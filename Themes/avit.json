@@ -1,0 +1,73 @@
+{
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#193549",
+          "properties": {
+            "home_icon": "~",
+            "style": "short"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#C2C206",
+          "background": "#193549",
+          "properties": {
+            "branch_icon": "",
+            "branch_identical_icon": "≡",
+            "branch_ahead_icon": "↑",
+            "branch_behind_icon": "↓",
+            "branch_gone_icon": "≢",
+            "local_working_icon": "",
+            "local_staged_icon": ""
+          }
+        },
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#B5B50D",
+          "background": "#193549",
+          "properties": {
+            "root_icon": "⚡"
+          }
+        },
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#C94A16",
+          "background": "#193549",
+          "properties": {
+            "error_icon": "x"
+          }
+        }
+      ]
+    },
+    {
+      "type": "line-break"
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#007ACC",
+          "background": "#193549",
+          "properties": {
+            "text": "▶"
+          }
+        }
+      ]
+    }
+  ],
+  "console_background_color": "#193549",
+  "end_space_enabled": true
+}

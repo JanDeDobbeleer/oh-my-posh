@@ -1,0 +1,94 @@
+{
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "powerline_separator": "",
+      "segments": [
+        {
+          "type": "session",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#ffb300",
+          "leading_diamond": "",
+          "trailing_diamond": "",
+          "properties": {
+            "user_info_separator": "@",
+            "postfix": " "
+          }
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "foreground": "#ffffff",
+          "background": "#61AFEF",
+          "properties": {
+            "prefix": "  ",
+            "style": "folder"
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "foreground": "#193549",
+          "background": "#ffeb3b",
+          "properties": {
+            "branch_icon": "",
+            "branch_identical_icon": "≡",
+            "branch_ahead_icon": "↑",
+            "branch_behind_icon": "↓",
+            "branch_gone_icon": "≢",
+            "local_working_icon": "",
+            "local_staged_icon": ""
+          }
+        },
+        {
+          "type": "spotify",
+          "style": "powerline",
+          "foreground": "#ffffff",
+          "background": "#1BD760",
+          "properties": {
+            "prefix": "  ",
+            "paused_icon": " ",
+            "playing_icon": " "
+          }
+        },
+        {
+          "type": "battery",
+          "style": "powerline",
+          "foreground": "#193549",
+          "background": "#ffeb3b",
+          "properties": {
+            "battery_icon": "",
+            "discharging_icon": " ",
+            "charging_icon": " ",
+            "charged_icon": " ",
+            "color_background": true,
+            "charged_color": "#4caf50",
+            "charging_color": "#40c4ff",
+            "discharging_color": "#ff5722",
+            "postfix": "% "
+          }
+        },
+        {
+          "type": "exit",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#00897b",
+          "leading_diamond": "",
+          "trailing_diamond": "",
+          "properties": {
+            "error_icon": "",
+            "display_error_code": false,
+            "always_enabled": true,
+            "error_color": "#e91e63",
+            "color_background": true,
+            "prefix": "<#193549> </>"
+          }
+        }
+      ]
+    }
+  ],
+  "console_background_color": "#193549",
+  "end_space_enabled": true
+}

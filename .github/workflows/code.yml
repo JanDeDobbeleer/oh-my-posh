@@ -1,0 +1,44 @@
+on: [pull_request]
+name: Validate Code
+jobs:
+  test:
+    env:
+      GOPATH: ${{ github.workspace }}
+      GO111MODULE: off
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        include:
+        - os: ubuntu-latest
+          INSTALL_DEP: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+        - os: macos-latest
+          INSTALL_DEP: curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+        - os: windows-latest
+          INSTALL_DEP: choco install dep
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.15.x
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        path: ./src/github.com/${{ github.repository }}
+    - name: Install dependencies
+      run: |
+        ${{ matrix.INSTALL_DEP }}
+        dep ensure -v
+    - name: Install dependencies
+      run: dep ensure -v
+    - name: Golang CI
+      if: matrix.os == 'ubuntu-latest'
+      uses: golangci/golangci-lint-action@v2
+      with:
+        version: v1.31
+        working-directory: ./src/github.com/${{ github.repository }}
+    - name: Unit Tests
+      run: go test . -v

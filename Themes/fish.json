@@ -1,0 +1,82 @@
+{
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "powerline_separator": "",
+      "segments": [
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#193549",
+          "properties": {
+            "error_icon": " ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#100e23",
+          "background": "#193549",
+          "properties": {
+            "root_icon": "襁"
+          }
+        },
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#193549",
+          "properties": {
+            "user_info_separator": "@"
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#007ACC",
+          "properties" : {
+              "home_icon": "~",
+              "folder_icon": "",
+              "windows_registry_icon": "",
+              "folder_separator_icon": "",
+              "style": "short",
+              "prefix": "<#193549></> ",
+              "postfix": " "
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#007ACC",
+          "properties": {
+            "branch_icon": "",
+            "branch_identical_icon": "≡",
+            "branch_ahead_icon": "↑",
+            "branch_behind_icon": "↓",
+            "branch_gone_icon": "≢",
+            "local_working_icon": "",
+            "local_staged_icon": "",
+            "prefix": "<#ffffff></> ",
+            "postfix": " "
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#007ACC",
+          "background": "#193549",
+          "properties": {
+            "prefix": "",
+            "text": ""
+          }
+        }
+      ]
+    }
+  ],
+  "console_background_color": "#193549"
+}

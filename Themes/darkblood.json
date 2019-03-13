@@ -1,0 +1,84 @@
+{
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#193549",
+          "properties": {
+            "user_info_separator": "",
+            "display_computer": false,
+            "prefix": "<#CB4B16>┏[</>",
+            "postfix": "<#CB4B16>]</>"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#193549",
+          "properties": {
+            "branch_icon": "",
+            "branch_identical_icon": "≡",
+            "branch_ahead_icon": "↑",
+            "branch_behind_icon": "↓",
+            "branch_gone_icon": "≢",
+            "local_working_icon": "",
+            "local_staged_icon": "",
+            "prefix": "<#CB4B16>[</>",
+            "postfix": "<#CB4B16>]</>"
+          }
+        },
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#193549",
+          "properties": {
+            "root_icon": "⚡",
+            "prefix": "<#CB4B16>[</>",
+            "postfix": "<#CB4B16>]</>"
+          }
+        },
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#193549",
+          "properties": {
+            "error_icon": "x",
+            "prefix": "<#CB4B16>[</>",
+            "postfix": "<#CB4B16>]</>"
+          }
+        }
+      ]
+    },
+    {
+      "type": "line-break"
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#193549",
+          "properties": {
+            "home_icon": "~",
+            "style": "short",
+            "prefix": "<#CB4B16>[</>",
+            "postfix": "<#CB4B16>]></>"
+          }
+        }
+      ]
+    }
+  ],
+  "console_background_color": "#193549",
+  "end_space_enabled": true
+}

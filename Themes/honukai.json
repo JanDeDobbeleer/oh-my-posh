@@ -1,0 +1,114 @@
+{
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#FFFFFF",
+          "background": "#193549",
+          "properties": {
+            "user_info_separator": " <#ffffff>in</> ",
+            "prefix": "<#0377C8># </>",
+            "user_color": "#0377C8",
+            "computer_color": "#4A9207"
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#0973C0",
+          "background": "#193549",
+          "properties": {
+            "home_icon": "~",
+            "folder_icon": "",
+            "windows_registry_icon": "",
+            "folder_separator_icon": "",
+            "style": "short"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#B8B80A",
+          "background": "#193549",
+          "properties": {
+            "branch_icon": "",
+            "branch_identical_icon": "≡",
+            "branch_ahead_icon": "↑",
+            "branch_behind_icon": "↓",
+            "branch_gone_icon": "≢",
+            "local_working_icon": "",
+            "local_staged_icon": "",
+            "prefix": "<#ffffff>on git:</>"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#193549",
+          "properties": {
+            "prefix": "[",
+            "postfix": "]"
+          }
+        }
+      ]
+    },
+    {
+      "type": "line-break"
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#CECE04",
+          "background": "#193549",
+          "properties": {
+            "root_icon": "襁"
+          }
+        },
+        {
+          "type": "virtualenv",
+          "style": "plain",
+          "foreground": "#100e23",
+          "background": "#193549",
+          "properties": {
+            "python_icon": ""
+          }
+        },
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#CB4B16",
+          "background": "#193549",
+          "properties": {
+            "error_icon": ""
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#CC4B16",
+          "background": "#193549",
+          "properties": {
+            "text": "→"
+          }
+        }
+      ]
+    }
+  ],
+  "console_background_color": "#193549",
+  "end_space_enabled": true
+}

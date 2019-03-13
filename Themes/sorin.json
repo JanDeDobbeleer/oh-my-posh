@@ -1,0 +1,86 @@
+{
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#CB4B16",
+          "background": "#193549",
+          "properties": {
+            "error_icon": ""
+          }
+        },
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#CECE04",
+          "background": "#193549",
+          "properties": {
+            "root_icon": "襁"
+          }
+        },
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#FFFFFF",
+          "background": "#193549",
+          "properties": {
+            "user_info_separator": "@"
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#0973C0",
+          "background": "#193549",
+          "properties": {
+            "home_icon": "",
+            "folder_icon": "",
+            "windows_registry_icon": "",
+            "folder_separator_icon": "  ",
+            "style": "agnoster"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#C1C106",
+          "background": "#193549",
+          "properties": {
+            "branch_icon": "",
+            "branch_identical_icon": "≡",
+            "branch_ahead_icon": "↑",
+            "branch_behind_icon": "↓",
+            "branch_gone_icon": "≢",
+            "local_working_icon": "",
+            "local_staged_icon": "",
+            "prefix": "<#ffffff>git:</>"
+          }
+        },
+        {
+          "type": "virtualenv",
+          "style": "plain",
+          "foreground": "#100e23",
+          "background": "#193549",
+          "properties": {
+            "python_icon": ""
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#193549",
+          "properties": {
+            "text": "<#CB4B16>❭</><#CACA02>❭</><#4E9A06>❭</>"
+          }
+        }
+      ]
+    }
+  ],
+  "console_background_color": "#193549",
+  "end_space_enabled": true
+}

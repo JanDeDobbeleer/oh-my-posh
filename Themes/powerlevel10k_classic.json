@@ -1,0 +1,107 @@
+{
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#26C6DA",
+          "background": "#546E7A",
+          "properties": {
+            "text": "",
+            "postfix": " "
+          }
+        },
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#26C6DA",
+          "background": "#546E7A",
+          "properties": {
+            "root_icon": "襁"
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#26C6DA",
+          "background": "#546E7A",
+          "properties": {
+            "home_icon": "~",
+            "style": "short",
+            "postfix": " "
+          }
+        },
+        {
+          "type": "git",
+          "style": "diamond",
+          "foreground": "#D4E157",
+          "background": "#546E7A",
+          "trailing_diamond": "",
+          "properties": {
+            "branch_icon": "",
+            "branch_identical_icon": "≡",
+            "branch_ahead_icon": "↑",
+            "branch_behind_icon": "↓",
+            "branch_gone_icon": "≢",
+            "local_working_icon": "",
+            "local_staged_icon": "",
+            "prefix": "<#26C6DA> </>"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "session",
+          "style": "diamond",
+          "foreground": "#D4E157",
+          "background": "#546E7A",
+          "leading_diamond": "",
+          "properties": {
+            "user_info_separator": "@",
+            "postfix": " <#26C6DA></> "
+          }
+        },
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#D4E157",
+          "background": "#546E7A",
+          "properties": {
+            "time_format": "15:04:05",
+            "postfix": "  "
+          }
+        }
+      ]
+    },
+    {
+      "type": "newline"
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#D4E157",
+          "background": "#193549",
+          "properties": {
+            "error_icon": "❯",
+            "always_enabled": true,
+            "error_color": "#FF5252",
+            "display_error_code": false
+          }
+        }
+      ]
+    }
+  ],
+  "console_background_color": "#193549",
+  "end_space_enabled": true
+}

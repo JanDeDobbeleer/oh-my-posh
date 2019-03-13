@@ -1,0 +1,62 @@
+{
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "powerline_separator": "",
+      "segments": [
+        {
+          "type": "session",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#61AFEF",
+          "leading_diamond": "",
+          "trailing_diamond": "",
+          "properties": {
+            "user_info_separator": "@",
+            "postfix": " "
+          }
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "foreground": "#ffffff",
+          "background": "#C678DD",
+          "properties": {
+            "home_icon": "~",
+            "style": "short"
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "foreground": "#193549",
+          "background": "#95ffa4",
+          "properties": {
+            "branch_icon": "",
+            "branch_identical_icon": "≡",
+            "branch_ahead_icon": "↑",
+            "branch_behind_icon": "↓",
+            "branch_gone_icon": "≢",
+            "local_working_icon": "",
+            "local_staged_icon": ""
+          }
+        },
+        {
+          "type": "virtualenv",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#FF6471",
+          "leading_diamond": "",
+          "trailing_diamond": "",
+          "properties": {
+            "python_icon": "",
+            "prefix": "<#193549> </>"
+          }
+        }
+      ]
+    }
+  ],
+  "console_background_color": "#193549",
+  "end_space_enabled": true
+}

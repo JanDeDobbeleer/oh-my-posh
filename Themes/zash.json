@@ -1,0 +1,66 @@
+{
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#E36464",
+          "background": "#193549",
+          "properties": {
+            "user_info_separator": "",
+            "display_computer": false,
+            "prefix": "@"
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#62ED8B",
+          "background": "#193549",
+          "properties": {
+            "text": "→",
+            "postfix": "",
+            "prefix": ""
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#56B6C2",
+          "background": "#193549",
+          "properties": {
+            "style": "folder",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#D4AAFC",
+          "background": "#193549",
+          "properties": {
+            "branch_icon": "",
+            "display_status": false,
+            "prefix": " <#DDB15F>git(</>",
+            "postfix": "<#DDB15F>)</>"
+          }
+        },
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#DCB977",
+          "background": "#193549",
+          "properties": {
+            "error_icon": "✗",
+            "display_error_code": false
+          }
+        }
+      ]
+    }
+  ],
+  "console_background_color": "#193549",
+  "end_space_enabled": true
+}

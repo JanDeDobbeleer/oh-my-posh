@@ -1,0 +1,35 @@
+skip_tags: true
+skip_commits:
+  files:
+    - .github/*
+    - README.md
+    - CHANGELOG.md
+environment:
+  GH_KEY:
+    secure: Vd8UVmtAfMZGW0OzImzMpG3ZfBoK6xOhduxnTJwyi5DmgbMuUz84SZ7AKke8xHsJ
+image:
+  - Visual Studio 2019
+  - Ubuntu
+build_script:
+  - pwsh: (Get-Content '.\oh-my-posh.psd1' -Raw).Replace('1.0.0.0', $ENV:APPVEYOR_BUILD_VERSION) | Out-File -Encoding 'UTF8' '.\oh-my-posh.psd1'
+before_test:
+  - pwsh: .\Build\setup_test_env.ps1
+test_script:
+  - pwsh: >-
+      if ($isWindows) {
+        .\Build\test_windows.ps1
+      }
+      else {
+        Invoke-Pester
+      }
+deploy_script:
+  - pwsh: >-
+      if ($isWindows) {
+        .\Build\release.ps1
+      }
+on_success:
+  - git config --global credential.helper store
+  - ps: Add-Content -Path "$HOME\.git-credentials" -Value "https://$($env:GH_KEY):x-oauth-basic@github.com`n" -NoNewline
+  - git config --global user.email "Your email"
+  - git config --global user.name "Your Name"
+  - git push

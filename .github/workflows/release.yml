@@ -93,3 +93,15 @@ jobs:
         asset_path: ./src/github.com/${{ github.repository }}/${{ matrix.ARTIFACT }}
         asset_name: ${{ matrix.ARTIFACT }}
         asset_content_type:  application/octet-stream
+  powershell:
+    needs: [release, artifacts]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: powershell
+        working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}/packages/powershell/go-my-posh
+    env:
+      PSGALLERY_KEY: ${{ secrets.PSGALLERY_KEY }}
+    steps:
+    - name: Pack and push
+      run: ./deploy.ps1 -BinVersion ${{ needs.release.outputs.version }} -ModuleVersion ${{ needs.release.outputs.version }} -Repository PSGallery -RepositoryAPIKey $env:PSGALLERY_KEY

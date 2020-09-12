@@ -13,17 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
+      version: ${{ steps.changelog.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Get next version
-        id: version
-        run: |
-          curl -L https://github.com/idc101/git-mkver/releases/download/v$MKVER/git-mkver-darwin-amd64-$MKVER.tar.gz | tar xvz
-          sudo mv git-mkver /usr/local/bin
-          echo "::set-output name=version::$(git mkver next)"
-        env:
-          MKVER: "1.1.1"
       - name: Create changelog
         id: changelog
         uses: TriPSs/conventional-changelog-action@v3
@@ -32,7 +25,6 @@ jobs:
           skip-version-file: "true"
           output-file: "false"
           skip-commit: "true"
-          fallback-version: ${{ steps.version.outputs.version }}
       - name: Create Github Release
         id: create_release
         uses: actions/create-release@v1
@@ -93,3 +85,19 @@ jobs:
         asset_path: ./src/github.com/${{ github.repository }}/${{ matrix.ARTIFACT }}
         asset_name: ${{ matrix.ARTIFACT }}
         asset_content_type:  application/octet-stream
+  powershell:
+    needs: [release, artifacts]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}/packages/powershell/go-my-posh
+    env:
+      PSGALLERY_KEY: ${{ secrets.PSGALLERY_KEY }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        path: ./src/github.com/${{ github.repository }}
+    - name: Pack and push
+      run: ./deploy.ps1 -BinVersion ${{ needs.release.outputs.version }} -ModuleVersion ${{ needs.release.outputs.version }} -Repository PSGallery -RepositoryAPIKey $env:PSGALLERY_KEY

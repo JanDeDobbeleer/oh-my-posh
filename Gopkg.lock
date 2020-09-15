@@ -27,6 +27,15 @@
   version = "v0.3.11"
 
 [[projects]]
+  digest = "1:69530a15507094162be4eb3180c1d68b787177e8c9bbe76d4da40d44d6586f6f"
+  name = "github.com/mitchellh/go-ps"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "147ff83818ae939913b2e20b91ae3cd6c391771c"
+  source = "github.com/mitchellh/go-ps"
+  version = "v1.0.0"
+
+[[projects]]
   digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
@@ -113,6 +122,7 @@
   input-imports = [
     "github.com/distatus/battery",
     "github.com/imdario/mergo",
+    "github.com/mitchellh/go-ps",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "golang.org/x/sys/windows",

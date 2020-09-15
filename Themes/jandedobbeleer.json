@@ -71,6 +71,15 @@
           }
         },
         {
+          "type": "shell",
+          "style": "powerline",
+          "foreground": "#ffffff",
+          "background": "#0077c2",
+          "properties": {
+            "prefix": "  "
+          }
+        },
+        {
           "type": "exit",
           "style": "diamond",
           "foreground": "#ffffff",

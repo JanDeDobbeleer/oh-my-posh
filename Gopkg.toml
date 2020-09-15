@@ -48,6 +48,11 @@
   source = "github.com/stretchr/objx"
 
 [[constraint]]
+  name = "github.com/mitchellh/go-ps"
+  version = "v1.0.0"
+  source = "github.com/mitchellh/go-ps"
+
+[[constraint]]
   name = "github.com/distatus/battery"
   branch = "master"
   source = "github.com/JanDeDobbeleer/battery"

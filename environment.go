@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/distatus/battery"
+	ps "github.com/mitchellh/go-ps"
 )
 
 type environmentInfo interface {
@@ -25,6 +26,7 @@ type environmentInfo interface {
 	lastErrorCode() int
 	getArgs() *args
 	getBatteryInfo() (*battery.Battery, error)
+	getParentProcess() (ps.Process, error)
 }
 
 type environment struct {
@@ -91,6 +93,11 @@ func (env *environment) getArgs() *args {
 
 func (env *environment) getBatteryInfo() (*battery.Battery, error) {
 	return battery.Get(0)
+}
+
+func (env *environment) getParentProcess() (ps.Process, error) {
+	pid := os.Getppid()
+	return ps.FindProcess(pid)
 }
 
 func cleanHostName(hostName string) string {

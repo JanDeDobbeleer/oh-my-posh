@@ -48,6 +48,8 @@ const (
 	Battery SegmentType = "battery"
 	//Spotify writes the Spotify status for Mac
 	Spotify SegmentType = "spotify"
+	//ShellInfo writes which shell we're currently in
+	ShellInfo SegmentType = "shell"
 	//Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	//Plain writes it without ornaments
@@ -66,17 +68,18 @@ func (segment *Segment) enabled() bool {
 
 func (segment *Segment) mapSegmentWithWriter(env environmentInfo) *properties {
 	functions := map[SegmentType]SegmentWriter{
-		Session: &session{},
-		Path:    &path{},
-		Git:     &git{},
-		Exit:    &exit{},
-		Venv:    &venv{},
-		Root:    &root{},
-		Text:    &text{},
-		Time:    &tempus{},
-		Cmd:     &command{},
-		Battery: &batt{},
-		Spotify: &spotify{},
+		Session:   &session{},
+		Path:      &path{},
+		Git:       &git{},
+		Exit:      &exit{},
+		Venv:      &venv{},
+		Root:      &root{},
+		Text:      &text{},
+		Time:      &tempus{},
+		Cmd:       &command{},
+		Battery:   &batt{},
+		Spotify:   &spotify{},
+		ShellInfo: &shell{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

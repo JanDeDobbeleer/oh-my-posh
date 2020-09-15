@@ -26,7 +26,7 @@ const (
 	//Prompt writes one or more Segments
 	Prompt BlockType = "prompt"
 	//LineBreak creates a line break in the prompt
-	LineBreak BlockType = "line-break"
+	LineBreak BlockType = "newline"
 	//Left aligns left
 	Left BlockAlignment = "left"
 	//Right aligns right

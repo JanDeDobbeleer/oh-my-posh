@@ -128,13 +128,13 @@ func (e *engine) string() string {
 	for _, block := range e.settings.Blocks {
 		// if line break, append a line break
 		if block.Type == LineBreak {
-			buffer.WriteString("\n")
+			buffer.WriteString("\x1b[1B")
 			continue
 		}
 		if block.LineOffset < 0 {
 			buffer.WriteString(fmt.Sprintf("\x1b[%dF", -block.LineOffset))
 		} else if block.LineOffset > 0 {
-			buffer.WriteString(fmt.Sprintf("\x1b[%dE", block.LineOffset))
+			buffer.WriteString(fmt.Sprintf("\x1b[%dB", block.LineOffset))
 		}
 		switch block.Alignment {
 		case Right:

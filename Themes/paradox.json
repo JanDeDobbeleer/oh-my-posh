@@ -72,7 +72,7 @@
       ]
     },
     {
-      "type": "line-break"
+      "type": "newline"
     },
     {
       "type": "prompt",

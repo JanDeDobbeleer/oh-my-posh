@@ -39,7 +39,7 @@ func TestBatteryCharging(t *testing.T) {
 		},
 	}
 	b := setupBatteryTests(battery.Charging, 80, props)
-	assert.Equal(t, "charging 80%", b.string())
+	assert.Equal(t, "charging 80", b.string())
 }
 
 func TestBatteryCharged(t *testing.T) {
@@ -49,7 +49,7 @@ func TestBatteryCharged(t *testing.T) {
 		},
 	}
 	b := setupBatteryTests(battery.Full, 100, props)
-	assert.Equal(t, "charged 100%", b.string())
+	assert.Equal(t, "charged 100", b.string())
 }
 
 func TestBatteryDischarging(t *testing.T) {
@@ -59,7 +59,7 @@ func TestBatteryDischarging(t *testing.T) {
 		},
 	}
 	b := setupBatteryTests(battery.Discharging, 70, props)
-	assert.Equal(t, "going down 70%", b.string())
+	assert.Equal(t, "going down 70", b.string())
 }
 
 func TestBatteryBackgroundColor(t *testing.T) {

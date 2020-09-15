@@ -38,7 +38,7 @@ func (b *batt) string() string {
 		return "BATT ERR"
 	}
 	batteryPercentage := bt.Current / bt.Full * 100
-	percentageText := fmt.Sprintf("%.0f%%", batteryPercentage)
+	percentageText := fmt.Sprintf("%.0f", batteryPercentage)
 	var icon string
 	var colorPorperty Property
 	switch bt.State {

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"regexp"
 
@@ -122,34 +121,31 @@ func (e *engine) lenWithoutANSI(str string) int {
 	return count
 }
 
-func (e *engine) string() string {
-	var buffer bytes.Buffer
-	defer buffer.Reset()
+func (e *engine) render() {
 	for _, block := range e.settings.Blocks {
 		// if line break, append a line break
 		if block.Type == LineBreak {
-			buffer.WriteString("\x1b[1B")
+			fmt.Printf("\x1b[%dC ", 1000)
 			continue
 		}
 		if block.LineOffset < 0 {
-			buffer.WriteString(fmt.Sprintf("\x1b[%dF", -block.LineOffset))
+			fmt.Printf("\x1b[%dF", -block.LineOffset)
 		} else if block.LineOffset > 0 {
-			buffer.WriteString(fmt.Sprintf("\x1b[%dB", block.LineOffset))
+			fmt.Printf("\x1b[%dB", block.LineOffset)
 		}
 		switch block.Alignment {
 		case Right:
-			buffer.WriteString(fmt.Sprintf("\x1b[%dC", 1000))
+			fmt.Printf("\x1b[%dC", 1000)
 			blockText := e.renderBlockSegments(block)
-			buffer.WriteString(fmt.Sprintf("\x1b[%dD", e.lenWithoutANSI(blockText)+e.settings.RightSegmentOffset))
-			buffer.WriteString(blockText)
+			fmt.Printf("\x1b[%dD", e.lenWithoutANSI(blockText)+e.settings.RightSegmentOffset)
+			fmt.Print(blockText)
 		default:
-			buffer.WriteString(e.renderBlockSegments(block))
+			fmt.Print(e.renderBlockSegments(block))
 		}
 	}
 	if e.settings.EndSpaceEnabled {
-		buffer.WriteString(" ")
+		fmt.Print(" ")
 	}
-	return buffer.String()
 }
 
 func (e *engine) reset() {

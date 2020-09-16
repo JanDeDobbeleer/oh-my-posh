@@ -45,6 +45,5 @@ func main() {
 			Buffer: new(bytes.Buffer),
 		},
 	}
-	prompt := engine.string()
-	fmt.Print(prompt)
+	engine.render()
 }

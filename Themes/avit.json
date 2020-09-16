@@ -10,6 +10,7 @@
           "foreground": "#ffffff",
           "background": "#193549",
           "properties": {
+            "prefix": "",
             "home_icon": "~",
             "style": "short"
           }
@@ -62,6 +63,7 @@
           "foreground": "#007ACC",
           "background": "#193549",
           "properties": {
+            "prefix": "",
             "text": "▶"
           }
         }

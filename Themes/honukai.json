@@ -76,6 +76,7 @@
           "foreground": "#CECE04",
           "background": "#193549",
           "properties": {
+            "prefix": "",
             "root_icon": "襁"
           }
         },
@@ -85,6 +86,7 @@
           "foreground": "#100e23",
           "background": "#193549",
           "properties": {
+            "prefix": "",
             "python_icon": ""
           }
         },
@@ -94,6 +96,7 @@
           "foreground": "#CB4B16",
           "background": "#193549",
           "properties": {
+            "prefix": "",
             "error_icon": ""
           }
         },
@@ -103,6 +106,7 @@
           "foreground": "#CC4B16",
           "background": "#193549",
           "properties": {
+            "prefix": "",
             "text": "→"
           }
         }

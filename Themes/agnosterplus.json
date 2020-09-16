@@ -30,6 +30,7 @@
           "foreground": "#100e23",
           "background": "#ffffff",
           "properties": {
+            "prefix": "",
             "user_info_separator": "@"
           }
         },

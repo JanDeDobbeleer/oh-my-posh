@@ -10,6 +10,7 @@
           "foreground": "#ffffff",
           "background": "#193549",
           "properties": {
+            "prefix": "",
             "text": "<#C591E8>❭</><#69FF94>❭</>"
           }
         },
@@ -75,6 +76,7 @@
           "foreground": "#ffffff",
           "background": "#193549",
           "properties": {
+            "prefix": "",
             "text": " "
           }
         }

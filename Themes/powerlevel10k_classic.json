@@ -93,6 +93,7 @@
           "foreground": "#D4E157",
           "background": "#193549",
           "properties": {
+            "prefix": "",
             "error_icon": "❯",
             "always_enabled": true,
             "error_color": "#FF5252",

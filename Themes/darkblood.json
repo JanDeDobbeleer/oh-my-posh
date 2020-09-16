@@ -72,7 +72,7 @@
           "properties": {
             "home_icon": "~",
             "style": "short",
-            "prefix": "<#CB4B16>[</>",
+            "prefix": "<#CB4B16>┖[</>",
             "postfix": "<#CB4B16>]></>"
           }
         }

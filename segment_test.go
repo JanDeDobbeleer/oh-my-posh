@@ -11,7 +11,9 @@ func TestMapSegmentWriterCanMap(t *testing.T) {
 		Type: Session,
 	}
 	env := new(MockedEnvironment)
-	sc.mapSegmentWithWriter(env)
+	props, err := sc.mapSegmentWithWriter(env)
+	assert.NotNil(t, props)
+	assert.NoError(t, err)
 	assert.NotNil(t, sc.writer)
 }
 
@@ -20,6 +22,7 @@ func TestMapSegmentWriterCannotMap(t *testing.T) {
 		Type: "nilwriter",
 	}
 	env := new(MockedEnvironment)
-	sc.mapSegmentWithWriter(env)
-	assert.Nil(t, sc.writer)
+	props, err := sc.mapSegmentWithWriter(env)
+	assert.Nil(t, props)
+	assert.Error(t, err)
 }

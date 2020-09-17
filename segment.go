@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 //Segment represent a single segment and it's configuration
 type Segment struct {
 	Type            SegmentType              `json:"type"`
@@ -68,7 +70,7 @@ func (segment *Segment) enabled() bool {
 	return segment.writer.enabled()
 }
 
-func (segment *Segment) mapSegmentWithWriter(env environmentInfo) *properties {
+func (segment *Segment) mapSegmentWithWriter(env environmentInfo) (*properties, error) {
 	functions := map[SegmentType]SegmentWriter{
 		Session:   &session{},
 		Path:      &path{},
@@ -92,7 +94,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) *properties {
 		}
 		writer.init(props, env)
 		segment.writer = writer
-		return props
+		return props, nil
 	}
-	return nil
+	return nil, errors.New("Unable to map writer")
 }

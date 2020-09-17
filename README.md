@@ -22,12 +22,12 @@ What started as the offspring of [oh-my-posh][oh-my-posh] for PowerShell resulte
 ## Table of Contents**
 
 * [Installation](#installation)
-  * [Precompiled Binaries](#precompiled-binaries)
   * [PowerShell](#powershell)
-  * [ZSH](#zsh)
-  * [Bash](#bash)
-  * [Fish](#fish)
-  * [Nix](#nix)
+  * [Precompiled Binaries](#precompiled-binaries)
+    * [ZSH](#zsh)
+    * [Bash](#bash)
+    * [Fish](#fish)
+    * [Nix](#nix)
 * [Configuration](#configuration)
 * [Roadmap](#roadmap)
 * [Thanks](#thanks)
@@ -38,6 +38,20 @@ What started as the offspring of [oh-my-posh][oh-my-posh] for PowerShell resulte
 but you may have to set your $TERM to `xterm-256color` for it to work.
 
 For maximum enjoyment, make sure to install a powerline enabled font. The fonts I use are patched by [Nerd Fonts][nerdfonts], which offers a maximum of icons you can use to configure your prompt.
+
+### Powershell
+
+A PowerShell module is available for your enjoyment. Install and use it with the following commands.
+
+```powershell
+Install-Module -Name go-my-posh -Repository PSGallery
+Import-Module go-my-posh
+Set-PoshPrompt paradox
+```
+
+The `Set-PoshPrompt` function has autocompletion to assist in correctly typing the correct theme. It accepts either one of the [pre-configured themes][themes], or a path to a theme of your own.
+
+To see available themes, make use of the `Get-PoshThemes` function. This prints out all themes based on your current location/environment.
 
 ### Precompiled Binaries
 
@@ -50,13 +64,13 @@ On UNIX systems, make sure the binary is executable before using it.
 chmod +x gmp_executable
 ```
 
-### Bash
+#### Bash
 
 Add the following to your `.bashrc` (or `.profile` on Mac):
 
 ```bash
 function _update_ps1() {
-    PS1="$(<go-my-posh> -error $?)"
+    PS1="$(<go-my-posh> -config ~/jandedobeleer.json -error $?)"
 }
 
 if [ "$TERM" != "linux" ] && [ -f <go-my-posh> ]; then
@@ -64,7 +78,7 @@ if [ "$TERM" != "linux" ] && [ -f <go-my-posh> ]; then
 fi
 ```
 
-### ZSH
+#### ZSH
 
 Add the following to your `.zshrc`:
 
@@ -87,7 +101,7 @@ if [ "$TERM" != "linux" ]; then
 fi
 ```
 
-### Fish
+#### Fish
 
 Redefine `fish_prompt` in `~/.config/fish/config.fish`:
 
@@ -97,7 +111,7 @@ function fish_prompt
 end
 ```
 
-### Nix
+#### Nix
 
 When using `nix-shell --pure`, `go-my-posh` will not be accessible, and
 your prompt will not appear.
@@ -112,18 +126,6 @@ if [ "$IN_NIX_SHELL" == "pure" ]; then
         alias powerline-go="<go-my-posh> -config ~/jandedobbeleer.json"
     fi
 fi
-```
-
-### Powershell
-
-Redefine `prompt` function on your profile:
-
-```powershell
-[ScriptBlock]$Prompt = {
-    $err = $? ? 0 : 1
-    <go-my-posh> -config ~/jandedobbeleer.json  -error $err
-}
-Set-Item -Path Function:prompt -Value $Prompt -Force
 ```
 
 ## Configuration
@@ -141,9 +143,9 @@ a few general properties are available cross segments which can be found in `pro
 * [x] Create documentation for manual installation
 * [ ] Create documentation on the different segments
 * Create easy installation packages
+  * [x] Powershell
   * [ ] Brew
   * [ ] Chocolatey
-* [ ] Create documentation on the different segments
 
 ## Thanks
 

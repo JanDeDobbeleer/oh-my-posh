@@ -50,6 +50,8 @@ const (
 	Spotify SegmentType = "spotify"
 	//ShellInfo writes which shell we're currently in
 	ShellInfo SegmentType = "shell"
+	//NVM writes which node version is currently active using nvm
+	NVM SegmentType = "nvm"
 	//Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	//Plain writes it without ornaments
@@ -80,6 +82,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) *properties {
 		Battery:   &batt{},
 		Spotify:   &spotify{},
 		ShellInfo: &shell{},
+		NVM:       &nvm{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

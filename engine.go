@@ -90,8 +90,8 @@ func (e *engine) renderBlockSegments(block *Block) string {
 	defer e.reset()
 	e.activeBlock = block
 	for _, segment := range block.Segments {
-		props := segment.mapSegmentWithWriter(e.env)
-		if !segment.enabled() {
+		props, err := segment.mapSegmentWithWriter(e.env)
+		if err != nil || !segment.enabled() {
 			continue
 		}
 		e.activeSegment = segment

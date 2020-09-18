@@ -19,6 +19,15 @@
   source = "github.com/JanDeDobbeleer/battery"
 
 [[projects]]
+  digest = "1:369d6bc308353c8a54325fdec2cba7afdbf099d034244c716c38c12a4d25c784"
+  name = "github.com/gookit/color"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "03a3efcb50655d3aaf551a88ca70ab76c865d65b"
+  source = "github.com/gookit/color"
+  version = "v1.3.0"
+
+[[projects]]
   digest = "1:eba10af56a904e7d797ccbdca4a6fae4029537b0118b6582f9f93e025b86af2a"
   name = "github.com/imdario/mergo"
   packages = ["."]
@@ -92,15 +101,6 @@
   version = "v0.3.3"
 
 [[projects]]
-  digest = "1:72f36cc57d0bdd5425e90d637d83bae9479ccc972364a21cde79ddfe72f7ac40"
-  name = "gopkg.in/gookit/color.v1"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "dedbfedb6650e743179e81a3a4cafddbd57da08e"
-  source = "gopkg.in/gookit/color.v1"
-  version = "v1.2.7"
-
-[[projects]]
   branch = "v3"
   digest = "1:229cb0f6192914f518cc1241ede6d6f1f458b31debfa18bf3a5c9e4f7b01e24b"
   name = "gopkg.in/yaml.v3"
@@ -121,13 +121,13 @@
   analyzer-version = 1
   input-imports = [
     "github.com/distatus/battery",
+    "github.com/gookit/color",
     "github.com/imdario/mergo",
     "github.com/mitchellh/go-ps",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",
     "golang.org/x/sys/windows",
     "golang.org/x/text/unicode/norm",
-    "gopkg.in/gookit/color.v1",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1

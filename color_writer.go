@@ -5,7 +5,7 @@ import (
 	"regexp"
 	"strings"
 
-	"gopkg.in/gookit/color.v1"
+	"github.com/gookit/color"
 )
 
 //ColorWriter writes colorized strings

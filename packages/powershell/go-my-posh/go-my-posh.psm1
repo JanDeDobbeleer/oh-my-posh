@@ -23,6 +23,10 @@ if (!$IsWindows) {
     $executable = Get-PoshCommand
     Invoke-Expression -Command "chmod +x $executable"
 }
+if ($IsWindows) {
+    # When this is not set, outputted fonts aren't rendered correctly in some terminals for the prompt function
+    [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+}
 
 function Set-PoshPrompt {
     param(

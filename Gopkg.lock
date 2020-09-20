@@ -19,13 +19,13 @@
   source = "github.com/JanDeDobbeleer/battery"
 
 [[projects]]
-  digest = "1:369d6bc308353c8a54325fdec2cba7afdbf099d034244c716c38c12a4d25c784"
+  branch = "master"
+  digest = "1:457016d13f789158a2c697ec64a91b600b8183aa7481a52920421a970236e6e1"
   name = "github.com/gookit/color"
   packages = ["."]
   pruneopts = "UT"
-  revision = "03a3efcb50655d3aaf551a88ca70ab76c865d65b"
-  source = "github.com/gookit/color"
-  version = "v1.3.0"
+  revision = "c52faac6396f15fd78c8fd343657f514b60a1147"
+  source = "github.com/JanDeDobbeleer/color"
 
 [[projects]]
   digest = "1:eba10af56a904e7d797ccbdca4a6fae4029537b0118b6582f9f93e025b86af2a"

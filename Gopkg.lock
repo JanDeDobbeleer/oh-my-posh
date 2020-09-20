@@ -28,14 +28,6 @@
   source = "github.com/JanDeDobbeleer/color"
 
 [[projects]]
-  digest = "1:eba10af56a904e7d797ccbdca4a6fae4029537b0118b6582f9f93e025b86af2a"
-  name = "github.com/imdario/mergo"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "cd55aeac72a19c6d5826061d5125d72b252a12eb"
-  version = "v0.3.11"
-
-[[projects]]
   digest = "1:69530a15507094162be4eb3180c1d68b787177e8c9bbe76d4da40d44d6586f6f"
   name = "github.com/mitchellh/go-ps"
   packages = ["."]
@@ -122,7 +114,6 @@
   input-imports = [
     "github.com/distatus/battery",
     "github.com/gookit/color",
-    "github.com/imdario/mergo",
     "github.com/mitchellh/go-ps",
     "github.com/stretchr/testify/assert",
     "github.com/stretchr/testify/mock",

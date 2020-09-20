@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-
-	"github.com/imdario/mergo"
 )
 
 //Settings holds all the theme for rendering the prompt
@@ -45,15 +43,16 @@ type Block struct {
 
 //GetSettings returns the default configuration including possible user overrides
 func GetSettings(env environmentInfo) *Settings {
-	defaultSettings := getDefaultSettings()
-	settings := loadUserConfiguration(env)
-	_ = mergo.Merge(settings, defaultSettings)
+	settings, err := loadUserConfiguration(env)
+	if err != nil {
+		return getDefaultSettings()
+	}
 	return settings
 }
 
-func loadUserConfiguration(env environmentInfo) *Settings {
+func loadUserConfiguration(env environmentInfo) (*Settings, error) {
 	var settings Settings
-	settingsFileLocation := fmt.Sprintf("%s/.go_my_psh", env.getenv("HOME"))
+	settingsFileLocation := fmt.Sprintf("%s/.go_my_posh", env.getenv("HOME"))
 	if _, err := os.Stat(*env.getArgs().Config); !os.IsNotExist(err) {
 		settingsFileLocation = *env.getArgs().Config
 	}
@@ -62,11 +61,11 @@ func loadUserConfiguration(env environmentInfo) *Settings {
 		_ = defaultSettings.Close()
 	}()
 	if err != nil {
-		return &settings
+		return nil, err
 	}
 	jsonParser := json.NewDecoder(defaultSettings)
-	_ = jsonParser.Decode(&settings)
-	return &settings
+	err = jsonParser.Decode(&settings)
+	return &settings, err
 }
 
 func getDefaultSettings() *Settings {

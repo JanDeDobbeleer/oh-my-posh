@@ -25,9 +25,9 @@
 #   unused-packages = true
 
 [[constraint]]
-  version = "1.3.0"
   name = "github.com/gookit/color"
-  source = "github.com/gookit/color"
+  branch = "master"
+  source = "github.com/JanDeDobbeleer/color"
 
 [[constraint]]
   version = "v0.3.3"

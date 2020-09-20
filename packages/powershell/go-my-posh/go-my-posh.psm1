@@ -30,23 +30,17 @@ if ($IsWindows) {
 
 function Set-PoshPrompt {
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]
         $Theme
     )
 
-    $themePath = ""
     if (Test-Path "$PSScriptRoot/Themes/$Theme.json") {
-        $themePath = "$PSScriptRoot/Themes/$Theme.json"
+        $global:PoshSettings.Theme = "$PSScriptRoot/Themes/$Theme.json"
     }
     elseif (Test-Path $Theme) {
-        $themePath = $Theme
+        $global:PoshSettings.Theme = $Theme
     }
-    else {
-        Write-Error -Message "Unable to locate theme, please verify the name and/or location"
-        return
-    }
-    $global:PoshSettings.Theme = $themePath
 
     [ScriptBlock]$Prompt = {
         $realLASTEXITCODE = $global:LASTEXITCODE

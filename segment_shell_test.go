@@ -42,7 +42,22 @@ func TestWriteCurrentShell(t *testing.T) {
 		env:   env,
 		props: props,
 	}
-	assert.Equal(t, "zsh", s.string())
+	assert.Equal(t, expected, s.string())
+}
+
+func TestWriteCurrentShellWindowsExe(t *testing.T) {
+	expected := "pwsh"
+	env := new(MockedEnvironment)
+	process := new(process)
+	parentProcess := expected + ".exe"
+	process.On("Executable", nil).Return(parentProcess)
+	env.On("getParentProcess", nil).Return(process, nil)
+	props := &properties{}
+	s := &shell{
+		env:   env,
+		props: props,
+	}
+	assert.Equal(t, expected, s.string())
 }
 
 func TestWriteCurrentShellError(t *testing.T) {

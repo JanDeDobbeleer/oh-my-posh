@@ -1,5 +1,7 @@
 package main
 
+import "strings"
+
 type shell struct {
 	props *properties
 	env   environmentInfo
@@ -15,7 +17,8 @@ func (s *shell) string() string {
 	if err != nil {
 		return "unknown"
 	}
-	return p.Executable()
+	shell := strings.Replace(p.Executable(), ".exe", "", 1)
+	return shell
 }
 
 func (s *shell) init(props *properties, env environmentInfo) {

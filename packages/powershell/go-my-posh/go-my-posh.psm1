@@ -26,6 +26,9 @@ if (!$IsWindows) {
 if ($IsWindows) {
     # When this is not set, outputted fonts aren't rendered correctly in some terminals for the prompt function
     [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+    # Not running it beforehand in the terminal will fail the prompt somehow
+    $poshCommand = Get-PoshCommand
+    Invoke-Expression -Command $poshCommand | Out-Null
 }
 
 function Set-PoshPrompt {

@@ -44,6 +44,9 @@ function Set-PoshPrompt {
     elseif (Test-Path $Theme) {
         $global:PoshSettings.Theme = $Theme
     }
+    else {
+        $global:PoshSettings.Theme = "$PSScriptRoot/Themes/jandedobbeleer.json"
+    }
 
     [ScriptBlock]$Prompt = {
         $realLASTEXITCODE = $global:LASTEXITCODE

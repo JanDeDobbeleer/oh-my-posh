@@ -36,18 +36,18 @@
 
 [[constraint]]
   name = "github.com/stretchr/testify"
-  version = "1.3.0"
+  version = "1.6.1"
   source = "github.com/stretchr/testify"
 
 [[constraint]]
   name = "github.com/stretchr/objx"
-  version = "v0.1.1"
+  version = "v0.3.0"
   source = "github.com/stretchr/objx"
 
 [[constraint]]
   name = "github.com/mitchellh/go-ps"
-  version = "v1.0.0"
-  source = "github.com/mitchellh/go-ps"
+  branch = "master"
+  source = "github.com/JanDeDobbeleer/go-ps"
 
 [[constraint]]
   name = "github.com/distatus/battery"

@@ -40,11 +40,6 @@
   source = "github.com/stretchr/testify"
 
 [[constraint]]
-  name = "github.com/stretchr/objx"
-  version = "v0.3.0"
-  source = "github.com/stretchr/objx"
-
-[[constraint]]
   name = "github.com/mitchellh/go-ps"
   branch = "master"
   source = "github.com/JanDeDobbeleer/go-ps"

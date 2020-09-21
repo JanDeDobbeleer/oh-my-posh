@@ -9,7 +9,6 @@
           "type": "time",
           "style": "plain",
           "foreground": "#00C5C7",
-          "background": "#193549",
           "properties": {
             "time_format": "15:04:05"
           }
@@ -28,7 +27,6 @@
           "type": "path",
           "style": "plain",
           "foreground": "#77E4F7",
-          "background": "#193549",
           "properties": {
             "prefix": "",
             "home_icon": "~",
@@ -39,8 +37,8 @@
           "type": "git",
           "style": "plain",
           "foreground": "#FFE700",
-          "background": "#193549",
           "properties": {
+            "prefix": "",
             "branch_icon": "",
             "branch_identical_icon": "≡",
             "branch_ahead_icon": "↑",
@@ -54,14 +52,12 @@
           "type": "text",
           "style": "plain",
           "foreground": "#43D426",
-          "background": "#193549",
           "properties": {
+            "prefix": "",
             "text": "❯"
           }
         }
       ]
     }
-  ],
-  "console_background_color": "#193549",
-  "end_space_enabled": true
+  ]
 }

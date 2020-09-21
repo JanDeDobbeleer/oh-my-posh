@@ -9,7 +9,6 @@
           "type": "root",
           "style": "plain",
           "foreground": "#FFEE58",
-          "background": "#193549",
           "properties": {
             "root_icon": "襁"
           }
@@ -18,7 +17,6 @@
           "type": "session",
           "style": "plain",
           "foreground": "#ffffff",
-          "background": "#193549",
           "properties": {
             "user_info_separator": "@"
           }

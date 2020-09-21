@@ -8,7 +8,6 @@
           "type": "session",
           "style": "plain",
           "foreground": "#E36464",
-          "background": "#193549",
           "properties": {
             "user_info_separator": "",
             "display_computer": false,
@@ -19,7 +18,6 @@
           "type": "text",
           "style": "plain",
           "foreground": "#62ED8B",
-          "background": "#193549",
           "properties": {
             "text": "→",
             "postfix": "",
@@ -30,7 +28,6 @@
           "type": "path",
           "style": "plain",
           "foreground": "#56B6C2",
-          "background": "#193549",
           "properties": {
             "style": "folder",
             "postfix": ""
@@ -40,7 +37,6 @@
           "type": "git",
           "style": "plain",
           "foreground": "#D4AAFC",
-          "background": "#193549",
           "properties": {
             "branch_icon": "",
             "display_status": false,
@@ -52,15 +48,14 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#DCB977",
-          "background": "#193549",
           "properties": {
             "error_icon": "✗",
-            "display_error_code": false
+            "display_error_code": false,
+            "postfix": ""
           }
         }
       ]
     }
   ],
-  "console_background_color": "#193549",
   "end_space_enabled": true
 }

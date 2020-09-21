@@ -14,9 +14,15 @@ type ColorWriter struct {
 }
 
 func (w *ColorWriter) writeColoredText(background string, foreground string, text string) {
-	style := color.HEXStyle(foreground, background)
-	text = style.Sprint(text)
-	w.Buffer.WriteString(text)
+	var coloredText string
+	if background != "" {
+		style := color.HEXStyle(foreground, background)
+		coloredText = style.Sprint(text)
+	} else {
+		style := color.HEX(foreground)
+		coloredText = style.Sprint(text)
+	}
+	w.Buffer.WriteString(coloredText)
 }
 
 func (w *ColorWriter) writeAndRemoveText(background string, foreground string, text string, textToRemove string, parentText string) string {
@@ -25,9 +31,6 @@ func (w *ColorWriter) writeAndRemoveText(background string, foreground string, t
 }
 
 func (w *ColorWriter) write(background string, foreground string, text string) {
-	style := color.HEXStyle(foreground, background)
-	text = style.Sprint(text)
-
 	r := regexp.MustCompile(`<\s*(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})>(?P<text>.*?)<\s*/\s*>`)
 	match := r.FindAllStringSubmatch(text, -1)
 	for i := range match {

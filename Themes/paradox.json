@@ -82,7 +82,6 @@
           "type": "text",
           "style": "plain",
           "foreground": "#007ACC",
-          "background": "#193549",
           "properties": {
             "prefix": "",
             "text": ""

@@ -8,7 +8,6 @@
           "type": "session",
           "style": "plain",
           "foreground": "#FFFFFF",
-          "background": "#193549",
           "properties": {
             "user_info_separator": " <#ffffff>in</> ",
             "prefix": "<#0377C8># </>",
@@ -20,7 +19,6 @@
           "type": "path",
           "style": "plain",
           "foreground": "#0973C0",
-          "background": "#193549",
           "properties": {
             "home_icon": "~",
             "folder_icon": "",
@@ -33,7 +31,6 @@
           "type": "git",
           "style": "plain",
           "foreground": "#B8B80A",
-          "background": "#193549",
           "properties": {
             "branch_icon": "",
             "branch_identical_icon": "≡",
@@ -55,7 +52,6 @@
           "type": "time",
           "style": "plain",
           "foreground": "#ffffff",
-          "background": "#193549",
           "properties": {
             "prefix": "[",
             "postfix": "]"
@@ -74,7 +70,6 @@
           "type": "root",
           "style": "plain",
           "foreground": "#CECE04",
-          "background": "#193549",
           "properties": {
             "prefix": "",
             "root_icon": "襁"
@@ -84,7 +79,6 @@
           "type": "virtualenv",
           "style": "plain",
           "foreground": "#100e23",
-          "background": "#193549",
           "properties": {
             "prefix": "",
             "python_icon": ""
@@ -94,7 +88,6 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#CB4B16",
-          "background": "#193549",
           "properties": {
             "prefix": "",
             "error_icon": ""
@@ -104,7 +97,6 @@
           "type": "text",
           "style": "plain",
           "foreground": "#CC4B16",
-          "background": "#193549",
           "properties": {
             "prefix": "",
             "text": "→"
@@ -113,6 +105,5 @@
       ]
     }
   ],
-  "console_background_color": "#193549",
   "end_space_enabled": true
 }

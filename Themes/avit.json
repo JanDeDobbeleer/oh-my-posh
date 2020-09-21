@@ -8,7 +8,6 @@
           "type": "path",
           "style": "plain",
           "foreground": "#ffffff",
-          "background": "#193549",
           "properties": {
             "prefix": "",
             "home_icon": "~",
@@ -19,7 +18,6 @@
           "type": "git",
           "style": "plain",
           "foreground": "#C2C206",
-          "background": "#193549",
           "properties": {
             "branch_icon": "",
             "branch_identical_icon": "≡",
@@ -34,7 +32,6 @@
           "type": "root",
           "style": "plain",
           "foreground": "#B5B50D",
-          "background": "#193549",
           "properties": {
             "root_icon": "⚡"
           }
@@ -43,7 +40,6 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#C94A16",
-          "background": "#193549",
           "properties": {
             "error_icon": "x"
           }
@@ -61,7 +57,6 @@
           "type": "text",
           "style": "plain",
           "foreground": "#007ACC",
-          "background": "#193549",
           "properties": {
             "prefix": "",
             "text": "▶"
@@ -70,6 +65,5 @@
       ]
     }
   ],
-  "console_background_color": "#193549",
   "end_space_enabled": true
 }

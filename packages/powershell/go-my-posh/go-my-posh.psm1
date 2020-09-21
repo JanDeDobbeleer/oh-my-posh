@@ -86,8 +86,9 @@ function Get-PoshThemes {
 }
 
 function Write-PoshTheme {
+    $config = $global:PoshSettings.Theme
     $poshCommand = Get-PoshCommand
-    Invoke-Expression -Command "$poshCommand -print-config"
+    & $poshCommand -config $config -print-config
 }
 
 # Helper function to create argument completion results

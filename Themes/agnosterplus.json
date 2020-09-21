@@ -9,7 +9,6 @@
           "type": "time",
           "style": "plain",
           "foreground": "#007ACC",
-          "background": "#193549",
           "properties": {
             "time_format": "15:04:05"
           }
@@ -65,6 +64,5 @@
       ]
     }
   ],
-  "console_background_color": "#193549",
   "end_space_enabled": true
 }

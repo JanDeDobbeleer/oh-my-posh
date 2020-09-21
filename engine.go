@@ -18,13 +18,13 @@ type engine struct {
 
 func (e *engine) getPowerlineColor(foreground bool) string {
 	if e.previousActiveSegment == nil {
-		return e.settings.ConsoleBackgroundColor
+		return Transparent
 	}
 	if !foreground && e.activeSegment.Style != Powerline {
-		return e.settings.ConsoleBackgroundColor
+		return Transparent
 	}
 	if foreground && e.previousActiveSegment.Style != Powerline {
-		return e.settings.ConsoleBackgroundColor
+		return Transparent
 	}
 	return e.previousActiveSegment.Background
 }
@@ -56,9 +56,9 @@ func (e *engine) renderPlainSegment(text string) {
 }
 
 func (e *engine) renderDiamondSegment(text string) {
-	e.renderer.write(e.settings.ConsoleBackgroundColor, e.activeSegment.Background, e.activeSegment.LeadingDiamond)
+	e.renderer.write(Transparent, e.activeSegment.Background, e.activeSegment.LeadingDiamond)
 	e.renderText(text)
-	e.renderer.write(e.settings.ConsoleBackgroundColor, e.activeSegment.Background, e.activeSegment.TrailingDiamond)
+	e.renderer.write(Transparent, e.activeSegment.Background, e.activeSegment.TrailingDiamond)
 }
 
 func (e *engine) getStringProperty(property Property, defaultValue string) string {
@@ -102,7 +102,7 @@ func (e *engine) renderBlockSegments(block *Block) string {
 		e.renderSegmentText(text)
 	}
 	if e.previousActiveSegment != nil && e.previousActiveSegment.Style == Powerline {
-		e.writePowerLineSeparator(e.settings.ConsoleBackgroundColor, e.previousActiveSegment.Background)
+		e.writePowerLineSeparator(Transparent, e.previousActiveSegment.Background)
 	}
 	return e.renderer.string()
 }

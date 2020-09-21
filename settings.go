@@ -8,10 +8,9 @@ import (
 
 //Settings holds all the theme for rendering the prompt
 type Settings struct {
-	ConsoleBackgroundColor string   `json:"console_background_color"`
-	RightSegmentOffset     int      `json:"right_segment_offset"`
-	EndSpaceEnabled        bool     `json:"end_space_enabled"`
-	Blocks                 []*Block `json:"blocks"`
+	RightSegmentOffset int      `json:"right_segment_offset"`
+	EndSpaceEnabled    bool     `json:"end_space_enabled"`
+	Blocks             []*Block `json:"blocks"`
 }
 
 //BlockType type of block
@@ -70,8 +69,7 @@ func loadUserConfiguration(env environmentInfo) (*Settings, error) {
 
 func getDefaultSettings() *Settings {
 	settings := &Settings{
-		EndSpaceEnabled:        true,
-		ConsoleBackgroundColor: "#193549",
+		EndSpaceEnabled: true,
 		Blocks: []*Block{
 			{
 				Type:               Prompt,

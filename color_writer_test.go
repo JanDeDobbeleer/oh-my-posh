@@ -35,3 +35,12 @@ func TestWriteColorOverride(t *testing.T) {
 	writer.write("#193549", "#ff5733", text)
 	assert.NotContains(t, writer.string(), "<#ff5733>")
 }
+
+func TestWriteColorTransparent(t *testing.T) {
+	writer := &ColorWriter{
+		Buffer: new(bytes.Buffer),
+	}
+	text := "This is white"
+	writer.writeColoredText("#193549", Transparent, text)
+	t.Log(writer.string())
+}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"regexp"
 	"strings"
 
@@ -13,13 +14,23 @@ type ColorWriter struct {
 	Buffer *bytes.Buffer
 }
 
+const (
+	//Transparent implies a transparent color
+	Transparent string = "transparent"
+)
+
 func (w *ColorWriter) writeColoredText(background string, foreground string, text string) {
 	var coloredText string
-	if background != "" {
-		style := color.HEXStyle(foreground, background)
+	if foreground == Transparent {
+		style := color.HEX(background, false)
+		colorCodes := style.Code()
+		// this takes the colors and inverts them so the foreground becomes transparent
+		coloredText = fmt.Sprintf("\x1b[%s;49m\x1b[7m%s\x1b[m\x1b[0m", colorCodes, text)
+	} else if background == "" || background == Transparent {
+		style := color.HEX(foreground)
 		coloredText = style.Sprint(text)
 	} else {
-		style := color.HEX(foreground)
+		style := color.HEXStyle(foreground, background)
 		coloredText = style.Sprint(text)
 	}
 	w.Buffer.WriteString(coloredText)

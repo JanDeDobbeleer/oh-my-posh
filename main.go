@@ -38,12 +38,18 @@ func main() {
 		fmt.Println(string(theme))
 		return
 	}
+	colorWriter := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+	var shell string
+	if parentProcess, err := env.getParentProcess(); err != nil {
+		shell = parentProcess.Executable()
+	}
+	colorWriter.init(shell)
 	engine := &engine{
 		settings: settings,
 		env:      env,
-		renderer: &ColorWriter{
-			Buffer: new(bytes.Buffer),
-		},
+		renderer: colorWriter,
 	}
 	engine.render()
 }

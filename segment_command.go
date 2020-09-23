@@ -9,14 +9,14 @@ type command struct {
 }
 
 const (
-	//Shell to execute command in
-	Shell Property = "shell"
+	//ExecutableShell to execute command in
+	ExecutableShell Property = "shell"
 	//Command to execute
 	Command Property = "command"
 )
 
 func (c *command) enabled() bool {
-	shell := c.props.getString(Shell, "bash")
+	shell := c.props.getString(ExecutableShell, "bash")
 	command := c.props.getString(Command, "echo no command specified")
 	if strings.Contains(command, "||") {
 		commands := strings.Split(command, "||")

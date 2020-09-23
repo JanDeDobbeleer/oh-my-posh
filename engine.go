@@ -2,15 +2,12 @@ package main
 
 import (
 	"fmt"
-	"regexp"
-
-	"golang.org/x/text/unicode/norm"
 )
 
 type engine struct {
 	settings              *Settings
 	env                   environmentInfo
-	renderer              *ColorWriter
+	renderer              *Renderer
 	activeBlock           *Block
 	activeSegment         *Segment
 	previousActiveSegment *Segment
@@ -107,37 +104,22 @@ func (e *engine) renderBlockSegments(block *Block) string {
 	return e.renderer.string()
 }
 
-func (e *engine) lenWithoutANSI(str string) int {
-	ansi := "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
-	re := regexp.MustCompile(ansi)
-	stripped := re.ReplaceAllString(str, "")
-	var i norm.Iter
-	i.InitString(norm.NFD, stripped)
-	var count int
-	for !i.Done() {
-		i.Next()
-		count++
-	}
-	return count
-}
-
 func (e *engine) render() {
 	for _, block := range e.settings.Blocks {
 		// if line break, append a line break
 		if block.Type == LineBreak {
-			fmt.Printf("\x1b[%dC ", 1000)
+			fmt.Print(e.renderer.lineBreak())
 			continue
 		}
-		if block.LineOffset < 0 {
-			fmt.Printf("\x1b[%dF", -block.LineOffset)
-		} else if block.LineOffset > 0 {
-			fmt.Printf("\x1b[%dB", block.LineOffset)
+		if block.LineOffset != 0 {
+			fmt.Print(e.renderer.changeLine(block.LineOffset))
 		}
 		switch block.Alignment {
 		case Right:
-			fmt.Printf("\x1b[%dC", 1000)
+			fmt.Print(e.renderer.carriageReturn())
 			blockText := e.renderBlockSegments(block)
-			fmt.Printf("\x1b[%dD", e.lenWithoutANSI(blockText)+e.settings.RightSegmentOffset)
+			cursorMove := e.renderer.setCursorForRightWrite(blockText, e.settings.RightSegmentOffset)
+			fmt.Print(cursorMove)
 			fmt.Print(blockText)
 		default:
 			fmt.Print(e.renderBlockSegments(block))

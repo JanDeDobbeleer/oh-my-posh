@@ -26,7 +26,7 @@ type environmentInfo interface {
 	lastErrorCode() int
 	getArgs() *args
 	getBatteryInfo() (*battery.Battery, error)
-	getParentProcess() (ps.Process, error)
+	getShellName() string
 }
 
 type environment struct {
@@ -95,9 +95,15 @@ func (env *environment) getBatteryInfo() (*battery.Battery, error) {
 	return battery.Get(0)
 }
 
-func (env *environment) getParentProcess() (ps.Process, error) {
+func (env *environment) getShellName() string {
 	pid := os.Getppid()
-	return ps.FindProcess(pid)
+	p, err := ps.FindProcess(pid)
+
+	if err != nil {
+		return "unknown"
+	}
+	shell := strings.Replace(p.Executable(), ".exe", "", 1)
+	return strings.Trim(shell, " ")
 }
 
 func cleanHostName(hostName string) string {

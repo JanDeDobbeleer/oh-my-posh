@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/distatus/battery"
-	ps "github.com/mitchellh/go-ps"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -81,9 +80,9 @@ func (env *MockedEnvironment) getBatteryInfo() (*battery.Battery, error) {
 	return args.Get(0).(*battery.Battery), args.Error(1)
 }
 
-func (env *MockedEnvironment) getParentProcess() (ps.Process, error) {
+func (env *MockedEnvironment) getShellName() string {
 	args := env.Called(nil)
-	return args.Get(0).(ps.Process), args.Error(1)
+	return args.String(0)
 }
 
 func TestWorkingDir(t *testing.T) {

@@ -41,11 +41,7 @@ func main() {
 	colorWriter := &Renderer{
 		Buffer: new(bytes.Buffer),
 	}
-	var shell string
-	if parentProcess, err := env.getParentProcess(); err != nil {
-		shell = parentProcess.Executable()
-	}
-	colorWriter.init(shell)
+	colorWriter.init(env.getShellName())
 	engine := &engine{
 		settings: settings,
 		env:      env,

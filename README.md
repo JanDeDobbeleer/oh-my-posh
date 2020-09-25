@@ -162,8 +162,8 @@ a few general properties are available cross segments which can be found in `pro
 [kofi-badge]: https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee!-%2346b798.svg
 [kofi]: https://ko-fi.com/jandedobbeleer
 [releases]: https://github.com/JanDeDobbeleer/go-my-posh/releases
-[jandedobbeleer]: https://github.com/JanDeDobbeleer/go-my-posh/blob/master/Themes/jandedobbeleer.json
-[themes]: https://github.com/JanDeDobbeleer/go-my-posh/tree/master/Themes
+[jandedobbeleer]: https://github.com/JanDeDobbeleer/go-my-posh/blob/master/themes/jandedobbeleer.json
+[themes]: https://github.com/JanDeDobbeleer/go-my-posh/tree/master/themes
 [chrisbenti-psconfig]: https://github.com/chrisbenti/PS-Config
 [keithdahlby-poshgit]: https://github.com/dahlbyk/posh-git
 [oh-my-zsh]: https://github.com/robbyrussell/oh-my-zsh

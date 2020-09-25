@@ -4,7 +4,7 @@
 #>
 
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
-    Theme = "$PSScriptRoot\Themes\jandedobbeleer.json"
+    Theme = "$PSScriptRoot\themes\jandedobbeleer.json"
 }
 
 function Get-PoshCommand {
@@ -38,14 +38,14 @@ function Set-PoshPrompt {
         $Theme
     )
 
-    if (Test-Path "$PSScriptRoot/Themes/$Theme.json") {
-        $global:PoshSettings.Theme = "$PSScriptRoot/Themes/$Theme.json"
+    if (Test-Path "$PSScriptRoot/themes/$Theme.json") {
+        $global:PoshSettings.Theme = "$PSScriptRoot/themes/$Theme.json"
     }
     elseif (Test-Path $Theme) {
         $global:PoshSettings.Theme = $Theme
     }
     else {
-        $global:PoshSettings.Theme = "$PSScriptRoot/Themes/jandedobbeleer.json"
+        $global:PoshSettings.Theme = "$PSScriptRoot/themes/jandedobbeleer.json"
     }
 
     [ScriptBlock]$Prompt = {
@@ -75,7 +75,7 @@ function Get-PoshThemes {
 '@
     Write-Host $logo
     $poshCommand = Get-PoshCommand
-    Get-ChildItem -Path "$PSScriptRoot\Themes\*" -Include '*.json' | Sort-Object Name | ForEach-Object -Process {
+    Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.json' | Sort-Object Name | ForEach-Object -Process {
         Write-Host ("=" * $consoleWidth)
         Write-Host "$esc[1m$($_.BaseName)$esc[0m"
         Write-Host ""
@@ -112,7 +112,7 @@ function ThemeCompletion {
         $commandAst,
         $fakeBoundParameter
     )
-    $themes = Get-ChildItem -Path "$PSScriptRoot\Themes\*" -Include '*.json' | Sort-Object Name | Select-Object -Property BaseName
+    $themes = Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.json' | Sort-Object Name | Select-Object -Property BaseName
     $themes |
     Where-Object { $_.BaseName.ToLower().StartsWith($wordToComplete.ToLower()); } |
     Select-Object -Unique -ExpandProperty BaseName |

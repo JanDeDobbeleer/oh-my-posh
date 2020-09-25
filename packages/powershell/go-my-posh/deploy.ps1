@@ -17,7 +17,7 @@ Param
 # set the actual version number
 (Get-Content '.\go-my-posh.psd1' -Raw).Replace('0.0.0.1', $ModuleVersion) | Out-File -Encoding 'UTF8' '.\go-my-posh.psd1'
 # copy all themes into the module folder
-Copy-Item -Path "../../../Themes" -Destination "./Themes" -Recurse
+Copy-Item -Path "../../../themes" -Destination "./themes" -Recurse
 # fetch all the binaries from the version's GitHub release
 New-Item -Path "./" -Name "bin" -ItemType "directory"
 "posh-windows-amd64.exe", "posh-darwin-amd64", "posh-linux-amd64" | ForEach-Object -Process {
@@ -33,5 +33,5 @@ if ($RepositoryAPIKey) {
 # reset module version (for local testing only as we don't want PR's with changed version numbers all the time)
 (Get-Content '.\go-my-posh.psd1' -Raw).Replace($ModuleVersion, '0.0.0.1') | Out-File -Encoding 'UTF8' '.\go-my-posh.psd1'
 Remove-Item "./bin" -Recurse -Force
-Remove-Item "./Themes" -Recurse -Force
+Remove-Item "./themes" -Recurse -Force
 

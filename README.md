@@ -70,7 +70,7 @@ Add the following to your `.bashrc` (or `.profile` on Mac):
 
 ```bash
 function _update_ps1() {
-    PS1="$(<go-my-posh> -config ~/jandedobeleer.json -error $?)"
+    PS1="$(<go-my-posh> -config ~/jandedobbeleer.json -error $?)"
 }
 
 if [ "$TERM" != "linux" ] && [ -f <go-my-posh> ]; then

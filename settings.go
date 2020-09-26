@@ -8,9 +8,8 @@ import (
 
 //Settings holds all the theme for rendering the prompt
 type Settings struct {
-	RightSegmentOffset int      `json:"right_segment_offset"`
-	EndSpaceEnabled    bool     `json:"end_space_enabled"`
-	Blocks             []*Block `json:"blocks"`
+	EndSpaceEnabled bool     `json:"end_space_enabled"`
+	Blocks          []*Block `json:"blocks"`
 }
 
 //BlockType type of block
@@ -36,7 +35,8 @@ type Block struct {
 	Alignment                     BlockAlignment `json:"alignment"`
 	PowerlineSeparator            string         `json:"powerline_separator"`
 	InvertPowerlineSeparatorColor bool           `json:"invert_powerline_separator_color"`
-	LineOffset                    int            `json:"line_offset"`
+	HorizontalOffset              int            `json:"horizontal_offset"`
+	VerticalOffset                int            `json:"vertical_offset"`
 	Segments                      []*Segment     `json:"segments"`
 }
 

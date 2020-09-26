@@ -8,8 +8,8 @@ import (
 
 //Settings holds all the theme for rendering the prompt
 type Settings struct {
-	EndSpaceEnabled bool     `json:"end_space_enabled"`
-	Blocks          []*Block `json:"blocks"`
+	FinalSpace bool     `json:"final_space"`
+	Blocks     []*Block `json:"blocks"`
 }
 
 //BlockType type of block
@@ -67,7 +67,7 @@ func loadUserConfiguration(env environmentInfo) (*Settings, error) {
 
 func getDefaultSettings() *Settings {
 	settings := &Settings{
-		EndSpaceEnabled: true,
+		FinalSpace: true,
 		Blocks: []*Block{
 			{
 				Type:      Prompt,

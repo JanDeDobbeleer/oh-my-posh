@@ -105,7 +105,6 @@ func (e *engine) renderBlockSegments(block *Block) string {
 	if e.previousActiveSegment != nil && e.previousActiveSegment.Style == Powerline {
 		e.writePowerLineSeparator(Transparent, e.previousActiveSegment.Background, true)
 	}
-	// e.endPowerline()
 	return e.renderer.string()
 }
 
@@ -130,7 +129,7 @@ func (e *engine) render() {
 			fmt.Print(e.renderBlockSegments(block))
 		}
 	}
-	if e.settings.EndSpaceEnabled {
+	if e.settings.FinalSpace {
 		fmt.Print(" ")
 	}
 }

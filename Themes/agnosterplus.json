@@ -3,7 +3,7 @@
     {
       "type": "prompt",
       "alignment": "right",
-      "line_offset": -1,
+      "vertical_offset": -1,
       "segments": [
         {
           "type": "time",

@@ -111,14 +111,14 @@ func (e *engine) render() {
 			fmt.Print(e.renderer.lineBreak())
 			continue
 		}
-		if block.LineOffset != 0 {
-			fmt.Print(e.renderer.changeLine(block.LineOffset))
+		if block.VerticalOffset != 0 {
+			fmt.Print(e.renderer.changeLine(block.VerticalOffset))
 		}
 		switch block.Alignment {
 		case Right:
 			fmt.Print(e.renderer.carriageReturn())
 			blockText := e.renderBlockSegments(block)
-			cursorMove := e.renderer.setCursorForRightWrite(blockText, e.settings.RightSegmentOffset)
+			cursorMove := e.renderer.setCursorForRightWrite(blockText, block.VerticalOffset)
 			fmt.Print(cursorMove)
 			fmt.Print(blockText)
 		default:

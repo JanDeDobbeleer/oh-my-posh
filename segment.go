@@ -4,14 +4,16 @@ import "errors"
 
 //Segment represent a single segment and it's configuration
 type Segment struct {
-	Type            SegmentType              `json:"type"`
-	Style           SegmentStyle             `json:"style"`
-	Foreground      string                   `json:"foreground"`
-	Background      string                   `json:"background"`
-	LeadingDiamond  string                   `json:"leading_diamond"`
-	TrailingDiamond string                   `json:"trailing_diamond"`
-	Properties      map[Property]interface{} `json:"properties"`
-	writer          SegmentWriter
+	Type                       SegmentType              `json:"type"`
+	Style                      SegmentStyle             `json:"style"`
+	PowerlineSymbol            string                   `json:"powerline_symbol"`
+	InvertPowerlineSymbolColor bool                     `json:"invert_powerline_symbol_color"`
+	Foreground                 string                   `json:"foreground"`
+	Background                 string                   `json:"background"`
+	LeadingDiamond             string                   `json:"leading_diamond"`
+	TrailingDiamond            string                   `json:"trailing_diamond"`
+	Properties                 map[Property]interface{} `json:"properties"`
+	writer                     SegmentWriter
 }
 
 //SegmentWriter is the interface used to define what and if to write to the prompt

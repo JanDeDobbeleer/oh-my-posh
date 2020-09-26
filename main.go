@@ -11,6 +11,7 @@ type args struct {
 	ErrorCode   *int
 	PrintConfig *bool
 	Config      *string
+	Shell       *string
 }
 
 func main() {
@@ -27,6 +28,10 @@ func main() {
 			"config",
 			"",
 			"Add the path to a configuration you wish to load"),
+		Shell: flag.String(
+			"shell",
+			"",
+			"Override the shell you are working in"),
 	}
 	flag.Parse()
 	env := &environment{
@@ -41,7 +46,11 @@ func main() {
 	colorWriter := &Renderer{
 		Buffer: new(bytes.Buffer),
 	}
-	colorWriter.init(env.getShellName())
+	shell := env.getShellName()
+	if *args.Shell != "" {
+		shell = *args.Shell
+	}
+	colorWriter.init(shell)
 	engine := &engine{
 		settings: settings,
 		env:      env,

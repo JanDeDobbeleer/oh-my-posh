@@ -21,11 +21,11 @@
     {
       "type": "prompt",
       "alignment": "left",
-      "powerline_separator": "",
       "segments": [
         {
           "type": "session",
           "style": "powerline",
+          "powerline_symbol": "",
           "foreground": "#100e23",
           "background": "#ffffff",
           "properties": {
@@ -36,6 +36,7 @@
         {
           "type": "path",
           "style": "powerline",
+          "powerline_symbol": "",
           "foreground": "#100e23",
           "background": "#91ddff",
           "properties" : {
@@ -49,6 +50,7 @@
         {
           "type": "git",
           "style": "powerline",
+          "powerline_symbol": "",
           "foreground": "#193549",
           "background": "#95ffa4",
           "properties": {

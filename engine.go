@@ -26,12 +26,16 @@ func (e *engine) getPowerlineColor(foreground bool) string {
 	return e.previousActiveSegment.Background
 }
 
-func (e *engine) writePowerLineSeparator(background string, foreground string) {
-	if e.activeBlock.InvertPowerlineSeparatorColor {
-		e.renderer.write(foreground, background, e.activeBlock.PowerlineSeparator)
+func (e *engine) writePowerLineSeparator(background string, foreground string, end bool) {
+	symbol := e.activeSegment.PowerlineSymbol
+	if end {
+		symbol = e.previousActiveSegment.PowerlineSymbol
+	}
+	if e.activeSegment.InvertPowerlineSymbolColor {
+		e.renderer.write(foreground, background, symbol)
 		return
 	}
-	e.renderer.write(background, foreground, e.activeBlock.PowerlineSeparator)
+	e.renderer.write(background, foreground, symbol)
 }
 
 func (e *engine) endPowerline() {
@@ -39,12 +43,12 @@ func (e *engine) endPowerline() {
 		e.activeSegment.Style != Powerline &&
 		e.previousActiveSegment != nil &&
 		e.previousActiveSegment.Style == Powerline {
-		e.writePowerLineSeparator(e.getPowerlineColor(false), e.previousActiveSegment.Background)
+		e.writePowerLineSeparator(e.getPowerlineColor(false), e.previousActiveSegment.Background, true)
 	}
 }
 
 func (e *engine) renderPowerLineSegment(text string) {
-	e.writePowerLineSeparator(e.activeSegment.Background, e.getPowerlineColor(true))
+	e.writePowerLineSeparator(e.activeSegment.Background, e.getPowerlineColor(true), false)
 	e.renderText(text)
 }
 
@@ -99,8 +103,9 @@ func (e *engine) renderBlockSegments(block *Block) string {
 		e.renderSegmentText(text)
 	}
 	if e.previousActiveSegment != nil && e.previousActiveSegment.Style == Powerline {
-		e.writePowerLineSeparator(Transparent, e.previousActiveSegment.Background)
+		e.writePowerLineSeparator(Transparent, e.previousActiveSegment.Background, true)
 	}
+	// e.endPowerline()
 	return e.renderer.string()
 }
 

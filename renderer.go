@@ -124,12 +124,12 @@ func (r *Renderer) lineBreak() string {
 	return r.formats.linebreak
 }
 
-func (r *Renderer) carriageReturn() string {
+func (r *Renderer) carriageForward() string {
 	return fmt.Sprintf(r.formats.left, 1000)
 }
 
 func (r *Renderer) setCursorForRightWrite(text string, offset int) string {
-	strippedLen := r.lenWithoutANSI(text) + offset
+	strippedLen := r.lenWithoutANSI(text) + -offset
 	return fmt.Sprintf(r.formats.right, strippedLen)
 }
 

@@ -31,13 +31,11 @@ const (
 
 //Block defines a part of the prompt with optional segments
 type Block struct {
-	Type                          BlockType      `json:"type"`
-	Alignment                     BlockAlignment `json:"alignment"`
-	PowerlineSeparator            string         `json:"powerline_separator"`
-	InvertPowerlineSeparatorColor bool           `json:"invert_powerline_separator_color"`
-	HorizontalOffset              int            `json:"horizontal_offset"`
-	VerticalOffset                int            `json:"vertical_offset"`
-	Segments                      []*Segment     `json:"segments"`
+	Type             BlockType      `json:"type"`
+	Alignment        BlockAlignment `json:"alignment"`
+	HorizontalOffset int            `json:"horizontal_offset"`
+	VerticalOffset   int            `json:"vertical_offset"`
+	Segments         []*Segment     `json:"segments"`
 }
 
 //GetSettings returns the default configuration including possible user overrides
@@ -72,45 +70,50 @@ func getDefaultSettings() *Settings {
 		EndSpaceEnabled: true,
 		Blocks: []*Block{
 			{
-				Type:               Prompt,
-				Alignment:          Left,
-				PowerlineSeparator: "",
+				Type:      Prompt,
+				Alignment: Left,
 				Segments: []*Segment{
 					{
-						Type:       Root,
-						Style:      Powerline,
-						Background: "#ffe9aa",
-						Foreground: "#100e23",
+						Type:            Root,
+						Style:           Powerline,
+						PowerlineSymbol: "",
+						Background:      "#ffe9aa",
+						Foreground:      "#100e23",
 					},
 					{
-						Type:       Session,
-						Style:      Powerline,
-						Background: "#ffffff",
-						Foreground: "#100e23",
+						Type:            Session,
+						Style:           Powerline,
+						PowerlineSymbol: "",
+						Background:      "#ffffff",
+						Foreground:      "#100e23",
 					},
 					{
-						Type:       Path,
-						Style:      Powerline,
-						Background: "#91ddff",
-						Foreground: "#100e23",
+						Type:            Path,
+						Style:           Powerline,
+						PowerlineSymbol: "",
+						Background:      "#91ddff",
+						Foreground:      "#100e23",
 					},
 					{
-						Type:       Git,
-						Style:      Powerline,
-						Background: "#95ffa4",
-						Foreground: "#100e23",
+						Type:            Git,
+						Style:           Powerline,
+						PowerlineSymbol: "",
+						Background:      "#95ffa4",
+						Foreground:      "#100e23",
 					},
 					{
-						Type:       Venv,
-						Style:      Powerline,
-						Background: "#906cff",
-						Foreground: "#100e23",
+						Type:            Venv,
+						Style:           Powerline,
+						PowerlineSymbol: "",
+						Background:      "#906cff",
+						Foreground:      "#100e23",
 					},
 					{
-						Type:       Exit,
-						Style:      Powerline,
-						Background: "#ff8080",
-						Foreground: "#ffffff",
+						Type:            Exit,
+						Style:           Powerline,
+						PowerlineSymbol: "",
+						Background:      "#ff8080",
+						Foreground:      "#ffffff",
 					},
 				},
 			},

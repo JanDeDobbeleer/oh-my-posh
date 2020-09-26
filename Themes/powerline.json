@@ -3,7 +3,6 @@
     {
       "type": "prompt",
       "alignment": "left",
-      "powerline_separator": "",
       "segments": [
         {
           "type": "root",
@@ -24,6 +23,7 @@
         {
           "type": "path",
           "style": "powerline",
+          "powerline_symbol": "",
           "foreground": "#100e23",
           "background": "#91ddff",
           "properties" : {
@@ -34,6 +34,7 @@
         {
           "type": "git",
           "style": "powerline",
+          "powerline_symbol": "",
           "foreground": "#193549",
           "background": "#95ffa4",
           "properties": {
@@ -49,6 +50,7 @@
         {
           "type": "virtualenv",
           "style": "powerline",
+          "powerline_symbol": "",
           "foreground": "#100e23",
           "background": "#906cff",
           "properties": {
@@ -58,6 +60,7 @@
         {
           "type": "exit",
           "style": "powerline",
+          "powerline_symbol": "",
           "foreground": "#ffffff",
           "background": "#ff8080",
           "properties": {

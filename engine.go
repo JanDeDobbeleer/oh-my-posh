@@ -120,9 +120,9 @@ func (e *engine) render() {
 		}
 		switch block.Alignment {
 		case Right:
-			fmt.Print(e.renderer.carriageReturn())
+			fmt.Print(e.renderer.carriageForward())
 			blockText := e.renderBlockSegments(block)
-			cursorMove := e.renderer.setCursorForRightWrite(blockText, block.VerticalOffset)
+			cursorMove := e.renderer.setCursorForRightWrite(blockText, block.HorizontalOffset)
 			fmt.Print(cursorMove)
 			fmt.Print(blockText)
 		default:

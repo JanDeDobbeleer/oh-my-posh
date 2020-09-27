@@ -31,7 +31,7 @@ func (e *engine) writePowerLineSeparator(background string, foreground string, e
 	if end {
 		symbol = e.previousActiveSegment.PowerlineSymbol
 	}
-	if e.activeSegment.InvertPowerlineSymbolColor {
+	if e.activeSegment.InvertPowerline {
 		e.renderer.write(foreground, background, symbol)
 		return
 	}

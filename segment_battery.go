@@ -7,13 +7,16 @@ import (
 )
 
 type batt struct {
-	props *properties
-	env   environmentInfo
+	props          *properties
+	env            environmentInfo
+	percentageText string
 }
 
 const (
 	//BatteryIcon to display in front of the battery
 	BatteryIcon Property = "battery_icon"
+	//DisplayError to display when an error occurs or not
+	DisplayError Property = "display_error"
 	//ChargingIcon to display when charging
 	ChargingIcon Property = "charging_icon"
 	//DischargingIcon o display when discharging
@@ -29,13 +32,14 @@ const (
 )
 
 func (b *batt) enabled() bool {
-	return true
-}
-
-func (b *batt) string() string {
 	bt, err := b.env.getBatteryInfo()
+	displayError := b.props.getBool(DisplayError, true)
+	if err != nil && !displayError {
+		return false
+	}
 	if err != nil {
-		return "BATT ERR"
+		b.percentageText = "BATT ERR"
+		return true
 	}
 	batteryPercentage := bt.Current / bt.Full * 100
 	percentageText := fmt.Sprintf("%.0f", batteryPercentage)
@@ -52,7 +56,8 @@ func (b *batt) string() string {
 		colorPorperty = ChargedColor
 		icon = b.props.getString(ChargedIcon, "")
 	default:
-		return percentageText
+		b.percentageText = percentageText
+		return true
 	}
 	colorBackground := b.props.getBool(ColorBackground, false)
 	if colorBackground {
@@ -61,7 +66,12 @@ func (b *batt) string() string {
 		b.props.foreground = b.props.getColor(colorPorperty, b.props.foreground)
 	}
 	batteryIcon := b.props.getString(BatteryIcon, "")
-	return fmt.Sprintf("%s%s%s", icon, batteryIcon, percentageText)
+	b.percentageText = fmt.Sprintf("%s%s%s", icon, batteryIcon, percentageText)
+	return true
+}
+
+func (b *batt) string() string {
+	return b.percentageText
 }
 
 func (b *batt) init(props *properties, env environmentInfo) {

@@ -8,16 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBattery(t *testing.T) {
-	env := &environment{}
-	b := &batt{
-		env:   env,
-		props: &properties{},
-	}
-	val := b.string()
-	assert.NotEmpty(t, val)
-}
-
 func setupBatteryTests(state battery.State, batteryLevel float64, props *properties) *batt {
 	env := &MockedEnvironment{}
 	bt := &battery.Battery{
@@ -26,10 +16,12 @@ func setupBatteryTests(state battery.State, batteryLevel float64, props *propert
 		Current: batteryLevel,
 	}
 	env.On("getBatteryInfo", nil).Return(bt, nil)
-	return &batt{
+	b := &batt{
 		props: props,
 		env:   env,
 	}
+	b.enabled()
+	return b
 }
 
 func TestBatteryCharging(t *testing.T) {
@@ -130,5 +122,23 @@ func TestBatteryError(t *testing.T) {
 		props: nil,
 		env:   env,
 	}
+	assert.True(t, b.enabled())
 	assert.Equal(t, "BATT ERR", b.string())
+}
+
+func TestBatteryErrorHidden(t *testing.T) {
+	env := &MockedEnvironment{}
+	err := errors.New("oh snap")
+	env.On("getBatteryInfo", nil).Return(&battery.Battery{}, err)
+	props := &properties{
+		values: map[Property]interface{}{
+			DisplayError: false,
+		},
+	}
+	b := &batt{
+		props: props,
+		env:   env,
+	}
+	assert.False(t, b.enabled())
+	assert.Equal(t, "", b.string())
 }

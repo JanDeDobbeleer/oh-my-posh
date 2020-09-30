@@ -35,7 +35,7 @@ func TestExitWriterStandardCode(t *testing.T) {
 		env:   env,
 		props: props,
 	}
-	assert.Equal(t, "XSIGHUP", e.getFormattedText())
+	assert.Equal(t, "SIGHUP", e.getFormattedText())
 }
 
 func TestExitWriterNonStandardCode(t *testing.T) {
@@ -49,7 +49,7 @@ func TestExitWriterNonStandardCode(t *testing.T) {
 		env:   env,
 		props: props,
 	}
-	assert.Equal(t, "X5001", e.getFormattedText())
+	assert.Equal(t, "5001", e.getFormattedText())
 }
 
 func TestGetMeaningFromExitCode(t *testing.T) {

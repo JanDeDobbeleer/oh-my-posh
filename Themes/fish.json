@@ -9,7 +9,7 @@
           "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "error_icon": " ",
+            "prefix": " ",
             "postfix": ""
           }
         },

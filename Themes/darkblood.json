@@ -46,8 +46,7 @@
           "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "error_icon": "x",
-            "prefix": "<#CB4B16>[</>",
+            "prefix": "<#CB4B16>[x</>",
             "postfix": "<#CB4B16>]</>"
           }
         }

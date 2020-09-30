@@ -41,7 +41,7 @@
           "style": "plain",
           "foreground": "#C94A16",
           "properties": {
-            "error_icon": "x"
+            "prefix": "x"
           }
         }
       ]

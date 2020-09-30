@@ -89,8 +89,7 @@
           "style": "plain",
           "foreground": "#CB4B16",
           "properties": {
-            "prefix": "",
-            "error_icon": ""
+            "prefix": ""
           }
         },
         {

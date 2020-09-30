@@ -92,8 +92,7 @@
           "style": "plain",
           "foreground": "#D4E157",
           "properties": {
-            "prefix": "",
-            "error_icon": "❯",
+            "prefix": "❯",
             "always_enabled": true,
             "error_color": "#FF5252",
             "display_exit_code": false

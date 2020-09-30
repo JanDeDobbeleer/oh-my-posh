@@ -36,7 +36,7 @@
           "style": "plain",
           "foreground": "#DCB977",
           "properties": {
-            "error_icon": "✗",
+            "prefix": "✗",
             "display_exit_code": false
           }
         },

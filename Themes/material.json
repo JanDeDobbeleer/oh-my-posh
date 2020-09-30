@@ -37,7 +37,7 @@
           "foreground": "#DCB977",
           "properties": {
             "error_icon": "✗",
-            "display_error_code": false
+            "display_exit_code": false
           }
         },
         {

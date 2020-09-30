@@ -92,7 +92,7 @@
           "trailing_diamond": "",
           "properties": {
             "error_icon": "",
-            "display_error_code": false,
+            "display_exit_code": false,
             "always_enabled": true,
             "error_color": "#e91e63",
             "color_background": true,

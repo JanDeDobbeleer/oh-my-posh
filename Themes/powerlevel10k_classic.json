@@ -96,7 +96,7 @@
             "error_icon": "❯",
             "always_enabled": true,
             "error_color": "#FF5252",
-            "display_error_code": false
+            "display_exit_code": false
           }
         }
       ]

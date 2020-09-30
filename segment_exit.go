@@ -10,8 +10,8 @@ type exit struct {
 const (
 	//ErrorIcon represents icon to display in case of error
 	ErrorIcon Property = "error_icon"
-	//DisplayErrorCode shows or hides the error code
-	DisplayErrorCode Property = "display_error_code"
+	//DisplayExitCode shows or hides the error code
+	DisplayExitCode Property = "display_exit_code"
 	//AlwaysEnabled decides whether or not to always display the exitcode info
 	AlwaysEnabled Property = "always_enabled"
 	//ErrorColor specify a different foreground color for the error text when using always_show = true
@@ -48,7 +48,7 @@ func (e *exit) getFormattedText() string {
 }
 
 func (e *exit) getMeaningFromExitCode() string {
-	if !e.props.getBool(DisplayErrorCode, true) {
+	if !e.props.getBool(DisplayExitCode, true) {
 		return ""
 	}
 	switch e.env.lastErrorCode() {

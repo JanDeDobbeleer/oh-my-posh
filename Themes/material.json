@@ -9,6 +9,7 @@
           "style": "plain",
           "foreground": "#ffffff",
           "properties": {
+            "prefix": "",
             "text": "<#C591E8>❭</><#69FF94>❭</>"
           }
         },

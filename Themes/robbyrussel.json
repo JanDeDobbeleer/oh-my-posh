@@ -9,6 +9,7 @@
           "style": "plain",
           "foreground": "#98C379",
           "properties": {
+            "prefix": "",
             "text": "→",
             "postfix": ""
           }

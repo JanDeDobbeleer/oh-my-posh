@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -15,6 +16,7 @@ import (
 type environmentInfo interface {
 	getenv(key string) string
 	getwd() (string, error)
+	hasFiles(pattern string) bool
 	getPathSeperator() string
 	getCurrentUser() (*user.User, error)
 	isRunningAsRoot() bool
@@ -39,6 +41,16 @@ func (env *environment) getenv(key string) string {
 
 func (env *environment) getwd() (string, error) {
 	return os.Getwd()
+}
+
+func (env *environment) hasFiles(pattern string) bool {
+	cwd, _ := env.getwd()
+	pattern = cwd + env.getPathSeperator() + pattern
+	matches, err := filepath.Glob(pattern)
+	if err != nil {
+		return false
+	}
+	return len(matches) > 0
 }
 
 func (env *environment) getPathSeperator() string {

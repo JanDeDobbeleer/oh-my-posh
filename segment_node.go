@@ -1,21 +1,24 @@
 package main
 
-type nvm struct {
+type node struct {
 	props       *properties
 	env         environmentInfo
 	nodeVersion string
 }
 
-func (n *nvm) string() string {
+func (n *node) string() string {
 	return n.nodeVersion
 }
 
-func (n *nvm) init(props *properties, env environmentInfo) {
+func (n *node) init(props *properties, env environmentInfo) {
 	n.props = props
 	n.env = env
 }
 
-func (n *nvm) enabled() bool {
+func (n *node) enabled() bool {
+	if !n.env.hasFiles("*.js") && !n.env.hasFiles("*.ts") {
+		return false
+	}
 	if !n.env.hasCommand("node") {
 		return false
 	}

@@ -25,6 +25,11 @@ func (env *MockedEnvironment) getwd() (string, error) {
 	return args.String(0), args.Error(1)
 }
 
+func (env *MockedEnvironment) hasFiles(pattern string) bool {
+	args := env.Called(pattern)
+	return args.Bool(0)
+}
+
 func (env *MockedEnvironment) getPathSeperator() string {
 	args := env.Called(nil)
 	return args.String(0)

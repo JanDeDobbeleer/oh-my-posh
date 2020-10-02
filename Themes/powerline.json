@@ -48,13 +48,13 @@
           }
         },
         {
-          "type": "virtualenv",
+          "type": "python",
           "style": "powerline",
           "powerline_symbol": "",
           "foreground": "#100e23",
           "background": "#906cff",
           "properties": {
-            "python_icon": ""
+            "prefix": "  "
           }
         },
         {

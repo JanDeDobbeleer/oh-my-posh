@@ -56,11 +56,11 @@
           }
         },
         {
-          "type": "virtualenv",
+          "type": "python",
           "style": "plain",
           "foreground": "#100e23",
           "properties": {
-            "python_icon": ""
+            "prefix": "  "
           }
         },
         {

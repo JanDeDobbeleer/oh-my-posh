@@ -38,8 +38,8 @@ const (
 	Git SegmentType = "git"
 	//Exit writes the last exit code
 	Exit SegmentType = "exit"
-	//Venv writes the virtual env name
-	Venv SegmentType = "virtualenv"
+	//Python writes the virtual env name
+	Python SegmentType = "python"
 	//Root writes root symbol
 	Root SegmentType = "root"
 	//Time writes the current timestamp
@@ -78,7 +78,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) (*properties, 
 		Path:      &path{},
 		Git:       &git{},
 		Exit:      &exit{},
-		Venv:      &venv{},
+		Python:    &python{},
 		Root:      &root{},
 		Text:      &text{},
 		Time:      &tempus{},

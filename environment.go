@@ -15,7 +15,8 @@ import (
 
 type environmentInfo interface {
 	getenv(key string) string
-	getwd() (string, error)
+	getcwd() string
+	homeDir() string
 	hasFiles(pattern string) bool
 	getPathSeperator() string
 	getCurrentUser() (*user.User, error)
@@ -39,12 +40,27 @@ func (env *environment) getenv(key string) string {
 	return os.Getenv(key)
 }
 
-func (env *environment) getwd() (string, error) {
-	return os.Getwd()
+func (env *environment) getcwd() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	// on Windows, and being case sentisitive and not consistent and all, this gives silly issues
+	return strings.Replace(dir, "c:", "C:", 1)
+}
+
+func (env *environment) homeDir() string {
+	usr, err := user.Current()
+	if err != nil {
+		return ""
+	}
+	homeDir := usr.HomeDir
+	// on Windows, and being case sentisitive and not consistent and all, this gives silly issues
+	return strings.Replace(homeDir, "c:", "C:", 1)
 }
 
 func (env *environment) hasFiles(pattern string) bool {
-	cwd, _ := env.getwd()
+	cwd := env.getcwd()
 	pattern = cwd + env.getPathSeperator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {

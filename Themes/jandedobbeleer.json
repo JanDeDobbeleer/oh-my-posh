@@ -8,7 +8,7 @@
           "type": "session",
           "style": "diamond",
           "foreground": "#ffffff",
-          "background": "#ffb300",
+          "background": "#a8216b",
           "leading_diamond": "",
           "trailing_diamond": "",
           "properties": {
@@ -33,7 +33,7 @@
           "style": "powerline",
           "powerline_symbol": "",
           "foreground": "#ffffff",
-          "background": "#61AFEF",
+          "background": "#ff479c",
           "properties": {
             "prefix": "  ",
             "style": "folder"
@@ -44,7 +44,7 @@
           "style": "powerline",
           "powerline_symbol": "",
           "foreground": "#193549",
-          "background": "#ffeb3b",
+          "background": "#fffb38",
           "properties": {
             "branch_icon": "",
             "branch_identical_icon": "≡",
@@ -60,7 +60,7 @@
           "style": "powerline",
           "powerline_symbol": "",
           "foreground": "#193549",
-          "background": "#ffeb3b",
+          "background": "#f36943",
           "properties": {
             "battery_icon": "",
             "discharging_icon": " ",
@@ -97,13 +97,13 @@
           "type": "exit",
           "style": "diamond",
           "foreground": "#ffffff",
-          "background": "#00897b",
+          "background": "#2e9599",
           "leading_diamond": "",
           "trailing_diamond": "",
           "properties": {
             "display_exit_code": false,
             "always_enabled": true,
-            "error_color": "#e91e63",
+            "error_color": "#f1184c",
             "color_background": true,
             "prefix": "<#193549></> "
           }

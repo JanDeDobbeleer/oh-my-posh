@@ -83,7 +83,7 @@ func (e *engine) renderSegmentText(text string) {
 func (e *engine) renderBlockSegments(block *Block) string {
 	defer e.reset()
 	e.activeBlock = block
-	cwd, _ := e.env.getwd()
+	cwd := e.env.getcwd()
 	for _, segment := range block.Segments {
 		if segment.hasValue(IgnoreFolders, cwd) {
 			continue

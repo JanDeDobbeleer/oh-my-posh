@@ -42,9 +42,9 @@ func (pt *path) string() string {
 	case Short:
 		return pt.getShortPath()
 	case Full:
-		return pt.workingDir()
+		return pt.env.getcwd()
 	case Folder:
-		return base(pt.workingDir(), pt.env)
+		return base(pt.env.getcwd(), pt.env)
 	default:
 		return fmt.Sprintf("Path style: %s is not available", style)
 	}
@@ -56,11 +56,11 @@ func (pt *path) init(props *properties, env environmentInfo) {
 }
 
 func (pt *path) getShortPath() string {
-	pwd := pt.workingDir()
+	pwd := pt.env.getcwd()
 	mappedLocations := map[string]string{
 		"HKCU:": pt.props.getString(WindowsRegistryIcon, "HK:"),
 		"Microsoft.PowerShell.Core\\FileSystem::": "",
-		pt.homeDir(): pt.props.getString(HomeIcon, "~"),
+		pt.env.homeDir(): pt.props.getString(HomeIcon, "~"),
 	}
 	for location, value := range mappedLocations {
 		if strings.HasPrefix(pwd, location) {
@@ -71,7 +71,7 @@ func (pt *path) getShortPath() string {
 }
 
 func (pt *path) getAgnosterPath() string {
-	pwd := pt.workingDir()
+	pwd := pt.env.getcwd()
 	buffer := new(bytes.Buffer)
 	buffer.WriteString(pt.rootLocation(pwd))
 	pathDepth := pt.pathDepth(pwd)
@@ -84,22 +84,8 @@ func (pt *path) getAgnosterPath() string {
 	return buffer.String()
 }
 
-func (pt *path) workingDir() string {
-	dir, err := pt.env.getwd()
-	if err != nil {
-		return ""
-	}
-	return dir
-}
-
-func (pt *path) homeDir() string {
-	// On Unix systems, $HOME comes with a trailing slash, unlike the Windows variant
-	home := pt.env.getenv("HOME")
-	return home
-}
-
 func (pt *path) inHomeDir(pwd string) bool {
-	return strings.HasPrefix(pwd, pt.homeDir())
+	return strings.HasPrefix(pwd, pt.env.homeDir())
 }
 
 func (pt *path) rootLocation(pwd string) string {
@@ -124,7 +110,7 @@ func (pt *path) rootLocation(pwd string) string {
 
 func (pt *path) pathDepth(pwd string) int {
 	if pt.inHomeDir(pwd) {
-		pwd = strings.Replace(pwd, pt.homeDir(), "root", 1)
+		pwd = strings.Replace(pwd, pt.env.homeDir(), "root", 1)
 	}
 	splitted := strings.Split(pwd, pt.env.getPathSeperator())
 	var validParts []string

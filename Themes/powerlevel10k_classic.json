@@ -36,10 +36,9 @@
         },
         {
           "type": "git",
-          "style": "diamond",
+          "style": "plain",
           "foreground": "#D4E157",
           "background": "#546E7A",
-          "trailing_diamond": "",
           "properties": {
             "branch_icon": "",
             "branch_identical_icon": "≡",
@@ -49,6 +48,17 @@
             "local_working_icon": "",
             "local_staged_icon": "",
             "prefix": "<#26C6DA> </>"
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "546E7A",
+          "background": "#173448",
+          "properties": {
+            "text": "",
+            "prefix": "",
+            "postfix": ""
           }
         }
       ]

@@ -102,7 +102,7 @@ func getDefaultSettings() *Settings {
 						Foreground:      "#100e23",
 					},
 					{
-						Type:            Venv,
+						Type:            Python,
 						Style:           Powerline,
 						PowerlineSymbol: "",
 						Background:      "#906cff",

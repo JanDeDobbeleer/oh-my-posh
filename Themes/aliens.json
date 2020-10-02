@@ -44,14 +44,14 @@
           }
         },
         {
-          "type": "virtualenv",
+          "type": "python",
           "style": "diamond",
           "foreground": "#ffffff",
           "background": "#FF6471",
           "leading_diamond": "",
           "trailing_diamond": "",
           "properties": {
-            "python_icon": "",
+            "prefix": "  ",
             "prefix": "<#193549> </>"
           }
         }

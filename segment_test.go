@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -25,4 +26,30 @@ func TestMapSegmentWriterCannotMap(t *testing.T) {
 	props, err := sc.mapSegmentWithWriter(env)
 	assert.Nil(t, props)
 	assert.Error(t, err)
+}
+
+func TestParseTestSettings(t *testing.T) {
+	segmentJSON :=
+		`
+		{
+			"type": "path",
+			"style": "powerline",
+			"powerline_symbol": "",
+			"foreground": "#ffffff",
+			"background": "#61AFEF",
+			"properties": {
+				"prefix": "  ",
+				"style": "folder",
+				"ignore_folders": [
+					"go-my-psh"
+				]
+			}
+		}
+		`
+	segment := &Segment{}
+	err := json.Unmarshal([]byte(segmentJSON), segment)
+	assert.NoError(t, err)
+	expected := "go-my-psh"
+	got := segment.hasValue(IgnoreFolders, expected)
+	assert.True(t, got)
 }

@@ -1,6 +1,9 @@
 package main
 
-import "regexp"
+import (
+	"fmt"
+	"regexp"
+)
 
 //Property defines one property of a segment for context
 type Property string
@@ -15,6 +18,8 @@ const (
 	Postfix Property = "postfix"
 	//ColorBackground color the background or foreground when a specific color is set
 	ColorBackground Property = "color_background"
+	//IgnoreFolders folders to ignore and not run the segment logic
+	IgnoreFolders Property = "ignore_folders"
 )
 
 type properties struct {
@@ -72,4 +77,16 @@ func (p *properties) getBool(property Property, defaultValue bool) bool {
 		return defaultValue
 	}
 	return boolValue
+}
+
+func parseStringArray(value interface{}) []string {
+	expectedValue, ok := value.([]interface{})
+	if !ok {
+		return []string{}
+	}
+	list := make([]string, len(expectedValue))
+	for i, v := range expectedValue {
+		list[i] = fmt.Sprint(v)
+	}
+	return list
 }

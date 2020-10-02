@@ -72,6 +72,26 @@ func (segment *Segment) enabled() bool {
 	return segment.writer.enabled()
 }
 
+func (segment *Segment) getValue(property Property, defaultValue string) string {
+	if value, ok := segment.Properties[property]; ok {
+		return parseString(value, defaultValue)
+	}
+	return defaultValue
+}
+
+func (segment *Segment) hasValue(property Property, match string) bool {
+	if value, ok := segment.Properties[property]; ok {
+		list := parseStringArray(value)
+		for _, element := range list {
+			if element == match {
+				return true
+			}
+		}
+		return false
+	}
+	return false
+}
+
 func (segment *Segment) mapSegmentWithWriter(env environmentInfo) (*properties, error) {
 	functions := map[SegmentType]SegmentWriter{
 		Session:   &session{},

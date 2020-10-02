@@ -62,16 +62,9 @@ func (e *engine) renderDiamondSegment(text string) {
 	e.renderer.write(Transparent, e.activeSegment.Background, e.activeSegment.TrailingDiamond)
 }
 
-func (e *engine) getStringProperty(property Property, defaultValue string) string {
-	if value, ok := e.activeSegment.Properties[property]; ok {
-		return parseString(value, defaultValue)
-	}
-	return defaultValue
-}
-
 func (e *engine) renderText(text string) {
-	prefix := e.getStringProperty(Prefix, " ")
-	postfix := e.getStringProperty(Postfix, " ")
+	prefix := e.activeSegment.getValue(Prefix, " ")
+	postfix := e.activeSegment.getValue(Postfix, " ")
 	e.renderer.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("%s%s%s", prefix, text, postfix))
 }
 
@@ -90,7 +83,11 @@ func (e *engine) renderSegmentText(text string) {
 func (e *engine) renderBlockSegments(block *Block) string {
 	defer e.reset()
 	e.activeBlock = block
+	cwd, _ := e.env.getwd()
 	for _, segment := range block.Segments {
+		if segment.hasValue(IgnoreFolders, cwd) {
+			continue
+		}
 		props, err := segment.mapSegmentWithWriter(e.env)
 		if err != nil || !segment.enabled() {
 			continue

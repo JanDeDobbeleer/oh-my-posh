@@ -12,7 +12,7 @@
             "user_info_separator": " <#ffffff>in</> ",
             "prefix": "<#0377C8># </>",
             "user_color": "#0377C8",
-            "computer_color": "#4A9207"
+            "host_color": "#4A9207"
           }
         },
         {

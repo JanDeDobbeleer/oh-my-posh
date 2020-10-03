@@ -10,7 +10,7 @@
           "foreground": "#E36464",
           "properties": {
             "user_info_separator": "",
-            "display_computer": false,
+            "display_host": false,
             "prefix": "@"
           }
         },

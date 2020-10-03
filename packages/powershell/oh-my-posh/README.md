@@ -1,6 +1,6 @@
 # PowerShell package
 
-The goal of this module is to wrap the `go-my-posh` binaries into a PowerShell module and allow easy installation
+The goal of this module is to wrap the `oh-my-posh` binaries into a PowerShell module and allow easy installation
 and ease of use when setting the prompt.
 
 ## Testing
@@ -26,5 +26,5 @@ deploy.ps1 -BinVersion 0.1.0 -ModuleVersion 0.0.2 -Repository LocalRepo
 Install/Update the module from your local repository and validate the changes.
 
 ```powershell
-Install-Module go-my-posh -Repository LocalRepo -Force
+Install-Module oh-my-posh -Repository LocalRepo -Force
 ```

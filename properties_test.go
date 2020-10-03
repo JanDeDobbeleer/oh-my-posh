@@ -68,11 +68,11 @@ func TestDefaultColorWithUnavailableProperty(t *testing.T) {
 
 func TestGetBool(t *testing.T) {
 	expected := true
-	values := map[Property]interface{}{DisplayComputer: expected}
+	values := map[Property]interface{}{DisplayHost: expected}
 	properties := properties{
 		values: values,
 	}
-	value := properties.getBool(DisplayComputer, false)
+	value := properties.getBool(DisplayHost, false)
 	assert.True(t, value)
 }
 
@@ -81,15 +81,15 @@ func TestGetBoolPropertyNotInMap(t *testing.T) {
 	properties := properties{
 		values: values,
 	}
-	value := properties.getBool(DisplayComputer, false)
+	value := properties.getBool(DisplayHost, false)
 	assert.False(t, value)
 }
 
 func TestGetBoolInvalidProperty(t *testing.T) {
-	values := map[Property]interface{}{DisplayComputer: "borked"}
+	values := map[Property]interface{}{DisplayHost: "borked"}
 	properties := properties{
 		values: values,
 	}
-	value := properties.getBool(DisplayComputer, false)
+	value := properties.getBool(DisplayHost, false)
 	assert.False(t, value)
 }

@@ -15,10 +15,10 @@ const (
 	UserInfoSeparator Property = "user_info_separator"
 	//UserColor if set, is used to color the user name
 	UserColor Property = "user_color"
-	//ComputerColor if set, is used to color the computer name
-	ComputerColor Property = "computer_color"
-	//DisplayComputer hides or show the computer name
-	DisplayComputer Property = "display_computer"
+	//HostColor if set, is used to color the computer name
+	HostColor Property = "host_color"
+	//DisplayHost hides or show the computer name
+	DisplayHost Property = "display_host"
 	//DisplayUser hides or shows the user name
 	DisplayUser Property = "display_user"
 )
@@ -39,11 +39,11 @@ func (s *session) init(props *properties, env environmentInfo) {
 func (s *session) getFormattedText() string {
 	username := s.getUserName()
 	computername := s.getComputerName()
-	return fmt.Sprintf("<%s>%s</>%s<%s>%s</>", s.props.getColor(UserColor, s.props.foreground), username, s.props.getString(UserInfoSeparator, "@"), s.props.getColor(ComputerColor, s.props.foreground), computername)
+	return fmt.Sprintf("<%s>%s</>%s<%s>%s</>", s.props.getColor(UserColor, s.props.foreground), username, s.props.getString(UserInfoSeparator, "@"), s.props.getColor(HostColor, s.props.foreground), computername)
 }
 
 func (s *session) getComputerName() string {
-	if !s.props.getBool(DisplayComputer, true) {
+	if !s.props.getBool(DisplayHost, true) {
 		return ""
 	}
 	computername, err := s.env.getHostName()

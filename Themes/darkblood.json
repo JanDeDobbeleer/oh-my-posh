@@ -10,7 +10,7 @@
           "foreground": "#ffffff",
           "properties": {
             "user_info_separator": "",
-            "display_computer": false,
+            "display_host": false,
             "prefix": "<#CB4B16>┏[</>",
             "postfix": "<#CB4B16>]</>"
           }

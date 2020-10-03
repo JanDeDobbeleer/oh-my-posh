@@ -1,7 +1,8 @@
 # A prompt theme engine for any shell
 
-![example workflow name](https://github.com/jandedobbeleer/go-my-posh/workflows/Release/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/jandedobbeleer/go-my-posh)](https://goreportcard.com/report/github.com/jandedobbeleer/go-my-posh)
+![Release Status](https://github.com/jandedobbeleer/oh-my-posh3/workflows/Release/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jandedobbeleer/oh-my-posh)](https://goreportcard.com/report/github.com/jandedobbeleer/oh-my-posh)
+[![PS Gallery][psgallery-badge]][powershell-gallery]
 
 What started as the offspring of [oh-my-posh][oh-my-posh] for PowerShell resulted in a cross platform, highly customizable and extensible prompt theme engine. After 4 years of working on oh-my-posh, a modern and more efficient tool was needed to suit my personal needs.
 
@@ -34,7 +35,7 @@ What started as the offspring of [oh-my-posh][oh-my-posh] for PowerShell resulte
 
 ## Installation
 
-`go-my-posh` uses ANSI color codes under the hood, these should work everywhere,
+`oh-my-posh` uses ANSI color codes under the hood, these should work everywhere,
 but you may have to set your $TERM to `xterm-256color` for it to work.
 
 For maximum enjoyment, make sure to install a powerline enabled font. The fonts I use are patched by [Nerd Fonts][nerdfonts], which offers a maximum of icons you can use to configure your prompt.
@@ -44,8 +45,8 @@ For maximum enjoyment, make sure to install a powerline enabled font. The fonts 
 A PowerShell module is available for your enjoyment. Install and use it with the following commands.
 
 ```powershell
-Install-Module -Name go-my-posh -Repository PSGallery
-Import-Module go-my-posh
+Install-Module -Name oh-my-posh3 -Repository PSGallery
+Import-Module oh-my-posh3
 Set-PoshPrompt paradox
 ```
 
@@ -56,7 +57,7 @@ To see available themes, make use of the `Get-PoshThemes` function. This prints 
 ### Precompiled Binaries
 
 You can find precompiled binaries for all major OS's underneath the
-[releases tab][releases]. Installation instruction for the different shells below assumes `<go-my-posh>` points to the go-my-posh binary and you've downloaded the [`jandedobbeleer` theme][jandedobbeleer] to your `$HOME` directory.
+[releases tab][releases]. Installation instruction for the different shells below assumes `<oh-my-posh>` points to the oh-my-posh binary and you've downloaded the [`jandedobbeleer` theme][jandedobbeleer] to your `$HOME` directory.
 
 On UNIX systems, make sure the binary is executable before using it.
 
@@ -70,10 +71,10 @@ Add the following to your `.bashrc` (or `.profile` on Mac):
 
 ```bash
 function _update_ps1() {
-    PS1="$(<go-my-posh> -config ~/jandedobbeleer.json -error $?)"
+    PS1="$(<oh-my-posh> -config ~/jandedobbeleer.json -error $?)"
 }
 
-if [ "$TERM" != "linux" ] && [ -f <go-my-posh> ]; then
+if [ "$TERM" != "linux" ] && [ -f <oh-my-posh> ]; then
     PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
 fi
 ```
@@ -84,7 +85,7 @@ Add the following to your `.zshrc`:
 
 ```bash
 function powerline_precmd() {
-    PS1="$(<go-my-posh> -config ~/jandedobbeleer.json --error $?)"
+    PS1="$(<oh-my-posh> -config ~/jandedobbeleer.json --error $?)"
 }
 
 function install_powerline_precmd() {
@@ -107,13 +108,13 @@ Redefine `fish_prompt` in `~/.config/fish/config.fish`:
 
 ```bash
 function fish_prompt
-    eval <go-my-posh> -config ~/jandedobbeleer.json -error $status
+    eval <oh-my-posh> -config ~/jandedobbeleer.json -error $status
 end
 ```
 
 #### Nix
 
-When using `nix-shell --pure`, `go-my-posh` will not be accessible, and
+When using `nix-shell --pure`, `oh-my-posh` will not be accessible, and
 your prompt will not appear.
 
 As a workaround you can add this snippet to your `.bashrc`,
@@ -122,8 +123,8 @@ which should re-enable the prompt in most cases:
 ```bash
 # Workaround for nix-shell --pure
 if [ "$IN_NIX_SHELL" == "pure" ]; then
-    if [ -x <go-my-posh> ]; then
-        alias powerline-go="<go-my-posh> -config ~/jandedobbeleer.json"
+    if [ -x <oh-my-posh> ]; then
+        alias powerline-go="<oh-my-posh> -config ~/jandedobbeleer.json"
     fi
 fi
 ```
@@ -154,6 +155,8 @@ a few general properties are available cross segments which can be found in `pro
 * [Robby Russel][oh-my-zsh] for creating oh-my-zsh, without him this would probably not be here
 * [Janne Mareike Koschinski][justjanne] for providing information on how to get certain information using Go (and the amazing [README][powerline-go])
 
+[psgallery-badge]: https://img.shields.io/powershellgallery/dt/oh-my-posh.svg
+[powershell-gallery]: https://www.powershellgallery.com/packages/oh-my-posh/
 [oh-my-posh]: https://github.com/JanDeDobbeleer/oh-my-posh
 [patreon-badge]: https://img.shields.io/badge/Support-Become%20a%20Patreon!-red.svg
 [patreon]: https://www.patreon.com/jandedobbeleer
@@ -161,9 +164,9 @@ a few general properties are available cross segments which can be found in `pro
 [liberapay]: https://liberapay.com/jandedobbeleer
 [kofi-badge]: https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee!-%2346b798.svg
 [kofi]: https://ko-fi.com/jandedobbeleer
-[releases]: https://github.com/JanDeDobbeleer/go-my-posh/releases
-[jandedobbeleer]: https://github.com/JanDeDobbeleer/go-my-posh/blob/master/themes/jandedobbeleer.json
-[themes]: https://github.com/JanDeDobbeleer/go-my-posh/tree/master/themes
+[releases]: https://github.com/JanDeDobbeleer/oh-my-posh3/releases
+[jandedobbeleer]: https://github.com/JanDeDobbeleer/oh-my-posh3/blob/master/themes/jandedobbeleer.json
+[themes]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/master/themes
 [chrisbenti-psconfig]: https://github.com/chrisbenti/PS-Config
 [keithdahlby-poshgit]: https://github.com/dahlbyk/posh-git
 [oh-my-zsh]: https://github.com/robbyrussell/oh-my-zsh

@@ -92,7 +92,7 @@ jobs:
     defaults:
       run:
         shell: pwsh
-        working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}/packages/powershell/go-my-posh
+        working-directory: ${{ github.workspace }}/src/github.com/${{ github.repository }}/packages/powershell/oh-my-posh
     env:
       PSGALLERY_KEY: ${{ secrets.PSGALLERY_KEY }}
     steps:

@@ -84,6 +84,16 @@
           }
         },
         {
+          "type": "root",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#111111",
+          "background": "#ffff66",
+          "properties": {
+            "root_icon": ""
+          }
+        },
+        {
           "type": "shell",
           "style": "powerline",
           "powerline_symbol": "",

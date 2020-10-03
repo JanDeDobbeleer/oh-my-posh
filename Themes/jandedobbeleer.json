@@ -8,7 +8,7 @@
           "type": "session",
           "style": "diamond",
           "foreground": "#ffffff",
-          "background": "#a8216b",
+          "background": "#c386f1",
           "leading_diamond": "",
           "trailing_diamond": "",
           "properties": {
@@ -92,6 +92,13 @@
           "properties": {
             "prefix": "  "
           }
+        },
+        {
+          "type": "root",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#ffffff",
+          "background": "#ffff66"
         },
         {
           "type": "exit",

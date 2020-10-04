@@ -1,8 +1,9 @@
 # A prompt theme engine for any shell
 
-![Release Status](https://github.com/jandedobbeleer/oh-my-posh3/workflows/Release/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/jandedobbeleer/oh-my-posh)](https://goreportcard.com/report/github.com/jandedobbeleer/oh-my-posh)
+![Release Status][release-status]
+[![Go Report Card][report-card]][report-card-link]
 [![PS Gallery][psgallery-badge]][powershell-gallery]
+[![Documentation][docs-badge]][docs]
 
 What started as the offspring of [oh-my-posh][oh-my-posh] for PowerShell resulted in a cross platform, highly customizable and extensible prompt theme engine. After 4 years of working on oh-my-posh, a modern and more efficient tool was needed to suit my personal needs.
 
@@ -14,135 +15,25 @@ What started as the offspring of [oh-my-posh][oh-my-posh] for PowerShell resulte
 
 ## Features
 
+* Shell independant
 * Git status indications
 * Failed command indication
 * Admin indication
 * Current session indications
+* Language info
+* Shell info
 * Configurable
 
-## Table of Contents**
+## Documentation
 
-* [Installation](#installation)
-  * [PowerShell](#powershell)
-  * [Precompiled Binaries](#precompiled-binaries)
-    * [ZSH](#zsh)
-    * [Bash](#bash)
-    * [Fish](#fish)
-    * [Nix](#nix)
-* [Configuration](#configuration)
-* [Roadmap](#roadmap)
-* [Thanks](#thanks)
-
-## Installation
-
-`oh-my-posh` uses ANSI color codes under the hood, these should work everywhere,
-but you may have to set your $TERM to `xterm-256color` for it to work.
-
-For maximum enjoyment, make sure to install a powerline enabled font. The fonts I use are patched by [Nerd Fonts][nerdfonts], which offers a maximum of icons you can use to configure your prompt.
-
-### Powershell
-
-A PowerShell module is available for your enjoyment. Install and use it with the following commands.
-
-```powershell
-Install-Module -Name oh-my-posh3 -Repository PSGallery
-Import-Module oh-my-posh3
-Set-PoshPrompt paradox
-```
-
-The `Set-PoshPrompt` function has autocompletion to assist in correctly typing the correct theme. It accepts either one of the [pre-configured themes][themes], or a path to a theme of your own.
-
-To see available themes, make use of the `Get-PoshThemes` function. This prints out all themes based on your current location/environment.
-
-### Precompiled Binaries
-
-You can find precompiled binaries for all major OS's underneath the
-[releases tab][releases]. Installation instruction for the different shells below assumes `<oh-my-posh>` points to the oh-my-posh binary and you've downloaded the [`jandedobbeleer` theme][jandedobbeleer] to your `$HOME` directory.
-
-On UNIX systems, make sure the binary is executable before using it.
-
-```bash
-chmod +x gmp_executable
-```
-
-#### Bash
-
-Add the following to your `.bashrc` (or `.profile` on Mac):
-
-```bash
-function _update_ps1() {
-    PS1="$(<oh-my-posh> -config ~/jandedobbeleer.json -error $?)"
-}
-
-if [ "$TERM" != "linux" ] && [ -f <oh-my-posh> ]; then
-    PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
-fi
-```
-
-#### ZSH
-
-Add the following to your `.zshrc`:
-
-```bash
-function powerline_precmd() {
-    PS1="$(<oh-my-posh> -config ~/jandedobbeleer.json --error $?)"
-}
-
-function install_powerline_precmd() {
-  for s in "${precmd_functions[@]}"; do
-    if [ "$s" = "powerline_precmd" ]; then
-      return
-    fi
-  done
-  precmd_functions+=(powerline_precmd)
-}
-
-if [ "$TERM" != "linux" ]; then
-    install_powerline_precmd
-fi
-```
-
-#### Fish
-
-Redefine `fish_prompt` in `~/.config/fish/config.fish`:
-
-```bash
-function fish_prompt
-    eval <oh-my-posh> -config ~/jandedobbeleer.json -error $status
-end
-```
-
-#### Nix
-
-When using `nix-shell --pure`, `oh-my-posh` will not be accessible, and
-your prompt will not appear.
-
-As a workaround you can add this snippet to your `.bashrc`,
-which should re-enable the prompt in most cases:
-
-```bash
-# Workaround for nix-shell --pure
-if [ "$IN_NIX_SHELL" == "pure" ]; then
-    if [ -x <oh-my-posh> ]; then
-        alias powerline-go="<oh-my-posh> -config ~/jandedobbeleer.json"
-    fi
-fi
-```
-
-## Configuration
-
-As the documentation for all the different segments is still lacking, have a look at the available [themes][themes] for reference.
-
-Every segment has its own properties you can set/override. Have a look at the code for any you would want to tweak, available options
-are listed as the `Property` constant with their respective `JSON` notation for use in a segment's `properties` section. Additionally,
-a few general properties are available cross segments which can be found in `properties.go`.
+[![Documentation][docs-badge]][docs]
 
 ## Roadmap
 
 * [x] CI
 * [x] Github Releases
 * [x] Create documentation for manual installation
-* [ ] Create documentation on the different segments
+* [x] Create documentation on the different segments
 * Create easy installation packages
   * [x] Powershell
   * [ ] Brew
@@ -155,8 +46,11 @@ a few general properties are available cross segments which can be found in `pro
 * [Robby Russel][oh-my-zsh] for creating oh-my-zsh, without him this would probably not be here
 * [Janne Mareike Koschinski][justjanne] for providing information on how to get certain information using Go (and the amazing [README][powerline-go])
 
+[release-status]: https://github.com/jandedobbeleer/oh-my-posh3/workflows/Release/badge.svg
 [psgallery-badge]: https://img.shields.io/powershellgallery/dt/oh-my-posh.svg
 [powershell-gallery]: https://www.powershellgallery.com/packages/oh-my-posh/
+[report-card]: https://goreportcard.com/badge/github.com/jandedobbeleer/oh-my-posh3
+[report-card-link]: https://goreportcard.com/report/github.com/jandedobbeleer/oh-my-posh3
 [oh-my-posh]: https://github.com/JanDeDobbeleer/oh-my-posh
 [patreon-badge]: https://img.shields.io/badge/Support-Become%20a%20Patreon!-red.svg
 [patreon]: https://www.patreon.com/jandedobbeleer
@@ -164,9 +58,8 @@ a few general properties are available cross segments which can be found in `pro
 [liberapay]: https://liberapay.com/jandedobbeleer
 [kofi-badge]: https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee!-%2346b798.svg
 [kofi]: https://ko-fi.com/jandedobbeleer
-[releases]: https://github.com/JanDeDobbeleer/oh-my-posh3/releases
-[jandedobbeleer]: https://github.com/JanDeDobbeleer/oh-my-posh3/blob/master/themes/jandedobbeleer.json
-[themes]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/master/themes
+[docs-badge]: https://img.shields.io/badge/documentation-ohmyposh.dev-blue
+[docs]: https://ohmyposh.dev/docs
 [chrisbenti-psconfig]: https://github.com/chrisbenti/PS-Config
 [keithdahlby-poshgit]: https://github.com/dahlbyk/posh-git
 [oh-my-zsh]: https://github.com/robbyrussell/oh-my-zsh

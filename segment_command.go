@@ -17,6 +17,9 @@ const (
 
 func (c *command) enabled() bool {
 	shell := c.props.getString(ExecutableShell, "bash")
+	if !c.env.hasCommand(shell) {
+		return false
+	}
 	command := c.props.getString(Command, "echo no command specified")
 	if strings.Contains(command, "||") {
 		commands := strings.Split(command, "||")

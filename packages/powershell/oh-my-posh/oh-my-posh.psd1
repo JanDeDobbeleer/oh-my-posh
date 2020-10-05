@@ -39,7 +39,7 @@
             # Tags applied to this module. These help with module discovery in online galleries.
             Tags       = @('git', 'agnoster', 'theme', 'zsh', 'posh-git', 'prompt', 'paradox', 'robbyrussel', 'oh-my-posh')
             # A URL to the license for this module.
-            LicenseUri = 'https://github.com/JanDeDobbeleer/oh-my-posh3/blob/master/COPYING'
+            LicenseUri = 'https://github.com/JanDeDobbeleer/oh-my-posh3/blob/main/COPYING'
             # A URL to the main website for this project.
             ProjectUri = 'https://github.com/JanDeDobbeleer/oh-my-posh3'
         } # End of PSData hashtable

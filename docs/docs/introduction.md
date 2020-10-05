@@ -76,5 +76,5 @@ can get started even without having to understand the theming. So, let's no long
 [kofi]: https://ko-fi.com/jandedobbeleer
 [block]: /docs/configure#block
 [segment]: /docs/configure#segment
-[themes]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/master/themes
+[themes]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/main/themes
 [omp-themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/master/Themes

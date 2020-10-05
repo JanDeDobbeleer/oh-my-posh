@@ -81,7 +81,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          editUrl: "https://github.com/jandedobbeleer/oh-my-posh3/edit/master/docs/",
+          editUrl: "https://github.com/jandedobbeleer/oh-my-posh3/edit/main/docs/",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),

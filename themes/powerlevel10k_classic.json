@@ -53,8 +53,8 @@
         {
           "type": "text",
           "style": "plain",
-          "foreground": "546E7A",
-          "background": "#173448",
+          "foreground": "#546E7A",
+          "background": "transparent",
           "properties": {
             "text": "",
             "prefix": "",

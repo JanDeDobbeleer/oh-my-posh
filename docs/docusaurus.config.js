@@ -47,6 +47,10 @@ module.exports = {
               label: "Packages",
               to: "docs/powershell",
             },
+            {
+              label: "Contributing",
+              to: "docs/contributing",
+            },
           ],
         },
         {

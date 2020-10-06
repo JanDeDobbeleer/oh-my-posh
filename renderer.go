@@ -91,13 +91,13 @@ func (r *Renderer) writeAndRemoveText(background string, foreground string, text
 }
 
 func (r *Renderer) write(background string, foreground string, text string) {
-	rex := regexp.MustCompile(`<\s*(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})>(?P<text>.*?)<\s*/\s*>`)
+	rex := regexp.MustCompile(`<((#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})|transparent))>(.*?)</>`)
 	match := rex.FindAllStringSubmatch(text, -1)
 	for i := range match {
 		// get the text before the color override and write that first
 		textBeforeColorOverride := strings.Split(text, match[i][0])[0]
 		text = r.writeAndRemoveText(background, foreground, textBeforeColorOverride, textBeforeColorOverride, text)
-		text = r.writeAndRemoveText(background, match[i][1], match[i][2], match[i][0], text)
+		text = r.writeAndRemoveText(background, match[i][1], match[i][4], match[i][0], text)
 	}
 	// color the remaining part of text with background and foreground
 	r.writeColoredText(background, foreground, text)

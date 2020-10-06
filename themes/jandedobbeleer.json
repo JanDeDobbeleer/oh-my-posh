@@ -122,7 +122,7 @@
             "always_enabled": true,
             "error_color": "#f1184c",
             "color_background": true,
-            "prefix": "<#193549></> "
+            "prefix": "<transparent></> "
           }
         }
       ]

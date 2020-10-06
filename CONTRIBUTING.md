@@ -2,12 +2,16 @@
 
 Note we have a code of conduct, please follow it in all your interactions with the project.
 
+Ensure you've read through the [documentation][docs] so you understand the core concepts of the
+project. If you're looking to get familiar with Go, following the [guide][guide] for adding
+segments can be a good starting point.
+
 ## Pull Request Process
 
 1. Ensure any dependencies or build artifacts are removed/ignored before creating a commit.
-2. Commits follow the conventional commits guidelines.
-3. Update the documentation with details of changes to the functionality, this includes new segments,
-   themes or core functionality.
+2. Commits follow the [conventional commits][cc] guidelines.
+3. Update the documentation with details of changes to the functionality, this includes new segments
+   or core functionality.
 4. Pull Requests are merged once all checks pass and a project maintainer has approved it.
 
 ## Code of Conduct
@@ -132,6 +136,9 @@ version 2.0, available [here][coc].
 Community Impact Guidelines were inspired by [Mozilla's code of conduct
 enforcement ladder](https://github.com/mozilla/diversity).
 
+[docs]: https://ohmyposh.dev/docs
+[guide]: https://ohmyposh.dev/docs/contributing-segment
+[cc]: https://www.conventionalcommits.org/en/v1.0.0/#summary
 [homepage]: https://www.contributor-covenant.org
 [conduct]: mailto:conduct@ohmyposh.dev
 [coc]: https://www.contributor-covenant.org/version/2/0/code_of_conduct.html

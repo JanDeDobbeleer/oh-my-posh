@@ -29,5 +29,10 @@ module.exports = {
         "time",
       ]
     },
+    {
+      type: "category",
+      label: "Contributing",
+      items: ["contributing-segment"],
+    },
   ],
 };

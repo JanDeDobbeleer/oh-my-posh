@@ -149,11 +149,11 @@ Text character to use at the end of the segment. Will take the background color 
 
 ### Foreground
 
-Hex [color][colors] to use as the segment text foreground color.
+Hex [color][colors] to use as the segment text foreground color. Also supports transparency using the `transparent` keyword.
 
 ### Background
 
-Hex [color][colors] to use as the segment text background color.
+Hex [color][colors] to use as the segment text background color. Also supports transparency using the `transparent` keyword.
 
 ### Properties
 
@@ -200,6 +200,9 @@ do so like this:
 ```json
 "prefix": "<#CB4B16>┏[</>",
 ```
+
+Oh my Posh offers support for hex [colors][colors] as well as the `transparent` keyword to create either a transparent foreground
+override or transparent background color using the segement's [foreground][fg] property.
 
 ## Full Sample
 
@@ -296,3 +299,4 @@ do so like this:
 [nf]: https://www.nerdfonts.com/
 [segments]: /docs/battery
 [colors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
+[fg]: /docs/configure#foreground

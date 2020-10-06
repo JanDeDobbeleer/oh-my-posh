@@ -10,8 +10,8 @@
           "foreground": "#E5C07B",
           "properties": {
             "time_format": "15:04:05",
-            "prefix": "[ ",
-            "postfix": " ]"
+            "prefix": "[",
+            "postfix": "]"
           }
         },
         {

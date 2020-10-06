@@ -9,6 +9,8 @@ on:
       - 'CONTRIBUTING.md'
       - 'COPYING'
       - 'docs/**'
+      - '.github/*.md'
+      - '.github/FUNDING.yml'
 
 jobs:
   release:

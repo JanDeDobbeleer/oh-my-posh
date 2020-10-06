@@ -33,11 +33,8 @@
           "style": "plain",
           "foreground": "#0973C0",
           "properties": {
-            "home_icon": "",
-            "folder_icon": "",
-            "windows_registry_icon": "",
-            "folder_separator_icon": "  ",
-            "style": "agnoster"
+            "home_icon": "~",
+            "style": "short"
           }
         },
         {

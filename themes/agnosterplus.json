@@ -29,7 +29,7 @@
           "foreground": "#100e23",
           "background": "#ffffff",
           "properties": {
-            "prefix": "",
+            "prefix": " ",
             "user_info_separator": "@"
           }
         },

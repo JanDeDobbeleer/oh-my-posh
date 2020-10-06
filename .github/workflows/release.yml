@@ -6,6 +6,8 @@ on:
       - main
     paths-ignore:
       - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'COPYING'
       - 'docs/**'
 
 jobs:

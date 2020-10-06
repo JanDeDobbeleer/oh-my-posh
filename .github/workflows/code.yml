@@ -2,6 +2,8 @@ on:
   pull_request:
     paths-ignore:
       - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'COPYING'
       - 'docs/**'
 
 name: Validate Code

@@ -19,7 +19,7 @@ module.exports = {
         "exit",
         "git",
         "node",
-        "osicon",
+        "os",
         "path",
         "python",
         "root",

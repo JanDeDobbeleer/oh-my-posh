@@ -39,7 +39,11 @@ func (s *session) init(props *properties, env environmentInfo) {
 func (s *session) getFormattedText() string {
 	username := s.getUserName()
 	computername := s.getComputerName()
-	return fmt.Sprintf("<%s>%s</>%s<%s>%s</>", s.props.getColor(UserColor, s.props.foreground), username, s.props.getString(UserInfoSeparator, "@"), s.props.getColor(HostColor, s.props.foreground), computername)
+	separator := ""
+	if s.props.getBool(DisplayHost, true) && s.props.getBool(DisplayUser, true) {
+		separator = s.props.getString(UserInfoSeparator, "@")
+	}
+	return fmt.Sprintf("<%s>%s</>%s<%s>%s</>", s.props.getColor(UserColor, s.props.foreground), username, separator, s.props.getColor(HostColor, s.props.foreground), computername)
 }
 
 func (s *session) getComputerName() string {

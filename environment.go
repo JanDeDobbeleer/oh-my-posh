@@ -138,9 +138,12 @@ func cleanHostName(hostName string) string {
 	garbage := []string{
 		".lan",
 		".local",
+		".localdomain",
 	}
 	for _, g := range garbage {
-		hostName = strings.Replace(hostName, g, "", 1)
+		if strings.HasSuffix(hostName, g) {
+			hostName = strings.Replace(hostName, g, "", 1)
+		}
 	}
 	return hostName
 }

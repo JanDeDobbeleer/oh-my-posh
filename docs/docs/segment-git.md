@@ -28,7 +28,8 @@ Local changes can also shown by default using the following syntax for both the 
     "branch_ahead_icon": "↑",
     "branch_behind_icon": "↓",
     "local_working_icon": "",
-    "local_staged_icon": ""
+    "local_staged_icon": "",
+    "rebase_icon": " "
   }
 }
 ```
@@ -42,3 +43,4 @@ Local changes can also shown by default using the following syntax for both the 
 - local_working_icon: `string` - the icon to display in front of the working area changes
 - local_staged_icon: `string` - the icon to display in front of the staged area changes
 - display_status: `boolean` - display the local changes or not
+- rebase_icon: `string` - icon/text to display before the context when in a rebase

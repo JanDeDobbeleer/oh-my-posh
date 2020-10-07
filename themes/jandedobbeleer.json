@@ -52,7 +52,8 @@
             "branch_behind_icon": "↓",
             "branch_gone_icon": "≢",
             "local_working_icon": "",
-            "local_staged_icon": ""
+            "local_staged_icon": "",
+            "rebase_icon": " "
           }
         },
         {

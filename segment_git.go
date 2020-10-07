@@ -62,8 +62,6 @@ func (g *git) enabled() bool {
 func (g *git) string() string {
 	g.getGitStatus()
 	buffer := new(bytes.Buffer)
-	// branchsymbol
-	buffer.WriteString(g.props.getString(BranchIcon, "Branch: "))
 	// branchName
 	fmt.Fprintf(buffer, "%s", g.repo.branch)
 	displayStatus := g.props.getBool(DisplayStatus, true)
@@ -101,7 +99,7 @@ func (g *git) init(props *properties, env environmentInfo) {
 
 func (g *git) getGitStatus() {
 	g.repo = &gitRepo{}
-	output := g.getGitOutputForCommand("status", "--porcelain", "-b", "--ignore-submodules")
+	output := g.getGitCommandOutput("status", "--porcelain", "-b", "--ignore-submodules")
 	splittedOutput := strings.Split(output, "\n")
 	g.repo.working = g.parseGitStats(splittedOutput, true)
 	g.repo.staging = g.parseGitStats(splittedOutput, false)
@@ -109,33 +107,67 @@ func (g *git) getGitStatus() {
 	if branchInfo["local"] != "" {
 		g.repo.ahead, _ = strconv.Atoi(branchInfo["ahead"])
 		g.repo.behind, _ = strconv.Atoi(branchInfo["behind"])
-		g.repo.branch = branchInfo["local"]
+		g.repo.branch = fmt.Sprintf("%s%s", g.props.getString(BranchIcon, "Branch:"), branchInfo["local"])
 		g.repo.upstream = branchInfo["upstream"]
 	} else {
-		g.repo.branch = g.getGitDetachedBranch()
+		g.repo.branch = g.getGitDetachedBranchContext()
 	}
 	g.repo.stashCount = g.getStashContext()
 }
 
-func (g *git) getGitOutputForCommand(args ...string) string {
+func (g *git) getGitCommandOutput(args ...string) string {
 	args = append([]string{"-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	return g.env.runCommand("git", args...)
 }
 
-func (g *git) getGitDetachedBranch() string {
-	commit := g.getGitOutputForCommand("rev-parse", "--short", "HEAD")
-	rebase := g.getGitOutputForCommand("rebase", "--show-current-patch")
+func (g *git) getGitDetachedBranchContext() string {
+	commit := g.getGitCommandOutput("rev-parse", "--short", "HEAD")
+	rebase := g.getGitCommandOutput("rebase", "--show-current-patch")
 	if rebase != "" {
-		return fmt.Sprintf("%s%s", g.props.getString(RebaseIcon, "REBASE: "), commit)
+		return g.getGitRebaseContext(commit)
 	}
-	ref := g.getGitOutputForCommand("symbolic-ref", "-q", "--short", "HEAD")
+	// name of branch
+	ref := g.getGitCommandOutput("symbolic-ref", "-q", "--short", "HEAD")
 	if ref == "" {
-		ref = g.getGitOutputForCommand("describe", "--tags", "--exact-match")
+		// get a tag name if there's a match for HEAD
+		ref = g.getGitCommandOutput("describe", "--tags", "--exact-match")
 	}
 	if ref == "" {
+		// revert to the short commit hash
 		ref = commit
 	}
 	return ref
+}
+
+func (g *git) getGitRebaseContext(commit string) string {
+	if g.env.hasFolder(".git/rebase-merge") {
+		origin := g.getGitRefFileSymbolicName("rebase-merge/orig-head")
+		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
+		step := g.getGitFileContents("rebase-merge/msgnum")
+		total := g.getGitFileContents("rebase-merge/end")
+		icon := g.props.getString(RebaseIcon, "REBASE:")
+		return fmt.Sprintf("%s%s onto %s (%s/%s) at %s", icon, origin, onto, step, total, commit)
+	}
+	if g.env.hasFolder(".git/rebase-apply") {
+		head := g.getGitFileContents("rebase-apply/head-name")
+		origin := strings.Replace(head, "refs/heads/", "", 1)
+		step := g.getGitFileContents("rebase-apply/next")
+		total := g.getGitFileContents("rebase-apply/last")
+		icon := g.props.getString(RebaseIcon, "REBASING:")
+		return fmt.Sprintf("%s%s (%s/%s) at %s", icon, origin, step, total, commit)
+	}
+	icon := g.props.getString(RebaseIcon, "REBASE:")
+	return fmt.Sprintf("%sUNKNOWN", icon)
+}
+
+func (g *git) getGitFileContents(file string) string {
+	content := g.env.getFileContent(fmt.Sprintf(".git/%s", file))
+	return strings.Trim(content, " \r\n")
+}
+
+func (g *git) getGitRefFileSymbolicName(refFile string) string {
+	ref := g.getGitFileContents(refFile)
+	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
 func (g *git) parseGitStats(output []string, working bool) *gitStatus {
@@ -168,7 +200,7 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 }
 
 func (g *git) getStashContext() int {
-	stash := g.getGitOutputForCommand("stash", "list")
+	stash := g.getGitCommandOutput("stash", "list")
 	return numberOfLinesInString(stash)
 }
 

@@ -138,11 +138,11 @@ func TestParseGitBranchInfoBehindandAhead(t *testing.T) {
 	assert.Equal(t, "1", got["ahead"])
 }
 
-// func TestGetGitStatus(t *testing.T) {
-// 	env := new(environment)
-// 	writer := gitWriter{
-// 		env: env,
-// 	}
-// 	writer.getGitStatus()
-// 	assert.NotEmpty(t, writer.repo)
-// }
+func TestGetGitStatus(t *testing.T) {
+	env := new(environment)
+	git := git{
+		env: env,
+	}
+	git.getGitStatus()
+	assert.NotEmpty(t, git.repo)
+}

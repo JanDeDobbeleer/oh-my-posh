@@ -47,6 +47,8 @@ const (
 	LocalStagingIcon Property = "local_staged_icon"
 	//DisplayStatus shows the status of the repository
 	DisplayStatus Property = "display_status"
+	//RebaseIcon shows before the rebase context
+	RebaseIcon Property = "rebase_icon"
 )
 
 func (g *git) enabled() bool {
@@ -121,9 +123,17 @@ func (g *git) getGitOutputForCommand(args ...string) string {
 }
 
 func (g *git) getGitDetachedBranch() string {
-	ref := g.getGitOutputForCommand("symbolic-ref", "--short", "HEAD")
+	commit := g.getGitOutputForCommand("rev-parse", "--short", "HEAD")
+	rebase := g.getGitOutputForCommand("rebase", "--show-current-patch")
+	if rebase != "" {
+		return fmt.Sprintf("%s%s", g.props.getString(RebaseIcon, "REBASE: "), commit)
+	}
+	ref := g.getGitOutputForCommand("symbolic-ref", "-q", "--short", "HEAD")
 	if ref == "" {
-		return "unknown"
+		ref = g.getGitOutputForCommand("describe", "--tags", "--exact-match")
+	}
+	if ref == "" {
+		ref = commit
 	}
 	return ref
 }

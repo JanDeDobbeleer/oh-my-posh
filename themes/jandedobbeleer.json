@@ -53,7 +53,10 @@
             "branch_gone_icon": "≢",
             "local_working_icon": "",
             "local_staged_icon": "",
-            "rebase_icon": " "
+            "rebase_icon": " ",
+            "cherry_pick_icon": " ",
+            "detached_icon": " ",
+            "tag_icon": "笠"
           }
         },
         {

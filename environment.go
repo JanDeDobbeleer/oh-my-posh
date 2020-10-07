@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -18,6 +19,8 @@ type environmentInfo interface {
 	getcwd() string
 	homeDir() string
 	hasFiles(pattern string) bool
+	hasFolder(folder string) bool
+	getFileContent(file string) string
 	getPathSeperator() string
 	getCurrentUser() (*user.User, error)
 	isRunningAsRoot() bool
@@ -67,6 +70,19 @@ func (env *environment) hasFiles(pattern string) bool {
 		return false
 	}
 	return len(matches) > 0
+}
+
+func (env *environment) hasFolder(folder string) bool {
+	_, err := os.Stat(folder)
+	return !os.IsNotExist(err)
+}
+
+func (env *environment) getFileContent(file string) string {
+	content, err := ioutil.ReadFile(file)
+	if err != nil {
+		return ""
+	}
+	return string(content)
 }
 
 func (env *environment) getPathSeperator() string {

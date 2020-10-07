@@ -34,6 +34,16 @@ func (env *MockedEnvironment) hasFiles(pattern string) bool {
 	return args.Bool(0)
 }
 
+func (env *MockedEnvironment) hasFolder(folder string) bool {
+	args := env.Called(folder)
+	return args.Bool(0)
+}
+
+func (env *MockedEnvironment) getFileContent(file string) string {
+	args := env.Called(file)
+	return args.String(0)
+}
+
 func (env *MockedEnvironment) getPathSeperator() string {
 	args := env.Called(nil)
 	return args.String(0)

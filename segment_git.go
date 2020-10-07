@@ -49,6 +49,12 @@ const (
 	DisplayStatus Property = "display_status"
 	//RebaseIcon shows before the rebase context
 	RebaseIcon Property = "rebase_icon"
+	//CherryPickIcon shows before the cherry-pick context
+	CherryPickIcon Property = "cherry_pick_icon"
+	//DetachedIcon shows before the detached context
+	DetachedIcon Property = "detached_icon"
+	//TagIcon shows before the tag context
+	TagIcon Property = "tag_icon"
 )
 
 func (g *git) enabled() bool {
@@ -103,15 +109,13 @@ func (g *git) getGitStatus() {
 	splittedOutput := strings.Split(output, "\n")
 	g.repo.working = g.parseGitStats(splittedOutput, true)
 	g.repo.staging = g.parseGitStats(splittedOutput, false)
-	branchInfo := g.parseGitBranchInfo(splittedOutput[0])
-	if branchInfo["local"] != "" {
-		g.repo.ahead, _ = strconv.Atoi(branchInfo["ahead"])
-		g.repo.behind, _ = strconv.Atoi(branchInfo["behind"])
-		g.repo.branch = fmt.Sprintf("%s%s", g.props.getString(BranchIcon, "Branch:"), branchInfo["local"])
-		g.repo.upstream = branchInfo["upstream"]
-	} else {
-		g.repo.branch = g.getGitDetachedBranchContext()
+	status := g.parseGitStatusInfo(splittedOutput[0])
+	if status["local"] != "" {
+		g.repo.ahead, _ = strconv.Atoi(status["ahead"])
+		g.repo.behind, _ = strconv.Atoi(status["behind"])
+		g.repo.upstream = status["upstream"]
 	}
+	g.repo.branch = g.getGitHEADContext()
 	g.repo.stashCount = g.getStashContext()
 }
 
@@ -120,23 +124,31 @@ func (g *git) getGitCommandOutput(args ...string) string {
 	return g.env.runCommand("git", args...)
 }
 
-func (g *git) getGitDetachedBranchContext() string {
+func (g *git) getGitHEADContext() string {
 	commit := g.getGitCommandOutput("rev-parse", "--short", "HEAD")
 	rebase := g.getGitCommandOutput("rebase", "--show-current-patch")
 	if rebase != "" {
 		return g.getGitRebaseContext(commit)
 	}
-	// name of branch
+	// branch
+	icon := g.props.getString(BranchIcon, "BRANCH:")
 	ref := g.getGitCommandOutput("symbolic-ref", "-q", "--short", "HEAD")
 	if ref == "" {
 		// get a tag name if there's a match for HEAD
+		icon = g.props.getString(TagIcon, "TAG:")
 		ref = g.getGitCommandOutput("describe", "--tags", "--exact-match")
 	}
-	if ref == "" {
-		// revert to the short commit hash
-		ref = commit
+	// validate additional context
+	if g.env.hasFiles(".git/CHERRY_PICK_HEAD") {
+		sha := g.getGitRefFileSymbolicName("CHERRY_PICK_HEAD")
+		icon := g.props.getString(CherryPickIcon, "CHERRY PICK:")
+		return fmt.Sprintf("%s%s onto %s", icon, sha, ref)
 	}
-	return ref
+	if ref == "" {
+		ref = commit
+		icon = g.props.getString(DetachedIcon, "DETACHED:")
+	}
+	return fmt.Sprintf("%s%s", icon, ref)
 }
 
 func (g *git) getGitRebaseContext(commit string) string {
@@ -212,7 +224,7 @@ func (g *git) hasWorking() bool {
 	return g.repo.working.deleted > 0 || g.repo.working.added > 0 || g.repo.working.unmerged > 0 || g.repo.working.modified > 0 || g.repo.working.untracked > 0
 }
 
-func (g *git) parseGitBranchInfo(branchInfo string) map[string]string {
+func (g *git) parseGitStatusInfo(branchInfo string) map[string]string {
 	var branchRegex = regexp.MustCompile(`^## (?P<local>\S+?)(\.{3}(?P<upstream>\S+?)( \[(ahead (?P<ahead>\d+)(, )?)?(behind (?P<behind>\d+))?])?)?$`)
 	return groupDict(branchRegex, branchInfo)
 }

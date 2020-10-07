@@ -50,9 +50,11 @@ type detachedContext struct {
 	total         string
 	branchName    string
 	tagName       string
+	cherryPick    bool
+	cherryPickSHA string
 }
 
-func setupDetachedHeadEnv(context *detachedContext) environmentInfo {
+func setupHEADContextEnv(context *detachedContext) environmentInfo {
 	env := new(MockedEnvironment)
 	env.On("hasFolder", ".git/rebase-merge").Return(context.rebaseMerge)
 	env.On("hasFolder", ".git/rebase-apply").Return(context.rebaseApply)
@@ -63,43 +65,46 @@ func setupDetachedHeadEnv(context *detachedContext) environmentInfo {
 	env.On("getFileContent", ".git/rebase-merge/end").Return(context.total)
 	env.On("getFileContent", ".git/rebase-apply/last").Return(context.total)
 	env.On("getFileContent", ".git/rebase-apply/head-name").Return(context.origin)
+	env.On("getFileContent", ".git/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
+	env.On("hasFiles", ".git/CHERRY_PICK_HEAD").Return(context.cherryPick)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-parse", "--short", "HEAD"}).Return(context.currentCommit)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rebase", "--show-current-patch"}).Return(context.rebase)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "symbolic-ref", "-q", "--short", "HEAD"}).Return(context.branchName)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "describe", "--tags", "--exact-match"}).Return(context.tagName)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.origin}).Return(context.origin)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.onto}).Return(context.onto)
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.cherryPickSHA}).Return(context.cherryPickSHA)
 	return env
 }
 
 func TestGetGitDetachedCommitHash(t *testing.T) {
-	want := "lalasha1"
+	want := "DETACHED:lalasha1"
 	context := &detachedContext{
-		currentCommit: want,
+		currentCommit: "lalasha1",
 	}
-	env := setupDetachedHeadEnv(context)
+	env := setupHEADContextEnv(context)
 	g := &git{
 		env: env,
 	}
-	got := g.getGitDetachedBranchContext()
+	got := g.getGitHEADContext()
 	assert.Equal(t, want, got)
 }
 
-func TestGetGitDetachedTagName(t *testing.T) {
-	want := "lalasha1"
+func TestGetGitHEADContextTagName(t *testing.T) {
+	want := "TAG:lalasha1"
 	context := &detachedContext{
 		currentCommit: "whatever",
-		tagName:       want,
+		tagName:       "lalasha1",
 	}
-	env := setupDetachedHeadEnv(context)
+	env := setupHEADContextEnv(context)
 	g := &git{
 		env: env,
 	}
-	got := g.getGitDetachedBranchContext()
+	got := g.getGitHEADContext()
 	assert.Equal(t, want, got)
 }
 
-func TestGetGitDetachedRebaseMerge(t *testing.T) {
+func TestGetGitHEADContextRebaseMerge(t *testing.T) {
 	want := "REBASE:cool-feature-bro onto main (2/3) at whatever"
 	context := &detachedContext{
 		currentCommit: "whatever",
@@ -110,15 +115,15 @@ func TestGetGitDetachedRebaseMerge(t *testing.T) {
 		step:          "2",
 		total:         "3",
 	}
-	env := setupDetachedHeadEnv(context)
+	env := setupHEADContextEnv(context)
 	g := &git{
 		env: env,
 	}
-	got := g.getGitDetachedBranchContext()
+	got := g.getGitHEADContext()
 	assert.Equal(t, want, got)
 }
 
-func TestGetGitDetachedRebaseApply(t *testing.T) {
+func TestGetGitHEADContextRebaseApply(t *testing.T) {
 	want := "REBASING:cool-feature-bro (2/3) at whatever"
 	context := &detachedContext{
 		currentCommit: "whatever",
@@ -128,25 +133,57 @@ func TestGetGitDetachedRebaseApply(t *testing.T) {
 		step:          "2",
 		total:         "3",
 	}
-	env := setupDetachedHeadEnv(context)
+	env := setupHEADContextEnv(context)
 	g := &git{
 		env: env,
 	}
-	got := g.getGitDetachedBranchContext()
+	got := g.getGitHEADContext()
 	assert.Equal(t, want, got)
 }
 
-func TestGetGitDetachedRebaseUnknown(t *testing.T) {
+func TestGetGitHEADContextRebaseUnknown(t *testing.T) {
 	want := "REBASE:UNKNOWN"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		rebase:        "true",
 	}
-	env := setupDetachedHeadEnv(context)
+	env := setupHEADContextEnv(context)
 	g := &git{
 		env: env,
 	}
-	got := g.getGitDetachedBranchContext()
+	got := g.getGitHEADContext()
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextCherryPickOnBranch(t *testing.T) {
+	want := "CHERRY PICK:pickme onto main"
+	context := &detachedContext{
+		currentCommit: "whatever",
+		branchName:    "main",
+		cherryPick:    true,
+		cherryPickSHA: "pickme",
+	}
+	env := setupHEADContextEnv(context)
+	g := &git{
+		env: env,
+	}
+	got := g.getGitHEADContext()
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextCherryPickOnTag(t *testing.T) {
+	want := "CHERRY PICK:pickme onto v3.4.6"
+	context := &detachedContext{
+		currentCommit: "whatever",
+		tagName:       "v3.4.6",
+		cherryPick:    true,
+		cherryPickSHA: "pickme",
+	}
+	env := setupHEADContextEnv(context)
+	g := &git{
+		env: env,
+	}
+	got := g.getGitHEADContext()
 	assert.Equal(t, want, got)
 }
 
@@ -190,7 +227,7 @@ func TestGetStashContextOneEntry(t *testing.T) {
 func TestParseGitBranchInfoEqual(t *testing.T) {
 	g := git{}
 	branchInfo := "## master...origin/master"
-	got := g.parseGitBranchInfo(branchInfo)
+	got := g.parseGitStatusInfo(branchInfo)
 	assert.Equal(t, "master", got["local"])
 	assert.Equal(t, "origin/master", got["upstream"])
 	assert.Empty(t, got["ahead"])
@@ -200,7 +237,7 @@ func TestParseGitBranchInfoEqual(t *testing.T) {
 func TestParseGitBranchInfoAhead(t *testing.T) {
 	g := git{}
 	branchInfo := "## master...origin/master [ahead 1]"
-	got := g.parseGitBranchInfo(branchInfo)
+	got := g.parseGitStatusInfo(branchInfo)
 	assert.Equal(t, "master", got["local"])
 	assert.Equal(t, "origin/master", got["upstream"])
 	assert.Equal(t, "1", got["ahead"])
@@ -210,7 +247,7 @@ func TestParseGitBranchInfoAhead(t *testing.T) {
 func TestParseGitBranchInfoBehind(t *testing.T) {
 	g := git{}
 	branchInfo := "## master...origin/master [behind 1]"
-	got := g.parseGitBranchInfo(branchInfo)
+	got := g.parseGitStatusInfo(branchInfo)
 	assert.Equal(t, "master", got["local"])
 	assert.Equal(t, "origin/master", got["upstream"])
 	assert.Equal(t, "1", got["behind"])
@@ -220,7 +257,7 @@ func TestParseGitBranchInfoBehind(t *testing.T) {
 func TestParseGitBranchInfoBehindandAhead(t *testing.T) {
 	g := git{}
 	branchInfo := "## master...origin/master [ahead 1, behind 2]"
-	got := g.parseGitBranchInfo(branchInfo)
+	got := g.parseGitStatusInfo(branchInfo)
 	assert.Equal(t, "master", got["local"])
 	assert.Equal(t, "origin/master", got["upstream"])
 	assert.Equal(t, "2", got["behind"])

@@ -57,7 +57,7 @@ const (
 	//Node writes which node version is currently active
 	Node SegmentType = "node"
 	//OS write os specific icon
-	OsIcon SegmentType = "osicon"
+	Os SegmentType = "os"
 	//Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	//Plain writes it without ornaments
@@ -109,7 +109,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) (*properties, 
 		Spotify:   &spotify{},
 		ShellInfo: &shell{},
 		Node:      &node{},
-		OsIcon:    &osicon{},
+		Os:        &osInfo{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

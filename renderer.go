@@ -49,7 +49,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.transparent = "%%{\x1b[%s;49m\x1b[7m%%}%s%%{\x1b[m\x1b[0m%%}"
 		r.formats.linebreak = "\n"
 		r.formats.linechange = "%%{\x1b[%d%s%%}"
-		r.formats.left = "%%{\x1b[%d%%}"
+		r.formats.left = "%%{\x1b[%dC%%}"
 		r.formats.right = "%%{\x1b[%dD%%}"
 		r.shell = zsh
 	default:

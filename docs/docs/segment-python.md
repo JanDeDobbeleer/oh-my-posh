@@ -6,7 +6,7 @@ sidebar_label: Python
 
 ## What
 
-Display the currently active python version and virtualenv when a folder contains `.py` files.
+Display the currently active python version and virtualenv when a folder contains `.py` files or `.ipynb` files.
 Supports conda, virtualenv and pyenv.
 
 ## Sample Configuration

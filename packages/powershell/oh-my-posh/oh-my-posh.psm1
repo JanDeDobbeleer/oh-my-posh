@@ -52,7 +52,7 @@ function Set-PoshPrompt {
         $realLASTEXITCODE = $global:LASTEXITCODE
         $poshCommand = Get-PoshCommand
         $config = $global:PoshSettings.Theme
-        & $poshCommand -config $config -error $realLASTEXITCODE
+        & $poshCommand -config $config -error $realLASTEXITCODE  -pwd $PWD
         $global:LASTEXITCODE = $realLASTEXITCODE
         Remove-Variable realLASTEXITCODE -Confirm:$false
     }
@@ -79,7 +79,7 @@ function Get-PoshThemes {
         Write-Host ("=" * $consoleWidth)
         Write-Host "$esc[1m$($_.BaseName)$esc[0m"
         Write-Host ""
-        & $poshCommand -config $($_.FullName)
+        & $poshCommand -config $($_.FullName) -pwd $PWD
         Write-Host ""
     }
     Write-Host ("=" * $consoleWidth)

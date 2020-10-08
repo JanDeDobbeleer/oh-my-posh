@@ -263,12 +263,3 @@ func TestParseGitBranchInfoBehindandAhead(t *testing.T) {
 	assert.Equal(t, "2", got["behind"])
 	assert.Equal(t, "1", got["ahead"])
 }
-
-func TestGetGitStatus(t *testing.T) {
-	env := new(environment)
-	git := git{
-		env: env,
-	}
-	git.getGitStatus()
-	assert.NotEmpty(t, git.repo)
-}

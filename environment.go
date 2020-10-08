@@ -44,12 +44,18 @@ func (env *environment) getenv(key string) string {
 }
 
 func (env *environment) getcwd() string {
+	correctPath := func(pwd string) string {
+		// on Windows, and being case sentisitive and not consistent and all, this gives silly issues
+		return strings.Replace(pwd, "c:", "C:", 1)
+	}
+	if *env.args.PWD != "" {
+		return correctPath(*env.args.PWD)
+	}
 	dir, err := os.Getwd()
 	if err != nil {
 		return ""
 	}
-	// on Windows, and being case sentisitive and not consistent and all, this gives silly issues
-	return strings.Replace(dir, "c:", "C:", 1)
+	return correctPath(dir)
 }
 
 func (env *environment) homeDir() string {

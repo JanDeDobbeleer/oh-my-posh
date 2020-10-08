@@ -83,7 +83,7 @@ Edit `$PROFILE` in your preferred PowerShell version and add the following lines
 ```powershell
 [ScriptBlock]$Prompt = {
   $realLASTEXITCODE = $global:LASTEXITCODE
-  & "C:\tools\oh-my-posh.exe" -config "~/downloadedtheme.json" -error $realLASTEXITCODE
+  & "C:\tools\oh-my-posh.exe" -config "~/downloadedtheme.json" -error $realLASTEXITCODE -pwd $PWD
   $global:LASTEXITCODE = $realLASTEXITCODE
   Remove-Variable realLASTEXITCODE -Confirm:$false
 }

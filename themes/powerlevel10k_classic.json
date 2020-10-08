@@ -5,12 +5,11 @@
       "alignment": "left",
       "segments": [
         {
-          "type": "text",
+          "type": "os",
           "style": "plain",
           "foreground": "#26C6DA",
           "background": "#546E7A",
           "properties": {
-            "text": "",
             "postfix": " "
           }
         },

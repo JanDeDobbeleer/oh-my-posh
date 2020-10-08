@@ -30,7 +30,7 @@ func (p *python) init(props *properties, env environmentInfo) {
 }
 
 func (p *python) enabled() bool {
-	if !p.env.hasFiles("*.py") {
+	if !p.env.hasFiles("*.py") && !p.env.hasFiles("*.ipynb") {
 		return false
 	}
 	pythonVersions := []string{

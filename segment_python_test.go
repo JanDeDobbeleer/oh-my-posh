@@ -15,7 +15,8 @@ type pythonArgs struct {
 	pathSeparator    string
 	pythonVersion    string
 	python3Version   string
-	hasFiles         bool
+	hasPyFiles         bool
+	hasNotebookFiles   bool
 }
 
 func newPythonArgs() *pythonArgs {
@@ -27,13 +28,15 @@ func newPythonArgs() *pythonArgs {
 		pathSeparator:    "/",
 		pythonVersion:    "",
 		python3Version:   "",
-		hasFiles:         true,
+		hasPyFiles:       true,
+		hasNotebookFiles: true,
 	}
 }
 
 func bootStrapPythonTest(args *pythonArgs) *python {
 	env := new(MockedEnvironment)
-	env.On("hasFiles", "*.py").Return(args.hasFiles)
+	env.On("hasFiles", "*.py").Return(args.hasPyFiles)
+	env.On("hasFiles", "*.ipynb").Return(args.hasNotebookFiles)
 	env.On("runCommand", "python", []string{"--version"}).Return(args.pythonVersion)
 	env.On("runCommand", "python3", []string{"--version"}).Return(args.python3Version)
 	env.On("getenv", "VIRTUAL_ENV").Return(args.virtualEnvName)
@@ -49,9 +52,46 @@ func bootStrapPythonTest(args *pythonArgs) *python {
 
 func TestPythonWriterDisabledNoPythonFiles(t *testing.T) {
 	args := newPythonArgs()
-	args.hasFiles = false
+	args.hasPyFiles = false
+	args.hasNotebookFiles = false
+	args.python3Version = "3.4.5"
 	python := bootStrapPythonTest(args)
 	assert.False(t, python.enabled(), "there are no Python files in the current folder")
+}
+
+func TestPythonWriterDisabledHasPythonFiles(t *testing.T) {
+	args := newPythonArgs()
+	args.hasPyFiles = true
+	args.hasNotebookFiles = false
+	args.python3Version = "3.4.5"
+	python := bootStrapPythonTest(args)
+	assert.True(t, python.enabled(), "there should be a Python file in the current folder")
+}
+
+func TestPythonWriterDisabledHasJupyterNotebookFiles(t *testing.T) {
+	args := newPythonArgs()
+	args.hasPyFiles = false
+	args.hasNotebookFiles = true
+	args.python3Version = "3.4.5"
+	python := bootStrapPythonTest(args)
+	assert.True(t, python.enabled(), "there should be a Jupyter Notebook file in the current folder")
+}
+
+func TestPythonWriterDisabledHasPyAndJupyterNotebookFiles(t *testing.T) {
+	args := newPythonArgs()
+	args.hasPyFiles = true
+	args.hasNotebookFiles = true
+	args.python3Version = "3.4.5"
+	python := bootStrapPythonTest(args)
+	assert.True(t, python.enabled(), "there should be a Jupyter Notebook file in the current folder")
+}
+
+func TestPythonWriterDisabledHasPyAndJupyterNotebookFilesButNoVersion(t *testing.T) {
+	args := newPythonArgs()
+	args.hasPyFiles = true
+	args.hasNotebookFiles = true
+	python := bootStrapPythonTest(args)
+	assert.False(t, python.enabled(), "there should be a Jupyter Notebook file in the current folder")
 }
 
 func TestPythonWriterDisabledNoPythonInstalled(t *testing.T) {

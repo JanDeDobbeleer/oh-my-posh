@@ -12,6 +12,7 @@ type args struct {
 	PrintConfig *bool
 	Config      *string
 	Shell       *string
+	PWD         *string
 }
 
 func main() {
@@ -32,6 +33,10 @@ func main() {
 			"shell",
 			"",
 			"Override the shell you are working in"),
+		PWD: flag.String(
+			"pwd",
+			"",
+			"the path you are working in"),
 	}
 	flag.Parse()
 	env := &environment{

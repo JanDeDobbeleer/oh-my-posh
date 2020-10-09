@@ -48,7 +48,7 @@ func (env *environment) getcwd() string {
 		// on Windows, and being case sentisitive and not consistent and all, this gives silly issues
 		return strings.Replace(pwd, "c:", "C:", 1)
 	}
-	if *env.args.PWD != "" {
+	if env.args.PWD != nil && *env.args.PWD != "" {
 		return correctPath(*env.args.PWD)
 	}
 	dir, err := os.Getwd()

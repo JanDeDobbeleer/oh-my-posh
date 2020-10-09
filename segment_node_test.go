@@ -7,10 +7,11 @@ import (
 )
 
 type nodeArgs struct {
-	enabled     bool
-	nodeVersion string
-	hasJS       bool
-	hasTS       bool
+	enabled        bool
+	nodeVersion    string
+	hasJS          bool
+	hasTS          bool
+	displayVersion bool
 }
 
 func bootStrapNodeTest(args *nodeArgs) *node {
@@ -19,8 +20,14 @@ func bootStrapNodeTest(args *nodeArgs) *node {
 	env.On("runCommand", "node", []string{"--version"}).Return(args.nodeVersion)
 	env.On("hasFiles", "*.js").Return(args.hasJS)
 	env.On("hasFiles", "*.ts").Return(args.hasTS)
+	props := &properties{
+		values: map[Property]interface{}{
+			DisplayVersion: args.displayVersion,
+		},
+	}
 	n := &node{
-		env: env,
+		env:   env,
+		props: props,
 	}
 	return n
 }
@@ -44,9 +51,10 @@ func TestNodeWriterDisabledNoJSorTSFiles(t *testing.T) {
 func TestNodeEnabledJSFiles(t *testing.T) {
 	expected := "1.14"
 	args := &nodeArgs{
-		enabled:     true,
-		nodeVersion: expected,
-		hasJS:       true,
+		enabled:        true,
+		nodeVersion:    expected,
+		hasJS:          true,
+		displayVersion: true,
 	}
 	node := bootStrapNodeTest(args)
 	assert.True(t, node.enabled())
@@ -56,9 +64,10 @@ func TestNodeEnabledJSFiles(t *testing.T) {
 func TestNodeEnabledTsFiles(t *testing.T) {
 	expected := "1.14"
 	args := &nodeArgs{
-		enabled:     true,
-		nodeVersion: expected,
-		hasTS:       true,
+		enabled:        true,
+		nodeVersion:    expected,
+		hasTS:          true,
+		displayVersion: true,
 	}
 	node := bootStrapNodeTest(args)
 	assert.True(t, node.enabled())
@@ -68,12 +77,39 @@ func TestNodeEnabledTsFiles(t *testing.T) {
 func TestNodeEnabledJsAndTsFiles(t *testing.T) {
 	expected := "1.14"
 	args := &nodeArgs{
-		enabled:     true,
-		nodeVersion: expected,
-		hasJS:       true,
-		hasTS:       true,
+		enabled:        true,
+		nodeVersion:    expected,
+		hasJS:          true,
+		hasTS:          true,
+		displayVersion: true,
 	}
 	node := bootStrapNodeTest(args)
 	assert.True(t, node.enabled())
 	assert.Equal(t, expected, node.string(), "node is available and JS and TS files are found")
+}
+
+func TestNodeEnabledNoVersion(t *testing.T) {
+	expected := ""
+	args := &nodeArgs{
+		enabled:        true,
+		nodeVersion:    "1.14",
+		hasJS:          true,
+		displayVersion: false,
+	}
+	node := bootStrapNodeTest(args)
+	assert.True(t, node.enabled())
+	assert.Equal(t, expected, node.string(), "we don't expect a version")
+}
+
+func TestNodeEnabledNodeVersion(t *testing.T) {
+	expected := "1.14"
+	args := &nodeArgs{
+		enabled:        true,
+		nodeVersion:    expected,
+		hasJS:          true,
+		displayVersion: true,
+	}
+	node := bootStrapNodeTest(args)
+	assert.True(t, node.enabled())
+	assert.Equal(t, expected, node.string(), "we expect a version")
 }

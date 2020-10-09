@@ -1,16 +1,16 @@
 package main
 
 type osInfo struct {
-	props          *properties
-	env            environmentInfo
+	props *properties
+	env   environmentInfo
 }
 
 const (
-	//Macos the string to use for macOS
-	macOS Property = "macos"
-	//LinuxIcon the string to use for linux
+	//MacOS the string/icon to use for MacOS
+	MacOS Property = "macos"
+	//Linux the string/icon to use for linux
 	Linux Property = "linux"
-	//WindowsIcon the icon to use for windows
+	//Windows the string/icon to use for windows
 	Windows Property = "windows"
 )
 
@@ -24,7 +24,7 @@ func (n *osInfo) string() string {
 	case "windows":
 		return n.props.getString(Windows, "\uE62A")
 	case "darwin":
-		return n.props.getString(macOS, "\uF179")
+		return n.props.getString(MacOS, "\uF179")
 	case "linux":
 		return n.props.getString(Linux, "\uF17C")
 	default:

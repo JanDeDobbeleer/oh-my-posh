@@ -10,6 +10,7 @@
 ### Environment
 
 - Oh my Posh version:
+- Theme:
 - Operating System:
 - Shell:
 - Terminal:

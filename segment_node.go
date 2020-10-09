@@ -6,8 +6,16 @@ type node struct {
 	nodeVersion string
 }
 
+const (
+	//DisplayVersion show the version number or not
+	DisplayVersion Property = "display_version"
+)
+
 func (n *node) string() string {
-	return n.nodeVersion
+	if n.props.getBool(DisplayVersion, true) {
+		return n.nodeVersion
+	}
+	return ""
 }
 
 func (n *node) init(props *properties, env environmentInfo) {

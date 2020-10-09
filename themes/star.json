@@ -5,41 +5,42 @@
       "alignment": "left",
       "segments": [
         {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#E06C75",
+          "properties": {
+            "root_icon": "root",
+            "prefix": "",
+            "postfix": " <#ffffff>in</> "
+          }
+        },
+        {
           "type": "path",
           "style": "plain",
-          "foreground": "#ffffff",
+          "foreground": "#55B9C4",
           "properties": {
-            "prefix": "",
             "home_icon": "~",
-            "style": "short",
-            "postfix": " on"
+            "style": "folder",
+            "prefix": ""
           }
         },
         {
           "type": "git",
           "style": "plain",
-          "foreground": "#F3C267",
+          "foreground": "#C678DD",
           "properties": {
-            "branch_icon": "",
-            "display_status": false,
-            "postfix": " <#C49EE9>[?!]</>"
+            "prefix": "<#ffffff>on</> ",
+            "branch_icon": "",
+            "display_status": true
           }
         },
         {
-          "type": "command",
+          "type": "node",
           "style": "plain",
-          "foreground": "#C49EE9",
+          "foreground": "#98C379",
           "properties": {
-            "shell": "bash",
-            "command": "find . -name package.json -depth 1 -exec echo \" <#ffffff>via node</>\" \\;"
-          }
-        },
-        {
-          "type": "root",
-          "style": "plain",
-          "foreground": "#B5B50D",
-          "properties": {
-            "root_icon": "⚡"
+            "display_version": true,
+            "prefix": "<#ffffff>via</> \uE781 "
           }
         },
         {
@@ -47,7 +48,8 @@
           "style": "plain",
           "foreground": "#C94A16",
           "properties": {
-            "prefix": "x"
+            "prefix": "x",
+            "display_exit_code": false
           }
         }
       ]

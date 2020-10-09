@@ -58,6 +58,8 @@ const (
 	Node SegmentType = "node"
 	//Os write os specific icon
 	Os SegmentType = "os"
+	//EnvVar writes the content of an environment variable
+	EnvVar SegmentType = "envvar"
 	//Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	//Plain writes it without ornaments
@@ -110,6 +112,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) (*properties, 
 		ShellInfo: &shell{},
 		Node:      &node{},
 		Os:        &osInfo{},
+		EnvVar:    &envvar{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

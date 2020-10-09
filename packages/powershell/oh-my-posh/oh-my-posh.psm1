@@ -31,6 +31,8 @@ if ($IsWindows) {
     & $poshCommand | Out-Null
 }
 
+function Set-PoshContext {}
+
 function Set-PoshPrompt {
     param(
         [Parameter(Mandatory = $false)]
@@ -52,6 +54,7 @@ function Set-PoshPrompt {
         $realLASTEXITCODE = $global:LASTEXITCODE
         $poshCommand = Get-PoshCommand
         $config = $global:PoshSettings.Theme
+        Set-PoshContext
         & $poshCommand -config $config -error $realLASTEXITCODE  -pwd $PWD
         $global:LASTEXITCODE = $realLASTEXITCODE
         Remove-Variable realLASTEXITCODE -Confirm:$false

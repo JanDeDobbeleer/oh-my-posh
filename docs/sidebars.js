@@ -16,6 +16,7 @@ module.exports = {
       items: [
         "battery",
         "command",
+        "environment",
         "exit",
         "git",
         "node",

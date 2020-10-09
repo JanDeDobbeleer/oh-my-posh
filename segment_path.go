@@ -58,7 +58,8 @@ func (pt *path) init(props *properties, env environmentInfo) {
 func (pt *path) getShortPath() string {
 	pwd := pt.env.getcwd()
 	mappedLocations := map[string]string{
-		"HKCU:": pt.props.getString(WindowsRegistryIcon, "HK:"),
+		"HKCU:": pt.props.getString(WindowsRegistryIcon, "REGISTRY"),
+		"HKLM:": pt.props.getString(WindowsRegistryIcon, "REGISTRY"),
 		"Microsoft.PowerShell.Core\\FileSystem::": "",
 		pt.env.homeDir(): pt.props.getString(HomeIcon, "~"),
 	}

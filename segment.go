@@ -56,7 +56,7 @@ const (
 	ShellInfo SegmentType = "shell"
 	//Node writes which node version is currently active
 	Node SegmentType = "node"
-	//OS write os specific icon
+	//Os write os specific icon
 	Os SegmentType = "os"
 	//Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"

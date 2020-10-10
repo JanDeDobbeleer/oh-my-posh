@@ -41,6 +41,8 @@ const (
 	BranchAheadIcon Property = "branch_ahead_icon"
 	//BranchBehindIcon the icon to display when the local branch is behind the remote
 	BranchBehindIcon Property = "branch_behind_icon"
+	//BranchGoneIcon the icon to use when ther's no remote
+	BranchGoneIcon Property = "branch_gone_icon"
 	//LocalWorkingIcon the icon to use as the local working area changes indicator
 	LocalWorkingIcon Property = "local_working_icon"
 	//LocalStagingIcon the icon to use as the local staging area changes indicator
@@ -74,7 +76,6 @@ func (g *git) string() string {
 	if !displayStatus {
 		return buffer.String()
 	}
-	// TODO: Add upstream gone icon
 	// if ahead, print with symbol
 	if g.repo.ahead > 0 {
 		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchAheadIcon, "+"), g.repo.ahead)
@@ -83,8 +84,10 @@ func (g *git) string() string {
 	if g.repo.behind > 0 {
 		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchBehindIcon, "-"), g.repo.behind)
 	}
-	if g.repo.behind == 0 && g.repo.ahead == 0 {
+	if g.repo.behind == 0 && g.repo.ahead == 0 && g.repo.upstream != "" {
 		fmt.Fprintf(buffer, " %s", g.props.getString(BranchIdenticalIcon, "="))
+	} else if g.repo.upstream == "" {
+		fmt.Fprintf(buffer, " %s", g.props.getString(BranchGoneIcon, "!="))
 	}
 	// if staging, print that part
 	if g.hasStaging() {

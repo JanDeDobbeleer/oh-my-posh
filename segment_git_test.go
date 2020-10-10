@@ -261,3 +261,11 @@ func TestParseGitBranchInfoBehindandAhead(t *testing.T) {
 	assert.Equal(t, "2", got["behind"])
 	assert.Equal(t, "1", got["ahead"])
 }
+
+func TestParseGitBranchInfoNoRemote(t *testing.T) {
+	g := git{}
+	branchInfo := "## master"
+	got := g.parseGitStatusInfo(branchInfo)
+	assert.Equal(t, "master", got["local"])
+	assert.Empty(t, got["upstream"])
+}

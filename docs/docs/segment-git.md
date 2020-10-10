@@ -31,7 +31,7 @@ Local changes can also shown by default using the following syntax for both the 
     "local_staged_icon": "",
     "rebase_icon": " ",
     "cherry_pick_icon": " ",
-    "detached_icon": " ",
+    "commit_icon": " ",
     "tag_icon": "笠 "
   }
 }
@@ -48,5 +48,5 @@ Local changes can also shown by default using the following syntax for both the 
 - display_status: `boolean` - display the local changes or not
 - rebase_icon: `string` - icon/text to display before the context when in a rebase
 - cherry_pick_icon: `string` - icon/text to display before the context when doing a cherry-pick
-- detached_icon: `string` - icon/text to display before the detached head context
+- commit_icon: `string` - icon/text to display before the commit context
 - tag_icon: `string` - icon/text to display before the tag context

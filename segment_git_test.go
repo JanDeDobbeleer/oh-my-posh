@@ -68,8 +68,6 @@ func setupHEADContextEnv(context *detachedContext) environmentInfo {
 	env.On("getFileContent", ".git/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
 	env.On("hasFiles", ".git/CHERRY_PICK_HEAD").Return(context.cherryPick)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-parse", "--short", "HEAD"}).Return(context.currentCommit)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rebase", "--show-current-patch"}).Return(context.rebase)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "symbolic-ref", "-q", "--short", "HEAD"}).Return(context.branchName)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "describe", "--tags", "--exact-match"}).Return(context.tagName)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.origin}).Return(context.origin)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.onto}).Return(context.onto)
@@ -78,7 +76,7 @@ func setupHEADContextEnv(context *detachedContext) environmentInfo {
 }
 
 func TestGetGitDetachedCommitHash(t *testing.T) {
-	want := "DETACHED:lalasha1"
+	want := "COMMIT:lalasha1"
 	context := &detachedContext{
 		currentCommit: "lalasha1",
 	}
@@ -86,7 +84,7 @@ func TestGetGitDetachedCommitHash(t *testing.T) {
 	g := &git{
 		env: env,
 	}
-	got := g.getGitHEADContext()
+	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
 
@@ -100,12 +98,12 @@ func TestGetGitHEADContextTagName(t *testing.T) {
 	g := &git{
 		env: env,
 	}
-	got := g.getGitHEADContext()
+	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
 
 func TestGetGitHEADContextRebaseMerge(t *testing.T) {
-	want := "REBASE:cool-feature-bro onto main (2/3) at whatever"
+	want := "REBASE:BRANCH:cool-feature-bro onto BRANCH:main (2/3) at COMMIT:whatever"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		rebase:        "true",
@@ -119,12 +117,12 @@ func TestGetGitHEADContextRebaseMerge(t *testing.T) {
 	g := &git{
 		env: env,
 	}
-	got := g.getGitHEADContext()
+	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
 
 func TestGetGitHEADContextRebaseApply(t *testing.T) {
-	want := "REBASING:cool-feature-bro (2/3) at whatever"
+	want := "REBASING:BRANCH:cool-feature-bro (2/3) at COMMIT:whatever"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		rebase:        "true",
@@ -137,12 +135,12 @@ func TestGetGitHEADContextRebaseApply(t *testing.T) {
 	g := &git{
 		env: env,
 	}
-	got := g.getGitHEADContext()
+	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
 
 func TestGetGitHEADContextRebaseUnknown(t *testing.T) {
-	want := "REBASE:UNKNOWN"
+	want := "COMMIT:whatever"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		rebase:        "true",
@@ -151,12 +149,12 @@ func TestGetGitHEADContextRebaseUnknown(t *testing.T) {
 	g := &git{
 		env: env,
 	}
-	got := g.getGitHEADContext()
+	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
 
 func TestGetGitHEADContextCherryPickOnBranch(t *testing.T) {
-	want := "CHERRY PICK:pickme onto main"
+	want := "CHERRY PICK:pickme onto BRANCH:main"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		branchName:    "main",
@@ -167,12 +165,12 @@ func TestGetGitHEADContextCherryPickOnBranch(t *testing.T) {
 	g := &git{
 		env: env,
 	}
-	got := g.getGitHEADContext()
+	got := g.getGitHEADContext("main")
 	assert.Equal(t, want, got)
 }
 
 func TestGetGitHEADContextCherryPickOnTag(t *testing.T) {
-	want := "CHERRY PICK:pickme onto v3.4.6"
+	want := "CHERRY PICK:pickme onto TAG:v3.4.6"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		tagName:       "v3.4.6",
@@ -183,7 +181,7 @@ func TestGetGitHEADContextCherryPickOnTag(t *testing.T) {
 	g := &git{
 		env: env,
 	}
-	got := g.getGitHEADContext()
+	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
 

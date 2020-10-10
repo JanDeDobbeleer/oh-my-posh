@@ -13,7 +13,7 @@ type gitRepo struct {
 	staging    *gitStatus
 	ahead      int
 	behind     int
-	branch     string
+	HEAD       string
 	upstream   string
 	stashCount int
 }
@@ -51,8 +51,8 @@ const (
 	RebaseIcon Property = "rebase_icon"
 	//CherryPickIcon shows before the cherry-pick context
 	CherryPickIcon Property = "cherry_pick_icon"
-	//DetachedIcon shows before the detached context
-	DetachedIcon Property = "detached_icon"
+	//CommitIcon shows before the detached context
+	CommitIcon Property = "commit_icon"
 	//TagIcon shows before the tag context
 	TagIcon Property = "tag_icon"
 )
@@ -69,7 +69,7 @@ func (g *git) string() string {
 	g.getGitStatus()
 	buffer := new(bytes.Buffer)
 	// branchName
-	fmt.Fprintf(buffer, "%s", g.repo.branch)
+	fmt.Fprintf(buffer, "%s", g.repo.HEAD)
 	displayStatus := g.props.getBool(DisplayStatus, true)
 	if !displayStatus {
 		return buffer.String()
@@ -115,7 +115,7 @@ func (g *git) getGitStatus() {
 		g.repo.behind, _ = strconv.Atoi(status["behind"])
 		g.repo.upstream = status["upstream"]
 	}
-	g.repo.branch = g.getGitHEADContext()
+	g.repo.HEAD = g.getGitHEADContext(status["local"])
 	g.repo.stashCount = g.getStashContext()
 }
 
@@ -124,41 +124,21 @@ func (g *git) getGitCommandOutput(args ...string) string {
 	return g.env.runCommand("git", args...)
 }
 
-func (g *git) getGitHEADContext() string {
-	commit := g.getGitCommandOutput("rev-parse", "--short", "HEAD")
-	rebase := g.getGitCommandOutput("rebase", "--show-current-patch")
-	if rebase != "" {
-		return g.getGitRebaseContext(commit)
-	}
-	// branch
-	icon := g.props.getString(BranchIcon, "BRANCH:")
-	ref := g.getGitCommandOutput("symbolic-ref", "-q", "--short", "HEAD")
+func (g *git) getGitHEADContext(ref string) string {
+	branchIcon := g.props.getString(BranchIcon, "BRANCH:")
 	if ref == "" {
-		// get a tag name if there's a match for HEAD
-		icon = g.props.getString(TagIcon, "TAG:")
-		ref = g.getGitCommandOutput("describe", "--tags", "--exact-match")
+		ref = g.getPrettyHEADName()
+	} else {
+		ref = fmt.Sprintf("%s%s", branchIcon, ref)
 	}
-	// validate additional context
-	if g.env.hasFiles(".git/CHERRY_PICK_HEAD") {
-		sha := g.getGitRefFileSymbolicName("CHERRY_PICK_HEAD")
-		icon := g.props.getString(CherryPickIcon, "CHERRY PICK:")
-		return fmt.Sprintf("%s%s onto %s", icon, sha, ref)
-	}
-	if ref == "" {
-		ref = commit
-		icon = g.props.getString(DetachedIcon, "DETACHED:")
-	}
-	return fmt.Sprintf("%s%s", icon, ref)
-}
-
-func (g *git) getGitRebaseContext(commit string) string {
+	// rebase
 	if g.env.hasFolder(".git/rebase-merge") {
 		origin := g.getGitRefFileSymbolicName("rebase-merge/orig-head")
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
 		step := g.getGitFileContents("rebase-merge/msgnum")
 		total := g.getGitFileContents("rebase-merge/end")
 		icon := g.props.getString(RebaseIcon, "REBASE:")
-		return fmt.Sprintf("%s%s onto %s (%s/%s) at %s", icon, origin, onto, step, total, commit)
+		return fmt.Sprintf("%s%s%s onto %s%s (%s/%s) at %s", icon, branchIcon, origin, branchIcon, onto, step, total, ref)
 	}
 	if g.env.hasFolder(".git/rebase-apply") {
 		head := g.getGitFileContents("rebase-apply/head-name")
@@ -166,10 +146,26 @@ func (g *git) getGitRebaseContext(commit string) string {
 		step := g.getGitFileContents("rebase-apply/next")
 		total := g.getGitFileContents("rebase-apply/last")
 		icon := g.props.getString(RebaseIcon, "REBASING:")
-		return fmt.Sprintf("%s%s (%s/%s) at %s", icon, origin, step, total, commit)
+		return fmt.Sprintf("%s%s%s (%s/%s) at %s", icon, branchIcon, origin, step, total, ref)
 	}
-	icon := g.props.getString(RebaseIcon, "REBASE:")
-	return fmt.Sprintf("%sUNKNOWN", icon)
+	// cherry-pick
+	if g.env.hasFiles(".git/CHERRY_PICK_HEAD") {
+		sha := g.getGitRefFileSymbolicName("CHERRY_PICK_HEAD")
+		icon := g.props.getString(CherryPickIcon, "CHERRY PICK:")
+		return fmt.Sprintf("%s%s onto %s", icon, sha, ref)
+	}
+	return ref
+}
+
+func (g *git) getPrettyHEADName() string {
+	// check for tag
+	ref := g.getGitCommandOutput("describe", "--tags", "--exact-match")
+	if ref != "" {
+		return fmt.Sprintf("%s%s", g.props.getString(TagIcon, "TAG:"), ref)
+	}
+	// fallback to commit
+	ref = g.getGitCommandOutput("rev-parse", "--short", "HEAD")
+	return fmt.Sprintf("%s%s", g.props.getString(CommitIcon, "COMMIT:"), ref)
 }
 
 func (g *git) getGitFileContents(file string) string {

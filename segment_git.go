@@ -15,7 +15,7 @@ type gitRepo struct {
 	behind     int
 	HEAD       string
 	upstream   string
-	stashCount int
+	stashCount string
 }
 
 type gitStatus struct {
@@ -57,6 +57,10 @@ const (
 	CommitIcon Property = "commit_icon"
 	//TagIcon shows before the tag context
 	TagIcon Property = "tag_icon"
+	//DisplayStashCount show stash count or not
+	DisplayStashCount Property = "display_stash_count"
+	//StashCountIcon shows before the stash context
+	StashCountIcon Property = "stash_count_icon"
 )
 
 func (g *git) enabled() bool {
@@ -97,7 +101,9 @@ func (g *git) string() string {
 	if g.hasWorking() {
 		fmt.Fprintf(buffer, " %s +%d ~%d -%d", g.props.getString(LocalWorkingIcon, "#"), g.repo.working.added+g.repo.working.untracked, g.repo.working.modified, g.repo.working.deleted)
 	}
-	// TODO: Add stash entries
+	if g.props.getBool(DisplayStashCount, false) && g.repo.stashCount != "" {
+		fmt.Fprintf(buffer, " %s%s", g.props.getString(StashCountIcon, ""), g.repo.stashCount)
+	}
 	return buffer.String()
 }
 
@@ -210,9 +216,8 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 	return &status
 }
 
-func (g *git) getStashContext() int {
-	stash := g.getGitCommandOutput("stash", "list")
-	return numberOfLinesInString(stash)
+func (g *git) getStashContext() string {
+	return g.getGitCommandOutput("rev-list", "--walk-reflogs", "--count", "refs/stash")
 }
 
 func (g *git) hasStaging() bool {
@@ -239,17 +244,4 @@ func groupDict(pattern *regexp.Regexp, haystack string) map[string]string {
 		}
 	}
 	return result
-}
-
-func numberOfLinesInString(s string) int {
-	n := 0
-	for _, r := range s {
-		if r == '\n' {
-			n++
-		}
-	}
-	if len(s) > 0 && !strings.HasSuffix(s, "\n") {
-		n++
-	}
-	return n
 }

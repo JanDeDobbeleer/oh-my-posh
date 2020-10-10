@@ -50,3 +50,5 @@ Local changes can also shown by default using the following syntax for both the 
 - cherry_pick_icon: `string` - icon/text to display before the context when doing a cherry-pick
 - commit_icon: `string` - icon/text to display before the commit context
 - tag_icon: `string` - icon/text to display before the tag context
+- display_stash_count: `boolean` show stash count or not
+- stash_count_icon: `string` icon/text to display before the stash context

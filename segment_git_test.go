@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -186,9 +185,9 @@ func TestGetGitHEADContextCherryPickOnTag(t *testing.T) {
 }
 
 func TestGetStashContextZeroEntries(t *testing.T) {
-	want := 0
+	want := ""
 	env := new(MockedEnvironment)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "stash", "list"}).Return("")
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-list", "--walk-reflogs", "--count", "refs/stash"}).Return("")
 	g := &git{
 		env: env,
 	}
@@ -197,24 +196,9 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 }
 
 func TestGetStashContextMultipleEntries(t *testing.T) {
-	want := rand.Intn(100)
-	var response string
-	for i := 0; i < want; i++ {
-		response += "I'm a stash entry\n"
-	}
+	want := "2"
 	env := new(MockedEnvironment)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "stash", "list"}).Return(response)
-	g := &git{
-		env: env,
-	}
-	got := g.getStashContext()
-	assert.Equal(t, want, got)
-}
-
-func TestGetStashContextOneEntry(t *testing.T) {
-	want := 1
-	env := new(MockedEnvironment)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "stash", "list"}).Return("stash entry")
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-list", "--walk-reflogs", "--count", "refs/stash"}).Return("2")
 	g := &git{
 		env: env,
 	}

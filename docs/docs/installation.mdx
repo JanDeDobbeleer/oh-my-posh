@@ -124,7 +124,7 @@ function _update_ps1() {
     PS1="$(oh-my-posh -config ~/downloadedtheme.json -error $?)"
 }
 
-if [ "$TERM" != "linux" ] && [ -f oh-my-posh ]; then
+if [ "$TERM" != "linux" ] && [ -x "$(command -v oh-my-posh)" ]; then
     PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
 fi
 ```

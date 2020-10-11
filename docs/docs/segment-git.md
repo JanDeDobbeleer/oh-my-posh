@@ -52,3 +52,4 @@ Local changes can also shown by default using the following syntax for both the 
 - tag_icon: `string` - icon/text to display before the tag context
 - display_stash_count: `boolean` show stash count or not
 - stash_count_icon: `string` icon/text to display before the stash context
+- status_separator_icon: `string` icon/text to display between staging and working area changes

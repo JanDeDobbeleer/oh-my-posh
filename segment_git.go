@@ -26,6 +26,25 @@ type gitStatus struct {
 	untracked int
 }
 
+func (s *gitStatus) string(prefix string) string {
+	var status string
+	stringIfValue := func(value int, prefix string) string {
+		if value > 0 {
+			return fmt.Sprintf(" %s%d", prefix, value)
+		}
+		return ""
+	}
+	status += stringIfValue(s.added, "+")
+	status += stringIfValue(s.modified, "~")
+	status += stringIfValue(s.deleted, "-")
+	status += stringIfValue(s.untracked, "?")
+	status += stringIfValue(s.unmerged, "x")
+	if status != "" {
+		return fmt.Sprintf(" %s%s", prefix, status)
+	}
+	return status
+}
+
 type git struct {
 	props *properties
 	env   environmentInfo
@@ -61,6 +80,8 @@ const (
 	DisplayStashCount Property = "display_stash_count"
 	//StashCountIcon shows before the stash context
 	StashCountIcon Property = "stash_count_icon"
+	//StatusSeparatorIcon shows between staging and working area
+	StatusSeparatorIcon Property = "status_separator_icon"
 )
 
 func (g *git) enabled() bool {
@@ -93,14 +114,13 @@ func (g *git) string() string {
 	} else if g.repo.upstream == "" {
 		fmt.Fprintf(buffer, " %s", g.props.getString(BranchGoneIcon, "!="))
 	}
-	// if staging, print that part
-	if g.hasStaging() {
-		fmt.Fprintf(buffer, " %s +%d ~%d -%d", g.props.getString(LocalStagingIcon, "~"), g.repo.staging.added, g.repo.staging.modified, g.repo.staging.deleted)
+	staging := g.repo.staging.string(g.props.getString(LocalStagingIcon, "~"))
+	working := g.repo.working.string(g.props.getString(LocalWorkingIcon, "#"))
+	fmt.Fprint(buffer, staging)
+	if staging != "" && working != "" {
+		fmt.Fprint(buffer, g.props.getString(StatusSeparatorIcon, " |"))
 	}
-	// if working, print that part
-	if g.hasWorking() {
-		fmt.Fprintf(buffer, " %s +%d ~%d -%d", g.props.getString(LocalWorkingIcon, "#"), g.repo.working.added+g.repo.working.untracked, g.repo.working.modified, g.repo.working.deleted)
-	}
+	fmt.Fprint(buffer, working)
 	if g.props.getBool(DisplayStashCount, false) && g.repo.stashCount != "" {
 		fmt.Fprintf(buffer, " %s%s", g.props.getString(StashCountIcon, ""), g.repo.stashCount)
 	}
@@ -218,14 +238,6 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 
 func (g *git) getStashContext() string {
 	return g.getGitCommandOutput("rev-list", "--walk-reflogs", "--count", "refs/stash")
-}
-
-func (g *git) hasStaging() bool {
-	return g.repo.staging.deleted > 0 || g.repo.staging.added > 0 || g.repo.staging.unmerged > 0 || g.repo.staging.modified > 0
-}
-
-func (g *git) hasWorking() bool {
-	return g.repo.working.deleted > 0 || g.repo.working.added > 0 || g.repo.working.unmerged > 0 || g.repo.working.modified > 0 || g.repo.working.untracked > 0
 }
 
 func (g *git) parseGitStatusInfo(branchInfo string) map[string]string {

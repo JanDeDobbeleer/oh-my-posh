@@ -59,7 +59,12 @@
             "tag_icon": "笠",
             "display_stash_count": true,
             "stash_count_icon": "\uF692 ",
-            "merge_icon": "\uE726 "
+            "merge_icon": "\uE726 ",
+            "display_upstream_icon": true,
+            "github_icon": "\uE709",
+            "bitbucket_icon": "\uE703",
+            "gitlab_icon": "\uE296",
+            "git_icon": "\uE702"
           }
         },
         {

@@ -373,3 +373,48 @@ func TestParseGitStatsInvalidLine(t *testing.T) {
 	status := g.parseGitStats(output, false)
 	assert.Equal(t, expected, status)
 }
+
+func bootstrapUpstreamTest(upstream string) *git {
+	env := &MockedEnvironment{}
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(upstream, nil)
+	props := &properties{
+		values: map[Property]interface{}{
+			GithubIcon:    "GH",
+			GitlabIcon:    "GL",
+			BitbucketIcon: "BB",
+			GitIcon:       "G",
+		},
+	}
+	g := &git{
+		env: env,
+		repo: &gitRepo{
+			upstream: "origin/main",
+		},
+		props: props,
+	}
+	return g
+}
+
+func TestGetUpstreamSymbolGitHub(t *testing.T) {
+	g := bootstrapUpstreamTest("github.com/test")
+	upstreamIcon := g.getUpstreamSymbol()
+	assert.Equal(t, "GH", upstreamIcon)
+}
+
+func TestGetUpstreamSymbolGitLab(t *testing.T) {
+	g := bootstrapUpstreamTest("gitlab.com/test")
+	upstreamIcon := g.getUpstreamSymbol()
+	assert.Equal(t, "GL", upstreamIcon)
+}
+
+func TestGetUpstreamSymbolBitBucket(t *testing.T) {
+	g := bootstrapUpstreamTest("bitbucket.org/test")
+	upstreamIcon := g.getUpstreamSymbol()
+	assert.Equal(t, "BB", upstreamIcon)
+}
+
+func TestGetUpstreamSymbolGit(t *testing.T) {
+	g := bootstrapUpstreamTest("gitstash.com/test")
+	upstreamIcon := g.getUpstreamSymbol()
+	assert.Equal(t, "G", upstreamIcon)
+}

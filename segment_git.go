@@ -84,6 +84,16 @@ const (
 	StatusSeparatorIcon Property = "status_separator_icon"
 	//MergeIcon shows before the merge context
 	MergeIcon Property = "merge_icon"
+	//DisplayUpstreamIcon show or hide the upstream icon
+	DisplayUpstreamIcon Property = "display_upstream_icon"
+	//GithubIcon shows√ when upstream is github
+	GithubIcon Property = "github_icon"
+	//BitbucketIcon shows  when upstream is bitbucket
+	BitbucketIcon Property = "bitbucket_icon"
+	//GitlabIcon shows when upstream is gitlab
+	GitlabIcon Property = "gitlab_icon"
+	//GitIcon shows when the upstream can't be identified
+	GitIcon Property = "git_icon"
 )
 
 func (g *git) enabled() bool {
@@ -98,6 +108,9 @@ func (g *git) string() string {
 	g.getGitStatus()
 	buffer := new(bytes.Buffer)
 	// branchName
+	if g.repo.upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
+		fmt.Fprintf(buffer, "%s", g.getUpstreamSymbol())
+	}
 	fmt.Fprintf(buffer, "%s", g.repo.HEAD)
 	displayStatus := g.props.getBool(DisplayStatus, true)
 	if !displayStatus {
@@ -132,6 +145,22 @@ func (g *git) string() string {
 func (g *git) init(props *properties, env environmentInfo) {
 	g.props = props
 	g.env = env
+}
+
+func (g *git) getUpstreamSymbol() string {
+	upstreamRegex := regexp.MustCompile("/.*")
+	upstream := upstreamRegex.ReplaceAllString(g.repo.upstream, "")
+	url := g.getGitCommandOutput("remote", "get-url", upstream)
+	if strings.Contains(url, "github") {
+		return g.props.getString(GithubIcon, "GITHUB")
+	}
+	if strings.Contains(url, "gitlab") {
+		return g.props.getString(GitlabIcon, "GITLAB")
+	}
+	if strings.Contains(url, "bitbucket") {
+		return g.props.getString(BitbucketIcon, "BITBUCKET")
+	}
+	return g.props.getString(GitIcon, "GIT")
 }
 
 func (g *git) getGitStatus() {

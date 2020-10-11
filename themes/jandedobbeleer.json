@@ -56,7 +56,10 @@
             "rebase_icon": " ",
             "cherry_pick_icon": " ",
             "detached_icon": " ",
-            "tag_icon": "笠"
+            "tag_icon": "笠",
+            "display_stash_count": true,
+            "stash_count_icon": "\uF692 ",
+            "merge_icon": "\uE726 "
           }
         },
         {

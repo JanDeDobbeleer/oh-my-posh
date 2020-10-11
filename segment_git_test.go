@@ -287,3 +287,89 @@ func TestParseGitBranchInfoNoRemote(t *testing.T) {
 	assert.Equal(t, "master", got["local"])
 	assert.Empty(t, got["upstream"])
 }
+
+func TestGitStatusUnmerged(t *testing.T) {
+	expected := " working: x1"
+	status := &gitStatus{
+		unmerged: 1,
+	}
+	assert.Equal(t, expected, status.string("working:"))
+}
+
+func TestGitStatusUnmergedModified(t *testing.T) {
+	expected := " working: ~3 x1"
+	status := &gitStatus{
+		unmerged: 1,
+		modified: 3,
+	}
+	assert.Equal(t, expected, status.string("working:"))
+}
+
+func TestGitStatusEmpty(t *testing.T) {
+	expected := ""
+	status := &gitStatus{}
+	assert.Equal(t, expected, status.string("working:"))
+}
+
+func TestParseGitStatsWorking(t *testing.T) {
+	g := &git{}
+	output := []string{
+		"## amazing-feat",
+		" M change.go",
+		"DD change.go",
+		" ? change.go",
+		" ? change.go",
+		" A change.go",
+		" U change.go",
+		" R change.go",
+		" C change.go",
+	}
+	status := g.parseGitStats(output, true)
+	assert.Equal(t, 3, status.modified)
+	assert.Equal(t, 1, status.unmerged)
+	assert.Equal(t, 1, status.added)
+	assert.Equal(t, 1, status.deleted)
+	assert.Equal(t, 2, status.untracked)
+}
+
+func TestParseGitStatsStaging(t *testing.T) {
+	g := &git{}
+	output := []string{
+		"## amazing-feat",
+		" M change.go",
+		"DD change.go",
+		" ? change.go",
+		"?? change.go",
+		" A change.go",
+		"DU change.go",
+		"MR change.go",
+		"AC change.go",
+	}
+	status := g.parseGitStats(output, false)
+	assert.Equal(t, 1, status.modified)
+	assert.Equal(t, 0, status.unmerged)
+	assert.Equal(t, 1, status.added)
+	assert.Equal(t, 2, status.deleted)
+	assert.Equal(t, 1, status.untracked)
+}
+
+func TestParseGitStatsNoChanges(t *testing.T) {
+	g := &git{}
+	expected := &gitStatus{}
+	output := []string{
+		"## amazing-feat",
+	}
+	status := g.parseGitStats(output, false)
+	assert.Equal(t, expected, status)
+}
+
+func TestParseGitStatsInvalidLine(t *testing.T) {
+	g := &git{}
+	expected := &gitStatus{}
+	output := []string{
+		"## amazing-feat",
+		"#",
+	}
+	status := g.parseGitStats(output, false)
+	assert.Equal(t, expected, status)
+}

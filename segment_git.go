@@ -82,6 +82,8 @@ const (
 	StashCountIcon Property = "stash_count_icon"
 	//StatusSeparatorIcon shows between staging and working area
 	StatusSeparatorIcon Property = "status_separator_icon"
+	//MergeIcon shows before the merge context
+	MergeIcon Property = "merge_icon"
 )
 
 func (g *git) enabled() bool {
@@ -176,6 +178,12 @@ func (g *git) getGitHEADContext(ref string) string {
 		total := g.getGitFileContents("rebase-apply/last")
 		icon := g.props.getString(RebaseIcon, "REBASING:")
 		return fmt.Sprintf("%s%s%s (%s/%s) at %s", icon, branchIcon, origin, step, total, ref)
+	}
+	// merge
+	if g.env.hasFiles(".git/MERGE_HEAD") {
+		mergeHEAD := g.getGitRefFileSymbolicName("MERGE_HEAD")
+		icon := g.props.getString(MergeIcon, "MERGING:")
+		return fmt.Sprintf("%s%s%s into %s", icon, branchIcon, mergeHEAD, ref)
 	}
 	// cherry-pick
 	if g.env.hasFiles(".git/CHERRY_PICK_HEAD") {

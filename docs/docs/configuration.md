@@ -47,9 +47,8 @@ which you can find [here][nf].
 
 ## General Settings
 
-At the top you can see `final_space`. This tells the engine to add a space at the end of the prompt once all blocks and
-segments are rendered. This is useful when there's conditional logic that shows or hides segments at the end of your
-prompt. That way you don't have to worry about how to handle that space at the end.
+- final_space: `boolean` - when true adds a space at the end of the prompt
+- console_title: `boolean` - when true sets the current location as the console title
 
 > "I Like The Way You Speak Words" - Gary Goodspeed
 

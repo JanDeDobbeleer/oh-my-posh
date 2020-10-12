@@ -8,8 +8,9 @@ import (
 
 //Settings holds all the theme for rendering the prompt
 type Settings struct {
-	FinalSpace bool     `json:"final_space"`
-	Blocks     []*Block `json:"blocks"`
+	FinalSpace   bool     `json:"final_space"`
+	ConsoleTitle bool     `json:"console_title"`
+	Blocks       []*Block `json:"blocks"`
 }
 
 //BlockType type of block

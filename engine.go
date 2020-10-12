@@ -126,6 +126,9 @@ func (e *engine) render() {
 			fmt.Print(e.renderBlockSegments(block))
 		}
 	}
+	if e.settings.ConsoleTitle {
+		e.renderer.setConsoleTitle(e.env.getcwd())
+	}
 	if e.settings.FinalSpace {
 		fmt.Print(" ")
 	}

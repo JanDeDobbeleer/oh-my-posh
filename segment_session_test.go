@@ -1,7 +1,6 @@
 package main
 
 import (
-	"os/user"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,10 +8,7 @@ import (
 
 func setupSession(userInfoSeparator string, username string, hostname string, goos string) session {
 	env := new(MockedEnvironment)
-	user := user.User{
-		Username: username,
-	}
-	env.On("getCurrentUser", nil).Return(&user, nil)
+	env.On("getCurrentUser", nil).Return(username)
 	env.On("getHostName", nil).Return(hostname, nil)
 	env.On("getRuntimeGOOS", nil).Return(goos)
 	props := &properties{
@@ -60,4 +56,11 @@ func TestWriteOnlyHostname(t *testing.T) {
 	want := "<#fff></><#fff>surface</>"
 	got := s.getFormattedText()
 	assert.EqualValues(t, want, got)
+}
+
+func TestSession(t *testing.T) {
+	s := &session{
+		env: &environment{},
+	}
+	assert.NotEmpty(t, s.getUserName())
 }

@@ -22,7 +22,7 @@ type environmentInfo interface {
 	hasFolder(folder string) bool
 	getFileContent(file string) string
 	getPathSeperator() string
-	getCurrentUser() (*user.User, error)
+	getCurrentUser() string
 	isRunningAsRoot() bool
 	getHostName() (string, error)
 	getRuntimeGOOS() string
@@ -101,8 +101,12 @@ func (env *environment) getPathSeperator() string {
 	return string(os.PathSeparator)
 }
 
-func (env *environment) getCurrentUser() (*user.User, error) {
-	return user.Current()
+func (env *environment) getCurrentUser() string {
+	user := os.Getenv("USER")
+	if user == "" {
+		user = os.Getenv("USERNAME")
+	}
+	return user
 }
 
 func (env *environment) getHostName() (string, error) {

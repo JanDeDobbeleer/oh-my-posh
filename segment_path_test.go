@@ -2,7 +2,6 @@ package main
 
 import (
 	"math/rand"
-	"os/user"
 	"testing"
 
 	"github.com/distatus/battery"
@@ -49,9 +48,9 @@ func (env *MockedEnvironment) getPathSeperator() string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) getCurrentUser() (*user.User, error) {
+func (env *MockedEnvironment) getCurrentUser() string {
 	args := env.Called(nil)
-	return args.Get(0).(*user.User), args.Error(1)
+	return args.String(0)
 }
 
 func (env *MockedEnvironment) getHostName() (string, error) {

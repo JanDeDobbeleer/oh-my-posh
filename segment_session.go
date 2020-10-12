@@ -61,11 +61,8 @@ func (s *session) getUserName() string {
 	if !s.props.getBool(DisplayUser, true) {
 		return ""
 	}
-	user, err := s.env.getCurrentUser()
-	if err != nil {
-		return "unknown"
-	}
-	username := strings.TrimSpace(user.Username)
+	user := s.env.getCurrentUser()
+	username := strings.TrimSpace(user)
 	if s.env.getRuntimeGOOS() == "windows" && strings.Contains(username, "\\") {
 		username = strings.Split(username, "\\")[1]
 	}

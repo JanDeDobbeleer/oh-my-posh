@@ -36,6 +36,7 @@ const (
 	//Transparent implies a transparent color
 	Transparent string = "transparent"
 	zsh         Shell  = "zsh"
+	bash        Shell  = "bash"
 	universal   Shell  = "any"
 )
 
@@ -54,6 +55,16 @@ func (r *Renderer) init(shell string) {
 		r.formats.right = "%%{\x1b[%dD%%}"
 		r.formats.title = "%%{\033]0;%s\007%%}"
 		r.shell = zsh
+	case "bash":
+		r.formats.single = "\\[\x1b[%sm\\]%s\\[\x1b[0m\\]"
+		r.formats.full = "\\[\x1b[%sm\x1b[%sm\\]%s\\[\x1b[0m\\]"
+		r.formats.transparent = "\\[\x1b[%s;49m\x1b[7m\\]%s\\[\x1b[m\x1b[0m\\]"
+		r.formats.linebreak = "\n"
+		r.formats.linechange = "\\[\x1b[%d%s\\]"
+		r.formats.left = "\\[\x1b[%dC\\]"
+		r.formats.right = "\\[\x1b[%dD\\]"
+		r.formats.title = "\\[\033]0;%s\007\\]"
+		r.shell = bash
 	default:
 		r.formats.single = "\x1b[%sm%s\x1b[0m"
 		r.formats.full = "\x1b[%sm\x1b[%sm%s\x1b[0m"
@@ -109,9 +120,13 @@ func (r *Renderer) write(background string, foreground string, text string) {
 func (r *Renderer) lenWithoutANSI(str string) int {
 	re := regexp.MustCompile(r.formats.rANSI)
 	stripped := re.ReplaceAllString(str, "")
-	if r.shell == zsh {
+	switch r.shell {
+	case zsh:
 		stripped = strings.Replace(stripped, "%{", "", -1)
 		stripped = strings.Replace(stripped, "%}", "", -1)
+	case bash:
+		stripped = strings.Replace(stripped, "\\[", "", -1)
+		stripped = strings.Replace(stripped, "\\]", "", -1)
 	}
 	var i norm.Iter
 	i.InitString(norm.NFD, stripped)

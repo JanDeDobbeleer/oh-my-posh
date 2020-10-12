@@ -19,6 +19,7 @@ type formats struct {
 	left        string
 	right       string
 	rANSI       string
+	title       string
 }
 
 //Shell indicates the shell we're currently in
@@ -51,6 +52,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.linechange = "%%{\x1b[%d%s%%}"
 		r.formats.left = "%%{\x1b[%dC%%}"
 		r.formats.right = "%%{\x1b[%dD%%}"
+		r.formats.title = "%%{\033]0;%s\007%%}"
 		r.shell = zsh
 	default:
 		r.formats.single = "\x1b[%sm%s\x1b[0m"
@@ -60,6 +62,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.linechange = "\x1b[%d%s"
 		r.formats.left = "\x1b[%dC"
 		r.formats.right = "\x1b[%dD"
+		r.formats.title = "\033]0;%s\007"
 		r.shell = universal
 	}
 }
@@ -140,6 +143,10 @@ func (r *Renderer) changeLine(numberOfLines int) string {
 		numberOfLines = -numberOfLines
 	}
 	return fmt.Sprintf(r.formats.linechange, numberOfLines, position)
+}
+
+func (r *Renderer) setConsoleTitle(title string) {
+	fmt.Printf(r.formats.title, title)
 }
 
 func (r *Renderer) string() string {

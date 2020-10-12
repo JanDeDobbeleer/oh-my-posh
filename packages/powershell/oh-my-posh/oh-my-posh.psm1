@@ -25,7 +25,13 @@ if (!$IsWindows) {
 }
 if ($IsWindows) {
     # When this is not set, outputted fonts aren't rendered correctly in some terminals for the prompt function
-    [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+    # It can also fail when we're not running in a console (and then, well, you're on your own)
+    try {
+        [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+    }
+    catch {
+        Write-Host "oh-my-posh: unable to set output encoding to UTF8, fonts might be rendered incorrectly."
+    }
     # Not running it beforehand in the terminal will fail the prompt somehow
     $poshCommand = Get-PoshCommand
     & $poshCommand | Out-Null

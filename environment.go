@@ -37,6 +37,7 @@ type environmentInfo interface {
 
 type environment struct {
 	args *args
+	cwd  string
 }
 
 func (env *environment) getenv(key string) string {
@@ -44,18 +45,23 @@ func (env *environment) getenv(key string) string {
 }
 
 func (env *environment) getcwd() string {
+	if env.cwd != "" {
+		return env.cwd
+	}
 	correctPath := func(pwd string) string {
 		// on Windows, and being case sentisitive and not consistent and all, this gives silly issues
 		return strings.Replace(pwd, "c:", "C:", 1)
 	}
 	if env.args != nil && *env.args.PWD != "" {
-		return correctPath(*env.args.PWD)
+		env.cwd = correctPath(*env.args.PWD)
+		return env.cwd
 	}
 	dir, err := os.Getwd()
 	if err != nil {
 		return ""
 	}
-	return correctPath(dir)
+	env.cwd = correctPath(dir)
+	return env.cwd
 }
 
 func (env *environment) homeDir() string {

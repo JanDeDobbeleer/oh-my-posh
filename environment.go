@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"os/user"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -62,16 +61,6 @@ func (env *environment) getcwd() string {
 	}
 	env.cwd = correctPath(dir)
 	return env.cwd
-}
-
-func (env *environment) homeDir() string {
-	usr, err := user.Current()
-	if err != nil {
-		return ""
-	}
-	homeDir := usr.HomeDir
-	// on Windows, and being case sentisitive and not consistent and all, this gives silly issues
-	return strings.Replace(homeDir, "c:", "C:", 1)
 }
 
 func (env *environment) hasFiles(pattern string) bool {

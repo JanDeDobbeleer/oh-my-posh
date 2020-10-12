@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"golang.org/x/sys/windows"
 )
 
@@ -34,4 +36,12 @@ func (env *environment) isRunningAsRoot() bool {
 	}
 
 	return member
+}
+
+func (env *environment) homeDir() string {
+	home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
+	if home == "" {
+		home = os.Getenv("USERPROFILE")
+	}
+	return home
 }

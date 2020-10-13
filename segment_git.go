@@ -16,6 +16,7 @@ type gitRepo struct {
 	HEAD       string
 	upstream   string
 	stashCount string
+	root       string
 }
 
 type gitStatus struct {
@@ -105,7 +106,7 @@ func (g *git) enabled() bool {
 }
 
 func (g *git) string() string {
-	g.getGitStatus()
+	g.setGitStatus()
 	buffer := new(bytes.Buffer)
 	// branchName
 	if g.repo.upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
@@ -163,8 +164,9 @@ func (g *git) getUpstreamSymbol() string {
 	return g.props.getString(GitIcon, "GIT")
 }
 
-func (g *git) getGitStatus() {
+func (g *git) setGitStatus() {
 	g.repo = &gitRepo{}
+	g.repo.root = g.getGitCommandOutput("rev-parse", "--show-toplevel")
 	output := g.getGitCommandOutput("status", "--porcelain", "-b", "--ignore-submodules")
 	splittedOutput := strings.Split(output, "\n")
 	g.repo.working = g.parseGitStats(splittedOutput, true)
@@ -192,7 +194,7 @@ func (g *git) getGitHEADContext(ref string) string {
 		ref = fmt.Sprintf("%s%s", branchIcon, ref)
 	}
 	// rebase
-	if g.env.hasFolder(".git/rebase-merge") {
+	if g.hasGitFolder("rebase-merge") {
 		origin := g.getGitRefFileSymbolicName("rebase-merge/orig-head")
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
 		step := g.getGitFileContents("rebase-merge/msgnum")
@@ -200,7 +202,7 @@ func (g *git) getGitHEADContext(ref string) string {
 		icon := g.props.getString(RebaseIcon, "REBASE:")
 		return fmt.Sprintf("%s%s%s onto %s%s (%s/%s) at %s", icon, branchIcon, origin, branchIcon, onto, step, total, ref)
 	}
-	if g.env.hasFolder(".git/rebase-apply") {
+	if g.hasGitFolder("rebase-apply") {
 		head := g.getGitFileContents("rebase-apply/head-name")
 		origin := strings.Replace(head, "refs/heads/", "", 1)
 		step := g.getGitFileContents("rebase-apply/next")
@@ -209,18 +211,38 @@ func (g *git) getGitHEADContext(ref string) string {
 		return fmt.Sprintf("%s%s%s (%s/%s) at %s", icon, branchIcon, origin, step, total, ref)
 	}
 	// merge
-	if g.env.hasFiles(".git/MERGE_HEAD") {
+	if g.hasGitFile("MERGE_HEAD") {
 		mergeHEAD := g.getGitRefFileSymbolicName("MERGE_HEAD")
 		icon := g.props.getString(MergeIcon, "MERGING:")
 		return fmt.Sprintf("%s%s%s into %s", icon, branchIcon, mergeHEAD, ref)
 	}
 	// cherry-pick
-	if g.env.hasFiles(".git/CHERRY_PICK_HEAD") {
+	if g.hasGitFile("CHERRY_PICK_HEAD") {
 		sha := g.getGitRefFileSymbolicName("CHERRY_PICK_HEAD")
 		icon := g.props.getString(CherryPickIcon, "CHERRY PICK:")
 		return fmt.Sprintf("%s%s onto %s", icon, sha, ref)
 	}
 	return ref
+}
+
+func (g *git) hasGitFile(file string) bool {
+	files := fmt.Sprintf("%s/.git/%s", g.repo.root, file)
+	return g.env.hasFiles(files)
+}
+
+func (g *git) hasGitFolder(folder string) bool {
+	path := fmt.Sprintf("%s/.git/%s", g.repo.root, folder)
+	return g.env.hasFolder(path)
+}
+
+func (g *git) getGitFileContents(file string) string {
+	content := g.env.getFileContent(fmt.Sprintf("%s/.git/%s", g.repo.root, file))
+	return strings.Trim(content, " \r\n")
+}
+
+func (g *git) getGitRefFileSymbolicName(refFile string) string {
+	ref := g.getGitFileContents(refFile)
+	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
 func (g *git) getPrettyHEADName() string {
@@ -232,16 +254,6 @@ func (g *git) getPrettyHEADName() string {
 	// fallback to commit
 	ref = g.getGitCommandOutput("rev-parse", "--short", "HEAD")
 	return fmt.Sprintf("%s%s", g.props.getString(CommitIcon, "COMMIT:"), ref)
-}
-
-func (g *git) getGitFileContents(file string) string {
-	content := g.env.getFileContent(fmt.Sprintf(".git/%s", file))
-	return strings.Trim(content, " \r\n")
-}
-
-func (g *git) getGitRefFileSymbolicName(refFile string) string {
-	ref := g.getGitFileContents(refFile)
-	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
 func (g *git) parseGitStats(output []string, working bool) *gitStatus {

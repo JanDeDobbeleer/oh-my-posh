@@ -13,7 +13,10 @@ type Segment struct {
 	LeadingDiamond  string                   `json:"leading_diamond"`
 	TrailingDiamond string                   `json:"trailing_diamond"`
 	Properties      map[Property]interface{} `json:"properties"`
+	props           *properties
 	writer          SegmentWriter
+	stringValue     string
+	active          bool
 }
 
 //SegmentWriter is the interface used to define what and if to write to the prompt
@@ -73,7 +76,8 @@ func (segment *Segment) string() string {
 }
 
 func (segment *Segment) enabled() bool {
-	return segment.writer.enabled()
+	segment.active = segment.writer.enabled()
+	return segment.active
 }
 
 func (segment *Segment) getValue(property Property, defaultValue string) string {
@@ -96,7 +100,7 @@ func (segment *Segment) hasValue(property Property, match string) bool {
 	return false
 }
 
-func (segment *Segment) mapSegmentWithWriter(env environmentInfo) (*properties, error) {
+func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 	functions := map[SegmentType]SegmentWriter{
 		Session:   &session{},
 		Path:      &path{},
@@ -122,7 +126,8 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) (*properties, 
 		}
 		writer.init(props, env)
 		segment.writer = writer
-		return props, nil
+		segment.props = props
+		return nil
 	}
-	return nil, errors.New("Unable to map writer")
+	return errors.New("Unable to map writer")
 }

@@ -55,28 +55,34 @@ type detachedContext struct {
 	mergeHEAD     string
 }
 
-func setupHEADContextEnv(context *detachedContext) environmentInfo {
+func setupHEADContextEnv(context *detachedContext) *git {
 	env := new(MockedEnvironment)
-	env.On("hasFolder", ".git/rebase-merge").Return(context.rebaseMerge)
-	env.On("hasFolder", ".git/rebase-apply").Return(context.rebaseApply)
-	env.On("getFileContent", ".git/rebase-merge/orig-head").Return(context.origin)
-	env.On("getFileContent", ".git/rebase-merge/onto").Return(context.onto)
-	env.On("getFileContent", ".git/rebase-merge/msgnum").Return(context.step)
-	env.On("getFileContent", ".git/rebase-apply/next").Return(context.step)
-	env.On("getFileContent", ".git/rebase-merge/end").Return(context.total)
-	env.On("getFileContent", ".git/rebase-apply/last").Return(context.total)
-	env.On("getFileContent", ".git/rebase-apply/head-name").Return(context.origin)
-	env.On("getFileContent", ".git/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
-	env.On("getFileContent", ".git/MERGE_HEAD").Return(context.mergeHEAD)
-	env.On("hasFiles", ".git/CHERRY_PICK_HEAD").Return(context.cherryPick)
-	env.On("hasFiles", ".git/MERGE_HEAD").Return(context.merge)
+	env.On("hasFolder", "/.git/rebase-merge").Return(context.rebaseMerge)
+	env.On("hasFolder", "/.git/rebase-apply").Return(context.rebaseApply)
+	env.On("getFileContent", "/.git/rebase-merge/orig-head").Return(context.origin)
+	env.On("getFileContent", "/.git/rebase-merge/onto").Return(context.onto)
+	env.On("getFileContent", "/.git/rebase-merge/msgnum").Return(context.step)
+	env.On("getFileContent", "/.git/rebase-apply/next").Return(context.step)
+	env.On("getFileContent", "/.git/rebase-merge/end").Return(context.total)
+	env.On("getFileContent", "/.git/rebase-apply/last").Return(context.total)
+	env.On("getFileContent", "/.git/rebase-apply/head-name").Return(context.origin)
+	env.On("getFileContent", "/.git/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
+	env.On("getFileContent", "/.git/MERGE_HEAD").Return(context.mergeHEAD)
+	env.On("hasFiles", "/.git/CHERRY_PICK_HEAD").Return(context.cherryPick)
+	env.On("hasFiles", "/.git/MERGE_HEAD").Return(context.merge)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-parse", "--short", "HEAD"}).Return(context.currentCommit)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "describe", "--tags", "--exact-match"}).Return(context.tagName)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.origin}).Return(context.origin)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.onto}).Return(context.onto)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.cherryPickSHA}).Return(context.cherryPickSHA)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.mergeHEAD}).Return(context.mergeHEAD)
-	return env
+	g := &git{
+		env: env,
+		repo: &gitRepo{
+			root: "",
+		},
+	}
+	return g
 }
 
 func TestGetGitDetachedCommitHash(t *testing.T) {
@@ -84,10 +90,7 @@ func TestGetGitDetachedCommitHash(t *testing.T) {
 	context := &detachedContext{
 		currentCommit: "lalasha1",
 	}
-	env := setupHEADContextEnv(context)
-	g := &git{
-		env: env,
-	}
+	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
@@ -98,10 +101,7 @@ func TestGetGitHEADContextTagName(t *testing.T) {
 		currentCommit: "whatever",
 		tagName:       "lalasha1",
 	}
-	env := setupHEADContextEnv(context)
-	g := &git{
-		env: env,
-	}
+	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
@@ -117,10 +117,7 @@ func TestGetGitHEADContextRebaseMerge(t *testing.T) {
 		step:          "2",
 		total:         "3",
 	}
-	env := setupHEADContextEnv(context)
-	g := &git{
-		env: env,
-	}
+	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
@@ -135,10 +132,7 @@ func TestGetGitHEADContextRebaseApply(t *testing.T) {
 		step:          "2",
 		total:         "3",
 	}
-	env := setupHEADContextEnv(context)
-	g := &git{
-		env: env,
-	}
+	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
@@ -149,10 +143,7 @@ func TestGetGitHEADContextRebaseUnknown(t *testing.T) {
 		currentCommit: "whatever",
 		rebase:        "true",
 	}
-	env := setupHEADContextEnv(context)
-	g := &git{
-		env: env,
-	}
+	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
@@ -165,10 +156,7 @@ func TestGetGitHEADContextCherryPickOnBranch(t *testing.T) {
 		cherryPick:    true,
 		cherryPickSHA: "pickme",
 	}
-	env := setupHEADContextEnv(context)
-	g := &git{
-		env: env,
-	}
+	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("main")
 	assert.Equal(t, want, got)
 }
@@ -181,10 +169,7 @@ func TestGetGitHEADContextCherryPickOnTag(t *testing.T) {
 		cherryPick:    true,
 		cherryPickSHA: "pickme",
 	}
-	env := setupHEADContextEnv(context)
-	g := &git{
-		env: env,
-	}
+	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }
@@ -195,10 +180,7 @@ func TestGetGitHEADContextMerge(t *testing.T) {
 		merge:     true,
 		mergeHEAD: "feat",
 	}
-	env := setupHEADContextEnv(context)
-	g := &git{
-		env: env,
-	}
+	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("main")
 	assert.Equal(t, want, got)
 }
@@ -210,10 +192,7 @@ func TestGetGitHEADContextMergeTag(t *testing.T) {
 		merge:     true,
 		mergeHEAD: "feat",
 	}
-	env := setupHEADContextEnv(context)
-	g := &git{
-		env: env,
-	}
+	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")
 	assert.Equal(t, want, got)
 }

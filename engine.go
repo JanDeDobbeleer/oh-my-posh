@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 )
 
 type engine struct {
@@ -83,26 +84,38 @@ func (e *engine) renderSegmentText(text string) {
 func (e *engine) renderBlockSegments(block *Block) string {
 	defer e.reset()
 	e.activeBlock = block
-	cwd := e.env.getcwd()
+	e.setStringValues(block.Segments)
 	for _, segment := range block.Segments {
-		if segment.hasValue(IgnoreFolders, cwd) {
-			continue
-		}
-		props, err := segment.mapSegmentWithWriter(e.env)
-		if err != nil || !segment.enabled() {
+		if !segment.active {
 			continue
 		}
 		e.activeSegment = segment
 		e.endPowerline()
 		text := segment.string()
-		e.activeSegment.Background = props.background
-		e.activeSegment.Foreground = props.foreground
+		e.activeSegment.Background = segment.props.background
+		e.activeSegment.Foreground = segment.props.foreground
 		e.renderSegmentText(text)
 	}
 	if e.previousActiveSegment != nil && e.previousActiveSegment.Style == Powerline {
 		e.writePowerLineSeparator(Transparent, e.previousActiveSegment.Background, true)
 	}
 	return e.renderer.string()
+}
+
+func (e *engine) setStringValues(segments []*Segment) {
+	wg := sync.WaitGroup{}
+	wg.Add(len(segments))
+	defer wg.Wait()
+	cwd := e.env.getcwd()
+	for _, segment := range segments {
+		go func(s *Segment) {
+			defer wg.Done()
+			err := s.mapSegmentWithWriter(e.env)
+			if err == nil && !s.hasValue(IgnoreFolders, cwd) && s.enabled() {
+				s.stringValue = s.string()
+			}
+		}(segment)
+	}
 }
 
 func (e *engine) render() {

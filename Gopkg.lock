@@ -20,11 +20,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:457016d13f789158a2c697ec64a91b600b8183aa7481a52920421a970236e6e1"
+  digest = "1:837f5d8c0bffa54d9d8acd26a196c637119c20ea67e5f61b9a2dbc9da8ca2f62"
   name = "github.com/gookit/color"
   packages = ["."]
   pruneopts = "UT"
-  revision = "c52faac6396f15fd78c8fd343657f514b60a1147"
+  revision = "5ffcdf66388a6c614511a0e9b34e3c325a8195f8"
   source = "github.com/JanDeDobbeleer/color"
 
 [[projects]]
@@ -66,7 +66,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:9d459f92935fefb74c8f24dc81230a4adbe5c8a94004adbfc8f826596c0e6a16"
+  digest = "1:dadec693126ed6aaec5296f94ba86bb6eb47ffc8e97fb963547a1d6b92b2b1b6"
   name = "golang.org/x/sys"
   packages = [
     "internal/unsafeheader",
@@ -74,7 +74,7 @@
     "windows",
   ]
   pruneopts = "UT"
-  revision = "9781c653f44323e2079cb1123720c32f9626be2c"
+  revision = "cc95f250f6bc3b018920acb1f50bc5aa1f6bd725"
 
 [[projects]]
   digest = "1:a2c690dfee42801a26a0e88f69206feca8a3c2437fd476d84767468d7d7708e9"

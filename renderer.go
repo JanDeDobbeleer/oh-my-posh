@@ -20,6 +20,7 @@ type formats struct {
 	right       string
 	rANSI       string
 	title       string
+	creset      string
 }
 
 //Shell indicates the shell we're currently in
@@ -54,6 +55,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.left = "%%{\x1b[%dC%%}"
 		r.formats.right = "%%{\x1b[%dD%%}"
 		r.formats.title = "%%{\033]0;%s\007%%}"
+		r.formats.creset = "%{\x1b[0m%}"
 		r.shell = zsh
 	case "bash":
 		r.formats.single = "\\[\x1b[%sm\\]%s\\[\x1b[0m\\]"
@@ -64,6 +66,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.left = "\\[\x1b[%dC\\]"
 		r.formats.right = "\\[\x1b[%dD\\]"
 		r.formats.title = "\\[\033]0;%s\007\\]"
+		r.formats.creset = "\\[\x1b[0m\\]"
 		r.shell = bash
 	default:
 		r.formats.single = "\x1b[%sm%s\x1b[0m"
@@ -74,6 +77,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.left = "\x1b[%dC"
 		r.formats.right = "\x1b[%dD"
 		r.formats.title = "\033]0;%s\007"
+		r.formats.creset = "\x1b[0m"
 		r.shell = universal
 	}
 }
@@ -170,4 +174,8 @@ func (r *Renderer) string() string {
 
 func (r *Renderer) reset() {
 	r.Buffer.Reset()
+}
+
+func (r *Renderer) creset() {
+	fmt.Print(r.formats.creset)
 }

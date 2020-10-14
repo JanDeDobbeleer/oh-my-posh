@@ -1,0 +1,32 @@
+; EditorConfig to support per-solution formatting.
+; http://editorconfig.org/
+
+; This is the default for the codeline.
+root = true
+
+; Default
+[*]
+indent_style = space
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+; Go Code - match go fmt
+[*.go]
+indent_style = tab
+
+; TOML - match default for dep
+[*.toml]
+indent_size = 2
+
+; JavaScript and JS mixes - match eslint, other standards
+[*.{js,json,ts,vue}]
+indent_size = 2
+
+; Markdown - match markdownlint settings
+[*.{md,markdown}]
+indent_size = 2
+
+; PowerShell - match defaults for New-ModuleManifest and PSScriptAnalyzer Invoke-Formatter
+[*.{ps1,psd1,psm1}]
+indent_size = 4
+charset = utf-8-bom

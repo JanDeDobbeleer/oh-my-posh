@@ -63,6 +63,8 @@ const (
 	Os SegmentType = "os"
 	//EnvVar writes the content of an environment variable
 	EnvVar SegmentType = "envvar"
+	//Az writes the Azure subscription info we're currently in
+	Az SegmentType = "az"
 	//Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	//Plain writes it without ornaments
@@ -117,6 +119,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Node:      &node{},
 		Os:        &osInfo{},
 		EnvVar:    &envvar{},
+		Az:        &az{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

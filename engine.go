@@ -129,6 +129,7 @@ func (e *engine) render() {
 	if e.settings.ConsoleTitle {
 		e.renderer.setConsoleTitle(e.env.getcwd())
 	}
+	e.renderer.creset()
 	if e.settings.FinalSpace {
 		fmt.Print(" ")
 	}

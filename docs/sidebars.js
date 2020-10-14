@@ -14,6 +14,7 @@ module.exports = {
       type: "category",
       label: "Segments",
       items: [
+        "az",
         "battery",
         "command",
         "environment",

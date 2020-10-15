@@ -19,7 +19,3 @@ replace github.com/distatus/battery v0.10.1-0.20200722221337-7e1bf2bbb15c => git
 replace github.com/gookit/color v1.3.1 => github.com/JanDeDobbeleer/color v1.3.1-0.20201014085303-5ffcdf66388a
 
 replace github.com/mitchellh/go-ps v1.0.0 => github.com/JanDeDobbeleer/go-ps v1.0.0
-
-replace github.com/stretchr/testify v1.6.1 => github.com/stretchr/testify v1.6.1
-
-replace golang.org/x/text v0.3.3 => golang.org/x/text v0.3.3

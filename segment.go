@@ -65,6 +65,8 @@ const (
 	EnvVar SegmentType = "envvar"
 	//Az writes the Azure subscription info we're currently in
 	Az SegmentType = "az"
+	//Kubectl writes the Kubernetes context we're currently in
+	Kubectl SegmentType = "kubectl"
 	//Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	//Plain writes it without ornaments
@@ -120,6 +122,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Os:        &osInfo{},
 		EnvVar:    &envvar{},
 		Az:        &az{},
+		Kubectl:   &kubectl{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

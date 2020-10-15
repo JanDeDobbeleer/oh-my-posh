@@ -20,6 +20,7 @@ module.exports = {
         "environment",
         "exit",
         "git",
+        "kubectl",
         "node",
         "os",
         "path",

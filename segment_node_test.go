@@ -17,7 +17,7 @@ type nodeArgs struct {
 func bootStrapNodeTest(args *nodeArgs) *node {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "node").Return(args.enabled)
-	env.On("runCommand", "node", []string{"--version"}).Return(args.nodeVersion)
+	env.On("runCommand", "node", []string{"--version"}).Return(args.nodeVersion, nil)
 	env.On("hasFiles", "*.js").Return(args.hasJS)
 	env.On("hasFiles", "*.ts").Return(args.hasTS)
 	props := &properties{

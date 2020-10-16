@@ -6,11 +6,6 @@ type node struct {
 	nodeVersion string
 }
 
-const (
-	//DisplayVersion show the version number or not
-	DisplayVersion Property = "display_version"
-)
-
 func (n *node) string() string {
 	if n.props.getBool(DisplayVersion, true) {
 		return n.nodeVersion
@@ -30,6 +25,6 @@ func (n *node) enabled() bool {
 	if !n.env.hasCommand("node") {
 		return false
 	}
-	n.nodeVersion = n.env.runCommand("node", "--version")
+	n.nodeVersion, _ = n.env.runCommand("node", "--version")
 	return true
 }

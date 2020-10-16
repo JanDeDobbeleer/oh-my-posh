@@ -17,6 +17,7 @@ module.exports = {
         "az",
         "battery",
         "command",
+        "dotnet",
         "environment",
         "exit",
         "git",

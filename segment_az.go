@@ -40,7 +40,7 @@ func (a *az) enabled() bool {
 		return false
 	}
 
-	output := a.env.runCommand("az", "account", "show", "--query=[name,id]", "-o=tsv")
+	output, _ := a.env.runCommand("az", "account", "show", "--query=[name,id]", "-o=tsv")
 	if output == "" {
 		return false
 	}

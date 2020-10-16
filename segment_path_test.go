@@ -68,9 +68,9 @@ func (env *MockedEnvironment) hasCommand(command string) bool {
 	return args.Bool(0)
 }
 
-func (env *MockedEnvironment) runCommand(command string, args ...string) string {
+func (env *MockedEnvironment) runCommand(command string, args ...string) (string, error) {
 	arguments := env.Called(command, args)
-	return arguments.String(0)
+	return arguments.String(0), arguments.Error(1)
 }
 
 func (env *MockedEnvironment) runShellCommand(shell string, command string) string {

@@ -14,7 +14,7 @@ type kubectlArgs struct {
 func bootStrapKubectlTest(args *kubectlArgs) *kubectl {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "kubectl").Return(args.enabled)
-	env.On("runCommand", "kubectl", []string{"config", "current-context"}).Return(args.contextName)
+	env.On("runCommand", "kubectl", []string{"config", "current-context"}).Return(args.contextName, nil)
 	k := &kubectl{
 		env:   env,
 		props: &properties{},

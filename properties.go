@@ -20,6 +20,8 @@ const (
 	ColorBackground Property = "color_background"
 	//IgnoreFolders folders to ignore and not run the segment logic
 	IgnoreFolders Property = "ignore_folders"
+	//DisplayVersion show the version number or not
+	DisplayVersion Property = "display_version"
 )
 
 type properties struct {

@@ -38,7 +38,7 @@ func (p *python) enabled() bool {
 		"python",
 	}
 	for index, python := range pythonVersions {
-		version := p.env.runCommand(python, "--version")
+		version, _ := p.env.runCommand(python, "--version")
 		if version != "" {
 			rawVersion := strings.TrimLeft(version, "Python")
 			p.pythonVersion = strings.Trim(rawVersion, " ")

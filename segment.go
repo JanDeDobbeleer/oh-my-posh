@@ -67,6 +67,8 @@ const (
 	Az SegmentType = "az"
 	//Kubectl writes the Kubernetes context we're currently in
 	Kubectl SegmentType = "kubectl"
+	//Dotnet writes which dotnet version is currently active
+	Dotnet SegmentType = "dotnet"
 	//Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	//Plain writes it without ornaments
@@ -123,6 +125,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		EnvVar:    &envvar{},
 		Az:        &az{},
 		Kubectl:   &kubectl{},
+		Dotnet:    &dotnet{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

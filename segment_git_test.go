@@ -18,7 +18,7 @@ func TestEnabledGitNotFound(t *testing.T) {
 func TestEnabledInWorkingDirectory(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "git").Return(true)
-	env.On("runCommand", "git", []string{"rev-parse", "--is-inside-work-tree"}).Return("true")
+	env.On("runCommand", "git", []string{"rev-parse", "--is-inside-work-tree"}).Return("true", nil)
 	g := &git{
 		env: env,
 	}
@@ -30,7 +30,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}
 	want := "je suis le output"
 	env := new(MockedEnvironment)
-	env.On("runCommand", "git", append(args, commandArgs...)).Return(want)
+	env.On("runCommand", "git", append(args, commandArgs...)).Return(want, nil)
 	g := &git{
 		env: env,
 	}
@@ -70,12 +70,12 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.On("getFileContent", "/.git/MERGE_HEAD").Return(context.mergeHEAD)
 	env.On("hasFiles", "/.git/CHERRY_PICK_HEAD").Return(context.cherryPick)
 	env.On("hasFiles", "/.git/MERGE_HEAD").Return(context.merge)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-parse", "--short", "HEAD"}).Return(context.currentCommit)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "describe", "--tags", "--exact-match"}).Return(context.tagName)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.origin}).Return(context.origin)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.onto}).Return(context.onto)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.cherryPickSHA}).Return(context.cherryPickSHA)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.mergeHEAD}).Return(context.mergeHEAD)
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-parse", "--short", "HEAD"}).Return(context.currentCommit, nil)
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "describe", "--tags", "--exact-match"}).Return(context.tagName, nil)
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.origin}).Return(context.origin, nil)
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.onto}).Return(context.onto, nil)
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.cherryPickSHA}).Return(context.cherryPickSHA, nil)
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.mergeHEAD}).Return(context.mergeHEAD, nil)
 	g := &git{
 		env: env,
 		repo: &gitRepo{
@@ -200,7 +200,7 @@ func TestGetGitHEADContextMergeTag(t *testing.T) {
 func TestGetStashContextZeroEntries(t *testing.T) {
 	want := ""
 	env := new(MockedEnvironment)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-list", "--walk-reflogs", "--count", "refs/stash"}).Return("")
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-list", "--walk-reflogs", "--count", "refs/stash"}).Return("", nil)
 	g := &git{
 		env: env,
 	}
@@ -211,7 +211,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 func TestGetStashContextMultipleEntries(t *testing.T) {
 	want := "2"
 	env := new(MockedEnvironment)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-list", "--walk-reflogs", "--count", "refs/stash"}).Return("2")
+	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-list", "--walk-reflogs", "--count", "refs/stash"}).Return("2", nil)
 	g := &git{
 		env: env,
 	}

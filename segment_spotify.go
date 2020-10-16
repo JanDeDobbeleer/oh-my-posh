@@ -61,5 +61,6 @@ func (s *spotify) init(props *properties, env environmentInfo) {
 }
 
 func (s *spotify) runAppleScriptCommand(command string) string {
-	return s.env.runCommand("osascript", "-e", command)
+	val, _ := s.env.runCommand("osascript", "-e", command)
+	return val
 }

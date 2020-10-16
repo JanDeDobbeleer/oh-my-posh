@@ -19,7 +19,7 @@ Supports conda, virtualenv and pyenv.
   "foreground": "#100e23",
   "background": "#906cff",
   "properties": {
-    "prefix": "  "
+    "prefix": " \uE235 "
   }
 }
 ```

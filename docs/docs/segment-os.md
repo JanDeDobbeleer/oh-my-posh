@@ -17,7 +17,7 @@ Display OS specific info. Defaults to Icon.
   "foreground": "#26C6DA",
   "background": "#546E7A",
   "properties": {
-    "postfix": " ",
+    "postfix": " \uE0B1",
     "macos": "mac"
   }
 }

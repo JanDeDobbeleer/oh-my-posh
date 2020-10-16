@@ -38,7 +38,7 @@ func TestParseTestSettings(t *testing.T) {
 			"foreground": "#ffffff",
 			"background": "#61AFEF",
 			"properties": {
-				"prefix": "  ",
+				"prefix": " \uE5FF ",
 				"style": "folder",
 				"ignore_folders": [
 					"go-my-psh"

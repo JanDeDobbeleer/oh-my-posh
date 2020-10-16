@@ -19,7 +19,7 @@
           "style": "plain",
           "foreground": "#62ED8B",
           "properties": {
-            "text": "→",
+            "text": "\u279C",
             "postfix": "",
             "prefix": ""
           }
@@ -49,7 +49,7 @@
           "style": "plain",
           "foreground": "#DCB977",
           "properties": {
-            "prefix": "✗",
+            "prefix": "\uD00D",
             "display_exit_code": false,
             "postfix": ""
           }

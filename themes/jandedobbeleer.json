@@ -9,7 +9,7 @@
           "style": "diamond",
           "foreground": "#ffffff",
           "background": "#c386f1",
-          "leading_diamond": "",
+          "leading_diamond": "\uE0B6",
           "trailing_diamond": "\uE0B0"
         },
         {
@@ -19,7 +19,7 @@
           "foreground": "#ffffff",
           "background": "#1BD760",
           "properties": {
-            "prefix": "  "
+            "prefix": " \uF9C6 "
           }
         },
         {
@@ -29,7 +29,7 @@
           "foreground": "#ffffff",
           "background": "#ff479c",
           "properties": {
-            "prefix": "  ",
+            "prefix": " \uE5FF ",
             "style": "folder"
           }
         },
@@ -66,7 +66,7 @@
           "foreground": "#ffffff",
           "background": "#6CA35E",
           "properties": {
-            "prefix": "  "
+            "prefix": " \uE718 "
           }
         },
         {
@@ -92,13 +92,13 @@
           "foreground": "#ffffff",
           "background": "#2e9599",
           "leading_diamond": "",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B4",
           "properties": {
             "display_exit_code": false,
             "always_enabled": true,
             "error_color": "#f1184c",
             "color_background": true,
-            "prefix": "<transparent>\uE0B0</> "
+            "prefix": "<transparent>\uE0B0</> \uE23A"
           }
         }
       ]

@@ -10,7 +10,7 @@
           "foreground": "#98C379",
           "properties": {
             "prefix": "",
-            "text": "→",
+            "text": "\u279C",
             "postfix": ""
           }
         },
@@ -38,7 +38,7 @@
           "style": "plain",
           "foreground": "#DCB977",
           "properties": {
-            "prefix": "✗",
+            "prefix": "\uD00D",
             "display_exit_code": false
           }
         }

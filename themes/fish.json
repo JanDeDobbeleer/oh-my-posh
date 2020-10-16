@@ -29,7 +29,7 @@
           "background": "#007ACC",
           "properties" : {
               "folder_icon": "\uF115",
-              "folder_separator_icon": "",
+              "folder_separator_icon": "\uE0B1",
               "style": "short",
               "prefix": "<transparent>\uE0B0</> ",
               "postfix": " "
@@ -41,7 +41,7 @@
           "foreground": "#ffffff",
           "background": "#007ACC",
           "properties": {
-            "prefix": "<#ffffff></> ",
+            "prefix": "<#ffffff>\uE0B1</> ",
             "postfix": " "
           }
         },

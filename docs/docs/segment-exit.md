@@ -17,13 +17,13 @@ Displays the last exit code or that the last command failed based on the configu
   "foreground": "#ffffff",
   "background": "#00897b",
   "leading_diamond": "",
-  "trailing_diamond": "",
+  "trailing_diamond": "\uE0B4",
   "properties": {
     "display_exit_code": false,
     "always_enabled": true,
     "error_color": "#e91e63",
     "color_background": true,
-    "prefix": "<#193549>\uE0B0</> "
+    "prefix": "<#193549>\uE0B0</> \uE23A"
   }
 }
 ```

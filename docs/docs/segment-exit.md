@@ -23,7 +23,7 @@ Displays the last exit code or that the last command failed based on the configu
     "always_enabled": true,
     "error_color": "#e91e63",
     "color_background": true,
-    "prefix": "<#193549></> "
+    "prefix": "<#193549>\uE0B0</> "
   }
 }
 ```

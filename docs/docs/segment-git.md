@@ -19,7 +19,7 @@ Local changes can also shown by default using the following syntax for both the 
 {
   "type": "git",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#193549",
   "background": "#ffeb3b",
   "properties": {

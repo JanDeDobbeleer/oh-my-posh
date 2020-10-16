@@ -10,7 +10,7 @@
           "foreground": "#ffffff",
           "background": "#c386f1",
           "leading_diamond": "",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B0",
           "properties": {
             "user_info_separator": "@",
             "postfix": " "
@@ -19,7 +19,7 @@
         {
           "type": "spotify",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#1BD760",
           "properties": {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#ff479c",
           "properties": {
@@ -42,7 +42,7 @@
         {
           "type": "git",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
           "background": "#fffb38",
           "properties": {
@@ -70,7 +70,7 @@
         {
           "type": "battery",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
           "background": "#f36943",
           "properties": {
@@ -88,7 +88,7 @@
         {
           "type": "node",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#6CA35E",
           "properties": {
@@ -98,7 +98,7 @@
         {
           "type": "root",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#111111",
           "background": "#ffff66",
           "properties": {
@@ -108,7 +108,7 @@
         {
           "type": "shell",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#0077c2",
           "properties": {
@@ -118,7 +118,7 @@
         {
           "type": "root",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#ffff66"
         },
@@ -134,7 +134,7 @@
             "always_enabled": true,
             "error_color": "#f1184c",
             "color_background": true,
-            "prefix": "<transparent></> "
+            "prefix": "<transparent>\uE0B0</> "
           }
         }
       ]

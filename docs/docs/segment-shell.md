@@ -14,7 +14,7 @@ Show the current shell name (zsh, powershell, bash, ...).
 {
   "type": "shell",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#0077c2",
   "properties": {

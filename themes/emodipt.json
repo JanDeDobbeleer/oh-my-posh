@@ -17,10 +17,7 @@
         {
           "type": "root",
           "style": "plain",
-          "foreground": "#B5B50D",
-          "properties": {
-            "root_icon": "⚡"
-          }
+          "foreground": "#B5B50D"
         },
         {
           "type": "path",

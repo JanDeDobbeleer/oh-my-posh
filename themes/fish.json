@@ -9,17 +9,13 @@
           "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": " ",
             "postfix": ""
           }
         },
         {
           "type": "root",
           "style": "plain",
-          "foreground": "#100e23",
-          "properties": {
-            "root_icon": "襁"
-          }
+          "foreground": "#100e23"
         },
         {
           "type": "session",
@@ -40,7 +36,7 @@
               "windows_registry_icon": "",
               "folder_separator_icon": "",
               "style": "short",
-              "prefix": "<transparent></> ",
+              "prefix": "<transparent>\uE0B0</> ",
               "postfix": " "
           }
         },
@@ -67,7 +63,7 @@
           "foreground": "#007ACC",
           "properties": {
             "prefix": "",
-            "text": ""
+            "text": "\uE0B0"
           }
         }
       ]

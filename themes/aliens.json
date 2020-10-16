@@ -10,7 +10,7 @@
           "foreground": "#ffffff",
           "background": "#61AFEF",
           "leading_diamond": "",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B0",
           "properties": {
             "user_info_separator": "@",
             "postfix": " "
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#C678DD",
           "properties": {
@@ -30,7 +30,7 @@
         {
           "type": "git",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
           "background": "#95ffa4",
           "properties": {
@@ -51,7 +51,7 @@
           "leading_diamond": "",
           "trailing_diamond": "",
           "properties": {
-            "prefix": "<transparent> </>"
+            "prefix": "<transparent>\uE0B0 </>"
           }
         }
       ]

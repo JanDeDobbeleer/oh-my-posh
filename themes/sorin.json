@@ -7,18 +7,12 @@
         {
           "type": "exit",
           "style": "plain",
-          "foreground": "#CB4B16",
-          "properties": {
-            "prefix": ""
-          }
+          "foreground": "#CB4B16"
         },
         {
           "type": "root",
           "style": "plain",
-          "foreground": "#CECE04",
-          "properties": {
-            "root_icon": "襁"
-          }
+          "foreground": "#CECE04"
         },
         {
           "type": "session",

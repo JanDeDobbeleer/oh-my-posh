@@ -92,7 +92,7 @@ Display something new.
 {
   "type": "new",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#193549",
   "background": "#ffeb3b",
   "properties": {

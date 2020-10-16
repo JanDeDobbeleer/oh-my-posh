@@ -14,7 +14,7 @@ Show when the current user is root or when in an elevated shell (Windows).
 {
   "type": "root",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#111111",
   "background": "#ffff66",
   "properties": {

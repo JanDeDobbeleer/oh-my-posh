@@ -7,10 +7,7 @@
         {
           "type": "root",
           "style": "plain",
-          "foreground": "#FFEE58",
-          "properties": {
-            "root_icon": "襁"
-          }
+          "foreground": "#FFEE58"
         },
         {
           "type": "session",
@@ -23,7 +20,7 @@
         {
           "type": "path",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#100e23",
           "background": "#91ddff",
           "properties" : {
@@ -34,7 +31,7 @@
         {
           "type": "git",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
           "background": "#95ffa4",
           "properties": {
@@ -50,7 +47,7 @@
         {
           "type": "python",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#100e23",
           "background": "#906cff",
           "properties": {
@@ -60,11 +57,11 @@
         {
           "type": "exit",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#ff8080",
           "properties": {
-            "prefix": ""
+            "prefix": "\uE20F"
           }
         }
       ]

@@ -14,7 +14,7 @@ Display the currently active node version when a folder contains `.js` or `.ts` 
 {
   "type": "node",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#6CA35E",
   "properties": {

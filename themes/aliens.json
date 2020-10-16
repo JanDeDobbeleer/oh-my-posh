@@ -9,7 +9,7 @@
           "style": "diamond",
           "foreground": "#ffffff",
           "background": "#61AFEF",
-          "leading_diamond": "",
+          "leading_diamond": "\uE0B6",
           "trailing_diamond": "\uE0B0"
         },
         {
@@ -35,7 +35,7 @@
           "foreground": "#ffffff",
           "background": "#FF6471",
           "leading_diamond": "",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B4",
           "properties": {
             "prefix": "<transparent>\uE0B0 </>"
           }

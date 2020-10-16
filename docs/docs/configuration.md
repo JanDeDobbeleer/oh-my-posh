@@ -22,7 +22,7 @@ A really simple configuration could look like this.
           "foreground": "#ffffff",
           "background": "#61AFEF",
           "properties": {
-            "prefix": "  ",
+            "prefix": " \uE5FF ",
             "style": "folder"
           }
         }
@@ -236,7 +236,7 @@ override or transparent background color using the segement's [foreground][fg] p
           "style": "diamond",
           "foreground": "#ffffff",
           "background": "#ffb300",
-          "leading_diamond": "",
+          "leading_diamond": "\uE0B6",
           "trailing_diamond": "\uE0B0",
           "properties": {
             "postfix": " "
@@ -249,7 +249,7 @@ override or transparent background color using the segement's [foreground][fg] p
           "foreground": "#ffffff",
           "background": "#61AFEF",
           "properties": {
-            "prefix": "  ",
+            "prefix": " \uE5FF ",
             "style": "folder",
             "ignore_folders": [
               "/super/secret/project"
@@ -278,13 +278,13 @@ override or transparent background color using the segement's [foreground][fg] p
           "foreground": "#ffffff",
           "background": "#00897b",
           "leading_diamond": "",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B4",
           "properties": {
             "display_exit_code": false,
             "always_enabled": true,
             "error_color": "#e91e63",
             "color_background": true,
-            "prefix": "<#193549>\uE0B0 </>"
+            "prefix": "<#193549>\uE0B0 \uE23A</>"
           }
         }
       ]

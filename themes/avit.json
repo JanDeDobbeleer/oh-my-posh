@@ -46,7 +46,7 @@
           "foreground": "#007ACC",
           "properties": {
             "prefix": "",
-            "text": "▶"
+            "text": "\uE602"
           }
         }
       ]

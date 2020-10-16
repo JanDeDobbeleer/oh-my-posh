@@ -16,7 +16,7 @@ Show the current user and host name.
   "style": "diamond",
   "foreground": "#ffffff",
   "background": "#c386f1",
-  "leading_diamond": "",
+  "leading_diamond": "\uE0B6",
   "trailing_diamond": "\uE0B0"
 }
 ```

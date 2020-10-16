@@ -10,7 +10,7 @@
           "foreground": "#26C6DA",
           "background": "#546E7A",
           "properties": {
-            "postfix": " "
+            "postfix": " \uE0B1"
           }
         },
         {
@@ -35,7 +35,7 @@
           "foreground": "#D4E157",
           "background": "#546E7A",
           "properties": {
-            "prefix": "<#26C6DA> </>"
+            "prefix": "<#26C6DA>\uE0B1 </>"
           }
         },
         {
@@ -60,9 +60,9 @@
           "style": "diamond",
           "foreground": "#D4E157",
           "background": "#546E7A",
-          "leading_diamond": "",
+          "leading_diamond": "\uE0B2",
           "properties": {
-            "postfix": " <#26C6DA></> "
+            "postfix": " <#26C6DA>\uE0B3</> "
           }
         },
         {
@@ -72,7 +72,7 @@
           "background": "#546E7A",
           "properties": {
             "time_format": "15:04:05",
-            "postfix": "  "
+            "postfix": " \uF017 "
           }
         }
       ]
@@ -89,7 +89,7 @@
           "style": "plain",
           "foreground": "#D4E157",
           "properties": {
-            "prefix": "❯",
+            "prefix": "\u276F",
             "always_enabled": true,
             "error_color": "#FF5252",
             "display_exit_code": false

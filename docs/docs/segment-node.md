@@ -18,7 +18,7 @@ Display the currently active node version when a folder contains `.js` or `.ts` 
   "foreground": "#ffffff",
   "background": "#6CA35E",
   "properties": {
-    "prefix": "  "
+    "prefix": " \uE718 "
   }
 }
 ```

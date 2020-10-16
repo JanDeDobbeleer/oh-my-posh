@@ -33,7 +33,6 @@
           "style": "plain",
           "foreground": "#F3C267",
           "properties": {
-            "branch_icon": "\u1F6A6 ",
             "display_status": true,
             "branch_identical_icon": "\uF14A",
             "branch_gone_icon": "\u274E"
@@ -53,7 +52,7 @@
           "foreground": "#E06C75",
           "properties": {
             "prefix": "",
-            "text": " ❯"
+            "text": " \u276F"
           }
         }
       ]

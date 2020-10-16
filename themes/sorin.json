@@ -40,7 +40,7 @@
           "style": "plain",
           "foreground": "#100e23",
           "properties": {
-            "prefix": "  "
+            "prefix": " \uE235 "
           }
         },
         {
@@ -49,7 +49,7 @@
           "foreground": "#ffffff",
           "properties": {
             "prefix": "",
-            "text": "<#CB4B16>❭</><#CACA02>❭</><#4E9A06>❭</>"
+            "text": "<#CB4B16>\u276F</><#CACA02>\u276F</><#4E9A06>\u276F</>"
           }
         }
       ]

@@ -30,7 +30,6 @@
           "foreground": "#C678DD",
           "properties": {
             "prefix": "<#ffffff>on</> ",
-            "branch_icon": "",
             "display_status": true
           }
         },

@@ -119,26 +119,26 @@ func (g *git) string() string {
 	}
 	// if ahead, print with symbol
 	if g.repo.ahead > 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchAheadIcon, "+"), g.repo.ahead)
+		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchAheadIcon, "\uF176"), g.repo.ahead)
 	}
 	// if behind, print with symbol
 	if g.repo.behind > 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchBehindIcon, "-"), g.repo.behind)
+		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchBehindIcon, "\uF175"), g.repo.behind)
 	}
 	if g.repo.behind == 0 && g.repo.ahead == 0 && g.repo.upstream != "" {
-		fmt.Fprintf(buffer, " %s", g.props.getString(BranchIdenticalIcon, "="))
+		fmt.Fprintf(buffer, " %s", g.props.getString(BranchIdenticalIcon, "\uF0C9"))
 	} else if g.repo.upstream == "" {
-		fmt.Fprintf(buffer, " %s", g.props.getString(BranchGoneIcon, "!="))
+		fmt.Fprintf(buffer, " %s", g.props.getString(BranchGoneIcon, "\u2262"))
 	}
-	staging := g.repo.staging.string(g.props.getString(LocalStagingIcon, "~"))
-	working := g.repo.working.string(g.props.getString(LocalWorkingIcon, "#"))
+	staging := g.repo.staging.string(g.props.getString(LocalStagingIcon, "\uF046"))
+	working := g.repo.working.string(g.props.getString(LocalWorkingIcon, "\uF044"))
 	fmt.Fprint(buffer, staging)
 	if staging != "" && working != "" {
 		fmt.Fprint(buffer, g.props.getString(StatusSeparatorIcon, " |"))
 	}
 	fmt.Fprint(buffer, working)
 	if g.props.getBool(DisplayStashCount, false) && g.repo.stashCount != "" {
-		fmt.Fprintf(buffer, " %s%s", g.props.getString(StashCountIcon, ""), g.repo.stashCount)
+		fmt.Fprintf(buffer, " %s%s", g.props.getString(StashCountIcon, "\uF692"), g.repo.stashCount)
 	}
 	return buffer.String()
 }
@@ -153,15 +153,15 @@ func (g *git) getUpstreamSymbol() string {
 	upstream := upstreamRegex.ReplaceAllString(g.repo.upstream, "")
 	url := g.getGitCommandOutput("remote", "get-url", upstream)
 	if strings.Contains(url, "github") {
-		return g.props.getString(GithubIcon, "GITHUB")
+		return g.props.getString(GithubIcon, "\uF408 ")
 	}
 	if strings.Contains(url, "gitlab") {
-		return g.props.getString(GitlabIcon, "GITLAB")
+		return g.props.getString(GitlabIcon, "\uF296 ")
 	}
 	if strings.Contains(url, "bitbucket") {
-		return g.props.getString(BitbucketIcon, "BITBUCKET")
+		return g.props.getString(BitbucketIcon, "\uF171 ")
 	}
-	return g.props.getString(GitIcon, "GIT")
+	return g.props.getString(GitIcon, "\uE5FB ")
 }
 
 func (g *git) setGitStatus() {
@@ -187,7 +187,7 @@ func (g *git) getGitCommandOutput(args ...string) string {
 }
 
 func (g *git) getGitHEADContext(ref string) string {
-	branchIcon := g.props.getString(BranchIcon, "BRANCH:")
+	branchIcon := g.props.getString(BranchIcon, "\uE0A0")
 	if ref == "" {
 		ref = g.getPrettyHEADName()
 	} else {
@@ -199,7 +199,7 @@ func (g *git) getGitHEADContext(ref string) string {
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
 		step := g.getGitFileContents("rebase-merge/msgnum")
 		total := g.getGitFileContents("rebase-merge/end")
-		icon := g.props.getString(RebaseIcon, "REBASE:")
+		icon := g.props.getString(RebaseIcon, "\uE728 ")
 		return fmt.Sprintf("%s%s%s onto %s%s (%s/%s) at %s", icon, branchIcon, origin, branchIcon, onto, step, total, ref)
 	}
 	if g.hasGitFolder("rebase-apply") {
@@ -207,19 +207,19 @@ func (g *git) getGitHEADContext(ref string) string {
 		origin := strings.Replace(head, "refs/heads/", "", 1)
 		step := g.getGitFileContents("rebase-apply/next")
 		total := g.getGitFileContents("rebase-apply/last")
-		icon := g.props.getString(RebaseIcon, "REBASING:")
+		icon := g.props.getString(RebaseIcon, "\uE728 ")
 		return fmt.Sprintf("%s%s%s (%s/%s) at %s", icon, branchIcon, origin, step, total, ref)
 	}
 	// merge
 	if g.hasGitFile("MERGE_HEAD") {
 		mergeHEAD := g.getGitRefFileSymbolicName("MERGE_HEAD")
-		icon := g.props.getString(MergeIcon, "MERGING:")
+		icon := g.props.getString(MergeIcon, "\uE727 ")
 		return fmt.Sprintf("%s%s%s into %s", icon, branchIcon, mergeHEAD, ref)
 	}
 	// cherry-pick
 	if g.hasGitFile("CHERRY_PICK_HEAD") {
 		sha := g.getGitRefFileSymbolicName("CHERRY_PICK_HEAD")
-		icon := g.props.getString(CherryPickIcon, "CHERRY PICK:")
+		icon := g.props.getString(CherryPickIcon, "\uE29B ")
 		return fmt.Sprintf("%s%s onto %s", icon, sha, ref)
 	}
 	return ref
@@ -249,11 +249,11 @@ func (g *git) getPrettyHEADName() string {
 	// check for tag
 	ref := g.getGitCommandOutput("describe", "--tags", "--exact-match")
 	if ref != "" {
-		return fmt.Sprintf("%s%s", g.props.getString(TagIcon, "TAG:"), ref)
+		return fmt.Sprintf("%s%s", g.props.getString(TagIcon, "\uF412"), ref)
 	}
 	// fallback to commit
 	ref = g.getGitCommandOutput("rev-parse", "--short", "HEAD")
-	return fmt.Sprintf("%s%s", g.props.getString(CommitIcon, "COMMIT:"), ref)
+	return fmt.Sprintf("%s%s", g.props.getString(CommitIcon, "\uF417"), ref)
 }
 
 func (g *git) parseGitStats(output []string, working bool) *gitStatus {

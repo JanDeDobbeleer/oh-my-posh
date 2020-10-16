@@ -37,14 +37,7 @@
           "style": "plain",
           "foreground": "#FFE700",
           "properties": {
-            "prefix": "",
-            "branch_icon": "",
-            "branch_identical_icon": "≡",
-            "branch_ahead_icon": "↑",
-            "branch_behind_icon": "↓",
-            "branch_gone_icon": "≢",
-            "local_working_icon": "",
-            "local_staged_icon": ""
+            "prefix": ""
           }
         },
         {

@@ -19,14 +19,14 @@ Battery displays the remaining power percentage for your battery.
   "background": "#ffeb3b",
   "properties": {
     "battery_icon": "",
-    "discharging_icon": " ",
-    "charging_icon": " ",
-    "charged_icon": " ",
+    "discharging_icon": "\uE231 ",
+    "charging_icon": "\uE234 ",
+    "charged_icon": "\uE22F ",
     "color_background": true,
     "charged_color": "#4caf50",
     "charging_color": "#40c4ff",
     "discharging_color": "#ff5722",
-    "postfix": " "
+    "postfix": "\uF295 "
   }
 }
 ```

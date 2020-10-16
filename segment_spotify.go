@@ -47,9 +47,9 @@ func (s *spotify) string() string {
 	icon := ""
 	switch s.status {
 	case "paused":
-		icon = s.props.getString(PausedIcon, "")
+		icon = s.props.getString(PausedIcon, "\uF8E3 ")
 	case "playing":
-		icon = s.props.getString(PlayingIcon, "")
+		icon = s.props.getString(PlayingIcon, "\uE602 ")
 	}
 	separator := s.props.getString(TrackSeparator, " - ")
 	return fmt.Sprintf("%s%s%s%s", icon, s.artist, separator, s.track)

@@ -72,7 +72,6 @@
           "foreground": "#CECE04",
           "properties": {
             "prefix": ""
-
           }
         },
         {
@@ -80,7 +79,6 @@
           "style": "plain",
           "foreground": "#100e23",
           "properties": {
-            "prefix": "",
             "prefix": "  "
           }
         },

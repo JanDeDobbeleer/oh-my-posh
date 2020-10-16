@@ -28,9 +28,7 @@
           "foreground": "#100e23",
           "background": "#91ddff",
           "properties": {
-            "home_icon": "~",
-            "folder_icon": "",
-            "windows_registry_icon": "",
+            "folder_icon": "\uF115",
             "folder_separator_icon": "",
             "style": "short"
           }

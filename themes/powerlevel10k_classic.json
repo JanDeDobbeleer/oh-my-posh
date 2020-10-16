@@ -25,7 +25,6 @@
           "foreground": "#26C6DA",
           "background": "#546E7A",
           "properties": {
-            "home_icon": "~",
             "style": "short",
             "postfix": " "
           }

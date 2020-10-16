@@ -31,9 +31,7 @@
           "foreground": "#ffffff",
           "background": "#007ACC",
           "properties" : {
-              "home_icon": "~",
-              "folder_icon": "",
-              "windows_registry_icon": "",
+              "folder_icon": "\uF115",
               "folder_separator_icon": "",
               "style": "short",
               "prefix": "<transparent>\uE0B0</> ",

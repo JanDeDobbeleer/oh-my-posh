@@ -18,7 +18,6 @@ Display the current path.
   "foreground": "#ffffff",
   "background": "#61AFEF",
   "properties": {
-    "prefix": "  ",
     "style": "folder"
   }
 }

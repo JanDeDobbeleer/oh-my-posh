@@ -27,7 +27,6 @@
           "style": "plain",
           "foreground": "#0973C0",
           "properties": {
-            "home_icon": "~",
             "style": "short"
           }
         },

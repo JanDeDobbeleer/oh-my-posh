@@ -239,7 +239,6 @@ override or transparent background color using the segement's [foreground][fg] p
           "leading_diamond": "",
           "trailing_diamond": "\uE0B0",
           "properties": {
-            "user_info_separator": "@",
             "postfix": " "
           }
         },

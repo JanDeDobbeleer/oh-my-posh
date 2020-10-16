@@ -12,10 +12,7 @@
         {
           "type": "session",
           "style": "plain",
-          "foreground": "#ffffff",
-          "properties": {
-            "user_info_separator": "@"
-          }
+          "foreground": "#ffffff"
         },
         {
           "type": "path",

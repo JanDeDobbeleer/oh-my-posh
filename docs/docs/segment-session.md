@@ -17,11 +17,7 @@ Show the current user and host name.
   "foreground": "#ffffff",
   "background": "#c386f1",
   "leading_diamond": "",
-  "trailing_diamond": "\uE0B0",
-  "properties": {
-    "user_info_separator": "@",
-    "postfix": " "
-  }
+  "trailing_diamond": "\uE0B0"
 }
 ```
 

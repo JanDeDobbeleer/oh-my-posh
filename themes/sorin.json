@@ -17,10 +17,7 @@
         {
           "type": "session",
           "style": "plain",
-          "foreground": "#FFFFFF",
-          "properties": {
-            "user_info_separator": "@"
-          }
+          "foreground": "#FFFFFF"
         },
         {
           "type": "path",

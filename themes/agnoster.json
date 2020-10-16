@@ -16,10 +16,7 @@
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
           "foreground": "#100e23",
-          "background": "#ffffff",
-          "properties": {
-            "user_info_separator": "@"
-          }
+          "background": "#ffffff"
         },
         {
           "type": "path",

@@ -28,10 +28,9 @@
           "foreground": "#100e23",
           "background": "#91ddff",
           "properties" : {
-              "home_icon": "",
-              "folder_icon": "",
-              "windows_registry_icon": "",
-              "folder_separator_icon": "  ",
+              "home_icon": "\uF7DB",
+              "folder_icon": "\uF115",
+              "folder_separator_icon": " \uE0B1 ",
               "style": "agnoster"
           }
         },

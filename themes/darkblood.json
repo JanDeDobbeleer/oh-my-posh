@@ -56,7 +56,6 @@
           "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "home_icon": "~",
             "style": "short",
             "prefix": "<#CB4B16>┖[</>",
             "postfix": "<#CB4B16>]></>"

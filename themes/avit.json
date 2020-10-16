@@ -10,7 +10,6 @@
           "foreground": "#ffffff",
           "properties": {
             "prefix": "",
-            "home_icon": "~",
             "style": "short"
           }
         },

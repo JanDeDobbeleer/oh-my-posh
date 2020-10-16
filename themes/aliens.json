@@ -23,7 +23,6 @@
           "foreground": "#ffffff",
           "background": "#C678DD",
           "properties": {
-            "home_icon": "~",
             "style": "short"
           }
         },

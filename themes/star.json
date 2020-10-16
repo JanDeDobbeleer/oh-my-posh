@@ -19,7 +19,6 @@
           "style": "plain",
           "foreground": "#55B9C4",
           "properties": {
-            "home_icon": "~",
             "style": "folder",
             "prefix": ""
           }

@@ -24,7 +24,6 @@
           "style": "plain",
           "foreground": "#61AFEF",
           "properties": {
-            "home_icon": "~",
             "style": "agnoster",
             "postfix": " on"
           }

@@ -28,6 +28,6 @@ Be aware this can make the prompt a tad bit slower as it needs to get a response
 
 ## Properties
 
-- playing_icon: `string` - text/icon to show when playing.
-- paused_icon: `string` - text/icon to show when paused.
-- track_separator: `string` - text/icon to put between the artist and song name.
+- playing_icon: `string` - text/icon to show when playing - defaults to `\uE602 `
+- paused_icon: `string` - text/icon to show when paused - defaults to `\uF8E3 `
+- track_separator: `string` - text/icon to put between the artist and song name - defaults to ` - `

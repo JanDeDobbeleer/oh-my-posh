@@ -25,10 +25,10 @@ Display the current path.
 
 ## Properties
 
-- folder_separator_icon: `string` - the symbol to use as a separator between folders
-- home_icon: `string` - the icon to display when at `$HOME`
-- folder_icon: `string` - the icon to use as a folder indication
-- windows_registry_icon: `string` - the icon to display when in the Windows registry
+- folder_separator_icon: `string` - the symbol to use as a separator between folders - defaults to platfrom path separator
+- home_icon: `string` - the icon to display when at `$HOME` - defaults to `~`
+- folder_icon: `string` - the icon to use as a folder indication - defaults to `..`
+- windows_registry_icon: `string` - the icon to display when in the Windows registry - defaults to `\uE0B1`
 - style: `enum` - how to display the current path
 
 ## Style

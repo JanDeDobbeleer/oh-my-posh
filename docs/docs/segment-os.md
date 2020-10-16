@@ -25,6 +25,6 @@ Display OS specific info. Defaults to Icon.
 
 ## Properties
 
-- macos: `string` - the string to use for macOS - defaults to macOS icon
-- linux: `string` - the icon to use for Linux - defaults to Linux icon
-- windows: `string` - the icon to use for Windows - defaults to Windows icon
+- macos: `string` - the string to use for macOS - defaults to macOS icon - defaults to `\uF179`
+- linux: `string` - the icon to use for Linux - defaults to Linux icon - defaults to `\uF17C`
+- windows: `string` - the icon to use for Windows - defaults to Windows icon - defaults to `\uE62A`

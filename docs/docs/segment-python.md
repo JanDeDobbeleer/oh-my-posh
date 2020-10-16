@@ -26,4 +26,4 @@ Supports conda, virtualenv and pyenv.
 
 ## Properties
 
-- display_virtual_env: `boolean` - show the name of the virtualenv or not, defaults to `true`.
+- display_virtual_env: `boolean` - show the name of the virtualenv or not - defaults to `true`

@@ -23,6 +23,6 @@ Show the current timestamp.
 
 ## Properties
 
-- time_format: `string` - format to use, follows the [golang standard][format].
+- time_format: `string` - format to use, follows the [golang standard][format] - defaults to `15:04:05`
 
 [format]: https://gobyexample.com/time-formatting-parsing

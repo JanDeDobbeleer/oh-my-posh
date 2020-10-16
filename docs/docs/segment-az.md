@@ -21,7 +21,7 @@ Display the currently active Azure subscription information.
     "display_id": true,
     "display_name": true,
     "info_separator": " @ ",
-    "prefix": " ﴃ "
+    "prefix": " \uFD03 "
   }
 }
 ```

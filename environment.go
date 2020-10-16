@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -26,7 +28,7 @@ type environmentInfo interface {
 	getHostName() (string, error)
 	getRuntimeGOOS() string
 	hasCommand(command string) bool
-	runCommand(command string, args ...string) string
+	runCommand(command string, args ...string) (string, error)
 	runShellCommand(shell string, command string) string
 	lastErrorCode() int
 	getArgs() *args
@@ -37,6 +39,14 @@ type environmentInfo interface {
 type environment struct {
 	args *args
 	cwd  string
+}
+
+type commandError struct {
+	exitCode int
+}
+
+func (e *commandError) Error() string {
+	return fmt.Sprintf("%d", e.exitCode)
 }
 
 func (env *environment) getenv(key string) string {
@@ -110,12 +120,18 @@ func (env *environment) getRuntimeGOOS() string {
 	return runtime.GOOS
 }
 
-func (env *environment) runCommand(command string, args ...string) string {
+func (env *environment) runCommand(command string, args ...string) (string, error) {
 	out, err := exec.Command(command, args...).Output()
-	if err != nil {
-		return ""
+
+	var exerr *exec.ExitError
+	if errors.As(err, &exerr) {
+		return "", &commandError{exitCode: exerr.ExitCode()}
 	}
-	return strings.TrimSpace(string(out))
+	if err != nil {
+		return "", err
+	}
+
+	return strings.TrimSpace(string(out)), nil
 }
 
 func (env *environment) runShellCommand(shell string, command string) string {

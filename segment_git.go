@@ -101,7 +101,7 @@ func (g *git) enabled() bool {
 	if !g.env.hasCommand("git") {
 		return false
 	}
-	output := g.env.runCommand("git", "rev-parse", "--is-inside-work-tree")
+	output, _ := g.env.runCommand("git", "rev-parse", "--is-inside-work-tree")
 	return output == "true"
 }
 
@@ -183,7 +183,8 @@ func (g *git) setGitStatus() {
 
 func (g *git) getGitCommandOutput(args ...string) string {
 	args = append([]string{"-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
-	return g.env.runCommand("git", args...)
+	val, _ := g.env.runCommand("git", args...)
+	return val
 }
 
 func (g *git) getGitHEADContext(ref string) string {

@@ -15,8 +15,8 @@ type pythonArgs struct {
 	pathSeparator    string
 	pythonVersion    string
 	python3Version   string
-	hasPyFiles         bool
-	hasNotebookFiles   bool
+	hasPyFiles       bool
+	hasNotebookFiles bool
 }
 
 func newPythonArgs() *pythonArgs {
@@ -37,8 +37,8 @@ func bootStrapPythonTest(args *pythonArgs) *python {
 	env := new(MockedEnvironment)
 	env.On("hasFiles", "*.py").Return(args.hasPyFiles)
 	env.On("hasFiles", "*.ipynb").Return(args.hasNotebookFiles)
-	env.On("runCommand", "python", []string{"--version"}).Return(args.pythonVersion)
-	env.On("runCommand", "python3", []string{"--version"}).Return(args.python3Version)
+	env.On("runCommand", "python", []string{"--version"}).Return(args.pythonVersion, nil)
+	env.On("runCommand", "python3", []string{"--version"}).Return(args.python3Version, nil)
 	env.On("getenv", "VIRTUAL_ENV").Return(args.virtualEnvName)
 	env.On("getenv", "CONDA_ENV_PATH").Return(args.condaEnvName)
 	env.On("getenv", "CONDA_DEFAULT_ENV").Return(args.condaDefaultName)

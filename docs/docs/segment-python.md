@@ -15,7 +15,7 @@ Supports conda, virtualenv and pyenv.
 {
   "type": "python",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#100e23",
   "background": "#906cff",
   "properties": {

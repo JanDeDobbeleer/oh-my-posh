@@ -15,7 +15,7 @@ Be aware this can make the prompt a tad bit slower as it needs to get a response
 {
   "type": "spotify",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#1BD760",
   "properties": {

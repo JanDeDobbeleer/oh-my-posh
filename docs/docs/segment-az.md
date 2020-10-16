@@ -14,7 +14,7 @@ Display the currently active Azure subscription information.
 {
   "type": "az",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#9ec3f0",
   "properties": {

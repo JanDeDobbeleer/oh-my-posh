@@ -15,7 +15,7 @@ func (rt *root) enabled() bool {
 }
 
 func (rt *root) string() string {
-	return rt.props.getString(RootIcon, "#")
+	return rt.props.getString(RootIcon, "\uE20F")
 }
 
 func (rt *root) init(props *properties, env environmentInfo) {

@@ -17,10 +17,7 @@
           "type": "root",
           "style": "plain",
           "foreground": "#26C6DA",
-          "background": "#546E7A",
-          "properties": {
-            "root_icon": "襁"
-          }
+          "background": "#546E7A"
         },
         {
           "type": "path",
@@ -55,7 +52,7 @@
           "foreground": "#546E7A",
           "background": "transparent",
           "properties": {
-            "text": "",
+            "text": "\uE0B0",
             "prefix": "",
             "postfix": ""
           }

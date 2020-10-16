@@ -40,7 +40,7 @@ The segment will show when the value of the environment variable isn't empty.
 {
   "type": "envvar",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#0077c2",
   "properties": {

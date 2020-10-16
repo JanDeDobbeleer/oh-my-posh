@@ -18,7 +18,7 @@ A really simple configuration could look like this.
         {
           "type": "path",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#61AFEF",
           "properties": {
@@ -237,7 +237,7 @@ override or transparent background color using the segement's [foreground][fg] p
           "foreground": "#ffffff",
           "background": "#ffb300",
           "leading_diamond": "",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B0",
           "properties": {
             "user_info_separator": "@",
             "postfix": " "
@@ -246,7 +246,7 @@ override or transparent background color using the segement's [foreground][fg] p
         {
           "type": "path",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#61AFEF",
           "properties": {
@@ -260,7 +260,7 @@ override or transparent background color using the segement's [foreground][fg] p
         {
           "type": "git",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
           "background": "#ffeb3b",
           "properties": {
@@ -285,7 +285,7 @@ override or transparent background color using the segement's [foreground][fg] p
             "always_enabled": true,
             "error_color": "#e91e63",
             "color_background": true,
-            "prefix": "<#193549> </>"
+            "prefix": "<#193549>\uE0B0 </>"
           }
         }
       ]

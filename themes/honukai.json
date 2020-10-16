@@ -71,8 +71,8 @@
           "style": "plain",
           "foreground": "#CECE04",
           "properties": {
-            "prefix": "",
-            "root_icon": "襁"
+            "prefix": ""
+
           }
         },
         {
@@ -87,10 +87,7 @@
         {
           "type": "exit",
           "style": "plain",
-          "foreground": "#CB4B16",
-          "properties": {
-            "prefix": ""
-          }
+          "foreground": "#CB4B16"
         },
         {
           "type": "text",

@@ -69,6 +69,8 @@ const (
 	Kubectl SegmentType = "kubectl"
 	//Dotnet writes which dotnet version is currently active
 	Dotnet SegmentType = "dotnet"
+	//Terraform writes the terraform workspace we're currently in
+	Terraform SegmentType = "terraform"
 	//Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	//Plain writes it without ornaments
@@ -126,6 +128,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Az:        &az{},
 		Kubectl:   &kubectl{},
 		Dotnet:    &dotnet{},
+		Terraform: &terraform{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

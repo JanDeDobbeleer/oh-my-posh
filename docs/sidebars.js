@@ -30,6 +30,7 @@ module.exports = {
         "session",
         "shell",
         "spotify",
+        "terraform",
         "text",
         "time",
       ]

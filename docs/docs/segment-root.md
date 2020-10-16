@@ -18,7 +18,7 @@ Show when the current user is root or when in an elevated shell (Windows).
   "foreground": "#111111",
   "background": "#ffff66",
   "properties": {
-    "root_icon": ""
+    "root_icon": "\uF0E7"
   }
 }
 ```

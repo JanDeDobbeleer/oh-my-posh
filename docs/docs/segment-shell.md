@@ -18,7 +18,7 @@ Show the current shell name (zsh, powershell, bash, ...).
   "foreground": "#ffffff",
   "background": "#0077c2",
   "properties": {
-    "prefix": "  "
+    "prefix": " \uFCB5 "
   }
 }
 ```

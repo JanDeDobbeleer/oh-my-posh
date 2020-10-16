@@ -14,11 +14,11 @@ Display the currently active Kubernetes context name.
 {
   "type": "kubectl",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#ebcc34",
   "properties": {
-    "prefix": " ⎈ "
+    "prefix": " \uFD31 "
   }
 }
 ```

@@ -29,7 +29,7 @@ func (n *new) enabled() bool {
 }
 
 func (n *new) string() string {
-    newText := n.props.getString(NewProp, "n00b")
+    newText := n.props.getString(NewProp, "\uEFF1")
     return newText
 }
 
@@ -38,6 +38,10 @@ func (n *new) init(props *properties, env environmentInfo) {
     n.env = env
 }
 ```
+
+When it comes to properties, make sure to use the UTF32 representation (e.g. "\uEFF1") rather than the icon itself.
+This will facilitate the review process as not all environments display the icons based on the font being used.
+You can find these values and query for icons easily at [Nerd Fonts][nf-icons].
 
 For each segment, there's a single test file ensuring the functionality going forward. The convention
 is `new_segment_test.go`, have a look at existing segment tests for inspiration.
@@ -96,14 +100,14 @@ Display something new.
   "foreground": "#193549",
   "background": "#ffeb3b",
   "properties": {
-    "newprop": "w00p"
+    "newprop": "\uEFF1"
   }
 }
 ```
 
 ## Properties
 
-- newprop: `string` - the new text to show
+- newprop: `string` - the new text to show - defaults to `\uEFF1`
 ````
 
 ## Map the new documentation in the sidebar
@@ -118,3 +122,4 @@ And be patient, I'm going as fast as I can 🏎
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/main/themes
 [docs]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/main/docs/docs
 [sidebars]: https://github.com/JanDeDobbeleer/oh-my-posh3/blob/main/docs/sidebars.js
+[nf-icons]: https://www.nerdfonts.com/cheat-sheet

@@ -101,7 +101,7 @@ func (pt *path) rootLocation(pwd string) string {
 	splitted := strings.Split(pwd, pt.env.getPathSeperator())
 	rootLocation := splitted[0]
 	mappedLocations := map[string]string{
-		"HKCU:": pt.props.getString(WindowsRegistryIcon, "HK:"),
+		"HKCU:": pt.props.getString(WindowsRegistryIcon, "\uE0B1"),
 	}
 	if val, ok := mappedLocations[rootLocation]; ok {
 		return val

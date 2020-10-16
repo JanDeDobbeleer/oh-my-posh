@@ -33,14 +33,14 @@ Battery displays the remaining power percentage for your battery.
 
 ## Properties
 
-- battery_icon: `string` - the icon to use as a prefix for the battery percentage
-- display_error: `boolean` - show the error context when failing to retrieve the battery information
-- charging_icon: `string` - icon to display on the left when charging
-- discharging_icon: `string` - icon to display on the left when discharging
-- charged_icon: `string` - icon to display on the left when fully charged
-- color_background: `boolean` - color the background or foreground for properties below
-- charged_color: `string` [hex color code][colors] - color to use when fully charged
-- charging_color: `string` [hex color code][colors] - color to use when charging
-- discharging_color: `string` [hex color code][colors] - color to use when discharging
+- battery_icon: `string` - the icon to use as a prefix for the battery percentage - defaults to empty
+- display_error: `boolean` - show the error context when failing to retrieve the battery information - defaults to `true`
+- charging_icon: `string` - icon to display on the left when charging - defaults to empty
+- discharging_icon: `string` - icon to display on the left when discharging - defaults to empty
+- charged_icon: `string` - icon to display on the left when fully charged - defaults to empty
+- color_background: `boolean` - color the background or foreground for properties below - defaults to `false`
+- charged_color: `string` [hex color code][colors] - color to use when fully charged - defaults to segment color
+- charging_color: `string` [hex color code][colors] - color to use when charging - defaults to segment color
+- discharging_color: `string` [hex color code][colors] - color to use when discharging - defaults to segment color
 
 [colors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/

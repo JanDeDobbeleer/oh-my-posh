@@ -261,16 +261,7 @@ override or transparent background color using the segement's [foreground][fg] p
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
-          "background": "#ffeb3b",
-          "properties": {
-            "branch_icon": "",
-            "branch_identical_icon": "≡",
-            "branch_ahead_icon": "↑",
-            "branch_behind_icon": "↓",
-            "branch_gone_icon": "≢",
-            "local_working_icon": "",
-            "local_staged_icon": ""
-          }
+          "background": "#ffeb3b"
         },
         {
           "type": "exit",

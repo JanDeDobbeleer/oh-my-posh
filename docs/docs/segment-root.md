@@ -25,4 +25,4 @@ Show when the current user is root or when in an elevated shell (Windows).
 
 ## Properties
 
-- root_icon: `string` - icon to display in case of root/elevated.
+- root_icon: `string` - icon to display in case of root/elevated - defaults to `\uF0E7`

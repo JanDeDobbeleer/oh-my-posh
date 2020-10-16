@@ -46,25 +46,8 @@
           "foreground": "#193549",
           "background": "#fffb38",
           "properties": {
-            "branch_icon": "",
-            "branch_identical_icon": "≡",
-            "branch_ahead_icon": "↑",
-            "branch_behind_icon": "↓",
-            "branch_gone_icon": "≢",
-            "local_working_icon": "",
-            "local_staged_icon": "",
-            "rebase_icon": " ",
-            "cherry_pick_icon": " ",
-            "detached_icon": " ",
-            "tag_icon": "笠",
             "display_stash_count": true,
-            "stash_count_icon": "\uF692 ",
-            "merge_icon": "\uE726 ",
-            "display_upstream_icon": true,
-            "github_icon": "\uE709",
-            "bitbucket_icon": "\uE703",
-            "gitlab_icon": "\uE296",
-            "git_icon": "\uE702"
+            "display_upstream_icon": true
           }
         },
         {
@@ -75,9 +58,6 @@
           "background": "#f36943",
           "properties": {
             "battery_icon": "",
-            "discharging_icon": "\uE231 ",
-            "charging_icon": "\uE234 ",
-            "charged_icon": "\uE22F ",
             "color_background": true,
             "charged_color": "#4caf50",
             "charging_color": "#40c4ff",

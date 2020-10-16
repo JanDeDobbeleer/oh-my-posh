@@ -34,14 +34,10 @@
           "style": "plain",
           "foreground": "#F3C267",
           "properties": {
-            "branch_icon": "🚦 ",
+            "branch_icon": "\u1F6A6 ",
             "display_status": true,
-            "branch_identical_icon": "✅",
-            "branch_ahead_icon": "",
-            "branch_behind_icon": "",
-            "branch_gone_icon": "❎",
-            "local_working_icon": "",
-            "local_staged_icon": ""
+            "branch_identical_icon": "\uF14A",
+            "branch_gone_icon": "\u274E"
           }
         },
         {

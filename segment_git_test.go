@@ -86,7 +86,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 }
 
 func TestGetGitDetachedCommitHash(t *testing.T) {
-	want := "COMMIT:lalasha1"
+	want := "\uf417lalasha1"
 	context := &detachedContext{
 		currentCommit: "lalasha1",
 	}
@@ -96,7 +96,7 @@ func TestGetGitDetachedCommitHash(t *testing.T) {
 }
 
 func TestGetGitHEADContextTagName(t *testing.T) {
-	want := "TAG:lalasha1"
+	want := "\uf412lalasha1"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		tagName:       "lalasha1",
@@ -107,7 +107,7 @@ func TestGetGitHEADContextTagName(t *testing.T) {
 }
 
 func TestGetGitHEADContextRebaseMerge(t *testing.T) {
-	want := "REBASE:BRANCH:cool-feature-bro onto BRANCH:main (2/3) at COMMIT:whatever"
+	want := "\ue728 \ue0a0cool-feature-bro onto \ue0a0main (2/3) at \uf417whatever"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		rebase:        "true",
@@ -123,7 +123,7 @@ func TestGetGitHEADContextRebaseMerge(t *testing.T) {
 }
 
 func TestGetGitHEADContextRebaseApply(t *testing.T) {
-	want := "REBASING:BRANCH:cool-feature-bro (2/3) at COMMIT:whatever"
+	want := "\ue728 \ue0a0cool-feature-bro (2/3) at \uf417whatever"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		rebase:        "true",
@@ -138,7 +138,7 @@ func TestGetGitHEADContextRebaseApply(t *testing.T) {
 }
 
 func TestGetGitHEADContextRebaseUnknown(t *testing.T) {
-	want := "COMMIT:whatever"
+	want := "\uf417whatever"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		rebase:        "true",
@@ -149,7 +149,7 @@ func TestGetGitHEADContextRebaseUnknown(t *testing.T) {
 }
 
 func TestGetGitHEADContextCherryPickOnBranch(t *testing.T) {
-	want := "CHERRY PICK:pickme onto BRANCH:main"
+	want := "\ue29b pickme onto \ue0a0main"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		branchName:    "main",
@@ -162,7 +162,7 @@ func TestGetGitHEADContextCherryPickOnBranch(t *testing.T) {
 }
 
 func TestGetGitHEADContextCherryPickOnTag(t *testing.T) {
-	want := "CHERRY PICK:pickme onto TAG:v3.4.6"
+	want := "\ue29b pickme onto \uf412v3.4.6"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		tagName:       "v3.4.6",
@@ -175,7 +175,7 @@ func TestGetGitHEADContextCherryPickOnTag(t *testing.T) {
 }
 
 func TestGetGitHEADContextMerge(t *testing.T) {
-	want := "MERGING:BRANCH:feat into BRANCH:main"
+	want := "\ue727 \ue0a0feat into \ue0a0main"
 	context := &detachedContext{
 		merge:     true,
 		mergeHEAD: "feat",
@@ -186,7 +186,7 @@ func TestGetGitHEADContextMerge(t *testing.T) {
 }
 
 func TestGetGitHEADContextMergeTag(t *testing.T) {
-	want := "MERGING:BRANCH:feat into TAG:v3.4.6"
+	want := "\ue727 \ue0a0feat into \uf412v3.4.6"
 	context := &detachedContext{
 		tagName:   "v3.4.6",
 		merge:     true,

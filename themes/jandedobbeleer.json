@@ -19,9 +19,7 @@
           "foreground": "#ffffff",
           "background": "#1BD760",
           "properties": {
-            "prefix": "  ",
-            "paused_icon": " ",
-            "playing_icon": " "
+            "prefix": "  "
           }
         },
         {

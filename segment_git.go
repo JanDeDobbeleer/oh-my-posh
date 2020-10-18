@@ -27,7 +27,7 @@ type gitStatus struct {
 	untracked int
 }
 
-func (s *gitStatus) string(prefix string) string {
+func (s *gitStatus) string(prefix string, color string) string {
 	var status string
 	stringIfValue := func(value int, prefix string) string {
 		if value > 0 {
@@ -41,7 +41,7 @@ func (s *gitStatus) string(prefix string) string {
 	status += stringIfValue(s.untracked, "?")
 	status += stringIfValue(s.unmerged, "x")
 	if status != "" {
-		return fmt.Sprintf(" %s%s", prefix, status)
+		return fmt.Sprintf(" <%s>%s%s</>", color, prefix, status)
 	}
 	return status
 }
@@ -95,6 +95,10 @@ const (
 	GitlabIcon Property = "gitlab_icon"
 	//GitIcon shows when the upstream can't be identified
 	GitIcon Property = "git_icon"
+	//WorkingColor if set, the color to use on the working area
+	WorkingColor Property = "working_color"
+	//StagingColor if set, the color to use on the staging area
+	StagingColor Property = "staging_color"
 )
 
 func (g *git) enabled() bool {
@@ -130,8 +134,8 @@ func (g *git) string() string {
 	} else if g.repo.upstream == "" {
 		fmt.Fprintf(buffer, " %s", g.props.getString(BranchGoneIcon, "\u2262"))
 	}
-	staging := g.repo.staging.string(g.props.getString(LocalStagingIcon, "\uF046"))
-	working := g.repo.working.string(g.props.getString(LocalWorkingIcon, "\uF044"))
+	staging := g.repo.staging.string(g.props.getString(LocalStagingIcon, "\uF046"), g.props.getColor(StagingColor, g.props.foreground))
+	working := g.repo.working.string(g.props.getString(LocalWorkingIcon, "\uF044"), g.props.getColor(WorkingColor, g.props.foreground))
 	fmt.Fprint(buffer, staging)
 	if staging != "" && working != "" {
 		fmt.Fprint(buffer, g.props.getString(StatusSeparatorIcon, " |"))

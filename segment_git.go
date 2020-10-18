@@ -25,6 +25,7 @@ type gitStatus struct {
 	added     int
 	modified  int
 	untracked int
+	changed   bool
 }
 
 func (s *gitStatus) string(prefix string, color string) string {
@@ -99,6 +100,16 @@ const (
 	WorkingColor Property = "working_color"
 	//StagingColor if set, the color to use on the staging area
 	StagingColor Property = "staging_color"
+	//StatusColorsEnabled enables status colors
+	StatusColorsEnabled Property = "status_colors_enabled"
+	//LocalChangesColor if set, the color to use when there are local changes
+	LocalChangesColor Property = "local_changes_color"
+	//AheadAndBehindColor if set, the color to use when the branch is ahead and behind the remote
+	AheadAndBehindColor Property = "ahead_and_behind_color"
+	//BehindColor if set, the color to use when the branch is ahead and behind the remote
+	BehindColor Property = "behind_color"
+	//AheadColor if set, the color to use when the branch is ahead and behind the remote
+	AheadColor Property = "ahead_color"
 )
 
 func (g *git) enabled() bool {
@@ -111,6 +122,10 @@ func (g *git) enabled() bool {
 
 func (g *git) string() string {
 	g.setGitStatus()
+	if g.props.getBool(StatusColorsEnabled, false) {
+		g.SetStatusColor()
+	}
+	// g.getGitColor()
 	buffer := new(bytes.Buffer)
 	// branchName
 	if g.repo.upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
@@ -134,13 +149,17 @@ func (g *git) string() string {
 	} else if g.repo.upstream == "" {
 		fmt.Fprintf(buffer, " %s", g.props.getString(BranchGoneIcon, "\u2262"))
 	}
-	staging := g.repo.staging.string(g.props.getString(LocalStagingIcon, "\uF046"), g.props.getColor(StagingColor, g.props.foreground))
-	working := g.repo.working.string(g.props.getString(LocalWorkingIcon, "\uF044"), g.props.getColor(WorkingColor, g.props.foreground))
-	fmt.Fprint(buffer, staging)
-	if staging != "" && working != "" {
+	if g.repo.staging.changed {
+		staging := g.repo.staging.string(g.props.getString(LocalStagingIcon, "\uF046"), g.props.getColor(StagingColor, g.props.foreground))
+		fmt.Fprint(buffer, staging)
+	}
+	if g.repo.staging.changed && g.repo.working.changed {
 		fmt.Fprint(buffer, g.props.getString(StatusSeparatorIcon, " |"))
 	}
-	fmt.Fprint(buffer, working)
+	if g.repo.working.changed {
+		working := g.repo.working.string(g.props.getString(LocalWorkingIcon, "\uF044"), g.props.getColor(WorkingColor, g.props.foreground))
+		fmt.Fprint(buffer, working)
+	}
 	if g.props.getBool(DisplayStashCount, false) && g.repo.stashCount != "" {
 		fmt.Fprintf(buffer, " %s%s", g.props.getString(StashCountIcon, "\uF692"), g.repo.stashCount)
 	}
@@ -183,6 +202,27 @@ func (g *git) setGitStatus() {
 	}
 	g.repo.HEAD = g.getGitHEADContext(status["local"])
 	g.repo.stashCount = g.getStashContext()
+}
+
+func (g *git) SetStatusColor() {
+	if g.props.getBool(ColorBackground, true) {
+		g.props.background = g.getStatusColor(g.props.background)
+	} else {
+		g.props.foreground = g.getStatusColor(g.props.foreground)
+	}
+}
+
+func (g *git) getStatusColor(defaultValue string) string {
+	if g.repo.staging.changed || g.repo.working.changed {
+		return g.props.getColor(LocalChangesColor, defaultValue)
+	} else if g.repo.ahead > 0 && g.repo.behind > 0 {
+		return g.props.getColor(AheadAndBehindColor, defaultValue)
+	} else if g.repo.ahead > 0 {
+		return g.props.getColor(AheadColor, defaultValue)
+	} else if g.repo.behind > 0 {
+		return g.props.getColor(BehindColor, defaultValue)
+	}
+	return defaultValue
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {
@@ -287,6 +327,7 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 			status.modified++
 		}
 	}
+	status.changed = status.added > 0 || status.deleted > 0 || status.modified > 0 || status.unmerged > 0 || status.untracked > 0
 	return &status
 }
 

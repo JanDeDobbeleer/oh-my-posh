@@ -309,6 +309,7 @@ func TestParseGitStatsWorking(t *testing.T) {
 	assert.Equal(t, 1, status.added)
 	assert.Equal(t, 1, status.deleted)
 	assert.Equal(t, 2, status.untracked)
+	assert.True(t, status.changed)
 }
 
 func TestParseGitStatsStaging(t *testing.T) {
@@ -330,6 +331,7 @@ func TestParseGitStatsStaging(t *testing.T) {
 	assert.Equal(t, 1, status.added)
 	assert.Equal(t, 2, status.deleted)
 	assert.Equal(t, 1, status.untracked)
+	assert.True(t, status.changed)
 }
 
 func TestParseGitStatsNoChanges(t *testing.T) {
@@ -340,6 +342,7 @@ func TestParseGitStatsNoChanges(t *testing.T) {
 	}
 	status := g.parseGitStats(output, false)
 	assert.Equal(t, expected, status)
+	assert.False(t, status.changed)
 }
 
 func TestParseGitStatsInvalidLine(t *testing.T) {
@@ -351,6 +354,7 @@ func TestParseGitStatsInvalidLine(t *testing.T) {
 	}
 	status := g.parseGitStats(output, false)
 	assert.Equal(t, expected, status)
+	assert.False(t, status.changed)
 }
 
 func bootstrapUpstreamTest(upstream string) *git {
@@ -396,4 +400,161 @@ func TestGetUpstreamSymbolGit(t *testing.T) {
 	g := bootstrapUpstreamTest("gitstash.com/test")
 	upstreamIcon := g.getUpstreamSymbol()
 	assert.Equal(t, "G", upstreamIcon)
+}
+
+func TestGetStatusColorLocalChangesStaging(t *testing.T) {
+	expected := "#BD8BDE"
+	repo := &gitRepo{
+		staging: &gitStatus{
+			changed: true,
+		},
+	}
+	g := &git{
+		repo: repo,
+		props: &properties{
+			values: map[Property]interface{}{
+				LocalChangesColor: expected,
+			},
+		},
+	}
+	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
+}
+
+func TestGetStatusColorLocalChangesWorking(t *testing.T) {
+	expected := "#BD8BDE"
+	repo := &gitRepo{
+		staging: &gitStatus{},
+		working: &gitStatus{
+			changed: true,
+		},
+	}
+	g := &git{
+		repo: repo,
+		props: &properties{
+			values: map[Property]interface{}{
+				LocalChangesColor: expected,
+			},
+		},
+	}
+	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
+}
+
+func TestGetStatusColorAheadAndBehind(t *testing.T) {
+	expected := "#BD8BDE"
+	repo := &gitRepo{
+		staging: &gitStatus{},
+		working: &gitStatus{},
+		ahead:   1,
+		behind:  3,
+	}
+	g := &git{
+		repo: repo,
+		props: &properties{
+			values: map[Property]interface{}{
+				AheadAndBehindColor: expected,
+			},
+		},
+	}
+	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
+}
+
+func TestGetStatusColorAhead(t *testing.T) {
+	expected := "#BD8BDE"
+	repo := &gitRepo{
+		staging: &gitStatus{},
+		working: &gitStatus{},
+		ahead:   1,
+		behind:  0,
+	}
+	g := &git{
+		repo: repo,
+		props: &properties{
+			values: map[Property]interface{}{
+				AheadColor: expected,
+			},
+		},
+	}
+	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
+}
+
+func TestGetStatusColorBehind(t *testing.T) {
+	expected := "#BD8BDE"
+	repo := &gitRepo{
+		staging: &gitStatus{},
+		working: &gitStatus{},
+		ahead:   0,
+		behind:  5,
+	}
+	g := &git{
+		repo: repo,
+		props: &properties{
+			values: map[Property]interface{}{
+				BehindColor: expected,
+			},
+		},
+	}
+	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
+}
+
+func TestGetStatusColorDefault(t *testing.T) {
+	expected := "#BD8BDE"
+	repo := &gitRepo{
+		staging: &gitStatus{},
+		working: &gitStatus{},
+		ahead:   0,
+		behind:  0,
+	}
+	g := &git{
+		repo: repo,
+		props: &properties{
+			values: map[Property]interface{}{
+				BehindColor: "#BD8BDE",
+			},
+		},
+	}
+	assert.Equal(t, expected, g.getStatusColor(expected))
+}
+
+func TestSetStatusColorBackground(t *testing.T) {
+	expected := "#BD8BDE"
+	repo := &gitRepo{
+		staging: &gitStatus{
+			changed: true,
+		},
+	}
+	g := &git{
+		repo: repo,
+		props: &properties{
+			values: map[Property]interface{}{
+				LocalChangesColor: "#BD8BDE",
+				ColorBackground:   false,
+			},
+			foreground: "#ffffff",
+			background: "#111111",
+		},
+	}
+	g.SetStatusColor()
+	assert.Equal(t, expected, g.props.foreground)
+}
+
+func TestSetStatusColorForeground(t *testing.T) {
+	expected := "#BD8BDE"
+	repo := &gitRepo{
+		staging: &gitStatus{
+			changed: true,
+		},
+	}
+	g := &git{
+		repo: repo,
+		props: &properties{
+			values: map[Property]interface{}{
+				LocalChangesColor: "#BD8BDE",
+				ColorBackground:   true,
+			},
+			foreground: "#ffffff",
+			background: "#111111",
+		},
+	}
+	g.SetStatusColor()
+	assert.Equal(t, expected, g.props.background)
 }

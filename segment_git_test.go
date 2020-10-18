@@ -268,26 +268,26 @@ func TestParseGitBranchInfoNoRemote(t *testing.T) {
 }
 
 func TestGitStatusUnmerged(t *testing.T) {
-	expected := " working: x1"
+	expected := " <#123456>working: x1</>"
 	status := &gitStatus{
 		unmerged: 1,
 	}
-	assert.Equal(t, expected, status.string("working:"))
+	assert.Equal(t, expected, status.string("working:", "#123456"))
 }
 
 func TestGitStatusUnmergedModified(t *testing.T) {
-	expected := " working: ~3 x1"
+	expected := " <#123456>working: ~3 x1</>"
 	status := &gitStatus{
 		unmerged: 1,
 		modified: 3,
 	}
-	assert.Equal(t, expected, status.string("working:"))
+	assert.Equal(t, expected, status.string("working:", "#123456"))
 }
 
 func TestGitStatusEmpty(t *testing.T) {
 	expected := ""
 	status := &gitStatus{}
-	assert.Equal(t, expected, status.string("working:"))
+	assert.Equal(t, expected, status.string("working:", "#123456"))
 }
 
 func TestParseGitStatsWorking(t *testing.T) {

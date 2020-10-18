@@ -63,3 +63,10 @@ Local changes can also shown by default using the following syntax for both the 
 - gitlab_icon: `string` - icon/text to display when the upstream is Gitlab - defaults to `\uF296 `
 - bitbucket_icon: `string` - icon/text to display when the upstream is Bitbucket - defaults to `\uF171 `
 - git_icon: `string` - icon/text to display when the upstream is not known/mapped - defaults to `\uE5FB `
+
+### Colors
+
+- working_color: `string` [hex color code][colors] - foreground color for the working area status - defaults to segment foreground
+- staging_color: `string` [hex color code][colors] - foreground color for the staging area status - defaults to segment foreground
+
+[colors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/

@@ -316,7 +316,9 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 		}
 		switch code {
 		case "?":
-			status.untracked++
+			if working {
+				status.untracked++
+			}
 		case "D":
 			status.deleted++
 		case "A":

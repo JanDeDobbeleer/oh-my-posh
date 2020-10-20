@@ -72,7 +72,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.single = "\x1b[%sm%s\x1b[0m"
 		r.formats.full = "\x1b[%sm\x1b[%sm%s\x1b[0m"
 		r.formats.transparent = "\x1b[%s;49m\x1b[7m%s\x1b[m\x1b[0m"
-		r.formats.linebreak = "\x1b[1000C "
+		r.formats.linebreak = "\x1b[E"
 		r.formats.linechange = "\x1b[%d%s"
 		r.formats.left = "\x1b[%dC"
 		r.formats.right = "\x1b[%dD"

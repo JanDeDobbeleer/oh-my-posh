@@ -14,7 +14,6 @@ type formats struct {
 	single      string
 	full        string
 	transparent string
-	linebreak   string
 	linechange  string
 	left        string
 	right       string
@@ -23,25 +22,20 @@ type formats struct {
 	creset      string
 }
 
-//Shell indicates the shell we're currently in
-type Shell string
-
 //Renderer writes colorized strings
 type Renderer struct {
 	Buffer  *bytes.Buffer
 	formats *formats
-	shell   Shell
+	shell   string
 }
 
 const (
 	//Transparent implies a transparent color
 	Transparent string = "transparent"
-	zsh         Shell  = "zsh"
-	bash        Shell  = "bash"
-	universal   Shell  = "any"
 )
 
 func (r *Renderer) init(shell string) {
+	r.shell = shell
 	r.formats = &formats{
 		rANSI: "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))",
 	}
@@ -50,35 +44,29 @@ func (r *Renderer) init(shell string) {
 		r.formats.single = "%%{\x1b[%sm%%}%s%%{\x1b[0m%%}"
 		r.formats.full = "%%{\x1b[%sm\x1b[%sm%%}%s%%{\x1b[0m%%}"
 		r.formats.transparent = "%%{\x1b[%s;49m\x1b[7m%%}%s%%{\x1b[m\x1b[0m%%}"
-		r.formats.linebreak = "\n"
 		r.formats.linechange = "%%{\x1b[%d%s%%}"
 		r.formats.left = "%%{\x1b[%dC%%}"
 		r.formats.right = "%%{\x1b[%dD%%}"
 		r.formats.title = "%%{\033]0;%s\007%%}"
 		r.formats.creset = "%{\x1b[0m%}"
-		r.shell = zsh
 	case "bash":
 		r.formats.single = "\\[\x1b[%sm\\]%s\\[\x1b[0m\\]"
 		r.formats.full = "\\[\x1b[%sm\x1b[%sm\\]%s\\[\x1b[0m\\]"
 		r.formats.transparent = "\\[\x1b[%s;49m\x1b[7m\\]%s\\[\x1b[m\x1b[0m\\]"
-		r.formats.linebreak = "\n"
 		r.formats.linechange = "\\[\x1b[%d%s\\]"
 		r.formats.left = "\\[\x1b[%dC\\]"
 		r.formats.right = "\\[\x1b[%dD\\]"
 		r.formats.title = "\\[\033]0;%s\007\\]"
 		r.formats.creset = "\\[\x1b[0m\\]"
-		r.shell = bash
 	default:
 		r.formats.single = "\x1b[%sm%s\x1b[0m"
 		r.formats.full = "\x1b[%sm\x1b[%sm%s\x1b[0m"
 		r.formats.transparent = "\x1b[%s;49m\x1b[7m%s\x1b[m\x1b[0m"
-		r.formats.linebreak = "\x1b[1000C "
 		r.formats.linechange = "\x1b[%d%s"
 		r.formats.left = "\x1b[%dC"
 		r.formats.right = "\x1b[%dD"
 		r.formats.title = "\033]0;%s\007"
 		r.formats.creset = "\x1b[0m"
-		r.shell = universal
 	}
 }
 
@@ -125,10 +113,10 @@ func (r *Renderer) lenWithoutANSI(str string) int {
 	re := regexp.MustCompile(r.formats.rANSI)
 	stripped := re.ReplaceAllString(str, "")
 	switch r.shell {
-	case zsh:
+	case "zsh":
 		stripped = strings.Replace(stripped, "%{", "", -1)
 		stripped = strings.Replace(stripped, "%}", "", -1)
-	case bash:
+	case "bash":
 		stripped = strings.Replace(stripped, "\\[", "", -1)
 		stripped = strings.Replace(stripped, "\\]", "", -1)
 	}
@@ -143,7 +131,11 @@ func (r *Renderer) lenWithoutANSI(str string) int {
 }
 
 func (r *Renderer) lineBreak() string {
-	return r.formats.linebreak
+	switch r.shell {
+	case "bash", "zsh", "nu":
+		return "\n"
+	}
+	return "\x1b[1000C "
 }
 
 func (r *Renderer) carriageForward() string {

@@ -1,5 +1,5 @@
 ---
-id: contributing-segment
+id: contributing_segment
 title: Add Segment
 sidebar_label: Add Segment
 ---

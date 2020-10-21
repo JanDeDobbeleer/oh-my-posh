@@ -131,11 +131,10 @@ func (r *Renderer) lenWithoutANSI(str string) int {
 }
 
 func (r *Renderer) lineBreak() string {
-	switch r.shell {
-	case "bash", "zsh", "nu":
-		return "\n"
+	if r.shell == "pwsh" {
+		return "\x1b[1000C "
 	}
-	return "\x1b[1000C "
+	return "\n"
 }
 
 func (r *Renderer) carriageForward() string {

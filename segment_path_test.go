@@ -63,6 +63,11 @@ func (env *MockedEnvironment) getRuntimeGOOS() string {
 	return args.String(0)
 }
 
+func (env *MockedEnvironment) getPlatform() string {
+	args := env.Called(nil)
+	return args.String(0)
+}
+
 func (env *MockedEnvironment) hasCommand(command string) bool {
 	args := env.Called(command)
 	return args.Bool(0)

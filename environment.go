@@ -13,6 +13,7 @@ import (
 
 	"github.com/distatus/battery"
 	ps "github.com/mitchellh/go-ps"
+	"github.com/shirou/gopsutil/host"
 )
 
 type environmentInfo interface {
@@ -27,6 +28,7 @@ type environmentInfo interface {
 	isRunningAsRoot() bool
 	getHostName() (string, error)
 	getRuntimeGOOS() string
+	getPlatform() string
 	hasCommand(command string) bool
 	runCommand(command string, args ...string) (string, error)
 	runShellCommand(shell string, command string) string
@@ -118,6 +120,15 @@ func (env *environment) getHostName() (string, error) {
 
 func (env *environment) getRuntimeGOOS() string {
 	return runtime.GOOS
+}
+
+func (env *environment) getPlatform() string {
+	if runtime.GOOS == "windows" {
+		return "windows"
+	}
+	p, _, _, _ := host.PlatformInformation()
+
+	return p
 }
 
 func (env *environment) runCommand(command string, args ...string) (string, error) {

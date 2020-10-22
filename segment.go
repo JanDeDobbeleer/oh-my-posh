@@ -71,6 +71,8 @@ const (
 	Dotnet SegmentType = "dotnet"
 	//Terraform writes the terraform workspace we're currently in
 	Terraform SegmentType = "terraform"
+	//Golang writes which go version is currently active
+	Golang SegmentType = "go"
 	//Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	//Plain writes it without ornaments
@@ -129,6 +131,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Kubectl:   &kubectl{},
 		Dotnet:    &dotnet{},
 		Terraform: &terraform{},
+		Golang:    &golang{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

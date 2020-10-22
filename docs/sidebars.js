@@ -21,6 +21,7 @@ module.exports = {
         "environment",
         "exit",
         "git",
+        "golang",
         "kubectl",
         "node",
         "os",

@@ -22,3 +22,7 @@ Display the currently active node version when a folder contains `.js` or `.ts` 
   }
 }
 ```
+
+## Properties
+
+- display_version: `boolean` - display the node version - defaults to `true`

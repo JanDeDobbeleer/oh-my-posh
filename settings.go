@@ -126,7 +126,8 @@ func getDefaultSettings() *Settings {
 						Background:      "#6CA35E",
 						Foreground:      "#ffffff",
 						Properties: map[Property]interface{}{
-							Prefix: " \uE718 ",
+							Prefix:         " \uE718",
+							DisplayVersion: false,
 						},
 					},
 					{

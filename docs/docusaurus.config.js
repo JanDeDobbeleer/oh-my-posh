@@ -49,7 +49,7 @@ module.exports = {
             },
             {
               label: "Contributing",
-              to: "docs/contributing",
+              to: "docs/contributing_segment",
             },
           ],
         },
@@ -67,8 +67,12 @@ module.exports = {
           ],
         },
         {
-          title: "Built with",
+          title: "Links",
           items: [
+            {
+              label: "Support",
+              href: "/docs/#-support-",
+            },
             {
               label: "Docusaurus",
               href: "https://github.com/facebook/docusaurus",

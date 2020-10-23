@@ -7,7 +7,6 @@ require (
 	github.com/distatus/battery v0.10.1-0.20200722221337-7e1bf2bbb15c
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/gookit/color v1.3.1
-	github.com/mitchellh/go-ps v1.0.0
 	github.com/shirou/gopsutil v2.20.9+incompatible
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.6.1

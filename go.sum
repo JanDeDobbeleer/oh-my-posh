@@ -2,8 +2,6 @@ github.com/JanDeDobbeleer/battery v0.10.1-0.20200909080331-bb0a7566dbb8 h1:+SZ7q
 github.com/JanDeDobbeleer/battery v0.10.1-0.20200909080331-bb0a7566dbb8/go.mod h1:STnSvFLX//eEpkaN7qWRxCWxrWOcssTDgnG4yqq9BRE=
 github.com/JanDeDobbeleer/color v1.3.1-0.20201014085303-5ffcdf66388a h1:0gU8YI1Z9jXOeMbUxRQR6/XznZTKXSQcVuoFZtbrkN8=
 github.com/JanDeDobbeleer/color v1.3.1-0.20201014085303-5ffcdf66388a/go.mod h1:R3ogXq2B9rTbXoSHJ1HyUVAZ3poOJHpd9nQmyGZsfvQ=
-github.com/JanDeDobbeleer/go-ps v1.0.0 h1:3nqwUNAIzjrjQoEdZDVcS5OCm+KIoShKnANJ5xfkgBY=
-github.com/JanDeDobbeleer/go-ps v1.0.0/go.mod h1:J4lOc8z8yJs6vUwklHw2XEIiT4z4C40KtWVN3nvg8Pg=
 github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d h1:G0m3OIz70MZUWq3EgK3CesDbo8upS2Vm9/P3FtgI+Jk=
 github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d/go.mod h1:3eOhrUMpNV+6aFIbp5/iudMxNCF27Vw2OZgy4xEx0Fg=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

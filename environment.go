@@ -12,8 +12,8 @@ import (
 	"strings"
 
 	"github.com/distatus/battery"
-	ps "github.com/mitchellh/go-ps"
 	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/process"
 )
 
 type environmentInfo interface {
@@ -173,12 +173,12 @@ func (env *environment) getBatteryInfo() (*battery.Battery, error) {
 
 func (env *environment) getShellName() string {
 	pid := os.Getppid()
-	p, err := ps.FindProcess(pid)
-
+	p, _ := process.NewProcess(int32(pid))
+	name, err := p.Name()
 	if err != nil {
 		return "unknown"
 	}
-	shell := strings.Replace(p.Executable(), ".exe", "", 1)
+	shell := strings.Replace(name, ".exe", "", 1)
 	return strings.Trim(shell, " ")
 }
 

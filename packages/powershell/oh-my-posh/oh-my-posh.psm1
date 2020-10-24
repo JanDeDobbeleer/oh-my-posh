@@ -23,19 +23,6 @@ if (!$IsWindows) {
     $executable = Get-PoshCommand
     Invoke-Expression -Command "chmod +x $executable"
 }
-if ($IsWindows) {
-    # When this is not set, outputted fonts aren't rendered correctly in some terminals for the prompt function
-    # It can also fail when we're not running in a console (and then, well, you're on your own)
-    try {
-        [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
-    }
-    catch {
-        Write-Host "oh-my-posh: unable to set output encoding to UTF8, fonts might be rendered incorrectly."
-    }
-    # Not running it beforehand in the terminal will fail the prompt somehow
-    $poshCommand = Get-PoshCommand
-    & $poshCommand | Out-Null
-}
 
 function Set-PoshContext {}
 
@@ -58,10 +45,28 @@ function Set-PoshPrompt {
 
     [ScriptBlock]$Prompt = {
         $realLASTEXITCODE = $global:LASTEXITCODE
-        $poshCommand = Get-PoshCommand
+        if ($realLASTEXITCODE -isnot [int]) {
+            $realLASTEXITCODE = 0
+        }
+        $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+        $startInfo.FileName = Get-PoshCommand
         $config = $global:PoshSettings.Theme
+        $startInfo.Arguments = "-config $config -pwd $PWD -error $realLASTEXITCODE"
+        $startInfo.Environment["TERM"] = "xterm-256color"
+        $startInfo.CreateNoWindow = $true
+        $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+        $startInfo.RedirectStandardOutput = $true
+        $startInfo.UseShellExecute = $false
+        if ($PWD.Provider.Name -eq "FileSystem") {
+            $startInfo.WorkingDirectory = $PWD
+        }
+        $process = New-Object System.Diagnostics.Process
+        $process.StartInfo = $startInfo
         Set-PoshContext
-        & $poshCommand -config $config -error $realLASTEXITCODE  -pwd $PWD
+        $process.Start() | Out-Null
+        $standardOut = $process.StandardOutput.ReadToEnd()
+        $process.WaitForExit()
+        $standardOut
         $global:LASTEXITCODE = $realLASTEXITCODE
         Remove-Variable realLASTEXITCODE -Confirm:$false
     }

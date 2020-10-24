@@ -122,7 +122,7 @@ func (e *engine) render() {
 	for _, block := range e.settings.Blocks {
 		// if line break, append a line break
 		if block.Type == LineBreak {
-			fmt.Print(e.renderer.lineBreak())
+			fmt.Print("\n")
 			continue
 		}
 		if block.VerticalOffset != 0 {

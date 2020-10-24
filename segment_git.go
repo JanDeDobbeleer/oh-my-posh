@@ -42,7 +42,7 @@ func (s *gitStatus) string(prefix string, color string) string {
 	status += stringIfValue(s.untracked, "?")
 	status += stringIfValue(s.unmerged, "x")
 	if status != "" {
-		return fmt.Sprintf(" <%s>%s%s</>", color, prefix, status)
+		return fmt.Sprintf("<%s>%s%s</>", color, prefix, status)
 	}
 	return status
 }
@@ -70,6 +70,8 @@ const (
 	LocalStagingIcon Property = "local_staged_icon"
 	//DisplayStatus shows the status of the repository
 	DisplayStatus Property = "display_status"
+	//DisplayStatusDetail shows the detailed status of the repository
+	DisplayStatusDetail Property = "display_status_detail"
 	//RebaseIcon shows before the rebase context
 	RebaseIcon Property = "rebase_icon"
 	//CherryPickIcon shows before the cherry-pick context
@@ -125,7 +127,6 @@ func (g *git) string() string {
 	if g.props.getBool(StatusColorsEnabled, false) {
 		g.SetStatusColor()
 	}
-	// g.getGitColor()
 	buffer := new(bytes.Buffer)
 	// branchName
 	if g.repo.upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
@@ -150,15 +151,13 @@ func (g *git) string() string {
 		fmt.Fprintf(buffer, " %s", g.props.getString(BranchGoneIcon, "\u2262"))
 	}
 	if g.repo.staging.changed {
-		staging := g.repo.staging.string(g.props.getString(LocalStagingIcon, "\uF046"), g.props.getColor(StagingColor, g.props.foreground))
-		fmt.Fprint(buffer, staging)
+		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.staging, StagingColor, LocalStagingIcon, " \uF046"))
 	}
 	if g.repo.staging.changed && g.repo.working.changed {
 		fmt.Fprint(buffer, g.props.getString(StatusSeparatorIcon, " |"))
 	}
 	if g.repo.working.changed {
-		working := g.repo.working.string(g.props.getString(LocalWorkingIcon, "\uF044"), g.props.getColor(WorkingColor, g.props.foreground))
-		fmt.Fprint(buffer, working)
+		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.working, WorkingColor, LocalWorkingIcon, " \uF044"))
 	}
 	if g.props.getBool(DisplayStashCount, false) && g.repo.stashCount != "" {
 		fmt.Fprintf(buffer, " %s%s", g.props.getString(StashCountIcon, "\uF692"), g.repo.stashCount)
@@ -169,6 +168,15 @@ func (g *git) string() string {
 func (g *git) init(props *properties, env environmentInfo) {
 	g.props = props
 	g.env = env
+}
+
+func (g *git) getStatusDetailString(status *gitStatus, color Property, icon Property, defaultIcon string) string {
+	prefix := g.props.getString(icon, defaultIcon)
+	foregroundColor := g.props.getColor(color, g.props.foreground)
+	if !g.props.getBool(DisplayStatusDetail, true) {
+		return fmt.Sprintf("<%s>%s</>", foregroundColor, prefix)
+	}
+	return status.string(prefix, foregroundColor)
 }
 
 func (g *git) getUpstreamSymbol() string {

@@ -54,7 +54,7 @@
           "foreground": "#ffffff",
           "background": "#ff8080",
           "properties": {
-            "prefix": "\uE20F"
+            "prefix": " \uE20F"
           }
         }
       ]
@@ -78,5 +78,5 @@
       ]
     }
   ],
-  "final_space": true
+  "final_space": false
 }

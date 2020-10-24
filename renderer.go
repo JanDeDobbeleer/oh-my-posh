@@ -130,13 +130,6 @@ func (r *Renderer) lenWithoutANSI(str string) int {
 	return count
 }
 
-func (r *Renderer) lineBreak() string {
-	if r.shell == "pwsh" {
-		return "\x1b[1000C "
-	}
-	return "\n"
-}
-
 func (r *Renderer) carriageForward() string {
 	return fmt.Sprintf(r.formats.left, 1000)
 }

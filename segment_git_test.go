@@ -268,7 +268,7 @@ func TestParseGitBranchInfoNoRemote(t *testing.T) {
 }
 
 func TestGitStatusUnmerged(t *testing.T) {
-	expected := " <#123456>working: x1</>"
+	expected := "<#123456>working: x1</>"
 	status := &gitStatus{
 		unmerged: 1,
 	}
@@ -276,7 +276,7 @@ func TestGitStatusUnmerged(t *testing.T) {
 }
 
 func TestGitStatusUnmergedModified(t *testing.T) {
-	expected := " <#123456>working: ~3 x1</>"
+	expected := "<#123456>working: ~3 x1</>"
 	status := &gitStatus{
 		unmerged: 1,
 		modified: 3,
@@ -557,4 +557,53 @@ func TestSetStatusColorForeground(t *testing.T) {
 	}
 	g.SetStatusColor()
 	assert.Equal(t, expected, g.props.background)
+}
+
+func TestGetStatusDetailStringDefault(t *testing.T) {
+	expected := "<#111111>icon +1</>"
+	status := &gitStatus{
+		changed: true,
+		added:   1,
+	}
+	g := &git{
+		props: &properties{
+			foreground: "#111111",
+		},
+	}
+	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
+}
+
+func TestGetStatusDetailStringNoStatus(t *testing.T) {
+	expected := "<#111111>icon</>"
+	status := &gitStatus{
+		changed: true,
+		added:   1,
+	}
+	g := &git{
+		props: &properties{
+			values: map[Property]interface{}{
+				DisplayStatusDetail: false,
+			},
+			foreground: "#111111",
+		},
+	}
+	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
+}
+
+func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
+	expected := "<#123456>icon</>"
+	status := &gitStatus{
+		changed: true,
+		added:   1,
+	}
+	g := &git{
+		props: &properties{
+			values: map[Property]interface{}{
+				DisplayStatusDetail: false,
+				WorkingColor:        "#123456",
+			},
+			foreground: "#111111",
+		},
+	}
+	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }

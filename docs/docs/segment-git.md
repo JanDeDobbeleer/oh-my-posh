@@ -42,6 +42,7 @@ Local changes can also shown by default using the following syntax for both the 
 ### Status
 
 - display_status: `boolean` - display the local changes or not - defaults to `true`
+- display_status_detail: `boolean` - display the local changes in detail or not - defaults to `true`
 - display_stash_count: `boolean` show stash count or not - defaults to `false`
 - status_separator_icon: `string` icon/text to display between staging and working area changes - defaults to ` |`
 - local_working_icon: `string` - the icon to display in front of the working area changes - defaults to `\uF044`

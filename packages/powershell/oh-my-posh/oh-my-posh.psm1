@@ -51,14 +51,14 @@ function Set-PoshPrompt {
         $startInfo = New-Object System.Diagnostics.ProcessStartInfo
         $startInfo.FileName = Get-PoshCommand
         $config = $global:PoshSettings.Theme
-        $startInfo.Arguments = "-config $config -pwd $PWD -error $realLASTEXITCODE"
+        $startInfo.Arguments = "-config $config -pwd ""$PWD"" -error $realLASTEXITCODE"
         $startInfo.Environment["TERM"] = "xterm-256color"
         $startInfo.CreateNoWindow = $true
         $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
         $startInfo.RedirectStandardOutput = $true
         $startInfo.UseShellExecute = $false
         if ($PWD.Provider.Name -eq "FileSystem") {
-            $startInfo.WorkingDirectory = $PWD
+            $startInfo.WorkingDirectory = "$PWD"
         }
         $process = New-Object System.Diagnostics.Process
         $process.StartInfo = $startInfo

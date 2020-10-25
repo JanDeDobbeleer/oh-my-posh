@@ -135,6 +135,7 @@
             "terraform",
             "go",
             "julia",
+            "ruby",
             "ytm",
             "executiontime"
           ]
@@ -653,6 +654,32 @@
           "then": {
             "title": "Julia Segment",
             "description": "https://ohmyposh.dev/docs/julia",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "ruby" }
+            }
+          },
+          "then": {
+            "title": "Ruby Segment",
+            "description": "https://ohmyposh.dev/docs/ruby",
             "properties": {
               "properties": {
                 "properties": {

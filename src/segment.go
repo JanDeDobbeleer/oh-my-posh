@@ -88,6 +88,8 @@ const (
 	YTM SegmentType = "ytm"
 	// ExecutionTime writes the execution time of the last run command
 	ExecutionTime SegmentType = "executiontime"
+	// Ruby writes which ruby version is currently active
+	Ruby SegmentType = "ruby"
 )
 
 func (segment *Segment) string() string {
@@ -144,6 +146,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Julia:         &julia{},
 		YTM:           &ytm{},
 		ExecutionTime: &executiontime{},
+		Ruby:          &ruby{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

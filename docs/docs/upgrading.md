@@ -7,6 +7,13 @@ sidebar_label: Upgrading from V2
 Just like V2, V3 is available in the [PowerShell gallery][psgallery]. Due to its nature, it's only
 available as a prerelease while we work out the kinks and get it on par with V2.
 
+:::info Powershell 5
+Due to being unable to maintain everything, the decision was made to drop active support for non-cross platform
+tooling. That's why V3 will only work as of Powershell 6 when it comes to the module.
+If you want to install this for Powershell 5 (and below), feel free to look at the [manual installation][manual] process
+which should get you up and running in no time.
+:::
+
 ## V2's problem statement
 
 V2 has Powershell module files as [themes][themesv2]. That way of working was inspired from [oh-my-zsh][omz] and other
@@ -90,6 +97,7 @@ Set-PoshPrompt -Theme jandedobbeleer
 You can either tweak the theme to your liking, add segments or [submit an issue][issues] for new functionality.
 Do not hesitate to [ask for assistance][issues] when you notice an issue or unexpected behavior.
 
+[manual]: /docs/installation
 [psgallery]: https://www.powershellgallery.com/packages/oh-my-posh
 [themesv2]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/master/Themes
 [omz]: https://github.com/ohmyzsh/ohmyzsh

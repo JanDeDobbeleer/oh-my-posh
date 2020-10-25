@@ -18,6 +18,7 @@ jobs:
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
       version: ${{ steps.changelog.outputs.version }}
+      skipped: ${{ steps.changelog.outputs.skipped }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -29,7 +30,7 @@ jobs:
           skip-version-file: "true"
           output-file: "false"
           skip-commit: "true"
-          skip-on-empty: "false"
+          skip-on-empty: "true"
       - name: Create Github Release
         id: create_release
         uses: actions/create-release@v1
@@ -42,6 +43,7 @@ jobs:
           body: ${{ steps.changelog.outputs.clean_changelog }}
   artifacts:
     needs: release
+    if: ${{ needs.release.outputs.skipped == 'false' }}
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -77,6 +79,7 @@ jobs:
         asset_content_type:  application/octet-stream
   powershell:
     needs: [release, artifacts]
+    if: ${{ needs.release.outputs.skipped == 'false' }}
     runs-on: ubuntu-latest
     defaults:
       run:

@@ -20,6 +20,7 @@ type formats struct {
 	rANSI       string
 	title       string
 	creset      string
+	clearOEL    string
 }
 
 //Renderer writes colorized strings
@@ -49,6 +50,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.right = "%%{\x1b[%dD%%}"
 		r.formats.title = "%%{\033]0;%s\007%%}"
 		r.formats.creset = "%{\x1b[0m%}"
+		r.formats.clearOEL = "%{\x1b[K%}"
 	case "bash":
 		r.formats.single = "\\[\x1b[%sm\\]%s\\[\x1b[0m\\]"
 		r.formats.full = "\\[\x1b[%sm\x1b[%sm\\]%s\\[\x1b[0m\\]"
@@ -58,6 +60,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.right = "\\[\x1b[%dD\\]"
 		r.formats.title = "\\[\033]0;%s\007\\]"
 		r.formats.creset = "\\[\x1b[0m\\]"
+		r.formats.clearOEL = "\\[\x1b[K\\]"
 	default:
 		r.formats.single = "\x1b[%sm%s\x1b[0m"
 		r.formats.full = "\x1b[%sm\x1b[%sm%s\x1b[0m"
@@ -67,6 +70,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.right = "\x1b[%dD"
 		r.formats.title = "\033]0;%s\007"
 		r.formats.creset = "\x1b[0m"
+		r.formats.clearOEL = "\x1b[K"
 	}
 }
 
@@ -166,4 +170,8 @@ func (r *Renderer) creset() {
 
 func (r *Renderer) print(text string) {
 	fmt.Print(text)
+}
+
+func (r *Renderer) clearEOL() {
+	fmt.Print(r.formats.clearOEL)
 }

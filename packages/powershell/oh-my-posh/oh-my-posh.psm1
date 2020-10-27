@@ -45,6 +45,7 @@ function Set-PoshPrompt {
 
     [ScriptBlock]$Prompt = {
         $realLASTEXITCODE = $global:LASTEXITCODE
+        Set-PoshContext
         if ($realLASTEXITCODE -isnot [int]) {
             $realLASTEXITCODE = 0
         }
@@ -62,7 +63,6 @@ function Set-PoshPrompt {
         }
         $process = New-Object System.Diagnostics.Process
         $process.StartInfo = $startInfo
-        Set-PoshContext
         $process.Start() | Out-Null
         $standardOut = $process.StandardOutput.ReadToEnd()
         $process.WaitForExit()

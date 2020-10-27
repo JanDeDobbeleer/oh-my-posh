@@ -122,21 +122,21 @@ func (e *engine) render() {
 	for _, block := range e.settings.Blocks {
 		// if line break, append a line break
 		if block.Type == LineBreak {
-			fmt.Print("\n")
+			e.renderer.print("\n")
 			continue
 		}
 		if block.VerticalOffset != 0 {
-			fmt.Print(e.renderer.changeLine(block.VerticalOffset))
+			e.renderer.print(e.renderer.changeLine(block.VerticalOffset))
 		}
 		switch block.Alignment {
 		case Right:
-			fmt.Print(e.renderer.carriageForward())
+			e.renderer.print(e.renderer.carriageForward())
 			blockText := e.renderBlockSegments(block)
 			cursorMove := e.renderer.setCursorForRightWrite(blockText, block.HorizontalOffset)
-			fmt.Print(cursorMove)
-			fmt.Print(blockText)
+			e.renderer.print(cursorMove)
+			e.renderer.print(blockText)
 		default:
-			fmt.Print(e.renderBlockSegments(block))
+			e.renderer.print(e.renderBlockSegments(block))
 		}
 	}
 	if e.settings.ConsoleTitle {
@@ -144,7 +144,7 @@ func (e *engine) render() {
 	}
 	e.renderer.creset()
 	if e.settings.FinalSpace {
-		fmt.Print(" ")
+		e.renderer.print(" ")
 	}
 }
 

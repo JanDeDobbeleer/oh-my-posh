@@ -146,6 +146,7 @@ func (e *engine) render() {
 	if e.settings.FinalSpace {
 		e.renderer.print(" ")
 	}
+	e.renderer.clearEOL()
 }
 
 func (e *engine) reset() {

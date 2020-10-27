@@ -163,3 +163,7 @@ func (r *Renderer) reset() {
 func (r *Renderer) creset() {
 	fmt.Print(r.formats.creset)
 }
+
+func (r *Renderer) print(text string) {
+	fmt.Print(text)
+}

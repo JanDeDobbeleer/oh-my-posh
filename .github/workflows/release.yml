@@ -55,6 +55,10 @@ jobs:
         - os: windows-latest
           ARTIFACT: posh-windows-amd64.exe
     runs-on: ${{ matrix.os }}
+    outputs:
+      hash_linux: ${{ steps.hash.outputs.hash_ubuntu-latest }}
+      hash_macos: ${{ steps.hash.outputs.hash_macos-latest }}
+      hash_windows: ${{ steps.hash.outputs.hash_windows-latest }}
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
@@ -67,6 +71,13 @@ jobs:
       run: go build -o ${{ matrix.ARTIFACT }}
       env:
         GOARCH: "amd64"
+    - name: Hash
+      id: hash
+      run: |
+        hash=hashFiles(${{ matrix.ARTIFACT }})
+        $hash > ${{ matrix.ARTIFACT }}.sha256
+        echo "::set-output name=hash_${{ matrix.os }}::${hash}"
+      shell: bash
     - name: Upload Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@v1
@@ -76,7 +87,17 @@ jobs:
         upload_url: ${{ needs.release.outputs.upload_url }}
         asset_path: ${{ matrix.ARTIFACT }}
         asset_name: ${{ matrix.ARTIFACT }}
-        asset_content_type:  application/octet-stream
+        asset_content_type: application/octet-stream
+    - name: Upload Hash Asset
+      id: upload-hash-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: ${{ matrix.ARTIFACT }}.sha256
+        asset_name: ${{ matrix.ARTIFACT }}.sha256
+        asset_content_type: text/plain
   powershell:
     needs: [release, artifacts]
     if: ${{ needs.release.outputs.skipped == 'false' }}
@@ -92,3 +113,36 @@ jobs:
       uses: actions/checkout@v2
     - name: Pack and push
       run: ./deploy.ps1 -BinVersion ${{ needs.release.outputs.version }} -ModuleVersion ${{ needs.release.outputs.version }} -Repository PSGallery -RepositoryAPIKey $env:PSGALLERY_KEY
+  scoop:
+    needs: [release, artifacts]
+    if: ${{ needs.release.outputs.skipped == 'false' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: ${{ github.workspace }}/packages/scoop
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Update Template
+      run: ./build.ps1 -Version ${{ needs.release.outputs.version }} -LinuxSHA ${{ needs.artifacts.outputs.hash_linux }} -WindowsSHA ${{ needs.artifacts.outputs.hash_windows }}
+    - name: Upload Scoop JSON
+      id: upload-scoop-json
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: oh-my-posh.json
+        asset_name: oh-my-posh.json
+        asset_content_type: text/plain
+    - name: Upload Scoop Post Install
+      id: upload-scoop-post-install
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: post-install.ps1
+        asset_name: post-install.ps1
+        asset_content_type: text/plain

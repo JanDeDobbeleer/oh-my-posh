@@ -37,7 +37,7 @@ function Set-PoshPrompt {
         $global:PoshSettings.Theme = "$PSScriptRoot/themes/$Theme.json"
     }
     elseif (Test-Path $Theme) {
-        $global:PoshSettings.Theme = $Theme
+        $global:PoshSettings.Theme = Resolve-Path -Path $Theme
     }
     else {
         $global:PoshSettings.Theme = "$PSScriptRoot/themes/jandedobbeleer.json"

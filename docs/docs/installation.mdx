@@ -94,7 +94,8 @@ Edit `$PROFILE` in your preferred PowerShell version and add the following lines
     $startInfo = New-Object System.Diagnostics.ProcessStartInfo
     $startInfo.FileName = "C:\tools\oh-my-posh.exe"
     $config = $global:PoshSettings.Theme
-    $startInfo.Arguments = "-config ""C:\Users\User\Downloads\downloadedtheme.json"" -pwd ""$PWD"" -error $realLASTEXITCODE"
+    $cleanPWD = $PWD.ToString().TrimEnd("\")
+    $startInfo.Arguments = "-config=""C:\Users\User\Downloads\downloadedtheme.json"" -error=$realLASTEXITCODE -pwd=""$cleanPWD"""
     $startInfo.Environment["TERM"] = "xterm-256color"
     $startInfo.CreateNoWindow = $true
     $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8

@@ -170,6 +170,7 @@ func (r *Renderer) creset() {
 
 func (r *Renderer) print(text string) {
 	fmt.Print(text)
+	r.clearEOL()
 }
 
 func (r *Renderer) clearEOL() {

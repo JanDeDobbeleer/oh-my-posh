@@ -58,8 +58,8 @@ function Set-PoshPrompt {
         $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
         $startInfo.RedirectStandardOutput = $true
         $startInfo.UseShellExecute = $false
-        if ($PWD.Provider.Name -eq "FileSystem") {
-            $startInfo.WorkingDirectory = "$PWD"
+        if ($PWD.Provider -eq 'FileSystem') {
+            $startInfo.WorkingDirectory = $PWD.ProviderPath
         }
         $process = New-Object System.Diagnostics.Process
         $process.StartInfo = $startInfo

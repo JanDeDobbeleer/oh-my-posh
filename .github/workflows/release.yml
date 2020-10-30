@@ -91,4 +91,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Pack and push
-      run: ./deploy.ps1 -BinVersion ${{ needs.release.outputs.version }} -ModuleVersion ${{ needs.release.outputs.version }} -Repository PSGallery -RepositoryAPIKey $env:PSGALLERY_KEY
+      run: |
+        Register-PSRepository -Default -ErrorAction SilentlyContinue
+        ./deploy.ps1 -BinVersion ${{ needs.release.outputs.version }} -ModuleVersion ${{ needs.release.outputs.version }} -Repository PSGallery -RepositoryAPIKey $env:PSGALLERY_KEY

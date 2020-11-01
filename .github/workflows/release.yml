@@ -98,6 +98,52 @@ jobs:
         asset_path: ${{ matrix.ARTIFACT }}.sha256
         asset_name: ${{ matrix.ARTIFACT }}.sha256
         asset_content_type: text/plain
+  themes:
+    needs: release
+    if: ${{ needs.release.outputs.skipped == 'false' }}
+    runs-on: ubuntu-latest
+    outputs:
+      hash_themes: ${{ steps.hash.outputs.hash_themes }}
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Zip theme files
+      run: |
+        $compress = @{
+          Path = "themes\*.json"
+          CompressionLevel = "Fastest"
+          DestinationPath = "themes.zip"
+        }
+        Compress-Archive @compress
+    - name: Hash
+      id: hash
+      run: |
+        $fileHash = Get-FileHash themes.zip -Algorithm SHA256
+        $fileHash.Hash | Out-File -Encoding 'UTF8' themes.zip.sha256
+        Write-Output "::set-output name=hash_${{ matrix.os }}::$($fileHash.Hash)"
+    - name: Upload Themes
+      id: upload-themes
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: themes.zip
+        asset_name: themes.zip
+        asset_content_type: application/octet-stream
+    - name: Upload Themes Hash
+      id: upload-hash-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: themes.zip.sha256
+        asset_name: themes.zip.sha256
+        asset_content_type: text/plain
   powershell:
     needs: [release, artifacts]
     if: ${{ needs.release.outputs.skipped == 'false' }}

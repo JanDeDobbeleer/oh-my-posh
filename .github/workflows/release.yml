@@ -74,10 +74,10 @@ jobs:
     - name: Hash
       id: hash
       run: |
-        hash=${{ hashFiles(matrix.ARTIFACT) }}
-        echo $hash > ${{ matrix.ARTIFACT }}.sha256
-        echo "::set-output name=hash_${{ matrix.os }}::${hash}"
-      shell: bash
+        $fileHash = Get-FileHash ${{ matrix.ARTIFACT }} -Algorithm SHA256
+        $fileHash.Hash | Out-File -Encoding 'UTF8' ${{ matrix.ARTIFACT }}.sha256
+        Write-Output "::set-output name=hash_${{ matrix.os }}::$($fileHash.Hash)"
+      shell: pwsh
     - name: Upload Release Asset
       id: upload-release-asset
       uses: actions/upload-release-asset@v1

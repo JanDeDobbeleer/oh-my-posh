@@ -19,5 +19,6 @@
         "<HASH_THEMES>"
     ],
     "extract_to": "themes",
+    "post_install": "& \"$dir/post-install.ps1\"",
     "bin": ["posh-linux-amd64", "posh-windows-amd64.exe"]
 }

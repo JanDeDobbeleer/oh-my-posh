@@ -123,7 +123,7 @@ jobs:
       run: |
         $fileHash = Get-FileHash themes.zip -Algorithm SHA256
         $fileHash.Hash | Out-File -Encoding 'UTF8' themes.zip.sha256
-        Write-Output "::set-output name=hash_${{ matrix.os }}::$($fileHash.Hash)"
+        Write-Output "::set-output name=hash_themes::$($fileHash.Hash)"
     - name: Upload Themes
       id: upload-themes
       uses: actions/upload-release-asset@v1
@@ -160,7 +160,7 @@ jobs:
     - name: Pack and push
       run: ./deploy.ps1 -BinVersion ${{ needs.release.outputs.version }} -ModuleVersion ${{ needs.release.outputs.version }} -Repository PSGallery -RepositoryAPIKey $env:PSGALLERY_KEY
   scoop:
-    needs: [release, artifacts]
+    needs: [release, artifacts, themes]
     if: ${{ needs.release.outputs.skipped == 'false' }}
     runs-on: ubuntu-latest
     defaults:
@@ -171,7 +171,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Update Template
-      run: ./build.ps1 -Version ${{ needs.release.outputs.version }} -LinuxSHA ${{ needs.artifacts.outputs.hash_linux }} -WindowsSHA ${{ needs.artifacts.outputs.hash_windows }}
+      run: ./build.ps1 -Version ${{ needs.release.outputs.version }} -LinuxSHA ${{ needs.artifacts.outputs.hash_linux }} -WindowsSHA ${{ needs.artifacts.outputs.hash_windows }} -ThemesSHA ${{ needs.themes.outputs.hash_themes }}
     - name: Upload Scoop JSON
       id: upload-scoop-json
       uses: actions/upload-release-asset@v1

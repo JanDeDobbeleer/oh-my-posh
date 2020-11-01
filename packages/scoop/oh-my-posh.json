@@ -9,13 +9,15 @@
     "url": [
         "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/posh-linux-amd64",
         "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/posh-windows-amd64.exe",
-        "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/post-install.ps1"
+        "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/post-install.ps1",
+        "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/themes.zip"
     ],
     "hash": [
         "<HASH_LINUX>",
         "<HASH_WINDOWS>",
-        "<HASH_INSTALL_SCRIPT>"
+        "<HASH_INSTALL_SCRIPT>",
+        "<HASH_THEMES>"
     ],
-    "bin": ["posh-linux-amd64", "posh-windows-amd64.exe"],
-    "post_install": "& \"$dir/post-install.ps1\""
+    "extract_to": "themes",
+    "bin": ["posh-linux-amd64", "posh-windows-amd64.exe"]
 }

@@ -38,6 +38,12 @@ But, if you insist on doing it manually, or you use a pre-core version of PowerS
 }>
 <TabItem value="windows">
 
+#### Scoop
+
+A [Scoop][scoop] package is available to assist installs on Windows.
+
+#### Manual
+
 ```powershell
 mkdir C:\tools
 Invoke-Webrequest https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/posh-windows-amd64.exe -OutFile C:\tools\oh-my-posh.exe
@@ -46,6 +52,7 @@ Invoke-Webrequest https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/
 </TabItem>
 <TabItem value="macos">
 
+#### Manual
 
 ```bash
 wget https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/posh-darwin-amd64 -O /usr/local/bin/oh-my-posh
@@ -55,6 +62,7 @@ chmod +x /usr/local/bin/oh-my-posh
 </TabItem>
 <TabItem value="unix">
 
+#### Manual
 
 ```bash
 wget https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh
@@ -198,3 +206,4 @@ Make sure `~/downloadedtheme.json` points to your downloaded or adjusted theme. 
 [meslo]: https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip
 [powershell]: /docs/powershell
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/main/themes
+[scoop]: /docs/scoop

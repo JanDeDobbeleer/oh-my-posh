@@ -133,8 +133,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/packages/scoop/oh-my-posh.json
-        asset_name: oh-my-posh.json
+        asset_path: ${{ github.workspace }}/packages/scoop/scoop.json
+        asset_name: scoop.json
         asset_content_type: text/plain
     - name: Upload Scoop Post Install
       id: upload-scoop-post-install

@@ -17,5 +17,5 @@
         "<HASH_INSTALL_SCRIPT>"
     ],
     "bin": ["posh-linux-amd64", "posh-windows-amd64.exe"],
-    "post_install": "./post-install.ps1"
+    "post_install": "& \"$dir/post-install.ps1\""
 }

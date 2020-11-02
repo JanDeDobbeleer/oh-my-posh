@@ -178,6 +178,13 @@ func (env *environment) getShellName() string {
 	if err != nil {
 		return "unknown"
 	}
+	if name == "cmd.exe" {
+		p, _ = p.Parent()
+		name, err = p.Name()
+	}
+	if err != nil {
+		return "unknown"
+	}
 	shell := strings.Replace(name, ".exe", "", 1)
 	return strings.Trim(shell, " ")
 }

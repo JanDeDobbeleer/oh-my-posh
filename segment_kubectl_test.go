@@ -40,3 +40,12 @@ func TestKubectlEnabled(t *testing.T) {
 	assert.True(t, kubectl.enabled())
 	assert.Equal(t, expected, kubectl.string())
 }
+
+func TestKubectlNoContext(t *testing.T) {
+	args := &kubectlArgs{
+		enabled:     true,
+		contextName: "",
+	}
+	kubectl := bootStrapKubectlTest(args)
+	assert.False(t, kubectl.enabled())
+}

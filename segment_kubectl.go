@@ -20,5 +20,5 @@ func (k *kubectl) enabled() bool {
 		return false
 	}
 	k.contextName, _ = k.env.runCommand("kubectl", "config", "current-context")
-	return true
+	return k.contextName != ""
 }

@@ -87,6 +87,7 @@ Find a [theme][themes] you like, download it and store it somewhere you can find
     { label: 'bash', value: 'bash', },
     { label: 'nix', value: 'nix', },
     { label: 'fish', value: 'fish', },
+    { label: 'nu', value: 'nu', },
   ]
 }>
 <TabItem value="powershell">
@@ -189,6 +190,15 @@ Redefine `fish_prompt` in `~/.config/fish/config.fish`:
 function fish_prompt
     eval oh-my-posh -config ~/downloadedtheme.json -error $status
 end
+```
+
+</TabItem>
+<TabItem value="nu">
+
+Set the prompt and restart nu shell:
+
+```bash
+config set prompt  "= `{{$(oh-my-posh -config ~/downloadedtheme.json | str collect)}}`"
 ```
 
 </TabItem>

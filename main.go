@@ -10,6 +10,7 @@ import (
 type args struct {
 	ErrorCode   *int
 	PrintConfig *bool
+	PrintShell  *bool
 	Config      *string
 	Shell       *string
 	PWD         *string
@@ -24,7 +25,11 @@ func main() {
 		PrintConfig: flag.Bool(
 			"print-config",
 			false,
-			"Config prints the current settings in json format"),
+			"Print the current config in json format"),
+		PrintShell: flag.Bool(
+			"print-shell",
+			false,
+			"Print the current shell name"),
 		Config: flag.String(
 			"config",
 			"",
@@ -46,6 +51,10 @@ func main() {
 	if *args.PrintConfig {
 		theme, _ := json.MarshalIndent(settings, "", "    ")
 		fmt.Println(string(theme))
+		return
+	}
+	if *args.PrintShell {
+		fmt.Println(env.getShellName())
 		return
 	}
 	colorWriter := &Renderer{

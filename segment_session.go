@@ -21,6 +21,8 @@ const (
 	DisplayHost Property = "display_host"
 	//DisplayUser hides or shows the user name
 	DisplayUser Property = "display_user"
+	//SSHIcon shows when in an SSH session
+	SSHIcon Property = "ssh_icon"
 )
 
 func (s *session) enabled() bool {
@@ -43,7 +45,11 @@ func (s *session) getFormattedText() string {
 	if s.props.getBool(DisplayHost, true) && s.props.getBool(DisplayUser, true) {
 		separator = s.props.getString(UserInfoSeparator, "@")
 	}
-	return fmt.Sprintf("<%s>%s</>%s<%s>%s</>", s.props.getColor(UserColor, s.props.foreground), username, separator, s.props.getColor(HostColor, s.props.foreground), computername)
+	var ssh string
+	if s.activeSSHSession() {
+		ssh = s.props.getString(SSHIcon, "\uF817 ")
+	}
+	return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", ssh, s.props.getColor(UserColor, s.props.foreground), username, separator, s.props.getColor(HostColor, s.props.foreground), computername)
 }
 
 func (s *session) getComputerName() string {
@@ -67,4 +73,18 @@ func (s *session) getUserName() string {
 		username = strings.Split(username, "\\")[1]
 	}
 	return username
+}
+
+func (s *session) activeSSHSession() bool {
+	keys := []string{
+		"SSH_CONNECTION",
+		"SSH_CLIENT",
+	}
+	for _, key := range keys {
+		content := s.env.getenv(key)
+		if content != "" {
+			return true
+		}
+	}
+	return false
 }

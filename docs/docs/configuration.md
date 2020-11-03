@@ -37,7 +37,7 @@ To set this configuration in combination with a [Oh my Posh executable][releases
 set a path to a json file containing the above code.
 
 ```bash
-./oh-my-posh -config sample.json
+oh-my-posh -config sample.json
 ```
 
 If all goes according to plan, you should see the prompt being printed out on the line below. This could bring us to

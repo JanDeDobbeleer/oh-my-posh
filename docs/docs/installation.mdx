@@ -9,26 +9,51 @@ import TabItem from "@theme/TabItem";
 
 ### 1. Setup your terminal
 
-Oh my Posh uses ANSI color codes under the hood, these should work everywhere,
-but you may have to set `$TERM` to `xterm-256color` for it to work.
+<Tabs
+  groupId="operating-systems"
+  defaultValue="windows"
+  values={[
+    { label: 'windows', value: 'windows', },
+    { label: 'macos', value: 'macos', },
+    { label: 'unix', value: 'unix', },
+  ]
+}>
+<TabItem value="windows">
 
-:::caution Font icons
-For maximum enjoyment, make sure to **install** and **configure** your terminal to use a powerline enabled font.
-The fonts we use are patched by [Nerd Fonts][nerdfonts], which offer a maximum of icons you can use to configure your prompt.
-To easily find the icon you want, have a look at their [cheat sheet][nf-cheat].
-:::
+#### Terminal
 
-Oh my Posh was designed using [Meslo LGM NF][meslo], so if you happen to see missing icons either change to that font or replace the icons
-by changing the [theme][themes] to your liking.
+While Oh my Posh works on the standard terminal, we advise using the [Windows Terminal][wt].
+
+</TabItem>
+<TabItem value="macos">
+
+#### Terminal
+
+As the standard terminal has issues displaying the ANSI characters correctly, we advise using
+[iTerm2][iterm2] or any other modern day MacOS terminal that supports ANSI characters.
+
+</TabItem>
+<TabItem value="unix">
+
+#### Terminal
+
+Oh my Posh uses ANSI color codes under the hood, these should work in every terminal,
+but you may have to set the environment variable `$TERM` to `xterm-256color` for it to work.
+
+</TabItem>
+</Tabs>
+
+#### Font
+
+To see the icons displayed in Oh my Posh, **install** and **configure** your terminal to use a powerline enabled font.
+The fonts we use are patched by [Nerd Fonts][nerdfonts], which offer a maximum of icons you can use.
+
+Oh my Posh was designed using [Meslo LGM NF][meslo], but any Nerd Font should be compatible with the standard [themes][themes].
 
 ### 2. Download the latest binary
 
-:::note
-If you're looking to use the prompt for PowerShell 6 and above, there's a [PowerShell package][powershell] for your enjoyment that facilitates the whole process.
-But, if you insist on doing it manually, or you use a pre-core version of PowerShell, here you go :-)
-:::
-
 <Tabs
+  groupId="operating-systems"
   defaultValue="windows"
   values={[
     { label: 'windows', value: 'windows', },
@@ -73,9 +98,60 @@ chmod +x /usr/local/bin/oh-my-posh
 </Tabs>
 
 
-### 3. Download a theme
+### 3. Download the themes
 
-Find a [theme][themes] you like, download it and store it somewhere you can find it again.
+<Tabs
+  groupId="operating-systems"
+  defaultValue="windows"
+  values={[
+    { label: 'windows', value: 'windows', },
+    { label: 'macos', value: 'macos', },
+    { label: 'unix', value: 'unix', },
+  ]
+}>
+<TabItem value="windows">
+
+#### Scoop
+
+When using [Scoop][scoop], all themes are downloaded as well.
+
+#### Manual
+
+```powershell
+mkdir C:\tools\poshthemes
+Invoke-Webrequest https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/themes.zip -OutFile C:\tools\poshthemes\themes.zip
+Expand-Archive C:\tools\poshthemes\themes.zip -DestinationPath C:\tools\poshthemes -Force
+Remove-Item C:\tools\poshthemes\themes.zip
+```
+
+</TabItem>
+<TabItem value="macos">
+
+#### Manual
+
+```bash
+mkdir ~/.poshthemes
+wget https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/themes.zip -O ~/.poshthemes/themes.zip
+unzip ~/.poshthemes/themes.zip -d ~/.poshthemes
+chmod u+rw ~/.poshthemes/*.json
+rm ~/.poshthemes/themes.zip
+```
+
+</TabItem>
+<TabItem value="unix">
+
+#### Manual
+
+```bash
+mkdir ~/.poshthemes
+wget https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/themes.zip -O ~/.poshthemes/themes.zip
+unzip ~/.poshthemes/themes.zip -d ~/.poshthemes
+chmod u+rw ~/.poshthemes/*.json
+rm ~/.poshthemes/themes.zip
+```
+
+</TabItem>
+</Tabs>
 
 ### 4. Replace your existing prompt
 
@@ -103,7 +179,7 @@ Edit `$PROFILE` in your preferred PowerShell version and add the following lines
     $startInfo = New-Object System.Diagnostics.ProcessStartInfo
     $startInfo.FileName = "C:\tools\oh-my-posh.exe"
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $startInfo.Arguments = "-config=""C:\Users\User\Downloads\downloadedtheme.json"" -error=$realLASTEXITCODE -pwd=""$cleanPWD"""
+    $startInfo.Arguments = "-config=""C:\Users\User\.poshthemes\jandedobbeleer.json"" -error=$realLASTEXITCODE -pwd=""$cleanPWD"""
     $startInfo.Environment["TERM"] = "xterm-256color"
     $startInfo.CreateNoWindow = $true
     $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
@@ -131,7 +207,7 @@ Add the following to `~/.zshrc`:
 
 ```bash
 function powerline_precmd() {
-    PS1="$(oh-my-posh -config ~/downloadedtheme.json --error $?)"
+    PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.json --error $?)"
 }
 
 function install_powerline_precmd() {
@@ -155,7 +231,7 @@ Add the following to `~/.bashrc` (or `~/.profile` on MacOS):
 
 ```bash
 function _update_ps1() {
-    PS1="$(oh-my-posh -config ~/downloadedtheme.json -error $?)"
+    PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.json -error $?)"
 }
 
 if [ "$TERM" != "linux" ] && [ -x "$(command -v oh-my-posh)" ]; then
@@ -176,7 +252,7 @@ which should re-enable the prompt in most cases:
 # Workaround for nix-shell --pure
 if [ "$IN_NIX_SHELL" == "pure" ]; then
     if [ -x oh-my-posh ]; then
-        alias powerline-go="oh-my-posh -config ~/downloadedtheme.json"
+        alias powerline-go="oh-my-posh -config ~/.poshthemes/jandedobbeleer.json"
     fi
 fi
 ```
@@ -188,7 +264,7 @@ Redefine `fish_prompt` in `~/.config/fish/config.fish`:
 
 ```bash
 function fish_prompt
-    eval oh-my-posh -config ~/downloadedtheme.json -error $status
+    eval oh-my-posh -config ~/.poshthemes/jandedobbeleer.json -error $status
 end
 ```
 
@@ -198,18 +274,20 @@ end
 Set the prompt and restart nu shell:
 
 ```bash
-config set prompt  "= `{{$(oh-my-posh -config ~/downloadedtheme.json | str collect)}}`"
+config set prompt  "= `{{$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.json | str collect)}}`"
 ```
 
 </TabItem>
 </Tabs>
 
-Make sure `~/downloadedtheme.json` points to your downloaded or adjusted theme. If the theme would be invalid, the default Agnoster prompt is printed.
-
 ### 5. Profit
+
+Restart your terminal and enjoy your upgraded experience.
 
 🎉🎉🎉
 
+[wt]: https://github.com/microsoft/terminal
+[iterm2]: https://www.iterm2.com/
 [nerdfonts]: https://www.nerdfonts.com/
 [nf-cheat]: https://www.nerdfonts.com/cheat-sheet
 [meslo]: https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip

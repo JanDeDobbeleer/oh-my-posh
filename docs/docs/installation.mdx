@@ -200,6 +200,12 @@ Edit `$PROFILE` in your preferred PowerShell version and add the following lines
 Set-Item -Path Function:prompt -Value $Prompt -Force
 ```
 
+Once added, reload your profile for the changes to take effect.
+
+```powershell
+. $profile
+```
+
 </TabItem>
 <TabItem value="zsh">
 
@@ -224,6 +230,12 @@ if [ "$TERM" != "linux" ]; then
 fi
 ```
 
+Once added, reload your profile for the changes to take effect.
+
+```shell
+source ~/.zshrc
+```
+
 </TabItem>
 <TabItem value="bash">
 
@@ -237,6 +249,18 @@ function _update_ps1() {
 if [ "$TERM" != "linux" ] && [ -x "$(command -v oh-my-posh)" ]; then
     PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
 fi
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+. ~/.bashrc
+```
+
+Or, when using `~/.profile`.
+
+```bash
+. ~/.profile
 ```
 
 </TabItem>
@@ -257,6 +281,12 @@ if [ "$IN_NIX_SHELL" == "pure" ]; then
 fi
 ```
 
+Once added, reload your profile for the changes to take effect.
+
+```bash
+. ~/.bashrc
+```
+
 </TabItem>
 <TabItem value="fish">
 
@@ -268,6 +298,12 @@ function fish_prompt
 end
 ```
 
+Once added, reload your config for the changes to take effect.
+
+```bash
+. ~/.config/fish/config.fish
+```
+
 </TabItem>
 <TabItem value="nu">
 
@@ -277,12 +313,12 @@ Set the prompt and restart nu shell:
 config set prompt  "= `{{$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.json | str collect)}}`"
 ```
 
+Restart nu shell for the changes to take effect.
+
 </TabItem>
 </Tabs>
 
 ### 5. Profit
-
-Restart your terminal and enjoy your upgraded experience.
 
 🎉🎉🎉
 

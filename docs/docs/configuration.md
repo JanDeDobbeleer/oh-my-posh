@@ -33,17 +33,22 @@ A really simple configuration could look like this.
 ```
 
 With this configuration, a single powerline segment is rendered that shows the name of the folder you're currently in.
-To set this configuration in combination with a [Oh my Posh executable][releases], make use of the `-config` flag to
-set a path to a json file containing the above code.
+To set this configuration in combination with a Oh my Posh [executable][releases], use the `-config` flag to
+set a path to a json file containing the above code. The `-shell universal` flag is used to print the prompt without
+escape characters to see the prompt as it would be shown inside a prompt function for your shell.
+
+:::info
+The command below will not persist the configuration for your shell but print the prompt in your terminal.
+If you want to use your own configuration permanently, adjust the [prompt configuration][promptconfig] to use your custom
+theme.
+:::
 
 ```bash
-oh-my-posh -config sample.json
+oh-my-posh -config sample.json -shell universal
 ```
 
-If all goes according to plan, you should see the prompt being printed out on the line below. This could bring us to
-the _first attention point_, you need to have a powerline enabled font installed on your machine and set as the font
-in your terminal to make use of, or see the symbols being used. All the themes were created with **Meslo Nerd Font**,
-which you can find [here][nf].
+If all goes according to plan, you should see the prompt being printed out on the line below. In case you see a lot of boxes with
+question marks, [set up your terminal][setupterm] to use a supported font before continuing.
 
 ## General Settings
 
@@ -284,6 +289,8 @@ override or transparent background color using the segement's [foreground][fg] p
 }
 ```
 
+[promptconfig]: /docs/installation#4-replace-your-existing-prompt
+[setupterm]: /docs/installation#1-setup-your-terminal
 [releases]: https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest
 [nf]: https://www.nerdfonts.com/
 [segments]: /docs/battery

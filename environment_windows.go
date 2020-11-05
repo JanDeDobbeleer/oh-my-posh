@@ -1,3 +1,5 @@
+// +build windows
+
 package main
 
 import (
@@ -44,4 +46,8 @@ func (env *environment) homeDir() string {
 		home = os.Getenv("USERPROFILE")
 	}
 	return home
+}
+
+func (env *environment) getWindowTitle(imageName string, windowTitleRegex string) (string, error) {
+	return getWindowTitle(imageName, windowTitleRegex)
 }

@@ -7,11 +7,13 @@ sidebar_label: Spotify
 ## What
 
 Show the currently playing song in the Spotify MacOS/Windows client.
-For the windows client to work, AutoHotkey is needed.
+AutoHotkey is needed for the windows client. You also have to add the
+`autohotkey_script` property with the path to this [script](./segment-spotify.ahk) in the spotify section of your config file.
 Be aware this can make the prompt a tad bit slower as it needs to get a response from the Spotify player using Applescript/AutoHotkey.
 
 ## Sample Configuration
 
+### darwin
 ```json
 {
   "type": "spotify",
@@ -28,6 +30,23 @@ Be aware this can make the prompt a tad bit slower as it needs to get a response
 }
 ```
 
+### windows
+```json
+{
+  "type": "spotify",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#1BD760",
+  "properties": {
+    "prefix": "  ",
+    "paused_icon": " ",
+    "stopped_icon": " ",
+    "playing_icon": " ",
+    "autohotkey_script":"pathtothescript"
+  }
+}
+```
 ## Properties
 
 - playing_icon: `string` - text/icon to show when playing - defaults to `\uE602 `

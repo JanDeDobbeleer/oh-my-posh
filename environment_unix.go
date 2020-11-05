@@ -3,6 +3,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 )
 
@@ -12,4 +13,8 @@ func (env *environment) isRunningAsRoot() bool {
 
 func (env *environment) homeDir() string {
 	return os.Getenv("HOME")
+}
+
+func (env *environment) getWindowTitle(imageName string, windowTitleRegex string) (string, error) {
+	return "", errors.New("not implemented")
 }

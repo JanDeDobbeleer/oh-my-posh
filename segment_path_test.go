@@ -108,6 +108,11 @@ func (env *MockedEnvironment) getShellName() string {
 	return args.String(0)
 }
 
+func (env *MockedEnvironment) getWindowTitle(imageName string, windowTitleRegex string) (string, error) {
+	args := env.Called(imageName)
+	return args.String(0), args.Error(1)
+}
+
 func TestIsInHomeDirTrue(t *testing.T) {
 	home := "/home/bill"
 	env := new(MockedEnvironment)

@@ -17,35 +17,19 @@ const (
 	PlayingIcon Property = "playing_icon"
 	//PausedIcon indicates a song is paused
 	PausedIcon Property = "paused_icon"
+	//StoppedIcon indicates a song is stopped
+	StoppedIcon Property = "stopped_icon"
 	//TrackSeparator is put between the artist and the track
 	TrackSeparator Property = "track_separator"
 )
 
-func (s *spotify) enabled() bool {
-	if s.env.getRuntimeGOOS() != "darwin" {
-		return false
-	}
-	var err error
-	// Check if running
-	running := s.runAppleScriptCommand("application \"Spotify\" is running")
-	if running == "false" || running == "" {
-		return false
-	}
-	s.status = s.runAppleScriptCommand("tell application \"Spotify\" to player state as string")
-	if err != nil {
-		return false
-	}
-	if s.status == "stopped" {
-		return false
-	}
-	s.artist = s.runAppleScriptCommand("tell application \"Spotify\" to artist of current track as string")
-	s.track = s.runAppleScriptCommand("tell application \"Spotify\" to name of current track as string")
-	return true
-}
-
 func (s *spotify) string() string {
 	icon := ""
 	switch s.status {
+	case "stopped":
+		// in this case, no artist or track info
+		icon = s.props.getString(StoppedIcon, "\uF04D ")
+		return icon
 	case "paused":
 		icon = s.props.getString(PausedIcon, "\uF8E3 ")
 	case "playing":
@@ -58,9 +42,4 @@ func (s *spotify) string() string {
 func (s *spotify) init(props *properties, env environmentInfo) {
 	s.props = props
 	s.env = env
-}
-
-func (s *spotify) runAppleScriptCommand(command string) string {
-	val, _ := s.env.runCommand("osascript", "-e", command)
-	return val
 }

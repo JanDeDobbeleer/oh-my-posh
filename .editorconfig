@@ -25,6 +25,7 @@ indent_size = 2
 ; Markdown - match markdownlint settings
 [*.{md,markdown}]
 indent_size = 2
+trim_trailing_whitespace = false
 
 ; PowerShell - match defaults for New-ModuleManifest and PSScriptAnalyzer Invoke-Formatter
 [*.{ps1,psd1,psm1}]

@@ -36,6 +36,7 @@ type environmentInfo interface {
 	getArgs() *args
 	getBatteryInfo() (*battery.Battery, error)
 	getShellName() string
+	getWindowTitle(imageName string, windowTitleRegex string) (string, error)
 }
 
 type environment struct {

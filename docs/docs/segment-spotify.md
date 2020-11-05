@@ -6,8 +6,9 @@ sidebar_label: Spotify
 
 ## What
 
-Show the currently playing song in the Spotify MacOS client. Only available on MacOS for obvious reasons.
-Be aware this can make the prompt a tad bit slower as it needs to get a response from the Spotify player using Applescript.
+Show the currently playing song in the Spotify MacOS/Windows client.
+For the windows client to work, AutoHotkey is needed.
+Be aware this can make the prompt a tad bit slower as it needs to get a response from the Spotify player using Applescript/AutoHotkey.
 
 ## Sample Configuration
 
@@ -21,6 +22,7 @@ Be aware this can make the prompt a tad bit slower as it needs to get a response
   "properties": {
     "prefix": "  ",
     "paused_icon": " ",
+    "stopped_icon": " ",
     "playing_icon": " "
   }
 }
@@ -30,4 +32,5 @@ Be aware this can make the prompt a tad bit slower as it needs to get a response
 
 - playing_icon: `string` - text/icon to show when playing - defaults to `\uE602 `
 - paused_icon: `string` - text/icon to show when paused - defaults to `\uF8E3 `
+- stopped_icon: `string` - text/icon to show when paused - defaults to `\uF8E3 `
 - track_separator: `string` - text/icon to put between the artist and song name - defaults to ` - `

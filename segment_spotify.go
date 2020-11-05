@@ -72,7 +72,8 @@ func (s *spotify) enabled() bool {
 
 		infos := strings.Split(spotifyWindowTitle, " - ")
 		s.artist = infos[0]
-		s.track = infos[1]
+		// remove first element
+		s.track = strings.Join(infos[1:], " - ")
 		s.status = "playing"
 		return true
 	}

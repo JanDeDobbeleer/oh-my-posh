@@ -1,3 +1,5 @@
+// +build windows
+
 package main
 
 import (
@@ -6,6 +8,50 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSpotifyEnabled(t *testing.T) {
-	assert.True(t, true)
+func TestSpotifyPlayingSong(t *testing.T) {
+	expected := "\ue602 Candlemass - Spellbreaker"
+	env := new(MockedEnvironment)
+	env.On("string", nil).Return(expected)
+	// params := spotify{
+	// 	artist: "Candlemass",
+	// 	track:  "Spellbreaker",
+	// }
+	s := &spotify{
+		artist: "Candlemass",
+		track:  "Spellbreaker",
+		status: "playing",
+	}
+	assert.Equal(t, expected, s.string())
+}
+
+func TestSpotifyPausedSong(t *testing.T) {
+	expected := "\uF8E3 Candlemass - Spellbreaker"
+	env := new(MockedEnvironment)
+	env.On("string", nil).Return(expected)
+	// params := spotify{
+	// 	artist: "Candlemass",
+	// 	track:  "Spellbreaker",
+	// }
+	s := &spotify{
+		artist: "Candlemass",
+		track:  "Spellbreaker",
+		status: "paused",
+	}
+	assert.Equal(t, expected, s.string())
+}
+
+func TestSpotifyStoppedSong(t *testing.T) {
+	expected := "\uf04d Candlemass - Spellbreaker"
+	env := new(MockedEnvironment)
+	env.On("string", nil).Return(expected)
+	// params := spotify{
+	// 	artist: "Candlemass",
+	// 	track:  "Spellbreaker",
+	// }
+	s := &spotify{
+		artist: "Candlemass",
+		track:  "Spellbreaker",
+		status: "stopped",
+	}
+	assert.Equal(t, expected, s.string())
 }

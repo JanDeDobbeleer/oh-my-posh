@@ -26,6 +26,12 @@ if (!$IsWindows) {
 
 function Set-PoshContext {}
 
+function Set-GitStatus {
+    if (Get-Command -Name "Get-GitStatus" -ErrorAction SilentlyContinue) {
+        $Global:GitStatus = Get-GitStatus
+    }
+}
+
 function Set-PoshPrompt {
     param(
         [Parameter(Mandatory = $false)]
@@ -70,6 +76,7 @@ function Set-PoshPrompt {
         $standardOut
         $global:LASTEXITCODE = $realLASTEXITCODE
         Remove-Variable realLASTEXITCODE -Confirm:$false
+        Set-GitStatus
     }
     Set-Item -Path Function:prompt -Value $Prompt -Force
 }

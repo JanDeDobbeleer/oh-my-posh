@@ -144,6 +144,17 @@ jobs:
         asset_path: themes.zip.sha256
         asset_name: themes.zip.sha256
         asset_content_type: text/plain
+  homebrew:
+    needs: release
+    if: ${{ needs.release.outputs.skipped == 'false' }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Push Version
+      run: |
+        curl -XPOST -u "jandedobbeleer:${{ secrets.GH_PAT }}" \
+        -H "Accept: application/vnd.github.everest-preview+json" \
+        -H "Content-Type: application/json" https://api.github.com/repos/jandedobbeleer/homebrew-oh-my-posh/actions/workflows/release.yml/dispatches \
+        --data '{"ref": "main", "inputs": {"version": "${{ needs.release.outputs.version }}"} }'
   powershell:
     needs: [release, artifacts]
     if: ${{ needs.release.outputs.skipped == 'false' }}

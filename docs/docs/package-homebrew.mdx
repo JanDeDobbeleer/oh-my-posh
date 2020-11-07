@@ -1,0 +1,38 @@
+---
+id: homebrew
+title: Homebrew
+sidebar_label: Homebrew
+---
+
+A package that installs the Oh my Posh executable using [Homebrew][brew].
+
+:::caution Font icons
+For maximum enjoyment, make sure to **install** and **configure** your terminal to use a powerline enabled font.
+The fonts we use are patched by [Nerd Fonts][nerdfonts], which offer a maximum of icons you can use to configure your prompt.
+To easily find the icon you want, have a look at their [cheat sheet][nf-cheat].
+:::
+
+## Installation
+
+```bash
+brew tap jandedobbeleer/oh-my-posh
+brew install oh-my-posh
+```
+
+This installs two things:
+
+-  `oh-my-posh` - Executable, added to `/usr/local/bin`
+-  `themes` - The latest Oh my Posh themes
+
+If you want to use a standard theme, you can find them in `$(brew --prefix oh-my-posh)/themes`, referencing them as such
+will always keep them compatible with the binary when updating Oh my Posh.
+
+## Update
+
+```bash
+brew upgrade oh-my-posh
+```
+
+[brew]: https://brew.sh/
+[nerdfonts]: https://www.nerdfonts.com/
+[nf-cheat]: https://www.nerdfonts.com/cheat-sheet

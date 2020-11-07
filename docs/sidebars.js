@@ -8,7 +8,7 @@ module.exports = {
     {
       type: "category",
       label: "Packages",
-      items: ["powershell", "scoop"],
+      items: ["powershell", "scoop", "homebrew"],
     },
     {
       type: "category",

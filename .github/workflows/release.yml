@@ -148,10 +148,12 @@ jobs:
     needs: release
     if: ${{ needs.release.outputs.skipped == 'false' }}
     runs-on: ubuntu-latest
+    env:
+      GH_KEY: ${{ secrets.GH_PAT }}
     steps:
     - name: Push Version
       run: |
-        curl -XPOST -u "jandedobbeleer:${{ secrets.GH_PAT }}" \
+        curl -XPOST -u "jandedobbeleer:$GH_KEY" \
         -H "Accept: application/vnd.github.everest-preview+json" \
         -H "Content-Type: application/json" https://api.github.com/repos/jandedobbeleer/homebrew-oh-my-posh/actions/workflows/release.yml/dispatches \
         --data '{"ref": "main", "inputs": {"version": "${{ needs.release.outputs.version }}"} }'

@@ -198,7 +198,7 @@ func (g *git) getUpstreamSymbol() string {
 func (g *git) setGitStatus() {
 	g.repo = &gitRepo{}
 	g.repo.root = g.getGitCommandOutput("rev-parse", "--show-toplevel")
-	output := g.getGitCommandOutput("status", "--porcelain", "-b", "--ignore-submodules")
+	output := g.getGitCommandOutput("status", "-unormal", "--short", "--branch")
 	splittedOutput := strings.Split(output, "\n")
 	g.repo.working = g.parseGitStats(splittedOutput, true)
 	g.repo.staging = g.parseGitStats(splittedOutput, false)

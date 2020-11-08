@@ -9,13 +9,13 @@ import (
 )
 
 type spotifyArgs struct {
-	hasAutoHoykey       bool
+	hasAutoHotkey       bool
 	spotifyWindowsTitle string
 }
 
 func bootStrapSpotifyWindowsTest(args *spotifyArgs) *spotify {
 	env := new(MockedEnvironment)
-	env.On("hasCommand", "AutoHotkey").Return(args.hasAutoHoykey)
+	env.On("hasCommand", "AutoHotkey").Return(args.hasAutoHotkey)
 	env.On("runCommand", "AutoHotkey", []string{""}).Return(args.spotifyWindowsTitle, nil)
 	props := &properties{}
 	s := &spotify{
@@ -27,7 +27,7 @@ func bootStrapSpotifyWindowsTest(args *spotifyArgs) *spotify {
 
 func TestSpotifyWindowsEnabledWithoutAutoHotkey(t *testing.T) {
 	args := &spotifyArgs{
-		hasAutoHoykey: false,
+		hasAutoHotkey: false,
 	}
 	s := bootStrapSpotifyWindowsTest(args)
 	assert.Equal(t, false, s.enabled())
@@ -35,7 +35,7 @@ func TestSpotifyWindowsEnabledWithoutAutoHotkey(t *testing.T) {
 
 func TestSpotifyWindowsEnabledWithAutoHotkeyAndSpotifyPlaying(t *testing.T) {
 	args := &spotifyArgs{
-		hasAutoHoykey:       true,
+		hasAutoHotkey:       true,
 		spotifyWindowsTitle: "Candlemass - Spellbreaker",
 	}
 	s := bootStrapSpotifyWindowsTest(args)
@@ -45,7 +45,7 @@ func TestSpotifyWindowsEnabledWithAutoHotkeyAndSpotifyPlaying(t *testing.T) {
 
 func TestSpotifyWindowsEnabledWithAutoHotkeyAndSpotifyStopped(t *testing.T) {
 	args := &spotifyArgs{
-		hasAutoHoykey:       true,
+		hasAutoHotkey:       true,
 		spotifyWindowsTitle: "Spotify premium",
 	}
 	s := bootStrapSpotifyWindowsTest(args)

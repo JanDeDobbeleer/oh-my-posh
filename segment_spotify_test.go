@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSpotifyPlayingSong(t *testing.T) {
+func TestSpotifyStringPlayingSong(t *testing.T) {
 	expected := "\ue602 Candlemass - Spellbreaker"
 	s := &spotify{
 		artist: "Candlemass",
@@ -18,7 +18,7 @@ func TestSpotifyPlayingSong(t *testing.T) {
 	assert.Equal(t, expected, s.string())
 }
 
-func TestSpotifyPausedSong(t *testing.T) {
+func TestSpotifyStringPausedSong(t *testing.T) {
 	expected := "\uF8E3 Candlemass - Spellbreaker"
 	s := &spotify{
 		artist: "Candlemass",
@@ -28,7 +28,7 @@ func TestSpotifyPausedSong(t *testing.T) {
 	assert.Equal(t, expected, s.string())
 }
 
-func TestSpotifyStoppedSong(t *testing.T) {
+func TestSpotifyStringStoppedSong(t *testing.T) {
 	expected := "\uf04d "
 	s := &spotify{
 		artist: "Candlemass",

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/gookit/color"
 )
 
 func TestWriteAndRemoveText(t *testing.T) {
@@ -49,6 +50,36 @@ func TestWriteColorTransparent(t *testing.T) {
 	t.Log(renderer.string())
 }
 
+func TestWriteColorName(t *testing.T) {
+	// given
+	renderer := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+	renderer.init("pwsh")
+	text := "This is white, <red>this is red</>, white again"
+
+	// when
+	renderer.write("#193549", "red", text)
+
+	// then
+	assert.NotContains(t, renderer.string(), "<red>")
+}
+
+func TestWriteColorInvalid(t *testing.T) {
+	// given
+	renderer := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+	renderer.init("pwsh")
+	text := "This is white, <invalid>this is orange</>, white again"
+
+	// when
+	renderer.write("#193549", "invalid", text)
+
+	// then
+	assert.Contains(t, renderer.string(), "<invalid>")
+}
+
 func TestLenWithoutANSI(t *testing.T) {
 	text := "\x1b[44mhello\x1b[0m"
 	renderer := &Renderer{
@@ -67,4 +98,69 @@ func TestLenWithoutANSIZsh(t *testing.T) {
 	renderer.init("zsh")
 	strippedLength := renderer.lenWithoutANSI(text)
 	assert.Equal(t, 5, strippedLength)
+}
+
+func TestGetAnsiFromColorStringBg(t *testing.T) {
+	// given
+	renderer := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+
+	// when
+	colorCode := renderer.getAnsiFromColorString("blue", true)
+
+	// then
+	assert.Equal(t, color.BgBlue.Code(), colorCode)
+}
+
+func TestGetAnsiFromColorStringFg(t *testing.T) {
+	// given
+	renderer := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+
+	// when
+	colorCode := renderer.getAnsiFromColorString("red", false)
+
+	// then
+	assert.Equal(t, color.FgRed.Code(), colorCode)
+}
+
+func TestGetAnsiFromColorStringHex(t *testing.T) {
+	// given
+	renderer := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+
+	// when
+	colorCode := renderer.getAnsiFromColorString("#AABBCC", false)
+
+	// then
+	assert.Equal(t, color.HEX("#AABBCC").Code(), colorCode)
+}
+
+func TestGetAnsiFromColorStringInvalidFg(t *testing.T) {
+	// given
+	renderer := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+
+	// when
+	colorCode := renderer.getAnsiFromColorString("invalid", false)
+
+	// then
+	assert.Equal(t, "", colorCode)
+}
+
+func TestGetAnsiFromColorStringInvalidBg(t *testing.T) {
+	// given
+	renderer := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+
+	// when
+	colorCode := renderer.getAnsiFromColorString("invalid", true)
+
+	// then
+	assert.Equal(t, "", colorCode)
 }

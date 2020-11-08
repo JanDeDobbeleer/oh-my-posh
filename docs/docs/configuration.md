@@ -103,8 +103,8 @@ understand how to configure a segment.
 - invert_powerline: `boolean`
 - leading_diamond: `string`
 - trailing_diamond: `string`
-- foreground: `string` [hex color code][colors]
-- background: `string` [hex color code][colors]
+- foreground: `string` [color][colors]
+- background: `string` [color][colors]
 - properties: `array` of `Property`: `string`
 
 ### Type
@@ -205,8 +205,21 @@ do so like this:
 "prefix": "<#CB4B16>┏[</>",
 ```
 
-Oh my Posh offers support for hex [colors][colors] as well as the `transparent` keyword to create either a transparent foreground
-override or transparent background color using the segement's [foreground][fg] property.
+Oh my Posh mainly supports three different color types being
+* Typical [hex colors][hexcolors] (for example `#CB4B16`).
+
+* The `transparent` keyword which can be used to create either a transparent foreground override
+  or transparent background color using the segement's foreground property.
+
+* 16 [ANSI color names][ansicolors].
+
+  These include 8 basic ANSI colors and `default`:
+
+  `black` `red` `green` `yellow` `blue` `magenta` `cyan` `white` `default`
+
+  as well as 8 extended ANSI colors:
+
+  `darkGray` `lightRed` `lightGreen` `lightYellow` `lightBlue` `lightMagenta` `lightCyan` `lightWhite`
 
 ## Full Sample
 
@@ -294,5 +307,7 @@ override or transparent background color using the segement's [foreground][fg] p
 [releases]: https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest
 [nf]: https://www.nerdfonts.com/
 [segments]: /docs/battery
-[colors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
+[colors]: #colors
+[hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
+[ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [fg]: /docs/configure#foreground

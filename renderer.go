@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -21,6 +22,41 @@ type formats struct {
 	title       string
 	creset      string
 	clearOEL    string
+}
+
+var (
+	// Map for color names and their respective foreground [0] or background [1] color codes
+	ColorMap map[string][2]string = map[string][2]string {
+		"black":        [2]string { "30", "40" },
+		"red":          [2]string { "31", "41" },
+		"green":        [2]string { "32", "42" },
+		"yellow":       [2]string { "33", "43" },
+		"blue":         [2]string { "34", "44" },
+		"magenta":      [2]string { "35", "45" },
+		"cyan":         [2]string { "36", "46" },
+		"white":        [2]string { "37", "47" },
+		"default":      [2]string { "39", "49" },
+		"darkGray":     [2]string { "90", "100" },
+		"lightRed":     [2]string { "91", "101" },
+		"lightGreen":   [2]string { "92", "102" },
+		"lightYellow":  [2]string { "93", "103" },
+		"lightBlue":    [2]string { "94", "104" },
+		"lightMagenta": [2]string { "95", "105" },
+		"lightCyan":    [2]string { "96", "106" },
+		"lightWhite":   [2]string { "97", "107" },
+	}
+)
+
+// Returns the color code for a given color name
+func getColorFromName(colorName string, isBackground bool) (string, error) {
+	colorMapOffset := 0
+	if isBackground {
+		colorMapOffset = 1
+	}
+	if colorCodes, found := ColorMap[colorName]; found {
+		return colorCodes[colorMapOffset], nil
+	}
+	return "", errors.New("This color name does not exist.")
 }
 
 //Renderer writes colorized strings
@@ -74,22 +110,29 @@ func (r *Renderer) init(shell string) {
 	}
 }
 
-func (r *Renderer) getAnsiFromHex(hexColor string, isBackground bool) string {
-	style := color.HEX(hexColor, isBackground)
+// Gets the ANSI color code for a given color string.
+// This can include a valid hex color in the format `#FFFFFF`,
+// but also a name of one of the first 16 ANSI colors like `lightBlue`.
+func (r *Renderer) getAnsiFromColorString(colorString string, isBackground bool) string {
+	colorFromName, err := getColorFromName(colorString, isBackground)
+	if err == nil {
+		return colorFromName
+	}
+	style := color.HEX(colorString, isBackground)
 	return style.Code()
 }
 
 func (r *Renderer) writeColoredText(background string, foreground string, text string) {
 	var coloredText string
 	if foreground == Transparent && background != "" {
-		ansiColor := r.getAnsiFromHex(background, false)
+		ansiColor := r.getAnsiFromColorString(background, false)
 		coloredText = fmt.Sprintf(r.formats.transparent, ansiColor, text)
 	} else if background == "" || background == Transparent {
-		ansiColor := r.getAnsiFromHex(foreground, false)
+		ansiColor := r.getAnsiFromColorString(foreground, false)
 		coloredText = fmt.Sprintf(r.formats.single, ansiColor, text)
 	} else if foreground != "" && background != "" {
-		bgAnsiColor := r.getAnsiFromHex(background, true)
-		fgAnsiColor := r.getAnsiFromHex(foreground, false)
+		bgAnsiColor := r.getAnsiFromColorString(background, true)
+		fgAnsiColor := r.getAnsiFromColorString(foreground, false)
 		coloredText = fmt.Sprintf(r.formats.full, bgAnsiColor, fgAnsiColor, text)
 	}
 	r.Buffer.WriteString(coloredText)
@@ -101,13 +144,19 @@ func (r *Renderer) writeAndRemoveText(background string, foreground string, text
 }
 
 func (r *Renderer) write(background string, foreground string, text string) {
-	rex := regexp.MustCompile(`<((#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})|transparent))>(.*?)</>`)
+	// first we match for any potentially valid color enclosed in <>
+	rex := regexp.MustCompile(`<([#A-Za-z0-9]+)>(.*?)<\/>`)
 	match := rex.FindAllStringSubmatch(text, -1)
 	for i := range match {
-		// get the text before the color override and write that first
-		textBeforeColorOverride := strings.Split(text, match[i][0])[0]
+		extractedColor := match[i][1]
+		if col := r.getAnsiFromColorString(extractedColor, false); col == "" && extractedColor != Transparent {
+			continue // we skip invalid colors
+		}
+		escapedTextSegment := match[i][0]
+		innerText := match[i][2]
+		textBeforeColorOverride := strings.Split(text, escapedTextSegment)[0]
 		text = r.writeAndRemoveText(background, foreground, textBeforeColorOverride, textBeforeColorOverride, text)
-		text = r.writeAndRemoveText(background, match[i][1], match[i][4], match[i][0], text)
+		text = r.writeAndRemoveText(background, extractedColor, innerText, escapedTextSegment, text)
 	}
 	// color the remaining part of text with background and foreground
 	r.writeColoredText(background, foreground, text)

@@ -39,8 +39,8 @@ Battery displays the remaining power percentage for your battery.
 - discharging_icon: `string` - icon to display on the left when discharging - defaults to empty
 - charged_icon: `string` - icon to display on the left when fully charged - defaults to empty
 - color_background: `boolean` - color the background or foreground for properties below - defaults to `false`
-- charged_color: `string` [hex color code][colors] - color to use when fully charged - defaults to segment color
-- charging_color: `string` [hex color code][colors] - color to use when charging - defaults to segment color
-- discharging_color: `string` [hex color code][colors] - color to use when discharging - defaults to segment color
+- charged_color: `string` [color][colors] - color to use when fully charged - defaults to segment color
+- charging_color: `string` [color][colors] - color to use when charging - defaults to segment color
+- discharging_color: `string` [color][colors] - color to use when discharging - defaults to segment color
 
-[colors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
+[colors]: /docs/configure#colors

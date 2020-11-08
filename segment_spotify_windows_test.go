@@ -8,53 +8,46 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSpotifyWindowsEnabledWithoutAutoHotkey(t *testing.T) {
+type spotifyArgs struct {
+	hasAutoHoykey       bool
+	spotifyWindowsTitle string
+}
+
+func bootStrapSpotifyWindowsTest(args *spotifyArgs) *spotify {
 	env := new(MockedEnvironment)
+	env.On("hasCommand", "AutoHotkey").Return(args.hasAutoHoykey)
+	env.On("runCommand", "AutoHotkey", []string{""}).Return(args.spotifyWindowsTitle, nil)
 	props := &properties{}
-	env.On("hasCommand", "AutoHotkey").Return(false)
 	s := &spotify{
 		env:   env,
 		props: props,
 	}
+	return s
+}
+
+func TestSpotifyWindowsEnabledWithoutAutoHotkey(t *testing.T) {
+	args := &spotifyArgs{
+		hasAutoHoykey: false,
+	}
+	s := bootStrapSpotifyWindowsTest(args)
 	assert.Equal(t, false, s.enabled())
 }
 
 func TestSpotifyWindowsEnabledWithAutoHotkeyAndSpotifyPlaying(t *testing.T) {
-	env := new(MockedEnvironment)
-	props := &properties{}
-	env.On("hasCommand", "AutoHotkey").Return(true)
-	env.On("runCommand", "AutoHotkey", []string{""}).Return("Candlemass - Spellbreaker", nil)
-	s := &spotify{
-		env:   env,
-		props: props,
+	args := &spotifyArgs{
+		hasAutoHoykey:       true,
+		spotifyWindowsTitle: "Candlemass - Spellbreaker",
 	}
-	expected := &spotify{
-		env:    env,
-		props:  props,
-		artist: "Candlemass",
-		track:  "Spellbreaker",
-		status: "playing",
-	}
+	s := bootStrapSpotifyWindowsTest(args)
 	assert.Equal(t, true, s.enabled())
-	assert.Equal(t, expected, s)
+	assert.Equal(t, "\ue602 Candlemass - Spellbreaker", s.string())
 }
 
 func TestSpotifyWindowsEnabledWithAutoHotkeyAndSpotifyStopped(t *testing.T) {
-	env := new(MockedEnvironment)
-	props := &properties{}
-	env.On("hasCommand", "AutoHotkey").Return(true)
-	env.On("runCommand", "AutoHotkey", []string{""}).Return("Spotify premium", nil)
-	s := &spotify{
-		env:   env,
-		props: props,
+	args := &spotifyArgs{
+		hasAutoHoykey:       true,
+		spotifyWindowsTitle: "Spotify premium",
 	}
-	expected := &spotify{
-		env:    env,
-		props:  props,
-		artist: "",
-		track:  "",
-		status: "stopped",
-	}
-	assert.Equal(t, true, s.enabled())
-	assert.Equal(t, expected, s)
+	s := bootStrapSpotifyWindowsTest(args)
+	assert.Equal(t, false, s.enabled())
 }

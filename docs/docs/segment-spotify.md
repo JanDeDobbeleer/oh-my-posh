@@ -35,6 +35,11 @@ Be aware this can make the prompt a tad bit slower as it needs to get a response
 
 ### Windows
 
+:::info AutoHotkey
+Please note [AutoHotkey](https://www.autohotkey.com/) must be installed and set in your `PATH`.  
+The easiest way is to install it with [Chocolatey](https://chocolatey.org/packages/autohotkey.portable/1.1.33.02)
+:::
+
 - autohotkey_script: `string` - path to the autohotkey script - defaults to `""`
 
   The script content:

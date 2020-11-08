@@ -29,7 +29,7 @@ func TestSpotifyPausedSong(t *testing.T) {
 }
 
 func TestSpotifyStoppedSong(t *testing.T) {
-	expected := "\uf04d Candlemass - Spellbreaker"
+	expected := "\uf04d "
 	s := &spotify{
 		artist: "Candlemass",
 		track:  "Spellbreaker",

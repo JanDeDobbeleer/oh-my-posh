@@ -49,5 +49,6 @@ func TestSpotifyWindowsEnabledWithAutoHotkeyAndSpotifyStopped(t *testing.T) {
 		spotifyWindowsTitle: "Spotify premium",
 	}
 	s := bootStrapSpotifyWindowsTest(args)
-	assert.Equal(t, false, s.enabled())
+	assert.Equal(t, true, s.enabled())
+	assert.Equal(t, "\uf04d ", s.string())
 }

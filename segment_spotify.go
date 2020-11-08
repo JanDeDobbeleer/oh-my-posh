@@ -27,7 +27,9 @@ func (s *spotify) string() string {
 	icon := ""
 	switch s.status {
 	case "stopped":
+		// in this case, no artist or track info
 		icon = s.props.getString(StoppedIcon, "\uF04D ")
+		return icon
 	case "paused":
 		icon = s.props.getString(PausedIcon, "\uF8E3 ")
 	case "playing":

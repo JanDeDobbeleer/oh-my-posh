@@ -10,8 +10,6 @@ import (
 
 func TestSpotifyPlayingSong(t *testing.T) {
 	expected := "\ue602 Candlemass - Spellbreaker"
-	env := new(MockedEnvironment)
-	env.On("string", nil).Return(expected)
 	s := &spotify{
 		artist: "Candlemass",
 		track:  "Spellbreaker",
@@ -22,8 +20,6 @@ func TestSpotifyPlayingSong(t *testing.T) {
 
 func TestSpotifyPausedSong(t *testing.T) {
 	expected := "\uF8E3 Candlemass - Spellbreaker"
-	env := new(MockedEnvironment)
-	env.On("string", nil).Return(expected)
 	s := &spotify{
 		artist: "Candlemass",
 		track:  "Spellbreaker",
@@ -34,8 +30,6 @@ func TestSpotifyPausedSong(t *testing.T) {
 
 func TestSpotifyStoppedSong(t *testing.T) {
 	expected := "\uf04d Candlemass - Spellbreaker"
-	env := new(MockedEnvironment)
-	env.On("string", nil).Return(expected)
 	s := &spotify{
 		artist: "Candlemass",
 		track:  "Spellbreaker",

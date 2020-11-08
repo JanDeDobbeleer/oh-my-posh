@@ -67,17 +67,17 @@ Local changes can also shown by default using the following syntax for both the 
 
 ### Colors
 
-- working_color: `string` [hex color code][colors] - foreground color for the working area status - defaults to segment foreground
-- staging_color: `string` [hex color code][colors] - foreground color for the staging area status - defaults to segment foreground
+- working_color: `string` [color][colors] - foreground color for the working area status - defaults to segment foreground
+- staging_color: `string` [color][colors] - foreground color for the staging area status - defaults to segment foreground
 - status_colors_enabled: `boolean` - color the segment based on the repository status - defaults to `false`
 - color_background: `boolean` - color background or foreground - defaults to `true`
-- local_changes_color: `string` [hex color code][colors] - segment color when there are local changes - defaults to segment
+- local_changes_color: `string` [color][colors] - segment color when there are local changes - defaults to segment
 foreground/background (see `color_background`)
-- ahead_and_behind_color: `string` [hex color code][colors] - segment color when the branch is ahead and behind -
+- ahead_and_behind_color: `string` [color][colors] - segment color when the branch is ahead and behind -
 defaults to segment foreground/background (see `color_background`)
-- behind_color: `string` [hex color code][colors] - segment color when the branch is behind - defaults to segment
+- behind_color: `string` [color][colors] - segment color when the branch is behind - defaults to segment
 foreground/background (see `color_background`)
-- ahead_color: `string` [hex color code][colors] - segment color when the branch is ahead - defaults to segment
+- ahead_color: `string` [color][colors] - segment color when the branch is ahead - defaults to segment
 foreground/background (see `color_background`)
 
-[colors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
+[colors]: /docs/configure#colors

@@ -12,7 +12,7 @@ const features = [
     description: (
       <>
         Oh my Posh enables you to use the full color set of your terminal
-        by using hex colors to define and render the prompt.
+        by using colors to define and render the prompt.
       </>
     ),
   },

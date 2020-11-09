@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -40,8 +41,9 @@ func (p *python) enabled() bool {
 	for index, python := range pythonVersions {
 		version, _ := p.env.runCommand(python, "--version")
 		if version != "" {
-			rawVersion := strings.TrimLeft(version, "Python")
-			p.pythonVersion = strings.Trim(rawVersion, " ")
+			re := regexp.MustCompile(`Python (?P<version>[0-9]+.[0-9]+.[0-9]+)`)
+			values := groupDict(re, version)
+			p.pythonVersion = strings.Trim(values["version"], " ")
 			break
 		}
 		//last element, Python isn't installed on this machine

@@ -54,7 +54,7 @@ func TestPythonWriterDisabledNoPythonFiles(t *testing.T) {
 	args := newPythonArgs()
 	args.hasPyFiles = false
 	args.hasNotebookFiles = false
-	args.python3Version = "3.4.5"
+	args.python3Version = "Python 3.4.5"
 	python := bootStrapPythonTest(args)
 	assert.False(t, python.enabled(), "there are no Python files in the current folder")
 }
@@ -63,7 +63,7 @@ func TestPythonWriterDisabledHasPythonFiles(t *testing.T) {
 	args := newPythonArgs()
 	args.hasPyFiles = true
 	args.hasNotebookFiles = false
-	args.python3Version = "3.4.5"
+	args.python3Version = "Python 3.4.5"
 	python := bootStrapPythonTest(args)
 	assert.True(t, python.enabled(), "there should be a Python file in the current folder")
 }
@@ -72,7 +72,7 @@ func TestPythonWriterDisabledHasJupyterNotebookFiles(t *testing.T) {
 	args := newPythonArgs()
 	args.hasPyFiles = false
 	args.hasNotebookFiles = true
-	args.python3Version = "3.4.5"
+	args.python3Version = "Python 3.4.5"
 	python := bootStrapPythonTest(args)
 	assert.True(t, python.enabled(), "there should be a Jupyter Notebook file in the current folder")
 }
@@ -81,7 +81,7 @@ func TestPythonWriterDisabledHasPyAndJupyterNotebookFiles(t *testing.T) {
 	args := newPythonArgs()
 	args.hasPyFiles = true
 	args.hasNotebookFiles = true
-	args.python3Version = "3.4.5"
+	args.python3Version = "Python 3.4.5"
 	python := bootStrapPythonTest(args)
 	assert.True(t, python.enabled(), "there should be a Jupyter Notebook file in the current folder")
 }
@@ -102,15 +102,15 @@ func TestPythonWriterDisabledNoPythonInstalled(t *testing.T) {
 
 func TestPythonWriterEnabledNoVirtualEnv(t *testing.T) {
 	args := newPythonArgs()
-	args.python3Version = "3.4.5"
+	args.python3Version = "Python 3.4.5"
 	python := bootStrapPythonTest(args)
 	assert.True(t, python.enabled())
-	assert.Equal(t, args.python3Version, python.string())
+	assert.Equal(t, "3.4.5", python.string())
 }
 
 func TestPythonWriterEnabledVirtualEnvOverrule(t *testing.T) {
 	args := newPythonArgs()
-	args.python3Version = "3.4.5"
+	args.python3Version = "Python 3.4.5"
 	args.condaEnvName = "myenv"
 	props := &properties{
 		values: map[Property]interface{}{
@@ -120,14 +120,14 @@ func TestPythonWriterEnabledVirtualEnvOverrule(t *testing.T) {
 	python := bootStrapPythonTest(args)
 	python.props = props
 	assert.True(t, python.enabled())
-	assert.Equal(t, args.python3Version, python.string())
+	assert.Equal(t, "3.4.5", python.string())
 }
 
 func TestPythonWriterEnabledVirtualEnv(t *testing.T) {
 	args := newPythonArgs()
-	args.python3Version = "3.4.5"
+	args.python3Version = "Python 3.4.5"
 	args.condaEnvName = "myenv"
-	expected := fmt.Sprintf("%s %s", args.condaEnvName, args.python3Version)
+	expected := fmt.Sprintf("%s %s", args.condaEnvName, "3.4.5")
 	props := &properties{
 		values: map[Property]interface{}{
 			DisplayVirtualEnv: true,
@@ -142,8 +142,8 @@ func TestPythonWriterEnabledVirtualEnv(t *testing.T) {
 func TestPythonWriterEnabledWithVirtualEnv(t *testing.T) {
 	args := newPythonArgs()
 	args.virtualEnvName = "venv"
-	args.python3Version = "3.4.5"
-	expected := fmt.Sprintf("%s %s", args.virtualEnvName, args.python3Version)
+	args.python3Version = "Python 3.4.5"
+	expected := fmt.Sprintf("%s %s", args.virtualEnvName, "3.4.5")
 	python := bootStrapPythonTest(args)
 	assert.True(t, python.enabled())
 	assert.Equal(t, expected, python.string())
@@ -152,8 +152,8 @@ func TestPythonWriterEnabledWithVirtualEnv(t *testing.T) {
 func TestPythonWriterEnabledWithCondaEnvPath(t *testing.T) {
 	args := newPythonArgs()
 	args.condaEnvName = "conda"
-	args.python3Version = "3.4.5"
-	expected := fmt.Sprintf("%s %s", args.condaEnvName, args.python3Version)
+	args.python3Version = "Python 3.4.5 something off about this one"
+	expected := fmt.Sprintf("%s %s", args.condaEnvName, "3.4.5")
 	python := bootStrapPythonTest(args)
 	assert.True(t, python.enabled())
 	assert.Equal(t, expected, python.string())
@@ -162,8 +162,18 @@ func TestPythonWriterEnabledWithCondaEnvPath(t *testing.T) {
 func TestPythonWriterEnabledWithCondaDefaultEnv(t *testing.T) {
 	args := newPythonArgs()
 	args.condaDefaultName = "conda2"
-	args.python3Version = "3.4.5"
-	expected := fmt.Sprintf("%s %s", args.condaDefaultName, args.python3Version)
+	args.python3Version = "Python 3.4.5"
+	expected := fmt.Sprintf("%s %s", args.condaDefaultName, "3.4.5")
+	python := bootStrapPythonTest(args)
+	assert.True(t, python.enabled())
+	assert.Equal(t, expected, python.string())
+}
+
+func TestPythonWriterEnabledWithCondaDefaultEnvAnacondaInc(t *testing.T) {
+	args := newPythonArgs()
+	args.condaDefaultName = "flatland_rl"
+	args.pythonVersion = "Python 3.6.8 :: Anaconda, Inc."
+	expected := "flatland_rl 3.6.8"
 	python := bootStrapPythonTest(args)
 	assert.True(t, python.enabled())
 	assert.Equal(t, expected, python.string())
@@ -173,8 +183,8 @@ func TestPythonWriterEnabledWithTwoValidEnvs(t *testing.T) {
 	args := newPythonArgs()
 	args.condaEnvName = "conda"
 	args.condaDefaultName = "conda2"
-	args.python3Version = "3.4.5"
-	expected := fmt.Sprintf("%s %s", args.condaEnvName, args.python3Version)
+	args.python3Version = "Python 3.4.5"
+	expected := fmt.Sprintf("%s %s", args.condaEnvName, "3.4.5")
 	python := bootStrapPythonTest(args)
 	assert.True(t, python.enabled())
 	assert.Equal(t, expected, python.string())
@@ -183,7 +193,7 @@ func TestPythonWriterEnabledWithTwoValidEnvs(t *testing.T) {
 func TestPythonWriterNameTrailingSlash(t *testing.T) {
 	args := newPythonArgs()
 	args.virtualEnvName = "python/"
-	args.pythonVersion = "2.7.3"
+	args.pythonVersion = "Python 2.7.3"
 	python := bootStrapPythonTest(args)
 	assert.True(t, python.enabled())
 	assert.Equal(t, "python", python.venvName)

@@ -267,6 +267,14 @@ func TestParseGitBranchInfoNoRemote(t *testing.T) {
 	assert.Empty(t, got["upstream"])
 }
 
+func TestParseGitBranchInfoRemoteGone(t *testing.T) {
+	g := git{}
+	branchInfo := "## test-branch...origin/test-branch [gone]"
+	got := g.parseGitStatusInfo(branchInfo)
+	assert.Equal(t, "test-branch", got["local"])
+	assert.Equal(t, "gone", got["upstream_status"])
+}
+
 func TestGitStatusUnmerged(t *testing.T) {
 	expected := "<#123456>working: x1</>"
 	status := &gitStatus{

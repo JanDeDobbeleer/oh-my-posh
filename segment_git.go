@@ -206,7 +206,9 @@ func (g *git) setGitStatus() {
 	if status["local"] != "" {
 		g.repo.ahead, _ = strconv.Atoi(status["ahead"])
 		g.repo.behind, _ = strconv.Atoi(status["behind"])
-		g.repo.upstream = status["upstream"]
+		if status["upstream_status"] != "gone" {
+			g.repo.upstream = status["upstream"]
+		}
 	}
 	g.repo.HEAD = g.getGitHEADContext(status["local"])
 	g.repo.stashCount = g.getStashContext()
@@ -346,7 +348,7 @@ func (g *git) getStashContext() string {
 }
 
 func (g *git) parseGitStatusInfo(branchInfo string) map[string]string {
-	var branchRegex = regexp.MustCompile(`^## (?P<local>\S+?)(\.{3}(?P<upstream>\S+?)( \[(ahead (?P<ahead>\d+)(, )?)?(behind (?P<behind>\d+))?])?)?$`)
+	var branchRegex = regexp.MustCompile(`^## (?P<local>\S+?)(\.{3}(?P<upstream>\S+?)( \[(?P<upstream_status>(ahead (?P<ahead>\d+)(, )?)?(behind (?P<behind>\d+))?(gone)?)])?)?$`)
 	return groupDict(branchRegex, branchInfo)
 }
 

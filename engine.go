@@ -91,7 +91,7 @@ func (e *engine) renderBlockSegments(block *Block) string {
 		}
 		e.activeSegment = segment
 		e.endPowerline()
-		text := segment.string()
+		text := segment.stringValue
 		e.activeSegment.Background = segment.props.background
 		e.activeSegment.Foreground = segment.props.foreground
 		e.renderSegmentText(text)

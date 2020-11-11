@@ -119,8 +119,12 @@ func TestBatteryError(t *testing.T) {
 	err := errors.New("oh snap")
 	env.On("getBatteryInfo", nil).Return(&battery.Battery{}, err)
 	b := &batt{
-		props: nil,
-		env:   env,
+		props: &properties{
+			values: map[Property]interface{}{
+				DisplayError: true,
+			},
+		},
+		env: env,
 	}
 	assert.True(t, b.enabled())
 	assert.Equal(t, "BATT ERR", b.string())
@@ -130,15 +134,14 @@ func TestBatteryErrorHidden(t *testing.T) {
 	env := &MockedEnvironment{}
 	err := errors.New("oh snap")
 	env.On("getBatteryInfo", nil).Return(&battery.Battery{}, err)
-	props := &properties{
-		values: map[Property]interface{}{
-			DisplayError: false,
-		},
-	}
 	b := &batt{
-		props: props,
-		env:   env,
+		props: &properties{
+			values: map[Property]interface{}{
+				DisplayError: false,
+			},
+		},
+		env: env,
 	}
-	assert.False(t, b.enabled())
-	assert.Equal(t, "", b.string())
+	assert.True(t, b.enabled())
+	assert.Equal(t, "100%", b.string())
 }

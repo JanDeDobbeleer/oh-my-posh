@@ -26,24 +26,24 @@ type formats struct {
 
 var (
 	// Map for color names and their respective foreground [0] or background [1] color codes
-	ColorMap map[string][2]string = map[string][2]string {
-		"black":        [2]string { "30", "40" },
-		"red":          [2]string { "31", "41" },
-		"green":        [2]string { "32", "42" },
-		"yellow":       [2]string { "33", "43" },
-		"blue":         [2]string { "34", "44" },
-		"magenta":      [2]string { "35", "45" },
-		"cyan":         [2]string { "36", "46" },
-		"white":        [2]string { "37", "47" },
-		"default":      [2]string { "39", "49" },
-		"darkGray":     [2]string { "90", "100" },
-		"lightRed":     [2]string { "91", "101" },
-		"lightGreen":   [2]string { "92", "102" },
-		"lightYellow":  [2]string { "93", "103" },
-		"lightBlue":    [2]string { "94", "104" },
-		"lightMagenta": [2]string { "95", "105" },
-		"lightCyan":    [2]string { "96", "106" },
-		"lightWhite":   [2]string { "97", "107" },
+	colorMap map[string][2]string = map[string][2]string{
+		"black":        {"30", "40"},
+		"red":          {"31", "41"},
+		"green":        {"32", "42"},
+		"yellow":       {"33", "43"},
+		"blue":         {"34", "44"},
+		"magenta":      {"35", "45"},
+		"cyan":         {"36", "46"},
+		"white":        {"37", "47"},
+		"default":      {"39", "49"},
+		"darkGray":     {"90", "100"},
+		"lightRed":     {"91", "101"},
+		"lightGreen":   {"92", "102"},
+		"lightYellow":  {"93", "103"},
+		"lightBlue":    {"94", "104"},
+		"lightMagenta": {"95", "105"},
+		"lightCyan":    {"96", "106"},
+		"lightWhite":   {"97", "107"},
 	}
 )
 
@@ -53,10 +53,10 @@ func getColorFromName(colorName string, isBackground bool) (string, error) {
 	if isBackground {
 		colorMapOffset = 1
 	}
-	if colorCodes, found := ColorMap[colorName]; found {
+	if colorCodes, found := colorMap[colorName]; found {
 		return colorCodes[colorMapOffset], nil
 	}
-	return "", errors.New("This color name does not exist.")
+	return "", errors.New("color name does not exist")
 }
 
 //Renderer writes colorized strings

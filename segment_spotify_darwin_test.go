@@ -9,7 +9,6 @@ import (
 )
 
 type spotifyArgs struct {
-	spotifyDarwinTitle   string
 	spotifyDarwinRunning string
 	spotifyDarwinStatus  string
 	spotifyDarwinArtist  string

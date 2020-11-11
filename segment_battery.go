@@ -34,9 +34,10 @@ const (
 
 func (b *batt) enabled() bool {
 	bt, err := b.env.getBatteryInfo()
-	displayError := b.props.getBool(DisplayError, true)
+	displayError := b.props.getBool(DisplayError, false)
 	if err != nil && !displayError {
-		return false
+		b.percentageText = "100%"
+		return true
 	}
 	if err != nil {
 		b.percentageText = "BATT ERR"

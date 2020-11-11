@@ -346,6 +346,23 @@ func TestPathDepthOutsideHomeOneLevelDeep(t *testing.T) {
 	assert.Equal(t, 1, got)
 }
 
+func TestGetAgnosterFullPath(t *testing.T) {
+	pwd := "/usr/location/whatever"
+	env := new(MockedEnvironment)
+	env.On("getPathSeperator", nil).Return("/")
+	env.On("getcwd", nil).Return(pwd)
+	path := &path{
+		env: env,
+		props: &properties{
+			values: map[Property]interface{}{
+				FolderSeparatorIcon: " > ",
+			},
+		},
+	}
+	got := path.getAgnosterFullPath()
+	assert.Equal(t, "usr > location > whatever", got)
+}
+
 func testWritePathInfo(home string, pwd string, pathSeparator string) string {
 	props := &properties{
 		values: map[Property]interface{}{

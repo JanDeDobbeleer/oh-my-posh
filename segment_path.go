@@ -23,6 +23,8 @@ const (
 	WindowsRegistryIcon Property = "windows_registry_icon"
 	//Agnoster displays a short path with separator icon, this the default style
 	Agnoster string = "agnoster"
+	//AgnosterFull displays all the folder names with the folder_separator_icon
+	AgnosterFull string = "agnoster_full"
 	//Short displays a shorter path
 	Short string = "short"
 	//Full displays the full path
@@ -39,6 +41,8 @@ func (pt *path) string() string {
 	switch style := pt.props.getString(Style, Agnoster); style {
 	case Agnoster:
 		return pt.getAgnosterPath()
+	case AgnosterFull:
+		return pt.getAgnosterFullPath()
 	case Short:
 		return pt.getShortPath()
 	case Full:
@@ -83,6 +87,16 @@ func (pt *path) getAgnosterPath() string {
 		buffer.WriteString(fmt.Sprintf("%s%s", pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator()), base(pwd, pt.env)))
 	}
 	return buffer.String()
+}
+
+func (pt *path) getAgnosterFullPath() string {
+	pwd := pt.env.getcwd()
+	pathSeparator := pt.env.getPathSeperator()
+	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
+	if string(pwd[0]) == pathSeparator {
+		pwd = pwd[1:]
+	}
+	return strings.Replace(pwd, pathSeparator, folderSeparator, -1)
 }
 
 func (pt *path) inHomeDir(pwd string) bool {

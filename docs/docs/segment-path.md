@@ -36,6 +36,7 @@ Display the current path.
 Style sets the way the path is displayed. Based on previous experience and popular themes, there are 4 flavors.
 
 - agnoster
+- agnoster_full
 - short
 - full
 - folder
@@ -45,6 +46,10 @@ Style sets the way the path is displayed. Based on previous experience and popul
 Renders each folder as the `folder_icon` separated by the `folder_separator_icon`.
 Only the current folder name is displayed at the end, `$HOME` is replaced by the `home_icon` if you're
 inside the `$HOME` location or one of its children.
+
+### Agnoster Full
+
+Renders each folder name separated by the `folder_separator_icon`.
 
 ### Short
 

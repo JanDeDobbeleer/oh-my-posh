@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
 	"os"
 )
 
@@ -43,30 +43,36 @@ type Block struct {
 func GetSettings(env environmentInfo) *Settings {
 	settings, err := loadUserConfiguration(env)
 	if err != nil {
-		return getDefaultSettings()
+		return getDefaultSettings(err.Error())
 	}
 	return settings
 }
 
 func loadUserConfiguration(env environmentInfo) (*Settings, error) {
 	var settings Settings
-	settingsFileLocation := fmt.Sprintf("%s/.go_my_posh", env.getenv("HOME"))
-	if _, err := os.Stat(*env.getArgs().Config); !os.IsNotExist(err) {
-		settingsFileLocation = *env.getArgs().Config
+	settingsFile := *env.getArgs().Config
+	if settingsFile == "" {
+		return nil, errors.New("NO CONFIG")
 	}
-	defaultSettings, err := os.Open(settingsFileLocation)
+	if _, err := os.Stat(settingsFile); os.IsNotExist(err) {
+		return nil, errors.New("INVALID CONFIG PATH")
+	}
+	defaultSettings, err := os.Open(settingsFile)
 	defer func() {
 		_ = defaultSettings.Close()
 	}()
 	if err != nil {
-		return nil, err
+		return nil, errors.New("UNABLE TO OPEN CONFIG")
 	}
 	jsonParser := json.NewDecoder(defaultSettings)
 	err = jsonParser.Decode(&settings)
-	return &settings, err
+	if err != nil {
+		return nil, errors.New("INVALID CONFIG")
+	}
+	return &settings, nil
 }
 
-func getDefaultSettings() *Settings {
+func getDefaultSettings(info string) *Settings {
 	settings := &Settings{
 		FinalSpace: true,
 		Blocks: []*Block{
@@ -146,6 +152,16 @@ func getDefaultSettings() *Settings {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#ffff66",
 						Foreground:      "#ffffff",
+					},
+					{
+						Type:            Text,
+						Style:           Powerline,
+						PowerlineSymbol: "\uE0B0",
+						Background:      "#ffffff",
+						Foreground:      "#111111",
+						Properties: map[Property]interface{}{
+							TextProperty: info,
+						},
 					},
 					{
 						Type:            Exit,

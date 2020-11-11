@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 
 	"github.com/distatus/battery"
 )
@@ -42,6 +43,7 @@ func (b *batt) enabled() bool {
 		return true
 	}
 	batteryPercentage := bt.Current / bt.Full * 100
+	batteryPercentage = math.Min(100, batteryPercentage)
 	percentageText := fmt.Sprintf("%.0f", batteryPercentage)
 	var icon string
 	var colorPorperty Property

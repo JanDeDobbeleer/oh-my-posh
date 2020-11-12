@@ -7,7 +7,7 @@ type envvar struct {
 }
 
 const (
-	//VarName name of the variable
+	// VarName name of the variable
 	VarName Property = "var_name"
 )
 

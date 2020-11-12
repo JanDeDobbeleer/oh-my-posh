@@ -35,7 +35,7 @@ func getImagePid(imageName string) ([]int, error) {
 }
 
 // getWindowTitle returns the title of a window linked to a process name
-func getWindowTitle(imageName string, windowTitleRegex string) (string, error) {
+func getWindowTitle(imageName, windowTitleRegex string) (string, error) {
 	processPid, err := getImagePid(imageName)
 	if err != nil {
 		return "", nil
@@ -73,7 +73,9 @@ func processes() ([]WindowsProcess, error) {
 	if err != nil {
 		return nil, syscall.GetLastError()
 	}
-	defer windows.CloseHandle(handle)
+	defer func() {
+		_ = windows.CloseHandle(handle)
+	}()
 
 	// get process infor by looping through the snapshot
 	var entry windows.ProcessEntry32
@@ -109,8 +111,8 @@ var (
 )
 
 // EnumWindows call EnumWindows from user32 and returns all active windows
-func EnumWindows(enumFunc uintptr, lparam uintptr) (err error) {
-	r1, _, e1 := syscall.Syscall(procEnumWindows.Addr(), 2, uintptr(enumFunc), uintptr(lparam), 0)
+func EnumWindows(enumFunc, lparam uintptr) (err error) {
+	r1, _, e1 := syscall.Syscall(procEnumWindows.Addr(), 2, enumFunc, lparam, 0)
 	if r1 == 0 {
 		if e1 != 0 {
 			err = error(e1)
@@ -122,10 +124,10 @@ func EnumWindows(enumFunc uintptr, lparam uintptr) (err error) {
 }
 
 // GetWindowText returns the title and text of a window from a window handle
-func GetWindowText(hwnd syscall.Handle, str *uint16, maxCount int32) (len int32, err error) {
+func GetWindowText(hwnd syscall.Handle, str *uint16, maxCount int32) (length int32, err error) {
 	r0, _, e1 := syscall.Syscall(procGetWindowTextW.Addr(), 3, uintptr(hwnd), uintptr(unsafe.Pointer(str)), uintptr(maxCount))
-	len = int32(r0)
-	if len == 0 {
+	length = int32(r0)
+	if length == 0 {
 		if e1 != 0 {
 			err = error(e1)
 		} else {
@@ -135,7 +137,7 @@ func GetWindowText(hwnd syscall.Handle, str *uint16, maxCount int32) (len int32,
 	return
 }
 
-// GetWindowTitle searchs for a window attached to the pid
+// GetWindowTitle searches for a window attached to the pid
 func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string, error) {
 	var hwnd syscall.Handle
 	var title string
@@ -166,8 +168,8 @@ func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string, e
 		return 1 // continue enumeration
 	})
 	// Enumerates all top-level windows on the screen
-	EnumWindows(cb, 0)
-	if hwnd == 0 {
+	err = EnumWindows(cb, 0)
+	if err != nil || hwnd == 0 {
 		return 0, "", fmt.Errorf("No window with title '%b' found", pid)
 	}
 	return hwnd, title, nil

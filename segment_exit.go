@@ -8,11 +8,11 @@ type exit struct {
 }
 
 const (
-	//DisplayExitCode shows or hides the error code
+	// DisplayExitCode shows or hides the error code
 	DisplayExitCode Property = "display_exit_code"
-	//AlwaysEnabled decides whether or not to always display the exitcode info
+	// AlwaysEnabled decides whether or not to always display the exitcode info
 	AlwaysEnabled Property = "always_enabled"
-	//ErrorColor specify a different foreground color for the error text when using always_show = true
+	// ErrorColor specify a different foreground color for the error text when using always_show = true
 	ErrorColor Property = "error_color"
 )
 

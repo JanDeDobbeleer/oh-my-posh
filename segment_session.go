@@ -11,17 +11,17 @@ type session struct {
 }
 
 const (
-	//UserInfoSeparator is put between the user and computer name
+	// UserInfoSeparator is put between the user and computer name
 	UserInfoSeparator Property = "user_info_separator"
-	//UserColor if set, is used to color the user name
+	// UserColor if set, is used to color the user name
 	UserColor Property = "user_color"
-	//HostColor if set, is used to color the computer name
+	// HostColor if set, is used to color the computer name
 	HostColor Property = "host_color"
-	//DisplayHost hides or show the computer name
+	// DisplayHost hides or show the computer name
 	DisplayHost Property = "display_host"
-	//DisplayUser hides or shows the user name
+	// DisplayUser hides or shows the user name
 	DisplayUser Property = "display_user"
-	//SSHIcon shows when in an SSH session
+	// SSHIcon shows when in an SSH session
 	SSHIcon Property = "ssh_icon"
 )
 
@@ -49,7 +49,9 @@ func (s *session) getFormattedText() string {
 	if s.activeSSHSession() {
 		ssh = s.props.getString(SSHIcon, "\uF817 ")
 	}
-	return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", ssh, s.props.getColor(UserColor, s.props.foreground), username, separator, s.props.getColor(HostColor, s.props.foreground), computername)
+	userColor := s.props.getColor(UserColor, s.props.foreground)
+	hostColor := s.props.getColor(HostColor, s.props.foreground)
+	return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", ssh, userColor, username, separator, hostColor, computername)
 }
 
 func (s *session) getComputerName() string {

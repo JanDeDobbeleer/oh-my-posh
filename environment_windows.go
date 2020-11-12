@@ -25,7 +25,9 @@ func (env *environment) isRunningAsRoot() bool {
 	if err != nil {
 		return false
 	}
-	defer windows.FreeSid(sid)
+	defer func() {
+		_ = windows.FreeSid(sid)
+	}()
 
 	// This appears to cast a null pointer so I'm not sure why this
 	// works, but this guy says it does and it Works for Me™:
@@ -48,6 +50,6 @@ func (env *environment) homeDir() string {
 	return home
 }
 
-func (env *environment) getWindowTitle(imageName string, windowTitleRegex string) (string, error) {
+func (env *environment) getWindowTitle(imageName, windowTitleRegex string) (string, error) {
 	return getWindowTitle(imageName, windowTitleRegex)
 }

@@ -6,7 +6,7 @@ type root struct {
 }
 
 const (
-	//RootIcon indicates the root user
+	// RootIcon indicates the root user
 	RootIcon Property = "root_icon"
 )
 

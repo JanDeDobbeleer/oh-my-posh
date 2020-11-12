@@ -9,18 +9,19 @@ import (
 )
 
 type spotifyArgs struct {
-	spotifyDarwinRunning string
-	spotifyDarwinStatus  string
-	spotifyDarwinArtist  string
-	spotifyDarwinTrack   string
+	running  string
+	status   string
+	artist   string
+	track    string
+	runError error
 }
 
 func bootStrapSpotifyDarwinTest(args *spotifyArgs) *spotify {
 	env := new(MockedEnvironment)
-	env.On("runCommand", "osascript", []string{"-e", "application \"Spotify\" is running"}).Return(args.spotifyDarwinRunning, nil)
-	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to player state as string"}).Return(args.spotifyDarwinStatus, nil)
-	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to artist of current track as string"}).Return(args.spotifyDarwinArtist, nil)
-	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to name of current track as string"}).Return(args.spotifyDarwinTrack, nil)
+	env.On("runCommand", "osascript", []string{"-e", "application \"Spotify\" is running"}).Return(args.running, args.runError)
+	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to player state as string"}).Return(args.status, nil)
+	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to artist of current track as string"}).Return(args.artist, nil)
+	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to name of current track as string"}).Return(args.track, nil)
 	props := &properties{}
 	s := &spotify{
 		env:   env,
@@ -31,7 +32,7 @@ func bootStrapSpotifyDarwinTest(args *spotifyArgs) *spotify {
 
 func TestSpotifyDarwinEnabledAndSpotifyNotRunning(t *testing.T) {
 	args := &spotifyArgs{
-		spotifyDarwinRunning: "false",
+		running: "false",
 	}
 	s := bootStrapSpotifyDarwinTest(args)
 	assert.Equal(t, false, s.enabled())
@@ -39,10 +40,10 @@ func TestSpotifyDarwinEnabledAndSpotifyNotRunning(t *testing.T) {
 
 func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 	args := &spotifyArgs{
-		spotifyDarwinRunning: "true",
-		spotifyDarwinStatus:  "playing",
-		spotifyDarwinArtist:  "Candlemass",
-		spotifyDarwinTrack:   "Spellbreaker",
+		running: "true",
+		status:  "playing",
+		artist:  "Candlemass",
+		track:   "Spellbreaker",
 	}
 	s := bootStrapSpotifyDarwinTest(args)
 	assert.Equal(t, true, s.enabled())
@@ -51,10 +52,10 @@ func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 
 func TestSpotifyDarwinEnabledAndSpotifyPaused(t *testing.T) {
 	args := &spotifyArgs{
-		spotifyDarwinRunning: "true",
-		spotifyDarwinStatus:  "paused",
-		spotifyDarwinArtist:  "Candlemass",
-		spotifyDarwinTrack:   "Spellbreaker",
+		running: "true",
+		status:  "paused",
+		artist:  "Candlemass",
+		track:   "Spellbreaker",
 	}
 	s := bootStrapSpotifyDarwinTest(args)
 	assert.Equal(t, true, s.enabled())

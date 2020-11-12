@@ -13,11 +13,11 @@ type az struct {
 }
 
 const (
-	//SubscriptionInfoSeparator is put between the name and ID
+	// SubscriptionInfoSeparator is put between the name and ID
 	SubscriptionInfoSeparator Property = "info_separator"
-	//DisplaySubscriptionID hides or show the subscription GUID
+	// DisplaySubscriptionID hides or show the subscription GUID
 	DisplaySubscriptionID Property = "display_id"
-	//DisplaySubscriptionName hides or shows the subscription display name
+	// DisplaySubscriptionName hides or shows the subscription display name
 	DisplaySubscriptionName Property = "display_name"
 )
 

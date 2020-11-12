@@ -6,31 +6,31 @@ import (
 	"os"
 )
 
-//Settings holds all the theme for rendering the prompt
+// Settings holds all the theme for rendering the prompt
 type Settings struct {
 	FinalSpace   bool     `json:"final_space"`
 	ConsoleTitle bool     `json:"console_title"`
 	Blocks       []*Block `json:"blocks"`
 }
 
-//BlockType type of block
+// BlockType type of block
 type BlockType string
 
-//BlockAlignment aligment of a Block
+// BlockAlignment aligment of a Block
 type BlockAlignment string
 
 const (
-	//Prompt writes one or more Segments
+	// Prompt writes one or more Segments
 	Prompt BlockType = "prompt"
-	//LineBreak creates a line break in the prompt
+	// LineBreak creates a line break in the prompt
 	LineBreak BlockType = "newline"
-	//Left aligns left
+	// Left aligns left
 	Left BlockAlignment = "left"
-	//Right aligns right
+	// Right aligns right
 	Right BlockAlignment = "right"
 )
 
-//Block defines a part of the prompt with optional segments
+// Block defines a part of the prompt with optional segments
 type Block struct {
 	Type             BlockType      `json:"type"`
 	Alignment        BlockAlignment `json:"alignment"`
@@ -39,7 +39,7 @@ type Block struct {
 	Segments         []*Segment     `json:"segments"`
 }
 
-//GetSettings returns the default configuration including possible user overrides
+// GetSettings returns the default configuration including possible user overrides
 func GetSettings(env environmentInfo) *Settings {
 	settings, err := loadUserConfiguration(env)
 	if err != nil {

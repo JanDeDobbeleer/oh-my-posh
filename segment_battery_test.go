@@ -8,6 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	expectedColor = "#768954"
+)
+
 func setupBatteryTests(state battery.State, batteryLevel float64, props *properties) *batt {
 	env := &MockedEnvironment{}
 	bt := &battery.Battery{
@@ -55,7 +59,7 @@ func TestBatteryDischarging(t *testing.T) {
 }
 
 func TestBatteryBackgroundColor(t *testing.T) {
-	expected := "#768954"
+	expected := expectedColor
 	props := &properties{
 		background: "#111111",
 		values: map[Property]interface{}{
@@ -70,7 +74,7 @@ func TestBatteryBackgroundColor(t *testing.T) {
 }
 
 func TestBatteryBackgroundColorInvalid(t *testing.T) {
-	expected := "#768954"
+	expected := expectedColor
 	props := &properties{
 		background: expected,
 		values: map[Property]interface{}{
@@ -85,7 +89,7 @@ func TestBatteryBackgroundColorInvalid(t *testing.T) {
 }
 
 func TestBatteryForegroundColor(t *testing.T) {
-	expected := "#768954"
+	expected := expectedColor
 	props := &properties{
 		foreground: "#111111",
 		values: map[Property]interface{}{
@@ -100,7 +104,7 @@ func TestBatteryForegroundColor(t *testing.T) {
 }
 
 func TestBatteryForegroundColorInvalid(t *testing.T) {
-	expected := "#768954"
+	expected := expectedColor
 	props := &properties{
 		foreground: expected,
 		values: map[Property]interface{}{

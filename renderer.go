@@ -59,7 +59,7 @@ func getColorFromName(colorName string, isBackground bool) (string, error) {
 	return "", errors.New("color name does not exist")
 }
 
-//Renderer writes colorized strings
+// Renderer writes colorized strings
 type Renderer struct {
 	Buffer  *bytes.Buffer
 	formats *formats
@@ -67,8 +67,10 @@ type Renderer struct {
 }
 
 const (
-	//Transparent implies a transparent color
-	Transparent string = "transparent"
+	// Transparent implies a transparent color
+	Transparent = "transparent"
+	zsh         = "zsh"
+	bash        = "bash"
 )
 
 func (r *Renderer) init(shell string) {
@@ -77,7 +79,7 @@ func (r *Renderer) init(shell string) {
 		rANSI: "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))",
 	}
 	switch shell {
-	case "zsh":
+	case zsh:
 		r.formats.single = "%%{\x1b[%sm%%}%s%%{\x1b[0m%%}"
 		r.formats.full = "%%{\x1b[%sm\x1b[%sm%%}%s%%{\x1b[0m%%}"
 		r.formats.transparent = "%%{\x1b[%s;49m\x1b[7m%%}%s%%{\x1b[m\x1b[0m%%}"
@@ -87,7 +89,7 @@ func (r *Renderer) init(shell string) {
 		r.formats.title = "%%{\033]0;%s\007%%}"
 		r.formats.creset = "%{\x1b[0m%}"
 		r.formats.clearOEL = "%{\x1b[K%}"
-	case "bash":
+	case bash:
 		r.formats.single = "\\[\x1b[%sm\\]%s\\[\x1b[0m\\]"
 		r.formats.full = "\\[\x1b[%sm\x1b[%sm\\]%s\\[\x1b[0m\\]"
 		r.formats.transparent = "\\[\x1b[%s;49m\x1b[7m\\]%s\\[\x1b[m\x1b[0m\\]"
@@ -122,7 +124,7 @@ func (r *Renderer) getAnsiFromColorString(colorString string, isBackground bool)
 	return style.Code()
 }
 
-func (r *Renderer) writeColoredText(background string, foreground string, text string) {
+func (r *Renderer) writeColoredText(background, foreground, text string) {
 	var coloredText string
 	if foreground == Transparent && background != "" {
 		ansiColor := r.getAnsiFromColorString(background, false)
@@ -138,12 +140,12 @@ func (r *Renderer) writeColoredText(background string, foreground string, text s
 	r.Buffer.WriteString(coloredText)
 }
 
-func (r *Renderer) writeAndRemoveText(background string, foreground string, text string, textToRemove string, parentText string) string {
+func (r *Renderer) writeAndRemoveText(background, foreground, text, textToRemove, parentText string) string {
 	r.writeColoredText(background, foreground, text)
 	return strings.Replace(parentText, textToRemove, "", 1)
 }
 
-func (r *Renderer) write(background string, foreground string, text string) {
+func (r *Renderer) write(background, foreground, text string) {
 	// first we match for any potentially valid color enclosed in <>
 	rex := regexp.MustCompile(`<([#A-Za-z0-9]+)>(.*?)<\/>`)
 	match := rex.FindAllStringSubmatch(text, -1)
@@ -166,12 +168,12 @@ func (r *Renderer) lenWithoutANSI(str string) int {
 	re := regexp.MustCompile(r.formats.rANSI)
 	stripped := re.ReplaceAllString(str, "")
 	switch r.shell {
-	case "zsh":
-		stripped = strings.Replace(stripped, "%{", "", -1)
-		stripped = strings.Replace(stripped, "%}", "", -1)
-	case "bash":
-		stripped = strings.Replace(stripped, "\\[", "", -1)
-		stripped = strings.Replace(stripped, "\\]", "", -1)
+	case zsh:
+		stripped = strings.ReplaceAll(stripped, "%{", "")
+		stripped = strings.ReplaceAll(stripped, "%}", "")
+	case bash:
+		stripped = strings.ReplaceAll(stripped, "\\[", "")
+		stripped = strings.ReplaceAll(stripped, "\\]", "")
 	}
 	var i norm.Iter
 	i.InitString(norm.NFD, stripped)

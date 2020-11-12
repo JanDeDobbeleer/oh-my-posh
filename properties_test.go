@@ -6,8 +6,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	expected = "expected"
+)
+
 func TestGetString(t *testing.T) {
-	expected := "expected"
 	values := map[Property]interface{}{TextProperty: expected}
 	properties := properties{
 		values: values,
@@ -17,7 +20,6 @@ func TestGetString(t *testing.T) {
 }
 
 func TestGetStringNoEntry(t *testing.T) {
-	expected := "expected"
 	values := map[Property]interface{}{}
 	properties := properties{
 		values: values,
@@ -27,7 +29,6 @@ func TestGetStringNoEntry(t *testing.T) {
 }
 
 func TestGetStringNoTextEntry(t *testing.T) {
-	expected := "expected"
 	values := map[Property]interface{}{TextProperty: true}
 	properties := properties{
 		values: values,
@@ -37,7 +38,7 @@ func TestGetStringNoTextEntry(t *testing.T) {
 }
 
 func TestGetColor(t *testing.T) {
-	expected := "#123456"
+	expected := expectedColor
 	values := map[Property]interface{}{UserColor: expected}
 	properties := properties{
 		values: values,
@@ -47,7 +48,7 @@ func TestGetColor(t *testing.T) {
 }
 
 func TestDefaultColorWithInvalidColorCode(t *testing.T) {
-	expected := "#123456"
+	expected := expectedColor
 	values := map[Property]interface{}{UserColor: "invalid"}
 	properties := properties{
 		values: values,
@@ -57,7 +58,7 @@ func TestDefaultColorWithInvalidColorCode(t *testing.T) {
 }
 
 func TestDefaultColorWithUnavailableProperty(t *testing.T) {
-	expected := "#123456"
+	expected := expectedColor
 	values := map[Property]interface{}{}
 	properties := properties{
 		values: values,

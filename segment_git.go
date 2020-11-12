@@ -28,7 +28,7 @@ type gitStatus struct {
 	changed   bool
 }
 
-func (s *gitStatus) string(prefix string, color string) string {
+func (s *gitStatus) string(prefix, color string) string {
 	var status string
 	stringIfValue := func(value int, prefix string) string {
 		if value > 0 {
@@ -54,63 +54,63 @@ type git struct {
 }
 
 const (
-	//BranchIcon the icon to use as branch indicator
+	// BranchIcon the icon to use as branch indicator
 	BranchIcon Property = "branch_icon"
-	//BranchIdenticalIcon the icon to display when the remote and local branch are identical
+	// BranchIdenticalIcon the icon to display when the remote and local branch are identical
 	BranchIdenticalIcon Property = "branch_identical_icon"
-	//BranchAheadIcon the icon to display when the local branch is ahead of the remote
+	// BranchAheadIcon the icon to display when the local branch is ahead of the remote
 	BranchAheadIcon Property = "branch_ahead_icon"
-	//BranchBehindIcon the icon to display when the local branch is behind the remote
+	// BranchBehindIcon the icon to display when the local branch is behind the remote
 	BranchBehindIcon Property = "branch_behind_icon"
-	//BranchGoneIcon the icon to use when ther's no remote
+	// BranchGoneIcon the icon to use when ther's no remote
 	BranchGoneIcon Property = "branch_gone_icon"
-	//LocalWorkingIcon the icon to use as the local working area changes indicator
+	// LocalWorkingIcon the icon to use as the local working area changes indicator
 	LocalWorkingIcon Property = "local_working_icon"
-	//LocalStagingIcon the icon to use as the local staging area changes indicator
+	// LocalStagingIcon the icon to use as the local staging area changes indicator
 	LocalStagingIcon Property = "local_staged_icon"
-	//DisplayStatus shows the status of the repository
+	// DisplayStatus shows the status of the repository
 	DisplayStatus Property = "display_status"
-	//DisplayStatusDetail shows the detailed status of the repository
+	// DisplayStatusDetail shows the detailed status of the repository
 	DisplayStatusDetail Property = "display_status_detail"
-	//RebaseIcon shows before the rebase context
+	// RebaseIcon shows before the rebase context
 	RebaseIcon Property = "rebase_icon"
-	//CherryPickIcon shows before the cherry-pick context
+	// CherryPickIcon shows before the cherry-pick context
 	CherryPickIcon Property = "cherry_pick_icon"
-	//CommitIcon shows before the detached context
+	// CommitIcon shows before the detached context
 	CommitIcon Property = "commit_icon"
-	//TagIcon shows before the tag context
+	// TagIcon shows before the tag context
 	TagIcon Property = "tag_icon"
-	//DisplayStashCount show stash count or not
+	// DisplayStashCount show stash count or not
 	DisplayStashCount Property = "display_stash_count"
-	//StashCountIcon shows before the stash context
+	// StashCountIcon shows before the stash context
 	StashCountIcon Property = "stash_count_icon"
-	//StatusSeparatorIcon shows between staging and working area
+	// StatusSeparatorIcon shows between staging and working area
 	StatusSeparatorIcon Property = "status_separator_icon"
-	//MergeIcon shows before the merge context
+	// MergeIcon shows before the merge context
 	MergeIcon Property = "merge_icon"
-	//DisplayUpstreamIcon show or hide the upstream icon
+	// DisplayUpstreamIcon show or hide the upstream icon
 	DisplayUpstreamIcon Property = "display_upstream_icon"
-	//GithubIcon shows√ when upstream is github
+	// GithubIcon shows√ when upstream is github
 	GithubIcon Property = "github_icon"
-	//BitbucketIcon shows  when upstream is bitbucket
+	// BitbucketIcon shows  when upstream is bitbucket
 	BitbucketIcon Property = "bitbucket_icon"
-	//GitlabIcon shows when upstream is gitlab
+	// GitlabIcon shows when upstream is gitlab
 	GitlabIcon Property = "gitlab_icon"
-	//GitIcon shows when the upstream can't be identified
+	// GitIcon shows when the upstream can't be identified
 	GitIcon Property = "git_icon"
-	//WorkingColor if set, the color to use on the working area
+	// WorkingColor if set, the color to use on the working area
 	WorkingColor Property = "working_color"
-	//StagingColor if set, the color to use on the staging area
+	// StagingColor if set, the color to use on the staging area
 	StagingColor Property = "staging_color"
-	//StatusColorsEnabled enables status colors
+	// StatusColorsEnabled enables status colors
 	StatusColorsEnabled Property = "status_colors_enabled"
-	//LocalChangesColor if set, the color to use when there are local changes
+	// LocalChangesColor if set, the color to use when there are local changes
 	LocalChangesColor Property = "local_changes_color"
-	//AheadAndBehindColor if set, the color to use when the branch is ahead and behind the remote
+	// AheadAndBehindColor if set, the color to use when the branch is ahead and behind the remote
 	AheadAndBehindColor Property = "ahead_and_behind_color"
-	//BehindColor if set, the color to use when the branch is ahead and behind the remote
+	// BehindColor if set, the color to use when the branch is ahead and behind the remote
 	BehindColor Property = "behind_color"
-	//AheadColor if set, the color to use when the branch is ahead and behind the remote
+	// AheadColor if set, the color to use when the branch is ahead and behind the remote
 	AheadColor Property = "ahead_color"
 )
 
@@ -170,7 +170,7 @@ func (g *git) init(props *properties, env environmentInfo) {
 	g.env = env
 }
 
-func (g *git) getStatusDetailString(status *gitStatus, color Property, icon Property, defaultIcon string) string {
+func (g *git) getStatusDetailString(status *gitStatus, color, icon Property, defaultIcon string) string {
 	prefix := g.props.getString(icon, defaultIcon)
 	foregroundColor := g.props.getColor(color, g.props.foreground)
 	if !g.props.getBool(DisplayStatusDetail, true) {

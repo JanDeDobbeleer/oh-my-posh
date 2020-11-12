@@ -14,21 +14,21 @@ type batt struct {
 }
 
 const (
-	//BatteryIcon to display in front of the battery
+	// BatteryIcon to display in front of the battery
 	BatteryIcon Property = "battery_icon"
-	//DisplayError to display when an error occurs or not
+	// DisplayError to display when an error occurs or not
 	DisplayError Property = "display_error"
-	//ChargingIcon to display when charging
+	// ChargingIcon to display when charging
 	ChargingIcon Property = "charging_icon"
-	//DischargingIcon o display when discharging
+	// DischargingIcon o display when discharging
 	DischargingIcon Property = "discharging_icon"
-	//ChargedIcon to display when fully charged
+	// ChargedIcon to display when fully charged
 	ChargedIcon Property = "charged_icon"
-	//ChargedColor to display when fully charged
+	// ChargedColor to display when fully charged
 	ChargedColor Property = "charged_color"
-	//ChargingColor to display when charging
+	// ChargingColor to display when charging
 	ChargingColor Property = "charging_color"
-	//DischargingColor to display when discharging
+	// DischargingColor to display when discharging
 	DischargingColor Property = "discharging_color"
 )
 
@@ -58,7 +58,7 @@ func (b *batt) enabled() bool {
 	case battery.Full:
 		colorPorperty = ChargedColor
 		icon = b.props.getString(ChargedIcon, "")
-	default:
+	case battery.Empty, battery.Unknown:
 		b.percentageText = percentageText
 		return true
 	}

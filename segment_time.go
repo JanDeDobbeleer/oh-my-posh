@@ -10,7 +10,7 @@ type tempus struct {
 }
 
 const (
-	//TimeFormat uses the reference time Mon Jan 2 15:04:05 MST 2006 to show the pattern with which to format the current time
+	// TimeFormat uses the reference time Mon Jan 2 15:04:05 MST 2006 to show the pattern with which to format the current time
 	TimeFormat Property = "time_format"
 )
 

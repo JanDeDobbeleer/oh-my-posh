@@ -2,7 +2,7 @@ package main
 
 import "errors"
 
-//Segment represent a single segment and it's configuration
+// Segment represent a single segment and it's configuration
 type Segment struct {
 	Type            SegmentType              `json:"type"`
 	Style           SegmentStyle             `json:"style"`
@@ -19,65 +19,65 @@ type Segment struct {
 	active          bool
 }
 
-//SegmentWriter is the interface used to define what and if to write to the prompt
+// SegmentWriter is the interface used to define what and if to write to the prompt
 type SegmentWriter interface {
 	enabled() bool
 	string() string
 	init(props *properties, env environmentInfo)
 }
 
-//SegmentStyle the syle of segment, for more information, see the constants
+// SegmentStyle the syle of segment, for more information, see the constants
 type SegmentStyle string
 
-//SegmentType the type of segment, for more information, see the constants
+// SegmentType the type of segment, for more information, see the constants
 type SegmentType string
 
 const (
-	//Session represents the user info segment
+	// Session represents the user info segment
 	Session SegmentType = "session"
-	//Path represents the current path segment
+	// Path represents the current path segment
 	Path SegmentType = "path"
-	//Git represents the git status and information
+	// Git represents the git status and information
 	Git SegmentType = "git"
-	//Exit writes the last exit code
+	// Exit writes the last exit code
 	Exit SegmentType = "exit"
-	//Python writes the virtual env name
+	// Python writes the virtual env name
 	Python SegmentType = "python"
-	//Root writes root symbol
+	// Root writes root symbol
 	Root SegmentType = "root"
-	//Time writes the current timestamp
+	// Time writes the current timestamp
 	Time SegmentType = "time"
-	//Text writes a text
+	// Text writes a text
 	Text SegmentType = "text"
-	//Cmd writes the output of a shell command
+	// Cmd writes the output of a shell command
 	Cmd SegmentType = "command"
-	//Battery writes the battery percentage
+	// Battery writes the battery percentage
 	Battery SegmentType = "battery"
-	//Spotify writes the Spotify status for Mac
+	// Spotify writes the Spotify status for Mac
 	Spotify SegmentType = "spotify"
-	//ShellInfo writes which shell we're currently in
+	// ShellInfo writes which shell we're currently in
 	ShellInfo SegmentType = "shell"
-	//Node writes which node version is currently active
+	// Node writes which node version is currently active
 	Node SegmentType = "node"
-	//Os write os specific icon
+	// Os write os specific icon
 	Os SegmentType = "os"
-	//EnvVar writes the content of an environment variable
+	// EnvVar writes the content of an environment variable
 	EnvVar SegmentType = "envvar"
-	//Az writes the Azure subscription info we're currently in
+	// Az writes the Azure subscription info we're currently in
 	Az SegmentType = "az"
-	//Kubectl writes the Kubernetes context we're currently in
+	// Kubectl writes the Kubernetes context we're currently in
 	Kubectl SegmentType = "kubectl"
-	//Dotnet writes which dotnet version is currently active
+	// Dotnet writes which dotnet version is currently active
 	Dotnet SegmentType = "dotnet"
-	//Terraform writes the terraform workspace we're currently in
+	// Terraform writes the terraform workspace we're currently in
 	Terraform SegmentType = "terraform"
-	//Golang writes which go version is currently active
+	// Golang writes which go version is currently active
 	Golang SegmentType = "go"
-	//Powerline writes it Powerline style
+	// Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
-	//Plain writes it without ornaments
+	// Plain writes it without ornaments
 	Plain SegmentStyle = "plain"
-	//Diamond writes the prompt shaped with a leading and trailing symbol
+	// Diamond writes the prompt shaped with a leading and trailing symbol
 	Diamond SegmentStyle = "diamond"
 )
 
@@ -144,5 +144,5 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		segment.props = props
 		return nil
 	}
-	return errors.New("Unable to map writer")
+	return errors.New("unable to map writer")
 }

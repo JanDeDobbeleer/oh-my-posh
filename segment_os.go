@@ -10,53 +10,53 @@ type osInfo struct {
 }
 
 const (
-	//MacOS the string/icon to use for MacOS
+	// MacOS the string/icon to use for MacOS
 	MacOS Property = "macos"
-	//Linux the string/icon to use for linux
+	// Linux the string/icon to use for linux
 	Linux Property = "linux"
-	//Windows the string/icon to use for windows
+	// Windows the string/icon to use for windows
 	Windows Property = "windows"
-	//WSL the string/icon to use for WSL
+	// WSL the string/icon to use for WSL
 	WSL Property = "wsl"
-	//WSLSeparator shows between WSL and Linux properties when WSL is detected
+	// WSLSeparator shows between WSL and Linux properties when WSL is detected
 	WSLSeparator Property = "wsl_separator"
-	//Alpine the string/icon to use for Alpine
+	// Alpine the string/icon to use for Alpine
 	Alpine Property = "alpine"
-	//Aosc the string/icon to use for Aosc
+	// Aosc the string/icon to use for Aosc
 	Aosc Property = "aosc"
-	//Arch the string/icon to use for Arch
+	// Arch the string/icon to use for Arch
 	Arch Property = "arch"
-	//Centos the string/icon to use for Centos
+	// Centos the string/icon to use for Centos
 	Centos Property = "centos"
-	//Coreos the string/icon to use for Coreos
+	// Coreos the string/icon to use for Coreos
 	Coreos Property = "coreos"
-	//Debian the string/icon to use for Debian
+	// Debian the string/icon to use for Debian
 	Debian Property = "debian"
-	//Devuan the string/icon to use for Devuan
+	// Devuan the string/icon to use for Devuan
 	Devuan Property = "devuan"
-	//Raspbian the string/icon to use for Raspbian
+	// Raspbian the string/icon to use for Raspbian
 	Raspbian Property = "raspbian"
-	//Elementary the string/icon to use for Elementary
+	// Elementary the string/icon to use for Elementary
 	Elementary Property = "elementary"
-	//Fedora the string/icon to use for Fedora
+	// Fedora the string/icon to use for Fedora
 	Fedora Property = "fedora"
-	//Gentoo the string/icon to use for Gentoo
+	// Gentoo the string/icon to use for Gentoo
 	Gentoo Property = "gentoo"
-	//Mageia the string/icon to use for Mageia
+	// Mageia the string/icon to use for Mageia
 	Mageia Property = "mageia"
-	//Manjaro the string/icon to use for Manjaro
+	// Manjaro the string/icon to use for Manjaro
 	Manjaro Property = "manjaro"
-	//Mint the string/icon to use for Mint
+	// Mint the string/icon to use for Mint
 	Mint Property = "mint"
-	//Nixos the string/icon to use for Nixos
+	// Nixos the string/icon to use for Nixos
 	Nixos Property = "nixos"
-	//Opensuse the string/icon to use for Opensuse
+	// Opensuse the string/icon to use for Opensuse
 	Opensuse Property = "opensuse"
-	//Sabayon the string/icon to use for Sabayon
+	// Sabayon the string/icon to use for Sabayon
 	Sabayon Property = "sabayon"
-	//Slackware the string/icon to use for Slackware
+	// Slackware the string/icon to use for Slackware
 	Slackware Property = "slackware"
-	//Ubuntu the string/icon to use for Ubuntu
+	// Ubuntu the string/icon to use for Ubuntu
 	Ubuntu Property = "ubuntu"
 )
 
@@ -67,7 +67,7 @@ func (n *osInfo) enabled() bool {
 func (n *osInfo) string() string {
 	goos := n.env.getRuntimeGOOS()
 	switch goos {
-	case "windows":
+	case windowsPlatform:
 		return n.props.getString(Windows, "\uE62A")
 	case "darwin":
 		return n.props.getString(MacOS, "\uF179")

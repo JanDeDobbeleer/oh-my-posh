@@ -13,23 +13,23 @@ type path struct {
 }
 
 const (
-	//FolderSeparatorIcon the path which is split will be separated by this icon
+	// FolderSeparatorIcon the path which is split will be separated by this icon
 	FolderSeparatorIcon Property = "folder_separator_icon"
-	//HomeIcon indicates the $HOME location
+	// HomeIcon indicates the $HOME location
 	HomeIcon Property = "home_icon"
-	//FolderIcon identifies one folder
+	// FolderIcon identifies one folder
 	FolderIcon Property = "folder_icon"
-	//WindowsRegistryIcon indicates the registry location on Windows
+	// WindowsRegistryIcon indicates the registry location on Windows
 	WindowsRegistryIcon Property = "windows_registry_icon"
-	//Agnoster displays a short path with separator icon, this the default style
+	// Agnoster displays a short path with separator icon, this the default style
 	Agnoster string = "agnoster"
-	//AgnosterFull displays all the folder names with the folder_separator_icon
+	// AgnosterFull displays all the folder names with the folder_separator_icon
 	AgnosterFull string = "agnoster_full"
-	//Short displays a shorter path
+	// Short displays a shorter path
 	Short string = "short"
-	//Full displays the full path
+	// Full displays the full path
 	Full string = "full"
-	//Folder displays the current folder
+	// Folder displays the current folder
 	Folder string = "folder"
 )
 
@@ -96,7 +96,7 @@ func (pt *path) getAgnosterFullPath() string {
 	if string(pwd[0]) == pathSeparator {
 		pwd = pwd[1:]
 	}
-	return strings.Replace(pwd, pathSeparator, folderSeparator, -1)
+	return strings.ReplaceAll(pwd, pathSeparator, folderSeparator)
 }
 
 func (pt *path) inHomeDir(pwd string) bool {
@@ -104,7 +104,7 @@ func (pt *path) inHomeDir(pwd string) bool {
 }
 
 func (pt *path) rootLocation(pwd string) string {
-	//See https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correcting-powershell-paths
+	// See https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correcting-powershell-paths
 	if strings.HasPrefix(pwd, "Microsoft.PowerShell.Core\\FileSystem::") {
 		pwd = strings.Replace(pwd, "Microsoft.PowerShell.Core\\FileSystem::", "", 1)
 	}
@@ -162,7 +162,7 @@ func base(path string, env environmentInfo) string {
 	}
 	// If empty now, it had only slashes.
 	if path == "" {
-		return string(env.getPathSeperator())
+		return env.getPathSeperator()
 	}
 	return path
 }

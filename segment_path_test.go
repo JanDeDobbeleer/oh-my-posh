@@ -78,7 +78,7 @@ func (env *MockedEnvironment) runCommand(command string, args ...string) (string
 	return arguments.String(0), arguments.Error(1)
 }
 
-func (env *MockedEnvironment) runShellCommand(shell string, command string) string {
+func (env *MockedEnvironment) runShellCommand(shell, command string) string {
 	args := env.Called(shell, command)
 	return args.String(0)
 }
@@ -108,13 +108,21 @@ func (env *MockedEnvironment) getShellName() string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) getWindowTitle(imageName string, windowTitleRegex string) (string, error) {
+func (env *MockedEnvironment) getWindowTitle(imageName, windowTitleRegex string) (string, error) {
 	args := env.Called(imageName)
 	return args.String(0), args.Error(1)
 }
 
+const (
+	homeGates       = "/home/gates"
+	homeBill        = "/home/bill"
+	homeJan         = "/usr/home/jan"
+	homeBillWindows = "C:\\Users\\Bill"
+	levelDir        = "/level"
+)
+
 func TestIsInHomeDirTrue(t *testing.T) {
-	home := "/home/bill"
+	home := homeBill
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return(home)
 	path := &path{
@@ -126,10 +134,10 @@ func TestIsInHomeDirTrue(t *testing.T) {
 
 func TestIsInHomeDirLevelTrue(t *testing.T) {
 	level := rand.Intn(100)
-	home := "/home/bill"
+	home := homeBill
 	pwd := home
 	for i := 0; i < level; i++ {
-		pwd += "/level"
+		pwd += levelDir
 	}
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return(home)
@@ -250,7 +258,7 @@ func TestRootLocationEmptyDir(t *testing.T) {
 }
 
 func TestIsInHomeDirFalse(t *testing.T) {
-	home := "/home/bill"
+	home := homeBill
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return(home)
 	path := &path{
@@ -261,7 +269,7 @@ func TestIsInHomeDirFalse(t *testing.T) {
 }
 
 func TestPathDepthInHome(t *testing.T) {
-	home := "/home/bill"
+	home := homeBill
 	pwd := home
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return(home)
@@ -288,10 +296,10 @@ func TestPathDepthInHomeTrailing(t *testing.T) {
 
 func TestPathDepthInHomeMultipleLevelsDeep(t *testing.T) {
 	level := rand.Intn(100)
-	home := "/home/bill"
+	home := homeBill
 	pwd := home
 	for i := 0; i < level; i++ {
-		pwd += "/level"
+		pwd += levelDir
 	}
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return(home)
@@ -305,10 +313,10 @@ func TestPathDepthInHomeMultipleLevelsDeep(t *testing.T) {
 
 func TestPathDepthOutsideHomeMultipleLevelsDeep(t *testing.T) {
 	level := rand.Intn(100)
-	home := "/home/gates"
+	home := homeGates
 	pwd := "/usr"
 	for i := 0; i < level; i++ {
-		pwd += "/level"
+		pwd += levelDir
 	}
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return(home)
@@ -321,7 +329,7 @@ func TestPathDepthOutsideHomeMultipleLevelsDeep(t *testing.T) {
 }
 
 func TestPathDepthOutsideHomeZeroLevelsDeep(t *testing.T) {
-	home := "/home/gates"
+	home := homeGates
 	pwd := "/usr/"
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return(home)
@@ -334,7 +342,7 @@ func TestPathDepthOutsideHomeZeroLevelsDeep(t *testing.T) {
 }
 
 func TestPathDepthOutsideHomeOneLevelDeep(t *testing.T) {
-	home := "/home/gates"
+	home := homeGates
 	pwd := "/usr/location"
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return(home)
@@ -363,7 +371,7 @@ func TestGetAgnosterFullPath(t *testing.T) {
 	assert.Equal(t, "usr > location > whatever", got)
 }
 
-func testWritePathInfo(home string, pwd string, pathSeparator string) string {
+func testWritePathInfo(home, pwd, pathSeparator string) string {
 	props := &properties{
 		values: map[Property]interface{}{
 			FolderSeparatorIcon: " > ",
@@ -383,14 +391,14 @@ func testWritePathInfo(home string, pwd string, pathSeparator string) string {
 }
 
 func TestWritePathInfoWindowsOutsideHome(t *testing.T) {
-	home := "C:\\Users\\Bill"
+	home := homeBillWindows
 	want := "C: > f > f > location"
 	got := testWritePathInfo(home, "C:\\Program Files\\Go\\location", "\\")
 	assert.Equal(t, want, got)
 }
 
 func TestWritePathInfoWindowsInsideHome(t *testing.T) {
-	home := "C:\\Users\\Bill"
+	home := homeBillWindows
 	location := home + "\\Documents\\Bill\\location"
 	want := "~ > f > f > location"
 	got := testWritePathInfo(home, location, "\\")
@@ -398,28 +406,28 @@ func TestWritePathInfoWindowsInsideHome(t *testing.T) {
 }
 
 func TestWritePathInfoWindowsOutsideHomeZeroLevels(t *testing.T) {
-	home := "C:\\Users\\Bill"
+	home := homeBillWindows
 	want := "C: > location"
 	got := testWritePathInfo(home, "C:\\location", "\\")
 	assert.Equal(t, want, got)
 }
 
 func TestWritePathInfoWindowsOutsideHomeOneLevels(t *testing.T) {
-	home := "C:\\Users\\Bill"
+	home := homeBillWindows
 	want := "C: > f > location"
 	got := testWritePathInfo(home, "C:\\Program Files\\location", "\\")
 	assert.Equal(t, want, got)
 }
 
 func TestWritePathInfoUnixOutsideHome(t *testing.T) {
-	home := "/usr/home/jan"
+	home := homeJan
 	want := "mnt > f > f > location"
 	got := testWritePathInfo(home, "/mnt/go/test/location", "/")
 	assert.Equal(t, want, got)
 }
 
 func TestWritePathInfoUnixInsideHome(t *testing.T) {
-	home := "/usr/home/jan"
+	home := homeJan
 	location := home + "/docs/jan/location"
 	want := "~ > f > f > location"
 	got := testWritePathInfo(home, location, "/")
@@ -427,14 +435,14 @@ func TestWritePathInfoUnixInsideHome(t *testing.T) {
 }
 
 func TestWritePathInfoUnixOutsideHomeZeroLevels(t *testing.T) {
-	home := "/usr/home/jan"
+	home := homeJan
 	want := "mnt > location"
 	got := testWritePathInfo(home, "/mnt/location", "/")
 	assert.Equal(t, want, got)
 }
 
 func TestWritePathInfoUnixOutsideHomeOneLevels(t *testing.T) {
-	home := "/usr/home/jan"
+	home := homeJan
 	want := "mnt > f > location"
 	got := testWritePathInfo(home, "/mnt/folder/location", "/")
 	assert.Equal(t, want, got)

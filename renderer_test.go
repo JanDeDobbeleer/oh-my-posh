@@ -4,8 +4,12 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	"github.com/gookit/color"
+	"github.com/stretchr/testify/assert"
+)
+
+const (
+	inputText = "This is white, <#ff5733>this is orange</>, white again"
 )
 
 func TestWriteAndRemoveText(t *testing.T) {
@@ -13,7 +17,6 @@ func TestWriteAndRemoveText(t *testing.T) {
 		Buffer: new(bytes.Buffer),
 	}
 	renderer.init("pwsh")
-	inputText := "This is white, <#ff5733>this is orange</>, white again"
 	text := renderer.writeAndRemoveText("#193549", "#fff", "This is white, ", "This is white, ", inputText)
 	assert.Equal(t, "<#ff5733>this is orange</>, white again", text)
 	assert.NotContains(t, renderer.string(), "<#ff5733>")
@@ -24,7 +27,6 @@ func TestWriteAndRemoveTextColored(t *testing.T) {
 		Buffer: new(bytes.Buffer),
 	}
 	renderer.init("pwsh")
-	inputText := "This is white, <#ff5733>this is orange</>, white again"
 	text := renderer.writeAndRemoveText("#193549", "#ff5733", "this is orange", "<#ff5733>this is orange</>", inputText)
 	assert.Equal(t, "This is white, , white again", text)
 	assert.NotContains(t, renderer.string(), "<#ff5733>")
@@ -35,8 +37,7 @@ func TestWriteColorOverride(t *testing.T) {
 		Buffer: new(bytes.Buffer),
 	}
 	renderer.init("pwsh")
-	text := "This is white, <#ff5733>this is orange</>, white again"
-	renderer.write("#193549", "#ff5733", text)
+	renderer.write("#193549", "#ff5733", inputText)
 	assert.NotContains(t, renderer.string(), "<#ff5733>")
 }
 

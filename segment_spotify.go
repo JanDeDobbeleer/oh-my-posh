@@ -13,13 +13,13 @@ type spotify struct {
 }
 
 const (
-	//PlayingIcon indicates a song is playing
+	// PlayingIcon indicates a song is playing
 	PlayingIcon Property = "playing_icon"
-	//PausedIcon indicates a song is paused
+	// PausedIcon indicates a song is paused
 	PausedIcon Property = "paused_icon"
-	//StoppedIcon indicates a song is stopped
+	// StoppedIcon indicates a song is stopped
 	StoppedIcon Property = "stopped_icon"
-	//TrackSeparator is put between the artist and the track
+	// TrackSeparator is put between the artist and the track
 	TrackSeparator Property = "track_separator"
 )
 

@@ -5,22 +5,22 @@ import (
 	"regexp"
 )
 
-//Property defines one property of a segment for context
+// Property defines one property of a segment for context
 type Property string
 
-//general Properties used across Segments
+// general Properties used across Segments
 const (
-	//Style indicates with style to use
+	// Style indicates with style to use
 	Style Property = "style"
-	//Prefix adds a text prefix to the segment
+	// Prefix adds a text prefix to the segment
 	Prefix Property = "prefix"
-	//Postfix adds a text postfix to the segment
+	// Postfix adds a text postfix to the segment
 	Postfix Property = "postfix"
-	//ColorBackground color the background or foreground when a specific color is set
+	// ColorBackground color the background or foreground when a specific color is set
 	ColorBackground Property = "color_background"
-	//IgnoreFolders folders to ignore and not run the segment logic
+	// IgnoreFolders folders to ignore and not run the segment logic
 	IgnoreFolders Property = "ignore_folders"
-	//DisplayVersion show the version number or not
+	// DisplayVersion show the version number or not
 	DisplayVersion Property = "display_version"
 )
 

@@ -6,6 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	node114 = "1.14"
+)
+
 type nodeArgs struct {
 	enabled        bool
 	nodeVersion    string
@@ -49,7 +53,7 @@ func TestNodeWriterDisabledNoJSorTSFiles(t *testing.T) {
 }
 
 func TestNodeEnabledJSFiles(t *testing.T) {
-	expected := "1.14"
+	expected := node114
 	args := &nodeArgs{
 		enabled:        true,
 		nodeVersion:    expected,
@@ -62,7 +66,7 @@ func TestNodeEnabledJSFiles(t *testing.T) {
 }
 
 func TestNodeEnabledTsFiles(t *testing.T) {
-	expected := "1.14"
+	expected := node114
 	args := &nodeArgs{
 		enabled:        true,
 		nodeVersion:    expected,
@@ -75,7 +79,7 @@ func TestNodeEnabledTsFiles(t *testing.T) {
 }
 
 func TestNodeEnabledJsAndTsFiles(t *testing.T) {
-	expected := "1.14"
+	expected := node114
 	args := &nodeArgs{
 		enabled:        true,
 		nodeVersion:    expected,
@@ -92,7 +96,7 @@ func TestNodeEnabledNoVersion(t *testing.T) {
 	expected := ""
 	args := &nodeArgs{
 		enabled:        true,
-		nodeVersion:    "1.14",
+		nodeVersion:    node114,
 		hasJS:          true,
 		displayVersion: false,
 	}
@@ -102,7 +106,7 @@ func TestNodeEnabledNoVersion(t *testing.T) {
 }
 
 func TestNodeEnabledNodeVersion(t *testing.T) {
-	expected := "1.14"
+	expected := node114
 	args := &nodeArgs{
 		enabled:        true,
 		nodeVersion:    expected,

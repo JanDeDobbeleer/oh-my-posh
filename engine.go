@@ -27,7 +27,7 @@ func (e *engine) getPowerlineColor(foreground bool) string {
 	return e.previousActiveSegment.Background
 }
 
-func (e *engine) writePowerLineSeparator(background string, foreground string, end bool) {
+func (e *engine) writePowerLineSeparator(background, foreground string, end bool) {
 	symbol := e.activeSegment.PowerlineSymbol
 	if end {
 		symbol = e.previousActiveSegment.PowerlineSymbol
@@ -75,7 +75,7 @@ func (e *engine) renderSegmentText(text string) {
 		e.renderPlainSegment(text)
 	case Diamond:
 		e.renderDiamondSegment(text)
-	default:
+	case Powerline:
 		e.renderPowerLineSegment(text)
 	}
 	e.previousActiveSegment = e.activeSegment
@@ -135,7 +135,7 @@ func (e *engine) render() {
 			cursorMove := e.renderer.setCursorForRightWrite(blockText, block.HorizontalOffset)
 			e.renderer.print(cursorMove)
 			e.renderer.print(blockText)
-		default:
+		case Left:
 			e.renderer.print(e.renderBlockSegments(block))
 		}
 	}

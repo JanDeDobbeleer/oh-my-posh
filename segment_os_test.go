@@ -15,7 +15,7 @@ func TestOsInfo(t *testing.T) {
 		background: "#000",
 	}
 	osInfo := &osInfo{
-		env: env,
+		env:   env,
 		props: props,
 	}
 	want := "win"
@@ -30,12 +30,12 @@ func TestWSL(t *testing.T) {
 	env.On("getPlatform", nil).Return("debian")
 	props := &properties{
 		values: map[Property]interface{}{
-			WSL: "WSL TEST",
+			WSL:          "WSL TEST",
 			WSLSeparator: " @ ",
 		},
 	}
 	osInfo := &osInfo{
-		env: env,
+		env:   env,
 		props: props,
 	}
 	want := "WSL TEST @ \uF306"

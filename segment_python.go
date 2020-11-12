@@ -14,7 +14,7 @@ type python struct {
 }
 
 const (
-	//DisplayVirtualEnv shows or hides the virtual env
+	// DisplayVirtualEnv shows or hides the virtual env
 	DisplayVirtualEnv Property = "display_virtual_env"
 )
 
@@ -46,7 +46,7 @@ func (p *python) enabled() bool {
 			p.pythonVersion = strings.Trim(values["version"], " ")
 			break
 		}
-		//last element, Python isn't installed on this machine
+		// last element, Python isn't installed on this machine
 		if index == len(pythonVersions)-1 {
 			return false
 		}

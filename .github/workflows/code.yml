@@ -27,7 +27,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Golang CI
-      if: matrix.os == 'ubuntu-latest'
       uses: golangci/golangci-lint-action@v2
       with:
         version: v1.31

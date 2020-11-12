@@ -6,6 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	changesColor = "#BD8BDE"
+)
+
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "git").Return(false)
@@ -70,12 +74,12 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.On("getFileContent", "/.git/MERGE_HEAD").Return(context.mergeHEAD)
 	env.On("hasFiles", "/.git/CHERRY_PICK_HEAD").Return(context.cherryPick)
 	env.On("hasFiles", "/.git/MERGE_HEAD").Return(context.merge)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-parse", "--short", "HEAD"}).Return(context.currentCommit, nil)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "describe", "--tags", "--exact-match"}).Return(context.tagName, nil)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.origin}).Return(context.origin, nil)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.onto}).Return(context.onto, nil)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.cherryPickSHA}).Return(context.cherryPickSHA, nil)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "name-rev", "--name-only", "--exclude=tags/*", context.mergeHEAD}).Return(context.mergeHEAD, nil)
+	env.mockGitCommand(context.currentCommit, "rev-parse", "--short", "HEAD")
+	env.mockGitCommand(context.tagName, "describe", "--tags", "--exact-match")
+	env.mockGitCommand(context.origin, "name-rev", "--name-only", "--exclude=tags/*", context.origin)
+	env.mockGitCommand(context.onto, "name-rev", "--name-only", "--exclude=tags/*", context.onto)
+	env.mockGitCommand(context.cherryPickSHA, "name-rev", "--name-only", "--exclude=tags/*", context.cherryPickSHA)
+	env.mockGitCommand(context.mergeHEAD, "name-rev", "--name-only", "--exclude=tags/*", context.mergeHEAD)
 	g := &git{
 		env: env,
 		repo: &gitRepo{
@@ -83,6 +87,11 @@ func setupHEADContextEnv(context *detachedContext) *git {
 		},
 	}
 	return g
+}
+
+func (m *MockedEnvironment) mockGitCommand(returnValue string, args ...string) {
+	args = append([]string{"-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+	m.On("runCommand", "git", args).Return(returnValue, nil)
 }
 
 func TestGetGitDetachedCommitHash(t *testing.T) {
@@ -411,7 +420,7 @@ func TestGetUpstreamSymbolGit(t *testing.T) {
 }
 
 func TestGetStatusColorLocalChangesStaging(t *testing.T) {
-	expected := "#BD8BDE"
+	expected := changesColor
 	repo := &gitRepo{
 		staging: &gitStatus{
 			changed: true,
@@ -429,7 +438,7 @@ func TestGetStatusColorLocalChangesStaging(t *testing.T) {
 }
 
 func TestGetStatusColorLocalChangesWorking(t *testing.T) {
-	expected := "#BD8BDE"
+	expected := changesColor
 	repo := &gitRepo{
 		staging: &gitStatus{},
 		working: &gitStatus{
@@ -448,7 +457,7 @@ func TestGetStatusColorLocalChangesWorking(t *testing.T) {
 }
 
 func TestGetStatusColorAheadAndBehind(t *testing.T) {
-	expected := "#BD8BDE"
+	expected := changesColor
 	repo := &gitRepo{
 		staging: &gitStatus{},
 		working: &gitStatus{},
@@ -467,7 +476,7 @@ func TestGetStatusColorAheadAndBehind(t *testing.T) {
 }
 
 func TestGetStatusColorAhead(t *testing.T) {
-	expected := "#BD8BDE"
+	expected := changesColor
 	repo := &gitRepo{
 		staging: &gitStatus{},
 		working: &gitStatus{},
@@ -486,7 +495,7 @@ func TestGetStatusColorAhead(t *testing.T) {
 }
 
 func TestGetStatusColorBehind(t *testing.T) {
-	expected := "#BD8BDE"
+	expected := changesColor
 	repo := &gitRepo{
 		staging: &gitStatus{},
 		working: &gitStatus{},
@@ -505,7 +514,7 @@ func TestGetStatusColorBehind(t *testing.T) {
 }
 
 func TestGetStatusColorDefault(t *testing.T) {
-	expected := "#BD8BDE"
+	expected := changesColor
 	repo := &gitRepo{
 		staging: &gitStatus{},
 		working: &gitStatus{},
@@ -516,7 +525,7 @@ func TestGetStatusColorDefault(t *testing.T) {
 		repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
-				BehindColor: "#BD8BDE",
+				BehindColor: changesColor,
 			},
 		},
 	}
@@ -524,7 +533,7 @@ func TestGetStatusColorDefault(t *testing.T) {
 }
 
 func TestSetStatusColorBackground(t *testing.T) {
-	expected := "#BD8BDE"
+	expected := changesColor
 	repo := &gitRepo{
 		staging: &gitStatus{
 			changed: true,
@@ -534,7 +543,7 @@ func TestSetStatusColorBackground(t *testing.T) {
 		repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
-				LocalChangesColor: "#BD8BDE",
+				LocalChangesColor: changesColor,
 				ColorBackground:   false,
 			},
 			foreground: "#ffffff",
@@ -546,7 +555,7 @@ func TestSetStatusColorBackground(t *testing.T) {
 }
 
 func TestSetStatusColorForeground(t *testing.T) {
-	expected := "#BD8BDE"
+	expected := changesColor
 	repo := &gitRepo{
 		staging: &gitStatus{
 			changed: true,
@@ -556,7 +565,7 @@ func TestSetStatusColorForeground(t *testing.T) {
 		repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
-				LocalChangesColor: "#BD8BDE",
+				LocalChangesColor: changesColor,
 				ColorBackground:   true,
 			},
 			foreground: "#ffffff",

@@ -9,9 +9,9 @@ type command struct {
 }
 
 const (
-	//ExecutableShell to execute command in
+	// ExecutableShell to execute command in
 	ExecutableShell Property = "shell"
-	//Command to execute
+	// Command to execute
 	Command Property = "command"
 )
 

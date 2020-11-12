@@ -16,6 +16,11 @@ import (
 	"github.com/shirou/gopsutil/process"
 )
 
+const (
+	unknown         = "unknown"
+	windowsPlatform = "windows"
+)
+
 type environmentInfo interface {
 	getenv(key string) string
 	getcwd() string
@@ -31,12 +36,12 @@ type environmentInfo interface {
 	getPlatform() string
 	hasCommand(command string) bool
 	runCommand(command string, args ...string) (string, error)
-	runShellCommand(shell string, command string) string
+	runShellCommand(shell, command string) string
 	lastErrorCode() int
 	getArgs() *args
 	getBatteryInfo() (*battery.Battery, error)
 	getShellName() string
-	getWindowTitle(imageName string, windowTitleRegex string) (string, error)
+	getWindowTitle(imageName, windowTitleRegex string) (string, error)
 }
 
 type environment struct {
@@ -124,8 +129,8 @@ func (env *environment) getRuntimeGOOS() string {
 }
 
 func (env *environment) getPlatform() string {
-	if runtime.GOOS == "windows" {
-		return "windows"
+	if runtime.GOOS == windowsPlatform {
+		return windowsPlatform
 	}
 	p, _, _, _ := host.PlatformInformation()
 
@@ -146,7 +151,7 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	return strings.TrimSpace(string(out)), nil
 }
 
-func (env *environment) runShellCommand(shell string, command string) string {
+func (env *environment) runShellCommand(shell, command string) string {
 	out, err := exec.Command(shell, "-c", command).Output()
 	if err != nil {
 		log.Println(err)
@@ -177,14 +182,14 @@ func (env *environment) getShellName() string {
 	p, _ := process.NewProcess(int32(pid))
 	name, err := p.Name()
 	if err != nil {
-		return "unknown"
+		return unknown
 	}
 	if name == "cmd.exe" {
 		p, _ = p.Parent()
 		name, err = p.Name()
 	}
 	if err != nil {
-		return "unknown"
+		return unknown
 	}
 	shell := strings.Replace(name, ".exe", "", 1)
 	return strings.Trim(shell, " ")

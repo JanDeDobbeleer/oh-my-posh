@@ -6,7 +6,7 @@ type text struct {
 }
 
 const (
-	//TextProperty represents text to write
+	// TextProperty represents text to write
 	TextProperty Property = "text"
 )
 

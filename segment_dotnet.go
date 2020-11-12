@@ -12,8 +12,8 @@ type dotnet struct {
 }
 
 const (
-	//UnsupportedDotnetVersionIcon is displayed when the dotnet version in
-	//the current folder isn't supported by the installed dotnet SDK set.
+	// UnsupportedDotnetVersionIcon is displayed when the dotnet version in
+	// the current folder isn't supported by the installed dotnet SDK set.
 	UnsupportedDotnetVersionIcon Property = "unsupported_version_icon"
 )
 

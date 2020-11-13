@@ -47,15 +47,21 @@ theme.
 oh-my-posh -config sample.json -shell universal
 ```
 
-If all goes according to plan, you should see the prompt being printed out on the line below. In case you see a lot of boxes with
-question marks, [set up your terminal][setupterm] to use a supported font before continuing.
+If all goes according to plan, you should see the prompt being printed out on the line below. In case you see a lot of
+boxes with question marks, [set up your terminal][setupterm] to use a supported font before continuing.
 
 ## General Settings
 
 - final_space: `boolean` - when true adds a space at the end of the prompt
 - console_title: `boolean` - when true sets the current location as the console title
+- console_title_style: `string` - the title to set in the console - defaults to `folder`
 
 > "I Like The Way You Speak Words" - Gary Goodspeed
+
+### Console Title Style
+
+- `folder`: show the current folder name
+- `path`: show the current path
 
 ## Block
 

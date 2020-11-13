@@ -139,14 +139,14 @@ func (g *git) string() string {
 	}
 	// if ahead, print with symbol
 	if g.repo.ahead > 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchAheadIcon, "\uF176"), g.repo.ahead)
+		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.repo.ahead)
 	}
 	// if behind, print with symbol
 	if g.repo.behind > 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchBehindIcon, "\uF175"), g.repo.behind)
+		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchBehindIcon, "\u2193"), g.repo.behind)
 	}
 	if g.repo.behind == 0 && g.repo.ahead == 0 && g.repo.upstream != "" {
-		fmt.Fprintf(buffer, " %s", g.props.getString(BranchIdenticalIcon, "\uF0C9"))
+		fmt.Fprintf(buffer, " %s", g.props.getString(BranchIdenticalIcon, "\u2261"))
 	} else if g.repo.upstream == "" {
 		fmt.Fprintf(buffer, " %s", g.props.getString(BranchGoneIcon, "\u2262"))
 	}
@@ -160,7 +160,7 @@ func (g *git) string() string {
 		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.working, WorkingColor, LocalWorkingIcon, " \uF044"))
 	}
 	if g.props.getBool(DisplayStashCount, false) && g.repo.stashCount != "" {
-		fmt.Fprintf(buffer, " %s%s", g.props.getString(StashCountIcon, "\uF692"), g.repo.stashCount)
+		fmt.Fprintf(buffer, " %s%s", g.props.getString(StashCountIcon, "\uF692 "), g.repo.stashCount)
 	}
 	return buffer.String()
 }

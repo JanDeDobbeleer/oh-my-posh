@@ -40,6 +40,13 @@ func getWindowTitle(imageName, windowTitleRegex string) (string, error) {
 	if err != nil {
 		return "", nil
 	}
+
+	// is a spotify process running?
+	// no: returns an empty string
+	if len(processPid) == 0 {
+		return "", nil
+	}
+
 	// returns the first window of the first pid
 	_, windowTitle, err := GetWindowTitle(processPid[0], windowTitleRegex)
 	if err != nil {
@@ -168,9 +175,6 @@ func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string, e
 		return 1 // continue enumeration
 	})
 	// Enumerates all top-level windows on the screen
-	err = EnumWindows(cb, 0)
-	if err != nil || hwnd == 0 {
-		return 0, "", fmt.Errorf("No window with title '%b' found", pid)
-	}
+	_ = EnumWindows(cb, 0)
 	return hwnd, title, nil
 }

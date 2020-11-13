@@ -8,9 +8,10 @@ import (
 
 // Settings holds all the theme for rendering the prompt
 type Settings struct {
-	FinalSpace   bool     `json:"final_space"`
-	ConsoleTitle bool     `json:"console_title"`
-	Blocks       []*Block `json:"blocks"`
+	FinalSpace        bool              `json:"final_space"`
+	ConsoleTitle      bool              `json:"console_title"`
+	ConsoleTitleStyle ConsoleTitleStyle `json:"console_title_style"`
+	Blocks            []*Block          `json:"blocks"`
 }
 
 // BlockType type of block
@@ -18,6 +19,9 @@ type BlockType string
 
 // BlockAlignment aligment of a Block
 type BlockAlignment string
+
+// ConsoleTitleStyle defines how to show the title in the console window
+type ConsoleTitleStyle string
 
 const (
 	// Prompt writes one or more Segments
@@ -28,6 +32,10 @@ const (
 	Left BlockAlignment = "left"
 	// Right aligns right
 	Right BlockAlignment = "right"
+	// FolderName show the current folder name
+	FolderName ConsoleTitleStyle = "folder"
+	// FullPath show the current path
+	FullPath ConsoleTitleStyle = "path"
 )
 
 // Block defines a part of the prompt with optional segments
@@ -74,7 +82,9 @@ func loadUserConfiguration(env environmentInfo) (*Settings, error) {
 
 func getDefaultSettings(info string) *Settings {
 	settings := &Settings{
-		FinalSpace: true,
+		FinalSpace:        true,
+		ConsoleTitle:      true,
+		ConsoleTitleStyle: FolderName,
 		Blocks: []*Block{
 			{
 				Type:      Prompt,

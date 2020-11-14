@@ -118,6 +118,7 @@ var (
 )
 
 // EnumWindows call EnumWindows from user32 and returns all active windows
+// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindows
 func EnumWindows(enumFunc, lparam uintptr) (err error) {
 	r1, _, e1 := syscall.Syscall(procEnumWindows.Addr(), 2, enumFunc, lparam, 0)
 	if r1 == 0 {
@@ -131,6 +132,7 @@ func EnumWindows(enumFunc, lparam uintptr) (err error) {
 }
 
 // GetWindowText returns the title and text of a window from a window handle
+// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextw
 func GetWindowText(hwnd syscall.Handle, str *uint16, maxCount int32) (length int32, err error) {
 	r0, _, e1 := syscall.Syscall(procGetWindowTextW.Addr(), 3, uintptr(hwnd), uintptr(unsafe.Pointer(str)), uintptr(maxCount))
 	length = int32(r0)
@@ -167,6 +169,8 @@ func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string, e
 			}
 			title = syscall.UTF16ToString(b)
 			if compiledRegex.MatchString(title) {
+				// will cause EnumWindows to return 0 (error)
+				// but we don't want to enumerate all windows since we got what we want
 				hwnd = h
 				return 0
 			}
@@ -175,6 +179,9 @@ func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string, e
 		return 1 // continue enumeration
 	})
 	// Enumerates all top-level windows on the screen
+	// The error is not checked because if EnumWindows is stopped bofere enumerating all windows
+	// it returns 0(error occurred) instead of 1(success)
+	// In our case, title will equal "" or the title of the window anyway
 	_ = EnumWindows(cb, 0)
 	return hwnd, title, nil
 }

@@ -1,30 +1,24 @@
 package main
 
 type node struct {
-	props       *properties
-	env         environmentInfo
-	nodeVersion string
+	language *language
 }
 
 func (n *node) string() string {
-	if n.props.getBool(DisplayVersion, true) {
-		return n.nodeVersion
-	}
-	return ""
+	return n.language.string()
 }
 
 func (n *node) init(props *properties, env environmentInfo) {
-	n.props = props
-	n.env = env
+	n.language = &language{
+		env:          env,
+		props:        props,
+		commands:     []string{"node"},
+		versionParam: "--version",
+		extensions:   []string{"*.js", "*.ts"},
+		versionRegex: `(?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+	}
 }
 
 func (n *node) enabled() bool {
-	if !n.env.hasFiles("*.js") && !n.env.hasFiles("*.ts") {
-		return false
-	}
-	if !n.env.hasCommand("node") {
-		return false
-	}
-	n.nodeVersion, _ = n.env.runCommand("node", "--version")
-	return true
+	return n.language.enabled()
 }

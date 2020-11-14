@@ -47,6 +47,5 @@ func TestSpotifyWindowsEnabledAndSpotifyStopped(t *testing.T) {
 		title: "Spotify premium",
 	}
 	s := bootStrapSpotifyWindowsTest(args)
-	assert.Equal(t, true, s.enabled())
-	assert.Equal(t, "\uf04d ", s.string())
+	assert.Equal(t, false, s.enabled())
 }

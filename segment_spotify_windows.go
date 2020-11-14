@@ -16,7 +16,7 @@ func (s *spotify) enabled() bool {
 
 	if !strings.Contains(spotifyWindowTitle, " - ") {
 		s.status = "stopped"
-		return true
+		return false
 	}
 
 	infos := strings.Split(spotifyWindowTitle, " - ")

@@ -73,6 +73,8 @@ const (
 	Terraform SegmentType = "terraform"
 	// Golang writes which go version is currently active
 	Golang SegmentType = "go"
+	// Julia writes which julia version is currently active
+	Julia SegmentType = "julia"
 	// Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	// Plain writes it without ornaments
@@ -132,6 +134,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Dotnet:    &dotnet{},
 		Terraform: &terraform{},
 		Golang:    &golang{},
+		Julia:     &julia{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

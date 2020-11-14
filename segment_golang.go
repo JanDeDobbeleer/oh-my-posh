@@ -1,35 +1,24 @@
 package main
 
-import "regexp"
-
 type golang struct {
-	props         *properties
-	env           environmentInfo
-	golangVersion string
+	language *language
 }
 
 func (g *golang) string() string {
-	if g.props.getBool(DisplayVersion, true) {
-		return g.golangVersion
-	}
-	return ""
+	return g.language.string()
 }
 
 func (g *golang) init(props *properties, env environmentInfo) {
-	g.props = props
-	g.env = env
+	g.language = &language{
+		env:          env,
+		props:        props,
+		commands:     []string{"go"},
+		versionParam: "version",
+		extensions:   []string{"*.go"},
+		versionRegex: `go(?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+	}
 }
 
 func (g *golang) enabled() bool {
-	if !g.env.hasFiles("*.go") {
-		return false
-	}
-	if !g.env.hasCommand("go") {
-		return false
-	}
-	versionInfo, _ := g.env.runCommand("go", "version")
-	r := regexp.MustCompile(`go(?P<version>[0-9]+.[0-9]+.[0-9]+)`)
-	values := groupDict(r, versionInfo)
-	g.golangVersion = values["version"]
-	return true
+	return g.language.enabled()
 }

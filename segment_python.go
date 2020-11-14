@@ -1,16 +1,10 @@
 package main
 
-import (
-	"fmt"
-	"regexp"
-	"strings"
-)
+import "fmt"
 
 type python struct {
-	props         *properties
-	env           environmentInfo
-	venvName      string
-	pythonVersion string
+	language *language
+	venvName string
 }
 
 const (
@@ -19,37 +13,30 @@ const (
 )
 
 func (p *python) string() string {
-	if p.venvName == "" || !p.props.getBool(DisplayVirtualEnv, true) {
-		return p.pythonVersion
+	if p.venvName == "" || !p.language.props.getBool(DisplayVirtualEnv, true) {
+		return p.language.string()
 	}
-	return fmt.Sprintf("%s %s", p.venvName, p.pythonVersion)
+	version := p.language.string()
+	if version == "" {
+		return p.venvName
+	}
+	return fmt.Sprintf("%s %s", p.venvName, version)
 }
 
 func (p *python) init(props *properties, env environmentInfo) {
-	p.props = props
-	p.env = env
+	p.language = &language{
+		env:          env,
+		props:        props,
+		commands:     []string{"python", "python3"},
+		versionParam: "--version",
+		extensions:   []string{"*.py", "*.ipynb"},
+		versionRegex: `Python (?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+	}
 }
 
 func (p *python) enabled() bool {
-	if !p.env.hasFiles("*.py") && !p.env.hasFiles("*.ipynb") {
+	if !p.language.enabled() {
 		return false
-	}
-	pythonVersions := []string{
-		"python3",
-		"python",
-	}
-	for index, python := range pythonVersions {
-		version, _ := p.env.runCommand(python, "--version")
-		if version != "" {
-			re := regexp.MustCompile(`Python (?P<version>[0-9]+.[0-9]+.[0-9]+)`)
-			values := groupDict(re, version)
-			p.pythonVersion = strings.Trim(values["version"], " ")
-			break
-		}
-		// last element, Python isn't installed on this machine
-		if index == len(pythonVersions)-1 {
-			return false
-		}
 	}
 	venvVars := []string{
 		"VIRTUAL_ENV",
@@ -59,9 +46,9 @@ func (p *python) enabled() bool {
 	}
 	var venv string
 	for _, venvVar := range venvVars {
-		venv = p.env.getenv(venvVar)
+		venv = p.language.env.getenv(venvVar)
 		if venv != "" {
-			p.venvName = base(venv, p.env)
+			p.venvName = base(venv, p.language.env)
 			break
 		}
 	}

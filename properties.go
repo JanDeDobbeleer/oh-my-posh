@@ -58,10 +58,14 @@ func (p *properties) getColor(property Property, defaultValue string) string {
 		return defaultValue
 	}
 	colorString := parseString(val, defaultValue)
+	_, err := getColorFromName(colorString, false)
+	if err == nil {
+		return colorString
+	}
 	r := regexp.MustCompile(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})`)
-	match := r.FindStringSubmatch(colorString)
-	if match != nil && match[0] != "" {
-		return match[0]
+	values := groupDict(r, colorString)
+	if values != nil && values["color"] != "" {
+		return values["color"]
 	}
 	return defaultValue
 }

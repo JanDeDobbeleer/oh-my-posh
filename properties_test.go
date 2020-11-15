@@ -16,7 +16,7 @@ func TestGetString(t *testing.T) {
 		values: values,
 	}
 	value := properties.getString(TextProperty, "err")
-	assert.Equal(t, value, expected)
+	assert.Equal(t, expected, value)
 }
 
 func TestGetStringNoEntry(t *testing.T) {
@@ -25,7 +25,7 @@ func TestGetStringNoEntry(t *testing.T) {
 		values: values,
 	}
 	value := properties.getString(TextProperty, expected)
-	assert.Equal(t, value, expected)
+	assert.Equal(t, expected, value)
 }
 
 func TestGetStringNoTextEntry(t *testing.T) {
@@ -34,17 +34,27 @@ func TestGetStringNoTextEntry(t *testing.T) {
 		values: values,
 	}
 	value := properties.getString(TextProperty, expected)
-	assert.Equal(t, value, expected)
+	assert.Equal(t, expected, value)
 }
 
-func TestGetColor(t *testing.T) {
+func TestGetHexColor(t *testing.T) {
 	expected := expectedColor
 	values := map[Property]interface{}{UserColor: expected}
 	properties := properties{
 		values: values,
 	}
 	value := properties.getColor(UserColor, "#789123")
-	assert.Equal(t, value, expected)
+	assert.Equal(t, expected, value)
+}
+
+func TestGetColor(t *testing.T) {
+	expected := "yellow"
+	values := map[Property]interface{}{UserColor: expected}
+	properties := properties{
+		values: values,
+	}
+	value := properties.getColor(UserColor, "#789123")
+	assert.Equal(t, expected, value)
 }
 
 func TestDefaultColorWithInvalidColorCode(t *testing.T) {
@@ -54,7 +64,7 @@ func TestDefaultColorWithInvalidColorCode(t *testing.T) {
 		values: values,
 	}
 	value := properties.getColor(UserColor, expected)
-	assert.Equal(t, value, expected)
+	assert.Equal(t, expected, value)
 }
 
 func TestDefaultColorWithUnavailableProperty(t *testing.T) {
@@ -64,7 +74,7 @@ func TestDefaultColorWithUnavailableProperty(t *testing.T) {
 		values: values,
 	}
 	value := properties.getColor(UserColor, expected)
-	assert.Equal(t, value, expected)
+	assert.Equal(t, expected, value)
 }
 
 func TestGetBool(t *testing.T) {

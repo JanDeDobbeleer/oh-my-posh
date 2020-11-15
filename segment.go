@@ -1,6 +1,9 @@
 package main
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
 
 // Segment represent a single segment and it's configuration
 type Segment struct {
@@ -17,6 +20,7 @@ type Segment struct {
 	writer          SegmentWriter
 	stringValue     string
 	active          bool
+	timing          time.Duration
 }
 
 // SegmentWriter is the interface used to define what and if to write to the prompt
@@ -148,4 +152,27 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		return nil
 	}
 	return errors.New("unable to map writer")
+}
+
+func (segment *Segment) setStringValue(env environmentInfo, cwd string, debug bool) {
+	err := segment.mapSegmentWithWriter(env)
+	if err != nil || segment.hasValue(IgnoreFolders, cwd) {
+		return
+	}
+	// add timing only in debug
+	if debug {
+		start := time.Now()
+		defer (func() {
+			// force segment rendering to display the time it took
+			// to check if the segment is enabled or not
+			// depending on the segement, calling enabled()
+			// can be time consuming
+			segment.active = true
+			elapsed := time.Since(start)
+			segment.timing = elapsed
+		})()
+	}
+	if segment.enabled() {
+		segment.stringValue = segment.string()
+	}
 }

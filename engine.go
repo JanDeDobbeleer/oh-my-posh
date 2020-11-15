@@ -67,6 +67,9 @@ func (e *engine) renderText(text string) {
 	prefix := e.activeSegment.getValue(Prefix, " ")
 	postfix := e.activeSegment.getValue(Postfix, " ")
 	e.renderer.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("%s%s%s", prefix, text, postfix))
+	if *e.env.getArgs().Debug {
+		e.renderer.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("(%s:%s)", e.activeSegment.Type, e.activeSegment.timing))
+	}
 }
 
 func (e *engine) renderSegmentText(text string) {
@@ -107,13 +110,11 @@ func (e *engine) setStringValues(segments []*Segment) {
 	wg.Add(len(segments))
 	defer wg.Wait()
 	cwd := e.env.getcwd()
+	debug := *e.env.getArgs().Debug
 	for _, segment := range segments {
 		go func(s *Segment) {
 			defer wg.Done()
-			err := s.mapSegmentWithWriter(e.env)
-			if err == nil && !s.hasValue(IgnoreFolders, cwd) && s.enabled() {
-				s.stringValue = s.string()
-			}
+			s.setStringValue(e.env, cwd, debug)
 		}(segment)
 	}
 }

@@ -14,6 +14,7 @@ type args struct {
 	Config      *string
 	Shell       *string
 	PWD         *string
+	Debug       *bool
 }
 
 func main() {
@@ -42,6 +43,10 @@ func main() {
 			"pwd",
 			"",
 			"the path you are working in"),
+		Debug: flag.Bool(
+			"debug",
+			false,
+			"Print debug information"),
 	}
 	flag.Parse()
 	env := &environment{

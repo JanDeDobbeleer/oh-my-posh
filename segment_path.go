@@ -61,10 +61,12 @@ func (pt *path) init(props *properties, env environmentInfo) {
 
 func (pt *path) getShortPath() string {
 	pwd := pt.env.getcwd()
+	if strings.HasPrefix(pwd, "Microsoft.PowerShell.Core\\FileSystem::") {
+		pwd = strings.Replace(pwd, "Microsoft.PowerShell.Core\\FileSystem::", "", 1)
+	}
 	mappedLocations := map[string]string{
-		"HKCU:": pt.props.getString(WindowsRegistryIcon, "\uE0B1"),
-		"HKLM:": pt.props.getString(WindowsRegistryIcon, "\uE0B1"),
-		"Microsoft.PowerShell.Core\\FileSystem::": "",
+		"HKCU:":          pt.props.getString(WindowsRegistryIcon, "\uE0B1"),
+		"HKLM:":          pt.props.getString(WindowsRegistryIcon, "\uE0B1"),
 		pt.env.homeDir(): pt.props.getString(HomeIcon, "~"),
 	}
 	for location, value := range mappedLocations {
@@ -76,9 +78,9 @@ func (pt *path) getShortPath() string {
 }
 
 func (pt *path) getAgnosterPath() string {
-	pwd := pt.env.getcwd()
 	buffer := new(bytes.Buffer)
-	buffer.WriteString(pt.rootLocation(pwd))
+	pwd := pt.getShortPath()
+	buffer.WriteString(pt.rootLocation())
 	pathDepth := pt.pathDepth(pwd)
 	for i := 1; i < pathDepth; i++ {
 		buffer.WriteString(fmt.Sprintf("%s%s", pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator()), pt.props.getString(FolderIcon, "..")))
@@ -90,7 +92,7 @@ func (pt *path) getAgnosterPath() string {
 }
 
 func (pt *path) getAgnosterFullPath() string {
-	pwd := pt.env.getcwd()
+	pwd := pt.getShortPath()
 	pathSeparator := pt.env.getPathSeperator()
 	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
 	if string(pwd[0]) == pathSeparator {
@@ -103,23 +105,11 @@ func (pt *path) inHomeDir(pwd string) bool {
 	return strings.HasPrefix(pwd, pt.env.homeDir())
 }
 
-func (pt *path) rootLocation(pwd string) string {
-	// See https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/correcting-powershell-paths
-	if strings.HasPrefix(pwd, "Microsoft.PowerShell.Core\\FileSystem::") {
-		pwd = strings.Replace(pwd, "Microsoft.PowerShell.Core\\FileSystem::", "", 1)
-	}
-	if pt.inHomeDir(pwd) {
-		return pt.props.getString(HomeIcon, "~")
-	}
+func (pt *path) rootLocation() string {
+	pwd := pt.getShortPath()
 	pwd = strings.TrimPrefix(pwd, pt.env.getPathSeperator())
 	splitted := strings.Split(pwd, pt.env.getPathSeperator())
 	rootLocation := splitted[0]
-	mappedLocations := map[string]string{
-		"HKCU:": pt.props.getString(WindowsRegistryIcon, "\uE0B1"),
-	}
-	if val, ok := mappedLocations[rootLocation]; ok {
-		return val
-	}
 	return rootLocation
 }
 

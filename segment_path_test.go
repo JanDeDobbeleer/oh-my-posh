@@ -155,13 +155,14 @@ func TestRootLocationHome(t *testing.T) {
 	}
 	home := "/home/bill/"
 	env := new(MockedEnvironment)
-	env.On("homeDir", nil).Return("/home/bill")
+	env.On("homeDir", nil).Return(home)
+	env.On("getcwd", nil).Return(home)
 	env.On("getPathSeperator", nil).Return("/")
 	path := &path{
 		env:   env,
 		props: props,
 	}
-	got := path.rootLocation(home)
+	got := path.rootLocation()
 	assert.EqualValues(t, expected, got)
 }
 
@@ -171,12 +172,13 @@ func TestRootLocationOutsideHome(t *testing.T) {
 	}
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return("/home/bill")
+	env.On("getcwd", nil).Return("/usr/error/what")
 	env.On("getPathSeperator", nil).Return("/")
 	path := &path{
 		env:   env,
 		props: props,
 	}
-	got := path.rootLocation("/usr/error/what")
+	got := path.rootLocation()
 	assert.EqualValues(t, "usr", got)
 }
 
@@ -186,12 +188,13 @@ func TestRootLocationWindowsDrive(t *testing.T) {
 	}
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return("C:\\Users\\Bill")
+	env.On("getcwd", nil).Return("C:\\Program Files\\Go")
 	env.On("getPathSeperator", nil).Return("\\")
 	path := &path{
 		env:   env,
 		props: props,
 	}
-	got := path.rootLocation("C:\\Program Files\\Go")
+	got := path.rootLocation()
 	assert.EqualValues(t, "C:", got)
 }
 
@@ -202,12 +205,13 @@ func TestRootLocationWindowsRegistry(t *testing.T) {
 	}
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return("C:\\Users\\Bill")
+	env.On("getcwd", nil).Return("HKCU:\\Program Files\\Go")
 	env.On("getPathSeperator", nil).Return("\\")
 	path := &path{
 		env:   env,
 		props: props,
 	}
-	got := path.rootLocation("HKCU:\\Program Files\\Go")
+	got := path.rootLocation()
 	assert.EqualValues(t, expected, got)
 }
 
@@ -218,12 +222,13 @@ func TestRootLocationWindowsPowerShellHome(t *testing.T) {
 	}
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return("C:\\Users\\Bill")
+	env.On("getcwd", nil).Return("Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\Bill")
 	env.On("getPathSeperator", nil).Return("\\")
 	path := &path{
 		env:   env,
 		props: props,
 	}
-	got := path.rootLocation("Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\Bill")
+	got := path.rootLocation()
 	assert.EqualValues(t, expected, got)
 }
 
@@ -233,12 +238,13 @@ func TestRootLocationWindowsPowerShellOutsideHome(t *testing.T) {
 	}
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return("C:\\Program Files\\Go")
+	env.On("getcwd", nil).Return("Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\Bill")
 	env.On("getPathSeperator", nil).Return("\\")
 	path := &path{
 		env:   env,
 		props: props,
 	}
-	got := path.rootLocation("Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\Bill")
+	got := path.rootLocation()
 	assert.EqualValues(t, "C:", got)
 }
 
@@ -248,12 +254,13 @@ func TestRootLocationEmptyDir(t *testing.T) {
 	}
 	env := new(MockedEnvironment)
 	env.On("homeDir", nil).Return("/home/bill")
+	env.On("getcwd", nil).Return("")
 	env.On("getPathSeperator", nil).Return("/")
 	path := &path{
 		env:   env,
 		props: props,
 	}
-	got := path.rootLocation("")
+	got := path.rootLocation()
 	assert.EqualValues(t, "", got)
 }
 
@@ -358,6 +365,7 @@ func TestGetAgnosterFullPath(t *testing.T) {
 	pwd := "/usr/location/whatever"
 	env := new(MockedEnvironment)
 	env.On("getPathSeperator", nil).Return("/")
+	env.On("homeDir", nil).Return("/usr/home")
 	env.On("getcwd", nil).Return(pwd)
 	path := &path{
 		env: env,

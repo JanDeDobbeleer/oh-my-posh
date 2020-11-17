@@ -14,7 +14,7 @@ func (g *golang) init(props *properties, env environmentInfo) {
 		props:        props,
 		commands:     []string{"go"},
 		versionParam: "version",
-		extensions:   []string{"*.go"},
+		extensions:   []string{"*.go", "go.mod"},
 		versionRegex: `go(?P<version>[0-9]+.[0-9]+.[0-9]+)`,
 	}
 }

@@ -14,7 +14,7 @@ func (n *node) init(props *properties, env environmentInfo) {
 		props:        props,
 		commands:     []string{"node"},
 		versionParam: "--version",
-		extensions:   []string{"*.js", "*.ts"},
+		extensions:   []string{"*.js", "*.ts", "package.json"},
 		versionRegex: `(?P<version>[0-9]+.[0-9]+.[0-9]+)`,
 	}
 }

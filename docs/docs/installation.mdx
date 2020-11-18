@@ -186,14 +186,22 @@ Edit `$PROFILE` in your preferred PowerShell version and add the following lines
 
 ```powershell
 [ScriptBlock]$Prompt = {
+    $lastCommandSuccess = $?
     $realLASTEXITCODE = $global:LASTEXITCODE
-    if ($realLASTEXITCODE -isnot [int]) {
-      $realLASTEXITCODE = 0
+    $errorCode = 0
+    if ($lastCommandSuccess -eq $false) {
+        #native app exit code
+        if ($realLASTEXITCODE -ne 0) {
+            $errorCode = $realLASTEXITCODE
+        }
+        else {
+            $errorCode = 1
+        }
     }
     $startInfo = New-Object System.Diagnostics.ProcessStartInfo
     $startInfo.FileName = "C:\tools\oh-my-posh.exe"
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $startInfo.Arguments = "-config=""C:\Users\User\.poshthemes\jandedobbeleer.json"" -error=$realLASTEXITCODE -pwd=""$cleanPWD"""
+    $startInfo.Arguments = "-config=""C:\Users\User\.poshthemes\jandedobbeleer.json"" -error=$errorCode -pwd=""$cleanPWD"""
     $startInfo.Environment["TERM"] = "xterm-256color"
     $startInfo.CreateNoWindow = $true
     $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
@@ -209,7 +217,9 @@ Edit `$PROFILE` in your preferred PowerShell version and add the following lines
     $process.WaitForExit()
     $standardOut
     $global:LASTEXITCODE = $realLASTEXITCODE
+    #remove temp variables
     Remove-Variable realLASTEXITCODE -Confirm:$false
+    Remove-Variable lastCommandSuccess -Confirm:$false
 }
 Set-Item -Path Function:prompt -Value $Prompt -Force
 ```

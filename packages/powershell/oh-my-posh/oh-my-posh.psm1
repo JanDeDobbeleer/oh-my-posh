@@ -4,7 +4,7 @@
 #>
 
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
-    Theme = "$PSScriptRoot\themes\jandedobbeleer.json"
+    Theme = "$PSScriptRoot\themes\jandedobbeleer.json";
 }
 
 function Get-PoshCommand {
@@ -50,16 +50,26 @@ function Set-PoshPrompt {
     }
 
     [ScriptBlock]$Prompt = {
+        #store if the last command was successfull
+        $lastCommandSuccess = $?
+        #store the last exit code for restore
         $realLASTEXITCODE = $global:LASTEXITCODE
+        $errorCode = 0
         Set-PoshContext
-        if ($realLASTEXITCODE -isnot [int]) {
-            $realLASTEXITCODE = 0
+        if ($lastCommandSuccess -eq $false) {
+            #native app exit code
+            if ($realLASTEXITCODE -ne 0) {
+                $errorCode = $realLASTEXITCODE
+            }
+            else {
+                $errorCode = 1
+            }
         }
         $startInfo = New-Object System.Diagnostics.ProcessStartInfo
         $startInfo.FileName = Get-PoshCommand
         $config = $global:PoshSettings.Theme
         $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-        $startInfo.Arguments = "-config=""$config"" -error=$realLASTEXITCODE -pwd=""$cleanPWD"""
+        $startInfo.Arguments = "-config=""$config"" -error=$errorCode -pwd=""$cleanPWD"""
         $startInfo.Environment["TERM"] = "xterm-256color"
         $startInfo.CreateNoWindow = $true
         $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
@@ -75,7 +85,9 @@ function Set-PoshPrompt {
         $process.WaitForExit()
         $standardOut
         $global:LASTEXITCODE = $realLASTEXITCODE
+        #remove temp variables
         Remove-Variable realLASTEXITCODE -Confirm:$false
+        Remove-Variable lastCommandSuccess -Confirm:$false
         Set-GitStatus
     }
     Set-Item -Path Function:prompt -Value $Prompt -Force

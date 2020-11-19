@@ -1,7 +1,8 @@
 package main
 
 import (
-	"errors"
+	"bufio"
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -138,17 +139,34 @@ func (env *environment) getPlatform() string {
 }
 
 func (env *environment) runCommand(command string, args ...string) (string, error) {
-	out, err := exec.Command(command, args...).Output()
-
-	var exerr *exec.ExitError
-	if errors.As(err, &exerr) {
-		return "", &commandError{exitCode: exerr.ExitCode()}
+	cmd := exec.Command(command, args...)
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
 	}
+	err = cmd.Start()
 	if err != nil {
 		return "", err
 	}
-
-	return strings.TrimSpace(string(out)), nil
+	defer func() {
+		_ = cmd.Process.Kill()
+	}()
+	output := new(bytes.Buffer)
+	defer output.Reset()
+	buf := bufio.NewReader(stdout)
+	multiline := false
+	for {
+		line, _, _ := buf.ReadLine()
+		if line == nil {
+			break
+		}
+		if multiline {
+			output.WriteString("\n")
+		}
+		output.Write(line)
+		multiline = true
+	}
+	return output.String(), nil
 }
 
 func (env *environment) runShellCommand(shell, command string) string {

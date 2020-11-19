@@ -18,7 +18,10 @@ Display the current path.
   "foreground": "#ffffff",
   "background": "#61AFEF",
   "properties": {
-    "style": "folder"
+    "style": "folder",
+    "mappedlocations": [
+      ["C:\\temp", "\ue799"]
+    ]
   }
 }
 ```
@@ -30,6 +33,7 @@ Display the current path.
 - folder_icon: `string` - the icon to use as a folder indication - defaults to `..`
 - windows_registry_icon: `string` - the icon to display when in the Windows registry - defaults to `\uE0B1`
 - style: `enum` - how to display the current path
+- mappedlocations: `[]string` - Custom glyph/text for specific paths(only when `style` is set to `agnoster`, `agnosterfull` or `short`)
 
 ## Style
 
@@ -55,6 +59,7 @@ Renders each folder name separated by the `folder_separator_icon`.
 
 Display `$PWD` as a string, replace `$HOME` with the `home_icon` if you're inside the `$HOME` location or
 one of its children.
+Specific folders can be customized using the `mappedlocations` property.
 
 ### Full
 

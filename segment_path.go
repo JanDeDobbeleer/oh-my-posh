@@ -64,11 +64,20 @@ func (pt *path) getShortPath() string {
 	if strings.HasPrefix(pwd, "Microsoft.PowerShell.Core\\FileSystem::") {
 		pwd = strings.Replace(pwd, "Microsoft.PowerShell.Core\\FileSystem::", "", 1)
 	}
+
 	mappedLocations := map[string]string{
 		"HKCU:":          pt.props.getString(WindowsRegistryIcon, "\uE0B1"),
 		"HKLM:":          pt.props.getString(WindowsRegistryIcon, "\uE0B1"),
 		pt.env.homeDir(): pt.props.getString(HomeIcon, "~"),
 	}
+
+	// merge custom locations with mapped locations
+	// mapped locations can override predefined locations
+	keyValues := pt.props.getKeyValueMap("mappedlocations", make(map[string]string))
+	for key, val := range keyValues {
+		mappedLocations[key] = val
+	}
+
 	for location, value := range mappedLocations {
 		if strings.HasPrefix(pwd, location) {
 			return strings.Replace(pwd, location, value, 1)

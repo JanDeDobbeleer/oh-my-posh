@@ -85,6 +85,20 @@ func (p *properties) getBool(property Property, defaultValue bool) bool {
 	return boolValue
 }
 
+func (p *properties) getKeyValueMap(property Property, defaultValue map[string]string) map[string]string {
+	if p == nil || p.values == nil {
+		return defaultValue
+	}
+	val, found := p.values[property]
+	if !found {
+		return defaultValue
+	}
+
+	keyValues := parseKeyValueArray(val)
+
+	return keyValues
+}
+
 func parseStringArray(value interface{}) []string {
 	expectedValue, ok := value.([]interface{})
 	if !ok {
@@ -95,4 +109,21 @@ func parseStringArray(value interface{}) []string {
 		list[i] = fmt.Sprint(v)
 	}
 	return list
+}
+
+func parseKeyValueArray(value interface{}) map[string]string {
+	locations, ok := value.([]interface{})
+	if !ok {
+		return map[string]string{}
+	}
+	keyValueArray := make(map[string]string)
+	for _, s := range locations {
+		l := parseStringArray(s)
+		if len(l) == 2 {
+			key := l[0]
+			val := l[1]
+			keyValueArray[key] = val
+		}
+	}
+	return keyValueArray
 }

@@ -19,10 +19,10 @@ Be aware this can make the prompt a tad bit slower as it needs to get a response
   "foreground": "#ffffff",
   "background": "#1BD760",
   "properties": {
-    "prefix": "  ",
-    "playing_icon": " ",
-    "paused_icon": " ",
-    "stopped_icon": " ",
+    "prefix": "\uF9C6 ",
+    "playing_icon": "\uE602 ",
+    "paused_icon": "\uF8E3 ",
+    "stopped_icon": "\uF04D ",
     "track_separator" : " - "
   }
 }
@@ -32,5 +32,5 @@ Be aware this can make the prompt a tad bit slower as it needs to get a response
 
 - playing_icon: `string` - text/icon to show when playing - defaults to `\uE602 `
 - paused_icon: `string` - text/icon to show when paused - defaults to `\uF8E3 `
-- stopped_icon: `string` - text/icon to show when paused - defaults to `\uF04D  `
+- stopped_icon: `string` - text/icon to show when paused - defaults to `\uF04D `
 - track_separator: `string` - text/icon to put between the artist and song name - defaults to ` - `

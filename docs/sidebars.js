@@ -35,6 +35,7 @@ module.exports = {
         "terraform",
         "text",
         "time",
+        "ytm",
       ]
     },
     {

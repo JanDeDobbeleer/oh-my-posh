@@ -85,6 +85,8 @@ const (
 	Plain SegmentStyle = "plain"
 	// Diamond writes the prompt shaped with a leading and trailing symbol
 	Diamond SegmentStyle = "diamond"
+	// YTM writes YouTube Music information and status
+	YTM SegmentType = "ytm"
 )
 
 func (segment *Segment) string() string {
@@ -139,6 +141,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Terraform: &terraform{},
 		Golang:    &golang{},
 		Julia:     &julia{},
+		YTM:       &ytm{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

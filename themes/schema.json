@@ -103,7 +103,8 @@
             "dotnet",
             "terraform",
             "go",
-            "julia"
+            "julia",
+            "ytm"
           ]
         },
         "style": {
@@ -1060,6 +1061,53 @@
                     "title": "Time Format",
                     "description": "Format to use, follows the golang standard: https://gobyexample.com/time-formatting-parsing",
                     "default": "15:04:05"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "ytm" }
+            }
+          },
+          "then": {
+            "title": "YouTube Music Desktop App Segment",
+            "description": "https://ohmyposh.dev/docs/ytm",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "playing_icon": {
+                    "type": "string",
+                    "title": "User Info Separator",
+                    "description": "Text/icon to show when playing",
+                    "default": "\uE602"
+                  },
+                  "paused_icon": {
+                    "type": "string",
+                    "title": "SSH Icon",
+                    "description": "Text/icon to show when paused",
+                    "default": "\uF8E3"
+                  },
+                  "stopped_icon": {
+                    "type": "string",
+                    "title": "SSH Icon",
+                    "description": "Text/icon to show when stopped",
+                    "default": "\uF04D"
+                  },
+                  "track_separator": {
+                    "type": "string",
+                    "title": "SSH Icon",
+                    "description": "Text/icon to put between the artist and song name",
+                    "default": " - "
+                  },
+                  "api_url": {
+                    "type": "string",
+                    "title": "API URL",
+                    "description": "The YTMDA Remote Control API URL",
+                    "default": "http://localhost:9863"
                   }
                 }
               }

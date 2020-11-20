@@ -205,3 +205,13 @@ jobs:
         asset_path: ${{ github.workspace }}/packages/scoop/posh-windows-wsl-amd64.7z
         asset_name: posh-windows-wsl-amd64.7z
         asset_content_type: application/octet-stream
+    - name: Upload Scoop Archive Hash
+      id: upload-scoop-post-install-hash
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/packages/scoop/posh-windows-wsl-amd64.7z.sha256
+        asset_name: posh-windows-wsl-amd64.7z.sha256
+        asset_content_type: text/plain

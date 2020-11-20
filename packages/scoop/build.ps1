@@ -24,5 +24,6 @@ $content = Get-Content '.\oh-my-posh.json' -Raw
 $content = $content.Replace('<VERSION>', $Version)
 $content = $content.Replace('<HASH>', $zipHash.Hash)
 $content | Out-File -Encoding 'UTF8' './oh-my-posh.json'
+$zipHash.Hash | Out-File -Encoding 'UTF8' 'posh-windows-wsl-amd64.7z.sha256'
 
 Remove-Item ./bin/ -Recurse

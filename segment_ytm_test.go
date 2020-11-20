@@ -30,7 +30,7 @@ func (s *mockYTMStatusService) Get() (*ytmStatus, error) {
 	return status, nil
 }
 
-func getMockYTMStatusService(hasSong bool, isPaused bool, author string, title string) *mockYTMStatusService {
+func getMockYTMStatusService(hasSong, isPaused bool, author, title string) *mockYTMStatusService {
 	return &mockYTMStatusService{
 		HasSong:  hasSong,
 		IsPaused: isPaused,

@@ -1,6 +1,9 @@
 package main
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+)
 
 // Inspired by: https://www.thegreatcodeadventure.com/mocking-http-requests-in-golang/
 
@@ -9,16 +12,12 @@ type httpClient interface {
 }
 
 var (
-	client httpClient
+	client httpClient = &http.Client{}
 )
-
-func init() {
-	client = &http.Client{}
-}
 
 // Get an HTTP response by sending an HTTP GET request to the specified URL.
 func Get(url string, headers http.Header) (*http.Response, error) {
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	request, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}

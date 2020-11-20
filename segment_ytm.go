@@ -43,11 +43,7 @@ func (y *ytm) enabled() bool {
 
 	// If we don't get a response back (error), the user isn't running
 	// YTMDA, or they don't have the RC API enabled.
-	if err != nil {
-		return false
-	}
-
-	return true
+	return err == nil
 }
 
 func (y *ytm) init(props *properties, env environmentInfo) {

@@ -173,7 +173,7 @@ jobs:
     - name: Pack and push
       run: ./deploy.ps1 -BinVersion ${{ needs.release.outputs.version }} -ModuleVersion ${{ needs.release.outputs.version }} -Repository PSGallery -RepositoryAPIKey $env:PSGALLERY_KEY
   scoop:
-    needs: [release, artifacts, themes]
+    needs: [release, artifacts]
     if: ${{ needs.release.outputs.skipped == 'false' }}
     runs-on: ubuntu-latest
     defaults:
@@ -184,7 +184,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Update Template
-      run: ./build.ps1 -Version ${{ needs.release.outputs.version }} -LinuxSHA ${{ needs.artifacts.outputs.hash_linux }} -WindowsSHA ${{ needs.artifacts.outputs.hash_windows }} -ThemesSHA ${{ needs.themes.outputs.hash_themes }}
+      run: ./build.ps1 -Version ${{ needs.release.outputs.version }}
     - name: Upload Scoop JSON
       id: upload-scoop-json
       uses: actions/upload-release-asset@v1
@@ -195,13 +195,13 @@ jobs:
         asset_path: ${{ github.workspace }}/packages/scoop/oh-my-posh.json
         asset_name: oh-my-posh.json
         asset_content_type: text/plain
-    - name: Upload Scoop Post Install
+    - name: Upload Scoop Archive
       id: upload-scoop-post-install
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/packages/scoop/post-install.ps1
-        asset_name: post-install.ps1
-        asset_content_type: text/plain
+        asset_path: ${{ github.workspace }}/packages/scoop/posh-windows-wsl-amd64.7z
+        asset_name: posh-windows-wsl-amd64.7z
+        asset_content_type: application/octet-stream

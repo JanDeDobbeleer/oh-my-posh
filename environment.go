@@ -3,9 +3,11 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -225,4 +227,13 @@ func cleanHostName(hostName string) string {
 		}
 	}
 	return hostName
+}
+
+func doGet(url string, headers http.Header) (*http.Response, error) {
+	request, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header = headers
+	return client.Do(request)
 }

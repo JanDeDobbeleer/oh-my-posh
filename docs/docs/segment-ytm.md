@@ -6,7 +6,7 @@ sidebar_label: YouTube Music
 
 ## What
 
-Show the currently playing song in the [YouTube Music Desktop App](https://github.com/ytmdesktop/ytmdesktop).
+Shows the currently playing song in the [YouTube Music Desktop App](https://github.com/ytmdesktop/ytmdesktop).
 
 **NOTE**: You **must** enable Remote Control in YTMDA for this segment to work: `Settings > Integrations > Remote Control`
 

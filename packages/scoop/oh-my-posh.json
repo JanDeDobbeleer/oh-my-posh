@@ -1,24 +1,36 @@
 {
-    "version": "<VERSION>",
-    "description": "A prompt theme engine for any shell",
-    "homepage": "https://ohmyposh.dev",
-    "license": {
-        "identifier": "GPL-3.0-only",
-        "url": "https://github.com/JanDeDobbeleer/oh-my-posh3/blob/main/COPYING"
-    },
-    "url": [
-        "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/posh-linux-amd64",
-        "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/posh-windows-amd64.exe",
-        "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/post-install.ps1",
-        "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/themes.zip"
-    ],
-    "hash": [
-        "<HASH_LINUX>",
-        "<HASH_WINDOWS>",
-        "<HASH_INSTALL_SCRIPT>",
-        "<HASH_THEMES>"
-    ],
-    "extract_to": "themes",
-    "post_install": "& \"$dir/post-install.ps1\"",
-    "bin": ["posh-linux-amd64", "posh-windows-amd64.exe"]
+  "version": "<VERSION>",
+  "description": "A prompt theme engine for any shell",
+  "homepage": "https://ohmyposh.dev",
+  "license": {
+      "identifier": "GPL-3.0-only",
+      "url": "https://github.com/JanDeDobbeleer/oh-my-posh3/blob/main/COPYING"
+  },
+  "architecture": {
+      "64bit": {
+          "url": "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/posh-windows-wsl-amd64.7z",
+          "hash": "<HASH>"
+      }
+  },
+  "bin": [
+      "oh-my-posh-wsl",
+      "oh-my-posh.exe"
+  ],
+  "checkver": {
+      "github": "https://github.com/JanDeDobbeleer/oh-my-posh3"
+  },
+  "post_install": [
+      "Write-Host 'Thanks for installing Oh my Posh.'",
+      "Write-Host 'Have a look at https://ohmyposh.dev/docs/installation for detailed instructions for your shell.'"
+  ],
+  "autoupdate": {
+      "architecture": {
+          "64bit": {
+              "url": "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v$version/posh-windows-wsl-amd64.7z",
+              "hash": {
+                  "url": "$url.sha256"
+              }
+          }
+      }
+  }
 }

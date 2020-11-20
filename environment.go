@@ -3,9 +3,11 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -43,6 +45,7 @@ type environmentInfo interface {
 	getBatteryInfo() (*battery.Battery, error)
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
+	doGet(url string) ([]byte, error)
 }
 
 type environment struct {
@@ -211,6 +214,23 @@ func (env *environment) getShellName() string {
 	}
 	shell := strings.Replace(name, ".exe", "", 1)
 	return strings.Trim(shell, " ")
+}
+
+func (env *environment) doGet(url string) ([]byte, error) {
+	request, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	response, err := client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+	return body, nil
 }
 
 func cleanHostName(hostName string) string {

@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-var currentVersion = "development"
+var Version = "development"
 
 type args struct {
 	ErrorCode   *int
@@ -70,7 +70,7 @@ func main() {
 		return
 	}
 	if *args.Version {
-		fmt.Println(currentVersion)
+		fmt.Println(Version)
 		return
 	}
 	colorWriter := &Renderer{

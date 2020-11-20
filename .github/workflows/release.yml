@@ -68,7 +68,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Build
       id: build
-      run: go build -o ${{ matrix.ARTIFACT }}
+      run: go build -o ${{ matrix.ARTIFACT }} -ldflags="-X 'main.version= ${{ needs.release.outputs.version }}'"
       env:
         GOARCH: "amd64"
     - name: Hash

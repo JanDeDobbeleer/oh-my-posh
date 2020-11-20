@@ -7,6 +7,8 @@ import (
 	"fmt"
 )
 
+var currentVersion = "development"
+
 type args struct {
 	ErrorCode   *int
 	PrintConfig *bool
@@ -14,6 +16,7 @@ type args struct {
 	Config      *string
 	Shell       *string
 	PWD         *string
+	Version     *bool
 	Debug       *bool
 }
 
@@ -43,6 +46,10 @@ func main() {
 			"pwd",
 			"",
 			"the path you are working in"),
+		Version: flag.Bool(
+			"version",
+			false,
+			"Print the current version of the binary"),
 		Debug: flag.Bool(
 			"debug",
 			false,
@@ -60,6 +67,10 @@ func main() {
 	}
 	if *args.PrintShell {
 		fmt.Println(env.getShellName())
+		return
+	}
+	if *args.Version {
+		fmt.Println(currentVersion)
 		return
 	}
 	colorWriter := &Renderer{

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -78,9 +79,20 @@ func (pt *path) getShortPath() string {
 		mappedLocations[key] = val
 	}
 
-	for location, value := range mappedLocations {
-		if strings.HasPrefix(pwd, location) {
-			return strings.Replace(pwd, location, value, 1)
+	// sort map keys in reverse order
+	// fixes case when a subfoder and its parent are mapped
+	// ex /users/test and /users/test/dev
+	keys := make([]string, len(mappedLocations))
+	i := 0
+	for k := range mappedLocations {
+		keys[i] = k
+		i++
+	}
+	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
+
+	for _, value := range keys {
+		if strings.HasPrefix(pwd, value) {
+			return strings.Replace(pwd, value, mappedLocations[value], 1)
 		}
 	}
 	return pwd

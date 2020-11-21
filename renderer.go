@@ -146,19 +146,32 @@ func (r *Renderer) writeAndRemoveText(background, foreground, text, textToRemove
 }
 
 func (r *Renderer) write(background, foreground, text string) {
-	// first we match for any potentially valid color enclosed in <>
-	rex := regexp.MustCompile(`<([#A-Za-z0-9]+)>(.*?)<\/>`)
+	// first we match for any potentially valid colors enclosed in <>
+	rex := regexp.MustCompile(`<([#A-Za-z0-9]+)?(?:,([#A-Za-z0-9]+))?>(.*?)<\/>`)
 	match := rex.FindAllStringSubmatch(text, -1)
 	for i := range match {
-		extractedColor := match[i][1]
-		if col := r.getAnsiFromColorString(extractedColor, false); col == "" && extractedColor != Transparent {
+		extractedForegroundColor := match[i][1]
+		extractedBackgroundColor := match[i][2]
+		if col := r.getAnsiFromColorString(extractedForegroundColor, false); col == "" && extractedForegroundColor != Transparent && len(extractedBackgroundColor) == 0 {
 			continue // we skip invalid colors
 		}
+		if col := r.getAnsiFromColorString(extractedBackgroundColor, false); col == "" && extractedBackgroundColor != Transparent && len(extractedForegroundColor) == 0 {
+			continue // we skip invalid colors
+		}
+
+		// reuse function colors if only one was specified
+		if len(extractedBackgroundColor) == 0 {
+			extractedBackgroundColor = background
+		}
+		if len(extractedForegroundColor) == 0 {
+			extractedForegroundColor = foreground
+		}
+
 		escapedTextSegment := match[i][0]
-		innerText := match[i][2]
+		innerText := match[i][3]
 		textBeforeColorOverride := strings.Split(text, escapedTextSegment)[0]
 		text = r.writeAndRemoveText(background, foreground, textBeforeColorOverride, textBeforeColorOverride, text)
-		text = r.writeAndRemoveText(background, extractedColor, innerText, escapedTextSegment, text)
+		text = r.writeAndRemoveText(extractedBackgroundColor, extractedForegroundColor, innerText, escapedTextSegment, text)
 	}
 	// color the remaining part of text with background and foreground
 	r.writeColoredText(background, foreground, text)

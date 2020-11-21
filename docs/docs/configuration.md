@@ -200,8 +200,8 @@ segment's configuration will not render it when in that location. The engine wil
 
 #### Colors
 
-You have the ability to override the foreground color for text in any property that accepts it. The syntax is custom but
-should be rather straighforward: `<#ffffff>this is white</> <#FF479C>but this is pink</>`. Anything between the color start
+You have the ability to override the foreground and/or background color for text in any property that accepts it. The syntax is custom but
+should be rather straighforward: `<#ffffff,#000000>this is white with black background</> <#FF479C>but this is pink</>`. Anything between the color start
 `<#FF479C>` and end `</>` will be colored accordingly.
 
 For example, if you want `prefix` to print a colored bracket which isn't the same as the segment's `foreground`, you can
@@ -209,6 +209,18 @@ do so like this:
 
 ```json
 "prefix": "<#CB4B16>┏[</>",
+```
+
+If you also wanted to change the background color in the previous command, you would do so like this:
+
+```json
+"prefix": "<#CB4B16,#FFFFFF>┏[</>",
+```
+
+To change *only* the background color, just omit the first color from the above string:
+
+```json
+"prefix": "<,#FFFFFF>┏[</>",
 ```
 
 Oh my Posh mainly supports three different color types being

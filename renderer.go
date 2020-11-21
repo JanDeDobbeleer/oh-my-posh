@@ -152,18 +152,18 @@ func (r *Renderer) write(background, foreground, text string) {
 	for i := range match {
 		extractedForegroundColor := match[i][1]
 		extractedBackgroundColor := match[i][2]
-		if col := r.getAnsiFromColorString(extractedForegroundColor, false); col == "" && extractedForegroundColor != Transparent && len(extractedBackgroundColor) <= 0 {
+		if col := r.getAnsiFromColorString(extractedForegroundColor, false); col == "" && extractedForegroundColor != Transparent && len(extractedBackgroundColor) == 0 {
 			continue // we skip invalid colors
 		}
-		if col := r.getAnsiFromColorString(extractedBackgroundColor, false); col == "" && extractedBackgroundColor != Transparent && len(extractedForegroundColor) <= 0 {
+		if col := r.getAnsiFromColorString(extractedBackgroundColor, false); col == "" && extractedBackgroundColor != Transparent && len(extractedForegroundColor) == 0 {
 			continue // we skip invalid colors
 		}
 
 		// reuse function colors if only one was specified
-		if len(extractedBackgroundColor) <= 0 {
+		if len(extractedBackgroundColor) == 0 {
 			extractedBackgroundColor = background
 		}
-		if len(extractedForegroundColor) <= 0 {
+		if len(extractedForegroundColor) == 0 {
 			extractedForegroundColor = foreground
 		}
 

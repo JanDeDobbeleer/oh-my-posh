@@ -41,6 +41,27 @@ func TestWriteColorOverride(t *testing.T) {
 	assert.NotContains(t, renderer.string(), "<#ff5733>")
 }
 
+func TestWriteColorOverrideBackground(t *testing.T) {
+	renderer := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+	text := "This is white, <,#000000>this is black</>, white again"
+	renderer.init("pwsh")
+	renderer.write("#193549", "#ff5733", text)
+	assert.NotContains(t, renderer.string(), "000000")
+}
+
+func TestWriteColorOverrideBoth(t *testing.T) {
+	renderer := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+	text := "This is white, <#000000,#ffffff>this is black</>, white again"
+	renderer.init("pwsh")
+	renderer.write("#193549", "#ff5733", text)
+	assert.NotContains(t, renderer.string(), "ffffff")
+	assert.NotContains(t, renderer.string(), "000000")
+}
+
 func TestWriteColorTransparent(t *testing.T) {
 	renderer := &Renderer{
 		Buffer: new(bytes.Buffer),

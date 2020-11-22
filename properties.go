@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"regexp"
 )
 
 // Property defines one property of a segment for context
@@ -62,8 +61,7 @@ func (p *properties) getColor(property Property, defaultValue string) string {
 	if err == nil {
 		return colorString
 	}
-	r := regexp.MustCompile(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})`)
-	values := groupDict(r, colorString)
+	values := findNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})`, colorString)
 	if values != nil && values["color"] != "" {
 		return values["color"]
 	}

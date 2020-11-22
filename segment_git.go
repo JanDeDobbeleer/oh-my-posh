@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"regexp"
 	"strconv"
 	"strings"
 )
@@ -180,8 +179,7 @@ func (g *git) getStatusDetailString(status *gitStatus, color, icon Property, def
 }
 
 func (g *git) getUpstreamSymbol() string {
-	upstreamRegex := regexp.MustCompile("/.*")
-	upstream := upstreamRegex.ReplaceAllString(g.repo.upstream, "")
+	upstream := replaceAllString("/.*", g.repo.upstream, "")
 	url := g.getGitCommandOutput("remote", "get-url", upstream)
 	if strings.Contains(url, "github") {
 		return g.props.getString(GithubIcon, "\uF408 ")
@@ -348,19 +346,6 @@ func (g *git) getStashContext() string {
 }
 
 func (g *git) parseGitStatusInfo(branchInfo string) map[string]string {
-	var branchRegex = regexp.MustCompile(`^## (?P<local>\S+?)(\.{3}(?P<upstream>\S+?)( \[(?P<upstream_status>(ahead (?P<ahead>\d+)(, )?)?(behind (?P<behind>\d+))?(gone)?)])?)?$`)
-	return groupDict(branchRegex, branchInfo)
-}
-
-func groupDict(pattern *regexp.Regexp, haystack string) map[string]string {
-	match := pattern.FindStringSubmatch(haystack)
-	result := make(map[string]string)
-	if len(match) > 0 {
-		for i, name := range pattern.SubexpNames() {
-			if i != 0 {
-				result[name] = match[i]
-			}
-		}
-	}
-	return result
+	var branchRegex = `^## (?P<local>\S+?)(\.{3}(?P<upstream>\S+?)( \[(?P<upstream_status>(ahead (?P<ahead>\d+)(, )?)?(behind (?P<behind>\d+))?(gone)?)])?)?$`
+	return findNamedRegexMatch(branchRegex, branchInfo)
 }

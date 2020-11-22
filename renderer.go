@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"regexp"
 	"strings"
 
 	"github.com/gookit/color"
@@ -147,18 +146,16 @@ func (r *Renderer) writeAndRemoveText(background, foreground, text, textToRemove
 
 func (r *Renderer) write(background, foreground, text string) {
 	// first we match for any potentially valid colors enclosed in <>
-	rex := regexp.MustCompile(`<([#A-Za-z0-9]+)?(?:,([#A-Za-z0-9]+))?>(.*?)<\/>`)
-	match := rex.FindAllStringSubmatch(text, -1)
+	match := findAllNamedRegexMatch(`<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`, text)
 	for i := range match {
-		extractedForegroundColor := match[i][1]
-		extractedBackgroundColor := match[i][2]
+		extractedForegroundColor := match[i]["foreground"]
+		extractedBackgroundColor := match[i]["background"]
 		if col := r.getAnsiFromColorString(extractedForegroundColor, false); col == "" && extractedForegroundColor != Transparent && len(extractedBackgroundColor) == 0 {
 			continue // we skip invalid colors
 		}
 		if col := r.getAnsiFromColorString(extractedBackgroundColor, false); col == "" && extractedBackgroundColor != Transparent && len(extractedForegroundColor) == 0 {
 			continue // we skip invalid colors
 		}
-
 		// reuse function colors if only one was specified
 		if len(extractedBackgroundColor) == 0 {
 			extractedBackgroundColor = background
@@ -166,9 +163,8 @@ func (r *Renderer) write(background, foreground, text string) {
 		if len(extractedForegroundColor) == 0 {
 			extractedForegroundColor = foreground
 		}
-
-		escapedTextSegment := match[i][0]
-		innerText := match[i][3]
+		escapedTextSegment := match[i]["text"]
+		innerText := match[i]["content"]
 		textBeforeColorOverride := strings.Split(text, escapedTextSegment)[0]
 		text = r.writeAndRemoveText(background, foreground, textBeforeColorOverride, textBeforeColorOverride, text)
 		text = r.writeAndRemoveText(extractedBackgroundColor, extractedForegroundColor, innerText, escapedTextSegment, text)
@@ -178,8 +174,7 @@ func (r *Renderer) write(background, foreground, text string) {
 }
 
 func (r *Renderer) lenWithoutANSI(str string) int {
-	re := regexp.MustCompile(r.formats.rANSI)
-	stripped := re.ReplaceAllString(str, "")
+	stripped := replaceAllString(r.formats.rANSI, str, "")
 	switch r.shell {
 	case zsh:
 		stripped = strings.ReplaceAll(stripped, "%{", "")

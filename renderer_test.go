@@ -85,6 +85,17 @@ func TestWriteColorOverrideBoth16(t *testing.T) {
 	assert.NotContains(t, renderer.string(), "</>")
 }
 
+func TestWriteColorOverrideDouble(t *testing.T) {
+	renderer := &Renderer{
+		Buffer: new(bytes.Buffer),
+	}
+	text := "<#ffffff>jan</>@<#ffffff>Jans-MBP</>"
+	renderer.init("pwsh")
+	renderer.write("#193549", "#ff5733", text)
+	assert.NotContains(t, renderer.string(), "<#ffffff>")
+	assert.NotContains(t, renderer.string(), "</>")
+}
+
 func TestWriteColorTransparent(t *testing.T) {
 	renderer := &Renderer{
 		Buffer: new(bytes.Buffer),

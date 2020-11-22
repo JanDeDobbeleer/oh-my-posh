@@ -1,7 +1,5 @@
 package main
 
-import "regexp"
-
 type language struct {
 	props        *properties
 	env          environmentInfo
@@ -39,8 +37,7 @@ func (l *language) enabled() bool {
 		}
 	}
 	versionInfo, _ := l.env.runCommand(executable, l.versionParam)
-	r := regexp.MustCompile(l.versionRegex)
-	values := groupDict(r, versionInfo)
+	values := findNamedRegexMatch(l.versionRegex, versionInfo)
 	l.version = values["version"]
 	return true
 }

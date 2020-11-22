@@ -7,6 +7,7 @@ import (
 	"fmt"
 )
 
+// Version number of oh-my-posh
 var Version = "development"
 
 type args struct {

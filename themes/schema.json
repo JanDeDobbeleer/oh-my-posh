@@ -1,0 +1,1101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "http://example.com/example.json",
+  "type": "object",
+  "title": "The Oh my Posh theme definition",
+  "description": "https://ohmyposh.dev/docs/configure",
+  "definitions": {
+    "color": {
+      "type": "string",
+      "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite)$",
+      "title": "Color string",
+      "description": "https://ohmyposh.dev/docs/configure#colors"
+    },
+    "display_version": {
+      "type": "boolean",
+      "title": "Display Version",
+      "description": "Show or hide the version number",
+      "default": true
+    },
+    "block": {
+      "type": "object",
+      "description": "https://ohmyposh.dev/docs/configure#block",
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "newline" }
+            }
+          },
+          "then": {
+            "required": ["type"],
+            "title": "Newline, renders a line break"
+          },
+          "else": {
+            "required": ["type", "alignment", "segments"],
+            "title": "Prompt definition, contains 1 or more segments to render"
+          }
+        }
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Block type",
+          "description": "https://ohmyposh.dev/docs/configure#type",
+          "enum": ["prompt", "newline"],
+          "default": "prompt"
+        },
+        "alignment": {
+          "type": "string",
+          "title": "Block alignment",
+          "description": "https://ohmyposh.dev/docs/configure#alignment",
+          "enum": ["left", "right"],
+          "default": "left"
+        },
+        "vertical_offset": {
+          "type": "integer",
+          "title": "Block vertical offset",
+          "description": "https://ohmyposh.dev/docs/configure#vertical-offset"
+        },
+        "horizontal-offset": {
+          "type": "integer",
+          "title": "Block vertical offset",
+          "description": "https://ohmyposh.dev/docs/configure#horizontal-offset"
+        },
+        "segments": {
+          "type": "array",
+          "title": "Segments list, prompt elements to display based on context",
+          "description": "https://ohmyposh.dev/docs/configure#segment",
+          "default": [],
+          "items": { "$ref": "#/definitions/segment" }
+        }
+      }
+    },
+    "segment": {
+      "type": "object",
+      "title": "A segment",
+      "description": "https://ohmyposh.dev/docs/configure#segment",
+      "default": {},
+      "required": ["type", "style", "foreground"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "title": "Segment Type",
+          "description": "https://ohmyposh.dev/docs/configure#type-1",
+          "enum": [
+            "session",
+            "path",
+            "git",
+            "exit",
+            "python",
+            "root",
+            "time",
+            "text",
+            "command",
+            "battery",
+            "spotify",
+            "shell",
+            "node",
+            "os",
+            "envvar",
+            "az",
+            "kubectl",
+            "dotnet",
+            "terraform",
+            "go",
+            "julia"
+          ]
+        },
+        "style": {
+          "type": "string",
+          "title": "Segment Style",
+          "description": "https://ohmyposh.dev/docs/configure#style",
+          "enum": ["powerline", "plain", "diamond"]
+        },
+        "foreground": { "$ref": "#/definitions/color" },
+        "background": { "$ref": "#/definitions/color" },
+        "properties": {
+          "type": "object",
+          "title": "Segment Properties, used to change behavior/displaying",
+          "description": "https://ohmyposh.dev/docs/configure#properties",
+          "default": {},
+          "properties": {
+            "prefix": {
+              "type": "string",
+              "title": "Text prefix",
+              "description": "https://ohmyposh.dev/docs/configure#prefix",
+              "default": " "
+            },
+            "postfix": {
+              "type": "string",
+              "title": "Text postfix",
+              "description": "https://ohmyposh.dev/docs/configure#postfix",
+              "default": " "
+            },
+            "ignore_folders": {
+              "type": "array",
+              "title": "Ignore rendering in these folders",
+              "description": "https://ohmyposh.dev/docs/configure#ignore-folders",
+              "default": [],
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "style": { "const": "powerline" }
+            }
+          },
+          "then": {
+            "properties": {
+              "powerline_symbol": {
+                "type": "string",
+                "title": "Powerline Symbol",
+                "description": "https://ohmyposh.dev/docs/configure#powerline-symbol",
+                "default": "\uE0B0"
+              },
+              "invert_powerline": {
+                "type": "boolean",
+                "title": "Flip the Powerline symbol vertically",
+                "description": "https://ohmyposh.dev/docs/configure#invert-powerline",
+                "default": false
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "style": { "const": "diamond" }
+            }
+          },
+          "then": {
+            "properties": {
+              "leading_diamond": {
+                "type": "string",
+                "title": "Leading diamond",
+                "description": "https://ohmyposh.dev/docs/configure#leading-diamond",
+                "default": ""
+              },
+              "trailing_diamond": {
+                "type": "string",
+                "title": "Trailing diamond",
+                "description": "https://ohmyposh.dev/docs/configure#trailing-diamond",
+                "default": ""
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "az" }
+            }
+          },
+          "then": {
+            "title": "Azure Segment",
+            "description": "https://ohmyposh.dev/docs/az",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_id": {
+                    "type": "boolean",
+                    "title": "Display ID",
+                    "description": "Display the subscription ID or not",
+                    "default": false
+                  },
+                  "display_name": {
+                    "type": "boolean",
+                    "title": "Display Name",
+                    "description": "Display the subscription name or not",
+                    "default": true
+                  },
+                  "info_separator": {
+                    "type": "string",
+                    "title": "Display Name",
+                    "description": "Text/icon to put in between the subscription name and ID",
+                    "default": " | "
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "battery" }
+            }
+          },
+          "then": {
+            "title": "Battery Segment",
+            "description": "https://ohmyposh.dev/docs/battery",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "battery_icon": {
+                    "type": "string",
+                    "title": "Battery Icon",
+                    "description": "Text/icon to use as a prefix for the battery percentage",
+                    "default": ""
+                  },
+                  "display_error": {
+                    "type": "boolean",
+                    "title": "Display Error",
+                    "description": "Show the error context when failing to retrieve the battery information",
+                    "default": false
+                  },
+                  "charging_icon": {
+                    "type": "string",
+                    "title": "Charging Icon",
+                    "description": "Text/icon to display on the left when charging",
+                    "default": ""
+                  },
+                  "discharging_icon": {
+                    "type": "string",
+                    "title": "discharging Dcon",
+                    "description": "Text/icon to display on the left when discharging",
+                    "default": ""
+                  },
+                  "charged_icon": {
+                    "type": "string",
+                    "title": "Charged Icon",
+                    "description": "Text/icon o display on the left when fully charged",
+                    "default": ""
+                  },
+                  "color_background": {
+                    "type": "boolean",
+                    "title": "Color Background",
+                    "description": "Color the background or foreground",
+                    "default": false
+                  },
+                  "charged_color": { "$ref": "#/definitions/color" },
+                  "charging_color": { "$ref": "#/definitions/color" },
+                  "discharging_color": { "$ref": "#/definitions/color" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "command" }
+            }
+          },
+          "then": {
+            "title": "Command Segment",
+            "description": "https://ohmyposh.dev/docs/command",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "shell": {
+                    "type": "string",
+                    "title": "Shell",
+                    "description": "The shell in which to run the command in. Uses shell -c command under the hood",
+                    "default": "bash"
+                  },
+                  "command": {
+                    "type": "string",
+                    "title": "Command",
+                    "description": "the command(s) to run",
+                    "default": "echo no command specified"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "dotnet" }
+            }
+          },
+          "then": {
+            "title": "Dotnet Segment",
+            "description": "https://ohmyposh.dev/docs/dotnet",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "unsupported_version_icon": {
+                    "type": "string",
+                    "title": "Unsupported Version Icon",
+                    "description": "Text/icon that is displayed when the active .NET SDK version (e.g., one specified by global.json) is not installed/supported",
+                    "default": " \uE77F "
+                  },
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "envvar" }
+            }
+          },
+          "then": {
+            "title": "Environment Variable Segment",
+            "description": "https://ohmyposh.dev/docs/environment",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "var_name": {
+                    "type": "string",
+                    "title": "Variable Name",
+                    "description": "The name of the environment variable",
+                    "default": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "exit" }
+            }
+          },
+          "then": {
+            "title": "Exit Segment",
+            "description": "https://ohmyposh.dev/docs/exit",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_exit_code": {
+                    "type": "boolean",
+                    "title": "Display Exit Code",
+                    "description": "Show or hide the exit code",
+                    "default": true
+                  },
+                  "always_enabled": {
+                    "type": "boolean",
+                    "title": "Always Enabled",
+                    "description": "Always show the status",
+                    "default": false
+                  },
+                  "color_background": {
+                    "type": "boolean",
+                    "title": "Color Background",
+                    "description": "Color the background or foreground",
+                    "default": false
+                  },
+                  "error_color": { "$ref": "#/definitions/color" },
+                  "always_numeric": {
+                    "type": "boolean",
+                    "title": "Always Numeric",
+                    "description": "Always display the exit code as a number",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "git" }
+            }
+          },
+          "then": {
+            "title": "Git Segment",
+            "description": "https://ohmyposh.dev/docs/git",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "branch_icon": {
+                    "type": "string",
+                    "title": "Branch Icon",
+                    "description": "The icon to use in front of the git branch name",
+                    "default": "\uE0A0 "
+                  },
+                  "branch_identical_icon": {
+                    "type": "string",
+                    "title": "Branch Identical Icon",
+                    "description": "The icon to display when remote and local are identical",
+                    "default": "\uF0C9"
+                  },
+                  "branch_ahead_icon": {
+                    "type": "string",
+                    "title": "Branch Ahead Icon",
+                    "description": "The icon to display when the local branch is ahead of its remote",
+                    "default": "\uF176"
+                  },
+                  "branch_behind_icon": {
+                    "type": "string",
+                    "title": "Branch Behind Icon",
+                    "description": "The icon to display when the local branch is behind its remote",
+                    "default": "\uF175"
+                  },
+                  "branch_gone_icon": {
+                    "type": "string",
+                    "title": "Branch Gone Icon",
+                    "description": "The icon to display when there's no remote branch",
+                    "default": "\u2262"
+                  },
+                  "display_status": {
+                    "type": "boolean",
+                    "title": "Display Status",
+                    "description": "Display the local changes or not",
+                    "default": true
+                  },
+                  "display_status_detail": {
+                    "type": "boolean",
+                    "title": "Display Status Detail",
+                    "description": "Display the local changes in detail or not",
+                    "default": true
+                  },
+                  "display_stash_count": {
+                    "type": "boolean",
+                    "title": "Display Stash Count",
+                    "description": "Display the stash count or not",
+                    "default": false
+                  },
+                  "status_separator_icon": {
+                    "type": "string",
+                    "title": "Status Separator Icon",
+                    "description": "Icon/text to display between staging and working area changes",
+                    "default": " | "
+                  },
+                  "local_working_icon": {
+                    "type": "string",
+                    "title": "Local Working Icon",
+                    "description": "The icon to display in front of the working area changes",
+                    "default": "\uF044"
+                  },
+                  "local_staged_icon": {
+                    "type": "string",
+                    "title": "Local Staged Icon",
+                    "description": "The icon to display in front of the staged area changes",
+                    "default": "\uF046"
+                  },
+                  "stash_count_icon": {
+                    "type": "string",
+                    "title": "Stash Count Icon",
+                    "description": "The icon to display before the stash context",
+                    "default": "\uF692"
+                  },
+                  "commit_icon": {
+                    "type": "string",
+                    "title": "Commit Icon",
+                    "description": "Icon/text to display before the commit context (detached HEAD)",
+                    "default": "\uF417"
+                  },
+                  "tag_icon": {
+                    "type": "string",
+                    "title": "Tag Icon",
+                    "description": "Icon/text to display before the tag context",
+                    "default": "\uF412"
+                  },
+                  "rebase_icon": {
+                    "type": "string",
+                    "title": "Rebase Icon",
+                    "description": "Icon/text to display before the context when in a rebase",
+                    "default": "\uE728"
+                  },
+                  "cherry_pick_icon": {
+                    "type": "string",
+                    "title": "Cherry-pick Icon",
+                    "description": "Icon/text to display before the context when doing a cherry-pick",
+                    "default": "\uE29B"
+                  },
+                  "merge_icon": {
+                    "type": "string",
+                    "title": "Merge Icon",
+                    "description": "Icon/text to display before the merge context",
+                    "default": "\uE727"
+                  },
+                  "display_upstream_icon": {
+                    "type": "boolean",
+                    "title": "Display Upstream Icon",
+                    "description": "Display upstream icon or not",
+                    "default": false
+                  },
+                  "github_icon": {
+                    "type": "string",
+                    "title": "Github Icon",
+                    "description": "Icon/text to display when the upstream is Github",
+                    "default": "\uF408"
+                  },
+                  "gitlab_icon": {
+                    "type": "string",
+                    "title": "Gitlab Icon",
+                    "description": "Icon/text to display when the upstream is Gitlab",
+                    "default": "\uF296"
+                  },
+                  "bitbucket_icon": {
+                    "type": "string",
+                    "title": "Bitbucket Icon",
+                    "description": "Icon/text to display when the upstream is Bitbucket",
+                    "default": "\uF171"
+                  },
+                  "git_icon": {
+                    "type": "string",
+                    "title": "Git Icon",
+                    "description": "Icon/text to display when the upstream is not known/mapped",
+                    "default": "\uE5FB"
+                  },
+                  "working_color": { "$ref": "#/definitions/color" },
+                  "staging_color": { "$ref": "#/definitions/color" },
+                  "status_colors_enabled": {
+                    "type": "boolean",
+                    "title": "Status Colors Enabled",
+                    "description": "Color the segment based on the repository status",
+                    "default": false
+                  },
+                  "color_background": {
+                    "type": "boolean",
+                    "title": "Color Background",
+                    "description": "Color the background or foreground",
+                    "default": false
+                  },
+                  "local_changes_color": {
+                    "$ref": "#/definitions/color"
+                  },
+                  "ahead_and_behind_color": {
+                    "$ref": "#/definitions/color"
+                  },
+                  "behind_color": { "$ref": "#/definitions/color" },
+                  "ahead_color": { "$ref": "#/definitions/color" }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "go" }
+            }
+          },
+          "then": {
+            "title": "Golang Segment",
+            "description": "https://ohmyposh.dev/docs/golang",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "julia" }
+            }
+          },
+          "then": {
+            "title": "Julia Segment",
+            "description": "https://ohmyposh.dev/docs/julia",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "kubectl" }
+            }
+          },
+          "then": {
+            "title": "Kubectl Segment",
+            "description": "https://ohmyposh.dev/docs/kubectl"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "node" }
+            }
+          },
+          "then": {
+            "title": "Node Segment",
+            "description": "https://ohmyposh.dev/docs/node",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "os" }
+            }
+          },
+          "then": {
+            "title": "Operating System Segment",
+            "description": "https://ohmyposh.dev/docs/os",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "macos": {
+                    "type": "string",
+                    "title": "MacOS Icon",
+                    "description": "Icon/text to use for macOS",
+                    "default": "\uF179"
+                  },
+                  "linux": {
+                    "type": "string",
+                    "title": "Linux Icon",
+                    "description": "Icon/text to use for Linux",
+                    "default": "\uF17C"
+                  },
+                  "windows": {
+                    "type": "string",
+                    "title": "Windows Icon",
+                    "description": "Icon/text to use for Windows",
+                    "default": "\uE62A"
+                  },
+                  "wsl": {
+                    "type": "string",
+                    "title": "WSL Icon",
+                    "description": "Icon/text to use for WSL",
+                    "default": "WSL"
+                  },
+                  "wsl_separator": {
+                    "type": "string",
+                    "title": "WSL Separator",
+                    "description": "Icon/text to use for separating WSL from Linux",
+                    "default": " - "
+                  },
+                  "alpine": {
+                    "type": "string",
+                    "title": "Alpine Icon",
+                    "description": "The icon to use for Alpine",
+                    "default": "\uF300"
+                  },
+                  "aosc": {
+                    "type": "string",
+                    "title": "Aosc Icon",
+                    "description": "The icon to use for Aosc",
+                    "default": "\uF301"
+                  },
+                  "arch": {
+                    "type": "string",
+                    "title": "Arch Icon",
+                    "description": "The icon to use for Arch",
+                    "default": "\uF303"
+                  },
+                  "centos": {
+                    "type": "string",
+                    "title": "Centos Icon",
+                    "description": "The icon to use for Centos",
+                    "default": "\uF303"
+                  },
+                  "coreos": {
+                    "type": "string",
+                    "title": "Coreos Icon",
+                    "description": "The icon to use for Coreos",
+                    "default": "\uF305"
+                  },
+                  "debian": {
+                    "type": "string",
+                    "title": "Debian Icon",
+                    "description": "The icon to use for Debian",
+                    "default": "\uF306"
+                  },
+                  "devuan": {
+                    "type": "string",
+                    "title": "Devuan Icon",
+                    "description": "The icon to use for Devuan",
+                    "default": "\uF307"
+                  },
+                  "raspbian": {
+                    "type": "string",
+                    "title": "Raspbian Icon",
+                    "description": "The icon to use for Raspbian",
+                    "default": "\uF315"
+                  },
+                  "elementary": {
+                    "type": "string",
+                    "title": "Elementary Icon",
+                    "description": "The icon to use for Elementary",
+                    "default": "\uF309"
+                  },
+                  "fedora": {
+                    "type": "string",
+                    "title": "Fedora Icon",
+                    "description": "The icon to use for Fedora",
+                    "default": "\uF30a"
+                  },
+                  "gentoo": {
+                    "type": "string",
+                    "title": "Gentoo Icon",
+                    "description": "The icon to use for Gentoo",
+                    "default": "\uF30d"
+                  },
+                  "mageia": {
+                    "type": "string",
+                    "title": "Mageia Icon",
+                    "description": "The icon to use for Mageia",
+                    "default": "\uF310"
+                  },
+                  "manjaro": {
+                    "type": "string",
+                    "title": "Manjaro Icon",
+                    "description": "The icon to use for Manjaro",
+                    "default": "\uF312"
+                  },
+                  "mint": {
+                    "type": "string",
+                    "title": "Mint Icon",
+                    "description": "The icon to use for Mint",
+                    "default": "\uF30e"
+                  },
+                  "nixos": {
+                    "type": "string",
+                    "title": "Nixos Icon",
+                    "description": "The icon to use for Nixos",
+                    "default": "\uF313"
+                  },
+                  "opensuse": {
+                    "type": "string",
+                    "title": "Opensuse Icon",
+                    "description": "The icon to use for Opensuse",
+                    "default": "\uF314"
+                  },
+                  "sabayon": {
+                    "type": "string",
+                    "title": "Sabayon Icon",
+                    "description": "The icon to use for Sabayon",
+                    "default": "\uF317"
+                  },
+                  "slackware": {
+                    "type": "string",
+                    "title": "Slackware Icon",
+                    "description": "The icon to use for Slackware",
+                    "default": "\uF319"
+                  },
+                  "ubuntu": {
+                    "type": "string",
+                    "title": "Ubuntu Icon",
+                    "description": "The icon to use for Ubuntu",
+                    "default": "\uF31b"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "path" }
+            }
+          },
+          "then": {
+            "title": "Path Segment",
+            "description": "https://ohmyposh.dev/docs/path",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "folder_separator_icon": {
+                    "type": "string",
+                    "title": "Folder Separator Icon",
+                    "description": "The symbol to use as a separator between folders",
+                    "default": "/"
+                  },
+                  "home_icon": {
+                    "type": "string",
+                    "title": "Home Icon",
+                    "description": "The icon to display when at $HOME",
+                    "default": "/"
+                  },
+                  "folder_icon": {
+                    "type": "string",
+                    "title": "Folder Icon",
+                    "description": "The con to use as a folder indication",
+                    "default": ".."
+                  },
+                  "windows_registry_icon": {
+                    "type": "string",
+                    "title": "Windows Registry Icon",
+                    "description": "The icon to display when in the Windows registry",
+                    "default": "\uE0B1"
+                  },
+                  "style": {
+                    "type": "string",
+                    "title": "The Path Style",
+                    "description": "How to display the current path",
+                    "enum": [
+                      "agnoster",
+                      "agnoster_full",
+                      "short",
+                      "full",
+                      "folder"
+                    ],
+                    "default": "folder"
+                  },
+                  "mapped_locations": {
+                    "type": "object",
+                    "title": "Mapped Locations",
+                    "description": "Custom glyph/text for specific paths",
+                    "additionalProperties": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "python" }
+            }
+          },
+          "then": {
+            "title": "Node Segment",
+            "description": "https://ohmyposh.dev/docs/python",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_virtual_env": {
+                    "type": "boolean",
+                    "title": "Display Virtual Env",
+                    "description": "Show the name of the virtualenv or not",
+                    "default": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "root" }
+            }
+          },
+          "then": {
+            "title": "Root Segment",
+            "description": "https://ohmyposh.dev/docs/root",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "root_icon": {
+                    "type": "string",
+                    "title": "Root Icon",
+                    "description": "The icon to display in case of root/elevated",
+                    "default": "\uF0E7"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "session" }
+            }
+          },
+          "then": {
+            "title": "Session Segment",
+            "description": "https://ohmyposh.dev/docs/session",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "user_info_separator": {
+                    "type": "string",
+                    "title": "User Info Separator",
+                    "description": "Text/icon to put in between the user and host name",
+                    "default": "@"
+                  },
+                  "ssh_icon": {
+                    "type": "string",
+                    "title": "SSH Icon",
+                    "description": "Text/icon to display first when in an active SSH session",
+                    "default": "\uF817"
+                  },
+                  "user_color": { "$ref": "#/definitions/color" },
+                  "host_color": { "$ref": "#/definitions/color" },
+                  "display_user": {
+                    "type": "boolean",
+                    "title": "Display User",
+                    "description": "Display the user name or not",
+                    "default": true
+                  },
+                  "display_host": {
+                    "type": "boolean",
+                    "title": "Display Host",
+                    "description": "Display the host name or not",
+                    "default": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "shell" }
+            }
+          },
+          "then": {
+            "title": "Shell Segment",
+            "description": "https://ohmyposh.dev/docs/shell"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "spotify" }
+            }
+          },
+          "then": {
+            "title": "Spotify Segment",
+            "description": "https://ohmyposh.dev/docs/spotify",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "playing_icon": {
+                    "type": "string",
+                    "title": "User Info Separator",
+                    "description": "Text/icon to show when playing",
+                    "default": "\uE602"
+                  },
+                  "paused_icon": {
+                    "type": "string",
+                    "title": "SSH Icon",
+                    "description": "Text/icon to show when paused",
+                    "default": "\uF8E3"
+                  },
+                  "stopped_icon": {
+                    "type": "string",
+                    "title": "SSH Icon",
+                    "description": "Text/icon to show when stopped",
+                    "default": "\uF04D"
+                  },
+                  "track_separator": {
+                    "type": "string",
+                    "title": "SSH Icon",
+                    "description": "Text/icon to put between the artist and song name",
+                    "default": " - "
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "terraform" }
+            }
+          },
+          "then": {
+            "title": "Terraform Segment",
+            "description": "https://ohmyposh.dev/docs/terraform"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "text" }
+            }
+          },
+          "then": {
+            "title": "Text Segment",
+            "description": "https://ohmyposh.dev/docs/text",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "title": "Text",
+                    "description": "Text/icon to display",
+                    "default": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "time" }
+            }
+          },
+          "then": {
+            "title": "Time Segment",
+            "description": "https://ohmyposh.dev/docs/time",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "time_format": {
+                    "type": "string",
+                    "title": "Time Format",
+                    "description": "Format to use, follows the golang standard: https://gobyexample.com/time-formatting-parsing",
+                    "default": "15:04:05"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": ["blocks"],
+  "properties": {
+    "final_space": {
+      "type": "boolean",
+      "title": "The final_space schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": true
+    },
+    "console_title": {
+      "type": "boolean",
+      "title": "The console_title schema",
+      "description": "An explanation about the purpose of this instance.",
+      "default": true
+    },
+    "console_title_style": {
+      "type": "string",
+      "title": "The console_title_style schema",
+      "description": "An explanation about the purpose of this instance.",
+      "enum": ["folder", "path"],
+      "default": "folder"
+    },
+    "blocks": {
+      "type": "array",
+      "title": "Block array",
+      "default": [],
+      "description": "https://ohmyposh.dev/docs/configure",
+      "items": { "$ref": "#/definitions/block" }
+    }
+  }
+}

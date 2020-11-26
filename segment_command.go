@@ -48,11 +48,6 @@ func (c *command) string() string {
 	return c.value
 }
 
-// func (c *command) runCommand(command string) string {
-// 	args := strings.Fields(command)
-// 	return c.env.runCommand(args[0], args[1:]...)
-// }
-
 func (c *command) init(props *properties, env environmentInfo) {
 	c.props = props
 	c.env = env

@@ -126,10 +126,10 @@ When using [Scoop][scoop], all themes are downloaded as well.
 #### Manual
 
 ```powershell
-mkdir C:\tools\poshthemes
-Invoke-Webrequest https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/themes.zip -OutFile C:\tools\poshthemes\themes.zip
-Expand-Archive C:\tools\poshthemes\themes.zip -DestinationPath C:\tools\poshthemes -Force
-Remove-Item C:\tools\poshthemes\themes.zip
+mkdir ~\.poshthemes
+Invoke-Webrequest https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/themes.zip -OutFile ~\.poshthemes\themes.zip
+Expand-Archive ~\.poshthemes\themes.zip -DestinationPath ~\.poshthemes -Force
+Remove-Item ~\.poshthemes\themes.zip
 ```
 
 </TabItem>
@@ -205,7 +205,7 @@ Edit `$PROFILE` in your preferred PowerShell version and add the following lines
     $startInfo = New-Object System.Diagnostics.ProcessStartInfo
     $startInfo.FileName = "C:\tools\oh-my-posh.exe"
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $startInfo.Arguments = "-config=""C:\Users\User\.poshthemes\jandedobbeleer.json"" -error=$errorCode -pwd=""$cleanPWD"""
+    $startInfo.Arguments = "-config=""$env:USERPROFILE\.poshthemes\jandedobbeleer.json"" -error=$errorCode -pwd=""$cleanPWD"""
     $startInfo.Environment["TERM"] = "xterm-256color"
     $startInfo.CreateNoWindow = $true
     $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8

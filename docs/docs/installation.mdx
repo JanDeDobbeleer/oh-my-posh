@@ -195,7 +195,7 @@ Edit `$PROFILE` in your preferred PowerShell version and add the following lines
     $errorCode = 0
     if ($lastCommandSuccess -eq $false) {
         #native app exit code
-        if ($realLASTEXITCODE -ne 0) {
+        if ($realLASTEXITCODE -is [int]) {
             $errorCode = $realLASTEXITCODE
         }
         else {

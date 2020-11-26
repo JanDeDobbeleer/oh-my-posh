@@ -127,14 +127,13 @@ func (e *engine) render() {
 			continue
 		}
 		if block.VerticalOffset != 0 {
-			e.renderer.print(e.renderer.changeLine(block.VerticalOffset))
+			e.renderer.changeLine(block.VerticalOffset)
 		}
 		switch block.Alignment {
 		case Right:
-			e.renderer.print(e.renderer.carriageForward())
+			e.renderer.carriageForward()
 			blockText := e.renderBlockSegments(block)
-			cursorMove := e.renderer.setCursorForRightWrite(blockText, block.HorizontalOffset)
-			e.renderer.print(cursorMove)
+			e.renderer.setCursorForRightWrite(blockText, block.HorizontalOffset)
 			e.renderer.print(blockText)
 		case Left:
 			e.renderer.print(e.renderBlockSegments(block))

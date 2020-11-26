@@ -193,22 +193,22 @@ func (r *Renderer) lenWithoutANSI(str string) int {
 	return count
 }
 
-func (r *Renderer) carriageForward() string {
-	return fmt.Sprintf(r.formats.left, 1000)
+func (r *Renderer) carriageForward() {
+	fmt.Printf(r.formats.left, 1000)
 }
 
-func (r *Renderer) setCursorForRightWrite(text string, offset int) string {
+func (r *Renderer) setCursorForRightWrite(text string, offset int) {
 	strippedLen := r.lenWithoutANSI(text) + -offset
-	return fmt.Sprintf(r.formats.right, strippedLen)
+	fmt.Printf(r.formats.right, strippedLen)
 }
 
-func (r *Renderer) changeLine(numberOfLines int) string {
+func (r *Renderer) changeLine(numberOfLines int) {
 	position := "B"
 	if numberOfLines < 0 {
 		position = "F"
 		numberOfLines = -numberOfLines
 	}
-	return fmt.Sprintf(r.formats.linechange, numberOfLines, position)
+	fmt.Printf(r.formats.linechange, numberOfLines, position)
 }
 
 func (r *Renderer) setConsoleTitle(title string) {

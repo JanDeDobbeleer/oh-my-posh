@@ -34,5 +34,6 @@ Displays the last exit code or that the last command failed based on the configu
 - always_enabled: `boolean` - always show the status - defaults to `false`
 - color_background: `boolean` - color the background or foreground when an error occurs - defaults to `false`
 - error_color: `string` [color][colors] - color to use when an error occured
+- always_numeric: `boolean` - always display exit code as a number - defaults to `false`
 
 [colors]: /docs/configure#colors

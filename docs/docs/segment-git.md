@@ -33,7 +33,7 @@ Local changes can also shown by default using the following syntax for both the 
 
 ### Standard
 
-- branch_icon: `string` - the icon to use in front of the git branch name - defaults to `\uE0A`
+- branch_icon: `string` - the icon to use in front of the git branch name - defaults to `\uE0A0 `
 - branch_identical_icon: `string` - the icon to display when remote and local are identical - defaults to `\uF0C9`
 - branch_ahead_icon: `string` - the icon to display when the local branch is ahead of its remote - defaults to `\uF176`
 - branch_behind_icon: `string` - the icon to display when the local branch is behind its remote - defaults to `\uF175`
@@ -59,7 +59,7 @@ Local changes can also shown by default using the following syntax for both the 
 
 ### Upstream context
 
-- display_upstream_icon: `boolean` - display upstrean icon or not - defaults to `false`
+- display_upstream_icon: `boolean` - display upstream icon or not - defaults to `false`
 - github_icon: `string` - icon/text to display when the upstream is Github - defaults to `\uF408 `
 - gitlab_icon: `string` - icon/text to display when the upstream is Gitlab - defaults to `\uF296 `
 - bitbucket_icon: `string` - icon/text to display when the upstream is Bitbucket - defaults to `\uF171 `

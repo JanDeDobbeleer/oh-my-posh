@@ -19,7 +19,7 @@ Display the current path.
   "background": "#61AFEF",
   "properties": {
     "style": "folder",
-    "mappedlocations": [
+    "mapped_locations": [
       ["C:\\temp", "\ue799"]
     ]
   }
@@ -33,7 +33,7 @@ Display the current path.
 - folder_icon: `string` - the icon to use as a folder indication - defaults to `..`
 - windows_registry_icon: `string` - the icon to display when in the Windows registry - defaults to `\uE0B1`
 - style: `enum` - how to display the current path
-- mappedlocations: `[]string` - Custom glyph/text for specific paths(only when `style` is set to `agnoster`, `agnosterfull` or `short`)
+- mapped_locations: `map[string]string` - custom glyph/text for specific paths(only when `style` is set to `agnoster`, `agnosterfull` or `short`)
 
 ## Style
 

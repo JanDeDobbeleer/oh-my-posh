@@ -32,6 +32,8 @@ const (
 	Full string = "full"
 	// Folder displays the current folder
 	Folder string = "folder"
+	// MappedLocations allows overriding certain location with an icon
+	MappedLocations Property = "mapped_locations"
 )
 
 func (pt *path) enabled() bool {
@@ -74,7 +76,7 @@ func (pt *path) getShortPath() string {
 
 	// merge custom locations with mapped locations
 	// mapped locations can override predefined locations
-	keyValues := pt.props.getKeyValueMap("mappedlocations", make(map[string]string))
+	keyValues := pt.props.getKeyValueMap(MappedLocations, make(map[string]string))
 	for key, val := range keyValues {
 		mappedLocations[key] = val
 	}

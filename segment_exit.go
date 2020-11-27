@@ -14,6 +14,8 @@ const (
 	AlwaysEnabled Property = "always_enabled"
 	// ErrorColor specify a different foreground color for the error text when using always_show = true
 	ErrorColor Property = "error_color"
+	// AlwaysNumeric shows error codes as numbers
+	AlwaysNumeric Property = "always_numeric"
 )
 
 func (e *exit) enabled() bool {
@@ -47,6 +49,9 @@ func (e *exit) getFormattedText() string {
 func (e *exit) getMeaningFromExitCode() string {
 	if !e.props.getBool(DisplayExitCode, true) {
 		return ""
+	}
+	if e.props.getBool(AlwaysNumeric, false) {
+		return fmt.Sprintf("%d", e.env.lastErrorCode())
 	}
 	switch e.env.lastErrorCode() {
 	case 1:

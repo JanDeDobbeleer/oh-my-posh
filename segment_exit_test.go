@@ -91,3 +91,18 @@ func TestGetMeaningFromExitCode(t *testing.T) {
 		assert.Equal(t, want, e.getMeaningFromExitCode())
 	}
 }
+
+func TestAlwaysNumericExitCode(t *testing.T) {
+	env := new(MockedEnvironment)
+	env.On("lastErrorCode", nil).Return(1)
+	props := &properties{
+		values: map[Property]interface{}{
+			AlwaysNumeric: true,
+		},
+	}
+	e := &exit{
+		env:   env,
+		props: props,
+	}
+	assert.Equal(t, "1", e.getMeaningFromExitCode())
+}

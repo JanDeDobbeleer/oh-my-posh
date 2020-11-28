@@ -205,7 +205,7 @@ Edit `$PROFILE` in your preferred PowerShell version and add the following lines
     $startInfo = New-Object System.Diagnostics.ProcessStartInfo
     $startInfo.FileName = "C:\tools\oh-my-posh.exe"
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $startInfo.Arguments = "-config=""$env:USERPROFILE\.poshthemes\jandedobbeleer.json"" -error=$errorCode -pwd=""$cleanPWD"""
+    $startInfo.Arguments = "-config=""$env:USERPROFILE\.poshthemes\jandedobbeleer.omp.json"" -error=$errorCode -pwd=""$cleanPWD"""
     $startInfo.Environment["TERM"] = "xterm-256color"
     $startInfo.CreateNoWindow = $true
     $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
@@ -241,7 +241,7 @@ Add the following to `~/.zshrc`:
 
 ```bash
 function powerline_precmd() {
-    PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.json --error $?)"
+    PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json --error $?)"
 }
 
 function install_powerline_precmd() {
@@ -271,7 +271,7 @@ Add the following to `~/.bashrc` (or `~/.profile` on MacOS):
 
 ```bash
 function _update_ps1() {
-    PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.json -error $?)"
+    PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json -error $?)"
 }
 
 if [ "$TERM" != "linux" ] && [ -x "$(command -v oh-my-posh)" ]; then
@@ -304,7 +304,7 @@ which should re-enable the prompt in most cases:
 # Workaround for nix-shell --pure
 if [ "$IN_NIX_SHELL" == "pure" ]; then
     if [ -x oh-my-posh ]; then
-        alias powerline-go="oh-my-posh -config ~/.poshthemes/jandedobbeleer.json"
+        alias powerline-go="oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json"
     fi
 fi
 ```
@@ -322,7 +322,7 @@ Redefine `fish_prompt` in `~/.config/fish/config.fish`:
 
 ```bash
 function fish_prompt
-    eval oh-my-posh -config ~/.poshthemes/jandedobbeleer.json -error $status
+    eval oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json -error $status
 end
 ```
 
@@ -338,7 +338,7 @@ Once added, reload your config for the changes to take effect.
 Set the prompt and restart nu shell:
 
 ```bash
-config set prompt  "= `{{$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.json | str collect)}}`"
+config set prompt  "= `{{$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json | str collect)}}`"
 ```
 
 Restart nu shell for the changes to take effect.
@@ -348,13 +348,13 @@ Restart nu shell for the changes to take effect.
 
 ### 5. Next steps
 
-At this point you're good to go. The `jandedobbeleer.json` theme displays most common use-cases
+At this point you're good to go. The `jandedobbeleer.omp.json` theme displays most common use-cases
 in your prompt so 9/10 you'll be more than happy with it. However, if you want to explore additional
 functionality, going through the additional steps below will help you get started.
 
 #### Change the theme
 
-We downloaded all the themes and set `jandedobbeleer.json` as the one to use.
+We downloaded all the themes and set `jandedobbeleer.omp.json` as the one to use.
 However, there are a lot more to be discovered and maybe there are some you like better.
 
 Adjust your configuration to use any other theme from the folder we created (`~/.poshthemes`).
@@ -365,7 +365,7 @@ Maybe there's a theme you like, but you don't fancy the colors. Or, maybe there'
 want to tweak/add, or replace some of the icons with a different one. Whatever the case, read through all
 available options first, by starting with the [configuration guide][configuration].
 
-Afterwards, the easiest way to go about this is to print the current config and store it elsewhere first (for example `~/.mytheme.json`).
+Afterwards, the easiest way to go about this is to print the current config and store it elsewhere first (for example `~/.mytheme.omp.json`).
 
 ```bash
 oh-my-posh --print-config
@@ -375,7 +375,22 @@ This will write the current configuration in your shell, allowing you to copy pa
 and store it somehwere. Once adjusted to your liking, [change the prompt setting][prompt] to use the newly created file.
 
 ```bash
-oh-my-posh -config ~/.mytheme.json
+oh-my-posh -config ~/.mytheme.omp.json
+```
+
+#### JSON Schema
+
+There's an easy to use [JSON schema][schema] available to validate your theme and have auto completion when editing.
+When using [Visual Studio Code][vscode], you can extend your settings file (F1 -> Preferences: Open Settings (JSON))
+by adding the following lines:
+
+```json
+"json.schemas": [
+  {
+    "fileMatch": ["*.omp.json"],
+    "url": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh3/main/themes/schema.json"
+  }
+]
 ```
 
 🎉🎉🎉
@@ -392,3 +407,5 @@ oh-my-posh -config ~/.mytheme.json
 [brew]: /docs/homebrew
 [prompt]: /docs/installation#4-replace-your-existing-prompt
 [configuration]: /docs/configure
+[schema]: https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh3/main/themes/schema.json
+[vscode]: https://code.visualstudio.com/

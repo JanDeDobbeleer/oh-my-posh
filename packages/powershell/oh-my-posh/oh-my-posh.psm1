@@ -152,7 +152,10 @@ function ThemeCompletion {
         $commandAst,
         $fakeBoundParameter
     )
-    $themes = Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | Select-Object -Property BaseName
+    $themes = Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | Select-Object -Property @{
+        label='BaseName'
+        expression={$_.BaseName.TrimEnd(".omp")}
+    }
     $themes |
     Where-Object { $_.BaseName.ToLower().StartsWith($wordToComplete.ToLower()); } |
     Select-Object -Unique -ExpandProperty BaseName |

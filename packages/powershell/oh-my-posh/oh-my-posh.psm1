@@ -20,7 +20,7 @@ function Get-PoshCommand {
 }
 
 # Set the right binary to executable before doing anything else
-if (!$IsWindows) {
+if (!$IsWindows  -and (Get-Item "Variable:*IsWindows*")) {
     $executable = Get-PoshCommand
     Invoke-Expression -Command "chmod +x $executable"
 }

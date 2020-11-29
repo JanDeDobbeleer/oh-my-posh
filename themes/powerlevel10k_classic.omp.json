@@ -26,7 +26,7 @@
           "background": "#546E7A",
           "properties": {
             "style": "short",
-            "postfix": " "
+            "postfix": "<#546E7A>\u2588</>"
           }
         },
         {
@@ -62,7 +62,7 @@
           "background": "#546E7A",
           "leading_diamond": "\uE0B2",
           "properties": {
-            "postfix": " <#26C6DA>\uE0B3</> "
+            "postfix": " \uE0B3"
           }
         },
         {
@@ -72,7 +72,7 @@
           "background": "#546E7A",
           "properties": {
             "time_format": "15:04:05",
-            "postfix": " \uF017 "
+            "postfix": "<#546e7a>\u2588</>\uF017<#546E7A>\u2588</>"
           }
         }
       ]

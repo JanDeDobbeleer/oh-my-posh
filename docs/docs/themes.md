@@ -4,8 +4,6 @@ title: Themes
 sidebar_label: Themes
 ---
 
-## oh-my-posh themes
-
 ### [Agnoster]
 
 [![Agnoster](/img/themes/agnoster.png)][Agnoster]

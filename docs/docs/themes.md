@@ -6,79 +6,79 @@ sidebar_label: Themes
 
 ### [Agnoster]
 
-[![Agnoster](/img/themes/agnoster.png)][Agnoster]
+[![Agnoster](../static/img/themes/agnoster.png)][Agnoster]
 
 ### [AgnosterPlus]
 
-[![AgnosterPlus](/img/themes/agnosterplus.png)][AgnosterPlus]
+[![AgnosterPlus](../static/img/themes/agnosterplus.png)][AgnosterPlus]
 
 ### [Aliens]
 
-[![Aliens](/img/themes/aliens.png)][Aliens]
+[![Aliens](../static/img/themes/aliens.png)][Aliens]
 
 ### [Avit]
 
-[![Avit](/img/themes/avit.png)][Avit]
+[![Avit](../static/img/themes/avit.png)][Avit]
 
 ### [DarkBlood]
 
-[![DarkBlood](/img/themes/darkblood.png)][DarkBlood]
+[![DarkBlood](../static/img/themes/darkblood.png)][DarkBlood]
 
 ### [Emodipt]
 
-[![Emodipt](/img/themes/emodipt.png)][Emodipt]
+[![Emodipt](../static/img/themes/emodipt.png)][Emodipt]
 
 ### [Fish]
 
-[![Fish](/img/themes/fish.png)][Fish]
+[![Fish](../static/img/themes/fish.png)][Fish]
 
 ### [Honukai]
 
-[![Honukai](/img/themes/honukai.png)][Honukai]
+[![Honukai](../static/img/themes/honukai.png)][Honukai]
 
 ### [JanDeDobbeleer]
 
-[![JanDeDobbeleer](/img/themes/jandedobbeleer.png)][JanDeDobbeleer]
+[![JanDeDobbeleer](../static/img/themes/jandedobbeleer.png)][JanDeDobbeleer]
 
 ### [Lambda]
 
-[![Lambda](/img/themes/lambda.png)][Lambda]
+[![Lambda](../static/img/themes/lambda.png)][Lambda]
 
 ### [Material]
 
-[![Material](/img/themes/material.png)][Material]
+[![Material](../static/img/themes/material.png)][Material]
 
 ### [ParaRussel]
 
-[![ParaRussel](/img/themes/pararussel.png)][ParaRussel]
+[![ParaRussel](../static/img/themes/pararussel.png)][ParaRussel]
 
 ### [Powerlevel10k_Classic]
 
-[![Powerlevel10k_Classic](/img/themes/powerlevel10k_classic.png)][Powerlevel10k_Classic]
+[![Powerlevel10k_Classic](../static/img/themes/powerlevel10k_classic.png)][Powerlevel10k_Classic]
 
 ### [Powerlevel10k_Lean]
 
-[![Powerlevel10k_Lean](/img/themes/powerlevel10k_lean.png)][Powerlevel10k_Lean]
+[![Powerlevel10k_Lean](../static/img/themes/powerlevel10k_lean.png)][Powerlevel10k_Lean]
 
 ### [PowerLine]
 
-[![PowerLine](/img/themes/powerline.png)][PowerLine]
+[![PowerLine](../static/img/themes/powerline.png)][PowerLine]
 
 ### [RobbyRussel]
 
-[![RobbyRussel](/img/themes/robbyrussel.png)][RobbyRussel]
+[![RobbyRussel](../static/img/themes/robbyrussel.png)][RobbyRussel]
 
 ### [Sorin]
 
-[![Sorin](/img/themes/sorin.png)][Sorin]
+[![Sorin](../static/img/themes/sorin.png)][Sorin]
 
 ### [Star]
 
-[![Star](/img/themes/star.png)][Star]
+[![Star](../static/img/themes/star.png)][Star]
 
 ### [Zash]
 
-[![Zash](/img/themes/zash.png)][Zash]
+[![Zash](../static/img/themes/zash.png)][Zash]
 
 [Agnoster]: https://github.com/JanDeDobbeleer/oh-my-posh3/blob/main/themes/agnoster.omp.json 'Agnoster'
 [AgnosterPlus]: https://github.com/JanDeDobbeleer/oh-my-posh3/blob/main/themes/agnosterplus.omp.json 'AgnosterPlus'

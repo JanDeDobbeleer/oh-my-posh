@@ -29,6 +29,7 @@ type environmentInfo interface {
 	getcwd() string
 	homeDir() string
 	hasFiles(pattern string) bool
+	hasFilesInDir(dir, pattern string) bool
 	hasFolder(folder string) bool
 	getFileContent(file string) string
 	getPathSeperator() string
@@ -88,6 +89,15 @@ func (env *environment) getcwd() string {
 func (env *environment) hasFiles(pattern string) bool {
 	cwd := env.getcwd()
 	pattern = cwd + env.getPathSeperator() + pattern
+	matches, err := filepath.Glob(pattern)
+	if err != nil {
+		return false
+	}
+	return len(matches) > 0
+}
+
+func (env *environment) hasFilesInDir(dir, pattern string) bool {
+	pattern = dir + env.getPathSeperator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
 		return false

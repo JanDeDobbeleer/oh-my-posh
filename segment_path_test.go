@@ -33,6 +33,11 @@ func (env *MockedEnvironment) hasFiles(pattern string) bool {
 	return args.Bool(0)
 }
 
+func (env *MockedEnvironment) hasFilesInDir(dir, pattern string) bool {
+	args := env.Called(dir, pattern)
+	return args.Bool(0)
+}
+
 func (env *MockedEnvironment) hasFolder(folder string) bool {
 	args := env.Called(folder)
 	return args.Bool(0)

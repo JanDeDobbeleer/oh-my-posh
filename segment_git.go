@@ -279,8 +279,8 @@ func (g *git) getGitHEADContext(ref string) string {
 }
 
 func (g *git) hasGitFile(file string) bool {
-	files := fmt.Sprintf("%s/.git/%s", g.repo.root, file)
-	return g.env.hasFiles(files)
+	files := fmt.Sprintf(".git/%s", file)
+	return g.env.hasFilesInDir(g.repo.root, files)
 }
 
 func (g *git) hasGitFolder(folder string) bool {

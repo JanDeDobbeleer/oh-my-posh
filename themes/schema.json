@@ -952,6 +952,18 @@
                     "title": "Display Host",
                     "description": "Display the host name or not",
                     "default": true
+                  },
+                  "default_user_name": {
+                    "type": "string",
+                    "title": "Default User Name",
+                    "description": "The name of the default user",
+                    "default": ""
+                  },
+                  "display_default_user": {
+                    "type": "boolean",
+                    "title": "Display Default User",
+                    "description": "Display the segment when default user or not",
+                    "default": true
                   }
                 }
               }

@@ -30,5 +30,8 @@ to `\uF817 `
 - host_color: `string` [color][colors] - override the foreground color of the host name
 - display_user: `boolean` - display the user name or not - defaults to `true`
 - display_host: `boolean` - display the host name or not - defaults to `true`
+- default_user_name: `string` - name of the default user - defaults to empty
+- display_default_user: `boolean` - display the segment or not when the user matches `default_user_name` - defaults
+to `true`
 
 [colors]: /docs/configure#colors

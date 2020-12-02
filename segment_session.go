@@ -6,8 +6,9 @@ import (
 )
 
 type session struct {
-	props *properties
-	env   environmentInfo
+	props    *properties
+	env      environmentInfo
+	userName string
 }
 
 const (
@@ -23,9 +24,19 @@ const (
 	DisplayUser Property = "display_user"
 	// SSHIcon shows when in an SSH session
 	SSHIcon Property = "ssh_icon"
+	// DefaultUserName holds the default user of the platform
+	DefaultUserName Property = "default_user_name"
+	// DisplayDefaultUser hides or shows the user name when it's the user set in DefaultUserName
+	DisplayDefaultUser Property = "display_default_user"
 )
 
 func (s *session) enabled() bool {
+	s.userName = s.getUserName()
+	showDefaultUser := s.props.getBool(DisplayDefaultUser, true)
+	defaultUser := s.props.getString(DefaultUserName, "")
+	if !showDefaultUser && defaultUser == s.userName {
+		return false
+	}
 	return true
 }
 
@@ -39,7 +50,7 @@ func (s *session) init(props *properties, env environmentInfo) {
 }
 
 func (s *session) getFormattedText() string {
-	username := s.getUserName()
+	username := s.userName
 	computername := s.getComputerName()
 	separator := ""
 	if s.props.getBool(DisplayHost, true) && s.props.getBool(DisplayUser, true) {

@@ -40,6 +40,7 @@ func setupSession(args *sessionArgs) session {
 
 func testUserInfoWriter(args *sessionArgs) string {
 	s := setupSession(args)
+	_ = s.enabled()
 	return s.getFormattedText()
 }
 
@@ -77,6 +78,7 @@ func TestWriteOnlyUsername(t *testing.T) {
 	s := setupSession(args)
 	s.props.values[DisplayHost] = false
 	want := "<#fff>bill</><#fff></>"
+	assert.True(t, s.enabled())
 	got := s.getFormattedText()
 	assert.EqualValues(t, want, got)
 }
@@ -91,6 +93,7 @@ func TestWriteOnlyHostname(t *testing.T) {
 	s := setupSession(args)
 	s.props.values[DisplayUser] = false
 	want := "<#fff></><#fff>surface</>"
+	assert.True(t, s.enabled())
 	got := s.getFormattedText()
 	assert.EqualValues(t, want, got)
 }

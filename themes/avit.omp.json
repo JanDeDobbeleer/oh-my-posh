@@ -8,7 +8,6 @@
           "type": "path",
           "style": "plain",
           "foreground": "#ffffff",
-          "background": "transparent",
           "properties": {
             "prefix": "",
             "style": "short"
@@ -17,23 +16,17 @@
         {
           "type": "git",
           "style": "plain",
-          "foreground": "#C2C206",
-          "background": "transparent",
-          "properties": {
-            "prefix": ""
-          }
+          "foreground": "#C2C206"
         },
         {
           "type": "root",
           "style": "plain",
-          "foreground": "#B5B50D",
-          "background": "transparent"
+          "foreground": "#B5B50D"
         },
         {
           "type": "exit",
           "style": "plain",
           "foreground": "#C94A16",
-          "background": "transparent",
           "properties": {
             "prefix": "x"
           }
@@ -51,10 +44,8 @@
           "type": "text",
           "style": "plain",
           "foreground": "#007ACC",
-          "background": "transparent",
           "properties": {
             "prefix": "",
-            "postfix": "",
             "text": "\uE602"
           }
         }

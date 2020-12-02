@@ -8,7 +8,6 @@
           "type": "session",
           "style": "plain",
           "foreground": "#E36464",
-          "background": "transparent",
           "properties": {
             "user_info_separator": "",
             "display_host": false,
@@ -19,7 +18,6 @@
           "type": "text",
           "style": "plain",
           "foreground": "#62ED8B",
-          "background": "transparent",
           "properties": {
             "text": "\u279C",
             "postfix": "",
@@ -30,7 +28,6 @@
           "type": "path",
           "style": "plain",
           "foreground": "#56B6C2",
-          "background": "transparent",
           "properties": {
             "style": "folder",
             "postfix": ""
@@ -40,19 +37,17 @@
           "type": "git",
           "style": "plain",
           "foreground": "#D4AAFC",
-          "background": "transparent",
           "properties": {
             "branch_icon": "",
             "display_status": false,
             "prefix": " <#DDB15F>git(</>",
-            "postfix": "<#DDB15F>)</>"  
+            "postfix": "<#DDB15F>)</>"
           }
         },
         {
           "type": "exit",
           "style": "plain",
           "foreground": "#DCB977",
-          "background": "transparent",
           "properties": {
             "prefix": "\uD00D",
             "display_exit_code": false,

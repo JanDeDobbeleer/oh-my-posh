@@ -7,37 +7,23 @@
         {
           "type": "exit",
           "style": "plain",
-          "foreground": "#CB4B16",
-          "background": "transparent",
-          "properties": {
-            "prefix": ""
-          }
+          "foreground": "#CB4B16"
         },
         {
           "type": "root",
           "style": "plain",
-          "foreground": "#CECE04",
-          "background": "transparent",
-          "properties": {
-            "prefix": ""
-          }
+          "foreground": "#CECE04"
         },
         {
           "type": "session",
           "style": "plain",
-          "foreground": "#FFFFFF",
-          "background": "transparent",
-          "properties": {
-            "prefix": ""
-          }
+          "foreground": "#FFFFFF"
         },
         {
           "type": "path",
           "style": "plain",
           "foreground": "#0973C0",
-          "background": "transparent",
           "properties": {
-            "prefix": "",
             "style": "short"
           }
         },
@@ -45,7 +31,6 @@
           "type": "git",
           "style": "plain",
           "foreground": "#C1C106",
-          "background": "transparent",
           "properties": {
             "prefix": "<#ffffff>git:</>"
           }
@@ -54,7 +39,6 @@
           "type": "python",
           "style": "plain",
           "foreground": "#100e23",
-          "background": "transparent",
           "properties": {
             "prefix": " \uE235 "
           }
@@ -63,7 +47,6 @@
           "type": "text",
           "style": "plain",
           "foreground": "#ffffff",
-          "background": "transparent",
           "properties": {
             "prefix": "",
             "text": "<#CB4B16>\u276F</><#CACA02>\u276F</><#4E9A06>\u276F</>"

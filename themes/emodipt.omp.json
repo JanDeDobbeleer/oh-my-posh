@@ -8,7 +8,6 @@
           "type": "time",
           "style": "plain",
           "foreground": "#E5C07B",
-          "background": "transparent",
           "properties": {
             "time_format": "15:04:05",
             "prefix": "[",
@@ -18,14 +17,12 @@
         {
           "type": "root",
           "style": "plain",
-          "foreground": "#B5B50D",
-          "background": "transparent"
+          "foreground": "#B5B50D"
         },
         {
           "type": "path",
           "style": "plain",
           "foreground": "#61AFEF",
-          "background": "transparent",
           "properties": {
             "style": "agnoster",
             "postfix": " on"
@@ -35,7 +32,6 @@
           "type": "git",
           "style": "plain",
           "foreground": "#F3C267",
-          "background": "transparent",
           "properties": {
             "display_status": true,
             "branch_identical_icon": "\uF14A",
@@ -46,7 +42,6 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#C94A16",
-          "background": "transparent",
           "properties": {
             "prefix": "x"
           }
@@ -55,14 +50,13 @@
           "type": "text",
           "style": "plain",
           "foreground": "#E06C75",
-          "background": "transparent",
           "properties": {
             "prefix": "",
-            "text": "\u276F"
+            "text": " \u276F"
           }
         }
       ]
     }
   ],
-  "final_space": false
+  "final_space": true
 }

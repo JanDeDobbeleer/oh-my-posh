@@ -64,7 +64,7 @@ function Set-PoshPrompt {
         Set-PoshContext
         if ($lastCommandSuccess -eq $false) {
             #native app exit code
-            if ($realLASTEXITCODE -is [int]) {
+            if ($realLASTEXITCODE -is [int] -and $realLASTEXITCODE -gt 0) {
                 $errorCode = $realLASTEXITCODE
             }
             else {

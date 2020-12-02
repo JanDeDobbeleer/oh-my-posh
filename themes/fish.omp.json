@@ -8,6 +8,7 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#ffffff",
+          "background": "transparent",
           "properties": {
             "postfix": ""
           }
@@ -15,12 +16,14 @@
         {
           "type": "root",
           "style": "plain",
-          "foreground": "#100e23"
+          "foreground": "#100e23",
+          "background": "transparent"
         },
         {
           "type": "session",
           "style": "plain",
-          "foreground": "#ffffff"
+          "foreground": "#ffffff",
+          "background": "transparent"
         },
         {
           "type": "path",
@@ -49,6 +52,7 @@
           "type": "text",
           "style": "plain",
           "foreground": "#007ACC",
+          "background": "transparent",
           "properties": {
             "prefix": "",
             "text": "\uE0B0"

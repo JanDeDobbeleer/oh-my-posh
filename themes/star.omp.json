@@ -8,6 +8,7 @@
           "type": "root",
           "style": "plain",
           "foreground": "#E06C75",
+          "background": "transparent",
           "properties": {
             "root_icon": "root",
             "prefix": "",
@@ -18,6 +19,7 @@
           "type": "path",
           "style": "plain",
           "foreground": "#55B9C4",
+          "background": "transparent",
           "properties": {
             "style": "folder",
             "prefix": ""
@@ -27,6 +29,7 @@
           "type": "git",
           "style": "plain",
           "foreground": "#C678DD",
+          "background": "transparent",
           "properties": {
             "prefix": "<#ffffff>on</> ",
             "display_status": true
@@ -36,6 +39,7 @@
           "type": "node",
           "style": "plain",
           "foreground": "#98C379",
+          "background": "transparent",
           "properties": {
             "display_version": true,
             "prefix": "<#ffffff>via</> \uE781 "
@@ -45,6 +49,7 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#C94A16",
+          "background": "transparent",
           "properties": {
             "prefix": "x",
             "display_exit_code": false
@@ -63,6 +68,7 @@
           "type": "text",
           "style": "plain",
           "foreground": "#63F08C",
+          "background": "transparent",
           "properties": {
             "prefix": "",
             "text": "\u279C"

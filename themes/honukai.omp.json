@@ -8,6 +8,7 @@
           "type": "session",
           "style": "plain",
           "foreground": "#FFFFFF",
+          "background": "transparent",
           "properties": {
             "user_info_separator": " <#ffffff>in</> ",
             "prefix": "<#0377C8># </>",
@@ -19,6 +20,7 @@
           "type": "path",
           "style": "plain",
           "foreground": "#0973C0",
+          "background": "transparent",
           "properties": {
             "folder_icon": "\uF115",
             "folder_separator_icon": "\uE0B1",
@@ -29,6 +31,7 @@
           "type": "git",
           "style": "plain",
           "foreground": "#B8B80A",
+          "background": "transparent",
           "properties": {
             "prefix": "<#ffffff>on git:</>"
           }
@@ -43,6 +46,7 @@
           "type": "time",
           "style": "plain",
           "foreground": "#ffffff",
+          "background": "transparent",
           "properties": {
             "prefix": "[",
             "postfix": "]"
@@ -61,6 +65,7 @@
           "type": "root",
           "style": "plain",
           "foreground": "#CECE04",
+          "background": "transparent",
           "properties": {
             "prefix": ""
           }
@@ -69,6 +74,7 @@
           "type": "python",
           "style": "plain",
           "foreground": "#100e23",
+          "background": "transparent",
           "properties": {
             "prefix": " \uE235 "
           }
@@ -76,12 +82,14 @@
         {
           "type": "exit",
           "style": "plain",
-          "foreground": "#CB4B16"
+          "foreground": "#CB4B16",
+          "background": "transparent"
         },
         {
           "type": "text",
           "style": "plain",
           "foreground": "#CC4B16",
+          "background": "transparent",
           "properties": {
             "prefix": "",
             "text": "\u279C"
@@ -90,5 +98,5 @@
       ]
     }
   ],
-  "final_space": true
+  "final_space": false
 }

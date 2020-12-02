@@ -8,6 +8,7 @@
           "type": "text",
           "style": "plain",
           "foreground": "#ffffff",
+          "background": "transparent",
           "properties": {
             "prefix": "",
             "text": "<#C591E8>\u276F</><#69FF94>\u276F</>"
@@ -17,7 +18,9 @@
           "type": "path",
           "style": "plain",
           "foreground": "#56B6C2",
+          "background": "transparent",
           "properties": {
+            "prefix": "",
             "style": "folder"
           }
         },
@@ -25,6 +28,7 @@
           "type": "git",
           "style": "plain",
           "foreground": "#D0666F",
+          "background": "transparent",
           "properties": {
             "branch_icon": "",
             "display_status": false,
@@ -36,6 +40,7 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#DCB977",
+          "background": "transparent",
           "properties": {
             "prefix": "\uD00D",
             "display_exit_code": false
@@ -51,6 +56,7 @@
           "type": "command",
           "style": "plain",
           "foreground": "#ffffff",
+          "background": "transparent",
           "properties": {
             "shell": "bash",
             "command": "git log --pretty=format:%cr -1 || date +%H:%m:%S"
@@ -69,13 +75,14 @@
           "type": "text",
           "style": "plain",
           "foreground": "#ffffff",
+          "background": "transparent",
           "properties": {
             "prefix": "",
-            "text": "\uF441"
+            "text": "\uF441 "
           }
         }
       ]
     }
   ],
-  "final_space": true
+  "final_space": false
 }

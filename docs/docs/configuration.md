@@ -182,10 +182,12 @@ You can use these on any segment, the engine is responsible for adding them corr
 ##### Prefix
 
 The string content will be put in front of the segment's output text. Useful for symbols, text or other customizations.
+Defaults to `<color>\u2588</>` where `color` is the background color of the segment.
 
 ##### Postfix
 
 The string content will be put after the segment's output text. Useful for symbols, text or other customizations.
+Defaults to `<color>\u2588</>` where `color` is the background color of the segment.
 
 ##### Ignore Folders
 
@@ -200,9 +202,10 @@ segment's configuration will not render it when in that location. The engine wil
 
 #### Colors
 
-You have the ability to override the foreground and/or background color for text in any property that accepts it. The syntax is custom but
-should be rather straighforward: `<#ffffff,#000000>this is white with black background</> <#FF479C>but this is pink</>`. Anything between the color start
-`<#FF479C>` and end `</>` will be colored accordingly.
+You have the ability to override the foreground and/or background color for text in any property that accepts it.
+The syntax is custom but should be rather straighforward:
+`<#ffffff,#000000>this is white with black background</> <#FF479C>but this is pink</>`.
+Anything between the color start `<#FF479C>` and end `</>` will be colored accordingly.
 
 For example, if you want `prefix` to print a colored bracket which isn't the same as the segment's `foreground`, you can
 do so like this:
@@ -224,12 +227,11 @@ To change *only* the background color, just omit the first color from the above 
 ```
 
 Oh my Posh mainly supports three different color types being
-* Typical [hex colors][hexcolors] (for example `#CB4B16`).
 
-* The `transparent` keyword which can be used to create either a transparent foreground override
+- Typical [hex colors][hexcolors] (for example `#CB4B16`).
+- The `transparent` keyword which can be used to create either a transparent foreground override
   or transparent background color using the segement's foreground property.
-
-* 16 [ANSI color names][ansicolors].
+- 16 [ANSI color names][ansicolors].
 
   These include 8 basic ANSI colors and `default`:
 
@@ -254,6 +256,7 @@ Oh my Posh mainly supports three different color types being
           "type": "time",
           "style": "plain",
           "foreground": "#007ACC",
+          "background": "transparent",
           "properties": {
             "time_format": "15:04:05"
           }

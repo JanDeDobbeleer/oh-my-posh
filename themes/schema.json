@@ -7,7 +7,31 @@
   "definitions": {
     "color": {
       "type": "string",
-      "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite)$",
+      "oneOf": [
+        { "pattern": "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" },
+        {
+          "enum": [
+            "black",
+            "red",
+            "green",
+            "yellow",
+            "blue",
+            "magenta",
+            "cyan",
+            "white",
+            "default",
+            "darkGray",
+            "lightRed",
+            "lightGreen",
+            "lightYellow",
+            "lightBlue",
+            "lightMagenta",
+            "lightCyan",
+            "lightWhite",
+            "transparent"
+          ]
+        }
+      ],
       "title": "Color string",
       "description": "https://ohmyposh.dev/docs/configure#colors"
     },
@@ -76,7 +100,7 @@
       "title": "A segment",
       "description": "https://ohmyposh.dev/docs/configure#segment",
       "default": {},
-      "required": ["type", "style", "foreground"],
+      "required": ["type", "style", "foreground", "background"],
       "properties": {
         "type": {
           "type": "string",

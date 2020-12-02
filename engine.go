@@ -64,8 +64,9 @@ func (e *engine) renderDiamondSegment(text string) {
 }
 
 func (e *engine) renderText(text string) {
-	prefix := e.activeSegment.getValue(Prefix, " ")
-	postfix := e.activeSegment.getValue(Postfix, " ")
+	defaultValue := fmt.Sprintf("<%s>\u2588</>", e.activeSegment.Background)
+	prefix := e.activeSegment.getValue(Prefix, defaultValue)
+	postfix := e.activeSegment.getValue(Postfix, defaultValue)
 	e.renderer.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("%s%s%s", prefix, text, postfix))
 	if *e.env.getArgs().Debug {
 		e.renderer.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("(%s:%s)", e.activeSegment.Type, e.activeSegment.timing))

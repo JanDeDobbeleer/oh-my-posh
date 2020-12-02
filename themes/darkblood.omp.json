@@ -8,6 +8,7 @@
           "type": "session",
           "style": "plain",
           "foreground": "#ffffff",
+          "background": "transparent",
           "properties": {
             "user_info_separator": "",
             "display_host": false,
@@ -19,6 +20,7 @@
           "type": "git",
           "style": "plain",
           "foreground": "#ffffff",
+          "background": "transparent",
           "properties": {
             "prefix": "<#CB4B16>[</>",
             "postfix": "<#CB4B16>]</>"
@@ -28,6 +30,7 @@
           "type": "root",
           "style": "plain",
           "foreground": "#ffffff",
+          "background": "transparent",
           "properties": {
             "prefix": "<#CB4B16>[</>",
             "postfix": "<#CB4B16>]</>"
@@ -37,6 +40,7 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#ffffff",
+          "background": "transparent",
           "properties": {
             "prefix": "<#CB4B16>[x</>",
             "postfix": "<#CB4B16>]</>"
@@ -55,6 +59,7 @@
           "type": "path",
           "style": "plain",
           "foreground": "#ffffff",
+          "background": "transparent",
           "properties": {
             "style": "short",
             "prefix": "<#CB4B16>┖[</>",

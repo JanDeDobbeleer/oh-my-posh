@@ -9,7 +9,6 @@
           "type": "time",
           "style": "plain",
           "foreground": "#007ACC",
-          "background": "transparent",
           "properties": {
             "time_format": "15:04:05"
           }

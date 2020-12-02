@@ -9,7 +9,6 @@
           "type": "time",
           "style": "plain",
           "foreground": "#00C5C7",
-          "background": "transparent",
           "properties": {
             "time_format": "15:04:05"
           }
@@ -27,7 +26,6 @@
           "type": "path",
           "style": "plain",
           "foreground": "#77E4F7",
-          "background": "transparent",
           "properties": {
             "prefix": "",
             "style": "short"
@@ -37,7 +35,6 @@
           "type": "git",
           "style": "plain",
           "foreground": "#FFE700",
-          "background": "transparent",
           "properties": {
             "prefix": ""
           }
@@ -46,7 +43,6 @@
           "type": "text",
           "style": "plain",
           "foreground": "#43D426",
-          "background": "transparent",
           "properties": {
             "prefix": "",
             "text": "\u276F"

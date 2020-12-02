@@ -70,7 +70,6 @@
           "type": "text",
           "style": "plain",
           "foreground": "#007ACC",
-          "background": "transparent",
           "properties": {
             "prefix": "",
             "text": "\u276F"

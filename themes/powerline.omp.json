@@ -7,14 +7,12 @@
         {
           "type": "root",
           "style": "plain",
-          "foreground": "#FFEE58",
-          "background": "transparent"
+          "foreground": "#FFEE58"
         },
         {
           "type": "session",
           "style": "plain",
-          "foreground": "#ffffff",
-          "background": "transparent"
+          "foreground": "#ffffff"
         },
         {
           "type": "path",

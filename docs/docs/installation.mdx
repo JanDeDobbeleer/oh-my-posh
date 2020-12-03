@@ -132,6 +132,21 @@ Expand-Archive ~\.poshthemes\themes.zip -DestinationPath ~\.poshthemes -Force
 Remove-Item ~\.poshthemes\themes.zip
 ```
 
+#### Preview the themes
+
+When using Scoop, replace `"~\.poshthemes\*"` with `"$(scoop prefix oh-my-posh)/themes/*"`
+
+```powershell
+Get-ChildItem -Path "~\.poshthemes\*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
+    $esc = [char]27
+    Write-Host ""
+    Write-Host "$esc[1m$($_.BaseName)$esc[0m"
+    Write-Host ""
+    & "C:\tools\oh-my-posh.exe" -config $($_.FullName) -pwd $PWD
+    Write-Host ""
+}
+```
+
 </TabItem>
 <TabItem value="macos">
 
@@ -149,6 +164,14 @@ chmod u+rw ~/.poshthemes/*.json
 rm ~/.poshthemes/themes.zip
 ```
 
+#### Preview the themes
+
+When using Hombrew, replace `~/.poshthemes/*.omp.json` with `$(brew --prefix oh-my-posh)/themes/*.omp.json`
+
+```bash
+for file in ~/.poshthemes/*.omp.json; do echo "$file\n"; oh-my-posh --config $file --shell universal; echo "\n"; done;
+```
+
 </TabItem>
 <TabItem value="unix">
 
@@ -160,6 +183,12 @@ wget https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/them
 unzip ~/.poshthemes/themes.zip -d ~/.poshthemes
 chmod u+rw ~/.poshthemes/*.json
 rm ~/.poshthemes/themes.zip
+```
+
+#### Preview the themes
+
+```bash
+for file in ~/.poshthemes/*.omp.json; do echo "$file\n"; oh-my-posh --config $file --shell universal; echo "\n"; done;
 ```
 
 </TabItem>

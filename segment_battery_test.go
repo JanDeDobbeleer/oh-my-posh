@@ -149,3 +149,37 @@ func TestBatteryErrorHidden(t *testing.T) {
 	assert.True(t, b.enabled())
 	assert.Equal(t, "100%", b.string())
 }
+
+func TestBatteryDischargingAndDisplayChargingDisabled(t *testing.T) {
+	props := &properties{
+		values: map[Property]interface{}{
+			DischargingIcon: "going down ",
+			DisplayCharging: false,
+		},
+	}
+	b := setupBatteryTests(battery.Discharging, 70, props)
+	assert.Equal(t, true, b.enabled())
+	assert.Equal(t, "going down 70", b.string())
+}
+
+func TestBatteryChargingAndDisplayChargingDisabled(t *testing.T) {
+	props := &properties{
+		values: map[Property]interface{}{
+			ChargingIcon:    "charging ",
+			DisplayCharging: false,
+		},
+	}
+	b := setupBatteryTests(battery.Charging, 80, props)
+	assert.Equal(t, false, b.enabled())
+}
+
+func TestBatteryChargedAndDisplayChargingDisabled(t *testing.T) {
+	props := &properties{
+		values: map[Property]interface{}{
+			ChargedIcon:     "charged ",
+			DisplayCharging: false,
+		},
+	}
+	b := setupBatteryTests(battery.Full, 100, props)
+	assert.Equal(t, false, b.enabled())
+}

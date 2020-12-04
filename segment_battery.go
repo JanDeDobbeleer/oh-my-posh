@@ -30,10 +30,18 @@ const (
 	ChargingColor Property = "charging_color"
 	// DischargingColor to display when discharging
 	DischargingColor Property = "discharging_color"
+	// DisplayCharging Hide the battery icon while it's charging
+	DisplayCharging Property = "display_charging"
 )
 
 func (b *batt) enabled() bool {
 	bt, err := b.env.getBatteryInfo()
+
+	display := b.props.getBool(DisplayCharging, true)
+	if !display && (bt.State == battery.Charging || bt.State == battery.Full) {
+		return false
+	}
+
 	displayError := b.props.getBool(DisplayError, false)
 	if err != nil && !displayError {
 		b.percentageText = "100%"

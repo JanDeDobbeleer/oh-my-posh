@@ -26,7 +26,8 @@ Battery displays the remaining power percentage for your battery.
     "charged_color": "#4caf50",
     "charging_color": "#40c4ff",
     "discharging_color": "#ff5722",
-    "postfix": "\uF295 "
+    "postfix": "\uF295 ",
+    "display_charging": true
   }
 }
 ```
@@ -42,5 +43,6 @@ Battery displays the remaining power percentage for your battery.
 - charged_color: `string` [color][colors] - color to use when fully charged - defaults to segment color
 - charging_color: `string` [color][colors] - color to use when charging - defaults to segment color
 - discharging_color: `string` [color][colors] - color to use when discharging - defaults to segment color
+- display_charging: `bool` - displays the battery status while charging (Charging or Full)
 
 [colors]: /docs/configure#colors

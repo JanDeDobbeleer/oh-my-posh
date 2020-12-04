@@ -277,7 +277,13 @@
                   },
                   "charged_color": { "$ref": "#/definitions/color" },
                   "charging_color": { "$ref": "#/definitions/color" },
-                  "discharging_color": { "$ref": "#/definitions/color" }
+                  "discharging_color": { "$ref": "#/definitions/color" },
+                  "display_charging": {
+                    "type": "boolean",
+                    "title": "Display while charging",
+                    "description": "displays the battery status while charging (Charging or Full)",
+                    "default": true
+                  }
                 }
               }
             }

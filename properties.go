@@ -97,31 +97,37 @@ func (p *properties) getKeyValueMap(property Property, defaultValue map[string]s
 	return keyValues
 }
 
-func parseStringArray(value interface{}) []string {
-	expectedValue, ok := value.([]interface{})
-	if !ok {
+func parseStringArray(param interface{}) []string {
+	switch v := param.(type) {
+	default:
 		return []string{}
+	case []interface{}:
+		list := make([]string, len(v))
+		for i, v := range v {
+			list[i] = fmt.Sprint(v)
+		}
+		return list
+	case []string:
+		return v
 	}
-	list := make([]string, len(expectedValue))
-	for i, v := range expectedValue {
-		list[i] = fmt.Sprint(v)
-	}
-	return list
 }
 
-func parseKeyValueArray(value interface{}) map[string]string {
-	locations, ok := value.([]interface{})
-	if !ok {
+func parseKeyValueArray(param interface{}) map[string]string {
+	switch v := param.(type) {
+	default:
 		return map[string]string{}
-	}
-	keyValueArray := make(map[string]string)
-	for _, s := range locations {
-		l := parseStringArray(s)
-		if len(l) == 2 {
-			key := l[0]
-			val := l[1]
-			keyValueArray[key] = val
+	case []interface{}:
+		keyValueArray := make(map[string]string)
+		for _, s := range v {
+			l := parseStringArray(s)
+			if len(l) == 2 {
+				key := l[0]
+				val := l[1]
+				keyValueArray[key] = val
+			}
 		}
+		return keyValueArray
+	case map[string]string:
+		return v
 	}
-	return keyValueArray
 }

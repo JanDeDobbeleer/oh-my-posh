@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"fmt"
+	"regexp"
 	"time"
 )
 
@@ -105,11 +107,13 @@ func (segment *Segment) getValue(property Property, defaultValue string) string 
 	return defaultValue
 }
 
-func (segment *Segment) hasValue(property Property, match string) bool {
-	if value, ok := segment.Properties[property]; ok {
+func (segment *Segment) shouldIgnoreFolder(cwd string) bool {
+	if value, ok := segment.Properties[IgnoreFolders]; ok {
 		list := parseStringArray(value)
 		for _, element := range list {
-			if element == match {
+			pattern := fmt.Sprintf("^%s$", element)
+			matched, err := regexp.MatchString(pattern, cwd)
+			if err == nil && matched {
 				return true
 			}
 		}
@@ -159,7 +163,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 
 func (segment *Segment) setStringValue(env environmentInfo, cwd string, debug bool) {
 	err := segment.mapSegmentWithWriter(env)
-	if err != nil || segment.hasValue(IgnoreFolders, cwd) {
+	if err != nil || segment.shouldIgnoreFolder(cwd) {
 		return
 	}
 	// add timing only in debug

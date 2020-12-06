@@ -7,6 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	cwd = "Projects/oh-my-posh3"
+)
+
 func TestMapSegmentWriterCanMap(t *testing.T) {
 	sc := &Segment{
 		Type: Session,
@@ -41,7 +45,7 @@ func TestParseTestSettings(t *testing.T) {
 				"prefix": " \uE5FF ",
 				"style": "folder",
 				"ignore_folders": [
-					"go-my-psh"
+					"/super/secret/project"
 				]
 			}
 		}
@@ -49,7 +53,47 @@ func TestParseTestSettings(t *testing.T) {
 	segment := &Segment{}
 	err := json.Unmarshal([]byte(segmentJSON), segment)
 	assert.NoError(t, err)
-	expected := "go-my-psh"
-	got := segment.hasValue(IgnoreFolders, expected)
+	cwd := "/super/secret/project"
+	got := segment.shouldIgnoreFolder(cwd)
 	assert.True(t, got)
+}
+
+func TestShouldIgnoreFolderRegex(t *testing.T) {
+	segment := &Segment{
+		Properties: map[Property]interface{}{
+			IgnoreFolders: []string{"Projects[\\/].*"},
+		},
+	}
+	got := segment.shouldIgnoreFolder(cwd)
+	assert.True(t, got)
+}
+
+func TestShouldIgnoreFolderRegexNonEscaped(t *testing.T) {
+	segment := &Segment{
+		Properties: map[Property]interface{}{
+			IgnoreFolders: []string{"Projects/.*"},
+		},
+	}
+	got := segment.shouldIgnoreFolder(cwd)
+	assert.True(t, got)
+}
+
+func TestShouldIgnoreFolderRegexInverted(t *testing.T) {
+	segment := &Segment{
+		Properties: map[Property]interface{}{
+			IgnoreFolders: []string{"(?!Projects[\\/]).*"},
+		},
+	}
+	got := segment.shouldIgnoreFolder(cwd)
+	assert.False(t, got)
+}
+
+func TestShouldIgnoreFolderRegexInvertedNonEscaped(t *testing.T) {
+	segment := &Segment{
+		Properties: map[Property]interface{}{
+			IgnoreFolders: []string{"(?!Projects/).*"},
+		},
+	}
+	got := segment.shouldIgnoreFolder(cwd)
+	assert.False(t, got)
 }

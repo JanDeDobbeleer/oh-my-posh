@@ -198,10 +198,30 @@ segment's configuration will not render it when in that location. The engine wil
 ]
 ```
 
+You can also specify a [regular expression][regex] to create wildcards to exclude certain folders.
+In the sample below, folders inside the `/Users/posh/Projects` path will not show the segment.
+
+```json
+"ignore_folders": [
+  "/Users/posh/Projects/.*"
+]
+```
+
+Want to only show the segment inside certain folders? Use the [negative lookahead][regex-nl] to only match folders
+in a certain path. Everything else will be ignored. In the sample below, only folders inside the
+`/Users/posh/Projects/` path will show the segment.
+
+```json
+"ignore_folders": [
+  "(?!/Users/posh/Projects/).*"
+]
+```
+
 #### Colors
 
-You have the ability to override the foreground and/or background color for text in any property that accepts it. The syntax is custom but
-should be rather straighforward: `<#ffffff,#000000>this is white with black background</> <#FF479C>but this is pink</>`. Anything between the color start
+You have the ability to override the foreground and/or background color for text in any property that accepts it.
+The syntax is custom but should be rather straighforward:
+`<#ffffff,#000000>this is white with black background</> <#FF479C>but this is pink</>`. Anything between the color start
 `<#FF479C>` and end `</>` will be colored accordingly.
 
 For example, if you want `prefix` to print a colored bracket which isn't the same as the segment's `foreground`, you can
@@ -224,12 +244,11 @@ To change *only* the background color, just omit the first color from the above 
 ```
 
 Oh my Posh mainly supports three different color types being
-* Typical [hex colors][hexcolors] (for example `#CB4B16`).
 
-* The `transparent` keyword which can be used to create either a transparent foreground override
+- Typical [hex colors][hexcolors] (for example `#CB4B16`).
+- The `transparent` keyword which can be used to create either a transparent foreground override
   or transparent background color using the segement's foreground property.
-
-* 16 [ANSI color names][ansicolors].
+- 16 [ANSI color names][ansicolors].
 
   These include 8 basic ANSI colors and `default`:
 
@@ -329,3 +348,5 @@ Oh my Posh mainly supports three different color types being
 [hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [fg]: /docs/configure#foreground
+[regex]: https://www.regular-expressions.info/tutorial.html
+[regex-nl]: https://www.regular-expressions.info/lookaround.html

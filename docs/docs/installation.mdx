@@ -231,10 +231,17 @@ Edit `$PROFILE` in your preferred PowerShell version and add the following lines
             $errorCode = 1
         }
     }
+
+    $executionTime = -1
+    $history = Get-History -ErrorAction Ignore -Count 1
+    if ($null -ne $history) {
+        $executionTime = $history.Duration.TotalMilliseconds
+    }
+
     $startInfo = New-Object System.Diagnostics.ProcessStartInfo
     $startInfo.FileName = "C:\tools\oh-my-posh.exe"
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $startInfo.Arguments = "-config=""$env:USERPROFILE\.poshthemes\jandedobbeleer.omp.json"" -error=$errorCode -pwd=""$cleanPWD"""
+    $startInfo.Arguments = "-config=""$env:USERPROFILE\.poshthemes\jandedobbeleer.omp.json"" -error=$errorCode -pwd=""$cleanPWD"" -execution-time=$executionTime"
     $startInfo.Environment["TERM"] = "xterm-256color"
     $startInfo.CreateNoWindow = $true
     $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
@@ -269,21 +276,40 @@ Once added, reload your profile for the changes to take effect.
 Add the following to `~/.zshrc`:
 
 ```bash
-function powerline_precmd() {
-    PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json --error $?)"
+function omp_preexec() {
+  omp_start_time=$(($(date +%s%0N)/1000000))
 }
 
-function install_powerline_precmd() {
-  for s in "${precmd_functions[@]}"; do
-    if [ "$s" = "powerline_precmd" ]; then
+function omp_precmd() {
+  omp_elapsed=-1
+  if [ $omp_start_time ]; then
+    omp_now=$(($(date +%s%0N)/1000000))
+    omp_elapsed=$(($omp_now-$omp_start_time))
+  fi
+  PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json --error $? --execution-time $omp_elapsed)"
+  unset omp_start_time
+  unset omp_now
+  unset omp_elapsed
+}
+
+function install_omp_hooks() {
+  for s in "${preexec_functions[@]}"; do
+    if [ "$s" = "omp_preexec" ]; then
       return
     fi
   done
-  precmd_functions+=(powerline_precmd)
+  preexec_functions+=(omp_preexec)
+
+  for s in "${precmd_functions[@]}"; do
+    if [ "$s" = "omp_precmd" ]; then
+      return
+    fi
+  done
+  precmd_functions+=(omp_precmd)
 }
 
 if [ "$TERM" != "linux" ]; then
-    install_powerline_precmd
+  install_omp_hooks
 fi
 ```
 

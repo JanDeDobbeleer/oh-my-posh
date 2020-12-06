@@ -104,3 +104,43 @@ func TestGetBoolInvalidProperty(t *testing.T) {
 	value := properties.getBool(DisplayHost, false)
 	assert.False(t, value)
 }
+
+func TestGetFloat64(t *testing.T) {
+	expected := float64(1337)
+	values := map[Property]interface{}{"myfloat": expected}
+	properties := properties{
+		values: values,
+	}
+	value := properties.getFloat64("myfloat", 9001)
+	assert.Equal(t, expected, value)
+}
+
+func TestGetFloat64PropertyNotInMap(t *testing.T) {
+	expected := float64(1337)
+	values := map[Property]interface{}{}
+	properties := properties{
+		values: values,
+	}
+	value := properties.getFloat64(ThresholdProperty, expected)
+	assert.Equal(t, expected, value)
+}
+
+func TestGetFloat64InvalidStringProperty(t *testing.T) {
+	expected := float64(1337)
+	values := map[Property]interface{}{ThresholdProperty: "invalid"}
+	properties := properties{
+		values: values,
+	}
+	value := properties.getFloat64(ThresholdProperty, expected)
+	assert.Equal(t, expected, value)
+}
+
+func TestGetFloat64InvalidBoolProperty(t *testing.T) {
+	expected := float64(1337)
+	values := map[Property]interface{}{ThresholdProperty: true}
+	properties := properties{
+		values: values,
+	}
+	value := properties.getFloat64(ThresholdProperty, expected)
+	assert.Equal(t, expected, value)
+}

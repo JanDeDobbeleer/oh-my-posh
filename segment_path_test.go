@@ -93,6 +93,11 @@ func (env *MockedEnvironment) lastErrorCode() int {
 	return args.Int(0)
 }
 
+func (env *MockedEnvironment) executionTime() float64 {
+	args := env.Called(nil)
+	return float64(args.Int(0))
+}
+
 func (env *MockedEnvironment) isRunningAsRoot() bool {
 	args := env.Called(nil)
 	return args.Bool(0)

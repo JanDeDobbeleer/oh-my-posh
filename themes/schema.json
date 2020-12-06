@@ -104,7 +104,8 @@
             "terraform",
             "go",
             "julia",
-            "ytm"
+            "ytm",
+            "executiontime"
           ]
         },
         "style": {
@@ -1126,6 +1127,29 @@
                     "title": "API URL",
                     "description": "The YTMDA Remote Control API URL",
                     "default": "http://localhost:9863"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "executiontime" }
+            }
+          },
+          "then": {
+            "title": "Displays the execution time of the previously executed command",
+            "description": "https://ohmyposh.dev/docs/executiontime",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "threshold": {
+                    "type": "number",
+                    "title": "Threshold",
+                    "description": "minimum duration (milliseconds) required to enable this segment",
+                    "default": 500
                   }
                 }
               }

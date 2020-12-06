@@ -42,6 +42,7 @@ type environmentInfo interface {
 	runCommand(command string, args ...string) (string, error)
 	runShellCommand(shell, command string) string
 	lastErrorCode() int
+	executionTime() float64
 	getArgs() *args
 	getBatteryInfo() (*battery.Battery, error)
 	getShellName() string
@@ -198,6 +199,10 @@ func (env *environment) hasCommand(command string) bool {
 
 func (env *environment) lastErrorCode() int {
 	return *env.args.ErrorCode
+}
+
+func (env *environment) executionTime() float64 {
+	return *env.args.ExecutionTime
 }
 
 func (env *environment) getArgs() *args {

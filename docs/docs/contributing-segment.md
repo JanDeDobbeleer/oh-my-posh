@@ -76,7 +76,7 @@ go build -o $GOPATH/bin/oh-my-posh
 
 ## Add the documentation
 
-Create a new `markdown` file underneath the [`docs/docs`][docs] folder called `new-segment.md`.
+Create a new `markdown` file underneath the [`docs/docs`][docs] folder called `segment-new.md`.
 Use the following template as a guide.
 
 ````markdown
@@ -113,6 +113,43 @@ Display something new.
 ## Map the new documentation in the sidebar
 
 Open [`sidebars.js`][sidebars] and add your document id (`new`) to the items of the Segments category.
+
+## Add the JSON schema
+
+Edit the `themes/schema.json` file to add your segment.
+
+At `$.definitions.segment.properties.type.enum`, add your `SegmentType` to the array:
+
+```json
+new,
+```
+
+At `$.definitions.segment.allOf`, add your segment details:
+```json
+{
+  "if": {
+    "properties": {
+      "type": { "const": "new" }
+    }
+  },
+  "then": {
+    "title": "Display something new",
+    "description": "https://ohmyposh.dev/docs/new",
+    "properties": {
+      "properties": {
+        "properties": {
+          "nwprop": {
+            "type": "string",
+            "title": "New Prop",
+            "description": "the new text to show",
+            "default": "\uEFF1"
+          }
+        }
+      }
+    }
+  }
+}
+```
 
 ## Create a pull request
 

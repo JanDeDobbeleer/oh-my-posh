@@ -137,7 +137,7 @@ Community Impact Guidelines were inspired by [Mozilla's code of conduct
 enforcement ladder](https://github.com/mozilla/diversity).
 
 [docs]: https://ohmyposh.dev/docs
-[guide]: https://ohmyposh.dev/docs/contributing-segment
+[guide]: https://ohmyposh.dev/docs/contributing_segment
 [cc]: https://www.conventionalcommits.org/en/v1.0.0/#summary
 [homepage]: https://www.contributor-covenant.org
 [conduct]: mailto:conduct@ohmyposh.dev

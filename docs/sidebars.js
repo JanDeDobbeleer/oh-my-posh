@@ -19,6 +19,7 @@ module.exports = {
         "command",
         "dotnet",
         "environment",
+        "executiontime",
         "exit",
         "git",
         "golang",

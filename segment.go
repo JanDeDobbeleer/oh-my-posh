@@ -89,6 +89,8 @@ const (
 	Diamond SegmentStyle = "diamond"
 	// YTM writes YouTube Music information and status
 	YTM SegmentType = "ytm"
+	// ExecutionTime writes the execution time of the last run command
+	ExecutionTime SegmentType = "executiontime"
 )
 
 func (segment *Segment) string() string {
@@ -124,28 +126,29 @@ func (segment *Segment) shouldIgnoreFolder(cwd string) bool {
 
 func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 	functions := map[SegmentType]SegmentWriter{
-		Session:   &session{},
-		Path:      &path{},
-		Git:       &git{},
-		Exit:      &exit{},
-		Python:    &python{},
-		Root:      &root{},
-		Text:      &text{},
-		Time:      &tempus{},
-		Cmd:       &command{},
-		Battery:   &batt{},
-		Spotify:   &spotify{},
-		ShellInfo: &shell{},
-		Node:      &node{},
-		Os:        &osInfo{},
-		EnvVar:    &envvar{},
-		Az:        &az{},
-		Kubectl:   &kubectl{},
-		Dotnet:    &dotnet{},
-		Terraform: &terraform{},
-		Golang:    &golang{},
-		Julia:     &julia{},
-		YTM:       &ytm{},
+		Session:       &session{},
+		Path:          &path{},
+		Git:           &git{},
+		Exit:          &exit{},
+		Python:        &python{},
+		Root:          &root{},
+		Text:          &text{},
+		Time:          &tempus{},
+		Cmd:           &command{},
+		Battery:       &batt{},
+		Spotify:       &spotify{},
+		ShellInfo:     &shell{},
+		Node:          &node{},
+		Os:            &osInfo{},
+		EnvVar:        &envvar{},
+		Az:            &az{},
+		Kubectl:       &kubectl{},
+		Dotnet:        &dotnet{},
+		Terraform:     &terraform{},
+		Golang:        &golang{},
+		Julia:         &julia{},
+		YTM:           &ytm{},
+		ExecutionTime: &executiontime{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

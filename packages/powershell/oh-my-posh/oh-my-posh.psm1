@@ -71,12 +71,19 @@ function Set-PoshPrompt {
                 $errorCode = 1
             }
         }
+
+        $executionTime = -1
+        $history = Get-History -ErrorAction Ignore -Count 1
+        if ($null -ne $history) {
+            $executionTime = $history.Duration.TotalMilliseconds
+        }
+
         $startInfo = New-Object System.Diagnostics.ProcessStartInfo
         $startInfo.FileName = Get-PoshCommand
         $config = $global:PoshSettings.Theme
         $showDebug = $global:PoshSettings.ShowDebug
         $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-        $startInfo.Arguments = "-debug=""$showDebug"" -config=""$config"" -error=$errorCode -pwd=""$cleanPWD"""
+        $startInfo.Arguments = "-debug=""$showDebug"" -config=""$config"" -error=$errorCode -pwd=""$cleanPWD"" -execution-time=$executionTime"
         $startInfo.Environment["TERM"] = "xterm-256color"
         $startInfo.CreateNoWindow = $true
         $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8

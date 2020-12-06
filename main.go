@@ -11,14 +11,15 @@ import (
 var Version = "development"
 
 type args struct {
-	ErrorCode   *int
-	PrintConfig *bool
-	PrintShell  *bool
-	Config      *string
-	Shell       *string
-	PWD         *string
-	Version     *bool
-	Debug       *bool
+	ErrorCode     *int
+	PrintConfig   *bool
+	PrintShell    *bool
+	Config        *string
+	Shell         *string
+	PWD           *string
+	Version       *bool
+	Debug         *bool
+	ExecutionTime *float64
 }
 
 func main() {
@@ -55,6 +56,10 @@ func main() {
 			"debug",
 			false,
 			"Print debug information"),
+		ExecutionTime: flag.Float64(
+			"execution-time",
+			0,
+			"Execution time of the previously executed command"),
 	}
 	flag.Parse()
 	env := &environment{

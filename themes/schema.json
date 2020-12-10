@@ -1150,6 +1150,20 @@
                     "title": "Threshold",
                     "description": "minimum duration (milliseconds) required to enable this segment",
                     "default": 500
+                  },
+                  "style": {
+                    "type": "string",
+                    "title": "Style",
+                    "description": "The style in which the time will be displayed",
+                    "enum": [
+                      "austin",
+                      "roundrock",
+                      "dallas",
+                      "galveston",
+                      "houston",
+                      "amarillo"
+                    ],
+                    "default": "austin"
                   }
                 }
               }

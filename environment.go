@@ -202,6 +202,9 @@ func (env *environment) lastErrorCode() int {
 }
 
 func (env *environment) executionTime() float64 {
+	if *env.args.ExecutionTime < 0 {
+		return 0
+	}
 	return *env.args.ExecutionTime
 }
 

@@ -1145,6 +1145,12 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "always_enabled": {
+                    "type": "boolean",
+                    "title": "Always Enabled",
+                    "description": "Always show the duration",
+                    "default": false
+                  },
                   "threshold": {
                     "type": "number",
                     "title": "Threshold",

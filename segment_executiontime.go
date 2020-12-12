@@ -37,9 +37,10 @@ const (
 )
 
 func (t *executiontime) enabled() bool {
+	alwaysEnabled := t.props.getBool(AlwaysEnabled, false)
 	executionTimeMs := t.env.executionTime()
 	thresholdMs := t.props.getFloat64(ThresholdProperty, float64(500))
-	if executionTimeMs < thresholdMs {
+	if !alwaysEnabled && executionTimeMs < thresholdMs {
 		return false
 	}
 	style := DurationStyle(t.props.getString(Style, string(Austin)))

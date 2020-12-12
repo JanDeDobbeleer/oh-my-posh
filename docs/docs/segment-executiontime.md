@@ -29,9 +29,9 @@ To use this, use the PowerShell module, or confirm that you are passing an `exec
 
 ## Properties
 
+- always_enabled: `boolean` - always show the duration - defaults to `false`
 - threshold: `number` - minimum duration (milliseconds) required to enable this segment - defaults to `500`
 - style: `enum` - one of the available format options - defaults to `austin`
-
 
 ## Style
 

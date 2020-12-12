@@ -277,13 +277,13 @@ Add the following to `~/.zshrc`:
 
 ```bash
 function omp_preexec() {
-  omp_start_time=$(($(date +%s%0N)/1000000))
+  omp_start_time=$(oh-my-posh --millis)
 }
 
 function omp_precmd() {
   omp_elapsed=-1
   if [ $omp_start_time ]; then
-    omp_now=$(($(date +%s%0N)/1000000))
+    omp_now=$(oh-my-posh --millis)
     omp_elapsed=$(($omp_now-$omp_start_time))
   fi
   PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json --error $? --execution-time $omp_elapsed)"

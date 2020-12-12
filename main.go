@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"time"
 )
 
 // Version number of oh-my-posh
@@ -20,6 +21,7 @@ type args struct {
 	Version       *bool
 	Debug         *bool
 	ExecutionTime *float64
+	Millis        *bool
 }
 
 func main() {
@@ -60,10 +62,18 @@ func main() {
 			"execution-time",
 			0,
 			"Execution time of the previously executed command"),
+		Millis: flag.Bool(
+			"millis",
+			false,
+			"Get the current time in milliseconds"),
 	}
 	flag.Parse()
 	env := &environment{
 		args: args,
+	}
+	if *args.Millis {
+		fmt.Print(time.Now().UnixNano() / 1000000)
+		return
 	}
 	settings := GetSettings(env)
 	if *args.PrintConfig {

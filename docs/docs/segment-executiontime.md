@@ -8,7 +8,9 @@ sidebar_label: Execution Time
 
 Displays the execution time of the previously executed command.
 
-To use this, use the PowerShell module, or confirm that you are passing an `execution-time` argument contianing the elapsed milliseconds to the oh-my-posh executable. The [installation guide][install] shows how to include this argument for PowerShell and Zsh.
+To use this, use the PowerShell module, or confirm that you are passing an `execution-time` argument containing the
+elapsed milliseconds to the oh-my-posh executable.
+The [installation guide][install] shows how to include this argument for PowerShell and Zsh.
 
 ## Sample Configuration
 
@@ -45,6 +47,5 @@ Style specifies the format in which the time will be displayed. The table below 
 | galveston | `00:00:00`     | `00:00:02`   | `00:03:02`    | `04:03:02`       |
 | houston   | `00:00:00.001` | `00:00:02.1` | `00:03:02.1`  | `04:03:02.1`     |
 | amarillo  | `0.001s`       | `2.1s`       | `182.1s`      | `14,582.1s`      |
-
 
 [install]: /docs/installation

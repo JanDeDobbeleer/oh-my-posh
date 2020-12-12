@@ -14,18 +14,24 @@ type executiontime struct {
 	output string
 }
 
+// DurationStyle how to display the time
 type DurationStyle string
 
 const (
 	// ThresholdProperty represents minimum duration (milliseconds) required to enable this segment
 	ThresholdProperty Property = "threshold"
-
-	Austin    DurationStyle = "austin"
+	// Austin milliseconds short
+	Austin DurationStyle = "austin"
+	// Roundrock milliseconds long
 	Roundrock DurationStyle = "roundrock"
-	Dallas    DurationStyle = "dallas"
+	// Dallas milliseconds full
+	Dallas DurationStyle = "dallas"
+	// Galveston hour
 	Galveston DurationStyle = "galveston"
-	Houston   DurationStyle = "houston"
-	Amarillo  DurationStyle = "amarillo"
+	// Houston hour and milliseconds
+	Houston DurationStyle = "houston"
+	// Amarillo seconds
+	Amarillo DurationStyle = "amarillo"
 
 	second           = 1000
 	minute           = 60000

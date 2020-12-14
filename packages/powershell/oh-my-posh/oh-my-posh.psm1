@@ -74,7 +74,7 @@ function Set-PoshPrompt {
 
         $executionTime = -1
         $history = Get-History -ErrorAction Ignore -Count 1
-        if ($null -ne $history) {
+        if ($null -ne $history -and $null -ne $history.Duration) {
             $executionTime = $history.Duration.TotalMilliseconds
         }
 

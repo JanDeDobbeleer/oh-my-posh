@@ -1,0 +1,15 @@
+name: Markdownlint
+
+on: [pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Lint files
+      uses: nosborn/github-action-markdown-cli@v1.1.1
+      with:
+          files: .
+          config_file: "docs/.markdownlint.json"

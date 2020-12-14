@@ -125,6 +125,7 @@ new,
 ```
 
 At `$.definitions.segment.allOf`, add your segment details:
+
 ```json
 {
   "if": {

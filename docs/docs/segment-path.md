@@ -33,7 +33,8 @@ Display the current path.
 - folder_icon: `string` - the icon to use as a folder indication - defaults to `..`
 - windows_registry_icon: `string` - the icon to display when in the Windows registry - defaults to `\uE0B1`
 - style: `enum` - how to display the current path
-- mapped_locations: `map[string]string` - custom glyph/text for specific paths(only when `style` is set to `agnoster`, `agnoster_full` or `short`)
+- mapped_locations: `map[string]string` - custom glyph/text for specific paths(only when `style` is set to `agnoster`,
+`agnoster_full` or `short`)
 
 ## Style
 

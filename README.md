@@ -5,7 +5,9 @@
 [![PS Gallery][psgallery-badge]][powershell-gallery]
 [![Documentation][docs-badge]][docs]
 
-What started as the offspring of [oh-my-posh][oh-my-posh] for PowerShell resulted in a cross platform, highly customizable and extensible prompt theme engine. After 4 years of working on oh-my-posh, a modern and more efficient tool was needed to suit my personal needs.
+What started as the offspring of [oh-my-posh][oh-my-posh] for PowerShell resulted in a cross platform,
+highly customizable and extensible prompt theme engine. After 4 years of working on oh-my-posh,
+a modern and more efficient tool was needed to suit my personal needs.
 
 ## ❤ Support ❤
 
@@ -36,15 +38,17 @@ What started as the offspring of [oh-my-posh][oh-my-posh] for PowerShell resulte
 * [x] Create documentation on the different segments
 * Create easy installation packages
   * [x] Powershell
-  * [ ] Brew
-  * [ ] Chocolatey
+  * [x] Brew
+  * [x] Scoop
+* [ ] Swap V2 with V3
 
 ## Thanks
 
 * [Chris Benti][chrisbenti-psconfig] for providing the first influence to start oh-my-posh
 * [Keith Dahlby][keithdahlby-poshgit] for creating posh-git and making life more enjoyable
 * [Robby Russel][oh-my-zsh] for creating oh-my-zsh, without him this would probably not be here
-* [Janne Mareike Koschinski][justjanne] for providing information on how to get certain information using Go (and the amazing [README][powerline-go])
+* [Janne Mareike Koschinski][justjanne] for providing information on how to get certain information
+using Go (and the amazing [README][powerline-go])
 
 [release-status]: https://github.com/jandedobbeleer/oh-my-posh3/workflows/Release/badge.svg
 [psgallery-badge]: https://img.shields.io/powershellgallery/dt/oh-my-posh.svg

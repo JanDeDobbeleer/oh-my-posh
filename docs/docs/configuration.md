@@ -67,7 +67,7 @@ boxes with question marks, [set up your terminal][setupterm] to use a supported 
 
 Let's take a closer look at what defines a block.
 
-- type: `prompt` | `newline` | `rprompt`
+- type: `prompt` | `rprompt` | `newline`
 - alignment: `left` | `right`
 - vertical_offset: `int`
 - horizontal_offset: `int`
@@ -75,9 +75,13 @@ Let's take a closer look at what defines a block.
 
 ### Type
 
-Tells the engine what to do with the block. There are three options, either it renders one or more segments,
-inserts a newline to start the next block on a new line or sets a block as the `RPROMPT` when on [ZSH][rprompt].
-New line blocks require no additional configuration other than the `type`.
+Tells the engine what to do with the block. There are three options:
+
+- `prompt` renders one or more segments
+- `rprompt` renders one or more segments aligned to the right of the cursor. Only one `rprompt` block is permitted.
+Supported on [ZSH][rprompt] and Powershell.
+- `newline` inserts a new line to start the next block on a new line. `newline` blocks require no additional
+configuration other than the `type`.
 
 ### Alignment
 

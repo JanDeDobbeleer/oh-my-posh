@@ -51,7 +51,7 @@
           },
           "then": {
             "required": ["type", "segments"],
-            "title": "RPrompt definition, contains 1 or more segments to render in ZSH RPROMPT"
+            "title": "RPrompt definition, contains 1 or more segments to render to the right of the cursor"
           }
         }
       ],
@@ -60,7 +60,7 @@
           "type": "string",
           "title": "Block type",
           "description": "https://ohmyposh.dev/docs/configure#type",
-          "enum": ["prompt", "newline", "rprompt"],
+          "enum": ["prompt", "rprompt", "newline"],
           "default": "prompt"
         },
         "alignment": {

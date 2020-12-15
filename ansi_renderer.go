@@ -30,12 +30,14 @@ func lenWithoutANSI(text, shell string) int {
 }
 
 type formats struct {
-	linechange string
-	left       string
-	right      string
-	title      string
-	creset     string
-	clearOEL   string
+	linechange            string
+	left                  string
+	right                 string
+	title                 string
+	creset                string
+	clearOEL              string
+	saveCursorPosition    string
+	restoreCursorPosition string
 }
 
 // AnsiRenderer exposes functionality using ANSI
@@ -46,8 +48,10 @@ type AnsiRenderer struct {
 }
 
 const (
-	zsh  = "zsh"
-	bash = "bash"
+	zsh         = "zsh"
+	bash        = "bash"
+	pwsh        = "pwsh"
+	powershell5 = "powershell"
 )
 
 func (r *AnsiRenderer) init(shell string) {
@@ -61,6 +65,8 @@ func (r *AnsiRenderer) init(shell string) {
 		r.formats.title = "%%{\033]0;%s\007%%}"
 		r.formats.creset = "%{\x1b[0m%}"
 		r.formats.clearOEL = "%{\x1b[K%}"
+		r.formats.saveCursorPosition = "%{\x1b7%}"
+		r.formats.restoreCursorPosition = "%{\x1b8%}"
 	case bash:
 		r.formats.linechange = "\\[\x1b[%d%s\\]"
 		r.formats.left = "\\[\x1b[%dC\\]"
@@ -68,6 +74,8 @@ func (r *AnsiRenderer) init(shell string) {
 		r.formats.title = "\\[\033]0;%s\007\\]"
 		r.formats.creset = "\\[\x1b[0m\\]"
 		r.formats.clearOEL = "\\[\x1b[K\\]"
+		r.formats.saveCursorPosition = "\\[\x1b7\\]"
+		r.formats.restoreCursorPosition = "\\[\x1b8\\]"
 	default:
 		r.formats.linechange = "\x1b[%d%s"
 		r.formats.left = "\x1b[%dC"
@@ -75,6 +83,8 @@ func (r *AnsiRenderer) init(shell string) {
 		r.formats.title = "\033]0;%s\007"
 		r.formats.creset = "\x1b[0m"
 		r.formats.clearOEL = "\x1b[K"
+		r.formats.saveCursorPosition = "\x1b7"
+		r.formats.restoreCursorPosition = "\x1b8"
 	}
 }
 
@@ -115,4 +125,12 @@ func (r *AnsiRenderer) clearEOL() {
 
 func (r *AnsiRenderer) string() string {
 	return r.buffer.String()
+}
+
+func (r *AnsiRenderer) saveCursorPosition() {
+	r.buffer.WriteString(r.formats.saveCursorPosition)
+}
+
+func (r *AnsiRenderer) restoreCursorPosition() {
+	r.buffer.WriteString(r.formats.restoreCursorPosition)
 }

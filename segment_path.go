@@ -26,6 +26,8 @@ const (
 	Agnoster string = "agnoster"
 	// AgnosterFull displays all the folder names with the folder_separator_icon
 	AgnosterFull string = "agnoster_full"
+	// AgnosterShort displays the folder names with one folder_separator_icon, regardless of depth
+	AgnosterShort string = "agnoster_short"
 	// Short displays a shorter path
 	Short string = "short"
 	// Full displays the full path
@@ -46,6 +48,8 @@ func (pt *path) string() string {
 		return pt.getAgnosterPath()
 	case AgnosterFull:
 		return pt.getAgnosterFullPath()
+	case AgnosterShort:
+		return pt.getAgnosterShortPath()
 	case Short:
 		return pt.getShortPath()
 	case Full:
@@ -122,6 +126,19 @@ func (pt *path) getAgnosterFullPath() string {
 		pwd = pwd[1:]
 	}
 	return strings.ReplaceAll(pwd, pathSeparator, folderSeparator)
+}
+
+func (pt *path) getAgnosterShortPath() string {
+	pathSeparator := pt.env.getPathSeperator()
+	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
+	folderIcon := pt.props.getString(FolderIcon, "..")
+	root := pt.rootLocation()
+	base := base(pt.env.getcwd(), pt.env)
+	pathDepth := pt.pathDepth(pt.getShortPath())
+	if pathDepth == 1 {
+		return fmt.Sprintf("%s%s%s", root, folderSeparator, base)
+	}
+	return fmt.Sprintf("%s%s%s%s%s", root, folderSeparator, folderIcon, folderSeparator, base)
 }
 
 func (pt *path) inHomeDir(pwd string) bool {

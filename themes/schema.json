@@ -856,6 +856,7 @@
                     "enum": [
                       "agnoster",
                       "agnoster_full",
+                      "agnoster_short",
                       "short",
                       "full",
                       "folder"

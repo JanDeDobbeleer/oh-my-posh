@@ -42,6 +42,7 @@ Style sets the way the path is displayed. Based on previous experience and popul
 
 - agnoster
 - agnoster_full
+- agnoster_short
 - short
 - full
 - folder
@@ -55,6 +56,10 @@ inside the `$HOME` location or one of its children.
 ### Agnoster Full
 
 Renders each folder name separated by the `folder_separator_icon`.
+
+### Agnoster Short
+
+When more than 1 level deep, it renders one `folder_icon` followed by the name of the current folder separated by the `folder_separator_icon`.
 
 ### Short
 

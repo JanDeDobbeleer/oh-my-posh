@@ -394,6 +394,60 @@ func TestGetAgnosterFullPath(t *testing.T) {
 	assert.Equal(t, "usr > location > whatever", got)
 }
 
+func TestGetAgnosterShortPath(t *testing.T) {
+	pwd := "/usr/location/whatever/man"
+	env := new(MockedEnvironment)
+	env.On("getPathSeperator", nil).Return("/")
+	env.On("homeDir", nil).Return("/usr/home")
+	env.On("getcwd", nil).Return(pwd)
+	path := &path{
+		env: env,
+		props: &properties{
+			values: map[Property]interface{}{
+				FolderSeparatorIcon: " > ",
+			},
+		},
+	}
+	got := path.getAgnosterShortPath()
+	assert.Equal(t, "usr > .. > man", got)
+}
+
+func TestGetAgnosterShortPathInsideHome(t *testing.T) {
+	pwd := "/usr/home/whatever/man"
+	env := new(MockedEnvironment)
+	env.On("getPathSeperator", nil).Return("/")
+	env.On("homeDir", nil).Return("/usr/home")
+	env.On("getcwd", nil).Return(pwd)
+	path := &path{
+		env: env,
+		props: &properties{
+			values: map[Property]interface{}{
+				FolderSeparatorIcon: " > ",
+			},
+		},
+	}
+	got := path.getAgnosterShortPath()
+	assert.Equal(t, "~ > .. > man", got)
+}
+
+func TestGetAgnosterShortPathInsideHomeOneLevel(t *testing.T) {
+	pwd := "/usr/home/projects"
+	env := new(MockedEnvironment)
+	env.On("getPathSeperator", nil).Return("/")
+	env.On("homeDir", nil).Return("/usr/home")
+	env.On("getcwd", nil).Return(pwd)
+	path := &path{
+		env: env,
+		props: &properties{
+			values: map[Property]interface{}{
+				FolderSeparatorIcon: " > ",
+			},
+		},
+	}
+	got := path.getAgnosterShortPath()
+	assert.Equal(t, "~ > projects", got)
+}
+
 func testWritePathInfo(home, pwd, pathSeparator string) string {
 	props := &properties{
 		values: map[Property]interface{}{

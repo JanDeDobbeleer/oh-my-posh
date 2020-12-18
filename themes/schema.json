@@ -7,7 +7,7 @@
   "definitions": {
     "color": {
       "type": "string",
-      "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite)$",
+      "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite|transparent)$",
       "title": "Color string",
       "description": "https://ohmyposh.dev/docs/configure#colors"
     },
@@ -30,10 +30,28 @@
           "then": {
             "required": ["type"],
             "title": "Newline, renders a line break"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "prompt" }
+            }
           },
-          "else": {
+          "then": {
             "required": ["type", "alignment", "segments"],
             "title": "Prompt definition, contains 1 or more segments to render"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "rprompt" }
+            }
+          },
+          "then": {
+            "required": ["type", "segments"],
+            "title": "RPrompt definition, contains 1 or more segments to render in ZSH RPROMPT"
           }
         }
       ],
@@ -42,7 +60,7 @@
           "type": "string",
           "title": "Block type",
           "description": "https://ohmyposh.dev/docs/configure#type",
-          "enum": ["prompt", "newline"],
+          "enum": ["prompt", "newline", "rprompt"],
           "default": "prompt"
         },
         "alignment": {

@@ -13,8 +13,8 @@ const (
 )
 
 func TestWriteAndRemoveText(t *testing.T) {
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	renderer.init("pwsh")
 	text := renderer.writeAndRemoveText("#193549", "#fff", "This is white, ", "This is white, ", inputText)
@@ -23,8 +23,8 @@ func TestWriteAndRemoveText(t *testing.T) {
 }
 
 func TestWriteAndRemoveTextColored(t *testing.T) {
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	renderer.init("pwsh")
 	text := renderer.writeAndRemoveText("#193549", "#ff5733", "this is orange", "<#ff5733>this is orange</>", inputText)
@@ -33,8 +33,8 @@ func TestWriteAndRemoveTextColored(t *testing.T) {
 }
 
 func TestWriteColorOverride(t *testing.T) {
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	renderer.init("pwsh")
 	renderer.write("#193549", "#ff5733", inputText)
@@ -42,8 +42,8 @@ func TestWriteColorOverride(t *testing.T) {
 }
 
 func TestWriteColorOverrideBackground(t *testing.T) {
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	text := "This is white, <,#000000>this is black</>, white again"
 	renderer.init("pwsh")
@@ -52,8 +52,8 @@ func TestWriteColorOverrideBackground(t *testing.T) {
 }
 
 func TestWriteColorOverrideBackground16(t *testing.T) {
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	text := "This is default <,white> this background is changed</> default again"
 	renderer.init("pwsh")
@@ -64,8 +64,8 @@ func TestWriteColorOverrideBackground16(t *testing.T) {
 }
 
 func TestWriteColorOverrideBoth(t *testing.T) {
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	text := "This is white, <#000000,#ffffff>this is black</>, white again"
 	renderer.init("pwsh")
@@ -75,8 +75,8 @@ func TestWriteColorOverrideBoth(t *testing.T) {
 }
 
 func TestWriteColorOverrideBoth16(t *testing.T) {
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	text := "This is white, <black,white>this is black</>, white again"
 	renderer.init("pwsh")
@@ -86,8 +86,8 @@ func TestWriteColorOverrideBoth16(t *testing.T) {
 }
 
 func TestWriteColorOverrideDouble(t *testing.T) {
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	text := "<#ffffff>jan</>@<#ffffff>Jans-MBP</>"
 	renderer.init("pwsh")
@@ -97,8 +97,8 @@ func TestWriteColorOverrideDouble(t *testing.T) {
 }
 
 func TestWriteColorTransparent(t *testing.T) {
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	renderer.init("pwsh")
 	text := "This is white"
@@ -108,8 +108,8 @@ func TestWriteColorTransparent(t *testing.T) {
 
 func TestWriteColorName(t *testing.T) {
 	// given
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	renderer.init("pwsh")
 	text := "This is white, <red>this is red</>, white again"
@@ -123,8 +123,8 @@ func TestWriteColorName(t *testing.T) {
 
 func TestWriteColorInvalid(t *testing.T) {
 	// given
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	renderer.init("pwsh")
 	text := "This is white, <invalid>this is orange</>, white again"
@@ -138,28 +138,28 @@ func TestWriteColorInvalid(t *testing.T) {
 
 func TestLenWithoutANSI(t *testing.T) {
 	text := "\x1b[44mhello\x1b[0m"
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	renderer.init("pwsh")
-	strippedLength := renderer.lenWithoutANSI(text)
+	strippedLength := lenWithoutANSI(text, "zsh")
 	assert.Equal(t, 5, strippedLength)
 }
 
 func TestLenWithoutANSIZsh(t *testing.T) {
 	text := "%{\x1b[44m%}hello%{\x1b[0m%}"
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 	renderer.init("zsh")
-	strippedLength := renderer.lenWithoutANSI(text)
+	strippedLength := lenWithoutANSI(text, "zsh")
 	assert.Equal(t, 5, strippedLength)
 }
 
 func TestGetAnsiFromColorStringBg(t *testing.T) {
 	// given
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 
 	// when
@@ -171,8 +171,8 @@ func TestGetAnsiFromColorStringBg(t *testing.T) {
 
 func TestGetAnsiFromColorStringFg(t *testing.T) {
 	// given
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 
 	// when
@@ -184,8 +184,8 @@ func TestGetAnsiFromColorStringFg(t *testing.T) {
 
 func TestGetAnsiFromColorStringHex(t *testing.T) {
 	// given
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 
 	// when
@@ -197,8 +197,8 @@ func TestGetAnsiFromColorStringHex(t *testing.T) {
 
 func TestGetAnsiFromColorStringInvalidFg(t *testing.T) {
 	// given
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 
 	// when
@@ -210,8 +210,8 @@ func TestGetAnsiFromColorStringInvalidFg(t *testing.T) {
 
 func TestGetAnsiFromColorStringInvalidBg(t *testing.T) {
 	// given
-	renderer := &Renderer{
-		Buffer: new(bytes.Buffer),
+	renderer := &AnsiColor{
+		buffer: new(bytes.Buffer),
 	}
 
 	// when

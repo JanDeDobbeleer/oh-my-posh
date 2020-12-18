@@ -8,10 +8,12 @@ import (
 type engine struct {
 	settings              *Settings
 	env                   environmentInfo
-	renderer              *Renderer
+	color                 *AnsiColor
+	renderer              *AnsiRenderer
 	activeBlock           *Block
 	activeSegment         *Segment
 	previousActiveSegment *Segment
+	rprompt               string
 }
 
 func (e *engine) getPowerlineColor(foreground bool) string {
@@ -33,10 +35,10 @@ func (e *engine) writePowerLineSeparator(background, foreground string, end bool
 		symbol = e.previousActiveSegment.PowerlineSymbol
 	}
 	if e.activeSegment.InvertPowerline {
-		e.renderer.write(foreground, background, symbol)
+		e.color.write(foreground, background, symbol)
 		return
 	}
-	e.renderer.write(background, foreground, symbol)
+	e.color.write(background, foreground, symbol)
 }
 
 func (e *engine) endPowerline() {
@@ -58,9 +60,9 @@ func (e *engine) renderPlainSegment(text string) {
 }
 
 func (e *engine) renderDiamondSegment(text string) {
-	e.renderer.write(Transparent, e.activeSegment.Background, e.activeSegment.LeadingDiamond)
+	e.color.write(Transparent, e.activeSegment.Background, e.activeSegment.LeadingDiamond)
 	e.renderText(text)
-	e.renderer.write(Transparent, e.activeSegment.Background, e.activeSegment.TrailingDiamond)
+	e.color.write(Transparent, e.activeSegment.Background, e.activeSegment.TrailingDiamond)
 }
 
 func (e *engine) renderText(text string) {
@@ -70,9 +72,9 @@ func (e *engine) renderText(text string) {
 	}
 	prefix := e.activeSegment.getValue(Prefix, defaultValue)
 	postfix := e.activeSegment.getValue(Postfix, defaultValue)
-	e.renderer.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("%s%s%s", prefix, text, postfix))
+	e.color.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("%s%s%s", prefix, text, postfix))
 	if *e.env.getArgs().Debug {
-		e.renderer.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("(%s:%s)", e.activeSegment.Type, e.activeSegment.timing))
+		e.color.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("(%s:%s)", e.activeSegment.Type, e.activeSegment.timing))
 	}
 }
 
@@ -89,7 +91,7 @@ func (e *engine) renderSegmentText(text string) {
 }
 
 func (e *engine) renderBlockSegments(block *Block) string {
-	defer e.reset()
+	defer e.resetBlock()
 	e.activeBlock = block
 	e.setStringValues(block.Segments)
 	for _, segment := range block.Segments {
@@ -106,7 +108,7 @@ func (e *engine) renderBlockSegments(block *Block) string {
 	if e.previousActiveSegment != nil && e.previousActiveSegment.Style == Powerline {
 		e.writePowerLineSeparator(Transparent, e.previousActiveSegment.Background, true)
 	}
-	return e.renderer.string()
+	return e.color.string()
 }
 
 func (e *engine) setStringValues(segments []*Segment) {
@@ -126,21 +128,24 @@ func (e *engine) setStringValues(segments []*Segment) {
 func (e *engine) render() {
 	for _, block := range e.settings.Blocks {
 		// if line break, append a line break
-		if block.Type == LineBreak {
+		switch block.Type {
+		case LineBreak:
 			e.renderer.print("\n")
-			continue
-		}
-		if block.VerticalOffset != 0 {
-			e.renderer.changeLine(block.VerticalOffset)
-		}
-		switch block.Alignment {
-		case Right:
-			e.renderer.carriageForward()
-			blockText := e.renderBlockSegments(block)
-			e.renderer.setCursorForRightWrite(blockText, block.HorizontalOffset)
-			e.renderer.print(blockText)
-		case Left:
-			e.renderer.print(e.renderBlockSegments(block))
+		case Prompt:
+			if block.VerticalOffset != 0 {
+				e.renderer.changeLine(block.VerticalOffset)
+			}
+			switch block.Alignment {
+			case Right:
+				e.renderer.carriageForward()
+				blockText := e.renderBlockSegments(block)
+				e.renderer.setCursorForRightWrite(blockText, block.HorizontalOffset)
+				e.renderer.print(blockText)
+			case Left:
+				e.renderer.print(e.renderBlockSegments(block))
+			}
+		case RPrompt:
+			e.rprompt = e.renderBlockSegments(block)
 		}
 	}
 	if e.settings.ConsoleTitle {
@@ -157,10 +162,22 @@ func (e *engine) render() {
 	if e.settings.FinalSpace {
 		e.renderer.print(" ")
 	}
+	e.write()
 }
 
-func (e *engine) reset() {
-	e.renderer.reset()
+func (e *engine) write() {
+	if *e.env.getArgs().Eval {
+		fmt.Printf("PS1=\"%s\"", e.renderer.string())
+		if e.rprompt != "" && e.env.getShellName() == zsh {
+			fmt.Printf("\nRPROMPT=\"%s\"", e.rprompt)
+		}
+		return
+	}
+	fmt.Print(e.renderer.string())
+}
+
+func (e *engine) resetBlock() {
+	e.color.reset()
 	e.previousActiveSegment = nil
 	e.activeBlock = nil
 }

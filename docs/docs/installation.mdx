@@ -286,7 +286,7 @@ function omp_precmd() {
     omp_now=$(oh-my-posh --millis)
     omp_elapsed=$(($omp_now-$omp_start_time))
   fi
-  PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json --error $? --execution-time $omp_elapsed)"
+  eval "$(oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json --error $? --execution-time $omp_elapsed --eval)"
   unset omp_start_time
   unset omp_now
   unset omp_elapsed
@@ -326,7 +326,7 @@ Add the following to `~/.bashrc` (or `~/.profile` on MacOS):
 
 ```bash
 function _update_ps1() {
-    PS1="$(oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json -error $?)"
+    eval "$(oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json --error $? --eval)"
 }
 
 if [ "$TERM" != "linux" ] && [ -x "$(command -v oh-my-posh)" ]; then
@@ -347,37 +347,13 @@ Or, when using `~/.profile`.
 ```
 
 </TabItem>
-<TabItem value="nix">
-
-When using `nix-shell --pure`, `oh-my-posh` will not be accessible, and
-your prompt will not appear.
-
-As a workaround you can add this snippet to `~/.bashrc`,
-which should re-enable the prompt in most cases:
-
-```bash
-# Workaround for nix-shell --pure
-if [ "$IN_NIX_SHELL" == "pure" ]; then
-    if [ -x oh-my-posh ]; then
-        alias powerline-go="oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json"
-    fi
-fi
-```
-
-Once added, reload your profile for the changes to take effect.
-
-```bash
-. ~/.bashrc
-```
-
-</TabItem>
 <TabItem value="fish">
 
 Redefine `fish_prompt` in `~/.config/fish/config.fish`:
 
 ```bash
 function fish_prompt
-    eval oh-my-posh -config ~/.poshthemes/jandedobbeleer.omp.json -error $status
+    eval oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json --error $status --eval
 end
 ```
 
@@ -430,7 +406,7 @@ This will write the current configuration in your shell, allowing you to copy pa
 and store it somehwere. Once adjusted to your liking, [change the prompt setting][prompt] to use the newly created file.
 
 ```bash
-oh-my-posh -config ~/.mytheme.omp.json
+oh-my-posh --config ~/.mytheme.omp.json
 ```
 
 #### JSON Schema

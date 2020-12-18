@@ -22,6 +22,7 @@ type args struct {
 	Debug         *bool
 	ExecutionTime *float64
 	Millis        *bool
+	Eval          *bool
 }
 
 func main() {
@@ -66,6 +67,10 @@ func main() {
 			"millis",
 			false,
 			"Get the current time in milliseconds"),
+		Eval: flag.Bool(
+			"eval",
+			false,
+			"Run in eval mode"),
 	}
 	flag.Parse()
 	env := &environment{
@@ -89,18 +94,23 @@ func main() {
 		fmt.Println(Version)
 		return
 	}
-	colorWriter := &Renderer{
-		Buffer: new(bytes.Buffer),
-	}
 	shell := env.getShellName()
 	if *args.Shell != "" {
 		shell = *args.Shell
 	}
-	colorWriter.init(shell)
+	renderer := &AnsiRenderer{
+		buffer: new(bytes.Buffer),
+	}
+	colorer := &AnsiColor{
+		buffer: new(bytes.Buffer),
+	}
+	renderer.init(shell)
+	colorer.init(shell)
 	engine := &engine{
 		settings: settings,
 		env:      env,
-		renderer: colorWriter,
+		color:    colorer,
+		renderer: renderer,
 	}
 	engine.render()
 }

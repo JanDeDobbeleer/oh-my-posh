@@ -57,3 +57,5 @@ gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776/go.mod h1:K4uyk7z7BCEPqu6E+C
 howett.net/plist v0.0.0-20181124034731-591f970eefbb/go.mod h1:vMygbs4qMhSZSc4lCUl2OEE+rDiIIJAIdR4m7MiMcm0=
 howett.net/plist v0.0.0-20200419221736-3b63eb3a43b5 h1:AQkaJpH+/FmqRjmXZPELom5zIERYZfwTjnHpfoVMQEc=
 howett.net/plist v0.0.0-20200419221736-3b63eb3a43b5/go.mod h1:vMygbs4qMhSZSc4lCUl2OEE+rDiIIJAIdR4m7MiMcm0=
+muzzammil.xyz/jsonc v0.0.0-20200627155943-e1c384b63054 h1:HhSLntk5Waqyx19MS886eRyllKmLtxBt6Lr0Z5Bk2bM=
+muzzammil.xyz/jsonc v0.0.0-20200627155943-e1c384b63054/go.mod h1:rFv8tUUKe+QLh7v02BhfxXEf4ZHhYD7unR93HL/1Uvo=

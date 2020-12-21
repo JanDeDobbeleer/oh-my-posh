@@ -19,6 +19,7 @@ require (
 	golang.org/x/text v0.3.3
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	howett.net/plist v0.0.0-20200419221736-3b63eb3a43b5 // indirect
+	muzzammil.xyz/jsonc v0.0.0-20200627155943-e1c384b63054
 )
 
 replace github.com/distatus/battery v0.10.1-0.20200722221337-7e1bf2bbb15c => github.com/JanDeDobbeleer/battery v0.10.1-0.20200909080331-bb0a7566dbb8

@@ -15,6 +15,7 @@ const (
 type languageArgs struct {
 	version           string
 	displayVersion    bool
+	displayMode       string
 	extensions        []string
 	enabledExtensions []string
 	commands          []string
@@ -43,7 +44,8 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	}
 	props := &properties{
 		values: map[Property]interface{}{
-			DisplayVersion: args.displayVersion,
+			DisplayVersion:      args.displayVersion,
+			DisplayModeProperty: args.displayMode,
 		},
 	}
 	l := &language{
@@ -57,7 +59,19 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	return l
 }
 
-func TestLanguageFilesFoundButNoCommand(t *testing.T) {
+func TestLanguageFilesFoundButNoCommandAndVersion(t *testing.T) {
+	args := &languageArgs{
+		commands:          []string{"unicorn"},
+		versionParam:      "--version",
+		extensions:        []string{uni},
+		enabledExtensions: []string{uni},
+		displayVersion:    true,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.False(t, lang.enabled(), "unicorn is not available")
+}
+
+func TestLanguageFilesFoundButNoCommandAndNoVersion(t *testing.T) {
 	args := &languageArgs{
 		commands:          []string{"unicorn"},
 		versionParam:      "--version",
@@ -65,7 +79,7 @@ func TestLanguageFilesFoundButNoCommand(t *testing.T) {
 		enabledExtensions: []string{uni},
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.False(t, lang.enabled(), "unicorn is not available")
+	assert.True(t, lang.enabled(), "unicorn is not available")
 }
 
 func TestLanguageDisabledNoFiles(t *testing.T) {

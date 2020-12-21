@@ -26,3 +26,7 @@ Display the currently active node version when a folder contains `.js` or `.ts` 
 ## Properties
 
 - display_version: `boolean` - display the node version - defaults to `true`
+- display_mode: `string` - determines when the segment is displayed
+  - `always`: The segment is always displayed
+  - `context`: The segment is only displayed when *.js, *.ts or package.json files are present (default)
+  - `never`: The segement is hidden

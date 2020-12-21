@@ -6,7 +6,7 @@ sidebar_label: Python
 
 ## What
 
-Display the currently active python version and virtualenv when a folder contains `.py` files or `.ipynb` files.
+Display the currently active python version and virtualenv.
 Supports conda, virtualenv and pyenv.
 
 ## Sample Configuration
@@ -27,3 +27,7 @@ Supports conda, virtualenv and pyenv.
 ## Properties
 
 - display_virtual_env: `boolean` - show the name of the virtualenv or not - defaults to `true`
+- display_mode: `string` - determines when the segment is displayed
+  - `always`: The segment is always displayed
+  - `context`: The segment is only displayed when *.py or *.ipynb files are present (default)
+  - `never`: The segement is hidden

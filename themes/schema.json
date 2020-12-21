@@ -912,6 +912,13 @@
                     "title": "Display Virtual Env",
                     "description": "Show the name of the virtualenv or not",
                     "default": true
+                  },
+                  "display_mode": {
+                    "type": "string",
+                    "title": "Display Mode",
+                    "description": "Determines whether the segment is displayed always or only if *.py or *.ipynb file are present in the current folder",
+                    "enum": ["always", "context", "never"],
+                    "default": "context"
                   }
                 }
               }

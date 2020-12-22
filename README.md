@@ -49,6 +49,7 @@ a modern and more efficient tool was needed to suit my personal needs.
 * [Robby Russel][oh-my-zsh] for creating oh-my-zsh, without him this would probably not be here
 * [Janne Mareike Koschinski][justjanne] for providing information on how to get certain information
 using Go (and the amazing [README][powerline-go])
+* [Starship][starship] for creating an amazing way to initialize the prompt
 
 [release-status]: https://github.com/jandedobbeleer/oh-my-posh3/workflows/Release/badge.svg
 [psgallery-badge]: https://img.shields.io/powershellgallery/dt/oh-my-posh.svg
@@ -69,3 +70,4 @@ using Go (and the amazing [README][powerline-go])
 [oh-my-zsh]: https://github.com/robbyrussell/oh-my-zsh
 [justjanne]: https://github.com/justjanne
 [powerline-go]: https://github.com/justjanne/powerline-go
+[starship]: https://github.com/starship/starship/blob/master/src/init/mod.rs

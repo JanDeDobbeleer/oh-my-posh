@@ -70,6 +70,15 @@ New: &new{},
 
 Even with unit tests, it's a good idea to build and validate the changes.
 
+First, we need to package the init scripts:
+
+```shell
+go get -u github.com/kevinburke/go-bindata/...
+go-bindata -o init.go init/
+```
+
+Next, build the app and validate the changes:
+
 ```shell
 go build -o $GOPATH/bin/oh-my-posh
 ```

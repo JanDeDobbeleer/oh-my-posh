@@ -5,11 +5,17 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"os"
+	"strings"
 	"time"
 )
 
 // Version number of oh-my-posh
 var Version = "development"
+
+const (
+	noExe = "echo \"Unable to find Oh my Posh executable\""
+)
 
 type args struct {
 	ErrorCode     *int
@@ -23,6 +29,8 @@ type args struct {
 	ExecutionTime *float64
 	Millis        *bool
 	Eval          *bool
+	Init          *bool
+	PrintInit     *bool
 }
 
 func main() {
@@ -71,6 +79,14 @@ func main() {
 			"eval",
 			false,
 			"Run in eval mode"),
+		Init: flag.Bool(
+			"init",
+			false,
+			"Initialize the shell"),
+		PrintInit: flag.Bool(
+			"print-init",
+			false,
+			"Print the shell initialization script"),
 	}
 	flag.Parse()
 	env := &environment{
@@ -78,6 +94,16 @@ func main() {
 	}
 	if *args.Millis {
 		fmt.Print(time.Now().UnixNano() / 1000000)
+		return
+	}
+	if *args.Init {
+		init := initShell(*args.Shell, *args.Config)
+		fmt.Print(init)
+		return
+	}
+	if *args.PrintInit {
+		init := printShellInit(*args.Shell, *args.Config)
+		fmt.Print(init)
 		return
 	}
 	settings := GetSettings(env)
@@ -113,4 +139,41 @@ func main() {
 		renderer: renderer,
 	}
 	engine.render()
+}
+
+func initShell(shell, config string) string {
+	executable, err := os.Executable()
+	if err != nil {
+		return noExe
+	}
+	switch shell {
+	case pwsh:
+		return fmt.Sprintf("Invoke-Expression (@(&\"%s\" --print-init --shell pwsh --config %s) -join \"`n\")", executable, config)
+	default:
+		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
+	}
+}
+
+func printShellInit(shell, config string) string {
+	executable, err := os.Executable()
+	if err != nil {
+		return noExe
+	}
+	switch shell {
+	case pwsh:
+		return getShellInitScript(executable, config, "init/pwsh.ps1")
+	default:
+		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
+	}
+}
+
+func getShellInitScript(executable, config, script string) string {
+	data, err := Asset(script)
+	if err != nil {
+		return fmt.Sprintf("echo \"Unable to find initialization script %s\"", script)
+	}
+	init := string(data)
+	init = strings.ReplaceAll(init, "::OMP::", executable)
+	init = strings.ReplaceAll(init, "::CONFIG::", config)
+	return init
 }

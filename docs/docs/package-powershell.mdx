@@ -34,15 +34,28 @@ Get-PoshThemes
 Autocompletion is available so it will loop through all available themes.
 
 ```powershell
-Set-PoshPrompt -Theme ~/downloadedtheme.json
+Set-PoshPrompt -Theme jandedobbeleer
 ```
 
-### Print the theme
+### Create your own theme
 
-Useful when you find a theme you like, but you want to tweak the settings a bit. The output is a formatted `json` string.
+You can output the current theme to its `JSON` representation which can be used to tweak and store as your custom theme.
 
 ```powershell
 Write-PoshTheme
+```
+
+Due to a bug in PowerShell, if you want to use `Out-File` directly to write the current theme to a new file, use the `oem`
+encoding to ensure the symbols are outputted correctly.
+
+```powershell
+Write-PoshTheme | Out-File -FilePath ~/.mytheme.omp.json -Encoding oem
+```
+
+Once you're done editing, adjust your `$PROFILE` to use your newly created theme.
+
+```powershell
+Set-PoshPrompt -Theme ~/.mytheme.omp.json
 ```
 
 [nerdfonts]: https://www.nerdfonts.com/

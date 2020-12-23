@@ -149,6 +149,8 @@ func initShell(shell, config string) string {
 	switch shell {
 	case pwsh:
 		return fmt.Sprintf("Invoke-Expression (@(&\"%s\" --print-init --shell pwsh --config %s) -join \"`n\")", executable, config)
+	case zsh:
+		return printShellInit(shell, config)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}
@@ -161,7 +163,9 @@ func printShellInit(shell, config string) string {
 	}
 	switch shell {
 	case pwsh:
-		return getShellInitScript(executable, config, "init/pwsh.ps1")
+		return getShellInitScript(executable, config, "init/omp.ps1")
+	case zsh:
+		return getShellInitScript(executable, config, "init/omp.zsh")
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}

@@ -166,20 +166,21 @@ func (e *engine) render() {
 }
 
 func (e *engine) write() {
-	if *e.env.getArgs().Eval {
-		fmt.Printf("PS1=\"%s\"", e.renderer.string())
-		if e.env.getShellName() == zsh {
+	switch e.env.getShellName() {
+	case zsh:
+		if *e.env.getArgs().Eval {
+			fmt.Printf("PS1=\"%s\"", e.renderer.string())
 			fmt.Printf("\nRPROMPT=\"%s\"", e.rprompt)
+			return
 		}
-		return
-	}
-
-	if e.rprompt != "" && (e.env.getShellName() == pwsh || e.env.getShellName() == powershell5) {
-		e.renderer.saveCursorPosition()
-		e.renderer.carriageForward()
-		e.renderer.setCursorForRightWrite(e.rprompt, 0)
-		e.renderer.print(e.rprompt)
-		e.renderer.restoreCursorPosition()
+	case pwsh, powershell5, bash:
+		if e.rprompt != "" {
+			e.renderer.saveCursorPosition()
+			e.renderer.carriageForward()
+			e.renderer.setCursorForRightWrite(e.rprompt, 0)
+			e.renderer.print(e.rprompt)
+			e.renderer.restoreCursorPosition()
+		}
 	}
 	fmt.Print(e.renderer.string())
 }

@@ -47,13 +47,6 @@ type AnsiRenderer struct {
 	shell   string
 }
 
-const (
-	zsh         = "zsh"
-	bash        = "bash"
-	pwsh        = "pwsh"
-	powershell5 = "powershell"
-)
-
 func (r *AnsiRenderer) init(shell string) {
 	r.shell = shell
 	r.formats = &formats{}

@@ -223,7 +223,9 @@ oh-my-posh --print-shell
 Edit `$PROFILE` in your preferred PowerShell version and add the following line.
 
 ```powershell
-Invoke-Expression (oh-my-posh --init --shell pwsh --config ~/.poshthemes/jandedobbeleer.omp.json)
+if (Get-Command -ErrorAction "SilentlyContinue" oh-my-posh) {
+    Invoke-Expression (oh-my-posh --init --shell pwsh --config ~/.poshthemes/jandedobbeleer.omp.json)
+}
 ```
 
 Once added, reload your profile for the changes to take effect.

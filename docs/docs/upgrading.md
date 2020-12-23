@@ -1,18 +1,11 @@
 ---
 id: upgrading
 title: Upgrading
-sidebar_label: Upgrading from V2
+sidebar_label: 🤘 Upgrading from V2
 ---
 
 Just like V2, V3 is available in the [PowerShell gallery][psgallery]. Due to its nature, it's only
 available as a prerelease while we work out the kinks and get it on par with V2.
-
-:::info Powershell 5
-Due to being unable to maintain everything, the decision was made to drop active support for non-cross platform
-tooling. That's why V3 will only work as of Powershell 6 when it comes to the module.
-If you want to install this for Powershell 5 (and below), feel free to look at the [manual installation][manual] process
-which should get you up and running in no time.
-:::
 
 ## V2's problem statement
 

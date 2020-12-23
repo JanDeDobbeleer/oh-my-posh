@@ -10,8 +10,8 @@ module.exports = {
   themeConfig: {
     sidebarCollapsible: false,
     prism: {
-      theme: require("prism-react-renderer/themes/github"),
-      darkTheme: require("prism-react-renderer/themes/dracula"),
+      theme: require("prism-react-renderer/themes/duotoneLight"),
+      darkTheme: require("prism-react-renderer/themes/oceanicNext"),
     },
     navbar: {
       title: "Oh my Posh",

@@ -1,7 +1,7 @@
 ---
 id: installation
 title: Installation
-sidebar_label: Installation
+sidebar_label: 🚀 Installation
 ---
 
 import Tabs from "@theme/Tabs";
@@ -203,7 +203,7 @@ for file in ~/.poshthemes/*.omp.json; do echo "$file\n"; oh-my-posh --config $fi
 
 If you have no idea which shell you're currently using, Oh my Posh has a utility switch that will you tell you.
 
-```shell
+```bash
 oh-my-posh --print-shell
 ```
 
@@ -237,13 +237,13 @@ Once added, reload your profile for the changes to take effect.
 
 Add the following to `~/.zshrc`:
 
-```zshrc
+```bash
 eval "$(oh-my-posh --init --shell zsh --config ~/.poshthemes/jandedobbeleer.omp.json)"
 ```
 
 Once added, reload your profile for the changes to take effect.
 
-```zsh
+```bash
 source ~/.zshrc
 ```
 
@@ -252,7 +252,7 @@ source ~/.zshrc
 
 Add the following to `~/.bashrc` (or `~/.profile` on MacOS):
 
-```bashrc
+```bash
 eval "$(oh-my-posh --init --shell bash --config ~/.poshthemes/jandedobbeleer.omp.json)"
 ```
 
@@ -273,13 +273,13 @@ Or, when using `~/.profile`.
 
 Redefine `fish_prompt` in `~/.config/fish/config.fish`:
 
-```fish
+```bash
 oh-my-posh --init --shell fish --config ~/.poshthemes/jandedobbeleer.omp.json | source
 ```
 
 Once added, reload your config for the changes to take effect.
 
-```fish
+```bash
 . ~/.config/fish/config.fish
 ```
 

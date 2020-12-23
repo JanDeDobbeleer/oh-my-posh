@@ -1,7 +1,7 @@
 ---
 id: configure
 title: Configuration
-sidebar_label: Configuration
+sidebar_label: ⚙️ Configuration
 ---
 
 Oh my Posh renders your prompt based on the definition of _blocks_ (like Lego) which contain or more _segments_.

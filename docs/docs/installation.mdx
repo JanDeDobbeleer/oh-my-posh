@@ -252,14 +252,8 @@ source ~/.zshrc
 
 Add the following to `~/.bashrc` (or `~/.profile` on MacOS):
 
-```bash
-function _update_ps1() {
-    eval "$(oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json --error $? --eval)"
-}
-
-if [ "$TERM" != "linux" ] && [ -x "$(command -v oh-my-posh)" ]; then
-    PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
-fi
+```bashrc
+eval "$(oh-my-posh --init --shell bash --config ~/.poshthemes/jandedobbeleer.omp.json)"
 ```
 
 Once added, reload your profile for the changes to take effect.

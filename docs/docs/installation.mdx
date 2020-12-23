@@ -273,15 +273,13 @@ Or, when using `~/.profile`.
 
 Redefine `fish_prompt` in `~/.config/fish/config.fish`:
 
-```bash
-function fish_prompt
-    eval oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json --error $status --eval
-end
+```fish
+oh-my-posh --init --shell fish --config ~/.poshthemes/jandedobbeleer.omp.json | source
 ```
 
 Once added, reload your config for the changes to take effect.
 
-```bash
+```fish
 . ~/.config/fish/config.fish
 ```
 

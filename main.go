@@ -14,7 +14,12 @@ import (
 var Version = "development"
 
 const (
-	noExe = "echo \"Unable to find Oh my Posh executable\""
+	noExe       = "echo \"Unable to find Oh my Posh executable\""
+	zsh         = "zsh"
+	bash        = "bash"
+	pwsh        = "pwsh"
+	fish        = "fish"
+	powershell5 = "powershell"
 )
 
 type args struct {
@@ -149,7 +154,7 @@ func initShell(shell, config string) string {
 	switch shell {
 	case pwsh:
 		return fmt.Sprintf("Invoke-Expression (@(&\"%s\" --print-init --shell pwsh --config %s) -join \"`n\")", executable, config)
-	case zsh, bash:
+	case zsh, bash, fish:
 		return printShellInit(shell, config)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
@@ -168,6 +173,8 @@ func printShellInit(shell, config string) string {
 		return getShellInitScript(executable, config, "init/omp.zsh")
 	case bash:
 		return getShellInitScript(executable, config, "init/omp.bash")
+	case fish:
+		return getShellInitScript(executable, config, "init/omp.fish")
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}

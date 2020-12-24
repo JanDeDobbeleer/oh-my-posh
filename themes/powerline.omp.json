@@ -20,8 +20,8 @@
           "powerline_symbol": "\uE0B0",
           "foreground": "#100e23",
           "background": "#91ddff",
-          "properties" : {
-              "style": "short"
+          "properties": {
+            "style": "full"
           }
         },
         {

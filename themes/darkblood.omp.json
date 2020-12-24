@@ -56,7 +56,7 @@
           "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "style": "short",
+            "style": "full",
             "prefix": "<#CB4B16>┖[</>",
             "postfix": "<#CB4B16>]></>"
           }

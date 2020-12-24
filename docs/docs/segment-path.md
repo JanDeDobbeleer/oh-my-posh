@@ -33,17 +33,18 @@ Display the current path.
 - folder_icon: `string` - the icon to use as a folder indication - defaults to `..`
 - windows_registry_icon: `string` - the icon to display when in the Windows registry - defaults to `\uE0B1`
 - style: `enum` - how to display the current path
-- mapped_locations: `map[string]string` - custom glyph/text for specific paths(only when `style` is set to `agnoster`,
-`agnoster_full`, `agnoster_short`, `short`, or `folder`)
+- mapped_locations: `map[string]string` - custom glyph/text for specific paths (only when `mapped_locations_enabled`
+is set to `true`)
+- mapped_locations_enabled: `boolean` - replace known locations in the path with the replacements before applying the
+style. defaults to `true`
 
 ## Style
 
-Style sets the way the path is displayed. Based on previous experience and popular themes, there are 4 flavors.
+Style sets the way the path is displayed. Based on previous experience and popular themes, there are 5 flavors.
 
 - agnoster
 - agnoster_full
 - agnoster_short
-- short
 - full
 - folder
 
@@ -61,15 +62,9 @@ Renders each folder name separated by the `folder_separator_icon`.
 
 When more than 1 level deep, it renders one `folder_icon` followed by the name of the current folder separated by the `folder_separator_icon`.
 
-### Short
-
-Display `$PWD` as a string, replace `$HOME` with the `home_icon` if you're inside the `$HOME` location or
-one of its children.
-Specific folders can be customized using the `mapped_locations` property.
-
 ### Full
 
-Display `$PWD` as a string
+Display `$PWD` as a string.
 
 ### Folder
 

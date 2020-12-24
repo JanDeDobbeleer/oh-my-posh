@@ -36,6 +36,8 @@ const (
 	Folder string = "folder"
 	// MappedLocations allows overriding certain location with an icon
 	MappedLocations Property = "mapped_locations"
+	// MappedLocationsEnabled enables overriding certain locations with an icon
+	MappedLocationsEnabled Property = "mapped_locations_enabled"
 )
 
 func (pt *path) enabled() bool {
@@ -51,9 +53,10 @@ func (pt *path) string() string {
 	case AgnosterShort:
 		return pt.getAgnosterShortPath()
 	case Short:
-		return pt.getShortPath()
+		// "short" is a duplicate of "full", just here for backwards compatibility
+		fallthrough
 	case Full:
-		return pt.env.getcwd()
+		return pt.getFullPath()
 	case Folder:
 		return pt.getFolderPath()
 	default:
@@ -66,8 +69,67 @@ func (pt *path) init(props *properties, env environmentInfo) {
 	pt.env = env
 }
 
-func (pt *path) getShortPath() string {
+func (pt *path) getAgnosterPath() string {
+	buffer := new(bytes.Buffer)
+	pwd := pt.getPwd()
+	buffer.WriteString(pt.rootLocation())
+	pathDepth := pt.pathDepth(pwd)
+	for i := 1; i < pathDepth; i++ {
+		buffer.WriteString(fmt.Sprintf("%s%s", pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator()), pt.props.getString(FolderIcon, "..")))
+	}
+	if pathDepth > 0 {
+		buffer.WriteString(fmt.Sprintf("%s%s", pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator()), base(pwd, pt.env)))
+	}
+	return buffer.String()
+}
+
+func (pt *path) getAgnosterFullPath() string {
+	pwd := pt.getPwd()
+	pathSeparator := pt.env.getPathSeperator()
+	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
+	if string(pwd[0]) == pathSeparator {
+		pwd = pwd[1:]
+	}
+	return strings.ReplaceAll(pwd, pathSeparator, folderSeparator)
+}
+
+func (pt *path) getAgnosterShortPath() string {
+	pathSeparator := pt.env.getPathSeperator()
+	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
+	folderIcon := pt.props.getString(FolderIcon, "..")
+	root := pt.rootLocation()
+	pwd := pt.getPwd()
+	base := base(pwd, pt.env)
+	pathDepth := pt.pathDepth(pwd)
+	if pathDepth <= 0 {
+		return root
+	}
+	if pathDepth == 1 {
+		return fmt.Sprintf("%s%s%s", root, folderSeparator, base)
+	}
+	return fmt.Sprintf("%s%s%s%s%s", root, folderSeparator, folderIcon, folderSeparator, base)
+}
+
+func (pt *path) getFullPath() string {
+	return pt.getPwd()
+}
+
+func (pt *path) getFolderPath() string {
+	pwd := pt.getPwd()
+	return base(pwd, pt.env)
+}
+
+func (pt *path) getPwd() string {
 	pwd := pt.env.getcwd()
+
+	if pt.props.getBool(MappedLocationsEnabled, true) {
+		pwd = pt.replaceMappedLocations(pwd)
+	}
+
+	return pwd
+}
+
+func (pt *path) replaceMappedLocations(pwd string) string {
 	if strings.HasPrefix(pwd, "Microsoft.PowerShell.Core\\FileSystem::") {
 		pwd = strings.Replace(pwd, "Microsoft.PowerShell.Core\\FileSystem::", "", 1)
 	}
@@ -104,57 +166,12 @@ func (pt *path) getShortPath() string {
 	return pwd
 }
 
-func (pt *path) getAgnosterPath() string {
-	buffer := new(bytes.Buffer)
-	pwd := pt.getShortPath()
-	buffer.WriteString(pt.rootLocation())
-	pathDepth := pt.pathDepth(pwd)
-	for i := 1; i < pathDepth; i++ {
-		buffer.WriteString(fmt.Sprintf("%s%s", pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator()), pt.props.getString(FolderIcon, "..")))
-	}
-	if pathDepth > 0 {
-		buffer.WriteString(fmt.Sprintf("%s%s", pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator()), base(pwd, pt.env)))
-	}
-	return buffer.String()
-}
-
-func (pt *path) getAgnosterFullPath() string {
-	pwd := pt.getShortPath()
-	pathSeparator := pt.env.getPathSeperator()
-	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
-	if string(pwd[0]) == pathSeparator {
-		pwd = pwd[1:]
-	}
-	return strings.ReplaceAll(pwd, pathSeparator, folderSeparator)
-}
-
-func (pt *path) getAgnosterShortPath() string {
-	pathSeparator := pt.env.getPathSeperator()
-	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
-	folderIcon := pt.props.getString(FolderIcon, "..")
-	root := pt.rootLocation()
-	base := base(pt.env.getcwd(), pt.env)
-	pathDepth := pt.pathDepth(pt.getShortPath())
-	if pathDepth <= 0 {
-		return root
-	}
-	if pathDepth == 1 {
-		return fmt.Sprintf("%s%s%s", root, folderSeparator, base)
-	}
-	return fmt.Sprintf("%s%s%s%s%s", root, folderSeparator, folderIcon, folderSeparator, base)
-}
-
-func (pt *path) getFolderPath() string {
-	pwd := pt.getShortPath()
-	return base(pwd, pt.env)
-}
-
 func (pt *path) inHomeDir(pwd string) bool {
 	return strings.HasPrefix(pwd, pt.env.homeDir())
 }
 
 func (pt *path) rootLocation() string {
-	pwd := pt.getShortPath()
+	pwd := pt.getPwd()
 	pwd = strings.TrimPrefix(pwd, pt.env.getPathSeperator())
 	splitted := strings.Split(pwd, pt.env.getPathSeperator())
 	rootLocation := splitted[0]
@@ -162,9 +179,6 @@ func (pt *path) rootLocation() string {
 }
 
 func (pt *path) pathDepth(pwd string) int {
-	if pt.inHomeDir(pwd) {
-		pwd = strings.Replace(pwd, pt.env.homeDir(), "root", 1)
-	}
 	splitted := strings.Split(pwd, pt.env.getPathSeperator())
 	var validParts []string
 	for _, part := range splitted {

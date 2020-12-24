@@ -27,12 +27,12 @@
           "style": "plain",
           "foreground": "#ffffff",
           "background": "#007ACC",
-          "properties" : {
-              "folder_icon": "\uF115",
-              "folder_separator_icon": "\uE0B1",
-              "style": "short",
-              "prefix": "<transparent>\uE0B0</> ",
-              "postfix": " "
+          "properties": {
+            "folder_icon": "\uF115",
+            "folder_separator_icon": "\uE0B1",
+            "style": "full",
+            "prefix": "<transparent>\uE0B0</> ",
+            "postfix": " "
           }
         },
         {

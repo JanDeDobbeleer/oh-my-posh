@@ -135,6 +135,9 @@ func (pt *path) getAgnosterShortPath() string {
 	root := pt.rootLocation()
 	base := base(pt.env.getcwd(), pt.env)
 	pathDepth := pt.pathDepth(pt.getShortPath())
+	if pathDepth <= 0 {
+		return root
+	}
 	if pathDepth == 1 {
 		return fmt.Sprintf("%s%s%s", root, folderSeparator, base)
 	}

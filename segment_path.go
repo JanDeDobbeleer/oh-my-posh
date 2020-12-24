@@ -55,7 +55,7 @@ func (pt *path) string() string {
 	case Full:
 		return pt.env.getcwd()
 	case Folder:
-		return base(pt.env.getcwd(), pt.env)
+		return pt.getFolderPath()
 	default:
 		return fmt.Sprintf("Path style: %s is not available", style)
 	}
@@ -139,6 +139,11 @@ func (pt *path) getAgnosterShortPath() string {
 		return fmt.Sprintf("%s%s%s", root, folderSeparator, base)
 	}
 	return fmt.Sprintf("%s%s%s%s%s", root, folderSeparator, folderIcon, folderSeparator, base)
+}
+
+func (pt *path) getFolderPath() string {
+	pwd := pt.getShortPath()
+	return base(pwd, pt.env)
 }
 
 func (pt *path) inHomeDir(pwd string) bool {

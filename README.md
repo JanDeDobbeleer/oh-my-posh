@@ -17,7 +17,7 @@ a modern and more efficient tool was needed to suit my personal needs.
 
 ## Features
 
-* Shell independant
+* Shell independent
 * Git status indications
 * Failed command indication
 * Admin indication

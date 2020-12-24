@@ -43,13 +43,20 @@ func (b *batt) enabled() bool {
 	}
 
 	displayError := b.props.getBool(DisplayError, false)
-	if err != nil && !displayError {
-		b.percentageText = "100%"
+	if err != nil && displayError {
+		b.percentageText = "BATT ERR"
 		return true
 	}
 	if err != nil {
-		b.percentageText = "BATT ERR"
-		return true
+		// On Windows, it sometimes errors when the battery is full.
+		// This hack ensures we display a fully charged battery, even if
+		// that state can be incorrect. It's better to "ignore" the error
+		// than to not display the segment at all as that will confuse users.
+		bt = &battery.Battery{
+			Current: 100,
+			Full:    100,
+			State:   battery.Full,
+		}
 	}
 	batteryPercentage := bt.Current / bt.Full * 100
 	batteryPercentage = math.Min(100, batteryPercentage)

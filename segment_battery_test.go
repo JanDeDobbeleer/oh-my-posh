@@ -147,7 +147,7 @@ func TestBatteryErrorHidden(t *testing.T) {
 		env: env,
 	}
 	assert.True(t, b.enabled())
-	assert.Equal(t, "100%", b.string())
+	assert.Equal(t, "100", b.string())
 }
 
 func TestBatteryDischargingAndDisplayChargingDisabled(t *testing.T) {

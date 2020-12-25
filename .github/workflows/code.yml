@@ -19,6 +19,9 @@ jobs:
         - os: macos-latest
         - os: windows-latest
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/src
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
@@ -34,5 +37,6 @@ jobs:
       uses: golangci/golangci-lint-action@v2
       with:
         version: v1.31
+        working-directory: src
     - name: Unit Tests
       run: go test . -v

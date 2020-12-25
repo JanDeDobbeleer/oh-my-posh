@@ -29,7 +29,7 @@ jobs:
     - name: Bundle init scripts
       run: |
         go get -u github.com/kevinburke/go-bindata/...
-        go-bindata -o init.go init/
+        go generate
     - name: Golang CI
       uses: golangci/golangci-lint-action@v2
       with:

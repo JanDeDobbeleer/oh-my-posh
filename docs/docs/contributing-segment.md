@@ -74,7 +74,7 @@ First, we need to package the init scripts:
 
 ```shell
 go get -u github.com/kevinburke/go-bindata/...
-go-bindata -o init.go init/
+go generate
 ```
 
 Next, build the app and validate the changes:

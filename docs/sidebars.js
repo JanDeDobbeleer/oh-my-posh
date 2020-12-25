@@ -42,7 +42,7 @@ module.exports = {
     {
       type: "category",
       label: "Contributing",
-      items: ["contributing_segment"],
+      items: ["contributing_started", "contributing_segment"],
     },
   ],
 };

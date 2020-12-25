@@ -5,6 +5,9 @@ on: [pull_request]
 jobs:
   go-mod:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/src
     steps:
     - name: Install Go
       uses: actions/setup-go@v2

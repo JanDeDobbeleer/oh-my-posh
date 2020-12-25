@@ -55,6 +55,9 @@ jobs:
         - os: windows-latest
           ARTIFACT: posh-windows-amd64.exe
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}/src
     outputs:
       hash_linux: ${{ steps.hash.outputs.hash_ubuntu-latest }}
       hash_macos: ${{ steps.hash.outputs.hash_macos-latest }}
@@ -89,7 +92,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ matrix.ARTIFACT }}
+        asset_path: src/${{ matrix.ARTIFACT }}
         asset_name: ${{ matrix.ARTIFACT }}
         asset_content_type: application/octet-stream
     - name: Upload Hash Asset
@@ -99,7 +102,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ matrix.ARTIFACT }}.sha256
+        asset_path: src/${{ matrix.ARTIFACT }}.sha256
         asset_name: ${{ matrix.ARTIFACT }}.sha256
         asset_content_type: text/plain
   themes:

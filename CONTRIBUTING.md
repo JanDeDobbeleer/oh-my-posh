@@ -3,8 +3,8 @@
 Note we have a code of conduct, please follow it in all your interactions with the project.
 
 Ensure you've read through the [documentation][docs] so you understand the core concepts of the
-project. If you're looking to get familiar with Go, following the [guide][guide] for adding
-segments can be a good starting point.
+project. If you're looking to get familiar with go, following the getting started [guide][guide]
+can be a good starting point.
 
 ## Pull Request Process
 
@@ -137,7 +137,7 @@ Community Impact Guidelines were inspired by [Mozilla's code of conduct
 enforcement ladder](https://github.com/mozilla/diversity).
 
 [docs]: https://ohmyposh.dev/docs
-[guide]: https://ohmyposh.dev/docs/contributing_segment
+[guide]: https://ohmyposh.dev/docs/contributing_started
 [cc]: https://www.conventionalcommits.org/en/v1.0.0/#summary
 [homepage]: https://www.contributor-covenant.org
 [conduct]: mailto:conduct@ohmyposh.dev

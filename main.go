@@ -1,3 +1,5 @@
+//go:generate go-bindata -o init.go init/
+
 package main
 
 import (

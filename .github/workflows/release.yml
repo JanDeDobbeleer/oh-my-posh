@@ -69,7 +69,7 @@ jobs:
     - name: Bundle init scripts
       run: |
         go get -u github.com/kevinburke/go-bindata/...
-        go-bindata -o init.go init/
+        go generate
     - name: Build
       id: build
       run: go build -o ${{ matrix.ARTIFACT }} -ldflags="-X 'main.Version=${{ needs.release.outputs.version }}'"

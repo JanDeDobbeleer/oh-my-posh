@@ -1,3 +1,5 @@
+github.com/JanDeDobbeleer/battery v0.10.0-1 h1:3N3i3xgvrrb3eCuX4kJnmbKzOiqkH1Ly1D7lAJJJTqA=
+github.com/JanDeDobbeleer/battery v0.10.0-1/go.mod h1:STnSvFLX//eEpkaN7qWRxCWxrWOcssTDgnG4yqq9BRE=
 github.com/JanDeDobbeleer/battery v0.10.1-0.20200909080331-bb0a7566dbb8 h1:+SZ7qtnuEFJmun53J2UzzbwBf5jtS/GkE9CZlkiPdSU=
 github.com/JanDeDobbeleer/battery v0.10.1-0.20200909080331-bb0a7566dbb8/go.mod h1:STnSvFLX//eEpkaN7qWRxCWxrWOcssTDgnG4yqq9BRE=
 github.com/JanDeDobbeleer/color v1.3.1-0.20201226083802-039df48570df h1:uRRjiiJyUC15eMJsVLnbWNohCmjd0teUplT0AB438c8=

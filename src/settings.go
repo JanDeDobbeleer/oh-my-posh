@@ -22,9 +22,6 @@ type BlockType string
 // BlockAlignment aligment of a Block
 type BlockAlignment string
 
-// ConsoleTitleStyle defines how to show the title in the console window
-type ConsoleTitleStyle string
-
 const (
 	// Prompt writes one or more Segments
 	Prompt BlockType = "prompt"
@@ -36,10 +33,6 @@ const (
 	Left BlockAlignment = "left"
 	// Right aligns right
 	Right BlockAlignment = "right"
-	// FolderName show the current folder name
-	FolderName ConsoleTitleStyle = "folder"
-	// FullPath show the current path
-	FullPath ConsoleTitleStyle = "path"
 )
 
 // Block defines a part of the prompt with optional segments

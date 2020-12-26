@@ -33,7 +33,6 @@ type formats struct {
 	linechange            string
 	left                  string
 	right                 string
-	title                 string
 	creset                string
 	clearOEL              string
 	saveCursorPosition    string
@@ -55,7 +54,6 @@ func (r *AnsiRenderer) init(shell string) {
 		r.formats.linechange = "%%{\x1b[%d%s%%}"
 		r.formats.left = "%%{\x1b[%dC%%}"
 		r.formats.right = "%%{\x1b[%dD%%}"
-		r.formats.title = "%%{\033]0;%s\007%%}"
 		r.formats.creset = "%{\x1b[0m%}"
 		r.formats.clearOEL = "%{\x1b[K%}"
 		r.formats.saveCursorPosition = "%{\x1b7%}"
@@ -64,7 +62,6 @@ func (r *AnsiRenderer) init(shell string) {
 		r.formats.linechange = "\\[\x1b[%d%s\\]"
 		r.formats.left = "\\[\x1b[%dC\\]"
 		r.formats.right = "\\[\x1b[%dD\\]"
-		r.formats.title = "\\[\033]0;%s\007\\]"
 		r.formats.creset = "\\[\x1b[0m\\]"
 		r.formats.clearOEL = "\\[\x1b[K\\]"
 		r.formats.saveCursorPosition = "\\[\x1b7\\]"
@@ -73,7 +70,6 @@ func (r *AnsiRenderer) init(shell string) {
 		r.formats.linechange = "\x1b[%d%s"
 		r.formats.left = "\x1b[%dC"
 		r.formats.right = "\x1b[%dD"
-		r.formats.title = "\033]0;%s\007"
 		r.formats.creset = "\x1b[0m"
 		r.formats.clearOEL = "\x1b[K"
 		r.formats.saveCursorPosition = "\x1b7"
@@ -97,10 +93,6 @@ func (r *AnsiRenderer) changeLine(numberOfLines int) {
 		numberOfLines = -numberOfLines
 	}
 	r.buffer.WriteString(fmt.Sprintf(r.formats.linechange, numberOfLines, position))
-}
-
-func (r *AnsiRenderer) setConsoleTitle(title string) {
-	r.buffer.WriteString(fmt.Sprintf(r.formats.title, title))
 }
 
 func (r *AnsiRenderer) creset() {

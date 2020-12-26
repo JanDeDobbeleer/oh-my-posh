@@ -449,6 +449,45 @@ func TestGetAgnosterShortPathOneLevel(t *testing.T) {
 	assert.Equal(t, "foo", got)
 }
 
+func TestGetFullPath(t *testing.T) {
+	cases := []struct {
+		UseFolderSeparatorIcon bool
+		Pwd                    string
+		Expected               string
+	}{
+		{UseFolderSeparatorIcon: false, Pwd: "", Expected: ""},
+		{UseFolderSeparatorIcon: false, Pwd: "/", Expected: "/"},
+		{UseFolderSeparatorIcon: false, Pwd: "/usr/home", Expected: "~"},
+		{UseFolderSeparatorIcon: false, Pwd: "/usr/home/abc", Expected: "~/abc"},
+		{UseFolderSeparatorIcon: false, Pwd: "/a/b/c/d", Expected: "/a/b/c/d"},
+
+		{UseFolderSeparatorIcon: true, Pwd: "", Expected: ""},
+		{UseFolderSeparatorIcon: true, Pwd: "/", Expected: "|"},
+		{UseFolderSeparatorIcon: true, Pwd: "/usr/home", Expected: "~"},
+		{UseFolderSeparatorIcon: true, Pwd: "/usr/home/abc", Expected: "~|abc"},
+		{UseFolderSeparatorIcon: true, Pwd: "/a/b/c/d", Expected: "|a|b|c|d"},
+	}
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("getPathSeperator", nil).Return("/")
+		env.On("homeDir", nil).Return("/usr/home")
+		env.On("getcwd", nil).Return(tc.Pwd)
+		props := map[Property]interface{}{}
+		if tc.UseFolderSeparatorIcon {
+			props[FolderSeparatorIcon] = "|"
+		}
+		path := &path{
+			env: env,
+			props: &properties{
+				values: props,
+			},
+		}
+		got := path.getFullPath()
+		assert.Equal(t, tc.Expected, got)
+	}
+}
+
 func TestGetFolderPath(t *testing.T) {
 	pwd := "/usr/home/projects"
 	env := new(MockedEnvironment)

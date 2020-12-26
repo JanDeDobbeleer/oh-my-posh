@@ -9,9 +9,8 @@ require (
 	github.com/alecthomas/repr v0.0.0-20201103221029-55c485bd663f // indirect
 	github.com/distatus/battery v0.10.1-0.20200722221337-7e1bf2bbb15c
 	github.com/go-ole/go-ole v1.2.4 // indirect
-	github.com/gookit/color v1.3.1
+	github.com/gookit/color v1.3.5
 	github.com/mattn/go-isatty v0.0.12 // indirect
-	github.com/mitchellh/go-ps v1.0.0 // indirect
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/shirou/gopsutil v2.20.9+incompatible
 	github.com/stretchr/objx v0.3.0 // indirect
@@ -25,4 +24,4 @@ require (
 
 replace github.com/distatus/battery v0.10.1-0.20200722221337-7e1bf2bbb15c => github.com/JanDeDobbeleer/battery v0.10.1-0.20200909080331-bb0a7566dbb8
 
-replace github.com/gookit/color v1.3.1 => github.com/JanDeDobbeleer/color v1.3.1-0.20201014085303-5ffcdf66388a
+replace github.com/gookit/color v1.3.5 => github.com/JanDeDobbeleer/color v1.3.5-1

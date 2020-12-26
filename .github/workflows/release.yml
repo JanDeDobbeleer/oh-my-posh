@@ -31,7 +31,6 @@ jobs:
           output-file: "false"
           skip-commit: "true"
           skip-on-empty: "true"
-          config-file-path: ".versionrc.json"
       - name: Create Github Release
         id: create_release
         uses: actions/create-release@v1

@@ -7,7 +7,7 @@ require (
 	github.com/alecthomas/assert v0.0.0-20170929043011-405dbfeb8e38
 	github.com/alecthomas/colour v0.1.0 // indirect
 	github.com/alecthomas/repr v0.0.0-20201103221029-55c485bd663f // indirect
-	github.com/distatus/battery v0.10.1-0.20200722221337-7e1bf2bbb15c
+	github.com/distatus/battery v0.10.0
 	github.com/go-ole/go-ole v1.2.4 // indirect
 	github.com/gookit/color v1.3.5
 	github.com/mattn/go-isatty v0.0.12 // indirect
@@ -22,6 +22,5 @@ require (
 	muzzammil.xyz/jsonc v0.0.0-20200627155943-e1c384b63054
 )
 
-replace github.com/distatus/battery v0.10.1-0.20200722221337-7e1bf2bbb15c => github.com/JanDeDobbeleer/battery v0.10.1-0.20200909080331-bb0a7566dbb8
-
+replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-1
 replace github.com/gookit/color v1.3.5 => github.com/JanDeDobbeleer/color v1.3.5-1

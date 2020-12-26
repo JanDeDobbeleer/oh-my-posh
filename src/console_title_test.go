@@ -26,10 +26,12 @@ func TestGetConsoleTitle(t *testing.T) {
 		env.On("getcwd", nil).Return(tc.Cwd)
 		env.On("homeDir", nil).Return("/usr/home")
 		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
-		env.On("getShellName", nil).Return(tc.ShellName)
+		formats := &ansiFormats{}
+		formats.init(tc.ShellName)
 		ct := &consoleTitle{
 			env:      env,
 			settings: settings,
+			formats:  formats,
 		}
 		got := ct.getConsoleTitle()
 		assert.Equal(t, tc.Expected, got)

@@ -131,19 +131,27 @@ func main() {
 	if *args.Shell != "" {
 		shell = *args.Shell
 	}
+	formats := &ansiFormats{}
+	formats.init(shell)
 	renderer := &AnsiRenderer{
-		buffer: new(bytes.Buffer),
+		buffer:  new(bytes.Buffer),
+		formats: formats,
 	}
 	colorer := &AnsiColor{
-		buffer: new(bytes.Buffer),
+		buffer:  new(bytes.Buffer),
+		formats: formats,
 	}
-	renderer.init(shell)
-	colorer.init(shell)
-	engine := &engine{
-		settings: settings,
+	title := &consoleTitle{
 		env:      env,
-		color:    colorer,
-		renderer: renderer,
+		settings: settings,
+		formats:  formats,
+	}
+	engine := &engine{
+		settings:     settings,
+		env:          env,
+		color:        colorer,
+		renderer:     renderer,
+		consoleTitle: title,
 	}
 	engine.render()
 }

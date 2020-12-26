@@ -3,78 +3,12 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"strings"
-
-	"golang.org/x/text/unicode/norm"
 )
-
-func lenWithoutANSI(text, shell string) int {
-	rANSI := "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
-	stripped := replaceAllString(rANSI, text, "")
-	switch shell {
-	case zsh:
-		stripped = strings.ReplaceAll(stripped, "%{", "")
-		stripped = strings.ReplaceAll(stripped, "%}", "")
-	case bash:
-		stripped = strings.ReplaceAll(stripped, "\\[", "")
-		stripped = strings.ReplaceAll(stripped, "\\]", "")
-	}
-	var i norm.Iter
-	i.InitString(norm.NFD, stripped)
-	var count int
-	for !i.Done() {
-		i.Next()
-		count++
-	}
-	return count
-}
-
-type formats struct {
-	linechange            string
-	left                  string
-	right                 string
-	creset                string
-	clearOEL              string
-	saveCursorPosition    string
-	restoreCursorPosition string
-}
 
 // AnsiRenderer exposes functionality using ANSI
 type AnsiRenderer struct {
 	buffer  *bytes.Buffer
-	formats *formats
-	shell   string
-}
-
-func (r *AnsiRenderer) init(shell string) {
-	r.shell = shell
-	r.formats = &formats{}
-	switch shell {
-	case zsh:
-		r.formats.linechange = "%%{\x1b[%d%s%%}"
-		r.formats.left = "%%{\x1b[%dC%%}"
-		r.formats.right = "%%{\x1b[%dD%%}"
-		r.formats.creset = "%{\x1b[0m%}"
-		r.formats.clearOEL = "%{\x1b[K%}"
-		r.formats.saveCursorPosition = "%{\x1b7%}"
-		r.formats.restoreCursorPosition = "%{\x1b8%}"
-	case bash:
-		r.formats.linechange = "\\[\x1b[%d%s\\]"
-		r.formats.left = "\\[\x1b[%dC\\]"
-		r.formats.right = "\\[\x1b[%dD\\]"
-		r.formats.creset = "\\[\x1b[0m\\]"
-		r.formats.clearOEL = "\\[\x1b[K\\]"
-		r.formats.saveCursorPosition = "\\[\x1b7\\]"
-		r.formats.restoreCursorPosition = "\\[\x1b8\\]"
-	default:
-		r.formats.linechange = "\x1b[%d%s"
-		r.formats.left = "\x1b[%dC"
-		r.formats.right = "\x1b[%dD"
-		r.formats.creset = "\x1b[0m"
-		r.formats.clearOEL = "\x1b[K"
-		r.formats.saveCursorPosition = "\x1b7"
-		r.formats.restoreCursorPosition = "\x1b8"
-	}
+	formats *ansiFormats
 }
 
 func (r *AnsiRenderer) carriageForward() {
@@ -82,7 +16,7 @@ func (r *AnsiRenderer) carriageForward() {
 }
 
 func (r *AnsiRenderer) setCursorForRightWrite(text string, offset int) {
-	strippedLen := lenWithoutANSI(text, r.shell) + -offset
+	strippedLen := r.formats.lenWithoutANSI(text) + -offset
 	r.buffer.WriteString(fmt.Sprintf(r.formats.right, strippedLen))
 }
 

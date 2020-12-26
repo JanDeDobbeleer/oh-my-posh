@@ -149,14 +149,11 @@ func (e *engine) render() {
 		}
 	}
 	if e.settings.ConsoleTitle {
-		switch e.settings.ConsoleTitleStyle {
-		case FullPath:
-			e.renderer.setConsoleTitle(e.env.getcwd())
-		case FolderName:
-			fallthrough
-		default:
-			e.renderer.setConsoleTitle(base(e.env.getcwd(), e.env))
+		title := &consoleTitle{
+			env:      e.env,
+			settings: e.settings,
 		}
+		e.renderer.print(title.getConsoleTitle())
 	}
 	e.renderer.creset()
 	if e.settings.FinalSpace {

@@ -9,12 +9,6 @@ import (
 	"github.com/gookit/color"
 )
 
-type colorFormats struct {
-	single      string
-	full        string
-	transparent string
-}
-
 var (
 	// Map for color names and their respective foreground [0] or background [1] color codes
 	colorMap map[string][2]string = map[string][2]string{
@@ -53,31 +47,13 @@ func getColorFromName(colorName string, isBackground bool) (string, error) {
 // AnsiColor writes colorized strings
 type AnsiColor struct {
 	buffer  *bytes.Buffer
-	formats *colorFormats
+	formats *ansiFormats
 }
 
 const (
 	// Transparent implies a transparent color
 	Transparent = "transparent"
 )
-
-func (a *AnsiColor) init(shell string) {
-	a.formats = &colorFormats{}
-	switch shell {
-	case zsh:
-		a.formats.single = "%%{\x1b[%sm%%}%s%%{\x1b[0m%%}"
-		a.formats.full = "%%{\x1b[%sm\x1b[%sm%%}%s%%{\x1b[0m%%}"
-		a.formats.transparent = "%%{\x1b[%s;49m\x1b[7m%%}%s%%{\x1b[m\x1b[0m%%}"
-	case bash:
-		a.formats.single = "\\[\x1b[%sm\\]%s\\[\x1b[0m\\]"
-		a.formats.full = "\\[\x1b[%sm\x1b[%sm\\]%s\\[\x1b[0m\\]"
-		a.formats.transparent = "\\[\x1b[%s;49m\x1b[7m\\]%s\\[\x1b[m\x1b[0m\\]"
-	default:
-		a.formats.single = "\x1b[%sm%s\x1b[0m"
-		a.formats.full = "\x1b[%sm\x1b[%sm%s\x1b[0m"
-		a.formats.transparent = "\x1b[%s;49m\x1b[7m%s\x1b[m\x1b[0m"
-	}
-}
 
 // Gets the ANSI color code for a given color string.
 // This can include a valid hex color in the format `#FFFFFF`,
@@ -99,14 +75,14 @@ func (a *AnsiColor) writeColoredText(background, foreground, text string) {
 	var coloredText string
 	if foreground == Transparent && background != "" {
 		ansiColor := a.getAnsiFromColorString(background, false)
-		coloredText = fmt.Sprintf(a.formats.transparent, ansiColor, text)
+		coloredText = fmt.Sprintf(a.formats.colorTransparent, ansiColor, text)
 	} else if background == "" || background == Transparent {
 		ansiColor := a.getAnsiFromColorString(foreground, false)
-		coloredText = fmt.Sprintf(a.formats.single, ansiColor, text)
+		coloredText = fmt.Sprintf(a.formats.colorSingle, ansiColor, text)
 	} else if foreground != "" && background != "" {
 		bgAnsiColor := a.getAnsiFromColorString(background, true)
 		fgAnsiColor := a.getAnsiFromColorString(foreground, false)
-		coloredText = fmt.Sprintf(a.formats.full, bgAnsiColor, fgAnsiColor, text)
+		coloredText = fmt.Sprintf(a.formats.colorFull, bgAnsiColor, fgAnsiColor, text)
 	}
 	a.buffer.WriteString(coloredText)
 }

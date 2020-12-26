@@ -5,6 +5,7 @@ import "fmt"
 type consoleTitle struct {
 	env      environmentInfo
 	settings *Settings
+	formats  *ansiFormats
 }
 
 // ConsoleTitleStyle defines how to show the title in the console window
@@ -18,25 +19,14 @@ const (
 )
 
 func (t *consoleTitle) getConsoleTitle() string {
+	var title string
 	switch t.settings.ConsoleTitleStyle {
 	case FullPath:
-		return t.formatConsoleTitle(t.env.getcwd())
+		title = t.env.getcwd()
 	case FolderName:
 		fallthrough
 	default:
-		return t.formatConsoleTitle(base(t.env.getcwd(), t.env))
+		title = base(t.env.getcwd(), t.env)
 	}
-}
-
-func (t *consoleTitle) formatConsoleTitle(title string) string {
-	var format string
-	switch t.env.getShellName() {
-	case zsh:
-		format = "%%{\033]0;%s\007%%}"
-	case bash:
-		format = "\\[\033]0;%s\007\\]"
-	default:
-		format = "\033]0;%s\007"
-	}
-	return fmt.Sprintf(format, title)
+	return fmt.Sprintf(t.formats.title, title)
 }

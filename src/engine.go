@@ -10,6 +10,7 @@ type engine struct {
 	env                   environmentInfo
 	color                 *AnsiColor
 	renderer              *AnsiRenderer
+	consoleTitle          *consoleTitle
 	activeBlock           *Block
 	activeSegment         *Segment
 	previousActiveSegment *Segment
@@ -149,11 +150,7 @@ func (e *engine) render() {
 		}
 	}
 	if e.settings.ConsoleTitle {
-		title := &consoleTitle{
-			env:      e.env,
-			settings: e.settings,
-		}
-		e.renderer.print(title.getConsoleTitle())
+		e.renderer.print(e.consoleTitle.getConsoleTitle())
 	}
 	e.renderer.creset()
 	if e.settings.FinalSpace {

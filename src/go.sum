@@ -1,11 +1,9 @@
 github.com/JanDeDobbeleer/battery v0.10.0-1 h1:3N3i3xgvrrb3eCuX4kJnmbKzOiqkH1Ly1D7lAJJJTqA=
 github.com/JanDeDobbeleer/battery v0.10.0-1/go.mod h1:STnSvFLX//eEpkaN7qWRxCWxrWOcssTDgnG4yqq9BRE=
-github.com/JanDeDobbeleer/battery v0.10.1-0.20200909080331-bb0a7566dbb8 h1:+SZ7qtnuEFJmun53J2UzzbwBf5jtS/GkE9CZlkiPdSU=
-github.com/JanDeDobbeleer/battery v0.10.1-0.20200909080331-bb0a7566dbb8/go.mod h1:STnSvFLX//eEpkaN7qWRxCWxrWOcssTDgnG4yqq9BRE=
-github.com/JanDeDobbeleer/color v1.3.1-0.20201226083802-039df48570df h1:uRRjiiJyUC15eMJsVLnbWNohCmjd0teUplT0AB438c8=
-github.com/JanDeDobbeleer/color v1.3.1-0.20201226083802-039df48570df/go.mod h1:GqqLKF1le3EfrbHbYsYa5WdLqfc/PHMdMRbt6tMnqIc=
 github.com/JanDeDobbeleer/color v1.3.5-1 h1:joTGC9ShPgXUVWJW4sBv4q9M2rdpTopCysc8fRRAgkY=
 github.com/JanDeDobbeleer/color v1.3.5-1/go.mod h1:GqqLKF1le3EfrbHbYsYa5WdLqfc/PHMdMRbt6tMnqIc=
+github.com/JanDeDobbeleer/jsonc v0.0.0-1 h1:mNNA3kH8VcKdZY2JSjhTn23SEszXtA6tdeihf1EgFr8=
+github.com/JanDeDobbeleer/jsonc v0.0.0-1/go.mod h1:du99TTKDGgeJ8EWTOucG3G9Q8W8XRw0P5I7565cuZVc=
 github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d h1:G0m3OIz70MZUWq3EgK3CesDbo8upS2Vm9/P3FtgI+Jk=
 github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d/go.mod h1:3eOhrUMpNV+6aFIbp5/iudMxNCF27Vw2OZgy4xEx0Fg=
 github.com/alecthomas/assert v0.0.0-20170929043011-405dbfeb8e38 h1:smF2tmSOzy2Mm+0dGI2AIUHY+w0BUc+4tn40djz7+6U=
@@ -61,5 +59,3 @@ gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776/go.mod h1:K4uyk7z7BCEPqu6E+C
 howett.net/plist v0.0.0-20181124034731-591f970eefbb/go.mod h1:vMygbs4qMhSZSc4lCUl2OEE+rDiIIJAIdR4m7MiMcm0=
 howett.net/plist v0.0.0-20200419221736-3b63eb3a43b5 h1:AQkaJpH+/FmqRjmXZPELom5zIERYZfwTjnHpfoVMQEc=
 howett.net/plist v0.0.0-20200419221736-3b63eb3a43b5/go.mod h1:vMygbs4qMhSZSc4lCUl2OEE+rDiIIJAIdR4m7MiMcm0=
-muzzammil.xyz/jsonc v0.0.0-20200627155943-e1c384b63054 h1:HhSLntk5Waqyx19MS886eRyllKmLtxBt6Lr0Z5Bk2bM=
-muzzammil.xyz/jsonc v0.0.0-20200627155943-e1c384b63054/go.mod h1:rFv8tUUKe+QLh7v02BhfxXEf4ZHhYD7unR93HL/1Uvo=

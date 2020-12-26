@@ -85,12 +85,10 @@ func (pt *path) getAgnosterPath() string {
 
 func (pt *path) getAgnosterFullPath() string {
 	pwd := pt.getPwd()
-	pathSeparator := pt.env.getPathSeperator()
-	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
-	if string(pwd[0]) == pathSeparator {
+	if string(pwd[0]) == pt.env.getPathSeperator() {
 		pwd = pwd[1:]
 	}
-	return strings.ReplaceAll(pwd, pathSeparator, folderSeparator)
+	return pt.replaceFolderSeparators(pwd)
 }
 
 func (pt *path) getAgnosterShortPath() string {
@@ -111,7 +109,8 @@ func (pt *path) getAgnosterShortPath() string {
 }
 
 func (pt *path) getFullPath() string {
-	return pt.getPwd()
+	pwd := pt.getPwd()
+	return pt.replaceFolderSeparators(pwd)
 }
 
 func (pt *path) getFolderPath() string {
@@ -166,6 +165,17 @@ func (pt *path) replaceMappedLocations(pwd string) string {
 	return pwd
 }
 
+func (pt *path) replaceFolderSeparators(pwd string) string {
+	defaultSeparator := pt.env.getPathSeperator()
+	folderSeparator := pt.props.getString(FolderSeparatorIcon, defaultSeparator)
+	if folderSeparator == defaultSeparator {
+		return pwd
+	}
+
+	pwd = strings.ReplaceAll(pwd, defaultSeparator, folderSeparator)
+	return pwd
+}
+
 func (pt *path) inHomeDir(pwd string) bool {
 	return strings.HasPrefix(pwd, pt.env.homeDir())
 }
@@ -180,13 +190,12 @@ func (pt *path) rootLocation() string {
 
 func (pt *path) pathDepth(pwd string) int {
 	splitted := strings.Split(pwd, pt.env.getPathSeperator())
-	var validParts []string
+	depth := 0
 	for _, part := range splitted {
 		if part != "" {
-			validParts = append(validParts, part)
+			depth++
 		}
 	}
-	depth := len(validParts)
 	return depth - 1
 }
 

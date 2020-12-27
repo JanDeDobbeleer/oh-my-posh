@@ -83,12 +83,12 @@ the current working directory is `/usr/home/omp` and the shell is `zsh`.
 
 ```json
 {
-    "console_title_template" = "{{.Folder}}{{if .Root}} :: root{{end}} :: {{.Shell}}",
+    "console_title_template": "{{.Folder}}{{if .Root}} :: root{{end}} :: {{.Shell}}",
     // outputs:
     // when root == false: omp :: zsh
     // when root == true: omp :: root :: zsh
-    "console_title_template" = "{{.Folder}}", // outputs: omp
-    "console_title_template" = "{{.Shell}} in {{.Path}}", // outputs: zsh in /usr/home/omp
+    "console_title_template": "{{.Folder}}", // outputs: omp
+    "console_title_template": "{{.Shell}} in {{.Path}}", // outputs: zsh in /usr/home/omp
 }
 ```
 

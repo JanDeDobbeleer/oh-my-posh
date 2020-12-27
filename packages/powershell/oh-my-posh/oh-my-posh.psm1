@@ -5,7 +5,6 @@
 
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
     Theme = "$PSScriptRoot\themes\jandedobbeleer.json";
-    ShowDebug = $false
 }
 
 function Get-PoshCommand {
@@ -29,6 +28,7 @@ function Set-PoshContext {}
 
 function Set-GitStatus {
     if (Get-Command -Name "Get-GitStatus" -ErrorAction SilentlyContinue) {
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification='Variable used later(not in this scope)')]
         $Global:GitStatus = Get-GitStatus
     }
 }
@@ -37,13 +37,8 @@ function Set-PoshPrompt {
     param(
         [Parameter(Mandatory = $false)]
         [string]
-        $Theme,
-        [Parameter(Mandatory = $false)]
-        [bool]
-        $ShowDebug = $false
+        $Theme
     )
-
-    $global:PoshSettings.ShowDebug = $ShowDebug
 
     if (Test-Path "$PSScriptRoot/themes/$Theme.omp.json") {
         $global:PoshSettings.Theme = "$PSScriptRoot/themes/$Theme.omp.json"
@@ -81,9 +76,8 @@ function Set-PoshPrompt {
         $startInfo = New-Object System.Diagnostics.ProcessStartInfo
         $startInfo.FileName = Get-PoshCommand
         $config = $global:PoshSettings.Theme
-        $showDebug = $global:PoshSettings.ShowDebug
         $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-        $startInfo.Arguments = "--debug=""$showDebug"" --config=""$config"" --error=$errorCode --pwd=""$cleanPWD"" --execution-time=$executionTime"
+        $startInfo.Arguments = "--config=""$config"" --error=$errorCode --pwd=""$cleanPWD"" --execution-time=$executionTime"
         $startInfo.Environment["TERM"] = "xterm-256color"
         $startInfo.CreateNoWindow = $true
         $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8

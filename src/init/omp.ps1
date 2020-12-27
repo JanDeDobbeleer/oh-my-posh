@@ -1,6 +1,5 @@
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
     Theme = "";
-    ShowDebug = $false
 }
 
 if (Test-Path "::CONFIG::") {
@@ -10,6 +9,7 @@ function Set-PoshContext {}
 
 function Set-GitStatus {
     if (Get-Command -Name "Get-GitStatus" -ErrorAction SilentlyContinue) {
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification='Variable used later(not in this scope)')]
         $Global:GitStatus = Get-GitStatus
     }
 }
@@ -40,9 +40,8 @@ function Set-GitStatus {
     $startInfo = New-Object System.Diagnostics.ProcessStartInfo
     $startInfo.FileName = "::OMP::"
     $config = $global:PoshSettings.Theme
-    $showDebug = $global:PoshSettings.ShowDebug
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $startInfo.Arguments = "--debug=""$showDebug"" --config=""$config"" --error=$errorCode --pwd=""$cleanPWD"" --execution-time=$executionTime"
+    $startInfo.Arguments = "--config=""$config"" --error=$errorCode --pwd=""$cleanPWD"" --execution-time=$executionTime"
     $startInfo.Environment["TERM"] = "xterm-256color"
     $startInfo.CreateNoWindow = $true
     $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8

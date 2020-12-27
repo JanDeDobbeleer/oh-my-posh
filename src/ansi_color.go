@@ -92,6 +92,10 @@ func (a *AnsiColor) getAnsiFromColorString(colorString string, isBackground bool
 }
 
 func (a *AnsiColor) writeColoredText(background, foreground, text string) {
+	// Avoid emitting empty strings with color codes
+	if text == "" {
+		return
+	}
 	var coloredText string
 	if foreground == Transparent && background != "" {
 		ansiColor := a.getAnsiFromColorString(background, false)

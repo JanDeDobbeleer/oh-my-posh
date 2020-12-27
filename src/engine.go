@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 type engine struct {
@@ -15,6 +16,17 @@ type engine struct {
 	activeSegment         *Segment
 	previousActiveSegment *Segment
 	rprompt               string
+}
+
+type SegmentTiming struct {
+	name            string
+	nameLength      int
+	enabled         bool
+	stringValue     string
+	enabledDuration time.Duration
+	stringDuration  time.Duration
+	background      string
+	foreground      string
 }
 
 func (e *engine) getPowerlineColor(foreground bool) string {
@@ -74,9 +86,6 @@ func (e *engine) renderText(text string) {
 	prefix := e.activeSegment.getValue(Prefix, defaultValue)
 	postfix := e.activeSegment.getValue(Postfix, defaultValue)
 	e.color.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("%s%s%s", prefix, text, postfix))
-	if *e.env.getArgs().Debug {
-		e.color.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("(%s:%s)", e.activeSegment.Type, e.activeSegment.timing))
-	}
 }
 
 func (e *engine) renderSegmentText(text string) {
@@ -117,11 +126,10 @@ func (e *engine) setStringValues(segments []*Segment) {
 	wg.Add(len(segments))
 	defer wg.Wait()
 	cwd := e.env.getcwd()
-	debug := *e.env.getArgs().Debug
 	for _, segment := range segments {
 		go func(s *Segment) {
 			defer wg.Done()
-			s.setStringValue(e.env, cwd, debug)
+			s.setStringValue(e.env, cwd)
 		}(segment)
 	}
 }
@@ -157,6 +165,71 @@ func (e *engine) render() {
 		e.renderer.print(" ")
 	}
 	e.write()
+}
+
+// debug will lool through your config file and output the timings for each segments
+func (e *engine) debug() {
+	var segmentTimings []SegmentTiming
+	nameMaxLength := 0
+	e.renderer.print("\nHere are the timings of segments in your prompt:\n")
+	// loop each segments of each blocks
+	for _, block := range e.settings.Blocks {
+		for _, segment := range block.Segments {
+			err := segment.mapSegmentWithWriter(e.env)
+			if err != nil || segment.shouldIgnoreFolder(e.env.getcwd()) {
+				return
+			}
+
+			var segmentTiming SegmentTiming
+
+			segmentTiming.name = string(segment.Type)
+			segmentTiming.nameLength = len(segmentTiming.name)
+
+			if segmentTiming.nameLength > nameMaxLength {
+				nameMaxLength = segmentTiming.nameLength
+			}
+
+			segmentTiming.background = segment.Background
+			segmentTiming.foreground = segment.Foreground
+
+			// enabled timing
+			start := time.Now()
+			segmentTiming.enabled = segment.enabled()
+			segmentTiming.enabledDuration = time.Since(start)
+
+			// string timing
+			if segmentTiming.enabled {
+				start = time.Now()
+				segmentTiming.stringValue = segment.string()
+				segmentTiming.stringDuration = time.Since(start)
+
+				// not pretty rendering could be refactored for a better separation of concern
+				e.previousActiveSegment = nil
+				e.activeSegment = segment
+				e.activeSegment.Background = segment.props.background
+				e.activeSegment.Foreground = segment.props.foreground
+				e.renderSegmentText(segmentTiming.stringValue)
+				segmentTiming.stringValue = e.color.string()
+				e.color.buffer.Reset()
+			}
+
+			segmentTimings = append(segmentTimings, segmentTiming)
+		}
+	}
+
+	// 7 => (false)
+	nameMaxLength += 7
+
+	for _, segment := range segmentTimings {
+		duration := segment.enabledDuration.Milliseconds()
+		if segment.enabled {
+			duration += segment.stringDuration.Milliseconds()
+		}
+		e.renderer.print(fmt.Sprintf("%-*s - %3d ms - %s\n", nameMaxLength, fmt.Sprintf("%s(%t)", segment.name, segment.enabled),
+			duration, segment.stringValue))
+	}
+
+	fmt.Print(e.renderer.string())
 }
 
 func (e *engine) write() {

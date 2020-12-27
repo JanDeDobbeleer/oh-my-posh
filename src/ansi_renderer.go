@@ -40,7 +40,7 @@ func (r *AnsiRenderer) print(text string) {
 	// color of the line above the new input line. Clearing the line fixes this,
 	// but can hopefully one day be removed when this is resolved natively.
 	if r.formats.shell == pwsh || r.formats.shell == powershell5 {
-		r.buffer.WriteString(r.formats.clearOEL)
+		r.buffer.WriteString(r.formats.clearEOL)
 	}
 }
 

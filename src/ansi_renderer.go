@@ -35,11 +35,13 @@ func (r *AnsiRenderer) creset() {
 
 func (r *AnsiRenderer) print(text string) {
 	r.buffer.WriteString(text)
-	r.clearEOL()
-}
-
-func (r *AnsiRenderer) clearEOL() {
-	r.buffer.WriteString(r.formats.clearOEL)
+	// Due to a bug in Powershell, the end of the line needs to be cleared.
+	// If this doesn't happen, the portion after the prompt gets colored in the background
+	// color of the line above the new input line. Clearing the line fixes this,
+	// but can hopefully one day be removed when this is resolved natively.
+	if r.formats.shell == pwsh || r.formats.shell == powershell5 {
+		r.buffer.WriteString(r.formats.clearOEL)
+	}
 }
 
 func (r *AnsiRenderer) string() string {

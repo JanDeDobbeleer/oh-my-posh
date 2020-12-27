@@ -1209,22 +1209,28 @@
   "properties": {
     "final_space": {
       "type": "boolean",
-      "title": "The final_space schema",
-      "description": "An explanation about the purpose of this instance.",
+      "title": "Final Space",
+      "description": "https://ohmyposh.dev/docs/configure#general-settings",
       "default": true
     },
     "console_title": {
       "type": "boolean",
-      "title": "The console_title schema",
-      "description": "An explanation about the purpose of this instance.",
+      "title": "Console Title",
+      "description": "https://ohmyposh.dev/docs/configure#general-settings",
       "default": true
     },
     "console_title_style": {
       "type": "string",
-      "title": "The console_title_style schema",
-      "description": "An explanation about the purpose of this instance.",
-      "enum": ["folder", "path"],
+      "title": "Console Title Style",
+      "description": "https://ohmyposh.dev/docs/configure#console-title-style",
+      "enum": ["folder", "path", "template"],
       "default": "folder"
+    },
+    "console_title_template": {
+      "type": "string",
+      "title": "Console Title Template",
+      "description": "https://ohmyposh.dev/docs/configure#console-title-template",
+      "default": "{{ .Shell }} in {{ .Folder }}"
     },
     "blocks": {
       "type": "array",

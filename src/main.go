@@ -127,12 +127,8 @@ func main() {
 		fmt.Println(Version)
 		return
 	}
-	shell := env.getShellName()
-	if *args.Shell != "" {
-		shell = *args.Shell
-	}
 	formats := &ansiFormats{}
-	formats.init(shell)
+	formats.init(env.getShellName())
 	renderer := &AnsiRenderer{
 		buffer:  new(bytes.Buffer),
 		formats: formats,

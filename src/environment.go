@@ -217,6 +217,9 @@ func (env *environment) getBatteryInfo() (*battery.Battery, error) {
 }
 
 func (env *environment) getShellName() string {
+	if *env.args.Shell != "" {
+		return *env.args.Shell
+	}
 	pid := os.Getppid()
 	p, _ := process.NewProcess(int32(pid))
 	name, err := p.Name()

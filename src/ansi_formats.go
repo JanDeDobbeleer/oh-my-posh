@@ -12,7 +12,7 @@ type ansiFormats struct {
 	left                  string
 	right                 string
 	creset                string
-	clearOEL              string
+	clearEOL              string
 	saveCursorPosition    string
 	restoreCursorPosition string
 	title                 string
@@ -31,7 +31,7 @@ func (a *ansiFormats) init(shell string) {
 		a.left = "%%{\x1b[%dC%%}"
 		a.right = "%%{\x1b[%dD%%}"
 		a.creset = "%{\x1b[0m%}"
-		a.clearOEL = "%{\x1b[K%}"
+		a.clearEOL = "%{\x1b[K%}"
 		a.saveCursorPosition = "%{\x1b7%}"
 		a.restoreCursorPosition = "%{\x1b8%}"
 		a.title = "%%{\033]0;%s\007%%}"
@@ -45,7 +45,7 @@ func (a *ansiFormats) init(shell string) {
 		a.left = "\\[\x1b[%dC\\]"
 		a.right = "\\[\x1b[%dD\\]"
 		a.creset = "\\[\x1b[0m\\]"
-		a.clearOEL = "\\[\x1b[K\\]"
+		a.clearEOL = "\\[\x1b[K\\]"
 		a.saveCursorPosition = "\\[\x1b7\\]"
 		a.restoreCursorPosition = "\\[\x1b8\\]"
 		a.title = "\\[\033]0;%s\007\\]"
@@ -59,7 +59,7 @@ func (a *ansiFormats) init(shell string) {
 		a.left = "\x1b[%dC"
 		a.right = "\x1b[%dD"
 		a.creset = "\x1b[0m"
-		a.clearOEL = "\x1b[K"
+		a.clearEOL = "\x1b[K"
 		a.saveCursorPosition = "\x1b7"
 		a.restoreCursorPosition = "\x1b8"
 		a.title = "\033]0;%s\007"

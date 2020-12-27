@@ -233,8 +233,9 @@ func (env *environment) getShellName() string {
 	if err != nil {
 		return unknown
 	}
-	shell := strings.Replace(name, ".exe", "", 1)
-	return strings.Trim(shell, " ")
+	// Cache the shell value to speed things up.
+	*env.args.Shell = strings.Trim(strings.Replace(name, ".exe", "", 1), " ")
+	return *env.args.Shell
 }
 
 func (env *environment) doGet(url string) ([]byte, error) {

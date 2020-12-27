@@ -33,8 +33,8 @@ A really simple configuration could look like this.
 ```
 
 With this configuration, a single powerline segment is rendered that shows the name of the folder you're currently in.
-To set this configuration in combination with a Oh my Posh [executable][releases], use the `-config` flag to
-set a path to a json file containing the above code. The `-shell universal` flag is used to print the prompt without
+To set this configuration in combination with a Oh my Posh [executable][releases], use the `--config` flag to
+set a path to a json file containing the above code. The `--shell universal` flag is used to print the prompt without
 escape characters to see the prompt as it would be shown inside a prompt function for your shell.
 
 :::info
@@ -44,7 +44,7 @@ theme.
 :::
 
 ```bash
-oh-my-posh -config sample.json -shell universal
+oh-my-posh --config sample.json --shell universal
 ```
 
 If all goes according to plan, you should see the prompt being printed out on the line below. In case you see a lot of

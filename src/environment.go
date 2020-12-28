@@ -39,7 +39,7 @@ type environmentInfo interface {
 	getHostName() (string, error)
 	getRuntimeGOOS() string
 	getPlatform() string
-	hasCommand(command string) bool
+	hasCommand(command string) (string, bool)
 	runCommand(command string, args ...string) (string, error)
 	runShellCommand(shell, command string) string
 	lastErrorCode() int
@@ -221,9 +221,9 @@ func (env *environment) runShellCommand(shell, command string) string {
 	return strings.TrimSpace(string(out))
 }
 
-func (env *environment) hasCommand(command string) bool {
-	_, err := exec.LookPath(command)
-	return err == nil
+func (env *environment) hasCommand(command string) (string, bool) {
+	path, err := exec.LookPath(command)
+	return path, err == nil
 }
 
 func (env *environment) lastErrorCode() int {

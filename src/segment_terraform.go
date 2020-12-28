@@ -16,9 +16,10 @@ func (tf *terraform) init(props *properties, env environmentInfo) {
 }
 
 func (tf *terraform) enabled() bool {
-	if !tf.env.hasCommand("terraform") || !tf.env.hasFolder(".terraform") {
+	commandPath, commandExists := tf.env.hasCommand("terraform")
+	if !commandExists || !tf.env.hasFolder(".terraform") {
 		return false
 	}
-	tf.workspaceName, _ = tf.env.runCommand("terraform", "workspace", "show")
+	tf.workspaceName, _ = tf.env.runCommand(commandPath, "workspace", "show")
 	return true
 }

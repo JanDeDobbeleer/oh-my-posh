@@ -1,14 +1,7 @@
 package main
 
-import (
-	"errors"
-)
-
 type dotnet struct {
-	props              *properties
-	env                environmentInfo
-	activeVersion      string
-	unsupportedVersion bool
+	language *language
 }
 
 const (
@@ -18,41 +11,29 @@ const (
 )
 
 func (d *dotnet) string() string {
-	if d.unsupportedVersion {
-		return d.props.getString(UnsupportedDotnetVersionIcon, "\u2327")
-	}
-
-	if d.props.getBool(DisplayVersion, true) {
-		return d.activeVersion
-	}
-
-	return ""
-}
-
-func (d *dotnet) init(props *properties, env environmentInfo) {
-	d.props = props
-	d.env = env
-}
-
-func (d *dotnet) enabled() bool {
-	if !d.env.hasCommand("dotnet") {
-		return false
-	}
-
-	output, err := d.env.runCommand("dotnet", "--version")
-	if err == nil {
-		d.activeVersion = output
-		return true
-	}
+	version := d.language.string()
 
 	// Exit code 145 is a special indicator that dotnet
 	// ran, but the current project config settings specify
 	// use of an SDK that isn't installed.
-	var exerr *commandError
-	if errors.As(err, &exerr) && exerr.exitCode == 145 {
-		d.unsupportedVersion = true
-		return true
+	if d.language.exitCode == 145 {
+		return d.language.props.getString(UnsupportedDotnetVersionIcon, "\uf071 ")
 	}
 
-	return false
+	return version
+}
+
+func (d *dotnet) init(props *properties, env environmentInfo) {
+	d.language = &language{
+		env:          env,
+		props:        props,
+		commands:     []string{"dotnet"},
+		versionParam: "--version",
+		extensions:   []string{"*.cs", "*.vb", "*.sln", "*.csproj", "*.vbproj"},
+		versionRegex: `(?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+	}
+}
+
+func (d *dotnet) enabled() bool {
+	return d.language.enabled()
 }

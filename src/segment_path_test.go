@@ -72,9 +72,9 @@ func (env *MockedEnvironment) getPlatform() string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) hasCommand(command string) bool {
+func (env *MockedEnvironment) hasCommand(command string) (string, bool) {
 	args := env.Called(command)
-	return args.Bool(0)
+	return args.String(0), args.Bool(1)
 }
 
 func (env *MockedEnvironment) runCommand(command string, args ...string) (string, error) {

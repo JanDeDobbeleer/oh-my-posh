@@ -47,9 +47,10 @@ func (s *gitStatus) string(prefix, color string) string {
 }
 
 type git struct {
-	props *properties
-	env   environmentInfo
-	repo  *gitRepo
+	props       *properties
+	env         environmentInfo
+	repo        *gitRepo
+	commandPath string
 }
 
 const (
@@ -114,10 +115,12 @@ const (
 )
 
 func (g *git) enabled() bool {
-	if !g.env.hasCommand("git") {
+	commandPath, commandExists := g.env.hasCommand("git")
+	if !commandExists {
 		return false
 	}
-	output, _ := g.env.runCommand("git", "rev-parse", "--is-inside-work-tree")
+	g.commandPath = commandPath
+	output, _ := g.env.runCommand(g.commandPath, "rev-parse", "--is-inside-work-tree")
 	return output == "true"
 }
 
@@ -235,7 +238,7 @@ func (g *git) getStatusColor(defaultValue string) string {
 
 func (g *git) getGitCommandOutput(args ...string) string {
 	args = append([]string{"-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
-	val, _ := g.env.runCommand("git", args...)
+	val, _ := g.env.runCommand(g.commandPath, args...)
 	return val
 }
 

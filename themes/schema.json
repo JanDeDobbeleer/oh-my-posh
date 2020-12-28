@@ -17,6 +17,19 @@
       "description": "Show or hide the version number",
       "default": true
     },
+    "display_mode": {
+      "type": "string",
+      "title": "Display Mode",
+      "description": "Determines whether the segment is displayed always or only if a file matching the extensions are present in the current folder",
+      "enum": ["always", "context", "never"],
+      "default": "context"
+    },
+    "missing_command_text": {
+      "type": "string",
+      "title": "Missing command text",
+      "description": "The string to display when the command is not available",
+      "default": ""
+    },
     "block": {
       "type": "object",
       "description": "https://ohmyposh.dev/docs/configure#block",
@@ -357,6 +370,12 @@
                   },
                   "display_version": {
                     "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
                   }
                 }
               }
@@ -613,6 +632,12 @@
                 "properties": {
                   "display_version": {
                     "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
                   }
                 }
               }
@@ -633,6 +658,12 @@
                 "properties": {
                   "display_version": {
                     "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
                   }
                 }
               }
@@ -664,6 +695,12 @@
                 "properties": {
                   "display_version": {
                     "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
                   }
                 }
               }
@@ -935,11 +972,10 @@
                     "default": true
                   },
                   "display_mode": {
-                    "type": "string",
-                    "title": "Display Mode",
-                    "description": "Determines whether the segment is displayed always or only if *.py or *.ipynb file are present in the current folder",
-                    "enum": ["always", "context", "never"],
-                    "default": "context"
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
                   }
                 }
               }

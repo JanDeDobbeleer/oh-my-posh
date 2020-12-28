@@ -13,15 +13,16 @@ const (
 )
 
 type languageArgs struct {
-	version           string
-	displayVersion    bool
-	displayMode       string
-	extensions        []string
-	enabledExtensions []string
-	commands          []string
-	enabledCommands   []string
-	versionParam      string
-	versionRegex      string
+	version            string
+	displayVersion     bool
+	displayMode        string
+	extensions         []string
+	enabledExtensions  []string
+	commands           []string
+	enabledCommands    []string
+	versionParam       string
+	versionRegex       string
+	missingCommandText string
 }
 
 func (l *languageArgs) hasvalue(value string, list []string) bool {
@@ -36,7 +37,7 @@ func (l *languageArgs) hasvalue(value string, list []string) bool {
 func bootStrapLanguageTest(args *languageArgs) *language {
 	env := new(MockedEnvironment)
 	for _, command := range args.commands {
-		env.On("hasCommand", command).Return(args.hasvalue(command, args.enabledCommands))
+		env.On("hasCommand", command).Return(command, args.hasvalue(command, args.enabledCommands))
 		env.On("runCommand", command, []string{args.versionParam}).Return(args.version, nil)
 	}
 	for _, extension := range args.extensions {
@@ -47,6 +48,9 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 			DisplayVersion:      args.displayVersion,
 			DisplayModeProperty: args.displayMode,
 		},
+	}
+	if args.missingCommandText != "" {
+		props.values[MissingCommandTextProperty] = args.missingCommandText
 	}
 	l := &language{
 		props:        props,
@@ -59,7 +63,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	return l
 }
 
-func TestLanguageFilesFoundButNoCommandAndVersion(t *testing.T) {
+func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T) {
 	args := &languageArgs{
 		commands:          []string{"unicorn"},
 		versionParam:      "--version",
@@ -69,6 +73,18 @@ func TestLanguageFilesFoundButNoCommandAndVersion(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.False(t, lang.enabled(), "unicorn is not available")
+}
+
+func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {
+	args := &languageArgs{
+		commands:          []string{"unicorn"},
+		versionParam:      "--version",
+		extensions:        []string{uni},
+		enabledExtensions: []string{uni},
+		displayVersion:    false,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.enabled(), "unicorn is not available")
 }
 
 func TestLanguageFilesFoundButNoCommandAndNoVersion(t *testing.T) {
@@ -171,4 +187,37 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
 	assert.Equal(t, "", lang.string(), "unicorn is available and uni and corn files are found")
+}
+
+func TestLanguageEnabledMissingCommand(t *testing.T) {
+	args := &languageArgs{
+		versionParam:      "--version",
+		commands:          []string{""},
+		enabledCommands:   []string{"unicorn"},
+		extensions:        []string{uni, corn},
+		versionRegex:      "(?P<version>.*)",
+		version:           universion,
+		enabledExtensions: []string{uni, corn},
+		displayVersion:    false,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.enabled())
+	assert.Equal(t, "", lang.string(), "unicorn is available and uni and corn files are found")
+}
+
+func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
+	args := &languageArgs{
+		versionParam:       "--version",
+		commands:           []string{""},
+		enabledCommands:    []string{"unicorn"},
+		extensions:         []string{uni, corn},
+		versionRegex:       "(?P<version>.*)",
+		version:            universion,
+		enabledExtensions:  []string{uni, corn},
+		displayVersion:     false,
+		missingCommandText: "missing",
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.enabled())
+	assert.Equal(t, args.missingCommandText, lang.string(), "unicorn is available and uni and corn files are found")
 }

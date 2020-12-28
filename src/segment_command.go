@@ -17,7 +17,8 @@ const (
 
 func (c *command) enabled() bool {
 	shell := c.props.getString(ExecutableShell, "bash")
-	if !c.env.hasCommand(shell) {
+	shell, commandExists := c.env.hasCommand(shell)
+	if !commandExists {
 		return false
 	}
 	command := c.props.getString(Command, "echo no command specified")

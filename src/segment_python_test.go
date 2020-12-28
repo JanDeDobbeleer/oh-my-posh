@@ -16,7 +16,7 @@ type pythonArgs struct {
 
 func bootStrapPythonTest(args *pythonArgs) *python {
 	env := new(MockedEnvironment)
-	env.On("hasCommand", "python").Return(true)
+	env.On("hasCommand", "python").Return("python", true)
 	env.On("runCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
 	env.On("hasFiles", "*.py").Return(true)
 	env.On("getenv", "VIRTUAL_ENV").Return(args.virtualEnvName)
@@ -83,6 +83,6 @@ func TestPythonPyEnvWithVersion(t *testing.T) {
 	}
 	python := bootStrapPythonTest(args)
 	assert.True(t, python.enabled())
-	assert.Equal(t, "3.8.4", python.language.version)
 	assert.Equal(t, expected, python.string())
+	assert.Equal(t, "3.8.4", python.language.version)
 }

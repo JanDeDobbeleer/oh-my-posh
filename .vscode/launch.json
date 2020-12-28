@@ -10,7 +10,7 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
-      "args": ["-config=${workspaceRoot}/themes/jandedobbeleer.omp.json"]
+      "args": ["--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"]
     },
     {
       "name": "Launch tests",
@@ -18,7 +18,7 @@
       "request": "launch",
       "mode": "test",
       "program": "${workspaceRoot}/src",
-      "args": ["-test.v"]
+      "args": ["--test.v"]
     },
     {
       "name": "Print debug",
@@ -28,7 +28,7 @@
       "program": "${workspaceRoot}/src",
       "args": [
         "--debug",
-        "-config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
+        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
       ]
     },
     {
@@ -37,7 +37,11 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
-      "args": ["--print-init","-shell=pwsh","-config=${workspaceRoot}/themes/jandedobbeleer.omp.json"]
-    },
+      "args": [
+        "--print-init",
+        "--shell=pwsh",
+        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
+      ]
+    }
   ]
 }

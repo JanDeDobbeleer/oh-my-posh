@@ -176,6 +176,10 @@ func initShell(shell, config string) string {
 
 func printShellInit(shell, config string) string {
 	executable, err := os.Executable()
+	// On Windows, it fails when the excutable is called in MSYS2 for example
+	// which uses unix style paths to resolve the executable's location.
+	// PowerShell knows how to resolve both, so we can swap this without any issue.
+	executable = strings.ReplaceAll(executable, "\\", "/")
 	if err != nil {
 		return noExe
 	}

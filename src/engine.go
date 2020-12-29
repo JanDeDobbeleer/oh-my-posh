@@ -204,8 +204,8 @@ func (e *engine) debug() {
 				segmentTiming.stringDuration = time.Since(start)
 
 				// not pretty rendering could be refactored for a better separation of concern
-				e.previousActiveSegment = nil
 				e.activeSegment = segment
+				e.endPowerline()
 				e.activeSegment.Background = segment.props.background
 				e.activeSegment.Foreground = segment.props.foreground
 				e.renderSegmentText(segmentTiming.stringValue)

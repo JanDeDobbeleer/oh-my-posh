@@ -65,8 +65,8 @@ Make sure to remove this before submitting a PR as there's [a check][pr-go-mod] 
 
 ## Get the source code
 
-The source is hosted on [Github][omp]. When you want to contribute, create a [fork][gh-fork] so you can make changes in your repository
-and create pull request in the official Oh my Posh repository.
+The source is hosted on [Github][omp]. When you want to contribute, create a [fork][gh-fork] so you can make changes in
+your repository and create pull request in the official Oh my Posh repository.
 
 Clone your fork of Oh my Posh locally, replace `<user>` with your Github username.
 
@@ -107,6 +107,21 @@ your path to add your own Oh my Posh binary to and immediately see the changes a
 ```bash
 go build -o $GOPATH/bin/oh-my-posh
 ```
+
+## Get an editor
+
+A default config(.vscode folder) for [Visual Studio Code](https://code.visualstudio.com) is available in the repo:
+
+- golangci-lint is configured as the default linter.
+- Recommended extensions available for a smooth bootstrap.
+
+  ![recommended extensions](recommended_extensions.png "Recommended extensions" )
+- Default run and debug configurations available.
+
+Once the extensions are installed:
+
+- Debug can be started by hitting F5.
+- All tests can be run using the Test explorer.
 
 ## Up Next
 

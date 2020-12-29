@@ -154,9 +154,9 @@ func main() {
 
 	if *args.Debug {
 		engine.debug()
-	} else {
-		engine.render()
+		return
 	}
+	engine.render()
 }
 
 func initShell(shell, config string) string {

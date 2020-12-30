@@ -19,11 +19,9 @@ require (
 	golang.org/x/text v0.3.3
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 	howett.net/plist v0.0.0-20200419221736-3b63eb3a43b5 // indirect
-	muzzammil.xyz/jsonc v0.0.0
+	muzzammil.xyz/jsonc v0.0.0-20201229145248-615b0916ca38
 )
 
 replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-1
 
 replace github.com/gookit/color v1.3.5 => github.com/JanDeDobbeleer/color v1.3.5-1
-
-replace muzzammil.xyz/jsonc v0.0.0 => github.com/JanDeDobbeleer/jsonc v0.0.0-1

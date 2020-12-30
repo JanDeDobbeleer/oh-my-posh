@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -153,8 +155,30 @@ func (env *environment) getPlatform() string {
 }
 
 func (env *environment) runCommand(command string, args ...string) (string, error) {
+	getOutputString := func(io io.ReadCloser) string {
+		output := new(bytes.Buffer)
+		defer output.Reset()
+		buf := bufio.NewReader(io)
+		multiline := false
+		for {
+			line, _, _ := buf.ReadLine()
+			if line == nil {
+				break
+			}
+			if multiline {
+				output.WriteString("\n")
+			}
+			output.Write(line)
+			multiline = true
+		}
+		return output.String()
+	}
 	cmd := exec.Command(command, args...)
 	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		log.Fatal(err)
+	}
+	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -165,22 +189,12 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	defer func() {
 		_ = cmd.Process.Kill()
 	}()
-	output := new(bytes.Buffer)
-	defer output.Reset()
-	buf := bufio.NewReader(stdout)
-	multiline := false
-	for {
-		line, _, _ := buf.ReadLine()
-		if line == nil {
-			break
-		}
-		if multiline {
-			output.WriteString("\n")
-		}
-		output.Write(line)
-		multiline = true
+	stdoutString := getOutputString(stdout)
+	stderrString := getOutputString(stderr)
+	if stderrString != "" {
+		return "", errors.New(stderrString)
 	}
-	return output.String(), nil
+	return stdoutString, nil
 }
 
 func (env *environment) runShellCommand(shell, command string) string {

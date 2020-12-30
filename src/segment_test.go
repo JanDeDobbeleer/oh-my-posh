@@ -84,8 +84,14 @@ func TestShouldIgnoreFolderRegexInverted(t *testing.T) {
 			IgnoreFolders: []string{"(?!Projects[\\/]).*"},
 		},
 	}
-	got := segment.shouldIgnoreFolder(cwd)
-	assert.False(t, got)
+	// detect panic(thrown by MustCompile)
+	defer func() {
+		if err := recover(); err != nil {
+			// display a message explaining omp failed(with the err)
+			assert.Equal(t, "regexp: Compile(`^(?!Projects[\\/]).*$`): error parsing regexp: invalid or unsupported Perl syntax: `(?!`", err)
+		}
+	}()
+	segment.shouldIgnoreFolder(cwd)
 }
 
 func TestShouldIgnoreFolderRegexInvertedNonEscaped(t *testing.T) {
@@ -94,6 +100,12 @@ func TestShouldIgnoreFolderRegexInvertedNonEscaped(t *testing.T) {
 			IgnoreFolders: []string{"(?!Projects/).*"},
 		},
 	}
-	got := segment.shouldIgnoreFolder(cwd)
-	assert.False(t, got)
+	// detect panic(thrown by MustCompile)
+	defer func() {
+		if err := recover(); err != nil {
+			// display a message explaining omp failed(with the err)
+			assert.Equal(t, "regexp: Compile(`^(?!Projects/).*$`): error parsing regexp: invalid or unsupported Perl syntax: `(?!`", err)
+		}
+	}()
+	segment.shouldIgnoreFolder(cwd)
 }

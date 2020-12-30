@@ -56,10 +56,10 @@ function Set-GitStatus {
     $standardOut = $process.StandardOutput.ReadToEnd()
     $process.WaitForExit()
     $standardOut
+    Set-GitStatus
     $global:LASTEXITCODE = $realLASTEXITCODE
     #remove temp variables
     Remove-Variable realLASTEXITCODE -Confirm:$false
     Remove-Variable lastCommandSuccess -Confirm:$false
-    Set-GitStatus
 }
 Set-Item -Path Function:prompt -Value $Prompt -Force

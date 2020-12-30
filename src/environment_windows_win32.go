@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"regexp"
 	"strings"
 	"syscall"
 	"unsafe"
@@ -48,10 +47,8 @@ func getWindowTitle(imageName, windowTitleRegex string) (string, error) {
 	}
 
 	// returns the first window of the first pid
-	_, windowTitle, err := GetWindowTitle(processPid[0], windowTitleRegex)
-	if err != nil {
-		return "", nil
-	}
+	_, windowTitle := GetWindowTitle(processPid[0], windowTitleRegex)
+
 	return windowTitle, nil
 }
 
@@ -147,13 +144,10 @@ func GetWindowText(hwnd syscall.Handle, str *uint16, maxCount int32) (length int
 }
 
 // GetWindowTitle searches for a window attached to the pid
-func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string, error) {
+func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string) {
 	var hwnd syscall.Handle
 	var title string
-	compiledRegex, err := regexp.Compile(windowTitleRegex)
-	if err != nil {
-		return 0, "", fmt.Errorf("Error while compiling the regex '%s'", windowTitleRegex)
-	}
+
 	// callback fro EnumWindows
 	cb := syscall.NewCallback(func(h syscall.Handle, p uintptr) uintptr {
 		var prcsID int = 0
@@ -168,7 +162,7 @@ func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string, e
 				return 1 // continue enumeration
 			}
 			title = syscall.UTF16ToString(b)
-			if compiledRegex.MatchString(title) {
+			if matchString(windowTitleRegex, title) {
 				// will cause EnumWindows to return 0 (error)
 				// but we don't want to enumerate all windows since we got what we want
 				hwnd = h
@@ -183,5 +177,5 @@ func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string, e
 	// it returns 0(error occurred) instead of 1(success)
 	// In our case, title will equal "" or the title of the window anyway
 	_ = EnumWindows(cb, 0)
-	return hwnd, title, nil
+	return hwnd, title
 }

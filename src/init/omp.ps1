@@ -45,7 +45,7 @@ function global:Set-PoshGitStatus {
     $config = $global:PoshSettings.Theme
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
     $cleanPSWD = $PWD.ToString().TrimEnd("\")
-    $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --config="$config")
+    $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --config="$config" 2>&1)
     # Restore initial encoding
     [Console]::OutputEncoding = $originalOutputEncoding
     # the ouput can be multiline, joining these ensures proper rendering by adding line breaks with `n

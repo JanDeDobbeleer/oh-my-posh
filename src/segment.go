@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"regexp"
 )
 
 // Segment represent a single segment and it's configuration
@@ -112,10 +111,8 @@ func (segment *Segment) shouldIgnoreFolder(cwd string) bool {
 		list := parseStringArray(value)
 		for _, element := range list {
 			pattern := fmt.Sprintf("^%s$", element)
-			matched, err := regexp.MatchString(pattern, cwd)
-			if err == nil && matched {
-				return true
-			}
+			matched := matchString(pattern, cwd)
+			return matched
 		}
 		return false
 	}
@@ -163,6 +160,17 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 }
 
 func (segment *Segment) setStringValue(env environmentInfo, cwd string) {
+	defer func() {
+		err := recover()
+		if err == nil {
+			return
+		}
+		// display a message explaining omp failed(with the err)
+		message := fmt.Sprintf("oh-my-posh fatal error rendering %s segment:%s", segment.Type, err)
+		fmt.Println(message)
+		segment.stringValue = "error"
+		segment.active = true
+	}()
 	err := segment.mapSegmentWithWriter(env)
 	if err != nil || segment.shouldIgnoreFolder(cwd) {
 		return

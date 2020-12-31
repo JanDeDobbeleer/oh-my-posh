@@ -13,16 +13,6 @@
           "trailing_diamond": "\uE0B0"
         },
         {
-          "type": "spotify",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#ffffff",
-          "background": "#1BD760",
-          "properties": {
-            "prefix": " \uF9C6 "
-          }
-        },
-        {
           "type": "path",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",

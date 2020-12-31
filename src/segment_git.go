@@ -78,6 +78,8 @@ const (
 	CherryPickIcon Property = "cherry_pick_icon"
 	// CommitIcon shows before the detached context
 	CommitIcon Property = "commit_icon"
+	// NoCommitsIcon shows when there are no commits in the repo yet
+	NoCommitsIcon Property = "no_commits_icon"
 	// TagIcon shows before the tag context
 	TagIcon Property = "tag_icon"
 	// DisplayStashCount show stash count or not
@@ -309,6 +311,9 @@ func (g *git) getPrettyHEADName() string {
 	}
 	// fallback to commit
 	ref = g.getGitCommandOutput("rev-parse", "--short", "HEAD")
+	if ref == "" {
+		return g.props.getString(NoCommitsIcon, "\uF594 ")
+	}
 	return fmt.Sprintf("%s%s", g.props.getString(CommitIcon, "\uF417"), ref)
 }
 

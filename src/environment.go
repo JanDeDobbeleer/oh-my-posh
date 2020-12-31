@@ -201,6 +201,9 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	stdoutString := getOutputString(stdout)
 	stderrString := getOutputString(stderr)
 	if stderrString != "" {
+		// only wait in case of error reduces the lead time on successful
+		// commands on windows due to not calling process.Wait()
+		_ = cmd.Wait()
 		return "", &commandError{
 			err:      stderrString,
 			exitCode: cmd.ProcessState.ExitCode(),

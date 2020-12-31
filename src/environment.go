@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/distatus/battery"
 	"github.com/shirou/gopsutil/host"
@@ -264,7 +265,9 @@ func (env *environment) getShellName() string {
 }
 
 func (env *environment) doGet(url string) ([]byte, error) {
-	request, err := http.NewRequestWithContext(context.Background(), http.MethodGet, url, nil)
+	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*20)
+	defer cncl()
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}

@@ -882,10 +882,31 @@
                     "default": "folder"
                   },
                   "mapped_locations": {
-                    "type": "object",
+                    "type": "array",
                     "title": "Mapped Locations",
                     "description": "Custom glyph/text for specific paths",
-                    "additionalProperties": { "type": "string" }
+                    "items": {
+                      "type": "array",
+                      "items": [
+                        {
+                          "type": "string",
+                          "title": "Filesystem path"
+                        },
+                        {
+                          "type": "string",
+                          "title": "Replacement text"
+                        }
+                      ],
+                      "minItems": 2,
+                      "maxItems": 2,
+                      "additionalItems": false
+                    }
+                  },
+                  "mapped_locations_enabled": {
+                    "type": "boolean",
+                    "title": "Enable the Mapped Locations feature",
+                    "description": "Replace known locations in the path with the replacements before applying the style.",
+                    "default": true
                   }
                 }
               }

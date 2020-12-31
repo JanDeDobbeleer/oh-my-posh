@@ -21,8 +21,6 @@ const (
 	DisplayModeAlways string = "always"
 	// DisplayModeContext displays the segment when the current folder contains certain extensions
 	DisplayModeContext string = "context"
-	// DisplayModeNever hides the segment
-	DisplayModeNever string = "never"
 	// MissingCommandProperty sets the text to display when the command is not present in the system
 	MissingCommandTextProperty Property = "missing_command_text"
 	// MissingCommand displays empty string by default
@@ -49,8 +47,6 @@ func (l *language) enabled() bool {
 	switch displayMode {
 	case DisplayModeAlways:
 		return (!displayVersion || l.hasCommand())
-	case DisplayModeNever:
-		return false
 	case DisplayModeContext:
 		fallthrough
 	default:
@@ -72,7 +68,7 @@ func (l *language) isInContext() bool {
 	return true
 }
 
-// getVersion returns the version an exit code returned by the exexutable
+// getVersion returns the version and exit code returned by the executable
 func (l *language) getVersion() bool {
 	versionInfo, err := l.env.runCommand(l.executable, l.versionParam)
 	var exerr *commandError
@@ -88,7 +84,7 @@ func (l *language) getVersion() bool {
 	return true
 }
 
-// hasCommand checks if one of the commands exists and set it as executablr
+// hasCommand checks if one of the commands exists and sets it as executable
 func (l *language) hasCommand() bool {
 	for i, command := range l.commands {
 		commandPath, commandExists := l.env.hasCommand(command)

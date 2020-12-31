@@ -12,6 +12,7 @@ Local changes can also shown by default using the following syntax for both the 
 - `+` added
 - `~` modified
 - `-` deleted
+- `?` untracked
 
 ## Sample Configuration
 
@@ -56,6 +57,7 @@ Local changes can also shown by default using the following syntax for both the 
 - rebase_icon: `string` - icon/text to display before the context when in a rebase - defaults to `\uE728 `
 - cherry_pick_icon: `string` - icon/text to display before the context when doing a cherry-pick - defaults to `\uE29B `
 - merge_icon: `string` icon/text to display before the merge context - defaults to `\uE727 `
+- no_commits_icon: `string` icon/text to display when there are no commits in the repo - defaults to `\uF594 `
 
 ### Upstream context
 

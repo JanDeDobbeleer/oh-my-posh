@@ -25,8 +25,6 @@ type SegmentTiming struct {
 	stringValue     string
 	enabledDuration time.Duration
 	stringDuration  time.Duration
-	background      string
-	foreground      string
 }
 
 func (e *engine) getPowerlineColor(foreground bool) string {
@@ -170,8 +168,8 @@ func (e *engine) render() {
 // debug will lool through your config file and output the timings for each segments
 func (e *engine) debug() {
 	var segmentTimings []SegmentTiming
-	nameMaxLength := 0
-	e.renderer.print("\nHere are the timings of segments in your prompt:\n")
+	largestSegmentNameLength := 0
+	e.renderer.print("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
 	// loop each segments of each blocks
 	for _, block := range e.settings.Blocks {
 		for _, segment := range block.Segments {
@@ -179,56 +177,45 @@ func (e *engine) debug() {
 			if err != nil || segment.shouldIgnoreFolder(e.env.getcwd()) {
 				return
 			}
-
 			var segmentTiming SegmentTiming
-
 			segmentTiming.name = string(segment.Type)
 			segmentTiming.nameLength = len(segmentTiming.name)
-
-			if segmentTiming.nameLength > nameMaxLength {
-				nameMaxLength = segmentTiming.nameLength
+			if segmentTiming.nameLength > largestSegmentNameLength {
+				largestSegmentNameLength = segmentTiming.nameLength
 			}
-
-			segmentTiming.background = segment.Background
-			segmentTiming.foreground = segment.Foreground
-
-			// enabled timing
+			// enabled() timing
 			start := time.Now()
 			segmentTiming.enabled = segment.enabled()
 			segmentTiming.enabledDuration = time.Since(start)
-
-			// string timing
+			// string() timing
 			if segmentTiming.enabled {
 				start = time.Now()
 				segmentTiming.stringValue = segment.string()
 				segmentTiming.stringDuration = time.Since(start)
-
-				// not pretty rendering could be refactored for a better separation of concern
+				e.previousActiveSegment = nil
 				e.activeSegment = segment
-				e.endPowerline()
 				e.activeSegment.Background = segment.props.background
 				e.activeSegment.Foreground = segment.props.foreground
 				e.renderSegmentText(segmentTiming.stringValue)
+				if e.activeSegment.Style == Powerline {
+					e.writePowerLineSeparator(Transparent, e.activeSegment.Background, true)
+				}
 				segmentTiming.stringValue = e.color.string()
 				e.color.buffer.Reset()
 			}
-
 			segmentTimings = append(segmentTimings, segmentTiming)
 		}
 	}
-
-	// 7 => (false)
-	nameMaxLength += 7
-
+	// pad the output so the tabs render correctly
+	largestSegmentNameLength += 7
 	for _, segment := range segmentTimings {
 		duration := segment.enabledDuration.Milliseconds()
 		if segment.enabled {
 			duration += segment.stringDuration.Milliseconds()
 		}
-		e.renderer.print(fmt.Sprintf("%-*s - %3d ms - %s\n", nameMaxLength, fmt.Sprintf("%s(%t)", segment.name, segment.enabled),
-			duration, segment.stringValue))
+		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.enabled)
+		e.renderer.print(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
-
 	fmt.Print(e.renderer.string())
 }
 

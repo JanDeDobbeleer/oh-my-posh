@@ -32,4 +32,3 @@ Supports conda, virtualenv and pyenv.
 - display_mode: `string` - determines when the segment is displayed
   - `always`: The segment is always displayed
   - `context`: The segment is only displayed when *.py or *.ipynb files are present (default)
-  - `never`: The segement is hidden

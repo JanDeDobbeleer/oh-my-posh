@@ -30,4 +30,3 @@ Display the currently active golang version when a folder contains `.go` files.
 - display_mode: `string` - determines when the segment is displayed
   - `always`: The segment is always displayed
   - `context`: The segment is only displayed when *.go or go.mod files are present (default)
-  - `never`: The segement is hidden

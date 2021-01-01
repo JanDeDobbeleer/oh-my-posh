@@ -280,7 +280,7 @@ Oh my Posh mainly supports three different color types being
 
 - Typical [hex colors][hexcolors] (for example `#CB4B16`).
 - The `transparent` keyword which can be used to create either a transparent foreground override
-  or transparent background color using the segement's foreground property.
+  or transparent background color using the segment's foreground property.
 - 16 [ANSI color names][ansicolors].
 
   These include 8 basic ANSI colors and `default`:

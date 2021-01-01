@@ -30,4 +30,3 @@ Display the currently active julia version when a folder contains `.jl` files.
 - display_mode: `string` - determines when the segment is displayed
   - `always`: The segment is always displayed
   - `context`: The segment is only displayed when *.jl files are present (default)
-  - `never`: The segement is hidden

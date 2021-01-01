@@ -17,7 +17,7 @@ type language struct {
 const (
 	// DisplayModeProperty sets the display mode (always, when_in_context, never)
 	DisplayModeProperty Property = "display_mode"
-	// DisplayModeAlways displays the segement always
+	// DisplayModeAlways displays the segment always
 	DisplayModeAlways string = "always"
 	// DisplayModeContext displays the segment when the current folder contains certain extensions
 	DisplayModeContext string = "context"

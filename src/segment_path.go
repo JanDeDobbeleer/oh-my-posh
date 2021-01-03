@@ -115,7 +115,8 @@ func (pt *path) getFullPath() string {
 
 func (pt *path) getFolderPath() string {
 	pwd := pt.getPwd()
-	return base(pwd, pt.env)
+	pwd = base(pwd, pt.env)
+	return pt.replaceFolderSeparators(pwd)
 }
 
 func (pt *path) getPwd() string {

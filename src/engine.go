@@ -175,7 +175,7 @@ func (e *engine) debug() {
 		for _, segment := range block.Segments {
 			err := segment.mapSegmentWithWriter(e.env)
 			if err != nil || segment.shouldIgnoreFolder(e.env.getcwd()) {
-				return
+				continue
 			}
 			var segmentTiming SegmentTiming
 			segmentTiming.name = string(segment.Type)

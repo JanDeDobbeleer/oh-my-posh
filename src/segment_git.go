@@ -163,7 +163,7 @@ func (g *git) string() string {
 	if g.repo.working.changed {
 		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.working, WorkingColor, LocalWorkingIcon, " \uF044"))
 	}
-	if g.props.getBool(DisplayStashCount, false) && g.repo.stashCount != "" {
+	if g.repo.stashCount != "" {
 		fmt.Fprintf(buffer, " %s%s", g.props.getString(StashCountIcon, "\uF692 "), g.repo.stashCount)
 	}
 	return buffer.String()
@@ -214,7 +214,9 @@ func (g *git) setGitStatus() {
 		}
 	}
 	g.repo.HEAD = g.getGitHEADContext(status["local"])
-	g.repo.stashCount = g.getStashContext()
+	if g.props.getBool(DisplayStashCount, false) {
+		g.repo.stashCount = g.getStashContext()
+	}
 }
 
 func (g *git) SetStatusColor() {

@@ -12,7 +12,7 @@ const (
 
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("hasCommand", "git").Return("", false)
+	env.On("hasCommand", "git").Return(false)
 	g := &git{
 		env: env,
 	}
@@ -21,7 +21,7 @@ func TestEnabledGitNotFound(t *testing.T) {
 
 func TestEnabledInWorkingDirectory(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("hasCommand", "git").Return("git", true)
+	env.On("hasCommand", "git").Return(true)
 	env.On("runCommand", "git", []string{"rev-parse", "--is-inside-work-tree"}).Return("true", nil)
 	g := &git{
 		env: env,
@@ -36,8 +36,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("runCommand", "git", append(args, commandArgs...)).Return(want, nil)
 	g := &git{
-		env:         env,
-		commandPath: "git",
+		env: env,
 	}
 	got := g.getGitCommandOutput(commandArgs...)
 	assert.Equal(t, want, got)
@@ -86,7 +85,6 @@ func setupHEADContextEnv(context *detachedContext) *git {
 		repo: &gitRepo{
 			root: "",
 		},
-		commandPath: "git",
 	}
 	return g
 }
@@ -213,8 +211,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-list", "--walk-reflogs", "--count", "refs/stash"}).Return("", nil)
 	g := &git{
-		env:         env,
-		commandPath: "git",
+		env: env,
 	}
 	got := g.getStashContext()
 	assert.Equal(t, want, got)
@@ -225,8 +222,7 @@ func TestGetStashContextMultipleEntries(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-list", "--walk-reflogs", "--count", "refs/stash"}).Return("2", nil)
 	g := &git{
-		env:         env,
-		commandPath: "git",
+		env: env,
 	}
 	got := g.getStashContext()
 	assert.Equal(t, want, got)
@@ -394,8 +390,7 @@ func bootstrapUpstreamTest(upstream string) *git {
 		repo: &gitRepo{
 			upstream: "origin/main",
 		},
-		props:       props,
-		commandPath: "git",
+		props: props,
 	}
 	return g
 }

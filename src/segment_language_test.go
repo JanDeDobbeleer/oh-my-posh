@@ -37,7 +37,7 @@ func (l *languageArgs) hasvalue(value string, list []string) bool {
 func bootStrapLanguageTest(args *languageArgs) *language {
 	env := new(MockedEnvironment)
 	for _, command := range args.commands {
-		env.On("hasCommand", command).Return(command, args.hasvalue(command, args.enabledCommands))
+		env.On("hasCommand", command).Return(args.hasvalue(command, args.enabledCommands))
 		env.On("runCommand", command, []string{args.versionParam}).Return(args.version, nil)
 	}
 	for _, extension := range args.extensions {

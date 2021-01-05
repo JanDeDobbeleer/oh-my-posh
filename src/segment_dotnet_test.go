@@ -16,7 +16,7 @@ type dotnetArgs struct {
 
 func bootStrapDotnetTest(args *dotnetArgs) *dotnet {
 	env := new(MockedEnvironment)
-	env.On("hasCommand", "dotnet").Return("dotnet", args.enabled)
+	env.On("hasCommand", "dotnet").Return(args.enabled)
 	if args.unsupported {
 		err := &commandError{exitCode: 145}
 		env.On("runCommand", "dotnet", []string{"--version"}).Return("", err)

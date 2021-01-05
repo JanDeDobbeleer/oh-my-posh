@@ -87,9 +87,8 @@ func (l *language) getVersion() bool {
 // hasCommand checks if one of the commands exists and sets it as executable
 func (l *language) hasCommand() bool {
 	for i, command := range l.commands {
-		commandPath, commandExists := l.env.hasCommand(command)
-		if commandExists {
-			l.executable = commandPath
+		if l.env.hasCommand(command) {
+			l.executable = command
 			break
 		}
 		if i == len(l.commands)-1 {

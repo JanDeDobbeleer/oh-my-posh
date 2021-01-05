@@ -21,9 +21,9 @@ const (
 	DisplayModeAlways string = "always"
 	// DisplayModeContext displays the segment when the current folder contains certain extensions
 	DisplayModeContext string = "context"
-	// MissingCommandProperty sets the text to display when the command is not present in the system
+	// MissingCommandTextProperty sets the text to display when the command is not present in the system
 	MissingCommandTextProperty Property = "missing_command_text"
-	// MissingCommand displays empty string by default
+	// MissingCommandText displays empty string by default
 	MissingCommandText string = ""
 )
 

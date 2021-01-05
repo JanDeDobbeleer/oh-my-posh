@@ -15,7 +15,7 @@ type gitRepo struct {
 	HEAD       string
 	upstream   string
 	stashCount string
-	root       string
+	gitFolder  string
 }
 
 type gitStatus struct {
@@ -121,8 +121,24 @@ func (g *git) enabled() bool {
 	if !g.env.hasCommand("git") {
 		return false
 	}
-	output, _ := g.env.runCommand(gitCommand, "rev-parse", "--is-inside-work-tree")
-	return output == "true"
+	gitdir, err := g.env.hasParentFilePath(".git")
+	if err != nil {
+		return false
+	}
+	g.repo = &gitRepo{}
+	if gitdir.isDir {
+		g.repo.gitFolder = gitdir.path
+		return true
+	}
+	// handle worktree
+	dirPointer := g.env.getFileContent(gitdir.path)
+	dirPointer = strings.Trim(dirPointer, " \r\n")
+	matches := findNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
+	if matches != nil && matches["dir"] != "" {
+		g.repo.gitFolder = matches["dir"]
+		return true
+	}
+	return false
 }
 
 func (g *git) string() string {
@@ -198,8 +214,6 @@ func (g *git) getUpstreamSymbol() string {
 }
 
 func (g *git) setGitStatus() {
-	g.repo = &gitRepo{}
-	g.repo.root = g.getGitCommandOutput("rev-parse", "--show-toplevel")
 	output := g.getGitCommandOutput("status", "-unormal", "--short", "--branch")
 	splittedOutput := strings.Split(output, "\n")
 	g.repo.working = g.parseGitStats(splittedOutput, true)
@@ -285,17 +299,17 @@ func (g *git) getGitHEADContext(ref string) string {
 }
 
 func (g *git) hasGitFile(file string) bool {
-	files := fmt.Sprintf(".git/%s", file)
-	return g.env.hasFilesInDir(g.repo.root, files)
+	return g.env.hasFilesInDir(g.repo.gitFolder, file)
 }
 
 func (g *git) hasGitFolder(folder string) bool {
-	path := fmt.Sprintf("%s/.git/%s", g.repo.root, folder)
+	path := g.repo.gitFolder + "/" + folder
 	return g.env.hasFolder(path)
 }
 
 func (g *git) getGitFileContents(file string) string {
-	content := g.env.getFileContent(fmt.Sprintf("%s/.git/%s", g.repo.root, file))
+	path := g.repo.gitFolder + "/" + file
+	content := g.env.getFileContent(path)
 	return strings.Trim(content, " \r\n")
 }
 

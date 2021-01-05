@@ -127,6 +127,11 @@ func (env *MockedEnvironment) doGet(url string) ([]byte, error) {
 	return args.Get(0).([]byte), args.Error(1)
 }
 
+func (env *MockedEnvironment) hasParentFilePath(path string) (*fileInfo, error) {
+	args := env.Called(path)
+	return args.Get(0).(*fileInfo), args.Error(1)
+}
+
 const (
 	homeBill        = "/home/bill"
 	homeJan         = "/usr/home/jan"

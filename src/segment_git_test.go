@@ -22,11 +22,34 @@ func TestEnabledGitNotFound(t *testing.T) {
 func TestEnabledInWorkingDirectory(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "git").Return(true)
-	env.On("runCommand", "git", []string{"rev-parse", "--is-inside-work-tree"}).Return("true", nil)
+	fileInfo := &fileInfo{
+		path:         "/dir/hello",
+		parentFolder: "/dir",
+		isDir:        true,
+	}
+	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
 	g := &git{
 		env: env,
 	}
 	assert.True(t, g.enabled())
+	assert.Equal(t, fileInfo.path, g.repo.gitFolder)
+}
+
+func TestEnabledInWorkingTree(t *testing.T) {
+	env := new(MockedEnvironment)
+	env.On("hasCommand", "git").Return(true)
+	fileInfo := &fileInfo{
+		path:         "/dir/hello",
+		parentFolder: "/dir",
+		isDir:        false,
+	}
+	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
+	env.On("getFileContent", "/dir/hello").Return("gitdir: /dir/hello/burp/burp")
+	g := &git{
+		env: env,
+	}
+	assert.True(t, g.enabled())
+	assert.Equal(t, "/dir/hello/burp/burp", g.repo.gitFolder)
 }
 
 func TestGetGitOutputForCommand(t *testing.T) {
@@ -61,19 +84,19 @@ type detachedContext struct {
 
 func setupHEADContextEnv(context *detachedContext) *git {
 	env := new(MockedEnvironment)
-	env.On("hasFolder", "/.git/rebase-merge").Return(context.rebaseMerge)
-	env.On("hasFolder", "/.git/rebase-apply").Return(context.rebaseApply)
-	env.On("getFileContent", "/.git/rebase-merge/orig-head").Return(context.origin)
-	env.On("getFileContent", "/.git/rebase-merge/onto").Return(context.onto)
-	env.On("getFileContent", "/.git/rebase-merge/msgnum").Return(context.step)
-	env.On("getFileContent", "/.git/rebase-apply/next").Return(context.step)
-	env.On("getFileContent", "/.git/rebase-merge/end").Return(context.total)
-	env.On("getFileContent", "/.git/rebase-apply/last").Return(context.total)
-	env.On("getFileContent", "/.git/rebase-apply/head-name").Return(context.origin)
-	env.On("getFileContent", "/.git/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
-	env.On("getFileContent", "/.git/MERGE_HEAD").Return(context.mergeHEAD)
-	env.On("hasFilesInDir", "", ".git/CHERRY_PICK_HEAD").Return(context.cherryPick)
-	env.On("hasFilesInDir", "", ".git/MERGE_HEAD").Return(context.merge)
+	env.On("hasFolder", "/rebase-merge").Return(context.rebaseMerge)
+	env.On("hasFolder", "/rebase-apply").Return(context.rebaseApply)
+	env.On("getFileContent", "/rebase-merge/orig-head").Return(context.origin)
+	env.On("getFileContent", "/rebase-merge/onto").Return(context.onto)
+	env.On("getFileContent", "/rebase-merge/msgnum").Return(context.step)
+	env.On("getFileContent", "/rebase-apply/next").Return(context.step)
+	env.On("getFileContent", "/rebase-merge/end").Return(context.total)
+	env.On("getFileContent", "/rebase-apply/last").Return(context.total)
+	env.On("getFileContent", "/rebase-apply/head-name").Return(context.origin)
+	env.On("getFileContent", "/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
+	env.On("getFileContent", "/MERGE_HEAD").Return(context.mergeHEAD)
+	env.On("hasFilesInDir", "", "CHERRY_PICK_HEAD").Return(context.cherryPick)
+	env.On("hasFilesInDir", "", "MERGE_HEAD").Return(context.merge)
 	env.mockGitCommand(context.currentCommit, "rev-parse", "--short", "HEAD")
 	env.mockGitCommand(context.tagName, "describe", "--tags", "--exact-match")
 	env.mockGitCommand(context.origin, "name-rev", "--name-only", "--exclude=tags/*", context.origin)
@@ -83,7 +106,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	g := &git{
 		env: env,
 		repo: &gitRepo{
-			root: "",
+			gitFolder: "",
 		},
 	}
 	return g

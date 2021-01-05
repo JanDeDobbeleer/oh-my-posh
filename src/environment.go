@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -30,6 +31,12 @@ func (e *commandError) Error() string {
 	return e.err
 }
 
+type fileInfo struct {
+	parentFolder string
+	path         string
+	isDir        bool
+}
+
 type environmentInfo interface {
 	getenv(key string) string
 	getcwd() string
@@ -54,6 +61,7 @@ type environmentInfo interface {
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
 	doGet(url string) ([]byte, error)
+	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 }
 
 type environment struct {
@@ -237,6 +245,29 @@ func (env *environment) doGet(url string) ([]byte, error) {
 		return nil, err
 	}
 	return body, nil
+}
+
+func (env *environment) hasParentFilePath(path string) (*fileInfo, error) {
+	currentFolder := env.getcwd()
+	for {
+		searchPath := filepath.Join(currentFolder, path)
+		info, err := os.Stat(searchPath)
+		if err == nil {
+			return &fileInfo{
+				parentFolder: currentFolder,
+				path:         searchPath,
+				isDir:        info.IsDir(),
+			}, nil
+		}
+		if !os.IsNotExist(err) {
+			return nil, err
+		}
+		if dir := filepath.Dir(currentFolder); dir != currentFolder {
+			currentFolder = dir
+			continue
+		}
+		return nil, errors.New("no match at root level")
+	}
 }
 
 func cleanHostName(hostName string) string {

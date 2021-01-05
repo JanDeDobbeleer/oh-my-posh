@@ -18,6 +18,7 @@ type engine struct {
 	rprompt               string
 }
 
+// SegmentTiming holds the timing context for a segment
 type SegmentTiming struct {
 	name            string
 	nameLength      int

@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -22,6 +21,15 @@ const (
 	windowsPlatform = "windows"
 )
 
+type commandError struct {
+	err      string
+	exitCode int
+}
+
+func (e *commandError) Error() string {
+	return e.err
+}
+
 type environmentInfo interface {
 	getenv(key string) string
 	getcwd() string
@@ -36,7 +44,7 @@ type environmentInfo interface {
 	getHostName() (string, error)
 	getRuntimeGOOS() string
 	getPlatform() string
-	hasCommand(command string) (string, bool)
+	hasCommand(command string) bool
 	runCommand(command string, args ...string) (string, error)
 	runShellCommand(shell, command string) string
 	lastErrorCode() int
@@ -49,17 +57,9 @@ type environmentInfo interface {
 }
 
 type environment struct {
-	args *args
-	cwd  string
-}
-
-type commandError struct {
-	err      string
-	exitCode int
-}
-
-func (e *commandError) Error() string {
-	return e.err
+	args     *args
+	cwd      string
+	commands map[string]string
 }
 
 func (env *environment) getenv(key string) string {
@@ -152,6 +152,9 @@ func (env *environment) getPlatform() string {
 }
 
 func (env *environment) runCommand(command string, args ...string) (string, error) {
+	if cmd, ok := env.commands[command]; ok {
+		command = cmd
+	}
 	out, err := exec.Command(command, args...).Output()
 	if err != nil {
 		return "", err
@@ -160,17 +163,20 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 }
 
 func (env *environment) runShellCommand(shell, command string) string {
-	out, err := exec.Command(shell, "-c", command).Output()
-	if err != nil {
-		log.Println(err)
-		return ""
-	}
-	return strings.TrimSpace(string(out))
+	out, _ := env.runCommand(shell, "-c", command)
+	return out
 }
 
-func (env *environment) hasCommand(command string) (string, bool) {
+func (env *environment) hasCommand(command string) bool {
+	if _, ok := env.commands[command]; ok {
+		return true
+	}
 	path, err := exec.LookPath(command)
-	return path, err == nil
+	if err == nil {
+		env.commands[command] = path
+		return true
+	}
+	return false
 }
 
 func (env *environment) lastErrorCode() int {

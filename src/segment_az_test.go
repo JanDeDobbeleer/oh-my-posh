@@ -18,7 +18,7 @@ type azArgs struct {
 
 func bootStrapAzTest(args *azArgs) *az {
 	env := new(MockedEnvironment)
-	env.On("hasCommand", "az").Return("az", args.enabled)
+	env.On("hasCommand", "az").Return(args.enabled)
 	env.On("runCommand", "az", []string{"account", "show", "--query=[name,id]", "-o=tsv"}).Return(fmt.Sprintf("%s\n%s\n", args.subscriptionName, args.subscriptionID), nil)
 	props := &properties{
 		values: map[Property]interface{}{

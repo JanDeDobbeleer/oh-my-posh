@@ -47,10 +47,9 @@ func (s *gitStatus) string(prefix, color string) string {
 }
 
 type git struct {
-	props       *properties
-	env         environmentInfo
-	repo        *gitRepo
-	commandPath string
+	props *properties
+	env   environmentInfo
+	repo  *gitRepo
 }
 
 const (
@@ -114,15 +113,15 @@ const (
 	BehindColor Property = "behind_color"
 	// AheadColor if set, the color to use when the branch is ahead and behind the remote
 	AheadColor Property = "ahead_color"
+
+	gitCommand = "git"
 )
 
 func (g *git) enabled() bool {
-	commandPath, commandExists := g.env.hasCommand("git")
-	if !commandExists {
+	if !g.env.hasCommand("git") {
 		return false
 	}
-	g.commandPath = commandPath
-	output, _ := g.env.runCommand(g.commandPath, "rev-parse", "--is-inside-work-tree")
+	output, _ := g.env.runCommand(gitCommand, "rev-parse", "--is-inside-work-tree")
 	return output == "true"
 }
 
@@ -242,7 +241,7 @@ func (g *git) getStatusColor(defaultValue string) string {
 
 func (g *git) getGitCommandOutput(args ...string) string {
 	args = append([]string{"-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
-	val, _ := g.env.runCommand(g.commandPath, args...)
+	val, _ := g.env.runCommand(gitCommand, args...)
 	return val
 }
 

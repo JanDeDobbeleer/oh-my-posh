@@ -37,11 +37,6 @@ const (
 func (b *batt) enabled() bool {
 	bt, err := b.env.getBatteryInfo()
 
-	display := b.props.getBool(DisplayCharging, true)
-	if !display && (bt.State == battery.Charging || bt.State == battery.Full) {
-		return false
-	}
-
 	displayError := b.props.getBool(DisplayError, false)
 	if err != nil && displayError {
 		b.percentageText = "BATT ERR"
@@ -58,6 +53,12 @@ func (b *batt) enabled() bool {
 			State:   battery.Full,
 		}
 	}
+
+	display := b.props.getBool(DisplayCharging, true)
+	if !display && (bt.State == battery.Charging || bt.State == battery.Full) {
+		return false
+	}
+
 	batteryPercentage := bt.Current / bt.Full * 100
 	batteryPercentage = math.Min(100, batteryPercentage)
 	percentageText := fmt.Sprintf("%.0f", batteryPercentage)

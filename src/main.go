@@ -3,7 +3,6 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -134,11 +133,9 @@ func main() {
 	formats.init(env.getShellName())
 
 	renderer := &AnsiRenderer{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	colorer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	title := &consoleTitle{

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"testing"
 
 	"github.com/gookit/color"
@@ -16,7 +15,6 @@ func TestWriteAndRemoveText(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	text := renderer.writeAndRemoveText("#193549", "#fff", "This is white, ", "This is white, ", inputText)
@@ -28,7 +26,6 @@ func TestWriteAndRemoveTextColored(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	text := renderer.writeAndRemoveText("#193549", "#ff5733", "this is orange", "<#ff5733>this is orange</>", inputText)
@@ -40,7 +37,6 @@ func TestWriteColorOverride(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	renderer.write("#193549", "#ff5733", inputText)
@@ -51,7 +47,6 @@ func TestWriteColorOverrideBackground(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	text := "This is white, <,#000000>this is black</>, white again"
@@ -63,7 +58,6 @@ func TestWriteColorOverrideBackground16(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	text := "This is default <,white> this background is changed</> default again"
@@ -77,7 +71,6 @@ func TestWriteColorOverrideBoth(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	text := "This is white, <#000000,#ffffff>this is black</>, white again"
@@ -90,7 +83,6 @@ func TestWriteColorOverrideBoth16(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	text := "This is white, <black,white>this is black</>, white again"
@@ -103,7 +95,6 @@ func TestWriteColorOverrideDouble(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	text := "<#ffffff>jan</>@<#ffffff>Jans-MBP</>"
@@ -116,7 +107,6 @@ func TestWriteColorTransparent(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	text := "This is white"
@@ -128,7 +118,6 @@ func TestWriteColorName(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	text := "This is white, <red>this is red</>, white again"
@@ -140,7 +129,6 @@ func TestWriteColorInvalid(t *testing.T) {
 	formats := &ansiFormats{}
 	formats.init("pwsh")
 	renderer := &AnsiColor{
-		buffer:  new(bytes.Buffer),
 		formats: formats,
 	}
 	text := "This is white, <invalid>this is orange</>, white again"
@@ -149,41 +137,31 @@ func TestWriteColorInvalid(t *testing.T) {
 }
 
 func TestGetAnsiFromColorStringBg(t *testing.T) {
-	renderer := &AnsiColor{
-		buffer: new(bytes.Buffer),
-	}
+	renderer := &AnsiColor{}
 	colorCode := renderer.getAnsiFromColorString("blue", true)
 	assert.Equal(t, color.BgBlue.Code(), colorCode)
 }
 
 func TestGetAnsiFromColorStringFg(t *testing.T) {
-	renderer := &AnsiColor{
-		buffer: new(bytes.Buffer),
-	}
+	renderer := &AnsiColor{}
 	colorCode := renderer.getAnsiFromColorString("red", false)
 	assert.Equal(t, color.FgRed.Code(), colorCode)
 }
 
 func TestGetAnsiFromColorStringHex(t *testing.T) {
-	renderer := &AnsiColor{
-		buffer: new(bytes.Buffer),
-	}
+	renderer := &AnsiColor{}
 	colorCode := renderer.getAnsiFromColorString("#AABBCC", false)
 	assert.Equal(t, color.HEX("#AABBCC").Code(), colorCode)
 }
 
 func TestGetAnsiFromColorStringInvalidFg(t *testing.T) {
-	renderer := &AnsiColor{
-		buffer: new(bytes.Buffer),
-	}
+	renderer := &AnsiColor{}
 	colorCode := renderer.getAnsiFromColorString("invalid", false)
 	assert.Equal(t, "", colorCode)
 }
 
 func TestGetAnsiFromColorStringInvalidBg(t *testing.T) {
-	renderer := &AnsiColor{
-		buffer: new(bytes.Buffer),
-	}
+	renderer := &AnsiColor{}
 	colorCode := renderer.getAnsiFromColorString("invalid", true)
 	assert.Equal(t, "", colorCode)
 }

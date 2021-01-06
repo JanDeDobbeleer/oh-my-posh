@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"strings"
@@ -46,7 +45,7 @@ func getColorFromName(colorName string, isBackground bool) (string, error) {
 
 // AnsiColor writes colorized strings
 type AnsiColor struct {
-	buffer  *bytes.Buffer
+	builder strings.Builder
 	formats *ansiFormats
 }
 
@@ -84,7 +83,7 @@ func (a *AnsiColor) writeColoredText(background, foreground, text string) {
 		fgAnsiColor := a.getAnsiFromColorString(foreground, false)
 		coloredText = fmt.Sprintf(a.formats.colorFull, bgAnsiColor, fgAnsiColor, text)
 	}
-	a.buffer.WriteString(coloredText)
+	a.builder.WriteString(coloredText)
 }
 
 func (a *AnsiColor) writeAndRemoveText(background, foreground, text, textToRemove, parentText string) string {
@@ -122,9 +121,9 @@ func (a *AnsiColor) write(background, foreground, text string) {
 }
 
 func (a *AnsiColor) string() string {
-	return a.buffer.String()
+	return a.builder.String()
 }
 
 func (a *AnsiColor) reset() {
-	a.buffer.Reset()
+	a.builder.Reset()
 }

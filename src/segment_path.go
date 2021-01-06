@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"path/filepath"
 	"sort"
@@ -70,7 +69,7 @@ func (pt *path) init(props *properties, env environmentInfo) {
 }
 
 func (pt *path) getAgnosterPath() string {
-	buffer := new(bytes.Buffer)
+	var buffer strings.Builder
 	pwd := pt.getPwd()
 	buffer.WriteString(pt.rootLocation())
 	pathDepth := pt.pathDepth(pwd)

@@ -202,7 +202,7 @@ func (e *engine) debug() {
 					e.writePowerLineSeparator(Transparent, e.activeSegment.Background, true)
 				}
 				segmentTiming.stringValue = e.color.string()
-				e.color.buffer.Reset()
+				e.color.builder.Reset()
 			}
 			segmentTimings = append(segmentTimings, segmentTiming)
 		}

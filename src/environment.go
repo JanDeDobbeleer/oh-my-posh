@@ -79,7 +79,7 @@ func (env *environment) getcwd() string {
 		return env.cwd
 	}
 	correctPath := func(pwd string) string {
-		// on Windows, and being case sentisitive and not consistent and all, this gives silly issues
+		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
 		return strings.Replace(pwd, "c:", "C:", 1)
 	}
 	if env.args != nil && *env.args.PWD != "" {

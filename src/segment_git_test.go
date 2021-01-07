@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -86,7 +87,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env := new(MockedEnvironment)
 	env.On("hasFolder", "/rebase-merge").Return(context.rebaseMerge)
 	env.On("hasFolder", "/rebase-apply").Return(context.rebaseApply)
-	env.On("getFileContent", "/rebase-merge/orig-head").Return(context.origin)
+	env.On("getFileContent", "/rebase-merge/head-name").Return(context.origin)
 	env.On("getFileContent", "/rebase-merge/onto").Return(context.onto)
 	env.On("getFileContent", "/rebase-merge/msgnum").Return(context.step)
 	env.On("getFileContent", "/rebase-apply/next").Return(context.step)
@@ -94,15 +95,14 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.On("getFileContent", "/rebase-apply/last").Return(context.total)
 	env.On("getFileContent", "/rebase-apply/head-name").Return(context.origin)
 	env.On("getFileContent", "/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
-	env.On("getFileContent", "/MERGE_HEAD").Return(context.mergeHEAD)
+	env.On("getFileContent", "/MERGE_MSG").Return(fmt.Sprintf("Merge branch '%s' into %s", context.mergeHEAD, context.onto))
 	env.On("hasFilesInDir", "", "CHERRY_PICK_HEAD").Return(context.cherryPick)
+	env.On("hasFilesInDir", "", "MERGE_MSG").Return(context.merge)
 	env.On("hasFilesInDir", "", "MERGE_HEAD").Return(context.merge)
 	env.mockGitCommand(context.currentCommit, "rev-parse", "--short", "HEAD")
 	env.mockGitCommand(context.tagName, "describe", "--tags", "--exact-match")
 	env.mockGitCommand(context.origin, "name-rev", "--name-only", "--exclude=tags/*", context.origin)
 	env.mockGitCommand(context.onto, "name-rev", "--name-only", "--exclude=tags/*", context.onto)
-	env.mockGitCommand(context.cherryPickSHA, "name-rev", "--name-only", "--exclude=tags/*", context.cherryPickSHA)
-	env.mockGitCommand(context.mergeHEAD, "name-rev", "--name-only", "--exclude=tags/*", context.mergeHEAD)
 	g := &git{
 		env: env,
 		repo: &gitRepo{

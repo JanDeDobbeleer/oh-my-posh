@@ -268,7 +268,8 @@ func (g *git) getGitHEADContext(ref string) string {
 	}
 	// rebase
 	if g.hasGitFolder("rebase-merge") {
-		origin := g.getGitRefFileSymbolicName("rebase-merge/orig-head")
+		head := g.getGitFileContents("rebase-merge/head-name")
+		origin := strings.Replace(head, "refs/heads/", "", 1)
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
 		step := g.getGitFileContents("rebase-merge/msgnum")
 		total := g.getGitFileContents("rebase-merge/end")
@@ -284,16 +285,19 @@ func (g *git) getGitHEADContext(ref string) string {
 		return fmt.Sprintf("%s%s%s (%s/%s) at %s", icon, branchIcon, origin, step, total, ref)
 	}
 	// merge
-	if g.hasGitFile("MERGE_HEAD") {
-		mergeHEAD := g.getGitRefFileSymbolicName("MERGE_HEAD")
+	if g.hasGitFile("MERGE_MSG") && g.hasGitFile("MERGE_HEAD") {
 		icon := g.props.getString(MergeIcon, "\uE727 ")
-		return fmt.Sprintf("%s%s%s into %s", icon, branchIcon, mergeHEAD, ref)
+		mergeContext := g.getGitFileContents("MERGE_MSG")
+		matches := findNamedRegexMatch(`Merge branch '(?P<head>.*)' into`, mergeContext)
+		if matches != nil && matches["head"] != "" {
+			return fmt.Sprintf("%s%s%s into %s", icon, branchIcon, matches["head"], ref)
+		}
 	}
 	// cherry-pick
 	if g.hasGitFile("CHERRY_PICK_HEAD") {
-		sha := g.getGitRefFileSymbolicName("CHERRY_PICK_HEAD")
+		sha := g.getGitFileContents("CHERRY_PICK_HEAD")
 		icon := g.props.getString(CherryPickIcon, "\uE29B ")
-		return fmt.Sprintf("%s%s onto %s", icon, sha, ref)
+		return fmt.Sprintf("%s%s onto %s", icon, sha[0:6], ref)
 	}
 	return ref
 }

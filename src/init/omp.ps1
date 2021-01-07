@@ -8,7 +8,7 @@ if (Test-Path "::CONFIG::") {
 function Set-PoshContext {}
 
 function Set-GitStatus {
-    if (Get-Command -Name "Get-GitStatus" -ErrorAction SilentlyContinue) {
+    if (Get-Module -Name "posh-git") {
         [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification='Variable used later(not in this scope)')]
         $Global:GitStatus = Get-GitStatus
     }

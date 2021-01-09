@@ -14,7 +14,7 @@ type gitRepo struct {
 	behind     int
 	HEAD       string
 	upstream   string
-	stashCount string
+	stashCount int
 	gitFolder  string
 }
 
@@ -178,8 +178,8 @@ func (g *git) string() string {
 	if g.repo.working.changed {
 		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.working, WorkingColor, LocalWorkingIcon, " \uF044"))
 	}
-	if g.repo.stashCount != "" {
-		fmt.Fprintf(buffer, " %s%s", g.props.getString(StashCountIcon, "\uF692 "), g.repo.stashCount)
+	if g.repo.stashCount != 0 {
+		fmt.Fprintf(buffer, " %s%d", g.props.getString(StashCountIcon, "\uF692 "), g.repo.stashCount)
 	}
 	return buffer.String()
 }
@@ -368,8 +368,13 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 	return &status
 }
 
-func (g *git) getStashContext() string {
-	return g.getGitCommandOutput("rev-list", "--walk-reflogs", "--count", "refs/stash")
+func (g *git) getStashContext() int {
+	stashContent := g.getGitFileContents("logs/refs/stash")
+	if stashContent == "" {
+		return 0
+	}
+	lines := strings.Split(stashContent, "\n")
+	return len(lines)
 }
 
 func (g *git) parseGitStatusInfo(branchInfo string) map[string]string {

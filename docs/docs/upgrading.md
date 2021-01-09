@@ -57,11 +57,11 @@ If you don't remember which one, preview them all and take the one closest to yo
 Get-PoshThemes
 ```
 
-If you see one you like, set it, export its config so you can customize/extend the blocks ans segmnts.
+If you see one you like, set it, then export its config so you can customize/extend the blocks and segments.
 
 ```powershell
 Set-PoshPrompt -Theme jandedobbeleer
-Write-PoshTheme | Out-File -FilePath ~/.go-my-posh.json
+Write-PoshTheme | Out-File -FilePath ~/.go-my-posh.json -Encoding oem
 ```
 
 Adjust the config (`~/.go-my-posh.json`) to your liking by going through the [configuration][configuration] guide.

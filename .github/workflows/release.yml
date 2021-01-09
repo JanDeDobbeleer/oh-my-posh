@@ -47,13 +47,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        goarch: [amd64]
         include:
         - os: ubuntu-latest
-          ARTIFACT: posh-linux-amd64
-        - os: macos-latest
-          ARTIFACT: posh-darwin-amd64
+          goarch: arm64
         - os: windows-latest
-          ARTIFACT: posh-windows-amd64.exe
+          goarch: 386
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -73,16 +72,35 @@ jobs:
       run: |
         go get -u github.com/kevinburke/go-bindata/...
         go generate
+    - name: Asset name
+      id: artifact
+      run: |
+        if ($IsLinux) {
+            $artifact = "posh-linux-${{ matrix.goarch }}"
+            Write-Output "::set-output name=name::$($artifact)"
+            return
+        }
+        if ($IsMacOS) {
+            $artifact = "posh-darwin-${{ matrix.goarch }}"
+            Write-Output "::set-output name=name::$($artifact)"
+            return
+        }
+        if ($IsWindows) {
+            $artifact = "posh-windows-${{ matrix.goarch }}.exe"
+            Write-Output "::set-output name=name::$($artifact)"
+            return
+        }
+      shell: pwsh
     - name: Build
       id: build
-      run: go build -o ${{ matrix.ARTIFACT }} -ldflags="-X 'main.Version=${{ needs.release.outputs.version }}'"
+      run: go build -o ${{ steps.artifact.outputs.name }} -ldflags="-X 'main.Version=${{ needs.release.outputs.version }}'"
       env:
-        GOARCH: "amd64"
+        GOARCH: ${{ matrix.goarch }}
     - name: Hash
       id: hash
       run: |
-        $fileHash = Get-FileHash ${{ matrix.ARTIFACT }} -Algorithm SHA256
-        $fileHash.Hash | Out-File -Encoding 'UTF8' ${{ matrix.ARTIFACT }}.sha256
+        $fileHash = Get-FileHash ${{ steps.artifact.outputs.name }} -Algorithm SHA256
+        $fileHash.Hash | Out-File -Encoding 'UTF8' ${{ steps.artifact.outputs.name }}.sha256
         Write-Output "::set-output name=hash_${{ matrix.os }}::$($fileHash.Hash)"
       shell: pwsh
     - name: Upload Release Asset
@@ -92,8 +110,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: src/${{ matrix.ARTIFACT }}
-        asset_name: ${{ matrix.ARTIFACT }}
+        asset_path: src/${{ steps.artifact.outputs.name }}
+        asset_name: ${{ steps.artifact.outputs.name }}
         asset_content_type: application/octet-stream
     - name: Upload Hash Asset
       id: upload-hash-asset
@@ -102,8 +120,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: src/${{ matrix.ARTIFACT }}.sha256
-        asset_name: ${{ matrix.ARTIFACT }}.sha256
+        asset_path: src/${{ steps.artifact.outputs.name }}.sha256
+        asset_name: ${{ steps.artifact.outputs.name }}.sha256
         asset_content_type: text/plain
   themes:
     needs: release

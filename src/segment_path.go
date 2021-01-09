@@ -119,12 +119,13 @@ func (pt *path) getFolderPath() string {
 }
 
 func (pt *path) getPwd() string {
-	pwd := pt.env.getcwd()
-
+	pwd := *pt.env.getArgs().PSWD
+	if pwd == "" {
+		pwd = pt.env.getcwd()
+	}
 	if pt.props.getBool(MappedLocationsEnabled, true) {
 		pwd = pt.replaceMappedLocations(pwd)
 	}
-
 	return pwd
 }
 

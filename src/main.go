@@ -30,6 +30,7 @@ type args struct {
 	Config        *string
 	Shell         *string
 	PWD           *string
+	PSWD          *string
 	Version       *bool
 	Debug         *bool
 	ExecutionTime *float64
@@ -65,6 +66,10 @@ func main() {
 			"pwd",
 			"",
 			"the path you are working in"),
+		PSWD: flag.String(
+			"pswd",
+			"",
+			"the powershell path you are working in, useful when working with drives"),
 		Version: flag.Bool(
 			"version",
 			false,
@@ -98,7 +103,6 @@ func main() {
 	env := &environment{
 		args:     args,
 		commands: make(map[string]string),
-		cwd:      *args.PWD,
 	}
 	if *args.Millis {
 		fmt.Print(time.Now().UnixNano() / 1000000)
@@ -131,7 +135,6 @@ func main() {
 
 	formats := &ansiFormats{}
 	formats.init(env.getShellName())
-
 	renderer := &AnsiRenderer{
 		formats: formats,
 	}

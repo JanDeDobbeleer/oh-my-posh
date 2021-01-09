@@ -82,6 +82,9 @@ func (e *engine) renderText(text string) {
 	if e.activeSegment.Background != "" {
 		defaultValue = fmt.Sprintf("<%s>\u2588</>", e.activeSegment.Background)
 	}
+
+	text = e.color.formats.generateHyperlink(text)
+
 	prefix := e.activeSegment.getValue(Prefix, defaultValue)
 	postfix := e.activeSegment.getValue(Postfix, defaultValue)
 	e.color.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("%s%s%s", prefix, text, postfix))
@@ -109,10 +112,9 @@ func (e *engine) renderBlockSegments(block *Block) string {
 		}
 		e.activeSegment = segment
 		e.endPowerline()
-		text := segment.stringValue
 		e.activeSegment.Background = segment.props.background
 		e.activeSegment.Foreground = segment.props.foreground
-		e.renderSegmentText(text)
+		e.renderSegmentText(segment.stringValue)
 	}
 	if e.previousActiveSegment != nil && e.previousActiveSegment.Style == Powerline {
 		e.writePowerLineSeparator(Transparent, e.previousActiveSegment.Background, true)
@@ -166,7 +168,7 @@ func (e *engine) render() {
 	e.write()
 }
 
-// debug will lool through your config file and output the timings for each segments
+// debug will loop through your config file and output the timings for each segments
 func (e *engine) debug() {
 	var segmentTimings []SegmentTiming
 	largestSegmentNameLength := 0

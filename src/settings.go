@@ -34,6 +34,8 @@ const (
 	Left BlockAlignment = "left"
 	// Right aligns right
 	Right BlockAlignment = "right"
+	// EnableHyperlink enable hyperlink
+	EnableHyperlink Property = "enable_hyperlink"
 )
 
 // Block defines a part of the prompt with optional segments

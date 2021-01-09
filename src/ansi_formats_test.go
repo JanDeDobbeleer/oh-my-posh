@@ -23,3 +23,57 @@ func TestLenWithoutAnsi(t *testing.T) {
 		assert.Equal(t, 5, strippedLength)
 	}
 }
+
+func TestGenerateHyperlinkNoUrl(t *testing.T) {
+	cases := []struct {
+		Text      string
+		ShellName string
+		Expected  string
+	}{
+		{Text: "sample text with no url", ShellName: zsh, Expected: "sample text with no url"},
+		{Text: "sample text with no url", ShellName: pwsh, Expected: "sample text with no url"},
+		{Text: "sample text with no url", ShellName: bash, Expected: "sample text with no url"},
+	}
+	for _, tc := range cases {
+		a := ansiFormats{}
+		a.init(tc.ShellName)
+		hyperlinkText := a.generateHyperlink(tc.Text)
+		assert.Equal(t, tc.Expected, hyperlinkText)
+	}
+}
+
+func TestGenerateHyperlinkWithUrl(t *testing.T) {
+	cases := []struct {
+		Text      string
+		ShellName string
+		Expected  string
+	}{
+		{Text: "[google](http://www.google.be)", ShellName: zsh, Expected: "%{\x1b]8;;http://www.google.be\x1b\\%}google%{\x1b]8;;\x1b\\%}"},
+		{Text: "[google](http://www.google.be)", ShellName: pwsh, Expected: "\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\"},
+		{Text: "[google](http://www.google.be)", ShellName: bash, Expected: "\\[\x1b]8;;http://www.google.be\x1b\\\\\\]google\\[\x1b]8;;\x1b\\\\\\]"},
+	}
+	for _, tc := range cases {
+		a := ansiFormats{}
+		a.init(tc.ShellName)
+		hyperlinkText := a.generateHyperlink(tc.Text)
+		assert.Equal(t, tc.Expected, hyperlinkText)
+	}
+}
+
+func TestGenerateHyperlinkWithUrlNoName(t *testing.T) {
+	cases := []struct {
+		Text      string
+		ShellName string
+		Expected  string
+	}{
+		{Text: "[](http://www.google.be)", ShellName: zsh, Expected: "[](http://www.google.be)"},
+		{Text: "[](http://www.google.be)", ShellName: pwsh, Expected: "[](http://www.google.be)"},
+		{Text: "[](http://www.google.be)", ShellName: bash, Expected: "[](http://www.google.be)"},
+	}
+	for _, tc := range cases {
+		a := ansiFormats{}
+		a.init(tc.ShellName)
+		hyperlinkText := a.generateHyperlink(tc.Text)
+		assert.Equal(t, tc.Expected, hyperlinkText)
+	}
+}

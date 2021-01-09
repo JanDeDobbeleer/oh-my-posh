@@ -77,7 +77,8 @@ function Set-PoshPrompt {
         $startInfo.FileName = Get-PoshCommand
         $config = $global:PoshSettings.Theme
         $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-        $startInfo.Arguments = "--config=""$config"" --error=$errorCode --pwd=""$cleanPWD"" --execution-time=$executionTime"
+        $cleanPSWD = $PWD.ToString().TrimEnd("\")
+        $startInfo.Arguments = "--config=""$config"" --error=$errorCode --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$executionTime"
         $startInfo.Environment["TERM"] = "xterm-256color"
         $startInfo.CreateNoWindow = $true
         $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8

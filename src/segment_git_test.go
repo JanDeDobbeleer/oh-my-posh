@@ -230,25 +230,26 @@ func TestGetGitHEADContextMergeTag(t *testing.T) {
 }
 
 func TestGetStashContextZeroEntries(t *testing.T) {
-	want := ""
-	env := new(MockedEnvironment)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-list", "--walk-reflogs", "--count", "refs/stash"}).Return("", nil)
-	g := &git{
-		env: env,
+	cases := []struct {
+		Expected     int
+		StashContent string
+	}{
+		{Expected: 0, StashContent: ""},
+		{Expected: 2, StashContent: "1\n2\n"},
+		{Expected: 4, StashContent: "1\n2\n3\n4\n\n"},
 	}
-	got := g.getStashContext()
-	assert.Equal(t, want, got)
-}
-
-func TestGetStashContextMultipleEntries(t *testing.T) {
-	want := "2"
-	env := new(MockedEnvironment)
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "rev-list", "--walk-reflogs", "--count", "refs/stash"}).Return("2", nil)
-	g := &git{
-		env: env,
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("getFileContent", "/logs/refs/stash").Return(tc.StashContent)
+		g := &git{
+			repo: &gitRepo{
+				gitFolder: "",
+			},
+			env: env,
+		}
+		got := g.getStashContext()
+		assert.Equal(t, tc.Expected, got)
 	}
-	got := g.getStashContext()
-	assert.Equal(t, want, got)
 }
 
 func TestParseGitBranchInfoEqual(t *testing.T) {

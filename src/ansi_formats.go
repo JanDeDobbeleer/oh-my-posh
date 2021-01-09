@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	"golang.org/x/text/unicode/norm"
@@ -21,6 +22,7 @@ type ansiFormats struct {
 	colorTransparent      string
 	escapeLeft            string
 	escapeRight           string
+	hyperlink             string
 }
 
 func (a *ansiFormats) init(shell string) {
@@ -40,6 +42,7 @@ func (a *ansiFormats) init(shell string) {
 		a.colorTransparent = "%%{\x1b[%s;49m\x1b[7m%%}%s%%{\x1b[m\x1b[0m%%}"
 		a.escapeLeft = "%{"
 		a.escapeRight = "%}"
+		a.hyperlink = "%%{\x1b]8;;%s\x1b\\%%}%s%%{\x1b]8;;\x1b\\%%}"
 	case bash:
 		a.linechange = "\\[\x1b[%d%s\\]"
 		a.left = "\\[\x1b[%dC\\]"
@@ -54,6 +57,7 @@ func (a *ansiFormats) init(shell string) {
 		a.colorTransparent = "\\[\x1b[%s;49m\x1b[7m\\]%s\\[\x1b[m\x1b[0m\\]"
 		a.escapeLeft = "\\["
 		a.escapeRight = "\\]"
+		a.hyperlink = "\\[\x1b]8;;%s\x1b\\\\\\]%s\\[\x1b]8;;\x1b\\\\\\]"
 	default:
 		a.linechange = "\x1b[%d%s"
 		a.left = "\x1b[%dC"
@@ -68,6 +72,7 @@ func (a *ansiFormats) init(shell string) {
 		a.colorTransparent = "\x1b[%s;49m\x1b[7m%s\x1b[m\x1b[0m"
 		a.escapeLeft = ""
 		a.escapeRight = ""
+		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
 	}
 }
 
@@ -84,4 +89,16 @@ func (a *ansiFormats) lenWithoutANSI(text string) int {
 		count++
 	}
 	return count
+}
+
+func (a *ansiFormats) generateHyperlink(text string) string {
+	// hyperlink matching
+	results := findNamedRegexMatch("(?P<all>(?:\\[(?P<name>.+)\\])(?:\\((?P<url>.*)\\)))", text)
+	if len(results) != 3 {
+		return text
+	}
+	// build hyperlink ansi
+	hyperlink := fmt.Sprintf(a.hyperlink, results["url"], results["name"])
+	// replace original text by the new one
+	return strings.Replace(text, results["all"], hyperlink, 1)
 }

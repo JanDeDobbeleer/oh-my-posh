@@ -37,6 +37,7 @@ Display the current path.
 is set to `true`)
 - mapped_locations_enabled: `boolean` - replace known locations in the path with the replacements before applying the
 style. defaults to `true`
+- enable_hyperlink: `boolean` - displays an hyperlink for the path - defaults to `false`
 
 ## Style
 

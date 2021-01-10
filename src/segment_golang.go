@@ -15,7 +15,10 @@ func (g *golang) init(props *properties, env environmentInfo) {
 		commands:     []string{"go"},
 		versionParam: "version",
 		extensions:   []string{"*.go", "go.mod"},
-		versionRegex: `go(?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+		version: &version{
+			regex:       `(?:go(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			urlTemplate: "[%s](https://golang.org/doc/go%s.%s)",
+		},
 	}
 }
 

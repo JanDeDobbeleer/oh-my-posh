@@ -32,9 +32,12 @@ func (p *python) init(props *properties, env environmentInfo) {
 		commands:     []string{"python", "python3"},
 		versionParam: "--version",
 		extensions:   []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak", "venv", ".venv"},
-		versionRegex: `Python (?P<version>[0-9]+.[0-9]+.[0-9]+)`,
 		loadContext:  p.loadContext,
 		inContext:    p.inContext,
+		version: &version{
+			regex:       `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			urlTemplate: "[%s](https://www.python.org/downloads/release/python-%s%s%s/)",
+		},
 	}
 }
 

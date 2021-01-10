@@ -15,7 +15,10 @@ func (n *node) init(props *properties, env environmentInfo) {
 		commands:     []string{"node"},
 		versionParam: "--version",
 		extensions:   []string{"*.js", "*.ts", "package.json"},
-		versionRegex: `(?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+		version: &version{
+			regex:       `(?:v(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			urlTemplate: "[%[1]s](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V%[2]s.md#%[1]s)",
+		},
 	}
 }
 

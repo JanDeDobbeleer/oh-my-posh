@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/distatus/battery"
@@ -65,10 +66,14 @@ type environmentInfo interface {
 }
 
 type environment struct {
-	args     *args
-	cwd      string
-	commands map[string]string
+	args *args
+	cwd  string
 }
+
+var (
+	commands map[string]string = make(map[string]string)
+	lock                       = sync.Mutex{}
+)
 
 func (env *environment) getenv(key string) string {
 	return os.Getenv(key)
@@ -160,7 +165,7 @@ func (env *environment) getPlatform() string {
 }
 
 func (env *environment) runCommand(command string, args ...string) (string, error) {
-	if cmd, ok := env.commands[command]; ok {
+	if cmd, ok := commands[command]; ok {
 		command = cmd
 	}
 	out, err := exec.Command(command, args...).Output()
@@ -176,12 +181,14 @@ func (env *environment) runShellCommand(shell, command string) string {
 }
 
 func (env *environment) hasCommand(command string) bool {
-	if _, ok := env.commands[command]; ok {
+	if _, ok := commands[command]; ok {
 		return true
 	}
 	path, err := exec.LookPath(command)
 	if err == nil {
-		env.commands[command] = path
+		lock.Lock()
+		commands[command] = path
+		lock.Unlock()
 		return true
 	}
 	return false

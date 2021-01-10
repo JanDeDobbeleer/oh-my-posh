@@ -101,8 +101,7 @@ func main() {
 	}
 	flag.Parse()
 	env := &environment{
-		args:     args,
-		commands: make(map[string]string),
+		args: args,
 	}
 	if *args.Millis {
 		fmt.Print(time.Now().UnixNano() / 1000000)

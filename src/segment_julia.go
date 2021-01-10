@@ -15,7 +15,9 @@ func (j *julia) init(props *properties, env environmentInfo) {
 		commands:     []string{"julia"},
 		versionParam: "--version",
 		extensions:   []string{"*.jl"},
-		versionRegex: `julia version (?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+		version: &version{
+			regex: `julia version (?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+		},
 	}
 }
 

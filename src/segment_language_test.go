@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	universion = "1.3.3.7"
+	universion = "1.3.307"
 	uni        = "*.uni"
 	corn       = "*.corn"
 )
@@ -23,6 +23,8 @@ type languageArgs struct {
 	versionParam       string
 	versionRegex       string
 	missingCommandText string
+	urlTemplate        string
+	enableHyperlink    bool
 }
 
 func (l *languageArgs) hasvalue(value string, list []string) bool {
@@ -45,8 +47,9 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	}
 	props := &properties{
 		values: map[Property]interface{}{
-			DisplayVersion: args.displayVersion,
-			DisplayMode:    args.displayMode,
+			DisplayVersion:  args.displayVersion,
+			DisplayMode:     args.displayMode,
+			EnableHyperlink: args.enableHyperlink,
 		},
 	}
 	if args.missingCommandText != "" {
@@ -58,7 +61,10 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 		extensions:   args.extensions,
 		commands:     args.commands,
 		versionParam: args.versionParam,
-		versionRegex: args.versionRegex,
+		version: &version{
+			regex:       args.versionRegex,
+			urlTemplate: args.urlTemplate,
+		},
 	}
 	return l
 }
@@ -221,4 +227,76 @@ func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
 	assert.Equal(t, args.missingCommandText, lang.string(), "unicorn is available and uni and corn files are found")
+}
+
+func TestLanguageHyperlinkEnabled(t *testing.T) {
+	args := &languageArgs{
+		versionParam:      "--version",
+		commands:          []string{"uni", "corn"},
+		enabledCommands:   []string{"corn"},
+		extensions:        []string{uni, corn},
+		versionRegex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		urlTemplate:       "[%s](https://unicor.org/doc/%s.%s.%s)",
+		version:           universion,
+		enabledExtensions: []string{corn},
+		displayVersion:    true,
+		enableHyperlink:   true,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.enabled())
+	assert.Equal(t, "[1.3.307](https://unicor.org/doc/1.3.307)", lang.string())
+}
+
+func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
+	args := &languageArgs{
+		versionParam:      "--version",
+		commands:          []string{"uni", "corn"},
+		enabledCommands:   []string{"corn"},
+		extensions:        []string{uni, corn},
+		versionRegex:      `wrong`,
+		urlTemplate:       "[%s](https://unicor.org/doc/%s.%s.%s)",
+		version:           universion,
+		enabledExtensions: []string{corn},
+		displayVersion:    true,
+		enableHyperlink:   true,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.enabled())
+	assert.Equal(t, "", lang.string())
+}
+
+func TestLanguageHyperlinkEnabledLessParamInTemplate(t *testing.T) {
+	args := &languageArgs{
+		versionParam:      "--version",
+		commands:          []string{"uni", "corn"},
+		enabledCommands:   []string{"corn"},
+		extensions:        []string{uni, corn},
+		versionRegex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		urlTemplate:       "[%s](https://unicor.org/doc/%s)",
+		version:           universion,
+		enabledExtensions: []string{corn},
+		displayVersion:    true,
+		enableHyperlink:   true,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.enabled())
+	assert.Equal(t, "[1.3.307](https://unicor.org/doc/1)", lang.string())
+}
+
+func TestLanguageHyperlinkEnabledMoreParamInTemplate(t *testing.T) {
+	args := &languageArgs{
+		versionParam:      "--version",
+		commands:          []string{"uni", "corn"},
+		enabledCommands:   []string{"corn"},
+		extensions:        []string{uni, corn},
+		versionRegex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+		urlTemplate:       "[%s](https://unicor.org/doc/%s.%s.%s.%s)",
+		version:           universion,
+		enabledExtensions: []string{corn},
+		displayVersion:    true,
+		enableHyperlink:   true,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.enabled())
+	assert.Equal(t, "1.3.307", lang.string())
 }

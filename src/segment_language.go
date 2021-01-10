@@ -1,8 +1,36 @@
 package main
 
+import (
+	"errors"
+	"fmt"
+	"strings"
+)
+
 type loadContext func()
 
 type inContext func() bool
+
+type version struct {
+	full        string
+	major       string
+	minor       string
+	patch       string
+	regex       string
+	urlTemplate string
+}
+
+func (v *version) parse(versionInfo string) error {
+	values := findNamedRegexMatch(v.regex, versionInfo)
+	if len(values) == 0 {
+		return errors.New("cannot parse version string")
+	}
+
+	v.full = values["version"]
+	v.major = values["major"]
+	v.minor = values["minor"]
+	v.patch = values["patch"]
+	return nil
+}
 
 type language struct {
 	props        *properties
@@ -11,8 +39,7 @@ type language struct {
 	commands     []string
 	executable   string
 	versionParam string
-	versionRegex string
-	version      string
+	version      *version
 	exitCode     int
 	loadContext  loadContext
 	inContext    inContext
@@ -42,8 +69,21 @@ func (l *language) string() string {
 	if !l.hasCommand() {
 		return l.props.getString(MissingCommandTextProperty, MissingCommandText)
 	}
-	l.setVersion()
-	return l.version
+
+	err := l.setVersion()
+	if err != nil {
+		return ""
+	}
+
+	// build release notes hyperlink
+	if l.props.getBool(EnableHyperlink, false) && l.version.urlTemplate != "" {
+		version, err := TruncatingSprintf(l.version.urlTemplate, l.version.full, l.version.major, l.version.minor, l.version.patch)
+		if err != nil {
+			return l.version.full
+		}
+		return version
+	}
+	return l.version.full
 }
 
 func (l *language) enabled() bool {
@@ -77,16 +117,18 @@ func (l *language) hasLanguageFiles() bool {
 	return true
 }
 
-// getVersion returns the version and exit code returned by the executable
-func (l *language) setVersion() {
+// setVersion parses the version string returned by the command
+func (l *language) setVersion() error {
 	versionInfo, err := l.env.runCommand(l.executable, l.versionParam)
 	if exitErr, ok := err.(*commandError); ok {
 		l.exitCode = exitErr.exitCode
-		return
+		return errors.New("error executing command")
 	}
-	values := findNamedRegexMatch(l.versionRegex, versionInfo)
-	l.exitCode = 0
-	l.version = values["version"]
+	err = l.version.parse(versionInfo)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // hasCommand checks if one of the commands exists and sets it as executable
@@ -115,4 +157,15 @@ func (l *language) inLanguageContext() bool {
 		return false
 	}
 	return l.inContext()
+}
+
+func TruncatingSprintf(str string, args ...interface{}) (string, error) {
+	n := strings.Count(str, "%s")
+	if n > len(args) {
+		return "", errors.New("Too many parameters")
+	}
+	if n == 0 {
+		return fmt.Sprintf(str, args...), nil
+	}
+	return fmt.Sprintf(str, args[:n]...), nil
 }

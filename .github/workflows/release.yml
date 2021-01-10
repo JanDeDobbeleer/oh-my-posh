@@ -50,7 +50,7 @@ jobs:
         goarch: [amd64]
         include:
         - os: ubuntu-latest
-          goarch: arm64
+          goarch: arm
         - os: windows-latest
           goarch: 386
     runs-on: ${{ matrix.os }}

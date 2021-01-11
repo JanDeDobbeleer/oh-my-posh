@@ -1,0 +1,80 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh3/main/themes/schema.json",
+    "blocks": [
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "segments": [
+                {
+                    "type": "os",
+                    "style": "powerline",
+                    "foreground": "cyan",
+                    "properties": {
+                        "prefix": "",
+                        "postfix": ""
+                    }
+                },
+                {
+                    "type": "path",
+                    "style": "plain",
+                    "foreground": "cyan",
+                    "properties": {
+                        "style": "full"
+                    }
+                },
+                {
+                    "type": "git",
+                    "style": "plain",
+                    "foreground": "lightYellow",
+                    "properties": {
+                        "prefix": ":: <lightBlue>git(</>",
+                        "postfix": "<lightBlue>)</>"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "prompt",
+            "alignment": "right",
+            "segments": [
+                {
+                    "type": "python",
+                    "style": "plain",
+                    "foreground": "lightRed",
+                    "properties": {
+                        "display_virtual_env": true,
+                        "display_version": false,
+                        "prefix": "[ ",
+                        "postfix": " ]",
+                        "display_mode": "always"
+                    }
+                },
+                {
+                    "type": "time",
+                    "style": "plain",
+                    "foreground": "lightGreen"
+                }
+            ]
+        },
+        {
+            "type": "newline"
+        },
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "segments": [
+                {
+                    "type": "exit",
+                    "style": "powerline",
+                    "foreground": "lightGreen",
+                    "properties": {
+                        "display_exit_code": false,
+                        "always_enabled": true,
+                        "error_color": "red",
+                        "prefix": "\u279c"
+                    }
+                }
+            ]
+        }
+    ]
+}

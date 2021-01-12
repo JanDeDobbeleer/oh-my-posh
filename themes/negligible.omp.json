@@ -8,7 +8,11 @@
                 {
                     "type": "os",
                     "style": "powerline",
-                    "foreground": "cyan"
+                    "foreground": "cyan",
+                    "properties": {
+                        "prefix": "",
+                        "postfix": ""
+                    }
                 },
                 {
                     "type": "path",

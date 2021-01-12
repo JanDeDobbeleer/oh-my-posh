@@ -31,4 +31,4 @@ Supports conda, virtualenv and pyenv.
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: The segment is always displayed
-  - `context`: The segment is only displayed when *.py or *.ipynb files are present (default)
+  - `files`: The segment is only displayed when `*.py` or `*.ipynb` files are present (default)

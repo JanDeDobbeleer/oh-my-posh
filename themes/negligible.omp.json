@@ -64,20 +64,14 @@
             "alignment": "left",
             "segments": [
                 {
-                    "type": "text",
-                    "style": "plain",
-                    "foreground": "#63F08C",
-                    "properties": {
-                        "prefix": "",
-                        "text": "\u279C"
-                    }
-                },
-                {
                     "type": "exit",
                     "style": "powerline",
-                    "foreground": "#DCB977",
+                    "foreground": "lightGreen",
                     "properties": {
-                        "display_exit_code": false
+                        "display_exit_code": false,
+                        "always_enabled": true,
+                        "error_color": "red",
+                        "prefix": "\u279c"
                     }
                 }
             ]

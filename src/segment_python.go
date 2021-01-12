@@ -31,17 +31,19 @@ func (p *python) init(props *properties, env environmentInfo) {
 		versionParam: "--version",
 		extensions:   []string{"*.py", "*.ipynb"},
 		versionRegex: `Python (?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+		loadContext:  p.loadContext,
+		inContext:    p.inContext,
 	}
 }
 
 func (p *python) enabled() bool {
-	if !p.language.enabled() {
-		return false
-	}
+	return p.language.enabled()
+}
+
+func (p *python) loadContext() {
 	venvVars := []string{
 		"VIRTUAL_ENV",
 		"CONDA_ENV_PATH",
-		"CONDA_DEFAULT_ENV",
 		"PYENV_VERSION",
 	}
 	var venv string
@@ -52,5 +54,8 @@ func (p *python) enabled() bool {
 			break
 		}
 	}
-	return true
+}
+
+func (p *python) inContext() bool {
+	return p.venvName != ""
 }

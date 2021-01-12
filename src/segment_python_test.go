@@ -7,11 +7,10 @@ import (
 )
 
 type pythonArgs struct {
-	virtualEnvName   string
-	condaEnvName     string
-	condaDefaultName string
-	pyEnvName        string
-	displayVersion   bool
+	virtualEnvName string
+	condaEnvName   string
+	pyEnvName      string
+	displayVersion bool
 }
 
 func bootStrapPythonTest(args *pythonArgs) *python {
@@ -21,7 +20,6 @@ func bootStrapPythonTest(args *pythonArgs) *python {
 	env.On("hasFiles", "*.py").Return(true)
 	env.On("getenv", "VIRTUAL_ENV").Return(args.virtualEnvName)
 	env.On("getenv", "CONDA_ENV_PATH").Return(args.condaEnvName)
-	env.On("getenv", "CONDA_DEFAULT_ENV").Return(args.condaDefaultName)
 	env.On("getenv", "PYENV_VERSION").Return(args.pyEnvName)
 	env.On("getPathSeperator", nil).Return("")
 	props := &properties{
@@ -55,16 +53,6 @@ func TestPythonCondaEnv(t *testing.T) {
 	assert.Equal(t, expected, python.string())
 }
 
-func TestPythonCondaDefaultName(t *testing.T) {
-	expected := "CONDADEF"
-	args := &pythonArgs{
-		condaDefaultName: expected,
-	}
-	python := bootStrapPythonTest(args)
-	assert.True(t, python.enabled())
-	assert.Equal(t, expected, python.string())
-}
-
 func TestPythonPyEnv(t *testing.T) {
 	expected := "PYENV"
 	args := &pythonArgs{
@@ -85,4 +73,20 @@ func TestPythonPyEnvWithVersion(t *testing.T) {
 	assert.True(t, python.enabled())
 	assert.Equal(t, expected, python.string())
 	assert.Equal(t, "3.8.4", python.language.version)
+}
+
+func TestPythonPythonInContext(t *testing.T) {
+	args := &pythonArgs{
+		pyEnvName:      "PYENV",
+		displayVersion: true,
+	}
+	python := bootStrapPythonTest(args)
+	python.loadContext()
+	assert.True(t, python.inContext())
+}
+
+func TestPythonPythonNotInContext(t *testing.T) {
+	python := bootStrapPythonTest(&pythonArgs{})
+	python.loadContext()
+	assert.False(t, python.inContext())
 }

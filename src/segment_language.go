@@ -15,12 +15,12 @@ type language struct {
 }
 
 const (
-	// DisplayModeProperty sets the display mode (always, when_in_context, never)
-	DisplayModeProperty Property = "display_mode"
+	// DisplayMode sets the display mode (always, when_in_context, never)
+	DisplayMode Property = "display_mode"
 	// DisplayModeAlways displays the segment always
 	DisplayModeAlways string = "always"
-	// DisplayModeContext displays the segment when the current folder contains certain extensions
-	DisplayModeContext string = "context"
+	// DisplayModeFiles displays the segment when the current folder contains certain extensions
+	DisplayModeFiles string = "files"
 	// MissingCommandTextProperty sets the text to display when the command is not present in the system
 	MissingCommandTextProperty Property = "missing_command_text"
 	// MissingCommandText displays empty string by default
@@ -41,21 +41,21 @@ func (l *language) string() string {
 }
 
 func (l *language) enabled() bool {
-	displayMode := l.props.getString(DisplayModeProperty, DisplayModeContext)
+	displayMode := l.props.getString(DisplayMode, DisplayModeFiles)
 	displayVersion := l.props.getBool(DisplayVersion, true)
 
 	switch displayMode {
 	case DisplayModeAlways:
 		return (!displayVersion || l.hasCommand())
-	case DisplayModeContext:
+	case DisplayModeFiles:
 		fallthrough
 	default:
-		return l.isInContext() && (!displayVersion || l.hasCommand())
+		return l.hasLanguageFiles() && (!displayVersion || l.hasCommand())
 	}
 }
 
-// isInContext will return true at least one file matching the extensions is found
-func (l *language) isInContext() bool {
+// hasLanguageFiles will return true at least one file matching the extensions is found
+func (l *language) hasLanguageFiles() bool {
 	for i, extension := range l.extensions {
 		if l.env.hasFiles(extension) {
 			break

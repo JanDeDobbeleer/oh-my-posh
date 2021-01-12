@@ -45,8 +45,8 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	}
 	props := &properties{
 		values: map[Property]interface{}{
-			DisplayVersion:      args.displayVersion,
-			DisplayModeProperty: args.displayMode,
+			DisplayVersion: args.displayVersion,
+			DisplayMode:    args.displayMode,
 		},
 	}
 	if args.missingCommandText != "" {

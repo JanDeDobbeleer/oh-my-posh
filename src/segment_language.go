@@ -2,6 +2,10 @@ package main
 
 import "errors"
 
+type loadContext func()
+
+type inContext func() bool
+
 type language struct {
 	props        *properties
 	env          environmentInfo
@@ -12,6 +16,8 @@ type language struct {
 	versionRegex string
 	version      string
 	exitCode     int
+	loadContext  loadContext
+	inContext    inContext
 }
 
 const (
@@ -21,6 +27,8 @@ const (
 	DisplayModeAlways string = "always"
 	// DisplayModeFiles displays the segment when the current folder contains certain extensions
 	DisplayModeFiles string = "files"
+	// DisplayModeEnvironment displays the segment when the environment has a language's context
+	DisplayModeEnvironment string = "environment"
 	// MissingCommandTextProperty sets the text to display when the command is not present in the system
 	MissingCommandTextProperty Property = "missing_command_text"
 	// MissingCommandText displays empty string by default
@@ -43,10 +51,12 @@ func (l *language) string() string {
 func (l *language) enabled() bool {
 	displayMode := l.props.getString(DisplayMode, DisplayModeFiles)
 	displayVersion := l.props.getBool(DisplayVersion, true)
-
+	l.loadLanguageContext()
 	switch displayMode {
 	case DisplayModeAlways:
 		return (!displayVersion || l.hasCommand())
+	case DisplayModeEnvironment:
+		return l.inLanguageContext()
 	case DisplayModeFiles:
 		fallthrough
 	default:
@@ -97,4 +107,18 @@ func (l *language) hasCommand() bool {
 		}
 	}
 	return true
+}
+
+func (l *language) loadLanguageContext() {
+	if l.loadContext == nil {
+		return
+	}
+	l.loadContext()
+}
+
+func (l *language) inLanguageContext() bool {
+	if l.inContext == nil {
+		return false
+	}
+	return l.inContext()
 }

@@ -946,7 +946,7 @@
                     "default": true
                   },
                   "enable_hyperlink": {
-                    "type": "string",
+                    "type": "boolean",
                     "title": "Enable hyperlink",
                     "description": "Displays an hyperlink for the current path",
                     "default": false

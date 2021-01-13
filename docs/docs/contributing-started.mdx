@@ -123,6 +123,26 @@ Once the extensions are installed:
 - Debug can be started by hitting F5.
 - All tests can be run using the Test explorer.
 
+### Extra tips
+
+#### Configure Delve in VS Code
+
+[Delve](https://github.com/go-delve/delve) config is restrictive by default(string limit especially). You can expand some limits in VS Code(`settings.json` or directly in `launch.json`):
+```
+"go.delveConfig": {
+
+  "dlvLoadConfig": {
+    "followPointers": true,
+    "maxVariableRecurse": 3,
+    "maxStringLen": 400,
+    "maxArrayValues": 400,
+    "maxStructFields": -1
+  },
+  "apiVersion": 2,
+  "showGlobalVariables": false
+}
+```
+
 ## Up Next
 
 With everything set up, you're ready to start making changes and create your first [PR][gh-pr]!

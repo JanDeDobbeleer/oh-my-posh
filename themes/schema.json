@@ -944,6 +944,12 @@
                     "title": "Enable the Mapped Locations feature",
                     "description": "Replace known locations in the path with the replacements before applying the style.",
                     "default": true
+                  },
+                  "enable_hyperlink": {
+                    "type": "boolean",
+                    "title": "Enable hyperlink",
+                    "description": "Displays an hyperlink for the current path",
+                    "default": false
                   }
                 }
               }

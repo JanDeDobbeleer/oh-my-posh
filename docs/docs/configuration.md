@@ -291,6 +291,19 @@ Oh my Posh mainly supports three different color types being
 
   `darkGray` `lightRed` `lightGreen` `lightYellow` `lightBlue` `lightMagenta` `lightCyan` `lightWhite`
 
+### Hyperlinks
+
+The engine has the ability to render hyperlinks. Your terminal has to support it and the option
+has to be enabled at the segment level. Hyperlink generation is disabled by default.
+
+#### Supported segments
+
+- [Path](segment-path.md)
+
+#### Supported terminals
+
+- [Terminal list](thttps://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda)
+
 ## Full Sample
 
 ```json
@@ -341,7 +354,8 @@ Oh my Posh mainly supports three different color types being
             "style": "folder",
             "ignore_folders": [
               "/super/secret/project"
-            ]
+            ],
+            "enable_hyperlink": false
           }
         },
         {

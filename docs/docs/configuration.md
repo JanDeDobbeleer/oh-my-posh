@@ -298,11 +298,11 @@ has to be enabled at the segment level. Hyperlink generation is disabled by defa
 
 #### Supported segments
 
-- [Path](segment-path.md)
+- [Path][path-segment]
 
 #### Supported terminals
 
-- [Terminal list](thttps://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda)
+- [Terminal list][terminal-list-hyperlinks]
 
 ## Full Sample
 
@@ -398,3 +398,5 @@ has to be enabled at the segment level. Hyperlink generation is disabled by defa
 [regex]: https://www.regular-expressions.info/tutorial.html
 [regex-nl]: https://www.regular-expressions.info/lookaround.html
 [rprompt]: https://scriptingosx.com/2019/07/moving-to-zsh-06-customizing-the-zsh-prompt/
+[path-segment]: /docs/path
+[terminal-list-hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda

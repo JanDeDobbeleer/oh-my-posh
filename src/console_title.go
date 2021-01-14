@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"strings"
 	"text/template"
 )
 
@@ -39,13 +40,13 @@ func (t *consoleTitle) getConsoleTitle() string {
 	var title string
 	switch t.settings.ConsoleTitleStyle {
 	case FullPath:
-		title = t.env.getcwd()
+		title = t.getPwd()
 	case Template:
 		title = t.getTemplateText()
 	case FolderName:
 		fallthrough
 	default:
-		title = base(t.env.getcwd(), t.env)
+		title = base(t.getPwd(), t.env)
 	}
 	return fmt.Sprintf(t.formats.title, title)
 }
@@ -53,8 +54,8 @@ func (t *consoleTitle) getConsoleTitle() string {
 func (t *consoleTitle) getTemplateText() string {
 	context := &TitleTemplateContext{
 		Root:   t.env.isRunningAsRoot(),
-		Path:   t.env.getcwd(),
-		Folder: base(t.env.getcwd(), t.env),
+		Path:   t.getPwd(),
+		Folder: base(t.getPwd(), t.env),
 		Shell:  t.env.getShellName(),
 	}
 	tmpl, err := template.New("title").Parse(t.settings.ConsoleTitleTemplate)
@@ -68,4 +69,10 @@ func (t *consoleTitle) getTemplateText() string {
 		return incorrectTitleTemplate
 	}
 	return buffer.String()
+}
+
+func (t *consoleTitle) getPwd() string {
+	pwd := t.env.getcwd()
+	pwd = strings.Replace(pwd, t.env.homeDir(), "~", 1)
+	return pwd
 }

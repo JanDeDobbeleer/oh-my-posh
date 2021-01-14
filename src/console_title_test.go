@@ -16,8 +16,8 @@ func TestGetConsoleTitle(t *testing.T) {
 		ShellName     string
 		Expected      string
 	}{
-		{Style: FolderName, Cwd: "/usr/home", PathSeperator: "/", ShellName: "default", Expected: "\x1b]0;home\a"},
-		{Style: FullPath, Cwd: "/usr/home/jan", PathSeperator: "/", ShellName: "default", Expected: "\x1b]0;/usr/home/jan\a"},
+		{Style: FolderName, Cwd: "/usr/home", PathSeperator: "/", ShellName: "default", Expected: "\x1b]0;~\a"},
+		{Style: FullPath, Cwd: "/usr/home/jan", PathSeperator: "/", ShellName: "default", Expected: "\x1b]0;~/jan\a"},
 		{
 			Style:         Template,
 			Template:      "{{.Path}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",

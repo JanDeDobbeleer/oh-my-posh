@@ -77,9 +77,10 @@ func (l *language) getVersion() bool {
 		l.exitCode = 0
 		l.version = values["version"]
 	} else {
-		errors.As(err, &exerr)
-		l.exitCode = exerr.exitCode
 		l.version = ""
+		if errors.As(err, &exerr) {
+			l.exitCode = exerr.exitCode
+		}
 	}
 	return true
 }

@@ -170,7 +170,12 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	}
 	out, err := exec.Command(command, args...).Output()
 	if err != nil {
-		return "", err
+		if exitErr, ok := err.(*exec.ExitError); ok {
+			return "", &commandError{
+				err:      exitErr.Error(),
+				exitCode: exitErr.ExitCode(),
+			}
+		}
 	}
 	return strings.TrimSpace(string(out)), nil
 }

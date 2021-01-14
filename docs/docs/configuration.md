@@ -64,20 +64,23 @@ to `{{ .Shell }} in {{ .Folder }}`
 
 - `folder`: show the current folder name
 - `path`: show the current path
-- `template`: show the current path
+- `template`: show a custom template
 
 ### Console Title Template
 
 You can create a more custom console title with the use of `"console_title_style" = "template"`.
 When this is set, a `console_title_template` is also expected, otherwise the title will remain empty.
-Under the hood this uses go's text/template feature and offers a few standard properties to work with.
+Under the hood this uses go's [text/template][go-text-template] feature and offers a few standard
+properties to work with.
 
 - `.Root`: `boolean` - is the current user root/admin or not
 - `.Path`: `string` - the current working directory
 - `.Folder`: `string` - the current working folder
 - `.Shell`: `string` - the current shell name
+- `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
 
 A `boolean` can be used for conditional display purposes, a `string` can be displayed.
+
 The following examples illustrate possible contents for `console_title_template`, provided
 the current working directory is `/usr/home/omp` and the shell is `zsh`.
 
@@ -89,6 +92,7 @@ the current working directory is `/usr/home/omp` and the shell is `zsh`.
     // when root == true: omp :: root :: zsh
     "console_title_template": "{{.Folder}}", // outputs: omp
     "console_title_template": "{{.Shell}} in {{.Path}}", // outputs: zsh in /usr/home/omp
+    "console_title_template": "{{Env..USERDOMAIN}} {{.Shell}} in {{.Path}}", // outputs: MyCompany zsh in /usr/home/omp
 }
 ```
 
@@ -400,3 +404,4 @@ has to be enabled at the segment level. Hyperlink generation is disabled by defa
 [rprompt]: https://scriptingosx.com/2019/07/moving-to-zsh-06-customizing-the-zsh-prompt/
 [path-segment]: /docs/path
 [terminal-list-hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
+[go-text-template]: https://golang.org/pkg/text/template/

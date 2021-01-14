@@ -20,12 +20,12 @@ func TestGetConsoleTitle(t *testing.T) {
 		{Style: FullPath, Cwd: "/usr/home/jan", PathSeperator: "/", ShellName: "default", Expected: "\x1b]0;~/jan\a"},
 		{
 			Style:         Template,
-			Template:      "{{.Path}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
+			Template:      "{{.Env.USERDOMAIN}} :: {{.Path}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
 			Cwd:           "C:\\vagrant",
 			PathSeperator: "\\",
 			ShellName:     "PowerShell",
 			Root:          true,
-			Expected:      "\x1b]0;C:\\vagrant :: Admin :: PowerShell\a",
+			Expected:      "\x1b]0;MyCompany :: C:\\vagrant :: Admin :: PowerShell\a",
 		},
 		{
 			Style:         Template,
@@ -48,6 +48,7 @@ func TestGetConsoleTitle(t *testing.T) {
 		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
 		env.On("isRunningAsRoot", nil).Return(tc.Root)
 		env.On("getShellName", nil).Return(tc.ShellName)
+		env.On("getenv", "USERDOMAIN").Return("MyCompany")
 		formats := &ansiFormats{}
 		formats.init(tc.ShellName)
 		ct := &consoleTitle{

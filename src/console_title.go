@@ -28,14 +28,6 @@ const (
 	incorrectTitleTemplate = "unable to create title based on template"
 )
 
-// TitleTemplateContext defines what can be aded to the title when using the template
-type TitleTemplateContext struct {
-	Root   bool
-	Path   string
-	Folder string
-	Shell  string
-}
-
 func (t *consoleTitle) getConsoleTitle() string {
 	var title string
 	switch t.settings.ConsoleTitleStyle {
@@ -52,12 +44,21 @@ func (t *consoleTitle) getConsoleTitle() string {
 }
 
 func (t *consoleTitle) getTemplateText() string {
-	context := &TitleTemplateContext{
-		Root:   t.env.isRunningAsRoot(),
-		Path:   t.getPwd(),
-		Folder: base(t.getPwd(), t.env),
-		Shell:  t.env.getShellName(),
+	context := make(map[string]interface{})
+
+	context["Root"] = t.env.isRunningAsRoot()
+	context["Path"] = t.getPwd()
+	context["Folder"] = base(t.getPwd(), t.env)
+	context["Shell"] = t.env.getShellName()
+
+	// load environment variables into the map
+	envVars := map[string]string{}
+	matches := findAllNamedRegexMatch(`\.Env\.(?P<ENV>[^ \.}]*)`, t.settings.ConsoleTitleTemplate)
+	for _, match := range matches {
+		envVars[match["ENV"]] = t.env.getenv(match["ENV"])
 	}
+	context["Env"] = envVars
+
 	tmpl, err := template.New("title").Parse(t.settings.ConsoleTitleTemplate)
 	if err != nil {
 		return invalidTitleTemplate

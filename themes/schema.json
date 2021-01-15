@@ -21,7 +21,7 @@
       "type": "string",
       "title": "Display Mode",
       "description": "Determines whether the segment is displayed always or only if a file matching the extensions are present in the current folder",
-      "enum": ["always", "files"],
+      "enum": ["always", "files", "environment", "context"],
       "default": "context"
     },
     "missing_command_text": {

@@ -173,6 +173,20 @@ func (e *engine) debug() {
 	var segmentTimings []SegmentTiming
 	largestSegmentNameLength := 0
 	e.renderer.print("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
+
+	// console title timing
+	start := time.Now()
+	consoleTitle := e.consoleTitle.getTemplateText()
+	duration := time.Since(start)
+	segmentTiming := SegmentTiming{
+		name:            "ConsoleTitle",
+		nameLength:      12,
+		enabled:         e.settings.ConsoleTitle,
+		stringValue:     consoleTitle,
+		enabledDuration: 0,
+		stringDuration:  duration,
+	}
+	segmentTimings = append(segmentTimings, segmentTiming)
 	// loop each segments of each blocks
 	for _, block := range e.settings.Blocks {
 		for _, segment := range block.Segments {
@@ -209,6 +223,7 @@ func (e *engine) debug() {
 			segmentTimings = append(segmentTimings, segmentTiming)
 		}
 	}
+
 	// pad the output so the tabs render correctly
 	largestSegmentNameLength += 7
 	for _, segment := range segmentTimings {

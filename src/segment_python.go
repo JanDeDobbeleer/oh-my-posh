@@ -29,7 +29,7 @@ func (p *python) init(props *properties, env environmentInfo) {
 		props:        props,
 		commands:     []string{"python", "python3"},
 		versionParam: "--version",
-		extensions:   []string{"*.py", "*.ipynb"},
+		extensions:   []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak", "venv", ".venv"},
 		versionRegex: `Python (?P<version>[0-9]+.[0-9]+.[0-9]+)`,
 		loadContext:  p.loadContext,
 		inContext:    p.inContext,

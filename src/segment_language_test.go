@@ -72,7 +72,8 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 		displayVersion:    true,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.False(t, lang.enabled(), "unicorn is not available")
+	assert.True(t, lang.enabled())
+	assert.Equal(t, MissingCommandText, lang.string(), "unicorn is not available")
 }
 
 func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {
@@ -214,7 +215,7 @@ func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 		versionRegex:       "(?P<version>.*)",
 		version:            universion,
 		enabledExtensions:  []string{uni, corn},
-		displayVersion:     false,
+		displayVersion:     true,
 		missingCommandText: "missing",
 	}
 	lang := bootStrapLanguageTest(args)

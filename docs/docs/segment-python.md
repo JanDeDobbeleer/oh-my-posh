@@ -33,3 +33,4 @@ Supports conda, virtualenv and pyenv.
   - `always`: The segment is always displayed
   - `files`: The segment is only displayed when `*.py` or `*.ipynb` files are present (default)
   - `environment`: The segment is only displayed when a virtual env is present
+  - `context`: The segment is only displayed when either `environment` or `files` is active

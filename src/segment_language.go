@@ -1,7 +1,5 @@
 package main
 
-import "errors"
-
 type loadContext func()
 
 type inContext func() bool
@@ -29,6 +27,8 @@ const (
 	DisplayModeFiles string = "files"
 	// DisplayModeEnvironment displays the segment when the environment has a language's context
 	DisplayModeEnvironment string = "environment"
+	// DisplayModeContext displays the segment when the environment or files is active
+	DisplayModeContext string = "context"
 	// MissingCommandTextProperty sets the text to display when the command is not present in the system
 	MissingCommandTextProperty Property = "missing_command_text"
 	// MissingCommandText displays empty string by default
@@ -36,31 +36,30 @@ const (
 )
 
 func (l *language) string() string {
-	// check if one of the defined commands exists in the system
+	if !l.props.getBool(DisplayVersion, true) {
+		return ""
+	}
 	if !l.hasCommand() {
 		return l.props.getString(MissingCommandTextProperty, MissingCommandText)
 	}
-
-	// call getVersion if displayVersion set in config
-	if l.props.getBool(DisplayVersion, true) && l.getVersion() {
-		return l.version
-	}
-	return ""
+	l.setVersion()
+	return l.version
 }
 
 func (l *language) enabled() bool {
-	displayMode := l.props.getString(DisplayMode, DisplayModeFiles)
-	displayVersion := l.props.getBool(DisplayVersion, true)
 	l.loadLanguageContext()
+	displayMode := l.props.getString(DisplayMode, DisplayModeFiles)
 	switch displayMode {
 	case DisplayModeAlways:
-		return (!displayVersion || l.hasCommand())
+		return true
 	case DisplayModeEnvironment:
 		return l.inLanguageContext()
 	case DisplayModeFiles:
+		return l.hasLanguageFiles()
+	case DisplayModeContext:
 		fallthrough
 	default:
-		return l.hasLanguageFiles() && (!displayVersion || l.hasCommand())
+		return l.hasLanguageFiles() || l.inLanguageContext()
 	}
 }
 
@@ -79,20 +78,15 @@ func (l *language) hasLanguageFiles() bool {
 }
 
 // getVersion returns the version and exit code returned by the executable
-func (l *language) getVersion() bool {
+func (l *language) setVersion() {
 	versionInfo, err := l.env.runCommand(l.executable, l.versionParam)
-	var exerr *commandError
-	if err == nil {
-		values := findNamedRegexMatch(l.versionRegex, versionInfo)
-		l.exitCode = 0
-		l.version = values["version"]
-	} else {
-		l.version = ""
-		if errors.As(err, &exerr) {
-			l.exitCode = exerr.exitCode
-		}
+	if exitErr, ok := err.(*commandError); ok {
+		l.exitCode = exitErr.exitCode
+		return
 	}
-	return true
+	values := findNamedRegexMatch(l.versionRegex, versionInfo)
+	l.exitCode = 0
+	l.version = values["version"]
 }
 
 // hasCommand checks if one of the commands exists and sets it as executable

@@ -55,8 +55,7 @@ boxes with question marks, [set up your terminal][setupterm] to use a supported 
 - final_space: `boolean` - when true adds a space at the end of the prompt
 - console_title: `boolean` - when true sets the current location as the console title
 - console_title_style: `string` - the title to set in the console - defaults to `folder`
-- console_title_template: `string` - the template to use when `"console_title_style" = "template"` - defaults
-to `{{ .Shell }} in {{ .Folder }}`
+- console_title_template: `string` - the template to use when `"console_title_style" = "template"`
 
 > "I Like The Way You Speak Words" - Gary Goodspeed
 

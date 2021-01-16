@@ -92,7 +92,7 @@ the current working directory is `/usr/home/omp` and the shell is `zsh`.
     // when root == true: omp :: root :: zsh
     "console_title_template": "{{.Folder}}", // outputs: omp
     "console_title_template": "{{.Shell}} in {{.Path}}", // outputs: zsh in /usr/home/omp
-    "console_title_template": "{{Env..USERDOMAIN}} {{.Shell}} in {{.Path}}", // outputs: MyCompany zsh in /usr/home/omp
+    "console_title_template": "{{.Env.USERDOMAIN}} {{.Shell}} in {{.Path}}", // outputs: MyCompany zsh in /usr/home/omp
 }
 ```
 

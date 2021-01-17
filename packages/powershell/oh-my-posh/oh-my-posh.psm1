@@ -3,10 +3,6 @@
         Generates the prompt before each line in the console
 #>
 
-$global:PoshSettings = New-Object -TypeName PSObject -Property @{
-    Theme = "$PSScriptRoot\themes\jandedobbeleer.json";
-}
-
 function Get-PoshCommand {
     $poshCommand = "$PSScriptRoot/bin/posh-windows-amd64.exe"
     if ($IsMacOS) {
@@ -24,15 +20,6 @@ if ($PSVersionTable.PSEdition -eq "Core" -and !$IsWindows) {
     Invoke-Expression -Command "chmod +x $executable"
 }
 
-function Set-PoshContext {}
-
-function Set-GitStatus {
-    if (Get-Module -Name "posh-git") {
-        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification='Variable used later(not in this scope)')]
-        $Global:GitStatus = Get-GitStatus
-    }
-}
-
 function Set-PoshPrompt {
     param(
         [Parameter(Mandatory = $false)]
@@ -40,66 +27,19 @@ function Set-PoshPrompt {
         $Theme
     )
 
+    $config = ""
     if (Test-Path "$PSScriptRoot/themes/$Theme.omp.json") {
-        $global:PoshSettings.Theme = "$PSScriptRoot/themes/$Theme.omp.json"
+        $config = "$PSScriptRoot/themes/$Theme.omp.json"
     }
     elseif (Test-Path $Theme) {
-        $global:PoshSettings.Theme = Resolve-Path -Path $Theme
+        $config = Resolve-Path -Path $Theme
     }
     else {
-        $global:PoshSettings.Theme = "$PSScriptRoot/themes/jandedobbeleer.omp.json"
+        $config = "$PSScriptRoot/themes/jandedobbeleer.omp.json"
     }
 
-    [ScriptBlock]$Prompt = {
-        #store if the last command was successfull
-        $lastCommandSuccess = $?
-        #store the last exit code for restore
-        $realLASTEXITCODE = $global:LASTEXITCODE
-        $errorCode = 0
-        Set-PoshContext
-        if ($lastCommandSuccess -eq $false) {
-            #native app exit code
-            if ($realLASTEXITCODE -is [int] -and $realLASTEXITCODE -gt 0) {
-                $errorCode = $realLASTEXITCODE
-            }
-            else {
-                $errorCode = 1
-            }
-        }
-
-        $executionTime = -1
-        $history = Get-History -ErrorAction Ignore -Count 1
-        if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime) {
-            $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
-        }
-
-        $startInfo = New-Object System.Diagnostics.ProcessStartInfo
-        $startInfo.FileName = Get-PoshCommand
-        $config = $global:PoshSettings.Theme
-        $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-        $cleanPSWD = $PWD.ToString().TrimEnd("\")
-        $startInfo.Arguments = "--config=""$config"" --error=$errorCode --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$executionTime"
-        $startInfo.Environment["TERM"] = "xterm-256color"
-        $startInfo.CreateNoWindow = $true
-        $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
-        $startInfo.RedirectStandardOutput = $true
-        $startInfo.UseShellExecute = $false
-        if ($PWD.Provider.Name -eq 'FileSystem') {
-            $startInfo.WorkingDirectory = $PWD.ProviderPath
-        }
-        $process = New-Object System.Diagnostics.Process
-        $process.StartInfo = $startInfo
-        $process.Start() | Out-Null
-        $standardOut = $process.StandardOutput.ReadToEnd()
-        $process.WaitForExit()
-        $standardOut
-        Set-GitStatus
-        $global:LASTEXITCODE = $realLASTEXITCODE
-        #remove temp variables
-        Remove-Variable realLASTEXITCODE -Confirm:$false
-        Remove-Variable lastCommandSuccess -Confirm:$false
-    }
-    Set-Item -Path Function:prompt -Value $Prompt -Force
+    $poshCommand = Get-PoshCommand
+    Invoke-Expression (& $poshCommand --init --shell pwsh --config $config)
 }
 
 function Get-PoshThemes {

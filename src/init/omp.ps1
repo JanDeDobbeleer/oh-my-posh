@@ -5,9 +5,10 @@ $global:PoshSettings = New-Object -TypeName PSObject -Property @{
 if (Test-Path "::CONFIG::") {
     $global:PoshSettings.Theme = Resolve-Path -Path "::CONFIG::"
 }
-function Set-PoshContext {}
 
-function Set-GitStatus {
+function global:Set-PoshContext {}
+
+function global:Set-PoshGitStatus {
     if (Get-Module -Name "posh-git") {
         [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification='Variable used later(not in this scope)')]
         $Global:GitStatus = Get-GitStatus
@@ -47,7 +48,7 @@ function Set-GitStatus {
     # Restore initial encoding
     [Console]::OutputEncoding = $originalOutputEncoding
     $standardOut
-    Set-GitStatus
+    Set-PoshGitStatus
     $global:LASTEXITCODE = $realLASTEXITCODE
     #remove temp variables
     Remove-Variable realLASTEXITCODE -Confirm:$false

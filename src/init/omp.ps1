@@ -36,26 +36,16 @@ function Set-GitStatus {
     if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime) {
         $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
     }
-
-    $startInfo = New-Object System.Diagnostics.ProcessStartInfo
-    $startInfo.FileName = "::OMP::"
+    # Save current encoding and swap for UTF8
+    $originalOutputEncoding = [Console]::OutputEncoding
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    $omp = "::OMP::"
     $config = $global:PoshSettings.Theme
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
     $cleanPSWD = $PWD.ToString().TrimEnd("\")
-    $startInfo.Arguments = "--config=""$config"" --error=$errorCode --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$executionTime"
-    $startInfo.Environment["TERM"] = "xterm-256color"
-    $startInfo.CreateNoWindow = $true
-    $startInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
-    $startInfo.RedirectStandardOutput = $true
-    $startInfo.UseShellExecute = $false
-    if ($PWD.Provider.Name -eq 'FileSystem') {
-        $startInfo.WorkingDirectory = $PWD.ProviderPath
-    }
-    $process = New-Object System.Diagnostics.Process
-    $process.StartInfo = $startInfo
-    $process.Start() | Out-Null
-    $standardOut = $process.StandardOutput.ReadToEnd()
-    $process.WaitForExit()
+    $standardOut = @(&$omp "--config=$config" "--error=$errorCode" "--pwd=$cleanPWD" "--pswd=$cleanPSWD" "--execution-time=$executionTime")
+    # Restore initial encoding
+    [Console]::OutputEncoding = $originalOutputEncoding
     $standardOut
     Set-GitStatus
     $global:LASTEXITCODE = $realLASTEXITCODE

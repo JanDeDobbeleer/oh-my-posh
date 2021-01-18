@@ -2,8 +2,9 @@ $global:PoshSettings = New-Object -TypeName PSObject -Property @{
     Theme = "";
 }
 
-if (Test-Path "::CONFIG::") {
-    $global:PoshSettings.Theme = Resolve-Path -Path "::CONFIG::"
+$config = "::CONFIG::"
+if (Test-Path $config) {
+    $global:PoshSettings.Theme = (Resolve-Path -Path $config).Path
 }
 
 function global:Set-PoshContext {}
@@ -44,7 +45,7 @@ function global:Set-PoshGitStatus {
     $config = $global:PoshSettings.Theme
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
     $cleanPSWD = $PWD.ToString().TrimEnd("\")
-    $standardOut = @(&$omp "--config=$config" "--error=$errorCode" "--pwd=$cleanPWD" "--pswd=$cleanPSWD" "--execution-time=$executionTime")
+    $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --config="$config")
     # Restore initial encoding
     [Console]::OutputEncoding = $originalOutputEncoding
     # the ouput can be multiline, joining these ensures proper rendering by adding line breaks with `n

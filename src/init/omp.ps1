@@ -47,7 +47,8 @@ function global:Set-PoshGitStatus {
     $standardOut = @(&$omp "--config=$config" "--error=$errorCode" "--pwd=$cleanPWD" "--pswd=$cleanPSWD" "--execution-time=$executionTime")
     # Restore initial encoding
     [Console]::OutputEncoding = $originalOutputEncoding
-    $standardOut
+    # the ouput can be multiline, joining these ensures proper rendering by adding line breaks with `n
+    $standardOut -join "`n"
     Set-PoshGitStatus
     $global:LASTEXITCODE = $realLASTEXITCODE
     #remove temp variables

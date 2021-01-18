@@ -32,14 +32,14 @@ function Set-PoshPrompt {
         $config = "$PSScriptRoot/themes/$Theme.omp.json"
     }
     elseif (Test-Path $Theme) {
-        $config = Resolve-Path -Path $Theme
+        $config = (Resolve-Path -Path $Theme).Path
     }
     else {
         $config = "$PSScriptRoot/themes/jandedobbeleer.omp.json"
     }
 
     $poshCommand = Get-PoshCommand
-    Invoke-Expression (& $poshCommand --init --shell pwsh --config $config)
+    Invoke-Expression (& $poshCommand --init --shell=pwsh --config="$config")
 }
 
 function Get-PoshThemes {

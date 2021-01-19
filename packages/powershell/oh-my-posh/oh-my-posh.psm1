@@ -108,3 +108,31 @@ Register-ArgumentCompleter `
     -CommandName Set-PoshPrompt `
     -ParameterName Theme `
     -ScriptBlock $function:ThemeCompletion
+
+
+# V2 compatibility functions
+# These should be removed at a certain point in time
+# but to facilitate ease of transition they are kept
+# as long as issues/feature requests keep popping up
+
+function Get-PoshInfoForV2Users {
+    Write-Host @'
+
+Hi there!
+
+It seems you're using an oh-my-posh V2 cmdlet while running V3.
+To migrate your current setup to V3, have a look the documentation.
+
+https://ohmyposh.dev/docs/upgrading
+
+'@
+}
+
+Set-Alias -Name Set-Prompt -Value Get-PoshInfoForV2Users -Force
+Set-Alias -Name Set-Theme -Value Get-PoshInfoForV2Users -Force
+Set-Alias -Name Get-ThemesLocation -Value Get-PoshInfoForV2Users -Force
+Set-Alias -Name Get-Theme -Value Get-PoshInfoForV2Users -Force
+Set-Alias -Name Show-ThemeSymbols -Value Get-PoshInfoForV2Users -Force
+Set-Alias -Name Show-ThemeColors -Value Get-PoshInfoForV2Users -Force
+Set-Alias -Name Show-Colors -Value Get-PoshInfoForV2Users -Force
+Set-Alias -Name Write-ColorPreview -Value Get-PoshInfoForV2Users -Force

@@ -21,6 +21,8 @@ const (
 	IgnoreFolders Property = "ignore_folders"
 	// DisplayVersion show the version number or not
 	DisplayVersion Property = "display_version"
+	// AlwaysEnabled decides whether or not to always display the info
+	AlwaysEnabled Property = "always_enabled"
 )
 
 type properties struct {

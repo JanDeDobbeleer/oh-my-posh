@@ -7,49 +7,63 @@ import (
 )
 
 func TestExitWriterEnabled(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("lastErrorCode", nil).Return(102)
-	e := &exit{
-		env: env,
+	cases := []struct {
+		ExitCode int
+		Expected bool
+	}{
+		{ExitCode: 102, Expected: true},
+		{ExitCode: 0, Expected: false},
+		{ExitCode: -1, Expected: true},
 	}
-	assert.True(t, e.enabled())
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("lastErrorCode", nil).Return(tc.ExitCode)
+		e := &exit{
+			env: env,
+		}
+		assert.Equal(t, tc.Expected, e.enabled())
+	}
 }
 
-func TestExitWriterDisabled(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("lastErrorCode", nil).Return(0)
-	e := &exit{
-		env: env,
+func TestExitWriterFormattedText(t *testing.T) {
+	cases := []struct {
+		ExitCode        int
+		Expected        string
+		SuccessIcon     string
+		ErrorIcon       string
+		DisplayExitCode bool
+		AlwaysNumeric   bool
+	}{
+		{ExitCode: 129, Expected: "SIGHUP", DisplayExitCode: true},
+		{ExitCode: 5001, Expected: "5001", DisplayExitCode: true},
+		{ExitCode: 147, Expected: "SIGSTOP", DisplayExitCode: true},
+		{ExitCode: 147, Expected: "", DisplayExitCode: false},
+		{ExitCode: 147, Expected: "147", DisplayExitCode: true, AlwaysNumeric: true},
+		{ExitCode: 0, Expected: "wooopie", SuccessIcon: "wooopie"},
+		{ExitCode: 129, Expected: "err SIGHUP", ErrorIcon: "err ", DisplayExitCode: true},
+		{ExitCode: 129, Expected: "err", ErrorIcon: "err", DisplayExitCode: false},
 	}
-	assert.False(t, e.enabled())
-}
 
-func TestExitWriterStandardCode(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("lastErrorCode", nil).Return(129)
-	props := &properties{
-		foreground: "#111111",
-		background: "#ffffff",
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("lastErrorCode", nil).Return(tc.ExitCode)
+		props := &properties{
+			foreground: "#111111",
+			background: "#ffffff",
+			values: map[Property]interface{}{
+				SuccessIcon:     tc.SuccessIcon,
+				ErrorIcon:       tc.ErrorIcon,
+				DisplayExitCode: tc.DisplayExitCode,
+				AlwaysNumeric:   tc.AlwaysNumeric,
+			},
+		}
+		e := &exit{
+			env:   env,
+			props: props,
+		}
+		assert.Equal(t, tc.Expected, e.getFormattedText())
 	}
-	e := &exit{
-		env:   env,
-		props: props,
-	}
-	assert.Equal(t, "SIGHUP", e.getFormattedText())
-}
-
-func TestExitWriterNonStandardCode(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("lastErrorCode", nil).Return(5001)
-	props := &properties{
-		foreground: "#111111",
-		background: "#ffffff",
-	}
-	e := &exit{
-		env:   env,
-		props: props,
-	}
-	assert.Equal(t, "5001", e.getFormattedText())
 }
 
 func TestGetMeaningFromExitCode(t *testing.T) {

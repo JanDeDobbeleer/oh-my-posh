@@ -10,12 +10,14 @@ type exit struct {
 const (
 	// DisplayExitCode shows or hides the error code
 	DisplayExitCode Property = "display_exit_code"
-	// AlwaysEnabled decides whether or not to always display the exitcode info
-	AlwaysEnabled Property = "always_enabled"
 	// ErrorColor specify a different foreground color for the error text when using always_show = true
 	ErrorColor Property = "error_color"
 	// AlwaysNumeric shows error codes as numbers
 	AlwaysNumeric Property = "always_numeric"
+	// SuccessIcon displays when there's no error and AlwaysEnabled = true
+	SuccessIcon Property = "success_icon"
+	// ErrorIcon displays when there's an error
+	ErrorIcon Property = "error_icon"
 )
 
 func (e *exit) enabled() bool {
@@ -43,7 +45,10 @@ func (e *exit) getFormattedText() string {
 	if e.env.lastErrorCode() != 0 && colorBackground {
 		e.props.background = e.props.getColor(ErrorColor, e.props.background)
 	}
-	return exitCode
+	if e.env.lastErrorCode() == 0 {
+		return e.props.getString(SuccessIcon, "")
+	}
+	return fmt.Sprintf("%s%s", e.props.getString(ErrorIcon, ""), exitCode)
 }
 
 func (e *exit) getMeaningFromExitCode() string {

@@ -40,6 +40,7 @@ if ($PSVersionTable.PSEdition -eq "Core" -and !$IsWindows) {
       Write-Warning "Executable at $executable was not found"
     }
 }
+
 function Set-PoshPrompt {
     param(
         [Parameter(Mandatory = $false)]

@@ -6,87 +6,68 @@ import (
 	"github.com/alecthomas/assert"
 )
 
-type pythonArgs struct {
-	virtualEnvName string
-	condaEnvName   string
-	pyEnvName      string
-	displayVersion bool
-}
-
-func bootStrapPythonTest(args *pythonArgs) *python {
-	env := new(MockedEnvironment)
-	env.On("hasCommand", "python").Return(true)
-	env.On("runCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
-	env.On("hasFiles", "*.py").Return(true)
-	env.On("getenv", "VIRTUAL_ENV").Return(args.virtualEnvName)
-	env.On("getenv", "CONDA_ENV_PATH").Return(args.condaEnvName)
-	env.On("getenv", "PYENV_VERSION").Return(args.pyEnvName)
-	env.On("getPathSeperator", nil).Return("")
-	props := &properties{
-		values: map[Property]interface{}{
-			DisplayVersion:    args.displayVersion,
-			DisplayVirtualEnv: true,
-		},
+func TestPythonVirtualEnv(t *testing.T) {
+	cases := []struct {
+		Expected            string
+		VirtualEnvName      string
+		CondaEnvName        string
+		CondaDefaultEnvName string
+		PyEnvName           string
+		DisplayVersion      bool
+		DisplayDefaultEnv   bool
+	}{
+		{Expected: "VENV", VirtualEnvName: "VENV"},
+		{Expected: "CONDA", CondaEnvName: "CONDA"},
+		{Expected: "CONDA", CondaDefaultEnvName: "CONDA"},
+		{Expected: "", CondaDefaultEnvName: "base"},
+		{Expected: "base", CondaDefaultEnvName: "base", DisplayDefaultEnv: true},
+		{Expected: "PYENV", PyEnvName: "PYENV"},
+		{Expected: "PYENV 3.8.4", PyEnvName: "PYENV", DisplayVersion: true},
 	}
-	python := &python{}
-	python.init(props, env)
-	return python
-}
 
-func TestPythonVertualEnv(t *testing.T) {
-	expected := "VENV"
-	args := &pythonArgs{
-		virtualEnvName: expected,
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("hasCommand", "python").Return(true)
+		env.On("runCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
+		env.On("hasFiles", "*.py").Return(true)
+		env.On("getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
+		env.On("getenv", "CONDA_ENV_PATH").Return(tc.CondaEnvName)
+		env.On("getenv", "CONDA_DEFAULT_ENV").Return(tc.CondaDefaultEnvName)
+		env.On("getenv", "PYENV_VERSION").Return(tc.PyEnvName)
+		env.On("getPathSeperator", nil).Return("")
+		props := &properties{
+			values: map[Property]interface{}{
+				DisplayVersion:    tc.DisplayVersion,
+				DisplayVirtualEnv: true,
+				DisplayDefaultEnv: tc.DisplayDefaultEnv,
+			},
+		}
+		python := &python{}
+		python.init(props, env)
+		assert.True(t, python.enabled())
+		assert.Equal(t, tc.Expected, python.string())
 	}
-	python := bootStrapPythonTest(args)
-	assert.True(t, python.enabled())
-	assert.Equal(t, expected, python.string())
-}
-
-func TestPythonCondaEnv(t *testing.T) {
-	expected := "CONDA"
-	args := &pythonArgs{
-		condaEnvName: expected,
-	}
-	python := bootStrapPythonTest(args)
-	assert.True(t, python.enabled())
-	assert.Equal(t, expected, python.string())
-}
-
-func TestPythonPyEnv(t *testing.T) {
-	expected := "PYENV"
-	args := &pythonArgs{
-		pyEnvName: expected,
-	}
-	python := bootStrapPythonTest(args)
-	assert.True(t, python.enabled())
-	assert.Equal(t, expected, python.string())
-}
-
-func TestPythonPyEnvWithVersion(t *testing.T) {
-	expected := "PYENV 3.8.4"
-	args := &pythonArgs{
-		pyEnvName:      "PYENV",
-		displayVersion: true,
-	}
-	python := bootStrapPythonTest(args)
-	assert.True(t, python.enabled())
-	assert.Equal(t, expected, python.string())
-	assert.Equal(t, "3.8.4", python.language.version)
 }
 
 func TestPythonPythonInContext(t *testing.T) {
-	args := &pythonArgs{
-		pyEnvName:      "PYENV",
-		displayVersion: true,
+	cases := []struct {
+		Expected       bool
+		VirtualEnvName string
+	}{
+		{Expected: true, VirtualEnvName: "VENV"},
+		{Expected: false, VirtualEnvName: ""},
 	}
-	python := bootStrapPythonTest(args)
-	python.loadContext()
-	assert.True(t, python.inContext())
-}
 
-func TestPythonPythonNotInContext(t *testing.T) {
-	python := bootStrapPythonTest(&pythonArgs{})
-	python.loadContext()
-	assert.False(t, python.inContext())
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("getPathSeperator", nil).Return("")
+		env.On("getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
+		env.On("getenv", "CONDA_ENV_PATH").Return("")
+		env.On("getenv", "CONDA_DEFAULT_ENV").Return("")
+		env.On("getenv", "PYENV_VERSION").Return("")
+		python := &python{}
+		python.init(nil, env)
+		python.loadContext()
+		assert.Equal(t, tc.Expected, python.inContext())
+	}
 }

@@ -17,7 +17,28 @@ function Get-PoshCommand {
 # Set the right binary to executable before doing anything else
 if ($PSVersionTable.PSEdition -eq "Core" -and !$IsWindows) {
     $executable = Get-PoshCommand
-    Invoke-Expression -Command "chmod +x $executable"
+    if (Test-Path $executable) {
+        # Check the permissions on the file
+        $permissions = ((ls -l $executable) -split ' ')[0]
+        if ((id -u) -eq 0) {
+            # Running as root, give global permissions if needed
+            $hasWrite = $permissions[2] -eq 'w'
+            $hasExecutable = $permissions[3] -eq 'x'
+            if ($hasWrite -and -not $hasExecutable) {
+                Invoke-Expression -Command "chmod g+x $executable"
+            }
+        }
+        else {
+            $hasWrite = $permissions[8] -eq 'w'
+            $hasExecutable = $permissions[9] -eq 'x'
+            if ($hasWrite -and -not $hasExecutable) {
+                Invoke-Expression -Command "chmod +x $executable"
+            }
+        }
+    }
+    else {
+      Write-Warning "Executable at $executable was not found"
+    }
 }
 
 function Set-PoshPrompt {

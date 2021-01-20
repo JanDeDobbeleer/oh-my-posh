@@ -10,6 +10,8 @@ type python struct {
 const (
 	// DisplayVirtualEnv shows or hides the virtual env
 	DisplayVirtualEnv Property = "display_virtual_env"
+	// DisplayDefaultEnv shows or hides the default env names (system/base)
+	DisplayDefaultEnv Property = "display_default_env"
 )
 
 func (p *python) string() string {
@@ -44,13 +46,15 @@ func (p *python) loadContext() {
 	venvVars := []string{
 		"VIRTUAL_ENV",
 		"CONDA_ENV_PATH",
+		"CONDA_DEFAULT_ENV",
 		"PYENV_VERSION",
 	}
 	var venv string
 	for _, venvVar := range venvVars {
 		venv = p.language.env.getenv(venvVar)
-		if venv != "" {
-			p.venvName = base(venv, p.language.env)
+		name := base(venv, p.language.env)
+		if p.canUseVenvName(name) {
+			p.venvName = name
 			break
 		}
 	}
@@ -58,4 +62,20 @@ func (p *python) loadContext() {
 
 func (p *python) inContext() bool {
 	return p.venvName != ""
+}
+
+func (p *python) canUseVenvName(name string) bool {
+	if name == "" || name == "." {
+		return false
+	}
+	if p.language.props.getBool(DisplayDefaultEnv, true) {
+		return true
+	}
+	invalidNames := [2]string{"system", "base"}
+	for _, a := range invalidNames {
+		if a == name {
+			return false
+		}
+	}
+	return true
 }

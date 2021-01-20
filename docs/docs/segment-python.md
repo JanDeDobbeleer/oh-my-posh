@@ -27,6 +27,8 @@ Supports conda, virtualenv and pyenv.
 ## Properties
 
 - display_virtual_env: `boolean` - show the name of the virtualenv or not - defaults to `true`
+- display_default_env: `boolean` - show the name of the virtualenv when it's default (`system`, `base`)
+or not - defaults to `true`
 - display_version: `boolean` - display the python version - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed

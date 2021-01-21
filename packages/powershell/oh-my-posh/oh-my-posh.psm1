@@ -14,10 +14,37 @@ function Get-PoshCommand {
     return $poshCommand
 }
 
-# Set the right binary to executable before doing anything else
-if ($PSVersionTable.PSEdition -eq "Core" -and !$IsWindows) {
+function Set-ExecutablePermissions {
+    # Set the right binary to executable before doing anything else
+    # Permissions don't need to be set on Windows
+    if ($PSVersionTable.PSEdition -ne "Core" -or $IsWindows) {
+        return
+    }
+
     $executable = Get-PoshCommand
-    Invoke-Expression -Command "chmod +x $executable"
+    if (-Not (Test-Path $executable)) {
+        # This should only happend with a corrupt installation
+        Write-Warning "Executable at $executable was not found"
+        return
+    }
+
+    # Check the permissions on the file
+    $permissions = ((ls -l $executable) -split ' ')[0]  # $permissions will be something like '-rw-r--r--'
+    if ((id -u) -eq 0) {
+        # Running as root, give global executable permissions if needed
+        $hasWrite = $permissions[2] -eq 'w'
+        $hasExecutable = $permissions[3] -eq 'x'
+        if ($hasWrite -and -not $hasExecutable) {
+            Invoke-Expression -Command "chmod g+x $executable"
+        }
+        return
+    }
+    # Running as user, give user executable permissions if needed
+    $hasWrite = $permissions[8] -eq 'w'
+    $hasExecutable = $permissions[9] -eq 'x'
+    if ($hasWrite -and -not $hasExecutable) {
+        Invoke-Expression -Command "chmod +x $executable"
+    }
 }
 
 function Set-PoshPrompt {
@@ -103,6 +130,8 @@ function ThemeCompletion {
     Select-Object -Unique -ExpandProperty BaseName |
     ForEach-Object { New-CompletionResult -CompletionText $_ }
 }
+
+Set-ExecutablePermissions
 
 Register-ArgumentCompleter `
     -CommandName Set-PoshPrompt `

@@ -6,7 +6,7 @@ sidebar_label: Golang
 
 ## What
 
-Display the currently active golang version when a folder contains `.go` files.
+Display the currently active golang version when a folder contains golang files.
 
 ## Sample Configuration
 

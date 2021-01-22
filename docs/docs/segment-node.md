@@ -6,7 +6,7 @@ sidebar_label: Node
 
 ## What
 
-Display the currently active node version when a folder contains `.js` or `.ts` files.
+Display the currently active node version when a folder contains node files.
 
 ## Sample Configuration
 
@@ -29,4 +29,4 @@ Display the currently active node version when a folder contains `.js` or `.ts` 
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: The segment is always displayed
-  - `files`: The segment is only displayed when `*.js`, `*.ts` or package.json files are present (default)
+  - `files`: The segment is only displayed when `*.js`, `*.ts`, or `package.json` files are present (default)

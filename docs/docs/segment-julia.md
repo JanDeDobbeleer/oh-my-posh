@@ -6,7 +6,7 @@ sidebar_label: Julia
 
 ## What
 
-Display the currently active julia version when a folder contains `.jl` files.
+Display the currently active julia version when a folder contains julia files.
 
 ## Sample Configuration
 

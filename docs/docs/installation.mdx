@@ -10,7 +10,6 @@ import TabItem from "@theme/TabItem";
 ### 1. Setup your terminal
 
 <Tabs
-  groupId="operating-systems"
   defaultValue="windows"
   values={[
     { label: 'windows', value: 'windows', },
@@ -54,95 +53,63 @@ Oh my Posh was designed using [Meslo LGM NF][meslo], but any Nerd Font should be
 Make sure to install fonts system wide to avoid seeing rectangles in your terminal. See this [thread][font-thread] for more context.
 :::
 
-### 2. Download the latest binary
-
-:::info PowerShell
-There's a [PowerShell module][powershell] that contains all of the functionality below and makes installation a breeze.
-If you're not looking to use Oh my Posh outside of PowerShell, have a look at the [module][powershell] rather than continue reading here.
-:::
+### 2. Install Oh my Posh
 
 <Tabs
-  groupId="operating-systems"
-  defaultValue="windows"
+  defaultValue="powershell"
   values={[
+    { label: 'powershell', value: 'powershell', },
     { label: 'windows', value: 'windows', },
     { label: 'macos', value: 'macos', },
     { label: 'unix', value: 'unix', },
   ]
 }>
-<TabItem value="windows">
+<TabItem value="powershell">
 
-#### Scoop
+A [Powershell][powershell] module is available for easy installation.
 
-A [Scoop][scoop] package is available to assist installs on Windows.
-
-#### Manual
+#### Installation
 
 ```powershell
-mkdir C:\tools
-Invoke-Webrequest https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/posh-windows-amd64.exe -OutFile C:\tools\oh-my-posh.exe
+Install-Module oh-my-posh -Scope CurrentUser -AllowPrerelease
 ```
 
-</TabItem>
-<TabItem value="macos">
+#### Usage
 
-#### Homebrew
+##### Show all themes
 
-A [Homebrew][brew] package is available to assist installs on MacOS.
-
-#### Manual
-
-```bash
-wget https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/posh-darwin-amd64 -O /usr/local/bin/oh-my-posh
-chmod +x /usr/local/bin/oh-my-posh
-```
-
-</TabItem>
-<TabItem value="unix">
-
-#### Manual
-
-```bash
-wget https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh
-chmod +x /usr/local/bin/oh-my-posh
-```
-
-</TabItem>
-</Tabs>
-
-
-### 3. Download the themes
-
-<Tabs
-  groupId="operating-systems"
-  defaultValue="windows"
-  values={[
-    { label: 'windows', value: 'windows', },
-    { label: 'macos', value: 'macos', },
-    { label: 'unix', value: 'unix', },
-  ]
-}>
-<TabItem value="windows">
-
-#### Scoop
-
-When using [Scoop][scoop], all themes are downloaded as well.
-
-#### Manual
+To display every available theme in the current directory, use the following
+cmdlet.
 
 ```powershell
-mkdir ~\.poshthemes
-Invoke-Webrequest https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/themes.zip -OutFile ~\.poshthemes\themes.zip
-Expand-Archive ~\.poshthemes\themes.zip -DestinationPath ~\.poshthemes -Force
-Remove-Item ~\.poshthemes\themes.zip
+Get-PoshThemes
 ```
+
+</TabItem>
+<TabItem value="windows">
+
+A [Scoop][scoop] package is available for easy installation.
+
+#### Installation
+
+```powershell
+scoop install https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/oh-my-posh.json
+```
+
+This installs a couple of things:
+
+- `oh-my-posh.exe` - Windows executable, added to your `$PATH`
+- `oh-my-posh-wsl` - Linux executable, added to your `$PATH` for use in the WSL
+- `themes` - The latest Oh my Posh themes
+
+If you want to use a standard theme, you can find them in `~\scoop\apps\oh-my-posh\current\themes\`,
+referencing them as such
+will always keep them compatible with the binary when updating Oh my Posh.
 
 #### Preview the themes
 
-When using Scoop, replace `"~\.poshthemes\*"` with `"$(scoop prefix oh-my-posh)/themes/*"`
-
 ```powershell
-Get-ChildItem -Path "~\.poshthemes\*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
+Get-ChildItem -Path "$(scoop prefix oh-my-posh)/themes/*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
     $esc = [char]27
     Write-Host ""
     Write-Host "$esc[1m$($_.BaseName)$esc[0m"
@@ -152,35 +119,55 @@ Get-ChildItem -Path "~\.poshthemes\*" -Include '*.omp.json' | Sort-Object Name |
 }
 ```
 
+#### Update
+
+```powershell
+scoop update oh-my-posh
+```
+
 </TabItem>
 <TabItem value="macos">
 
-#### Homebrew
+A [Homebrew][brew] formula is available for easy installation.
 
-When using [Homebrew][brew], all themes are downloaded as well.
-
-#### Manual
+#### Installation
 
 ```bash
-mkdir ~/.poshthemes
-wget https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/themes.zip -O ~/.poshthemes/themes.zip
-unzip ~/.poshthemes/themes.zip -d ~/.poshthemes
-chmod u+rw ~/.poshthemes/*.json
-rm ~/.poshthemes/themes.zip
+brew tap jandedobbeleer/oh-my-posh
+brew install oh-my-posh
 ```
+
+This installs two things:
+
+- `oh-my-posh` - Executable, added to `/usr/local/bin`
+- `themes` - The latest Oh my Posh themes
+
+If you want to use a standard theme, you can find them in `$(brew --prefix oh-my-posh)/themes`, referencing them as such
+will always keep them compatible with the binary when updating Oh my Posh.
 
 #### Preview the themes
 
-When using Hombrew, replace `~/.poshthemes/*.omp.json` with `$(brew --prefix oh-my-posh)/themes/*.omp.json`
+```bash
+for file in $(brew --prefix oh-my-posh)/themes/*.omp.json; do echo "$file\n"; oh-my-posh --config $file --shell universal; echo "\n"; done;
+```
+
+#### Update
 
 ```bash
-for file in ~/.poshthemes/*.omp.json; do echo "$file\n"; oh-my-posh --config $file --shell universal; echo "\n"; done;
+brew upgrade oh-my-posh
 ```
 
 </TabItem>
 <TabItem value="unix">
 
-#### Manual
+#### Installation
+
+```bash
+wget https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh
+chmod +x /usr/local/bin/oh-my-posh
+```
+
+#### Download the themes
 
 ```bash
 mkdir ~/.poshthemes
@@ -199,19 +186,22 @@ for file in ~/.poshthemes/*.omp.json; do echo "$file\n"; oh-my-posh --config $fi
 </TabItem>
 </Tabs>
 
-### 4. Replace your existing prompt
+### 3. Replace your existing prompt
 
-If you have no idea which shell you're currently using, Oh my Posh has a utility switch that will you tell you.
+:::info
+If you have no idea which shell you're currently using, Oh my Posh has a utility switch that can you tell you (not relevant
+for the Powershell module).
+:::
 
 ```bash
 oh-my-posh --print-shell
 ```
 
 <Tabs
-  defaultValue="zsh"
+  defaultValue="powershell"
   values={[
-    { label: 'zsh', value: 'zsh', },
     { label: 'powershell', value: 'powershell', },
+    { label: 'zsh', value: 'zsh', },
     { label: 'bash', value: 'bash', },
     { label: 'nix', value: 'nix', },
     { label: 'fish', value: 'fish', },
@@ -222,9 +212,30 @@ oh-my-posh --print-shell
 
 Edit `$PROFILE` in your preferred PowerShell version and add the following line.
 
+<Tabs
+  defaultValue="module"
+  values={[
+    { label: 'module', value: 'module', },
+    { label: 'manual', value: 'manual', },
+  ]
+}>
+<TabItem value="module">
+
+Autocompletion is available so it will loop through all available themes.
+
 ```powershell
-Invoke-Expression (oh-my-posh --init --shell pwsh --config ~/.poshthemes/jandedobbeleer.omp.json)
+Set-PoshPrompt -Theme jandedobbeleer
 ```
+
+</TabItem>
+<TabItem value="manual">
+
+```powershell
+Invoke-Expression (oh-my-posh --init --shell pwsh --config "$(scoop prefix oh-my-posh)/themes/jandedobbeleer.omp.json")
+```
+
+</TabItem>
+</Tabs>
 
 Once added, reload your profile for the changes to take effect.
 
@@ -316,6 +327,37 @@ Maybe there's a theme you like, but you don't fancy the colors. Or, maybe there'
 want to tweak/add, or replace some of the icons with a different one. Whatever the case, read through all
 available options first, by starting with the [configuration guide][configuration].
 
+<Tabs
+  defaultValue="powershell"
+  values={[
+    { label: 'powershell module', value: 'powershell', },
+    { label: 'manual', value: 'manual', },
+  ]
+}>
+<TabItem value="powershell">
+
+You can output the current theme to its `JSON` representation which can be used to tweak and store as your custom theme.
+
+```powershell
+Write-PoshTheme
+```
+
+Due to a bug in PowerShell, if you want to use `Out-File` directly to write the current theme to a new file, use the `oem`
+encoding to ensure the symbols are outputted correctly.
+
+```powershell
+Write-PoshTheme | Out-File -FilePath ~/.mytheme.omp.json -Encoding oem
+```
+
+Once you're done editing, adjust your `$PROFILE` to use your newly created theme.
+
+```powershell
+Set-PoshPrompt -Theme ~/.mytheme.omp.json
+```
+
+</TabItem>
+<TabItem value="manual">
+
 Afterwards, the easiest way to go about this is to print the current config and store it elsewhere first (for example `~/.mytheme.omp.json`).
 
 ```bash
@@ -329,17 +371,21 @@ and store it somehwere. Once adjusted to your liking, [change the prompt setting
 oh-my-posh --config ~/.mytheme.omp.json
 ```
 
+</TabItem>
+</Tabs>
+
 🎉🎉🎉
 
+[scoop]: https://scoop.sh/
 [wt]: https://github.com/microsoft/terminal
 [iterm2]: https://www.iterm2.com/
 [nerdfonts]: https://www.nerdfonts.com/
 [nf-cheat]: https://www.nerdfonts.com/cheat-sheet
 [meslo]: https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip
 [font-thread]: https://github.com/JanDeDobbeleer/oh-my-posh3/issues/145#issuecomment-730162622
-[powershell]: /docs/powershell
+[powershell]: https://www.powershellgallery.com/packages/oh-my-posh
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/main/themes
-[scoop]: /docs/scoop
-[brew]: /docs/homebrew
-[prompt]: /docs/installation#4-replace-your-existing-prompt
+[scoop]: https://scoop.sh
+[brew]: https://brew.sh
+[prompt]: /docs/installation#3-replace-your-existing-prompt
 [configuration]: /docs/configure

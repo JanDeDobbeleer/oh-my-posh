@@ -7,11 +7,6 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Packages",
-      items: ["powershell", "scoop", "homebrew"],
-    },
-    {
-      type: "category",
       label: "Segments",
       items: [
         "az",

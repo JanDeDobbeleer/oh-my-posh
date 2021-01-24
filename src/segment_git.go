@@ -27,7 +27,7 @@ type gitStatus struct {
 	changed   bool
 }
 
-func (s *gitStatus) string(prefix, color string) string {
+func (s *gitStatus) string() string {
 	var status string
 	stringIfValue := func(value int, prefix string) string {
 		if value > 0 {
@@ -40,9 +40,6 @@ func (s *gitStatus) string(prefix, color string) string {
 	status += stringIfValue(s.deleted, "-")
 	status += stringIfValue(s.untracked, "?")
 	status += stringIfValue(s.unmerged, "x")
-	if status != "" {
-		return fmt.Sprintf("<%s>%s%s</>", color, prefix, status)
-	}
 	return status
 }
 
@@ -193,9 +190,19 @@ func (g *git) getStatusDetailString(status *gitStatus, color, icon Property, def
 	prefix := g.props.getString(icon, defaultIcon)
 	foregroundColor := g.props.getColor(color, g.props.foreground)
 	if !g.props.getBool(DisplayStatusDetail, true) {
-		return fmt.Sprintf("<%s>%s</>", foregroundColor, prefix)
+		return g.colorStatusString(prefix, "", foregroundColor)
 	}
-	return status.string(prefix, foregroundColor)
+	return g.colorStatusString(prefix, status.string(), foregroundColor)
+}
+
+func (g *git) colorStatusString(prefix, status, color string) string {
+	if color == g.props.foreground {
+		return fmt.Sprintf("%s%s", prefix, status)
+	}
+	if strings.Contains(prefix, "</>") {
+		return fmt.Sprintf("%s<%s>%s</>", prefix, color, status)
+	}
+	return fmt.Sprintf("<%s>%s%s</>", color, prefix, status)
 }
 
 func (g *git) getUpstreamSymbol() string {

@@ -309,26 +309,26 @@ func TestParseGitBranchInfoRemoteGone(t *testing.T) {
 }
 
 func TestGitStatusUnmerged(t *testing.T) {
-	expected := "<#123456>working: x1</>"
+	expected := " x1"
 	status := &gitStatus{
 		unmerged: 1,
 	}
-	assert.Equal(t, expected, status.string("working:", "#123456"))
+	assert.Equal(t, expected, status.string())
 }
 
 func TestGitStatusUnmergedModified(t *testing.T) {
-	expected := "<#123456>working: ~3 x1</>"
+	expected := " ~3 x1"
 	status := &gitStatus{
 		unmerged: 1,
 		modified: 3,
 	}
-	assert.Equal(t, expected, status.string("working:", "#123456"))
+	assert.Equal(t, expected, status.string())
 }
 
 func TestGitStatusEmpty(t *testing.T) {
 	expected := ""
 	status := &gitStatus{}
-	assert.Equal(t, expected, status.string("working:", "#123456"))
+	assert.Equal(t, expected, status.string())
 }
 
 func TestParseGitStatsWorking(t *testing.T) {
@@ -601,7 +601,7 @@ func TestSetStatusColorForeground(t *testing.T) {
 }
 
 func TestGetStatusDetailStringDefault(t *testing.T) {
-	expected := "<#111111>icon +1</>"
+	expected := "icon +1"
 	status := &gitStatus{
 		changed: true,
 		added:   1,
@@ -614,8 +614,61 @@ func TestGetStatusDetailStringDefault(t *testing.T) {
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
 
+func TestGetStatusDetailStringDefaultColorOverride(t *testing.T) {
+	expected := "<#123456>icon +1</>"
+	status := &gitStatus{
+		changed: true,
+		added:   1,
+	}
+	g := &git{
+		props: &properties{
+			values: map[Property]interface{}{
+				WorkingColor: "#123456",
+			},
+			foreground: "#111111",
+		},
+	}
+	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
+}
+
+func TestGetStatusDetailStringDefaultColorOverrideAndIconColorOverride(t *testing.T) {
+	expected := "<#789123>work</><#123456> +1</>"
+	status := &gitStatus{
+		changed: true,
+		added:   1,
+	}
+	g := &git{
+		props: &properties{
+			values: map[Property]interface{}{
+				WorkingColor:     "#123456",
+				LocalWorkingIcon: "<#789123>work</>",
+			},
+			foreground: "#111111",
+		},
+	}
+	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
+}
+
+func TestGetStatusDetailStringDefaultColorOverrideNoIconColorOverride(t *testing.T) {
+	expected := "<#123456>work +1</>"
+	status := &gitStatus{
+		changed: true,
+		added:   1,
+	}
+	g := &git{
+		props: &properties{
+			values: map[Property]interface{}{
+				WorkingColor:     "#123456",
+				LocalWorkingIcon: "work",
+			},
+			foreground: "#111111",
+		},
+	}
+	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
+}
+
 func TestGetStatusDetailStringNoStatus(t *testing.T) {
-	expected := "<#111111>icon</>"
+	expected := "icon"
 	status := &gitStatus{
 		changed: true,
 		added:   1,
@@ -647,4 +700,19 @@ func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
 		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
+}
+
+func TestGitOutPut(t *testing.T) {
+	g := &git{
+		env: &environment{},
+		props: &properties{
+			values: map[Property]interface{}{
+				LocalWorkingIcon: "<#88C0D0>\u21e1 </>",
+			},
+			foreground: "#111111",
+		},
+	}
+	assert.True(t, g.enabled())
+	value := g.string()
+	assert.NotEmpty(t, value)
 }

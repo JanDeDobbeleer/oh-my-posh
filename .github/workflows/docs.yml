@@ -17,7 +17,6 @@ jobs:
         run: |
           cd docs
           npm install
-          npm run swizzle
           npm run build
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@3.6.2

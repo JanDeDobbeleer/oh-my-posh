@@ -150,3 +150,5 @@ dist
 
 # linux binary
 /src/oh-my-posh3
+bin/
+Output/

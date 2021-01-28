@@ -240,3 +240,36 @@ jobs:
         asset_path: ${{ github.workspace }}/packages/scoop/posh-windows-wsl-amd64.7z.sha256
         asset_name: posh-windows-wsl-amd64.7z.sha256
         asset_content_type: text/plain
+  inno:
+    needs: [release, artifacts]
+    if: ${{ needs.release.outputs.skipped == 'false' }}
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: ${{ github.workspace }}/packages/inno
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build installer
+      run: ./build.ps1 -Version ${{ needs.release.outputs.version }}
+    - name: Upload Inno Installer
+      id: upload-inno-installer
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/packages/inno/Output/install.exe
+        asset_name: install.exe
+        asset_content_type: text/plain
+    - name: Upload Inno Installer Hash
+      id: upload-inno-installer-hash
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.release.outputs.upload_url }}
+        asset_path: ${{ github.workspace }}/packages/inno/Output/install.exe.sha256
+        asset_name: install.exe.sha256
+        asset_content_type: text/plain

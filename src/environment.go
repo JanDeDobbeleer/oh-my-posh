@@ -10,12 +10,12 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/distatus/battery"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/process"
+	"github.com/xaionaro-go/atomicmap"
 )
 
 const (
@@ -71,8 +71,7 @@ type environment struct {
 }
 
 var (
-	commands map[string]string = make(map[string]string)
-	lock                       = sync.Mutex{}
+	commands atomicmap.Map = atomicmap.New()
 )
 
 func (env *environment) getenv(key string) string {
@@ -165,8 +164,8 @@ func (env *environment) getPlatform() string {
 }
 
 func (env *environment) runCommand(command string, args ...string) (string, error) {
-	if cmd, ok := commands[command]; ok {
-		command = cmd
+	if cmd, err := commands.Get(command); err == nil {
+		command = cmd.(string)
 	}
 	out, err := exec.Command(command, args...).Output()
 	if err != nil {
@@ -186,14 +185,14 @@ func (env *environment) runShellCommand(shell, command string) string {
 }
 
 func (env *environment) hasCommand(command string) bool {
-	if _, ok := commands[command]; ok {
+	if _, err := commands.Get(command); err == nil {
 		return true
 	}
 	path, err := exec.LookPath(command)
 	if err == nil {
-		lock.Lock()
-		commands[command] = path
-		lock.Unlock()
+		// the error implies we failed to cache the path
+		// ignoring it only affects the path caching, not the functionality
+		_ = commands.Set(command, path)
 		return true
 	}
 	return false

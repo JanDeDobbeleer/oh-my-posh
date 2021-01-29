@@ -1,0 +1,15 @@
+PackageIdentifier: JanDeDobbeleer.OhMyPosh
+PackageVersion: <VERSION>
+InstallModes:
+ - "silent"
+Installers:
+- Architecture: x64
+  InstallerType: inno
+  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install.exe
+  InstallerSha256: <HASH>
+- Architecture: x86
+  InstallerType: inno
+  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install.exe
+  InstallerSha256: <HASH>
+ManifestType: "installer"
+ManifestVersion: 1.0.0

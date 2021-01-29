@@ -237,6 +237,8 @@ jobs:
     needs: [release, artifacts]
     if: ${{ needs.release.outputs.skipped == 'false' }}
     runs-on: windows-latest
+    outputs:
+      hash: ${{ steps.hash.outputs.hash_inno }}
     defaults:
       run:
         shell: pwsh
@@ -246,6 +248,11 @@ jobs:
       uses: actions/checkout@v2
     - name: Build installer
       run: ./build.ps1 -Version ${{ needs.release.outputs.version }}
+    - name: Output Hash
+      id: hash
+      run: |
+        $hash = Get-Content -Path Output/install.exe.sha256
+        Write-Output "::set-output name=hash_inno::$($hash)"
     - name: Upload Inno Installer
       id: upload-inno-installer
       uses: actions/upload-release-asset@v1
@@ -266,3 +273,18 @@ jobs:
         asset_path: ${{ github.workspace }}/packages/inno/Output/install.exe.sha256
         asset_name: install.exe.sha256
         asset_content_type: text/plain
+  winget:
+    needs: [release, inno]
+    if: ${{ needs.release.outputs.skipped == 'false' }}
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: ${{ github.workspace }}/packages/winget
+    env:
+      WINGETCREATE_TOKEN: ${{ secrets.WINGETCREATE_TOKEN }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Create manifest and submit PR
+      run: ./build.ps1 -Version ${{ needs.release.outputs.version }} -Hash ${{ needs.inno.outputs.hash }} -Token $env:WINGETCREATE_TOKEN

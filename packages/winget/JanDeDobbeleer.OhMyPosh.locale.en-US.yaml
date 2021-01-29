@@ -1,0 +1,22 @@
+PackageIdentifier: JanDeDobbeleer.OhMyPosh
+PackageVersion: <VERSION>
+PackageLocale: en-US
+Publisher: Jan De Dobbeleer
+PackageName: Oh My Posh
+License: GPL
+ShortDescription: Prompt theme engine for any shell
+Tags:
+- "Console"
+- "Command-Line"
+- "Shell"
+- "Command-Prompt"
+- "PowerShell"
+- "WSL"
+- "Developer-Tools"
+- "Utilities"
+- "cli"
+- "cmd"
+- "ps"
+- "terminal"
+ManifestType: defaultLocale
+ManifestVersion: 1.0.0

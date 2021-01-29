@@ -16,6 +16,33 @@ While Oh my Posh works on the standard terminal, we advise using the [Windows Te
 
 ### Installation
 
+<Tabs
+  defaultValue="winget"
+  groupId="install"
+  values={[
+    { label: 'winget', value: 'winget', },
+    { label: 'scoop', value: 'scoop', },
+  ]
+}>
+<TabItem value="winget">
+
+```powershell
+winget install JanDeDobbeleer.OhMyPosh
+```
+
+This installs a couple of things:
+
+- `oh-my-posh.exe` - Windows executable, added to your `$PATH`
+- `oh-my-posh-wsl` - Linux executable, added to your `$PATH` for use in the WSL
+- `themes` - The latest Oh my Posh themes
+
+If you want to use a standard theme, you can find them in `~\AppData\Local\Programs\oh-my-posh\themes\`,
+referencing them as such
+will always keep them compatible with the binary when updating Oh my Posh.
+
+</TabItem>
+<TabItem value="scoop">
+
 ```powershell
 scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
 ```
@@ -30,12 +57,27 @@ If you want to use a standard theme, you can find them in `~\scoop\apps\oh-my-po
 referencing them as such
 will always keep them compatible with the binary when updating Oh my Posh.
 
+</TabItem>
+</Tabs>
+
+For the `$PATH` to reload, a reboot is advised.
+
 ### Usage
 
 #### Preview the themes
 
+<Tabs
+  defaultValue="winget"
+  groupId="install"
+  values={[
+    { label: 'winget', value: 'winget', },
+    { label: 'scoop', value: 'scoop', },
+  ]
+}>
+<TabItem value="winget">
+
 ```powershell
-Get-ChildItem -Path "$(scoop prefix oh-my-posh)/themes/*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
+Get-ChildItem -Path "~\AppData\Local\Programs\oh-my-posh\themes\*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
     $esc = [char]27
     Write-Host ""
     Write-Host "$esc[1m$($_.BaseName)$esc[0m"
@@ -45,17 +87,74 @@ Get-ChildItem -Path "$(scoop prefix oh-my-posh)/themes/*" -Include '*.omp.json' 
 }
 ```
 
+</TabItem>
+<TabItem value="scoop">
+
+```powershell
+Get-ChildItem -Path "$(scoop prefix oh-my-posh)\themes\*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
+    $esc = [char]27
+    Write-Host ""
+    Write-Host "$esc[1m$($_.BaseName)$esc[0m"
+    Write-Host ""
+    oh-my-posh --config $($_.FullName) --pwd $PWD
+    Write-Host ""
+}
+```
+
+</TabItem>
+</Tabs>
+
 #### Update
+
+<Tabs
+  defaultValue="winget"
+  groupId="install"
+  values={[
+    { label: 'winget', value: 'winget', },
+    { label: 'scoop', value: 'scoop', },
+  ]
+}>
+<TabItem value="winget">
+
+```powershell
+winget upgrade JanDeDobbeleer.OhMyPosh
+```
+
+</TabItem>
+<TabItem value="scoop">
 
 ```powershell
 scoop update oh-my-posh
 ```
 
+</TabItem>
+</Tabs>
+
 ### Replace your existing prompt
 
-You can find the themes scoop installs inside the `"$(scoop prefix oh-my-posh)/themes/"` folder.
-To use `jandedobbeleer.omp.json` for example, you can refer to it using `"$(scoop prefix oh-my-posh)/themes/jandedobbeleer.omp.json"`
+<Tabs
+  defaultValue="winget"
+  groupId="install"
+  values={[
+    { label: 'winget', value: 'winget', },
+    { label: 'scoop', value: 'scoop', },
+  ]
+}>
+<TabItem value="winget">
+
+You can find the themes scoop installs inside the `~\AppData\Local\Programs\oh-my-posh\themes\` folder.
+To use `jandedobbeleer.omp.json` for example, you can refer to it using `~\AppData\Local\Programs\oh-my-posh\themes\jandedobbeleer.omp.json"`
 when setting the prompt using the `--config` flag.
+
+</TabItem>
+<TabItem value="scoop">
+
+You can find the themes scoop installs inside the `"$(scoop prefix oh-my-posh)\themes\"` folder.
+To use `jandedobbeleer.omp.json` for example, you can refer to it using `"$(scoop prefix oh-my-posh)\themes\jandedobbeleer.omp.json"`
+when setting the prompt using the `--config` flag.
+
+</TabItem>
+</Tabs>
 
 The guides below use an imaginary theme called `mytheme.omp.json`, so make sure to replace that with your own, or one of the
 included themes.

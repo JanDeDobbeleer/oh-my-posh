@@ -10,13 +10,15 @@ func (j *julia) string() string {
 
 func (j *julia) init(props *properties, env environmentInfo) {
 	j.language = &language{
-		env:          env,
-		props:        props,
-		commands:     []string{"julia"},
-		versionParam: "--version",
-		extensions:   []string{"*.jl"},
-		version: &version{
-			regex: `julia version (?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+		env:        env,
+		props:      props,
+		extensions: []string{"*.jl"},
+		commands: []*cmd{
+			{
+				executable: "julia",
+				args:       []string{"--version"},
+				regex:      `julia version (?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+			},
 		},
 	}
 }

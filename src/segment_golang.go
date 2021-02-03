@@ -10,15 +10,17 @@ func (g *golang) string() string {
 
 func (g *golang) init(props *properties, env environmentInfo) {
 	g.language = &language{
-		env:          env,
-		props:        props,
-		commands:     []string{"go"},
-		versionParam: "version",
-		extensions:   []string{"*.go", "go.mod"},
-		version: &version{
-			regex:       `(?:go(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
-			urlTemplate: "[%s](https://golang.org/doc/go%s.%s)",
+		env:        env,
+		props:      props,
+		extensions: []string{"*.go", "go.mod"},
+		commands: []*cmd{
+			{
+				executable: "go",
+				args:       []string{"version"},
+				regex:      `(?:go(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			},
 		},
+		versionURLTemplate: "[%s](https://golang.org/doc/go%s.%s)",
 	}
 }
 

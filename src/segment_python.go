@@ -27,17 +27,24 @@ func (p *python) string() string {
 
 func (p *python) init(props *properties, env environmentInfo) {
 	p.language = &language{
-		env:          env,
-		props:        props,
-		commands:     []string{"python", "python3"},
-		versionParam: "--version",
-		extensions:   []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak", "venv", ".venv"},
-		loadContext:  p.loadContext,
-		inContext:    p.inContext,
-		version: &version{
-			regex:       `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
-			urlTemplate: "[%s](https://www.python.org/downloads/release/python-%s%s%s/)",
+		env:         env,
+		props:       props,
+		extensions:  []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak", "venv", ".venv"},
+		loadContext: p.loadContext,
+		inContext:   p.inContext,
+		commands: []*cmd{
+			{
+				executable: "python",
+				args:       []string{"--version"},
+				regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			},
+			{
+				executable: "python3",
+				args:       []string{"--version"},
+				regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			},
 		},
+		versionURLTemplate: "[%s](https://www.python.org/downloads/release/python-%s%s%s/)",
 	}
 }
 

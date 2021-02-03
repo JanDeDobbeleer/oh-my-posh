@@ -25,15 +25,17 @@ func (d *dotnet) string() string {
 
 func (d *dotnet) init(props *properties, env environmentInfo) {
 	d.language = &language{
-		env:          env,
-		props:        props,
-		commands:     []string{"dotnet"},
-		versionParam: "--version",
-		extensions:   []string{"*.cs", "*.vb", "*.sln", "*.csproj", "*.vbproj"},
-		version: &version{
-			regex:       `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?:\d{2})(?P<patch>[0-9]{1}))))`,
-			urlTemplate: "[%1s](https://github.com/dotnet/core/blob/master/release-notes/%[2]s.%[3]s/%[2]s.%[3]s.%[4]s/%[2]s.%[3]s.%[4]s.md)",
+		env:        env,
+		props:      props,
+		extensions: []string{"*.cs", "*.vb", "*.sln", "*.csproj", "*.vbproj"},
+		commands: []*cmd{
+			{
+				executable: "dotnet",
+				args:       []string{"--version"},
+				regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?:\d{2})(?P<patch>[0-9]{1}))))`,
+			},
 		},
+		versionURLTemplate: "[%1s](https://github.com/dotnet/core/blob/master/release-notes/%[2]s.%[3]s/%[2]s.%[3]s.%[4]s/%[2]s.%[3]s.%[4]s.md)",
 	}
 }
 

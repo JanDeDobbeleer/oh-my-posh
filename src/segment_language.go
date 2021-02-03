@@ -11,38 +11,63 @@ type loadContext func()
 type inContext func() bool
 
 type version struct {
-	full        string
-	major       string
-	minor       string
-	patch       string
-	regex       string
-	urlTemplate string
+	full  string
+	major string
+	minor string
+	patch string
 }
 
-func (v *version) parse(versionInfo string) error {
-	values := findNamedRegexMatch(v.regex, versionInfo)
+type cmd struct {
+	executable string
+	args       []string
+	regex      string
+	version    *version
+}
+
+func (c *cmd) parse(versionInfo string) error {
+	values := findNamedRegexMatch(c.regex, versionInfo)
 	if len(values) == 0 {
 		return errors.New("cannot parse version string")
 	}
-
-	v.full = values["version"]
-	v.major = values["major"]
-	v.minor = values["minor"]
-	v.patch = values["patch"]
+	c.version = &version{}
+	c.version.full = values["version"]
+	c.version.major = values["major"]
+	c.version.minor = values["minor"]
+	c.version.patch = values["patch"]
 	return nil
 }
 
+func (c *cmd) buildVersionURL(template string) string {
+	if template == "" {
+		return c.version.full
+	}
+	truncatingSprintf := func(str string, args ...interface{}) (string, error) {
+		n := strings.Count(str, "%s")
+		if n > len(args) {
+			return "", errors.New("Too many parameters")
+		}
+		if n == 0 {
+			return fmt.Sprintf(str, args...), nil
+		}
+		return fmt.Sprintf(str, args[:n]...), nil
+	}
+	version, err := truncatingSprintf(template, c.version.full, c.version.major, c.version.minor, c.version.patch)
+	if err != nil {
+		return c.version.full
+	}
+	return version
+}
+
 type language struct {
-	props        *properties
-	env          environmentInfo
-	extensions   []string
-	commands     []string
-	executable   string
-	versionParam string
-	version      *version
-	exitCode     int
-	loadContext  loadContext
-	inContext    inContext
+	props              *properties
+	env                environmentInfo
+	extensions         []string
+	commands           []*cmd
+	versionURLTemplate string
+	activeCommand      *cmd
+	exitCode           int
+	loadContext        loadContext
+	inContext          inContext
 }
 
 const (
@@ -66,24 +91,16 @@ func (l *language) string() string {
 	if !l.props.getBool(DisplayVersion, true) {
 		return ""
 	}
-	if !l.hasCommand() {
-		return l.props.getString(MissingCommandTextProperty, MissingCommandText)
-	}
 
 	err := l.setVersion()
 	if err != nil {
-		return ""
+		return err.Error()
 	}
 
-	// build release notes hyperlink
-	if l.props.getBool(EnableHyperlink, false) && l.version.urlTemplate != "" {
-		version, err := TruncatingSprintf(l.version.urlTemplate, l.version.full, l.version.major, l.version.minor, l.version.patch)
-		if err != nil {
-			return l.version.full
-		}
-		return version
+	if l.props.getBool(EnableHyperlink, false) {
+		return l.activeCommand.buildVersionURL(l.versionURLTemplate)
 	}
-	return l.version.full
+	return l.activeCommand.version.full
 }
 
 func (l *language) enabled() bool {
@@ -119,30 +136,23 @@ func (l *language) hasLanguageFiles() bool {
 
 // setVersion parses the version string returned by the command
 func (l *language) setVersion() error {
-	versionInfo, err := l.env.runCommand(l.executable, l.versionParam)
-	if exitErr, ok := err.(*commandError); ok {
-		l.exitCode = exitErr.exitCode
-		return errors.New("error executing command")
-	}
-	err = l.version.parse(versionInfo)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// hasCommand checks if one of the commands exists and sets it as executable
-func (l *language) hasCommand() bool {
-	for i, command := range l.commands {
-		if l.env.hasCommand(command) {
-			l.executable = command
-			break
+	for _, command := range l.commands {
+		if !l.env.hasCommand(command.executable) {
+			continue
 		}
-		if i == len(l.commands)-1 {
-			return false
+		version, err := l.env.runCommand(command.executable, command.args...)
+		if exitErr, ok := err.(*commandError); ok {
+			l.exitCode = exitErr.exitCode
+			return fmt.Errorf("err executing %s with %s", command.executable, command.args)
 		}
+		err = command.parse(version)
+		if err != nil {
+			return fmt.Errorf("err parsing info from %s with %s", command.executable, version)
+		}
+		l.activeCommand = command
+		return nil
 	}
-	return true
+	return errors.New(l.props.getString(MissingCommandTextProperty, MissingCommandText))
 }
 
 func (l *language) loadLanguageContext() {
@@ -157,15 +167,4 @@ func (l *language) inLanguageContext() bool {
 		return false
 	}
 	return l.inContext()
-}
-
-func TruncatingSprintf(str string, args ...interface{}) (string, error) {
-	n := strings.Count(str, "%s")
-	if n > len(args) {
-		return "", errors.New("Too many parameters")
-	}
-	if n == 0 {
-		return fmt.Sprintf(str, args...), nil
-	}
-	return fmt.Sprintf(str, args[:n]...), nil
 }

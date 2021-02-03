@@ -9,6 +9,7 @@ import (
 
 func TestRuby(t *testing.T) {
 	cases := []struct {
+		Case            string
 		ExpectedString  string
 		ExpectedEnabled bool
 		HasRbenv        bool
@@ -22,13 +23,14 @@ func TestRuby(t *testing.T) {
 		HasGemFile      bool
 		DisplayVersion  bool
 	}{
-		{ExpectedString: "", ExpectedEnabled: false},
-		{ExpectedString: "", ExpectedEnabled: true, DisplayVersion: false, HasRubyFiles: true},
-		{ExpectedString: "", ExpectedEnabled: true, DisplayVersion: false, HasRakeFile: true},
-		{ExpectedString: "", ExpectedEnabled: true, DisplayVersion: false, HasGemFile: true},
-		{ExpectedString: "", ExpectedEnabled: false, DisplayVersion: true, HasGemFile: true},
-		{ExpectedString: "", ExpectedEnabled: false, DisplayVersion: true},
+		{Case: "No files", ExpectedString: "", ExpectedEnabled: false},
+		{Case: "Ruby files", ExpectedString: "", ExpectedEnabled: true, DisplayVersion: false, HasRubyFiles: true},
+		{Case: "Rakefile", ExpectedString: "", ExpectedEnabled: true, DisplayVersion: false, HasRakeFile: true},
+		{Case: "Gemfile", ExpectedString: "", ExpectedEnabled: true, DisplayVersion: false, HasGemFile: true},
+		{Case: "Gemfile with version", ExpectedString: "", ExpectedEnabled: true, DisplayVersion: true, HasGemFile: true},
+		{Case: "No files with version", ExpectedString: "", ExpectedEnabled: false, DisplayVersion: true},
 		{
+			Case:            "Version with chruby",
 			ExpectedString:  "ruby-2.6.3",
 			ExpectedEnabled: true,
 			DisplayVersion:  true,
@@ -40,6 +42,7 @@ func TestRuby(t *testing.T) {
 			rubinius-2.0.0-rc1`,
 		},
 		{
+			Case:            "Version with chruby line 2",
 			ExpectedString:  "ruby-1.9.3-p392",
 			ExpectedEnabled: true,
 			DisplayVersion:  true,
@@ -51,6 +54,7 @@ func TestRuby(t *testing.T) {
 			rubinius-2.0.0-rc1`,
 		},
 		{
+			Case:            "Version with asdf",
 			ExpectedString:  "2.6.3",
 			ExpectedEnabled: true,
 			DisplayVersion:  true,
@@ -59,12 +63,22 @@ func TestRuby(t *testing.T) {
 			Version:         "ruby            2.6.3           /Users/jan/Projects/oh-my-posh3/.tool-versions",
 		},
 		{
+			Case:            "Version with asdf not set",
 			ExpectedString:  "",
-			ExpectedEnabled: false,
+			ExpectedEnabled: true,
 			DisplayVersion:  true,
 			HasRubyFiles:    true,
 			HasAsdf:         true,
 			Version:         "ruby            ______          No version set. Run \"asdf <global|shell|local> ruby <version>\"",
+		},
+		{
+			Case:            "Version with ruby",
+			ExpectedString:  "2.6.3",
+			ExpectedEnabled: true,
+			DisplayVersion:  true,
+			HasRubyFiles:    true,
+			HasRuby:         true,
+			Version:         "ruby  2.6.3 (2019-04-16 revision 67580) [universal.x86_64-darwin20]",
 		},
 	}
 	for _, tc := range cases {
@@ -87,11 +101,9 @@ func TestRuby(t *testing.T) {
 				DisplayVersion: tc.DisplayVersion,
 			},
 		}
-		ruby := &ruby{
-			env:   env,
-			props: props,
-		}
-		assert.Equal(t, tc.ExpectedEnabled, ruby.enabled(), fmt.Sprintf("Failed in case: %+v", tc))
-		assert.Equal(t, tc.ExpectedString, ruby.string(), fmt.Sprintf("Failed in case: %+v", tc))
+		ruby := &ruby{}
+		ruby.init(props, env)
+		assert.Equal(t, tc.ExpectedEnabled, ruby.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, ruby.string(), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

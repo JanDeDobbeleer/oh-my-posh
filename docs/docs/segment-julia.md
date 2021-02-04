@@ -6,7 +6,7 @@ sidebar_label: Julia
 
 ## What
 
-Display the currently active julia version when a folder contains julia files.
+Display the currently active julia version.
 
 ## Sample Configuration
 
@@ -28,5 +28,5 @@ Display the currently active julia version when a folder contains julia files.
 - display_version: `boolean` - display the julia version - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
-  - `always`: The segment is always displayed
-  - `files`: The segment is only displayed when `*.jl` files are present (default)
+  - `always`: the segment is always displayed
+  - `files`: the segment is only displayed when `*.jl` files are present (default)

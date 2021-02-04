@@ -6,7 +6,7 @@ sidebar_label: Dotnet
 
 ## What
 
-Display the currently active .NET SDK version when a folder contains .NET files.
+Display the currently active .NET SDK version.
 
 ## Sample Configuration
 
@@ -29,7 +29,7 @@ Display the currently active .NET SDK version when a folder contains .NET files.
   is present - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
-  - `always`: The segment is always displayed
-  - `files`: The segment is only displayed when `*.cs`, `*.vb`, `*.sln`, `*.csproj`, or `*.vbproj` files are present (default)
+  - `always`: the segment is always displayed
+  - `files`: the segment is only displayed when `*.cs`, `*.vb`, `*.sln`, `*.csproj`, or `*.vbproj` files are present (default)
 - unsupported_version_icon: `string` - text/icon that is displayed when the active .NET SDK version (e.g., one specified
   by `global.json`) is not installed/supported - defaults to `\uf071` (X in a rectangle box)

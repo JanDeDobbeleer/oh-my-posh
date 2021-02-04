@@ -6,7 +6,7 @@ sidebar_label: Node
 
 ## What
 
-Display the currently active node version when a folder contains node files.
+Display the currently active node version.
 
 ## Sample Configuration
 

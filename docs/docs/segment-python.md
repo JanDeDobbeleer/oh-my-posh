@@ -32,8 +32,8 @@ or not - defaults to `true`
 - display_version: `boolean` - display the python version - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
-  - `always`: The segment is always displayed
-  - `files`: The segment is only displayed when `*.py`, `*.ipynb`, `pyproject.toml`, `venv.bak`, `venv`, or `.venv`
+  - `always`: the segment is always displayed
+  - `files`: the segment is only displayed when `*.py`, `*.ipynb`, `pyproject.toml`, `venv.bak`, `venv`, or `.venv`
     files are present (default)
-  - `environment`: The segment is only displayed when a virtual env is present
-  - `context`: The segment is only displayed when either `environment` or `files` is active
+  - `environment`: the segment is only displayed when a virtual env is present
+  - `context`: the segment is only displayed when either `environment` or `files` is active

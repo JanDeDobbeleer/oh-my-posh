@@ -25,6 +25,7 @@ module.exports = {
         "path",
         "python",
         "root",
+        "ruby",
         "session",
         "shell",
         "spotify",

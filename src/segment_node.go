@@ -12,7 +12,7 @@ func (n *node) init(props *properties, env environmentInfo) {
 	n.language = &language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.js", "*.ts", "package.json"},
+		extensions: []string{"*.js", "*.ts", "package.json", ".nvm"},
 		commands: []*cmd{
 			{
 				executable: "node",

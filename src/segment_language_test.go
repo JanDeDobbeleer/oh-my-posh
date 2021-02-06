@@ -52,7 +52,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 		},
 	}
 	if args.missingCommandText != "" {
-		props.values[MissingCommandTextProperty] = args.missingCommandText
+		props.values[MissingCommandText] = args.missingCommandText
 	}
 	l := &language{
 		props:              props,
@@ -78,7 +78,7 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, MissingCommandText, lang.string(), "unicorn is not available")
+	assert.Equal(t, "", lang.string(), "unicorn is not available")
 }
 
 func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {

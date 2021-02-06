@@ -81,10 +81,8 @@ const (
 	DisplayModeEnvironment string = "environment"
 	// DisplayModeContext displays the segment when the environment or files is active
 	DisplayModeContext string = "context"
-	// MissingCommandTextProperty sets the text to display when the command is not present in the system
-	MissingCommandTextProperty Property = "missing_command_text"
-	// MissingCommandText displays empty string by default
-	MissingCommandText string = ""
+	// MissingCommandText sets the text to display when the command is not present in the system
+	MissingCommandText Property = "missing_command_text"
 )
 
 func (l *language) string() string {
@@ -152,7 +150,7 @@ func (l *language) setVersion() error {
 		l.activeCommand = command
 		return nil
 	}
-	return errors.New(l.props.getString(MissingCommandTextProperty, MissingCommandText))
+	return errors.New(l.props.getString(MissingCommandText, ""))
 }
 
 func (l *language) loadLanguageContext() {

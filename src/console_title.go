@@ -50,6 +50,11 @@ func (t *consoleTitle) getTemplateText() string {
 	context["Path"] = t.getPwd()
 	context["Folder"] = base(t.getPwd(), t.env)
 	context["Shell"] = t.env.getShellName()
+	context["User"] = t.env.getCurrentUser()
+	context["Host"] = ""
+	if host, err := t.env.getHostName(); err == nil {
+		context["Host"] = host
+	}
 
 	// load environment variables into the map
 	envVars := map[string]string{}

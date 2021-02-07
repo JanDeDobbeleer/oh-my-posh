@@ -1,10 +1,8 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"strings"
-	"text/template"
 )
 
 type consoleTitle struct {
@@ -23,9 +21,6 @@ const (
 	FullPath ConsoleTitleStyle = "path"
 	// Template allows a more powerful custom string
 	Template ConsoleTitleStyle = "template"
-	// Errors to show when the template handling fails
-	invalidTitleTemplate   = "invalid template title text"
-	incorrectTitleTemplate = "unable to create title based on template"
 )
 
 func (t *consoleTitle) getConsoleTitle() string {
@@ -64,17 +59,11 @@ func (t *consoleTitle) getTemplateText() string {
 	}
 	context["Env"] = envVars
 
-	tmpl, err := template.New("title").Parse(t.settings.ConsoleTitleTemplate)
-	if err != nil {
-		return invalidTitleTemplate
+	template := &textTemplate{
+		Template: t.settings.ConsoleTitleTemplate,
+		Context:  context,
 	}
-	buffer := new(bytes.Buffer)
-	defer buffer.Reset()
-	err = tmpl.Execute(buffer, context)
-	if err != nil {
-		return incorrectTitleTemplate
-	}
-	return buffer.String()
+	return template.render()
 }
 
 func (t *consoleTitle) getPwd() string {

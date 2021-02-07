@@ -14,16 +14,14 @@ const (
 
 type languageArgs struct {
 	version            string
-	displayVersion     bool
-	displayMode        string
 	extensions         []string
 	enabledExtensions  []string
 	commands           []*cmd
 	enabledCommands    []string
-	missingCommandText string
 	versionURLTemplate string
-	enableHyperlink    bool
 	expectedError      error
+	properties         map[Property]interface{}
+	matchesVersionFile matchesVersionFile
 }
 
 func (l *languageArgs) hasvalue(value string, list []string) bool {
@@ -45,14 +43,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 		env.On("hasFiles", extension).Return(args.hasvalue(extension, args.enabledExtensions))
 	}
 	props := &properties{
-		values: map[Property]interface{}{
-			DisplayVersion:  args.displayVersion,
-			DisplayMode:     args.displayMode,
-			EnableHyperlink: args.enableHyperlink,
-		},
-	}
-	if args.missingCommandText != "" {
-		props.values[MissingCommandText] = args.missingCommandText
+		values: args.properties,
 	}
 	l := &language{
 		props:              props,
@@ -60,6 +51,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 		extensions:         args.extensions,
 		commands:           args.commands,
 		versionURLTemplate: args.versionURLTemplate,
+		matchesVersionFile: args.matchesVersionFile,
 	}
 	return l
 }
@@ -74,7 +66,6 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 		},
 		extensions:        []string{uni},
 		enabledExtensions: []string{uni},
-		displayVersion:    true,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -82,6 +73,9 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 }
 
 func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {
+	props := map[Property]interface{}{
+		DisplayVersion: false,
+	}
 	args := &languageArgs{
 		commands: []*cmd{
 			{
@@ -91,7 +85,7 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testin
 		},
 		extensions:        []string{uni},
 		enabledExtensions: []string{uni},
-		displayVersion:    false,
+		properties:        props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled(), "unicorn is not available")
@@ -123,7 +117,6 @@ func TestLanguageDisabledNoFiles(t *testing.T) {
 		extensions:        []string{uni},
 		enabledExtensions: []string{},
 		enabledCommands:   []string{"unicorn"},
-		displayVersion:    true,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.False(t, lang.enabled(), "no files in the current directory")
@@ -142,7 +135,6 @@ func TestLanguageEnabledOneExtensionFound(t *testing.T) {
 		enabledExtensions: []string{uni},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		displayVersion:    true,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -162,7 +154,6 @@ func TestLanguageEnabledSecondExtensionFound(t *testing.T) {
 		enabledExtensions: []string{corn},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		displayVersion:    true,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -187,7 +178,6 @@ func TestLanguageEnabledSecondCommand(t *testing.T) {
 		enabledExtensions: []string{corn},
 		enabledCommands:   []string{"corn"},
 		version:           universion,
-		displayVersion:    true,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -207,7 +197,6 @@ func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		displayVersion:    true,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -215,6 +204,9 @@ func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
 }
 
 func TestLanguageEnabledNoVersion(t *testing.T) {
+	props := map[Property]interface{}{
+		DisplayVersion: false,
+	}
 	args := &languageArgs{
 		commands: []*cmd{
 			{
@@ -227,7 +219,7 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		displayVersion:    false,
+		properties:        props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -235,13 +227,16 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 }
 
 func TestLanguageEnabledMissingCommand(t *testing.T) {
+	props := map[Property]interface{}{
+		DisplayVersion: false,
+	}
 	args := &languageArgs{
 		commands:          []*cmd{},
 		extensions:        []string{uni, corn},
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"unicorn"},
 		version:           universion,
-		displayVersion:    false,
+		properties:        props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -249,18 +244,21 @@ func TestLanguageEnabledMissingCommand(t *testing.T) {
 }
 
 func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
+	expected := "missing"
+	props := map[Property]interface{}{
+		MissingCommandText: expected,
+	}
 	args := &languageArgs{
-		commands:           []*cmd{},
-		extensions:         []string{uni, corn},
-		enabledExtensions:  []string{uni, corn},
-		enabledCommands:    []string{"unicorn"},
-		version:            universion,
-		missingCommandText: "missing",
-		displayVersion:     true,
+		commands:          []*cmd{},
+		extensions:        []string{uni, corn},
+		enabledExtensions: []string{uni, corn},
+		enabledCommands:   []string{"unicorn"},
+		version:           universion,
+		properties:        props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, args.missingCommandText, lang.string(), "unicorn is available and uni and corn files are found")
+	assert.Equal(t, expected, lang.string(), "unicorn is available and uni and corn files are found")
 }
 
 func TestLanguageEnabledCommandExitCode(t *testing.T) {
@@ -277,7 +275,6 @@ func TestLanguageEnabledCommandExitCode(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"uni"},
 		version:           universion,
-		displayVersion:    true,
 		expectedError:     &commandError{exitCode: expected},
 	}
 	lang := bootStrapLanguageTest(args)
@@ -287,6 +284,9 @@ func TestLanguageEnabledCommandExitCode(t *testing.T) {
 }
 
 func TestLanguageHyperlinkEnabled(t *testing.T) {
+	props := map[Property]interface{}{
+		EnableHyperlink: true,
+	}
 	args := &languageArgs{
 		commands: []*cmd{
 			{
@@ -305,8 +305,7 @@ func TestLanguageHyperlinkEnabled(t *testing.T) {
 		enabledExtensions:  []string{corn},
 		enabledCommands:    []string{"corn"},
 		version:            universion,
-		displayVersion:     true,
-		enableHyperlink:    true,
+		properties:         props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -314,6 +313,9 @@ func TestLanguageHyperlinkEnabled(t *testing.T) {
 }
 
 func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
+	props := map[Property]interface{}{
+		EnableHyperlink: true,
+	}
 	args := &languageArgs{
 		commands: []*cmd{
 			{
@@ -332,8 +334,7 @@ func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
 		enabledExtensions:  []string{corn},
 		enabledCommands:    []string{"corn"},
 		version:            universion,
-		displayVersion:     true,
-		enableHyperlink:    true,
+		properties:         props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -341,6 +342,9 @@ func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
 }
 
 func TestLanguageHyperlinkEnabledLessParamInTemplate(t *testing.T) {
+	props := map[Property]interface{}{
+		EnableHyperlink: true,
+	}
 	args := &languageArgs{
 		commands: []*cmd{
 			{
@@ -359,8 +363,7 @@ func TestLanguageHyperlinkEnabledLessParamInTemplate(t *testing.T) {
 		enabledExtensions:  []string{corn},
 		enabledCommands:    []string{"corn"},
 		version:            universion,
-		displayVersion:     true,
-		enableHyperlink:    true,
+		properties:         props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -368,6 +371,9 @@ func TestLanguageHyperlinkEnabledLessParamInTemplate(t *testing.T) {
 }
 
 func TestLanguageHyperlinkEnabledMoreParamInTemplate(t *testing.T) {
+	props := map[Property]interface{}{
+		EnableHyperlink: true,
+	}
 	args := &languageArgs{
 		commands: []*cmd{
 			{
@@ -386,10 +392,65 @@ func TestLanguageHyperlinkEnabledMoreParamInTemplate(t *testing.T) {
 		enabledExtensions:  []string{corn},
 		enabledCommands:    []string{"corn"},
 		version:            universion,
-		displayVersion:     true,
-		enableHyperlink:    true,
+		properties:         props,
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
 	assert.Equal(t, "1.3.307", lang.string())
+}
+
+func TestLanguageVersionMismatch(t *testing.T) {
+	cases := []struct {
+		Case            string
+		Enabled         bool
+		Mismatch        bool
+		ExpectedColor   string
+		ColorBackground bool
+	}{
+		{Case: "Disabled", Enabled: false},
+		{Case: "Mismatch - Foreground color", Enabled: true, Mismatch: true, ExpectedColor: "#566777"},
+		{Case: "Mismatch - Background color", Enabled: true, Mismatch: true, ExpectedColor: "#566777", ColorBackground: true},
+		{Case: "No mismatch", Enabled: true, Mismatch: false},
+	}
+	for _, tc := range cases {
+		props := map[Property]interface{}{
+			EnableVersionMismatch: tc.Enabled,
+			VersionMismatchColor:  tc.ExpectedColor,
+			ColorBackground:       tc.ColorBackground,
+		}
+		var matchesVersionFile func() bool
+		switch tc.Mismatch {
+		case true:
+			matchesVersionFile = func() bool {
+				return false
+			}
+		default:
+			matchesVersionFile = func() bool {
+				return true
+			}
+		}
+		args := &languageArgs{
+			commands: []*cmd{
+				{
+					executable: "unicorn",
+					args:       []string{"--version"},
+					regex:      "(?P<version>.*)",
+				},
+			},
+			extensions:         []string{uni, corn},
+			enabledExtensions:  []string{uni, corn},
+			enabledCommands:    []string{"unicorn"},
+			version:            universion,
+			properties:         props,
+			matchesVersionFile: matchesVersionFile,
+		}
+		lang := bootStrapLanguageTest(args)
+		assert.True(t, lang.enabled(), tc.Case)
+		assert.Equal(t, universion, lang.string(), tc.Case)
+		if tc.ColorBackground {
+			assert.Equal(t, tc.ExpectedColor, lang.props.background, tc.Case)
+			return
+		}
+		assert.Equal(t, tc.ExpectedColor, lang.props.foreground, tc.Case)
+	}
 }

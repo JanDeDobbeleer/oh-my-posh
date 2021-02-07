@@ -10,6 +10,8 @@ type loadContext func()
 
 type inContext func() bool
 
+type matchesVersionFile func() bool
+
 type version struct {
 	full  string
 	major string
@@ -68,6 +70,7 @@ type language struct {
 	exitCode           int
 	loadContext        loadContext
 	inContext          inContext
+	matchesVersionFile matchesVersionFile
 }
 
 const (
@@ -83,6 +86,10 @@ const (
 	DisplayModeContext string = "context"
 	// MissingCommandText sets the text to display when the command is not present in the system
 	MissingCommandText Property = "missing_command_text"
+	// VersionMismatchColor displays empty string by default
+	VersionMismatchColor Property = "version_mismatch_color"
+	// EnableVersionMismatch displays empty string by default
+	EnableVersionMismatch Property = "enable_version_mismatch"
 )
 
 func (l *language) string() string {
@@ -97,6 +104,9 @@ func (l *language) string() string {
 
 	if l.props.getBool(EnableHyperlink, false) {
 		return l.activeCommand.buildVersionURL(l.versionURLTemplate)
+	}
+	if l.props.getBool(EnableVersionMismatch, false) {
+		l.setVersionFileMismatch()
 	}
 	return l.activeCommand.version.full
 }
@@ -165,4 +175,15 @@ func (l *language) inLanguageContext() bool {
 		return false
 	}
 	return l.inContext()
+}
+
+func (l *language) setVersionFileMismatch() {
+	if l.matchesVersionFile == nil || l.matchesVersionFile() {
+		return
+	}
+	if l.props.getBool(ColorBackground, false) {
+		l.props.background = l.props.getColor(VersionMismatchColor, l.props.background)
+		return
+	}
+	l.props.foreground = l.props.getColor(VersionMismatchColor, l.props.foreground)
 }

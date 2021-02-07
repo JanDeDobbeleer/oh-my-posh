@@ -90,6 +90,8 @@ const (
 	ExecutionTime SegmentType = "executiontime"
 	// Ruby writes which ruby version is currently active
 	Ruby SegmentType = "ruby"
+	// Aws writes the active aws context
+	Aws SegmentType = "aws"
 )
 
 func (segment *Segment) string() string {
@@ -147,6 +149,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		YTM:           &ytm{},
 		ExecutionTime: &executiontime{},
 		Ruby:          &ruby{},
+		Aws:           &aws{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

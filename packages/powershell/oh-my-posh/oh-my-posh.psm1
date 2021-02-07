@@ -123,7 +123,7 @@ function ThemeCompletion {
     )
     $themes = Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | Select-Object -Property @{
         label='BaseName'
-        expression={$_.BaseName.TrimEnd(".omp")}
+        expression={$_.BaseName.Replace('.omp', '')}
     }
     $themes |
     Where-Object { $_.BaseName.ToLower().StartsWith($wordToComplete.ToLower()); } |

@@ -62,6 +62,7 @@ const (
 	ShellInfo SegmentType = "shell"
 	// Node writes which node version is currently active
 	Node SegmentType = "node"
+	Nvm  SegmentType = "nvm"
 	// Os write os specific icon
 	Os SegmentType = "os"
 	// EnvVar writes the content of an environment variable
@@ -136,6 +137,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Spotify:       &spotify{},
 		ShellInfo:     &shell{},
 		Node:          &node{},
+		Nvm:           &nvm{},
 		Os:            &osInfo{},
 		EnvVar:        &envvar{},
 		Az:            &az{},

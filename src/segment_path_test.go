@@ -280,6 +280,9 @@ func TestAgnosterPathStyles(t *testing.T) {
 
 		{Style: AgnosterFull, Expected: "PSDRIVE: | src", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src", PathSeperator: "/", FolderSeparatorIcon: " | "},
 		{Style: AgnosterShort, Expected: "PSDRIVE: | .. | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeperator: "/", FolderSeparatorIcon: " | "},
+
+		{Style: Mixed, Expected: "~ > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
+		{Style: Mixed, Expected: "~ > ab > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/ab/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)

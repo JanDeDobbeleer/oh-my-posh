@@ -38,6 +38,8 @@ is set to `true`)
 - mapped_locations_enabled: `boolean` - replace known locations in the path with the replacements before applying the
 style. defaults to `true`
 - enable_hyperlink: `boolean` - displays an hyperlink for the path - defaults to `false`
+- mixed_threshold: `number` - the maximum length of a path segment that will be displayed when using `Mixed` -
+  defaults to `4`
 
 ## Style
 
@@ -48,6 +50,7 @@ Style sets the way the path is displayed. Based on previous experience and popul
 - agnoster_short
 - full
 - folder
+- mixed
 
 ### Agnoster
 
@@ -70,3 +73,8 @@ Display `$PWD` as a string.
 ### Folder
 
 Display the name of the current folder.
+
+### Mixed
+
+Works like `Agnoster Full`, but for any middle folder short enough it will display its name instead. The maximum length
+for the folders to display is governed by the `mixed_threshold` property.

@@ -33,6 +33,10 @@ const (
 	Full string = "full"
 	// Folder displays the current folder
 	Folder string = "folder"
+	// Mixed like agnoster, but if the path is short it displays it
+	Mixed string = "mixed"
+	// MixedThreshold the threshold of the length of the path Mixed will display
+	MixedThreshold Property = "mixed_threshold"
 	// MappedLocations allows overriding certain location with an icon
 	MappedLocations Property = "mapped_locations"
 	// MappedLocationsEnabled enables overriding certain locations with an icon
@@ -53,6 +57,8 @@ func (pt *path) string() string {
 		formattedPath = pt.getAgnosterFullPath()
 	case AgnosterShort:
 		formattedPath = pt.getAgnosterShortPath()
+	case Mixed:
+		formattedPath = pt.getMixedPath()
 	case Short:
 		// "short" is a duplicate of "full", just here for backwards compatibility
 		fallthrough
@@ -78,6 +84,30 @@ func (pt *path) string() string {
 func (pt *path) init(props *properties, env environmentInfo) {
 	pt.props = props
 	pt.env = env
+}
+
+func (pt *path) getMixedPath() string {
+	var buffer strings.Builder
+	pwd := pt.getPwd()
+	splitted := strings.Split(pwd, pt.env.getPathSeperator())
+	threshold := int(pt.props.getFloat64(MixedThreshold, 4))
+	for i, part := range splitted {
+		if part == "" {
+			continue
+		}
+
+		folder := part
+		if len(part) > threshold && i != 0 && i != len(splitted)-1 {
+			folder = pt.props.getString(FolderIcon, "..")
+		}
+		separator := pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator())
+		if i == 0 {
+			separator = ""
+		}
+		buffer.WriteString(fmt.Sprintf("%s%s", separator, folder))
+	}
+
+	return buffer.String()
 }
 
 func (pt *path) getAgnosterPath() string {

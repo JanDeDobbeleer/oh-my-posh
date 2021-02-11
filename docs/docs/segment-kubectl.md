@@ -6,7 +6,7 @@ sidebar_label: Kubectl
 
 ## What
 
-Display the currently active Kubernetes context name.
+Display the currently active Kubernetes context name and namespace name.
 
 ## Sample Configuration
 
@@ -18,7 +18,27 @@ Display the currently active Kubernetes context name.
   "foreground": "#000000",
   "background": "#ebcc34",
   "properties": {
-    "prefix": " \uFD31 "
+    "prefix": " \uFD31 ",
+    "template": "{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}"
   }
 }
 ```
+
+## Properties
+
+- template: `string` - A go [text/template][go-text-template] template utilizing the properties below.
+Defaults to `{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}`
+
+## Template Properties
+
+- `.Context`: `string` - the current kubectl context
+- `.Namespace`: `string` - the current kubectl namespace
+
+## Tips
+
+It is common for the Kubernetes "default" namespace to be used when no namespace is provided. If you want your prompt to
+ render an empty current namespace using the word "default", you can use something like this for the template:
+
+`{{.Context}} :: {{if .Namespace}}{{.Namespace}}{{else}}default{{end}}`
+
+[go-text-template]: https://golang.org/pkg/text/template/

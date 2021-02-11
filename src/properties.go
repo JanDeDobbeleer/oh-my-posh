@@ -23,6 +23,8 @@ const (
 	DisplayVersion Property = "display_version"
 	// AlwaysEnabled decides whether or not to always display the info
 	AlwaysEnabled Property = "always_enabled"
+	// SegmentTemplate is the template to use to render the information
+	SegmentTemplate Property = "template"
 )
 
 type properties struct {

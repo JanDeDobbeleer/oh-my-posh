@@ -123,7 +123,7 @@ function ThemeCompletion {
     )
     $themes = Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | Select-Object -Property @{
         label='BaseName'
-        expression={$_.BaseName.TrimEnd(".omp")}
+        expression={$_.BaseName.Replace('.omp', '')}
     }
     $themes |
     Where-Object { $_.BaseName.ToLower().StartsWith($wordToComplete.ToLower()); } |
@@ -158,7 +158,6 @@ https://ohmyposh.dev/docs/upgrading
 }
 
 Set-Alias -Name Set-Prompt -Value Get-PoshInfoForV2Users -Force
-Set-Alias -Name Set-Theme -Value Get-PoshInfoForV2Users -Force
 Set-Alias -Name Get-ThemesLocation -Value Get-PoshInfoForV2Users -Force
 Set-Alias -Name Get-Theme -Value Get-PoshInfoForV2Users -Force
 Set-Alias -Name Show-ThemeSymbols -Value Get-PoshInfoForV2Users -Force

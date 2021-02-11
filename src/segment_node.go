@@ -12,7 +12,7 @@ func (n *node) init(props *properties, env environmentInfo) {
 	n.language = &language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.js", "*.ts", "package.json"},
+		extensions: []string{"*.js", "*.ts", "package.json", ".nvm"},
 		commands: []*cmd{
 			{
 				executable: "node",
@@ -21,9 +21,14 @@ func (n *node) init(props *properties, env environmentInfo) {
 			},
 		},
 		versionURLTemplate: "[%[1]s](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V%[2]s.md#%[1]s)",
+		matchesVersionFile: n.matchesVersionFile,
 	}
 }
 
 func (n *node) enabled() bool {
 	return n.language.enabled()
+}
+
+func (n *node) matchesVersionFile() bool {
+	return true
 }

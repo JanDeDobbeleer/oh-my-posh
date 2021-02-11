@@ -32,17 +32,15 @@ function Set-ExecutablePermissions {
     $permissions = ((ls -l $executable) -split ' ')[0]  # $permissions will be something like '-rw-r--r--'
     if ((id -u) -eq 0) {
         # Running as root, give global executable permissions if needed
-        $hasWrite = $permissions[2] -eq 'w'
         $hasExecutable = $permissions[3] -eq 'x'
-        if ($hasWrite -and -not $hasExecutable) {
+        if (-not $hasExecutable) {
             Invoke-Expression -Command "chmod g+x $executable"
         }
         return
     }
     # Running as user, give user executable permissions if needed
-    $hasWrite = $permissions[8] -eq 'w'
     $hasExecutable = $permissions[9] -eq 'x'
-    if ($hasWrite -and -not $hasExecutable) {
+    if (-not $hasExecutable) {
         Invoke-Expression -Command "chmod +x $executable"
     }
 }

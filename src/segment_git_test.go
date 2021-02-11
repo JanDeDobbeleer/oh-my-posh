@@ -701,18 +701,3 @@ func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
-
-func TestGitOutPut(t *testing.T) {
-	g := &git{
-		env: &environment{},
-		props: &properties{
-			values: map[Property]interface{}{
-				LocalWorkingIcon: "<#88C0D0>\u21e1 </>",
-			},
-			foreground: "#111111",
-		},
-	}
-	assert.True(t, g.enabled())
-	value := g.string()
-	assert.NotEmpty(t, value)
-}

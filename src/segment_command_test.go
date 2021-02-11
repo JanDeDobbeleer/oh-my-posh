@@ -8,6 +8,7 @@ import (
 
 func TestExecuteCommand(t *testing.T) {
 	env := &environment{}
+	env.init(nil)
 	props := &properties{
 		values: map[Property]interface{}{
 			Command: "echo hello",
@@ -24,6 +25,7 @@ func TestExecuteCommand(t *testing.T) {
 
 func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
 	env := &environment{}
+	env.init(nil)
 	props := &properties{
 		values: map[Property]interface{}{
 			Command: "exit 1 || echo hello",
@@ -40,6 +42,7 @@ func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
 
 func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
 	env := &environment{}
+	env.init(nil)
 	props := &properties{
 		values: map[Property]interface{}{
 			Command: "echo hello || echo world",
@@ -56,6 +59,7 @@ func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
 
 func TestExecuteMultipleCommandsAnd(t *testing.T) {
 	env := &environment{}
+	env.init(nil)
 	props := &properties{
 		values: map[Property]interface{}{
 			Command: "echo hello && echo world",
@@ -72,6 +76,7 @@ func TestExecuteMultipleCommandsAnd(t *testing.T) {
 
 func TestExecuteSingleCommandEmpty(t *testing.T) {
 	env := &environment{}
+	env.init(nil)
 	props := &properties{
 		values: map[Property]interface{}{
 			Command: "",
@@ -87,6 +92,7 @@ func TestExecuteSingleCommandEmpty(t *testing.T) {
 
 func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
 	env := &environment{}
+	env.init(nil)
 	props := &properties{}
 	c := &command{
 		props: props,
@@ -99,6 +105,7 @@ func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
 
 func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
 	env := &environment{}
+	env.init(nil)
 	props := &properties{
 		values: map[Property]interface{}{
 			Command: "echo && echo",
@@ -114,6 +121,7 @@ func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
 
 func TestExecuteMultipleCommandsOrDisabled(t *testing.T) {
 	env := &environment{}
+	env.init(nil)
 	props := &properties{
 		values: map[Property]interface{}{
 			Command: "echo|| echo",

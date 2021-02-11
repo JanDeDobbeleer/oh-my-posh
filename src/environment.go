@@ -10,12 +10,12 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/distatus/battery"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/process"
-	"github.com/xaionaro-go/atomicmap"
 )
 
 const (
@@ -65,14 +65,41 @@ type environmentInfo interface {
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 }
 
-type environment struct {
-	args *args
-	cwd  string
+type commandCache struct {
+	commands map[string]string
+	lock     sync.Mutex
 }
 
-var (
-	commands atomicmap.Map = atomicmap.New()
-)
+func (c *commandCache) set(command, path string) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	c.commands[command] = path
+}
+
+func (c *commandCache) get(command string) (string, bool) {
+	c.lock.Lock()
+	defer c.lock.Unlock()
+	if cmd, ok := c.commands[command]; ok {
+		command = cmd
+		return command, true
+	}
+	return "", false
+}
+
+type environment struct {
+	args     *args
+	cwd      string
+	cmdCache *commandCache
+}
+
+func (env *environment) init(args *args) {
+	env.args = args
+	cmdCache := &commandCache{
+		commands: make(map[string]string),
+		lock:     sync.Mutex{},
+	}
+	env.cmdCache = cmdCache
+}
 
 func (env *environment) getenv(key string) string {
 	return os.Getenv(key)
@@ -164,8 +191,8 @@ func (env *environment) getPlatform() string {
 }
 
 func (env *environment) runCommand(command string, args ...string) (string, error) {
-	if cmd, err := commands.Get(command); err == nil {
-		command = cmd.(string)
+	if cmd, ok := env.cmdCache.get(command); ok {
+		command = cmd
 	}
 	out, err := exec.Command(command, args...).Output()
 	if err != nil {
@@ -185,14 +212,12 @@ func (env *environment) runShellCommand(shell, command string) string {
 }
 
 func (env *environment) hasCommand(command string) bool {
-	if _, err := commands.Get(command); err == nil {
+	if _, ok := env.cmdCache.get(command); ok {
 		return true
 	}
 	path, err := exec.LookPath(command)
 	if err == nil {
-		// the error implies we failed to cache the path
-		// ignoring it only affects the path caching, not the functionality
-		_ = commands.Set(command, path)
+		env.cmdCache.set(command, path)
 		return true
 	}
 	return false

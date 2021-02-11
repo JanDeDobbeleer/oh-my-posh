@@ -100,9 +100,8 @@ func main() {
 			"Print the shell initialization script"),
 	}
 	flag.Parse()
-	env := &environment{
-		args: args,
-	}
+	env := &environment{}
+	env.init(args)
 	if *args.Millis {
 		fmt.Print(time.Now().UnixNano() / 1000000)
 		return

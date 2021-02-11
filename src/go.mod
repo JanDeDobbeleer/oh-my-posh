@@ -15,7 +15,6 @@ require (
 	github.com/shirou/gopsutil v2.20.9+incompatible
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.6.1
-	github.com/xaionaro-go/atomicmap v0.0.0-20200307233044-c040bc137895
 	golang.org/x/sys v0.0.0-20201015000850-e3ed0017c211
 	golang.org/x/text v0.3.3
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect

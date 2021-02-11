@@ -7,45 +7,65 @@ import (
 )
 
 type kubectlArgs struct {
-	enabled     bool
-	contextName string
+	kubectlExists bool
+	kubectlErr    bool
+	template      string
+	context       string
+	namespace     string
 }
 
 func bootStrapKubectlTest(args *kubectlArgs) *kubectl {
 	env := new(MockedEnvironment)
-	env.On("hasCommand", "kubectl").Return(args.enabled)
-	env.On("runCommand", "kubectl", []string{"config", "current-context"}).Return(args.contextName, nil)
+	env.On("hasCommand", "kubectl").Return(args.kubectlExists)
+	kubectlOut := args.context + "," + args.namespace
+	var kubectlErr error = nil
+	if args.kubectlErr {
+		kubectlErr = &commandError{
+			err:      "oops",
+			exitCode: 1,
+		}
+	}
+	env.On("runCommand", "kubectl", []string{"config", "view", "--minify", "--output", "jsonpath={..current-context},{..namespace}"}).Return(kubectlOut, kubectlErr)
 	k := &kubectl{
-		env:   env,
-		props: &properties{},
+		env: env,
+		props: &properties{
+			values: map[Property]interface{}{
+				SegmentTemplate: args.template,
+			},
+		},
 	}
 	return k
 }
 
-func TestKubectlWriterDisabled(t *testing.T) {
-	args := &kubectlArgs{
-		enabled: false,
+func TestKubectlSegment(t *testing.T) {
+	standardTemplate := "{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}"
+	cases := []struct {
+		Case            string
+		Template        string
+		KubectlExists   bool
+		Context         string
+		Namespace       string
+		KubectlErr      bool
+		ExpectedEnabled bool
+		ExpectedString  string
+	}{
+		{Case: "disabled", Template: standardTemplate, KubectlExists: false, Context: "aaa", Namespace: "bbb", ExpectedString: "", ExpectedEnabled: false},
+		{Case: "normal", Template: standardTemplate, KubectlExists: true, Context: "aaa", Namespace: "bbb", ExpectedString: "aaa :: bbb", ExpectedEnabled: true},
+		{Case: "no namespace", Template: standardTemplate, KubectlExists: true, Context: "aaa", Namespace: "", ExpectedString: "aaa", ExpectedEnabled: true},
+		{Case: "kubectl error", Template: standardTemplate, KubectlExists: true, Context: "aaa", Namespace: "bbb", KubectlErr: true,
+			ExpectedString: "KUBECTL ERR :: KUBECTL ERR", ExpectedEnabled: true},
 	}
-	kubectl := bootStrapKubectlTest(args)
-	assert.False(t, kubectl.enabled())
-}
 
-func TestKubectlEnabled(t *testing.T) {
-	expected := "context-name"
-	args := &kubectlArgs{
-		enabled:     true,
-		contextName: expected,
+	for _, tc := range cases {
+		args := &kubectlArgs{
+			kubectlExists: tc.KubectlExists,
+			template:      tc.Template,
+			context:       tc.Context,
+			namespace:     tc.Namespace,
+			kubectlErr:    tc.KubectlErr,
+		}
+		kubectl := bootStrapKubectlTest(args)
+		assert.Equal(t, tc.ExpectedEnabled, kubectl.enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedString, kubectl.string(), tc.Case)
 	}
-	kubectl := bootStrapKubectlTest(args)
-	assert.True(t, kubectl.enabled())
-	assert.Equal(t, expected, kubectl.string())
-}
-
-func TestKubectlNoContext(t *testing.T) {
-	args := &kubectlArgs{
-		enabled:     true,
-		contextName: "",
-	}
-	kubectl := bootStrapKubectlTest(args)
-	assert.False(t, kubectl.enabled())
 }

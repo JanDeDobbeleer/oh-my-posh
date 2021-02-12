@@ -718,6 +718,12 @@
                 "properties": {
                   "template": {
                     "$ref": "#/definitions/template"
+                  },
+                  "display_error": {
+                    "type": "boolean",
+                    "title": "Display Error",
+                    "description": "Show the error context when failing to retrieve the kubectl information",
+                    "default": false
                   }
                 }
               }

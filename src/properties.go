@@ -25,6 +25,8 @@ const (
 	AlwaysEnabled Property = "always_enabled"
 	// SegmentTemplate is the template to use to render the information
 	SegmentTemplate Property = "template"
+	// DisplayError to display when an error occurs or not
+	DisplayError Property = "display_error"
 )
 
 type properties struct {

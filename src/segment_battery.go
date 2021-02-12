@@ -16,8 +16,6 @@ type batt struct {
 const (
 	// BatteryIcon to display in front of the battery
 	BatteryIcon Property = "battery_icon"
-	// DisplayError to display when an error occurs or not
-	DisplayError Property = "display_error"
 	// ChargingIcon to display when charging
 	ChargingIcon Property = "charging_icon"
 	// DischargingIcon o display when discharging

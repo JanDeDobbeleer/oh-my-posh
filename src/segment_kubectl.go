@@ -31,10 +31,14 @@ func (k *kubectl) enabled() bool {
 		return false
 	}
 	result, err := k.env.runCommand(cmd, "config", "view", "--minify", "--output", "jsonpath={..current-context},{..namespace}")
-	if err != nil {
+	displayError := k.props.getBool(DisplayError, false)
+	if err != nil && displayError {
 		k.Context = "KUBECTL ERR"
 		k.Namespace = k.Context
 		return true
+	}
+	if err != nil {
+		return false
 	}
 
 	values := strings.Split(result, ",")

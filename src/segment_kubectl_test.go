@@ -10,6 +10,7 @@ type kubectlArgs struct {
 	kubectlExists bool
 	kubectlErr    bool
 	template      string
+	displayError  bool
 	context       string
 	namespace     string
 }
@@ -31,6 +32,7 @@ func bootStrapKubectlTest(args *kubectlArgs) *kubectl {
 		props: &properties{
 			values: map[Property]interface{}{
 				SegmentTemplate: args.template,
+				DisplayError:    args.displayError,
 			},
 		},
 	}
@@ -42,6 +44,7 @@ func TestKubectlSegment(t *testing.T) {
 	cases := []struct {
 		Case            string
 		Template        string
+		DisplayError    bool
 		KubectlExists   bool
 		Context         string
 		Namespace       string
@@ -52,14 +55,17 @@ func TestKubectlSegment(t *testing.T) {
 		{Case: "disabled", Template: standardTemplate, KubectlExists: false, Context: "aaa", Namespace: "bbb", ExpectedString: "", ExpectedEnabled: false},
 		{Case: "normal", Template: standardTemplate, KubectlExists: true, Context: "aaa", Namespace: "bbb", ExpectedString: "aaa :: bbb", ExpectedEnabled: true},
 		{Case: "no namespace", Template: standardTemplate, KubectlExists: true, Context: "aaa", Namespace: "", ExpectedString: "aaa", ExpectedEnabled: true},
-		{Case: "kubectl error", Template: standardTemplate, KubectlExists: true, Context: "aaa", Namespace: "bbb", KubectlErr: true,
+		{Case: "kubectl error", Template: standardTemplate, DisplayError: true, KubectlExists: true, Context: "aaa", Namespace: "bbb", KubectlErr: true,
 			ExpectedString: "KUBECTL ERR :: KUBECTL ERR", ExpectedEnabled: true},
+		{Case: "kubectl error hidden", Template: standardTemplate, DisplayError: false, KubectlExists: true, Context: "aaa", Namespace: "bbb", KubectlErr: true,
+			ExpectedString: "", ExpectedEnabled: false},
 	}
 
 	for _, tc := range cases {
 		args := &kubectlArgs{
 			kubectlExists: tc.KubectlExists,
 			template:      tc.Template,
+			displayError:  tc.DisplayError,
 			context:       tc.Context,
 			namespace:     tc.Namespace,
 			kubectlErr:    tc.KubectlErr,

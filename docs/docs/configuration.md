@@ -69,8 +69,8 @@ boxes with question marks, [set up your terminal][setupterm] to use a supported 
 
 You can create a more custom console title with the use of `"console_title_style" = "template"`.
 When this is set, a `console_title_template` is also expected, otherwise the title will remain empty.
-Under the hood this uses go's [text/template][go-text-template] feature and offers a few standard
-properties to work with.
+Under the hood this uses go's [text/template][go-text-template] feature extended with [sprig][sprig] and
+offers a few standard properties to work with.
 
 - `.Root`: `boolean` - is the current user root/admin or not
 - `.Path`: `string` - the current working directory
@@ -407,3 +407,4 @@ has to be enabled at the segment level. Hyperlink generation is disabled by defa
 [path-segment]: /docs/path
 [terminal-list-hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
 [go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

@@ -53,6 +53,18 @@ func TestRenderTemplate(t *testing.T) {
 				Text2: "world",
 			},
 		},
+		{
+			Case:     "sprig - contains",
+			Expected: "hello world",
+			Template: "{{ if contains \"hell\" .Text }}{{.Text}} {{end}}{{.Text2}}",
+			Context: struct {
+				Text  string
+				Text2 string
+			}{
+				Text:  "hello",
+				Text2: "world",
+			},
+		},
 	}
 
 	for _, tc := range cases {

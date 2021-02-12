@@ -26,8 +26,8 @@ Display the currently active Kubernetes context name and namespace name.
 
 ## Properties
 
-- template: `string` - A go [text/template][go-text-template] template utilizing the properties below.
-Defaults to `{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}`
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}`
 
 ## Template Properties
 
@@ -42,3 +42,4 @@ It is common for the Kubernetes "default" namespace to be used when no namespace
 `{{.Context}} :: {{if .Namespace}}{{.Namespace}}{{else}}default{{end}}`
 
 [go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

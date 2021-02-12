@@ -30,6 +30,12 @@
       "description": "The string to display when the command is not available",
       "default": ""
     },
+    "template": {
+      "type": "string",
+      "title": "Template text",
+      "description": "The template to use to render the segment text",
+      "default": ""
+    },
     "block": {
       "type": "object",
       "description": "https://ohmyposh.dev/docs/configure#block",
@@ -137,7 +143,8 @@
             "julia",
             "ruby",
             "ytm",
-            "executiontime"
+            "executiontime",
+            "aws"
           ]
         },
         "style": {
@@ -705,7 +712,36 @@
           },
           "then": {
             "title": "Kubectl Segment",
-            "description": "https://ohmyposh.dev/docs/kubectl"
+            "description": "https://ohmyposh.dev/docs/kubectl",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "aws" }
+            }
+          },
+          "then": {
+            "title": "AWS Segment",
+            "description": "https://ohmyposh.dev/docs/aws",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  }
+                }
+              }
+            }
           }
         },
         {

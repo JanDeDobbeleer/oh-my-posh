@@ -9,6 +9,7 @@ module.exports = {
       type: "category",
       label: "Segments",
       items: [
+        "aws",
         "az",
         "battery",
         "command",

@@ -38,7 +38,7 @@ func (e *engine) getPowerlineColor(foreground bool) string {
 	if foreground && e.previousActiveSegment.Style != Powerline {
 		return Transparent
 	}
-	return e.previousActiveSegment.Background
+	return e.previousActiveSegment.background()
 }
 
 func (e *engine) writePowerLineSeparator(background, foreground string, end bool) {
@@ -58,12 +58,12 @@ func (e *engine) endPowerline() {
 		e.activeSegment.Style != Powerline &&
 		e.previousActiveSegment != nil &&
 		e.previousActiveSegment.Style == Powerline {
-		e.writePowerLineSeparator(e.getPowerlineColor(false), e.previousActiveSegment.Background, true)
+		e.writePowerLineSeparator(e.getPowerlineColor(false), e.previousActiveSegment.background(), true)
 	}
 }
 
 func (e *engine) renderPowerLineSegment(text string) {
-	e.writePowerLineSeparator(e.activeSegment.Background, e.getPowerlineColor(true), false)
+	e.writePowerLineSeparator(e.activeSegment.background(), e.getPowerlineColor(true), false)
 	e.renderText(text)
 }
 
@@ -72,22 +72,22 @@ func (e *engine) renderPlainSegment(text string) {
 }
 
 func (e *engine) renderDiamondSegment(text string) {
-	e.color.write(Transparent, e.activeSegment.Background, e.activeSegment.LeadingDiamond)
+	e.color.write(Transparent, e.activeSegment.background(), e.activeSegment.LeadingDiamond)
 	e.renderText(text)
-	e.color.write(Transparent, e.activeSegment.Background, e.activeSegment.TrailingDiamond)
+	e.color.write(Transparent, e.activeSegment.background(), e.activeSegment.TrailingDiamond)
 }
 
 func (e *engine) renderText(text string) {
 	defaultValue := " "
-	if e.activeSegment.Background != "" {
-		defaultValue = fmt.Sprintf("<%s>\u2588</>", e.activeSegment.Background)
+	if e.activeSegment.background() != "" {
+		defaultValue = fmt.Sprintf("<%s>\u2588</>", e.activeSegment.background())
 	}
 
 	text = e.color.formats.generateHyperlink(text)
 
 	prefix := e.activeSegment.getValue(Prefix, defaultValue)
 	postfix := e.activeSegment.getValue(Postfix, defaultValue)
-	e.color.write(e.activeSegment.Background, e.activeSegment.Foreground, fmt.Sprintf("%s%s%s", prefix, text, postfix))
+	e.color.write(e.activeSegment.background(), e.activeSegment.foreground(), fmt.Sprintf("%s%s%s", prefix, text, postfix))
 }
 
 func (e *engine) renderSegmentText(text string) {
@@ -112,12 +112,10 @@ func (e *engine) renderBlockSegments(block *Block) string {
 		}
 		e.activeSegment = segment
 		e.endPowerline()
-		e.activeSegment.Background = segment.props.background
-		e.activeSegment.Foreground = segment.props.foreground
 		e.renderSegmentText(segment.stringValue)
 	}
 	if e.previousActiveSegment != nil && e.previousActiveSegment.Style == Powerline {
-		e.writePowerLineSeparator(Transparent, e.previousActiveSegment.Background, true)
+		e.writePowerLineSeparator(Transparent, e.previousActiveSegment.background(), true)
 	}
 	return e.color.string()
 }
@@ -211,11 +209,9 @@ func (e *engine) debug() {
 				segmentTiming.stringDuration = time.Since(start)
 				e.previousActiveSegment = nil
 				e.activeSegment = segment
-				e.activeSegment.Background = segment.props.background
-				e.activeSegment.Foreground = segment.props.foreground
 				e.renderSegmentText(segmentTiming.stringValue)
 				if e.activeSegment.Style == Powerline {
-					e.writePowerLineSeparator(Transparent, e.activeSegment.Background, true)
+					e.writePowerLineSeparator(Transparent, e.activeSegment.background(), true)
 				}
 				segmentTiming.stringValue = e.color.string()
 				e.color.builder.Reset()

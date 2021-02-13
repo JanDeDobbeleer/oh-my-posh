@@ -7,19 +7,21 @@ import (
 
 // Segment represent a single segment and it's configuration
 type Segment struct {
-	Type            SegmentType              `json:"type"`
-	Style           SegmentStyle             `json:"style"`
-	PowerlineSymbol string                   `json:"powerline_symbol"`
-	InvertPowerline bool                     `json:"invert_powerline"`
-	Foreground      string                   `json:"foreground"`
-	Background      string                   `json:"background"`
-	LeadingDiamond  string                   `json:"leading_diamond"`
-	TrailingDiamond string                   `json:"trailing_diamond"`
-	Properties      map[Property]interface{} `json:"properties"`
-	props           *properties
-	writer          SegmentWriter
-	stringValue     string
-	active          bool
+	Type                SegmentType              `json:"type"`
+	Style               SegmentStyle             `json:"style"`
+	PowerlineSymbol     string                   `json:"powerline_symbol"`
+	InvertPowerline     bool                     `json:"invert_powerline"`
+	Foreground          string                   `json:"foreground"`
+	ForegroundTemplates []string                 `json:"foreground_templates"`
+	Background          string                   `json:"background"`
+	BackgroundTemplates []string                 `json:"background_templates"`
+	LeadingDiamond      string                   `json:"leading_diamond"`
+	TrailingDiamond     string                   `json:"trailing_diamond"`
+	Properties          map[Property]interface{} `json:"properties"`
+	props               *properties
+	writer              SegmentWriter
+	stringValue         string
+	active              bool
 }
 
 // SegmentWriter is the interface used to define what and if to write to the prompt
@@ -121,6 +123,40 @@ func (segment *Segment) shouldIgnoreFolder(cwd string) bool {
 		return false
 	}
 	return false
+}
+
+func (segment *Segment) getColor(templates []string, defaultColor string) string {
+	if len(templates) == 0 {
+		return defaultColor
+	}
+	txtTemplate := &textTemplate{
+		Context: segment.writer,
+	}
+	for _, template := range templates {
+		txtTemplate.Template = template
+		value := txtTemplate.render()
+		if value == "" {
+			continue
+		}
+		return value
+	}
+	return defaultColor
+}
+
+func (segment *Segment) foreground() string {
+	color := segment.Foreground
+	if segment.props != nil {
+		color = segment.props.foreground
+	}
+	return segment.getColor(segment.ForegroundTemplates, color)
+}
+
+func (segment *Segment) background() string {
+	color := segment.Background
+	if segment.props != nil {
+		color = segment.props.background
+	}
+	return segment.getColor(segment.BackgroundTemplates, color)
 }
 
 func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {

@@ -60,8 +60,9 @@ func (s *session) getFormattedText() string {
 	if s.activeSSHSession() {
 		ssh = s.props.getString(SSHIcon, "\uF817 ")
 	}
-	userColor := s.props.getColor(UserColor, s.props.foreground)
-	hostColor := s.props.getColor(HostColor, s.props.foreground)
+	//TODO: fix this
+	userColor := s.props.getColor(UserColor, "")
+	hostColor := s.props.getColor(HostColor, "")
 	return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", ssh, userColor, username, separator, hostColor, computername)
 }
 

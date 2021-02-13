@@ -86,8 +86,6 @@ const (
 	DisplayModeContext string = "context"
 	// MissingCommandText sets the text to display when the command is not present in the system
 	MissingCommandText Property = "missing_command_text"
-	// VersionMismatchColor displays empty string by default
-	VersionMismatchColor Property = "version_mismatch_color"
 	// EnableVersionMismatch displays empty string by default
 	EnableVersionMismatch Property = "enable_version_mismatch"
 )
@@ -181,9 +179,4 @@ func (l *language) setVersionFileMismatch() {
 	if l.matchesVersionFile == nil || l.matchesVersionFile() {
 		return
 	}
-	if l.props.getBool(ColorBackground, false) {
-		l.props.background = l.props.getColor(VersionMismatchColor, l.props.background)
-		return
-	}
-	l.props.foreground = l.props.getColor(VersionMismatchColor, l.props.foreground)
 }

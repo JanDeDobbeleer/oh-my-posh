@@ -125,12 +125,8 @@ func getDefaultSettings(info string) *Settings {
 						Background:      "#f36943",
 						Foreground:      "#193549",
 						Properties: map[Property]interface{}{
-							BatteryIcon:      "",
-							ColorBackground:  true,
-							ChargedColor:     "#4caf50",
-							ChargingColor:    "#40c4ff",
-							DischargingColor: "#ff5722",
-							Postfix:          "\uF295 ",
+							BatteryIcon: "",
+							Postfix:     "\uF295 ",
 						},
 					},
 					{
@@ -182,8 +178,6 @@ func getDefaultSettings(info string) *Settings {
 						Properties: map[Property]interface{}{
 							DisplayExitCode: false,
 							AlwaysEnabled:   true,
-							ErrorColor:      "#f1184c",
-							ColorBackground: true,
 							Prefix:          "<transparent>\uE0B0</> \uE23A",
 						},
 					},

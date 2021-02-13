@@ -10,9 +10,7 @@ func TestOsInfo(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("getRuntimeGOOS", nil).Return("windows")
 	props := &properties{
-		values:     map[Property]interface{}{Windows: "win"},
-		foreground: "#fff",
-		background: "#000",
+		values: map[Property]interface{}{Windows: "win"},
 	}
 	osInfo := &osInfo{
 		env:   env,

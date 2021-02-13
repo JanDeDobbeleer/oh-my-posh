@@ -15,8 +15,6 @@ const (
 	Prefix Property = "prefix"
 	// Postfix adds a text postfix to the segment
 	Postfix Property = "postfix"
-	// ColorBackground color the background or foreground when a specific color is set
-	ColorBackground Property = "color_background"
 	// IgnoreFolders folders to ignore and not run the segment logic
 	IgnoreFolders Property = "ignore_folders"
 	// DisplayVersion show the version number or not
@@ -30,9 +28,7 @@ const (
 )
 
 type properties struct {
-	values     map[Property]interface{}
-	foreground string
-	background string
+	values map[Property]interface{}
 }
 
 func (p *properties) getString(property Property, defaultValue string) string {

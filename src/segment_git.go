@@ -100,16 +100,6 @@ const (
 	WorkingColor Property = "working_color"
 	// StagingColor if set, the color to use on the staging area
 	StagingColor Property = "staging_color"
-	// StatusColorsEnabled enables status colors
-	StatusColorsEnabled Property = "status_colors_enabled"
-	// LocalChangesColor if set, the color to use when there are local changes
-	LocalChangesColor Property = "local_changes_color"
-	// AheadAndBehindColor if set, the color to use when the branch is ahead and behind the remote
-	AheadAndBehindColor Property = "ahead_and_behind_color"
-	// BehindColor if set, the color to use when the branch is ahead and behind the remote
-	BehindColor Property = "behind_color"
-	// AheadColor if set, the color to use when the branch is ahead and behind the remote
-	AheadColor Property = "ahead_color"
 
 	gitCommand = "git"
 )
@@ -140,9 +130,6 @@ func (g *git) enabled() bool {
 
 func (g *git) string() string {
 	g.setGitStatus()
-	if g.props.getBool(StatusColorsEnabled, false) {
-		g.SetStatusColor()
-	}
 	buffer := new(bytes.Buffer)
 	// branchName
 	if g.repo.upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
@@ -188,7 +175,7 @@ func (g *git) init(props *properties, env environmentInfo) {
 
 func (g *git) getStatusDetailString(status *gitStatus, color, icon Property, defaultIcon string) string {
 	prefix := g.props.getString(icon, defaultIcon)
-	foregroundColor := g.props.getColor(color, g.props.foreground)
+	foregroundColor := g.props.getColor(color, "")
 	if !g.props.getBool(DisplayStatusDetail, true) {
 		return g.colorStatusString(prefix, "", foregroundColor)
 	}
@@ -196,7 +183,7 @@ func (g *git) getStatusDetailString(status *gitStatus, color, icon Property, def
 }
 
 func (g *git) colorStatusString(prefix, status, color string) string {
-	if color == g.props.foreground {
+	if color == "" {
 		return fmt.Sprintf("%s%s", prefix, status)
 	}
 	if strings.Contains(prefix, "</>") {
@@ -237,27 +224,6 @@ func (g *git) setGitStatus() {
 	if g.props.getBool(DisplayStashCount, false) {
 		g.repo.stashCount = g.getStashContext()
 	}
-}
-
-func (g *git) SetStatusColor() {
-	if g.props.getBool(ColorBackground, true) {
-		g.props.background = g.getStatusColor(g.props.background)
-	} else {
-		g.props.foreground = g.getStatusColor(g.props.foreground)
-	}
-}
-
-func (g *git) getStatusColor(defaultValue string) string {
-	if g.repo.staging.changed || g.repo.working.changed {
-		return g.props.getColor(LocalChangesColor, defaultValue)
-	} else if g.repo.ahead > 0 && g.repo.behind > 0 {
-		return g.props.getColor(AheadAndBehindColor, defaultValue)
-	} else if g.repo.ahead > 0 {
-		return g.props.getColor(AheadColor, defaultValue)
-	} else if g.repo.behind > 0 {
-		return g.props.getColor(BehindColor, defaultValue)
-	}
-	return defaultValue
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {

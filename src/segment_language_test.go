@@ -401,22 +401,18 @@ func TestLanguageHyperlinkEnabledMoreParamInTemplate(t *testing.T) {
 
 func TestLanguageVersionMismatch(t *testing.T) {
 	cases := []struct {
-		Case            string
-		Enabled         bool
-		Mismatch        bool
-		ExpectedColor   string
-		ColorBackground bool
+		Case     string
+		Enabled  bool
+		Mismatch bool
 	}{
 		{Case: "Disabled", Enabled: false},
-		{Case: "Mismatch - Foreground color", Enabled: true, Mismatch: true, ExpectedColor: "#566777"},
-		{Case: "Mismatch - Background color", Enabled: true, Mismatch: true, ExpectedColor: "#566777", ColorBackground: true},
+		{Case: "Mismatch - Foreground color", Enabled: true, Mismatch: true},
+		{Case: "Mismatch - Background color", Enabled: true, Mismatch: true},
 		{Case: "No mismatch", Enabled: true, Mismatch: false},
 	}
 	for _, tc := range cases {
 		props := map[Property]interface{}{
 			EnableVersionMismatch: tc.Enabled,
-			VersionMismatchColor:  tc.ExpectedColor,
-			ColorBackground:       tc.ColorBackground,
 		}
 		var matchesVersionFile func() bool
 		switch tc.Mismatch {
@@ -447,10 +443,5 @@ func TestLanguageVersionMismatch(t *testing.T) {
 		lang := bootStrapLanguageTest(args)
 		assert.True(t, lang.enabled(), tc.Case)
 		assert.Equal(t, universion, lang.string(), tc.Case)
-		if tc.ColorBackground {
-			assert.Equal(t, tc.ExpectedColor, lang.props.background, tc.Case)
-			return
-		}
-		assert.Equal(t, tc.ExpectedColor, lang.props.foreground, tc.Case)
 	}
 }

@@ -11,8 +11,8 @@ type Segment struct {
 	Style           SegmentStyle             `json:"style"`
 	PowerlineSymbol string                   `json:"powerline_symbol"`
 	InvertPowerline bool                     `json:"invert_powerline"`
-	Foreground      string                   `json:"foreground"`
-	Background      string                   `json:"background"`
+	Foreground      interface{}              `json:"foreground"`
+	Background      interface{}              `json:"background"`
 	LeadingDiamond  string                   `json:"leading_diamond"`
 	TrailingDiamond string                   `json:"trailing_diamond"`
 	Properties      map[Property]interface{} `json:"properties"`
@@ -123,6 +123,38 @@ func (segment *Segment) shouldIgnoreFolder(cwd string) bool {
 	return false
 }
 
+func (segment *Segment) getColor(color interface{}) string {
+	// what should the default be?
+	defaultColor := "#ffffff"
+	switch v := color.(type) {
+	case []string:
+		txtTemplate := &textTemplate{
+			Context: segment.writer,
+		}
+		for _, template := range v {
+			txtTemplate.Template = template
+			value := txtTemplate.render()
+			if value == "" {
+				continue
+			}
+			return value
+		}
+		return defaultColor
+	case string:
+		return v
+	default:
+		return defaultColor
+	}
+}
+
+func (segment *Segment) foreground() string {
+	return segment.getColor(segment.Foreground)
+}
+
+func (segment *Segment) background() string {
+	return segment.getColor(segment.Background)
+}
+
 func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 	functions := map[SegmentType]SegmentWriter{
 		Session:       &session{},
@@ -153,9 +185,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{
-			values:     segment.Properties,
-			foreground: segment.Foreground,
-			background: segment.Background,
+			values: segment.Properties,
 		}
 		writer.init(props, env)
 		segment.writer = writer

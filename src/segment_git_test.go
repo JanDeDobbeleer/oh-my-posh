@@ -443,161 +443,14 @@ func TestGetUpstreamSymbolGit(t *testing.T) {
 	assert.Equal(t, "G", upstreamIcon)
 }
 
-func TestGetStatusColorLocalChangesStaging(t *testing.T) {
-	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{
-			changed: true,
-		},
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				LocalChangesColor: expected,
-			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
-}
-
-func TestGetStatusColorLocalChangesWorking(t *testing.T) {
-	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{},
-		working: &gitStatus{
-			changed: true,
-		},
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				LocalChangesColor: expected,
-			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
-}
-
-func TestGetStatusColorAheadAndBehind(t *testing.T) {
-	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{},
-		working: &gitStatus{},
-		ahead:   1,
-		behind:  3,
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				AheadAndBehindColor: expected,
-			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
-}
-
-func TestGetStatusColorAhead(t *testing.T) {
-	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{},
-		working: &gitStatus{},
-		ahead:   1,
-		behind:  0,
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				AheadColor: expected,
-			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
-}
-
-func TestGetStatusColorBehind(t *testing.T) {
-	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{},
-		working: &gitStatus{},
-		ahead:   0,
-		behind:  5,
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				BehindColor: expected,
-			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
-}
-
-func TestGetStatusColorDefault(t *testing.T) {
-	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{},
-		working: &gitStatus{},
-		ahead:   0,
-		behind:  0,
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				BehindColor: changesColor,
-			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor(expected))
-}
-
 func TestSetStatusColorBackground(t *testing.T) {
 	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{
-			changed: true,
-		},
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				LocalChangesColor: changesColor,
-				ColorBackground:   false,
-			},
-			foreground: "#ffffff",
-			background: "#111111",
-		},
-	}
-	g.SetStatusColor()
-	assert.Equal(t, expected, g.props.foreground)
+	assert.Equal(t, expected, "")
 }
 
 func TestSetStatusColorForeground(t *testing.T) {
 	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{
-			changed: true,
-		},
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				LocalChangesColor: changesColor,
-				ColorBackground:   true,
-			},
-			foreground: "#ffffff",
-			background: "#111111",
-		},
-	}
-	g.SetStatusColor()
-	assert.Equal(t, expected, g.props.background)
+	assert.Equal(t, expected, "")
 }
 
 func TestGetStatusDetailStringDefault(t *testing.T) {
@@ -606,11 +459,7 @@ func TestGetStatusDetailStringDefault(t *testing.T) {
 		changed: true,
 		added:   1,
 	}
-	g := &git{
-		props: &properties{
-			foreground: "#111111",
-		},
-	}
+	g := &git{}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
 
@@ -625,7 +474,6 @@ func TestGetStatusDetailStringDefaultColorOverride(t *testing.T) {
 			values: map[Property]interface{}{
 				WorkingColor: "#123456",
 			},
-			foreground: "#111111",
 		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
@@ -643,7 +491,6 @@ func TestGetStatusDetailStringDefaultColorOverrideAndIconColorOverride(t *testin
 				WorkingColor:     "#123456",
 				LocalWorkingIcon: "<#789123>work</>",
 			},
-			foreground: "#111111",
 		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
@@ -661,7 +508,6 @@ func TestGetStatusDetailStringDefaultColorOverrideNoIconColorOverride(t *testing
 				WorkingColor:     "#123456",
 				LocalWorkingIcon: "work",
 			},
-			foreground: "#111111",
 		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
@@ -678,7 +524,6 @@ func TestGetStatusDetailStringNoStatus(t *testing.T) {
 			values: map[Property]interface{}{
 				DisplayStatusDetail: false,
 			},
-			foreground: "#111111",
 		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
@@ -696,7 +541,6 @@ func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
 				DisplayStatusDetail: false,
 				WorkingColor:        "#123456",
 			},
-			foreground: "#111111",
 		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))

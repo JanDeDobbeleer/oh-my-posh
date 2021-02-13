@@ -28,8 +28,6 @@ func setupSession(args *sessionArgs) session {
 			UserInfoSeparator: args.userInfoSeparator,
 			SSHIcon:           args.sshIcon,
 		},
-		foreground: "#fff",
-		background: "#000",
 	}
 	s := session{
 		env:   env,

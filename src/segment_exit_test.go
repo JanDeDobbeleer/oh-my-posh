@@ -49,8 +49,6 @@ func TestExitWriterFormattedText(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("lastErrorCode", nil).Return(tc.ExitCode)
 		props := &properties{
-			foreground: "#111111",
-			background: "#ffffff",
 			values: map[Property]interface{}{
 				SuccessIcon:     tc.SuccessIcon,
 				ErrorIcon:       tc.ErrorIcon,

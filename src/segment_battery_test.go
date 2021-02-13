@@ -61,61 +61,49 @@ func TestBatteryDischarging(t *testing.T) {
 func TestBatteryBackgroundColor(t *testing.T) {
 	expected := expectedColor
 	props := &properties{
-		background: "#111111",
 		values: map[Property]interface{}{
-			DischargingIcon:  "going down ",
-			ColorBackground:  true,
-			DischargingColor: expected,
+			DischargingIcon: "going down ",
 		},
 	}
 	b := setupBatteryTests(battery.Discharging, 70, props)
 	b.string()
-	assert.Equal(t, expected, props.background)
+	assert.Equal(t, expected, "")
 }
 
 func TestBatteryBackgroundColorInvalid(t *testing.T) {
 	expected := expectedColor
 	props := &properties{
-		background: expected,
 		values: map[Property]interface{}{
-			DischargingIcon:  "going down ",
-			ColorBackground:  true,
-			DischargingColor: "derp",
+			DischargingIcon: "going down ",
 		},
 	}
 	b := setupBatteryTests(battery.Discharging, 70, props)
 	b.string()
-	assert.Equal(t, expected, props.background)
+	assert.Equal(t, expected, "")
 }
 
 func TestBatteryForegroundColor(t *testing.T) {
 	expected := expectedColor
 	props := &properties{
-		foreground: "#111111",
 		values: map[Property]interface{}{
-			DischargingIcon:  "going down ",
-			ColorBackground:  false,
-			DischargingColor: expected,
+			DischargingIcon: "going down ",
 		},
 	}
 	b := setupBatteryTests(battery.Discharging, 70, props)
 	b.string()
-	assert.Equal(t, expected, props.foreground)
+	assert.Equal(t, expected, "")
 }
 
 func TestBatteryForegroundColorInvalid(t *testing.T) {
 	expected := expectedColor
 	props := &properties{
-		foreground: expected,
 		values: map[Property]interface{}{
-			DischargingIcon:  "going down ",
-			ColorBackground:  false,
-			DischargingColor: "derp",
+			DischargingIcon: "going down ",
 		},
 	}
 	b := setupBatteryTests(battery.Discharging, 70, props)
 	b.string()
-	assert.Equal(t, expected, props.foreground)
+	assert.Equal(t, expected, "")
 }
 
 func TestBatteryError(t *testing.T) {

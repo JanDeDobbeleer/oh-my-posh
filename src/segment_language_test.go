@@ -261,6 +261,24 @@ func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 	assert.Equal(t, expected, lang.string(), "unicorn is available and uni and corn files are found")
 }
 
+func TestLanguageEnabledMissingCommandCustomTextHideError(t *testing.T) {
+	props := map[Property]interface{}{
+		MissingCommandText: "missing",
+		DisplayError:       false,
+	}
+	args := &languageArgs{
+		commands:          []*cmd{},
+		extensions:        []string{uni, corn},
+		enabledExtensions: []string{uni, corn},
+		enabledCommands:   []string{"unicorn"},
+		version:           universion,
+		properties:        props,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.enabled())
+	assert.Equal(t, "", lang.string())
+}
+
 func TestLanguageEnabledCommandExitCode(t *testing.T) {
 	expected := 200
 	args := &languageArgs{

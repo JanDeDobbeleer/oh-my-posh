@@ -23,6 +23,7 @@ type ansiFormats struct {
 	escapeLeft            string
 	escapeRight           string
 	hyperlink             string
+	osc99                 string
 }
 
 func (a *ansiFormats) init(shell string) {
@@ -43,6 +44,7 @@ func (a *ansiFormats) init(shell string) {
 		a.escapeLeft = "%{"
 		a.escapeRight = "%}"
 		a.hyperlink = "%%{\x1b]8;;%s\x1b\\%%}%s%%{\x1b]8;;\x1b\\%%}"
+		a.osc99 = "%%{\x1b]9;9;%s\x1b7%%}"
 	case bash:
 		a.linechange = "\\[\x1b[%d%s\\]"
 		a.left = "\\[\x1b[%dC\\]"
@@ -58,6 +60,7 @@ func (a *ansiFormats) init(shell string) {
 		a.escapeLeft = "\\["
 		a.escapeRight = "\\]"
 		a.hyperlink = "\\[\x1b]8;;%s\x1b\\\\\\]%s\\[\x1b]8;;\x1b\\\\\\]"
+		a.osc99 = "\\[\x1b]9;9;%s\x1b7\\]"
 	default:
 		a.linechange = "\x1b[%d%s"
 		a.left = "\x1b[%dC"
@@ -73,6 +76,7 @@ func (a *ansiFormats) init(shell string) {
 		a.escapeLeft = ""
 		a.escapeRight = ""
 		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
+		a.osc99 = "\x1b]9;9;%s\x1b7"
 	}
 }
 

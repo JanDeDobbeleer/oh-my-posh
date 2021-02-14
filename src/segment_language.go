@@ -98,8 +98,12 @@ func (l *language) string() string {
 	}
 
 	err := l.setVersion()
-	if err != nil {
+	displayError := l.props.getBool(DisplayError, true)
+	if err != nil && displayError {
 		return err.Error()
+	}
+	if err != nil {
+		return ""
 	}
 
 	if l.props.getBool(EnableHyperlink, false) {

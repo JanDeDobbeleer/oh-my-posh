@@ -30,6 +30,7 @@ Supports conda, virtualenv and pyenv.
 - display_default_env: `boolean` - show the name of the virtualenv when it's default (`system`, `base`)
 or not - defaults to `true`
 - display_version: `boolean` - display the python version - defaults to `true`
+- display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed

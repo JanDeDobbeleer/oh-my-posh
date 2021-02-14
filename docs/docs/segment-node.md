@@ -26,6 +26,7 @@ Display the currently active node version.
 ## Properties
 
 - display_version: `boolean` - display the node version - defaults to `true`
+- display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: The segment is always displayed

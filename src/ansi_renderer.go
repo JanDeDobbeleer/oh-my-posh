@@ -33,7 +33,7 @@ func (r *AnsiRenderer) creset() {
 	r.builder.WriteString(r.formats.creset)
 }
 
-func (r *AnsiRenderer) print(text string) {
+func (r *AnsiRenderer) write(text string) {
 	r.builder.WriteString(text)
 	// Due to a bug in Powershell, the end of the line needs to be cleared.
 	// If this doesn't happen, the portion after the prompt gets colored in the background
@@ -54,4 +54,8 @@ func (r *AnsiRenderer) saveCursorPosition() {
 
 func (r *AnsiRenderer) restoreCursorPosition() {
 	r.builder.WriteString(r.formats.restoreCursorPosition)
+}
+
+func (r *AnsiRenderer) osc99(pwd string) {
+	r.builder.WriteString(fmt.Sprintf(r.formats.osc99, pwd))
 }

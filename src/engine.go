@@ -138,7 +138,7 @@ func (e *engine) render() {
 		// if line break, append a line break
 		switch block.Type {
 		case LineBreak:
-			e.renderer.print("\n")
+			e.renderer.write("\n")
 		case Prompt:
 			if block.VerticalOffset != 0 {
 				e.renderer.changeLine(block.VerticalOffset)
@@ -148,29 +148,30 @@ func (e *engine) render() {
 				e.renderer.carriageForward()
 				blockText := e.renderBlockSegments(block)
 				e.renderer.setCursorForRightWrite(blockText, block.HorizontalOffset)
-				e.renderer.print(blockText)
+				e.renderer.write(blockText)
 			case Left:
-				e.renderer.print(e.renderBlockSegments(block))
+				e.renderer.write(e.renderBlockSegments(block))
 			}
 		case RPrompt:
 			e.rprompt = e.renderBlockSegments(block)
 		}
 	}
 	if e.settings.ConsoleTitle {
-		e.renderer.print(e.consoleTitle.getConsoleTitle())
+		e.renderer.write(e.consoleTitle.getConsoleTitle())
 	}
 	e.renderer.creset()
 	if e.settings.FinalSpace {
-		e.renderer.print(" ")
+		e.renderer.write(" ")
 	}
-	e.write()
+	e.renderer.osc99(e.env.getcwd())
+	e.print()
 }
 
 // debug will loop through your config file and output the timings for each segments
 func (e *engine) debug() {
 	var segmentTimings []SegmentTiming
 	largestSegmentNameLength := 0
-	e.renderer.print("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
+	e.renderer.write("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
 
 	// console title timing
 	start := time.Now()
@@ -228,12 +229,12 @@ func (e *engine) debug() {
 			duration += segment.stringDuration.Milliseconds()
 		}
 		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.enabled)
-		e.renderer.print(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
+		e.renderer.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
 	fmt.Print(e.renderer.string())
 }
 
-func (e *engine) write() {
+func (e *engine) print() {
 	switch e.env.getShellName() {
 	case zsh:
 		if *e.env.getArgs().Eval {
@@ -246,7 +247,7 @@ func (e *engine) write() {
 			e.renderer.saveCursorPosition()
 			e.renderer.carriageForward()
 			e.renderer.setCursorForRightWrite(e.rprompt, 0)
-			e.renderer.print(e.rprompt)
+			e.renderer.write(e.rprompt)
 			e.renderer.restoreCursorPosition()
 		}
 	}

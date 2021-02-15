@@ -149,7 +149,9 @@ understand how to configure a segment.
 - leading_diamond: `string`
 - trailing_diamond: `string`
 - foreground: `string` [color][colors]
+- foreground_templates: `array` of `string` values
 - background: `string` [color][colors]
+- background_templates: `array` of `string` values
 - properties: `array` of `Property`: `string`
 
 ### Type
@@ -198,11 +200,46 @@ Text character to use at the end of the segment. Will take the background color 
 
 ### Foreground
 
-Hex [color][colors] to use as the segment text foreground color. Also supports transparency using the `transparent` keyword.
+[Color][colors] to use as the segment text foreground color. Also supports transparency using the `transparent` keyword.
+
+### Foreground Templates
+
+Array if string templates to define the foreground color for the given Segment based on the Segment's Template Properties.
+Under the hood this uses go's [text/template][go-text-template] feature extended with [sprig][sprig] and
+offers a few standard properties to work with. For supported Segments, look for the **Template Properties** section in
+the documentation.
+
+The following sample is based on the [AWS Segment][aws].
+
+```json
+{
+  "type": "aws",
+  "style": "powerline",
+  "powerline_symbol": "",
+  "foreground": "#ffffff",
+  "background": "#111111",
+  "foreground_templates": [
+    "{{if contains \"default\" .Profile}}#FFA400{{end}}",
+    "{{if contains \"jan\" .Profile}}#f1184c{{end}}"
+  ],
+  "properties": {
+    "prefix": " \uE7AD "
+  }
+}
+```
+
+The logic is as follows, when `background_templates` contains an array, we will check every template line until there's
+one that returns a non-empty string. So, when the contents of `.Profile` contain the word `default`, the first template
+returns `#FFA400` and that's the color that will be used. If it contains `jan`, it returns `#f1184c`. When none of the
+templates return a value, the foreground value `#ffffff` is used.
 
 ### Background
 
-Hex [color][colors] to use as the segment text background color. Also supports transparency using the `transparent` keyword.
+[Color][colors] to use as the segment text background color. Also supports transparency using the `transparent` keyword.
+
+### Background Templates
+
+Same as [Foreground Templates][fg-templ] but for the background color.
 
 ### Properties
 
@@ -408,3 +445,5 @@ has to be enabled at the segment level. Hyperlink generation is disabled by defa
 [terminal-list-hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
+[aws]: /docs/aws
+[fg-templ]: /docs/configure#foreground-templates

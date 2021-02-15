@@ -11,6 +11,15 @@
       "title": "Color string",
       "description": "https://ohmyposh.dev/docs/configure#colors"
     },
+    "color_templates": {
+      "type": "array",
+      "title": "Templates to define a color",
+      "description": "https://ohmyposh.dev/docs/configure#foreground-templates",
+      "default": [],
+      "items": {
+        "type": "string"
+      }
+    },
     "display_version": {
       "type": "boolean",
       "title": "Display Version",
@@ -113,7 +122,7 @@
       "title": "A segment",
       "description": "https://ohmyposh.dev/docs/configure#segment",
       "default": {},
-      "required": ["type", "style", "foreground"],
+      "required": ["type", "style"],
       "properties": {
         "type": {
           "type": "string",
@@ -154,7 +163,9 @@
           "enum": ["powerline", "plain", "diamond"]
         },
         "foreground": { "$ref": "#/definitions/color" },
+        "foreground_templates": { "$ref": "#/definitions/color_templates" },
         "background": { "$ref": "#/definitions/color" },
+        "background_templates": { "$ref": "#/definitions/color_templates" },
         "properties": {
           "type": "object",
           "title": "Segment Properties, used to change behavior/displaying",

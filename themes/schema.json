@@ -1356,6 +1356,12 @@
       "description": "https://ohmyposh.dev/docs/configure#general-settings",
       "default": true
     },
+    "osc99": {
+      "type": "boolean",
+      "title": "Enable OSC99",
+      "description": "https://ohmyposh.dev/docs/configure#general-settings",
+      "default": false
+    },
     "console_title": {
       "type": "boolean",
       "title": "Console Title",

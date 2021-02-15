@@ -11,6 +11,7 @@ import (
 // Settings holds all the theme for rendering the prompt
 type Settings struct {
 	FinalSpace           bool              `json:"final_space"`
+	OSC99                bool              `json:"osc99"`
 	ConsoleTitle         bool              `json:"console_title"`
 	ConsoleTitleStyle    ConsoleTitleStyle `json:"console_title_style"`
 	ConsoleTitleTemplate string            `json:"console_title_template"`

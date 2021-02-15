@@ -53,6 +53,7 @@ boxes with question marks, [set up your terminal][setupterm] to use a supported 
 ## General Settings
 
 - final_space: `boolean` - when true adds a space at the end of the prompt
+- osc99: `boolean` - when true adds support for OSC9;9; (notify terminal of current working directory)
 - console_title: `boolean` - when true sets the current location as the console title
 - console_title_style: `string` - the title to set in the console - defaults to `folder`
 - console_title_template: `string` - the template to use when `"console_title_style" = "template"`

@@ -151,3 +151,87 @@ func TestActiveSSHSessionActiveBoth(t *testing.T) {
 	}
 	assert.True(t, s.activeSSHSession())
 }
+
+func TestSessionSegmentTemplate(t *testing.T) {
+	cases := []struct {
+		Case           string
+		ExpectedString string
+		UserName       string
+		ComputerName   string
+		SSHSession     bool
+		Root           bool
+		Template       string
+	}{
+		{
+			Case:           "user and computer",
+			ExpectedString: "john@company-laptop",
+			ComputerName:   "company-laptop",
+			UserName:       "john",
+			Template:       "{{.UserName}}{{if .ComputerName}}@{{.ComputerName}}{{end}}",
+		},
+		{
+			Case:           "user only",
+			ExpectedString: "john",
+			UserName:       "john",
+			Template:       "{{.UserName}}{{if .ComputerName}}@{{.ComputerName}}{{end}}",
+		},
+		{
+			Case:           "user with ssh",
+			ExpectedString: "john on remote",
+			UserName:       "john",
+			SSHSession:     true,
+			ComputerName:   "remote",
+			Template:       "{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+		},
+		{
+			Case:           "user without ssh",
+			ExpectedString: "john",
+			UserName:       "john",
+			SSHSession:     false,
+			ComputerName:   "remote",
+			Template:       "{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+		},
+		{
+			Case:           "user with root and ssh",
+			ExpectedString: "super john on remote",
+			UserName:       "john",
+			SSHSession:     true,
+			ComputerName:   "remote",
+			Root:           true,
+			Template:       "{{if .Root}}super {{end}}{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+		},
+		{
+			Case:           "no template",
+			ExpectedString: "\uf817 <>john</>@<>remote</>",
+			UserName:       "john",
+			SSHSession:     true,
+			ComputerName:   "remote",
+			Root:           true,
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("getCurrentUser", nil).Return(tc.UserName)
+		env.On("getRuntimeGOOS", nil).Return("burp")
+		env.On("getHostName", nil).Return(tc.ComputerName, nil)
+		var SSHSession string
+		if tc.SSHSession {
+			SSHSession = "zezzion"
+		}
+		env.On("getenv", "SSH_CONNECTION").Return(SSHSession)
+		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
+		env.On("isRunningAsRoot", nil).Return(tc.Root)
+		props := &properties{
+			values: map[Property]interface{}{
+				SegmentTemplate: tc.Template,
+			},
+		}
+		session := &session{
+			env:   env,
+			props: props,
+		}
+		_ = session.enabled()
+		assert.Equal(t, tc.ExpectedString, session.string(), tc.Case)
+	}
+}

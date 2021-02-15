@@ -31,3 +31,8 @@ Display the currently active node version.
 - display_mode: `string` - determines when the segment is displayed
   - `always`: The segment is always displayed
   - `files`: The segment is only displayed when `*.js`, `*.ts`, or `package.json` files are present (default)
+- enable_version_mismatch: `boolean` - color the segment when the version in `.nvmrc` doesn't match the
+returned node version
+- color_background: `boolean` - color the background or foreground for `version_mismatch_color` - defaults to `false`
+- version_mismatch_color: `string` [color][colors] - the color to use for `enable_version_mismatch` - defaults to
+segment's background or foreground color

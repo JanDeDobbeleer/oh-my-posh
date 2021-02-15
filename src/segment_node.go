@@ -12,7 +12,7 @@ func (n *node) init(props *properties, env environmentInfo) {
 	n.language = &language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.js", "*.ts", "package.json", ".nvm"},
+		extensions: []string{"*.js", "*.ts", "package.json", ".nvmrc"},
 		commands: []*cmd{
 			{
 				executable: "node",
@@ -30,5 +30,9 @@ func (n *node) enabled() bool {
 }
 
 func (n *node) matchesVersionFile() bool {
-	return true
+	fileVersion := n.language.env.getFileContent(".nvmrc")
+	if len(fileVersion) == 0 {
+		return true
+	}
+	return fileVersion == n.language.activeCommand.version.full
 }

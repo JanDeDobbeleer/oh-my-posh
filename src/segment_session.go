@@ -6,9 +6,11 @@ import (
 )
 
 type session struct {
-	props    *properties
-	env      environmentInfo
-	userName string
+	props        *properties
+	env          environmentInfo
+	UserName     string
+	ComputerName string
+	SSHSession   bool
 }
 
 const (
@@ -31,10 +33,10 @@ const (
 )
 
 func (s *session) enabled() bool {
-	s.userName = s.getUserName()
+	s.UserName = s.getUserName()
 	showDefaultUser := s.props.getBool(DisplayDefaultUser, true)
 	defaultUser := s.props.getString(DefaultUserName, "")
-	if !showDefaultUser && defaultUser == s.userName {
+	if !showDefaultUser && defaultUser == s.UserName {
 		return false
 	}
 	return true
@@ -50,19 +52,18 @@ func (s *session) init(props *properties, env environmentInfo) {
 }
 
 func (s *session) getFormattedText() string {
-	username := s.userName
-	computername := s.getComputerName()
+	s.ComputerName = s.getComputerName()
 	separator := ""
 	if s.props.getBool(DisplayHost, true) && s.props.getBool(DisplayUser, true) {
 		separator = s.props.getString(UserInfoSeparator, "@")
 	}
-	var ssh string
+	var sshIcon string
 	if s.activeSSHSession() {
-		ssh = s.props.getString(SSHIcon, "\uF817 ")
+		sshIcon = s.props.getString(SSHIcon, "\uF817 ")
 	}
 	userColor := s.props.getColor(UserColor, s.props.foreground)
 	hostColor := s.props.getColor(HostColor, s.props.foreground)
-	return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", ssh, userColor, username, separator, hostColor, computername)
+	return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", sshIcon, userColor, s.UserName, separator, hostColor, s.ComputerName)
 }
 
 func (s *session) getComputerName() string {
@@ -96,6 +97,7 @@ func (s *session) activeSSHSession() bool {
 	for _, key := range keys {
 		content := s.env.getenv(key)
 		if content != "" {
+			s.SSHSession = true
 			return true
 		}
 	}

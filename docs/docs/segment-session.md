@@ -34,4 +34,10 @@ to `\uF817 `
 - display_default_user: `boolean` - display the segment or not when the user matches `default_user_name` - defaults
 to `true`
 
+## Template Properties
+
+- `.UserName`: `string` - the current user's name
+- `.ComputerName`: `string` - the current computer's name
+- `.SSHSession`: `boolean` - active SSH session or not
+
 [colors]: /docs/configure#colors

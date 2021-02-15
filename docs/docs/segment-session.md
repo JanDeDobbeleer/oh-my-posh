@@ -33,11 +33,14 @@ to `\uF817 `
 - default_user_name: `string` - name of the default user - defaults to empty
 - display_default_user: `boolean` - display the segment or not when the user matches `default_user_name` - defaults
 to `true`
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Only used when a value is set, making the above properties obsolete.
 
 ## Template Properties
 
 - `.UserName`: `string` - the current user's name
 - `.ComputerName`: `string` - the current computer's name
 - `.SSHSession`: `boolean` - active SSH session or not
+- `.Root`: `boolean` - are you a root/admin user or not
 
 [colors]: /docs/configure#colors

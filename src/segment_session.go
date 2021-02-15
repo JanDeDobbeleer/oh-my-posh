@@ -11,6 +11,7 @@ type session struct {
 	UserName     string
 	ComputerName string
 	SSHSession   bool
+	Root         bool
 }
 
 const (
@@ -53,12 +54,22 @@ func (s *session) init(props *properties, env environmentInfo) {
 
 func (s *session) getFormattedText() string {
 	s.ComputerName = s.getComputerName()
+	s.SSHSession = s.activeSSHSession()
+	segmentTemplate := s.props.getString(SegmentTemplate, "")
+	if segmentTemplate != "" {
+		s.Root = s.env.isRunningAsRoot()
+		template := &textTemplate{
+			Template: segmentTemplate,
+			Context:  s,
+		}
+		return template.render()
+	}
 	separator := ""
 	if s.props.getBool(DisplayHost, true) && s.props.getBool(DisplayUser, true) {
 		separator = s.props.getString(UserInfoSeparator, "@")
 	}
 	var sshIcon string
-	if s.activeSSHSession() {
+	if s.SSHSession {
 		sshIcon = s.props.getString(SSHIcon, "\uF817 ")
 	}
 	userColor := s.props.getColor(UserColor, s.props.foreground)
@@ -97,7 +108,6 @@ func (s *session) activeSSHSession() bool {
 	for _, key := range keys {
 		content := s.env.getenv(key)
 		if content != "" {
-			s.SSHSession = true
 			return true
 		}
 	}

@@ -45,4 +45,10 @@ Battery displays the remaining power percentage for your battery.
 - discharging_color: `string` [color][colors] - color to use when discharging - defaults to segment color
 - display_charging: `bool` - displays the battery status while charging (Charging or Full)
 
+## Template Properties
+
+- `.Battery`: `struct` - the [battery][battery] object, you can use any property it has e.g. `.Battery.State`
+- `.Percentage`: `float64` - the current battery percentage
+
 [colors]: /docs/configure#colors
+[battery]: https://github.com/distatus/battery/blob/master/battery.go#L78

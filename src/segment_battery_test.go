@@ -183,3 +183,73 @@ func TestBatteryChargedAndDisplayChargingDisabled(t *testing.T) {
 	b := setupBatteryTests(battery.Full, 100, props)
 	assert.Equal(t, false, b.enabled())
 }
+
+func TestGetBatteryColors(t *testing.T) {
+	cases := []struct {
+		Case          string
+		ExpectedColor string
+		Templates     []string
+		DefaultColor  string
+		Battery       *battery.Battery
+		Percentage    int
+	}{
+		{
+			Case:          "Percentage lower",
+			ExpectedColor: "color2",
+			DefaultColor:  "color",
+			Templates: []string{
+				"{{if (lt .Percentage 60)}}color2{{end}}",
+				"{{if (gt .Percentage 60)}}color3{{end}}",
+			},
+			Percentage: 50,
+		},
+		{
+			Case:          "Percentage higher",
+			ExpectedColor: "color3",
+			DefaultColor:  "color",
+			Templates: []string{
+				"{{if (lt .Percentage 60)}}color2{{end}}",
+				"{{if (gt .Percentage 60)}}color3{{end}}",
+			},
+			Percentage: 70,
+		},
+		{
+			Case:          "Charging",
+			ExpectedColor: "color2",
+			DefaultColor:  "color",
+			Templates: []string{
+				"{{if eq \"Charging\" .Battery.State.String}}color2{{end}}",
+				"{{if eq \"Discharging\" .Battery.State.String}}color3{{end}}",
+				"{{if eq \"Full\" .Battery.State.String}}color4{{end}}",
+			},
+			Battery: &battery.Battery{
+				State: battery.Charging,
+			},
+		},
+		{
+			Case:          "Discharging",
+			ExpectedColor: "color3",
+			DefaultColor:  "color",
+			Templates: []string{
+				"{{if eq \"Charging\" .Battery.State.String}}color2{{end}}",
+				"{{if eq \"Discharging\" .Battery.State.String}}color3{{end}}",
+				"{{if eq \"Full\" .Battery.State.String}}color2{{end}}",
+			},
+			Battery: &battery.Battery{
+				State: battery.Discharging,
+			},
+		},
+	}
+	for _, tc := range cases {
+		segment := &Segment{
+			writer: &batt{
+				Percentage: tc.Percentage,
+				Battery:    tc.Battery,
+			},
+		}
+		segment.Foreground = tc.DefaultColor
+		segment.ForegroundTemplates = tc.Templates
+		color := segment.foreground()
+		assert.Equal(t, tc.ExpectedColor, color, tc.Case)
+	}
+}

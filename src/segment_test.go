@@ -112,39 +112,39 @@ func TestShouldIgnoreFolderRegexInvertedNonEscaped(t *testing.T) {
 
 func TestGetColors(t *testing.T) {
 	cases := []struct {
-		Case           string
-		Background     bool
-		ExpectedString string
-		Templates      []string
-		DefaultColor   string
-		Region         string
-		Profile        string
+		Case          string
+		Background    bool
+		ExpectedColor string
+		Templates     []string
+		DefaultColor  string
+		Region        string
+		Profile       string
 	}{
-		{Case: "No template - foreground", ExpectedString: "color", Background: false, DefaultColor: "color"},
-		{Case: "No template - background", ExpectedString: "color", Background: true, DefaultColor: "color"},
-		{Case: "Nil template", ExpectedString: "color", DefaultColor: "color", Templates: nil},
+		{Case: "No template - foreground", ExpectedColor: "color", Background: false, DefaultColor: "color"},
+		{Case: "No template - background", ExpectedColor: "color", Background: true, DefaultColor: "color"},
+		{Case: "Nil template", ExpectedColor: "color", DefaultColor: "color", Templates: nil},
 		{
-			Case:           "Template - default",
-			ExpectedString: "color",
-			DefaultColor:   "color",
+			Case:          "Template - default",
+			ExpectedColor: "color",
+			DefaultColor:  "color",
 			Templates: []string{
 				"{{if contains \"john\" .Profile}}color2{{end}}",
 			},
 			Profile: "doe",
 		},
 		{
-			Case:           "Template - override",
-			ExpectedString: "color2",
-			DefaultColor:   "color",
+			Case:          "Template - override",
+			ExpectedColor: "color2",
+			DefaultColor:  "color",
 			Templates: []string{
 				"{{if contains \"john\" .Profile}}color2{{end}}",
 			},
 			Profile: "john",
 		},
 		{
-			Case:           "Template - override multiple",
-			ExpectedString: "color3",
-			DefaultColor:   "color",
+			Case:          "Template - override multiple",
+			ExpectedColor: "color3",
+			DefaultColor:  "color",
 			Templates: []string{
 				"{{if contains \"doe\" .Profile}}color2{{end}}",
 				"{{if contains \"john\" .Profile}}color3{{end}}",
@@ -152,9 +152,9 @@ func TestGetColors(t *testing.T) {
 			Profile: "john",
 		},
 		{
-			Case:           "Template - override multiple no match",
-			ExpectedString: "color",
-			DefaultColor:   "color",
+			Case:          "Template - override multiple no match",
+			ExpectedColor: "color",
+			DefaultColor:  "color",
 			Templates: []string{
 				"{{if contains \"doe\" .Profile}}color2{{end}}",
 				"{{if contains \"philip\" .Profile}}color3{{end}}",
@@ -173,12 +173,12 @@ func TestGetColors(t *testing.T) {
 			segment.Background = tc.DefaultColor
 			segment.BackgroundTemplates = tc.Templates
 			color := segment.background()
-			assert.Equal(t, tc.ExpectedString, color, tc.Case)
+			assert.Equal(t, tc.ExpectedColor, color, tc.Case)
 			continue
 		}
 		segment.Foreground = tc.DefaultColor
 		segment.ForegroundTemplates = tc.Templates
 		color := segment.foreground()
-		assert.Equal(t, tc.ExpectedString, color, tc.Case)
+		assert.Equal(t, tc.ExpectedColor, color, tc.Case)
 	}
 }

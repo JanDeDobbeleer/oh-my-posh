@@ -63,6 +63,7 @@ type environmentInfo interface {
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
 	doGet(url string) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
+	isWsl() bool
 }
 
 type commandCache struct {

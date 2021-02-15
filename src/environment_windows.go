@@ -53,3 +53,7 @@ func (env *environment) homeDir() string {
 func (env *environment) getWindowTitle(imageName, windowTitleRegex string) (string, error) {
 	return getWindowTitle(imageName, windowTitleRegex)
 }
+
+func (env *environment) isWsl() bool {
+	return false
+}

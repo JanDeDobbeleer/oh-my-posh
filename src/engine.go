@@ -163,7 +163,15 @@ func (e *engine) render() {
 	if e.settings.FinalSpace {
 		e.renderer.write(" ")
 	}
-	e.renderer.osc99(e.env.getcwd())
+
+	cwd := e.env.getcwd()
+
+	// temp to fix 3.89 issue and add wsl support
+	if e.env.isWsl() {
+		// transform path
+		cwd, _ = e.env.runCommand("wslpath", "-m", cwd)
+	}
+	e.renderer.osc99(cwd)
 	e.print()
 }
 

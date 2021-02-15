@@ -132,6 +132,10 @@ func (env *MockedEnvironment) hasParentFilePath(path string) (*fileInfo, error) 
 	return args.Get(0).(*fileInfo), args.Error(1)
 }
 
+func (env *MockedEnvironment) isWsl() bool {
+	return false
+}
+
 const (
 	homeBill        = "/home/bill"
 	homeJan         = "/usr/home/jan"

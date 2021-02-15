@@ -65,6 +65,10 @@ func (pt *path) string() string {
 	}
 
 	if pt.props.getBool(EnableHyperlink, false) {
+		// wsl check
+		if pt.env.isWsl() {
+			cwd, _ = pt.env.runCommand("wslpath", "-m", cwd)
+		}
 		return fmt.Sprintf("[%s](file://%s)", formattedPath, cwd)
 	}
 

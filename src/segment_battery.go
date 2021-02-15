@@ -11,6 +11,8 @@ type batt struct {
 	props          *properties
 	env            environmentInfo
 	percentageText string
+	Battery        *battery.Battery
+	Percentage     int
 }
 
 const (
@@ -33,7 +35,8 @@ const (
 )
 
 func (b *batt) enabled() bool {
-	bt, err := b.env.getBatteryInfo()
+	var err error
+	b.Battery, err = b.env.getBatteryInfo()
 
 	displayError := b.props.getBool(DisplayError, false)
 	if err != nil && displayError {
@@ -45,7 +48,7 @@ func (b *batt) enabled() bool {
 		// This hack ensures we display a fully charged battery, even if
 		// that state can be incorrect. It's better to "ignore" the error
 		// than to not display the segment at all as that will confuse users.
-		bt = &battery.Battery{
+		b.Battery = &battery.Battery{
 			Current: 100,
 			Full:    100,
 			State:   battery.Full,
@@ -53,16 +56,16 @@ func (b *batt) enabled() bool {
 	}
 
 	display := b.props.getBool(DisplayCharging, true)
-	if !display && (bt.State == battery.Charging || bt.State == battery.Full) {
+	if !display && (b.Battery.State == battery.Charging || b.Battery.State == battery.Full) {
 		return false
 	}
 
-	batteryPercentage := bt.Current / bt.Full * 100
-	batteryPercentage = math.Min(100, batteryPercentage)
-	percentageText := fmt.Sprintf("%.0f", batteryPercentage)
+	batteryPercentage := b.Battery.Current / b.Battery.Full * 100
+	b.Percentage = int(math.Min(100, batteryPercentage))
+	percentageText := fmt.Sprintf("%.0d", b.Percentage)
 	var icon string
 	var colorPorperty Property
-	switch bt.State {
+	switch b.Battery.State {
 	case battery.Discharging:
 		colorPorperty = DischargingColor
 		icon = b.props.getString(DischargingIcon, "")

@@ -60,7 +60,7 @@ func TestRuby(t *testing.T) {
 			DisplayVersion:  true,
 			HasRubyFiles:    true,
 			HasAsdf:         true,
-			Version:         "ruby            2.6.3           /Users/jan/Projects/oh-my-posh3/.tool-versions",
+			Version:         "ruby            2.6.3           /Users/jan/Projects/oh-my-posh/.tool-versions",
 		},
 		{
 			Case:            "Version with asdf not set",

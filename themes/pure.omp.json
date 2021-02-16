@@ -1,5 +1,5 @@
 {
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh3/main/themes/schema.json",
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
     "console_title": true,
     "console_title_style": "template",
     "console_title_template": "{{if .Root}}(Admin){{end}} {{.Path}}",

@@ -4,11 +4,11 @@
   "homepage": "https://ohmyposh.dev",
   "license": {
       "identifier": "GPL-3.0-only",
-      "url": "https://github.com/JanDeDobbeleer/oh-my-posh3/blob/main/COPYING"
+      "url": "https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/COPYING"
   },
   "architecture": {
       "64bit": {
-          "url": "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v<VERSION>/posh-windows-wsl-amd64.7z",
+          "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/posh-windows-wsl-amd64.7z",
           "hash": "<HASH>"
       }
   },
@@ -17,7 +17,7 @@
       "oh-my-posh.exe"
   ],
   "checkver": {
-      "github": "https://github.com/JanDeDobbeleer/oh-my-posh3"
+      "github": "https://github.com/JanDeDobbeleer/oh-my-posh"
   },
   "post_install": [
       "Write-Host 'Thanks for installing Oh my Posh.'",
@@ -26,7 +26,7 @@
   "autoupdate": {
       "architecture": {
           "64bit": {
-              "url": "https://github.com/JanDeDobbeleer/oh-my-posh3/releases/download/v$version/posh-windows-wsl-amd64.7z",
+              "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/posh-windows-wsl-amd64.7z",
               "hash": {
                   "url": "$url.sha256"
               }

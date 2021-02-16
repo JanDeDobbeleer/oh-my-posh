@@ -1,11 +1,11 @@
 module.exports = {
-  title: "Oh my Posh 3",
+  title: "Oh my Posh",
   tagline: "A prompt theme engine for any shell.",
   url: "https://ohmyposh.dev",
   baseUrl: "/",
   favicon: "img/favicon.ico",
   organizationName: "jandedobbeleer",
-  projectName: "oh-my-posh3",
+  projectName: "oh-my-posh",
   onBrokenLinks: "ignore",
   themeConfig: {
     sidebarCollapsible: false,
@@ -27,7 +27,7 @@ module.exports = {
           position: "left",
         },
         {
-          href: "https://github.com/jandedobbeleer/oh-my-posh3",
+          href: "https://github.com/jandedobbeleer/oh-my-posh",
           label: "GitHub",
           position: "right",
         },
@@ -58,7 +58,7 @@ module.exports = {
           items: [
             {
               label: "GitHub",
-              href: "https://github.com/jandedobbeleer/oh-my-posh3",
+              href: "https://github.com/jandedobbeleer/oh-my-posh",
             },
             {
               label: "Twitter",
@@ -89,7 +89,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          editUrl: "https://github.com/jandedobbeleer/oh-my-posh3/edit/main/docs/",
+          editUrl: "https://github.com/jandedobbeleer/oh-my-posh/edit/main/docs/",
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),

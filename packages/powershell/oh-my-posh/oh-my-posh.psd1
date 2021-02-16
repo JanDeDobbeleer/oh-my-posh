@@ -35,7 +35,6 @@
     # Private data to pass to the module specified in RootModule. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
     PrivateData       = @{
         PSData = @{
-            Prerelease = 'beta'
             # Tags applied to this module. These help with module discovery in online galleries.
             Tags       = @('git', 'agnoster', 'theme', 'zsh', 'posh-git', 'prompt', 'paradox', 'robbyrussel', 'oh-my-posh')
             # A URL to the license for this module.

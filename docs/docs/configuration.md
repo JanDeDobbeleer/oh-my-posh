@@ -4,7 +4,7 @@ title: Configuration
 sidebar_label: ⚙️ Configuration
 ---
 
-Oh my Posh renders your prompt based on the definition of _blocks_ (like Lego) which contain or more _segments_.
+Oh my Posh renders your prompt based on the definition of _blocks_ (like Lego) which contain one or more _segments_.
 A really simple configuration could look like this.
 
 ```json

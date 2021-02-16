@@ -10,7 +10,7 @@ Copy-Item -Path "../../themes" -Destination "./bin" -Recurse
 
 # Download the files and pack them
 @{name = 'posh-windows-amd64.exe'; outName = 'oh-my-posh.exe' }, @{name = 'posh-linux-amd64'; outName = 'oh-my-posh-wsl' } | ForEach-Object -Process {
-    $download = "https://github.com/jandedobbeleer/oh-my-posh3/releases/download/v$Version/$($_.name)"
+    $download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($_.name)"
     Invoke-WebRequest $download -Out "./bin/$($_.outName)"
 }
 $compress = @{

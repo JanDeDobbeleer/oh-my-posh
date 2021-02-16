@@ -165,8 +165,8 @@ At `$.definitions.segment.allOf`, add your segment details:
 
 And be patient, I'm going as fast as I can 🏎
 
-[segment-go]: https://github.com/JanDeDobbeleer/oh-my-posh3/blob/main/segment.go
-[themes]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/main/themes
-[docs]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/main/docs/docs
-[sidebars]: https://github.com/JanDeDobbeleer/oh-my-posh3/blob/main/docs/sidebars.js
+[segment-go]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/segment.go
+[themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
+[docs]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/docs/docs
+[sidebars]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/docs/sidebars.js
 [nf-icons]: https://www.nerdfonts.com/cheat-sheet

@@ -432,7 +432,7 @@ has to be enabled at the segment level. Hyperlink generation is disabled by defa
 
 [promptconfig]: /docs/installation#4-replace-your-existing-prompt
 [setupterm]: /docs/installation#1-setup-your-terminal
-[releases]: https://github.com/JanDeDobbeleer/oh-my-posh3/releases/latest
+[releases]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
 [nf]: https://www.nerdfonts.com/
 [segments]: /docs/battery
 [colors]: #colors

@@ -1,4 +1,4 @@
-module github.com/jandedobbeleer/oh-my-posh3
+module github.com/jandedobbeleer/oh-my-posh
 
 go 1.15
 

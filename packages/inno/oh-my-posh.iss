@@ -6,7 +6,7 @@ DefaultGroupName=Oh my Posh
 PrivilegesRequired=lowest
 AppPublisher=Jan De Dobbeleer
 AppPublisherURL=https://ohmyposh.dev
-AppSupportURL=https://github.com/JanDeDobbeleer/oh-my-posh3/issues
+AppSupportURL=https://github.com/JanDeDobbeleer/oh-my-posh/issues
 LicenseFile="bin\COPYING.txt"
 OutputBaseFilename=install
 

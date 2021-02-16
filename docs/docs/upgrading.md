@@ -96,7 +96,7 @@ Do not hesitate to [ask for assistance][issues] when you notice an issue or unex
 [omz]: https://github.com/ohmyzsh/ohmyzsh
 [golang]: https://golang.org/
 [introduction]: /docs/#concept
-[v3]: https://github.com/JanDeDobbeleer/oh-my-posh3/
-[themesv3]: https://github.com/JanDeDobbeleer/oh-my-posh3/tree/main/themes
+[v3]: https://github.com/JanDeDobbeleer/oh-my-posh/
+[themesv3]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [configuration]: /docs/configure
-[issues]: https://github.com/JanDeDobbeleer/oh-my-posh3/issues/new
+[issues]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/new

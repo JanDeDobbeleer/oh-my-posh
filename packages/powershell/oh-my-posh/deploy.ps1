@@ -21,7 +21,7 @@ Copy-Item -Path "../../../themes" -Destination "./themes" -Recurse
 # fetch all the binaries from the version's GitHub release
 New-Item -Path "./" -Name "bin" -ItemType "directory"
 "posh-windows-amd64.exe", "posh-darwin-amd64", "posh-linux-amd64" | ForEach-Object -Process {
-    $download = "https://github.com/jandedobbeleer/oh-my-posh3/releases/download/v$BinVersion/$_"
+    $download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$BinVersion/$_"
     Invoke-WebRequest $download -Out "./bin/$_"
 }
 # publish the module

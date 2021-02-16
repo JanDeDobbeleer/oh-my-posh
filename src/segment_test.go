@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	cwd = "Projects/oh-my-posh3"
+	cwd = "Projects/oh-my-posh"
 )
 
 func TestMapSegmentWriterCanMap(t *testing.T) {

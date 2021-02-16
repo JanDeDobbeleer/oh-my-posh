@@ -51,11 +51,11 @@ a modern and more efficient tool was needed to suit my personal needs.
 using Go (and the amazing [README][powerline-go])
 * [Starship][starship] for creating an amazing way to initialize the prompt
 
-[release-status]: https://github.com/jandedobbeleer/oh-my-posh3/workflows/Release/badge.svg
+[release-status]: https://github.com/jandedobbeleer/oh-my-posh/workflows/Release/badge.svg
 [psgallery-badge]: https://img.shields.io/powershellgallery/dt/oh-my-posh.svg
 [powershell-gallery]: https://www.powershellgallery.com/packages/oh-my-posh/
-[report-card]: https://goreportcard.com/badge/github.com/jandedobbeleer/oh-my-posh3
-[report-card-link]: https://goreportcard.com/report/github.com/jandedobbeleer/oh-my-posh3
+[report-card]: https://goreportcard.com/badge/github.com/jandedobbeleer/oh-my-posh
+[report-card-link]: https://goreportcard.com/report/github.com/jandedobbeleer/oh-my-posh
 [oh-my-posh]: https://github.com/JanDeDobbeleer/oh-my-posh
 [patreon-badge]: https://img.shields.io/badge/Support-Become%20a%20Patreon!-red.svg
 [patreon]: https://www.patreon.com/jandedobbeleer

@@ -1,0 +1,111 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh3/main/themes/schema.json",
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "python",
+            "style": "plain",
+            "foreground": "white",
+            "properties": {
+              "prefix": "(",
+              "postfix": ")",
+              "display_version": false
+            }
+          }
+        ]
+      },
+      {
+        "type": "newline"
+      },
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "text",
+            "style": "plain",
+            "foreground": "lightBlue",
+            "properties": {
+              "prefix": "",
+              "text": "#"
+            }
+          },
+          {
+            "type": "root",
+            "style": "plain",
+            "foreground": "red",
+            "properties": {
+              "root_icon": "\b\b\b%"
+            }
+          },
+          {
+            "type": "session",
+            "style": "plain",
+            "properties": {
+              "user_info_separator": " <darkGray>@</> ",
+              "prefix": "",
+              "user_color": "cyan",
+              "host_color": "green"
+            }
+          },
+          {
+            "type": "path",
+            "style": "plain",
+            "foreground": "lightYellow",
+            "properties": {
+              "prefix": "<darkGray>in </>",
+              "style": "full"
+            }
+          },
+          {
+            "type": "git",
+            "style": "plain",
+            "properties": {
+              "prefix": "<darkGray>on</> <white>git:</>"
+            }
+          },
+          {
+            "type": "time",
+            "style": "plain",
+            "foreground": "darkGray",
+            "properties": {
+              "prefix": "[",
+              "postfix": "]"
+            }
+          },
+          {
+            "type": "exit",
+            "style": "plain",
+            "foreground": "red",
+            "properties": {
+              "prefix": " C:",
+              "always_numeric": true
+            }
+          }
+        ]
+      },
+      {
+        "type": "newline"
+      },
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "text",
+            "style": "plain",
+            "foreground": "lightRed",
+            "properties": {
+              "prefix": "",
+              "text": "$",
+              "postfix": ""
+            }
+          }
+        ]
+      }
+    ],
+    "final_space": true
+  }

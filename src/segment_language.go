@@ -157,6 +157,9 @@ func (l *language) setVersion() error {
 			l.exitCode = exitErr.exitCode
 			return fmt.Errorf("err executing %s with %s", command.executable, command.args)
 		}
+		if version == "" {
+			continue
+		}
 		err = command.parse(version)
 		if err != nil {
 			return fmt.Errorf("err parsing info from %s with %s", command.executable, version)

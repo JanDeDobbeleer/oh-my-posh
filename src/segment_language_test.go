@@ -243,6 +243,29 @@ func TestLanguageEnabledMissingCommand(t *testing.T) {
 	assert.Equal(t, "", lang.string(), "unicorn is available and uni and corn files are found")
 }
 
+func TestLanguageEnabledNoVersionData(t *testing.T) {
+	props := map[Property]interface{}{
+		DisplayVersion: true,
+	}
+	args := &languageArgs{
+		commands: []*cmd{
+			{
+				executable: "uni",
+				args:       []string{"--version"},
+				regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			},
+		},
+		extensions:        []string{uni, corn},
+		enabledExtensions: []string{uni, corn},
+		enabledCommands:   []string{"uni"},
+		version:           "",
+		properties:        props,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.enabled())
+	assert.Equal(t, "", lang.string())
+}
+
 func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 	expected := "missing"
 	props := map[Property]interface{}{

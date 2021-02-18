@@ -31,7 +31,11 @@ func (a *aws) enabled() bool {
 		}
 		return ""
 	}
+	displayDefaultUser := a.props.getBool(DisplayDefault, true)
 	a.Profile = getEnvFirstMatch("AWS_VAULT", "AWS_PROFILE")
+	if !displayDefaultUser && a.Profile == defaultUser {
+		return false
+	}
 	a.Region = getEnvFirstMatch("AWS_DEFAULT_REGION", "AWS_REGION")
 	if a.Profile != "" && a.Region != "" {
 		return true
@@ -41,6 +45,9 @@ func (a *aws) enabled() bool {
 		return true
 	}
 	a.getConfigFileInfo()
+	if !displayDefaultUser && a.Profile == defaultUser {
+		return false
+	}
 	return a.Profile != ""
 }
 

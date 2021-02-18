@@ -61,14 +61,14 @@ If you see one you like, set it, then export its config so you can customize/ext
 
 ```powershell
 Set-PoshPrompt -Theme jandedobbeleer
-Export-PoshTheme | Out-File -FilePath ~/.go-my-posh.json -Encoding oem
+Export-PoshTheme -FilePath ~/.oh-my-posh.omp.json
 ```
 
-Adjust the config (`~/.go-my-posh.json`) to your liking by going through the [configuration][configuration] guide.
+Adjust the config (`~/.oh-my-posh.omp.json`) to your liking by going through the [configuration][configuration] guide.
 Set your custom theme and enjoy.
 
 ```powershell
-Set-PoshPrompt -Theme  ~/.go-my-posh.json
+Set-PoshPrompt -Theme  ~/.oh-my-posh.omp.json
 ```
 
 ### I have no idea just yet

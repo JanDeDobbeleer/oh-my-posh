@@ -10,8 +10,6 @@ type python struct {
 const (
 	// DisplayVirtualEnv shows or hides the virtual env
 	DisplayVirtualEnv Property = "display_virtual_env"
-	// DisplayDefaultEnv shows or hides the default env names (system/base)
-	DisplayDefaultEnv Property = "display_default_env"
 )
 
 func (p *python) string() string {
@@ -78,7 +76,7 @@ func (p *python) canUseVenvName(name string) bool {
 	if name == "" || name == "." {
 		return false
 	}
-	if p.language.props.getBool(DisplayDefaultEnv, true) {
+	if p.language.props.getBool(DisplayDefault, true) {
 		return true
 	}
 	invalidNames := [2]string{"system", "base"}

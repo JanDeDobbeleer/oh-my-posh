@@ -17,8 +17,11 @@ func TestAWSSegment(t *testing.T) {
 		DefaultRegion   string
 		ConfigFile      string
 		Template        string
+		DisplayDefault  bool
 	}{
 		{Case: "disabled", ExpectedString: "", ExpectedEnabled: false},
+		{Case: "enabled with default user", ExpectedString: "default@eu-west", Profile: "default", Region: "eu-west", ExpectedEnabled: true, DisplayDefault: true},
+		{Case: "disabled with default user", ExpectedString: "default", Profile: "default", Region: "eu-west", ExpectedEnabled: false, DisplayDefault: false},
 		{Case: "enabled no region", ExpectedString: "company", ExpectedEnabled: true, Profile: "company"},
 		{Case: "enabled with region", ExpectedString: "company@eu-west", ExpectedEnabled: true, Profile: "company", Region: "eu-west"},
 		{
@@ -49,7 +52,9 @@ func TestAWSSegment(t *testing.T) {
 		env.On("getFileContent", "/usr/home/.aws/config").Return("")
 		env.On("homeDir", nil).Return("/usr/home")
 		props := &properties{
-			values: map[Property]interface{}{},
+			values: map[Property]interface{}{
+				DisplayDefault: tc.DisplayDefault,
+			},
 		}
 		if tc.Template != "" {
 			props.values[SegmentTemplate] = tc.Template

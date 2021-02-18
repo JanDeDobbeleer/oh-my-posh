@@ -27,6 +27,8 @@ const (
 	SegmentTemplate Property = "template"
 	// DisplayError to display when an error occurs or not
 	DisplayError Property = "display_error"
+	// DisplayDefault hides or shows the default
+	DisplayDefault Property = "display_default"
 )
 
 type properties struct {

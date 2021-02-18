@@ -27,7 +27,7 @@ Supports conda, virtualenv and pyenv.
 ## Properties
 
 - display_virtual_env: `boolean` - show the name of the virtualenv or not - defaults to `true`
-- display_default_env: `boolean` - show the name of the virtualenv when it's default (`system`, `base`)
+- display_default: `boolean` - show the name of the virtualenv when it's default (`system`, `base`)
 or not - defaults to `true`
 - display_version: `boolean` - display the python version - defaults to `true`
 - display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`

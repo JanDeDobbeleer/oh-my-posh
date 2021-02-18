@@ -14,13 +14,13 @@ func TestPythonVirtualEnv(t *testing.T) {
 		CondaDefaultEnvName string
 		PyEnvName           string
 		DisplayVersion      bool
-		DisplayDefaultEnv   bool
+		DisplayDefault      bool
 	}{
 		{Expected: "VENV", VirtualEnvName: "VENV"},
 		{Expected: "CONDA", CondaEnvName: "CONDA"},
 		{Expected: "CONDA", CondaDefaultEnvName: "CONDA"},
 		{Expected: "", CondaDefaultEnvName: "base"},
-		{Expected: "base", CondaDefaultEnvName: "base", DisplayDefaultEnv: true},
+		{Expected: "base", CondaDefaultEnvName: "base", DisplayDefault: true},
 		{Expected: "PYENV", PyEnvName: "PYENV"},
 		{Expected: "PYENV 3.8.4", PyEnvName: "PYENV", DisplayVersion: true},
 	}
@@ -39,7 +39,7 @@ func TestPythonVirtualEnv(t *testing.T) {
 			values: map[Property]interface{}{
 				DisplayVersion:    tc.DisplayVersion,
 				DisplayVirtualEnv: true,
-				DisplayDefaultEnv: tc.DisplayDefaultEnv,
+				DisplayDefault:    tc.DisplayDefault,
 			},
 		}
 		python := &python{}

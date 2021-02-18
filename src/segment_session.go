@@ -29,13 +29,11 @@ const (
 	SSHIcon Property = "ssh_icon"
 	// DefaultUserName holds the default user of the platform
 	DefaultUserName Property = "default_user_name"
-	// DisplayDefaultUser hides or shows the user name when it's the user set in DefaultUserName
-	DisplayDefaultUser Property = "display_default_user"
 )
 
 func (s *session) enabled() bool {
 	s.UserName = s.getUserName()
-	showDefaultUser := s.props.getBool(DisplayDefaultUser, true)
+	showDefaultUser := s.props.getBool(DisplayDefault, true)
 	defaultUser := s.props.getString(DefaultUserName, "")
 	if !showDefaultUser && defaultUser == s.UserName {
 		return false

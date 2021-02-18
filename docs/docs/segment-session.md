@@ -31,7 +31,7 @@ to `\uF817 `
 - display_user: `boolean` - display the user name or not - defaults to `true`
 - display_host: `boolean` - display the host name or not - defaults to `true`
 - default_user_name: `string` - name of the default user - defaults to empty
-- display_default_user: `boolean` - display the segment or not when the user matches `default_user_name` - defaults
+- display_default: `boolean` - display the segment or not when the user matches `default_user_name` - defaults
 to `true`
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
 properties below. Only used when a value is set, making the above properties obsolete.

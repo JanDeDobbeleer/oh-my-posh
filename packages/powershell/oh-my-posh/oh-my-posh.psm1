@@ -92,10 +92,21 @@ function Get-PoshThemes {
     Write-Host ("=" * $consoleWidth)
 }
 
-function Write-PoshTheme {
+function Export-PoshTheme {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]
+        $FilePath
+    )
+
     $config = $global:PoshSettings.Theme
     $poshCommand = Get-PoshCommand
-    & $poshCommand -config $config -print-config
+    # Save current encoding and swap for UTF8
+    $originalOutputEncoding = [Console]::OutputEncoding
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    & $poshCommand -config $config -print-config | Out-File -FilePath $FilePath
+    # Restore initial encoding
+    [Console]::OutputEncoding = $originalOutputEncoding
 }
 
 # Helper function to create argument completion results

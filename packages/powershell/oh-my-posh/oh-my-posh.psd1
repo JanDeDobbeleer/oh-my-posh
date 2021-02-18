@@ -31,7 +31,7 @@
     # Aliases to export from this module
     AliasesToExport   = '*'
     # Functions to export from this module
-    FunctionsToExport = @('Get-PoshThemes', 'Set-PoshPrompt', 'Write-PoshTheme', 'Set-PoshContext', 'Get-PoshInfoForV2Users')
+    FunctionsToExport = @('Get-PoshThemes', 'Set-PoshPrompt', 'Export-PoshTheme', 'Set-PoshContext', 'Get-PoshInfoForV2Users')
     # Private data to pass to the module specified in RootModule. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
     PrivateData       = @{
         PSData = @{

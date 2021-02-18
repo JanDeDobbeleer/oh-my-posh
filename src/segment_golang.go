@@ -17,7 +17,7 @@ func (g *golang) init(props *properties, env environmentInfo) {
 			{
 				executable: "go",
 				args:       []string{"version"},
-				regex:      `(?:go(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+				regex:      `(?:go(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?)))`,
 			},
 		},
 		versionURLTemplate: "[%s](https://golang.org/doc/go%s.%s)",

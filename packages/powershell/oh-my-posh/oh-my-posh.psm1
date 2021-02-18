@@ -28,21 +28,7 @@ function Set-ExecutablePermissions {
         return
     }
 
-    # Check the permissions on the file
-    $permissions = ((ls -l $executable) -split ' ')[0]  # $permissions will be something like '-rw-r--r--'
-    if ((id -u) -eq 0) {
-        # Running as root, give global executable permissions if needed
-        $hasExecutable = $permissions[3] -eq 'x'
-        if (-not $hasExecutable) {
-            Invoke-Expression -Command "chmod g+x $executable"
-        }
-        return
-    }
-    # Running as user, give user executable permissions if needed
-    $hasExecutable = $permissions[9] -eq 'x'
-    if (-not $hasExecutable) {
-        Invoke-Expression -Command "chmod +x $executable"
-    }
+    Invoke-Expression -Command "chmod +x $executable"
 }
 
 function Set-PoshPrompt {

@@ -339,14 +339,7 @@ available options first, by starting with the [configuration guide][configuratio
 You can output the current theme to its `JSON` representation which can be used to tweak and store as your custom theme.
 
 ```powershell
-Write-PoshTheme
-```
-
-Due to a bug in PowerShell, if you want to use `Out-File` directly to write the current theme to a new file, use the `oem`
-encoding to ensure the symbols are outputted correctly.
-
-```powershell
-Write-PoshTheme | Out-File -FilePath ~/.mytheme.omp.json -Encoding oem
+Export-PoshTheme -FilePath ~/.mytheme.omp.json
 ```
 
 Once you're done editing, adjust your `$PROFILE` to use your newly created theme.

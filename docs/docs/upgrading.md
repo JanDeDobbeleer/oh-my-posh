@@ -61,7 +61,7 @@ If you see one you like, set it, then export its config so you can customize/ext
 
 ```powershell
 Set-PoshPrompt -Theme jandedobbeleer
-Write-PoshTheme | Out-File -FilePath ~/.go-my-posh.json -Encoding oem
+Export-PoshTheme | Out-File -FilePath ~/.go-my-posh.json -Encoding oem
 ```
 
 Adjust the config (`~/.go-my-posh.json`) to your liking by going through the [configuration][configuration] guide.

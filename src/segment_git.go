@@ -52,6 +52,8 @@ type git struct {
 const (
 	// BranchIcon the icon to use as branch indicator
 	BranchIcon Property = "branch_icon"
+	// DisplayBranchStatus show branch status or not
+	DisplayBranchStatus Property = "display_branch_status"
 	// BranchIdenticalIcon the icon to display when the remote and local branch are identical
 	BranchIdenticalIcon Property = "branch_identical_icon"
 	// BranchAheadIcon the icon to display when the local branch is ahead of the remote
@@ -153,18 +155,8 @@ func (g *git) string() string {
 	if !displayStatus {
 		return buffer.String()
 	}
-	// if ahead, print with symbol
-	if g.repo.ahead > 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.repo.ahead)
-	}
-	// if behind, print with symbol
-	if g.repo.behind > 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(BranchBehindIcon, "\u2193"), g.repo.behind)
-	}
-	if g.repo.behind == 0 && g.repo.ahead == 0 && g.repo.upstream != "" {
-		fmt.Fprintf(buffer, " %s", g.props.getString(BranchIdenticalIcon, "\u2261"))
-	} else if g.repo.upstream == "" {
-		fmt.Fprintf(buffer, " %s", g.props.getString(BranchGoneIcon, "\u2262"))
+	if g.props.getBool(DisplayBranchStatus, true) {
+		buffer.WriteString(g.getBranchStatus())
 	}
 	if g.repo.staging.changed {
 		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.staging, StagingColor, LocalStagingIcon, " \uF046"))
@@ -184,6 +176,25 @@ func (g *git) string() string {
 func (g *git) init(props *properties, env environmentInfo) {
 	g.props = props
 	g.env = env
+}
+
+func (g *git) getBranchStatus() string {
+	if g.repo.ahead > 0 && g.repo.behind > 0 {
+		return fmt.Sprintf(" %s%d %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.repo.ahead, g.props.getString(BranchBehindIcon, "\u2193"), g.repo.behind)
+	}
+	if g.repo.ahead > 0 {
+		return fmt.Sprintf(" %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.repo.ahead)
+	}
+	if g.repo.behind > 0 {
+		return fmt.Sprintf(" %s%d", g.props.getString(BranchBehindIcon, "\u2193"), g.repo.behind)
+	}
+	if g.repo.behind == 0 && g.repo.ahead == 0 && g.repo.upstream != "" {
+		return fmt.Sprintf(" %s", g.props.getString(BranchIdenticalIcon, "\u2261"))
+	}
+	if g.repo.upstream == "" {
+		return fmt.Sprintf(" %s", g.props.getString(BranchGoneIcon, "\u2262"))
+	}
+	return ""
 }
 
 func (g *git) getStatusDetailString(status *gitStatus, color, icon Property, defaultIcon string) string {

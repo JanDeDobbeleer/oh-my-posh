@@ -5,7 +5,7 @@
 [![PS Gallery][psgallery-badge]][powershell-gallery]
 [![Documentation][docs-badge]][docs]
 
-What started as the offspring of [oh-my-posh][oh-my-posh] for PowerShell resulted in a cross platform,
+What started as the offspring of [oh-my-posh2][oh-my-posh2] for PowerShell resulted in a cross platform,
 highly customizable and extensible prompt theme engine. After 4 years of working on oh-my-posh,
 a modern and more efficient tool was needed to suit my personal needs.
 
@@ -56,7 +56,7 @@ using Go (and the amazing [README][powerline-go])
 [powershell-gallery]: https://www.powershellgallery.com/packages/oh-my-posh/
 [report-card]: https://goreportcard.com/badge/github.com/jandedobbeleer/oh-my-posh
 [report-card-link]: https://goreportcard.com/report/github.com/jandedobbeleer/oh-my-posh
-[oh-my-posh]: https://github.com/JanDeDobbeleer/oh-my-posh
+[oh-my-posh2]: https://github.com/JanDeDobbeleer/oh-my-posh2
 [patreon-badge]: https://img.shields.io/badge/Support-Become%20a%20Patreon!-red.svg
 [patreon]: https://www.patreon.com/jandedobbeleer
 [liberapay-badge]: https://img.shields.io/badge/Liberapay-Donate-%23f6c915.svg

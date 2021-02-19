@@ -484,6 +484,12 @@
                     "description": "The icon to use in front of the git branch name",
                     "default": "\uE0A0 "
                   },
+                  "display_branch_status": {
+                    "type": "boolean",
+                    "title": "Display Branch Status",
+                    "description": "Display the branch status or not",
+                    "default": true
+                  },
                   "branch_identical_icon": {
                     "type": "string",
                     "title": "Branch Identical Icon",

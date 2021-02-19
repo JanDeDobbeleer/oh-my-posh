@@ -701,3 +701,39 @@ func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
+
+func TestGetBranchStatus(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Ahead    int
+		Behind   int
+		Upstream string
+	}{
+		{Case: "Equal with remote", Expected: " equal", Upstream: "main"},
+		{Case: "Ahead", Expected: " up2", Ahead: 2},
+		{Case: "Behind", Expected: " down8", Behind: 8},
+		{Case: "Behind and ahead", Expected: " up7 down8", Behind: 8, Ahead: 7},
+		{Case: "Gone", Expected: " gone"},
+		{Case: "Default (bug)", Expected: "", Behind: -8, Upstream: "wonky"},
+	}
+
+	for _, tc := range cases {
+		g := &git{
+			props: &properties{
+				values: map[Property]interface{}{
+					BranchAheadIcon:     "up",
+					BranchBehindIcon:    "down",
+					BranchIdenticalIcon: "equal",
+					BranchGoneIcon:      "gone",
+				},
+			},
+			repo: &gitRepo{
+				ahead:    tc.Ahead,
+				behind:   tc.Behind,
+				upstream: tc.Upstream,
+			},
+		}
+		assert.Equal(t, tc.Expected, g.getBranchStatus(), tc.Case)
+	}
+}

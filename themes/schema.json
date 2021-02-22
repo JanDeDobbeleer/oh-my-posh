@@ -9,7 +9,8 @@
       "type": "string",
       "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite|transparent)$",
       "title": "Color string",
-      "description": "https://ohmyposh.dev/docs/configure#colors"
+      "description": "https://ohmyposh.dev/docs/configure#colors",
+      "format": "color"
     },
     "color_templates": {
       "type": "array",

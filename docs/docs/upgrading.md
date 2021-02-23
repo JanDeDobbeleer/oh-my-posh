@@ -33,7 +33,12 @@ Stays the same! Alright. All you need to do is update to the **beta**.
 ```powershell
 Update-Module -Name oh-my-posh -AllowPrerelease -Scope CurrentUser
 ```
-
+If you get this error `Update-Module : A parameter cannot be found that matches parameter name 'AllowPrerelease'.` 
+execute following commands and try again.
+```
+Install-Module -Name PackageManagement -Repository PSGallery -Force
+Install-Module -Name PowerShellGet -Repository PSGallery -Force
+```
 ## Configuration
 
 Here we have a few options. If you're using an out-of-the box theme, you can simply change the current command to the

@@ -77,3 +77,23 @@ func TestGenerateHyperlinkWithUrlNoName(t *testing.T) {
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
 }
+
+func TestFormatText(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Text     string
+		Expected string
+	}{
+		{Case: "single format", Text: "This <b>is</b> white", Expected: "This \x1b[1mis\x1b[22m white"},
+		{Case: "double format", Text: "This <b>is</b> white, this <b>is</b> orange", Expected: "This \x1b[1mis\x1b[22m white, this \x1b[1mis\x1b[22m orange"},
+		{Case: "underline", Text: "This <u>is</u> white", Expected: "This \x1b[4mis\x1b[24m white"},
+		{Case: "italic", Text: "This <i>is</i> white", Expected: "This \x1b[3mis\x1b[23m white"},
+		{Case: "strikethrough", Text: "This <s>is</s> white", Expected: "This \x1b[9mis\x1b[29m white"},
+	}
+	for _, tc := range cases {
+		a := ansiFormats{}
+		a.init("")
+		formattedText := a.formatText(tc.Text)
+		assert.Equal(t, tc.Expected, formattedText, tc.Case)
+	}
+}

@@ -92,6 +92,7 @@ func (a *AnsiColor) writeAndRemoveText(background, foreground, text, textToRemov
 }
 
 func (a *AnsiColor) write(background, foreground, text string) {
+	text = a.formats.formatText(text)
 	// first we match for any potentially valid colors enclosed in <>
 	match := findAllNamedRegexMatch(`<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`, text)
 	for i := range match {

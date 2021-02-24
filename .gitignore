@@ -150,5 +150,8 @@ dist
 
 # linux binary
 /src/oh-my-posh
+package/
 bin/
 Output/
+*.sha256
+*.7z

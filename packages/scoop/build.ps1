@@ -5,16 +5,16 @@ Param
     $Version
 )
 
-New-Item -Path "." -Name "bin" -ItemType Directory
-Copy-Item -Path "../../themes" -Destination "./bin" -Recurse
+New-Item -Path "." -Name "package/bin" -ItemType Directory
+Copy-Item -Path "../../themes" -Destination "./package" -Recurse
 
 # Download the files and pack them
 @{name = 'posh-windows-amd64.exe'; outName = 'oh-my-posh.exe' }, @{name = 'posh-linux-amd64'; outName = 'oh-my-posh-wsl' } | ForEach-Object -Process {
     $download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($_.name)"
-    Invoke-WebRequest $download -Out "./bin/$($_.outName)"
+    Invoke-WebRequest $download -Out "./package/bin/$($_.outName)"
 }
 $compress = @{
-    Path             = "./bin/*"
+    Path             = "./package/*"
     CompressionLevel = "Fastest"
     DestinationPath  = "./posh-windows-wsl-amd64.7z"
 }
@@ -26,4 +26,4 @@ $content = $content.Replace('<HASH>', $zipHash.Hash)
 $content | Out-File -Encoding 'UTF8' './oh-my-posh.json'
 $zipHash.Hash | Out-File -Encoding 'UTF8' 'posh-windows-wsl-amd64.7z.sha256'
 
-Remove-Item ./bin/ -Recurse
+Remove-Item ./package/ -Recurse

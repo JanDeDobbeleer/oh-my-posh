@@ -12,10 +12,7 @@
           "hash": "<HASH>"
       }
   },
-  "bin": [
-      "oh-my-posh-wsl",
-      "oh-my-posh.exe"
-  ],
+  "env_add_path": "bin",
   "checkver": {
       "github": "https://github.com/JanDeDobbeleer/oh-my-posh"
   },

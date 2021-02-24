@@ -14,6 +14,7 @@ type sessionArgs struct {
 	connection        string
 	client            string
 	sshIcon           string
+	defaultUserName   string
 }
 
 func setupSession(args *sessionArgs) session {
@@ -23,6 +24,7 @@ func setupSession(args *sessionArgs) session {
 	env.On("getRuntimeGOOS", nil).Return(args.goos)
 	env.On("getenv", "SSH_CONNECTION").Return(args.connection)
 	env.On("getenv", "SSH_CLIENT").Return(args.client)
+	env.On("getenv", defaultUserEnvVar).Return(args.defaultUserName)
 	props := &properties{
 		values: map[Property]interface{}{
 			UserInfoSeparator: args.userInfoSeparator,
@@ -154,59 +156,89 @@ func TestActiveSSHSessionActiveBoth(t *testing.T) {
 
 func TestSessionSegmentTemplate(t *testing.T) {
 	cases := []struct {
-		Case           string
-		ExpectedString string
-		UserName       string
-		ComputerName   string
-		SSHSession     bool
-		Root           bool
-		Template       string
+		Case            string
+		ExpectedEnabled bool
+		ExpectedString  string
+		UserName        string
+		DefaultUserName string
+		ComputerName    string
+		SSHSession      bool
+		Root            bool
+		Template        string
 	}{
 		{
-			Case:           "user and computer",
-			ExpectedString: "john@company-laptop",
-			ComputerName:   "company-laptop",
-			UserName:       "john",
-			Template:       "{{.UserName}}{{if .ComputerName}}@{{.ComputerName}}{{end}}",
+			Case:            "user and computer",
+			ExpectedString:  "john@company-laptop",
+			ComputerName:    "company-laptop",
+			UserName:        "john",
+			Template:        "{{.UserName}}{{if .ComputerName}}@{{.ComputerName}}{{end}}",
+			ExpectedEnabled: true,
 		},
 		{
-			Case:           "user only",
-			ExpectedString: "john",
-			UserName:       "john",
-			Template:       "{{.UserName}}{{if .ComputerName}}@{{.ComputerName}}{{end}}",
+			Case:            "user only",
+			ExpectedString:  "john",
+			UserName:        "john",
+			Template:        "{{.UserName}}{{if .ComputerName}}@{{.ComputerName}}{{end}}",
+			ExpectedEnabled: true,
 		},
 		{
-			Case:           "user with ssh",
-			ExpectedString: "john on remote",
-			UserName:       "john",
-			SSHSession:     true,
-			ComputerName:   "remote",
-			Template:       "{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			Case:            "user with ssh",
+			ExpectedString:  "john on remote",
+			UserName:        "john",
+			SSHSession:      true,
+			ComputerName:    "remote",
+			Template:        "{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			ExpectedEnabled: true,
 		},
 		{
-			Case:           "user without ssh",
-			ExpectedString: "john",
-			UserName:       "john",
-			SSHSession:     false,
-			ComputerName:   "remote",
-			Template:       "{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			Case:            "user without ssh",
+			ExpectedString:  "john",
+			UserName:        "john",
+			SSHSession:      false,
+			ComputerName:    "remote",
+			Template:        "{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			ExpectedEnabled: true,
 		},
 		{
-			Case:           "user with root and ssh",
-			ExpectedString: "super john on remote",
-			UserName:       "john",
-			SSHSession:     true,
-			ComputerName:   "remote",
-			Root:           true,
-			Template:       "{{if .Root}}super {{end}}{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			Case:            "user with root and ssh",
+			ExpectedString:  "super john on remote",
+			UserName:        "john",
+			SSHSession:      true,
+			ComputerName:    "remote",
+			Root:            true,
+			Template:        "{{if .Root}}super {{end}}{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			ExpectedEnabled: true,
 		},
 		{
-			Case:           "no template",
-			ExpectedString: "\uf817 <>john</>@<>remote</>",
-			UserName:       "john",
-			SSHSession:     true,
-			ComputerName:   "remote",
-			Root:           true,
+			Case:            "no template",
+			ExpectedString:  "\uf817 <>john</>@<>remote</>",
+			UserName:        "john",
+			SSHSession:      true,
+			ComputerName:    "remote",
+			Root:            true,
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "default user not equal",
+			ExpectedString:  "john",
+			UserName:        "john",
+			DefaultUserName: "jack",
+			SSHSession:      true,
+			ComputerName:    "remote",
+			Root:            true,
+			Template:        "{{if ne .DefaultUserName .UserName}}{{.UserName}}{{end}}",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "default user equal",
+			ExpectedString:  "",
+			UserName:        "john",
+			DefaultUserName: "john",
+			SSHSession:      true,
+			ComputerName:    "remote",
+			Root:            true,
+			Template:        "{{if ne .DefaultUserName .UserName}}{{.UserName}}{{end}}",
+			ExpectedEnabled: false,
 		},
 	}
 
@@ -222,6 +254,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		env.On("getenv", "SSH_CONNECTION").Return(SSHSession)
 		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
 		env.On("isRunningAsRoot", nil).Return(tc.Root)
+		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserName)
 		props := &properties{
 			values: map[Property]interface{}{
 				SegmentTemplate: tc.Template,
@@ -231,7 +264,9 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			env:   env,
 			props: props,
 		}
-		_ = session.enabled()
-		assert.Equal(t, tc.ExpectedString, session.string(), tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, session.enabled(), tc.Case)
+		if tc.ExpectedEnabled {
+			assert.Equal(t, tc.ExpectedString, session.string(), tc.Case)
+		}
 	}
 }

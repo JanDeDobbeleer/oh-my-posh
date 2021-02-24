@@ -39,8 +39,13 @@ properties below. Only used when a value is set, making the above properties obs
 ## Template Properties
 
 - `.UserName`: `string` - the current user's name
+- `.DefaultUserName`: - the default user name (set with the `POSH_SESSION_DEFAULT_USER` env var or `default_user_name` property)
 - `.ComputerName`: `string` - the current computer's name
 - `.SSHSession`: `boolean` - active SSH session or not
 - `.Root`: `boolean` - are you a root/admin user or not
+
+## Environmnent Variables
+
+- `POSH_SESSION_DEFAULT_USER` - used to override the hardcoded `default_user_name` property
 
 [colors]: /docs/configure#colors

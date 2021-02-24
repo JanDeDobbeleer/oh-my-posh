@@ -6,12 +6,14 @@ import (
 )
 
 type session struct {
-	props        *properties
-	env          environmentInfo
-	UserName     string
-	ComputerName string
-	SSHSession   bool
-	Root         bool
+	props           *properties
+	env             environmentInfo
+	UserName        string
+	DefaultUserName string
+	ComputerName    string
+	SSHSession      bool
+	Root            bool
+	templateText    string
 }
 
 const (
@@ -29,12 +31,26 @@ const (
 	SSHIcon Property = "ssh_icon"
 	// DefaultUserName holds the default user of the platform
 	DefaultUserName Property = "default_user_name"
+
+	defaultUserEnvVar = "POSH_SESSION_DEFAULT_USER"
 )
 
 func (s *session) enabled() bool {
 	s.UserName = s.getUserName()
+	s.ComputerName = s.getComputerName()
+	s.SSHSession = s.activeSSHSession()
+	s.DefaultUserName = s.getDefaultUser()
+	segmentTemplate := s.props.getString(SegmentTemplate, "")
+	if segmentTemplate != "" {
+		s.Root = s.env.isRunningAsRoot()
+		template := &textTemplate{
+			Template: segmentTemplate,
+			Context:  s,
+		}
+		s.templateText = template.render()
+		return len(s.templateText) > 0
+	}
 	showDefaultUser := s.props.getBool(DisplayDefault, true)
-	defaultUser := s.props.getString(DefaultUserName, "")
 	if !showDefaultUser && defaultUser == s.UserName {
 		return false
 	}
@@ -51,16 +67,8 @@ func (s *session) init(props *properties, env environmentInfo) {
 }
 
 func (s *session) getFormattedText() string {
-	s.ComputerName = s.getComputerName()
-	s.SSHSession = s.activeSSHSession()
-	segmentTemplate := s.props.getString(SegmentTemplate, "")
-	if segmentTemplate != "" {
-		s.Root = s.env.isRunningAsRoot()
-		template := &textTemplate{
-			Template: segmentTemplate,
-			Context:  s,
-		}
-		return template.render()
+	if len(s.templateText) > 0 {
+		return s.templateText
 	}
 	separator := ""
 	if s.props.getBool(DisplayHost, true) && s.props.getBool(DisplayUser, true) {
@@ -96,6 +104,14 @@ func (s *session) getUserName() string {
 		username = strings.Split(username, "\\")[1]
 	}
 	return username
+}
+
+func (s *session) getDefaultUser() string {
+	user := s.env.getenv(defaultUserEnvVar)
+	if len(user) == 0 {
+		user = s.props.getString(DefaultUserName, "")
+	}
+	return user
 }
 
 func (s *session) activeSSHSession() bool {

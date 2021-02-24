@@ -24,6 +24,10 @@ type ansiFormats struct {
 	escapeRight           string
 	hyperlink             string
 	osc99                 string
+	bold                  string
+	italic                string
+	underline             string
+	strikethrough         string
 }
 
 func (a *ansiFormats) init(shell string) {
@@ -45,6 +49,10 @@ func (a *ansiFormats) init(shell string) {
 		a.escapeRight = "%}"
 		a.hyperlink = "%%{\x1b]8;;%s\x1b\\%%}%s%%{\x1b]8;;\x1b\\%%}"
 		a.osc99 = "%%{\x1b]9;9;%s\x1b\\%%}"
+		a.bold = "%%{\x1b[1m%%}%s%%{\x1b[22m%%}"
+		a.italic = "%%{\x1b[3m%%}%s%%{\x1b[23m%%}"
+		a.underline = "%%{\x1b[4m%%}%s%%{\x1b[24m%%}"
+		a.strikethrough = "%%{\x1b[9m%%}%s%%{\x1b[29m%%}"
 	case bash:
 		a.linechange = "\\[\x1b[%d%s\\]"
 		a.left = "\\[\x1b[%dC\\]"
@@ -61,6 +69,10 @@ func (a *ansiFormats) init(shell string) {
 		a.escapeRight = "\\]"
 		a.hyperlink = "\\[\x1b]8;;%s\x1b\\\\\\]%s\\[\x1b]8;;\x1b\\\\\\]"
 		a.osc99 = "\\[\x1b]9;9;%s\x1b\\\\\\]"
+		a.bold = "\\[\x1b[1m\\]%s\\[\x1b[22m\\]"
+		a.italic = "\\[\x1b[3m\\]%s\\[\x1b[23m\\]"
+		a.underline = "\\[\x1b[4m\\]%s\\[\x1b[24m\\]"
+		a.strikethrough = "\\[\x1b[9m\\]%s\\[\x1b[29m\\]"
 	default:
 		a.linechange = "\x1b[%d%s"
 		a.left = "\x1b[%dC"
@@ -77,6 +89,11 @@ func (a *ansiFormats) init(shell string) {
 		a.escapeRight = ""
 		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
 		a.osc99 = "\x1b]9;9;%s\x1b\\"
+		a.bold = "\x1b[1m%s\x1b[22m"
+		a.italic = "\x1b[3m%s\x1b[23m"
+		a.underline = "\x1b[4m%s\x1b[24m"
+		a.strikethrough = "\x1b[9m%s\x1b[29m"
+		a.strikethrough = "\x1b[9m%s\x1b[29m"
 	}
 }
 
@@ -105,4 +122,23 @@ func (a *ansiFormats) generateHyperlink(text string) string {
 	hyperlink := fmt.Sprintf(a.hyperlink, results["url"], results["name"])
 	// replace original text by the new one
 	return strings.Replace(text, results["all"], hyperlink, 1)
+}
+
+func (a *ansiFormats) formatText(text string) string {
+	results := findAllNamedRegexMatch("(?P<context><(?P<format>[buis])>(?P<text>[^<]+)</[buis]>)", text)
+	for _, result := range results {
+		var formatted string
+		switch result["format"] {
+		case "b":
+			formatted = fmt.Sprintf(a.bold, result["text"])
+		case "u":
+			formatted = fmt.Sprintf(a.underline, result["text"])
+		case "i":
+			formatted = fmt.Sprintf(a.italic, result["text"])
+		case "s":
+			formatted = fmt.Sprintf(a.strikethrough, result["text"])
+		}
+		text = strings.Replace(text, result["context"], formatted, 1)
+	}
+	return text
 }

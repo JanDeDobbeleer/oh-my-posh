@@ -335,6 +335,17 @@ Oh my Posh mainly supports three different color types being
 
   `darkGray` `lightRed` `lightGreen` `lightYellow` `lightBlue` `lightMagenta` `lightCyan` `lightWhite`
 
+### Text decorations
+
+You can make use of the following syntax to decorate text:
+
+- `<b>bold</b>`: renders `bold` as bold text
+- `<u>underline</u>`: renders `underline` as underlined text
+- `<i>italic</i>`: renders `italic` as italic text
+- `<s>strikethrough</s>`: renders `strikethrough` as strikethrough text
+
+This can be used in templates and icons/text inside your config.
+
 ### Hyperlinks
 
 The engine has the ability to render hyperlinks. Your terminal has to support it and the option

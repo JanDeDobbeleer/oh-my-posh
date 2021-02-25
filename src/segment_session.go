@@ -80,7 +80,16 @@ func (s *session) getFormattedText() string {
 	}
 	userColor := s.props.getColor(UserColor, s.props.foreground)
 	hostColor := s.props.getColor(HostColor, s.props.foreground)
-	return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", sshIcon, userColor, s.UserName, separator, hostColor, s.ComputerName)
+	if len(userColor) > 0 && len(hostColor) > 0 {
+		return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", sshIcon, userColor, s.UserName, separator, hostColor, s.ComputerName)
+	}
+	if len(userColor) > 0 {
+		return fmt.Sprintf("%s<%s>%s</>%s%s", sshIcon, userColor, s.UserName, separator, s.ComputerName)
+	}
+	if len(hostColor) > 0 {
+		return fmt.Sprintf("%s%s%s<%s>%s</>", sshIcon, s.UserName, separator, hostColor, s.ComputerName)
+	}
+	return fmt.Sprintf("%s%s%s%s", sshIcon, s.UserName, separator, s.ComputerName)
 }
 
 func (s *session) getComputerName() string {

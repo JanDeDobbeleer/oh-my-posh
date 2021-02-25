@@ -1,157 +1,205 @@
 package main
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-type sessionArgs struct {
-	userInfoSeparator string
-	username          string
-	hostname          string
-	goos              string
-	connection        string
-	client            string
-	sshIcon           string
-	defaultUserName   string
-}
-
-func setupSession(args *sessionArgs) session {
-	env := new(MockedEnvironment)
-	env.On("getCurrentUser", nil).Return(args.username)
-	env.On("getHostName", nil).Return(args.hostname, nil)
-	env.On("getRuntimeGOOS", nil).Return(args.goos)
-	env.On("getenv", "SSH_CONNECTION").Return(args.connection)
-	env.On("getenv", "SSH_CLIENT").Return(args.client)
-	env.On("getenv", defaultUserEnvVar).Return(args.defaultUserName)
-	props := &properties{
-		values: map[Property]interface{}{
-			UserInfoSeparator: args.userInfoSeparator,
-			SSHIcon:           args.sshIcon,
+func TestPropertySessionSegment(t *testing.T) {
+	cases := []struct {
+		Case               string
+		ExpectedEnabled    bool
+		ExpectedString     string
+		UserName           string
+		Host               string
+		DefaultUserName    string
+		DefaultUserNameEnv string
+		SSHSession         bool
+		SSHClient          bool
+		Root               bool
+		DisplayUser        bool
+		DisplayHost        bool
+		DisplayDefault     bool
+		HostColor          string
+		UserColor          string
+		GOOS               string
+		HostError          bool
+	}{
+		{
+			Case:            "user and computer",
+			ExpectedString:  "john at company-laptop",
+			Host:            "company-laptop",
+			DisplayUser:     true,
+			DisplayHost:     true,
+			UserName:        "john",
+			ExpectedEnabled: true,
 		},
-		foreground: "#fff",
-		background: "#000",
+		{
+			Case:            "user and computer with host color",
+			ExpectedString:  "john at <yellow>company-laptop</>",
+			Host:            "company-laptop",
+			DisplayUser:     true,
+			DisplayHost:     true,
+			UserName:        "john",
+			HostColor:       "yellow",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "user and computer with user color",
+			ExpectedString:  "<yellow>john</> at company-laptop",
+			Host:            "company-laptop",
+			DisplayUser:     true,
+			DisplayHost:     true,
+			UserName:        "john",
+			UserColor:       "yellow",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "user and computer with both colors",
+			ExpectedString:  "<yellow>john</> at <green>company-laptop</>",
+			Host:            "company-laptop",
+			DisplayUser:     true,
+			DisplayHost:     true,
+			UserName:        "john",
+			UserColor:       "yellow",
+			HostColor:       "green",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "SSH Session",
+			ExpectedString:  "ssh john at company-laptop",
+			Host:            "company-laptop",
+			DisplayUser:     true,
+			DisplayHost:     true,
+			UserName:        "john",
+			SSHSession:      true,
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "SSH Client",
+			ExpectedString:  "ssh john at company-laptop",
+			Host:            "company-laptop",
+			DisplayUser:     true,
+			DisplayHost:     true,
+			UserName:        "john",
+			SSHClient:       true,
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "SSH Client",
+			ExpectedString:  "ssh john at company-laptop",
+			Host:            "company-laptop",
+			DisplayUser:     true,
+			DisplayHost:     true,
+			UserName:        "john",
+			SSHClient:       true,
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "only user name",
+			ExpectedString:  "john",
+			Host:            "company-laptop",
+			UserName:        "john",
+			DisplayUser:     true,
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "windows user name",
+			ExpectedString:  "john at company-laptop",
+			Host:            "company-laptop",
+			UserName:        "surface\\john",
+			DisplayHost:     true,
+			DisplayUser:     true,
+			ExpectedEnabled: true,
+			GOOS:            string(Windows),
+		},
+		{
+			Case:            "only host name",
+			ExpectedString:  "company-laptop",
+			Host:            "company-laptop",
+			UserName:        "john",
+			DisplayDefault:  true,
+			DisplayHost:     true,
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "display default - hidden",
+			Host:            "company-laptop",
+			UserName:        "john",
+			DefaultUserName: "john",
+			DisplayDefault:  false,
+			DisplayHost:     true,
+			DisplayUser:     true,
+			ExpectedEnabled: false,
+		},
+		{
+			Case:               "display default with env var - hidden",
+			Host:               "company-laptop",
+			UserName:           "john",
+			DefaultUserNameEnv: "john",
+			DefaultUserName:    "jake",
+			DisplayDefault:     false,
+			DisplayHost:        true,
+			DisplayUser:        true,
+			ExpectedEnabled:    false,
+		},
+		{
+			Case:            "host error",
+			ExpectedString:  "john at unknown",
+			Host:            "company-laptop",
+			HostError:       true,
+			UserName:        "john",
+			DisplayHost:     true,
+			DisplayUser:     true,
+			ExpectedEnabled: true,
+		},
 	}
-	s := session{
-		env:   env,
-		props: props,
-	}
-	return s
-}
 
-func testUserInfoWriter(args *sessionArgs) string {
-	s := setupSession(args)
-	_ = s.enabled()
-	return s.getFormattedText()
-}
-
-func TestWriteUserInfo(t *testing.T) {
-	want := "<#fff>bill</>@<#fff>surface</>"
-	args := &sessionArgs{
-		userInfoSeparator: "@",
-		username:          "bill",
-		hostname:          "surface",
-		goos:              "windows",
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("getCurrentUser", nil).Return(tc.UserName)
+		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		if tc.HostError {
+			env.On("getHostName", nil).Return(tc.Host, errors.New("oh snap"))
+		} else {
+			env.On("getHostName", nil).Return(tc.Host, nil)
+		}
+		var SSHSession string
+		if tc.SSHSession {
+			SSHSession = "zezzion"
+		}
+		var SSHClient string
+		if tc.SSHClient {
+			SSHClient = "clientz"
+		}
+		env.On("getenv", "SSH_CONNECTION").Return(SSHSession)
+		env.On("getenv", "SSH_CLIENT").Return(SSHClient)
+		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
+		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserNameEnv)
+		env.On("isRunningAsRoot", nil).Return(tc.Root)
+		props := &properties{
+			values: map[Property]interface{}{
+				UserInfoSeparator: " at ",
+				SSHIcon:           "ssh ",
+				DefaultUserName:   tc.DefaultUserName,
+				DisplayDefault:    tc.DisplayDefault,
+				DisplayUser:       tc.DisplayUser,
+				DisplayHost:       tc.DisplayHost,
+				HostColor:         tc.HostColor,
+				UserColor:         tc.UserColor,
+			},
+		}
+		session := &session{
+			env:   env,
+			props: props,
+		}
+		assert.Equal(t, tc.ExpectedEnabled, session.enabled(), tc.Case)
+		if tc.ExpectedEnabled {
+			assert.Equal(t, tc.ExpectedString, session.string(), tc.Case)
+		}
 	}
-	got := testUserInfoWriter(args)
-	assert.EqualValues(t, want, got)
-}
-
-func TestWriteUserInfoWindowsIncludingHostname(t *testing.T) {
-	want := "<#fff>bill</>@<#fff>surface</>"
-	args := &sessionArgs{
-		userInfoSeparator: "@",
-		username:          "surface\\bill",
-		hostname:          "surface",
-		goos:              "windows",
-	}
-	got := testUserInfoWriter(args)
-	assert.EqualValues(t, want, got)
-}
-
-func TestWriteOnlyUsername(t *testing.T) {
-	args := &sessionArgs{
-		userInfoSeparator: "@",
-		username:          "surface\\bill",
-		hostname:          "surface",
-		goos:              "windows",
-	}
-	s := setupSession(args)
-	s.props.values[DisplayHost] = false
-	want := "<#fff>bill</><#fff></>"
-	assert.True(t, s.enabled())
-	got := s.getFormattedText()
-	assert.EqualValues(t, want, got)
-}
-
-func TestWriteOnlyHostname(t *testing.T) {
-	args := &sessionArgs{
-		userInfoSeparator: "@",
-		username:          "surface\\bill",
-		hostname:          "surface",
-		goos:              "windows",
-	}
-	s := setupSession(args)
-	s.props.values[DisplayUser] = false
-	want := "<#fff></><#fff>surface</>"
-	assert.True(t, s.enabled())
-	got := s.getFormattedText()
-	assert.EqualValues(t, want, got)
-}
-
-func TestWriteActiveSSHSession(t *testing.T) {
-	want := "ssh <#fff>bill</>@<#fff>surface</>"
-	args := &sessionArgs{
-		userInfoSeparator: "@",
-		username:          "bill",
-		hostname:          "surface",
-		goos:              "windows",
-		sshIcon:           "ssh ",
-		connection:        "1.1.1.1",
-	}
-	got := testUserInfoWriter(args)
-	assert.EqualValues(t, want, got)
-}
-
-func TestActiveSSHSessionInactive(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("getenv", "SSH_CONNECTION").Return("")
-	env.On("getenv", "SSH_CLIENT").Return("")
-	s := &session{
-		env: env,
-	}
-	assert.False(t, s.activeSSHSession())
-}
-
-func TestActiveSSHSessionActiveConnection(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("getenv", "SSH_CONNECTION").Return("1.1.1.1")
-	env.On("getenv", "SSH_CLIENT").Return("")
-	s := &session{
-		env: env,
-	}
-	assert.True(t, s.activeSSHSession())
-}
-
-func TestActiveSSHSessionActiveClient(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("getenv", "SSH_CONNECTION").Return("")
-	env.On("getenv", "SSH_CLIENT").Return("1.1.1.1")
-	s := &session{
-		env: env,
-	}
-	assert.True(t, s.activeSSHSession())
-}
-
-func TestActiveSSHSessionActiveBoth(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("getenv", "SSH_CONNECTION").Return("2.2.2.2")
-	env.On("getenv", "SSH_CLIENT").Return("1.1.1.1")
-	s := &session{
-		env: env,
-	}
-	assert.True(t, s.activeSSHSession())
 }
 
 func TestSessionSegmentTemplate(t *testing.T) {
@@ -211,7 +259,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		},
 		{
 			Case:            "no template",
-			ExpectedString:  "\uf817 <>john</>@<>remote</>",
+			ExpectedString:  "\uf817 john@remote",
 			UserName:        "john",
 			SSHSession:      true,
 			ComputerName:    "remote",

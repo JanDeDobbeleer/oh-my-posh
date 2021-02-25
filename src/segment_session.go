@@ -51,7 +51,7 @@ func (s *session) enabled() bool {
 		return len(s.templateText) > 0
 	}
 	showDefaultUser := s.props.getBool(DisplayDefault, true)
-	if !showDefaultUser && defaultUser == s.UserName {
+	if !showDefaultUser && s.DefaultUserName == s.UserName {
 		return false
 	}
 	return true

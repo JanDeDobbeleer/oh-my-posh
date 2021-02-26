@@ -836,6 +836,12 @@
                     "description": "Icon/text to use for separating WSL from Linux",
                     "default": " - "
                   },
+                  "display_distro_name": {
+                    "type": "boolean",
+                    "title": "Display Distro Name",
+                    "description": "Display the distro name or icon or not",
+                    "default": false
+                  },
                   "alpine": {
                     "type": "string",
                     "title": "Alpine Icon",

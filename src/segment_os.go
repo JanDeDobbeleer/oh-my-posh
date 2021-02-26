@@ -58,6 +58,8 @@ const (
 	Slackware Property = "slackware"
 	// Ubuntu the string/icon to use for Ubuntu
 	Ubuntu Property = "ubuntu"
+	// DisplayDistroName display the distro name or not
+	DisplayDistroName Property = "display_distro_name"
 )
 
 func (n *osInfo) enabled() bool {
@@ -74,20 +76,27 @@ func (n *osInfo) string() string {
 	case "linux":
 		wsl := n.env.getenv("WSL_DISTRO_NAME")
 		p := n.env.getPlatform()
-		if wsl != "" {
-			return fmt.Sprintf("%s%s%s",
-				n.props.getString(WSL, "WSL"),
-				n.props.getString(WSLSeparator, " - "),
-				getLinuxIcon(n, p))
+		if len(wsl) == 0 {
+			return n.getDistroName(p, "")
 		}
-		return getLinuxIcon(n, p)
+		return fmt.Sprintf("%s%s%s",
+			n.props.getString(WSL, "WSL"),
+			n.props.getString(WSLSeparator, " - "),
+			n.getDistroName(p, wsl))
 	default:
-		return ""
+		return goos
 	}
 }
 
-func getLinuxIcon(n *osInfo, p string) string {
-	switch p {
+func (n *osInfo) getDistroName(distro, defaultName string) string {
+	displayDistroName := n.props.getBool(DisplayDistroName, false)
+	if displayDistroName && len(defaultName) > 0 {
+		return defaultName
+	}
+	if displayDistroName {
+		return distro
+	}
+	switch distro {
 	case "alpine":
 		return n.props.getString(Alpine, "\uF300")
 	case "aosc":

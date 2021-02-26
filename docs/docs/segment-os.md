@@ -30,6 +30,7 @@ Display OS specific info. Defaults to Icon.
 - windows: `string` - the icon to use for Windows - defaults to Windows icon - defaults to `\uE62A`
 - wsl: `string` - the string/icon to use for WSL - defaults to `WSL`
 - wsl_separator: `string` - the string to use for separating WSL from Linux - defaults to ` - `
+- display_distro_name: `boolean` - display the distro name or icon (for WSL and Linux) - defaults to `false`
 - alpine: `string` - the icon to use for Alpine - defaults to Alpine icon - defaults to `\uF300`
 - aosc: `string` - the icon to use for Aosc - defaults to Aosc icon - defaults to `\uF301`
 - arch: `string` - the icon to use for Arch - defaults to Arch icon - defaults to `\uF303`

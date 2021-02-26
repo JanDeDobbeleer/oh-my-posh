@@ -28,10 +28,10 @@ Let's have a look at the V2 commands and how to move towards V3.
 
 ## Import
 
-Stays the same! Alright. All you need to do is update to the **beta**.
+Stays the same! Alright. All you need to do is update oh-my-posh.
 
 ```powershell
-Update-Module -Name oh-my-posh -AllowPrerelease -Scope CurrentUser
+Update-Module -Name oh-my-posh -Scope CurrentUser
 ```
 
 ## Configuration

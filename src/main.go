@@ -1,8 +1,7 @@
-//go:generate go-bindata -o init.go init/
-
 package main
 
 import (
+	_ "embed"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -13,6 +12,18 @@ import (
 
 // Version number of oh-my-posh
 var Version = "development"
+
+//go:embed init/omp.ps1
+var pwshInit string
+
+//go:embed init/omp.fish
+var fishInit string
+
+//go:embed init/omp.bash
+var bashInit string
+
+//go:embed init/omp.zsh
+var zshInit string
 
 const (
 	noExe       = "echo \"Unable to find Oh my Posh executable\""
@@ -185,25 +196,20 @@ func printShellInit(shell, config string) string {
 	}
 	switch shell {
 	case pwsh:
-		return getShellInitScript(executable, config, "init/omp.ps1")
+		return getShellInitScript(executable, config, pwshInit)
 	case zsh:
-		return getShellInitScript(executable, config, "init/omp.zsh")
+		return getShellInitScript(executable, config, zshInit)
 	case bash:
-		return getShellInitScript(executable, config, "init/omp.bash")
+		return getShellInitScript(executable, config, bashInit)
 	case fish:
-		return getShellInitScript(executable, config, "init/omp.fish")
+		return getShellInitScript(executable, config, fishInit)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}
 }
 
 func getShellInitScript(executable, config, script string) string {
-	data, err := Asset(script)
-	if err != nil {
-		return fmt.Sprintf("echo \"Unable to find initialization script %s\"", script)
-	}
-	init := string(data)
-	init = strings.ReplaceAll(init, "::OMP::", executable)
-	init = strings.ReplaceAll(init, "::CONFIG::", config)
-	return init
+	script = strings.ReplaceAll(script, "::OMP::", executable)
+	script = strings.ReplaceAll(script, "::CONFIG::", config)
+	return script
 }

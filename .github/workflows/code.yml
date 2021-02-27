@@ -26,7 +26,7 @@ jobs:
     - name: Install Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.15.x
+        go-version: 1.16
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Bundle init scripts

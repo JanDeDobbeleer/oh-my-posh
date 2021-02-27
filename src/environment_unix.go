@@ -5,6 +5,8 @@ package main
 import (
 	"errors"
 	"os"
+
+	"github.com/shirou/gopsutil/host"
 )
 
 func (env *environment) isRunningAsRoot() bool {
@@ -25,4 +27,9 @@ func (env *environment) isWsl() bool {
 	// return strings.Contains(version, "microsoft")
 	// using env variable
 	return env.getenv("WSL_DISTRO_NAME") != ""
+}
+
+func (env *environment) getPlatform() string {
+	p, _, _, _ := host.PlatformInformation()
+	return p
 }

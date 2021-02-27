@@ -57,3 +57,7 @@ func (env *environment) getWindowTitle(imageName, windowTitleRegex string) (stri
 func (env *environment) isWsl() bool {
 	return false
 }
+
+func (env *environment) getPlatform() string {
+	return windowsPlatform
+}

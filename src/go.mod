@@ -22,6 +22,7 @@ require (
 	github.com/shirou/gopsutil v3.21.1+incompatible
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
+	github.com/tklauser/go-sysconf v0.3.4 // indirect
 	golang.org/x/crypto v0.0.0-20210220033148-5ea612d1eb83 // indirect
 	golang.org/x/sys v0.0.0-20210228012217-479acdf4ea46
 	golang.org/x/text v0.3.5
@@ -33,3 +34,7 @@ require (
 replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-1
 
 replace github.com/gookit/color v1.3.5 => github.com/JanDeDobbeleer/color v1.3.5-1
+
+replace github.com/shirou/gopsutil v3.21.1+incompatible => github.com/JanDeDobbeleer/gopsutil v3.21.1-1+incompatible
+
+replace github.com/go-ole/go-ole v1.2.5 => github.com/JanDeDobbeleer/go-ole v1.2.5-1

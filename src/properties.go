@@ -17,7 +17,11 @@ const (
 	Postfix Property = "postfix"
 	// ColorBackground color the background or foreground when a specific color is set
 	ColorBackground Property = "color_background"
-	// IgnoreFolders folders to ignore and not run the segment logic
+	// IncludeFolders folders to be included for the segment logic
+	IncludeFolders Property = "include_folders"
+	// ExcludeFolders folders to be excluded for the segment logic
+	ExcludeFolders Property = "exclude_folders"
+	// IgnoreFolders duplicate of ExcludeFolders
 	IgnoreFolders Property = "ignore_folders"
 	// DisplayVersion show the version number or not
 	DisplayVersion Property = "display_version"

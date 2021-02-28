@@ -112,15 +112,45 @@ func (segment *Segment) getValue(property Property, defaultValue string) string 
 	return defaultValue
 }
 
-func (segment *Segment) shouldIgnoreFolder(cwd string) bool {
-	if value, ok := segment.Properties[IgnoreFolders]; ok {
-		list := parseStringArray(value)
-		for _, element := range list {
-			pattern := fmt.Sprintf("^%s$", element)
-			matched := matchString(pattern, cwd)
-			return matched
+func (segment *Segment) shouldIncludeFolder(cwd string) bool {
+	cwdIncluded := segment.cwdIncluded(cwd)
+	cwdExcluded := segment.cwdExcluded(cwd)
+	return (cwdIncluded && !cwdExcluded)
+}
+
+func (segment *Segment) cwdIncluded(cwd string) bool {
+	value, ok := segment.Properties[IncludeFolders]
+	if !ok {
+		// IncludeFolders isn't specified, everything is included
+		return true
+	}
+
+	list := parseStringArray(value)
+
+	if len(list) == 0 {
+		// IncludeFolders is an empty array, everything is included
+		return true
+	}
+
+	return segment.cwdMatchesOneOf(cwd, list)
+}
+
+func (segment *Segment) cwdExcluded(cwd string) bool {
+	value, ok := segment.Properties[ExcludeFolders]
+	if !ok {
+		value = segment.Properties[IgnoreFolders]
+	}
+	list := parseStringArray(value)
+	return segment.cwdMatchesOneOf(cwd, list)
+}
+
+func (segment *Segment) cwdMatchesOneOf(cwd string, regexes []string) bool {
+	for _, element := range regexes {
+		pattern := fmt.Sprintf("^%s$", element)
+		matched := matchString(pattern, cwd)
+		if matched {
+			return true
 		}
-		return false
 	}
 	return false
 }
@@ -214,7 +244,7 @@ func (segment *Segment) setStringValue(env environmentInfo, cwd string) {
 		segment.active = true
 	}()
 	err := segment.mapSegmentWithWriter(env)
-	if err != nil || segment.shouldIgnoreFolder(cwd) {
+	if err != nil || !segment.shouldIncludeFolder(cwd) {
 		return
 	}
 	if segment.enabled() {

@@ -185,14 +185,33 @@
               "description": "https://ohmyposh.dev/docs/configure#postfix",
               "default": " "
             },
-            "ignore_folders": {
+            "include_folders": {
               "type": "array",
-              "title": "Ignore rendering in these folders",
-              "description": "https://ohmyposh.dev/docs/configure#ignore-folders",
+              "title": "If specified, segment will only render in these folders",
+              "description": "https://ohmyposh.dev/docs/configure#include--exclude-folders",
               "default": [],
               "items": {
                 "type": "string"
               }
+            },
+            "exclude_folders": {
+              "type": "array",
+              "title": "Exclude rendering in these folders",
+              "description": "https://ohmyposh.dev/docs/configure#include--exclude-folders",
+              "default": [],
+              "items": {
+                "type": "string"
+              }
+            },
+            "ignore_folders": {
+              "type": "array",
+              "title": "Deprecated - please use `exclude_folders` instead",
+              "description": "https://ohmyposh.dev/docs/configure#include--exclude-folders",
+              "default": [],
+              "items": {
+                "type": "string"
+              },
+              "deprecated": true
             }
           }
         }

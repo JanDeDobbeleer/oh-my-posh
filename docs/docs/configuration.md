@@ -254,7 +254,8 @@ You can use these on any segment, the engine is responsible for adding them corr
 
 - prefix: `string`
 - postfix: `string`
-- ignore_folders: `[]string`
+- include_folders: `[]string`
+- exclude_folders: `[]string`
 
 ##### Prefix
 
@@ -264,33 +265,52 @@ The string content will be put in front of the segment's output text. Useful for
 
 The string content will be put after the segment's output text. Useful for symbols, text or other customizations.
 
-##### Ignore Folders
+##### Include / Exclude Folders
 
-Sometimes you want might want to not have a segment rendered at a certain location. If so, adding the path to the
-segment's configuration will not render it when in that location. The engine will simply skip it.
+Sometimes you might want to have a segment only rendered in certain folders. If `include_folders` is specified,
+the segment will only be rendered when in one of those locations. If `exclude_folders` is specified, the segment
+will not be rendered when in one of the excluded locations.
 
 ```json
-"ignore_folders": [
-  "/super/secret/project"
+"include_folders": [
+  "/Users/posh/Projects"
 ]
 ```
 
-You can also specify a [regular expression][regex] to create wildcards to exclude certain folders.
-In the sample below, folders inside the `/Users/posh/Projects` path will not show the segment.
-
 ```json
-"ignore_folders": [
-  "/Users/posh/Projects/.*"
+"exclude_folders": [
+  "/Users/posh/Projects"
 ]
 ```
 
-Want to only show the segment inside certain folders? Use the [negative lookahead][regex-nl] to only match folders
-in a certain path. Everything else will be ignored. In the sample below, only folders inside the
-`/Users/posh/Projects/` path will show the segment.
+You can also specify a [regular expression][regex] to create folder wildcards.
+In the sample below, any folders inside the `/Users/posh/Projects` path will be matched.
 
 ```json
-"ignore_folders": [
-  "(?!/Users/posh/Projects/).*"
+"include_folders": [
+  "/Users/posh/Projects.*"
+]
+```
+
+You can also combine these properties:
+
+```json
+"include_folders": [
+  "/Users/posh/Projects.*"
+],
+"exclude_folders": [
+  "/Users/posh/Projects/secret-project.*"
+]
+```
+
+Note for Windows users: Windows directory separators should be specified as 4 backslashes.
+
+```json
+"include_folders": [
+  "C:\\\\Projects.*"
+],
+"exclude_folders": [
+  "C:\\\\Projects\\\\secret-project.*"
 ]
 ```
 
@@ -407,7 +427,7 @@ has to be enabled at the segment level. Hyperlink generation is disabled by defa
           "properties": {
             "prefix": " \uE5FF ",
             "style": "folder",
-            "ignore_folders": [
+            "exclude_folders": [
               "/super/secret/project"
             ],
             "enable_hyperlink": false
@@ -451,7 +471,6 @@ has to be enabled at the segment level. Hyperlink generation is disabled by defa
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [fg]: /docs/configure#foreground
 [regex]: https://www.regular-expressions.info/tutorial.html
-[regex-nl]: https://www.regular-expressions.info/lookaround.html
 [rprompt]: https://scriptingosx.com/2019/07/moving-to-zsh-06-customizing-the-zsh-prompt/
 [path-segment]: /docs/path
 [terminal-list-hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda

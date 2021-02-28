@@ -199,7 +199,7 @@ func (e *engine) debug() {
 	for _, block := range e.settings.Blocks {
 		for _, segment := range block.Segments {
 			err := segment.mapSegmentWithWriter(e.env)
-			if err != nil || segment.shouldIgnoreFolder(e.env.getcwd()) {
+			if err != nil || !segment.shouldIncludeFolder(e.env.getcwd()) {
 				continue
 			}
 			var segmentTiming SegmentTiming

@@ -1007,7 +1007,8 @@
                       "agnoster_short",
                       "short",
                       "full",
-                      "folder"
+                      "folder",
+                      "mixed"
                     ],
                     "default": "folder"
                   },

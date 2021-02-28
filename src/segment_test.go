@@ -44,7 +44,7 @@ func TestParseTestSettings(t *testing.T) {
 			"properties": {
 				"prefix": " \uE5FF ",
 				"style": "folder",
-				"ignore_folders": [
+				"exclude_folders": [
 					"/super/secret/project"
 				]
 			}
@@ -53,35 +53,49 @@ func TestParseTestSettings(t *testing.T) {
 	segment := &Segment{}
 	err := json.Unmarshal([]byte(segmentJSON), segment)
 	assert.NoError(t, err)
-	cwd := "/super/secret/project"
-	got := segment.shouldIgnoreFolder(cwd)
-	assert.True(t, got)
 }
 
-func TestShouldIgnoreFolderRegex(t *testing.T) {
-	segment := &Segment{
-		Properties: map[Property]interface{}{
-			IgnoreFolders: []string{"Projects[\\/].*"},
-		},
+func TestShouldIncludeFolder(t *testing.T) {
+	cases := []struct {
+		Case           string
+		IncludeFolders []string
+		ExcludeFolders []string
+		Expected       bool
+	}{
+		{Case: "Base Case", IncludeFolders: nil, ExcludeFolders: nil, Expected: true},
+		{Case: "Base Case Empty Arrays", IncludeFolders: []string{}, ExcludeFolders: []string{}, Expected: true},
+
+		{Case: "Include", IncludeFolders: []string{"Projects/oh-my-posh"}, ExcludeFolders: nil, Expected: true},
+		{Case: "Include Regex", IncludeFolders: []string{"Projects.*"}, ExcludeFolders: nil, Expected: true},
+		{Case: "Include Mismatch", IncludeFolders: []string{"Projects/nope"}, ExcludeFolders: nil, Expected: false},
+		{Case: "Include Regex Mismatch", IncludeFolders: []string{"zProjects.*"}, ExcludeFolders: nil, Expected: false},
+
+		{Case: "Exclude", IncludeFolders: nil, ExcludeFolders: []string{"Projects/oh-my-posh"}, Expected: false},
+		{Case: "Exclude Regex", IncludeFolders: nil, ExcludeFolders: []string{"Projects.*"}, Expected: false},
+		{Case: "Exclude Mismatch", IncludeFolders: nil, ExcludeFolders: []string{"Projects/nope"}, Expected: true},
+		{Case: "Exclude Regex Mismatch", IncludeFolders: nil, ExcludeFolders: []string{"zProjects.*"}, Expected: true},
+
+		{Case: "Include Match / Exclude Match", IncludeFolders: []string{"Projects.*"}, ExcludeFolders: []string{"Projects/oh-my-posh"}, Expected: false},
+		{Case: "Include Match / Exclude Mismatch", IncludeFolders: []string{"Projects.*"}, ExcludeFolders: []string{"Projects/nope"}, Expected: true},
+		{Case: "Include Mismatch / Exclude Match", IncludeFolders: []string{"zProjects.*"}, ExcludeFolders: []string{"Projects/oh-my-posh"}, Expected: false},
+		{Case: "Include Mismatch / Exclude Mismatch", IncludeFolders: []string{"zProjects.*"}, ExcludeFolders: []string{"Projects/nope"}, Expected: false},
 	}
-	got := segment.shouldIgnoreFolder(cwd)
-	assert.True(t, got)
-}
-
-func TestShouldIgnoreFolderRegexNonEscaped(t *testing.T) {
-	segment := &Segment{
-		Properties: map[Property]interface{}{
-			IgnoreFolders: []string{"Projects/.*"},
-		},
+	for _, tc := range cases {
+		segment := &Segment{
+			Properties: map[Property]interface{}{
+				IncludeFolders: tc.IncludeFolders,
+				ExcludeFolders: tc.ExcludeFolders,
+			},
+		}
+		got := segment.shouldIncludeFolder(cwd)
+		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
-	got := segment.shouldIgnoreFolder(cwd)
-	assert.True(t, got)
 }
 
-func TestShouldIgnoreFolderRegexInverted(t *testing.T) {
+func TestShouldIncludeFolderRegexInverted(t *testing.T) {
 	segment := &Segment{
 		Properties: map[Property]interface{}{
-			IgnoreFolders: []string{"(?!Projects[\\/]).*"},
+			ExcludeFolders: []string{"(?!Projects[\\/]).*"},
 		},
 	}
 	// detect panic(thrown by MustCompile)
@@ -91,13 +105,13 @@ func TestShouldIgnoreFolderRegexInverted(t *testing.T) {
 			assert.Equal(t, "regexp: Compile(`^(?!Projects[\\/]).*$`): error parsing regexp: invalid or unsupported Perl syntax: `(?!`", err)
 		}
 	}()
-	segment.shouldIgnoreFolder(cwd)
+	segment.shouldIncludeFolder(cwd)
 }
 
-func TestShouldIgnoreFolderRegexInvertedNonEscaped(t *testing.T) {
+func TestShouldIncludeFolderRegexInvertedNonEscaped(t *testing.T) {
 	segment := &Segment{
 		Properties: map[Property]interface{}{
-			IgnoreFolders: []string{"(?!Projects/).*"},
+			ExcludeFolders: []string{"(?!Projects/).*"},
 		},
 	}
 	// detect panic(thrown by MustCompile)
@@ -107,7 +121,7 @@ func TestShouldIgnoreFolderRegexInvertedNonEscaped(t *testing.T) {
 			assert.Equal(t, "regexp: Compile(`^(?!Projects/).*$`): error parsing regexp: invalid or unsupported Perl syntax: `(?!`", err)
 		}
 	}()
-	segment.shouldIgnoreFolder(cwd)
+	segment.shouldIncludeFolder(cwd)
 }
 
 func TestGetColors(t *testing.T) {

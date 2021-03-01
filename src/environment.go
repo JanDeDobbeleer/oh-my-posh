@@ -68,7 +68,7 @@ type environmentInfo interface {
 
 type commandCache struct {
 	commands map[string]string
-	lock     sync.Mutex
+	lock     sync.RWMutex
 }
 
 func (c *commandCache) set(command, path string) {
@@ -78,8 +78,8 @@ func (c *commandCache) set(command, path string) {
 }
 
 func (c *commandCache) get(command string) (string, bool) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
+	c.lock.RLock()
+	defer c.lock.RUnlock()
 	if cmd, ok := c.commands[command]; ok {
 		command = cmd
 		return command, true
@@ -97,7 +97,7 @@ func (env *environment) init(args *args) {
 	env.args = args
 	cmdCache := &commandCache{
 		commands: make(map[string]string),
-		lock:     sync.Mutex{},
+		lock:     sync.RWMutex{},
 	}
 	env.cmdCache = cmdCache
 }

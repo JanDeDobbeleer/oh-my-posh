@@ -7,12 +7,14 @@ import (
 
 var (
 	regexCache     map[string]*regexp.Regexp = make(map[string]*regexp.Regexp)
-	regexCacheLock                           = sync.Mutex{}
+	regexCacheLock                           = sync.RWMutex{}
 )
 
 func getCompiledRegex(pattern string) *regexp.Regexp {
 	// try in cache first
+	regexCacheLock.RLock()
 	re := regexCache[pattern]
+	regexCacheLock.RUnlock()
 	if re != nil {
 		return re
 	}

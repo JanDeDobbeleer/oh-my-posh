@@ -4,14 +4,16 @@
 #>
 
 function Get-PoshCommand {
-    $poshCommand = "$PSScriptRoot/bin/posh-windows-amd64.exe"
     if ($IsMacOS) {
-        $poshCommand = "$PSScriptRoot/bin/posh-darwin-amd64"
+        return "$PSScriptRoot/bin/posh-darwin-amd64"
     }
     if ($IsLinux) {
-        $poshCommand = "$PSScriptRoot/bin/posh-linux-amd64"
+        return "$PSScriptRoot/bin/posh-linux-amd64"
     }
-    return $poshCommand
+    if ([Environment]::Is64BitOperatingSystem) {
+        return "$PSScriptRoot/bin/posh-windows-amd64.exe"
+    }
+    return "$PSScriptRoot/bin/posh-windows-386.exe"
 }
 
 function Set-ExecutablePermissions {

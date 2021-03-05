@@ -309,33 +309,38 @@ func TestAgnosterPathStyles(t *testing.T) {
 
 func TestGetFullPath(t *testing.T) {
 	cases := []struct {
-		Style               string
-		FolderSeparatorIcon string
-		Pwd                 string
-		Pswd                string
-		Expected            string
+		Style                  string
+		FolderSeparatorIcon    string
+		Pwd                    string
+		Pswd                   string
+		Expected               string
+		DisableMappedLocations bool
 	}{
 		{Style: Full, Pwd: "", Expected: ""},
 		{Style: Full, Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: "/usr/home", Expected: "~"},
 		{Style: Full, Pwd: "/usr/home/abc", Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", Expected: "/usr/home/abc", DisableMappedLocations: true},
 		{Style: Full, Pwd: "/a/b/c/d", Expected: "/a/b/c/d"},
 
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "", Expected: ""},
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "|"},
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/usr/home", Expected: "~"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/usr/home", Expected: "|usr|home", DisableMappedLocations: true},
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/usr/home/abc", Expected: "~|abc"},
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/a/b/c/d", Expected: "|a|b|c|d"},
 
 		{Style: Folder, Pwd: "", Expected: "."},
 		{Style: Folder, Pwd: "/", Expected: "/"},
 		{Style: Folder, Pwd: "/usr/home", Expected: "~"},
+		{Style: Folder, Pwd: "/usr/home", Expected: "home", DisableMappedLocations: true},
 		{Style: Folder, Pwd: "/usr/home/abc", Expected: "abc"},
 		{Style: Folder, Pwd: "/a/b/c/d", Expected: "d"},
 
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "", Expected: "."},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/", Expected: "|"},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/usr/home", Expected: "~"},
+		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/usr/home", Expected: "home", DisableMappedLocations: true},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/usr/home/abc", Expected: "abc"},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/a/b/c/d", Expected: "d"},
 	}
@@ -356,6 +361,9 @@ func TestGetFullPath(t *testing.T) {
 		}
 		if tc.FolderSeparatorIcon != "" {
 			props.values[FolderSeparatorIcon] = tc.FolderSeparatorIcon
+		}
+		if tc.DisableMappedLocations {
+			props.values[MappedLocationsEnabled] = false
 		}
 		path := &path{
 			env:   env,

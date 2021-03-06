@@ -11,9 +11,10 @@ import TabItem from "@theme/TabItem";
 
 <Tabs
   defaultValue="windows"
+  groupId="env"
   values={[
     { label: 'windows', value: 'windows', },
-    { label: 'macos', value: 'macos', },
+    { label: 'macOS', value: 'macos', },
     { label: 'unix', value: 'unix', },
   ]
 }>
@@ -57,10 +58,11 @@ Make sure to install fonts system wide to avoid seeing rectangles in your termin
 
 <Tabs
   defaultValue="powershell"
+  groupId="env"
   values={[
     { label: 'powershell', value: 'powershell', },
     { label: 'windows', value: 'windows', },
-    { label: 'macos', value: 'macos', },
+    { label: 'macOS', value: 'macos', },
     { label: 'unix', value: 'unix', },
   ]
 }>
@@ -199,6 +201,7 @@ oh-my-posh --print-shell
 
 <Tabs
   defaultValue="powershell"
+  groupId="env"
   values={[
     { label: 'powershell', value: 'powershell', },
     { label: 'zsh', value: 'zsh', },
@@ -213,13 +216,15 @@ oh-my-posh --print-shell
 Edit `$PROFILE` in your preferred PowerShell version and add the following line.
 
 <Tabs
-  defaultValue="module"
+  defaultValue="windows"
+  groupId="env"
   values={[
-    { label: 'module', value: 'module', },
-    { label: 'manual', value: 'manual', },
+    { label: 'module', value: 'powershell', },
+    { label: 'macOS', value: 'macos', },
+    { label: 'windows', value: 'windows', },
   ]
 }>
-<TabItem value="module">
+<TabItem value="powershell">
 
 Autocompletion is available so it will loop through all available themes.
 
@@ -228,7 +233,14 @@ Set-PoshPrompt -Theme jandedobbeleer
 ```
 
 </TabItem>
-<TabItem value="manual">
+<TabItem value="macos">
+
+```powershell
+Invoke-Expression (oh-my-posh --init --shell pwsh --config "$(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json")
+```
+
+</TabItem>
+<TabItem value="windows">
 
 ```powershell
 Invoke-Expression (oh-my-posh --init --shell pwsh --config "$(scoop prefix oh-my-posh)/themes/jandedobbeleer.omp.json")
@@ -248,9 +260,29 @@ Once added, reload your profile for the changes to take effect.
 
 Add the following to `~/.zshrc`:
 
+<Tabs
+  defaultValue="macos"
+  groupId="env"
+  values={[
+    { label: 'macOS', value: 'macos', },
+    { label: 'unix', value: 'unix', },
+  ]
+}>
+<TabItem value="macos">
+
+```bash
+eval "$(oh-my-posh --init --shell zsh --config $(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json)"
+```
+
+</TabItem>
+<TabItem value="unix">
+
 ```bash
 eval "$(oh-my-posh --init --shell zsh --config ~/.poshthemes/jandedobbeleer.omp.json)"
 ```
+
+</TabItem>
+</Tabs>
 
 Once added, reload your profile for the changes to take effect.
 
@@ -263,9 +295,29 @@ source ~/.zshrc
 
 Add the following to `~/.bashrc` (or `~/.profile` on MacOS):
 
+<Tabs
+  defaultValue="macos"
+  groupId="env"
+  values={[
+    { label: 'macOS', value: 'macos', },
+    { label: 'unix', value: 'unix', },
+  ]
+}>
+<TabItem value="macos">
+
+```bash
+eval "$(oh-my-posh --init --shell bash --config $(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json)"
+```
+
+</TabItem>
+<TabItem value="unix">
+
 ```bash
 eval "$(oh-my-posh --init --shell bash --config ~/.poshthemes/jandedobbeleer.omp.json)"
 ```
+
+</TabItem>
+</Tabs>
 
 Once added, reload your profile for the changes to take effect.
 
@@ -329,9 +381,12 @@ available options first, by starting with the [configuration guide][configuratio
 
 <Tabs
   defaultValue="powershell"
+  groupId="env"
   values={[
-    { label: 'powershell module', value: 'powershell', },
-    { label: 'manual', value: 'manual', },
+    { label: 'powershell', value: 'powershell', },
+    { label: 'windows', value: 'windows', },
+    { label: 'macOS', value: 'macos', },
+    { label: 'unix', value: 'unix', },
   ]
 }>
 <TabItem value="powershell">
@@ -349,7 +404,39 @@ Set-PoshPrompt -Theme ~/.mytheme.omp.json
 ```
 
 </TabItem>
-<TabItem value="manual">
+<TabItem value="windows">
+
+Afterwards, the easiest way to go about this is to print the current config and store it elsewhere first (for example `~/.mytheme.omp.json`).
+
+```powershell
+oh-my-posh --print-config
+```
+
+This will write the current configuration in your shell, allowing you to copy paste it in a new file
+and store it somehwere. Once adjusted to your liking, [change the prompt setting][prompt] to use the newly created file.
+
+```powershell
+oh-my-posh --config ~/.mytheme.omp.json
+```
+
+</TabItem>
+<TabItem value="macos">
+
+Afterwards, the easiest way to go about this is to print the current config and store it elsewhere first (for example `~/.mytheme.omp.json`).
+
+```bash
+oh-my-posh --print-config
+```
+
+This will write the current configuration in your shell, allowing you to copy paste it in a new file
+and store it somehwere. Once adjusted to your liking, [change the prompt setting][prompt] to use the newly created file.
+
+```bash
+oh-my-posh --config ~/.mytheme.omp.json
+```
+
+</TabItem>
+<TabItem value="unix">
 
 Afterwards, the easiest way to go about this is to print the current config and store it elsewhere first (for example `~/.mytheme.omp.json`).
 

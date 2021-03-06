@@ -89,10 +89,15 @@ function Export-PoshTheme {
 
     $config = $global:PoshSettings.Theme
     $poshCommand = Get-PoshCommand
-    # Save current encoding and swap for UTF8
+
+    # Save current encoding and swap for UTF8 without BOM
     $originalOutputEncoding = [Console]::OutputEncoding
-    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-    & $poshCommand -config $config -print-config | Out-File -FilePath $FilePath
+    [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
+
+    # Create Config File
+    $configString = & $poshCommand -config $config -print-config
+    [IO.File]::WriteAllLines($FilePath, $configString)
+
     # Restore initial encoding
     [Console]::OutputEncoding = $originalOutputEncoding
 }

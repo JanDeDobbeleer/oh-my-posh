@@ -59,6 +59,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	want := "je suis le output"
 	env := new(MockedEnvironment)
 	env.On("runCommand", "git", append(args, commandArgs...)).Return(want, nil)
+	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
 		env: env,
 	}
@@ -103,6 +104,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.mockGitCommand(context.tagName, "describe", "--tags", "--exact-match")
 	env.mockGitCommand(context.origin, "name-rev", "--name-only", "--exclude=tags/*", context.origin)
 	env.mockGitCommand(context.onto, "name-rev", "--name-only", "--exclude=tags/*", context.onto)
+	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
 		env: env,
 		repo: &gitRepo{
@@ -401,6 +403,7 @@ func TestParseGitStatsInvalidLine(t *testing.T) {
 func bootstrapUpstreamTest(upstream string) *git {
 	env := &MockedEnvironment{}
 	env.On("runCommand", "git", []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(upstream, nil)
+	env.On("getRuntimeGOOS", nil).Return("unix")
 	props := &properties{
 		values: map[Property]interface{}{
 			GithubIcon:    "GH",

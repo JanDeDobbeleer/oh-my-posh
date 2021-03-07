@@ -112,8 +112,6 @@ const (
 	BehindColor Property = "behind_color"
 	// AheadColor if set, the color to use when the branch is ahead and behind the remote
 	AheadColor Property = "ahead_color"
-
-	gitCommand = "git"
 )
 
 func (g *git) enabled() bool {
@@ -272,6 +270,10 @@ func (g *git) getStatusColor(defaultValue string) string {
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {
+	gitCommand := "git"
+	if g.env.getRuntimeGOOS() == "windows" {
+		gitCommand = "git.exe"
+	}
 	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	val, _ := g.env.runCommand(gitCommand, args...)
 	return val

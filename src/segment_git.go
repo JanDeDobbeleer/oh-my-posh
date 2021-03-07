@@ -271,7 +271,7 @@ func (g *git) getStatusColor(defaultValue string) string {
 
 func (g *git) getGitCommandOutput(args ...string) string {
 	gitCommand := "git"
-	if g.env.getRuntimeGOOS() == "windows" {
+	if g.env.getRuntimeGOOS() == windowsPlatform {
 		gitCommand = "git.exe"
 	}
 	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)

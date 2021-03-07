@@ -21,6 +21,7 @@ import (
 const (
 	unknown         = "unknown"
 	windowsPlatform = "windows"
+	exe             = ".exe"
 )
 
 type commandError struct {
@@ -192,6 +193,9 @@ func (env *environment) getPlatform() string {
 }
 
 func (env *environment) runCommand(command string, args ...string) (string, error) {
+	if env.getRuntimeGOOS() == windowsPlatform {
+		command += exe
+	}
 	if cmd, ok := env.cmdCache.get(command); ok {
 		command = cmd
 	}
@@ -208,11 +212,17 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 }
 
 func (env *environment) runShellCommand(shell, command string) string {
+	if env.getRuntimeGOOS() == windowsPlatform {
+		shell += exe
+	}
 	out, _ := env.runCommand(shell, "-c", command)
 	return out
 }
 
 func (env *environment) hasCommand(command string) bool {
+	if env.getRuntimeGOOS() == windowsPlatform {
+		command += exe
+	}
 	if _, ok := env.cmdCache.get(command); ok {
 		return true
 	}

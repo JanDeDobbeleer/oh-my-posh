@@ -272,7 +272,7 @@ func (g *git) getStatusColor(defaultValue string) string {
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {
-	args = append([]string{"-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	val, _ := g.env.runCommand(gitCommand, args...)
 	return val
 }

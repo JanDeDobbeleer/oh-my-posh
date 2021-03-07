@@ -54,7 +54,7 @@ func TestEnabledInWorkingTree(t *testing.T) {
 }
 
 func TestGetGitOutputForCommand(t *testing.T) {
-	args := []string{"-c", "core.quotepath=false", "-c", "color.status=false"}
+	args := []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}
 	want := "je suis le output"
 	env := new(MockedEnvironment)
@@ -113,7 +113,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 }
 
 func (m *MockedEnvironment) mockGitCommand(returnValue string, args ...string) {
-	args = append([]string{"-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	m.On("runCommand", "git", args).Return(returnValue, nil)
 }
 
@@ -400,7 +400,7 @@ func TestParseGitStatsInvalidLine(t *testing.T) {
 
 func bootstrapUpstreamTest(upstream string) *git {
 	env := &MockedEnvironment{}
-	env.On("runCommand", "git", []string{"-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(upstream, nil)
+	env.On("runCommand", "git", []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(upstream, nil)
 	props := &properties{
 		values: map[Property]interface{}{
 			GithubIcon:    "GH",

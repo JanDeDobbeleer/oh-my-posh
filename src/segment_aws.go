@@ -40,7 +40,7 @@ func (a *aws) enabled() bool {
 	if a.Profile != "" && a.Region != "" {
 		return true
 	}
-	if a.Profile == "" && a.Region != "" {
+	if a.Profile == "" && a.Region != "" && displayDefaultUser {
 		a.Profile = defaultUser
 		return true
 	}

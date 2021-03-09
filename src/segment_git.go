@@ -139,20 +139,18 @@ func (g *git) enabled() bool {
 }
 
 func (g *git) string() string {
-	g.setGitStatus()
-	if g.props.getBool(StatusColorsEnabled, false) {
-		g.SetStatusColor()
+	displayStatus := g.props.getBool(DisplayStatus, true)
+	if !displayStatus {
+		return g.getPrettyHEADName()
 	}
+	g.setGitStatus()
 	buffer := new(bytes.Buffer)
-	// branchName
+	// remote (if available)
 	if g.repo.upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
 		fmt.Fprintf(buffer, "%s", g.getUpstreamSymbol())
 	}
+	// branchName
 	fmt.Fprintf(buffer, "%s", g.repo.HEAD)
-	displayStatus := g.props.getBool(DisplayStatus, true)
-	if !displayStatus {
-		return buffer.String()
-	}
 	if g.props.getBool(DisplayBranchStatus, true) {
 		buffer.WriteString(g.getBranchStatus())
 	}
@@ -167,6 +165,9 @@ func (g *git) string() string {
 	}
 	if g.repo.stashCount != 0 {
 		fmt.Fprintf(buffer, " %s%d", g.props.getString(StashCountIcon, "\uF692 "), g.repo.stashCount)
+	}
+	if g.props.getBool(StatusColorsEnabled, false) {
+		g.SetStatusColor()
 	}
 	return buffer.String()
 }
@@ -343,8 +344,12 @@ func (g *git) getGitRefFileSymbolicName(refFile string) string {
 }
 
 func (g *git) getPrettyHEADName() string {
+	ref := g.getGitCommandOutput("branch", "--show-current")
+	if ref != "" {
+		return fmt.Sprintf("%s%s", g.props.getString(BranchIcon, "\uE0A0"), ref)
+	}
 	// check for tag
-	ref := g.getGitCommandOutput("describe", "--tags", "--exact-match")
+	ref = g.getGitCommandOutput("describe", "--tags", "--exact-match")
 	if ref != "" {
 		return fmt.Sprintf("%s%s", g.props.getString(TagIcon, "\uF412"), ref)
 	}

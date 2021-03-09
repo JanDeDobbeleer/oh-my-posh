@@ -104,6 +104,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.mockGitCommand(context.tagName, "describe", "--tags", "--exact-match")
 	env.mockGitCommand(context.origin, "name-rev", "--name-only", "--exclude=tags/*", context.origin)
 	env.mockGitCommand(context.onto, "name-rev", "--name-only", "--exclude=tags/*", context.onto)
+	env.mockGitCommand(context.branchName, "branch", "--show-current")
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
 		env: env,

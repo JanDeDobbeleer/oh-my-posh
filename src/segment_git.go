@@ -271,8 +271,11 @@ func (g *git) getStatusColor(defaultValue string) string {
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {
+	inWSLSharedDrive := func(env environmentInfo) bool {
+              return env.isWsl() && strings.HasPrefix(env.getcwd(), "/mnt/")
+        }
 	gitCommand := "git"
-	if g.env.getRuntimeGOOS() == windowsPlatform || (g.env.isWsl() && strings.HasPrefix(g.env.getcwd(), "/mnt/")) {
+	if g.env.getRuntimeGOOS() == windowsPlatform || inWSLSharedDrive(g.env) {
 		gitCommand = "git.exe"
 	}
 	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)

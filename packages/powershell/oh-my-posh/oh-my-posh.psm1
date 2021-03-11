@@ -8,6 +8,11 @@ function Get-PoshCommand {
         return "$PSScriptRoot/bin/posh-darwin-amd64"
     }
     if ($IsLinux) {
+        # this is rather hacky but there's no other way for the time being
+        $arch = uname -m
+        if ($arch -eq 'aarch64') {
+            return "$PSScriptRoot/bin/posh-linux-arm"
+        }
         return "$PSScriptRoot/bin/posh-linux-amd64"
     }
     if ([Environment]::Is64BitOperatingSystem) {

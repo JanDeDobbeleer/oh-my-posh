@@ -57,3 +57,16 @@ function global:Set-PoshGitStatus {
     Remove-Variable lastCommandSuccess -Confirm:$false
 }
 Set-Item -Path Function:prompt -Value $Prompt -Force
+
+function global:Write-PoshDebug {
+    $originalOutputEncoding = [Console]::OutputEncoding
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    $omp = "::OMP::"
+    $config = $global:PoshSettings.Theme
+    $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
+    $cleanPSWD = $PWD.ToString().TrimEnd("\")
+    $standardOut = @(&$omp --error=1337 --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time=9001 --config="$config" --debug 2>&1)
+    $standardOut
+    # Restore initial encoding
+    [Console]::OutputEncoding = $originalOutputEncoding
+}

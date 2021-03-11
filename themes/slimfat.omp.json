@@ -1,0 +1,221 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": true,
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}}root :: {{end}}{{.Shell}} :: {{.Folder}}",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "os",
+          "style": "diamond",
+          "leading_diamond": "\ue0c7\u2593",
+          "foreground": "#26C6DA",
+          "background": "#2f2f2f",
+          "properties": {
+            "alpine": "\uf300",
+            "arch": "\uf303",
+            "centos": "\uf304",
+            "debian": "\uf306",
+            "elementary": "\uf309",
+            "fedora": "\uf30a",
+            "gentoo": "\uf30d",
+            "linux": "\ue712",
+            "macos": "\ue711",
+            "manjaro": "\uf312",
+            "mint": "\uf30f",
+            "opensuse": "\uf314",
+            "raspbian": "\uf315",
+            "ubuntu": "\uf31c",
+            "wsl": "\ue712",
+            "wsl_separator": " on ",
+            "windows": "\ue70f",
+            "postfix": "<#7a7a7a> \ue0b1</>"
+          }
+        },
+        {
+          "type": "session",
+          "style": "diamond",
+          "foreground": "#fafafa",
+          "background": "#2f2f2f",
+          "properties": {
+            "user_info_separator": "<#7a7a7a>\uf1fa</>",
+            "display_default": false,
+            "user_color": "#77f5d6",
+            "host_color": "#2EEFBF",
+            "postfix": "<#7a7a7a> \ue0b1</>"
+          }
+        },
+        {
+          "type": "root",
+          "style": "diamond",
+          "foreground": "#ffff66",
+          "background": "#2f2f2f",
+          "properties": {
+            "root_icon": "\uF0E7",
+            "postfix": "<#7a7a7a> \ue0b1</>"
+          }
+        },
+        {
+          "type": "path",
+          "style": "diamond",
+          "foreground": "#fafafa",
+          "background": "#2f2f2f",
+          "properties": {
+            "prefix": "<#f2f200> \ue5ff </>",
+            "style": "full",
+            "enable_hyperlink": false,
+            "folder_icon": "<#B5B2C2>\ue5fe </>"
+          }
+        },
+        {
+          "type": "git",
+          "style": "diamond",
+          "foreground": "#ffeb3b",
+          "background": "#2f2f2f",
+          "properties": {
+            "display_stash_count": true,
+            "display_upstream_icon": true,
+            "display_status": true,
+            "status_colors_enabled": true,
+            "color_background": false,
+            "local_changes_color": "#ffeb3b",
+            "working_color": "#E84855",
+            "staging_color": "#2FDA4E",
+            "ahead_color": "#2EC4B6",
+            "behind_color": "#8A4FFF",
+            "prefix": "<#7a7a7a>\ue0b1 </>"
+          }
+        },
+        {
+          "type": "text",
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "foreground": "#fafafa",
+          "background": "#2f2f2f",
+          "properties": {
+            "text": "",
+            "postfix": "",
+            "prefix": ""
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "text",
+          "style": "diamond",
+          "foreground": "#fafafa",
+          "background": "#2f2f2f",
+          "leading_diamond": "\ue0b2",
+          "properties": {
+            "text": "",
+            "prefix": "",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "node",
+          "style": "diamond",
+          "foreground": "#6CA35E",
+          "background": "#2f2f2f",
+          "properties": {
+            "prefix": " \uE718 ",
+            "postfix": "<#7a7a7a> \ue0b3</>"
+          }
+        },
+        {
+          "type": "python",
+          "style": "diamond",
+          "foreground": "#96E072",
+          "background": "#2f2f2f",
+          "properties": {
+            "prefix": " \uE235 ",
+            "postfix": "<#7a7a7a> \ue0b3</>"
+          }
+        },
+        {
+          "type": "dotnet",
+          "style": "diamond",
+          "foreground": "#3891A6",
+          "background": "#2f2f2f",
+          "properties": {
+            "prefix": " \uE77F ",
+            "postfix": "<#7a7a7a> \ue0b3</>"
+          }
+        },
+        {
+          "type": "time",
+          "style": "diamond",
+          "trailing_diamond": "\u2593\ue0c6",
+          "foreground": "#fafafa",
+          "background": "#2f2f2f",
+          "properties": {
+            "time_format": "15:04:05",
+            "postfix": "<#007ACC> \uf64f </>"
+          }
+        }
+      ]
+    },
+    {
+      "type": "newline"
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#7a7a7a",
+          "properties": {
+            "text": "~#@\u276F"
+          }
+        }
+      ]
+    },
+    {
+      "type": "rprompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#7a7a7a",
+          "properties": {
+            "text": "\u276E"
+          }
+        },
+        {
+          "type": "executiontime",
+          "style": "plain",
+          "foreground": "#FFCE5C",
+          "properties": {
+            "threshold": 500,
+            "style": "roundrock",
+            "postfix": "<#fafafa> \uf252 </>"
+          }
+        },
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#9FD356",
+          "properties": {
+            "display_exit_code": true,
+            "always_numeric": true,
+            "always_enabled": true,
+            "error_color": "#E84855",
+            "color_background": false,
+            "prefix": " \uf705 "
+          }
+        }
+      ]
+    }
+  ]
+}

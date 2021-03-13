@@ -43,33 +43,6 @@ but you may have to set the environment variable `$TERM` to `xterm-256color` for
 </TabItem>
 </Tabs>
 
-#### Font
-
-To see the icons displayed in Oh my Posh, **install** and **configure** your terminal to use a powerline enabled font.
-The fonts we use are patched by [Nerd Fonts][nerdfonts], which offer a maximum of icons you can use.
-
-Oh my Posh was designed using [Meslo LGM NF][meslo], but any Nerd Font should be compatible with the standard [themes][themes].
-
-:::caution Windows fonts
-Make sure to install fonts system wide to avoid seeing rectangles in your terminal. See this [thread][font-thread] for more context.
-:::
-
-:::caution Setting the default font in the Windows Terminal
-Once you have installed a powerline enabled font, don't forget to tell the Windows Terminal to use it. This can be easily done by modifying the Windows Terminal settings (default shortcut: `CTRL + ,`). In your `settings.json` file, add the `fontFace` attribute under the `defaults` attribute in `profiles`:
-
-```json
-{
-    "profiles":
-    {
-        "defaults":
-        {
-            "fontFace": "MesloLGL Nerd Font"
-        }
-    }
-}            
-```
-:::
-
 ### 2. Install Oh my Posh
 
 <Tabs
@@ -475,13 +448,7 @@ oh-my-posh --config ~/.mytheme.omp.json
 [scoop]: https://scoop.sh/
 [wt]: https://github.com/microsoft/terminal
 [iterm2]: https://www.iterm2.com/
-[nerdfonts]: https://www.nerdfonts.com/
-[nf-cheat]: https://www.nerdfonts.com/cheat-sheet
-[meslo]: https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip
-[font-thread]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/145#issuecomment-730162622
 [powershell]: https://www.powershellgallery.com/packages/oh-my-posh
-[themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
-[scoop]: https://scoop.sh
 [brew]: https://brew.sh
 [prompt]: /docs/installation#3-replace-your-existing-prompt
 [configuration]: /docs/configure

@@ -82,6 +82,7 @@ type detachedContext struct {
 	cherryPickSHA string
 	merge         bool
 	mergeHEAD     string
+	status        string
 }
 
 func setupHEADContextEnv(context *detachedContext) *git {
@@ -105,6 +106,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.mockGitCommand(context.origin, "name-rev", "--name-only", "--exclude=tags/*", context.origin)
 	env.mockGitCommand(context.onto, "name-rev", "--name-only", "--exclude=tags/*", context.onto)
 	env.mockGitCommand(context.branchName, "branch", "--show-current")
+	env.mockGitCommand(context.status, "status", "-unormal", "--short", "--branch")
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
 		env: env,
@@ -560,7 +562,7 @@ func TestGetStatusColorDefault(t *testing.T) {
 	assert.Equal(t, expected, g.getStatusColor(expected))
 }
 
-func TestSetStatusColorBackground(t *testing.T) {
+func TestSetStatusColorForeground(t *testing.T) {
 	expected := changesColor
 	repo := &gitRepo{
 		staging: &gitStatus{
@@ -582,7 +584,7 @@ func TestSetStatusColorBackground(t *testing.T) {
 	assert.Equal(t, expected, g.props.foreground)
 }
 
-func TestSetStatusColorForeground(t *testing.T) {
+func TestSetStatusColorBackground(t *testing.T) {
 	expected := changesColor
 	repo := &gitRepo{
 		staging: &gitStatus{
@@ -601,6 +603,23 @@ func TestSetStatusColorForeground(t *testing.T) {
 		},
 	}
 	g.SetStatusColor()
+	assert.Equal(t, expected, g.props.background)
+}
+
+func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
+	expected := changesColor
+	context := &detachedContext{
+		status: "## main...origin/main [ahead 33]\n M myfile",
+	}
+	g := setupHEADContextEnv(context)
+	g.props = &properties{
+		values: map[Property]interface{}{
+			DisplayStatus:       false,
+			StatusColorsEnabled: true,
+			LocalChangesColor:   expected,
+		},
+	}
+	g.string()
 	assert.Equal(t, expected, g.props.background)
 }
 

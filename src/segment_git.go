@@ -139,11 +139,18 @@ func (g *git) enabled() bool {
 }
 
 func (g *git) string() string {
+	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
 	displayStatus := g.props.getBool(DisplayStatus, true)
+
+	if displayStatus || statusColorsEnabled {
+		g.setGitStatus()
+	}
+	if statusColorsEnabled {
+		g.SetStatusColor()
+	}
 	if !displayStatus {
 		return g.getPrettyHEADName()
 	}
-	g.setGitStatus()
 	buffer := new(bytes.Buffer)
 	// remote (if available)
 	if g.repo.upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
@@ -165,9 +172,6 @@ func (g *git) string() string {
 	}
 	if g.repo.stashCount != 0 {
 		fmt.Fprintf(buffer, " %s%d", g.props.getString(StashCountIcon, "\uF692 "), g.repo.stashCount)
-	}
-	if g.props.getBool(StatusColorsEnabled, false) {
-		g.SetStatusColor()
 	}
 	return buffer.String()
 }

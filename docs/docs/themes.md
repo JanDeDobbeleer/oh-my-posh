@@ -4,6 +4,18 @@ title: Themes
 sidebar_label: 🎨 Themes
 ---
 
+Oh my Posh comes with many themes included out of the box. Below are some screenshots of the more common themes.
+For the full updated list of themes, [view the themes][themes] in Github.  If you are using PowerShell, you can
+display every available theme, use the following PowerShell cmdlet.
+
+```powershell
+Get-PoshThemes
+```
+
+Once you're ready to swap to a theme, follow the steps described in [🚀Installation/Replace your existing prompt][replace-you-existing-prompt].
+
+Themes with `minimal` in their names do not require a Nerd Font. Read about [🆎Fonts][fonts] for more information.
+
 ### [Agnoster]
 
 [![Agnoster](/img/themes/agnoster.png)][Agnoster]
@@ -79,6 +91,10 @@ sidebar_label: 🎨 Themes
 ### [Zash]
 
 [![Zash](/img/themes/zash.png)][Zash]
+
+[themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
+[fonts]: /docs/fonts
+[replace-you-existing-prompt]: /docs/installation#3-replace-your-existing-prompt
 
 [Agnoster]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/agnoster.omp.json 'Agnoster'
 [AgnosterPlus]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/agnosterplus.omp.json 'AgnosterPlus'

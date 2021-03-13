@@ -76,13 +76,17 @@ function Get-PoshThemes {
     Write-Host $logo
     $poshCommand = Get-PoshCommand
     Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
-        Write-Host ("=" * $consoleWidth)
-        Write-Host "$esc[1m$($_.BaseName)$esc[0m"
+        Write-Host ("─" * $consoleWidth)
+        Write-Host "Theme: $esc[1m$($_.BaseName.Replace('.omp', ''))$esc[0m"
         Write-Host ""
         & $poshCommand -config $($_.FullName) -pwd $PWD
         Write-Host ""
     }
-    Write-Host ("=" * $consoleWidth)
+    Write-Host ("─" * $consoleWidth)
+    Write-Host ""
+    Write-Host "To change your theme, use the Set-PoshPrompt command. Example:"
+    Write-Host "  Set-PoshPrompt -Theme jandedobbeleer"
+    Write-Host ""
 }
 
 function Export-PoshTheme {

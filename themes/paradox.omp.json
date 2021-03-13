@@ -27,7 +27,7 @@
           "background": "#91ddff",
           "properties": {
             "folder_icon": "\uF115",
-            "folder_separator_icon": "\uE0B1",
+            "folder_separator_icon": " \uE0B1 ",
             "style": "full"
           }
         },

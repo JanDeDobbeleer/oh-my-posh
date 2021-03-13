@@ -177,8 +177,8 @@ func (pt *path) replaceMappedLocations(pwd string) string {
 	}
 
 	mappedLocations := map[string]string{
-		"HKCU:":          pt.props.getString(WindowsRegistryIcon, "\uE0B1"),
-		"HKLM:":          pt.props.getString(WindowsRegistryIcon, "\uE0B1"),
+		"HKCU:":          pt.props.getString(WindowsRegistryIcon, "\uF013"),
+		"HKLM:":          pt.props.getString(WindowsRegistryIcon, "\uF013"),
 		pt.env.homeDir(): pt.props.getString(HomeIcon, "~"),
 	}
 

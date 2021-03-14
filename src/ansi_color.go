@@ -45,8 +45,9 @@ func getColorFromName(colorName string, isBackground bool) (string, error) {
 
 // AnsiColor writes colorized strings
 type AnsiColor struct {
-	builder strings.Builder
-	formats *ansiFormats
+	builder            strings.Builder
+	formats            *ansiFormats
+	terminalBackground string
 }
 
 const (
@@ -71,18 +72,27 @@ func (a *AnsiColor) writeColoredText(background, foreground, text string) {
 	if text == "" {
 		return
 	}
-	var coloredText string
+	if foreground == Transparent && background != "" && a.terminalBackground != "" {
+		bgAnsiColor := a.getAnsiFromColorString(background, true)
+		fgAnsiColor := a.getAnsiFromColorString(a.terminalBackground, false)
+		coloredText := fmt.Sprintf(a.formats.colorFull, bgAnsiColor, fgAnsiColor, text)
+		a.builder.WriteString(coloredText)
+		return
+	}
 	if foreground == Transparent && background != "" {
 		ansiColor := a.getAnsiFromColorString(background, false)
-		coloredText = fmt.Sprintf(a.formats.colorTransparent, ansiColor, text)
+		coloredText := fmt.Sprintf(a.formats.colorTransparent, ansiColor, text)
+		a.builder.WriteString(coloredText)
+		return
 	} else if background == "" || background == Transparent {
 		ansiColor := a.getAnsiFromColorString(foreground, false)
-		coloredText = fmt.Sprintf(a.formats.colorSingle, ansiColor, text)
-	} else if foreground != "" && background != "" {
-		bgAnsiColor := a.getAnsiFromColorString(background, true)
-		fgAnsiColor := a.getAnsiFromColorString(foreground, false)
-		coloredText = fmt.Sprintf(a.formats.colorFull, bgAnsiColor, fgAnsiColor, text)
+		coloredText := fmt.Sprintf(a.formats.colorSingle, ansiColor, text)
+		a.builder.WriteString(coloredText)
+		return
 	}
+	bgAnsiColor := a.getAnsiFromColorString(background, true)
+	fgAnsiColor := a.getAnsiFromColorString(foreground, false)
+	coloredText := fmt.Sprintf(a.formats.colorFull, bgAnsiColor, fgAnsiColor, text)
 	a.builder.WriteString(coloredText)
 }
 

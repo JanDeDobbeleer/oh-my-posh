@@ -15,6 +15,7 @@ type Settings struct {
 	ConsoleTitle         bool              `json:"console_title"`
 	ConsoleTitleStyle    ConsoleTitleStyle `json:"console_title_style"`
 	ConsoleTitleTemplate string            `json:"console_title_template"`
+	TerminalBackground   string            `json:"terminal_background"`
 	Blocks               []*Block          `json:"blocks"`
 }
 

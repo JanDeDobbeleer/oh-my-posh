@@ -57,6 +57,8 @@ boxes with question marks, [set up your terminal][setupterm] to use a supported 
 - console_title: `boolean` - when true sets the current location as the console title
 - console_title_style: `string` - the title to set in the console - defaults to `folder`
 - console_title_template: `string` - the template to use when `"console_title_style" = "template"`
+- terminal_background: `string` [color][colors] - terminal background color, set to your terminal's background color when
+you notice black elements in Windows Terminal or the Visual Studio Code integrated terminal
 
 > "I Like The Way You Speak Words" - Gary Goodspeed
 

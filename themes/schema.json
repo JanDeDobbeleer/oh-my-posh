@@ -1414,6 +1414,7 @@
       "description": "https://ohmyposh.dev/docs/configure#console-title-template",
       "default": "{{ .Shell }} in {{ .Folder }}"
     },
+    "terminal_background": { "$ref": "#/definitions/color" },
     "blocks": {
       "type": "array",
       "title": "Block array",

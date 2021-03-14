@@ -147,7 +147,6 @@ func main() {
 	renderer := &AnsiRenderer{
 		formats: formats,
 	}
-	fmt.Println("echo \"", settings.TerminalBackground, "\"")
 	colorer := &AnsiColor{
 		formats:            formats,
 		terminalBackground: settings.TerminalBackground,

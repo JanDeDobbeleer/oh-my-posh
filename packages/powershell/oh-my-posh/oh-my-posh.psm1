@@ -3,6 +3,10 @@
         Generates the prompt before each line in the console
 #>
 
+# Powershell doesn't default to UTF8 just yet, so we're forcing it as there are too many problems
+# that pop up when we don't
+[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+
 function Get-PoshCommand {
     if ($IsMacOS) {
         return "$PSScriptRoot/bin/posh-darwin-amd64"

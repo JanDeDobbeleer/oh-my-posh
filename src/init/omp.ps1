@@ -1,3 +1,7 @@
+# Powershell doesn't default to UTF8 just yet, so we're forcing it as there are too many problems
+# that pop up when we don't
+[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
     Theme = "";
 }
@@ -38,16 +42,11 @@ function global:Set-PoshGitStatus {
     if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime) {
         $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
     }
-    # Save current encoding and swap for UTF8
-    $originalOutputEncoding = [Console]::OutputEncoding
-    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
     $omp = "::OMP::"
     $config = $global:PoshSettings.Theme
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
     $cleanPSWD = $PWD.ToString().TrimEnd("\")
     $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --config="$config" 2>&1)
-    # Restore initial encoding
-    [Console]::OutputEncoding = $originalOutputEncoding
     # the ouput can be multiline, joining these ensures proper rendering by adding line breaks with `n
     $standardOut -join "`n"
     Set-PoshGitStatus
@@ -59,14 +58,10 @@ function global:Set-PoshGitStatus {
 Set-Item -Path Function:prompt -Value $Prompt -Force
 
 function global:Write-PoshDebug {
-    $originalOutputEncoding = [Console]::OutputEncoding
-    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
     $omp = "::OMP::"
     $config = $global:PoshSettings.Theme
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
     $cleanPSWD = $PWD.ToString().TrimEnd("\")
     $standardOut = @(&$omp --error=1337 --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time=9001 --config="$config" --debug 2>&1)
-    $standardOut
-    # Restore initial encoding
-    [Console]::OutputEncoding = $originalOutputEncoding
+    $standardOut -join "`n"
 }

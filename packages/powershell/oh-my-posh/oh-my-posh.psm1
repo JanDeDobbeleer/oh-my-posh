@@ -34,7 +34,7 @@ function Set-ExecutablePermissions {
 
     $executable = Get-PoshCommand
     if (-Not (Test-Path $executable)) {
-        # This should only happend with a corrupt installation
+        # This should only happen with a corrupt installation
         Write-Warning "Executable at $executable was not found"
         return
     }

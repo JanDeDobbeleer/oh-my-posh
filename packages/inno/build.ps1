@@ -13,7 +13,7 @@ Copy-Item -Path "../../themes" -Destination "./bin" -Recurse
     $download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($_.name)"
     Invoke-WebRequest $download -Out "./bin/$($_.name)"
 }
-# lisence
+# license
 Invoke-WebRequest "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$Version/COPYING" -Out "./bin/COPYING.txt"
 $content = Get-Content '.\oh-my-posh.iss' -Raw
 $content = $content.Replace('<VERSION>', $Version)

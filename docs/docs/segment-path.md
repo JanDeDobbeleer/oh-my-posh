@@ -28,7 +28,7 @@ Display the current path.
 
 ## Properties
 
-- folder_separator_icon: `string` - the symbol to use as a separator between folders - defaults to platfrom path separator
+- folder_separator_icon: `string` - the symbol to use as a separator between folders - defaults to platform path separator
 - home_icon: `string` - the icon to display when at `$HOME` - defaults to `~`
 - folder_icon: `string` - the icon to use as a folder indication - defaults to `..`
 - windows_registry_icon: `string` - the icon to display when in the Windows registry - defaults to `\uE0B1`

@@ -21,7 +21,7 @@ function global:Set-PoshGitStatus {
 }
 
 [ScriptBlock]$Prompt = {
-    #store if the last command was successfull
+    #store if the last command was successful
     $lastCommandSuccess = $?
     #store the last exit code for restore
     $realLASTEXITCODE = $global:LASTEXITCODE
@@ -47,7 +47,7 @@ function global:Set-PoshGitStatus {
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
     $cleanPSWD = $PWD.ToString().TrimEnd("\")
     $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --config="$config" 2>&1)
-    # the ouput can be multiline, joining these ensures proper rendering by adding line breaks with `n
+    # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n
     $standardOut -join "`n"
     Set-PoshGitStatus
     $global:LASTEXITCODE = $realLASTEXITCODE

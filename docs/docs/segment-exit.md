@@ -33,7 +33,7 @@ Displays the last exit code or that the last command failed based on the configu
 - display_exit_code: `boolean` - show or hide the exit code - defaults to `true`
 - always_enabled: `boolean` - always show the status - defaults to `false`
 - color_background: `boolean` - color the background or foreground when an error occurs - defaults to `false`
-- error_color: `string` [color][colors] - color to use when an error occured
+- error_color: `string` [color][colors] - color to use when an error occurred
 - always_numeric: `boolean` - always display exit code as a number - defaults to `false`
 - success_icon: `string` - displays when there's no error and `"always_enabled": true` - defaults to `""`
 - error_icon: `string` - displays when there's an error - defaults to `""`

@@ -1282,6 +1282,9 @@
                     "title": "Time Format",
                     "description": "Format to use, follows the golang standard: https://gobyexample.com/time-formatting-parsing",
                     "default": "15:04:05"
+                  },
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }

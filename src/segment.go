@@ -94,6 +94,8 @@ const (
 	Ruby SegmentType = "ruby"
 	// Aws writes the active aws context
 	Aws SegmentType = "aws"
+	// Java writes the active java version
+	Java SegmentType = "java"
 )
 
 func (segment *Segment) string() string {
@@ -216,6 +218,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		ExecutionTime: &executiontime{},
 		Ruby:          &ruby{},
 		Aws:           &aws{},
+		Java:          &java{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

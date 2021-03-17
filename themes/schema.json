@@ -154,7 +154,8 @@
             "ruby",
             "ytm",
             "executiontime",
-            "aws"
+            "aws",
+            "java"
           ]
         },
         "style": {
@@ -698,6 +699,32 @@
           "then": {
             "title": "Julia Segment",
             "description": "https://ohmyposh.dev/docs/julia",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "java" }
+            }
+          },
+          "then": {
+            "title": "Julia Segment",
+            "description": "https://ohmyposh.dev/docs/java",
             "properties": {
               "properties": {
                 "properties": {

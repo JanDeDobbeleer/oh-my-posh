@@ -269,6 +269,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		HomeIcon            string
 		FolderSeparatorIcon string
 		Style               string
+		GOOS                string
 	}{
 		{Style: AgnosterFull, Expected: "usr > location > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeperator: "/", FolderSeparatorIcon: " > "},
 		{Style: AgnosterShort, Expected: "usr > .. > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
@@ -289,6 +290,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
 		env.On("homeDir", nil).Return(tc.HomePath)
 		env.On("getcwd", nil).Return(tc.Pwd)
+		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
 		args := &args{
 			PSWD: &tc.Pswd,
 		}
@@ -315,7 +317,10 @@ func TestGetFullPath(t *testing.T) {
 		Pswd                   string
 		Expected               string
 		DisableMappedLocations bool
+		GOOS                   string
+		PathSeparator          string
 	}{
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: "", Expected: ""},
 		{Style: Full, Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: "/usr/home", Expected: "~"},
@@ -324,32 +329,38 @@ func TestGetFullPath(t *testing.T) {
 		{Style: Full, Pwd: "/a/b/c/d", Expected: "/a/b/c/d"},
 
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "", Expected: ""},
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "|"},
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/usr/home", Expected: "~"},
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/usr/home", Expected: "|usr|home", DisableMappedLocations: true},
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/usr/home/abc", Expected: "~|abc"},
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/a/b/c/d", Expected: "|a|b|c|d"},
 
-		{Style: Folder, Pwd: "", Expected: "."},
+		{Style: Folder, Pwd: "", Expected: ""},
 		{Style: Folder, Pwd: "/", Expected: "/"},
 		{Style: Folder, Pwd: "/usr/home", Expected: "~"},
 		{Style: Folder, Pwd: "/usr/home", Expected: "home", DisableMappedLocations: true},
 		{Style: Folder, Pwd: "/usr/home/abc", Expected: "abc"},
 		{Style: Folder, Pwd: "/a/b/c/d", Expected: "d"},
 
-		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "", Expected: "."},
-		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/", Expected: "|"},
+		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "", Expected: ""},
+		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/usr/home", Expected: "~"},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/usr/home", Expected: "home", DisableMappedLocations: true},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/usr/home/abc", Expected: "abc"},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/a/b/c/d", Expected: "d"},
+
+		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: windowsPlatform},
+		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\Jan", Expected: "C:\\Users\\Jan", PathSeparator: "\\", GOOS: windowsPlatform},
 	}
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getPathSeperator", nil).Return("/")
+		if len(tc.PathSeparator) == 0 {
+			tc.PathSeparator = "/"
+		}
+		env.On("getPathSeperator", nil).Return(tc.PathSeparator)
 		env.On("homeDir", nil).Return("/usr/home")
 		env.On("getcwd", nil).Return(tc.Pwd)
+		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
 		args := &args{
 			PSWD: &tc.Pswd,
 		}

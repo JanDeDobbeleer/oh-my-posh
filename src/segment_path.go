@@ -69,7 +69,7 @@ func (pt *path) string() string {
 	default:
 		return fmt.Sprintf("Path style: %s is not available", style)
 	}
-
+	formattedPath = pt.formatWindowsDrive(formattedPath)
 	if pt.props.getBool(EnableHyperlink, false) {
 		// wsl check
 		if pt.env.isWsl() {
@@ -77,8 +77,14 @@ func (pt *path) string() string {
 		}
 		return fmt.Sprintf("[%s](file://%s)", formattedPath, cwd)
 	}
-
 	return formattedPath
+}
+
+func (pt *path) formatWindowsDrive(pwd string) string {
+	if pt.env.getRuntimeGOOS() != windowsPlatform || !strings.HasSuffix(pwd, ":") {
+		return pwd
+	}
+	return pwd + "\\"
 }
 
 func (pt *path) init(props *properties, env environmentInfo) {
@@ -210,6 +216,9 @@ func (pt *path) replaceMappedLocations(pwd string) string {
 
 func (pt *path) replaceFolderSeparators(pwd string) string {
 	defaultSeparator := pt.env.getPathSeperator()
+	if pwd == defaultSeparator {
+		return pwd
+	}
 	folderSeparator := pt.props.getString(FolderSeparatorIcon, defaultSeparator)
 	if folderSeparator == defaultSeparator {
 		return pwd
@@ -244,15 +253,18 @@ func (pt *path) pathDepth(pwd string) int {
 
 // Base returns the last element of path.
 // Trailing path separators are removed before extracting the last element.
-// If the path is empty, Base returns ".".
 // If the path consists entirely of separators, Base returns a single separator.
 func base(path string, env environmentInfo) string {
-	if path == "" {
-		return "."
+	if path == "/" {
+		return path
 	}
+	volumeName := filepath.VolumeName(path)
 	// Strip trailing slashes.
 	for len(path) > 0 && string(path[len(path)-1]) == env.getPathSeperator() {
 		path = path[0 : len(path)-1]
+	}
+	if volumeName == path {
+		return path
 	}
 	// Throw away volume name
 	path = path[len(filepath.VolumeName(path)):]

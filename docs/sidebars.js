@@ -19,6 +19,7 @@ module.exports = {
         "exit",
         "git",
         "golang",
+        "java",
         "julia",
         "kubectl",
         "node",

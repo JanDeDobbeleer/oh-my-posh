@@ -14,7 +14,7 @@ function _omp_hook() {
         omp_elapsed=$((omp_now-omp_start_time))
         rm "$TIMER_START"
     fi
-    PS1="$(::OMP:: --config $POSH_THEME --shell bash --error $ret --execution-time $omp_elapsed --shell bash)"
+    PS1="$(::OMP:: --config $POSH_THEME --shell bash --error $ret --execution-time $omp_elapsed)"
 
     return $ret
 }

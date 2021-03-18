@@ -6,6 +6,9 @@ $global:PoshSettings = New-Object -TypeName PSObject -Property @{
     Theme = "";
 }
 
+# used to detect empty hit
+$global:omp_lastHistoryId = -1
+
 $config = "::CONFIG::"
 if (Test-Path $config) {
     $global:PoshSettings.Theme = (Resolve-Path -Path $config).Path
@@ -15,7 +18,7 @@ function global:Set-PoshContext {}
 
 function global:Set-PoshGitStatus {
     if (Get-Module -Name "posh-git") {
-        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification='Variable used later(not in this scope)')]
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used later(not in this scope)')]
         $Global:GitStatus = Get-GitStatus
     }
 }
@@ -39,8 +42,9 @@ function global:Set-PoshGitStatus {
 
     $executionTime = -1
     $history = Get-History -ErrorAction Ignore -Count 1
-    if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime) {
-        $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
+    if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime -and $global:omp_lastHistoryId -ne $history.Id) {
+            $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
+            $global:omp_lastHistoryId = $history.Id
     }
     $omp = "::OMP::"
     $config = $global:PoshSettings.Theme

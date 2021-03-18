@@ -11,7 +11,7 @@ function omp_precmd() {
     omp_now=$(::OMP:: --millis)
     omp_elapsed=$(($omp_now-$omp_start_time))
   fi
-  eval "$(::OMP:: --config $POSH_THEME --error $omp_last_error --execution-time $omp_elapsed --eval)"
+  eval "$(::OMP:: --config $POSH_THEME --error $omp_last_error --execution-time $omp_elapsed --eval --shell zsh)"
   unset omp_start_time
   unset omp_now
   unset omp_elapsed

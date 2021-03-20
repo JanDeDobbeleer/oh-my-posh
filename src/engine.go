@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 )
@@ -247,7 +248,8 @@ func (e *engine) print() {
 	switch e.env.getShellName() {
 	case zsh:
 		if *e.env.getArgs().Eval {
-			fmt.Printf("PS1=\"%s\"", e.renderer.string())
+			// escape double quotes contained in the prompt
+			fmt.Printf("PS1=\"%s\"", strings.ReplaceAll(e.renderer.string(), "\"", "\"\""))
 			fmt.Printf("\nRPROMPT=\"%s\"", e.rprompt)
 			return
 		}

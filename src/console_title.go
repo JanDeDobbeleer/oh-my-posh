@@ -6,9 +6,9 @@ import (
 )
 
 type consoleTitle struct {
-	env      environmentInfo
-	settings *Settings
-	formats  *ansiFormats
+	env     environmentInfo
+	config  *Config
+	formats *ansiFormats
 }
 
 // ConsoleTitleStyle defines how to show the title in the console window
@@ -25,7 +25,7 @@ const (
 
 func (t *consoleTitle) getConsoleTitle() string {
 	var title string
-	switch t.settings.ConsoleTitleStyle {
+	switch t.config.ConsoleTitleStyle {
 	case FullPath:
 		title = t.getPwd()
 	case Template:
@@ -53,14 +53,14 @@ func (t *consoleTitle) getTemplateText() string {
 
 	// load environment variables into the map
 	envVars := map[string]string{}
-	matches := findAllNamedRegexMatch(`\.Env\.(?P<ENV>[^ \.}]*)`, t.settings.ConsoleTitleTemplate)
+	matches := findAllNamedRegexMatch(`\.Env\.(?P<ENV>[^ \.}]*)`, t.config.ConsoleTitleTemplate)
 	for _, match := range matches {
 		envVars[match["ENV"]] = t.env.getenv(match["ENV"])
 	}
 	context["Env"] = envVars
 
 	template := &textTemplate{
-		Template: t.settings.ConsoleTitleTemplate,
+		Template: t.config.ConsoleTitleTemplate,
 		Context:  context,
 	}
 	return template.render()

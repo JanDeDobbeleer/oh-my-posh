@@ -8,7 +8,7 @@ import (
 )
 
 type engine struct {
-	settings              *Settings
+	config                *Config
 	env                   environmentInfo
 	color                 *AnsiColor
 	renderer              *AnsiRenderer
@@ -135,7 +135,7 @@ func (e *engine) setStringValues(segments []*Segment) {
 }
 
 func (e *engine) render() {
-	for _, block := range e.settings.Blocks {
+	for _, block := range e.config.Blocks {
 		// if line break, append a line break
 		switch block.Type {
 		case LineBreak:
@@ -157,15 +157,15 @@ func (e *engine) render() {
 			e.rprompt = e.renderBlockSegments(block)
 		}
 	}
-	if e.settings.ConsoleTitle {
+	if e.config.ConsoleTitle {
 		e.renderer.write(e.consoleTitle.getConsoleTitle())
 	}
 	e.renderer.creset()
-	if e.settings.FinalSpace {
+	if e.config.FinalSpace {
 		e.renderer.write(" ")
 	}
 
-	if !e.settings.OSC99 {
+	if !e.config.OSC99 {
 		e.print()
 		return
 	}
@@ -190,14 +190,14 @@ func (e *engine) debug() {
 	segmentTiming := SegmentTiming{
 		name:            "ConsoleTitle",
 		nameLength:      12,
-		enabled:         e.settings.ConsoleTitle,
+		enabled:         e.config.ConsoleTitle,
 		stringValue:     consoleTitle,
 		enabledDuration: 0,
 		stringDuration:  duration,
 	}
 	segmentTimings = append(segmentTimings, segmentTiming)
 	// loop each segments of each blocks
-	for _, block := range e.settings.Blocks {
+	for _, block := range e.config.Blocks {
 		for _, segment := range block.Segments {
 			err := segment.mapSegmentWithWriter(e.env)
 			if err != nil || !segment.shouldIncludeFolder(e.env.getcwd()) {

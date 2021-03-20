@@ -2,12 +2,13 @@ package main
 
 import (
 	_ "embed"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/gookit/config/v2"
 )
 
 // Version number of oh-my-posh
@@ -37,6 +38,7 @@ const (
 type args struct {
 	ErrorCode     *int
 	PrintConfig   *bool
+	ConfigFormat  *string
 	PrintShell    *bool
 	Config        *string
 	Shell         *string
@@ -61,6 +63,10 @@ func main() {
 			"print-config",
 			false,
 			"Print the current config in json format"),
+		ConfigFormat: flag.String(
+			"config-format",
+			config.JSON,
+			"The format to print the config in. Valid options are:\n- json\n- yaml\n- toml\n"),
 		PrintShell: flag.Bool(
 			"print-shell",
 			false,
@@ -127,12 +133,11 @@ func main() {
 		fmt.Print(init)
 		return
 	}
-	settings := GetSettings(env)
 	if *args.PrintConfig {
-		theme, _ := json.MarshalIndent(settings, "", "    ")
-		fmt.Println(string(theme))
+		fmt.Print(exportConfig(*args.Config, *args.ConfigFormat))
 		return
 	}
+	cfg := GetConfig(env)
 	if *args.PrintShell {
 		fmt.Println(env.getShellName())
 		return
@@ -149,15 +154,15 @@ func main() {
 	}
 	colorer := &AnsiColor{
 		formats:            formats,
-		terminalBackground: settings.TerminalBackground,
+		terminalBackground: cfg.TerminalBackground,
 	}
 	title := &consoleTitle{
-		env:      env,
-		settings: settings,
-		formats:  formats,
+		env:     env,
+		config:  cfg,
+		formats: formats,
 	}
 	engine := &engine{
-		settings:     settings,
+		config:       cfg,
 		env:          env,
 		color:        colorer,
 		renderer:     renderer,
@@ -171,22 +176,22 @@ func main() {
 	engine.render()
 }
 
-func initShell(shell, config string) string {
+func initShell(shell, configFile string) string {
 	executable, err := os.Executable()
 	if err != nil {
 		return noExe
 	}
 	switch shell {
 	case pwsh:
-		return fmt.Sprintf("Invoke-Expression (@(&\"%s\" --print-init --shell=pwsh --config=\"%s\") -join \"`n\")", executable, config)
+		return fmt.Sprintf("Invoke-Expression (@(&\"%s\" --print-init --shell=pwsh --config=\"%s\") -join \"`n\")", executable, configFile)
 	case zsh, bash, fish:
-		return printShellInit(shell, config)
+		return printShellInit(shell, configFile)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}
 }
 
-func printShellInit(shell, config string) string {
+func printShellInit(shell, configFile string) string {
 	executable, err := os.Executable()
 	// On Windows, it fails when the excutable is called in MSYS2 for example
 	// which uses unix style paths to resolve the executable's location.
@@ -197,20 +202,20 @@ func printShellInit(shell, config string) string {
 	}
 	switch shell {
 	case pwsh:
-		return getShellInitScript(executable, config, pwshInit)
+		return getShellInitScript(executable, configFile, pwshInit)
 	case zsh:
-		return getShellInitScript(executable, config, zshInit)
+		return getShellInitScript(executable, configFile, zshInit)
 	case bash:
-		return getShellInitScript(executable, config, bashInit)
+		return getShellInitScript(executable, configFile, bashInit)
 	case fish:
-		return getShellInitScript(executable, config, fishInit)
+		return getShellInitScript(executable, configFile, fishInit)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}
 }
 
-func getShellInitScript(executable, config, script string) string {
+func getShellInitScript(executable, configFile, script string) string {
 	script = strings.ReplaceAll(script, "::OMP::", executable)
-	script = strings.ReplaceAll(script, "::CONFIG::", config)
+	script = strings.ReplaceAll(script, "::CONFIG::", configFile)
 	return script
 }

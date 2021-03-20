@@ -49,7 +49,7 @@ func TestGetConsoleTitle(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		settings := &Settings{
+		config := &Config{
 			ConsoleTitleStyle:    tc.Style,
 			ConsoleTitleTemplate: tc.Template,
 		}
@@ -65,9 +65,9 @@ func TestGetConsoleTitle(t *testing.T) {
 		formats := &ansiFormats{}
 		formats.init(tc.ShellName)
 		ct := &consoleTitle{
-			env:      env,
-			settings: settings,
-			formats:  formats,
+			env:     env,
+			config:  config,
+			formats: formats,
 		}
 		got := ct.getConsoleTitle()
 		assert.Equal(t, tc.Expected, got)
@@ -104,7 +104,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		settings := &Settings{
+		config := &Config{
 			ConsoleTitleStyle:    tc.Style,
 			ConsoleTitleTemplate: tc.Template,
 		}
@@ -120,9 +120,9 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		formats := &ansiFormats{}
 		formats.init(tc.ShellName)
 		ct := &consoleTitle{
-			env:      env,
-			settings: settings,
-			formats:  formats,
+			env:     env,
+			config:  config,
+			formats: formats,
 		}
 		got := ct.getConsoleTitle()
 		assert.Equal(t, tc.Expected, got)

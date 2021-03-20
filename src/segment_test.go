@@ -32,7 +32,7 @@ func TestMapSegmentWriterCannotMap(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestParseTestSettings(t *testing.T) {
+func TestParseTestConfig(t *testing.T) {
 	segmentJSON :=
 		`
 		{

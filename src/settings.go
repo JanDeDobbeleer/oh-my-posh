@@ -1,22 +1,29 @@
 package main
 
 import (
-	"encoding/json"
+	// "encoding/json"
+
+	"bytes"
+	json2 "encoding/json"
 	"errors"
+	"fmt"
 	"os"
 
-	"muzzammil.xyz/jsonc"
+	"github.com/gookit/config/v2"
+	"github.com/gookit/config/v2/json"
+	"github.com/gookit/config/v2/toml"
+	"github.com/gookit/config/v2/yaml"
 )
 
-// Settings holds all the theme for rendering the prompt
-type Settings struct {
-	FinalSpace           bool              `json:"final_space"`
-	OSC99                bool              `json:"osc99"`
-	ConsoleTitle         bool              `json:"console_title"`
-	ConsoleTitleStyle    ConsoleTitleStyle `json:"console_title_style"`
-	ConsoleTitleTemplate string            `json:"console_title_template"`
-	TerminalBackground   string            `json:"terminal_background"`
-	Blocks               []*Block          `json:"blocks"`
+// Config holds all the theme for rendering the prompt
+type Config struct {
+	FinalSpace           bool              `config:"final_space"`
+	OSC99                bool              `config:"osc99"`
+	ConsoleTitle         bool              `config:"console_title"`
+	ConsoleTitleStyle    ConsoleTitleStyle `config:"console_title_style"`
+	ConsoleTitleTemplate string            `config:"console_title_template"`
+	TerminalBackground   string            `config:"terminal_background"`
+	Blocks               []*Block          `config:"blocks"`
 }
 
 // BlockType type of block
@@ -42,46 +49,97 @@ const (
 
 // Block defines a part of the prompt with optional segments
 type Block struct {
-	Type             BlockType      `json:"type"`
-	Alignment        BlockAlignment `json:"alignment"`
-	HorizontalOffset int            `json:"horizontal_offset"`
-	VerticalOffset   int            `json:"vertical_offset"`
-	Segments         []*Segment     `json:"segments"`
+	Type             BlockType      `config:"type"`
+	Alignment        BlockAlignment `config:"alignment"`
+	HorizontalOffset int            `config:"horizontal_offset"`
+	VerticalOffset   int            `config:"vertical_offset"`
+	Segments         []*Segment     `config:"segments"`
 }
 
-// GetSettings returns the default configuration including possible user overrides
-func GetSettings(env environmentInfo) *Settings {
-	settings, err := loadUserConfiguration(env)
+// GetConfig returns the default configuration including possible user overrides
+func GetConfig(env environmentInfo) *Config {
+	cfg, err := loadConfig(env)
 	if err != nil {
-		return getDefaultSettings(err.Error())
+		return getDefaultConfig(err.Error())
 	}
-	return settings
+	return cfg
 }
 
-func loadUserConfiguration(env environmentInfo) (*Settings, error) {
-	var settings Settings
-	settingsFile := *env.getArgs().Config
-	if settingsFile == "" {
+func loadConfig(env environmentInfo) (*Config, error) {
+	var cfg Config
+	configFile := *env.getArgs().Config
+	if configFile == "" {
 		return nil, errors.New("NO CONFIG")
 	}
-	if _, err := os.Stat(settingsFile); os.IsNotExist(err) {
+	if _, err := os.Stat(configFile); os.IsNotExist(err) {
 		return nil, errors.New("INVALID CONFIG PATH")
 	}
 
-	_, j, err := jsonc.ReadFromFile(settingsFile)
+	config.AddDriver(yaml.Driver)
+	config.AddDriver(json.Driver)
+	config.AddDriver(toml.Driver)
+	config.WithOptions(func(opt *config.Options) {
+		opt.TagName = "config"
+	})
+
+	err := config.LoadFiles(configFile)
 	if err != nil {
 		return nil, errors.New("UNABLE TO OPEN CONFIG")
 	}
 
-	err = json.Unmarshal(j, &settings)
+	err = config.BindStruct("", &cfg)
 	if err != nil {
 		return nil, errors.New("INVALID CONFIG")
 	}
-	return &settings, nil
+
+	return &cfg, nil
 }
 
-func getDefaultSettings(info string) *Settings {
-	settings := &Settings{
+func exportConfig(configFile, format string) string {
+	if len(format) == 0 {
+		format = config.JSON
+	}
+
+	config.AddDriver(yaml.Driver)
+	config.AddDriver(json.Driver)
+	config.AddDriver(toml.Driver)
+
+	err := config.LoadFiles(configFile)
+	if err != nil {
+		return fmt.Sprintf("INVALID CONFIG:\n\n%s", err.Error())
+	}
+
+	schemaKey := "$schema"
+	if format == config.JSON && !config.Exists(schemaKey) {
+		data := config.Data()
+		data[schemaKey] = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+		config.SetData(data)
+	}
+
+	buf := new(bytes.Buffer)
+	_, err = config.DumpTo(buf, format)
+	if err != nil {
+		return "UNABLE TO DUMP CONFIG"
+	}
+
+	switch format {
+	case config.JSON:
+		var prettyJSON bytes.Buffer
+		err := json2.Indent(&prettyJSON, buf.Bytes(), "", "  ")
+		if err == nil {
+			return prettyJSON.String()
+		}
+	case config.Yaml:
+		prefix := "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
+		content := buf.String()
+		return prefix + content
+	}
+
+	return buf.String()
+}
+
+func getDefaultConfig(info string) *Config {
+	cfg := &Config{
 		FinalSpace:        true,
 		ConsoleTitle:      true,
 		ConsoleTitleStyle: FolderName,
@@ -193,5 +251,5 @@ func getDefaultSettings(info string) *Settings {
 			},
 		},
 	}
-	return settings
+	return cfg
 }

@@ -3,10 +3,6 @@
         Generates the prompt before each line in the console
 #>
 
-# Powershell doesn't default to UTF8 just yet, so we're forcing it as there are too many problems
-# that pop up when we don't
-[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
-
 function Get-PoshCommand {
     if ($IsMacOS) {
         return "$PSScriptRoot/bin/posh-darwin-amd64"
@@ -91,28 +87,6 @@ function Get-PoshThemes {
     Write-Host "To change your theme, use the Set-PoshPrompt command. Example:"
     Write-Host "  Set-PoshPrompt -Theme jandedobbeleer"
     Write-Host ""
-}
-
-function Export-PoshTheme {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]
-        $FilePath
-    )
-
-    $config = $global:PoshSettings.Theme
-    $poshCommand = Get-PoshCommand
-
-    # Save current encoding and swap for UTF8 without BOM
-    $originalOutputEncoding = [Console]::OutputEncoding
-    [Console]::OutputEncoding = [Text.UTF8Encoding]::new($false)
-
-    # Create Config File
-    $configString = & $poshCommand -config $config -print-config
-    [IO.File]::WriteAllLines($FilePath, $configString)
-
-    # Restore initial encoding
-    [Console]::OutputEncoding = $originalOutputEncoding
 }
 
 # Helper function to create argument completion results

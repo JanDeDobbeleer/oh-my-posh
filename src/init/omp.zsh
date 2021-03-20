@@ -37,3 +37,12 @@ function install_omp_hooks() {
 if [ "$TERM" != "linux" ]; then
   install_omp_hooks
 fi
+
+function export_poshconfig() {
+    [ $# -eq 0 ] && { echo "Usage: $0 \"filename\""; return; }
+    format=$2
+    if [ -z "$format" ]; then
+      format="json"
+    fi
+    ::OMP:: --config $POSH_THEME --print-config --config-format $format > $1
+}

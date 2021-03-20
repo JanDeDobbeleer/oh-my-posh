@@ -69,3 +69,20 @@ function global:Write-PoshDebug {
     $standardOut = @(&$omp --error=1337 --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time=9001 --config="$config" --debug 2>&1)
     $standardOut -join "`n"
 }
+
+function global:Export-PoshTheme {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]
+        $FilePath,
+        [Parameter(Mandatory = $false)]
+        [ValidateSet('json','yaml','toml')]
+        [string]
+        $Format = 'json'
+    )
+
+    $config = $global:PoshSettings.Theme
+    $omp = "::OMP::"
+    $configString = @(&$omp --config="$config" --config-format="$Format" --print-config 2>&1)
+    [IO.File]::WriteAllLines($FilePath, $configString)
+}

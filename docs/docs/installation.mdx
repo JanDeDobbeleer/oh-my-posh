@@ -326,7 +326,7 @@ Or, when using `~/.profile`.
 It's advised to be on the latest version of fish. Versions below 3.1.2 have issues displaying the prompt.
 :::
 
-Redefine `fish_prompt` in `~/.config/fish/config.fish`:
+Initialize Oh my Posh in `~/.config/fish/config.fish`:
 
 ```bash
 oh-my-posh --init --shell fish --config ~/.poshthemes/jandedobbeleer.omp.json | source
@@ -376,17 +376,17 @@ available options first, by starting with the [configuration guide][configuratio
   groupId="env"
   values={[
     { label: 'powershell', value: 'powershell', },
-    { label: 'windows', value: 'windows', },
-    { label: 'macOS', value: 'macos', },
-    { label: 'unix', value: 'unix', },
+    { label: 'zsh', value: 'zsh', },
+    { label: 'bash', value: 'bash', },
+    { label: 'fish', value: 'fish', },
   ]
 }>
 <TabItem value="powershell">
 
-You can output the current theme to its `JSON` representation which can be used to tweak and store as your custom theme.
+You can output the current theme to the format you like (`json`, `yaml` or `toml`) which can be used to tweak and store as your custom theme.
 
 ```powershell
-Export-PoshTheme -FilePath ~/.mytheme.omp.json
+Export-PoshTheme -FilePath ~/.mytheme.omp.json -Format json
 ```
 
 Once you're done editing, adjust your `$PROFILE` to use your newly created theme.
@@ -396,51 +396,66 @@ Set-PoshPrompt -Theme ~/.mytheme.omp.json
 ```
 
 </TabItem>
-<TabItem value="windows">
+<TabItem value="zsh">
 
-Afterwards, the easiest way to go about this is to print the current config and store it elsewhere first (for example `~/.mytheme.omp.json`).
+You can output the current theme to the format you like (`json`, `yaml` or `toml`) which can be used to tweak and store as your custom theme.
 
-```powershell
-oh-my-posh --print-config
+```bash
+export_poshconfig "~/.mytheme.omp.json" json
 ```
 
-This will write the current configuration in your shell, allowing you to copy paste it in a new file
-and store it somewhere. Once adjusted to your liking, [change the prompt setting][prompt] to use the newly created file.
+Once you're done editing, adjust `~/.zshrc` to use your newly created theme.
 
-```powershell
-oh-my-posh --config ~/.mytheme.omp.json
+```bash
+eval "$(oh-my-posh --init --shell zsh --config ~/.mytheme.omp.json)"
+```
+
+When adjusted, reload your profile for the changes to take effect.
+
+```bash
+. ~/.zshrc
 ```
 
 </TabItem>
-<TabItem value="macos">
+<TabItem value="bash">
 
-Afterwards, the easiest way to go about this is to print the current config and store it elsewhere first (for example `~/.mytheme.omp.json`).
+You can output the current theme to the format you like (`json`, `yaml` or `toml`) which can be used to tweak and store as your custom theme.
 
 ```bash
-oh-my-posh --print-config
+export_poshconfig "~/.mytheme.omp.json" json
 ```
 
-This will write the current configuration in your shell, allowing you to copy paste it in a new file
-and store it somewhere. Once adjusted to your liking, [change the prompt setting][prompt] to use the newly created file.
+Once you're done editing, adjust `~/.bashrc` to use your newly created theme.
 
 ```bash
-oh-my-posh --config ~/.mytheme.omp.json
+eval "$(oh-my-posh --init --shell bash --config ~/.mytheme.omp.json)"
+```
+
+When adjusted, reload your profile for the changes to take effect.
+
+```bash
+. ~/.bashrc
 ```
 
 </TabItem>
-<TabItem value="unix">
+<TabItem value="fish">
 
-Afterwards, the easiest way to go about this is to print the current config and store it elsewhere first (for example `~/.mytheme.omp.json`).
+You can output the current theme to the format you like (`json`, `yaml` or `toml`) which can be used to tweak and store as your custom theme.
 
 ```bash
-oh-my-posh --print-config
+export_poshconfig "~/.mytheme.omp.json" json
 ```
 
-This will write the current configuration in your shell, allowing you to copy paste it in a new file
-and store it somewhere. Once adjusted to your liking, [change the prompt setting][prompt] to use the newly created file.
+Once you're done editing, adjust `config.fish` to use your newly created theme.
 
 ```bash
-oh-my-posh --config ~/.mytheme.omp.json
+oh-my-posh --init --shell fish --config ~/.mytheme.omp.json | source
+```
+
+Once adjusted, reload your config for the changes to take effect.
+
+```bash
+. ~/.config/fish/config.fish
 ```
 
 </TabItem>

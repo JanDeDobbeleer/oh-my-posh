@@ -7,17 +7,17 @@ import (
 
 // Segment represent a single segment and it's configuration
 type Segment struct {
-	Type                SegmentType              `json:"type"`
-	Style               SegmentStyle             `json:"style"`
-	PowerlineSymbol     string                   `json:"powerline_symbol"`
-	InvertPowerline     bool                     `json:"invert_powerline"`
-	Foreground          string                   `json:"foreground"`
-	ForegroundTemplates []string                 `json:"foreground_templates"`
-	Background          string                   `json:"background"`
-	BackgroundTemplates []string                 `json:"background_templates"`
-	LeadingDiamond      string                   `json:"leading_diamond"`
-	TrailingDiamond     string                   `json:"trailing_diamond"`
-	Properties          map[Property]interface{} `json:"properties"`
+	Type                SegmentType              `config:"type"`
+	Style               SegmentStyle             `config:"style"`
+	PowerlineSymbol     string                   `config:"powerline_symbol"`
+	InvertPowerline     bool                     `config:"invert_powerline"`
+	Foreground          string                   `config:"foreground"`
+	ForegroundTemplates []string                 `config:"foreground_templates"`
+	Background          string                   `config:"background"`
+	BackgroundTemplates []string                 `config:"background_templates"`
+	LeadingDiamond      string                   `config:"leading_diamond"`
+	TrailingDiamond     string                   `config:"trailing_diamond"`
+	Properties          map[Property]interface{} `config:"properties"`
 	props               *properties
 	writer              SegmentWriter
 	stringValue         string

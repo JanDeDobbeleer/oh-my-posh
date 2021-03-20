@@ -28,3 +28,12 @@ function _omp_runonexit() {
 }
 
 trap _omp_runonexit EXIT
+
+function export_poshconfig() {
+    [ $# -eq 0 ] && { echo "Usage: $0 \"filename\""; return; }
+    format=$2
+    if [ -z "$format" ]; then
+      format="json"
+    fi
+    ::OMP:: --config $POSH_THEME --print-config --config-format $format > $1
+}

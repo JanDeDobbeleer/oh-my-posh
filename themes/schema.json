@@ -808,6 +808,12 @@
                 "properties": {
                   "template": {
                     "$ref": "#/definitions/template"
+                  },
+                  "display_default": {
+                    "type": "boolean",
+                    "title": "Display Default User Profile",
+                    "description": "Display the segment when default user or not",
+                    "default": true
                   }
                 }
               }
@@ -1103,13 +1109,19 @@
             }
           },
           "then": {
-            "title": "Node Segment",
+            "title": "Python Segment",
             "description": "https://ohmyposh.dev/docs/python",
             "properties": {
               "properties": {
                 "properties": {
                   "display_version": {
                     "$ref": "#/definitions/display_version"
+                  },
+                  "display_default": {
+                    "type": "boolean",
+                    "title": "Display Default Env",
+                    "description": "Show the name of the virtualenv when it's default (`system`, `base`)",
+                    "default": true
                   },
                   "display_virtual_env": {
                     "type": "boolean",
@@ -1195,7 +1207,7 @@
                     "description": "The name of the default user",
                     "default": ""
                   },
-                  "display_default_user": {
+                  "display_default": {
                     "type": "boolean",
                     "title": "Display Default User",
                     "description": "Display the segment when default user or not",

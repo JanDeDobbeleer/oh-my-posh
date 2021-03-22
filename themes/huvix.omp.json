@@ -1,0 +1,100 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "session",
+            "style": "plain",
+            "foreground": "#FFE082",
+            "properties": {
+              "user_info_separator": "",
+              "display_host": false,
+              "prefix": "@",
+              "postfix": " \u279C"
+            }
+          },
+          {
+            "type": "path",
+            "style": "plain",
+            "foreground": "#56B6C2",
+            "properties": {
+              "style": "agnoster_short"
+            }
+          },
+          {
+            "type": "go",
+            "style": "powerline",
+            "foreground": "#7FD5EA",
+            "properties": {
+                "prefix": "\u0028\uFCD1",
+                "postfix": "\u0029 "
+              }
+            },
+            {
+            "type": "python",
+            "style": "powerline",
+            "foreground": "#9e7eff",
+            "properties": {
+                "prefix": "\u0028\uE235 ",
+                "postfix": "\u0029 " 
+              }
+            },
+            {
+              "type": "git",
+              "style": "plain",
+              "foreground": "#56B6C2",
+              "properties": {
+                "branch_icon": "",
+                "display_status": false,
+                "prefix": "<#E8CC97>git(</>",
+                "postfix": "<#E8CC97>) </>"
+              }
+            },
+            {
+              "type": "executiontime",
+              "style": "powerline",
+              "foreground": "#FFAB91",
+              "properties": {
+                "threshold": 100,
+                "style": "austin",
+                "prefix": "\u007B",
+                "postfix": "\u007D",
+                "always_enabled": false
+              }
+            }
+        ]
+      },
+      {
+        "type": "newline"
+      },
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+          "type": "battery",
+          "style": "powerline",
+          "foreground": "#193549",
+          "properties": {
+              "battery_icon": "",
+              "discharging_icon": "\uE231 ",
+              "charging_icon": "\uE234 ",
+              "charged_icon": "\uE22F ",
+              "color_background": false,
+              "charged_color": "#66BB6A",
+              "charging_color": "#64B5F6",
+              "discharging_color": "#E36464",
+              "prefix": "\u005B",
+              "postfix": "\uF295\u005D ",
+              "display_charging": true
+            }
+          }
+        ]
+      }
+    ],
+    "final_space": true
+  }
+  

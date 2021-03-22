@@ -96,6 +96,8 @@ func TestRuby(t *testing.T) {
 		env.On("hasFiles", "*.rb").Return(tc.HasRubyFiles)
 		env.On("hasFiles", "Rakefile").Return(tc.HasRakeFile)
 		env.On("hasFiles", "Gemfile").Return(tc.HasGemFile)
+		env.On("getcwd", nil).Return("/usr/home/project")
+		env.On("homeDir", nil).Return("/usr/home")
 		props := &properties{
 			values: map[Property]interface{}{
 				DisplayVersion: tc.DisplayVersion,

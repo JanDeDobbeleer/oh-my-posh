@@ -116,6 +116,9 @@ func (l *language) string() string {
 }
 
 func (l *language) enabled() bool {
+	if l.env.getcwd() == l.env.homeDir() {
+		return false
+	}
 	l.loadLanguageContext()
 	displayMode := l.props.getString(DisplayMode, DisplayModeFiles)
 	switch displayMode {

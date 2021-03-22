@@ -35,6 +35,8 @@ func TestPythonVirtualEnv(t *testing.T) {
 		env.On("getenv", "CONDA_DEFAULT_ENV").Return(tc.CondaDefaultEnvName)
 		env.On("getenv", "PYENV_VERSION").Return(tc.PyEnvName)
 		env.On("getPathSeperator", nil).Return("")
+		env.On("getcwd", nil).Return("/usr/home/project")
+		env.On("homeDir", nil).Return("/usr/home")
 		props := &properties{
 			values: map[Property]interface{}{
 				DisplayVersion:    tc.DisplayVersion,

@@ -7,6 +7,7 @@ import (
 type osInfo struct {
 	props *properties
 	env   environmentInfo
+	OS    string
 }
 
 const (
@@ -70,20 +71,25 @@ func (n *osInfo) string() string {
 	goos := n.env.getRuntimeGOOS()
 	switch goos {
 	case windowsPlatform:
+		n.OS = windowsPlatform
 		return n.props.getString(Windows, "\uE62A")
-	case "darwin":
+	case darwinPlatform:
+		n.OS = darwinPlatform
 		return n.props.getString(MacOS, "\uF179")
-	case "linux":
+	case linuxPlatform:
 		wsl := n.env.getenv("WSL_DISTRO_NAME")
 		p := n.env.getPlatform()
 		if len(wsl) == 0 {
+			n.OS = p
 			return n.getDistroName(p, "")
 		}
+		n.OS = wsl
 		return fmt.Sprintf("%s%s%s",
 			n.props.getString(WSL, "WSL"),
 			n.props.getString(WSLSeparator, " - "),
 			n.getDistroName(p, wsl))
 	default:
+		n.OS = goos
 		return goos
 	}
 }

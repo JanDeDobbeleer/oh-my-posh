@@ -41,6 +41,8 @@ const (
 	MappedLocations Property = "mapped_locations"
 	// MappedLocationsEnabled enables overriding certain locations with an icon
 	MappedLocationsEnabled Property = "mapped_locations_enabled"
+	// StackCountEnabled enables the stack count display
+	StackCountEnabled Property = "stack_count_enabled"
 )
 
 func (pt *path) enabled() bool {
@@ -77,6 +79,11 @@ func (pt *path) string() string {
 		}
 		return fmt.Sprintf("[%s](file://%s)", formattedPath, cwd)
 	}
+
+	if pt.props.getBool(StackCountEnabled, false) && pt.env.stackCount() > 0 {
+		return fmt.Sprintf("%d %s", pt.env.stackCount(), formattedPath)
+	}
+
 	return formattedPath
 }
 

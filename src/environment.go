@@ -21,6 +21,8 @@ import (
 const (
 	unknown         = "unknown"
 	windowsPlatform = "windows"
+	darwinPlatform  = "darwin"
+	linuxPlatform   = "linux"
 )
 
 type commandError struct {
@@ -30,6 +32,12 @@ type commandError struct {
 
 func (e *commandError) Error() string {
 	return e.err
+}
+
+type noBatteryError struct{}
+
+func (m *noBatteryError) Error() string {
+	return "no battery"
 }
 
 type fileInfo struct {
@@ -58,12 +66,14 @@ type environmentInfo interface {
 	lastErrorCode() int
 	executionTime() float64
 	getArgs() *args
-	getBatteryInfo() (*battery.Battery, error)
+	getBatteryInfo() ([]*battery.Battery, error)
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
 	doGet(url string) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
+	stackCount() int
+	getTerminalWidth() (int, error)
 }
 
 type commandCache struct {
@@ -195,7 +205,7 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	if cmd, ok := env.cmdCache.get(command); ok {
 		command = cmd
 	}
-	out, err := exec.Command(command, args...).Output()
+	out, err := exec.Command(command, args...).CombinedOutput()
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			return "", &commandError{
@@ -239,8 +249,8 @@ func (env *environment) getArgs() *args {
 	return env.args
 }
 
-func (env *environment) getBatteryInfo() (*battery.Battery, error) {
-	return battery.Get(0)
+func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
+	return battery.GetAll()
 }
 
 func (env *environment) getShellName() string {
@@ -305,6 +315,13 @@ func (env *environment) hasParentFilePath(path string) (*fileInfo, error) {
 		}
 		return nil, errors.New("no match at root level")
 	}
+}
+
+func (env *environment) stackCount() int {
+	if *env.args.StackCount < 0 {
+		return 0
+	}
+	return *env.args.StackCount
 }
 
 func cleanHostName(hostName string) string {

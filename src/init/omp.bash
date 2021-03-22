@@ -1,4 +1,6 @@
 export POSH_THEME=::CONFIG::
+export POWERLINE_COMMAND="oh-my-posh"
+export CONDA_PROMPT_MODIFIER=false
 
 TIMER_START="/tmp/${USER}.start.$$"
 
@@ -7,14 +9,15 @@ PS0='$(::OMP:: --millis > $TIMER_START)'
 function _omp_hook() {
     local ret=$?
 
+    omp_stack_count=$((${#DIRSTACK[@]} - 1))
     omp_elapsed=-1
     if [[ -f $TIMER_START ]]; then
         omp_now=$(::OMP:: --millis)
         omp_start_time=$(cat "$TIMER_START")
         omp_elapsed=$((omp_now-omp_start_time))
-        rm "$TIMER_START"
+        rm -f "$TIMER_START"
     fi
-    PS1="$(::OMP:: --config $POSH_THEME --shell bash --error $ret --execution-time $omp_elapsed)"
+    PS1="$(::OMP:: --config $POSH_THEME --shell bash --error $ret --execution-time $omp_elapsed --stack-count $omp_stack_count)"
 
     return $ret
 }
@@ -24,7 +27,7 @@ if [ "$TERM" != "linux" ] && [ -x "$(command -v ::OMP::)" ] && ! [[ "$PROMPT_COM
 fi
 
 function _omp_runonexit() {
-  [[ -f $TIMER_START ]] && rm "$TIMER_START"
+  [[ -f $TIMER_START ]] && rm -f "$TIMER_START"
 }
 
 trap _omp_runonexit EXIT

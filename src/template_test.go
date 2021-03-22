@@ -8,14 +8,15 @@ import (
 
 func TestRenderTemplate(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Expected string
-		Template string
-		Context  interface{}
+		Case        string
+		Expected    string
+		Template    string
+		ShouldError bool
+		Context     interface{}
 	}{
 		{Case: "single property", Expected: "hello world", Template: "{{.Text}} world", Context: struct{ Text string }{Text: "hello"}},
-		{Case: "invalid property", Expected: incorrectTemplate, Template: "{{.Durp}} world", Context: struct{ Text string }{Text: "hello"}},
-		{Case: "invalid template", Expected: invalidTemplate, Template: "{{ if .Text }} world", Context: struct{ Text string }{Text: "hello"}},
+		{Case: "invalid property", ShouldError: true, Template: "{{.Durp}} world", Context: struct{ Text string }{Text: "hello"}},
+		{Case: "invalid template", ShouldError: true, Template: "{{ if .Text }} world", Context: struct{ Text string }{Text: "hello"}},
 		{Case: "if statement true", Expected: "hello world", Template: "{{ if .Text }}{{.Text}} world{{end}}", Context: struct{ Text string }{Text: "hello"}},
 		{Case: "if statement false", Expected: "world", Template: "{{ if .Text }}{{.Text}} {{end}}world", Context: struct{ Text string }{Text: ""}},
 		{
@@ -72,6 +73,11 @@ func TestRenderTemplate(t *testing.T) {
 			Template: tc.Template,
 			Context:  tc.Context,
 		}
-		assert.Equal(t, tc.Expected, template.render(), tc.Case)
+		text, err := template.render()
+		if tc.ShouldError {
+			assert.Error(t, err)
+			continue
+		}
+		assert.Equal(t, tc.Expected, text, tc.Case)
 	}
 }

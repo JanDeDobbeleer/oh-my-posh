@@ -22,6 +22,7 @@ type languageArgs struct {
 	expectedError      error
 	properties         map[Property]interface{}
 	matchesVersionFile matchesVersionFile
+	inHome             bool
 }
 
 func (l *languageArgs) hasvalue(value string, list []string) bool {
@@ -42,6 +43,13 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	for _, extension := range args.extensions {
 		env.On("hasFiles", extension).Return(args.hasvalue(extension, args.enabledExtensions))
 	}
+	home := "/usr/home"
+	cwd := "/usr/home/project"
+	if args.inHome {
+		cwd = home
+	}
+	env.On("getcwd", nil).Return(cwd)
+	env.On("homeDir", nil).Return(home)
 	props := &properties{
 		values: args.properties,
 	}
@@ -139,6 +147,25 @@ func TestLanguageEnabledOneExtensionFound(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
 	assert.Equal(t, universion, lang.string(), "unicorn is available and uni files are found")
+}
+
+func TestLanguageDisabledInHome(t *testing.T) {
+	args := &languageArgs{
+		commands: []*cmd{
+			{
+				executable: "unicorn",
+				args:       []string{"--version"},
+				regex:      "(?P<version>.*)",
+			},
+		},
+		extensions:        []string{uni, corn},
+		enabledExtensions: []string{uni},
+		enabledCommands:   []string{"unicorn"},
+		version:           universion,
+		inHome:            true,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.False(t, lang.enabled())
 }
 
 func TestLanguageEnabledSecondExtensionFound(t *testing.T) {
@@ -409,6 +436,39 @@ func TestLanguageHyperlinkEnabledLessParamInTemplate(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
 	assert.Equal(t, "[1.3.307](https://unicor.org/doc/1)", lang.string())
+}
+
+func TestLanguageEnabledInHome(t *testing.T) {
+	cases := []struct {
+		Case            string
+		DisplayMode     string
+		ExpectedEnabled bool
+	}{
+		{Case: "Always enabled", DisplayMode: DisplayModeAlways, ExpectedEnabled: true},
+		{Case: "Context disabled", DisplayMode: DisplayModeContext, ExpectedEnabled: false},
+	}
+	for _, tc := range cases {
+		props := map[Property]interface{}{
+			DisplayMode: tc.DisplayMode,
+		}
+		args := &languageArgs{
+			commands: []*cmd{
+				{
+					executable: "uni",
+					args:       []string{"--version"},
+					regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+				},
+			},
+			extensions:        []string{uni, corn},
+			enabledExtensions: []string{corn},
+			enabledCommands:   []string{"corn"},
+			version:           universion,
+			properties:        props,
+			inHome:            true,
+		}
+		lang := bootStrapLanguageTest(args)
+		assert.Equal(t, tc.ExpectedEnabled, lang.enabled(), tc.Case)
+	}
 }
 
 func TestLanguageHyperlinkEnabledMoreParamInTemplate(t *testing.T) {

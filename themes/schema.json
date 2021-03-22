@@ -53,17 +53,6 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "newline" }
-            }
-          },
-          "then": {
-            "required": ["type"],
-            "title": "Newline, renders a line break"
-          }
-        },
-        {
-          "if": {
-            "properties": {
               "type": { "const": "prompt" }
             }
           },
@@ -89,7 +78,7 @@
           "type": "string",
           "title": "Block type",
           "description": "https://ohmyposh.dev/docs/configure#type",
-          "enum": ["prompt", "rprompt", "newline"],
+          "enum": ["prompt", "rprompt"],
           "default": "prompt"
         },
         "alignment": {
@@ -98,6 +87,12 @@
           "description": "https://ohmyposh.dev/docs/configure#alignment",
           "enum": ["left", "right"],
           "default": "left"
+        },
+        "newline": {
+          "type": "boolean",
+          "title": "Newline",
+          "description": "https://ohmyposh.dev/docs/configure#newline",
+          "default": false
         },
         "vertical_offset": {
           "type": "integer",
@@ -155,7 +150,11 @@
             "ytm",
             "executiontime",
             "aws",
-            "java"
+            "java",
+            "poshgit",
+            "azfunc",
+            "crystal",
+            "dart"
           ]
         },
         "style": {
@@ -355,6 +354,9 @@
                     "title": "Display while charging",
                     "description": "displays the battery status while charging (Charging or Full)",
                     "default": true
+                  },
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -515,19 +517,19 @@
                     "type": "string",
                     "title": "Branch Identical Icon",
                     "description": "The icon to display when remote and local are identical",
-                    "default": "\uF0C9"
+                    "default": "\u2261"
                   },
                   "branch_ahead_icon": {
                     "type": "string",
                     "title": "Branch Ahead Icon",
                     "description": "The icon to display when the local branch is ahead of its remote",
-                    "default": "\uF176"
+                    "default": "\u2191"
                   },
                   "branch_behind_icon": {
                     "type": "string",
                     "title": "Branch Behind Icon",
                     "description": "The icon to display when the local branch is behind its remote",
-                    "default": "\uF175"
+                    "default": "\u2193"
                   },
                   "branch_gone_icon": {
                     "type": "string",
@@ -631,6 +633,12 @@
                     "description": "Icon/text to display when the upstream is Bitbucket",
                     "default": "\uF171"
                   },
+                  "azure_devops_icon": {
+                    "type": "string",
+                    "title": "Azure DevOps Icon",
+                    "description": "Icon/text to display when the upstream is Azure DevOps",
+                    "default": "\uFD03"
+                  },
                   "git_icon": {
                     "type": "string",
                     "title": "Git Icon",
@@ -649,7 +657,7 @@
                     "type": "boolean",
                     "title": "Color Background",
                     "description": "Color the background or foreground",
-                    "default": false
+                    "default": true
                   },
                   "local_changes_color": {
                     "$ref": "#/definitions/color"
@@ -673,6 +681,58 @@
           "then": {
             "title": "Golang Segment",
             "description": "https://ohmyposh.dev/docs/golang",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "dart" }
+            }
+          },
+          "then": {
+            "title": "Dart Segment",
+            "description": "https://ohmyposh.dev/docs/dart",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "crystal" }
+            }
+          },
+          "then": {
+            "title": "Crystal Segment",
+            "description": "https://ohmyposh.dev/docs/crystal",
             "properties": {
               "properties": {
                 "properties": {
@@ -829,6 +889,50 @@
           "then": {
             "title": "Node Segment",
             "description": "https://ohmyposh.dev/docs/node",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "display_package_manager": {
+                    "type": "boolean",
+                    "title": "Display Package Manager",
+                    "description": "Show whether the current project uses Yarn or NPM",
+                    "default": false
+                  },
+                  "yarn_icon": {
+                    "type": "string",
+                    "title": "Yarn Icon",
+                    "description": "Icon/text to use for Yarn",
+                    "default": " \uF61A"
+                  },
+                  "npm_icon": {
+                    "type": "string",
+                    "title": "NPM Icon",
+                    "description": "Icon/text to use for NPM",
+                    "default": " \uE71E"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "azfunc" }
+            }
+          },
+          "then": {
+            "title": "Azure Function Segment",
+            "description": "https://ohmyposh.dev/docs/azfunc",
             "properties": {
               "properties": {
                 "properties": {
@@ -1095,6 +1199,12 @@
                     "type": "boolean",
                     "title": "Enable hyperlink",
                     "description": "Displays an hyperlink for the current path",
+                    "default": false
+                  },
+                  "stack_count_enabled": {
+                    "type": "boolean",
+                    "title": "Show/hide stack count",
+                    "description": "Displays the stack count when using pushd/popd",
                     "default": false
                   }
                 }
@@ -1370,7 +1480,7 @@
                     "type": "string",
                     "title": "API URL",
                     "description": "The YTMDA Remote Control API URL",
-                    "default": "http://localhost:9863"
+                    "default": "http://127.0.0.1:9863"
                   }
                 }
               }
@@ -1411,13 +1521,25 @@
                       "dallas",
                       "galveston",
                       "houston",
-                      "amarillo"
+                      "amarillo",
+                      "round"
                     ],
                     "default": "austin"
                   }
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "poshgit" }
+            }
+          },
+          "then": {
+            "title": "Posh-Git Segment",
+            "description": "https://ohmyposh.dev/docs/poshgit"
           }
         }
       ]

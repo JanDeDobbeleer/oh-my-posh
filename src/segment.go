@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 // Segment represent a single segment and it's configuration
@@ -22,6 +23,16 @@ type Segment struct {
 	writer              SegmentWriter
 	stringValue         string
 	active              bool
+}
+
+// SegmentTiming holds the timing context for a segment
+type SegmentTiming struct {
+	name            string
+	nameLength      int
+	enabled         bool
+	stringValue     string
+	enabledDuration time.Duration
+	stringDuration  time.Duration
 }
 
 // SegmentWriter is the interface used to define what and if to write to the prompt
@@ -96,6 +107,14 @@ const (
 	Aws SegmentType = "aws"
 	// Java writes the active java version
 	Java SegmentType = "java"
+	// PoshGit writes the posh git prompt
+	PoshGit SegmentType = "poshgit"
+	// AZFunc writes current AZ func version
+	AZFunc SegmentType = "azfunc"
+	// Crystal writes the active crystal version
+	Crystal SegmentType = "crystal"
+	// Dart writes the active dart version
+	Dart SegmentType = "dart"
 )
 
 func (segment *Segment) string() string {
@@ -166,8 +185,8 @@ func (segment *Segment) getColor(templates []string, defaultColor string) string
 	}
 	for _, template := range templates {
 		txtTemplate.Template = template
-		value := txtTemplate.render()
-		if value == "" {
+		value, err := txtTemplate.render()
+		if err != nil || value == "" {
 			continue
 		}
 		return value
@@ -219,6 +238,10 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Ruby:          &ruby{},
 		Aws:           &aws{},
 		Java:          &java{},
+		PoshGit:       &poshgit{},
+		AZFunc:        &azfunc{},
+		Crystal:       &crystal{},
+		Dart:          &dart{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

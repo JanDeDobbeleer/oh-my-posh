@@ -50,3 +50,7 @@ Display OS specific info. Defaults to Icon.
 - sabayon: `string` - the icon to use for Sabayon - defaults to Sabayon icon - defaults to `\uF317`
 - slackware: `string` - the icon to use for Slackware - defaults to Slackware icon - defaults to `\uF319`
 - ubuntu: `string` - the icon to use for Ubuntu - defaults to Ubuntu icon - defaults to `\uF31b`
+
+## Template Properties
+
+- `.OS`: `string` - the OS platform

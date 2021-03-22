@@ -352,9 +352,8 @@ func TestParseGitStatsWorking(t *testing.T) {
 	status := g.parseGitStats(output, true)
 	assert.Equal(t, 3, status.modified)
 	assert.Equal(t, 1, status.unmerged)
-	assert.Equal(t, 1, status.added)
+	assert.Equal(t, 3, status.added)
 	assert.Equal(t, 1, status.deleted)
-	assert.Equal(t, 2, status.untracked)
 	assert.True(t, status.changed)
 }
 
@@ -376,7 +375,6 @@ func TestParseGitStatsStaging(t *testing.T) {
 	assert.Equal(t, 0, status.unmerged)
 	assert.Equal(t, 1, status.added)
 	assert.Equal(t, 2, status.deleted)
-	assert.Equal(t, 0, status.untracked)
 	assert.True(t, status.changed)
 }
 
@@ -409,10 +407,11 @@ func bootstrapUpstreamTest(upstream string) *git {
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	props := &properties{
 		values: map[Property]interface{}{
-			GithubIcon:    "GH",
-			GitlabIcon:    "GL",
-			BitbucketIcon: "BB",
-			GitIcon:       "G",
+			GithubIcon:      "GH",
+			GitlabIcon:      "GL",
+			BitbucketIcon:   "BB",
+			AzureDevOpsIcon: "AD",
+			GitIcon:         "G",
 		},
 	}
 	g := &git{
@@ -441,6 +440,16 @@ func TestGetUpstreamSymbolBitBucket(t *testing.T) {
 	g := bootstrapUpstreamTest("bitbucket.org/test")
 	upstreamIcon := g.getUpstreamSymbol()
 	assert.Equal(t, "BB", upstreamIcon)
+}
+
+func TestGetUpstreamSymbolAzureDevOps(t *testing.T) {
+	g := bootstrapUpstreamTest("dev.azure.com/test")
+	upstreamIcon := g.getUpstreamSymbol()
+	assert.Equal(t, "AD", upstreamIcon)
+
+	g = bootstrapUpstreamTest("test.visualstudio.com")
+	upstreamIcon = g.getUpstreamSymbol()
+	assert.Equal(t, "AD", upstreamIcon)
 }
 
 func TestGetUpstreamSymbolGit(t *testing.T) {

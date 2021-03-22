@@ -3,6 +3,10 @@
         Generates the prompt before each line in the console
 #>
 
+# Powershell doesn't default to UTF8 just yet, so we're forcing it as there are too many problems
+# that pop up when we don't
+[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+
 function Get-PoshCommand {
     if ($IsMacOS) {
         return "$PSScriptRoot/bin/posh-darwin-amd64"
@@ -10,7 +14,7 @@ function Get-PoshCommand {
     if ($IsLinux) {
         # this is rather hacky but there's no other way for the time being
         $arch = uname -m
-        if ($arch -eq 'aarch64') {
+        if (($arch -eq 'aarch64') -or ($arch -eq 'armv7l')) {
             return "$PSScriptRoot/bin/posh-linux-arm"
         }
         return "$PSScriptRoot/bin/posh-linux-amd64"
@@ -35,7 +39,7 @@ function Set-ExecutablePermissions {
         return
     }
 
-    Invoke-Expression -Command "chmod +x $executable"
+    chmod a+x $executable 2>&1
 }
 
 function Set-PoshPrompt {
@@ -47,17 +51,23 @@ function Set-PoshPrompt {
 
     $config = ""
     if (Test-Path "$PSScriptRoot/themes/$Theme.omp.json") {
-        $config = "$PSScriptRoot/themes/$Theme.omp.json"
+        $path = "$PSScriptRoot/themes/$Theme.omp.json"
+        $config = (Resolve-Path -Path $path).ProviderPath
     }
     elseif (Test-Path $Theme) {
-        $config = (Resolve-Path -Path $Theme).Path
+        $config = (Resolve-Path -Path $Theme).ProviderPath
     }
     else {
         $config = "$PSScriptRoot/themes/jandedobbeleer.omp.json"
     }
 
+    # Workaround for get-location/push-location/pop-location from within a module
+    # https://github.com/PowerShell/PowerShell/issues/12868
+    # https://github.com/JanDeDobbeleer/oh-my-posh2/issues/113
+    $global:omp_global_sessionstate = $PSCmdlet.SessionState
+
     $poshCommand = Get-PoshCommand
-    Invoke-Expression (& $poshCommand --init --shell=pwsh --config="$config")
+    (& $poshCommand --init --shell=pwsh --config="$config") | Invoke-Expression
 }
 
 function Get-PoshThemes {

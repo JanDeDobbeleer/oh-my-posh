@@ -19,12 +19,11 @@ type gitRepo struct {
 }
 
 type gitStatus struct {
-	unmerged  int
-	deleted   int
-	added     int
-	modified  int
-	untracked int
-	changed   bool
+	unmerged int
+	deleted  int
+	added    int
+	modified int
+	changed  bool
 }
 
 func (s *gitStatus) string() string {
@@ -38,7 +37,6 @@ func (s *gitStatus) string() string {
 	status += stringIfValue(s.added, "+")
 	status += stringIfValue(s.modified, "~")
 	status += stringIfValue(s.deleted, "-")
-	status += stringIfValue(s.untracked, "?")
 	status += stringIfValue(s.unmerged, "x")
 	return status
 }
@@ -94,6 +92,8 @@ const (
 	GithubIcon Property = "github_icon"
 	// BitbucketIcon shows  when upstream is bitbucket
 	BitbucketIcon Property = "bitbucket_icon"
+	// AzureDevOpsIcon shows  when upstream is azure devops
+	AzureDevOpsIcon Property = "azure_devops_icon"
 	// GitlabIcon shows when upstream is gitlab
 	GitlabIcon Property = "gitlab_icon"
 	// GitIcon shows when the upstream can't be identified
@@ -140,7 +140,7 @@ func (g *git) enabled() bool {
 
 func (g *git) string() string {
 	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
-	displayStatus := g.props.getBool(DisplayStatus, true)
+	displayStatus := g.props.getBool(DisplayStatus, false)
 
 	if displayStatus || statusColorsEnabled {
 		g.setGitStatus()
@@ -230,6 +230,9 @@ func (g *git) getUpstreamSymbol() string {
 	}
 	if strings.Contains(url, "bitbucket") {
 		return g.props.getString(BitbucketIcon, "\uF171 ")
+	}
+	if strings.Contains(url, "dev.azure.com") || strings.Contains(url, "visualstudio.com") {
+		return g.props.getString(AzureDevOpsIcon, "\uFD03 ")
 	}
 	return g.props.getString(GitIcon, "\uE5FB ")
 }
@@ -384,7 +387,7 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 		switch code {
 		case "?":
 			if working {
-				status.untracked++
+				status.added++
 			}
 		case "D":
 			status.deleted++
@@ -392,11 +395,11 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 			status.added++
 		case "U":
 			status.unmerged++
-		case "M", "R", "C":
+		case "M", "R", "C", "m":
 			status.modified++
 		}
 	}
-	status.changed = status.added > 0 || status.deleted > 0 || status.modified > 0 || status.unmerged > 0 || status.untracked > 0
+	status.changed = status.added > 0 || status.deleted > 0 || status.modified > 0 || status.unmerged > 0
 	return &status
 }
 

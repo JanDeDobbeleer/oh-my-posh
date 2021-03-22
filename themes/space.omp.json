@@ -1,0 +1,121 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": false,
+  "osc99": false,
+  "console_title": false,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "horizontal_offset": 0,
+      "vertical_offset": 0,
+      "segments": [
+        {
+          "type": "os",
+          "style": "plain",
+          "foreground": "#26C6DA",
+          "properties": {
+            "prefix": "",
+            "postfix": "",
+            "macos": "mac"
+        }
+        },
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#26C6DA",
+          "properties": {
+            "display_host": false,
+            "prefix": " ",
+            "postfix": ": ",
+            "user_info_separator": "",
+            "display_user": true
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "invert_powerline": false,
+          "foreground": "lightGreen",
+          "properties": {
+            "prefix": "",
+            "style": "folder"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "invert_powerline": false,
+          "properties": {
+            "branch_icon": "",
+            "display_stash_count": true,
+            "display_status": false,
+            "prefix": "<#ffffff>on</> "
+          }
+        },
+        {
+          "type": "python",
+          "style": "powerline",
+          "foreground": "#906cff",
+          "properties": {
+            "prefix": "\u005b\uE235 ",
+            "postfix": "\u005D "
+          }
+        },
+        {
+          "type": "go",
+          "style": "powerline",
+          "foreground": "#7FD5EA",
+          "properties": {
+            "prefix": "\u005b\uFCD1 ",
+            "postfix": "\u005D "
+          }
+        },
+        {
+          "type": "node",
+          "style": "powerline",
+          "foreground": "#76b367",
+          "properties": {
+            "prefix": "\u005b\uE718 ",
+            "postfix": "\u005D "
+          }
+        },
+        {
+          "type": "ruby",
+          "style": "powerline",
+          "foreground": "#f44336",
+          "properties": {
+            "prefix": "\u005b\uE791",
+            "postfix": "\u005D "
+          }
+        },
+        {
+          "type": "java",
+          "style": "powerline",
+          "foreground": "#ea2d2e",
+          "properties": {
+            "prefix": "\u005b\uE738 ",
+            "postfix": "\u005D "
+          }
+        },
+        {
+          "type": "julia",
+          "style": "powerline",
+          "foreground": "#4063D8",
+          "properties": {
+            "prefix": " \uE624 "
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#FFD54F",
+          "properties": {
+              "prefix": "",
+              "text": "\u276F"
+          }
+        }
+      ]
+    }
+  ]
+}

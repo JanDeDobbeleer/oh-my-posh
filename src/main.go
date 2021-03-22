@@ -33,6 +33,7 @@ const (
 	pwsh        = "pwsh"
 	fish        = "fish"
 	powershell5 = "powershell"
+	plain       = "shell"
 )
 
 type args struct {
@@ -51,6 +52,11 @@ type args struct {
 	Eval          *bool
 	Init          *bool
 	PrintInit     *bool
+	ExportPNG     *bool
+	Author        *string
+	CursorPadding *int
+	RPromptOffset *int
+	StackCount    *int
 }
 
 func main() {
@@ -115,6 +121,26 @@ func main() {
 			"print-init",
 			false,
 			"Print the shell initialization script"),
+		ExportPNG: flag.Bool(
+			"export-png",
+			false,
+			"Create an image based on the current configuration"),
+		Author: flag.String(
+			"author",
+			"",
+			"Add the author to the exported image using --export-img"),
+		CursorPadding: flag.Int(
+			"cursor-padding",
+			30,
+			"Pad the cursor with x when using --export-img"),
+		RPromptOffset: flag.Int(
+			"rprompt-offset",
+			40,
+			"Offset the right prompt with x when using --export-img"),
+		StackCount: flag.Int(
+			"stack-count",
+			0,
+			"The current location stack count"),
 	}
 	flag.Parse()
 	env := &environment{}
@@ -147,33 +173,47 @@ func main() {
 		return
 	}
 
-	formats := &ansiFormats{}
-	formats.init(env.getShellName())
-	renderer := &AnsiRenderer{
-		formats: formats,
-	}
+	ansi := &ansiUtils{}
+	ansi.init(env.getShellName())
 	colorer := &AnsiColor{
-		formats:            formats,
-		terminalBackground: cfg.TerminalBackground,
+		ansi:               ansi,
+		terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
 	}
 	title := &consoleTitle{
-		env:     env,
-		config:  cfg,
-		formats: formats,
+		env:    env,
+		config: cfg,
+		ansi:   ansi,
 	}
 	engine := &engine{
 		config:       cfg,
 		env:          env,
-		color:        colorer,
-		renderer:     renderer,
+		colorWriter:  colorer,
 		consoleTitle: title,
+		ansi:         ansi,
 	}
 
 	if *args.Debug {
-		engine.debug()
+		fmt.Print(engine.debug())
 		return
 	}
-	engine.render()
+	prompt := engine.render()
+	if !*args.ExportPNG {
+		fmt.Print(prompt)
+		return
+	}
+	imageCreator := &ImageRenderer{
+		ansiString:    prompt,
+		author:        *args.Author,
+		cursorPadding: *args.CursorPadding,
+		rPromptOffset: *args.RPromptOffset,
+		ansi:          ansi,
+	}
+	imageCreator.init()
+	match := findNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, *args.Config)
+	err := imageCreator.SavePNG(fmt.Sprintf("%s.png", match[str]))
+	if err != nil {
+		fmt.Print(err.Error())
+	}
 }
 
 func initShell(shell, configFile string) string {
@@ -183,7 +223,7 @@ func initShell(shell, configFile string) string {
 	}
 	switch shell {
 	case pwsh:
-		return fmt.Sprintf("Invoke-Expression (@(&\"%s\" --print-init --shell=pwsh --config=\"%s\") -join \"`n\")", executable, configFile)
+		return fmt.Sprintf("(@(&\"%s\" --print-init --shell=pwsh --config=\"%s\") -join \"`n\") | Invoke-Expression", executable, configFile)
 	case zsh, bash, fish:
 		return printShellInit(shell, configFile)
 	default:
@@ -218,4 +258,28 @@ func getShellInitScript(executable, configFile, script string) string {
 	script = strings.ReplaceAll(script, "::OMP::", executable)
 	script = strings.ReplaceAll(script, "::CONFIG::", configFile)
 	return script
+}
+
+func getConsoleBackgroundColor(env environmentInfo, backgroundColorTemplate string) string {
+	if len(backgroundColorTemplate) == 0 {
+		return backgroundColorTemplate
+	}
+	context := struct {
+		Env map[string]string
+	}{
+		Env: map[string]string{},
+	}
+	matches := findAllNamedRegexMatch(templateEnvRegex, backgroundColorTemplate)
+	for _, match := range matches {
+		context.Env[match["ENV"]] = env.getenv(match["ENV"])
+	}
+	template := &textTemplate{
+		Template: backgroundColorTemplate,
+		Context:  context,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }

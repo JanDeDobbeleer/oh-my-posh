@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/distatus/battery"
+	"github.com/gookit/config/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -107,9 +108,9 @@ func (env *MockedEnvironment) getArgs() *args {
 	return arguments.Get(0).(*args)
 }
 
-func (env *MockedEnvironment) getBatteryInfo() (*battery.Battery, error) {
+func (env *MockedEnvironment) getBatteryInfo() ([]*battery.Battery, error) {
 	args := env.Called(nil)
-	return args.Get(0).(*battery.Battery), args.Error(1)
+	return args.Get(0).([]*battery.Battery), args.Error(1)
 }
 
 func (env *MockedEnvironment) getShellName() string {
@@ -132,8 +133,18 @@ func (env *MockedEnvironment) hasParentFilePath(path string) (*fileInfo, error) 
 	return args.Get(0).(*fileInfo), args.Error(1)
 }
 
+func (env *MockedEnvironment) stackCount() int {
+	args := env.Called(nil)
+	return args.Int(0)
+}
+
 func (env *MockedEnvironment) isWsl() bool {
 	return false
+}
+
+func (env *MockedEnvironment) getTerminalWidth() (int, error) {
+	args := env.Called(nil)
+	return args.Int(0), args.Error(1)
 }
 
 const (
@@ -319,6 +330,8 @@ func TestGetFullPath(t *testing.T) {
 		DisableMappedLocations bool
 		GOOS                   string
 		PathSeparator          string
+		StackCount             int
+		StackCountEnabled      bool
 	}{
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: "", Expected: ""},
@@ -350,6 +363,51 @@ func TestGetFullPath(t *testing.T) {
 
 		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: windowsPlatform},
 		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\Jan", Expected: "C:\\Users\\Jan", PathSeparator: "\\", GOOS: windowsPlatform},
+
+		// StackCountEnabled=true and StackCount=2
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, StackCount: 2, Expected: "2 /"},
+		{Style: Full, Pwd: "", StackCountEnabled: true, StackCount: 2, Expected: "2 "},
+		{Style: Full, Pwd: "/", StackCountEnabled: true, StackCount: 2, Expected: "2 /"},
+		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, StackCount: 2, Expected: "2 ~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 2, Expected: "2 ~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 2, Expected: "2 /usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, StackCount: 2, Expected: "2 /a/b/c/d"},
+
+		// StackCountEnabled=false and StackCount=2
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: false, StackCount: 2, Expected: "/"},
+		{Style: Full, Pwd: "", StackCountEnabled: false, StackCount: 2, Expected: ""},
+		{Style: Full, Pwd: "/", StackCountEnabled: false, StackCount: 2, Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", StackCountEnabled: false, StackCount: 2, Expected: "~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: false, StackCount: 2, Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: false, StackCount: 2, Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: false, StackCount: 2, Expected: "/a/b/c/d"},
+
+		// StackCountEnabled=true and StackCount=0
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, StackCount: 0, Expected: "/"},
+		{Style: Full, Pwd: "", StackCountEnabled: true, StackCount: 0, Expected: ""},
+		{Style: Full, Pwd: "/", StackCountEnabled: true, StackCount: 0, Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, StackCount: 0, Expected: "~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 0, Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 0, Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, StackCount: 0, Expected: "/a/b/c/d"},
+
+		// StackCountEnabled=true and StackCount<0
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, StackCount: -1, Expected: "/"},
+		{Style: Full, Pwd: "", StackCountEnabled: true, StackCount: -1, Expected: ""},
+		{Style: Full, Pwd: "/", StackCountEnabled: true, StackCount: -1, Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, StackCount: -1, Expected: "~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: -1, Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: -1, Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, StackCount: -1, Expected: "/a/b/c/d"},
+
+		// StackCountEnabled=true and StackCount not set
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, Expected: "/"},
+		{Style: Full, Pwd: "", StackCountEnabled: true, Expected: ""},
+		{Style: Full, Pwd: "/", StackCountEnabled: true, Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, Expected: "~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, Expected: "/a/b/c/d"},
 	}
 
 	for _, tc := range cases {
@@ -361,13 +419,15 @@ func TestGetFullPath(t *testing.T) {
 		env.On("homeDir", nil).Return("/usr/home")
 		env.On("getcwd", nil).Return(tc.Pwd)
 		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		env.On("stackCount", nil).Return(tc.StackCount)
 		args := &args{
 			PSWD: &tc.Pswd,
 		}
 		env.On("getArgs", nil).Return(args)
 		props := &properties{
 			values: map[Property]interface{}{
-				Style: tc.Style,
+				Style:             tc.Style,
+				StackCountEnabled: tc.StackCountEnabled,
 			},
 		}
 		if tc.FolderSeparatorIcon != "" {
@@ -535,5 +595,31 @@ func TestGetPwd(t *testing.T) {
 		}
 		got := path.getPwd()
 		assert.Equal(t, tc.Expected, got)
+	}
+}
+
+func TestParseMappedLocations(t *testing.T) {
+	cases := []struct {
+		Case string
+		JSON string
+	}{
+		{Case: "new format", JSON: `{ "properties": { "mapped_locations": {"folder1": "one","folder2": "two"} } }`},
+		{Case: "old format", JSON: `{ "properties": { "mapped_locations": [["folder1", "one"], ["folder2", "two"]] } }`},
+	}
+	for _, tc := range cases {
+		config.ClearAll()
+		config.WithOptions(func(opt *config.Options) {
+			opt.TagName = "config"
+		})
+		err := config.LoadStrings(config.JSON, tc.JSON)
+		assert.NoError(t, err)
+		var segment Segment
+		err = config.BindStruct("", &segment)
+		assert.NoError(t, err)
+		props := &properties{
+			values: segment.Properties,
+		}
+		mappedLocations := props.getKeyValueMap(MappedLocations, make(map[string]string))
+		assert.Equal(t, "two", mappedLocations["folder2"])
 	}
 }

@@ -1,0 +1,28 @@
+---
+id: poshgit
+title: Posh-Git
+sidebar_label: Git (posh-git)
+---
+
+## What
+
+Display the [posh-git][posh-git] prompt.
+
+:::info
+This segment only works within Powershell and requires the posh-git module to be installed and imported.
+To enable the `posh-git` module, set `$env:POSH_GIT_ENABLED = $true` in your `$PROFILE`.
+:::
+
+## Sample Configuration
+
+```json
+{
+  "type": "poshgit",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#0077c2"
+}
+```
+
+[posh-git]: https://github.com/dahlbyk/posh-git

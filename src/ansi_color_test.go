@@ -12,10 +12,10 @@ const (
 )
 
 func TestWriteAndRemoveText(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	text := renderer.writeAndRemoveText("#193549", "#fff", "This is white, ", "This is white, ", inputText)
 	assert.Equal(t, "<#ff5733>this is orange</>, white again", text)
@@ -23,10 +23,10 @@ func TestWriteAndRemoveText(t *testing.T) {
 }
 
 func TestWriteAndRemoveTextColored(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	text := renderer.writeAndRemoveText("#193549", "#ff5733", "this is orange", "<#ff5733>this is orange</>", inputText)
 	assert.Equal(t, "This is white, , white again", text)
@@ -34,20 +34,20 @@ func TestWriteAndRemoveTextColored(t *testing.T) {
 }
 
 func TestWriteColorOverride(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	renderer.write("#193549", "#ff5733", inputText)
 	assert.NotContains(t, renderer.string(), "<#ff5733>")
 }
 
 func TestWriteColorOverrideBackground(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	text := "This is white, <,#000000>this is black</>, white again"
 	renderer.write("#193549", "#ff5733", text)
@@ -55,10 +55,10 @@ func TestWriteColorOverrideBackground(t *testing.T) {
 }
 
 func TestWriteColorOverrideBackground16(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	text := "This is default <,white> this background is changed</> default again"
 	renderer.write("#193549", "#ff5733", text)
@@ -68,10 +68,10 @@ func TestWriteColorOverrideBackground16(t *testing.T) {
 }
 
 func TestWriteColorOverrideBoth(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	text := "This is white, <#000000,#ffffff>this is black</>, white again"
 	renderer.write("#193549", "#ff5733", text)
@@ -80,10 +80,10 @@ func TestWriteColorOverrideBoth(t *testing.T) {
 }
 
 func TestWriteColorOverrideBoth16(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	text := "This is white, <black,white>this is black</>, white again"
 	renderer.write("#193549", "#ff5733", text)
@@ -92,10 +92,10 @@ func TestWriteColorOverrideBoth16(t *testing.T) {
 }
 
 func TestWriteColorOverrideDouble(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	text := "<#ffffff>jan</>@<#ffffff>Jans-MBP</>"
 	renderer.write("#193549", "#ff5733", text)
@@ -104,10 +104,10 @@ func TestWriteColorOverrideDouble(t *testing.T) {
 }
 
 func TestWriteColorTransparent(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	text := "This is white"
 	renderer.writeColoredText("#193549", Transparent, text)
@@ -115,10 +115,10 @@ func TestWriteColorTransparent(t *testing.T) {
 }
 
 func TestWriteColorName(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	text := "This is white, <red>this is red</>, white again"
 	renderer.write("#193549", "red", text)
@@ -126,10 +126,10 @@ func TestWriteColorName(t *testing.T) {
 }
 
 func TestWriteColorInvalid(t *testing.T) {
-	formats := &ansiFormats{}
-	formats.init("pwsh")
+	ansi := &ansiUtils{}
+	ansi.init("pwsh")
 	renderer := &AnsiColor{
-		formats: formats,
+		ansi: ansi,
 	}
 	text := "This is white, <invalid>this is orange</>, white again"
 	renderer.write("#193549", "invalid", text)

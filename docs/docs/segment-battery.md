@@ -34,7 +34,8 @@ Battery displays the remaining power percentage for your battery.
 
 ## Properties
 
-- battery_icon: `string` - the icon to use as a prefix for the battery percentage - defaults to empty
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{.Icon}}{{ if not .Error }}{{.Percentage}}{{ end }}{{.Error}}`
 - display_error: `boolean` - show the error context when failing to retrieve the battery information - defaults to `false`
 - charging_icon: `string` - icon to display on the left when charging - defaults to empty
 - discharging_icon: `string` - icon to display on the left when discharging - defaults to empty
@@ -49,6 +50,10 @@ Battery displays the remaining power percentage for your battery.
 
 - `.Battery`: `struct` - the [battery][battery] object, you can use any property it has e.g. `.Battery.State`
 - `.Percentage`: `float64` - the current battery percentage
+- `.Error`: `string` - the error in case fetching the battery information failed
+- `.Icon`: `string` - the icon based on the battery state
 
 [colors]: /docs/configure#colors
 [battery]: https://github.com/distatus/battery/blob/master/battery.go#L78
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

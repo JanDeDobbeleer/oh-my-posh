@@ -1,23 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/distatus/battery"
 )
 
 type batt struct {
-	props          *properties
-	env            environmentInfo
-	percentageText string
-	Battery        *battery.Battery
-	Percentage     int
+	props      *properties
+	env        environmentInfo
+	Battery    *battery.Battery
+	Percentage int
+	Error      string
+	Icon       string
 }
 
 const (
-	// BatteryIcon to display in front of the battery
-	BatteryIcon Property = "battery_icon"
 	// ChargingIcon to display when charging
 	ChargingIcon Property = "charging_icon"
 	// DischargingIcon o display when discharging
@@ -35,24 +33,22 @@ const (
 )
 
 func (b *batt) enabled() bool {
-	var err error
-	b.Battery, err = b.env.getBatteryInfo()
+	batteries, err := b.env.getBatteryInfo()
 
-	displayError := b.props.getBool(DisplayError, false)
-	if err != nil && displayError {
-		b.percentageText = "BATT ERR"
-		return true
+	if !b.enabledWhileError(err) {
+		return false
 	}
-	if err != nil {
-		// On Windows, it sometimes errors when the battery is full.
-		// This hack ensures we display a fully charged battery, even if
-		// that state can be incorrect. It's better to "ignore" the error
-		// than to not display the segment at all as that will confuse users.
-		b.Battery = &battery.Battery{
-			Current: 100,
-			Full:    100,
-			State:   battery.Full,
-		}
+
+	// case on computer without batteries(no error, empty array)
+	if err == nil && len(batteries) == 0 {
+		return false
+	}
+
+	b.Battery = &battery.Battery{}
+	for _, bt := range batteries {
+		b.Battery.Current += bt.Current
+		b.Battery.Full += bt.Full
+		b.Battery.State = b.mapMostLogicalState(b.Battery.State, bt.State)
 	}
 
 	display := b.props.getBool(DisplayCharging, true)
@@ -62,21 +58,18 @@ func (b *batt) enabled() bool {
 
 	batteryPercentage := b.Battery.Current / b.Battery.Full * 100
 	b.Percentage = int(math.Min(100, batteryPercentage))
-	percentageText := fmt.Sprintf("%.0d", b.Percentage)
-	var icon string
 	var colorPorperty Property
 	switch b.Battery.State {
 	case battery.Discharging:
 		colorPorperty = DischargingColor
-		icon = b.props.getString(DischargingIcon, "")
+		b.Icon = b.props.getString(DischargingIcon, "")
 	case battery.Charging:
 		colorPorperty = ChargingColor
-		icon = b.props.getString(ChargingIcon, "")
+		b.Icon = b.props.getString(ChargingIcon, "")
 	case battery.Full:
 		colorPorperty = ChargedColor
-		icon = b.props.getString(ChargedIcon, "")
+		b.Icon = b.props.getString(ChargedIcon, "")
 	case battery.Empty, battery.Unknown:
-		b.percentageText = percentageText
 		return true
 	}
 	colorBackground := b.props.getBool(ColorBackground, false)
@@ -85,13 +78,63 @@ func (b *batt) enabled() bool {
 	} else {
 		b.props.foreground = b.props.getColor(colorPorperty, b.props.foreground)
 	}
-	batteryIcon := b.props.getString(BatteryIcon, "")
-	b.percentageText = fmt.Sprintf("%s%s%s", icon, batteryIcon, percentageText)
 	return true
 }
 
+func (b *batt) enabledWhileError(err error) bool {
+	if err == nil {
+		return true
+	}
+	if _, ok := err.(*noBatteryError); ok {
+		return false
+	}
+	displayError := b.props.getBool(DisplayError, false)
+	if !displayError {
+		return false
+	}
+	b.Error = err.Error()
+	// On Windows, it sometimes errors when the battery is full.
+	// This hack ensures we display a fully charged battery, even if
+	// that state can be incorrect. It's better to "ignore" the error
+	// than to not display the segment at all as that will confuse users.
+	b.Battery = &battery.Battery{
+		Current: 100,
+		Full:    100,
+		State:   battery.Full,
+	}
+	return true
+}
+
+func (b *batt) mapMostLogicalState(currentState, newState battery.State) battery.State {
+	switch currentState {
+	case battery.Discharging:
+		return battery.Discharging
+	case battery.Empty:
+		return newState
+	case battery.Charging:
+		if newState == battery.Discharging {
+			return battery.Discharging
+		}
+		return battery.Charging
+	case battery.Unknown:
+		return newState
+	case battery.Full:
+		return newState
+	}
+	return newState
+}
+
 func (b *batt) string() string {
-	return b.percentageText
+	segmentTemplate := b.props.getString(SegmentTemplate, "{{.Icon}}{{ if not .Error }}{{.Percentage}}{{ end }}{{.Error}}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  b,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (b *batt) init(props *properties, env environmentInfo) {

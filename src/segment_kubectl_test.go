@@ -19,7 +19,7 @@ func bootStrapKubectlTest(args *kubectlArgs) *kubectl {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "kubectl").Return(args.kubectlExists)
 	kubectlOut := args.context + "," + args.namespace
-	var kubectlErr error = nil
+	var kubectlErr error
 	if args.kubectlErr {
 		kubectlErr = &commandError{
 			err:      "oops",

@@ -6,9 +6,9 @@ import (
 )
 
 type consoleTitle struct {
-	env     environmentInfo
-	config  *Config
-	formats *ansiFormats
+	env    environmentInfo
+	config *Config
+	ansi   *ansiUtils
 }
 
 // ConsoleTitleStyle defines how to show the title in the console window
@@ -21,6 +21,8 @@ const (
 	FullPath ConsoleTitleStyle = "path"
 	// Template allows a more powerful custom string
 	Template ConsoleTitleStyle = "template"
+
+	templateEnvRegex = `\.Env\.(?P<ENV>[^ \.}]*)`
 )
 
 func (t *consoleTitle) getConsoleTitle() string {
@@ -35,7 +37,7 @@ func (t *consoleTitle) getConsoleTitle() string {
 	default:
 		title = base(t.getPwd(), t.env)
 	}
-	return fmt.Sprintf(t.formats.title, title)
+	return fmt.Sprintf(t.ansi.title, title)
 }
 
 func (t *consoleTitle) getTemplateText() string {
@@ -53,7 +55,7 @@ func (t *consoleTitle) getTemplateText() string {
 
 	// load environment variables into the map
 	envVars := map[string]string{}
-	matches := findAllNamedRegexMatch(`\.Env\.(?P<ENV>[^ \.}]*)`, t.config.ConsoleTitleTemplate)
+	matches := findAllNamedRegexMatch(templateEnvRegex, t.config.ConsoleTitleTemplate)
 	for _, match := range matches {
 		envVars[match["ENV"]] = t.env.getenv(match["ENV"])
 	}
@@ -63,7 +65,11 @@ func (t *consoleTitle) getTemplateText() string {
 		Template: t.config.ConsoleTitleTemplate,
 		Context:  context,
 	}
-	return template.render()
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (t *consoleTitle) getPwd() string {

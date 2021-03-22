@@ -78,5 +78,12 @@ func TestOSInfo(t *testing.T) {
 			props: props,
 		}
 		assert.Equal(t, tc.ExpectedString, osInfo.string(), tc.Case)
+		if tc.WSLDistro != "" {
+			assert.Equal(t, tc.WSLDistro, osInfo.OS, tc.Case)
+		} else if tc.Platform != "" {
+			assert.Equal(t, tc.Platform, osInfo.OS, tc.Case)
+		} else {
+			assert.Equal(t, tc.GOOS, osInfo.OS, tc.Case)
+		}
 	}
 }

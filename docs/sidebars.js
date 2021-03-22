@@ -3,7 +3,25 @@ module.exports = {
     {
       type: "category",
       label: "Getting Started",
-      items: ["introduction", "upgrading", "installation", "configure", "themes", "fonts"],
+      items: [
+        "introduction",
+        "upgrading",
+        {
+          type: "category",
+          label: "🚀 Installation",
+          items: [
+            "pwsh",
+            "windows",
+            "macos",
+            "linux",
+          ],
+        },
+        "configure",
+        "themes",
+        "share",
+        "fonts",
+        "faq"
+      ],
     },
     {
       type: "category",
@@ -11,13 +29,17 @@ module.exports = {
       items: [
         "aws",
         "az",
+        "azfunc",
         "battery",
         "command",
+        "crystal",
+        "dart",
         "dotnet",
         "environment",
         "executiontime",
         "exit",
         "git",
+        "poshgit",
         "golang",
         "java",
         "julia",
@@ -40,7 +62,7 @@ module.exports = {
     {
       type: "category",
       label: "Contributing",
-      items: ["contributing_started", "contributing_segment"],
+      items: ["contributing_started", "contributing_segment", "contributing_git"],
     },
   ],
 };

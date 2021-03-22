@@ -7,91 +7,161 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type azArgs struct {
-	enabled          bool
-	subscriptionName string
-	subscriptionID   string
-	infoSeparator    string
-	displayID        bool
-	displayName      bool
-}
-
-func bootStrapAzTest(args *azArgs) *az {
-	env := new(MockedEnvironment)
-	env.On("hasCommand", "az").Return(args.enabled)
-	env.On("runCommand", "az", []string{"account", "show", "--query=[name,id]", "-o=tsv"}).Return(fmt.Sprintf("%s\n%s\n", args.subscriptionName, args.subscriptionID), nil)
-	props := &properties{
-		values: map[Property]interface{}{
-			SubscriptionInfoSeparator: args.infoSeparator,
-			DisplaySubscriptionID:     args.displayID,
-			DisplaySubscriptionName:   args.displayName,
+func TestAzSegment(t *testing.T) {
+	cases := []struct {
+		Case            string
+		ExpectedEnabled bool
+		ExpectedString  string
+		EnvSubName      string
+		EnvSubID        string
+		EnvSubAccount   string
+		CliExists       bool
+		CliSubName      string
+		CliSubID        string
+		CliSubAccount   string
+		InfoSeparator   string
+		DisplayID       bool
+		DisplayName     bool
+		DisplayAccount  bool
+	}{
+		{
+			Case:            "print only account",
+			ExpectedEnabled: true,
+			ExpectedString:  "foobar",
+			CliExists:       true,
+			CliSubName:      "foo",
+			CliSubID:        "bar",
+			CliSubAccount:   "foobar",
+			InfoSeparator:   "$",
+			DisplayID:       false,
+			DisplayName:     false,
+			DisplayAccount:  true,
+		},
+		{
+			Case:            "envvars present",
+			ExpectedEnabled: true,
+			ExpectedString:  "foo$bar",
+			EnvSubName:      "foo",
+			EnvSubID:        "bar",
+			CliExists:       false,
+			InfoSeparator:   "$",
+			DisplayID:       true,
+			DisplayName:     true,
+		},
+		{
+			Case:            "envvar name present",
+			ExpectedEnabled: true,
+			ExpectedString:  "foo",
+			EnvSubName:      "foo",
+			CliExists:       false,
+			InfoSeparator:   "$",
+			DisplayID:       true,
+			DisplayName:     true,
+		},
+		{
+			Case:            "envvar id present",
+			ExpectedEnabled: true,
+			ExpectedString:  "bar",
+			EnvSubID:        "bar",
+			CliExists:       false,
+			InfoSeparator:   "$",
+			DisplayID:       true,
+			DisplayName:     true,
+		},
+		{
+			Case:            "cli not found",
+			ExpectedEnabled: false,
+			ExpectedString:  "",
+			CliExists:       false,
+			InfoSeparator:   "$",
+			DisplayID:       true,
+			DisplayName:     true,
+		},
+		{
+			Case:            "cli contains data",
+			ExpectedEnabled: true,
+			ExpectedString:  "foo$bar",
+			CliExists:       true,
+			CliSubName:      "foo",
+			CliSubID:        "bar",
+			InfoSeparator:   "$",
+			DisplayID:       true,
+			DisplayName:     true,
+		},
+		{
+			Case:            "print only name",
+			ExpectedEnabled: true,
+			ExpectedString:  "foo",
+			CliExists:       true,
+			CliSubName:      "foo",
+			CliSubID:        "bar",
+			InfoSeparator:   "$",
+			DisplayID:       false,
+			DisplayName:     true,
+		},
+		{
+			Case:            "print only id",
+			ExpectedEnabled: true,
+			ExpectedString:  "bar",
+			CliExists:       true,
+			CliSubName:      "foo",
+			CliSubID:        "bar",
+			InfoSeparator:   "$",
+			DisplayID:       true,
+			DisplayName:     false,
+		},
+		{
+			Case:            "print none",
+			ExpectedEnabled: true,
+			CliExists:       true,
+			CliSubName:      "foo",
+			CliSubID:        "bar",
+			InfoSeparator:   "$",
+		},
+		{
+			Case:            "update needed",
+			ExpectedEnabled: true,
+			ExpectedString:  updateMessage,
+			CliExists:       true,
+			CliSubName:      "Do you want to continue? (Y/n): Visual Studio Enterprise",
+			DisplayID:       false,
+			DisplayName:     true,
+		},
+		{
+			Case:            "account info",
+			ExpectedEnabled: true,
+			ExpectedString:  updateMessage,
+			CliExists:       true,
+			CliSubName:      "Do you want to continue? (Y/n): Visual Studio Enterprise",
+			DisplayID:       false,
+			DisplayName:     true,
+			DisplayAccount:  true,
 		},
 	}
 
-	a := &az{
-		env:   env,
-		props: props,
-	}
-	return a
-}
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("getenv", "AZ_SUBSCRIPTION_NAME").Return(tc.EnvSubName)
+		env.On("getenv", "AZ_SUBSCRIPTION_ID").Return(tc.EnvSubID)
+		env.On("hasCommand", "az").Return(tc.CliExists)
+		env.On("runCommand", "az", []string{"account", "show", "--query=[name,id,user.name]", "-o=tsv"}).Return(
+			fmt.Sprintf("%s\n%s\n%s\n", tc.CliSubName, tc.CliSubID, tc.CliSubAccount),
+			nil,
+		)
+		props := &properties{
+			values: map[Property]interface{}{
+				SubscriptionInfoSeparator:  tc.InfoSeparator,
+				DisplaySubscriptionID:      tc.DisplayID,
+				DisplaySubscriptionName:    tc.DisplayName,
+				DisplaySubscriptionAccount: tc.DisplayAccount,
+			},
+		}
 
-func TestEnabledAzNotFound(t *testing.T) {
-	args := &azArgs{
-		enabled: false,
+		az := &az{
+			env:   env,
+			props: props,
+		}
+		assert.Equal(t, tc.ExpectedEnabled, az.enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedString, az.string(), tc.Case)
 	}
-	az := bootStrapAzTest(args)
-	assert.False(t, az.enabled())
-}
-
-func TestEnabledNoAzDataToDisplay(t *testing.T) {
-	args := &azArgs{
-		enabled:     true,
-		displayID:   false,
-		displayName: false,
-	}
-	az := bootStrapAzTest(args)
-	assert.False(t, az.enabled())
-}
-
-func TestWriteAzSubscriptionId(t *testing.T) {
-	expected := "id"
-	args := &azArgs{
-		enabled:          true,
-		subscriptionID:   "id",
-		subscriptionName: "name",
-		displayID:        true,
-		displayName:      false,
-	}
-	az := bootStrapAzTest(args)
-	assert.True(t, az.enabled())
-	assert.Equal(t, expected, az.string())
-}
-
-func TestWriteAzSubscriptionName(t *testing.T) {
-	expected := "name"
-	args := &azArgs{
-		enabled:          true,
-		subscriptionID:   "id",
-		subscriptionName: "name",
-		displayID:        false,
-		displayName:      true,
-	}
-	az := bootStrapAzTest(args)
-	assert.True(t, az.enabled())
-	assert.Equal(t, expected, az.string())
-}
-
-func TestWriteAzNameAndID(t *testing.T) {
-	expected := "name@id"
-	args := &azArgs{
-		enabled:          true,
-		subscriptionID:   "id",
-		subscriptionName: "name",
-		infoSeparator:    "@",
-		displayID:        true,
-		displayName:      true,
-	}
-	az := bootStrapAzTest(args)
-	assert.True(t, az.enabled())
-	assert.Equal(t, expected, az.string())
 }

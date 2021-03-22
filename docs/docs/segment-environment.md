@@ -29,7 +29,7 @@ make sure to do this after importing `go-my-posh` and you're good to go.
 function Set-EnvVar {
     $env:POSH=$(Get-Date)
 }
-New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global
+New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
 ```
 
 The segment will show when the value of the environment variable isn't empty.

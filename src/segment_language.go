@@ -116,8 +116,14 @@ func (l *language) string() string {
 }
 
 func (l *language) enabled() bool {
-	l.loadLanguageContext()
+	inHomeDir := func() bool {
+		return l.env.getcwd() == l.env.homeDir()
+	}
 	displayMode := l.props.getString(DisplayMode, DisplayModeFiles)
+	if inHomeDir() && displayMode != DisplayModeAlways {
+		return false
+	}
+	l.loadLanguageContext()
 	switch displayMode {
 	case DisplayModeAlways:
 		return true

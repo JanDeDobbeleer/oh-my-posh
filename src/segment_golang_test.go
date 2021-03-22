@@ -21,6 +21,8 @@ func TestGolang(t *testing.T) {
 		env.On("hasCommand", "go").Return(true)
 		env.On("runCommand", "go", []string{"version"}).Return(tc.Version, nil)
 		env.On("hasFiles", "*.go").Return(true)
+		env.On("getcwd", nil).Return("/usr/home/project")
+		env.On("homeDir", nil).Return("/usr/home")
 		props := &properties{
 			values: map[Property]interface{}{
 				DisplayVersion: true,

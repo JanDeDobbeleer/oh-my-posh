@@ -31,6 +31,7 @@ Display the currently active java version.
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when one of the following files is present:
+    - `pom.xml`
     - `build.gradle.kts`
     - `build.sbt`
     - `.java-version`

@@ -1,0 +1,196 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "vertical_offset": -1,
+      "segments": [
+        {
+          "type": "session",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4 ",
+          "leading_diamond": "\uE0B6",
+          "foreground": "#E64747",
+          "background": "#29315A",
+          "properties": {
+            "display_host": false,
+            "postfix": "",
+            "prefix": ""
+          }
+        },
+        {
+          "type": "path",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "leading_diamond": "\uE0B6",
+          "foreground": "#3EC669",
+          "background": "#29315A",
+          "properties": {
+            "prefix": "\uE5FF ",
+            "postfix": "",
+            "style": "folder"
+          }
+        },
+        {
+          "type": "git",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "leading_diamond": " \uE0B6",
+          "foreground": "#43CCEA",
+          "background": "#29315A",
+          "properties": {
+            "prefix": "",
+            "postfix": "",
+            "display_status_detail": false,
+            "branch_icon": ""
+          }
+        },
+        {
+          "type": "python",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "leading_diamond": " \uE0B6",
+          "foreground": "#E4F34A",
+          "background": "#29315A",
+          "properties": {
+            "prefix": "\uE235",
+            "postfix": "",
+            "display_version": false
+          }
+        },
+        {
+          "type": "go",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "leading_diamond": " \uE0B6",
+          "foreground": "#7FD5EA",
+          "background": "#29315A",
+          "properties": {
+            "prefix": "\uFCD1",
+            "postfix": "",
+            "display_version": false
+          }
+        },
+        {
+          "type": "node",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "leading_diamond": " \uE0B6",
+          "foreground": "#42E66C",
+          "background": "#29315A",
+          "properties": {
+            "prefix": "\uE718",
+            "postfix": "",
+            "display_version": false
+          }
+        },
+        {
+          "type": "ruby",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "leading_diamond": " \uE0B6",
+          "foreground": "#E64747",
+          "background": "#29315A",
+          "properties": {
+            "prefix": "\uE791",
+            "postfix": "",
+            "display_version": false
+          }
+        },
+        {
+          "type": "java",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "leading_diamond": " \uE0B6",
+          "foreground": "#E64747",
+          "background": "#29315A",
+          "properties": {
+            "prefix": "\uE738",
+            "postfix": "",
+            "display_version": false
+          }
+        },
+        {
+          "type": "julia",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "leading_diamond": " \uE0B6",
+          "foreground": "#9B6BDF",
+          "background": "#29315A",
+          "properties": {
+            "prefix": "\uE624",
+            "display_version": false
+          }
+        },
+        {
+          "type": "battery",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "leading_diamond": " \uE0B6",
+          "foreground": "#9B6BDF",
+          "background": "#29315A",
+          "properties": {
+            "battery_icon": "",
+            "discharging_icon": "\u21E3 ",
+            "charging_icon": "\u21E1 ",
+            "charged_icon": "\u0095 ",
+            "color_background": false,
+            "charged_color": "#4caf50",
+            "charging_color": "#40c4ff",
+            "discharging_color": "#ff5722",
+            "prefix": "",
+            "postfix": "",
+            "display_charging": true
+          }
+        }
+      ]
+    },
+    {
+      "type": "newline"
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "executiontime",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4 ",
+          "leading_diamond": "\uE0B6",
+          "foreground": "#AEA4BF",
+          "background": "#29315A",
+          "properties": {
+            "threshold": 150,
+            "style": "austin",
+            "prefix": "",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "text",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "leading_diamond": "\uE0B6",
+          "foreground": "#7FD5EA",
+          "background": "#29315A",
+          "properties": {
+              "prefix": "",
+              "text": "\u276F",
+              "postfix": ""
+          }
+        },
+        {
+          "type":"text",
+          "style": "plain",
+          "foreground": "transparent",
+          "properties": {
+              "prefix": "",
+              "text": " ",
+              "postfix": ""
+          }
+        }
+      ]
+    }
+  ]
+}

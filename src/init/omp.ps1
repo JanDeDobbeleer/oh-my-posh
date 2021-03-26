@@ -81,6 +81,10 @@ function global:Export-PoshTheme {
         $Format = 'json'
     )
 
+    if ($FilePath.StartsWith('~')) {
+        $FilePath = $FilePath.Replace('~', $HOME)
+    }
+
     $config = $global:PoshSettings.Theme
     $omp = "::OMP::"
     $configString = @(&$omp --config="$config" --config-format="$Format" --print-config 2>&1)

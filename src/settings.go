@@ -8,6 +8,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/json"
@@ -127,7 +129,14 @@ func exportConfig(configFile, format string) string {
 		var prettyJSON bytes.Buffer
 		err := json2.Indent(&prettyJSON, buf.Bytes(), "", "  ")
 		if err == nil {
-			return prettyJSON.String()
+			unescapeUnicodeCharactersInJSON := func(rawJSON []byte) string {
+				str, err := strconv.Unquote(strings.ReplaceAll(strconv.Quote(string(rawJSON)), `\\u`, `\u`))
+				if err != nil {
+					return err.Error()
+				}
+				return str
+			}
+			return unescapeUnicodeCharactersInJSON(prettyJSON.Bytes())
 		}
 	case config.Yaml:
 		prefix := "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"

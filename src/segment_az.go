@@ -36,24 +36,47 @@ func (a *az) init(props *properties, env environmentInfo) {
 }
 
 func (a *az) enabled() bool {
+	var enabled bool
+	a.name, a.id, enabled = a.getFromEnvVars()
+	if enabled {
+		return enabled
+	}
+
+	a.name, a.id, enabled = a.getFromAzCli()
+	return enabled
+}
+
+func (a *az) getFromEnvVars() (string, string, bool) {
+	name := a.env.getenv("AZ_SUBSCRIPTION_NAME")
+	id := a.env.getenv("AZ_SUBSCRIPTION_ID")
+
+	if name == "" && id == "" {
+		return "", "", false
+	}
+
+	return name, id, true
+}
+
+func (a *az) getFromAzCli() (string, string, bool) {
 	cmd := "az"
 	if (!a.idEnabled() && !a.nameEnabled()) || !a.env.hasCommand(cmd) {
-		return false
+		return "", "", false
 	}
 
 	output, _ := a.env.runCommand(cmd, "account", "show", "--query=[name,id]", "-o=tsv")
 	if output == "" {
-		return false
+		return "", "", false
 	}
 
 	splittedOutput := strings.Split(output, "\n")
 	if len(splittedOutput) < 2 {
-		return false
+		return "", "", false
 	}
 
-	a.name = strings.TrimSpace(splittedOutput[0])
-	a.id = strings.TrimSpace(splittedOutput[1])
-	return true
+	name := strings.TrimSpace(splittedOutput[0])
+	id := strings.TrimSpace(splittedOutput[1])
+
+	return name, id, true
 }
 
 func (a *az) getID() string {

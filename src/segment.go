@@ -96,6 +96,8 @@ const (
 	Aws SegmentType = "aws"
 	// Java writes the active java version
 	Java SegmentType = "java"
+	// PoshGit writes the posh git prompt
+	PoshGit SegmentType = "poshgit"
 )
 
 func (segment *Segment) string() string {
@@ -219,6 +221,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Ruby:          &ruby{},
 		Aws:           &aws{},
 		Java:          &java{},
+		PoshGit:       &poshgit{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

@@ -19,7 +19,8 @@ function global:Set-PoshContext {}
 function global:Set-PoshGitStatus {
     if (Get-Module -Name "posh-git") {
         [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used later(not in this scope)')]
-        $Global:GitStatus = Get-GitStatus
+        $global:GitStatus = Get-GitStatus
+        $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
     }
 }
 
@@ -46,6 +47,7 @@ function global:Set-PoshGitStatus {
             $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
             $global:omp_lastHistoryId = $history.Id
     }
+    Set-PoshGitStatus
     $omp = "::OMP::"
     $config = $global:PoshSettings.Theme
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
@@ -53,7 +55,6 @@ function global:Set-PoshGitStatus {
     $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --config="$config" 2>&1)
     # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n
     $standardOut -join "`n"
-    Set-PoshGitStatus
     $global:LASTEXITCODE = $realLASTEXITCODE
     #remove temp variables
     Remove-Variable realLASTEXITCODE -Confirm:$false

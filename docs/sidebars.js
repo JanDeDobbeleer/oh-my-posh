@@ -25,6 +25,7 @@ module.exports = {
         "node",
         "os",
         "path",
+        "poshgit",
         "python",
         "root",
         "ruby",

@@ -16,11 +16,22 @@ if (Test-Path $config) {
 
 function global:Set-PoshContext {}
 
-function global:Set-PoshGitStatus {
+function global:Initialize-ModuleSupport {
     if (Get-Module -Name "posh-git") {
         [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used later(not in this scope)')]
         $global:GitStatus = Get-GitStatus
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
+    }
+
+    if (Get-Module -ListAvailable -Name "Az.Accounts") {
+        try {
+            $subscription = Get-AzContext | Select-Object -ExpandProperty "Subscription" | Select-Object "Name", "Id"
+            if ($null -ne $subscription) {
+                $env:AZ_SUBSCRIPTION_NAME = $subscription.Name
+                $env:AZ_SUBSCRIPTION_ID = $subscription.Id
+            }
+        }
+        catch {}
     }
 }
 
@@ -44,10 +55,10 @@ function global:Set-PoshGitStatus {
     $executionTime = -1
     $history = Get-History -ErrorAction Ignore -Count 1
     if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime -and $global:omp_lastHistoryId -ne $history.Id) {
-            $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
-            $global:omp_lastHistoryId = $history.Id
+        $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
+        $global:omp_lastHistoryId = $history.Id
     }
-    Set-PoshGitStatus
+    Initialize-ModuleSupport
     $omp = "::OMP::"
     $config = $global:PoshSettings.Theme
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
@@ -77,7 +88,7 @@ function global:Export-PoshTheme {
         [string]
         $FilePath,
         [Parameter(Mandatory = $false)]
-        [ValidateSet('json','yaml','toml')]
+        [ValidateSet('json', 'yaml', 'toml')]
         [string]
         $Format = 'json'
     )

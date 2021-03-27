@@ -155,7 +155,8 @@
             "ytm",
             "executiontime",
             "aws",
-            "java"
+            "java",
+            "poshgit"
           ]
         },
         "style": {
@@ -1418,6 +1419,17 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "poshgit" }
+            }
+          },
+          "then": {
+            "title": "Posh-Git Segment",
+            "description": "https://ohmyposh.dev/docs/poshgit"
           }
         }
       ]

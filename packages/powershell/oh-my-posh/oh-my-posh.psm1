@@ -15,7 +15,10 @@ function Get-PoshCommand {
         }
         return "$PSScriptRoot/bin/posh-linux-amd64"
     }
-    if ([Environment]::Is64BitOperatingSystem) {
+    if ((Get-CimInstance Win32_OperatingSystem).OSArchitecture -icontains "arm") {
+        return "$PSScriptRoot/bin/posh-windows-arm.exe"
+    }
+    elseif ([Environment]::Is64BitOperatingSystem) {
         return "$PSScriptRoot/bin/posh-windows-amd64.exe"
     }
     return "$PSScriptRoot/bin/posh-windows-386.exe"

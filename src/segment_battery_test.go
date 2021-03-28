@@ -131,7 +131,7 @@ func TestBatteryError(t *testing.T) {
 		env: env,
 	}
 	assert.True(t, b.enabled())
-	assert.Equal(t, "BATT ERR", b.string())
+	assert.Equal(t, "oh snap", b.string())
 }
 
 func TestBatteryErrorHidden(t *testing.T) {

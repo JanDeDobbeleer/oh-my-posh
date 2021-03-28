@@ -194,7 +194,6 @@ func getDefaultConfig(info string) *Config {
 						Background:      "#f36943",
 						Foreground:      "#193549",
 						Properties: map[Property]interface{}{
-							BatteryIcon:      "",
 							ColorBackground:  true,
 							ChargedColor:     "#4caf50",
 							ChargingColor:    "#40c4ff",

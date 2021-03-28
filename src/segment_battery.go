@@ -1,23 +1,21 @@
 package main
 
 import (
-	"fmt"
 	"math"
 
 	"github.com/distatus/battery"
 )
 
 type batt struct {
-	props          *properties
-	env            environmentInfo
-	percentageText string
-	Battery        *battery.Battery
-	Percentage     int
+	props      *properties
+	env        environmentInfo
+	Battery    *battery.Battery
+	Percentage int
+	Error      string
+	Icon       string
 }
 
 const (
-	// BatteryIcon to display in front of the battery
-	BatteryIcon Property = "battery_icon"
 	// ChargingIcon to display when charging
 	ChargingIcon Property = "charging_icon"
 	// DischargingIcon o display when discharging
@@ -40,7 +38,7 @@ func (b *batt) enabled() bool {
 
 	displayError := b.props.getBool(DisplayError, false)
 	if err != nil && displayError {
-		b.percentageText = "BATT ERR"
+		b.Error = err.Error()
 		return true
 	}
 	if err != nil {
@@ -62,21 +60,18 @@ func (b *batt) enabled() bool {
 
 	batteryPercentage := b.Battery.Current / b.Battery.Full * 100
 	b.Percentage = int(math.Min(100, batteryPercentage))
-	percentageText := fmt.Sprintf("%.0d", b.Percentage)
-	var icon string
 	var colorPorperty Property
 	switch b.Battery.State {
 	case battery.Discharging:
 		colorPorperty = DischargingColor
-		icon = b.props.getString(DischargingIcon, "")
+		b.Icon = b.props.getString(DischargingIcon, "")
 	case battery.Charging:
 		colorPorperty = ChargingColor
-		icon = b.props.getString(ChargingIcon, "")
+		b.Icon = b.props.getString(ChargingIcon, "")
 	case battery.Full:
 		colorPorperty = ChargedColor
-		icon = b.props.getString(ChargedIcon, "")
+		b.Icon = b.props.getString(ChargedIcon, "")
 	case battery.Empty, battery.Unknown:
-		b.percentageText = percentageText
 		return true
 	}
 	colorBackground := b.props.getBool(ColorBackground, false)
@@ -85,13 +80,16 @@ func (b *batt) enabled() bool {
 	} else {
 		b.props.foreground = b.props.getColor(colorPorperty, b.props.foreground)
 	}
-	batteryIcon := b.props.getString(BatteryIcon, "")
-	b.percentageText = fmt.Sprintf("%s%s%s", icon, batteryIcon, percentageText)
 	return true
 }
 
 func (b *batt) string() string {
-	return b.percentageText
+	segmentTemplate := b.props.getString(SegmentTemplate, "{{.Icon}}{{ if not .Error }}{{.Percentage}}{{ end }}{{.Error}}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  b,
+	}
+	return template.render()
 }
 
 func (b *batt) init(props *properties, env environmentInfo) {

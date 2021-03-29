@@ -35,7 +35,7 @@ function Set-ExecutablePermissions {
         return
     }
 
-    Invoke-Expression -Command "chmod +x $executable"
+    chmod a+x $executable 2>&1
 }
 
 function Set-PoshPrompt {

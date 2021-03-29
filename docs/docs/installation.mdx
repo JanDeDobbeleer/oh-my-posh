@@ -65,6 +65,16 @@ A [Powershell][powershell] module is available for easy installation.
 Install-Module oh-my-posh -Scope CurrentUser -AllowPrerelease
 ```
 
+If you wish to install for all users in a linux environment, you will need to install from an elevate session
+of powershell.  You will also need to import the module one time from the elevated session in order to set the
+executable permissions correctly.
+
+```powershell
+sudo pwsh
+Install-Module oh-my-posh -Scope AllUsers -AllowPrerelease
+Import-Module oh-my-posh
+```
+
 #### Usage
 
 ##### Show all themes

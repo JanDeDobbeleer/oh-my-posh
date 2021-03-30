@@ -23,6 +23,9 @@ function global:Initialize-ModuleSupport {
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
     }
 
+    $env:AZ_SUBSCRIPTION_NAME = $null
+    $env:AZ_SUBSCRIPTION_ID = $null
+
     if (Get-Module -ListAvailable -Name "Az.Accounts") {
         try {
             $subscription = Get-AzContext | Select-Object -ExpandProperty "Subscription" | Select-Object "Name", "Id"

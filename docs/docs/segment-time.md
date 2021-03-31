@@ -32,24 +32,28 @@ properties below. Only used when a value is set, making the above properties obs
 
   example: `{{ now | date \"January 02, 2006 15:04:05 PM\" | lower }}`
   
-  ### Standard time and date formats
-    - January 2, 2006 	Date
-    - 01/02/06 	
-    - Jan-02-06 	
-    - 15:04:05 	Time
-    - 3:04:05 PM 	
-    - Jan _2 15:04:05 	Timestamp
-    - Jan _2 15:04:05.000000 	with microseconds
-    - 2006-01-02T15:04:05-0700 	ISO 8601 (RFC 3339)
-    - 2006-01-02 	
-    - 15:04:05 	
-    - 02 Jan 06 15:04 MST 	RFC 822
-    - 02 Jan 06 15:04 -0700 	with numeric zone
-    - Mon, 02 Jan 2006 15:04:05 MST 	RFC 1123
-    - Mon, 02 Jan 2006 15:04:05 -0700 	with numeric zone
+### Standard time and date formats
 
-   #### The following predefined date and timestamp format constants are also available.
+```list
+    - January 2, 2006  Date
+    - 01/02/06  
+    - Jan-02-06  
+    - 15:04:05  Time
+    - 3:04:05 PM  
+    - Jan _2 15:04:05  Timestamp
+    - Jan _2 15:04:05.000000  with microseconds
+    - 2006-01-02T15:04:05-0700  ISO 8601 (RFC 3339)
+    - 2006-01-02  
+    - 15:04:05  
+    - 02 Jan 06 15:04 MST  RFC 822
+    - 02 Jan 06 15:04 -0700  with numeric zone
+    - Mon, 02 Jan 2006 15:04:05 MST  RFC 1123
+    - Mon, 02 Jan 2006 15:04:05 -0700  with numeric zone
+```
 
+#### The following predefined date and timestamp format constants are also available
+
+```list
     - ANSIC       = "Mon Jan _2 15:04:05 2006"
     - UnixDate    = "Mon Jan _2 15:04:05 MST 2006"
     - RubyDate    = "Mon Jan 02 15:04:05 -0700 2006"
@@ -66,7 +70,7 @@ properties below. Only used when a value is set, making the above properties obs
     - StampMilli = "Jan _2 15:04:05.000"
     - StampMicro = "Jan _2 15:04:05.000000"
     - StampNano  = "Jan _2 15:04:05.000000000"
-
+```
 
 ## Template Properties
 

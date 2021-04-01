@@ -154,7 +154,7 @@ func main() {
 	}
 	colorer := &AnsiColor{
 		formats:            formats,
-		terminalBackground: cfg.TerminalBackground,
+		terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
 	}
 	title := &consoleTitle{
 		env:     env,
@@ -218,4 +218,24 @@ func getShellInitScript(executable, configFile, script string) string {
 	script = strings.ReplaceAll(script, "::OMP::", executable)
 	script = strings.ReplaceAll(script, "::CONFIG::", configFile)
 	return script
+}
+
+func getConsoleBackgroundColor(env environmentInfo, backgroundColorTemplate string) string {
+	if len(backgroundColorTemplate) == 0 {
+		return backgroundColorTemplate
+	}
+	context := struct {
+		Env map[string]string
+	}{
+		Env: map[string]string{},
+	}
+	matches := findAllNamedRegexMatch(templateEnvRegex, backgroundColorTemplate)
+	for _, match := range matches {
+		context.Env[match["ENV"]] = env.getenv(match["ENV"])
+	}
+	template := &textTemplate{
+		Template: backgroundColorTemplate,
+		Context:  context,
+	}
+	return template.render()
 }

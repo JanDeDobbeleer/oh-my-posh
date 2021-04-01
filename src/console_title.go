@@ -21,6 +21,8 @@ const (
 	FullPath ConsoleTitleStyle = "path"
 	// Template allows a more powerful custom string
 	Template ConsoleTitleStyle = "template"
+
+	templateEnvRegex = `\.Env\.(?P<ENV>[^ \.}]*)`
 )
 
 func (t *consoleTitle) getConsoleTitle() string {
@@ -53,7 +55,7 @@ func (t *consoleTitle) getTemplateText() string {
 
 	// load environment variables into the map
 	envVars := map[string]string{}
-	matches := findAllNamedRegexMatch(`\.Env\.(?P<ENV>[^ \.}]*)`, t.config.ConsoleTitleTemplate)
+	matches := findAllNamedRegexMatch(templateEnvRegex, t.config.ConsoleTitleTemplate)
 	for _, match := range matches {
 		envVars[match["ENV"]] = t.env.getenv(match["ENV"])
 	}

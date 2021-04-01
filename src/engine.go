@@ -79,13 +79,8 @@ func (e *engine) renderDiamondSegment(text string) {
 }
 
 func (e *engine) renderText(text string) {
-	defaultValue := " "
-	if e.activeSegment.background() != "" {
-		defaultValue = fmt.Sprintf("<%s>\u2588</>", e.activeSegment.background())
-	}
-
 	text = e.color.formats.generateHyperlink(text)
-
+	defaultValue := " "
 	prefix := e.activeSegment.getValue(Prefix, defaultValue)
 	postfix := e.activeSegment.getValue(Postfix, defaultValue)
 	e.color.write(e.activeSegment.background(), e.activeSegment.foreground(), fmt.Sprintf("%s%s%s", prefix, text, postfix))

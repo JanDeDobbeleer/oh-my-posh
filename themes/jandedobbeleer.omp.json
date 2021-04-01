@@ -9,7 +9,7 @@
           "type": "session",
           "style": "diamond",
           "foreground": "#ffffff",
-          "background": "#c386f1",
+          "background": "#af98c0",
           "leading_diamond": "\uE0B6",
           "trailing_diamond": "\uE0B0"
         },

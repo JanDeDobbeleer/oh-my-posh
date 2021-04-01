@@ -10,8 +10,8 @@ import (
 type engine struct {
 	config                *Config
 	env                   environmentInfo
-	color                 *AnsiColor
-	renderer              *AnsiRenderer
+	writer                AnsiWriter
+	utils                 *ANSIUtils
 	consoleTitle          *consoleTitle
 	activeBlock           *Block
 	activeSegment         *Segment
@@ -48,10 +48,10 @@ func (e *engine) writePowerLineSeparator(background, foreground string, end bool
 		symbol = e.previousActiveSegment.PowerlineSymbol
 	}
 	if e.activeSegment.InvertPowerline {
-		e.color.write(foreground, background, symbol)
+		e.writer.write(foreground, background, symbol)
 		return
 	}
-	e.color.write(background, foreground, symbol)
+	e.writer.write(background, foreground, symbol)
 }
 
 func (e *engine) endPowerline() {
@@ -73,9 +73,9 @@ func (e *engine) renderPlainSegment(text string) {
 }
 
 func (e *engine) renderDiamondSegment(text string) {
-	e.color.write(Transparent, e.activeSegment.background(), e.activeSegment.LeadingDiamond)
+	e.writer.write(Transparent, e.activeSegment.background(), e.activeSegment.LeadingDiamond)
 	e.renderText(text)
-	e.color.write(Transparent, e.activeSegment.background(), e.activeSegment.TrailingDiamond)
+	e.writer.write(Transparent, e.activeSegment.background(), e.activeSegment.TrailingDiamond)
 }
 
 func (e *engine) renderText(text string) {
@@ -84,11 +84,11 @@ func (e *engine) renderText(text string) {
 		defaultValue = fmt.Sprintf("<%s>\u2588</>", e.activeSegment.background())
 	}
 
-	text = e.color.formats.generateHyperlink(text)
+	text = e.utils.formats.generateHyperlink(text)
 
 	prefix := e.activeSegment.getValue(Prefix, defaultValue)
 	postfix := e.activeSegment.getValue(Postfix, defaultValue)
-	e.color.write(e.activeSegment.background(), e.activeSegment.foreground(), fmt.Sprintf("%s%s%s", prefix, text, postfix))
+	e.writer.write(e.activeSegment.background(), e.activeSegment.foreground(), fmt.Sprintf("%s%s%s", prefix, text, postfix))
 }
 
 func (e *engine) renderSegmentText(text string) {
@@ -118,7 +118,7 @@ func (e *engine) renderBlockSegments(block *Block) string {
 	if e.previousActiveSegment != nil && e.previousActiveSegment.Style == Powerline {
 		e.writePowerLineSeparator(Transparent, e.previousActiveSegment.background(), true)
 	}
-	return e.color.string()
+	return e.writer.render()
 }
 
 func (e *engine) setStringValues(segments []*Segment) {
@@ -139,30 +139,30 @@ func (e *engine) render() {
 		// if line break, append a line break
 		switch block.Type {
 		case LineBreak:
-			e.renderer.write("\n")
+			e.utils.write("\n")
 		case Prompt:
 			if block.VerticalOffset != 0 {
-				e.renderer.changeLine(block.VerticalOffset)
+				e.utils.changeLine(block.VerticalOffset)
 			}
 			switch block.Alignment {
 			case Right:
-				e.renderer.carriageForward()
+				e.utils.carriageForward()
 				blockText := e.renderBlockSegments(block)
-				e.renderer.setCursorForRightWrite(blockText, block.HorizontalOffset)
-				e.renderer.write(blockText)
+				e.utils.setCursorForRightWrite(blockText, block.HorizontalOffset)
+				e.utils.write(blockText)
 			case Left:
-				e.renderer.write(e.renderBlockSegments(block))
+				e.utils.write(e.renderBlockSegments(block))
 			}
 		case RPrompt:
 			e.rprompt = e.renderBlockSegments(block)
 		}
 	}
 	if e.config.ConsoleTitle {
-		e.renderer.write(e.consoleTitle.getConsoleTitle())
+		e.utils.write(e.consoleTitle.getConsoleTitle())
 	}
-	e.renderer.creset()
+	e.utils.creset()
 	if e.config.FinalSpace {
-		e.renderer.write(" ")
+		e.utils.write(" ")
 	}
 
 	if !e.config.OSC99 {
@@ -173,7 +173,7 @@ func (e *engine) render() {
 	if e.env.isWsl() {
 		cwd, _ = e.env.runCommand("wslpath", "-m", cwd)
 	}
-	e.renderer.osc99(cwd)
+	e.utils.osc99(cwd)
 	e.print()
 }
 
@@ -181,7 +181,7 @@ func (e *engine) render() {
 func (e *engine) debug() {
 	var segmentTimings []SegmentTiming
 	largestSegmentNameLength := 0
-	e.renderer.write("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
+	e.utils.write("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
 
 	// console title timing
 	start := time.Now()
@@ -224,8 +224,8 @@ func (e *engine) debug() {
 				if e.activeSegment.Style == Powerline {
 					e.writePowerLineSeparator(Transparent, e.activeSegment.background(), true)
 				}
-				segmentTiming.stringValue = e.color.string()
-				e.color.builder.Reset()
+				segmentTiming.stringValue = e.writer.render()
+				e.writer.reset()
 			}
 			segmentTimings = append(segmentTimings, segmentTiming)
 		}
@@ -239,9 +239,9 @@ func (e *engine) debug() {
 			duration += segment.stringDuration.Milliseconds()
 		}
 		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.enabled)
-		e.renderer.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
+		e.utils.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
-	fmt.Print(e.renderer.string())
+	fmt.Print(e.utils.string())
 }
 
 func (e *engine) print() {
@@ -249,24 +249,24 @@ func (e *engine) print() {
 	case zsh:
 		if *e.env.getArgs().Eval {
 			// escape double quotes contained in the prompt
-			fmt.Printf("PS1=\"%s\"", strings.ReplaceAll(e.renderer.string(), "\"", "\"\""))
+			fmt.Printf("PS1=\"%s\"", strings.ReplaceAll(e.utils.string(), "\"", "\"\""))
 			fmt.Printf("\nRPROMPT=\"%s\"", e.rprompt)
 			return
 		}
 	case pwsh, powershell5, bash:
 		if e.rprompt != "" {
-			e.renderer.saveCursorPosition()
-			e.renderer.carriageForward()
-			e.renderer.setCursorForRightWrite(e.rprompt, 0)
-			e.renderer.write(e.rprompt)
-			e.renderer.restoreCursorPosition()
+			e.utils.saveCursorPosition()
+			e.utils.carriageForward()
+			e.utils.setCursorForRightWrite(e.rprompt, 0)
+			e.utils.write(e.rprompt)
+			e.utils.restoreCursorPosition()
 		}
 	}
-	fmt.Print(e.renderer.string())
+	fmt.Print(e.utils.string())
 }
 
 func (e *engine) resetBlock() {
-	e.color.reset()
+	e.writer.reset()
 	e.previousActiveSegment = nil
 	e.activeBlock = nil
 }

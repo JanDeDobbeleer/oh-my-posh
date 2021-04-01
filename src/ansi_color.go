@@ -8,6 +8,12 @@ import (
 	"github.com/gookit/color"
 )
 
+type AnsiWriter interface {
+	write(background, foreground, text string)
+	render() string
+	reset()
+}
+
 var (
 	// Map for color names and their respective foreground [0] or background [1] color codes
 	colorMap map[string][2]string = map[string][2]string{
@@ -43,8 +49,8 @@ func getColorFromName(colorName string, isBackground bool) (string, error) {
 	return "", errors.New("color name does not exist")
 }
 
-// AnsiColor writes colorized strings
-type AnsiColor struct {
+// ANSIWriter writes colorized strings
+type ANSIWriter struct {
 	builder            strings.Builder
 	formats            *ansiFormats
 	terminalBackground string
@@ -58,7 +64,7 @@ const (
 // Gets the ANSI color code for a given color string.
 // This can include a valid hex color in the format `#FFFFFF`,
 // but also a name of one of the first 16 ANSI colors like `lightBlue`.
-func (a *AnsiColor) getAnsiFromColorString(colorString string, isBackground bool) string {
+func (a *ANSIWriter) getAnsiFromColorString(colorString string, isBackground bool) string {
 	colorFromName, err := getColorFromName(colorString, isBackground)
 	if err == nil {
 		return colorFromName
@@ -67,7 +73,7 @@ func (a *AnsiColor) getAnsiFromColorString(colorString string, isBackground bool
 	return style.Code()
 }
 
-func (a *AnsiColor) writeColoredText(background, foreground, text string) {
+func (a *ANSIWriter) writeColoredText(background, foreground, text string) {
 	// Avoid emitting empty strings with color codes
 	if text == "" {
 		return
@@ -96,12 +102,12 @@ func (a *AnsiColor) writeColoredText(background, foreground, text string) {
 	a.builder.WriteString(coloredText)
 }
 
-func (a *AnsiColor) writeAndRemoveText(background, foreground, text, textToRemove, parentText string) string {
+func (a *ANSIWriter) writeAndRemoveText(background, foreground, text, textToRemove, parentText string) string {
 	a.writeColoredText(background, foreground, text)
 	return strings.Replace(parentText, textToRemove, "", 1)
 }
 
-func (a *AnsiColor) write(background, foreground, text string) {
+func (a *ANSIWriter) write(background, foreground, text string) {
 	text = a.formats.formatText(text)
 	// first we match for any potentially valid colors enclosed in <>
 	match := findAllNamedRegexMatch(`<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`, text)
@@ -131,10 +137,10 @@ func (a *AnsiColor) write(background, foreground, text string) {
 	a.writeColoredText(background, foreground, text)
 }
 
-func (a *AnsiColor) string() string {
+func (a *ANSIWriter) render() string {
 	return a.builder.String()
 }
 
-func (a *AnsiColor) reset() {
+func (a *ANSIWriter) reset() {
 	a.builder.Reset()
 }

@@ -51,6 +51,7 @@ type args struct {
 	Eval          *bool
 	Init          *bool
 	PrintInit     *bool
+	Render        *bool
 }
 
 func main() {
@@ -115,6 +116,10 @@ func main() {
 			"print-init",
 			false,
 			"Print the shell initialization script"),
+		Render: flag.Bool(
+			"render",
+			false,
+			"Render an image for the current configuration"),
 	}
 	flag.Parse()
 	env := &environment{}
@@ -149,10 +154,10 @@ func main() {
 
 	formats := &ansiFormats{}
 	formats.init(env.getShellName())
-	renderer := &AnsiRenderer{
+	utils := &ANSIUtils{
 		formats: formats,
 	}
-	colorer := &AnsiColor{
+	writer := &ANSIWriter{
 		formats:            formats,
 		terminalBackground: cfg.TerminalBackground,
 	}
@@ -164,11 +169,16 @@ func main() {
 	engine := &engine{
 		config:       cfg,
 		env:          env,
-		color:        colorer,
-		renderer:     renderer,
+		writer:       writer,
+		utils:        utils,
 		consoleTitle: title,
 	}
 
+	if *args.Render {
+		imageRenderer := NewImageCreator(writer, engine)
+		imageRenderer.renderImage()
+		return
+	}
 	if *args.Debug {
 		engine.debug()
 		return

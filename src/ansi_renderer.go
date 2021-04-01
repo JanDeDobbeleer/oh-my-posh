@@ -5,22 +5,22 @@ import (
 	"strings"
 )
 
-// AnsiRenderer exposes functionality using ANSI
-type AnsiRenderer struct {
+// ANSIUtils exposes functionality using ANSI
+type ANSIUtils struct {
 	builder strings.Builder
 	formats *ansiFormats
 }
 
-func (r *AnsiRenderer) carriageForward() {
+func (r *ANSIUtils) carriageForward() {
 	r.builder.WriteString(fmt.Sprintf(r.formats.left, 1000))
 }
 
-func (r *AnsiRenderer) setCursorForRightWrite(text string, offset int) {
+func (r *ANSIUtils) setCursorForRightWrite(text string, offset int) {
 	strippedLen := r.formats.lenWithoutANSI(text) + -offset
 	r.builder.WriteString(fmt.Sprintf(r.formats.right, strippedLen))
 }
 
-func (r *AnsiRenderer) changeLine(numberOfLines int) {
+func (r *ANSIUtils) changeLine(numberOfLines int) {
 	position := "B"
 	if numberOfLines < 0 {
 		position = "F"
@@ -29,11 +29,11 @@ func (r *AnsiRenderer) changeLine(numberOfLines int) {
 	r.builder.WriteString(fmt.Sprintf(r.formats.linechange, numberOfLines, position))
 }
 
-func (r *AnsiRenderer) creset() {
+func (r *ANSIUtils) creset() {
 	r.builder.WriteString(r.formats.creset)
 }
 
-func (r *AnsiRenderer) write(text string) {
+func (r *ANSIUtils) write(text string) {
 	r.builder.WriteString(text)
 	// Due to a bug in Powershell, the end of the line needs to be cleared.
 	// If this doesn't happen, the portion after the prompt gets colored in the background
@@ -44,18 +44,18 @@ func (r *AnsiRenderer) write(text string) {
 	}
 }
 
-func (r *AnsiRenderer) string() string {
+func (r *ANSIUtils) string() string {
 	return r.builder.String()
 }
 
-func (r *AnsiRenderer) saveCursorPosition() {
+func (r *ANSIUtils) saveCursorPosition() {
 	r.builder.WriteString(r.formats.saveCursorPosition)
 }
 
-func (r *AnsiRenderer) restoreCursorPosition() {
+func (r *ANSIUtils) restoreCursorPosition() {
 	r.builder.WriteString(r.formats.restoreCursorPosition)
 }
 
-func (r *AnsiRenderer) osc99(pwd string) {
+func (r *ANSIUtils) osc99(pwd string) {
 	r.builder.WriteString(fmt.Sprintf(r.formats.osc99, pwd))
 }

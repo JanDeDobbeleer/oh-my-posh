@@ -11,6 +11,7 @@ module.exports = {
       items: [
         "aws",
         "az",
+        "azfunc",
         "battery",
         "command",
         "dotnet",

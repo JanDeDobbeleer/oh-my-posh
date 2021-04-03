@@ -4,13 +4,9 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'README.md'
-      - 'CONTRIBUTING.md'
-      - 'COPYING'
-      - 'docs/**'
-      - '.github/*.md'
-      - '.github/FUNDING.yml'
+    paths:
+      - 'src/**'
+      - 'packages/**'
 
 jobs:
   release:

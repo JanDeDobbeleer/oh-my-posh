@@ -25,7 +25,8 @@
           "style": "plain",
           "foreground": "#0973C0",
           "properties": {
-            "style": "full"
+            "style": "full",
+            "prefix": ""
           }
         },
         {

@@ -16,7 +16,7 @@
             "user_info_separator": "",
             "display_host": false,
             "prefix": "",
-            "postfix": ""
+            "postfix": " "
           }
         },
         {
@@ -42,8 +42,8 @@
           "properties": {
             "branch_icon": "",
             "display_status": false,
-            "prefix": "git(",
-            "postfix": ")"
+            "prefix": " git(",
+            "postfix": ") "
           }
         },
         {
@@ -55,8 +55,8 @@
           "background": "lightMagenta",
           "properties": {
             "time_format": "15:04",
-            "prefix": "",
-            "postfix": ""
+            "prefix": " ",
+            "postfix": " "
           }
         }
       ]

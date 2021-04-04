@@ -1,91 +1,92 @@
 {
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "console_title": true,
-    "console_title_style": "template",
-    "console_title_template": "{{if .Root}}(Admin){{end}} {{.Path}}",
-    "blocks": [
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}}(Admin){{end}} {{.Path}}",
+  "blocks": [
+    {
+      "type": "newline"
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
         {
-            "type":"newline"
+          "type": "root",
+          "style": "plain",
+          "foreground": "#BF616A",
+          "properties": {
+            "prefix": "",
+            "root_icon": "Admin"
+          }
         },
         {
-            "type":"prompt",
-            "alignment": "left",
-            "segments": [
-                {
-                    "type":"root",
-                    "style":"plain",
-                    "foreground": "#BF616A",
-                    "properties": {
-                        "prefix": "",
-                        "root_icon": "Admin"
-                    }
-                },
-                {
-                    "type":"path",
-                    "style":"plain",
-                    "foreground": "#81A1C1",
-                    "properties": {
-                        "prefix": "",
-                        "style": "full"
-                    }
-                }
-            ]
-        },
-        {
-            "type":"prompt",
-            "alignment": "left",
-            "segments": [
-                {
-                    "type":"git",
-                    "style":"plain",
-                    "foreground": "#6C6C6C",
-                    "properties": {
-                        "display_stash_count": true,
-                        "display_status": true,
-                        "display_status_detail": true,
-                        "display_upstream_icon": true,
-                        "branch_icon": "",
-                        "github_icon": "",
-                        "branch_ahead_icon": "<#88C0D0>\u21e1 </>",
-                        "branch_behind_icon": "<#88C0D0>\u21e3 </>",
-                        "local_working_icon": "<#FFAFD7>\u002a</>"
-                    }
-                }
-            ]
-        },
-        {
-            "type":"prompt",
-            "alignment": "left",
-            "segments": [
-                {
-                    "type":"executiontime",
-                    "style":"plain",
-                    "foreground": "#A3BE8C",
-                    "properties": {
-                        "style": "austin"
-                    }
-                }
-            ]
-        },
-        {
-            "type":"newline"
-        },
-        {
-            "alignment": "left",
-            "type":"prompt",
-            "segments": [
-                {
-                    "type":"exit",
-                    "style":"plain",
-                    "foreground": "#B48EAD",
-                    "properties": {
-                        "prefix": "\u276f",
-                        "display_exit_code": false,
-                        "error_color": "#BF616A",
-                        "always_enabled": true
-                    }
-                }
-            ]
+          "type": "path",
+          "style": "plain",
+          "foreground": "#81A1C1",
+          "properties": {
+            "prefix": "",
+            "style": "full"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#6C6C6C",
+          "properties": {
+            "prefix": "",
+            "display_stash_count": true,
+            "display_status": true,
+            "display_status_detail": true,
+            "display_upstream_icon": true,
+            "branch_icon": "",
+            "github_icon": "",
+            "branch_ahead_icon": "<#88C0D0>\u21e1 </>",
+            "branch_behind_icon": "<#88C0D0>\u21e3 </>",
+            "local_working_icon": "<#FFAFD7>\u002a</>"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "executiontime",
+          "style": "plain",
+          "foreground": "#A3BE8C",
+          "properties": {
+            "style": "austin"
+          }
+        }
+      ]
+    },
+    {
+      "type": "newline"
+    },
+    {
+      "alignment": "left",
+      "type": "prompt",
+      "segments": [
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#B48EAD",
+          "properties": {
+            "prefix": "\u276f",
+            "display_exit_code": false,
+            "error_color": "#BF616A",
+            "always_enabled": true
+          }
+        }
+      ]
+    }
+  ]
 }

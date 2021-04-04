@@ -11,7 +11,10 @@ require (
 	github.com/alecthomas/colour v0.1.0 // indirect
 	github.com/alecthomas/repr v0.0.0-20210301060118-828286944d6a // indirect
 	github.com/distatus/battery v0.10.0
+	github.com/esimov/stackblur-go v1.0.0
+	github.com/fogleman/gg v1.3.0
 	github.com/go-ole/go-ole v1.2.5 // indirect
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/gookit/color v1.3.8
 	github.com/gookit/config/v2 v2.0.22
@@ -24,6 +27,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tklauser/go-sysconf v0.3.5 // indirect
 	golang.org/x/crypto v0.0.0-20210322153248-0c34fe9e7dc2 // indirect
+	golang.org/x/image v0.0.0-20210220032944-ac19c3e999fb
 	golang.org/x/sys v0.0.0-20210324051608-47abb6519492
 	golang.org/x/text v0.3.5
 	howett.net/plist v0.0.0-20201203080718-1454fab16a06 // indirect

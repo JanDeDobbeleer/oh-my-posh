@@ -33,6 +33,7 @@ const (
 	pwsh        = "pwsh"
 	fish        = "fish"
 	powershell5 = "powershell"
+	shelly      = "shell"
 )
 
 type args struct {
@@ -51,6 +52,10 @@ type args struct {
 	Eval          *bool
 	Init          *bool
 	PrintInit     *bool
+	ExportPNG     *bool
+	Author        *string
+	CursorPadding *int
+	RPromptOffset *int
 }
 
 func main() {
@@ -115,6 +120,22 @@ func main() {
 			"print-init",
 			false,
 			"Print the shell initialization script"),
+		ExportPNG: flag.Bool(
+			"export-png",
+			false,
+			"Create an image based on the current configuration"),
+		Author: flag.String(
+			"author",
+			"",
+			"Add the author to the exported image using --export-img"),
+		CursorPadding: flag.Int(
+			"cursor-padding",
+			30,
+			"Pad the cursor with x when using --export-img"),
+		RPromptOffset: flag.Int(
+			"rprompt-offset",
+			40,
+			"Offset the right prompt with x when using --export-img"),
 	}
 	flag.Parse()
 	env := &environment{}
@@ -170,10 +191,27 @@ func main() {
 	}
 
 	if *args.Debug {
-		engine.debug()
+		fmt.Print(engine.debug())
 		return
 	}
-	engine.render()
+	prompt := engine.render()
+	if !*args.ExportPNG {
+		fmt.Print(prompt)
+		return
+	}
+	imageCreator := &ImageRenderer{
+		ansiString:    prompt,
+		author:        *args.Author,
+		cursorPadding: *args.CursorPadding,
+		rPromptOffset: *args.RPromptOffset,
+		formats:       formats,
+	}
+	imageCreator.init()
+	match := findNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, *args.Config)
+	err := imageCreator.SavePNG(fmt.Sprintf("%s.png", match[STR]))
+	if err != nil {
+		fmt.Print(err.Error())
+	}
 }
 
 func initShell(shell, configFile string) string {

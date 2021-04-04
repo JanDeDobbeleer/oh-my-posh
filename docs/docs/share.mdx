@@ -1,0 +1,54 @@
+---
+id: share
+title: Share
+sidebar_label: 📸 Share
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+You can export your prompt to an image which you can share online. You have the ability to align it correctly and add your name for credits too.
+
+:::warning
+Some glyphs aren't rendered correctly, that's not you but the limitations of the renderer. Depending on your config, you might have to tweak
+the output a little bit.
+:::
+
+<Tabs
+  defaultValue="powershell"
+  values={[
+    { label: 'powershell', value: 'powershell', },
+    { label: 'others', value: 'others', },
+  ]
+}>
+<TabItem value="powershell">
+
+You can make use of the `Export-PoshImage` function to export your current theme configuration.
+
+```powershell
+Export-PoshImage -CursorPadding 50
+```
+
+There are a couple of parameters you can use to tweak the image rendering:
+
+- `CursorPadding`: spaces to add after the cursor indication (`_`)
+- `RPromptOffset`: spaces to add **before** a block that's right aligned
+- `Author`: the name of the creator, added after `https://ohmyposh.dev`
+
+</TabItem>
+<TabItem value="others">
+
+The oh-my-posh executable has the `--export-png` switch to export your current theme configuration.
+
+```powershell
+oh-my-posh --config ~/.mytheme.omp.json --export-png --cursor-padding 50
+```
+
+There are a couple of additional switches you can use to tweak the image rendering:
+
+- `--cursor-padding`: spaces to add after the cursor indication (`_`)
+- `--rprompt-offset`: spaces to add **before** a block that's right aligned
+- `--author`: the name of the creator, added after `https://ohmyposh.dev`
+
+</TabItem>
+</Tabs>

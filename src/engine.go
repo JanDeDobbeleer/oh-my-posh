@@ -129,7 +129,7 @@ func (e *engine) setStringValues(segments []*Segment) {
 	}
 }
 
-func (e *engine) render() {
+func (e *engine) render() string {
 	for _, block := range e.config.Blocks {
 		// if line break, append a line break
 		switch block.Type {
@@ -161,19 +161,18 @@ func (e *engine) render() {
 	}
 
 	if !e.config.OSC99 {
-		e.print()
-		return
+		return e.print()
 	}
 	cwd := e.env.getcwd()
 	if e.env.isWsl() {
 		cwd, _ = e.env.runCommand("wslpath", "-m", cwd)
 	}
 	e.renderer.osc99(cwd)
-	e.print()
+	return e.print()
 }
 
 // debug will loop through your config file and output the timings for each segments
-func (e *engine) debug() {
+func (e *engine) debug() string {
 	var segmentTimings []SegmentTiming
 	largestSegmentNameLength := 0
 	e.renderer.write("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
@@ -236,19 +235,19 @@ func (e *engine) debug() {
 		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.enabled)
 		e.renderer.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
-	fmt.Print(e.renderer.string())
+	return e.renderer.string()
 }
 
-func (e *engine) print() {
+func (e *engine) print() string {
 	switch e.env.getShellName() {
 	case zsh:
 		if *e.env.getArgs().Eval {
 			// escape double quotes contained in the prompt
-			fmt.Printf("PS1=\"%s\"", strings.ReplaceAll(e.renderer.string(), "\"", "\"\""))
-			fmt.Printf("\nRPROMPT=\"%s\"", e.rprompt)
-			return
+			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.renderer.string(), "\"", "\"\""))
+			prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
+			return prompt
 		}
-	case pwsh, powershell5, bash:
+	case pwsh, powershell5, bash, shelly:
 		if e.rprompt != "" {
 			e.renderer.saveCursorPosition()
 			e.renderer.carriageForward()
@@ -257,7 +256,7 @@ func (e *engine) print() {
 			e.renderer.restoreCursorPosition()
 		}
 	}
-	fmt.Print(e.renderer.string())
+	return e.renderer.string()
 }
 
 func (e *engine) resetBlock() {

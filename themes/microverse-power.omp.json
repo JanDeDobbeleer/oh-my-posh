@@ -8,7 +8,10 @@
         {
           "type": "os",
           "style": "plain",
-          "foreground": "#3A86FF"
+          "foreground": "#3A86FF",
+          "properties": {
+            "prefix": ""
+          }
         },
         {
           "type": "session",
@@ -101,6 +104,5 @@
         }
       ]
     }
-  ],
-  "final_space": true
+  ]
 }

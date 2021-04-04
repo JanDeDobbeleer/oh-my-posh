@@ -3,7 +3,7 @@ module.exports = {
     {
       type: "category",
       label: "Getting Started",
-      items: ["introduction", "upgrading", "installation", "configure", "themes", "fonts"],
+      items: ["introduction", "upgrading", "installation", "configure", "themes", "share", "fonts"],
     },
     {
       type: "category",

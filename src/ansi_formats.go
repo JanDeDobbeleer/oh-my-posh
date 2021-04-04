@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"strings"
+)
 
-	"golang.org/x/text/unicode/norm"
+const (
+	ANSIRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 )
 
 type ansiFormats struct {
@@ -44,7 +46,7 @@ func (a *ansiFormats) init(shell string) {
 		a.title = "%%{\x1b]0;%s\007%%}"
 		a.colorSingle = "%%{\x1b[%sm%%}%s%%{\x1b[0m%%}"
 		a.colorFull = "%%{\x1b[%sm\x1b[%sm%%}%s%%{\x1b[0m%%}"
-		a.colorTransparent = "%%{\x1b[%s;49m\x1b[7m%%}%s%%{\x1b[m\x1b[0m%%}"
+		a.colorTransparent = "%%{\x1b[%s;49m\x1b[7m%%}%s%%{\x1b[0m%%}"
 		a.escapeLeft = "%{"
 		a.escapeRight = "%}"
 		a.hyperlink = "%%{\x1b]8;;%s\x1b\\%%}%s%%{\x1b]8;;\x1b\\%%}"
@@ -64,7 +66,7 @@ func (a *ansiFormats) init(shell string) {
 		a.title = "\\[\x1b]0;%s\007\\]"
 		a.colorSingle = "\\[\x1b[%sm\\]%s\\[\x1b[0m\\]"
 		a.colorFull = "\\[\x1b[%sm\x1b[%sm\\]%s\\[\x1b[0m\\]"
-		a.colorTransparent = "\\[\x1b[%s;49m\x1b[7m\\]%s\\[\x1b[m\x1b[0m\\]"
+		a.colorTransparent = "\\[\x1b[%s;49m\x1b[7m\\]%s\\[\x1b[0m\\]"
 		a.escapeLeft = "\\["
 		a.escapeRight = "\\]"
 		a.hyperlink = "\\[\x1b]8;;%s\x1b\\\\\\]%s\\[\x1b]8;;\x1b\\\\\\]"
@@ -84,7 +86,7 @@ func (a *ansiFormats) init(shell string) {
 		a.title = "\x1b]0;%s\007"
 		a.colorSingle = "\x1b[%sm%s\x1b[0m"
 		a.colorFull = "\x1b[%sm\x1b[%sm%s\x1b[0m"
-		a.colorTransparent = "\x1b[%s;49m\x1b[7m%s\x1b[m\x1b[0m"
+		a.colorTransparent = "\x1b[%s;49m\x1b[7m%s\x1b[0m"
 		a.escapeLeft = ""
 		a.escapeRight = ""
 		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
@@ -93,23 +95,28 @@ func (a *ansiFormats) init(shell string) {
 		a.italic = "\x1b[3m%s\x1b[23m"
 		a.underline = "\x1b[4m%s\x1b[24m"
 		a.strikethrough = "\x1b[9m%s\x1b[29m"
-		a.strikethrough = "\x1b[9m%s\x1b[29m"
 	}
 }
 
 func (a *ansiFormats) lenWithoutANSI(text string) int {
-	rANSI := "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
-	stripped := replaceAllString(rANSI, text, "")
+	if len(text) == 0 {
+		return 0
+	}
+	// replace hyperlinks
+	matches := findAllNamedRegexMatch(`(?P<STR>\x1b]8;;file:\/\/(.+)\x1b\\(?P<URL>.+)\x1b]8;;\x1b\\)`, text)
+	for _, match := range matches {
+		text = strings.ReplaceAll(text, match[STR], match[URL])
+	}
+	// replace console title
+	matches = findAllNamedRegexMatch(`(?P<STR>\x1b\]0;(.+)\007)`, text)
+	for _, match := range matches {
+		text = strings.ReplaceAll(text, match[STR], "")
+	}
+	stripped := replaceAllString(ANSIRegex, text, "")
 	stripped = strings.ReplaceAll(stripped, a.escapeLeft, "")
 	stripped = strings.ReplaceAll(stripped, a.escapeRight, "")
-	var i norm.Iter
-	i.InitString(norm.NFD, stripped)
-	var count int
-	for !i.Done() {
-		i.Next()
-		count++
-	}
-	return count
+	runeText := []rune(stripped)
+	return len(runeText)
 }
 
 func (a *ansiFormats) generateHyperlink(text string) string {

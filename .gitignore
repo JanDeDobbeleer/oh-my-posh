@@ -155,3 +155,6 @@ bin/
 Output/
 *.sha256
 *.7z
+
+# images
+*.png

@@ -11,6 +11,7 @@
           "foreground": "#ffffff",
           "properties": {
             "prefix": "",
+            "postfix": "",
             "text": "<#C591E8>\u276F</><#69FF94>\u276F</>"
           }
         },
@@ -52,6 +53,5 @@
         }
       ]
     }
-  ],
-  "final_space": true
+  ]
 }

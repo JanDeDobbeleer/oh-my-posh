@@ -13,6 +13,7 @@
           "leading_diamond": "\uE0B6",
           "trailing_diamond": "",
           "properties": {
+            "prefix": "",
             "display_host":false
           }
         },

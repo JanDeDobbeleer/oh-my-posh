@@ -19,6 +19,7 @@
           "style": "plain",
           "foreground": "#56B6C2",
           "properties": {
+            "prefix": "",
             "style": "folder"
           }
         },
@@ -77,6 +78,5 @@
         }
       ]
     }
-  ],
-  "final_space": true
+  ]
 }

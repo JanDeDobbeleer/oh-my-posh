@@ -23,10 +23,20 @@ function global:Initialize-ModuleSupport {
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
     }
 
+
+    if ($null -eq $env:AZ_ENABLED) {
+        if (Get-Module -ListAvailable -Name "Az.Accounts") {
+            $env:AZ_ENABLED = $true
+        }
+        else {
+            $env:AZ_ENABLED = $false
+        }
+    }
+
     $env:AZ_SUBSCRIPTION_NAME = $null
     $env:AZ_SUBSCRIPTION_ID = $null
 
-    if (Get-Module -ListAvailable -Name "Az.Accounts") {
+    if ($env:AZ_ENABLED -eq $true) {
         try {
             $subscription = Get-AzContext | Select-Object -ExpandProperty "Subscription" | Select-Object "Name", "Id"
             if ($null -ne $subscription) {

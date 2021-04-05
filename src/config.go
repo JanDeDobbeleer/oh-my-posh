@@ -142,6 +142,11 @@ func exportConfig(configFile, format string) string {
 		prefix := "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 		content := buf.String()
 		return prefix + content
+
+	case config.Toml:
+		prefix := "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
+		content := buf.String()
+		return prefix + content
 	}
 
 	return buf.String()

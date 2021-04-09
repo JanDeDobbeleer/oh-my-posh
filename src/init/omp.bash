@@ -12,7 +12,7 @@ function _omp_hook() {
         omp_now=$(::OMP:: --millis)
         omp_start_time=$(cat "$TIMER_START")
         omp_elapsed=$((omp_now-omp_start_time))
-        rm "$TIMER_START"
+        rm -f "$TIMER_START"
     fi
     PS1="$(::OMP:: --config $POSH_THEME --shell bash --error $ret --execution-time $omp_elapsed)"
 
@@ -24,7 +24,7 @@ if [ "$TERM" != "linux" ] && [ -x "$(command -v ::OMP::)" ] && ! [[ "$PROMPT_COM
 fi
 
 function _omp_runonexit() {
-  [[ -f $TIMER_START ]] && rm "$TIMER_START"
+  [[ -f $TIMER_START ]] && rm -f "$TIMER_START"
 }
 
 trap _omp_runonexit EXIT

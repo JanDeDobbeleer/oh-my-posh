@@ -89,7 +89,11 @@ func (b *batt) string() string {
 		Template: segmentTemplate,
 		Context:  b,
 	}
-	return template.render()
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (b *batt) init(props *properties, env environmentInfo) {

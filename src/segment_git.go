@@ -392,7 +392,7 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 			status.added++
 		case "U":
 			status.unmerged++
-		case "M", "R", "C":
+		case "M", "R", "C", "m":
 			status.modified++
 		}
 	}

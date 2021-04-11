@@ -56,3 +56,4 @@ properties below. Defaults to `{{.Icon}}{{ if not .Error }}{{.Percentage}}{{ end
 [colors]: /docs/configure#colors
 [battery]: https://github.com/distatus/battery/blob/master/battery.go#L78
 [go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

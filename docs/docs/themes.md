@@ -19,3 +19,5 @@ Themes with `minimal` in their names do not require a Nerd Font. Read about [ðŸ†
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [fonts]: /docs/fonts
 [replace-you-existing-prompt]: /docs/installation#3-replace-your-existing-prompt
+
+<!-- Do not change the content below, themes are rendered automatically -->

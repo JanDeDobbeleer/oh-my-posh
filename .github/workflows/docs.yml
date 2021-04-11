@@ -17,13 +17,14 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.16
-      - name: Build
+      - name: Build oh-my-posh 🎨
         run: |
           cd src
-          go build -o docs/oh-my-posh
+          go build -o ./bin/oh-my-posh
           cd ..
       - name: Install and Build 🔧
         run: |
+          export PATH="$PWD/src/bin:$PATH"
           cd docs
           npm install
           npm run themes

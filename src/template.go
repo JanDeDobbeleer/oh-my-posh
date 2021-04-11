@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"text/template"
 
 	"github.com/Masterminds/sprig"
@@ -18,16 +19,16 @@ type textTemplate struct {
 	Context  interface{}
 }
 
-func (t *textTemplate) render() string {
+func (t *textTemplate) render() (string, error) {
 	tmpl, err := template.New("title").Funcs(sprig.TxtFuncMap()).Parse(t.Template)
 	if err != nil {
-		return invalidTemplate
+		return "", errors.New(invalidTemplate)
 	}
 	buffer := new(bytes.Buffer)
 	defer buffer.Reset()
 	err = tmpl.Execute(buffer, t.Context)
 	if err != nil {
-		return incorrectTemplate
+		return "", errors.New(incorrectTemplate)
 	}
-	return buffer.String()
+	return buffer.String(), nil
 }

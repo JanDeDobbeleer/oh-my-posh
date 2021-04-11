@@ -170,8 +170,8 @@ func (segment *Segment) getColor(templates []string, defaultColor string) string
 	}
 	for _, template := range templates {
 		txtTemplate.Template = template
-		value := txtTemplate.render()
-		if value == "" {
+		value, err := txtTemplate.render()
+		if err != nil || value == "" {
 			continue
 		}
 		return value

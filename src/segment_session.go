@@ -47,7 +47,11 @@ func (s *session) enabled() bool {
 			Template: segmentTemplate,
 			Context:  s,
 		}
-		s.templateText = template.render()
+		var err error
+		s.templateText, err = template.render()
+		if err != nil {
+			s.templateText = err.Error()
+		}
 		return len(s.templateText) > 0
 	}
 	showDefaultUser := s.props.getBool(DisplayDefault, true)

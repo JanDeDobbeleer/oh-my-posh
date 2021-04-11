@@ -17,7 +17,11 @@ func (k *kubectl) string() string {
 		Template: segmentTemplate,
 		Context:  k,
 	}
-	return template.render()
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (k *kubectl) init(props *properties, env environmentInfo) {

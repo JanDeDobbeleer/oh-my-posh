@@ -25,7 +25,11 @@ func (t *tempus) enabled() bool {
 			Template: segmentTemplate,
 			Context:  t,
 		}
-		t.templateText = template.render()
+		var err error
+		t.templateText, err = template.render()
+		if err != nil {
+			t.templateText = err.Error()
+		}
 		return len(t.templateText) > 0
 	}
 	return true

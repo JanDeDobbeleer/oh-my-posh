@@ -84,5 +84,9 @@ func (a *aws) string() string {
 		Template: segmentTemplate,
 		Context:  a,
 	}
-	return template.render()
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }

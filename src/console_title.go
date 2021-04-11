@@ -65,7 +65,11 @@ func (t *consoleTitle) getTemplateText() string {
 		Template: t.config.ConsoleTitleTemplate,
 		Context:  context,
 	}
-	return template.render()
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (t *consoleTitle) getPwd() string {

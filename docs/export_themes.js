@@ -30,6 +30,7 @@ themeConfigOverrrides.set('hotstick.minimal.omp.json', newThemeConfig(40, 10));
 themeConfigOverrrides.set('huvix.omp.json', newThemeConfig(40, 70));
 themeConfigOverrrides.set('jandedobbeleer.omp.json', newThemeConfig(40, 15));
 themeConfigOverrrides.set('lambda.omp.json', newThemeConfig(40, 40));
+themeConfigOverrrides.set('marcduiker.omp.json', newThemeConfig(0, 40));
 themeConfigOverrrides.set('material.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('microverse-power.omp.json', newThemeConfig(40, 100));
 themeConfigOverrrides.set('negligible.omp.json', newThemeConfig(10));

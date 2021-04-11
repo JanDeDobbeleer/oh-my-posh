@@ -42,7 +42,8 @@ a modern and more efficient tool was needed to suit my personal needs.
   * [x] Powershell
   * [x] Brew
   * [x] Scoop
-* [ ] Swap V2 with V3
+  * [ ] Winget
+* [x] Swap V2 with V3
 
 ## Thanks
 

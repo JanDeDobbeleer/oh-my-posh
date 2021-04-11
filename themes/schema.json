@@ -156,7 +156,8 @@
             "executiontime",
             "aws",
             "java",
-            "poshgit"
+            "poshgit",
+            "azfunc"
           ]
         },
         "style": {
@@ -830,6 +831,32 @@
           "then": {
             "title": "Node Segment",
             "description": "https://ohmyposh.dev/docs/node",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "azfunc" }
+            }
+          },
+          "then": {
+            "title": "Azure Function Segment",
+            "description": "https://ohmyposh.dev/docs/azfunc",
             "properties": {
               "properties": {
                 "properties": {

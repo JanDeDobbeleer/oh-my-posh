@@ -240,7 +240,26 @@ func (env *environment) getArgs() *args {
 }
 
 func (env *environment) getBatteryInfo() (*battery.Battery, error) {
-	return battery.Get(0)
+	getMostLogicalState := func(currentState battery.State, state battery.State) battery.State {
+		if currentState == battery.Unknown {
+			return state
+		}
+		if currentState == battery.Empty|battery.Full && state == battery.Charging|battery.Discharging {
+			return state
+		}
+		return battery.Charging
+	}
+	batteries, err := battery.GetAll()
+	if err != nil {
+		return nil, err
+	}
+	batt := &battery.Battery{}
+	for _, bt := range batteries {
+		batt.Current += bt.Current
+		batt.Full += bt.Full
+		batt.State = getMostLogicalState(batt.State, bt.State)
+	}
+	return batt, nil
 }
 
 func (env *environment) getShellName() string {

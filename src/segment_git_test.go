@@ -352,9 +352,8 @@ func TestParseGitStatsWorking(t *testing.T) {
 	status := g.parseGitStats(output, true)
 	assert.Equal(t, 3, status.modified)
 	assert.Equal(t, 1, status.unmerged)
-	assert.Equal(t, 1, status.added)
+	assert.Equal(t, 3, status.added)
 	assert.Equal(t, 1, status.deleted)
-	assert.Equal(t, 2, status.untracked)
 	assert.True(t, status.changed)
 }
 
@@ -376,7 +375,6 @@ func TestParseGitStatsStaging(t *testing.T) {
 	assert.Equal(t, 0, status.unmerged)
 	assert.Equal(t, 1, status.added)
 	assert.Equal(t, 2, status.deleted)
-	assert.Equal(t, 0, status.untracked)
 	assert.True(t, status.changed)
 }
 

@@ -19,12 +19,11 @@ type gitRepo struct {
 }
 
 type gitStatus struct {
-	unmerged  int
-	deleted   int
-	added     int
-	modified  int
-	untracked int
-	changed   bool
+	unmerged int
+	deleted  int
+	added    int
+	modified int
+	changed  bool
 }
 
 func (s *gitStatus) string() string {
@@ -38,7 +37,6 @@ func (s *gitStatus) string() string {
 	status += stringIfValue(s.added, "+")
 	status += stringIfValue(s.modified, "~")
 	status += stringIfValue(s.deleted, "-")
-	status += stringIfValue(s.untracked, "?")
 	status += stringIfValue(s.unmerged, "x")
 	return status
 }
@@ -384,7 +382,7 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 		switch code {
 		case "?":
 			if working {
-				status.untracked++
+				status.added++
 			}
 		case "D":
 			status.deleted++
@@ -396,7 +394,7 @@ func (g *git) parseGitStats(output []string, working bool) *gitStatus {
 			status.modified++
 		}
 	}
-	status.changed = status.added > 0 || status.deleted > 0 || status.modified > 0 || status.unmerged > 0 || status.untracked > 0
+	status.changed = status.added > 0 || status.deleted > 0 || status.modified > 0 || status.unmerged > 0
 	return &status
 }
 

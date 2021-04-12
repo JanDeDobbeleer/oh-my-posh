@@ -5,6 +5,7 @@ on:
       - main
     paths:
     - 'docs/**'
+    - 'themes/**'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

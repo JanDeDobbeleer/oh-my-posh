@@ -5,13 +5,14 @@ function omp_preexec() {
 }
 
 function omp_precmd() {
+  stack_count=${#dirstack[@]}
   omp_last_error=$?
   omp_elapsed=-1
   if [ $omp_start_time ]; then
     omp_now=$(::OMP:: --millis)
     omp_elapsed=$(($omp_now-$omp_start_time))
   fi
-  eval "$(::OMP:: --config $POSH_THEME --error $omp_last_error --execution-time $omp_elapsed --eval --shell zsh)"
+  eval "$(::OMP:: --config $POSH_THEME --error $omp_last_error --execution-time $omp_elapsed --stack-count $stack_count --eval --shell zsh)"
   unset omp_start_time
   unset omp_now
   unset omp_elapsed

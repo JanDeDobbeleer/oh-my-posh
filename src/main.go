@@ -56,6 +56,7 @@ type args struct {
 	Author        *string
 	CursorPadding *int
 	RPromptOffset *int
+	StackCount    *int
 }
 
 func main() {
@@ -136,6 +137,10 @@ func main() {
 			"rprompt-offset",
 			40,
 			"Offset the right prompt with x when using --export-img"),
+		StackCount: flag.Int(
+			"stack-count",
+			0,
+			"The current location stack count"),
 	}
 	flag.Parse()
 	env := &environment{}

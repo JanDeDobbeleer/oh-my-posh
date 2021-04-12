@@ -1124,6 +1124,12 @@
                     "title": "Enable hyperlink",
                     "description": "Displays an hyperlink for the current path",
                     "default": false
+                  },
+                  "stack_count_enabled": {
+                    "type": "boolean",
+                    "title": "Show/hide stack count",
+                    "description": "Displays the stack count when using pushd/popd",
+                    "default": false
                   }
                 }
               }

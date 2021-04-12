@@ -7,6 +7,7 @@ PS0='$(::OMP:: --millis > $TIMER_START)'
 function _omp_hook() {
     local ret=$?
 
+    stack_count=$((${#DIRSTACK[@]} - 1))
     omp_elapsed=-1
     if [[ -f $TIMER_START ]]; then
         omp_now=$(::OMP:: --millis)
@@ -14,7 +15,7 @@ function _omp_hook() {
         omp_elapsed=$((omp_now-omp_start_time))
         rm -f "$TIMER_START"
     fi
-    PS1="$(::OMP:: --config $POSH_THEME --shell bash --error $ret --execution-time $omp_elapsed)"
+    PS1="$(::OMP:: --config $POSH_THEME --shell bash --error $ret --execution-time $omp_elapsed --stack-count $stack_count)"
 
     return $ret
 }

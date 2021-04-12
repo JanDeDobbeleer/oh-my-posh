@@ -32,6 +32,12 @@ func (e *commandError) Error() string {
 	return e.err
 }
 
+type noBatteryError struct{}
+
+func (m *noBatteryError) Error() string {
+	return "no battery"
+}
+
 type fileInfo struct {
 	parentFolder string
 	path         string
@@ -252,6 +258,9 @@ func (env *environment) getBatteryInfo() (*battery.Battery, error) {
 	batteries, err := battery.GetAll()
 	if err != nil {
 		return nil, err
+	}
+	if batteries == nil {
+		return nil, &noBatteryError{}
 	}
 	batt := &battery.Battery{}
 	for _, bt := range batteries {

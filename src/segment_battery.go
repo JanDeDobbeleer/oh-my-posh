@@ -35,22 +35,8 @@ const (
 func (b *batt) enabled() bool {
 	var err error
 	b.Battery, err = b.env.getBatteryInfo()
-
-	displayError := b.props.getBool(DisplayError, false)
-	if err != nil && displayError {
-		b.Error = err.Error()
-		return true
-	}
-	if err != nil {
-		// On Windows, it sometimes errors when the battery is full.
-		// This hack ensures we display a fully charged battery, even if
-		// that state can be incorrect. It's better to "ignore" the error
-		// than to not display the segment at all as that will confuse users.
-		b.Battery = &battery.Battery{
-			Current: 100,
-			Full:    100,
-			State:   battery.Full,
-		}
+	if !b.enabledWhileError(err) {
+		return false
 	}
 
 	display := b.props.getBool(DisplayCharging, true)
@@ -79,6 +65,30 @@ func (b *batt) enabled() bool {
 		b.props.background = b.props.getColor(colorPorperty, b.props.background)
 	} else {
 		b.props.foreground = b.props.getColor(colorPorperty, b.props.foreground)
+	}
+	return true
+}
+
+func (b *batt) enabledWhileError(err error) bool {
+	if err == nil {
+		return true
+	}
+	if _, ok := err.(*noBatteryError); ok {
+		return false
+	}
+	displayError := b.props.getBool(DisplayError, false)
+	if !displayError {
+		return false
+	}
+	b.Error = err.Error()
+	// On Windows, it sometimes errors when the battery is full.
+	// This hack ensures we display a fully charged battery, even if
+	// that state can be incorrect. It's better to "ignore" the error
+	// than to not display the segment at all as that will confuse users.
+	b.Battery = &battery.Battery{
+		Current: 100,
+		Full:    100,
+		State:   battery.Full,
 	}
 	return true
 }

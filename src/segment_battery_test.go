@@ -146,8 +146,22 @@ func TestBatteryErrorHidden(t *testing.T) {
 		},
 		env: env,
 	}
-	assert.True(t, b.enabled())
-	assert.Equal(t, "100", b.string())
+	assert.False(t, b.enabled())
+}
+
+func TestBatteryNoBattery(t *testing.T) {
+	env := &MockedEnvironment{}
+	err := &noBatteryError{}
+	env.On("getBatteryInfo", nil).Return(&battery.Battery{}, err)
+	b := &batt{
+		props: &properties{
+			values: map[Property]interface{}{
+				DisplayError: true,
+			},
+		},
+		env: env,
+	}
+	assert.False(t, b.enabled())
 }
 
 func TestBatteryDischargingAndDisplayChargingDisabled(t *testing.T) {

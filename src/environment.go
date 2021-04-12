@@ -70,6 +70,7 @@ type environmentInfo interface {
 	doGet(url string) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
+	stackCount() int
 }
 
 type commandCache struct {
@@ -333,6 +334,13 @@ func (env *environment) hasParentFilePath(path string) (*fileInfo, error) {
 		}
 		return nil, errors.New("no match at root level")
 	}
+}
+
+func (env *environment) stackCount() int {
+	if *env.args.StackCount < 0 {
+		return 0
+	}
+	return *env.args.StackCount
 }
 
 func cleanHostName(hostName string) string {

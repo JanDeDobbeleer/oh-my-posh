@@ -65,6 +65,7 @@ function global:Initialize-ModuleSupport {
         }
     }
 
+    $stackCount = (Get-Location -Stack).Count
     $executionTime = -1
     $history = Get-History -ErrorAction Ignore -Count 1
     if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime -and $global:omp_lastHistoryId -ne $history.Id) {
@@ -76,7 +77,7 @@ function global:Initialize-ModuleSupport {
     $config = $global:PoshSettings.Theme
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
     $cleanPSWD = $PWD.ToString().TrimEnd("\")
-    $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --config="$config" 2>&1)
+    $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --stack-count="$stackCount" --config="$config" 2>&1)
     # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n
     $standardOut -join "`n"
     $global:LASTEXITCODE = $realLASTEXITCODE

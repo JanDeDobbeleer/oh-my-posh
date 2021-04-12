@@ -1,6 +1,7 @@
 set -g posh_theme ::CONFIG::
 
 function fish_prompt
+    set -l stack_count (count $dirstack)
     set -l omp_duration "$CMD_DURATION$cmd_duration"
     # check if variable set, < 3.2 case
     if set -q omp_lastcommand; and test "$omp_lastcommand" = ""
@@ -14,7 +15,7 @@ function fish_prompt
       set -gx omp_last_status_generation $status_generation
     end
 
-    ::OMP:: --config $posh_theme --error $status --execution-time $omp_duration
+    ::OMP:: --config $posh_theme --error $status --execution-time $omp_duration --stack-count $stack_count
 end
 
 function postexec_omp --on-event fish_postexec

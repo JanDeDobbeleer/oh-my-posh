@@ -40,6 +40,7 @@ style. defaults to `true`
 - enable_hyperlink: `boolean` - displays an hyperlink for the path - defaults to `false`
 - mixed_threshold: `number` - the maximum length of a path segment that will be displayed when using `Mixed` -
   defaults to `4`
+- stack_count_enabled: `boolean` - displays the stack count when using pushd/popd - defaults to `false`
 
 ## Style
 

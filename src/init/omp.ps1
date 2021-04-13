@@ -65,7 +65,12 @@ function global:Initialize-ModuleSupport {
         }
     }
 
-    $stackCount = (Get-Location -Stack).Count
+    $stackCount = 0
+    try {
+        $stackCount = ($global:omp_global_sessionstate).path.locationstack('').count
+    }
+    catch {}
+
     $executionTime = -1
     $history = Get-History -ErrorAction Ignore -Count 1
     if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime -and $global:omp_lastHistoryId -ne $history.Id) {

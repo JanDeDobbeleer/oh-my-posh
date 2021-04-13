@@ -56,6 +56,11 @@ function Set-PoshPrompt {
         $config = "$PSScriptRoot/themes/jandedobbeleer.omp.json"
     }
 
+    # Workaround for get-location/push-location/pop-location from within a module
+    # https://github.com/PowerShell/PowerShell/issues/12868
+    # https://github.com/JanDeDobbeleer/oh-my-posh2/issues/113
+    $global:omp_global_sessionstate = $PSCmdlet.SessionState
+
     $poshCommand = Get-PoshCommand
     Invoke-Expression (& $poshCommand --init --shell=pwsh --config="$config")
 }

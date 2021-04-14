@@ -65,9 +65,12 @@ function global:Initialize-ModuleSupport {
         }
     }
 
-    $stackCount = 0
+    # read stack count from current stack(if invoked from profile=right value,otherwise use the global variable set in Set-PoshPrompt(stack scoped to module))
+    $stackCount = (Get-Location -stack).Count
     try {
-        $stackCount = ($global:omp_global_sessionstate).path.locationstack('').count
+        if($global:omp_global_sessionstate -ne $null){
+            $stackCount = ($global:omp_global_sessionstate).path.locationstack('').count
+        }
     }
     catch {}
 

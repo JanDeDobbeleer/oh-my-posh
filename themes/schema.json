@@ -357,6 +357,9 @@
                     "title": "Display while charging",
                     "description": "displays the battery status while charging (Charging or Full)",
                     "default": true
+                  },
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }

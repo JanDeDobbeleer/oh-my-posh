@@ -64,7 +64,7 @@ type environmentInfo interface {
 	lastErrorCode() int
 	executionTime() float64
 	getArgs() *args
-	getBatteryInfo() (*battery.Battery, error)
+	getBatteryInfo() ([]*battery.Battery, error)
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
 	doGet(url string) ([]byte, error)
@@ -246,30 +246,8 @@ func (env *environment) getArgs() *args {
 	return env.args
 }
 
-func (env *environment) getBatteryInfo() (*battery.Battery, error) {
-	getMostLogicalState := func(currentState battery.State, state battery.State) battery.State {
-		if currentState == battery.Unknown {
-			return state
-		}
-		if currentState == battery.Empty|battery.Full && state == battery.Charging|battery.Discharging {
-			return state
-		}
-		return battery.Charging
-	}
-	batteries, err := battery.GetAll()
-	if err != nil {
-		return nil, err
-	}
-	if batteries == nil {
-		return nil, &noBatteryError{}
-	}
-	batt := &battery.Battery{}
-	for _, bt := range batteries {
-		batt.Current += bt.Current
-		batt.Full += bt.Full
-		batt.State = getMostLogicalState(batt.State, bt.State)
-	}
-	return batt, nil
+func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
+	return battery.GetAll()
 }
 
 func (env *environment) getShellName() string {

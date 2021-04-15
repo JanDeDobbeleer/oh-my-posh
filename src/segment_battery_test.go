@@ -19,7 +19,10 @@ func setupBatteryTests(state battery.State, batteryLevel float64, props *propert
 		Full:    100,
 		Current: batteryLevel,
 	}
-	env.On("getBatteryInfo", nil).Return(bt, nil)
+	batteries := []*battery.Battery{
+		bt,
+	}
+	env.On("getBatteryInfo", nil).Return(batteries, nil)
 	b := &batt{
 		props: props,
 		env:   env,
@@ -121,7 +124,8 @@ func TestBatteryForegroundColorInvalid(t *testing.T) {
 func TestBatteryError(t *testing.T) {
 	env := &MockedEnvironment{}
 	err := errors.New("oh snap")
-	env.On("getBatteryInfo", nil).Return(&battery.Battery{}, err)
+	batteries := []*battery.Battery{}
+	env.On("getBatteryInfo", nil).Return(batteries, err)
 	b := &batt{
 		props: &properties{
 			values: map[Property]interface{}{
@@ -137,7 +141,8 @@ func TestBatteryError(t *testing.T) {
 func TestBatteryErrorHidden(t *testing.T) {
 	env := &MockedEnvironment{}
 	err := errors.New("oh snap")
-	env.On("getBatteryInfo", nil).Return(&battery.Battery{}, err)
+	batteries := []*battery.Battery{}
+	env.On("getBatteryInfo", nil).Return(batteries, err)
 	b := &batt{
 		props: &properties{
 			values: map[Property]interface{}{
@@ -152,7 +157,8 @@ func TestBatteryErrorHidden(t *testing.T) {
 func TestBatteryNoBattery(t *testing.T) {
 	env := &MockedEnvironment{}
 	err := &noBatteryError{}
-	env.On("getBatteryInfo", nil).Return(&battery.Battery{}, err)
+	batteries := []*battery.Battery{}
+	env.On("getBatteryInfo", nil).Return(batteries, err)
 	b := &batt{
 		props: &properties{
 			values: map[Property]interface{}{

@@ -33,10 +33,16 @@ const (
 )
 
 func (b *batt) enabled() bool {
-	var err error
-	b.Battery, err = b.env.getBatteryInfo()
+	batteries, err := b.env.getBatteryInfo()
 	if !b.enabledWhileError(err) {
 		return false
+	}
+
+	b.Battery = &battery.Battery{}
+	for _, bt := range batteries {
+		b.Battery.Current += bt.Current
+		b.Battery.Full += bt.Full
+		b.Battery.State = b.mapMostLogicalState(b.Battery.State, bt.State)
 	}
 
 	display := b.props.getBool(DisplayCharging, true)
@@ -91,6 +97,16 @@ func (b *batt) enabledWhileError(err error) bool {
 		State:   battery.Full,
 	}
 	return true
+}
+
+func (b *batt) mapMostLogicalState(currentState battery.State, state battery.State) battery.State {
+	if currentState == battery.Unknown {
+		return state
+	}
+	if currentState == battery.Empty|battery.Full && state == battery.Charging|battery.Discharging {
+		return state
+	}
+	return battery.Charging
 }
 
 func (b *batt) string() string {

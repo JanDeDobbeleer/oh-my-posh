@@ -99,14 +99,23 @@ func (b *batt) enabledWhileError(err error) bool {
 	return true
 }
 
-func (b *batt) mapMostLogicalState(currentState battery.State, state battery.State) battery.State {
-	if currentState == battery.Unknown {
-		return state
+func (b *batt) mapMostLogicalState(currentState, newState battery.State) battery.State {
+	switch currentState {
+	case battery.Discharging:
+		return battery.Discharging
+	case battery.Empty:
+		return newState
+	case battery.Charging:
+		if newState == battery.Discharging {
+			return battery.Discharging
+		}
+		return battery.Charging
+	case battery.Unknown:
+		return newState
+	case battery.Full:
+		return newState
 	}
-	if currentState == battery.Empty|battery.Full && state == battery.Charging|battery.Discharging {
-		return state
-	}
-	return battery.Charging
+	return newState
 }
 
 func (b *batt) string() string {

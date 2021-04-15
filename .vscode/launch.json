@@ -7,7 +7,7 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
-      "args": ["--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"]
+      "args": ["--config=/Users/jan/.jandedobbeleer.omp.json"]
     },
     {
       "name": "Launch tests",

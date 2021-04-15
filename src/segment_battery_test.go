@@ -9,199 +9,139 @@ import (
 )
 
 const (
-	expectedColor = "#768954"
+	chargingColor    = "#123456"
+	dischargingColor = "#765432"
+	chargedColor     = "#248644"
 )
 
-func setupBatteryTests(state battery.State, batteryLevel float64, props *properties) *batt {
-	env := &MockedEnvironment{}
-	bt := &battery.Battery{
-		State:   state,
-		Full:    100,
-		Current: batteryLevel,
-	}
-	batteries := []*battery.Battery{
-		bt,
-	}
-	env.On("getBatteryInfo", nil).Return(batteries, nil)
-	b := &batt{
-		props: props,
-		env:   env,
-	}
-	b.enabled()
-	return b
-}
-
-func TestBatteryCharging(t *testing.T) {
-	props := &properties{
-		values: map[Property]interface{}{
-			ChargingIcon: "charging ",
+func TestBatterySegmentSingle(t *testing.T) {
+	cases := []struct {
+		Case            string
+		BatteryState    battery.State
+		BatteryLevel    float64
+		ExpectedString  string
+		ExpectedEnabled bool
+		ExpectedColor   string
+		ColorBackground bool
+		DisplayError    bool
+		Error           error
+		DisableCharging bool
+	}{
+		{Case: "80% charging", BatteryState: battery.Charging, BatteryLevel: 80, ExpectedString: "charging 80", ExpectedEnabled: true},
+		{Case: "battery full", BatteryState: battery.Full, BatteryLevel: 100, ExpectedString: "charged 100", ExpectedEnabled: true},
+		{Case: "70% discharging", BatteryState: battery.Discharging, BatteryLevel: 70, ExpectedString: "going down 70", ExpectedEnabled: true},
+		{
+			Case:            "discharging background color",
+			BatteryState:    battery.Discharging,
+			BatteryLevel:    70,
+			ExpectedString:  "going down 70",
+			ExpectedEnabled: true,
+			ColorBackground: true,
+			ExpectedColor:   dischargingColor,
+		},
+		{
+			Case:            "charging background color",
+			BatteryState:    battery.Charging,
+			BatteryLevel:    70,
+			ExpectedString:  "charging 70",
+			ExpectedEnabled: true,
+			ColorBackground: true,
+			ExpectedColor:   chargingColor,
+		},
+		{
+			Case:            "charged background color",
+			BatteryState:    battery.Full,
+			BatteryLevel:    70,
+			ExpectedString:  "charged 70",
+			ExpectedEnabled: true,
+			ColorBackground: true,
+			ExpectedColor:   chargedColor,
+		},
+		{
+			Case:            "discharging foreground color",
+			BatteryState:    battery.Discharging,
+			BatteryLevel:    70,
+			ExpectedString:  "going down 70",
+			ExpectedEnabled: true,
+			ExpectedColor:   dischargingColor,
+		},
+		{
+			Case:            "charging foreground color",
+			BatteryState:    battery.Charging,
+			BatteryLevel:    70,
+			ExpectedString:  "charging 70",
+			ExpectedEnabled: true,
+			ExpectedColor:   chargingColor,
+		},
+		{
+			Case:            "charged foreground color",
+			BatteryState:    battery.Full,
+			BatteryLevel:    70,
+			ExpectedString:  "charged 70",
+			ExpectedEnabled: true,
+			ExpectedColor:   chargedColor,
+		},
+		{Case: "battery error", DisplayError: true, Error: errors.New("oh snap"), ExpectedString: "oh snap", ExpectedEnabled: true},
+		{Case: "battery error disabled", Error: errors.New("oh snap")},
+		{Case: "no batteries", DisplayError: true, Error: &noBatteryError{}},
+		{Case: "display charging disabled: charging", BatteryState: battery.Charging, DisableCharging: true},
+		{Case: "display charging disabled: charged", BatteryState: battery.Full, DisableCharging: true},
+		{
+			Case:            "display charging disabled: discharging",
+			BatteryState:    battery.Discharging,
+			BatteryLevel:    70,
+			ExpectedString:  "going down 70",
+			ExpectedEnabled: true,
+			DisableCharging: true,
 		},
 	}
-	b := setupBatteryTests(battery.Charging, 80, props)
-	assert.Equal(t, "charging 80", b.string())
-}
 
-func TestBatteryCharged(t *testing.T) {
-	props := &properties{
-		values: map[Property]interface{}{
-			ChargedIcon: "charged ",
-		},
-	}
-	b := setupBatteryTests(battery.Full, 100, props)
-	assert.Equal(t, "charged 100", b.string())
-}
-
-func TestBatteryDischarging(t *testing.T) {
-	props := &properties{
-		values: map[Property]interface{}{
-			DischargingIcon: "going down ",
-		},
-	}
-	b := setupBatteryTests(battery.Discharging, 70, props)
-	assert.Equal(t, "going down 70", b.string())
-}
-
-func TestBatteryBackgroundColor(t *testing.T) {
-	expected := expectedColor
-	props := &properties{
-		background: "#111111",
-		values: map[Property]interface{}{
-			DischargingIcon:  "going down ",
-			ColorBackground:  true,
-			DischargingColor: expected,
-		},
-	}
-	b := setupBatteryTests(battery.Discharging, 70, props)
-	b.string()
-	assert.Equal(t, expected, props.background)
-}
-
-func TestBatteryBackgroundColorInvalid(t *testing.T) {
-	expected := expectedColor
-	props := &properties{
-		background: expected,
-		values: map[Property]interface{}{
-			DischargingIcon:  "going down ",
-			ColorBackground:  true,
-			DischargingColor: "derp",
-		},
-	}
-	b := setupBatteryTests(battery.Discharging, 70, props)
-	b.string()
-	assert.Equal(t, expected, props.background)
-}
-
-func TestBatteryForegroundColor(t *testing.T) {
-	expected := expectedColor
-	props := &properties{
-		foreground: "#111111",
-		values: map[Property]interface{}{
-			DischargingIcon:  "going down ",
-			ColorBackground:  false,
-			DischargingColor: expected,
-		},
-	}
-	b := setupBatteryTests(battery.Discharging, 70, props)
-	b.string()
-	assert.Equal(t, expected, props.foreground)
-}
-
-func TestBatteryForegroundColorInvalid(t *testing.T) {
-	expected := expectedColor
-	props := &properties{
-		foreground: expected,
-		values: map[Property]interface{}{
-			DischargingIcon:  "going down ",
-			ColorBackground:  false,
-			DischargingColor: "derp",
-		},
-	}
-	b := setupBatteryTests(battery.Discharging, 70, props)
-	b.string()
-	assert.Equal(t, expected, props.foreground)
-}
-
-func TestBatteryError(t *testing.T) {
-	env := &MockedEnvironment{}
-	err := errors.New("oh snap")
-	batteries := []*battery.Battery{}
-	env.On("getBatteryInfo", nil).Return(batteries, err)
-	b := &batt{
-		props: &properties{
-			values: map[Property]interface{}{
-				DisplayError: true,
+	for _, tc := range cases {
+		env := &MockedEnvironment{}
+		batteries := []*battery.Battery{
+			{
+				Full:    100,
+				State:   tc.BatteryState,
+				Current: tc.BatteryLevel,
 			},
-		},
-		env: env,
-	}
-	assert.True(t, b.enabled())
-	assert.Equal(t, "oh snap", b.string())
-}
-
-func TestBatteryErrorHidden(t *testing.T) {
-	env := &MockedEnvironment{}
-	err := errors.New("oh snap")
-	batteries := []*battery.Battery{}
-	env.On("getBatteryInfo", nil).Return(batteries, err)
-	b := &batt{
-		props: &properties{
+		}
+		props := &properties{
+			background: "#111111",
+			foreground: "#ffffff",
 			values: map[Property]interface{}{
-				DisplayError: false,
+				ChargingIcon:     "charging ",
+				ChargedIcon:      "charged ",
+				DischargingIcon:  "going down ",
+				DischargingColor: dischargingColor,
+				ChargedColor:     chargedColor,
+				ChargingColor:    chargingColor,
+				ColorBackground:  tc.ColorBackground,
+				DisplayError:     tc.DisplayError,
 			},
-		},
-		env: env,
+		}
+		if tc.DisableCharging {
+			props.values[DisplayCharging] = false
+		}
+		env.On("getBatteryInfo", nil).Return(batteries, tc.Error)
+		b := &batt{
+			props: props,
+			env:   env,
+		}
+		enabled := b.enabled()
+		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
+		if !enabled {
+			continue
+		}
+		assert.Equal(t, tc.ExpectedString, b.string(), tc.Case)
+		if len(tc.ExpectedColor) == 0 {
+			continue
+		}
+		actualColor := b.props.foreground
+		if tc.ColorBackground {
+			actualColor = b.props.background
+		}
+		assert.Equal(t, tc.ExpectedColor, actualColor, tc.Case)
 	}
-	assert.False(t, b.enabled())
-}
-
-func TestBatteryNoBattery(t *testing.T) {
-	env := &MockedEnvironment{}
-	err := &noBatteryError{}
-	batteries := []*battery.Battery{}
-	env.On("getBatteryInfo", nil).Return(batteries, err)
-	b := &batt{
-		props: &properties{
-			values: map[Property]interface{}{
-				DisplayError: true,
-			},
-		},
-		env: env,
-	}
-	assert.False(t, b.enabled())
-}
-
-func TestBatteryDischargingAndDisplayChargingDisabled(t *testing.T) {
-	props := &properties{
-		values: map[Property]interface{}{
-			DischargingIcon: "going down ",
-			DisplayCharging: false,
-		},
-	}
-	b := setupBatteryTests(battery.Discharging, 70, props)
-	assert.Equal(t, true, b.enabled())
-	assert.Equal(t, "going down 70", b.string())
-}
-
-func TestBatteryChargingAndDisplayChargingDisabled(t *testing.T) {
-	props := &properties{
-		values: map[Property]interface{}{
-			ChargingIcon:    "charging ",
-			DisplayCharging: false,
-		},
-	}
-	b := setupBatteryTests(battery.Charging, 80, props)
-	assert.Equal(t, false, b.enabled())
-}
-
-func TestBatteryChargedAndDisplayChargingDisabled(t *testing.T) {
-	props := &properties{
-		values: map[Property]interface{}{
-			ChargedIcon:     "charged ",
-			DisplayCharging: false,
-		},
-	}
-	b := setupBatteryTests(battery.Full, 100, props)
-	assert.Equal(t, false, b.enabled())
 }
 
 func TestGetBatteryColors(t *testing.T) {
@@ -271,5 +211,27 @@ func TestGetBatteryColors(t *testing.T) {
 		segment.ForegroundTemplates = tc.Templates
 		color := segment.foreground()
 		assert.Equal(t, tc.ExpectedColor, color, tc.Case)
+	}
+}
+
+func TestMapBatteriesState(t *testing.T) {
+	cases := []struct {
+		Case          string
+		ExpectedState battery.State
+		CurrentState  battery.State
+		NewState      battery.State
+	}{
+		{Case: "charging > charged", ExpectedState: battery.Charging, CurrentState: battery.Full, NewState: battery.Charging},
+		{Case: "charging < discharging", ExpectedState: battery.Discharging, CurrentState: battery.Discharging, NewState: battery.Charging},
+		{Case: "charging == charging", ExpectedState: battery.Charging, CurrentState: battery.Charging, NewState: battery.Charging},
+		{Case: "discharging > charged", ExpectedState: battery.Discharging, CurrentState: battery.Full, NewState: battery.Discharging},
+		{Case: "discharging > unknown", ExpectedState: battery.Discharging, CurrentState: battery.Unknown, NewState: battery.Discharging},
+		{Case: "discharging > full", ExpectedState: battery.Discharging, CurrentState: battery.Full, NewState: battery.Discharging},
+		{Case: "discharging > charging 2", ExpectedState: battery.Discharging, CurrentState: battery.Charging, NewState: battery.Discharging},
+		{Case: "discharging > empty", ExpectedState: battery.Discharging, CurrentState: battery.Empty, NewState: battery.Discharging},
+	}
+	for _, tc := range cases {
+		batt := &batt{}
+		assert.Equal(t, tc.ExpectedState, batt.mapMostLogicalState(tc.CurrentState, tc.NewState), tc.Case)
 	}
 }

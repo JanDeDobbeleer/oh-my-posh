@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	expected = "expected"
+	expected      = "expected"
+	expectedColor = "#768954"
 )
 
 func TestGetString(t *testing.T) {

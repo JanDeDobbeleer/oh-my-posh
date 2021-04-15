@@ -107,9 +107,9 @@ func (env *MockedEnvironment) getArgs() *args {
 	return arguments.Get(0).(*args)
 }
 
-func (env *MockedEnvironment) getBatteryInfo() (*battery.Battery, error) {
+func (env *MockedEnvironment) getBatteryInfo() ([]*battery.Battery, error) {
 	args := env.Called(nil)
-	return args.Get(0).(*battery.Battery), args.Error(1)
+	return args.Get(0).([]*battery.Battery), args.Error(1)
 }
 
 func (env *MockedEnvironment) getShellName() string {

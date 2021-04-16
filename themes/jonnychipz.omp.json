@@ -152,9 +152,9 @@
           "foreground": "#000000",
           "background": "#ffffff",
           "properties": {
-            "text": "",
-            "postfix": "",
-            "prefix": ""
+              "text": "",
+              "postfix": "",
+              "prefix": ""
           }
         }
       ]
@@ -168,7 +168,7 @@
           "style": "plain",
           "foreground": "#1a1af5",
           "properties": {
-            "text": "\u276F"
+              "text": "\u276F"
           }
         }
       ]

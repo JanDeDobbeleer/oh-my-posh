@@ -36,3 +36,6 @@ returned node version
 - color_background: `boolean` - color the background or foreground for `version_mismatch_color` - defaults to `false`
 - version_mismatch_color: `string` [color][colors] - the color to use for `enable_version_mismatch` - defaults to
 segment's background or foreground color
+- display_package_manager: `boolean` - show whether the current project uses Yarn or NPM - defaults to `false`
+- yarn_icon: `string` - the icon/text to display when using Yarn - defaults to ` \uF61A`
+- npm_icon: `string` - the icon/text to display when using NPM - defaults to ` \uE71E`

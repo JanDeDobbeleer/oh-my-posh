@@ -845,6 +845,24 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "display_package_manager": {
+                    "type": "boolean",
+                    "title": "Display Package Manager",
+                    "description": "Show whether the current project uses Yarn or NPM",
+                    "default": false
+                  },
+                  "yarn_icon": {
+                    "type": "string",
+                    "title": "Yarn Icon",
+                    "description": "Icon/text to use for Yarn",
+                    "default": " \uF61A"
+                  },
+                  "npm_icon": {
+                    "type": "string",
+                    "title": "NPM Icon",
+                    "description": "Icon/text to use for NPM",
+                    "default": " \uE71E"
                   }
                 }
               }

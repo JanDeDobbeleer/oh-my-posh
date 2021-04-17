@@ -54,6 +54,7 @@ function global:Initialize-ModuleSupport {
     #store the last exit code for restore
     $realLASTEXITCODE = $global:LASTEXITCODE
     $errorCode = 0
+    Initialize-ModuleSupport
     Set-PoshContext
     if ($lastCommandSuccess -eq $false) {
         #native app exit code
@@ -80,7 +81,6 @@ function global:Initialize-ModuleSupport {
         $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
         $global:omp_lastHistoryId = $history.Id
     }
-    Initialize-ModuleSupport
     $omp = "::OMP::"
     $config = $global:PoshSettings.Theme
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")

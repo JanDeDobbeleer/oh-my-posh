@@ -438,6 +438,39 @@ func TestLanguageHyperlinkEnabledLessParamInTemplate(t *testing.T) {
 	assert.Equal(t, "[1.3.307](https://unicor.org/doc/1)", lang.string())
 }
 
+func TestLanguageEnabledInHome(t *testing.T) {
+	cases := []struct {
+		Case            string
+		DisplayMode     string
+		ExpectedEnabled bool
+	}{
+		{Case: "Always enabled", DisplayMode: DisplayModeAlways, ExpectedEnabled: true},
+		{Case: "Context disabled", DisplayMode: DisplayModeContext, ExpectedEnabled: false},
+	}
+	for _, tc := range cases {
+		props := map[Property]interface{}{
+			DisplayMode: tc.DisplayMode,
+		}
+		args := &languageArgs{
+			commands: []*cmd{
+				{
+					executable: "uni",
+					args:       []string{"--version"},
+					regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+				},
+			},
+			extensions:        []string{uni, corn},
+			enabledExtensions: []string{corn},
+			enabledCommands:   []string{"corn"},
+			version:           universion,
+			properties:        props,
+			inHome:            true,
+		}
+		lang := bootStrapLanguageTest(args)
+		assert.Equal(t, tc.ExpectedEnabled, lang.enabled(), tc.Case)
+	}
+}
+
 func TestLanguageHyperlinkEnabledMoreParamInTemplate(t *testing.T) {
 	props := map[Property]interface{}{
 		EnableHyperlink: true,

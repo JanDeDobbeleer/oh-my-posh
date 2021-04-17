@@ -13,7 +13,7 @@ const (
 )
 
 func (p *python) string() string {
-	if p.venvName == "" || !p.language.props.getBool(DisplayVirtualEnv, true) {
+	if p.venvName == "" {
 		return p.language.string()
 	}
 	version := p.language.string()
@@ -51,6 +51,9 @@ func (p *python) enabled() bool {
 }
 
 func (p *python) loadContext() {
+	if !p.language.props.getBool(DisplayVirtualEnv, true) {
+		return
+	}
 	venvVars := []string{
 		"VIRTUAL_ENV",
 		"CONDA_ENV_PATH",

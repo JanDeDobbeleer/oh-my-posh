@@ -49,6 +49,7 @@ func (n *node) loadContext() {
 	}
 	if n.language.env.hasFiles("yarn.lock") {
 		n.packageManagerIcon = n.language.props.getString(YarnIcon, " \uF61A")
+		return
 	}
 	if n.language.env.hasFiles("package-lock.json") || n.language.env.hasFiles("package.json") {
 		n.packageManagerIcon = n.language.props.getString(NPMIcon, " \uE71E")

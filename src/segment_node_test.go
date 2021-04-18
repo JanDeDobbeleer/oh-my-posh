@@ -49,6 +49,7 @@ func TestNodeInContext(t *testing.T) {
 		{Case: "npm", hasNPM: true, ExpectedString: "npm", PkgMgrEnabled: true},
 		{Case: "default", hasDefault: true, ExpectedString: "npm", PkgMgrEnabled: true},
 		{Case: "disabled", HasYarn: true, ExpectedString: "", PkgMgrEnabled: false},
+		{Case: "yarn and npm", HasYarn: true, hasNPM: true, ExpectedString: "yarn", PkgMgrEnabled: true},
 	}
 
 	for _, tc := range cases {

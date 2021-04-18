@@ -39,7 +39,7 @@
             "foreground": "#9e7eff",
             "properties": {
                 "prefix": "\u0028\uE235 ",
-                "postfix": "\u0029 " 
+                "postfix": "\u0029 "
               }
             },
             {
@@ -68,11 +68,9 @@
         ]
       },
       {
-        "type": "newline"
-      },
-      {
         "type": "prompt",
         "alignment": "left",
+        "newline": true,
         "segments": [
           {
           "type": "battery",
@@ -97,4 +95,4 @@
     ],
     "final_space": true
   }
-  
+

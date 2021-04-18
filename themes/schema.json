@@ -53,17 +53,6 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "newline" }
-            }
-          },
-          "then": {
-            "required": ["type"],
-            "title": "Newline, renders a line break"
-          }
-        },
-        {
-          "if": {
-            "properties": {
               "type": { "const": "prompt" }
             }
           },
@@ -89,7 +78,7 @@
           "type": "string",
           "title": "Block type",
           "description": "https://ohmyposh.dev/docs/configure#type",
-          "enum": ["prompt", "rprompt", "newline"],
+          "enum": ["prompt", "rprompt"],
           "default": "prompt"
         },
         "alignment": {
@@ -98,6 +87,12 @@
           "description": "https://ohmyposh.dev/docs/configure#alignment",
           "enum": ["left", "right"],
           "default": "left"
+        },
+        "newline": {
+          "type": "boolean",
+          "title": "Newline",
+          "description": "https://ohmyposh.dev/docs/configure#newline",
+          "default": false
         },
         "vertical_offset": {
           "type": "integer",

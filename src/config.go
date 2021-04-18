@@ -28,35 +28,10 @@ type Config struct {
 	Blocks               []*Block          `config:"blocks"`
 }
 
-// BlockType type of block
-type BlockType string
-
-// BlockAlignment aligment of a Block
-type BlockAlignment string
-
 const (
-	// Prompt writes one or more Segments
-	Prompt BlockType = "prompt"
-	// LineBreak creates a line break in the prompt
-	LineBreak BlockType = "newline"
-	// RPrompt a right aligned prompt in ZSH and Powershell
-	RPrompt BlockType = "rprompt"
-	// Left aligns left
-	Left BlockAlignment = "left"
-	// Right aligns right
-	Right BlockAlignment = "right"
 	// EnableHyperlink enable hyperlink
 	EnableHyperlink Property = "enable_hyperlink"
 )
-
-// Block defines a part of the prompt with optional segments
-type Block struct {
-	Type             BlockType      `config:"type"`
-	Alignment        BlockAlignment `config:"alignment"`
-	HorizontalOffset int            `config:"horizontal_offset"`
-	VerticalOffset   int            `config:"vertical_offset"`
-	Segments         []*Segment     `config:"segments"`
-}
 
 // GetConfig returns the default configuration including possible user overrides
 func GetConfig(env environmentInfo) *Config {

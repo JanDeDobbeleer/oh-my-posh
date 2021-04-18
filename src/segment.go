@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 // Segment represent a single segment and it's configuration
@@ -22,6 +23,16 @@ type Segment struct {
 	writer              SegmentWriter
 	stringValue         string
 	active              bool
+}
+
+// SegmentTiming holds the timing context for a segment
+type SegmentTiming struct {
+	name            string
+	nameLength      int
+	enabled         bool
+	stringValue     string
+	enabledDuration time.Duration
+	stringDuration  time.Duration
 }
 
 // SegmentWriter is the interface used to define what and if to write to the prompt

@@ -5,11 +5,9 @@
   "console_title_template": "{{if .Root}}(Admin){{end}} {{.Path}}",
   "blocks": [
     {
-      "type": "newline"
-    },
-    {
       "type": "prompt",
       "alignment": "left",
+      "newline": true,
       "segments": [
         {
           "type": "root",
@@ -69,11 +67,9 @@
       ]
     },
     {
-      "type": "newline"
-    },
-    {
-      "alignment": "left",
       "type": "prompt",
+      "alignment": "left",
+      "newline": true,
       "segments": [
         {
           "type": "exit",

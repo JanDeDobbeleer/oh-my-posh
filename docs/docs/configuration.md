@@ -105,7 +105,8 @@ the current working directory is `/usr/home/omp` and the shell is `zsh`.
 
 Let's take a closer look at what defines a block.
 
-- type: `prompt` | `rprompt` | `newline`
+- type: `prompt` | `rprompt`
+- newline: `boolean`
 - alignment: `left` | `right`
 - vertical_offset: `int`
 - horizontal_offset: `int`
@@ -117,9 +118,11 @@ Tells the engine what to do with the block. There are three options:
 
 - `prompt` renders one or more segments
 - `rprompt` renders one or more segments aligned to the right of the cursor. Only one `rprompt` block is permitted.
-Supported on [ZSH][rprompt] and Powershell.
-- `newline` inserts a new line to start the next block on a new line. `newline` blocks require no additional
-configuration other than the `type`.
+Supported on [ZSH][rprompt], Bash and Powershell.
+
+### Newline
+
+Start the block on a new line. Defaults to `false`.
 
 ### Alignment
 
@@ -403,11 +406,9 @@ has to be enabled at the segment level. Hyperlink generation is disabled by defa
       ]
     },
     {
-      "type": "newline"
-    },
-    {
       "type": "prompt",
       "alignment": "left",
+      "newline": true,
       "segments": [
         {
           "type": "session",

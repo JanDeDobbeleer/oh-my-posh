@@ -20,7 +20,7 @@
             		"postfix": "",
             		"prefix": ""
           		}
-        },	
+        },
         {
           	"type": "session",
           	"style": "diamond",
@@ -42,7 +42,7 @@
               		"prefix": " \uFD03 "
             		}
         },
-	
+
 	{
           	"type": "exit",
           	"style": "diamond",
@@ -61,12 +61,10 @@
       ]
       },
       {
-        "type": "newline"
-      }, 
-      {
         "type": "prompt",
         "alignment": "left",
-        "segments": [             
+        "newline": true,
+        "segments": [
       	{
           	"type": "os",
           	"style": "diamond",
@@ -94,7 +92,7 @@
             		"postfix": "<#000000> \ue0b1</>"
           		}
         },
-      
+
         {
           "type": "root",
           "style": "diamond",

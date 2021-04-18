@@ -18,11 +18,9 @@
         ]
       },
       {
-        "type": "newline"
-      },
-      {
         "type": "prompt",
         "alignment": "left",
+        "newline": true,
         "segments": [
           {
             "type": "text",
@@ -88,11 +86,9 @@
         ]
       },
       {
-        "type": "newline"
-      },
-      {
         "type": "prompt",
         "alignment": "left",
+        "newline": true,
         "segments": [
           {
             "type": "text",

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh3/main/themes/schema.json",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "os",
+          "style": "diamond",
+          "foreground": "#000000",
+          "background": "#ffffff",
+          "leading_diamond": "\uE0B6",
+          "trailing_diamond": "\uE0B4"
+        },
+        {
+          "type": "root",
+          "style": "powerline",
+          "foreground": "#000000",
+          "background": "#0000ff",
+          "powerline_symbol": "\uE0B4",
+          "properties": {
+            "style": "full"
+          }
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "foreground": "#ffffff",
+          "background": "#0000ff",
+          "powerline_symbol": "\uE0B4",
+          "properties": {
+            "style": "full",
+            "postfix": " "
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "foreground": "#000000",
+          "background": "#D4E157",
+          "powerline_symbol": "\uE0B4",
+          "properties": {
+            "style": "full",
+            "prefix": " "
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "python",
+          "style": "diamond",
+          "foreground": "#000000",
+          "background": "#D4E157",
+          "leading_diamond": "\uE0B6",
+          "properties": {
+            "postfix": " <#000000>\uE0B6</>"
+          }
+        },
+        {
+          "type": "go",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#7FD5EA",
+          "leading_diamond": "\uE0B6",
+          "display_version": true,
+          "properties": {
+            "postfix": " <#000000>\uE0B6</>"
+          }
+        },
+        {
+          "type": "time",
+          "style": "diamond",
+          "foreground": "#000000",
+          "background": "#ffffff",
+          "leading_diamond": "\uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "properties": {
+            "time_format": "15:04:05"
+          }
+        }
+      ]
+    },
+    {
+      "type": "newline"
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#D4E157",
+          "properties": {
+            "prefix": "\u276F",
+            "always_enabled": true,
+            "error_color": "#FF5252",
+            "display_exit_code": false
+          }
+        }
+      ]
+    }
+  ]
+}

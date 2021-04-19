@@ -5,8 +5,8 @@ function omp_preexec() {
 }
 
 function omp_precmd() {
-  omp_stack_count=${#dirstack[@]}
   omp_last_error=$?
+  omp_stack_count=${#dirstack[@]}
   omp_elapsed=-1
   if [ $omp_start_time ]; then
     omp_now=$(::OMP:: --millis)

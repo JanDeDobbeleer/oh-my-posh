@@ -173,26 +173,23 @@ func main() {
 		return
 	}
 
-	formats := &ansiFormats{}
-	formats.init(env.getShellName())
-	renderer := &AnsiRenderer{
-		formats: formats,
-	}
+	ansi := &ansiUtils{}
+	ansi.init(env.getShellName())
 	colorer := &AnsiColor{
-		formats:            formats,
+		ansi:               ansi,
 		terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
 	}
 	title := &consoleTitle{
-		env:     env,
-		config:  cfg,
-		formats: formats,
+		env:    env,
+		config: cfg,
+		ansi:   ansi,
 	}
 	engine := &engine{
 		config:       cfg,
 		env:          env,
-		color:        colorer,
-		renderer:     renderer,
+		colorWriter:  colorer,
 		consoleTitle: title,
+		ansi:         ansi,
 	}
 
 	if *args.Debug {
@@ -209,7 +206,7 @@ func main() {
 		author:        *args.Author,
 		cursorPadding: *args.CursorPadding,
 		rPromptOffset: *args.RPromptOffset,
-		formats:       formats,
+		ansi:          ansi,
 	}
 	imageCreator.init()
 	match := findNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, *args.Config)

@@ -35,14 +35,16 @@ type Block struct {
 	Newline          bool           `config:"newline"`
 
 	env                   environmentInfo
-	color                 *AnsiColor
+	writer                colorWriter
+	ansi                  *ansiUtils
 	activeSegment         *Segment
 	previousActiveSegment *Segment
 }
 
-func (b *Block) init(env environmentInfo, color *AnsiColor) {
+func (b *Block) init(env environmentInfo, writer colorWriter, ansi *ansiUtils) {
 	b.env = env
-	b.color = color
+	b.writer = writer
+	b.ansi = ansi
 }
 
 func (b *Block) enabled() bool {
@@ -71,6 +73,7 @@ func (b *Block) setStringValues() {
 }
 
 func (b *Block) renderSegments() string {
+	defer b.writer.reset()
 	for _, segment := range b.Segments {
 		if !segment.active {
 			continue
@@ -82,7 +85,7 @@ func (b *Block) renderSegments() string {
 	if b.previousActiveSegment != nil && b.previousActiveSegment.Style == Powerline {
 		b.writePowerLineSeparator(Transparent, b.previousActiveSegment.background(), true)
 	}
-	return b.color.string()
+	return b.writer.string()
 }
 
 func (b *Block) endPowerline() {
@@ -100,10 +103,10 @@ func (b *Block) writePowerLineSeparator(background, foreground string, end bool)
 		symbol = b.previousActiveSegment.PowerlineSymbol
 	}
 	if b.activeSegment.InvertPowerline {
-		b.color.write(foreground, background, symbol)
+		b.writer.write(foreground, background, symbol)
 		return
 	}
-	b.color.write(background, foreground, symbol)
+	b.writer.write(background, foreground, symbol)
 }
 
 func (b *Block) getPowerlineColor(foreground bool) string {
@@ -141,17 +144,17 @@ func (b *Block) renderPlainSegment(text string) {
 }
 
 func (b *Block) renderDiamondSegment(text string) {
-	b.color.write(Transparent, b.activeSegment.background(), b.activeSegment.LeadingDiamond)
+	b.writer.write(Transparent, b.activeSegment.background(), b.activeSegment.LeadingDiamond)
 	b.renderText(text)
-	b.color.write(Transparent, b.activeSegment.background(), b.activeSegment.TrailingDiamond)
+	b.writer.write(Transparent, b.activeSegment.background(), b.activeSegment.TrailingDiamond)
 }
 
 func (b *Block) renderText(text string) {
-	text = b.color.formats.generateHyperlink(text)
+	text = b.ansi.generateHyperlink(text)
 	defaultValue := " "
 	prefix := b.activeSegment.getValue(Prefix, defaultValue)
 	postfix := b.activeSegment.getValue(Postfix, defaultValue)
-	b.color.write(b.activeSegment.background(), b.activeSegment.foreground(), fmt.Sprintf("%s%s%s", prefix, text, postfix))
+	b.writer.write(b.activeSegment.background(), b.activeSegment.foreground(), fmt.Sprintf("%s%s%s", prefix, text, postfix))
 }
 
 func (b *Block) debug() (int, []*SegmentTiming) {
@@ -183,8 +186,8 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 			if b.activeSegment.Style == Powerline {
 				b.writePowerLineSeparator(Transparent, b.activeSegment.background(), true)
 			}
-			segmentTiming.stringValue = b.color.string()
-			b.color.builder.Reset()
+			segmentTiming.stringValue = b.writer.string()
+			b.writer.reset()
 		}
 		segmentTimings = append(segmentTimings, &segmentTiming)
 	}

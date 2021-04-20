@@ -43,10 +43,16 @@ func getColorFromName(colorName string, isBackground bool) (string, error) {
 	return "", errors.New("color name does not exist")
 }
 
+type colorWriter interface {
+	write(background, foreground, text string)
+	string() string
+	reset()
+}
+
 // AnsiColor writes colorized strings
 type AnsiColor struct {
 	builder            strings.Builder
-	formats            *ansiFormats
+	ansi               *ansiUtils
 	terminalBackground string
 }
 
@@ -75,24 +81,24 @@ func (a *AnsiColor) writeColoredText(background, foreground, text string) {
 	if foreground == Transparent && background != "" && a.terminalBackground != "" {
 		bgAnsiColor := a.getAnsiFromColorString(background, true)
 		fgAnsiColor := a.getAnsiFromColorString(a.terminalBackground, false)
-		coloredText := fmt.Sprintf(a.formats.colorFull, bgAnsiColor, fgAnsiColor, text)
+		coloredText := fmt.Sprintf(a.ansi.colorFull, bgAnsiColor, fgAnsiColor, text)
 		a.builder.WriteString(coloredText)
 		return
 	}
 	if foreground == Transparent && background != "" {
 		ansiColor := a.getAnsiFromColorString(background, false)
-		coloredText := fmt.Sprintf(a.formats.colorTransparent, ansiColor, text)
+		coloredText := fmt.Sprintf(a.ansi.colorTransparent, ansiColor, text)
 		a.builder.WriteString(coloredText)
 		return
 	} else if background == "" || background == Transparent {
 		ansiColor := a.getAnsiFromColorString(foreground, false)
-		coloredText := fmt.Sprintf(a.formats.colorSingle, ansiColor, text)
+		coloredText := fmt.Sprintf(a.ansi.colorSingle, ansiColor, text)
 		a.builder.WriteString(coloredText)
 		return
 	}
 	bgAnsiColor := a.getAnsiFromColorString(background, true)
 	fgAnsiColor := a.getAnsiFromColorString(foreground, false)
-	coloredText := fmt.Sprintf(a.formats.colorFull, bgAnsiColor, fgAnsiColor, text)
+	coloredText := fmt.Sprintf(a.ansi.colorFull, bgAnsiColor, fgAnsiColor, text)
 	a.builder.WriteString(coloredText)
 }
 
@@ -102,7 +108,7 @@ func (a *AnsiColor) writeAndRemoveText(background, foreground, text, textToRemov
 }
 
 func (a *AnsiColor) write(background, foreground, text string) {
-	text = a.formats.formatText(text)
+	text = a.ansi.formatText(text)
 	// first we match for any potentially valid colors enclosed in <>
 	match := findAllNamedRegexMatch(`<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`, text)
 	for i := range match {

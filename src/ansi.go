@@ -9,7 +9,7 @@ const (
 	ANSIRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 )
 
-type ansiFormats struct {
+type ansiUtils struct {
 	shell                 string
 	linechange            string
 	left                  string
@@ -32,7 +32,7 @@ type ansiFormats struct {
 	strikethrough         string
 }
 
-func (a *ansiFormats) init(shell string) {
+func (a *ansiUtils) init(shell string) {
 	a.shell = shell
 	switch shell {
 	case zsh:
@@ -98,7 +98,7 @@ func (a *ansiFormats) init(shell string) {
 	}
 }
 
-func (a *ansiFormats) lenWithoutANSI(text string) int {
+func (a *ansiUtils) lenWithoutANSI(text string) int {
 	if len(text) == 0 {
 		return 0
 	}
@@ -119,7 +119,7 @@ func (a *ansiFormats) lenWithoutANSI(text string) int {
 	return len(runeText)
 }
 
-func (a *ansiFormats) generateHyperlink(text string) string {
+func (a *ansiUtils) generateHyperlink(text string) string {
 	// hyperlink matching
 	results := findNamedRegexMatch("(?P<all>(?:\\[(?P<name>.+)\\])(?:\\((?P<url>.*)\\)))", text)
 	if len(results) != 3 {
@@ -131,7 +131,7 @@ func (a *ansiFormats) generateHyperlink(text string) string {
 	return strings.Replace(text, results["all"], hyperlink, 1)
 }
 
-func (a *ansiFormats) formatText(text string) string {
+func (a *ansiUtils) formatText(text string) string {
 	results := findAllNamedRegexMatch("(?P<context><(?P<format>[buis])>(?P<text>[^<]+)</[buis]>)", text)
 	for _, result := range results {
 		var formatted string
@@ -148,4 +148,26 @@ func (a *ansiFormats) formatText(text string) string {
 		text = strings.Replace(text, result["context"], formatted, 1)
 	}
 	return text
+}
+
+func (a *ansiUtils) carriageForward() string {
+	return fmt.Sprintf(a.left, 1000)
+}
+
+func (a *ansiUtils) getCursorForRightWrite(text string, offset int) string {
+	strippedLen := a.lenWithoutANSI(text) + -offset
+	return fmt.Sprintf(a.right, strippedLen)
+}
+
+func (a *ansiUtils) changeLine(numberOfLines int) string {
+	position := "B"
+	if numberOfLines < 0 {
+		position = "F"
+		numberOfLines = -numberOfLines
+	}
+	return fmt.Sprintf(a.linechange, numberOfLines, position)
+}
+
+func (a *ansiUtils) consolePwd(pwd string) string {
+	return fmt.Sprintf(a.osc99, pwd)
 }

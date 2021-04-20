@@ -62,12 +62,12 @@ func TestGetConsoleTitle(t *testing.T) {
 		env.On("getenv", "USERDOMAIN").Return("MyCompany")
 		env.On("getCurrentUser", nil).Return("MyUser")
 		env.On("getHostName", nil).Return("MyHost", nil)
-		formats := &ansiFormats{}
-		formats.init(tc.ShellName)
+		ansi := &ansiUtils{}
+		ansi.init(tc.ShellName)
 		ct := &consoleTitle{
-			env:     env,
-			config:  config,
-			formats: formats,
+			env:    env,
+			config: config,
+			ansi:   ansi,
 		}
 		got := ct.getConsoleTitle()
 		assert.Equal(t, tc.Expected, got)
@@ -117,12 +117,12 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		env.On("getenv", "USERDOMAIN").Return("MyCompany")
 		env.On("getCurrentUser", nil).Return("MyUser")
 		env.On("getHostName", nil).Return("", fmt.Errorf("I have a bad feeling about this"))
-		formats := &ansiFormats{}
-		formats.init(tc.ShellName)
+		ansi := &ansiUtils{}
+		ansi.init(tc.ShellName)
 		ct := &consoleTitle{
-			env:     env,
-			config:  config,
-			formats: formats,
+			env:    env,
+			config: config,
+			ansi:   ansi,
 		}
 		got := ct.getConsoleTitle()
 		assert.Equal(t, tc.Expected, got)

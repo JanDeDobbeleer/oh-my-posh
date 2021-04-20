@@ -34,7 +34,13 @@ const (
 
 func (b *batt) enabled() bool {
 	batteries, err := b.env.getBatteryInfo()
+
 	if !b.enabledWhileError(err) {
+		return false
+	}
+
+	// case on computer without batteries(no error, empty array)
+	if err == nil && len(batteries) == 0 {
 		return false
 	}
 

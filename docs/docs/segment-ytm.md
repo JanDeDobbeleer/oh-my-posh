@@ -38,4 +38,4 @@ Remote Control password.
 - paused_icon: `string` - text/icon to show when paused - defaults to `\uF8E3 `
 - stopped_icon: `string` - text/icon to show when paused - defaults to `\uF04D `
 - track_separator: `string` - text/icon to put between the artist and song name - defaults to ` - `
-- api_url: `string` - the YTMDA Remote Control API URL- defaults to `http://localhost:9863`
+- api_url: `string` - the YTMDA Remote Control API URL- defaults to `http://127.0.0.1:9863`

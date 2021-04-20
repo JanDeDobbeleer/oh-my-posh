@@ -17,8 +17,7 @@ const (
 func TestBatterySegmentSingle(t *testing.T) {
 	cases := []struct {
 		Case            string
-		BatteryState    battery.State
-		BatteryLevel    float64
+		Batteries       []*battery.Battery
 		ExpectedString  string
 		ExpectedEnabled bool
 		ExpectedColor   string
@@ -27,13 +26,12 @@ func TestBatterySegmentSingle(t *testing.T) {
 		Error           error
 		DisableCharging bool
 	}{
-		{Case: "80% charging", BatteryState: battery.Charging, BatteryLevel: 80, ExpectedString: "charging 80", ExpectedEnabled: true},
-		{Case: "battery full", BatteryState: battery.Full, BatteryLevel: 100, ExpectedString: "charged 100", ExpectedEnabled: true},
-		{Case: "70% discharging", BatteryState: battery.Discharging, BatteryLevel: 70, ExpectedString: "going down 70", ExpectedEnabled: true},
+		{Case: "80% charging", Batteries: []*battery.Battery{{Full: 100, State: battery.Charging, Current: 80}}, ExpectedString: "charging 80", ExpectedEnabled: true},
+		{Case: "battery full", Batteries: []*battery.Battery{{Full: 100, State: battery.Full, Current: 100}}, ExpectedString: "charged 100", ExpectedEnabled: true},
+		{Case: "70% discharging", Batteries: []*battery.Battery{{Full: 100, State: battery.Discharging, Current: 70}}, ExpectedString: "going down 70", ExpectedEnabled: true},
 		{
 			Case:            "discharging background color",
-			BatteryState:    battery.Discharging,
-			BatteryLevel:    70,
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Discharging, Current: 70}},
 			ExpectedString:  "going down 70",
 			ExpectedEnabled: true,
 			ColorBackground: true,
@@ -41,8 +39,7 @@ func TestBatterySegmentSingle(t *testing.T) {
 		},
 		{
 			Case:            "charging background color",
-			BatteryState:    battery.Charging,
-			BatteryLevel:    70,
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Charging, Current: 70}},
 			ExpectedString:  "charging 70",
 			ExpectedEnabled: true,
 			ColorBackground: true,
@@ -50,8 +47,7 @@ func TestBatterySegmentSingle(t *testing.T) {
 		},
 		{
 			Case:            "charged background color",
-			BatteryState:    battery.Full,
-			BatteryLevel:    70,
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Full, Current: 70}},
 			ExpectedString:  "charged 70",
 			ExpectedEnabled: true,
 			ColorBackground: true,
@@ -59,24 +55,21 @@ func TestBatterySegmentSingle(t *testing.T) {
 		},
 		{
 			Case:            "discharging foreground color",
-			BatteryState:    battery.Discharging,
-			BatteryLevel:    70,
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Discharging, Current: 70}},
 			ExpectedString:  "going down 70",
 			ExpectedEnabled: true,
 			ExpectedColor:   dischargingColor,
 		},
 		{
 			Case:            "charging foreground color",
-			BatteryState:    battery.Charging,
-			BatteryLevel:    70,
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Charging, Current: 70}},
 			ExpectedString:  "charging 70",
 			ExpectedEnabled: true,
 			ExpectedColor:   chargingColor,
 		},
 		{
 			Case:            "charged foreground color",
-			BatteryState:    battery.Full,
-			BatteryLevel:    70,
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Full, Current: 70}},
 			ExpectedString:  "charged 70",
 			ExpectedEnabled: true,
 			ExpectedColor:   chargedColor,
@@ -84,12 +77,12 @@ func TestBatterySegmentSingle(t *testing.T) {
 		{Case: "battery error", DisplayError: true, Error: errors.New("oh snap"), ExpectedString: "oh snap", ExpectedEnabled: true},
 		{Case: "battery error disabled", Error: errors.New("oh snap")},
 		{Case: "no batteries", DisplayError: true, Error: &noBatteryError{}},
-		{Case: "display charging disabled: charging", BatteryState: battery.Charging, DisableCharging: true},
-		{Case: "display charging disabled: charged", BatteryState: battery.Full, DisableCharging: true},
+		{Case: "no batteries without error"},
+		{Case: "display charging disabled: charging", Batteries: []*battery.Battery{{Full: 100, State: battery.Charging}}, DisableCharging: true},
+		{Case: "display charging disabled: charged", Batteries: []*battery.Battery{{Full: 100, State: battery.Full}}, DisableCharging: true},
 		{
 			Case:            "display charging disabled: discharging",
-			BatteryState:    battery.Discharging,
-			BatteryLevel:    70,
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Discharging, Current: 70}},
 			ExpectedString:  "going down 70",
 			ExpectedEnabled: true,
 			DisableCharging: true,
@@ -98,13 +91,6 @@ func TestBatterySegmentSingle(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
-		batteries := []*battery.Battery{
-			{
-				Full:    100,
-				State:   tc.BatteryState,
-				Current: tc.BatteryLevel,
-			},
-		}
 		props := &properties{
 			background: "#111111",
 			foreground: "#ffffff",
@@ -122,7 +108,7 @@ func TestBatterySegmentSingle(t *testing.T) {
 		if tc.DisableCharging {
 			props.values[DisplayCharging] = false
 		}
-		env.On("getBatteryInfo", nil).Return(batteries, tc.Error)
+		env.On("getBatteryInfo", nil).Return(tc.Batteries, tc.Error)
 		b := &batt{
 			props: props,
 			env:   env,

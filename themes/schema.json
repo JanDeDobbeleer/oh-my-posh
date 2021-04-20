@@ -1425,7 +1425,7 @@
                     "type": "string",
                     "title": "API URL",
                     "description": "The YTMDA Remote Control API URL",
-                    "default": "http://localhost:9863"
+                    "default": "http://127.0.0.1:9863"
                   }
                 }
               }

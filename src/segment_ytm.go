@@ -84,7 +84,7 @@ type track struct {
 
 func (y *ytm) setStatus() error {
 	// https://github.com/ytmdesktop/ytmdesktop/wiki/Remote-Control-API
-	url := y.props.getString(APIURL, "http://localhost:9863")
+	url := y.props.getString(APIURL, "http://127.0.0.1:9863")
 	body, err := y.env.doGet(url + "/query")
 	if err != nil {
 		return err

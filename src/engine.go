@@ -9,13 +9,27 @@ import (
 type engine struct {
 	config       *Config
 	env          environmentInfo
-	color        *AnsiColor
-	renderer     *AnsiRenderer
+	colorWriter  colorWriter
+	ansi         *ansiUtils
 	consoleTitle *consoleTitle
-	// activeBlock           *Block
-	// activeSegment         *Segment
-	// previousActiveSegment *Segment
+
+	console strings.Builder
 	rprompt string
+}
+
+func (e *engine) write(text string) {
+	e.console.WriteString(text)
+	// Due to a bug in Powershell, the end of the line needs to be cleared.
+	// If this doesn't happen, the portion after the prompt gets colored in the background
+	// color of the line above the new input line. Clearing the line fixes this,
+	// but can hopefully one day be removed when this is resolved natively.
+	if e.ansi.shell == pwsh || e.ansi.shell == powershell5 {
+		e.console.WriteString(e.ansi.clearEOL)
+	}
+}
+
+func (e *engine) string() string {
+	return e.console.String()
 }
 
 func (e *engine) render() string {
@@ -23,11 +37,11 @@ func (e *engine) render() string {
 		e.renderBlock(block)
 	}
 	if e.config.ConsoleTitle {
-		e.renderer.write(e.consoleTitle.getConsoleTitle())
+		e.write(e.consoleTitle.getConsoleTitle())
 	}
-	e.renderer.creset()
+	e.write(e.ansi.creset)
 	if e.config.FinalSpace {
-		e.renderer.write(" ")
+		e.write(" ")
 	}
 
 	if !e.config.OSC99 {
@@ -37,38 +51,37 @@ func (e *engine) render() string {
 	if e.env.isWsl() {
 		cwd, _ = e.env.runCommand("wslpath", "-m", cwd)
 	}
-	e.renderer.osc99(cwd)
+	e.write(e.ansi.consolePwd(cwd))
 	return e.print()
 }
 
 func (e *engine) renderBlock(block *Block) {
-	block.init(e.env, e.color)
+	block.init(e.env, e.colorWriter, e.ansi)
 	block.setStringValues()
-	defer e.color.reset()
 	if !block.enabled() {
 		return
 	}
 	if block.Newline {
-		e.renderer.write("\n")
+		e.write("\n")
 	}
 	switch block.Type {
 	// This is deprecated but leave if to not break current configs
 	// It is encouraged to used "newline": true on block level
 	// rather than the standalone the linebreak block
 	case LineBreak:
-		e.renderer.write("\n")
+		e.write("\n")
 	case Prompt:
 		if block.VerticalOffset != 0 {
-			e.renderer.changeLine(block.VerticalOffset)
+			e.write(e.ansi.changeLine(block.VerticalOffset))
 		}
 		switch block.Alignment {
 		case Right:
-			e.renderer.carriageForward()
+			e.write(e.ansi.carriageForward())
 			blockText := block.renderSegments()
-			e.renderer.setCursorForRightWrite(blockText, block.HorizontalOffset)
-			e.renderer.write(blockText)
+			e.write(e.ansi.getCursorForRightWrite(blockText, block.HorizontalOffset))
+			e.write(blockText)
 		case Left:
-			e.renderer.write(block.renderSegments())
+			e.write(block.renderSegments())
 		}
 	case RPrompt:
 		e.rprompt = block.renderSegments()
@@ -79,7 +92,7 @@ func (e *engine) renderBlock(block *Block) {
 func (e *engine) debug() string {
 	var segmentTimings []*SegmentTiming
 	largestSegmentNameLength := 0
-	e.renderer.write("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
+	e.write("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
 
 	// console title timing
 	start := time.Now()
@@ -96,7 +109,7 @@ func (e *engine) debug() string {
 	segmentTimings = append(segmentTimings, segmentTiming)
 	// loop each segments of each blocks
 	for _, block := range e.config.Blocks {
-		block.init(e.env, e.color)
+		block.init(e.env, e.colorWriter, e.ansi)
 		longestSegmentName, timings := block.debug()
 		segmentTimings = append(segmentTimings, timings...)
 		if longestSegmentName > largestSegmentNameLength {
@@ -112,9 +125,9 @@ func (e *engine) debug() string {
 			duration += segment.stringDuration.Milliseconds()
 		}
 		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.enabled)
-		e.renderer.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
+		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
-	return e.renderer.string()
+	return e.string()
 }
 
 func (e *engine) print() string {
@@ -122,18 +135,18 @@ func (e *engine) print() string {
 	case zsh:
 		if *e.env.getArgs().Eval {
 			// escape double quotes contained in the prompt
-			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.renderer.string(), "\"", "\"\""))
+			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), "\"", "\"\""))
 			prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 			return prompt
 		}
 	case pwsh, powershell5, bash, shelly:
 		if e.rprompt != "" {
-			e.renderer.saveCursorPosition()
-			e.renderer.carriageForward()
-			e.renderer.setCursorForRightWrite(e.rprompt, 0)
-			e.renderer.write(e.rprompt)
-			e.renderer.restoreCursorPosition()
+			e.write(e.ansi.saveCursorPosition)
+			e.write(e.ansi.carriageForward())
+			e.write(e.ansi.getCursorForRightWrite(e.rprompt, 0))
+			e.write(e.rprompt)
+			e.write(e.ansi.restoreCursorPosition)
 		}
 	}
-	return e.renderer.string()
+	return e.string()
 }

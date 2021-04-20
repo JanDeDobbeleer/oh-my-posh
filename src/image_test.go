@@ -15,11 +15,11 @@ func runImageTest(content string) error {
 		return err
 	}
 	defer os.Remove(file.Name())
-	formats := &ansiFormats{}
-	formats.init(shelly)
+	ansi := &ansiUtils{}
+	ansi.init(shelly)
 	image := &ImageRenderer{
 		ansiString: content,
-		formats:    formats,
+		ansi:       ansi,
 	}
 	image.init()
 	err = image.SavePNG(poshImagePath)

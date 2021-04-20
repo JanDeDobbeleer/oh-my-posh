@@ -96,7 +96,7 @@ func NewRGBColor(ansiColor string) *RGB {
 type ImageRenderer struct {
 	ansiString string
 	author     string
-	formats    *ansiFormats
+	ansi       *ansiUtils
 
 	factor float64
 
@@ -189,7 +189,7 @@ func (ir *ImageRenderer) fontHeight() float64 {
 func (ir *ImageRenderer) calculateWidth() int {
 	longest := 0
 	for _, line := range strings.Split(ir.ansiString, "\n") {
-		length := ir.formats.lenWithoutANSI(line)
+		length := ir.ansi.lenWithoutANSI(line)
 		if length > longest {
 			longest = length
 		}

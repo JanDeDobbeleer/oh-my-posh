@@ -6,9 +6,9 @@ import (
 )
 
 type consoleTitle struct {
-	env     environmentInfo
-	config  *Config
-	formats *ansiFormats
+	env    environmentInfo
+	config *Config
+	ansi   *ansiUtils
 }
 
 // ConsoleTitleStyle defines how to show the title in the console window
@@ -37,7 +37,7 @@ func (t *consoleTitle) getConsoleTitle() string {
 	default:
 		title = base(t.getPwd(), t.env)
 	}
-	return fmt.Sprintf(t.formats.title, title)
+	return fmt.Sprintf(t.ansi.title, title)
 }
 
 func (t *consoleTitle) getTemplateText() string {

@@ -19,13 +19,6 @@ type engine struct {
 
 func (e *engine) write(text string) {
 	e.console.WriteString(text)
-	// Due to a bug in Powershell, the end of the line needs to be cleared.
-	// If this doesn't happen, the portion after the prompt gets colored in the background
-	// color of the line above the new input line. Clearing the line fixes this,
-	// but can hopefully one day be removed when this is resolved natively.
-	if e.ansi.shell == pwsh || e.ansi.shell == powershell5 {
-		e.console.WriteString(e.ansi.clearEOL)
-	}
 }
 
 func (e *engine) string() string {
@@ -85,6 +78,13 @@ func (e *engine) renderBlock(block *Block) {
 		}
 	case RPrompt:
 		e.rprompt = block.renderSegments()
+	}
+	// Due to a bug in Powershell, the end of the line needs to be cleared.
+	// If this doesn't happen, the portion after the prompt gets colored in the background
+	// color of the line above the new input line. Clearing the line fixes this,
+	// but can hopefully one day be removed when this is resolved natively.
+	if e.ansi.shell == pwsh || e.ansi.shell == powershell5 {
+		e.write(e.ansi.clearEOL)
 	}
 }
 

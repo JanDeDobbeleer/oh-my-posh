@@ -19,6 +19,11 @@ const (
 	DisplaySubscriptionID Property = "display_id"
 	// DisplaySubscriptionName hides or shows the subscription display name
 	DisplaySubscriptionName Property = "display_name"
+
+	updateConsentNeeded = "Do you want to continue?"
+	updateMessage       = "AZ CLI: Update needed!"
+	updateForeground    = "#ffffff"
+	updateBackground    = "#ff5349"
 )
 
 func (a *az) string() string {
@@ -66,6 +71,12 @@ func (a *az) getFromAzCli() (string, string, bool) {
 	output, _ := a.env.runCommand(cmd, "account", "show", "--query=[name,id]", "-o=tsv")
 	if output == "" {
 		return "", "", false
+	}
+
+	if strings.Contains(output, updateConsentNeeded) {
+		a.props.foreground = updateForeground
+		a.props.background = updateBackground
+		return updateMessage, "", true
 	}
 
 	splittedOutput := strings.Split(output, "\n")

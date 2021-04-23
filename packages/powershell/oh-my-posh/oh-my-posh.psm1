@@ -84,6 +84,12 @@ function Set-PoshPrompt {
 }
 
 function Get-PoshThemes {
+    param(
+        [Parameter(Mandatory = $false)]
+        [bool]
+        $Online
+    )
+
     $esc = [char]27
     $consoleWidth = $Host.UI.RawUI.WindowSize.Width
     $logo = @'
@@ -98,12 +104,35 @@ function Get-PoshThemes {
 '@
     Write-Host $logo
     $poshCommand = Get-PoshCommand
-    Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
-        Write-Host ("-" * $consoleWidth)
-        Write-Host "Theme: $esc[1m$($_.BaseName.Replace('.omp', ''))$esc[0m"
-        Write-Host ""
-        & $poshCommand -config $($_.FullName) -pwd $PWD
-        Write-Host ""
+
+    if ($Online) {
+        $themes = invoke-restmethod https://api.github.com/repos/JanDeDobbeleer/oh-my-posh/contents/themes
+        $themes |
+        where-object name -ne 'schema.json' |
+        ForEach-Object -Process {
+            $downloadPath = "$PSScriptRoot/themes/$($_.Name)"
+            $downloadUrl = "https://api.github.com/repos/JanDeDobbeleer/oh-my-posh/contents/themes/$($_.Name)"
+            $downloadedTheme = invoke-restmethod $downloadUrl
+            $content = $downloadedTheme | select-object -ExpandProperty content
+            $bytes = [Convert]::FromBase64String($content)
+            [IO.File]::WriteAllBytes($downloadPath, $bytes)
+            $config = $downloadPath
+
+            Write-Host ("-" * $consoleWidth)
+            Write-Host "Theme: $esc[1m$($_.Name.Replace('.omp.json', ''))$esc[0m"
+            Write-Host ""
+            & $poshCommand -config $($downloadPath) -pwd $PWD
+            Write-Host ""
+        }
+    }
+    else {
+        Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
+            Write-Host ("-" * $consoleWidth)
+            Write-Host "Theme: $esc[1m$($_.BaseName.Replace('.omp', ''))$esc[0m"
+            Write-Host ""
+            & $poshCommand -config $($_.FullName) -pwd $PWD
+            Write-Host ""
+        }
     }
     Write-Host ("-" * $consoleWidth)
     Write-Host ""

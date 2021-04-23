@@ -136,7 +136,7 @@ function ThemeCompletion {
 
     # try online first
     try {
-        $themes = invoke-restmethod https://api2.github.com/repos/JanDeDobbeleer/oh-my-posh/contents/themes
+        $themes = invoke-restmethod https://api.github.com/repos/JanDeDobbeleer/oh-my-posh/contents/themes
         $themes |
         where-object name -ne 'schema.json' |
         Select-Object -Property @{

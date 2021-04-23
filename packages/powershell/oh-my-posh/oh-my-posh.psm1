@@ -50,16 +50,30 @@ function Set-PoshPrompt {
     )
 
     $config = ""
-    if (Test-Path "$PSScriptRoot/themes/$Theme.omp.json") {
-        $config = "$PSScriptRoot/themes/$Theme.omp.json"
+
+    try {
+        $downloadedTheme = invoke-restmethod https://api.github.com/repos/JanDeDobbeleer/oh-my-posh/contents/themes/$Theme.omp.json
+        $content = $downloadedTheme | select-object -ExpandProperty content
+        $downloadPath = "$PSScriptRoot/themes/$Theme.omp.json"
+        $bytes = [Convert]::FromBase64String($content)
+        [IO.File]::WriteAllBytes($downloadPath, $bytes)
+        $config = $downloadPath
     }
-    elseif (Test-Path $Theme) {
-        $config = (Resolve-Path -Path $Theme).Path
-    }
-    else {
-        $config = "$PSScriptRoot/themes/jandedobbeleer.omp.json"
+    catch {
+        Write-Host 'theme '$Theme' not found on github, fallback to local folder'
     }
 
+    if ($config -eq "") {
+        if (Test-Path "$PSScriptRoot/themes/$Theme.omp.json") {
+            $config = "$PSScriptRoot/themes/$Theme.omp.json"
+        }
+        elseif (Test-Path $Theme) {
+            $config = (Resolve-Path -Path $Theme).Path
+        }
+        else {
+            $config = "$PSScriptRoot/themes/jandedobbeleer.omp.json"
+        }
+    }
     # Workaround for get-location/push-location/pop-location from within a module
     # https://github.com/PowerShell/PowerShell/issues/12868
     # https://github.com/JanDeDobbeleer/oh-my-posh2/issues/113
@@ -119,14 +133,31 @@ function ThemeCompletion {
         $commandAst,
         $fakeBoundParameter
     )
-    $themes = Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | Select-Object -Property @{
-        label='BaseName'
-        expression={$_.BaseName.Replace('.omp', '')}
+
+    # try online first
+    try {
+        $themes = invoke-restmethod https://api2.github.com/repos/JanDeDobbeleer/oh-my-posh/contents/themes
+        $themes |
+        where-object name -ne 'schema.json' |
+        Select-Object -Property @{
+            label      = 'BaseName'
+            expression = { $_.name.Replace('.omp.json', '') }
+        } |
+        Where-Object { $_.BaseName.ToLower().StartsWith($wordToComplete.ToLower()); } |
+        Select-Object -Unique -ExpandProperty BaseName |
+        ForEach-Object { New-CompletionResult -CompletionText $_ }
     }
-    $themes |
-    Where-Object { $_.BaseName.ToLower().StartsWith($wordToComplete.ToLower()); } |
-    Select-Object -Unique -ExpandProperty BaseName |
-    ForEach-Object { New-CompletionResult -CompletionText $_ }
+    catch {
+        #fallback
+        $themes = Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | Select-Object -Property @{
+            label      = 'BaseName'
+            expression = { $_.BaseName.Replace('.omp', '') }
+        }
+        $themes |
+        Where-Object { $_.BaseName.ToLower().StartsWith($wordToComplete.ToLower()); } |
+        Select-Object -Unique -ExpandProperty BaseName |
+        ForEach-Object { New-CompletionResult -CompletionText $_ }
+    }
 }
 
 Set-ExecutablePermissions

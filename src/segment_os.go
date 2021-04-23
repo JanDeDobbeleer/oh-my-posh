@@ -7,6 +7,7 @@ import (
 type osInfo struct {
 	props *properties
 	env   environmentInfo
+	OS    string
 }
 
 const (
@@ -76,6 +77,7 @@ func (n *osInfo) string() string {
 	case "linux":
 		wsl := n.env.getenv("WSL_DISTRO_NAME")
 		p := n.env.getPlatform()
+		n.OS = p
 		if len(wsl) == 0 {
 			return n.getDistroName(p, "")
 		}

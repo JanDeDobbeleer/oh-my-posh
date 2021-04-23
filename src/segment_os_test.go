@@ -78,5 +78,6 @@ func TestOSInfo(t *testing.T) {
 			props: props,
 		}
 		assert.Equal(t, tc.ExpectedString, osInfo.string(), tc.Case)
+		assert.Equal(t, tc.Platform, osInfo.OS, tc.Case)
 	}
 }

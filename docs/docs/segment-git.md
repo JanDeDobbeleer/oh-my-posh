@@ -36,9 +36,9 @@ Local changes can also shown by default using the following syntax for both the 
 
 - branch_icon: `string` - the icon to use in front of the git branch name - defaults to `\uE0A0 `
 - display_branch_status: `boolean` - display the branch status or not - defaults to `true`
-- branch_identical_icon: `string` - the icon to display when remote and local are identical - defaults to `\uF0C9`
-- branch_ahead_icon: `string` - the icon to display when the local branch is ahead of its remote - defaults to `\uF176`
-- branch_behind_icon: `string` - the icon to display when the local branch is behind its remote - defaults to `\uF175`
+- branch_identical_icon: `string` - the icon to display when remote and local are identical - defaults to `\u2261`
+- branch_ahead_icon: `string` - the icon to display when the local branch is ahead of its remote - defaults to `\u2191`
+- branch_behind_icon: `string` - the icon to display when the local branch is behind its remote - defaults to `\u2193`
 - branch_gone_icon: `string` - the icon to display when there's no remote branch - defaults to `\u2262`
 
 ### Status

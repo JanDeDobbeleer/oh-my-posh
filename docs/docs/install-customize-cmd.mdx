@@ -1,0 +1,85 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+<Tabs
+  defaultValue="powershell"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'powershell', },
+    { label: 'zsh', value: 'zsh', },
+    { label: 'bash', value: 'bash', },
+    { label: 'fish', value: 'fish', },
+    { label: 'nu', value: 'nu', },
+  ]
+}>
+<TabItem value="powershell">
+
+```powershell
+Export-PoshTheme -FilePath ~/.mytheme.omp.json -Format json
+```
+
+Once you're done editing, adjust your `$PROFILE` to use your newly created theme.
+
+```powershell
+Invoke-Expression (oh-my-posh --init --shell pwsh --config ~/mytheme.omp.json)
+```
+
+</TabItem>
+<TabItem value="zsh">
+
+```bash
+export_poshconfig "~/.mytheme.omp.json" json
+```
+
+Once you're done editing, adjust `~/.zshrc` to use your newly created theme.
+
+```bash
+eval "$(oh-my-posh --init --shell zsh --config ~/.mytheme.omp.json)"
+```
+
+When adjusted, reload your profile for the changes to take effect.
+
+```bash
+. ~/.zshrc
+```
+
+</TabItem>
+<TabItem value="bash">
+
+```bash
+export_poshconfig "~/.mytheme.omp.json" json
+```
+
+Once you're done editing, adjust `~/.bashrc` to use your newly created theme.
+
+```bash
+eval "$(oh-my-posh --init --shell bash --config ~/.mytheme.omp.json)"
+```
+
+When adjusted, reload your profile for the changes to take effect.
+
+```bash
+. ~/.bashrc
+```
+
+</TabItem>
+<TabItem value="fish">
+
+```bash
+export_poshconfig "~/.mytheme.omp.json" json
+```
+
+Once you're done editing, adjust `config.fish` to use your newly created theme.
+
+```bash
+oh-my-posh --init --shell fish --config ~/.mytheme.omp.json | source
+```
+
+Once adjusted, reload your config for the changes to take effect.
+
+```bash
+. ~/.config/fish/config.fish
+```
+
+</TabItem>
+</Tabs>

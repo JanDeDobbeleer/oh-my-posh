@@ -1,0 +1,105 @@
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+:::info
+If you have no idea which shell you're currently using, Oh my Posh has a utility switch that can you tell you (not relevant
+for the Powershell module).
+:::
+
+```bash
+oh-my-posh --print-shell
+```
+
+<Tabs
+  defaultValue="powershell"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'powershell', },
+    { label: 'zsh', value: 'zsh', },
+    { label: 'bash', value: 'bash', },
+    { label: 'fish', value: 'fish', },
+    { label: 'nu', value: 'nu', },
+  ]
+}>
+<TabItem value="powershell">
+
+Edit `$PROFILE` in your preferred PowerShell version and add the following line.
+
+```powershell
+Invoke-Expression (oh-my-posh --init --shell pwsh --config ~/mytheme.omp.json)
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```powershell
+. $profile
+```
+
+</TabItem>
+<TabItem value="zsh">
+
+Add the following to `~/.zshrc`:
+
+```bash
+eval "$(oh-my-posh --init --shell zsh --config ~/mytheme.omp.json)"
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+source ~/.zshrc
+```
+
+</TabItem>
+<TabItem value="bash">
+
+Add the following to `~/.bashrc` (or `~/.profile` on MacOS):
+
+```bash
+eval "$(oh-my-posh --init --shell bash --config ~/mytheme.omp.json)"
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+. ~/.bashrc
+```
+
+Or, when using `~/.profile`.
+
+```bash
+. ~/.profile
+```
+
+</TabItem>
+<TabItem value="fish">
+
+:::caution
+It's advised to be on the latest version of fish. Versions below 3.1.2 have issues displaying the prompt.
+:::
+
+Initialize Oh my Posh in `~/.config/fish/config.fish`:
+
+```bash
+oh-my-posh --init --shell fish --config ~/.poshthemes/jandedobbeleer.omp.json | source
+```
+
+Once added, reload your config for the changes to take effect.
+
+```bash
+. ~/.config/fish/config.fish
+```
+
+</TabItem>
+<TabItem value="nu">
+
+Set the prompt and restart nu shell:
+
+```bash
+config set prompt  "= `{{$(oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json | str collect)}}`"
+```
+
+Restart nu shell for the changes to take effect.
+
+</TabItem>
+</Tabs>

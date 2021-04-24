@@ -1,0 +1,65 @@
+---
+id: macos
+title: macOS
+sidebar_label: 🍏 macOS
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import Shells from "./install-shells.mdx";
+import Customize from "./install-customize.md";
+import CustomizeCmd from "./install-customize-cmd.mdx";
+
+### Setup your terminal
+
+As the standard terminal has issues displaying the ANSI characters correctly, we advise using
+[iTerm2][iterm2] or any other modern day MacOS terminal that supports ANSI characters.
+
+### Installation
+
+A [Homebrew][brew] formula is available for easy installation.
+
+```bash
+brew tap jandedobbeleer/oh-my-posh
+brew install oh-my-posh
+```
+
+This installs two things:
+
+- `oh-my-posh` - Executable, added to `/usr/local/bin`
+- `themes` - The latest Oh my Posh themes
+
+If you want to use a standard theme, you can find them in `$(brew --prefix oh-my-posh)/themes`, referencing them as such
+will always keep them compatible with the binary when updating Oh my Posh.
+
+#### Preview the themes
+
+```bash
+for file in $(brew --prefix oh-my-posh)/themes/*.omp.json; do echo "$file\n"; oh-my-posh --config $file --shell universal; echo "\n"; done;
+```
+
+#### Update
+
+```bash
+brew upgrade oh-my-posh
+```
+
+### Replace your existing prompt
+
+<Shells />
+
+### Customize
+
+<Customize />
+
+<CustomizeCmd />
+
+🎉🎉🎉
+
+[scoop]: https://scoop.sh/
+[wt]: https://github.com/microsoft/terminal
+[iterm2]: https://www.iterm2.com/
+[powershell]: https://www.powershellgallery.com/packages/oh-my-posh
+[brew]: https://brew.sh
+[prompt]: /docs/installation#3-replace-your-existing-prompt
+[configuration]: /docs/configure

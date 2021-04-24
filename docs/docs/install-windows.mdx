@@ -1,0 +1,75 @@
+---
+id: windows
+title: Windows
+sidebar_label: 🪟 Windows
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import Shells from "./install-shells.mdx";
+import Customize from "./install-customize.md";
+import CustomizeCmd from "./install-customize-cmd.mdx";
+
+### Setup your terminal
+
+While Oh my Posh works on the standard terminal, we advise using the [Windows Terminal][wt].
+
+### Installation
+
+```powershell
+scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
+```
+
+This installs a couple of things:
+
+- `oh-my-posh.exe` - Windows executable, added to your `$PATH`
+- `oh-my-posh-wsl` - Linux executable, added to your `$PATH` for use in the WSL
+- `themes` - The latest Oh my Posh themes
+
+If you want to use a standard theme, you can find them in `~\scoop\apps\oh-my-posh\current\themes\`,
+referencing them as such
+will always keep them compatible with the binary when updating Oh my Posh.
+
+### Usage
+
+#### Preview the themes
+
+```powershell
+Get-ChildItem -Path "$(scoop prefix oh-my-posh)/themes/*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
+    $esc = [char]27
+    Write-Host ""
+    Write-Host "$esc[1m$($_.BaseName)$esc[0m"
+    Write-Host ""
+    & "C:\tools\oh-my-posh.exe" -config $($_.FullName) -pwd $PWD
+    Write-Host ""
+}
+```
+
+#### Update
+
+```powershell
+scoop update oh-my-posh
+```
+
+### Replace your existing prompt
+
+You can find the themes scoop installs inside the `"$(scoop prefix oh-my-posh)/themes/"` folder.
+To use `jandedobbeleer.omp.json` for example, you can refer to it using `"$(scoop prefix oh-my-posh)/themes/jandedobbeleer.omp.json"`
+when setting the prompt using the `--config` flag.
+
+The guides below use an imaginary theme called `mytheme.omp.json`, so make sure to replace that with your own, or one of the
+included themes.
+
+<Shells />
+
+### Customize
+
+<Customize />
+
+<CustomizeCmd />
+
+🎉🎉🎉
+
+[scoop]: https://scoop.sh/
+[wt]: https://github.com/microsoft/terminal
+[powershell]: https://www.powershellgallery.com/packages/oh-my-posh

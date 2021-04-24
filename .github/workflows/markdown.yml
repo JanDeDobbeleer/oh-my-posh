@@ -9,7 +9,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Lint files
-      uses: nosborn/github-action-markdown-cli@v1.1.1
+      uses: articulate/actions-markdownlint@v1
       with:
           files: .
-          config_file: "docs/.markdownlint.json"
+          config: .markdownlint.yaml

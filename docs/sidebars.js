@@ -3,7 +3,24 @@ module.exports = {
     {
       type: "category",
       label: "Getting Started",
-      items: ["introduction", "upgrading", "installation", "configure", "themes", "share", "fonts"],
+      items: [
+        "introduction",
+        "upgrading",
+        {
+          type: "category",
+          label: "🚀 Installation",
+          items: [
+            "pwsh",
+            "windows",
+            "macos",
+            "linux",
+          ],
+        },
+        "configure",
+        "themes",
+        "share",
+        "fonts"
+      ],
     },
     {
       type: "category",

@@ -1,0 +1,80 @@
+---
+id: pwsh
+title: PowerShell
+sidebar_label: 🐚 PowerShell
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import Customize from "./install-customize.md";
+
+:::info
+This guide is for usage inside PowerShell only. If you plan to use Oh my Posh inside other shells as well,
+have a look at the platform specific install instructions.
+:::
+
+## Installation
+
+```powershell
+Install-Module oh-my-posh -Scope CurrentUser
+```
+
+:::caution
+If you wish to install for **all users in a linux** environment, you will need to install from an **elevated PowerShell session**.
+You will also need to import the module one time from the elevated session in order to set the executable permissions correctly.
+
+```powershell
+sudo pwsh
+Install-Module oh-my-posh -Scope AllUsers
+Import-Module oh-my-posh
+```
+:::
+
+## List all themes
+
+To display every available theme in the current directory, use the following
+cmdlet.
+
+```powershell
+Get-PoshThemes
+```
+
+## Replace your existing prompt
+
+Edit `$PROFILE` in your preferred PowerShell version and add the following line. Autocompletion is available so it will loop
+through all available themes.
+
+```powershell
+Set-PoshPrompt -Theme jandedobbeleer
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```powershell
+. $profile
+```
+
+<Customize />
+
+```powershell
+Export-PoshTheme -FilePath ~/.mytheme.omp.json -Format json
+```
+
+Once you're done editing, adjust your `$PROFILE` to use your newly created theme.
+
+```powershell
+Set-PoshPrompt -Theme ~/.mytheme.omp.json
+```
+
+## Update
+
+```powershell
+Update-Module oh-my-posh
+```
+
+🎉🎉🎉
+
+[scoop]: https://scoop.sh/
+[wt]: https://github.com/microsoft/terminal
+[powershell]: https://www.powershellgallery.com/packages/oh-my-posh
+[configuration]: /docs/configure

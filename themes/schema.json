@@ -515,19 +515,19 @@
                     "type": "string",
                     "title": "Branch Identical Icon",
                     "description": "The icon to display when remote and local are identical",
-                    "default": "\uF0C9"
+                    "default": "\u2261"
                   },
                   "branch_ahead_icon": {
                     "type": "string",
                     "title": "Branch Ahead Icon",
                     "description": "The icon to display when the local branch is ahead of its remote",
-                    "default": "\uF176"
+                    "default": "\u2191"
                   },
                   "branch_behind_icon": {
                     "type": "string",
                     "title": "Branch Behind Icon",
                     "description": "The icon to display when the local branch is behind its remote",
-                    "default": "\uF175"
+                    "default": "\u2193"
                   },
                   "branch_gone_icon": {
                     "type": "string",
@@ -649,7 +649,7 @@
                     "type": "boolean",
                     "title": "Color Background",
                     "description": "Color the background or foreground",
-                    "default": false
+                    "default": true
                   },
                   "local_changes_color": {
                     "$ref": "#/definitions/color"

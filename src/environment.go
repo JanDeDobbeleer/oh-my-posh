@@ -21,6 +21,8 @@ import (
 const (
 	unknown         = "unknown"
 	windowsPlatform = "windows"
+	darwinPlatform  = "darwin"
+	linuxPlatform   = "linux"
 )
 
 type commandError struct {

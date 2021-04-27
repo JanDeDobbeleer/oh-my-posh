@@ -47,13 +47,6 @@
           }
         },
         {
-          "type": "poshgit",
-          "style": "powerline",
-          "powerline_symbol": "",
-          "foreground": "#ffffff",
-          "background": "#193549"
-        },
-        {
           "type": "node",
           "style": "powerline",
           "powerline_symbol": "",

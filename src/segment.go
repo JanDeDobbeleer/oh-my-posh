@@ -18,6 +18,7 @@ type Segment struct {
 	BackgroundTemplates []string                 `config:"background_templates"`
 	LeadingDiamond      string                   `config:"leading_diamond"`
 	TrailingDiamond     string                   `config:"trailing_diamond"`
+	HideSeparator       bool                     `config:"hide_separator"`
 	Properties          map[Property]interface{} `config:"properties"`
 	props               *properties
 	writer              SegmentWriter

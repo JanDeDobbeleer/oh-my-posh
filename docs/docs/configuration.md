@@ -195,6 +195,63 @@ Text character to use when `"style": "powerline"`.
 If `true` this swaps the foreground and background colors. Can be useful when the character you want does not exist
 in the perfectly mirrored variant for example.
 
+### Hide Separator
+
+By default a separator between a powerline segment and a diamond/plain segment will be rendered. If `true` this removes
+the separator. Can be useful when you want a powerline that is right next to other segments.
+
+Notice: If you have segments that is NOT always enabled, be sure to set EVERY of them till the first always-enabled segment.
+
+```jsonc
+{
+  "segments": [
+    {
+      "type": "session",
+      "style": "diamond",
+      "foreground": "#ffffff",
+      "background": "#ffb300",
+      "leading_diamond": "\uE0B6",
+      // in this case a trailing_diamond is not required
+    },
+    {
+      "type": "go",
+      "style": "powerline",
+      "powerline_symbol": "\uE0B0",
+      "foreground": "#ffffff",
+      "background": "#61AFEF",
+      "hide_separator": true,
+      // hide_separator is required here
+      "properties": {
+        "always_enabled": false,
+      }
+    },
+    {
+      "type": "path",
+      "style": "powerline",
+      "powerline_symbol": "\uE0B0",
+      "foreground": "#193549",
+      "background": "#ffeb3b",
+      "hide_separator": true,
+      // hide_separator is also required here
+      "properties": {
+        "always_enabled": true,
+      }
+    },
+    {
+      "type": "git",
+      "style": "powerline",
+      "powerline_symbol": "\uE0B0",
+      "foreground": "#ffffff",
+      "background": "#61AFEF",
+      // hide_separator is not required here
+      "properties": {
+        "always_enabled": false,
+      }
+    },
+  ]
+}
+```
+
 ### Leading diamond
 
 Text character to use at the start of the segment. Will take the background color of the segment as

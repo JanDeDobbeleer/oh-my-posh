@@ -92,7 +92,8 @@ func (b *Block) endPowerline() {
 	if b.activeSegment != nil &&
 		b.activeSegment.Style != Powerline &&
 		b.previousActiveSegment != nil &&
-		b.previousActiveSegment.Style == Powerline {
+		b.previousActiveSegment.Style == Powerline &&
+		!b.previousActiveSegment.HideSeparator {
 		b.writePowerLineSeparator(b.getPowerlineColor(false), b.previousActiveSegment.background(), true)
 	}
 }
@@ -116,7 +117,7 @@ func (b *Block) getPowerlineColor(foreground bool) string {
 	if !foreground && b.activeSegment.Style != Powerline {
 		return Transparent
 	}
-	if foreground && b.previousActiveSegment.Style != Powerline {
+	if foreground && b.previousActiveSegment.Style != Powerline && !b.activeSegment.HideSeparator {
 		return Transparent
 	}
 	return b.previousActiveSegment.background()
@@ -144,7 +145,11 @@ func (b *Block) renderPlainSegment(text string) {
 }
 
 func (b *Block) renderDiamondSegment(text string) {
-	b.writer.write(Transparent, b.activeSegment.background(), b.activeSegment.LeadingDiamond)
+	if b.previousActiveSegment != nil && b.previousActiveSegment.HideSeparator {
+		b.writer.write(b.previousActiveSegment.background(), b.activeSegment.background(), b.activeSegment.LeadingDiamond)
+	} else {
+		b.writer.write(Transparent, b.activeSegment.background(), b.activeSegment.LeadingDiamond)
+	}
 	b.renderText(text)
 	b.writer.write(Transparent, b.activeSegment.background(), b.activeSegment.TrailingDiamond)
 }

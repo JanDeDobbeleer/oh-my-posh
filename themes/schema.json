@@ -234,6 +234,12 @@
                 "title": "Flip the Powerline symbol vertically",
                 "description": "https://ohmyposh.dev/docs/configure#invert-powerline",
                 "default": false
+              },
+              "hide_separator": {
+                "type": "boolean",
+                "title": "Hide the separator between a Powerline segment and others",
+                "description": "https://ohmyposh.dev/docs/configure#hide_separator",
+                "default": false
               }
             }
           }

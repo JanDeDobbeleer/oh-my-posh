@@ -1,0 +1,109 @@
+---
+id: faq
+title: FAQ
+sidebar_label: 🤨 FAQ
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Before validating anything, make sure you're on the [latest version][latest] of Oh my Posh and your terminal and shell are up-to-date.
+
+### The prompt is slow (delay in showing the prompt between commands)
+
+<Tabs
+  defaultValue="powershell"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'powershell', },
+    { label: 'others', value: 'others', },
+  ]
+}>
+<TabItem value="powershell">
+
+You can use the `Write-PoshDebug` function to see where Oh my posh spends its time.
+In case there's no clear culprit (timings indicate everything's OK), chances are some modules are the culprit.
+We bootstrap afew PowerShell modules to maximise compatibility, but sometimes these can introduce unwanted side-effects.
+
+The modules we support are:
+
+- posh-git
+- Az.Accounts
+
+Especially the latter can slow things down so the first thing to do is disable that one:
+
+```powershell
+$env:AZ_ENABLED=$false
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```powershell
+. $profile
+```
+
+</TabItem>
+<TabItem value="others">
+
+You can use the Oh my Posh's built-in `--debug` flag to identify slow segments.
+
+```bash
+oh-my-posh --config ~/.mytheme.omp.json --debug --shell uni
+```
+
+Whenever there's a segment that spikes, see if there might be updates to the underlying functionality (usally shell commands).
+
+</TabItem>
+</Tabs>
+
+If nothing seems to resolve the issue, feel free to [create an issue][new-issue].
+
+### Windows Terminal: Unexpected space between segments/text
+
+Windows Terminal has some issues with [rendering certain glyphs][wt-glyph]. These issues are on [their backlog][wt-glyphs].
+A temporary workaround is to use an invisible character at the end (`\u2800`).
+
+```json
+{
+    "type": "executiontime",
+    /* other attributes here */
+    "properties": {
+    "always_enabled": true,
+    "prefix": "\ufa1e",
+    "postfix": "\u2800" // invisible spacing character
+    }
+}
+```
+
+### There are rectangles instead of icons in my prompt
+
+The font you're using doesn't have the needed standard extended glyph set like [Nerd Font][nf] does.
+Windows Terminal ships with Cascadia Code by default which has a powerline patched variant called Cascadia Code PL,
+but also that one misses certain interesting icons. You can fall back to any theme with the `.minimal` indication,
+or make use of a Nerd Font. Have a look at the [font][font] senction for more context in case you're using all the right conditions.
+
+### Jetbrains terminals: Icons do not rendering
+
+They need to work on their terminal, somehow it only supports UTF-8 and not UTF-16.
+[An issue][jb-icons] is available for follow-up here.
+
+### The term 'Set-Theme' is not recognized as the name of a cmdlet, function, script file, or operable program.
+
+You need to migrate V2 to V3 using the following [guide][upgrading]. The quick fix is to replace `Set-Theme` with `Set-PoshPrompt`,
+but it's advised to read the guide.
+
+### Strange colouring after exiting VIM or when using the PowerShell progress bootstrap
+
+This bug is caused by Windows Terminal and/or VIM. There are two issues for this, one at [Windows Terminal][wt-vim] and
+one at [VIM][vim-wt].
+
+[new-issue]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/new
+[latest]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
+[wt-glyph]: https://github.com/microsoft/terminal/issues/3546
+[wt-glyphs]: https://github.com/microsoft/terminal/issues?q=is%3Aissue+is%3Aopen+unicode+width
+[nf]: https://www.nerdfonts.com/
+[font]: fonts.md
+[jb-icons]: https://youtrack.jetbrains.com/issue/IDEA-248010
+[upgrading]: upgrading.md
+[wt-vim]: https://github.com/microsoft/terminal/issues/3794
+[vim-wt]: https://github.com/vim/vim/issues/5092

@@ -19,7 +19,8 @@ module.exports = {
         "configure",
         "themes",
         "share",
-        "fonts"
+        "fonts",
+        "faq"
       ],
     },
     {

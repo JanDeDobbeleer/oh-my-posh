@@ -145,6 +145,13 @@ func parseKeyValueArray(param interface{}) map[string]string {
 	switch v := param.(type) {
 	default:
 		return map[string]string{}
+	case map[string]interface{}:
+		keyValueArray := make(map[string]string)
+		for key, value := range v {
+			val := value.(string)
+			keyValueArray[key] = val
+		}
+		return keyValueArray
 	case []interface{}:
 		keyValueArray := make(map[string]string)
 		for _, s := range v {

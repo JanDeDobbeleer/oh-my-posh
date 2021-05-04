@@ -33,8 +33,8 @@
           "type": "time",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground":"#193549",
-          "background":"#4caf50",
+          "foreground": "#193549",
+          "background": "#4caf50",
           "properties": {
             "time_format": "2006-01-02 15:04:05",
             "prefix": ""
@@ -74,14 +74,14 @@
           "style": "diamond",
           "foreground": "#ffffff",
           "background": "#2e9599",
-          "leading_diamond": "",
+          "leading_diamond": "<transparent, #2e9599>\uE0B0</>",
           "trailing_diamond": "\uE0B4",
           "properties": {
             "display_exit_code": false,
             "always_enabled": true,
             "error_color": "#f1184c",
             "color_background": true,
-            "prefix": "<transparent>\uE0B0</> \uFC0C"
+            "prefix": " \uFC0C"
           }
         }
       ]

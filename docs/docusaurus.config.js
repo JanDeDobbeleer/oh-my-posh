@@ -76,8 +76,8 @@ module.exports = {
           title: "Links",
           items: [
             {
-              label: "Support",
-              href: "/docs/#-support-",
+              label: "Sponsor",
+              href: "https://github.com/sponsors/JanDeDobbeleer",
             },
             {
               label: "GitKraken",

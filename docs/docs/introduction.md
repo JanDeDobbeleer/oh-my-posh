@@ -57,23 +57,11 @@ For your convenience, the existing [themes][themes] from [Oh my Posh][omp-themes
 can get started even without having to understand the theming. So, let's no longer waste time on theory, have a look at the
 [installation guide][install] to get started right away!
 
-## ❤ Support ❤
-
-[![Patreon][patreon-badge]][patreon]
-[![Liberapay][liberapay-badge]][liberapay]
-[![Ko-Fi][kofi-badge]][kofi]
-
 [omp]: https://github.com/JanDeDobbeleer/oh-my-posh2
 [omz]: https://github.com/ohmyzsh/ohmyzsh
 [omp3]: https://github.com/JanDeDobbeleer/oh-my-posh
 [wsl]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
 [install]: /docs/installation
-[patreon-badge]: https://img.shields.io/badge/Support-Become%20a%20Patreon!-red.svg
-[patreon]: https://www.patreon.com/jandedobbeleer
-[liberapay-badge]: https://img.shields.io/badge/Liberapay-Donate-%23f6c915.svg
-[liberapay]: https://liberapay.com/jandedobbeleer
-[kofi-badge]: https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee!-%2346b798.svg
-[kofi]: https://ko-fi.com/jandedobbeleer
 [block]: /docs/configure#block
 [segment]: /docs/configure#segment
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes

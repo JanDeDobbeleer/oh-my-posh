@@ -89,9 +89,10 @@ func (b *Block) renderSegments() string {
 }
 
 func (b *Block) endPowerline() {
-	if b.activeSegment != nil &&
-		b.activeSegment.Style != Powerline &&
-		b.previousActiveSegment != nil &&
+	if b.previousActiveSegment == nil || b.activeSegment == nil {
+		return
+	}
+	if b.activeSegment.Style != Powerline &&
 		b.previousActiveSegment.Style == Powerline {
 		b.writePowerLineSeparator(b.getPowerlineColor(false), b.previousActiveSegment.background(), true)
 	}
@@ -112,6 +113,12 @@ func (b *Block) writePowerLineSeparator(background, foreground string, end bool)
 func (b *Block) getPowerlineColor(foreground bool) string {
 	if b.previousActiveSegment == nil {
 		return Transparent
+	}
+	if b.previousActiveSegment.Style == Diamond && len(b.previousActiveSegment.TrailingDiamond) == 0 {
+		return b.previousActiveSegment.background()
+	}
+	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
+		return b.activeSegment.background()
 	}
 	if !foreground && b.activeSegment.Style != Powerline {
 		return Transparent

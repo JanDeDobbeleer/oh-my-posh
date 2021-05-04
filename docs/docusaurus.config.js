@@ -27,6 +27,16 @@ module.exports = {
           position: "left",
         },
         {
+          href: "https://github.com/sponsors/JanDeDobbeleer",
+          label: "Sponsor",
+          position: "left",
+        },
+        {
+          href: "https://www.gitkraken.com/invite/nQmDPR9D",
+          label: "GitKraken",
+          position: "left",
+        },
+        {
           href: "https://github.com/jandedobbeleer/oh-my-posh",
           label: "GitHub",
           position: "right",
@@ -44,12 +54,8 @@ module.exports = {
               to: "docs/",
             },
             {
-              label: "Packages",
-              to: "docs/powershell",
-            },
-            {
               label: "Contributing",
-              to: "docs/contributing_segment",
+              to: "docs/contributing_started",
             },
           ],
         },
@@ -72,6 +78,10 @@ module.exports = {
             {
               label: "Support",
               href: "/docs/#-support-",
+            },
+            {
+              label: "GitKraken",
+              href: "https://www.gitkraken.com/invite/nQmDPR9D",
             },
             {
               label: "Docusaurus",

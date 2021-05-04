@@ -19,9 +19,9 @@ Display the current path.
   "background": "#61AFEF",
   "properties": {
     "style": "folder",
-    "mapped_locations": [
-      ["C:\\temp", "\ue799"]
-    ]
+    "mapped_locations": {
+      "C:\\temp": "\ue799"
+    }
   }
 }
 ```
@@ -33,14 +33,30 @@ Display the current path.
 - folder_icon: `string` - the icon to use as a folder indication - defaults to `..`
 - windows_registry_icon: `string` - the icon to display when in the Windows registry - defaults to `\uE0B1`
 - style: `enum` - how to display the current path
-- mapped_locations: `map[string]string` - custom glyph/text for specific paths (only when `mapped_locations_enabled`
-is set to `true`)
-- mapped_locations_enabled: `boolean` - replace known locations in the path with the replacements before applying the
-style. defaults to `true`
+
 - enable_hyperlink: `boolean` - displays an hyperlink for the path - defaults to `false`
 - mixed_threshold: `number` - the maximum length of a path segment that will be displayed when using `Mixed` -
   defaults to `4`
 - stack_count_enabled: `boolean` - displays the stack count when using pushd/popd - defaults to `false`
+
+## Mapped Locations
+
+Allows you to override a location with an icon. It validates if the current path **starts with** the value and replaces
+it with the icon if there's a match. To avoid issues with nested overrides, Oh my posh will sort the list of mapped
+locations before doing a replacement.
+
+- mapped_locations_enabled: `boolean` - replace known locations in the path with the replacements before applying the
+style. defaults to `true`
+- mapped_locations: `map[string]string` - custom glyph/text for specific paths (only when `mapped_locations_enabled`
+is set to `true`)
+
+For example, to swap out `C:\Users\Leet\GitHub` with a GitHub icon, you can do the following:
+
+```json
+"mapped_locations": {
+  "C:\\Users\\Leet\\GitHub": "\uF09B"
+}
+```
 
 ## Style
 

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/distatus/battery"
+	"github.com/gookit/config/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -589,5 +590,31 @@ func TestGetPwd(t *testing.T) {
 		}
 		got := path.getPwd()
 		assert.Equal(t, tc.Expected, got)
+	}
+}
+
+func TestParseMappedLocations(t *testing.T) {
+	cases := []struct {
+		Case string
+		JSON string
+	}{
+		{Case: "new format", JSON: `{ "properties": { "mapped_locations": {"folder1": "one","folder2": "two"} } }`},
+		{Case: "old format", JSON: `{ "properties": { "mapped_locations": [["folder1", "one"], ["folder2", "two"]] } }`},
+	}
+	for _, tc := range cases {
+		config.ClearAll()
+		config.WithOptions(func(opt *config.Options) {
+			opt.TagName = "config"
+		})
+		err := config.LoadStrings(config.JSON, tc.JSON)
+		assert.NoError(t, err)
+		var segment Segment
+		err = config.BindStruct("", &segment)
+		assert.NoError(t, err)
+		props := &properties{
+			values: segment.Properties,
+		}
+		mappedLocations := props.getKeyValueMap(MappedLocations, make(map[string]string))
+		assert.Equal(t, "two", mappedLocations["folder2"])
 	}
 }

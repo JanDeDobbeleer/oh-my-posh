@@ -6,7 +6,6 @@
       "horizontal_offset": 0,
       "vertical_offset": 0,
       "segments": [
-
         {
           "background": "#feae34",
           "foreground": "#262b44",
@@ -47,13 +46,13 @@
         {
           "background": "#0095e9",
           "foreground": "#ffffff",
-          "leading_diamond": "",
+          "leading_diamond": "<transparent, #0095e9></>",
           "properties": {
             "always_enabled": true,
             "color_background": true,
             "display_exit_code": false,
             "error_color": "#ff0044",
-            "prefix": "<transparent></> "
+            "prefix": " "
           },
           "style": "diamond",
           "trailing_diamond": "",

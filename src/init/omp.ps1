@@ -69,7 +69,7 @@ function global:Initialize-ModuleSupport {
     # read stack count from current stack(if invoked from profile=right value,otherwise use the global variable set in Set-PoshPrompt(stack scoped to module))
     $stackCount = (Get-Location -stack).Count
     try {
-        if($global:omp_global_sessionstate -ne $null){
+        if ($global:omp_global_sessionstate -ne $null) {
             $stackCount = ($global:omp_global_sessionstate).path.locationstack('').count
         }
     }
@@ -104,25 +104,52 @@ function global:Write-PoshDebug {
     $standardOut -join "`n"
 }
 
+<#
+.SYNOPSIS
+    Exports the current oh-my-posh theme
+.DESCRIPTION
+    By default the config is exported in json to the clipboard
+.EXAMPLE
+    Export-PoshTheme
+    Current theme exported in json to clipboard
+.EXAMPLE
+    Export-PoshTheme -Format toml
+    Current theme exported in toml to clipboard
+.EXAMPLE
+    Export-PoshTheme c:\temp\theme.toml toml
+    Current theme exported in toml to c:\temp\theme.toml
+.EXAMPLE
+    Export-PoshTheme ~\theme.toml toml
+    Current theme exported in toml to your home\theme.toml
+#>
 function global:Export-PoshTheme {
     param(
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [string]
+        # The file path where the theme will be exported. If not provided, the config is copied to the clipboard by default.
         $FilePath,
         [Parameter(Mandatory = $false)]
         [ValidateSet('json', 'yaml', 'toml')]
         [string]
+        # The format of the theme
         $Format = 'json'
     )
-
-    if ($FilePath.StartsWith('~')) {
-        $FilePath = $FilePath.Replace('~', $HOME)
-    }
 
     $config = $global:PoshSettings.Theme
     $omp = "::OMP::"
     $configString = @(&$omp --config="$config" --config-format="$Format" --print-config 2>&1)
-    [IO.File]::WriteAllLines($FilePath, $configString)
+
+    # if no path, copy to clipboard by default
+    if ($FilePath -ne "") {
+        if ($FilePath.StartsWith('~')) {
+            $FilePath = $FilePath.Replace('~', $HOME)
+        }
+        [IO.File]::WriteAllLines($FilePath, $configString)
+    }
+    else {
+        Set-Clipboard $configString
+        Write-Output "Theme copied to clipboard"
+    }
 }
 
 function global:Export-PoshImage {

@@ -4,7 +4,6 @@
     {
       "type": "prompt",
       "alignment": "right",
-      "vertical_offset": -1,
       "segments": [
         {
           "type": "session",

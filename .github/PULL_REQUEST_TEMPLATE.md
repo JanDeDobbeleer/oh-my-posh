@@ -9,4 +9,11 @@
 
 [Description of the change]
 
+### Tips
+
+If you're not comfortable working with git, we're working a [guide][docs] to help you out.
+Oh my Posh advises [GitKraken][kraken] as your preferred cross platfrom git GUI powertool.
+
 [cc]: https://www.conventionalcommits.org/en/v1.0.0/#summary
+[docs]: https://ohmyposh.dev/docs/contributing_git
+[kraken]: https://www.gitkraken.com/invite/nQmDPR9D

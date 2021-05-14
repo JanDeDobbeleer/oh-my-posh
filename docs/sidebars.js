@@ -33,6 +33,7 @@ module.exports = {
         "battery",
         "command",
         "crystal",
+        "dart",
         "dotnet",
         "environment",
         "executiontime",

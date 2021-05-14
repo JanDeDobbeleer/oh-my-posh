@@ -4,8 +4,6 @@
 [![Go Report Card][report-card]][report-card-link]
 [![PS Gallery][psgallery-badge]][powershell-gallery]
 [![Documentation][docs-badge]][docs]
-[![Total alerts][lgtm-alerts]][lgtm-alerts-link]
-[![Language grade: Go][lgtm-code]][lgtm-code-link]
 
 What started as the offspring of [oh-my-posh2][oh-my-posh2] for PowerShell resulted in a cross platform,
 highly customizable and extensible prompt theme engine. After 4 years of working on oh-my-posh,
@@ -59,10 +57,6 @@ using Go (and the amazing [README][powerline-go])
 [powershell-gallery]: https://www.powershellgallery.com/packages/oh-my-posh/
 [report-card]: https://goreportcard.com/badge/github.com/jandedobbeleer/oh-my-posh
 [report-card-link]: https://goreportcard.com/report/github.com/jandedobbeleer/oh-my-posh
-[lgtm-alerts]: https://img.shields.io/lgtm/alerts/g/JanDeDobbeleer/oh-my-posh.svg?logo=lgtm&logoWidth=18
-[lgtm-alerts-link]: https://lgtm.com/projects/g/JanDeDobbeleer/oh-my-posh/alerts/
-[lgtm-code]: https://img.shields.io/lgtm/grade/go/g/JanDeDobbeleer/oh-my-posh.svg?logo=lgtm&logoWidth=18
-[lgtm-code-link]: https://lgtm.com/projects/g/JanDeDobbeleer/oh-my-posh/context:go
 [oh-my-posh2]: https://github.com/JanDeDobbeleer/oh-my-posh2
 [patreon-badge]: https://img.shields.io/badge/Support-Become%20a%20Patreon!-red.svg
 [patreon]: https://www.patreon.com/jandedobbeleer

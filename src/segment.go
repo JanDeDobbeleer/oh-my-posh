@@ -111,6 +111,8 @@ const (
 	PoshGit SegmentType = "poshgit"
 	// AZFunc writes current AZ func version
 	AZFunc SegmentType = "azfunc"
+	// Crystal writes the active crystal version
+	Crystal SegmentType = "crystal"
 )
 
 func (segment *Segment) string() string {
@@ -236,6 +238,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Java:          &java{},
 		PoshGit:       &poshgit{},
 		AZFunc:        &azfunc{},
+		Crystal:       &crystal{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

@@ -7,6 +7,28 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type mockedLanguageParams struct {
+	cmd           string
+	versionParam  string
+	versionOutput string
+	extension     string
+}
+
+func getMockedLanguageEnv(params *mockedLanguageParams) (*MockedEnvironment, *properties) {
+	env := new(MockedEnvironment)
+	env.On("hasCommand", params.cmd).Return(true)
+	env.On("runCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
+	env.On("hasFiles", params.extension).Return(true)
+	env.On("getcwd", nil).Return("/usr/home/project")
+	env.On("homeDir", nil).Return("/usr/home")
+	props := &properties{
+		values: map[Property]interface{}{
+			DisplayVersion: true,
+		},
+	}
+	return env, props
+}
+
 func TestGolang(t *testing.T) {
 	cases := []struct {
 		Case           string
@@ -17,17 +39,13 @@ func TestGolang(t *testing.T) {
 		{Case: "Go 1.16", ExpectedString: "1.16", Version: "go version go1.16 darwin/amd64"},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("hasCommand", "go").Return(true)
-		env.On("runCommand", "go", []string{"version"}).Return(tc.Version, nil)
-		env.On("hasFiles", "*.go").Return(true)
-		env.On("getcwd", nil).Return("/usr/home/project")
-		env.On("homeDir", nil).Return("/usr/home")
-		props := &properties{
-			values: map[Property]interface{}{
-				DisplayVersion: true,
-			},
+		params := &mockedLanguageParams{
+			cmd:           "go",
+			versionParam:  "version",
+			versionOutput: tc.Version,
+			extension:     "*.go",
 		}
+		env, props := getMockedLanguageEnv(params)
 		g := &golang{}
 		g.init(props, env)
 		assert.True(t, g.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))

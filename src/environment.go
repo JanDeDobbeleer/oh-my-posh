@@ -204,7 +204,7 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	if cmd, ok := env.cmdCache.get(command); ok {
 		command = cmd
 	}
-	out, err := exec.Command(command, args...).Output()
+	out, err := exec.Command(command, args...).CombinedOutput()
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			return "", &commandError{

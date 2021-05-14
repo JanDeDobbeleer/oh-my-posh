@@ -17,9 +17,10 @@ func (j *julia) init(props *properties, env environmentInfo) {
 			{
 				executable: "julia",
 				args:       []string{"--version"},
-				regex:      `julia version (?P<version>[0-9]+.[0-9]+.[0-9]+)`,
+				regex:      `julia version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
 			},
 		},
+		versionURLTemplate: "[%s](https://github.com/JuliaLang/julia/releases/tag/v%s.%s.%s)",
 	}
 }
 

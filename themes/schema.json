@@ -152,7 +152,8 @@
             "aws",
             "java",
             "poshgit",
-            "azfunc"
+            "azfunc",
+            "crystal"
           ]
         },
         "style": {
@@ -673,6 +674,32 @@
           "then": {
             "title": "Golang Segment",
             "description": "https://ohmyposh.dev/docs/golang",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "crystal" }
+            }
+          },
+          "then": {
+            "title": "Crystal Segment",
+            "description": "https://ohmyposh.dev/docs/crystal",
             "properties": {
               "properties": {
                 "properties": {

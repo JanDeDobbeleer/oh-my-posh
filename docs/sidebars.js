@@ -32,6 +32,7 @@ module.exports = {
         "azfunc",
         "battery",
         "command",
+        "crystal",
         "dotnet",
         "environment",
         "executiontime",

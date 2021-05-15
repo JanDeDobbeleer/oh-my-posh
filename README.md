@@ -2,8 +2,12 @@
 
 ![Release Status][release-status]
 [![Go Report Card][report-card]][report-card-link]
-[![PS Gallery][psgallery-badge]][powershell-gallery]
+
+[![Release][release-badge]][release]
 [![Documentation][docs-badge]][docs]
+
+[![PS Gallery][psgallery-badge]][powershell-gallery]
+![GitHub Downloads][gh-downloads]
 
 What started as the offspring of [oh-my-posh2][oh-my-posh2] for PowerShell resulted in a cross platform,
 highly customizable and extensible prompt theme engine. After 4 years of working on oh-my-posh,
@@ -52,9 +56,10 @@ a modern and more efficient tool was needed to suit my personal needs.
 using Go (and the amazing [README][powerline-go])
 * [Starship][starship] for creating an amazing way to initialize the prompt
 
-[release-status]: https://github.com/jandedobbeleer/oh-my-posh/workflows/Release/badge.svg
-[psgallery-badge]: https://img.shields.io/powershellgallery/dt/oh-my-posh.svg
+[release-status]: https://img.shields.io/github/workflow/status/jandedobbeleer/oh-my-posh/Release?label=Build
+[psgallery-badge]: https://img.shields.io/powershellgallery/dt/oh-my-posh?color=pink&label=PowerShell%20Downloads
 [powershell-gallery]: https://www.powershellgallery.com/packages/oh-my-posh/
+[gh-downloads]: https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads
 [report-card]: https://goreportcard.com/badge/github.com/jandedobbeleer/oh-my-posh
 [report-card-link]: https://goreportcard.com/report/github.com/jandedobbeleer/oh-my-posh
 [oh-my-posh2]: https://github.com/JanDeDobbeleer/oh-my-posh2
@@ -64,8 +69,10 @@ using Go (and the amazing [README][powerline-go])
 [liberapay]: https://liberapay.com/jandedobbeleer
 [kofi-badge]: https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee!-%2346b798.svg
 [kofi]: https://ko-fi.com/jandedobbeleer
-[docs-badge]: https://img.shields.io/badge/documentation-ohmyposh.dev-blue
+[docs-badge]: https://img.shields.io/badge/Docs-ohmyposh.dev-blue
 [docs]: https://ohmyposh.dev/docs
+[release-badge]: https://img.shields.io/github/v/release/jandedobbeleer/oh-my-posh?label=Release
+[release]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
 [chrisbenti-psconfig]: https://github.com/chrisbenti/PS-Config
 [keithdahlby-poshgit]: https://github.com/dahlbyk/posh-git
 [oh-my-zsh]: https://github.com/robbyrussell/oh-my-zsh

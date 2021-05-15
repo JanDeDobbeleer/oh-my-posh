@@ -633,6 +633,12 @@
                     "description": "Icon/text to display when the upstream is Bitbucket",
                     "default": "\uF171"
                   },
+                  "azure_devops_icon": {
+                    "type": "string",
+                    "title": "Azure DevOps Icon",
+                    "description": "Icon/text to display when the upstream is Azure DevOps",
+                    "default": "\uFD03"
+                  },
                   "git_icon": {
                     "type": "string",
                     "title": "Git Icon",

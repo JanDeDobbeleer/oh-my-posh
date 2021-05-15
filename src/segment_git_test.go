@@ -407,10 +407,11 @@ func bootstrapUpstreamTest(upstream string) *git {
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	props := &properties{
 		values: map[Property]interface{}{
-			GithubIcon:    "GH",
-			GitlabIcon:    "GL",
-			BitbucketIcon: "BB",
-			GitIcon:       "G",
+			GithubIcon:      "GH",
+			GitlabIcon:      "GL",
+			BitbucketIcon:   "BB",
+			AzureDevOpsIcon: "AD",
+			GitIcon:         "G",
 		},
 	}
 	g := &git{
@@ -439,6 +440,16 @@ func TestGetUpstreamSymbolBitBucket(t *testing.T) {
 	g := bootstrapUpstreamTest("bitbucket.org/test")
 	upstreamIcon := g.getUpstreamSymbol()
 	assert.Equal(t, "BB", upstreamIcon)
+}
+
+func TestGetUpstreamSymbolAzureDevOps(t *testing.T) {
+	g := bootstrapUpstreamTest("dev.azure.com/test")
+	upstreamIcon := g.getUpstreamSymbol()
+	assert.Equal(t, "AD", upstreamIcon)
+
+	g = bootstrapUpstreamTest("test.visualstudio.com")
+	upstreamIcon = g.getUpstreamSymbol()
+	assert.Equal(t, "AD", upstreamIcon)
 }
 
 func TestGetUpstreamSymbolGit(t *testing.T) {

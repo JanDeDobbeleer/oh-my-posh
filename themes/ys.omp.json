@@ -36,7 +36,7 @@
             "style": "plain",
             "foreground": "red",
             "properties": {
-              "root_icon": "\b\b\b%"
+              "root_icon": "%"
             }
           },
           {

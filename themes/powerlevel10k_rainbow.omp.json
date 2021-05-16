@@ -205,9 +205,9 @@
           "type": "text",
           "style": "diamond",
           "background": "#d3d7cf",
-          "trailing_diamond": "\b╰─",
+          "trailing_diamond": "╰─",
           "properties": {
-            "text": "\b"
+            "text": ""
           }
         }
       ]

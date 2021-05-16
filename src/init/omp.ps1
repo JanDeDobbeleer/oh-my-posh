@@ -1,6 +1,7 @@
 # Powershell doesn't default to UTF8 just yet, so we're forcing it as there are too many problems
 # that pop up when we don't
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+$env:POWERLINE_COMMAND = "oh-my-posh"
 
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
     Theme = "";

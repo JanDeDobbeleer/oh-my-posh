@@ -1,4 +1,5 @@
 set -g posh_theme ::CONFIG::
+set -g POWERLINE_COMMAND "oh-my-posh"
 
 function fish_prompt
     set -l omp_stack_count (count $dirstack)

@@ -1,4 +1,5 @@
 export POSH_THEME=::CONFIG::
+export POWERLINE_COMMAND="oh-my-posh"
 
 TIMER_START="/tmp/${USER}.start.$$"
 

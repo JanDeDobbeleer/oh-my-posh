@@ -95,8 +95,16 @@ Once added, reload your config for the changes to take effect.
 
 Set the prompt and restart nu shell:
 
+### Nu < 0.32.0
+
 ```bash
 config set prompt  "= `{{$(oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json | str collect)}}`"
+```
+
+### Nu >= 0.32.0
+
+```bash
+config set prompt  "(oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json | str collect)"
 ```
 
 Restart nu shell for the changes to take effect.

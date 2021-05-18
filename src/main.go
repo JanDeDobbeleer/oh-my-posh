@@ -223,7 +223,7 @@ func initShell(shell, configFile string) string {
 	}
 	switch shell {
 	case pwsh:
-		return fmt.Sprintf("Invoke-Expression (@(&\"%s\" --print-init --shell=pwsh --config=\"%s\") -join \"`n\")", executable, configFile)
+		return fmt.Sprintf("(@(&\"%s\" --print-init --shell=pwsh --config=\"%s\") -join \"`n\") | Invoke-Expression", executable, configFile)
 	case zsh, bash, fish:
 		return printShellInit(shell, configFile)
 	default:

@@ -66,7 +66,7 @@ function Set-PoshPrompt {
     $global:omp_global_sessionstate = $PSCmdlet.SessionState
 
     $poshCommand = Get-PoshCommand
-    Invoke-Expression (& $poshCommand --init --shell=pwsh --config="$config")
+    (& $poshCommand --init --shell=pwsh --config="$config") | Invoke-Expression
 }
 
 function Get-PoshThemes {

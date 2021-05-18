@@ -33,6 +33,10 @@ const (
 	EnableHyperlink Property = "enable_hyperlink"
 )
 
+func printConfigError(err error) {
+	fmt.Println("Oh My Posh Error:\n", err.Error())
+}
+
 // GetConfig returns the default configuration including possible user overrides
 func GetConfig(env environmentInfo) *Config {
 	cfg, err := loadConfig(env)
@@ -49,6 +53,7 @@ func loadConfig(env environmentInfo) (*Config, error) {
 		return nil, errors.New("NO CONFIG")
 	}
 	if _, err := os.Stat(configFile); os.IsNotExist(err) {
+		printConfigError(err)
 		return nil, errors.New("INVALID CONFIG PATH")
 	}
 
@@ -61,11 +66,13 @@ func loadConfig(env environmentInfo) (*Config, error) {
 
 	err := config.LoadFiles(configFile)
 	if err != nil {
+		printConfigError(err)
 		return nil, errors.New("UNABLE TO OPEN CONFIG")
 	}
 
 	err = config.BindStruct("", &cfg)
 	if err != nil {
+		printConfigError(err)
 		return nil, errors.New("INVALID CONFIG")
 	}
 
@@ -83,6 +90,7 @@ func exportConfig(configFile, format string) string {
 
 	err := config.LoadFiles(configFile)
 	if err != nil {
+		printConfigError(err)
 		return fmt.Sprintf("INVALID CONFIG:\n\n%s", err.Error())
 	}
 
@@ -96,6 +104,7 @@ func exportConfig(configFile, format string) string {
 	buf := new(bytes.Buffer)
 	_, err = config.DumpTo(buf, format)
 	if err != nil {
+		printConfigError(err)
 		return "UNABLE TO DUMP CONFIG"
 	}
 

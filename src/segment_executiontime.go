@@ -32,6 +32,8 @@ const (
 	Houston DurationStyle = "houston"
 	// Amarillo seconds
 	Amarillo DurationStyle = "amarillo"
+	// Round will round the output of the format
+	Round DurationStyle = "round"
 
 	second           = 1000
 	minute           = 60000
@@ -78,6 +80,8 @@ func (t *executiontime) formatDuration(ms int64, style DurationStyle) string {
 		return t.formatDurationHouston(ms)
 	case Amarillo:
 		return t.formatDurationAmarillo(ms)
+	case Round:
+		return t.formatDurationRound(ms)
 	default:
 		return fmt.Sprintf("Style: %s is not available", style)
 	}
@@ -174,4 +178,20 @@ func (t *executiontime) formatDurationAmarillo(ms int64) string {
 	result += "s"
 
 	return result
+}
+
+func (t *executiontime) formatDurationRound(ms int64) string {
+	if ms >= day {
+		return fmt.Sprintf("%dd", ms/day)
+	}
+	if ms >= hour {
+		return fmt.Sprintf("%dh", ms/hour%hoursPerDay)
+	}
+	if ms >= minute {
+		return fmt.Sprintf("%dm", ms/minute%secondsPerMinute)
+	}
+	if ms >= second {
+		return fmt.Sprintf("%ds", (ms%minute)/second)
+	}
+	return fmt.Sprintf("%dms", ms%second)
 }

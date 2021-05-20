@@ -2,6 +2,7 @@
 # that pop up when we don't
 [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 $env:POWERLINE_COMMAND = "oh-my-posh"
+$env:CONDA_PROMPT_MODIFIER = $false
 
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
     Theme = "";

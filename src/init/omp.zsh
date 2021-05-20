@@ -1,5 +1,6 @@
 export POSH_THEME=::CONFIG::
 export POWERLINE_COMMAND="oh-my-posh"
+export CONDA_PROMPT_MODIFIER=false
 
 function omp_preexec() {
   omp_start_time=$(::OMP:: --millis)

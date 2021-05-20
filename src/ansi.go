@@ -50,7 +50,7 @@ func (a *ansiUtils) init(shell string) {
 		a.escapeLeft = "%{"
 		a.escapeRight = "%}"
 		a.hyperlink = "%%{\x1b]8;;%s\x1b\\%%}%s%%{\x1b]8;;\x1b\\%%}"
-		a.osc99 = "%%{\x1b]9;9;%s\x1b\\%%}"
+		a.osc99 = "%%{\x1b]9;9;\"%s\"\x1b\\%%}"
 		a.bold = "%%{\x1b[1m%%}%s%%{\x1b[22m%%}"
 		a.italic = "%%{\x1b[3m%%}%s%%{\x1b[23m%%}"
 		a.underline = "%%{\x1b[4m%%}%s%%{\x1b[24m%%}"
@@ -70,7 +70,7 @@ func (a *ansiUtils) init(shell string) {
 		a.escapeLeft = "\\["
 		a.escapeRight = "\\]"
 		a.hyperlink = "\\[\x1b]8;;%s\x1b\\\\\\]%s\\[\x1b]8;;\x1b\\\\\\]"
-		a.osc99 = "\\[\x1b]9;9;%s\x1b\\\\\\]"
+		a.osc99 = "\\[\x1b]9;9;\"%s\"\x1b\\\\\\]"
 		a.bold = "\\[\x1b[1m\\]%s\\[\x1b[22m\\]"
 		a.italic = "\\[\x1b[3m\\]%s\\[\x1b[23m\\]"
 		a.underline = "\\[\x1b[4m\\]%s\\[\x1b[24m\\]"
@@ -90,7 +90,7 @@ func (a *ansiUtils) init(shell string) {
 		a.escapeLeft = ""
 		a.escapeRight = ""
 		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
-		a.osc99 = "\x1b]9;9;%s\x1b\\"
+		a.osc99 = "\x1b]9;9;\"%s\"\x1b\\"
 		a.bold = "\x1b[1m%s\x1b[22m"
 		a.italic = "\x1b[3m%s\x1b[23m"
 		a.underline = "\x1b[4m%s\x1b[24m"
@@ -169,5 +169,8 @@ func (a *ansiUtils) changeLine(numberOfLines int) string {
 }
 
 func (a *ansiUtils) consolePwd(pwd string) string {
+	if strings.HasSuffix(pwd, ":") {
+		pwd += "\\"
+	}
 	return fmt.Sprintf(a.osc99, pwd)
 }

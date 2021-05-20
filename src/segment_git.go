@@ -140,7 +140,7 @@ func (g *git) enabled() bool {
 
 func (g *git) string() string {
 	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
-	displayStatus := g.props.getBool(DisplayStatus, true)
+	displayStatus := g.props.getBool(DisplayStatus, false)
 
 	if displayStatus || statusColorsEnabled {
 		g.setGitStatus()

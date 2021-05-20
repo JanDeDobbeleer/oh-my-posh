@@ -24,6 +24,7 @@ Local changes can also shown by default using the following syntax for both the 
   "foreground": "#193549",
   "background": "#ffeb3b",
   "properties": {
+    "display_status": true,
     "display_stash_count": true,
     "display_upstream_icon": true
   }
@@ -43,7 +44,7 @@ Local changes can also shown by default using the following syntax for both the 
 
 ### Status
 
-- display_status: `boolean` - display the local changes or not - defaults to `true`
+- display_status: `boolean` - display the local changes or not - defaults to `false`
 - display_status_detail: `boolean` - display the local changes in detail or not - defaults to `true`
 - display_stash_count: `boolean` show stash count or not - defaults to `false`
 - status_separator_icon: `string` icon/text to display between staging and working area changes - defaults to ` |`

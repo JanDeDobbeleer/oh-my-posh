@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	regexCache     map[string]*regexp.Regexp = make(map[string]*regexp.Regexp)
-	regexCacheLock                           = sync.RWMutex{}
+	regexCache     = make(map[string]*regexp.Regexp)
+	regexCacheLock = sync.RWMutex{}
 )
 
 func getCompiledRegex(pattern string) *regexp.Regexp {

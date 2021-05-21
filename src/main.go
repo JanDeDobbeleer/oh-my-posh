@@ -210,7 +210,7 @@ func main() {
 	}
 	imageCreator.init()
 	match := findNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, *args.Config)
-	err := imageCreator.SavePNG(fmt.Sprintf("%s.png", match[STR]))
+	err := imageCreator.SavePNG(fmt.Sprintf("%s.png", match[str]))
 	if err != nil {
 		fmt.Print(err.Error())
 	}

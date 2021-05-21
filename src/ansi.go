@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	ANSIRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
+	ansiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 )
 
 type ansiUtils struct {
@@ -105,14 +105,14 @@ func (a *ansiUtils) lenWithoutANSI(text string) int {
 	// replace hyperlinks
 	matches := findAllNamedRegexMatch(`(?P<STR>\x1b]8;;file:\/\/(.+)\x1b\\(?P<URL>.+)\x1b]8;;\x1b\\)`, text)
 	for _, match := range matches {
-		text = strings.ReplaceAll(text, match[STR], match[URL])
+		text = strings.ReplaceAll(text, match[str], match[url])
 	}
 	// replace console title
 	matches = findAllNamedRegexMatch(`(?P<STR>\x1b\]0;(.+)\007)`, text)
 	for _, match := range matches {
-		text = strings.ReplaceAll(text, match[STR], "")
+		text = strings.ReplaceAll(text, match[str], "")
 	}
-	stripped := replaceAllString(ANSIRegex, text, "")
+	stripped := replaceAllString(ansiRegex, text, "")
 	stripped = strings.ReplaceAll(stripped, a.escapeLeft, "")
 	stripped = strings.ReplaceAll(stripped, a.escapeRight, "")
 	runeText := []rune(stripped)

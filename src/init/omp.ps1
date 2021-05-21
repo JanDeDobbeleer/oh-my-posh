@@ -13,7 +13,7 @@ $global:omp_lastHistoryId = -1
 
 $config = "::CONFIG::"
 if (Test-Path $config) {
-    $global:PoshSettings.Theme = (Resolve-Path -Path $config).Path
+    $global:PoshSettings.Theme = (Resolve-Path -Path $config).ProviderPath
 }
 
 function global:Set-PoshContext {}

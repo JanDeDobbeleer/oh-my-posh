@@ -10,7 +10,7 @@ import (
 
 var (
 	// Map for color names and their respective foreground [0] or background [1] color codes
-	colorMap map[string][2]string = map[string][2]string{
+	colorMap = map[string][2]string{
 		"black":        {"30", "40"},
 		"red":          {"31", "41"},
 		"green":        {"32", "42"},

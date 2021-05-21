@@ -150,7 +150,7 @@ func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string) {
 
 	// callback fro EnumWindows
 	cb := syscall.NewCallback(func(h syscall.Handle, p uintptr) uintptr {
-		var prcsID int = 0
+		var prcsID int
 		// get pid
 		_, _, _ = procGetWindowThreadProcessID.Call(uintptr(h), uintptr(unsafe.Pointer(&prcsID)))
 		// check if pid matches spotify pid

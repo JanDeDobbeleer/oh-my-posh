@@ -41,10 +41,11 @@ const (
 	green  = "#71BD47"
 
 	// known ansi sequences
-	FG                  = "FG"
-	BG                  = "BG"
-	STR                 = "STR"
-	URL                 = "URL"
+
+	fg                  = "FG"
+	bg                  = "BG"
+	str                 = "STR"
+	url                 = "URL"
 	invertedColor       = "inverted"
 	invertedColorSingle = "invertedsingle"
 	fullColor           = "full"
@@ -355,24 +356,24 @@ func (ir *ImageRenderer) shouldPrint() bool {
 		if len(match) == 0 {
 			continue
 		}
-		ir.ansiString = strings.TrimPrefix(ir.ansiString, match[STR])
+		ir.ansiString = strings.TrimPrefix(ir.ansiString, match[str])
 		switch sequence {
 		case invertedColor:
 			ir.foregroundColor = ir.defaultBackgroundColor
-			ir.backgroundColor = NewRGBColor(match[BG])
+			ir.backgroundColor = NewRGBColor(match[bg])
 			return false
 		case invertedColorSingle:
 			ir.foregroundColor = ir.defaultBackgroundColor
-			color, _ := strconv.Atoi(match[BG])
+			color, _ := strconv.Atoi(match[bg])
 			color += 10
 			ir.setBase16Color(fmt.Sprint(color))
 			return false
 		case fullColor:
-			ir.foregroundColor = NewRGBColor(match[FG])
-			ir.backgroundColor = NewRGBColor(match[BG])
+			ir.foregroundColor = NewRGBColor(match[fg])
+			ir.backgroundColor = NewRGBColor(match[bg])
 			return false
 		case foreground:
-			ir.foregroundColor = NewRGBColor(match[FG])
+			ir.foregroundColor = NewRGBColor(match[fg])
 			return false
 		case reset:
 			ir.foregroundColor = ir.defaultForegroundColor
@@ -387,10 +388,10 @@ func (ir *ImageRenderer) shouldPrint() bool {
 		case strikethrough, strikethroughReset, left, osc99, lineChange, title:
 			return false
 		case color16:
-			ir.setBase16Color(match[FG])
+			ir.setBase16Color(match[fg])
 			return false
 		case link:
-			ir.ansiString = match[URL] + ir.ansiString
+			ir.ansiString = match[url] + ir.ansiString
 		}
 	}
 	return true

@@ -33,7 +33,7 @@ const (
 	pwsh        = "pwsh"
 	fish        = "fish"
 	powershell5 = "powershell"
-	shelly      = "shell"
+	plain       = "shell"
 )
 
 type args struct {

@@ -30,10 +30,12 @@ type ansiUtils struct {
 	italic                string
 	underline             string
 	strikethrough         string
+	bashFormat            string
 }
 
 func (a *ansiUtils) init(shell string) {
 	a.shell = shell
+	a.bashFormat = "\\[%s\\]"
 	switch shell {
 	case zsh:
 		a.linechange = "%%{\x1b[%d%s%%}"

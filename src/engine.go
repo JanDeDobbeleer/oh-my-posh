@@ -49,7 +49,13 @@ func (e *engine) render() string {
 }
 
 func (e *engine) renderBlock(block *Block) {
-	block.init(e.env, e.colorWriter, e.ansi)
+	// when in bash, for rprompt blocks we need to write plain
+	// and wrap in escaped mode or the prompt will not render correctly
+	if block.Type == RPrompt && e.env.getShellName() == bash {
+		block.initPlain(e.env, e.config)
+	} else {
+		block.init(e.env, e.colorWriter, e.ansi)
+	}
 	block.setStringValues()
 	if !block.enabled() {
 		return
@@ -77,7 +83,11 @@ func (e *engine) renderBlock(block *Block) {
 			e.write(block.renderSegments())
 		}
 	case RPrompt:
-		e.rprompt = block.renderSegments()
+		blockText := block.renderSegments()
+		if e.env.getShellName() == bash {
+			blockText = fmt.Sprintf(e.ansi.bashFormat, blockText)
+		}
+		e.rprompt = blockText
 	}
 	// Due to a bug in Powershell, the end of the line needs to be cleared.
 	// If this doesn't happen, the portion after the prompt gets colored in the background
@@ -133,20 +143,22 @@ func (e *engine) debug() string {
 func (e *engine) print() string {
 	switch e.env.getShellName() {
 	case zsh:
-		if *e.env.getArgs().Eval {
-			// escape double quotes contained in the prompt
-			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), "\"", "\"\""))
-			prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
-			return prompt
+		if !*e.env.getArgs().Eval {
+			break
 		}
-	case pwsh, powershell5, bash, shelly:
-		if e.rprompt != "" {
-			e.write(e.ansi.saveCursorPosition)
-			e.write(e.ansi.carriageForward())
-			e.write(e.ansi.getCursorForRightWrite(e.rprompt, 0))
-			e.write(e.rprompt)
-			e.write(e.ansi.restoreCursorPosition)
+		// escape double quotes contained in the prompt
+		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), "\"", "\"\""))
+		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
+		return prompt
+	case pwsh, powershell5, bash, plain:
+		if e.rprompt == "" {
+			break
 		}
+		e.write(e.ansi.saveCursorPosition)
+		e.write(e.ansi.carriageForward())
+		e.write(e.ansi.getCursorForRightWrite(e.rprompt, 0))
+		e.write(e.rprompt)
+		e.write(e.ansi.restoreCursorPosition)
 	}
 	return e.string()
 }

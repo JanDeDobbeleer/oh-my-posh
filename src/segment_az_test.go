@@ -14,13 +14,29 @@ func TestAzSegment(t *testing.T) {
 		ExpectedString  string
 		EnvSubName      string
 		EnvSubID        string
+		EnvSubAccount   string
 		CliExists       bool
 		CliSubName      string
 		CliSubID        string
+		CliSubAccount   string
 		InfoSeparator   string
 		DisplayID       bool
 		DisplayName     bool
+		DisplayAccount  bool
 	}{
+		{
+			Case:            "print only account",
+			ExpectedEnabled: true,
+			ExpectedString:  "foobar",
+			CliExists:       true,
+			CliSubName:      "foo",
+			CliSubID:        "bar",
+			CliSubAccount:   "foobar",
+			InfoSeparator:   "$",
+			DisplayID:       false,
+			DisplayName:     false,
+			DisplayAccount:  true,
+		},
 		{
 			Case:            "envvars present",
 			ExpectedEnabled: true,
@@ -35,7 +51,7 @@ func TestAzSegment(t *testing.T) {
 		{
 			Case:            "envvar name present",
 			ExpectedEnabled: true,
-			ExpectedString:  "foo$",
+			ExpectedString:  "foo",
 			EnvSubName:      "foo",
 			CliExists:       false,
 			InfoSeparator:   "$",
@@ -45,7 +61,7 @@ func TestAzSegment(t *testing.T) {
 		{
 			Case:            "envvar id present",
 			ExpectedEnabled: true,
-			ExpectedString:  "$bar",
+			ExpectedString:  "bar",
 			EnvSubID:        "bar",
 			CliExists:       false,
 			InfoSeparator:   "$",
@@ -55,7 +71,7 @@ func TestAzSegment(t *testing.T) {
 		{
 			Case:            "cli not found",
 			ExpectedEnabled: false,
-			ExpectedString:  "$",
+			ExpectedString:  "",
 			CliExists:       false,
 			InfoSeparator:   "$",
 			DisplayID:       true,
@@ -96,13 +112,11 @@ func TestAzSegment(t *testing.T) {
 		},
 		{
 			Case:            "print none",
-			ExpectedEnabled: false,
+			ExpectedEnabled: true,
 			CliExists:       true,
 			CliSubName:      "foo",
 			CliSubID:        "bar",
 			InfoSeparator:   "$",
-			DisplayID:       false,
-			DisplayName:     false,
 		},
 		{
 			Case:            "update needed",
@@ -113,6 +127,16 @@ func TestAzSegment(t *testing.T) {
 			DisplayID:       false,
 			DisplayName:     true,
 		},
+		{
+			Case:            "account info",
+			ExpectedEnabled: true,
+			ExpectedString:  updateMessage,
+			CliExists:       true,
+			CliSubName:      "Do you want to continue? (Y/n): Visual Studio Enterprise",
+			DisplayID:       false,
+			DisplayName:     true,
+			DisplayAccount:  true,
+		},
 	}
 
 	for _, tc := range cases {
@@ -120,12 +144,16 @@ func TestAzSegment(t *testing.T) {
 		env.On("getenv", "AZ_SUBSCRIPTION_NAME").Return(tc.EnvSubName)
 		env.On("getenv", "AZ_SUBSCRIPTION_ID").Return(tc.EnvSubID)
 		env.On("hasCommand", "az").Return(tc.CliExists)
-		env.On("runCommand", "az", []string{"account", "show", "--query=[name,id]", "-o=tsv"}).Return(fmt.Sprintf("%s\n%s\n", tc.CliSubName, tc.CliSubID), nil)
+		env.On("runCommand", "az", []string{"account", "show", "--query=[name,id,user.name]", "-o=tsv"}).Return(
+			fmt.Sprintf("%s\n%s\n%s\n", tc.CliSubName, tc.CliSubID, tc.CliSubAccount),
+			nil,
+		)
 		props := &properties{
 			values: map[Property]interface{}{
-				SubscriptionInfoSeparator: tc.InfoSeparator,
-				DisplaySubscriptionID:     tc.DisplayID,
-				DisplaySubscriptionName:   tc.DisplayName,
+				SubscriptionInfoSeparator:  tc.InfoSeparator,
+				DisplaySubscriptionID:      tc.DisplayID,
+				DisplaySubscriptionName:    tc.DisplayName,
+				DisplaySubscriptionAccount: tc.DisplayAccount,
 			},
 		}
 

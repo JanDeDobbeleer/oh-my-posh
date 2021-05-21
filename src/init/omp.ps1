@@ -47,10 +47,11 @@ function global:Initialize-ModuleSupport {
 
     if ($env:AZ_ENABLED -eq $true) {
         try {
-            $subscription = Get-AzContext | Select-Object -ExpandProperty "Subscription" | Select-Object "Name", "Id"
+            $subscription = Get-AzContext | Select-Object -ExpandProperty "Subscription" | Select-Object "Name", "Id", "Account"
             if ($null -ne $subscription) {
                 $env:AZ_SUBSCRIPTION_NAME = $subscription.Name
                 $env:AZ_SUBSCRIPTION_ID = $subscription.Id
+                $env:AZ_SUBSCRIPTION_ACCOUNT = $subscription.Account
             }
         }
         catch {}

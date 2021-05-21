@@ -16,7 +16,7 @@ func runImageTest(content string) error {
 	}
 	defer os.Remove(file.Name())
 	ansi := &ansiUtils{}
-	ansi.init(shelly)
+	ansi.init(plain)
 	image := &ImageRenderer{
 		ansiString: content,
 		ansi:       ansi,

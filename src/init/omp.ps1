@@ -4,6 +4,23 @@
 $env:POWERLINE_COMMAND = "oh-my-posh"
 $env:CONDA_PROMPT_MODIFIER = $false
 
+# specific module support (disabled by default)
+function Set-DefaultEnvValue {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]
+        $Name
+    )
+
+    $value = [System.Environment]::GetEnvironmentVariable($Name)
+    if ($value -eq $null) {
+        [System.Environment]::SetEnvironmentVariable($Name, $false)
+    }
+}
+Set-DefaultEnvValue("AZ_ENABLED")
+Set-DefaultEnvValue("POSH_GIT_ENABLED")
+
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
     Theme = "";
 }
@@ -19,20 +36,10 @@ if (Test-Path $config) {
 function global:Set-PoshContext {}
 
 function global:Initialize-ModuleSupport {
-    if (Get-Module -Name "posh-git") {
+    if ($env:POSH_GIT_ENABLED -eq $true -and (Get-Module -Name "posh-git")) {
         [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used later(not in this scope)')]
         $global:GitStatus = Get-GitStatus
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
-    }
-
-
-    if ($null -eq $env:AZ_ENABLED) {
-        if (Get-Module -ListAvailable -Name "Az.Accounts") {
-            $env:AZ_ENABLED = $true
-        }
-        else {
-            $env:AZ_ENABLED = $false
-        }
     }
 
     $env:AZ_SUBSCRIPTION_NAME = $null

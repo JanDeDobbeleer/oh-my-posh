@@ -181,17 +181,26 @@ func (t *executiontime) formatDurationAmarillo(ms int64) string {
 }
 
 func (t *executiontime) formatDurationRound(ms int64) string {
+	toRoundString := func(one, two int64, oneText, twoText string) string {
+		if two == 0 {
+			return fmt.Sprintf("%d%s", one, oneText)
+		}
+		return fmt.Sprintf("%d%s %d%s", one, oneText, two, twoText)
+	}
+	hours := ms / hour % hoursPerDay
 	if ms >= day {
-		return fmt.Sprintf("%dd", ms/day)
+		return toRoundString(ms/day, hours, "d", "h")
 	}
+	minutes := ms / minute % secondsPerMinute
 	if ms >= hour {
-		return fmt.Sprintf("%dh", ms/hour%hoursPerDay)
+		return toRoundString(hours, minutes, "h", "m")
 	}
+	seconds := (ms % minute) / second
 	if ms >= minute {
-		return fmt.Sprintf("%dm", ms/minute%secondsPerMinute)
+		return toRoundString(minutes, seconds, "m", "s")
 	}
 	if ms >= second {
-		return fmt.Sprintf("%ds", (ms%minute)/second)
+		return fmt.Sprintf("%ds", seconds)
 	}
 	return fmt.Sprintf("%dms", ms%second)
 }

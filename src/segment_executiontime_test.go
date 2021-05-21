@@ -228,3 +228,28 @@ func TestExecutionTimeFormatAmarillo(t *testing.T) {
 		assert.Equal(t, tc.Expected, output)
 	}
 }
+
+func TestExecutionTimeFormatDurationRound(t *testing.T) {
+	cases := []struct {
+		Input    string
+		Expected string
+	}{
+		{Input: "0.001s", Expected: "1ms"},
+		{Input: "0.1s", Expected: "100ms"},
+		{Input: "1s", Expected: "1s"},
+		{Input: "2.1s", Expected: "2s"},
+		{Input: "1m", Expected: "1m"},
+		{Input: "3m2.1s", Expected: "3m 2s"},
+		{Input: "1h", Expected: "1h"},
+		{Input: "4h3m2.1s", Expected: "4h 3m"},
+		{Input: "124h3m2.1s", Expected: "5d 4h"},
+		{Input: "124h3m2.0s", Expected: "5d 4h"},
+	}
+
+	for _, tc := range cases {
+		duration, _ := time.ParseDuration(tc.Input)
+		executionTime := &executiontime{}
+		output := executionTime.formatDurationRound(duration.Milliseconds())
+		assert.Equal(t, tc.Expected, output)
+	}
+}

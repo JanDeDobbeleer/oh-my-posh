@@ -16,7 +16,6 @@ import (
 	"github.com/distatus/battery"
 	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/process"
-	terminal "github.com/wayneashleyberry/terminal-dimensions"
 )
 
 const (
@@ -74,7 +73,6 @@ type environmentInfo interface {
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
 	stackCount() int
-	getTerminalWidth() (int, error)
 }
 
 type commandCache struct {
@@ -323,11 +321,6 @@ func (env *environment) stackCount() int {
 		return 0
 	}
 	return *env.args.StackCount
-}
-
-func (env *environment) getTerminalWidth() (int, error) {
-	width, err := terminal.Width()
-	return int(width), err
 }
 
 func cleanHostName(hostName string) string {

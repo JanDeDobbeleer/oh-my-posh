@@ -142,11 +142,6 @@ func (env *MockedEnvironment) isWsl() bool {
 	return false
 }
 
-func (env *MockedEnvironment) getTerminalWidth() (int, error) {
-	args := env.Called(nil)
-	return args.Int(0), args.Error(1)
-}
-
 const (
 	homeBill        = "/home/bill"
 	homeJan         = "/usr/home/jan"

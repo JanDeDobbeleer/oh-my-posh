@@ -40,7 +40,7 @@ Get-ChildItem -Path "$(scoop prefix oh-my-posh)/themes/*" -Include '*.omp.json' 
     Write-Host ""
     Write-Host "$esc[1m$($_.BaseName)$esc[0m"
     Write-Host ""
-    & "C:\tools\oh-my-posh.exe" -config $($_.FullName) -pwd $PWD
+    oh-my-posh --config $($_.FullName) --pwd $PWD
     Write-Host ""
 }
 ```

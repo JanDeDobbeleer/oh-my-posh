@@ -25,6 +25,21 @@ func (e *engine) string() string {
 	return e.console.String()
 }
 
+func (e *engine) canWriteRPrompt() bool {
+	prompt := e.string()
+	consoleWidth, err := e.env.getTerminalWidth()
+	if err != nil {
+		return true
+	}
+	promptWidth := e.ansi.lenWithoutANSI(prompt)
+	availableSpace := consoleWidth - promptWidth
+	if promptWidth > consoleWidth {
+		availableSpace = promptWidth - (promptWidth % consoleWidth)
+	}
+	promptBreathingRoom := 30
+	return (availableSpace - e.ansi.lenWithoutANSI(e.rprompt)) >= promptBreathingRoom
+}
+
 func (e *engine) render() string {
 	for _, block := range e.config.Blocks {
 		e.renderBlock(block)
@@ -151,7 +166,7 @@ func (e *engine) print() string {
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
 	case pwsh, powershell5, bash, plain:
-		if e.rprompt == "" {
+		if e.rprompt == "" || !e.canWriteRPrompt() {
 			break
 		}
 		e.write(e.ansi.saveCursorPosition)

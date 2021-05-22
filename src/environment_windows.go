@@ -3,6 +3,7 @@
 package main
 
 import (
+	"errors"
 	"os"
 
 	"golang.org/x/sys/windows"
@@ -56,4 +57,8 @@ func (env *environment) getWindowTitle(imageName, windowTitleRegex string) (stri
 
 func (env *environment) isWsl() bool {
 	return false
+}
+
+func (env *environment) getTerminalWidth() (int, error) {
+	return 0, errors.New("Unsupported on Windows")
 }

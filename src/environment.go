@@ -73,6 +73,7 @@ type environmentInfo interface {
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
 	stackCount() int
+	getTerminalWidth() (int, error)
 }
 
 type commandCache struct {

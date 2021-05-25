@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 )
@@ -90,7 +91,13 @@ func (b *Block) renderSegments() string {
 		}
 		b.activeSegment = segment
 		b.endPowerline()
-		b.renderSegmentText(segment.stringValue)
+		segmentValue := segment.stringValue
+		// escape backslashes to avoid replacements
+		// https://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
+		if b.env.getShellName() == bash {
+			segmentValue = strings.ReplaceAll(segment.stringValue, "\\", "\\\\")
+		}
+		b.renderSegmentText(segmentValue)
 	}
 	if b.previousActiveSegment != nil && b.previousActiveSegment.Style == Powerline {
 		b.writePowerLineSeparator(Transparent, b.previousActiveSegment.background(), true)

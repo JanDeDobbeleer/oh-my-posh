@@ -28,7 +28,7 @@ func (e *engine) string() string {
 func (e *engine) canWriteRPrompt() bool {
 	prompt := e.string()
 	consoleWidth, err := e.env.getTerminalWidth()
-	if err != nil {
+	if err != nil || consoleWidth == 0 {
 		return true
 	}
 	promptWidth := e.ansi.lenWithoutANSI(prompt)

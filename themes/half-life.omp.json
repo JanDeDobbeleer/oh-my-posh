@@ -43,13 +43,20 @@
             "branch_behind_icon": "",
             "branch_gone_icon": "",
             "branch_identical_icon": "",
+            "commit_icon": "",
+            "tag_icon": "",
+            "merge_icon": "",
+            "rebase_icon": "",
+            "cherry_pick_icon": "",
             "working_color": "#D75F00",
             "staging_color": "#87FF00",
             "local_working_icon": " ●",
             "local_staged_icon": " ●",
             "status_separator_icon": "",
+            "display_status": true,
             "display_status_detail": false,
-            "display_branch_status": false
+            "display_branch_status": false,
+            "display_stash_count": false
           }
         },
         {

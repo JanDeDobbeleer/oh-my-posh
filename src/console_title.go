@@ -37,6 +37,7 @@ func (t *consoleTitle) getConsoleTitle() string {
 	default:
 		title = base(t.getPwd(), t.env)
 	}
+	title = t.ansi.escapeText(title)
 	return fmt.Sprintf(t.ansi.title, title)
 }
 

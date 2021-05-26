@@ -83,6 +83,7 @@ func (a *aws) string() string {
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  a,
+		Env:      a.env,
 	}
 	text, err := template.render()
 	if err != nil {

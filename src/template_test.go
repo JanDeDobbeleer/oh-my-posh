@@ -68,10 +68,65 @@ func TestRenderTemplate(t *testing.T) {
 		},
 	}
 
+	env := &MockedEnvironment{}
 	for _, tc := range cases {
 		template := &textTemplate{
 			Template: tc.Template,
 			Context:  tc.Context,
+			Env:      env,
+		}
+		text, err := template.render()
+		if tc.ShouldError {
+			assert.Error(t, err)
+			continue
+		}
+		assert.Equal(t, tc.Expected, text, tc.Case)
+	}
+}
+
+func TestRenderTemplateEnvVar(t *testing.T) {
+	cases := []struct {
+		Case        string
+		Expected    string
+		Template    string
+		ShouldError bool
+		Env         map[string]string
+		Context     interface{}
+	}{
+		{
+			Case:     "map with env var",
+			Expected: "hello world",
+			Template: "{{.Env.HELLO}} {{.World}}",
+			Context:  map[string]interface{}{"World": "world"},
+			Env:      map[string]string{"HELLO": "hello"},
+		},
+		{
+			Case:     "nil struct with env var",
+			Expected: "hello world",
+			Template: "{{.Env.HELLO }} world{{ .Text}}",
+			Context:  nil,
+			Env:      map[string]string{"HELLO": "hello"},
+		},
+		{
+			Case:     "struct with env var",
+			Expected: "hello world posh",
+			Template: "{{.Env.HELLO}} world {{ .Text }}",
+			Context:  struct{ Text string }{Text: "posh"},
+			Env:      map[string]string{"HELLO": "hello"},
+		},
+		{Case: "no env var", Expected: "hello world", Template: "{{.Text}} world", Context: struct{ Text string }{Text: "hello"}},
+		{Case: "map", Expected: "hello world", Template: "{{.Text}} world", Context: map[string]interface{}{"Text": "hello"}},
+		{Case: "empty map", Expected: " world", Template: "{{.Text}} world", Context: map[string]string{}},
+	}
+	for _, tc := range cases {
+		env := &MockedEnvironment{}
+		for name, value := range tc.Env {
+			env.On("getenv", name).Return(value)
+		}
+		template := &textTemplate{
+			Template: tc.Template,
+			Context:  tc.Context,
+			Env:      env,
 		}
 		text, err := template.render()
 		if tc.ShouldError {

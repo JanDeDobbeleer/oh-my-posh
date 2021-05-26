@@ -16,6 +16,7 @@ func (k *kubectl) string() string {
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  k,
+		Env:      k.env,
 	}
 	text, err := template.render()
 	if err != nil {

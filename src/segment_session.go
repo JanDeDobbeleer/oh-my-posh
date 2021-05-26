@@ -46,6 +46,7 @@ func (s *session) enabled() bool {
 		template := &textTemplate{
 			Template: segmentTemplate,
 			Context:  s,
+			Env:      s.env,
 		}
 		var err error
 		s.templateText, err = template.render()

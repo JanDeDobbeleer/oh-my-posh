@@ -129,6 +129,7 @@ func (b *batt) string() string {
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  b,
+		Env:      b.env,
 	}
 	text, err := template.render()
 	if err != nil {

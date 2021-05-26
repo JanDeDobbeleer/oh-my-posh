@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"sync"
 	"time"
 )
@@ -91,13 +90,7 @@ func (b *Block) renderSegments() string {
 		}
 		b.activeSegment = segment
 		b.endPowerline()
-		segmentValue := segment.stringValue
-		// escape backslashes to avoid replacements
-		// https://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
-		if b.env.getShellName() == bash {
-			segmentValue = strings.ReplaceAll(segment.stringValue, "\\", "\\\\")
-		}
-		b.renderSegmentText(segmentValue)
+		b.renderSegmentText(segment.stringValue)
 	}
 	if b.previousActiveSegment != nil && b.previousActiveSegment.Style == Powerline {
 		b.writePowerLineSeparator(Transparent, b.previousActiveSegment.background(), true)
@@ -174,7 +167,6 @@ func (b *Block) renderDiamondSegment(text string) {
 }
 
 func (b *Block) renderText(text string) {
-	text = b.ansi.generateHyperlink(text)
 	defaultValue := " "
 	prefix := b.activeSegment.getValue(Prefix, defaultValue)
 	postfix := b.activeSegment.getValue(Postfix, defaultValue)

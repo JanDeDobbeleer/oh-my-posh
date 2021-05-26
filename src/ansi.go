@@ -176,3 +176,21 @@ func (a *ansiUtils) consolePwd(pwd string) string {
 	}
 	return fmt.Sprintf(a.osc99, pwd)
 }
+
+func (a *ansiUtils) escapeText(text string) string {
+	// what to escape/replace is different per shell
+	// maybe we should refactor and maintain a list of characters to escap/replace
+	// like we do in ansi.go for ansi codes
+	switch a.shell {
+	case zsh:
+		// escape double quotes
+		text = strings.ReplaceAll(text, "\"", "\"\"")
+	case bash:
+		// escape backslashes to avoid replacements
+		// https://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
+		text = strings.ReplaceAll(text, "\\", "\\\\")
+	}
+	// escape backtick
+	text = strings.ReplaceAll(text, "`", "'")
+	return text
+}

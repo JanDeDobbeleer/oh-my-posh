@@ -23,6 +23,7 @@ type Segment struct {
 	writer              SegmentWriter
 	stringValue         string
 	active              bool
+	env                 environmentInfo
 }
 
 // SegmentTiming holds the timing context for a segment
@@ -182,6 +183,7 @@ func (segment *Segment) getColor(templates []string, defaultColor string) string
 	}
 	txtTemplate := &textTemplate{
 		Context: segment.writer,
+		Env:     segment.env,
 	}
 	for _, template := range templates {
 		txtTemplate.Template = template
@@ -211,6 +213,7 @@ func (segment *Segment) background() string {
 }
 
 func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
+	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
 		Session:       &session{},
 		Path:          &path{},

@@ -24,6 +24,7 @@ func (t *tempus) enabled() bool {
 		template := &textTemplate{
 			Template: segmentTemplate,
 			Context:  t,
+			Env:      t.env,
 		}
 		var err error
 		t.templateText, err = template.render()

@@ -276,6 +276,7 @@ func getConsoleBackgroundColor(env environmentInfo, backgroundColorTemplate stri
 	template := &textTemplate{
 		Template: backgroundColorTemplate,
 		Context:  context,
+		Env:      env,
 	}
 	text, err := template.render()
 	if err != nil {

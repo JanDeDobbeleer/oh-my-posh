@@ -60,7 +60,7 @@ func (b *batt) enabled() bool {
 	b.Percentage = int(math.Min(100, batteryPercentage))
 	var colorPorperty Property
 	switch b.Battery.State {
-	case battery.Discharging:
+	case battery.Discharging, battery.NotCharging:
 		colorPorperty = DischargingColor
 		b.Icon = b.props.getString(DischargingIcon, "")
 	case battery.Charging:
@@ -107,7 +107,7 @@ func (b *batt) enabledWhileError(err error) bool {
 
 func (b *batt) mapMostLogicalState(currentState, newState battery.State) battery.State {
 	switch currentState {
-	case battery.Discharging:
+	case battery.Discharging, battery.NotCharging:
 		return battery.Discharging
 	case battery.Empty:
 		return newState

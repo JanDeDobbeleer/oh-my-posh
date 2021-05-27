@@ -34,6 +34,6 @@ require (
 	howett.net/plist v0.0.0-20201203080718-1454fab16a06 // indirect
 )
 
-replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-1
+replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-2
 
 replace github.com/gookit/color v1.3.5 => github.com/JanDeDobbeleer/color v1.3.5-1

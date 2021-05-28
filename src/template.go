@@ -83,9 +83,15 @@ func (t *textTemplate) isStruct() bool {
 func (t *textTemplate) structToMap() map[string]interface{} {
 	context := make(map[string]interface{})
 	v := reflect.ValueOf(t.Context)
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
 	strct := v.Type()
 	for i := 0; i < strct.NumField(); i++ {
 		sf := strct.Field(i)
+		if !v.Field(i).CanInterface() {
+			continue
+		}
 		name := sf.Name
 		value := v.Field(i).Interface()
 		context[name] = value

@@ -70,7 +70,7 @@ func (a *az) enabled() bool {
 func (a *az) getFromEnvVars() bool {
 	a.name = a.env.getenv("AZ_SUBSCRIPTION_NAME")
 	a.id = a.env.getenv("AZ_SUBSCRIPTION_ID")
-	a.account = a.env.getenv("AZ_SUBSCRIPTION_ID")
+	a.account = a.env.getenv("AZ_SUBSCRIPTION_ACCOUNT")
 
 	if a.name == "" && a.id == "" {
 		return false

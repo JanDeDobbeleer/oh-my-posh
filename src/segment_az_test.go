@@ -69,6 +69,16 @@ func TestAzSegment(t *testing.T) {
 			DisplayName:     true,
 		},
 		{
+			Case:            "envvar account present",
+			ExpectedEnabled: true,
+			ExpectedString:  "foobar",
+			EnvSubAccount:   "foobar",
+			EnvSubID:        "bar",
+			CliExists:       false,
+			InfoSeparator:   "$",
+			DisplayAccount:  true,
+		},
+		{
 			Case:            "cli not found",
 			ExpectedEnabled: false,
 			ExpectedString:  "",
@@ -143,6 +153,7 @@ func TestAzSegment(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("getenv", "AZ_SUBSCRIPTION_NAME").Return(tc.EnvSubName)
 		env.On("getenv", "AZ_SUBSCRIPTION_ID").Return(tc.EnvSubID)
+		env.On("getenv", "AZ_SUBSCRIPTION_ACCOUNT").Return(tc.EnvSubAccount)
 		env.On("hasCommand", "az").Return(tc.CliExists)
 		env.On("runCommand", "az", []string{"account", "show", "--query=[name,id,user.name]", "-o=tsv"}).Return(
 			fmt.Sprintf("%s\n%s\n%s\n", tc.CliSubName, tc.CliSubID, tc.CliSubAccount),

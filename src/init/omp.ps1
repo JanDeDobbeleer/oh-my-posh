@@ -150,6 +150,9 @@ function global:Export-PoshTheme {
     $configString = @(&$omp --config="$config" --config-format="$Format" --print-config 2>&1)
     # if no path, copy to clipboard by default
     if ($FilePath -ne "") {
+        if ($FilePath.StartsWith('~')) {
+            $FilePath = $FilePath.Replace('~', $HOME)
+        }
         $FilePath = [IO.Path]::GetFullPath($FilePath)
         [IO.File]::WriteAllLines($FilePath, $configString)
     }

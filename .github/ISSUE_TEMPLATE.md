@@ -14,6 +14,11 @@
 - Operating System:
 - Shell:
 - Terminal:
+  
+#### Optional
+
+- posh-git version:
+- git version:
 
 ### Steps to Reproduce
 

@@ -19,6 +19,12 @@ PowerShell offers support for the `posh-git` module for autocompletion, but it i
 To enable this, set `$env:POSH_GIT_ENABLED = $true` in your `$PROFILE`.
 :::
 
+:::warning
+Starting from version 3.152.0, `display_status` is disabled by default.  
+It improves performance but reduces the quantity of information. Don't forget to enable it in your theme if needed.  
+An alternative is to use the [Posh-Git segment][poshgit]
+:::
+
 ## Sample Configuration
 
 ```json
@@ -91,3 +97,4 @@ foreground/background (see `color_background`)
 foreground/background (see `color_background`)
 
 [colors]: /docs/configure#colors
+[poshgit]: /docs/poshgit

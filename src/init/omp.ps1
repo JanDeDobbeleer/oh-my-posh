@@ -153,7 +153,7 @@ function global:Export-PoshTheme {
         if ($FilePath.StartsWith('~')) {
             $FilePath = $FilePath.Replace('~', $HOME)
         }
-        $FilePath = [IO.Path]::GetFullPath($FilePath)
+        $FilePath = [IO.Path]::GetFullPath($FilePath, (Get-Location -PSProvider FileSystem).ProviderPath)
         [IO.File]::WriteAllLines($FilePath, $configString)
     }
     else {

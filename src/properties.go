@@ -112,6 +112,23 @@ func (p *properties) getFloat64(property Property, defaultValue float64) float64
 	return floatValue
 }
 
+func (p *properties) getInt(property Property, defaultValue int) int {
+	if p == nil || p.values == nil {
+		return defaultValue
+	}
+	val, found := p.values[property]
+	if !found {
+		return defaultValue
+	}
+
+	intValue, ok := val.(int)
+	if !ok {
+		return defaultValue
+	}
+
+	return intValue
+}
+
 func (p *properties) getKeyValueMap(property Property, defaultValue map[string]string) map[string]string {
 	if p == nil || p.values == nil {
 		return defaultValue

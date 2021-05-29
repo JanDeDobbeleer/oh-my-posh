@@ -112,6 +112,8 @@ const (
 	BehindColor Property = "behind_color"
 	// AheadColor if set, the color to use when the branch is ahead and behind the remote
 	AheadColor Property = "ahead_color"
+	// BranchMaxLength truncates the length of the branch name
+	BranchMaxLength Property = "branch_max_length"
 )
 
 func (g *git) enabled() bool {
@@ -295,13 +297,16 @@ func (g *git) getGitHEADContext(ref string) string {
 	if ref == "" {
 		ref = g.getPrettyHEADName()
 	} else {
+		ref = g.truncateBranch(ref)
 		ref = fmt.Sprintf("%s%s", branchIcon, ref)
 	}
 	// rebase
 	if g.hasGitFolder("rebase-merge") {
 		head := g.getGitFileContents("rebase-merge/head-name")
 		origin := strings.Replace(head, "refs/heads/", "", 1)
+		origin = g.truncateBranch(origin)
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
+		onto = g.truncateBranch(onto)
 		step := g.getGitFileContents("rebase-merge/msgnum")
 		total := g.getGitFileContents("rebase-merge/end")
 		icon := g.props.getString(RebaseIcon, "\uE728 ")
@@ -310,6 +315,7 @@ func (g *git) getGitHEADContext(ref string) string {
 	if g.hasGitFolder("rebase-apply") {
 		head := g.getGitFileContents("rebase-apply/head-name")
 		origin := strings.Replace(head, "refs/heads/", "", 1)
+		origin = g.truncateBranch(origin)
 		step := g.getGitFileContents("rebase-apply/next")
 		total := g.getGitFileContents("rebase-apply/last")
 		icon := g.props.getString(RebaseIcon, "\uE728 ")
@@ -321,7 +327,8 @@ func (g *git) getGitHEADContext(ref string) string {
 		mergeContext := g.getGitFileContents("MERGE_MSG")
 		matches := findNamedRegexMatch(`Merge branch '(?P<head>.*)' into`, mergeContext)
 		if matches != nil && matches["head"] != "" {
-			return fmt.Sprintf("%s%s%s into %s", icon, branchIcon, matches["head"], ref)
+			branch := g.truncateBranch(matches["head"])
+			return fmt.Sprintf("%s%s%s into %s", icon, branchIcon, branch, ref)
 		}
 	}
 	// cherry-pick
@@ -331,6 +338,14 @@ func (g *git) getGitHEADContext(ref string) string {
 		return fmt.Sprintf("%s%s onto %s", icon, sha[0:6], ref)
 	}
 	return ref
+}
+
+func (g *git) truncateBranch(branch string) string {
+	maxLength := g.props.getInt(BranchMaxLength, 0)
+	if maxLength == 0 {
+		return branch
+	}
+	return branch[0:maxLength]
 }
 
 func (g *git) hasGitFile(file string) bool {
@@ -356,6 +371,7 @@ func (g *git) getGitRefFileSymbolicName(refFile string) string {
 func (g *git) getPrettyHEADName() string {
 	ref := g.getGitCommandOutput("branch", "--show-current")
 	if ref != "" {
+		ref = g.truncateBranch(ref)
 		return fmt.Sprintf("%s%s", g.props.getString(BranchIcon, "\uE0A0"), ref)
 	}
 	// check for tag

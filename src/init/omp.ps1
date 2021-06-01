@@ -150,10 +150,8 @@ function global:Export-PoshTheme {
     $configString = @(&$omp --config="$config" --config-format="$Format" --print-config 2>&1)
     # if no path, copy to clipboard by default
     if ($FilePath -ne "") {
-        if ($FilePath.StartsWith('~')) {
-            $FilePath = $FilePath.Replace('~', $HOME)
-        }
-        $FilePath = [IO.Path]::GetFullPath($FilePath, (Get-Location -PSProvider FileSystem).ProviderPath)
+        #https://stackoverflow.com/questions/3038337/powershell-resolve-path-that-might-not-exist
+        $FilePath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($FilePath)
         [IO.File]::WriteAllLines($FilePath, $configString)
     }
     else {

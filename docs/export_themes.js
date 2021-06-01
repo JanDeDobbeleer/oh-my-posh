@@ -47,6 +47,7 @@ themeConfigOverrrides.set('space.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('spaceship.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('star.omp.json', newThemeConfig(40, 70));
 themeConfigOverrrides.set('stelbent.minimal.omp.json', newThemeConfig(70));
+themeConfigOverrrides.set('tonybaloney.omp.json', newThemeConfig(0,40));
 themeConfigOverrrides.set('ys.omp.json', newThemeConfig(40, 100));
 themeConfigOverrrides.set('zash.omp.json', newThemeConfig(40, 40));
 

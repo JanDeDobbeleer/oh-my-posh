@@ -55,13 +55,12 @@ when relevant. It can be styled any way you want, resulting in visualizing the p
 
 For your convenience, the existing [themes][themes] from [Oh my Posh][omp-themes] have been added to version 3, so you
 can get started even without having to understand the theming. So, let's no longer waste time on theory, have a look at the
-[installation guide][install] to get started right away!
+installation guide to get started right away!
 
 [omp]: https://github.com/JanDeDobbeleer/oh-my-posh2
 [omz]: https://github.com/ohmyzsh/ohmyzsh
 [omp3]: https://github.com/JanDeDobbeleer/oh-my-posh
 [wsl]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
-[install]: /docs/installation
 [block]: /docs/configure#block
 [segment]: /docs/configure#segment
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes

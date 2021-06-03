@@ -47,15 +47,15 @@ locations before doing a replacement.
 
 - mapped_locations_enabled: `boolean` - replace known locations in the path with the replacements before applying the
 style. defaults to `true`
-- mapped_locations: `map[string]string` - custom glyph/text for specific paths (only when `mapped_locations_enabled`
+- mapped_locations: `[][]string, string` - custom glyph/text for specific paths (only when `mapped_locations_enabled`
 is set to `true`)
 
 For example, to swap out `C:\Users\Leet\GitHub` with a GitHub icon, you can do the following:
 
 ```json
-"mapped_locations": {
-  "C:\\Users\\Leet\\GitHub": "\uF09B"
-}
+"mapped_locations": [
+  ["C:\\Users\\Leet\\GitHub", "\uF09B"]
+]
 ```
 
 ## Style

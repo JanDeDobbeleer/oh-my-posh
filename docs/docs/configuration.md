@@ -39,7 +39,7 @@ escape characters to see the prompt as it would be shown inside a prompt functio
 
 :::info
 The command below will not persist the configuration for your shell but print the prompt in your terminal.
-If you want to use your own configuration permanently, adjust the [prompt configuration][promptconfig] to use your custom
+If you want to use your own configuration permanently, adjust the prompt configuration to use your custom
 theme.
 :::
 
@@ -48,7 +48,7 @@ oh-my-posh --config sample.json --shell universal
 ```
 
 If all goes according to plan, you should see the prompt being printed out on the line below. In case you see a lot of
-boxes with question marks, [set up your terminal][setupterm] to use a supported font before continuing.
+boxes with question marks, set up your terminal to use a supported font before continuing.
 
 ## General Settings
 
@@ -464,8 +464,6 @@ has to be enabled at the segment level. Hyperlink generation is disabled by defa
 }
 ```
 
-[promptconfig]: /docs/installation#4-replace-your-existing-prompt
-[setupterm]: /docs/installation#1-setup-your-terminal
 [releases]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
 [nf]: https://www.nerdfonts.com/
 [segments]: /docs/battery

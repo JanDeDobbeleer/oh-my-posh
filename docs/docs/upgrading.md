@@ -90,7 +90,6 @@ Set-PoshPrompt -Theme jandedobbeleer
 You can either tweak the theme to your liking, add segments or [submit an issue][issues] for new functionality.
 Do not hesitate to [ask for assistance][issues] when you notice an issue or unexpected behavior.
 
-[manual]: /docs/installation
 [psgallery]: https://www.powershellgallery.com/packages/oh-my-posh
 [themesv2]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/master/Themes
 [omz]: https://github.com/ohmyzsh/ohmyzsh

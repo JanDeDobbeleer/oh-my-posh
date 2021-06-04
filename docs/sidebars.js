@@ -44,6 +44,7 @@ module.exports = {
         "java",
         "julia",
         "kubectl",
+        "nbgv",
         "node",
         "os",
         "path",

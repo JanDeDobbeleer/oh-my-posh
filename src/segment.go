@@ -116,6 +116,8 @@ const (
 	Crystal SegmentType = "crystal"
 	// Dart writes the active dart version
 	Dart SegmentType = "dart"
+	// Nbgv writes the nbgv version information
+	Nbgv SegmentType = "nbgv"
 )
 
 func (segment *Segment) string() string {
@@ -245,6 +247,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		AZFunc:        &azfunc{},
 		Crystal:       &crystal{},
 		Dart:          &dart{},
+		Nbgv:          &nbgv{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

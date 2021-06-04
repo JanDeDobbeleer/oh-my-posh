@@ -1,0 +1,47 @@
+---
+id: nbgv
+title: Nerdbank.GitVersioning
+sidebar_label: Nbgv
+---
+
+## What
+
+Display the [Nerdbank.GitVersioning][nbgv] version.
+
+:::warning
+The Nerdbank.GitVersioning CLI can be a bit slow causing the prompt to feel slow.
+:::
+
+## Sample Configuration
+
+```json
+{
+  "type": "nbgv",
+  "style": "powerline",
+  "powerline_symbol": "",
+  "foreground": "#ffffff",
+  "background": "#3a579a",
+  "properties": {
+    "prefix": " \uF1D2 "
+  }
+}
+```
+
+## Properties
+
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{ .Version }}`
+
+## Template Properties
+
+- `.Version`: `string` - the current version
+- `.AssemblyVersion`: `string` - the current assembly version
+- `.AssemblyInformationalVersion`: `string` - the current assembly informational version
+- `.NuGetPackageVersion`: `string` - the current nuget package version
+- `.ChocolateyPackageVersion`: `string` - the current chocolatey package version
+- `.NpmPackageVersion`: `string` - the current npm package version
+- `.SimpleVersion`: `string` - the current simple version
+
+[nbgv]: https://github.com/dotnet/Nerdbank.GitVersioning
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

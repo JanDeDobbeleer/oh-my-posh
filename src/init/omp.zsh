@@ -50,3 +50,22 @@ function export_poshconfig() {
     fi
     ::OMP:: --config $POSH_THEME --print-config --config-format $format > $1
 }
+
+function self-insert() {
+  # ignore an empty buffer
+  if [[ -z  "$BUFFER"  ]]; then
+    zle .self-insert
+    return
+  fi
+  tooltip=$(::OMP:: --config $POSH_THEME --shell zsh --tooltip $BUFFER)
+  # ignore an empty tooltip
+  if [[ ! -z "$tooltip" ]]; then
+    RPROMPT=$tooltip
+    zle reset-prompt
+  fi
+  zle .self-insert
+}
+
+function enable_poshtooltips() {
+  zle -N self-insert
+}

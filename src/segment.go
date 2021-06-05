@@ -9,6 +9,7 @@ import (
 // Segment represent a single segment and it's configuration
 type Segment struct {
 	Type                SegmentType              `config:"type"`
+	Tips                []string                 `config:"tips"`
 	Style               SegmentStyle             `config:"style"`
 	PowerlineSymbol     string                   `config:"powerline_symbol"`
 	InvertPowerline     bool                     `config:"invert_powerline"`
@@ -196,6 +197,15 @@ func (segment *Segment) getColor(templates []string, defaultColor string) string
 		return value
 	}
 	return defaultColor
+}
+
+func (segment *Segment) shouldInvokeWithTip(tip string) bool {
+	for _, t := range segment.Tips {
+		if t == tip {
+			return true
+		}
+	}
+	return false
 }
 
 func (segment *Segment) foreground() string {

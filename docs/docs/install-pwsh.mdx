@@ -39,6 +39,12 @@ cmdlet.
 Get-PoshThemes
 ```
 
+The module installs all themes in the module folder. To find the actual files, you can use the following command:
+
+```powershell
+Get-ChildItem "$((Get-Module oh-my-posh).ModuleBase)/themes"
+```
+
 ## Replace your existing prompt
 
 Edit `$PROFILE` in your preferred PowerShell version and add the following line. Autocompletion is available so it will loop

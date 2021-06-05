@@ -27,6 +27,7 @@ type Config struct {
 	ConsoleTitleTemplate string            `config:"console_title_template"`
 	TerminalBackground   string            `config:"terminal_background"`
 	Blocks               []*Block          `config:"blocks"`
+	Tooltips             []*Segment        `config:"tooltips"`
 }
 
 const (

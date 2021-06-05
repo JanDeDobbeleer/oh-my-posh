@@ -9,12 +9,12 @@
 
 ### Environment
 
-- Oh my Posh version:
+- Oh My Posh version:
 - Theme:
 - Operating System:
 - Shell:
 - Terminal:
-  
+
 #### Optional
 
 - posh-git version:

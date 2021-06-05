@@ -27,7 +27,7 @@ var bashInit string
 var zshInit string
 
 const (
-	noExe       = "echo \"Unable to find Oh my Posh executable\""
+	noExe       = "echo \"Unable to find Oh My Posh executable\""
 	zsh         = "zsh"
 	bash        = "bash"
 	pwsh        = "pwsh"

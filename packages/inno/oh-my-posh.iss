@@ -1,8 +1,8 @@
 [Setup]
-AppName=Oh my Posh
+AppName=Oh My Posh
 AppVersion=<VERSION>
 DefaultDirName={autopf}\oh-my-posh
-DefaultGroupName=Oh my Posh
+DefaultGroupName=Oh My Posh
 PrivilegesRequired=lowest
 AppPublisher=Jan De Dobbeleer
 AppPublisherURL=https://ohmyposh.dev

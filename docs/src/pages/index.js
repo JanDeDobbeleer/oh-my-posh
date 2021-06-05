@@ -11,7 +11,7 @@ const features = [
     title: <>Colors</>,
     description: (
       <>
-        Oh my Posh enables you to use the full color set of your terminal
+        Oh My Posh enables you to use the full color set of your terminal
         by using colors to define and render the prompt.
       </>
     ),
@@ -71,7 +71,7 @@ function Home() {
               Get Started
             </Link>
           </div>
-          <img class="hero--image" src="/img/hero.png" alt="Oh my Posh prompt"></img>
+          <img class="hero--image" src="/img/hero.png" alt="Oh My Posh prompt"></img>
         </div>
       </header>
       <main>

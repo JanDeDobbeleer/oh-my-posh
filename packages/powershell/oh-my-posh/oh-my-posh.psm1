@@ -70,7 +70,20 @@ function Set-PoshPrompt {
     (& $poshCommand --init --shell=pwsh --config="$config") | Invoke-Expression
 }
 
-function Get-PoshThemes {
+<#
+.SYNOPSIS
+    Display a preview or a list of installed themes.
+.EXAMPLE
+    Get-PoshThemes
+.Example
+    Gest-PoshThemes -list
+#>
+function Get-PoshThemes() {
+    param(
+        [switch]
+        [Parameter(Mandatory = $false, HelpMessage = "List themes path")]
+        $list
+    )
     $esc = [char]27
     $consoleWidth = $Host.UI.RawUI.WindowSize.Width
     $logo = @'
@@ -84,15 +97,23 @@ function Get-PoshThemes {
                             |___/
 '@
     Write-Host $logo
-    $poshCommand = Get-PoshCommand
-    Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
-        Write-Host ("-" * $consoleWidth)
-        Write-Host "Theme: $esc[1m$($_.BaseName.Replace('.omp', ''))$esc[0m"
-        Write-Host ""
-        & $poshCommand -config $($_.FullName) -pwd $PWD
-        Write-Host ""
+    $themes = Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name
+    Write-Host ("-" * $consoleWidth)
+    if ($list -eq $true) {
+        $themes | Select-Object fullname | Format-Table -HideTableHeaders
+    }
+    else {
+        $poshCommand = Get-PoshCommand
+        $themes | ForEach-Object -Process {
+            Write-Host "Theme: $esc[1m$($_.BaseName.Replace('.omp', ''))$esc[0m"
+            Write-Host ""
+            & $poshCommand -config $($_.FullName) -pwd $PWD
+            Write-Host ""
+        }
     }
     Write-Host ("-" * $consoleWidth)
+    Write-Host ""
+    Write-Host "Themes location: $PSScriptRoot\themes"
     Write-Host ""
     Write-Host "To change your theme, use the Set-PoshPrompt command. Example:"
     Write-Host "  Set-PoshPrompt -Theme jandedobbeleer"
@@ -121,8 +142,8 @@ function ThemeCompletion {
         $fakeBoundParameter
     )
     $themes = Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name | Select-Object -Property @{
-        label='BaseName'
-        expression={$_.BaseName.Replace('.omp', '')}
+        label      = 'BaseName'
+        expression = { $_.BaseName.Replace('.omp', '') }
     }
     $themes |
     Where-Object { $_.BaseName.ToLower().StartsWith($wordToComplete.ToLower()); } |

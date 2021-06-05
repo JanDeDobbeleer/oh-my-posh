@@ -4,7 +4,7 @@ title: Configuration
 sidebar_label: ⚙️ Configuration
 ---
 
-Oh my Posh renders your prompt based on the definition of _blocks_ (like Lego) which contain one or more _segments_.
+Oh My Posh renders your prompt based on the definition of _blocks_ (like Lego) which contain one or more _segments_.
 A really simple configuration could look like this.
 
 ```json
@@ -33,7 +33,7 @@ A really simple configuration could look like this.
 ```
 
 With this configuration, a single powerline segment is rendered that shows the name of the folder you're currently in.
-To set this configuration in combination with a Oh my Posh [executable][releases], use the `--config` flag to
+To set this configuration in combination with a Oh My Posh [executable][releases], use the `--config` flag to
 set a path to a json file containing the above code. The `--shell universal` flag is used to print the prompt without
 escape characters to see the prompt as it would be shown inside a prompt function for your shell.
 
@@ -345,7 +345,7 @@ To change *only* the background color, just omit the first color from the above 
 "prefix": "<,#FFFFFF>┏[</>",
 ```
 
-Oh my Posh mainly supports three different color types being
+Oh My Posh mainly supports three different color types being
 
 - Typical [hex colors][hexcolors] (for example `#CB4B16`).
 - The `transparent` keyword which can be used to create either a transparent foreground override

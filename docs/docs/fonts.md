@@ -6,10 +6,10 @@ sidebar_label: 🆎 Fonts
 
 ### Nerd Fonts
 
-Oh my Posh was designed to use [Nerd Fonts][nerdfonts]. Nerd Fonts are popular fonts that are patched to include icons.
+Oh My Posh was designed to use [Nerd Fonts][nerdfonts]. Nerd Fonts are popular fonts that are patched to include icons.
 We recommend [Meslo LGM NF][meslo], but any Nerd Font should be compatible with the standard [themes][themes].
 
-To see the icons displayed in Oh my Posh, **install** a [Nerd Font][nerdfonts], and **configure** your terminal to use it.
+To see the icons displayed in Oh My Posh, **install** a [Nerd Font][nerdfonts], and **configure** your terminal to use it.
 
 #### Windows
 

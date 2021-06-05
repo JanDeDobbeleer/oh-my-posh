@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema",
   "$id": "http://example.com/example.json",
   "type": "object",
-  "title": "The Oh my Posh theme definition",
+  "title": "The Oh My Posh theme definition",
   "description": "https://ohmyposh.dev/docs/configure",
   "definitions": {
     "color": {

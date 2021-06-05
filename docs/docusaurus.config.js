@@ -1,5 +1,5 @@
 module.exports = {
-  title: "Oh my Posh",
+  title: "Oh My Posh",
   tagline: "A prompt theme engine for any shell.",
   url: "https://ohmyposh.dev",
   baseUrl: "/",
@@ -14,9 +14,9 @@ module.exports = {
       darkTheme: require("prism-react-renderer/themes/oceanicNext"),
     },
     navbar: {
-      title: "Oh my Posh",
+      title: "Oh My Posh",
       logo: {
-        alt: "Oh my Posh Logo",
+        alt: "Oh My Posh Logo",
         src: "img/logo.svg",
       },
       items: [

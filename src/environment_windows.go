@@ -44,6 +44,10 @@ func (env *environment) isRunningAsRoot() bool {
 }
 
 func (env *environment) homeDir() string {
+	// return the right HOME reference when using MSYS2
+	if env.getShellName() == bash {
+		return os.Getenv("HOME")
+	}
 	home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
 	if home == "" {
 		home = os.Getenv("USERPROFILE")

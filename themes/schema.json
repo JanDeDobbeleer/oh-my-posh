@@ -1169,24 +1169,10 @@
                     "default": "folder"
                   },
                   "mapped_locations": {
-                    "type": "array",
+                    "type": "object",
                     "title": "Mapped Locations",
                     "description": "Custom glyph/text for specific paths",
-                    "items": {
-                      "type": "array",
-                      "items": [
-                        {
-                          "type": "string",
-                          "title": "Filesystem path"
-                        },
-                        {
-                          "type": "string",
-                          "title": "Replacement text"
-                        }
-                      ],
-                      "minItems": 2,
-                      "maxItems": 2,
-                      "additionalItems": false
+                    "default": {}
                     }
                   },
                   "mapped_locations_enabled": {

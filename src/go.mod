@@ -37,5 +37,3 @@ require (
 )
 
 replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-2
-
-replace github.com/gookit/color v1.4.2 => github.com/JanDeDobbeleer/color v1.4.2-2

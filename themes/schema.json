@@ -1173,26 +1173,25 @@
                     "title": "Mapped Locations",
                     "description": "Custom glyph/text for specific paths",
                     "default": {}
-                    }
-                  },
-                  "mapped_locations_enabled": {
-                    "type": "boolean",
-                    "title": "Enable the Mapped Locations feature",
-                    "description": "Replace known locations in the path with the replacements before applying the style.",
-                    "default": true
-                  },
-                  "enable_hyperlink": {
-                    "type": "boolean",
-                    "title": "Enable hyperlink",
-                    "description": "Displays an hyperlink for the current path",
-                    "default": false
-                  },
-                  "stack_count_enabled": {
-                    "type": "boolean",
-                    "title": "Show/hide stack count",
-                    "description": "Displays the stack count when using pushd/popd",
-                    "default": false
                   }
+                },
+                "mapped_locations_enabled": {
+                  "type": "boolean",
+                  "title": "Enable the Mapped Locations feature",
+                  "description": "Replace known locations in the path with the replacements before applying the style.",
+                  "default": true
+                },
+                "enable_hyperlink": {
+                  "type": "boolean",
+                  "title": "Enable hyperlink",
+                  "description": "Displays an hyperlink for the current path",
+                  "default": false
+                },
+                "stack_count_enabled": {
+                  "type": "boolean",
+                  "title": "Show/hide stack count",
+                  "description": "Displays the stack count when using pushd/popd",
+                  "default": false
                 }
               }
             }

@@ -26,7 +26,7 @@ oh-my-posh --print-shell
 Edit `$PROFILE` in your preferred PowerShell version and add the following line.
 
 ```powershell
-oh-my-posh --init --shell pwsh --config ~/.mytheme.omp.json | Invoke-Expression
+oh-my-posh --init --shell pwsh --config ~/jandedobbeleer.omp.json | Invoke-Expression
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -41,7 +41,7 @@ Once added, reload your profile for the changes to take effect.
 Add the following to `~/.zshrc`:
 
 ```bash
-eval "$(oh-my-posh --init --shell zsh --config ~/.mytheme.omp.json)"
+eval "$(oh-my-posh --init --shell zsh --config ~/jandedobbeleer.omp.json)"
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -56,7 +56,7 @@ source ~/.zshrc
 Add the following to `~/.bashrc` (or `~/.profile` on MacOS):
 
 ```bash
-eval "$(oh-my-posh --init --shell bash --config ~/.mytheme.omp.json)"
+eval "$(oh-my-posh --init --shell bash --config ~/jandedobbeleer.omp.json)"
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -81,7 +81,7 @@ It's advised to be on the latest version of fish. Versions below 3.1.2 have issu
 Initialize Oh My Posh in `~/.config/fish/config.fish`:
 
 ```bash
-oh-my-posh --init --shell fish --config ~/.poshthemes/jandedobbeleer.omp.json | source
+oh-my-posh --init --shell fish --config ~/jandedobbeleer.omp.json | source
 ```
 
 Once added, reload your config for the changes to take effect.
@@ -98,13 +98,13 @@ Set the prompt and restart nu shell:
 ### Nu < 0.32.0
 
 ```bash
-config set prompt  "= `{{$(oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json | str collect)}}`"
+config set prompt  "= `{{$(oh-my-posh --config ~/jandedobbeleer.omp.json | str collect)}}`"
 ```
 
 ### Nu >= 0.32.0
 
 ```bash
-config set prompt  "(oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json | str collect)"
+config set prompt  "(oh-my-posh --config ~/jandedobbeleer.omp.json | str collect)"
 ```
 
 Restart nu shell for the changes to take effect.

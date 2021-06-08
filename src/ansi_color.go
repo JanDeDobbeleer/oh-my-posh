@@ -108,6 +108,9 @@ func (a *AnsiColor) writeAndRemoveText(background, foreground, text, textToRemov
 }
 
 func (a *AnsiColor) write(background, foreground, text string) {
+	if len(text) == 0 {
+		return
+	}
 	text = a.ansi.escapeText(text)
 	text = a.ansi.formatText(text)
 	text = a.ansi.generateHyperlink(text)

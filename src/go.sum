@@ -2,10 +2,6 @@ github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/JanDeDobbeleer/battery v0.10.0-2 h1:nmFASq8Rmo0sHz6gLT3pXHh7uNABLEgEozKb2tRPgVY=
 github.com/JanDeDobbeleer/battery v0.10.0-2/go.mod h1:STnSvFLX//eEpkaN7qWRxCWxrWOcssTDgnG4yqq9BRE=
-github.com/JanDeDobbeleer/color v1.4.2-1 h1:ifmcQ8X8Ukyk8XvyLO5//mT+aTYtALGTUNVLv3qCzcU=
-github.com/JanDeDobbeleer/color v1.4.2-1/go.mod h1:fqRyamkC1W8uxl+lxCQxOT09l/vYfZ+QeiX3rKQHCoQ=
-github.com/JanDeDobbeleer/color v1.4.2-2 h1:OIlJOILQpktvqIKqlEFEMBB9TEs5gHfL3hFej6flxko=
-github.com/JanDeDobbeleer/color v1.4.2-2/go.mod h1:fqRyamkC1W8uxl+lxCQxOT09l/vYfZ+QeiX3rKQHCoQ=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=
 github.com/Masterminds/goutils v1.1.1/go.mod h1:8cTjp+g8YejhMuvIA5y2vz3BpJxksy863GQaJW2MFNU=
 github.com/Masterminds/semver v1.5.0 h1:H65muMkzWKEuNDnfl9d70GUjFniHKHRbFPGBuZ3QEww=
@@ -44,6 +40,8 @@ github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/
 github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
 github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/gookit/color v1.3.6/go.mod h1:R3ogXq2B9rTbXoSHJ1HyUVAZ3poOJHpd9nQmyGZsfvQ=
+github.com/gookit/color v1.4.2 h1:tXy44JFSFkKnELV6WaMo/lLfu/meqITX3iAV52do7lk=
+github.com/gookit/color v1.4.2/go.mod h1:fqRyamkC1W8uxl+lxCQxOT09l/vYfZ+QeiX3rKQHCoQ=
 github.com/gookit/config/v2 v2.0.24 h1:v2K99gf/Esbgvy1OuJ0s8/fklEHJme9DMJZbT4VGzCI=
 github.com/gookit/config/v2 v2.0.24/go.mod h1:TrsQSQfFyOe5ELsU9cXaEJpPV44Dm7zzK20oT+3eTTI=
 github.com/gookit/goutil v0.3.8/go.mod h1:8pmV0itRPVrL6qWJ84RG+E7ZZBP4wvTl6cjjps9hgaE=

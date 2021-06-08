@@ -156,8 +156,28 @@ when setting the prompt using the `--config` flag.
 </TabItem>
 </Tabs>
 
-The guides below use an imaginary theme called `mytheme.omp.json`, so make sure to replace that with your own, or one of the
-included themes.
+The guides below assume you copied the theme called `jandedobbeleer.omp.json` to your user's `$HOME` folder.
+Based on the installation method used, you can find this theme at the following location:
+
+<Tabs
+  defaultValue="winget"
+  groupId="install"
+  values={[
+    { label: 'winget', value: 'winget', },
+    { label: 'scoop', value: 'scoop', },
+  ]
+}>
+<TabItem value="winget">
+
+`~\AppData\Local\Programs\oh-my-posh\themes\jandedobbeleer.omp.json`
+
+</TabItem>
+<TabItem value="scoop">
+
+`"$(scoop prefix oh-my-posh)\themes\jandedobbeleer.omp.json"`
+
+</TabItem>
+</Tabs>
 
 <Shells />
 

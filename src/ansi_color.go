@@ -70,7 +70,10 @@ func (a *AnsiColor) getAnsiFromColorString(colorString string, isBackground bool
 		return colorFromName
 	}
 	style := color.HEX(colorString, isBackground)
-	return style.Code()
+	if style.IsEmpty() {
+		return ""
+	}
+	return style.String()
 }
 
 func (a *AnsiColor) writeColoredText(background, foreground, text string) {

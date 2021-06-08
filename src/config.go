@@ -15,6 +15,7 @@ import (
 	"github.com/gookit/config/v2/json"
 	"github.com/gookit/config/v2/toml"
 	"github.com/gookit/config/v2/yaml"
+	"github.com/mitchellh/mapstructure"
 )
 
 // Config holds all the theme for rendering the prompt
@@ -61,7 +62,9 @@ func loadConfig(env environmentInfo) (*Config, error) {
 	config.AddDriver(json.Driver)
 	config.AddDriver(toml.Driver)
 	config.WithOptions(func(opt *config.Options) {
-		opt.TagName = "config"
+		opt.DecoderConfig = &mapstructure.DecoderConfig{
+			TagName: "config",
+		}
 	})
 
 	err := config.LoadFiles(configFile)

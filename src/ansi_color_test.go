@@ -139,19 +139,19 @@ func TestWriteColorInvalid(t *testing.T) {
 func TestGetAnsiFromColorStringBg(t *testing.T) {
 	renderer := &AnsiColor{}
 	colorCode := renderer.getAnsiFromColorString("blue", true)
-	assert.Equal(t, color.BgBlue.Code(), colorCode)
+	assert.Equal(t, color.BgBlue.String(), colorCode)
 }
 
 func TestGetAnsiFromColorStringFg(t *testing.T) {
 	renderer := &AnsiColor{}
 	colorCode := renderer.getAnsiFromColorString("red", false)
-	assert.Equal(t, color.FgRed.Code(), colorCode)
+	assert.Equal(t, color.FgRed.String(), colorCode)
 }
 
 func TestGetAnsiFromColorStringHex(t *testing.T) {
 	renderer := &AnsiColor{}
 	colorCode := renderer.getAnsiFromColorString("#AABBCC", false)
-	assert.Equal(t, color.HEX("#AABBCC").Code(), colorCode)
+	assert.Equal(t, color.HEX("#AABBCC").String(), colorCode)
 }
 
 func TestGetAnsiFromColorStringInvalidFg(t *testing.T) {

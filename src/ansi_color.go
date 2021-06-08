@@ -70,9 +70,6 @@ func (a *AnsiColor) getAnsiFromColorString(colorString string, isBackground bool
 		return colorFromName
 	}
 	style := color.HEX(colorString, isBackground)
-	if style.IsEmpty() {
-		return ""
-	}
 	return style.Code()
 }
 

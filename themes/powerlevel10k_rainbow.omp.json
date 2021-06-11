@@ -205,8 +205,10 @@
           "type": "text",
           "style": "diamond",
           "background": "#d3d7cf",
-          "trailing_diamond": "╰─",
+          "leading_diamond": "╰─",
           "properties": {
+            "prefix": "",
+            "postfix": "",
             "text": ""
           }
         }

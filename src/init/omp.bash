@@ -4,14 +4,19 @@ export CONDA_PROMPT_MODIFIER=false
 
 TIMER_START="/tmp/${USER}.start.$$"
 
-PS0='$(::OMP:: --millis > $TIMER_START)'
+# some environments don't have the filesystem we'd expect
+if [[ ! -d "/tmp" ]]; then
+  TIMER_START="${HOME}/.${USER}.start.$$"
+fi
+
+ PS0='$(::OMP:: --millis > $TIMER_START)'
 
 function _omp_hook() {
     local ret=$?
 
     omp_stack_count=$((${#DIRSTACK[@]} - 1))
     omp_elapsed=-1
-    if [[ -f $TIMER_START ]]; then
+    if [[ -f "$TIMER_START" ]]; then
         omp_now=$(::OMP:: --millis)
         omp_start_time=$(cat "$TIMER_START")
         omp_elapsed=$((omp_now-omp_start_time))

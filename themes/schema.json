@@ -1570,6 +1570,25 @@
       "default": [],
       "description": "https://ohmyposh.dev/docs/configure",
       "items": { "$ref": "#/definitions/block" }
+    },
+    "tooltips": {
+      "type": "array",
+      "title": "Tooltip list, prompt elements to display based on context",
+      "description": "https://ohmyposh.dev/docs/beta#tooltips",
+      "default": [],
+      "items": {
+        "allOf": [{ "$ref": "#/definitions/segment" }],
+        "properties": {
+          "tips": {
+            "type": "array",
+            "title": "The commands for which you want the segment to show",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["tips"]
+      }
     }
   }
 }

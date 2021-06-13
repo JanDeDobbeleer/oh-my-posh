@@ -17,6 +17,7 @@ module.exports = {
           ],
         },
         "configure",
+        "beta",
         "themes",
         "share",
         "fonts",

@@ -15,7 +15,7 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
-      "args": ["--config=/Users/jan/.jandedobbeleer.omp.json", "--tooltip=git"]
+      "args": ["--config=${workspaceRoot}/themes/jandedobbeleer.omp.json", "--command=git", "--shell=pwsh"]
     },
     {
       "name": "Launch tests",

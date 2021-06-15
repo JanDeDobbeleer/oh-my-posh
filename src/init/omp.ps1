@@ -192,11 +192,24 @@ function global:Enable-PoshTooltips {
         $position = $host.UI.RawUI.CursorPosition
         $omp = "::OMP::"
         $config, $cleanPWD, $cleanPSWD = Get-PoshContext
-        $tooltip = $null
+        $command = $null
         $cursor = $null
-        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$tooltip, [ref]$cursor)
-        $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --tooltip="$tooltip" 2>&1)
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
+        $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --command="$command" 2>&1)
         Write-Host $standardOut -NoNewline
         $host.UI.RawUI.CursorPosition = $position
+    }
+}
+
+function global:Enable-PoshTransientPrompt {
+    Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
+        $command = $null
+        $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
+        $omp = "::OMP::"
+        $config, $cleanPWD, $cleanPSWD = Get-PoshContext
+        $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --command="$command" --print-transient 2>&1)
+        Write-Host $standardOut -NoNewline
+        [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
     }
 }

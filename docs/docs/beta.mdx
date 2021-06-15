@@ -9,14 +9,16 @@ import TabItem from "@theme/TabItem";
 
 ## Tooltips
 
+:::info
+Due to limitations (or not having found a way just yet) this feature only work in `zsh` and `powershell` for
+the time being.
+:::
+
 Tooltips are segments that are rendered as a right aligned prompt while you're typing certain keywords.
 They behave similar to the other segments when it comes to how and when they are shown so you can tweak
 them to act and look like you want. The key difference is that they can be invoked using `tips` which are the
 commands you are typing. Due to the possibility of the use of an alias, you can define for which keyword
 the segment should be rendered.
-
-Due to limitations (or not having found a way just yet) this feature only work for `zsh` and `powershell` at
-the time of writing.
 
 ### Configuration
 
@@ -87,3 +89,65 @@ Restart your shell or reload `.zshrc` using `source ~/.zshrc` for the changes to
 
 </TabItem>
 </Tabs>
+
+## Transient prompt
+
+:::info
+This feature only works in `powershell` for the time being.
+:::
+
+Transient prompt, when enabled, replaces the prompt with a simpler one to allow more screen real estate.
+You can use go [text/template][go-text-template] templates extended with [sprig][sprig] to enrich the text.
+Environment variables are available, just like the [`console_title_template`][console-title] functionality.
+
+### Configuration
+
+You need to extend or create a custom theme with your transient prompt. For example:
+
+```json
+{
+  "blocks": {
+    ...
+  }
+  "transient_prompt": {
+    "background": "transparent",
+    "foreground": "#ffffff",
+    "template": "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"
+  }
+}
+```
+
+The configuration has the following properties:
+
+- background: `string` [color][colors]
+- foreground: `string` [color][colors]
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{ .Shell }}> <#f7dc66>{{ .Command }}</>`
+- vertical_offset: `int` - Move the prompt up or down x lines. For example `vertical_offset: 1` moves the prompt down one line, `vertical_offset: -1`
+moves it up one line. Useful when you have a multiline prompt. Defaults to `0`
+
+#### Template Properties
+
+- `.Command`: `string` - the shell command you typed
+- `.Root`: `boolean` - is the current user root/admin or not
+- `.Path`: `string` - the current working directory
+- `.Folder`: `string` - the current working folder
+- `.Shell`: `string` - the current shell name
+- `.User`: `string` - the current user name
+- `.Host`: `string` - the host name
+- `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
+
+### Enable the feature
+
+Import/invoke Oh My Posh in your `$PROFILE` and add the following line below:
+
+```pwsh
+Enable-PoshTransientPrompt
+```
+
+Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes to take effect.
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/
+[console-title]: /docs/configure#console-title-template
+[colors]: /docs/configure#colors

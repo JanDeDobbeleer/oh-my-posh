@@ -37,27 +37,28 @@ const (
 )
 
 type args struct {
-	ErrorCode     *int
-	PrintConfig   *bool
-	ConfigFormat  *string
-	PrintShell    *bool
-	Config        *string
-	Shell         *string
-	PWD           *string
-	PSWD          *string
-	Version       *bool
-	Debug         *bool
-	ExecutionTime *float64
-	Millis        *bool
-	Eval          *bool
-	Init          *bool
-	PrintInit     *bool
-	ExportPNG     *bool
-	Author        *string
-	CursorPadding *int
-	RPromptOffset *int
-	StackCount    *int
-	ToolTip       *string
+	ErrorCode      *int
+	PrintConfig    *bool
+	ConfigFormat   *string
+	PrintShell     *bool
+	Config         *string
+	Shell          *string
+	PWD            *string
+	PSWD           *string
+	Version        *bool
+	Debug          *bool
+	ExecutionTime  *float64
+	Millis         *bool
+	Eval           *bool
+	Init           *bool
+	PrintInit      *bool
+	ExportPNG      *bool
+	Author         *string
+	CursorPadding  *int
+	RPromptOffset  *int
+	StackCount     *int
+	Command        *string
+	PrintTransient *bool
 }
 
 func main() {
@@ -142,10 +143,14 @@ func main() {
 			"stack-count",
 			0,
 			"The current location stack count"),
-		ToolTip: flag.String(
-			"tooltip",
+		Command: flag.String(
+			"command",
 			"",
-			"Render a tooltip based on the string value"),
+			"Render a tooltip based on the command value"),
+		PrintTransient: flag.Bool(
+			"print-transient",
+			false,
+			"Print the transient prompt"),
 	}
 	flag.Parse()
 	env := &environment{}
@@ -200,8 +205,12 @@ func main() {
 		fmt.Print(engine.debug())
 		return
 	}
-	if len(*args.ToolTip) != 0 {
-		fmt.Print(engine.renderTooltip(*args.ToolTip))
+	if *args.PrintTransient {
+		fmt.Print(engine.renderTransientPrompt(*args.Command))
+		return
+	}
+	if len(*args.Command) != 0 {
+		fmt.Print(engine.renderTooltip(*args.Command))
 		return
 	}
 	prompt := engine.render()

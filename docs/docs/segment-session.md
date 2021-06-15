@@ -49,3 +49,5 @@ properties below. Only used when a value is set, making the above properties obs
 - `POSH_SESSION_DEFAULT_USER` - used to override the hardcoded `default_user_name` property
 
 [colors]: /docs/configure#colors
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

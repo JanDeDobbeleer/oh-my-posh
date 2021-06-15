@@ -71,3 +71,6 @@ Show the current timestamp.
 - StampMilli = "Jan _2 15:04:05.000"
 - StampMicro = "Jan _2 15:04:05.000000"
 - StampNano  = "Jan _2 15:04:05.000000000"
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

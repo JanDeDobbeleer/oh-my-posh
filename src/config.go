@@ -28,6 +28,14 @@ type Config struct {
 	TerminalBackground   string            `config:"terminal_background"`
 	Blocks               []*Block          `config:"blocks"`
 	Tooltips             []*Segment        `config:"tooltips"`
+	TransientPrompt      *TransientPrompt  `config:"transient_prompt"`
+}
+
+type TransientPrompt struct {
+	Template       string `config:"template"`
+	Background     string `config:"background"`
+	Foreground     string `config:"foreground"`
+	VerticalOffset int    `config:"vertical_offset"`
 }
 
 const (
@@ -78,6 +86,11 @@ func loadConfig(env environmentInfo) (*Config, error) {
 	if err != nil {
 		printConfigError(err)
 		return nil, errors.New("INVALID CONFIG")
+	}
+
+	// initialize default values
+	if cfg.TransientPrompt == nil {
+		cfg.TransientPrompt = &TransientPrompt{}
 	}
 
 	return &cfg, nil

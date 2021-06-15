@@ -40,28 +40,11 @@ func (t *consoleTitle) getConsoleTitle() string {
 }
 
 func (t *consoleTitle) getTemplateText() string {
-	context := make(map[string]interface{})
-
-	context["Root"] = t.env.isRunningAsRoot()
-	context["Path"] = t.getPwd()
-	context["Folder"] = base(t.getPwd(), t.env)
-	context["Shell"] = t.env.getShellName()
-	context["User"] = t.env.getCurrentUser()
-	context["Host"] = ""
-	if host, err := t.env.getHostName(); err == nil {
-		context["Host"] = host
-	}
-
 	template := &textTemplate{
 		Template: t.config.ConsoleTitleTemplate,
-		Context:  context,
 		Env:      t.env,
 	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
+	return template.renderPlainContextTemplate(nil)
 }
 
 func (t *consoleTitle) getPwd() string {

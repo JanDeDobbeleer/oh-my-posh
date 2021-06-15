@@ -217,3 +217,23 @@ func (e *engine) renderTooltip(tip string) string {
 	}
 	return ""
 }
+
+func (e *engine) renderTransientPrompt(command string) string {
+	promptTemplate := e.config.TransientPrompt.Template
+	if len(promptTemplate) == 0 {
+		promptTemplate = "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"
+	}
+	template := &textTemplate{
+		Template: promptTemplate,
+		Env:      e.env,
+	}
+	context := make(map[string]interface{})
+	context["Command"] = command
+	prompt := template.renderPlainContextTemplate(context)
+	e.colorWriter.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
+	transientPrompt := e.ansi.carriageBackward()
+	if e.config.TransientPrompt.VerticalOffset != 0 {
+		transientPrompt += e.ansi.changeLine(e.config.TransientPrompt.VerticalOffset)
+	}
+	return transientPrompt + e.colorWriter.string() + e.ansi.clearEOL
+}

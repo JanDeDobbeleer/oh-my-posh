@@ -319,7 +319,26 @@ Note for Windows users: Windows directory separators should be specified as 4 ba
 ]
 ```
 
-#### Colors
+### Colors
+
+#### Standard colors
+
+Oh My Posh mainly supports three different color types being
+
+- Typical [hex colors][hexcolors] (for example `#CB4B16`).
+- The `transparent` keyword which can be used to create either a transparent foreground override
+  or transparent background color using the segment's foreground property.
+- 16 [ANSI color names][ansicolors].
+
+  These include 8 basic ANSI colors and `default`:
+
+  `black` `red` `green` `yellow` `blue` `magenta` `cyan` `white` `default`
+
+  as well as 8 extended ANSI colors:
+
+  `darkGray` `lightRed` `lightGreen` `lightYellow` `lightBlue` `lightMagenta` `lightCyan` `lightWhite`
+
+#### Color overrides
 
 You have the ability to override the foreground and/or background color for text in any property that accepts it.
 The syntax is custom but should be rather straighforward:
@@ -344,21 +363,6 @@ To change *only* the background color, just omit the first color from the above 
 ```json
 "prefix": "<,#FFFFFF>┏[</>",
 ```
-
-Oh My Posh mainly supports three different color types being
-
-- Typical [hex colors][hexcolors] (for example `#CB4B16`).
-- The `transparent` keyword which can be used to create either a transparent foreground override
-  or transparent background color using the segment's foreground property.
-- 16 [ANSI color names][ansicolors].
-
-  These include 8 basic ANSI colors and `default`:
-
-  `black` `red` `green` `yellow` `blue` `magenta` `cyan` `white` `default`
-
-  as well as 8 extended ANSI colors:
-
-  `darkGray` `lightRed` `lightGreen` `lightYellow` `lightBlue` `lightMagenta` `lightCyan` `lightWhite`
 
 ### Text decorations
 

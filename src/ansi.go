@@ -39,10 +39,10 @@ func (a *ansiUtils) init(shell string) {
 	switch shell {
 	case zsh:
 		a.linechange = "%%{\x1b[%d%s%%}"
-		a.left = "%%{\x1b[%dC%%}"
-		a.right = "%%{\x1b[%dD%%}"
+		a.right = "%%{\x1b[%dC%%}"
+		a.left = "%%{\x1b[%dD%%}"
 		a.creset = "%{\x1b[0m%}"
-		a.clearEOL = "%{\x1b[K%}"
+		a.clearEOL = "%{\x1b[0J%}"
 		a.saveCursorPosition = "%{\x1b7%}"
 		a.restoreCursorPosition = "%{\x1b8%}"
 		a.title = "%%{\x1b]0;%s\007%%}"
@@ -59,10 +59,10 @@ func (a *ansiUtils) init(shell string) {
 		a.strikethrough = "%%{\x1b[9m%%}%s%%{\x1b[29m%%}"
 	case bash:
 		a.linechange = "\\[\x1b[%d%s\\]"
-		a.left = "\\[\x1b[%dC\\]"
-		a.right = "\\[\x1b[%dD\\]"
+		a.right = "\\[\x1b[%dC\\]"
+		a.left = "\\[\x1b[%dD\\]"
 		a.creset = "\\[\x1b[0m\\]"
-		a.clearEOL = "\\[\x1b[K\\]"
+		a.clearEOL = "\\[\x1b[0J\\]"
 		a.saveCursorPosition = "\\[\x1b7\\]"
 		a.restoreCursorPosition = "\\[\x1b8\\]"
 		a.title = "\\[\x1b]0;%s\007\\]"
@@ -79,10 +79,10 @@ func (a *ansiUtils) init(shell string) {
 		a.strikethrough = "\\[\x1b[9m\\]%s\\[\x1b[29m\\]"
 	default:
 		a.linechange = "\x1b[%d%s"
-		a.left = "\x1b[%dC"
-		a.right = "\x1b[%dD"
+		a.right = "\x1b[%dC"
+		a.left = "\x1b[%dD"
 		a.creset = "\x1b[0m"
-		a.clearEOL = "\x1b[K"
+		a.clearEOL = "\x1b[0J"
 		a.saveCursorPosition = "\x1b7"
 		a.restoreCursorPosition = "\x1b8"
 		a.title = "\x1b]0;%s\007"
@@ -153,12 +153,16 @@ func (a *ansiUtils) formatText(text string) string {
 }
 
 func (a *ansiUtils) carriageForward() string {
+	return fmt.Sprintf(a.right, 1000)
+}
+
+func (a *ansiUtils) carriageBackward() string {
 	return fmt.Sprintf(a.left, 1000)
 }
 
 func (a *ansiUtils) getCursorForRightWrite(text string, offset int) string {
 	strippedLen := a.lenWithoutANSI(text) + -offset
-	return fmt.Sprintf(a.right, strippedLen)
+	return fmt.Sprintf(a.left, strippedLen)
 }
 
 func (a *ansiUtils) changeLine(numberOfLines int) string {

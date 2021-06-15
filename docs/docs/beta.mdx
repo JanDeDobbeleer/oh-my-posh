@@ -66,10 +66,10 @@ are being explored.
 }>
 <TabItem value="pwsh">
 
-Import/invoke Oh My Posh in your `$PROFILE` and add the following setting:
+Import/invoke Oh My Posh in your `$PROFILE` and add the following line below:
 
 ```pwsh
-$Global:PoshSettings.EnableToolTips = $true
+Enable-PoshTooltips
 ```
 
 Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes to take effect.
@@ -77,7 +77,7 @@ Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes 
 </TabItem>
 <TabItem value="zsh">
 
-Invoke Oh My Posh in `.zshrc` and add the following setting:
+Invoke Oh My Posh in `.zshrc` and add the following line below:
 
 ```bash
 enable_poshtooltips

@@ -22,8 +22,7 @@ Set-DefaultEnvValue("AZ_ENABLED")
 Set-DefaultEnvValue("POSH_GIT_ENABLED")
 
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
-    Theme = "";
-    EnableToolTips = $false;
+    Theme          = "";
 }
 
 # used to detect empty hit
@@ -35,6 +34,13 @@ if (Test-Path $config) {
 }
 
 function global:Set-PoshContext {}
+
+function global:Get-PoshContext {
+    $config = $global:PoshSettings.Theme
+    $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
+    $cleanPSWD = $PWD.ToString().TrimEnd("\")
+    return $config, $cleanPWD, $cleanPSWD
+}
 
 function global:Initialize-ModuleSupport {
     if ($env:POSH_GIT_ENABLED -eq $true -and (Get-Module -Name "posh-git")) {
@@ -56,24 +62,6 @@ function global:Initialize-ModuleSupport {
             }
         }
         catch {}
-    }
-
-    # Set the keyhandler to enable tooltips
-    if ($global:PoshSettings.EnableToolTips -eq $true) {
-        Set-PSReadlineKeyHandler -Key SpaceBar -ScriptBlock {
-            [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
-            $position = $host.UI.RawUI.CursorPosition
-            $omp = "::OMP::"
-            $config = $global:PoshSettings.Theme
-            $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-            $cleanPSWD = $PWD.ToString().TrimEnd("\")
-            $tooltip = $null
-            $cursor = $null
-            [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$tooltip, [ref]$cursor)
-            $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --tooltip="$tooltip" 2>&1)
-            Write-Host $standardOut -NoNewline
-            $host.UI.RawUI.CursorPosition = $position
-        }
     }
 }
 
@@ -111,9 +99,7 @@ function global:Initialize-ModuleSupport {
         $global:omp_lastHistoryId = $history.Id
     }
     $omp = "::OMP::"
-    $config = $global:PoshSettings.Theme
-    $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $cleanPSWD = $PWD.ToString().TrimEnd("\")
+    $config, $cleanPWD, $cleanPSWD = Get-PoshContext
     $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --stack-count="$stackCount" --config="$config" 2>&1)
     # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n
     $standardOut -join "`n"
@@ -126,9 +112,7 @@ Set-Item -Path Function:prompt -Value $Prompt -Force
 
 function global:Write-PoshDebug {
     $omp = "::OMP::"
-    $config = $global:PoshSettings.Theme
-    $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $cleanPSWD = $PWD.ToString().TrimEnd("\")
+    $config, $cleanPWD, $cleanPSWD = Get-PoshContext
     $standardOut = @(&$omp --error=1337 --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time=9001 --config="$config" --debug 2>&1)
     $standardOut -join "`n"
 }
@@ -197,9 +181,22 @@ function global:Export-PoshImage {
     }
 
     $omp = "::OMP::"
-    $config = $global:PoshSettings.Theme
-    $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $cleanPSWD = $PWD.ToString().TrimEnd("\")
+    $config, $cleanPWD, $cleanPSWD = Get-PoshContext
     $standardOut = @(&$omp --config="$config" --pwd="$cleanPWD" --pswd="$cleanPSWD" --export-png --rprompt-offset="$RPromptOffset" --cursor-padding="$CursorPadding" $Author 2>&1)
     $standardOut -join "`n"
+}
+
+function global:Enable-PoshTooltips {
+    Set-PSReadlineKeyHandler -Key SpaceBar -ScriptBlock {
+        [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
+        $position = $host.UI.RawUI.CursorPosition
+        $omp = "::OMP::"
+        $config, $cleanPWD, $cleanPSWD = Get-PoshContext
+        $tooltip = $null
+        $cursor = $null
+        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$tooltip, [ref]$cursor)
+        $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --tooltip="$tooltip" 2>&1)
+        Write-Host $standardOut -NoNewline
+        $host.UI.RawUI.CursorPosition = $position
+    }
 }

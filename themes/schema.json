@@ -1589,6 +1589,26 @@
         },
         "required": ["tips"]
       }
+    },
+    "transient_prompt": {
+      "type": "object",
+      "title": "Transient Prompt Settings",
+      "description": "https://ohmyposh.dev/docs/beta#transient-prompt",
+      "default": {},
+      "properties": {
+        "template": {
+          "type": "string",
+          "title": "Transient Prompt Template",
+          "default": "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"
+        },
+        "vertical_offset": {
+          "type": "integer",
+          "title": "Transient Prompt vertical offset",
+          "default": 0
+        },
+        "background": { "$ref": "#/definitions/color" },
+        "foreground": { "$ref": "#/definitions/color" }
+      }
     }
   }
 }

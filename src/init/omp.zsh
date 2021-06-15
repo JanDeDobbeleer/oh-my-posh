@@ -57,7 +57,7 @@ function self-insert() {
     zle .self-insert
     return
   fi
-  tooltip=$(::OMP:: --config $POSH_THEME --shell zsh --tooltip $BUFFER)
+  tooltip=$(::OMP:: --config $POSH_THEME --shell zsh --command $BUFFER)
   # ignore an empty tooltip
   if [[ ! -z "$tooltip" ]]; then
     RPROMPT=$tooltip

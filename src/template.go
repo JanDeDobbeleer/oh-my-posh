@@ -24,6 +24,29 @@ type textTemplate struct {
 	Env      environmentInfo
 }
 
+func (t *textTemplate) renderPlainContextTemplate(context map[string]interface{}) string {
+	if context == nil {
+		context = make(map[string]interface{})
+	}
+	context["Root"] = t.Env.isRunningAsRoot()
+	pwd := t.Env.getcwd()
+	pwd = strings.Replace(pwd, t.Env.homeDir(), "~", 1)
+	context["Path"] = pwd
+	context["Folder"] = base(pwd, t.Env)
+	context["Shell"] = t.Env.getShellName()
+	context["User"] = t.Env.getCurrentUser()
+	context["Host"] = ""
+	if host, err := t.Env.getHostName(); err == nil {
+		context["Host"] = host
+	}
+	t.Context = context
+	text, err := t.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
+}
+
 func (t *textTemplate) render() (string, error) {
 	tmpl, err := template.New("title").Funcs(sprig.TxtFuncMap()).Parse(t.Template)
 	if err != nil {

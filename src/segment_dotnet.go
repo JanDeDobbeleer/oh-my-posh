@@ -13,10 +13,10 @@ const (
 func (d *dotnet) string() string {
 	version := d.language.string()
 
-	// Exit code 145 is a special indicator that dotnet
+	// Exit codes 145 and 0x80008091 are special indicators that dotnet
 	// ran, but the current project config settings specify
 	// use of an SDK that isn't installed.
-	if d.language.exitCode == 145 {
+	if d.language.exitCode == 145 || d.language.exitCode == 0x80008091 {
 		return d.language.props.getString(UnsupportedDotnetVersionIcon, "\uf071 ")
 	}
 

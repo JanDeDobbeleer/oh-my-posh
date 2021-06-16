@@ -9,7 +9,7 @@ import (
 type dotnetArgs struct {
 	enabled         bool
 	version         string
-	unsupported     bool
+	exitCode        int
 	unsupportedIcon string
 	displayVersion  bool
 }
@@ -17,8 +17,8 @@ type dotnetArgs struct {
 func bootStrapDotnetTest(args *dotnetArgs) *dotnet {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "dotnet").Return(args.enabled)
-	if args.unsupported {
-		err := &commandError{exitCode: 145}
+	if args.exitCode != 0 {
+		err := &commandError{exitCode: args.exitCode}
 		env.On("runCommand", "dotnet", []string{"--version"}).Return("", err)
 	} else {
 		env.On("runCommand", "dotnet", []string{"--version"}).Return(args.version, nil)
@@ -75,7 +75,20 @@ func TestDotnetVersionUnsupported(t *testing.T) {
 	args := &dotnetArgs{
 		enabled:         true,
 		displayVersion:  true,
-		unsupported:     true,
+		exitCode:        dotnetExitCodeUnix,
+		unsupportedIcon: expected,
+	}
+	dotnet := bootStrapDotnetTest(args)
+	assert.True(t, dotnet.enabled())
+	assert.Equal(t, expected, dotnet.string())
+}
+
+func TestDotnetVersionUnsupportedWindows(t *testing.T) {
+	expected := "x"
+	args := &dotnetArgs{
+		enabled:         true,
+		displayVersion:  true,
+		exitCode:        dotnetExitCodeWindows,
 		unsupportedIcon: expected,
 	}
 	dotnet := bootStrapDotnetTest(args)

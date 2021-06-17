@@ -60,8 +60,6 @@ boxes with question marks, set up your terminal to use a supported font before c
 - terminal_background: `string` [color][colors] - terminal background color, set to your terminal's background color when
 you notice black elements in Windows Terminal or the Visual Studio Code integrated terminal
 
-> "I Like The Way You Speak Words" - Gary Goodspeed
-
 ### Console Title Style
 
 - `folder`: show the current folder name

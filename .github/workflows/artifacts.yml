@@ -8,12 +8,18 @@ on:
       - '.github/*.md'
       - '.github/FUNDING.yml'
 
-name: Validate Code
+name: Build Code
 jobs:
-  test:
+  build:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        goarch: [amd64]
+        include:
+        - os: ubuntu-latest
+          goarch: arm
+        - os: windows-latest
+          goarch: 386
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -25,10 +31,7 @@ jobs:
         go-version: 1.16
     - name: Checkout code
       uses: actions/checkout@v2
-    - name: Golang CI
-      uses: golangci/golangci-lint-action@v2
-      with:
-        version: latest
-        working-directory: src
-    - name: Unit Tests
-      run: go test . -v
+    - name: Build
+      run: go build
+      env:
+        GOARCH: ${{ matrix.goarch }}

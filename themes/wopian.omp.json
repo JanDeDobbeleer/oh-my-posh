@@ -1,0 +1,116 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "segments": [
+                {
+                    "type": "os",
+                    "style": "powerline",
+                    "foreground": "cyan",
+                    "properties": {
+                        "prefix": "",
+                        "postfix": "",
+                        "wsl": "",
+                        "wsl_separator": ""
+                    }
+                },
+                {
+                    "type": "path",
+                    "style": "plain",
+                    "foreground": "cyan",
+                    "properties": {
+                        "style": "full"
+                    }
+                },
+                {
+                    "type": "git",
+                    "style": "plain",
+                    "foreground": "lightYellow",
+                    "properties": {
+                        "prefix": ":: <lightBlue>git(</>",
+                        "postfix": "<lightBlue>)</>"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "prompt",
+            "alignment": "right",
+            "segments": [
+                {
+                    "type": "node",
+                    "style": "plain",
+                    "foreground": "#68a063",
+                    "properties": {
+                        "display_version": true,
+                        "prefix": " ",
+                        "postfix": "",
+                        "display_mode": "files",
+                        "display_package_manager": true,
+                        "yarn_icon": "/yarn",
+                        "npm_icon": "/npm"
+                    }
+                },
+                {
+                    "type": "crystal",
+                    "style": "plain",
+                    "foreground": "#4063D8",
+                    "properties": {
+                        "display_version": true,
+                        "display_mode": "files",
+                        "prefix": " ",
+                        "postfix": ""
+                    }
+                },
+                {
+                    "type": "ruby",
+                    "style": "plain",
+                    "foreground": "#DE3F24",
+                    "properties": {
+                        "display_version": true,
+                        "prefix": " ",
+                        "postfix": "",
+                        "display_mode": "files"
+                    }
+                },
+                {
+                    "type": "python",
+                    "style": "plain",
+                    "foreground": "#FED142",
+                    "properties": {
+                        "display_virtual_env": false,
+                        "display_version": true,
+                        "prefix": " ",
+                        "postfix": "",
+                        "display_mode": "context"
+                    }
+                },
+                {
+                    "type": "time",
+                    "style": "plain",
+                    "foreground": "lightGreen"
+                }
+            ]
+        },
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "newline": true,
+            "segments": [
+                {
+                    "type": "exit",
+                    "style": "powerline",
+                    "foreground": "lightGreen",
+                    "properties": {
+                        "display_exit_code": false,
+                        "always_enabled": true,
+                        "error_color": "red",
+                        "prefix": "\u279c"
+                    }
+                }
+            ]
+        }
+    ]
+}

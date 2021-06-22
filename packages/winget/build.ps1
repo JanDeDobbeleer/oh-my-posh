@@ -39,11 +39,6 @@ if (-not $Token) {
     return
 }
 # Get the latest wingetcreate exe
-# Replace with the following once https://github.com/microsoft/winget-create/issues/38 is resolved:
-# Invoke-WebRequest https://aka.ms/wingetcreate/latest -OutFile wingetcreate.exe
-Invoke-WebRequest 'https://github.com/JanDeDobbeleer/winget-create/releases/latest/download/wingetcreate.zip' -OutFile wingetcreate.zip
-Expand-Archive -LiteralPath wingetcreate.zip -DestinationPath wingetcreate
-$wingetcreate = Resolve-Path -Path wingetcreate
-$env:Path += ";$($wingetcreate.Path)"
+Invoke-WebRequest 'https://aka.ms/wingetcreate/latest/self-contained' -OutFile wingetcreate.exe
 # Create the PR
-WingetCreateCLI.exe submit --token $Token $Version
+./wingetcreate.exe submit --token $Token $Version

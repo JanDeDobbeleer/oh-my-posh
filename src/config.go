@@ -32,10 +32,9 @@ type Config struct {
 }
 
 type TransientPrompt struct {
-	Template       string `config:"template"`
-	Background     string `config:"background"`
-	Foreground     string `config:"foreground"`
-	VerticalOffset int    `config:"vertical_offset"`
+	Template   string `config:"template"`
+	Background string `config:"background"`
+	Foreground string `config:"foreground"`
 }
 
 const (

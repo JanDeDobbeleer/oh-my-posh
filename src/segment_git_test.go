@@ -778,9 +778,10 @@ func TestTruncateBranch(t *testing.T) {
 		MaxLength interface{}
 	}{
 		{Case: "No limit", Expected: "all-your-base-are-belong-to-us", Branch: "all-your-base-are-belong-to-us"},
-		{Case: "No limit - larger", Expected: "all-your-base", Branch: "all-your-base-are-belong-to-us", MaxLength: 13},
-		{Case: "No limit - smaller", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 13},
+		{Case: "No limit - larger", Expected: "all-your-base", Branch: "all-your-base-are-belong-to-us", MaxLength: 13.0},
+		{Case: "No limit - smaller", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 13.0},
 		{Case: "Invalid setting", Expected: "all-your-base", Branch: "all-your-base", MaxLength: "burp"},
+		{Case: "Lower than limit", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 20.0},
 	}
 
 	for _, tc := range cases {

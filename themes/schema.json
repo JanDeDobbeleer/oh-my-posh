@@ -1601,11 +1601,6 @@
           "title": "Transient Prompt Template",
           "default": "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"
         },
-        "vertical_offset": {
-          "type": "integer",
-          "title": "Transient Prompt vertical offset",
-          "default": 0
-        },
         "background": { "$ref": "#/definitions/color" },
         "foreground": { "$ref": "#/definitions/color" }
       }

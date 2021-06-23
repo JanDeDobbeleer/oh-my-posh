@@ -232,8 +232,15 @@ func (e *engine) renderTransientPrompt(command string) string {
 	prompt := template.renderPlainContextTemplate(context)
 	e.colorWriter.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
 	transientPrompt := e.ansi.carriageBackward()
-	if e.config.TransientPrompt.VerticalOffset != 0 {
-		transientPrompt += e.ansi.changeLine(e.config.TransientPrompt.VerticalOffset)
+	// calculate offset for multiline prompt
+	lineOffset := 0
+	for _, block := range e.config.Blocks {
+		if block.Newline {
+			lineOffset--
+		}
+	}
+	if lineOffset != 0 {
+		transientPrompt += e.ansi.changeLine(lineOffset)
 	}
 	return transientPrompt + e.colorWriter.string() + e.ansi.clearEOL
 }

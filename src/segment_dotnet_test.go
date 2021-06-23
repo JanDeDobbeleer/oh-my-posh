@@ -71,24 +71,10 @@ func TestDotnetVersionDisplayed(t *testing.T) {
 }
 
 func TestDotnetVersionUnsupported(t *testing.T) {
-	expected := "x"
 	args := &dotnetArgs{
 		enabled:         true,
 		displayVersion:  true,
-		exitCode:        dotnetExitCodeUnix,
-		unsupportedIcon: expected,
-	}
-	dotnet := bootStrapDotnetTest(args)
-	assert.True(t, dotnet.enabled())
-	assert.Equal(t, expected, dotnet.string())
-}
-
-func TestDotnetVersionUnsupportedWindows(t *testing.T) {
-	expected := "x"
-	args := &dotnetArgs{
-		enabled:         true,
-		displayVersion:  true,
-		exitCode:        dotnetExitCodeWindows,
+		exitCode:        dotnetExitCode,
 		unsupportedIcon: expected,
 	}
 	dotnet := bootStrapDotnetTest(args)

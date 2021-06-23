@@ -342,7 +342,7 @@ func (g *git) getGitHEADContext(ref string) string {
 
 func (g *git) truncateBranch(branch string) string {
 	maxLength := g.props.getInt(BranchMaxLength, 0)
-	if maxLength == 0 {
+	if maxLength == 0 || len(branch) < maxLength {
 		return branch
 	}
 	return branch[0:maxLength]

@@ -121,12 +121,17 @@ func (p *properties) getInt(property Property, defaultValue int) int {
 		return defaultValue
 	}
 
-	intValue, ok := val.(int)
+	if intValue, ok := val.(int); ok {
+		return intValue
+	}
+
+	// json parses a float
+	intValue, ok := val.(float64)
 	if !ok {
 		return defaultValue
 	}
 
-	return intValue
+	return int(intValue)
 }
 
 func (p *properties) getKeyValueMap(property Property, defaultValue map[string]string) map[string]string {

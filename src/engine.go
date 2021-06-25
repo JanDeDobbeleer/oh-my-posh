@@ -109,7 +109,7 @@ func (e *engine) renderBlock(block *Block) {
 	// color of the line above the new input line. Clearing the line fixes this,
 	// but can hopefully one day be removed when this is resolved natively.
 	if e.ansi.shell == pwsh || e.ansi.shell == powershell5 {
-		e.write(e.ansi.clearEOL)
+		e.write(e.ansi.clearAfter())
 	}
 }
 
@@ -209,7 +209,7 @@ func (e *engine) renderTooltip(tip string) string {
 	case pwsh, powershell5:
 		block.initPlain(e.env, e.config)
 		tooltipText := block.renderSegments()
-		e.write(e.ansi.clearEOL)
+		e.write(e.ansi.clearAfter())
 		e.write(e.ansi.carriageForward())
 		e.write(e.ansi.getCursorForRightWrite(tooltipText, 0))
 		e.write(tooltipText)
@@ -219,6 +219,11 @@ func (e *engine) renderTooltip(tip string) string {
 }
 
 func (e *engine) renderTransientPrompt(command string) string {
+	newlines := strings.Count(command, ";")
+	if strings.HasSuffix(command, ";") {
+		newlines--
+	}
+	command = strings.Replace(command, ";", fmt.Sprintf(";%s", e.ansi.newLine()), newlines)
 	promptTemplate := e.config.TransientPrompt.Template
 	if len(promptTemplate) == 0 {
 		promptTemplate = "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"
@@ -242,5 +247,5 @@ func (e *engine) renderTransientPrompt(command string) string {
 	if lineOffset != 0 {
 		transientPrompt += e.ansi.changeLine(lineOffset)
 	}
-	return transientPrompt + e.colorWriter.string() + e.ansi.clearEOL
+	return transientPrompt + e.colorWriter.string() + e.ansi.clearAfter()
 }

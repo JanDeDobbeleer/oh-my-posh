@@ -209,6 +209,12 @@ function global:Enable-PoshTransientPrompt {
         $omp = "::OMP::"
         $config, $cleanPWD, $cleanPSWD = Get-PoshContext
         $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --command="$command" --print-transient 2>&1)
+        # call twice due multiple lines:
+        # If the input has multiple lines, move to the start of the current line,
+        # or if already at the start of the line, move to the start of the input.
+        # If the input has a single line, move to the start of the input.
+        [Microsoft.PowerShell.PSConsoleReadLine]::BeginningOfLine()
+        [Microsoft.PowerShell.PSConsoleReadLine]::BeginningOfLine()
         Write-Host $standardOut -NoNewline
         [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
     }

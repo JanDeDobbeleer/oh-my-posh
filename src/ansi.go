@@ -15,7 +15,8 @@ type ansiUtils struct {
 	left                  string
 	right                 string
 	creset                string
-	clearEOL              string
+	clearBelow            string
+	clearLine             string
 	saveCursorPosition    string
 	restoreCursorPosition string
 	title                 string
@@ -42,7 +43,8 @@ func (a *ansiUtils) init(shell string) {
 		a.right = "%%{\x1b[%dC%%}"
 		a.left = "%%{\x1b[%dD%%}"
 		a.creset = "%{\x1b[0m%}"
-		a.clearEOL = "%{\x1b[0J%}"
+		a.clearBelow = "%{\x1b[0J%}"
+		a.clearLine = "%{\x1b[K%}"
 		a.saveCursorPosition = "%{\x1b7%}"
 		a.restoreCursorPosition = "%{\x1b8%}"
 		a.title = "%%{\x1b]0;%s\007%%}"
@@ -62,7 +64,8 @@ func (a *ansiUtils) init(shell string) {
 		a.right = "\\[\x1b[%dC\\]"
 		a.left = "\\[\x1b[%dD\\]"
 		a.creset = "\\[\x1b[0m\\]"
-		a.clearEOL = "\\[\x1b[0J\\]"
+		a.clearBelow = "\\[\x1b[0J\\]"
+		a.clearLine = "\\[\x1b[K\\]"
 		a.saveCursorPosition = "\\[\x1b7\\]"
 		a.restoreCursorPosition = "\\[\x1b8\\]"
 		a.title = "\\[\x1b]0;%s\007\\]"
@@ -82,7 +85,8 @@ func (a *ansiUtils) init(shell string) {
 		a.right = "\x1b[%dC"
 		a.left = "\x1b[%dD"
 		a.creset = "\x1b[0m"
-		a.clearEOL = "\x1b[0J"
+		a.clearBelow = "\x1b[0J"
+		a.clearLine = "\x1b[K"
 		a.saveCursorPosition = "\x1b7"
 		a.restoreCursorPosition = "\x1b8"
 		a.title = "\x1b]0;%s\007"
@@ -179,6 +183,14 @@ func (a *ansiUtils) consolePwd(pwd string) string {
 		pwd += "\\"
 	}
 	return fmt.Sprintf(a.osc99, pwd)
+}
+
+func (a *ansiUtils) clearAfter() string {
+	return a.clearLine + a.clearBelow
+}
+
+func (a *ansiUtils) newLine() string {
+	return a.clearAfter() + a.changeLine(1) + a.carriageBackward()
 }
 
 func (a *ansiUtils) escapeText(text string) string {

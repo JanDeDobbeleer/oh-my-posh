@@ -3,7 +3,7 @@ PackageVersion: <VERSION>
 InstallModes:
  - "silent"
 Installers:
-- Architecture: x86
+- Architecture: x64
   InstallerType: inno
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install.exe
   InstallerSha256: <HASH>

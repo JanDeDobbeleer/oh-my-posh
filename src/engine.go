@@ -219,11 +219,8 @@ func (e *engine) renderTooltip(tip string) string {
 }
 
 func (e *engine) renderTransientPrompt(command string) string {
-	newlines := strings.Count(command, ";")
-	if strings.HasSuffix(command, ";") {
-		newlines--
-	}
-	command = strings.Replace(command, ";", fmt.Sprintf(";%s", e.ansi.newLine()), newlines)
+	newlines := strings.Count(command, "\n")
+	command = strings.Replace(command, "\n", e.ansi.newLine(), newlines)
 	promptTemplate := e.config.TransientPrompt.Template
 	if len(promptTemplate) == 0 {
 		promptTemplate = "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"

@@ -4,7 +4,7 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
-    "README.md"
+    "docs/docs/contributors.md"
   ],
   "imageSize": 100,
   "commit": true,
@@ -530,6 +530,24 @@
       "profile": "https://suuu.us/",
       "contributions": [
         "doc"
+      ]
+    },
+    {
+      "login": "wopian",
+      "name": "James Harris",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3440094?v=4",
+      "profile": "https://wopian.me/",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "mdlopresti",
+      "name": "Michael LoPresti",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1293090?v=4",
+      "profile": "https://github.com/mdlopresti",
+      "contributions": [
+        "code"
       ]
     }
   ],

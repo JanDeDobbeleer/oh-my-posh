@@ -43,7 +43,7 @@ a modern and more efficient tool was needed to suit my personal needs.
   * [x] Powershell
   * [x] Brew
   * [x] Scoop
-  * [ ] Winget
+  * [x] Winget
 * [x] Swap V2 with V3
 
 ## Thanks

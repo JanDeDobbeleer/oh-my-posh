@@ -9,7 +9,7 @@ available as a prerelease while we work out the kinks and get it on par with V2.
 
 ## V2's problem statement
 
-V2 has Powershell module files as [themes][themesv2]. That way of working was inspired from [oh-my-zsh][omz] and other
+V2 has Powershell module files as [themes][themesv2]. That way of working was inspired by [oh-my-zsh][omz] and other
 prompt rendering tools, but that approach has a few important downsides.
 
 - hard to extend/adjust when you're not proficient
@@ -18,8 +18,8 @@ prompt rendering tools, but that approach has a few important downsides.
 
 ## Enter V3
 
-This bring us to the first change, to allow a cross platform experience, [Oh My Posh V3][v3] is written entirely in [Go][golang].
-That way, cross platform binaries can be shipped which render the same prompt using the same config anywhere.
+This brings us to the first change, to allow a cross-platform experience, [Oh My Posh V3][v3] is written entirely in [Go][golang].
+That way, cross-platform binaries can be shipped which render the same prompt using the same config anywhere.
 
 The configuration is changed from `$ThemeSettings` towards a `.json` file that only contains the configuration for the
 blocks and segments you want to render. See [concept][introduction] for more context on that part.
@@ -36,7 +36,7 @@ Update-Module -Name oh-my-posh -Scope CurrentUser
 
 ## Configuration
 
-Here we have a few options. If you're using an out-of-the box theme, you can simply change the current command to the
+Here we have a few options. If you're using an out-of-the-box theme, you can simply change the current command to the
 new one, provided your V2 theme has already been added to [V3][themesv3].
 
 ### I use an out-of-the-box theme

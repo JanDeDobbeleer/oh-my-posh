@@ -11,7 +11,7 @@ the prompt string with a function or variable.
 ## Oh My Posh 3 vs Oh My Posh 2
 
 Oh My Posh 3 is the offspring of [Oh My Posh][omp], a prompt theme engine for PowerShell.
-Oh My Posh started out by being inspired from tools like [oh my zsh][omz] when nothing was
+Oh My Posh started out by being inspired by tools like [Oh my ZSH][omz] when nothing was
 available specifically for PowerShell.
 
 Over the years, I switched operating system/main shell quite a lot, even on

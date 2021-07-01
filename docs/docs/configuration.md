@@ -34,7 +34,7 @@ A really simple configuration could look like this.
 
 With this configuration, a single powerline segment is rendered that shows the name of the folder you're currently in.
 To set this configuration in combination with a Oh My Posh [executable][releases], use the `--config` flag to
-set a path to a json file containing the above code. The `--shell universal` flag is used to print the prompt without
+set a path to a JSON file containing the above code. The `--shell universal` flag is used to print the prompt without
 escape characters to see the prompt as it would be shown inside a prompt function for your shell.
 
 :::info
@@ -71,8 +71,8 @@ you notice black elements in Windows Terminal or the Visual Studio Code integrat
 ### Console Title Template
 
 You can create a more custom console title with the use of `"console_title_style" = "template"`.
-When this is set, a `console_title_template` is also expected, otherwise the title will remain empty.
-Under the hood this uses go's [text/template][go-text-template] feature extended with [sprig][sprig] and
+When this is set, a `console_title_template` is also expected, otherwise, the title will remain empty.
+Under the hood, this uses go's [text/template][go-text-template] feature extended with [sprig][sprig] and
 offers a few standard properties to work with.
 
 - `.Root`: `boolean` - is the current user root/admin or not
@@ -126,11 +126,11 @@ Start the block on a new line. Defaults to `false`.
 
 ### Alignment
 
-Tell the engine if the block should be left or right aligned.
+Tell the engine if the block should be left or right-aligned.
 
 ### Vertical offset
 
-Move the block up or down x lines. For example `vertical_offset: 1` moves the prompt down one line, `vertical_offset: -1`
+Move the block up or down x lines. For example, `vertical_offset: 1` moves the prompt down one line, `vertical_offset: -1`
 moves it up one line.
 
 ### Horizontal offset
@@ -144,7 +144,7 @@ Array of one or more segments.
 
 ## Segment
 
-A segments is a part of the prompt with a certain context. There are different types available out of the box, if you're
+A segment is a part of the prompt with a certain context. There are different types available out-of-the-box, if you're
 looking for what's included, feel free to skip this part and browse through the [segments][segments]. Keep reading to
 understand how to configure a segment.
 
@@ -166,7 +166,7 @@ Takes the `string` value referencing which segment logic it needs to run (see [s
 
 ### Style
 
-Oh Hi! You made it to a really interesting part, great! Style defines how a prompt is rendered. Looking at most prompt
+Oh Hi! You made it to a really interesting part, great! Style defines how a prompt is rendered. Looking at the most prompt
 themes out there, we identified 3 types. All of these require a different configuration and depending on the look
 you want to achieve you might need to understand/use them all.
 
@@ -234,10 +234,10 @@ The following sample is based on the [AWS Segment][aws].
 }
 ```
 
-The logic is as follows, when `background_templates` contains an array, we will check every template line until there's
+The logic is as follows: when `background_templates` contains an array, we will check every template line until there's
 one that returns a non-empty string. So, when the contents of `.Profile` contain the word `default`, the first template
 returns `#FFA400` and that's the color that will be used. If it contains `jan`, it returns `#f1184c`. When none of the
-templates return a value, the foreground value `#ffffff` is used.
+templates returns a value, the foreground value `#ffffff` is used.
 
 ### Background
 
@@ -253,7 +253,7 @@ An array of **Properties** with a value. This is used inside of the segment logi
 will be. Segments have the ability to define their own Properties, but there are some general ones being used by the
 engine which allow you to customize the output even more.
 
-#### General purpose properties
+#### General-purpose properties
 
 You can use these on any segment, the engine is responsible for adding them correctly.
 
@@ -341,11 +341,11 @@ Oh My Posh mainly supports three different color types being
 #### Color overrides
 
 You have the ability to override the foreground and/or background color for text in any property that accepts it.
-The syntax is custom but should be rather straighforward:
+The syntax is custom but should be rather straight-forward:
 `<#ffffff,#000000>this is white with black background</> <#FF479C>but this is pink</>`. Anything between the color start
 `<#FF479C>` and end `</>` will be colored accordingly.
 
-For example, if you want `prefix` to print a colored bracket which isn't the same as the segment's `foreground`, you can
+For example, if you want `prefix` to print a colored bracket that isn't the same as the segment's `foreground`, you can
 do so like this:
 
 ```json

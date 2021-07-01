@@ -10,12 +10,12 @@ import TabItem from "@theme/TabItem";
 ## Tooltips
 
 :::info
-Due to limitations (or not having found a way just yet) this feature only work in `zsh` and `powershell` for
+Due to limitations (or not having found a way just yet), this feature only works in `ZSH` and `PowerShell` for
 the time being.
 :::
 
-Tooltips are segments that are rendered as a right aligned prompt while you're typing certain keywords.
-They behave similar to the other segments when it comes to how and when they are shown so you can tweak
+Tooltips are segments that are rendered as a right-aligned prompt while you're typing certain keywords.
+They behave similarly to the other segments when it comes to how and when they are shown so you can tweak
 them to act and look like you want. The key difference is that they can be invoked using `tips` which are the
 commands you are typing. Due to the possibility of the use of an alias, you can define for which keyword
 the segment should be rendered.
@@ -52,7 +52,7 @@ You need to extend or create a custom theme with your tooltips. For example:
 }
 ```
 
-This configuration will render a right aligned git segment when you type `git` or `g` followed by a space. Keep in mind that
+This configuration will render a right-aligned git segment when you type `git` or `g` followed by a space. Keep in mind that
 this is a blocking call, meaning that if the segment renders slow, you can't type until it's visible. Optimizations in this space
 are being explored.
 

@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-next-line MD041 -->
-At this point you're good to go. The `jandedobbeleer.omp.json` theme displays most common use-cases
-in your prompt so 9/10 you'll be more than happy with it. However, if you want to explore additional
+At this point, you're good to go. The `jandedobbeleer.omp.json` theme displays the most common use-cases
+in your prompt, so 9/10 you'll be more than happy with it. However, if you want to explore additional
 functionality, going through the additional steps below will help you get started.
 
 #### Change the theme

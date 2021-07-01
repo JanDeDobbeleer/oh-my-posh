@@ -6,7 +6,7 @@ sidebar_label: Shell
 
 ## What
 
-Show the current shell name (zsh, powershell, bash, ...).
+Show the current shell name (ZSH, powershell, bash, ...).
 
 ## Sample Configuration
 

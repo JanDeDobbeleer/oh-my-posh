@@ -90,7 +90,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Jan De Dobbeleer.`,
+      copyright: `Copyright © ${new Date().getFullYear()} <a href="https://github.com/sponsors/JanDeDobbeleer" target="_blank">Jan De Dobbeleer</a> and <a href="/docs/contributors">contributors</a>.`,
     },
   },
   presets: [

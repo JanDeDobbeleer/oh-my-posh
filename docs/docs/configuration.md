@@ -144,7 +144,7 @@ Array of one or more segments.
 
 ## Segment
 
-A segment is a part of the prompt with a certain context. There are different types available out of the box, if you're
+A segment is a part of the prompt with a certain context. There are different types available out-of-the-box, if you're
 looking for what's included, feel free to skip this part and browse through the [segments][segments]. Keep reading to
 understand how to configure a segment.
 

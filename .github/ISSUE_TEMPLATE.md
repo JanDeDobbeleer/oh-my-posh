@@ -1,7 +1,7 @@
 ### Prerequisites
 
-- [ ] I have read and understand the `CONTRIBUTING` guide
-- [ ] I looked for duplicate issues before submitting this one
+- [ ] I have read and understood the `CONTRIBUTING` guide
+- [ ] I have looked for duplicate issues before submitting this one
 
 ### Description
 

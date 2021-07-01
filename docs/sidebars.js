@@ -21,7 +21,8 @@ module.exports = {
         "themes",
         "share",
         "fonts",
-        "faq"
+        "faq",
+        "contributors"
       ],
     },
     {

@@ -10,7 +10,7 @@ import TabItem from "@theme/TabItem";
 ## Tooltips
 
 :::info
-Due to limitations (or not having found a way just yet), this feature only works in `ZSH` and `PowerShell` for
+Due to limitations (or not having found a way just yet), this feature only works in `zsh` and `powershell` for
 the time being.
 :::
 
@@ -93,7 +93,7 @@ Restart your shell or reload `.zshrc` using `source ~/.zshrc` for the changes to
 ## Transient prompt
 
 :::info
-This feature only works in `powershell` for the time being.
+This feature only works in `zsh` and `powershell` for the time being.
 :::
 
 Transient prompt, when enabled, replaces the prompt with a simpler one to allow more screen real estate.
@@ -126,7 +126,7 @@ properties below. Defaults to `{{ .Shell }}> <#f7dc66>{{ .Command }}</>`
 
 #### Template Properties
 
-- `.Command`: `string` - the shell command you typed
+- `.Command`: `string` - the shell command you typed (only available in Powershell)
 - `.Root`: `boolean` - is the current user root/admin or not
 - `.Path`: `string` - the current working directory
 - `.Folder`: `string` - the current working folder
@@ -137,6 +137,17 @@ properties below. Defaults to `{{ .Shell }}> <#f7dc66>{{ .Command }}</>`
 
 ### Enable the feature
 
+<Tabs
+  defaultValue="pwsh"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'pwsh', },
+    { label: 'zsh', value: 'zsh', },
+  ]
+}>
+<TabItem value="pwsh">
+
+
 Import/invoke Oh My Posh in your `$PROFILE` and add the following line below:
 
 ```pwsh
@@ -144,6 +155,20 @@ Enable-PoshTransientPrompt
 ```
 
 Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes to take effect.
+
+</TabItem>
+<TabItem value="zsh">
+
+Invoke Oh My Posh in `.zshrc` and add the following line below:
+
+```bash
+enable_poshtransientprompt
+```
+
+Restart your shell or reload `.zshrc` using `source ~/.zshrc` for the changes to take effect.
+
+</TabItem>
+</Tabs>
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

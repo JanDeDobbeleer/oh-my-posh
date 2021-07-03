@@ -2,11 +2,11 @@ export POSH_THEME=::CONFIG::
 export POWERLINE_COMMAND="oh-my-posh"
 export CONDA_PROMPT_MODIFIER=false
 
-function omp_preexec() {
+function _omp-preexec() {
   omp_start_time=$(::OMP:: --millis)
 }
 
-function omp_precmd() {
+function _omp-precmd() {
   omp_last_error=$?
   omp_stack_count=${#dirstack[@]}
   omp_elapsed=-1
@@ -22,24 +22,24 @@ function omp_precmd() {
   unset omp_stack_count
 }
 
-function install_omp_hooks() {
+function _install-omp-hooks() {
   for s in "${preexec_functions[@]}"; do
-    if [ "$s" = "omp_preexec" ]; then
+    if [ "$s" = "_omp-preexec" ]; then
       return
     fi
   done
-  preexec_functions+=(omp_preexec)
+  preexec_functions+=(_omp-preexec)
 
   for s in "${precmd_functions[@]}"; do
-    if [ "$s" = "omp_precmd" ]; then
+    if [ "$s" = "_omp-precmd" ]; then
       return
     fi
   done
-  precmd_functions+=(omp_precmd)
+  precmd_functions+=(_omp-precmd)
 }
 
 if [ "$TERM" != "linux" ]; then
-  install_omp_hooks
+  _install-omp-hooks
 fi
 
 function export_poshconfig() {
@@ -61,11 +61,42 @@ function self-insert() {
   # ignore an empty tooltip
   if [[ ! -z "$tooltip" ]]; then
     RPROMPT=$tooltip
-    zle reset-prompt
+    zle .reset-prompt
   fi
   zle .self-insert
 }
 
 function enable_poshtooltips() {
   zle -N self-insert
+}
+
+_posh-zle-line-init() {
+    [[ $CONTEXT == start ]] || return 0
+
+    # Start regular line editor
+    (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[1]
+    zle .recursive-edit
+    local -i ret=$?
+    (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
+
+    eval "$(::OMP:: --config $POSH_THEME --print-transient --eval --shell zsh)"
+    zle .reset-prompt
+
+    # If we received EOT, we exit the shell
+    if [[ $ret == 0 && $KEYS == $'\4' ]]; then
+        exit
+    fi
+
+    # Ctrl-C
+    if (( ret )); then
+        zle .send-break
+    else
+        # Enter
+        zle .accept-line
+    fi
+    return ret
+}
+
+function enable_poshtransientprompt() {
+  zle -N zle-line-init _posh-zle-line-init
 }

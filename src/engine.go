@@ -233,16 +233,25 @@ func (e *engine) renderTransientPrompt(command string) string {
 	context["Command"] = command
 	prompt := template.renderPlainContextTemplate(context)
 	e.colorWriter.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
-	transientPrompt := e.ansi.carriageBackward()
-	// calculate offset for multiline prompt
-	lineOffset := 0
-	for _, block := range e.config.Blocks {
-		if block.Newline {
-			lineOffset--
+	switch e.env.getShellName() {
+	case zsh:
+		// escape double quotes contained in the prompt
+		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.colorWriter.string(), "\"", "\"\""))
+		prompt += "\nRPROMPT=\"\""
+		return prompt
+	case pwsh, powershell5:
+		prompt := e.ansi.carriageBackward()
+		// calculate offset for multiline prompt
+		lineOffset := 0
+		for _, block := range e.config.Blocks {
+			if block.Newline {
+				lineOffset--
+			}
 		}
+		if lineOffset != 0 {
+			prompt += e.ansi.changeLine(lineOffset)
+		}
+		return prompt + e.colorWriter.string() + e.ansi.clearAfter()
 	}
-	if lineOffset != 0 {
-		transientPrompt += e.ansi.changeLine(lineOffset)
-	}
-	return transientPrompt + e.colorWriter.string() + e.ansi.clearAfter()
+	return ""
 }

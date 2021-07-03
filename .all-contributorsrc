@@ -549,7 +549,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "floh96",
+      "name": "Florian Heberl",
+      "avatar_url": "https://avatars.githubusercontent.com/u/49693964?v=4",
+      "profile": "https://github.com/floh96",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }

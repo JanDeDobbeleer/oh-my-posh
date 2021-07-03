@@ -18,7 +18,7 @@ Download your chosen Nerd Font, and install the font system-wide. See this [thre
 #### Windows Terminal
 
 Once you have installed a Nerd Font, you will need to configure the Windows Terminal to use it. This can be easily done
-by modifying the Windows Terminal settings (default shortcut: `CTRL + ,`). In your `settings.json` file, add the
+by modifying the Windows Terminal settings (default shortcut: `CTRL + SHIFT + ,`). In your `settings.json` file, add the
 `fontFace` attribute under the `defaults` attribute in `profiles`:
 
 ```json

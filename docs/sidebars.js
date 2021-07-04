@@ -53,6 +53,7 @@ module.exports = {
         "python",
         "root",
         "ruby",
+        "rust",
         "session",
         "shell",
         "spotify",

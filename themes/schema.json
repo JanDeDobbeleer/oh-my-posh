@@ -154,7 +154,8 @@
             "poshgit",
             "azfunc",
             "crystal",
-            "dart"
+            "dart",
+            "rust"
           ]
         },
         "style": {
@@ -811,6 +812,32 @@
           "then": {
             "title": "Ruby Segment",
             "description": "https://ohmyposh.dev/docs/ruby",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "rust" }
+            }
+          },
+          "then": {
+            "title": "Rust Segment",
+            "description": "https://ohmyposh.dev/docs/rust",
             "properties": {
               "properties": {
                 "properties": {

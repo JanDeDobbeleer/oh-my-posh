@@ -558,6 +558,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "relativityhd",
+      "name": "Tobias Hölzer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37540371?v=4",
+      "profile": "http://tobiashoelzer.dynu.net",
+      "contributions": [
+        "doc",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

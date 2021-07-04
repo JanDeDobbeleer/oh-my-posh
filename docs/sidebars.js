@@ -9,12 +9,7 @@ module.exports = {
         {
           type: "category",
           label: "🚀 Installation",
-          items: [
-            "pwsh",
-            "windows",
-            "macos",
-            "linux",
-          ],
+          items: ["pwsh", "windows", "macos", "linux"],
         },
         "configure",
         "beta",
@@ -22,7 +17,7 @@ module.exports = {
         "share",
         "fonts",
         "faq",
-        "contributors"
+        "contributors",
       ],
     },
     {
@@ -53,6 +48,7 @@ module.exports = {
         "python",
         "root",
         "ruby",
+        "rust",
         "session",
         "shell",
         "spotify",
@@ -60,12 +56,16 @@ module.exports = {
         "text",
         "time",
         "ytm",
-      ]
+      ],
     },
     {
       type: "category",
       label: "Contributing",
-      items: ["contributing_started", "contributing_segment", "contributing_git"],
+      items: [
+        "contributing_started",
+        "contributing_segment",
+        "contributing_git",
+      ],
     },
   ],
 };

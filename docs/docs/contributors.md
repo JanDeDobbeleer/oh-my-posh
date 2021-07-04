@@ -88,6 +88,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://wopian.me/"><img src="https://avatars.githubusercontent.com/u/3440094?v=4?s=100" width="100px;" alt=""/><br /><sub><b>James Harris</b></sub></a><br /><a href="#design-wopian" title="Design">🎨</a></td>
     <td align="center"><a href="https://github.com/mdlopresti"><img src="https://avatars.githubusercontent.com/u/1293090?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michael LoPresti</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mdlopresti" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/floh96"><img src="https://avatars.githubusercontent.com/u/49693964?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Florian Heberl</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=floh96" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://tobiashoelzer.dynu.net"><img src="https://avatars.githubusercontent.com/u/37540371?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tobias Hölzer</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=relativityhd" title="Documentation">📖</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=relativityhd" title="Code">💻</a></td>
   </tr>
 </table>
 

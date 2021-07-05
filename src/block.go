@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"oh-my-posh/runtime"
 )
 
 // BlockType type of block
@@ -34,22 +36,22 @@ type Block struct {
 	Segments         []*Segment     `config:"segments"`
 	Newline          bool           `config:"newline"`
 
-	env                   environmentInfo
+	env                   runtime.Environment
 	writer                colorWriter
 	ansi                  *ansiUtils
 	activeSegment         *Segment
 	previousActiveSegment *Segment
 }
 
-func (b *Block) init(env environmentInfo, writer colorWriter, ansi *ansiUtils) {
+func (b *Block) init(env runtime.Environment, writer colorWriter, ansi *ansiUtils) {
 	b.env = env
 	b.writer = writer
 	b.ansi = ansi
 }
 
-func (b *Block) initPlain(env environmentInfo, config *Config) {
+func (b *Block) initPlain(env runtime.Environment, config *Config) {
 	b.ansi = &ansiUtils{}
-	b.ansi.init(plain)
+	b.ansi.init(runtime.Plain)
 	b.writer = &AnsiColor{
 		ansi:               b.ansi,
 		terminalBackground: getConsoleBackgroundColor(env, config.TerminalBackground),
@@ -73,7 +75,7 @@ func (b *Block) setStringValues() {
 	wg := sync.WaitGroup{}
 	wg.Add(len(b.Segments))
 	defer wg.Wait()
-	cwd := b.env.getcwd()
+	cwd := b.env.Getcwd()
 	for _, segment := range b.Segments {
 		go func(s *Segment) {
 			defer wg.Done()
@@ -178,7 +180,7 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 	largestSegmentNameLength := 0
 	for _, segment := range b.Segments {
 		err := segment.mapSegmentWithWriter(b.env)
-		if err != nil || !segment.shouldIncludeFolder(b.env.getcwd()) {
+		if err != nil || !segment.shouldIncludeFolder(b.env.Getcwd()) {
 			continue
 		}
 		var segmentTiming SegmentTiming

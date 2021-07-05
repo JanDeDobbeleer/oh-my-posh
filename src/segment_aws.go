@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	"oh-my-posh/runtime"
 )
 
 type aws struct {
 	props   *properties
-	env     environmentInfo
+	env     runtime.Environment
 	Profile string
 	Region  string
 }
@@ -16,7 +18,7 @@ const (
 	defaultUser = "default"
 )
 
-func (a *aws) init(props *properties, env environmentInfo) {
+func (a *aws) init(props *properties, env runtime.Environment) {
 	a.props = props
 	a.env = env
 }
@@ -24,7 +26,7 @@ func (a *aws) init(props *properties, env environmentInfo) {
 func (a *aws) enabled() bool {
 	getEnvFirstMatch := func(envs ...string) string {
 		for _, env := range envs {
-			value := a.env.getenv(env)
+			value := a.env.Getenv(env)
 			if value != "" {
 				return value
 			}
@@ -52,11 +54,11 @@ func (a *aws) enabled() bool {
 }
 
 func (a *aws) getConfigFileInfo() {
-	configPath := a.env.getenv("AWS_CONFIG_FILE")
+	configPath := a.env.Getenv("AWS_CONFIG_FILE")
 	if configPath == "" {
-		configPath = fmt.Sprintf("%s/.aws/config", a.env.homeDir())
+		configPath = fmt.Sprintf("%s/.aws/config", a.env.HomeDir())
 	}
-	config := a.env.getFileContent(configPath)
+	config := a.env.GetFileContent(configPath)
 	configSection := "[default]"
 	if a.Profile != "" {
 		configSection = fmt.Sprintf("[profile %s]", a.Profile)

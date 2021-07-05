@@ -4,6 +4,8 @@ import (
 	"errors"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/alecthomas/assert"
 )
 
@@ -57,9 +59,9 @@ func TestNbgv(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("hasCommand", "nbgv").Return(tc.HasNbgv)
-		env.On("runCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
+		env := new(runtime.MockedEnvironment)
+		env.On("HasCommand", "nbgv").Return(tc.HasNbgv)
+		env.On("RunCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
 		nbgv := &nbgv{
 			env: env,
 			props: &properties{

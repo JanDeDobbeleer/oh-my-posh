@@ -1,5 +1,7 @@
 package main
 
+import "oh-my-posh/runtime"
+
 type rust struct {
 	language *language
 }
@@ -8,7 +10,7 @@ func (r *rust) string() string {
 	return r.language.string()
 }
 
-func (r *rust) init(props *properties, env environmentInfo) {
+func (r *rust) init(props *properties, env runtime.Environment) {
 	r.language = &language{
 		env:        env,
 		props:      props,

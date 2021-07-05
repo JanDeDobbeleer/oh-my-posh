@@ -4,6 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"oh-my-posh/regex"
+
+	"oh-my-posh/runtime"
 )
 
 type loadContext func()
@@ -27,7 +31,7 @@ type cmd struct {
 }
 
 func (c *cmd) parse(versionInfo string) error {
-	values := findNamedRegexMatch(c.regex, versionInfo)
+	values := regex.FindNamedRegexMatch(c.regex, versionInfo)
 	if len(values) == 0 {
 		return errors.New("cannot parse version string")
 	}
@@ -62,7 +66,7 @@ func (c *cmd) buildVersionURL(template string) string {
 
 type language struct {
 	props              *properties
-	env                environmentInfo
+	env                runtime.Environment
 	extensions         []string
 	commands           []*cmd
 	versionURLTemplate string
@@ -117,7 +121,7 @@ func (l *language) string() string {
 
 func (l *language) enabled() bool {
 	inHomeDir := func() bool {
-		return l.env.getcwd() == l.env.homeDir()
+		return l.env.Getcwd() == l.env.HomeDir()
 	}
 	displayMode := l.props.getString(DisplayMode, DisplayModeFiles)
 	if inHomeDir() && displayMode != DisplayModeAlways {
@@ -141,7 +145,7 @@ func (l *language) enabled() bool {
 // hasLanguageFiles will return true at least one file matching the extensions is found
 func (l *language) hasLanguageFiles() bool {
 	for i, extension := range l.extensions {
-		if l.env.hasFiles(extension) {
+		if l.env.HasFiles(extension) {
 			break
 		}
 		if i == len(l.extensions)-1 {
@@ -155,12 +159,12 @@ func (l *language) hasLanguageFiles() bool {
 // setVersion parses the version string returned by the command
 func (l *language) setVersion() error {
 	for _, command := range l.commands {
-		if !l.env.hasCommand(command.executable) {
+		if !l.env.HasCommand(command.executable) {
 			continue
 		}
-		version, err := l.env.runCommand(command.executable, command.args...)
-		if exitErr, ok := err.(*commandError); ok {
-			l.exitCode = exitErr.exitCode
+		version, err := l.env.RunCommand(command.executable, command.args...)
+		if exitErr, ok := err.(*runtime.CommandError); ok {
+			l.exitCode = exitErr.ExitCode
 			return fmt.Errorf("err executing %s with %s", command.executable, command.args)
 		}
 		if version == "" {

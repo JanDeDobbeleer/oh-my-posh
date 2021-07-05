@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"strings"
 
+	"oh-my-posh/regex"
+
 	"github.com/gookit/color"
 )
 
@@ -119,7 +121,7 @@ func (a *AnsiColor) write(background, foreground, text string) {
 	text = a.ansi.generateHyperlink(text)
 
 	// first we match for any potentially valid colors enclosed in <>
-	match := findAllNamedRegexMatch(`<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`, text)
+	match := regex.FindAllNamedRegexMatch(`<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`, text)
 	for i := range match {
 		extractedForegroundColor := match[i]["foreground"]
 		extractedBackgroundColor := match[i]["background"]

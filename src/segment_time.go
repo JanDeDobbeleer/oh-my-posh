@@ -1,10 +1,14 @@
 package main
 
-import "time"
+import (
+	"time"
+
+	"oh-my-posh/runtime"
+)
 
 type tempus struct {
 	props        *properties
-	env          environmentInfo
+	env          runtime.Environment
 	templateText string
 	CurrentDate  time.Time
 }
@@ -40,7 +44,7 @@ func (t *tempus) string() string {
 	return t.getFormattedText()
 }
 
-func (t *tempus) init(props *properties, env environmentInfo) {
+func (t *tempus) init(props *properties, env runtime.Environment) {
 	t.props = props
 	t.env = env
 }

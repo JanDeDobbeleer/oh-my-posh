@@ -4,6 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"time"
+
+	"oh-my-posh/regex"
+
+	"oh-my-posh/runtime"
 )
 
 // Segment represent a single segment and it's configuration
@@ -24,7 +28,7 @@ type Segment struct {
 	writer              SegmentWriter
 	stringValue         string
 	active              bool
-	env                 environmentInfo
+	env                 runtime.Environment
 }
 
 // SegmentTiming holds the timing context for a segment
@@ -41,7 +45,7 @@ type SegmentTiming struct {
 type SegmentWriter interface {
 	enabled() bool
 	string() string
-	init(props *properties, env environmentInfo)
+	init(props *properties, env runtime.Environment)
 }
 
 // SegmentStyle the syle of segment, for more information, see the constants
@@ -174,7 +178,7 @@ func (segment *Segment) cwdExcluded(cwd string) bool {
 func (segment *Segment) cwdMatchesOneOf(cwd string, regexes []string) bool {
 	for _, element := range regexes {
 		pattern := fmt.Sprintf("^%s$", element)
-		matched := matchString(pattern, cwd)
+		matched := regex.MatchString(pattern, cwd)
 		if matched {
 			return true
 		}
@@ -226,7 +230,7 @@ func (segment *Segment) background() string {
 	return segment.getColor(segment.BackgroundTemplates, color)
 }
 
-func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
+func (segment *Segment) mapSegmentWithWriter(env runtime.Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
 		Session:       &session{},
@@ -276,7 +280,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 	return errors.New("unable to map writer")
 }
 
-func (segment *Segment) setStringValue(env environmentInfo, cwd string) {
+func (segment *Segment) setStringValue(env runtime.Environment, cwd string) {
 	defer func() {
 		err := recover()
 		if err == nil {

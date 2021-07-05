@@ -32,6 +32,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Build
-      run: go build
+      run: go build -tags release
       env:
         GOARCH: ${{ matrix.goarch }}

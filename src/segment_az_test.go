@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -150,12 +152,12 @@ func TestAzSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getenv", "AZ_SUBSCRIPTION_NAME").Return(tc.EnvSubName)
-		env.On("getenv", "AZ_SUBSCRIPTION_ID").Return(tc.EnvSubID)
-		env.On("getenv", "AZ_SUBSCRIPTION_ACCOUNT").Return(tc.EnvSubAccount)
-		env.On("hasCommand", "az").Return(tc.CliExists)
-		env.On("runCommand", "az", []string{"account", "show", "--query=[name,id,user.name]", "-o=tsv"}).Return(
+		env := new(runtime.MockedEnvironment)
+		env.On("Getenv", "AZ_SUBSCRIPTION_NAME").Return(tc.EnvSubName)
+		env.On("Getenv", "AZ_SUBSCRIPTION_ID").Return(tc.EnvSubID)
+		env.On("Getenv", "AZ_SUBSCRIPTION_ACCOUNT").Return(tc.EnvSubAccount)
+		env.On("HasCommand", "az").Return(tc.CliExists)
+		env.On("RunCommand", "az", []string{"account", "show", "--query=[name,id,user.name]", "-o=tsv"}).Return(
 			fmt.Sprintf("%s\n%s\n%s\n", tc.CliSubName, tc.CliSubID, tc.CliSubAccount),
 			nil,
 		)

@@ -14,9 +14,13 @@ You can use the following template as a guide.
 ```go
 package main
 
+import (
+  "oh-my-posh/runtime"
+)
+
 type new struct {
     props          *properties
-    env            environmentInfo
+    env            runtime.Environment
 }
 
 const (
@@ -33,7 +37,7 @@ func (n *new) string() string {
     return newText
 }
 
-func (n *new) init(props *properties, env environmentInfo) {
+func (n *new) init(props *properties, env runtime.Environment) {
     n.props = props
     n.env = env
 }

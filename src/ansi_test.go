@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,9 +14,9 @@ func TestLenWithoutAnsi(t *testing.T) {
 		ShellName string
 		Expected  int
 	}{
-		{Text: "%{\x1b[44m%}hello%{\x1b[0m%}", ShellName: zsh, Expected: 5},
-		{Text: "\x1b[44mhello\x1b[0m", ShellName: pwsh, Expected: 5},
-		{Text: "\\[\x1b[44m\\]hello\\[\x1b[0m\\]", ShellName: bash, Expected: 5},
+		{Text: "%{\x1b[44m%}hello%{\x1b[0m%}", ShellName: runtime.Zsh, Expected: 5},
+		{Text: "\x1b[44mhello\x1b[0m", ShellName: runtime.PSCore, Expected: 5},
+		{Text: "\\[\x1b[44m\\]hello\\[\x1b[0m\\]", ShellName: runtime.Bash, Expected: 5},
 	}
 	for _, tc := range cases {
 		a := ansiUtils{}
@@ -30,9 +32,9 @@ func TestGenerateHyperlinkNoUrl(t *testing.T) {
 		ShellName string
 		Expected  string
 	}{
-		{Text: "sample text with no url", ShellName: zsh, Expected: "sample text with no url"},
-		{Text: "sample text with no url", ShellName: pwsh, Expected: "sample text with no url"},
-		{Text: "sample text with no url", ShellName: bash, Expected: "sample text with no url"},
+		{Text: "sample text with no url", ShellName: runtime.Zsh, Expected: "sample text with no url"},
+		{Text: "sample text with no url", ShellName: runtime.PSCore, Expected: "sample text with no url"},
+		{Text: "sample text with no url", ShellName: runtime.Bash, Expected: "sample text with no url"},
 	}
 	for _, tc := range cases {
 		a := ansiUtils{}
@@ -48,9 +50,9 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 		ShellName string
 		Expected  string
 	}{
-		{Text: "[google](http://www.google.be)", ShellName: zsh, Expected: "%{\x1b]8;;http://www.google.be\x1b\\%}google%{\x1b]8;;\x1b\\%}"},
-		{Text: "[google](http://www.google.be)", ShellName: pwsh, Expected: "\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\"},
-		{Text: "[google](http://www.google.be)", ShellName: bash, Expected: "\\[\x1b]8;;http://www.google.be\x1b\\\\\\]google\\[\x1b]8;;\x1b\\\\\\]"},
+		{Text: "[google](http://www.google.be)", ShellName: runtime.Zsh, Expected: "%{\x1b]8;;http://www.google.be\x1b\\%}google%{\x1b]8;;\x1b\\%}"},
+		{Text: "[google](http://www.google.be)", ShellName: runtime.PSCore, Expected: "\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\"},
+		{Text: "[google](http://www.google.be)", ShellName: runtime.Bash, Expected: "\\[\x1b]8;;http://www.google.be\x1b\\\\\\]google\\[\x1b]8;;\x1b\\\\\\]"},
 	}
 	for _, tc := range cases {
 		a := ansiUtils{}
@@ -66,9 +68,9 @@ func TestGenerateHyperlinkWithUrlNoName(t *testing.T) {
 		ShellName string
 		Expected  string
 	}{
-		{Text: "[](http://www.google.be)", ShellName: zsh, Expected: "[](http://www.google.be)"},
-		{Text: "[](http://www.google.be)", ShellName: pwsh, Expected: "[](http://www.google.be)"},
-		{Text: "[](http://www.google.be)", ShellName: bash, Expected: "[](http://www.google.be)"},
+		{Text: "[](http://www.google.be)", ShellName: runtime.Zsh, Expected: "[](http://www.google.be)"},
+		{Text: "[](http://www.google.be)", ShellName: runtime.PSCore, Expected: "[](http://www.google.be)"},
+		{Text: "[](http://www.google.be)", ShellName: runtime.Bash, Expected: "[](http://www.google.be)"},
 	}
 	for _, tc := range cases {
 		a := ansiUtils{}

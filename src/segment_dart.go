@@ -1,5 +1,7 @@
 package main
 
+import "oh-my-posh/runtime"
+
 type dart struct {
 	language *language
 }
@@ -8,7 +10,7 @@ func (d *dart) string() string {
 	return d.language.string()
 }
 
-func (d *dart) init(props *properties, env environmentInfo) {
+func (d *dart) init(props *properties, env runtime.Environment) {
 	d.language = &language{
 		env:        env,
 		props:      props,

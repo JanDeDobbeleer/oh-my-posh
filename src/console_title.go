@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	"oh-my-posh/runtime"
 )
 
 type consoleTitle struct {
-	env    environmentInfo
+	env    runtime.Environment
 	config *Config
 	ansi   *ansiUtils
 }
@@ -48,7 +50,7 @@ func (t *consoleTitle) getTemplateText() string {
 }
 
 func (t *consoleTitle) getPwd() string {
-	pwd := t.env.getcwd()
-	pwd = strings.Replace(pwd, t.env.homeDir(), "~", 1)
+	pwd := t.env.Getcwd()
+	pwd = strings.Replace(pwd, t.env.HomeDir(), "~", 1)
 	return pwd
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -45,14 +47,14 @@ func TestAWSSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getenv", "AWS_VAULT").Return(tc.Vault)
-		env.On("getenv", "AWS_PROFILE").Return(tc.Profile)
-		env.On("getenv", "AWS_REGION").Return(tc.Region)
-		env.On("getenv", "AWS_DEFAULT_REGION").Return(tc.DefaultRegion)
-		env.On("getenv", "AWS_CONFIG_FILE").Return(tc.ConfigFile)
-		env.On("getFileContent", "/usr/home/.aws/config").Return("")
-		env.On("homeDir", nil).Return("/usr/home")
+		env := new(runtime.MockedEnvironment)
+		env.On("Getenv", "AWS_VAULT").Return(tc.Vault)
+		env.On("Getenv", "AWS_PROFILE").Return(tc.Profile)
+		env.On("Getenv", "AWS_REGION").Return(tc.Region)
+		env.On("Getenv", "AWS_DEFAULT_REGION").Return(tc.DefaultRegion)
+		env.On("Getenv", "AWS_CONFIG_FILE").Return(tc.ConfigFile)
+		env.On("GetFileContent", "/usr/home/.aws/config").Return("")
+		env.On("HomeDir", nil).Return("/usr/home")
 		props := &properties{
 			values: map[Property]interface{}{
 				DisplayDefault: tc.DisplayDefault,

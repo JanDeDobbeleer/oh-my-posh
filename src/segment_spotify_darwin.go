@@ -22,6 +22,6 @@ func (s *spotify) enabled() bool {
 }
 
 func (s *spotify) runAppleScriptCommand(command string) string {
-	val, _ := s.env.runCommand("osascript", "-e", command)
+	val, _ := s.env.RunCommand("osascript", "-e", command)
 	return val
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,19 +17,19 @@ type dotnetArgs struct {
 }
 
 func bootStrapDotnetTest(args *dotnetArgs) *dotnet {
-	env := new(MockedEnvironment)
-	env.On("hasCommand", "dotnet").Return(args.enabled)
+	env := new(runtime.MockedEnvironment)
+	env.On("HasCommand", "dotnet").Return(args.enabled)
 	if args.exitCode != 0 {
-		err := &commandError{exitCode: args.exitCode}
-		env.On("runCommand", "dotnet", []string{"--version"}).Return("", err)
+		err := &runtime.CommandError{ExitCode: args.exitCode}
+		env.On("RunCommand", "dotnet", []string{"--version"}).Return("", err)
 	} else {
-		env.On("runCommand", "dotnet", []string{"--version"}).Return(args.version, nil)
+		env.On("RunCommand", "dotnet", []string{"--version"}).Return(args.version, nil)
 	}
 
-	env.On("hasFiles", "*.cs").Return(true)
-	env.On("getPathSeperator", nil).Return("")
-	env.On("getcwd", nil).Return("/usr/home/project")
-	env.On("homeDir", nil).Return("/usr/home")
+	env.On("HasFiles", "*.cs").Return(true)
+	env.On("GetPathSeperator", nil).Return("")
+	env.On("Getcwd", nil).Return("/usr/home/project")
+	env.On("HomeDir", nil).Return("/usr/home")
 	props := &properties{
 		values: map[Property]interface{}{
 			DisplayVersion:               args.displayVersion,

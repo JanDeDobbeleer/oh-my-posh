@@ -1,8 +1,10 @@
 package main
 
+import "oh-my-posh/runtime"
+
 type shell struct {
 	props *properties
-	env   environmentInfo
+	env   runtime.Environment
 }
 
 func (s *shell) enabled() bool {
@@ -10,10 +12,10 @@ func (s *shell) enabled() bool {
 }
 
 func (s *shell) string() string {
-	return s.env.getShellName()
+	return s.env.GetShellName()
 }
 
-func (s *shell) init(props *properties, env environmentInfo) {
+func (s *shell) init(props *properties, env runtime.Environment) {
 	s.props = props
 	s.env = env
 }

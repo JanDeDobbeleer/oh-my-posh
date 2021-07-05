@@ -1,5 +1,7 @@
 package main
 
+import "oh-my-posh/runtime"
+
 type crystal struct {
 	language *language
 }
@@ -8,7 +10,7 @@ func (c *crystal) string() string {
 	return c.language.string()
 }
 
-func (c *crystal) init(props *properties, env environmentInfo) {
+func (c *crystal) init(props *properties, env runtime.Environment) {
 	c.language = &language{
 		env:        env,
 		props:      props,

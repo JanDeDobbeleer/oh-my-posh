@@ -3,13 +3,15 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
 func TestWriteCurrentShell(t *testing.T) {
 	expected := "zsh"
-	env := new(MockedEnvironment)
-	env.On("getShellName", nil).Return(expected, nil)
+	env := new(runtime.MockedEnvironment)
+	env.On("GetShellName", nil).Return(expected, nil)
 	props := &properties{}
 	s := &shell{
 		env:   env,

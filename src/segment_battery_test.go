@@ -4,6 +4,8 @@ import (
 	"errors"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/distatus/battery"
 	"github.com/stretchr/testify/assert"
 )
@@ -76,7 +78,7 @@ func TestBatterySegmentSingle(t *testing.T) {
 		},
 		{Case: "battery error", DisplayError: true, Error: errors.New("oh snap"), ExpectedString: "oh snap", ExpectedEnabled: true},
 		{Case: "battery error disabled", Error: errors.New("oh snap")},
-		{Case: "no batteries", DisplayError: true, Error: &noBatteryError{}},
+		{Case: "no batteries", DisplayError: true, Error: &runtime.NoBatteryError{}},
 		{Case: "no batteries without error"},
 		{Case: "display charging disabled: charging", Batteries: []*battery.Battery{{Full: 100, State: battery.Charging}}, DisableCharging: true},
 		{Case: "display charging disabled: charged", Batteries: []*battery.Battery{{Full: 100, State: battery.Full}}, DisableCharging: true},
@@ -90,7 +92,7 @@ func TestBatterySegmentSingle(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &runtime.MockedEnvironment{}
 		props := &properties{
 			background: "#111111",
 			foreground: "#ffffff",
@@ -108,7 +110,7 @@ func TestBatterySegmentSingle(t *testing.T) {
 		if tc.DisableCharging {
 			props.values[DisplayCharging] = false
 		}
-		env.On("getBatteryInfo", nil).Return(tc.Batteries, tc.Error)
+		env.On("GetBatteryInfo", nil).Return(tc.Batteries, tc.Error)
 		b := &batt{
 			props: props,
 			env:   env,

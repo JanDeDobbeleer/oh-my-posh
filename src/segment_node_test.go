@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/alecthomas/assert"
 )
 
@@ -19,8 +21,8 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getFileContent", ".nvmrc").Return(tc.RCVersion)
+		env := new(runtime.MockedEnvironment)
+		env.On("GetFileContent", ".nvmrc").Return(tc.RCVersion)
 		node := &node{
 			language: &language{
 				env: env,
@@ -53,10 +55,10 @@ func TestNodeInContext(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("hasFiles", "yarn.lock").Return(tc.HasYarn)
-		env.On("hasFiles", "package-lock.json").Return(tc.hasNPM)
-		env.On("hasFiles", "package.json").Return(tc.hasDefault)
+		env := new(runtime.MockedEnvironment)
+		env.On("HasFiles", "yarn.lock").Return(tc.HasYarn)
+		env.On("HasFiles", "package-lock.json").Return(tc.hasNPM)
+		env.On("HasFiles", "package.json").Return(tc.hasDefault)
 		node := &node{
 			language: &language{
 				env: env,

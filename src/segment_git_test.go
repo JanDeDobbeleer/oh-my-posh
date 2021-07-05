@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,8 +14,8 @@ const (
 )
 
 func TestEnabledGitNotFound(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("hasCommand", "git").Return(false)
+	env := new(runtime.MockedEnvironment)
+	env.On("HasCommand", "git").Return(false)
 	g := &git{
 		env: env,
 	}
@@ -21,31 +23,31 @@ func TestEnabledGitNotFound(t *testing.T) {
 }
 
 func TestEnabledInWorkingDirectory(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("hasCommand", "git").Return(true)
-	fileInfo := &fileInfo{
-		path:         "/dir/hello",
-		parentFolder: "/dir",
-		isDir:        true,
+	env := new(runtime.MockedEnvironment)
+	env.On("HasCommand", "git").Return(true)
+	fileInfo := &runtime.File{
+		Path:         "/dir/hello",
+		ParentFolder: "/dir",
+		IsDir:        true,
 	}
-	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
+	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	g := &git{
 		env: env,
 	}
 	assert.True(t, g.enabled())
-	assert.Equal(t, fileInfo.path, g.repo.gitFolder)
+	assert.Equal(t, fileInfo.Path, g.repo.gitFolder)
 }
 
 func TestEnabledInWorkingTree(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("hasCommand", "git").Return(true)
-	fileInfo := &fileInfo{
-		path:         "/dir/hello",
-		parentFolder: "/dir",
-		isDir:        false,
+	env := new(runtime.MockedEnvironment)
+	env.On("HasCommand", "git").Return(true)
+	fileInfo := &runtime.File{
+		Path:         "/dir/hello",
+		ParentFolder: "/dir",
+		IsDir:        false,
 	}
-	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
-	env.On("getFileContent", "/dir/hello").Return("gitdir: /dir/hello/burp/burp")
+	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
+	env.On("GetFileContent", "/dir/hello").Return("gitdir: /dir/hello/burp/burp")
 	g := &git{
 		env: env,
 	}
@@ -57,9 +59,9 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	args := []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}
 	want := "je suis le output"
-	env := new(MockedEnvironment)
-	env.On("runCommand", "git", append(args, commandArgs...)).Return(want, nil)
-	env.On("getRuntimeGOOS", nil).Return("unix")
+	env := new(runtime.MockedEnvironment)
+	env.On("RunCommand", "git", append(args, commandArgs...)).Return(want, nil)
+	env.On("GetRuntimeGOOS", nil).Return("unix")
 	g := &git{
 		env: env,
 	}
@@ -86,28 +88,28 @@ type detachedContext struct {
 }
 
 func setupHEADContextEnv(context *detachedContext) *git {
-	env := new(MockedEnvironment)
-	env.On("hasFolder", "/rebase-merge").Return(context.rebaseMerge)
-	env.On("hasFolder", "/rebase-apply").Return(context.rebaseApply)
-	env.On("getFileContent", "/rebase-merge/head-name").Return(context.origin)
-	env.On("getFileContent", "/rebase-merge/onto").Return(context.onto)
-	env.On("getFileContent", "/rebase-merge/msgnum").Return(context.step)
-	env.On("getFileContent", "/rebase-apply/next").Return(context.step)
-	env.On("getFileContent", "/rebase-merge/end").Return(context.total)
-	env.On("getFileContent", "/rebase-apply/last").Return(context.total)
-	env.On("getFileContent", "/rebase-apply/head-name").Return(context.origin)
-	env.On("getFileContent", "/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
-	env.On("getFileContent", "/MERGE_MSG").Return(fmt.Sprintf("Merge branch '%s' into %s", context.mergeHEAD, context.onto))
-	env.On("hasFilesInDir", "", "CHERRY_PICK_HEAD").Return(context.cherryPick)
-	env.On("hasFilesInDir", "", "MERGE_MSG").Return(context.merge)
-	env.On("hasFilesInDir", "", "MERGE_HEAD").Return(context.merge)
-	env.mockGitCommand(context.currentCommit, "rev-parse", "--short", "HEAD")
-	env.mockGitCommand(context.tagName, "describe", "--tags", "--exact-match")
-	env.mockGitCommand(context.origin, "name-rev", "--name-only", "--exclude=tags/*", context.origin)
-	env.mockGitCommand(context.onto, "name-rev", "--name-only", "--exclude=tags/*", context.onto)
-	env.mockGitCommand(context.branchName, "branch", "--show-current")
-	env.mockGitCommand(context.status, "status", "-unormal", "--short", "--branch")
-	env.On("getRuntimeGOOS", nil).Return("unix")
+	env := new(runtime.MockedEnvironment)
+	env.On("HasFolder", "/rebase-merge").Return(context.rebaseMerge)
+	env.On("HasFolder", "/rebase-apply").Return(context.rebaseApply)
+	env.On("GetFileContent", "/rebase-merge/head-name").Return(context.origin)
+	env.On("GetFileContent", "/rebase-merge/onto").Return(context.onto)
+	env.On("GetFileContent", "/rebase-merge/msgnum").Return(context.step)
+	env.On("GetFileContent", "/rebase-apply/next").Return(context.step)
+	env.On("GetFileContent", "/rebase-merge/end").Return(context.total)
+	env.On("GetFileContent", "/rebase-apply/last").Return(context.total)
+	env.On("GetFileContent", "/rebase-apply/head-name").Return(context.origin)
+	env.On("GetFileContent", "/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
+	env.On("GetFileContent", "/MERGE_MSG").Return(fmt.Sprintf("Merge branch '%s' into %s", context.mergeHEAD, context.onto))
+	env.On("HasFilesInDir", "", "CHERRY_PICK_HEAD").Return(context.cherryPick)
+	env.On("HasFilesInDir", "", "MERGE_MSG").Return(context.merge)
+	env.On("HasFilesInDir", "", "MERGE_HEAD").Return(context.merge)
+	mockGitCommand(env, context.currentCommit, "rev-parse", "--short", "HEAD")
+	mockGitCommand(env, context.tagName, "describe", "--tags", "--exact-match")
+	mockGitCommand(env, context.origin, "name-rev", "--name-only", "--exclude=tags/*", context.origin)
+	mockGitCommand(env, context.onto, "name-rev", "--name-only", "--exclude=tags/*", context.onto)
+	mockGitCommand(env, context.branchName, "branch", "--show-current")
+	mockGitCommand(env, context.status, "status", "-unormal", "--short", "--branch")
+	env.On("GetRuntimeGOOS", nil).Return("unix")
 	g := &git{
 		env: env,
 		repo: &gitRepo{
@@ -117,9 +119,9 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	return g
 }
 
-func (m *MockedEnvironment) mockGitCommand(returnValue string, args ...string) {
+func mockGitCommand(m *runtime.MockedEnvironment, returnValue string, args ...string) {
 	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
-	m.On("runCommand", "git", args).Return(returnValue, nil)
+	m.On("RunCommand", "git", args).Return(returnValue, nil)
 }
 
 func TestGetGitDetachedCommitHash(t *testing.T) {
@@ -244,8 +246,8 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 		{Expected: 4, StashContent: "1\n2\n3\n4\n\n"},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getFileContent", "/logs/refs/stash").Return(tc.StashContent)
+		env := new(runtime.MockedEnvironment)
+		env.On("GetFileContent", "/logs/refs/stash").Return(tc.StashContent)
 		g := &git{
 			repo: &gitRepo{
 				gitFolder: "",
@@ -402,9 +404,9 @@ func TestParseGitStatsInvalidLine(t *testing.T) {
 }
 
 func bootstrapUpstreamTest(upstream string) *git {
-	env := &MockedEnvironment{}
-	env.On("runCommand", "git", []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(upstream, nil)
-	env.On("getRuntimeGOOS", nil).Return("unix")
+	env := &runtime.MockedEnvironment{}
+	env.On("RunCommand", "git", []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(upstream, nil)
+	env.On("GetRuntimeGOOS", nil).Return("unix")
 	props := &properties{
 		values: map[Property]interface{}{
 			GithubIcon:      "GH",

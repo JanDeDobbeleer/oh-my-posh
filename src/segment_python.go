@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"oh-my-posh/runtime"
+)
 
 type python struct {
 	language *language
@@ -23,7 +27,7 @@ func (p *python) string() string {
 	return fmt.Sprintf("%s %s", p.venvName, version)
 }
 
-func (p *python) init(props *properties, env environmentInfo) {
+func (p *python) init(props *properties, env runtime.Environment) {
 	p.language = &language{
 		env:         env,
 		props:       props,
@@ -62,7 +66,7 @@ func (p *python) loadContext() {
 	}
 	var venv string
 	for _, venvVar := range venvVars {
-		venv = p.language.env.getenv(venvVar)
+		venv = p.language.env.Getenv(venvVar)
 		name := base(venv, p.language.env)
 		if p.canUseVenvName(name) {
 			p.venvName = name

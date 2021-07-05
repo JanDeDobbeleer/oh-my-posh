@@ -8,6 +8,11 @@ import (
 	"strings"
 	"time"
 
+	"oh-my-posh/engine"
+	"oh-my-posh/regex"
+
+	"oh-my-posh/runtime"
+
 	"github.com/gookit/config/v2"
 )
 
@@ -27,42 +32,11 @@ var bashInit string
 var zshInit string
 
 const (
-	noExe       = "echo \"Unable to find Oh My Posh executable\""
-	zsh         = "zsh"
-	bash        = "bash"
-	pwsh        = "pwsh"
-	fish        = "fish"
-	powershell5 = "powershell"
-	plain       = "shell"
+	noExe = "echo \"Unable to find Oh My Posh executable\""
 )
 
-type args struct {
-	ErrorCode      *int
-	PrintConfig    *bool
-	ConfigFormat   *string
-	PrintShell     *bool
-	Config         *string
-	Shell          *string
-	PWD            *string
-	PSWD           *string
-	Version        *bool
-	Debug          *bool
-	ExecutionTime  *float64
-	Millis         *bool
-	Eval           *bool
-	Init           *bool
-	PrintInit      *bool
-	ExportPNG      *bool
-	Author         *string
-	CursorPadding  *int
-	RPromptOffset  *int
-	StackCount     *int
-	Command        *string
-	PrintTransient *bool
-}
-
 func main() {
-	args := &args{
+	args := &engine.Args{
 		ErrorCode: flag.Int(
 			"error",
 			0,
@@ -153,8 +127,8 @@ func main() {
 			"Print the transient prompt"),
 	}
 	flag.Parse()
-	env := &environment{}
-	env.init(args)
+	env := &runtime.Shell{}
+	env.Init(args)
 	if *args.Millis {
 		fmt.Print(time.Now().UnixNano() / 1000000)
 		return
@@ -175,7 +149,7 @@ func main() {
 	}
 	cfg := GetConfig(env)
 	if *args.PrintShell {
-		fmt.Println(env.getShellName())
+		fmt.Println(env.GetShellName())
 		return
 	}
 	if *args.Version {
@@ -184,7 +158,7 @@ func main() {
 	}
 
 	ansi := &ansiUtils{}
-	ansi.init(env.getShellName())
+	ansi.init(env.GetShellName())
 	colorer := &AnsiColor{
 		ansi:               ansi,
 		terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
@@ -194,7 +168,7 @@ func main() {
 		config: cfg,
 		ansi:   ansi,
 	}
-	engine := &engine{
+	core := &Core{
 		config:       cfg,
 		env:          env,
 		colorWriter:  colorer,
@@ -202,18 +176,18 @@ func main() {
 		ansi:         ansi,
 	}
 	if *args.Debug {
-		fmt.Print(engine.debug())
+		fmt.Print(core.debug())
 		return
 	}
 	if *args.PrintTransient {
-		fmt.Print(engine.renderTransientPrompt(*args.Command))
+		fmt.Print(core.renderTransientPrompt(*args.Command))
 		return
 	}
 	if len(*args.Command) != 0 {
-		fmt.Print(engine.renderTooltip(*args.Command))
+		fmt.Print(core.renderTooltip(*args.Command))
 		return
 	}
-	prompt := engine.render()
+	prompt := core.render()
 	if !*args.ExportPNG {
 		fmt.Print(prompt)
 		return
@@ -226,7 +200,7 @@ func main() {
 		ansi:          ansi,
 	}
 	imageCreator.init()
-	match := findNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, *args.Config)
+	match := regex.FindNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, *args.Config)
 	err := imageCreator.SavePNG(fmt.Sprintf("%s.png", match[str]))
 	if err != nil {
 		fmt.Print(err.Error())
@@ -239,9 +213,9 @@ func initShell(shell, configFile string) string {
 		return noExe
 	}
 	switch shell {
-	case pwsh:
+	case runtime.PSCore, runtime.Powershell:
 		return fmt.Sprintf("(@(&\"%s\" --print-init --shell=pwsh --config=\"%s\") -join \"`n\") | Invoke-Expression", executable, configFile)
-	case zsh, bash, fish:
+	case runtime.Zsh, runtime.Bash, runtime.Fish:
 		return printShellInit(shell, configFile)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
@@ -258,13 +232,13 @@ func printShellInit(shell, configFile string) string {
 		return noExe
 	}
 	switch shell {
-	case pwsh:
+	case runtime.Powershell, runtime.PSCore:
 		return getShellInitScript(executable, configFile, pwshInit)
-	case zsh:
+	case runtime.Zsh:
 		return getShellInitScript(executable, configFile, zshInit)
-	case bash:
+	case runtime.Bash:
 		return getShellInitScript(executable, configFile, bashInit)
-	case fish:
+	case runtime.Fish:
 		return getShellInitScript(executable, configFile, fishInit)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
@@ -277,7 +251,7 @@ func getShellInitScript(executable, configFile, script string) string {
 	return script
 }
 
-func getConsoleBackgroundColor(env environmentInfo, backgroundColorTemplate string) string {
+func getConsoleBackgroundColor(env runtime.Environment, backgroundColorTemplate string) string {
 	if len(backgroundColorTemplate) == 0 {
 		return backgroundColorTemplate
 	}
@@ -286,9 +260,9 @@ func getConsoleBackgroundColor(env environmentInfo, backgroundColorTemplate stri
 	}{
 		Env: map[string]string{},
 	}
-	matches := findAllNamedRegexMatch(templateEnvRegex, backgroundColorTemplate)
+	matches := regex.FindAllNamedRegexMatch(templateEnvRegex, backgroundColorTemplate)
 	for _, match := range matches {
-		context.Env[match["ENV"]] = env.getenv(match["ENV"])
+		context.Env[match["ENV"]] = env.Getenv(match["ENV"])
 	}
 	template := &textTemplate{
 		Template: backgroundColorTemplate,

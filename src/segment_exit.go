@@ -1,10 +1,14 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"oh-my-posh/runtime"
+)
 
 type exit struct {
 	props *properties
-	env   environmentInfo
+	env   runtime.Environment
 }
 
 const (
@@ -24,14 +28,14 @@ func (e *exit) enabled() bool {
 	if e.props.getBool(AlwaysEnabled, false) {
 		return true
 	}
-	return e.env.lastErrorCode() != 0
+	return e.env.LastErrorCode() != 0
 }
 
 func (e *exit) string() string {
 	return e.getFormattedText()
 }
 
-func (e *exit) init(props *properties, env environmentInfo) {
+func (e *exit) init(props *properties, env runtime.Environment) {
 	e.props = props
 	e.env = env
 }
@@ -39,13 +43,13 @@ func (e *exit) init(props *properties, env environmentInfo) {
 func (e *exit) getFormattedText() string {
 	exitCode := e.getMeaningFromExitCode()
 	colorBackground := e.props.getBool(ColorBackground, false)
-	if e.env.lastErrorCode() != 0 && !colorBackground {
+	if e.env.LastErrorCode() != 0 && !colorBackground {
 		e.props.foreground = e.props.getColor(ErrorColor, e.props.foreground)
 	}
-	if e.env.lastErrorCode() != 0 && colorBackground {
+	if e.env.LastErrorCode() != 0 && colorBackground {
 		e.props.background = e.props.getColor(ErrorColor, e.props.background)
 	}
-	if e.env.lastErrorCode() == 0 {
+	if e.env.LastErrorCode() == 0 {
 		return e.props.getString(SuccessIcon, "")
 	}
 	return fmt.Sprintf("%s%s", e.props.getString(ErrorIcon, ""), exitCode)
@@ -56,9 +60,9 @@ func (e *exit) getMeaningFromExitCode() string {
 		return ""
 	}
 	if e.props.getBool(AlwaysNumeric, false) {
-		return fmt.Sprintf("%d", e.env.lastErrorCode())
+		return fmt.Sprintf("%d", e.env.LastErrorCode())
 	}
-	switch e.env.lastErrorCode() {
+	switch e.env.LastErrorCode() {
 	case 1:
 		return "ERROR"
 	case 2:
@@ -112,6 +116,6 @@ func (e *exit) getMeaningFromExitCode() string {
 	case 128 + 22:
 		return "SIGTTOU"
 	default:
-		return fmt.Sprintf("%d", e.env.lastErrorCode())
+		return fmt.Sprintf("%d", e.env.LastErrorCode())
 	}
 }

@@ -4,12 +4,14 @@ import (
 	"testing"
 	"time"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(1337)
+	env := new(runtime.MockedEnvironment)
+	env.On("ExecutionTime", nil).Return(1337)
 	executionTime := &executiontime{
 		env: env,
 	}
@@ -17,8 +19,8 @@ func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
 }
 
 func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(1)
+	env := new(runtime.MockedEnvironment)
+	env.On("ExecutionTime", nil).Return(1)
 	executionTime := &executiontime{
 		env: env,
 	}
@@ -26,8 +28,8 @@ func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 }
 
 func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(99)
+	env := new(runtime.MockedEnvironment)
+	env.On("ExecutionTime", nil).Return(99)
 	props := &properties{
 		values: map[Property]interface{}{
 			ThresholdProperty: float64(10),
@@ -41,8 +43,8 @@ func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 }
 
 func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(99)
+	env := new(runtime.MockedEnvironment)
+	env.On("ExecutionTime", nil).Return(99)
 	props := &properties{
 		values: map[Property]interface{}{
 			ThresholdProperty: float64(100),
@@ -58,8 +60,8 @@ func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
 func TestExecutionTimeWriterDuration(t *testing.T) {
 	input := 1337
 	expected := "1.337s"
-	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(input)
+	env := new(runtime.MockedEnvironment)
+	env.On("ExecutionTime", nil).Return(input)
 	executionTime := &executiontime{
 		env: env,
 	}
@@ -70,8 +72,8 @@ func TestExecutionTimeWriterDuration(t *testing.T) {
 func TestExecutionTimeWriterDuration2(t *testing.T) {
 	input := 13371337
 	expected := "3h 42m 51.337s"
-	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(input)
+	env := new(runtime.MockedEnvironment)
+	env.On("ExecutionTime", nil).Return(input)
 	executionTime := &executiontime{
 		env: env,
 	}

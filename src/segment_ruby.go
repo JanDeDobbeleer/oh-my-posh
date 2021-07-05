@@ -1,5 +1,7 @@
 package main
 
+import "oh-my-posh/runtime"
+
 type ruby struct {
 	language *language
 }
@@ -13,7 +15,7 @@ func (r *ruby) string() string {
 	return version
 }
 
-func (r *ruby) init(props *properties, env environmentInfo) {
+func (r *ruby) init(props *properties, env runtime.Environment) {
 	r.language = &language{
 		env:        env,
 		props:      props,

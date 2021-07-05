@@ -7,6 +7,10 @@ import (
 	"strings"
 	"text/template"
 
+	"oh-my-posh/regex"
+
+	"oh-my-posh/runtime"
+
 	"github.com/Masterminds/sprig"
 )
 
@@ -21,22 +25,22 @@ const (
 type textTemplate struct {
 	Template string
 	Context  interface{}
-	Env      environmentInfo
+	Env      runtime.Environment
 }
 
 func (t *textTemplate) renderPlainContextTemplate(context map[string]interface{}) string {
 	if context == nil {
 		context = make(map[string]interface{})
 	}
-	context["Root"] = t.Env.isRunningAsRoot()
-	pwd := t.Env.getcwd()
-	pwd = strings.Replace(pwd, t.Env.homeDir(), "~", 1)
+	context["Root"] = t.Env.IsRunningAsRoot()
+	pwd := t.Env.Getcwd()
+	pwd = strings.Replace(pwd, t.Env.HomeDir(), "~", 1)
 	context["Path"] = pwd
 	context["Folder"] = base(pwd, t.Env)
-	context["Shell"] = t.Env.getShellName()
-	context["User"] = t.Env.getCurrentUser()
+	context["Shell"] = t.Env.GetShellName()
+	context["User"] = t.Env.GetCurrentUser()
 	context["Host"] = ""
-	if host, err := t.Env.getHostName(); err == nil {
+	if host, err := t.Env.GetHostName(); err == nil {
 		context["Host"] = host
 	}
 	t.Context = context
@@ -81,9 +85,9 @@ func (t *textTemplate) loadEnvVars() {
 		context = t.structToMap()
 	}
 	envVars := map[string]string{}
-	matches := findAllNamedRegexMatch(templateEnvRegex, t.Template)
+	matches := regex.FindAllNamedRegexMatch(templateEnvRegex, t.Template)
 	for _, match := range matches {
-		envVars[match["ENV"]] = t.Env.getenv(match["ENV"])
+		envVars[match["ENV"]] = t.Env.Getenv(match["ENV"])
 	}
 	context["Env"] = envVars
 	t.Context = context

@@ -1,10 +1,14 @@
 package main
 
-import "strings"
+import (
+	"strings"
+
+	"oh-my-posh/runtime"
+)
 
 type command struct {
 	props *properties
-	env   environmentInfo
+	env   runtime.Environment
 	value string
 }
 
@@ -17,14 +21,14 @@ const (
 
 func (c *command) enabled() bool {
 	shell := c.props.getString(ExecutableShell, "bash")
-	if !c.env.hasCommand(shell) {
+	if !c.env.HasCommand(shell) {
 		return false
 	}
 	command := c.props.getString(Command, "echo no command specified")
 	if strings.Contains(command, "||") {
 		commands := strings.Split(command, "||")
 		for _, cmd := range commands {
-			output := c.env.runShellCommand(shell, cmd)
+			output := c.env.RunShellCommand(shell, cmd)
 			if output != "" {
 				c.value = output
 				return true
@@ -35,12 +39,12 @@ func (c *command) enabled() bool {
 		var output string
 		commands := strings.Split(command, "&&")
 		for _, cmd := range commands {
-			output += c.env.runShellCommand(shell, cmd)
+			output += c.env.RunShellCommand(shell, cmd)
 		}
 		c.value = output
 		return c.value != ""
 	}
-	c.value = c.env.runShellCommand(shell, command)
+	c.value = c.env.RunShellCommand(shell, command)
 	return c.value != ""
 }
 
@@ -48,7 +52,7 @@ func (c *command) string() string {
 	return c.value
 }
 
-func (c *command) init(props *properties, env environmentInfo) {
+func (c *command) init(props *properties, env runtime.Environment) {
 	c.props = props
 	c.env = env
 }

@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -60,10 +62,10 @@ func TestOSInfo(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
-		env.On("getenv", "WSL_DISTRO_NAME").Return(tc.WSLDistro)
-		env.On("getPlatform", nil).Return(tc.Platform)
+		env := new(runtime.MockedEnvironment)
+		env.On("GetRuntimeGOOS", nil).Return(tc.GOOS)
+		env.On("Getenv", "WSL_DISTRO_NAME").Return(tc.WSLDistro)
+		env.On("GetPlatform", nil).Return(tc.Platform)
 		props := &properties{
 			values: map[Property]interface{}{
 				WSL:               "WSL",

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -53,15 +55,15 @@ func TestGetConsoleTitle(t *testing.T) {
 			ConsoleTitleStyle:    tc.Style,
 			ConsoleTitleTemplate: tc.Template,
 		}
-		env := new(MockedEnvironment)
-		env.On("getcwd", nil).Return(tc.Cwd)
-		env.On("homeDir", nil).Return("/usr/home")
-		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
-		env.On("isRunningAsRoot", nil).Return(tc.Root)
-		env.On("getShellName", nil).Return(tc.ShellName)
-		env.On("getenv", "USERDOMAIN").Return("MyCompany")
-		env.On("getCurrentUser", nil).Return("MyUser")
-		env.On("getHostName", nil).Return("MyHost", nil)
+		env := new(runtime.MockedEnvironment)
+		env.On("Getcwd", nil).Return(tc.Cwd)
+		env.On("HomeDir", nil).Return("/usr/home")
+		env.On("GetPathSeperator", nil).Return(tc.PathSeperator)
+		env.On("IsRunningAsRoot", nil).Return(tc.Root)
+		env.On("GetShellName", nil).Return(tc.ShellName)
+		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
+		env.On("GetCurrentUser", nil).Return("MyUser")
+		env.On("GetHostName", nil).Return("MyHost", nil)
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)
 		ct := &consoleTitle{
@@ -108,15 +110,15 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			ConsoleTitleStyle:    tc.Style,
 			ConsoleTitleTemplate: tc.Template,
 		}
-		env := new(MockedEnvironment)
-		env.On("getcwd", nil).Return(tc.Cwd)
-		env.On("homeDir", nil).Return("/usr/home")
-		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
-		env.On("isRunningAsRoot", nil).Return(tc.Root)
-		env.On("getShellName", nil).Return(tc.ShellName)
-		env.On("getenv", "USERDOMAIN").Return("MyCompany")
-		env.On("getCurrentUser", nil).Return("MyUser")
-		env.On("getHostName", nil).Return("", fmt.Errorf("I have a bad feeling about this"))
+		env := new(runtime.MockedEnvironment)
+		env.On("Getcwd", nil).Return(tc.Cwd)
+		env.On("HomeDir", nil).Return("/usr/home")
+		env.On("GetPathSeperator", nil).Return(tc.PathSeperator)
+		env.On("IsRunningAsRoot", nil).Return(tc.Root)
+		env.On("GetShellName", nil).Return(tc.ShellName)
+		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
+		env.On("GetCurrentUser", nil).Return("MyUser")
+		env.On("GetHostName", nil).Return("", fmt.Errorf("I have a bad feeling about this"))
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)
 		ct := &consoleTitle{

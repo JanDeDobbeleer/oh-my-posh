@@ -1,8 +1,10 @@
 package main
 
+import "oh-my-posh/runtime"
+
 type envvar struct {
 	props   *properties
-	env     environmentInfo
+	env     runtime.Environment
 	content string
 }
 
@@ -13,7 +15,7 @@ const (
 
 func (e *envvar) enabled() bool {
 	name := e.props.getString(VarName, "")
-	e.content = e.env.getenv(name)
+	e.content = e.env.Getenv(name)
 	return e.content != ""
 }
 
@@ -21,7 +23,7 @@ func (e *envvar) string() string {
 	return e.content
 }
 
-func (e *envvar) init(props *properties, env environmentInfo) {
+func (e *envvar) init(props *properties, env runtime.Environment) {
 	e.props = props
 	e.env = env
 }

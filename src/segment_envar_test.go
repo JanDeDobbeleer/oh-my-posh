@@ -3,14 +3,16 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
 func TestEnvvarAvailable(t *testing.T) {
 	name := "HERP"
 	expected := "derp"
-	env := new(MockedEnvironment)
-	env.On("getenv", name).Return(expected)
+	env := new(runtime.MockedEnvironment)
+	env.On("Getenv", name).Return(expected)
 	props := &properties{
 		values: map[Property]interface{}{
 			VarName: name,
@@ -27,8 +29,8 @@ func TestEnvvarAvailable(t *testing.T) {
 func TestEnvvarNotAvailable(t *testing.T) {
 	name := "HERP"
 	expected := ""
-	env := new(MockedEnvironment)
-	env.On("getenv", name).Return(expected)
+	env := new(runtime.MockedEnvironment)
+	env.On("Getenv", name).Return(expected)
 	props := &properties{
 		values: map[Property]interface{}{
 			VarName: name,

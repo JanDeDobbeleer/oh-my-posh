@@ -86,7 +86,7 @@ jobs:
       shell: pwsh
     - name: Build
       id: build
-      run: go build -o ${{ steps.artifact.outputs.name }} -ldflags="-X 'main.Version=${{ needs.release.outputs.version }}'"
+      run: go build -o ${{ steps.artifact.outputs.name }} -ldflags="-X 'main.Version=${{ needs.release.outputs.version }}'" -tags release
       env:
         GOARCH: ${{ matrix.goarch }}
     - name: Hash

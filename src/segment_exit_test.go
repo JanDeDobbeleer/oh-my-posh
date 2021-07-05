@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,8 +19,8 @@ func TestExitWriterEnabled(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("lastErrorCode", nil).Return(tc.ExitCode)
+		env := new(runtime.MockedEnvironment)
+		env.On("LastErrorCode", nil).Return(tc.ExitCode)
 		e := &exit{
 			env: env,
 		}
@@ -46,8 +48,8 @@ func TestExitWriterFormattedText(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("lastErrorCode", nil).Return(tc.ExitCode)
+		env := new(runtime.MockedEnvironment)
+		env.On("LastErrorCode", nil).Return(tc.ExitCode)
 		props := &properties{
 			foreground: "#111111",
 			background: "#ffffff",
@@ -97,8 +99,8 @@ func TestGetMeaningFromExitCode(t *testing.T) {
 	errorMap[151] = "151"
 	errorMap[7000] = "7000"
 	for exitcode, want := range errorMap {
-		env := new(MockedEnvironment)
-		env.On("lastErrorCode", nil).Return(exitcode)
+		env := new(runtime.MockedEnvironment)
+		env.On("LastErrorCode", nil).Return(exitcode)
 		e := &exit{
 			env: env,
 		}
@@ -107,8 +109,8 @@ func TestGetMeaningFromExitCode(t *testing.T) {
 }
 
 func TestAlwaysNumericExitCode(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("lastErrorCode", nil).Return(1)
+	env := new(runtime.MockedEnvironment)
+	env.On("LastErrorCode", nil).Return(1)
 	props := &properties{
 		values: map[Property]interface{}{
 			AlwaysNumeric: true,

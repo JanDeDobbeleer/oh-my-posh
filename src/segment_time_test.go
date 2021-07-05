@@ -5,6 +5,8 @@ import (
 	"testing"
 	"time"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -38,7 +40,7 @@ func TestTimeSegmentTemplate(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(runtime.MockedEnvironment)
 		props := &properties{
 			values: map[Property]interface{}{
 				SegmentTemplate: tc.Template,

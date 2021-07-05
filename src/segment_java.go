@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"oh-my-posh/runtime"
+)
 
 type java struct {
 	language *language
@@ -10,7 +14,7 @@ func (j *java) string() string {
 	return j.language.string()
 }
 
-func (j *java) init(props *properties, env environmentInfo) {
+func (j *java) init(props *properties, env runtime.Environment) {
 	javaRegex := `(?: JRE) \((?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))?(?:\.(?P<patch>[0-9]+))?).*\),`
 	javaCmd := &cmd{
 		executable: "java",
@@ -36,7 +40,7 @@ func (j *java) init(props *properties, env environmentInfo) {
 			"*.cljc",
 		},
 	}
-	javaHome := j.language.env.getenv("JAVA_HOME")
+	javaHome := j.language.env.Getenv("JAVA_HOME")
 	if len(javaHome) > 0 {
 		java := fmt.Sprintf("%s/bin/java", javaHome)
 		j.language.commands = []*cmd{

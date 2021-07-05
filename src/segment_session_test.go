@@ -4,6 +4,8 @@ import (
 	"errors"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -158,13 +160,13 @@ func TestPropertySessionSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getCurrentUser", nil).Return(tc.UserName)
-		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		env := new(runtime.MockedEnvironment)
+		env.On("GetCurrentUser", nil).Return(tc.UserName)
+		env.On("GetRuntimeGOOS", nil).Return(tc.GOOS)
 		if tc.HostError {
-			env.On("getHostName", nil).Return(tc.Host, errors.New("oh snap"))
+			env.On("GetHostName", nil).Return(tc.Host, errors.New("oh snap"))
 		} else {
-			env.On("getHostName", nil).Return(tc.Host, nil)
+			env.On("GetHostName", nil).Return(tc.Host, nil)
 		}
 		var SSHSession string
 		if tc.SSHSession {
@@ -174,11 +176,11 @@ func TestPropertySessionSegment(t *testing.T) {
 		if tc.SSHClient {
 			SSHClient = "clientz"
 		}
-		env.On("getenv", "SSH_CONNECTION").Return(SSHSession)
-		env.On("getenv", "SSH_CLIENT").Return(SSHClient)
-		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
-		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserNameEnv)
-		env.On("isRunningAsRoot", nil).Return(tc.Root)
+		env.On("Getenv", "SSH_CONNECTION").Return(SSHSession)
+		env.On("Getenv", "SSH_CLIENT").Return(SSHClient)
+		env.On("Getenv", "SSH_CLIENT").Return(SSHSession)
+		env.On("Getenv", defaultUserEnvVar).Return(tc.DefaultUserNameEnv)
+		env.On("IsRunningAsRoot", nil).Return(tc.Root)
 		props := &properties{
 			values: map[Property]interface{}{
 				UserInfoSeparator: " at ",
@@ -291,18 +293,18 @@ func TestSessionSegmentTemplate(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getCurrentUser", nil).Return(tc.UserName)
-		env.On("getRuntimeGOOS", nil).Return("burp")
-		env.On("getHostName", nil).Return(tc.ComputerName, nil)
+		env := new(runtime.MockedEnvironment)
+		env.On("GetCurrentUser", nil).Return(tc.UserName)
+		env.On("GetRuntimeGOOS", nil).Return("burp")
+		env.On("GetHostName", nil).Return(tc.ComputerName, nil)
 		var SSHSession string
 		if tc.SSHSession {
 			SSHSession = "zezzion"
 		}
-		env.On("getenv", "SSH_CONNECTION").Return(SSHSession)
-		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
-		env.On("isRunningAsRoot", nil).Return(tc.Root)
-		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserName)
+		env.On("Getenv", "SSH_CONNECTION").Return(SSHSession)
+		env.On("Getenv", "SSH_CLIENT").Return(SSHSession)
+		env.On("IsRunningAsRoot", nil).Return(tc.Root)
+		env.On("Getenv", defaultUserEnvVar).Return(tc.DefaultUserName)
 		props := &properties{
 			values: map[Property]interface{}{
 				SegmentTemplate: tc.Template,

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,13 +16,13 @@ type mockedLanguageParams struct {
 	extension     string
 }
 
-func getMockedLanguageEnv(params *mockedLanguageParams) (*MockedEnvironment, *properties) {
-	env := new(MockedEnvironment)
-	env.On("hasCommand", params.cmd).Return(true)
-	env.On("runCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
-	env.On("hasFiles", params.extension).Return(true)
-	env.On("getcwd", nil).Return("/usr/home/project")
-	env.On("homeDir", nil).Return("/usr/home")
+func getMockedLanguageEnv(params *mockedLanguageParams) (*runtime.MockedEnvironment, *properties) {
+	env := new(runtime.MockedEnvironment)
+	env.On("HasCommand", params.cmd).Return(true)
+	env.On("RunCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
+	env.On("HasFiles", params.extension).Return(true)
+	env.On("Getcwd", nil).Return("/usr/home/project")
+	env.On("HomeDir", nil).Return("/usr/home")
 	props := &properties{
 		values: map[Property]interface{}{
 			DisplayVersion: true,

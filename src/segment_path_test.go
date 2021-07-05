@@ -1,152 +1,15 @@
 package main
 
 import (
+	"oh-my-posh/engine"
 	"testing"
 
-	"github.com/distatus/battery"
+	"oh-my-posh/runtime"
+
 	"github.com/gookit/config/v2"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
-
-type MockedEnvironment struct {
-	mock.Mock
-}
-
-func (env *MockedEnvironment) getenv(key string) string {
-	args := env.Called(key)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) getcwd() string {
-	args := env.Called(nil)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) homeDir() string {
-	args := env.Called(nil)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) hasFiles(pattern string) bool {
-	args := env.Called(pattern)
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) hasFilesInDir(dir, pattern string) bool {
-	args := env.Called(dir, pattern)
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) hasFolder(folder string) bool {
-	args := env.Called(folder)
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) getFileContent(file string) string {
-	args := env.Called(file)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) getPathSeperator() string {
-	args := env.Called(nil)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) getCurrentUser() string {
-	args := env.Called(nil)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) getHostName() (string, error) {
-	args := env.Called(nil)
-	return args.String(0), args.Error(1)
-}
-
-func (env *MockedEnvironment) getRuntimeGOOS() string {
-	args := env.Called(nil)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) getPlatform() string {
-	args := env.Called(nil)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) hasCommand(command string) bool {
-	args := env.Called(command)
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) runCommand(command string, args ...string) (string, error) {
-	arguments := env.Called(command, args)
-	return arguments.String(0), arguments.Error(1)
-}
-
-func (env *MockedEnvironment) runShellCommand(shell, command string) string {
-	args := env.Called(shell, command)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) lastErrorCode() int {
-	args := env.Called(nil)
-	return args.Int(0)
-}
-
-func (env *MockedEnvironment) executionTime() float64 {
-	args := env.Called(nil)
-	return float64(args.Int(0))
-}
-
-func (env *MockedEnvironment) isRunningAsRoot() bool {
-	args := env.Called(nil)
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) getArgs() *args {
-	arguments := env.Called(nil)
-	return arguments.Get(0).(*args)
-}
-
-func (env *MockedEnvironment) getBatteryInfo() ([]*battery.Battery, error) {
-	args := env.Called(nil)
-	return args.Get(0).([]*battery.Battery), args.Error(1)
-}
-
-func (env *MockedEnvironment) getShellName() string {
-	args := env.Called(nil)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) getWindowTitle(imageName, windowTitleRegex string) (string, error) {
-	args := env.Called(imageName)
-	return args.String(0), args.Error(1)
-}
-
-func (env *MockedEnvironment) doGet(url string) ([]byte, error) {
-	args := env.Called(url)
-	return args.Get(0).([]byte), args.Error(1)
-}
-
-func (env *MockedEnvironment) hasParentFilePath(path string) (*fileInfo, error) {
-	args := env.Called(path)
-	return args.Get(0).(*fileInfo), args.Error(1)
-}
-
-func (env *MockedEnvironment) stackCount() int {
-	args := env.Called(nil)
-	return args.Int(0)
-}
-
-func (env *MockedEnvironment) isWsl() bool {
-	return false
-}
-
-func (env *MockedEnvironment) getTerminalWidth() (int, error) {
-	args := env.Called(nil)
-	return args.Int(0), args.Error(1)
-}
 
 const (
 	homeBill        = "/home/bill"
@@ -157,8 +20,8 @@ const (
 
 func TestIsInHomeDirTrue(t *testing.T) {
 	home := homeBill
-	env := new(MockedEnvironment)
-	env.On("homeDir", nil).Return(home)
+	env := new(runtime.MockedEnvironment)
+	env.On("HomeDir", nil).Return(home)
 	path := &path{
 		env: env,
 	}
@@ -172,8 +35,8 @@ func TestIsInHomeDirLevelTrue(t *testing.T) {
 	for i := 0; i < 99; i++ {
 		pwd += levelDir
 	}
-	env := new(MockedEnvironment)
-	env.On("homeDir", nil).Return(home)
+	env := new(runtime.MockedEnvironment)
+	env.On("HomeDir", nil).Return(home)
 	path := &path{
 		env: env,
 	}
@@ -207,14 +70,14 @@ func TestRootLocationHome(t *testing.T) {
 				WindowsRegistryIcon: tc.RegistryIcon,
 			},
 		}
-		env := new(MockedEnvironment)
-		env.On("homeDir", nil).Return(tc.HomePath)
-		env.On("getcwd", nil).Return(tc.Pwd)
-		args := &args{
+		env := new(runtime.MockedEnvironment)
+		env.On("HomeDir", nil).Return(tc.HomePath)
+		env.On("Getcwd", nil).Return(tc.Pwd)
+		args := &engine.Args{
 			PSWD: &tc.Pswd,
 		}
-		env.On("getArgs", nil).Return(args)
-		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
+		env.On("GetArgs", nil).Return(args)
+		env.On("GetPathSeperator", nil).Return(tc.PathSeperator)
 		path := &path{
 			env:   env,
 			props: props,
@@ -226,8 +89,8 @@ func TestRootLocationHome(t *testing.T) {
 
 func TestIsInHomeDirFalse(t *testing.T) {
 	home := homeBill
-	env := new(MockedEnvironment)
-	env.On("homeDir", nil).Return(home)
+	env := new(runtime.MockedEnvironment)
+	env.On("HomeDir", nil).Return(home)
 	path := &path{
 		env: env,
 	}
@@ -240,8 +103,8 @@ func TestPathDepthMultipleLevelsDeep(t *testing.T) {
 	for i := 0; i < 99; i++ {
 		pwd += levelDir
 	}
-	env := new(MockedEnvironment)
-	env.On("getPathSeperator", nil).Return("/")
+	env := new(runtime.MockedEnvironment)
+	env.On("GetPathSeperator", nil).Return("/")
 	path := &path{
 		env: env,
 	}
@@ -251,8 +114,8 @@ func TestPathDepthMultipleLevelsDeep(t *testing.T) {
 
 func TestPathDepthZeroLevelsDeep(t *testing.T) {
 	pwd := "/usr/"
-	env := new(MockedEnvironment)
-	env.On("getPathSeperator", nil).Return("/")
+	env := new(runtime.MockedEnvironment)
+	env.On("GetPathSeperator", nil).Return("/")
 	path := &path{
 		env: env,
 	}
@@ -262,8 +125,8 @@ func TestPathDepthZeroLevelsDeep(t *testing.T) {
 
 func TestPathDepthOneLevelDeep(t *testing.T) {
 	pwd := "/usr/location"
-	env := new(MockedEnvironment)
-	env.On("getPathSeperator", nil).Return("/")
+	env := new(runtime.MockedEnvironment)
+	env.On("GetPathSeperator", nil).Return("/")
 	path := &path{
 		env: env,
 	}
@@ -298,15 +161,15 @@ func TestAgnosterPathStyles(t *testing.T) {
 		{Style: Mixed, Expected: "~ > ab > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/ab/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
-		env.On("homeDir", nil).Return(tc.HomePath)
-		env.On("getcwd", nil).Return(tc.Pwd)
-		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
-		args := &args{
+		env := new(runtime.MockedEnvironment)
+		env.On("GetPathSeperator", nil).Return(tc.PathSeperator)
+		env.On("HomeDir", nil).Return(tc.HomePath)
+		env.On("Getcwd", nil).Return(tc.Pwd)
+		env.On("GetRuntimeGOOS", nil).Return(tc.GOOS)
+		args := &engine.Args{
 			PSWD: &tc.Pswd,
 		}
-		env.On("getArgs", nil).Return(args)
+		env.On("GetArgs", nil).Return(args)
 		path := &path{
 			env: env,
 			props: &properties{
@@ -362,8 +225,8 @@ func TestGetFullPath(t *testing.T) {
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/usr/home/abc", Expected: "abc"},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/a/b/c/d", Expected: "d"},
 
-		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: windowsPlatform},
-		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\Jan", Expected: "C:\\Users\\Jan", PathSeparator: "\\", GOOS: windowsPlatform},
+		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: runtime.Windows},
+		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\Jan", Expected: "C:\\Users\\Jan", PathSeparator: "\\", GOOS: runtime.Windows},
 
 		// StackCountEnabled=true and StackCount=2
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, StackCount: 2, Expected: "2 /"},
@@ -412,19 +275,19 @@ func TestGetFullPath(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(runtime.MockedEnvironment)
 		if len(tc.PathSeparator) == 0 {
 			tc.PathSeparator = "/"
 		}
-		env.On("getPathSeperator", nil).Return(tc.PathSeparator)
-		env.On("homeDir", nil).Return("/usr/home")
-		env.On("getcwd", nil).Return(tc.Pwd)
-		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
-		env.On("stackCount", nil).Return(tc.StackCount)
-		args := &args{
+		env.On("GetPathSeperator", nil).Return(tc.PathSeparator)
+		env.On("HomeDir", nil).Return("/usr/home")
+		env.On("Getcwd", nil).Return(tc.Pwd)
+		env.On("GetRuntimeGOOS", nil).Return(tc.GOOS)
+		env.On("StackCount", nil).Return(tc.StackCount)
+		args := &engine.Args{
 			PSWD: &tc.Pswd,
 		}
-		env.On("getArgs", nil).Return(args)
+		env.On("GetArgs", nil).Return(args)
 		props := &properties{
 			values: map[Property]interface{}{
 				Style:             tc.Style,
@@ -448,14 +311,14 @@ func TestGetFullPath(t *testing.T) {
 
 func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	pwd := "/a/b/c/d"
-	env := new(MockedEnvironment)
-	env.On("getPathSeperator", nil).Return("/")
-	env.On("homeDir", nil).Return("/usr/home")
-	env.On("getcwd", nil).Return(pwd)
-	args := &args{
+	env := new(runtime.MockedEnvironment)
+	env.On("GetPathSeperator", nil).Return("/")
+	env.On("HomeDir", nil).Return("/usr/home")
+	env.On("Getcwd", nil).Return(pwd)
+	args := &engine.Args{
 		PSWD: &pwd,
 	}
-	env.On("getArgs", nil).Return(args)
+	env.On("GetArgs", nil).Return(args)
 	path := &path{
 		env: env,
 		props: &properties{
@@ -478,14 +341,14 @@ func testWritePathInfo(home, pwd, pathSeparator string) string {
 			HomeIcon:            "~",
 		},
 	}
-	env := new(MockedEnvironment)
-	env.On("homeDir", nil).Return(home)
-	env.On("getPathSeperator", nil).Return(pathSeparator)
-	env.On("getcwd", nil).Return(pwd)
-	args := &args{
+	env := new(runtime.MockedEnvironment)
+	env.On("HomeDir", nil).Return(home)
+	env.On("GetPathSeperator", nil).Return(pathSeparator)
+	env.On("Getcwd", nil).Return(pwd)
+	args := &engine.Args{
 		PSWD: &pwd,
 	}
-	env.On("getArgs", nil).Return(args)
+	env.On("GetArgs", nil).Return(args)
 	path := &path{
 		env:   env,
 		props: props,
@@ -575,14 +438,14 @@ func TestGetPwd(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getPathSeperator", nil).Return("/")
-		env.On("homeDir", nil).Return("/usr/home")
-		env.On("getcwd", nil).Return(tc.Pwd)
-		args := &args{
+		env := new(runtime.MockedEnvironment)
+		env.On("GetPathSeperator", nil).Return("/")
+		env.On("HomeDir", nil).Return("/usr/home")
+		env.On("Getcwd", nil).Return(tc.Pwd)
+		args := &engine.Args{
 			PSWD: &tc.Pswd,
 		}
-		env.On("getArgs", nil).Return(args)
+		env.On("GetArgs", nil).Return(args)
 		path := &path{
 			env: env,
 			props: &properties{

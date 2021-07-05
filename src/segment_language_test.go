@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -35,21 +37,21 @@ func (l *languageArgs) hasvalue(value string, list []string) bool {
 }
 
 func bootStrapLanguageTest(args *languageArgs) *language {
-	env := new(MockedEnvironment)
+	env := new(runtime.MockedEnvironment)
 	for _, command := range args.commands {
-		env.On("hasCommand", command.executable).Return(args.hasvalue(command.executable, args.enabledCommands))
-		env.On("runCommand", command.executable, command.args).Return(args.version, args.expectedError)
+		env.On("HasCommand", command.executable).Return(args.hasvalue(command.executable, args.enabledCommands))
+		env.On("RunCommand", command.executable, command.args).Return(args.version, args.expectedError)
 	}
 	for _, extension := range args.extensions {
-		env.On("hasFiles", extension).Return(args.hasvalue(extension, args.enabledExtensions))
+		env.On("HasFiles", extension).Return(args.hasvalue(extension, args.enabledExtensions))
 	}
 	home := "/usr/home"
 	cwd := "/usr/home/project"
 	if args.inHome {
 		cwd = home
 	}
-	env.On("getcwd", nil).Return(cwd)
-	env.On("homeDir", nil).Return(home)
+	env.On("Getcwd", nil).Return(cwd)
+	env.On("HomeDir", nil).Return(home)
 	props := &properties{
 		values: args.properties,
 	}
@@ -343,7 +345,7 @@ func TestLanguageEnabledCommandExitCode(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"uni"},
 		version:           universion,
-		expectedError:     &commandError{exitCode: expected},
+		expectedError:     &runtime.CommandError{ExitCode: expected},
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())

@@ -5,6 +5,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,11 +19,11 @@ type spotifyArgs struct {
 }
 
 func bootStrapSpotifyDarwinTest(args *spotifyArgs) *spotify {
-	env := new(MockedEnvironment)
-	env.On("runCommand", "osascript", []string{"-e", "application \"Spotify\" is running"}).Return(args.running, args.runError)
-	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to player state as string"}).Return(args.status, nil)
-	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to artist of current track as string"}).Return(args.artist, nil)
-	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to name of current track as string"}).Return(args.track, nil)
+	env := new(runtime.MockedEnvironment)
+	env.On("RunCommand", "osascript", []string{"-e", "application \"Spotify\" is running"}).Return(args.running, args.runError)
+	env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to player state as string"}).Return(args.status, nil)
+	env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to artist of current track as string"}).Return(args.artist, nil)
+	env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to name of current track as string"}).Return(args.track, nil)
 	props := &properties{}
 	s := &spotify{
 		env:   env,

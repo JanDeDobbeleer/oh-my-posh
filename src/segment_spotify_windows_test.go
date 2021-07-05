@@ -6,6 +6,8 @@ import (
 	"errors"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,8 +17,8 @@ type spotifyArgs struct {
 }
 
 func bootStrapSpotifyWindowsTest(args *spotifyArgs) *spotify {
-	env := new(MockedEnvironment)
-	env.On("getWindowTitle", "spotify.exe").Return(args.title, args.runError)
+	env := new(runtime.MockedEnvironment)
+	env.On("GetWindowTitle", "spotify.exe").Return(args.title, args.runError)
 	props := &properties{}
 	s := &spotify{
 		env:   env,

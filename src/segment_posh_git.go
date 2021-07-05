@@ -1,10 +1,14 @@
 package main
 
-import "strings"
+import (
+	"strings"
+
+	"oh-my-posh/runtime"
+)
 
 type poshgit struct {
 	props     *properties
-	env       environmentInfo
+	env       runtime.Environment
 	gitStatus string
 }
 
@@ -13,7 +17,7 @@ const (
 )
 
 func (p *poshgit) enabled() bool {
-	status := p.env.getenv(poshGitEnv)
+	status := p.env.Getenv(poshGitEnv)
 	p.gitStatus = strings.TrimSpace(status)
 	return p.gitStatus != ""
 }
@@ -22,7 +26,7 @@ func (p *poshgit) string() string {
 	return p.gitStatus
 }
 
-func (p *poshgit) init(props *properties, env environmentInfo) {
+func (p *poshgit) init(props *properties, env runtime.Environment) {
 	p.props = props
 	p.env = env
 }

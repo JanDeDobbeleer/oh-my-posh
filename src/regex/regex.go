@@ -1,4 +1,4 @@
-package main
+package regex
 
 import (
 	"regexp"
@@ -30,7 +30,7 @@ func getCompiledRegex(pattern string) *regexp.Regexp {
 	return re
 }
 
-func findNamedRegexMatch(pattern, text string) map[string]string {
+func FindNamedRegexMatch(pattern, text string) map[string]string {
 	// error ignored because mustCompile will cause a panic
 	re := getCompiledRegex(pattern)
 	match := re.FindStringSubmatch(text)
@@ -47,7 +47,7 @@ func findNamedRegexMatch(pattern, text string) map[string]string {
 	return result
 }
 
-func findAllNamedRegexMatch(pattern, text string) []map[string]string {
+func FindAllNamedRegexMatch(pattern, text string) []map[string]string {
 	re := getCompiledRegex(pattern)
 	match := re.FindAllStringSubmatch(text, -1)
 	var results []map[string]string
@@ -68,12 +68,12 @@ func findAllNamedRegexMatch(pattern, text string) []map[string]string {
 	return results
 }
 
-func replaceAllString(pattern, text, replaceText string) string {
+func ReplaceAllString(pattern, text, replaceText string) string {
 	re := getCompiledRegex(pattern)
 	return re.ReplaceAllString(text, replaceText)
 }
 
-func matchString(pattern, text string) bool {
+func MatchString(pattern, text string) bool {
 	re := getCompiledRegex(pattern)
 	return re.MatchString(text)
 }

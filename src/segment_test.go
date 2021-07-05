@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +17,7 @@ func TestMapSegmentWriterCanMap(t *testing.T) {
 	sc := &Segment{
 		Type: Session,
 	}
-	env := new(MockedEnvironment)
+	env := new(runtime.MockedEnvironment)
 	err := sc.mapSegmentWithWriter(env)
 	assert.NotNil(t, sc.props)
 	assert.NoError(t, err)
@@ -26,7 +28,7 @@ func TestMapSegmentWriterCannotMap(t *testing.T) {
 	sc := &Segment{
 		Type: "nilwriter",
 	}
-	env := new(MockedEnvironment)
+	env := new(runtime.MockedEnvironment)
 	err := sc.mapSegmentWithWriter(env)
 	assert.Nil(t, sc.props)
 	assert.Error(t, err)

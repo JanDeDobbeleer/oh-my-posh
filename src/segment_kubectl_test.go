@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,17 +18,17 @@ type kubectlArgs struct {
 }
 
 func bootStrapKubectlTest(args *kubectlArgs) *kubectl {
-	env := new(MockedEnvironment)
-	env.On("hasCommand", "kubectl").Return(args.kubectlExists)
+	env := new(runtime.MockedEnvironment)
+	env.On("HasCommand", "kubectl").Return(args.kubectlExists)
 	kubectlOut := args.context + "," + args.namespace
 	var kubectlErr error
 	if args.kubectlErr {
-		kubectlErr = &commandError{
-			err:      "oops",
-			exitCode: 1,
+		kubectlErr = &runtime.CommandError{
+			Err:      "oops",
+			ExitCode: 1,
 		}
 	}
-	env.On("runCommand", "kubectl", []string{"config", "view", "--minify", "--output", "jsonpath={..current-context},{..namespace}"}).Return(kubectlOut, kubectlErr)
+	env.On("RunCommand", "kubectl", []string{"config", "view", "--minify", "--output", "jsonpath={..current-context},{..namespace}"}).Return(kubectlOut, kubectlErr)
 	k := &kubectl{
 		env: env,
 		props: &properties{

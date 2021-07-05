@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/alecthomas/assert"
 )
 
@@ -26,17 +28,17 @@ func TestPythonVirtualEnv(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("hasCommand", "python").Return(true)
-		env.On("runCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
-		env.On("hasFiles", "*.py").Return(true)
-		env.On("getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
-		env.On("getenv", "CONDA_ENV_PATH").Return(tc.CondaEnvName)
-		env.On("getenv", "CONDA_DEFAULT_ENV").Return(tc.CondaDefaultEnvName)
-		env.On("getenv", "PYENV_VERSION").Return(tc.PyEnvName)
-		env.On("getPathSeperator", nil).Return("")
-		env.On("getcwd", nil).Return("/usr/home/project")
-		env.On("homeDir", nil).Return("/usr/home")
+		env := new(runtime.MockedEnvironment)
+		env.On("HasCommand", "python").Return(true)
+		env.On("RunCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
+		env.On("HasFiles", "*.py").Return(true)
+		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
+		env.On("Getenv", "CONDA_ENV_PATH").Return(tc.CondaEnvName)
+		env.On("Getenv", "CONDA_DEFAULT_ENV").Return(tc.CondaDefaultEnvName)
+		env.On("Getenv", "PYENV_VERSION").Return(tc.PyEnvName)
+		env.On("GetPathSeperator", nil).Return("")
+		env.On("Getcwd", nil).Return("/usr/home/project")
+		env.On("HomeDir", nil).Return("/usr/home")
 		props := &properties{
 			values: map[Property]interface{}{
 				DisplayVersion:    tc.DisplayVersion,
@@ -61,12 +63,12 @@ func TestPythonPythonInContext(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getPathSeperator", nil).Return("")
-		env.On("getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
-		env.On("getenv", "CONDA_ENV_PATH").Return("")
-		env.On("getenv", "CONDA_DEFAULT_ENV").Return("")
-		env.On("getenv", "PYENV_VERSION").Return("")
+		env := new(runtime.MockedEnvironment)
+		env.On("GetPathSeperator", nil).Return("")
+		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
+		env.On("Getenv", "CONDA_ENV_PATH").Return("")
+		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
+		env.On("Getenv", "PYENV_VERSION").Return("")
 		python := &python{}
 		python.init(nil, env)
 		python.loadContext()

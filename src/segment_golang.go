@@ -1,5 +1,7 @@
 package main
 
+import "oh-my-posh/runtime"
+
 type golang struct {
 	language *language
 }
@@ -8,7 +10,7 @@ func (g *golang) string() string {
 	return g.language.string()
 }
 
-func (g *golang) init(props *properties, env environmentInfo) {
+func (g *golang) init(props *properties, env runtime.Environment) {
 	g.language = &language{
 		env:        env,
 		props:      props,

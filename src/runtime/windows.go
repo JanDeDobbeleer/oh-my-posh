@@ -1,6 +1,6 @@
 // +build windows
 
-package main
+package runtime
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-func (env *environment) isRunningAsRoot() bool {
+func (sh *Shell) IsRunningAsRoot() bool {
 	var sid *windows.SID
 
 	// Although this looks scary, it is directly copied from the
@@ -43,9 +43,9 @@ func (env *environment) isRunningAsRoot() bool {
 	return member
 }
 
-func (env *environment) homeDir() string {
+func (sh *Shell) HomeDir() string {
 	// return the right HOME reference when using MSYS2
-	if env.getShellName() == bash {
+	if sh.GetShellName() == Bash {
 		return os.Getenv("HOME")
 	}
 	home := os.Getenv("HOMEDRIVE") + os.Getenv("HOMEPATH")
@@ -55,14 +55,14 @@ func (env *environment) homeDir() string {
 	return home
 }
 
-func (env *environment) getWindowTitle(imageName, windowTitleRegex string) (string, error) {
+func (sh *Shell) GetWindowTitle(imageName, windowTitleRegex string) (string, error) {
 	return getWindowTitle(imageName, windowTitleRegex)
 }
 
-func (env *environment) isWsl() bool {
+func (sh *Shell) IsWsl() bool {
 	return false
 }
 
-func (env *environment) getTerminalWidth() (int, error) {
+func (sh *Shell) GetTerminalWidth() (int, error) {
 	return 0, errors.New("Unsupported on Windows")
 }

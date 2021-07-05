@@ -2,11 +2,13 @@ package main
 
 import (
 	"encoding/json"
+
+	"oh-my-posh/runtime"
 )
 
 type nbgv struct {
 	props *properties
-	env   environmentInfo
+	env   runtime.Environment
 	nbgv  *versionInfo
 }
 
@@ -23,10 +25,10 @@ type versionInfo struct {
 
 func (n *nbgv) enabled() bool {
 	nbgv := "nbgv"
-	if !n.env.hasCommand(nbgv) {
+	if !n.env.HasCommand(nbgv) {
 		return false
 	}
-	response, err := n.env.runCommand(nbgv, "get-version", "--format=json")
+	response, err := n.env.RunCommand(nbgv, "get-version", "--format=json")
 	if err != nil {
 		return false
 	}
@@ -52,7 +54,7 @@ func (n *nbgv) string() string {
 	return text
 }
 
-func (n *nbgv) init(props *properties, env environmentInfo) {
+func (n *nbgv) init(props *properties, env runtime.Environment) {
 	n.props = props
 	n.env = env
 }

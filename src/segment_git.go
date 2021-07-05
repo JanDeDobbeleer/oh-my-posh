@@ -5,6 +5,10 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"oh-my-posh/regex"
+
+	"oh-my-posh/runtime"
 )
 
 type gitRepo struct {
@@ -43,7 +47,7 @@ func (s *gitStatus) string() string {
 
 type git struct {
 	props *properties
-	env   environmentInfo
+	env   runtime.Environment
 	repo  *gitRepo
 }
 
@@ -117,22 +121,22 @@ const (
 )
 
 func (g *git) enabled() bool {
-	if !g.env.hasCommand("git") {
+	if !g.env.HasCommand("git") {
 		return false
 	}
-	gitdir, err := g.env.hasParentFilePath(".git")
+	gitdir, err := g.env.HasParentFilePath(".git")
 	if err != nil {
 		return false
 	}
 	g.repo = &gitRepo{}
-	if gitdir.isDir {
-		g.repo.gitFolder = gitdir.path
+	if gitdir.IsDir {
+		g.repo.gitFolder = gitdir.Path
 		return true
 	}
 	// handle worktree
-	dirPointer := g.env.getFileContent(gitdir.path)
+	dirPointer := g.env.GetFileContent(gitdir.Path)
 	dirPointer = strings.Trim(dirPointer, " \r\n")
-	matches := findNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
+	matches := regex.FindNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
 	if matches != nil && matches["dir"] != "" {
 		g.repo.gitFolder = matches["dir"]
 		return true
@@ -178,7 +182,7 @@ func (g *git) string() string {
 	return buffer.String()
 }
 
-func (g *git) init(props *properties, env environmentInfo) {
+func (g *git) init(props *properties, env runtime.Environment) {
 	g.props = props
 	g.env = env
 }
@@ -222,7 +226,7 @@ func (g *git) colorStatusString(prefix, status, color string) string {
 }
 
 func (g *git) getUpstreamSymbol() string {
-	upstream := replaceAllString("/.*", g.repo.upstream, "")
+	upstream := regex.ReplaceAllString("/.*", g.repo.upstream, "")
 	url := g.getGitCommandOutput("remote", "get-url", upstream)
 	if strings.Contains(url, "github") {
 		return g.props.getString(GithubIcon, "\uF408 ")
@@ -280,15 +284,15 @@ func (g *git) getStatusColor(defaultValue string) string {
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {
-	inWSLSharedDrive := func(env environmentInfo) bool {
-		return env.isWsl() && strings.HasPrefix(env.getcwd(), "/mnt/")
+	inWSLSharedDrive := func(env runtime.Environment) bool {
+		return env.IsWsl() && strings.HasPrefix(env.Getcwd(), "/mnt/")
 	}
 	gitCommand := "git"
-	if g.env.getRuntimeGOOS() == windowsPlatform || inWSLSharedDrive(g.env) {
+	if g.env.GetRuntimeGOOS() == runtime.Windows || inWSLSharedDrive(g.env) {
 		gitCommand = "git.exe"
 	}
 	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
-	val, _ := g.env.runCommand(gitCommand, args...)
+	val, _ := g.env.RunCommand(gitCommand, args...)
 	return val
 }
 
@@ -325,7 +329,7 @@ func (g *git) getGitHEADContext(ref string) string {
 	if g.hasGitFile("MERGE_MSG") && g.hasGitFile("MERGE_HEAD") {
 		icon := g.props.getString(MergeIcon, "\uE727 ")
 		mergeContext := g.getGitFileContents("MERGE_MSG")
-		matches := findNamedRegexMatch(`Merge branch '(?P<head>.*)' into`, mergeContext)
+		matches := regex.FindNamedRegexMatch(`Merge branch '(?P<head>.*)' into`, mergeContext)
 		if matches != nil && matches["head"] != "" {
 			branch := g.truncateBranch(matches["head"])
 			return fmt.Sprintf("%s%s%s into %s", icon, branchIcon, branch, ref)
@@ -349,17 +353,17 @@ func (g *git) truncateBranch(branch string) string {
 }
 
 func (g *git) hasGitFile(file string) bool {
-	return g.env.hasFilesInDir(g.repo.gitFolder, file)
+	return g.env.HasFilesInDir(g.repo.gitFolder, file)
 }
 
 func (g *git) hasGitFolder(folder string) bool {
 	path := g.repo.gitFolder + "/" + folder
-	return g.env.hasFolder(path)
+	return g.env.HasFolder(path)
 }
 
 func (g *git) getGitFileContents(file string) string {
 	path := g.repo.gitFolder + "/" + file
-	content := g.env.getFileContent(path)
+	content := g.env.GetFileContent(path)
 	return strings.Trim(content, " \r\n")
 }
 
@@ -430,5 +434,5 @@ func (g *git) getStashContext() int {
 
 func (g *git) parseGitStatusInfo(branchInfo string) map[string]string {
 	var branchRegex = `^## (?P<local>\S+?)(\.{3}(?P<upstream>\S+?)( \[(?P<upstream_status>(ahead (?P<ahead>\d+)(, )?)?(behind (?P<behind>\d+))?(gone)?)])?)?$`
-	return findNamedRegexMatch(branchRegex, branchInfo)
+	return regex.FindNamedRegexMatch(branchRegex, branchInfo)
 }

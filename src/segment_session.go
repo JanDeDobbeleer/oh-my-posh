@@ -3,11 +3,13 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	"oh-my-posh/runtime"
 )
 
 type session struct {
 	props           *properties
-	env             environmentInfo
+	env             runtime.Environment
 	UserName        string
 	DefaultUserName string
 	ComputerName    string
@@ -42,7 +44,7 @@ func (s *session) enabled() bool {
 	s.DefaultUserName = s.getDefaultUser()
 	segmentTemplate := s.props.getString(SegmentTemplate, "")
 	if segmentTemplate != "" {
-		s.Root = s.env.isRunningAsRoot()
+		s.Root = s.env.IsRunningAsRoot()
 		template := &textTemplate{
 			Template: segmentTemplate,
 			Context:  s,
@@ -66,7 +68,7 @@ func (s *session) string() string {
 	return s.getFormattedText()
 }
 
-func (s *session) init(props *properties, env environmentInfo) {
+func (s *session) init(props *properties, env runtime.Environment) {
 	s.props = props
 	s.env = env
 }
@@ -101,7 +103,7 @@ func (s *session) getComputerName() string {
 	if !s.props.getBool(DisplayHost, true) {
 		return ""
 	}
-	computername, err := s.env.getHostName()
+	computername, err := s.env.GetHostName()
 	if err != nil {
 		computername = "unknown"
 	}
@@ -112,16 +114,16 @@ func (s *session) getUserName() string {
 	if !s.props.getBool(DisplayUser, true) {
 		return ""
 	}
-	user := s.env.getCurrentUser()
+	user := s.env.GetCurrentUser()
 	username := strings.TrimSpace(user)
-	if s.env.getRuntimeGOOS() == "windows" && strings.Contains(username, "\\") {
+	if s.env.GetRuntimeGOOS() == "windows" && strings.Contains(username, "\\") {
 		username = strings.Split(username, "\\")[1]
 	}
 	return username
 }
 
 func (s *session) getDefaultUser() string {
-	user := s.env.getenv(defaultUserEnvVar)
+	user := s.env.Getenv(defaultUserEnvVar)
 	if len(user) == 0 {
 		user = s.props.getString(DefaultUserName, "")
 	}
@@ -134,7 +136,7 @@ func (s *session) activeSSHSession() bool {
 		"SSH_CLIENT",
 	}
 	for _, key := range keys {
-		content := s.env.getenv(key)
+		content := s.env.Getenv(key)
 		if content != "" {
 			return true
 		}

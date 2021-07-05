@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+
+	"oh-my-posh/runtime"
 )
 
 type osInfo struct {
 	props *properties
-	env   environmentInfo
+	env   runtime.Environment
 	OS    string
 }
 
@@ -68,17 +70,17 @@ func (n *osInfo) enabled() bool {
 }
 
 func (n *osInfo) string() string {
-	goos := n.env.getRuntimeGOOS()
+	goos := n.env.GetRuntimeGOOS()
 	switch goos {
-	case windowsPlatform:
-		n.OS = windowsPlatform
+	case runtime.Windows:
+		n.OS = runtime.Windows
 		return n.props.getString(Windows, "\uE62A")
-	case darwinPlatform:
-		n.OS = darwinPlatform
+	case runtime.Darwin:
+		n.OS = runtime.Darwin
 		return n.props.getString(MacOS, "\uF179")
-	case linuxPlatform:
-		wsl := n.env.getenv("WSL_DISTRO_NAME")
-		p := n.env.getPlatform()
+	case runtime.Linux:
+		wsl := n.env.Getenv("WSL_DISTRO_NAME")
+		p := n.env.GetPlatform()
 		if len(wsl) == 0 {
 			n.OS = p
 			return n.getDistroName(p, "")
@@ -145,7 +147,7 @@ func (n *osInfo) getDistroName(distro, defaultName string) string {
 	return n.props.getString(Linux, "\uF17C")
 }
 
-func (n *osInfo) init(props *properties, env environmentInfo) {
+func (n *osInfo) init(props *properties, env runtime.Environment) {
 	n.props = props
 	n.env = env
 }

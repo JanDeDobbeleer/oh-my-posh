@@ -4,11 +4,14 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"oh-my-posh/runtime"
 )
 
-type engine struct {
+// Core writes the prompt to the console
+type Core struct {
 	config       *Config
-	env          environmentInfo
+	env          runtime.Environment
 	colorWriter  colorWriter
 	ansi         *ansiUtils
 	consoleTitle *consoleTitle
@@ -17,17 +20,17 @@ type engine struct {
 	rprompt string
 }
 
-func (e *engine) write(text string) {
+func (e *Core) write(text string) {
 	e.console.WriteString(text)
 }
 
-func (e *engine) string() string {
+func (e *Core) string() string {
 	return e.console.String()
 }
 
-func (e *engine) canWriteRPrompt() bool {
+func (e *Core) canWriteRPrompt() bool {
 	prompt := e.string()
-	consoleWidth, err := e.env.getTerminalWidth()
+	consoleWidth, err := e.env.GetTerminalWidth()
 	if err != nil || consoleWidth == 0 {
 		return true
 	}
@@ -40,7 +43,7 @@ func (e *engine) canWriteRPrompt() bool {
 	return (availableSpace - e.ansi.lenWithoutANSI(e.rprompt)) >= promptBreathingRoom
 }
 
-func (e *engine) render() string {
+func (e *Core) render() string {
 	for _, block := range e.config.Blocks {
 		e.renderBlock(block)
 	}
@@ -55,18 +58,18 @@ func (e *engine) render() string {
 	if !e.config.OSC99 {
 		return e.print()
 	}
-	cwd := e.env.getcwd()
-	if e.env.isWsl() {
-		cwd, _ = e.env.runCommand("wslpath", "-m", cwd)
+	cwd := e.env.Getcwd()
+	if e.env.IsWsl() {
+		cwd, _ = e.env.RunCommand("wslpath", "-m", cwd)
 	}
 	e.write(e.ansi.consolePwd(cwd))
 	return e.print()
 }
 
-func (e *engine) renderBlock(block *Block) {
+func (e *Core) renderBlock(block *Block) {
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
-	if block.Type == RPrompt && e.env.getShellName() == bash {
+	if block.Type == RPrompt && e.env.GetShellName() == runtime.Bash {
 		block.initPlain(e.env, e.config)
 	} else {
 		block.init(e.env, e.colorWriter, e.ansi)
@@ -99,7 +102,7 @@ func (e *engine) renderBlock(block *Block) {
 		}
 	case RPrompt:
 		blockText := block.renderSegments()
-		if e.env.getShellName() == bash {
+		if e.env.GetShellName() == runtime.Bash {
 			blockText = fmt.Sprintf(e.ansi.bashFormat, blockText)
 		}
 		e.rprompt = blockText
@@ -108,13 +111,13 @@ func (e *engine) renderBlock(block *Block) {
 	// If this doesn't happen, the portion after the prompt gets colored in the background
 	// color of the line above the new input line. Clearing the line fixes this,
 	// but can hopefully one day be removed when this is resolved natively.
-	if e.ansi.shell == pwsh || e.ansi.shell == powershell5 {
+	if e.ansi.shell == runtime.PSCore || e.ansi.shell == runtime.Powershell {
 		e.write(e.ansi.clearAfter())
 	}
 }
 
 // debug will loop through your config file and output the timings for each segments
-func (e *engine) debug() string {
+func (e *Core) debug() string {
 	var segmentTimings []*SegmentTiming
 	largestSegmentNameLength := 0
 	e.write("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
@@ -155,17 +158,17 @@ func (e *engine) debug() string {
 	return e.string()
 }
 
-func (e *engine) print() string {
-	switch e.env.getShellName() {
-	case zsh:
-		if !*e.env.getArgs().Eval {
+func (e *Core) print() string {
+	switch e.env.GetShellName() {
+	case runtime.Zsh:
+		if !*e.env.GetArgs().Eval {
 			break
 		}
 		// escape double quotes contained in the prompt
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), "\"", "\"\""))
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
-	case pwsh, powershell5, bash, plain:
+	case runtime.PSCore, runtime.Powershell, runtime.Bash, runtime.Plain:
 		if e.rprompt == "" || !e.canWriteRPrompt() {
 			break
 		}
@@ -178,7 +181,7 @@ func (e *engine) print() string {
 	return e.string()
 }
 
-func (e *engine) renderTooltip(tip string) string {
+func (e *Core) renderTooltip(tip string) string {
 	tip = strings.Trim(tip, " ")
 	var tooltip *Segment
 	for _, tp := range e.config.Tooltips {
@@ -202,11 +205,11 @@ func (e *engine) renderTooltip(tip string) string {
 		Alignment: Right,
 		Segments:  []*Segment{tooltip},
 	}
-	switch e.env.getShellName() {
-	case zsh:
+	switch e.env.GetShellName() {
+	case runtime.Zsh:
 		block.init(e.env, e.colorWriter, e.ansi)
 		return block.renderSegments()
-	case pwsh, powershell5:
+	case runtime.PSCore, runtime.Powershell:
 		block.initPlain(e.env, e.config)
 		tooltipText := block.renderSegments()
 		e.write(e.ansi.clearAfter())
@@ -218,7 +221,7 @@ func (e *engine) renderTooltip(tip string) string {
 	return ""
 }
 
-func (e *engine) renderTransientPrompt(command string) string {
+func (e *Core) renderTransientPrompt(command string) string {
 	newlines := strings.Count(command, "\n")
 	command = strings.Replace(command, "\n", e.ansi.newLine(), newlines)
 	promptTemplate := e.config.TransientPrompt.Template
@@ -233,13 +236,13 @@ func (e *engine) renderTransientPrompt(command string) string {
 	context["Command"] = command
 	prompt := template.renderPlainContextTemplate(context)
 	e.colorWriter.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
-	switch e.env.getShellName() {
-	case zsh:
+	switch e.env.GetShellName() {
+	case runtime.Zsh:
 		// escape double quotes contained in the prompt
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.colorWriter.string(), "\"", "\"\""))
 		prompt += "\nRPROMPT=\"\""
 		return prompt
-	case pwsh, powershell5:
+	case runtime.PSCore, runtime.Powershell:
 		prompt := e.ansi.carriageBackward()
 		// calculate offset for multiline prompt
 		lineOffset := 0

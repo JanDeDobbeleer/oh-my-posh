@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -82,22 +84,22 @@ func TestRuby(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("hasCommand", "rbenv").Return(tc.HasRbenv)
-		env.On("runCommand", "rbenv", []string{"version-name"}).Return(tc.Version, nil)
-		env.On("hasCommand", "rvm-prompt").Return(tc.HasRvmprompt)
-		env.On("runCommand", "rvm-prompt", []string{"i", "v", "g"}).Return(tc.Version, nil)
-		env.On("hasCommand", "chruby").Return(tc.HasChruby)
-		env.On("runCommand", "chruby", []string(nil)).Return(tc.Version, nil)
-		env.On("hasCommand", "asdf").Return(tc.HasAsdf)
-		env.On("runCommand", "asdf", []string{"current", "ruby"}).Return(tc.Version, nil)
-		env.On("hasCommand", "ruby").Return(tc.HasRuby)
-		env.On("runCommand", "ruby", []string{"--version"}).Return(tc.Version, nil)
-		env.On("hasFiles", "*.rb").Return(tc.HasRubyFiles)
-		env.On("hasFiles", "Rakefile").Return(tc.HasRakeFile)
-		env.On("hasFiles", "Gemfile").Return(tc.HasGemFile)
-		env.On("getcwd", nil).Return("/usr/home/project")
-		env.On("homeDir", nil).Return("/usr/home")
+		env := new(runtime.MockedEnvironment)
+		env.On("HasCommand", "rbenv").Return(tc.HasRbenv)
+		env.On("RunCommand", "rbenv", []string{"version-name"}).Return(tc.Version, nil)
+		env.On("HasCommand", "rvm-prompt").Return(tc.HasRvmprompt)
+		env.On("RunCommand", "rvm-prompt", []string{"i", "v", "g"}).Return(tc.Version, nil)
+		env.On("HasCommand", "chruby").Return(tc.HasChruby)
+		env.On("RunCommand", "chruby", []string(nil)).Return(tc.Version, nil)
+		env.On("HasCommand", "asdf").Return(tc.HasAsdf)
+		env.On("RunCommand", "asdf", []string{"current", "ruby"}).Return(tc.Version, nil)
+		env.On("HasCommand", "ruby").Return(tc.HasRuby)
+		env.On("RunCommand", "ruby", []string{"--version"}).Return(tc.Version, nil)
+		env.On("HasFiles", "*.rb").Return(tc.HasRubyFiles)
+		env.On("HasFiles", "Rakefile").Return(tc.HasRakeFile)
+		env.On("HasFiles", "Gemfile").Return(tc.HasGemFile)
+		env.On("Getcwd", nil).Return("/usr/home/project")
+		env.On("HomeDir", nil).Return("/usr/home")
 		props := &properties{
 			values: map[Property]interface{}{
 				DisplayVersion: tc.DisplayVersion,

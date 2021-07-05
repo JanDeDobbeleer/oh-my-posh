@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+
+	"oh-my-posh/runtime"
 )
 
 type spotify struct {
 	props  *properties
-	env    environmentInfo
+	env    runtime.Environment
 	status string
 	artist string
 	track  string
@@ -39,7 +41,7 @@ func (s *spotify) string() string {
 	return fmt.Sprintf("%s%s%s%s", icon, s.artist, separator, s.track)
 }
 
-func (s *spotify) init(props *properties, env environmentInfo) {
+func (s *spotify) init(props *properties, env runtime.Environment) {
 	s.props = props
 	s.env = env
 }

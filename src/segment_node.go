@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"oh-my-posh/runtime"
+)
 
 type node struct {
 	language           *language
@@ -21,7 +25,7 @@ func (n *node) string() string {
 	return fmt.Sprintf("%s%s", version, n.packageManagerIcon)
 }
 
-func (n *node) init(props *properties, env environmentInfo) {
+func (n *node) init(props *properties, env runtime.Environment) {
 	n.language = &language{
 		env:        env,
 		props:      props,
@@ -47,17 +51,17 @@ func (n *node) loadContext() {
 	if !n.language.props.getBool(DisplayPackageManager, false) {
 		return
 	}
-	if n.language.env.hasFiles("yarn.lock") {
+	if n.language.env.HasFiles("yarn.lock") {
 		n.packageManagerIcon = n.language.props.getString(YarnIcon, " \uF61A")
 		return
 	}
-	if n.language.env.hasFiles("package-lock.json") || n.language.env.hasFiles("package.json") {
+	if n.language.env.HasFiles("package-lock.json") || n.language.env.HasFiles("package.json") {
 		n.packageManagerIcon = n.language.props.getString(NPMIcon, " \uE71E")
 	}
 }
 
 func (n *node) matchesVersionFile() bool {
-	fileVersion := n.language.env.getFileContent(".nvmrc")
+	fileVersion := n.language.env.GetFileContent(".nvmrc")
 	if len(fileVersion) == 0 {
 		return true
 	}

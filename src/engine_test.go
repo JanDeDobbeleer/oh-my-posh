@@ -5,6 +5,8 @@ import (
 	"strings"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,11 +29,11 @@ func TestCanWriteRPrompt(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getTerminalWidth", nil).Return(tc.TerminalWidth, tc.TerminalWidthError)
+		env := new(runtime.MockedEnvironment)
+		env.On("GetTerminalWidth", nil).Return(tc.TerminalWidth, tc.TerminalWidthError)
 		ansi := &ansiUtils{}
-		ansi.init(plain)
-		engine := &engine{
+		ansi.init(runtime.Plain)
+		engine := &Core{
 			env:  env,
 			ansi: ansi,
 		}

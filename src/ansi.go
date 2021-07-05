@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"strings"
+
+	"oh-my-posh/regex"
+	"oh-my-posh/runtime"
 )
 
 const (
@@ -38,7 +41,7 @@ func (a *ansiUtils) init(shell string) {
 	a.shell = shell
 	a.bashFormat = "\\[%s\\]"
 	switch shell {
-	case zsh:
+	case runtime.Zsh:
 		a.linechange = "%%{\x1b[%d%s%%}"
 		a.right = "%%{\x1b[%dC%%}"
 		a.left = "%%{\x1b[%dD%%}"
@@ -59,7 +62,7 @@ func (a *ansiUtils) init(shell string) {
 		a.italic = "%%{\x1b[3m%%}%s%%{\x1b[23m%%}"
 		a.underline = "%%{\x1b[4m%%}%s%%{\x1b[24m%%}"
 		a.strikethrough = "%%{\x1b[9m%%}%s%%{\x1b[29m%%}"
-	case bash:
+	case runtime.Bash:
 		a.linechange = "\\[\x1b[%d%s\\]"
 		a.right = "\\[\x1b[%dC\\]"
 		a.left = "\\[\x1b[%dD\\]"
@@ -109,16 +112,16 @@ func (a *ansiUtils) lenWithoutANSI(text string) int {
 		return 0
 	}
 	// replace hyperlinks
-	matches := findAllNamedRegexMatch(`(?P<STR>\x1b]8;;file:\/\/(.+)\x1b\\(?P<URL>.+)\x1b]8;;\x1b\\)`, text)
+	matches := regex.FindAllNamedRegexMatch(`(?P<STR>\x1b]8;;file:\/\/(.+)\x1b\\(?P<URL>.+)\x1b]8;;\x1b\\)`, text)
 	for _, match := range matches {
 		text = strings.ReplaceAll(text, match[str], match[url])
 	}
 	// replace console title
-	matches = findAllNamedRegexMatch(`(?P<STR>\x1b\]0;(.+)\007)`, text)
+	matches = regex.FindAllNamedRegexMatch(`(?P<STR>\x1b\]0;(.+)\007)`, text)
 	for _, match := range matches {
 		text = strings.ReplaceAll(text, match[str], "")
 	}
-	stripped := replaceAllString(ansiRegex, text, "")
+	stripped := regex.ReplaceAllString(ansiRegex, text, "")
 	stripped = strings.ReplaceAll(stripped, a.escapeLeft, "")
 	stripped = strings.ReplaceAll(stripped, a.escapeRight, "")
 	runeText := []rune(stripped)
@@ -127,7 +130,7 @@ func (a *ansiUtils) lenWithoutANSI(text string) int {
 
 func (a *ansiUtils) generateHyperlink(text string) string {
 	// hyperlink matching
-	results := findNamedRegexMatch("(?P<all>(?:\\[(?P<name>.+)\\])(?:\\((?P<url>.*)\\)))", text)
+	results := regex.FindNamedRegexMatch("(?P<all>(?:\\[(?P<name>.+)\\])(?:\\((?P<url>.*)\\)))", text)
 	if len(results) != 3 {
 		return text
 	}
@@ -138,7 +141,7 @@ func (a *ansiUtils) generateHyperlink(text string) string {
 }
 
 func (a *ansiUtils) formatText(text string) string {
-	results := findAllNamedRegexMatch("(?P<context><(?P<format>[buis])>(?P<text>[^<]+)</[buis]>)", text)
+	results := regex.FindAllNamedRegexMatch("(?P<context><(?P<format>[buis])>(?P<text>[^<]+)</[buis]>)", text)
 	for _, result := range results {
 		var formatted string
 		switch result["format"] {
@@ -198,10 +201,10 @@ func (a *ansiUtils) escapeText(text string) string {
 	// maybe we should refactor and maintain a list of characters to escap/replace
 	// like we do in ansi.go for ansi codes
 	switch a.shell {
-	case zsh:
+	case runtime.Zsh:
 		// escape double quotes
 		text = strings.ReplaceAll(text, "\"", "\"\"")
-	case bash:
+	case runtime.Bash:
 		// escape backslashes to avoid replacements
 		// https://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
 		text = strings.ReplaceAll(text, "\\", "\\\\")

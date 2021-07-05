@@ -3,11 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+
+	"oh-my-posh/runtime"
 )
 
 type ytm struct {
 	props  *properties
-	env    environmentInfo
+	env    runtime.Environment
 	status playStatus
 	artist string
 	track  string
@@ -39,7 +41,7 @@ func (y *ytm) enabled() bool {
 	return err == nil
 }
 
-func (y *ytm) init(props *properties, env environmentInfo) {
+func (y *ytm) init(props *properties, env runtime.Environment) {
 	y.props = props
 	y.env = env
 }
@@ -85,7 +87,7 @@ type track struct {
 func (y *ytm) setStatus() error {
 	// https://github.com/ytmdesktop/ytmdesktop/wiki/Remote-Control-API
 	url := y.props.getString(APIURL, "http://127.0.0.1:9863")
-	body, err := y.env.doGet(url + "/query")
+	body, err := y.env.DoGet(url + "/query")
 	if err != nil {
 		return err
 	}

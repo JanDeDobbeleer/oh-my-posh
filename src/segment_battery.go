@@ -3,12 +3,14 @@ package main
 import (
 	"math"
 
+	"oh-my-posh/runtime"
+
 	"github.com/distatus/battery"
 )
 
 type batt struct {
 	props      *properties
-	env        environmentInfo
+	env        runtime.Environment
 	Battery    *battery.Battery
 	Percentage int
 	Error      string
@@ -33,7 +35,7 @@ const (
 )
 
 func (b *batt) enabled() bool {
-	batteries, err := b.env.getBatteryInfo()
+	batteries, err := b.env.GetBatteryInfo()
 
 	if !b.enabledWhileError(err) {
 		return false
@@ -85,7 +87,7 @@ func (b *batt) enabledWhileError(err error) bool {
 	if err == nil {
 		return true
 	}
-	if _, ok := err.(*noBatteryError); ok {
+	if _, ok := err.(*runtime.NoBatteryError); ok {
 		return false
 	}
 	displayError := b.props.getBool(DisplayError, false)
@@ -138,7 +140,7 @@ func (b *batt) string() string {
 	return text
 }
 
-func (b *batt) init(props *properties, env environmentInfo) {
+func (b *batt) init(props *properties, env runtime.Environment) {
 	b.props = props
 	b.env = env
 }

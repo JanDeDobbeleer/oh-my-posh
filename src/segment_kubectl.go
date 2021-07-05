@@ -2,11 +2,13 @@ package main
 
 import (
 	"strings"
+
+	"oh-my-posh/runtime"
 )
 
 type kubectl struct {
 	props     *properties
-	env       environmentInfo
+	env       runtime.Environment
 	Context   string
 	Namespace string
 }
@@ -25,17 +27,17 @@ func (k *kubectl) string() string {
 	return text
 }
 
-func (k *kubectl) init(props *properties, env environmentInfo) {
+func (k *kubectl) init(props *properties, env runtime.Environment) {
 	k.props = props
 	k.env = env
 }
 
 func (k *kubectl) enabled() bool {
 	cmd := "kubectl"
-	if !k.env.hasCommand(cmd) {
+	if !k.env.HasCommand(cmd) {
 		return false
 	}
-	result, err := k.env.runCommand(cmd, "config", "view", "--minify", "--output", "jsonpath={..current-context},{..namespace}")
+	result, err := k.env.RunCommand(cmd, "config", "view", "--minify", "--output", "jsonpath={..current-context},{..namespace}")
 	displayError := k.props.getBool(DisplayError, false)
 	if err != nil && displayError {
 		k.Context = "KUBECTL ERR"

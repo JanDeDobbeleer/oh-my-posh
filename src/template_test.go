@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -68,7 +70,7 @@ func TestRenderTemplate(t *testing.T) {
 		},
 	}
 
-	env := &MockedEnvironment{}
+	env := &runtime.MockedEnvironment{}
 	for _, tc := range cases {
 		template := &textTemplate{
 			Template: tc.Template,
@@ -119,9 +121,9 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		{Case: "empty map", Expected: " world", Template: "{{.Text}} world", Context: map[string]string{}},
 	}
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &runtime.MockedEnvironment{}
 		for name, value := range tc.Env {
-			env.On("getenv", name).Return(value)
+			env.On("Getenv", name).Return(value)
 		}
 		template := &textTemplate{
 			Template: tc.Template,

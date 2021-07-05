@@ -1,8 +1,10 @@
 package main
 
+import "oh-my-posh/runtime"
+
 type text struct {
 	props *properties
-	env   environmentInfo
+	env   runtime.Environment
 }
 
 const (
@@ -19,7 +21,7 @@ func (t *text) string() string {
 	return textProperty
 }
 
-func (t *text) init(props *properties, env environmentInfo) {
+func (t *text) init(props *properties, env runtime.Environment) {
 	t.props = props
 	t.env = env
 }

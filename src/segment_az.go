@@ -2,11 +2,13 @@ package main
 
 import (
 	"strings"
+
+	"oh-my-posh/runtime"
 )
 
 type az struct {
 	props     *properties
-	env       environmentInfo
+	env       runtime.Environment
 	name      string
 	id        string
 	account   string
@@ -54,7 +56,7 @@ func (a *az) string() string {
 	return a.builder.String()
 }
 
-func (a *az) init(props *properties, env environmentInfo) {
+func (a *az) init(props *properties, env runtime.Environment) {
 	a.props = props
 	a.env = env
 }
@@ -68,9 +70,9 @@ func (a *az) enabled() bool {
 }
 
 func (a *az) getFromEnvVars() bool {
-	a.name = a.env.getenv("AZ_SUBSCRIPTION_NAME")
-	a.id = a.env.getenv("AZ_SUBSCRIPTION_ID")
-	a.account = a.env.getenv("AZ_SUBSCRIPTION_ACCOUNT")
+	a.name = a.env.Getenv("AZ_SUBSCRIPTION_NAME")
+	a.id = a.env.Getenv("AZ_SUBSCRIPTION_ID")
+	a.account = a.env.Getenv("AZ_SUBSCRIPTION_ACCOUNT")
 
 	if a.name == "" && a.id == "" {
 		return false
@@ -81,11 +83,11 @@ func (a *az) getFromEnvVars() bool {
 
 func (a *az) getFromAzCli() bool {
 	cmd := "az"
-	if !a.env.hasCommand(cmd) {
+	if !a.env.HasCommand(cmd) {
 		return false
 	}
 
-	output, _ := a.env.runCommand(cmd, "account", "show", "--query=[name,id,user.name]", "-o=tsv")
+	output, _ := a.env.RunCommand(cmd, "account", "show", "--query=[name,id,user.name]", "-o=tsv")
 	if len(output) == 0 {
 		return false
 	}

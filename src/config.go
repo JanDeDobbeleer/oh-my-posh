@@ -11,6 +11,8 @@ import (
 	"strconv"
 	"strings"
 
+	"oh-my-posh/runtime"
+
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/json"
 	"github.com/gookit/config/v2/toml"
@@ -47,7 +49,7 @@ func printConfigError(err error) {
 }
 
 // GetConfig returns the default configuration including possible user overrides
-func GetConfig(env environmentInfo) *Config {
+func GetConfig(env runtime.Environment) *Config {
 	cfg, err := loadConfig(env)
 	if err != nil {
 		return getDefaultConfig(err.Error())
@@ -55,9 +57,9 @@ func GetConfig(env environmentInfo) *Config {
 	return cfg
 }
 
-func loadConfig(env environmentInfo) (*Config, error) {
+func loadConfig(env runtime.Environment) (*Config, error) {
 	var cfg Config
-	configFile := *env.getArgs().Config
+	configFile := *env.GetArgs().Config
 	if configFile == "" {
 		return nil, errors.New("NO CONFIG")
 	}

@@ -4,13 +4,15 @@ import (
 	"fmt"
 	"strconv"
 
+	"oh-my-posh/runtime"
+
 	lang "golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
 
 type executiontime struct {
 	props  *properties
-	env    environmentInfo
+	env    runtime.Environment
 	output string
 }
 
@@ -46,7 +48,7 @@ const (
 
 func (t *executiontime) enabled() bool {
 	alwaysEnabled := t.props.getBool(AlwaysEnabled, false)
-	executionTimeMs := t.env.executionTime()
+	executionTimeMs := t.env.ExecutionTime()
 	thresholdMs := t.props.getFloat64(ThresholdProperty, float64(500))
 	if !alwaysEnabled && executionTimeMs < thresholdMs {
 		return false
@@ -61,7 +63,7 @@ func (t *executiontime) string() string {
 	return t.output
 }
 
-func (t *executiontime) init(props *properties, env environmentInfo) {
+func (t *executiontime) init(props *properties, env runtime.Environment) {
 	t.props = props
 	t.env = env
 }

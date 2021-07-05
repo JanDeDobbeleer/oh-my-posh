@@ -1,5 +1,7 @@
 package main
 
+import "oh-my-posh/runtime"
+
 type dotnet struct {
 	language *language
 }
@@ -21,7 +23,7 @@ func (d *dotnet) string() string {
 	return version
 }
 
-func (d *dotnet) init(props *properties, env environmentInfo) {
+func (d *dotnet) init(props *properties, env runtime.Environment) {
 	d.language = &language{
 		env:        env,
 		props:      props,

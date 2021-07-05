@@ -5,6 +5,8 @@ import (
 	"os"
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +18,7 @@ func runImageTest(content string) error {
 	}
 	defer os.Remove(file.Name())
 	ansi := &ansiUtils{}
-	ansi.init(plain)
+	ansi.init(runtime.Plain)
 	image := &ImageRenderer{
 		ansiString: content,
 		ansi:       ansi,

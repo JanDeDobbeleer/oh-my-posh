@@ -3,6 +3,8 @@ package main
 import (
 	"testing"
 
+	"oh-my-posh/runtime"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,10 +15,10 @@ type terraformArgs struct {
 }
 
 func bootStrapTerraformTest(args *terraformArgs) *terraform {
-	env := new(MockedEnvironment)
-	env.On("hasCommand", "terraform").Return(args.hasTfCommand)
-	env.On("hasFolder", ".terraform").Return(args.hasTfFolder)
-	env.On("runCommand", "terraform", []string{"workspace", "show"}).Return(args.workspaceName, nil)
+	env := new(runtime.MockedEnvironment)
+	env.On("HasCommand", "terraform").Return(args.hasTfCommand)
+	env.On("HasFolder", ".terraform").Return(args.hasTfFolder)
+	env.On("RunCommand", "terraform", []string{"workspace", "show"}).Return(args.workspaceName, nil)
 	k := &terraform{
 		env:   env,
 		props: &properties{},

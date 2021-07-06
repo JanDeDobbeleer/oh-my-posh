@@ -568,6 +568,15 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "h4iku",
+      "name": "Reza Gharibi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3812788?v=4",
+      "profile": "https://h4iku.github.io",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

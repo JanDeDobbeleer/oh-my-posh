@@ -206,7 +206,7 @@ func main() {
 		return
 	}
 	if *args.PrintTransient {
-		fmt.Print(engine.renderTransientPrompt(*args.Command))
+		fmt.Print(engine.renderTransientPrompt())
 		return
 	}
 	if len(*args.Command) != 0 {

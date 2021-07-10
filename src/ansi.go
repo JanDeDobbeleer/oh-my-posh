@@ -160,10 +160,6 @@ func (a *ansiUtils) carriageForward() string {
 	return fmt.Sprintf(a.right, 1000)
 }
 
-func (a *ansiUtils) carriageBackward() string {
-	return fmt.Sprintf(a.left, 1000)
-}
-
 func (a *ansiUtils) getCursorForRightWrite(text string, offset int) string {
 	strippedLen := a.lenWithoutANSI(text) + -offset
 	return fmt.Sprintf(a.left, strippedLen)
@@ -187,10 +183,6 @@ func (a *ansiUtils) consolePwd(pwd string) string {
 
 func (a *ansiUtils) clearAfter() string {
 	return a.clearLine + a.clearBelow
-}
-
-func (a *ansiUtils) newLine() string {
-	return a.clearAfter() + a.changeLine(1) + a.carriageBackward()
 }
 
 func (a *ansiUtils) escapeText(text string) string {

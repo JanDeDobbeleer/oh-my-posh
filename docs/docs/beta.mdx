@@ -112,7 +112,7 @@ You need to extend or create a custom theme with your transient prompt. For exam
   "transient_prompt": {
     "background": "transparent",
     "foreground": "#ffffff",
-    "template": "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"
+    "template": "{{ .Shell }}> "
   }
 }
 ```
@@ -122,11 +122,10 @@ The configuration has the following properties:
 - background: `string` [color][colors]
 - foreground: `string` [color][colors]
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below. Defaults to `{{ .Shell }}> <#f7dc66>{{ .Command }}</>`
+properties below. Defaults to `{{ .Shell }}> `
 
 #### Template Properties
 
-- `.Command`: `string` - the shell command you typed (only available in Powershell)
 - `.Root`: `boolean` - is the current user root/admin or not
 - `.Path`: `string` - the current working directory
 - `.Folder`: `string` - the current working folder

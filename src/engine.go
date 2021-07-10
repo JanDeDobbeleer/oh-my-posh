@@ -218,20 +218,16 @@ func (e *engine) renderTooltip(tip string) string {
 	return ""
 }
 
-func (e *engine) renderTransientPrompt(command string) string {
-	newlines := strings.Count(command, "\n")
-	command = strings.Replace(command, "\n", e.ansi.newLine(), newlines)
+func (e *engine) renderTransientPrompt() string {
 	promptTemplate := e.config.TransientPrompt.Template
 	if len(promptTemplate) == 0 {
-		promptTemplate = "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"
+		promptTemplate = "{{ .Shell }}> "
 	}
 	template := &textTemplate{
 		Template: promptTemplate,
 		Env:      e.env,
 	}
-	context := make(map[string]interface{})
-	context["Command"] = command
-	prompt := template.renderPlainContextTemplate(context)
+	prompt := template.renderPlainContextTemplate(nil)
 	e.colorWriter.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
 	switch e.env.getShellName() {
 	case zsh:
@@ -240,18 +236,7 @@ func (e *engine) renderTransientPrompt(command string) string {
 		prompt += "\nRPROMPT=\"\""
 		return prompt
 	case pwsh, powershell5:
-		prompt := e.ansi.carriageBackward()
-		// calculate offset for multiline prompt
-		lineOffset := 0
-		for _, block := range e.config.Blocks {
-			if block.Newline {
-				lineOffset--
-			}
-		}
-		if lineOffset != 0 {
-			prompt += e.ansi.changeLine(lineOffset)
-		}
-		return prompt + e.colorWriter.string() + e.ansi.clearAfter()
+		return e.colorWriter.string()
 	}
 	return ""
 }

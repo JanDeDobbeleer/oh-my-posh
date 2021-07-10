@@ -22,7 +22,8 @@ Set-DefaultEnvValue("AZ_ENABLED")
 Set-DefaultEnvValue("POSH_GIT_ENABLED")
 
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
-    Theme          = "";
+    Theme     = "";
+    Transient = $false;
 }
 
 # used to detect empty hit
@@ -66,6 +67,14 @@ function global:Initialize-ModuleSupport {
 }
 
 [ScriptBlock]$Prompt = {
+    $omp = "::OMP::"
+    $config, $cleanPWD, $cleanPSWD = Get-PoshContext
+    if ($global:PoshSettings.Transient -eq $true) {
+        $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --print-transient 2>&1)
+        $standardOut -join "`n"
+        $global:PoshSettings.Transient = $false
+        return
+    }
     #store if the last command was successful
     $lastCommandSuccess = $?
     #store the last exit code for restore
@@ -98,9 +107,12 @@ function global:Initialize-ModuleSupport {
         $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
         $global:omp_lastHistoryId = $history.Id
     }
-    $omp = "::OMP::"
-    $config, $cleanPWD, $cleanPSWD = Get-PoshContext
     $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --stack-count="$stackCount" --config="$config" 2>&1)
+    # make sure PSReadLine knows we have a multiline prompt
+    $extraLines = $standardOut.Count - 1
+    if ($extraLines -gt 0) {
+        Set-PSReadlineOption -ExtraPromptLineCount $extraLines
+    }
     # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n
     $standardOut -join "`n"
     $global:LASTEXITCODE = $realLASTEXITCODE
@@ -203,19 +215,8 @@ function global:Enable-PoshTooltips {
 
 function global:Enable-PoshTransientPrompt {
     Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
-        $command = $null
-        $cursor = $null
-        [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
-        $omp = "::OMP::"
-        $config, $cleanPWD, $cleanPSWD = Get-PoshContext
-        $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --command="$command" --print-transient 2>&1)
-        # call twice due multiple lines:
-        # If the input has multiple lines, move to the start of the current line,
-        # or if already at the start of the line, move to the start of the input.
-        # If the input has a single line, move to the start of the input.
-        [Microsoft.PowerShell.PSConsoleReadLine]::BeginningOfLine()
-        [Microsoft.PowerShell.PSConsoleReadLine]::BeginningOfLine()
-        Write-Host $standardOut -NoNewline
+        $global:PoshSettings.Transient = $true
+        [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
         [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
     }
 }

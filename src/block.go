@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
@@ -167,10 +166,12 @@ func (b *Block) renderDiamondSegment(text string) {
 }
 
 func (b *Block) renderText(text string) {
+	bg := b.activeSegment.background()
+	fg := b.activeSegment.foreground()
 	defaultValue := " "
-	prefix := b.activeSegment.getValue(Prefix, defaultValue)
-	postfix := b.activeSegment.getValue(Postfix, defaultValue)
-	b.writer.write(b.activeSegment.background(), b.activeSegment.foreground(), fmt.Sprintf("%s%s%s", prefix, text, postfix))
+	b.writer.write(bg, fg, b.activeSegment.getValue(Prefix, defaultValue))
+	b.writer.write(bg, fg, text)
+	b.writer.write(bg, fg, b.activeSegment.getValue(Postfix, defaultValue))
 }
 
 func (b *Block) debug() (int, []*SegmentTiming) {

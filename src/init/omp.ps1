@@ -67,6 +67,10 @@ function global:Initialize-ModuleSupport {
 }
 
 [ScriptBlock]$Prompt = {
+    #store if the last command was successful
+    $lastCommandSuccess = $?
+    #store the last exit code for restore
+    $realLASTEXITCODE = $global:LASTEXITCODE
     $omp = "::OMP::"
     $config, $cleanPWD, $cleanPSWD = Get-PoshContext
     if ($global:PoshSettings.Transient -eq $true) {
@@ -75,10 +79,6 @@ function global:Initialize-ModuleSupport {
         $global:PoshSettings.Transient = $false
         return
     }
-    #store if the last command was successful
-    $lastCommandSuccess = $?
-    #store the last exit code for restore
-    $realLASTEXITCODE = $global:LASTEXITCODE
     $errorCode = 0
     Initialize-ModuleSupport
     Set-PoshContext

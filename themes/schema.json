@@ -1191,7 +1191,8 @@
                       "short",
                       "full",
                       "folder",
-                      "mixed"
+                      "mixed",
+                      "letter"
                     ],
                     "default": "folder"
                   },

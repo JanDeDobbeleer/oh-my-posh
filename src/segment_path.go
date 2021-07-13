@@ -35,6 +35,8 @@ const (
 	Folder string = "folder"
 	// Mixed like agnoster, but if the path is short it displays it
 	Mixed string = "mixed"
+	// Letter like agnoster, but with the first letter of each folder name
+	Letter string = "letter"
 	// MixedThreshold the threshold of the length of the path Mixed will display
 	MixedThreshold Property = "mixed_threshold"
 	// MappedLocations allows overriding certain location with an icon
@@ -61,6 +63,8 @@ func (pt *path) string() string {
 		formattedPath = pt.getAgnosterShortPath()
 	case Mixed:
 		formattedPath = pt.getMixedPath()
+	case Letter:
+		formattedPath = pt.getLetterPath()
 	case Short:
 		// "short" is a duplicate of "full", just here for backwards compatibility
 		fallthrough
@@ -128,12 +132,30 @@ func (pt *path) getAgnosterPath() string {
 	pwd := pt.getPwd()
 	buffer.WriteString(pt.rootLocation())
 	pathDepth := pt.pathDepth(pwd)
+	folderIcon := pt.props.getString(FolderIcon, "..")
+	separator := pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator())
 	for i := 1; i < pathDepth; i++ {
-		buffer.WriteString(fmt.Sprintf("%s%s", pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator()), pt.props.getString(FolderIcon, "..")))
+		buffer.WriteString(fmt.Sprintf("%s%s", separator, folderIcon))
 	}
 	if pathDepth > 0 {
-		buffer.WriteString(fmt.Sprintf("%s%s", pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator()), base(pwd, pt.env)))
+		buffer.WriteString(fmt.Sprintf("%s%s", separator, base(pwd, pt.env)))
 	}
+	return buffer.String()
+}
+
+func (pt *path) getLetterPath() string {
+	var buffer strings.Builder
+	pwd := pt.getPwd()
+	splitted := strings.Split(pwd, pt.env.getPathSeperator())
+	separator := pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator())
+	for i := 0; i < len(splitted)-1; i++ {
+		if len(splitted[i]) == 0 {
+			continue
+		}
+		letter := []rune(splitted[i])[0]
+		buffer.WriteString(fmt.Sprintf("%c%s", letter, separator))
+	}
+	buffer.WriteString(splitted[len(splitted)-1])
 	return buffer.String()
 }
 

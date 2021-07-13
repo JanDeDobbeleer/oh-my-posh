@@ -68,6 +68,7 @@ Style sets the way the path is displayed. Based on previous experience and popul
 - full
 - folder
 - mixed
+- letter
 
 ### Agnoster
 
@@ -95,3 +96,7 @@ Display the name of the current folder.
 
 Works like `Agnoster Full`, but for any middle folder short enough it will display its name instead. The maximum length
 for the folders to display is governed by the `mixed_threshold` property.
+
+### Letter
+
+Works like `Full`, but will write every subfolder name using the first letter only.

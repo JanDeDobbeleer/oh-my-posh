@@ -179,6 +179,7 @@ if we're at the last segment). Expects segments to have a colored background, el
 #### Plain
 
 Simple. Colored text on a transparent background. Make sure to set `foreground` for maximum enjoyment.
+Segments will be separated by empty spaces unless you specify `''` for the `prefix` and `postfix` settings for the segment.
 
 #### Diamond
 
@@ -265,10 +266,14 @@ You can use these on any segment, the engine is responsible for adding them corr
 ##### Prefix
 
 The string content will be put in front of the segment's output text. Useful for symbols, text or other customizations.
+If this is not set, it will be an empty space in `plain` mode. If you want to remove the space before the segment,
+specify this as `''`.
 
 ##### Postfix
 
 The string content will be put after the segment's output text. Useful for symbols, text or other customizations.
+If this is not set, it will default to an empty space in `plain` mode. If you want to remove the space after the segment,
+specify this as `''`.
 
 ##### Include / Exclude Folders
 

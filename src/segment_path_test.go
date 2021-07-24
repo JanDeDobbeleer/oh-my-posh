@@ -571,10 +571,12 @@ func TestGetPwd(t *testing.T) {
 
 		{MappedLocationsEnabled: false, Pwd: "", Expected: ""},
 		{MappedLocationsEnabled: false, Pwd: "/usr/home/abc", Expected: "/usr/home/abc"},
-		{MappedLocationsEnabled: false, Pwd: "/a/b/c/d/e/f/g", Expected: "/a/b/c/d/e/f/g"},
+		{MappedLocationsEnabled: false, Pwd: "/a/b/c/d/e/f/g", Expected: "#/e/f/g"},
+		{MappedLocationsEnabled: false, Pwd: "/usr/home/c/d/e/f/g", Expected: "/usr/home/c/d/e/f/g"},
+		{MappedLocationsEnabled: true, Pwd: "/usr/home/c/d/e/f/g", Expected: "~/c/d/e/f/g"},
 
 		{MappedLocationsEnabled: true, Pwd: "/w/d/x/w", Pswd: "/z/y/x/w", Expected: "/z/y/x/w"},
-		{MappedLocationsEnabled: false, Pwd: "/f/g/k/d/e/f/g", Pswd: "/a/b/c/d/e/f/g", Expected: "/a/b/c/d/e/f/g"},
+		{MappedLocationsEnabled: false, Pwd: "/f/g/k/d/e/f/g", Pswd: "/a/b/c/d/e/f/g", Expected: "#/e/f/g"},
 	}
 
 	for _, tc := range cases {

@@ -91,6 +91,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="http://tobiashoelzer.dynu.net"><img src="https://avatars.githubusercontent.com/u/37540371?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Tobias Hölzer</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=relativityhd" title="Documentation">📖</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=relativityhd" title="Code">💻</a></td>
     <td align="center"><a href="https://h4iku.github.io"><img src="https://avatars.githubusercontent.com/u/3812788?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Reza Gharibi</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=h4iku" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://justingrote.github.io"><img src="https://avatars.githubusercontent.com/u/15258962?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Justin Grote</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=JustinGrote" title="Documentation">📖</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->

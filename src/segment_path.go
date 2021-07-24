@@ -200,9 +200,7 @@ func (pt *path) getPwd() string {
 	if pwd == "" {
 		pwd = pt.env.getcwd()
 	}
-	if pt.props.getBool(MappedLocationsEnabled, true) {
-		pwd = pt.replaceMappedLocations(pwd)
-	}
+	pwd = pt.replaceMappedLocations(pwd)
 	return pwd
 }
 
@@ -211,10 +209,11 @@ func (pt *path) replaceMappedLocations(pwd string) string {
 		pwd = strings.Replace(pwd, "Microsoft.PowerShell.Core\\FileSystem::", "", 1)
 	}
 
-	mappedLocations := map[string]string{
-		"HKCU:":          pt.props.getString(WindowsRegistryIcon, "\uF013"),
-		"HKLM:":          pt.props.getString(WindowsRegistryIcon, "\uF013"),
-		pt.env.homeDir(): pt.props.getString(HomeIcon, "~"),
+	mappedLocations := map[string]string{}
+	if pt.props.getBool(MappedLocationsEnabled, true) {
+		mappedLocations["HKCU:"] = pt.props.getString(WindowsRegistryIcon, "\uF013")
+		mappedLocations["HKLM:"] = pt.props.getString(WindowsRegistryIcon, "\uF013")
+		mappedLocations[pt.env.homeDir()] = pt.props.getString(HomeIcon, "~")
 	}
 
 	// merge custom locations with mapped locations

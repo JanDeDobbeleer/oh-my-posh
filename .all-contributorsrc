@@ -577,6 +577,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "JustinGrote",
+      "name": "Justin Grote",
+      "avatar_url": "https://avatars.githubusercontent.com/u/15258962?v=4",
+      "profile": "https://justingrote.github.io",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

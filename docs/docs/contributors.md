@@ -93,6 +93,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
   </tr>
   <tr>
     <td align="center"><a href="https://justingrote.github.io"><img src="https://avatars.githubusercontent.com/u/15258962?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Justin Grote</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=JustinGrote" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/henry-js"><img src="https://avatars.githubusercontent.com/u/79054685?v=4?s=100" width="100px;" alt=""/><br /><sub><b>James</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=henry-js" title="Documentation">📖</a></td>
   </tr>
 </table>
 

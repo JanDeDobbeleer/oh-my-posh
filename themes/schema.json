@@ -604,6 +604,12 @@
                     "description": "Icon/text to display before the context when doing a cherry-pick",
                     "default": "\uE29B"
                   },
+                  "revert_icon": {
+                    "type": "string",
+                    "title": "Revert Icon",
+                    "description": "Icon/text to display before the context when doing a revert",
+                    "default": "\uF0E2"
+                  },
                   "merge_icon": {
                     "type": "string",
                     "title": "Merge Icon",

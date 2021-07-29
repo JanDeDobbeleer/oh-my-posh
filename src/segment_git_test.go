@@ -221,12 +221,12 @@ func TestGetGitHEADContextCherryPickOnTag(t *testing.T) {
 }
 
 func TestGetGitHEADContextRevertOnBranch(t *testing.T) {
-	want := "\uf0e2 pickme onto \ue0a0main"
+	want := "\uf0e2 012345 onto \ue0a0main"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		branchName:    "main",
 		revert:        true,
-		revertSHA:     "pickme",
+		revertSHA:     "01234567",
 	}
 	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("main")
@@ -234,12 +234,12 @@ func TestGetGitHEADContextRevertOnBranch(t *testing.T) {
 }
 
 func TestGetGitHEADContextRevertOnTag(t *testing.T) {
-	want := "\uf0e2 pickme onto \uf412v3.4.6"
+	want := "\uf0e2 012345 onto \uf412v3.4.6"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		tagName:       "v3.4.6",
 		revert:        true,
-		revertSHA:     "pickme",
+		revertSHA:     "01234567",
 	}
 	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")
@@ -265,7 +265,7 @@ func TestGetGitHEADContextSequencerCherryPickOnTag(t *testing.T) {
 		currentCommit: "whatever",
 		tagName:       "v3.4.6",
 		sequencer:     true,
-		sequencerTodo: "pick pickme",
+		sequencerTodo: "pick pickme message\npick notme message",
 	}
 	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")
@@ -273,12 +273,12 @@ func TestGetGitHEADContextSequencerCherryPickOnTag(t *testing.T) {
 }
 
 func TestGetGitHEADContextSequencerRevertOnBranch(t *testing.T) {
-	want := "\ue29b pickme onto \ue0a0main"
+	want := "\uf0e2 012345 onto \ue0a0main"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		branchName:    "main",
 		sequencer:     true,
-		sequencerTodo: "revert pickme",
+		sequencerTodo: "revert 01234567 message\nrevert notme message",
 	}
 	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("main")
@@ -286,12 +286,12 @@ func TestGetGitHEADContextSequencerRevertOnBranch(t *testing.T) {
 }
 
 func TestGetGitHEADContextSequencerRevertOnTag(t *testing.T) {
-	want := "\ue29b pickme onto \uf412v3.4.6"
+	want := "\uf0e2 012345 onto \uf412v3.4.6"
 	context := &detachedContext{
 		currentCommit: "whatever",
 		tagName:       "v3.4.6",
 		sequencer:     true,
-		sequencerTodo: "revert pickme",
+		sequencerTodo: "revert 01234567 message\nrevert notme message",
 	}
 	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")

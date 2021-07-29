@@ -93,6 +93,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env := new(MockedEnvironment)
 	env.On("hasFolder", "/rebase-merge").Return(context.rebaseMerge)
 	env.On("hasFolder", "/rebase-apply").Return(context.rebaseApply)
+	env.On("hasFolder", "/sequencer").Return(context.sequencer)
 	env.On("getFileContent", "/rebase-merge/head-name").Return(context.origin)
 	env.On("getFileContent", "/rebase-merge/onto").Return(context.onto)
 	env.On("getFileContent", "/rebase-merge/msgnum").Return(context.step)
@@ -103,12 +104,12 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.On("getFileContent", "/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
 	env.On("getFileContent", "/REVERT_HEAD").Return(context.revertSHA)
 	env.On("getFileContent", "/MERGE_MSG").Return(fmt.Sprintf("Merge branch '%s' into %s", context.mergeHEAD, context.onto))
+	env.On("getFileContent", "/sequencer/todo").Return(context.sequencerTodo)
 	env.On("hasFilesInDir", "", "CHERRY_PICK_HEAD").Return(context.cherryPick)
 	env.On("hasFilesInDir", "", "REVERT_HEAD").Return(context.revert)
-	env.On("hasFolder", "sequencer").Return(context.sequencer)
-	env.On("getFileContent", "/sequencer/todo").Return(context.sequencerTodo)
 	env.On("hasFilesInDir", "", "MERGE_MSG").Return(context.merge)
 	env.On("hasFilesInDir", "", "MERGE_HEAD").Return(context.merge)
+	env.On("hasFilesInDir", "", "sequencer/todo").Return(context.sequencer)
 	env.mockGitCommand(context.currentCommit, "rev-parse", "--short", "HEAD")
 	env.mockGitCommand(context.tagName, "describe", "--tags", "--exact-match")
 	env.mockGitCommand(context.origin, "name-rev", "--name-only", "--exclude=tags/*", context.origin)
@@ -251,7 +252,7 @@ func TestGetGitHEADContextSequencerCherryPickOnBranch(t *testing.T) {
 		currentCommit: "whatever",
 		branchName:    "main",
 		sequencer:     true,
-		sequencerTodo: "pick pickme",
+		sequencerTodo: "pick pickme message\npick notme message",
 	}
 	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("main")

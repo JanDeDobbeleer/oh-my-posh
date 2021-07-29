@@ -72,6 +72,8 @@ const (
 	RebaseIcon Property = "rebase_icon"
 	// CherryPickIcon shows before the cherry-pick context
 	CherryPickIcon Property = "cherry_pick_icon"
+	// RevertIcon shows before the revert context
+	RevertIcon Property = "revert_icon"
 	// CommitIcon shows before the detached context
 	CommitIcon Property = "commit_icon"
 	// NoCommitsIcon shows when there are no commits in the repo yet
@@ -331,11 +333,34 @@ func (g *git) getGitHEADContext(ref string) string {
 			return fmt.Sprintf("%s%s%s into %s", icon, branchIcon, branch, ref)
 		}
 	}
-	// cherry-pick
+	// sequencer status
+	// see if a cherry-pick or revert is in progress, if the user has committed a
+	// conflict resolution with 'git commit' in the middle of a sequence of picks or
+	// reverts then CHERRY_PICK_HEAD/REVERT_HEAD will not exist so we have to read
+	// the todo file.
 	if g.hasGitFile("CHERRY_PICK_HEAD") {
 		sha := g.getGitFileContents("CHERRY_PICK_HEAD")
 		icon := g.props.getString(CherryPickIcon, "\uE29B ")
 		return fmt.Sprintf("%s%s onto %s", icon, sha[0:6], ref)
+	} else if g.hasGitFile("REVERT_HEAD") {
+		sha := g.getGitFileContents("REVERT_HEAD")
+		icon := g.props.getString(RevertIcon, "\uF0E2 ")
+		return fmt.Sprintf("%s%s onto %s", icon, sha[0:6], ref)
+	} else if g.hasGitFile("sequencer/todo") {
+		todo := g.getGitFileContents("sequencer/todo")
+		matches := findNamedRegexMatch(`^(?P<action>p|pick|revert)\s+(?P<sha>\S+)`, todo)
+		if matches != nil && matches["sha"] != "" {
+			action := matches["action"]
+			sha := matches["sha"]
+			switch action {
+			case "p", "pick":
+				icon := g.props.getString(CherryPickIcon, "\uE29B ")
+				return fmt.Sprintf("%s%s onto %s", icon, sha[0:6], ref)
+			case "revert":
+				icon := g.props.getString(RevertIcon, "\uF0E2 ")
+				return fmt.Sprintf("%s%s onto %s", icon, sha[0:6], ref)
+			}
+		}
 	}
 	return ref
 }

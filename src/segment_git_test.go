@@ -80,6 +80,10 @@ type detachedContext struct {
 	tagName       string
 	cherryPick    bool
 	cherryPickSHA string
+	revert        bool
+	revertSHA     string
+	sequencer     bool
+	sequencerTodo string
 	merge         bool
 	mergeHEAD     string
 	status        string
@@ -97,8 +101,12 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.On("getFileContent", "/rebase-apply/last").Return(context.total)
 	env.On("getFileContent", "/rebase-apply/head-name").Return(context.origin)
 	env.On("getFileContent", "/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
+	env.On("getFileContent", "/REVERT_HEAD").Return(context.revertSHA)
 	env.On("getFileContent", "/MERGE_MSG").Return(fmt.Sprintf("Merge branch '%s' into %s", context.mergeHEAD, context.onto))
 	env.On("hasFilesInDir", "", "CHERRY_PICK_HEAD").Return(context.cherryPick)
+	env.On("hasFilesInDir", "", "REVERT_HEAD").Return(context.revert)
+	env.On("hasFolder", "sequencer").Return(context.sequencer)
+	env.On("getFileContent", "/sequencer/todo").Return(context.sequencerTodo)
 	env.On("hasFilesInDir", "", "MERGE_MSG").Return(context.merge)
 	env.On("hasFilesInDir", "", "MERGE_HEAD").Return(context.merge)
 	env.mockGitCommand(context.currentCommit, "rev-parse", "--short", "HEAD")
@@ -205,6 +213,84 @@ func TestGetGitHEADContextCherryPickOnTag(t *testing.T) {
 		tagName:       "v3.4.6",
 		cherryPick:    true,
 		cherryPickSHA: "pickme",
+	}
+	g := setupHEADContextEnv(context)
+	got := g.getGitHEADContext("")
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextRevertOnBranch(t *testing.T) {
+	want := "\uf0e2 pickme onto \ue0a0main"
+	context := &detachedContext{
+		currentCommit: "whatever",
+		branchName:    "main",
+		revert:        true,
+		revertSHA:     "pickme",
+	}
+	g := setupHEADContextEnv(context)
+	got := g.getGitHEADContext("main")
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextRevertOnTag(t *testing.T) {
+	want := "\uf0e2 pickme onto \uf412v3.4.6"
+	context := &detachedContext{
+		currentCommit: "whatever",
+		tagName:       "v3.4.6",
+		revert:        true,
+		revertSHA:     "pickme",
+	}
+	g := setupHEADContextEnv(context)
+	got := g.getGitHEADContext("")
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextSequencerCherryPickOnBranch(t *testing.T) {
+	want := "\ue29b pickme onto \ue0a0main"
+	context := &detachedContext{
+		currentCommit: "whatever",
+		branchName:    "main",
+		sequencer:     true,
+		sequencerTodo: "pick pickme",
+	}
+	g := setupHEADContextEnv(context)
+	got := g.getGitHEADContext("main")
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextSequencerCherryPickOnTag(t *testing.T) {
+	want := "\ue29b pickme onto \uf412v3.4.6"
+	context := &detachedContext{
+		currentCommit: "whatever",
+		tagName:       "v3.4.6",
+		sequencer:     true,
+		sequencerTodo: "pick pickme",
+	}
+	g := setupHEADContextEnv(context)
+	got := g.getGitHEADContext("")
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextSequencerRevertOnBranch(t *testing.T) {
+	want := "\ue29b pickme onto \ue0a0main"
+	context := &detachedContext{
+		currentCommit: "whatever",
+		branchName:    "main",
+		sequencer:     true,
+		sequencerTodo: "revert pickme",
+	}
+	g := setupHEADContextEnv(context)
+	got := g.getGitHEADContext("main")
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextSequencerRevertOnTag(t *testing.T) {
+	want := "\ue29b pickme onto \uf412v3.4.6"
+	context := &detachedContext{
+		currentCommit: "whatever",
+		tagName:       "v3.4.6",
+		sequencer:     true,
+		sequencerTodo: "revert pickme",
 	}
 	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")

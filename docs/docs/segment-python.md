@@ -26,6 +26,7 @@ Supports conda, virtualenv and pyenv.
 
 ## Properties
 
+- home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
 - display_virtual_env: `boolean` - show the name of the virtualenv or not - defaults to `true`
 - display_default: `boolean` - show the name of the virtualenv when it's default (`system`, `base`)
 or not - defaults to `true`

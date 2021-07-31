@@ -90,6 +90,8 @@ const (
 	VersionMismatchColor Property = "version_mismatch_color"
 	// EnableVersionMismatch displays empty string by default
 	EnableVersionMismatch Property = "enable_version_mismatch"
+	// HomeEnabled displays the segment in the HOME folder or not
+	HomeEnabled Property = "home_enabled"
 )
 
 func (l *language) string() string {
@@ -119,10 +121,11 @@ func (l *language) enabled() bool {
 	inHomeDir := func() bool {
 		return l.env.getcwd() == l.env.homeDir()
 	}
-	displayMode := l.props.getString(DisplayMode, DisplayModeFiles)
-	if inHomeDir() && displayMode != DisplayModeAlways {
+	homeEnabled := l.props.getBool(HomeEnabled, false)
+	if inHomeDir() && !homeEnabled {
 		return false
 	}
+	displayMode := l.props.getString(DisplayMode, DisplayModeFiles)
 	l.loadLanguageContext()
 	switch displayMode {
 	case DisplayModeAlways:

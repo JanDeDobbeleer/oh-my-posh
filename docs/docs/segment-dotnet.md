@@ -25,6 +25,7 @@ Display the currently active .NET SDK version.
 
 ## Properties
 
+- home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
 - display_version: `boolean` - display the active version or not; useful if all you need is an icon indicating `dotnet`
   is present - defaults to `true`
 - display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`

@@ -441,15 +441,15 @@ func TestLanguageHyperlinkEnabledLessParamInTemplate(t *testing.T) {
 func TestLanguageEnabledInHome(t *testing.T) {
 	cases := []struct {
 		Case            string
-		DisplayMode     string
+		HomeEnabled     bool
 		ExpectedEnabled bool
 	}{
-		{Case: "Always enabled", DisplayMode: DisplayModeAlways, ExpectedEnabled: true},
-		{Case: "Context disabled", DisplayMode: DisplayModeContext, ExpectedEnabled: false},
+		{Case: "Always enabled", HomeEnabled: true, ExpectedEnabled: true},
+		{Case: "Context disabled", HomeEnabled: false, ExpectedEnabled: false},
 	}
 	for _, tc := range cases {
 		props := map[Property]interface{}{
-			DisplayMode: tc.DisplayMode,
+			HomeEnabled: tc.HomeEnabled,
 		}
 		args := &languageArgs{
 			commands: []*cmd{

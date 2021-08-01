@@ -155,6 +155,7 @@ func main() {
 	flag.Parse()
 	env := &environment{}
 	env.init(args)
+	defer env.tracer.close()
 	if *args.Millis {
 		fmt.Print(time.Now().UnixNano() / 1000000)
 		return

@@ -5,11 +5,13 @@ package main
 import (
 	"errors"
 	"os"
+	"time"
 
 	terminal "github.com/wayneashleyberry/terminal-dimensions"
 )
 
 func (env *environment) isRunningAsRoot() bool {
+	defer env.tracer.trace(time.Now(), "isRunningAsRoot")
 	return os.Geteuid() == 0
 }
 
@@ -22,6 +24,7 @@ func (env *environment) getWindowTitle(imageName, windowTitleRegex string) (stri
 }
 
 func (env *environment) isWsl() bool {
+	defer env.tracer.trace(time.Now(), "isWsl")
 	// one way to check
 	// version := env.getFileContent("/proc/version")
 	// return strings.Contains(version, "microsoft")
@@ -30,6 +33,7 @@ func (env *environment) isWsl() bool {
 }
 
 func (env *environment) getTerminalWidth() (int, error) {
+	defer env.tracer.trace(time.Now(), "getTerminalWidth")
 	width, err := terminal.Width()
 	return int(width), err
 }

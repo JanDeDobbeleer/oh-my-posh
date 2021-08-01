@@ -5,11 +5,13 @@ package main
 import (
 	"errors"
 	"os"
+	"time"
 
 	"golang.org/x/sys/windows"
 )
 
 func (env *environment) isRunningAsRoot() bool {
+	defer env.tracer.trace(time.Now(), "isRunningAsRoot")
 	var sid *windows.SID
 
 	// Although this looks scary, it is directly copied from the
@@ -57,13 +59,16 @@ func (env *environment) homeDir() string {
 }
 
 func (env *environment) getWindowTitle(imageName, windowTitleRegex string) (string, error) {
+	defer env.tracer.trace(time.Now(), "getWindowTitle", imageName, windowTitleRegex)
 	return getWindowTitle(imageName, windowTitleRegex)
 }
 
 func (env *environment) isWsl() bool {
+	defer env.tracer.trace(time.Now(), "isWsl")
 	return false
 }
 
 func (env *environment) getTerminalWidth() (int, error) {
+	defer env.tracer.trace(time.Now(), "getTerminalWidth")
 	return 0, errors.New("Unsupported on Windows")
 }

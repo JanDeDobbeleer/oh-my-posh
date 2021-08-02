@@ -595,6 +595,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "iarejenius",
+      "name": "Timothy Wittig",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1031515?v=4",
+      "profile": "https://wittig.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

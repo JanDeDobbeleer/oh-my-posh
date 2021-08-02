@@ -5,17 +5,21 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"gopkg.in/ini.v1"
 )
 
 type gitRepo struct {
-	working    *gitStatus
-	staging    *gitStatus
-	ahead      int
-	behind     int
-	HEAD       string
-	upstream   string
-	stashCount int
-	gitFolder  string
+	working          *gitStatus
+	staging          *gitStatus
+	ahead            int
+	behind           int
+	HEAD             string
+	upstream         string
+	stashCount       int
+	gitWorkingFolder string // .git working folder, can be different of root if using worktree
+	isWorkTree       bool
+	gitRootFolder    string // .git root folder
 }
 
 type gitStatus struct {
@@ -128,15 +132,23 @@ func (g *git) enabled() bool {
 	}
 	g.repo = &gitRepo{}
 	if gitdir.isDir {
-		g.repo.gitFolder = gitdir.path
+		g.repo.gitWorkingFolder = gitdir.path
+		g.repo.gitRootFolder = gitdir.path
 		return true
 	}
 	// handle worktree
+	g.repo.gitRootFolder = gitdir.path
 	dirPointer := g.env.getFileContent(gitdir.path)
 	dirPointer = strings.Trim(dirPointer, " \r\n")
 	matches := findNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
 	if matches != nil && matches["dir"] != "" {
-		g.repo.gitFolder = matches["dir"]
+		g.repo.gitWorkingFolder = matches["dir"]
+		// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
+		// strips the last .git/worktrees part
+		// :ind+5 = index + /.git
+		ind := strings.LastIndex(g.repo.gitWorkingFolder, "/.git/worktrees")
+		g.repo.gitRootFolder = g.repo.gitWorkingFolder[:ind+5]
+		g.repo.isWorkTree = true
 		return true
 	}
 	return false
@@ -225,7 +237,7 @@ func (g *git) colorStatusString(prefix, status, color string) string {
 
 func (g *git) getUpstreamSymbol() string {
 	upstream := replaceAllString("/.*", g.repo.upstream, "")
-	url := g.getGitCommandOutput("remote", "get-url", upstream)
+	url := g.getOriginURL(upstream)
 	if strings.Contains(url, "github") {
 		return g.props.getString(GithubIcon, "\uF408 ")
 	}
@@ -374,16 +386,16 @@ func (g *git) truncateBranch(branch string) string {
 }
 
 func (g *git) hasGitFile(file string) bool {
-	return g.env.hasFilesInDir(g.repo.gitFolder, file)
+	return g.env.hasFilesInDir(g.repo.gitWorkingFolder, file)
 }
 
 func (g *git) hasGitFolder(folder string) bool {
-	path := g.repo.gitFolder + "/" + folder
+	path := g.repo.gitWorkingFolder + "/" + folder
 	return g.env.hasFolder(path)
 }
 
 func (g *git) getGitFileContents(file string) string {
-	path := g.repo.gitFolder + "/" + file
+	path := g.repo.gitWorkingFolder + "/" + file
 	content := g.env.getFileContent(path)
 	return strings.Trim(content, " \r\n")
 }
@@ -456,4 +468,16 @@ func (g *git) getStashContext() int {
 func (g *git) parseGitStatusInfo(branchInfo string) map[string]string {
 	var branchRegex = `^## (?P<local>\S+?)(\.{3}(?P<upstream>\S+?)( \[(?P<upstream_status>(ahead (?P<ahead>\d+)(, )?)?(behind (?P<behind>\d+))?(gone)?)])?)?$`
 	return findNamedRegexMatch(branchRegex, branchInfo)
+}
+
+func (g *git) getOriginURL(upstream string) string {
+	cfg, err := ini.Load(g.repo.gitRootFolder + "/config")
+	if err != nil {
+		return g.getGitCommandOutput("remote", "get-url", upstream)
+	}
+	keyVal := cfg.Section("remote \"" + upstream + "\"").Key("url").String()
+	if keyVal == "" {
+		return g.getGitCommandOutput("remote", "get-url", upstream)
+	}
+	return keyVal
 }

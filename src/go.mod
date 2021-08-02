@@ -25,6 +25,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.1
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/shirou/gopsutil v3.21.5+incompatible
+	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/tklauser/go-sysconf v0.3.6 // indirect
@@ -33,6 +34,7 @@ require (
 	golang.org/x/image v0.0.0-20210607152325-775e3b0c77b9
 	golang.org/x/sys v0.0.0-20210608053332-aa57babbf139
 	golang.org/x/text v0.3.6
+	gopkg.in/ini.v1 v1.62.0
 	howett.net/plist v0.0.0-20201203080718-1454fab16a06 // indirect
 )
 

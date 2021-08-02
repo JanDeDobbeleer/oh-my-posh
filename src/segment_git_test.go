@@ -33,7 +33,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 		env: env,
 	}
 	assert.True(t, g.enabled())
-	assert.Equal(t, fileInfo.path, g.repo.gitFolder)
+	assert.Equal(t, fileInfo.path, g.repo.gitWorkingFolder)
 }
 
 func TestEnabledInWorkingTree(t *testing.T) {
@@ -50,7 +50,7 @@ func TestEnabledInWorkingTree(t *testing.T) {
 		env: env,
 	}
 	assert.True(t, g.enabled())
-	assert.Equal(t, "/dir/hello/burp/burp", g.repo.gitFolder)
+	assert.Equal(t, "/dir/hello/burp/burp", g.repo.gitWorkingFolder)
 }
 
 func TestGetGitOutputForCommand(t *testing.T) {
@@ -120,7 +120,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	g := &git{
 		env: env,
 		repo: &gitRepo{
-			gitFolder: "",
+			gitWorkingFolder: "",
 		},
 	}
 	return g
@@ -335,7 +335,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 		env.On("getFileContent", "/logs/refs/stash").Return(tc.StashContent)
 		g := &git{
 			repo: &gitRepo{
-				gitFolder: "",
+				gitWorkingFolder: "",
 			},
 			env: env,
 		}

@@ -616,6 +616,12 @@
                     "description": "Icon/text to display before the merge context",
                     "default": "\uE727"
                   },
+                  "no_commits_icon": {
+                    "type": "string",
+                    "title": "No Commits Icon",
+                    "description": "Icon/text to display when there are no commits in the repo",
+                    "default": "\uF594"
+                  },
                   "display_upstream_icon": {
                     "type": "boolean",
                     "title": "Display Upstream Icon",

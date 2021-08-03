@@ -679,7 +679,13 @@
                     "$ref": "#/definitions/color"
                   },
                   "behind_color": { "$ref": "#/definitions/color" },
-                  "ahead_color": { "$ref": "#/definitions/color" }
+                  "ahead_color": { "$ref": "#/definitions/color" },
+                  "branch_max_length": {
+                      "type": "integer",
+                      "title": "Branch max length",
+                      "description": "the max length for the displayed branch name where 0 implies full length",
+                      "default": 0
+                  }
                 }
               }
             }

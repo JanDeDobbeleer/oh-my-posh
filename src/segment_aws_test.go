@@ -25,7 +25,8 @@ func TestAWSSegment(t *testing.T) {
 		{Case: "enabled with default user", ExpectedString: "default@eu-west", Profile: "default", Region: "eu-west", ExpectedEnabled: true, DisplayDefault: true},
 		{Case: "disabled with default user", ExpectedString: "default", Profile: "default", Region: "eu-west", ExpectedEnabled: false, DisplayDefault: false},
 		{Case: "enabled no region", ExpectedString: "company", ExpectedEnabled: true, Profile: "company"},
-		{Case: "enabled with region", ExpectedString: "company@eu-west", ExpectedEnabled: true, Profile: "company", Region: "eu-west"},
+		{Case: "enabled with region", ExpectedString: "company@eu-west", ExpectedEnabled: true, Profile: "company", Region: "eu-west", DefaultRegion: "us-west"},
+		{Case: "enabled with default region", ExpectedString: "company@us-west", ExpectedEnabled: true, Profile: "company", DefaultRegion: "us-west"},
 		{
 			Case:            "template: enabled no region",
 			ExpectedString:  "profile: company",

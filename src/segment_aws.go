@@ -36,7 +36,7 @@ func (a *aws) enabled() bool {
 	if !displayDefaultUser && a.Profile == defaultUser {
 		return false
 	}
-	a.Region = getEnvFirstMatch("AWS_DEFAULT_REGION", "AWS_REGION")
+	a.Region = getEnvFirstMatch("AWS_REGION", "AWS_DEFAULT_REGION")
 	if a.Profile != "" && a.Region != "" {
 		return true
 	}

@@ -115,12 +115,14 @@ func (t *tracer) init(home string) {
 		log.Fatalf("error opening file: %v", err)
 	}
 	log.SetOutput(t.file)
+	log.Println("start oh-my-posh run")
 }
 
 func (t *tracer) close() {
 	if !t.debug {
 		return
 	}
+	log.Println("end oh-my-posh run")
 	_ = t.file.Close()
 }
 
@@ -129,7 +131,7 @@ func (t *tracer) trace(start time.Time, function string, args ...string) {
 		return
 	}
 	elapsed := time.Since(start)
-	trace := fmt.Sprintf("func: %s duration: %s, args: %s", function, elapsed, strings.Trim(fmt.Sprint(args), "[]"))
+	trace := fmt.Sprintf("%s duration: %s, args: %s", function, elapsed, strings.Trim(fmt.Sprint(args), "[]"))
 	log.Println(trace)
 }
 

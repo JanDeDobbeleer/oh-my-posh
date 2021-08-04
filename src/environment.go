@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -115,14 +116,14 @@ func (t *tracer) init(home string) {
 		log.Fatalf("error opening file: %v", err)
 	}
 	log.SetOutput(t.file)
-	log.Println("start oh-my-posh run")
+	log.Println("#### start oh-my-posh run ####")
 }
 
 func (t *tracer) close() {
 	if !t.debug {
 		return
 	}
-	log.Println("end oh-my-posh run")
+	log.Println("#### end oh-my-posh run ####")
 	_ = t.file.Close()
 }
 
@@ -261,7 +262,50 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	if cmd, ok := env.cmdCache.get(command); ok {
 		command = cmd
 	}
-	out, err := exec.Command(command, args...).CombinedOutput()
+	copyAndCapture := func(r io.Reader) ([]byte, error) {
+		var out []byte
+		buf := make([]byte, 1024)
+		for {
+			n, err := r.Read(buf)
+			if n > 0 {
+				d := buf[:n]
+				out = append(out, d...)
+			}
+			if err == nil {
+				continue
+			}
+			// Read returns io.EOF at the end of file, which is not an error for us
+			if err == io.EOF {
+				err = nil
+			}
+			return out, err
+		}
+	}
+	normalizeOutput := func(out []byte) string {
+		return strings.TrimSuffix(string(out), "\n")
+	}
+	cmd := exec.Command(command, args...)
+	var stdout, stderr []byte
+	var stdoutErr, stderrErr error
+	stdoutIn, _ := cmd.StdoutPipe()
+	stderrIn, _ := cmd.StderrPipe()
+	err := cmd.Start()
+	if err != nil {
+		errorStr := fmt.Sprintf("cmd.Start() failed with '%s'", err)
+		return "", errors.New(errorStr)
+	}
+	// cmd.Wait() should be called only after we finish reading
+	// from stdoutIn and stderrIn.
+	// wg ensures that we finish
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		stdout, stdoutErr = copyAndCapture(stdoutIn)
+		wg.Done()
+	}()
+	stderr, stderrErr = copyAndCapture(stderrIn)
+	wg.Wait()
+	err = cmd.Wait()
 	if err != nil {
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			return "", &commandError{
@@ -270,7 +314,14 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 			}
 		}
 	}
-	return strings.TrimSpace(string(out)), nil
+	if stdoutErr != nil || stderrErr != nil {
+		return "", errors.New("failed to capture stdout or stderr")
+	}
+	stderrStr := normalizeOutput(stderr)
+	if len(stderrStr) > 0 {
+		return stderrStr, nil
+	}
+	return normalizeOutput(stdout), nil
 }
 
 func (env *environment) runShellCommand(shell, command string) string {

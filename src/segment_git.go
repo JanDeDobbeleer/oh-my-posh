@@ -406,7 +406,12 @@ func (g *git) getGitRefFileSymbolicName(refFile string) string {
 }
 
 func (g *git) getPrettyHEADName() string {
-	ref := g.getGitCommandOutput("branch", "--show-current")
+	var ref string
+	HEAD := g.getGitFileContents("HEAD")
+	branchPrefix := "ref: refs/heads/"
+	if strings.HasPrefix(HEAD, branchPrefix) {
+		ref = strings.TrimPrefix(HEAD, branchPrefix)
+	}
 	if ref != "" {
 		ref = g.truncateBranch(ref)
 		return fmt.Sprintf("%s%s", g.props.getString(BranchIcon, "\uE0A0"), ref)

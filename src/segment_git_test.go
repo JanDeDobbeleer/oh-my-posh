@@ -105,6 +105,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.On("getFileContent", "/REVERT_HEAD").Return(context.revertSHA)
 	env.On("getFileContent", "/MERGE_MSG").Return(fmt.Sprintf("Merge branch '%s' into %s", context.mergeHEAD, context.onto))
 	env.On("getFileContent", "/sequencer/todo").Return(context.sequencerTodo)
+	env.On("getFileContent", "/HEAD").Return(context.branchName)
 	env.On("hasFilesInDir", "", "CHERRY_PICK_HEAD").Return(context.cherryPick)
 	env.On("hasFilesInDir", "", "REVERT_HEAD").Return(context.revert)
 	env.On("hasFilesInDir", "", "MERGE_MSG").Return(context.merge)

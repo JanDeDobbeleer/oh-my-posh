@@ -1,4 +1,4 @@
-set -g posh_theme ::CONFIG::
+set -g posh_theme "::CONFIG::"
 set -g POWERLINE_COMMAND "oh-my-posh"
 set -g CONDA_PROMPT_MODIFIER false
 

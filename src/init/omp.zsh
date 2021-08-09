@@ -1,4 +1,4 @@
-export POSH_THEME=::CONFIG::
+export POSH_THEME="::CONFIG::"
 export POWERLINE_COMMAND="oh-my-posh"
 export CONDA_PROMPT_MODIFIER=false
 

@@ -149,11 +149,17 @@ func (pt *path) getLetterPath() string {
 	splitted := strings.Split(pwd, pt.env.getPathSeperator())
 	separator := pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator())
 	for i := 0; i < len(splitted)-1; i++ {
-		if len(splitted[i]) == 0 {
+		folder := splitted[i]
+		if len(folder) == 0 {
 			continue
 		}
-		letter := []rune(splitted[i])[0]
-		buffer.WriteString(fmt.Sprintf("%c%s", letter, separator))
+		var letter string
+		if strings.HasPrefix(folder, ".") && len(folder) > 1 {
+			letter = folder[0:2]
+		} else {
+			letter = folder[0:1]
+		}
+		buffer.WriteString(fmt.Sprintf("%s%s", letter, separator))
 	}
 	buffer.WriteString(splitted[len(splitted)-1])
 	return buffer.String()

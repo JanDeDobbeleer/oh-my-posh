@@ -299,6 +299,8 @@ func TestAgnosterPathStyles(t *testing.T) {
 
 		{Style: Letter, Expected: "~ > a > w > man", HomePath: "/usr/home", Pwd: "/usr/home/ab/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
 		{Style: Letter, Expected: "u > b > a > w > man", HomePath: "/usr/home", Pwd: "/usr/burp/ab/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "u > .b > a > w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/ab/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "u > .b > a > .w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/ab/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)

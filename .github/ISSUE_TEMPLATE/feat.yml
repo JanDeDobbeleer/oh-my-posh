@@ -1,0 +1,27 @@
+name: Feature Request
+description: Request a new feature
+labels: [feat]
+assignees:
+  - jandedobbeleer
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to request a new feature!
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/CONTRIBUTING.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
+  - type: textarea
+    id: feature-request
+    attributes:
+      label: What would you like to see changed/added?
+      description: Try to give some examples to make it really clear!
+      placeholder: Tell us what you would like to see!
+      value: "Something new and amazing!"
+    validations:
+      required: true

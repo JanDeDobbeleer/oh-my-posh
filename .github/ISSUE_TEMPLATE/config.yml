@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Oh My Posh FAQ
+    url: https://ohmyposh.dev/docs/faq
+    about: Please find common issues here.
+  - name: Oh My Posh Docs
+    url: https://ohmyposh.dev/docs
+    about: RTFM
+  - name: Oh My Posh Q&A
+    url: https://github.com/JanDeDobbeleer/oh-my-posh/discussions
+    about: Please ask questions here.

@@ -1,0 +1,67 @@
+name: Bug Report
+description: File a bug report
+labels: [bug]
+assignees:
+  - jandedobbeleer
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/CONTRIBUTING.md)
+      options:
+        - label: I agree to follow this project's Code of Conduct
+          required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Also tell us, what did you expect to happen?
+      placeholder: Tell us what you see!
+      value: "A bug happened!"
+    validations:
+      required: true
+  - type: textarea
+    id: version
+    attributes:
+      label: Version
+      description: What version of oh-my-posh are you running?
+    validations:
+      required: true
+  - type: textarea
+    id: theme
+    attributes:
+      label: Theme
+      description: Which theme/config are you using?
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: What OS are you seeing the problem on?
+      multiple: true
+      options:
+        - Windows
+        - Linux
+        - macOS
+  - type: dropdown
+    id: shell
+    attributes:
+      label: Which shell are you using?
+      multiple: true
+      options:
+        - zsh
+        - bash
+        - fish
+        - powershell
+        - other (please specify)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell

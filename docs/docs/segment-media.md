@@ -28,7 +28,9 @@ Show the currently playing media info from Windows NowPlayingSession API or medi
     "playing_icon": "\uE602 ",
     "paused_icon": "\uF8E3 ",
     "stopped_icon": "\uF04D ",
-    "track_separator" : " - "
+    "track_separator": " - ",
+    "time_separator": "/",
+    "is_show_time": true
   }
 }
 ```
@@ -39,3 +41,5 @@ Show the currently playing media info from Windows NowPlayingSession API or medi
 * paused_icon: `string` - text/icon to show when paused - defaults to `\uF8E3 `
 * stopped_icon: `string` - text/icon to show when stopped - defaults to `\uF04D `
 * track_separator: `string` - text/icon to put between the artist and song name - defaults to ` - `
+* time_separator: `string` - text/icon to put between the media position and total time - defaults to `/`
+* is_show_time:`bolean` - show or hidden media position and total time - defaults to `true`

@@ -14,18 +14,23 @@ type media struct {
 }
 
 const (
-	// PlayingIcon indicates a song is playing
+	// MediaPlayingIcon indicates a song is playing
 	MediaPlayingIcon Property = "playing_icon"
-	// PausedIcon indicates a song is paused
+	// MediaPausedIcon indicates a song is paused
 	MediaPausedIcon Property = "paused_icon"
-	// StoppedIcon indicates a song is stopped
+	// MediaStoppedIcon indicates a song is stopped
 	MediaStoppedIcon Property = "stopped_icon"
-	// TrackSeparator is put between the artist and the track
+	// MediaTrackSeparator is put between the artist and the track
 	MediaTrackSeparator Property = "track_separator"
+	// MediaTimeSeparator is put between the media position and total time
+	MediaTimeSeparator Property = "time_separator"
+	// MediaShowTime is media time show or hidden switch
+	MediaIsShowTime Property = "is_show_time"
 )
 
 func (s *media) string() string {
 	separator := s.props.getString(TrackSeparator, " - ")
+	time_separator := s.props.getString(MediaTimeSeparator, "/")
 	if s.other != "" {
 		spt := strings.Split(s.other, " - ")
 		return fmt.Sprintf("%s%s%s", spt[0], separator, spt[1])
@@ -39,7 +44,12 @@ func (s *media) string() string {
 	case 6:
 		icon = s.props.getString(MediaPausedIcon, "\uF8E3 ")
 	}
-	return fmt.Sprintf("%s%s%s%s", icon, s.info.MediaInfo.Title, separator, s.info.MediaInfo.Artist)
+	str := icon
+	if s.props.getBool(MediaIsShowTime, true) && s.info.Timeline.Position.TotalSeconds > 1 && s.info.Timeline.EndTime.TotalSeconds > 1 {
+		str = str + fmt.Sprintf("[%d:%02d%s%d:%02d] ", int64(s.info.Timeline.Position.TotalMinutes), s.info.Timeline.Position.Seconds, time_separator, int64(s.info.Timeline.EndTime.TotalMinutes), s.info.Timeline.EndTime.Seconds)
+	}
+	str = str + fmt.Sprintf("%s%s%s", s.info.MediaInfo.Title, separator, s.info.MediaInfo.Artist)
+	return str
 }
 
 func (n *media) init(props *properties, env environmentInfo) {

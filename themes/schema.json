@@ -1609,6 +1609,18 @@
                     "title": "SSH Icon",
                     "description": "Text/icon to put between the artist and song name",
                     "default": " - "
+                  },
+                  "time_separator": {
+                    "type": "string",
+                    "title": "SSH Icon",
+                    "description": "Text/icon to put between the media position and total time",
+                    "default": "/"
+                  },
+                  "is_show_time": {
+                    "type": "boolean",
+                    "title": "Show media time",
+                    "description": "Show or hidden media position and total time",
+                    "default": true
                   }
                 }
               }

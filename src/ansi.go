@@ -32,6 +32,12 @@ type ansiUtils struct {
 	underline             string
 	strikethrough         string
 	bashFormat            string
+	shellReservedKeywords []shellKeyWordReplacement
+}
+
+type shellKeyWordReplacement struct {
+	text        string
+	replacement string
 }
 
 func (a *ansiUtils) init(shell string) {
@@ -59,6 +65,8 @@ func (a *ansiUtils) init(shell string) {
 		a.italic = "%%{\x1b[3m%%}%s%%{\x1b[23m%%}"
 		a.underline = "%%{\x1b[4m%%}%s%%{\x1b[24m%%}"
 		a.strikethrough = "%%{\x1b[9m%%}%s%%{\x1b[29m%%}"
+		// escape double quotes and variable expansion
+		a.shellReservedKeywords = append(a.shellReservedKeywords, shellKeyWordReplacement{"\\", "\\\\"}, shellKeyWordReplacement{"%", "%%"})
 	case bash:
 		a.linechange = "\\[\x1b[%d%s\\]"
 		a.right = "\\[\x1b[%dC\\]"
@@ -80,6 +88,9 @@ func (a *ansiUtils) init(shell string) {
 		a.italic = "\\[\x1b[3m\\]%s\\[\x1b[23m\\]"
 		a.underline = "\\[\x1b[4m\\]%s\\[\x1b[24m\\]"
 		a.strikethrough = "\\[\x1b[9m\\]%s\\[\x1b[29m\\]"
+		// escape backslashes to avoid replacements
+		// https://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
+		a.shellReservedKeywords = append(a.shellReservedKeywords, shellKeyWordReplacement{"\\", "\\\\"})
 	default:
 		a.linechange = "\x1b[%d%s"
 		a.right = "\x1b[%dC"
@@ -102,6 +113,8 @@ func (a *ansiUtils) init(shell string) {
 		a.underline = "\x1b[4m%s\x1b[24m"
 		a.strikethrough = "\x1b[9m%s\x1b[29m"
 	}
+	// common replacement for all shells
+	a.shellReservedKeywords = append(a.shellReservedKeywords, shellKeyWordReplacement{"`", "'"})
 }
 
 func (a *ansiUtils) lenWithoutANSI(text string) int {
@@ -187,18 +200,8 @@ func (a *ansiUtils) clearAfter() string {
 
 func (a *ansiUtils) escapeText(text string) string {
 	// what to escape/replace is different per shell
-	// maybe we should refactor and maintain a list of characters to escap/replace
-	// like we do in ansi.go for ansi codes
-	switch a.shell {
-	case zsh:
-		// escape double quotes
-		text = strings.ReplaceAll(text, "\"", "\"\"")
-	case bash:
-		// escape backslashes to avoid replacements
-		// https://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
-		text = strings.ReplaceAll(text, "\\", "\\\\")
+	for _, s := range a.shellReservedKeywords {
+		text = strings.ReplaceAll(text, s.text, s.replacement)
 	}
-	// escape backtick
-	text = strings.ReplaceAll(text, "`", "'")
 	return text
 }

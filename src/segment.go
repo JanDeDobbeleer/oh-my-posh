@@ -120,7 +120,8 @@ const (
 	// Nbgv writes the nbgv version information
 	Nbgv SegmentType = "nbgv"
 	// Rust writes the cargo version information if cargo.toml is present
-	Rust SegmentType = "rust"
+	Rust  SegmentType = "rust"
+	Media SegmentType = "media"
 )
 
 func (segment *Segment) string() string {
@@ -261,6 +262,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Dart:          &dart{},
 		Nbgv:          &nbgv{},
 		Rust:          &rust{},
+		Media:         &media{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

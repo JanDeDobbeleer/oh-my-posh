@@ -56,6 +56,7 @@ module.exports = {
         "text",
         "time",
         "ytm",
+        "owm"
       ],
     },
     {

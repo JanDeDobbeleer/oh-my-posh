@@ -2,6 +2,6 @@
 
 package main
 
-func (s *spotify) enabled() bool {
+func (s *media) enabled() bool {
 	return false
 }

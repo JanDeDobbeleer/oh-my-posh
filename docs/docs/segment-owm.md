@@ -8,7 +8,8 @@ sidebar_label: Open Weather Map
 
 Shows the current weather of a given location.
 
-**NOTE**: You **must** request an API key at the [Open Weather Map](https://openweathermap.org/price) website. The free tier for *Current weather and forecasts collection* is sufficient.
+**NOTE**: You **must** request an API key at the [Open Weather Map](https://openweathermap.org/price) website.
+The free tier for *Current weather and forecasts collection* is sufficient.
 
 ## Sample Configuration
 
@@ -30,5 +31,8 @@ Shows the current weather of a given location.
 ## Properties
 
 - apikey: `string` - Your apikey from [Open Weather Map](https://openweathermap.org)
-- location: `string` - The requested location. Formatted as <City,STATE,COUNTRY_CODE>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes - defaults to `DE BILT,NL`
-- units: `string` - Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`
+- location: `string` - The requested location.
+                        Formatted as <City,STATE,COUNTRY_CODE>. City name, state code and country code divided by comma.
+                        Please, refer to ISO 3166 for the state codes or country codes - defaults to `DE BILT,NL`
+- units: `string` - Units of measurement.
+Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`

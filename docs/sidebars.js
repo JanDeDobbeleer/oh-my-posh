@@ -44,6 +44,7 @@ module.exports = {
         "nbgv",
         "node",
         "os",
+        "owm",
         "path",
         "python",
         "root",
@@ -56,7 +57,6 @@ module.exports = {
         "text",
         "time",
         "ytm",
-        "owm"
       ],
     },
     {

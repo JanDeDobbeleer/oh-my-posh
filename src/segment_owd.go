@@ -60,23 +60,23 @@ func (d *owm) setStatus() error {
 	icon := ""
 	switch q.Data[0].TypeID {
 	case "01d":
-		icon = "滛"
+		icon = "\ufa98"
 	case "02d":
-		icon = "杖"
+		icon = "\ufa94"
 	case "03d":
-		icon = "摒"
+		icon = "\ue33d"
 	case "04d":
-		icon = ""
+		icon = "\ue312"
 	case "09d":
-		icon = "歹"
+		icon = "\ufa95"
 	case "10d":
-		icon = "殺"
+		icon = "\ue308"
 	case "11d":
-		icon = "朗"
+		icon = "\ue31d"
 	case "13d":
-		icon = ""
+		icon = "\ue31a"
 	case "50d":
-		icon = ""
+		icon = "\ue313"
 	}
 	d.weather = icon
 	return nil

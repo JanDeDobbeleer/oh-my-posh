@@ -8,8 +8,12 @@ sidebar_label: Open Weather Map
 
 Shows the current weather of a given location.
 
-**NOTE**: You **must** request an API key at the [Open Weather Map](https://openweathermap.org/price) website.
+:::caution
+
+You **must** request an API key at the [Open Weather Map](https://openweathermap.org/price) website.
 The free tier for *Current weather and forecasts collection* is sufficient.
+
+:::
 
 ## Sample Configuration
 

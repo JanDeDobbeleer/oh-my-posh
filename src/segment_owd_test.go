@@ -2,62 +2,138 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestOWDStringPlayingSong(t *testing.T) {
-	expected := "滛 (16.7°)"
-	d := &owm{
-		temperature: 16.7,
-		weather:     "滛",
-	}
-
-	assert.Equal(t, expected, d.string())
-}
-func bootstrapOWDTest(json string, err error) *owm {
-	url := "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=foobar"
-	env := new(MockedEnvironment)
-	env.On("doGet", url).Return([]byte(json), err)
-
-	props := &properties{
-		values: map[Property]interface{}{
-			APIKEY:   "foobar",
-			LOCATION: "AMSTERDAM,NL",
-			UNITS:    "metric",
+func TestOWDSegmentSingle(t *testing.T) {
+	cases := []struct {
+		Case            string
+		JSONResponse    string
+		ExpectedString  string
+		ExpectedEnabled bool
+		Error           error
+	}{
+		{
+			Case:            "Sunny Display",
+			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
+			ExpectedString:  "\ufa98 (20\ue33e)",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "Error in retrieving data",
+			JSONResponse:    "nonsense",
+			Error:           errors.New("Something went wrong"),
+			ExpectedEnabled: false,
 		},
 	}
 
-	owd := &owm{
-		props: props,
-		env:   env,
+	for _, tc := range cases {
+		env := &MockedEnvironment{}
+		props := &properties{
+			values: map[Property]interface{}{
+				APIKEY:   "key",
+				LOCATION: "AMSTERDAM,NL",
+				UNITS:    "metric",
+			},
+		}
+
+		url := "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
+
+		env.On("doGet", url).Return([]byte(tc.JSONResponse), tc.Error)
+
+		o := &owm{
+			props: props,
+			env:   env,
+		}
+
+		enabled := o.enabled()
+		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
+		if !enabled {
+			continue
+		}
+
+		assert.Equal(t, tc.ExpectedString, o.string(), tc.Case)
 	}
-	return owd
-}
-func TestOWDTemperatureRetrieval(t *testing.T) {
-	data := `{"weather":[{"id":804,"main":"Clouds","description":"overcast clouds","icon":"04d"}],
-	"main":{"temp":22.91,"feels_like":23.19,"temp_min":19.99,"temp_max":25.62,"pressure":1018,"humidity":74}}`
-	d := bootstrapOWDTest(data, nil)
-	err := d.setStatus()
-
-	assert.Nil(t, err)
-
-	assert.Equal(t, 22.91, d.temperature)
 }
 
-func TestOWDIconRetrieval(t *testing.T) {
-	data := `{"weather":[{"icon":"50d"}],"main":{"temp":16}}`
-	d := bootstrapOWDTest(data, nil)
-	err := d.setStatus()
+func TestOWDSegmentIcons(t *testing.T) {
+	cases := []struct {
+		Case               string
+		IconID             string
+		ExpectedIconString string
+	}{
+		{
+			Case:               "Sunny Display",
+			IconID:             "01d",
+			ExpectedIconString: "\ufa98",
+		},
+		{
+			Case:               "Light clouds Display",
+			IconID:             "02d",
+			ExpectedIconString: "\ufa94",
+		},
+		{
+			Case:               "Cloudy Display",
+			IconID:             "03d",
+			ExpectedIconString: "\ue33d",
+		},
+		{
+			Case:               "Broken Clouds Display",
+			IconID:             "04d",
+			ExpectedIconString: "\ue312",
+		},
+		{
+			Case:               "Shower Rain Display",
+			IconID:             "09d",
+			ExpectedIconString: "\ufa95",
+		},
+		{
+			Case:               "Rain Display",
+			IconID:             "10d",
+			ExpectedIconString: "\ue308",
+		},
+		{
+			Case:               "Thunderstorm Display",
+			IconID:             "11d",
+			ExpectedIconString: "\ue31d",
+		},
+		{
+			Case:               "Snow Display",
+			IconID:             "13d",
+			ExpectedIconString: "\ue31a",
+		},
+		{
+			Case:               "Fog Display",
+			IconID:             "50d",
+			ExpectedIconString: "\ue313",
+		},
+	}
 
-	assert.Nil(t, err)
-	assert.Equal(t, d.weather, "")
-}
+	for _, tc := range cases {
+		env := &MockedEnvironment{}
+		props := &properties{
+			values: map[Property]interface{}{
+				APIKEY:   "key",
+				LOCATION: "AMSTERDAM,NL",
+				UNITS:    "metric",
+			},
+		}
 
-func TestOWDDisabled(t *testing.T) {
-	data := "nonsense"
-	d := bootstrapOWDTest(data, errors.New("Whelp, something went wrong"))
-	enabled := d.enabled()
-	assert.False(t, enabled)
+		url := "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
+		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, tc.IconID)
+		expectedString := fmt.Sprintf("%s (20\ue33e)", tc.ExpectedIconString)
+
+		env.On("doGet", url).Return([]byte(response), nil)
+
+		o := &owm{
+			props: props,
+			env:   env,
+		}
+
+		assert.Nil(t, o.setStatus())
+		assert.Equal(t, expectedString, o.string(), tc.Case)
+	}
 }

@@ -27,7 +27,7 @@ type temperature struct {
 	Value float64 `json:"temp"`
 }
 
-type owmDataResponse struct {
+type OWMDataResponse struct {
 	Data        []weather `json:"weather"`
 	temperature `json:"main"`
 }
@@ -38,7 +38,7 @@ func (d *owm) enabled() bool {
 }
 
 func (d *owm) string() string {
-	return fmt.Sprintf("%s (%g°)", d.weather, d.temperature)
+	return fmt.Sprintf("%s (%g\ue33e)", d.weather, d.temperature)
 }
 
 func (d *owm) setStatus() error {
@@ -51,7 +51,7 @@ func (d *owm) setStatus() error {
 	if err != nil {
 		return err
 	}
-	q := new(owmDataResponse)
+	q := new(OWMDataResponse)
 	err = json.Unmarshal(body, &q)
 	if err != nil {
 		return err

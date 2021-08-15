@@ -44,6 +44,7 @@ module.exports = {
         "nbgv",
         "node",
         "os",
+        "owm",
         "path",
         "python",
         "root",

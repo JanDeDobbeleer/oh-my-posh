@@ -1521,6 +1521,41 @@
         {
           "if": {
             "properties": {
+              "type": { "const": "owm" }
+            }
+          },
+          "then": {
+            "title": "Open Weather Map Segment",
+            "description": "Displays the current weather from the Open Weather Map system",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "apikey": {
+                    "type": "string",
+                    "title": "apikey",
+                    "description": "The apikey used for the api call (Required)",
+                    "default": "."
+                  },
+                  "location": {
+                    "type": "string",
+                    "title": "location",
+                    "description": "Location to use for the api call. Formatted as <City>,<STATE>,<COUNTRY_CODE>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes.",
+                    "default": "De Bilt,NL"
+                  },
+                  "units": {
+                    "type": "string",
+                    "title": "units",
+                    "description": "Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit). Default is standard",
+                    "default": "standard"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
               "type": { "const": "executiontime" }
             }
           },

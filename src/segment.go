@@ -121,6 +121,7 @@ const (
 	Nbgv SegmentType = "nbgv"
 	// Rust writes the cargo version information if cargo.toml is present
 	Rust SegmentType = "rust"
+	OWM  SegmentType = "owm"
 )
 
 func (segment *Segment) string() string {
@@ -229,6 +230,7 @@ func (segment *Segment) background() string {
 func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
+		OWM:           &owm{},
 		Session:       &session{},
 		Path:          &path{},
 		Git:           &git{},

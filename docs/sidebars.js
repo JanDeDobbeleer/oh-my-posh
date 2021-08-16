@@ -41,6 +41,7 @@ module.exports = {
         "java",
         "julia",
         "kubectl",
+        "media",
         "nbgv",
         "node",
         "os",

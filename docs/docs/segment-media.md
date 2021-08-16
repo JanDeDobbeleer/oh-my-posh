@@ -6,7 +6,7 @@ sidebar_label: Media
 
 ## What
 
-Show the currently playing media info from Windows NowPlayingSession API or media-related process window title.
+Show the currently playing media information from Windows NowPlayingSession API or media-related process window title.
 
 ## Prerequisites
 
@@ -43,3 +43,14 @@ Show the currently playing media info from Windows NowPlayingSession API or medi
 * track_separator: `string` - text/icon to put between the artist and song name - defaults to ` - `
 * time_separator: `string` - text/icon to put between the media position and total time - defaults to `/`
 * is_show_time:`bolean` - show or hidden media position and total time - defaults to `true`
+
+## Example
+
+**Groove:**
+![Groove](https://user-images.githubusercontent.com/20531439/129418053-5cf80721-8b27-402e-b8e9-f1df61fefc5b.gif)
+
+**Spotify：**
+![Spotify](https://user-images.githubusercontent.com/20531439/129418076-aa65b032-3faa-4e6a-87c9-4ad44cb134e4.gif)
+
+**YouTube (Edge Chromium):**
+![Edge Chromium](https://user-images.githubusercontent.com/20531439/129418840-42c790c2-8252-4cd7-ad5a-b6732f3656f3.gif)

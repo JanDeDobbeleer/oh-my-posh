@@ -122,6 +122,8 @@ const (
 	// Rust writes the cargo version information if cargo.toml is present
 	Rust SegmentType = "rust"
 	OWM  SegmentType = "owm"
+	// Media writes the current system media session information
+	Media SegmentType = "media"
 )
 
 func (segment *Segment) string() string {

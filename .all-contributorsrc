@@ -604,6 +604,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Descalon",
+      "name": "Nico Glas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1098500?v=4",
+      "profile": "https://github.com/Descalon",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

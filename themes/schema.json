@@ -1223,7 +1223,8 @@
                       "full",
                       "folder",
                       "mixed",
-                      "letter"
+                      "letter",
+                      "shortened"
                     ],
                     "default": "folder"
                   },
@@ -1232,6 +1233,12 @@
                     "title": "Mapped Locations",
                     "description": "Custom glyph/text for specific paths",
                     "default": {}
+                  },
+                  "max_depth": {
+                    "type": "number",
+                    "title": "Maximum Depth",
+                    "description": "Maximum path depth to display whithout shortening",
+                    "default": 2
                   }
                 },
                 "mapped_locations_enabled": {

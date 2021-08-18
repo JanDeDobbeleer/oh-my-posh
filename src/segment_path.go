@@ -37,6 +37,8 @@ const (
 	Mixed string = "mixed"
 	// Letter like agnoster, but with the first letter of each folder name
 	Letter string = "letter"
+	// Shortened displays the drive letter (on windows), and last 'n' folders specified by max_depth, with one folder_icon inbetween
+	Shortened string = "shortened"
 	// MixedThreshold the threshold of the length of the path Mixed will display
 	MixedThreshold Property = "mixed_threshold"
 	// MappedLocations allows overriding certain location with an icon
@@ -45,6 +47,8 @@ const (
 	MappedLocationsEnabled Property = "mapped_locations_enabled"
 	// StackCountEnabled enables the stack count display
 	StackCountEnabled Property = "stack_count_enabled"
+	// Maximum path depth to display whithout shortening
+	MaxDepth Property = "max_depth"
 )
 
 func (pt *path) enabled() bool {
@@ -72,6 +76,8 @@ func (pt *path) string() string {
 		formattedPath = pt.getFullPath()
 	case Folder:
 		formattedPath = pt.getFolderPath()
+	case Shortened:
+		formattedPath = pt.getShortenedPath()
 	default:
 		return fmt.Sprintf("Path style: %s is not available", style)
 	}
@@ -199,6 +205,29 @@ func (pt *path) getFolderPath() string {
 	pwd := pt.getPwd()
 	pwd = base(pwd, pt.env)
 	return pt.replaceFolderSeparators(pwd)
+}
+
+func (pt *path) getShortenedPath() string {
+	var buffer strings.Builder
+	pathSeparator := pt.env.getPathSeperator()
+	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
+	folderIcon := pt.props.getString(FolderIcon, "..")
+	maxPathDepth := pt.props.getInt(MaxDepth, 2)
+	pwd := pt.getPwd()
+	splitted := strings.Split(pwd, pt.env.getPathSeperator())
+	length := len(splitted)
+	if length <= 1 {
+		return pt.rootLocation()
+	}
+	if maxPathDepth < 1 || length <= maxPathDepth + 1 {
+		return pt.replaceFolderSeparators(pwd)
+	}
+	buffer.WriteString(fmt.Sprintf("%s%s%s", splitted[0], folderSeparator, folderIcon))
+	splitPos := length - maxPathDepth
+	for i := splitPos; i < length; i++ {
+		buffer.WriteString(fmt.Sprintf("%s%s", folderSeparator, splitted[i]))
+	}
+	return buffer.String()
 }
 
 func (pt *path) getPwd() string {

@@ -121,7 +121,8 @@ const (
 	Nbgv SegmentType = "nbgv"
 	// Rust writes the cargo version information if cargo.toml is present
 	Rust SegmentType = "rust"
-	OWM  SegmentType = "owm"
+	// OWM writes the weather coming from openweatherdata
+	OWM SegmentType = "owm"
 )
 
 func (segment *Segment) string() string {

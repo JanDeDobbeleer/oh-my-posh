@@ -27,6 +27,18 @@
       "description": "Show or hide the version number",
       "default": true
     },
+    "enable_hyperlink": {
+      "type": "boolean",
+      "title": "Enable hyperlink",
+      "description": "Displays an hyperlink for the current segment",
+      "default": false
+    },
+    "http_timeout": {
+      "type": "integer",
+      "title": "Http requst timeout",
+      "description": "Timeout value to use for http request",
+      "default": 20
+    },
     "display_mode": {
       "type": "string",
       "title": "Display Mode",
@@ -155,7 +167,8 @@
             "azfunc",
             "crystal",
             "dart",
-            "rust"
+            "rust",
+            "owm"
           ]
         },
         "style": {
@@ -681,10 +694,10 @@
                   "behind_color": { "$ref": "#/definitions/color" },
                   "ahead_color": { "$ref": "#/definitions/color" },
                   "branch_max_length": {
-                      "type": "integer",
-                      "title": "Branch max length",
-                      "description": "the max length for the displayed branch name where 0 implies full length",
-                      "default": 0
+                    "type": "integer",
+                    "title": "Branch max length",
+                    "description": "the max length for the displayed branch name where 0 implies full length",
+                    "default": 0
                   }
                 }
               }
@@ -1227,17 +1240,14 @@
                   "description": "Replace known locations in the path with the replacements before applying the style.",
                   "default": true
                 },
-                "enable_hyperlink": {
-                  "type": "boolean",
-                  "title": "Enable hyperlink",
-                  "description": "Displays an hyperlink for the current path",
-                  "default": false
-                },
                 "stack_count_enabled": {
                   "type": "boolean",
                   "title": "Show/hide stack count",
                   "description": "Displays the stack count when using pushd/popd",
                   "default": false
+                },
+                "enable_hyperlink": {
+                  "$ref": "#/definitions/enable_hyperlink"
                 }
               }
             }
@@ -1512,6 +1522,9 @@
                     "title": "API URL",
                     "description": "The YTMDA Remote Control API URL",
                     "default": "http://127.0.0.1:9863"
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
                   }
                 }
               }
@@ -1547,6 +1560,12 @@
                     "title": "units",
                     "description": "Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit). Default is standard",
                     "default": "standard"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
                   }
                 }
               }

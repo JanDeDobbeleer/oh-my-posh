@@ -10,12 +10,17 @@ type owm struct {
 	env         environmentInfo
 	temperature float64
 	weather     string
+	url         string
+	units       string
 }
 
 const (
-	APIKEY   Property = "apikey"
+	// APIKEY openweathermap api key
+	APIKEY Property = "apikey"
+	// LOCATION openweathermap location
 	LOCATION Property = "location"
-	UNITS    Property = "units"
+	// UNITS openweathermap units
+	UNITS Property = "units"
 )
 
 type weather struct {
@@ -38,16 +43,32 @@ func (d *owm) enabled() bool {
 }
 
 func (d *owm) string() string {
-	return fmt.Sprintf("%s (%g\ue33e)", d.weather, d.temperature)
+	unitIcon := "\ue33e"
+	switch d.units {
+	case "imperial":
+		unitIcon = "°F" // \ue341"
+	case "metric":
+		unitIcon = "°C" // \ue339"
+	case "":
+		fallthrough
+	case "standard":
+		unitIcon = "°K" // \ufa05"
+	}
+	text := fmt.Sprintf("%s (%g%s)", d.weather, d.temperature, unitIcon)
+	if d.props.getBool(EnableHyperlink, false) {
+		text = fmt.Sprintf("[%s](%s)", text, d.url)
+	}
+	return text
 }
 
 func (d *owm) setStatus() error {
 	apikey := d.props.getString(APIKEY, ".")
 	location := d.props.getString(LOCATION, "De Bilt,NL")
 	units := d.props.getString(UNITS, "standard")
+	timeout := d.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
 
 	url := fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?q=%s&units=%s&appid=%s", location, units, apikey)
-	body, err := d.env.doGet(url)
+	body, err := d.env.doGet(url, timeout)
 	if err != nil {
 		return err
 	}
@@ -79,6 +100,8 @@ func (d *owm) setStatus() error {
 		icon = "\ue313"
 	}
 	d.weather = icon
+	d.url = url
+	d.units = units
 	return nil
 }
 

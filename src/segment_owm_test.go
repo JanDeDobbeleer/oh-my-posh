@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestOWDSegmentSingle(t *testing.T) {
+func TestOWMSegmentSingle(t *testing.T) {
 	cases := []struct {
 		Case            string
 		JSONResponse    string
@@ -19,7 +19,7 @@ func TestOWDSegmentSingle(t *testing.T) {
 		{
 			Case:            "Sunny Display",
 			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
-			ExpectedString:  "\ufa98 (20\ue33e)",
+			ExpectedString:  "\ufa98 (20°C)",
 			ExpectedEnabled: true,
 		},
 		{
@@ -59,7 +59,7 @@ func TestOWDSegmentSingle(t *testing.T) {
 	}
 }
 
-func TestOWDSegmentIcons(t *testing.T) {
+func TestOWMSegmentIcons(t *testing.T) {
 	cases := []struct {
 		Case               string
 		IconID             string
@@ -124,7 +124,7 @@ func TestOWDSegmentIcons(t *testing.T) {
 
 		url := "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
 		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, tc.IconID)
-		expectedString := fmt.Sprintf("%s (20\ue33e)", tc.ExpectedIconString)
+		expectedString := fmt.Sprintf("%s (20°C)", tc.ExpectedIconString)
 
 		env.On("doGet", url).Return([]byte(response), nil)
 

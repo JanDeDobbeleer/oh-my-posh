@@ -124,7 +124,7 @@ func (env *MockedEnvironment) getWindowTitle(imageName, windowTitleRegex string)
 	return args.String(0), args.Error(1)
 }
 
-func (env *MockedEnvironment) doGet(url string) ([]byte, error) {
+func (env *MockedEnvironment) doGet(url string, timeout int) ([]byte, error) {
 	args := env.Called(url)
 	return args.Get(0).([]byte), args.Error(1)
 }

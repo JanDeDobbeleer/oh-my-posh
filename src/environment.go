@@ -72,7 +72,7 @@ type environmentInfo interface {
 	getBatteryInfo() ([]*battery.Battery, error)
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
-	doGet(url string) ([]byte, error)
+	doGet(url string, timeout int) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
 	stackCount() int
@@ -389,9 +389,9 @@ func (env *environment) getShellName() string {
 	return *env.args.Shell
 }
 
-func (env *environment) doGet(url string) ([]byte, error) {
+func (env *environment) doGet(url string, timeout int) ([]byte, error) {
 	defer env.tracer.trace(time.Now(), "doGet", url)
-	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*20)
+	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {

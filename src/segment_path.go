@@ -178,8 +178,10 @@ func (pt *path) getAgnosterFullPath() string {
 func (pt *path) getAgnosterShortPath() string {
 	pwd := pt.getPwd()
 	pathDepth := pt.pathDepth(pwd)
-	maxDepth :=  pt.props.getInt(MaxDepth, 1)
-	if maxDepth < 1 { maxDepth = 1 }
+	maxDepth := pt.props.getInt(MaxDepth, 1)
+	if maxDepth < 1 {
+		maxDepth = 1
+	}
 	if pathDepth <= maxDepth {
 		return pt.getAgnosterFullPath()
 	}

@@ -38,7 +38,7 @@ Display the current path.
 - mixed_threshold: `number` - the maximum length of a path segment that will be displayed when using `Mixed` -
   defaults to `4`
 - stack_count_enabled: `boolean` - displays the stack count when using pushd/popd - defaults to `false`
-- max_depth: `number` - maximum path depth to display before shortening, when style is set to `shortened`
+- max_depth: `number` - maximum path depth to display before shortening when using `Agnoster Short` - defaults to `1`
 
 ## Mapped Locations
 
@@ -70,7 +70,6 @@ Style sets the way the path is displayed. Based on previous experience and popul
 - folder
 - mixed
 - letter
-- shortened
 
 ### Agnoster
 
@@ -84,7 +83,8 @@ Renders each folder name separated by the `folder_separator_icon`.
 
 ### Agnoster Short
 
-When more than 1 level deep, it renders one `folder_icon` followed by the name of the current folder separated by the `folder_separator_icon`.
+When more than `max_depth` levels deep, it renders one `folder_icon` followed by the names of the last `max_depth` folders,
+separated by the `folder_separator_icon`.
 
 ### Full
 
@@ -102,9 +102,3 @@ for the folders to display is governed by the `mixed_threshold` property.
 ### Letter
 
 Works like `Full`, but will write every subfolder name using the first letter only.
-
-### Shortened
-
-When folder depth is greater than `max_depth`, replaces all except the last `max_depth` folders with a single `folder_icon`,
-separated by the `folder_separator_icon`.
-On Windows, keeps the drive letter intact.

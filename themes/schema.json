@@ -1223,8 +1223,7 @@
                       "full",
                       "folder",
                       "mixed",
-                      "letter",
-                      "shortened"
+                      "letter"
                     ],
                     "default": "folder"
                   },
@@ -1235,10 +1234,10 @@
                     "default": {}
                   },
                   "max_depth": {
-                    "type": "number",
+                    "type": "integer",
                     "title": "Maximum Depth",
                     "description": "Maximum path depth to display whithout shortening",
-                    "default": 2
+                    "default": 1
                   }
                 },
                 "mapped_locations_enabled": {

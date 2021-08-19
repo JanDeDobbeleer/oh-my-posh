@@ -282,6 +282,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		FolderSeparatorIcon string
 		Style               string
 		GOOS                string
+		MaxDepth            int
 	}{
 		{Style: AgnosterFull, Expected: "usr > location > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeperator: "/", FolderSeparatorIcon: " > "},
 		{Style: AgnosterShort, Expected: "usr > .. > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
@@ -290,6 +291,16 @@ func TestAgnosterPathStyles(t *testing.T) {
 		{Style: AgnosterShort, Expected: "C:", HomePath: homeBillWindows, Pwd: "C:", PathSeperator: "\\", FolderSeparatorIcon: " > "},
 		{Style: AgnosterShort, Expected: "", HomePath: homeBillWindows, Pwd: "/", PathSeperator: "/", FolderSeparatorIcon: " > "},
 		{Style: AgnosterShort, Expected: "foo", HomePath: homeBillWindows, Pwd: "/foo", PathSeperator: "/", FolderSeparatorIcon: " > "},
+
+		{Style: AgnosterShort, Expected: "usr > .. > bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2},
+		{Style: AgnosterShort, Expected: "usr > foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 3},
+		{Style: AgnosterShort, Expected: "~ > .. > bar > man", HomePath: "/usr/home", Pwd: "/usr/home/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2},
+		{Style: AgnosterShort, Expected: "~ > foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/home/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 3},
+
+		{Style: AgnosterShort, Expected: "C: > .. > bar > man", HomePath: homeBillWindows, Pwd: "C:\\usr\\foo\\bar\\man", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxDepth: 2},
+		{Style: AgnosterShort, Expected: "C: > .. > foo > bar > man", HomePath: homeBillWindows, Pwd: "C:\\usr\\foo\\bar\\man", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxDepth: 3},
+		{Style: AgnosterShort, Expected: "~ > .. > bar > man", HomePath: homeBillWindows, Pwd: "C:\\Users\\Bill\\foo\\bar\\man", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxDepth: 2},
+		{Style: AgnosterShort, Expected: "~ > foo > bar > man", HomePath: homeBillWindows, Pwd: "C:\\Users\\Bill\\foo\\bar\\man", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxDepth: 3},
 
 		{Style: AgnosterFull, Expected: "PSDRIVE: | src", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src", PathSeperator: "/", FolderSeparatorIcon: " | "},
 		{Style: AgnosterShort, Expected: "PSDRIVE: | .. | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeperator: "/", FolderSeparatorIcon: " | "},
@@ -318,6 +329,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 				values: map[Property]interface{}{
 					FolderSeparatorIcon: tc.FolderSeparatorIcon,
 					Style:               tc.Style,
+					MaxDepth:            tc.MaxDepth,
 				},
 			},
 		}
@@ -445,80 +457,6 @@ func TestGetFullPath(t *testing.T) {
 		path := &path{
 			env:   env,
 			props: props,
-		}
-		got := path.string()
-		assert.Equal(t, tc.Expected, got)
-	}
-}
-
-func TestGetShortenedPath(t *testing.T) {
-	cases := []struct {
-		Expected            string
-		HomePath            string
-		Pswd                string
-		Pwd                 string
-		PathSeperator       string
-		HomeIcon            string
-		FolderSeparatorIcon string
-		Style               string
-		GOOS                string
-		MaxPathDepth        int
-	}{
-		{Expected: "", HomePath: homeBillWindows, Pwd: "", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 3},
-		{Expected: "/", HomePath: homeBillWindows, Pwd: "/", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 3},
-		{Expected: "C:", HomePath: homeBillWindows, Pwd: "C:", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxPathDepth: 3},
-		{Expected: "C: > ", HomePath: homeBillWindows, Pwd: "C:\\", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxPathDepth: 3},
-
-		{Expected: " > .. > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 1},
-		{Expected: " > .. > location > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 2},
-		{Expected: " > usr > location > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 3},
-		{Expected: " > usr > location > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 4},
-
-		{Expected: " > .. > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 1},
-		{Expected: " > .. > whatever > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 2},
-		{Expected: " > .. > location > whatever > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 3},
-		{Expected: " > usr > location > whatever > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 4},
-
-		{Expected: "~ > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 1},
-		{Expected: "~ > whatever > man", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 2},
-		{Expected: "~ > whatever > man", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 3},
-
-		{Expected: "~ > .. > man > doc", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man/doc", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 2},
-		{Expected: "~ > whatever > man > doc", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man/doc", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 3},
-		{Expected: "~ > whatever > man > doc", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man/doc", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxPathDepth: 4},
-		
-		{Expected: "C: > .. > man", HomePath: homeBillWindows, Pwd: "C:\\location\\whatever\\man", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxPathDepth: 1},
-		{Expected: "C: > .. > whatever > man", HomePath: homeBillWindows, Pwd: "C:\\location\\whatever\\man", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxPathDepth: 2},
-		{Expected: "C: > location > whatever > man", HomePath: homeBillWindows, Pwd: "C:\\location\\whatever\\man", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxPathDepth: 3},
-
-		{Expected: "~ > whatever", HomePath: homeBillWindows, Pwd: "C:\\Users\\Bill\\whatever", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxPathDepth: 2},
-		{Expected: "~ > whatever > man", HomePath: homeBillWindows, Pwd: "C:\\Users\\Bill\\whatever\\man", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxPathDepth: 2},
-		{Expected: "~ > .. > man > doc", HomePath: homeBillWindows, Pwd: "C:\\Users\\Bill\\whatever\\man\\doc", PathSeperator: "\\", FolderSeparatorIcon: " > ", MaxPathDepth: 2},
-
-		{Expected: "PSDRIVE: | src", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src", PathSeperator: "/", FolderSeparatorIcon: " | ", MaxPathDepth: 2},
-		{Expected: "PSDRIVE: | src | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeperator: "/", FolderSeparatorIcon: " | ", MaxPathDepth: 2},
-		{Expected: "PSDRIVE: | src | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeperator: "/", FolderSeparatorIcon: " | ", MaxPathDepth: 3},
-		{Expected: "PSDRIVE: | .. | init | man", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init/man", PathSeperator: "/", FolderSeparatorIcon: " | ", MaxPathDepth: 2},
-	}
-	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
-		env.On("homeDir", nil).Return(tc.HomePath)
-		env.On("getcwd", nil).Return(tc.Pwd)
-		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
-		args := &args{
-			PSWD: &tc.Pswd,
-		}
-		env.On("getArgs", nil).Return(args)
-		path := &path{
-			env: env,
-			props: &properties{
-				values: map[Property]interface{}{
-					FolderSeparatorIcon: tc.FolderSeparatorIcon,
-					Style:               Shortened,
-					MaxDepth:           tc.MaxPathDepth,
-				},
-			},
 		}
 		got := path.string()
 		assert.Equal(t, tc.Expected, got)

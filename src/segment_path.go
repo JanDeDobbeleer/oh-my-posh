@@ -37,8 +37,6 @@ const (
 	Mixed string = "mixed"
 	// Letter like agnoster, but with the first letter of each folder name
 	Letter string = "letter"
-	// Shortened displays the drive letter (on windows), and last 'n' folders specified by max_depth, with one folder_icon inbetween
-	Shortened string = "shortened"
 	// MixedThreshold the threshold of the length of the path Mixed will display
 	MixedThreshold Property = "mixed_threshold"
 	// MappedLocations allows overriding certain location with an icon
@@ -76,8 +74,6 @@ func (pt *path) string() string {
 		formattedPath = pt.getFullPath()
 	case Folder:
 		formattedPath = pt.getFolderPath()
-	case Shortened:
-		formattedPath = pt.getShortenedPath()
 	default:
 		return fmt.Sprintf("Path style: %s is not available", style)
 	}
@@ -180,20 +176,26 @@ func (pt *path) getAgnosterFullPath() string {
 }
 
 func (pt *path) getAgnosterShortPath() string {
+	pwd := pt.getPwd()
+	pathDepth := pt.pathDepth(pwd)
+	maxDepth :=  pt.props.getInt(MaxDepth, 1)
+	if maxDepth < 1 { maxDepth = 1 }
+	if pathDepth <= maxDepth {
+		return pt.getAgnosterFullPath()
+	}
 	pathSeparator := pt.env.getPathSeperator()
 	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
 	folderIcon := pt.props.getString(FolderIcon, "..")
 	root := pt.rootLocation()
-	pwd := pt.getPwd()
-	base := base(pwd, pt.env)
-	pathDepth := pt.pathDepth(pwd)
-	if pathDepth <= 0 {
-		return root
+	splitted := strings.Split(pwd, pathSeparator)
+	fullPathDepth := len(splitted)
+	splitPos := fullPathDepth - maxDepth
+	var buffer strings.Builder
+	buffer.WriteString(fmt.Sprintf("%s%s%s", root, folderSeparator, folderIcon))
+	for i := splitPos; i < fullPathDepth; i++ {
+		buffer.WriteString(fmt.Sprintf("%s%s", folderSeparator, splitted[i]))
 	}
-	if pathDepth == 1 {
-		return fmt.Sprintf("%s%s%s", root, folderSeparator, base)
-	}
-	return fmt.Sprintf("%s%s%s%s%s", root, folderSeparator, folderIcon, folderSeparator, base)
+	return buffer.String()
 }
 
 func (pt *path) getFullPath() string {
@@ -205,29 +207,6 @@ func (pt *path) getFolderPath() string {
 	pwd := pt.getPwd()
 	pwd = base(pwd, pt.env)
 	return pt.replaceFolderSeparators(pwd)
-}
-
-func (pt *path) getShortenedPath() string {
-	var buffer strings.Builder
-	pathSeparator := pt.env.getPathSeperator()
-	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
-	folderIcon := pt.props.getString(FolderIcon, "..")
-	maxPathDepth := pt.props.getInt(MaxDepth, 2)
-	pwd := pt.getPwd()
-	splitted := strings.Split(pwd, pt.env.getPathSeperator())
-	length := len(splitted)
-	if length <= 1 {
-		return pt.rootLocation()
-	}
-	if maxPathDepth < 1 || length <= maxPathDepth + 1 {
-		return pt.replaceFolderSeparators(pwd)
-	}
-	buffer.WriteString(fmt.Sprintf("%s%s%s", splitted[0], folderSeparator, folderIcon))
-	splitPos := length - maxPathDepth
-	for i := splitPos; i < length; i++ {
-		buffer.WriteString(fmt.Sprintf("%s%s", folderSeparator, splitted[i]))
-	}
-	return buffer.String()
 }
 
 func (pt *path) getPwd() string {

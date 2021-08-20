@@ -1559,7 +1559,12 @@
                     "type": "string",
                     "title": "units",
                     "description": "Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit). Default is standard",
-                    "default": "standard"
+                    "default": "standard",
+                    "enum": [
+                      "standard",
+                      "metric",
+                      "imperial"
+                    ]
                   },
                   "enable_hyperlink": {
                     "$ref": "#/definitions/enable_hyperlink"

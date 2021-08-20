@@ -41,6 +41,6 @@ The free tier for *Current weather and forecasts collection* is sufficient.
                         Formatted as <City,STATE,COUNTRY_CODE>. City name, state code and country code divided by comma.
                         Please, refer to ISO 3166 for the state codes or country codes - defaults to `DE BILT,NL`
 - units: `string` - Units of measurement.
+                    Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`
 - enable_hyperlink: `bool` - Displays an hyperlink to get openweathermap data
 - http_timeout: `int` - The default timeout for http request is 20ms.
-Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`

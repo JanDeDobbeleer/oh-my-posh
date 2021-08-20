@@ -38,6 +38,7 @@ Display the current path.
 - mixed_threshold: `number` - the maximum length of a path segment that will be displayed when using `Mixed` -
   defaults to `4`
 - stack_count_enabled: `boolean` - displays the stack count when using pushd/popd - defaults to `false`
+- max_depth: `number` - maximum path depth to display before shortening when using `Agnoster Short` - defaults to `1`
 
 ## Mapped Locations
 
@@ -82,7 +83,8 @@ Renders each folder name separated by the `folder_separator_icon`.
 
 ### Agnoster Short
 
-When more than 1 level deep, it renders one `folder_icon` followed by the name of the current folder separated by the `folder_separator_icon`.
+When more than `max_depth` levels deep, it renders one `folder_icon` followed by the names of the last `max_depth` folders,
+separated by the `folder_separator_icon`.
 
 ### Full
 

@@ -282,6 +282,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		FolderSeparatorIcon string
 		Style               string
 		GOOS                string
+		MaxDepth            int
 	}{
 		{Style: AgnosterFull, Expected: "usr > location > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeperator: "/", FolderSeparatorIcon: " > "},
 		{Style: AgnosterShort, Expected: "usr > .. > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
@@ -290,6 +291,48 @@ func TestAgnosterPathStyles(t *testing.T) {
 		{Style: AgnosterShort, Expected: "C:", HomePath: homeBillWindows, Pwd: "C:", PathSeperator: "\\", FolderSeparatorIcon: " > "},
 		{Style: AgnosterShort, Expected: "", HomePath: homeBillWindows, Pwd: "/", PathSeperator: "/", FolderSeparatorIcon: " > "},
 		{Style: AgnosterShort, Expected: "foo", HomePath: homeBillWindows, Pwd: "/foo", PathSeperator: "/", FolderSeparatorIcon: " > "},
+
+		{Style: AgnosterShort, Expected: "usr > .. > bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2},
+		{Style: AgnosterShort, Expected: "usr > foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 3},
+		{Style: AgnosterShort, Expected: "~ > .. > bar > man", HomePath: "/usr/home", Pwd: "/usr/home/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2},
+		{Style: AgnosterShort, Expected: "~ > foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/home/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 3},
+
+		{
+			Style:               AgnosterShort,
+			Expected:            "C: > .. > bar > man",
+			HomePath:            homeBillWindows,
+			Pwd:                 "C:\\usr\\foo\\bar\\man",
+			PathSeperator:       "\\",
+			FolderSeparatorIcon: " > ",
+			MaxDepth:            2,
+		},
+		{
+			Style:               AgnosterShort,
+			Expected:            "C: > .. > foo > bar > man",
+			HomePath:            homeBillWindows,
+			Pwd:                 "C:\\usr\\foo\\bar\\man",
+			PathSeperator:       "\\",
+			FolderSeparatorIcon: " > ",
+			MaxDepth:            3,
+		},
+		{
+			Style:               AgnosterShort,
+			Expected:            "~ > .. > bar > man",
+			HomePath:            homeBillWindows,
+			Pwd:                 "C:\\Users\\Bill\\foo\\bar\\man",
+			PathSeperator:       "\\",
+			FolderSeparatorIcon: " > ",
+			MaxDepth:            2,
+		},
+		{
+			Style:               AgnosterShort,
+			Expected:            "~ > foo > bar > man",
+			HomePath:            homeBillWindows,
+			Pwd:                 "C:\\Users\\Bill\\foo\\bar\\man",
+			PathSeperator:       "\\",
+			FolderSeparatorIcon: " > ",
+			MaxDepth:            3,
+		},
 
 		{Style: AgnosterFull, Expected: "PSDRIVE: | src", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src", PathSeperator: "/", FolderSeparatorIcon: " | "},
 		{Style: AgnosterShort, Expected: "PSDRIVE: | .. | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeperator: "/", FolderSeparatorIcon: " | "},
@@ -318,6 +361,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 				values: map[Property]interface{}{
 					FolderSeparatorIcon: tc.FolderSeparatorIcon,
 					Style:               tc.Style,
+					MaxDepth:            tc.MaxDepth,
 				},
 			},
 		}

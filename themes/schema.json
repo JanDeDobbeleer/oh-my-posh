@@ -1232,6 +1232,12 @@
                     "title": "Mapped Locations",
                     "description": "Custom glyph/text for specific paths",
                     "default": {}
+                  },
+                  "max_depth": {
+                    "type": "integer",
+                    "title": "Maximum Depth",
+                    "description": "Maximum path depth to display whithout shortening",
+                    "default": 1
                   }
                 },
                 "mapped_locations_enabled": {

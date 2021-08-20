@@ -45,6 +45,8 @@ const (
 	MappedLocationsEnabled Property = "mapped_locations_enabled"
 	// StackCountEnabled enables the stack count display
 	StackCountEnabled Property = "stack_count_enabled"
+	// Maximum path depth to display whithout shortening
+	MaxDepth Property = "max_depth"
 )
 
 func (pt *path) enabled() bool {
@@ -174,20 +176,28 @@ func (pt *path) getAgnosterFullPath() string {
 }
 
 func (pt *path) getAgnosterShortPath() string {
+	pwd := pt.getPwd()
+	pathDepth := pt.pathDepth(pwd)
+	maxDepth := pt.props.getInt(MaxDepth, 1)
+	if maxDepth < 1 {
+		maxDepth = 1
+	}
+	if pathDepth <= maxDepth {
+		return pt.getAgnosterFullPath()
+	}
 	pathSeparator := pt.env.getPathSeperator()
 	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
 	folderIcon := pt.props.getString(FolderIcon, "..")
 	root := pt.rootLocation()
-	pwd := pt.getPwd()
-	base := base(pwd, pt.env)
-	pathDepth := pt.pathDepth(pwd)
-	if pathDepth <= 0 {
-		return root
+	splitted := strings.Split(pwd, pathSeparator)
+	fullPathDepth := len(splitted)
+	splitPos := fullPathDepth - maxDepth
+	var buffer strings.Builder
+	buffer.WriteString(fmt.Sprintf("%s%s%s", root, folderSeparator, folderIcon))
+	for i := splitPos; i < fullPathDepth; i++ {
+		buffer.WriteString(fmt.Sprintf("%s%s", folderSeparator, splitted[i]))
 	}
-	if pathDepth == 1 {
-		return fmt.Sprintf("%s%s%s", root, folderSeparator, base)
-	}
-	return fmt.Sprintf("%s%s%s%s%s", root, folderSeparator, folderIcon, folderSeparator, base)
+	return buffer.String()
 }
 
 func (pt *path) getFullPath() string {

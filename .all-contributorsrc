@@ -613,6 +613,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "hanskokx",
+      "name": "Hans Kokx",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1911919?v=4",
+      "profile": "https://github.com/hanskokx",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

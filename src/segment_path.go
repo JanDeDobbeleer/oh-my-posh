@@ -45,7 +45,7 @@ const (
 	MappedLocationsEnabled Property = "mapped_locations_enabled"
 	// StackCountEnabled enables the stack count display
 	StackCountEnabled Property = "stack_count_enabled"
-	// Maximum path depth to display whithout shortening
+	// MaxDepth Maximum path depth to display whithout shortening
 	MaxDepth Property = "max_depth"
 )
 

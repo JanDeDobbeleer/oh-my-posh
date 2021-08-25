@@ -57,6 +57,7 @@ type environmentInfo interface {
 	hasFilesInDir(dir, pattern string) bool
 	hasFolder(folder string) bool
 	getFileContent(file string) string
+	getFoldersList(path string) []string
 	getPathSeperator() string
 	getCurrentUser() string
 	isRunningAsRoot() bool
@@ -217,6 +218,21 @@ func (env *environment) getFileContent(file string) string {
 		return ""
 	}
 	return string(content)
+}
+
+func (env *environment) getFoldersList(path string) []string {
+	defer env.tracer.trace(time.Now(), "getFoldersList", path)
+	content, err := os.ReadDir(path)
+	if err != nil {
+		return nil
+	}
+	var folderNames []string
+	for _, s := range content {
+		if s.IsDir() {
+			folderNames = append(folderNames, s.Name())
+		}
+	}
+	return folderNames
 }
 
 func (env *environment) getPathSeperator() string {

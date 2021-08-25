@@ -49,6 +49,11 @@ func (env *MockedEnvironment) getFileContent(file string) string {
 	return args.String(0)
 }
 
+func (env *MockedEnvironment) getFoldersList(path string) []string {
+	args := env.Called(path)
+	return args.Get(0).([]string)
+}
+
 func (env *MockedEnvironment) getPathSeperator() string {
 	args := env.Called(nil)
 	return args.String(0)

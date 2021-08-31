@@ -622,6 +622,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "alchatti",
+      "name": "Majed Al-Chatti",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9209306?v=4",
+      "profile": "http://alchatti.com",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

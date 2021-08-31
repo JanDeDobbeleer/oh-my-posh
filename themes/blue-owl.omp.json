@@ -28,21 +28,21 @@
         {
           "type": "path",
           "style": "diamond",
-          "leading_diamond": "<transparent,#01579B></>",
+          "leading_diamond": "<transparent,#01579B>\uE0B0</>",
           "trailing_diamond": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#01579B",
           "properties": {
             "home_icon": "\uF7DB",
             "folder_icon": "",
-            "folder_separator_icon": "<transparent> \ue0bd </>",
+            "folder_separator_icon": "<transparent> \uE0BD </>",
             "style": "agnoster_short"
           }
         },
         {
           "type": "git",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#000000",
           "background": "#00C853",
           "properties": {
@@ -58,7 +58,7 @@
         {
           "type": "executiontime",
           "style": "diamond",
-          "leading_diamond": "<transparent,#49404f></>",
+          "leading_diamond": "<transparent,#49404f>\uE0B0</>",
           "trailing_diamond": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#49404f",
@@ -71,11 +71,11 @@
         {
           "type": "exit",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#910000",
           "properties": {
-            "prefix": "<transparent> </> "
+            "prefix": "<transparent> \uF12A</> "
           }
         }
       ]
@@ -88,7 +88,7 @@
           "type": "session",
           "style": "diamond",
           "trailing_diamond": "",
-          "leading_diamond": "",
+          "leading_diamond": "\uE0C5",
           "foreground": "#43CCEA",
           "background": "#29315A",
           "properties": {
@@ -104,7 +104,7 @@
           "background": "#29315A",
           "properties": {
             "time_format": "15:04:05",
-            "prefix": "<transparent>  </>"
+            "prefix": "<transparent> \uE0BA\uE0BC </>"
           }
         }
       ]

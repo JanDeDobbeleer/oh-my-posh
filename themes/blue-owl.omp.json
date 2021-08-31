@@ -34,7 +34,7 @@
           "background": "#01579B",
           "properties": {
             "home_icon": "\uF7DB",
-            "folder_icon": "",
+            "folder_icon": "\uF6D7",
             "folder_separator_icon": "<transparent> \uE0BD </>",
             "style": "agnoster_short"
           }

@@ -97,6 +97,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://wittig.dev"><img src="https://avatars.githubusercontent.com/u/1031515?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Timothy Wittig</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=iarejenius" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/Descalon"><img src="https://avatars.githubusercontent.com/u/1098500?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Nico Glas</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Descalon" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/hanskokx"><img src="https://avatars.githubusercontent.com/u/1911919?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Hans Kokx</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=hanskokx" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://alchatti.com"><img src="https://avatars.githubusercontent.com/u/9209306?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Majed Al-Chatti</b></sub></a><br /><a href="#design-alchatti" title="Design">🎨</a></td>
   </tr>
 </table>
 

@@ -9,7 +9,7 @@ if [[ ! -d "/tmp" ]]; then
   TIMER_START="${HOME}/.${USER}.start.$$"
 fi
 
- PS0='$(::OMP:: --millis > $TIMER_START)'
+ PS0='$(::OMP:: --millis > "$TIMER_START")'
 
 function _omp_hook() {
     local ret=$?

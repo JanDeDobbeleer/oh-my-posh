@@ -6,7 +6,7 @@ sidebar_label: Command
 
 ## What
 
-:::info Powershell
+:::caution Powershell
 While powerful, it tends to take a lot of time executing the command on **Powershell**.
 Even with `–noprofile` it's noticeably slower compared to `sh`. It's advised to look at using
 [environment variables][env] when using Powershell.

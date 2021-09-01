@@ -8,7 +8,7 @@ sidebar_label: Terraform
 
 Display the currently active Terraform Workspace name.
 
-:::info
+:::caution
 This requires a terraform binary in your PATH and will only show in directories that contain a `.terraform` subdirectory
 :::
 

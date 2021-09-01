@@ -1,6 +1,6 @@
 module github.com/jandedobbeleer/oh-my-posh
 
-go 1.16
+go 1.17
 
 require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
@@ -33,6 +33,27 @@ require (
 	golang.org/x/text v0.3.6
 	gopkg.in/ini.v1 v1.62.0
 	howett.net/plist v0.0.0-20201203080718-1454fab16a06 // indirect
+)
+
+require (
+	github.com/Masterminds/goutils v1.1.1 // indirect
+	github.com/Masterminds/semver/v3 v3.1.1 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/go-ole/go-ole v1.2.5 // indirect
+	github.com/imdario/mergo v0.3.12 // indirect
+	github.com/json-iterator/go v1.1.11 // indirect
+	github.com/mattn/go-isatty v0.0.13 // indirect
+	github.com/mitchellh/go-homedir v1.1.0 // indirect
+	github.com/mitchellh/reflectwalk v1.0.2 // indirect
+	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/shopspring/decimal v1.2.0 // indirect
+	github.com/spf13/cast v1.3.1 // indirect
+	github.com/tklauser/numcpus v0.2.3 // indirect
+	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
 replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-2

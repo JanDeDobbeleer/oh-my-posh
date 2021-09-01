@@ -80,22 +80,40 @@ func (d *owm) setStatus() error {
 	d.temperature = q.temperature.Value
 	icon := ""
 	switch q.Data[0].TypeID {
+	case "01n":
+		fallthrough
 	case "01d":
 		icon = "\ufa98"
+	case "02n":
+		fallthrough
 	case "02d":
 		icon = "\ufa94"
+	case "03n":
+		fallthrough
 	case "03d":
 		icon = "\ue33d"
+	case "04n":
+		fallthrough
 	case "04d":
 		icon = "\ue312"
+	case "09n":
+		fallthrough
 	case "09d":
 		icon = "\ufa95"
+	case "10n":
+		fallthrough
 	case "10d":
 		icon = "\ue308"
+	case "11n":
+		fallthrough
 	case "11d":
 		icon = "\ue31d"
+	case "13n":
+		fallthrough
 	case "13d":
 		icon = "\ue31a"
+	case "50n":
+		fallthrough
 	case "50d":
 		icon = "\ue313"
 	}

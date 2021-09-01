@@ -66,48 +66,94 @@ func TestOWMSegmentIcons(t *testing.T) {
 		ExpectedIconString string
 	}{
 		{
-			Case:               "Sunny Display",
+			Case:               "Sunny Display day",
 			IconID:             "01d",
 			ExpectedIconString: "\ufa98",
 		},
 		{
-			Case:               "Light clouds Display",
+			Case:               "Light clouds Display day",
 			IconID:             "02d",
 			ExpectedIconString: "\ufa94",
 		},
 		{
-			Case:               "Cloudy Display",
+			Case:               "Cloudy Display day",
 			IconID:             "03d",
 			ExpectedIconString: "\ue33d",
 		},
 		{
-			Case:               "Broken Clouds Display",
+			Case:               "Broken Clouds Display day",
 			IconID:             "04d",
 			ExpectedIconString: "\ue312",
 		},
 		{
-			Case:               "Shower Rain Display",
+			Case:               "Shower Rain Display day",
 			IconID:             "09d",
 			ExpectedIconString: "\ufa95",
 		},
 		{
-			Case:               "Rain Display",
+			Case:               "Rain Display day",
 			IconID:             "10d",
 			ExpectedIconString: "\ue308",
 		},
 		{
-			Case:               "Thunderstorm Display",
+			Case:               "Thunderstorm Display day",
 			IconID:             "11d",
 			ExpectedIconString: "\ue31d",
 		},
 		{
-			Case:               "Snow Display",
+			Case:               "Snow Display day",
 			IconID:             "13d",
 			ExpectedIconString: "\ue31a",
 		},
 		{
-			Case:               "Fog Display",
+			Case:               "Fog Display day",
 			IconID:             "50d",
+			ExpectedIconString: "\ue313",
+		},
+
+		{
+			Case:               "Sunny Display night",
+			IconID:             "01n",
+			ExpectedIconString: "\ufa98",
+		},
+		{
+			Case:               "Light clouds Display night",
+			IconID:             "02n",
+			ExpectedIconString: "\ufa94",
+		},
+		{
+			Case:               "Cloudy Display night",
+			IconID:             "03n",
+			ExpectedIconString: "\ue33d",
+		},
+		{
+			Case:               "Broken Clouds Display night",
+			IconID:             "04n",
+			ExpectedIconString: "\ue312",
+		},
+		{
+			Case:               "Shower Rain Display night",
+			IconID:             "09n",
+			ExpectedIconString: "\ufa95",
+		},
+		{
+			Case:               "Rain Display night",
+			IconID:             "10n",
+			ExpectedIconString: "\ue308",
+		},
+		{
+			Case:               "Thunderstorm Display night",
+			IconID:             "11n",
+			ExpectedIconString: "\ue31d",
+		},
+		{
+			Case:               "Snow Display night",
+			IconID:             "13n",
+			ExpectedIconString: "\ue31a",
+		},
+		{
+			Case:               "Fog Display night",
+			IconID:             "50n",
 			ExpectedIconString: "\ue313",
 		},
 	}

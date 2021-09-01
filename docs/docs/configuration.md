@@ -37,7 +37,7 @@ To set this configuration in combination with a Oh My Posh [executable][releases
 set a path to a JSON file containing the above code. The `--shell universal` flag is used to print the prompt without
 escape characters to see the prompt as it would be shown inside a prompt function for your shell.
 
-:::info
+:::caution
 The command below will not persist the configuration for your shell but print the prompt in your terminal.
 If you want to use your own configuration permanently, adjust the prompt configuration to use your custom
 theme.

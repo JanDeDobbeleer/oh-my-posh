@@ -8,7 +8,7 @@ require (
 	github.com/StackExchange/wmi v1.2.1 // indirect
 	github.com/alecthomas/assert v0.0.0-20170929043011-405dbfeb8e38
 	github.com/alecthomas/colour v0.1.0 // indirect
-	github.com/alecthomas/repr v0.0.0-20210301060118-828286944d6a // indirect
+	github.com/alecthomas/repr v0.0.0-20210801044451-80ca428c5142 // indirect
 	github.com/distatus/battery v0.10.0
 	github.com/esimov/stackblur-go v1.0.0
 	github.com/fogleman/gg v1.3.0
@@ -21,15 +21,15 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.1
 	github.com/sergi/go-diff v1.2.0 // indirect
-	github.com/shirou/gopsutil v3.21.7+incompatible
+	github.com/shirou/gopsutil v3.21.8+incompatible
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
-	github.com/tklauser/go-sysconf v0.3.7 // indirect
+	github.com/tklauser/go-sysconf v0.3.9 // indirect
 	github.com/wayneashleyberry/terminal-dimensions v1.0.0
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
-	golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e
+	golang.org/x/sys v0.0.0-20210816074244-15123e1e1f71
 	golang.org/x/text v0.3.6
 	gopkg.in/ini.v1 v1.62.0
 	howett.net/plist v0.0.0-20201203080718-1454fab16a06 // indirect
@@ -49,8 +49,8 @@ require (
 	github.com/modern-go/reflect2 v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/shopspring/decimal v1.2.0 // indirect
-	github.com/spf13/cast v1.3.1 // indirect
-	github.com/tklauser/numcpus v0.2.3 // indirect
+	github.com/spf13/cast v1.4.1 // indirect
+	github.com/tklauser/numcpus v0.3.0 // indirect
 	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect

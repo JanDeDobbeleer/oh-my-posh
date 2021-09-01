@@ -6,14 +6,14 @@ PackageName: Oh My Posh
 License: GPL
 ShortDescription: Prompt theme engine for any shell
 Tags:
-- "Console"
-- "Command-Line"
-- "Shell"
-- "Command-Prompt"
-- "PowerShell"
-- "WSL"
-- "Developer-Tools"
-- "Utilities"
+- "console"
+- "command-line"
+- "shell"
+- "command-prompt"
+- "powershell"
+- "wsl"
+- "developer-tools"
+- "utilities"
 - "cli"
 - "cmd"
 - "ps"

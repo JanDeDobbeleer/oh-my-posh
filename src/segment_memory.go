@@ -22,8 +22,10 @@ func (n *memory) enabled() bool {
 }
 
 func (n *memory) string() string {
-	newText := strconv.FormatFloat(100.0/float64(n.TotalMemory)*float64(n.TotalMemory-n.FreeMemory), 'f', n.props.getInt(Precision, 0), 64)
-	return newText
+	// 100.0 / total * used
+	percentage := 100.0 / float64(n.TotalMemory) * float64(n.TotalMemory-n.FreeMemory)
+	text := strconv.FormatFloat(percentage, 'f', n.props.getInt(Precision, 0), 64)
+	return text
 }
 
 func (n *memory) init(props *properties, env environmentInfo) {

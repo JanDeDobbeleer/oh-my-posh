@@ -57,6 +57,7 @@ module.exports = {
         "text",
         "time",
         "ytm",
+        "memory",
       ],
     },
     {

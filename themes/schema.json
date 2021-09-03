@@ -168,7 +168,8 @@
             "crystal",
             "dart",
             "rust",
-            "owm"
+            "owm",
+            "memory"
           ]
         },
         "style": {
@@ -1636,6 +1637,29 @@
           "then": {
             "title": "Posh-Git Segment",
             "description": "https://ohmyposh.dev/docs/poshgit"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "memory" }
+            }
+          },
+          "then": {
+            "title": "Get used memory percentage",
+            "description": "https://ohmyposh.dev/docs/memory",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "precision": {
+                    "type": "integer",
+                    "title": "Precision",
+                    "description": "number of decimal places to show",
+                    "default": 0
+                  }
+                }
+              }
+            }
           }
         }
       ]

@@ -123,6 +123,8 @@ const (
 	Rust SegmentType = "rust"
 	// OWM writes the weather coming from openweatherdata
 	OWM SegmentType = "owm"
+	// Memory writes used memory percentage
+	Memory SegmentType = "memory"
 )
 
 func (segment *Segment) string() string {
@@ -264,6 +266,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Dart:          &dart{},
 		Nbgv:          &nbgv{},
 		Rust:          &rust{},
+		Memory:        &memory{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

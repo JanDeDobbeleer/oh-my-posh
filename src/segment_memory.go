@@ -3,7 +3,7 @@ package main
 import (
 	"strconv"
 
-	mem "github.com/pbnjay/memory"
+	mem "github.com/jan0660/memory"
 )
 
 type memory struct {
@@ -14,10 +14,19 @@ type memory struct {
 }
 
 const (
+	// Precision number of decimal places to show
 	Precision Property = "precision"
+	// UseAvailable if available memory should be used instead of free on Linux
+	UseAvailable Property = "use_available"
+	// MemoryType either physical or swap
+	MemoryType Property = "memory_type"
 )
 
 func (n *memory) enabled() bool {
+	if n.TotalMemory == 0 || n.FreeMemory == 0 {
+		// failed to get memory information
+		return false
+	}
 	return true
 }
 
@@ -31,6 +40,15 @@ func (n *memory) string() string {
 func (n *memory) init(props *properties, env environmentInfo) {
 	n.props = props
 	n.env = env
-	n.TotalMemory = mem.TotalMemory()
-	n.FreeMemory = mem.FreeMemory()
+	if props.getString(MemoryType, "physical") == "physical" {
+		n.TotalMemory = mem.TotalMemory()
+		if props.getBool(UseAvailable, true) {
+			n.FreeMemory = mem.AvailableMemory()
+			return
+		}
+		n.FreeMemory = mem.FreeMemory()
+		return
+	}
+	n.TotalMemory = mem.TotalSwap()
+	n.FreeMemory = mem.FreeSwap()
 }

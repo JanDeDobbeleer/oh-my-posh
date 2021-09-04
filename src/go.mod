@@ -18,9 +18,9 @@ require (
 	github.com/gookit/config/v2 v2.0.25
 	github.com/gookit/goutil v0.3.15 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
+	github.com/jan0660/memory v0.1.2
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.1
-	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/shirou/gopsutil v3.21.8+incompatible
 	github.com/smartystreets/goconvey v1.6.4 // indirect

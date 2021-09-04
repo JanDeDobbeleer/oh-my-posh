@@ -20,6 +20,7 @@ require (
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.1
+	github.com/pbnjay/memory v0.0.0-20210728143218-7b4eea64cf58
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/shirou/gopsutil v3.21.8+incompatible
 	github.com/smartystreets/goconvey v1.6.4 // indirect

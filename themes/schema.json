@@ -570,6 +570,12 @@
                     "description": "Display the stash count or not",
                     "default": false
                   },
+                  "display_worktree_count": {
+                    "type": "boolean",
+                    "title": "Display Worktree Count",
+                    "description": "Display the worktree count or not",
+                    "default": false
+                  },
                   "status_separator_icon": {
                     "type": "string",
                     "title": "Status Separator Icon",
@@ -592,7 +598,13 @@
                     "type": "string",
                     "title": "Stash Count Icon",
                     "description": "The icon to display before the stash context",
-                    "default": "\uF692"
+                    "default": "\uF692 "
+                  },
+                  "worktree_count_icon": {
+                    "type": "string",
+                    "title": "Worktree Count Icon",
+                    "description": "The icon to display before the worktree context",
+                    "default": "\uF1bb "
                   },
                   "commit_icon": {
                     "type": "string",

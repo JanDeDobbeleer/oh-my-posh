@@ -1,0 +1,84 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#BF231D"
+        },
+        {
+          "type": "os",
+          "style": "plain",
+          "background": "#0A703E",
+          "foreground": "#ffffff",
+          "properties": {
+            "wsl": "",
+            "wsl_separator": "",
+            "prefix": " ",
+            "postfix": " "
+
+          }
+        },
+        {
+          "type": "session",
+          "style": "plain",
+          "background": "#0A703E",
+          "foreground": "#ffffff",
+          "properties": {
+            "display_host": false,
+            "prefix": "",
+            "postfix": " "
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#256C9D",
+          "properties": {
+            "max_depth": 2,
+            "folder_icon": "\uF115",
+            "folder_separator_icon": " \uE0B1 ",
+            "style": "agnoster_short",
+            "postfix": " "
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#256C9D",
+          "properties": {
+            "branch_max_length": 30,
+            "display_stash_count": false,
+            "display_upstream_icon": true,
+            "display_status": true,
+            "status_colors_enabled": false,
+            "color_background": true,
+            "local_changes_color": "#ffffff",
+            "working_color": "#ffffff",
+            "staging_color": "#ffffff",
+            "ahead_color": "#ffffff",
+            "behind_color": "#ffffff",
+            "prefix": "[ ",
+            "postfix": " ]"
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#256C9D",
+          "properties": {
+            "prefix": "",
+            "text": "\uE0B0"
+          }
+        }
+      ]
+    }
+  ]
+}

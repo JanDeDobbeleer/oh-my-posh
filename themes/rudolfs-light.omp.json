@@ -1,0 +1,81 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "root",
+          "style": "plain",
+          "background": "#E0E0E0",
+          "foreground": "#BF231D"
+        },
+        {
+          "type": "os",
+          "style": "plain",
+          "background": "#E0E0E0",
+          "foreground": "#EF7D00",
+          "properties": {
+            "wsl": "",
+            "wsl_separator": "",
+            "prefix": " ",
+            "postfix": " "
+
+          }
+        },
+        {
+          "type": "session",
+          "style": "plain",
+          "background": "#E0E0E0",
+          "foreground": "#424242",
+          "properties": {
+            "display_host": false,
+            "prefix": "",
+            "postfix": ""
+          }
+        },        
+        {
+          "type": "git",
+          "style": "plain",
+          "background": "#E0E0E0",
+          "foreground": "#424242",
+          "properties": {
+            "display_stash_count": false,
+            "branch_max_length": 30,
+            "display_upstream_icon": true,
+            "display_status": true,
+            "status_colors_enabled": true,
+            "color_background": false,
+            "local_changes_color": "#053F22",
+            "working_color": "#BD6200",
+            "staging_color": "#053F22",
+            "ahead_color": "#0A703E",
+            "behind_color": "#0A703E",
+            "prefix": " [",
+            "postfix": "] "
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "background": "#E0E0E0",
+          "foreground": "#424242",
+          "properties": {
+            "style": "full",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#E0E0E0",
+          "properties": {
+            "prefix": "",
+            "text": "\uE0B0"
+          }
+        }
+      ]
+    }
+  ]
+}

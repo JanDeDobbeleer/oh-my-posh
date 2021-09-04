@@ -1668,6 +1668,19 @@
                     "title": "Precision",
                     "description": "number of decimal places to show",
                     "default": 0
+                  },
+                  "use_available": {
+                    "type": "boolean",
+                    "title": "Use available memory",
+                    "description": "whether to use available or free memory on Linux",
+                    "default": true
+                  },
+                  "memory_type": {
+                    "type": "string",
+                    "enum": ["physical", "swap"],
+                    "title": "Memory type",
+                    "description": "whether to show physical or swap memory",
+                    "default": "physical"
                   }
                 }
               }

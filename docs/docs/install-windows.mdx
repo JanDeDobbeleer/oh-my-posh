@@ -22,6 +22,7 @@ While Oh My Posh works on the standard terminal, we advise using the [Windows Te
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
+    { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
 <TabItem value="winget">
@@ -58,6 +59,27 @@ referencing them as such
 will always keep them compatible with the binary when updating Oh My Posh.
 
 </TabItem>
+<TabItem value="chocolatey">
+
+:::info
+The chocolatey package is managed by [Curtis Carter][cc]. In case of problems, please create an issue [here][cc-choco].
+:::
+
+```powershell
+choco install oh-my-posh
+```
+
+This installs a couple of things:
+
+- `oh-my-posh.exe` - Windows executable, added to your `$PATH`
+- `oh-my-posh-wsl` - Linux executable, added to your `$PATH` for use in the WSL
+- `themes` - The latest Oh My Posh themes
+
+If you want to use a standard theme, you can find them in `~\AppData\Local\Programs\oh-my-posh\themes\`,
+referencing them as such
+will always keep them compatible with the binary when updating Oh My Posh.
+
+</TabItem>
 </Tabs>
 
 For the `$PATH` to reload, a reboot is advised.
@@ -72,6 +94,7 @@ For the `$PATH` to reload, a reboot is advised.
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
+    { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
 <TabItem value="winget">
@@ -102,6 +125,20 @@ Get-ChildItem -Path "$(scoop prefix oh-my-posh)\themes\*" -Include '*.omp.json' 
 ```
 
 </TabItem>
+<TabItem value="chocolatey">
+
+```powershell
+Get-ChildItem -Path "~\AppData\Local\Programs\oh-my-posh\themes\*" -Include '*.omp.json' | Sort-Object Name | ForEach-Object -Process {
+    $esc = [char]27
+    Write-Host ""
+    Write-Host "$esc[1m$($_.BaseName)$esc[0m"
+    Write-Host ""
+    oh-my-posh --config $($_.FullName) --pwd $PWD
+    Write-Host ""
+}
+```
+
+</TabItem>
 </Tabs>
 
 #### Update
@@ -112,6 +149,7 @@ Get-ChildItem -Path "$(scoop prefix oh-my-posh)\themes\*" -Include '*.omp.json' 
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
+    { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
 <TabItem value="winget">
@@ -128,6 +166,13 @@ scoop update oh-my-posh
 ```
 
 </TabItem>
+<TabItem value="chocolatey">
+
+```powershell
+choco upgrade oh-my-posh
+```
+
+</TabItem>
 </Tabs>
 
 ### Replace your existing prompt
@@ -138,6 +183,7 @@ scoop update oh-my-posh
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
+    { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
 <TabItem value="winget">
@@ -154,6 +200,13 @@ To use `jandedobbeleer.omp.json` for example, you can refer to it using `"$(scoo
 when setting the prompt using the `--config` flag.
 
 </TabItem>
+<TabItem value="chocolatey">
+
+You can find the themes winget installs inside the `~\AppData\Local\Programs\oh-my-posh\themes\` folder.
+To use `jandedobbeleer.omp.json` for example, you can refer to it using `~\AppData\Local\Programs\oh-my-posh\themes\jandedobbeleer.omp.json`
+when setting the prompt using the `--config` flag.
+
+</TabItem>
 </Tabs>
 
 The guides below assume you copied the theme called `jandedobbeleer.omp.json` to your user's `$HOME` folder.
@@ -165,6 +218,7 @@ Based on the installation method used, you can find this theme at the following 
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
+    { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
 <TabItem value="winget">
@@ -175,6 +229,11 @@ Based on the installation method used, you can find this theme at the following 
 <TabItem value="scoop">
 
 `"$(scoop prefix oh-my-posh)\themes\jandedobbeleer.omp.json"`
+
+</TabItem>
+<TabItem value="chocolatey">
+
+`~\AppData\Local\Programs\oh-my-posh\themes\jandedobbeleer.omp.json`
 
 </TabItem>
 </Tabs>
@@ -203,3 +262,5 @@ Inside the WSL, replace `~` with the following path: `/mnt/c/Users/<WINDOWSUSERN
 [scoop]: https://scoop.sh/
 [wt]: https://github.com/microsoft/terminal
 [powershell]: https://www.powershellgallery.com/packages/oh-my-posh
+[cc]: https://github.com/digitalcoyote
+[cc-choco]: https://github.com/digitalcoyote/chocolatey-packages/tree/master/oh-my-posh

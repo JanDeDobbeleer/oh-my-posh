@@ -219,6 +219,9 @@ func (e *engine) renderTooltip(tip string) string {
 }
 
 func (e *engine) renderTransientPrompt() string {
+	if e.config.TransientPrompt == nil {
+		return ""
+	}
 	promptTemplate := e.config.TransientPrompt.Template
 	if len(promptTemplate) == 0 {
 		promptTemplate = "{{ .Shell }}> "

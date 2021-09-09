@@ -46,7 +46,11 @@ const (
 	DefaultHTTPTimeout = 20
 )
 
-func printConfigError(err error) {
+func printConfigError(err error, eval bool) {
+	if eval {
+		fmt.Println("echo \"Oh My Posh Error:\n\"", err.Error())
+		return
+	}
 	fmt.Println("Oh My Posh Error:\n", err.Error())
 }
 
@@ -62,11 +66,12 @@ func GetConfig(env environmentInfo) *Config {
 func loadConfig(env environmentInfo) (*Config, error) {
 	var cfg Config
 	configFile := *env.getArgs().Config
+	eval := *env.getArgs().Eval
 	if configFile == "" {
 		return nil, errors.New("NO CONFIG")
 	}
 	if _, err := os.Stat(configFile); os.IsNotExist(err) {
-		printConfigError(err)
+		printConfigError(err, eval)
 		return nil, errors.New("INVALID CONFIG PATH")
 	}
 
@@ -81,13 +86,13 @@ func loadConfig(env environmentInfo) (*Config, error) {
 
 	err := config.LoadFiles(configFile)
 	if err != nil {
-		printConfigError(err)
+		printConfigError(err, eval)
 		return nil, errors.New("UNABLE TO OPEN CONFIG")
 	}
 
 	err = config.BindStruct("", &cfg)
 	if err != nil {
-		printConfigError(err)
+		printConfigError(err, eval)
 		return nil, errors.New("INVALID CONFIG")
 	}
 
@@ -110,7 +115,7 @@ func exportConfig(configFile, format string) string {
 
 	err := config.LoadFiles(configFile)
 	if err != nil {
-		printConfigError(err)
+		printConfigError(err, false)
 		return fmt.Sprintf("INVALID CONFIG:\n\n%s", err.Error())
 	}
 
@@ -124,7 +129,7 @@ func exportConfig(configFile, format string) string {
 	buf := new(bytes.Buffer)
 	_, err = config.DumpTo(buf, format)
 	if err != nil {
-		printConfigError(err)
+		printConfigError(err, false)
 		return "UNABLE TO DUMP CONFIG"
 	}
 

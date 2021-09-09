@@ -1,5 +1,4 @@
-// +build windows
-// +build 386
+//go:build windows && 386
 
 package main
 

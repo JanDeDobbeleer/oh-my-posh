@@ -72,3 +72,7 @@ func (env *environment) getTerminalWidth() (int, error) {
 	defer env.tracer.trace(time.Now(), "getTerminalWidth")
 	return 0, errors.New("Unsupported on Windows")
 }
+
+func (env *environment) getPlatform() string {
+	return windowsPlatform
+}

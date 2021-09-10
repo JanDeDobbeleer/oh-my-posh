@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/shirou/gopsutil/host"
 	terminal "github.com/wayneashleyberry/terminal-dimensions"
 )
 
@@ -36,4 +37,9 @@ func (env *environment) getTerminalWidth() (int, error) {
 	defer env.tracer.trace(time.Now(), "getTerminalWidth")
 	width, err := terminal.Width()
 	return int(width), err
+}
+
+func (env *environment) getPlatform() string {
+	p, _, _, _ := host.PlatformInformation()
+	return p
 }

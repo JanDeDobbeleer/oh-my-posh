@@ -1,4 +1,4 @@
-module github.com/jandedobbeleer/oh-my-posh
+module oh-my-posh
 
 go 1.17
 
@@ -58,3 +58,7 @@ require (
 )
 
 replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-2
+
+replace github.com/go-ole/go-ole v1.2.5 => github.com/JanDeDobbeleer/go-ole v1.2.5-3
+
+replace github.com/shirou/gopsutil v3.21.8+incompatible => github.com/JanDeDobbeleer/gopsutil v3.21.8-3+incompatible

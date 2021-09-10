@@ -29,6 +29,7 @@ The free tier for *Current weather and forecasts collection* is sufficient.
     "location": "AMSTERDAM,NL",
     "units": "metric",
     "enable_hyperlink" : false,
+    "format": "%s (%g%s)",
     "http_timeout": 20
   }
 }
@@ -43,4 +44,6 @@ The free tier for *Current weather and forecasts collection* is sufficient.
 - units: `string` - Units of measurement.
                     Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`
 - enable_hyperlink: `bool` - Displays an hyperlink to get openweathermap data
+- format: `string` - The format string used to generate text. Defaults to `%s (%g%s)`, receiving the current weather icon,
+temperature, and temperature unit as arguments. See [the Go `fmt` docs](https://pkg.go.dev/fmt) for details.
 - http_timeout: `int` - The default timeout for http request is 20ms.

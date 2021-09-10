@@ -21,6 +21,8 @@ const (
 	LOCATION Property = "location"
 	// UNITS openweathermap units
 	UNITS Property = "units"
+	// FORMAT display format
+	FORMAT Property = "format"
 )
 
 type weather struct {
@@ -54,7 +56,9 @@ func (d *owm) string() string {
 	case "standard":
 		unitIcon = "°K" // \ufa05"
 	}
-	text := fmt.Sprintf("%s (%g%s)", d.weather, d.temperature, unitIcon)
+
+	format := d.props.getString(FORMAT, "%s (%g%s)")
+	text := fmt.Sprintf(format, d.weather, d.temperature, unitIcon)
 	if d.props.getBool(EnableHyperlink, false) {
 		text = fmt.Sprintf("[%s](%s)", text, d.url)
 	}

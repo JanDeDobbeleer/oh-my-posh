@@ -183,3 +183,52 @@ func TestOWMSegmentIcons(t *testing.T) {
 		assert.Equal(t, expectedString, o.string(), tc.Case)
 	}
 }
+
+func TestOWMSegmentFormat(t *testing.T) {
+	cases := []struct {
+		Case               string
+		Format             string
+		ExpectedString 	   string
+	}{
+		{
+			Case:               "Default format",
+			Format:             "%s (%g%s)",
+			ExpectedString:     "\ufa98 (20.02°C)",
+		},
+		{
+			Case:               "Custom format",
+			Format:             "%s - %g%s",
+			ExpectedString:     "\ufa98 - 20.02°C",
+		},
+		{
+			Case:               "Change number of digits",
+			Format:             "%s - %.0f%s",
+			ExpectedString:     "\ufa98 - 20°C",
+		},
+	}
+
+	for _, tc := range cases {
+		env := &MockedEnvironment{}
+		props := &properties{
+			values: map[Property]interface{}{
+				APIKEY:   "key",
+				LOCATION: "AMSTERDAM,NL",
+				UNITS:    "metric",
+				FORMAT:   tc.Format,
+			},
+		}
+
+		url := "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
+		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.02}}`, "01d" )
+
+		env.On("doGet", url).Return([]byte(response), nil)
+
+		o := &owm{
+			props: props,
+			env:   env,
+		}
+
+		assert.Nil(t, o.setStatus())
+		assert.Equal(t, tc.ExpectedString, o.string(), tc.Case)
+	}
+}

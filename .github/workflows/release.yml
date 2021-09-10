@@ -50,6 +50,8 @@ jobs:
           goarch: arm
         - os: windows-latest
           goarch: 386
+        - os: windows-latest
+          goarch: arm64
     runs-on: ${{ matrix.os }}
     defaults:
       run:

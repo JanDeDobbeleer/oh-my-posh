@@ -17,7 +17,6 @@ import (
 	"time"
 
 	"github.com/distatus/battery"
-	"github.com/shirou/gopsutil/host"
 	"github.com/shirou/gopsutil/process"
 )
 
@@ -261,16 +260,6 @@ func (env *environment) getHostName() (string, error) {
 func (env *environment) getRuntimeGOOS() string {
 	defer env.tracer.trace(time.Now(), "getRuntimeGOOS")
 	return runtime.GOOS
-}
-
-func (env *environment) getPlatform() string {
-	defer env.tracer.trace(time.Now(), "getPlatform")
-	if runtime.GOOS == windowsPlatform {
-		return windowsPlatform
-	}
-	p, _, _, _ := host.PlatformInformation()
-
-	return p
 }
 
 func (env *environment) runCommand(command string, args ...string) (string, error) {

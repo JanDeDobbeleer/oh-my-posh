@@ -8,6 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const URL = "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
+
 func TestOWMSegmentSingle(t *testing.T) {
 	cases := []struct {
 		Case            string
@@ -40,9 +42,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 			},
 		}
 
-		url := "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
-
-		env.On("doGet", url).Return([]byte(tc.JSONResponse), tc.Error)
+		env.On("doGet", URL).Return([]byte(tc.JSONResponse), tc.Error)
 
 		o := &owm{
 			props: props,
@@ -168,11 +168,10 @@ func TestOWMSegmentIcons(t *testing.T) {
 			},
 		}
 
-		url := "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
 		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, tc.IconID)
 		expectedString := fmt.Sprintf("%s (20°C)", tc.ExpectedIconString)
 
-		env.On("doGet", url).Return([]byte(response), nil)
+		env.On("doGet", URL).Return([]byte(response), nil)
 
 		o := &owm{
 			props: props,
@@ -186,24 +185,24 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 func TestOWMSegmentFormat(t *testing.T) {
 	cases := []struct {
-		Case               string
-		Format             string
-		ExpectedString 	   string
+		Case           string
+		Format         string
+		ExpectedString string
 	}{
 		{
-			Case:               "Default format",
-			Format:             "%s (%g%s)",
-			ExpectedString:     "\ufa98 (20.02°C)",
+			Case:           "Default format",
+			Format:         "%s (%g%s)",
+			ExpectedString: "\ufa98 (20.02°C)",
 		},
 		{
-			Case:               "Custom format",
-			Format:             "%s - %g%s",
-			ExpectedString:     "\ufa98 - 20.02°C",
+			Case:           "Custom format",
+			Format:         "%s - %g%s",
+			ExpectedString: "\ufa98 - 20.02°C",
 		},
 		{
-			Case:               "Change number of digits",
-			Format:             "%s - %.0f%s",
-			ExpectedString:     "\ufa98 - 20°C",
+			Case:           "Change number of digits",
+			Format:         "%s - %.0f%s",
+			ExpectedString: "\ufa98 - 20°C",
 		},
 	}
 
@@ -218,10 +217,9 @@ func TestOWMSegmentFormat(t *testing.T) {
 			},
 		}
 
-		url := "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
-		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.02}}`, "01d" )
+		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.02}}`, "01d")
 
-		env.On("doGet", url).Return([]byte(response), nil)
+		env.On("doGet", URL).Return([]byte(response), nil)
 
 		o := &owm{
 			props: props,

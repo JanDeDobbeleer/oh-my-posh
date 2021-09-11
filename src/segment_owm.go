@@ -3,6 +3,8 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"time"
 )
 
 type owm struct {
@@ -12,6 +14,7 @@ type owm struct {
 	weather     string
 	url         string
 	units       string
+	cachefile   string
 }
 
 const (
@@ -21,6 +24,8 @@ const (
 	LOCATION Property = "location"
 	// UNITS openweathermap units
 	UNITS Property = "units"
+	// CACHEFILE location to cache response
+	CACHEFILE Property = "cachefile"
 )
 
 type weather struct {
@@ -61,22 +66,56 @@ func (d *owm) string() string {
 	return text
 }
 
-func (d *owm) setStatus() error {
+func (d *owm) getResult() (*OWMDataResponse, error) {
 	apikey := d.props.getString(APIKEY, ".")
 	location := d.props.getString(LOCATION, "De Bilt,NL")
 	units := d.props.getString(UNITS, "standard")
 	timeout := d.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
+	cachefile := d.props.getString(CACHEFILE, "")
+
+	if cachefile != "" {
+
+		stats, err := os.Stat(cachefile)
+		if err == nil {
+			if time.Now().Sub(stats.ModTime()).Minutes() < 10 {
+				cachedData, err := os.ReadFile(cachefile)
+				if err == nil {
+					q := new(OWMDataResponse)
+					err := json.Unmarshal(cachedData, q)
+					if err == nil {
+						return q, nil
+					}
+				}
+			}
+		}
+	}
 
 	url := fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?q=%s&units=%s&appid=%s", location, units, apikey)
 	body, err := d.env.doGet(url, timeout)
 	if err != nil {
-		return err
+		return new(OWMDataResponse), err
 	}
 	q := new(OWMDataResponse)
 	err = json.Unmarshal(body, &q)
 	if err != nil {
+		return new(OWMDataResponse), err
+	}
+
+	if cachefile != "" {
+		os.WriteFile(cachefile, body, 0600)
+	}
+
+	return q, nil
+}
+
+func (d *owm) setStatus() error {
+	units := d.props.getString(UNITS, "standard")
+
+	q, err := d.getResult()
+	if err != nil {
 		return err
 	}
+
 	d.temperature = q.temperature.Value
 	icon := ""
 	switch q.Data[0].TypeID {

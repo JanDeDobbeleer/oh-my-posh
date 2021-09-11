@@ -30,6 +30,7 @@ The free tier for *Current weather and forecasts collection* is sufficient.
     "units": "metric",
     "enable_hyperlink" : false,
     "http_timeout": 20
+    "cachefile": ""
   }
 }
 ```
@@ -44,3 +45,7 @@ The free tier for *Current weather and forecasts collection* is sufficient.
                     Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`
 - enable_hyperlink: `bool` - Displays an hyperlink to get openweathermap data
 - http_timeout: `int` - The default timeout for http request is 20ms.
+- cachefile: `string` - If specified, location where weather data will be cached. 
+                        Data will be cached for 10 minutes. 
+                        This will allow you to set a higher timeout and keep your prompt responsive more often. 
+                        Read/write access to the file is required.

@@ -1568,6 +1568,12 @@
                     "description": "The apikey used for the api call (Required)",
                     "default": "."
                   },
+                  "cachefile": {
+                    "type": "string",
+                    "title": "cachefile",
+                    "description": "If specified, location where weather data will be cached. Data will be cached for 10 minutes. This will allow you to set a higher timeout and keep your prompt responsive more often. Read/write access to the file is required.",
+                    "default": ""
+                  },
                   "location": {
                     "type": "string",
                     "title": "location",

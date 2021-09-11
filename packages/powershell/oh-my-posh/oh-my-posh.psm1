@@ -19,10 +19,13 @@ function Get-PoshCommand {
         }
         return "$PSScriptRoot/bin/posh-linux-amd64"
     }
-    if ([Environment]::Is64BitOperatingSystem) {
-        return "$PSScriptRoot/bin/posh-windows-amd64.exe"
+    $arch = (Get-CimInstance -Class Win32_Processor -Property Architecture).Architecture
+    switch ($arch) {
+        0 { return "$PSScriptRoot/bin/posh-windows-386.exe" } # x86
+        5 { return "$PSScriptRoot/bin/posh-windows-arm64.exe" } # ARM
+        9 { return "$PSScriptRoot/bin/posh-windows-amd64.exe" } # x64
     }
-    return "$PSScriptRoot/bin/posh-windows-386.exe"
+    throw "Oh My Posh: Unsupported architecture: $arch"
 }
 
 function Set-ExecutablePermissions {

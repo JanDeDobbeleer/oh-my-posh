@@ -14,7 +14,6 @@ type owm struct {
 	weather     string
 	url         string
 	units       string
-	cachefile   string
 }
 
 const (
@@ -77,7 +76,7 @@ func (d *owm) getResult() (*OWMDataResponse, error) {
 
 		stats, err := os.Stat(cachefile)
 		if err == nil {
-			if time.Now().Sub(stats.ModTime()).Minutes() < 10 {
+			if time.Since(stats.ModTime()).Minutes() < 10 {
 				cachedData, err := os.ReadFile(cachefile)
 				if err == nil {
 					q := new(OWMDataResponse)
@@ -102,7 +101,10 @@ func (d *owm) getResult() (*OWMDataResponse, error) {
 	}
 
 	if cachefile != "" {
-		os.WriteFile(cachefile, body, 0600)
+		err := os.WriteFile(cachefile, body, 0600)
+		if err != nil {
+			return new(OWMDataResponse), err
+		}
 	}
 
 	return q, nil

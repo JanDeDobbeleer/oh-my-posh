@@ -29,7 +29,7 @@ The free tier for *Current weather and forecasts collection* is sufficient.
     "location": "AMSTERDAM,NL",
     "units": "metric",
     "enable_hyperlink" : false,
-    "http_timeout": 20
+    "http_timeout": 20,
     "cachefile": ""
   }
 }

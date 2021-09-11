@@ -73,7 +73,6 @@ func (d *owm) getResult() (*OWMDataResponse, error) {
 	cachefile := d.props.getString(CACHEFILE, "")
 
 	if cachefile != "" {
-
 		stats, err := os.Stat(cachefile)
 		if err == nil {
 			if time.Since(stats.ModTime()).Minutes() < 10 {

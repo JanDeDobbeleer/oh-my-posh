@@ -649,6 +649,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "asherber",
+      "name": "Aaron Sherber",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5248041?v=4",
+      "profile": "https://github.com/asherber",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

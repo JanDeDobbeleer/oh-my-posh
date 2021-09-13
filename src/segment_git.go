@@ -350,7 +350,7 @@ func (g *git) getGitHEADContext(ref string) string {
 	if g.hasGitFile("MERGE_MSG") && g.hasGitFile("MERGE_HEAD") {
 		icon := g.props.getString(MergeIcon, "\uE727 ")
 		mergeContext := g.getGitFileContents(g.repo.gitWorkingFolder, "MERGE_MSG")
-		matches := findNamedRegexMatch(`Merge branch '(?P<head>.*)' into`, mergeContext)
+		matches := findNamedRegexMatch(`Merge (remote-tracking )?branch '(?P<head>.*)' into`, mergeContext)
 		if matches != nil && matches["head"] != "" {
 			branch := g.truncateBranch(matches["head"])
 			return fmt.Sprintf("%s%s%s into %s", icon, branchIcon, branch, ref)

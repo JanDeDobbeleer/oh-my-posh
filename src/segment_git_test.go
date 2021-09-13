@@ -86,6 +86,7 @@ type detachedContext struct {
 	sequencerTodo string
 	merge         bool
 	mergeHEAD     string
+	mergeMsgStart string
 	status        string
 }
 
@@ -103,7 +104,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.On("getFileContent", "/rebase-apply/head-name").Return(context.origin)
 	env.On("getFileContent", "/CHERRY_PICK_HEAD").Return(context.cherryPickSHA)
 	env.On("getFileContent", "/REVERT_HEAD").Return(context.revertSHA)
-	env.On("getFileContent", "/MERGE_MSG").Return(fmt.Sprintf("Merge branch '%s' into %s", context.mergeHEAD, context.onto))
+	env.On("getFileContent", "/MERGE_MSG").Return(fmt.Sprintf("%s '%s' into %s", context.mergeMsgStart, context.mergeHEAD, context.onto))
 	env.On("getFileContent", "/sequencer/todo").Return(context.sequencerTodo)
 	env.On("getFileContent", "/HEAD").Return(context.branchName)
 	env.On("hasFilesInDir", "", "CHERRY_PICK_HEAD").Return(context.cherryPick)
@@ -302,8 +303,21 @@ func TestGetGitHEADContextSequencerRevertOnTag(t *testing.T) {
 func TestGetGitHEADContextMerge(t *testing.T) {
 	want := "\ue727 \ue0a0feat into \ue0a0main"
 	context := &detachedContext{
-		merge:     true,
-		mergeHEAD: "feat",
+		merge:         true,
+		mergeHEAD:     "feat",
+		mergeMsgStart: "Merge branch",
+	}
+	g := setupHEADContextEnv(context)
+	got := g.getGitHEADContext("main")
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextMergeRemote(t *testing.T) {
+	want := "\ue727 \ue0a0feat into \ue0a0main"
+	context := &detachedContext{
+		merge:         true,
+		mergeHEAD:     "feat",
+		mergeMsgStart: "Merge remote-tracking branch",
 	}
 	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("main")
@@ -313,9 +327,10 @@ func TestGetGitHEADContextMerge(t *testing.T) {
 func TestGetGitHEADContextMergeTag(t *testing.T) {
 	want := "\ue727 \ue0a0feat into \uf412v3.4.6"
 	context := &detachedContext{
-		tagName:   "v3.4.6",
-		merge:     true,
-		mergeHEAD: "feat",
+		tagName:       "v3.4.6",
+		merge:         true,
+		mergeHEAD:     "feat",
+		mergeMsgStart: "Merge branch",
 	}
 	g := setupHEADContextEnv(context)
 	got := g.getGitHEADContext("")

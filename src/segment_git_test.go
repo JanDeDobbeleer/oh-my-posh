@@ -325,6 +325,30 @@ func TestGetGitHEADContextMergeRemote(t *testing.T) {
 }
 
 func TestGetGitHEADContextMergeTag(t *testing.T) {
+	want := "\ue727 \uf412v7.8.9 into \ue0a0main"
+	context := &detachedContext{
+		merge:         true,
+		mergeHEAD:     "v7.8.9",
+		mergeMsgStart: "Merge tag",
+	}
+	g := setupHEADContextEnv(context)
+	got := g.getGitHEADContext("main")
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextMergeCommit(t *testing.T) {
+	want := "\ue727 \uf4178d7e869 into \ue0a0main"
+	context := &detachedContext{
+		merge:         true,
+		mergeHEAD:     "8d7e869",
+		mergeMsgStart: "Merge commit",
+	}
+	g := setupHEADContextEnv(context)
+	got := g.getGitHEADContext("main")
+	assert.Equal(t, want, got)
+}
+
+func TestGetGitHEADContextMergeIntoTag(t *testing.T) {
 	want := "\ue727 \ue0a0feat into \uf412v3.4.6"
 	context := &detachedContext{
 		tagName:       "v3.4.6",

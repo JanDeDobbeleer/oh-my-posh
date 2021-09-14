@@ -658,6 +658,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "SeanKilleen",
+      "name": "Sean Killeen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2148318?v=4",
+      "profile": "http://SeanKilleen.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -220,6 +220,19 @@ func (pt *path) getPwd() string {
 	return pwd
 }
 
+func (pt *path) normalize(inputPath string) string {
+	normalized := inputPath
+	if strings.HasPrefix(inputPath, "~") {
+		normalized = pt.env.homeDir() + normalized[1:]
+	}
+	normalized = strings.ReplaceAll(normalized, "\\", "/")
+	goos := pt.env.getRuntimeGOOS()
+	if goos == windowsPlatform || goos == darwinPlatform {
+		normalized = strings.ToLower(normalized)
+	}
+	return normalized
+}
+
 func (pt *path) replaceMappedLocations(pwd string) string {
 	if strings.HasPrefix(pwd, "Microsoft.PowerShell.Core\\FileSystem::") {
 		pwd = strings.Replace(pwd, "Microsoft.PowerShell.Core\\FileSystem::", "", 1)
@@ -229,14 +242,14 @@ func (pt *path) replaceMappedLocations(pwd string) string {
 	if pt.props.getBool(MappedLocationsEnabled, true) {
 		mappedLocations["HKCU:"] = pt.props.getString(WindowsRegistryIcon, "\uF013")
 		mappedLocations["HKLM:"] = pt.props.getString(WindowsRegistryIcon, "\uF013")
-		mappedLocations[pt.env.homeDir()] = pt.props.getString(HomeIcon, "~")
+		mappedLocations[pt.normalize(pt.env.homeDir())] = pt.props.getString(HomeIcon, "~")
 	}
 
 	// merge custom locations with mapped locations
 	// mapped locations can override predefined locations
 	keyValues := pt.props.getKeyValueMap(MappedLocations, make(map[string]string))
 	for key, val := range keyValues {
-		mappedLocations[key] = val
+		mappedLocations[pt.normalize(key)] = val
 	}
 
 	// sort map keys in reverse order
@@ -250,9 +263,11 @@ func (pt *path) replaceMappedLocations(pwd string) string {
 	}
 	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
 
-	for _, value := range keys {
-		if strings.HasPrefix(pwd, value) {
-			return strings.Replace(pwd, value, mappedLocations[value], 1)
+	normalizedPwd := pt.normalize(pwd)
+	for _, key := range keys {
+		if strings.HasPrefix(normalizedPwd, key) {
+			value := mappedLocations[key]
+			return value + pwd[len(key):]
 		}
 	}
 	return pwd

@@ -48,6 +48,8 @@ jobs:
         include:
         - os: ubuntu-latest
           goarch: arm64
+        - os: ubuntu-latest
+          goarch: arm
         - os: windows-latest
           goarch: 386
         - os: windows-latest

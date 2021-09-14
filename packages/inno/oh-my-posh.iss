@@ -11,9 +11,8 @@ LicenseFile="bin\COPYING.txt"
 OutputBaseFilename=install
 
 [Files]
-Source: "bin\posh-windows-amd64.exe"; DestDir: "{app}\bin"; DestName: "oh-my-posh.exe"; Flags: 64bit
-Source: "bin\posh-windows-386.exe"; DestDir: "{app}\bin"; DestName: "oh-my-posh.exe"; Flags: 32bit
-Source: "bin\posh-linux-amd64"; DestDir: "{app}\bin"; DestName: "oh-my-posh-wsl"; Flags: 64bit
+Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"
+Source: "bin\oh-my-posh-wsl"; DestDir: "{app}\bin"
 Source: "bin\themes\*"; DestDir: "{app}\themes"
 
 [Registry]

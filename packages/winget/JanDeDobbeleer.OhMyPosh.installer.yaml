@@ -5,7 +5,11 @@ InstallModes:
 Installers:
 - Architecture: x64
   InstallerType: inno
-  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install.exe
-  InstallerSha256: <HASH>
+  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-amd64.exe
+  InstallerSha256: <HASH-AMD64>
+- Architecture: arm64
+  InstallerType: inno
+  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-arm64.exe
+  InstallerSha256: <HASH-ARM64>
 ManifestType: "installer"
 ManifestVersion: 1.0.0

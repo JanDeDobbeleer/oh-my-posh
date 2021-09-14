@@ -239,8 +239,9 @@ jobs:
     needs: [release, artifacts]
     if: ${{ needs.release.outputs.skipped == 'false' }}
     runs-on: windows-latest
-    outputs:
-      hash: ${{ steps.hash.outputs.hash_inno }}
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
     defaults:
       run:
         shell: pwsh
@@ -249,12 +250,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Build installer
-      run: ./build.ps1 -Version ${{ needs.release.outputs.version }}
+      run: ./build.ps1 -Architecture ${{ matrix.arch }}  -Version ${{ needs.release.outputs.version }}
     - name: Output Hash
       id: hash
       run: |
-        $hash = Get-Content -Path Output/install.exe.sha256
-        Write-Output "::set-output name=hash_inno::$($hash)"
+        $hash = Get-Content -Path Output/install-${{ matrix.arch }}.exe.sha256
+        Write-Output "::set-output name=hash_inno_${{ matrix.arch }}::$($hash)"
     - name: Upload Inno Installer
       id: upload-inno-installer
       uses: actions/upload-release-asset@v1
@@ -262,8 +263,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/packages/inno/Output/install.exe
-        asset_name: install.exe
+        asset_path: ${{ github.workspace }}/packages/inno/Output/install-${{ matrix.arch }}.exe
+        asset_name: install-${{ matrix.arch }}.exe
         asset_content_type: text/plain
     - name: Upload Inno Installer Hash
       id: upload-inno-installer-hash
@@ -272,8 +273,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/packages/inno/Output/install.exe.sha256
-        asset_name: install.exe.sha256
+        asset_path: ${{ github.workspace }}/packages/inno/Output/install-${{ matrix.arch }}.exe.sha256
+        asset_name: install-${{ matrix.arch }}.exe.sha256
         asset_content_type: text/plain
   winget:
     needs: [release, inno]
@@ -289,4 +290,4 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Create manifest and submit PR
-      run: ./build.ps1 -Version ${{ needs.release.outputs.version }} -Hash ${{ needs.inno.outputs.hash }} -Token $env:WINGETCREATE_TOKEN
+      run: ./build.ps1 -Version ${{ needs.release.outputs.version }} -Token $env:WINGETCREATE_TOKEN

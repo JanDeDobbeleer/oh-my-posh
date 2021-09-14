@@ -20,7 +20,7 @@ Param
 Copy-Item -Path "../../../themes" -Destination "./themes" -Recurse
 # fetch all the binaries from the version's GitHub release
 New-Item -Path "./" -Name "bin" -ItemType "directory"
-"posh-windows-amd64.exe", "posh-windows-386.exe", "posh-windows-arm64.exe", "posh-darwin-amd64", "posh-linux-amd64", "posh-linux-arm64" | ForEach-Object -Process {
+"posh-windows-amd64.exe", "posh-windows-386.exe", "posh-windows-arm64.exe", "posh-darwin-amd64", "posh-linux-amd64", "posh-linux-arm", "posh-linux-arm64" | ForEach-Object -Process {
     $download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$BinVersion/$_"
     Invoke-WebRequest $download -Out "./bin/$_"
 }

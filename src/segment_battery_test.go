@@ -25,6 +25,7 @@ func TestBatterySegmentSingle(t *testing.T) {
 		DisplayError    bool
 		Error           error
 		DisableCharging bool
+		DisableCharged  bool
 	}{
 		{Case: "80% charging", Batteries: []*battery.Battery{{Full: 100, State: battery.Charging, Current: 80}}, ExpectedString: "charging 80", ExpectedEnabled: true},
 		{Case: "battery full", Batteries: []*battery.Battery{{Full: 100, State: battery.Full, Current: 100}}, ExpectedString: "charged 100", ExpectedEnabled: true},
@@ -79,7 +80,17 @@ func TestBatterySegmentSingle(t *testing.T) {
 		{Case: "no batteries", DisplayError: true, Error: &noBatteryError{}},
 		{Case: "no batteries without error"},
 		{Case: "display charging disabled: charging", Batteries: []*battery.Battery{{Full: 100, State: battery.Charging}}, DisableCharging: true},
-		{Case: "display charging disabled: charged", Batteries: []*battery.Battery{{Full: 100, State: battery.Full}}, DisableCharging: true},
+		{Case: "display charged disabled: charged", Batteries: []*battery.Battery{{Full: 100, State: battery.Full}}, DisableCharged: true},
+		{
+			Case:            "display charging disabled/display charged enabled: charging",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Charging}},
+			DisableCharging: true,
+			DisableCharged:  false},
+		{
+			Case:            "display charged disabled/display charging enabled: charged",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Full}},
+			DisableCharged:  true,
+			DisableCharging: false},
 		{
 			Case:            "display charging disabled: discharging",
 			Batteries:       []*battery.Battery{{Full: 100, State: battery.Discharging, Current: 70}},
@@ -105,8 +116,12 @@ func TestBatterySegmentSingle(t *testing.T) {
 				DisplayError:     tc.DisplayError,
 			},
 		}
+		// default values
 		if tc.DisableCharging {
 			props.values[DisplayCharging] = false
+		}
+		if tc.DisableCharged {
+			props.values[DisplayCharged] = false
 		}
 		env.On("getBatteryInfo", nil).Return(tc.Batteries, tc.Error)
 		b := &batt{

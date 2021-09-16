@@ -367,7 +367,13 @@
                   "display_charging": {
                     "type": "boolean",
                     "title": "Display while charging",
-                    "description": "displays the battery status while charging (Charging or Full)",
+                    "description": "displays the battery status while charging (Charging)",
+                    "default": true
+                  },
+                  "display_charged": {
+                    "type": "boolean",
+                    "title": "Display when full",
+                    "description": "displays the battery status when charged (Full)",
                     "default": true
                   },
                   "template": {

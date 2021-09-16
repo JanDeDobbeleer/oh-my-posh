@@ -18,7 +18,13 @@ Show the current shell name (ZSH, powershell, bash, ...).
   "foreground": "#ffffff",
   "background": "#0077c2",
   "properties": {
-    "prefix": " \uFCB5 "
+    "custom_text": {
+      "pwsh": "PS"
+    }
   }
 }
 ```
+
+## Properties
+
+- custom_text: `object` - custom glyph/text to use in place of specified shell names (case-insensitive)

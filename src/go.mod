@@ -3,6 +3,7 @@ module oh-my-posh
 go 1.17
 
 require (
+	github.com/Azure/go-ansiterm v0.0.0-20210617225240-d185dfc1b5a1
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.2
 	github.com/StackExchange/wmi v1.2.1 // indirect

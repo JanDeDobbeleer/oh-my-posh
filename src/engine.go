@@ -33,11 +33,14 @@ func (e *engine) canWriteRPrompt() bool {
 	}
 	promptWidth := e.ansi.lenWithoutANSI(prompt)
 	availableSpace := consoleWidth - promptWidth
-	if promptWidth > consoleWidth {
-		availableSpace = promptWidth - (promptWidth % consoleWidth)
+	// spanning multiple lines
+	if availableSpace < 0 {
+		overflow := promptWidth % consoleWidth
+		availableSpace = consoleWidth - overflow
 	}
 	promptBreathingRoom := 30
-	return (availableSpace - e.ansi.lenWithoutANSI(e.rprompt)) >= promptBreathingRoom
+	canWrite := (availableSpace - e.ansi.lenWithoutANSI(e.rprompt)) >= promptBreathingRoom
+	return canWrite
 }
 
 func (e *engine) render() string {

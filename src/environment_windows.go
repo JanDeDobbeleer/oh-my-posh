@@ -3,10 +3,11 @@
 package main
 
 import (
-	"errors"
 	"os"
+	"syscall"
 	"time"
 
+	"github.com/Azure/go-ansiterm/winterm"
 	"golang.org/x/sys/windows"
 )
 
@@ -70,7 +71,16 @@ func (env *environment) isWsl() bool {
 
 func (env *environment) getTerminalWidth() (int, error) {
 	defer env.tracer.trace(time.Now(), "getTerminalWidth")
-	return 0, errors.New("Unsupported on Windows")
+	handle, err := syscall.GetStdHandle(syscall.STD_OUTPUT_HANDLE)
+	if err != nil {
+		return 0, err
+	}
+	info, err := winterm.GetConsoleScreenBufferInfo(uintptr(handle))
+	if err != nil {
+		return 0, err
+	}
+	// return int(float64(info.Size.X) * 0.57), nil
+	return int(info.Size.X), nil
 }
 
 func (env *environment) getPlatform() string {

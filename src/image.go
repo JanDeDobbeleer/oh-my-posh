@@ -28,7 +28,6 @@ import (
 	"math"
 	"strconv"
 	"strings"
-	"unicode"
 
 	"github.com/esimov/stackblur-go"
 	"github.com/fogleman/gg"
@@ -189,14 +188,30 @@ func (ir *ImageRenderer) fontHeight() float64 {
 	return float64(ir.regular.Metrics().Height >> 6)
 }
 
+func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
+	// If we're a Nerd Font code point, treat as double width
+	if ('\ue5fa' <= r && r <= '\ue62b') ||
+		('\ue700' <= r && r <= '\ue7c5') ||
+		('\uf000' <= r && r <= '\uf2e0') ||
+		('\ue200' <= r && r <= '\ue2a9') ||
+		('\uf500' <= r && r <= '\ufd46') ||
+		('\ue300' <= r && r <= '\ue3eb') ||
+		('\uf400' <= r && r <= '\uf4a8') || r == '\u2665' || r == '\u26A1' || r == '\uf27c' ||
+		r == '\ue0a3' || ('\ue0b4' <= r && r <= '\ue0c8') || r == '\ue0ca' || ('\ue0cc' <= r && r <= '\ue0d2') || r == '\ue0d4' ||
+		('\u23fb' <= r && r <= '\u23fe') || r == '\u2b58' ||
+		('\uf300' <= r && r <= '\uf313') ||
+		('\ue000' <= r && r <= '\ue00d') {
+		return 1
+	}
+	return 0
+}
+
 func (ir *ImageRenderer) calculateWidth() int {
 	longest := 0
 	for _, line := range strings.Split(ir.ansiString, "\n") {
 		length := ir.ansi.lenWithoutANSI(line)
 		for _, char := range line {
-			if char > unicode.MaxASCII {
-				length++
-			}
+			length += ir.runeAdditionalWidth(char)
 		}
 		if length > longest {
 			longest = length
@@ -326,9 +341,8 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 		}
 
 		w, h := dc.MeasureString(str)
-		if runes[0] > unicode.MaxASCII {
-			w *= 2
-		}
+		w += (w * float64(ir.runeAdditionalWidth(runes[0])))
+
 		if ir.backgroundColor != nil {
 			dc.SetRGB255(ir.backgroundColor.r, ir.backgroundColor.g, ir.backgroundColor.b)
 			dc.DrawRectangle(x, y-h, w, h+12)

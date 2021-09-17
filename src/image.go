@@ -327,7 +327,7 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 
 		w, h := dc.MeasureString(str)
 		if runes[0] > unicode.MaxASCII {
-			w *= 1.7
+			w *= 2
 		}
 		if ir.backgroundColor != nil {
 			dc.SetRGB255(ir.backgroundColor.r, ir.backgroundColor.g, ir.backgroundColor.b)

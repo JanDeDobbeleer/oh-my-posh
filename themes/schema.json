@@ -1402,7 +1402,19 @@
           },
           "then": {
             "title": "Shell Segment",
-            "description": "https://ohmyposh.dev/docs/shell"
+            "description": "https://ohmyposh.dev/docs/shell",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "custom_text": {
+                    "type": "object",
+                    "title": "Custom Text",
+                    "description": "Custom glyph/text for specific shells",
+                    "default": {}
+                  }
+                }
+              }
+            }
           }
         },
         {

@@ -18,7 +18,7 @@ Show the current shell name (ZSH, powershell, bash, ...).
   "foreground": "#ffffff",
   "background": "#0077c2",
   "properties": {
-    "custom_text": {
+    "mapped_shell_names": {
       "pwsh": "PS"
     }
   }
@@ -27,4 +27,4 @@ Show the current shell name (ZSH, powershell, bash, ...).
 
 ## Properties
 
-- custom_text: `object` - custom glyph/text to use in place of specified shell names (case-insensitive)
+- mapped_shell_names: `object` - custom glyph/text to use in place of specified shell names (case-insensitive)

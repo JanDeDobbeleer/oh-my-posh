@@ -18,7 +18,7 @@ func TestWriteCurrentShell(t *testing.T) {
 	assert.Equal(t, expected, s.string())
 }
 
-func TestUseCustomStrings(t *testing.T) {
+func TestUseMappedShellNames(t *testing.T) {
 	cases := []struct {
 		Shell    string
 		Expected string
@@ -34,7 +34,7 @@ func TestUseCustomStrings(t *testing.T) {
 			env: env,
 			props: &properties{
 				values: map[Property]interface{}{
-					CustomText: map[string]string{"pwsh": "PS"},
+					MappedShellNames: map[string]string{"pwsh": "PS"},
 				},
 			},
 		}

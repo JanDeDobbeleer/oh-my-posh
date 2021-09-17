@@ -8,8 +8,8 @@ type shell struct {
 }
 
 const (
-	// CustomText allows for custom text in place of shell names
-	CustomText Property = "custom_text"
+	// MappedShellNames allows for custom text in place of shell names
+	MappedShellNames Property = "mapped_shell_names"
 )
 
 func (s *shell) enabled() bool {
@@ -17,9 +17,9 @@ func (s *shell) enabled() bool {
 }
 
 func (s *shell) string() string {
-	customText := s.props.getKeyValueMap(CustomText, make(map[string]string))
+	mappedNames := s.props.getKeyValueMap(MappedShellNames, make(map[string]string))
 	shellName := s.env.getShellName()
-	for key, val := range customText {
+	for key, val := range mappedNames {
 		if strings.EqualFold(shellName, key) {
 			shellName = val
 			break

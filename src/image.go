@@ -28,6 +28,7 @@ import (
 	"math"
 	"strconv"
 	"strings"
+	"unicode"
 
 	"github.com/esimov/stackblur-go"
 	"github.com/fogleman/gg"
@@ -67,14 +68,14 @@ const (
 	link                = "link"
 )
 
-//go:embed font/VictorMono-Bold.ttf
-var victorMonoBold []byte
+//go:embed font/Hack-Nerd-Bold.ttf
+var hackBold []byte
 
-//go:embed font/VictorMono-Regular.ttf
-var victorMonoRegular []byte
+//go:embed font/Hack-Nerd-Regular.ttf
+var hackRegular []byte
 
-//go:embed font/VictorMono-Italic.ttf
-var victorMonoItalic []byte
+//go:embed font/Hack-Nerd-Italic.ttf
+var hackItalic []byte
 
 type RGB struct {
 	r int
@@ -135,9 +136,9 @@ func (ir *ImageRenderer) init() {
 
 	ir.cleanContent()
 
-	fontRegular, _ := truetype.Parse(victorMonoRegular)
-	fontBold, _ := truetype.Parse(victorMonoBold)
-	fontItalic, _ := truetype.Parse(victorMonoItalic)
+	fontRegular, _ := truetype.Parse(hackRegular)
+	fontBold, _ := truetype.Parse(hackBold)
+	fontItalic, _ := truetype.Parse(hackItalic)
 	fontFaceOptions := &truetype.Options{Size: f * 12, DPI: 144}
 
 	ir.defaultForegroundColor = &RGB{255, 255, 255}
@@ -192,6 +193,11 @@ func (ir *ImageRenderer) calculateWidth() int {
 	longest := 0
 	for _, line := range strings.Split(ir.ansiString, "\n") {
 		length := ir.ansi.lenWithoutANSI(line)
+		for _, char := range line {
+			if char > unicode.MaxASCII {
+				length++
+			}
+		}
 		if length > longest {
 			longest = length
 		}
@@ -320,6 +326,9 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 		}
 
 		w, h := dc.MeasureString(str)
+		if runes[0] > unicode.MaxASCII {
+			w *= 1.7
+		}
 		if ir.backgroundColor != nil {
 			dc.SetRGB255(ir.backgroundColor.r, ir.backgroundColor.g, ir.backgroundColor.b)
 			dc.DrawRectangle(x, y-h, w, h+12)

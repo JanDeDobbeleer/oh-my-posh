@@ -104,6 +104,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="http://www.m365princess.com"><img src="https://avatars.githubusercontent.com/u/49960482?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Luise Freese</b></sub></a><br /><a href="#design-LuiseFreese" title="Design">🎨</a></td>
     <td align="center"><a href="https://github.com/asherber"><img src="https://avatars.githubusercontent.com/u/5248041?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Aaron Sherber</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=asherber" title="Code">💻</a></td>
     <td align="center"><a href="http://SeanKilleen.com"><img src="https://avatars.githubusercontent.com/u/2148318?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sean Killeen</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=SeanKilleen" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://nickcraver.com"><img src="https://avatars.githubusercontent.com/u/454813?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Nick Craver</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=NickCraver" title="Code">💻</a></td>
   </tr>
 </table>
 

@@ -8,11 +8,12 @@ const exec = util.promisify(require('child_process').exec);
 const themesConfigDir = "./../themes";
 const themesStaticDir = "./static/img/themes";
 
-function newThemeConfig(rpromptOffset = 40, cursorPadding = 30, author = "") {
+function newThemeConfig(rpromptOffset = 40, cursorPadding = 30, author = "", bgColor = "#151515") {
   var config = {
     rpromptOffset: rpromptOffset,
     cursorPadding: cursorPadding,
-    author: author
+    author: author,
+    bgColor: bgColor
   };
   return config;
 }
@@ -24,6 +25,7 @@ themeConfigOverrrides.set('avit.omp.json', newThemeConfig(40, 80));
 themeConfigOverrrides.set('blueish.omp.json', newThemeConfig(40, 100));
 themeConfigOverrrides.set('cert.omp.json', newThemeConfig(40, 50));
 themeConfigOverrrides.set('cinnamon.omp.json', newThemeConfig(40, 80));
+themeConfigOverrrides.set('craver.omp.json', newThemeConfig(40, 80, 'Nick Craver', '#282c34'));
 themeConfigOverrrides.set('darkblood.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('honukai.omp.json', newThemeConfig(20));
 themeConfigOverrrides.set('hotstick.minimal.omp.json', newThemeConfig(40, 10));
@@ -69,6 +71,7 @@ themeConfigOverrrides.set('zash.omp.json', newThemeConfig(40, 40));
     let poshCommand = `oh-my-posh --config=${configPath} --shell shell --export-png`;
     poshCommand += ` --rprompt-offset=${config.rpromptOffset}`;
     poshCommand += ` --cursor-padding=${config.cursorPadding}`;
+    poshCommand += ` --bg-color=${config.cursorPadding}`;
     if (config.author !== '') {
       poshCommand += ` --author=${config.author}`;
     }

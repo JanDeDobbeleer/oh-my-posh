@@ -56,6 +56,7 @@ type args struct {
 	Author         *string
 	CursorPadding  *int
 	RPromptOffset  *int
+	BGColor        *string
 	StackCount     *int
 	Command        *string
 	PrintTransient *bool
@@ -139,6 +140,10 @@ func main() {
 			"rprompt-offset",
 			40,
 			"Offset the right prompt with x when using --export-img"),
+		BGColor: flag.String(
+			"bg-color",
+			"#151515",
+			"Set the background color when using --export-img"),
 		StackCount: flag.Int(
 			"stack-count",
 			0,
@@ -224,6 +229,7 @@ func main() {
 		author:        *args.Author,
 		cursorPadding: *args.CursorPadding,
 		rPromptOffset: *args.RPromptOffset,
+		bgColor:       *args.BGColor,
 		ansi:          ansi,
 	}
 	imageCreator.init()

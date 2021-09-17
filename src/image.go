@@ -98,6 +98,7 @@ type ImageRenderer struct {
 	ansiString string
 	author     string
 	ansi       *ansiUtils
+	bgColor    string
 
 	factor float64
 
@@ -285,7 +286,7 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 	// Draw rounded rectangle with outline and three button to produce the
 	// impression of a window with controls and a content area
 	dc.DrawRoundedRectangle(xOffset, yOffset, width-2*marginX, height-2*marginY, corner)
-	dc.SetHexColor("#151515")
+	dc.SetHexColor(ir.bgColor)
 	dc.Fill()
 
 	dc.DrawRoundedRectangle(xOffset, yOffset, width-2*marginX, height-2*marginY, corner)

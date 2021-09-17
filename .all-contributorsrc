@@ -667,6 +667,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "NickCraver",
+      "name": "Nick Craver",
+      "avatar_url": "https://avatars.githubusercontent.com/u/454813?v=4",
+      "profile": "https://nickcraver.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

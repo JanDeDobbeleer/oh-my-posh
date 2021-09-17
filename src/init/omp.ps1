@@ -185,16 +185,22 @@ function global:Export-PoshImage {
         $CursorPadding = 30,
         [Parameter(Mandatory = $false)]
         [string]
-        $Author
+        $Author,
+        [Parameter(Mandatory = $false)]
+        [string]
+        $BGColor
     )
 
     if ($Author) {
         $Author = "--author=$Author"
     }
+    if ($BGColor) {
+        $BGColor = "--bg-color=$BGColor"
+    }
 
     $omp = "::OMP::"
     $config, $cleanPWD, $cleanPSWD = Get-PoshContext
-    $standardOut = @(&$omp --config="$config" --pwd="$cleanPWD" --pswd="$cleanPSWD" --export-png --rprompt-offset="$RPromptOffset" --cursor-padding="$CursorPadding" $Author 2>&1)
+    $standardOut = @(&$omp --config="$config" --pwd="$cleanPWD" --pswd="$cleanPSWD" --export-png --rprompt-offset="$RPromptOffset" --cursor-padding="$CursorPadding" $Author $BGColor 2>&1)
     $standardOut -join "`n"
 }
 

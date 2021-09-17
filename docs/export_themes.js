@@ -8,11 +8,12 @@ const exec = util.promisify(require('child_process').exec);
 const themesConfigDir = "./../themes";
 const themesStaticDir = "./static/img/themes";
 
-function newThemeConfig(rpromptOffset = 40, cursorPadding = 30, author = "") {
+function newThemeConfig(rpromptOffset = 40, cursorPadding = 30, author = "", bgColor = "#151515") {
   var config = {
     rpromptOffset: rpromptOffset,
     cursorPadding: cursorPadding,
-    author: author
+    author: author,
+    bgColor: bgColor
   };
   return config;
 }
@@ -69,6 +70,7 @@ themeConfigOverrrides.set('zash.omp.json', newThemeConfig(40, 40));
     let poshCommand = `oh-my-posh --config=${configPath} --shell shell --export-png`;
     poshCommand += ` --rprompt-offset=${config.rpromptOffset}`;
     poshCommand += ` --cursor-padding=${config.cursorPadding}`;
+    poshCommand += ` --bg-color=${config.cursorPadding}`;
     if (config.author !== '') {
       poshCommand += ` --author=${config.author}`;
     }

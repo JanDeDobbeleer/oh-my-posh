@@ -197,7 +197,8 @@ func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
 		('\uf500' <= r && r <= '\ufd46') ||
 		('\ue300' <= r && r <= '\ue3eb') ||
 		('\uf400' <= r && r <= '\uf4a8') || r == '\u2665' || r == '\u26A1' || r == '\uf27c' ||
-		r == '\ue0a3' || ('\ue0b4' <= r && r <= '\ue0c8') || r == '\ue0ca' || ('\ue0cc' <= r && r <= '\ue0d2') || r == '\ue0d4' ||
+		// Intentionally excluding single width bubbles (e0b4-e0b7)
+		r == '\ue0a3' || ('\ue0b8' <= r && r <= '\ue0c8') || r == '\ue0ca' || ('\ue0cc' <= r && r <= '\ue0d2') || r == '\ue0d4' ||
 		('\u23fb' <= r && r <= '\u23fe') || r == '\u2b58' ||
 		('\uf300' <= r && r <= '\uf313') ||
 		('\ue000' <= r && r <= '\ue00d') {
@@ -345,7 +346,7 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 
 		if ir.backgroundColor != nil {
 			dc.SetRGB255(ir.backgroundColor.r, ir.backgroundColor.g, ir.backgroundColor.b)
-			dc.DrawRectangle(x, y-h, w, h+12)
+			dc.DrawRectangle(x, y-h+3, w, h+9)
 			dc.Fill()
 		}
 		if ir.foregroundColor != nil {

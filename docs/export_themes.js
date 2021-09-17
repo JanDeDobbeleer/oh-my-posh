@@ -71,9 +71,9 @@ themeConfigOverrrides.set('zash.omp.json', newThemeConfig(40, 40));
     let poshCommand = `oh-my-posh --config=${configPath} --shell shell --export-png`;
     poshCommand += ` --rprompt-offset=${config.rpromptOffset}`;
     poshCommand += ` --cursor-padding=${config.cursorPadding}`;
-    poshCommand += ` --bg-color=${config.cursorPadding}`;
+    poshCommand += ` --bg-color=${config.bgColor}`;
     if (config.author !== '') {
-      poshCommand += ` --author=${config.author}`;
+      poshCommand += ` --author="${config.author}"`;
     }
 
     const { _, stderr } = await exec(poshCommand);

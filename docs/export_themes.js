@@ -25,6 +25,7 @@ themeConfigOverrrides.set('avit.omp.json', newThemeConfig(40, 80));
 themeConfigOverrrides.set('blueish.omp.json', newThemeConfig(40, 100));
 themeConfigOverrrides.set('cert.omp.json', newThemeConfig(40, 50));
 themeConfigOverrrides.set('cinnamon.omp.json', newThemeConfig(40, 80));
+themeConfigOverrrides.set('craver.omp.json', newThemeConfig(40, 80, 'Nick Craver', '#282c34'));
 themeConfigOverrrides.set('darkblood.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('honukai.omp.json', newThemeConfig(20));
 themeConfigOverrrides.set('hotstick.minimal.omp.json', newThemeConfig(40, 10));

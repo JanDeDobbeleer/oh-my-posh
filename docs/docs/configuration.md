@@ -293,8 +293,9 @@ will not be rendered when in one of the excluded locations.
 ]
 ```
 
-You can also specify a [regular expression][regex] to create folder wildcards.
-In the sample below, any folders inside the `/Users/posh/Projects` path will be matched.
+The strings specified in these properties are evaluated as [regular expressions][regex]. You
+can use any valid regular expression construct, but the regular expression must match the entire directory
+name. The following will match `/Users/posh/Projects/Foo` but not `/home/Users/posh/Projects/Foo`.
 
 ```json
 "include_folders": [
@@ -313,16 +314,17 @@ You can also combine these properties:
 ]
 ```
 
-Note for Windows users: Windows directory separators should be specified as 4 backslashes.
+##### Notes
 
-```json
-"include_folders": [
-  "C:\\\\Projects.*"
-],
-"exclude_folders": [
-  "C:\\\\Projects\\\\secret-project.*"
-]
-```
+- Oh My Posh will accept both `/` and `\` as path separators for a folder and will match regardless of which
+is used by the current operating system.
+- Because the strings are evaluated as regular expressions, if you want to use a `\` in a Windows
+directory name, you need to specify it as `\\\\`.
+- The character `~` at the start of a specified folder will match the user's home directory.
+- The comparison is case-insensitive on Windows and macOS, but case-sensitive on other operating systems.
+
+This means that for user Bill, who has a user account `Bill` on Windows and `bill` on Linux,  `~/Foo` might match
+`C:\Users\Bill\Foo` or `C:\Users\Bill\foo` on Windows but only `/home/bill/Foo` on Linux.
 
 ### Colors
 

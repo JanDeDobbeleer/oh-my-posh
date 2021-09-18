@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 )
 
@@ -176,9 +177,20 @@ func (segment *Segment) cwdExcluded(cwd string) bool {
 }
 
 func (segment *Segment) cwdMatchesOneOf(cwd string, regexes []string) bool {
+	normalizedCwd := strings.ReplaceAll(cwd, "\\", "/")
+	normalizedHomeDir := strings.ReplaceAll(segment.env.homeDir(), "\\", "/")
+
 	for _, element := range regexes {
-		pattern := fmt.Sprintf("^%s$", element)
-		matched := matchString(pattern, cwd)
+		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
+		if strings.HasPrefix(normalizedElement, "~") {
+			normalizedElement = normalizedHomeDir + normalizedElement[1:]
+		}
+		pattern := fmt.Sprintf("^%s$", normalizedElement)
+		goos := segment.env.getRuntimeGOOS()
+		if goos == windowsPlatform || goos == darwinPlatform {
+			pattern = "(?i)" + pattern
+		}
+		matched := matchString(pattern, normalizedCwd)
 		if matched {
 			return true
 		}

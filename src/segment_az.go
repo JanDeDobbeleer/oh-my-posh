@@ -1,57 +1,53 @@
 package main
 
 import (
+	"encoding/json"
 	"strings"
 )
 
 type az struct {
-	props     *properties
-	env       environmentInfo
-	name      string
-	id        string
-	account   string
-	builder   strings.Builder
-	separator string
+	props *properties
+	env   environmentInfo
+	AZ    *AzureAccount
 }
 
 const (
-	// SubscriptionInfoSeparator is put between the name and ID
-	SubscriptionInfoSeparator Property = "info_separator"
-	// DisplaySubscriptionID hides or show the subscription GUID
-	DisplaySubscriptionID Property = "display_id"
-	// DisplaySubscriptionName hides or shows the subscription display name
-	DisplaySubscriptionName Property = "display_name"
-	// DisplaySubscriptionAccount hides or shows the subscription account name
-	DisplaySubscriptionAccount Property = "display_account"
-
 	updateConsentNeeded = "Do you want to continue?"
 	updateMessage       = "AZ CLI: Update needed!"
 	updateForeground    = "#ffffff"
 	updateBackground    = "#ff5349"
 )
 
-func (a *az) string() string {
-	a.separator = a.props.getString(SubscriptionInfoSeparator, " | ")
-	writeValue := func(value string) {
-		if len(value) == 0 {
-			return
-		}
-		if a.builder.Len() > 0 {
-			a.builder.WriteString(a.separator)
-		}
-		a.builder.WriteString(value)
-	}
-	if a.props.getBool(DisplaySubscriptionAccount, false) {
-		writeValue(a.account)
-	}
-	if a.props.getBool(DisplaySubscriptionName, true) {
-		writeValue(a.name)
-	}
-	if a.props.getBool(DisplaySubscriptionID, false) {
-		writeValue(a.id)
-	}
+type AzureUser struct {
+	Name string `json:"name"`
+}
 
-	return a.builder.String()
+type AzureAccount struct {
+	EnvironmentName string     `json:"environmentName"`
+	HomeTenantID    string     `json:"homeTenantId"`
+	ID              string     `json:"id"`
+	IsDefault       bool       `json:"isDefault"`
+	Name            string     `json:"name"`
+	State           string     `json:"state"`
+	TenantID        string     `json:"tenantId"`
+	User            *AzureUser `json:"user"`
+}
+
+func (a *az) string() string {
+	if a.AZ != nil && a.AZ.Name == updateMessage {
+		return updateMessage
+	}
+	segmentTemplate := a.props.getString(SegmentTemplate, "{{.Name}}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  a.AZ,
+		Env:      a.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (a *az) init(props *properties, env environmentInfo) {
@@ -68,12 +64,22 @@ func (a *az) enabled() bool {
 }
 
 func (a *az) getFromEnvVars() bool {
-	a.name = a.env.getenv("AZ_SUBSCRIPTION_NAME")
-	a.id = a.env.getenv("AZ_SUBSCRIPTION_ID")
-	a.account = a.env.getenv("AZ_SUBSCRIPTION_ACCOUNT")
+	environmentName := a.env.getenv("AZ_ENVIRONMENT_NAME")
+	userName := a.env.getenv("AZ_USER_NAME")
+	id := a.env.getenv("AZ_SUBSCRIPTION_ID")
+	accountName := a.env.getenv("AZ_ACCOUNT_NAME")
 
-	if a.name == "" && a.id == "" {
+	if userName == "" && environmentName == "" {
 		return false
+	}
+
+	a.AZ = &AzureAccount{
+		EnvironmentName: environmentName,
+		Name:            accountName,
+		ID:              id,
+		User: &AzureUser{
+			Name: userName,
+		},
 	}
 
 	return true
@@ -85,7 +91,7 @@ func (a *az) getFromAzCli() bool {
 		return false
 	}
 
-	output, _ := a.env.runCommand(cmd, "account", "show", "--query=[name,id,user.name]", "-o=tsv")
+	output, _ := a.env.runCommand(cmd, "account", "show")
 	if len(output) == 0 {
 		return false
 	}
@@ -93,17 +99,13 @@ func (a *az) getFromAzCli() bool {
 	if strings.Contains(output, updateConsentNeeded) {
 		a.props.foreground = updateForeground
 		a.props.background = updateBackground
-		a.name = updateMessage
+		a.AZ = &AzureAccount{
+			Name: updateMessage,
+		}
 		return true
 	}
 
-	splittedOutput := strings.Split(output, "\n")
-	if len(splittedOutput) < 3 {
-		return false
-	}
-
-	a.name = strings.TrimSpace(splittedOutput[0])
-	a.id = strings.TrimSpace(splittedOutput[1])
-	a.account = strings.TrimSpace(splittedOutput[2])
-	return true
+	a.AZ = &AzureAccount{}
+	err := json.Unmarshal([]byte(output), a.AZ)
+	return err == nil
 }

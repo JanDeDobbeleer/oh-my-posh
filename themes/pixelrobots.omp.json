@@ -39,9 +39,6 @@
           "foreground": "#000000",
           "background": "#008AD7",
           "properties": {
-            "display_id": false,
-            "display_name": true,
-            "info_separator": " @ ",
             "prefix": " \uFD03 "
           }
         }

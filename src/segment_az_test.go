@@ -9,162 +9,140 @@ import (
 
 func TestAzSegment(t *testing.T) {
 	cases := []struct {
-		Case            string
-		ExpectedEnabled bool
-		ExpectedString  string
-		EnvSubName      string
-		EnvSubID        string
-		EnvSubAccount   string
-		CliExists       bool
-		CliSubName      string
-		CliSubID        string
-		CliSubAccount   string
-		InfoSeparator   string
-		DisplayID       bool
-		DisplayName     bool
-		DisplayAccount  bool
+		Case               string
+		ExpectedEnabled    bool
+		ExpectedString     string
+		EnvEnvironmentName string
+		EnvUserName        string
+		AccountName        string
+		EnvSubscriptionID  string
+		CLIExists          bool
+		CLIEnvironmentname string
+		CLISubscriptionID  string
+		CLIAccountName     string
+		CLIUserName        string
+		Template           string
 	}{
 		{
-			Case:            "print only account",
-			ExpectedEnabled: true,
-			ExpectedString:  "foobar",
-			CliExists:       true,
-			CliSubName:      "foo",
-			CliSubID:        "bar",
-			CliSubAccount:   "foobar",
-			InfoSeparator:   "$",
-			DisplayID:       false,
-			DisplayName:     false,
-			DisplayAccount:  true,
+			Case:               "display account name",
+			ExpectedEnabled:    true,
+			ExpectedString:     "foobar",
+			CLIExists:          true,
+			CLIEnvironmentname: "foo",
+			CLISubscriptionID:  "bar",
+			CLIAccountName:     "foobar",
+			Template:           "{{.Name}}",
 		},
 		{
-			Case:            "envvars present",
-			ExpectedEnabled: true,
-			ExpectedString:  "foo$bar",
-			EnvSubName:      "foo",
-			EnvSubID:        "bar",
-			CliExists:       false,
-			InfoSeparator:   "$",
-			DisplayID:       true,
-			DisplayName:     true,
+			Case:               "envvars present",
+			ExpectedEnabled:    true,
+			ExpectedString:     "foo$bar",
+			EnvEnvironmentName: "foo",
+			EnvUserName:        "bar",
+			CLIExists:          false,
+			Template:           "{{.EnvironmentName}}${{.User.Name}}",
 		},
 		{
-			Case:            "envvar name present",
-			ExpectedEnabled: true,
-			ExpectedString:  "foo",
-			EnvSubName:      "foo",
-			CliExists:       false,
-			InfoSeparator:   "$",
-			DisplayID:       true,
-			DisplayName:     true,
+			Case:               "envvar environment name present",
+			ExpectedEnabled:    true,
+			ExpectedString:     "foo",
+			EnvEnvironmentName: "foo",
+			CLIExists:          false,
+			Template:           "{{.EnvironmentName}}",
 		},
 		{
-			Case:            "envvar id present",
+			Case:            "envvar user name present",
 			ExpectedEnabled: true,
 			ExpectedString:  "bar",
-			EnvSubID:        "bar",
-			CliExists:       false,
-			InfoSeparator:   "$",
-			DisplayID:       true,
-			DisplayName:     true,
+			EnvUserName:     "bar",
+			CLIExists:       false,
+			Template:        "{{.User.Name}}",
 		},
 		{
-			Case:            "envvar account present",
-			ExpectedEnabled: true,
-			ExpectedString:  "foobar",
-			EnvSubAccount:   "foobar",
-			EnvSubID:        "bar",
-			CliExists:       false,
-			InfoSeparator:   "$",
-			DisplayAccount:  true,
+			Case:              "envvar subscription id",
+			ExpectedEnabled:   true,
+			ExpectedString:    "foobar",
+			EnvSubscriptionID: "foobar",
+			EnvUserName:       "bar",
+			CLIExists:         false,
+			Template:          "{{.ID}}",
 		},
 		{
 			Case:            "cli not found",
 			ExpectedEnabled: false,
 			ExpectedString:  "",
-			CliExists:       false,
-			InfoSeparator:   "$",
-			DisplayID:       true,
-			DisplayName:     true,
+			CLIExists:       false,
 		},
 		{
-			Case:            "cli contains data",
-			ExpectedEnabled: true,
-			ExpectedString:  "foo$bar",
-			CliExists:       true,
-			CliSubName:      "foo",
-			CliSubID:        "bar",
-			InfoSeparator:   "$",
-			DisplayID:       true,
-			DisplayName:     true,
+			Case:               "cli contains data",
+			ExpectedEnabled:    true,
+			ExpectedString:     "foo$bar",
+			CLIExists:          true,
+			CLIEnvironmentname: "foo",
+			CLISubscriptionID:  "bar",
+			Template:           "{{.EnvironmentName}}${{.ID}}",
 		},
 		{
-			Case:            "print only name",
-			ExpectedEnabled: true,
-			ExpectedString:  "foo",
-			CliExists:       true,
-			CliSubName:      "foo",
-			CliSubID:        "bar",
-			InfoSeparator:   "$",
-			DisplayID:       false,
-			DisplayName:     true,
+			Case:               "print only environment ame",
+			ExpectedEnabled:    true,
+			ExpectedString:     "foo",
+			CLIExists:          true,
+			CLIEnvironmentname: "foo",
+			CLISubscriptionID:  "bar",
+			Template:           "{{.EnvironmentName}}",
 		},
 		{
-			Case:            "print only id",
-			ExpectedEnabled: true,
-			ExpectedString:  "bar",
-			CliExists:       true,
-			CliSubName:      "foo",
-			CliSubID:        "bar",
-			InfoSeparator:   "$",
-			DisplayID:       true,
-			DisplayName:     false,
+			Case:               "print only id",
+			ExpectedEnabled:    true,
+			ExpectedString:     "bar",
+			CLIExists:          true,
+			CLIEnvironmentname: "foo",
+			CLISubscriptionID:  "bar",
+			Template:           "{{.ID}}",
 		},
 		{
-			Case:            "print none",
-			ExpectedEnabled: true,
-			CliExists:       true,
-			CliSubName:      "foo",
-			CliSubID:        "bar",
-			InfoSeparator:   "$",
+			Case:               "print none",
+			ExpectedEnabled:    true,
+			CLIExists:          true,
+			CLIEnvironmentname: "foo",
+			CLISubscriptionID:  "bar",
 		},
 		{
-			Case:            "update needed",
-			ExpectedEnabled: true,
-			ExpectedString:  updateMessage,
-			CliExists:       true,
-			CliSubName:      "Do you want to continue? (Y/n): Visual Studio Enterprise",
-			DisplayID:       false,
-			DisplayName:     true,
-		},
-		{
-			Case:            "account info",
-			ExpectedEnabled: true,
-			ExpectedString:  updateMessage,
-			CliExists:       true,
-			CliSubName:      "Do you want to continue? (Y/n): Visual Studio Enterprise",
-			DisplayID:       false,
-			DisplayName:     true,
-			DisplayAccount:  true,
+			Case:               "update needed",
+			ExpectedEnabled:    true,
+			ExpectedString:     updateMessage,
+			CLIExists:          true,
+			CLIEnvironmentname: "Do you want to continue? (Y/n): Visual Studio Enterprise",
 		},
 	}
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getenv", "AZ_SUBSCRIPTION_NAME").Return(tc.EnvSubName)
-		env.On("getenv", "AZ_SUBSCRIPTION_ID").Return(tc.EnvSubID)
-		env.On("getenv", "AZ_SUBSCRIPTION_ACCOUNT").Return(tc.EnvSubAccount)
-		env.On("hasCommand", "az").Return(tc.CliExists)
-		env.On("runCommand", "az", []string{"account", "show", "--query=[name,id,user.name]", "-o=tsv"}).Return(
-			fmt.Sprintf("%s\n%s\n%s\n", tc.CliSubName, tc.CliSubID, tc.CliSubAccount),
+		env.On("getenv", "AZ_ENVIRONMENT_NAME").Return(tc.EnvEnvironmentName)
+		env.On("getenv", "AZ_USER_NAME").Return(tc.EnvUserName)
+		env.On("getenv", "AZ_SUBSCRIPTION_ID").Return(tc.EnvSubscriptionID)
+		env.On("getenv", "AZ_ACCOUNT_NAME").Return(tc.AccountName)
+		env.On("hasCommand", "az").Return(tc.CLIExists)
+		env.On("runCommand", "az", []string{"account", "show"}).Return(
+			fmt.Sprintf(`{
+				"environmentName": "%s",
+				"homeTenantId": "8d934305-ac9f-46fe-b0e7-50fd32ad2acf",
+				"id": "%s",
+				"isDefault": true,
+				"managedByTenants": [],
+				"name": "%s",
+				"state": "Enabled",
+				"tenantId": "8d934305-ac9f-46fe-b0e7-50fd32ad2acf",
+				"user": {
+				  "name": "%s",
+				  "type": "user"
+				}
+			  }`, tc.CLIEnvironmentname, tc.CLISubscriptionID, tc.CLIAccountName, tc.CLIUserName),
 			nil,
 		)
 		props := &properties{
 			values: map[Property]interface{}{
-				SubscriptionInfoSeparator:  tc.InfoSeparator,
-				DisplaySubscriptionID:      tc.DisplayID,
-				DisplaySubscriptionName:    tc.DisplayName,
-				DisplaySubscriptionAccount: tc.DisplayAccount,
+				SegmentTemplate: tc.Template,
 			},
 		}
 

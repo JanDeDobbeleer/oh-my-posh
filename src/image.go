@@ -228,9 +228,12 @@ var doubleWidthRunes = []RuneRange{
 	{Start: '\ue000', End: '\ue00d'},
 }
 
+// This is getting how many additional characters of width to allocate when drawing
+// e.g. for characters that are 2 or more wide. A standard character will return 0
+// Nerd Font glyphs will return 1, since most are double width
 func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
-	for _, doubleWidthRune := range doubleWidthRunes {
-		if doubleWidthRune.Start <= r && r <= doubleWidthRune.End {
+	for _, runeRange := range doubleWidthRunes {
+		if runeRange.Start <= r && r <= runeRange.End {
 			return 1
 		}
 	}
@@ -372,10 +375,17 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 		}
 
 		w, h := dc.MeasureString(str)
+		// The gg library unfortunately returns a single character width for *all* glyphs in a font.
+		// So if we know the glyph to occupy n additional characters in width, allocate that area
+		// e.g. this will double the space for Nerd Fonts, but some could even be 3 or 4 wide
+		// If there's 0 additional characters of width (the common case), this won't add anything
 		w += (w * float64(ir.runeAdditionalWidth(runes[0])))
 
 		if ir.backgroundColor != nil {
 			dc.SetRGB255(ir.backgroundColor.r, ir.backgroundColor.g, ir.backgroundColor.b)
+			// The background for a chracter needs love to align to the font we're using
+			// Not all fonts are rendered the same height or starting position,
+			// so we're shifting the background rectangles vertically to correct
 			dc.DrawRectangle(x, y-h+3, w, h+9)
 			dc.Fill()
 		}

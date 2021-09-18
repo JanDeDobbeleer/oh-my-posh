@@ -383,7 +383,7 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 
 		if ir.backgroundColor != nil {
 			dc.SetRGB255(ir.backgroundColor.r, ir.backgroundColor.g, ir.backgroundColor.b)
-			// The background for a chracter needs love to align to the font we're using
+			// The background for a character needs love to align to the font we're using
 			// Not all fonts are rendered the same height or starting position,
 			// so we're shifting the background rectangles vertically to correct
 			dc.DrawRectangle(x, y-h+3, w, h+9)

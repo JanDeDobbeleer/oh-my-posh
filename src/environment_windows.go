@@ -71,7 +71,7 @@ func (env *environment) isWsl() bool {
 
 func (env *environment) getTerminalWidth() (int, error) {
 	defer env.tracer.trace(time.Now(), "getTerminalWidth")
-	handle, err := syscall.GetStdHandle(syscall.STD_OUTPUT_HANDLE)
+	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
 	if err != nil {
 		return 0, err
 	}

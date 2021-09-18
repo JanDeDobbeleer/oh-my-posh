@@ -190,18 +190,48 @@ func (ir *ImageRenderer) fontHeight() float64 {
 
 func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
 	// If we're a Nerd Font code point, treat as double width
-	if ('\ue5fa' <= r && r <= '\ue62b') ||
-		('\ue700' <= r && r <= '\ue7c5') ||
-		('\uf000' <= r && r <= '\uf2e0') ||
-		('\ue200' <= r && r <= '\ue2a9') ||
-		('\uf500' <= r && r <= '\ufd46') ||
-		('\ue300' <= r && r <= '\ue3eb') ||
-		('\uf400' <= r && r <= '\uf4a8') || r == '\u2665' || r == '\u26A1' || r == '\uf27c' ||
-		// Intentionally excluding single width bubbles (e0b4-e0b7) and pixelated (e0c4-e0c7)
-		r == '\ue0a3' || ('\ue0b8' <= r && r <= '\ue0c3') || r == '\ue0c8' || r == '\ue0ca' || ('\ue0cc' <= r && r <= '\ue0d2') || r == '\ue0d4' ||
-		('\u23fb' <= r && r <= '\u23fe') || r == '\u2b58' ||
-		('\uf300' <= r && r <= '\uf313') ||
-		('\ue000' <= r && r <= '\ue00d') {
+	// Seti-UI + Custom range
+	if '\ue5fa' <= r && r <= '\ue62b' {
+		return 1
+	}
+	// Devicons
+	if '\ue700' <= r && r <= '\ue7c5' {
+		return 1
+	}
+	// Font Awesome
+	if '\uf000' <= r && r <= '\uf2e0' {
+		return 1
+	}
+	// Font Awesome Extension
+	if '\ue200' <= r && r <= '\ue2a9' {
+		return 1
+	}
+	// Material Design Icons
+	if '\uf500' <= r && r <= '\ufd46' {
+		return 1
+	}
+	// Weather
+	if '\ue300' <= r && r <= '\ue3eb' {
+		return 1
+	}
+	// Octicons
+	if ('\uf400' <= r && r <= '\uf4a8') || r == '\u2665' || r == '\u26A1' || r == '\uf27c' {
+		return 1
+	}
+	// Powerline Extra Symbols (intentionally excluding single width bubbles (e0b4-e0b7) and pixelated (e0c4-e0c7))
+	if r == '\ue0a3' || ('\ue0b8' <= r && r <= '\ue0c3') || r == '\ue0c8' || r == '\ue0ca' || ('\ue0cc' <= r && r <= '\ue0d2') || r == '\ue0d4' {
+		return 1
+	}
+	// IEC Power Symbols
+	if ('\u23fb' <= r && r <= '\u23fe') || r == '\u2b58' {
+		return 1
+	}
+	// Font Logos
+	if '\uf300' <= r && r <= '\uf313' {
+		return 1
+	}
+	// Pomicons
+	if '\ue000' <= r && r <= '\ue00d' {
 		return 1
 	}
 	return 0

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "docusaurus start",
+    "start": "NODE_ENV=development docusaurus start",
     "build": "docusaurus build",
     "themes": "node export_themes.js"
   },

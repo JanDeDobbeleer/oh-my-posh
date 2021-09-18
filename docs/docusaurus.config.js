@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   title: "Oh My Posh",
   tagline: "A prompt theme engine for any shell.",
@@ -7,6 +9,7 @@ module.exports = {
   organizationName: "jandedobbeleer",
   projectName: "oh-my-posh",
   onBrokenLinks: "ignore",
+  plugins: [path.resolve(__dirname, 'plugins', 'appinsights')],
   themeConfig: {
     sidebarCollapsible: false,
     prism: {
@@ -92,6 +95,9 @@ module.exports = {
       ],
       copyright: `Copyright © ${new Date().getFullYear()} <a href="https://github.com/sponsors/JanDeDobbeleer" target="_blank">Jan De Dobbeleer</a> and <a href="/docs/contributors">contributors</a>.`,
     },
+    appInsights: {
+      instrumentationKey: "72804848-dc30-4856-8245-4fa1450b041f",
+    }
   },
   presets: [
     [

@@ -81,11 +81,15 @@ func TestShouldIncludeFolder(t *testing.T) {
 		{Case: "Include Mismatch / Exclude Mismatch", IncludeFolders: []string{"zProjects.*"}, ExcludeFolders: []string{"Projects/nope"}, Expected: false},
 	}
 	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("getRuntimeGOOS", nil).Return(linuxPlatform)
+		env.On("homeDir", nil).Return("")
 		segment := &Segment{
 			Properties: map[Property]interface{}{
 				IncludeFolders: tc.IncludeFolders,
 				ExcludeFolders: tc.ExcludeFolders,
 			},
+			env: env,
 		}
 		got := segment.shouldIncludeFolder(cwd)
 		assert.Equal(t, tc.Expected, got, tc.Case)
@@ -93,10 +97,14 @@ func TestShouldIncludeFolder(t *testing.T) {
 }
 
 func TestShouldIncludeFolderRegexInverted(t *testing.T) {
+	env := new(MockedEnvironment)
+	env.On("getRuntimeGOOS", nil).Return(linuxPlatform)
+	env.On("homeDir", nil).Return("")
 	segment := &Segment{
 		Properties: map[Property]interface{}{
 			ExcludeFolders: []string{"(?!Projects[\\/]).*"},
 		},
+		env: env,
 	}
 	// detect panic(thrown by MustCompile)
 	defer func() {
@@ -109,10 +117,14 @@ func TestShouldIncludeFolderRegexInverted(t *testing.T) {
 }
 
 func TestShouldIncludeFolderRegexInvertedNonEscaped(t *testing.T) {
+	env := new(MockedEnvironment)
+	env.On("getRuntimeGOOS", nil).Return(linuxPlatform)
+	env.On("homeDir", nil).Return("")
 	segment := &Segment{
 		Properties: map[Property]interface{}{
 			ExcludeFolders: []string{"(?!Projects/).*"},
 		},
+		env: env,
 	}
 	// detect panic(thrown by MustCompile)
 	defer func() {
@@ -194,5 +206,41 @@ func TestGetColors(t *testing.T) {
 		segment.ForegroundTemplates = tc.Templates
 		color := segment.foreground()
 		assert.Equal(t, tc.ExpectedColor, color, tc.Case)
+	}
+}
+
+func TestCwdMatchesOneOf(t *testing.T) {
+	cases := []struct {
+		GOOS     string
+		HomeDir  string
+		Cwd      string
+		Pattern  string
+		Expected bool
+	}{
+		{GOOS: linuxPlatform, HomeDir: "/home/bill", Cwd: "/home/bill", Pattern: "/home/bill", Expected: true},
+		{GOOS: linuxPlatform, HomeDir: "/home/bill", Cwd: "/home/bill/foo", Pattern: "~/foo", Expected: true},
+		{GOOS: linuxPlatform, HomeDir: "/home/bill", Cwd: "/home/bill/foo", Pattern: "~/Foo", Expected: false},
+		{GOOS: linuxPlatform, HomeDir: "/home/bill", Cwd: "/home/bill/foo", Pattern: "~\\\\foo", Expected: true},
+		{GOOS: linuxPlatform, HomeDir: "/home/bill", Cwd: "/home/bill/foo/bar", Pattern: "~/fo.*", Expected: true},
+		{GOOS: linuxPlatform, HomeDir: "/home/bill", Cwd: "/home/bill/foo", Pattern: "~/fo\\w", Expected: true},
+		{GOOS: windowsPlatform, HomeDir: "C:\\Users\\Bill", Cwd: "C:\\Users\\Bill", Pattern: "C:\\\\Users\\\\Bill", Expected: true},
+		{GOOS: windowsPlatform, HomeDir: "C:\\Users\\Bill", Cwd: "C:\\Users\\Bill", Pattern: "C:/Users/Bill", Expected: true},
+		{GOOS: windowsPlatform, HomeDir: "C:\\Users\\Bill", Cwd: "C:\\Users\\Bill", Pattern: "c:/users/bill", Expected: true},
+		{GOOS: windowsPlatform, HomeDir: "C:\\Users\\Bill", Cwd: "C:\\Users\\Bill", Pattern: "~", Expected: true},
+		{GOOS: windowsPlatform, HomeDir: "C:\\Users\\Bill", Cwd: "C:\\Users\\Bill\\Foo", Pattern: "~/Foo", Expected: true},
+		{GOOS: windowsPlatform, HomeDir: "C:\\Users\\Bill", Cwd: "C:\\Users\\Bill\\Foo", Pattern: "~/foo", Expected: true},
+		{GOOS: windowsPlatform, HomeDir: "C:\\Users\\Bill", Cwd: "C:\\Users\\Bill\\Foo\\Bar", Pattern: "~/fo.*", Expected: true},
+		{GOOS: windowsPlatform, HomeDir: "C:\\Users\\Bill", Cwd: "C:\\Users\\Bill\\Foo", Pattern: "~/fo\\w", Expected: true},
+	}
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		env.On("homeDir", nil).Return(tc.HomeDir)
+		segment := &Segment{
+			env: env,
+		}
+		got := segment.cwdMatchesOneOf(tc.Cwd, []string{tc.Pattern})
+		assert.Equal(t, tc.Expected, got)
 	}
 }

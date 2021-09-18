@@ -48,6 +48,9 @@ func (b *batt) enabled() bool {
 
 	b.Battery = &battery.Battery{}
 	for _, bt := range batteries {
+		if bt == nil {
+			continue
+		}
 		b.Battery.Current += bt.Current
 		b.Battery.Full += bt.Full
 		b.Battery.State = b.mapMostLogicalState(b.Battery.State, bt.State)

@@ -67,14 +67,14 @@ const (
 	link                = "link"
 )
 
-//go:embed font/VictorMono-Bold.ttf
-var victorMonoBold []byte
+//go:embed font/Hack-Nerd-Bold.ttf
+var hackBold []byte
 
-//go:embed font/VictorMono-Regular.ttf
-var victorMonoRegular []byte
+//go:embed font/Hack-Nerd-Regular.ttf
+var hackRegular []byte
 
-//go:embed font/VictorMono-Italic.ttf
-var victorMonoItalic []byte
+//go:embed font/Hack-Nerd-Italic.ttf
+var hackItalic []byte
 
 type RGB struct {
 	r int
@@ -135,9 +135,9 @@ func (ir *ImageRenderer) init() {
 
 	ir.cleanContent()
 
-	fontRegular, _ := truetype.Parse(victorMonoRegular)
-	fontBold, _ := truetype.Parse(victorMonoBold)
-	fontItalic, _ := truetype.Parse(victorMonoItalic)
+	fontRegular, _ := truetype.Parse(hackRegular)
+	fontBold, _ := truetype.Parse(hackBold)
+	fontItalic, _ := truetype.Parse(hackItalic)
 	fontFaceOptions := &truetype.Options{Size: f * 12, DPI: 144}
 
 	ir.defaultForegroundColor = &RGB{255, 255, 255}
@@ -188,10 +188,65 @@ func (ir *ImageRenderer) fontHeight() float64 {
 	return float64(ir.regular.Metrics().Height >> 6)
 }
 
+type RuneRange struct {
+	Start rune
+	End   rune
+}
+
+// If we're a Nerd Font code point, treat as double width
+var doubleWidthRunes = []RuneRange{
+	// Seti-UI + Custom range
+	{Start: '\ue5fa', End: '\ue62b'},
+	// Devicons
+	{Start: '\ue700', End: '\ue7c5'},
+	// Font Awesome
+	{Start: '\uf000', End: '\uf2e0'},
+	// Font Awesome Extension
+	{Start: '\ue200', End: '\ue2a9'},
+	// Material Design Icons
+	{Start: '\uf500', End: '\ufd46'},
+	// Weather
+	{Start: '\ue300', End: '\ue3eb'},
+	// Octicons
+	{Start: '\uf400', End: '\uf4a8'},
+	{Start: '\u2665', End: '\u2665'},
+	{Start: '\u26A1', End: '\u26A1'},
+	{Start: '\uf27c', End: '\uf27c'},
+	// Powerline Extra Symbols (intentionally excluding single width bubbles (e0b4-e0b7) and pixelated (e0c4-e0c7))
+	{Start: '\ue0a3', End: '\ue0a3'},
+	{Start: '\ue0b8', End: '\ue0c3'},
+	{Start: '\ue0c8', End: '\ue0c8'},
+	{Start: '\ue0ca', End: '\ue0ca'},
+	{Start: '\ue0cc', End: '\ue0d2'},
+	{Start: '\ue0d4', End: '\ue0d4'},
+	// IEC Power Symbols
+	{Start: '\u23fb', End: '\u23fe'},
+	{Start: '\u2b58', End: '\u2b58'},
+	// Font Logos
+	{Start: '\uf300', End: '\uf313'},
+	// Pomicons
+	{Start: '\ue000', End: '\ue00d'},
+}
+
+// This is getting how many additional characters of width to allocate when drawing
+// e.g. for characters that are 2 or more wide. A standard character will return 0
+// Nerd Font glyphs will return 1, since most are double width
+func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
+	for _, runeRange := range doubleWidthRunes {
+		if runeRange.Start <= r && r <= runeRange.End {
+			return 1
+		}
+	}
+	return 0
+}
+
 func (ir *ImageRenderer) calculateWidth() int {
 	longest := 0
 	for _, line := range strings.Split(ir.ansiString, "\n") {
 		length := ir.ansi.lenWithoutANSI(line)
+		for _, char := range line {
+			length += ir.runeAdditionalWidth(char)
+		}
 		if length > longest {
 			longest = length
 		}
@@ -320,9 +375,18 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 		}
 
 		w, h := dc.MeasureString(str)
+		// The gg library unfortunately returns a single character width for *all* glyphs in a font.
+		// So if we know the glyph to occupy n additional characters in width, allocate that area
+		// e.g. this will double the space for Nerd Fonts, but some could even be 3 or 4 wide
+		// If there's 0 additional characters of width (the common case), this won't add anything
+		w += (w * float64(ir.runeAdditionalWidth(runes[0])))
+
 		if ir.backgroundColor != nil {
 			dc.SetRGB255(ir.backgroundColor.r, ir.backgroundColor.g, ir.backgroundColor.b)
-			dc.DrawRectangle(x, y-h, w, h+12)
+			// The background for a character needs love to align to the font we're using
+			// Not all fonts are rendered the same height or starting position,
+			// so we're shifting the background rectangles vertically to correct
+			dc.DrawRectangle(x, y-h+3, w, h+9)
 			dc.Fill()
 		}
 		if ir.foregroundColor != nil {

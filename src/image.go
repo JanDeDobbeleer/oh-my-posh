@@ -188,51 +188,51 @@ func (ir *ImageRenderer) fontHeight() float64 {
 	return float64(ir.regular.Metrics().Height >> 6)
 }
 
-func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
-	// If we're a Nerd Font code point, treat as double width
+type RuneRange struct {
+	Start rune
+	End   rune
+}
+
+// If we're a Nerd Font code point, treat as double width
+var doubleWidthRunes = []RuneRange{
 	// Seti-UI + Custom range
-	if '\ue5fa' <= r && r <= '\ue62b' {
-		return 1
-	}
+	{Start: '\ue5fa', End: '\ue62b'},
 	// Devicons
-	if '\ue700' <= r && r <= '\ue7c5' {
-		return 1
-	}
+	{Start: '\ue700', End: '\ue7c5'},
 	// Font Awesome
-	if '\uf000' <= r && r <= '\uf2e0' {
-		return 1
-	}
+	{Start: '\uf000', End: '\uf2e0'},
 	// Font Awesome Extension
-	if '\ue200' <= r && r <= '\ue2a9' {
-		return 1
-	}
+	{Start: '\ue200', End: '\ue2a9'},
 	// Material Design Icons
-	if '\uf500' <= r && r <= '\ufd46' {
-		return 1
-	}
+	{Start: '\uf500', End: '\ufd46'},
 	// Weather
-	if '\ue300' <= r && r <= '\ue3eb' {
-		return 1
-	}
+	{Start: '\ue300', End: '\ue3eb'},
 	// Octicons
-	if ('\uf400' <= r && r <= '\uf4a8') || r == '\u2665' || r == '\u26A1' || r == '\uf27c' {
-		return 1
-	}
+	{Start: '\uf400', End: '\uf4a8'},
+	{Start: '\u2665', End: '\u2665'},
+	{Start: '\u26A1', End: '\u26A1'},
+	{Start: '\uf27c', End: '\uf27c'},
 	// Powerline Extra Symbols (intentionally excluding single width bubbles (e0b4-e0b7) and pixelated (e0c4-e0c7))
-	if r == '\ue0a3' || ('\ue0b8' <= r && r <= '\ue0c3') || r == '\ue0c8' || r == '\ue0ca' || ('\ue0cc' <= r && r <= '\ue0d2') || r == '\ue0d4' {
-		return 1
-	}
+	{Start: '\ue0a3', End: '\ue0a3'},
+	{Start: '\ue0b8', End: '\ue0c3'},
+	{Start: '\ue0c8', End: '\ue0c8'},
+	{Start: '\ue0ca', End: '\ue0ca'},
+	{Start: '\ue0cc', End: '\ue0d2'},
+	{Start: '\ue0d4', End: '\ue0d4'},
 	// IEC Power Symbols
-	if ('\u23fb' <= r && r <= '\u23fe') || r == '\u2b58' {
-		return 1
-	}
+	{Start: '\u23fb', End: '\u23fe'},
+	{Start: '\u2b58', End: '\u2b58'},
 	// Font Logos
-	if '\uf300' <= r && r <= '\uf313' {
-		return 1
-	}
+	{Start: '\uf300', End: '\uf313'},
 	// Pomicons
-	if '\ue000' <= r && r <= '\ue00d' {
-		return 1
+	{Start: '\ue000', End: '\ue00d'},
+}
+
+func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
+	for _, doubleWidthRune := range doubleWidthRunes {
+		if doubleWidthRune.Start <= r && r <= doubleWidthRune.End {
+			return 1
+		}
 	}
 	return 0
 }

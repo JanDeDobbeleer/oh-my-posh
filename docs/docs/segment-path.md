@@ -43,7 +43,7 @@ Display the current path.
 ## Mapped Locations
 
 Allows you to override a location with an icon. It validates if the current path **starts with** the value and replaces
-it with the icon if there's a match. To avoid issues with nested overrides, oh-my-posh will sort the list of mapped
+it with the icon if there's a match. To avoid issues with nested overrides, Oh My Posh will sort the list of mapped
 locations before doing a replacement.
 
 - mapped_locations_enabled: `boolean` - replace known locations in the path with the replacements before applying the
@@ -61,7 +61,7 @@ For example, to swap out `C:\Users\Leet\GitHub` with a GitHub icon, you can do t
 
 ### Notes
 
-- oh-my-posh will accept both `/` and `\` as path separators for a mapped location and will match regardless of which
+- Oh My Posh will accept both `/` and `\` as path separators for a mapped location and will match regardless of which
 is used by the current operating system.
 - The character `~` at the start of a mapped location will match the user's home directory.
 - The match is case-insensitive on Windows and macOS, but case-sensitive on other operating systems.

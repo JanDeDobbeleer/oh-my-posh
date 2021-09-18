@@ -27,6 +27,7 @@ function Get-PoshCommand {
         0 { return "$PSScriptRoot/bin/posh-windows-386.exe" } # x86
         5 { return "$PSScriptRoot/bin/posh-windows-arm64.exe" } # ARM
         9 { return "$PSScriptRoot/bin/posh-windows-amd64.exe" } # x64
+        12 { return "$PSScriptRoot/bin/posh-windows-amd64.exe" } # x64 emulated on Surface Pro X
     }
     throw "Oh My Posh: Unsupported architecture: $arch"
 }

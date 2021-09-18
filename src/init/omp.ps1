@@ -50,16 +50,19 @@ function global:Initialize-ModuleSupport {
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
     }
 
-    $env:AZ_SUBSCRIPTION_NAME = $null
+    $env:AZ_ENVIRONMENT_NAME = $null
+    $env:AZ_USER_NAME = $null
     $env:AZ_SUBSCRIPTION_ID = $null
+    $env:AZ_ACCOUNT_NAME = $null
 
     if ($env:AZ_ENABLED -eq $true) {
         try {
-            $subscription = Get-AzContext | Select-Object -ExpandProperty "Subscription" | Select-Object "Name", "Id", "Account"
+            $context = Get-AzContext
             if ($null -ne $subscription) {
-                $env:AZ_SUBSCRIPTION_NAME = $subscription.Name
-                $env:AZ_SUBSCRIPTION_ID = $subscription.Id
-                $env:AZ_SUBSCRIPTION_ACCOUNT = $subscription.Account
+                $env:AZ_ENVIRONMENT_NAME = $context.Environment.Name
+                $env:AZ_USER_NAME = $context.Account.Id
+                $env:AZ_SUBSCRIPTION_ID = $context.Subscription.Id
+                $env:AZ_ACCOUNT_NAME = $context.Subscription.Name
             }
         }
         catch {}

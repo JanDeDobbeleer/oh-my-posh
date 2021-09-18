@@ -220,6 +220,7 @@ func TestRootLocationHome(t *testing.T) {
 		}
 		env.On("getArgs", nil).Return(args)
 		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
+		env.On("getRuntimeGOOS", nil).Return("")
 		path := &path{
 			env:   env,
 			props: props,
@@ -247,6 +248,7 @@ func TestPathDepthMultipleLevelsDeep(t *testing.T) {
 	}
 	env := new(MockedEnvironment)
 	env.On("getPathSeperator", nil).Return("/")
+	env.On("getRunteGOOS", nil).Return("")
 	path := &path{
 		env: env,
 	}
@@ -500,12 +502,82 @@ func TestGetFullPath(t *testing.T) {
 	}
 }
 
+func TestGetFullPathCustomMappedLocations(t *testing.T) {
+	cases := []struct {
+		Pwd             string
+		MappedLocations map[string]string
+		Expected        string
+	}{
+		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"/a/b/c/d": "#"}, Expected: "#"},
+		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"\\a\\b": "#"}, Expected: "#/c/d"},
+		{Pwd: "\\a\\b\\c\\d", MappedLocations: map[string]string{"\\a\\b": "#"}, Expected: "#\\c\\d"},
+		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"/a/b": "#"}, Expected: "#/c/d"},
+		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"/a/b": "/e/f"}, Expected: "/e/f/c/d"},
+		{Pwd: "/usr/home/a/b/c/d", MappedLocations: map[string]string{"~\\a\\b": "#"}, Expected: "#/c/d"},
+		{Pwd: "/usr/home/a/b/c/d", MappedLocations: map[string]string{"~/a/b": "#"}, Expected: "#/c/d"},
+		{Pwd: "/a/usr/home/b/c/d", MappedLocations: map[string]string{"/a~": "#"}, Expected: "/a/usr/home/b/c/d"},
+		{Pwd: "/usr/home/a/b/c/d", MappedLocations: map[string]string{"/a/b": "#"}, Expected: "/usr/home/a/b/c/d"},
+	}
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("getPathSeperator", nil).Return("/")
+		env.On("homeDir", nil).Return("/usr/home")
+		env.On("getcwd", nil).Return(tc.Pwd)
+		env.On("getRuntimeGOOS", nil).Return("")
+		args := &args{
+			PSWD: &tc.Pwd,
+		}
+		env.On("getArgs", nil).Return(args)
+		path := &path{
+			env: env,
+			props: &properties{
+				values: map[Property]interface{}{
+					MappedLocationsEnabled: false,
+					MappedLocations:        tc.MappedLocations,
+				},
+			},
+		}
+		got := path.getFullPath()
+		assert.Equal(t, tc.Expected, got)
+	}
+}
+
+func TestNormalizePath(t *testing.T) {
+	cases := []struct {
+		Input    string
+		GOOS     string
+		Expected string
+	}{
+		{Input: "C:\\Users\\Bob\\Foo", GOOS: linuxPlatform, Expected: "C:/Users/Bob/Foo"},
+		{Input: "C:\\Users\\Bob\\Foo", GOOS: windowsPlatform, Expected: "c:/users/bob/foo"},
+		{Input: "~\\Bob\\Foo", GOOS: linuxPlatform, Expected: "/usr/home/Bob/Foo"},
+		{Input: "~\\Bob\\Foo", GOOS: windowsPlatform, Expected: "/usr/home/bob/foo"},
+		{Input: "/foo/~/bar", GOOS: linuxPlatform, Expected: "/foo/~/bar"},
+		{Input: "/foo/~/bar", GOOS: windowsPlatform, Expected: "/foo/~/bar"},
+		{Input: "~/baz", GOOS: linuxPlatform, Expected: "/usr/home/baz"},
+		{Input: "~/baz", GOOS: windowsPlatform, Expected: "/usr/home/baz"},
+	}
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("homeDir", nil).Return("/usr/home")
+		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		pt := &path{
+			env: env,
+		}
+		got := pt.normalize(tc.Input)
+		assert.Equal(t, tc.Expected, got)
+	}
+}
+
 func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	pwd := "/a/b/c/d"
 	env := new(MockedEnvironment)
 	env.On("getPathSeperator", nil).Return("/")
 	env.On("homeDir", nil).Return("/usr/home")
 	env.On("getcwd", nil).Return(pwd)
+	env.On("getRuntimeGOOS", nil).Return("")
 	args := &args{
 		PSWD: &pwd,
 	}
@@ -536,6 +608,7 @@ func testWritePathInfo(home, pwd, pathSeparator string) string {
 	env.On("homeDir", nil).Return(home)
 	env.On("getPathSeperator", nil).Return(pathSeparator)
 	env.On("getcwd", nil).Return(pwd)
+	env.On("getRuntimeGOOS", nil).Return("")
 	args := &args{
 		PSWD: &pwd,
 	}
@@ -635,6 +708,7 @@ func TestGetPwd(t *testing.T) {
 		env.On("getPathSeperator", nil).Return("/")
 		env.On("homeDir", nil).Return("/usr/home")
 		env.On("getcwd", nil).Return(tc.Pwd)
+		env.On("getRuntimeGOOS", nil).Return("")
 		args := &args{
 			PSWD: &tc.Pswd,
 		}

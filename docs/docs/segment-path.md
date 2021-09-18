@@ -43,12 +43,12 @@ Display the current path.
 ## Mapped Locations
 
 Allows you to override a location with an icon. It validates if the current path **starts with** the value and replaces
-it with the icon if there's a match. To avoid issues with nested overrides, Oh my posh will sort the list of mapped
+it with the icon if there's a match. To avoid issues with nested overrides, Oh My Posh will sort the list of mapped
 locations before doing a replacement.
 
 - mapped_locations_enabled: `boolean` - replace known locations in the path with the replacements before applying the
-style. defaults to `true`
-- mapped_locations: `map[string]string` - custom glyph/text for specific paths. Works regardless of the `mapped_locations_enabled`
+style - defaults to `true`
+- mapped_locations: `object` - custom glyph/text for specific paths. Works regardless of the `mapped_locations_enabled`
 setting.
 
 For example, to swap out `C:\Users\Leet\GitHub` with a GitHub icon, you can do the following:
@@ -58,6 +58,16 @@ For example, to swap out `C:\Users\Leet\GitHub` with a GitHub icon, you can do t
   "C:\\Users\\Leet\\GitHub": "\uF09B"
 }
 ```
+
+### Notes
+
+- Oh My Posh will accept both `/` and `\` as path separators for a mapped location and will match regardless of which
+is used by the current operating system.
+- The character `~` at the start of a mapped location will match the user's home directory.
+- The match is case-insensitive on Windows and macOS, but case-sensitive on other operating systems.
+
+This means that for user Bill, who has a user account `Bill` on Windows and `bill` on Linux,  `~/Foo` might match
+`C:\Users\Bill\Foo` or `C:\Users\Bill\foo` on Windows but only `/home/bill/Foo` on Linux.
 
 ## Style
 

@@ -4,8 +4,7 @@ title: Upgrading
 sidebar_label: 🤘 Upgrading from V2
 ---
 
-Just like V2, V3 is available in the [PowerShell gallery][psgallery]. Due to its nature, it's only
-available as a prerelease while we work out the kinks and get it on par with V2.
+Just like V2, V3 is available in the [PowerShell gallery][psgallery].
 
 ## V2's problem statement
 

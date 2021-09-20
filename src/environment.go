@@ -80,24 +80,15 @@ type environmentInfo interface {
 }
 
 type commandCache struct {
-	commands map[string]string
-	lock     sync.RWMutex
+	commands *concurrentMap
 }
 
 func (c *commandCache) set(command, path string) {
-	c.lock.Lock()
-	defer c.lock.Unlock()
-	c.commands[command] = path
+	c.commands.set(command, path)
 }
 
 func (c *commandCache) get(command string) (string, bool) {
-	c.lock.RLock()
-	defer c.lock.RUnlock()
-	if cmd, ok := c.commands[command]; ok {
-		command = cmd
-		return command, true
-	}
-	return "", false
+	return c.commands.get(command)
 }
 
 type tracer struct {
@@ -145,11 +136,9 @@ type environment struct {
 
 func (env *environment) init(args *args) {
 	env.args = args
-	cmdCache := &commandCache{
-		commands: make(map[string]string),
-		lock:     sync.RWMutex{},
+	env.cmdCache = &commandCache{
+		commands: newConcurrentMap(),
 	}
-	env.cmdCache = cmdCache
 	tracer := &tracer{
 		debug: *args.Debug,
 	}

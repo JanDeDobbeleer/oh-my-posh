@@ -368,7 +368,33 @@ func (env *environment) getArgs() *args {
 
 func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
 	defer env.tracer.trace(time.Now(), "getBatteryInfo")
-	return battery.GetAll()
+	batteries, err := battery.GetAll()
+	// actual error, return it
+	if err != nil && len(batteries) == 0 {
+		return nil, err
+	}
+	// there are no batteries found
+	if len(batteries) == 0 {
+		return nil, &noBatteryError{}
+	}
+	// some batteries fail to get retrieved, filter them out if present
+	validBatteries := []*battery.Battery{}
+	for _, batt := range batteries {
+		if batt != nil {
+			validBatteries = append(validBatteries, batt)
+		}
+	}
+	unableToRetrieveBatteryInfo := "A device which does not exist was specified."
+	// when battery info fails to get retrieved but there is at least one valid battery, return it without error
+	if len(validBatteries) > 0 && err != nil && strings.Contains(err.Error(), unableToRetrieveBatteryInfo) {
+		return validBatteries, nil
+	}
+	// another error occurred (possibly unmapped use-case), return it
+	if err != nil {
+		return nil, err
+	}
+	// everything is fine
+	return validBatteries, nil
 }
 
 func (env *environment) getShellName() string {

@@ -48,6 +48,13 @@ type fileInfo struct {
 	isDir        bool
 }
 
+type cache interface {
+	init(home string)
+	close()
+	get(key string) (string, bool)
+	set(key, value string)
+}
+
 type environmentInfo interface {
 	getenv(key string) string
 	getcwd() string
@@ -77,6 +84,8 @@ type environmentInfo interface {
 	isWsl() bool
 	stackCount() int
 	getTerminalWidth() (int, error)
+	cache() cache
+	close()
 }
 
 type commandCache struct {
@@ -128,10 +137,11 @@ func (t *tracer) trace(start time.Time, function string, args ...string) {
 }
 
 type environment struct {
-	args     *args
-	cwd      string
-	cmdCache *commandCache
-	tracer   *tracer
+	args      *args
+	cwd       string
+	cmdCache  *commandCache
+	fileCache *fileCache
+	tracer    *tracer
 }
 
 func (env *environment) init(args *args) {
@@ -139,6 +149,8 @@ func (env *environment) init(args *args) {
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
+	env.fileCache = &fileCache{}
+	env.fileCache.init(env.homeDir())
 	tracer := &tracer{
 		debug: *args.Debug,
 	}
@@ -459,6 +471,15 @@ func (env *environment) stackCount() int {
 		return 0
 	}
 	return *env.args.StackCount
+}
+
+func (env *environment) cache() cache {
+	return env.fileCache
+}
+
+func (env *environment) close() {
+	env.fileCache.close()
+	env.tracer.close()
 }
 
 func cleanHostName(hostName string) string {

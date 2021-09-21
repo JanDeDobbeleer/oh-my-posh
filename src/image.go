@@ -223,7 +223,7 @@ var doubleWidthRunes = []RuneRange{
 	{Start: '\u23fb', End: '\u23fe'},
 	{Start: '\u2b58', End: '\u2b58'},
 	// Font Logos
-	{Start: '\uf300', End: '\uf313'},
+	{Start: '\uf300', End: '\uf31c'},
 	// Pomicons
 	{Start: '\ue000', End: '\ue00d'},
 }

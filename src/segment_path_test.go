@@ -153,6 +153,15 @@ func (env *MockedEnvironment) getTerminalWidth() (int, error) {
 	return args.Int(0), args.Error(1)
 }
 
+func (env *MockedEnvironment) cache() cache {
+	args := env.Called(nil)
+	return args.Get(0).(cache)
+}
+
+func (env *MockedEnvironment) close() {
+	_ = env.Called(nil)
+}
+
 const (
 	homeBill        = "/home/bill"
 	homeJan         = "/usr/home/jan"

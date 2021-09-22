@@ -52,7 +52,8 @@ type cache interface {
 	init(home string)
 	close()
 	get(key string) (string, bool)
-	set(key, value string)
+	// ttl in seconds
+	set(key, value string, ttl int64)
 }
 
 type environmentInfo interface {
@@ -97,7 +98,14 @@ func (c *commandCache) set(command, path string) {
 }
 
 func (c *commandCache) get(command string) (string, bool) {
-	return c.commands.get(command)
+	cmd, found := c.commands.get(command)
+	if !found {
+		return "", false
+	}
+	if command, ok := cmd.(string); ok {
+		return command, true
+	}
+	return "", false
 }
 
 type tracer struct {

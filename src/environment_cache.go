@@ -1,14 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"io/ioutil"
-	"strings"
+	"time"
 )
 
 const (
 	cachePath = "/.omp.cache"
 )
+
+type cacheObject struct {
+	Value     string `json:"value"`
+	Timestamp int64  `json:"timestamp"`
+	TTL       int64  `json:"ttl"`
+}
 
 type fileCache struct {
 	cache *concurrentMap
@@ -18,32 +24,49 @@ type fileCache struct {
 func (fc *fileCache) init(home string) {
 	fc.cache = newConcurrentMap()
 	fc.home = home
-	content, err := ioutil.ReadFile(home + cachePath)
+	content, err := ioutil.ReadFile(fc.home + cachePath)
 	if err != nil {
 		return
 	}
-	for _, line := range strings.Split(string(content), "\n") {
-		if len(line) == 0 || !strings.Contains(line, "=") {
-			continue
-		}
-		kv := strings.SplitN(line, "=", 2)
-		fc.set(kv[0], kv[1])
+
+	var list map[string]*cacheObject
+	if err := json.Unmarshal(content, &list); err != nil {
+		return
+	}
+
+	for key, co := range list {
+		fc.cache.set(key, co)
 	}
 }
 
 func (fc *fileCache) close() {
-	var sb strings.Builder
-	for key, value := range fc.cache.values {
-		cacheEntry := fmt.Sprintf("%s=%s\n", key, value)
-		sb.WriteString(cacheEntry)
+	fc.set("hello", "world", 200)
+	if dump, err := json.Marshal(fc.cache.list()); err == nil {
+		_ = ioutil.WriteFile(fc.home+cachePath, dump, 0644)
 	}
-	_ = ioutil.WriteFile(fc.home+cachePath, []byte(sb.String()), 0644)
 }
 
 func (fc *fileCache) get(key string) (string, bool) {
-	return fc.cache.get(key)
+	val, found := fc.cache.get(key)
+	if !found {
+		return "", false
+	}
+	co, ok := val.(*cacheObject)
+	if !ok {
+		return "", false
+	}
+	expired := time.Now().Unix() >= (co.Timestamp + co.TTL*60)
+	if expired {
+		fc.cache.remove(key)
+		return "", false
+	}
+	return co.Value, true
 }
 
-func (fc *fileCache) set(key, value string) {
-	fc.cache.set(key, value)
+func (fc *fileCache) set(key, value string, ttl int64) {
+	fc.cache.set(key, &cacheObject{
+		Value:     value,
+		Timestamp: time.Now().Unix(),
+		TTL:       ttl,
+	})
 }

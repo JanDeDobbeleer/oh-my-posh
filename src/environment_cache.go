@@ -40,8 +40,7 @@ func (fc *fileCache) init(home string) {
 }
 
 func (fc *fileCache) close() {
-	fc.set("hello", "world", 200)
-	if dump, err := json.Marshal(fc.cache.list()); err == nil {
+	if dump, err := json.MarshalIndent(fc.cache.list(), "", "    "); err == nil {
 		_ = ioutil.WriteFile(fc.home+cachePath, dump, 0644)
 	}
 }

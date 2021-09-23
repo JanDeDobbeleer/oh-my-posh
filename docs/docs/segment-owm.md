@@ -29,7 +29,8 @@ The free tier for *Current weather and forecasts collection* is sufficient.
     "location": "AMSTERDAM,NL",
     "units": "metric",
     "enable_hyperlink" : false,
-    "http_timeout": 20
+    "http_timeout": 20,
+    "cache_timeout": 10
   }
 }
 ```
@@ -44,3 +45,4 @@ The free tier for *Current weather and forecasts collection* is sufficient.
                     Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`
 - enable_hyperlink: `bool` - Displays an hyperlink to get openweathermap data
 - http_timeout: `int` - The default timeout for http request is 20ms.
+- cache_timeout: `int` - The default timeout for request caching is 10m. A value of 0 disables the cache.

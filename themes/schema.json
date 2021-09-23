@@ -1547,6 +1547,12 @@
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout",
+                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 10
                   }
                 }
               }

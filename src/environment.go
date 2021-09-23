@@ -102,10 +102,8 @@ func (c *commandCache) get(command string) (string, bool) {
 	if !found {
 		return "", false
 	}
-	if command, ok := cmd.(string); ok {
-		return command, true
-	}
-	return "", false
+	command, ok := cmd.(string)
+	return command, ok
 }
 
 type tracer struct {

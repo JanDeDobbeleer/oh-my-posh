@@ -8,6 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const (
+	OWMAPIURL = "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
+)
+
 func TestOWMSegmentSingle(t *testing.T) {
 	cases := []struct {
 		Case            string
@@ -34,15 +38,14 @@ func TestOWMSegmentSingle(t *testing.T) {
 		env := &MockedEnvironment{}
 		props := &properties{
 			values: map[Property]interface{}{
-				APIKEY:   "key",
-				LOCATION: "AMSTERDAM,NL",
-				UNITS:    "metric",
+				APIKEY:       "key",
+				LOCATION:     "AMSTERDAM,NL",
+				UNITS:        "metric",
+				CACHETIMEOUT: 0,
 			},
 		}
 
-		url := "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
-
-		env.On("doGet", url).Return([]byte(tc.JSONResponse), tc.Error)
+		env.On("doGet", OWMAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
 
 		o := &owm{
 			props: props,
@@ -162,17 +165,17 @@ func TestOWMSegmentIcons(t *testing.T) {
 		env := &MockedEnvironment{}
 		props := &properties{
 			values: map[Property]interface{}{
-				APIKEY:   "key",
-				LOCATION: "AMSTERDAM,NL",
-				UNITS:    "metric",
+				APIKEY:       "key",
+				LOCATION:     "AMSTERDAM,NL",
+				UNITS:        "metric",
+				CACHETIMEOUT: 0,
 			},
 		}
 
-		url := "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
 		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, tc.IconID)
 		expectedString := fmt.Sprintf("%s (20°C)", tc.ExpectedIconString)
 
-		env.On("doGet", url).Return([]byte(response), nil)
+		env.On("doGet", OWMAPIURL).Return([]byte(response), nil)
 
 		o := &owm{
 			props: props,
@@ -182,4 +185,28 @@ func TestOWMSegmentIcons(t *testing.T) {
 		assert.Nil(t, o.setStatus())
 		assert.Equal(t, expectedString, o.string(), tc.Case)
 	}
+}
+func TestOWMSegmentFromCache(t *testing.T) {
+	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
+	expectedString := fmt.Sprintf("%s (20°C)", "\ufa98")
+
+	env := &MockedEnvironment{}
+	cache := &MockedCache{}
+	props := &properties{
+		values: map[Property]interface{}{
+			APIKEY:   "key",
+			LOCATION: "AMSTERDAM,NL",
+			UNITS:    "metric",
+		},
+	}
+	o := &owm{
+		props: props,
+		env:   env,
+	}
+	cache.On("get", "owm_response").Return(response, true)
+	cache.On("set").Return()
+	env.On("cache", nil).Return(cache)
+
+	assert.Nil(t, o.setStatus())
+	assert.Equal(t, expectedString, o.string())
 }

@@ -330,11 +330,12 @@ This means that for user Bill, who has a user account `Bill` on Windows and `bil
 
 #### Standard colors
 
-Oh My Posh mainly supports three different color types being
+Oh My Posh supports four different color types being:
 
 - Typical [hex colors][hexcolors] (for example `#CB4B16`).
 - The `transparent` keyword which can be used to create either a transparent foreground override
   or transparent background color using the segment's foreground property.
+- The `inherit` keyword which can be used to inherit the previous active segment's foreground and/or background color.
 - 16 [ANSI color names][ansicolors].
 
   These include 8 basic ANSI colors and `default`:

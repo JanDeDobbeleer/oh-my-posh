@@ -59,6 +59,8 @@ type AnsiColor struct {
 const (
 	// Transparent implies a transparent color
 	Transparent = "transparent"
+	// Inherit take the previous segment's color
+	Inherit = "inherit"
 )
 
 // Gets the ANSI color code for a given color string.

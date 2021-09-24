@@ -21,8 +21,10 @@ const (
 	LOCATION Property = "location"
 	// UNITS openweathermap units
 	UNITS Property = "units"
-	// CACHETIMEOUT cache timeout
-	CACHETIMEOUT Property = "cachetimeout"
+	// CACHETimeout cache timeout
+	CACHETimeout Property = "cache_timeout"
+	// CACHEKey key used when caching the response
+	CACHEKey string = "owm_response"
 )
 
 type weather struct {
@@ -67,14 +69,14 @@ func (d *owm) getResult() (*OWMDataResponse, error) {
 	apikey := d.props.getString(APIKEY, ".")
 	location := d.props.getString(LOCATION, "De Bilt,NL")
 	units := d.props.getString(UNITS, "standard")
-	timeout := d.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
-	cachetimeout := int64(d.props.getInt(CACHETIMEOUT, 10))
+	httpTimeout := d.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
+	cacheTimeout := int64(d.props.getInt(CACHETimeout, DefaultCacheTimeout))
 
 	d.url = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?q=%s&units=%s&appid=%s", location, units, apikey)
 
-	if cachetimeout > 0 {
+	if cacheTimeout > 0 {
 		// check if data stored in cache
-		val, found := d.env.cache().get("owm_response")
+		val, found := d.env.cache().get(CACHEKey)
 		// we got something from te cache
 		if found {
 			q := new(OWMDataResponse)
@@ -86,7 +88,7 @@ func (d *owm) getResult() (*OWMDataResponse, error) {
 		}
 	}
 
-	body, err := d.env.doGet(d.url, timeout)
+	body, err := d.env.doGet(d.url, httpTimeout)
 	if err != nil {
 		return new(OWMDataResponse), err
 	}
@@ -96,9 +98,9 @@ func (d *owm) getResult() (*OWMDataResponse, error) {
 		return new(OWMDataResponse), err
 	}
 
-	if cachetimeout > 0 {
+	if cacheTimeout > 0 {
 		// persist new forecasts in cache
-		d.env.cache().set("owm_response", string(body), cachetimeout)
+		d.env.cache().set(CACHEKey, string(body), cacheTimeout)
 		if err != nil {
 			return nil, err
 		}

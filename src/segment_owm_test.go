@@ -41,7 +41,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 				APIKEY:       "key",
 				LOCATION:     "AMSTERDAM,NL",
 				UNITS:        "metric",
-				CACHETIMEOUT: 0,
+				CACHETimeout: 0,
 			},
 		}
 
@@ -168,7 +168,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 				APIKEY:       "key",
 				LOCATION:     "AMSTERDAM,NL",
 				UNITS:        "metric",
-				CACHETIMEOUT: 0,
+				CACHETimeout: 0,
 			},
 		}
 

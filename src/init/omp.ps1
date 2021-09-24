@@ -58,7 +58,7 @@ function global:Initialize-ModuleSupport {
     if ($env:AZ_ENABLED -eq $true) {
         try {
             $context = Get-AzContext
-            if ($null -ne $subscription) {
+            if ($null -ne $context) {
                 $env:AZ_ENVIRONMENT_NAME = $context.Environment.Name
                 $env:AZ_USER_NAME = $context.Account.Id
                 $env:AZ_SUBSCRIPTION_ID = $context.Subscription.Id

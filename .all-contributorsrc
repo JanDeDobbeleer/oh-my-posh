@@ -676,6 +676,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "justin-vogt",
+      "name": "Justin Vogt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/84424169?v=4",
+      "profile": "https://github.com/justin-vogt",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

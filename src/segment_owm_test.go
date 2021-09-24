@@ -38,10 +38,10 @@ func TestOWMSegmentSingle(t *testing.T) {
 		env := &MockedEnvironment{}
 		props := &properties{
 			values: map[Property]interface{}{
-				APIKEY:       "key",
-				LOCATION:     "AMSTERDAM,NL",
-				UNITS:        "metric",
-				CACHETimeout: 0,
+				APIKey:       "key",
+				Location:     "AMSTERDAM,NL",
+				Units:        "metric",
+				CacheTimeout: 0,
 			},
 		}
 
@@ -165,10 +165,10 @@ func TestOWMSegmentIcons(t *testing.T) {
 		env := &MockedEnvironment{}
 		props := &properties{
 			values: map[Property]interface{}{
-				APIKEY:       "key",
-				LOCATION:     "AMSTERDAM,NL",
-				UNITS:        "metric",
-				CACHETimeout: 0,
+				APIKey:       "key",
+				Location:     "AMSTERDAM,NL",
+				Units:        "metric",
+				CacheTimeout: 0,
 			},
 		}
 
@@ -194,9 +194,9 @@ func TestOWMSegmentFromCache(t *testing.T) {
 	cache := &MockedCache{}
 	props := &properties{
 		values: map[Property]interface{}{
-			APIKEY:   "key",
-			LOCATION: "AMSTERDAM,NL",
-			UNITS:    "metric",
+			APIKey:   "key",
+			Location: "AMSTERDAM,NL",
+			Units:    "metric",
 		},
 	}
 	o := &owm{
@@ -206,6 +206,7 @@ func TestOWMSegmentFromCache(t *testing.T) {
 	cache.On("get", "owm_response").Return(response, true)
 	cache.On("set").Return()
 	env.On("cache", nil).Return(cache)
+	// env.On("doGet", "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key").Return([]byte(response), nil)
 
 	assert.Nil(t, o.setStatus())
 	assert.Equal(t, expectedString, o.string())

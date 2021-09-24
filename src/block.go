@@ -81,6 +81,20 @@ func (b *Block) setStringValues() {
 	}
 }
 
+func (b *Block) foreground() string {
+	if b.previousActiveSegment != nil && b.activeSegment.foreground() == Inherit {
+		return b.previousActiveSegment.foreground()
+	}
+	return b.activeSegment.foreground()
+}
+
+func (b *Block) background() string {
+	if b.previousActiveSegment != nil && b.activeSegment.background() == Inherit {
+		return b.previousActiveSegment.background()
+	}
+	return b.activeSegment.background()
+}
+
 func (b *Block) renderSegments() string {
 	defer b.writer.reset()
 	for _, segment := range b.Segments {
@@ -127,7 +141,7 @@ func (b *Block) getPowerlineColor(foreground bool) string {
 		return b.previousActiveSegment.background()
 	}
 	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
-		return b.activeSegment.background()
+		return b.background()
 	}
 	if !foreground && b.activeSegment.Style != Powerline {
 		return Transparent
@@ -151,7 +165,7 @@ func (b *Block) renderSegmentText(text string) {
 }
 
 func (b *Block) renderPowerLineSegment(text string) {
-	b.writePowerLineSeparator(b.activeSegment.background(), b.getPowerlineColor(true), false)
+	b.writePowerLineSeparator(b.background(), b.getPowerlineColor(true), false)
 	b.renderText(text)
 }
 
@@ -160,14 +174,14 @@ func (b *Block) renderPlainSegment(text string) {
 }
 
 func (b *Block) renderDiamondSegment(text string) {
-	b.writer.write(Transparent, b.activeSegment.background(), b.activeSegment.LeadingDiamond)
+	b.writer.write(Transparent, b.background(), b.activeSegment.LeadingDiamond)
 	b.renderText(text)
-	b.writer.write(Transparent, b.activeSegment.background(), b.activeSegment.TrailingDiamond)
+	b.writer.write(Transparent, b.background(), b.activeSegment.TrailingDiamond)
 }
 
 func (b *Block) renderText(text string) {
-	bg := b.activeSegment.background()
-	fg := b.activeSegment.foreground()
+	bg := b.background()
+	fg := b.foreground()
 	defaultValue := " "
 	b.writer.write(bg, fg, b.activeSegment.getValue(Prefix, defaultValue))
 	b.writer.write(bg, fg, text)

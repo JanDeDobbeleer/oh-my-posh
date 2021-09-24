@@ -23,8 +23,10 @@ const (
 	Units Property = "units"
 	// CacheTimeout cache timeout
 	CacheTimeout Property = "cache_timeout"
-	// CacheKey key used when caching the response
-	CacheKey string = "owm_response"
+	// CacheKeyResponse key used when caching the response
+	CacheKeyResponse string = "owm_response"
+	// CacheKeyUrl key used when caching the url responsible for the response
+	CacheKeyURL string = "owm_url"
 )
 
 type weather struct {
@@ -70,13 +72,14 @@ func (d *owm) getResult() (*OWMDataResponse, error) {
 	response := new(OWMDataResponse)
 	if cacheTimeout > 0 {
 		// check if data stored in cache
-		val, found := d.env.cache().get(CacheKey)
+		val, found := d.env.cache().get(CacheKeyResponse)
 		// we got something from te cache
 		if found {
 			err := json.Unmarshal([]byte(val), response)
 			if err != nil {
 				return nil, err
 			}
+			d.url, _ = d.env.cache().get(CacheKeyURL)
 			return response, nil
 		}
 	}
@@ -98,7 +101,8 @@ func (d *owm) getResult() (*OWMDataResponse, error) {
 
 	if cacheTimeout > 0 {
 		// persist new forecasts in cache
-		d.env.cache().set(CacheKey, string(body), cacheTimeout)
+		d.env.cache().set(CacheKeyResponse, string(body), cacheTimeout)
+		d.env.cache().set(CacheKeyURL, d.url, cacheTimeout)
 	}
 	return response, nil
 }

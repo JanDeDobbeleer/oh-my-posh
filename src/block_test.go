@@ -28,42 +28,42 @@ func TestBlockEnabled(t *testing.T) {
 	}
 }
 
-func TestForegroundColor(t *testing.T) {
-	cases := []struct {
-		Case            string
-		Expected        string
-		PreviousSegment *Segment
-		Segment         *Segment
-	}{
-		{Case: "Standard", Expected: "black", Segment: &Segment{Foreground: "black"}},
-		{Case: "Segment color override", Expected: "red", Segment: &Segment{Foreground: "black", props: &properties{foreground: "red"}}},
-		{Case: "Inherit", Expected: "yellow", Segment: &Segment{Foreground: Inherit}, PreviousSegment: &Segment{Foreground: "yellow"}},
-	}
+// func TestForegroundColor(t *testing.T) {
+// 	cases := []struct {
+// 		Case            string
+// 		Expected        string
+// 		PreviousSegment *Segment
+// 		Segment         *Segment
+// 	}{
+// 		{Case: "Standard", Expected: "black", Segment: &Segment{Foreground: "black"}},
+// 		{Case: "Segment color override", Expected: "red", Segment: &Segment{Foreground: "black", props: &properties{foreground: "red"}}},
+// 		{Case: "Inherit", Expected: "yellow", Segment: &Segment{Foreground: Inherit}, PreviousSegment: &Segment{Foreground: "yellow"}},
+// 	}
 
-	for _, tc := range cases {
-		block := &Block{}
-		block.previousActiveSegment = tc.PreviousSegment
-		block.activeSegment = tc.Segment
-		assert.Equal(t, tc.Expected, block.foreground(), tc.Case)
-	}
-}
+// 	for _, tc := range cases {
+// 		block := &Block{}
+// 		block.previousActiveSegment = tc.PreviousSegment
+// 		block.activeSegment = tc.Segment
+// 		assert.Equal(t, tc.Expected, block.foreground(), tc.Case)
+// 	}
+// }
 
-func TestBackgroundColor(t *testing.T) {
-	cases := []struct {
-		Case            string
-		Expected        string
-		PreviousSegment *Segment
-		Segment         *Segment
-	}{
-		{Case: "Standard", Expected: "black", Segment: &Segment{Background: "black"}},
-		{Case: "Segment color override", Expected: "red", Segment: &Segment{Background: "black", props: &properties{background: "red"}}},
-		{Case: "Inherit", Expected: "yellow", Segment: &Segment{Background: Inherit}, PreviousSegment: &Segment{Background: "yellow"}},
-	}
+// func TestBackgroundColor(t *testing.T) {
+// 	cases := []struct {
+// 		Case            string
+// 		Expected        string
+// 		PreviousSegment *Segment
+// 		Segment         *Segment
+// 	}{
+// 		{Case: "Standard", Expected: "black", Segment: &Segment{Background: "black"}},
+// 		{Case: "Segment color override", Expected: "red", Segment: &Segment{Background: "black", props: &properties{background: "red"}}},
+// 		{Case: "Inherit", Expected: "yellow", Segment: &Segment{Background: Inherit}, PreviousSegment: &Segment{Background: "yellow"}},
+// 	}
 
-	for _, tc := range cases {
-		block := &Block{}
-		block.previousActiveSegment = tc.PreviousSegment
-		block.activeSegment = tc.Segment
-		assert.Equal(t, tc.Expected, block.background(), tc.Case)
-	}
-}
+// 	for _, tc := range cases {
+// 		block := &Block{}
+// 		block.previousActiveSegment = tc.PreviousSegment
+// 		block.activeSegment = tc.Segment
+// 		assert.Equal(t, tc.Expected, block.background(), tc.Case)
+// 	}
+// }

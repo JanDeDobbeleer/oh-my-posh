@@ -3,165 +3,150 @@ package main
 import (
 	"testing"
 
-	"github.com/gookit/color"
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	inputText = "This is white, <#ff5733>this is orange</>, white again"
-)
-
-func TestWriteAndRemoveText(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
+func TestGetAnsiFromColorString(t *testing.T) {
+	cases := []struct {
+		Case       string
+		Expected   string
+		Color      string
+		Background bool
+	}{
+		{Case: "Invalid background", Expected: "", Color: "invalid", Background: true},
+		{Case: "Invalid background", Expected: "", Color: "invalid", Background: false},
+		{Case: "Hex foreground", Expected: "48;2;170;187;204", Color: "#AABBCC", Background: false},
+		{Case: "Base 8 foreground", Expected: "41", Color: "red", Background: false},
+		{Case: "Base 8 background", Expected: "41", Color: "red", Background: true},
+		{Case: "Base 16 foreground", Expected: "101", Color: "lightRed", Background: false},
+		{Case: "Base 16 backround", Expected: "101", Color: "lightRed", Background: true},
 	}
-	text := renderer.writeAndRemoveText("#193549", "#fff", "This is white, ", "This is white, ", inputText)
-	assert.Equal(t, "<#ff5733>this is orange</>, white again", text)
-	assert.NotContains(t, renderer.string(), "<#ff5733>")
-}
-
-func TestWriteAndRemoveTextColored(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
+	for _, tc := range cases {
+		renderer := &AnsiColor{}
+		ansiColor := renderer.getAnsiFromColorString(tc.Color, true)
+		assert.Equal(t, tc.Expected, ansiColor, tc.Case)
 	}
-	text := renderer.writeAndRemoveText("#193549", "#ff5733", "this is orange", "<#ff5733>this is orange</>", inputText)
-	assert.Equal(t, "This is white, , white again", text)
-	assert.NotContains(t, renderer.string(), "<#ff5733>")
 }
 
-func TestWriteColorOverride(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
+func TestWriteANSIColors(t *testing.T) {
+	cases := []struct {
+		Case               string
+		Expected           string
+		Input              string
+		Colors             *Color
+		Parent             *Color
+		TerminalBackground string
+	}{
+		{
+			Case:     "No color override",
+			Input:    "test",
+			Expected: "\x1b[47m\x1b[30mtest\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+			Parent:   &Color{Foreground: "black", Background: "white"},
+		},
+		{
+			Case:     "Inherit foreground",
+			Input:    "test",
+			Expected: "\x1b[47m\x1b[33mtest\x1b[0m",
+			Colors:   &Color{Foreground: Inherit, Background: "white"},
+			Parent:   &Color{Foreground: "yellow", Background: "white"},
+		},
+		{
+			Case:     "Inherit background",
+			Input:    "test",
+			Expected: "\x1b[41m\x1b[30mtest\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: Inherit},
+			Parent:   &Color{Foreground: "yellow", Background: "red"},
+		},
+		{
+			Case:     "No parent",
+			Input:    "test",
+			Expected: "\x1b[30mtest\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: Inherit},
+		},
+		{
+			Case:     "Inherit override foreground",
+			Input:    "hello <inherit>world</>",
+			Expected: "\x1b[47m\x1b[30mhello \x1b[0m\x1b[47m\x1b[33mworld\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+			Parent:   &Color{Foreground: "yellow", Background: "red"},
+		},
+		{
+			Case:     "Inherit override background",
+			Input:    "hello <black,inherit>world</>",
+			Expected: "\x1b[47m\x1b[30mhello \x1b[0m\x1b[41m\x1b[30mworld\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+			Parent:   &Color{Foreground: "yellow", Background: "red"},
+		},
+		{
+			Case:     "Inherit override background, no foreground specified",
+			Input:    "hello <,inherit>world</>",
+			Expected: "\x1b[47m\x1b[30mhello \x1b[0m\x1b[41m\x1b[30mworld\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+			Parent:   &Color{Foreground: "yellow", Background: "red"},
+		},
+		{
+			Case:     "Inherit override both",
+			Input:    "hello <inherit,inherit>world</>",
+			Expected: "\x1b[47m\x1b[30mhello \x1b[0m\x1b[41m\x1b[33mworld\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+			Parent:   &Color{Foreground: "yellow", Background: "red"},
+		},
+		{
+			Case:     "Inline override",
+			Input:    "hello, <red>world</>, rabbit",
+			Expected: "\x1b[47m\x1b[30mhello, \x1b[0m\x1b[47m\x1b[31mworld\x1b[0m\x1b[47m\x1b[30m, rabbit\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+		},
+		{
+			Case:     "Transparent background",
+			Input:    "hello world",
+			Expected: "\x1b[37mhello world\x1b[0m",
+			Colors:   &Color{Foreground: "white", Background: Transparent},
+		},
+		{
+			Case:     "Transparent foreground override",
+			Input:    "hello <#ffffff>world</>",
+			Expected: "\x1b[32mhello \x1b[0m\x1b[38;2;255;255;255mworld\x1b[0m",
+			Colors:   &Color{Foreground: "green", Background: Transparent},
+		},
+		{
+			Case:     "Double override",
+			Input:    "<#ffffff>jan</>@<#ffffff>Jans-MBP</>",
+			Expected: "\x1b[48;2;255;87;51m\x1b[38;2;255;255;255mjan\x1b[0m\x1b[48;2;255;87;51m\x1b[32m@\x1b[0m\x1b[48;2;255;87;51m\x1b[38;2;255;255;255mJans-MBP\x1b[0m",
+			Colors:   &Color{Foreground: "green", Background: "#FF5733"},
+		},
+		{
+			Case:     "No foreground",
+			Input:    "test",
+			Expected: "\x1b[48;2;255;87;51m\x1b[37mtest\x1b[0m",
+			Colors:   &Color{Foreground: "", Background: "#FF5733"},
+		},
+		{
+			Case:     "Transparent foreground",
+			Input:    "test",
+			Expected: "\x1b[38;2;255;87;51;49m\x1b[7mtest\x1b[0m",
+			Colors:   &Color{Foreground: Transparent, Background: "#FF5733"},
+		},
+		{
+			Case:               "Transparent foreground, terminal background set",
+			Input:              "test",
+			Expected:           "\x1b[38;2;255;87;51m\x1b[38;2;33;47;60mtest\x1b[0m",
+			Colors:             &Color{Foreground: Transparent, Background: "#FF5733"},
+			TerminalBackground: "#212F3C",
+		},
 	}
-	renderer.write("#193549", "#ff5733", inputText)
-	assert.NotContains(t, renderer.string(), "<#ff5733>")
-}
 
-func TestWriteColorOverrideBackground(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
+	for _, tc := range cases {
+		ansi := &ansiUtils{}
+		ansi.init("pwsh")
+		renderer := &AnsiColor{
+			ansi:               ansi,
+			Parent:             tc.Parent,
+			terminalBackground: tc.TerminalBackground,
+		}
+		renderer.write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
+		got := renderer.string()
+		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
-	text := "This is white, <,#000000>this is black</>, white again"
-	renderer.write("#193549", "#ff5733", text)
-	assert.NotContains(t, renderer.string(), "000000")
-}
-
-func TestWriteColorOverrideBackground16(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
-	}
-	text := "This is default <,white> this background is changed</> default again"
-	renderer.write("#193549", "#ff5733", text)
-	assert.NotContains(t, renderer.string(), "white")
-	assert.NotContains(t, renderer.string(), "</>")
-	assert.NotContains(t, renderer.string(), "<,")
-}
-
-func TestWriteColorOverrideBoth(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
-	}
-	text := "This is white, <#000000,#ffffff>this is black</>, white again"
-	renderer.write("#193549", "#ff5733", text)
-	assert.NotContains(t, renderer.string(), "ffffff")
-	assert.NotContains(t, renderer.string(), "000000")
-}
-
-func TestWriteColorOverrideBoth16(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
-	}
-	text := "This is white, <black,white>this is black</>, white again"
-	renderer.write("#193549", "#ff5733", text)
-	assert.NotContains(t, renderer.string(), "<black,white>")
-	assert.NotContains(t, renderer.string(), "</>")
-}
-
-func TestWriteColorOverrideDouble(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
-	}
-	text := "<#ffffff>jan</>@<#ffffff>Jans-MBP</>"
-	renderer.write("#193549", "#ff5733", text)
-	assert.NotContains(t, renderer.string(), "<#ffffff>")
-	assert.NotContains(t, renderer.string(), "</>")
-}
-
-func TestWriteColorTransparent(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
-	}
-	text := "This is white"
-	renderer.writeColoredText("#193549", Transparent, text)
-	t.Log(renderer.string())
-}
-
-func TestWriteColorName(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
-	}
-	text := "This is white, <red>this is red</>, white again"
-	renderer.write("#193549", "red", text)
-	assert.NotContains(t, renderer.string(), "<red>")
-}
-
-func TestWriteColorInvalid(t *testing.T) {
-	ansi := &ansiUtils{}
-	ansi.init("pwsh")
-	renderer := &AnsiColor{
-		ansi: ansi,
-	}
-	text := "This is white, <invalid>this is orange</>, white again"
-	renderer.write("#193549", "invalid", text)
-	assert.NotContains(t, renderer.string(), "<invalid>")
-}
-
-func TestGetAnsiFromColorStringBg(t *testing.T) {
-	renderer := &AnsiColor{}
-	colorCode := renderer.getAnsiFromColorString("blue", true)
-	assert.Equal(t, color.BgBlue.String(), colorCode)
-}
-
-func TestGetAnsiFromColorStringFg(t *testing.T) {
-	renderer := &AnsiColor{}
-	colorCode := renderer.getAnsiFromColorString("red", false)
-	assert.Equal(t, color.FgRed.String(), colorCode)
-}
-
-func TestGetAnsiFromColorStringHex(t *testing.T) {
-	renderer := &AnsiColor{}
-	colorCode := renderer.getAnsiFromColorString("#AABBCC", false)
-	assert.Equal(t, color.HEX("#AABBCC").String(), colorCode)
-}
-
-func TestGetAnsiFromColorStringInvalidFg(t *testing.T) {
-	renderer := &AnsiColor{}
-	colorCode := renderer.getAnsiFromColorString("invalid", false)
-	assert.Equal(t, "", colorCode)
-}
-
-func TestGetAnsiFromColorStringInvalidBg(t *testing.T) {
-	renderer := &AnsiColor{}
-	colorCode := renderer.getAnsiFromColorString("invalid", true)
-	assert.Equal(t, "", colorCode)
 }

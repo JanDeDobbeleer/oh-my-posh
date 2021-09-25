@@ -82,17 +82,19 @@ func (b *Block) setStringValues() {
 }
 
 func (b *Block) foreground() string {
-	if b.previousActiveSegment != nil && b.activeSegment.foreground() == Inherit {
+	color := b.activeSegment.foreground()
+	if b.previousActiveSegment != nil && color == Inherit {
 		return b.previousActiveSegment.foreground()
 	}
-	return b.activeSegment.foreground()
+	return color
 }
 
 func (b *Block) background() string {
-	if b.previousActiveSegment != nil && b.activeSegment.background() == Inherit {
+	color := b.activeSegment.background()
+	if b.previousActiveSegment != nil && color == Inherit {
 		return b.previousActiveSegment.background()
 	}
-	return b.activeSegment.background()
+	return color
 }
 
 func (b *Block) renderSegments() string {

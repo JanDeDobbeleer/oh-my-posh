@@ -133,7 +133,7 @@ func TestWriteColorInvalid(t *testing.T) {
 	}
 	text := "This is white, <invalid>this is orange</>, white again"
 	renderer.write("#193549", "invalid", text)
-	assert.Contains(t, renderer.string(), "<invalid>")
+	assert.NotContains(t, renderer.string(), "<invalid>")
 }
 
 func TestGetAnsiFromColorStringBg(t *testing.T) {

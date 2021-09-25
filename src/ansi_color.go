@@ -47,6 +47,7 @@ type colorWriter interface {
 	write(background, foreground, text string)
 	string() string
 	reset()
+	setParentColors(background, foreground string)
 }
 
 // AnsiColor writes colorized strings
@@ -54,6 +55,12 @@ type AnsiColor struct {
 	builder            strings.Builder
 	ansi               *ansiUtils
 	terminalBackground string
+	Parent             *Color
+}
+
+type Color struct {
+	Background string
+	Foreground string
 }
 
 const (
@@ -62,6 +69,13 @@ const (
 	// Inherit take the previous segment's color
 	Inherit = "inherit"
 )
+
+func (a *AnsiColor) setParentColors(background, foreground string) {
+	a.Parent = &Color{
+		Background: background,
+		Foreground: foreground,
+	}
+}
 
 // Gets the ANSI color code for a given color string.
 // This can include a valid hex color in the format `#FFFFFF`,
@@ -120,6 +134,12 @@ func (a *AnsiColor) write(background, foreground, text string) {
 	}
 
 	getAnsiColors := func(background, foreground string) (string, string) {
+		if background == Inherit && a.Parent != nil {
+			background = a.Parent.Background
+		}
+		if foreground == Inherit && a.Parent != nil {
+			foreground = a.Parent.Foreground
+		}
 		inverted := foreground == Transparent && len(background) != 0
 		background = a.getAnsiFromColorString(background, !inverted)
 		foreground = a.getAnsiFromColorString(foreground, false)

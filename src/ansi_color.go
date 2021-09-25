@@ -67,6 +67,9 @@ const (
 // This can include a valid hex color in the format `#FFFFFF`,
 // but also a name of one of the first 16 ANSI colors like `lightBlue`.
 func (a *AnsiColor) getAnsiFromColorString(colorString string, isBackground bool) string {
+	if colorString == Transparent || len(colorString) == 0 {
+		return colorString
+	}
 	colorFromName, err := getColorFromName(colorString, isBackground)
 	if err == nil {
 		return colorFromName
@@ -83,27 +86,26 @@ func (a *AnsiColor) writeColoredText(background, foreground, text string) {
 	if text == "" {
 		return
 	}
-	if foreground == Transparent && background != "" && a.terminalBackground != "" {
-		bgAnsiColor := a.getAnsiFromColorString(background, true)
+	// default to white fg if empty, empty backgrond is supported
+	if len(foreground) == 0 {
+		foreground = a.getAnsiFromColorString("white", false)
+	}
+	if foreground == Transparent && len(background) != 0 && len(a.terminalBackground) != 0 {
 		fgAnsiColor := a.getAnsiFromColorString(a.terminalBackground, false)
-		coloredText := fmt.Sprintf(a.ansi.colorFull, bgAnsiColor, fgAnsiColor, text)
+		coloredText := fmt.Sprintf(a.ansi.colorFull, background, fgAnsiColor, text)
 		a.builder.WriteString(coloredText)
 		return
 	}
-	if foreground == Transparent && background != "" {
-		ansiColor := a.getAnsiFromColorString(background, false)
-		coloredText := fmt.Sprintf(a.ansi.colorTransparent, ansiColor, text)
+	if foreground == Transparent && len(background) != 0 {
+		coloredText := fmt.Sprintf(a.ansi.colorTransparent, background, text)
 		a.builder.WriteString(coloredText)
 		return
-	} else if background == "" || background == Transparent {
-		ansiColor := a.getAnsiFromColorString(foreground, false)
-		coloredText := fmt.Sprintf(a.ansi.colorSingle, ansiColor, text)
+	} else if len(background) == 0 || background == Transparent {
+		coloredText := fmt.Sprintf(a.ansi.colorSingle, foreground, text)
 		a.builder.WriteString(coloredText)
 		return
 	}
-	bgAnsiColor := a.getAnsiFromColorString(background, true)
-	fgAnsiColor := a.getAnsiFromColorString(foreground, false)
-	coloredText := fmt.Sprintf(a.ansi.colorFull, bgAnsiColor, fgAnsiColor, text)
+	coloredText := fmt.Sprintf(a.ansi.colorFull, background, foreground, text)
 	a.builder.WriteString(coloredText)
 }
 
@@ -116,6 +118,16 @@ func (a *AnsiColor) write(background, foreground, text string) {
 	if len(text) == 0 {
 		return
 	}
+
+	getAnsiColors := func(background, foreground string) (string, string) {
+		inverted := foreground == Transparent && len(background) != 0
+		background = a.getAnsiFromColorString(background, !inverted)
+		foreground = a.getAnsiFromColorString(foreground, false)
+		return background, foreground
+	}
+
+	bgAnsi, fgAnsi := getAnsiColors(background, foreground)
+
 	text = a.ansi.escapeText(text)
 	text = a.ansi.formatText(text)
 	text = a.ansi.generateHyperlink(text)
@@ -123,29 +135,27 @@ func (a *AnsiColor) write(background, foreground, text string) {
 	// first we match for any potentially valid colors enclosed in <>
 	match := findAllNamedRegexMatch(`<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`, text)
 	for i := range match {
-		extractedForegroundColor := match[i]["foreground"]
-		extractedBackgroundColor := match[i]["background"]
-		if col := a.getAnsiFromColorString(extractedForegroundColor, false); col == "" && extractedForegroundColor != Transparent && len(extractedBackgroundColor) == 0 {
-			continue // we skip invalid colors
+		fg := match[i]["foreground"]
+		bg := match[i]["background"]
+		if fg == Transparent && len(bg) == 0 {
+			bg = background
 		}
-		if col := a.getAnsiFromColorString(extractedBackgroundColor, false); col == "" && extractedBackgroundColor != Transparent && len(extractedForegroundColor) == 0 {
-			continue // we skip invalid colors
+		bg, fg = getAnsiColors(bg, fg)
+		// set colors if they are empty
+		if len(bg) == 0 {
+			bg = bgAnsi
 		}
-		// reuse function colors if only one was specified
-		if len(extractedBackgroundColor) == 0 {
-			extractedBackgroundColor = background
-		}
-		if len(extractedForegroundColor) == 0 {
-			extractedForegroundColor = foreground
+		if len(fg) == 0 {
+			fg = fgAnsi
 		}
 		escapedTextSegment := match[i]["text"]
 		innerText := match[i]["content"]
 		textBeforeColorOverride := strings.Split(text, escapedTextSegment)[0]
-		text = a.writeAndRemoveText(background, foreground, textBeforeColorOverride, textBeforeColorOverride, text)
-		text = a.writeAndRemoveText(extractedBackgroundColor, extractedForegroundColor, innerText, escapedTextSegment, text)
+		text = a.writeAndRemoveText(bgAnsi, fgAnsi, textBeforeColorOverride, textBeforeColorOverride, text)
+		text = a.writeAndRemoveText(bg, fg, innerText, escapedTextSegment, text)
 	}
 	// color the remaining part of text with background and foreground
-	a.writeColoredText(background, foreground, text)
+	a.writeColoredText(bgAnsi, fgAnsi, text)
 }
 
 func (a *AnsiColor) string() string {

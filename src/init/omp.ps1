@@ -203,7 +203,7 @@ function global:Export-PoshImage {
 
     $omp = "::OMP::"
     $config, $cleanPWD, $cleanPSWD = Get-PoshContext
-    $standardOut = @(&$omp --config="$config" --pwd="$cleanPWD" --pswd="$cleanPSWD" --export-png --rprompt-offset="$RPromptOffset" --cursor-padding="$CursorPadding" $Author $BGColor 2>&1)
+    $standardOut = @(&$omp --shell=shell --config="$config" --pwd="$cleanPWD" --pswd="$cleanPSWD" --export-png --rprompt-offset="$RPromptOffset" --cursor-padding="$CursorPadding" $Author $BGColor 2>&1)
     $standardOut -join "`n"
 }
 

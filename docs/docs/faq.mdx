@@ -97,6 +97,18 @@ but it's advised to read the guide.
 This bug is caused by Windows Terminal and/or VIM. There are two issues for this, one at [Windows Terminal][wt-vim] and
 one at [VIM][vim-wt].
 
+### ZSH: No command history (ctrl+r does not work)
+
+This issue occurs when you're using plain ZSH in combination with Oh My Posh.
+You fix this by can adding the right configuration to `~/.zshrc`.
+
+```zsh
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
+```
+
 [new-issue]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/new
 [latest]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
 [wt-glyph]: https://github.com/microsoft/terminal/issues/3546

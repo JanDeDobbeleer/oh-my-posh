@@ -97,7 +97,7 @@ func (a *AnsiColor) getAnsiFromColorString(colorString string, isBackground bool
 
 func (a *AnsiColor) writeColoredText(background, foreground, text string) {
 	// Avoid emitting empty strings with color codes
-	if text == "" {
+	if text == "" || (foreground == Transparent && background == Transparent) {
 		return
 	}
 	// default to white fg if empty, empty backgrond is supported

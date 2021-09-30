@@ -169,7 +169,7 @@ func (pt *path) getLetterPath() string {
 
 func (pt *path) getAgnosterFullPath() string {
 	pwd := pt.getPwd()
-	if string(pwd[0]) == pt.env.getPathSeperator() {
+	if len(pwd) > 1 && string(pwd[0]) == pt.env.getPathSeperator() {
 		pwd = pwd[1:]
 	}
 	return pt.replaceFolderSeparators(pwd)

@@ -9,7 +9,7 @@
 ![GitHub Downloads][gh-downloads]
 
 What started as the offspring of [oh-my-posh2][oh-my-posh2] for PowerShell resulted in a cross platform,
-highly customizable and extensible prompt theme engine. After 4 years of working on oh-my-posh,
+highly customizable, portable and extensible prompt theme engine. After 4 years of working on oh-my-posh,
 a modern and more efficient tool was needed to suit my personal needs.
 
 ## ❤ Support ❤

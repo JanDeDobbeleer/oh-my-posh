@@ -3,8 +3,9 @@ set -g POWERLINE_COMMAND "oh-my-posh"
 set -g CONDA_PROMPT_MODIFIER false
 
 function fish_prompt
-    set -l omp_stack_count (count $dirstack)
-    set -l omp_duration "$CMD_DURATION$cmd_duration"
+    set omp_status_cache $status
+    set omp_stack_count (count $dirstack)
+    set omp_duration "$CMD_DURATION$cmd_duration"
     # check if variable set, < 3.2 case
     if set -q omp_lastcommand; and test "$omp_lastcommand" = ""
       set omp_duration 0
@@ -17,7 +18,7 @@ function fish_prompt
       set -gx omp_last_status_generation $status_generation
     end
 
-    ::OMP:: --config $posh_theme --error $status --execution-time $omp_duration --stack-count $omp_stack_count
+    ::OMP:: --config $posh_theme --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
 end
 
 function postexec_omp --on-event fish_postexec

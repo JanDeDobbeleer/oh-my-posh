@@ -219,11 +219,12 @@
       "segments": [
         {
           "type": "text",
-          "style": "diamond",
-          "background": "#d3d7cf",
-          "trailing_diamond": "─╯",
+          "style": "plain",
+          "foreground": "#d3d7cf",
           "properties": {
-            "text": ""
+            "text": "─╯",
+            "prefix": "",
+            "postfix": ""
           }
         }
       ]

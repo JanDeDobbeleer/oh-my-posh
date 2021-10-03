@@ -153,6 +153,11 @@ func (env *MockedEnvironment) getTerminalWidth() (int, error) {
 	return args.Int(0), args.Error(1)
 }
 
+func (env *MockedEnvironment) getCachePath() string {
+	args := env.Called(nil)
+	return args.String(0)
+}
+
 func (env *MockedEnvironment) cache() cache {
 	args := env.Called(nil)
 	return args.Get(0).(cache)

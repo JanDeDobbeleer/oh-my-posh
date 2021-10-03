@@ -85,6 +85,7 @@ type environmentInfo interface {
 	isWsl() bool
 	stackCount() int
 	getTerminalWidth() (int, error)
+	getCachePath() string
 	cache() cache
 	close()
 }
@@ -155,13 +156,13 @@ func (env *environment) init(args *args) {
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
-	env.fileCache = &fileCache{}
-	env.fileCache.init(env.homeDir())
 	tracer := &tracer{
 		debug: *args.Debug,
 	}
 	tracer.init(env.homeDir())
 	env.tracer = tracer
+	env.fileCache = &fileCache{}
+	env.fileCache.init(env.getCachePath())
 }
 
 func (env *environment) getenv(key string) string {
@@ -500,4 +501,20 @@ func cleanHostName(hostName string) string {
 		}
 	}
 	return hostName
+}
+
+func returnOrBuildCachePath(path string) string {
+	// validate root path
+	if _, err := os.Stat(path); err != nil {
+		return ""
+	}
+	// validate oh-my-posh folder, if non existent, create it
+	cachePath := path + "/oh-my-posh"
+	if _, err := os.Stat(cachePath); err == nil {
+		return cachePath
+	}
+	if err := os.Mkdir(cachePath, 0755); err != nil {
+		return ""
+	}
+	return cachePath
 }

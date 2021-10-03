@@ -86,3 +86,12 @@ func (env *environment) getTerminalWidth() (int, error) {
 func (env *environment) getPlatform() string {
 	return windowsPlatform
 }
+
+func (env *environment) getCachePath() string {
+	defer env.tracer.trace(time.Now(), "getCachePath")
+	// get LOCALAPPDATA if present
+	if cachePath := returnOrBuildCachePath(env.getenv("LOCALAPPDATA")); len(cachePath) != 0 {
+		return cachePath
+	}
+	return env.homeDir()
+}

@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	cachePath = "/.omp.cache"
+	fileName = "/omp.cache"
 )
 
 type cacheObject struct {
@@ -17,14 +17,14 @@ type cacheObject struct {
 }
 
 type fileCache struct {
-	cache *concurrentMap
-	home  string
+	cache     *concurrentMap
+	cachePath string
 }
 
-func (fc *fileCache) init(home string) {
+func (fc *fileCache) init(cachePath string) {
 	fc.cache = newConcurrentMap()
-	fc.home = home
-	content, err := ioutil.ReadFile(fc.home + cachePath)
+	fc.cachePath = cachePath
+	content, err := ioutil.ReadFile(fc.cachePath + fileName)
 	if err != nil {
 		return
 	}
@@ -41,7 +41,7 @@ func (fc *fileCache) init(home string) {
 
 func (fc *fileCache) close() {
 	if dump, err := json.MarshalIndent(fc.cache.list(), "", "    "); err == nil {
-		_ = ioutil.WriteFile(fc.home+cachePath, dump, 0644)
+		_ = ioutil.WriteFile(fc.cachePath+fileName, dump, 0644)
 	}
 }
 

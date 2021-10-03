@@ -40,7 +40,11 @@ func (fc *fileCache) init(cachePath string) {
 }
 
 func (fc *fileCache) close() {
-	if dump, err := json.MarshalIndent(fc.cache.list(), "", "    "); err == nil {
+	cache := fc.cache.list()
+	if len(cache) == 0 {
+		return
+	}
+	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
 		_ = ioutil.WriteFile(fc.cachePath+fileName, dump, 0644)
 	}
 }

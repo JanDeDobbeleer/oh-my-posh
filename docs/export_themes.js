@@ -21,6 +21,7 @@ function newThemeConfig(rpromptOffset = 40, cursorPadding = 30, author = "", bgC
 let themeConfigOverrrides = new Map();
 themeConfigOverrrides.set('agnoster.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('agnosterplus.omp.json', newThemeConfig(80));
+themeConfigOverrrides.set('amro.omp.json', newThemeConfig(40, 100, 'AmRo', '#1C2029'));
 themeConfigOverrrides.set('avit.omp.json', newThemeConfig(40, 80));
 themeConfigOverrrides.set('blueish.omp.json', newThemeConfig(40, 100));
 themeConfigOverrrides.set('cert.omp.json', newThemeConfig(40, 50));

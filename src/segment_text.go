@@ -1,8 +1,9 @@
 package main
 
 type text struct {
-	props *properties
-	env   environmentInfo
+	props   *properties
+	env     environmentInfo
+	content string
 }
 
 const (
@@ -11,18 +12,18 @@ const (
 )
 
 func (t *text) enabled() bool {
-	return true
-}
-
-func (t *text) string() string {
 	textProperty := t.props.getString(TextProperty, "!!text property not defined!!")
 	template := &textTemplate{
 		Template: textProperty,
 		Context:  t,
 		Env:      t.env,
 	}
-	textOutput := template.renderPlainContextTemplate(nil)
-	return textOutput
+	t.content = template.renderPlainContextTemplate(nil)
+	return len(t.content) > 0
+}
+
+func (t *text) string() string {
+	return t.content
 }
 
 func (t *text) init(props *properties, env environmentInfo) {

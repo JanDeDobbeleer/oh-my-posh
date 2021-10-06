@@ -7,18 +7,20 @@ on:
     paths:
       - 'src/**'
       - 'packages/**'
+      - '.github/*'
 
 jobs:
-  release:
+  changelog:
     runs-on: ubuntu-latest
     outputs:
-      upload_url: ${{ steps.create_release.outputs.upload_url }}
       version: ${{ steps.changelog.outputs.version }}
+      body: ${{ steps.changelog.outputs.clean_changelog }}
+      tag: ${{ steps.changelog.outputs.tag }}
       skipped: ${{ steps.changelog.outputs.skipped }}
     steps:
-      - name: Checkout code
+      - name: Checkout code 👋
         uses: actions/checkout@v2
-      - name: Create changelog
+      - name: Create changelog ✍️
         id: changelog
         uses: TriPSs/conventional-changelog-action@v3
         with:
@@ -27,268 +29,53 @@ jobs:
           output-file: "false"
           skip-commit: "true"
           skip-on-empty: "true"
-      - name: Create Github Release
-        id: create_release
-        uses: actions/create-release@v1
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.github_token }}
-        with:
-          tag_name: ${{ steps.changelog.outputs.tag }}
-          release_name: ${{ steps.changelog.outputs.tag }}
-          body: ${{ steps.changelog.outputs.clean_changelog }}
   artifacts:
-    needs: release
-    if: ${{ needs.release.outputs.skipped == 'false' }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        goarch: [amd64]
-        include:
-        - os: ubuntu-latest
-          goarch: arm64
-        - os: ubuntu-latest
-          goarch: arm
-        - os: windows-latest
-          goarch: 386
-        - os: windows-latest
-          goarch: arm64
-    runs-on: ${{ matrix.os }}
+    needs: changelog
+    if: ${{ needs.changelog.outputs.skipped == 'false' }}
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: ${{ github.workspace }}/src
-    outputs:
-      hash_linux: ${{ steps.hash.outputs.hash_ubuntu-latest }}
-      hash_macos: ${{ steps.hash.outputs.hash_macos-latest }}
-      hash_windows: ${{ steps.hash.outputs.hash_windows-latest }}
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.17
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Asset name
-      id: artifact
-      run: |
-        if ($IsLinux) {
-            $artifact = "posh-linux-${{ matrix.goarch }}"
-            Write-Output "::set-output name=name::$($artifact)"
-            return
-        }
-        if ($IsMacOS) {
-            $artifact = "posh-darwin-${{ matrix.goarch }}"
-            Write-Output "::set-output name=name::$($artifact)"
-            return
-        }
-        if ($IsWindows) {
-            $artifact = "posh-windows-${{ matrix.goarch }}.exe"
-            Write-Output "::set-output name=name::$($artifact)"
-            return
-        }
-      shell: pwsh
-    - name: Build
-      id: build
-      run: go build -o ${{ steps.artifact.outputs.name }} -ldflags="-X 'main.Version=${{ needs.release.outputs.version }}'"
-      env:
-        GOARCH: ${{ matrix.goarch }}
-    - name: Hash
-      id: hash
-      run: |
-        $fileHash = Get-FileHash ${{ steps.artifact.outputs.name }} -Algorithm SHA256
-        $fileHash.Hash | Out-File -Encoding 'UTF8' ${{ steps.artifact.outputs.name }}.sha256
-        Write-Output "::set-output name=hash_${{ matrix.os }}::$($fileHash.Hash)"
-      shell: pwsh
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: src/${{ steps.artifact.outputs.name }}
-        asset_name: ${{ steps.artifact.outputs.name }}
-        asset_content_type: application/octet-stream
-    - name: Upload Hash Asset
-      id: upload-hash-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: src/${{ steps.artifact.outputs.name }}.sha256
-        asset_name: ${{ steps.artifact.outputs.name }}.sha256
-        asset_content_type: text/plain
-  themes:
-    needs: release
-    if: ${{ needs.release.outputs.skipped == 'false' }}
-    runs-on: ubuntu-latest
-    outputs:
-      hash_themes: ${{ steps.hash.outputs.hash_themes }}
-    defaults:
-      run:
+      - name: Install Go 🗳
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+      - name: Checkout code 👋
+        uses: actions/checkout@v2
+      - name: Tag HEAD 😸
+        run: git tag ${{ needs.changelog.outputs.tag }}
+      - name: Run GoReleaser 🚀
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: build --rm-dist
+          workdir: src
+      - name: Zip theme files 🤐
+        run: |
+          $compress = @{
+            Path = "../themes/*.omp.json"
+            CompressionLevel = "Fastest"
+            DestinationPath = "./dist/themes.zip"
+          }
+          Compress-Archive @compress
         shell: pwsh
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Zip theme files
-      run: |
-        $compress = @{
-          Path = "themes\*.json"
-          CompressionLevel = "Fastest"
-          DestinationPath = "themes.zip"
-        }
-        Compress-Archive @compress
-    - name: Hash
-      id: hash
-      run: |
-        $fileHash = Get-FileHash themes.zip -Algorithm SHA256
-        $fileHash.Hash | Out-File -Encoding 'UTF8' themes.zip.sha256
-        Write-Output "::set-output name=hash_themes::$($fileHash.Hash)"
-    - name: Upload Themes
-      id: upload-themes
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: themes.zip
-        asset_name: themes.zip
-        asset_content_type: application/octet-stream
-    - name: Upload Themes Hash
-      id: upload-hash-asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: themes.zip.sha256
-        asset_name: themes.zip.sha256
-        asset_content_type: text/plain
-  homebrew:
-    needs: release
-    if: ${{ needs.release.outputs.skipped == 'false' }}
-    runs-on: ubuntu-latest
-    env:
-      GH_KEY: ${{ secrets.GH_PAT }}
-    steps:
-    - name: Push Version
-      run: |
-        curl -XPOST -u "jandedobbeleer:$GH_KEY" \
-        -H "Accept: application/vnd.github.everest-preview+json" \
-        -H "Content-Type: application/json" https://api.github.com/repos/jandedobbeleer/homebrew-oh-my-posh/actions/workflows/release.yml/dispatches \
-        --data '{"ref": "main", "inputs": {"version": "${{ needs.release.outputs.version }}"} }'
-  powershell:
-    needs: [release, artifacts]
-    if: ${{ needs.release.outputs.skipped == 'false' }}
-    runs-on: ubuntu-latest
-    defaults:
-      run:
+      - name: Add hashes 🤫
+        run: |
+          Get-ChildItem ./dist -Exclude *.yaml | Get-Unique |
+          Foreach-Object {
+            $zipHash = Get-FileHash $_.FullName -Algorithm SHA256
+            $zipHash.Hash | Out-File -Encoding 'UTF8' "./dist/$($_.Name).sha256"
+          }
         shell: pwsh
-        working-directory: ${{ github.workspace }}/packages/powershell/oh-my-posh
-    env:
-      PSGALLERY_KEY: ${{ secrets.PSGALLERY_KEY }}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Pack and push
-      run: ./deploy.ps1 -BinVersion ${{ needs.release.outputs.version }} -ModuleVersion ${{ needs.release.outputs.version }} -Repository PSGallery -RepositoryAPIKey $env:PSGALLERY_KEY
-  scoop:
-    needs: [release, artifacts]
-    if: ${{ needs.release.outputs.skipped == 'false' }}
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: pwsh
-        working-directory: ${{ github.workspace }}/packages/scoop
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Update Template
-      run: ./build.ps1 -Version ${{ needs.release.outputs.version }}
-    - name: Upload Scoop JSON
-      id: upload-scoop-json
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/packages/scoop/oh-my-posh.json
-        asset_name: oh-my-posh.json
-        asset_content_type: text/plain
-    - name: Upload Scoop Archive
-      id: upload-scoop-post-install
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/packages/scoop/posh-windows-amd64.7z
-        asset_name: posh-windows-amd64.7z
-        asset_content_type: application/octet-stream
-    - name: Upload Scoop Archive Hash
-      id: upload-scoop-post-install-hash
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/packages/scoop/posh-windows-amd64.7z.sha256
-        asset_name: posh-windows-amd64.7z.sha256
-        asset_content_type: text/plain
-  inno:
-    needs: [release, artifacts]
-    if: ${{ needs.release.outputs.skipped == 'false' }}
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        arch: [amd64, arm64]
-    defaults:
-      run:
-        shell: pwsh
-        working-directory: ${{ github.workspace }}/packages/inno
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Build installer
-      run: ./build.ps1 -Architecture ${{ matrix.arch }}  -Version ${{ needs.release.outputs.version }}
-    - name: Output Hash
-      id: hash
-      run: |
-        $hash = Get-Content -Path Output/install-${{ matrix.arch }}.exe.sha256
-        Write-Output "::set-output name=hash_inno_${{ matrix.arch }}::$($hash)"
-    - name: Upload Inno Installer
-      id: upload-inno-installer
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/packages/inno/Output/install-${{ matrix.arch }}.exe
-        asset_name: install-${{ matrix.arch }}.exe
-        asset_content_type: text/plain
-    - name: Upload Inno Installer Hash
-      id: upload-inno-installer-hash
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ needs.release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/packages/inno/Output/install-${{ matrix.arch }}.exe.sha256
-        asset_name: install-${{ matrix.arch }}.exe.sha256
-        asset_content_type: text/plain
-  winget:
-    needs: [release, inno]
-    if: ${{ needs.release.outputs.skipped == 'false' }}
-    runs-on: windows-latest
-    defaults:
-      run:
-        shell: pwsh
-        working-directory: ${{ github.workspace }}/packages/winget
-    env:
-      WINGETCREATE_TOKEN: ${{ secrets.WINGETCREATE_TOKEN }}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Create manifest and submit PR
-      run: ./build.ps1 -Version ${{ needs.release.outputs.version }} -Token $env:WINGETCREATE_TOKEN
+      - name: Release 🎓
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ needs.changelog.outputs.tag }}
+          body: ${{ needs.changelog.outputs.clean_changelog }}
+          fail_on_unmatched_files: true
+          token: ${{ secrets.GH_PAT }}
+          files: |
+            src/dist/posh-*
+            src/dist/themes.*

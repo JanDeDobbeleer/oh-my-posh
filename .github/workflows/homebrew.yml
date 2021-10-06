@@ -1,0 +1,21 @@
+name: Homebrew
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Notify Homebrew Repo 🙋🏾‍♀️
+      uses: actions/github-script@v5
+      with:
+        github-token: ${{ secrets.GH_PAT }}
+        script: |
+          await github.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+            owner: 'jandedobbeleer',
+            repo: 'homebrew-oh-my-posh',
+            workflow_id: 'release.yml',
+            ref: 'main',
+            inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', '')}
+          })

@@ -1,0 +1,67 @@
+name: Inno
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [amd64, arm64]
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: ${{ github.workspace }}/packages/inno
+    steps:
+    - name: Checkout code 👋
+      uses: actions/checkout@v2
+    - name: Build installer 📦
+      id: build
+      run: |
+        $version = $env:GITHUB_REF.TrimStart("refs/tags/v")
+        ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version
+    - name: Get release ⬇️
+      id: get_release
+      uses: bruceadams/get-release@v1.2.3
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Upload artifacts 🆙
+      uses: actions/github-script@v5
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          console.log('environment', process.versions);
+
+          const fs = require('fs').promises;
+
+          const { repo: { owner, repo }, sha } = context;
+          console.log({ owner, repo, sha });
+
+          for (let file of await fs.readdir('./packages/inno/Output')) {
+            console.log('uploading', file);
+
+            await github.rest.repos.uploadReleaseAsset({
+              owner, repo,
+              release_id: ${{ steps.get_release.outputs.id }},
+              name: file,
+              data: await fs.readFile(`./packages/inno/Output/${file}`)
+            });
+          }
+  notify:
+    runs-on: ubuntu-latest
+    needs: publish
+    steps:
+    - name: Notify Winget Build 🙋🏾‍♀️
+      uses: actions/github-script@v5
+      with:
+        github-token: ${{ secrets.GH_PAT }}
+        script: |
+          await github.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+            owner: 'jandedobbeleer',
+            repo: '${{ github.event.repository.name }}',
+            workflow_id: 'winget.yml',
+            ref: 'main',
+            inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', '')}
+          })
+

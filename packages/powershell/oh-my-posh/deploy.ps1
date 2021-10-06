@@ -2,9 +2,6 @@ Param
 (
     [parameter(Mandatory=$true)]
     [string]
-    $BinVersion,
-    [parameter(Mandatory=$true)]
-    [string]
     $ModuleVersion,
     [parameter(Mandatory=$true)]
     [string]

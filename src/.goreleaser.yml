@@ -1,0 +1,39 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+before:
+  hooks:
+    - go mod tidy
+builds:
+  -
+    binary: "posh-{{ .Os }}-{{ .Arch }}"
+    no_unique_dist_dir: true
+    ldflags:
+      - -X main.Version={{.Version}}
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+      - arm
+      - 386
+    ignore:
+      - goos: darwin
+        goarch: 386
+      - goos: linux
+        goarch: 386
+      - goos: darwin
+        goarch: arm
+      - goos: windows
+        goarch: arm
+      - goos: darwin
+        goarch: arm64
+archives:
+  - id: oh-my-posh
+    format: binary
+    name_template: "posh-{{ .Os }}-{{ .Arch }}"
+checksum:
+  name_template: 'checksums.txt'
+changelog:
+  skip: true

@@ -158,3 +158,6 @@ Output/
 
 # images
 *.png
+
+# go releaser
+/src/dist

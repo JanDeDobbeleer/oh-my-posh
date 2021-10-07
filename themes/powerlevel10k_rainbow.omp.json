@@ -4,13 +4,6 @@
     {
       "type": "prompt",
       "alignment": "left",
-      "newline": true,
-      "segments": []
-    },
-    {
-      "type": "prompt",
-      "alignment": "left",
-      "newline": true,
       "segments": [
         {
           "type": "os",
@@ -203,13 +196,12 @@
       "segments": [
         {
           "type": "text",
-          "style": "diamond",
-          "background": "#d3d7cf",
-          "leading_diamond": "╰─",
+          "style": "plain",
+          "foreground": "#d3d7cf",
           "properties": {
             "prefix": "",
             "postfix": "",
-            "text": ""
+            "text": "╰─"
           }
         }
       ]

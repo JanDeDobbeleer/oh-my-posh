@@ -145,7 +145,8 @@ func (env *MockedEnvironment) stackCount() int {
 }
 
 func (env *MockedEnvironment) isWsl() bool {
-	return false
+	args := env.Called(nil)
+	return args.Bool(0)
 }
 
 func (env *MockedEnvironment) getTerminalWidth() (int, error) {

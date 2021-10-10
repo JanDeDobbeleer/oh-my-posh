@@ -240,8 +240,24 @@ func main() {
 	}
 }
 
-func initShell(shell, configFile string) string {
+func getExecutablePath(shell string) (string, error) {
 	executable, err := os.Executable()
+	if err != nil {
+		return "", err
+	}
+	// On Windows, it fails when the excutable is called in MSYS2 for example
+	// which uses unix style paths to resolve the executable's location.
+	// PowerShell knows how to resolve both, so we can swap this without any issue.
+	executable = strings.ReplaceAll(executable, "\\", "/")
+	switch shell {
+	case bash, zsh:
+		return strings.ReplaceAll(executable, " ", "\\ "), nil
+	}
+	return executable, nil
+}
+
+func initShell(shell, configFile string) string {
+	executable, err := getExecutablePath(shell)
 	if err != nil {
 		return noExe
 	}
@@ -256,11 +272,7 @@ func initShell(shell, configFile string) string {
 }
 
 func printShellInit(shell, configFile string) string {
-	executable, err := os.Executable()
-	// On Windows, it fails when the excutable is called in MSYS2 for example
-	// which uses unix style paths to resolve the executable's location.
-	// PowerShell knows how to resolve both, so we can swap this without any issue.
-	executable = strings.ReplaceAll(executable, "\\", "/")
+	executable, err := getExecutablePath(shell)
 	if err != nil {
 		return noExe
 	}

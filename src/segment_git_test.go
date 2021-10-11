@@ -58,6 +58,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}
 	want := "je suis le output"
 	env := new(MockedEnvironment)
+	env.On("isWsl", nil).Return(false)
 	env.On("runCommand", "git", append(args, commandArgs...)).Return(want, nil)
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
@@ -92,6 +93,7 @@ type detachedContext struct {
 
 func setupHEADContextEnv(context *detachedContext) *git {
 	env := new(MockedEnvironment)
+	env.On("isWsl", nil).Return(false)
 	env.On("hasFolder", "/rebase-merge").Return(context.rebaseMerge)
 	env.On("hasFolder", "/rebase-apply").Return(context.rebaseApply)
 	env.On("hasFolder", "/sequencer").Return(context.sequencer)
@@ -530,6 +532,7 @@ func TestParseGitStatsInvalidLine(t *testing.T) {
 
 func bootstrapUpstreamTest(upstream string) *git {
 	env := &MockedEnvironment{}
+	env.On("isWsl", nil).Return(false)
 	env.On("runCommand", "git", []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(upstream, nil)
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	props := &properties{

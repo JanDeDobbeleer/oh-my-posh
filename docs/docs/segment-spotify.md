@@ -7,7 +7,7 @@ sidebar_label: Spotify
 ## What
 
 Show the currently playing song in the Spotify MacOS/Windows client.  
-On Windows, only the playing state is supported (no information when paused/stopped).  
+On Windows/WSL, only the playing state is supported (no information when paused/stopped).  
 On macOS, all states are supported (playing/paused/stopped).  
 **Be aware this can make the prompt a tad bit slower as it needs to get a response from the Spotify player.**  
 

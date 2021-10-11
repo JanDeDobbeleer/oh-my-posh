@@ -694,6 +694,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "bewing",
+      "name": "bewing",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4759896?v=4",
+      "profile": "https://github.com/bewing",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

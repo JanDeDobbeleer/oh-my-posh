@@ -14,7 +14,7 @@ function _omp-precmd() {
     omp_now=$(::OMP:: --millis)
     omp_elapsed=$(($omp_now-$omp_start_time))
   fi
-  eval "$(::OMP:: --config $POSH_THEME --error $omp_last_error --execution-time $omp_elapsed --stack-count $omp_stack_count --eval --shell zsh)"
+  eval "$(::OMP:: --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh)"
   unset omp_start_time
   unset omp_now
   unset omp_elapsed
@@ -48,7 +48,7 @@ function export_poshconfig() {
     if [ -z "$format" ]; then
       format="json"
     fi
-    ::OMP:: --config $POSH_THEME --print-config --config-format $format > $1
+    ::OMP:: --config="$POSH_THEME" --print-config --config-format="$format" > $1
 }
 
 function self-insert() {
@@ -57,7 +57,7 @@ function self-insert() {
     zle .self-insert
     return
   fi
-  tooltip=$(::OMP:: --config $POSH_THEME --shell zsh --command $BUFFER)
+  tooltip=$(::OMP:: --config="$POSH_THEME" --shell=zsh --command="$BUFFER")
   # ignore an empty tooltip
   if [[ ! -z "$tooltip" ]]; then
     RPROMPT=$tooltip
@@ -79,7 +79,7 @@ _posh-zle-line-init() {
     local -i ret=$?
     (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
-    eval "$(::OMP:: --config $POSH_THEME --print-transient --eval --shell zsh)"
+    eval "$(::OMP:: --config="$POSH_THEME" --print-transient --eval --shell=zsh)"
     zle .reset-prompt
 
     # If we received EOT, we exit the shell

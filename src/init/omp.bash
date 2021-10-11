@@ -22,7 +22,7 @@ function _omp_hook() {
         omp_elapsed=$((omp_now-omp_start_time))
         rm -f "$TIMER_START"
     fi
-    PS1="$(::OMP:: --config $POSH_THEME --shell bash --error $ret --execution-time $omp_elapsed --stack-count $omp_stack_count)"
+    PS1="$(::OMP:: --config="$POSH_THEME" --shell=bash --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count")"
 
     return $ret
 }
@@ -43,5 +43,5 @@ function export_poshconfig() {
     if [ -z "$format" ]; then
       format="json"
     fi
-    ::OMP:: --config $POSH_THEME --print-config --config-format $format > $1
+    ::OMP:: --config="$POSH_THEME" --print-config --config-format="$format" > $1
 }

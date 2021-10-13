@@ -24,6 +24,7 @@ module.exports = {
       type: "category",
       label: "Segments",
       items: [
+        "angularcli",
         "aws",
         "az",
         "azfunc",

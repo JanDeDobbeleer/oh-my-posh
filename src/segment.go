@@ -126,6 +126,8 @@ const (
 	OWM SegmentType = "owm"
 	// Memory writes used memory percentage
 	Memory SegmentType = "memory"
+	// AngularCli writes which angular cli version us currently active
+	AngularCli SegmentType = "angularcli"
 )
 
 func (segment *Segment) string() string {
@@ -279,6 +281,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Nbgv:          &nbgv{},
 		Rust:          &rust{},
 		Memory:        &memory{},
+		AngularCli:    &angularcli{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

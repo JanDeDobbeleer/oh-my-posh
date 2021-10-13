@@ -169,7 +169,8 @@
             "dart",
             "rust",
             "owm",
-            "memory"
+            "memory",
+            "angularcli"
           ]
         },
         "style": {
@@ -1707,6 +1708,29 @@
                     "title": "Memory type",
                     "description": "whether to show physical or swap memory",
                     "default": "physical"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "angularcli" }
+            }
+          },
+          "then": {
+            "title": "Angular CLI Segment",
+            "description": "https://ohmyposh.dev/docs/angularcli",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
                   }
                 }
               }

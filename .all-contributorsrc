@@ -703,6 +703,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "shawnwildermuth",
+      "name": "Shawn Wildermuth",
+      "avatar_url": "https://avatars.githubusercontent.com/u/568272?v=4",
+      "profile": "http://wildermuth.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "onpikono",
+      "name": "Ondrej Pinka",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25362465?v=4",
+      "profile": "https://github.com/onpikono",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

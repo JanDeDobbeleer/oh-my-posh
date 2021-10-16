@@ -703,6 +703,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "shawnwildermuth",
+      "name": "Shawn Wildermuth",
+      "avatar_url": "https://avatars.githubusercontent.com/u/568272?v=4",
+      "profile": "http://wildermuth.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

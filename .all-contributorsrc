@@ -721,6 +721,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "kasuken",
+      "name": "Emanuele Bartolesi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2757486?v=4",
+      "profile": "https://www.emanuelebartolesi.com",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

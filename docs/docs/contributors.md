@@ -111,6 +111,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
   </tr>
   <tr>
     <td align="center"><a href="http://wildermuth.com"><img src="https://avatars.githubusercontent.com/u/568272?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Shawn Wildermuth</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=shawnwildermuth" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.emanuelebartolesi.com"><img src="https://avatars.githubusercontent.com/u/2757486?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Emanuele Bartolesi</b></sub></a><br /><a href="#design-kasuken" title="Design">🎨</a></td>
   </tr>
 </table>
 

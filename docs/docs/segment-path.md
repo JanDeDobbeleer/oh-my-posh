@@ -111,4 +111,10 @@ for the folders to display is governed by the `mixed_threshold` property.
 
 ### Letter
 
-Works like `Full`, but will write every subfolder name using the first letter only.
+Works like `Full`, but will write every subfolder name using the first letter only, except when the folder name
+starts with a symbol or icon.
+
+- `folder` will be shortened to `f`
+- `.config` will be shortened to `.c`
+- `__pycache__` will be shortened to `__p`
+- `➼ folder` will be shortened to `➼ f`

@@ -155,12 +155,20 @@ func (pt *path) getLetterPath() string {
 		if len(folder) == 0 {
 			continue
 		}
-		var letter string
-		if strings.HasPrefix(folder, ".") && len(folder) > 1 {
-			letter = folder[0:2]
-		} else {
-			letter = folder[0:1]
+
+		// check if there is at least a letter we can use
+		matches := findNamedRegexMatch(`(?P<letter>[\p{L}0-9]).*`, folder)
+
+		if matches == nil || matches["letter"] == "" {
+			// no letter found, keep the folder unchanged
+			buffer.WriteString(fmt.Sprintf("%s%s", folder, separator))
+			continue
 		}
+
+		letter := matches["letter"]
+		// handle non-letter characters before the first found letter
+		letter = folder[0:strings.Index(folder, letter)] + letter
+
 		buffer.WriteString(fmt.Sprintf("%s%s", letter, separator))
 	}
 	buffer.WriteString(splitted[len(splitted)-1])

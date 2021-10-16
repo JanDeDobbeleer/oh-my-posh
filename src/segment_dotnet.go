@@ -25,7 +25,7 @@ func (d *dotnet) init(props *properties, env environmentInfo) {
 	d.language = &language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.cs", "*.csx", "*.vb", "*.sln", "*.csproj", "*.vbproj", "*.fs", "*.fsx", "*.fsproj"},
+		extensions: []string{"*.cs", "*.csx", "*.vb", "*.sln", "*.csproj", "*.vbproj", "*.fs", "*.fsx", "*.fsproj", "global.json"},
 		commands: []*cmd{
 			{
 				executable: "dotnet",

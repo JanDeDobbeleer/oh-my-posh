@@ -1,0 +1,66 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "#EB9654",
+          "foreground": "#ffffff",
+          "leading_diamond": "",
+          "properties": {
+            "display_host": false,
+            "prefix": ""
+          },
+          "style": "diamond",
+          "trailing_diamond": "",
+          "type": "session"
+        },
+        {
+          "background": "lightYellow",
+          "foreground": "#3f3f3f",
+          "properties": {
+            "style": "full"
+          },
+          "style": "plain",
+          "type": "path"
+        },
+        {
+          "background": "#25AFF3",
+          "foreground": "#ffffff",
+          "properties": {
+            "display_status": true,
+            "postfix": ") ",
+            "prefix": " branch ("
+          },
+          "style": "plain",
+          "type": "git"
+        },
+        {
+          "type": "spotify",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#1BD760",
+          "properties": {
+            "track_separator" : " - ",
+            "playing_icon": "",
+            "stopped_icon": "",
+            "paused_icon": ""
+          }
+        },
+        {
+          "background": "#cc00ff",
+          "foreground": "#ffffff",
+          "properties": {
+            "time_format": "15:04:05"
+          },
+          "style": "diamond",
+          "trailing_diamond": "",
+          "type": "time"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true
+}

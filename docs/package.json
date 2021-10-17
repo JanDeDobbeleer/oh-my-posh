@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development docusaurus start",
+    "start": "cross-env NODE_ENV=development docusaurus start",
     "build": "docusaurus build",
     "themes": "node export_themes.js"
   },
@@ -13,6 +13,9 @@
     "classnames": "^2.3.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   },
   "browserslist": {
     "production": [

@@ -1,0 +1,154 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": true,
+  "console_title": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "os",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#c44569",
+          "leading_diamond": "\uE0B6",
+          "trailing_diamond": "",
+          "properties": {
+            "prefix": "",
+            "windows": "\uE62A",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#ffffff",
+          "background": "#c44569",
+          "properties": {
+            "prefix": "",
+            "style": "full"
+          }
+        },
+        {
+          "type": "node",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#ffffff",
+          "background": "#f78fb3",
+          "properties": {
+            "prefix": " \uE718 "
+          }
+        },
+        {
+          "type": "python",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#ffffff",
+          "background": "#f78fb3",
+          "properties": {
+            "prefix": " \uE235 ",
+            "display_version": false
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#ffffff",
+          "background": "#caffbf",
+          "properties": {
+            "display_stash_count": false,
+            "display_upstream_icon": true,
+            "status_colors_enabled": true,
+            "display_status": true,
+            "local_changes_color": "#FCA17D",
+            "ahead_and_behind_color": "#f26d50",
+            "behind_color": "#f17c37",
+            "ahead_color": "#89d1dc",
+            "stash_count_icon": "\uF692 "
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "executiontime",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B2",
+          "invert_powerline": true,
+          "foreground": "#ffffff",
+          "background": "#83769c",
+          "properties": {
+            "always_enabled": true,
+            "prefix": " "
+          }
+        },
+        {
+          "type": "root",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B2",
+          "invert_powerline": true,
+          "foreground": "#FFD700",
+          "background": "#86BBD8",
+          "properties": {
+            "prefix": " ",
+            "postfix": "",
+            "root_icon": "⚡"
+          }
+        },
+        {
+          "type": "session",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B2",
+          "invert_powerline": true,
+          "foreground": "#ffffff",
+          "background": "#86BBD8",
+          "properties": {
+            "prefix": " ",
+            "postfix": " ",
+            "display_host": false
+          }
+        },
+        {
+          "type": "shell",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B4",
+          "invert_powerline": true,
+          "foreground": "#ffffff",
+          "background": "#33658A",
+          "properties": {
+            "prefix": " ",
+            "postfix": " "
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "root",
+          "style": "plain",
+          "properties": {}
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "properties": {
+            "prefix": "",
+            "postfix": "",
+            "text": "<#69FF94>\u276F</>"
+          }
+        }
+      ]
+    }
+  ]
+}

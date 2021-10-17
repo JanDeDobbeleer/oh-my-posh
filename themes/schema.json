@@ -424,6 +424,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -728,6 +731,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -754,6 +760,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -780,6 +789,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -806,6 +818,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -819,7 +834,7 @@
             }
           },
           "then": {
-            "title": "Julia Segment",
+            "title": "Java Segment",
             "description": "https://ohmyposh.dev/docs/java",
             "properties": {
               "properties": {
@@ -980,6 +995,9 @@
                     "title": "NPM Icon",
                     "description": "Icon/text to use for NPM",
                     "default": " \uE71E"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -1295,6 +1313,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }

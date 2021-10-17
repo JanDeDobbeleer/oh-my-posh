@@ -740,6 +740,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "tjackadams",
+      "name": "Thomas Adams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2307314?v=4",
+      "profile": "https://blog.itadams.co.uk",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

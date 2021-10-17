@@ -32,6 +32,7 @@ Display the currently active .NET SDK version.
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
-  - `files`: the segment is only displayed when `*.cs`, `*.vb`, `*.fs`, `*.fsx`, `*.sln`, `*.csproj`, `*.vbproj`, or `*.fsproj` files are present (default)
+  - `files`: the segment is only displayed when `*.cs`, `*.vb`, `*.fs`, `*.fsx`, `*.sln`, `*.csproj`, `*.vbproj`,
+  or `*.fsproj` files are present (default)
 - unsupported_version_icon: `string` - text/icon that is displayed when the active .NET SDK version (e.g., one specified
   by `global.json`) is not installed/supported - defaults to `\uf071` (X in a rectangle box)

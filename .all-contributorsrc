@@ -703,6 +703,33 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "shawnwildermuth",
+      "name": "Shawn Wildermuth",
+      "avatar_url": "https://avatars.githubusercontent.com/u/568272?v=4",
+      "profile": "http://wildermuth.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "onpikono",
+      "name": "Ondrej Pinka",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25362465?v=4",
+      "profile": "https://github.com/onpikono",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "kasuken",
+      "name": "Emanuele Bartolesi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2757486?v=4",
+      "profile": "https://www.emanuelebartolesi.com",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

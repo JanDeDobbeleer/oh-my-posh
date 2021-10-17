@@ -25,10 +25,10 @@
                 {
                     "type": "git",
                     "style": "plain",
-                    "foreground": "lightYellow",
+                    "foreground": "#F1502F",
                     "properties": {
-                        "prefix": ":: <lightBlue>git(</>",
-                        "postfix": "<lightBlue>)</>"
+                        "prefix": ":: ",
+                        "display_status": true
                     }
                 }
             ]
@@ -38,21 +38,62 @@
             "alignment": "right",
             "segments": [
                 {
+                    "type": "root",
+                    "style": "plain",
+                    "foreground": "red",
+                    "properties": {
+                        "prefix": "| ",
+                        "root_icon": "root"
+                    }
+                },
+                {
+                    "type": "dart",
+                    "style": "powerline",
+                    "foreground": "#06A4CE",
+                    "properties": {
+                        "prefix": "| \uE798 "
+                    }
+                },
+                {
+                    "type": "node",
+                    "style": "powerline",
+                    "foreground": "#6CA35E",
+                    "properties": {
+                        "prefix": "| \uE718 "
+                    }
+                },
+                {
                     "type": "python",
                     "style": "plain",
-                    "foreground": "lightRed",
+                    "foreground": "#4584b6",
                     "properties": {
-                        "display_virtual_env": true,
+                        "prefix": "| \uE235 ",
                         "display_version": false,
-                        "prefix": "[ ",
-                        "postfix": " ]",
-                        "display_mode": "always"
+                        "display_mode": "context",
+                        "display_virtual_env": true
+                    }
+                },
+                {
+                    "type": "battery",
+                    "style": "powerline",
+                    "invert_powerline": true,
+                    "properties": {
+                        "charging_icon": " ",
+                        "charged_icon": "\uf00d ",
+                        "charged_color": "#ff0000",
+                        "charging_color": "#4caf50",
+                        "discharging_color": "#40c4ff",
+                        "prefix": "| ",
+                        "postfix": "  "
                     }
                 },
                 {
                     "type": "time",
                     "style": "plain",
-                    "foreground": "lightGreen"
+                    "foreground": "lightGreen",
+                    "properties": {
+                        "prefix": "| "
+                    }
                 }
             ]
         },

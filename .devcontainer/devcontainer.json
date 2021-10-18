@@ -1,0 +1,67 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.177.0/containers/go
+{
+  "name": "Go",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "args": {
+      // Update the VARIANT arg to pick a version of Go: 1, 1.16, 1.17
+      // Append -bullseye or -buster to pin to an OS version.
+      // Use -bullseye variants on local arm64/Apple Silicon.
+      "VARIANT": "1.17-bullseye",
+      // Options
+      "NODE_VERSION": "lts/*"
+    }
+  },
+  "runArgs": ["--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"],
+
+  // Set *default* container specific settings.json values on container create.
+  "settings": {
+    "go.toolsManagement.checkForUpdates": "local",
+    "go.useLanguageServer": true,
+    "go.gopath": "/go",
+    "go.goroot": "/usr/local/go",
+    "terminal.integrated.profiles.linux": {
+      "bash": {
+        "path": "bash"
+      },
+      "zsh": {
+        "path": "zsh"
+      },
+      "fish": {
+        "path": "fish"
+      },
+      "tmux": {
+        "path": "tmux",
+        "icon": "terminal-tmux"
+      },
+      "pwsh": {
+        "path": "pwsh",
+        "icon": "terminal-powershell"
+      }
+    },
+    "terminal.integrated.defaultProfile.linux": "pwsh",
+    "terminal.integrated.defaultProfile.windows": "pwsh",
+    "terminal.integrated.defaultProfile.osx": "pwsh",
+  },
+
+  // Add the IDs of extensions you want installed when the container is created.
+  "extensions": [
+    "github.vscode-pull-request-github",
+    "esbenp.prettier-vscode",
+    "davidanson.vscode-markdownlint",
+    "yzhang.markdown-all-in-one",
+    "bungcip.better-toml",
+    "redhat.vscode-yaml",
+    "golang.go-nightly"
+  ],
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [3000],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  // "postCreateCommand": "go version",
+
+  // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+  "remoteUser": "vscode"
+}

@@ -53,11 +53,12 @@
     "yzhang.markdown-all-in-one",
     "bungcip.better-toml",
     "redhat.vscode-yaml",
-    "golang.go-nightly"
+    "golang.go",
+    "ms-vscode.powershell"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  "forwardPorts": [3000],
+  // "forwardPorts": [3000],
 
   // Use 'postCreateCommand' to run commands after the container is created.
   // "postCreateCommand": "go version",

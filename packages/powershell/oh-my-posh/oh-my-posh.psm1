@@ -79,6 +79,30 @@ function Set-PoshPrompt {
 
 <#
 .SYNOPSIS
+    Returns an ansi formatted hyperlink
+    if name not set, uri is used as the name of the hyperlink
+.EXAMPLE
+    Get-Hyperlink
+#>
+function Get-Hyperlink {
+    param(
+        [Parameter(Mandatory)]
+        [string]$uri,
+        [string]$name
+    )
+    $esc = [char]27
+    if ("" -eq $name) {
+        $name = $uri
+    }
+    if ($env:WSL_DISTRO_NAME -ne $null){
+        # wsl conversion if needed
+        $uri= &wslpath -m $uri
+    }
+    return "$esc]8;;file://$uri$esc\$name$esc]8;;$esc\"
+}
+
+<#
+.SYNOPSIS
     Display a preview or a list of installed themes.
 .EXAMPLE
     Get-PoshThemes
@@ -91,7 +115,6 @@ function Get-PoshThemes() {
         [Parameter(Mandatory = $false, HelpMessage = "List themes path")]
         $list
     )
-    $esc = [char]27
     $consoleWidth = $Host.UI.RawUI.WindowSize.Width
     $logo = @'
    __  _____ _      ___  ___       ______         _      __
@@ -112,7 +135,7 @@ function Get-PoshThemes() {
     else {
         $poshCommand = Get-PoshCommand
         $themes | ForEach-Object -Process {
-            Write-Host "Theme: $esc[1m$($_.BaseName.Replace('.omp', ''))$esc[0m"
+            Write-Host "Theme: $(Get-Hyperlink -uri $_.fullname -name $_.BaseName.Replace('.omp', ''))"
             Write-Host ""
             & $poshCommand -config $($_.FullName) -pwd $PWD
             Write-Host ""
@@ -120,7 +143,7 @@ function Get-PoshThemes() {
     }
     Write-Host ("-" * $consoleWidth)
     Write-Host ""
-    Write-Host "Themes location: $PSScriptRoot\themes"
+    Write-Host "Themes location: $(Get-Hyperlink -uri "$PSScriptRoot/themes")"
     Write-Host ""
     Write-Host "To change your theme, use the Set-PoshPrompt command. Example:"
     Write-Host "  Set-PoshPrompt -Theme jandedobbeleer"

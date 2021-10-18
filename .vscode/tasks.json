@@ -16,7 +16,7 @@
         "isDefault": true
       },
       "problemMatcher": "$go",
-      "args": ["build", "-v", "-o", "bin/oh-my-posh"]
+      "args": ["build", "-v"]
     }
   ]
 }

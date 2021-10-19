@@ -30,6 +30,7 @@ themeConfigOverrrides.set('craver.omp.json', newThemeConfig(40, 80, 'Nick Craver
 themeConfigOverrrides.set('darkblood.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('honukai.omp.json', newThemeConfig(20));
 themeConfigOverrrides.set('hotstick.minimal.omp.json', newThemeConfig(40, 10));
+themeConfigOverrrides.set('hunk.omp.json', newThemeConfig(40, 15, 'Paris Qian'));
 themeConfigOverrrides.set('huvix.omp.json', newThemeConfig(40, 70));
 themeConfigOverrrides.set('jandedobbeleer.omp.json', newThemeConfig(40, 15));
 themeConfigOverrrides.set('lambda.omp.json', newThemeConfig(40, 40));

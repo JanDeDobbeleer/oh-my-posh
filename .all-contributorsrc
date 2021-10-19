@@ -710,7 +710,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/568272?v=4",
       "profile": "http://wildermuth.com",
       "contributions": [
-        "doc"
+        "doc",
+        "code"
       ]
     },
     {
@@ -729,6 +730,24 @@
       "profile": "https://www.emanuelebartolesi.com",
       "contributions": [
         "design"
+      ]
+    },
+    {
+      "login": "qiansen1386",
+      "name": "Paris Qian",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1759658?v=4",
+      "profile": "https://qiansen1386.github.io",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "tjackadams",
+      "name": "Thomas Adams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2307314?v=4",
+      "profile": "https://blog.itadams.co.uk",
+      "contributions": [
+        "code"
       ]
     }
   ],

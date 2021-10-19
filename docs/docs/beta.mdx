@@ -76,6 +76,14 @@ Import/invoke Oh My Posh in your `$PROFILE` and add the following line below:
 Enable-PoshTooltips
 ```
 
+For example:
+
+```pwsh
+# $PROFILE
+oh-my-posh --init --shell pwsh --config ~\wildertheme.json | Invoke-Expression
+Enable-PoshTooltips
+```
+
 Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes to take effect.
 
 </TabItem>
@@ -101,6 +109,15 @@ This feature only works in `zsh` and `powershell` for the time being.
 Transient prompt, when enabled, replaces the prompt with a simpler one to allow more screen real estate.
 You can use go [text/template][go-text-template] templates extended with [sprig][sprig] to enrich the text.
 Environment variables are available, just like the [`console_title_template`][console-title] functionality.
+
+Typically, your prompt will simply leave the prompt on the screen when you execute a command (or press enter) like so:
+
+![Before Transient](/img/transient-before.gif)
+
+By enabling Transient Prompt, you can replace the prompt with some other content for a cleaner console as shown here:
+
+![After Transient](/img/transient-after.gif)
+
 
 ### Configuration
 

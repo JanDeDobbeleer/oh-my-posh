@@ -925,3 +925,36 @@ func TestTruncateBranch(t *testing.T) {
 		assert.Equal(t, tc.Expected, g.truncateBranch(tc.Branch), tc.Case)
 	}
 }
+
+func TestShouldIgnoreRootRepository(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Dir      string
+		Expected bool
+	}{
+		{Case: "inside excluded", Dir: "/home/bill/repo"},
+		{Case: "oustide excluded", Dir: "/home/melinda"},
+		{Case: "excluded exact match", Dir: "/home/gates", Expected: true},
+		{Case: "excluded inside match", Dir: "/home/gates/bill", Expected: true},
+	}
+
+	for _, tc := range cases {
+		props := map[Property]interface{}{
+			ExcludeFolders: []string{
+				"/home/bill",
+				"/home/gates.*",
+			},
+		}
+		env := new(MockedEnvironment)
+		env.On("homeDir", nil).Return("/home/bill")
+		env.On("getRuntimeGOOS", nil).Return(windowsPlatform)
+		git := &git{
+			props: &properties{
+				values: props,
+			},
+			env: env,
+		}
+		got := git.shouldIgnoreRootRepository(tc.Dir)
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}

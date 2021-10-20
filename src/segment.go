@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 )
 
@@ -146,13 +145,13 @@ func (segment *Segment) getValue(property Property, defaultValue string) string 
 	return defaultValue
 }
 
-func (segment *Segment) shouldIncludeFolder(cwd string) bool {
-	cwdIncluded := segment.cwdIncluded(cwd)
-	cwdExcluded := segment.cwdExcluded(cwd)
+func (segment *Segment) shouldIncludeFolder() bool {
+	cwdIncluded := segment.cwdIncluded()
+	cwdExcluded := segment.cwdExcluded()
 	return (cwdIncluded && !cwdExcluded)
 }
 
-func (segment *Segment) cwdIncluded(cwd string) bool {
+func (segment *Segment) cwdIncluded() bool {
 	value, ok := segment.Properties[IncludeFolders]
 	if !ok {
 		// IncludeFolders isn't specified, everything is included
@@ -166,38 +165,16 @@ func (segment *Segment) cwdIncluded(cwd string) bool {
 		return true
 	}
 
-	return segment.cwdMatchesOneOf(cwd, list)
+	return dirMatchesOneOf(segment.env, segment.env.getcwd(), list)
 }
 
-func (segment *Segment) cwdExcluded(cwd string) bool {
+func (segment *Segment) cwdExcluded() bool {
 	value, ok := segment.Properties[ExcludeFolders]
 	if !ok {
 		value = segment.Properties[IgnoreFolders]
 	}
 	list := parseStringArray(value)
-	return segment.cwdMatchesOneOf(cwd, list)
-}
-
-func (segment *Segment) cwdMatchesOneOf(cwd string, regexes []string) bool {
-	normalizedCwd := strings.ReplaceAll(cwd, "\\", "/")
-	normalizedHomeDir := strings.ReplaceAll(segment.env.homeDir(), "\\", "/")
-
-	for _, element := range regexes {
-		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
-		if strings.HasPrefix(normalizedElement, "~") {
-			normalizedElement = normalizedHomeDir + normalizedElement[1:]
-		}
-		pattern := fmt.Sprintf("^%s$", normalizedElement)
-		goos := segment.env.getRuntimeGOOS()
-		if goos == windowsPlatform || goos == darwinPlatform {
-			pattern = "(?i)" + pattern
-		}
-		matched := matchString(pattern, normalizedCwd)
-		if matched {
-			return true
-		}
-	}
-	return false
+	return dirMatchesOneOf(segment.env, segment.env.getcwd(), list)
 }
 
 func (segment *Segment) getColor(templates []string, defaultColor string) string {
@@ -297,7 +274,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 	return errors.New("unable to map writer")
 }
 
-func (segment *Segment) setStringValue(env environmentInfo, cwd string) {
+func (segment *Segment) setStringValue(env environmentInfo) {
 	defer func() {
 		err := recover()
 		if err == nil {
@@ -310,7 +287,7 @@ func (segment *Segment) setStringValue(env environmentInfo, cwd string) {
 		segment.active = true
 	}()
 	err := segment.mapSegmentWithWriter(env)
-	if err != nil || !segment.shouldIncludeFolder(cwd) {
+	if err != nil || !segment.shouldIncludeFolder() {
 		return
 	}
 	if segment.enabled() {

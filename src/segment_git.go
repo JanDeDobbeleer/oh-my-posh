@@ -135,6 +135,10 @@ func (g *git) enabled() bool {
 	if err != nil {
 		return false
 	}
+	if g.shouldIgnoreRootRepository(gitdir.parentFolder) {
+		return false
+	}
+
 	g.repo = &gitRepo{}
 	if gitdir.isDir {
 		g.repo.gitWorkingFolder = gitdir.path
@@ -157,6 +161,18 @@ func (g *git) enabled() bool {
 		return true
 	}
 	return false
+}
+
+func (g *git) shouldIgnoreRootRepository(rootDir string) bool {
+	if g.props == nil || g.props.values == nil {
+		return false
+	}
+	value, ok := g.props.values[ExcludeFolders]
+	if !ok {
+		return false
+	}
+	excludedFolders := parseStringArray(value)
+	return dirMatchesOneOf(g.env, rootDir, excludedFolders)
 }
 
 func (g *git) string() string {

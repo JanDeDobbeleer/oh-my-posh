@@ -15,25 +15,24 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/gookit/color v1.4.2
-	github.com/gookit/config/v2 v2.0.25
-	github.com/gookit/goutil v0.3.15 // indirect
+	github.com/gookit/color v1.5.0
+	github.com/gookit/config/v2 v2.0.27
+	github.com/gookit/goutil v0.4.0 // indirect
 	github.com/huandu/xstrings v1.3.2 // indirect
 	github.com/jan0660/memory v0.1.2
 	github.com/mitchellh/copystructure v1.2.0 // indirect
-	github.com/mitchellh/mapstructure v1.4.1
+	github.com/mitchellh/mapstructure v1.4.2
 	github.com/sergi/go-diff v1.2.0 // indirect
-	github.com/shirou/gopsutil v3.21.8+incompatible
-	github.com/smartystreets/goconvey v1.6.4 // indirect
+	github.com/shirou/gopsutil v3.21.9+incompatible
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/tklauser/go-sysconf v0.3.9 // indirect
-	github.com/wayneashleyberry/terminal-dimensions v1.0.0
-	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
+	github.com/wayneashleyberry/terminal-dimensions v1.1.0
+	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d
-	golang.org/x/sys v0.0.0-20210917161153-d61c044b1678
-	golang.org/x/text v0.3.6
-	gopkg.in/ini.v1 v1.62.0
+	golang.org/x/sys v0.0.0-20211020064051-0ec99a608a1b
+	golang.org/x/text v0.3.7
+	gopkg.in/ini.v1 v1.63.2
 	howett.net/plist v0.0.0-20201203080718-1454fab16a06 // indirect
 )
 
@@ -41,16 +40,16 @@ require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/go-ole/go-ole v1.2.5 // indirect
+	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/imdario/mergo v0.3.12 // indirect
-	github.com/json-iterator/go v1.1.11 // indirect
-	github.com/mattn/go-isatty v0.0.13 // indirect
+	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.1 // indirect
+	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/shopspring/decimal v1.2.0 // indirect
+	github.com/shopspring/decimal v1.3.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/tklauser/numcpus v0.3.0 // indirect
 	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
@@ -60,6 +59,4 @@ require (
 
 replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-2
 
-replace github.com/go-ole/go-ole v1.2.5 => github.com/JanDeDobbeleer/go-ole v1.2.5-3
-
-replace github.com/shirou/gopsutil v3.21.8+incompatible => github.com/JanDeDobbeleer/gopsutil v3.21.8-3+incompatible
+replace github.com/shirou/gopsutil v3.21.9+incompatible => github.com/JanDeDobbeleer/gopsutil v3.21.9-1+incompatible

@@ -36,6 +36,9 @@ func (env *environment) isWsl() bool {
 func (env *environment) getTerminalWidth() (int, error) {
 	defer env.tracer.trace(time.Now(), "getTerminalWidth")
 	width, err := terminal.Width()
+	if err != nil {
+		env.tracer.error(err.Error())
+	}
 	return int(width), err
 }
 

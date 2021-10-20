@@ -128,7 +128,7 @@ const (
 )
 
 func (g *git) enabled() bool {
-	if !g.env.hasCommand("git") {
+	if !g.env.hasCommand(g.getGitCommand()) {
 		return false
 	}
 	gitdir, err := g.env.hasParentFilePath(".git")
@@ -320,7 +320,7 @@ func (g *git) getStatusColor(defaultValue string) string {
 	return defaultValue
 }
 
-func (g *git) getGitCommandOutput(args ...string) string {
+func (g *git) getGitCommand() string {
 	inWSLSharedDrive := func(env environmentInfo) bool {
 		return env.isWsl() && strings.HasPrefix(env.getcwd(), "/mnt/")
 	}
@@ -328,8 +328,12 @@ func (g *git) getGitCommandOutput(args ...string) string {
 	if g.env.getRuntimeGOOS() == windowsPlatform || inWSLSharedDrive(g.env) {
 		gitCommand = "git.exe"
 	}
+	return gitCommand
+}
+
+func (g *git) getGitCommandOutput(args ...string) string {
 	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
-	val, _ := g.env.runCommand(gitCommand, args...)
+	val, _ := g.env.runCommand(g.getGitCommand(), args...)
 	return val
 }
 

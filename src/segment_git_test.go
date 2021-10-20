@@ -14,6 +14,8 @@ const (
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "git").Return(false)
+	env.On("getRuntimeGOOS", nil).Return("")
+	env.On("isWsl", nil).Return(false)
 	g := &git{
 		env: env,
 	}
@@ -23,6 +25,8 @@ func TestEnabledGitNotFound(t *testing.T) {
 func TestEnabledInWorkingDirectory(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "git").Return(true)
+	env.On("getRuntimeGOOS", nil).Return("")
+	env.On("isWsl", nil).Return(false)
 	fileInfo := &fileInfo{
 		path:         "/dir/hello",
 		parentFolder: "/dir",
@@ -39,6 +43,8 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 func TestEnabledInWorkingTree(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "git").Return(true)
+	env.On("getRuntimeGOOS", nil).Return("")
+	env.On("isWsl", nil).Return(false)
 	fileInfo := &fileInfo{
 		path:         "/dir/hello",
 		parentFolder: "/dir",
@@ -900,32 +906,6 @@ func TestGetBranchStatus(t *testing.T) {
 	}
 }
 
-func TestTruncateBranch(t *testing.T) {
-	cases := []struct {
-		Case      string
-		Expected  string
-		Branch    string
-		MaxLength interface{}
-	}{
-		{Case: "No limit", Expected: "all-your-base-are-belong-to-us", Branch: "all-your-base-are-belong-to-us"},
-		{Case: "No limit - larger", Expected: "all-your-base", Branch: "all-your-base-are-belong-to-us", MaxLength: 13.0},
-		{Case: "No limit - smaller", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 13.0},
-		{Case: "Invalid setting", Expected: "all-your-base", Branch: "all-your-base", MaxLength: "burp"},
-		{Case: "Lower than limit", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 20.0},
-	}
-
-	for _, tc := range cases {
-		g := &git{
-			props: &properties{
-				values: map[Property]interface{}{
-					BranchMaxLength: tc.MaxLength,
-				},
-			},
-		}
-		assert.Equal(t, tc.Expected, g.truncateBranch(tc.Branch), tc.Case)
-	}
-}
-
 func TestShouldIgnoreRootRepository(t *testing.T) {
 	cases := []struct {
 		Case     string
@@ -956,5 +936,57 @@ func TestShouldIgnoreRootRepository(t *testing.T) {
 		}
 		got := git.shouldIgnoreRootRepository(tc.Dir)
 		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
+func TestTruncateBranch(t *testing.T) {
+	cases := []struct {
+		Case      string
+		Expected  string
+		Branch    string
+		MaxLength interface{}
+	}{
+		{Case: "No limit", Expected: "all-your-base-are-belong-to-us", Branch: "all-your-base-are-belong-to-us"},
+		{Case: "No limit - larger", Expected: "all-your-base", Branch: "all-your-base-are-belong-to-us", MaxLength: 13.0},
+		{Case: "No limit - smaller", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 13.0},
+		{Case: "Invalid setting", Expected: "all-your-base", Branch: "all-your-base", MaxLength: "burp"},
+		{Case: "Lower than limit", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 20.0},
+	}
+
+	for _, tc := range cases {
+		g := &git{
+			props: &properties{
+				values: map[Property]interface{}{
+					BranchMaxLength: tc.MaxLength,
+				},
+			},
+		}
+		assert.Equal(t, tc.Expected, g.truncateBranch(tc.Branch), tc.Case)
+	}
+}
+
+func TestGetGitCommand(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		IsWSL    bool
+		GOOS     string
+		CWD      string
+	}{
+		{Case: "On Windows", Expected: "git.exe", GOOS: windowsPlatform},
+		{Case: "Non Windows", Expected: "git"},
+		{Case: "Iside WSL, non shared", IsWSL: true, Expected: "git"},
+		{Case: "Iside WSL, shared", Expected: "git.exe", IsWSL: true, CWD: "/mnt/bill"},
+	}
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("isWsl", nil).Return(tc.IsWSL)
+		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		env.On("getcwd", nil).Return(tc.CWD)
+		g := &git{
+			env: env,
+		}
+		assert.Equal(t, tc.Expected, g.getGitCommand(), tc.Case)
 	}
 }

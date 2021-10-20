@@ -72,11 +72,10 @@ func (b *Block) setStringValues() {
 	wg := sync.WaitGroup{}
 	wg.Add(len(b.Segments))
 	defer wg.Wait()
-	cwd := b.env.getcwd()
 	for _, segment := range b.Segments {
 		go func(s *Segment) {
 			defer wg.Done()
-			s.setStringValue(b.env, cwd)
+			s.setStringValue(b.env)
 		}(segment)
 	}
 }
@@ -184,7 +183,7 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 	largestSegmentNameLength := 0
 	for _, segment := range b.Segments {
 		err := segment.mapSegmentWithWriter(b.env)
-		if err != nil || !segment.shouldIncludeFolder(b.env.getcwd()) {
+		if err != nil || !segment.shouldIncludeFolder() {
 			continue
 		}
 		var segmentTiming SegmentTiming

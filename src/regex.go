@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"regexp"
+	"strings"
 	"sync"
 )
 
@@ -76,4 +78,26 @@ func replaceAllString(pattern, text, replaceText string) string {
 func matchString(pattern, text string) bool {
 	re := getCompiledRegex(pattern)
 	return re.MatchString(text)
+}
+
+func dirMatchesOneOf(env environmentInfo, dir string, regexes []string) bool {
+	normalizedCwd := strings.ReplaceAll(dir, "\\", "/")
+	normalizedHomeDir := strings.ReplaceAll(env.homeDir(), "\\", "/")
+
+	for _, element := range regexes {
+		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
+		if strings.HasPrefix(normalizedElement, "~") {
+			normalizedElement = normalizedHomeDir + normalizedElement[1:]
+		}
+		pattern := fmt.Sprintf("^%s$", normalizedElement)
+		goos := env.getRuntimeGOOS()
+		if goos == windowsPlatform || goos == darwinPlatform {
+			pattern = "(?i)" + pattern
+		}
+		matched := matchString(pattern, normalizedCwd)
+		if matched {
+			return true
+		}
+	}
+	return false
 }

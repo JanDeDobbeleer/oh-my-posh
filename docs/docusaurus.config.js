@@ -97,7 +97,12 @@ module.exports = {
     },
     appInsights: {
       instrumentationKey: "72804848-dc30-4856-8245-4fa1450b041f",
-    }
+    },
+    algolia: {
+      appId: 'BH4D9OD16A',
+      apiKey: '539391a0be386508c6a80cb2bca8ebfe',
+      indexName: 'ohmyposh',
+    },
   },
   presets: [
     [

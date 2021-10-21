@@ -136,6 +136,8 @@ const (
 	WiFi SegmentType = "wifi"
 	// WinReg queries the Windows registry.
 	WinReg SegmentType = "winreg"
+	// Media writes the current system media session information
+	Media SegmentType = "media"
 )
 
 func (segment *Segment) string() string {
@@ -272,6 +274,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Nightscout:    &nightscout{},
 		WiFi:          &wifi{},
 		WinReg:        &winreg{},
+		Media:         &media{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

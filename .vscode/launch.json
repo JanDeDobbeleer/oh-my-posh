@@ -7,7 +7,7 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
-      "args": ["--config=${workspaceRoot}/themes/jandedobbeleer.omp.json", "--shell=pwsh"]
+      "args": ["--config=d:/tools/ohmyposh/jandedobbeleer_custom.omp.json", "--shell=pwsh"]
     },
     {
       "name": "Launch Tooltip",
@@ -33,7 +33,8 @@
       "program": "${workspaceRoot}/src",
       "args": [
         "--debug",
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
+        "--pwd=D:/dev/rc_hotfix_sp6",
+        "--config=d:/tools/ohmyposh/jandedobbeleer_custom.omp.json"
       ]
     },
     {

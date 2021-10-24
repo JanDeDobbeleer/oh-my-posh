@@ -8,7 +8,9 @@ import (
 
 func TestPythonVirtualEnv(t *testing.T) {
 	cases := []struct {
+		Case                string
 		Expected            string
+		ExpectedDisabled    bool
 		VirtualEnvName      string
 		CondaEnvName        string
 		CondaDefaultEnvName string
@@ -16,13 +18,13 @@ func TestPythonVirtualEnv(t *testing.T) {
 		DisplayVersion      bool
 		DisplayDefault      bool
 	}{
-		{Expected: "VENV", VirtualEnvName: "VENV"},
-		{Expected: "CONDA", CondaEnvName: "CONDA"},
-		{Expected: "CONDA", CondaDefaultEnvName: "CONDA"},
-		{Expected: "", CondaDefaultEnvName: "base"},
-		{Expected: "base", CondaDefaultEnvName: "base", DisplayDefault: true},
-		{Expected: "PYENV", PyEnvName: "PYENV"},
-		{Expected: "PYENV 3.8.4", PyEnvName: "PYENV", DisplayVersion: true},
+		{Case: "VENV", Expected: "VENV", VirtualEnvName: "VENV"},
+		{Case: "CONDA", Expected: "CONDA", CondaEnvName: "CONDA"},
+		{Case: "CONDA default", Expected: "CONDA", CondaDefaultEnvName: "CONDA"},
+		{Case: "Display Base", Expected: "base", CondaDefaultEnvName: "base", DisplayDefault: true},
+		{Case: "Hide base", Expected: "", CondaDefaultEnvName: "base", ExpectedDisabled: true},
+		{Case: "PYENV", Expected: "PYENV", PyEnvName: "PYENV"},
+		{Case: "PYENV Version", Expected: "PYENV 3.8.4", PyEnvName: "PYENV", DisplayVersion: true},
 	}
 
 	for _, tc := range cases {
@@ -46,8 +48,8 @@ func TestPythonVirtualEnv(t *testing.T) {
 		}
 		python := &python{}
 		python.init(props, env)
-		assert.True(t, python.enabled())
-		assert.Equal(t, tc.Expected, python.string())
+		assert.Equal(t, !tc.ExpectedDisabled, python.enabled(), tc.Case)
+		assert.Equal(t, tc.Expected, python.string(), tc.Case)
 	}
 }
 

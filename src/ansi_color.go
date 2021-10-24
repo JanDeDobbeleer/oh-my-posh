@@ -137,8 +137,14 @@ func (a *AnsiColor) write(background, foreground, text string) {
 		if background == Inherit && a.Parent != nil {
 			background = a.Parent.Background
 		}
+		if background == Inherit && a.Parent == nil {
+			background = Transparent
+		}
 		if foreground == Inherit && a.Parent != nil {
 			foreground = a.Parent.Foreground
+		}
+		if foreground == Inherit && a.Parent == nil {
+			foreground = Transparent
 		}
 		inverted := foreground == Transparent && len(background) != 0
 		background = a.getAnsiFromColorString(background, !inverted)

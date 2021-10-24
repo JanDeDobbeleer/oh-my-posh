@@ -93,6 +93,18 @@ func TestWriteANSIColors(t *testing.T) {
 			Parent:   &Color{Foreground: "yellow", Background: "red"},
 		},
 		{
+			Case:     "Inherit no parent foreground",
+			Input:    "hello <inherit>world</>",
+			Expected: "\x1b[47m\x1b[30mhello \x1b[0m\x1b[47;49m\x1b[7mworld\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+		},
+		{
+			Case:     "Inherit no parent background",
+			Input:    "hello <,inherit>world</>",
+			Expected: "\x1b[47m\x1b[30mhello \x1b[0m\x1b[30mworld\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+		},
+		{
 			Case:     "Inline override",
 			Input:    "hello, <red>world</>, rabbit",
 			Expected: "\x1b[47m\x1b[30mhello, \x1b[0m\x1b[47m\x1b[31mworld\x1b[0m\x1b[47m\x1b[30m, rabbit\x1b[0m",

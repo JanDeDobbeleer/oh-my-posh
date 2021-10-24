@@ -12,7 +12,7 @@ func (az *azfunc) init(props *properties, env environmentInfo) {
 	az.language = &language{
 		env:        env,
 		props:      props,
-		extensions: []string{"host.json", "local.settings.json"},
+		extensions: []string{"host.json", "local.settings.json", "function.json"},
 		commands: []*cmd{
 			{
 				executable: "func",

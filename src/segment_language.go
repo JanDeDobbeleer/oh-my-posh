@@ -71,6 +71,8 @@ type language struct {
 	loadContext        loadContext
 	inContext          inContext
 	matchesVersionFile matchesVersionFile
+	homeEnabled        bool
+	displayMode        string
 }
 
 const (
@@ -121,13 +123,16 @@ func (l *language) enabled() bool {
 	inHomeDir := func() bool {
 		return l.env.getcwd() == l.env.homeDir()
 	}
-	homeEnabled := l.props.getBool(HomeEnabled, false)
+	homeEnabled := l.props.getBool(HomeEnabled, l.homeEnabled)
 	if inHomeDir() && !homeEnabled {
 		return false
 	}
-	displayMode := l.props.getString(DisplayMode, DisplayModeFiles)
+	// set default mode when not set
+	if len(l.displayMode) == 0 {
+		l.displayMode = l.props.getString(DisplayMode, DisplayModeFiles)
+	}
 	l.loadLanguageContext()
-	switch displayMode {
+	switch l.displayMode {
 	case DisplayModeAlways:
 		return true
 	case DisplayModeEnvironment:

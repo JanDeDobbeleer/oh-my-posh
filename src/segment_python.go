@@ -43,6 +43,8 @@ func (p *python) init(props *properties, env environmentInfo) {
 			},
 		},
 		versionURLTemplate: "[%s](https://www.python.org/downloads/release/python-%s%s%s/)",
+		displayMode:        props.getString(DisplayMode, DisplayModeEnvironment),
+		homeEnabled:        props.getBool(HomeEnabled, true),
 	}
 }
 

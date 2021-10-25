@@ -55,7 +55,7 @@
             "branch_icon": " \ue725 ",
             "display_status": true,
             "display_upstream_icon": true,
-            "staging_color": "#f78c6c",
+            "staging_color": "#ef5350",
             "status_colors_enabled": true,
             "local_changes_color": "#ffeb95",
             "ahead_and_behind_color": "#c5e478",

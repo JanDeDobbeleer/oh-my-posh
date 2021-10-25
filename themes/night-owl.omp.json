@@ -1,0 +1,302 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": false,
+  "osc99": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "os",
+          "style": "diamond",
+          "leading_diamond": "╭─\uE0B6",
+          "trailing_diamond": "\uE0B0",
+          "foreground": "#011627",
+          "background": "#21c7a8",
+          "properties": {
+            "postfix": "  ",
+            "windows": "\uf871"
+          }
+        },
+        {
+          "type": "root",
+          "style": "diamond",
+          "leading_diamond": "<transparent,#ef5350>\uE0B0</>",
+          "trailing_diamond": "\uE0B0",
+          "foreground": "#ffeb95",
+          "background": "#ef5350",
+          "properties": {
+            "root_icon": "\uf292 "
+          }
+        },
+        {
+          "type": "path",
+          "style": "diamond",
+          "leading_diamond": "<transparent,#82AAFF>\uE0B0</>",
+          "trailing_diamond": "\uE0B0",
+          "foreground": "#011627",
+          "background": "#82AAFF",
+          "properties": {
+            "folder_separator_icon": " <#011627>\uE0B1</> ",
+            "home_icon": "\uf46d ",
+            "folder_icon": "\uf115 ",
+            "style": "agnoster",
+            "enable_hyperlink": true
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#011627",
+          "background": "#22da6e",
+          "properties": {
+            "branch_icon": " \ue725 ",
+            "display_status": true,
+            "display_upstream_icon": true,
+            "staging_color": "#ef5350",
+            "status_colors_enabled": true,
+            "local_changes_color": "#ffeb95",
+            "ahead_and_behind_color": "#c5e478",
+            "behind_color": "#C792EA",
+            "ahead_color": "#C792EA"
+          }
+        },
+        {
+          "type": "executiontime",
+          "style": "diamond",
+          "leading_diamond": "<transparent,#575656>\uE0B0</>",
+          "trailing_diamond": "\uE0B0",
+          "foreground": "#d6deeb",
+          "background": "#575656",
+          "properties": {
+            "postfix": " ",
+            "threshold": 0,
+            "style": "roundrock"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "node",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#3C873A",
+          "background": "#303030",
+          "properties": {
+            "prefix": "\uE718 ",
+            "postfix": "",
+            "display_package_manager": true,
+            "yarn_icon": " <#348cba></>",
+            "npm_icon": " <#cc3a3a></> "
+          }
+        },
+        {
+          "type": "python",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#FFE873",
+          "background": "#306998",
+          "properties": {
+            "prefix": "\uE235 ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "java",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#ec2729",
+          "background": "#0e8ac8",
+          "properties": {
+            "prefix": "\uE738 ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "dotnet",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#0d6da8",
+          "background": "#0e0e0e",
+          "properties": {
+            "prefix": "\uE77F ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "go",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#06aad5",
+          "background": "#ffffff",
+          "properties": {
+            "prefix": "\uFCD1 ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "rust",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#925837",
+          "background": "#f3f0ec",
+          "properties": {
+            "prefix": "\uE7a8 ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "dart",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#055b9c",
+          "background": "#e1e8e9",
+          "properties": {
+            "prefix": "\uE798 ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "angular",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#ce092f",
+          "background": "#ffffff",
+          "properties": {
+            "prefix": "\uE753 ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "julia",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#359a25",
+          "background": "#945bb3",
+          "properties": {
+            "prefix": "<#ca3c34>\uE624</> ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "ruby",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#9c1006",
+          "background": "#ffffff",
+          "properties": {
+            "prefix": "\uE791 ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "azfunc",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#5398c2",
+          "background": "#ffffff",
+          "properties": {
+            "prefix": "\uf104<#f5bf45>\uf0e7</>\uf105 ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "aws",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#faa029",
+          "background": "#565656",
+          "properties": {
+            "prefix": "\uE7AD ",
+            "postfix": "",
+            "template": "{{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+          }
+        },
+        {
+          "type": "kubectl",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#ffffff",
+          "background": "#316ce4",
+          "properties": {
+            "prefix": "\uFD31 ",
+            "postfix": "",
+            "template": "{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}"
+          }
+        },
+        {
+          "type": "time",
+          "style": "diamond",
+          "leading_diamond": " \uE0B6",
+          "trailing_diamond": "\uE0B4",
+          "foreground": "#d6deeb",
+          "background": "#234d70",
+          "properties": {
+            "prefix": " \uf64f  ",
+            "postfix": " ",
+            "time_format": "15:04:05"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#21c7a8",
+          "properties": {
+            "prefix": "",
+            "postfix": "",
+            "text": "╰─"
+          }
+        },
+        {
+          "type": "spotify",
+          "style": "diamond",
+          "leading_diamond": "\uE0B6",
+          "trailing_diamond": "\uE0c6 ",
+          "foreground": "#011627",
+          "background": "#1DB954",
+          "properties": {
+            "playing_icon": "\uf1bc ",
+            "track_separator": " ~ "
+          }
+        },
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#22da6e",
+          "properties": {
+            "prefix": "\ue285\ue285",
+            "display_exit_code": false,
+            "always_enabled": true,
+            "error_color": "#ef5350"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -47,6 +47,7 @@ type colorWriter interface {
 	write(background, foreground, text string)
 	string() string
 	reset()
+	setColors(background, foreground string)
 	setParentColors(background, foreground string)
 }
 
@@ -55,7 +56,8 @@ type AnsiColor struct {
 	builder            strings.Builder
 	ansi               *ansiUtils
 	terminalBackground string
-	Parent             *Color
+	Colors             *Color
+	ParentColors       *Color
 }
 
 type Color struct {
@@ -66,12 +68,23 @@ type Color struct {
 const (
 	// Transparent implies a transparent color
 	Transparent = "transparent"
-	// Inherit take the previous segment's color
+	// Inherit takes the previous segment's color
 	Inherit = "inherit"
+	// Background takes the current segment's background color
+	Background = "background"
+	// Foreground takes the current segment's foreground color
+	Foreground = "foreground"
 )
 
+func (a *AnsiColor) setColors(background, foreground string) {
+	a.Colors = &Color{
+		Background: background,
+		Foreground: foreground,
+	}
+}
+
 func (a *AnsiColor) setParentColors(background, foreground string) {
-	a.Parent = &Color{
+	a.ParentColors = &Color{
 		Background: background,
 		Foreground: foreground,
 	}
@@ -134,16 +147,28 @@ func (a *AnsiColor) write(background, foreground, text string) {
 	}
 
 	getAnsiColors := func(background, foreground string) (string, string) {
-		if background == Inherit && a.Parent != nil {
-			background = a.Parent.Background
+		if background == Background {
+			background = a.Colors.Background
 		}
-		if background == Inherit && a.Parent == nil {
+		if background == Foreground {
+			background = a.Colors.Foreground
+		}
+		if foreground == Foreground {
+			foreground = a.Colors.Foreground
+		}
+		if foreground == Background {
+			foreground = a.Colors.Background
+		}
+		if background == Inherit && a.ParentColors != nil {
+			background = a.ParentColors.Background
+		}
+		if background == Inherit && a.ParentColors == nil {
 			background = Transparent
 		}
-		if foreground == Inherit && a.Parent != nil {
-			foreground = a.Parent.Foreground
+		if foreground == Inherit && a.ParentColors != nil {
+			foreground = a.ParentColors.Foreground
 		}
-		if foreground == Inherit && a.Parent == nil {
+		if foreground == Inherit && a.ParentColors == nil {
 			foreground = Transparent
 		}
 		inverted := foreground == Transparent && len(background) != 0

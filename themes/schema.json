@@ -338,7 +338,7 @@
                   "charged_icon": {
                     "type": "string",
                     "title": "Charged Icon",
-                    "description": "Text/icon o display on the left when fully charged",
+                    "description": "Text/icon to display on the left when fully charged",
                     "default": ""
                   },
                   "color_background": {

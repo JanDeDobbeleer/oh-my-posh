@@ -17,7 +17,7 @@ func (az *azfunc) init(props *properties, env environmentInfo) {
 			{
 				executable: "func",
 				args:       []string{"--version"},
-				regex:      `(?P<version>.+)`,
+				regex:      `(?P<version>[0-9.]+)`,
 			},
 		},
 	}

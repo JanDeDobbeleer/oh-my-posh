@@ -127,6 +127,8 @@ const (
 	Memory SegmentType = "memory"
 	// Angular writes which angular cli version us currently active
 	Angular SegmentType = "angular"
+	// PHP writes which php version is currently active
+	PHP SegmentType = "php"
 )
 
 func (segment *Segment) string() string {
@@ -259,6 +261,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Rust:          &rust{},
 		Memory:        &memory{},
 		Angular:       &angular{},
+		PHP:           &php{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

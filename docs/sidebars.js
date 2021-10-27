@@ -48,6 +48,7 @@ module.exports = {
         "os",
         "owm",
         "path",
+        "php",
         "python",
         "root",
         "ruby",
@@ -59,7 +60,6 @@ module.exports = {
         "text",
         "time",
         "ytm",
-        "php",
       ],
     },
     {

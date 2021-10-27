@@ -12,7 +12,7 @@ func (n *php) init(props *properties, env environmentInfo) {
 	n.language = &language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.php", "composer.json", ".php-version"},
+		extensions: []string{"*.php", "composer.json", "composer.lock", ".php-version"},
 		commands: []*cmd{
 			{
 				executable: "php",

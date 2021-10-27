@@ -59,6 +59,7 @@ module.exports = {
         "text",
         "time",
         "ytm",
+        "php",
       ],
     },
     {

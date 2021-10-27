@@ -170,7 +170,8 @@
             "rust",
             "owm",
             "memory",
-            "angularcli"
+            "angularcli",
+            "php"
           ]
         },
         "style": {
@@ -808,6 +809,35 @@
           "then": {
             "title": "Julia Segment",
             "description": "https://ohmyposh.dev/docs/julia",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "php" }
+            }
+          },
+          "then": {
+            "title": "PHP Segment",
+            "description": "https://ohmyposh.dev/docs/php",
             "properties": {
               "properties": {
                 "properties": {

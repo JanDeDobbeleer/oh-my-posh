@@ -7,7 +7,6 @@ on:
     paths:
       - 'src/**'
       - 'packages/**'
-      - 'themes/**'
 
 jobs:
   release:

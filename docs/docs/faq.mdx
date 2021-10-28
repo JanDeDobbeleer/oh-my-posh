@@ -109,6 +109,26 @@ SAVEHIST=10000
 setopt appendhistory
 ```
 
+### PowerShell: Running in ConstrainedLanguage mode
+
+You're here because you've seen the following message:
+
+```powershell
+[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
+When using PowerShell in ConstrainedLanguage mode, please set the
+console mode manually to UTF-8. See here for more information:
+https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
+```
+
+When running PowerShell in ConstrainedLanguage mode, we can't set the console to UTF-8. This will cause the prompt to be rendered incorrectly.
+There's a few [options][utf-8] to set the console to UTF-8 from an OS perspective on Windows, other systems shouldn't be impacted.
+
+To remove the message after manual configuration, you can add the following to your `$PROFILE` before importing oh-my-posh:
+
+```powershell
+$env:POSH_CONSTRAINED_LANGUAGE = 1
+```
+
 [new-issue]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/new
 [latest]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
 [wt-glyph]: https://github.com/microsoft/terminal/issues/3546
@@ -119,3 +139,4 @@ setopt appendhistory
 [upgrading]: upgrading.md
 [wt-vim]: https://github.com/microsoft/terminal/issues/3794
 [vim-wt]: https://github.com/vim/vim/issues/5092
+[utf-8]: https://github.com/PowerShell/PowerShell/issues/7233#issuecomment-640243647

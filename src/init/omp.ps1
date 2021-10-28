@@ -1,6 +1,14 @@
 # Powershell doesn't default to UTF8 just yet, so we're forcing it as there are too many problems
 # that pop up when we don't
-[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
+    [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+} elseif ($env:POSH_CONSTRAINED_LANGUAGE -ne 1) {
+    Write-Host "[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
+When using PowerShell in ConstrainedLanguage mode, please set the
+console mode manually to UTF-8. See here for more information:
+https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
+"
+}
 $env:POWERLINE_COMMAND = "oh-my-posh"
 $env:CONDA_PROMPT_MODIFIER = $false
 

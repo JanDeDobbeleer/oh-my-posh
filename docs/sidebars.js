@@ -3,6 +3,7 @@ module.exports = {
     {
       type: "category",
       label: "Getting Started",
+      collapsed: false,
       items: [
         "introduction",
         "upgrading",
@@ -23,6 +24,7 @@ module.exports = {
     {
       type: "category",
       label: "Segments",
+      collapsed: true,
       items: [
         "angular",
         "aws",
@@ -65,6 +67,7 @@ module.exports = {
     {
       type: "category",
       label: "Contributing",
+      collapsed: true,
       items: [
         "contributing_started",
         "contributing_segment",

@@ -40,7 +40,8 @@ module.exports = {
         },
         {
           href: "https://github.com/jandedobbeleer/oh-my-posh",
-          label: "GitHub",
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
           position: "right",
         },
       ],

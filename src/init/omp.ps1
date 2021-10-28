@@ -5,21 +5,14 @@ $env:POWERLINE_COMMAND = "oh-my-posh"
 $env:CONDA_PROMPT_MODIFIER = $false
 
 # specific module support (disabled by default)
-function Set-DefaultEnvValue {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [string]
-        $Name
-    )
-
-    $value = [System.Environment]::GetEnvironmentVariable($Name)
-    if ($value -eq $null) {
-        [System.Environment]::SetEnvironmentVariable($Name, $false)
-    }
+$value = $env:AZ_ENABLED
+if ($null -eq $value) {
+    $env:AZ_ENABLED = $false
 }
-Set-DefaultEnvValue("AZ_ENABLED")
-Set-DefaultEnvValue("POSH_GIT_ENABLED")
+$value = $env:POSH_GIT_ENABLED
+if ($null -eq $value) {
+    $env:POSH_GIT_ENABLED = $false
+}
 
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
     Theme     = "";

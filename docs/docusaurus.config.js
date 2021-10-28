@@ -11,7 +11,6 @@ module.exports = {
   onBrokenLinks: "ignore",
   plugins: [path.resolve(__dirname, 'plugins', 'appinsights')],
   themeConfig: {
-    sidebarCollapsible: false,
     prism: {
       theme: require("prism-react-renderer/themes/duotoneLight"),
       darkTheme: require("prism-react-renderer/themes/oceanicNext"),

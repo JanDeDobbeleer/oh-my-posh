@@ -4,20 +4,29 @@ title: Upgrading
 sidebar_label: 🤘 Upgrading from V2
 ---
 
-Just like V2, V3 is available in the [PowerShell gallery][psgallery].
+Just like V2, oh-my-posh is available in the [PowerShell gallery][psgallery].
 
 ## V2's problem statement
 
-V2 has Powershell module files as [themes][themesv2]. That way of working was inspired by [oh-my-zsh][omz] and other
-prompt rendering tools, but that approach has a few important downsides.
+Oh My Posh is the offspring of [Oh My Posh 2][omp], a prompt theme engine for PowerShell.
+It started out by being inspired by tools like [Oh my ZSH][omz] when nothing was
+available specifically for PowerShell.
+
+Over the years, I switched operating system/main shell quite a lot, even on
+Windows via the [WSL][wsl]. This made it so that my prompt wasn't portable enough,
+I wanted the same visual/functional experience regardless
+of the shell I was working in.
+
+Additionally, V2 has Powershell module files as [themes][themesv2]. That way of working was inspired by [oh-my-zsh][omz]
+and other prompt rendering tools, but that approach has a few important downsides.
 
 - hard to extend/adjust when you're not proficient
 - the need to expose a lot of functions/settings to allow ease of personalization
 - limited to Powershell
 
-## Enter V3
+## A brave new world
 
-This brings us to the first change, to allow a cross-platform experience, [Oh My Posh V3][v3] is written entirely in [Go][golang].
+This brings us to the first change, to allow a cross-platform experience, [Oh My Posh][v3] is written entirely in [Go][golang].
 That way, cross-platform binaries can be shipped which render the same prompt using the same config anywhere.
 
 The configuration is changed from `$ThemeSettings` towards a `.json` file that only contains the configuration for the
@@ -36,7 +45,7 @@ Update-Module -Name oh-my-posh -Scope CurrentUser
 ## Configuration
 
 Here we have a few options. If you're using an out-of-the-box theme, you can simply change the current command to the
-new one, provided your V2 theme has already been added to [V3][themesv3].
+new one, provided your V2 theme has already been added to [oh-my-posh][themesv3].
 
 ### I use an out-of-the-box theme
 
@@ -90,6 +99,8 @@ You can either tweak the theme to your liking, add segments or [submit an issue]
 Do not hesitate to [ask for assistance][issues] when you notice an issue or unexpected behavior.
 
 [psgallery]: https://www.powershellgallery.com/packages/oh-my-posh
+[omp]: https://github.com/JanDeDobbeleer/oh-my-posh2
+[wsl]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
 [themesv2]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/master/Themes
 [omz]: https://github.com/ohmyzsh/ohmyzsh
 [golang]: https://golang.org/

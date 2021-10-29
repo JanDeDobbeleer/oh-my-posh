@@ -89,6 +89,9 @@ func (b *Block) renderSegments() string {
 			continue
 		}
 		b.activeSegment = segment
+		b.activeBackground = b.activeSegment.background()
+		b.activeForeground = b.activeSegment.foreground()
+		b.writer.setColors(b.activeBackground, b.activeForeground)
 		b.endPowerline()
 		b.renderSegmentText(segment.stringValue)
 	}
@@ -140,9 +143,6 @@ func (b *Block) getPowerlineColor(foreground bool) string {
 }
 
 func (b *Block) renderSegmentText(text string) {
-	b.activeBackground = b.activeSegment.background()
-	b.activeForeground = b.activeSegment.foreground()
-	b.writer.setColors(b.activeBackground, b.activeForeground)
 	switch b.activeSegment.Style {
 	case Plain:
 		b.renderPlainSegment(text)

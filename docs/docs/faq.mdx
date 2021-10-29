@@ -123,10 +123,19 @@ https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
 When running PowerShell in ConstrainedLanguage mode, we can't set the console to UTF-8. This will cause the prompt to be rendered incorrectly.
 There's a few [options][utf-8] to set the console to UTF-8 from an OS perspective on Windows, other systems shouldn't be impacted.
 
-To remove the message after manual configuration, you can add the following to your `$PROFILE` before importing oh-my-posh:
+To remove the message after manual configuration, you can add the following to your `$PROFILE` before importing Oh My Posh:
 
 ```powershell
 $env:POSH_CONSTRAINED_LANGUAGE = 1
+```
+
+### Conda: environment name displayed in front of the prompt
+
+Conda will automatically prepend the prompt with the name of the environment you're in.
+To solely rely on Oh My Posh to set the prompt, you can configure the follwing setting to hide it:
+
+```bash
+conda config --set changeps1 False
 ```
 
 [new-issue]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/new

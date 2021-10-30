@@ -49,6 +49,7 @@ type colorWriter interface {
 	reset()
 	setColors(background, foreground string)
 	setParentColors(background, foreground string)
+	clearParentColors()
 }
 
 // AnsiColor writes colorized strings
@@ -88,6 +89,10 @@ func (a *AnsiColor) setParentColors(background, foreground string) {
 		Background: background,
 		Foreground: foreground,
 	}
+}
+
+func (a *AnsiColor) clearParentColors() {
+	a.ParentColors = nil
 }
 
 // Gets the ANSI color code for a given color string.

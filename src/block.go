@@ -98,6 +98,7 @@ func (b *Block) renderSegments() string {
 	if b.previousActiveSegment != nil && b.previousActiveSegment.Style == Powerline {
 		b.writePowerLineSeparator(Transparent, b.previousActiveSegment.background(), true)
 	}
+	b.writer.clearParentColors()
 	return b.writer.string()
 }
 

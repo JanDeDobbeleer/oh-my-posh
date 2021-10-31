@@ -451,7 +451,7 @@ func TestParseGitBranchInfoRemoteGone(t *testing.T) {
 }
 
 func TestGitStatusUnmerged(t *testing.T) {
-	expected := " x1"
+	expected := "x1"
 	status := &GitStatus{
 		Unmerged: 1,
 	}
@@ -459,7 +459,7 @@ func TestGitStatusUnmerged(t *testing.T) {
 }
 
 func TestGitStatusUnmergedModified(t *testing.T) {
-	expected := " ~3 x1"
+	expected := "~3 x1"
 	status := &GitStatus{
 		Unmerged: 1,
 		Modified: 3,
@@ -538,338 +538,43 @@ func TestParseGitStatsInvalidLine(t *testing.T) {
 	assert.False(t, status.Changed)
 }
 
-func bootstrapUpstreamTest(upstream string) *git {
-	env := &MockedEnvironment{}
-	env.On("isWsl", nil).Return(false)
-	env.On("runCommand", "git", []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(upstream, nil)
-	env.On("getRuntimeGOOS", nil).Return("unix")
-	props := &properties{
-		values: map[Property]interface{}{
-			GithubIcon:      "GH",
-			GitlabIcon:      "GL",
-			BitbucketIcon:   "BB",
-			AzureDevOpsIcon: "AD",
-			GitIcon:         "G",
-		},
+func TestGitUpstream(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Upstream string
+	}{
+		{Case: "GitHub", Expected: "GH", Upstream: "github.com/test"},
+		{Case: "Gitlab", Expected: "GL", Upstream: "gitlab.com/test"},
+		{Case: "Bitbucket", Expected: "BB", Upstream: "bitbucket.org/test"},
+		{Case: "Azure DevOps", Expected: "AD", Upstream: "dev.azure.com/test"},
+		{Case: "Azure DevOps Dos", Expected: "AD", Upstream: "test.visualstudio.com"},
+		{Case: "Gitstash", Expected: "G", Upstream: "gitstash.com/test"},
 	}
-	g := &git{
-		env: env,
-		repo: &Repo{
-			Upstream: "origin/main",
-		},
-		props: props,
-	}
-	return g
-}
-
-func TestGetUpstreamSymbolGitHub(t *testing.T) {
-	g := bootstrapUpstreamTest("github.com/test")
-	upstreamIcon := g.getUpstreamIcon()
-	assert.Equal(t, "GH", upstreamIcon)
-}
-
-func TestGetUpstreamSymbolGitLab(t *testing.T) {
-	g := bootstrapUpstreamTest("gitlab.com/test")
-	upstreamIcon := g.getUpstreamIcon()
-	assert.Equal(t, "GL", upstreamIcon)
-}
-
-func TestGetUpstreamSymbolBitBucket(t *testing.T) {
-	g := bootstrapUpstreamTest("bitbucket.org/test")
-	upstreamIcon := g.getUpstreamIcon()
-	assert.Equal(t, "BB", upstreamIcon)
-}
-
-func TestGetUpstreamSymbolAzureDevOps(t *testing.T) {
-	g := bootstrapUpstreamTest("dev.azure.com/test")
-	upstreamIcon := g.getUpstreamIcon()
-	assert.Equal(t, "AD", upstreamIcon)
-
-	g = bootstrapUpstreamTest("test.visualstudio.com")
-	upstreamIcon = g.getUpstreamIcon()
-	assert.Equal(t, "AD", upstreamIcon)
-}
-
-func TestGetUpstreamSymbolGit(t *testing.T) {
-	g := bootstrapUpstreamTest("gitstash.com/test")
-	upstreamIcon := g.getUpstreamIcon()
-	assert.Equal(t, "G", upstreamIcon)
-}
-
-func TestGetStatusColorLocalChangesStaging(t *testing.T) {
-	expected := changesColor
-	repo := &Repo{
-		Staging: &GitStatus{
-			Changed: true,
-		},
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
+	for _, tc := range cases {
+		env := &MockedEnvironment{}
+		env.On("isWsl", nil).Return(false)
+		env.On("runCommand", "git", []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
+		env.On("getRuntimeGOOS", nil).Return("unix")
+		props := &properties{
 			values: map[Property]interface{}{
-				LocalChangesColor: expected,
+				GithubIcon:      "GH",
+				GitlabIcon:      "GL",
+				BitbucketIcon:   "BB",
+				AzureDevOpsIcon: "AD",
+				GitIcon:         "G",
 			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
-}
-
-func TestGetStatusColorLocalChangesWorking(t *testing.T) {
-	expected := changesColor
-	repo := &Repo{
-		Staging: &GitStatus{},
-		Working: &GitStatus{
-			Changed: true,
-		},
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				LocalChangesColor: expected,
+		}
+		g := &git{
+			env: env,
+			repo: &Repo{
+				Upstream: "origin/main",
 			},
-		},
+			props: props,
+		}
+		upstreamIcon := g.getUpstreamIcon()
+		assert.Equal(t, tc.Expected, upstreamIcon, tc.Case)
 	}
-	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
-}
-
-func TestGetStatusColorAheadAndBehind(t *testing.T) {
-	expected := changesColor
-	repo := &Repo{
-		Staging: &GitStatus{},
-		Working: &GitStatus{},
-		Ahead:   1,
-		Behind:  3,
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				AheadAndBehindColor: expected,
-			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
-}
-
-func TestGetStatusColorAhead(t *testing.T) {
-	expected := changesColor
-	repo := &Repo{
-		Staging: &GitStatus{},
-		Working: &GitStatus{},
-		Ahead:   1,
-		Behind:  0,
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				AheadColor: expected,
-			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
-}
-
-func TestGetStatusColorBehind(t *testing.T) {
-	expected := changesColor
-	repo := &Repo{
-		Staging: &GitStatus{},
-		Working: &GitStatus{},
-		Ahead:   0,
-		Behind:  5,
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				BehindColor: expected,
-			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
-}
-
-func TestGetStatusColorDefault(t *testing.T) {
-	expected := changesColor
-	repo := &Repo{
-		Staging: &GitStatus{},
-		Working: &GitStatus{},
-		Ahead:   0,
-		Behind:  0,
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				BehindColor: changesColor,
-			},
-		},
-	}
-	assert.Equal(t, expected, g.getStatusColor(expected))
-}
-
-func TestSetStatusColorForeground(t *testing.T) {
-	expected := changesColor
-	repo := &Repo{
-		Staging: &GitStatus{
-			Changed: true,
-		},
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				LocalChangesColor: changesColor,
-				ColorBackground:   false,
-			},
-			foreground: "#ffffff",
-			background: "#111111",
-		},
-	}
-	g.SetStatusColor()
-	assert.Equal(t, expected, g.props.foreground)
-}
-
-func TestSetStatusColorBackground(t *testing.T) {
-	expected := changesColor
-	repo := &Repo{
-		Staging: &GitStatus{
-			Changed: true,
-		},
-	}
-	g := &git{
-		repo: repo,
-		props: &properties{
-			values: map[Property]interface{}{
-				LocalChangesColor: changesColor,
-				ColorBackground:   true,
-			},
-			foreground: "#ffffff",
-			background: "#111111",
-		},
-	}
-	g.SetStatusColor()
-	assert.Equal(t, expected, g.props.background)
-}
-
-func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
-	expected := changesColor
-	context := &detachedContext{
-		status: "## main...origin/main [ahead 33]\n M myfile",
-	}
-	g := setupHEADContextEnv(context)
-	g.props = &properties{
-		values: map[Property]interface{}{
-			DisplayStatus:       false,
-			StatusColorsEnabled: true,
-			LocalChangesColor:   expected,
-		},
-	}
-	g.string()
-	assert.Equal(t, expected, g.props.background)
-}
-
-func TestGetStatusDetailStringDefault(t *testing.T) {
-	expected := "icon +1"
-	status := &GitStatus{
-		Changed: true,
-		Added:   1,
-	}
-	g := &git{
-		props: &properties{
-			foreground: "#111111",
-		},
-	}
-	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
-}
-
-func TestGetStatusDetailStringDefaultColorOverride(t *testing.T) {
-	expected := "<#123456>icon +1</>"
-	status := &GitStatus{
-		Changed: true,
-		Added:   1,
-	}
-	g := &git{
-		props: &properties{
-			values: map[Property]interface{}{
-				WorkingColor: "#123456",
-			},
-			foreground: "#111111",
-		},
-	}
-	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
-}
-
-func TestGetStatusDetailStringDefaultColorOverrideAndIconColorOverride(t *testing.T) {
-	expected := "<#789123>work</><#123456> +1</>"
-	status := &GitStatus{
-		Changed: true,
-		Added:   1,
-	}
-	g := &git{
-		props: &properties{
-			values: map[Property]interface{}{
-				WorkingColor:     "#123456",
-				LocalWorkingIcon: "<#789123>work</>",
-			},
-			foreground: "#111111",
-		},
-	}
-	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
-}
-
-func TestGetStatusDetailStringDefaultColorOverrideNoIconColorOverride(t *testing.T) {
-	expected := "<#123456>work +1</>"
-	status := &GitStatus{
-		Changed: true,
-		Added:   1,
-	}
-	g := &git{
-		props: &properties{
-			values: map[Property]interface{}{
-				WorkingColor:     "#123456",
-				LocalWorkingIcon: "work",
-			},
-			foreground: "#111111",
-		},
-	}
-	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
-}
-
-func TestGetStatusDetailStringNoStatus(t *testing.T) {
-	expected := "icon"
-	status := &GitStatus{
-		Changed: true,
-		Added:   1,
-	}
-	g := &git{
-		props: &properties{
-			values: map[Property]interface{}{
-				DisplayStatusDetail: false,
-			},
-			foreground: "#111111",
-		},
-	}
-	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
-}
-
-func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
-	expected := "<#123456>icon</>"
-	status := &GitStatus{
-		Changed: true,
-		Added:   1,
-	}
-	g := &git{
-		props: &properties{
-			values: map[Property]interface{}{
-				DisplayStatusDetail: false,
-				WorkingColor:        "#123456",
-			},
-			foreground: "#111111",
-		},
-	}
-	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
 
 func TestGetBranchStatus(t *testing.T) {
@@ -1012,7 +717,7 @@ func TestGitTemplateString(t *testing.T) {
 		{
 			Case:     "Working area changes",
 			Expected: "main \uF044 +2 ~3",
-			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
+			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
 			Repo: &Repo{
 				HEAD: "main",
 				Working: &GitStatus{
@@ -1025,7 +730,7 @@ func TestGitTemplateString(t *testing.T) {
 		{
 			Case:     "No working area changes",
 			Expected: "main",
-			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
+			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
 			Repo: &Repo{
 				HEAD: "main",
 				Working: &GitStatus{
@@ -1036,7 +741,7 @@ func TestGitTemplateString(t *testing.T) {
 		{
 			Case:     "Working and staging area changes",
 			Expected: "main \uF046 +5 ~1 \uF044 +2 ~3",
-			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046{{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
+			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
 			Repo: &Repo{
 				HEAD: "main",
 				Working: &GitStatus{
@@ -1066,9 +771,9 @@ func TestGitTemplateString(t *testing.T) {
 			Expected: "from GitHub on main",
 			Template: "from {{ .UpstreamIcon }} on {{ .HEAD }}",
 			Repo: &Repo{
-				HEAD:    "main",
-				Staging: &GitStatus{},
-				Working: &GitStatus{},
+				HEAD:         "main",
+				Staging:      &GitStatus{},
+				Working:      &GitStatus{},
 				UpstreamIcon: "GitHub",
 			},
 		},
@@ -1077,9 +782,9 @@ func TestGitTemplateString(t *testing.T) {
 			Expected: "from GitHub on main \u21912",
 			Template: "from {{ .UpstreamIcon }} on {{ .HEAD }} {{ .BranchStatus }}",
 			Repo: &Repo{
-				HEAD:    "main",
-				Staging: &GitStatus{},
-				Working: &GitStatus{},
+				HEAD:         "main",
+				Staging:      &GitStatus{},
+				Working:      &GitStatus{},
 				UpstreamIcon: "GitHub",
 				BranchStatus: "\u21912",
 			},

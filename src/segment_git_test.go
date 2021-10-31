@@ -129,7 +129,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
 		env: env,
-		repo: &gitRepo{
+		repo: &Repo{
 			gitWorkingFolder: "",
 		},
 	}
@@ -382,7 +382,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("getFileContent", "/logs/refs/stash").Return(tc.StashContent)
 		g := &git{
-			repo: &gitRepo{
+			repo: &Repo{
 				gitWorkingFolder: "",
 			},
 			env: env,
@@ -450,24 +450,24 @@ func TestParseGitBranchInfoRemoteGone(t *testing.T) {
 
 func TestGitStatusUnmerged(t *testing.T) {
 	expected := " x1"
-	status := &gitStatus{
-		unmerged: 1,
+	status := &GitStatus{
+		Unmerged: 1,
 	}
 	assert.Equal(t, expected, status.string())
 }
 
 func TestGitStatusUnmergedModified(t *testing.T) {
 	expected := " ~3 x1"
-	status := &gitStatus{
-		unmerged: 1,
-		modified: 3,
+	status := &GitStatus{
+		Unmerged: 1,
+		Modified: 3,
 	}
 	assert.Equal(t, expected, status.string())
 }
 
 func TestGitStatusEmpty(t *testing.T) {
 	expected := ""
-	status := &gitStatus{}
+	status := &GitStatus{}
 	assert.Equal(t, expected, status.string())
 }
 
@@ -485,11 +485,11 @@ func TestParseGitStatsWorking(t *testing.T) {
 		" C change.go",
 	}
 	status := g.parseGitStats(output, true)
-	assert.Equal(t, 3, status.modified)
-	assert.Equal(t, 1, status.unmerged)
-	assert.Equal(t, 3, status.added)
-	assert.Equal(t, 1, status.deleted)
-	assert.True(t, status.changed)
+	assert.Equal(t, 3, status.Modified)
+	assert.Equal(t, 1, status.Unmerged)
+	assert.Equal(t, 3, status.Added)
+	assert.Equal(t, 1, status.Deleted)
+	assert.True(t, status.Changed)
 }
 
 func TestParseGitStatsStaging(t *testing.T) {
@@ -506,34 +506,34 @@ func TestParseGitStatsStaging(t *testing.T) {
 		"AC change.go",
 	}
 	status := g.parseGitStats(output, false)
-	assert.Equal(t, 1, status.modified)
-	assert.Equal(t, 0, status.unmerged)
-	assert.Equal(t, 1, status.added)
-	assert.Equal(t, 2, status.deleted)
-	assert.True(t, status.changed)
+	assert.Equal(t, 1, status.Modified)
+	assert.Equal(t, 0, status.Unmerged)
+	assert.Equal(t, 1, status.Added)
+	assert.Equal(t, 2, status.Deleted)
+	assert.True(t, status.Changed)
 }
 
 func TestParseGitStatsNoChanges(t *testing.T) {
 	g := &git{}
-	expected := &gitStatus{}
+	expected := &GitStatus{}
 	output := []string{
 		"## amazing-feat",
 	}
 	status := g.parseGitStats(output, false)
 	assert.Equal(t, expected, status)
-	assert.False(t, status.changed)
+	assert.False(t, status.Changed)
 }
 
 func TestParseGitStatsInvalidLine(t *testing.T) {
 	g := &git{}
-	expected := &gitStatus{}
+	expected := &GitStatus{}
 	output := []string{
 		"## amazing-feat",
 		"#",
 	}
 	status := g.parseGitStats(output, false)
 	assert.Equal(t, expected, status)
-	assert.False(t, status.changed)
+	assert.False(t, status.Changed)
 }
 
 func bootstrapUpstreamTest(upstream string) *git {
@@ -552,8 +552,8 @@ func bootstrapUpstreamTest(upstream string) *git {
 	}
 	g := &git{
 		env: env,
-		repo: &gitRepo{
-			upstream: "origin/main",
+		repo: &Repo{
+			Upstream: "origin/main",
 		},
 		props: props,
 	}
@@ -596,9 +596,9 @@ func TestGetUpstreamSymbolGit(t *testing.T) {
 
 func TestGetStatusColorLocalChangesStaging(t *testing.T) {
 	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{
-			changed: true,
+	repo := &Repo{
+		Staging: &GitStatus{
+			Changed: true,
 		},
 	}
 	g := &git{
@@ -614,10 +614,10 @@ func TestGetStatusColorLocalChangesStaging(t *testing.T) {
 
 func TestGetStatusColorLocalChangesWorking(t *testing.T) {
 	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{},
-		working: &gitStatus{
-			changed: true,
+	repo := &Repo{
+		Staging: &GitStatus{},
+		Working: &GitStatus{
+			Changed: true,
 		},
 	}
 	g := &git{
@@ -633,11 +633,11 @@ func TestGetStatusColorLocalChangesWorking(t *testing.T) {
 
 func TestGetStatusColorAheadAndBehind(t *testing.T) {
 	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{},
-		working: &gitStatus{},
-		ahead:   1,
-		behind:  3,
+	repo := &Repo{
+		Staging: &GitStatus{},
+		Working: &GitStatus{},
+		Ahead:   1,
+		Behind:  3,
 	}
 	g := &git{
 		repo: repo,
@@ -652,11 +652,11 @@ func TestGetStatusColorAheadAndBehind(t *testing.T) {
 
 func TestGetStatusColorAhead(t *testing.T) {
 	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{},
-		working: &gitStatus{},
-		ahead:   1,
-		behind:  0,
+	repo := &Repo{
+		Staging: &GitStatus{},
+		Working: &GitStatus{},
+		Ahead:   1,
+		Behind:  0,
 	}
 	g := &git{
 		repo: repo,
@@ -671,11 +671,11 @@ func TestGetStatusColorAhead(t *testing.T) {
 
 func TestGetStatusColorBehind(t *testing.T) {
 	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{},
-		working: &gitStatus{},
-		ahead:   0,
-		behind:  5,
+	repo := &Repo{
+		Staging: &GitStatus{},
+		Working: &GitStatus{},
+		Ahead:   0,
+		Behind:  5,
 	}
 	g := &git{
 		repo: repo,
@@ -690,11 +690,11 @@ func TestGetStatusColorBehind(t *testing.T) {
 
 func TestGetStatusColorDefault(t *testing.T) {
 	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{},
-		working: &gitStatus{},
-		ahead:   0,
-		behind:  0,
+	repo := &Repo{
+		Staging: &GitStatus{},
+		Working: &GitStatus{},
+		Ahead:   0,
+		Behind:  0,
 	}
 	g := &git{
 		repo: repo,
@@ -709,9 +709,9 @@ func TestGetStatusColorDefault(t *testing.T) {
 
 func TestSetStatusColorForeground(t *testing.T) {
 	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{
-			changed: true,
+	repo := &Repo{
+		Staging: &GitStatus{
+			Changed: true,
 		},
 	}
 	g := &git{
@@ -731,9 +731,9 @@ func TestSetStatusColorForeground(t *testing.T) {
 
 func TestSetStatusColorBackground(t *testing.T) {
 	expected := changesColor
-	repo := &gitRepo{
-		staging: &gitStatus{
-			changed: true,
+	repo := &Repo{
+		Staging: &GitStatus{
+			Changed: true,
 		},
 	}
 	g := &git{
@@ -770,9 +770,9 @@ func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
 
 func TestGetStatusDetailStringDefault(t *testing.T) {
 	expected := "icon +1"
-	status := &gitStatus{
-		changed: true,
-		added:   1,
+	status := &GitStatus{
+		Changed: true,
+		Added:   1,
 	}
 	g := &git{
 		props: &properties{
@@ -784,9 +784,9 @@ func TestGetStatusDetailStringDefault(t *testing.T) {
 
 func TestGetStatusDetailStringDefaultColorOverride(t *testing.T) {
 	expected := "<#123456>icon +1</>"
-	status := &gitStatus{
-		changed: true,
-		added:   1,
+	status := &GitStatus{
+		Changed: true,
+		Added:   1,
 	}
 	g := &git{
 		props: &properties{
@@ -801,9 +801,9 @@ func TestGetStatusDetailStringDefaultColorOverride(t *testing.T) {
 
 func TestGetStatusDetailStringDefaultColorOverrideAndIconColorOverride(t *testing.T) {
 	expected := "<#789123>work</><#123456> +1</>"
-	status := &gitStatus{
-		changed: true,
-		added:   1,
+	status := &GitStatus{
+		Changed: true,
+		Added:   1,
 	}
 	g := &git{
 		props: &properties{
@@ -819,9 +819,9 @@ func TestGetStatusDetailStringDefaultColorOverrideAndIconColorOverride(t *testin
 
 func TestGetStatusDetailStringDefaultColorOverrideNoIconColorOverride(t *testing.T) {
 	expected := "<#123456>work +1</>"
-	status := &gitStatus{
-		changed: true,
-		added:   1,
+	status := &GitStatus{
+		Changed: true,
+		Added:   1,
 	}
 	g := &git{
 		props: &properties{
@@ -837,9 +837,9 @@ func TestGetStatusDetailStringDefaultColorOverrideNoIconColorOverride(t *testing
 
 func TestGetStatusDetailStringNoStatus(t *testing.T) {
 	expected := "icon"
-	status := &gitStatus{
-		changed: true,
-		added:   1,
+	status := &GitStatus{
+		Changed: true,
+		Added:   1,
 	}
 	g := &git{
 		props: &properties{
@@ -854,9 +854,9 @@ func TestGetStatusDetailStringNoStatus(t *testing.T) {
 
 func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
 	expected := "<#123456>icon</>"
-	status := &gitStatus{
-		changed: true,
-		added:   1,
+	status := &GitStatus{
+		Changed: true,
+		Added:   1,
 	}
 	g := &git{
 		props: &properties{
@@ -896,10 +896,10 @@ func TestGetBranchStatus(t *testing.T) {
 					BranchGoneIcon:      "gone",
 				},
 			},
-			repo: &gitRepo{
-				ahead:    tc.Ahead,
-				behind:   tc.Behind,
-				upstream: tc.Upstream,
+			repo: &Repo{
+				Ahead:    tc.Ahead,
+				Behind:   tc.Behind,
+				Upstream: tc.Upstream,
 			},
 		}
 		assert.Equal(t, tc.Expected, g.getBranchStatus(), tc.Case)

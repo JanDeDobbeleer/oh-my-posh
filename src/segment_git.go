@@ -11,20 +11,19 @@ import (
 
 // Repo represents a git repository
 type Repo struct {
-	Working          *GitStatus
-	Staging          *GitStatus
-	Ahead            int
-	Behind           int
-	HEAD             string
-	Upstream         string
-	StashCount       int
-	WorktreeCount    int
+	Working       *GitStatus
+	Staging       *GitStatus
+	Ahead         int
+	Behind        int
+	HEAD          string
+	Upstream      string
+	StashCount    int
+	WorktreeCount int
+	IsWorkTree    bool
 
 	gitWorkingFolder string // .git working folder, can be different of root if using worktree
-	isWorkTree    bool
-	gitRootFolder string // .git root folder
+	gitRootFolder    string // .git root folder
 }
-
 
 // GitStatus represents part of the status of a git repository
 type GitStatus struct {
@@ -35,7 +34,37 @@ type GitStatus struct {
 	Changed  bool
 }
 
-func (s *GitStatus) string() string {
+func (s *GitStatus) parse(output []string, working bool) {
+	if len(output) <= 1 {
+		return
+	}
+	for _, line := range output[1:] {
+		if len(line) < 2 {
+			continue
+		}
+		code := line[0:1]
+		if working {
+			code = line[1:2]
+		}
+		switch code {
+		case "?":
+			if working {
+				s.Added++
+			}
+		case "D":
+			s.Deleted++
+		case "A":
+			s.Added++
+		case "U":
+			s.Unmerged++
+		case "M", "R", "C", "m":
+			s.Modified++
+		}
+	}
+	s.Changed = s.Added > 0 || s.Deleted > 0 || s.Modified > 0 || s.Unmerged > 0
+}
+
+func (s *GitStatus) String() string {
 	var status string
 	stringIfValue := func(value int, prefix string) string {
 		if value > 0 {
@@ -57,10 +86,19 @@ type git struct {
 }
 
 const (
-	// BranchIcon the icon to use as branch indicator
-	BranchIcon Property = "branch_icon"
 	// DisplayBranchStatus show branch status or not
 	DisplayBranchStatus Property = "display_branch_status"
+	// DisplayStatus shows the status of the repository
+	DisplayStatus Property = "display_status"
+	// DisplayStashCount show stash count or not
+	DisplayStashCount Property = "display_stash_count"
+	// DisplayWorktreeCount show worktree count or not
+	DisplayWorktreeCount Property = "display_worktree_count"
+	// DisplayUpstreamIcon show or hide the upstream icon
+	DisplayUpstreamIcon Property = "display_upstream_icon"
+
+	// BranchIcon the icon to use as branch indicator
+	BranchIcon Property = "branch_icon"
 	// BranchIdenticalIcon the icon to display when the remote and local branch are identical
 	BranchIdenticalIcon Property = "branch_identical_icon"
 	// BranchAheadIcon the icon to display when the local branch is ahead of the remote
@@ -73,10 +111,6 @@ const (
 	LocalWorkingIcon Property = "local_working_icon"
 	// LocalStagingIcon the icon to use as the local staging area changes indicator
 	LocalStagingIcon Property = "local_staged_icon"
-	// DisplayStatus shows the status of the repository
-	DisplayStatus Property = "display_status"
-	// DisplayStatusDetail shows the detailed status of the repository
-	DisplayStatusDetail Property = "display_status_detail"
 	// RebaseIcon shows before the rebase context
 	RebaseIcon Property = "rebase_icon"
 	// CherryPickIcon shows before the cherry-pick context
@@ -89,16 +123,12 @@ const (
 	NoCommitsIcon Property = "no_commits_icon"
 	// TagIcon shows before the tag context
 	TagIcon Property = "tag_icon"
-	// DisplayStashCount show stash count or not
-	DisplayStashCount Property = "display_stash_count"
 	// StashCountIcon shows before the stash context
 	StashCountIcon Property = "stash_count_icon"
 	// StatusSeparatorIcon shows between staging and working area
 	StatusSeparatorIcon Property = "status_separator_icon"
 	// MergeIcon shows before the merge context
 	MergeIcon Property = "merge_icon"
-	// DisplayUpstreamIcon show or hide the upstream icon
-	DisplayUpstreamIcon Property = "display_upstream_icon"
 	// GithubIcon shows√ when upstream is github
 	GithubIcon Property = "github_icon"
 	// BitbucketIcon shows  when upstream is bitbucket
@@ -109,6 +139,11 @@ const (
 	GitlabIcon Property = "gitlab_icon"
 	// GitIcon shows when the upstream can't be identified
 	GitIcon Property = "git_icon"
+
+	// Deprecated
+
+	// DisplayStatusDetail shows the detailed status of the repository
+	DisplayStatusDetail Property = "display_status_detail"
 	// WorkingColor if set, the color to use on the working area
 	WorkingColor Property = "working_color"
 	// StagingColor if set, the color to use on the staging area
@@ -125,8 +160,6 @@ const (
 	AheadColor Property = "ahead_color"
 	// BranchMaxLength truncates the length of the branch name
 	BranchMaxLength Property = "branch_max_length"
-	// DisplayWorktreeCount show worktree count or not
-	DisplayWorktreeCount Property = "display_worktree_count"
 	// WorktreeCountIcon shows before the worktree context
 	WorktreeCountIcon Property = "worktree_count_icon"
 )
@@ -143,7 +176,10 @@ func (g *git) enabled() bool {
 		return false
 	}
 
-	g.repo = &Repo{}
+	g.repo = &Repo{
+		Staging: &GitStatus{},
+		Working: &GitStatus{},
+	}
 	if gitdir.isDir {
 		g.repo.gitWorkingFolder = gitdir.path
 		g.repo.gitRootFolder = gitdir.path
@@ -161,7 +197,7 @@ func (g *git) enabled() bool {
 		// :ind+5 = index + /.git
 		ind := strings.LastIndex(g.repo.gitWorkingFolder, "/.git/worktrees")
 		g.repo.gitRootFolder = g.repo.gitWorkingFolder[:ind+5]
-		g.repo.isWorkTree = true
+		g.repo.IsWorkTree = true
 		return true
 	}
 	return false
@@ -194,7 +230,7 @@ func (g *git) string() string {
 	if len(segmentTemplate) > 0 {
 		template := &textTemplate{
 			Template: segmentTemplate,
-			Context:  g,
+			Context:  g.repo,
 			Env:      g.env,
 		}
 		text, err := template.render()
@@ -270,7 +306,7 @@ func (g *git) getStatusDetailString(status *GitStatus, color, icon Property, def
 	if !g.props.getBool(DisplayStatusDetail, true) {
 		return g.colorStatusString(prefix, "", foregroundColor)
 	}
-	return g.colorStatusString(prefix, status.string(), foregroundColor)
+	return g.colorStatusString(prefix, status.String(), foregroundColor)
 }
 
 func (g *git) colorStatusString(prefix, status, color string) string {
@@ -304,8 +340,8 @@ func (g *git) getUpstreamSymbol() string {
 func (g *git) setGitStatus() {
 	output := g.getGitCommandOutput("status", "-unormal", "--short", "--branch")
 	splittedOutput := strings.Split(output, "\n")
-	g.repo.Working = g.parseGitStats(splittedOutput, true)
-	g.repo.Staging = g.parseGitStats(splittedOutput, false)
+	g.repo.Working.parse(splittedOutput, true)
+	g.repo.Staging.parse(splittedOutput, false)
 	status := g.parseGitStatusInfo(splittedOutput[0])
 	if status["local"] != "" {
 		g.repo.Ahead, _ = strconv.Atoi(status["ahead"])
@@ -485,38 +521,6 @@ func (g *git) getPrettyHEADName() string {
 		return g.props.getString(NoCommitsIcon, "\uF594 ")
 	}
 	return fmt.Sprintf("%s%s", g.props.getString(CommitIcon, "\uF417"), ref)
-}
-
-func (g *git) parseGitStats(output []string, working bool) *GitStatus {
-	status := GitStatus{}
-	if len(output) <= 1 {
-		return &status
-	}
-	for _, line := range output[1:] {
-		if len(line) < 2 {
-			continue
-		}
-		code := line[0:1]
-		if working {
-			code = line[1:2]
-		}
-		switch code {
-		case "?":
-			if working {
-				status.Added++
-			}
-		case "D":
-			status.Deleted++
-		case "A":
-			status.Added++
-		case "U":
-			status.Unmerged++
-		case "M", "R", "C", "m":
-			status.Modified++
-		}
-	}
-	status.Changed = status.Added > 0 || status.Deleted > 0 || status.Modified > 0 || status.Unmerged > 0
-	return &status
 }
 
 func (g *git) getStashContext() int {

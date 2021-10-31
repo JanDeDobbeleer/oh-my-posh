@@ -131,6 +131,8 @@ func setupHEADContextEnv(context *detachedContext) *git {
 		env: env,
 		repo: &Repo{
 			gitWorkingFolder: "",
+			Working: &GitStatus{},
+			Staging: &GitStatus{},
 		},
 	}
 	return g
@@ -453,7 +455,7 @@ func TestGitStatusUnmerged(t *testing.T) {
 	status := &GitStatus{
 		Unmerged: 1,
 	}
-	assert.Equal(t, expected, status.string())
+	assert.Equal(t, expected, status.String())
 }
 
 func TestGitStatusUnmergedModified(t *testing.T) {
@@ -462,17 +464,17 @@ func TestGitStatusUnmergedModified(t *testing.T) {
 		Unmerged: 1,
 		Modified: 3,
 	}
-	assert.Equal(t, expected, status.string())
+	assert.Equal(t, expected, status.String())
 }
 
 func TestGitStatusEmpty(t *testing.T) {
 	expected := ""
 	status := &GitStatus{}
-	assert.Equal(t, expected, status.string())
+	assert.Equal(t, expected, status.String())
 }
 
 func TestParseGitStatsWorking(t *testing.T) {
-	g := &git{}
+	status := &GitStatus{}
 	output := []string{
 		"## amazing-feat",
 		" M change.go",
@@ -484,7 +486,7 @@ func TestParseGitStatsWorking(t *testing.T) {
 		" R change.go",
 		" C change.go",
 	}
-	status := g.parseGitStats(output, true)
+	status.parse(output, true)
 	assert.Equal(t, 3, status.Modified)
 	assert.Equal(t, 1, status.Unmerged)
 	assert.Equal(t, 3, status.Added)
@@ -493,7 +495,7 @@ func TestParseGitStatsWorking(t *testing.T) {
 }
 
 func TestParseGitStatsStaging(t *testing.T) {
-	g := &git{}
+	status := &GitStatus{}
 	output := []string{
 		"## amazing-feat",
 		" M change.go",
@@ -505,7 +507,7 @@ func TestParseGitStatsStaging(t *testing.T) {
 		"MR change.go",
 		"AC change.go",
 	}
-	status := g.parseGitStats(output, false)
+	status.parse(output, false)
 	assert.Equal(t, 1, status.Modified)
 	assert.Equal(t, 0, status.Unmerged)
 	assert.Equal(t, 1, status.Added)
@@ -514,24 +516,24 @@ func TestParseGitStatsStaging(t *testing.T) {
 }
 
 func TestParseGitStatsNoChanges(t *testing.T) {
-	g := &git{}
+	status := &GitStatus{}
 	expected := &GitStatus{}
 	output := []string{
 		"## amazing-feat",
 	}
-	status := g.parseGitStats(output, false)
+	status.parse(output, false)
 	assert.Equal(t, expected, status)
 	assert.False(t, status.Changed)
 }
 
 func TestParseGitStatsInvalidLine(t *testing.T) {
-	g := &git{}
+	status := &GitStatus{}
 	expected := &GitStatus{}
 	output := []string{
 		"## amazing-feat",
 		"#",
 	}
-	status := g.parseGitStats(output, false)
+	status.parse(output, false)
 	assert.Equal(t, expected, status)
 	assert.False(t, status.Changed)
 }
@@ -988,5 +990,88 @@ func TestGetGitCommand(t *testing.T) {
 			env: env,
 		}
 		assert.Equal(t, tc.Expected, g.getGitCommand(), tc.Case)
+	}
+}
+
+func TestGitTemplate(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Template string
+		Repo     *Repo
+	}{
+		{
+			Case: "Only HEAD name",
+			Expected: "main",
+			Template: "{{ .HEAD }}",
+			Repo: &Repo{
+				HEAD: "main",
+				Behind: 2,
+			},
+		},
+		{
+			Case: "Working area changes",
+			Expected: "main \uF044 +2 ~3",
+			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
+			Repo: &Repo{
+				HEAD: "main",
+				Working: &GitStatus{
+					Added: 2,
+					Modified: 3,
+					Changed: true,
+				},
+			},
+		},
+		{
+			Case: "No working area changes",
+			Expected: "main",
+			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
+			Repo: &Repo{
+				HEAD: "main",
+				Working: &GitStatus{
+					Changed: false,
+				},
+			},
+		},
+		{
+			Case: "Working and staging area changes",
+			Expected: "main \uF046 +5 ~1 \uF044 +2 ~3",
+			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046{{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
+			Repo: &Repo{
+				HEAD: "main",
+				Working: &GitStatus{
+					Added: 2,
+					Modified: 3,
+					Changed: true,
+				},
+				Staging: &GitStatus{
+					Added: 5,
+					Modified: 1,
+					Changed: true,
+				},
+			},
+		},
+		{
+			Case: "No local changes",
+			Expected: "main",
+			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046{{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
+			Repo: &Repo{
+				HEAD: "main",
+				Staging: &GitStatus{},
+				Working: &GitStatus{},
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		g := &git{
+			props: &properties{
+				values: map[Property]interface{}{
+					SegmentTemplate:     tc.Template,
+				},
+			},
+			repo: tc.Repo,
+		}
+		assert.Equal(t, tc.Expected, g.string(), tc.Case)
 	}
 }

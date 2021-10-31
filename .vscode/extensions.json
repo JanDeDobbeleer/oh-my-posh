@@ -1,8 +1,6 @@
 {
   "recommendations": [
     "golang.go",
-    "hbenl.vscode-test-explorer",
-    "ethan-reesor.vscode-go-test-adapter",
     "github.vscode-pull-request-github",
     "esbenp.prettier-vscode",
     "davidanson.vscode-markdownlint",

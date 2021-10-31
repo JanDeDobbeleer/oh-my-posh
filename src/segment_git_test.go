@@ -131,8 +131,8 @@ func setupHEADContextEnv(context *detachedContext) *git {
 		env: env,
 		repo: &Repo{
 			gitWorkingFolder: "",
-			Working: &GitStatus{},
-			Staging: &GitStatus{},
+			Working:          &GitStatus{},
+			Staging:          &GitStatus{},
 		},
 	}
 	return g
@@ -993,7 +993,7 @@ func TestGetGitCommand(t *testing.T) {
 	}
 }
 
-func TestGitTemplate(t *testing.T) {
+func TestGitTemplateString(t *testing.T) {
 	cases := []struct {
 		Case     string
 		Expected string
@@ -1001,29 +1001,29 @@ func TestGitTemplate(t *testing.T) {
 		Repo     *Repo
 	}{
 		{
-			Case: "Only HEAD name",
+			Case:     "Only HEAD name",
 			Expected: "main",
 			Template: "{{ .HEAD }}",
 			Repo: &Repo{
-				HEAD: "main",
+				HEAD:   "main",
 				Behind: 2,
 			},
 		},
 		{
-			Case: "Working area changes",
+			Case:     "Working area changes",
 			Expected: "main \uF044 +2 ~3",
 			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
 			Repo: &Repo{
 				HEAD: "main",
 				Working: &GitStatus{
-					Added: 2,
+					Added:    2,
 					Modified: 3,
-					Changed: true,
+					Changed:  true,
 				},
 			},
 		},
 		{
-			Case: "No working area changes",
+			Case:     "No working area changes",
 			Expected: "main",
 			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
 			Repo: &Repo{
@@ -1034,31 +1034,54 @@ func TestGitTemplate(t *testing.T) {
 			},
 		},
 		{
-			Case: "Working and staging area changes",
+			Case:     "Working and staging area changes",
 			Expected: "main \uF046 +5 ~1 \uF044 +2 ~3",
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046{{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
 			Repo: &Repo{
 				HEAD: "main",
 				Working: &GitStatus{
-					Added: 2,
+					Added:    2,
 					Modified: 3,
-					Changed: true,
+					Changed:  true,
 				},
 				Staging: &GitStatus{
-					Added: 5,
+					Added:    5,
 					Modified: 1,
-					Changed: true,
+					Changed:  true,
 				},
 			},
 		},
 		{
-			Case: "No local changes",
+			Case:     "No local changes",
 			Expected: "main",
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046{{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
 			Repo: &Repo{
-				HEAD: "main",
+				HEAD:    "main",
 				Staging: &GitStatus{},
 				Working: &GitStatus{},
+			},
+		},
+		{
+			Case:     "Upstream Icon",
+			Expected: "from GitHub on main",
+			Template: "from {{ .UpstreamIcon }} on {{ .HEAD }}",
+			Repo: &Repo{
+				HEAD:    "main",
+				Staging: &GitStatus{},
+				Working: &GitStatus{},
+				UpstreamIcon: "GitHub",
+			},
+		},
+		{
+			Case:     "Branch status",
+			Expected: "from GitHub on main \u21912",
+			Template: "from {{ .UpstreamIcon }} on {{ .HEAD }} {{ .BranchStatus }}",
+			Repo: &Repo{
+				HEAD:    "main",
+				Staging: &GitStatus{},
+				Working: &GitStatus{},
+				UpstreamIcon: "GitHub",
+				BranchStatus: "\u21912",
 			},
 		},
 	}
@@ -1067,11 +1090,11 @@ func TestGitTemplate(t *testing.T) {
 		g := &git{
 			props: &properties{
 				values: map[Property]interface{}{
-					SegmentTemplate:     tc.Template,
+					DisplayStatus: true,
 				},
 			},
 			repo: tc.Repo,
 		}
-		assert.Equal(t, tc.Expected, g.string(), tc.Case)
+		assert.Equal(t, tc.Expected, g.templateString(tc.Template), tc.Case)
 	}
 }

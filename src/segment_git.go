@@ -10,16 +10,17 @@ import (
 
 // Repo represents a git repository
 type Repo struct {
-	Working        *GitStatus
-	Staging        *GitStatus
-	Ahead          int
-	Behind         int
-	HEAD           string
-	Upstream       string
-	UpstreamIcon string
-	StashCount     int
-	WorktreeCount  int
-	IsWorkTree     bool
+	Working       *GitStatus
+	Staging       *GitStatus
+	Ahead         int
+	Behind        int
+	HEAD          string
+	BranchStatus  string
+	Upstream      string
+	UpstreamIcon  string
+	StashCount    int
+	WorktreeCount int
+	IsWorkTree    bool
 
 	gitWorkingFolder string // .git working folder, can be different of root if using worktree
 	gitRootFolder    string // .git root folder
@@ -191,7 +192,9 @@ func (g *git) shouldIgnoreRootRepository(rootDir string) bool {
 func (g *git) string() string {
 	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
 	displayStatus := g.props.getBool(DisplayStatus, false)
-
+	if !displayStatus {
+		g.repo.HEAD = g.getPrettyHEADName()
+	}
 	if displayStatus || statusColorsEnabled {
 		g.setGitStatus()
 	}
@@ -201,23 +204,30 @@ func (g *git) string() string {
 	if g.repo.Upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
 		g.repo.UpstreamIcon = g.getUpstreamIcon()
 	}
+	if g.props.getBool(DisplayBranchStatus, true) {
+		g.repo.BranchStatus = g.getBranchStatus()
+	}
 	// use template if available
 	segmentTemplate := g.props.getString(SegmentTemplate, "")
 	if len(segmentTemplate) > 0 {
-		template := &textTemplate{
-			Template: segmentTemplate,
-			Context:  g.repo,
-			Env:      g.env,
-		}
-		text, err := template.render()
-		if err != nil {
-			return err.Error()
-		}
-		return text
+		return g.templateString(segmentTemplate)
 	}
 	// legacy render string	if no template
 	// remove this for 6.0
-	return g.renderDeprecatedString(displayStatus)
+	return g.renderDeprecatedString()
+}
+
+func (g *git) templateString(segmentTemplate string) string {
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  g.repo,
+		Env:      g.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (g *git) init(props *properties, env environmentInfo) {

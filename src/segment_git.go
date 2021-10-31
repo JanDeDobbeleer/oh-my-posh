@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"strconv"
 	"strings"
@@ -11,15 +10,16 @@ import (
 
 // Repo represents a git repository
 type Repo struct {
-	Working       *GitStatus
-	Staging       *GitStatus
-	Ahead         int
-	Behind        int
-	HEAD          string
-	Upstream      string
-	StashCount    int
-	WorktreeCount int
-	IsWorkTree    bool
+	Working        *GitStatus
+	Staging        *GitStatus
+	Ahead          int
+	Behind         int
+	HEAD           string
+	Upstream       string
+	UpstreamIcon string
+	StashCount     int
+	WorktreeCount  int
+	IsWorkTree     bool
 
 	gitWorkingFolder string // .git working folder, can be different of root if using worktree
 	gitRootFolder    string // .git root folder
@@ -107,10 +107,6 @@ const (
 	BranchBehindIcon Property = "branch_behind_icon"
 	// BranchGoneIcon the icon to use when ther's no remote
 	BranchGoneIcon Property = "branch_gone_icon"
-	// LocalWorkingIcon the icon to use as the local working area changes indicator
-	LocalWorkingIcon Property = "local_working_icon"
-	// LocalStagingIcon the icon to use as the local staging area changes indicator
-	LocalStagingIcon Property = "local_staged_icon"
 	// RebaseIcon shows before the rebase context
 	RebaseIcon Property = "rebase_icon"
 	// CherryPickIcon shows before the cherry-pick context
@@ -139,29 +135,6 @@ const (
 	GitlabIcon Property = "gitlab_icon"
 	// GitIcon shows when the upstream can't be identified
 	GitIcon Property = "git_icon"
-
-	// Deprecated
-
-	// DisplayStatusDetail shows the detailed status of the repository
-	DisplayStatusDetail Property = "display_status_detail"
-	// WorkingColor if set, the color to use on the working area
-	WorkingColor Property = "working_color"
-	// StagingColor if set, the color to use on the staging area
-	StagingColor Property = "staging_color"
-	// StatusColorsEnabled enables status colors
-	StatusColorsEnabled Property = "status_colors_enabled"
-	// LocalChangesColor if set, the color to use when there are local changes
-	LocalChangesColor Property = "local_changes_color"
-	// AheadAndBehindColor if set, the color to use when the branch is ahead and behind the remote
-	AheadAndBehindColor Property = "ahead_and_behind_color"
-	// BehindColor if set, the color to use when the branch is ahead and behind the remote
-	BehindColor Property = "behind_color"
-	// AheadColor if set, the color to use when the branch is ahead and behind the remote
-	AheadColor Property = "ahead_color"
-	// BranchMaxLength truncates the length of the branch name
-	BranchMaxLength Property = "branch_max_length"
-	// WorktreeCountIcon shows before the worktree context
-	WorktreeCountIcon Property = "worktree_count_icon"
 )
 
 func (g *git) enabled() bool {
@@ -225,6 +198,9 @@ func (g *git) string() string {
 	if statusColorsEnabled {
 		g.SetStatusColor()
 	}
+	if g.repo.Upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
+		g.repo.UpstreamIcon = g.getUpstreamIcon()
+	}
 	// use template if available
 	segmentTemplate := g.props.getString(SegmentTemplate, "")
 	if len(segmentTemplate) > 0 {
@@ -242,38 +218,6 @@ func (g *git) string() string {
 	// legacy render string	if no template
 	// remove this for 6.0
 	return g.renderDeprecatedString(displayStatus)
-}
-
-func (g *git) renderDeprecatedString(displayStatus bool) string {
-	if !displayStatus {
-		return g.getPrettyHEADName()
-	}
-	buffer := new(bytes.Buffer)
-	// remote (if available)
-	if g.repo.Upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
-		fmt.Fprintf(buffer, "%s", g.getUpstreamSymbol())
-	}
-	// branchName
-	fmt.Fprintf(buffer, "%s", g.repo.HEAD)
-	if g.props.getBool(DisplayBranchStatus, true) {
-		buffer.WriteString(g.getBranchStatus())
-	}
-	if g.repo.Staging.Changed {
-		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.Staging, StagingColor, LocalStagingIcon, " \uF046"))
-	}
-	if g.repo.Staging.Changed && g.repo.Working.Changed {
-		fmt.Fprint(buffer, g.props.getString(StatusSeparatorIcon, " |"))
-	}
-	if g.repo.Working.Changed {
-		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.Working, WorkingColor, LocalWorkingIcon, " \uF044"))
-	}
-	if g.repo.StashCount != 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(StashCountIcon, "\uF692 "), g.repo.StashCount)
-	}
-	if g.repo.WorktreeCount != 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(WorktreeCountIcon, "\uf1bb "), g.repo.WorktreeCount)
-	}
-	return buffer.String()
 }
 
 func (g *git) init(props *properties, env environmentInfo) {
@@ -319,7 +263,7 @@ func (g *git) colorStatusString(prefix, status, color string) string {
 	return fmt.Sprintf("<%s>%s%s</>", color, prefix, status)
 }
 
-func (g *git) getUpstreamSymbol() string {
+func (g *git) getUpstreamIcon() string {
 	upstream := replaceAllString("/.*", g.repo.Upstream, "")
 	url := g.getOriginURL(upstream)
 	if strings.Contains(url, "github") {

@@ -3,6 +3,7 @@ module.exports = {
     {
       type: "category",
       label: "Getting Started",
+      collapsed: false,
       items: [
         "introduction",
         "upgrading",
@@ -23,7 +24,9 @@ module.exports = {
     {
       type: "category",
       label: "Segments",
+      collapsed: true,
       items: [
+        "angular",
         "aws",
         "az",
         "azfunc",
@@ -47,6 +50,7 @@ module.exports = {
         "os",
         "owm",
         "path",
+        "php",
         "python",
         "root",
         "ruby",
@@ -63,6 +67,7 @@ module.exports = {
     {
       type: "category",
       label: "Contributing",
+      collapsed: true,
       items: [
         "contributing_started",
         "contributing_segment",

@@ -11,7 +11,6 @@ module.exports = {
   onBrokenLinks: "ignore",
   plugins: [path.resolve(__dirname, 'plugins', 'appinsights')],
   themeConfig: {
-    sidebarCollapsible: false,
     prism: {
       theme: require("prism-react-renderer/themes/duotoneLight"),
       darkTheme: require("prism-react-renderer/themes/oceanicNext"),
@@ -41,7 +40,8 @@ module.exports = {
         },
         {
           href: "https://github.com/jandedobbeleer/oh-my-posh",
-          label: "GitHub",
+          className: 'header-github-link',
+          'aria-label': 'GitHub repository',
           position: "right",
         },
       ],
@@ -97,7 +97,12 @@ module.exports = {
     },
     appInsights: {
       instrumentationKey: "72804848-dc30-4856-8245-4fa1450b041f",
-    }
+    },
+    algolia: {
+      appId: 'BH4D9OD16A',
+      apiKey: '539391a0be386508c6a80cb2bca8ebfe',
+      indexName: 'ohmyposh',
+    },
   },
   presets: [
     [

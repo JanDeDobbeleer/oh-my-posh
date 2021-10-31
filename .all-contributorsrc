@@ -703,6 +703,52 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "shawnwildermuth",
+      "name": "Shawn Wildermuth",
+      "avatar_url": "https://avatars.githubusercontent.com/u/568272?v=4",
+      "profile": "http://wildermuth.com",
+      "contributions": [
+        "doc",
+        "code"
+      ]
+    },
+    {
+      "login": "onpikono",
+      "name": "Ondrej Pinka",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25362465?v=4",
+      "profile": "https://github.com/onpikono",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "kasuken",
+      "name": "Emanuele Bartolesi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2757486?v=4",
+      "profile": "https://www.emanuelebartolesi.com",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "qiansen1386",
+      "name": "Paris Qian",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1759658?v=4",
+      "profile": "https://qiansen1386.github.io",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "tjackadams",
+      "name": "Thomas Adams",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2307314?v=4",
+      "profile": "https://blog.itadams.co.uk",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

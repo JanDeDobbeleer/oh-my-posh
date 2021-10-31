@@ -3,11 +3,12 @@
   "final_space": true,
   "console_title": true,
   "console_title_style": "template",
-  "console_title_template": "{{ .Shell }} in {{ .Folder }}",
+  "console_title_template": "{{.User}}@{{.Host}} in {{ .Path }}",
   "blocks": [
     {
       "type": "prompt",
       "alignment": "left",
+      "vertical_offset": 1,
       "segments": [
         {
           "type": "os",
@@ -17,20 +18,8 @@
           "background": "#003543",
           "properties": {
             "prefix": " ",
-            "windows": "\uF179",
+            "windows": "\uE62A ",
             "postfix": ""
-          }
-        },
-        {
-          "type": "session",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#d2ff5e",
-          "background": "#003543",
-          "properties": {
-            "prefix": "",
-            "display_host": false,
-            "postfix": " "
           }
         },
         {
@@ -64,64 +53,26 @@
           }
         },
         {
-          "type": "exit",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#242424",
-          "background": "#33DD2D",
-          "properties": {
-            "display_exit_code": false,
-            "always_enabled": true,
-            "color_background": true,
-            "error_color": "#f1184c",
-            "prefix": " \ufc8d"
-          }
-        }
-      ]
-    },
-    {
-      "type": "prompt",
-      "alignment": "right",
-      "segments": [
-        {
-          "type": "battery",
-          "style": "powerline",
-          "invert_powerline": true,
-          "powerline_symbol": "\uE0B2",
-          "foreground": "#242424",
-          "background": "#f36943",
-          "properties": {
-            "battery_icon": "\f583",
-            "color_background": true,
-            "charged_color": "#0476d0",
-            "charging_color": "#33DD2D",
-            "discharging_color": "#FFCD58",
-            "postfix": "\uF295 \uf583 "
-          }
-        },
-        {
-          "type": "python",
-          "style": "powerline",
-          "invert_powerline": true,
-          "powerline_symbol": "\uE0B2",
-          "foreground": "#003544",
-          "background": "#0087D8",
-          "properties": {
-            "prefix": " \uE235 ",
-            "display_version": false,
-            "display_mode": "context",
-            "display_virtual_env": true
-          }
-        },
-        {
           "type": "time",
           "style": "powerline",
-          "invert_powerline": true,
-          "powerline_symbol": "\uE0B2",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#fff",
           "background": "#003543",
           "properties": {
             "prefix": "<#fff> \uf64f </>"
+          }
+        },
+        {
+          "type": "executiontime",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#83769c",
+          "leading_diamond": "",
+          "trailing_diamond": "",
+          "properties": {
+            "always_enabled": true,
+            "prefix": " \ufa1e ",
+            "postfix": "\u2800"
           }
         }
       ]
@@ -134,7 +85,7 @@
         {
           "type": "root",
           "style": "plain",
-          "foreground": "#FFD700",
+          "foreground": "#fff",
           "properties": {
             "root_icon": "⚡"
           }
@@ -145,7 +96,7 @@
           "foreground": "#f1184c",
           "properties": {
             "prefix": "",
-            "text": "🚀"
+            "text": "🦄"
           }
         }
       ]

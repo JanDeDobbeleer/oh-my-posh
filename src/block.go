@@ -38,6 +38,8 @@ type Block struct {
 	ansi                  *ansiUtils
 	activeSegment         *Segment
 	previousActiveSegment *Segment
+	activeBackground      string
+	activeForeground      string
 }
 
 func (b *Block) init(env environmentInfo, writer colorWriter, ansi *ansiUtils) {
@@ -72,11 +74,10 @@ func (b *Block) setStringValues() {
 	wg := sync.WaitGroup{}
 	wg.Add(len(b.Segments))
 	defer wg.Wait()
-	cwd := b.env.getcwd()
 	for _, segment := range b.Segments {
 		go func(s *Segment) {
 			defer wg.Done()
-			s.setStringValue(b.env, cwd)
+			s.setStringValue(b.env)
 		}(segment)
 	}
 }
@@ -88,12 +89,16 @@ func (b *Block) renderSegments() string {
 			continue
 		}
 		b.activeSegment = segment
+		b.activeBackground = b.activeSegment.background()
+		b.activeForeground = b.activeSegment.foreground()
+		b.writer.setColors(b.activeBackground, b.activeForeground)
 		b.endPowerline()
 		b.renderSegmentText(segment.stringValue)
 	}
 	if b.previousActiveSegment != nil && b.previousActiveSegment.Style == Powerline {
 		b.writePowerLineSeparator(Transparent, b.previousActiveSegment.background(), true)
 	}
+	b.writer.clearParentColors()
 	return b.writer.string()
 }
 
@@ -127,7 +132,7 @@ func (b *Block) getPowerlineColor(foreground bool) string {
 		return b.previousActiveSegment.background()
 	}
 	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
-		return b.activeSegment.background()
+		return b.activeBackground
 	}
 	if !foreground && b.activeSegment.Style != Powerline {
 		return Transparent
@@ -148,11 +153,11 @@ func (b *Block) renderSegmentText(text string) {
 		b.renderPowerLineSegment(text)
 	}
 	b.previousActiveSegment = b.activeSegment
-	b.writer.setParentColors(b.activeSegment.background(), b.activeSegment.foreground())
+	b.writer.setParentColors(b.activeBackground, b.activeForeground)
 }
 
 func (b *Block) renderPowerLineSegment(text string) {
-	b.writePowerLineSeparator(b.activeSegment.background(), b.getPowerlineColor(true), false)
+	b.writePowerLineSeparator(b.activeBackground, b.getPowerlineColor(true), false)
 	b.renderText(text)
 }
 
@@ -161,7 +166,7 @@ func (b *Block) renderPlainSegment(text string) {
 }
 
 func (b *Block) renderDiamondSegment(text string) {
-	background := b.activeSegment.background()
+	background := b.activeBackground
 	if background == Inherit {
 		background = b.previousActiveSegment.background()
 	}
@@ -171,12 +176,10 @@ func (b *Block) renderDiamondSegment(text string) {
 }
 
 func (b *Block) renderText(text string) {
-	bg := b.activeSegment.background()
-	fg := b.activeSegment.foreground()
 	defaultValue := " "
-	b.writer.write(bg, fg, b.activeSegment.getValue(Prefix, defaultValue))
-	b.writer.write(bg, fg, text)
-	b.writer.write(bg, fg, b.activeSegment.getValue(Postfix, defaultValue))
+	b.writer.write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Prefix, defaultValue))
+	b.writer.write(b.activeBackground, b.activeForeground, text)
+	b.writer.write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Postfix, defaultValue))
 }
 
 func (b *Block) debug() (int, []*SegmentTiming) {
@@ -184,7 +187,7 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 	largestSegmentNameLength := 0
 	for _, segment := range b.Segments {
 		err := segment.mapSegmentWithWriter(b.env)
-		if err != nil || !segment.shouldIncludeFolder(b.env.getcwd()) {
+		if err != nil || !segment.shouldIncludeFolder() {
 			continue
 		}
 		var segmentTiming SegmentTiming
@@ -206,7 +209,7 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 			b.activeSegment = segment
 			b.renderSegmentText(segmentTiming.stringValue)
 			if b.activeSegment.Style == Powerline {
-				b.writePowerLineSeparator(Transparent, b.activeSegment.background(), true)
+				b.writePowerLineSeparator(Transparent, b.activeBackground, true)
 			}
 			segmentTiming.stringValue = b.writer.string()
 			b.writer.reset()

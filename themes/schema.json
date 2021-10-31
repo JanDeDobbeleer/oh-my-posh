@@ -169,7 +169,9 @@
             "dart",
             "rust",
             "owm",
-            "memory"
+            "memory",
+            "angularcli",
+            "php"
           ]
         },
         "style": {
@@ -337,7 +339,7 @@
                   "charged_icon": {
                     "type": "string",
                     "title": "Charged Icon",
-                    "description": "Text/icon o display on the left when fully charged",
+                    "description": "Text/icon to display on the left when fully charged",
                     "default": ""
                   },
                   "color_background": {
@@ -424,6 +426,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -728,6 +733,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -754,6 +762,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -780,6 +791,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -806,6 +820,38 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "php" }
+            }
+          },
+          "then": {
+            "title": "PHP Segment",
+            "description": "https://ohmyposh.dev/docs/php",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -819,7 +865,7 @@
             }
           },
           "then": {
-            "title": "Julia Segment",
+            "title": "Java Segment",
             "description": "https://ohmyposh.dev/docs/java",
             "properties": {
               "properties": {
@@ -980,6 +1026,9 @@
                     "title": "NPM Icon",
                     "description": "Icon/text to use for NPM",
                     "default": " \uE71E"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -1295,6 +1344,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -1686,6 +1738,29 @@
                     "title": "Memory type",
                     "description": "whether to show physical or swap memory",
                     "default": "physical"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "angularcli" }
+            }
+          },
+          "then": {
+            "title": "Angular CLI Segment",
+            "description": "https://ohmyposh.dev/docs/angularcli",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_version": {
+                    "$ref": "#/definitions/display_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
                   }
                 }
               }

@@ -1,25 +1,26 @@
 # Powershell doesn't default to UTF8 just yet, so we're forcing it as there are too many problems
 # that pop up when we don't
-[console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
+    [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+} elseif ($env:POSH_CONSTRAINED_LANGUAGE -ne 1) {
+    Write-Host "[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
+When using PowerShell in ConstrainedLanguage mode, please set the
+console mode manually to UTF-8. See here for more information:
+https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
+"
+}
 $env:POWERLINE_COMMAND = "oh-my-posh"
 $env:CONDA_PROMPT_MODIFIER = $false
 
 # specific module support (disabled by default)
-function Set-DefaultEnvValue {
-    [CmdletBinding()]
-    param (
-        [Parameter(Mandatory = $true)]
-        [string]
-        $Name
-    )
-
-    $value = [System.Environment]::GetEnvironmentVariable($Name)
-    if ($value -eq $null) {
-        [System.Environment]::SetEnvironmentVariable($Name, $false)
-    }
+$value = $env:AZ_ENABLED
+if ($null -eq $value) {
+    $env:AZ_ENABLED = $false
 }
-Set-DefaultEnvValue("AZ_ENABLED")
-Set-DefaultEnvValue("POSH_GIT_ENABLED")
+$value = $env:POSH_GIT_ENABLED
+if ($null -eq $value) {
+    $env:POSH_GIT_ENABLED = $false
+}
 
 $global:PoshSettings = New-Object -TypeName PSObject -Property @{
     Theme     = "";

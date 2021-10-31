@@ -93,6 +93,18 @@ func TestWriteANSIColors(t *testing.T) {
 			Parent:   &Color{Foreground: "yellow", Background: "red"},
 		},
 		{
+			Case:     "Inherit no parent foreground",
+			Input:    "hello <inherit>world</>",
+			Expected: "\x1b[47m\x1b[30mhello \x1b[0m\x1b[47;49m\x1b[7mworld\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+		},
+		{
+			Case:     "Inherit no parent background",
+			Input:    "hello <,inherit>world</>",
+			Expected: "\x1b[47m\x1b[30mhello \x1b[0m\x1b[30mworld\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+		},
+		{
 			Case:     "Inline override",
 			Input:    "hello, <red>world</>, rabbit",
 			Expected: "\x1b[47m\x1b[30mhello, \x1b[0m\x1b[47m\x1b[31mworld\x1b[0m\x1b[47m\x1b[30m, rabbit\x1b[0m",
@@ -135,6 +147,36 @@ func TestWriteANSIColors(t *testing.T) {
 			Colors:             &Color{Foreground: Transparent, Background: "#FF5733"},
 			TerminalBackground: "#212F3C",
 		},
+		{
+			Case:     "Foreground for foreground override",
+			Input:    "<foreground>test</>",
+			Expected: "\x1b[47m\x1b[30mtest\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+		},
+		{
+			Case:     "Foreground for background override",
+			Input:    "<background>test</>",
+			Expected: "\x1b[47m\x1b[37mtest\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+		},
+		{
+			Case:     "Foreground for background vice versa override",
+			Input:    "<background,foreground>test</>",
+			Expected: "\x1b[40m\x1b[37mtest\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+		},
+		{
+			Case:     "Background for background override",
+			Input:    "<,background>test</>",
+			Expected: "\x1b[47m\x1b[30mtest\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+		},
+		{
+			Case:     "Background for foreground override",
+			Input:    "<,foreground>test</>",
+			Expected: "\x1b[40m\x1b[30mtest\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "white"},
+		},
 	}
 
 	for _, tc := range cases {
@@ -142,7 +184,8 @@ func TestWriteANSIColors(t *testing.T) {
 		ansi.init("pwsh")
 		renderer := &AnsiColor{
 			ansi:               ansi,
-			Parent:             tc.Parent,
+			ParentColors:       tc.Parent,
+			Colors:             tc.Colors,
 			terminalBackground: tc.TerminalBackground,
 		}
 		renderer.write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)

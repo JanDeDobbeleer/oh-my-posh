@@ -143,6 +143,14 @@ func (t *tracer) trace(start time.Time, function string, args ...string) {
 	log.Println(trace)
 }
 
+func (t *tracer) error(message string) {
+	if !t.debug {
+		return
+	}
+	trace := fmt.Sprintf("error: %s", message)
+	log.Println(trace)
+}
+
 type environment struct {
 	args      *args
 	cwd       string
@@ -185,6 +193,7 @@ func (env *environment) getcwd() string {
 	}
 	dir, err := os.Getwd()
 	if err != nil {
+		env.tracer.error(err.Error())
 		return ""
 	}
 	env.cwd = correctPath(dir)
@@ -197,6 +206,7 @@ func (env *environment) hasFiles(pattern string) bool {
 	pattern = cwd + env.getPathSeperator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
+		env.tracer.error(err.Error())
 		return false
 	}
 	return len(matches) > 0
@@ -207,6 +217,7 @@ func (env *environment) hasFilesInDir(dir, pattern string) bool {
 	pattern = dir + env.getPathSeperator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
+		env.tracer.error(err.Error())
 		return false
 	}
 	return len(matches) > 0
@@ -222,6 +233,7 @@ func (env *environment) getFileContent(file string) string {
 	defer env.tracer.trace(time.Now(), "getFileContent", file)
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
+		env.tracer.error(err.Error())
 		return ""
 	}
 	return string(content)
@@ -231,6 +243,7 @@ func (env *environment) getFoldersList(path string) []string {
 	defer env.tracer.trace(time.Now(), "getFoldersList", path)
 	content, err := os.ReadDir(path)
 	if err != nil {
+		env.tracer.error(err.Error())
 		return nil
 	}
 	var folderNames []string
@@ -260,6 +273,7 @@ func (env *environment) getHostName() (string, error) {
 	defer env.tracer.trace(time.Now(), "getHostName")
 	hostName, err := os.Hostname()
 	if err != nil {
+		env.tracer.error(err.Error())
 		return "", err
 	}
 	return cleanHostName(hostName), nil
@@ -305,6 +319,7 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	err := cmd.Start()
 	if err != nil {
 		errorStr := fmt.Sprintf("cmd.Start() failed with '%s'", err)
+		env.tracer.error(errorStr)
 		return "", errors.New(errorStr)
 	}
 	// cmd.Wait() should be called only after we finish reading
@@ -320,6 +335,7 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	wg.Wait()
 	err = cmd.Wait()
 	if err != nil {
+		env.tracer.error(err.Error())
 		if exitErr, ok := err.(*exec.ExitError); ok {
 			return "", &commandError{
 				err:      exitErr.Error(),
@@ -328,7 +344,9 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 		}
 	}
 	if stdoutErr != nil || stderrErr != nil {
-		return "", errors.New("failed to capture stdout or stderr")
+		errString := "failed to capture stdout or stderr"
+		env.tracer.error(errString)
+		return "", errors.New(errString)
 	}
 	stderrStr := normalizeOutput(stderr)
 	if len(stderrStr) > 0 {
@@ -353,6 +371,7 @@ func (env *environment) hasCommand(command string) bool {
 		env.cmdCache.set(command, path)
 		return true
 	}
+	env.tracer.error(err.Error())
 	return false
 }
 
@@ -379,6 +398,7 @@ func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
 	batteries, err := battery.GetAll()
 	// actual error, return it
 	if err != nil && len(batteries) == 0 {
+		env.tracer.error(err.Error())
 		return nil, err
 	}
 	// there are no batteries found
@@ -399,6 +419,7 @@ func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
 	}
 	// another error occurred (possibly unmapped use-case), return it
 	if err != nil {
+		env.tracer.error(err.Error())
 		return nil, err
 	}
 	// everything is fine
@@ -414,6 +435,7 @@ func (env *environment) getShellName() string {
 	p, _ := process.NewProcess(int32(pid))
 	name, err := p.Name()
 	if err != nil {
+		env.tracer.error(err.Error())
 		return unknown
 	}
 	if name == "cmd.exe" {
@@ -421,6 +443,7 @@ func (env *environment) getShellName() string {
 		name, err = p.Name()
 	}
 	if err != nil {
+		env.tracer.error(err.Error())
 		return unknown
 	}
 	// Cache the shell value to speed things up.
@@ -438,11 +461,13 @@ func (env *environment) doGet(url string, timeout int) ([]byte, error) {
 	}
 	response, err := client.Do(request)
 	if err != nil {
+		env.tracer.error(err.Error())
 		return nil, err
 	}
 	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
+		env.tracer.error(err.Error())
 		return nil, err
 	}
 	return body, nil
@@ -468,6 +493,7 @@ func (env *environment) hasParentFilePath(path string) (*fileInfo, error) {
 			currentFolder = dir
 			continue
 		}
+		env.tracer.error(err.Error())
 		return nil, errors.New("no match at root level")
 	}
 }

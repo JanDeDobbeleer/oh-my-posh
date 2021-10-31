@@ -149,7 +149,8 @@
           "trailing_diamond": "",
           "properties": {
             "always_enabled": true,
-            "prefix": "<transparent></> \ufa1e"
+            "prefix": "<transparent></> \ufa1e",
+            "postfix": "\u2800"
           }
         },
         {

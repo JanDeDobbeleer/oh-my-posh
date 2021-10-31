@@ -27,6 +27,7 @@ func (env *environment) isRunningAsRoot() bool {
 		0, 0, 0, 0, 0, 0,
 		&sid)
 	if err != nil {
+		env.tracer.error(err.Error())
 		return false
 	}
 	defer func() {
@@ -40,6 +41,7 @@ func (env *environment) isRunningAsRoot() bool {
 
 	member, err := token.IsMember(sid)
 	if err != nil {
+		env.tracer.error(err.Error())
 		return false
 	}
 
@@ -73,10 +75,12 @@ func (env *environment) getTerminalWidth() (int, error) {
 	defer env.tracer.trace(time.Now(), "getTerminalWidth")
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
 	if err != nil {
+		env.tracer.error(err.Error())
 		return 0, err
 	}
 	info, err := winterm.GetConsoleScreenBufferInfo(uintptr(handle))
 	if err != nil {
+		env.tracer.error(err.Error())
 		return 0, err
 	}
 	// return int(float64(info.Size.X) * 0.57), nil

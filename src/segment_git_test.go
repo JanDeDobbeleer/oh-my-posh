@@ -14,6 +14,8 @@ const (
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "git").Return(false)
+	env.On("getRuntimeGOOS", nil).Return("")
+	env.On("isWsl", nil).Return(false)
 	g := &git{
 		env: env,
 	}
@@ -23,6 +25,8 @@ func TestEnabledGitNotFound(t *testing.T) {
 func TestEnabledInWorkingDirectory(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "git").Return(true)
+	env.On("getRuntimeGOOS", nil).Return("")
+	env.On("isWsl", nil).Return(false)
 	fileInfo := &fileInfo{
 		path:         "/dir/hello",
 		parentFolder: "/dir",
@@ -39,6 +43,8 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 func TestEnabledInWorkingTree(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "git").Return(true)
+	env.On("getRuntimeGOOS", nil).Return("")
+	env.On("isWsl", nil).Return(false)
 	fileInfo := &fileInfo{
 		path:         "/dir/hello",
 		parentFolder: "/dir",
@@ -900,6 +906,39 @@ func TestGetBranchStatus(t *testing.T) {
 	}
 }
 
+func TestShouldIgnoreRootRepository(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Dir      string
+		Expected bool
+	}{
+		{Case: "inside excluded", Dir: "/home/bill/repo"},
+		{Case: "oustide excluded", Dir: "/home/melinda"},
+		{Case: "excluded exact match", Dir: "/home/gates", Expected: true},
+		{Case: "excluded inside match", Dir: "/home/gates/bill", Expected: true},
+	}
+
+	for _, tc := range cases {
+		props := map[Property]interface{}{
+			ExcludeFolders: []string{
+				"/home/bill",
+				"/home/gates.*",
+			},
+		}
+		env := new(MockedEnvironment)
+		env.On("homeDir", nil).Return("/home/bill")
+		env.On("getRuntimeGOOS", nil).Return(windowsPlatform)
+		git := &git{
+			props: &properties{
+				values: props,
+			},
+			env: env,
+		}
+		got := git.shouldIgnoreRootRepository(tc.Dir)
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
 func TestTruncateBranch(t *testing.T) {
 	cases := []struct {
 		Case      string
@@ -923,5 +962,31 @@ func TestTruncateBranch(t *testing.T) {
 			},
 		}
 		assert.Equal(t, tc.Expected, g.truncateBranch(tc.Branch), tc.Case)
+	}
+}
+
+func TestGetGitCommand(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		IsWSL    bool
+		GOOS     string
+		CWD      string
+	}{
+		{Case: "On Windows", Expected: "git.exe", GOOS: windowsPlatform},
+		{Case: "Non Windows", Expected: "git"},
+		{Case: "Iside WSL, non shared", IsWSL: true, Expected: "git"},
+		{Case: "Iside WSL, shared", Expected: "git.exe", IsWSL: true, CWD: "/mnt/bill"},
+	}
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("isWsl", nil).Return(tc.IsWSL)
+		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		env.On("getcwd", nil).Return(tc.CWD)
+		g := &git{
+			env: env,
+		}
+		assert.Equal(t, tc.Expected, g.getGitCommand(), tc.Case)
 	}
 }

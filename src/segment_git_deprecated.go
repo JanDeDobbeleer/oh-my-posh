@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"strings"
 )
 
 const (
@@ -26,13 +27,18 @@ const (
 	BehindColor Property = "behind_color"
 	// AheadColor if set, the color to use when the branch is ahead and behind the remote
 	AheadColor Property = "ahead_color"
-	// BranchMaxLength truncates the length of the branch name
-	BranchMaxLength Property = "branch_max_length"
 	// WorktreeCountIcon shows before the worktree context
 	WorktreeCountIcon Property = "worktree_count_icon"
+	// StashCountIcon shows before the stash context
+	StashCountIcon Property = "stash_count_icon"
+	// StatusSeparatorIcon shows between staging and working area
+	StatusSeparatorIcon Property = "status_separator_icon"
 )
 
-func (g *git) renderDeprecatedString() string {
+func (g *git) renderDeprecatedString(statusColorsEnabled bool) string {
+	if statusColorsEnabled {
+		g.SetStatusColor()
+	}
 	buffer := new(bytes.Buffer)
 	// remote (if available)
 	if len(g.repo.UpstreamIcon) != 0 {
@@ -59,4 +65,50 @@ func (g *git) renderDeprecatedString() string {
 		fmt.Fprintf(buffer, " %s%d", g.props.getString(WorktreeCountIcon, "\uf1bb "), g.repo.WorktreeCount)
 	}
 	return buffer.String()
+}
+
+func (g *git) SetStatusColor() {
+	if g.props.getBool(ColorBackground, true) {
+		g.props.background = g.getStatusColor(g.props.background)
+	} else {
+		g.props.foreground = g.getStatusColor(g.props.foreground)
+	}
+}
+
+func (g *git) getStatusColor(defaultValue string) string {
+	if g.repo.Staging.Changed || g.repo.Working.Changed {
+		return g.props.getColor(LocalChangesColor, defaultValue)
+	} else if g.repo.Ahead > 0 && g.repo.Behind > 0 {
+		return g.props.getColor(AheadAndBehindColor, defaultValue)
+	} else if g.repo.Ahead > 0 {
+		return g.props.getColor(AheadColor, defaultValue)
+	} else if g.repo.Behind > 0 {
+		return g.props.getColor(BehindColor, defaultValue)
+	}
+	return defaultValue
+}
+
+func (g *git) getStatusDetailString(status *GitStatus, color, icon Property, defaultIcon string) string {
+	prefix := g.props.getString(icon, defaultIcon)
+	foregroundColor := g.props.getColor(color, g.props.foreground)
+	if !g.props.getBool(DisplayStatusDetail, true) {
+		return g.colorStatusString(prefix, "", foregroundColor)
+	}
+	return g.colorStatusString(prefix, status.String(), foregroundColor)
+}
+
+func (g *git) colorStatusString(prefix, status, color string) string {
+	if color == g.props.foreground && len(status) == 0 {
+		return prefix
+	}
+	if color == g.props.foreground {
+		return fmt.Sprintf("%s %s", prefix, status)
+	}
+	if strings.Contains(prefix, "</>") {
+		return fmt.Sprintf("%s <%s>%s</>", prefix, color, status)
+	}
+	if len(status) == 0 {
+		return fmt.Sprintf("<%s>%s</>", color, prefix)
+	}
+	return fmt.Sprintf("<%s>%s %s</>", color, prefix, status)
 }

@@ -512,6 +512,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
                   "branch_icon": {
                     "type": "string",
                     "title": "Branch Icon",
@@ -554,12 +557,6 @@
                     "description": "Display the local changes or not",
                     "default": true
                   },
-                  "display_status_detail": {
-                    "type": "boolean",
-                    "title": "Display Status Detail",
-                    "description": "Display the local changes in detail or not",
-                    "default": true
-                  },
                   "display_stash_count": {
                     "type": "boolean",
                     "title": "Display Stash Count",
@@ -571,36 +568,6 @@
                     "title": "Display Worktree Count",
                     "description": "Display the worktree count or not",
                     "default": false
-                  },
-                  "status_separator_icon": {
-                    "type": "string",
-                    "title": "Status Separator Icon",
-                    "description": "Icon/text to display between staging and working area changes",
-                    "default": " | "
-                  },
-                  "local_working_icon": {
-                    "type": "string",
-                    "title": "Local Working Icon",
-                    "description": "The icon to display in front of the working area changes",
-                    "default": "\uF044"
-                  },
-                  "local_staged_icon": {
-                    "type": "string",
-                    "title": "Local Staged Icon",
-                    "description": "The icon to display in front of the staged area changes",
-                    "default": "\uF046"
-                  },
-                  "stash_count_icon": {
-                    "type": "string",
-                    "title": "Stash Count Icon",
-                    "description": "The icon to display before the stash context",
-                    "default": "\uF692 "
-                  },
-                  "worktree_count_icon": {
-                    "type": "string",
-                    "title": "Worktree Count Icon",
-                    "description": "The icon to display before the worktree context",
-                    "default": "\uF1bb "
                   },
                   "commit_icon": {
                     "type": "string",
@@ -680,28 +647,6 @@
                     "description": "Icon/text to display when the upstream is not known/mapped",
                     "default": "\uE5FB"
                   },
-                  "working_color": { "$ref": "#/definitions/color" },
-                  "staging_color": { "$ref": "#/definitions/color" },
-                  "status_colors_enabled": {
-                    "type": "boolean",
-                    "title": "Status Colors Enabled",
-                    "description": "Color the segment based on the repository status",
-                    "default": false
-                  },
-                  "color_background": {
-                    "type": "boolean",
-                    "title": "Color Background",
-                    "description": "Color the background or foreground",
-                    "default": true
-                  },
-                  "local_changes_color": {
-                    "$ref": "#/definitions/color"
-                  },
-                  "ahead_and_behind_color": {
-                    "$ref": "#/definitions/color"
-                  },
-                  "behind_color": { "$ref": "#/definitions/color" },
-                  "ahead_color": { "$ref": "#/definitions/color" },
                   "branch_max_length": {
                     "type": "integer",
                     "title": "Branch max length",

@@ -77,7 +77,7 @@ func (s *GitStatus) String() string {
 	status += stringIfValue(s.Modified, "~")
 	status += stringIfValue(s.Deleted, "-")
 	status += stringIfValue(s.Unmerged, "x")
-	return status
+	return strings.TrimSpace(status)
 }
 
 type git struct {
@@ -98,6 +98,8 @@ const (
 	// DisplayUpstreamIcon show or hide the upstream icon
 	DisplayUpstreamIcon Property = "display_upstream_icon"
 
+	// BranchMaxLength truncates the length of the branch name
+	BranchMaxLength Property = "branch_max_length"
 	// BranchIcon the icon to use as branch indicator
 	BranchIcon Property = "branch_icon"
 	// BranchIdenticalIcon the icon to display when the remote and local branch are identical
@@ -120,10 +122,6 @@ const (
 	NoCommitsIcon Property = "no_commits_icon"
 	// TagIcon shows before the tag context
 	TagIcon Property = "tag_icon"
-	// StashCountIcon shows before the stash context
-	StashCountIcon Property = "stash_count_icon"
-	// StatusSeparatorIcon shows between staging and working area
-	StatusSeparatorIcon Property = "status_separator_icon"
 	// MergeIcon shows before the merge context
 	MergeIcon Property = "merge_icon"
 	// GithubIcon shows√ when upstream is github
@@ -198,9 +196,6 @@ func (g *git) string() string {
 	if displayStatus || statusColorsEnabled {
 		g.setGitStatus()
 	}
-	if statusColorsEnabled {
-		g.SetStatusColor()
-	}
 	if g.repo.Upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
 		g.repo.UpstreamIcon = g.getUpstreamIcon()
 	}
@@ -214,7 +209,7 @@ func (g *git) string() string {
 	}
 	// legacy render string	if no template
 	// remove this for 6.0
-	return g.renderDeprecatedString()
+	return g.renderDeprecatedString(statusColorsEnabled)
 }
 
 func (g *git) templateString(segmentTemplate string) string {
@@ -252,25 +247,6 @@ func (g *git) getBranchStatus() string {
 		return fmt.Sprintf(" %s", g.props.getString(BranchGoneIcon, "\u2262"))
 	}
 	return ""
-}
-
-func (g *git) getStatusDetailString(status *GitStatus, color, icon Property, defaultIcon string) string {
-	prefix := g.props.getString(icon, defaultIcon)
-	foregroundColor := g.props.getColor(color, g.props.foreground)
-	if !g.props.getBool(DisplayStatusDetail, true) {
-		return g.colorStatusString(prefix, "", foregroundColor)
-	}
-	return g.colorStatusString(prefix, status.String(), foregroundColor)
-}
-
-func (g *git) colorStatusString(prefix, status, color string) string {
-	if color == g.props.foreground {
-		return fmt.Sprintf("%s%s", prefix, status)
-	}
-	if strings.Contains(prefix, "</>") {
-		return fmt.Sprintf("%s<%s>%s</>", prefix, color, status)
-	}
-	return fmt.Sprintf("<%s>%s%s</>", color, prefix, status)
 }
 
 func (g *git) getUpstreamIcon() string {
@@ -311,27 +287,6 @@ func (g *git) setGitStatus() {
 	if g.props.getBool(DisplayWorktreeCount, false) {
 		g.repo.WorktreeCount = g.getWorktreeContext()
 	}
-}
-
-func (g *git) SetStatusColor() {
-	if g.props.getBool(ColorBackground, true) {
-		g.props.background = g.getStatusColor(g.props.background)
-	} else {
-		g.props.foreground = g.getStatusColor(g.props.foreground)
-	}
-}
-
-func (g *git) getStatusColor(defaultValue string) string {
-	if g.repo.Staging.Changed || g.repo.Working.Changed {
-		return g.props.getColor(LocalChangesColor, defaultValue)
-	} else if g.repo.Ahead > 0 && g.repo.Behind > 0 {
-		return g.props.getColor(AheadAndBehindColor, defaultValue)
-	} else if g.repo.Ahead > 0 {
-		return g.props.getColor(AheadColor, defaultValue)
-	} else if g.repo.Behind > 0 {
-		return g.props.getColor(BehindColor, defaultValue)
-	}
-	return defaultValue
 }
 
 func (g *git) getGitCommand() string {

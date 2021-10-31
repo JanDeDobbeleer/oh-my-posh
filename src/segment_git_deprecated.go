@@ -32,10 +32,7 @@ const (
 	WorktreeCountIcon Property = "worktree_count_icon"
 )
 
-func (g *git) renderDeprecatedString(displayStatus bool) string {
-	if !displayStatus {
-		return g.getPrettyHEADName()
-	}
+func (g *git) renderDeprecatedString() string {
 	buffer := new(bytes.Buffer)
 	// remote (if available)
 	if len(g.repo.UpstreamIcon) != 0 {
@@ -43,8 +40,8 @@ func (g *git) renderDeprecatedString(displayStatus bool) string {
 	}
 	// branchName
 	fmt.Fprintf(buffer, "%s", g.repo.HEAD)
-	if g.props.getBool(DisplayBranchStatus, true) {
-		buffer.WriteString(g.getBranchStatus())
+	if len(g.repo.BranchStatus) != 0 {
+		buffer.WriteString(g.repo.BranchStatus)
 	}
 	if g.repo.Staging.Changed {
 		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.Staging, StagingColor, LocalStagingIcon, " \uF046"))

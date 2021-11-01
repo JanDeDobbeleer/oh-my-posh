@@ -9,8 +9,16 @@
       // Append -bullseye or -buster to pin to an OS version.
       // Use -bullseye variants on local arm64/Apple Silicon.
       "VARIANT": "1.17-bullseye",
-      // Options
+
+      // Options:
+
       "DEFAULT_POSH_THEME": "jandedobbeleer",
+
+      // Override me with your own timezone:
+      "TZ": "UTC",
+      // Use one of the "TZ database name" entries from:
+      // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
       "NODE_VERSION": "lts/*"
     }
   },

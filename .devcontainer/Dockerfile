@@ -72,6 +72,10 @@ RUN sed -i 's/^__bash_prompt$/#&/' /home/${USERNAME}/.bashrc && \
 RUN sed -i 's/^source \$ZSH/oh-my-zsh.sh$/# source \$ZSH/oh-my-zsh.sh&/' /home/${USERNAME}/.zshrc && \
     echo "eval \"\$(oh-my-posh --init --shell zsh --config ${POSHTHEMES_ROOT}/${DEFAULT_POSH_THEME}.omp.json)\"" >> /home/${USERNAME}/.zshrc
 
+# Set container timezone:
+ARG TZ="UTC"
+RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
+
 # [Optional] Uncomment the next line to use go get to install anything else you need
 # RUN go get -x github.com/JanDeDobbeleer/battery
 

@@ -10,6 +10,7 @@
       // Use -bullseye variants on local arm64/Apple Silicon.
       "VARIANT": "1.17-bullseye",
       // Options
+      "DEFAULT_POSH_THEME": "jandedobbeleer",
       "NODE_VERSION": "lts/*"
     }
   },

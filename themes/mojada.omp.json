@@ -11,10 +11,16 @@
                     "foreground": "#0077c2",
                     "background": "#fbfbfb",
                     "properties": {
-                        "prefix": "",
                         "postfix": " ",
-                        "macos": "mac",
-                        "windows": ""
+                        "macos": "\uEF179",
+                        "windows": "\uF17A",
+                        "linux": "\uF17C",
+                        "debian": "\uF306",
+                        "ubuntu": "\uF31B",
+                        "arch": "\uF303",
+                        "fedora": "\uF30A",
+                        "manjaro": "\uF312",
+                        "opensuse": "\uF314"
                     }
                 },
                 {
@@ -26,11 +32,9 @@
                     "trailing_diamond": "",
                     "properties": {
                         "prefix": "",
-                        "postfix": " ",
                         "display_host": true,
                         "host_color": "#e06c75",
                         "user_info_separator": "<#000000>@</>"
-
                     }
                 },
                 {
@@ -40,7 +44,7 @@
                     "foreground": "#ffffff",
                     "background": "#e06c75",
                     "properties": {
-                        "root_icon": " ",
+                        "root_icon": "\uE799 ",
                         "postfix": "\u2800"
                     }
                 },
@@ -53,7 +57,7 @@
                     "properties": {
                         "style": "letter",
                         "folder_separator_icon": "/",
-                        "prefix": "  ",
+                        "prefix": " \uE5FE ",
                         "home_icon": "~",
                         "enable_hyperlink": true,
                         "max_depth": 2
@@ -82,7 +86,8 @@
                     "foreground": "#FFD54F",
                     "properties": {
                         "prefix": " ",
-                        "text": "{{if .Root}}#{{else}}${{end}}"
+                        "text": "{{if .Root}}#{{else}}${{end}}",
+                        "postfix": ""
                     }
                 }
             ]
@@ -96,9 +101,8 @@
                     "properties": {
                         "display_exit_code": false,
                         "always_enabled": true,
-                        "error_icon": "<#ff0000></>",
-                        "success_icon": "<#00ff00></>",
-                        "prefix": ""
+                        "success_icon": "<#00ff00>\uF633</>",
+                        "error_icon": "<#ff0000>\uF659</>"
                     }
                 },
                 {
@@ -107,8 +111,7 @@
                     "foreground": "#ffffff",
                     "properties": {
                         "always_enabled": true,
-                        "prefix": "",
-                        "postfix": " "
+                        "prefix": ""
                     }
                 },
                 {
@@ -120,9 +123,9 @@
                     "background": "#f36943",
                     "properties": {
                         "battery_icon": "",
-                        "discharging_icon": " ",
-                        "charging_icon": " ",
-                        "charged_icon": " ",
+                        "discharging_icon": "\uF57D ",
+                        "charging_icon": "\uF588 ",
+                        "charged_icon": "\uF583 ",
                         "color_background": true,
                         "charged_color": "#4caf50",
                         "charging_color": "#40c4ff",

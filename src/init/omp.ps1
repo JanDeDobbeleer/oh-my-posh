@@ -13,12 +13,12 @@ $env:POWERLINE_COMMAND = "oh-my-posh"
 $env:CONDA_PROMPT_MODIFIER = $false
 
 # specific module support (disabled by default)
-$value = $env:AZ_ENABLED
-if ($null -eq $value) {
+$omp_value = $env:AZ_ENABLED
+if ($null -eq $omp_value) {
     $env:AZ_ENABLED = $false
 }
-$value = $env:POSH_GIT_ENABLED
-if ($null -eq $value) {
+$omp_value = $env:POSH_GIT_ENABLED
+if ($null -eq $omp_value) {
     $env:POSH_GIT_ENABLED = $false
 }
 
@@ -30,10 +30,13 @@ $global:PoshSettings = New-Object -TypeName PSObject -Property @{
 # used to detect empty hit
 $global:omp_lastHistoryId = -1
 
-$config = "::CONFIG::"
-if (Test-Path $config) {
-    $global:PoshSettings.Theme = (Resolve-Path -Path $config).ProviderPath
+$omp_config = "::CONFIG::"
+if (Test-Path $omp_config) {
+    $global:PoshSettings.Theme = (Resolve-Path -Path $omp_config).ProviderPath
 }
+
+Remove-Variable $omp_value -Confirm:$false
+Remove-Variable $omp_config -Confirm:$false
 
 function global:Set-PoshContext {}
 

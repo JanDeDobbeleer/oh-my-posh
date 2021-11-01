@@ -15,8 +15,10 @@ RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod
 
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y --no-install-recommends fish\
-    && apt-get install -y --no-install-recommends powershell
+    && apt-get install -y --no-install-recommends \
+        fish \
+        powershell \
+    && apt-get clean
 
 
 # [Optional] Uncomment the next line to use go get to install anything else you need

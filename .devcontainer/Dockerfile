@@ -8,10 +8,10 @@ FROM mcr.microsoft.com/vscode/devcontainers/go:0-${VARIANT}
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
-# Download the Microsoft repository GPG keys
-RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb
-# Register the Microsoft repository GPG keys
-RUN  dpkg -i packages-microsoft-prod.deb
+# Download and register the Microsoft repository GPG keys
+RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    rm -f packages-microsoft-prod.deb
 
 # [Optional] Uncomment this section to install additional OS packages.
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \

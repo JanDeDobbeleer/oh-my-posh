@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.177.0/containers/go
 {
-  "name": "Go",
+  "name": "oh-my-posh",
   "build": {
     "dockerfile": "Dockerfile",
     "args": {

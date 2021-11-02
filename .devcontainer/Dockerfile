@@ -18,6 +18,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
         fish \
         powershell \
+        tmux \
     && apt-get clean
 
 # Deploy latest stable oh-my-posh as a starting point:

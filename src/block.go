@@ -34,7 +34,7 @@ type Block struct {
 	Newline          bool           `config:"newline"`
 
 	env                   environmentInfo
-	writer                colorWriter
+	writer                promptWriter
 	ansi                  *ansiUtils
 	activeSegment         *Segment
 	previousActiveSegment *Segment
@@ -42,7 +42,7 @@ type Block struct {
 	activeForeground      string
 }
 
-func (b *Block) init(env environmentInfo, writer colorWriter, ansi *ansiUtils) {
+func (b *Block) init(env environmentInfo, writer promptWriter, ansi *ansiUtils) {
 	b.env = env
 	b.writer = writer
 	b.ansi = ansi
@@ -51,7 +51,7 @@ func (b *Block) init(env environmentInfo, writer colorWriter, ansi *ansiUtils) {
 func (b *Block) initPlain(env environmentInfo, config *Config) {
 	b.ansi = &ansiUtils{}
 	b.ansi.init(plain)
-	b.writer = &AnsiColor{
+	b.writer = &AnsiWriter{
 		ansi:               b.ansi,
 		terminalBackground: getConsoleBackgroundColor(env, config.TerminalBackground),
 	}

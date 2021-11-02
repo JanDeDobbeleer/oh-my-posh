@@ -191,7 +191,7 @@ func main() {
 
 	ansi := &ansiUtils{}
 	ansi.init(env.getShellName())
-	colorer := &AnsiColor{
+	colorer := &AnsiWriter{
 		ansi:               ansi,
 		terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
 	}

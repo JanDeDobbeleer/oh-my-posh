@@ -35,8 +35,8 @@ if (Test-Path $omp_config) {
     $global:PoshSettings.Theme = (Resolve-Path -Path $omp_config).ProviderPath
 }
 
-Remove-Variable $omp_value -Confirm:$false
-Remove-Variable $omp_config -Confirm:$false
+Remove-Variable omp_value -Confirm:$false
+Remove-Variable omp_config -Confirm:$false
 
 function global:Set-PoshContext {}
 

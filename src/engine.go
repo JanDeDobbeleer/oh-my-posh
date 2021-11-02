@@ -9,7 +9,7 @@ import (
 type engine struct {
 	config       *Config
 	env          environmentInfo
-	colorWriter  colorWriter
+	colorWriter  promptWriter
 	ansi         *ansiUtils
 	consoleTitle *consoleTitle
 

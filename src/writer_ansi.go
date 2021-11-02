@@ -31,6 +31,10 @@ var (
 	}
 )
 
+const (
+	colorRegex = `<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`
+)
+
 // Returns the color code for a given color name
 func getColorFromName(colorName string, isBackground bool) (string, error) {
 	colorMapOffset := 0
@@ -43,7 +47,7 @@ func getColorFromName(colorName string, isBackground bool) (string, error) {
 	return "", errors.New("color name does not exist")
 }
 
-type colorWriter interface {
+type promptWriter interface {
 	write(background, foreground, text string)
 	string() string
 	reset()
@@ -52,8 +56,8 @@ type colorWriter interface {
 	clearParentColors()
 }
 
-// AnsiColor writes colorized strings
-type AnsiColor struct {
+// AnsiWriter writes colorized strings
+type AnsiWriter struct {
 	builder            strings.Builder
 	ansi               *ansiUtils
 	terminalBackground string
@@ -77,28 +81,28 @@ const (
 	Foreground = "foreground"
 )
 
-func (a *AnsiColor) setColors(background, foreground string) {
+func (a *AnsiWriter) setColors(background, foreground string) {
 	a.Colors = &Color{
 		Background: background,
 		Foreground: foreground,
 	}
 }
 
-func (a *AnsiColor) setParentColors(background, foreground string) {
+func (a *AnsiWriter) setParentColors(background, foreground string) {
 	a.ParentColors = &Color{
 		Background: background,
 		Foreground: foreground,
 	}
 }
 
-func (a *AnsiColor) clearParentColors() {
+func (a *AnsiWriter) clearParentColors() {
 	a.ParentColors = nil
 }
 
 // Gets the ANSI color code for a given color string.
 // This can include a valid hex color in the format `#FFFFFF`,
 // but also a name of one of the first 16 ANSI colors like `lightBlue`.
-func (a *AnsiColor) getAnsiFromColorString(colorString string, isBackground bool) string {
+func (a *AnsiWriter) getAnsiFromColorString(colorString string, isBackground bool) string {
 	if colorString == Transparent || len(colorString) == 0 {
 		return colorString
 	}
@@ -113,7 +117,7 @@ func (a *AnsiColor) getAnsiFromColorString(colorString string, isBackground bool
 	return style.String()
 }
 
-func (a *AnsiColor) writeColoredText(background, foreground, text string) {
+func (a *AnsiWriter) writeColoredText(background, foreground, text string) {
 	// Avoid emitting empty strings with color codes
 	if text == "" || (foreground == Transparent && background == Transparent) {
 		return
@@ -141,12 +145,12 @@ func (a *AnsiColor) writeColoredText(background, foreground, text string) {
 	a.builder.WriteString(coloredText)
 }
 
-func (a *AnsiColor) writeAndRemoveText(background, foreground, text, textToRemove, parentText string) string {
+func (a *AnsiWriter) writeAndRemoveText(background, foreground, text, textToRemove, parentText string) string {
 	a.writeColoredText(background, foreground, text)
 	return strings.Replace(parentText, textToRemove, "", 1)
 }
 
-func (a *AnsiColor) write(background, foreground, text string) {
+func (a *AnsiWriter) write(background, foreground, text string) {
 	if len(text) == 0 {
 		return
 	}
@@ -189,7 +193,7 @@ func (a *AnsiColor) write(background, foreground, text string) {
 	text = a.ansi.generateHyperlink(text)
 
 	// first we match for any potentially valid colors enclosed in <>
-	match := findAllNamedRegexMatch(`<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`, text)
+	match := findAllNamedRegexMatch(colorRegex, text)
 	for i := range match {
 		fg := match[i]["foreground"]
 		bg := match[i]["background"]
@@ -214,10 +218,10 @@ func (a *AnsiColor) write(background, foreground, text string) {
 	a.writeColoredText(bgAnsi, fgAnsi, text)
 }
 
-func (a *AnsiColor) string() string {
+func (a *AnsiWriter) string() string {
 	return a.builder.String()
 }
 
-func (a *AnsiColor) reset() {
+func (a *AnsiWriter) reset() {
 	a.builder.Reset()
 }

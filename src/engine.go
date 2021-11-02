@@ -9,15 +9,23 @@ import (
 type engine struct {
 	config       *Config
 	env          environmentInfo
-	colorWriter  promptWriter
+	writer       promptWriter
 	ansi         *ansiUtils
 	consoleTitle *consoleTitle
+	plain        bool
 
 	console strings.Builder
 	rprompt string
 }
 
 func (e *engine) write(text string) {
+	e.console.WriteString(text)
+}
+
+func (e *engine) writeANSI(text string) {
+	if e.plain {
+		return
+	}
 	e.console.WriteString(text)
 }
 
@@ -48,9 +56,9 @@ func (e *engine) render() string {
 		e.renderBlock(block)
 	}
 	if e.config.ConsoleTitle {
-		e.write(e.consoleTitle.getConsoleTitle())
+		e.writeANSI(e.consoleTitle.getConsoleTitle())
 	}
-	e.write(e.ansi.creset)
+	e.writeANSI(e.ansi.creset)
 	if e.config.FinalSpace {
 		e.write(" ")
 	}
@@ -62,7 +70,7 @@ func (e *engine) render() string {
 	if e.env.isWsl() {
 		cwd, _ = e.env.runCommand("wslpath", "-m", cwd)
 	}
-	e.write(e.ansi.consolePwd(cwd))
+	e.writeANSI(e.ansi.consolePwd(cwd))
 	return e.print()
 }
 
@@ -72,7 +80,7 @@ func (e *engine) renderBlock(block *Block) {
 	if block.Type == RPrompt && e.env.getShellName() == bash {
 		block.initPlain(e.env, e.config)
 	} else {
-		block.init(e.env, e.colorWriter, e.ansi)
+		block.init(e.env, e.writer, e.ansi)
 	}
 	block.setStringValues()
 	if !block.enabled() {
@@ -89,13 +97,13 @@ func (e *engine) renderBlock(block *Block) {
 		e.write("\n")
 	case Prompt:
 		if block.VerticalOffset != 0 {
-			e.write(e.ansi.changeLine(block.VerticalOffset))
+			e.writeANSI(e.ansi.changeLine(block.VerticalOffset))
 		}
 		switch block.Alignment {
 		case Right:
-			e.write(e.ansi.carriageForward())
+			e.writeANSI(e.ansi.carriageForward())
 			blockText := block.renderSegments()
-			e.write(e.ansi.getCursorForRightWrite(blockText, block.HorizontalOffset))
+			e.writeANSI(e.ansi.getCursorForRightWrite(blockText, block.HorizontalOffset))
 			e.write(blockText)
 		case Left:
 			e.write(block.renderSegments())
@@ -112,7 +120,7 @@ func (e *engine) renderBlock(block *Block) {
 	// color of the line above the new input line. Clearing the line fixes this,
 	// but can hopefully one day be removed when this is resolved natively.
 	if e.ansi.shell == pwsh || e.ansi.shell == powershell5 {
-		e.write(e.ansi.clearAfter())
+		e.writeANSI(e.ansi.clearAfter())
 	}
 }
 
@@ -137,7 +145,7 @@ func (e *engine) debug() string {
 	segmentTimings = append(segmentTimings, segmentTiming)
 	// loop each segments of each blocks
 	for _, block := range e.config.Blocks {
-		block.init(e.env, e.colorWriter, e.ansi)
+		block.init(e.env, e.writer, e.ansi)
 		longestSegmentName, timings := block.debug()
 		segmentTimings = append(segmentTimings, timings...)
 		if longestSegmentName > largestSegmentNameLength {
@@ -169,7 +177,7 @@ func (e *engine) print() string {
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
 	case pwsh, powershell5, bash, plain:
-		if e.rprompt == "" || !e.canWriteRPrompt() {
+		if e.rprompt == "" || !e.canWriteRPrompt() || e.plain {
 			break
 		}
 		e.write(e.ansi.saveCursorPosition)
@@ -207,7 +215,7 @@ func (e *engine) renderTooltip(tip string) string {
 	}
 	switch e.env.getShellName() {
 	case zsh:
-		block.init(e.env, e.colorWriter, e.ansi)
+		block.init(e.env, e.writer, e.ansi)
 		return block.renderSegments()
 	case pwsh, powershell5:
 		block.initPlain(e.env, e.config)
@@ -234,15 +242,15 @@ func (e *engine) renderTransientPrompt() string {
 		Env:      e.env,
 	}
 	prompt := template.renderPlainContextTemplate(nil)
-	e.colorWriter.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
+	e.writer.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
 	switch e.env.getShellName() {
 	case zsh:
 		// escape double quotes contained in the prompt
-		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.colorWriter.string(), "\"", "\"\""))
+		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.writer.string(), "\"", "\"\""))
 		prompt += "\nRPROMPT=\"\""
 		return prompt
 	case pwsh, powershell5:
-		return e.colorWriter.string()
+		return e.writer.string()
 	}
 	return ""
 }

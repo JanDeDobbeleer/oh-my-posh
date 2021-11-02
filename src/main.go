@@ -60,6 +60,7 @@ type args struct {
 	StackCount     *int
 	Command        *string
 	PrintTransient *bool
+	Plain          *bool
 }
 
 func main() {
@@ -156,6 +157,10 @@ func main() {
 			"print-transient",
 			false,
 			"Print the transient prompt"),
+		Plain: flag.Bool(
+			"plain",
+			false,
+			"Print a plain prompt without ANSI"),
 	}
 	flag.Parse()
 	env := &environment{}
@@ -191,9 +196,14 @@ func main() {
 
 	ansi := &ansiUtils{}
 	ansi.init(env.getShellName())
-	colorer := &AnsiWriter{
-		ansi:               ansi,
-		terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
+	var writer promptWriter
+	if *args.Plain {
+		writer = &PlainWriter{}
+	} else {
+		writer = &AnsiWriter{
+			ansi:               ansi,
+			terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
+		}
 	}
 	title := &consoleTitle{
 		env:    env,
@@ -203,9 +213,10 @@ func main() {
 	engine := &engine{
 		config:       cfg,
 		env:          env,
-		colorWriter:  colorer,
+		writer:       writer,
 		consoleTitle: title,
 		ansi:         ansi,
+		plain:        *args.Plain,
 	}
 	if *args.Debug {
 		fmt.Print(engine.debug())

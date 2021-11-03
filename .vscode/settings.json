@@ -1,8 +1,15 @@
 {
   "go.lintTool": "golangci-lint",
-  "go.lintOnSave": "file",
+  "go.useLanguageServer": true,
+  "go.languageServerExperimentalFeatures": {
+    "diagnostics": false,
+  },
+  "go.lintFlags": ["--fast"],
   "go.testOnSave": true,
   "[go]": {
-    "editor.formatOnSave": false
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
   }
 }

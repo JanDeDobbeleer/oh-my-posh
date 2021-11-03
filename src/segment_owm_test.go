@@ -18,6 +18,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 		JSONResponse    string
 		ExpectedString  string
 		ExpectedEnabled bool
+		Template        string
 		Error           error
 	}{
 		{
@@ -25,6 +26,20 @@ func TestOWMSegmentSingle(t *testing.T) {
 			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
 			ExpectedString:  "\ufa98 (20°C)",
 			ExpectedEnabled: true,
+		},
+		{
+			Case:            "Sunny Display",
+			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
+			ExpectedString:  "\ufa98 (20°C)",
+			ExpectedEnabled: true,
+			Template:        "{{.Weather}} ({{.Temperature}}{{.UnitIcon}})",
+		},
+		{
+			Case:            "Sunny Display",
+			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
+			ExpectedString:  "\ufa98 ",
+			ExpectedEnabled: true,
+			Template:        "{{.Weather}} ",
 		},
 		{
 			Case:            "Error in retrieving data",
@@ -46,6 +61,10 @@ func TestOWMSegmentSingle(t *testing.T) {
 		}
 
 		env.On("doGet", OWMAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
+
+		if tc.Template != "" {
+			props.values[SegmentTemplate] = tc.Template
+		}
 
 		o := &owm{
 			props: props,
@@ -204,6 +223,8 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 		env.On("doGet", OWMAPIURL).Return([]byte(response), nil)
 
+		props.values[SegmentTemplate] = "[{{.Weather}} ({{.Temperature}}{{.UnitIcon}})]({{.URL}})"
+
 		o := &owm{
 			props: props,
 			env:   env,
@@ -253,6 +274,9 @@ func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 			EnableHyperlink: true,
 		},
 	}
+
+	props.values[SegmentTemplate] = "[{{.Weather}} ({{.Temperature}}{{.UnitIcon}})]({{.URL}})"
+
 	o := &owm{
 		props: props,
 		env:   env,

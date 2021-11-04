@@ -30,7 +30,8 @@ The free tier for *Current weather and forecasts collection* is sufficient.
     "units": "metric",
     "enable_hyperlink" : false,
     "http_timeout": 20,
-    "cache_timeout": 10
+    "cache_timeout": 10,
+    "template": "{{.Weather}} ({{.Temperature}}{{.UnitIcon}})"
   }
 }
 ```
@@ -46,3 +47,12 @@ The free tier for *Current weather and forecasts collection* is sufficient.
 - enable_hyperlink: `bool` - Displays an hyperlink to get openweathermap data
 - http_timeout: `int` - The default timeout for http request is 20ms.
 - cache_timeout: `int` - The default timeout for request caching is 10m. A value of 0 disables the cache.
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`
+
+## Template Properties
+
+- `.Weather`: `string` - the current weather icon
+- `.Temperature`: `string` - the current temperature
+- `.UnitIcon`: `string` - the current unit icon(based on units property)
+- `.URL`: `string` - the url of the current api call

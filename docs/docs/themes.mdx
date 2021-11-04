@@ -1,0 +1,55 @@
+---
+id: themes
+title: Themes
+sidebar_label: 🎨 Themes
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Oh My Posh comes with many themes included out-of-the-box. Below are some screenshots of the more common themes.
+For the full updated list of themes, [view the themes][themes] in GitHub.
+
+<Tabs
+  defaultValue="powershell"
+  values={[
+    { label: 'powershell', value: 'powershell', },
+  ]
+}>
+<TabItem value="powershell">
+
+You can make use of the `Export-PoshImage` function to export your current theme configuration.
+
+```powershell
+Export-PoshImage -CursorPadding 50
+```
+
+There are a couple of parameters you can use to tweak the image rendering:
+
+- `CursorPadding`: spaces to add after the cursor indication (`_`)
+- `RPromptOffset`: spaces to add **before** a block that's right aligned
+- `Author`: the name of the creator, added after `https://ohmyposh.dev`
+- `BGColor`: the hex background color to use (e.g. `#222222`)
+
+If you are using PowerShell, you can display every available theme using the following PowerShell cmdlet.
+
+```powershell
+Get-PoshThemes
+```
+
+Or specify the theme you'd like to use:
+
+```powershell
+Set-PoshPrompt -Theme jandedobbeleer
+```
+</TabItem>
+
+Once you're ready to swap to a theme, follow the steps described in [🚀Installation/Replace your existing prompt][replace-you-existing-prompt].
+
+Themes with `minimal` in their names do not require a Nerd Font. Read about [🆎Fonts][fonts] for more information.
+
+[themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
+[fonts]: /docs/fonts
+[replace-you-existing-prompt]: /docs/windows#override-the-theme-settings
+
+<!-- Do not change the content below, themes are rendered automatically -->

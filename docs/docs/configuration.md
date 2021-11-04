@@ -183,7 +183,7 @@ Segments will be separated by empty spaces unless you specify `''` for the `pref
 
 #### Diamond
 
-While Powerline works great with as single symbol, sometimes you want a segment to have a different start and end symbol.
+While Powerline works great with a single symbol, sometimes you want a segment to have a different start and end symbol.
 Just like a diamond: `< my segment text >`. The difference between this and plain is that the diamond symbols take the
 segment background as their foreground color.
 

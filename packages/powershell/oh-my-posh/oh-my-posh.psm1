@@ -7,7 +7,8 @@
 # that pop up when we don't
 if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
     [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
-} elseif ($env:POSH_CONSTRAINED_LANGUAGE -ne 1) {
+}
+elseif ($env:POSH_CONSTRAINED_LANGUAGE -ne 1) {
     Write-Host "[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
 When using PowerShell in ConstrainedLanguage mode, please set the
 console mode manually to UTF-8. See here for more information:
@@ -95,17 +96,18 @@ function Set-PoshPrompt {
 #>
 function Get-Hyperlink {
     param(
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory, ValuefromPipeline = $True)]
         [string]$uri,
+        [Parameter(ValuefromPipeline = $True)]
         [string]$name
     )
     $esc = [char]27
     if ("" -eq $name) {
         $name = $uri
     }
-    if ($env:WSL_DISTRO_NAME -ne $null){
+    if ($null -ne $env:WSL_DISTRO_NAME) {
         # wsl conversion if needed
-        $uri= &wslpath -m $uri
+        $uri = &wslpath -m $uri
     }
     return "$esc]8;;file://$uri$esc\$name$esc]8;;$esc\"
 }
@@ -139,7 +141,7 @@ function Get-PoshThemes() {
     $themes = Get-ChildItem -Path "$PSScriptRoot\themes\*" -Include '*.omp.json' | Sort-Object Name
     Write-Host ("-" * $consoleWidth)
     if ($list -eq $true) {
-        $themes | Select-Object fullname | Format-Table -HideTableHeaders
+        $themes | Select-Object @{ Name = 'hyperlink'; Expression = { Get-Hyperlink -uri $_.fullname } } | Format-Table -HideTableHeaders
     }
     else {
         $poshCommand = Get-PoshCommand

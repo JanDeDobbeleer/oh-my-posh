@@ -671,6 +671,62 @@ func TestWritePathInfoWindowsOutsideHomeOneLevels(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
+func TestWritePathInfoWindowsLowerCaseDriveLetter(t *testing.T) {
+	home := homeBillWindows
+	want := "C: > Windows"
+	got := testWritePathInfo(home, "c:\\Windows\\", "\\")
+	assert.Equal(t, want, got)
+}
+
+func TestWritePathInfoWindowsOtherDriveLetters(t *testing.T) {
+	home := homeBillWindows
+	want := "P: > Other"
+	got := testWritePathInfo(home, "P:\\Other\\", "\\")
+	assert.Equal(t, want, got)
+}
+
+func TestWritePathInfoWindowsOtherDriveLettersLowerCase(t *testing.T) {
+	home := homeBillWindows
+	want := "P: > Other"
+	got := testWritePathInfo(home, "p:\\Other\\", "\\")
+	assert.Equal(t, want, got)
+}
+
+func TestWritePathInfoWindowsCustomDrive(t *testing.T) {
+	home := homeBillWindows
+	want := "other: > other"
+	got := testWritePathInfo(home, "other:\\other\\", "\\")
+	assert.Equal(t, want, got)
+}
+
+func TestWritePathInfoWindowsCustomDriveEndingWithC(t *testing.T) {
+	home := homeBillWindows
+	want := "src: > source"
+	got := testWritePathInfo(home, "src:\\source\\", "\\")
+	assert.Equal(t, want, got)
+}
+
+func TestWritePathInfoWindowsCustomDriveEndingWithCArbitraryCasing(t *testing.T) {
+	home := homeBillWindows
+	want := "sRc: > source"
+	got := testWritePathInfo(home, "sRc:\\source\\", "\\")
+	assert.Equal(t, want, got)
+}
+
+func TestWritePathInfoWindowsRegistryDrives(t *testing.T) {
+	home := homeBillWindows
+	want := "\uf013 > f > magnetic:test"
+	got := testWritePathInfo(home, "HKLM:\\SOFTWARE\\magnetic:test\\", "\\")
+	assert.Equal(t, want, got)
+}
+
+func TestWritePathInfoWindowsRegistryDrivePreserveCase(t *testing.T) {
+	home := homeBillWindows
+	want := "\uf013 > f > magnetic:TOAST"
+	got := testWritePathInfo(home, "HKLM:\\SOFTWARE\\magnetic:TOAST\\", "\\")
+	assert.Equal(t, want, got)
+}
+
 func TestWritePathInfoUnixOutsideHome(t *testing.T) {
 	home := homeJan
 	want := "mnt > f > f > location"

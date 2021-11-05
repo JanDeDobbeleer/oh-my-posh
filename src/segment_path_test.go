@@ -618,86 +618,55 @@ func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	assert.Equal(t, "#", got)
 }
 
-func testWritePathInfo(home, pwd, pathSeparator string) string {
-	props := &properties{
-		values: map[Property]interface{}{
-			FolderSeparatorIcon: " > ",
-			FolderIcon:          "f",
-			HomeIcon:            "~",
-		},
+func TestAgnosterPath(t *testing.T) {
+	cases := []struct {
+		Case          string
+		Expected      string
+		Home          string
+		PWD           string
+		PathSeparator string
+	}{
+		{Case: "Windows outside home", Expected: "C: > f > f > location", Home: homeBillWindows, PWD: "C:\\Program Files\\Go\\location", PathSeparator: "\\"},
+		{Case: "Windows oustide home", Expected: "~ > f > f > location", Home: homeBillWindows, PWD: homeBillWindows + "\\Documents\\Bill\\location", PathSeparator: "\\"},
+		{Case: "Windows inside home zero levels", Expected: "C: > location", Home: homeBillWindows, PWD: "C:\\location", PathSeparator: "\\"},
+		{Case: "Windows inside home one level", Expected: "C: > f > location", Home: homeBillWindows, PWD: "C:\\Program Files\\location", PathSeparator: "\\"},
+		{Case: "Windows lower case drive letter", Expected: "C: > Windows", Home: homeBillWindows, PWD: "C:\\Windows\\", PathSeparator: "\\"},
+		{Case: "Windows lower case drive letter (other)", Expected: "P: > Other", Home: homeBillWindows, PWD: "P:\\Other\\", PathSeparator: "\\"},
+		{Case: "Windows lower word drive", Expected: "some: > some", Home: homeBillWindows, PWD: "some:\\some\\", PathSeparator: "\\"},
+		{Case: "Windows lower word drive (ending with c)", Expected: "src: > source", Home: homeBillWindows, PWD: "src:\\source\\", PathSeparator: "\\"},
+		{Case: "Windows lower word drive (arbitrary cases)", Expected: "sRc: > source", Home: homeBillWindows, PWD: "sRc:\\source\\", PathSeparator: "\\"},
+		{Case: "Windows registry drive", Expected: "\uf013 > f > magnetic:test", Home: homeBillWindows, PWD: "HKLM:\\SOFTWARE\\magnetic:test\\", PathSeparator: "\\"},
+		{Case: "Windows registry drive case sensitive", Expected: "\uf013 > f > magnetic:TOAST", Home: homeBillWindows, PWD: "HKLM:\\SOFTWARE\\magnetic:TOAST\\", PathSeparator: "\\"},
+		{Case: "Unix outside home", Expected: "mnt > f > f > location", Home: homeJan, PWD: "/mnt/go/test/location", PathSeparator: "/"},
+		{Case: "Unix inside home", Expected: "~ > f > f > location", Home: homeJan, PWD: homeJan + "/docs/jan/location", PathSeparator: "/"},
+		{Case: "Unix outside home zero levels", Expected: "mnt > location", Home: homeJan, PWD: "/mnt/location", PathSeparator: "/"},
+		{Case: "Unix outside home one level", Expected: "mnt > f > location", Home: homeJan, PWD: "/mnt/folder/location", PathSeparator: "/"},
 	}
-	env := new(MockedEnvironment)
-	env.On("homeDir", nil).Return(home)
-	env.On("getPathSeperator", nil).Return(pathSeparator)
-	env.On("getcwd", nil).Return(pwd)
-	env.On("getRuntimeGOOS", nil).Return("")
-	args := &args{
-		PSWD: &pwd,
+
+	for _, tc := range cases {
+		props := &properties{
+			values: map[Property]interface{}{
+				FolderSeparatorIcon: " > ",
+				FolderIcon:          "f",
+				HomeIcon:            "~",
+			},
+		}
+		env := new(MockedEnvironment)
+		env.On("homeDir", nil).Return(tc.Home)
+		env.On("getPathSeperator", nil).Return(tc.PathSeparator)
+		env.On("getcwd", nil).Return(tc.PWD)
+		env.On("getRuntimeGOOS", nil).Return("")
+		args := &args{
+			PSWD: &tc.PWD,
+		}
+		env.On("getArgs", nil).Return(args)
+		path := &path{
+			env:   env,
+			props: props,
+		}
+		got := path.getAgnosterPath()
+		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
-	env.On("getArgs", nil).Return(args)
-	path := &path{
-		env:   env,
-		props: props,
-	}
-	return path.getAgnosterPath()
-}
-
-func TestWritePathInfoWindowsOutsideHome(t *testing.T) {
-	home := homeBillWindows
-	want := "C: > f > f > location"
-	got := testWritePathInfo(home, "C:\\Program Files\\Go\\location", "\\")
-	assert.Equal(t, want, got)
-}
-
-func TestWritePathInfoWindowsInsideHome(t *testing.T) {
-	home := homeBillWindows
-	location := home + "\\Documents\\Bill\\location"
-	want := "~ > f > f > location"
-	got := testWritePathInfo(home, location, "\\")
-	assert.Equal(t, want, got)
-}
-
-func TestWritePathInfoWindowsOutsideHomeZeroLevels(t *testing.T) {
-	home := homeBillWindows
-	want := "C: > location"
-	got := testWritePathInfo(home, "C:\\location", "\\")
-	assert.Equal(t, want, got)
-}
-
-func TestWritePathInfoWindowsOutsideHomeOneLevels(t *testing.T) {
-	home := homeBillWindows
-	want := "C: > f > location"
-	got := testWritePathInfo(home, "C:\\Program Files\\location", "\\")
-	assert.Equal(t, want, got)
-}
-
-func TestWritePathInfoUnixOutsideHome(t *testing.T) {
-	home := homeJan
-	want := "mnt > f > f > location"
-	got := testWritePathInfo(home, "/mnt/go/test/location", "/")
-	assert.Equal(t, want, got)
-}
-
-func TestWritePathInfoUnixInsideHome(t *testing.T) {
-	home := homeJan
-	location := home + "/docs/jan/location"
-	want := "~ > f > f > location"
-	got := testWritePathInfo(home, location, "/")
-	assert.Equal(t, want, got)
-}
-
-func TestWritePathInfoUnixOutsideHomeZeroLevels(t *testing.T) {
-	home := homeJan
-	want := "mnt > location"
-	got := testWritePathInfo(home, "/mnt/location", "/")
-	assert.Equal(t, want, got)
-}
-
-func TestWritePathInfoUnixOutsideHomeOneLevels(t *testing.T) {
-	home := homeJan
-	want := "mnt > f > location"
-	got := testWritePathInfo(home, "/mnt/folder/location", "/")
-	assert.Equal(t, want, got)
 }
 
 func TestGetPwd(t *testing.T) {

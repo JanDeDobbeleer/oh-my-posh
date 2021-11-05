@@ -11,5 +11,9 @@
     "editor.codeActionsOnSave": {
       "source.organizeImports": true
     }
-  }
+  },
+  "go.formatTool": "gofmt",
+  "go.formatFlags": [
+    "-s"
+  ]
 }

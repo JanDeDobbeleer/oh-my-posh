@@ -22,7 +22,7 @@ func TestGetAnsiFromColorString(t *testing.T) {
 		{Case: "Base 16 backround", Expected: "101", Color: "lightRed", Background: true},
 	}
 	for _, tc := range cases {
-		renderer := &AnsiColor{}
+		renderer := &AnsiWriter{}
 		ansiColor := renderer.getAnsiFromColorString(tc.Color, true)
 		assert.Equal(t, tc.Expected, ansiColor, tc.Case)
 	}
@@ -182,7 +182,7 @@ func TestWriteANSIColors(t *testing.T) {
 	for _, tc := range cases {
 		ansi := &ansiUtils{}
 		ansi.init("pwsh")
-		renderer := &AnsiColor{
+		renderer := &AnsiWriter{
 			ansi:               ansi,
 			ParentColors:       tc.Parent,
 			Colors:             tc.Colors,

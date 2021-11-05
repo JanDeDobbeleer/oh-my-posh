@@ -186,7 +186,7 @@ func (env *environment) getcwd() string {
 	correctPath := func(pwd string) string {
 		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
 		driveLetter := getCompiledRegex(`^[a-z]:`)
-		return driveLetter.ReplaceAllStringFunc(pwd, func(letter string) string {return strings.ToUpper(letter)})
+		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
 	}
 	if env.args != nil && *env.args.PWD != "" {
 		env.cwd = correctPath(*env.args.PWD)

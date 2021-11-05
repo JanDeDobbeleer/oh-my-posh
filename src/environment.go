@@ -107,12 +107,19 @@ func (c *commandCache) get(command string) (string, bool) {
 	return command, ok
 }
 
-type tracer struct {
+type tracer interface {
+	init(home string)
+	close()
+	trace(start time.Time, function string, args ...string)
+	error(message string)
+}
+
+type fileTracer struct {
 	file  *os.File
 	debug bool
 }
 
-func (t *tracer) init(home string) {
+func (t *fileTracer) init(home string) {
 	if !t.debug {
 		return
 	}
@@ -126,7 +133,7 @@ func (t *tracer) init(home string) {
 	log.Println("#### start oh-my-posh run ####")
 }
 
-func (t *tracer) close() {
+func (t *fileTracer) close() {
 	if !t.debug {
 		return
 	}
@@ -134,7 +141,7 @@ func (t *tracer) close() {
 	_ = t.file.Close()
 }
 
-func (t *tracer) trace(start time.Time, function string, args ...string) {
+func (t *fileTracer) trace(start time.Time, function string, args ...string) {
 	if !t.debug {
 		return
 	}
@@ -143,7 +150,7 @@ func (t *tracer) trace(start time.Time, function string, args ...string) {
 	log.Println(trace)
 }
 
-func (t *tracer) error(message string) {
+func (t *fileTracer) error(message string) {
 	if !t.debug {
 		return
 	}
@@ -156,7 +163,7 @@ type environment struct {
 	cwd       string
 	cmdCache  *commandCache
 	fileCache *fileCache
-	tracer    *tracer
+	tracer    tracer
 }
 
 func (env *environment) init(args *args) {
@@ -164,7 +171,7 @@ func (env *environment) init(args *args) {
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
-	tracer := &tracer{
+	tracer := &fileTracer{
 		debug: *args.Debug,
 	}
 	tracer.init(env.homeDir())
@@ -185,7 +192,8 @@ func (env *environment) getcwd() string {
 	}
 	correctPath := func(pwd string) string {
 		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
-		return strings.Replace(pwd, "c:", "C:", 1)
+		driveLetter := getCompiledRegex(`^[a-z]:`)
+		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
 	}
 	if env.args != nil && *env.args.PWD != "" {
 		env.cwd = correctPath(*env.args.PWD)

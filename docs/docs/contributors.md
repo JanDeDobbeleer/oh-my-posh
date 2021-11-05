@@ -115,6 +115,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://www.emanuelebartolesi.com"><img src="https://avatars.githubusercontent.com/u/2757486?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Emanuele Bartolesi</b></sub></a><br /><a href="#design-kasuken" title="Design">🎨</a></td>
     <td align="center"><a href="https://qiansen1386.github.io"><img src="https://avatars.githubusercontent.com/u/1759658?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Paris Qian</b></sub></a><br /><a href="#design-qiansen1386" title="Design">🎨</a></td>
     <td align="center"><a href="https://blog.itadams.co.uk"><img src="https://avatars.githubusercontent.com/u/2307314?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Thomas Adams</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=tjackadams" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.terrasoft.gr/"><img src="https://avatars.githubusercontent.com/u/598065?v=4?s=100" width="100px;" alt=""/><br /><sub><b>George Schizas</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=gschizas" title="Code">💻</a></td>
   </tr>
 </table>
 

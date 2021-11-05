@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"sync"
@@ -185,7 +186,8 @@ func (env *environment) getcwd() string {
 	}
 	correctPath := func(pwd string) string {
 		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
-		return strings.Replace(pwd, "c:", "C:", 1)
+		driveLetter := regexp.MustCompile(`^[a-z]:`)
+		return driveLetter.ReplaceAllStringFunc(pwd, func(letter string) string {return strings.ToUpper(letter)})
 	}
 	if env.args != nil && *env.args.PWD != "" {
 		env.cwd = correctPath(*env.args.PWD)

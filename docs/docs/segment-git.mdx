@@ -36,9 +36,15 @@ An alternative is to use the [Posh-Git segment][poshgit]
   "powerline_symbol": "\uE0B0",
   "foreground": "#193549",
   "background": "#ffeb3b",
+  "background_templates": [
+    "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#FFEB3B{{ end }}",
+    "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#FFCC80{{ end }}",
+    "{{ if .Repo.Ahead gt 0 }}#B388FF{{ end }}",
+    "{{ if .Repo.Behind gt 0 }}#B388FB{{ end }}"
+  ],
   "properties": {
-    "display_status": true,
-    "display_stash_count": true,
+    "fetch_status": true,
+    "fetch_stash_count": true,
     "display_upstream_icon": true
   }
 }
@@ -46,29 +52,31 @@ An alternative is to use the [Posh-Git segment][poshgit]
 
 ## Properties
 
-### Standard
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to empty.
+
+### Fetching information
+
+As doing multiple git calls can slow down the prompt experience, we do not fetch information by default.
+You can set the following properties to `true` to enable fetching additional information (and populate the template).
+
+- fetch_branch_status: `boolean` - fetch the branch status (rebase/merge/cherry-pick/...) - defaults to `true`
+- fetch_status: `boolean` - fetch the local changes - defaults to `false`
+- fetch_stash_count: `boolean` fetch stash count - defaults to `false`
+- fetch_worktree_count: `boolean` fetch worktree count - defaults to `false`
+
+### Icons
+
+#### Branch
 
 - branch_icon: `string` - the icon to use in front of the git branch name - defaults to `\uE0A0 `
-- display_branch_status: `boolean` - display the branch status or not - defaults to `true`
 - branch_identical_icon: `string` - the icon to display when remote and local are identical - defaults to `\u2261`
 - branch_ahead_icon: `string` - the icon to display when the local branch is ahead of its remote - defaults to `\u2191`
 - branch_behind_icon: `string` - the icon to display when the local branch is behind its remote - defaults to `\u2193`
 - branch_gone_icon: `string` - the icon to display when there's no remote branch - defaults to `\u2262`
 - branch_max_length: `int` - the max length for the displayed branch name where `0` implies full length - defaults to `0`
 
-### Status
-
-- display_status: `boolean` - display the local changes or not - defaults to `false`
-- display_status_detail: `boolean` - display the local changes in detail or not - defaults to `true`
-- display_stash_count: `boolean` show stash count or not - defaults to `false`
-- display_worktree_count: `boolean` show worktree count or not - defaults to `false`
-- status_separator_icon: `string` icon/text to display between staging and working area changes - defaults to ` |`
-- local_working_icon: `string` - the icon to display in front of the working area changes - defaults to `\uF044`
-- local_staged_icon: `string` - the icon to display in front of the staged area changes - defaults to `\uF046`
-- stash_count_icon: `string` icon/text to display before the stash context - defaults to `\uF692`
-- worktree_count_icon: `string` icon/text to display before the worktree context - defaults to `\uF1BB`
-
-### HEAD context
+#### HEAD
 
 - commit_icon: `string` - icon/text to display before the commit context (detached HEAD) - defaults to `\uF417`
 - tag_icon: `string` - icon/text to display before the tag context - defaults to `\uF412`
@@ -78,29 +86,38 @@ An alternative is to use the [Posh-Git segment][poshgit]
 - merge_icon: `string` icon/text to display before the merge context - defaults to `\uE727 `
 - no_commits_icon: `string` icon/text to display when there are no commits in the repo - defaults to `\uF594 `
 
-### Upstream context
+#### Upstream
 
-- display_upstream_icon: `boolean` - display upstream icon or not - defaults to `false`
+- display_upstream_icon: `boolean` - fetch upstream icon - defaults to `false`
 - github_icon: `string` - icon/text to display when the upstream is Github - defaults to `\uF408 `
 - gitlab_icon: `string` - icon/text to display when the upstream is Gitlab - defaults to `\uF296 `
 - bitbucket_icon: `string` - icon/text to display when the upstream is Bitbucket - defaults to `\uF171 `
 - azure_devops_icon: `string` - icon/text to display when the upstream is Azure DevOps - defaults to `\uFD03 `
 - git_icon: `string` - icon/text to display when the upstream is not known/mapped - defaults to `\uE5FB `
 
-### Colors
+## Template Properties
 
-- working_color: `string` [color][colors] - foreground color for the working area status - defaults to segment foreground
-- staging_color: `string` [color][colors] - foreground color for the staging area status - defaults to segment foreground
-- status_colors_enabled: `boolean` - color the segment based on the repository status - defaults to `false`
-- color_background: `boolean` - color background or foreground - defaults to `true`
-- local_changes_color: `string` [color][colors] - segment color when there are local changes - defaults to segment
-foreground/background (see `color_background`)
-- ahead_and_behind_color: `string` [color][colors] - segment color when the branch is ahead and behind -
-defaults to segment foreground/background (see `color_background`)
-- behind_color: `string` [color][colors] - segment color when the branch is behind - defaults to segment
-foreground/background (see `color_background`)
-- ahead_color: `string` [color][colors] - segment color when the branch is ahead - defaults to segment
-foreground/background (see `color_background`)
+- `.Repo.Working`: `GitStatus` - changes in the working tree (see below)
+- `.Repo.Staging`: `GitStatus` - staged changes in the work tree (see below)
+- `.Repo.HEAD`: `string` - the current HEAD context (branch/rebase/merge/...)
+- `.Repo.Behind`: `int` - commits behind of upstream
+- `.Repo.Ahead`: `int` - commits ahead of upstream
+- `.Repo.BranchStatus`: `string` - the current branch context (ahead/behind string representation)
+- `.Repo.Upstream`: `string` - the upstream name (remote)
+- `.Repo.UpstreamIcon`: `string` - the upstream icon (based on the icons above)
+- `.Repo.StashCount`: `int` - the stash count
+- `.Repo.WorktreeCount`: `int` - the worktree count
+- `.Repo.IsWorkTree`: `boolean` - if in a worktree repo or not
 
-[colors]: /docs/configure#colors
+### GitStatus
+
+- `.Unmerged`: `int` - number of unmerged changes
+- `.Deleted`: `int` - number of deleted changes
+- `.Added`: `int` - number of added changes
+- `.Modified`: `int` - number of modified changes
+- `.Changed`: `boolean` - if the status contains changes or not
+- `.String`: `string` - a string representation of the changes above
+
 [poshgit]: /docs/poshgit
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

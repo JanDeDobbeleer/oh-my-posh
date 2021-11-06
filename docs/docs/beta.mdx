@@ -41,13 +41,9 @@ You need to extend or create a custom theme with your tooltips. For example:
       "leading_diamond": "",
       "trailing_diamond": "",
       "properties": {
-        "display_status": true,
+        "fetch_status": true,
         "display_upstream_icon": true,
-        "status_colors_enabled": true,
-        "local_changes_color": "#ff9248",
-        "ahead_and_behind_color": "#f26d50",
-        "behind_color": "#f17c37",
-        "ahead_color": "#89d1dc"
+        "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}"
       }
     }
   ]

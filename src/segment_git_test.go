@@ -757,6 +757,43 @@ func TestGitTemplateString(t *testing.T) {
 			},
 		},
 		{
+			Case:     "Working and staging area changes with separator",
+			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3",
+			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}", //nolint:lll
+			Repo: &Repo{
+				HEAD: "main",
+				Working: &GitStatus{
+					Added:    2,
+					Modified: 3,
+					Changed:  true,
+				},
+				Staging: &GitStatus{
+					Added:    5,
+					Modified: 1,
+					Changed:  true,
+				},
+			},
+		},
+		{
+			Case:     "Working and staging area changes with separator and stash count",
+			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3 \uf692 3",
+			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}", //nolint:lll
+			Repo: &Repo{
+				HEAD: "main",
+				Working: &GitStatus{
+					Added:    2,
+					Modified: 3,
+					Changed:  true,
+				},
+				Staging: &GitStatus{
+					Added:    5,
+					Modified: 1,
+					Changed:  true,
+				},
+				StashCount: 3,
+			},
+		},
+		{
 			Case:     "No local changes",
 			Expected: "main",
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046{{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
@@ -777,25 +814,13 @@ func TestGitTemplateString(t *testing.T) {
 				UpstreamIcon: "GitHub",
 			},
 		},
-		{
-			Case:     "Branch status",
-			Expected: "from GitHub on main \u21912",
-			Template: "from {{ .UpstreamIcon }} on {{ .HEAD }} {{ .BranchStatus }}",
-			Repo: &Repo{
-				HEAD:         "main",
-				Staging:      &GitStatus{},
-				Working:      &GitStatus{},
-				UpstreamIcon: "GitHub",
-				BranchStatus: "\u21912",
-			},
-		},
 	}
 
 	for _, tc := range cases {
 		g := &git{
 			props: &properties{
 				values: map[Property]interface{}{
-					DisplayStatus: true,
+					FetchStatus: true,
 				},
 			},
 			repo: tc.Repo,

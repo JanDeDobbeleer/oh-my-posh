@@ -166,13 +166,9 @@ func (b *Block) renderPlainSegment(text string) {
 }
 
 func (b *Block) renderDiamondSegment(text string) {
-	background := b.activeBackground
-	if background == Inherit {
-		background = b.previousActiveSegment.background()
-	}
-	b.writer.write(Transparent, background, b.activeSegment.LeadingDiamond)
+	b.writer.write(Transparent, b.activeBackground, b.activeSegment.LeadingDiamond)
 	b.renderText(text)
-	b.writer.write(Transparent, background, b.activeSegment.TrailingDiamond)
+	b.writer.write(Transparent, b.activeBackground, b.activeSegment.TrailingDiamond)
 }
 
 func (b *Block) renderText(text string) {

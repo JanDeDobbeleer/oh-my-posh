@@ -73,8 +73,10 @@ type Color struct {
 const (
 	// Transparent implies a transparent color
 	Transparent = "transparent"
-	// Inherit takes the previous segment's color
-	Inherit = "inherit"
+	// ParentBackground takes the previous segment's background color
+	ParentBackground = "parentBackground"
+	// ParentForeground takes the previous segment's color
+	ParentForeground = "parentForeground"
 	// Background takes the current segment's background color
 	Background = "background"
 	// Foreground takes the current segment's foreground color
@@ -156,30 +158,22 @@ func (a *AnsiWriter) write(background, foreground, text string) {
 	}
 
 	getAnsiColors := func(background, foreground string) (string, string) {
-		if background == Background {
-			background = a.Colors.Background
+		getColorString := func(color string) string {
+			if color == Background {
+				color = a.Colors.Background
+			} else if color == Foreground {
+				color = a.Colors.Foreground
+			} else if color == ParentBackground && a.ParentColors != nil {
+				color = a.ParentColors.Background
+			} else if color == ParentForeground && a.ParentColors != nil {
+				color = a.ParentColors.Foreground
+			} else if (color == ParentForeground || color == ParentBackground) && a.ParentColors == nil {
+				color = Transparent
+			}
+			return color
 		}
-		if background == Foreground {
-			background = a.Colors.Foreground
-		}
-		if foreground == Foreground {
-			foreground = a.Colors.Foreground
-		}
-		if foreground == Background {
-			foreground = a.Colors.Background
-		}
-		if background == Inherit && a.ParentColors != nil {
-			background = a.ParentColors.Background
-		}
-		if background == Inherit && a.ParentColors == nil {
-			background = Transparent
-		}
-		if foreground == Inherit && a.ParentColors != nil {
-			foreground = a.ParentColors.Foreground
-		}
-		if foreground == Inherit && a.ParentColors == nil {
-			foreground = Transparent
-		}
+		background = getColorString(background)
+		foreground = getColorString(foreground)
 		inverted := foreground == Transparent && len(background) != 0
 		background = a.getAnsiFromColorString(background, !inverted)
 		foreground = a.getAnsiFromColorString(foreground, false)
@@ -187,7 +181,6 @@ func (a *AnsiWriter) write(background, foreground, text string) {
 	}
 
 	bgAnsi, fgAnsi := getAnsiColors(background, foreground)
-
 	text = a.ansi.escapeText(text)
 	text = a.ansi.formatText(text)
 	text = a.ansi.generateHyperlink(text)

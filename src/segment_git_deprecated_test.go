@@ -116,7 +116,7 @@ func TestGetStatusColorLocalChangesStaging(t *testing.T) {
 		},
 	}
 	g := &git{
-		repo: repo,
+		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				LocalChangesColor: expected,
@@ -135,7 +135,7 @@ func TestGetStatusColorLocalChangesWorking(t *testing.T) {
 		},
 	}
 	g := &git{
-		repo: repo,
+		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				LocalChangesColor: expected,
@@ -154,7 +154,7 @@ func TestGetStatusColorAheadAndBehind(t *testing.T) {
 		Behind:  3,
 	}
 	g := &git{
-		repo: repo,
+		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				AheadAndBehindColor: expected,
@@ -173,7 +173,7 @@ func TestGetStatusColorAhead(t *testing.T) {
 		Behind:  0,
 	}
 	g := &git{
-		repo: repo,
+		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				AheadColor: expected,
@@ -192,7 +192,7 @@ func TestGetStatusColorBehind(t *testing.T) {
 		Behind:  5,
 	}
 	g := &git{
-		repo: repo,
+		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				BehindColor: expected,
@@ -211,7 +211,7 @@ func TestGetStatusColorDefault(t *testing.T) {
 		Behind:  0,
 	}
 	g := &git{
-		repo: repo,
+		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				BehindColor: changesColor,
@@ -229,7 +229,7 @@ func TestSetStatusColorForeground(t *testing.T) {
 		},
 	}
 	g := &git{
-		repo: repo,
+		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				LocalChangesColor: changesColor,
@@ -251,7 +251,7 @@ func TestSetStatusColorBackground(t *testing.T) {
 		},
 	}
 	g := &git{
-		repo: repo,
+		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				LocalChangesColor: changesColor,

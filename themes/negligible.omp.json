@@ -1,119 +1,120 @@
 {
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "blocks": [
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
         {
-            "type": "prompt",
-            "alignment": "left",
-            "segments": [
-                {
-                    "type": "os",
-                    "style": "powerline",
-                    "foreground": "cyan",
-                    "properties": {
-                        "prefix": "",
-                        "postfix": ""
-                    }
-                },
-                {
-                    "type": "path",
-                    "style": "plain",
-                    "foreground": "cyan",
-                    "properties": {
-                        "style": "full"
-                    }
-                },
-                {
-                    "type": "git",
-                    "style": "plain",
-                    "foreground": "#F1502F",
-                    "properties": {
-                        "prefix": ":: ",
-                        "display_status": true
-                    }
-                }
-            ]
+          "type": "os",
+          "style": "powerline",
+          "foreground": "cyan",
+          "properties": {
+            "prefix": "",
+            "postfix": ""
+          }
         },
         {
-            "type": "prompt",
-            "alignment": "right",
-            "segments": [
-                {
-                    "type": "root",
-                    "style": "plain",
-                    "foreground": "red",
-                    "properties": {
-                        "prefix": "| ",
-                        "root_icon": "root"
-                    }
-                },
-                {
-                    "type": "dart",
-                    "style": "powerline",
-                    "foreground": "#06A4CE",
-                    "properties": {
-                        "prefix": "| \uE798 "
-                    }
-                },
-                {
-                    "type": "node",
-                    "style": "powerline",
-                    "foreground": "#6CA35E",
-                    "properties": {
-                        "prefix": "| \uE718 "
-                    }
-                },
-                {
-                    "type": "python",
-                    "style": "plain",
-                    "foreground": "#4584b6",
-                    "properties": {
-                        "prefix": "| \uE235 ",
-                        "display_version": false,
-                        "display_mode": "context",
-                        "display_virtual_env": true
-                    }
-                },
-                {
-                    "type": "battery",
-                    "style": "powerline",
-                    "invert_powerline": true,
-                    "properties": {
-                        "charging_icon": " ",
-                        "charged_icon": "\uf00d ",
-                        "charged_color": "#ff0000",
-                        "charging_color": "#4caf50",
-                        "discharging_color": "#40c4ff",
-                        "prefix": "| ",
-                        "postfix": "  "
-                    }
-                },
-                {
-                    "type": "time",
-                    "style": "plain",
-                    "foreground": "lightGreen",
-                    "properties": {
-                        "prefix": "| "
-                    }
-                }
-            ]
+          "type": "path",
+          "style": "plain",
+          "foreground": "cyan",
+          "properties": {
+            "style": "full"
+          }
         },
         {
-            "type": "prompt",
-            "alignment": "left",
-            "newline": true,
-            "segments": [
-                {
-                    "type": "exit",
-                    "style": "powerline",
-                    "foreground": "lightGreen",
-                    "properties": {
-                        "display_exit_code": false,
-                        "always_enabled": true,
-                        "error_color": "red",
-                        "prefix": "\u279c"
-                    }
-                }
-            ]
+          "type": "git",
+          "style": "plain",
+          "foreground": "#F1502F",
+          "properties": {
+            "prefix": ":: ",
+            "fetch_status": true,
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}"
+          }
         }
-    ]
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "red",
+          "properties": {
+            "prefix": "| ",
+            "root_icon": "root"
+          }
+        },
+        {
+          "type": "dart",
+          "style": "powerline",
+          "foreground": "#06A4CE",
+          "properties": {
+            "prefix": "| \uE798 "
+          }
+        },
+        {
+          "type": "node",
+          "style": "powerline",
+          "foreground": "#6CA35E",
+          "properties": {
+            "prefix": "| \uE718 "
+          }
+        },
+        {
+          "type": "python",
+          "style": "plain",
+          "foreground": "#4584b6",
+          "properties": {
+            "prefix": "| \uE235 ",
+            "display_version": false,
+            "display_mode": "context",
+            "display_virtual_env": true
+          }
+        },
+        {
+          "type": "battery",
+          "style": "powerline",
+          "invert_powerline": true,
+          "properties": {
+            "charging_icon": " ",
+            "charged_icon": "\uf00d ",
+            "charged_color": "#ff0000",
+            "charging_color": "#4caf50",
+            "discharging_color": "#40c4ff",
+            "prefix": "| ",
+            "postfix": "  "
+          }
+        },
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "lightGreen",
+          "properties": {
+            "prefix": "| "
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "exit",
+          "style": "powerline",
+          "foreground": "lightGreen",
+          "properties": {
+            "display_exit_code": false,
+            "always_enabled": true,
+            "error_color": "red",
+            "prefix": "\u279c"
+          }
+        }
+      ]
+    }
+  ]
 }

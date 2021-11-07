@@ -38,7 +38,7 @@
             "foreground": "#ffffff",
             "background": "#491545",
             "properties": {
-              "prefix": "\uF9C6 ",
+              "prefix": " \uF9C6 ",
               "playing_icon": "\uE602 ",
               "paused_icon": "\uF8E3 ",
               "stopped_icon": "\uF04D ",
@@ -64,4 +64,4 @@
     ],
     "final_space": true
   }
-  
+

@@ -2,91 +2,90 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh3/main/themes/schema.json",
   "final_space": true,
   "blocks": [
-      {
-          "type": "prompt",
-          "alignment": "left",
-          "newline": true,
-          "segments": [
-              {
-                  "type": "root",
-                  "style": "plain",
-                  "powerline_symbol": "\uE0B0",
-                  "foreground": "red",
-                  "properties": {
-                      "prefix": "",
-                      "postfix": " ",
-                      "root_icon": "\uF0E7"
-                  }
-              },
-              {
-                  "type": "path",
-                  "style": "plain",
-                  "foreground": "blue",
-                  "properties": {
-                      "prefix": "",
-                      "postfix": "",
-                      "home_icon": "\uF7DB",
-                      "folder_icon": "\uE5FF",
-                      "folder_separator_icon": "/",
-                      "style": "agnoster"
-                  }
-              },
-              {
-                  "type": "git",
-                  "style": "plain",
-                  "foreground": "green",
-                  "properties": {
-                      "display_status": true,
-                      "prefix": " on ",
-                      "postfix": "",
-                      "ahead_color": "red",
-                      "behind_color": "green",
-                      "working_color": "red",
-                      "staging_color": "yellow",
-                      "local_changes_color": "yellow",
-                      "ahead_and_behind_color": "red",
-                      "color_background": false,
-                      "display_stash_count": true,
-                      "display_upstream_icon": true,
-                      "status_colors_enabled": true,
-                      "github_icon": " "
-                  }
-              },
-              {
-                  "type": "dotnet",
-                  "style": "plain",
-                  "foreground": "magenta",
-                  "properties": {
-                    "prefix": " [.NET] "
-                  }
-                }
-          ]
-      },
-      {
-          "type": "prompt",
-          "alignment": "left",
-          "newline": true,
-          "segments": [
-              {
-                  "type": "time",
-                  "style": "plain",
-                  "foreground": "yellow",
-                  "properties": {
-                      "prefix": "",
-                      "time_format": "15:04:05"
-                  }
-              },
-              {
-                  "type": "text",
-                  "style": "plain",
-                  "foreground": "green",
-                  "properties": {
-                      "prefix": "",
-                      "postfix": "",
-                      "text": "\u276F"
-                  }
-              }
-          ]
-      }
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "root",
+          "style": "plain",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "red",
+          "properties": {
+            "prefix": "",
+            "postfix": " ",
+            "root_icon": "\uF0E7"
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "blue",
+          "properties": {
+            "prefix": "",
+            "postfix": "",
+            "home_icon": "\uF7DB",
+            "folder_icon": "\uE5FF",
+            "folder_separator_icon": "/",
+            "style": "agnoster"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "green",
+          "foreground_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}yellow{{ end }}",
+            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}red{{ end }}",
+            "{{ if .Repo.Ahead gt 0 }}red{{ end }}",
+            "{{ if .Repo.Behind gt 0 }}green{{ end }}"
+          ],
+          "properties": {
+            "fetch_status": true,
+            "fetch_stash_count": true,
+            "display_upstream_icon": true,
+            "prefix": " on ",
+            "postfix": "",
+            "github_icon": " ",
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }}<red> \uF044 {{ .Repo.Working.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<yellow> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
+          }
+        },
+        {
+          "type": "dotnet",
+          "style": "plain",
+          "foreground": "magenta",
+          "properties": {
+            "prefix": " [.NET] "
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "yellow",
+          "properties": {
+            "prefix": "",
+            "time_format": "15:04:05"
+          }
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "green",
+          "properties": {
+            "prefix": "",
+            "postfix": "",
+            "text": "\u276F"
+          }
+        }
+      ]
+    }
   ]
 }

@@ -34,7 +34,8 @@
           "style": "plain",
           "foreground": "#C1C106",
           "properties": {
-            "prefix": "<#ffffff>git:</>"
+            "prefix": "<#ffffff>git:</>",
+            "template": "{{ .Repo.HEAD }}"
           }
         },
         {

@@ -36,7 +36,8 @@
           "foreground": "#D4E157",
           "background": "#546E7A",
           "properties": {
-            "prefix": "<#26C6DA>\uE0B1 </>"
+            "prefix": "<#26C6DA>\uE0B1 </>",
+            "template": "{{ .Repo.HEAD }}"
           }
         },
         {

@@ -37,7 +37,7 @@
           "background": "#4caf50",
           "properties": {
             "time_format": "2006-01-02 15:04:05",
-            "prefix": ""
+            "prefix": " "
           }
         },
 
@@ -48,8 +48,9 @@
           "foreground": "#193549",
           "background": "#fffb38",
           "properties": {
-            "display_stash_count": true,
-            "display_upstream_icon": true
+            "fetch_stash_count": true,
+            "display_upstream_icon": true,
+            "template": "{{ .Repo.HEAD }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           }
         },
         {

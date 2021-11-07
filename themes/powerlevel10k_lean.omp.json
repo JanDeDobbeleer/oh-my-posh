@@ -35,7 +35,8 @@
           "style": "plain",
           "foreground": "#FFE700",
           "properties": {
-            "prefix": ""
+            "prefix": "",
+            "template": "{{ .Repo.HEAD }}"
           }
         },
         {

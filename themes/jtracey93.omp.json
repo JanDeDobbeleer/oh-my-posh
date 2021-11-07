@@ -29,7 +29,8 @@
           "background": "#25AFF3",
           "foreground": "#ffffff",
           "properties": {
-            "display_status": true,
+            "fetch_status": true,
+            "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}",
             "postfix": ") ",
             "prefix": " branch ("
           },
@@ -42,7 +43,7 @@
           "foreground": "#ffffff",
           "background": "#1BD760",
           "properties": {
-            "track_separator" : " - ",
+            "track_separator": " - ",
             "playing_icon": "",
             "stopped_icon": "",
             "paused_icon": ""
@@ -55,7 +56,7 @@
             "time_format": "15:04:05"
           },
           "style": "diamond",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B0",
           "type": "time"
         }
       ],

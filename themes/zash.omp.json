@@ -40,9 +40,9 @@
           "foreground": "#D4AAFC",
           "properties": {
             "branch_icon": "",
-            "display_status": false,
             "prefix": " <#DDB15F>git(</>",
-            "postfix": "<#DDB15F>)</>"
+            "postfix": "<#DDB15F>)</>",
+            "template": "{{ .Repo.HEAD }}"
           }
         },
         {

@@ -37,19 +37,20 @@
         {
           "type": "git",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
           "background": "#d2ff5e",
+          "background_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ff9248{{ end }}",
+            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#f26d50{{ end }}",
+            "{{ if .Repo.Ahead gt 0 }}#89d1dc{{ end }}",
+            "{{ if .Repo.Behind gt 0 }}#f17c37{{ end }}"
+          ],
           "properties": {
-            "display_stash_count": true,
+            "fetch_status": true,
+            "fetch_stash_count": true,
             "display_upstream_icon": true,
-            "status_colors_enabled": true,
-            "display_status": true,
-            "local_changes_color": "#ff9248",
-            "ahead_and_behind_color": "#f26d50",
-            "behind_color": "#f17c37",
-            "ahead_color": "#89d1dc",
-            "stash_count_icon": "\uF692 "
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           }
         },
         {

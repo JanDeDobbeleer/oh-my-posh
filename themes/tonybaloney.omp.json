@@ -9,9 +9,8 @@
         {
           "background": "#18354c",
           "foreground": "#ffc107",
-          "powerline_symbol": "",
           "leading_diamond": "",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B0",
           "properties": {
             "prefix": "  ",
             "style": "folder"
@@ -22,30 +21,30 @@
         {
           "background": "#18354c",
           "foreground": "#ffc107",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "properties": {
-            "display_stash_count": true,
+            "fetch_stash_count": true,
             "display_upstream_icon": true,
-            "status_colors_enabled": false
+            "template": "{{ .Repo.HEAD }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           },
           "style": "powerline",
           "type": "git"
         },
         {
-            "type": "python",
-            "style": "powerline",
-            "powerline_symbol": "\uE0B0",
-            "foreground": "#18354c",
-            "background": "#ffc107",
-            "properties": {
-              "prefix": " \uE235 "
-            }
-          },
-          
+          "type": "python",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#18354c",
+          "background": "#ffc107",
+          "properties": {
+            "prefix": " \uE235 "
+          }
+        },
+
         {
           "background": "#ffc107",
           "foreground": "#18354c",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "style": "powerline",
           "type": "root"
         }

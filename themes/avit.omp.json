@@ -17,7 +17,11 @@
         {
           "type": "git",
           "style": "plain",
-          "foreground": "#C2C206"
+          "foreground": "#C2C206",
+          "properties": {
+            "prefix": "",
+            "template": "{{ .Repo.HEAD }}"
+          }
         },
         {
           "type": "root",

@@ -10,7 +10,7 @@
           "foreground": "#ffffff",
           "background": "#c386f1",
           "leading_diamond": "",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B0",
           "properties": {
             "postfix": " ",
             "display_host": false
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#ff479c",
           "properties": {
@@ -32,24 +32,28 @@
         {
           "type": "git",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
           "background": "#fffb38",
+          "background_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ff8c00{{ end }}",
+            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#ff4500{{ end }}",
+            "{{ if .Repo.Ahead gt 0 }}#B388FF{{ end }}",
+            "{{ if .Repo.Behind gt 0 }}#B388FF{{ end }}"
+          ],
+          "leading_diamond": "",
+          "trailing_diamond": "",
           "properties": {
-            "display_stash_count": true,
-            "display_upstream_icon": true,
-            "status_colors_enabled": true,
-            "local_changes_color": "#ff9248",
-            "ahead_and_behind_color": "#f26d50",
-            "behind_color": "#f17c37",
-            "ahead_color": "#89d1dc",
-            "stash_count_icon": "\uF692 "
+            "fetch_status": true,
+            "fetch_stash_count": true,
+            "branch_max_length": 25,
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           }
         },
         {
           "type": "node",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#6CA35E",
           "properties": {
@@ -60,7 +64,7 @@
         {
           "type": "go",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#111111",
           "background": "#8ED1F7",
           "properties": {
@@ -71,7 +75,7 @@
         {
           "type": "julia",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#111111",
           "background": "#4063D8",
           "properties": {
@@ -82,7 +86,7 @@
         {
           "type": "python",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#111111",
           "background": "#FFDE57",
           "properties": {
@@ -95,7 +99,7 @@
         {
           "type": "ruby",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#AE1401",
           "properties": {
@@ -107,7 +111,7 @@
         {
           "type": "azfunc",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#FEAC19",
           "properties": {
@@ -119,7 +123,7 @@
         {
           "type": "aws",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background_templates": [
             "{{if contains \"default\" .Profile}}#FFA400{{end}}",
@@ -133,7 +137,7 @@
         {
           "type": "root",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "#111111",
           "background": "#ffff66",
           "properties": {
@@ -149,7 +153,7 @@
           "trailing_diamond": "",
           "properties": {
             "always_enabled": true,
-            "prefix": "<transparent></> \ufa1e",
+            "prefix": "<transparent>\uE0B0</> \ufa1e",
             "postfix": "\u2800"
           }
         },
@@ -165,7 +169,7 @@
             "always_enabled": true,
             "error_color": "#f1184c",
             "color_background": true,
-            "prefix": "<#83769c></> "
+            "prefix": "<#83769c>\uE0B0</> "
           }
         }
       ]

@@ -28,11 +28,11 @@
           "powerline_symbol": "\uE0B0",
           "foreground": "#100e23",
           "background": "#ec9706",
-          "properties" : {
-              "home_icon": "\uF7DB",
-              "folder_icon": "\uF115",
-              "folder_separator_icon": " \uE0B1 ",
-              "style": "full"
+          "properties": {
+            "home_icon": "\uF7DB",
+            "folder_icon": "\uF115",
+            "folder_separator_icon": " \uE0B1 ",
+            "style": "full"
           }
         },
         {
@@ -40,7 +40,10 @@
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
-          "background": "#95ffa4"
+          "background": "#95ffa4",
+          "properties": {
+            "template": "{{ .Repo.HEAD }}"
+          }
         },
         {
           "type": "python",

@@ -43,7 +43,8 @@
           "background": "#007ACC",
           "properties": {
             "prefix": "<#ffffff>\uE0B1</> ",
-            "postfix": " "
+            "postfix": " ",
+            "template": "{{ .Repo.HEAD }}"
           }
         },
         {

@@ -42,8 +42,8 @@
           "properties": {
             "prefix": "",
             "postfix": "",
-            "display_status_detail": false,
-            "branch_icon": ""
+            "branch_icon": "",
+            "template": "{{ .Repo.HEAD }}"
           }
         },
         {

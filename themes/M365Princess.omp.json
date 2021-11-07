@@ -35,11 +35,11 @@
           "foreground": "#ffffff",
           "background": "#FCA17D",
           "properties": {
-            "display_stash_count": true,
+            "fetch_stash_count": true,
             "display_upstream_icon": true,
-            "status_colors_enabled": false,
             "branch_icon": "",
-            "display_status": false,
+            "fetch_status": false,
+            "template": "{{ .Repo.HEAD }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}",
             "prefix": " \u279C (",
             "postfix": ") "
           }

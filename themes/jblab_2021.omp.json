@@ -48,18 +48,19 @@
         {
           "background": "#280C2E",
           "foreground": "#FFFFFF",
+          "background_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#7621DE{{ end }}",
+            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#7621DE{{ end }}",
+            "{{ if .Repo.Ahead gt 0 }}#7621DE{{ end }}",
+            "{{ if .Repo.Behind gt 0 }}#7621DE{{ end }}"
+          ],
           "powerline_symbol": "\uE0B0",
           "properties": {
-            "ahead_and_behind_color": "#7621DE",
-            "ahead_color": "#7621DE",
-            "behind_color": "#7621DE",
-            "display_stash_count": true,
-            "display_status": true,
+            "fetch_stash_count": true,
+            "fetch_status": true,
             "display_upstream_icon": true,
-            "local_changes_color": "#7621DE",
             "prefix": " ",
-            "staging_color": "#7621DE",
-            "status_colors_enabled": true
+            "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           },
           "style": "powerline",
           "type": "git"

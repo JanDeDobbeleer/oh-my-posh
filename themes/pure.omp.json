@@ -7,15 +7,17 @@
     {
       "type": "prompt",
       "alignment": "left",
-      "newline": true,
+      "newline": false,
       "segments": [
         {
-          "type": "root",
+          "type": "session",
           "style": "plain",
           "foreground": "#BF616A",
           "properties": {
-            "prefix": "",
-            "root_icon": "Admin"
+            "display_host": false,
+            "display_user": true,
+            "user_info_separator": "",
+            "prefix": ""
           }
         },
         {

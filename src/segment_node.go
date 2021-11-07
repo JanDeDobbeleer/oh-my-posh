@@ -61,5 +61,5 @@ func (n *node) matchesVersionFile() bool {
 	if len(fileVersion) == 0 {
 		return true
 	}
-	return fileVersion == n.language.activeCommand.version.full
+	return fileVersion == n.language.activeCommand.version.Full
 }

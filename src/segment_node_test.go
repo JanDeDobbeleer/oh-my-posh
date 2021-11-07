@@ -26,7 +26,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 				env: env,
 				activeCommand: &cmd{
 					version: &version{
-						full: tc.Version,
+						Full: tc.Version,
 					},
 				},
 			},

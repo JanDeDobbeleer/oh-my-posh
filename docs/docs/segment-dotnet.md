@@ -36,3 +36,18 @@ Display the currently active .NET SDK version.
   or `*.fsproj` files are present (default)
 - unsupported_version_icon: `string` - text/icon that is displayed when the active .NET SDK version (e.g., one specified
   by `global.json`) is not installed/supported - defaults to `\uf071` (X in a rectangle box)
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults does nothing(backward compatibility).
+- version_url_template: `string` - A go [text/template][go-text-template] template extended
+with [sprig][sprig] utilizing the properties below. Defaults does nothing(backward compatibility).
+
+### Template Properties
+
+- `.Major`: `string` - is the major version
+- `.Minor`: `string` - is the minor version
+- `.Patch`: `string` - is the patch version
+- `.Prerelease`: `string` - is the prerelease version
+- `.BuildMetadata`: `string` - is the build metadata
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

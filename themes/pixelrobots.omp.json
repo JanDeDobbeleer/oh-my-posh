@@ -119,18 +119,17 @@
           "style": "diamond",
           "foreground": "#ffea00",
           "background": "#2f2f2f",
+          "foreground_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ffea00{{ end }}",
+            "{{ if .Repo.Ahead gt 0 }}#2EC4B6{{ end }}",
+            "{{ if .Repo.Behind gt 0 }}#8A4FFF{{ end }}"
+          ],
           "properties": {
-            "display_stash_count": true,
+            "fetch_stash_count": true,
+            "fetch_status": true,
             "display_upstream_icon": true,
-            "display_status": true,
-            "status_colors_enabled": true,
-            "color_background": false,
-            "local_changes_color": "#ffea00",
-            "working_color": "#E84855",
-            "staging_color": "#2FDA4E",
-            "ahead_color": "#2EC4B6",
-            "behind_color": "#8A4FFF",
-            "prefix": "<#ffea00>\ue0b1 </>"
+            "prefix": "<#ffea00>\ue0b1 </>",
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }}<#E84855> \uF044 {{ .Repo.Working.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<#2FDA4E> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           }
         },
         {

@@ -68,29 +68,29 @@
           "powerline_symbol": "\ue0b0",
           "foreground": "#100e23",
           "background": "#95ffa4",
+          "background_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ff9248{{ end }}",
+            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#f26d50{{ end }}",
+            "{{ if .Repo.Ahead gt 0 }}#89d1dc{{ end }}",
+            "{{ if .Repo.Behind gt 0 }}#c5b6ad{{ end }}"
+          ],
           "properties": {
+            "fetch_status": true,
+            "fetch_stash_count": true,
             "branch_ahead_icon": "\u2191",
             "branch_behind_icon": "\u2193",
             "branch_gone": "\u2262",
             "branch_icon": "\ue0a0 ",
             "branch_identical_icon": "\u2261",
             "cherry_pick_icon": "\u2713 ",
-            "color_background": true,
             "commit_icon": "\u25b7 ",
-            "display_status_detail": true,
             "local_staged_icon": "",
             "local_working_icon": "",
             "merge_icon": "\u25f4 ",
             "no_commits_icon": "[no commits]",
             "rebase_icon": "\u2c62 ",
-            "stash_count_icon": "",
-            "status_colors_enabled": true,
-            "status_separator_icon": " \u2502",
             "tag_icon": "\u25b6 ",
-            "local_changes_color": "#ff9248",
-            "ahead_and_behind_color": "#f26d50",
-            "behind_color": "#f17c37",
-            "ahead_color": "#89d1dc"
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} \u2502{{ end }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} {{ .Repo.StashCount }}{{ end }}"
           }
         },
         {

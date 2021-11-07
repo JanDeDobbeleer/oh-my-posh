@@ -34,7 +34,7 @@
           "style": "plain",
           "foreground": "#F3C267",
           "properties": {
-            "display_status": true,
+            "template": "{{ .Repo.HEAD }}",
             "branch_identical_icon": "\uF14A",
             "branch_gone_icon": "\u274E"
           }
@@ -53,11 +53,10 @@
           "foreground": "#E06C75",
           "properties": {
             "prefix": "",
-            "text": " \u276F"
+            "text": "\u276F"
           }
         }
       ]
     }
-  ],
-  "final_space": true
+  ]
 }

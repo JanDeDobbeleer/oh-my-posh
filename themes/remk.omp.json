@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "blocks":[
+  "blocks": [
     {
       "type": "prompt",
       "alignment": "left",
@@ -14,12 +14,12 @@
           "trailing_diamond": "",
           "properties": {
             "prefix": "",
-            "display_host":false
+            "display_host": false
           }
         },
         {
-          "type":"path",
-          "style":"plain",
+          "type": "path",
+          "style": "plain",
           "foreground": "#3f3f3f",
           "background": "lightYellow",
           "properties": {
@@ -33,9 +33,9 @@
           "background": "lightCyan",
           "properties": {
             "branch_icon": "",
-            "display_status": false,
             "prefix": " git(",
-            "postfix": ") "
+            "postfix": ") ",
+            "template": "{{ .Repo.HEAD }}"
           }
         },
         {

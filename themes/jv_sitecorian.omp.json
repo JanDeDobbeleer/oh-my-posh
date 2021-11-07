@@ -6,21 +6,21 @@
   "console_title_template": "{{if .Root}}Admin: {{end}} {{.Folder}}",
   "blocks": [
     {
-        "type": "prompt",
-        "alignment": "left",
-        "newline": true,
-        "segments": [
-            {
-            "type": "text",
-            "style": "plain",
-            "foreground": "#ffffff",
-            "properties": {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "properties": {
             "prefix": "",
             "text": "",
             "postfix": ""
           }
         }
-     ]
+      ]
     },
     {
       "type": "prompt",
@@ -30,7 +30,7 @@
           "type": "text",
           "style": "plain",
           "foreground": "#185F7B",
-            "properties": {
+          "properties": {
             "prefix": "\ue0c5",
             "text": "",
             "postfix": ""
@@ -42,7 +42,7 @@
           "powerline_symbol": "\ue0c4",
           "background": "#185F7B",
           "foreground": "#185F7B",
-            "properties": {
+          "properties": {
             "text": "",
             "prefix": "",
             "postfix": ""
@@ -59,27 +59,28 @@
             "style": "mixed",
             "home_icon": "\uf7dd  ",
             "prefix": "",
-            "postfix": " ",            
+            "postfix": " ",
             "enable_hyperlink": true
           }
         },
         {
-            "type": "git",
-            "style": "powerline",
-            "powerline_symbol": "\uE0B0",
-            "foreground": "#ffffff",
-            "background": "#6f42c1",
-            "properties": {
-              "display_stash_count": true,
-              "display_upstream_icon": true,
-              "status_colors_enabled": true,
-              "display_status": true,
-              "local_changes_color": "#176f2c",
-              "ahead_and_behind_color": "#f26d50",
-              "behind_color": "#f9c513",
-              "ahead_color": "#0366d6",
-              "stash_count_icon": "\uF692 "
-            }
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#ffffff",
+          "background": "#6f42c1",
+          "backround_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#176f2c{{ end }}",
+            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#f26d50{{ end }}",
+            "{{ if .Repo.Ahead gt 0 }}#0366d6{{ end }}",
+            "{{ if .Repo.Behind gt 0 }}#f9c513{{ end }}"
+          ],
+          "properties": {
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "display_upstream_icon": true,
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
+          }
         },
         {
           "type": "text",
@@ -104,15 +105,15 @@
             "success_icon": "\uf469 \u2665 ",
             "color_background": true,
             "error_icon": "\uf525 ",
-            "error_color": "red"          
+            "error_color": "red"
           }
         }
       ]
     },
     {
-        "type": "prompt",
-        "alignment": "right",
-        "segments": [
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
         {
           "type": "time",
           "style": "diamond",
@@ -127,18 +128,17 @@
           }
         },
         {
-            "type": "executiontime",
-            "style": "diamond",
-            "leading_diamond": "\ue0c5",
-            "trailing_diamond": "\ue0c4",
-            "invert_powerline": true,
-            "foreground": "#ffffff",
-            "background": "#2B2B2B",
-            "properties": {
-                "postfix": "<#ffffff> \uF252 </>",
-                "postfix": "<#ffffff> \ufbab </>",
-                "always_enabled": true
-            }
+          "type": "executiontime",
+          "style": "diamond",
+          "leading_diamond": "\ue0c5",
+          "trailing_diamond": "\ue0c4",
+          "invert_powerline": true,
+          "foreground": "#ffffff",
+          "background": "#2B2B2B",
+          "properties": {
+            "postfix": "<#ffffff> \uF252 </>",
+            "always_enabled": true
+          }
         }
       ]
     },
@@ -151,7 +151,7 @@
           "type": "text",
           "style": "plain",
           "foreground": "#2B2B2B",
-            "properties": {
+          "properties": {
             "prefix": "\ue0c5",
             "text": "",
             "postfix": ""
@@ -170,7 +170,7 @@
           "powerline_symbol": "\uE0B0",
           "foreground": "#FBD951",
           "background": "#2B2B2B",
-            "properties": {
+          "properties": {
             "prefix": ""
           }
         },
@@ -185,23 +185,23 @@
             "display_host": false
           }
         }
-     ]
-    },    
+      ]
+    },
     {
       "type": "rprompt",
       "alignment": "right",
       "segments": [
-      {
-        "type": "shell",
-        "style": "plain",
-        "foreground": "#666666",
-        "background": "#000000",
-        "properties": {
-          "prefix": " ",
-          "postfix": ""
+        {
+          "type": "shell",
+          "style": "plain",
+          "foreground": "#666666",
+          "background": "#000000",
+          "properties": {
+            "prefix": " ",
+            "postfix": ""
+          }
         }
-      }
-    ]
+      ]
     }
   ]
 }

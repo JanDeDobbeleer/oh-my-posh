@@ -37,9 +37,8 @@
           "properties": {
             "prefix": "HEAD:",
             "branch_icon": "",
-            "display_status": false,
             "display_upstream_icon": false,
-            "display_stash_count": false
+            "template": "{{ .Repo.HEAD }}"
           }
         },
         {

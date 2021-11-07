@@ -18,7 +18,7 @@
             "prefix": "",
             "postfix": "",
             "macos": "mac"
-        }
+          }
         },
         {
           "type": "session",
@@ -48,9 +48,9 @@
           "invert_powerline": false,
           "properties": {
             "branch_icon": "",
-            "display_stash_count": true,
-            "display_status": false,
-            "prefix": "<#ffffff>on</> "
+            "fetch_stash_count": true,
+            "prefix": "<#ffffff>on</> ",
+            "template": "{{ .Repo.HEAD }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           }
         },
         {
@@ -111,8 +111,8 @@
           "style": "plain",
           "foreground": "#FFD54F",
           "properties": {
-              "prefix": "",
-              "text": "\u276F"
+            "prefix": "",
+            "text": "\u276F"
           }
         }
       ]

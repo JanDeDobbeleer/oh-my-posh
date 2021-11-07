@@ -1,71 +1,71 @@
 {
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "final_space": true,
-    "blocks": [
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
         {
-            "type": "prompt",
-            "alignment": "left",
-            "segments": [
-                {
-                    "type": "session",
-                    "style": "diamond",
-                    "foreground": "#ffffff",
-                    "background": "#B4009E",
-                    "leading_diamond": "\uE0B6",
-                    "trailing_diamond": "",
-                    "properties": {
-                        "prefix": "",
-                        "display_host": false
-                    }
-                },
-                {
-                    "type": "path",
-                    "style": "powerline",
-                    "powerline_symbol": "\uE0B0",
-                    "foreground": "#000000",
-                    "background": "#FFFF00",
-                    "properties": {
-                        "style": "folder"
-                    }
-                },
-                {
-                    "type": "git",
-                    "style": "powerline",
-                    "powerline_symbol": "\uE0B0",
-                    "foreground": "#ffffff",
-                    "background": "#4E44FF",
-                    "properties": {
-                        "display_stash_count": true,
-                        "display_upstream_icon": true,
-                        "status_colors_enabled": false,
-                        "branch_icon": "",
-                        "display_status": false,
-                        "prefix": " \u279C (",
-                        "postfix": ") "
-                    }
-                },
-                {
-                    "type": "node",
-                    "style": "powerline",
-                    "powerline_symbol": "\uE0B0",
-                    "foreground": "#ffffff",
-                    "background": "#4e903d",
-                    "properties": {
-                        "prefix": " \uE718 "
-                    }
-                },
-                {
-                    "type": "time",
-                    "style": "diamond",
-                    "trailing_diamond": "\uE0B0",
-                    "foreground": "#ffffff",
-                    "background": "#16C60C",
-                    "properties": {
-                        "prefix": " \u2665 ",
-                        "time_format": "15:04"
-                    }
-                }
-            ]
+          "type": "session",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#B4009E",
+          "leading_diamond": "\uE0B6",
+          "trailing_diamond": "",
+          "properties": {
+            "prefix": "",
+            "display_host": false
+          }
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#000000",
+          "background": "#FFFF00",
+          "properties": {
+            "style": "folder"
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#ffffff",
+          "background": "#4E44FF",
+          "properties": {
+            "fetch_stash_count": true,
+            "fetch_status": false,
+            "display_upstream_icon": true,
+            "branch_icon": "",
+            "template": "{{ .Repo.HEAD }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}",
+            "prefix": " \u279C (",
+            "postfix": ") "
+          }
+        },
+        {
+          "type": "node",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#ffffff",
+          "background": "#4e903d",
+          "properties": {
+            "prefix": " \uE718 "
+          }
+        },
+        {
+          "type": "time",
+          "style": "diamond",
+          "trailing_diamond": "\uE0B0",
+          "foreground": "#ffffff",
+          "background": "#16C60C",
+          "properties": {
+            "prefix": " \u2665 ",
+            "time_format": "15:04"
+          }
         }
-    ]
+      ]
+    }
+  ]
 }

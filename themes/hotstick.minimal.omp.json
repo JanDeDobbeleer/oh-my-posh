@@ -10,7 +10,7 @@
       "type": "prompt",
       "alignment": "left",
       "segments": [
-        { 
+        {
           "type": "root",
           "style": "plain",
           "foreground": "yellow",
@@ -24,7 +24,7 @@
           "foreground": "black",
           "background": "lightBlue",
           "leading_diamond": "",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B0",
           "properties": {
             "style": "mixed"
           }
@@ -32,11 +32,15 @@
         {
           "type": "git",
           "style": "powerline",
-          "powerline_symbol": "",
+          "powerline_symbol": "\uE0B0",
           "foreground": "black",
           "background": "green",
+          "background_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}yellow{{ end }}"
+          ],
           "properties": {
-            "display_status_detail": true,
+            "fetch_status": true,
+            "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}",
             "branch_icon": " ",
             "branch_identical_icon": "≡",
             "branch_ahead_icon": "↑",
@@ -50,11 +54,7 @@
             "rebase_icon": "Ɫ ",
             "cherry_pick_icon": "✓ ",
             "merge_icon": "◴ ",
-            "no_commits_icon": "[no commits]",
-            "status_separator_icon": " │",
-            "status_colors_enabled": true,
-            "color_background": true,
-            "local_changes_color": "yellow"
+            "no_commits_icon": "[no commits]"
           }
         }
       ]

@@ -28,7 +28,7 @@
           "properties": {
             "prefix": "",
             "postfix": "",
-            "display_status_detail": false,
+            "template": "{{ .Repo.HEAD }}",
             "branch_icon": ""
           }
         },
@@ -136,7 +136,6 @@
     {
       "type": "prompt",
       "alignment": "left",
-      "newline": true,
       "segments": [
         {
           "type": "session",

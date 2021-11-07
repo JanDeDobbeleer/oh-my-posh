@@ -30,7 +30,8 @@
           "foreground": "#C678DD",
           "properties": {
             "prefix": "<#ffffff>on</> ",
-            "display_status": true
+            "fetch_status": true,
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}"
           }
         },
         {

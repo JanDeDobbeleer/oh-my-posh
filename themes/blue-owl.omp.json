@@ -16,6 +16,7 @@
           "foreground": "#FFEB3B",
           "background": "#a313a8",
           "properties": {
+            "prefix": "",
             "root_icon": "⚡"
           }
         },
@@ -23,7 +24,10 @@
           "type": "os",
           "style": "plain",
           "foreground": "#ffffff",
-          "background": "transparent"
+          "background": "transparent",
+          "properties": {
+            "prefix": ""
+          }
         },
         {
           "type": "path",
@@ -45,14 +49,16 @@
           "powerline_symbol": "\uE0B0",
           "foreground": "#000000",
           "background": "#00C853",
+          "background_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#FFEB3B{{ end }}",
+            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#FFCC80{{ end }}",
+            "{{ if .Repo.Ahead gt 0 }}#B388FF{{ end }}",
+            "{{ if .Repo.Behind gt 0 }}#B388FF{{ end }}"
+          ],
           "properties": {
-            "display_stash_count": true,
-            "staging_color": "#FF6F00",
-            "status_colors_enabled": true,
-            "local_changes_color": "#FFEB3B",
-            "ahead_and_behind_color": "#FFCC80",
-            "behind_color": "#B388FF",
-            "ahead_color": "#B388FF"
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }}<#FF6F00> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           }
         },
         {

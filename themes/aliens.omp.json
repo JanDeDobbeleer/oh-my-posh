@@ -28,18 +28,18 @@
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
-          "background": "#95ffa4"
+          "background": "#95ffa4",
+          "properties": {
+            "template": "{{ .Repo.HEAD }}"
+          }
         },
         {
           "type": "python",
           "style": "diamond",
           "foreground": "#ffffff",
           "background": "#FF6471",
-          "leading_diamond": "",
-          "trailing_diamond": "\uE0B4",
-          "properties": {
-            "prefix": "<transparent>\uE0B0 </>"
-          }
+          "leading_diamond": "<transparent,background>\uE0B0</>",
+          "trailing_diamond": "\uE0B4"
         }
       ]
     }

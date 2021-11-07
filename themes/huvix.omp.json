@@ -48,7 +48,7 @@
               "foreground": "#56B6C2",
               "properties": {
                 "branch_icon": "",
-                "display_status": false,
+                "template": "{{ .Repo.HEAD }}",
                 "prefix": "<#E8CC97>git(</>",
                 "postfix": "<#E8CC97>) </>"
               }
@@ -86,7 +86,7 @@
               "charging_color": "#64B5F6",
               "discharging_color": "#E36464",
               "prefix": "\u005B",
-              "postfix": "\uF295\u005D ",
+              "postfix": "\uF295\u005D",
               "display_charging": true
             }
           }

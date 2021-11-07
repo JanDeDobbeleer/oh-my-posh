@@ -29,7 +29,8 @@
           "foreground": "#D0666F",
           "properties": {
             "branch_icon": "",
-            "display_status": false,
+            "fetch_status": false,
+            "template": "{{ .Repo.HEAD }}",
             "prefix": "<#5FAAE8>git:(</>",
             "postfix": "<#5FAAE8>)</>"
           }

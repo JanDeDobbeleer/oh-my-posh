@@ -31,7 +31,8 @@
           "style": "plain",
           "foreground": "#B8B80A",
           "properties": {
-            "prefix": "<#ffffff>on git:</>"
+            "prefix": "<#ffffff>on git:</>",
+            "template": "{{ .Repo.HEAD }}"
           }
         }
       ]
@@ -69,7 +70,7 @@
           "style": "plain",
           "foreground": "#100e23",
           "properties": {
-            "prefix": " \uE235 "
+            "prefix": "\uE235 "
           }
         },
         {

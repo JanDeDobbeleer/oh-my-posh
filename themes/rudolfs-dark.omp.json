@@ -21,7 +21,6 @@
             "wsl_separator": "",
             "prefix": " ",
             "postfix": " "
-
           }
         },
         {
@@ -54,19 +53,13 @@
           "foreground": "#ffffff",
           "background": "#256C9D",
           "properties": {
+            "fetch_status": true,
+            "fetch_stash_count": false,
             "branch_max_length": 30,
-            "display_stash_count": false,
             "display_upstream_icon": true,
-            "display_status": true,
-            "status_colors_enabled": false,
-            "color_background": true,
-            "local_changes_color": "#ffffff",
-            "working_color": "#ffffff",
-            "staging_color": "#ffffff",
-            "ahead_color": "#ffffff",
-            "behind_color": "#ffffff",
             "prefix": "[ ",
-            "postfix": " ]"
+            "postfix": " ]",
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           }
         },
         {

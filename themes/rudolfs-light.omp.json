@@ -21,7 +21,6 @@
             "wsl_separator": "",
             "prefix": " ",
             "postfix": " "
-
           }
         },
         {
@@ -34,26 +33,23 @@
             "prefix": "",
             "postfix": ""
           }
-        },        
+        },
         {
           "type": "git",
           "style": "plain",
           "background": "#E0E0E0",
           "foreground": "#424242",
+          "foreground_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#053F22{{ end }}",
+            "{{ if or (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#0A703E{{ end }}"
+          ],
           "properties": {
-            "display_stash_count": false,
+            "fetch_status": true,
             "branch_max_length": 30,
             "display_upstream_icon": true,
-            "display_status": true,
-            "status_colors_enabled": true,
-            "color_background": false,
-            "local_changes_color": "#053F22",
-            "working_color": "#BD6200",
-            "staging_color": "#053F22",
-            "ahead_color": "#0A703E",
-            "behind_color": "#0A703E",
             "prefix": " [",
-            "postfix": "] "
+            "postfix": "] ",
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }}<#BD6200> \uF044 {{ .Repo.Working.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<#053F22> \uF046 {{ .Repo.Staging.String }}</>{{ end }}"
           }
         },
         {

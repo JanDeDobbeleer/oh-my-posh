@@ -51,16 +51,17 @@
           "powerline_symbol": "\uE0B0",
           "foreground": "#011627",
           "background": "#22da6e",
+          "background_templates": [
+            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ffeb95{{ end }}",
+            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#c5e478{{ end }}",
+            "{{ if .Repo.Ahead gt 0 }}#C792EA{{ end }}",
+            "{{ if .Repo.Behind gt 0 }}#C792EA{{ end }}"
+          ],
           "properties": {
-            "branch_icon": " \ue725 ",
-            "display_status": true,
+            "branch_icon": "\ue725 ",
+            "fetch_status": true,
             "display_upstream_icon": true,
-            "staging_color": "#ef5350",
-            "status_colors_enabled": true,
-            "local_changes_color": "#ffeb95",
-            "ahead_and_behind_color": "#c5e478",
-            "behind_color": "#C792EA",
-            "ahead_color": "#C792EA"
+            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<#ef5350> \uF046 {{ .Repo.Staging.String }}</>{{ end }}"
           }
         },
         {

@@ -1,107 +1,108 @@
 {
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "blocks": [
-      {
-        "type": "prompt",
-        "alignment": "left",
-        "segments": [
-          {
-            "type": "python",
-            "style": "plain",
-            "foreground": "white",
-            "properties": {
-              "prefix": "(",
-              "postfix": ")",
-              "display_version": false
-            }
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "python",
+          "style": "plain",
+          "foreground": "white",
+          "properties": {
+            "prefix": "(",
+            "postfix": ")",
+            "display_version": false
           }
-        ]
-      },
-      {
-        "type": "prompt",
-        "alignment": "left",
-        "newline": true,
-        "segments": [
-          {
-            "type": "text",
-            "style": "plain",
-            "foreground": "lightBlue",
-            "properties": {
-              "prefix": "",
-              "text": "#"
-            }
-          },
-          {
-            "type": "root",
-            "style": "plain",
-            "foreground": "red",
-            "properties": {
-              "root_icon": "%"
-            }
-          },
-          {
-            "type": "session",
-            "style": "plain",
-            "properties": {
-              "user_info_separator": " <darkGray>@</> ",
-              "prefix": "",
-              "user_color": "cyan",
-              "host_color": "green"
-            }
-          },
-          {
-            "type": "path",
-            "style": "plain",
-            "foreground": "lightYellow",
-            "properties": {
-              "prefix": "<darkGray>in </>",
-              "style": "full"
-            }
-          },
-          {
-            "type": "git",
-            "style": "plain",
-            "properties": {
-              "prefix": "<darkGray>on</> <white>git:</>"
-            }
-          },
-          {
-            "type": "time",
-            "style": "plain",
-            "foreground": "darkGray",
-            "properties": {
-              "prefix": "[",
-              "postfix": "]"
-            }
-          },
-          {
-            "type": "exit",
-            "style": "plain",
-            "foreground": "red",
-            "properties": {
-              "prefix": " C:",
-              "always_numeric": true
-            }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "lightBlue",
+          "properties": {
+            "prefix": "",
+            "text": "#"
           }
-        ]
-      },
-      {
-        "type": "prompt",
-        "alignment": "left",
-        "newline": true,
-        "segments": [
-          {
-            "type": "text",
-            "style": "plain",
-            "foreground": "lightRed",
-            "properties": {
-              "prefix": "",
-              "text": "$",
-              "postfix": ""
-            }
+        },
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "red",
+          "properties": {
+            "root_icon": "%"
           }
-        ]
-      }
-    ],
-    "final_space": true
-  }
+        },
+        {
+          "type": "session",
+          "style": "plain",
+          "properties": {
+            "user_info_separator": " <darkGray>@</> ",
+            "prefix": "",
+            "user_color": "cyan",
+            "host_color": "green"
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "lightYellow",
+          "properties": {
+            "prefix": "<darkGray>in </>",
+            "style": "full"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "properties": {
+            "prefix": "<darkGray>on</> <white>git:</>",
+            "template": "{{ .Repo.HEAD }}"
+          }
+        },
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "darkGray",
+          "properties": {
+            "prefix": "[",
+            "postfix": "]"
+          }
+        },
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "red",
+          "properties": {
+            "prefix": " C:",
+            "always_numeric": true
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "lightRed",
+          "properties": {
+            "prefix": "",
+            "text": "$",
+            "postfix": ""
+          }
+        }
+      ]
+    }
+  ],
+  "final_space": true
+}

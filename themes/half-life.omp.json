@@ -49,15 +49,8 @@
             "rebase_icon": "",
             "cherry_pick_icon": "",
             "revert_icon": "",
-            "working_color": "#D75F00",
-            "staging_color": "#87FF00",
-            "local_working_icon": " ●",
-            "local_staged_icon": " ●",
-            "status_separator_icon": "",
-            "display_status": true,
-            "display_status_detail": false,
-            "display_branch_status": false,
-            "display_stash_count": false
+            "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }}<#87FF00> ● {{ .Repo.Staging.String }}</>{{ end }}{{ if .Repo.Working.Changed }}<#D75F00> ● {{ .Repo.Working.String }}</>{{ end }}",
+            "fetch_status": true
           }
         },
         {

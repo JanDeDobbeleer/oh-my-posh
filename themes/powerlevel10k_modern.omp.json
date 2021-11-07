@@ -41,8 +41,8 @@
           "background": "#D4E157",
           "powerline_symbol": "\uE0B4",
           "properties": {
-            "style": "full",
-            "prefix": " "
+            "prefix": " ",
+            "template": "{{ .Repo.HEAD }}"
           }
         }
       ]

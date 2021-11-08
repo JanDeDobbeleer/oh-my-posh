@@ -222,7 +222,7 @@ The following sample is based on the [AWS Segment][aws].
 {
   "type": "aws",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#111111",
   "foreground_templates": [

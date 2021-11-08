@@ -14,7 +14,7 @@ Display the currently active Azure functions CLI version.
 {
     "type": "azfunc",
     "style": "powerline",
-    "powerline_symbol": "",
+    "powerline_symbol": "\uE0B0",
     "foreground": "#ffffff",
     "background": "#FEAC19",
     "properties": {

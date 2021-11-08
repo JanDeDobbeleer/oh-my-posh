@@ -14,7 +14,7 @@ Display the currently active Angular CLI version.
 {
   "type": "angular",
   "style": "powerline",
-  "powerline_symbol": "",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#1976d2",
   "properties": {

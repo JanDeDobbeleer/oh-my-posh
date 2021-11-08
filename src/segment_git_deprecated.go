@@ -63,7 +63,7 @@ func (g *git) renderDeprecatedString(statusColorsEnabled bool) string {
 	}
 	// branchName
 	fmt.Fprintf(buffer, "%s", g.Repo.HEAD)
-	if len(g.Repo.BranchStatus) != 0 {
+	if g.props.getBool(DisplayBranchStatus, false) {
 		buffer.WriteString(g.Repo.BranchStatus)
 	}
 	if g.Repo.Staging.Changed {

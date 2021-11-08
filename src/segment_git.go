@@ -87,8 +87,6 @@ type git struct {
 }
 
 const (
-	// FetchBranchStatus show branch status or not
-	FetchBranchStatus Property = "fetch_branch_status"
 	// FetchStatus shows the status of the repository
 	FetchStatus Property = "fetch_status"
 	// FetchStashCount show stash count or not
@@ -199,8 +197,6 @@ func (g *git) string() string {
 	if g.Repo.Upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
 		g.Repo.UpstreamIcon = g.getUpstreamIcon()
 	}
-	if g.getBool(FetchBranchStatus, DisplayBranchStatus, true) {
-		g.Repo.BranchStatus = g.getBranchStatus()
 	}
 	// use template if available
 	segmentTemplate := g.props.getString(SegmentTemplate, "")

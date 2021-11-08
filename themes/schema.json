@@ -170,7 +170,7 @@
             "rust",
             "owm",
             "memory",
-            "angularcli",
+            "angular",
             "php"
           ]
         },
@@ -1695,12 +1695,12 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "angularcli" }
+              "type": { "const": "angular" }
             }
           },
           "then": {
             "title": "Angular CLI Segment",
-            "description": "https://ohmyposh.dev/docs/angularcli",
+            "description": "https://ohmyposh.dev/docs/angular",
             "properties": {
               "properties": {
                 "properties": {

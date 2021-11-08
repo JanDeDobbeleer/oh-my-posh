@@ -126,10 +126,10 @@
           ],
           "properties": {
             "fetch_stash_count": true,
-            "display_upstream_icon": true,
+            "fetch_upstream_icon": true,
             "fetch_status": true,
             "prefix": "<#000000>\ue0b1 </>",
-            "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }}<#2FDA4E> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }}<#E84855> \uF044 {{ .Repo.Working.String }}</>{{ end }}"
+            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }}<#2FDA4E> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }}<#E84855> \uF044 {{ .Repo.Working.String }}</>{{ end }}"
           }
         },
         {

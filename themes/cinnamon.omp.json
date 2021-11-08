@@ -28,8 +28,9 @@
             "foreground": "#ffffff",
             "background": "#de076f",
             "properties": {
-              "display_upstream_icon": true,
-              "branch_icon": ""
+              "fetch_upstream_icon": true,
+              "branch_icon": "",
+              "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}"
             }
           },
           {

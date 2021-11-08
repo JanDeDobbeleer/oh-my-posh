@@ -44,11 +44,11 @@
           "properties": {
             "fetch_status": true,
             "fetch_stash_count": true,
-            "display_upstream_icon": true,
+            "fetch_upstream_icon": true,
             "prefix": " on ",
             "postfix": "",
             "github_icon": " ",
-            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }}<red> \uF044 {{ .Repo.Working.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<yellow> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
+            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }}<red> \uF044 {{ .Repo.Working.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<yellow> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           }
         },
         {

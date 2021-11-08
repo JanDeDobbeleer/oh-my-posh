@@ -197,6 +197,11 @@ func (g *git) string() string {
 	if g.Repo.Upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
 		g.Repo.UpstreamIcon = g.getUpstreamIcon()
 	}
+	if g.getBool(FetchStashCount, DisplayStashCount, false) {
+		g.Repo.StashCount = g.getStashContext()
+	}
+	if g.getBool(FetchWorktreeCount, DisplayWorktreeCount, false) {
+		g.Repo.WorktreeCount = g.getWorktreeContext()
 	}
 	// use template if available
 	segmentTemplate := g.props.getString(SegmentTemplate, "")
@@ -277,12 +282,7 @@ func (g *git) setGitStatus() {
 		}
 	}
 	g.Repo.HEAD = g.getGitHEADContext(status["local"])
-	if g.getBool(FetchStashCount, DisplayStashCount, false) {
-		g.Repo.StashCount = g.getStashContext()
-	}
-	if g.getBool(FetchWorktreeCount, DisplayWorktreeCount, false) {
-		g.Repo.WorktreeCount = g.getWorktreeContext()
-	}
+	g.Repo.BranchStatus = g.getBranchStatus()
 }
 
 func (g *git) getGitCommand() string {

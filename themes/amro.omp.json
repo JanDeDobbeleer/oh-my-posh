@@ -32,9 +32,9 @@
           "foreground": "#14A5AE",
           "properties": {
             "fetch_stash_count": true,
-            "display_upstream_icon": true,
+            "fetch_upstream_icon": true,
             "prefix": "",
-            "template": "{{ .Repo.HEAD }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
+            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           }
         }
       ]

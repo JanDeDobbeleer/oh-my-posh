@@ -127,9 +127,9 @@
           "properties": {
             "fetch_stash_count": true,
             "fetch_status": true,
-            "display_upstream_icon": true,
+            "fetch_upstream_icon": true,
             "prefix": "<#ffea00>\ue0b1 </>",
-            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }}<#E84855> \uF044 {{ .Repo.Working.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<#2FDA4E> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
+            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }}<#E84855> \uF044 {{ .Repo.Working.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<#2FDA4E> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
           }
         },
         {

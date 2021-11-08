@@ -611,7 +611,7 @@
                     "description": "Icon/text to display when there are no commits in the repo",
                     "default": "\uF594"
                   },
-                  "display_upstream_icon": {
+                  "fetch_upstream_icon": {
                     "type": "boolean",
                     "title": "Display Upstream Icon",
                     "description": "Display upstream icon or not",

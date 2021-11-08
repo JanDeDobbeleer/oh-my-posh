@@ -87,15 +87,15 @@ type git struct {
 }
 
 const (
-	// FetchStatus shows the status of the repository
+	// FetchStatus fetches the status of the repository
 	FetchStatus Property = "fetch_status"
-	// FetchStashCount show stash count or not
+	// FetchStashCount fetches the stash count
 	FetchStashCount Property = "fetch_stash_count"
-	// FetchWorktreeCount show worktree count or not
+	// FetchWorktreeCount fetches the worktree count
 	FetchWorktreeCount Property = "fetch_worktree_count"
+	// FetchUpstreamIcon fetches the upstream icon
+	FetchUpstreamIcon Property = "fetch_upstream_icon"
 
-	// DisplayUpstreamIcon show or hide the upstream icon
-	DisplayUpstreamIcon Property = "display_upstream_icon"
 	// BranchMaxLength truncates the length of the branch name
 	BranchMaxLength Property = "branch_max_length"
 	// BranchIcon the icon to use as branch indicator
@@ -187,20 +187,20 @@ func (g *git) shouldIgnoreRootRepository(rootDir string) bool {
 
 func (g *git) string() string {
 	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
-	displayStatus := g.getBool(FetchStatus, DisplayStatus, false)
+	displayStatus := g.getBool(FetchStatus, DisplayStatus)
 	if !displayStatus {
 		g.Repo.HEAD = g.getPrettyHEADName()
 	}
 	if displayStatus || statusColorsEnabled {
 		g.setGitStatus()
 	}
-	if g.Repo.Upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
+	if g.Repo.Upstream != "" && g.getBool(FetchUpstreamIcon, DisplayUpstreamIcon) {
 		g.Repo.UpstreamIcon = g.getUpstreamIcon()
 	}
-	if g.getBool(FetchStashCount, DisplayStashCount, false) {
+	if g.getBool(FetchStashCount, DisplayStashCount) {
 		g.Repo.StashCount = g.getStashContext()
 	}
-	if g.getBool(FetchWorktreeCount, DisplayWorktreeCount, false) {
+	if g.getBool(FetchWorktreeCount, DisplayWorktreeCount) {
 		g.Repo.WorktreeCount = g.getWorktreeContext()
 	}
 	// use template if available

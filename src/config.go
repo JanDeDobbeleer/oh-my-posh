@@ -199,8 +199,8 @@ func getDefaultConfig(info string) *Config {
 						Background:      "#fffb38",
 						Foreground:      "#193549",
 						Properties: map[Property]interface{}{
-							DisplayStashCount:   true,
-							DisplayUpstreamIcon: true,
+							FetchStashCount:   true,
+							FetchUpstreamIcon: true,
 						},
 					},
 					{

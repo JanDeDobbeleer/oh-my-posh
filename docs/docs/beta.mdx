@@ -42,7 +42,7 @@ You need to extend or create a custom theme with your tooltips. For example:
       "trailing_diamond": "",
       "properties": {
         "fetch_status": true,
-        "display_upstream_icon": true,
+        "fetch_upstream_icon": true,
         "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}"
       }
     }

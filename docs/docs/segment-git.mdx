@@ -45,7 +45,8 @@ An alternative is to use the [Posh-Git segment][poshgit]
   "properties": {
     "fetch_status": true,
     "fetch_stash_count": true,
-    "display_upstream_icon": true
+    "fetch_upstream_icon": true,
+    "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
   }
 }
 ```
@@ -63,6 +64,7 @@ You can set the following properties to `true` to enable fetching additional inf
 - fetch_status: `boolean` - fetch the local changes - defaults to `false`
 - fetch_stash_count: `boolean` fetch stash count - defaults to `false`
 - fetch_worktree_count: `boolean` fetch worktree count - defaults to `false`
+- fetch_upstream_icon: `boolean` - fetch upstream icon - defaults to `false`
 
 ### Icons
 
@@ -87,7 +89,6 @@ You can set the following properties to `true` to enable fetching additional inf
 
 #### Upstream
 
-- display_upstream_icon: `boolean` - fetch upstream icon - defaults to `false`
 - github_icon: `string` - icon/text to display when the upstream is Github - defaults to `\uF408 `
 - gitlab_icon: `string` - icon/text to display when the upstream is Gitlab - defaults to `\uF296 `
 - bitbucket_icon: `string` - icon/text to display when the upstream is Bitbucket - defaults to `\uF171 `

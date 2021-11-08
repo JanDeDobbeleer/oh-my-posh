@@ -60,8 +60,8 @@
           "properties": {
             "branch_icon": "\ue725 ",
             "fetch_status": true,
-            "display_upstream_icon": true,
-            "template": "{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<#ef5350> \uF046 {{ .Repo.Staging.String }}</>{{ end }}"
+            "fetch_upstream_icon": true,
+            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<#ef5350> \uF046 {{ .Repo.Staging.String }}</>{{ end }}"
           }
         },
         {

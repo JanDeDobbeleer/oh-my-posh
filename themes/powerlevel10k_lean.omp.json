@@ -36,7 +36,7 @@
           "foreground": "#FFE700",
           "properties": {
             "prefix": "",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         },
         {

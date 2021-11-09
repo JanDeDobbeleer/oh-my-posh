@@ -43,7 +43,7 @@ You need to extend or create a custom theme with your tooltips. For example:
       "properties": {
         "fetch_status": true,
         "fetch_upstream_icon": true,
-        "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}"
+        "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}"
       }
     }
   ]

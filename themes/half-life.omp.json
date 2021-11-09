@@ -49,7 +49,7 @@
             "rebase_icon": "",
             "cherry_pick_icon": "",
             "revert_icon": "",
-            "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }}<#87FF00> ● {{ .Repo.Staging.String }}</>{{ end }}{{ if .Repo.Working.Changed }}<#D75F00> ● {{ .Repo.Working.String }}</>{{ end }}",
+            "template": "{{ .HEAD }}{{ if .Staging.Changed }}<#87FF00> ● {{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }}<#D75F00> ● {{ .Working.String }}</>{{ end }}",
             "fetch_status": true
           }
         },

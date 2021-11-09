@@ -42,7 +42,7 @@
             "branch_icon": "",
             "prefix": " <#DDB15F>git(</>",
             "postfix": "<#DDB15F>)</>",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         },
         {

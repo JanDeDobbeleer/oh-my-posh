@@ -44,7 +44,7 @@
           "properties": {
             "prefix": "<#ffffff>\uE0B1</> ",
             "postfix": " ",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         },
         {

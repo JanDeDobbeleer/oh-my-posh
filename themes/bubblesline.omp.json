@@ -28,7 +28,7 @@
           "properties": {
             "prefix": "",
             "postfix": "",
-            "template": "{{ .Repo.HEAD }}",
+            "template": "{{ .HEAD }}",
             "branch_icon": ""
           }
         },

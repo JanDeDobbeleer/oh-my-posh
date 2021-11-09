@@ -30,7 +30,7 @@
             "properties": {
               "fetch_upstream_icon": true,
               "branch_icon": "",
-              "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}"
+              "template": "{{ .UpstreamIcon }}{{ .HEAD }}"
             }
           },
           {

@@ -23,7 +23,7 @@
           "properties": {
             "prefix": "<#CB4B16>[</>",
             "postfix": "<#CB4B16>]</>",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         },
         {

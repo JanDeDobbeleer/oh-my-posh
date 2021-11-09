@@ -63,7 +63,7 @@
           "style": "plain",
           "properties": {
             "prefix": "<darkGray>on</> <white>git:</>",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         },
         {

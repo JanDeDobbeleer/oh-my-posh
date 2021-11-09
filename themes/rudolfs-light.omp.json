@@ -40,8 +40,8 @@
           "background": "#E0E0E0",
           "foreground": "#424242",
           "foreground_templates": [
-            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#053F22{{ end }}",
-            "{{ if or (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}#0A703E{{ end }}"
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#053F22{{ end }}",
+            "{{ if or (gt .Ahead 0) (gt .Behind 0) }}#0A703E{{ end }}"
           ],
           "properties": {
             "fetch_status": true,
@@ -49,7 +49,7 @@
             "fetch_upstream_icon": true,
             "prefix": " [",
             "postfix": "] ",
-            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }}<#BD6200> \uF044 {{ .Repo.Working.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<#053F22> \uF046 {{ .Repo.Staging.String }}</>{{ end }}"
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#BD6200> \uF044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#053F22> \uF046 {{ .Staging.String }}</>{{ end }}"
           }
         },
         {

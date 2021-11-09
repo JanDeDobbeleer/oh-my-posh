@@ -31,7 +31,7 @@
           "properties": {
             "prefix": ":: <lightBlue>git(</>",
             "postfix": "<lightBlue>)</>",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         }
       ]

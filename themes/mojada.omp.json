@@ -71,16 +71,16 @@
           "foreground": "#193549",
           "background": "#fffb38",
           "background_templates": [
-            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ff9248{{ end }}",
-            "{{ if and (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}#f26d50{{ end }}",
-            "{{ if gt .Repo.Ahead 0 }}#f17c37{{ end }}",
-            "{{ if gt .Repo.Behind 0 }}#89d1dc{{ end }}"
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#ff9248{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#f26d50{{ end }}",
+            "{{ if gt .Ahead 0 }}#f17c37{{ end }}",
+            "{{ if gt .Behind 0 }}#89d1dc{{ end }}"
           ],
           "properties": {
             "fetch_status": true,
             "fetch_stash_count": true,
             "fetch_upstream_icon": true,
-            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
           }
         },
         {

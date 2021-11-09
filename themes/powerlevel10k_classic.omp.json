@@ -37,7 +37,7 @@
           "background": "#546E7A",
           "properties": {
             "prefix": "<#26C6DA>\uE0B1 </>",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         },
         {

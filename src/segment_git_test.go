@@ -37,7 +37,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 		env: env,
 	}
 	assert.True(t, g.enabled())
-	assert.Equal(t, fileInfo.path, g.Repo.gitWorkingFolder)
+	assert.Equal(t, fileInfo.path, g.gitWorkingFolder)
 }
 
 func TestEnabledInWorkingTree(t *testing.T) {
@@ -56,7 +56,7 @@ func TestEnabledInWorkingTree(t *testing.T) {
 		env: env,
 	}
 	assert.True(t, g.enabled())
-	assert.Equal(t, "/dir/hello/burp/burp", g.Repo.gitWorkingFolder)
+	assert.Equal(t, "/dir/hello/burp/burp", g.gitWorkingFolder)
 }
 
 func TestGetGitOutputForCommand(t *testing.T) {
@@ -68,10 +68,8 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	env.On("runCommand", "git", append(args, commandArgs...)).Return(want, nil)
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
-		env: env,
-		Repo: &Repo{
-			gitRootFolder: "test",
-		},
+		env:           env,
+		gitRootFolder: "test",
 	}
 	got := g.getGitCommandOutput(commandArgs...)
 	assert.Equal(t, want, got)
@@ -131,12 +129,10 @@ func setupHEADContextEnv(context *detachedContext) *git {
 	env.mockGitCommand(context.status, "status", "-unormal", "--short", "--branch")
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
-		env: env,
-		Repo: &Repo{
-			gitWorkingFolder: "",
-			Working:          &GitStatus{},
-			Staging:          &GitStatus{},
-		},
+		env:              env,
+		gitWorkingFolder: "",
+		Working:          &GitStatus{},
+		Staging:          &GitStatus{},
 	}
 	return g
 }
@@ -387,10 +383,8 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("getFileContent", "/logs/refs/stash").Return(tc.StashContent)
 		g := &git{
-			Repo: &Repo{
-				gitWorkingFolder: "",
-			},
-			env: env,
+			env:              env,
+			gitWorkingFolder: "",
 		}
 		got := g.getStashContext()
 		assert.Equal(t, tc.Expected, got)
@@ -569,11 +563,9 @@ func TestGitUpstream(t *testing.T) {
 			},
 		}
 		g := &git{
-			env: env,
-			Repo: &Repo{
-				Upstream: "origin/main",
-			},
-			props: props,
+			env:      env,
+			props:    props,
+			Upstream: "origin/main",
 		}
 		upstreamIcon := g.getUpstreamIcon()
 		assert.Equal(t, tc.Expected, upstreamIcon, tc.Case)
@@ -606,11 +598,9 @@ func TestGetBranchStatus(t *testing.T) {
 					BranchGoneIcon:      "gone",
 				},
 			},
-			Repo: &Repo{
-				Ahead:    tc.Ahead,
-				Behind:   tc.Behind,
-				Upstream: tc.Upstream,
-			},
+			Ahead:    tc.Ahead,
+			Behind:   tc.Behind,
+			Upstream: tc.Upstream,
 		}
 		assert.Equal(t, tc.Expected, g.getBranchStatus(), tc.Case)
 	}
@@ -706,13 +696,13 @@ func TestGitTemplateString(t *testing.T) {
 		Case     string
 		Expected string
 		Template string
-		Repo     *Repo
+		Git      *git
 	}{
 		{
 			Case:     "Only HEAD name",
 			Expected: "main",
-			Template: "{{ .Repo.HEAD }}",
-			Repo: &Repo{
+			Template: "{{ .HEAD }}",
+			Git: &git{
 				HEAD:   "main",
 				Behind: 2,
 			},
@@ -720,8 +710,8 @@ func TestGitTemplateString(t *testing.T) {
 		{
 			Case:     "Working area changes",
 			Expected: "main \uF044 +2 ~3",
-			Template: "{{ .Repo.HEAD }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}",
-			Repo: &Repo{
+			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
+			Git: &git{
 				HEAD: "main",
 				Working: &GitStatus{
 					Added:    2,
@@ -733,8 +723,8 @@ func TestGitTemplateString(t *testing.T) {
 		{
 			Case:     "No working area changes",
 			Expected: "main",
-			Template: "{{ .Repo.HEAD }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}",
-			Repo: &Repo{
+			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
+			Git: &git{
 				HEAD: "main",
 				Working: &GitStatus{
 					Changed: false,
@@ -744,8 +734,8 @@ func TestGitTemplateString(t *testing.T) {
 		{
 			Case:     "Working and staging area changes",
 			Expected: "main \uF046 +5 ~1 \uF044 +2 ~3",
-			Template: "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}",
-			Repo: &Repo{
+			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
+			Git: &git{
 				HEAD: "main",
 				Working: &GitStatus{
 					Added:    2,
@@ -762,8 +752,8 @@ func TestGitTemplateString(t *testing.T) {
 		{
 			Case:     "Working and staging area changes with separator",
 			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3",
-			Template: "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}", //nolint:lll
-			Repo: &Repo{
+			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}", //nolint:lll
+			Git: &git{
 				HEAD: "main",
 				Working: &GitStatus{
 					Added:    2,
@@ -780,8 +770,8 @@ func TestGitTemplateString(t *testing.T) {
 		{
 			Case:     "Working and staging area changes with separator and stash count",
 			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3 \uf692 3",
-			Template: "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}", //nolint:lll
-			Repo: &Repo{
+			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}", //nolint:lll
+			Git: &git{
 				HEAD: "main",
 				Working: &GitStatus{
 					Added:    2,
@@ -799,8 +789,8 @@ func TestGitTemplateString(t *testing.T) {
 		{
 			Case:     "No local changes",
 			Expected: "main",
-			Template: "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046{{ .Repo.Staging.String }}{{ end }}{{ if .Repo.Working.Changed }} \uF044{{ .Repo.Working.String }}{{ end }}",
-			Repo: &Repo{
+			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046{{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
+			Git: &git{
 				HEAD:    "main",
 				Staging: &GitStatus{},
 				Working: &GitStatus{},
@@ -809,8 +799,8 @@ func TestGitTemplateString(t *testing.T) {
 		{
 			Case:     "Upstream Icon",
 			Expected: "from GitHub on main",
-			Template: "from {{ .Repo.UpstreamIcon }} on {{ .Repo.HEAD }}",
-			Repo: &Repo{
+			Template: "from {{ .UpstreamIcon }} on {{ .HEAD }}",
+			Git: &git{
 				HEAD:         "main",
 				Staging:      &GitStatus{},
 				Working:      &GitStatus{},
@@ -820,14 +810,11 @@ func TestGitTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		g := &git{
-			props: &properties{
-				values: map[Property]interface{}{
-					FetchStatus: true,
-				},
+		tc.Git.props = &properties{
+			values: map[Property]interface{}{
+				FetchStatus: true,
 			},
-			Repo: tc.Repo,
 		}
-		assert.Equal(t, tc.Expected, g.templateString(tc.Template), tc.Case)
+		assert.Equal(t, tc.Expected, tc.Git.templateString(tc.Template), tc.Case)
 	}
 }

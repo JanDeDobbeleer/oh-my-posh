@@ -12,19 +12,19 @@ LicenseUrl: https://github.com/JanDeDobbeleer/oh-my-posh/raw/main/COPYING
 ShortDescription: Prompt theme engine for any shell
 Moniker: oh-my-posh
 Tags:
-- cli
-- cmd
-- command-line
-- command-prompt
-- console
-- developer-tools
-- oh-my-posh
-- powershell
-- ps
-- shell
-- terminal
-- utilities
-- wsl
+- "console"
+- "command-line"
+- "shell"
+- "command-prompt"
+- "powershell"
+- "wsl"
+- "developer-tools"
+- "utilities"
+- "cli"
+- "cmd"
+- "ps"
+- "terminal"
+- "oh-my-posh"
 ManifestType: defaultLocale
 ManifestVersion: 1.1.0
 ReleaseNotesUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v<VERSION>

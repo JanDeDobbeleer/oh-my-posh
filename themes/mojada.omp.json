@@ -72,9 +72,9 @@
           "background": "#fffb38",
           "background_templates": [
             "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ff9248{{ end }}",
-            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#f26d50{{ end }}",
-            "{{ if .Repo.Ahead gt 0 }}#f17c37{{ end }}",
-            "{{ if .Repo.Behind gt 0 }}#89d1dc{{ end }}"
+            "{{ if and (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}#f26d50{{ end }}",
+            "{{ if gt .Repo.Ahead 0 }}#f17c37{{ end }}",
+            "{{ if gt .Repo.Behind 0 }}#89d1dc{{ end }}"
           ],
           "properties": {
             "fetch_status": true,

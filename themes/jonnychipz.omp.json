@@ -121,8 +121,8 @@
           "background": "#ffffff",
           "foreground_templates": [
             "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ffea00{{ end }}",
-            "{{ if .Repo.Ahead gt 0 }}#2EC4B6{{ end }}",
-            "{{ if .Repo.Behind gt 0 }}#8A4FFF{{ end }}"
+            "{{ if gt .Repo.Ahead 0 }}#2EC4B6{{ end }}",
+            "{{ if gt .Repo.Behind 0 }}#8A4FFF{{ end }}"
           ],
           "properties": {
             "fetch_stash_count": true,

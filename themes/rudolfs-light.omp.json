@@ -41,7 +41,7 @@
           "foreground": "#424242",
           "foreground_templates": [
             "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#053F22{{ end }}",
-            "{{ if or (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#0A703E{{ end }}"
+            "{{ if or (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}#0A703E{{ end }}"
           ],
           "properties": {
             "fetch_status": true,

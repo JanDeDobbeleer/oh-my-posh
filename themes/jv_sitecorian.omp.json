@@ -71,9 +71,9 @@
           "background": "#6f42c1",
           "backround_templates": [
             "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#176f2c{{ end }}",
-            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#f26d50{{ end }}",
-            "{{ if .Repo.Ahead gt 0 }}#0366d6{{ end }}",
-            "{{ if .Repo.Behind gt 0 }}#f9c513{{ end }}"
+            "{{ if and (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}#f26d50{{ end }}",
+            "{{ if gt .Repo.Ahead 0 }}#0366d6{{ end }}",
+            "{{ if gt .Repo.Behind 0 }}#f9c513{{ end }}"
           ],
           "properties": {
             "fetch_stash_count": true,

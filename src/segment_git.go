@@ -297,7 +297,7 @@ func (g *git) getGitCommand() string {
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {
-	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+	args = append([]string{"-C", strings.TrimSuffix(g.Repo.gitRootFolder, ".git"), "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	val, _ := g.env.runCommand(g.getGitCommand(), args...)
 	return val
 }

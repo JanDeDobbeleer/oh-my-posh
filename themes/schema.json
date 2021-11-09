@@ -515,17 +515,35 @@
                   "template": {
                     "$ref": "#/definitions/template"
                   },
+                  "fetch_status": {
+                    "type": "boolean",
+                    "title": "Display Status",
+                    "description": "Display the local changes or not",
+                    "default": true
+                  },
+                  "fetch_stash_count": {
+                    "type": "boolean",
+                    "title": "Display Stash Count",
+                    "description": "Display the stash count or not",
+                    "default": false
+                  },
+                  "fetch_worktree_count": {
+                    "type": "boolean",
+                    "title": "Display Worktree Count",
+                    "description": "Display the worktree count or not",
+                    "default": false
+                  },
+                  "fetch_upstream_icon": {
+                    "type": "boolean",
+                    "title": "Display Upstream Icon",
+                    "description": "Display upstream icon or not",
+                    "default": false
+                  },
                   "branch_icon": {
                     "type": "string",
                     "title": "Branch Icon",
                     "description": "The icon to use in front of the git branch name",
                     "default": "\uE0A0 "
-                  },
-                  "display_branch_status": {
-                    "type": "boolean",
-                    "title": "Display Branch Status",
-                    "description": "Display the branch status or not",
-                    "default": true
                   },
                   "branch_identical_icon": {
                     "type": "string",
@@ -550,24 +568,6 @@
                     "title": "Branch Gone Icon",
                     "description": "The icon to display when there's no remote branch",
                     "default": "\u2262"
-                  },
-                  "display_status": {
-                    "type": "boolean",
-                    "title": "Display Status",
-                    "description": "Display the local changes or not",
-                    "default": true
-                  },
-                  "display_stash_count": {
-                    "type": "boolean",
-                    "title": "Display Stash Count",
-                    "description": "Display the stash count or not",
-                    "default": false
-                  },
-                  "display_worktree_count": {
-                    "type": "boolean",
-                    "title": "Display Worktree Count",
-                    "description": "Display the worktree count or not",
-                    "default": false
                   },
                   "commit_icon": {
                     "type": "string",
@@ -610,12 +610,6 @@
                     "title": "No Commits Icon",
                     "description": "Icon/text to display when there are no commits in the repo",
                     "default": "\uF594"
-                  },
-                  "fetch_upstream_icon": {
-                    "type": "boolean",
-                    "title": "Display Upstream Icon",
-                    "description": "Display upstream icon or not",
-                    "default": false
                   },
                   "github_icon": {
                     "type": "string",

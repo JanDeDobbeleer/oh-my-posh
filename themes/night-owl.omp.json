@@ -53,9 +53,9 @@
           "background": "#22da6e",
           "background_templates": [
             "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ffeb95{{ end }}",
-            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#c5e478{{ end }}",
-            "{{ if .Repo.Ahead gt 0 }}#C792EA{{ end }}",
-            "{{ if .Repo.Behind gt 0 }}#C792EA{{ end }}"
+            "{{ if and (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}#c5e478{{ end }}",
+            "{{ if gt .Repo.Ahead 0 }}#C792EA{{ end }}",
+            "{{ if gt .Repo.Behind 0 }}#C792EA{{ end }}"
           ],
           "properties": {
             "branch_icon": "\ue725 ",

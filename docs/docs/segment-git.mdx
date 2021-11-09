@@ -38,9 +38,9 @@ An alternative is to use the [Posh-Git segment][poshgit]
   "background": "#ffeb3b",
   "background_templates": [
     "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#FFEB3B{{ end }}",
-    "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#FFCC80{{ end }}",
-    "{{ if .Repo.Ahead gt 0 }}#B388FF{{ end }}",
-    "{{ if .Repo.Behind gt 0 }}#B388FB{{ end }}"
+    "{{ if and (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}#FFCC80{{ end }}",
+    "{{ if gt .Repo.Ahead 0 }}#B388FF{{ end }}",
+    "{{ if gt .Repo.Behind 0 }}#B388FB{{ end }}"
   ],
   "properties": {
     "fetch_status": true,

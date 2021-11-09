@@ -24,9 +24,9 @@
           "foreground": "#262b44",
           "background_templates": [
             "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#f77622{{ end }}",
-            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}#e43b44{{ end }}",
-            "{{ if .Repo.Ahead gt 0 }}#2ce8f5{{ end }}",
-            "{{ if .Repo.Behind gt 0 }}#f77622{{ end }}"
+            "{{ if and (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}#e43b44{{ end }}",
+            "{{ if gt .Repo.Ahead 0 }}#2ce8f5{{ end }}",
+            "{{ if gt .Repo.Behind 0 }}#f77622{{ end }}"
           ],
           "powerline_symbol": "\uE0B0",
           "properties": {

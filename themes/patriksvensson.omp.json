@@ -37,9 +37,9 @@
           "foreground": "green",
           "foreground_templates": [
             "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}yellow{{ end }}",
-            "{{ if and (.Repo.Ahead gt 0) (.Repo.Behind gt 0) }}red{{ end }}",
-            "{{ if .Repo.Ahead gt 0 }}red{{ end }}",
-            "{{ if .Repo.Behind gt 0 }}green{{ end }}"
+            "{{ if and (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}red{{ end }}",
+            "{{ if gt .Repo.Ahead 0 }}red{{ end }}",
+            "{{ if gt .Repo.Behind 0 }}green{{ end }}"
           ],
           "properties": {
             "fetch_status": true,

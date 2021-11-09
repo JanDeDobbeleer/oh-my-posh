@@ -101,7 +101,7 @@ Do not hesitate to [ask for assistance][issues] when you notice an issue or unex
 [psgallery]: https://www.powershellgallery.com/packages/oh-my-posh
 [omp]: https://github.com/JanDeDobbeleer/oh-my-posh2
 [wsl]: https://docs.microsoft.com/en-us/windows/wsl/install-win10
-[themesv2]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/master/Themes
+[themesv2]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/master/themes
 [omz]: https://github.com/ohmyzsh/ohmyzsh
 [golang]: https://golang.org/
 [introduction]: /docs/#concept

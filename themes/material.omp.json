@@ -30,7 +30,7 @@
           "properties": {
             "branch_icon": "",
             "fetch_status": false,
-            "template": "{{ .Repo.HEAD }}",
+            "template": "{{ .HEAD }}",
             "prefix": "<#5FAAE8>git:(</>",
             "postfix": "<#5FAAE8>)</>"
           }

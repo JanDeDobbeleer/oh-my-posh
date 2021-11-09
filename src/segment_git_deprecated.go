@@ -58,28 +58,28 @@ func (g *git) renderDeprecatedString(statusColorsEnabled bool) string {
 	}
 	buffer := new(bytes.Buffer)
 	// remote (if available)
-	if len(g.Repo.UpstreamIcon) != 0 {
-		fmt.Fprintf(buffer, "%s", g.Repo.UpstreamIcon)
+	if len(g.UpstreamIcon) != 0 {
+		fmt.Fprintf(buffer, "%s", g.UpstreamIcon)
 	}
 	// branchName
-	fmt.Fprintf(buffer, "%s", g.Repo.HEAD)
-	if len(g.Repo.BranchStatus) > 0 {
-		buffer.WriteString(g.Repo.BranchStatus)
+	fmt.Fprintf(buffer, "%s", g.HEAD)
+	if len(g.BranchStatus) > 0 {
+		buffer.WriteString(g.BranchStatus)
 	}
-	if g.Repo.Staging.Changed {
-		fmt.Fprint(buffer, g.getStatusDetailString(g.Repo.Staging, StagingColor, LocalStagingIcon, " \uF046"))
+	if g.Staging.Changed {
+		fmt.Fprint(buffer, g.getStatusDetailString(g.Staging, StagingColor, LocalStagingIcon, " \uF046"))
 	}
-	if g.Repo.Staging.Changed && g.Repo.Working.Changed {
+	if g.Staging.Changed && g.Working.Changed {
 		fmt.Fprint(buffer, g.props.getString(StatusSeparatorIcon, " |"))
 	}
-	if g.Repo.Working.Changed {
-		fmt.Fprint(buffer, g.getStatusDetailString(g.Repo.Working, WorkingColor, LocalWorkingIcon, " \uF044"))
+	if g.Working.Changed {
+		fmt.Fprint(buffer, g.getStatusDetailString(g.Working, WorkingColor, LocalWorkingIcon, " \uF044"))
 	}
-	if g.Repo.StashCount != 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(StashCountIcon, "\uF692 "), g.Repo.StashCount)
+	if g.StashCount != 0 {
+		fmt.Fprintf(buffer, " %s%d", g.props.getString(StashCountIcon, "\uF692 "), g.StashCount)
 	}
-	if g.Repo.WorktreeCount != 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(WorktreeCountIcon, "\uf1bb "), g.Repo.WorktreeCount)
+	if g.WorktreeCount != 0 {
+		fmt.Fprintf(buffer, " %s%d", g.props.getString(WorktreeCountIcon, "\uf1bb "), g.WorktreeCount)
 	}
 	return buffer.String()
 }
@@ -93,13 +93,13 @@ func (g *git) SetStatusColor() {
 }
 
 func (g *git) getStatusColor(defaultValue string) string {
-	if g.Repo.Staging.Changed || g.Repo.Working.Changed {
+	if g.Staging.Changed || g.Working.Changed {
 		return g.props.getColor(LocalChangesColor, defaultValue)
-	} else if g.Repo.Ahead > 0 && g.Repo.Behind > 0 {
+	} else if g.Ahead > 0 && g.Behind > 0 {
 		return g.props.getColor(AheadAndBehindColor, defaultValue)
-	} else if g.Repo.Ahead > 0 {
+	} else if g.Ahead > 0 {
 		return g.props.getColor(AheadColor, defaultValue)
-	} else if g.Repo.Behind > 0 {
+	} else if g.Behind > 0 {
 		return g.props.getColor(BehindColor, defaultValue)
 	}
 	return defaultValue

@@ -30,7 +30,7 @@
           "foreground": "#193549",
           "background": "#95ffa4",
           "properties": {
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         },
         {

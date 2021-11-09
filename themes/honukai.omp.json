@@ -32,7 +32,7 @@
           "foreground": "#B8B80A",
           "properties": {
             "prefix": "<#ffffff>on git:</>",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         }
       ]

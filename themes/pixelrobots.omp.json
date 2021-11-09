@@ -120,16 +120,16 @@
           "foreground": "#ffea00",
           "background": "#2f2f2f",
           "foreground_templates": [
-            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ffea00{{ end }}",
-            "{{ if gt .Repo.Ahead 0 }}#2EC4B6{{ end }}",
-            "{{ if gt .Repo.Behind 0 }}#8A4FFF{{ end }}"
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#ffea00{{ end }}",
+            "{{ if gt .Ahead 0 }}#2EC4B6{{ end }}",
+            "{{ if gt .Behind 0 }}#8A4FFF{{ end }}"
           ],
           "properties": {
             "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true,
             "prefix": "<#ffea00>\ue0b1 </>",
-            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }}<#E84855> \uF044 {{ .Repo.Working.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<#2FDA4E> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#E84855> \uF044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#2FDA4E> \uF046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
           }
         },
         {

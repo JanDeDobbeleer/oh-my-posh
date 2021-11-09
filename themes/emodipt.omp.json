@@ -34,7 +34,7 @@
           "style": "plain",
           "foreground": "#F3C267",
           "properties": {
-            "template": "{{ .Repo.HEAD }}",
+            "template": "{{ .HEAD }}",
             "branch_identical_icon": "\uF14A",
             "branch_gone_icon": "\u274E"
           }

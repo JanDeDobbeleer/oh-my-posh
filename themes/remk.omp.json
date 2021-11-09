@@ -35,7 +35,7 @@
             "branch_icon": "",
             "prefix": " git(",
             "postfix": ") ",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         },
         {

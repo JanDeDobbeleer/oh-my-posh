@@ -42,7 +42,7 @@
           "powerline_symbol": "\uE0B4",
           "properties": {
             "prefix": " ",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         }
       ]

@@ -36,11 +36,11 @@
           "foreground": "black",
           "background": "green",
           "background_templates": [
-            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}yellow{{ end }}"
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}"
           ],
           "properties": {
             "fetch_status": true,
-            "template": "{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}",
+            "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
             "branch_icon": " ",
             "branch_identical_icon": "≡",
             "branch_ahead_icon": "↑",

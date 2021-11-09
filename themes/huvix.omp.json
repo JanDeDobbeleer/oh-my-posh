@@ -48,7 +48,7 @@
               "foreground": "#56B6C2",
               "properties": {
                 "branch_icon": "",
-                "template": "{{ .Repo.HEAD }}",
+                "template": "{{ .HEAD }}",
                 "prefix": "<#E8CC97>git(</>",
                 "postfix": "<#E8CC97>) </>"
               }

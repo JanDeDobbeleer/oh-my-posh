@@ -110,17 +110,14 @@ func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
 
 func TestGetStatusColorLocalChangesStaging(t *testing.T) {
 	expected := changesColor
-	repo := &Repo{
-		Staging: &GitStatus{
-			Changed: true,
-		},
-	}
 	g := &git{
-		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				LocalChangesColor: expected,
 			},
+		},
+		Staging: &GitStatus{
+			Changed: true,
 		},
 	}
 	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
@@ -128,14 +125,11 @@ func TestGetStatusColorLocalChangesStaging(t *testing.T) {
 
 func TestGetStatusColorLocalChangesWorking(t *testing.T) {
 	expected := changesColor
-	repo := &Repo{
+	g := &git{
 		Staging: &GitStatus{},
 		Working: &GitStatus{
 			Changed: true,
 		},
-	}
-	g := &git{
-		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				LocalChangesColor: expected,
@@ -147,14 +141,11 @@ func TestGetStatusColorLocalChangesWorking(t *testing.T) {
 
 func TestGetStatusColorAheadAndBehind(t *testing.T) {
 	expected := changesColor
-	repo := &Repo{
+	g := &git{
 		Staging: &GitStatus{},
 		Working: &GitStatus{},
 		Ahead:   1,
 		Behind:  3,
-	}
-	g := &git{
-		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				AheadAndBehindColor: expected,
@@ -166,14 +157,11 @@ func TestGetStatusColorAheadAndBehind(t *testing.T) {
 
 func TestGetStatusColorAhead(t *testing.T) {
 	expected := changesColor
-	repo := &Repo{
+	g := &git{
 		Staging: &GitStatus{},
 		Working: &GitStatus{},
 		Ahead:   1,
 		Behind:  0,
-	}
-	g := &git{
-		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				AheadColor: expected,
@@ -185,14 +173,11 @@ func TestGetStatusColorAhead(t *testing.T) {
 
 func TestGetStatusColorBehind(t *testing.T) {
 	expected := changesColor
-	repo := &Repo{
+	g := &git{
 		Staging: &GitStatus{},
 		Working: &GitStatus{},
 		Ahead:   0,
 		Behind:  5,
-	}
-	g := &git{
-		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				BehindColor: expected,
@@ -204,14 +189,11 @@ func TestGetStatusColorBehind(t *testing.T) {
 
 func TestGetStatusColorDefault(t *testing.T) {
 	expected := changesColor
-	repo := &Repo{
+	g := &git{
 		Staging: &GitStatus{},
 		Working: &GitStatus{},
 		Ahead:   0,
 		Behind:  0,
-	}
-	g := &git{
-		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				BehindColor: changesColor,
@@ -223,13 +205,10 @@ func TestGetStatusColorDefault(t *testing.T) {
 
 func TestSetStatusColorForeground(t *testing.T) {
 	expected := changesColor
-	repo := &Repo{
+	g := &git{
 		Staging: &GitStatus{
 			Changed: true,
 		},
-	}
-	g := &git{
-		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				LocalChangesColor: changesColor,
@@ -245,13 +224,10 @@ func TestSetStatusColorForeground(t *testing.T) {
 
 func TestSetStatusColorBackground(t *testing.T) {
 	expected := changesColor
-	repo := &Repo{
+	g := &git{
 		Staging: &GitStatus{
 			Changed: true,
 		},
-	}
-	g := &git{
-		Repo: repo,
 		props: &properties{
 			values: map[Property]interface{}{
 				LocalChangesColor: changesColor,

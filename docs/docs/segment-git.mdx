@@ -37,16 +37,16 @@ An alternative is to use the [Posh-Git segment][poshgit]
   "foreground": "#193549",
   "background": "#ffeb3b",
   "background_templates": [
-    "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#FFEB3B{{ end }}",
-    "{{ if and (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}#FFCC80{{ end }}",
-    "{{ if gt .Repo.Ahead 0 }}#B388FF{{ end }}",
-    "{{ if gt .Repo.Behind 0 }}#B388FB{{ end }}"
+    "{{ if or (.Working.Changed) (.Staging.Changed) }}#FFEB3B{{ end }}",
+    "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#FFCC80{{ end }}",
+    "{{ if gt .Ahead 0 }}#B388FF{{ end }}",
+    "{{ if gt .Behind 0 }}#B388FB{{ end }}"
   ],
   "properties": {
     "fetch_status": true,
     "fetch_stash_count": true,
     "fetch_upstream_icon": true,
-    "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }} \uF044 {{ .Repo.Working.String }}{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }} \uF046 {{ .Repo.Staging.String }}{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
+    "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
   }
 }
 ```
@@ -97,17 +97,17 @@ You can set the following properties to `true` to enable fetching additional inf
 
 ## Template Properties
 
-- `.Repo.Working`: `GitStatus` - changes in the working tree (see below)
-- `.Repo.Staging`: `GitStatus` - staged changes in the work tree (see below)
-- `.Repo.HEAD`: `string` - the current HEAD context (branch/rebase/merge/...)
-- `.Repo.Behind`: `int` - commits behind of upstream
-- `.Repo.Ahead`: `int` - commits ahead of upstream
-- `.Repo.BranchStatus`: `string` - the current branch context (ahead/behind string representation)
-- `.Repo.Upstream`: `string` - the upstream name (remote)
-- `.Repo.UpstreamIcon`: `string` - the upstream icon (based on the icons above)
-- `.Repo.StashCount`: `int` - the stash count
-- `.Repo.WorktreeCount`: `int` - the worktree count
-- `.Repo.IsWorkTree`: `boolean` - if in a worktree repo or not
+- `.Working`: `GitStatus` - changes in the working tree (see below)
+- `.Staging`: `GitStatus` - staged changes in the work tree (see below)
+- `.HEAD`: `string` - the current HEAD context (branch/rebase/merge/...)
+- `.Behind`: `int` - commits behind of upstream
+- `.Ahead`: `int` - commits ahead of upstream
+- `.BranchStatus`: `string` - the current branch context (ahead/behind string representation)
+- `.Upstream`: `string` - the upstream name (remote)
+- `.UpstreamIcon`: `string` - the upstream icon (based on the icons above)
+- `.StashCount`: `int` - the stash count
+- `.WorktreeCount`: `int` - the worktree count
+- `.IsWorkTree`: `boolean` - if in a worktree repo or not
 
 ### GitStatus
 

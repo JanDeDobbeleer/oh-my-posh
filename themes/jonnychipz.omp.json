@@ -120,16 +120,16 @@
           "foreground": "#000000",
           "background": "#ffffff",
           "foreground_templates": [
-            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}#ffea00{{ end }}",
-            "{{ if gt .Repo.Ahead 0 }}#2EC4B6{{ end }}",
-            "{{ if gt .Repo.Behind 0 }}#8A4FFF{{ end }}"
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#ffea00{{ end }}",
+            "{{ if gt .Ahead 0 }}#2EC4B6{{ end }}",
+            "{{ if gt .Behind 0 }}#8A4FFF{{ end }}"
           ],
           "properties": {
             "fetch_stash_count": true,
             "fetch_upstream_icon": true,
             "fetch_status": true,
             "prefix": "<#000000>\ue0b1 </>",
-            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ if .Repo.Staging.Changed }}<#2FDA4E> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Working.Changed }}<#E84855> \uF044 {{ .Repo.Working.String }}</>{{ end }}"
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }}<#2FDA4E> \uF046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }}<#E84855> \uF044 {{ .Working.String }}</>{{ end }}"
           }
         },
         {

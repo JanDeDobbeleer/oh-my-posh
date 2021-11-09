@@ -38,7 +38,7 @@
             "prefix": "HEAD:",
             "branch_icon": "",
             "fetch_upstream_icon": false,
-            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}"
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}"
           }
         },
         {

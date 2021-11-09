@@ -36,10 +36,10 @@
           "style": "plain",
           "foreground": "green",
           "foreground_templates": [
-            "{{ if or (.Repo.Working.Changed) (.Repo.Staging.Changed) }}yellow{{ end }}",
-            "{{ if and (gt .Repo.Ahead 0) (gt .Repo.Behind 0) }}red{{ end }}",
-            "{{ if gt .Repo.Ahead 0 }}red{{ end }}",
-            "{{ if gt .Repo.Behind 0 }}green{{ end }}"
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}red{{ end }}",
+            "{{ if gt .Ahead 0 }}red{{ end }}",
+            "{{ if gt .Behind 0 }}green{{ end }}"
           ],
           "properties": {
             "fetch_status": true,
@@ -48,7 +48,7 @@
             "prefix": " on ",
             "postfix": "",
             "github_icon": " ",
-            "template": "{{ .Repo.UpstreamIcon }}{{ .Repo.HEAD }}{{ .Repo.BranchStatus }}{{ if .Repo.Working.Changed }}<red> \uF044 {{ .Repo.Working.String }}</>{{ end }}{{ if and (.Repo.Working.Changed) (.Repo.Staging.Changed) }} |{{ end }}{{ if .Repo.Staging.Changed }}<yellow> \uF046 {{ .Repo.Staging.String }}</>{{ end }}{{ if gt .Repo.StashCount 0 }} \uF692 {{ .Repo.StashCount }}{{ end }}"
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<red> \uF044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<yellow> \uF046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
           }
         },
         {

@@ -20,7 +20,7 @@
           "foreground": "#C2C206",
           "properties": {
             "prefix": "",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         },
         {

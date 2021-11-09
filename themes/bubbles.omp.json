@@ -43,7 +43,7 @@
             "prefix": "",
             "postfix": "",
             "branch_icon": "",
-            "template": "{{ .Repo.HEAD }}"
+            "template": "{{ .HEAD }}"
           }
         },
         {

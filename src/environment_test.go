@@ -18,14 +18,14 @@ func (_m *MockedTracer) close() {
 	_m.Called()
 }
 
-// error provides a mock function with given fields: message
-func (_m *MockedTracer) error(message string) {
-	_m.Called(message)
-}
-
 // init provides a mock function with given fields: home
 func (_m *MockedTracer) init(home string) {
 	_m.Called(home)
+}
+
+// log provides a mock function with given fields: lt, function, message
+func (_m *MockedTracer) log(lt logType, function, message string) {
+	_m.Called(lt, function, message)
 }
 
 // trace provides a mock function with given fields: start, function, args

@@ -46,21 +46,23 @@ func TestEnabledInWorkingTree(t *testing.T) {
 	env.On("getRuntimeGOOS", nil).Return("")
 	env.On("isWsl", nil).Return(false)
 	fileInfo := &fileInfo{
-		path:         "/dir/hello",
-		parentFolder: "/dir",
+		path:         "/dev/folder_worktree/.git",
+		parentFolder: "/dev/folder_worktree",
 		isDir:        false,
 	}
 	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
-	env.On("getFileContent", "/dir/hello").Return("gitdir: /dir/hello/burp/burp")
+	env.On("getFileContent", "/dev/folder_worktree/.git").Return("gitdir: /dev/real_folder/.git/worktrees/folder_worktree")
+	env.On("getFileContent", "/dev/real_folder/.git/worktrees/folder_worktree/gitdir").Return("/dev/folder_worktree.git\n")
 	g := &git{
 		env: env,
 	}
 	assert.True(t, g.enabled())
-	assert.Equal(t, "/dir/hello/burp/burp", g.gitWorkingFolder)
+	assert.Equal(t, "/dev/real_folder/.git/worktrees/folder_worktree", g.gitWorkingFolder)
+	assert.Equal(t, "/dev/folder_worktree", g.gitWorktreeFolder)
 }
 
 func TestGetGitOutputForCommand(t *testing.T) {
-	args := []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
+	args := []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}
 	want := "je suis le output"
 	env := new(MockedEnvironment)
@@ -137,7 +139,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 }
 
 func (m *MockedEnvironment) mockGitCommand(returnValue string, args ...string) {
-	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+	args = append([]string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	m.On("runCommand", "git", args).Return(returnValue, nil)
 }
 
@@ -550,7 +552,8 @@ func TestGitUpstream(t *testing.T) {
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
 		env.On("isWsl", nil).Return(false)
-		env.On("runCommand", "git", []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
+		env.On("runCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
 		env.On("getRuntimeGOOS", nil).Return("unix")
 		props := &properties{
 			values: map[Property]interface{}{

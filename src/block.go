@@ -58,6 +58,12 @@ func (b *Block) initPlain(env environmentInfo, config *Config) {
 	b.env = env
 }
 
+func (b *Block) setActiveSegment(segment *Segment) {
+	b.activeSegment = segment
+	b.activeBackground = segment.background()
+	b.activeForeground = segment.foreground()
+}
+
 func (b *Block) enabled() bool {
 	if b.Type == LineBreak {
 		return true
@@ -88,9 +94,7 @@ func (b *Block) renderSegments() string {
 		if !segment.active {
 			continue
 		}
-		b.activeSegment = segment
-		b.activeBackground = b.activeSegment.background()
-		b.activeForeground = b.activeSegment.foreground()
+		b.setActiveSegment(segment)
 		b.writer.setColors(b.activeBackground, b.activeForeground)
 		b.endPowerline()
 		b.renderSegmentText(segment.stringValue)
@@ -202,7 +206,7 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 			segmentTiming.stringValue = segment.string()
 			segmentTiming.stringDuration = time.Since(start)
 			b.previousActiveSegment = nil
-			b.activeSegment = segment
+			b.setActiveSegment(segment)
 			b.renderSegmentText(segmentTiming.stringValue)
 			if b.activeSegment.Style == Powerline {
 				b.writePowerLineSeparator(Transparent, b.activeBackground, true)

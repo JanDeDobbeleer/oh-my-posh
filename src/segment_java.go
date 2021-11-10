@@ -11,7 +11,7 @@ func (j *java) string() string {
 }
 
 func (j *java) init(props *properties, env environmentInfo) {
-	javaRegex := `(?: JRE) \((?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))?(?:\.(?P<patch>[0-9]+))?).*\),`
+	javaRegex := `(?: JRE)(?: \(.*\))? \((?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))?(?:\.(?P<patch>[0-9]+))?).*\),`
 	javaCmd := &cmd{
 		executable: "java",
 		args:       []string{"-Xinternalversion"},

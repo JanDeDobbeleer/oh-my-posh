@@ -60,7 +60,7 @@ func TestEnabledInWorkingTree(t *testing.T) {
 }
 
 func TestGetGitOutputForCommand(t *testing.T) {
-	args := []string{"-C", "test", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
+	args := []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}
 	want := "je suis le output"
 	env := new(MockedEnvironment)
@@ -68,8 +68,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	env.On("runCommand", "git", append(args, commandArgs...)).Return(want, nil)
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
-		env:           env,
-		gitRootFolder: "test",
+		env: env,
 	}
 	got := g.getGitCommandOutput(commandArgs...)
 	assert.Equal(t, want, got)
@@ -138,7 +137,7 @@ func setupHEADContextEnv(context *detachedContext) *git {
 }
 
 func (m *MockedEnvironment) mockGitCommand(returnValue string, args ...string) {
-	args = append([]string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	m.On("runCommand", "git", args).Return(returnValue, nil)
 }
 
@@ -551,7 +550,7 @@ func TestGitUpstream(t *testing.T) {
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
 		env.On("isWsl", nil).Return(false)
-		env.On("runCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil) //nolint:lll
+		env.On("runCommand", "git", []string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
 		env.On("getRuntimeGOOS", nil).Return("unix")
 		props := &properties{
 			values: map[Property]interface{}{

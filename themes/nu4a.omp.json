@@ -1,26 +1,29 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": true,
+  "osc99": false,
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}} ⚡ {{end}}{{.User}} ➔ 📁{{.Folder}}",
   "blocks": [
     {
       "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "root",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#100e23",
-          "background": "#ff3026",
-          "properties": {
-            "root_icon": "\uF0E7"
-          }
-        },
-        {
           "type": "session",
           "style": "powerline",
-          "powerline_symbol": "\uE0B0",
           "foreground": "#100e23",
-          "background": "#cfcfc4"
+          "background": "#cfcfc4",
+          "background_templates": [
+            "{{if .Root}}#ff3026{{else}}#cfcfc4{{end}}"
+          ],
+          "properties": {
+            "prefix": "",
+            "postfix": "",
+            "display_host": false,
+            "template": "{{if .Root}} \uF0E7 {{.UserName}} {{else}} {{.UserName}} {{end}}"
+          }
         },
         {
           "type": "path",
@@ -31,8 +34,9 @@
           "properties": {
             "home_icon": "\uF7DB",
             "folder_icon": "\uF115",
-            "folder_separator_icon": " \uE0B1 ",
-            "style": "full"
+            "folder_separator_icon": " \uE0B1 \uE5FF ",
+            "style": "full",
+            "enable_hyperlink": true
           }
         },
         {
@@ -86,6 +90,5 @@
         }
       ]
     }
-  ],
-  "final_space": true
+  ]
 }

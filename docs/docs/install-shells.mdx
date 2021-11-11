@@ -19,6 +19,7 @@ oh-my-posh --print-shell
     { label: 'bash', value: 'bash', },
     { label: 'fish', value: 'fish', },
     { label: 'nu', value: 'nu', },
+    { label: 'Cmder/Clink/ConEmu', value: 'Cmder/Clink/ConEmu', },
   ]
 }>
 <TabItem value="powershell">
@@ -109,5 +110,19 @@ config set prompt  "(oh-my-posh --config ~/.poshthemes/jandedobbeleer.omp.json |
 
 Restart nu shell for the changes to take effect.
 
+</TabItem>
+
+<TabItem value="Cmder/Clink/ConEmu">
+
+Create a new file in your Cmder/Clink/ConEmu installation directory `vendor\clink-completions\oh-my-posh.lua` with the following content, which assumes you have a config file in your `C:` partition called `oh-my-posh-config.json`.
+
+```lua
+local custom_prompt = clink.promptfilter(50)
+function custom_prompt:filter(prompt)
+    return io.popen("oh-my-posh --config C:\\oh-my-posh-config.json"):read("*a")
+end
+```
+
+For more information check [CLink's documentation on how to add oh-my-posh to your terminal.](https://chrisant996.github.io/clink/clink.html#oh-my-posh)
 </TabItem>
 </Tabs>

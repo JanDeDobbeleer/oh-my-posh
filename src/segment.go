@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"runtime/debug"
 	"time"
 )
 
@@ -284,7 +285,7 @@ func (segment *Segment) setStringValue(env environmentInfo) {
 			return
 		}
 		// display a message explaining omp failed(with the err)
-		message := fmt.Sprintf("oh-my-posh fatal error rendering %s segment:%s", segment.Type, err)
+		message := fmt.Sprintf("\noh-my-posh fatal error rendering %s segment:%s\n\n%s\n", segment.Type, err, debug.Stack())
 		fmt.Println(message)
 		segment.stringValue = "error"
 		segment.active = true

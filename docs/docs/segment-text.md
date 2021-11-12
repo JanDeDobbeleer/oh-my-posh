@@ -38,6 +38,6 @@ properties below.
 - `.Host`: `string` - the host name
 - `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
 
-[coloring]: /docs/configure#colors
+[coloring]: /docs/config-colors
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

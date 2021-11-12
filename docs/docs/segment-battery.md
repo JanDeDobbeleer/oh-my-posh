@@ -55,7 +55,7 @@ properties below. Defaults to `{{.Icon}}{{ if not .Error }}{{.Percentage}}{{ end
 - `.Error`: `string` - the error in case fetching the battery information failed
 - `.Icon`: `string` - the icon based on the battery state
 
-[colors]: /docs/configure#colors
+[colors]: /docs/config-colors
 [battery]: https://github.com/distatus/battery/blob/master/battery.go#L78
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

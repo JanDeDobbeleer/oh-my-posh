@@ -38,4 +38,4 @@ Displays the last exit code or that the last command failed based on the configu
 - success_icon: `string` - displays when there's no error and `"always_enabled": true` - defaults to `""`
 - error_icon: `string` - displays when there's an error - defaults to `""`
 
-[colors]: /docs/configure#colors
+[colors]: /docs/config-colors

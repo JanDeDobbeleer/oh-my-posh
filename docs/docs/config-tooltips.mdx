@@ -1,0 +1,96 @@
+---
+id: config-tooltips
+title: Tooltips
+sidebar_label: Tooltips
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+:::info
+Due to limitations (or not having found a way just yet), this feature only works in `zsh` and `powershell` for
+the time being.
+:::
+
+![Tooltip Demo](/img/posh-tooltip.gif)
+
+Tooltips are segments that are rendered as a right-aligned prompt while you're typing certain keywords.
+They behave similarly to the other segments when it comes to how and when they are shown so you can tweak
+them to act and look like you want. The key difference is that they can be invoked using `tips` which are the
+commands you are typing. Due to the possibility of the use of an alias, you can define for which keyword
+the segment should be rendered.
+
+### Configuration
+
+You need to extend or create a custom theme with your tooltips. For example:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+      ...
+  ],
+  "tooltips": [
+    {
+      "type": "git",
+      "tips": ["git", "g"],
+      "style": "diamond",
+      "foreground": "#193549",
+      "background": "#fffb38",
+      "leading_diamond": "",
+      "trailing_diamond": "",
+      "properties": {
+        "fetch_status": true,
+        "fetch_upstream_icon": true,
+        "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}"
+      }
+    }
+  ]
+}
+```
+
+This configuration will render a right-aligned git segment when you type `git` or `g` followed by a space. Keep in mind that
+this is a blocking call, meaning that if the segment renders slow, you can't type until it's visible. Optimizations in this space
+are being explored.
+
+## Enable the feature
+
+<Tabs
+  defaultValue="pwsh"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'pwsh', },
+    { label: 'zsh', value: 'zsh', },
+  ]
+}>
+<TabItem value="pwsh">
+
+Import/invoke Oh My Posh in your `$PROFILE` and add the following line below:
+
+```pwsh
+Enable-PoshTooltips
+```
+
+For example:
+
+```pwsh
+# $PROFILE
+oh-my-posh --init --shell pwsh --config ~\wildertheme.json | Invoke-Expression
+Enable-PoshTooltips
+```
+
+Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes to take effect.
+
+</TabItem>
+<TabItem value="zsh">
+
+Invoke Oh My Posh in `.zshrc` and add the following line below:
+
+```bash
+enable_poshtooltips
+```
+
+Restart your shell or reload `.zshrc` using `source ~/.zshrc` for the changes to take effect.
+
+</TabItem>
+</Tabs>

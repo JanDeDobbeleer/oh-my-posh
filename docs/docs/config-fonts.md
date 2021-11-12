@@ -1,7 +1,7 @@
 ---
-id: fonts
+id: config-fonts
 title: Fonts
-sidebar_label: 🆎 Fonts
+sidebar_label: Fonts
 ---
 
 ### Nerd Fonts
@@ -44,4 +44,4 @@ The `minimal` themes do not make use of Nerd Font icons.
 [meslo]: https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [font-thread]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/145#issuecomment-730162622
-[configuration]: /docs/configure
+[configuration]: /docs/config-overview

@@ -78,8 +78,9 @@ type git struct {
 	WorktreeCount int
 	IsWorkTree    bool
 
-	gitWorkingFolder string // .git working folder, can be different of root if using worktree
-	gitRootFolder    string // .git root folder
+	gitWorkingFolder  string // .git working folder, can be different of root if using worktree
+	gitRootFolder     string // .git root folder
+	gitWorktreeFolder string // .git real worktree path
 }
 
 const (
@@ -152,8 +153,7 @@ func (g *git) enabled() bool {
 	}
 	// handle worktree
 	g.gitRootFolder = gitdir.path
-	dirPointer := g.env.getFileContent(gitdir.path)
-	dirPointer = strings.Trim(dirPointer, " \r\n")
+	dirPointer := strings.Trim(g.env.getFileContent(gitdir.path), " \r\n")
 	matches := findNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
 	if matches != nil && matches["dir"] != "" {
 		g.gitWorkingFolder = matches["dir"]
@@ -162,6 +162,7 @@ func (g *git) enabled() bool {
 		// :ind+5 = index + /.git
 		ind := strings.LastIndex(g.gitWorkingFolder, "/.git/worktrees")
 		g.gitRootFolder = g.gitWorkingFolder[:ind+5]
+		g.gitWorktreeFolder = strings.TrimSuffix(g.env.getFileContent(g.gitWorkingFolder+"/gitdir"), ".git\n")
 		g.IsWorkTree = true
 		return true
 	}
@@ -292,7 +293,7 @@ func (g *git) getGitCommand() string {
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {
-	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+	args = append([]string{"-C", g.gitWorktreeFolder, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	val, _ := g.env.runCommand(g.getGitCommand(), args...)
 	return val
 }

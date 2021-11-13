@@ -26,6 +26,9 @@ var bashInit string
 //go:embed init/omp.zsh
 var zshInit string
 
+//go:embed init/omp.lua
+var cmdInit string
+
 const (
 	noExe       = "echo \"Unable to find Oh My Posh executable\""
 	zsh         = "zsh"
@@ -33,6 +36,7 @@ const (
 	pwsh        = "pwsh"
 	fish        = "fish"
 	powershell5 = "powershell"
+	winCMD      = "cmd"
 	plain       = "shell"
 )
 
@@ -284,7 +288,7 @@ func initShell(shell, configFile string) string {
 	switch shell {
 	case pwsh:
 		return fmt.Sprintf("(@(&\"%s\" --print-init --shell=pwsh --config=\"%s\") -join \"`n\") | Invoke-Expression", executable, configFile)
-	case zsh, bash, fish:
+	case zsh, bash, fish, winCMD:
 		return printShellInit(shell, configFile)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
@@ -305,6 +309,8 @@ func printShellInit(shell, configFile string) string {
 		return getShellInitScript(executable, configFile, bashInit)
 	case fish:
 		return getShellInitScript(executable, configFile, fishInit)
+	case winCMD:
+		return getShellInitScript(executable, configFile, cmdInit)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}

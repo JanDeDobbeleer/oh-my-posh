@@ -15,6 +15,7 @@ oh-my-posh --print-shell
   groupId="shell"
   values={[
     { label: 'powershell', value: 'powershell', },
+    { label: 'cmd', value: 'cmd', },
     { label: 'zsh', value: 'zsh', },
     { label: 'bash', value: 'bash', },
     { label: 'fish', value: 'fish', },
@@ -34,6 +35,26 @@ Once added, reload your profile for the changes to take effect.
 ```powershell
 . $PROFILE
 ```
+
+</TabItem>
+<TabItem value="cmd">
+
+There's no out of the box support for Windows CMD when it comes to custom prompts.
+There is however a way to do it using [Clink][clink], which at the same time supercharges
+your cmd experience. Follow the installation instructions and make sure you select autostart.
+
+Integrating Oh my Posh with Clink is easy: create a new file called oh-my-posh.lua in your Clink
+scripts directory (run `clink info` inside cmd to find that file's location).
+
+:::warning
+Use the full path to the config file, not the relative path.
+:::
+
+```lua title="oh-my-posh.lua"
+load(io.popen("oh-my-posh --config=\"C:/Users/jan/jandedobbeleer.omp.json\" --init --shell cmd"):read("*a"))()
+```
+
+Once added, restart cmd for the changes to take effect.
 
 </TabItem>
 <TabItem value="zsh">
@@ -111,3 +132,5 @@ Restart nu shell for the changes to take effect.
 
 </TabItem>
 </Tabs>
+
+[clink]: https://chrisant996.github.io/clink/

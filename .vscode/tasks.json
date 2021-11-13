@@ -17,6 +17,27 @@
       },
       "problemMatcher": "$go",
       "args": ["build", "-v"]
+    },
+    {
+      "type": "shell",
+      "command": "go",
+      "label": "devcontainer: build omp",
+      "options": {
+        "cwd": "${workspaceRoot}/src",
+        "shell": {
+          "executable": "bash",
+          "args": ["-c"]
+        },
+        "statusbar": {
+          "hide": false,
+          "color" : "#22C1D6",
+          "label" : "$(beaker) devcontainer: build omp",
+          "tooltip": "Compiles *oh-my-posh* from this repo while **overwriting** your preinstalled stable release."
+        }
+      },
+      "group": "build",
+      "problemMatcher": "$go",
+      "args": ["build", "-v", "-o", "`readlink", "/usr/bin/oh-my-posh`"]
     }
   ]
 }

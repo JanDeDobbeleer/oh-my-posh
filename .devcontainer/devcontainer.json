@@ -52,10 +52,12 @@
     "terminal.integrated.defaultProfile.linux": "pwsh",
     "terminal.integrated.defaultProfile.windows": "pwsh",
     "terminal.integrated.defaultProfile.osx": "pwsh",
+    "tasks.statusbar.default.hide": true
   },
 
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
+    "actboy168.tasks",
     "bungcip.better-toml",
     "davidanson.vscode-markdownlint",
     "editorconfig.editorconfig",

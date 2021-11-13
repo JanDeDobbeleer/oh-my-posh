@@ -254,3 +254,24 @@ func (e *engine) renderTransientPrompt() string {
 	}
 	return ""
 }
+
+func (e *engine) renderRPrompt() string {
+	filterRPromptBlock := func(blocks []*Block) *Block {
+		for _, block := range blocks {
+			if block.Type == RPrompt {
+				return block
+			}
+		}
+		return nil
+	}
+	block := filterRPromptBlock(e.config.Blocks)
+	if block == nil {
+		return ""
+	}
+	block.init(e.env, e.writer, e.ansi)
+	block.setStringValues()
+	if !block.enabled() {
+		return ""
+	}
+	return block.renderSegments()
+}

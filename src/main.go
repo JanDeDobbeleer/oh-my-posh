@@ -56,6 +56,7 @@ type args struct {
 	Author         *string
 	CursorPadding  *int
 	RPromptOffset  *int
+	RPrompt        *bool
 	BGColor        *string
 	StackCount     *int
 	Command        *string
@@ -141,6 +142,10 @@ func main() {
 			"rprompt-offset",
 			40,
 			"Offset the right prompt with x when using --export-img"),
+		RPrompt: flag.Bool(
+			"rprompt",
+			false,
+			"Only print the rprompt block"),
 		BGColor: flag.String(
 			"bg-color",
 			"#151515",
@@ -228,6 +233,10 @@ func main() {
 	}
 	if len(*args.Command) != 0 {
 		fmt.Print(engine.renderTooltip(*args.Command))
+		return
+	}
+	if *args.RPrompt {
+		fmt.Print(engine.renderRPrompt())
 		return
 	}
 	prompt := engine.render()

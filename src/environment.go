@@ -17,7 +17,7 @@ import (
 	"time"
 
 	"github.com/distatus/battery"
-	"github.com/shirou/gopsutil/process"
+	process "github.com/shirou/gopsutil/v3/process"
 )
 
 const (

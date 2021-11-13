@@ -124,8 +124,8 @@ const (
 	Rust SegmentType = "rust"
 	// OWM writes the weather coming from openweatherdata
 	OWM SegmentType = "owm"
-	// Memory writes used memory percentage
-	Memory SegmentType = "memory"
+	// SysInfo writes system information (memory, cpu, load)
+	SysInfo SegmentType = "sysinfo"
 	// Angular writes which angular cli version us currently active
 	Angular SegmentType = "angular"
 	// PHP writes which php version is currently active
@@ -260,7 +260,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Dart:          &dart{},
 		Nbgv:          &nbgv{},
 		Rust:          &rust{},
-		Memory:        &memory{},
+		SysInfo:       &sysinfo{},
 		Angular:       &angular{},
 		PHP:           &php{},
 	}

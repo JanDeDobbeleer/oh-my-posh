@@ -53,10 +53,7 @@
       "default": ""
     },
     "template": {
-      "type": "string",
-      "title": "Template text",
-      "description": "The template to use to render the segment text",
-      "default": ""
+      "$ref": "#/definitions/template"
     },
     "block": {
       "type": "object",
@@ -169,7 +166,7 @@
             "dart",
             "rust",
             "owm",
-            "memory",
+            "sysinfo",
             "angular",
             "php"
           ]
@@ -1643,12 +1640,12 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "memory" }
+              "type": { "const": "sysinfo" }
             }
           },
           "then": {
-            "title": "Get used memory percentage",
-            "description": "https://ohmyposh.dev/docs/memory",
+            "title": "Get sysinfo",
+            "description": "https://ohmyposh.dev/docs/sysinfo",
             "properties": {
               "properties": {
                 "properties": {
@@ -1658,18 +1655,8 @@
                     "description": "number of decimal places to show",
                     "default": 0
                   },
-                  "use_available": {
-                    "type": "boolean",
-                    "title": "Use available memory",
-                    "description": "whether to use available or free memory on Linux",
-                    "default": true
-                  },
-                  "memory_type": {
-                    "type": "string",
-                    "enum": ["physical", "swap"],
-                    "title": "Memory type",
-                    "description": "whether to show physical or swap memory",
-                    "default": "physical"
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }

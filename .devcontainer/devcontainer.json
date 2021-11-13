@@ -47,6 +47,7 @@
 
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
+    "eamodio.gitlens",
     "github.vscode-pull-request-github",
     "esbenp.prettier-vscode",
     "davidanson.vscode-markdownlint",

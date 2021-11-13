@@ -54,7 +54,7 @@ module.exports = {
         "java",
         "julia",
         "kubectl",
-        "memory",
+        "sysinfo",
         "nbgv",
         "node",
         "os",

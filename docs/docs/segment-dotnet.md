@@ -41,7 +41,7 @@ properties below. Defaults does nothing(backward compatibility).
 - version_url_template: `string` - A go [text/template][go-text-template] template extended
 with [sprig][sprig] utilizing the properties below. Defaults does nothing(backward compatibility).
 
-### Template Properties
+## Template Properties
 
 - `.Major`: `string` - is the major version
 - `.Minor`: `string` - is the minor version

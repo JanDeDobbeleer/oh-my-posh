@@ -14,6 +14,7 @@ module.exports = {
     prism: {
       theme: require("prism-react-renderer/themes/duotoneLight"),
       darkTheme: require("prism-react-renderer/themes/oceanicNext"),
+      additionalLanguages: ['powershell', 'lua'],
     },
     navbar: {
       title: "Oh My Posh",

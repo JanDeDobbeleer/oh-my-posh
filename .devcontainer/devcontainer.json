@@ -56,15 +56,15 @@
 
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
-    "github.vscode-pull-request-github",
+    "bungcip.better-toml",
+    "davidanson.vscode-markdownlint",
     "editorconfig.editorconfig",
     "esbenp.prettier-vscode",
-    "davidanson.vscode-markdownlint",
-    "yzhang.markdown-all-in-one",
-    "bungcip.better-toml",
-    "redhat.vscode-yaml",
+    "github.vscode-pull-request-github",
     "golang.go",
-    "ms-vscode.powershell"
+    "ms-vscode.powershell",
+    "redhat.vscode-yaml",
+    "yzhang.markdown-all-in-one",
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

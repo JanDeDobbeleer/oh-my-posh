@@ -66,7 +66,7 @@
     "golang.go",
     "ms-vscode.powershell",
     "redhat.vscode-yaml",
-    "yzhang.markdown-all-in-one",
+    "yzhang.markdown-all-in-one"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

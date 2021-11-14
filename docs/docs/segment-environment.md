@@ -50,3 +50,7 @@ The segment will show when the value of the environment variable isn't empty.
 ```
 
 - var_name: `string` - the name of the environment variable
+
+## Template Properties
+
+- `.Value`: `string` - the value of the environment variable

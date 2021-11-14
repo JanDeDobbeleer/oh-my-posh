@@ -447,6 +447,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
                   "var_name": {
                     "type": "string",
                     "title": "Variable Name",

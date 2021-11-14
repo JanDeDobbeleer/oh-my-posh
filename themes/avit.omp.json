@@ -33,7 +33,8 @@
           "style": "plain",
           "foreground": "#C94A16",
           "properties": {
-            "prefix": "x"
+            "template": "x{{ .Text }}",
+            "prefix": ""
           }
         }
       ]

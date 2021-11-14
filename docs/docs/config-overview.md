@@ -344,23 +344,36 @@ This means that for user Bill, who has a user account `Bill` on Windows and `bil
         {
           "type": "git",
           "style": "powerline",
-          "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
-          "background": "#ffeb3b"
+          "foreground_templates": [
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ffffff{{ end }}"
+          ],
+          "background": "#2e9599",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#f36943{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#a8216b{{ end }}",
+            "{{ if gt .Ahead 0 }}#35b5ff{{ end }}",
+            "{{ if gt .Behind 0 }}#f89cfa{{ end }}"
+          ],
+          "powerline_symbol": "\uE0B0",
+          "properties": {
+            "fetch_status": true,
+            "branch_max_length": 25,
+            "template": "{{ .HEAD }}{{ .BranchStatus }}"
+          }
         },
         {
           "type": "exit",
           "style": "diamond",
           "foreground": "#ffffff",
           "background": "#00897b",
+          "background_templates": ["{{ if gt .Code 0 }}#e91e63{{ end }}"],
           "leading_diamond": "",
           "trailing_diamond": "\uE0B4",
           "properties": {
-            "display_exit_code": false,
             "always_enabled": true,
-            "error_color": "#e91e63",
-            "color_background": true,
-            "prefix": "<#193549>\uE0B0 \uE23A</>"
+            "template": "\uE23A",
+            "prefix": "<parentBackground>\uE0B0</> "
           }
         }
       ]

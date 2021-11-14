@@ -75,14 +75,12 @@
           "style": "diamond",
           "foreground": "#ffffff",
           "background": "#2e9599",
-          "leading_diamond": "<transparent, #2e9599>\uE0B0</>",
+          "background_templates": ["{{ if gt .Code 0 }}#f1184c{{ end }}"],
+          "leading_diamond": "<transparent,background>\uE0B0</>",
           "trailing_diamond": "\uE0B4",
           "properties": {
-            "display_exit_code": false,
-            "always_enabled": true,
-            "error_color": "#f1184c",
-            "color_background": true,
-            "prefix": " \uFC0C"
+            "template": "\uF7d4",
+            "always_enabled": true
           }
         }
       ]

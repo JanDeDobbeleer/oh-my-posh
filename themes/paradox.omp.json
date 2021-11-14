@@ -58,7 +58,7 @@
           "foreground": "#ffffff",
           "background": "#ff8080",
           "properties": {
-            "prefix": " \uE20F"
+            "template": "\uE20F"
           }
         }
       ]

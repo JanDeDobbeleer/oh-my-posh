@@ -206,7 +206,7 @@ func (g *git) string() string {
 	}
 	// legacy render string	if no template
 	// remove this for 6.0
-	return g.renderDeprecatedString(statusColorsEnabled)
+	return g.deprecatedString(statusColorsEnabled)
 }
 
 func (g *git) templateString(segmentTemplate string) string {

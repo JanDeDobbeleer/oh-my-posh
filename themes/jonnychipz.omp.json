@@ -45,14 +45,13 @@
           "style": "diamond",
           "foreground": "#ffffff",
           "background": "#4707a8",
+          "background_templates": ["{{ if gt .Code 0 }}#f1184c{{ end }}"],
           "leading_diamond": "",
           "trailing_diamond": "\uE0B4",
           "properties": {
-            "display_exit_code": false,
+            "template": " \uE23A",
             "always_enabled": true,
-            "error_color": "#f1184c",
-            "color_background": true,
-            "prefix": "<transparent>\uE0B0</> \uE23A"
+            "prefix": "<transparent>\uE0B0</>"
           }
         }
       ]

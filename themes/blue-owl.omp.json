@@ -81,7 +81,8 @@
           "foreground": "#ffffff",
           "background": "#910000",
           "properties": {
-            "prefix": "<transparent> \uF12A</> "
+            "prefix": "<transparent> \uF12A</> ",
+            "template": "{{ .Text }}"
           }
         }
       ]
@@ -124,11 +125,11 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#ffffff",
+          "foreground_templates": ["{{ if gt .Code 0 }}#ff0000{{ end }}"],
           "properties": {
-            "prefix": "\u276F",
-            "always_enabled": true,
-            "error_color": "#ff0000",
-            "display_exit_code": false
+            "template": "\u276F",
+            "prefix": "",
+            "always_enabled": true
           }
         }
       ]

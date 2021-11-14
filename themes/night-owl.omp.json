@@ -290,11 +290,11 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#22da6e",
+          "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
           "properties": {
-            "prefix": "\ue285\ue285",
-            "display_exit_code": false,
-            "always_enabled": true,
-            "error_color": "#ef5350"
+            "template": "\ue285\ue285",
+            "prefix": "",
+            "always_enabled": true
           }
         }
       ]

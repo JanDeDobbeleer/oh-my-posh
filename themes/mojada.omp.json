@@ -103,10 +103,8 @@
           "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "display_exit_code": false,
             "always_enabled": true,
-            "success_icon": "<#00ff00>\uF633</>",
-            "error_icon": "<#ff0000>\uF659</>"
+            "template": "{{ if gt .Code 0 }}\uF659{{ else }}\uF633{{ end }}"
           }
         },
         {

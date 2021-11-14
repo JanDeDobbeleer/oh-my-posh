@@ -77,10 +77,10 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#B48EAD",
+          "foreground_templates": ["{{ if gt .Code 0 }}#BF616A{{ end }}"],
           "properties": {
-            "prefix": "\u276f",
-            "display_exit_code": false,
-            "error_color": "#BF616A",
+            "template": "\u276f",
+            "prefix": "",
             "always_enabled": true
           }
         }

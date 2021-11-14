@@ -99,13 +99,10 @@
           "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#4caf50",
-          "background_templates": [],
+          "background_templates": ["{{ if gt .Code 0 }}red{{ end }}"],
           "properties": {
             "always_enabled": true,
-            "success_icon": "\uf469 \u2665 ",
-            "color_background": true,
-            "error_icon": "\uf525 ",
-            "error_color": "red"
+            "template": "{{ if gt .Code 0 }}\uf525{{ else }}\uf469 \u2665{{ end }} "
           }
         }
       ]

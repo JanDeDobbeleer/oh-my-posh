@@ -92,8 +92,9 @@
         {
           "background": "#910000",
           "foreground": "#ffffff",
-          "leading_diamond": "<transparent,#910000>\uE0B0</>",
+          "leading_diamond": "<transparent,background>\uE0B0</>",
           "properties": {
+            "template": "{{ .Text }}",
             "prefix": "<transparent> \uF12A</> "
           },
           "style": "diamond",

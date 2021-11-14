@@ -473,30 +473,14 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_exit_code": {
-                    "type": "boolean",
-                    "title": "Display Exit Code",
-                    "description": "Show or hide the exit code",
-                    "default": true
-                  },
                   "always_enabled": {
                     "type": "boolean",
                     "title": "Always Enabled",
                     "description": "Always show the status",
                     "default": false
                   },
-                  "color_background": {
-                    "type": "boolean",
-                    "title": "Color Background",
-                    "description": "Color the background or foreground",
-                    "default": false
-                  },
-                  "error_color": { "$ref": "#/definitions/color" },
-                  "always_numeric": {
-                    "type": "boolean",
-                    "title": "Always Numeric",
-                    "description": "Always display the exit code as a number",
-                    "default": false
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1610,6 +1594,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
                   "always_enabled": {
                     "type": "boolean",
                     "title": "Always Enabled",

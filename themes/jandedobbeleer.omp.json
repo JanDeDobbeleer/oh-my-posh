@@ -162,15 +162,14 @@
           "type": "exit",
           "style": "diamond",
           "foreground": "#ffffff",
-          "background": "#2e9599",
+          "background": "#00897b",
+          "background_templates": ["{{ if gt .Code 0 }}#e91e63{{ end }}"],
           "leading_diamond": "",
-          "trailing_diamond": "",
+          "trailing_diamond": "\uE0B4",
           "properties": {
-            "display_exit_code": false,
             "always_enabled": true,
-            "error_color": "#f1184c",
-            "color_background": true,
-            "prefix": "<#83769c>\uE0B0</> "
+            "template": "\uE23A",
+            "prefix": "<parentBackground>\uE0B0</> "
           }
         }
       ]

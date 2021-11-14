@@ -6,6 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// GIT Segment
+
 func TestGetStatusDetailStringDefault(t *testing.T) {
 	expected := "icon +1"
 	status := &GitStatus{
@@ -256,4 +258,46 @@ func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
 	}
 	g.string()
 	assert.Equal(t, expected, g.props.background)
+}
+
+// EXIT Segement
+
+func TestExitWriterDeprecatedString(t *testing.T) {
+	cases := []struct {
+		ExitCode        int
+		Expected        string
+		SuccessIcon     string
+		ErrorIcon       string
+		DisplayExitCode bool
+		AlwaysNumeric   bool
+	}{
+		{ExitCode: 129, Expected: "SIGHUP", DisplayExitCode: true},
+		{ExitCode: 5001, Expected: "5001", DisplayExitCode: true},
+		{ExitCode: 147, Expected: "SIGSTOP", DisplayExitCode: true},
+		{ExitCode: 147, Expected: "", DisplayExitCode: false},
+		{ExitCode: 147, Expected: "147", DisplayExitCode: true, AlwaysNumeric: true},
+		{ExitCode: 0, Expected: "wooopie", SuccessIcon: "wooopie"},
+		{ExitCode: 129, Expected: "err SIGHUP", ErrorIcon: "err ", DisplayExitCode: true},
+		{ExitCode: 129, Expected: "err", ErrorIcon: "err", DisplayExitCode: false},
+	}
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("lastErrorCode", nil).Return(tc.ExitCode)
+		props := &properties{
+			foreground: "#111111",
+			background: "#ffffff",
+			values: map[Property]interface{}{
+				SuccessIcon:     tc.SuccessIcon,
+				ErrorIcon:       tc.ErrorIcon,
+				DisplayExitCode: tc.DisplayExitCode,
+				AlwaysNumeric:   tc.AlwaysNumeric,
+			},
+		}
+		e := &exit{
+			env:   env,
+			props: props,
+		}
+		assert.Equal(t, tc.Expected, e.string())
+	}
 }

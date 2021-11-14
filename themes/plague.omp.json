@@ -78,13 +78,12 @@
           "style": "plain",
           "foreground": "#ffffff",
           "background": "#2e9599",
+          "background_templates": ["{{ if gt .Code 0 }}#f1184c{{ end }}"],
           "properties": {
-            "display_exit_code": false,
             "always_enabled": true,
-            "error_color": "#f1184c",
-            "color_background": true,
-            "prefix": "<transparent>\uE0B0</> \uE23A ",
-            "postfix": "<#2e9599,transparent>\uE0B4</>"
+            "template": " \uE23A ",
+            "prefix": "<transparent>\uE0B0</>",
+            "postfix": "<background,transparent>\uE0B4</>"
           }
         }
       ]

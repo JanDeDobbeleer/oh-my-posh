@@ -76,7 +76,10 @@
         {
           "type": "exit",
           "style": "plain",
-          "foreground": "#CB4B16"
+          "foreground": "#CB4B16",
+          "properties": {
+            "template": "{{ .Text }}"
+          }
         },
         {
           "type": "text",

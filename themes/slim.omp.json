@@ -207,13 +207,10 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#9FD356",
+          "foreground_templates": ["{{ if gt .Code 0 }}#E84855{{ end }}"],
           "properties": {
-            "display_exit_code": true,
-            "always_numeric": true,
             "always_enabled": true,
-            "error_color": "#E84855",
-            "color_background": false,
-            "prefix": " \uf705 "
+            "template": "\uf705 {{ if gt .Code 0 }}{{ .Code }}{{ end }}"
           }
         }
       ]

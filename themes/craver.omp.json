@@ -95,11 +95,9 @@
           "powerline_symbol": "\uE0B4",
           "foreground": "#242424",
           "background": "#33DD2D",
+          "background_templates": ["{{ if gt .Code 0 }}#f1184c{{ end }}"],
           "properties": {
-            "display_exit_code": false,
-            "color_background": true,
-            "error_color": "#f1184c",
-            "prefix": " \ufc8d"
+            "template": "\uF7d4"
           }
         }
       ]

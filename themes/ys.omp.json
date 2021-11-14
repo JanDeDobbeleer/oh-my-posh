@@ -80,7 +80,7 @@
           "style": "plain",
           "foreground": "red",
           "properties": {
-            "prefix": " C:",
+            "template": "C:{{ if gt .Code 0 }}{{ .Code }}{{ end }}",
             "always_numeric": true
           }
         }

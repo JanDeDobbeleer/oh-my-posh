@@ -1,9 +1,9 @@
 package main
 
 type envvar struct {
-	props   *properties
-	env     environmentInfo
-	content string
+	props *properties
+	env   environmentInfo
+	Value string
 }
 
 const (
@@ -13,12 +13,12 @@ const (
 
 func (e *envvar) enabled() bool {
 	name := e.props.getString(VarName, "")
-	e.content = e.env.getenv(name)
-	return e.content != ""
+	e.Value = e.env.getenv(name)
+	return e.Value != ""
 }
 
 func (e *envvar) string() string {
-	return e.content
+	return e.Value
 }
 
 func (e *envvar) init(props *properties, env environmentInfo) {

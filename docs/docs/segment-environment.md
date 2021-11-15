@@ -34,7 +34,7 @@ New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
 
 The segment will show when the value of the environment variable isn't empty.
 
-## Sample Configuration
+## Sample *Configuration*
 
 ```json
 {

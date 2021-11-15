@@ -20,6 +20,9 @@ module.exports = {
       label: "⚙️ Configuration",
       items: [
         "config-overview",
+        "config-block",
+        "config-segment",
+        "config-sample",
         "config-title",
         "config-colors",
         "config-text-style",

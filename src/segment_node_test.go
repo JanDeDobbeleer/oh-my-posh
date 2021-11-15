@@ -7,15 +7,25 @@ import (
 )
 
 func TestNodeMatchesVersionFile(t *testing.T) {
+	nodeVersion := version{
+		Full:  "1.2.3",
+		Major: "1",
+		Minor: "2",
+		Patch: "3",
+	}
 	cases := []struct {
 		Case      string
 		Expected  bool
 		RCVersion string
-		Version   string
 	}{
-		{Case: "no file context", Expected: true, RCVersion: "", Version: "durp"},
-		{Case: "version match", Expected: true, RCVersion: "durp", Version: "durp"},
-		{Case: "version mismatch", Expected: false, RCVersion: "werp", Version: "durp"},
+		{Case: "no file context", Expected: true, RCVersion: ""},
+		{Case: "version match", Expected: true, RCVersion: "1.2.3"},
+		{Case: "version mismatch", Expected: false, RCVersion: "3.2.1"},
+		{Case: "version match in other format", Expected: true, RCVersion: "v1.2.3"},
+		{Case: "version match without patch", Expected: true, RCVersion: "1.2"},
+		{Case: "version match without patch in other format", Expected: true, RCVersion: "v1.2"},
+		{Case: "version match without minor", Expected: true, RCVersion: "1"},
+		{Case: "version match without minor in other format", Expected: true, RCVersion: "v1"},
 	}
 
 	for _, tc := range cases {
@@ -25,9 +35,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 			language: &language{
 				env: env,
 				activeCommand: &cmd{
-					version: &version{
-						Full: tc.Version,
-					},
+					version: &nodeVersion,
 				},
 			},
 		}

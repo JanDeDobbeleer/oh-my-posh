@@ -61,5 +61,13 @@ func (n *node) matchesVersionFile() bool {
 	if len(fileVersion) == 0 {
 		return true
 	}
-	return fileVersion == n.language.activeCommand.version.Full
+
+	regex := fmt.Sprintf(
+		`(?im)^v?%s(\.?%s)?(\.?%s)?$`,
+		n.language.activeCommand.version.Major,
+		n.language.activeCommand.version.Minor,
+		n.language.activeCommand.version.Patch,
+	)
+
+	return matchString(regex, fileVersion)
 }

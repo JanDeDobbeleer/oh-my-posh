@@ -18,7 +18,20 @@ func (e *envvar) enabled() bool {
 }
 
 func (e *envvar) string() string {
-	return e.Value
+	segmentTemplate := e.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) == 0 {
+		return e.Value
+	}
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  e,
+		Env:      e.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (e *envvar) init(props *properties, env environmentInfo) {

@@ -118,6 +118,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="http://www.terrasoft.gr/"><img src="https://avatars.githubusercontent.com/u/598065?v=4?s=100" width="100px;" alt=""/><br /><sub><b>George Schizas</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=gschizas" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/denelon"><img src="https://avatars.githubusercontent.com/u/61799811?v=4?s=100" width="100px;" alt=""/><br /><sub><b>denelon</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=denelon" title="Code">💻</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/AbdelrahmanHafez"><img src="https://avatars.githubusercontent.com/u/19984935?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Hafez</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=AbdelrahmanHafez" title="Documentation">📖</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->

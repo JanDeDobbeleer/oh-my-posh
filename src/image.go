@@ -265,6 +265,7 @@ func (ir *ImageRenderer) cleanContent() {
 	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\x1b[K", "")
 	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\x1b[1F", "")
 	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\x1b8", "")
+	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\u2800", " ")
 	// replace rprompt with adding and mark right aligned blocks with a pointer
 	ir.ansiString = strings.ReplaceAll(ir.ansiString, rPromptAnsi, fmt.Sprintf("_%s", strings.Repeat(" ", ir.cursorPadding)))
 	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\x1b[1000C", strings.Repeat(" ", ir.rPromptOffset))

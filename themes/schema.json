@@ -182,7 +182,7 @@
             "angular",
             "php",
             "wifi",
-            "regquery"
+            "winreg"
           ]
         },
         "style": {
@@ -1724,6 +1724,32 @@
                     "type": "string",
                     "title": "Registry Key",
                     "description": "The key under he registry path to get (case insensitive).  If left blank, will get the value of the (Default) key in the registry_path",
+                    "default": ""
+                  },
+                  "query_fail_behaviour" : {
+                    "type":"string",
+                    "title": "Query failure behaviour",
+                    "description": "What to do when the registry query fails",
+                    "default":"hide_segment",
+                    "enum": ["hide_segment", "display_fallback_string"]
+                  },
+                  "query_fail_fallback_string": {
+                    "type": "string",
+                    "title": "Query Failure fallback string",
+                    "description": "In the event of a failure to get the requested key, this string will be displayed in the segment if 'query_fail_behaviour' is set to 'display_fallback_string'",
+                    "default": ""
+                  },
+                  "query_fail_behaviour" : {
+                    "type":"string",
+                    "title": "Query failure behaviour",
+                    "description": "What to do when the registry query fails",
+                    "default":"hide_segment",
+                    "enum": ["hide_segment", "display_fallback_string", "show_debug_info"]
+                  },
+                  "query_fail_fallback_string": {
+                    "type": "string",
+                    "title": "Query Failure fallback string",
+                    "description": "In the event of a failure to get the requested key, this string will be displayed in the segment if 'query_fail_behaviour' is set to 'display_fallback_string'",
                     "default": ""
                   }
                 }

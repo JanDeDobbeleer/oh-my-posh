@@ -130,6 +130,8 @@ const (
 	Angular SegmentType = "angular"
 	// PHP writes which php version is currently active
 	PHP SegmentType = "php"
+	// RegQuery queries the Windows registry.
+	RegQuery SegmentType = "regquery"
 )
 
 func (segment *Segment) string() string {
@@ -263,6 +265,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Memory:        &memory{},
 		Angular:       &angular{},
 		PHP:           &php{},
+		RegQuery:	   &regquery{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

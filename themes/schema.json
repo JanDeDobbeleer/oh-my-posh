@@ -1698,6 +1698,38 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "regquery" }
+            }
+          },
+          "then": {
+            "title": "Registry Query",
+            "description": "https://ohmyposh.dev/docs/regquery",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
+                  "registry_path": {
+                    "type": "string",
+                    "title": "Registry Path",
+                    "description": "The path under which the registy key lives (case insensitive)",
+                    "default": ""
+                  },
+                  "registry_key": {
+                    "type": "string",
+                    "title": "Registry Key",
+                    "description": "The key under he registry path to get (case insensitive)",
+                    "default": ""
+                  }
+                }
+              }
+            }
+          }
         }
       ]
     }

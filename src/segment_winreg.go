@@ -32,11 +32,17 @@ func (wr *winreg) enabled() bool {
 
 	var err error
 	wr.Value, err = wr.env.getWindowsRegistryKeyValue(registryPath, registryKey)
-	if len(fallback) > 0 && (err != nil || len(wr.Value) == 0) {
-		wr.Value = fallback
-		return true
+
+	if err != nil {
+		if len(fallback) > 0 {
+			wr.Value = fallback
+			return true
+		}
+
+		return false
 	}
-	return err == nil && len(wr.Value) > 0
+
+	return true
 }
 
 func (wr *winreg) string() string {

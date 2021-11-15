@@ -17,16 +17,15 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 		Case      string
 		Expected  bool
 		RCVersion string
-		Version   version
 	}{
-		{Case: "no file context", Expected: true, RCVersion: "", Version: nodeVersion},
-		{Case: "version match", Expected: true, RCVersion: "1.2.3", Version: nodeVersion},
-		{Case: "version mismatch", Expected: false, RCVersion: "3.2.1", Version: nodeVersion},
-		{Case: "version match in other format", Expected: true, RCVersion: "v1.2.3", Version: nodeVersion},
-		{Case: "version match without patch", Expected: true, RCVersion: "1.2", Version: nodeVersion},
-		{Case: "version match without patch in other format", Expected: true, RCVersion: "v1.2", Version: nodeVersion},
-		{Case: "version match without minor", Expected: true, RCVersion: "1", Version: nodeVersion},
-		{Case: "version match without minor in other format", Expected: true, RCVersion: "v1", Version: nodeVersion},
+		{Case: "no file context", Expected: true, RCVersion: ""},
+		{Case: "version match", Expected: true, RCVersion: "1.2.3"},
+		{Case: "version mismatch", Expected: false, RCVersion: "3.2.1"},
+		{Case: "version match in other format", Expected: true, RCVersion: "v1.2.3"},
+		{Case: "version match without patch", Expected: true, RCVersion: "1.2"},
+		{Case: "version match without patch in other format", Expected: true, RCVersion: "v1.2"},
+		{Case: "version match without minor", Expected: true, RCVersion: "1"},
+		{Case: "version match without minor in other format", Expected: true, RCVersion: "v1"},
 	}
 
 	for _, tc := range cases {
@@ -36,7 +35,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 			language: &language{
 				env: env,
 				activeCommand: &cmd{
-					version: &tc.Version,
+					version: &nodeVersion,
 				},
 			},
 		}

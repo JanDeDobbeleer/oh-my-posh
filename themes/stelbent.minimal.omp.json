@@ -84,13 +84,11 @@
             "branch_identical_icon": "\u2261",
             "cherry_pick_icon": "\u2713 ",
             "commit_icon": "\u25b7 ",
-            "local_staged_icon": "",
-            "local_working_icon": "",
             "merge_icon": "\u25f4 ",
             "no_commits_icon": "[no commits]",
             "rebase_icon": "\u2c62 ",
             "tag_icon": "\u25b6 ",
-            "template": "{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} \u2502{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} {{ .StashCount }}{{ end }}"
+            "template": "{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} \u2502{{ end }}{{ if .Staging.Changed }} {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} {{ .StashCount }}{{ end }}"
           }
         },
         {

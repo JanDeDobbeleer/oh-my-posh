@@ -242,6 +242,7 @@ func (e *engine) renderTransientPrompt() string {
 		Env:      e.env,
 	}
 	prompt := template.renderPlainContextTemplate(nil)
+	e.writer.setColors(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground)
 	e.writer.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
 	switch e.env.getShellName() {
 	case zsh:

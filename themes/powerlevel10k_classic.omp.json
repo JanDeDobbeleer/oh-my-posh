@@ -88,11 +88,11 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#D4E157",
+          "foreground_templates": ["{{ if gt .Code 0 }}#FF5252{{ end }}"],
           "properties": {
-            "prefix": "\u276F",
-            "always_enabled": true,
-            "error_color": "#FF5252",
-            "display_exit_code": false
+            "template": "\u276F",
+            "prefix": "",
+            "always_enabled": true
           }
         }
       ]

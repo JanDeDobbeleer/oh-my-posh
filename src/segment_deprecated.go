@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+// GIT Segement
+
 const (
 	// DisplayStatus shows the status of the repository
 	DisplayStatus Property = "display_status"
@@ -15,7 +17,6 @@ const (
 	DisplayWorktreeCount Property = "display_worktree_count"
 	// DisplayUpstreamIcon show or hide the upstream icon
 	DisplayUpstreamIcon Property = "display_upstream_icon"
-
 	// LocalWorkingIcon the icon to use as the local working area changes indicator
 	LocalWorkingIcon Property = "local_working_icon"
 	// LocalStagingIcon the icon to use as the local staging area changes indicator
@@ -52,7 +53,7 @@ func (g *git) getBool(property, legacyProperty Property) bool {
 	return g.props.getBool(property, false)
 }
 
-func (g *git) renderDeprecatedString(statusColorsEnabled bool) string {
+func (g *git) deprecatedString(statusColorsEnabled bool) string {
 	if statusColorsEnabled {
 		g.SetStatusColor()
 	}
@@ -128,4 +129,40 @@ func (g *git) colorStatusString(prefix, status, color string) string {
 		return fmt.Sprintf("<%s>%s</>", color, prefix)
 	}
 	return fmt.Sprintf("<%s>%s %s</>", color, prefix, status)
+}
+
+// EXIT Segment
+
+const (
+	// DisplayExitCode shows or hides the error code
+	DisplayExitCode Property = "display_exit_code"
+	// ErrorColor specify a different foreground color for the error text when using always_show = true
+	ErrorColor Property = "error_color"
+	// AlwaysNumeric shows error codes as numbers
+	AlwaysNumeric Property = "always_numeric"
+	// SuccessIcon displays when there's no error and AlwaysEnabled = true
+	SuccessIcon Property = "success_icon"
+	// ErrorIcon displays when there's an error
+	ErrorIcon Property = "error_icon"
+)
+
+func (e *exit) deprecatedString() string {
+	colorBackground := e.props.getBool(ColorBackground, false)
+	if e.Code != 0 && !colorBackground {
+		e.props.foreground = e.props.getColor(ErrorColor, e.props.foreground)
+	}
+	if e.Code != 0 && colorBackground {
+		e.props.background = e.props.getColor(ErrorColor, e.props.background)
+	}
+	if e.Code == 0 {
+		return e.props.getString(SuccessIcon, "")
+	}
+	errorIcon := e.props.getString(ErrorIcon, "")
+	if !e.props.getBool(DisplayExitCode, true) {
+		return errorIcon
+	}
+	if e.props.getBool(AlwaysNumeric, false) {
+		return fmt.Sprintf("%s%d", errorIcon, e.Code)
+	}
+	return fmt.Sprintf("%s%s", errorIcon, e.Text)
 }

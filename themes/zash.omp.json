@@ -50,8 +50,7 @@
           "style": "plain",
           "foreground": "#DCB977",
           "properties": {
-            "prefix": "\uF119",
-            "display_exit_code": false,
+            "template": "\uF119",
             "postfix": ""
           }
         }

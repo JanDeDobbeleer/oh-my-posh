@@ -37,10 +37,11 @@
         {
           "type": "exit",
           "style": "plain",
-          "foreground": "#DCB977",
+          "foreground": "#BF616A",
           "properties": {
-            "prefix": "\u2717",
-            "display_exit_code": false
+            "template": "\u2717",
+            "prefix": " ",
+            "postfix": ""
           }
         }
       ]

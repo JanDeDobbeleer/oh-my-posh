@@ -44,10 +44,12 @@
         {
           "type": "exit",
           "style": "plain",
+          "foreground": "#7FFFD4",
+          "foreground_templates": ["{{ if gt .Code 0 }}#E84855{{ end }}"],
           "properties": {
-            "display_exit_code": false,
             "always_enabled": true,
-            "prefix": "<#66CDAA>\u276F</><#76EEC6>\u276F</><#7FFFD4>\u276F</>"
+            "template": "<#66CDAA>\u276F</><#76EEC6>\u276F</><foreground>\u276F</>",
+            "prefix": ""
           }
         }
       ]

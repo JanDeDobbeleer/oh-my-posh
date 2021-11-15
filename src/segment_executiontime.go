@@ -9,9 +9,11 @@ import (
 )
 
 type executiontime struct {
-	props  *properties
-	env    environmentInfo
-	output string
+	props *properties
+	env   environmentInfo
+
+	FormattedMs string
+	Ms          int64
 }
 
 // DurationStyle how to display the time
@@ -52,13 +54,13 @@ func (t *executiontime) enabled() bool {
 		return false
 	}
 	style := DurationStyle(t.props.getString(Style, string(Austin)))
-	t.output = t.formatDuration(int64(executionTimeMs), style)
-
-	return t.output != ""
+	t.Ms = int64(executionTimeMs)
+	t.FormattedMs = t.formatDuration(style)
+	return t.FormattedMs != ""
 }
 
 func (t *executiontime) string() string {
-	return t.output
+	return t.FormattedMs
 }
 
 func (t *executiontime) init(props *properties, env environmentInfo) {
@@ -66,103 +68,103 @@ func (t *executiontime) init(props *properties, env environmentInfo) {
 	t.env = env
 }
 
-func (t *executiontime) formatDuration(ms int64, style DurationStyle) string {
+func (t *executiontime) formatDuration(style DurationStyle) string {
 	switch style {
 	case Austin:
-		return t.formatDurationAustin(ms)
+		return t.formatDurationAustin()
 	case Roundrock:
-		return t.formatDurationRoundrock(ms)
+		return t.formatDurationRoundrock()
 	case Dallas:
-		return t.formatDurationDallas(ms)
+		return t.formatDurationDallas()
 	case Galveston:
-		return t.formatDurationGalveston(ms)
+		return t.formatDurationGalveston()
 	case Houston:
-		return t.formatDurationHouston(ms)
+		return t.formatDurationHouston()
 	case Amarillo:
-		return t.formatDurationAmarillo(ms)
+		return t.formatDurationAmarillo()
 	case Round:
-		return t.formatDurationRound(ms)
+		return t.formatDurationRound()
 	default:
 		return fmt.Sprintf("Style: %s is not available", style)
 	}
 }
 
-func (t *executiontime) formatDurationAustin(ms int64) string {
-	if ms < second {
-		return fmt.Sprintf("%dms", ms%second)
+func (t *executiontime) formatDurationAustin() string {
+	if t.Ms < second {
+		return fmt.Sprintf("%dms", t.Ms%second)
 	}
 
-	seconds := float64(ms%minute) / second
+	seconds := float64(t.Ms%minute) / second
 	result := strconv.FormatFloat(seconds, 'f', -1, 64) + "s"
 
-	if ms >= minute {
-		result = fmt.Sprintf("%dm %s", ms/minute%secondsPerMinute, result)
+	if t.Ms >= minute {
+		result = fmt.Sprintf("%dm %s", t.Ms/minute%secondsPerMinute, result)
 	}
-	if ms >= hour {
-		result = fmt.Sprintf("%dh %s", ms/hour%hoursPerDay, result)
+	if t.Ms >= hour {
+		result = fmt.Sprintf("%dh %s", t.Ms/hour%hoursPerDay, result)
 	}
-	if ms >= day {
-		result = fmt.Sprintf("%dd %s", ms/day, result)
-	}
-	return result
-}
-
-func (t *executiontime) formatDurationRoundrock(ms int64) string {
-	result := fmt.Sprintf("%dms", ms%second)
-	if ms >= second {
-		result = fmt.Sprintf("%ds %s", ms/second%secondsPerMinute, result)
-	}
-	if ms >= minute {
-		result = fmt.Sprintf("%dm %s", ms/minute%minutesPerHour, result)
-	}
-	if ms >= hour {
-		result = fmt.Sprintf("%dh %s", ms/hour%hoursPerDay, result)
-	}
-	if ms >= day {
-		result = fmt.Sprintf("%dd %s", ms/day, result)
+	if t.Ms >= day {
+		result = fmt.Sprintf("%dd %s", t.Ms/day, result)
 	}
 	return result
 }
 
-func (t *executiontime) formatDurationDallas(ms int64) string {
-	seconds := float64(ms%minute) / second
+func (t *executiontime) formatDurationRoundrock() string {
+	result := fmt.Sprintf("%dms", t.Ms%second)
+	if t.Ms >= second {
+		result = fmt.Sprintf("%ds %s", t.Ms/second%secondsPerMinute, result)
+	}
+	if t.Ms >= minute {
+		result = fmt.Sprintf("%dm %s", t.Ms/minute%minutesPerHour, result)
+	}
+	if t.Ms >= hour {
+		result = fmt.Sprintf("%dh %s", t.Ms/hour%hoursPerDay, result)
+	}
+	if t.Ms >= day {
+		result = fmt.Sprintf("%dd %s", t.Ms/day, result)
+	}
+	return result
+}
+
+func (t *executiontime) formatDurationDallas() string {
+	seconds := float64(t.Ms%minute) / second
 	result := strconv.FormatFloat(seconds, 'f', -1, 64)
 
-	if ms >= minute {
-		result = fmt.Sprintf("%d:%s", ms/minute%minutesPerHour, result)
+	if t.Ms >= minute {
+		result = fmt.Sprintf("%d:%s", t.Ms/minute%minutesPerHour, result)
 	}
-	if ms >= hour {
-		result = fmt.Sprintf("%d:%s", ms/hour%hoursPerDay, result)
+	if t.Ms >= hour {
+		result = fmt.Sprintf("%d:%s", t.Ms/hour%hoursPerDay, result)
 	}
-	if ms >= day {
-		result = fmt.Sprintf("%d:%s", ms/day, result)
+	if t.Ms >= day {
+		result = fmt.Sprintf("%d:%s", t.Ms/day, result)
 	}
 	return result
 }
 
-func (t *executiontime) formatDurationGalveston(ms int64) string {
-	result := fmt.Sprintf("%02d:%02d:%02d", ms/hour, ms/minute%minutesPerHour, ms%minute/second)
+func (t *executiontime) formatDurationGalveston() string {
+	result := fmt.Sprintf("%02d:%02d:%02d", t.Ms/hour, t.Ms/minute%minutesPerHour, t.Ms%minute/second)
 	return result
 }
 
-func (t *executiontime) formatDurationHouston(ms int64) string {
+func (t *executiontime) formatDurationHouston() string {
 	milliseconds := ".0"
-	if ms%second > 0 {
+	if t.Ms%second > 0 {
 		// format milliseconds as a string with truncated trailing zeros
-		milliseconds = strconv.FormatFloat(float64(ms%second)/second, 'f', -1, 64)
+		milliseconds = strconv.FormatFloat(float64(t.Ms%second)/second, 'f', -1, 64)
 		// at this point milliseconds looks like "0.5". remove the leading "0"
 		milliseconds = milliseconds[1:]
 	}
 
-	result := fmt.Sprintf("%02d:%02d:%02d%s", ms/hour, ms/minute%minutesPerHour, ms%minute/second, milliseconds)
+	result := fmt.Sprintf("%02d:%02d:%02d%s", t.Ms/hour, t.Ms/minute%minutesPerHour, t.Ms%minute/second, milliseconds)
 	return result
 }
 
-func (t *executiontime) formatDurationAmarillo(ms int64) string {
+func (t *executiontime) formatDurationAmarillo() string {
 	// wholeNumber represents the value to the left of the decimal point (seconds)
-	wholeNumber := ms / second
+	wholeNumber := t.Ms / second
 	// decimalNumber represents the value to the right of the decimal point (milliseconds)
-	decimalNumber := float64(ms%second) / second
+	decimalNumber := float64(t.Ms%second) / second
 
 	// format wholeNumber as a string with thousands separators
 	printer := message.NewPrinter(lang.English)
@@ -180,27 +182,27 @@ func (t *executiontime) formatDurationAmarillo(ms int64) string {
 	return result
 }
 
-func (t *executiontime) formatDurationRound(ms int64) string {
+func (t *executiontime) formatDurationRound() string {
 	toRoundString := func(one, two int64, oneText, twoText string) string {
 		if two == 0 {
 			return fmt.Sprintf("%d%s", one, oneText)
 		}
 		return fmt.Sprintf("%d%s %d%s", one, oneText, two, twoText)
 	}
-	hours := ms / hour % hoursPerDay
-	if ms >= day {
-		return toRoundString(ms/day, hours, "d", "h")
+	hours := t.Ms / hour % hoursPerDay
+	if t.Ms >= day {
+		return toRoundString(t.Ms/day, hours, "d", "h")
 	}
-	minutes := ms / minute % secondsPerMinute
-	if ms >= hour {
+	minutes := t.Ms / minute % secondsPerMinute
+	if t.Ms >= hour {
 		return toRoundString(hours, minutes, "h", "m")
 	}
-	seconds := (ms % minute) / second
-	if ms >= minute {
+	seconds := (t.Ms % minute) / second
+	if t.Ms >= minute {
 		return toRoundString(minutes, seconds, "m", "s")
 	}
-	if ms >= second {
+	if t.Ms >= second {
 		return fmt.Sprintf("%ds", seconds)
 	}
-	return fmt.Sprintf("%dms", ms%second)
+	return fmt.Sprintf("%dms", t.Ms%second)
 }

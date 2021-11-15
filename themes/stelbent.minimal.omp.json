@@ -105,10 +105,7 @@
           "foreground": "#ffffff",
           "background": "#ff8080",
           "properties": {
-            "display_exit_code": false,
-            "prefix": " ",
-            "postfix": " ",
-            "error_icon": "error"
+            "template": "error"
           }
         }
       ]

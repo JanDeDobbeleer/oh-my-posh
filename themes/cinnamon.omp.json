@@ -52,12 +52,10 @@
             "trailing_diamond": "\uE0B4",
             "foreground": "#ffffff",
             "background": "#491515",
+            "background_templates": ["{{ if gt .Code 0 }}#f1184c{{ end }}"],
             "properties": {
-              "display_exit_code": false,
-              "always_enabled": true,
-              "error_color": "#f1184c",
-              "color_background": true,
-              "prefix": " \uF7d4"
+              "template": "\uF7d4",
+              "always_enabled": true
             }
           }
         ]

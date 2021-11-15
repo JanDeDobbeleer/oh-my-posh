@@ -170,12 +170,11 @@
           "invert_powerline": true,
           "foreground": "#d3d7cf",
           "background": "#000000",
+          "background_templates": ["{{ if gt .Code 0 }}#cc2222{{ end }}"],
           "properties": {
+            "prefix": " ",
             "always_enabled": true,
-            "display_exit_code": true,
-            "error_color": "#cc2222",
-            "color_background": true,
-            "success_icon": "✔"
+            "template": "{{ if gt .Code 0 }}{{ .Text }}{{ else }}✔{{ end }}"
           }
         },
         {

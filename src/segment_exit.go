@@ -1,24 +1,14 @@
 package main
 
-import "fmt"
+import "strconv"
 
 type exit struct {
 	props *properties
 	env   environmentInfo
-}
 
-const (
-	// DisplayExitCode shows or hides the error code
-	DisplayExitCode Property = "display_exit_code"
-	// ErrorColor specify a different foreground color for the error text when using always_show = true
-	ErrorColor Property = "error_color"
-	// AlwaysNumeric shows error codes as numbers
-	AlwaysNumeric Property = "always_numeric"
-	// SuccessIcon displays when there's no error and AlwaysEnabled = true
-	SuccessIcon Property = "success_icon"
-	// ErrorIcon displays when there's an error
-	ErrorIcon Property = "error_icon"
-)
+	Code int
+	Text string
+}
 
 func (e *exit) enabled() bool {
 	if e.props.getBool(AlwaysEnabled, false) {
@@ -37,28 +27,26 @@ func (e *exit) init(props *properties, env environmentInfo) {
 }
 
 func (e *exit) getFormattedText() string {
-	exitCode := e.getMeaningFromExitCode()
-	colorBackground := e.props.getBool(ColorBackground, false)
-	if e.env.lastErrorCode() != 0 && !colorBackground {
-		e.props.foreground = e.props.getColor(ErrorColor, e.props.foreground)
+	e.Code = e.env.lastErrorCode()
+	e.Text = e.getMeaningFromExitCode()
+	segmentTemplate := e.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) == 0 {
+		return e.deprecatedString()
 	}
-	if e.env.lastErrorCode() != 0 && colorBackground {
-		e.props.background = e.props.getColor(ErrorColor, e.props.background)
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  e,
+		Env:      e.env,
 	}
-	if e.env.lastErrorCode() == 0 {
-		return e.props.getString(SuccessIcon, "")
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
 	}
-	return fmt.Sprintf("%s%s", e.props.getString(ErrorIcon, ""), exitCode)
+	return text
 }
 
 func (e *exit) getMeaningFromExitCode() string {
-	if !e.props.getBool(DisplayExitCode, true) {
-		return ""
-	}
-	if e.props.getBool(AlwaysNumeric, false) {
-		return fmt.Sprintf("%d", e.env.lastErrorCode())
-	}
-	switch e.env.lastErrorCode() {
+	switch e.Code {
 	case 1:
 		return "ERROR"
 	case 2:
@@ -112,6 +100,6 @@ func (e *exit) getMeaningFromExitCode() string {
 	case 128 + 22:
 		return "SIGTTOU"
 	default:
-		return fmt.Sprintf("%d", e.env.lastErrorCode())
+		return strconv.Itoa(e.Code)
 	}
 }

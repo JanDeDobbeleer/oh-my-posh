@@ -48,8 +48,8 @@
           "style": "plain",
           "foreground": "#C94A16",
           "properties": {
-            "prefix": "x",
-            "display_exit_code": false
+            "prefix": "",
+            "template": "x"
           }
         }
       ]

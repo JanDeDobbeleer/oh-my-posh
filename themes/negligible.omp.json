@@ -107,11 +107,11 @@
           "type": "exit",
           "style": "powerline",
           "foreground": "lightGreen",
+          "foreground_templates": ["{{ if gt .Code 0 }}red{{ end }}"],
           "properties": {
-            "display_exit_code": false,
             "always_enabled": true,
-            "error_color": "red",
-            "prefix": "\u279c"
+            "template": "\u279c",
+            "prefix": ""
           }
         }
       ]

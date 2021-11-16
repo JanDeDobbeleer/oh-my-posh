@@ -128,8 +128,8 @@ func (e *engine) renderBlock(block *Block) {
 func (e *engine) debug() string {
 	var segmentTimings []*SegmentTiming
 	largestSegmentNameLength := 0
-	e.write("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
-
+	e.write(fmt.Sprintf("\n\x1b[1mVersion:\x1b[0m %s\n", Version))
+	e.write("\n\x1b[1mSegments:\x1b[0m\n\n")
 	// console title timing
 	start := time.Now()
 	consoleTitle := e.consoleTitle.getTemplateText()
@@ -163,8 +163,8 @@ func (e *engine) debug() string {
 		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.enabled)
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
-	e.write(fmt.Sprintf("\n\x1b[1mVersion:\x1b[0m %s\n", Version))
-	e.write(fmt.Sprintf("\x1b[1mLog:\x1b[0m %s/oh-my-posh.log\n\n", e.env.homeDir()))
+	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
+	e.write(e.env.logs())
 	return e.string()
 }
 

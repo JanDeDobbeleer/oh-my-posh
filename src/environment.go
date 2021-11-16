@@ -88,6 +88,7 @@ type environmentInfo interface {
 	getCachePath() string
 	cache() cache
 	close()
+	logs() string
 }
 
 type commandCache struct {
@@ -115,40 +116,32 @@ const (
 )
 
 type tracer interface {
-	init(home string)
-	close()
+	init()
+	string() string
 	trace(start time.Time, function string, args ...string)
 	log(lt logType, function, message string)
 }
 
-type fileTracer struct {
-	file  *os.File
-	debug bool
+type logTracer struct {
+	builder strings.Builder
+	debug   bool
 }
 
-func (t *fileTracer) init(home string) {
+func (t *logTracer) init() {
 	if !t.debug {
 		return
 	}
-	var err error
-	fileName := home + "/oh-my-posh.log"
-	t.file, err = os.OpenFile(fileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalf("error opening file: %v", err)
-	}
-	log.SetOutput(t.file)
-	log.Println("#### start oh-my-posh run ####")
+	log.SetOutput(&t.builder)
 }
 
-func (t *fileTracer) close() {
+func (t *logTracer) string() string {
 	if !t.debug {
-		return
+		return ""
 	}
-	log.Println("#### end oh-my-posh run ####")
-	_ = t.file.Close()
+	return t.builder.String()
 }
 
-func (t *fileTracer) trace(start time.Time, function string, args ...string) {
+func (t *logTracer) trace(start time.Time, function string, args ...string) {
 	if !t.debug {
 		return
 	}
@@ -157,7 +150,7 @@ func (t *fileTracer) trace(start time.Time, function string, args ...string) {
 	log.Println(trace)
 }
 
-func (t *fileTracer) log(lt logType, function, message string) {
+func (t *logTracer) log(lt logType, function, message string) {
 	if !t.debug {
 		return
 	}
@@ -178,10 +171,10 @@ func (env *environment) init(args *args) {
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
-	tracer := &fileTracer{
+	tracer := &logTracer{
 		debug: *args.Debug,
 	}
-	tracer.init(env.homeDir())
+	tracer.init()
 	env.tracer = tracer
 	env.fileCache = &fileCache{}
 	env.fileCache.init(env.getCachePath())
@@ -531,7 +524,10 @@ func (env *environment) cache() cache {
 
 func (env *environment) close() {
 	env.fileCache.close()
-	env.tracer.close()
+}
+
+func (env *environment) logs() string {
+	return env.tracer.string()
 }
 
 func cleanHostName(hostName string) string {

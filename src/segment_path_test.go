@@ -168,6 +168,11 @@ func (env *MockedEnvironment) close() {
 	_ = env.Called(nil)
 }
 
+func (env *MockedEnvironment) logs() string {
+	args := env.Called(nil)
+	return args.String(0)
+}
+
 const (
 	homeBill        = "/home/bill"
 	homeJan         = "/usr/home/jan"

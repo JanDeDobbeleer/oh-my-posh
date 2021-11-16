@@ -13,19 +13,28 @@ type MockedTracer struct {
 	mock.Mock
 }
 
-// close provides a mock function with given fields:
-func (_m *MockedTracer) close() {
+// init provides a mock function with given fields:
+func (_m *MockedTracer) init() {
 	_m.Called()
-}
-
-// init provides a mock function with given fields: home
-func (_m *MockedTracer) init(home string) {
-	_m.Called(home)
 }
 
 // log provides a mock function with given fields: lt, function, message
 func (_m *MockedTracer) log(lt logType, function, message string) {
 	_m.Called(lt, function, message)
+}
+
+// string provides a mock function with given fields:
+func (_m *MockedTracer) string() string {
+	ret := _m.Called()
+
+	var r0 string
+	if rf, ok := ret.Get(0).(func() string); ok {
+		r0 = rf()
+	} else {
+		r0 = ret.Get(0).(string)
+	}
+
+	return r0
 }
 
 // trace provides a mock function with given fields: start, function, args

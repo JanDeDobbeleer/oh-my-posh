@@ -116,3 +116,30 @@ func TestPaletteShouldUseTransparentByDefault(t *testing.T) {
 		assert.Equal(t, tc.Expected, actual, "expected different color value")
 	}
 }
+
+func TestPaletteShouldNotResolveRecursiveReference(t *testing.T) {
+	tp := Palette{
+		"light-blue": "#CAF0F8",
+		"dark-blue":  "#023E8A",
+		"background": "p:dark-blue",
+		"foreground": "p:light-blue",
+	}
+
+	cases := []TestPaletteRequest{
+		{Case: "Palette light-blue", Request: "p:light-blue", Expected: "#CAF0F8"},
+		{Case: "Palette background", Request: "p:background", ExpectedError: true, Expected: "palette: resolution of color background returned palette reference p:dark-blue; recursive resolution is not supported"},
+		{Case: "Palette foreground", Request: "p:foreground", ExpectedError: true, Expected: "palette: resolution of color foreground returned palette reference p:light-blue; recursive resolution is not supported"},
+	}
+
+	for _, tc := range cases {
+		actual, err := tp.resolveColor(tc.Request)
+
+		if !tc.ExpectedError {
+			assert.Nil(t, err, "expected no error")
+			assert.Equal(t, tc.Expected, actual, "expected different color value")
+		} else {
+			assert.NotNil(t, err, "expected error")
+			assert.Equal(t, tc.Expected, err.Error())
+		}
+	}
+}

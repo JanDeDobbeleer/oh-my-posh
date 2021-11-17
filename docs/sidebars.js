@@ -28,7 +28,8 @@ module.exports = {
         "config-text-style",
         "config-transient",
         "config-tooltips",
-        "config-fonts"
+        "config-fonts",
+        "config-palette"
       ],
     },
     {

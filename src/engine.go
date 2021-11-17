@@ -163,6 +163,7 @@ func (e *engine) debug() string {
 		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.enabled)
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
+	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(start)))
 	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
 	e.write(e.env.logs())
 	return e.string()

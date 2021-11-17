@@ -62,9 +62,24 @@ func TestPaletteShouldIgnoreNonPaletteColors(t *testing.T) {
 
 func TestPaletteShouldReturnErrorOnMissingColor(t *testing.T) {
 	cases := []TestPaletteRequest{
-		{Case: "Palette deep purple", Request: "palette:deep-purple", ExpectedError: true, Expected: "palette: requested color deep-purple does not exist in palette of colors black,blue,green,red,white"},
-		{Case: "Palette cyan", Request: "palette:cyan", ExpectedError: true, Expected: "palette: requested color cyan does not exist in palette of colors black,blue,green,red,white"},
-		{Case: "Palette foreground", Request: "palette:foreground", ExpectedError: true, Expected: "palette: requested color foreground does not exist in palette of colors black,blue,green,red,white"},
+		{
+			Case:          "Palette deep purple",
+			Request:       "palette:deep-purple",
+			ExpectedError: true,
+			Expected:      "palette: requested color deep-purple does not exist in palette of colors black,blue,green,red,white",
+		},
+		{
+			Case:          "Palette cyan",
+			Request:       "palette:cyan",
+			ExpectedError: true,
+			Expected:      "palette: requested color cyan does not exist in palette of colors black,blue,green,red,white",
+		},
+		{
+			Case:          "Palette foreground",
+			Request:       "palette:foreground",
+			ExpectedError: true,
+			Expected:      "palette: requested color foreground does not exist in palette of colors black,blue,green,red,white",
+		},
 	}
 
 	for _, tc := range cases {
@@ -126,9 +141,23 @@ func TestPaletteShouldNotResolveRecursiveReference(t *testing.T) {
 	}
 
 	cases := []TestPaletteRequest{
-		{Case: "Palette light-blue", Request: "p:light-blue", Expected: "#CAF0F8"},
-		{Case: "Palette background", Request: "p:background", ExpectedError: true, Expected: "palette: resolution of color background returned palette reference p:dark-blue; recursive resolution is not supported"},
-		{Case: "Palette foreground", Request: "p:foreground", ExpectedError: true, Expected: "palette: resolution of color foreground returned palette reference p:light-blue; recursive resolution is not supported"},
+		{
+			Case:     "Palette light-blue",
+			Request:  "p:light-blue",
+			Expected: "#CAF0F8",
+		},
+		{
+			Case:          "Palette background",
+			Request:       "p:background",
+			ExpectedError: true,
+			Expected:      "palette: resolution of color background returned palette reference p:dark-blue; recursive resolution is not supported",
+		},
+		{
+			Case:          "Palette foreground",
+			Request:       "p:foreground",
+			ExpectedError: true,
+			Expected:      "palette: resolution of color foreground returned palette reference p:light-blue; recursive resolution is not supported",
+		},
 	}
 
 	for _, tc := range cases {

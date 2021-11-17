@@ -102,3 +102,17 @@ func TestPaletteShouldAllowShortReference(t *testing.T) {
 		testPaletteRequest(t, tc)
 	}
 }
+
+func TestPaletteShouldUseTransparentByDefault(t *testing.T) {
+	cases := []TestPaletteRequest{
+		{Case: "Palette magenta", Request: "p:magenta", Expected: Transparent},
+		{Case: "Palette gray", Request: "p:gray", Expected: Transparent},
+		{Case: "Palette rose", Request: "p:rose", Expected: Transparent},
+	}
+
+	for _, tc := range cases {
+		actual := testPalette.maybeResolveColor(tc.Request)
+
+		assert.Equal(t, tc.Expected, actual, "expected different color value")
+	}
+}

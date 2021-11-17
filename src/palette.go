@@ -51,3 +51,14 @@ func (p Palette) reportColorMissing(colorName string) error {
 	errorStr := fmt.Sprintf(paletteColorMissingErrorTemplate, colorName, allColors)
 	return errors.New(errorStr)
 }
+
+// maybeResolveColor wraps resolveColor and silences possible errors, returning
+// Transparent color by default, as a Block does not know how to handle color errors.
+func (p Palette) maybeResolveColor(colorName string) string {
+	color, err := p.resolveColor(colorName)
+	if err != nil {
+		return Transparent
+	}
+
+	return color
+}

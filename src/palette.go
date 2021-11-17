@@ -10,16 +10,29 @@ import (
 type Palette map[string]string
 
 const (
-	paletteColorPrefix               = "palette:"
 	paletteColorMissingErrorTemplate = "palette: requested color %s does not exist in palette of colors %s"
 )
 
+var (
+	paletteColorPrefixes = [...]string{"palette:", "p:"}
+)
+
 func (p Palette) resolveColor(colorName string) (string, error) {
-	if !strings.HasPrefix(colorName, paletteColorPrefix) {
+	var selectedColorPrefix string
+
+	for _, paletteColorPrefix := range paletteColorPrefixes {
+		if strings.HasPrefix(colorName, paletteColorPrefix) {
+			selectedColorPrefix = paletteColorPrefix
+			break
+		}
+	}
+
+	// colorName is not a palette reference, return it as is
+	if selectedColorPrefix == "" {
 		return colorName, nil
 	}
 
-	paletteName := strings.ReplaceAll(colorName, paletteColorPrefix, "")
+	paletteName := strings.ReplaceAll(colorName, selectedColorPrefix, "")
 
 	if paletteColor, ok := p[paletteName]; ok {
 		return paletteColor, nil

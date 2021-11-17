@@ -85,3 +85,20 @@ func TestPaletteShouldHandleMixedCases(t *testing.T) {
 		testPaletteRequest(t, tc)
 	}
 }
+
+func TestPaletteShouldAllowShortReference(t *testing.T) {
+	cases := []TestPaletteRequest{
+		{Case: "Palette red", Request: "p:red", Expected: "#FF0000"},
+		{Case: "Palette green", Request: "palette:green", Expected: "#00FF00"},
+		{Case: "Palette blue", Request: "p:blue", Expected: "#0000FF"},
+		{Case: "Palette white", Request: "palette:white", Expected: "#FFFFFF"},
+		{Case: "Palette red", Request: "p:red", Expected: "#FF0000"},
+		{Case: "Palette green", Request: "palette:green", Expected: "#00FF00"},
+		{Case: "Palette blue", Request: "p:blue", Expected: "#0000FF"},
+		{Case: "Palette black", Request: "palette:black", Expected: "#000000"},
+	}
+
+	for _, tc := range cases {
+		testPaletteRequest(t, tc)
+	}
+}

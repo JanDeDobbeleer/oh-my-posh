@@ -12,7 +12,7 @@ import (
 )
 
 func (env *environment) isRunningAsRoot() bool {
-	defer env.tracer.trace(time.Now(), "isRunningAsRoot")
+	defer env.trace(time.Now(), "isRunningAsRoot")
 	return os.Geteuid() == 0
 }
 
@@ -25,7 +25,7 @@ func (env *environment) getWindowTitle(imageName, windowTitleRegex string) (stri
 }
 
 func (env *environment) isWsl() bool {
-	defer env.tracer.trace(time.Now(), "isWsl")
+	defer env.trace(time.Now(), "isWsl")
 	// one way to check
 	// version := env.getFileContent("/proc/version")
 	// return strings.Contains(version, "microsoft")
@@ -34,10 +34,10 @@ func (env *environment) isWsl() bool {
 }
 
 func (env *environment) getTerminalWidth() (int, error) {
-	defer env.tracer.trace(time.Now(), "getTerminalWidth")
+	defer env.trace(time.Now(), "getTerminalWidth")
 	width, err := terminal.Width()
 	if err != nil {
-		env.tracer.log(Error, "runCommand", err.Error())
+		env.log(Error, "runCommand", err.Error())
 	}
 	return int(width), err
 }
@@ -48,7 +48,7 @@ func (env *environment) getPlatform() string {
 }
 
 func (env *environment) getCachePath() string {
-	defer env.tracer.trace(time.Now(), "getCachePath")
+	defer env.trace(time.Now(), "getCachePath")
 	// get XDG_CACHE_HOME if present
 	if cachePath := returnOrBuildCachePath(env.getenv("XDG_CACHE_HOME")); len(cachePath) != 0 {
 		return cachePath

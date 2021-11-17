@@ -50,10 +50,9 @@ func testPaletteRequest(t *testing.T, tc TestPaletteRequest) {
 func TestPaletteShouldIgnoreNonPaletteColors(t *testing.T) {
 	cases := []TestPaletteRequest{
 		{Case: "Deep puprple", Request: "#1F1137", Expected: "#1F1137"},
-		{Case: "Palette red", Request: "palette:red", Expected: "#FF0000"},
 		{Case: "Light red", Request: "#D55252", Expected: "#D55252"},
 		{Case: "ANSI black", Request: "black", Expected: "black"},
-		{Case: "Palette black", Request: "palette:black", Expected: "#000000"},
+		{Case: "Foreground", Request: "foreground", Expected: "foreground"},
 	}
 
 	for _, tc := range cases {
@@ -64,11 +63,22 @@ func TestPaletteShouldIgnoreNonPaletteColors(t *testing.T) {
 func TestPaletteShouldReturnErrorOnMissingColor(t *testing.T) {
 	cases := []TestPaletteRequest{
 		{Case: "Palette deep purple", Request: "palette:deep-purple", ExpectedError: true, Expected: "palette: requested color deep-purple does not exist in palette of colors black,blue,green,red,white"},
+		{Case: "Palette cyan", Request: "palette:cyan", ExpectedError: true, Expected: "palette: requested color cyan does not exist in palette of colors black,blue,green,red,white"},
+		{Case: "Palette foreground", Request: "palette:foreground", ExpectedError: true, Expected: "palette: requested color foreground does not exist in palette of colors black,blue,green,red,white"},
+	}
+
+	for _, tc := range cases {
+		testPaletteRequest(t, tc)
+	}
+}
+
+func TestPaletteShouldHandleMixedCases(t *testing.T) {
+	cases := []TestPaletteRequest{
 		{Case: "Palette red", Request: "palette:red", Expected: "#FF0000"},
 		{Case: "ANSI black", Request: "black", Expected: "black"},
 		{Case: "Cyan", Request: "#05E6FA", Expected: "#05E6FA"},
-		{Case: "Palette cyan", Request: "palette:cyan", ExpectedError: true, Expected: "palette: requested color cyan does not exist in palette of colors black,blue,green,red,white"},
-		{Case: "Palette foreground", Request: "palette:foreground", ExpectedError: true, Expected: "palette: requested color foreground does not exist in palette of colors black,blue,green,red,white"},
+		{Case: "Palette black", Request: "palette:black", Expected: "#000000"},
+		{Case: "Palette pink", Request: "palette:pink", ExpectedError: true, Expected: "palette: requested color pink does not exist in palette of colors black,blue,green,red,white"},
 	}
 
 	for _, tc := range cases {

@@ -2,7 +2,7 @@
   "go.lintTool": "golangci-lint",
   "go.useLanguageServer": true,
   "go.languageServerExperimentalFeatures": {
-    "diagnostics": false,
+    "diagnostics": false
   },
   "go.lintFlags": ["--fast"],
   "go.testOnSave": true,
@@ -13,7 +13,5 @@
     }
   },
   "go.formatTool": "gofmt",
-  "go.formatFlags": [
-    "-s"
-  ]
+  "go.formatFlags": ["-s"]
 }

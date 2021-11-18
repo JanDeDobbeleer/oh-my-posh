@@ -8,7 +8,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
 :::info
-This feature only works in `zsh` and `powershell` for the time being.
+This feature only works in `zsh`, `powershell` and `cmd` for the time being.
 :::
 
 Transient prompt, when enabled, replaces the prompt with a simpler one to allow more screen real estate.
@@ -66,6 +66,7 @@ properties below. Defaults to `{{ .Shell }}> `
   groupId="shell"
   values={[
     { label: 'powershell', value: 'pwsh', },
+    { label: 'cmd', value: 'cmd', },
     { label: 'zsh', value: 'zsh', },
   ]
 }>
@@ -79,6 +80,17 @@ Enable-PoshTransientPrompt
 ```
 
 Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes to take effect.
+
+</TabItem>
+<TabItem value="cmd">
+
+Set the transient prompt in [clink][clink] to `always` in the `oh-my-posh.lua` script to enable the feature:
+
+```shell
+clink set prompt.transient always
+```
+
+Restart your shell for the changes to take effect.
 
 </TabItem>
 <TabItem value="zsh">
@@ -98,3 +110,4 @@ Restart your shell or reload `.zshrc` using `source ~/.zshrc` for the changes to
 [go-text-template]: https://golang.org/pkg/text/template/
 [console-title]: /docs/config-title#console-title-template
 [sprig]: https://masterminds.github.io/sprig/
+[clink]: https://chrisant996.github.io/clink/

@@ -12,7 +12,7 @@ import (
 )
 
 func (env *environment) isRunningAsRoot() bool {
-	defer env.tracer.trace(time.Now(), "isRunningAsRoot")
+	defer env.trace(time.Now(), "isRunningAsRoot")
 	var sid *windows.SID
 
 	// Although this looks scary, it is directly copied from the
@@ -27,7 +27,7 @@ func (env *environment) isRunningAsRoot() bool {
 		0, 0, 0, 0, 0, 0,
 		&sid)
 	if err != nil {
-		env.tracer.log(Error, "isRunningAsRoot", err.Error())
+		env.log(Error, "isRunningAsRoot", err.Error())
 		return false
 	}
 	defer func() {
@@ -41,7 +41,7 @@ func (env *environment) isRunningAsRoot() bool {
 
 	member, err := token.IsMember(sid)
 	if err != nil {
-		env.tracer.log(Error, "isRunningAsRoot", err.Error())
+		env.log(Error, "isRunningAsRoot", err.Error())
 		return false
 	}
 
@@ -62,25 +62,25 @@ func (env *environment) homeDir() string {
 }
 
 func (env *environment) getWindowTitle(imageName, windowTitleRegex string) (string, error) {
-	defer env.tracer.trace(time.Now(), "getWindowTitle", imageName, windowTitleRegex)
+	defer env.trace(time.Now(), "getWindowTitle", imageName, windowTitleRegex)
 	return getWindowTitle(imageName, windowTitleRegex)
 }
 
 func (env *environment) isWsl() bool {
-	defer env.tracer.trace(time.Now(), "isWsl")
+	defer env.trace(time.Now(), "isWsl")
 	return false
 }
 
 func (env *environment) getTerminalWidth() (int, error) {
-	defer env.tracer.trace(time.Now(), "getTerminalWidth")
+	defer env.trace(time.Now(), "getTerminalWidth")
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
 	if err != nil {
-		env.tracer.log(Error, "getTerminalWidth", err.Error())
+		env.log(Error, "getTerminalWidth", err.Error())
 		return 0, err
 	}
 	info, err := winterm.GetConsoleScreenBufferInfo(uintptr(handle))
 	if err != nil {
-		env.tracer.log(Error, "getTerminalWidth", err.Error())
+		env.log(Error, "getTerminalWidth", err.Error())
 		return 0, err
 	}
 	// return int(float64(info.Size.X) * 0.57), nil
@@ -92,7 +92,7 @@ func (env *environment) getPlatform() string {
 }
 
 func (env *environment) getCachePath() string {
-	defer env.tracer.trace(time.Now(), "getCachePath")
+	defer env.trace(time.Now(), "getCachePath")
 	// get LOCALAPPDATA if present
 	if cachePath := returnOrBuildCachePath(env.getenv("LOCALAPPDATA")); len(cachePath) != 0 {
 		return cachePath

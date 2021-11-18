@@ -72,7 +72,7 @@
           "trailing_diamond": "",
           "properties": {
             "always_enabled": true,
-            "prefix": " \ufa1e ",
+            "prefix": " \ufbab ",
             "postfix": "\u2800"
           }
         }

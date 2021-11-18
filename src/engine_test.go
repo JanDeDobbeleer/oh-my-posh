@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -40,4 +42,82 @@ func TestCanWriteRPrompt(t *testing.T) {
 		got := engine.canWriteRPrompt()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
+}
+
+func BenchmarkEngineRender(b *testing.B) {
+	var err error
+	for i := 0; i < b.N; i++ {
+		_, err = engineRender("jandedobbeleer.omp.json")
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func engineRender(configPath string) (string, error) {
+	testDir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	configPath = filepath.Join(testDir, "testdata", configPath)
+
+	var (
+		debug    = false
+		eval     = false
+		shell    = "pwsh"
+		plain    = false
+		pwd      = ""
+		pswd     = ""
+		code     = 2
+		execTime = 917.0
+	)
+
+	args := &args{
+		Debug:         &debug,
+		Config:        &configPath,
+		Eval:          &eval,
+		Shell:         &shell,
+		Plain:         &plain,
+		PWD:           &pwd,
+		PSWD:          &pswd,
+		ErrorCode:     &code,
+		ExecutionTime: &execTime,
+	}
+
+	env := &environment{}
+	env.init(args)
+	defer env.close()
+
+	cfg := GetConfig(env)
+	defer testClearDefaultConfig()
+
+	ansi := &ansiUtils{}
+	ansi.init(env.getShellName())
+	var writerColors AnsiColors
+	writerColors = &DefaultAnsiColors{}
+	if cfg.Palette != nil {
+		writerColors = &PaletteColors{ansiColors: writerColors, palette: cfg.Palette}
+	}
+	writerColors = &CachedColors{ansiColors: writerColors}
+	writer := &AnsiWriter{
+		ansi:               ansi,
+		terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
+		ansiColors:         writerColors,
+	}
+	title := &consoleTitle{
+		env:    env,
+		config: cfg,
+		ansi:   ansi,
+	}
+	engine := &engine{
+		config:       cfg,
+		env:          env,
+		writer:       writer,
+		consoleTitle: title,
+		ansi:         ansi,
+		plain:        *args.Plain,
+	}
+
+	return engine.render(), nil
 }

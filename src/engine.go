@@ -253,7 +253,7 @@ func (e *engine) renderTransientPrompt() string {
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.writer.string(), "\"", "\"\""))
 		prompt += "\nRPROMPT=\"\""
 		return prompt
-	case pwsh, powershell5:
+	case pwsh, powershell5, winCMD:
 		return e.writer.string()
 	}
 	return ""

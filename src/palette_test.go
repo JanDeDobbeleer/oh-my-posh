@@ -36,7 +36,7 @@ func TestPaletteShouldResolveColorFromTestPalette(t *testing.T) {
 }
 
 func testPaletteRequest(t *testing.T, tc TestPaletteRequest) {
-	actual, err := testPalette.resolveColor(tc.Request)
+	actual, err := testPalette.ResolveColor(tc.Request)
 
 	if !tc.ExpectedError {
 		assert.Nil(t, err, "expected no error")
@@ -126,7 +126,7 @@ func TestPaletteShouldUseTransparentByDefault(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actual := testPalette.maybeResolveColor(tc.Request)
+		actual := testPalette.MaybeResolveColor(tc.Request)
 
 		assert.Equal(t, tc.Expected, actual, "expected different color value")
 	}
@@ -161,7 +161,7 @@ func TestPaletteShouldNotResolveRecursiveReference(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actual, err := tp.resolveColor(tc.Request)
+		actual, err := tp.ResolveColor(tc.Request)
 
 		if !tc.ExpectedError {
 			assert.Nil(t, err, "expected no error")
@@ -187,9 +187,16 @@ func benchmarkPaletteMixedCaseResolution() {
 		{Case: "Palette black", Request: "palette:black", Expected: "#000000"},
 		{Case: "Palette pink", Request: "palette:pink", ExpectedError: true, Expected: "palette: requested color pink does not exist in palette of colors black,blue,green,red,white"},
 		{Case: "Palette blue", Request: "p:blue", Expected: "#0000FF"},
+		// repeating the same set to have longer benchmarks
+		{Case: "Palette red", Request: "palette:red", Expected: "#FF0000"},
+		{Case: "ANSI black", Request: "black", Expected: "black"},
+		{Case: "Cyan", Request: "#05E6FA", Expected: "#05E6FA"},
+		{Case: "Palette black", Request: "palette:black", Expected: "#000000"},
+		{Case: "Palette pink", Request: "palette:pink", ExpectedError: true, Expected: "palette: requested color pink does not exist in palette of colors black,blue,green,red,white"},
+		{Case: "Palette blue", Request: "p:blue", Expected: "#0000FF"},
 	}
 
 	for _, tc := range cases {
-		testPalette.resolveColor(tc.Request)
+		testPalette.ResolveColor(tc.Request)
 	}
 }

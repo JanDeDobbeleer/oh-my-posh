@@ -1,12 +1,12 @@
 ---
 id: regquery    
 title: Windows Registry Key Query
-sidebar_label: regquery
+sidebar_label: Windows Registry Key Query
 ---
 
 ## What
 
-Display the content of the registry key defined in the configuration.
+Display the content of the requested Windows registry key.
 
 Supported registry key types:
 

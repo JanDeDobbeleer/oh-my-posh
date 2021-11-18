@@ -1,4 +1,4 @@
-set -g posh_theme "::CONFIG::"
+set -g POSH_THEME "::CONFIG::"
 set -g POWERLINE_COMMAND "oh-my-posh"
 set -g CONDA_PROMPT_MODIFIER false
 
@@ -18,7 +18,7 @@ function fish_prompt
       set -gx omp_last_status_generation $status_generation
     end
 
-    ::OMP:: --config $posh_theme --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
+    ::OMP:: --config $POSH_THEME --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
 end
 
 function postexec_omp --on-event fish_postexec
@@ -38,5 +38,5 @@ function export_poshconfig
   if not test -n "$format"
     set format "json"
   end
-  ::OMP:: --config $posh_theme --print-config --config-format $format > $file_name
+  ::OMP:: --config $POSH_THEME --print-config --config-format $format > $file_name
 end

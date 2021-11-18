@@ -7,20 +7,55 @@ import (
     "unsafe"
 )
 
-func (r *regquery) enabled() bool {
-    var ret bool = false
-    r.content = "fail"
+// TODO
+//  Code tidyup
+//      Move registry code out?
+//      Make nested if/else more easy to understand
+//  Test cases
+//      Include registry calls?
+//  Docs
 
-	// Call registry code and fill out "content" string.	
+func (r *regquery) getHKEYValueFromAbbrString(abbr string) windows.Handle {
+    var ret windows.Handle = 0
+
+    switch (abbr) {
+        case "HKCR":
+            ret = windows.HKEY_CLASSES_ROOT
+        case "HKCC":
+            ret = windows.HKEY_CURRENT_CONFIG
+        case "HKCU":
+            ret = windows.HKEY_CURRENT_USER
+        case "HKLM":
+            ret = windows.HKEY_LOCAL_MACHINE
+        case "HKU":
+            ret = windows.HKEY_USERS
+    }
+
+    return ret
+}
+
+func (r *regquery) enabled() bool {
+
+    var enableSegment bool = false
+    var failed bool = false
+
+	// Call registry code and fill out "content" string.
+    registryRoot := r.props.getString(RegistryRoot, "")
+    registryRootHKEYValue := r.getHKEYValueFromAbbrString(registryRoot)
+    
     registryPath := r.props.getString(RegistryPath, "")
     registryKey := r.props.getString(RegistryKey, "")
+
+    // Fallback behaviour
+    failBehaviour := r.props.getString(QueryFailBehaviour, "hide_segment")
+    fallbackString := r.props.getString(QueryFailFallbackString, "")
 
     regPathUTF16, regPathErr :=  windows.UTF16FromString(registryPath);
 
     if (regPathErr == nil) {
         var hKey windows.Handle;
-
-        regOpenErr := windows.RegOpenKeyEx(windows.HKEY_LOCAL_MACHINE, &regPathUTF16[0], 0, windows.KEY_READ, &hKey)
+                                  
+        regOpenErr := windows.RegOpenKeyEx(registryRootHKEYValue, &regPathUTF16[0], 0, windows.KEY_READ, &hKey)
 
         if (regOpenErr == nil) {
             regKeyUTF16, regKeyErr := windows.UTF16FromString(registryKey);
@@ -46,21 +81,58 @@ func (r *regquery) enabled() bool {
                                 uint16p = (*uint16)(unsafe.Pointer(&keyBuf[0]))  // nasty casty
                                 s := windows.UTF16PtrToString(uint16p)
                                 r.content = s
-                                ret = true
+                                enableSegment = true
                             case windows.REG_DWORD:
                                 var uint32p *uint32
                                 uint32p = (*uint32)(unsafe.Pointer(&keyBuf[0])) // more casting goodness
+                                
+                                // add a property for the sprintf format string so it can be defined by the user?
                                 r.content = fmt.Sprintf("0x%08X", *uint32p)
-                                ret = true
+                                enableSegment = true
                             default:
-                                r.content = fmt.Sprintf("default: %d, %d %d", keyBufType, keyBufSize, keyBuf[0])
+                                r.errorInfo = fmt.Sprintf("no formatter for type:%d, data size:%d bytes", keyBufType, keyBufSize)
+                                failed = true
                             }
+                    } else {
+                        // key value query failure
+                        r.errorInfo = fmt.Sprintf("Error calling RegQueryValueEx to retrieve key data with error '%s'", regQueryErr)
+                        failed = true
                     }
+                } else {
+                    r.errorInfo = fmt.Sprintf("Error calling RegQueryValueEx to retrieve key data size with error '%s'", regQueryErr)
+                    failed = true
                 }
+            } else {
+                r.errorInfo = fmt.Sprintf("Error converting regsitry_key (%s) to UTF16, with error %d", registryKey, regKeyErr)
+                failed = true        
             }
-        }
+            
+            windows.RegCloseKey(hKey);
 
-        windows.RegCloseKey(hKey);
+        } else {
+            r.errorInfo = fmt.Sprintf("Error calling RegOpenKeyEx to open registry (root handle: '%s', path: '%s') with error '%s'", registryRoot, registryPath, regOpenErr)
+            failed = true
+        }
+    } else {
+        r.errorInfo = fmt.Sprintf("Error converting regsitry_path (%s) to UTF16, with error %d", registryPath, regPathErr)
+        failed = true
     }
-    return ret;
+
+    // Ok decide what to do...
+    if (failed) {
+        switch (failBehaviour){
+            case "hide_segment":
+                enableSegment = false
+            case "display_fallback_string":
+                r.content = fallbackString
+                enableSegment = true
+            case "show_debug_info":
+                r.content = r.errorInfo
+                enableSegment = true
+        }
+    } else {
+        enableSegment = true
+    }
+
+    return enableSegment;
 }

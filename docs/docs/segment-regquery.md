@@ -23,7 +23,7 @@ Additional flags are supported to configure behaviour if the key cannot be retri
     "style": "powerline",
     "powerline_symbol": "\uE0B0",
     "foreground": "#ffffff",
-    "background": "#0077c2",
+    "background": "#444444",
     "properties": {
         "registry_root": "HKLM",
         "registry_path": "software\\microsoft\\xboxlive",
@@ -37,16 +37,16 @@ Additional flags are supported to configure behaviour if the key cannot be retri
 ```
 ## Properties
 
-- registry_root: 'string' - the abbreviation of the root HKEY of the registry path:
+- registry_root: `string` - the abbreviation of the root HKEY of the registry path:
   - 'HKCR': HKEY_CLASSES_ROOT
   - 'HKCC': HKEY_CURRENT_CONFIG
   - 'HKCU': HKEY_CURRENT_USER
   - 'HKLM': HKEY_LOCAL_MACHINE
   - 'HKU': HKEY_USERS
-- registry_path: 'string' - the path from root to get to the desired key.
-- registry_key: 'string' - the key at the destiation root\path location to read.
-- query_fail_behaviour: 'string' - what to do if unable to get key value from the registry for any reason:
-  - 'hide_segment': will not display this segment.
-  - 'display_fallback_string': will display the string supplied in the 'query_fail_fallback_string' property.
-  - 'show_debug_info': will show details about why the key value could not be retrieved.
-- query_fail_fallback_string: 'string' - string to display when the requested key value could not be retrieved, and when 'display_fallback_string' is supplied as the value for 'query_fail_behaviour'.
+- registry_path: `string` - the path from root to get to the desired key.
+- registry_key: `string` - the key at the destiation root\path location to read.
+- query_fail_behaviour: `string` - what to do if unable to get key value from the registry for any reason:
+  - `hide_segment`: will not display this segment.
+  - `display_fallback_string`: will display the string supplied in the 'query_fail_fallback_string' property.
+  - `show_debug_info`: will show details about why the key value could not be retrieved.
+- query_fail_fallback_string: `string` - string to display when the requested key value could not be retrieved, and when `display_fallback_string` is supplied as the value for 'query_fail_behaviour'.

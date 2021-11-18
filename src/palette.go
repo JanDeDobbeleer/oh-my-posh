@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -10,13 +9,39 @@ import (
 type Palette map[string]string
 
 const (
-	paletteColorMissingErrorTemplate        = "palette: requested color %s does not exist in palette of colors %s"
-	paletteRecursiveResolutionErrorTemplate = "palette: resolution of color %s returned palette reference %s; recursive resolution is not supported"
+	paletteColorMissingErrorTemplate       = "palette: requested color %s does not exist in palette of colors %s"
+	paletteRecursiveReferenceErrorTemplate = "palette: resolution of color %s returned palette reference %s; recursive references are not supported"
 )
 
 var (
 	paletteColorPrefixes = [...]string{"palette:", "p:"}
 )
+
+type PaletteColorMissingError struct {
+	Reference string
+	palette   Palette
+}
+
+func (p *PaletteColorMissingError) Error() string {
+	colorNames := make([]string, 0, len(p.palette))
+	for k := range p.palette {
+		colorNames = append(colorNames, k)
+	}
+	sort.Strings(colorNames)
+	allColors := strings.Join(colorNames, ",")
+	errorStr := fmt.Sprintf(paletteColorMissingErrorTemplate, p.Reference, allColors)
+	return errorStr
+}
+
+type PaletteRecursiveReferenceError struct {
+	Reference string
+	Value     string
+}
+
+func (p *PaletteRecursiveReferenceError) Error() string {
+	errorStr := fmt.Sprintf(paletteRecursiveReferenceErrorTemplate, p.Reference, p.Value)
+	return errorStr
+}
 
 func (p Palette) resolveColor(colorName string) (string, error) {
 	palettePrefix := p.checkPalettePrefix(colorName)
@@ -29,16 +54,14 @@ func (p Palette) resolveColor(colorName string) (string, error) {
 	paletteName := strings.ReplaceAll(colorName, palettePrefix, "")
 
 	if paletteColor, ok := p[paletteName]; ok {
-		palettePrefix = p.checkPalettePrefix(paletteColor)
-
-		if palettePrefix != "" {
-			return "", p.reportRecursiveResolution(paletteName, paletteColor)
+		if palettePrefix = p.checkPalettePrefix(paletteColor); palettePrefix != "" {
+			return "", &PaletteRecursiveReferenceError{Reference: paletteName, Value: paletteColor}
 		}
 
 		return paletteColor, nil
 	}
 
-	return "", p.reportColorMissing(paletteName)
+	return "", &PaletteColorMissingError{Reference: paletteName, palette: p}
 }
 
 func (p Palette) checkPalettePrefix(colorName string) (selectedPalettePrefix string) {
@@ -50,22 +73,6 @@ func (p Palette) checkPalettePrefix(colorName string) (selectedPalettePrefix str
 	}
 
 	return
-}
-
-func (p Palette) reportRecursiveResolution(colorName, colorValue string) error {
-	errorStr := fmt.Sprintf(paletteRecursiveResolutionErrorTemplate, colorName, colorValue)
-	return errors.New(errorStr)
-}
-
-func (p Palette) reportColorMissing(colorName string) error {
-	colorNames := make([]string, 0, len(p))
-	for k := range p {
-		colorNames = append(colorNames, k)
-	}
-	sort.Strings(colorNames)
-	allColors := strings.Join(colorNames, ",")
-	errorStr := fmt.Sprintf(paletteColorMissingErrorTemplate, colorName, allColors)
-	return errors.New(errorStr)
 }
 
 // maybeResolveColor wraps resolveColor and silences possible errors, returning

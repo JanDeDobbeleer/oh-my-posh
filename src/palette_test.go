@@ -150,13 +150,13 @@ func TestPaletteShouldNotResolveRecursiveReference(t *testing.T) {
 			Case:          "Palette background",
 			Request:       "p:background",
 			ExpectedError: true,
-			Expected:      "palette: resolution of color background returned palette reference p:dark-blue; recursive resolution is not supported",
+			Expected:      "palette: resolution of color background returned palette reference p:dark-blue; recursive references are not supported",
 		},
 		{
 			Case:          "Palette foreground",
 			Request:       "p:foreground",
 			ExpectedError: true,
-			Expected:      "palette: resolution of color foreground returned palette reference p:light-blue; recursive resolution is not supported",
+			Expected:      "palette: resolution of color foreground returned palette reference p:light-blue; recursive references are not supported",
 		},
 	}
 
@@ -170,5 +170,26 @@ func TestPaletteShouldNotResolveRecursiveReference(t *testing.T) {
 			assert.NotNil(t, err, "expected error")
 			assert.Equal(t, tc.Expected, err.Error())
 		}
+	}
+}
+
+func BenchmarkPaletteMixedCaseResolution(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		benchmarkPaletteMixedCaseResolution()
+	}
+}
+
+func benchmarkPaletteMixedCaseResolution() {
+	cases := []TestPaletteRequest{
+		{Case: "Palette red", Request: "palette:red", Expected: "#FF0000"},
+		{Case: "ANSI black", Request: "black", Expected: "black"},
+		{Case: "Cyan", Request: "#05E6FA", Expected: "#05E6FA"},
+		{Case: "Palette black", Request: "palette:black", Expected: "#000000"},
+		{Case: "Palette pink", Request: "palette:pink", ExpectedError: true, Expected: "palette: requested color pink does not exist in palette of colors black,blue,green,red,white"},
+		{Case: "Palette blue", Request: "p:blue", Expected: "#0000FF"},
+	}
+
+	for _, tc := range cases {
+		testPalette.resolveColor(tc.Request)
 	}
 }

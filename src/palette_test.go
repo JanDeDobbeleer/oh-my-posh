@@ -208,6 +208,8 @@ func benchmarkPaletteMixedCaseResolution() {
 	}
 
 	for _, tc := range cases {
-		testPalette.ResolveColor(tc.Request)
+		// both value and error values are irrelevant, but such assignment calms down
+		// golangci-lint "return value of `testPalette.ResolveColor` is not checked" error
+		_, _ = testPalette.ResolveColor(tc.Request)
 	}
 }

@@ -173,6 +173,17 @@ func TestPaletteShouldNotResolveRecursiveReference(t *testing.T) {
 	}
 }
 
+func TestPaletteShouldHandleEmptyKey(t *testing.T) {
+	tp := Palette{
+		"": "#000000",
+	}
+
+	actual, err := tp.ResolveColor("palette:")
+
+	assert.Nil(t, err, "expected no error")
+	assert.Equal(t, "#000000", actual, "expected different color value")
+}
+
 func BenchmarkPaletteMixedCaseResolution(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		benchmarkPaletteMixedCaseResolution()

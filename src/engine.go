@@ -217,7 +217,7 @@ func (e *engine) renderTooltip(tip string) string {
 		Segments:  []*Segment{tooltip},
 	}
 	switch e.env.getShellName() {
-	case zsh:
+	case zsh, winCMD:
 		block.init(e.env, e.writer, e.ansi)
 		return block.renderSegments()
 	case pwsh, powershell5:

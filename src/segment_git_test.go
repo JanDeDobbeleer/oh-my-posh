@@ -667,6 +667,34 @@ func TestTruncateBranch(t *testing.T) {
 	}
 }
 
+func TestTruncateBranchWithSymbol(t *testing.T) {
+	cases := []struct {
+		Case           string
+		Expected       string
+		Branch         string
+		MaxLength      interface{}
+		TruncateSymbol interface{}
+	}{
+		{Case: "No limit", Expected: "all-your-base-are-belong-to-us", Branch: "all-your-base-are-belong-to-us", TruncateSymbol: "..."},
+		{Case: "No limit - larger", Expected: "all-your-base...", Branch: "all-your-base-are-belong-to-us", MaxLength: 13.0, TruncateSymbol: "..."},
+		{Case: "No limit - smaller", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 16.0, TruncateSymbol: "..."},
+		{Case: "Invalid setting", Expected: "all-your-base", Branch: "all-your-base", MaxLength: "burp", TruncateSymbol: "..."},
+		{Case: "Lower than limit", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 20.0, TruncateSymbol: "..."},
+	}
+
+	for _, tc := range cases {
+		g := &git{
+			props: &properties{
+				values: map[Property]interface{}{
+					BranchMaxLength: tc.MaxLength,
+					TruncateSymbol:  tc.TruncateSymbol,
+				},
+			},
+		}
+		assert.Equal(t, tc.Expected, g.truncateBranch(tc.Branch), tc.Case)
+	}
+}
+
 func TestGetGitCommand(t *testing.T) {
 	cases := []struct {
 		Case     string

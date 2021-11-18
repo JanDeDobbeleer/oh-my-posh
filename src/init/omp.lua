@@ -2,6 +2,7 @@
 
 local endedit_time
 local last_duration
+local tip_word
 
 local function os_clock_millis()
     -- Clink v1.2.30 has a fix for Lua's os.clock() implementation failing after
@@ -56,6 +57,14 @@ function p:filter(prompt)
     return get_posh_prompt(false)
 end
 function p:rightfilter(prompt)
+    if tip_word == nil then
+        return get_posh_prompt(true), false
+    end
+    local prompt_exe = string.format('::OMP:: --config="::CONFIG::" --command="%s"', tip_word)
+    tooltip = io.popen(prompt_exe):read("*a")
+    if tooltip ~= "" then
+        return tooltip, false
+    end
     return get_posh_prompt(true), false
 end
 
@@ -73,4 +82,20 @@ end
 if clink.onbeginedit ~= nil and clink.onendedit ~= nil then
     clink.onbeginedit(builtin_modules_onbeginedit)
     clink.onendedit(builtin_modules_onendedit)
+end
+
+-- Tooltips
+
+function ohmyposh_space(rl_buffer)
+    rl_buffer:insert(" ")
+    local words = string.explode(rl_buffer:getbuffer(), ' ', [["]])
+    if words[1] ~= tip_word then
+        tip_word = words[1] -- remember the first word for use when filtering the prompt
+        clink.refilterprompt() -- invoke the prompt filters so omp can update the prompt per the tip word
+    end
+end
+
+if rl.setbinding then
+    clink.onbeginedit(function () tip_word = nil end)
+    rl.setbinding(' ', [["luafunc:ohmyposh_space"]], 'emacs')
 end

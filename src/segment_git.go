@@ -95,6 +95,8 @@ const (
 
 	// BranchMaxLength truncates the length of the branch name
 	BranchMaxLength Property = "branch_max_length"
+	// TruncateSymbol appends the set symbol to a truncated branch name
+	TruncateSymbol Property = "truncate_symbol"
 	// BranchIcon the icon to use as branch indicator
 	BranchIcon Property = "branch_icon"
 	// BranchIdenticalIcon the icon to display when the remote and local branch are identical
@@ -384,7 +386,8 @@ func (g *git) truncateBranch(branch string) string {
 	if maxLength == 0 || len(branch) < maxLength {
 		return branch
 	}
-	return branch[0:maxLength]
+	symbol := g.props.getString(TruncateSymbol, "")
+	return branch[0:maxLength] + symbol
 }
 
 func (g *git) hasGitFile(file string) bool {

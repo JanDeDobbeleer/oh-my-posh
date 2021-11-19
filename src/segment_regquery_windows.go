@@ -1,5 +1,12 @@
 //go:build windows
 
+// TODO:
+//
+//  * reg value -> string formatting to own fn?
+//  * support for other reg types?
+//  * custom formatting for values?  (custom sprintf is too dangerous, what else?)
+//
+
 package main
 
 import (
@@ -9,14 +16,6 @@ import (
 
 	"golang.org/x/sys/windows"
 )
-
-// TODO
-//  Code tidyup
-//      Move registry code out?
-//      Make nested if/else more easy to understand
-//  Test cases
-//      Include registry calls?
-//  Docs
 
 func (r *regquery) getHKEYValueFromAbbrString(abbr string) windows.Handle {
 	var ret windows.Handle = 0

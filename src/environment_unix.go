@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/v3/host"
 	terminal "github.com/wayneashleyberry/terminal-dimensions"
 )
 

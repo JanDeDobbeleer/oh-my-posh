@@ -217,7 +217,7 @@ func (e *engine) renderTooltip(tip string) string {
 		Segments:  []*Segment{tooltip},
 	}
 	switch e.env.getShellName() {
-	case zsh:
+	case zsh, winCMD:
 		block.init(e.env, e.writer, e.ansi)
 		return block.renderSegments()
 	case pwsh, powershell5:
@@ -253,7 +253,7 @@ func (e *engine) renderTransientPrompt() string {
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.writer.string(), "\"", "\"\""))
 		prompt += "\nRPROMPT=\"\""
 		return prompt
-	case pwsh, powershell5:
+	case pwsh, powershell5, winCMD:
 		return e.writer.string()
 	}
 	return ""

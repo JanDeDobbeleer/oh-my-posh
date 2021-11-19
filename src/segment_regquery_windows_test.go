@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetRegistryFunction(t *testing.T) {
+func TestRegQueryGetRegistryFunction(t *testing.T) {
 
 	cases := []struct {
 		CaseDescription     string

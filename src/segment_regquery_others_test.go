@@ -8,7 +8,7 @@ import (
 	"github.com/alecthomas/assert"
 )
 
-func Test(t *testing.T) {
+func TestRegQueryNonWindows(t *testing.T) {
 	r := regquery{}
 	assert.EqualValues(t, r.enabled(), false)
 }

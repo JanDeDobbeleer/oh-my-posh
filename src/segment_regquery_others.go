@@ -1,10 +1,7 @@
-//go:build linux
+//go:build !windows
 
 package main
 
-a
-
 func (r *regquery) enabled() bool {
-	a
 	return false
 }

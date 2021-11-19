@@ -19,20 +19,19 @@ Additional flags are supported to configure behaviour if the key cannot be retri
 
 ```json
 {
-    "type": "regquery",
-    "style": "powerline",
-    "powerline_symbol": "\uE0B0",
-    "foreground": "#ffffff",
-    "background": "#444444",
-    "properties": {
-        "registry_path": "HKLM\\software\\microsoft\\xboxlive",
-        "registry_key":"sandbox",
-        "query_fail_behaviour":"display_fallback_string",
-        "query_fail_fallback_string":"RETAIL",
-        "prefix": " \uFAB8 (",
-        "postfix": ") "
-    }
-},
+  "type": "regquery",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#444444",
+  "properties": {
+    "registry_path": "HKLM\\software\\microsoft\\windows nt\\currentversion",
+    "registry_key":"buildlab",
+    "query_fail_behaviour":"display_fallback_string",
+    "query_fail_fallback_string":"unknown",
+    "prefix": " \uE62A ",
+  }
+}, 
 ```
 ## Properties
 

@@ -25,8 +25,7 @@ Additional flags are supported to configure behaviour if the key cannot be retri
     "foreground": "#ffffff",
     "background": "#444444",
     "properties": {
-        "registry_root": "HKLM",
-        "registry_path": "software\\microsoft\\xboxlive",
+        "registry_path": "HKLM\\software\\microsoft\\xboxlive",
         "registry_key":"sandbox",
         "query_fail_behaviour":"display_fallback_string",
         "query_fail_fallback_string":"RETAIL",
@@ -37,14 +36,8 @@ Additional flags are supported to configure behaviour if the key cannot be retri
 ```
 ## Properties
 
-- registry_root: `string` - the abbreviation of the root HKEY of the registry path:
-  - 'HKCR': HKEY_CLASSES_ROOT
-  - 'HKCC': HKEY_CURRENT_CONFIG
-  - 'HKCU': HKEY_CURRENT_USER
-  - 'HKLM': HKEY_LOCAL_MACHINE
-  - 'HKU': HKEY_USERS
-- registry_path: `string` - the path from root to get to the desired key.
-- registry_key: `string` - the key at the destiation root\path location to read.
+- registry_path: `string` - the path from root to get to the desired key.  Case-insensitive.  Must use backslashes.  Must include the valid root HKEY in short or abbreviated format, such as HKLM or HKEY_LOCAL_MACHINE.
+- registry_key: `string` - the key at the destiation root\path location to read.  If this is blank, the value of the "(Default)" key for that path will be used.
 - query_fail_behaviour: `string` - what to do if unable to get key value from the registry for any reason:
   - `hide_segment`: will not display this segment.
   - `display_fallback_string`: will display the string supplied in the 'query_fail_fallback_string' property.

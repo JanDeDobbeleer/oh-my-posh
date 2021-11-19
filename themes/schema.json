@@ -1715,22 +1715,16 @@
                   "template": {
                     "$ref": "#/definitions/template"
                   },
-                  "registry_root": {
-                    "type": "string",
-                    "title": "Registry Root",
-                    "description": "The root HK to use for the query",
-                    "enum": ["HKCR", "HKCC", "HKCU", "HKLM", "HKU"]
-                  },
                   "registry_path": {
                     "type": "string",
                     "title": "Registry Path",
-                    "description": "The path under which the registy key lives (case insensitive)",
+                    "description": "The path under which the registy key lives (case insensitive, must use backslashes), e.g. HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion",
                     "default": ""
                   },
                   "registry_key": {
                     "type": "string",
                     "title": "Registry Key",
-                    "description": "The key under he registry path to get (case insensitive)",
+                    "description": "The key under he registry path to get (case insensitive).  If left blank, will get the value of the (Default) key in the registry_path",
                     "default": ""
                   },
                   "query_fail_behaviour" : {

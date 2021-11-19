@@ -25,7 +25,7 @@ const (
 )
 
 func (n *new) enabled() bool {
-    return true 
+    return true
 }
 
 func (n *new) string() string {

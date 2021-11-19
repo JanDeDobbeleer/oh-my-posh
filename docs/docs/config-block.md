@@ -39,7 +39,7 @@ Supported on [ZSH][rprompt], Bash and Powershell.
 
 ### Newline
 
-Start the block on a new line. Defaults to `false`.
+Start the block on a new line - defaults to `false`.
 
 ### Alignment
 

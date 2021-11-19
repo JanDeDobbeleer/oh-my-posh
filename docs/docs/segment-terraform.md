@@ -28,7 +28,7 @@ This requires a terraform binary in your PATH and will only show in directories 
 ```
 
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below. Defaults to `{{ .WorkspaceName }}> `
+properties below - defaults to `{{ .WorkspaceName }}> `
 
 ## Template Properties
 

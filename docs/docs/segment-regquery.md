@@ -33,12 +33,13 @@ Additional flags are supported to configure behaviour if the key cannot be retri
   }
 }, 
 ```
+
 ## Properties
 
-- registry_path: `string` - the path from root to get to the desired key.  Case-insensitive.  Must use backslashes.  Must include the valid root HKEY in short or abbreviated format, such as HKLM or HKEY_LOCAL_MACHINE.
-- registry_key: `string` - the key at the destiation root\path location to read.  If this is blank, the value of the "(Default)" key for that path will be used.
-- query_fail_behaviour: `string` - what to do if unable to get key value from the registry for any reason:
-  - `hide_segment`: will not display this segment.
-  - `display_fallback_string`: will display the string supplied in the 'query_fail_fallback_string' property.
-  - `show_debug_info`: will show details about why the key value could not be retrieved.
-- query_fail_fallback_string: `string` - string to display when the requested key value could not be retrieved, and when `display_fallback_string` is supplied as the value for 'query_fail_behaviour'.
+* registry_path: `string` - the path from root to get to the desired key.  Case-insensitive.  Must use backslashes.  Must include the valid root HKEY in short or abbreviated format, such as HKLM or HKEY_LOCAL_MACHINE.
+* registry_key: `string` - the key at the destiation root\path location to read.  If this is blank, the value of the "(Default)" key for that path will be used.
+* query_fail_behaviour: `string` - what to do if unable to get key value from the registry for any reason:
+  * `hide_segment`: will not display this segment.
+  * `display_fallback_string`: will display the string supplied in the 'query_fail_fallback_string' property.
+  * `show_debug_info`: will show details about why the key value could not be retrieved.
+* query_fail_fallback_string: `string` - string to display when the requested key value could not be retrieved, and when `display_fallback_string` is supplied as the value for 'query_fail_behaviour'.

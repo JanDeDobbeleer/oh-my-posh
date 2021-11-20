@@ -66,3 +66,8 @@ func getAnsiColorFromName(colorName string, isBackground bool) (AnsiColor, error
 	}
 	return "", errors.New(fmt.Sprintf("color name %s does not exist", colorName))
 }
+
+func isAnsiColorName(colorString string) bool {
+	_, ok := ansiColors[colorString]
+	return ok
+}

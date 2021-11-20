@@ -6,7 +6,7 @@ sidebar_label: OS
 
 ## What
 
-Display OS specific info. Defaults to Icon.
+Display OS specific info - defaults to Icon.
 
 ## Sample Configuration
 

@@ -48,7 +48,7 @@ The free tier for *Current weather and forecasts collection* is sufficient.
 - http_timeout: `int` - The default timeout for http request is 20ms.
 - cache_timeout: `int` - The default timeout for request caching is 10m. A value of 0 disables the cache.
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below. Defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`
+properties below - defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`
 
 ## Template Properties
 

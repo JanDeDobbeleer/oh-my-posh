@@ -34,13 +34,13 @@ To use a Palette, define a `"palette"` object at the top level of your theme:
 }
 ```
 
-Color names can have any string value, so be creative.
+Color names (palette keys) can have any string value, so be creative.
 Color values, on the other hand, should adhere to the [Standard color][colors] format.
 
 ## Using a Palette
 
-You can now reference color from Palette in [Segment][segment] `foreground`, `foreground_templates`,
-`background`, `background_templates` properties.
+You can now reference color from Palette in any [Segment's][segment] `foreground`, `foreground_templates`,
+`background`, `background_templates` properties, and other config properties that expect __Standard color__ value.
 Reference can have 2 forms: either `palette:<color name>` or `p:<color name>`.
 Take a look at the [Git][git] segment using Palette references:
 

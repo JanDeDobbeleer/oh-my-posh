@@ -16,7 +16,6 @@ Oh My Posh supports multiple different color references, being:
 - The `background` keyword which can be used to reference the current segment's background color.
 - The `parentForeground` keyword which can be used to inherit the previous active segment's foreground color.
 - The `parentBackground` keyword which can be used to inherit the previous active segment's background color.
-- The `palete:...` color references which allow using colors from a [Palette][palette].
 
   These include 8 basic ANSI colors and `default`:
 
@@ -51,6 +50,15 @@ To change *only* the background color, just omit the first color from the above 
 ```json
 "prefix": "<,#FFFFFF>┏[</>",
 ```
+
+## Palette reference
+
+If your theme has a defined [Palette][palette], you can use the Palette reference in places where the
+__Standard color__ is expected.
+
+Palette references have 2 possible formats: `p:<palette key>` and `palette:<palette key>`.
+
+Read more about [Palette][palette].
 
 [hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/

@@ -27,7 +27,7 @@ Display the currently active AWS profile and region.
 ## Properties
 
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below. Defaults to `{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}`
+properties below - defaults to `{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}`
 - display_default: `boolean` - display the segment or not when the user profile matches `default` - defaults
 to `true`
 

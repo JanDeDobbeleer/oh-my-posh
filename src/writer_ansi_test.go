@@ -163,7 +163,7 @@ func TestWriteANSIColors(t *testing.T) {
 			Colors:   &Color{Foreground: "black", Background: "white"},
 		},
 		{
-			Case:     "Goole",
+			Case:     "Google",
 			Input:    "<blue,white>G</><red,white>o</><yellow,white>o</><blue,white>g</><green,white>l</><red,white>e</>",
 			Expected: "\x1b[47m\x1b[34mG\x1b[0m\x1b[47m\x1b[31mo\x1b[0m\x1b[47m\x1b[33mo\x1b[0m\x1b[47m\x1b[34mg\x1b[0m\x1b[47m\x1b[32ml\x1b[0m\x1b[47m\x1b[31me\x1b[0m",
 			Colors:   &Color{Foreground: "black", Background: "black"},

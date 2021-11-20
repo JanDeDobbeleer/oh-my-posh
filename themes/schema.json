@@ -1734,7 +1734,7 @@
       "description": "https://ohmyposh.dev/docs/config-title#console-title-template",
       "default": "{{ .Shell }} in {{ .Folder }}"
     },
-    "terminal_background": { "$ref": "#/definitions/color_literal" },
+    "terminal_background": { "$ref": "#/definitions/color" },
     "blocks": {
       "type": "array",
       "title": "Block array",
@@ -1772,8 +1772,8 @@
           "title": "Transient Prompt Template",
           "default": "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"
         },
-        "background": { "$ref": "#/definitions/color_literal" },
-        "foreground": { "$ref": "#/definitions/color_literal" }
+        "background": { "$ref": "#/definitions/color" },
+        "foreground": { "$ref": "#/definitions/color" }
       }
     },
     "palette": {

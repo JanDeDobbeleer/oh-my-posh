@@ -64,7 +64,7 @@ func TestExecutionTimeWriterDuration(t *testing.T) {
 		env: env,
 	}
 	executionTime.enabled()
-	assert.Equal(t, expected, executionTime.output)
+	assert.Equal(t, expected, executionTime.FormattedMs)
 }
 
 func TestExecutionTimeWriterDuration2(t *testing.T) {
@@ -76,7 +76,7 @@ func TestExecutionTimeWriterDuration2(t *testing.T) {
 		env: env,
 	}
 	executionTime.enabled()
-	assert.Equal(t, expected, executionTime.output)
+	assert.Equal(t, expected, executionTime.FormattedMs)
 }
 
 func TestExecutionTimeFormatDurationAustin(t *testing.T) {
@@ -99,7 +99,8 @@ func TestExecutionTimeFormatDurationAustin(t *testing.T) {
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
 		executionTime := &executiontime{}
-		output := executionTime.formatDurationAustin(duration.Milliseconds())
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationAustin()
 		assert.Equal(t, tc.Expected, output)
 	}
 }
@@ -124,7 +125,8 @@ func TestExecutionTimeFormatDurationRoundrock(t *testing.T) {
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
 		executionTime := &executiontime{}
-		output := executionTime.formatDurationRoundrock(duration.Milliseconds())
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationRoundrock()
 		assert.Equal(t, tc.Expected, output)
 	}
 }
@@ -149,7 +151,8 @@ func TestExecutionTimeFormatDallas(t *testing.T) {
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
 		executionTime := &executiontime{}
-		output := executionTime.formatDurationDallas(duration.Milliseconds())
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationDallas()
 		assert.Equal(t, tc.Expected, output)
 	}
 }
@@ -174,7 +177,8 @@ func TestExecutionTimeFormatGalveston(t *testing.T) {
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
 		executionTime := &executiontime{}
-		output := executionTime.formatDurationGalveston(duration.Milliseconds())
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationGalveston()
 		assert.Equal(t, tc.Expected, output)
 	}
 }
@@ -199,7 +203,8 @@ func TestExecutionTimeFormatHouston(t *testing.T) {
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
 		executionTime := &executiontime{}
-		output := executionTime.formatDurationHouston(duration.Milliseconds())
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationHouston()
 		assert.Equal(t, tc.Expected, output)
 	}
 }
@@ -224,7 +229,8 @@ func TestExecutionTimeFormatAmarillo(t *testing.T) {
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
 		executionTime := &executiontime{}
-		output := executionTime.formatDurationAmarillo(duration.Milliseconds())
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationAmarillo()
 		assert.Equal(t, tc.Expected, output)
 	}
 }
@@ -249,7 +255,8 @@ func TestExecutionTimeFormatDurationRound(t *testing.T) {
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
 		executionTime := &executiontime{}
-		output := executionTime.formatDurationRound(duration.Milliseconds())
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationRound()
 		assert.Equal(t, tc.Expected, output)
 	}
 }

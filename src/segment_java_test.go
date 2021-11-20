@@ -16,6 +16,11 @@ func TestJava(t *testing.T) {
 		JavaHomeEnabled bool
 	}{
 		{
+			Case:           "Zulu LTS",
+			ExpectedString: "11.0.13",
+			Version:        "OpenJDK 64-Bit Server VM (11.0.13+8-LTS) for windows-amd64 JRE (Zulu11.52+13-CA) (11.0.13+8-LTS), built on Oct 7 2021 16:00:23 by \"zulu_re\" with MS VC++ 15.9 (VS2017)", // nolint:lll
+		},
+		{
 			Case:           "OpenJDK macOS",
 			ExpectedString: "1.8.0",
 			Version:        "OpenJDK 64-Bit Server VM (25.275-b01) for bsd-amd64 JRE (1.8.0_275-b01), built on Nov  9 2020 12:07:35 by \"jenkins\" with gcc 4.2.1",

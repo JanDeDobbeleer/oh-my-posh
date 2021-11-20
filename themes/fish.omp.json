@@ -10,6 +10,7 @@
           "style": "plain",
           "foreground": "#ffffff",
           "properties": {
+            "template": "{{ .Text }}",
             "postfix": ""
           }
         },
@@ -43,7 +44,8 @@
           "background": "#007ACC",
           "properties": {
             "prefix": "<#ffffff>\uE0B1</> ",
-            "postfix": " "
+            "postfix": " ",
+            "template": "{{ .HEAD }}"
           }
         },
         {

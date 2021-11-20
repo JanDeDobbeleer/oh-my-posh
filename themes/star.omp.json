@@ -30,7 +30,8 @@
           "foreground": "#C678DD",
           "properties": {
             "prefix": "<#ffffff>on</> ",
-            "display_status": true
+            "fetch_status": true,
+            "template": "{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}"
           }
         },
         {
@@ -47,8 +48,8 @@
           "style": "plain",
           "foreground": "#C94A16",
           "properties": {
-            "prefix": "x",
-            "display_exit_code": false
+            "prefix": "",
+            "template": "x"
           }
         }
       ]

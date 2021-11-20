@@ -7,15 +7,17 @@
     {
       "type": "prompt",
       "alignment": "left",
-      "newline": true,
+      "newline": false,
       "segments": [
         {
-          "type": "root",
+          "type": "session",
           "style": "plain",
           "foreground": "#BF616A",
           "properties": {
-            "prefix": "",
-            "root_icon": "Admin"
+            "display_host": false,
+            "display_user": true,
+            "user_info_separator": "",
+            "prefix": ""
           }
         },
         {
@@ -39,15 +41,15 @@
           "foreground": "#6C6C6C",
           "properties": {
             "prefix": "",
-            "display_stash_count": true,
-            "display_status": true,
-            "display_status_detail": true,
-            "display_upstream_icon": true,
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
             "branch_icon": "",
             "github_icon": "",
             "branch_ahead_icon": "<#88C0D0>\u21e1 </>",
             "branch_behind_icon": "<#88C0D0>\u21e3 </>",
-            "local_working_icon": "<#FFAFD7>\u002a</>"
+            "local_working_icon": "<#FFAFD7>\u002a</>",
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
           }
         }
       ]
@@ -75,10 +77,10 @@
           "type": "exit",
           "style": "plain",
           "foreground": "#B48EAD",
+          "foreground_templates": ["{{ if gt .Code 0 }}#BF616A{{ end }}"],
           "properties": {
-            "prefix": "\u276f",
-            "display_exit_code": false,
-            "error_color": "#BF616A",
+            "template": "\u276f",
+            "prefix": "",
             "always_enabled": true
           }
         }

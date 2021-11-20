@@ -35,11 +35,11 @@
           "foreground": "#ffffff",
           "background": "#FCA17D",
           "properties": {
-            "display_stash_count": true,
-            "display_upstream_icon": true,
-            "status_colors_enabled": false,
+            "fetch_stash_count": true,
+            "fetch_upstream_icon": true,
             "branch_icon": "",
-            "display_status": false,
+            "fetch_status": false,
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}",
             "prefix": " \u279C (",
             "postfix": ") "
           }

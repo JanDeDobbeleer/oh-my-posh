@@ -22,7 +22,8 @@
           "foreground": "#ffffff",
           "properties": {
             "prefix": "<#CB4B16>[</>",
-            "postfix": "<#CB4B16>]</>"
+            "postfix": "<#CB4B16>]</>",
+            "template": "{{ .HEAD }}"
           }
         },
         {
@@ -39,6 +40,7 @@
           "style": "plain",
           "foreground": "#ffffff",
           "properties": {
+            "template": "{{ .Text }}",
             "prefix": "<#CB4B16>[x</>",
             "postfix": "<#CB4B16>]</>"
           }

@@ -13,10 +13,12 @@ type inContext func() bool
 type matchesVersionFile func() bool
 
 type version struct {
-	full  string
-	major string
-	minor string
-	patch string
+	Full          string
+	Major         string
+	Minor         string
+	Patch         string
+	Prerelease    string
+	BuildMetadata string
 }
 
 type cmd struct {
@@ -32,16 +34,18 @@ func (c *cmd) parse(versionInfo string) error {
 		return errors.New("cannot parse version string")
 	}
 	c.version = &version{}
-	c.version.full = values["version"]
-	c.version.major = values["major"]
-	c.version.minor = values["minor"]
-	c.version.patch = values["patch"]
+	c.version.Full = values["version"]
+	c.version.Major = values["major"]
+	c.version.Minor = values["minor"]
+	c.version.Patch = values["patch"]
+	c.version.Prerelease = values["prerelease"]
+	c.version.BuildMetadata = values["buildmetadata"]
 	return nil
 }
 
-func (c *cmd) buildVersionURL(template string) string {
+func (c *cmd) buildVersionURL(text, template string) string {
 	if template == "" {
-		return c.version.full
+		return text
 	}
 	truncatingSprintf := func(str string, args ...interface{}) (string, error) {
 		n := strings.Count(str, "%s")
@@ -53,9 +57,9 @@ func (c *cmd) buildVersionURL(template string) string {
 		}
 		return fmt.Sprintf(str, args[:n]...), nil
 	}
-	version, err := truncatingSprintf(template, c.version.full, c.version.major, c.version.minor, c.version.patch)
+	version, err := truncatingSprintf(template, text, c.version.Major, c.version.Minor, c.version.Patch)
 	if err != nil {
-		return c.version.full
+		return text
 	}
 	return version
 }
@@ -110,13 +114,40 @@ func (l *language) string() string {
 		return ""
 	}
 
-	if l.props.getBool(EnableHyperlink, false) {
-		return l.activeCommand.buildVersionURL(l.versionURLTemplate)
+	segmentTemplate := l.props.getString(SegmentTemplate, "{{.Full}}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  l.activeCommand.version,
+		Env:      l.env,
 	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+
+	if l.props.getBool(EnableHyperlink, false) {
+		versionURLTemplate := l.props.getString(VersionURLTemplate, "")
+		// backward compatibility
+		if versionURLTemplate == "" {
+			text = l.activeCommand.buildVersionURL(text, l.versionURLTemplate)
+		} else {
+			template := &textTemplate{
+				Template: versionURLTemplate,
+				Context:  l.activeCommand.version,
+				Env:      l.env,
+			}
+			url, err := template.render()
+			if err != nil {
+				return err.Error()
+			}
+			text = url
+		}
+	}
+
 	if l.props.getBool(EnableVersionMismatch, false) {
 		l.setVersionFileMismatch()
 	}
-	return l.activeCommand.version.full
+	return text
 }
 
 func (l *language) enabled() bool {

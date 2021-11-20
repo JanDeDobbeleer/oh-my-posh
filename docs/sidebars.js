@@ -2,7 +2,7 @@ module.exports = {
   docs: [
     {
       type: "category",
-      label: "Getting Started",
+      label: "💡 Getting Started",
       collapsed: false,
       items: [
         "introduction",
@@ -10,20 +10,30 @@ module.exports = {
         {
           type: "category",
           label: "🚀 Installation",
+          collapsed: false,
           items: ["pwsh", "windows", "macos", "linux"],
         },
-        "configure",
-        "beta",
-        "themes",
-        "share",
-        "fonts",
-        "faq",
-        "contributors",
       ],
     },
     {
       type: "category",
-      label: "Segments",
+      label: "⚙️ Configuration",
+      items: [
+        "config-overview",
+        "config-block",
+        "config-segment",
+        "config-sample",
+        "config-title",
+        "config-colors",
+        "config-text-style",
+        "config-transient",
+        "config-tooltips",
+        "config-fonts"
+      ],
+    },
+    {
+      type: "category",
+      label: "🌟 Segments",
       collapsed: true,
       items: [
         "angular",
@@ -44,7 +54,6 @@ module.exports = {
         "java",
         "julia",
         "kubectl",
-        "memory",
         "nbgv",
         "node",
         "os",
@@ -58,6 +67,7 @@ module.exports = {
         "session",
         "shell",
         "spotify",
+        "sysinfo",
         "terraform",
         "text",
         "time",
@@ -66,7 +76,7 @@ module.exports = {
     },
     {
       type: "category",
-      label: "Contributing",
+      label: "🙋🏾‍♀️ Contributing",
       collapsed: true,
       items: [
         "contributing_started",
@@ -74,5 +84,9 @@ module.exports = {
         "contributing_git",
       ],
     },
+    "themes",
+    "share",
+    "faq",
+    "contributors",
   ],
 };

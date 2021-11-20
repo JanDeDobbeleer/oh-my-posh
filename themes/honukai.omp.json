@@ -31,7 +31,8 @@
           "style": "plain",
           "foreground": "#B8B80A",
           "properties": {
-            "prefix": "<#ffffff>on git:</>"
+            "prefix": "<#ffffff>on git:</>",
+            "template": "{{ .HEAD }}"
           }
         }
       ]
@@ -69,13 +70,16 @@
           "style": "plain",
           "foreground": "#100e23",
           "properties": {
-            "prefix": " \uE235 "
+            "prefix": "\uE235 "
           }
         },
         {
           "type": "exit",
           "style": "plain",
-          "foreground": "#CB4B16"
+          "foreground": "#CB4B16",
+          "properties": {
+            "template": "{{ .Text }}"
+          }
         },
         {
           "type": "text",

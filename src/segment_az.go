@@ -8,7 +8,15 @@ import (
 type az struct {
 	props *properties
 	env   environmentInfo
-	AZ    *AzureAccount
+
+	EnvironmentName string     `json:"environmentName"`
+	HomeTenantID    string     `json:"homeTenantId"`
+	ID              string     `json:"id"`
+	IsDefault       bool       `json:"isDefault"`
+	Name            string     `json:"name"`
+	State           string     `json:"state"`
+	TenantID        string     `json:"tenantId"`
+	User            *AzureUser `json:"user"`
 }
 
 const (
@@ -22,25 +30,14 @@ type AzureUser struct {
 	Name string `json:"name"`
 }
 
-type AzureAccount struct {
-	EnvironmentName string     `json:"environmentName"`
-	HomeTenantID    string     `json:"homeTenantId"`
-	ID              string     `json:"id"`
-	IsDefault       bool       `json:"isDefault"`
-	Name            string     `json:"name"`
-	State           string     `json:"state"`
-	TenantID        string     `json:"tenantId"`
-	User            *AzureUser `json:"user"`
-}
-
 func (a *az) string() string {
-	if a.AZ != nil && a.AZ.Name == updateMessage {
+	if a != nil && a.Name == updateMessage {
 		return updateMessage
 	}
 	segmentTemplate := a.props.getString(SegmentTemplate, "{{.Name}}")
 	template := &textTemplate{
 		Template: segmentTemplate,
-		Context:  a.AZ,
+		Context:  a,
 		Env:      a.env,
 	}
 	text, err := template.render()
@@ -73,13 +70,11 @@ func (a *az) getFromEnvVars() bool {
 		return false
 	}
 
-	a.AZ = &AzureAccount{
-		EnvironmentName: environmentName,
-		Name:            accountName,
-		ID:              id,
-		User: &AzureUser{
-			Name: userName,
-		},
+	a.EnvironmentName = environmentName
+	a.Name = accountName
+	a.ID = id
+	a.User = &AzureUser{
+		Name: userName,
 	}
 
 	return true
@@ -99,13 +94,10 @@ func (a *az) getFromAzCli() bool {
 	if strings.Contains(output, updateConsentNeeded) {
 		a.props.foreground = updateForeground
 		a.props.background = updateBackground
-		a.AZ = &AzureAccount{
-			Name: updateMessage,
-		}
+		a.Name = updateMessage
 		return true
 	}
 
-	a.AZ = &AzureAccount{}
-	err := json.Unmarshal([]byte(output), a.AZ)
+	err := json.Unmarshal([]byte(output), a)
 	return err == nil
 }

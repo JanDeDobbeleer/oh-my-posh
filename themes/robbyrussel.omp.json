@@ -1,4 +1,3 @@
-
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
@@ -30,18 +29,19 @@
           "foreground": "#D0666F",
           "properties": {
             "branch_icon": "",
-            "display_status": false,
             "prefix": "<#5FAAE8>git:(</>",
-            "postfix": "<#5FAAE8>)</>"
+            "postfix": "<#5FAAE8>)</>",
+            "template": "{{ .HEAD }}"
           }
         },
         {
           "type": "exit",
           "style": "plain",
-          "foreground": "#DCB977",
+          "foreground": "#BF616A",
           "properties": {
-            "prefix": "\u2717",
-            "display_exit_code": false
+            "template": "\u2717",
+            "prefix": " ",
+            "postfix": ""
           }
         }
       ]

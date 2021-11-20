@@ -8,7 +8,10 @@
         {
           "type": "exit",
           "style": "plain",
-          "foreground": "#CB4B16"
+          "foreground": "#CB4B16",
+          "properties": {
+            "template": "{{ .Text }}"
+          }
         },
         {
           "type": "root",
@@ -34,7 +37,8 @@
           "style": "plain",
           "foreground": "#C1C106",
           "properties": {
-            "prefix": "<#ffffff>git:</>"
+            "prefix": "<#ffffff>git:</>",
+            "template": "{{ .HEAD }}"
           }
         },
         {

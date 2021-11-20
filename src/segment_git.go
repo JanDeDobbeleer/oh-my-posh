@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"strconv"
 	"strings"
@@ -9,29 +8,46 @@ import (
 	"gopkg.in/ini.v1"
 )
 
-type gitRepo struct {
-	working          *gitStatus
-	staging          *gitStatus
-	ahead            int
-	behind           int
-	HEAD             string
-	upstream         string
-	stashCount       int
-	gitWorkingFolder string // .git working folder, can be different of root if using worktree
-	isWorkTree       bool
-	gitRootFolder    string // .git root folder
-	worktreeCount    int
+// GitStatus represents part of the status of a git repository
+type GitStatus struct {
+	Unmerged int
+	Deleted  int
+	Added    int
+	Modified int
+	Changed  bool
 }
 
-type gitStatus struct {
-	unmerged int
-	deleted  int
-	added    int
-	modified int
-	changed  bool
+func (s *GitStatus) parse(output []string, working bool) {
+	if len(output) <= 1 {
+		return
+	}
+	for _, line := range output[1:] {
+		if len(line) < 2 {
+			continue
+		}
+		code := line[0:1]
+		if working {
+			code = line[1:2]
+		}
+		switch code {
+		case "?":
+			if working {
+				s.Added++
+			}
+		case "D":
+			s.Deleted++
+		case "A":
+			s.Added++
+		case "U":
+			s.Unmerged++
+		case "M", "R", "C", "m":
+			s.Modified++
+		}
+	}
+	s.Changed = s.Added > 0 || s.Deleted > 0 || s.Modified > 0 || s.Unmerged > 0
 }
 
-func (s *gitStatus) string() string {
+func (s *GitStatus) String() string {
 	var status string
 	stringIfValue := func(value int, prefix string) string {
 		if value > 0 {
@@ -39,24 +55,50 @@ func (s *gitStatus) string() string {
 		}
 		return ""
 	}
-	status += stringIfValue(s.added, "+")
-	status += stringIfValue(s.modified, "~")
-	status += stringIfValue(s.deleted, "-")
-	status += stringIfValue(s.unmerged, "x")
-	return status
+	status += stringIfValue(s.Added, "+")
+	status += stringIfValue(s.Modified, "~")
+	status += stringIfValue(s.Deleted, "-")
+	status += stringIfValue(s.Unmerged, "x")
+	return strings.TrimSpace(status)
 }
 
 type git struct {
 	props *properties
 	env   environmentInfo
-	repo  *gitRepo
+
+	Working       *GitStatus
+	Staging       *GitStatus
+	Ahead         int
+	Behind        int
+	HEAD          string
+	BranchStatus  string
+	Upstream      string
+	UpstreamIcon  string
+	StashCount    int
+	WorktreeCount int
+	IsWorkTree    bool
+
+	gitWorkingFolder  string // .git working folder, can be different of root if using worktree
+	gitRootFolder     string // .git root folder
+	gitWorktreeFolder string // .git real worktree path
 }
 
 const (
+	// FetchStatus fetches the status of the repository
+	FetchStatus Property = "fetch_status"
+	// FetchStashCount fetches the stash count
+	FetchStashCount Property = "fetch_stash_count"
+	// FetchWorktreeCount fetches the worktree count
+	FetchWorktreeCount Property = "fetch_worktree_count"
+	// FetchUpstreamIcon fetches the upstream icon
+	FetchUpstreamIcon Property = "fetch_upstream_icon"
+
+	// BranchMaxLength truncates the length of the branch name
+	BranchMaxLength Property = "branch_max_length"
+	// TruncateSymbol appends the set symbol to a truncated branch name
+	TruncateSymbol Property = "truncate_symbol"
 	// BranchIcon the icon to use as branch indicator
 	BranchIcon Property = "branch_icon"
-	// DisplayBranchStatus show branch status or not
-	DisplayBranchStatus Property = "display_branch_status"
 	// BranchIdenticalIcon the icon to display when the remote and local branch are identical
 	BranchIdenticalIcon Property = "branch_identical_icon"
 	// BranchAheadIcon the icon to display when the local branch is ahead of the remote
@@ -65,14 +107,6 @@ const (
 	BranchBehindIcon Property = "branch_behind_icon"
 	// BranchGoneIcon the icon to use when ther's no remote
 	BranchGoneIcon Property = "branch_gone_icon"
-	// LocalWorkingIcon the icon to use as the local working area changes indicator
-	LocalWorkingIcon Property = "local_working_icon"
-	// LocalStagingIcon the icon to use as the local staging area changes indicator
-	LocalStagingIcon Property = "local_staged_icon"
-	// DisplayStatus shows the status of the repository
-	DisplayStatus Property = "display_status"
-	// DisplayStatusDetail shows the detailed status of the repository
-	DisplayStatusDetail Property = "display_status_detail"
 	// RebaseIcon shows before the rebase context
 	RebaseIcon Property = "rebase_icon"
 	// CherryPickIcon shows before the cherry-pick context
@@ -85,16 +119,8 @@ const (
 	NoCommitsIcon Property = "no_commits_icon"
 	// TagIcon shows before the tag context
 	TagIcon Property = "tag_icon"
-	// DisplayStashCount show stash count or not
-	DisplayStashCount Property = "display_stash_count"
-	// StashCountIcon shows before the stash context
-	StashCountIcon Property = "stash_count_icon"
-	// StatusSeparatorIcon shows between staging and working area
-	StatusSeparatorIcon Property = "status_separator_icon"
 	// MergeIcon shows before the merge context
 	MergeIcon Property = "merge_icon"
-	// DisplayUpstreamIcon show or hide the upstream icon
-	DisplayUpstreamIcon Property = "display_upstream_icon"
 	// GithubIcon shows√ when upstream is github
 	GithubIcon Property = "github_icon"
 	// BitbucketIcon shows  when upstream is bitbucket
@@ -105,26 +131,6 @@ const (
 	GitlabIcon Property = "gitlab_icon"
 	// GitIcon shows when the upstream can't be identified
 	GitIcon Property = "git_icon"
-	// WorkingColor if set, the color to use on the working area
-	WorkingColor Property = "working_color"
-	// StagingColor if set, the color to use on the staging area
-	StagingColor Property = "staging_color"
-	// StatusColorsEnabled enables status colors
-	StatusColorsEnabled Property = "status_colors_enabled"
-	// LocalChangesColor if set, the color to use when there are local changes
-	LocalChangesColor Property = "local_changes_color"
-	// AheadAndBehindColor if set, the color to use when the branch is ahead and behind the remote
-	AheadAndBehindColor Property = "ahead_and_behind_color"
-	// BehindColor if set, the color to use when the branch is ahead and behind the remote
-	BehindColor Property = "behind_color"
-	// AheadColor if set, the color to use when the branch is ahead and behind the remote
-	AheadColor Property = "ahead_color"
-	// BranchMaxLength truncates the length of the branch name
-	BranchMaxLength Property = "branch_max_length"
-	// DisplayWorktreeCount show worktree count or not
-	DisplayWorktreeCount Property = "display_worktree_count"
-	// WorktreeCountIcon shows before the worktree context
-	WorktreeCountIcon Property = "worktree_count_icon"
 )
 
 func (g *git) enabled() bool {
@@ -139,25 +145,27 @@ func (g *git) enabled() bool {
 		return false
 	}
 
-	g.repo = &gitRepo{}
+	g.Staging = &GitStatus{}
+	g.Working = &GitStatus{}
+
 	if gitdir.isDir {
-		g.repo.gitWorkingFolder = gitdir.path
-		g.repo.gitRootFolder = gitdir.path
+		g.gitWorkingFolder = gitdir.path
+		g.gitRootFolder = gitdir.path
 		return true
 	}
 	// handle worktree
-	g.repo.gitRootFolder = gitdir.path
-	dirPointer := g.env.getFileContent(gitdir.path)
-	dirPointer = strings.Trim(dirPointer, " \r\n")
+	g.gitRootFolder = gitdir.path
+	dirPointer := strings.Trim(g.env.getFileContent(gitdir.path), " \r\n")
 	matches := findNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
 	if matches != nil && matches["dir"] != "" {
-		g.repo.gitWorkingFolder = matches["dir"]
+		g.gitWorkingFolder = matches["dir"]
 		// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
 		// strips the last .git/worktrees part
 		// :ind+5 = index + /.git
-		ind := strings.LastIndex(g.repo.gitWorkingFolder, "/.git/worktrees")
-		g.repo.gitRootFolder = g.repo.gitWorkingFolder[:ind+5]
-		g.repo.isWorkTree = true
+		ind := strings.LastIndex(g.gitWorkingFolder, "/.git/worktrees")
+		g.gitRootFolder = g.gitWorkingFolder[:ind+5]
+		g.gitWorktreeFolder = strings.TrimSuffix(g.env.getFileContent(g.gitWorkingFolder+"/gitdir"), ".git\n")
+		g.IsWorkTree = true
 		return true
 	}
 	return false
@@ -177,43 +185,43 @@ func (g *git) shouldIgnoreRootRepository(rootDir string) bool {
 
 func (g *git) string() string {
 	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
-	displayStatus := g.props.getBool(DisplayStatus, false)
-
+	displayStatus := g.getBool(FetchStatus, DisplayStatus)
+	if !displayStatus {
+		g.HEAD = g.getPrettyHEADName()
+	}
 	if displayStatus || statusColorsEnabled {
 		g.setGitStatus()
 	}
-	if statusColorsEnabled {
-		g.SetStatusColor()
+	if g.Upstream != "" && g.getBool(FetchUpstreamIcon, DisplayUpstreamIcon) {
+		g.UpstreamIcon = g.getUpstreamIcon()
 	}
-	if !displayStatus {
-		return g.getPrettyHEADName()
+	if g.getBool(FetchStashCount, DisplayStashCount) {
+		g.StashCount = g.getStashContext()
 	}
-	buffer := new(bytes.Buffer)
-	// remote (if available)
-	if g.repo.upstream != "" && g.props.getBool(DisplayUpstreamIcon, false) {
-		fmt.Fprintf(buffer, "%s", g.getUpstreamSymbol())
+	if g.getBool(FetchWorktreeCount, DisplayWorktreeCount) {
+		g.WorktreeCount = g.getWorktreeContext()
 	}
-	// branchName
-	fmt.Fprintf(buffer, "%s", g.repo.HEAD)
-	if g.props.getBool(DisplayBranchStatus, true) {
-		buffer.WriteString(g.getBranchStatus())
+	// use template if available
+	segmentTemplate := g.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) > 0 {
+		return g.templateString(segmentTemplate)
 	}
-	if g.repo.staging.changed {
-		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.staging, StagingColor, LocalStagingIcon, " \uF046"))
+	// legacy render string	if no template
+	// remove this for 6.0
+	return g.deprecatedString(statusColorsEnabled)
+}
+
+func (g *git) templateString(segmentTemplate string) string {
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  g,
+		Env:      g.env,
 	}
-	if g.repo.staging.changed && g.repo.working.changed {
-		fmt.Fprint(buffer, g.props.getString(StatusSeparatorIcon, " |"))
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
 	}
-	if g.repo.working.changed {
-		fmt.Fprint(buffer, g.getStatusDetailString(g.repo.working, WorkingColor, LocalWorkingIcon, " \uF044"))
-	}
-	if g.repo.stashCount != 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(StashCountIcon, "\uF692 "), g.repo.stashCount)
-	}
-	if g.repo.worktreeCount != 0 {
-		fmt.Fprintf(buffer, " %s%d", g.props.getString(WorktreeCountIcon, "\uf1bb "), g.repo.worktreeCount)
-	}
-	return buffer.String()
+	return text
 }
 
 func (g *git) init(props *properties, env environmentInfo) {
@@ -222,45 +230,26 @@ func (g *git) init(props *properties, env environmentInfo) {
 }
 
 func (g *git) getBranchStatus() string {
-	if g.repo.ahead > 0 && g.repo.behind > 0 {
-		return fmt.Sprintf(" %s%d %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.repo.ahead, g.props.getString(BranchBehindIcon, "\u2193"), g.repo.behind)
+	if g.Ahead > 0 && g.Behind > 0 {
+		return fmt.Sprintf(" %s%d %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.Ahead, g.props.getString(BranchBehindIcon, "\u2193"), g.Behind)
 	}
-	if g.repo.ahead > 0 {
-		return fmt.Sprintf(" %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.repo.ahead)
+	if g.Ahead > 0 {
+		return fmt.Sprintf(" %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.Ahead)
 	}
-	if g.repo.behind > 0 {
-		return fmt.Sprintf(" %s%d", g.props.getString(BranchBehindIcon, "\u2193"), g.repo.behind)
+	if g.Behind > 0 {
+		return fmt.Sprintf(" %s%d", g.props.getString(BranchBehindIcon, "\u2193"), g.Behind)
 	}
-	if g.repo.behind == 0 && g.repo.ahead == 0 && g.repo.upstream != "" {
+	if g.Behind == 0 && g.Ahead == 0 && g.Upstream != "" {
 		return fmt.Sprintf(" %s", g.props.getString(BranchIdenticalIcon, "\u2261"))
 	}
-	if g.repo.upstream == "" {
+	if g.Upstream == "" {
 		return fmt.Sprintf(" %s", g.props.getString(BranchGoneIcon, "\u2262"))
 	}
 	return ""
 }
 
-func (g *git) getStatusDetailString(status *gitStatus, color, icon Property, defaultIcon string) string {
-	prefix := g.props.getString(icon, defaultIcon)
-	foregroundColor := g.props.getColor(color, g.props.foreground)
-	if !g.props.getBool(DisplayStatusDetail, true) {
-		return g.colorStatusString(prefix, "", foregroundColor)
-	}
-	return g.colorStatusString(prefix, status.string(), foregroundColor)
-}
-
-func (g *git) colorStatusString(prefix, status, color string) string {
-	if color == g.props.foreground {
-		return fmt.Sprintf("%s%s", prefix, status)
-	}
-	if strings.Contains(prefix, "</>") {
-		return fmt.Sprintf("%s<%s>%s</>", prefix, color, status)
-	}
-	return fmt.Sprintf("<%s>%s%s</>", color, prefix, status)
-}
-
-func (g *git) getUpstreamSymbol() string {
-	upstream := replaceAllString("/.*", g.repo.upstream, "")
+func (g *git) getUpstreamIcon() string {
+	upstream := replaceAllString("/.*", g.Upstream, "")
 	url := g.getOriginURL(upstream)
 	if strings.Contains(url, "github") {
 		return g.props.getString(GithubIcon, "\uF408 ")
@@ -280,44 +269,18 @@ func (g *git) getUpstreamSymbol() string {
 func (g *git) setGitStatus() {
 	output := g.getGitCommandOutput("status", "-unormal", "--short", "--branch")
 	splittedOutput := strings.Split(output, "\n")
-	g.repo.working = g.parseGitStats(splittedOutput, true)
-	g.repo.staging = g.parseGitStats(splittedOutput, false)
+	g.Working.parse(splittedOutput, true)
+	g.Staging.parse(splittedOutput, false)
 	status := g.parseGitStatusInfo(splittedOutput[0])
 	if status["local"] != "" {
-		g.repo.ahead, _ = strconv.Atoi(status["ahead"])
-		g.repo.behind, _ = strconv.Atoi(status["behind"])
+		g.Ahead, _ = strconv.Atoi(status["ahead"])
+		g.Behind, _ = strconv.Atoi(status["behind"])
 		if status["upstream_status"] != "gone" {
-			g.repo.upstream = status["upstream"]
+			g.Upstream = status["upstream"]
 		}
 	}
-	g.repo.HEAD = g.getGitHEADContext(status["local"])
-	if g.props.getBool(DisplayStashCount, false) {
-		g.repo.stashCount = g.getStashContext()
-	}
-	if g.props.getBool(DisplayWorktreeCount, false) {
-		g.repo.worktreeCount = g.getWorktreeContext()
-	}
-}
-
-func (g *git) SetStatusColor() {
-	if g.props.getBool(ColorBackground, true) {
-		g.props.background = g.getStatusColor(g.props.background)
-	} else {
-		g.props.foreground = g.getStatusColor(g.props.foreground)
-	}
-}
-
-func (g *git) getStatusColor(defaultValue string) string {
-	if g.repo.staging.changed || g.repo.working.changed {
-		return g.props.getColor(LocalChangesColor, defaultValue)
-	} else if g.repo.ahead > 0 && g.repo.behind > 0 {
-		return g.props.getColor(AheadAndBehindColor, defaultValue)
-	} else if g.repo.ahead > 0 {
-		return g.props.getColor(AheadColor, defaultValue)
-	} else if g.repo.behind > 0 {
-		return g.props.getColor(BehindColor, defaultValue)
-	}
-	return defaultValue
+	g.HEAD = g.getGitHEADContext(status["local"])
+	g.BranchStatus = g.getBranchStatus()
 }
 
 func (g *git) getGitCommand() string {
@@ -332,7 +295,7 @@ func (g *git) getGitCommand() string {
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {
-	args = append([]string{"--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+	args = append([]string{"-C", g.gitWorktreeFolder, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	val, _ := g.env.runCommand(g.getGitCommand(), args...)
 	return val
 }
@@ -346,30 +309,30 @@ func (g *git) getGitHEADContext(ref string) string {
 		ref = fmt.Sprintf("%s%s", branchIcon, ref)
 	}
 	// rebase
-	if g.env.hasFolder(g.repo.gitWorkingFolder + "/rebase-merge") {
-		head := g.getGitFileContents(g.repo.gitWorkingFolder, "rebase-merge/head-name")
+	if g.env.hasFolder(g.gitWorkingFolder + "/rebase-merge") {
+		head := g.getGitFileContents(g.gitWorkingFolder, "rebase-merge/head-name")
 		origin := strings.Replace(head, "refs/heads/", "", 1)
 		origin = g.truncateBranch(origin)
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
 		onto = g.truncateBranch(onto)
-		step := g.getGitFileContents(g.repo.gitWorkingFolder, "rebase-merge/msgnum")
-		total := g.getGitFileContents(g.repo.gitWorkingFolder, "rebase-merge/end")
+		step := g.getGitFileContents(g.gitWorkingFolder, "rebase-merge/msgnum")
+		total := g.getGitFileContents(g.gitWorkingFolder, "rebase-merge/end")
 		icon := g.props.getString(RebaseIcon, "\uE728 ")
 		return fmt.Sprintf("%s%s%s onto %s%s (%s/%s) at %s", icon, branchIcon, origin, branchIcon, onto, step, total, ref)
 	}
-	if g.env.hasFolder(g.repo.gitWorkingFolder + "/rebase-apply") {
-		head := g.getGitFileContents(g.repo.gitWorkingFolder, "rebase-apply/head-name")
+	if g.env.hasFolder(g.gitWorkingFolder + "/rebase-apply") {
+		head := g.getGitFileContents(g.gitWorkingFolder, "rebase-apply/head-name")
 		origin := strings.Replace(head, "refs/heads/", "", 1)
 		origin = g.truncateBranch(origin)
-		step := g.getGitFileContents(g.repo.gitWorkingFolder, "rebase-apply/next")
-		total := g.getGitFileContents(g.repo.gitWorkingFolder, "rebase-apply/last")
+		step := g.getGitFileContents(g.gitWorkingFolder, "rebase-apply/next")
+		total := g.getGitFileContents(g.gitWorkingFolder, "rebase-apply/last")
 		icon := g.props.getString(RebaseIcon, "\uE728 ")
 		return fmt.Sprintf("%s%s%s (%s/%s) at %s", icon, branchIcon, origin, step, total, ref)
 	}
 	// merge
 	if g.hasGitFile("MERGE_MSG") && g.hasGitFile("MERGE_HEAD") {
 		icon := g.props.getString(MergeIcon, "\uE727 ")
-		mergeContext := g.getGitFileContents(g.repo.gitWorkingFolder, "MERGE_MSG")
+		mergeContext := g.getGitFileContents(g.gitWorkingFolder, "MERGE_MSG")
 		matches := findNamedRegexMatch(`Merge (?P<type>(remote-tracking )?branch|commit|tag) '(?P<head>.*)' into`, mergeContext)
 
 		if matches != nil && matches["head"] != "" {
@@ -392,15 +355,15 @@ func (g *git) getGitHEADContext(ref string) string {
 	// reverts then CHERRY_PICK_HEAD/REVERT_HEAD will not exist so we have to read
 	// the todo file.
 	if g.hasGitFile("CHERRY_PICK_HEAD") {
-		sha := g.getGitFileContents(g.repo.gitWorkingFolder, "CHERRY_PICK_HEAD")
+		sha := g.getGitFileContents(g.gitWorkingFolder, "CHERRY_PICK_HEAD")
 		icon := g.props.getString(CherryPickIcon, "\uE29B ")
 		return fmt.Sprintf("%s%s onto %s", icon, sha[0:6], ref)
 	} else if g.hasGitFile("REVERT_HEAD") {
-		sha := g.getGitFileContents(g.repo.gitWorkingFolder, "REVERT_HEAD")
+		sha := g.getGitFileContents(g.gitWorkingFolder, "REVERT_HEAD")
 		icon := g.props.getString(RevertIcon, "\uF0E2 ")
 		return fmt.Sprintf("%s%s onto %s", icon, sha[0:6], ref)
 	} else if g.hasGitFile("sequencer/todo") {
-		todo := g.getGitFileContents(g.repo.gitWorkingFolder, "sequencer/todo")
+		todo := g.getGitFileContents(g.gitWorkingFolder, "sequencer/todo")
 		matches := findNamedRegexMatch(`^(?P<action>p|pick|revert)\s+(?P<sha>\S+)`, todo)
 		if matches != nil && matches["sha"] != "" {
 			action := matches["action"]
@@ -423,11 +386,12 @@ func (g *git) truncateBranch(branch string) string {
 	if maxLength == 0 || len(branch) < maxLength {
 		return branch
 	}
-	return branch[0:maxLength]
+	symbol := g.props.getString(TruncateSymbol, "")
+	return branch[0:maxLength] + symbol
 }
 
 func (g *git) hasGitFile(file string) bool {
-	return g.env.hasFilesInDir(g.repo.gitWorkingFolder, file)
+	return g.env.hasFilesInDir(g.gitWorkingFolder, file)
 }
 
 func (g *git) getGitFileContents(folder, file string) string {
@@ -435,13 +399,13 @@ func (g *git) getGitFileContents(folder, file string) string {
 }
 
 func (g *git) getGitRefFileSymbolicName(refFile string) string {
-	ref := g.getGitFileContents(g.repo.gitWorkingFolder, refFile)
+	ref := g.getGitFileContents(g.gitWorkingFolder, refFile)
 	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
 func (g *git) getPrettyHEADName() string {
 	var ref string
-	HEAD := g.getGitFileContents(g.repo.gitWorkingFolder, "HEAD")
+	HEAD := g.getGitFileContents(g.gitWorkingFolder, "HEAD")
 	branchPrefix := "ref: refs/heads/"
 	if strings.HasPrefix(HEAD, branchPrefix) {
 		ref = strings.TrimPrefix(HEAD, branchPrefix)
@@ -463,40 +427,8 @@ func (g *git) getPrettyHEADName() string {
 	return fmt.Sprintf("%s%s", g.props.getString(CommitIcon, "\uF417"), ref)
 }
 
-func (g *git) parseGitStats(output []string, working bool) *gitStatus {
-	status := gitStatus{}
-	if len(output) <= 1 {
-		return &status
-	}
-	for _, line := range output[1:] {
-		if len(line) < 2 {
-			continue
-		}
-		code := line[0:1]
-		if working {
-			code = line[1:2]
-		}
-		switch code {
-		case "?":
-			if working {
-				status.added++
-			}
-		case "D":
-			status.deleted++
-		case "A":
-			status.added++
-		case "U":
-			status.unmerged++
-		case "M", "R", "C", "m":
-			status.modified++
-		}
-	}
-	status.changed = status.added > 0 || status.deleted > 0 || status.modified > 0 || status.unmerged > 0
-	return &status
-}
-
 func (g *git) getStashContext() int {
-	stashContent := g.getGitFileContents(g.repo.gitRootFolder, "logs/refs/stash")
+	stashContent := g.getGitFileContents(g.gitRootFolder, "logs/refs/stash")
 	if stashContent == "" {
 		return 0
 	}
@@ -505,10 +437,10 @@ func (g *git) getStashContext() int {
 }
 
 func (g *git) getWorktreeContext() int {
-	if !g.env.hasFolder(g.repo.gitRootFolder + "/worktrees") {
+	if !g.env.hasFolder(g.gitRootFolder + "/worktrees") {
 		return 0
 	}
-	worktreeFolders := g.env.getFoldersList(g.repo.gitRootFolder + "/worktrees")
+	worktreeFolders := g.env.getFoldersList(g.gitRootFolder + "/worktrees")
 	return len(worktreeFolders)
 }
 
@@ -518,7 +450,7 @@ func (g *git) parseGitStatusInfo(branchInfo string) map[string]string {
 }
 
 func (g *git) getOriginURL(upstream string) string {
-	cfg, err := ini.Load(g.repo.gitRootFolder + "/config")
+	cfg, err := ini.Load(g.gitRootFolder + "/config")
 	if err != nil {
 		return g.getGitCommandOutput("remote", "get-url", upstream)
 	}

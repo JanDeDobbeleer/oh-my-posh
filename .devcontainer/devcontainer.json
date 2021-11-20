@@ -58,6 +58,7 @@
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
     "actboy168.tasks",
+    "eamodio.gitlens",
     "bungcip.better-toml",
     "davidanson.vscode-markdownlint",
     "editorconfig.editorconfig",

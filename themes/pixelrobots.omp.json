@@ -119,18 +119,17 @@
           "style": "diamond",
           "foreground": "#ffea00",
           "background": "#2f2f2f",
+          "foreground_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#ffea00{{ end }}",
+            "{{ if gt .Ahead 0 }}#2EC4B6{{ end }}",
+            "{{ if gt .Behind 0 }}#8A4FFF{{ end }}"
+          ],
           "properties": {
-            "display_stash_count": true,
-            "display_upstream_icon": true,
-            "display_status": true,
-            "status_colors_enabled": true,
-            "color_background": false,
-            "local_changes_color": "#ffea00",
-            "working_color": "#E84855",
-            "staging_color": "#2FDA4E",
-            "ahead_color": "#2EC4B6",
-            "behind_color": "#8A4FFF",
-            "prefix": "<#ffea00>\ue0b1 </>"
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "prefix": "<#ffea00>\ue0b1 </>",
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#E84855> \uF044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#2FDA4E> \uF046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
           }
         },
         {

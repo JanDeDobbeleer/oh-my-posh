@@ -26,46 +26,6 @@ func TestExitWriterEnabled(t *testing.T) {
 	}
 }
 
-func TestExitWriterFormattedText(t *testing.T) {
-	cases := []struct {
-		ExitCode        int
-		Expected        string
-		SuccessIcon     string
-		ErrorIcon       string
-		DisplayExitCode bool
-		AlwaysNumeric   bool
-	}{
-		{ExitCode: 129, Expected: "SIGHUP", DisplayExitCode: true},
-		{ExitCode: 5001, Expected: "5001", DisplayExitCode: true},
-		{ExitCode: 147, Expected: "SIGSTOP", DisplayExitCode: true},
-		{ExitCode: 147, Expected: "", DisplayExitCode: false},
-		{ExitCode: 147, Expected: "147", DisplayExitCode: true, AlwaysNumeric: true},
-		{ExitCode: 0, Expected: "wooopie", SuccessIcon: "wooopie"},
-		{ExitCode: 129, Expected: "err SIGHUP", ErrorIcon: "err ", DisplayExitCode: true},
-		{ExitCode: 129, Expected: "err", ErrorIcon: "err", DisplayExitCode: false},
-	}
-
-	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("lastErrorCode", nil).Return(tc.ExitCode)
-		props := &properties{
-			foreground: "#111111",
-			background: "#ffffff",
-			values: map[Property]interface{}{
-				SuccessIcon:     tc.SuccessIcon,
-				ErrorIcon:       tc.ErrorIcon,
-				DisplayExitCode: tc.DisplayExitCode,
-				AlwaysNumeric:   tc.AlwaysNumeric,
-			},
-		}
-		e := &exit{
-			env:   env,
-			props: props,
-		}
-		assert.Equal(t, tc.Expected, e.getFormattedText())
-	}
-}
-
 func TestGetMeaningFromExitCode(t *testing.T) {
 	errorMap := make(map[int]string)
 	errorMap[1] = "ERROR"
@@ -97,26 +57,34 @@ func TestGetMeaningFromExitCode(t *testing.T) {
 	errorMap[151] = "151"
 	errorMap[7000] = "7000"
 	for exitcode, want := range errorMap {
-		env := new(MockedEnvironment)
-		env.On("lastErrorCode", nil).Return(exitcode)
-		e := &exit{
-			env: env,
-		}
+		e := &exit{}
+		e.Code = exitcode
 		assert.Equal(t, want, e.getMeaningFromExitCode())
 	}
 }
 
-func TestAlwaysNumericExitCode(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("lastErrorCode", nil).Return(1)
-	props := &properties{
-		values: map[Property]interface{}{
-			AlwaysNumeric: true,
-		},
+func TestExitWriterTemplateString(t *testing.T) {
+	cases := []struct {
+		Case     string
+		ExitCode int
+		Expected string
+		Template string
+	}{
+		{Case: "Only code", ExitCode: 129, Expected: "129", Template: "{{ .Code }}"},
 	}
-	e := &exit{
-		env:   env,
-		props: props,
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("lastErrorCode", nil).Return(tc.ExitCode)
+		props := &properties{
+			values: map[Property]interface{}{
+				SegmentTemplate: tc.Template,
+			},
+		}
+		e := &exit{
+			env:   env,
+			props: props,
+		}
+		assert.Equal(t, tc.Expected, e.string(), tc.Case)
 	}
-	assert.Equal(t, "1", e.getMeaningFromExitCode())
 }

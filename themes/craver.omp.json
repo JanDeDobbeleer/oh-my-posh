@@ -60,9 +60,10 @@
           "foreground": "#3A86FF",
           "background": "#242424",
           "properties": {
-            "display_status": true,
-            "display_stash_count": true,
-            "display_upstream_icon": true,
+            "fetch_status": true,
+            "fetch_stash_count": true,
+            "fetch_upstream_icon": true,
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}",
             "prefix": ""
           }
         },
@@ -94,11 +95,9 @@
           "powerline_symbol": "\uE0B4",
           "foreground": "#242424",
           "background": "#33DD2D",
+          "background_templates": ["{{ if gt .Code 0 }}#f1184c{{ end }}"],
           "properties": {
-            "display_exit_code": false,
-            "color_background": true,
-            "error_color": "#f1184c",
-            "prefix": " \ufc8d"
+            "template": "\uF7d4"
           }
         }
       ]

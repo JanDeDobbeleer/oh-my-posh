@@ -158,3 +158,5 @@ Output/
 
 # images
 *.png
+
+local/

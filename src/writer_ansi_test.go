@@ -9,21 +9,22 @@ import (
 func TestGetAnsiFromColorString(t *testing.T) {
 	cases := []struct {
 		Case       string
-		Expected   string
+		Expected   AnsiColor
 		Color      string
 		Background bool
 	}{
-		{Case: "Invalid background", Expected: "", Color: "invalid", Background: true},
-		{Case: "Invalid background", Expected: "", Color: "invalid", Background: false},
-		{Case: "Hex foreground", Expected: "48;2;170;187;204", Color: "#AABBCC", Background: false},
-		{Case: "Base 8 foreground", Expected: "41", Color: "red", Background: false},
-		{Case: "Base 8 background", Expected: "41", Color: "red", Background: true},
-		{Case: "Base 16 foreground", Expected: "101", Color: "lightRed", Background: false},
-		{Case: "Base 16 backround", Expected: "101", Color: "lightRed", Background: true},
+		{Case: "Invalid background", Expected: emptyAnsiColor, Color: "invalid", Background: true},
+		{Case: "Invalid background", Expected: emptyAnsiColor, Color: "invalid", Background: false},
+		{Case: "Hex foreground", Expected: AnsiColor("38;2;170;187;204"), Color: "#AABBCC", Background: false},
+		{Case: "Hex backgrond", Expected: AnsiColor("48;2;170;187;204"), Color: "#AABBCC", Background: true},
+		{Case: "Base 8 foreground", Expected: AnsiColor("31"), Color: "red", Background: false},
+		{Case: "Base 8 background", Expected: AnsiColor("41"), Color: "red", Background: true},
+		{Case: "Base 16 foreground", Expected: AnsiColor("91"), Color: "lightRed", Background: false},
+		{Case: "Base 16 backround", Expected: AnsiColor("101"), Color: "lightRed", Background: true},
 	}
 	for _, tc := range cases {
 		renderer := &AnsiWriter{}
-		ansiColor := renderer.getAnsiFromColorString(tc.Color, true)
+		ansiColor := renderer.getAnsiFromColorString(tc.Color, tc.Background)
 		assert.Equal(t, tc.Expected, ansiColor, tc.Case)
 	}
 }

@@ -38,9 +38,9 @@
           "background": "#FF9248",
           "properties": {
             "home_icon": "",
-            "folder_icon": "\uf413 ",
+            "folder_icon": " \uf413 ",
             "style": "folder",
-            "prefix": "<parentBackground>\uE0B0</> \ufc6e\uf553",
+            "prefix": " \ufc6e\uf553",
             "enable_hyperlink": true
           }
         },
@@ -71,7 +71,7 @@
           "foreground": "#ffffff",
           "background": "#83769c",
           "properties": {
-            "prefix": "<parentBackground>\uE0B0</>羽",
+            "prefix": "羽",
             "postfix": "\u2800",
             "threshold": 0,
             "style": "roundrock"
@@ -252,7 +252,7 @@
           "foreground": "#222222",
           "background": "#b2bec3",
           "properties": {
-            "postfix": "<#333333>\uE0B2</>",
+            "postfix": "<#262626>\uE0B2</>",
             "windows": "\ue27f ",
             "macos": "\ue27f ",
             "linux": "\ue27f "
@@ -275,7 +275,7 @@
             "charged_color": "#33DD2D",
             "charging_color": "lightYellow",
             "discharging_color": "#ff5722",
-            "postfix": " <#333333>\uE0B2</>"
+            "postfix": " <#262626>\uE0B2</>"
           }
         },
         {

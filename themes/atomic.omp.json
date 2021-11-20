@@ -247,7 +247,7 @@
         {
           "type": "os",
           "style": "diamond",
-          "leading_diamond": "\uE0B6",
+          "leading_diamond": " \uE0B6",
           "trailing_diamond": "",
           "foreground": "#222222",
           "background": "#b2bec3",

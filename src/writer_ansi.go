@@ -183,26 +183,27 @@ func (a *AnsiWriter) write(background, foreground, text string) {
 	text = a.ansi.generateHyperlink(text)
 
 	// first we match for any potentially valid colors enclosed in <>
-	match := findAllNamedRegexMatch(colorRegex, text)
-	for i := range match {
-		fgName := match[i]["foreground"]
-		bgName := match[i]["background"]
-		if fgName == Transparent && len(bgName) == 0 {
-			bgName = background
+	// i.e., find color overrides
+	overrides := findAllNamedRegexMatch(colorRegex, text)
+	for _, override := range overrides {
+		fgOverride := override["foreground"]
+		bgOverride := override["background"]
+		if fgOverride == Transparent && len(bgOverride) == 0 {
+			bgOverride = background
 		}
-		bg, fg := a.asAnsiColors(bgName, fgName)
+		bgOverrideAnsi, fgOverrideAnsi := a.asAnsiColors(bgOverride, fgOverride)
 		// set colors if they are empty
-		if bg.IsEmpty() {
-			bg = bgAnsi
+		if bgOverrideAnsi.IsEmpty() {
+			bgOverrideAnsi = bgAnsi
 		}
-		if fg.IsEmpty() {
-			fg = fgAnsi
+		if fgOverrideAnsi.IsEmpty() {
+			fgOverrideAnsi = fgAnsi
 		}
-		escapedTextSegment := match[i]["text"]
-		innerText := match[i]["content"]
+		escapedTextSegment := override["text"]
+		innerText := override["content"]
 		textBeforeColorOverride := strings.Split(text, escapedTextSegment)[0]
 		text = a.writeAndRemoveText(bgAnsi, fgAnsi, textBeforeColorOverride, textBeforeColorOverride, text)
-		text = a.writeAndRemoveText(bg, fg, innerText, escapedTextSegment, text)
+		text = a.writeAndRemoveText(bgOverrideAnsi, fgOverrideAnsi, innerText, escapedTextSegment, text)
 	}
 	// color the remaining part of text with background and foreground
 	a.writeColoredText(bgAnsi, fgAnsi, text)

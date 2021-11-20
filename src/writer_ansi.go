@@ -177,30 +177,7 @@ func (a *AnsiWriter) write(background, foreground, text string) {
 		return
 	}
 
-	getAnsiColors := func(background, foreground string) (AnsiColor, AnsiColor) {
-		getColorString := func(color string) string {
-			if color == Background {
-				color = a.Colors.Background
-			} else if color == Foreground {
-				color = a.Colors.Foreground
-			} else if color == ParentBackground && a.ParentColors != nil {
-				color = a.ParentColors.Background
-			} else if color == ParentForeground && a.ParentColors != nil {
-				color = a.ParentColors.Foreground
-			} else if (color == ParentForeground || color == ParentBackground) && a.ParentColors == nil {
-				color = Transparent
-			}
-			return color
-		}
-		background = getColorString(background)
-		foreground = getColorString(foreground)
-		inverted := foreground == Transparent && len(background) != 0
-		backgroundAnsi := a.getAnsiFromColorString(background, !inverted)
-		foregroundAnsi := a.getAnsiFromColorString(foreground, false)
-		return backgroundAnsi, foregroundAnsi
-	}
-
-	bgAnsi, fgAnsi := getAnsiColors(background, foreground)
+	bgAnsi, fgAnsi := a.asAnsiColors(background, foreground)
 	text = a.ansi.escapeText(text)
 	text = a.ansi.formatText(text)
 	text = a.ansi.generateHyperlink(text)
@@ -213,12 +190,12 @@ func (a *AnsiWriter) write(background, foreground, text string) {
 		if fgName == Transparent && len(bgName) == 0 {
 			bgName = background
 		}
-		bg, fg := getAnsiColors(bg, fgName)
+		bg, fg := a.asAnsiColors(bgName, fgName)
 		// set colors if they are empty
-		if len(bg) == 0 {
+		if bg.IsEmpty() {
 			bg = bgAnsi
 		}
-		if len(fg) == 0 {
+		if fg.IsEmpty() {
 			fg = fgAnsi
 		}
 		escapedTextSegment := match[i]["text"]
@@ -229,6 +206,36 @@ func (a *AnsiWriter) write(background, foreground, text string) {
 	}
 	// color the remaining part of text with background and foreground
 	a.writeColoredText(bgAnsi, fgAnsi, text)
+}
+
+func (a *AnsiWriter) asAnsiColors(background, foreground string) (AnsiColor, AnsiColor) {
+	if backgroundValue, ok := a.isKeyword(background); ok {
+		background = backgroundValue
+	}
+	if foregroundValue, ok := a.isKeyword(foreground); ok {
+		foreground = foregroundValue
+	}
+	inverted := foreground == Transparent && len(background) != 0
+	backgroundAnsi := a.getAnsiFromColorString(background, !inverted)
+	foregroundAnsi := a.getAnsiFromColorString(foreground, false)
+	return backgroundAnsi, foregroundAnsi
+}
+
+func (a *AnsiWriter) isKeyword(color string) (string, bool) {
+	switch {
+	case color == Background:
+		return a.Colors.Background, true
+	case color == Foreground:
+		return a.Colors.Foreground, true
+	case color == ParentBackground && a.ParentColors != nil:
+		return a.ParentColors.Background, true
+	case color == ParentForeground && a.ParentColors != nil:
+		return a.ParentColors.Foreground, true
+	case (color == ParentBackground || color == ParentForeground) && a.ParentColors == nil:
+		return Transparent, true
+	default:
+		return "", false
+	}
 }
 
 func (a *AnsiWriter) string() string {

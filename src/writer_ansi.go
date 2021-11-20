@@ -1,51 +1,13 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strings"
-
-	"github.com/gookit/color"
-)
-
-var (
-	// Map for color names and their respective foreground [0] or background [1] color codes
-	colorMap = map[string][2]AnsiColor{
-		"black":        {"30", "40"},
-		"red":          {"31", "41"},
-		"green":        {"32", "42"},
-		"yellow":       {"33", "43"},
-		"blue":         {"34", "44"},
-		"magenta":      {"35", "45"},
-		"cyan":         {"36", "46"},
-		"white":        {"37", "47"},
-		"default":      {"39", "49"},
-		"darkGray":     {"90", "100"},
-		"lightRed":     {"91", "101"},
-		"lightGreen":   {"92", "102"},
-		"lightYellow":  {"93", "103"},
-		"lightBlue":    {"94", "104"},
-		"lightMagenta": {"95", "105"},
-		"lightCyan":    {"96", "106"},
-		"lightWhite":   {"97", "107"},
-	}
 )
 
 const (
 	colorRegex = `<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`
 )
-
-// Returns the color code for a given color name
-func getColorFromName(colorName string, isBackground bool) (AnsiColor, error) {
-	colorMapOffset := 0
-	if isBackground {
-		colorMapOffset = 1
-	}
-	if colorCodes, found := colorMap[colorName]; found {
-		return colorCodes[colorMapOffset], nil
-	}
-	return "", errors.New(fmt.Sprintf("color name %s does not exist", colorName))
-}
 
 type promptWriter interface {
 	write(background, foreground, text string)
@@ -63,11 +25,21 @@ type AnsiWriter struct {
 	terminalBackground string
 	Colors             *Color
 	ParentColors       *Color
+	ansiColors         AnsiColors
 }
 
 type Color struct {
 	Background string
 	Foreground string
+}
+
+// AnsiColors is the interface that wraps AnsiColorFromString method.
+//
+// AnsiColorFromString gets the ANSI color code for a given color string.
+// This can include a valid hex color in the format `#FFFFFF`,
+// but also a name of one of the first 16 ANSI colors like `lightBlue`.
+type AnsiColors interface {
+	AnsiColorFromString(colorString string, isBackground bool) AnsiColor
 }
 
 // AnsiColor is an ANSI color code ready to be printed to the console.
@@ -118,25 +90,8 @@ func (a *AnsiWriter) clearParentColors() {
 	a.ParentColors = nil
 }
 
-// Gets the ANSI color code for a given color string.
-// This can include a valid hex color in the format `#FFFFFF`,
-// but also a name of one of the first 16 ANSI colors like `lightBlue`.
 func (a *AnsiWriter) getAnsiFromColorString(colorString string, isBackground bool) AnsiColor {
-	if len(colorString) == 0 {
-		return emptyAnsiColor
-	}
-	if colorString == Transparent {
-		return transparentAnsiColor
-	}
-	colorFromName, err := getColorFromName(colorString, isBackground)
-	if err == nil {
-		return colorFromName
-	}
-	style := color.HEX(colorString, isBackground)
-	if style.IsEmpty() {
-		return emptyAnsiColor
-	}
-	return AnsiColor(style.String())
+	return a.ansiColors.AnsiColorFromString(colorString, isBackground)
 }
 
 func (a *AnsiWriter) writeColoredText(background, foreground AnsiColor, text string) {

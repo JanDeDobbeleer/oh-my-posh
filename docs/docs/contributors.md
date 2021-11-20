@@ -120,6 +120,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/AbdelrahmanHafez"><img src="https://avatars.githubusercontent.com/u/19984935?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Hafez</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=AbdelrahmanHafez" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/TedCrocker"><img src="https://avatars.githubusercontent.com/u/382001?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ted Ballou</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=TedCrocker" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=TedCrocker" title="Documentation">📖</a></td>
   </tr>
 </table>
 

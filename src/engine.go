@@ -128,8 +128,8 @@ func (e *engine) renderBlock(block *Block) {
 func (e *engine) debug() string {
 	var segmentTimings []*SegmentTiming
 	largestSegmentNameLength := 0
-	e.write("\n\x1b[1mHere are the timings of segments in your prompt:\x1b[0m\n\n")
-
+	e.write(fmt.Sprintf("\n\x1b[1mVersion:\x1b[0m %s\n", Version))
+	e.write("\n\x1b[1mSegments:\x1b[0m\n\n")
 	// console title timing
 	start := time.Now()
 	consoleTitle := e.consoleTitle.getTemplateText()
@@ -163,6 +163,9 @@ func (e *engine) debug() string {
 		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.enabled)
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
+	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(start)))
+	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
+	e.write(e.env.logs())
 	return e.string()
 }
 
@@ -214,7 +217,7 @@ func (e *engine) renderTooltip(tip string) string {
 		Segments:  []*Segment{tooltip},
 	}
 	switch e.env.getShellName() {
-	case zsh:
+	case zsh, winCMD:
 		block.init(e.env, e.writer, e.ansi)
 		return block.renderSegments()
 	case pwsh, powershell5:
@@ -250,7 +253,7 @@ func (e *engine) renderTransientPrompt() string {
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.writer.string(), "\"", "\"\""))
 		prompt += "\nRPROMPT=\"\""
 		return prompt
-	case pwsh, powershell5:
+	case pwsh, powershell5, winCMD:
 		return e.writer.string()
 	}
 	return ""

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/gookit/color"
@@ -37,7 +36,7 @@ var (
 
 type DefaultAnsiColors struct{}
 
-func (_ *DefaultAnsiColors) AnsiColorFromString(colorString string, isBackground bool) AnsiColor {
+func (*DefaultAnsiColors) AnsiColorFromString(colorString string, isBackground bool) AnsiColor {
 	if len(colorString) == 0 {
 		return emptyAnsiColor
 	}
@@ -64,7 +63,7 @@ func getAnsiColorFromName(colorName string, isBackground bool) (AnsiColor, error
 		}
 		return colorCodes[foregroundIndex], nil
 	}
-	return "", errors.New(fmt.Sprintf("color name %s does not exist", colorName))
+	return "", fmt.Errorf("color name %s does not exist", colorName)
 }
 
 func isAnsiColorName(colorString string) bool {

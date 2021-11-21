@@ -51,15 +51,94 @@ To change *only* the background color, just omit the first color from the above 
 "prefix": "<,#FFFFFF>┏[</>",
 ```
 
-## Palette reference
+## Palette
 
-If your theme has a defined [Palette][palette], you can use the Palette reference in places where the
+If your theme defined the Palette, you can use the _Palette reference_ `p:<palette key>` in places where the
 __Standard color__ is expected.
 
-Palette references have 2 possible formats: `p:<palette key>` and `palette:<palette key>`.
+### Defining a Palette
 
-Read more about [Palette][palette].
+Palette is a set of named __Standard colors__. To use a Palette, define a `"palette"` object
+at the top level of your theme:
+
+```json
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "palette": {
+        "git-foreground": "#193549",
+        "git": "#FFFB38",
+        "git-modified": "#FF9248",
+        "git-diverged": "#FF4500",
+        "git-ahead": "#B388FF",
+        "git-behind": "#B388FF",
+        "white": "#FFFFFF",
+        "black": "#111111"
+    },
+    "blocks": {
+        ...
+    }
+}
+```
+
+Color names (palette keys) can have any string value, so be creative.
+Color values, on the other hand, should adhere to the __Standard color__ format.
+
+### Using a Palette
+
+You can now _Palette references_ in any [Segment's][segment] `foreground`, `foreground_templates`,
+`background`, `background_templates` properties, and other config properties that expect __Standard color__ value.
+_Palette reference_ format is `p:<palette key>`. Take a look at the [Git][git] segment using _Palette references_:
+
+```json
+{
+    "type": "git",
+    "style": "powerline",
+    "powerline_symbol": "\uE0B0",
+    "foreground": "p:git-foreground",
+    "background": "p:git",
+    "background_templates": [
+        "{{ if or (.Working.Changed) (.Staging.Changed) }}p:git-modified{{ end }}",
+        "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git-diverged{{ end }}",
+        "{{ if gt .Ahead 0 }}p:git-ahead{{ end }}",
+        "{{ if gt .Behind 0 }}p:git-behind{{ end }}"
+    ],
+    ...
+},
+```
+
+Having all of the colors defined in one place allows you to import existing color themes (usually with slight
+tweaking to adhere to the format), easily change colors of multiple segments at once, and have a more
+organized theme overall. Be creative!
+
+### Handling of invalid references
+
+Should you use an invalid Palette reference as a color (for example typo `p:bleu` instead of `p:blue`),
+the Pallete engine will use the Transparent keyword as a fallback value. So if you see your prompt segments
+rendered with incorrect colors, and you are using a Palette, be sure to check the correctness of your references.
+
+### Limitations
+
+#### (Non) Recursive resolution
+
+Palette does not allow for recursive reference resolution. You should not reference Palette colors in other
+Palette colors. This configuration will not work, `p:background` and `p:foreground` will be set to Transparent:
+
+```json
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "palette": {
+        "light-blue": "#CAF0F8",
+        "dark-blue": "#023E8A",
+        "background": "p:dark-blue",
+        "foreground": "p:light-blue"
+    },
+    "blocks": {
+        ...
+    }
+```
+
+If you want to have different names for the same color, you can specify multiple keys.
 
 [hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [palette]: /docs/config-palette
+[git]: /docs/segment-git

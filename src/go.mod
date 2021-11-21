@@ -35,6 +35,8 @@ require (
 	howett.net/plist v0.0.0-20201203080718-1454fab16a06 // indirect
 )
 
+require gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
+
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
@@ -54,7 +56,6 @@ require (
 	github.com/tklauser/numcpus v0.3.0 // indirect
 	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
 replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-2

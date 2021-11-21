@@ -866,6 +866,12 @@
                     "title": "Display Error",
                     "description": "Show the error context when failing to retrieve the kubectl information",
                     "default": false
+                  },
+                  "parse_kubeconfig": {
+                    "type": "boolean",
+                    "title": "Parse kubeconfig",
+                    "description": "Parse kubeconfig files instead of calling out to kubectl to improve performance.",
+                    "default": false
                   }
                 }
               }

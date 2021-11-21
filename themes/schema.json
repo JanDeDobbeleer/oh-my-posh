@@ -1779,7 +1779,7 @@
     "palette": {
       "type": "object",
       "title": "Palette",
-      "description": "https://ohmyposh.dev/docs/config-palette",
+      "description": "https://ohmyposh.dev/docs/config-colors#palette",
       "default": {},
       "patternProperties": {
         ".*": { "$ref": "#/definitions/color_literal" }

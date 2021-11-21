@@ -140,5 +140,4 @@ If you want to have different names for the same color, you can specify multiple
 
 [hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
-[palette]: /docs/config-palette
 [git]: /docs/segment-git

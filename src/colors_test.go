@@ -23,8 +23,36 @@ func TestGetAnsiFromColorString(t *testing.T) {
 		{Case: "Base 16 backround", Expected: AnsiColor("101"), Color: "lightRed", Background: true},
 	}
 	for _, tc := range cases {
-		ansiColors := &DefaultAnsiColors{}
+		ansiColors := &DefaultColors{}
 		ansiColor := ansiColors.AnsiColorFromString(tc.Color, tc.Background)
 		assert.Equal(t, tc.Expected, ansiColor, tc.Case)
+	}
+}
+
+func TestMakeColors(t *testing.T) {
+	colors := makeColors(nil, false)
+	assert.IsType(t, &DefaultColors{}, colors)
+
+	colors = makeColors(nil, true)
+	assert.IsType(t, &CachedColors{}, colors)
+	assert.IsType(t, &DefaultColors{}, colors.(*CachedColors).ansiColors)
+
+	colors = makeColors(testPalette, false)
+	assert.IsType(t, &PaletteColors{}, colors)
+	assert.IsType(t, &DefaultColors{}, colors.(*PaletteColors).ansiColors)
+
+	colors = makeColors(testPalette, true)
+	assert.IsType(t, &CachedColors{}, colors)
+	assert.IsType(t, &PaletteColors{}, colors.(*CachedColors).ansiColors)
+	assert.IsType(t, &DefaultColors{}, colors.(*CachedColors).ansiColors.(*PaletteColors).ansiColors)
+}
+
+func BenchmarkEngineRenderPalette(b *testing.B) {
+	var err error
+	for i := 0; i < b.N; i++ {
+		_, err = engineRender("jandedobbeleer-palette.omp.json")
+		if err != nil {
+			b.Fatal(err)
+		}
 	}
 }

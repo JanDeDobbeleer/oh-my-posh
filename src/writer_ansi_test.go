@@ -178,7 +178,7 @@ func TestWriteANSIColors(t *testing.T) {
 			ParentColors:       tc.Parent,
 			Colors:             tc.Colors,
 			terminalBackground: tc.TerminalBackground,
-			ansiColors:         &DefaultAnsiColors{},
+			ansiColors:         &DefaultColors{},
 		}
 		renderer.write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
 		got := renderer.string()

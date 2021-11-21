@@ -209,12 +209,7 @@ func main() {
 	if *args.Plain {
 		writer = &PlainWriter{}
 	} else {
-		var writerColors AnsiColors
-		writerColors = &DefaultAnsiColors{}
-		if cfg.Palette != nil {
-			writerColors = &PaletteColors{ansiColors: writerColors, palette: cfg.Palette}
-		}
-		writerColors = &CachedColors{ansiColors: writerColors}
+		writerColors := MakeColors(env, cfg)
 		writer = &AnsiWriter{
 			ansi:               ansi,
 			terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),

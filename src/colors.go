@@ -74,7 +74,7 @@ func (*DefaultColors) AnsiColorFromString(colorString string, isBackground bool)
 }
 
 // getAnsiColorFromName returns the color code for a given color name if the name is
-// knows ANSI color name.
+// known ANSI color name.
 func getAnsiColorFromName(colorName string, isBackground bool) (AnsiColor, error) {
 	if colorCodes, found := ansiColorCodes[colorName]; found {
 		if isBackground {

@@ -17,10 +17,12 @@ package main
 type new struct {
     props          *properties
     env            environmentInfo
+
+    Text string
 }
 
 const (
-    //NewProp switches something
+    //NewProp enables something
     NewProp Property = "newprop"
 )
 
@@ -29,8 +31,21 @@ func (n *new) enabled() bool {
 }
 
 func (n *new) string() string {
-    newText := n.props.getString(NewProp, "\uEFF1")
-    return newText
+    useDefaultText := n.props.getBool(NewProp, true)
+    if useDefaultText {
+      n.Text = "Hello"
+    }
+    segmentTemplate := a.props.getString(SegmentTemplate, "{{.Text}} world")
+    template := &textTemplate{
+      Template: segmentTemplate,
+      Context:  n,
+      Env:      n.env,
+    }
+    text, err := template.render()
+    if err != nil {
+      return err.Error()
+    }
+    return text
 }
 
 func (n *new) init(props *properties, env environmentInfo) {
@@ -39,12 +54,16 @@ func (n *new) init(props *properties, env environmentInfo) {
 }
 ```
 
-When it comes to properties, make sure to use the UTF32 representation (e.g. "\uEFF1") rather than the icon itself.
+When it comes to icon properties, make sure to use the UTF32 representation (e.g. "\uEFF1") rather than the icon itself.
 This will facilitate the review process as not all environments display the icons based on the font being used.
 You can find these values and query for icons easily at [Nerd Fonts][nf-icons].
 
 For each segment, there's a single test file ensuring the functionality going forward. The convention
-is `new_segment_test.go`, have a look at existing segment tests for inspiration.
+is `new_segment_test.go`, have a look at [existing segment tests][tests] for inspiration. Oh My Posh makes
+use of the test tables pattern for all newly added tests. See [this][tables] blog post for more information.
+
+The use of a `SegmentTemplate` is required. We're currentlly in the process of refactoring all segments to use
+a template. As soon as this work is done, the templating logic will move outside of the segment's logic.
 
 ## Create a name for your Segment
 
@@ -140,10 +159,10 @@ At `$.definitions.segment.allOf`, add your segment details:
       "properties": {
         "properties": {
           "nwprop": {
-            "type": "string",
-            "title": "New Prop",
-            "description": "the new text to show",
-            "default": "\uEFF1"
+            "type": "boolean",
+            "title": "New Property",
+            "description": "the default text to display",
+            "default": "Hello"
           }
         }
       }
@@ -161,3 +180,5 @@ And be patient, I'm going as fast as I can 🏎
 [docs]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/docs/docs
 [sidebars]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/docs/sidebars.js
 [nf-icons]: https://www.nerdfonts.com/cheat-sheet
+[tests]: hhttps://github.com/JanDeDobbeleer/oh-my-posh/blob/main/src/segment_az_test.go
+[tables]: https://blog.alexellis.io/golang-writing-unit-tests/

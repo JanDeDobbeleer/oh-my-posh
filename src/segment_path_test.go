@@ -731,6 +731,7 @@ func TestGetPwd(t *testing.T) {
 }
 
 func TestParseMappedLocations(t *testing.T) {
+	defer testClearDefaultConfig()
 	cases := []struct {
 		Case string
 		JSON string

@@ -1,5 +1,3 @@
-//go:build windows
-
 // TODO:
 //
 //  * reg value -> string formatting to own fn?

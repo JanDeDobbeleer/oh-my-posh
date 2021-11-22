@@ -71,6 +71,9 @@ at the top level of your theme:
         "git-diverged": "#FF4500",
         "git-ahead": "#B388FF",
         "git-behind": "#B388FF",
+        "red":   "#FF0000",
+        "green": "#00FF00",
+        "blue":  "#0000FF",
         "white": "#FFFFFF",
         "black": "#111111"
     },
@@ -110,6 +113,33 @@ Having all of the colors defined in one place allows you to import existing colo
 tweaking to adhere to the format), easily change colors of multiple segments at once, and have a more
 organized theme overall. Be creative!
 
+### _Palette references_ and __Standard colors__
+
+Using Palette does not interfere with using __Standard colors__ in your theme. You can still use __Standard colors__
+everywhere. This can be useful if you want to use a specific color for a single segment element, or in a
+_Color override_ ([Battery segment][battery]):
+
+```json
+{
+    "type": "battery",
+    "style": "powerline",
+    "invert_powerline": true,
+    "powerline_symbol": "\uE0B2",
+    "foreground": "p:white",
+    "background": "p:black",
+    "properties": {
+        "battery_icon": "<#ffa500> [II ]- </>", // icon should always be orange
+        "discharging_icon": "- ",
+        "charging_icon": "+ ",
+        "charged_icon": "* ",
+        "color_background": true,
+        "charged_color": "#4caf50",     //
+        "charging_color": "#40c4ff",    // battery should use specific colors for status
+        "discharging_color": "#ff5722", //
+    }
+},
+```
+
 ### Handling of invalid references
 
 Should you use an invalid _Palette reference_ as a color (for example typo `p:bleu` instead of `p:blue`),
@@ -138,3 +168,4 @@ For example, `p:foreground` and `p:background`  will be correctly set to "#CAF0F
 [hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [git]: /docs/segment-git
+[battery]: /docs/segment-battery

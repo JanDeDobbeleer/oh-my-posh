@@ -47,17 +47,17 @@ func TestCanWriteRPrompt(t *testing.T) {
 func BenchmarkEngineRender(b *testing.B) {
 	var err error
 	for i := 0; i < b.N; i++ {
-		_, err = engineRender("jandedobbeleer.omp.json")
+		err = engineRender("jandedobbeleer.omp.json")
 		if err != nil {
 			b.Fatal(err)
 		}
 	}
 }
 
-func engineRender(configPath string) (string, error) {
+func engineRender(configPath string) error {
 	testDir, err := os.Getwd()
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	configPath = filepath.Join(testDir, "testdata", configPath)
@@ -114,5 +114,7 @@ func engineRender(configPath string) (string, error) {
 		plain:        *args.Plain,
 	}
 
-	return engine.render(), nil
+	engine.render()
+
+	return nil
 }

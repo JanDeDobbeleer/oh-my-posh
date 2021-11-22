@@ -12,7 +12,6 @@ OutputBaseFilename=install
 
 [Files]
 Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"
-Source: "bin\oh-my-posh-wsl"; DestDir: "{app}\bin"
 Source: "bin\themes\*"; DestDir: "{app}\themes"
 
 [Registry]

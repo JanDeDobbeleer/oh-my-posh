@@ -8,7 +8,7 @@
   },
   "architecture": {
       "64bit": {
-          "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/posh-windows-wsl-amd64.7z",
+          "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/posh-windows-amd64.7z",
           "hash": "<HASH>"
       }
   },
@@ -23,7 +23,7 @@
   "autoupdate": {
       "architecture": {
           "64bit": {
-              "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/posh-windows-wsl-amd64.7z",
+              "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/posh-windows-amd64.7z",
               "hash": {
                   "url": "$url.sha256"
               }

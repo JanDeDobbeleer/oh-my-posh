@@ -6,28 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetAnsiFromColorString(t *testing.T) {
-	cases := []struct {
-		Case       string
-		Expected   string
-		Color      string
-		Background bool
-	}{
-		{Case: "Invalid background", Expected: "", Color: "invalid", Background: true},
-		{Case: "Invalid background", Expected: "", Color: "invalid", Background: false},
-		{Case: "Hex foreground", Expected: "48;2;170;187;204", Color: "#AABBCC", Background: false},
-		{Case: "Base 8 foreground", Expected: "41", Color: "red", Background: false},
-		{Case: "Base 8 background", Expected: "41", Color: "red", Background: true},
-		{Case: "Base 16 foreground", Expected: "101", Color: "lightRed", Background: false},
-		{Case: "Base 16 backround", Expected: "101", Color: "lightRed", Background: true},
-	}
-	for _, tc := range cases {
-		renderer := &AnsiWriter{}
-		ansiColor := renderer.getAnsiFromColorString(tc.Color, true)
-		assert.Equal(t, tc.Expected, ansiColor, tc.Case)
-	}
-}
-
 func TestWriteANSIColors(t *testing.T) {
 	cases := []struct {
 		Case               string
@@ -184,6 +162,12 @@ func TestWriteANSIColors(t *testing.T) {
 			Expected: "\x1b[40m\x1b[30mtest\x1b[0m",
 			Colors:   &Color{Foreground: "black", Background: "white"},
 		},
+		{
+			Case:     "Google",
+			Input:    "<blue,white>G</><red,white>o</><yellow,white>o</><blue,white>g</><green,white>l</><red,white>e</>",
+			Expected: "\x1b[47m\x1b[34mG\x1b[0m\x1b[47m\x1b[31mo\x1b[0m\x1b[47m\x1b[33mo\x1b[0m\x1b[47m\x1b[34mg\x1b[0m\x1b[47m\x1b[32ml\x1b[0m\x1b[47m\x1b[31me\x1b[0m",
+			Colors:   &Color{Foreground: "black", Background: "black"},
+		},
 	}
 
 	for _, tc := range cases {
@@ -194,6 +178,7 @@ func TestWriteANSIColors(t *testing.T) {
 			ParentColors:       tc.Parent,
 			Colors:             tc.Colors,
 			terminalBackground: tc.TerminalBackground,
+			ansiColors:         &DefaultColors{},
 		}
 		renderer.write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
 		got := renderer.string()

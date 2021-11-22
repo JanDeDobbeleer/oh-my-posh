@@ -9,7 +9,7 @@
 
 package main
 
-func (r *regquery) enabled() bool {
+func (r *winreg) enabled() bool {
 
 	var enableSegment bool = false
 

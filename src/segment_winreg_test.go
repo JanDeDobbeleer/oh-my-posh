@@ -2,11 +2,9 @@
 
 package main
 
-import (
-	"testing"
+import "testing"
 
-	"github.com/stretchr/testify/assert"
-)
+//	"testing"
 
 func TestRegQueryGetRegistryFunction(t *testing.T) {
 

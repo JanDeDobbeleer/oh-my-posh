@@ -11,14 +11,14 @@ type Palette map[string]string
 const (
 	paletteKeyPrefix         = "p:"
 	paletteKeyError          = "palette: requested color %s does not exist in palette of colors %s"
-	paletteMaxRecursionDepth = 9 // allows 10 recusive resolutions
+	paletteMaxRecursionDepth = 4 // allows 4 or less recusive resolutions
 	paletteRecursiveKeyError = "palette: recursive resolution of color %s returned palette reference %s and reached recursion depth %d"
 )
 
 // ResolveColor gets a color value from the palette using given colorName.
 // If colorName is not a palette reference, it is returned as is.
 func (p Palette) ResolveColor(colorName string) (string, error) {
-	return p.resolveColor(colorName, 0, &colorName)
+	return p.resolveColor(colorName, 1, &colorName)
 }
 
 // originalColorName is a pointer to save allocations
@@ -34,7 +34,7 @@ func (p Palette) resolveColor(colorName string, depth int, originalColorName *st
 		return "", &PaletteKeyError{Key: key, palette: p}
 	}
 
-	if isPaletteKey(color) {
+	if _, isKey := isPaletteKey(color); isKey {
 		if depth > paletteMaxRecursionDepth {
 			return "", &PaletteRecursiveKeyError{Key: *originalColorName, Value: color, depth: depth}
 		}
@@ -46,17 +46,18 @@ func (p Palette) resolveColor(colorName string, depth int, originalColorName *st
 }
 
 func asPaletteKey(colorName string) (string, bool) {
-	if !isPaletteKey(colorName) {
+	prefix, isKey := isPaletteKey(colorName)
+	if !isKey {
 		return "", false
 	}
 
-	key := strings.TrimPrefix(colorName, paletteKeyPrefix)
+	key := strings.TrimPrefix(colorName, prefix)
 
 	return key, true
 }
 
-func isPaletteKey(colorName string) bool {
-	return strings.HasPrefix(colorName, paletteKeyPrefix)
+func isPaletteKey(colorName string) (string, bool) {
+	return paletteKeyPrefix, strings.HasPrefix(colorName, paletteKeyPrefix)
 }
 
 // PaletteKeyError records the missing Palette key.

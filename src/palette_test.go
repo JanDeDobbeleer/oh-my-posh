@@ -103,11 +103,11 @@ func TestPaletteShouldHandleMixedCases(t *testing.T) {
 	}
 }
 
-func TestPaletteShouldUseTransparentByDefault(t *testing.T) {
+func TestPaletteShouldUseEmptyColorByDefault(t *testing.T) {
 	cases := []TestPaletteRequest{
-		{Case: "Palette magenta", Request: "p:magenta", Expected: Transparent},
-		{Case: "Palette gray", Request: "p:gray", Expected: Transparent},
-		{Case: "Palette rose", Request: "p:rose", Expected: Transparent},
+		{Case: "Palette magenta", Request: "p:magenta", Expected: ""},
+		{Case: "Palette gray", Request: "p:gray", Expected: ""},
+		{Case: "Palette rose", Request: "p:rose", Expected: ""},
 	}
 
 	for _, tc := range cases {

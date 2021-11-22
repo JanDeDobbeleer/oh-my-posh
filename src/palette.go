@@ -94,7 +94,7 @@ func (p *PaletteRecursiveKeyError) Error() string {
 func (p Palette) MaybeResolveColor(colorName string) string {
 	color, err := p.ResolveColor(colorName)
 	if err != nil {
-		return Transparent
+		return ""
 	}
 
 	return color

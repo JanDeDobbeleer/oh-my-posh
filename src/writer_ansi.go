@@ -100,7 +100,7 @@ func (a *AnsiWriter) writeColoredText(background, foreground AnsiColor, text str
 		return
 	}
 	// default to white fg if empty, empty backgrond is supported
-	if len(foreground) == 0 {
+	if foreground.IsEmpty() {
 		foreground = a.getAnsiFromColorString("white", false)
 	}
 	if foreground.IsTransparent() && !background.IsEmpty() && len(a.terminalBackground) != 0 {

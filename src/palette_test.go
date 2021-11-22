@@ -117,12 +117,27 @@ func TestPaletteShouldUseTransparentByDefault(t *testing.T) {
 	}
 }
 
-func TestPaletteShouldNotResolveRecursiveReference(t *testing.T) {
+func TestPaletteShouldResolveRecursiveReference(t *testing.T) {
 	tp := Palette{
 		"light-blue": "#CAF0F8",
 		"dark-blue":  "#023E8A",
-		"background": "p:dark-blue",
 		"foreground": "p:light-blue",
+		"background": "p:dark-blue",
+		"text":       "p:foreground",
+		"icon":       "p:background",
+		"void":       "p:void", // infinite recursion - error
+		"1":          "white",
+		"2":          "p:1",
+		"3":          "p:2",
+		"4":          "p:3",
+		"5":          "p:4",
+		"6":          "p:5",
+		"7":          "p:6",
+		"8":          "p:7",
+		"9":          "p:8",
+		"10":         "p:9",
+		"11":         "p:10", // 10 recursive lookups - allowed
+		"12":         "p:11", // 11 recursive lookups - error
 	}
 
 	cases := []TestPaletteRequest{
@@ -132,16 +147,41 @@ func TestPaletteShouldNotResolveRecursiveReference(t *testing.T) {
 			Expected: "#CAF0F8",
 		},
 		{
-			Case:          "Palette background",
-			Request:       "p:background",
-			ExpectedError: true,
-			Expected:      "palette: resolution of color background returned palette reference p:dark-blue; recursive references are not supported",
+			Case:     "Palette foreground",
+			Request:  "p:foreground",
+			Expected: "#CAF0F8",
 		},
 		{
-			Case:          "Palette foreground",
-			Request:       "p:foreground",
+			Case:     "Palette background",
+			Request:  "p:background",
+			Expected: "#023E8A",
+		},
+		{
+			Case:     "Palette text (2 recursive lookups)",
+			Request:  "p:text",
+			Expected: "#CAF0F8",
+		},
+		{
+			Case:     "Palette icon (2 recursive lookups)",
+			Request:  "p:icon",
+			Expected: "#023E8A",
+		},
+		{
+			Case:          "Palette void (infinite recursion)",
+			Request:       "p:void",
 			ExpectedError: true,
-			Expected:      "palette: resolution of color foreground returned palette reference p:light-blue; recursive references are not supported",
+			Expected:      "palette: recursive resolution of color p:void returned palette reference p:void and reached recursion depth 10",
+		},
+		{
+			Case:     "Palette p:11 (10 recursive lookups)",
+			Request:  "p:11",
+			Expected: "white",
+		},
+		{
+			Case:          "Palette p:12 (11 recursive lookups)",
+			Request:       "p:12",
+			ExpectedError: true,
+			Expected:      "palette: recursive resolution of color p:12 returned palette reference p:1 and reached recursion depth 10",
 		},
 	}
 

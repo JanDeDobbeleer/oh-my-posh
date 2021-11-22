@@ -112,31 +112,28 @@ organized theme overall. Be creative!
 
 ### Handling of invalid references
 
-Should you use an invalid Palette reference as a color (for example typo `p:bleu` instead of `p:blue`),
+Should you use an invalid _Palette reference_ as a color (for example typo `p:bleu` instead of `p:blue`),
 the Pallete engine will use the Transparent keyword as a fallback value. So if you see your prompt segments
 rendered with incorrect colors, and you are using a Palette, be sure to check the correctness of your references.
 
-### Limitations
+### Recursive resolution
 
-#### (Non) Recursive resolution
-
-Palette does not allow for recursive reference resolution. You should not reference Palette colors in other
-Palette colors. This configuration will not work, `p:background` and `p:foreground` will be set to Transparent:
+Palette allows for recursive _Palette reference_ resolution. You can use a _Palette reference_ as a color
+value in Palette. This allows you to define named colors, and use references to those colors as Palette values.
+For example, `p:foreground` and `p:background`  will be correctly set to "#CAF0F80" and "#023E8A":
 
 ```json
     "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
     "palette": {
         "light-blue": "#CAF0F8",
         "dark-blue": "#023E8A",
-        "background": "p:dark-blue",
-        "foreground": "p:light-blue"
+        "foreground": "p:light-blue",
+        "background": "p:dark-blue"
     },
     "blocks": {
         ...
     }
 ```
-
-If you want to have different names for the same color, you can specify multiple keys.
 
 [hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/

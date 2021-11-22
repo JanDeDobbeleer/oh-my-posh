@@ -11,13 +11,19 @@ type Palette map[string]string
 const (
 	paletteKeyPrefix         = "p:"
 	paletteKeyError          = "palette: requested color %s does not exist in palette of colors %s"
-	paletteRecursiveKeyError = "palette: resolution of color %s returned palette reference %s; recursive references are not supported"
+	paletteMaxRecursionDepth = 9 // allows 10 recusive resolutions
+	paletteRecursiveKeyError = "palette: recursive resolution of color %s returned palette reference %s and reached recursion depth %d"
 )
 
 // ResolveColor gets a color value from the palette using given colorName.
 // If colorName is not a palette reference, it is returned as is.
 func (p Palette) ResolveColor(colorName string) (string, error) {
-	key, ok := p.asPaletteKey(colorName)
+	return p.resolveColor(colorName, 0, &colorName)
+}
+
+// originalColorName is a pointer to save allocations
+func (p Palette) resolveColor(colorName string, depth int, originalColorName *string) (string, error) {
+	key, ok := asPaletteKey(colorName)
 	// colorName is not a palette key, return it as is
 	if !ok {
 		return colorName, nil
@@ -28,21 +34,29 @@ func (p Palette) ResolveColor(colorName string) (string, error) {
 		return "", &PaletteKeyError{Key: key, palette: p}
 	}
 
-	if _, ok = p.asPaletteKey(color); ok {
-		return "", &PaletteRecursiveKeyError{Key: key, Value: color}
+	if isPaletteKey(color) {
+		if depth > paletteMaxRecursionDepth {
+			return "", &PaletteRecursiveKeyError{Key: *originalColorName, Value: color, depth: depth}
+		}
+
+		return p.resolveColor(color, depth+1, originalColorName)
 	}
 
 	return color, nil
 }
 
-func (p Palette) asPaletteKey(colorName string) (string, bool) {
-	if !strings.HasPrefix(colorName, paletteKeyPrefix) {
+func asPaletteKey(colorName string) (string, bool) {
+	if !isPaletteKey(colorName) {
 		return "", false
 	}
 
 	key := strings.TrimPrefix(colorName, paletteKeyPrefix)
 
 	return key, true
+}
+
+func isPaletteKey(colorName string) bool {
+	return strings.HasPrefix(colorName, paletteKeyPrefix)
 }
 
 // PaletteKeyError records the missing Palette key.
@@ -67,10 +81,11 @@ func (p *PaletteKeyError) Error() string {
 type PaletteRecursiveKeyError struct {
 	Key   string
 	Value string
+	depth int
 }
 
 func (p *PaletteRecursiveKeyError) Error() string {
-	errorStr := fmt.Sprintf(paletteRecursiveKeyError, p.Key, p.Value)
+	errorStr := fmt.Sprintf(paletteRecursiveKeyError, p.Key, p.Value, p.depth)
 	return errorStr
 }
 

@@ -129,9 +129,8 @@ func TestPaletteShouldResolveRecursiveReference(t *testing.T) {
 		"1":          "white",
 		"2":          "p:1",
 		"3":          "p:2",
-		"4":          "p:3",
-		"5":          "p:4", // 4 recursive lookups - allowed
-		"6":          "p:5", // 5 recursive lookups - error
+		"4":          "p:3", // 3 recursive lookups - allowed
+		"5":          "p:4", // 4 recursive lookups - error
 	}
 
 	cases := []TestPaletteRequest{
@@ -164,18 +163,18 @@ func TestPaletteShouldResolveRecursiveReference(t *testing.T) {
 			Case:          "Palette void (infinite recursion)",
 			Request:       "p:void",
 			ExpectedError: true,
-			Expected:      "palette: recursive resolution of color p:void returned palette reference p:void and reached recursion depth 5",
+			Expected:      "palette: recursive resolution of color p:void returned palette reference p:void and reached recursion depth 4",
 		},
 		{
-			Case:     "Palette p:5 (4 recursive lookups)",
-			Request:  "p:5",
+			Case:     "Palette p:4 (3 recursive lookups)",
+			Request:  "p:4",
 			Expected: "white",
 		},
 		{
-			Case:          "Palette p:6 (5 recursive lookups)",
-			Request:       "p:6",
+			Case:          "Palette p:5 (4 recursive lookups)",
+			Request:       "p:5",
 			ExpectedError: true,
-			Expected:      "palette: recursive resolution of color p:6 returned palette reference p:1 and reached recursion depth 5",
+			Expected:      "palette: recursive resolution of color p:5 returned palette reference p:1 and reached recursion depth 4",
 		},
 	}
 

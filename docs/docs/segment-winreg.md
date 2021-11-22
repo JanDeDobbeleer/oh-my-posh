@@ -1,5 +1,5 @@
 ---
-id: regquery    
+id: winreg    
 title: Windows Registry Key Query
 sidebar_label: Windows Registry Key Query
 ---
@@ -19,7 +19,7 @@ Additional flags are supported to configure behaviour if the key cannot be retri
 
 ```json
 {
-  "type": "regquery",
+  "type": "winreg",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
@@ -41,5 +41,4 @@ Additional flags are supported to configure behaviour if the key cannot be retri
 * query_fail_behaviour: `string` - what to do if unable to get key value from the registry for any reason:
   * `hide_segment`: will not display this segment.
   * `display_fallback_string`: will display the string supplied in the 'query_fail_fallback_string' property.
-  * `show_debug_info`: will show details about why the key value could not be retrieved.
 * query_fail_fallback_string: `string` - string to display when the requested key value could not be retrieved, and when `display_fallback_string` is supplied as the value for 'query_fail_behaviour'.

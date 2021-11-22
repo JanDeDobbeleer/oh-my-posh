@@ -1690,12 +1690,12 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "regquery" }
+              "type": { "const": "winreg" }
             }
           },
           "then": {
-            "title": "Registry Query",
-            "description": "https://ohmyposh.dev/docs/regquery",
+            "title": "Windows Registry Query",
+            "description": "https://ohmyposh.dev/docs/winreg",
             "properties": {
               "properties": {
                 "properties": {
@@ -1719,7 +1719,7 @@
                     "title": "Query failure behaviour",
                     "description": "What to do when the registry query fails",
                     "default":"hide_segment",
-                    "enum": ["hide_segment", "display_fallback_string", "show_debug_info"]
+                    "enum": ["hide_segment", "display_fallback_string"]
                   },
                   "query_fail_fallback_string": {
                     "type": "string",

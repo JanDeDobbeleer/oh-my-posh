@@ -9,12 +9,9 @@ import (
 type Palette map[string]string
 
 const (
+	paletteKeyPrefix         = "p:"
 	paletteKeyError          = "palette: requested color %s does not exist in palette of colors %s"
 	paletteRecursiveKeyError = "palette: resolution of color %s returned palette reference %s; recursive references are not supported"
-)
-
-var (
-	paletteColorPrefixes = [...]string{"palette:", "p:"}
 )
 
 // ResolveColor gets a color value from the palette using given colorName.
@@ -39,23 +36,11 @@ func (p Palette) ResolveColor(colorName string) (string, error) {
 }
 
 func (p Palette) asPaletteKey(colorName string) (string, bool) {
-	var (
-		prefix      string
-		prefixFound bool
-	)
-
-	for _, prefix = range paletteColorPrefixes {
-		if strings.HasPrefix(colorName, prefix) {
-			prefixFound = true
-			break
-		}
-	}
-
-	if !prefixFound {
+	if !strings.HasPrefix(colorName, paletteKeyPrefix) {
 		return "", false
 	}
 
-	key := strings.ReplaceAll(colorName, prefix, "")
+	key := strings.TrimPrefix(colorName, paletteKeyPrefix)
 
 	return key, true
 }

@@ -25,9 +25,11 @@ type TestPaletteRequest struct {
 
 func TestPaletteShouldResolveColorFromTestPalette(t *testing.T) {
 	cases := []TestPaletteRequest{
-		{Case: "Palette red", Request: "palette:red", Expected: "#FF0000"},
-		{Case: "Palette green", Request: "palette:green", Expected: "#00FF00"},
-		{Case: "Palette blue", Request: "palette:blue", Expected: "#0000FF"},
+		{Case: "Palette red", Request: "p:red", Expected: "#FF0000"},
+		{Case: "Palette green", Request: "p:green", Expected: "#00FF00"},
+		{Case: "Palette blue", Request: "p:blue", Expected: "#0000FF"},
+		{Case: "Palette white", Request: "p:white", Expected: "#FFFFFF"},
+		{Case: "Palette black", Request: "p:black", Expected: "#000000"},
 	}
 
 	for _, tc := range cases {
@@ -39,10 +41,10 @@ func testPaletteRequest(t *testing.T, tc TestPaletteRequest) {
 	actual, err := testPalette.ResolveColor(tc.Request)
 
 	if !tc.ExpectedError {
-		assert.Nil(t, err, "expected no error")
+		assert.Nil(t, err, tc.Case)
 		assert.Equal(t, tc.Expected, actual, "expected different color value")
 	} else {
-		assert.NotNil(t, err, "expected error")
+		assert.NotNil(t, err, tc.Case)
 		assert.Equal(t, tc.Expected, err.Error())
 	}
 }
@@ -64,19 +66,19 @@ func TestPaletteShouldReturnErrorOnMissingColor(t *testing.T) {
 	cases := []TestPaletteRequest{
 		{
 			Case:          "Palette deep purple",
-			Request:       "palette:deep-purple",
+			Request:       "p:deep-purple",
 			ExpectedError: true,
 			Expected:      "palette: requested color deep-purple does not exist in palette of colors black,blue,green,red,white",
 		},
 		{
 			Case:          "Palette cyan",
-			Request:       "palette:cyan",
+			Request:       "p:cyan",
 			ExpectedError: true,
 			Expected:      "palette: requested color cyan does not exist in palette of colors black,blue,green,red,white",
 		},
 		{
 			Case:          "Palette foreground",
-			Request:       "palette:foreground",
+			Request:       "p:foreground",
 			ExpectedError: true,
 			Expected:      "palette: requested color foreground does not exist in palette of colors black,blue,green,red,white",
 		},
@@ -89,28 +91,11 @@ func TestPaletteShouldReturnErrorOnMissingColor(t *testing.T) {
 
 func TestPaletteShouldHandleMixedCases(t *testing.T) {
 	cases := []TestPaletteRequest{
-		{Case: "Palette red", Request: "palette:red", Expected: "#FF0000"},
+		{Case: "Palette red", Request: "p:red", Expected: "#FF0000"},
 		{Case: "ANSI black", Request: "black", Expected: "black"},
 		{Case: "Cyan", Request: "#05E6FA", Expected: "#05E6FA"},
-		{Case: "Palette black", Request: "palette:black", Expected: "#000000"},
-		{Case: "Palette pink", Request: "palette:pink", ExpectedError: true, Expected: "palette: requested color pink does not exist in palette of colors black,blue,green,red,white"},
-	}
-
-	for _, tc := range cases {
-		testPaletteRequest(t, tc)
-	}
-}
-
-func TestPaletteShouldAllowShortReference(t *testing.T) {
-	cases := []TestPaletteRequest{
-		{Case: "Palette red", Request: "p:red", Expected: "#FF0000"},
-		{Case: "Palette green", Request: "palette:green", Expected: "#00FF00"},
-		{Case: "Palette blue", Request: "p:blue", Expected: "#0000FF"},
-		{Case: "Palette white", Request: "palette:white", Expected: "#FFFFFF"},
-		{Case: "Palette red", Request: "p:red", Expected: "#FF0000"},
-		{Case: "Palette green", Request: "palette:green", Expected: "#00FF00"},
-		{Case: "Palette blue", Request: "p:blue", Expected: "#0000FF"},
-		{Case: "Palette black", Request: "palette:black", Expected: "#000000"},
+		{Case: "Palette black", Request: "p:black", Expected: "#000000"},
+		{Case: "Palette pink", Request: "p:pink", ExpectedError: true, Expected: "palette: requested color pink does not exist in palette of colors black,blue,green,red,white"},
 	}
 
 	for _, tc := range cases {
@@ -178,7 +163,7 @@ func TestPaletteShouldHandleEmptyKey(t *testing.T) {
 		"": "#000000",
 	}
 
-	actual, err := tp.ResolveColor("palette:")
+	actual, err := tp.ResolveColor("p:")
 
 	assert.Nil(t, err, "expected no error")
 	assert.Equal(t, "#000000", actual, "expected different color value")
@@ -192,18 +177,18 @@ func BenchmarkPaletteMixedCaseResolution(b *testing.B) {
 
 func benchmarkPaletteMixedCaseResolution() {
 	cases := []TestPaletteRequest{
-		{Case: "Palette red", Request: "palette:red", Expected: "#FF0000"},
+		{Case: "Palette red", Request: "p:red", Expected: "#FF0000"},
 		{Case: "ANSI black", Request: "black", Expected: "black"},
 		{Case: "Cyan", Request: "#05E6FA", Expected: "#05E6FA"},
-		{Case: "Palette black", Request: "palette:black", Expected: "#000000"},
-		{Case: "Palette pink", Request: "palette:pink", ExpectedError: true, Expected: "palette: requested color pink does not exist in palette of colors black,blue,green,red,white"},
+		{Case: "Palette black", Request: "p:black", Expected: "#000000"},
+		{Case: "Palette pink", Request: "p:pink", ExpectedError: true, Expected: "palette: requested color pink does not exist in palette of colors black,blue,green,red,white"},
 		{Case: "Palette blue", Request: "p:blue", Expected: "#0000FF"},
 		// repeating the same set to have longer benchmarks
-		{Case: "Palette red", Request: "palette:red", Expected: "#FF0000"},
+		{Case: "Palette red", Request: "p:red", Expected: "#FF0000"},
 		{Case: "ANSI black", Request: "black", Expected: "black"},
 		{Case: "Cyan", Request: "#05E6FA", Expected: "#05E6FA"},
-		{Case: "Palette black", Request: "palette:black", Expected: "#000000"},
-		{Case: "Palette pink", Request: "palette:pink", ExpectedError: true, Expected: "palette: requested color pink does not exist in palette of colors black,blue,green,red,white"},
+		{Case: "Palette black", Request: "p:black", Expected: "#000000"},
+		{Case: "Palette pink", Request: "p:pink", ExpectedError: true, Expected: "palette: requested color pink does not exist in palette of colors black,blue,green,red,white"},
 		{Case: "Palette blue", Request: "p:blue", Expected: "#0000FF"},
 	}
 

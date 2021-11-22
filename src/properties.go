@@ -74,7 +74,7 @@ func (p *properties) getColor(property Property, defaultValue string) string {
 	if IsAnsiColorName(colorString) {
 		return colorString
 	}
-	values := findNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|(p|palette):.*)`, colorString)
+	values := findNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|p:.*)`, colorString)
 	if values != nil && values["color"] != "" {
 		return values["color"]
 	}

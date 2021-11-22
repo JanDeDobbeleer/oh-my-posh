@@ -7,11 +7,11 @@
   "definitions": {
     "color": {
       "anyOf": [
-        { "$ref": "#/definitions/color_literal" },
+        { "$ref": "#/definitions/color_string" },
         { "$ref": "#/definitions/palette_reference" }
       ]
     },
-    "color_literal": {
+    "color_string": {
       "type": "string",
       "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite|transparent|parentBackground|parentForeground|background|foreground)$",
       "title": "Color string",
@@ -20,9 +20,9 @@
     },
     "palette_reference": {
       "type": "string",
-      "pattern": "^(palette|p):.*$",
+      "pattern": "^p:.*$",
       "title": "Palette reference",
-      "description": "https://ohmyposh.dev/docs/config-palette"
+      "description": "https://ohmyposh.dev/docs/config-colors#palette"
     },
     "color_templates": {
       "type": "array",
@@ -1782,7 +1782,7 @@
       "description": "https://ohmyposh.dev/docs/config-colors#palette",
       "default": {},
       "patternProperties": {
-        ".*": { "$ref": "#/definitions/color_literal" }
+        ".*": { "$ref": "#/definitions/color" }
       }
     }
   }

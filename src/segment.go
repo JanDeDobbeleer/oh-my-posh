@@ -130,7 +130,7 @@ const (
 	Angular SegmentType = "angular"
 	// PHP writes which php version is currently active
 	PHP SegmentType = "php"
-	// RegQuery queries the Windows registry.
+	// WinReg queries the Windows registry.
 	WinReg SegmentType = "winreg"
 )
 

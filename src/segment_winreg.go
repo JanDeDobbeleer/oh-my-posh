@@ -36,6 +36,10 @@ func (r *winreg) init(props *properties, env environmentInfo) {
 }
 
 func (r *winreg) enabled() bool {
+	// Definitely no point going further if it's not windows.
+	if r.env.getRuntimeGOOS() != windowsPlatform {
+		return false
+	}
 
 	var enableSegment bool = false
 

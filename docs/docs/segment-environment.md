@@ -51,7 +51,7 @@ The segment will show when the value of the environment variable isn't empty.
 
 - var_name: `string` - the name of the environment variable
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below. Defaults to the value of the environment variable.
+properties below - defaults to the value of the environment variable.
 
 ## Template Properties
 

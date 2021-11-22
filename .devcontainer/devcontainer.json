@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.177.0/containers/go
 {
-  "name": "Go",
+  "name": "oh-my-posh",
   "build": {
     "dockerfile": "Dockerfile",
     "args": {
@@ -9,7 +9,16 @@
       // Append -bullseye or -buster to pin to an OS version.
       // Use -bullseye variants on local arm64/Apple Silicon.
       "VARIANT": "1.17-bullseye",
-      // Options
+
+      // Options:
+
+      "DEFAULT_POSH_THEME": "jandedobbeleer",
+
+      // Override me with your own timezone:
+      "TZ": "UTC",
+      // Use one of the "TZ database name" entries from:
+      // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+
       "NODE_VERSION": "lts/*"
     }
   },
@@ -43,19 +52,22 @@
     "terminal.integrated.defaultProfile.linux": "pwsh",
     "terminal.integrated.defaultProfile.windows": "pwsh",
     "terminal.integrated.defaultProfile.osx": "pwsh",
+    "tasks.statusbar.default.hide": true
   },
 
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
+    "actboy168.tasks",
     "eamodio.gitlens",
-    "github.vscode-pull-request-github",
-    "esbenp.prettier-vscode",
-    "davidanson.vscode-markdownlint",
-    "yzhang.markdown-all-in-one",
     "bungcip.better-toml",
-    "redhat.vscode-yaml",
+    "davidanson.vscode-markdownlint",
+    "editorconfig.editorconfig",
+    "esbenp.prettier-vscode",
+    "github.vscode-pull-request-github",
     "golang.go",
-    "ms-vscode.powershell"
+    "ms-vscode.powershell",
+    "redhat.vscode-yaml",
+    "yzhang.markdown-all-in-one"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

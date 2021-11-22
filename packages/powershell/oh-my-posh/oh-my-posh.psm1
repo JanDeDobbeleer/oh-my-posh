@@ -17,47 +17,95 @@ https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
     $env:POSH_CONSTRAINED_LANGUAGE = 1
 }
 
-function Get-PoshCommand {
+function Get-PoshDownloadUrl {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]
+        $Version
+    )
+
+    $executable = ""
     if ($IsMacOS) {
-        return "$PSScriptRoot/bin/posh-darwin-amd64"
+        $executable = "posh-darwin-amd64"
     }
-    if ($IsLinux) {
+    elseif ($IsLinux) {
         # this is rather hacky but there's no other way for the time being
         $arch = uname -m
         if ($arch -eq 'aarch64') {
-            return "$PSScriptRoot/bin/posh-linux-arm64"
+            $executable = "posh-linux-arm64"
         }
-        if ($arch -eq 'armv7l') {
-            return "$PSScriptRoot/bin/posh-linux-arm"
+        elseif ($arch -eq 'armv7l') {
+            $executable = "posh-linux-arm"
         }
-        return "$PSScriptRoot/bin/posh-linux-amd64"
+        else {
+            $executable = "posh-linux-amd64"
+        }
     }
-    $arch = (Get-CimInstance -Class Win32_Processor -Property Architecture).Architecture
-    switch ($arch) {
-        0 { return "$PSScriptRoot/bin/posh-windows-386.exe" } # x86
-        5 { return "$PSScriptRoot/bin/posh-windows-arm64.exe" } # ARM
-        9 { return "$PSScriptRoot/bin/posh-windows-amd64.exe" } # x64
-        12 { return "$PSScriptRoot/bin/posh-windows-amd64.exe" } # x64 emulated on Surface Pro X
+    else {
+        $arch = (Get-CimInstance -Class Win32_Processor -Property Architecture).Architecture
+        switch ($arch) {
+            0 { $executable = "posh-windows-386.exe" } # x86
+            5 { $executable = "posh-windows-arm64.exe" } # ARM
+            9 { $executable = "posh-windows-amd64.exe" } # x64
+            12 { $executable = "posh-windows-amd64.exe" } # x64 emulated on Surface Pro X
+        }
     }
-    throw "Oh My Posh: Unsupported architecture: $arch"
+    if ($executable -eq "") {
+        throw "oh-my-posh: Unsupported architecture: $arch"
+    }
+    return "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$executable"
 }
 
-function Set-ExecutablePermissions {
+function Get-PoshExecutable {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]
+        $Url,
+        [Parameter(Mandatory = $true)]
+        [string]
+        $Destination
+    )
+
+    Invoke-WebRequest $Url -Out $Destination
+    if (-Not (Test-Path $executable)) {
+        # This should only happen with a corrupt installation
+        throw "Executable at $executable was not found, please try importing oh-my-posh again."
+    }
     # Set the right binary to executable before doing anything else
     # Permissions don't need to be set on Windows
     if ($PSVersionTable.PSEdition -ne "Core" -or $IsWindows) {
         return
     }
-
-    $executable = Get-PoshCommand
-    if (-Not (Test-Path $executable)) {
-        # This should only happen with a corrupt installation
-        Write-Warning "Executable at $executable was not found"
-        return
-    }
-
     chmod a+x $executable 2>&1
 }
+
+function Get-PoshCommand {
+    $extension = ""
+    if ($PSVersionTable.PSEdition -ne "Core" -or $IsWindows) {
+        $extension = ".exe"
+    }
+    return "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent)/oh-my-posh$extension"
+}
+
+function Sync-PoshExecutable {
+    $executable = Get-PoshCommand
+    $moduleVersion = Split-Path -Leaf $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase
+    if (-not (Test-Path $executable)) {
+        Write-Host "Downloading oh-my-posh executable"
+        $url = Get-PoshDownloadUrl -Version $moduleVersion
+        Get-PoshExecutable -Url $url -Destination $executable
+        return
+    }
+    $poshVersion = & $executable --version
+    if ($poshVersion -eq $moduleVersion) {
+        return
+    }
+    Write-Host "Updating oh-my-posh executable to $moduleVersion"
+    $url = Get-PoshDownloadUrl -Version $moduleVersion
+    Get-PoshExecutable -Url $url -Destination $executable
+}
+
+Sync-PoshExecutable
 
 function Set-PoshPrompt {
     param(
@@ -191,8 +239,6 @@ function ThemeCompletion {
     Select-Object -Unique -ExpandProperty BaseName |
     ForEach-Object { New-CompletionResult -CompletionText $_ }
 }
-
-Set-ExecutablePermissions
 
 Register-ArgumentCompleter `
     -CommandName Set-PoshPrompt `

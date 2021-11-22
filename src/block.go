@@ -54,6 +54,7 @@ func (b *Block) initPlain(env environmentInfo, config *Config) {
 	b.writer = &AnsiWriter{
 		ansi:               b.ansi,
 		terminalBackground: getConsoleBackgroundColor(env, config.TerminalBackground),
+		ansiColors:         MakeColors(env, config),
 	}
 	b.env = env
 }

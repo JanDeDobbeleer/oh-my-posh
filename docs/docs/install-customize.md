@@ -18,4 +18,4 @@ You can output the current theme to the format you like (`json`, `yaml` or `toml
 and store as your custom theme.
 
 [themes]: themes.md
-[configuration]: configuration.md
+[configuration]: config-overview.md

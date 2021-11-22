@@ -3,11 +3,21 @@ package main
 type terraform struct {
 	props         *properties
 	env           environmentInfo
-	workspaceName string
+	WorkspaceName string
 }
 
 func (tf *terraform) string() string {
-	return tf.workspaceName
+	segmentTemplate := tf.props.getString(SegmentTemplate, "{{.WorkspaceName}}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  tf,
+		Env:      tf.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (tf *terraform) init(props *properties, env environmentInfo) {
@@ -17,9 +27,9 @@ func (tf *terraform) init(props *properties, env environmentInfo) {
 
 func (tf *terraform) enabled() bool {
 	cmd := "terraform"
-	if !tf.env.hasCommand(cmd) || !tf.env.hasFolder(".terraform") {
+	if !tf.env.hasCommand(cmd) || !tf.env.hasFolder(tf.env.getcwd()+"/.terraform") {
 		return false
 	}
-	tf.workspaceName, _ = tf.env.runCommand(cmd, "workspace", "show")
+	tf.WorkspaceName, _ = tf.env.runCommand(cmd, "workspace", "show")
 	return true
 }

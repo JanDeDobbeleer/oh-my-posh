@@ -27,7 +27,7 @@ Display the currently active Kubernetes context name and namespace name.
 ## Properties
 
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below. Defaults to `{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}`
+properties below - defaults to `{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}`
 - display_error: `boolean` - show the error context when failing to retrieve the kubectl information - defaults to `false`
 
 ## Template Properties

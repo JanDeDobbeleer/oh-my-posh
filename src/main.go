@@ -209,9 +209,11 @@ func main() {
 	if *args.Plain {
 		writer = &PlainWriter{}
 	} else {
+		writerColors := MakeColors(env, cfg)
 		writer = &AnsiWriter{
 			ansi:               ansi,
 			terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
+			ansiColors:         writerColors,
 		}
 	}
 	title := &consoleTitle{

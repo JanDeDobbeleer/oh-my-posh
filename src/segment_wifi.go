@@ -50,7 +50,8 @@ func (w *wifi) enabled() bool {
 }
 
 func (w *wifi) string() string {
-	const defaultTemplate string = "{{ if .Connected }}\uFAA8{{ else }}\uFAA9{{ end }}{{ if .Connected }}{{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ else }}{{ .State }}{{ end }}"
+	const defaultTemplate string = "{{ if .Connected }}\uFAA8{{ else }}\uFAA9{{ end }}" +
+		"{{ if .Connected }}{{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ else }}{{ .State }}{{ end }}"
 
 	segmentTemplate := w.props.getString(SegmentTemplate, defaultTemplate)
 	template := &textTemplate{
@@ -63,7 +64,7 @@ func (w *wifi) string() string {
 		return err.Error()
 	}
 
-	return fmt.Sprintf("%s", text)
+	return text
 }
 
 func (w *wifi) init(props *properties, env environmentInfo) {

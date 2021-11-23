@@ -5,6 +5,11 @@
   "console_title": true,
   "console_title_style": "template",
   "console_title_template": "{{ .Folder }}",
+  "transient_prompt": {
+    "background": "transparent",
+    "foreground": "#d6deeb",
+    "template": "\ue285 "
+  },
   "blocks": [
     {
       "type": "prompt",
@@ -101,6 +106,19 @@
           }
         },
         {
+          "type": "sysinfo",
+          "style": "diamond",
+          "leading_diamond": "\uE0B2",
+          "trailing_diamond": "<transparent,#8f43f3>\uE0B2</>",
+          "foreground": "#ffffff",
+          "background": "#8f43f3",
+          "properties": {
+            "prefix": " \uf85a ",
+            "postfix": "% ",
+            "template": "{{ round .PhysicalPercentUsed .Precision }}"
+          }
+        },
+        {
           "type": "node",
           "style": "diamond",
           "leading_diamond": "\uE0B2",
@@ -133,9 +151,21 @@
           "leading_diamond": "\uE0B2",
           "trailing_diamond": "<transparent,#0e8ac8>\uE0B2</>",
           "foreground": "#ec2729",
-          "background": "#0e8ac8",
+          "background": "#ffffff",
           "properties": {
             "prefix": "\uE738 ",
+            "postfix": ""
+          }
+        },
+        {
+          "type": "php",
+          "style": "diamond",
+          "leading_diamond": "\uE0B2",
+          "trailing_diamond": "<transparent,#787CB5>\uE0B2</>",
+          "foreground": "#000000",
+          "background": "#787CB5",
+          "properties": {
+            "prefix": "\ue73d ",
             "postfix": ""
           }
         },
@@ -295,7 +325,7 @@
           "type": "spotify",
           "style": "diamond",
           "leading_diamond": "\uE0B6",
-          "trailing_diamond": "\uE0c6",
+          "trailing_diamond": "\uE0c6 ",
           "foreground": "#011627",
           "background": "#1DB954",
           "properties": {
@@ -309,16 +339,12 @@
           "foreground": "#22da6e",
           "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
           "properties": {
+            "prefix": "",
             "template": "\ue285\ue285",
             "always_enabled": true
           }
         }
       ]
     }
-  ],
-  "transient_prompt": {
-    "background": "transparent",
-    "foreground": "#d6deeb",
-    "template": "\ue285 "
-  }
+  ]
 }

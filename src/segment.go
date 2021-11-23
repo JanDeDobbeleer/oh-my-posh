@@ -130,6 +130,8 @@ const (
 	Angular SegmentType = "angular"
 	// PHP writes which php version is currently active
 	PHP SegmentType = "php"
+	// WiFi writes details about the current WiFi connection
+	WiFi SegmentType = "wifi"
 )
 
 func (segment *Segment) string() string {
@@ -263,6 +265,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		SysInfo:       &sysinfo{},
 		Angular:       &angular{},
 		PHP:           &php{},
+		WiFi:          &wifi{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

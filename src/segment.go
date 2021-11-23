@@ -132,6 +132,8 @@ const (
 	PHP SegmentType = "php"
 	// Nightscout is an open source diabetes system
 	Nightscout SegmentType = "nightscout"
+	// WiFi writes details about the current WiFi connection
+	WiFi SegmentType = "wifi"
 )
 
 func (segment *Segment) string() string {
@@ -266,6 +268,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Angular:       &angular{},
 		PHP:           &php{},
 		Nightscout:    &nightscout{},
+		WiFi:          &wifi{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

@@ -35,8 +35,6 @@ func (wr *winreg) enabled() bool {
 		return false
 	}
 
-	//var enableSegment bool = false
-
 	registryPath := wr.props.getString(RegistryPath, "")
 	registryKey := wr.props.getString(RegistryKey, "")
 

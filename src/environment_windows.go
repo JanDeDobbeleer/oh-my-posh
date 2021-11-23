@@ -111,7 +111,7 @@ func (env *environment) getCachePath() string {
 //   true and the retrieved value formatted into a string if successful.
 //   false and the string will be the error
 //
-func (env *environment) getWindowsRegistryKeyValue(regPath string, regKey string) (string, error) {
+func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (string, error) {
 	env.trace(time.Now(), "getWindowsRegistryKeyValue", regPath, regKey)
 
 	// Extract root HK value and turn it into a windows.Handle to open the key.
@@ -141,7 +141,12 @@ func (env *environment) getWindowsRegistryKeyValue(regPath string, regKey string
 		return "", errors.New(errorLogMsg)
 	}
 	// Success - from here on out, when returning make sure to close that reg key with a deferred call to close:
-	defer windows.RegCloseKey(hKeyHandle)
+	defer func() {
+		err := windows.RegCloseKey(hKeyHandle)
+		if err != nil {
+			env.log(Error, "getWindowsRegistryKeyValue", fmt.Sprintf("Error closing registry key: %s", err))
+		}
+	}()
 
 	// Again - need UTF16 of the key for the API:
 	regKeyUTF16, regKeyUTF16ConversionErr := windows.UTF16FromString(regKey)
@@ -163,7 +168,7 @@ func (env *environment) getWindowsRegistryKeyValue(regPath string, regKey string
 	}
 
 	// Alloc and fill...
-	var keyBuf = make([]byte, keyBufSize, keyBufSize)
+	var keyBuf = make([]byte, keyBufSize)
 
 	regQueryErr = windows.RegQueryValueEx(hKeyHandle, &regKeyUTF16[0], nil, &keyBufType, &keyBuf[0], &keyBufSize)
 	if regQueryErr != nil {

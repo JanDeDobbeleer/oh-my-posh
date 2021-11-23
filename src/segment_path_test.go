@@ -159,7 +159,7 @@ func (env *MockedEnvironment) getCachePath() string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) getWindowsRegistryKeyValue(regPath string, regKey string) (string, error) {
+func (env *MockedEnvironment) getWindowsRegistryKeyValue(regPath, regKey string) (string, error) {
 	args := env.Called(nil)
 	return args.String(0), args.Error(1)
 }

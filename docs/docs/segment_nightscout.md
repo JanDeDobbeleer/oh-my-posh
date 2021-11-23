@@ -42,7 +42,7 @@ if that color is visible against any of your backgrounds.
   "trailing_diamond": "\uE0B0",
   "properties": {
     "url": "https://YOURNIGHTSCOUTAPP.herokuapp.com/api/v1/entries.json?count=1&token=APITOKENFROMYOURADMIN",
-    "http_timeout": 500,
+    "http_timeout": 1500,
     "template": " {{.Sgv}}{{.TrendIcon}}"
   }
 },

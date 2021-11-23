@@ -55,6 +55,7 @@ module.exports = {
         "julia",
         "kubectl",
         "nbgv",
+        "nightscout",
         "node",
         "os",
         "owm",

@@ -84,8 +84,8 @@ func (ns *nightscout) string() string {
 
 func (ns *nightscout) getResult() (*nightscoutData, error) {
 	url := ns.props.getString(URL, "")
-	//cacheTimeout := int64(ns.props.getInt(CacheTimeout, DefaultCacheTimeout))
-	cacheTimeout := int64(5) //nightscout can only give you data every 5 min, todo: make it configurable?
+	// ORIGINAL LINE: cacheTimeout := int64(ns.props.getInt(CacheTimeout, DefaultCacheTimeout))
+	cacheTimeout := int64(5) // TODO: nightscout can only give you data every 5 min, todo: make it configurable?
 	response := &nightscoutData{}
 	if cacheTimeout > 0 {
 		// check if data stored in cache

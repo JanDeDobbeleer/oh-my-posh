@@ -180,7 +180,8 @@
             "owm",
             "sysinfo",
             "angular",
-            "php"
+            "php",
+            "wifi"
           ]
         },
         "style": {
@@ -1692,6 +1693,26 @@
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "wifi" }
+            }
+          },
+          "then": {
+            "title": "WiFi Segment",
+            "description": "https://ohmyposh.dev/docs/wifi",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }

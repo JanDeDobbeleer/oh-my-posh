@@ -60,6 +60,6 @@ func (env *environment) getCachePath() string {
 	return env.homeDir()
 }
 
-func (env *environment) getWindowsRegistryKeyValue(regPath string, regKey string) (string, error) {
+func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (string, error) {
 	return "", errors.New("not implemented")
 }

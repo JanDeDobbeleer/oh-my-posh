@@ -84,7 +84,7 @@ function Get-PoshCommand {
     if ($PSVersionTable.PSEdition -ne "Core" -or $IsWindows) {
         $extension = ".exe"
     }
-    return "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent)/oh-my-posh$extension"
+    return "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent.FullName)/oh-my-posh$extension"
 }
 
 function Sync-PoshExecutable {

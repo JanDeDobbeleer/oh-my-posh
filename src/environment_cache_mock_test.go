@@ -39,6 +39,6 @@ func (_m *MockedCache) init(home string) {
 }
 
 // set provides a mock function with given fields: key, value, ttl
-func (_m *MockedCache) set(key, value string, ttl int64) {
+func (_m *MockedCache) set(key, value string, ttl int) {
 	_m.Called(key, value, ttl)
 }

@@ -13,7 +13,7 @@ const (
 type cacheObject struct {
 	Value     string `json:"value"`
 	Timestamp int64  `json:"timestamp"`
-	TTL       int64  `json:"ttl"`
+	TTL       int    `json:"ttl"`
 }
 
 type fileCache struct {
@@ -49,6 +49,8 @@ func (fc *fileCache) close() {
 	}
 }
 
+// returns the value for the given key as long as
+// the TTL (minutes) is not expired
 func (fc *fileCache) get(key string) (string, bool) {
 	val, found := fc.cache.get(key)
 	if !found {
@@ -58,7 +60,7 @@ func (fc *fileCache) get(key string) (string, bool) {
 	if !ok {
 		return "", false
 	}
-	expired := time.Now().Unix() >= (co.Timestamp + co.TTL*60)
+	expired := time.Now().Unix() >= (co.Timestamp + int64(co.TTL)*60)
 	if expired {
 		fc.cache.remove(key)
 		return "", false
@@ -66,7 +68,8 @@ func (fc *fileCache) get(key string) (string, bool) {
 	return co.Value, true
 }
 
-func (fc *fileCache) set(key, value string, ttl int64) {
+// sets the value for the given key with a TTL (minutes)
+func (fc *fileCache) set(key, value string, ttl int) {
 	fc.cache.set(key, &cacheObject{
 		Value:     value,
 		Timestamp: time.Now().Unix(),

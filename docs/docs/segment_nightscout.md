@@ -6,7 +6,7 @@ sidebar_label: Nightscout
 
 ## What
 
-[Nightscout](http://www.nightscout.info/) (CGM in the Cloud) is an open source, 
+[Nightscout][nightscout] (CGM in the Cloud) is an open source, 
 DIY project that allows real time access to a CGM data via an HTTP REST API. It 
 is used for secure remote viewing of blood sugar data from anywhere...including 
 OhMyPosh segments on the command line!
@@ -56,8 +56,15 @@ if that color is visible against any of your backgrounds.
 - http_timeout: `number` - How long do you want to wait before you want to see
   your prompt more than your sugar? I figure a half second is a good default - 
   defaults to 500ms
-- template: a go text/template. See the example above where I added a syringe. 
+- template: `string` - a go [text/template][go-text-template] template extended 
+  with [sprig][sprig] utilizing the properties below. 
+  See the example above where I added a syringe. 
   You can change the icon, put the trend elsewhere, add text, however you like! 
+  Make sure your NerdFont has the glyph you want or search for one 
+  at nerdfonts.com
+
+- NOTE: You can change the icons for trend, put the trend elsewhere, add text, 
+  however you like! 
   Make sure your NerdFont has the glyph you want or search for one at
   nerdfonts.com
 - DoubleUpIcon - defaults to ↑↑
@@ -70,5 +77,10 @@ if that color is visible against any of your backgrounds.
 
 ## Template Properties
 
-- .Sgv - Your Serum Glucose Value (your sugar)
-- .TrendIcon - By default, this will be something like ↑↑ or ↘ etc but you can override them
+- .Sgv: `int` - Your Serum Glucose Value (your sugar)
+- .TrendIcon: `string` - By default, this will be something like ↑↑ or ↘ etc but you can 
+  override them with any glpyh as seen above
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/
+[nightscout]: http://www.nightscout.info/

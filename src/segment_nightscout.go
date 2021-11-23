@@ -18,7 +18,8 @@ type nightscout struct {
 
 const (
 	// Your complete Nightscout URL and APIKey like this
-	URL               Property = "url"
+	URL Property = "url"
+
 	DoubleUpIcon      Property = "doubleup_icon"
 	SingleUpIcon      Property = "singleup_icon"
 	FortyFiveUpIcon   Property = "fortyfiveup_icon"
@@ -26,6 +27,8 @@ const (
 	FortyFiveDownIcon Property = "fortyfivedown_icon"
 	SingleDownIcon    Property = "singledown_icon"
 	DoubleDownIcon    Property = "doubledown_icon"
+
+	NSCacheTimeout Property = "cache_timeout"
 )
 
 type nightscoutData struct {
@@ -84,8 +87,8 @@ func (ns *nightscout) string() string {
 
 func (ns *nightscout) getResult() (*nightscoutData, error) {
 	url := ns.props.getString(URL, "")
-	// ORIGINAL LINE: cacheTimeout := int64(ns.props.getInt(CacheTimeout, DefaultCacheTimeout))
-	cacheTimeout := int64(5) // TODO: nightscout can only give you data every 5 min, todo: make it configurable?
+	// natural and understood NS timeout is 5, anything else is unusual
+	cacheTimeout := ns.props.getInt(NSCacheTimeout, 5)
 	response := &nightscoutData{}
 	if cacheTimeout > 0 {
 		// check if data stored in cache

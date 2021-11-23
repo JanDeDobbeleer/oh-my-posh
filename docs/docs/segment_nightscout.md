@@ -53,7 +53,7 @@ if that color is visible against any of your backgrounds.
 - url: `string` - Your Nightscout URL, inclding the full path to entries.json 
   AND count=1 AND token. Example above. You'll know this works if you can curl 
   it yourself and get a single value. - defaults to ``
-- http_timeout: `number` - How long do you want to wait before you want to see
+- http_timeout: `int` - How long do you want to wait before you want to see
   your prompt more than your sugar? I figure a half second is a good default - 
   defaults to 500ms
 - template: `string` - a go [text/template][go-text-template] template extended 
@@ -61,7 +61,9 @@ if that color is visible against any of your backgrounds.
   See the example above where I added a syringe. 
   You can change the icon, put the trend elsewhere, add text, however you like! 
   Make sure your NerdFont has the glyph you want or search for one 
-  at nerdfonts.com
+  at nerdfonts.com 
+- NSCacheTimeout: `int` in minutes - How long do you want your numbers cached? - 
+  defaults to 5 min
 
 - NOTE: You can change the icons for trend, put the trend elsewhere, add text, 
   however you like! 

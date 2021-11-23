@@ -130,6 +130,8 @@ const (
 	Angular SegmentType = "angular"
 	// PHP writes which php version is currently active
 	PHP SegmentType = "php"
+	// Nightscout is an open source diabetes system
+	Nightscout SegmentType = "nightscout"
 )
 
 func (segment *Segment) string() string {
@@ -263,6 +265,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		SysInfo:       &sysinfo{},
 		Angular:       &angular{},
 		PHP:           &php{},
+		Nightscout:    &nightscout{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

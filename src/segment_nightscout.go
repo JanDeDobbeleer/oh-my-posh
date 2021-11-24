@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 )
 
 // segment struct, makes templating easier
@@ -82,46 +83,59 @@ func (ns *nightscout) string() string {
 }
 
 func (ns *nightscout) getResult() (*NightscoutData, error) {
-	url := ns.props.getString(URL, "")
-	// natural and understood NS timeout is 5, anything else is unusual
-	cacheTimeout := ns.props.getInt(NSCacheTimeout, 5)
-	response := &NightscoutData{}
-	if cacheTimeout > 0 {
-		// check if data stored in cache
-		val, found := ns.env.cache().get(url)
+	parseSingleElement := func(data []byte) (*NightscoutData, error) {
+		var result []*NightscoutData
+		err := json.Unmarshal(data, &result)
+		if err != nil {
+			return nil, err
+		}
+		if len(result) == 0 {
+			return nil, errors.New("no elements in the array")
+		}
+		return result[0], nil
+	}
+	getCacheValue := func(key string) (*NightscoutData, error) {
+		val, found := ns.env.cache().get(key)
 		// we got something from the cache
 		if found {
-			err := json.Unmarshal([]byte(val), response)
-			if err != nil {
-				return nil, err
+			if data, err := parseSingleElement([]byte(val)); err == nil {
+				return data, nil
 			}
-			return response, nil
+		}
+		return nil, errors.New("no data in cache")
+	}
+
+	url := ns.props.getString(URL, "")
+	httpTimeout := ns.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
+	// natural and understood NS timeout is 5, anything else is unusual
+	cacheTimeout := ns.props.getInt(NSCacheTimeout, 5)
+
+	if cacheTimeout > 0 {
+		if data, err := getCacheValue(url); err == nil {
+			return data, nil
 		}
 	}
 
-	httpTimeout := ns.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
-
 	body, err := ns.env.doGet(url, httpTimeout)
 	if err != nil {
-		return &NightscoutData{}, err
+		return nil, err
 	}
 	var arr []*NightscoutData
 	err = json.Unmarshal(body, &arr)
 	if err != nil {
-		return &NightscoutData{}, err
+		return nil, err
 	}
 
-	firstelement := arr[0]
-	firstData, err := json.Marshal(firstelement)
+	data, err := parseSingleElement(body)
 	if err != nil {
-		return &NightscoutData{}, err
+		return nil, err
 	}
 
 	if cacheTimeout > 0 {
 		// persist new sugars in cache
-		ns.env.cache().set(url, string(firstData), cacheTimeout)
+		ns.env.cache().set(url, string(body), cacheTimeout)
 	}
-	return firstelement, nil
+	return data, nil
 }
 
 func (ns *nightscout) init(props *properties, env environmentInfo) {

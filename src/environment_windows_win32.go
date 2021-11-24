@@ -179,3 +179,22 @@ func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string) {
 	_ = EnumWindows(cb, 0)
 	return hwnd, title
 }
+
+// Return the windows handles corresponding to the names of the root registry keys.
+// A returned value of 0 means there was no match.
+func getHKEYHandleFromAbbrString(abbr string) windows.Handle {
+	switch abbr {
+	case "HKCR", "HKEY_CLASSES_ROOT":
+		return windows.HKEY_CLASSES_ROOT
+	case "HKCC", "HKEY_CURRENT_CONFIG":
+		return windows.HKEY_CURRENT_CONFIG
+	case "HKCU", "HKEY_CURRENT_USER":
+		return windows.HKEY_CURRENT_USER
+	case "HKLM", "HKEY_LOCAL_MACHINE":
+		return windows.HKEY_LOCAL_MACHINE
+	case "HKU", "HKEY_USERS":
+		return windows.HKEY_USERS
+	}
+
+	return 0
+}

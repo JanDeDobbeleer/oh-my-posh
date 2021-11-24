@@ -181,7 +181,8 @@
             "sysinfo",
             "angular",
             "php",
-            "wifi"
+            "wifi",
+            "regquery"
           ]
         },
         "style": {
@@ -1713,6 +1714,38 @@
                 "properties": {
                   "template": {
                     "$ref": "#/definitions/template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "winreg" }
+            }
+          },
+          "then": {
+            "title": "Windows Registry Query",
+            "description": "https://ohmyposh.dev/docs/winreg",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
+                  "path": {
+                    "type": "string",
+                    "title": "Registry Path",
+                    "description": "The path under which the registy key lives (case insensitive, must use backslashes), e.g. HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion",
+                    "default": ""
+                  },
+                  "key": {
+                    "type": "string",
+                    "title": "Registry Key",
+                    "description": "The key under he registry path to get (case insensitive).  If left blank, will get the value of the (Default) key in the registry_path",
+                    "default": ""
                   }
                 }
               }

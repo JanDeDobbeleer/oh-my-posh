@@ -129,6 +129,11 @@ func (env *MockedEnvironment) getWindowTitle(imageName, windowTitleRegex string)
 	return args.String(0), args.Error(1)
 }
 
+func (env *MockedEnvironment) getWindowsRegistryKeyValue(regPath, regKey string) (string, error) {
+	args := env.Called(regPath, regKey)
+	return args.String(0), args.Error(1)
+}
+
 func (env *MockedEnvironment) doGet(url string, timeout int) ([]byte, error) {
 	args := env.Called(url)
 	return args.Get(0).([]byte), args.Error(1)

@@ -787,6 +787,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "mikesigs",
+      "name": "Mike Sigsworth",
+      "avatar_url": "https://avatars.githubusercontent.com/u/811177?v=4",
+      "profile": "https://discardchanges.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

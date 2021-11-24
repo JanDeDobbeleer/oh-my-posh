@@ -797,6 +797,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "memcpy-rand-rand-rand",
+      "name": "Will",
+      "avatar_url": "https://avatars.githubusercontent.com/u/90210865?v=4",
+      "profile": "https://github.com/memcpy-rand-rand-rand",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

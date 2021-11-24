@@ -8,11 +8,8 @@ import (
 type nightscout struct {
 	props *properties
 	env   environmentInfo
-	// array of nightscoutData (is often just 1, and we will pick the ZEROeth)
 
-	Sgv       int64
-	Direction string
-
+	NightscoutData
 	TrendIcon string
 }
 
@@ -31,7 +28,8 @@ const (
 	NSCacheTimeout Property = "cache_timeout"
 )
 
-type nightscoutData struct {
+// NightscoutData struct contains the API data
+type NightscoutData struct {
 	Sgv       int64  `json:"sgv"`
 	Direction string `json:"direction"`
 }
@@ -41,9 +39,7 @@ func (ns *nightscout) enabled() bool {
 	if err != nil {
 		return false
 	}
-	ns.Sgv = data.Sgv
-	ns.Direction = data.Direction
-
+	ns.NightscoutData = *data
 	ns.TrendIcon = ns.getTrendIcon()
 
 	return true
@@ -85,11 +81,11 @@ func (ns *nightscout) string() string {
 	return text
 }
 
-func (ns *nightscout) getResult() (*nightscoutData, error) {
+func (ns *nightscout) getResult() (*NightscoutData, error) {
 	url := ns.props.getString(URL, "")
 	// natural and understood NS timeout is 5, anything else is unusual
 	cacheTimeout := ns.props.getInt(NSCacheTimeout, 5)
-	response := &nightscoutData{}
+	response := &NightscoutData{}
 	if cacheTimeout > 0 {
 		// check if data stored in cache
 		val, found := ns.env.cache().get(url)
@@ -107,18 +103,18 @@ func (ns *nightscout) getResult() (*nightscoutData, error) {
 
 	body, err := ns.env.doGet(url, httpTimeout)
 	if err != nil {
-		return &nightscoutData{}, err
+		return &NightscoutData{}, err
 	}
-	var arr []*nightscoutData
+	var arr []*NightscoutData
 	err = json.Unmarshal(body, &arr)
 	if err != nil {
-		return &nightscoutData{}, err
+		return &NightscoutData{}, err
 	}
 
 	firstelement := arr[0]
 	firstData, err := json.Marshal(firstelement)
 	if err != nil {
-		return &nightscoutData{}, err
+		return &NightscoutData{}, err
 	}
 
 	if cacheTimeout > 0 {

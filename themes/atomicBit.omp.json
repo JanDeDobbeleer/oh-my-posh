@@ -1,0 +1,250 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": false,
+  "osc99": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "plain",
+          "properties": {
+            "user_info_separator": "<#ff5555>@</>",
+            "prefix": "╭─[",
+            "postfix": "]─",
+            "user_color": "#ffff55",
+            "host_color": "#55ff55"
+          }
+        },
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#ff5555",
+          "properties": {
+            "prefix": "<#ffffff>[</>",
+            "postfix": "<#ffffff>]</>",
+            "style": "folder",
+            "enable_hyperlink": true
+          }
+        },
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#FF9248",
+          "properties": {
+            "prefix": "<#ffffff>─(</>",
+            "postfix": "<#ffffff>)</>",
+            "root_icon": "#"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "node",
+          "style": "plain",
+          "foreground": "#3C873A",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>",
+            "display_package_manager": true,
+            "yarn_icon": " <#348cba></>",
+            "npm_icon": " <#cc3a3a></> "
+          }
+        },
+        {
+          "type": "python",
+          "style": "plain",
+          "foreground": "#FFE873",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>"
+          }
+        },
+        {
+          "type": "java",
+          "style": "plain",
+          "foreground": "#ec2729",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>"
+          }
+        },
+        {
+          "type": "dotnet",
+          "style": "plain",
+          "foreground": "#0d6da8",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>"
+          }
+        },
+        {
+          "type": "go",
+          "style": "plain",
+          "foreground": "#06aad5",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>"
+          }
+        },
+        {
+          "type": "rust",
+          "style": "plain",
+          "foreground": "#925837",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>"
+          }
+        },
+        {
+          "type": "dart",
+          "style": "plain",
+          "foreground": "#055b9c",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>"
+          }
+        },
+        {
+          "type": "angular",
+          "style": "plain",
+          "foreground": "#ce092f",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>"
+          }
+        },
+        {
+          "type": "julia",
+          "style": "plain",
+          "foreground": "#359a25",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>"
+          }
+        },
+        {
+          "type": "ruby",
+          "style": "plain",
+          "foreground": "#9c1006",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>"
+          }
+        },
+        {
+          "type": "azfunc",
+          "style": "plain",
+          "foreground": "#5398c2",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>"
+          }
+        },
+        {
+          "type": "aws",
+          "style": "plain",
+          "foreground": "#faa029",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>",
+            "template": "{{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+          }
+        },
+        {
+          "type": "kubectl",
+          "style": "plain",
+          "foreground": "#316ce4",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)</>",
+            "template": "{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}"
+          }
+        },
+        {
+          "type": "os",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "properties": {
+            "prefix": "<#ffffff>(</>",
+            "postfix": "<#ffffff>)─</>",
+            "windows": "<#ffffff>\ue27f</>",
+            "macos": "<#ffffff>\ue27f</>",
+            "linux": "<#ffffff>\ue27f</>"
+          }
+        },
+        {
+          "type": "battery",
+          "style": "plain",
+          "properties": {
+            "discharging_icon": " ",
+            "charging_icon": "\uf1e6 ",
+            "charged_icon": "\uf58e ",
+            "color_foreground": true,
+            "charged_color": "#33DD2D",
+            "charging_color": "#40c4ff",
+            "discharging_color": "#FFFB38",
+            "prefix": "<#ffffff>[</>",
+            "postfix": "%<#ffffff>]─</>"
+          }
+        },
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#55ffff",
+          "properties": {
+            "prefix": "<#ffffff>[</>",
+            "postfix": "<#ffffff>]</>",
+            "time_format": "_2,15:04"
+        }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "properties": {
+            "prefix": "",
+            "postfix": "",
+            "text": "╰─"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#e0f8ff",
+          "properties": {
+            "prefix": "<#ffffff>[</>",
+            "postfix": "<#ffffff>]-</>",
+            "branch_icon": "\ue725 ",
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "template": "{{ .HEAD }}{{ if .Staging.Changed }}<#00AA00> ● {{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }}<#D75F00> ● {{ .Working.String }}</>{{ end }}"
+          }
+        },
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#ecf7fa",
+          "properties": {
+            "prefix": "\ue285ﬀ",
+            "display_exit_code": false,
+            "always_enabled": true,
+            "error_color": "#ef5350"
+          }
+        }
+      ]
+    }
+  ]
+}

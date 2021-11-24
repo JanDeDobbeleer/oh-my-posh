@@ -38,9 +38,9 @@
           "background": "#FF9248",
           "properties": {
             "home_icon": "",
-            "folder_icon": " \uf413 ",
+            "folder_icon": " \uf07b ",
             "style": "folder",
-            "prefix": " \ufc6e\uf553",
+            "prefix": " \uf07b\uf553",
             "enable_hyperlink": true
           }
         },
@@ -252,10 +252,10 @@
           "foreground": "#222222",
           "background": "#b2bec3",
           "properties": {
-            "postfix": "<#262626>\uE0B2</>",
-            "windows": "\ue27f ",
-            "macos": "\ue27f ",
-            "linux": "\ue27f "
+            "postfix": "<#262626> \uE0B2</>",
+            "windows": "\ue27f",
+            "macos": "\ue27f",
+            "linux": "\ue27f"
           }
         },
         {
@@ -264,17 +264,17 @@
           "invert_powerline": true,
           "leading_diamond": "\uE0B2",
           "trailing_diamond": "",
-          "foreground": "#ffffff",
+          "foreground": "#262626",
           "background": "#f36943",
           "properties": {
             "battery_icon": "",
-            "discharging_icon": " ",
-            "charging_icon": " ",
-            "charged_icon": " ",
+            "discharging_icon": " ",
+            "charging_icon": "\uf1e6 ",
+            "charged_icon": "\uf58e ",
             "color_background": true,
             "charged_color": "#33DD2D",
-            "charging_color": "lightYellow",
-            "discharging_color": "#ff5722",
+            "charging_color": "#b8e994",
+            "discharging_color": "#fff34e",
             "postfix": " <#262626>\uE0B2</>"
           }
         },

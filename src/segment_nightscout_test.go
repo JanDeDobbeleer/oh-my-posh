@@ -17,6 +17,8 @@ func TestNSSegment(t *testing.T) {
 		JSONResponse    string
 		ExpectedString  string
 		ExpectedEnabled bool
+		CacheTimeout    int
+		CacheFoundFail  bool
 		Template        string
 		Error           error
 	}{
@@ -82,18 +84,65 @@ func TestNSSegment(t *testing.T) {
 			Error:           errors.New("Something went wrong"),
 			ExpectedEnabled: false,
 		},
+		{
+			Case:            "Empty array",
+			JSONResponse:    "[]",
+			ExpectedEnabled: false,
+		},
+		{
+			Case: "DoubleDown 50 from cache",
+			JSONResponse: `
+			[{"_id":"619d6fa819696e8ded5b2206","sgv":50,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"DoubleDown","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
+			Template:        " {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  " 50↓↓",
+			ExpectedEnabled: true,
+			CacheTimeout:    10,
+		},
+		{
+			Case: "DoubleDown 50 from cache not found",
+			JSONResponse: `
+			[{"_id":"619d6fa819696e8ded5b2206","sgv":50,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"DoubleDown","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
+			Template:        " {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  " 50↓↓",
+			ExpectedEnabled: true,
+			CacheTimeout:    10,
+			CacheFoundFail:  true,
+		},
+		{
+			Case: "Error parsing response",
+			JSONResponse: `
+			4tffgt4e4567`,
+			Template:        " {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  " 50↓↓",
+			ExpectedEnabled: false,
+			CacheTimeout:    10,
+		},
+		{
+			Case: "Faulty template",
+			JSONResponse: `
+			[{"sgv":50,"direction":"DoubleDown"}]`,
+			Template:        " {{.Sgv}}{{.Burp}}",
+			ExpectedString:  incorrectTemplate,
+			ExpectedEnabled: true,
+			CacheTimeout:    10,
+		},
 	}
 
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
 		props := &properties{
 			values: map[Property]interface{}{
-				CacheTimeout: 0,
+				CacheTimeout: tc.CacheTimeout,
 				URL:          "FAKE",
 			},
 		}
 
+		cache := &MockedCache{}
+		cache.On("get", NSAPIURL).Return(tc.JSONResponse, !tc.CacheFoundFail)
+		cache.On("set", NSAPIURL, tc.JSONResponse, tc.CacheTimeout).Return()
+
 		env.On("doGet", NSAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
+		env.On("cache", nil).Return(cache)
 
 		if tc.Template != "" {
 			props.values[SegmentTemplate] = tc.Template

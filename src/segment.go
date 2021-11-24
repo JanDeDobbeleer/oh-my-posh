@@ -134,6 +134,8 @@ const (
 	Nightscout SegmentType = "nightscout"
 	// WiFi writes details about the current WiFi connection
 	WiFi SegmentType = "wifi"
+	// WinReg queries the Windows registry.
+	WinReg SegmentType = "winreg"
 )
 
 func (segment *Segment) string() string {
@@ -269,6 +271,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		PHP:           &php{},
 		Nightscout:    &nightscout{},
 		WiFi:          &wifi{},
+		WinReg:        &winreg{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		props := &properties{

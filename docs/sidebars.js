@@ -73,6 +73,7 @@ module.exports = {
         "text",
         "time",
         "wifi",
+        "winreg",
         "ytm",
       ],
     },

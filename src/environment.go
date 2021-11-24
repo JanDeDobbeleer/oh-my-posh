@@ -80,6 +80,7 @@ type environmentInfo interface {
 	getBatteryInfo() ([]*battery.Battery, error)
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
+	getWindowsRegistryKeyValue(regPath, regKey string) (string, error)
 	doGet(url string, timeout int) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool

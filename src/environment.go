@@ -52,8 +52,8 @@ type cache interface {
 	init(home string)
 	close()
 	get(key string) (string, bool)
-	// ttl in seconds
-	set(key, value string, ttl int64)
+	// ttl in minutes
+	set(key, value string, ttl int)
 }
 
 type environmentInfo interface {

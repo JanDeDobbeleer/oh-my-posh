@@ -78,6 +78,16 @@ func TestDefaultColorWithUnavailableProperty(t *testing.T) {
 	assert.Equal(t, expected, value)
 }
 
+func TestGetPaletteColor(t *testing.T) {
+	expected := "p:red"
+	values := map[Property]interface{}{Background: expected}
+	properties := properties{
+		values: values,
+	}
+	value := properties.getColor(Background, "white")
+	assert.Equal(t, expected, value)
+}
+
 func TestGetBool(t *testing.T) {
 	expected := true
 	values := map[Property]interface{}{DisplayHost: expected}

@@ -76,7 +76,7 @@ func (d *owm) string() string {
 }
 
 func (d *owm) getResult() (*owmDataResponse, error) {
-	cacheTimeout := int64(d.props.getInt(CacheTimeout, DefaultCacheTimeout))
+	cacheTimeout := d.props.getInt(CacheTimeout, DefaultCacheTimeout)
 	response := new(owmDataResponse)
 	if cacheTimeout > 0 {
 		// check if data stored in cache

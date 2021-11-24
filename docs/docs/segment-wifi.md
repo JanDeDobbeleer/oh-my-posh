@@ -8,7 +8,7 @@ sidebar_label: WiFi
 
 Show details about the currently connected WiFi network.
 
-::info
+:::info
 Currently only supports Windows and WSL. Pull requests for Darwin and Linux support are welcome :)
 :::
 

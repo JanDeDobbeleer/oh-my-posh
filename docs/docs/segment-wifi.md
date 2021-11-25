@@ -21,13 +21,12 @@ Currently only supports Windows and WSL. Pull requests for Darwin and Linux supp
   "background": "#8822ee",
   "foreground": "#222222",
   "background_templates": [
-    "{{ if (not .Connected) }}#FF1111{{ end }}"
+    "{{ if (not .Connected) }}#FF1111{{ end }}",
     "{{ if (lt .Signal 60) }}#DDDD11{{ else if (lt .Signal 90) }}#DD6611{{ else }}#11CC11{{ end }}"
   ],
   "powerline_symbol": "\uE0B0",
   "properties": {
-    "template": "{{ if .Connected }}\uFAA8{{ else }}\uFAA9{{ end }}
-    {{ if .Connected }}{{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ else }}{{ .State }}{{ end }}"
+    "template": "{{ if .Connected }}\uFAA8{{ else }}\uFAA9{{ end }} {{ if .Connected }}{{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ else }}{{ .State }}{{ end }}"
   }
 }
 ```

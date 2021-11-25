@@ -4,7 +4,28 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
+
+	"github.com/distatus/battery"
 )
+
+// Properties
+
+func (p *properties) getOneOfBool(property, legacyProperty Property) bool {
+	_, found := p.values[legacyProperty]
+	if found {
+		return p.getBool(legacyProperty, false)
+	}
+	return p.getBool(property, false)
+}
+
+func (p *properties) hasOneOf(properties ...Property) bool {
+	for _, property := range properties {
+		if _, found := p.values[property]; found {
+			return true
+		}
+	}
+	return false
+}
 
 // GIT Segement
 
@@ -44,14 +65,6 @@ const (
 	// StatusSeparatorIcon shows between staging and working area
 	StatusSeparatorIcon Property = "status_separator_icon"
 )
-
-func (g *git) getBool(property, legacyProperty Property) bool {
-	_, found := g.props.values[legacyProperty]
-	if found {
-		return g.props.getBool(legacyProperty, false)
-	}
-	return g.props.getBool(property, false)
-}
 
 func (g *git) deprecatedString(statusColorsEnabled bool) string {
 	if statusColorsEnabled {
@@ -165,4 +178,57 @@ func (e *exit) deprecatedString() string {
 		return fmt.Sprintf("%s%d", errorIcon, e.Code)
 	}
 	return fmt.Sprintf("%s%s", errorIcon, e.Text)
+}
+
+// Battery segment
+
+const (
+	// ChargedColor to display when fully charged
+	ChargedColor Property = "charged_color"
+	// ChargingColor to display when charging
+	ChargingColor Property = "charging_color"
+	// DischargingColor to display when discharging
+	DischargingColor Property = "discharging_color"
+	// DisplayCharging Hide the battery icon while it's charging
+	DisplayCharging Property = "display_charging"
+	// DisplayCharged Hide the battery icon when it's charged
+	DisplayCharged Property = "display_charged"
+)
+
+func (b *batt) colorSegment() {
+	if !b.props.hasOneOf(ChargedColor, ChargingColor, DischargingColor) {
+		return
+	}
+	var colorProperty Property
+	switch b.Battery.State {
+	case battery.Discharging, battery.NotCharging:
+		colorProperty = DischargingColor
+	case battery.Charging:
+		colorProperty = ChargingColor
+	case battery.Full:
+		colorProperty = ChargedColor
+	case battery.Empty, battery.Unknown:
+		return
+	}
+	colorBackground := b.props.getBool(ColorBackground, false)
+	if colorBackground {
+		b.props.background = b.props.getColor(colorProperty, b.props.background)
+	} else {
+		b.props.foreground = b.props.getColor(colorProperty, b.props.foreground)
+	}
+}
+
+func (b *batt) shouldDisplay() bool {
+	if !b.props.hasOneOf(DisplayCharged, DisplayCharging) {
+		return true
+	}
+	displayCharged := b.props.getBool(DisplayCharged, true)
+	if !displayCharged && (b.Battery.State == battery.Full) {
+		return false
+	}
+	displayCharging := b.props.getBool(DisplayCharging, true)
+	if !displayCharging && (b.Battery.State == battery.Charging) {
+		return false
+	}
+	return true
 }

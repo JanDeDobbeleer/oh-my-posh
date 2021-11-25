@@ -323,12 +323,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "battery_icon": {
-                    "type": "string",
-                    "title": "Battery Icon",
-                    "description": "Text/icon to use as a prefix for the battery percentage",
-                    "default": ""
-                  },
                   "display_error": {
                     "type": "boolean",
                     "title": "Display Error",
@@ -352,27 +346,6 @@
                     "title": "Charged Icon",
                     "description": "Text/icon to display on the left when fully charged",
                     "default": ""
-                  },
-                  "color_background": {
-                    "type": "boolean",
-                    "title": "Color Background",
-                    "description": "Color the background or foreground",
-                    "default": false
-                  },
-                  "charged_color": { "$ref": "#/definitions/color" },
-                  "charging_color": { "$ref": "#/definitions/color" },
-                  "discharging_color": { "$ref": "#/definitions/color" },
-                  "display_charging": {
-                    "type": "boolean",
-                    "title": "Display while charging",
-                    "description": "displays the battery status while charging (Charging)",
-                    "default": true
-                  },
-                  "display_charged": {
-                    "type": "boolean",
-                    "title": "Display when full",
-                    "description": "displays the battery status when charged (Full)",
-                    "default": true
                   },
                   "template": {
                     "$ref": "#/definitions/template"

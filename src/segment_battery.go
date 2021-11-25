@@ -23,16 +23,6 @@ const (
 	DischargingIcon Property = "discharging_icon"
 	// ChargedIcon to display when fully charged
 	ChargedIcon Property = "charged_icon"
-	// ChargedColor to display when fully charged
-	ChargedColor Property = "charged_color"
-	// ChargingColor to display when charging
-	ChargingColor Property = "charging_color"
-	// DischargingColor to display when discharging
-	DischargingColor Property = "discharging_color"
-	// DisplayCharging Hide the battery icon while it's charging
-	DisplayCharging Property = "display_charging"
-	// DisplayCharged Hide the battery icon when it's charged
-	DisplayCharged Property = "display_charged"
 )
 
 func (b *batt) enabled() bool {
@@ -52,38 +42,24 @@ func (b *batt) enabled() bool {
 		b.Battery.Full += bt.Full
 		b.Battery.State = b.mapMostLogicalState(b.Battery.State, bt.State)
 	}
-
-	displayCharged := b.props.getBool(DisplayCharged, true)
-	if !displayCharged && (b.Battery.State == battery.Full) {
-		return false
-	}
-	displayCharging := b.props.getBool(DisplayCharging, true)
-	if !displayCharging && (b.Battery.State == battery.Charging) {
-		return false
-	}
-
 	batteryPercentage := b.Battery.Current / b.Battery.Full * 100
 	b.Percentage = int(math.Min(100, batteryPercentage))
-	var colorPorperty Property
+
+	if !b.shouldDisplay() {
+		return false
+	}
+
 	switch b.Battery.State {
 	case battery.Discharging, battery.NotCharging:
-		colorPorperty = DischargingColor
 		b.Icon = b.props.getString(DischargingIcon, "")
 	case battery.Charging:
-		colorPorperty = ChargingColor
 		b.Icon = b.props.getString(ChargingIcon, "")
 	case battery.Full:
-		colorPorperty = ChargedColor
 		b.Icon = b.props.getString(ChargedIcon, "")
 	case battery.Empty, battery.Unknown:
 		return true
 	}
-	colorBackground := b.props.getBool(ColorBackground, false)
-	if colorBackground {
-		b.props.background = b.props.getColor(colorPorperty, b.props.background)
-	} else {
-		b.props.foreground = b.props.getColor(colorPorperty, b.props.foreground)
-	}
+	b.colorSegment()
 	return true
 }
 

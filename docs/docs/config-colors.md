@@ -128,14 +128,9 @@ _Color override_ ([Battery segment][battery]):
     "foreground": "p:white",
     "background": "p:black",
     "properties": {
-        "battery_icon": "<#ffa500> [II ]- </>", // icon should always be orange
-        "discharging_icon": "- ",
+        "discharging_icon": "<#ffa500>-</> ",
         "charging_icon": "+ ",
         "charged_icon": "* ",
-        "color_background": true,
-        "charged_color": "#4caf50",     //
-        "charging_color": "#40c4ff",    // battery should use specific colors for status
-        "discharging_color": "#ff5722", //
     }
 },
 ```

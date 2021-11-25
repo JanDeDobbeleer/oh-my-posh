@@ -266,15 +266,15 @@
           "trailing_diamond": "",
           "foreground": "#262626",
           "background": "#f36943",
+          "background_templates": [
+            "{{if eq \"Charging\" .State.String}}#b8e994{{end}}",
+            "{{if eq \"Discharging\" .State.String}}#fff34e{{end}}",
+            "{{if eq \"Full\" .State.String}}#33DD2D{{end}}"
+          ],
           "properties": {
-            "battery_icon": "",
             "discharging_icon": " ",
             "charging_icon": "\uf1e6 ",
             "charged_icon": "\uf58e ",
-            "color_background": true,
-            "charged_color": "#33DD2D",
-            "charging_color": "#b8e994",
-            "discharging_color": "#fff34e",
             "postfix": " <#262626>\uE0B2</>"
           }
         },

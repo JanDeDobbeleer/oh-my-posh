@@ -30,12 +30,12 @@
           "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
           "background": "#a2beef",
+          "background_templates": [
+            "{{if eq \"Charging\" .State.String}}#00D100{{end}}",
+            "{{if eq \"Discharging\" .State.String}}#FFCD58{{end}}",
+            "{{if eq \"Full\" .State.String}}#0476d0{{end}}"
+          ],
           "properties": {
-            "battery_icon": "\f583",
-            "color_background": true,
-            "charged_color": "#0476d0",
-            "charging_color": "#00D100",
-            "discharging_color": "#FFCD58",
             "postfix": "\uF295 \uf583 "
           }
         },

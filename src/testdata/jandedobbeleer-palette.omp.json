@@ -38,8 +38,8 @@
         {
           "type": "session",
           "style": "diamond",
-          "foreground": "palette:white",
-          "background": "palette:session",
+          "foreground": "p:white",
+          "background": "p:session",
           "leading_diamond": "",
           "trailing_diamond": "\uE0B0",
           "properties": {
@@ -51,8 +51,8 @@
           "type": "path",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground": "palette:white",
-          "background": "palette:path",
+          "foreground": "p:white",
+          "background": "p:path",
           "properties": {
             "prefix": "   ",
             "home_icon": "~",
@@ -64,13 +64,13 @@
           "type": "git",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground": "palette:git-foreground",
-          "background": "palette:git",
+          "foreground": "p:git-foreground",
+          "background": "p:git",
           "background_templates": [
-            "{{ if or (.Working.Changed) (.Staging.Changed) }}palette:git-modified{{ end }}",
-            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}palette:git-diverged{{ end }}",
-            "{{ if gt .Ahead 0 }}palette:git-ahead{{ end }}",
-            "{{ if gt .Behind 0 }}palette:git-behind{{ end }}"
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}p:git-modified{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:git-diverged{{ end }}",
+            "{{ if gt .Ahead 0 }}p:git-ahead{{ end }}",
+            "{{ if gt .Behind 0 }}p:git-behind{{ end }}"
           ],
           "leading_diamond": "",
           "trailing_diamond": "",
@@ -86,8 +86,8 @@
           "type": "node",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground": "palette:white",
-          "background": "palette:node",
+          "foreground": "p:white",
+          "background": "p:node",
           "properties": {
             "prefix": " \uF898 ",
             "display_version": true
@@ -97,8 +97,8 @@
           "type": "go",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground": "palette:black",
-          "background": "palette:go",
+          "foreground": "p:black",
+          "background": "p:go",
           "properties": {
             "prefix": " \uE626 ",
             "display_version": true
@@ -108,8 +108,8 @@
           "type": "julia",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground": "palette:black",
-          "background": "palette:julia",
+          "foreground": "p:black",
+          "background": "p:julia",
           "properties": {
             "prefix": " \uE624 ",
             "display_version": true
@@ -119,8 +119,8 @@
           "type": "python",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground": "palette:black",
-          "background": "palette:python",
+          "foreground": "p:black",
+          "background": "p:python",
           "properties": {
             "prefix": " \uE235 ",
             "display_version": true,
@@ -132,8 +132,8 @@
           "type": "ruby",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground": "palette:white",
-          "background": "palette:ruby",
+          "foreground": "p:white",
+          "background": "p:ruby",
           "properties": {
             "prefix": " \uE791 ",
             "display_version": true,
@@ -144,8 +144,8 @@
           "type": "azfunc",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground": "palette:white",
-          "background": "palette:azfunc",
+          "foreground": "p:white",
+          "background": "p:azfunc",
           "properties": {
             "prefix": " \uf0e7",
             "display_version": false,
@@ -156,10 +156,10 @@
           "type": "aws",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground": "palette:white",
+          "foreground": "p:white",
           "background_templates": [
-            "{{if contains \"default\" .Profile}}palette:aws-default{{end}}",
-            "{{if contains \"jan\" .Profile}}palette:aws-jan{{end}}"
+            "{{if contains \"default\" .Profile}}p:aws-default{{end}}",
+            "{{if contains \"jan\" .Profile}}p:aws-jan{{end}}"
           ],
           "properties": {
             "prefix": " \uE7AD ",
@@ -170,8 +170,8 @@
           "type": "root",
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
-          "foreground": "palette:black",
-          "background": "palette:root",
+          "foreground": "p:black",
+          "background": "p:root",
           "properties": {
             "root_icon": ""
           }
@@ -179,8 +179,8 @@
         {
           "type": "executiontime",
           "style": "plain",
-          "foreground": "palette:white",
-          "background": "palette:executiontime",
+          "foreground": "p:white",
+          "background": "p:executiontime",
           "leading_diamond": "",
           "trailing_diamond": "",
           "properties": {
@@ -192,10 +192,10 @@
         {
           "type": "exit",
           "style": "diamond",
-          "foreground": "palette:white",
-          "background": "palette:exit",
+          "foreground": "p:white",
+          "background": "p:exit",
           "background_templates": [
-            "{{ if gt .Code 0 }}palette:exit-red{{ end }}"
+            "{{ if gt .Code 0 }}p:exit-red{{ end }}"
           ],
           "leading_diamond": "",
           "trailing_diamond": "\uE0B4",
@@ -213,8 +213,8 @@
         {
           "type": "shell",
           "style": "plain",
-          "foreground": "palette:white",
-          "background": "palette:shell",
+          "foreground": "p:white",
+          "background": "p:shell",
           "properties": {
             "prefix": "<#0077c2,transparent>\uE0B6</>  ",
             "postfix": " <transparent,#0077c2>\uE0B2</>"
@@ -225,8 +225,8 @@
           "style": "powerline",
           "powerline_symbol": "\uE0B2",
           "invert_powerline": true,
-          "foreground": "palette:black",
-          "background": "palette:ytm",
+          "foreground": "p:black",
+          "background": "p:ytm",
           "properties": {
             "prefix": " \uF167 ",
             "paused_icon": " ",
@@ -238,17 +238,17 @@
           "style": "powerline",
           "invert_powerline": true,
           "powerline_symbol": "\uE0B2",
-          "foreground": "palette:white",
-          "background": "palette:battery",
+          "foreground": "p:white",
+          "background": "p:battery",
+          "background_templates": [
+            "{{if eq \"Charging\" .State.String}}p:battery-charging{{end}}",
+            "{{if eq \"Discharging\" .State.String}}p:battery-discharging{{end}}",
+            "{{if eq \"Full\" .State.String}}p:battery-charged{{end}}"
+          ],
           "properties": {
-            "battery_icon": "",
             "discharging_icon": " ",
             "charging_icon": " ",
             "charged_icon": " ",
-            "color_background": true,
-            "charged_color": "palette:battery-charged",
-            "charging_color": "palette:battery-charging",
-            "discharging_color": "palette:battery-discharging",
             "postfix": " "
           }
         },
@@ -258,8 +258,8 @@
           "invert_powerline": true,
           "leading_diamond": "\uE0B2",
           "trailing_diamond": "\uE0B4",
-          "background": "palette:time",
-          "foreground": "palette:black"
+          "background": "p:time",
+          "foreground": "p:black"
         }
       ]
     }

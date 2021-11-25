@@ -20,5 +20,4 @@ jobs:
       uses: actions/checkout@v2
     - name: Create manifest and submit PR 📦
       run: |
-        $version = ${{ github.event.inputs.version }}
-        ./build.ps1 -Version $version -Token $env:WINGETCREATE_TOKEN
+        ./build.ps1 -Version "${{ github.event.inputs.version }}" -Token $env:WINGETCREATE_TOKEN

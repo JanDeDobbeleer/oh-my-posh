@@ -12,7 +12,9 @@ func TestRegQueryEnabled(t *testing.T) {
 		CaseDescription string
 		Path            string
 		Key             string
+		Fallback        string
 		ExpectedSuccess bool
+		ExpectedValue   string
 		Output          string
 		Err             error
 	}{
@@ -20,15 +22,43 @@ func TestRegQueryEnabled(t *testing.T) {
 			CaseDescription: "Error",
 			Path:            "HKLLM\\Software\\Microsoft\\Windows NT\\CurrentVersion",
 			Key:             "ProductName",
-			ExpectedSuccess: false,
 			Err:             errors.New("No match"),
+			ExpectedSuccess: false,
 		},
 		{
 			CaseDescription: "Value",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion",
 			Key:             "InstallTime",
+			Output:          "xbox",
 			ExpectedSuccess: true,
+			ExpectedValue:   "xbox",
+		},
+		{
+			CaseDescription: "Fallback value",
+			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion",
+			Key:             "InstallTime",
 			Output:          "no formatter",
+			Fallback:        "cortana",
+			Err:             errors.New("No match"),
+			ExpectedSuccess: true,
+			ExpectedValue:   "cortana",
+		},
+		{
+			CaseDescription: "Fallback value on empty",
+			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion",
+			Key:             "InstallTime",
+			Output:          "",
+			Fallback:        "anaconda",
+			ExpectedSuccess: true,
+			ExpectedValue:   "anaconda",
+		},
+		{
+			CaseDescription: "Empty no fallback disabled",
+			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion",
+			Key:             "InstallTime",
+			Output:          "",
+			ExpectedSuccess: false,
+			ExpectedValue:   "",
 		},
 	}
 
@@ -40,6 +70,7 @@ func TestRegQueryEnabled(t *testing.T) {
 			values: map[Property]interface{}{
 				RegistryPath: tc.Path,
 				RegistryKey:  tc.Key,
+				Fallback:     tc.Fallback,
 			},
 		}
 		r := &winreg{
@@ -47,6 +78,7 @@ func TestRegQueryEnabled(t *testing.T) {
 			props: props,
 		}
 
-		assert.Equal(t, r.enabled(), tc.ExpectedSuccess, tc.CaseDescription)
+		assert.Equal(t, tc.ExpectedSuccess, r.enabled(), tc.CaseDescription)
+		assert.Equal(t, tc.ExpectedValue, r.string(), tc.CaseDescription)
 	}
 }

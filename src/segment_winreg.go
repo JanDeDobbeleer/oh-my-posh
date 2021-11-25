@@ -12,6 +12,8 @@ const (
 	RegistryPath Property = "path"
 	// key within full reg path formed from two above
 	RegistryKey Property = "key"
+	// Fallback is the text to display if the key is not found
+	Fallback Property = "fallback"
 )
 
 func (wr *winreg) init(props *properties, env environmentInfo) {
@@ -26,10 +28,15 @@ func (wr *winreg) enabled() bool {
 
 	registryPath := wr.props.getString(RegistryPath, "")
 	registryKey := wr.props.getString(RegistryKey, "")
+	fallback := wr.props.getString(Fallback, "")
 
 	var err error
 	wr.Value, err = wr.env.getWindowsRegistryKeyValue(registryPath, registryKey)
-	return err == nil
+	if len(fallback) > 0 && (err != nil || len(wr.Value) == 0) {
+		wr.Value = fallback
+		return true
+	}
+	return err == nil && len(wr.Value) > 0
 }
 
 func (wr *winreg) string() string {

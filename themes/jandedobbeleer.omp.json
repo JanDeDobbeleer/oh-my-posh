@@ -207,15 +207,15 @@
           "powerline_symbol": "\uE0B2",
           "foreground": "#ffffff",
           "background": "#f36943",
+          "background_templates": [
+            "{{if eq \"Charging\" .State.String}}#40c4ff{{end}}",
+            "{{if eq \"Discharging\" .State.String}}#ff5722{{end}}",
+            "{{if eq \"Full\" .State.String}}#4caf50{{end}}"
+          ],
           "properties": {
-            "battery_icon": "",
             "discharging_icon": " ",
             "charging_icon": " ",
             "charged_icon": " ",
-            "color_background": true,
-            "charged_color": "#4caf50",
-            "charging_color": "#40c4ff",
-            "discharging_color": "#ff5722",
             "postfix": " "
           }
         },

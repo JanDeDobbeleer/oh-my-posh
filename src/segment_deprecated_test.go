@@ -1,8 +1,10 @@
 package main
 
 import (
+	"errors"
 	"testing"
 
+	"github.com/distatus/battery"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -299,5 +301,138 @@ func TestExitWriterDeprecatedString(t *testing.T) {
 			props: props,
 		}
 		assert.Equal(t, tc.Expected, e.string())
+	}
+}
+
+// Battery Segment
+
+func TestBatterySegmentSingle(t *testing.T) {
+	cases := []struct {
+		Case            string
+		Batteries       []*battery.Battery
+		ExpectedString  string
+		ExpectedEnabled bool
+		ExpectedColor   string
+		ColorBackground bool
+		DisplayError    bool
+		Error           error
+		DisableCharging bool
+		DisableCharged  bool
+	}{
+		{Case: "80% charging", Batteries: []*battery.Battery{{Full: 100, State: battery.Charging, Current: 80}}, ExpectedString: "charging 80", ExpectedEnabled: true},
+		{Case: "battery full", Batteries: []*battery.Battery{{Full: 100, State: battery.Full, Current: 100}}, ExpectedString: "charged 100", ExpectedEnabled: true},
+		{Case: "70% discharging", Batteries: []*battery.Battery{{Full: 100, State: battery.Discharging, Current: 70}}, ExpectedString: "going down 70", ExpectedEnabled: true},
+		{
+			Case:            "discharging background color",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Discharging, Current: 70}},
+			ExpectedString:  "going down 70",
+			ExpectedEnabled: true,
+			ColorBackground: true,
+			ExpectedColor:   dischargingColor,
+		},
+		{
+			Case:            "charging background color",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Charging, Current: 70}},
+			ExpectedString:  "charging 70",
+			ExpectedEnabled: true,
+			ColorBackground: true,
+			ExpectedColor:   chargingColor,
+		},
+		{
+			Case:            "charged background color",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Full, Current: 70}},
+			ExpectedString:  "charged 70",
+			ExpectedEnabled: true,
+			ColorBackground: true,
+			ExpectedColor:   chargedColor,
+		},
+		{
+			Case:            "discharging foreground color",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Discharging, Current: 70}},
+			ExpectedString:  "going down 70",
+			ExpectedEnabled: true,
+			ExpectedColor:   dischargingColor,
+		},
+		{
+			Case:            "charging foreground color",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Charging, Current: 70}},
+			ExpectedString:  "charging 70",
+			ExpectedEnabled: true,
+			ExpectedColor:   chargingColor,
+		},
+		{
+			Case:            "charged foreground color",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Full, Current: 70}},
+			ExpectedString:  "charged 70",
+			ExpectedEnabled: true,
+			ExpectedColor:   chargedColor,
+		},
+		{Case: "battery error", DisplayError: true, Error: errors.New("oh snap"), ExpectedString: "oh snap", ExpectedEnabled: true},
+		{Case: "battery error disabled", Error: errors.New("oh snap")},
+		{Case: "no batteries", DisplayError: true, Error: &noBatteryError{}},
+		{Case: "no batteries without error"},
+		{Case: "display charging disabled: charging", Batteries: []*battery.Battery{{Full: 100, State: battery.Charging}}, DisableCharging: true},
+		{Case: "display charged disabled: charged", Batteries: []*battery.Battery{{Full: 100, State: battery.Full}}, DisableCharged: true},
+		{
+			Case:            "display charging disabled/display charged enabled: charging",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Charging}},
+			DisableCharging: true,
+			DisableCharged:  false},
+		{
+			Case:            "display charged disabled/display charging enabled: charged",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Full}},
+			DisableCharged:  true,
+			DisableCharging: false},
+		{
+			Case:            "display charging disabled: discharging",
+			Batteries:       []*battery.Battery{{Full: 100, State: battery.Discharging, Current: 70}},
+			ExpectedString:  "going down 70",
+			ExpectedEnabled: true,
+			DisableCharging: true,
+		},
+	}
+
+	for _, tc := range cases {
+		env := &MockedEnvironment{}
+		props := &properties{
+			background: "#111111",
+			foreground: "#ffffff",
+			values: map[Property]interface{}{
+				ChargingIcon:     "charging ",
+				ChargedIcon:      "charged ",
+				DischargingIcon:  "going down ",
+				DischargingColor: dischargingColor,
+				ChargedColor:     chargedColor,
+				ChargingColor:    chargingColor,
+				ColorBackground:  tc.ColorBackground,
+				DisplayError:     tc.DisplayError,
+			},
+		}
+		// default values
+		if tc.DisableCharging {
+			props.values[DisplayCharging] = false
+		}
+		if tc.DisableCharged {
+			props.values[DisplayCharged] = false
+		}
+		env.On("getBatteryInfo", nil).Return(tc.Batteries, tc.Error)
+		b := &batt{
+			props: props,
+			env:   env,
+		}
+		enabled := b.enabled()
+		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
+		if !enabled {
+			continue
+		}
+		assert.Equal(t, tc.ExpectedString, b.string(), tc.Case)
+		if len(tc.ExpectedColor) == 0 {
+			continue
+		}
+		actualColor := b.props.foreground
+		if tc.ColorBackground {
+			actualColor = b.props.background
+		}
+		assert.Equal(t, tc.ExpectedColor, actualColor, tc.Case)
 	}
 }

@@ -76,18 +76,17 @@
           "type": "battery",
           "style": "powerline",
           "foreground": "#193549",
+          "foreground_templates": [
+            "{{if eq \"Charging\" .State.String}}#64B5F6{{end}}",
+            "{{if eq \"Discharging\" .State.String}}#E36464{{end}}",
+            "{{if eq \"Full\" .State.String}}#66BB6A{{end}}"
+          ],
           "properties": {
-              "battery_icon": "",
               "discharging_icon": "\uE231 ",
               "charging_icon": "\uE234 ",
               "charged_icon": "\uE22F ",
-              "color_background": false,
-              "charged_color": "#66BB6A",
-              "charging_color": "#64B5F6",
-              "discharging_color": "#E36464",
               "prefix": "\u005B",
-              "postfix": "\uF295\u005D",
-              "display_charging": true
+              "postfix": "\uF295\u005D"
             }
           }
         ]

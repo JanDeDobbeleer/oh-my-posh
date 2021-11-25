@@ -79,7 +79,16 @@ if that color is visible against any of your backgrounds.
 
 ## Template Properties
 
+- .ID: `string` - The internal ID of the object
 - .Sgv: `int` - Your Serum Glucose Value (your sugar)
+- .Date: `int` - The unix timestamp of the entry
+- .DateString: `time` - The timestamp of the entry
+- .Trend: `int` - The trend of the entry
+- .Device: `string` - The device linked to the entry
+- .Type: `string` - The type of the entry
+- .UtcOffset: `int` - The UTC offset
+- .SysTime: `time` - The time on the system
+- .Mills: `int` - The amount of mills
 - .TrendIcon: `string` - By default, this will be something like ↑↑ or ↘ etc but you can
   override them with any glpyh as seen above
 

@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"time"
 )
 
 // segment struct, makes templating easier
@@ -31,8 +32,17 @@ const (
 
 // NightscoutData struct contains the API data
 type NightscoutData struct {
-	Sgv       int64  `json:"sgv"`
-	Direction string `json:"direction"`
+	ID         string    `json:"_id"`
+	Sgv        int       `json:"sgv"`
+	Date       int64     `json:"date"`
+	DateString time.Time `json:"dateString"`
+	Trend      int       `json:"trend"`
+	Direction  string    `json:"direction"`
+	Device     string    `json:"device"`
+	Type       string    `json:"type"`
+	UtcOffset  int       `json:"utcOffset"`
+	SysTime    time.Time `json:"sysTime"`
+	Mills      int64     `json:"mills"`
 }
 
 func (ns *nightscout) enabled() bool {

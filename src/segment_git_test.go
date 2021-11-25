@@ -700,13 +700,15 @@ func TestGetGitCommand(t *testing.T) {
 		Case     string
 		Expected string
 		IsWSL    bool
+		IsWSL1   bool
 		GOOS     string
 		CWD      string
 	}{
 		{Case: "On Windows", Expected: "git.exe", GOOS: windowsPlatform},
 		{Case: "Non Windows", Expected: "git"},
-		{Case: "Iside WSL, non shared", IsWSL: true, Expected: "git"},
-		{Case: "Iside WSL, shared", Expected: "git.exe", IsWSL: true, CWD: "/mnt/bill"},
+		{Case: "Iside WSL2, non shared", IsWSL: true, Expected: "git"},
+		{Case: "Iside WSL2, shared", Expected: "git.exe", IsWSL: true, CWD: "/mnt/bill"},
+		{Case: "Iside WSL1, shared", Expected: "git", IsWSL: true, IsWSL1: true, CWD: "/mnt/bill"},
 	}
 
 	for _, tc := range cases {
@@ -714,6 +716,11 @@ func TestGetGitCommand(t *testing.T) {
 		env.On("isWsl", nil).Return(tc.IsWSL)
 		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
 		env.On("getcwd", nil).Return(tc.CWD)
+		wslUname := "5.10.60.1-microsoft-standard-WSL2"
+		if tc.IsWSL1 {
+			wslUname = "4.4.0-19041-Microsoft"
+		}
+		env.On("runCommand", "uname", []string{"-r"}).Return(wslUname, nil)
 		g := &git{
 			env: env,
 		}

@@ -81,6 +81,8 @@ type git struct {
 	gitWorkingFolder  string // .git working folder, can be different of root if using worktree
 	gitRootFolder     string // .git root folder
 	gitWorktreeFolder string // .git real worktree path
+
+	gitCommand string
 }
 
 const (
@@ -284,14 +286,24 @@ func (g *git) setGitStatus() {
 }
 
 func (g *git) getGitCommand() string {
-	inWSLSharedDrive := func(env environmentInfo) bool {
-		return env.isWsl() && strings.HasPrefix(env.getcwd(), "/mnt/")
+	if len(g.gitCommand) > 0 {
+		return g.gitCommand
 	}
-	gitCommand := "git"
-	if g.env.getRuntimeGOOS() == windowsPlatform || inWSLSharedDrive(g.env) {
-		gitCommand = "git.exe"
+	inWSL2SharedDrive := func(env environmentInfo) bool {
+		if !env.isWsl() {
+			return false
+		}
+		if !strings.HasPrefix(env.getcwd(), "/mnt/") {
+			return false
+		}
+		uname, _ := g.env.runCommand("uname", "-r")
+		return strings.Contains(uname, "WSL2")
 	}
-	return gitCommand
+	g.gitCommand = "git"
+	if g.env.getRuntimeGOOS() == windowsPlatform || inWSL2SharedDrive(g.env) {
+		g.gitCommand = "git.exe"
+	}
+	return g.gitCommand
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {

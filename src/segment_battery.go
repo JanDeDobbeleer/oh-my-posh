@@ -7,9 +7,10 @@ import (
 )
 
 type batt struct {
-	props      *properties
-	env        environmentInfo
-	Battery    *battery.Battery
+	props *properties
+	env   environmentInfo
+
+	battery.Battery
 	Percentage int
 	Error      string
 	Icon       string
@@ -46,7 +47,6 @@ func (b *batt) enabled() bool {
 		return false
 	}
 
-	b.Battery = &battery.Battery{}
 	for _, bt := range batteries {
 		b.Battery.Current += bt.Current
 		b.Battery.Full += bt.Full
@@ -103,11 +103,9 @@ func (b *batt) enabledWhileError(err error) bool {
 	// This hack ensures we display a fully charged battery, even if
 	// that state can be incorrect. It's better to "ignore" the error
 	// than to not display the segment at all as that will confuse users.
-	b.Battery = &battery.Battery{
-		Current: 100,
-		Full:    100,
-		State:   battery.Full,
-	}
+	b.Battery.Current = 100
+	b.Battery.Full = 10
+	b.Battery.State = battery.Full
 	return true
 }
 
@@ -131,7 +129,7 @@ func (b *batt) mapMostLogicalState(currentState, newState battery.State) battery
 }
 
 func (b *batt) string() string {
-	segmentTemplate := b.props.getString(SegmentTemplate, "{{.Icon}}{{ if not .Error }}{{.Percentage}}{{ end }}{{.Error}}")
+	segmentTemplate := b.props.getString(SegmentTemplate, "{{ if not .Error }}{{.Icon}}{{.Percentage}}{{ end }}{{.Error}}")
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  b,

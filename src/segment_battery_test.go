@@ -202,11 +202,14 @@ func TestGetBatteryColors(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
+		batt := &batt{
+			Percentage: tc.Percentage,
+		}
+		if tc.Battery != nil {
+			batt.Battery = *tc.Battery
+		}
 		segment := &Segment{
-			writer: &batt{
-				Percentage: tc.Percentage,
-				Battery:    tc.Battery,
-			},
+			writer: batt,
 		}
 		segment.Foreground = tc.DefaultColor
 		segment.ForegroundTemplates = tc.Templates

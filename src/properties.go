@@ -127,6 +127,17 @@ func (p properties) getKeyValueMap(property Property, defaultValue map[string]st
 	return keyValues
 }
 
+func (p properties) getStringArray(property Property, defaultValue []string) []string {
+	val, found := p[property]
+	if !found {
+		return defaultValue
+	}
+
+	keyValues := parseStringArray(val)
+
+	return keyValues
+}
+
 func parseStringArray(param interface{}) []string {
 	switch v := param.(type) {
 	default:

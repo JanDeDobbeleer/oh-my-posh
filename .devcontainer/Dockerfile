@@ -18,42 +18,32 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
         fish \
         powershell \
-        tmux \
     && apt-get clean
 
-# Deploy latest stable oh-my-posh as a starting point:
-RUN pwsh -Command Install-Module oh-my-posh -Scope AllUsers -Force && \
-    chmod 777 -R /usr/local/share/powershell
-# If you recompile the prompt in the devcontainer you may overwrite the executables at:
-# /usr/local/share/powershell/Modules/oh-my-posh/<version>/bin/
+ARG USERNAME=vscode
 
-# Deploy symlink of binary under /usr/bin/oh-my-posh for convenience access from non-Powershell shells:
-RUN export ARCH=`uname -m`;\
+# Download the oh-my-posh binary
+RUN mkdir /home/${USERNAME}/bin; \
+    export ARCH=`uname -m`;\
     if [[ "$ARCH" -eq "aarch64" ]]; then \
-        export POSH_BIN="$(find /usr/local/share/powershell/Modules/oh-my-posh/*/bin/posh-linux-arm64)";\
+        export POSH_BIN="posh-linux-arm64";\
     elif [[ "$ARCH" -eq "armv7l" ]]; then \
-        export POSH_BIN="$(find /usr/local/share/powershell/Modules/oh-my-posh/*/bin/posh-linux-arm)";\
+        export POSH_BIN="posh-linux-arm";\
     else \
-        export POSH_BIN="$(find /usr/local/share/powershell/Modules/oh-my-posh/*/bin/posh-linux-amd64)";\
+        export POSH_BIN="posh-linux-amd64";\
     fi;\
-    ln -sf $POSH_BIN /usr/bin/oh-my-posh
+    wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/${POSH_BIN} -O /home/${USERNAME}/bin/oh-my-posh; \
+    chmod +x /home/${USERNAME}/bin/oh-my-posh; \
+    chown ${USERNAME}: /home/${USERNAME}/bin;
 # NOTE: devcontainers are Linux-only at this time but when
 # Windows or Darwin is supported someone will need to improve
 # the code logic above.
 
-# Deploy all latest oh-my-posh themes at devcontainer build time:
-ARG USERNAME=vscode
-ARG POSHTHEMES_ROOT=/home/${USERNAME}/.poshthemes
-ENV POSHTHEMES_ROOT=${POSHTHEMES_ROOT}
-RUN mkdir -m=777 -p ${POSHTHEMES_ROOT} && \
-    wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip -O ${POSHTHEMES_ROOT}/themes.zip && \
-    unzip ${POSHTHEMES_ROOT}/themes.zip -d ${POSHTHEMES_ROOT} && \
-    chmod 777 ${POSHTHEMES_ROOT}/*.json && \
-    rm ${POSHTHEMES_ROOT}/themes.zip
+# add the oh-my-posh path to the PATH variable
+ENV PATH "$PATH:${USERNAME}/bin"
 
 # Can be used to override the devcontainer prompt default theme:
-ARG DEFAULT_POSH_THEME=jandedobbeleer
-ENV DEFAULT_POSH_THEME=${DEFAULT_POSH_THEME}
+ENV POSH_THEME="/workspaces/oh-my-posh/themes/jandedobbeleer.omp.json"
 
 # Deploy oh-my-posh prompt to Powershell:
 COPY Microsoft.PowerShell_profile.ps1 /home/${USERNAME}/.config/powershell/Microsoft.PowerShell_profile.ps1
@@ -67,11 +57,10 @@ RUN chmod 777 -R /home/${USERNAME}/.config
 
 # Override vscode's own Bash prompt with oh-my-posh:
 RUN sed -i 's/^__bash_prompt$/#&/' /home/${USERNAME}/.bashrc && \
-    echo "eval \"\$(oh-my-posh --init --shell bash --config ${POSHTHEMES_ROOT}/${DEFAULT_POSH_THEME}.omp.json)\"" >> /home/${USERNAME}/.bashrc
+    echo "eval \"\$(oh-my-posh --init --shell bash --config $POSH_THEME)\"" >> /home/${USERNAME}/.bashrc
 
 # Override vscode's own ZSH prompt with oh-my-posh:
-RUN sed -i 's/^source \$ZSH/oh-my-zsh.sh$/# source \$ZSH/oh-my-zsh.sh&/' /home/${USERNAME}/.zshrc && \
-    echo "eval \"\$(oh-my-posh --init --shell zsh --config ${POSHTHEMES_ROOT}/${DEFAULT_POSH_THEME}.omp.json)\"" >> /home/${USERNAME}/.zshrc
+RUN echo "eval \"\$(oh-my-posh --init --shell zsh --config $POSH_THEME)\"" >> /home/${USERNAME}/.zshrc
 
 # Set container timezone:
 ARG TZ="UTC"

@@ -327,16 +327,17 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 	bc.SetHexColor(ir.shadowBaseColor)
 	bc.Fill()
 
-	var done = make(chan struct{}, ir.shadowRadius)
-	shadow := stackblur.Process(
+	// var done = make(chan struct{}, ir.shadowRadius)
+	shadow, err := stackblur.Run(
 		bc.Image(),
-		uint32(width),
-		uint32(height),
 		uint32(ir.shadowRadius),
-		done,
 	)
 
-	<-done
+	if err != nil {
+		return err
+	}
+
+	// <-done
 	dc.DrawImage(shadow, 0, 0)
 
 	// Draw rounded rectangle with outline and three button to produce the

@@ -1,9 +1,6 @@
 {
   "go.lintTool": "golangci-lint",
   "go.useLanguageServer": true,
-  "go.languageServerExperimentalFeatures": {
-    "diagnostics": false
-  },
   "go.lintFlags": ["--fast"],
   "go.testOnSave": true,
   "[go]": {

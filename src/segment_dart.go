@@ -8,7 +8,7 @@ func (d *dart) string() string {
 	return d.language.string()
 }
 
-func (d *dart) init(props *properties, env environmentInfo) {
+func (d *dart) init(props properties, env environmentInfo) {
 	d.language = &language{
 		env:        env,
 		props:      props,

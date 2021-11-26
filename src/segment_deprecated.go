@@ -8,19 +8,26 @@ import (
 	"github.com/distatus/battery"
 )
 
+// Segment
+
+const (
+	BackgroundOverride Property = "background"
+	ForegroundOverride Property = "foreground"
+)
+
 // Properties
 
-func (p *properties) getOneOfBool(property, legacyProperty Property) bool {
-	_, found := p.values[legacyProperty]
+func (p properties) getOneOfBool(property, legacyProperty Property) bool {
+	_, found := p[legacyProperty]
 	if found {
 		return p.getBool(legacyProperty, false)
 	}
 	return p.getBool(property, false)
 }
 
-func (p *properties) hasOneOf(properties ...Property) bool {
+func (p properties) hasOneOf(properties ...Property) bool {
 	for _, property := range properties {
-		if _, found := p.values[property]; found {
+		if _, found := p[property]; found {
 			return true
 		}
 	}
@@ -100,9 +107,9 @@ func (g *git) deprecatedString(statusColorsEnabled bool) string {
 
 func (g *git) SetStatusColor() {
 	if g.props.getBool(ColorBackground, true) {
-		g.props.background = g.getStatusColor(g.props.background)
+		g.props[BackgroundOverride] = g.getStatusColor(g.props.getColor(BackgroundOverride, ""))
 	} else {
-		g.props.foreground = g.getStatusColor(g.props.foreground)
+		g.props[ForegroundOverride] = g.getStatusColor(g.props.getColor(ForegroundOverride, ""))
 	}
 }
 
@@ -121,25 +128,24 @@ func (g *git) getStatusColor(defaultValue string) string {
 
 func (g *git) getStatusDetailString(status *GitStatus, color, icon Property, defaultIcon string) string {
 	prefix := g.props.getString(icon, defaultIcon)
-	foregroundColor := g.props.getColor(color, g.props.foreground)
-	if !g.props.getBool(DisplayStatusDetail, true) {
-		return g.colorStatusString(prefix, "", foregroundColor)
+	foregroundColor := g.props.getColor(color, g.props.getColor(ForegroundOverride, ""))
+	detail := ""
+	if g.props.getBool(DisplayStatusDetail, true) {
+		detail = status.String()
 	}
-	return g.colorStatusString(prefix, status.String(), foregroundColor)
+	statusStr := g.colorStatusString(prefix, detail, foregroundColor)
+	return strings.TrimSpace(statusStr)
 }
 
 func (g *git) colorStatusString(prefix, status, color string) string {
-	if color == g.props.foreground && len(status) == 0 {
-		return prefix
-	}
-	if color == g.props.foreground {
+	if len(color) == 0 {
 		return fmt.Sprintf("%s %s", prefix, status)
-	}
-	if strings.Contains(prefix, "</>") {
-		return fmt.Sprintf("%s <%s>%s</>", prefix, color, status)
 	}
 	if len(status) == 0 {
 		return fmt.Sprintf("<%s>%s</>", color, prefix)
+	}
+	if strings.Contains(prefix, "</>") {
+		return fmt.Sprintf("%s <%s>%s</>", prefix, color, status)
 	}
 	return fmt.Sprintf("<%s>%s %s</>", color, prefix, status)
 }
@@ -162,10 +168,10 @@ const (
 func (e *exit) deprecatedString() string {
 	colorBackground := e.props.getBool(ColorBackground, false)
 	if e.Code != 0 && !colorBackground {
-		e.props.foreground = e.props.getColor(ErrorColor, e.props.foreground)
+		e.props[ForegroundOverride] = e.props.getColor(ErrorColor, e.props.getColor(ForegroundOverride, ""))
 	}
 	if e.Code != 0 && colorBackground {
-		e.props.background = e.props.getColor(ErrorColor, e.props.background)
+		e.props[BackgroundOverride] = e.props.getColor(ErrorColor, e.props.getColor(BackgroundOverride, ""))
 	}
 	if e.Code == 0 {
 		return e.props.getString(SuccessIcon, "")
@@ -212,9 +218,9 @@ func (b *batt) colorSegment() {
 	}
 	colorBackground := b.props.getBool(ColorBackground, false)
 	if colorBackground {
-		b.props.background = b.props.getColor(colorProperty, b.props.background)
+		b.props[BackgroundOverride] = b.props.getColor(colorProperty, b.props.getColor(BackgroundOverride, ""))
 	} else {
-		b.props.foreground = b.props.getColor(colorProperty, b.props.foreground)
+		b.props[ForegroundOverride] = b.props.getColor(colorProperty, b.props.getColor(ForegroundOverride, ""))
 	}
 }
 

@@ -23,7 +23,7 @@ func (p *python) string() string {
 	return fmt.Sprintf("%s %s", p.venvName, version)
 }
 
-func (p *python) init(props *properties, env environmentInfo) {
+func (p *python) init(props properties, env environmentInfo) {
 	p.language = &language{
 		env:         env,
 		props:       props,

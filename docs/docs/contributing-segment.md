@@ -15,7 +15,7 @@ You can use the following template as a guide.
 package main
 
 type new struct {
-    props          *properties
+    props          properties
     env            environmentInfo
 
     Text string
@@ -48,7 +48,7 @@ func (n *new) string() string {
     return text
 }
 
-func (n *new) init(props *properties, env environmentInfo) {
+func (n *new) init(props properties, env environmentInfo) {
     n.props = props
     n.env = env
 }

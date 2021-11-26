@@ -8,7 +8,7 @@ func (c *crystal) string() string {
 	return c.language.string()
 }
 
-func (c *crystal) init(props *properties, env environmentInfo) {
+func (c *crystal) init(props properties, env environmentInfo) {
 	c.language = &language{
 		env:        env,
 		props:      props,

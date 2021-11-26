@@ -35,13 +35,11 @@ func TestSysInfo(t *testing.T) {
 
 	for _, tc := range cases {
 		tc.SysInfo.env = new(MockedEnvironment)
-		tc.SysInfo.props = &properties{
-			values: map[Property]interface{}{
-				Precision: tc.Precision,
-			},
+		tc.SysInfo.props = map[Property]interface{}{
+			Precision: tc.Precision,
 		}
 		if tc.Template != "" {
-			tc.SysInfo.props.values[SegmentTemplate] = tc.Template
+			tc.SysInfo.props[SegmentTemplate] = tc.Template
 		}
 		if tc.ExpectDisabled {
 			assert.Equal(t, false, tc.SysInfo.enabled(), tc.Case)

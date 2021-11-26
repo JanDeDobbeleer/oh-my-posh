@@ -7,7 +7,7 @@ import (
 )
 
 type sysinfo struct {
-	props     *properties
+	props     properties
 	env       environmentInfo
 	Precision int
 	// mem
@@ -53,7 +53,7 @@ func (s *sysinfo) string() string {
 	return text
 }
 
-func (s *sysinfo) init(props *properties, env environmentInfo) {
+func (s *sysinfo) init(props properties, env environmentInfo) {
 	s.props = props
 	s.env = env
 	s.Precision = s.props.getInt(Precision, 2)

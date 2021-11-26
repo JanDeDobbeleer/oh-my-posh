@@ -14,10 +14,8 @@ func TestExecuteCommand(t *testing.T) {
 	env.init(&args{
 		Debug: &debug,
 	})
-	props := &properties{
-		values: map[Property]interface{}{
-			Command: "echo hello",
-		},
+	var props properties = map[Property]interface{}{
+		Command: "echo hello",
 	}
 	c := &command{
 		props: props,
@@ -34,10 +32,8 @@ func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
 	env.init(&args{
 		Debug: &debug,
 	})
-	props := &properties{
-		values: map[Property]interface{}{
-			Command: "exit 1 || echo hello",
-		},
+	var props properties = map[Property]interface{}{
+		Command: "exit 1 || echo hello",
 	}
 	c := &command{
 		props: props,
@@ -54,10 +50,8 @@ func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
 	env.init(&args{
 		Debug: &debug,
 	})
-	props := &properties{
-		values: map[Property]interface{}{
-			Command: "echo hello || echo world",
-		},
+	var props properties = map[Property]interface{}{
+		Command: "echo hello || echo world",
 	}
 	c := &command{
 		props: props,
@@ -74,10 +68,8 @@ func TestExecuteMultipleCommandsAnd(t *testing.T) {
 	env.init(&args{
 		Debug: &debug,
 	})
-	props := &properties{
-		values: map[Property]interface{}{
-			Command: "echo hello && echo world",
-		},
+	var props properties = map[Property]interface{}{
+		Command: "echo hello && echo world",
 	}
 	c := &command{
 		props: props,
@@ -94,10 +86,8 @@ func TestExecuteSingleCommandEmpty(t *testing.T) {
 	env.init(&args{
 		Debug: &debug,
 	})
-	props := &properties{
-		values: map[Property]interface{}{
-			Command: "",
-		},
+	var props properties = map[Property]interface{}{
+		Command: "",
 	}
 	c := &command{
 		props: props,
@@ -113,7 +103,7 @@ func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
 	env.init(&args{
 		Debug: &debug,
 	})
-	props := &properties{}
+	var props properties
 	c := &command{
 		props: props,
 		env:   env,
@@ -129,10 +119,8 @@ func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
 	env.init(&args{
 		Debug: &debug,
 	})
-	props := &properties{
-		values: map[Property]interface{}{
-			Command: "echo && echo",
-		},
+	var props properties = map[Property]interface{}{
+		Command: "echo && echo",
 	}
 	c := &command{
 		props: props,
@@ -148,10 +136,8 @@ func TestExecuteMultipleCommandsOrDisabled(t *testing.T) {
 	env.init(&args{
 		Debug: &debug,
 	})
-	props := &properties{
-		values: map[Property]interface{}{
-			Command: "echo|| echo",
-		},
+	var props properties = map[Property]interface{}{
+		Command: "echo|| echo",
 	}
 	c := &command{
 		props: props,

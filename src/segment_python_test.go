@@ -39,12 +39,10 @@ func TestPythonVirtualEnv(t *testing.T) {
 		env.On("getPathSeperator", nil).Return("")
 		env.On("getcwd", nil).Return("/usr/home/project")
 		env.On("homeDir", nil).Return("/usr/home")
-		props := &properties{
-			values: map[Property]interface{}{
-				DisplayVersion:    tc.DisplayVersion,
-				DisplayVirtualEnv: true,
-				DisplayDefault:    tc.DisplayDefault,
-			},
+		var props properties = map[Property]interface{}{
+			DisplayVersion:    tc.DisplayVersion,
+			DisplayVirtualEnv: true,
+			DisplayDefault:    tc.DisplayDefault,
 		}
 		python := &python{}
 		python.init(props, env)

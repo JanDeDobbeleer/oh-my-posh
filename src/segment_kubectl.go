@@ -5,7 +5,7 @@ import (
 )
 
 type kubectl struct {
-	props     *properties
+	props     properties
 	env       environmentInfo
 	Context   string
 	Namespace string
@@ -25,7 +25,7 @@ func (k *kubectl) string() string {
 	return text
 }
 
-func (k *kubectl) init(props *properties, env environmentInfo) {
+func (k *kubectl) init(props properties, env environmentInfo) {
 	k.props = props
 	k.env = env
 }

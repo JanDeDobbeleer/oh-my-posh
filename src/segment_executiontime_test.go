@@ -28,10 +28,8 @@ func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("executionTime", nil).Return(99)
-	props := &properties{
-		values: map[Property]interface{}{
-			ThresholdProperty: float64(10),
-		},
+	var props properties = map[Property]interface{}{
+		ThresholdProperty: float64(10),
 	}
 	executionTime := &executiontime{
 		env:   env,
@@ -43,10 +41,8 @@ func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("executionTime", nil).Return(99)
-	props := &properties{
-		values: map[Property]interface{}{
-			ThresholdProperty: float64(100),
-		},
+	var props properties = map[Property]interface{}{
+		ThresholdProperty: float64(100),
 	}
 	executionTime := &executiontime{
 		env:   env,

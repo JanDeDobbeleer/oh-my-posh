@@ -6,7 +6,7 @@ import (
 )
 
 type az struct {
-	props *properties
+	props properties
 	env   environmentInfo
 
 	EnvironmentName string     `json:"environmentName"`
@@ -47,7 +47,7 @@ func (a *az) string() string {
 	return text
 }
 
-func (a *az) init(props *properties, env environmentInfo) {
+func (a *az) init(props properties, env environmentInfo) {
 	a.props = props
 	a.env = env
 }
@@ -92,8 +92,8 @@ func (a *az) getFromAzCli() bool {
 	}
 
 	if strings.Contains(output, updateConsentNeeded) {
-		a.props.foreground = updateForeground
-		a.props.background = updateBackground
+		a.props[ForegroundOverride] = updateForeground
+		a.props[BackgroundOverride] = updateBackground
 		a.Name = updateMessage
 		return true
 	}

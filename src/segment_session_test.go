@@ -179,17 +179,15 @@ func TestPropertySessionSegment(t *testing.T) {
 		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
 		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserNameEnv)
 		env.On("isRunningAsRoot", nil).Return(tc.Root)
-		props := &properties{
-			values: map[Property]interface{}{
-				UserInfoSeparator: " at ",
-				SSHIcon:           "ssh ",
-				DefaultUserName:   tc.DefaultUserName,
-				DisplayDefault:    tc.DisplayDefault,
-				DisplayUser:       tc.DisplayUser,
-				DisplayHost:       tc.DisplayHost,
-				HostColor:         tc.HostColor,
-				UserColor:         tc.UserColor,
-			},
+		var props properties = map[Property]interface{}{
+			UserInfoSeparator: " at ",
+			SSHIcon:           "ssh ",
+			DefaultUserName:   tc.DefaultUserName,
+			DisplayDefault:    tc.DisplayDefault,
+			DisplayUser:       tc.DisplayUser,
+			DisplayHost:       tc.DisplayHost,
+			HostColor:         tc.HostColor,
+			UserColor:         tc.UserColor,
 		}
 		session := &session{
 			env:   env,
@@ -303,14 +301,11 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
 		env.On("isRunningAsRoot", nil).Return(tc.Root)
 		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserName)
-		props := &properties{
-			values: map[Property]interface{}{
+		session := &session{
+			env: env,
+			props: map[Property]interface{}{
 				SegmentTemplate: tc.Template,
 			},
-		}
-		session := &session{
-			env:   env,
-			props: props,
 		}
 		assert.Equal(t, tc.ExpectedEnabled, session.enabled(), tc.Case)
 		if tc.ExpectedEnabled {

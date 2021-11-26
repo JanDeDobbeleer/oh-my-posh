@@ -5,7 +5,7 @@ import (
 )
 
 type nbgv struct {
-	props *properties
+	props properties
 	env   environmentInfo
 	nbgv  *versionInfo
 }
@@ -52,7 +52,7 @@ func (n *nbgv) string() string {
 	return text
 }
 
-func (n *nbgv) init(props *properties, env environmentInfo) {
+func (n *nbgv) init(props properties, env environmentInfo) {
 	n.props = props
 	n.env = env
 }

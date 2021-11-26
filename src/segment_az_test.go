@@ -140,10 +140,8 @@ func TestAzSegment(t *testing.T) {
 			  }`, tc.CLIEnvironmentname, tc.CLISubscriptionID, tc.CLIAccountName, tc.CLIUserName),
 			nil,
 		)
-		props := &properties{
-			values: map[Property]interface{}{
-				SegmentTemplate: tc.Template,
-			},
+		var props properties = map[Property]interface{}{
+			SegmentTemplate: tc.Template,
 		}
 
 		az := &az{

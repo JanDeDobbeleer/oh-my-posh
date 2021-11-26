@@ -9,19 +9,18 @@ import (
 
 // Segment represent a single segment and it's configuration
 type Segment struct {
-	Type                SegmentType              `config:"type"`
-	Tips                []string                 `config:"tips"`
-	Style               SegmentStyle             `config:"style"`
-	PowerlineSymbol     string                   `config:"powerline_symbol"`
-	InvertPowerline     bool                     `config:"invert_powerline"`
-	Foreground          string                   `config:"foreground"`
-	ForegroundTemplates []string                 `config:"foreground_templates"`
-	Background          string                   `config:"background"`
-	BackgroundTemplates []string                 `config:"background_templates"`
-	LeadingDiamond      string                   `config:"leading_diamond"`
-	TrailingDiamond     string                   `config:"trailing_diamond"`
-	Properties          map[Property]interface{} `config:"properties"`
-	props               *properties
+	Type                SegmentType  `config:"type"`
+	Tips                []string     `config:"tips"`
+	Style               SegmentStyle `config:"style"`
+	PowerlineSymbol     string       `config:"powerline_symbol"`
+	InvertPowerline     bool         `config:"invert_powerline"`
+	Foreground          string       `config:"foreground"`
+	ForegroundTemplates []string     `config:"foreground_templates"`
+	Background          string       `config:"background"`
+	BackgroundTemplates []string     `config:"background_templates"`
+	LeadingDiamond      string       `config:"leading_diamond"`
+	TrailingDiamond     string       `config:"trailing_diamond"`
+	Properties          properties   `config:"properties"`
 	writer              SegmentWriter
 	stringValue         string
 	active              bool
@@ -42,7 +41,7 @@ type SegmentTiming struct {
 type SegmentWriter interface {
 	enabled() bool
 	string() string
-	init(props *properties, env environmentInfo)
+	init(props properties, env environmentInfo)
 }
 
 // SegmentStyle the syle of segment, for more information, see the constants
@@ -215,18 +214,12 @@ func (segment *Segment) shouldInvokeWithTip(tip string) bool {
 }
 
 func (segment *Segment) foreground() string {
-	color := segment.Foreground
-	if segment.props != nil {
-		color = segment.props.foreground
-	}
+	color := segment.Properties.getColor(ForegroundOverride, segment.Foreground)
 	return segment.getColor(segment.ForegroundTemplates, color)
 }
 
 func (segment *Segment) background() string {
-	color := segment.Background
-	if segment.props != nil {
-		color = segment.props.background
-	}
+	color := segment.Properties.getColor(BackgroundOverride, segment.Background)
 	return segment.getColor(segment.BackgroundTemplates, color)
 }
 
@@ -274,14 +267,8 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		WinReg:        &winreg{},
 	}
 	if writer, ok := functions[segment.Type]; ok {
-		props := &properties{
-			values:     segment.Properties,
-			foreground: segment.Foreground,
-			background: segment.Background,
-		}
-		writer.init(props, env)
+		writer.init(segment.Properties, env)
 		segment.writer = writer
-		segment.props = props
 		return nil
 	}
 	return errors.New("unable to map writer")

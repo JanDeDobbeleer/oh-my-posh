@@ -64,18 +64,15 @@ func TestOSInfo(t *testing.T) {
 		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
 		env.On("getenv", "WSL_DISTRO_NAME").Return(tc.WSLDistro)
 		env.On("getPlatform", nil).Return(tc.Platform)
-		props := &properties{
-			values: map[Property]interface{}{
+		osInfo := &osInfo{
+			env: env,
+			props: map[Property]interface{}{
 				WSL:               "WSL",
 				WSLSeparator:      " at ",
 				DisplayDistroName: tc.DisplayDistroName,
 				Windows:           "windows",
 				MacOS:             "darwin",
 			},
-		}
-		osInfo := &osInfo{
-			env:   env,
-			props: props,
 		}
 		assert.Equal(t, tc.ExpectedString, osInfo.string(), tc.Case)
 		if tc.WSLDistro != "" {

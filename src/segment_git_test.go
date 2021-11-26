@@ -555,14 +555,12 @@ func TestGitUpstream(t *testing.T) {
 		env.On("runCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
 		env.On("getRuntimeGOOS", nil).Return("unix")
-		props := &properties{
-			values: map[Property]interface{}{
-				GithubIcon:      "GH",
-				GitlabIcon:      "GL",
-				BitbucketIcon:   "BB",
-				AzureDevOpsIcon: "AD",
-				GitIcon:         "G",
-			},
+		var props properties = map[Property]interface{}{
+			GithubIcon:      "GH",
+			GitlabIcon:      "GL",
+			BitbucketIcon:   "BB",
+			AzureDevOpsIcon: "AD",
+			GitIcon:         "G",
 		}
 		g := &git{
 			env:      env,
@@ -591,15 +589,14 @@ func TestGetBranchStatus(t *testing.T) {
 	}
 
 	for _, tc := range cases {
+		var props properties = map[Property]interface{}{
+			BranchAheadIcon:     "up",
+			BranchBehindIcon:    "down",
+			BranchIdenticalIcon: "equal",
+			BranchGoneIcon:      "gone",
+		}
 		g := &git{
-			props: &properties{
-				values: map[Property]interface{}{
-					BranchAheadIcon:     "up",
-					BranchBehindIcon:    "down",
-					BranchIdenticalIcon: "equal",
-					BranchGoneIcon:      "gone",
-				},
-			},
+			props:    props,
 			Ahead:    tc.Ahead,
 			Behind:   tc.Behind,
 			Upstream: tc.Upstream,
@@ -621,7 +618,7 @@ func TestShouldIgnoreRootRepository(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := map[Property]interface{}{
+		var props properties = map[Property]interface{}{
 			ExcludeFolders: []string{
 				"/home/bill",
 				"/home/gates.*",
@@ -631,10 +628,8 @@ func TestShouldIgnoreRootRepository(t *testing.T) {
 		env.On("homeDir", nil).Return("/home/bill")
 		env.On("getRuntimeGOOS", nil).Return(windowsPlatform)
 		git := &git{
-			props: &properties{
-				values: props,
-			},
-			env: env,
+			props: props,
+			env:   env,
 		}
 		got := git.shouldIgnoreRootRepository(tc.Dir)
 		assert.Equal(t, tc.Expected, got, tc.Case)
@@ -656,12 +651,11 @@ func TestTruncateBranch(t *testing.T) {
 	}
 
 	for _, tc := range cases {
+		var props properties = map[Property]interface{}{
+			BranchMaxLength: tc.MaxLength,
+		}
 		g := &git{
-			props: &properties{
-				values: map[Property]interface{}{
-					BranchMaxLength: tc.MaxLength,
-				},
-			},
+			props: props,
 		}
 		assert.Equal(t, tc.Expected, g.truncateBranch(tc.Branch), tc.Case)
 	}
@@ -683,13 +677,12 @@ func TestTruncateBranchWithSymbol(t *testing.T) {
 	}
 
 	for _, tc := range cases {
+		var props properties = map[Property]interface{}{
+			BranchMaxLength: tc.MaxLength,
+			TruncateSymbol:  tc.TruncateSymbol,
+		}
 		g := &git{
-			props: &properties{
-				values: map[Property]interface{}{
-					BranchMaxLength: tc.MaxLength,
-					TruncateSymbol:  tc.TruncateSymbol,
-				},
-			},
+			props: props,
 		}
 		assert.Equal(t, tc.Expected, g.truncateBranch(tc.Branch), tc.Case)
 	}
@@ -847,11 +840,10 @@ func TestGitTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tc.Git.props = &properties{
-			values: map[Property]interface{}{
-				FetchStatus: true,
-			},
+		var props properties = map[Property]interface{}{
+			FetchStatus: true,
 		}
+		tc.Git.props = props
 		assert.Equal(t, tc.Expected, tc.Git.templateString(tc.Template), tc.Case)
 	}
 }

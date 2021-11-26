@@ -68,12 +68,10 @@ func TestNodeInContext(t *testing.T) {
 		node := &node{
 			language: &language{
 				env: env,
-				props: &properties{
-					values: map[Property]interface{}{
-						YarnIcon:              "yarn",
-						NPMIcon:               "npm",
-						DisplayPackageManager: tc.PkgMgrEnabled,
-					},
+				props: map[Property]interface{}{
+					YarnIcon:              "yarn",
+					NPMIcon:               "npm",
+					DisplayPackageManager: tc.PkgMgrEnabled,
 				},
 			},
 		}

@@ -21,7 +21,7 @@ func (d *dotnet) string() string {
 	return version
 }
 
-func (d *dotnet) init(props *properties, env environmentInfo) {
+func (d *dotnet) init(props properties, env environmentInfo) {
 	d.language = &language{
 		env:        env,
 		props:      props,

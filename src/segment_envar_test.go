@@ -11,14 +11,11 @@ func TestEnvvarAvailable(t *testing.T) {
 	expected := "derp"
 	env := new(MockedEnvironment)
 	env.On("getenv", name).Return(expected)
-	props := &properties{
-		values: map[Property]interface{}{
+	e := &envvar{
+		env: env,
+		props: map[Property]interface{}{
 			VarName: name,
 		},
-	}
-	e := &envvar{
-		env:   env,
-		props: props,
 	}
 	assert.True(t, e.enabled())
 	assert.Equal(t, expected, e.string())
@@ -29,14 +26,11 @@ func TestEnvvarNotAvailable(t *testing.T) {
 	expected := ""
 	env := new(MockedEnvironment)
 	env.On("getenv", name).Return(expected)
-	props := &properties{
-		values: map[Property]interface{}{
+	e := &envvar{
+		env: env,
+		props: map[Property]interface{}{
 			VarName: name,
 		},
-	}
-	e := &envvar{
-		env:   env,
-		props: props,
 	}
 	assert.False(t, e.enabled())
 }

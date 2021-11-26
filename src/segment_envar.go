@@ -1,7 +1,7 @@
 package main
 
 type envvar struct {
-	props *properties
+	props properties
 	env   environmentInfo
 	Value string
 }
@@ -34,7 +34,7 @@ func (e *envvar) string() string {
 	return text
 }
 
-func (e *envvar) init(props *properties, env environmentInfo) {
+func (e *envvar) init(props properties, env environmentInfo) {
 	e.props = props
 	e.env = env
 }

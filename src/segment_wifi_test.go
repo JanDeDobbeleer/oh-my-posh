@@ -120,16 +120,12 @@ func TestWiFiSegment(t *testing.T) {
 		env.On("hasCommand", "netsh.exe").Return(!tc.CommandNotFound)
 		env.On("runCommand", mock.Anything, mock.Anything).Return(tc.CommandOutput, tc.CommandError)
 
-		props := &properties{
-			values: map[Property]interface{}{
+		w := &wifi{
+			env: env,
+			props: map[Property]interface{}{
 				DisplayError:    tc.DisplayError,
 				SegmentTemplate: tc.Template,
 			},
-		}
-
-		w := &wifi{
-			env:   env,
-			props: props,
 		}
 
 		assert.Equal(t, tc.ExpectedEnabled, w.enabled(), tc.Case)

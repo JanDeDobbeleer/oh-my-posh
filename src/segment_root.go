@@ -1,7 +1,7 @@
 package main
 
 type root struct {
-	props *properties
+	props properties
 	env   environmentInfo
 }
 
@@ -18,7 +18,7 @@ func (rt *root) string() string {
 	return rt.props.getString(RootIcon, "\uF0E7")
 }
 
-func (rt *root) init(props *properties, env environmentInfo) {
+func (rt *root) init(props properties, env environmentInfo) {
 	rt.props = props
 	rt.env = env
 }

@@ -21,7 +21,7 @@
     {
       "type": "shell",
       "command": "go",
-      "label": "devcontainer: build omp",
+      "label": "devcontainer: rebuild oh-my-posh",
       "options": {
         "cwd": "${workspaceRoot}/src",
         "shell": {
@@ -31,13 +31,13 @@
         "statusbar": {
           "hide": false,
           "color": "#22C1D6",
-          "label": "$(beaker) devcontainer: build omp",
+          "label": "$(beaker) devcontainer: rebuild oh-my-posh",
           "tooltip": "Compiles *oh-my-posh* from this repo while **overwriting** your preinstalled stable release."
         }
       },
       "group": "build",
       "problemMatcher": "$go",
-      "args": ["build", "-v", "-o", "`readlink", "/usr/bin/oh-my-posh`"]
+      "args": ["build", "-v", "-o", "/home/vscode/bin/oh-my-posh", "-ldflags", "\"-X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%B)'\""]
     },
     {
       "label": "golangci-lint - docker",

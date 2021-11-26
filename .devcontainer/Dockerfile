@@ -47,7 +47,7 @@ RUN pwsh -Command Install-Module posh-git -Scope AllUsers -Force; \
     pwsh -Command Install-Module Terminal-Icons -Scope AllUsers -Force;
 
 # add the oh-my-posh path to the PATH variable
-ENV PATH "$PATH:${USERNAME}/bin"
+ENV PATH "$PATH:/home/${USERNAME}/bin"
 
 # Can be used to override the devcontainer prompt default theme:
 ENV POSH_THEME="/workspaces/oh-my-posh/themes/jandedobbeleer.omp.json"

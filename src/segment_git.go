@@ -63,7 +63,7 @@ func (s *GitStatus) String() string {
 }
 
 type git struct {
-	props *properties
+	props properties
 	env   environmentInfo
 
 	Working       *GitStatus
@@ -174,10 +174,7 @@ func (g *git) enabled() bool {
 }
 
 func (g *git) shouldIgnoreRootRepository(rootDir string) bool {
-	if g.props == nil || g.props.values == nil {
-		return false
-	}
-	value, ok := g.props.values[ExcludeFolders]
+	value, ok := g.props[ExcludeFolders]
 	if !ok {
 		return false
 	}
@@ -226,7 +223,7 @@ func (g *git) templateString(segmentTemplate string) string {
 	return text
 }
 
-func (g *git) init(props *properties, env environmentInfo) {
+func (g *git) init(props properties, env environmentInfo) {
 	g.props = props
 	g.env = env
 }

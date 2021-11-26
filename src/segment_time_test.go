@@ -39,14 +39,11 @@ func TestTimeSegmentTemplate(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		props := &properties{
-			values: map[Property]interface{}{
+		tempus := &tempus{
+			env: env,
+			props: map[Property]interface{}{
 				SegmentTemplate: tc.Template,
 			},
-		}
-		tempus := &tempus{
-			env:         env,
-			props:       props,
 			CurrentDate: currentDate,
 		}
 		assert.Equal(t, tc.ExpectedEnabled, tempus.enabled())

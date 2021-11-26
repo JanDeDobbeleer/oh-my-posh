@@ -37,17 +37,10 @@ const (
 	DisplayDefault Property = "display_default"
 )
 
-type properties struct {
-	values     map[Property]interface{}
-	foreground string
-	background string
-}
+type properties map[Property]interface{}
 
-func (p *properties) getString(property Property, defaultValue string) string {
-	if p == nil || p.values == nil {
-		return defaultValue
-	}
-	val, found := p.values[property]
+func (p properties) getString(property Property, defaultValue string) string {
+	val, found := p[property]
 	if !found {
 		return defaultValue
 	}
@@ -62,11 +55,8 @@ func parseString(value interface{}, defaultValue string) string {
 	return stringValue
 }
 
-func (p *properties) getColor(property Property, defaultValue string) string {
-	if p == nil || p.values == nil {
-		return defaultValue
-	}
-	val, found := p.values[property]
+func (p properties) getColor(property Property, defaultValue string) string {
+	val, found := p[property]
 	if !found {
 		return defaultValue
 	}
@@ -81,11 +71,8 @@ func (p *properties) getColor(property Property, defaultValue string) string {
 	return defaultValue
 }
 
-func (p *properties) getBool(property Property, defaultValue bool) bool {
-	if p == nil || p.values == nil {
-		return defaultValue
-	}
-	val, found := p.values[property]
+func (p properties) getBool(property Property, defaultValue bool) bool {
+	val, found := p[property]
 	if !found {
 		return defaultValue
 	}
@@ -96,11 +83,8 @@ func (p *properties) getBool(property Property, defaultValue bool) bool {
 	return boolValue
 }
 
-func (p *properties) getFloat64(property Property, defaultValue float64) float64 {
-	if p == nil || p.values == nil {
-		return defaultValue
-	}
-	val, found := p.values[property]
+func (p properties) getFloat64(property Property, defaultValue float64) float64 {
+	val, found := p[property]
 	if !found {
 		return defaultValue
 	}
@@ -113,11 +97,8 @@ func (p *properties) getFloat64(property Property, defaultValue float64) float64
 	return floatValue
 }
 
-func (p *properties) getInt(property Property, defaultValue int) int {
-	if p == nil || p.values == nil {
-		return defaultValue
-	}
-	val, found := p.values[property]
+func (p properties) getInt(property Property, defaultValue int) int {
+	val, found := p[property]
 	if !found {
 		return defaultValue
 	}
@@ -135,11 +116,8 @@ func (p *properties) getInt(property Property, defaultValue int) int {
 	return int(intValue)
 }
 
-func (p *properties) getKeyValueMap(property Property, defaultValue map[string]string) map[string]string {
-	if p == nil || p.values == nil {
-		return defaultValue
-	}
-	val, found := p.values[property]
+func (p properties) getKeyValueMap(property Property, defaultValue map[string]string) map[string]string {
+	val, found := p[property]
 	if !found {
 		return defaultValue
 	}

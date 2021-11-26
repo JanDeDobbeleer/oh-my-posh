@@ -29,11 +29,9 @@ func bootStrapKubectlTest(args *kubectlArgs) *kubectl {
 	env.On("runCommand", "kubectl", []string{"config", "view", "--minify", "--output", "jsonpath={..current-context},{..namespace}"}).Return(kubectlOut, kubectlErr)
 	k := &kubectl{
 		env: env,
-		props: &properties{
-			values: map[Property]interface{}{
-				SegmentTemplate: args.template,
-				DisplayError:    args.displayError,
-			},
+		props: map[Property]interface{}{
+			SegmentTemplate: args.template,
+			DisplayError:    args.displayError,
 		},
 	}
 	return k

@@ -33,14 +33,11 @@ func TestTextSegment(t *testing.T) {
 		env.On("getenv", "WORLD").Return("")
 		env.On("getCurrentUser", nil).Return("Posh")
 		env.On("getHostName", nil).Return("MyHost", nil)
-		props := &properties{
-			values: map[Property]interface{}{
+		txt := &text{
+			env: env,
+			props: map[Property]interface{}{
 				TextProperty: tc.Text,
 			},
-		}
-		txt := &text{
-			env:   env,
-			props: props,
 		}
 		assert.Equal(t, tc.ExpectedDisabled, !txt.enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedString, txt.string(), tc.Case)

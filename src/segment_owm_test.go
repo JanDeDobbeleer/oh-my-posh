@@ -51,19 +51,17 @@ func TestOWMSegmentSingle(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
-		props := &properties{
-			values: map[Property]interface{}{
-				APIKey:       "key",
-				Location:     "AMSTERDAM,NL",
-				Units:        "metric",
-				CacheTimeout: 0,
-			},
+		var props properties = map[Property]interface{}{
+			APIKey:       "key",
+			Location:     "AMSTERDAM,NL",
+			Units:        "metric",
+			CacheTimeout: 0,
 		}
 
 		env.On("doGet", OWMAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
 
 		if tc.Template != "" {
-			props.values[SegmentTemplate] = tc.Template
+			props[SegmentTemplate] = tc.Template
 		}
 
 		o := &owm{
@@ -182,14 +180,6 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
-		props := &properties{
-			values: map[Property]interface{}{
-				APIKey:       "key",
-				Location:     "AMSTERDAM,NL",
-				Units:        "metric",
-				CacheTimeout: 0,
-			},
-		}
 
 		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, tc.IconID)
 		expectedString := fmt.Sprintf("%s (20°C)", tc.ExpectedIconString)
@@ -197,8 +187,13 @@ func TestOWMSegmentIcons(t *testing.T) {
 		env.On("doGet", OWMAPIURL).Return([]byte(response), nil)
 
 		o := &owm{
-			props: props,
-			env:   env,
+			props: map[Property]interface{}{
+				APIKey:       "key",
+				Location:     "AMSTERDAM,NL",
+				Units:        "metric",
+				CacheTimeout: 0,
+			},
+			env: env,
 		}
 
 		assert.Nil(t, o.setStatus())
@@ -208,26 +203,22 @@ func TestOWMSegmentIcons(t *testing.T) {
 	// test with hyperlink enabled
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
-		props := &properties{
-			values: map[Property]interface{}{
-				APIKey:          "key",
-				Location:        "AMSTERDAM,NL",
-				Units:           "metric",
-				CacheTimeout:    0,
-				EnableHyperlink: true,
-			},
-		}
 
 		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, tc.IconID)
 		expectedString := fmt.Sprintf("[%s (20°C)](http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", tc.ExpectedIconString)
 
 		env.On("doGet", OWMAPIURL).Return([]byte(response), nil)
 
-		props.values[SegmentTemplate] = "[{{.Weather}} ({{.Temperature}}{{.UnitIcon}})]({{.URL}})"
-
 		o := &owm{
-			props: props,
-			env:   env,
+			props: map[Property]interface{}{
+				APIKey:          "key",
+				Location:        "AMSTERDAM,NL",
+				Units:           "metric",
+				CacheTimeout:    0,
+				EnableHyperlink: true,
+				SegmentTemplate: "[{{.Weather}} ({{.Temperature}}{{.UnitIcon}})]({{.URL}})",
+			},
+			env: env,
 		}
 
 		assert.Nil(t, o.setStatus())
@@ -240,16 +231,13 @@ func TestOWMSegmentFromCache(t *testing.T) {
 
 	env := &MockedEnvironment{}
 	cache := &MockedCache{}
-	props := &properties{
-		values: map[Property]interface{}{
+	o := &owm{
+		props: map[Property]interface{}{
 			APIKey:   "key",
 			Location: "AMSTERDAM,NL",
 			Units:    "metric",
 		},
-	}
-	o := &owm{
-		props: props,
-		env:   env,
+		env: env,
 	}
 	cache.On("get", "owm_response").Return(response, true)
 	cache.On("get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key", true)
@@ -266,20 +254,16 @@ func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 
 	env := &MockedEnvironment{}
 	cache := &MockedCache{}
-	props := &properties{
-		values: map[Property]interface{}{
+
+	o := &owm{
+		props: map[Property]interface{}{
 			APIKey:          "key",
 			Location:        "AMSTERDAM,NL",
 			Units:           "metric",
 			EnableHyperlink: true,
+			SegmentTemplate: "[{{.Weather}} ({{.Temperature}}{{.UnitIcon}})]({{.URL}})",
 		},
-	}
-
-	props.values[SegmentTemplate] = "[{{.Weather}} ({{.Temperature}}{{.UnitIcon}})]({{.URL}})"
-
-	o := &owm{
-		props: props,
-		env:   env,
+		env: env,
 	}
 	cache.On("get", "owm_response").Return(response, true)
 	cache.On("get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key", true)

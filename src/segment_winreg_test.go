@@ -66,16 +66,13 @@ func TestRegQueryEnabled(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("getRuntimeGOOS", nil).Return(windowsPlatform)
 		env.On("getWindowsRegistryKeyValue", tc.Path, tc.Key).Return(tc.Output, tc.Err)
-		props := &properties{
-			values: map[Property]interface{}{
+		r := &winreg{
+			env: env,
+			props: map[Property]interface{}{
 				RegistryPath: tc.Path,
 				RegistryKey:  tc.Key,
 				Fallback:     tc.Fallback,
 			},
-		}
-		r := &winreg{
-			env:   env,
-			props: props,
 		}
 
 		assert.Equal(t, tc.ExpectedSuccess, r.enabled(), tc.CaseDescription)

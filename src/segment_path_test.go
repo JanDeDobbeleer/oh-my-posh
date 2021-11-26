@@ -231,12 +231,6 @@ func TestRootLocationHome(t *testing.T) {
 		{Expected: "DRIVE:", HomePath: "/home/bill/", Pwd: "/usr/error/what", Pswd: "DRIVE:", PathSeperator: "/"},
 	}
 	for _, tc := range cases {
-		props := &properties{
-			values: map[Property]interface{}{
-				HomeIcon:            tc.HomeIcon,
-				WindowsRegistryIcon: tc.RegistryIcon,
-			},
-		}
 		env := new(MockedEnvironment)
 		env.On("homeDir", nil).Return(tc.HomePath)
 		env.On("getcwd", nil).Return(tc.Pwd)
@@ -247,8 +241,11 @@ func TestRootLocationHome(t *testing.T) {
 		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
 		env.On("getRuntimeGOOS", nil).Return("")
 		path := &path{
-			env:   env,
-			props: props,
+			env: env,
+			props: map[Property]interface{}{
+				HomeIcon:            tc.HomeIcon,
+				WindowsRegistryIcon: tc.RegistryIcon,
+			},
 		}
 		got := path.rootLocation()
 		assert.EqualValues(t, tc.Expected, got)
@@ -396,12 +393,10 @@ func TestAgnosterPathStyles(t *testing.T) {
 		env.On("getArgs", nil).Return(args)
 		path := &path{
 			env: env,
-			props: &properties{
-				values: map[Property]interface{}{
-					FolderSeparatorIcon: tc.FolderSeparatorIcon,
-					Style:               tc.Style,
-					MaxDepth:            tc.MaxDepth,
-				},
+			props: map[Property]interface{}{
+				FolderSeparatorIcon: tc.FolderSeparatorIcon,
+				Style:               tc.Style,
+				MaxDepth:            tc.MaxDepth,
 			},
 		}
 		got := path.string()
@@ -513,17 +508,15 @@ func TestGetFullPath(t *testing.T) {
 			PSWD: &tc.Pswd,
 		}
 		env.On("getArgs", nil).Return(args)
-		props := &properties{
-			values: map[Property]interface{}{
-				Style:             tc.Style,
-				StackCountEnabled: tc.StackCountEnabled,
-			},
+		var props properties = map[Property]interface{}{
+			Style:             tc.Style,
+			StackCountEnabled: tc.StackCountEnabled,
 		}
 		if tc.FolderSeparatorIcon != "" {
-			props.values[FolderSeparatorIcon] = tc.FolderSeparatorIcon
+			props[FolderSeparatorIcon] = tc.FolderSeparatorIcon
 		}
 		if tc.DisableMappedLocations {
-			props.values[MappedLocationsEnabled] = false
+			props[MappedLocationsEnabled] = false
 		}
 		path := &path{
 			env:   env,
@@ -563,11 +556,9 @@ func TestGetFullPathCustomMappedLocations(t *testing.T) {
 		env.On("getArgs", nil).Return(args)
 		path := &path{
 			env: env,
-			props: &properties{
-				values: map[Property]interface{}{
-					MappedLocationsEnabled: false,
-					MappedLocations:        tc.MappedLocations,
-				},
+			props: map[Property]interface{}{
+				MappedLocationsEnabled: false,
+				MappedLocations:        tc.MappedLocations,
 			},
 		}
 		got := path.getFullPath()
@@ -616,11 +607,9 @@ func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	env.On("getArgs", nil).Return(args)
 	path := &path{
 		env: env,
-		props: &properties{
-			values: map[Property]interface{}{
-				MappedLocations: map[string]string{
-					"/a/b/c/d": "#",
-				},
+		props: map[Property]interface{}{
+			MappedLocations: map[string]string{
+				"/a/b/c/d": "#",
 			},
 		},
 	}
@@ -654,13 +643,6 @@ func TestAgnosterPath(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := &properties{
-			values: map[Property]interface{}{
-				FolderSeparatorIcon: " > ",
-				FolderIcon:          "f",
-				HomeIcon:            "~",
-			},
-		}
 		env := new(MockedEnvironment)
 		env.On("homeDir", nil).Return(tc.Home)
 		env.On("getPathSeperator", nil).Return(tc.PathSeparator)
@@ -671,8 +653,12 @@ func TestAgnosterPath(t *testing.T) {
 		}
 		env.On("getArgs", nil).Return(args)
 		path := &path{
-			env:   env,
-			props: props,
+			env: env,
+			props: map[Property]interface{}{
+				FolderSeparatorIcon: " > ",
+				FolderIcon:          "f",
+				HomeIcon:            "~",
+			},
 		}
 		got := path.getAgnosterPath()
 		assert.Equal(t, tc.Expected, got, tc.Case)
@@ -716,12 +702,10 @@ func TestGetPwd(t *testing.T) {
 		env.On("getArgs", nil).Return(args)
 		path := &path{
 			env: env,
-			props: &properties{
-				values: map[Property]interface{}{
-					MappedLocationsEnabled: tc.MappedLocationsEnabled,
-					MappedLocations: map[string]string{
-						"/a/b/c/d": "#",
-					},
+			props: map[Property]interface{}{
+				MappedLocationsEnabled: tc.MappedLocationsEnabled,
+				MappedLocations: map[string]string{
+					"/a/b/c/d": "#",
 				},
 			},
 		}
@@ -751,10 +735,7 @@ func TestParseMappedLocations(t *testing.T) {
 		var segment Segment
 		err = config.BindStruct("", &segment)
 		assert.NoError(t, err)
-		props := &properties{
-			values: segment.Properties,
-		}
-		mappedLocations := props.getKeyValueMap(MappedLocations, make(map[string]string))
+		mappedLocations := segment.Properties.getKeyValueMap(MappedLocations, make(map[string]string))
 		assert.Equal(t, "two", mappedLocations["folder2"])
 	}
 }

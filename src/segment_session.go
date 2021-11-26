@@ -6,7 +6,7 @@ import (
 )
 
 type session struct {
-	props           *properties
+	props           properties
 	env             environmentInfo
 	UserName        string
 	DefaultUserName string
@@ -66,7 +66,7 @@ func (s *session) string() string {
 	return s.getFormattedText()
 }
 
-func (s *session) init(props *properties, env environmentInfo) {
+func (s *session) init(props properties, env environmentInfo) {
 	s.props = props
 	s.env = env
 }
@@ -83,8 +83,9 @@ func (s *session) getFormattedText() string {
 	if s.SSHSession {
 		sshIcon = s.props.getString(SSHIcon, "\uF817 ")
 	}
-	userColor := s.props.getColor(UserColor, s.props.foreground)
-	hostColor := s.props.getColor(HostColor, s.props.foreground)
+	defaulColor := s.props.getColor(ForegroundOverride, "")
+	userColor := s.props.getColor(UserColor, defaulColor)
+	hostColor := s.props.getColor(HostColor, defaulColor)
 	if len(userColor) > 0 && len(hostColor) > 0 {
 		return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", sshIcon, userColor, s.UserName, separator, hostColor, s.ComputerName)
 	}

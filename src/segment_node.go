@@ -21,7 +21,7 @@ func (n *node) string() string {
 	return fmt.Sprintf("%s%s", version, n.packageManagerIcon)
 }
 
-func (n *node) init(props *properties, env environmentInfo) {
+func (n *node) init(props properties, env environmentInfo) {
 	n.language = &language{
 		env:        env,
 		props:      props,

@@ -17,10 +17,8 @@ type spotifyArgs struct {
 func bootStrapSpotifyWindowsTest(args *spotifyArgs) *spotify {
 	env := new(MockedEnvironment)
 	env.On("getWindowTitle", "spotify.exe").Return(args.title, args.runError)
-	props := &properties{}
 	s := &spotify{
-		env:   env,
-		props: props,
+		env: env,
 	}
 	return s
 }

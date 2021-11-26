@@ -50,11 +50,8 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	}
 	env.On("getcwd", nil).Return(cwd)
 	env.On("homeDir", nil).Return(home)
-	props := &properties{
-		values: args.properties,
-	}
 	l := &language{
-		props:              props,
+		props:              args.properties,
 		env:                env,
 		extensions:         args.extensions,
 		commands:           args.commands,
@@ -549,9 +546,9 @@ func TestLanguageVersionMismatch(t *testing.T) {
 		assert.True(t, lang.enabled(), tc.Case)
 		assert.Equal(t, universion, lang.string(), tc.Case)
 		if tc.ColorBackground {
-			assert.Equal(t, tc.ExpectedColor, lang.props.background, tc.Case)
+			assert.Equal(t, tc.ExpectedColor, lang.props[BackgroundOverride], tc.Case)
 			return
 		}
-		assert.Equal(t, tc.ExpectedColor, lang.props.foreground, tc.Case)
+		assert.Equal(t, tc.ExpectedColor, lang.props.getColor(ForegroundOverride, ""), tc.Case)
 	}
 }

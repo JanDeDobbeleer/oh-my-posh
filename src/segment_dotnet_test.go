@@ -28,11 +28,9 @@ func bootStrapDotnetTest(args *dotnetArgs) *dotnet {
 	env.On("getPathSeperator", nil).Return("")
 	env.On("getcwd", nil).Return("/usr/home/project")
 	env.On("homeDir", nil).Return("/usr/home")
-	props := &properties{
-		values: map[Property]interface{}{
-			DisplayVersion:               args.displayVersion,
-			UnsupportedDotnetVersionIcon: args.unsupportedIcon,
-		},
+	var props properties = map[Property]interface{}{
+		DisplayVersion:               args.displayVersion,
+		UnsupportedDotnetVersionIcon: args.unsupportedIcon,
 	}
 	dotnet := &dotnet{}
 	dotnet.init(props, env)

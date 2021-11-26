@@ -62,10 +62,8 @@ func TestNbgv(t *testing.T) {
 		env.On("runCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
 		nbgv := &nbgv{
 			env: env,
-			props: &properties{
-				values: map[Property]interface{}{
-					SegmentTemplate: tc.SegmentTemplate,
-				},
+			props: map[Property]interface{}{
+				SegmentTemplate: tc.SegmentTemplate,
 			},
 		}
 		enabled := nbgv.enabled()

@@ -10,10 +10,8 @@ func TestWriteCurrentShell(t *testing.T) {
 	expected := "zsh"
 	env := new(MockedEnvironment)
 	env.On("getShellName", nil).Return(expected, nil)
-	props := &properties{}
 	s := &shell{
-		env:   env,
-		props: props,
+		env: env,
 	}
 	assert.Equal(t, expected, s.string())
 }
@@ -32,10 +30,8 @@ func TestUseMappedShellNames(t *testing.T) {
 		env.On("getShellName", nil).Return(tc.Expected, nil)
 		s := &shell{
 			env: env,
-			props: &properties{
-				values: map[Property]interface{}{
-					MappedShellNames: map[string]string{"pwsh": "PS"},
-				},
+			props: map[Property]interface{}{
+				MappedShellNames: map[string]string{"pwsh": "PS"},
 			},
 		}
 		got := s.string()

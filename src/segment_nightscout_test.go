@@ -130,11 +130,9 @@ func TestNSSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
-		props := &properties{
-			values: map[Property]interface{}{
-				CacheTimeout: tc.CacheTimeout,
-				URL:          "FAKE",
-			},
+		var props properties = map[Property]interface{}{
+			CacheTimeout: tc.CacheTimeout,
+			URL:          "FAKE",
 		}
 
 		cache := &MockedCache{}
@@ -145,7 +143,7 @@ func TestNSSegment(t *testing.T) {
 		env.On("cache", nil).Return(cache)
 
 		if tc.Template != "" {
-			props.values[SegmentTemplate] = tc.Template
+			props[SegmentTemplate] = tc.Template
 		}
 
 		ns := &nightscout{

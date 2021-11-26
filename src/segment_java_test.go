@@ -66,10 +66,8 @@ func TestJava(t *testing.T) {
 		} else {
 			env.On("getenv", "JAVA_HOME").Return("")
 		}
-		props := &properties{
-			values: map[Property]interface{}{
-				DisplayVersion: true,
-			},
+		var props properties = map[Property]interface{}{
+			DisplayVersion: true,
 		}
 		j := &java{}
 		j.init(props, env)

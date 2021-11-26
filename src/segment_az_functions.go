@@ -8,7 +8,7 @@ func (az *azfunc) string() string {
 	return az.language.string()
 }
 
-func (az *azfunc) init(props *properties, env environmentInfo) {
+func (az *azfunc) init(props properties, env environmentInfo) {
 	az.language = &language{
 		env:        env,
 		props:      props,

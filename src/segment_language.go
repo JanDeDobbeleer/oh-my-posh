@@ -65,7 +65,7 @@ func (c *cmd) buildVersionURL(text, template string) string {
 }
 
 type language struct {
-	props              *properties
+	props              properties
 	env                environmentInfo
 	extensions         []string
 	commands           []*cmd
@@ -234,8 +234,8 @@ func (l *language) setVersionFileMismatch() {
 		return
 	}
 	if l.props.getBool(ColorBackground, false) {
-		l.props.background = l.props.getColor(VersionMismatchColor, l.props.background)
+		l.props[BackgroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(BackgroundOverride, ""))
 		return
 	}
-	l.props.foreground = l.props.getColor(VersionMismatchColor, l.props.foreground)
+	l.props[ForegroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(ForegroundOverride, ""))
 }

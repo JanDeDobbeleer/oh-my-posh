@@ -8,7 +8,7 @@ import (
 )
 
 type path struct {
-	props *properties
+	props properties
 	env   environmentInfo
 }
 
@@ -100,7 +100,7 @@ func (pt *path) formatWindowsDrive(pwd string) string {
 	return pwd + "\\"
 }
 
-func (pt *path) init(props *properties, env environmentInfo) {
+func (pt *path) init(props properties, env environmentInfo) {
 	pt.props = props
 	pt.env = env
 }

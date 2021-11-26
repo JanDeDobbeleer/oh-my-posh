@@ -7,7 +7,7 @@ import (
 )
 
 type wifi struct {
-	props          *properties
+	props          properties
 	env            environmentInfo
 	Connected      bool
 	State          string
@@ -68,7 +68,7 @@ func (w *wifi) string() string {
 	return text
 }
 
-func (w *wifi) init(props *properties, env environmentInfo) {
+func (w *wifi) init(props properties, env environmentInfo) {
 	w.props = props
 	w.env = env
 }

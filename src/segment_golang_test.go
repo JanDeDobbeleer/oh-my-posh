@@ -14,17 +14,15 @@ type mockedLanguageParams struct {
 	extension     string
 }
 
-func getMockedLanguageEnv(params *mockedLanguageParams) (*MockedEnvironment, *properties) {
+func getMockedLanguageEnv(params *mockedLanguageParams) (*MockedEnvironment, properties) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", params.cmd).Return(true)
 	env.On("runCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
 	env.On("hasFiles", params.extension).Return(true)
 	env.On("getcwd", nil).Return("/usr/home/project")
 	env.On("homeDir", nil).Return("/usr/home")
-	props := &properties{
-		values: map[Property]interface{}{
-			DisplayVersion: true,
-		},
+	var props properties = map[Property]interface{}{
+		DisplayVersion: true,
 	}
 	return env, props
 }

@@ -18,6 +18,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
         fish \
         powershell \
+        fzf \
     && apt-get clean
 
 ARG USERNAME=vscode
@@ -38,6 +39,12 @@ RUN mkdir /home/${USERNAME}/bin; \
 # NOTE: devcontainers are Linux-only at this time but when
 # Windows or Darwin is supported someone will need to improve
 # the code logic above.
+
+# Setup a neat little PowerShell experience
+RUN pwsh -Command Install-Module posh-git -Scope AllUsers -Force; \
+    pwsh -Command Install-Module z -Scope AllUsers -Force; \
+    pwsh -Command Install-Module PSFzf -Scope AllUsers -Force; \
+    pwsh -Command Install-Module Terminal-Icons -Scope AllUsers -Force;
 
 # add the oh-my-posh path to the PATH variable
 ENV PATH "$PATH:${USERNAME}/bin"

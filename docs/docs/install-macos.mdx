@@ -15,39 +15,7 @@ import CustomizeCmd from "./install-customize-cmd.mdx";
 As the standard terminal has issues displaying the ANSI characters correctly, we advise using
 [iTerm2][iterm2] or any other modern day MacOS terminal that supports ANSI characters.
 
-### Installation
-
-A [Homebrew][brew] formula is available for easy installation.
-
-```bash
-brew tap jandedobbeleer/oh-my-posh
-brew install oh-my-posh
-```
-
-This installs two things:
-
-- `oh-my-posh` - Executable, added to `/usr/local/bin`
-- `themes` - The latest Oh My Posh themes
-
-If you want to use a standard theme, you can find them in `$(brew --prefix oh-my-posh)/themes`, referencing them as such
-will always keep them compatible with the binary when updating Oh My Posh.
-
-#### Preview the themes
-
-```bash
-for file in $(brew --prefix oh-my-posh)/themes/*.omp.json; do echo "$file\n"; oh-my-posh --config $file --shell universal; echo "\n"; done;
-```
-
-#### Update
-
-```bash
-brew upgrade oh-my-posh
-```
-
-### Replace your existing prompt
-
-The guides below assume you copied the theme called `jandedobbeleer.omp.json` to your user's `$HOME` folder.
-When using brew, you can find this one at `$(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json`.
+<InstallHomebrew />
 
 <Shells />
 
@@ -63,5 +31,4 @@ When using brew, you can find this one at `$(brew --prefix oh-my-posh)/themes/ja
 [wt]: https://github.com/microsoft/terminal
 [iterm2]: https://www.iterm2.com/
 [powershell]: https://www.powershellgallery.com/packages/oh-my-posh
-[brew]: https://brew.sh
 [configuration]: /docs/config-overview

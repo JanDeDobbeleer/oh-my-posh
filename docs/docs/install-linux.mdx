@@ -9,39 +9,14 @@ import TabItem from "@theme/TabItem";
 import Shells from "./install-shells.mdx";
 import Customize from "./install-customize.md";
 import CustomizeCmd from "./install-customize-cmd.mdx";
+import InstallHomebrew from "./install-homebrew.mdx";
 
 ### Setup your terminal
 
 Oh My Posh uses ANSI color codes under the hood, these should work in every terminal,
 but you may have to set the environment variable `$TERM` to `xterm-256color` for it to work.
 
-### Installation
-
-```bash
-sudo wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh
-sudo chmod +x /usr/local/bin/oh-my-posh
-```
-
-#### Download the themes
-
-```bash
-mkdir ~/.poshthemes
-wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip -O ~/.poshthemes/themes.zip
-unzip ~/.poshthemes/themes.zip -d ~/.poshthemes
-chmod u+rw ~/.poshthemes/*.json
-rm ~/.poshthemes/themes.zip
-```
-
-#### Preview the themes
-
-```bash
-for file in ~/.poshthemes/*.omp.json; do echo "$file\n"; oh-my-posh --config $file --shell universal; echo "\n"; done;
-```
-
-### Replace your existing prompt
-
-The guides below assume you copied the theme called `jandedobbeleer.omp.json` to your user's `$HOME` folder.
-When you've downloaded the themes, you can find this one at `~/.poshthemes/jandedobbeleer.omp.json`.
+<InstallHomebrew />
 
 <Shells />
 
@@ -57,5 +32,4 @@ When you've downloaded the themes, you can find this one at `~/.poshthemes/jande
 [wt]: https://github.com/microsoft/terminal
 [iterm2]: https://www.iterm2.com/
 [powershell]: https://www.powershellgallery.com/packages/oh-my-posh
-[brew]: https://brew.sh
 [configuration]: /docs/config-overview

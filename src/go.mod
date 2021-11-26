@@ -22,6 +22,7 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.2
 	github.com/sergi/go-diff v1.2.0 // indirect
+	github.com/shirou/gopsutil/v3 v3.21.10
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/tklauser/go-sysconf v0.3.9 // indirect
@@ -33,8 +34,6 @@ require (
 	gopkg.in/ini.v1 v1.64.0
 	howett.net/plist v0.0.0-20201203080718-1454fab16a06 // indirect
 )
-
-require github.com/shirou/gopsutil/v3 v3.21.10
 
 require (
 	github.com/Masterminds/goutils v1.1.1 // indirect
@@ -59,5 +58,3 @@ require (
 )
 
 replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-2
-
-replace github.com/shirou/gopsutil v3.21.9+incompatible => github.com/JanDeDobbeleer/gopsutil v3.21.9-1+incompatible

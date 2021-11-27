@@ -11,7 +11,7 @@ module.exports = {
           type: "category",
           label: "🚀 Installation",
           collapsed: false,
-          items: ["pwsh", "windows", "macos", "linux"],
+          items: ["windows", "macos", "linux"],
         },
       ],
     },

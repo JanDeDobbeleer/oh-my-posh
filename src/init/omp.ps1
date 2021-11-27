@@ -22,17 +22,12 @@ if ($null -eq $omp_value) {
     $env:POSH_GIT_ENABLED = $false
 }
 
-$global:PoshSettings = New-Object -TypeName PSObject -Property @{
-    Theme     = "";
-    Transient = $false;
-}
-
 # used to detect empty hit
 $global:omp_lastHistoryId = -1
 
 $omp_config = "::CONFIG::"
 if (Test-Path $omp_config) {
-    $global:PoshSettings.Theme = (Resolve-Path -Path $omp_config).ProviderPath
+    $env:POSH_THEME = (Resolve-Path -Path $omp_config).ProviderPath
 }
 
 Remove-Variable omp_value -Confirm:$false
@@ -41,7 +36,7 @@ Remove-Variable omp_config -Confirm:$false
 function global:Set-PoshContext {}
 
 function global:Get-PoshContext {
-    $config = $global:PoshSettings.Theme
+    $config = $env:POSH_THEME
     $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
     $cleanPSWD = $PWD.ToString().TrimEnd("\")
     return $config, $cleanPWD, $cleanPSWD
@@ -80,10 +75,10 @@ function global:Initialize-ModuleSupport {
     $realLASTEXITCODE = $global:LASTEXITCODE
     $omp = "::OMP::"
     $config, $cleanPWD, $cleanPSWD = Get-PoshContext
-    if ($global:PoshSettings.Transient -eq $true) {
+    if ($env:POSH_TRANSIENT -eq $true) {
         $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --print-transient 2>&1)
         $standardOut -join "`n"
-        $global:PoshSettings.Transient = $false
+        $env:POSH_TRANSIENT = $false
         return
     }
     $errorCode = 0
@@ -167,7 +162,7 @@ function global:Export-PoshTheme {
         $Format = 'json'
     )
 
-    $config = $global:PoshSettings.Theme
+    $config = $env:POSH_THEME
     $omp = "::OMP::"
     $configString = @(&$omp --config="$config" --config-format="$Format" --print-config 2>&1)
     # if no path, copy to clipboard by default
@@ -228,7 +223,7 @@ function global:Enable-PoshTooltips {
 
 function global:Enable-PoshTransientPrompt {
     Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
-        $global:PoshSettings.Transient = $true
+        $env:POSH_TRANSIENT = $true
         [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
         [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
     }

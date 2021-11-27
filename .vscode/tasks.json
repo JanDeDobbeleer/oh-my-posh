@@ -37,38 +37,7 @@
       },
       "group": "build",
       "problemMatcher": "$go",
-      "args": ["build", "-v", "-o", "/home/vscode/bin/oh-my-posh", "-ldflags", "\"-X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%B)'\""]
-    },
-    {
-      "label": "golangci-lint - docker",
-      "type": "shell",
-      "command": "docker",
-      "group": "build",
-      "presentation": {
-        "reveal": "always",
-        "focus": false,
-        "echo": true,
-        "showReuseMessage": false,
-        "panel": "dedicated",
-        "clear": false
-      },
-      "problemMatcher": {
-          "base": "$go",
-          "fileLocation": ["relative", "${workspaceFolder}/src"]
-      },
-      "args": [
-        "run", "--rm", "-v", "${workspaceFolder}/src:/app", "-w", "/app",
-        "golangci/golangci-lint:${input:golangci-lint-version}",
-        "golangci-lint", "run", "-v"
-      ]
-    }
-  ],
-  "inputs": [
-    {
-      "id": "golangci-lint-version",
-      "description": "Version of the golangci-lint Docker container to use in lint task.",
-      "type": "promptString",
-      "default": "v1.43.0"
+      "args": ["build", "-v", "-o", "/home/vscode/bin/oh-my-posh", "-ldflags", "\"-X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%s)'\""]
     }
   ]
 }

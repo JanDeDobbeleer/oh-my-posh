@@ -16,7 +16,7 @@
         "isDefault": true
       },
       "problemMatcher": "$go",
-      "args": ["build", "-v"]
+      "args": ["build", "-v", "-ldflags", "\"-X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%s)'\""]
     },
     {
       "type": "shell",

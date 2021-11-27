@@ -1,0 +1,34 @@
+version: "3"
+
+services:
+  mc:
+    # Only using IMAGE variable to allow for local testing
+    image: ${IMAGE:-itzg/minecraft-server}
+    ports:
+      - 25565:25565
+    environment:
+      EULA: "TRUE"
+      TYPE: SPIGOT
+      SPIGET_RESOURCES: 9089,34315,3836
+    volumes:
+      - data:/data
+
+volumes:
+  data: {}
+
+
+version: '3.9'
+
+services:
+  mc:
+#    build: .
+    image: itzg/minecraft-server
+    ports:
+      - 25565:25565
+    environment:
+      EULA: "TRUE"
+#      TYPE: SPIGOT
+#      VERSION: 1.11.2
+      PROXY: proxy:3128
+  proxy:
+    image: sameersbn/squid

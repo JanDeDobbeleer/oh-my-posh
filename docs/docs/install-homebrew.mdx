@@ -1,5 +1,3 @@
-### Installation
-
 A [Homebrew][brew] formula is available for easy installation.
 
 ```bash
@@ -13,21 +11,15 @@ This installs two things:
 - `themes` - The latest Oh My Posh [themes][themes]
 
 If you want to use a standard theme, you can find them in `$(brew --prefix oh-my-posh)/themes`, referencing them as such
-will always keep them compatible with the binary when updating Oh My Posh.
+will always keep them compatible when updating Oh My Posh.
 
-#### Preview the themes
-
-```bash
-for file in $(brew --prefix oh-my-posh)/themes/*.omp.json; do echo "$file\n"; oh-my-posh --config $file --shell universal; echo "\n"; done;
-```
-
-#### Update
+## Update
 
 ```bash
 brew upgrade oh-my-posh
 ```
 
-### Replace your existing prompt
+## Replace your existing prompt
 
 The guides below assume you copied the theme called `jandedobbeleer.omp.json` to your user's `$HOME` folder.
 When using brew, you can find this one at `$(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json`.

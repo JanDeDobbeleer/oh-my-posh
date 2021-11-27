@@ -16,7 +16,51 @@ import InstallHomebrew from "./install-homebrew.mdx";
 Oh My Posh uses ANSI color codes under the hood, these should work in every terminal,
 but you may have to set the environment variable `$TERM` to `xterm-256color` for it to work.
 
+### Installation
+<Tabs
+  defaultValue="homebrew"
+  groupId="install"
+  values={[
+    { label: 'homebrew', value: 'homebrew', },
+    { label: 'manual', value: 'manual', }
+  ]
+}>
+<TabItem value="homebrew">
 <InstallHomebrew />
+</TabItem>
+<TabItem value="manual">
+
+Oh My Posh can also be installed manually.
+
+#### Download the executable
+
+```bash
+sudo wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh
+sudo chmod +x /usr/local/bin/oh-my-posh
+```
+
+#### Download the themes
+
+```bash
+mkdir ~/.poshthemes
+wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip -O ~/.poshthemes/themes.zip
+unzip ~/.poshthemes/themes.zip -d ~/.poshthemes
+chmod u+rw ~/.poshthemes/*.json
+rm ~/.poshthemes/themes.zip
+```
+
+#### Preview the themes
+
+```bash
+for file in ~/.poshthemes/*.omp.json; do echo "$file\n"; oh-my-posh --config $file --shell universal; echo "\n"; done;
+```
+
+### Replace your existing prompt
+
+The guides below assume you copied the theme called `jandedobbeleer.omp.json` to your user's `$HOME` folder.
+When you've downloaded the themes, you can find this one at `~/.poshthemes/jandedobbeleer.omp.json`.
+</TabItem>
+</Tabs>
 
 <Shells />
 

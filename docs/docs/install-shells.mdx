@@ -26,6 +26,15 @@ oh-my-posh --print-shell
 
 Edit `$PROFILE` in your preferred PowerShell version and add the following line.
 
+:::caution
+If you installed Oh My Posh using `Install-Module oh-my-posh`, you need to first import
+Oh My Posh in your `$PROFILE` before adding the line below:
+
+```powershell
+Import-Module oh-my-posh
+```
+:::
+
 ```powershell
 oh-my-posh --init --shell pwsh --config ~/jandedobbeleer.omp.json | Invoke-Expression
 ```

@@ -1,5 +1,6 @@
-$env:POSH_THEMES_PATH = "$PSScriptRoot/themes"
-$env:PATH = "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent.FullName);$env:PATH"
+$artifactPath = "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent.FullName)"
+$env:POSH_THEMES_PATH = $artifactPath + "/themes"
+$env:PATH = "$artifactPath;$env:PATH"
 
 function Get-PoshDownloadUrl {
     param(
@@ -71,25 +72,49 @@ function Get-PoshCommand {
     return "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent.FullName)/oh-my-posh$extension"
 }
 
-function Sync-PoshExecutable {
+function Sync-PoshThemes {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]
+        $Version
+    )
+
+    Write-Host "Downloading oh-my-posh themes for $Version"
+    $tmp = New-TemporaryFile | Rename-Item -NewName { $_ -replace 'tmp$', 'zip' } –PassThru
+    $themesUrl = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/themes.zip"
+    Invoke-WebRequest -OutFile $tmp $themesUrl
+    $destination = $env:POSH_THEMES_PATH
+    $tmp | Expand-Archive -DestinationPath $destination -Force
+    $tmp | Remove-Item
+}
+
+function Sync-PoshArtifacts {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]
+        $Version
+    )
+
     $executable = Get-PoshCommand
-    $moduleVersion = Split-Path -Leaf $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase
     if (-not (Test-Path $executable)) {
-        Write-Host "Downloading oh-my-posh executable for $moduleVersion"
-        $url = Get-PoshDownloadUrl -Version $moduleVersion
+        Write-Host "Downloading oh-my-posh executable for $Version"
+        $url = Get-PoshDownloadUrl -Version $Version
         Get-PoshExecutable -Url $url -Destination $executable
+        Sync-PoshThemes -Version $Version
         return
     }
     $poshVersion = & $executable --version
-    if ($poshVersion -eq $moduleVersion) {
+    if ($poshVersion -eq $Version) {
         return
     }
-    Write-Host "Updating oh-my-posh executable to $moduleVersion"
-    $url = Get-PoshDownloadUrl -Version $moduleVersion
+    Write-Host "Updating oh-my-posh executable to $Version"
+    $url = Get-PoshDownloadUrl -Version $Version
     Get-PoshExecutable -Url $url -Destination $executable
+    Sync-PoshThemes -Version $Version
 }
 
-Sync-PoshExecutable
+$moduleVersion = Split-Path -Leaf $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase
+Sync-PoshArtifacts -Version $moduleVersion
 
 # Legacy functions
 

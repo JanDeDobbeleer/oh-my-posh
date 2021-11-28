@@ -42,18 +42,18 @@ scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/downl
 </TabItem>
 <TabItem value="powershell">
 
-:::warning
-The PowerShell module only installs the Oh My Posh execuatble inside PowerShell, to use Oh My posh outside of PowerShell,
-add the following folder to your `$PATH`:
-
-```powershell
-"$((Get-Item (Get-Module oh-my-posh).ModuleBase).Parent.FullName)"
-```
-:::
-
 ```powershell
 Install-Module oh-my-posh -Scope CurrentUser
 ```
+
+:::warning
+The PowerShell module only installs the Oh My Posh executable inside PowerShell, to use Oh My posh outside of PowerShell
+(bash, cmd, ...), add the following folder to your `$PATH`:
+
+```powershell
+$env:POSH_PATH
+```
+:::
 
 </TabItem>
 <TabItem value="chocolatey">
@@ -71,10 +71,10 @@ choco install oh-my-posh
 
 This installs a couple of things:
 
-- `oh-my-posh.exe` - Windows executable, added to your `$PATH`
+- `oh-my-posh.exe` - Windows executable
 - `themes` - The latest Oh My Posh [themes][themes]
 
-For the `$PATH` to reload, a reboot is advised.
+For the `$PATH` to reload, a restart of your shell session is advised.
 
 ## Update
 
@@ -146,8 +146,8 @@ when setting the prompt using the `--config` flag.
 </TabItem>
 <TabItem value="powershell">
 
-You can find the themes PowerShell installs inside the `"$((Get-Module oh-my-posh).ModuleBase)\themes\"` folder.
-To use `jandedobbeleer.omp.json` for example, you can refer to it using `"$((Get-Module oh-my-posh).ModuleBase)\themes\jandedobbeleer.omp.json"`
+You can find the themes PowerShell installs inside the `$env:POSH_THEMES_PATH` folder.
+To use `jandedobbeleer.omp.json` for example, you can refer to it using `"$env:POSH_THEMES_PATH\jandedobbeleer.omp.json"`
 when setting the prompt using the `--config` flag.
 
 </TabItem>
@@ -161,39 +161,6 @@ when setting the prompt using the `--config` flag.
 </Tabs>
 
 The guides below assume you copied the theme called `jandedobbeleer.omp.json` to your user's `$HOME` folder.
-Based on the installation method used, you can find this theme at the following location:
-
-<Tabs
-  defaultValue="winget"
-  groupId="install"
-  values={[
-    { label: 'winget', value: 'winget', },
-    { label: 'scoop', value: 'scoop', },
-    { label: 'powershell', value: 'powershell', },
-    { label: 'chocolatey', value: 'chocolatey'},
-  ]
-}>
-<TabItem value="winget">
-
-`~\AppData\Local\Programs\oh-my-posh\themes\jandedobbeleer.omp.json`
-
-</TabItem>
-<TabItem value="scoop">
-
-`"$(scoop prefix oh-my-posh)\themes\jandedobbeleer.omp.json"`
-
-</TabItem>
-<TabItem value="powershell">
-
-`"$((Get-Module oh-my-posh).ModuleBase)\themes\jandedobbeleer.omp.json"`
-
-</TabItem>
-<TabItem value="chocolatey">
-
-`~\AppData\Local\Programs\oh-my-posh\themes\jandedobbeleer.omp.json`
-
-</TabItem>
-</Tabs>
 
 :::caution
 When using oh-my-posh inside the WSL, make sure to follow the [linux](linux) installation guide.

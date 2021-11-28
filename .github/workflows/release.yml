@@ -73,7 +73,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ needs.changelog.outputs.tag }}
-          body: ${{ needs.changelog.outputs.clean_changelog }}
+          body: ${{ needs.changelog.outputs.body }}
           fail_on_unmatched_files: true
           token: ${{ secrets.GH_PAT }}
           files: |

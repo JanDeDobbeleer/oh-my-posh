@@ -8,7 +8,7 @@ functionality, going through the additional steps below will help you get starte
 We downloaded all the themes and set `jandedobbeleer.omp.json` as the one to use.
 However, there are [a lot more][themes] to be discovered and maybe there are some you like better.
 
-## Override the theme settings
+### Override the theme settings
 
 Maybe there's a theme you like, but you don't fancy the colors. Or, maybe there's a segment you
 want to tweak/add, or replace some of the icons with a different one. Whatever the case, read through all

@@ -1,6 +1,6 @@
-$artifactPath = "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent.FullName)"
-$env:POSH_THEMES_PATH = $artifactPath + "/themes"
-$env:PATH = "$artifactPath;$env:PATH"
+$env:POSH_PATH = "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent.FullName)"
+$env:POSH_THEMES_PATH = $env:POSH_PATH + "/themes"
+$env:PATH = "$env:POSH_PATH;$env:PATH"
 
 function Get-PoshDownloadUrl {
     param(

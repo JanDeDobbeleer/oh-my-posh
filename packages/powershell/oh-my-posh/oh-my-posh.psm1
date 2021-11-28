@@ -75,7 +75,7 @@ function Sync-PoshExecutable {
     $executable = Get-PoshCommand
     $moduleVersion = Split-Path -Leaf $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase
     if (-not (Test-Path $executable)) {
-        Write-Host "Downloading oh-my-posh executable"
+        Write-Host "Downloading oh-my-posh executable for $moduleVersion"
         $url = Get-PoshDownloadUrl -Version $moduleVersion
         Get-PoshExecutable -Url $url -Destination $executable
         return

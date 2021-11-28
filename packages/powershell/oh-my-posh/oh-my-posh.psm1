@@ -145,7 +145,3 @@ function Set-PoshPrompt {
     $poshCommand = Get-PoshCommand
     (& $poshCommand --init --shell=pwsh --config="$config") | Invoke-Expression
 }
-
-function Get-PoshThemes() {
-    Write-Host 'Get-PoshThemes is deprecated, please have a look at all the themes in the documentation: https://ohmyposh.dev/docs/themes'
-}

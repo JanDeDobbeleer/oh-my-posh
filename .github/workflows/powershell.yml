@@ -9,7 +9,7 @@ jobs:
     defaults:
       run:
         shell: pwsh
-        working-directory: ${{ github.workspace }}/packages/powershell/oh-my-posh
+        working-directory: ${{ github.workspace }}/packages/powershell
     steps:
     - name: Checkout code 👋
       uses: actions/checkout@v2

@@ -21,7 +21,7 @@
     # Description of the functionality provided by this module
     Description       = 'A prompt theme engine for any shell'
     # Minimum version of the Windows PowerShell engine required by this module
-    PowerShellVersion = '5.0'
+    PowerShellVersion = '6.0'
     # List of all files packaged with this module
     FileList          = @()
     # Cmdlets to export from this module

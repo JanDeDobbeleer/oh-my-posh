@@ -9,24 +9,35 @@
     {
       "type": "shell",
       "command": "go",
-      "label": "build omp",
-      "options": { "cwd": "${workspaceRoot}/src" },
+      "label": "build oh-my-posh",
+      "detail": "Build oh-my-posh in the /src folder locally",
+      "options": {
+        "cwd": "${workspaceRoot}/src"
+      },
       "group": {
         "kind": "build",
         "isDefault": true
       },
       "problemMatcher": "$go",
-      "args": ["build", "-v", "-ldflags", "\"-X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%s)'\""]
+      "args": [
+        "build",
+        "-v",
+        "-ldflags",
+        "\"-X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%s)'\""
+      ]
     },
     {
       "type": "shell",
       "command": "go",
       "label": "devcontainer: rebuild oh-my-posh",
+      "detail": "Build oh-my-posh for all shells when inside the devcaontainer",
       "options": {
         "cwd": "${workspaceRoot}/src",
         "shell": {
           "executable": "bash",
-          "args": ["-c"]
+          "args": [
+            "-c"
+          ]
         },
         "statusbar": {
           "hide": false,
@@ -37,7 +48,22 @@
       },
       "group": "build",
       "problemMatcher": "$go",
-      "args": ["build", "-v", "-o", "/home/vscode/bin/oh-my-posh", "-ldflags", "\"-X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%s)'\""]
+      "args": [
+        "build",
+        "-v",
+        "-o",
+        "/home/vscode/bin/oh-my-posh",
+        "-ldflags",
+        "\"-X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%s)'\""
+      ]
+    },
+    {
+      "type": "npm",
+      "script": "start",
+      "path": "docs/",
+      "problemMatcher": [],
+      "label": "docs: start site",
+      "detail": "cross-env NODE_ENV=development docusaurus start"
     }
   ]
 }

@@ -80,7 +80,7 @@ function Sync-PoshThemes {
     )
 
     Write-Host "Downloading oh-my-posh themes for $Version"
-    $tmp = New-TemporaryFile | Rename-Item -NewName { $_ -replace 'tmp$', 'zip' } –PassThru
+    $tmp = New-TemporaryFile | Rename-Item -NewName { $_ -replace 'tmp$', 'zip' } -PassThru
     $themesUrl = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/themes.zip"
     Invoke-WebRequest -OutFile $tmp $themesUrl
     $destination = $env:POSH_THEMES_PATH

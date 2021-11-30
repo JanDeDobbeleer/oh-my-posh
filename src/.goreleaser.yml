@@ -7,8 +7,10 @@ builds:
   -
     binary: "posh-{{ .Os }}-{{ .Arch }}"
     no_unique_dist_dir: true
+    flags:
+      - -a
     ldflags:
-      - -X main.Version={{.Version}}
+      - -s -w -X main.Version={{.Version}}
     goos:
       - linux
       - windows

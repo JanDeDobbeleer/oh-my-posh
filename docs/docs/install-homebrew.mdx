@@ -16,8 +16,17 @@ will always keep them compatible when updating Oh My Posh.
 ## Update
 
 ```bash
-brew upgrade oh-my-posh
+brew update && brew upgrade oh-my-posh
 ```
+
+:::tip
+In case you see [strange behaviour][strange] in your shell, reload it after upgrading Oh My Posh.
+For example in zsh:
+
+```bash
+brew update && brew upgrade && exec zsh
+```
+:::
 
 ## Replace your existing prompt
 
@@ -26,3 +35,4 @@ When using brew, you can find this one at `$(brew --prefix oh-my-posh)/themes/ja
 
 [brew]: https://brew.sh
 [themes]: https://ohmyposh.dev/docs/themes
+[strange]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/1287

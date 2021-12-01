@@ -288,8 +288,8 @@ func initShell(shell, configFile string) string {
 		return noExe
 	}
 	switch shell {
-	case pwsh:
-		return fmt.Sprintf("(@(&\"%s\" --print-init --shell=pwsh --config=\"%s\") -join \"`n\") | Invoke-Expression", executable, configFile)
+	case pwsh, powershell5:
+		return fmt.Sprintf("(@(&\"%s\" --print-init --shell=%s --config=\"%s\") -join \"`n\") | Invoke-Expression", executable, shell, configFile)
 	case zsh, bash, fish, winCMD:
 		return printShellInit(shell, configFile)
 	default:
@@ -303,7 +303,7 @@ func printShellInit(shell, configFile string) string {
 		return noExe
 	}
 	switch shell {
-	case pwsh:
+	case pwsh, powershell5:
 		return getShellInitScript(executable, configFile, pwshInit)
 	case zsh:
 		return getShellInitScript(executable, configFile, zshInit)

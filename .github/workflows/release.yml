@@ -52,6 +52,15 @@ jobs:
           version: latest
           args: build --rm-dist
           workdir: src
+      - name: Run UPX
+        uses: crazy-max/ghaction-upx@v1
+        with:
+          version: latest
+          files: |
+            ./src/dist/posh-linux-amd64
+            ./src/dist/posh-windows-386.exe
+            ./src/dist/posh-windows-amd64.exe
+          args: --brute
       - name: Zip theme files 🤐
         run: |
           $compress = @{

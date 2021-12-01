@@ -35,7 +35,7 @@ Tells the engine what to do with the block. There are three options:
 
 - `prompt` renders one or more segments
 - `rprompt` renders one or more segments aligned to the right of the cursor. Only one `rprompt` block is permitted.
-Supported on [ZSH][rprompt], Bash and Powershell.
+Supported on zsh, bash, PowerShell, cmd and fish.
 
 ### Newline
 

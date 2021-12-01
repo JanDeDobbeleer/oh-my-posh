@@ -60,7 +60,7 @@ func engineRender(configPath string) error {
 		return err
 	}
 
-	configPath = filepath.Join(testDir, "testdata", configPath)
+	configPath = filepath.Join(testDir, "test", configPath)
 
 	var (
 		debug    = false

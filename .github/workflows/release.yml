@@ -33,8 +33,11 @@ jobs:
     needs: changelog
     if: ${{ needs.changelog.outputs.skipped == 'false' }}
     runs-on: ubuntu-latest
+    env:
+      COSIGN_KEY_LOCATION: "/tmp/cosign.key"
     defaults:
       run:
+        shell: pwsh
         working-directory: ${{ github.workspace }}/src
     steps:
       - name: Install Go 🗳
@@ -45,6 +48,16 @@ jobs:
         uses: actions/checkout@v2
       - name: Tag HEAD 😸
         run: git tag ${{ needs.changelog.outputs.tag }}
+      - name: Install cosign 🔑
+        uses: sigstore/cosign-installer@main
+        with:
+          cosign-release: 'v1.3.1'
+      - name: Private Key 🔐
+        run: |
+          $PSDefaultParameterValues['Out-File:Encoding']='UTF8'
+          $env:COSIGN_KEY > $env:COSIGN_KEY_LOCATION
+        env:
+          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
       - name: Run GoReleaser 🚀
         uses: goreleaser/goreleaser-action@v2
         with:
@@ -52,6 +65,8 @@ jobs:
           version: latest
           args: build --rm-dist
           workdir: src
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
       - name: Zip theme files 🤐
         run: |
           $compress = @{
@@ -60,7 +75,6 @@ jobs:
             DestinationPath = "./dist/themes.zip"
           }
           Compress-Archive @compress
-        shell: pwsh
       - name: Add hashes 🤫
         run: |
           Get-ChildItem ./dist -Exclude *.yaml | Get-Unique |

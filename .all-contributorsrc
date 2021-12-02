@@ -817,6 +817,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "hgreving",
+      "name": "Harmjan Greving",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23560667?v=4",
+      "profile": "https://github.com/hgreving",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -7,7 +7,7 @@ on:
     paths:
       - 'src/**'
       - 'packages/**'
-      - '.github/*'
+      - '.github/workflows/**'
 
 jobs:
   changelog:

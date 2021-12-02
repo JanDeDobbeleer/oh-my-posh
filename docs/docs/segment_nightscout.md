@@ -13,10 +13,12 @@ OhMyPosh segments on the command line!
 
 ## Sample Configuration
 
-This example is using mg/dl, you'll want change the numbers for mmol. Your idea
-of "high" or "low" is different from others. You'll also want to think about
-your background and foreground colors. Don't use white text on a yellow
-background, for example.
+This example is using mg/dl by default because the Nightscout API sends the sugar
+glucose value (.Sgv) in mg/dl format. Below is also a template for displaying the
+glucose value in mmol/L. When using different color ranges you should multiply your
+high and low range glucose values by 18 and use these values in the templates.
+You'll also want to think about your background and foreground colors. Don't use
+white text on a yellow background, for example.
 
 The foreground_templates example below could be set to just a single color,
 if that color is visible against any of your backgrounds.
@@ -46,6 +48,12 @@ if that color is visible against any of your backgrounds.
     "template": " {{.Sgv}}{{.TrendIcon}}"
   }
 },
+```
+
+Or display in mmol/l (instead of the default mg/dl) with the following template:
+
+```json
+    "template": " {{divf (floor (mulf 10 (divf .Sgv 18))) 10}} {{.TrendIcon}}"
 ```
 
 ## Properties

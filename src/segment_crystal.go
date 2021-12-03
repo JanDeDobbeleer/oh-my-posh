@@ -1,7 +1,7 @@
 package main
 
 type crystal struct {
-	language *language
+	language
 }
 
 func (c *crystal) string() string {
@@ -9,7 +9,7 @@ func (c *crystal) string() string {
 }
 
 func (c *crystal) init(props properties, env environmentInfo) {
-	c.language = &language{
+	c.language = language{
 		env:        env,
 		props:      props,
 		extensions: []string{"*.cr", "shard.yml"},

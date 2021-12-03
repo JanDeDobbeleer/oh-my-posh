@@ -1,7 +1,7 @@
 package main
 
 type dart struct {
-	language *language
+	language
 }
 
 func (d *dart) string() string {
@@ -9,7 +9,7 @@ func (d *dart) string() string {
 }
 
 func (d *dart) init(props properties, env environmentInfo) {
-	d.language = &language{
+	d.language = language{
 		env:        env,
 		props:      props,
 		extensions: []string{"*.dart", "pubspec.yaml", "pubspec.yml", "pubspec.lock", ".dart_tool"},

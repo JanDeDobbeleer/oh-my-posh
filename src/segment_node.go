@@ -3,8 +3,9 @@ package main
 import "fmt"
 
 type node struct {
-	language           *language
 	packageManagerIcon string
+
+	language
 }
 
 const (
@@ -22,7 +23,7 @@ func (n *node) string() string {
 }
 
 func (n *node) init(props properties, env environmentInfo) {
-	n.language = &language{
+	n.language = language{
 		env:        env,
 		props:      props,
 		extensions: []string{"*.js", "*.ts", "package.json", ".nvmrc", "pnpm-workspace.yaml", ".pnpmfile.cjs", ".npmrc"},
@@ -64,9 +65,9 @@ func (n *node) matchesVersionFile() bool {
 
 	regex := fmt.Sprintf(
 		`(?im)^v?%s(\.?%s)?(\.?%s)?$`,
-		n.language.activeCommand.version.Major,
-		n.language.activeCommand.version.Minor,
-		n.language.activeCommand.version.Patch,
+		n.language.version.Major,
+		n.language.version.Minor,
+		n.language.version.Patch,
 	)
 
 	return matchString(regex, fileVersion)

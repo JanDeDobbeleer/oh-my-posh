@@ -25,44 +25,23 @@ type cmd struct {
 	executable string
 	args       []string
 	regex      string
-
-	version
 }
 
-func (c *cmd) parse(versionInfo string) error {
+func (c *cmd) parse(versionInfo string) (*version, error) {
 	values := findNamedRegexMatch(c.regex, versionInfo)
 	if len(values) == 0 {
-		return errors.New("cannot parse version string")
+		return nil, errors.New("cannot parse version string")
 	}
 
-	c.version.Full = values["version"]
-	c.version.Major = values["major"]
-	c.version.Minor = values["minor"]
-	c.version.Patch = values["patch"]
-	c.version.Prerelease = values["prerelease"]
-	c.version.BuildMetadata = values["buildmetadata"]
-	return nil
-}
-
-func (c *cmd) buildVersionURL(text, template string) string {
-	if template == "" {
-		return text
+	version := &version{
+		Full:          values["version"],
+		Major:         values["major"],
+		Minor:         values["minor"],
+		Patch:         values["patch"],
+		Prerelease:    values["prerelease"],
+		BuildMetadata: values["buildmetadata"],
 	}
-	truncatingSprintf := func(str string, args ...interface{}) (string, error) {
-		n := strings.Count(str, "%s")
-		if n > len(args) {
-			return "", errors.New("Too many parameters")
-		}
-		if n == 0 {
-			return fmt.Sprintf(str, args...), nil
-		}
-		return fmt.Sprintf(str, args[:n]...), nil
-	}
-	version, err := truncatingSprintf(template, text, c.version.Major, c.version.Minor, c.version.Patch)
-	if err != nil {
-		return text
-	}
-	return version
+	return version, nil
 }
 
 type language struct {
@@ -71,13 +50,14 @@ type language struct {
 	extensions         []string
 	commands           []*cmd
 	versionURLTemplate string
-	activeCommand      *cmd
 	exitCode           int
 	loadContext        loadContext
 	inContext          inContext
 	matchesVersionFile matchesVersionFile
 	homeEnabled        bool
 	displayMode        string
+
+	version
 }
 
 const (
@@ -120,7 +100,7 @@ func (l *language) string() string {
 	segmentTemplate := l.props.getString(SegmentTemplate, "{{.Full}}")
 	template := &textTemplate{
 		Template: segmentTemplate,
-		Context:  l.activeCommand.version,
+		Context:  l.version,
 		Env:      l.env,
 	}
 	text, err := template.render()
@@ -132,11 +112,11 @@ func (l *language) string() string {
 		versionURLTemplate := l.props.getString(VersionURLTemplate, "")
 		// backward compatibility
 		if versionURLTemplate == "" {
-			text = l.activeCommand.buildVersionURL(text, l.versionURLTemplate)
+			text = l.buildVersionURL(text)
 		} else {
 			template := &textTemplate{
 				Template: versionURLTemplate,
-				Context:  l.activeCommand.version,
+				Context:  l.version,
 				Env:      l.env,
 			}
 			url, err := template.render()
@@ -203,19 +183,19 @@ func (l *language) setVersion() error {
 		if !l.env.hasCommand(command.executable) {
 			continue
 		}
-		version, err := l.env.runCommand(command.executable, command.args...)
+		versionStr, err := l.env.runCommand(command.executable, command.args...)
 		if exitErr, ok := err.(*commandError); ok {
 			l.exitCode = exitErr.exitCode
 			return fmt.Errorf("err executing %s with %s", command.executable, command.args)
 		}
-		if version == "" {
+		if versionStr == "" {
 			continue
 		}
-		err = command.parse(version)
+		version, err := command.parse(versionStr)
 		if err != nil {
-			return fmt.Errorf("err parsing info from %s with %s", command.executable, version)
+			return fmt.Errorf("err parsing info from %s with %s", command.executable, versionStr)
 		}
-		l.activeCommand = command
+		l.version = *version
 		return nil
 	}
 	return errors.New(l.props.getString(MissingCommandText, ""))
@@ -244,4 +224,25 @@ func (l *language) setVersionFileMismatch() {
 		return
 	}
 	l.props[ForegroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(ForegroundOverride, ""))
+}
+
+func (l *language) buildVersionURL(text string) string {
+	if l.versionURLTemplate == "" {
+		return text
+	}
+	truncatingSprintf := func(str string, args ...interface{}) (string, error) {
+		n := strings.Count(str, "%s")
+		if n > len(args) {
+			return "", errors.New("Too many parameters")
+		}
+		if n == 0 {
+			return fmt.Sprintf(str, args...), nil
+		}
+		return fmt.Sprintf(str, args[:n]...), nil
+	}
+	version, err := truncatingSprintf(l.versionURLTemplate, text, l.version.Major, l.version.Minor, l.version.Patch)
+	if err != nil {
+		return text
+	}
+	return version
 }

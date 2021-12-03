@@ -33,11 +33,9 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 		env.On("getFileContent", ".nvmrc").Return(tc.RCVersion)
 
 		node := &node{
-			language: &language{
-				env: env,
-				activeCommand: &cmd{
-					version: nodeVersion,
-				},
+			language: language{
+				env:     env,
+				version: nodeVersion,
 			},
 		}
 		assert.Equal(t, tc.Expected, node.matchesVersionFile(), tc.Case)
@@ -67,7 +65,7 @@ func TestNodeInContext(t *testing.T) {
 		env.On("hasFiles", "package-lock.json").Return(tc.hasNPM)
 		env.On("hasFiles", "package.json").Return(tc.hasDefault)
 		node := &node{
-			language: &language{
+			language: language{
 				env: env,
 				props: map[Property]interface{}{
 					YarnIcon:              "yarn",

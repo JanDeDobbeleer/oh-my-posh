@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 type python struct {
-	language *language
+	language
 	venvName string
 }
 
@@ -24,7 +24,7 @@ func (p *python) string() string {
 }
 
 func (p *python) init(props properties, env environmentInfo) {
-	p.language = &language{
+	p.language = language{
 		env:         env,
 		props:       props,
 		extensions:  []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak", "venv", ".venv"},

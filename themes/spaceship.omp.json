@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "final_space": false,
+  "final_space": true,
   "osc99": false,
   "console_title": false,
   "blocks": [
@@ -41,8 +41,14 @@
             "prefix": "<#ffffff>on</> ",
             "template": "{{ .HEAD }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
           }
-        },
-
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
         {
           "type": "text",
           "style": "plain",

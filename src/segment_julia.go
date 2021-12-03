@@ -1,7 +1,7 @@
 package main
 
 type julia struct {
-	language *language
+	language
 }
 
 func (j *julia) string() string {
@@ -9,7 +9,7 @@ func (j *julia) string() string {
 }
 
 func (j *julia) init(props properties, env environmentInfo) {
-	j.language = &language{
+	j.language = language{
 		env:        env,
 		props:      props,
 		extensions: []string{"*.jl"},

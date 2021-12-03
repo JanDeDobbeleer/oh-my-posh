@@ -1,7 +1,7 @@
 package main
 
 type angular struct {
-	language *language
+	language
 }
 
 func (a *angular) string() string {
@@ -9,7 +9,7 @@ func (a *angular) string() string {
 }
 
 func (a *angular) init(props properties, env environmentInfo) {
-	a.language = &language{
+	a.language = language{
 		env:        env,
 		props:      props,
 		extensions: []string{"angular.json"},

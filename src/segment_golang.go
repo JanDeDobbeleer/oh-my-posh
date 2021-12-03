@@ -1,7 +1,7 @@
 package main
 
 type golang struct {
-	language *language
+	language
 }
 
 func (g *golang) string() string {
@@ -9,7 +9,7 @@ func (g *golang) string() string {
 }
 
 func (g *golang) init(props properties, env environmentInfo) {
-	g.language = &language{
+	g.language = language{
 		env:        env,
 		props:      props,
 		extensions: []string{"*.go", "go.mod"},

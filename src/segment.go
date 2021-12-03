@@ -266,6 +266,9 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		WiFi:          &wifi{},
 		WinReg:        &winreg{},
 	}
+	if segment.Properties == nil {
+		segment.Properties = make(properties)
+	}
 	if writer, ok := functions[segment.Type]; ok {
 		writer.init(segment.Properties, env)
 		segment.writer = writer

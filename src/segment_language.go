@@ -97,7 +97,7 @@ func (l *language) string() string {
 		return ""
 	}
 
-	segmentTemplate := l.props.getString(SegmentTemplate, "{{.Full}}")
+	segmentTemplate := l.props.getString(SegmentTemplate, "{{ .Full }}")
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  l.version,

@@ -53,7 +53,7 @@ if that color is visible against any of your backgrounds.
 Or display in mmol/l (instead of the default mg/dl) with the following template:
 
 ```json
-    "template": " {{ if eq (mod .Sgv 18) 0 }} {{ div .Sgv 18 }}.0 {{ else }} {{ round (divf .Sgv 18) 1 }} {{ end }} {{.TrendIcon}}"
+    "template": " {{ if eq (mod .Sgv 18) 0 }}{{divf .Sgv 18}}.0{{ else }} {{ round (divf .Sgv 18) 1 }}{{ end }}{{.TrendIcon}}"
 ```
 
 ## Properties

@@ -11,11 +11,9 @@
           "type": "session",
           "style": "plain",
           "properties": {
-            "user_info_separator": "<#ff5555>@</>",
             "prefix": "╭─[",
             "postfix": "]─",
-            "user_color": "#ffff55",
-            "host_color": "#55ff55"
+            "template": "<#ffff55>{{ .UserName }}</><#ff5555>@</><#55ff55>{{ .ComputerName }}</>"
           }
         },
         {

@@ -27,7 +27,10 @@
           "foreground": "#ffffff",
           "background": "#4707a8",
           "leading_diamond": "\uE0B6",
-          "trailing_diamond": "\uE0B0"
+          "trailing_diamond": "\uE0B0",
+          "properties": {
+            "template": "{{ .UserName }}@{{ .ComputerName }}"
+          }
         },
         {
           "type": "az",

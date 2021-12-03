@@ -13,10 +13,9 @@
           "background": "#E36464",
           "foreground": "#fff",
           "properties": {
-            "user_info_separator": "",
-            "display_host": false,
             "prefix": "",
-            "postfix": " "
+            "postfix": " ",
+            "template": "{{ .UserName }}"
           }
         },
         {

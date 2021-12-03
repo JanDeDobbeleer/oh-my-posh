@@ -36,7 +36,7 @@ sidebar_label: Sample
           "leading_diamond": "\uE0B6",
           "trailing_diamond": "\uE0B0",
           "properties": {
-            "postfix": " "
+            "template": "{{ .UserName }}"
           }
         },
         {

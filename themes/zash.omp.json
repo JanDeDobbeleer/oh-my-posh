@@ -10,9 +10,8 @@
           "style": "plain",
           "foreground": "#E36464",
           "properties": {
-            "user_info_separator": "",
-            "display_host": false,
-            "prefix": "@"
+            "prefix": "@",
+            "template": "{{ .UserName }}"
           }
         },
         {

@@ -43,10 +43,8 @@
           "type": "session",
           "style": "plain",
           "properties": {
-            "user_info_separator": " <darkGray>@</> ",
             "prefix": "",
-            "user_color": "cyan",
-            "host_color": "green"
+            "template": "<cyan>{{ .UserName }}</> <darkGray>@</> <green>{{ .ComputerName }}</>"
           }
         },
         {

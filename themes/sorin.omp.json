@@ -21,7 +21,11 @@
         {
           "type": "session",
           "style": "plain",
-          "foreground": "#FFFFFF"
+          "foreground": "#FFFFFF",
+          "properties": {
+            "prefix": "",
+            "template": "{{ .UserName }}@{{ .ComputerName }}"
+          }
         },
         {
           "type": "path",

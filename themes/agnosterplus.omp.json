@@ -26,7 +26,10 @@
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
           "foreground": "#100e23",
-          "background": "#ffffff"
+          "background": "#ffffff",
+          "properties": {
+            "template": "{{ .UserName }}@{{ .ComputerName }}"
+          }
         },
         {
           "type": "path",

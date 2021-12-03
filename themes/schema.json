@@ -1304,43 +1304,14 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "user_info_separator": {
-                    "type": "string",
-                    "title": "User Info Separator",
-                    "description": "Text/icon to put in between the user and host name",
-                    "default": "@"
-                  },
                   "ssh_icon": {
                     "type": "string",
                     "title": "SSH Icon",
                     "description": "Text/icon to display first when in an active SSH session",
                     "default": "\uF817"
                   },
-                  "user_color": { "$ref": "#/definitions/color" },
-                  "host_color": { "$ref": "#/definitions/color" },
-                  "display_user": {
-                    "type": "boolean",
-                    "title": "Display User",
-                    "description": "Display the user name or not",
-                    "default": true
-                  },
-                  "display_host": {
-                    "type": "boolean",
-                    "title": "Display Host",
-                    "description": "Display the host name or not",
-                    "default": true
-                  },
-                  "default_user_name": {
-                    "type": "string",
-                    "title": "Default User Name",
-                    "description": "The name of the default user",
-                    "default": ""
-                  },
-                  "display_default": {
-                    "type": "boolean",
-                    "title": "Display Default User",
-                    "description": "Display the segment when default user or not",
-                    "default": true
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }

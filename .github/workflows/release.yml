@@ -77,7 +77,7 @@ jobs:
           Compress-Archive @compress
       - name: Add hashes 🤫
         run: |
-          Get-ChildItem ./dist -Exclude *.yaml | Get-Unique |
+          Get-ChildItem ./dist -Exclude *.yaml,*.sig | Get-Unique |
           Foreach-Object {
             $zipHash = Get-FileHash $_.FullName -Algorithm SHA256
             $zipHash.Hash | Out-File -Encoding 'UTF8' "./dist/$($_.Name).sha256"

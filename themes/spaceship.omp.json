@@ -16,10 +16,8 @@
           "invert_powerline": false,
           "foreground": "lightYellow",
           "properties": {
-            "display_host": false,
             "prefix": "",
-            "user_info_separator": "",
-            "display_user": true
+            "template": "{{ .UserName }}"
           }
         },
         {

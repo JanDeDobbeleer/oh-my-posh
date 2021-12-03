@@ -25,11 +25,8 @@
           "style": "plain",
           "foreground": "#26C6DA",
           "properties": {
-            "display_host": false,
-            "prefix": " ",
             "postfix": ": ",
-            "user_info_separator": "",
-            "display_user": true
+            "template": "{{ .UserName }}"
           }
         },
         {

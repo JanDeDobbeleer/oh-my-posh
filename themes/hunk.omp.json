@@ -109,9 +109,7 @@
           "foreground": "#ffffff",
           "background": "#86BBD8",
           "properties": {
-            "prefix": " ",
-            "postfix": " ",
-            "display_host": false
+            "template": "{{ .UserName }}"
           }
         },
         {

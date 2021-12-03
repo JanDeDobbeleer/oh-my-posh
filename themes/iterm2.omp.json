@@ -29,8 +29,7 @@
           "background": "#003543",
           "properties": {
             "prefix": "",
-            "display_host": false,
-            "postfix": " "
+            "template": "{{ .UserName }}"
           }
         },
         {

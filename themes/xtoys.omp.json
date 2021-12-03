@@ -18,7 +18,8 @@
           "type": "session",
           "style": "plain",
           "properties": {
-            "prefix": ""
+            "prefix": "",
+            "template": "{{ .UserName }}@{{ .ComputerName }}"
           }
         },
         {

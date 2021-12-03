@@ -10,9 +10,9 @@
           "style": "plain",
           "foreground": "#45F1C2",
           "properties": {
-            "display_host": false,
             "prefix": "\uf508 ",
-            "postfix": " on"
+            "postfix": " on",
+            "template": "{{ .UserName }}"
           }
         },
         {

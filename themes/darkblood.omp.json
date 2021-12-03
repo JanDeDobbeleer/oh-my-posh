@@ -10,10 +10,9 @@
           "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "user_info_separator": "",
-            "display_host": false,
             "prefix": "<#CB4B16>┏[</>",
-            "postfix": "<#CB4B16>]</>"
+            "postfix": "<#CB4B16>]</>",
+            "template": "{{ .UserName }}"
           }
         },
         {

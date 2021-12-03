@@ -22,7 +22,10 @@
           "style": "powerline",
           "foreground": "#26C6DA",
           "background": "#546E7A",
-          "powerline_symbol": "\uE0B0"
+          "powerline_symbol": "\uE0B0",
+          "properties": {
+            "template": "{{ .UserName }}@{{ .ComputerName }}"
+          }
         },
         {
           "type": "battery",

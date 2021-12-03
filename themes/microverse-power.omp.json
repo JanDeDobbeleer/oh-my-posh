@@ -20,8 +20,8 @@
           "foreground": "#f1184c",
           "background": "#242424",
           "properties": {
-            "display_host": false,
-            "postfix": ""
+            "postfix": "",
+            "template": "{{ .UserName }}"
           }
         },
         {

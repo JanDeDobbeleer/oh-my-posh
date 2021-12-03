@@ -13,7 +13,10 @@
         {
           "type": "session",
           "style": "plain",
-          "foreground": "#ffffff"
+          "foreground": "#ffffff",
+          "properties": {
+            "template": "{{ .UserName }}@{{ .ComputerName }}"
+          }
         },
         {
           "type": "path",

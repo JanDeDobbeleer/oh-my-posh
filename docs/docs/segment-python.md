@@ -39,3 +39,17 @@ or not - defaults to `true`
     files are present (default)
   - `environment`: the segment is only displayed when a virtual env is present
   - `context`: the segment is only displayed when either `environment` or `files` is active
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{ .Full }}`
+
+## Template Properties
+
+- `.Full`: `string` - the full version
+- `.Major`: `string` - is the major version
+- `.Minor`: `string` - is the minor version
+- `.Patch`: `string` - is the patch version
+- `.Prerelease`: `string` - is the prerelease version
+- `.BuildMetadata`: `string` - is the build metadata
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

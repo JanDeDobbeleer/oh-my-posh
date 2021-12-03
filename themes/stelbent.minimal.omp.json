@@ -48,7 +48,7 @@
           "foreground": "#757575",
           "properties": {
             "prefix": "\u250c ",
-            "display_host": true
+            "template": "{{ .UserName }}@{{ .ComputerName }}"
           }
         },
         {

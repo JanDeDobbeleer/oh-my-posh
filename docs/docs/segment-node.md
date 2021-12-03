@@ -40,3 +40,17 @@ segment's background or foreground color
 - display_package_manager: `boolean` - show whether the current project uses Yarn or NPM - defaults to `false`
 - yarn_icon: `string` - the icon/text to display when using Yarn - defaults to ` \uF61A`
 - npm_icon: `string` - the icon/text to display when using NPM - defaults to ` \uE71E`
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{ .Full }}`
+
+## Template Properties
+
+- `.Full`: `string` - the full version
+- `.Major`: `string` - is the major version
+- `.Minor`: `string` - is the minor version
+- `.Patch`: `string` - is the patch version
+- `.Prerelease`: `string` - is the prerelease version
+- `.BuildMetadata`: `string` - is the build metadata
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

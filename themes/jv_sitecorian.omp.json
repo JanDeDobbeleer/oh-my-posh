@@ -178,8 +178,7 @@
           "foreground": "#ffffff",
           "background": "#DC291E",
           "properties": {
-            "postfix": " ",
-            "display_host": false
+            "template": "{{ .UserName }}"
           }
         }
       ]

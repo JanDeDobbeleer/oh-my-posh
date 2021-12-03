@@ -10,7 +10,10 @@
             "style": "diamond",
             "foreground": "#ffffff",
             "background": "#07585c",
-            "leading_diamond": "\uE0B6"
+            "leading_diamond": "\uE0B6",
+            "properties": {
+              "template": "{{ .UserName }}@{{ .ComputerName }}"
+            }
           },
           {
             "type": "path",

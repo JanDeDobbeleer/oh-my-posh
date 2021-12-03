@@ -16,7 +16,10 @@
           "type": "session",
           "style": "powerline",
           "foreground": "#ffffff",
-          "background": "#3A86FF"
+          "background": "#3A86FF",
+          "properties": {
+            "template": "{{ .UserName }}@{{ .ComputerName }}"
+          }
         },
         {
           "type": "path",

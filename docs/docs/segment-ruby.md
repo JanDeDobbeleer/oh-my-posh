@@ -32,3 +32,17 @@ Display the currently active ruby version.
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when `*.rb`, `Gemfile` or `Rakefile` files are present (default)
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{ .Full }}`
+
+## Template Properties
+
+- `.Full`: `string` - the full version
+- `.Major`: `string` - is the major version
+- `.Minor`: `string` - is the minor version
+- `.Patch`: `string` - is the patch version
+- `.Prerelease`: `string` - is the prerelease version
+- `.BuildMetadata`: `string` - is the build metadata
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

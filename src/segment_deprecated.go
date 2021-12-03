@@ -238,3 +238,69 @@ func (b *batt) shouldDisplay() bool {
 	}
 	return true
 }
+
+// Session
+
+const (
+	// UserInfoSeparator is put between the user and computer name
+	UserInfoSeparator Property = "user_info_separator"
+	// UserColor if set, is used to color the user name
+	UserColor Property = "user_color"
+	// HostColor if set, is used to color the computer name
+	HostColor Property = "host_color"
+	// DisplayHost hides or show the computer name
+	DisplayHost Property = "display_host"
+	// DisplayUser hides or shows the user name
+	DisplayUser Property = "display_user"
+	// DefaultUserName holds the default user of the platform
+	DefaultUserName Property = "default_user_name"
+
+	defaultUserEnvVar = "POSH_SESSION_DEFAULT_USER"
+)
+
+func (s *session) getDefaultUser() string {
+	user := s.env.getenv(defaultUserEnvVar)
+	if len(user) == 0 {
+		user = s.props.getString(DefaultUserName, "")
+	}
+	return user
+}
+
+func (s *session) legacyEnabled() bool {
+	if s.props.getBool(DisplayUser, true) {
+		s.UserName = s.getUserName()
+	}
+	if s.props.getBool(DisplayHost, true) {
+		s.ComputerName = s.getComputerName()
+	}
+	s.DefaultUserName = s.getDefaultUser()
+	showDefaultUser := s.props.getBool(DisplayDefault, true)
+	if !showDefaultUser && s.DefaultUserName == s.UserName {
+		return false
+	}
+	return true
+}
+
+func (s *session) getFormattedText() string {
+	separator := ""
+	if s.props.getBool(DisplayHost, true) && s.props.getBool(DisplayUser, true) {
+		separator = s.props.getString(UserInfoSeparator, "@")
+	}
+	var sshIcon string
+	if s.SSHSession {
+		sshIcon = s.props.getString(SSHIcon, "\uF817 ")
+	}
+	defaulColor := s.props.getColor(ForegroundOverride, "")
+	userColor := s.props.getColor(UserColor, defaulColor)
+	hostColor := s.props.getColor(HostColor, defaulColor)
+	if len(userColor) > 0 && len(hostColor) > 0 {
+		return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", sshIcon, userColor, s.UserName, separator, hostColor, s.ComputerName)
+	}
+	if len(userColor) > 0 {
+		return fmt.Sprintf("%s<%s>%s</>%s%s", sshIcon, userColor, s.UserName, separator, s.ComputerName)
+	}
+	if len(hostColor) > 0 {
+		return fmt.Sprintf("%s%s%s<%s>%s</>", sshIcon, s.UserName, separator, hostColor, s.ComputerName)
+	}
+	return fmt.Sprintf("%s%s%s%s", sshIcon, s.UserName, separator, s.ComputerName)
+}

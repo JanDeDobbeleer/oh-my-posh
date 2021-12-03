@@ -82,12 +82,8 @@
           "foreground": "#ffea00",
           "background": "#2f2f2f",
           "properties": {
-            "display_host": false,
-            "user_info_separator": "<#ffea00 >\uf1fa</>",
-            "display_default": false,
-            "user_color": "#ffea00",
-            "host_color": "#2EEFBF",
-            "postfix": "<#ffea00> \ue0b1</>"
+            "postfix": "<#ffea00> \ue0b1</>",
+            "template": "{{ if ne .Env.POSH_SESSION_DEFAULT_USER .UserName }}{{ .UserName }}{{ end }}"
           }
         },
         {

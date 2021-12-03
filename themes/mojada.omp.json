@@ -34,8 +34,7 @@
           "properties": {
             "prefix": "",
             "display_host": true,
-            "host_color": "#e06c75",
-            "user_info_separator": "<#000000>@</>"
+            "template": "{{ .UserName }}<#000000>@</><#e06c75>{{ .ComputerName }}</>"
           }
         },
         {

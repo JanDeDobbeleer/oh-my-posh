@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 type java struct {
-	language *language
+	language
 }
 
 func (j *java) string() string {
@@ -17,7 +17,7 @@ func (j *java) init(props properties, env environmentInfo) {
 		args:       []string{"-Xinternalversion"},
 		regex:      javaRegex,
 	}
-	j.language = &language{
+	j.language = language{
 		env:   env,
 		props: props,
 		extensions: []string{

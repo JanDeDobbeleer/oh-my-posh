@@ -1,7 +1,7 @@
 package main
 
 type ruby struct {
-	language *language
+	language
 }
 
 func (r *ruby) string() string {
@@ -14,7 +14,7 @@ func (r *ruby) string() string {
 }
 
 func (r *ruby) init(props properties, env environmentInfo) {
-	r.language = &language{
+	r.language = language{
 		env:        env,
 		props:      props,
 		extensions: []string{"*.rb", "Rakefile", "Gemfile"},

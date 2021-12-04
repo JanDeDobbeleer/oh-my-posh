@@ -597,6 +597,64 @@ func TestPropertySessionSegment(t *testing.T) {
 	}
 }
 
+// Language
+
+func TestLanguageVersionMismatch(t *testing.T) {
+	cases := []struct {
+		Case            string
+		Enabled         bool
+		Mismatch        bool
+		ExpectedColor   string
+		ColorBackground bool
+	}{
+		{Case: "Mismatch - Foreground color", Enabled: true, Mismatch: true, ExpectedColor: "#566777"},
+		{Case: "Mismatch - Background color", Enabled: true, Mismatch: true, ExpectedColor: "#566777", ColorBackground: true},
+		{Case: "Disabled", Enabled: false},
+		{Case: "No mismatch", Enabled: true, Mismatch: false},
+	}
+	for _, tc := range cases {
+		props := map[Property]interface{}{
+			EnableVersionMismatch: tc.Enabled,
+			VersionMismatchColor:  tc.ExpectedColor,
+			ColorBackground:       tc.ColorBackground,
+		}
+		var matchesVersionFile func() bool
+		switch tc.Mismatch {
+		case true:
+			matchesVersionFile = func() bool {
+				return false
+			}
+		default:
+			matchesVersionFile = func() bool {
+				return true
+			}
+		}
+		args := &languageArgs{
+			commands: []*cmd{
+				{
+					executable: "unicorn",
+					args:       []string{"--version"},
+					regex:      "(?P<version>.*)",
+				},
+			},
+			extensions:         []string{uni, corn},
+			enabledExtensions:  []string{uni, corn},
+			enabledCommands:    []string{"unicorn"},
+			version:            universion,
+			properties:         props,
+			matchesVersionFile: matchesVersionFile,
+		}
+		lang := bootStrapLanguageTest(args)
+		assert.True(t, lang.enabled(), tc.Case)
+		assert.Equal(t, universion, lang.string(), tc.Case)
+		if tc.ColorBackground {
+			assert.Equal(t, tc.ExpectedColor, lang.props[BackgroundOverride], tc.Case)
+			return
+		}
+		assert.Equal(t, tc.ExpectedColor, lang.props.getColor(ForegroundOverride, ""), tc.Case)
+	}
+}
+
 // Python
 
 func TestPythonVirtualEnv(t *testing.T) {
@@ -608,7 +666,7 @@ func TestPythonVirtualEnv(t *testing.T) {
 		CondaEnvName        string
 		CondaDefaultEnvName string
 		PyEnvName           string
-		DisplayVersion      bool
+		FetchVersion        bool
 		DisplayDefault      bool
 	}{
 		{Case: "VENV", Expected: "VENV", VirtualEnvName: "VENV"},
@@ -617,7 +675,7 @@ func TestPythonVirtualEnv(t *testing.T) {
 		{Case: "Display Base", Expected: "base", CondaDefaultEnvName: "base", DisplayDefault: true},
 		{Case: "Hide base", Expected: "", CondaDefaultEnvName: "base", ExpectedDisabled: true},
 		{Case: "PYENV", Expected: "PYENV", PyEnvName: "PYENV"},
-		{Case: "PYENV Version", Expected: "PYENV 3.8.4", PyEnvName: "PYENV", DisplayVersion: true},
+		{Case: "PYENV Version", Expected: "PYENV 3.8.4", PyEnvName: "PYENV", FetchVersion: true},
 	}
 
 	for _, tc := range cases {
@@ -633,7 +691,7 @@ func TestPythonVirtualEnv(t *testing.T) {
 		env.On("getcwd", nil).Return("/usr/home/project")
 		env.On("homeDir", nil).Return("/usr/home")
 		var props properties = map[Property]interface{}{
-			DisplayVersion:    tc.DisplayVersion,
+			FetchVersion:      tc.FetchVersion,
 			DisplayVirtualEnv: true,
 			DisplayDefault:    tc.DisplayDefault,
 		}

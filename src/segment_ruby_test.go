@@ -21,19 +21,19 @@ func TestRuby(t *testing.T) {
 		HasRubyFiles    bool
 		HasRakeFile     bool
 		HasGemFile      bool
-		DisplayVersion  bool
+		FetchVersion    bool
 	}{
 		{Case: "No files", ExpectedString: "", ExpectedEnabled: false},
-		{Case: "Ruby files", ExpectedString: "", ExpectedEnabled: true, DisplayVersion: false, HasRubyFiles: true},
-		{Case: "Rakefile", ExpectedString: "", ExpectedEnabled: true, DisplayVersion: false, HasRakeFile: true},
-		{Case: "Gemfile", ExpectedString: "", ExpectedEnabled: true, DisplayVersion: false, HasGemFile: true},
-		{Case: "Gemfile with version", ExpectedString: "", ExpectedEnabled: true, DisplayVersion: true, HasGemFile: true},
-		{Case: "No files with version", ExpectedString: "", ExpectedEnabled: false, DisplayVersion: true},
+		{Case: "Ruby files", ExpectedString: "", ExpectedEnabled: true, FetchVersion: false, HasRubyFiles: true},
+		{Case: "Rakefile", ExpectedString: "", ExpectedEnabled: true, FetchVersion: false, HasRakeFile: true},
+		{Case: "Gemfile", ExpectedString: "", ExpectedEnabled: true, FetchVersion: false, HasGemFile: true},
+		{Case: "Gemfile with version", ExpectedString: "", ExpectedEnabled: true, FetchVersion: true, HasGemFile: true},
+		{Case: "No files with version", ExpectedString: "", ExpectedEnabled: false, FetchVersion: true},
 		{
 			Case:            "Version with chruby",
 			ExpectedString:  "ruby-2.6.3",
 			ExpectedEnabled: true,
-			DisplayVersion:  true,
+			FetchVersion:    true,
 			HasRubyFiles:    true,
 			HasChruby:       true,
 			Version: ` * ruby-2.6.3
@@ -45,7 +45,7 @@ func TestRuby(t *testing.T) {
 			Case:            "Version with chruby line 2",
 			ExpectedString:  "ruby-1.9.3-p392",
 			ExpectedEnabled: true,
-			DisplayVersion:  true,
+			FetchVersion:    true,
 			HasRubyFiles:    true,
 			HasChruby:       true,
 			Version: ` ruby-2.6.3
@@ -57,7 +57,7 @@ func TestRuby(t *testing.T) {
 			Case:            "Version with asdf",
 			ExpectedString:  "2.6.3",
 			ExpectedEnabled: true,
-			DisplayVersion:  true,
+			FetchVersion:    true,
 			HasRubyFiles:    true,
 			HasAsdf:         true,
 			Version:         "ruby            2.6.3           /Users/jan/Projects/oh-my-posh/.tool-versions",
@@ -66,7 +66,7 @@ func TestRuby(t *testing.T) {
 			Case:            "Version with asdf not set",
 			ExpectedString:  "",
 			ExpectedEnabled: true,
-			DisplayVersion:  true,
+			FetchVersion:    true,
 			HasRubyFiles:    true,
 			HasAsdf:         true,
 			Version:         "ruby            ______          No version set. Run \"asdf <global|shell|local> ruby <version>\"",
@@ -75,7 +75,7 @@ func TestRuby(t *testing.T) {
 			Case:            "Version with ruby",
 			ExpectedString:  "2.6.3",
 			ExpectedEnabled: true,
-			DisplayVersion:  true,
+			FetchVersion:    true,
 			HasRubyFiles:    true,
 			HasRuby:         true,
 			Version:         "ruby  2.6.3 (2019-04-16 revision 67580) [universal.x86_64-darwin20]",
@@ -99,7 +99,7 @@ func TestRuby(t *testing.T) {
 		env.On("getcwd", nil).Return("/usr/home/project")
 		env.On("homeDir", nil).Return("/usr/home")
 		var props properties = map[Property]interface{}{
-			DisplayVersion: tc.DisplayVersion,
+			FetchVersion: tc.FetchVersion,
 		}
 		ruby := &ruby{}
 		ruby.init(props, env)

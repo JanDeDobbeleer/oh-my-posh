@@ -312,10 +312,14 @@ func (s *session) getFormattedText() string {
 const (
 	// DisplayVersion show the version number or not
 	DisplayVersion Property = "display_version"
+	// VersionMismatchColor displays empty string by default
+	VersionMismatchColor Property = "version_mismatch_color"
+	// EnableVersionMismatch displays empty string by default
+	EnableVersionMismatch Property = "enable_version_mismatch"
 )
 
 func (l *language) string() string {
-	if !l.props.getBool(DisplayVersion, true) {
+	if !l.props.getOneOfBool(FetchVersion, DisplayVersion, true) {
 		return ""
 	}
 
@@ -367,6 +371,14 @@ func (l *language) string() string {
 	return text
 }
 
+func (l *language) colorMismatch() {
+	if l.props.getBool(ColorBackground, false) {
+		l.props[BackgroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(BackgroundOverride, ""))
+		return
+	}
+	l.props[ForegroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(ForegroundOverride, ""))
+}
+
 // Python
 
 const (
@@ -384,3 +396,10 @@ func (p *python) legacyString() string {
 	}
 	return fmt.Sprintf("%s %s", p.Venv, version)
 }
+
+// Node
+
+const (
+	// DisplayPackageManager shows if NPM or Yarn is used
+	DisplayPackageManager Property = "display_package_manager"
+)

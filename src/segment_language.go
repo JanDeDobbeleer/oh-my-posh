@@ -58,7 +58,8 @@ type language struct {
 	displayMode        string
 
 	version
-	Error string
+	Error    string
+	Mismatch bool
 }
 
 const (
@@ -74,10 +75,6 @@ const (
 	DisplayModeContext string = "context"
 	// MissingCommandText sets the text to display when the command is not present in the system
 	MissingCommandText Property = "missing_command_text"
-	// VersionMismatchColor displays empty string by default
-	VersionMismatchColor Property = "version_mismatch_color"
-	// EnableVersionMismatch displays empty string by default
-	EnableVersionMismatch Property = "enable_version_mismatch"
 	// HomeEnabled displays the segment in the HOME folder or not
 	HomeEnabled Property = "home_enabled"
 	// LanguageExtensions the list of extensions to validate
@@ -205,14 +202,14 @@ func (l *language) inLanguageContext() bool {
 }
 
 func (l *language) setVersionFileMismatch() {
-	if l.matchesVersionFile == nil || l.matchesVersionFile() {
+	if l.matchesVersionFile == nil {
 		return
 	}
-	if l.props.getBool(ColorBackground, false) {
-		l.props[BackgroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(BackgroundOverride, ""))
+	l.Mismatch = !l.matchesVersionFile()
+	if !l.Mismatch {
 		return
 	}
-	l.props[ForegroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(ForegroundOverride, ""))
+	l.colorMismatch()
 }
 
 func (l *language) buildVersionURL(text string) string {

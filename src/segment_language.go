@@ -58,6 +58,7 @@ type language struct {
 	displayMode        string
 
 	version
+	Error string
 }
 
 const (
@@ -89,6 +90,7 @@ func (l *language) string() string {
 	}
 
 	err := l.setVersion()
+	l.Error = err.Error()
 	displayError := l.props.getBool(DisplayError, true)
 	if err != nil && displayError {
 		return err.Error()

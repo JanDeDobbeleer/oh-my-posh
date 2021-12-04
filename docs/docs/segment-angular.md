@@ -35,11 +35,12 @@ properties below. Defaults to `{{ .Full }}`
 ## Template Properties
 
 - `.Full`: `string` - the full version
-- `.Major`: `string` - is the major version
-- `.Minor`: `string` - is the minor version
-- `.Patch`: `string` - is the patch version
-- `.Prerelease`: `string` - is the prerelease version
-- `.BuildMetadata`: `string` - is the build metadata
+- `.Major`: `string` - major number
+- `.Minor`: `string` - minor number
+- `.Patch`: `string` - patch number
+- `.Prerelease`: `string` - prerelease info text
+- `.BuildMetadata`: `string` - build metadata
+- `.Error`: `string` - when fetching the version string errors
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

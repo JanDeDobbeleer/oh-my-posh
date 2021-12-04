@@ -34,21 +34,21 @@ func (wr *winreg) enabled() bool {
 	registryKey := wr.props.getString(RegistryKey, "")
 	fallback := wr.props.getString(Fallback, "")
 
-	var err error
 	var regValue *windowsRegistryValue
-	regValue, err = wr.env.getWindowsRegistryKeyValue(registryPath, registryKey)
+	regValue, _ = wr.env.getWindowsRegistryKeyValue(registryPath, registryKey)
 
 	if (regValue != nil) {
-	switch (regValue.valueType) {
-		case regString:
-			wr.Value = regValue.str
-		case regDword:
-			wr.Value = fmt.Sprintf("%d", regValue.dword)
-	}
-	}
-
-	if err == nil {
-		return true
+		switch (regValue.valueType) {
+			case regString:
+				wr.Value = regValue.str
+				return true
+			case regDword:
+				wr.Value = fmt.Sprintf("0x%08X", regValue.dword)
+				return true
+			case regQword:
+				wr.Value = fmt.Sprintf("0x%016X", regValue.qword)
+				return true
+		}
 	}
 
 	if len(fallback) > 0 {

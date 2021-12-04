@@ -66,7 +66,7 @@ const (
 
 type windowsRegistryValue struct{
 	valueType windowsRegistryValueType
-	qword int64
+	qword uint64
 	dword uint32
 	str string
 }

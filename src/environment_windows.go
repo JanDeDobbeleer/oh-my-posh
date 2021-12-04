@@ -193,6 +193,12 @@ func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (*win
 
 		env.log(Debug, "getWindowsRegistryKeyValue", fmt.Sprintf("success, DWORD, 0x%08X", *uint32p))
 		return &windowsRegistryValue{valueType:regDword, dword:*uint32p}, nil
+	case windows.REG_QWORD:
+		var uint64p *uint64
+		uint64p = (*uint64)(unsafe.Pointer(&keyBuf[0])) // more casting goodness
+
+		env.log(Debug, "getWindowsRegistryKeyValue", fmt.Sprintf("success, QWORD, 0x%016X", *uint64p))
+		return &windowsRegistryValue{valueType:regQword, qword:*uint64p}, nil
 	default:
 		errorLogMsg := fmt.Sprintf("Error, no formatter for REG_? type:%d, data size:%d bytes", keyBufType, keyBufSize)
 		return nil, errors.New(errorLogMsg)

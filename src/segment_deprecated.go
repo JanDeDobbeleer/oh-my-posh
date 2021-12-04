@@ -254,6 +254,8 @@ const (
 	DisplayUser Property = "display_user"
 	// DefaultUserName holds the default user of the platform
 	DefaultUserName Property = "default_user_name"
+	// SSHIcon is the icon used for SSH sessions
+	SSHIcon Property = "ssh_icon"
 
 	defaultUserEnvVar = "POSH_SESSION_DEFAULT_USER"
 )

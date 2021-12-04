@@ -4,7 +4,8 @@ import "fmt"
 
 type python struct {
 	language
-	venvName string
+
+	Venv string
 }
 
 const (
@@ -13,14 +14,14 @@ const (
 )
 
 func (p *python) string() string {
-	if p.venvName == "" {
+	if p.Venv == "" {
 		return p.language.string()
 	}
 	version := p.language.string()
 	if version == "" {
-		return p.venvName
+		return p.Venv
 	}
-	return fmt.Sprintf("%s %s", p.venvName, version)
+	return fmt.Sprintf("%s %s", p.Venv, version)
 }
 
 func (p *python) init(props properties, env environmentInfo) {
@@ -67,14 +68,14 @@ func (p *python) loadContext() {
 		venv = p.language.env.getenv(venvVar)
 		name := base(venv, p.language.env)
 		if p.canUseVenvName(name) {
-			p.venvName = name
+			p.Venv = name
 			break
 		}
 	}
 }
 
 func (p *python) inContext() bool {
-	return p.venvName != ""
+	return p.Venv != ""
 }
 
 func (p *python) canUseVenvName(name string) bool {

@@ -288,7 +288,6 @@
           "foreground": "#ffffff",
           "properties": {
             "prefix": " \uf5ef ",
-            "postfix": " ",
             "time_format": "_2,15:04"
         }
         }

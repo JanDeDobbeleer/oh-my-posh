@@ -84,8 +84,7 @@
           "foreground": "#ffffff",
           "background": "#83769c",
           "properties": {
-            "always_enabled": true,
-            "prefix": " "
+            "always_enabled": true
           }
         },
         {
@@ -96,7 +95,6 @@
           "foreground": "#FFD700",
           "background": "#86BBD8",
           "properties": {
-            "prefix": " ",
             "postfix": "",
             "root_icon": "⚡"
           }
@@ -118,11 +116,7 @@
           "trailing_diamond": "\uE0B4",
           "invert_powerline": true,
           "foreground": "#ffffff",
-          "background": "#33658A",
-          "properties": {
-            "prefix": " ",
-            "postfix": " "
-          }
+          "background": "#33658A"
         }
       ]
     },

@@ -46,7 +46,6 @@
           "foreground": "#68a063",
           "properties": {
             "display_version": true,
-            "prefix": " ",
             "postfix": "",
             "display_mode": "files",
             "display_package_manager": true,
@@ -61,7 +60,6 @@
           "properties": {
             "display_version": true,
             "display_mode": "files",
-            "prefix": " ",
             "postfix": ""
           }
         },
@@ -71,7 +69,6 @@
           "foreground": "#DE3F24",
           "properties": {
             "display_version": true,
-            "prefix": " ",
             "postfix": "",
             "display_mode": "files"
           }
@@ -81,11 +78,10 @@
           "style": "plain",
           "foreground": "#FED142",
           "properties": {
-            "display_virtual_env": false,
-            "display_version": true,
-            "prefix": " ",
+            "fetch_virtual_env": false,
             "postfix": "",
-            "display_mode": "context"
+            "display_mode": "context",
+            "template": "{{ .Full }}"
           }
         },
         {

@@ -36,8 +36,7 @@
             "folder_icon": "\uF115",
             "folder_separator_icon": " \uE0B1 ",
             "style": "full",
-            "prefix": "<transparent>\uE0B0</> ",
-            "postfix": " "
+            "prefix": "<transparent>\uE0B0</> "
           }
         },
         {
@@ -47,7 +46,6 @@
           "background": "#007ACC",
           "properties": {
             "prefix": "<#ffffff>\uE0B1</> ",
-            "postfix": " ",
             "template": "{{ .HEAD }}"
           }
         },

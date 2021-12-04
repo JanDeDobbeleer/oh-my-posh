@@ -1240,19 +1240,10 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
-                  },
-                  "display_default": {
+                  "fetch_virtual_env": {
                     "type": "boolean",
-                    "title": "Display Default Env",
-                    "description": "Show the name of the virtualenv when it's default (`system`, `base`)",
-                    "default": true
-                  },
-                  "display_virtual_env": {
-                    "type": "boolean",
-                    "title": "Display Virtual Env",
-                    "description": "Show the name of the virtualenv or not",
+                    "title": "Fetch Virtual Env",
+                    "description": "Fetch the name of the virtualenv or not",
                     "default": true
                   },
                   "display_mode": {
@@ -1263,6 +1254,9 @@
                   },
                   "enable_hyperlink": {
                     "$ref": "#/definitions/enable_hyperlink"
+                  },
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }

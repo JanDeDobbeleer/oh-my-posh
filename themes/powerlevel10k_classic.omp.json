@@ -26,8 +26,7 @@
           "foreground": "#26C6DA",
           "background": "#546E7A",
           "properties": {
-            "style": "full",
-            "postfix": " "
+            "style": "full"
           }
         },
         {

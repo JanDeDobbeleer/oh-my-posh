@@ -17,7 +17,6 @@
           "foreground": "#fff",
           "background": "#003543",
           "properties": {
-            "prefix": " ",
             "windows": "\uE62A ",
             "postfix": ""
           }

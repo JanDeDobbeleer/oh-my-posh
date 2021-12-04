@@ -14,7 +14,6 @@
           "foreground": "#fff",
           "properties": {
             "prefix": "",
-            "postfix": " ",
             "template": "{{ .UserName }}"
           }
         },
@@ -26,9 +25,7 @@
           "background": "green",
           "foreground": "#fff",
           "properties": {
-            "style": "folder",
-            "prefix": " ",
-            "postfix": " "
+            "style": "folder"
           }
         },
         {
@@ -53,9 +50,7 @@
           "foreground": "#fff",
           "background": "lightMagenta",
           "properties": {
-            "time_format": "15:04",
-            "prefix": " ",
-            "postfix": " "
+            "time_format": "15:04"
           }
         }
       ]

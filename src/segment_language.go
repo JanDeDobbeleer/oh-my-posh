@@ -84,25 +84,17 @@ const (
 	LanguageExtensions Property = "extensions"
 )
 
-func (l *language) string() string {
-	if !l.props.getBool(DisplayVersion, true) {
-		return ""
+func (l *language) renderTemplate(segmentTemplate string, context SegmentWriter) string {
+	if l.props.getBool(FetchVersion, true) {
+		err := l.setVersion()
+		if err != nil {
+			l.Error = err.Error()
+		}
 	}
 
-	err := l.setVersion()
-	l.Error = err.Error()
-	displayError := l.props.getBool(DisplayError, true)
-	if err != nil && displayError {
-		return err.Error()
-	}
-	if err != nil {
-		return ""
-	}
-
-	segmentTemplate := l.props.getString(SegmentTemplate, "{{ .Full }}")
 	template := &textTemplate{
 		Template: segmentTemplate,
-		Context:  l.version,
+		Context:  context,
 		Env:      l.env,
 	}
 	text, err := template.render()
@@ -110,27 +102,22 @@ func (l *language) string() string {
 		return err.Error()
 	}
 
-	if l.props.getBool(EnableHyperlink, false) {
-		versionURLTemplate := l.props.getString(VersionURLTemplate, "")
-		// backward compatibility
-		if versionURLTemplate == "" {
-			text = l.buildVersionURL(text)
-		} else {
-			template := &textTemplate{
-				Template: versionURLTemplate,
-				Context:  l.version,
-				Env:      l.env,
-			}
-			url, err := template.render()
-			if err != nil {
-				return err.Error()
-			}
-			text = url
-		}
+	if !l.props.getBool(EnableHyperlink, false) {
+		return text
 	}
-
-	if l.props.getBool(EnableVersionMismatch, false) {
-		l.setVersionFileMismatch()
+	versionURLTemplate := l.props.getString(VersionURLTemplate, "")
+	// backward compatibility
+	if versionURLTemplate == "" {
+		return l.buildVersionURL(text)
+	}
+	template = &textTemplate{
+		Template: versionURLTemplate,
+		Context:  l.version,
+		Env:      l.env,
+	}
+	text, err = template.render()
+	if err != nil {
+		return err.Error()
 	}
 	return text
 }

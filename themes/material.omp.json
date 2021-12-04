@@ -41,7 +41,6 @@
           "foreground": "#DCB977",
           "properties": {
             "template": "\uF119",
-            "prefix": " ",
             "postfix": ""
           }
         },

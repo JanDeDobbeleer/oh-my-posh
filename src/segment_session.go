@@ -12,13 +12,9 @@ type session struct {
 	SSHSession   bool
 	Root         bool
 
+	// Deprecated
 	DefaultUserName string
 }
-
-const (
-	// SSHIcon is the icon used for SSH sessions
-	SSHIcon Property = "ssh_icon"
-)
 
 func (s *session) enabled() bool {
 	s.SSHSession = s.activeSSHSession()

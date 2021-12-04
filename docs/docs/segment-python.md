@@ -27,7 +27,7 @@ Supports conda, virtualenv and pyenv.
 ## Properties
 
 - home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
-- display_virtual_env: `boolean` - show the name of the virtualenv or not - defaults to `true`
+- fetch_virtual_env: `boolean` - fetch the name of the virtualenv or not - defaults to `true`
 - display_default: `boolean` - show the name of the virtualenv when it's default (`system`, `base`)
 or not - defaults to `true`
 - display_version: `boolean` - display the python version - defaults to `true`
@@ -44,12 +44,14 @@ properties below. Defaults to `{{ .Full }}`
 
 ## Template Properties
 
+- `.Venv`: `string` - the virtual environment name (if present)
 - `.Full`: `string` - the full version
-- `.Major`: `string` - is the major version
-- `.Minor`: `string` - is the minor version
-- `.Patch`: `string` - is the patch version
-- `.Prerelease`: `string` - is the prerelease version
-- `.BuildMetadata`: `string` - is the build metadata
+- `.Major`: `string` - major number
+- `.Minor`: `string` - minor number
+- `.Patch`: `string` - patch number
+- `.Prerelease`: `string` - prerelease info text
+- `.BuildMetadata`: `string` - build metadata
+- `.Error`: `string` - when fetching the version string errors
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

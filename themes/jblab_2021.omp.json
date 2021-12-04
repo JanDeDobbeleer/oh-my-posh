@@ -16,7 +16,6 @@
           "leading_diamond": "\uE0B6",
           "trailing_diamond": "\uE0B0",
           "properties": {
-            "prefix": " ",
             "wsl": "",
             "wsl_separator": ""
           },
@@ -59,7 +58,6 @@
             "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true,
-            "prefix": " ",
             "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
           },
           "style": "powerline",

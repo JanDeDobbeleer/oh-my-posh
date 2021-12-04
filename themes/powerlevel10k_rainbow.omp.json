@@ -95,9 +95,9 @@
           "background": "#FFDE57",
           "properties": {
             "postfix": " \uE235 ",
-            "display_version": true,
             "display_mode": "files",
-            "display_virtual_env": false
+            "fetch_virtual_env": false,
+            "template": "{{ .Full }}"
           }
         },
         {
@@ -172,7 +172,6 @@
           "background": "#000000",
           "background_templates": ["{{ if gt .Code 0 }}#cc2222{{ end }}"],
           "properties": {
-            "prefix": " ",
             "always_enabled": true,
             "template": "{{ if gt .Code 0 }}{{ .Text }}{{ else }}✔{{ end }}"
           }

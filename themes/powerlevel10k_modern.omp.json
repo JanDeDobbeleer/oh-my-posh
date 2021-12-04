@@ -30,8 +30,7 @@
           "background": "#0000ff",
           "powerline_symbol": "\uE0B4",
           "properties": {
-            "style": "full",
-            "postfix": " "
+            "style": "full"
           }
         },
         {
@@ -41,7 +40,6 @@
           "background": "#D4E157",
           "powerline_symbol": "\uE0B4",
           "properties": {
-            "prefix": " ",
             "template": "{{ .HEAD }}"
           }
         }

@@ -22,7 +22,7 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*MockedEnvironment, pro
 	env.On("getcwd", nil).Return("/usr/home/project")
 	env.On("homeDir", nil).Return("/usr/home")
 	var props properties = map[Property]interface{}{
-		DisplayVersion: true,
+		FetchVersion: true,
 	}
 	return env, props
 }

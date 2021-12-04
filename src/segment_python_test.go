@@ -6,25 +6,38 @@ import (
 	"github.com/alecthomas/assert"
 )
 
-func TestPythonVirtualEnv(t *testing.T) {
+func TestPythonTemplate(t *testing.T) {
 	cases := []struct {
-		Case                string
-		Expected            string
-		ExpectedDisabled    bool
-		VirtualEnvName      string
-		CondaEnvName        string
-		CondaDefaultEnvName string
-		PyEnvName           string
-		DisplayVersion      bool
-		DisplayDefault      bool
+		Case             string
+		Expected         string
+		ExpectedDisabled bool
+		Template         string
+		VirtualEnvName   string
+		FetchVersion     bool
 	}{
-		{Case: "VENV", Expected: "VENV", VirtualEnvName: "VENV"},
-		{Case: "CONDA", Expected: "CONDA", CondaEnvName: "CONDA"},
-		{Case: "CONDA default", Expected: "CONDA", CondaDefaultEnvName: "CONDA"},
-		{Case: "Display Base", Expected: "base", CondaDefaultEnvName: "base", DisplayDefault: true},
-		{Case: "Hide base", Expected: "", CondaDefaultEnvName: "base", ExpectedDisabled: true},
-		{Case: "PYENV", Expected: "PYENV", PyEnvName: "PYENV"},
-		{Case: "PYENV Version", Expected: "PYENV 3.8.4", PyEnvName: "PYENV", DisplayVersion: true},
+		{Case: "No virtual env present", FetchVersion: true, Expected: "3.8.4", Template: "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}"},
+		{Case: "Virtual env present", FetchVersion: true, Expected: "VENV 3.8.4", VirtualEnvName: "VENV", Template: "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}"},
+		{
+			Case:           "Virtual env major and minor dot",
+			FetchVersion:   true,
+			Expected:       "VENV 3.8",
+			VirtualEnvName: "VENV",
+			Template:       "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+		},
+		{
+			Case:           "Virtual env hide on default",
+			FetchVersion:   true,
+			Expected:       "3.8",
+			VirtualEnvName: "default",
+			Template:       "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+		},
+		{
+			Case:           "Virtual env show non default",
+			FetchVersion:   true,
+			Expected:       "billy 3.8",
+			VirtualEnvName: "billy",
+			Template:       "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+		},
 	}
 
 	for _, tc := range cases {
@@ -33,16 +46,16 @@ func TestPythonVirtualEnv(t *testing.T) {
 		env.On("runCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
 		env.On("hasFiles", "*.py").Return(true)
 		env.On("getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
-		env.On("getenv", "CONDA_ENV_PATH").Return(tc.CondaEnvName)
-		env.On("getenv", "CONDA_DEFAULT_ENV").Return(tc.CondaDefaultEnvName)
-		env.On("getenv", "PYENV_VERSION").Return(tc.PyEnvName)
+		env.On("getenv", "CONDA_ENV_PATH").Return(tc.VirtualEnvName)
+		env.On("getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
+		env.On("getenv", "PYENV_VERSION").Return(tc.VirtualEnvName)
 		env.On("getPathSeperator", nil).Return("")
 		env.On("getcwd", nil).Return("/usr/home/project")
 		env.On("homeDir", nil).Return("/usr/home")
 		var props properties = map[Property]interface{}{
-			DisplayVersion:    tc.DisplayVersion,
-			DisplayVirtualEnv: true,
-			DisplayDefault:    tc.DisplayDefault,
+			FetchVersion:    tc.FetchVersion,
+			SegmentTemplate: tc.Template,
+			DisplayMode:     DisplayModeAlways,
 		}
 		python := &python{}
 		python.init(props, env)

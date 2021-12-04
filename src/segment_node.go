@@ -3,9 +3,9 @@ package main
 import "fmt"
 
 type node struct {
-	packageManagerIcon string
-
 	language
+
+	PackageManagerIcon string
 }
 
 const (
@@ -13,13 +13,17 @@ const (
 	YarnIcon Property = "yarn_icon"
 	// NPMIcon illustrates NPM is used
 	NPMIcon Property = "npm_icon"
-	// DisplayPackageManager shows if NPM or Yarn is used
-	DisplayPackageManager Property = "display_package_manager"
+	// FetchPackageManager shows if NPM or Yarn is used
+	FetchPackageManager Property = "fetch_package_manager"
 )
 
 func (n *node) string() string {
-	version := n.language.string()
-	return fmt.Sprintf("%s%s", version, n.packageManagerIcon)
+	segmentTemplate := n.language.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) == 0 {
+		version := n.language.string()
+		return fmt.Sprintf("%s%s", version, n.PackageManagerIcon)
+	}
+	return n.language.renderTemplate(segmentTemplate, n)
 }
 
 func (n *node) init(props properties, env environmentInfo) {
@@ -45,15 +49,15 @@ func (n *node) enabled() bool {
 }
 
 func (n *node) loadContext() {
-	if !n.language.props.getBool(DisplayPackageManager, false) {
+	if !n.language.props.getOneOfBool(FetchPackageManager, DisplayPackageManager, false) {
 		return
 	}
 	if n.language.env.hasFiles("yarn.lock") {
-		n.packageManagerIcon = n.language.props.getString(YarnIcon, " \uF61A")
+		n.PackageManagerIcon = n.language.props.getString(YarnIcon, " \uF61A")
 		return
 	}
 	if n.language.env.hasFiles("package-lock.json") || n.language.env.hasFiles("package.json") {
-		n.packageManagerIcon = n.language.props.getString(NPMIcon, " \uE71E")
+		n.PackageManagerIcon = n.language.props.getString(NPMIcon, " \uE71E")
 	}
 }
 

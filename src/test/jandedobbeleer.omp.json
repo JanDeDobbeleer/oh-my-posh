@@ -91,9 +91,9 @@
           "background": "#FFDE57",
           "properties": {
             "prefix": " \uE235 ",
-            "display_version": true,
             "display_mode": "files",
-            "display_virtual_env": false
+            "fetch_virtual_env": false,
+            "template": "{{ .Full }}"
           }
         },
         {

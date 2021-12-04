@@ -40,7 +40,6 @@
           "foreground": "#BF616A",
           "properties": {
             "template": "\u2717",
-            "prefix": " ",
             "postfix": ""
           }
         }

@@ -39,8 +39,7 @@
           "foreground": "#193549",
           "background": "#4caf50",
           "properties": {
-            "time_format": "2006-01-02 15:04:05",
-            "prefix": " "
+            "time_format": "2006-01-02 15:04:05"
           }
         },
 

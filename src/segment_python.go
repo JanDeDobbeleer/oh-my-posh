@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type python struct {
 	language
 
@@ -9,19 +7,16 @@ type python struct {
 }
 
 const (
-	// DisplayVirtualEnv shows or hides the virtual env
-	DisplayVirtualEnv Property = "display_virtual_env"
+	// FetchVirtualEnv fetches the virtual env
+	FetchVirtualEnv Property = "fetch_virtual_env"
 )
 
 func (p *python) string() string {
-	if p.Venv == "" {
-		return p.language.string()
+	segmentTemplate := p.language.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) == 0 {
+		return p.legacyString()
 	}
-	version := p.language.string()
-	if version == "" {
-		return p.Venv
-	}
-	return fmt.Sprintf("%s %s", p.Venv, version)
+	return p.language.renderTemplate(segmentTemplate, p)
 }
 
 func (p *python) init(props properties, env environmentInfo) {
@@ -54,7 +49,7 @@ func (p *python) enabled() bool {
 }
 
 func (p *python) loadContext() {
-	if !p.language.props.getBool(DisplayVirtualEnv, true) {
+	if !p.language.props.getOneOfBool(DisplayVirtualEnv, FetchVirtualEnv, true) {
 		return
 	}
 	venvVars := []string{

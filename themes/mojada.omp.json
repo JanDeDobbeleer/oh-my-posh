@@ -13,7 +13,6 @@
           "foreground": "#0077c2",
           "background": "#fbfbfb",
           "properties": {
-            "postfix": " ",
             "macos": "\uEF179",
             "windows": "\uF17A",
             "linux": "\uF17C",
@@ -87,7 +86,6 @@
           "style": "plain",
           "foreground": "#FFD54F",
           "properties": {
-            "prefix": " ",
             "text": "{{if .Root}}#{{else}}${{end}}",
             "postfix": ""
           }

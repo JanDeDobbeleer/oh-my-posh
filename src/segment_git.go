@@ -184,20 +184,20 @@ func (g *git) shouldIgnoreRootRepository(rootDir string) bool {
 
 func (g *git) string() string {
 	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
-	displayStatus := g.props.getOneOfBool(FetchStatus, DisplayStatus)
+	displayStatus := g.props.getOneOfBool(FetchStatus, DisplayStatus, false)
 	if !displayStatus {
 		g.HEAD = g.getPrettyHEADName()
 	}
 	if displayStatus || statusColorsEnabled {
 		g.setGitStatus()
 	}
-	if g.Upstream != "" && g.props.getOneOfBool(FetchUpstreamIcon, DisplayUpstreamIcon) {
+	if g.Upstream != "" && g.props.getOneOfBool(FetchUpstreamIcon, DisplayUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
-	if g.props.getOneOfBool(FetchStashCount, DisplayStashCount) {
+	if g.props.getOneOfBool(FetchStashCount, DisplayStashCount, false) {
 		g.StashCount = g.getStashContext()
 	}
-	if g.props.getOneOfBool(FetchWorktreeCount, DisplayWorktreeCount) {
+	if g.props.getOneOfBool(FetchWorktreeCount, DisplayWorktreeCount, false) {
 		g.WorktreeCount = g.getWorktreeContext()
 	}
 	// use template if available

@@ -23,8 +23,8 @@ const (
 	ExcludeFolders Property = "exclude_folders"
 	// IgnoreFolders duplicate of ExcludeFolders
 	IgnoreFolders Property = "ignore_folders"
-	// DisplayVersion show the version number or not
-	DisplayVersion Property = "display_version"
+	// FetchVersion fetch the version number or not
+	FetchVersion Property = "fetch_version"
 	// AlwaysEnabled decides whether or not to always display the info
 	AlwaysEnabled Property = "always_enabled"
 	// SegmentTemplate is the template to use to render the information

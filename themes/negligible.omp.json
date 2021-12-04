@@ -69,9 +69,9 @@
           "foreground": "#4584b6",
           "properties": {
             "prefix": "| \uE235 ",
-            "display_version": false,
             "display_mode": "context",
-            "display_virtual_env": true
+            "fetch_virtual_env": true,
+            "template": "{{ .Venv }}"
           }
         },
         {

@@ -18,9 +18,7 @@
           "foreground": "#EF7D00",
           "properties": {
             "wsl": "",
-            "wsl_separator": "",
-            "prefix": " ",
-            "postfix": " "
+            "wsl_separator": ""
           }
         },
         {

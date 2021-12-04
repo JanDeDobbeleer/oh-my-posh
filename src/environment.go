@@ -64,11 +64,11 @@ const (
 	regString
 )
 
-type windowsRegistryValue struct{
+type windowsRegistryValue struct {
 	valueType windowsRegistryValueType
-	qword uint64
-	dword uint32
-	str string
+	qword     uint64
+	dword     uint32
+	str       string
 }
 
 type environmentInfo interface {

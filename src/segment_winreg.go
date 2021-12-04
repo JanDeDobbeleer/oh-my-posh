@@ -37,17 +37,17 @@ func (wr *winreg) enabled() bool {
 	var regValue *windowsRegistryValue
 	regValue, _ = wr.env.getWindowsRegistryKeyValue(registryPath, registryKey)
 
-	if (regValue != nil) {
-		switch (regValue.valueType) {
-			case regString:
-				wr.Value = regValue.str
-				return true
-			case regDword:
-				wr.Value = fmt.Sprintf("0x%08X", regValue.dword)
-				return true
-			case regQword:
-				wr.Value = fmt.Sprintf("0x%016X", regValue.qword)
-				return true
+	if regValue != nil {
+		switch regValue.valueType {
+		case regString:
+			wr.Value = regValue.str
+			return true
+		case regDword:
+			wr.Value = fmt.Sprintf("0x%08X", regValue.dword)
+			return true
+		case regQword:
+			wr.Value = fmt.Sprintf("0x%016X", regValue.qword)
+			return true
 		}
 	}
 

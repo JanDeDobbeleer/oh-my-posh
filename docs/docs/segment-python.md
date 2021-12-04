@@ -44,6 +44,7 @@ properties below. Defaults to `{{ .Full }}`
 
 ## Template Properties
 
+- `.Venv`: `string` - the virtual environment name (if present)
 - `.Full`: `string` - the full version
 - `.Major`: `string` - is the major version
 - `.Minor`: `string` - is the minor version

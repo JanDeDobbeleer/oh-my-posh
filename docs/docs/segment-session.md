@@ -13,7 +13,7 @@ Show the current user and host name.
 ```json
 {
   "type": "session",
-  "style": "diamond",
+  "style": "diamond", 
   "foreground": "#ffffff",
   "background": "#c386f1",
   "leading_diamond": "\uE0B6",

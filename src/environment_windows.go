@@ -111,7 +111,7 @@ func (env *environment) getCachePath() string {
 //   true and the retrieved value formatted into a string if successful.
 //   false and the string will be the error
 //
-func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (string, error) {
+func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (*windowsRegistryValue, error) {
 	env.trace(time.Now(), "getWindowsRegistryKeyValue", regPath, regKey)
 
 	// Extract root HK value and turn it into a windows.Handle to open the key.
@@ -121,7 +121,7 @@ func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (stri
 	if regRootHKeyHandle == 0 {
 		errorLogMsg := fmt.Sprintf("Error, Supplied root HKEY value not valid: '%s'", regPathParts[0])
 		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
-		return "", errors.New(errorLogMsg)
+		return nil, errors.New(errorLogMsg)
 	}
 
 	// Second part of split is registry path after HK part - needs to be UTF16 to pass to the windows. API
@@ -129,7 +129,7 @@ func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (stri
 	if regPathUTF16ConversionErr != nil {
 		errorLogMsg := fmt.Sprintf("Error, Could not convert supplied path '%s' to UTF16, error: '%s'", regPathParts[1], regPathUTF16ConversionErr)
 		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
-		return "", errors.New(errorLogMsg)
+		return nil, errors.New(errorLogMsg)
 	}
 
 	// Ok - open it..
@@ -138,7 +138,7 @@ func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (stri
 	if regOpenErr != nil {
 		errorLogMsg := fmt.Sprintf("Error RegOpenKeyEx opening registry path to '%s', error: '%s'", regPath, regOpenErr)
 		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
-		return "", errors.New(errorLogMsg)
+		return nil, errors.New(errorLogMsg)
 	}
 	// Success - from here on out, when returning make sure to close that reg key with a deferred call to close:
 	defer func() {
@@ -153,7 +153,7 @@ func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (stri
 	if regKeyUTF16ConversionErr != nil {
 		errorLogMsg := fmt.Sprintf("Error, could not convert supplied key '%s' to UTF16, error: '%s'", regKey, regKeyUTF16ConversionErr)
 		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
-		return "", errors.New(errorLogMsg)
+		return nil, errors.New(errorLogMsg)
 	}
 
 	// Two stage way to get the key value - query once to get size - then allocate and query again to fill it.
@@ -164,7 +164,7 @@ func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (stri
 	if regQueryErr != nil {
 		errorLogMsg := fmt.Sprintf("Error calling RegQueryValueEx to retrieve key data size with error '%s'", regQueryErr)
 		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
-		return "", errors.New(errorLogMsg)
+		return nil, errors.New(errorLogMsg)
 	}
 
 	// Alloc and fill...
@@ -174,7 +174,7 @@ func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (stri
 	if regQueryErr != nil {
 		errorLogMsg := fmt.Sprintf("Error calling RegQueryValueEx to retrieve key data with error '%s'", regQueryErr)
 		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
-		return "", errors.New(errorLogMsg)
+		return nil, errors.New(errorLogMsg)
 	}
 
 	// Format result into a string, depending on type.  (future refactor - move this out into it's own function)
@@ -185,16 +185,16 @@ func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (stri
 
 		valueString := windows.UTF16PtrToString(uint16p)
 		env.log(Debug, "getWindowsRegistryKeyValue", fmt.Sprintf("success, string: %s", valueString))
-		return valueString, nil
+
+		return &windowsRegistryValue{valueType:regString, str:valueString}, nil
 	case windows.REG_DWORD:
 		var uint32p *uint32
 		uint32p = (*uint32)(unsafe.Pointer(&keyBuf[0])) // more casting goodness
 
-		valueString := fmt.Sprintf("0x%08X", *uint32p)
-		env.log(Debug, "getWindowsRegistryKeyValue", fmt.Sprintf("success, DWORD, formatted as string: %s", valueString))
-		return valueString, nil
+		env.log(Debug, "getWindowsRegistryKeyValue", fmt.Sprintf("success, DWORD, 0x%08X", *uint32p))
+		return &windowsRegistryValue{valueType:regDword, dword:*uint32p}, nil
 	default:
 		errorLogMsg := fmt.Sprintf("Error, no formatter for REG_? type:%d, data size:%d bytes", keyBufType, keyBufSize)
-		return "", errors.New(errorLogMsg)
+		return nil, errors.New(errorLogMsg)
 	}
 }

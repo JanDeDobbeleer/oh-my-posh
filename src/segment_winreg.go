@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 type winreg struct {
 	props properties
 	env   environmentInfo
@@ -31,7 +35,17 @@ func (wr *winreg) enabled() bool {
 	fallback := wr.props.getString(Fallback, "")
 
 	var err error
-	wr.Value, err = wr.env.getWindowsRegistryKeyValue(registryPath, registryKey)
+	var regValue *windowsRegistryValue
+	regValue, err = wr.env.getWindowsRegistryKeyValue(registryPath, registryKey)
+
+	if (regValue != nil) {
+	switch (regValue.valueType) {
+		case regString:
+			wr.Value = regValue.str
+		case regDword:
+			wr.Value = fmt.Sprintf("%d", regValue.dword)
+	}
+	}
 
 	if err == nil {
 		return true

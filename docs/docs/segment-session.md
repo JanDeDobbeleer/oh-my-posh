@@ -19,15 +19,13 @@ Show the current user and host name.
   "leading_diamond": "\uE0B6",
   "trailing_diamond": "\uE0B0",
   "properties": {
-    "template": "{{ .UserName }}"
+    "template": "{{ if .SSHSession }}\uF817 {{ end }}{{ .UserName }}"
   }
 }
 ```
 
 ## Properties
 
-- ssh_icon: `string` - text/icon to display first when in an active SSH session - defaults
-to `\uF817 `
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
 properties below.
 

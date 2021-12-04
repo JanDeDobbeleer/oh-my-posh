@@ -1,0 +1,76 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": true,
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}} ⚡ {{end}}{{.User}} ➔ 📁{{.Folder}}",
+  "blocks": [
+    {
+      "type": "rprompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "time",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#003543",
+          "properties": {
+            "prefix": " \uf64f "
+          }
+        },
+        {
+          "type": "executiontime",
+          "style": "plain",
+          "foreground": "#ffffff",
+          "background": "#83769c",
+          "properties": {
+            "always_enabled": true,
+            "prefix": " 羽"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#61AFEF",
+          "trailing_diamond": "\uE0B0",
+          "properties": {
+            "prefix": "",
+            "postfix": "",
+            "display_host": false,
+            "template": "{{if .Root}} \uF0E7 {{.UserName}} {{else}} {{.UserName}} {{end}}"
+          }
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "ffffff",
+          "background": "#C678DD",
+          "properties": {
+            "max_depth": 2,
+            "folder_icon": "\uF115",
+            "folder_separator_icon": " \uE0B1 ",
+            "style": "agnoster_short"
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#193549",
+          "background": "#95ffa4",
+          "properties": {
+            "template": "{{ .HEAD }}"
+          }
+        }
+      ]
+    }
+  ]
+}

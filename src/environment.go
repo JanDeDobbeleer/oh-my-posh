@@ -56,6 +56,21 @@ type cache interface {
 	set(key, value string, ttl int)
 }
 
+type windowsRegistryValueType int
+
+const (
+	regQword windowsRegistryValueType = iota
+	regDword
+	regString
+)
+
+type windowsRegistryValue struct {
+	valueType windowsRegistryValueType
+	qword     uint64
+	dword     uint32
+	str       string
+}
+
 type environmentInfo interface {
 	getenv(key string) string
 	getcwd() string
@@ -80,7 +95,7 @@ type environmentInfo interface {
 	getBatteryInfo() ([]*battery.Battery, error)
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
-	getWindowsRegistryKeyValue(regPath, regKey string) (string, error)
+	getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error)
 	doGet(url string, timeout int) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool

@@ -1687,13 +1687,7 @@
                   "path": {
                     "type": "string",
                     "title": "Registry Path",
-                    "description": "The path under which the registy key lives (case insensitive, must use backslashes), e.g. HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion",
-                    "default": ""
-                  },
-                  "key": {
-                    "type": "string",
-                    "title": "Registry Key",
-                    "description": "The key under he registry path to get (case insensitive).  If left blank, will get the value of the (Default) key in the registry_path",
+                    "description": "The path to the registry key (case insensitive, must use backslashes).  Ending with \\ will retrieve \"(Default)\" key in that path.",
                     "default": ""
                   },
                   "fallback": {

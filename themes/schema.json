@@ -33,10 +33,10 @@
         "type": "string"
       }
     },
-    "display_version": {
+    "fetch_version": {
       "type": "boolean",
-      "title": "Display Version",
-      "description": "Show or hide the version number",
+      "title": "Fetch Version",
+      "description": "Fetch the version number",
       "default": true
     },
     "enable_hyperlink": {
@@ -402,8 +402,8 @@
                     "description": "Text/icon that is displayed when the active .NET SDK version (e.g., one specified by global.json) is not installed/supported",
                     "default": " \uE77F "
                   },
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -635,8 +635,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -664,8 +664,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -693,8 +693,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -722,8 +722,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -751,8 +751,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -780,8 +780,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -806,8 +806,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -832,8 +832,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -916,8 +916,11 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -925,10 +928,10 @@
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
                   },
-                  "display_package_manager": {
+                  "fetch_package_manager": {
                     "type": "boolean",
-                    "title": "Display Package Manager",
-                    "description": "Show whether the current project uses Yarn or NPM",
+                    "title": "Fetch Display Package Manager",
+                    "description": "Assigns the Yarn or NPM icon to .PackageManagerIcon",
                     "default": false
                   },
                   "yarn_icon": {
@@ -963,8 +966,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1633,8 +1636,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"

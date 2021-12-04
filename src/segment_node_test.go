@@ -75,6 +75,6 @@ func TestNodeInContext(t *testing.T) {
 			},
 		}
 		node.loadContext()
-		assert.Equal(t, tc.ExpectedString, node.packageManagerIcon, tc.Case)
+		assert.Equal(t, tc.ExpectedString, node.PackageManagerIcon, tc.Case)
 	}
 }

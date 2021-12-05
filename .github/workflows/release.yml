@@ -41,9 +41,11 @@ jobs:
         working-directory: ${{ github.workspace }}/src
     steps:
       - name: Install Go 🗳
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17
+        run: |
+          New-Item -Path ./bin -ItemType Directory
+          Invoke-WebRequest 'https://github.com/jandedobbeleer/go/releases/download/1.17.4/go' -OutFile ./bin/go
+          chmod a+x ./bin/go 2>&1
+          $env:GITHUB_PATH = "${{ github.workspace }}/src/bin;$env:GITHUB_PATH"
       - name: Checkout code 👋
         uses: actions/checkout@v2
       - name: Tag HEAD 😸

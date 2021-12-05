@@ -87,13 +87,13 @@ func (g *git) deprecatedString(statusColorsEnabled bool) string {
 	if len(g.BranchStatus) > 0 {
 		buffer.WriteString(g.BranchStatus)
 	}
-	if g.Staging.Changed {
+	if g.Staging.Changed() {
 		fmt.Fprint(buffer, g.getStatusDetailString(g.Staging, StagingColor, LocalStagingIcon, " \uF046"))
 	}
-	if g.Staging.Changed && g.Working.Changed {
+	if g.Staging.Changed() && g.Working.Changed() {
 		fmt.Fprint(buffer, g.props.getString(StatusSeparatorIcon, " |"))
 	}
-	if g.Working.Changed {
+	if g.Working.Changed() {
 		fmt.Fprint(buffer, g.getStatusDetailString(g.Working, WorkingColor, LocalWorkingIcon, " \uF044"))
 	}
 	if g.StashCount != 0 {
@@ -114,7 +114,7 @@ func (g *git) SetStatusColor() {
 }
 
 func (g *git) getStatusColor(defaultValue string) string {
-	if g.Staging.Changed || g.Working.Changed {
+	if g.Staging.Changed() || g.Working.Changed() {
 		return g.props.getColor(LocalChangesColor, defaultValue)
 	} else if g.Ahead > 0 && g.Behind > 0 {
 		return g.props.getColor(AheadAndBehindColor, defaultValue)

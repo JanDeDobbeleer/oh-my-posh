@@ -13,8 +13,7 @@ import (
 func TestGetStatusDetailStringDefault(t *testing.T) {
 	expected := "icon +1"
 	status := &GitStatus{
-		Changed: true,
-		Added:   1,
+		Added: 1,
 	}
 	g := &git{}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
@@ -23,8 +22,7 @@ func TestGetStatusDetailStringDefault(t *testing.T) {
 func TestGetStatusDetailStringDefaultColorOverride(t *testing.T) {
 	expected := "<#123456>icon +1</>"
 	status := &GitStatus{
-		Changed: true,
-		Added:   1,
+		Added: 1,
 	}
 	var props properties = map[Property]interface{}{
 		WorkingColor: "#123456",
@@ -38,8 +36,7 @@ func TestGetStatusDetailStringDefaultColorOverride(t *testing.T) {
 func TestGetStatusDetailStringDefaultColorOverrideAndIconColorOverride(t *testing.T) {
 	expected := "<#789123>work</> <#123456>+1</>"
 	status := &GitStatus{
-		Changed: true,
-		Added:   1,
+		Added: 1,
 	}
 	var props properties = map[Property]interface{}{
 		WorkingColor:     "#123456",
@@ -54,8 +51,7 @@ func TestGetStatusDetailStringDefaultColorOverrideAndIconColorOverride(t *testin
 func TestGetStatusDetailStringDefaultColorOverrideNoIconColorOverride(t *testing.T) {
 	expected := "<#123456>work +1</>"
 	status := &GitStatus{
-		Changed: true,
-		Added:   1,
+		Added: 1,
 	}
 	var props properties = map[Property]interface{}{
 		WorkingColor:     "#123456",
@@ -70,8 +66,7 @@ func TestGetStatusDetailStringDefaultColorOverrideNoIconColorOverride(t *testing
 func TestGetStatusDetailStringNoStatus(t *testing.T) {
 	expected := "icon"
 	status := &GitStatus{
-		Changed: true,
-		Added:   1,
+		Added: 1,
 	}
 	var props properties = map[Property]interface{}{
 		DisplayStatusDetail: false,
@@ -85,8 +80,7 @@ func TestGetStatusDetailStringNoStatus(t *testing.T) {
 func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
 	expected := "<#123456>icon</>"
 	status := &GitStatus{
-		Changed: true,
-		Added:   1,
+		Added: 1,
 	}
 	var props properties = map[Property]interface{}{
 		DisplayStatusDetail: false,
@@ -106,8 +100,9 @@ func TestGetStatusColorLocalChangesStaging(t *testing.T) {
 	g := &git{
 		props: props,
 		Staging: &GitStatus{
-			Changed: true,
+			Modified: 1,
 		},
+		Working: &GitStatus{},
 	}
 	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
 }
@@ -121,7 +116,7 @@ func TestGetStatusColorLocalChangesWorking(t *testing.T) {
 		props:   props,
 		Staging: &GitStatus{},
 		Working: &GitStatus{
-			Changed: true,
+			Modified: 1,
 		},
 	}
 	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
@@ -196,8 +191,9 @@ func TestSetStatusColorForeground(t *testing.T) {
 	g := &git{
 		props: props,
 		Staging: &GitStatus{
-			Changed: true,
+			Added: 1,
 		},
+		Working: &GitStatus{},
 	}
 	g.SetStatusColor()
 	assert.Equal(t, expected, g.props[ForegroundOverride])
@@ -210,9 +206,10 @@ func TestSetStatusColorBackground(t *testing.T) {
 		ColorBackground:   true,
 	}
 	g := &git{
-		props: props,
-		Staging: &GitStatus{
-			Changed: true,
+		props:   props,
+		Staging: &GitStatus{},
+		Working: &GitStatus{
+			Modified: 1,
 		},
 	}
 	g.SetStatusColor()
@@ -221,16 +218,30 @@ func TestSetStatusColorBackground(t *testing.T) {
 
 func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
 	expected := changesColor
-	context := &detachedContext{
-		status: "## main...origin/main [ahead 33]\n M myfile",
+	status := "## main...origin/main [ahead 33]\n M myfile"
+	env := new(MockedEnvironment)
+	env.On("isWsl", nil).Return(false)
+	env.On("getRuntimeGOOS", nil).Return("unix")
+	env.On("hasFolder", "/rebase-merge").Return(false)
+	env.On("hasFolder", "/rebase-apply").Return(false)
+	env.On("hasFolder", "/sequencer").Return(false)
+	env.On("getFileContent", "/HEAD").Return(status)
+	env.On("hasFilesInDir", "", "CHERRY_PICK_HEAD").Return(false)
+	env.On("hasFilesInDir", "", "REVERT_HEAD").Return(false)
+	env.On("hasFilesInDir", "", "MERGE_MSG").Return(false)
+	env.On("hasFilesInDir", "", "MERGE_HEAD").Return(false)
+	env.On("hasFilesInDir", "", "sequencer/todo").Return(false)
+	env.mockGitCommand("", "describe", "--tags", "--exact-match")
+	env.mockGitCommand(status, "status", "-unormal", "--branch", "--porcelain=2")
+	g := &git{
+		env:              env,
+		gitWorkingFolder: "",
+		props: map[Property]interface{}{
+			DisplayStatus:       false,
+			StatusColorsEnabled: true,
+			LocalChangesColor:   expected,
+		},
 	}
-	g := setupHEADContextEnv(context)
-	var props properties = map[Property]interface{}{
-		DisplayStatus:       false,
-		StatusColorsEnabled: true,
-		LocalChangesColor:   expected,
-	}
-	g.props = props
 	g.string()
 	assert.Equal(t, expected, g.props[BackgroundOverride])
 }

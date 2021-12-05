@@ -2,22 +2,28 @@ PackageIdentifier: JanDeDobbeleer.OhMyPosh
 PackageVersion: <VERSION>
 PackageLocale: en-US
 Publisher: Jan De Dobbeleer
+PublisherUrl: https://github.com/JanDeDobbeleer/oh-my-posh/
+PublisherSupportUrl: https://github.com/JanDeDobbeleer/oh-my-posh/issues
+Author: Jan De Dobbeleer
 PackageName: Oh My Posh
-License: GPL
+PackageUrl: https://ohmyposh.dev/
+License: GNU General Public License v3.0
+LicenseUrl: https://github.com/JanDeDobbeleer/oh-my-posh/raw/main/COPYING
 ShortDescription: Prompt theme engine for any shell
+Moniker: oh-my-posh
 Tags:
-- "console"
-- "command-line"
-- "shell"
-- "command-prompt"
-- "powershell"
-- "wsl"
-- "developer-tools"
-- "utilities"
-- "cli"
-- "cmd"
-- "ps"
-- "terminal"
-- "oh-my-posh"
+- cli
+- cmd
+- command-line
+- command-prompt
+- console
+- developer-tools
+- oh-my-posh
+- powershell
+- ps
+- shell
+- terminal
+- utilities
+- wsl
 ManifestType: defaultLocale
 ManifestVersion: 1.0.0

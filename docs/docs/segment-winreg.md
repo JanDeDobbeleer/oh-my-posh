@@ -12,6 +12,7 @@ Supported registry key types:
 
 - String
 - DWORD (displayed in upper-case 0x hex)
+- QWORD (displayed in upper-case 0x hex)
 
 ## Sample Configuration
 
@@ -25,7 +26,8 @@ Supported registry key types:
     "properties": {
       "path": "HKLM\\software\\microsoft\\windows nt\\currentversion",
       "key":"buildlab",
-      "template":"{{ if .Value }}{{ .Value }}{{ else }}unknown{{ end }}",
+      "fallback":"unknown",
+      "template":"{{ .Value }}",
       "prefix": " \uE62A "
     }
   },
@@ -41,7 +43,7 @@ Supported registry key types:
 
 ## Template Properties
 
-- .Value: `string` - The result of your query
+- .Value: `string` - The result of your query, or fallback if not found.
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

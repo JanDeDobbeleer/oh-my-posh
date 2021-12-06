@@ -105,17 +105,31 @@ func (env *environment) getCachePath() string {
 }
 
 //
-// Takes a registry path like "HKLM\Software\Microsoft\Windows NT\CurrentVersion" and a key under that path like "CurrentVersion" (or "" if the (Default) key is required).
-// Returns a bool and string:
+// Takes a registry path to a key like
+//		"HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"
 //
-//   true and the retrieved value formatted into a string if successful.
-//   false and the string will be the error
+// The last part of the path is the key to retrieve.
 //
-func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (*windowsRegistryValue, error) {
-	env.trace(time.Now(), "getWindowsRegistryKeyValue", regPath, regKey)
+// If the path ends in "\", the "(Default)" key in that path is retrieved.
+//
+// Returns a variant type if successful; nil and an error if not.
+//
+func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error) {
+	env.trace(time.Now(), "getWindowsRegistryKeyValue", path)
 
-	// Extract root HK value and turn it into a windows.Handle to open the key.
-	regPathParts := strings.SplitN(regPath, "\\", 2)
+	// Format:
+	// "HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"
+	//   1  |                  2                         |   3
+	//
+	// Split into:
+	//
+	// 1. Root key - extract the root HKEY string and turn this into a handle to get started
+	// 2. Path - open this path
+	// 3. Key - get this key value
+	//
+	// If 3 is "" (i.e. the path ends with "\"), then get (Default) key.
+	//
+	regPathParts := strings.SplitN(path, "\\", 2)
 
 	regRootHKeyHandle := getHKEYHandleFromAbbrString(regPathParts[0])
 	if regRootHKeyHandle == 0 {
@@ -123,6 +137,18 @@ func (env *environment) getWindowsRegistryKeyValue(regPath, regKey string) (*win
 		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
+
+	// Strip key off the end.
+	lastSlash := strings.LastIndex(regPathParts[1], "\\")
+
+	regKey := regPathParts[1][lastSlash+1:]
+	regPath := regPathParts[1][0:lastSlash]
+
+	regKeyLogged := regKey
+	if regKeyLogged == "" {
+		regKeyLogged = "(Default)"
+	}
+	env.log(Error, "getWindowsRegistryKeyValue", fmt.Sprintf("getWindowsRegistryKeyValue: root:\"%s\", path:\"%s\", key:\"%s\"", regPathParts[0], regPath, regKeyLogged))
 
 	// Second part of split is registry path after HK part - needs to be UTF16 to pass to the windows. API
 	regPathUTF16, regPathUTF16ConversionErr := windows.UTF16FromString(regPathParts[1])

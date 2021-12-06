@@ -12,10 +12,8 @@ type winreg struct {
 }
 
 const (
-	// path from the supplied root under which the key exists
+	// full path to the key; if ends in \, gets "(Default)" key in that path
 	RegistryPath Property = "path"
-	// key within full reg path formed from two above
-	RegistryKey Property = "key"
 	// Fallback is the text to display if the key is not found
 	Fallback Property = "fallback"
 )
@@ -31,11 +29,10 @@ func (wr *winreg) enabled() bool {
 	}
 
 	registryPath := wr.props.getString(RegistryPath, "")
-	registryKey := wr.props.getString(RegistryKey, "")
 	fallback := wr.props.getString(Fallback, "")
 
 	var regValue *windowsRegistryValue
-	regValue, _ = wr.env.getWindowsRegistryKeyValue(registryPath, registryKey)
+	regValue, _ = wr.env.getWindowsRegistryKeyValue(registryPath)
 
 	if regValue != nil {
 		switch regValue.valueType {

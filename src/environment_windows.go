@@ -151,9 +151,9 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	env.log(Error, "getWindowsRegistryKeyValue", fmt.Sprintf("getWindowsRegistryKeyValue: root:\"%s\", path:\"%s\", key:\"%s\"", regPathParts[0], regPath, regKeyLogged))
 
 	// Second part of split is registry path after HK part - needs to be UTF16 to pass to the windows. API
-	regPathUTF16, regPathUTF16ConversionErr := windows.UTF16FromString(regPathParts[1])
+	regPathUTF16, regPathUTF16ConversionErr := windows.UTF16FromString(regPath)
 	if regPathUTF16ConversionErr != nil {
-		errorLogMsg := fmt.Sprintf("Error, Could not convert supplied path '%s' to UTF16, error: '%s'", regPathParts[1], regPathUTF16ConversionErr)
+		errorLogMsg := fmt.Sprintf("Error, Could not convert supplied path '%s' to UTF16, error: '%s'", regPath, regPathUTF16ConversionErr)
 		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}

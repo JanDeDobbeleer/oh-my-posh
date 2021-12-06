@@ -2,6 +2,7 @@ package main
 
 import (
 	"testing"
+	"time"
 
 	"github.com/distatus/battery"
 	"github.com/gookit/config/v2"
@@ -102,6 +103,11 @@ func (env *MockedEnvironment) lastErrorCode() int {
 func (env *MockedEnvironment) executionTime() float64 {
 	args := env.Called(nil)
 	return float64(args.Int(0))
+}
+
+func (env *MockedEnvironment) getTimeNow() time.Time {
+	args := env.Called()
+	return args.Get(0).(time.Time)
 }
 
 func (env *MockedEnvironment) isRunningAsRoot() bool {

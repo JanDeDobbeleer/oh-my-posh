@@ -90,6 +90,7 @@ type environmentInfo interface {
 	cache() cache
 	close()
 	logs() string
+	getTimeNow() time.Time
 }
 
 type commandCache struct {
@@ -414,6 +415,10 @@ func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
 	}
 	// everything is fine
 	return validBatteries, nil
+}
+
+func (env *environment) getTimeNow() time.Time {
+	return time.Now()
 }
 
 func (env *environment) getShellName() string {

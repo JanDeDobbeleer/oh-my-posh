@@ -135,6 +135,8 @@ const (
 	WiFi SegmentType = "wifi"
 	// WinReg queries the Windows registry.
 	WinReg SegmentType = "winreg"
+	// JulianDate writes the current date in julian format
+	JulianDate SegmentType = "juliandate"
 )
 
 func (segment *Segment) string() string {
@@ -265,6 +267,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Nightscout:    &nightscout{},
 		WiFi:          &wifi{},
 		WinReg:        &winreg{},
+		JulianDate:    &juliandate{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties)

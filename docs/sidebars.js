@@ -53,6 +53,7 @@ module.exports = {
         "golang",
         "java",
         "julia",
+        "juliandate",
         "kubectl",
         "nbgv",
         "nightscout",

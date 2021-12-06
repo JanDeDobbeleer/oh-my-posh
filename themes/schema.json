@@ -167,6 +167,7 @@
             "terraform",
             "go",
             "julia",
+            "juliandate",
             "ruby",
             "ytm",
             "executiontime",
@@ -1695,10 +1696,30 @@
                     "default": ""
                   },
                   "fallback": {
-                    "type":"string",
-                    "title":"Fallback value",
-                    "description":"Value to display if registry value cannot be retrieved",
-                    "default":""
+                    "type": "string",
+                    "title": "Fallback value",
+                    "description": "Value to display if registry value cannot be retrieved",
+                    "default": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "juliandate" }
+            }
+          },
+          "then": {
+            "title": "Display the Julian Date",
+            "description": "https://ohmyposh.dev/docs/juliandate",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }

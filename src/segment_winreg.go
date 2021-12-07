@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 )
 
@@ -72,4 +73,46 @@ func (wr *winreg) templateString(segmentTemplate string) string {
 		return err.Error()
 	}
 	return text
+}
+
+func (wr winreg) GetRegistryString(path string) (string, error) {
+	regValue, err := wr.env.getWindowsRegistryKeyValue(path)
+
+	if regValue != nil {
+		if regValue.valueType == regString {
+			return regValue.str, nil
+		}
+
+		return "", errors.New("type mismatch, registry value is not a string")
+	}
+
+	return "", err
+}
+
+func (wr winreg) GetRegistryDword(path string) (uint32, error) {
+	regValue, err := wr.env.getWindowsRegistryKeyValue(path)
+
+	if regValue != nil {
+		if regValue.valueType == regDword {
+			return regValue.dword, nil
+		}
+
+		return 0, errors.New("type mismatch, registry value is not a dword or qword")
+	}
+
+	return 0, err
+}
+
+func (wr winreg) GetRegistryQword(path string) (uint64, error) {
+	regValue, err := wr.env.getWindowsRegistryKeyValue(path)
+
+	if regValue != nil {
+		if regValue.valueType == regQword {
+			return regValue.qword, nil
+		}
+
+		return 0, errors.New("type mismatch, registry value is not a qword")
+	}
+
+	return 0, err
 }

@@ -34,7 +34,8 @@ Supported registry key types:
 
 ## Properties
 
-- path: `string` - registry path to the desired key using backslashes and with a valid root HKEY name.  Ending with \ will get (Default) key.
+- path: `string` - registry path to the desired key using backslashes and with a valid root HKEY name.  
+  Ending path with \ will get the (Default) key from that path.
 - fallback: `string` - the value to fall back to if no entry is found
 - template: `string` - a go [text/template][go-text-template] template extended
   with [sprig][sprig] utilizing the properties below.

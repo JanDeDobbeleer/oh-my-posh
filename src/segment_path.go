@@ -10,6 +10,17 @@ import (
 type path struct {
 	props properties
 	env   environmentInfo
+
+	// Full displays the full path
+	Full   string
+	Folder string
+	Letter string
+	Mixed  string
+
+	FolderSeparatorIcon string
+	HomeIcon            string
+	FolderIcon          string
+	WindowsRegistryIcon string
 }
 
 const (
@@ -53,9 +64,39 @@ func (pt *path) enabled() bool {
 	return true
 }
 
+func (pt *path) templateString(segmentTemplate string) string {
+	pt.Full = pt.getFullPath()
+	pt.Folder = pt.getFolderPath()
+	pt.Letter = pt.getLetterPath()
+	pt.Mixed = pt.getMixedPath()
+
+	pt.FolderSeparatorIcon = pt.props.getString(FolderSeparatorIcon, "")
+	pt.HomeIcon = pt.props.getString(HomeIcon, "")
+	pt.FolderIcon = pt.props.getString(FolderIcon, "")
+	pt.WindowsRegistryIcon = pt.props.getString(WindowsRegistryIcon, "")
+
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  pt,
+		Env:      pt.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
+}
+
 func (pt *path) string() string {
 	cwd := pt.env.getcwd()
 	var formattedPath string
+
+	segmentTemplate := pt.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) > 0 {
+		formattedPath = pt.templateString(segmentTemplate)
+		return formattedPath
+	}
+
 	switch style := pt.props.getString(Style, Agnoster); style {
 	case Agnoster:
 		formattedPath = pt.getAgnosterPath()

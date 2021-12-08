@@ -242,6 +242,8 @@ func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
 			LocalChangesColor:   expected,
 		},
 	}
+	g.Working = &GitStatus{}
+	g.Staging = &GitStatus{}
 	g.string()
 	assert.Equal(t, expected, g.props[BackgroundOverride])
 }

@@ -87,6 +87,8 @@ func (g *git) deprecatedString(statusColorsEnabled bool) string {
 	if len(g.BranchStatus) > 0 {
 		buffer.WriteString(g.BranchStatus)
 	}
+
+	// status
 	if g.Staging.Changed() {
 		fmt.Fprint(buffer, g.getStatusDetailString(g.Staging, StagingColor, LocalStagingIcon, " \uF046"))
 	}

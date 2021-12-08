@@ -183,6 +183,9 @@ func (g *git) string() string {
 		g.setGitStatus()
 		g.setGitHEADContext()
 		g.BranchStatus = g.getBranchStatus()
+	} else {
+		g.Working = &GitStatus{}
+		g.Staging = &GitStatus{}
 	}
 	if g.Upstream != "" && g.props.getOneOfBool(FetchUpstreamIcon, DisplayUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
@@ -274,8 +277,6 @@ func (g *git) setGitStatus() {
 		UPSTREAM     = "# branch.upstream "
 		BRANCHSTATUS = "# branch.ab "
 	)
-	g.Staging = &GitStatus{}
-	g.Working = &GitStatus{}
 	output := g.getGitCommandOutput("status", "-unormal", "--branch", "--porcelain=2")
 	for _, line := range strings.Split(output, "\n") {
 		if strings.HasPrefix(line, HASH) {

@@ -183,9 +183,6 @@ func (g *git) string() string {
 		g.setGitStatus()
 		g.setGitHEADContext()
 		g.setBranchStatus()
-	} else {
-		g.Working = &GitStatus{}
-		g.Staging = &GitStatus{}
 	}
 	if g.Upstream != "" && g.props.getOneOfBool(FetchUpstreamIcon, DisplayUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
@@ -265,6 +262,8 @@ func (g *git) getUpstreamIcon() string {
 }
 
 func (g *git) setGitStatus() {
+	g.Working = &GitStatus{}
+	g.Staging = &GitStatus{}
 	addToStatus := func(status string) {
 		if len(status) <= 4 {
 			return

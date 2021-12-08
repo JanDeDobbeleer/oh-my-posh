@@ -280,6 +280,8 @@ func (g *git) setGitStatus() {
 		UPSTREAM     = "# branch.upstream "
 		BRANCHSTATUS = "# branch.ab "
 	)
+	g.Working = &GitStatus{}
+	g.Staging = &GitStatus{}
 	output := g.getGitCommandOutput("status", "-unormal", "--branch", "--porcelain=2")
 	for _, line := range strings.Split(output, "\n") {
 		if strings.HasPrefix(line, HASH) {

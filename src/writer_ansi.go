@@ -179,9 +179,9 @@ func (a *AnsiWriter) asAnsiColors(background, foreground string) (AnsiColor, Ans
 
 func (a *AnsiWriter) isKeyword(color string) (string, bool) {
 	switch {
-	case color == Background:
+	case color == Background && a.Colors != nil:
 		return a.Colors.Background, true
-	case color == Foreground:
+	case color == Foreground && a.Colors != nil:
 		return a.Colors.Foreground, true
 	case color == ParentBackground && a.ParentColors != nil:
 		return a.ParentColors.Background, true

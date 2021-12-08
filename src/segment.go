@@ -57,6 +57,8 @@ const (
 	Path SegmentType = "path"
 	// Git represents the git status and information
 	Git SegmentType = "git"
+	// Plastic represents the plastic scm status and information
+	Plastic SegmentType = "plastic"
 	// Exit writes the last exit code
 	Exit SegmentType = "exit"
 	// Python writes the virtual env name
@@ -230,6 +232,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Session:       &session{},
 		Path:          &path{},
 		Git:           &git{},
+		Plastic:       &plastic{},
 		Exit:          &exit{},
 		Python:        &python{},
 		Root:          &root{},

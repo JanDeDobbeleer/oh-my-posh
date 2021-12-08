@@ -61,6 +61,7 @@ module.exports = {
         "owm",
         "path",
         "php",
+        "plastic",
         "python",
         "root",
         "ruby",

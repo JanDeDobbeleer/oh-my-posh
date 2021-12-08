@@ -486,7 +486,8 @@ func TestGetBranchStatus(t *testing.T) {
 			Behind:   tc.Behind,
 			Upstream: tc.Upstream,
 		}
-		assert.Equal(t, tc.Expected, g.getBranchStatus(), tc.Case)
+		g.setBranchStatus()
+		assert.Equal(t, tc.Expected, g.BranchStatus, tc.Case)
 	}
 }
 

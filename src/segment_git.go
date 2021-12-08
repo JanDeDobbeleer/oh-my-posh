@@ -182,7 +182,7 @@ func (g *git) string() string {
 	if displayStatus || statusColorsEnabled {
 		g.setGitStatus()
 		g.setGitHEADContext()
-		g.BranchStatus = g.getBranchStatus()
+		g.setBranchStatus()
 	} else {
 		g.Working = &GitStatus{}
 		g.Staging = &GitStatus{}
@@ -224,23 +224,26 @@ func (g *git) init(props properties, env environmentInfo) {
 	g.env = env
 }
 
-func (g *git) getBranchStatus() string {
-	if g.Ahead > 0 && g.Behind > 0 {
-		return fmt.Sprintf(" %s%d %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.Ahead, g.props.getString(BranchBehindIcon, "\u2193"), g.Behind)
+func (g *git) setBranchStatus() {
+	getBranchStatus := func() string {
+		if g.Ahead > 0 && g.Behind > 0 {
+			return fmt.Sprintf(" %s%d %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.Ahead, g.props.getString(BranchBehindIcon, "\u2193"), g.Behind)
+		}
+		if g.Ahead > 0 {
+			return fmt.Sprintf(" %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.Ahead)
+		}
+		if g.Behind > 0 {
+			return fmt.Sprintf(" %s%d", g.props.getString(BranchBehindIcon, "\u2193"), g.Behind)
+		}
+		if g.Behind == 0 && g.Ahead == 0 && g.Upstream != "" {
+			return fmt.Sprintf(" %s", g.props.getString(BranchIdenticalIcon, "\u2261"))
+		}
+		if g.Upstream == "" {
+			return fmt.Sprintf(" %s", g.props.getString(BranchGoneIcon, "\u2262"))
+		}
+		return ""
 	}
-	if g.Ahead > 0 {
-		return fmt.Sprintf(" %s%d", g.props.getString(BranchAheadIcon, "\u2191"), g.Ahead)
-	}
-	if g.Behind > 0 {
-		return fmt.Sprintf(" %s%d", g.props.getString(BranchBehindIcon, "\u2193"), g.Behind)
-	}
-	if g.Behind == 0 && g.Ahead == 0 && g.Upstream != "" {
-		return fmt.Sprintf(" %s", g.props.getString(BranchIdenticalIcon, "\u2261"))
-	}
-	if g.Upstream == "" {
-		return fmt.Sprintf(" %s", g.props.getString(BranchGoneIcon, "\u2262"))
-	}
-	return ""
+	g.BranchStatus = getBranchStatus()
 }
 
 func (g *git) getUpstreamIcon() string {

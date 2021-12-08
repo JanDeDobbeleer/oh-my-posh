@@ -270,9 +270,6 @@ func (env *environment) getRuntimeGOOS() string {
 }
 
 func (env *environment) runCommand(command string, args ...string) (string, error) {
-	if env.getRuntimeGOOS() == windowsPlatform && !strings.HasSuffix(command, ".exe") {
-		command += ".exe"
-	}
 	defer env.trace(time.Now(), "runCommand", append([]string{command}, args...)...)
 	if cmd, ok := env.cmdCache.get(command); ok {
 		command = cmd

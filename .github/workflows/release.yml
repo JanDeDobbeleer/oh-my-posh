@@ -56,7 +56,7 @@ jobs:
       - name: Install cosign 🔑
         uses: sigstore/cosign-installer@main
         with:
-          cosign-release: 'v1.3.1'
+          cosign-release: 'v1.4.0'
       - name: Private Key 🔐
         run: |
           $PSDefaultParameterValues['Out-File:Encoding']='UTF8'

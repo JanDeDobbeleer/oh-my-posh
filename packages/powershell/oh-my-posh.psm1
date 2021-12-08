@@ -113,8 +113,21 @@ function Sync-PoshArtifacts {
     Sync-PoshThemes -Version $Version
 }
 
-$moduleVersion = Split-Path -Leaf $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase
-Sync-PoshArtifacts -Version $moduleVersion
+try {
+    $moduleVersion = Split-Path -Leaf $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase
+    Sync-PoshArtifacts -Version $moduleVersion
+}
+catch {
+    $message = @'
+Oh My Posh is unable to download and store the latest version.
+In case you installed using AllUsers and are a non-admin user,
+please run the following command as an administrator:
+
+Import-Module oh-my-posh
+'@
+    Write-Error $message
+    exit 1
+}
 
 # Legacy functions
 

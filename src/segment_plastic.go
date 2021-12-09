@@ -20,9 +20,7 @@ type plastic struct {
 	Behind   bool
 	Selector string
 
-	plasticWorkspaceFolder string // .plastic working folder
-
-	cmCommand string
+	plasticWorkspaceFolder string // root folder of workspace
 }
 
 const (
@@ -30,59 +28,58 @@ const (
 	FullBranchPath Property = "full_branch_path"
 )
 
-func (g *plastic) enabled() bool {
-	if !g.env.hasCommand(g.getCmCommand()) {
+func (p *plastic) enabled() bool {
+	if !p.env.hasCommand("cm") {
 		return false
 	}
-	wkdir, err := g.env.hasParentFilePath(".plastic")
+	wkdir, err := p.env.hasParentFilePath(".plastic")
 	if err != nil {
 		return false
 	}
-	if g.shouldIgnoreRootRepository(wkdir.parentFolder) {
+	if p.shouldIgnoreRootRepository(wkdir.parentFolder) {
 		return false
 	}
 
 	if wkdir.isDir {
-		g.plasticWorkspaceFolder = wkdir.parentFolder
+		p.plasticWorkspaceFolder = wkdir.parentFolder
 		return true
 	}
 
 	return false
 }
 
-func (g *plastic) shouldIgnoreRootRepository(rootDir string) bool {
-	value, ok := g.props[ExcludeFolders]
+func (p *plastic) shouldIgnoreRootRepository(rootDir string) bool {
+	value, ok := p.props[ExcludeFolders]
 	if !ok {
 		return false
 	}
 	excludedFolders := parseStringArray(value)
-	return dirMatchesOneOf(g.env, rootDir, excludedFolders)
+	return dirMatchesOneOf(p.env, rootDir, excludedFolders)
 }
 
-func (g *plastic) string() string {
-	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
-	displayStatus := g.props.getOneOfBool(FetchStatus, DisplayStatus, false)
+func (p *plastic) string() string {
+	displayStatus := p.props.getOneOfBool(FetchStatus, DisplayStatus, false)
 
-	g.Selector = g.getSelector()
-	if displayStatus || statusColorsEnabled {
-		g.getPlasticStatus()
+	p.Selector = p.getSelector()
+	if displayStatus {
+		p.getPlasticStatus()
 	}
 
 	// use template if available
-	segmentTemplate := g.props.getString(SegmentTemplate, "")
+	segmentTemplate := p.props.getString(SegmentTemplate, "")
 	if len(segmentTemplate) > 0 {
-		return g.templateString(segmentTemplate)
+		return p.templateString(segmentTemplate)
 	}
 
 	// default: only selector is returned
-	return g.Selector
+	return p.Selector
 }
 
-func (g *plastic) templateString(segmentTemplate string) string {
+func (p *plastic) templateString(segmentTemplate string) string {
 	template := &textTemplate{
 		Template: segmentTemplate,
-		Context:  g,
-		Env:      g.env,
+		Context:  p,
+		Env:      p.env,
 	}
 	text, err := template.render()
 	if err != nil {
@@ -91,7 +88,7 @@ func (g *plastic) templateString(segmentTemplate string) string {
 	return text
 }
 
-func (g *plastic) Status() string {
+func (p *plastic) Status() string {
 	var status string
 	stringIfValue := func(value int, prefix string) string {
 		if value > 0 {
@@ -99,27 +96,27 @@ func (g *plastic) Status() string {
 		}
 		return ""
 	}
-	status += stringIfValue(g.Added, "+")
-	status += stringIfValue(g.Modified, "~")
-	status += stringIfValue(g.Deleted, "-")
-	status += stringIfValue(g.Moved, ">")
-	status += stringIfValue(g.Unmerged, "x")
+	status += stringIfValue(p.Added, "+")
+	status += stringIfValue(p.Modified, "~")
+	status += stringIfValue(p.Deleted, "-")
+	status += stringIfValue(p.Moved, ">")
+	status += stringIfValue(p.Unmerged, "x")
 	return strings.TrimSpace(status)
 }
 
-func (g *plastic) getPlasticStatus() {
-	output := g.getCmCommandOutput("status", "--all", "--machinereadable")
+func (p *plastic) getPlasticStatus() {
+	output := p.getCmCommandOutput("status", "--all", "--machinereadable")
 	splittedOutput := strings.Split(output, "\n")
 	// compare to head
-	currentChangeset := g.parseStatusChangeset(splittedOutput[0])
-	headChangeset := g.getHeadChangeset()
-	g.Behind = headChangeset > currentChangeset
+	currentChangeset := p.parseStatusChangeset(splittedOutput[0])
+	headChangeset := p.getHeadChangeset()
+	p.Behind = headChangeset > currentChangeset
 
 	// parse file state
-	g.parseFilesStatus(splittedOutput)
+	p.parseFilesStatus(splittedOutput)
 }
 
-func (g *plastic) parseFilesStatus(output []string) {
+func (p *plastic) parseFilesStatus(output []string) {
 	if len(output) <= 1 {
 		return
 	}
@@ -128,85 +125,95 @@ func (g *plastic) parseFilesStatus(output []string) {
 			continue
 		}
 		if matchString(`(?i)merge\s+from\s+[0-9]+\s*$`, line) {
-			g.Unmerged++
+			p.Unmerged++
 			continue
 		}
 		code := line[0:2]
 		switch code {
 		case "LD":
-			g.Deleted++
+			p.Deleted++
 		case "AD", "PR":
-			g.Added++
+			p.Added++
 		case "LM":
-			g.Moved++
+			p.Moved++
 		case "CH":
-			g.Modified++
+			p.Modified++
 		}
 	}
-	g.Changed = g.Added > 0 || g.Deleted > 0 || g.Modified > 0 || g.Moved > 0 || g.Unmerged > 0
+	p.Changed = p.Added > 0 || p.Deleted > 0 || p.Modified > 0 || p.Moved > 0 || p.Unmerged > 0
 }
 
-func (g *plastic) parseStatusChangeset(status string) int {
-	var csRegex = `STATUS\s+(?P<cs>[0-9]+?)\s`
-	cs, _ := strconv.Atoi(findNamedRegexMatch(csRegex, status)["cs"])
-	return cs
+func (p *plastic) parseStringPattern(output, pattern, name string) string {
+	match := findNamedRegexMatch(pattern, output)
+	if sValue, ok := match[name]; ok {
+		return sValue
+	}
+	return ""
 }
 
-func (g *plastic) getHeadChangeset() int {
-	output := g.getCmCommandOutput("status", "--head", "--machinereadable")
-	var csRegex = `\bcs:(?P<cs>[0-9]+?)\s`
-	cs, _ := strconv.Atoi(findNamedRegexMatch(csRegex, output)["cs"])
-	return cs
+func (p *plastic) parseIntPattern(output, pattern, name string, defValue int) int {
+	sValue := p.parseStringPattern(output, pattern, name)
+	if sValue != "" {
+		iValue, _ := strconv.Atoi(sValue)
+		return iValue
+	}
+	return defValue
 }
 
-func (g *plastic) getPlasticFileContents(folder, file string) string {
-	return strings.Trim(g.env.getFileContent(folder+"/"+file), " \r\n")
+func (p *plastic) parseStatusChangeset(status string) int {
+	return p.parseIntPattern(status, `STATUS\s+(?P<cs>[0-9]+?)\s`, "cs", 0)
 }
 
-func (g *plastic) getSelector() string {
+func (p *plastic) getHeadChangeset() int {
+	output := p.getCmCommandOutput("status", "--head", "--machinereadable")
+	return p.parseIntPattern(output, `\bcs:(?P<cs>[0-9]+?)\s`, "cs", 0)
+}
+
+func (p *plastic) getPlasticFileContents(file string) string {
+	return strings.Trim(p.env.getFileContent(p.plasticWorkspaceFolder+"/.plastic/"+file), " \r\n")
+}
+
+func (p *plastic) getSelector() string {
 	var ref string
-	selector := g.getPlasticFileContents(g.plasticWorkspaceFolder+"/.plastic", "plastic.selector")
+	selector := p.getPlasticFileContents("plastic.selector")
 	// changeset
-	ref = g.parseChangesetSelector(selector)
+	ref = p.parseChangesetSelector(selector)
 	if ref != "" {
-		return fmt.Sprintf("%s%s", g.props.getString(CommitIcon, "\uF417"), ref)
+		return fmt.Sprintf("%s%s", p.props.getString(CommitIcon, "\uF417"), ref)
 	}
 	// fallback to label
-	ref = g.parseLabelSelector(selector)
+	ref = p.parseLabelSelector(selector)
 	if ref != "" {
-		return fmt.Sprintf("%s%s", g.props.getString(TagIcon, "\uF412"), ref)
+		return fmt.Sprintf("%s%s", p.props.getString(TagIcon, "\uF412"), ref)
 	}
 	// fallback to branch/smartbranch
-	ref = g.parseBranchSelector(selector)
+	ref = p.parseBranchSelector(selector)
 	if ref != "" {
-		ref = g.truncateBranch(ref)
+		ref = p.truncateBranch(ref)
 	}
-	return fmt.Sprintf("%s%s", g.props.getString(BranchIcon, "\uE0A0"), ref)
+	return fmt.Sprintf("%s%s", p.props.getString(BranchIcon, "\uE0A0"), ref)
 }
 
-func (g *plastic) parseChangesetSelector(selector string) string {
-	var csRegex = `\bchangeset "(?P<cs>[0-9]+?)"`
-	return findNamedRegexMatch(csRegex, selector)["cs"]
+func (p *plastic) parseChangesetSelector(selector string) string {
+	return p.parseStringPattern(selector, `\bchangeset "(?P<cs>[0-9]+?)"`, "cs")
 }
 
-func (g *plastic) parseLabelSelector(selector string) string {
-	var labelRegex = `label "(?P<label>[a-zA-Z0-9\-\_]+?)"`
-	return findNamedRegexMatch(labelRegex, selector)["label"]
+func (p *plastic) parseLabelSelector(selector string) string {
+	return p.parseStringPattern(selector, `label "(?P<label>[a-zA-Z0-9\-\_]+?)"`, "label")
 }
 
-func (g *plastic) parseBranchSelector(selector string) string {
-	var branchRegex = `branch "(?P<branch>[\/a-zA-Z0-9\-\_]+?)"`
-	return findNamedRegexMatch(branchRegex, selector)["branch"]
+func (p *plastic) parseBranchSelector(selector string) string {
+	return p.parseStringPattern(selector, `branch "(?P<branch>[\/a-zA-Z0-9\-\_]+?)"`, "branch")
 }
 
-func (g *plastic) init(props properties, env environmentInfo) {
-	g.props = props
-	g.env = env
+func (p *plastic) init(props properties, env environmentInfo) {
+	p.props = props
+	p.env = env
 }
 
-func (g *plastic) truncateBranch(branch string) string {
-	fullBranchPath := g.props.getBool(FullBranchPath, false)
-	maxLength := g.props.getInt(BranchMaxLength, 0)
+func (p *plastic) truncateBranch(branch string) string {
+	fullBranchPath := p.props.getBool(FullBranchPath, false)
+	maxLength := p.props.getInt(BranchMaxLength, 0)
 	if !fullBranchPath && len(branch) > 0 {
 		index := strings.LastIndex(branch, "/")
 		branch = branch[index+1:]
@@ -214,32 +221,11 @@ func (g *plastic) truncateBranch(branch string) string {
 	if maxLength == 0 || len(branch) <= maxLength {
 		return branch
 	}
-	symbol := g.props.getString(TruncateSymbol, "")
+	symbol := p.props.getString(TruncateSymbol, "")
 	return branch[0:maxLength] + symbol
 }
 
-func (g *plastic) getCmCommandOutput(args ...string) string {
-	val, _ := g.env.runCommand(g.getCmCommand(), args...)
+func (p *plastic) getCmCommandOutput(args ...string) string {
+	val, _ := p.env.runCommand("cm", args...)
 	return val
-}
-
-func (g *plastic) getCmCommand() string {
-	if len(g.cmCommand) > 0 {
-		return g.cmCommand
-	}
-	inWSL2SharedDrive := func(env environmentInfo) bool {
-		if !env.isWsl() {
-			return false
-		}
-		if !strings.HasPrefix(env.getcwd(), "/mnt/") {
-			return false
-		}
-		uname, _ := g.env.runCommand("uname", "-r")
-		return strings.Contains(uname, "WSL2")
-	}
-	g.cmCommand = "cm"
-	if g.env.getRuntimeGOOS() == windowsPlatform || inWSL2SharedDrive(g.env) {
-		g.cmCommand = "cm.exe"
-	}
-	return g.cmCommand
 }

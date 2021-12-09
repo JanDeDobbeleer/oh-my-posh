@@ -36,7 +36,7 @@ Local changes can also be displayed which uses the following syntax (see `.Statu
     "fetch_status": true,
     "branch_max_length": 25,
     "truncate_symbol": "\u2026",
-    "template": "{{ .Selector }}{{ if .Changed }} \uF044 {{ end }}{{ .Status }}"
+    "template": "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ end }}{{ .Status.String }}"
   }
 }
 ```
@@ -58,7 +58,7 @@ You can set the following property to `true` to enable fetching additional infor
 #### Branch
 
 - branch_icon: `string` - the icon to use in front of the git branch name - defaults to `\uE0A0 `
-- full_branch_path: `bool` - display the full branch path: */main/fix-001* instead of *fix-001* - defaults to `false`
+- full_branch_path: `bool` - display the full branch path: */main/fix-001* instead of *fix-001* - defaults to `true`
 - branch_max_length: `int` - the max length for the displayed branch name where `0` implies full length - defaults to `0`
 - truncate_symbol: `string` - the icon to display when a branch name is truncated - defaults to empty
 
@@ -71,13 +71,17 @@ You can set the following property to `true` to enable fetching additional infor
 
 - `.Selector`: `string` - the current selector context (branch/changeset/label)
 - `.Behind`: `bool` - the current workspace is behind and changes are incoming
-- `.Status`: `string` - all changes in the workspace as text
+- `.Status`: `PlasticStatus` - changes in the workspace (see below)
+
+### PlasticStatus
+
 - `.Unmerged`: `int` - number of unmerged changes
 - `.Deleted`: `int` - number of deleted changes
 - `.Added`: `int` - number of added changes
 - `.Modified`: `int` - number of modified changes
 - `.Moved`: `int` - number of moved changes
 - `.Changed`: `boolean` - if the status contains changes or not
+- `.String`: `string` - a string representation of the changes above
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

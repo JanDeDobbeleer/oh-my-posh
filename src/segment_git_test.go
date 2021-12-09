@@ -19,7 +19,9 @@ func TestEnabledGitNotFound(t *testing.T) {
 	env.On("getRuntimeGOOS", nil).Return("")
 	env.On("isWsl", nil).Return(false)
 	g := &git{
-		env: env,
+		scm: scm{
+			env: env,
+		},
 	}
 	assert.False(t, g.enabled())
 }
@@ -36,7 +38,9 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	}
 	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
 	g := &git{
-		env: env,
+		scm: scm{
+			env: env,
+		},
 	}
 	assert.True(t, g.enabled())
 	assert.Equal(t, fileInfo.path, g.gitWorkingFolder)
@@ -56,7 +60,9 @@ func TestEnabledInWorkingTree(t *testing.T) {
 	env.On("getFileContent", "/dev/folder_worktree/.git").Return("gitdir: /dev/real_folder/.git/worktrees/folder_worktree")
 	env.On("getFileContent", "/dev/real_folder/.git/worktrees/folder_worktree/gitdir").Return("/dev/folder_worktree.git\n")
 	g := &git{
-		env: env,
+		scm: scm{
+			env: env,
+		},
 	}
 	assert.True(t, g.enabled())
 	assert.Equal(t, "/dev/real_folder/.git/worktrees/folder_worktree", g.gitWorkingFolder)
@@ -72,7 +78,9 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	env.On("runCommand", "git", append(args, commandArgs...)).Return(want, nil)
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
-		env: env,
+		scm: scm{
+			env: env,
+		},
 	}
 	got := g.getGitCommandOutput(commandArgs...)
 	assert.Equal(t, want, got)
@@ -217,15 +225,17 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		env.On("getFileContent", "/sequencer/todo").Return(tc.Theirs)
 
 		g := &git{
-			env: env,
-			props: map[Property]interface{}{
-				BranchIcon:     "branch ",
-				CommitIcon:     "commit ",
-				RebaseIcon:     "rebase ",
-				MergeIcon:      "merge ",
-				CherryPickIcon: "pick ",
-				TagIcon:        "tag ",
-				RevertIcon:     "revert ",
+			scm: scm{
+				env: env,
+				props: map[Property]interface{}{
+					BranchIcon:     "branch ",
+					CommitIcon:     "commit ",
+					RebaseIcon:     "rebase ",
+					MergeIcon:      "merge ",
+					CherryPickIcon: "pick ",
+					TagIcon:        "tag ",
+					RevertIcon:     "revert ",
+				},
 			},
 			Hash: "1234567",
 			Ref:  tc.Ref,
@@ -257,11 +267,13 @@ func TestSetPrettyHEADName(t *testing.T) {
 		env.On("isWsl", nil).Return(false)
 		env.mockGitCommand(tc.Tag, "describe", "--tags", "--exact-match")
 		g := &git{
-			env: env,
-			props: map[Property]interface{}{
-				BranchIcon: "branch ",
-				CommitIcon: "commit ",
-				TagIcon:    "tag ",
+			scm: scm{
+				env: env,
+				props: map[Property]interface{}{
+					BranchIcon: "branch ",
+					CommitIcon: "commit ",
+					TagIcon:    "tag ",
+				},
 			},
 			Hash: tc.Hash,
 		}
@@ -297,8 +309,8 @@ func TestSetGitStatus(t *testing.T) {
 			1 .U N...
 			1 A. N...
 			`,
-			ExpectedWorking: &GitStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1},
-			ExpectedStaging: &GitStatus{Added: 1},
+			ExpectedWorking: &GitStatus{ScmStatus: ScmStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1}},
+			ExpectedStaging: &GitStatus{ScmStatus: ScmStatus{Added: 1}},
 			ExpectedHash:    "1234567",
 			ExpectedRef:     "rework-git-status",
 		},
@@ -318,8 +330,8 @@ func TestSetGitStatus(t *testing.T) {
 			1 .U N...
 			1 A. N...
 			`,
-			ExpectedWorking:  &GitStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1},
-			ExpectedStaging:  &GitStatus{Added: 1},
+			ExpectedWorking:  &GitStatus{ScmStatus: ScmStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1}},
+			ExpectedStaging:  &GitStatus{ScmStatus: ScmStatus{Added: 1}},
 			ExpectedUpstream: "origin/rework-git-status",
 			ExpectedHash:     "1234567",
 			ExpectedRef:      "rework-git-status",
@@ -356,7 +368,9 @@ func TestSetGitStatus(t *testing.T) {
 		env.On("isWsl", nil).Return(false)
 		env.mockGitCommand(strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
 		g := &git{
-			env: env,
+			scm: scm{
+				env: env,
+			},
 		}
 		if tc.ExpectedWorking == nil {
 			tc.ExpectedWorking = &GitStatus{}
@@ -388,35 +402,14 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("getFileContent", "/logs/refs/stash").Return(tc.StashContent)
 		g := &git{
-			env:              env,
+			scm: scm{
+				env: env,
+			},
 			gitWorkingFolder: "",
 		}
 		got := g.getStashContext()
 		assert.Equal(t, tc.Expected, got)
 	}
-}
-
-func TestGitStatusUnmerged(t *testing.T) {
-	expected := "x1"
-	status := &GitStatus{
-		Unmerged: 1,
-	}
-	assert.Equal(t, expected, status.String())
-}
-
-func TestGitStatusUnmergedModified(t *testing.T) {
-	expected := "~3 x1"
-	status := &GitStatus{
-		Unmerged: 1,
-		Modified: 3,
-	}
-	assert.Equal(t, expected, status.String())
-}
-
-func TestGitStatusEmpty(t *testing.T) {
-	expected := ""
-	status := &GitStatus{}
-	assert.Equal(t, expected, status.String())
 }
 
 func TestGitUpstream(t *testing.T) {
@@ -446,8 +439,10 @@ func TestGitUpstream(t *testing.T) {
 			GitIcon:         "G",
 		}
 		g := &git{
-			env:      env,
-			props:    props,
+			scm: scm{
+				env:   env,
+				props: props,
+			},
 			Upstream: "origin/main",
 		}
 		upstreamIcon := g.getUpstreamIcon()
@@ -479,7 +474,9 @@ func TestGetBranchStatus(t *testing.T) {
 			BranchGoneIcon:      "gone",
 		}
 		g := &git{
-			props:    props,
+			scm: scm{
+				props: props,
+			},
 			Ahead:    tc.Ahead,
 			Behind:   tc.Behind,
 			Upstream: tc.Upstream,
@@ -512,63 +509,13 @@ func TestShouldIgnoreRootRepository(t *testing.T) {
 		env.On("homeDir", nil).Return("/home/bill")
 		env.On("getRuntimeGOOS", nil).Return(windowsPlatform)
 		git := &git{
-			props: props,
-			env:   env,
+			scm: scm{
+				props: props,
+				env:   env,
+			},
 		}
 		got := git.shouldIgnoreRootRepository(tc.Dir)
 		assert.Equal(t, tc.Expected, got, tc.Case)
-	}
-}
-
-func TestTruncateBranch(t *testing.T) {
-	cases := []struct {
-		Case      string
-		Expected  string
-		Branch    string
-		MaxLength interface{}
-	}{
-		{Case: "No limit", Expected: "all-your-base-are-belong-to-us", Branch: "all-your-base-are-belong-to-us"},
-		{Case: "No limit - larger", Expected: "all-your-base", Branch: "all-your-base-are-belong-to-us", MaxLength: 13.0},
-		{Case: "No limit - smaller", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 13.0},
-		{Case: "Invalid setting", Expected: "all-your-base", Branch: "all-your-base", MaxLength: "burp"},
-		{Case: "Lower than limit", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 20.0},
-	}
-
-	for _, tc := range cases {
-		var props properties = map[Property]interface{}{
-			BranchMaxLength: tc.MaxLength,
-		}
-		g := &git{
-			props: props,
-		}
-		assert.Equal(t, tc.Expected, g.formatHEAD(tc.Branch), tc.Case)
-	}
-}
-
-func TestTruncateBranchWithSymbol(t *testing.T) {
-	cases := []struct {
-		Case           string
-		Expected       string
-		Branch         string
-		MaxLength      interface{}
-		TruncateSymbol interface{}
-	}{
-		{Case: "No limit", Expected: "all-your-base-are-belong-to-us", Branch: "all-your-base-are-belong-to-us", TruncateSymbol: "..."},
-		{Case: "No limit - larger", Expected: "all-your-base...", Branch: "all-your-base-are-belong-to-us", MaxLength: 13.0, TruncateSymbol: "..."},
-		{Case: "No limit - smaller", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 16.0, TruncateSymbol: "..."},
-		{Case: "Invalid setting", Expected: "all-your-base", Branch: "all-your-base", MaxLength: "burp", TruncateSymbol: "..."},
-		{Case: "Lower than limit", Expected: "all-your-base", Branch: "all-your-base", MaxLength: 20.0, TruncateSymbol: "..."},
-	}
-
-	for _, tc := range cases {
-		var props properties = map[Property]interface{}{
-			BranchMaxLength: tc.MaxLength,
-			TruncateSymbol:  tc.TruncateSymbol,
-		}
-		g := &git{
-			props: props,
-		}
-		assert.Equal(t, tc.Expected, g.formatHEAD(tc.Branch), tc.Case)
 	}
 }
 
@@ -599,7 +546,9 @@ func TestGetGitCommand(t *testing.T) {
 		}
 		env.On("runCommand", "uname", []string{"-r"}).Return(wslUname, nil)
 		g := &git{
-			env: env,
+			scm: scm{
+				env: env,
+			},
 		}
 		assert.Equal(t, tc.Expected, g.getGitCommand(), tc.Case)
 	}
@@ -628,8 +577,10 @@ func TestGitTemplateString(t *testing.T) {
 			Git: &git{
 				HEAD: branchName,
 				Working: &GitStatus{
-					Added:    2,
-					Modified: 3,
+					ScmStatus: ScmStatus{
+						Added:    2,
+						Modified: 3,
+					},
 				},
 			},
 		},
@@ -649,12 +600,16 @@ func TestGitTemplateString(t *testing.T) {
 			Git: &git{
 				HEAD: branchName,
 				Working: &GitStatus{
-					Added:    2,
-					Modified: 3,
+					ScmStatus: ScmStatus{
+						Added:    2,
+						Modified: 3,
+					},
 				},
 				Staging: &GitStatus{
-					Added:    5,
-					Modified: 1,
+					ScmStatus: ScmStatus{
+						Added:    5,
+						Modified: 1,
+					},
 				},
 			},
 		},
@@ -665,12 +620,16 @@ func TestGitTemplateString(t *testing.T) {
 			Git: &git{
 				HEAD: branchName,
 				Working: &GitStatus{
-					Added:    2,
-					Modified: 3,
+					ScmStatus: ScmStatus{
+						Added:    2,
+						Modified: 3,
+					},
 				},
 				Staging: &GitStatus{
-					Added:    5,
-					Modified: 1,
+					ScmStatus: ScmStatus{
+						Added:    5,
+						Modified: 1,
+					},
 				},
 			},
 		},
@@ -681,12 +640,16 @@ func TestGitTemplateString(t *testing.T) {
 			Git: &git{
 				HEAD: branchName,
 				Working: &GitStatus{
-					Added:    2,
-					Modified: 3,
+					ScmStatus: ScmStatus{
+						Added:    2,
+						Modified: 3,
+					},
 				},
 				Staging: &GitStatus{
-					Added:    5,
-					Modified: 1,
+					ScmStatus: ScmStatus{
+						Added:    5,
+						Modified: 1,
+					},
 				},
 				StashCount: 3,
 			},

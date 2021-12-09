@@ -11,10 +11,10 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 	env.On("hasCommand", "cm").Return(false)
 	env.On("getRuntimeGOOS", nil).Return("")
 	env.On("isWsl", nil).Return(false)
-	g := &plastic{
+	p := &plastic{
 		env: env,
 	}
-	assert.False(t, g.enabled())
+	assert.False(t, p.enabled())
 }
 
 func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
@@ -28,11 +28,11 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 		isDir:        true,
 	}
 	env.On("hasParentFilePath", ".plastic").Return(fileInfo, nil)
-	g := &plastic{
+	p := &plastic{
 		env: env,
 	}
-	assert.True(t, g.enabled())
-	assert.Equal(t, fileInfo.parentFolder, g.plasticWorkspaceFolder)
+	assert.True(t, p.enabled())
+	assert.Equal(t, fileInfo.parentFolder, p.plasticWorkspaceFolder)
 }
 
 func setupCmStatusEnv(status, headStatus string) *plastic {
@@ -41,16 +41,16 @@ func setupCmStatusEnv(status, headStatus string) *plastic {
 	env.On("runCommand", "cm", []string{"status", "--all", "--machinereadable"}).Return(status, nil)
 	env.On("runCommand", "cm", []string{"status", "--head", "--machinereadable"}).Return(headStatus, nil)
 	env.On("getRuntimeGOOS", nil).Return("unix")
-	g := &plastic{
+	p := &plastic{
 		env: env,
 	}
-	return g
+	return p
 }
 
 func TestPlasticGetCmOutputForCommand(t *testing.T) {
 	want := "je suis le output"
-	g := setupCmStatusEnv(want, "")
-	got := g.getCmCommandOutput("status", "--all", "--machinereadable")
+	p := setupCmStatusEnv(want, "")
+	got := p.getCmCommandOutput("status", "--all", "--machinereadable")
 	assert.Equal(t, want, got)
 }
 
@@ -76,9 +76,9 @@ func TestPlasticStatusBehind(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		g := setupCmStatusEnv(tc.Status, tc.Head)
-		g.getPlasticStatus()
-		assert.Equal(t, tc.Expected, g.Behind, tc.Case)
+		p := setupCmStatusEnv(tc.Status, tc.Head)
+		p.getPlasticStatus()
+		assert.Equal(t, tc.Expected, p.Behind, tc.Case)
 	}
 }
 
@@ -126,9 +126,9 @@ func TestPlasticStatusChanged(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		g := setupCmStatusEnv(tc.Status, "")
-		g.getPlasticStatus()
-		assert.Equal(t, tc.Expected, g.Changed, tc.Case)
+		p := setupCmStatusEnv(tc.Status, "")
+		p.getPlasticStatus()
+		assert.Equal(t, tc.Expected, p.Changed, tc.Case)
 	}
 }
 
@@ -139,58 +139,100 @@ func TestPlasticStatusCounts(t *testing.T) {
 		"\r\nCH /some.file\r\nCH /some.file" +
 		"\r\nLD /some.file\r\nLD /some.file\r\nLD /some.file" +
 		"\r\nLM /some.file\r\nLM /some.file\r\nLM /some.file\r\nLM /some.file"
-	g := setupCmStatusEnv(status, "")
-	g.getPlasticStatus()
-	assert.Equal(t, 1, g.Unmerged)
-	assert.Equal(t, 1, g.Added)
-	assert.Equal(t, 2, g.Modified)
-	assert.Equal(t, 3, g.Deleted)
-	assert.Equal(t, 4, g.Moved)
+	p := setupCmStatusEnv(status, "")
+	p.getPlasticStatus()
+	assert.Equal(t, 1, p.Unmerged)
+	assert.Equal(t, 1, p.Added)
+	assert.Equal(t, 2, p.Modified)
+	assert.Equal(t, 3, p.Deleted)
+	assert.Equal(t, 4, p.Moved)
+}
+
+func TestPlasticParseIntPattern(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected int
+		Text     string
+		Pattern  string
+		Name     string
+		Default  int
+	}{
+		{
+			Case:     "int found",
+			Expected: 123,
+			Text:     "Some number 123 in text",
+			Pattern:  `\s(?P<x>[0-9]+?)\s`,
+			Name:     "x",
+			Default:  0,
+		},
+		{
+			Case:     "int not found",
+			Expected: 0,
+			Text:     "No number in text",
+			Pattern:  `\s(?P<x>[0-9]+?)\s`,
+			Name:     "x",
+			Default:  0,
+		},
+		{
+			Case:     "empty text",
+			Expected: 0,
+			Text:     "",
+			Pattern:  `\s(?P<x>[0-9]+?)\s`,
+			Name:     "x",
+			Default:  0,
+		},
+	}
+
+	p := &plastic{}
+	for _, tc := range cases {
+		value := p.parseIntPattern(tc.Text, tc.Pattern, tc.Name, tc.Default)
+		assert.Equal(t, tc.Expected, value, tc.Case)
+	}
 }
 
 func TestPlasticParseStatusChangeset(t *testing.T) {
-	g := &plastic{}
-	cs := g.parseStatusChangeset("STATUS 321 default localhost:8087")
+	p := &plastic{}
+	cs := p.parseStatusChangeset("STATUS 321 default localhost:8087")
 	assert.Equal(t, 321, cs)
 }
 
 func TestPlasticGetHeadChangeset(t *testing.T) {
 	head := "STATUS cs:321 rep:default repserver:localhost:8087"
-	g := setupCmStatusEnv("", head)
-	cs := g.getHeadChangeset()
+	p := setupCmStatusEnv("", head)
+	cs := p.getHeadChangeset()
 	assert.Equal(t, 321, cs)
 }
 
 func TestPlasticParseChangesetSelector(t *testing.T) {
 	content := "repository \"default\"\r\n	path \"/\"\r\n	  smartbranch \"/main\" changeset \"321\""
-	g := &plastic{}
-	selector := g.parseChangesetSelector(content)
+	p := &plastic{}
+	selector := p.parseChangesetSelector(content)
 	assert.Equal(t, "321", selector)
 }
 
 func TestPlasticParseLabelSelector(t *testing.T) {
 	content := "repository \"default\"\r\n	path \"/\"\r\n	  label \"BL003\""
-	g := &plastic{}
-	selector := g.parseLabelSelector(content)
+	p := &plastic{}
+	selector := p.parseLabelSelector(content)
 	assert.Equal(t, "BL003", selector)
 }
 
 func TestPlasticParseBranchSelector(t *testing.T) {
 	content := "repository \"default\"\r\n	path \"/\"\r\n	  branch \"/main/fix-004\""
-	g := &plastic{}
-	selector := g.parseBranchSelector(content)
+	p := &plastic{}
+	selector := p.parseBranchSelector(content)
 	assert.Equal(t, "/main/fix-004", selector)
 }
 
 func TestPlasticParseSmartbranchSelector(t *testing.T) {
 	content := "repository \"default\"\r\n	path \"/\"\r\n	  smartbranch \"/main/fix-002\""
-	g := &plastic{}
-	selector := g.parseBranchSelector(content)
+	p := &plastic{}
+	selector := p.parseBranchSelector(content)
 	assert.Equal(t, "/main/fix-002", selector)
 }
 
 func TestPlasticStatus(t *testing.T) {
-	g := &plastic{
+	p := &plastic{
 		Changed:  true,
 		Added:    1,
 		Modified: 2,
@@ -198,7 +240,7 @@ func TestPlasticStatus(t *testing.T) {
 		Moved:    4,
 		Unmerged: 5,
 	}
-	status := g.Status()
+	status := p.Status()
 	expected := "+1 ~2 -3 >4 x5"
 	assert.Equal(t, expected, status)
 }
@@ -225,11 +267,11 @@ func TestPlasticShouldIgnoreRootRepository(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("homeDir", nil).Return("/home/bill")
 		env.On("getRuntimeGOOS", nil).Return(windowsPlatform)
-		plastic := &plastic{
+		p := &plastic{
 			props: props,
 			env:   env,
 		}
-		got := plastic.shouldIgnoreRootRepository(tc.Dir)
+		got := p.shouldIgnoreRootRepository(tc.Dir)
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
@@ -260,10 +302,10 @@ func TestPlasticTruncateBranch(t *testing.T) {
 			BranchMaxLength: tc.MaxLength,
 			FullBranchPath:  tc.FullBranch,
 		}
-		g := &plastic{
+		p := &plastic{
 			props: props,
 		}
-		assert.Equal(t, tc.Expected, g.truncateBranch(tc.Branch), tc.Case)
+		assert.Equal(t, tc.Expected, p.truncateBranch(tc.Branch), tc.Case)
 	}
 }
 
@@ -295,43 +337,10 @@ func TestPlasticTruncateBranchWithSymbol(t *testing.T) {
 			TruncateSymbol:  tc.TruncateSymbol,
 			FullBranchPath:  tc.FullBranch,
 		}
-		g := &plastic{
+		p := &plastic{
 			props: props,
 		}
-		assert.Equal(t, tc.Expected, g.truncateBranch(tc.Branch), tc.Case)
-	}
-}
-
-func TestGetCmCommand(t *testing.T) {
-	cases := []struct {
-		Case     string
-		Expected string
-		IsWSL    bool
-		IsWSL1   bool
-		GOOS     string
-		CWD      string
-	}{
-		{Case: "On Windows", Expected: "cm.exe", GOOS: windowsPlatform},
-		{Case: "Non Windows", Expected: "cm"},
-		{Case: "Iside WSL2, non shared", IsWSL: true, Expected: "cm"},
-		{Case: "Iside WSL2, shared", Expected: "cm.exe", IsWSL: true, CWD: "/mnt/bill"},
-		{Case: "Iside WSL1, shared", Expected: "cm", IsWSL: true, IsWSL1: true, CWD: "/mnt/bill"},
-	}
-
-	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("isWsl", nil).Return(tc.IsWSL)
-		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
-		env.On("getcwd", nil).Return(tc.CWD)
-		wslUname := "5.10.60.1-microsoft-standard-WSL2"
-		if tc.IsWSL1 {
-			wslUname = "4.4.0-19041-Microsoft"
-		}
-		env.On("runCommand", "uname", []string{"-r"}).Return(wslUname, nil)
-		g := &plastic{
-			env: env,
-		}
-		assert.Equal(t, tc.Expected, g.getCmCommand(), tc.Case)
+		assert.Equal(t, tc.Expected, p.truncateBranch(tc.Branch), tc.Case)
 	}
 }
 

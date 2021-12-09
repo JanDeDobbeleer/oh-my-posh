@@ -30,7 +30,7 @@
       "type": "shell",
       "command": "go",
       "label": "devcontainer: rebuild oh-my-posh",
-      "detail": "Build oh-my-posh for all shells when inside the devcaontainer",
+      "detail": "Build oh-my-posh for all shells when inside the devcontainer",
       "options": {
         "cwd": "${workspaceRoot}/src",
         "shell": {

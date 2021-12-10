@@ -104,6 +104,21 @@ func (env *environment) getCachePath() string {
 	return env.homeDir()
 }
 
+type windowsRegistryValueType int
+
+const (
+	regQword windowsRegistryValueType = iota
+	regDword
+	regString
+)
+
+type windowsRegistryValue struct {
+	valueType windowsRegistryValueType
+	qword     uint64
+	dword     uint32
+	str       string
+}
+
 //
 // Takes a registry path to a key like
 //		"HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"
@@ -156,11 +171,12 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	regKey := regPathParts[1][lastSlash+1:]
 	regPath := regPathParts[1][0:lastSlash]
 
+	// Just for debug log display.
 	regKeyLogged := regKey
-	if regKeyLogged == "" {
+	if len(regKeyLogged) == 0 {
 		regKeyLogged = "(Default)"
 	}
-	env.log(Error, "getWindowsRegistryKeyValue", fmt.Sprintf("getWindowsRegistryKeyValue: root:\"%s\", path:\"%s\", key:\"%s\"", regPathParts[0], regPath, regKeyLogged))
+	env.log(Debug, "getWindowsRegistryKeyValue", fmt.Sprintf("getWindowsRegistryKeyValue: root:\"%s\", path:\"%s\", key:\"%s\"", regPathParts[0], regPath, regKeyLogged))
 
 	// Second part of split is registry path after HK part - needs to be UTF16 to pass to the windows. API
 	regPathUTF16, err := windows.UTF16FromString(regPath)

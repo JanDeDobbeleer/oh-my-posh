@@ -56,21 +56,6 @@ type cache interface {
 	set(key, value string, ttl int)
 }
 
-type windowsRegistryValueType int
-
-const (
-	regQword windowsRegistryValueType = iota
-	regDword
-	regString
-)
-
-type windowsRegistryValue struct {
-	valueType windowsRegistryValueType
-	qword     uint64
-	dword     uint32
-	str       string
-}
-
 type environmentInfo interface {
 	getenv(key string) string
 	getcwd() string

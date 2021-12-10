@@ -122,11 +122,11 @@ func TestPlasticStatusChanged(t *testing.T) {
 			Expected: true,
 			Status:   "STATUS 1 default localhost:8087\r\nLD /some.file",
 		},
-		// {
-		// 	Case:     "Unmerged file",
-		// 	Expected: true,
-		// 	Status:   "STATUS 1 default localhost:8087\r\nCP /some.file Merge from 321",
-		// },
+		{
+			Case:     "Unmerged file",
+			Expected: true,
+			Status:   "STATUS 1 default localhost:8087\r\nCO /some.file NO_MERGES",
+		},
 	}
 
 	for _, tc := range cases {
@@ -138,7 +138,7 @@ func TestPlasticStatusChanged(t *testing.T) {
 
 func TestPlasticStatusCounts(t *testing.T) {
 	status := "STATUS 1 default localhost:8087" +
-		"\r\nCP /some.file Merge from 321" +
+		"\r\nCO /some.file NO_MERGES" +
 		"\r\nAD /some.file" +
 		"\r\nCH /some.file\r\nCH /some.file" +
 		"\r\nLD /some.file\r\nLD /some.file\r\nLD /some.file" +
@@ -146,11 +146,35 @@ func TestPlasticStatusCounts(t *testing.T) {
 	p := setupCmStatusEnv(status, "")
 	p.setPlasticStatus()
 	s := p.Status
-	//assert.Equal(t, 1, s.Unmerged)
+	assert.Equal(t, 1, s.Unmerged)
 	assert.Equal(t, 1, s.Added)
 	assert.Equal(t, 2, s.Modified)
 	assert.Equal(t, 3, s.Deleted)
 	assert.Equal(t, 4, s.Moved)
+}
+
+func TestPlasticMergePending(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected bool
+		Status   string
+	}{
+		{
+			Case:     "No pending merge",
+			Expected: false,
+			Status:   "STATUS 1 default localhost:8087",
+		},
+		{
+			Case:     "Pending merge",
+			Expected: true,
+			Status:   "STATUS 1 default localhost:8087\r\nCH /some.file merge from 8",
+		},
+	}
+	for _, tc := range cases {
+		p := setupCmStatusEnv(tc.Status, "")
+		p.setPlasticStatus()
+		assert.Equal(t, tc.Expected, p.MergePending, tc.Case)
+	}
 }
 
 func TestPlasticParseIntPattern(t *testing.T) {

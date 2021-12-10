@@ -28,6 +28,7 @@ Local changes can also be displayed which uses the following syntax (see `.Statu
   "foreground": "#193549",
   "background": "#ffeb3b",
   "background_templates": [
+    "{{ if .MergePending }}#006060{{ end }}",
     "{{ if .Changed }}#FF9248{{ end }}",
     "{{ if and .Changed .Behind }}#ff4500{{ end }}",
     "{{ if .Behind }}#B388FF{{ end }}"
@@ -40,6 +41,12 @@ Local changes can also be displayed which uses the following syntax (see `.Statu
   }
 }
 ```
+
+## Plastic SCM Icon
+
+If you want to use the icon of Plastic SCM in the segment, then please help me push the icon in this [issue][fa-issue] 
+by leaving a like!  
+![icon](https://www.plasticscm.com/images/icon-logo-plasticscm.svg)
 
 ## Properties
 
@@ -72,6 +79,8 @@ You can set the following property to `true` to enable fetching additional infor
 - `.Selector`: `string` - the current selector context (branch/changeset/label)
 - `.Behind`: `bool` - the current workspace is behind and changes are incoming
 - `.Status`: `PlasticStatus` - changes in the workspace (see below)
+- `.MergePending`: `bool` - if a merge is pending and needs to be commited  
+(kown issue: when no file is left after a *Change/Delete conflict* merge, the `MergePending` property is not set)
 
 ### PlasticStatus
 
@@ -85,3 +94,4 @@ You can set the following property to `true` to enable fetching additional infor
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
+[fa-issue]: https://github.com/FortAwesome/Font-Awesome/issues/18504

@@ -18,7 +18,7 @@ func (s *PlasticStatus) add(code string) {
 		s.Added++
 	case "LM":
 		s.Moved++
-	case "CH":
+	case "CH", "CO":
 		s.Modified++
 	}
 }
@@ -26,9 +26,10 @@ func (s *PlasticStatus) add(code string) {
 type plastic struct {
 	scm
 
-	Status   *PlasticStatus
-	Behind   bool
-	Selector string
+	Status       *PlasticStatus
+	Behind       bool
+	Selector     string
+	MergePending bool
 
 	plasticWorkspaceFolder string // root folder of workspace
 }
@@ -98,6 +99,7 @@ func (p *plastic) setPlasticStatus() {
 	p.Behind = headChangeset > currentChangeset
 
 	// parse file state
+	p.MergePending = false
 	p.Status = &PlasticStatus{}
 	p.parseFilesStatus(splittedOutput)
 }
@@ -110,6 +112,14 @@ func (p *plastic) parseFilesStatus(output []string) {
 		if len(line) < 3 {
 			continue
 		}
+
+		if strings.Contains(line, "NO_MERGES") {
+			p.Status.Unmerged++
+			continue
+		}
+
+		p.MergePending = p.MergePending || matchString(`(?i)\smerge\s+from\s+[0-9]+\s*$`, line)
+
 		code := line[:2]
 		p.Status.add(code)
 	}
@@ -176,7 +186,7 @@ func (p *plastic) parseBranchSelector(selector string) string {
 	return p.parseStringPattern(selector, `branch "(?P<branch>[\/a-zA-Z0-9\-\_]+?)"`, "branch")
 }
 
-func (s *scm) getCmCommandOutput(args ...string) string {
+func (s *plastic) getCmCommandOutput(args ...string) string {
 	val, _ := s.env.runCommand("cm", args...)
 	return val
 }

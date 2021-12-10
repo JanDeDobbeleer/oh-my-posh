@@ -131,6 +131,12 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	//
 	regPathParts := strings.SplitN(path, "\\", 2)
 
+	if len(regPathParts) < 2 {
+		errorLogMsg := fmt.Sprintf("Error, malformed registry path: '%s'", path)
+		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
+		return nil, errors.New(errorLogMsg)
+	}
+
 	regRootHKeyHandle := getHKEYHandleFromAbbrString(regPathParts[0])
 	if regRootHKeyHandle == 0 {
 		errorLogMsg := fmt.Sprintf("Error, Supplied root HKEY value not valid: '%s'", regPathParts[0])
@@ -140,6 +146,12 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 
 	// Strip key off the end.
 	lastSlash := strings.LastIndex(regPathParts[1], "\\")
+
+	if lastSlash < 0 {
+		errorLogMsg := fmt.Sprintf("Error, malformed registry path: '%s'", path)
+		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
+		return nil, errors.New(errorLogMsg)
+	}
 
 	regKey := regPathParts[1][lastSlash+1:]
 	regPath := regPathParts[1][0:lastSlash]
@@ -151,9 +163,9 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	env.log(Error, "getWindowsRegistryKeyValue", fmt.Sprintf("getWindowsRegistryKeyValue: root:\"%s\", path:\"%s\", key:\"%s\"", regPathParts[0], regPath, regKeyLogged))
 
 	// Second part of split is registry path after HK part - needs to be UTF16 to pass to the windows. API
-	regPathUTF16, regPathUTF16ConversionErr := windows.UTF16FromString(regPath)
-	if regPathUTF16ConversionErr != nil {
-		errorLogMsg := fmt.Sprintf("Error, Could not convert supplied path '%s' to UTF16, error: '%s'", regPath, regPathUTF16ConversionErr)
+	regPathUTF16, err := windows.UTF16FromString(regPath)
+	if err != nil {
+		errorLogMsg := fmt.Sprintf("Error, Could not convert supplied path '%s' to UTF16, error: '%s'", regPath, err)
 		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
@@ -175,9 +187,9 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	}()
 
 	// Again - need UTF16 of the key for the API:
-	regKeyUTF16, regKeyUTF16ConversionErr := windows.UTF16FromString(regKey)
-	if regKeyUTF16ConversionErr != nil {
-		errorLogMsg := fmt.Sprintf("Error, could not convert supplied key '%s' to UTF16, error: '%s'", regKey, regKeyUTF16ConversionErr)
+	regKeyUTF16, err := windows.UTF16FromString(regKey)
+	if err != nil {
+		errorLogMsg := fmt.Sprintf("Error, could not convert supplied key '%s' to UTF16, error: '%s'", regKey, err)
 		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}

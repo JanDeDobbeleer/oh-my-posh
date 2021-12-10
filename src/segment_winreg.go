@@ -78,41 +78,41 @@ func (wr *winreg) templateString(segmentTemplate string) string {
 func (wr winreg) GetRegistryString(path string) (string, error) {
 	regValue, err := wr.env.getWindowsRegistryKeyValue(path)
 
-	if regValue != nil {
-		if regValue.valueType == regString {
-			return regValue.str, nil
-		}
+	if regValue == nil {
+		return "", err
+	}
 
+	if regValue.valueType != regString {
 		return "", errors.New("type mismatch, registry value is not a string")
 	}
 
-	return "", err
+	return regValue.str, nil
 }
 
 func (wr winreg) GetRegistryDword(path string) (uint32, error) {
 	regValue, err := wr.env.getWindowsRegistryKeyValue(path)
 
-	if regValue != nil {
-		if regValue.valueType == regDword {
-			return regValue.dword, nil
-		}
-
-		return 0, errors.New("type mismatch, registry value is not a dword or qword")
+	if regValue == nil {
+		return 0, err
 	}
 
-	return 0, err
+	if regValue.valueType != regDword {
+		return 0, errors.New("type mismatch, registry value is not a dword")
+	}
+
+	return regValue.dword, nil
 }
 
 func (wr winreg) GetRegistryQword(path string) (uint64, error) {
 	regValue, err := wr.env.getWindowsRegistryKeyValue(path)
 
-	if regValue != nil {
-		if regValue.valueType == regQword {
-			return regValue.qword, nil
-		}
+	if regValue == nil {
+		return 0, err
+	}
 
+	if regValue.valueType != regQword {
 		return 0, errors.New("type mismatch, registry value is not a qword")
 	}
 
-	return 0, err
+	return regValue.qword, nil
 }

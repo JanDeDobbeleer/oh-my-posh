@@ -86,6 +86,7 @@ module.exports = {
         "contributing_started",
         "contributing_segment",
         "contributing_git",
+        "contributing_plastic",
       ],
     },
     "themes",

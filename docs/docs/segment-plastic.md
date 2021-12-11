@@ -44,7 +44,7 @@ Local changes can also be displayed which uses the following syntax (see `.Statu
 
 ## Plastic SCM Icon
 
-If you want to use the icon of Plastic SCM in the segment, then please help me push the icon in this [issue][fa-issue] 
+If you want to use the icon of Plastic SCM in the segment, then please help me push the icon in this [issue][fa-issue]
 by leaving a like!  
 ![icon](https://www.plasticscm.com/images/icon-logo-plasticscm.svg)
 

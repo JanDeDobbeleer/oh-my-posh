@@ -10,6 +10,7 @@ type loadContext func()
 
 type inContext func() bool
 
+type getVersion func() (string, error)
 type matchesVersionFile func() bool
 
 type version struct {
@@ -25,6 +26,7 @@ type cmd struct {
 	executable string
 	args       []string
 	regex      string
+	getVersion getVersion
 }
 
 func (c *cmd) parse(versionInfo string) (*version, error) {
@@ -166,13 +168,22 @@ func (l *language) hasLanguageFiles() bool {
 // setVersion parses the version string returned by the command
 func (l *language) setVersion() error {
 	for _, command := range l.commands {
-		if !l.env.hasCommand(command.executable) {
-			continue
-		}
-		versionStr, err := l.env.runCommand(command.executable, command.args...)
-		if exitErr, ok := err.(*commandError); ok {
-			l.exitCode = exitErr.exitCode
-			return fmt.Errorf("err executing %s with %s", command.executable, command.args)
+		var versionStr string
+		var err error
+		if command.getVersion == nil {
+			if !l.env.hasCommand(command.executable) {
+				continue
+			}
+			versionStr, err = l.env.runCommand(command.executable, command.args...)
+			if exitErr, ok := err.(*commandError); ok {
+				l.exitCode = exitErr.exitCode
+				return fmt.Errorf("err executing %s with %s", command.executable, command.args)
+			}
+		} else {
+			versionStr, err = command.getVersion()
+			if err != nil {
+				return err
+			}
 		}
 		if versionStr == "" {
 			continue

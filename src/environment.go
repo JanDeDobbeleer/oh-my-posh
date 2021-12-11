@@ -403,25 +403,25 @@ func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
 	unableToRetrieveBatteryInfo := "A device which does not exist was specified."
 	unknownChargeRate := "Unknown value received"
 	var fatalErr battery.Errors
-	ignoreErr := func(err error) error {
+	ignoreErr := func(err error) bool {
 		if e, ok := err.(battery.ErrPartial); ok {
-			// ignore errors unknown charge rate value
+			// ignore unknown charge rate value error
 			if e.Current == nil &&
 				e.Design == nil &&
 				e.DesignVoltage == nil &&
 				e.Full == nil &&
 				e.State == nil &&
 				e.Voltage == nil &&
+				e.ChargeRate != nil &&
 				e.ChargeRate.Error() == unknownChargeRate {
-				return nil
+				return true
 			}
 		}
-		return err
+		return false
 	}
 	if batErr, ok := err.(battery.Errors); ok {
 		for _, err := range batErr {
-			err = ignoreErr(err)
-			if err != nil {
+			if !ignoreErr(err) {
 				fatalErr = append(fatalErr, err)
 			}
 		}

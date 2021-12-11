@@ -131,7 +131,7 @@ const (
 	PHP SegmentType = "php"
 	// Nightscout is an open source diabetes system
 	Nightscout SegmentType = "nightscout"
-	// WiFi writes details about the current WiFi connection
+	// Wakatime writes tracked time spend in dev editors
 	Wakatime SegmentType = "wakatime"
 	// WiFi writes details about the current WiFi connection
 	WiFi SegmentType = "wifi"

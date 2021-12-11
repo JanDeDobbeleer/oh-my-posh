@@ -826,6 +826,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Khaos66",
+      "name": "Khaos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4013009?v=4",
+      "profile": "https://github.com/Khaos66",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

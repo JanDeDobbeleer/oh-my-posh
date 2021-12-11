@@ -182,7 +182,8 @@
             "angular",
             "php",
             "wifi",
-            "winreg"
+            "winreg",
+            "plastic"
           ]
         },
         "style": {
@@ -1700,6 +1701,62 @@
                     "title":"Fallback value",
                     "description":"Value to display if registry value cannot be retrieved",
                     "default":""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "plastic" }
+            }
+          },
+          "then": {
+            "title": "Plastic SCM Segment",
+            "description": "https://ohmyposh.dev/docs/plastic",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
+                  "fetch_status": {
+                    "type": "boolean",
+                    "title": "Display Status",
+                    "description": "Display the local changes or not",
+                    "default": false
+                  },
+                  "branch_icon": {
+                    "type": "string",
+                    "title": "Branch Icon",
+                    "description": "The icon to use in front of the selector branch name",
+                    "default": "\uE0A0 "
+                  },
+                  "commit_icon": {
+                    "type": "string",
+                    "title": "Commit Icon",
+                    "description": "Icon/text to display before the selector changeset",
+                    "default": "\uF417"
+                  },
+                  "tag_icon": {
+                    "type": "string",
+                    "title": "Tag Icon",
+                    "description": "Icon/text to display before the seletor label",
+                    "default": "\uF412"
+                  },
+                  "branch_max_length": {
+                    "type": "integer",
+                    "title": "Branch max length",
+                    "description": "the max length for the displayed branch name where 0 implies full length",
+                    "default": 0
+                  },
+                  "full_branch_path": {
+                    "type": "boolean",
+                    "title": "Full branch path",
+                    "description": "display the full branch path instead of only the branch name",
+                    "default": false
                   }
                 }
               }

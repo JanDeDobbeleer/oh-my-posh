@@ -13,7 +13,9 @@ import (
 func TestGetStatusDetailStringDefault(t *testing.T) {
 	expected := "icon +1"
 	status := &GitStatus{
-		Added: 1,
+		ScmStatus: ScmStatus{
+			Added: 1,
+		},
 	}
 	g := &git{}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
@@ -22,13 +24,17 @@ func TestGetStatusDetailStringDefault(t *testing.T) {
 func TestGetStatusDetailStringDefaultColorOverride(t *testing.T) {
 	expected := "<#123456>icon +1</>"
 	status := &GitStatus{
-		Added: 1,
+		ScmStatus: ScmStatus{
+			Added: 1,
+		},
 	}
 	var props properties = map[Property]interface{}{
 		WorkingColor: "#123456",
 	}
 	g := &git{
-		props: props,
+		scm: scm{
+			props: props,
+		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
@@ -36,14 +42,18 @@ func TestGetStatusDetailStringDefaultColorOverride(t *testing.T) {
 func TestGetStatusDetailStringDefaultColorOverrideAndIconColorOverride(t *testing.T) {
 	expected := "<#789123>work</> <#123456>+1</>"
 	status := &GitStatus{
-		Added: 1,
+		ScmStatus: ScmStatus{
+			Added: 1,
+		},
 	}
 	var props properties = map[Property]interface{}{
 		WorkingColor:     "#123456",
 		LocalWorkingIcon: "<#789123>work</>",
 	}
 	g := &git{
-		props: props,
+		scm: scm{
+			props: props,
+		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
@@ -51,14 +61,18 @@ func TestGetStatusDetailStringDefaultColorOverrideAndIconColorOverride(t *testin
 func TestGetStatusDetailStringDefaultColorOverrideNoIconColorOverride(t *testing.T) {
 	expected := "<#123456>work +1</>"
 	status := &GitStatus{
-		Added: 1,
+		ScmStatus: ScmStatus{
+			Added: 1,
+		},
 	}
 	var props properties = map[Property]interface{}{
 		WorkingColor:     "#123456",
 		LocalWorkingIcon: "work",
 	}
 	g := &git{
-		props: props,
+		scm: scm{
+			props: props,
+		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
@@ -66,13 +80,17 @@ func TestGetStatusDetailStringDefaultColorOverrideNoIconColorOverride(t *testing
 func TestGetStatusDetailStringNoStatus(t *testing.T) {
 	expected := "icon"
 	status := &GitStatus{
-		Added: 1,
+		ScmStatus: ScmStatus{
+			Added: 1,
+		},
 	}
 	var props properties = map[Property]interface{}{
 		DisplayStatusDetail: false,
 	}
 	g := &git{
-		props: props,
+		scm: scm{
+			props: props,
+		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
@@ -80,14 +98,18 @@ func TestGetStatusDetailStringNoStatus(t *testing.T) {
 func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
 	expected := "<#123456>icon</>"
 	status := &GitStatus{
-		Added: 1,
+		ScmStatus: ScmStatus{
+			Added: 1,
+		},
 	}
 	var props properties = map[Property]interface{}{
 		DisplayStatusDetail: false,
 		WorkingColor:        "#123456",
 	}
 	g := &git{
-		props: props,
+		scm: scm{
+			props: props,
+		},
 	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
@@ -98,9 +120,13 @@ func TestGetStatusColorLocalChangesStaging(t *testing.T) {
 		LocalChangesColor: expected,
 	}
 	g := &git{
-		props: props,
+		scm: scm{
+			props: props,
+		},
 		Staging: &GitStatus{
-			Modified: 1,
+			ScmStatus: ScmStatus{
+				Modified: 1,
+			},
 		},
 		Working: &GitStatus{},
 	}
@@ -113,10 +139,14 @@ func TestGetStatusColorLocalChangesWorking(t *testing.T) {
 		LocalChangesColor: expected,
 	}
 	g := &git{
-		props:   props,
+		scm: scm{
+			props: props,
+		},
 		Staging: &GitStatus{},
 		Working: &GitStatus{
-			Modified: 1,
+			ScmStatus: ScmStatus{
+				Modified: 1,
+			},
 		},
 	}
 	assert.Equal(t, expected, g.getStatusColor("#fg1111"))
@@ -128,7 +158,9 @@ func TestGetStatusColorAheadAndBehind(t *testing.T) {
 		AheadAndBehindColor: expected,
 	}
 	g := &git{
-		props:   props,
+		scm: scm{
+			props: props,
+		},
 		Staging: &GitStatus{},
 		Working: &GitStatus{},
 		Ahead:   1,
@@ -143,7 +175,9 @@ func TestGetStatusColorAhead(t *testing.T) {
 		AheadColor: expected,
 	}
 	g := &git{
-		props:   props,
+		scm: scm{
+			props: props,
+		},
 		Staging: &GitStatus{},
 		Working: &GitStatus{},
 		Ahead:   1,
@@ -158,7 +192,9 @@ func TestGetStatusColorBehind(t *testing.T) {
 		BehindColor: expected,
 	}
 	g := &git{
-		props:   props,
+		scm: scm{
+			props: props,
+		},
 		Staging: &GitStatus{},
 		Working: &GitStatus{},
 		Ahead:   0,
@@ -173,7 +209,9 @@ func TestGetStatusColorDefault(t *testing.T) {
 		BehindColor: changesColor,
 	}
 	g := &git{
-		props:   props,
+		scm: scm{
+			props: props,
+		},
 		Staging: &GitStatus{},
 		Working: &GitStatus{},
 		Ahead:   0,
@@ -189,9 +227,13 @@ func TestSetStatusColorForeground(t *testing.T) {
 		ColorBackground:   false,
 	}
 	g := &git{
-		props: props,
+		scm: scm{
+			props: props,
+		},
 		Staging: &GitStatus{
-			Added: 1,
+			ScmStatus: ScmStatus{
+				Added: 1,
+			},
 		},
 		Working: &GitStatus{},
 	}
@@ -206,10 +248,14 @@ func TestSetStatusColorBackground(t *testing.T) {
 		ColorBackground:   true,
 	}
 	g := &git{
-		props:   props,
+		scm: scm{
+			props: props,
+		},
 		Staging: &GitStatus{},
 		Working: &GitStatus{
-			Modified: 1,
+			ScmStatus: ScmStatus{
+				Modified: 1,
+			},
 		},
 	}
 	g.SetStatusColor()
@@ -234,13 +280,15 @@ func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
 	env.mockGitCommand("", "describe", "--tags", "--exact-match")
 	env.mockGitCommand(status, "status", "-unormal", "--branch", "--porcelain=2")
 	g := &git{
-		env:              env,
-		gitWorkingFolder: "",
-		props: map[Property]interface{}{
-			DisplayStatus:       false,
-			StatusColorsEnabled: true,
-			LocalChangesColor:   expected,
+		scm: scm{
+			env: env,
+			props: map[Property]interface{}{
+				DisplayStatus:       false,
+				StatusColorsEnabled: true,
+				LocalChangesColor:   expected,
+			},
 		},
+		gitWorkingFolder: "",
 	}
 	g.Working = &GitStatus{}
 	g.Staging = &GitStatus{}

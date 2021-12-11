@@ -11,8 +11,7 @@ Shows the tracked time on [wakatime](wakatime.com) of the current day
 :::caution
 
 You **must** request an API key at the [wakatime](https://wakatime.com) website.
-The free tier for *Current weather and forecasts collection* is sufficient. You'll
-find the API key in your profile settings page.
+The free tier for is sufficient. You'll find the API key in your profile settings page.
 
 :::
 

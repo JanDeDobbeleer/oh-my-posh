@@ -399,15 +399,42 @@ func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
 			validBatteries = append(validBatteries, batt)
 		}
 	}
+	// clean minor errors
 	unableToRetrieveBatteryInfo := "A device which does not exist was specified."
+	unknownChargeRate := "Unknown value received"
+	var fatalErr battery.Errors
+	ignoreErr := func(err error) error {
+		if e, ok := err.(battery.ErrPartial); ok {
+			// ignore errors unknown charge rate value
+			if e.Current == nil &&
+				e.Design == nil &&
+				e.DesignVoltage == nil &&
+				e.Full == nil &&
+				e.State == nil &&
+				e.Voltage == nil &&
+				e.ChargeRate.Error() == unknownChargeRate {
+				return nil
+			}
+		}
+		return err
+	}
+	if batErr, ok := err.(battery.Errors); ok {
+		for _, err := range batErr {
+			err = ignoreErr(err)
+			if err != nil {
+				fatalErr = append(fatalErr, err)
+			}
+		}
+	}
+
 	// when battery info fails to get retrieved but there is at least one valid battery, return it without error
-	if len(validBatteries) > 0 && err != nil && strings.Contains(err.Error(), unableToRetrieveBatteryInfo) {
+	if len(validBatteries) > 0 && fatalErr != nil && strings.Contains(fatalErr.Error(), unableToRetrieveBatteryInfo) {
 		return validBatteries, nil
 	}
 	// another error occurred (possibly unmapped use-case), return it
-	if err != nil {
-		env.log(Error, "getBatteryInfo", err.Error())
-		return nil, err
+	if fatalErr != nil {
+		env.log(Error, "getBatteryInfo", fatalErr.Error())
+		return nil, fatalErr
 	}
 	// everything is fine
 	return validBatteries, nil

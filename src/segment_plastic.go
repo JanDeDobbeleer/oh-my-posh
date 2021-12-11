@@ -135,7 +135,7 @@ func (p *plastic) parseStringPattern(output, pattern, name string) string {
 
 func (p *plastic) parseIntPattern(output, pattern, name string, defValue int) int {
 	sValue := p.parseStringPattern(output, pattern, name)
-	if sValue != "" {
+	if len(sValue) > 0 {
 		iValue, _ := strconv.Atoi(sValue)
 		return iValue
 	}
@@ -156,19 +156,19 @@ func (p *plastic) setSelector() {
 	selector := p.getFileContents(p.plasticWorkspaceFolder+"/.plastic/", "plastic.selector")
 	// changeset
 	ref = p.parseChangesetSelector(selector)
-	if ref != "" {
+	if len(ref) > 0 {
 		p.Selector = fmt.Sprintf("%s%s", p.props.getString(CommitIcon, "\uF417"), ref)
 		return
 	}
 	// fallback to label
 	ref = p.parseLabelSelector(selector)
-	if ref != "" {
+	if len(ref) > 0 {
 		p.Selector = fmt.Sprintf("%s%s", p.props.getString(TagIcon, "\uF412"), ref)
 		return
 	}
 	// fallback to branch/smartbranch
 	ref = p.parseBranchSelector(selector)
-	if ref != "" {
+	if len(ref) > 0 {
 		ref = p.truncateBranch(ref)
 	}
 	p.Selector = fmt.Sprintf("%s%s", p.props.getString(BranchIcon, "\uE0A0"), ref)

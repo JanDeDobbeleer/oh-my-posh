@@ -87,7 +87,7 @@ func (w *wakatime) getResult() (*wtDataResponse, error) {
 
 	if cacheTimeout > 0 {
 		// persist data in cache
-		w.env.cache().set(WTCacheKeyURL, string(w.URL), cacheTimeout)
+		w.env.cache().set(WTCacheKeyURL, w.URL, cacheTimeout)
 		w.env.cache().set(WTCacheKeyResponse, string(body), cacheTimeout)
 	}
 	return w.Response, nil

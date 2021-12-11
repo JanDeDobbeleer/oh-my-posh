@@ -13,11 +13,15 @@ type wakatime struct {
 	Hours        int
 	Minutes      int
 	MinutesTotal int
+	URL          string
+	Response     *wtDataResponse
 }
 
 const (
 	// CacheKeyResponse key used when caching the response
 	WTCacheKeyResponse string = "wt_response"
+	// WTCacheKeyURL key used when caching the url
+	WTCacheKeyURL string = "wt_url"
 )
 
 type wtTotals struct {
@@ -29,6 +33,8 @@ type wtTotals struct {
 
 type wtDataResponse struct {
 	CummulativeTotal wtTotals `json:"cummulative_total"`
+	Start            string   `json:"start"`
+	End              string   `json:"end"`
 }
 
 func (w *wakatime) enabled() bool {
@@ -53,36 +59,38 @@ func (w *wakatime) string() string {
 
 func (w *wakatime) getResult() (*wtDataResponse, error) {
 	cacheTimeout := w.props.getInt(CacheTimeout, DefaultCacheTimeout)
-	response := new(wtDataResponse)
+	w.Response = &wtDataResponse{}
 	if cacheTimeout > 0 {
 		// check if data stored in cache
 		if val, found := w.env.cache().get(WTCacheKeyResponse); found {
-			err := json.Unmarshal([]byte(val), response)
+			err := json.Unmarshal([]byte(val), w.Response)
 			if err != nil {
 				return nil, err
 			}
-			return response, nil
+			w.URL, _ = w.env.cache().get(WTCacheKeyURL)
+			return w.Response, nil
 		}
 	}
 
 	apikey := w.props.getString(APIKey, ".")
 	httpTimeout := w.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
-	url := fmt.Sprintf("https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=%s", apikey)
+	w.URL = fmt.Sprintf("https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=%s", apikey)
 
-	body, err := w.env.doGet(url, httpTimeout)
+	body, err := w.env.doGet(w.URL, httpTimeout)
 	if err != nil {
 		return new(wtDataResponse), err
 	}
-	err = json.Unmarshal(body, &response)
+	err = json.Unmarshal(body, w.Response)
 	if err != nil {
 		return new(wtDataResponse), err
 	}
 
 	if cacheTimeout > 0 {
 		// persist data in cache
+		w.env.cache().set(WTCacheKeyURL, string(w.URL), cacheTimeout)
 		w.env.cache().set(WTCacheKeyResponse, string(body), cacheTimeout)
 	}
-	return response, nil
+	return w.Response, nil
 }
 
 func (w *wakatime) setStatus() error {

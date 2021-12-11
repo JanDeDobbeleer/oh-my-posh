@@ -46,6 +46,21 @@ properties below - defaults to `{{ if gt .Hours 0 }}{{.Hours}}h {{ end }}{{.Minu
 - `.Hours`: `int` - total hours tracked today (0 - 23)
 - `.Minutes`: `int` - additional minutes tracked (0 - 59)
 - `.MinutesTotal`: `int` - total minutes tracked today (0 - 1440)
+- `.URL`: `string` - the url of the current api call
+- `.Response`: `wtDataResponse` - the response of the api call
+
+### wtDataResponse Properties
+
+- `.CummulativeTotal`: `wtTotals` - object holding total tracked time values
+- `.Start` - `string` - datetime string reprecenting the start time of the data set
+- `.End` - `string` - datetime string reprecenting the end time of the data set
+
+### wtTotal Properties
+
+- `.Decimal`: `string` - a string reprecenting `hours.minutes` (eg: "2.5" for 2h 30m)
+- `.Digital`: `string` - a string reprecenting `hours:minutes` (eg: "2:30" for 2h 30m)
+- `.Seconds`: `float` - a number reprecenting the total tracked time in seconds
+- `.Text`: `string` - a string with human readable tracked time (eg: "2 hrs 30 mins")
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

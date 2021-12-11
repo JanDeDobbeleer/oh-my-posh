@@ -133,6 +133,8 @@ const (
 	PHP SegmentType = "php"
 	// Nightscout is an open source diabetes system
 	Nightscout SegmentType = "nightscout"
+	// Wakatime writes tracked time spend in dev editors
+	Wakatime SegmentType = "wakatime"
 	// WiFi writes details about the current WiFi connection
 	WiFi SegmentType = "wifi"
 	// WinReg queries the Windows registry.
@@ -266,6 +268,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Angular:       &angular{},
 		PHP:           &php{},
 		Nightscout:    &nightscout{},
+		Wakatime:      &wakatime{},
 		WiFi:          &wifi{},
 		WinReg:        &winreg{},
 	}

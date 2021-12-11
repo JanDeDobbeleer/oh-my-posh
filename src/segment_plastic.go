@@ -186,7 +186,7 @@ func (p *plastic) parseBranchSelector(selector string) string {
 	return p.parseStringPattern(selector, `branch "(?P<branch>[\/a-zA-Z0-9\-\_]+?)"`, "branch")
 }
 
-func (s *plastic) getCmCommandOutput(args ...string) string {
-	val, _ := s.env.runCommand("cm", args...)
+func (p *plastic) getCmCommandOutput(args ...string) string {
+	val, _ := p.env.runCommand("cm", args...)
 	return val
 }

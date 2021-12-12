@@ -1,3 +1,4 @@
+
 ---
 id: wakatime
 title: Wakatime
@@ -40,6 +41,19 @@ The free tier for is sufficient. You'll find the API key in your profile setting
 - cache_timeout: `int` - The default timeout for request caching is 10m. A value of 0 disables the cache.
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
 properties below - defaults to `{{ if gt .Hours 0 }}{{.Hours}}h {{ end }}{{.Minutes}}m`
+
+### Filter properties
+
+The [wakatime API](https://wakatime.com/developers#summaries) allows certain filter properties:
+
+- start: `string` - Start date of the dataset (default `today`)
+- end: `string` - End date of the dataset (default `today`)
+- timezone: `string` - Timezone of the `start` and `end` dates (default: empty)
+- project: `string` - Only show time tracked for this project (default: empty)
+- branches: `string` - Only show time tracked on these branches (default: empty)
+- writes_only: `bool` - Only count `wirte` events
+- timeout: `int` - Timeout used to merge heartbeat events to a duration (default: 0.
+This uses the value from the user profile on wakatime)
 
 ## Template Properties
 

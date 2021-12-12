@@ -2,8 +2,9 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"math"
+	neturl "net/url"
+	"strconv"
 )
 
 type wakatime struct {
@@ -22,6 +23,20 @@ const (
 	WTCacheKeyResponse string = "wt_response"
 	// WTCacheKeyURL key used when caching the url
 	WTCacheKeyURL string = "wt_url"
+	// Start date filter
+	Start Property = "start"
+	// End date filter
+	End Property = "end"
+	// Project filter
+	Project Property = "project"
+	// Branches filter
+	Branches Property = "branches"
+	// Timout to merge heartbeats into durations
+	Timeout Property = "timeout"
+	// Only writes string
+	WritesOnly Property = "writes_only"
+	// Timezone for start and end date filters
+	Timezone Property = "timezone"
 )
 
 type wtTotals struct {
@@ -72,9 +87,9 @@ func (w *wakatime) getResult() (*wtDataResponse, error) {
 		}
 	}
 
-	apikey := w.props.getString(APIKey, ".")
 	httpTimeout := w.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
-	w.URL = fmt.Sprintf("https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=%s", apikey)
+	// Build API URL
+	w.setAPIURL()
 
 	body, err := w.env.doGet(w.URL, httpTimeout)
 	if err != nil {
@@ -91,6 +106,52 @@ func (w *wakatime) getResult() (*wtDataResponse, error) {
 		w.env.cache().set(WTCacheKeyResponse, string(body), cacheTimeout)
 	}
 	return w.Response, nil
+}
+
+func (w *wakatime) setAPIURL() {
+	url := neturl.URL{
+		Scheme: "https",
+		Host:   "wakatime.com",
+		Path:   "/api/v1/users/current/summaries",
+	}
+
+	w.addURLStringParam(&url, APIKey, ".", "api_key")
+	w.addURLStringParam(&url, Start, "today", "start")
+	w.addURLStringParam(&url, End, "today", "end")
+	w.addURLStringParam(&url, Timezone, "", "timezone")
+	w.addURLStringParam(&url, Project, "", "project")
+	w.addURLStringParam(&url, Branches, "", "branches")
+	w.addURLIntParam(&url, Timeout, 0, "timeout")
+	w.addURLBoolParam(&url, WritesOnly, false, "writes_only")
+
+	w.URL = url.String()
+}
+
+func (w *wakatime) addURLStringParam(url *neturl.URL, property Property, defValue, paramName string) {
+	value := w.props.getString(property, defValue)
+	if len(value) > 0 {
+		q := url.Query()
+		q.Set(paramName, value)
+		url.RawQuery = q.Encode()
+	}
+}
+
+func (w *wakatime) addURLIntParam(url *neturl.URL, property Property, defValue int, paramName string) {
+	value := w.props.getInt(property, defValue)
+	if value > 0 {
+		q := url.Query()
+		q.Set(paramName, strconv.Itoa(value))
+		url.RawQuery = q.Encode()
+	}
+}
+
+func (w *wakatime) addURLBoolParam(url *neturl.URL, property Property, defValue bool, paramName string) {
+	value := w.props.getBool(property, defValue)
+	if value {
+		q := url.Query()
+		q.Set(paramName, "true")
+		url.RawQuery = q.Encode()
+	}
 }
 
 func (w *wakatime) setStatus() error {

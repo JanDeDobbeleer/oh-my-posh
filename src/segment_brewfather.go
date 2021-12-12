@@ -66,6 +66,10 @@ type Batch struct {
 	FermentStartDate int64 `json:"fermentationStartDate"`
 	BottlingDate     int64 `json:"bottlingDate"`
 
+	MeasuredOg  float64 `json:"measuredOg"`
+	MeasuredFg  float64 `json:"measuredFg"`
+	MeasuredAbv float64 `json:"measuredAbv"`
+
 	// copy of the latest BatchReading in here.
 	Reading *BatchReading
 

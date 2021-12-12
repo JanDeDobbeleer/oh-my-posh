@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"sort"
-	//"time"
+	"time"
 )
 
 // segment struct, makes templating easier
@@ -17,6 +17,10 @@ type brewfather struct {
 	Batch
 	TemperatureTrendIcon string
 	StatusIcon           string
+
+	DaysFermenting         uint
+	DaysBottled            uint
+	DaysBottledOrFermented *uint // help avoid chronic template logic - code will point this to one of above or be nil depending on status
 }
 
 const (
@@ -52,15 +56,20 @@ type BatchReading struct {
 	Timepoint   int64   `json:"timepoint"` // << check what these are...
 	Time        int64   `json:"time"`      // <<
 }
-
-// Returned from https://api.brewfather.app/v1/batches/batch_id
 type Batch struct {
+	// Json tagged values returned from https://api.brewfather.app/v1/batches/batch_id
 	Status string `json:"status"`
 	Recipe struct {
 		Name string `json:"name"`
 	} `json:"recipe"`
+	BrewDate         int64 `json:"brewDate"`
+	FermentStartDate int64 `json:"fermentationStartDate"`
+	BottlingDate     int64 `json:"bottlingDate"`
 
-	Reading          *BatchReading
+	// copy of the latest BatchReading in here.
+	Reading *BatchReading
+
+	// Calculated values we need to cache because they require the rest query to reproduce
 	TemperatureTrend float64 // diff between this and last, short term trend
 }
 
@@ -73,6 +82,24 @@ func (bf *brewfather) enabled() bool {
 	bf.TemperatureTrendIcon = bf.getTrendIcon(bf.TemperatureTrend)
 	bf.StatusIcon = bf.getBatchStatusIcon(data.Status)
 
+	fermStartDate := time.UnixMilli(bf.Batch.FermentStartDate)
+	bottlingDate := time.UnixMilli(bf.Batch.BottlingDate)
+
+	switch bf.Batch.Status {
+	case "Fermenting":
+		// in the fermenter now, so relative to today.
+		bf.DaysFermenting = uint(time.Since(fermStartDate).Hours() / 24)
+		bf.DaysBottled = 0
+		bf.DaysBottledOrFermented = &bf.DaysFermenting
+	case "Conditioning", "Completed", "Archived":
+		bf.DaysFermenting = uint(bottlingDate.Sub(fermStartDate).Hours() / 24)
+		bf.DaysBottled = uint(time.Since(bottlingDate).Hours() / 24)
+		bf.DaysBottledOrFermented = &bf.DaysBottled
+	default:
+		bf.DaysFermenting = 0
+		bf.DaysBottled = 0
+		bf.DaysBottledOrFermented = nil
+	}
 	return true
 }
 
@@ -115,7 +142,7 @@ func (bf *brewfather) getBatchStatusIcon(batchStatus string) string {
 	case "Fermenting": //ﭙ
 		return bf.props.getString(BFFermentingStatusIcon, "")
 	case "Conditioning":
-		return bf.props.getString(BFConditioningStatusIcon, "צּ") //?
+		return bf.props.getString(BFConditioningStatusIcon, "") //?
 	case "Completed":
 		return bf.props.getString(BFCompletedStatusIcon, "祖")
 	case "Archived":

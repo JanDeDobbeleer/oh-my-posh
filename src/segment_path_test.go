@@ -617,7 +617,7 @@ func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	assert.Equal(t, "#", got)
 }
 
-func TestAgnosterPath(t *testing.T) {
+func TestAgnosterPath(t *testing.T) { // nolint:dupl
 	cases := []struct {
 		Case          string
 		Expected      string
@@ -661,6 +661,54 @@ func TestAgnosterPath(t *testing.T) {
 			},
 		}
 		got := path.getAgnosterPath()
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
+func TestAgnosterLeftPath(t *testing.T) { // nolint:dupl
+	cases := []struct {
+		Case          string
+		Expected      string
+		Home          string
+		PWD           string
+		PathSeparator string
+	}{
+		{Case: "Windows outside home", Expected: "C: > Program Files > f > f", Home: homeBillWindows, PWD: "C:\\Program Files\\Go\\location", PathSeparator: "\\"},
+		{Case: "Windows inside home", Expected: "~ > Documents > f > f", Home: homeBillWindows, PWD: homeBillWindows + "\\Documents\\Bill\\location", PathSeparator: "\\"},
+		{Case: "Windows inside home zero levels", Expected: "C: > location", Home: homeBillWindows, PWD: "C:\\location", PathSeparator: "\\"},
+		{Case: "Windows inside home one level", Expected: "C: > Program Files > f", Home: homeBillWindows, PWD: "C:\\Program Files\\location", PathSeparator: "\\"},
+		{Case: "Windows lower case drive letter", Expected: "C: > Windows", Home: homeBillWindows, PWD: "C:\\Windows\\", PathSeparator: "\\"},
+		{Case: "Windows lower case drive letter (other)", Expected: "P: > Other", Home: homeBillWindows, PWD: "P:\\Other\\", PathSeparator: "\\"},
+		{Case: "Windows lower word drive", Expected: "some: > some", Home: homeBillWindows, PWD: "some:\\some\\", PathSeparator: "\\"},
+		{Case: "Windows lower word drive (ending with c)", Expected: "src: > source", Home: homeBillWindows, PWD: "src:\\source\\", PathSeparator: "\\"},
+		{Case: "Windows lower word drive (arbitrary cases)", Expected: "sRc: > source", Home: homeBillWindows, PWD: "sRc:\\source\\", PathSeparator: "\\"},
+		{Case: "Windows registry drive", Expected: "\uf013 > SOFTWARE > f", Home: homeBillWindows, PWD: "HKLM:\\SOFTWARE\\magnetic:test\\", PathSeparator: "\\"},
+		{Case: "Windows registry drive case sensitive", Expected: "\uf013 > SOFTWARE > f", Home: homeBillWindows, PWD: "HKLM:\\SOFTWARE\\magnetic:TOAST\\", PathSeparator: "\\"},
+		{Case: "Unix outside home", Expected: "mnt > go > f > f", Home: homeJan, PWD: "/mnt/go/test/location", PathSeparator: "/"},
+		{Case: "Unix inside home", Expected: "~ > docs > f > f", Home: homeJan, PWD: homeJan + "/docs/jan/location", PathSeparator: "/"},
+		{Case: "Unix outside home zero levels", Expected: "mnt > location", Home: homeJan, PWD: "/mnt/location", PathSeparator: "/"},
+		{Case: "Unix outside home one level", Expected: "mnt > folder > f", Home: homeJan, PWD: "/mnt/folder/location", PathSeparator: "/"},
+	}
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("homeDir", nil).Return(tc.Home)
+		env.On("getPathSeperator", nil).Return(tc.PathSeparator)
+		env.On("getcwd", nil).Return(tc.PWD)
+		env.On("getRuntimeGOOS", nil).Return("")
+		args := &args{
+			PSWD: &tc.PWD,
+		}
+		env.On("getArgs", nil).Return(args)
+		path := &path{
+			env: env,
+			props: map[Property]interface{}{
+				FolderSeparatorIcon: " > ",
+				FolderIcon:          "f",
+				HomeIcon:            "~",
+			},
+		}
+		got := path.getAgnosterLeftPath()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

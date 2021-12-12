@@ -1,15 +1,20 @@
 PackageIdentifier: JanDeDobbeleer.OhMyPosh
 PackageVersion: <VERSION>
+Platform:
+- Windows.Desktop
+MinimumOSVersion: 10.0.0.0
+InstallerType: inno
+Scope: user
 InstallModes:
- - "silent"
+- interactive
+- silent
+- silentWithProgress
 Installers:
 - Architecture: x64
-  InstallerType: inno
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-amd64.exe
   InstallerSha256: <HASH-AMD64>
 - Architecture: arm64
-  InstallerType: inno
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-arm64.exe
   InstallerSha256: <HASH-ARM64>
-ManifestType: "installer"
+ManifestType: installer
 ManifestVersion: 1.0.0

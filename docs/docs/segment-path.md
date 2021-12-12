@@ -76,6 +76,7 @@ Style sets the way the path is displayed. Based on previous experience and popul
 - agnoster
 - agnoster_full
 - agnoster_short
+- agnoster_left
 - full
 - folder
 - mixed
@@ -84,8 +85,7 @@ Style sets the way the path is displayed. Based on previous experience and popul
 ### Agnoster
 
 Renders each folder as the `folder_icon` separated by the `folder_separator_icon`.
-Only the current folder name is displayed at the end, `$HOME` is replaced by the `home_icon` if you're
-inside the `$HOME` location or one of its children.
+Only the current folder name is displayed at the end.
 
 ### Agnoster Full
 
@@ -95,6 +95,11 @@ Renders each folder name separated by the `folder_separator_icon`.
 
 When more than `max_depth` levels deep, it renders one `folder_icon` followed by the names of the last `max_depth` folders,
 separated by the `folder_separator_icon`.
+
+### Agnoster Left
+
+Renders each folder as the `folder_icon` separated by the `folder_separator_icon`.
+Only the root folder name and it's child are displayed in full.
 
 ### Full
 

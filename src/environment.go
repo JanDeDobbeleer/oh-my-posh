@@ -82,6 +82,7 @@ type environmentInfo interface {
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
 	getWindowsRegistryKeyValue(regPath, regKey string) (string, error)
 	doGet(url string, timeout int) ([]byte, error)
+	doGetWithAuth(url string, timeout int, auth string) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
 	stackCount() int
@@ -482,6 +483,29 @@ func (env *environment) doGet(url string, timeout int) ([]byte, error) {
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		env.log(Error, "doGet", err.Error())
+		return nil, err
+	}
+	return body, nil
+}
+
+func (env *environment) doGetWithAuth(url string, timeout int, auth string) ([]byte, error) {
+	defer env.trace(time.Now(), "doGetWithAuth", url)
+	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
+	defer cncl()
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Add("authorization", auth)
+	response, err := client.Do(request)
+	if err != nil {
+		env.log(Error, "doGetWithAuth", err.Error())
+		return nil, err
+	}
+	defer response.Body.Close()
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		env.log(Error, "doGetWithAuth", err.Error())
 		return nil, err
 	}
 	return body, nil

@@ -104,21 +104,6 @@ func (env *environment) getCachePath() string {
 	return env.homeDir()
 }
 
-type windowsRegistryValueType int
-
-const (
-	regQword windowsRegistryValueType = iota
-	regDword
-	regString
-)
-
-type windowsRegistryValue struct {
-	valueType windowsRegistryValueType
-	qword     uint64
-	dword     uint32
-	str       string
-}
-
 //
 // Takes a registry path to a key like
 //		"HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"

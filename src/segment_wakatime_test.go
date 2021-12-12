@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	WTAPIURL = "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=key"
+	WTAPIURL = "https://wakatime.com/api/v1/users/current/summaries?api_key=key&end=today&start=today"
 )
 
 func TestWTTrackedTime(t *testing.T) {

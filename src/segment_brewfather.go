@@ -14,6 +14,7 @@ type brewfather struct {
 	env   environmentInfo
 
 	BatchReading
+	Batch
 }
 
 const (
@@ -26,7 +27,7 @@ const (
 	BFCacheTimeout Property = "cache_timeout"
 )
 
-// Returned from https://api.brewfather.app/v1/batches/:batch_id/readings
+// Returned from https://api.brewfather.app/v1/batches/batch_id/readings
 type BatchReading struct {
     Comment		string 	`json:"comment"`
     Gravity		float32 `json:"sg"`
@@ -35,6 +36,14 @@ type BatchReading struct {
 	Temperature	float32	`json:"temp"` // celsius
 	Timepoint	int64	`json:"timepoint"` // << check what these are...
     Time		int64	`json:"time"`
+}
+
+// Returned from https://api.brewfather.app/v1/batches/batch_id
+type Batch struct {
+	Status	string `json:"status"`
+	Recipe struct {
+		Name	string `json:"name"`
+	} `json:"recipe"`
 }
 
 func (bf *brewfather) enabled() bool {
@@ -96,16 +105,16 @@ func (bf *brewfather) getResult() (*BatchReading, error) {
 		}
 		return result[0], nil
 	}
-	getCacheValue := func(key string) (*BatchReading, error) {
-		val, found := bf.env.cache().get(key)
-		// we got something from the cache
-		if found {
-			if data, err := parseSingleElement([]byte(val)); err == nil {
-				return data, nil
-			}
-		}
-		return nil, errors.New("no data in cache")
-	}
+	// getCacheValue := func(key string) (*BatchReading, error) {
+	// 	val, found := bf.env.cache().get(key)
+	// 	// we got something from the cache
+	// 	if found {
+	// 		if data, err := parseSingleElement([]byte(val)); err == nil {
+	// 			return data, nil
+	// 		}
+	// 	}
+	// 	return nil, errors.New("no data in cache")
+	// }
 
 	userId := bf.props.getString(BFUserID, "")
 	apiKey := bf.props.getString(BFAPIKey, "")
@@ -122,19 +131,33 @@ func (bf *brewfather) getResult() (*BatchReading, error) {
 	authStringb64 := base64.StdEncoding.EncodeToString([]byte(authString))
 	authHeader := fmt.Sprintf("Basic %s", authStringb64)
 	batchId := "tbc9nltgWRam8M8yB8QpMGEDvwQteV"
-	url := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s/readings", batchId)
+	batchUrl := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s", batchId)
+	batchReadingsUrl := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s/readings", batchId)
 	
 	httpTimeout := bf.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
 	// natural and understood bf timeout is 5, anything else is unusual
-	cacheTimeout := bf.props.getInt(BFCacheTimeout, 5)
+	//cacheTimeout := bf.props.getInt(BFCacheTimeout, 5)
 
-	if cacheTimeout > 0 {
-		if data, err := getCacheValue(url); err == nil {
-			return data, nil
-		}
+	// if cacheTimeout > 0 {
+	// 	if data, err := getCacheValue(url); err == nil {
+	// 		return data, nil
+	// 	}
+	// }
+
+	// batch
+	body, err := bf.env.doGetWithAuth(batchUrl, httpTimeout, authHeader)
+	if err != nil {
+		return nil, err
 	}
+	var batch Batch
+	err = json.Unmarshal(body, &batch)
+	if err != nil {
+		return nil, err
+	}
+	bf.Batch = batch
 
-	body, err := bf.env.doGetWithAuth(url, httpTimeout, authHeader)
+	// reading
+	body, err = bf.env.doGetWithAuth(batchReadingsUrl, httpTimeout, authHeader)
 	if err != nil {
 		return nil, err
 	}
@@ -149,10 +172,10 @@ func (bf *brewfather) getResult() (*BatchReading, error) {
 		return nil, err
 	}
 
-	if cacheTimeout > 0 {
-		// persist new sugars in cache
-		bf.env.cache().set(url, string(body), cacheTimeout)
-	}
+	// if cacheTimeout > 0 {
+	// 	// persist new sugars in cache
+	// 	bf.env.cache().set(batchUrl, string(body), cacheTimeout)
+	// }
 	return data, nil
 }
 

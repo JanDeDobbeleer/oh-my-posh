@@ -6,7 +6,11 @@ sidebar_label: Brewfather
 
 ## What
 
-Show the status of your [Brewfather][brewfather] batch.
+Calling all brewers!  Keep up-to-date with the status of your [Brewfather][brewfather] batch directly in your
+ commandline prompt using the brewfather segment!
+
+ You will need your User ID and API Key as generated in
+ Brewfather's Settings screen, enabled with **batches.read** and **recipes.read** scopes.
 
 ## Sample Configuration
 
@@ -35,8 +39,6 @@ It will display the number of days the brew has been fermenting or conditioning 
         "user_id":"abcdefg123456",
         "api_key":"qrstuvw78910",
         "batch_id":"hijklmno098765",
-        "http_timeout":2000,
-        "cache_timeout":1,
         "template":"{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} {{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}"
     }
 },
@@ -44,8 +46,10 @@ It will display the number of days the brew has been fermenting or conditioning 
 
 ## Properties
 
-- user_id: `string` - Generate API-Key in the Brewfather app's Settings section will create this for you.
-- api_key: `string` - Also created by the above Generate API-Key flow in Brewfather.
+- user_id: `string` - as provided by Brewfather's Generate API Key screen.
+- api_key: `string` - as provided by Brewfather's Generate API Key screen.
+- batch_id: `string` - Get this by navigating to the desired batch on the brewfather website,
+the batch id is at the end of the URL in the address bar.
 - http_timeout: `int` in milliseconds - How long to wait for the Brewfather service to answer the request.  Default 2 seconds.
 - template: `string` - a go [text/template][go-text-template] template extended
   with [sprig][sprig] utilizing the properties below.
@@ -53,9 +57,9 @@ It will display the number of days the brew has been fermenting or conditioning 
   You can change the icon, put the trend elsewhere, add text, however you like!
   Make sure your NerdFont has the glyph you want or search for one
   at nerdfonts.com
-- BFCacheTimeout: `int` in minutes - How long to wait before updating the data from Brewfather.  Default is 5 minutes.
+- cache_timeout: `int` in minutes - How long to wait before updating the data from Brewfather.  Default is 5 minutes.
 
-You can change the icons for temperature trend as used by template property .TemperatureTrendIcon  The defaults are:
+You can override the icons for temperature trend as used by template property .TemperatureTrendIcon with:
 
 - doubleup_icon - for increases of more than 4°C, default is ↑↑
 - singleup_icon - increase 2-4°C, default is ↑
@@ -65,14 +69,14 @@ You can change the icons for temperature trend as used by template property .Tem
 - singledown_icon - decrease 2-4°C, default is ↓
 - doubledown_icon - decrease more than 4°C, default is ↓↓
 
-You can change the icons for batch status as used by template property .StatusIcon.  The defaults are:
+You can override the default icons for batch status as used by template property .StatusIcon with:
 
-- planning_status_icon - default is (todo)
-- brewing_status_icon - default is (todo)
-- fermenting_status_icon - default is (todo)
-- conditioning_status_icon - default is (todo)
-- completed_status_icon - default is (todo)
-- archived_status_icon - default is (todo)
+- planning_status_icon
+- brewing_status_icon
+- fermenting_status_icon
+- conditioning_status_icon
+- completed_status_icon
+- archived_status_icon
 
 ## Template Properties
 

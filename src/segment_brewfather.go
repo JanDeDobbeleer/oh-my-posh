@@ -46,6 +46,10 @@ const (
 	BFArchivedStatusIcon     Property = "archived_status_icon"
 
 	BFCacheTimeout Property = "cache_timeout"
+
+	DefaultTemplate string = "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} " +
+		"{{.Recipe.Name}}{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}\ue33e" +
+		"{{.TemperatureTrendIcon}} {{end}}"
 )
 
 // Returned from https://api.brewfather.app/v1/batches/batch_id/readings
@@ -54,7 +58,7 @@ type BatchReading struct {
 	Gravity     float64 `json:"sg"`
 	DeviceType  string  `json:"type"`
 	DeviceID    string  `json:"id"`
-	Temperature float64 `json:"temp"`      // celsius
+	Temperature float64 `json:"temp"`      // celsius - need to add F conversion
 	Timepoint   int64   `json:"timepoint"` // << check what these are...
 	Time        int64   `json:"time"`      // <<
 }
@@ -118,6 +122,7 @@ func (bf *brewfather) enabled() bool {
 }
 
 func (bf *brewfather) getTrendIcon(trend float64) string {
+	// Not a fan of this logic - wondering if Go lets us do something cleaner...
 	if trend >= 0 {
 		if trend > 4 {
 			return bf.props.getString(BFDoubleUpIcon, "↑↑")
@@ -169,9 +174,7 @@ func (bf *brewfather) getBatchStatusIcon(batchStatus string) string {
 }
 
 func (bf *brewfather) string() string {
-	segmentTemplate := bf.props.getString(SegmentTemplate, `
-		{{.StatusIcon}} {{.Recipe.Name}}{{ if and (.Reading) (eq .Status \"Fermenting\")}}:
-	 	{{.Reading.Gravity}} {{.Reading.Temperature}}\ue33e {{.TemperatureTrendIcon}} {{end}}`)
+	segmentTemplate := bf.props.getString(SegmentTemplate, DefaultTemplate)
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  bf,

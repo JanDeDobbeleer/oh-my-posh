@@ -37,6 +37,8 @@ const (
 	Mixed string = "mixed"
 	// Letter like agnoster, but with the first letter of each folder name
 	Letter string = "letter"
+	// AgnosterLeft like agnoster, but keeps the left side of the path
+	AgnosterLeft string = "agnoster_left"
 	// MixedThreshold the threshold of the length of the path Mixed will display
 	MixedThreshold Property = "mixed_threshold"
 	// MappedLocations allows overriding certain location with an icon
@@ -67,6 +69,8 @@ func (pt *path) string() string {
 		formattedPath = pt.getMixedPath()
 	case Letter:
 		formattedPath = pt.getLetterPath()
+	case AgnosterLeft:
+		formattedPath = pt.getAgnosterLeftPath()
 	case Short:
 		// "short" is a duplicate of "full", just here for backwards compatibility
 		fallthrough
@@ -141,6 +145,29 @@ func (pt *path) getAgnosterPath() string {
 	}
 	if pathDepth > 0 {
 		buffer.WriteString(fmt.Sprintf("%s%s", separator, base(pwd, pt.env)))
+	}
+	return buffer.String()
+}
+
+func (pt *path) getAgnosterLeftPath() string {
+	pwd := pt.getPwd()
+	separator := pt.env.getPathSeperator()
+	pwd = strings.Trim(pwd, separator)
+	splitted := strings.Split(pwd, separator)
+	folderIcon := pt.props.getString(FolderIcon, "..")
+	separator = pt.props.getString(FolderSeparatorIcon, separator)
+	switch len(splitted) {
+	case 0:
+		return ""
+	case 1:
+		return splitted[0]
+	case 2:
+		return fmt.Sprintf("%s%s%s", splitted[0], separator, splitted[1])
+	}
+	var buffer strings.Builder
+	buffer.WriteString(fmt.Sprintf("%s%s%s", splitted[0], separator, splitted[1]))
+	for i := 2; i < len(splitted); i++ {
+		buffer.WriteString(fmt.Sprintf("%s%s", separator, folderIcon))
 	}
 	return buffer.String()
 }

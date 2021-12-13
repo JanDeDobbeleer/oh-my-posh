@@ -640,6 +640,12 @@
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
+                  "parse_mod_file": {
+                    "type": "boolean",
+                    "title": "Parse go.mod file",
+                    "description": "Parse go.mod file instead of calling out to go to improve performance.",
+                    "default": false
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },

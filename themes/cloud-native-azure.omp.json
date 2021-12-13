@@ -20,7 +20,7 @@
           "invert_powerline": false,
           "powerline_symbol": "",
           "properties": {
-            "prefix": "   ",
+            "prefix": " \uf07b  ",
             "style": "folder"
           },
           "style": "powerline",
@@ -34,7 +34,7 @@
           "properties": {
             "display_stash_count": true,
             "display_upstream_icon": true,
-            "prefix": "   "
+            "prefix": " \uf7a1  "
           },
           "style": "powerline",
           "trailing_diamond": "",
@@ -50,7 +50,7 @@
             "color_background": true,
             "display_exit_code": false,
             "error_color": "#f1184c",
-            "prefix": " "
+            "prefix": " \ue23a "
           },
           "style": "diamond",
           "trailing_diamond": "",
@@ -81,13 +81,13 @@
           "powerline_symbol": "",
           "properties": {
             "charged_color": "#4caf50",
-            "charged_icon": " ",
+            "charged_icon": "\ue22f ",
             "charging_color": "#40c4ff",
-            "charging_icon": " ",
+            "charging_icon": "\uf583 ",
             "color_background": true,
             "discharging_color": "#ff5722",
-            "discharging_icon": " ",
-            "postfix": " "
+            "discharging_icon": "\uf582 ",
+            "postfix": "\uf295 "
           },
           "style": "powerline",
           "type": "battery"
@@ -116,7 +116,7 @@
           "leading_diamond": "",
           "powerline_symbol": "",
           "properties": {
-            "prefix": " ﴱ ",
+            "prefix": " \uefd31 ",
             "template": "Kubernetes {{.Context}} cluster {{if .Namespace}}- {{.Namespace}} namespace{{end}}"
           },
           "style": "diamond",
@@ -128,7 +128,7 @@
           "foreground": "#000000",
           "powerline_symbol": "",
           "properties": {
-            "prefix": " ﴃ ",
+            "prefix": " \ufd03 ",
             "template": "Subscription {{ .Name }} ({{ if .EnvironmentName | contains \"AzureCloud\" }}{{ \"Global\" }}{{ else }}{{ .EnvironmentName }}{{ end }})"
           },
           "style": "powerline",

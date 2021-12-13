@@ -361,6 +361,22 @@ func TestSetGitStatus(t *testing.T) {
 			ExpectedAhead:    2,
 			ExpectedBehind:   1,
 		},
+		{
+			Case: "untracked files",
+			Output: `
+			# branch.oid 1234567891011121314
+			# branch.head main
+			# branch.upstream origin/main
+			# branch.ab +0 -0
+			? q
+			? qq
+			? qqq
+			`,
+			ExpectedUpstream: "origin/main",
+			ExpectedHash:     "1234567",
+			ExpectedRef:      "main",
+			ExpectedWorking:  &GitStatus{ScmStatus: ScmStatus{Added: 3}},
+		},
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)

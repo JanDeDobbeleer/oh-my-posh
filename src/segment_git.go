@@ -227,6 +227,11 @@ func (g *git) setGitStatus() {
 		if len(status) <= 4 {
 			return
 		}
+		const UNTRACKED = "?"
+		if strings.HasPrefix(status, UNTRACKED) {
+			g.Working.add(UNTRACKED)
+			return
+		}
 		workingCode := status[3:4]
 		stagingCode := status[2:3]
 		g.Working.add(workingCode)

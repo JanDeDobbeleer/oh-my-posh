@@ -27,7 +27,7 @@ type brewfather struct {
 const (
 	BFUserID  Property = "user_id"
 	BFAPIKey  Property = "api_key"
-	BFBatchId Property = "batch_id"
+	BFBatchID Property = "batch_id"
 
 	BFDoubleUpIcon      Property = "doubleup_icon"
 	BFSingleUpIcon      Property = "singleup_icon"
@@ -52,7 +52,7 @@ type BatchReading struct {
 	Comment     string  `json:"comment"`
 	Gravity     float64 `json:"sg"`
 	DeviceType  string  `json:"type"`
-	DeviceId    string  `json:"id"`
+	DeviceID    string  `json:"id"`
 	Temperature float64 `json:"temp"`      // celsius
 	Timepoint   int64   `json:"timepoint"` // << check what these are...
 	Time        int64   `json:"time"`      // <<
@@ -109,7 +109,7 @@ func (bf *brewfather) enabled() bool {
 }
 
 func (bf *brewfather) getTrendIcon(trend float64) string {
-	if trend > 0 {
+	if trend >= 0 {
 		if trend > 4 {
 			return bf.props.getString(BFDoubleUpIcon, "↑↑")
 		}
@@ -121,6 +121,8 @@ func (bf *brewfather) getTrendIcon(trend float64) string {
 		if trend > 0.5 {
 			return bf.props.getString(BFFortyFiveUpIcon, "↗")
 		}
+
+		return bf.props.getString(BFFlatIcon, "→")
 	}
 
 	if trend < -4 {
@@ -141,13 +143,13 @@ func (bf *brewfather) getTrendIcon(trend float64) string {
 func (bf *brewfather) getBatchStatusIcon(batchStatus string) string {
 	switch batchStatus {
 	case "Planning":
-		return bf.props.getString(BFPlanningStatusIcon, "") //辰?
+		return bf.props.getString(BFPlanningStatusIcon, "")
 	case "Brewing":
 		return bf.props.getString(BFBrewingStatusIcon, "")
-	case "Fermenting": //ﭙ
+	case "Fermenting":
 		return bf.props.getString(BFFermentingStatusIcon, "")
 	case "Conditioning":
-		return bf.props.getString(BFConditioningStatusIcon, "") //?
+		return bf.props.getString(BFConditioningStatusIcon, "")
 	case "Completed":
 		return bf.props.getString(BFCompletedStatusIcon, "祖")
 	case "Archived":
@@ -158,7 +160,9 @@ func (bf *brewfather) getBatchStatusIcon(batchStatus string) string {
 }
 
 func (bf *brewfather) string() string {
-	segmentTemplate := bf.props.getString(SegmentTemplate, "{{.StatusIcon}} {{.Recipe.Name}}{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}\ue33e {{.TemperatureTrendIcon}} {{end}}")
+	segmentTemplate := bf.props.getString(SegmentTemplate, `
+		{{.StatusIcon}} {{.Recipe.Name}}{{ if and (.Reading) (eq .Status \"Fermenting\")}}:
+	 	{{.Reading.Gravity}} {{.Reading.Temperature}}\ue33e {{.TemperatureTrendIcon}} {{end}}`)
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  bf,
@@ -173,7 +177,6 @@ func (bf *brewfather) string() string {
 }
 
 func (bf *brewfather) getResult() (*Batch, error) {
-
 	getFromCache := func(key string) (*Batch, error) {
 		val, found := bf.env.cache().get(key)
 		// we got something from the cache
@@ -188,18 +191,18 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	}
 
 	putToCache := func(key string, batch *Batch, cacheTimeout int) error {
-		cacheJson, err := json.Marshal(batch)
+		cacheJSON, err := json.Marshal(batch)
 		if err != nil {
 			return err
 		}
 
-		bf.env.cache().set(key, string(cacheJson), cacheTimeout)
+		bf.env.cache().set(key, string(cacheJSON), cacheTimeout)
 
 		return nil
 	}
 
-	userId := bf.props.getString(BFUserID, "")
-	if len(userId) == 0 {
+	userID := bf.props.getString(BFUserID, "")
+	if len(userID) == 0 {
 		return nil, errors.New("missing Brewfather user id (user_id)")
 	}
 
@@ -208,22 +211,22 @@ func (bf *brewfather) getResult() (*Batch, error) {
 		return nil, errors.New("missing Brewfather api key (api_key)")
 	}
 
-	batchId := bf.props.getString(BFBatchId, "")
-	if len(batchId) == 0 {
+	batchID := bf.props.getString(BFBatchID, "")
+	if len(batchID) == 0 {
 		return nil, errors.New("missing Brewfather batch id (batch_id)")
 	}
 
-	authString := fmt.Sprintf("%s:%s", userId, apiKey)
+	authString := fmt.Sprintf("%s:%s", userID, apiKey)
 	authStringb64 := base64.StdEncoding.EncodeToString([]byte(authString))
 	authHeader := fmt.Sprintf("Basic %s", authStringb64)
-	batchUrl := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s", batchId)
-	batchReadingsUrl := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s/readings", batchId)
+	batchURL := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s", batchID)
+	batchReadingsURL := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s/readings", batchID)
 
 	httpTimeout := bf.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
 	cacheTimeout := bf.props.getInt(BFCacheTimeout, 5)
 
 	if cacheTimeout > 0 {
-		if data, err := getFromCache(batchUrl); err == nil {
+		if data, err := getFromCache(batchURL); err == nil {
 			return data, nil
 		}
 	}
@@ -232,10 +235,11 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	addAuthHeader := func(request *http.Request) {
 		request.Header.Add("authorization", authHeader)
 	}
-	body, err := bf.env.doGet(batchUrl, httpTimeout, addAuthHeader)
+	body, err := bf.env.doGet(batchURL, httpTimeout, addAuthHeader)
 	if err != nil {
 		return nil, err
 	}
+
 	var batch Batch
 	err = json.Unmarshal(body, &batch)
 	if err != nil {
@@ -243,7 +247,7 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	}
 
 	// readings
-	body, err = bf.env.doGet(batchReadingsUrl, httpTimeout, addAuthHeader)
+	body, err = bf.env.doGet(batchReadingsURL, httpTimeout, addAuthHeader)
 	if err != nil {
 		return nil, err
 	}
@@ -255,8 +259,9 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	}
 
 	if len(arr) > 0 {
-		// could just take latest reading using their API, but that won't allow us to see trend - get 'em all and sort by time instead
-		sort.Slice(arr[:], func(i, j int) bool {
+		// could just take latest reading using their API, but that won't allow us to see trend - get 'em all and sort by time,
+		// using two most recent for trend
+		sort.Slice(arr, func(i, j int) bool {
 			return arr[i].Time > arr[j].Time
 		})
 
@@ -269,7 +274,7 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	}
 
 	if cacheTimeout > 0 {
-		putToCache(batchUrl, &batch, cacheTimeout)
+		_ = putToCache(batchURL, &batch, cacheTimeout)
 	}
 
 	return &batch, nil

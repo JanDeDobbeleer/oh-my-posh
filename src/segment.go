@@ -267,7 +267,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Nightscout:    &nightscout{},
 		WiFi:          &wifi{},
 		WinReg:        &winreg{},
-		BrewFather:	   &brewfather{},
+		BrewFather:    &brewfather{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties)

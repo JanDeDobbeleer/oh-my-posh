@@ -1,0 +1,192 @@
+package main
+
+import (
+	"fmt"
+	"strconv"
+	"strings"
+)
+
+type PlasticStatus struct {
+	ScmStatus
+}
+
+func (s *PlasticStatus) add(code string) {
+	switch code {
+	case "LD":
+		s.Deleted++
+	case "AD", "PR":
+		s.Added++
+	case "LM":
+		s.Moved++
+	case "CH", "CO":
+		s.Modified++
+	}
+}
+
+type plastic struct {
+	scm
+
+	Status       *PlasticStatus
+	Behind       bool
+	Selector     string
+	MergePending bool
+
+	plasticWorkspaceFolder string // root folder of workspace
+}
+
+func (p *plastic) init(props properties, env environmentInfo) {
+	p.props = props
+	p.env = env
+}
+
+func (p *plastic) enabled() bool {
+	if !p.env.hasCommand("cm") {
+		return false
+	}
+	wkdir, err := p.env.hasParentFilePath(".plastic")
+	if err != nil {
+		return false
+	}
+	if p.shouldIgnoreRootRepository(wkdir.parentFolder) {
+		return false
+	}
+
+	if wkdir.isDir {
+		p.plasticWorkspaceFolder = wkdir.parentFolder
+		return true
+	}
+
+	return false
+}
+
+func (p *plastic) string() string {
+	displayStatus := p.props.getOneOfBool(FetchStatus, DisplayStatus, false)
+
+	p.setSelector()
+	if displayStatus {
+		p.setPlasticStatus()
+	}
+
+	// use template if available
+	segmentTemplate := p.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) > 0 {
+		return p.templateString(segmentTemplate)
+	}
+
+	// default: only selector is returned
+	return p.Selector
+}
+
+func (p *plastic) templateString(segmentTemplate string) string {
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  p,
+		Env:      p.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
+}
+
+func (p *plastic) setPlasticStatus() {
+	output := p.getCmCommandOutput("status", "--all", "--machinereadable")
+	splittedOutput := strings.Split(output, "\n")
+	// compare to head
+	currentChangeset := p.parseStatusChangeset(splittedOutput[0])
+	headChangeset := p.getHeadChangeset()
+	p.Behind = headChangeset > currentChangeset
+
+	// parse file state
+	p.MergePending = false
+	p.Status = &PlasticStatus{}
+	p.parseFilesStatus(splittedOutput)
+}
+
+func (p *plastic) parseFilesStatus(output []string) {
+	if len(output) <= 1 {
+		return
+	}
+	for _, line := range output[1:] {
+		if len(line) < 3 {
+			continue
+		}
+
+		if strings.Contains(line, "NO_MERGES") {
+			p.Status.Unmerged++
+			continue
+		}
+
+		p.MergePending = p.MergePending || matchString(`(?i)\smerge\s+from\s+[0-9]+\s*$`, line)
+
+		code := line[:2]
+		p.Status.add(code)
+	}
+}
+
+func (p *plastic) parseStringPattern(output, pattern, name string) string {
+	match := findNamedRegexMatch(pattern, output)
+	if sValue, ok := match[name]; ok {
+		return sValue
+	}
+	return ""
+}
+
+func (p *plastic) parseIntPattern(output, pattern, name string, defValue int) int {
+	sValue := p.parseStringPattern(output, pattern, name)
+	if len(sValue) > 0 {
+		iValue, _ := strconv.Atoi(sValue)
+		return iValue
+	}
+	return defValue
+}
+
+func (p *plastic) parseStatusChangeset(status string) int {
+	return p.parseIntPattern(status, `STATUS\s+(?P<cs>[0-9]+?)\s`, "cs", 0)
+}
+
+func (p *plastic) getHeadChangeset() int {
+	output := p.getCmCommandOutput("status", "--head", "--machinereadable")
+	return p.parseIntPattern(output, `\bcs:(?P<cs>[0-9]+?)\s`, "cs", 0)
+}
+
+func (p *plastic) setSelector() {
+	var ref string
+	selector := p.getFileContents(p.plasticWorkspaceFolder+"/.plastic/", "plastic.selector")
+	// changeset
+	ref = p.parseChangesetSelector(selector)
+	if len(ref) > 0 {
+		p.Selector = fmt.Sprintf("%s%s", p.props.getString(CommitIcon, "\uF417"), ref)
+		return
+	}
+	// fallback to label
+	ref = p.parseLabelSelector(selector)
+	if len(ref) > 0 {
+		p.Selector = fmt.Sprintf("%s%s", p.props.getString(TagIcon, "\uF412"), ref)
+		return
+	}
+	// fallback to branch/smartbranch
+	ref = p.parseBranchSelector(selector)
+	if len(ref) > 0 {
+		ref = p.truncateBranch(ref)
+	}
+	p.Selector = fmt.Sprintf("%s%s", p.props.getString(BranchIcon, "\uE0A0"), ref)
+}
+
+func (p *plastic) parseChangesetSelector(selector string) string {
+	return p.parseStringPattern(selector, `\bchangeset "(?P<cs>[0-9]+?)"`, "cs")
+}
+
+func (p *plastic) parseLabelSelector(selector string) string {
+	return p.parseStringPattern(selector, `label "(?P<label>[a-zA-Z0-9\-\_]+?)"`, "label")
+}
+
+func (p *plastic) parseBranchSelector(selector string) string {
+	return p.parseStringPattern(selector, `branch "(?P<branch>[\/a-zA-Z0-9\-\_]+?)"`, "branch")
+}
+
+func (p *plastic) getCmCommandOutput(args ...string) string {
+	val, _ := p.env.runCommand("cm", args...)
+	return val
+}

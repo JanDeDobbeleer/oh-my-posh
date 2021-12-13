@@ -7,13 +7,9 @@
       "segments": [
         {
           "background": "#c386f1",
-          "background_templates": null,
           "foreground": "#ffffff",
-          "foreground_templates": null,
           "invert_powerline": false,
           "leading_diamond": "",
-          "powerline_symbol": "",
-          "properties": null,
           "style": "diamond",
           "trailing_diamond": "",
           "type": "session"
@@ -46,12 +42,9 @@
         },
         {
           "background": "#2e9599",
-          "background_templates": null,
           "foreground": "#ffffff",
-          "foreground_templates": null,
           "invert_powerline": false,
           "leading_diamond": "<transparent,background></>",
-          "powerline_symbol": "",
           "properties": {
             "always_enabled": true,
             "color_background": true,
@@ -87,7 +80,6 @@
           "invert_powerline": true,
           "powerline_symbol": "",
           "properties": {
-            "battery_icon": "",
             "charged_color": "#4caf50",
             "charged_icon": " ",
             "charging_color": "#40c4ff",
@@ -134,7 +126,6 @@
         {
           "background": "#9ec3f0",
           "foreground": "#000000",
-          "leading_diamond": "",
           "powerline_symbol": "",
           "properties": {
             "prefix": " ﴃ ",
@@ -155,7 +146,6 @@
         {
           "foreground": "#E06C75",
           "properties": {
-            "prefix": "",
             "text": "~"
           },
           "style": "plain",

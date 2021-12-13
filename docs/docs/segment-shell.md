@@ -19,7 +19,7 @@ Show the current shell name (ZSH, powershell, bash, ...).
   "background": "#0077c2",
   "properties": {
     "mapped_shell_names": {
-      "pwsh": "PS"
+      "powershell": "PS"
     }
   }
 }

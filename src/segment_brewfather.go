@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"sort"
 	"time"
 )
@@ -228,7 +229,10 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	}
 
 	// batch
-	body, err := bf.env.doGetWithAuth(batchUrl, httpTimeout, authHeader)
+	addAuthHeader := func(request *http.Request) {
+		request.Header.Add("authorization", authHeader)
+	}
+	body, err := bf.env.doGet(batchUrl, httpTimeout, addAuthHeader)
 	if err != nil {
 		return nil, err
 	}
@@ -239,7 +243,7 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	}
 
 	// readings
-	body, err = bf.env.doGetWithAuth(batchReadingsUrl, httpTimeout, authHeader)
+	body, err = bf.env.doGet(batchReadingsUrl, httpTimeout, addAuthHeader)
 	if err != nil {
 		return nil, err
 	}

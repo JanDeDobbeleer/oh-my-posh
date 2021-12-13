@@ -9,7 +9,7 @@ sidebar_label: Nightscout
 [Nightscout][nightscout] (CGM in the Cloud) is an open source,
 DIY project that allows real time access to a CGM data via an HTTP REST API. It
 is used for secure remote viewing of blood sugar data from anywhere...including
-OhMyPosh segments on the command line!
+Oh My Posh segments on the command line!
 
 ## Sample Configuration
 
@@ -20,7 +20,7 @@ high and low range glucose values by 18 and use these values in the templates.
 You'll also want to think about your background and foreground colors. Don't use
 white text on a yellow background, for example.
 
-The foreground_templates example below could be set to just a single color,
+The `foreground_templates` example below could be set to just a single color,
 if that color is visible against any of your backgrounds.
 
 ```json
@@ -47,18 +47,18 @@ if that color is visible against any of your backgrounds.
     "http_timeout": 1500,
     "template": " {{.Sgv}}{{.TrendIcon}}"
   }
-},
+}
 ```
 
 Or display in mmol/l (instead of the default mg/dl) with the following template:
 
 ```json
-    "template": " {{ if eq (mod .Sgv 18) 0 }}{{divf .Sgv 18}}.0{{ else }} {{ round (divf .Sgv 18) 1 }}{{ end }}{{.TrendIcon}}"
+"template": " {{ if eq (mod .Sgv 18) 0 }}{{divf .Sgv 18}}.0{{ else }} {{ round (divf .Sgv 18) 1 }}{{ end }}{{.TrendIcon}}"
 ```
 
 ## Properties
 
-- url: `string` - Your Nightscout URL, inclding the full path to entries.json
+- url: `string` - Your Nightscout URL, including the full path to entries.json
   AND count=1 AND token. Example above. You'll know this works if you can curl
   it yourself and get a single value. - defaults to ``
 - http_timeout: `int` - How long do you want to wait before you want to see

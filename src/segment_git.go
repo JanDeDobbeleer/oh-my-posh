@@ -224,12 +224,12 @@ func (g *git) getUpstreamIcon() string {
 
 func (g *git) setGitStatus() {
 	addToStatus := func(status string) {
-		if len(status) <= 4 {
-			return
-		}
 		const UNTRACKED = "?"
 		if strings.HasPrefix(status, UNTRACKED) {
 			g.Working.add(UNTRACKED)
+			return
+		}
+		if len(status) <= 4 {
 			return
 		}
 		workingCode := status[3:4]

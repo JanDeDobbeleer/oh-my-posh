@@ -9,21 +9,16 @@ import (
 	"github.com/Masterminds/sprig/v3"
 )
 
-var funcMapCache map[string]interface{}
-
 func funcMap() template.FuncMap {
-	if funcMapCache != nil {
-		return template.FuncMap(funcMapCache)
-	}
-	funcMapCache = map[string]interface{}{
+	funcMap := map[string]interface{}{
 		"secondsRound": secondsRound,
 	}
 	for key, fun := range sprig.TxtFuncMap() {
-		if _, ok := funcMapCache[key]; !ok {
-			funcMapCache[key] = fun
+		if _, ok := funcMap[key]; !ok {
+			funcMap[key] = fun
 		}
 	}
-	return template.FuncMap(funcMapCache)
+	return template.FuncMap(funcMap)
 }
 
 func parseSeconds(seconds interface{}) (int, error) {

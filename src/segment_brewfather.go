@@ -19,6 +19,7 @@ type brewfather struct {
 	TemperatureTrendIcon string
 	StatusIcon           string
 
+	ReadingAge             int // age in hours of the most recent reading included in the batch, -1 if none
 	DaysFermenting         uint
 	DaysBottled            uint
 	DaysBottledOrFermented *uint // help avoid chronic template logic - code will point this to one of above or be nil depending on status
@@ -84,6 +85,14 @@ func (bf *brewfather) enabled() bool {
 		return false
 	}
 	bf.Batch = *data
+
+	if bf.Batch.Reading != nil {
+		readingDate := time.UnixMilli(bf.Batch.Reading.Time)
+		bf.ReadingAge = int(time.Since(readingDate).Hours())
+	} else {
+		bf.ReadingAge = -1
+	}
+
 	bf.TemperatureTrendIcon = bf.getTrendIcon(bf.TemperatureTrend)
 	bf.StatusIcon = bf.getBatchStatusIcon(data.Status)
 

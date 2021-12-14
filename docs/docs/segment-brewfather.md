@@ -14,11 +14,12 @@ Calling all brewers!  Keep up-to-date with the status of your [Brewfather][brewf
 
 ## Sample Configuration
 
-This example uses the built-in `.DefaultString` segment formatting to show a default rendition of detail appropriate to
-the status of the batch
+This example uses the default segment template to show a rendition of detail appropriate to the status of the batch
 
 Additionally, the background of the segment will turn red if the latest reading is over 4 hours old - possibly helping indicate
 an issue if, for example there is a Tilt or similar device that is supposed to be logging to Brewfather every 15 minutes.
+
+NOTE: Temperature units are in degrees C and specific gravity is expressed as `1.XYZ` values.
 
 ```json
 {
@@ -34,7 +35,6 @@ an issue if, for example there is a Tilt or similar device that is supposed to b
         "user_id":"abcdefg123456",
         "api_key":"qrstuvw78910",
         "batch_id":"hijklmno098765",
-        "template":"{{.DefaultString}}"
     }
 },
 ```
@@ -72,12 +72,6 @@ You can override the default icons for batch status as used by template property
 
 ## Template Properties
 
-Pre-formatted
-
-- .DefaultString: `string` - The segment will build a default string based on the status of the batch and
-readings available without needing to build a template.  If you want to customize further, there are a host
-of additional template properties available
-
 Commonly used fields
 
 - .Status: `string` - One of "Planning", "Brewing", "Fermenting", "Conditioning", "Completed" or "Archived"
@@ -108,6 +102,7 @@ Additional template properties
 - .FermentStartDate: `int` The unix timestamp when fermentation was started
 - .BottlingDate: `time` - The unix timestamp when bottled/kegged
 - .TemperatureTrend `float` - The difference between the most recent and previous temperature in °C
+- .DayIcon `string` - given by "day_icon", or "d" by default
 
 Hyperlink support
 
@@ -127,12 +122,12 @@ has this by default.
 
 ### Advanced Templating
 
-The `.DefaultString` template property will provide a pre-formatted string with most useful information.  However, you
-can also use the additional properties about the batch to build your own.  For example:
+The built in template will provides key useful information.  However, you can use the properties about the batch
+to build your own.  For reference, the built-in template looks like this:
 
   ````json
   {
-    "template":"{{{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} {{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}}}"
+    "template":"{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}{{.DayIcon}} {{end}}[{{.Recipe.Name}}]({{.URL}}) {{printf \"%.1f\" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{printf \"%.3f\" .Reading.Gravity}} {{.Reading.Temperature}}\u00b0 {{.TemperatureTrendIcon}}{{end}}"
   }
   ````
 

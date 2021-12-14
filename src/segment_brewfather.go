@@ -15,11 +15,10 @@ type brewfather struct {
 	props properties
 	env   environmentInfo
 
-	DefaultString string // provide a default string for the template for each status type for easy out-of-the box use, template-free
-
 	Batch
 	TemperatureTrendIcon string
 	StatusIcon           string
+	DayIcon              string // populated from day_icon for use in template
 
 	ReadingAge             int // age in hours of the most recent reading included in the batch, -1 if none
 	DaysFermenting         uint
@@ -53,9 +52,9 @@ const (
 
 	BFCacheTimeout Property = "cache_timeout"
 
-	DefaultTemplate string = "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} " +
-		"{{.Recipe.Name}}{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}\ue33e" +
-		"{{.TemperatureTrendIcon}} {{end}}"
+	DefaultTemplate string = "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}{{.DayIcon}} {{end}}[{{.Recipe.Name}}]({{.URL}})" +
+		" {{printf \"%.1f\" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: " +
+		"{{printf \"%.3f\" .Reading.Gravity}} {{.Reading.Temperature}}\u00b0 {{.TemperatureTrendIcon}}{{end}}"
 
 	BFStatusPlanning     string = "Planning"
 	BFStatusBrewing      string = "Brewing"
@@ -138,30 +137,9 @@ func (bf *brewfather) enabled() bool {
 		bf.URL = fmt.Sprintf("https://web.brewfather.app/tabs/batches/batch/%s", batchID)
 	}
 
-	bf.DefaultString = bf.formatDefaultString()
+	bf.DayIcon = bf.props.getString(BFDayIcon, "d")
 
 	return true
-}
-
-// build a default string for the segment using Sprintf for speed and to provide a simple starting point without complex template logic
-func (bf *brewfather) formatDefaultString() string {
-	dayIcon := bf.props.getString(BFDayIcon, "d")
-	switch bf.Batch.Status {
-	case BFStatusPlanning, BFStatusBrewing:
-		return fmt.Sprintf("[%s %s %.1f%%](%s)", bf.StatusIcon, bf.Recipe.Name, bf.MeasuredAbv, bf.URL)
-	case BFStatusFermenting:
-		ret := fmt.Sprintf("[%s %d%s %s %.1f%%", bf.StatusIcon, bf.DaysFermenting, dayIcon, bf.Recipe.Name, bf.MeasuredAbv)
-		if bf.Reading != nil {
-			ret += fmt.Sprintf(" %1.3f %.1f° %s", bf.Reading.Gravity, bf.Reading.Temperature, bf.TemperatureTrendIcon)
-		}
-		ret += "](" + bf.URL
-		ret += ")"
-		return ret
-	case BFStatusConditioning, BFStatusCompleted, BFStatusArchived:
-		return fmt.Sprintf("[%s %d%s %s %.1f%%](%s)", bf.StatusIcon, bf.DaysBottled, dayIcon, bf.Recipe.Name, bf.MeasuredAbv, bf.URL)
-	}
-
-	return ""
 }
 
 func (bf *brewfather) getTrendIcon(trend float64) string {

@@ -14,7 +14,7 @@ Calling all brewers!  Keep up-to-date with the status of your [Brewfather][brewf
 
 ## Sample Configuration
 
-This example uses the built-in .DefaultString segment formatting to show a default rendition of detail appropriate to 
+This example uses the built-in `.DefaultString` segment formatting to show a default rendition of detail appropriate to
 the status of the batch
 
 Additionally, the background of the segment will turn red if the latest reading is over 4 hours old - possibly helping indicate
@@ -127,7 +127,7 @@ has this by default.
 
 ### Advanced Templating
 
-The `.DefaultString` template property will provide a pre-formatted string with most useful information.  However, you 
+The `.DefaultString` template property will provide a pre-formatted string with most useful information.  However, you
 can also use the additional properties about the batch to build your own.  For example:
 
   ````json

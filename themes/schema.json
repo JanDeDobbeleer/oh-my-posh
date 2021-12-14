@@ -1798,6 +1798,50 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "brewfather" }
+            }
+          },
+          "then": {
+            "title": "Brewfather Batch Status",
+            "description": "https://ohmyposh.dev/docs/brewfather",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "title": "Brewfather UserID (required)",
+                    "description": "Provided by Brewfather's Generate API Key settings option",
+                    "default": ""
+                  },
+                  "api_key": {
+                    "type":"string",
+                    "title":"Brewfather API Key (required)",
+                    "description":"Provided by Brewfather's Generate API Key settings option",
+                    "default":""
+                  },
+                  "batch_id": {
+                    "type":"string",
+                    "title":"ID of the batch in Brewfather (required)",
+                    "description":"At the end of the URL when viewing the batch on the Brewfather site",
+                    "default":""
+                  },
+                  "day_icon": {
+                    "type":"string",
+                    "title":"Icon to use to indicate days",
+                    "description":"Appended to a number to indicate days, e.g. 25d",
+                    "default":"d"
+                  }
+                }
+              }
+            }
+          }
         }
       ]
     }

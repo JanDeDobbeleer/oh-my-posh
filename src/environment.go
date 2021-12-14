@@ -56,7 +56,7 @@ type cache interface {
 	set(key, value string, ttl int)
 }
 
-type doGetRequestModifier func(c *http.Request)
+type doGetRequestModifier func(request *http.Request)
 
 type windowsRegistryValueType int
 

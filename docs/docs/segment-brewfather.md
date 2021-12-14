@@ -111,6 +111,21 @@ Additional template properties
 - .BottlingDate: `time` - The unix timestamp when bottled/kegged
 - .TemperatureTrend `float` - The difference between the most recent and previous temperature in °C
 
+Hyperlink support
+
+- .URL `string` - the URL for the batch in the Brewfather app.  You can use this to add a hyperlink to the segment
+if you are using a terminal that supports it and the segment has `"enable_hyperlink":true` in it's properties.
+
+  Hyperlink formatting example 
+
+  ````json
+  {
+    // General format: [Text](Url)
+    "template":"[{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} {{.Recipe.Name}}]({{.URL}})"
+  }
+
+  ````
+
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
 [brewfather]: http://brewfather.app

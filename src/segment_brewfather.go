@@ -23,6 +23,8 @@ type brewfather struct {
 	DaysFermenting         uint
 	DaysBottled            uint
 	DaysBottledOrFermented *uint // help avoid chronic template logic - code will point this to one of above or be nil depending on status
+
+	URL string // URL of batch page to open if hyperlink enabled on the segment and URL formatting used in template: [name](link)
 }
 
 const (
@@ -118,6 +120,13 @@ func (bf *brewfather) enabled() bool {
 		bf.DaysBottled = 0
 		bf.DaysBottledOrFermented = nil
 	}
+
+	// URL property set to weblink to the full batch page
+	batchID := bf.props.getString(BFBatchID, "")
+	if len(batchID) > 0 {
+		bf.URL = fmt.Sprintf("https://web.brewfather.app/tabs/batches/batch/%s", batchID)
+	}
+
 	return true
 }
 

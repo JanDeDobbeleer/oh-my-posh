@@ -8,17 +8,16 @@
         {
           "background": "#c386f1",
           "foreground": "#ffffff",
-          "invert_powerline": false,
-          "leading_diamond": "",
+          "leading_diamond": "\ue0b6",
           "style": "diamond",
-          "trailing_diamond": "",
+          "trailing_diamond": "\ue0b0",
           "type": "session"
         },
         {
           "background": "#ff479c",
           "foreground": "#ffffff",
           "invert_powerline": false,
-          "powerline_symbol": "",
+          "powerline_symbol": "\ue0b0",
           "properties": {
             "prefix": " \uf07b  ",
             "style": "folder"
@@ -29,22 +28,19 @@
         {
           "background": "#fffb38",
           "foreground": "#193549",
-          "leading_diamond": "<transparent,background></>",
-          "powerline_symbol": "",
+          "powerline_symbol": "\ue0b0",
           "properties": {
             "display_stash_count": true,
             "display_upstream_icon": true,
             "prefix": " \uf7a1  "
           },
           "style": "powerline",
-          "trailing_diamond": "",
           "type": "git"
         },
         {
           "background": "#2e9599",
           "foreground": "#ffffff",
-          "invert_powerline": false,
-          "leading_diamond": "<transparent,background></>",
+          "leading_diamond": "<transparent,background>\ue0b0</>",
           "properties": {
             "always_enabled": true,
             "color_background": true,
@@ -53,7 +49,7 @@
             "prefix": " \ue23a "
           },
           "style": "diamond",
-          "trailing_diamond": "",
+          "trailing_diamond": "\ue0b4",
           "type": "exit"
         }
       ],
@@ -68,8 +64,8 @@
           "background": "#0077c2",
           "foreground": "#ffffff",
           "properties": {
-            "postfix": " <transparent,#0077c2></>",
-            "prefix": "<#0077c2,transparent></>  "
+            "postfix": " <transparent,#0077c2>\ue0b2</>",
+            "prefix": "<#0077c2,transparent>\ue0b6</> \uf489 "
           },
           "style": "plain",
           "type": "shell"

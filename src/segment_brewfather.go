@@ -53,7 +53,7 @@ const (
 	BFCacheTimeout Property = "cache_timeout"
 
 	DefaultTemplate string = "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}{{.DayIcon}} {{end}}[{{.Recipe.Name}}]({{.URL}})" +
-		" {{printf \"%.1f\" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: " +
+		" {{printf \"%.1f\" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}} " +
 		"{{printf \"%.3f\" .Reading.Gravity}} {{.Reading.Temperature}}\u00b0 {{.TemperatureTrendIcon}}{{end}}"
 
 	BFStatusPlanning     string = "Planning"
@@ -178,17 +178,17 @@ func (bf *brewfather) getTrendIcon(trend float64) string {
 func (bf *brewfather) getBatchStatusIcon(batchStatus string) string {
 	switch batchStatus {
 	case BFStatusPlanning:
-		return bf.props.getString(BFPlanningStatusIcon, "")
+		return bf.props.getString(BFPlanningStatusIcon, "\uF8EA")
 	case BFStatusBrewing:
-		return bf.props.getString(BFBrewingStatusIcon, "")
+		return bf.props.getString(BFBrewingStatusIcon, "\uF7DE")
 	case BFStatusFermenting:
-		return bf.props.getString(BFFermentingStatusIcon, "")
+		return bf.props.getString(BFFermentingStatusIcon, "\uF499")
 	case BFStatusConditioning:
-		return bf.props.getString(BFConditioningStatusIcon, "")
+		return bf.props.getString(BFConditioningStatusIcon, "\uE372")
 	case BFStatusCompleted:
-		return bf.props.getString(BFCompletedStatusIcon, "祖")
+		return bf.props.getString(BFCompletedStatusIcon, "\uF7A5")
 	case BFStatusArchived:
-		return bf.props.getString(BFArchivedStatusIcon, "")
+		return bf.props.getString(BFArchivedStatusIcon, "\uF187")
 	default:
 		return ""
 	}

@@ -56,7 +56,7 @@ type cache interface {
 	set(key, value string, ttl int)
 }
 
-type doGetRequestModifier func(request *http.Request)
+type HTTPRequestModifier func(request *http.Request)
 
 type windowsRegistryValueType int
 
@@ -98,7 +98,7 @@ type environmentInfo interface {
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
 	getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error)
-	doGet(url string, timeout int, requestModifiers ...doGetRequestModifier) ([]byte, error)
+	doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
 	stackCount() int
@@ -482,7 +482,7 @@ func (env *environment) getShellName() string {
 	return *env.args.Shell
 }
 
-func (env *environment) doGet(url string, timeout int, requestModifiers ...doGetRequestModifier) ([]byte, error) {
+func (env *environment) doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
 	defer env.trace(time.Now(), "doGet", url)
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()

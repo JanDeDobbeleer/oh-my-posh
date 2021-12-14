@@ -14,16 +14,11 @@ Calling all brewers!  Keep up-to-date with the status of your [Brewfather][brewf
 
 ## Sample Configuration
 
-This example gets the latest batch information and uses the template to customize the prompt
-based on the status of the batch.  The name and expected/measured Abv is displayed at all times.
+This example uses the built-in .DefaultString segment formatting to show a default rendition of detail appropriate to 
+the status of the batch
 
-If it's "Fermenting" and there are logged readings that show on Brewfather's graph, the most
-recent Gravity, Temperature is shown.  Along with with an icon indicating the temperature
-trend compared to the previous reading. If the most recent reading is greater than 4 hours old,
-the background of the prompt is turned red - indicating an issue if, for example there is a Tilt or similar
-device that is supposed to be logging to Brewfather every 15 minutes.
-
-It will display the number of days the brew has been fermenting or conditioning as appropriate.
+Additionally, the background of the segment will turn red if the latest reading is over 4 hours old - possibly helping indicate
+an issue if, for example there is a Tilt or similar device that is supposed to be logging to Brewfather every 15 minutes.
 
 ```json
 {
@@ -39,7 +34,7 @@ It will display the number of days the brew has been fermenting or conditioning 
         "user_id":"abcdefg123456",
         "api_key":"qrstuvw78910",
         "batch_id":"hijklmno098765",
-        "template":"{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} {{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}"
+        "template":"{{.DefaultString}}"
     }
 },
 ```
@@ -52,14 +47,11 @@ It will display the number of days the brew has been fermenting or conditioning 
 the batch id is at the end of the URL in the address bar.
 - http_timeout: `int` in milliseconds - How long to wait for the Brewfather service to answer the request.  Default 2 seconds.
 - template: `string` - a go [text/template][go-text-template] template extended
-  with [sprig][sprig] utilizing the properties below.
-  See the example above where I added a syringe.
-  You can change the icon, put the trend elsewhere, add text, however you like!
-  Make sure your NerdFont has the glyph you want or search for one
-  at nerdfonts.com
+with [sprig][sprig] utilizing the properties below.
 - cache_timeout: `int` in minutes - How long to wait before updating the data from Brewfather.  Default is 5 minutes.
+- day_icon: `string` - icon or letter to use to indicate days.  Default is "d".
 
-You can override the icons for temperature trend as used by template property .TemperatureTrendIcon with:
+You can override the icons for temperature trend as used by template property `.TemperatureTrendIcon` with:
 
 - doubleup_icon - for increases of more than 4°C, default is ↑↑
 - singleup_icon - increase 2-4°C, default is ↑
@@ -69,7 +61,7 @@ You can override the icons for temperature trend as used by template property .T
 - singledown_icon - decrease 2-4°C, default is ↓
 - doubledown_icon - decrease more than 4°C, default is ↓↓
 
-You can override the default icons for batch status as used by template property .StatusIcon with:
+You can override the default icons for batch status as used by template property `.StatusIcon` with:
 
 - planning_status_icon
 - brewing_status_icon
@@ -79,6 +71,12 @@ You can override the default icons for batch status as used by template property
 - archived_status_icon
 
 ## Template Properties
+
+Pre-formatted
+
+- .DefaultString: `string` - The segment will build a default string based on the status of the batch and
+readings available without needing to build a template.  If you want to customize further, there are a host
+of additional template properties available
 
 Commonly used fields
 
@@ -114,9 +112,10 @@ Additional template properties
 Hyperlink support
 
 - .URL `string` - the URL for the batch in the Brewfather app.  You can use this to add a hyperlink to the segment
-if you are using a terminal that supports it and the segment has `"enable_hyperlink":true` in it's properties.
+if you are using a terminal that supports it and the segment has `"enable_hyperlink":true` in it's properties.  `.DefaultString`
+has this by default.
 
-  Hyperlink formatting example 
+  Hyperlink formatting example
 
   ````json
   {
@@ -124,6 +123,17 @@ if you are using a terminal that supports it and the segment has `"enable_hyperl
     "template":"[{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} {{.Recipe.Name}}]({{.URL}})"
   }
 
+  ````
+
+### Advanced Templating
+
+The `.DefaultString` template property will provide a pre-formatted string with most useful information.  However, you 
+can also use the additional properties about the batch to build your own.  For example:
+
+  ````json
+  {
+    "template":"{{{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} {{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}}}"
+  }
   ````
 
 [go-text-template]: https://golang.org/pkg/text/template/

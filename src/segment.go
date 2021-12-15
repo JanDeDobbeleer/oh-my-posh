@@ -139,6 +139,8 @@ const (
 	WiFi SegmentType = "wifi"
 	// WinReg queries the Windows registry.
 	WinReg SegmentType = "winreg"
+	// Brewfather segment
+	BrewFather SegmentType = "brewfather"
 )
 
 func (segment *Segment) string() string {
@@ -271,6 +273,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Wakatime:      &wakatime{},
 		WiFi:          &wifi{},
 		WinReg:        &winreg{},
+		BrewFather:    &brewfather{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties)

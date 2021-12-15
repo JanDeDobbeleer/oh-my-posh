@@ -34,6 +34,7 @@ Display the currently active golang version.
   - `files`: the segment is only displayed when `*.go` or `go.mod` files are present (default)
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
 properties below. Defaults to `{{ .Full }}`
+- parse_mod_file: `boolean`: parse the go.mod file instead of calling `go version`
 
 ## Template Properties
 

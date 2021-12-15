@@ -134,7 +134,7 @@ func (env *MockedEnvironment) getWindowsRegistryKeyValue(path string) (*windowsR
 	return args.Get(0).(*windowsRegistryValue), args.Error(1)
 }
 
-func (env *MockedEnvironment) doGet(url string, timeout int) ([]byte, error) {
+func (env *MockedEnvironment) doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
 	args := env.Called(url)
 	return args.Get(0).([]byte), args.Error(1)
 }

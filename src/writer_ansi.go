@@ -165,33 +165,46 @@ func (a *AnsiWriter) write(background, foreground, text string) {
 }
 
 func (a *AnsiWriter) asAnsiColors(background, foreground string) (AnsiColor, AnsiColor) {
-	if backgroundValue, ok := a.isKeyword(background); ok {
-		background = backgroundValue
-	}
-	if foregroundValue, ok := a.isKeyword(foreground); ok {
-		foreground = foregroundValue
-	}
+	background = a.expandKeyword(background)
+	foreground = a.expandKeyword(foreground)
 	inverted := foreground == Transparent && len(background) != 0
 	backgroundAnsi := a.getAnsiFromColorString(background, !inverted)
 	foregroundAnsi := a.getAnsiFromColorString(foreground, false)
 	return backgroundAnsi, foregroundAnsi
 }
 
-func (a *AnsiWriter) isKeyword(color string) (string, bool) {
-	switch {
-	case color == Background && a.Colors != nil:
-		return a.Colors.Background, true
-	case color == Foreground && a.Colors != nil:
-		return a.Colors.Foreground, true
-	case color == ParentBackground && a.ParentColors != nil:
-		return a.ParentColors.Background, true
-	case color == ParentForeground && a.ParentColors != nil:
-		return a.ParentColors.Foreground, true
-	case (color == ParentBackground || color == ParentForeground) && a.ParentColors == nil:
-		return Transparent, true
+func (a *AnsiWriter) isKeyword(color string) bool {
+	switch color {
+	case Transparent, ParentBackground, ParentForeground, Background, Foreground:
+		return true
 	default:
-		return "", false
+		return false
 	}
+}
+
+func (a *AnsiWriter) expandKeyword(keyword string) string {
+	resolveKeyword := func(keyword string) string {
+		switch {
+		case keyword == Background && a.Colors != nil:
+			return a.Colors.Background
+		case keyword == Foreground && a.Colors != nil:
+			return a.Colors.Foreground
+		case keyword == ParentBackground && a.ParentColors != nil:
+			return a.ParentColors.Background
+		case keyword == ParentForeground && a.ParentColors != nil:
+			return a.ParentColors.Foreground
+		default:
+			return Transparent
+		}
+	}
+	for ok := a.isKeyword(keyword); ok; ok = a.isKeyword(keyword) {
+		resolved := resolveKeyword(keyword)
+		if resolved == keyword {
+			break
+		}
+		keyword = resolved
+	}
+	return keyword
 }
 
 func (a *AnsiWriter) string() string {

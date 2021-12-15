@@ -41,6 +41,7 @@ module.exports = {
         "az",
         "azfunc",
         "battery",
+        "brewfather",
         "command",
         "crystal",
         "dart",

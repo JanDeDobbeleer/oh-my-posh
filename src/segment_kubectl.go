@@ -121,6 +121,9 @@ func (k *kubectl) doCallKubectl() bool {
 	}
 
 	values := strings.Split(result, ",")
+	if len(values) < 4 {
+		return false
+	}
 	k.Context = values[0]
 	k.Namespace = values[1]
 	k.User = values[2]

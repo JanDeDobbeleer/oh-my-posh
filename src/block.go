@@ -95,41 +95,42 @@ func (b *Block) renderSegments() string {
 		if !segment.active {
 			continue
 		}
-		b.setActiveSegment(segment)
-		b.writer.setColors(b.activeBackground, b.activeForeground)
-		b.endPowerline()
-		b.renderSegmentText(segment.stringValue)
+		b.renderSegment(segment)
 	}
-	if b.previousActiveSegment != nil && b.previousActiveSegment.Style == Powerline {
-		b.writePowerLineSeparator(Transparent, b.previousActiveSegment.background(), true)
-	}
+	b.writePowerline(true)
 	b.writer.clearParentColors()
 	return b.writer.string()
 }
 
-func (b *Block) endPowerline() {
-	if b.previousActiveSegment == nil || b.activeSegment == nil {
+func (b *Block) writePowerline(end bool) {
+	resolvePowerlineSymbol := func() string {
+		var symbol string
+		if b.previousActiveSegment != nil && b.previousActiveSegment.Style == Powerline {
+			symbol = b.previousActiveSegment.PowerlineSymbol
+		} else if b.activeSegment.Style == Powerline {
+			symbol = b.activeSegment.PowerlineSymbol
+		}
+		return symbol
+	}
+	symbol := resolvePowerlineSymbol()
+	if len(symbol) == 0 {
 		return
 	}
-	if b.activeSegment.Style != Powerline &&
-		b.previousActiveSegment.Style == Powerline {
-		b.writePowerLineSeparator(b.getPowerlineColor(false), b.previousActiveSegment.background(), true)
+	background := b.activeSegment.background()
+	if end || b.activeSegment.Style != Powerline {
+		background = Transparent
 	}
-}
-
-func (b *Block) writePowerLineSeparator(background, foreground string, end bool) {
-	symbol := b.activeSegment.PowerlineSymbol
-	if end {
-		symbol = b.previousActiveSegment.PowerlineSymbol
+	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
+		background = b.activeSegment.background()
 	}
 	if b.activeSegment.InvertPowerline {
-		b.writer.write(foreground, background, symbol)
+		b.writer.write(b.getPowerlineColor(), background, symbol)
 		return
 	}
-	b.writer.write(background, foreground, symbol)
+	b.writer.write(background, b.getPowerlineColor(), symbol)
 }
 
-func (b *Block) getPowerlineColor(foreground bool) string {
+func (b *Block) getPowerlineColor() string {
 	if b.previousActiveSegment == nil {
 		return Transparent
 	}
@@ -137,43 +138,28 @@ func (b *Block) getPowerlineColor(foreground bool) string {
 		return b.previousActiveSegment.background()
 	}
 	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
-		return b.activeBackground
+		return b.previousActiveSegment.background()
 	}
-	if !foreground && b.activeSegment.Style != Powerline {
-		return Transparent
-	}
-	if foreground && b.previousActiveSegment.Style != Powerline {
+	if b.previousActiveSegment.Style != Powerline {
 		return Transparent
 	}
 	return b.previousActiveSegment.background()
 }
 
-func (b *Block) renderSegmentText(text string) {
+func (b *Block) renderSegment(segment *Segment) {
+	b.setActiveSegment(segment)
+	b.writePowerline(false)
+	b.writer.setColors(b.activeBackground, b.activeForeground)
 	switch b.activeSegment.Style {
-	case Plain:
-		b.renderPlainSegment(text)
+	case Plain, Powerline:
+		b.renderText(segment.stringValue)
 	case Diamond:
-		b.renderDiamondSegment(text)
-	case Powerline:
-		b.renderPowerLineSegment(text)
+		b.writer.write(Transparent, b.activeBackground, b.activeSegment.LeadingDiamond)
+		b.renderText(segment.stringValue)
+		b.writer.write(Transparent, b.activeBackground, b.activeSegment.TrailingDiamond)
 	}
 	b.previousActiveSegment = b.activeSegment
 	b.writer.setParentColors(b.activeBackground, b.activeForeground)
-}
-
-func (b *Block) renderPowerLineSegment(text string) {
-	b.writePowerLineSeparator(b.activeBackground, b.getPowerlineColor(true), false)
-	b.renderText(text)
-}
-
-func (b *Block) renderPlainSegment(text string) {
-	b.renderText(text)
-}
-
-func (b *Block) renderDiamondSegment(text string) {
-	b.writer.write(Transparent, b.activeBackground, b.activeSegment.LeadingDiamond)
-	b.renderText(text)
-	b.writer.write(Transparent, b.activeBackground, b.activeSegment.TrailingDiamond)
 }
 
 func (b *Block) renderText(text string) {
@@ -204,13 +190,12 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 		// string() timing
 		if segmentTiming.enabled {
 			start = time.Now()
-			segmentTiming.stringValue = segment.string()
+			segment.stringValue = segment.string()
 			segmentTiming.stringDuration = time.Since(start)
 			b.previousActiveSegment = nil
-			b.setActiveSegment(segment)
-			b.renderSegmentText(segmentTiming.stringValue)
+			b.renderSegment(segment)
 			if b.activeSegment.Style == Powerline {
-				b.writePowerLineSeparator(Transparent, b.activeBackground, true)
+				b.writePowerline(false)
 			}
 			segmentTiming.stringValue = b.writer.string()
 			b.writer.reset()

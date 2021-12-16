@@ -1,6 +1,6 @@
 $env:POSH_PATH = "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent.FullName)"
 $env:POSH_THEMES_PATH = $env:POSH_PATH + "/themes"
-$env:PATH = "$env:POSH_PATH;$env:PATH"
+$env:PATH = $env:POSH_PATH + [System.IO.Path]::PathSeparator + $env:PATH
 
 function Get-PoshDownloadUrl {
     param(

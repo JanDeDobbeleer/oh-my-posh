@@ -49,7 +49,7 @@ jobs:
       - name: Override Go ♻️
         run: |
           New-Item -Path ./bin -ItemType Directory
-          Invoke-WebRequest 'https://github.com/jandedobbeleer/go/releases/download/1.17.4/go' -OutFile "$env:GOROOT/bin/go"
+          Invoke-WebRequest 'https://github.com/jandedobbeleer/go/releases/download/1.17.5/go' -OutFile "$env:GOROOT/bin/go"
           chmod a+x "$env:GOROOT/bin/go" 2>&1
       - name: Tag HEAD 😸
         run: git tag ${{ needs.changelog.outputs.tag }}

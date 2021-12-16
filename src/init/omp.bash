@@ -22,11 +22,7 @@ function _omp_hook() {
         omp_elapsed=$((omp_now-omp_start_time))
         rm -f "$TIMER_START"
     fi
-    omp_pwd=$PWD
-    if [ -x "$(command -v cygpath)" ]; then
-      omp_pwd=$(cygpath -w "$PWD")
-    fi
-    PS1="$(::OMP:: --config="$POSH_THEME" --shell=bash --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --pwd="$omp_pwd" | tr -d '\0')"
+    PS1="$(::OMP:: --config="$POSH_THEME" --shell=bash --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" | tr -d '\0')"
 
     return $ret
 }

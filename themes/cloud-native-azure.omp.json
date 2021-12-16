@@ -49,11 +49,9 @@
           "background": "#2e9599",
           "foreground": "#ffffff",
           "leading_diamond": "<transparent,background>\ue0b0</>",
+          "background_templates": ["{{ if gt .Code 0 }}#f1184c{{ end }}"],
           "properties": {
             "always_enabled": true,
-            "color_background": true,
-            "display_exit_code": false,
-            "error_color": "#f1184c",
             "prefix": " \ue23a "
           },
           "style": "diamond",

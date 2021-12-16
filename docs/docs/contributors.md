@@ -125,6 +125,10 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://github.com/memcpy-rand-rand-rand"><img src="https://avatars.githubusercontent.com/u/90210865?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Will</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=memcpy-rand-rand-rand" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=memcpy-rand-rand-rand" title="Documentation">📖</a></td>
     <td align="center"><a href="http://www.hanselman.com"><img src="https://avatars.githubusercontent.com/u/2892?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Scott Hanselman</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=shanselman" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=shanselman" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/hgreving"><img src="https://avatars.githubusercontent.com/u/23560667?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Harmjan Greving</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=hgreving" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/Khaos66"><img src="https://avatars.githubusercontent.com/u/4013009?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Khaos</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Khaos66" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Khaos66" title="Documentation">📖</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="http://mattwojo.github.io/"><img src="https://avatars.githubusercontent.com/u/7566797?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matt Wojciakowski</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mattwojo" title="Documentation">📖</a></td>
   </tr>
 </table>
 

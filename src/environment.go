@@ -56,6 +56,23 @@ type cache interface {
 	set(key, value string, ttl int)
 }
 
+type HTTPRequestModifier func(request *http.Request)
+
+type windowsRegistryValueType int
+
+const (
+	regQword windowsRegistryValueType = iota
+	regDword
+	regString
+)
+
+type windowsRegistryValue struct {
+	valueType windowsRegistryValueType
+	qword     uint64
+	dword     uint32
+	str       string
+}
+
 type environmentInfo interface {
 	getenv(key string) string
 	getcwd() string
@@ -80,8 +97,8 @@ type environmentInfo interface {
 	getBatteryInfo() ([]*battery.Battery, error)
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
-	getWindowsRegistryKeyValue(regPath, regKey string) (string, error)
-	doGet(url string, timeout int) ([]byte, error)
+	getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error)
+	doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
 	stackCount() int
@@ -399,15 +416,42 @@ func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
 			validBatteries = append(validBatteries, batt)
 		}
 	}
+	// clean minor errors
 	unableToRetrieveBatteryInfo := "A device which does not exist was specified."
+	unknownChargeRate := "Unknown value received"
+	var fatalErr battery.Errors
+	ignoreErr := func(err error) bool {
+		if e, ok := err.(battery.ErrPartial); ok {
+			// ignore unknown charge rate value error
+			if e.Current == nil &&
+				e.Design == nil &&
+				e.DesignVoltage == nil &&
+				e.Full == nil &&
+				e.State == nil &&
+				e.Voltage == nil &&
+				e.ChargeRate != nil &&
+				e.ChargeRate.Error() == unknownChargeRate {
+				return true
+			}
+		}
+		return false
+	}
+	if batErr, ok := err.(battery.Errors); ok {
+		for _, err := range batErr {
+			if !ignoreErr(err) {
+				fatalErr = append(fatalErr, err)
+			}
+		}
+	}
+
 	// when battery info fails to get retrieved but there is at least one valid battery, return it without error
-	if len(validBatteries) > 0 && err != nil && strings.Contains(err.Error(), unableToRetrieveBatteryInfo) {
+	if len(validBatteries) > 0 && fatalErr != nil && strings.Contains(fatalErr.Error(), unableToRetrieveBatteryInfo) {
 		return validBatteries, nil
 	}
 	// another error occurred (possibly unmapped use-case), return it
-	if err != nil {
-		env.log(Error, "getBatteryInfo", err.Error())
-		return nil, err
+	if fatalErr != nil {
+		env.log(Error, "getBatteryInfo", fatalErr.Error())
+		return nil, fatalErr
 	}
 	// everything is fine
 	return validBatteries, nil
@@ -438,13 +482,16 @@ func (env *environment) getShellName() string {
 	return *env.args.Shell
 }
 
-func (env *environment) doGet(url string, timeout int) ([]byte, error) {
+func (env *environment) doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
 	defer env.trace(time.Now(), "doGet", url)
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
+	}
+	for _, modifier := range requestModifiers {
+		modifier(request)
 	}
 	response, err := client.Do(request)
 	if err != nil {

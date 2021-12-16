@@ -181,8 +181,10 @@
             "sysinfo",
             "angular",
             "php",
+            "wakatime",
             "wifi",
-            "winreg"
+            "winreg",
+            "plastic"
           ]
         },
         "style": {
@@ -637,6 +639,12 @@
                 "properties": {
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "parse_mod_file": {
+                    "type": "boolean",
+                    "title": "Parse go.mod file",
+                    "description": "Parse go.mod file instead of calling out to go to improve performance.",
+                    "default": false
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1191,6 +1199,7 @@
                       "agnoster",
                       "agnoster_full",
                       "agnoster_short",
+                      "agnoster_left",
                       "short",
                       "full",
                       "folder",
@@ -1650,6 +1659,41 @@
         {
           "if": {
             "properties": {
+              "type": { "const": "wakatime" }
+            }
+          },
+          "then": {
+            "title": "Wakatime",
+            "description": "Displays the tracked time on wakatime.com",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "apikey": {
+                    "type": "string",
+                    "title": "apikey",
+                    "description": "The apikey used for the api call (Required)",
+                    "default": "."
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout",
+                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 10
+                  },
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
               "type": { "const": "wifi" }
             }
           },
@@ -1685,13 +1729,7 @@
                   "path": {
                     "type": "string",
                     "title": "Registry Path",
-                    "description": "The path under which the registy key lives (case insensitive, must use backslashes), e.g. HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion",
-                    "default": ""
-                  },
-                  "key": {
-                    "type": "string",
-                    "title": "Registry Key",
-                    "description": "The key under he registry path to get (case insensitive).  If left blank, will get the value of the (Default) key in the registry_path",
+                    "description": "The path to the registry key (case insensitive, must use backslashes).  Ending with \\ will retrieve \"(Default)\" key in that path.",
                     "default": ""
                   },
                   "fallback": {
@@ -1699,6 +1737,106 @@
                     "title":"Fallback value",
                     "description":"Value to display if registry value cannot be retrieved",
                     "default":""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "plastic" }
+            }
+          },
+          "then": {
+            "title": "Plastic SCM Segment",
+            "description": "https://ohmyposh.dev/docs/plastic",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
+                  "fetch_status": {
+                    "type": "boolean",
+                    "title": "Display Status",
+                    "description": "Display the local changes or not",
+                    "default": false
+                  },
+                  "branch_icon": {
+                    "type": "string",
+                    "title": "Branch Icon",
+                    "description": "The icon to use in front of the selector branch name",
+                    "default": "\uE0A0 "
+                  },
+                  "commit_icon": {
+                    "type": "string",
+                    "title": "Commit Icon",
+                    "description": "Icon/text to display before the selector changeset",
+                    "default": "\uF417"
+                  },
+                  "tag_icon": {
+                    "type": "string",
+                    "title": "Tag Icon",
+                    "description": "Icon/text to display before the seletor label",
+                    "default": "\uF412"
+                  },
+                  "branch_max_length": {
+                    "type": "integer",
+                    "title": "Branch max length",
+                    "description": "the max length for the displayed branch name where 0 implies full length",
+                    "default": 0
+                  },
+                  "full_branch_path": {
+                    "type": "boolean",
+                    "title": "Full branch path",
+                    "description": "display the full branch path instead of only the branch name",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "brewfather" }
+            }
+          },
+          "then": {
+            "title": "Brewfather Batch Status",
+            "description": "https://ohmyposh.dev/docs/brewfather",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "title": "Brewfather UserID (required)",
+                    "description": "Provided by Brewfather's Generate API Key settings option",
+                    "default": ""
+                  },
+                  "api_key": {
+                    "type":"string",
+                    "title":"Brewfather API Key (required)",
+                    "description":"Provided by Brewfather's Generate API Key settings option",
+                    "default":""
+                  },
+                  "batch_id": {
+                    "type":"string",
+                    "title":"ID of the batch in Brewfather (required)",
+                    "description":"At the end of the URL when viewing the batch on the Brewfather site",
+                    "default":""
+                  },
+                  "day_icon": {
+                    "type":"string",
+                    "title":"Icon to use to indicate days",
+                    "description":"Appended to a number to indicate days, e.g. 25d",
+                    "default":"d"
                   }
                 }
               }

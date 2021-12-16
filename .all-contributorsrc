@@ -826,6 +826,25 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Khaos66",
+      "name": "Khaos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4013009?v=4",
+      "profile": "https://github.com/Khaos66",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "mattwojo",
+      "name": "Matt Wojciakowski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7566797?v=4",
+      "profile": "http://mattwojo.github.io/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

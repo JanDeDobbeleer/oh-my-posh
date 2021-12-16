@@ -1915,7 +1915,7 @@
                   },
                   "completed_status_icon": {
                     "type":"string",
-                    "title":"Icon for copleted batch",
+                    "title":"Icon for completed batch",
                     "description":"Available in template as .StatusIcon",
                     "default":"\uF7A5"
                   },

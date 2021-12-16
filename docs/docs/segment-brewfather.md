@@ -82,7 +82,7 @@ Commonly used fields
 - .DaysBottledOrFermented `int` - one of the above, chosen automatically based on batch status
 - .Recipe.Name: `string` - The recipe being brewed in this batch
 - .BatchName `string` - The name of this batch
-- .BatchNumer `string` - The number of this batch
+- .BatchNumer `int` - The number of this batch
 - .MeasuredAbv: `float` - The ABV for the batch - either estimated from recipe or calculated from entered OG and FG values
 - .ReadingAge `int` - age in hours of most recent reading or -1 if there are no readings available
   

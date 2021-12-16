@@ -836,6 +836,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "mattwojo",
+      "name": "Matt Wojciakowski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7566797?v=4",
+      "profile": "http://mattwojo.github.io/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

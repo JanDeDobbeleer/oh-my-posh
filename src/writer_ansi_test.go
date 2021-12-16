@@ -175,7 +175,7 @@ func TestWriteANSIColors(t *testing.T) {
 		ansi.init("pwsh")
 		renderer := &AnsiWriter{
 			ansi:               ansi,
-			ParentColors:       tc.Parent,
+			ParentColors:       []*Color{tc.Parent},
 			Colors:             tc.Colors,
 			terminalBackground: tc.TerminalBackground,
 			ansiColors:         &DefaultColors{},

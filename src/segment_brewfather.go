@@ -76,8 +76,10 @@ type BatchReading struct {
 }
 type Batch struct {
 	// Json tagged values returned from https://api.brewfather.app/v1/batches/batch_id
-	Status string `json:"status"`
-	Recipe struct {
+	Status      string `json:"status"`
+	BatchName   string `json:"name"`
+	BatchNumber int    `json:"batchNo"`
+	Recipe      struct {
 		Name string `json:"name"`
 	} `json:"recipe"`
 	BrewDate         int64 `json:"brewDate"`

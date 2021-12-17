@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"io/ioutil"
 	"path/filepath"
 	"testing"
 
@@ -29,16 +31,16 @@ func TestKubectlSegment(t *testing.T) {
 		ExpectedString  string
 		Files           map[string]string
 	}{
-		{Case: "disabled", Template: standardTemplate, KubectlExists: false, Context: "aaa", Namespace: "bbb", ExpectedString: "", ExpectedEnabled: false},
 		{
-			Case:            "not enough arguments",
-			Template:        standardTemplate,
-			KubectlExists:   true,
-			Context:         "aaa",
-			Namespace:       "bbb",
-			ExpectedString:  "",
-			ExpectedEnabled: false,
+			Case:            "kubeconfig incomplete",
+			Template:        testKubectlAllInfoTemplate,
+			ParseKubeConfig: true,
+			Kubeconfig:      "currentcontextmarker" + lsep + "contextdefinitionincomplete",
+			Files:           testKubeConfigFiles,
+			ExpectedString:  "ctx ::  ::  :: ",
+			ExpectedEnabled: true,
 		},
+		{Case: "disabled", Template: standardTemplate, KubectlExists: false, Context: "aaa", Namespace: "bbb", ExpectedEnabled: false},
 		{
 			Case:            "all information",
 			Template:        testKubectlAllInfoTemplate,
@@ -50,7 +52,7 @@ func TestKubectlSegment(t *testing.T) {
 			ExpectedString:  "aaa :: bbb :: ccc :: ddd",
 			ExpectedEnabled: true,
 		},
-		{Case: "no namespace", Template: standardTemplate, KubectlExists: true, Context: "aaa", Namespace: "", ExpectedString: "", ExpectedEnabled: false},
+		{Case: "no namespace", Template: standardTemplate, KubectlExists: true, Context: "aaa", ExpectedString: "aaa", ExpectedEnabled: true},
 		{
 			Case:            "kubectl error",
 			Template:        standardTemplate,
@@ -100,30 +102,16 @@ func TestKubectlSegment(t *testing.T) {
 			ExpectedString:  "KUBECONFIG ERR :: KUBECONFIG ERR :: KUBECONFIG ERR :: KUBECONFIG ERR",
 			ExpectedEnabled: true,
 		},
-		{
-			Case:            "kubeconfig incomplete",
-			Template:        testKubectlAllInfoTemplate,
-			ParseKubeConfig: true,
-			Kubeconfig:      "currentcontextmarker" + lsep + "contextdefinitionincomplete",
-			Files:           testKubeConfigFiles,
-			ExpectedString:  "ctx ::  ::  :: ",
-			ExpectedEnabled: true,
-		},
 	}
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
 		env.On("hasCommand", "kubectl").Return(tc.KubectlExists)
-		addCommaAndvalue := func(s string) string {
-			if s == "" {
-				return ""
-			}
-			return "," + s
+		var kubeconfig string
+		content, err := ioutil.ReadFile("./test/kubectl.yml")
+		if err == nil {
+			kubeconfig = fmt.Sprintf(string(content), tc.Cluster, tc.User, tc.Namespace, tc.Context)
 		}
-		kubectlOut := tc.Context
-		kubectlOut += addCommaAndvalue(tc.Namespace)
-		kubectlOut += addCommaAndvalue(tc.User)
-		kubectlOut += addCommaAndvalue(tc.Cluster)
 		var kubectlErr error
 		if tc.KubectlErr {
 			kubectlErr = &commandError{
@@ -131,9 +119,7 @@ func TestKubectlSegment(t *testing.T) {
 				exitCode: 1,
 			}
 		}
-		env.On("runCommand", "kubectl",
-			[]string{"config", "view", "--minify", "--output", "jsonpath={..current-context},{..namespace},{..context.user},{..context.cluster}"}).Return(kubectlOut, kubectlErr)
-
+		env.On("runCommand", "kubectl", []string{"config", "view", "--output", "yaml", "--minify"}).Return(kubeconfig, kubectlErr)
 		env.On("getenv", "KUBECONFIG").Return(tc.Kubeconfig)
 		for path, content := range tc.Files {
 			env.On("getFileContent", path).Return(content)

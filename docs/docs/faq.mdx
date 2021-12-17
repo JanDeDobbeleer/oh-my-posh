@@ -138,6 +138,47 @@ To solely rely on Oh My Posh to set the prompt, you can configure the follwing s
 conda config --set changeps1 False
 ```
 
+### Python venv: Prompt is changed to display the environment name
+Upon activation, virtual environments created with `venv` change the prompt to add the activated environment's name.
+To disable this behaviour, set `VIRTUAL_ENV_DISABLE_PROMPT` environment variable to `1` on your system. Example commands to run, with probable file locations you'll have to put them in for auto-loading:
+
+Note: Tilde (~) in paths here refers to your user's home directory.
+
+<Tabs
+  defaultValue="powershell"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'powershell', },
+    { label: 'fish', value: 'fish', },
+    { label: 'others', value: 'others', },
+  ]
+}>
+<TabItem value="powershell">
+
+```powershell
+# powershell - ~/Documents/WindowsPowerShell/profile.ps1
+$env:VIRTUAL_ENV_DISABLE_PROMPT=1
+```
+
+</TabItem>
+<TabItem value="fish">
+
+```fish
+#fish - ~/.config/fish/config.fish
+set -x VIRTUAL_ENV_DISABLE_PROMPT 1
+```
+
+</TabItem>
+<TabItem value="others">
+
+```bash
+# bash, zsh - ~/bashrc or ~/.zprofile ~/.zshrc
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+```
+
+</TabItem>
+</Tabs>
+
 [new-issue]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/new/choose
 [latest]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
 [wt-glyph]: https://github.com/microsoft/terminal/issues/3546

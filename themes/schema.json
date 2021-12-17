@@ -1219,22 +1219,19 @@
                     "title": "Maximum Depth",
                     "description": "Maximum path depth to display whithout shortening",
                     "default": 1
-                  }
-                },
-                "mapped_locations_enabled": {
-                  "type": "boolean",
-                  "title": "Enable the Mapped Locations feature",
-                  "description": "Replace known locations in the path with the replacements before applying the style.",
-                  "default": true
-                },
-                "stack_count_enabled": {
-                  "type": "boolean",
-                  "title": "Show/hide stack count",
-                  "description": "Displays the stack count when using pushd/popd",
-                  "default": false
-                },
-                "enable_hyperlink": {
-                  "$ref": "#/definitions/enable_hyperlink"
+                  },
+                  "mapped_locations_enabled": {
+                    "type": "boolean",
+                    "title": "Enable the Mapped Locations feature",
+                    "description": "Replace known locations in the path with the replacements before applying the style.",
+                    "default": true
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
+                  },
+                  "template": {
+                      "$ref": "#/definitions/template"
+                    }
                 }
               }
             }

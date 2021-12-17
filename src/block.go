@@ -192,11 +192,8 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 			start = time.Now()
 			segment.stringValue = segment.string()
 			segmentTiming.stringDuration = time.Since(start)
-			b.previousActiveSegment = nil
 			b.renderSegment(segment)
-			if b.activeSegment.Style == Powerline {
-				b.writePowerline(false)
-			}
+			b.writePowerline(true)
 			segmentTiming.stringValue = b.writer.string()
 			b.writer.reset()
 		}

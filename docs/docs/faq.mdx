@@ -140,11 +140,19 @@ conda config --set changeps1 False
 
 ### Python venv: Prompt is changed to display the environment name
 Upon activation, virtual environments created with `venv` change the prompt to add the activated environment's name.
-To disable this behaviour, set `VIRTUAL_ENV_DISABLE_PROMPT` environment variable to `1` on your system.
-You can add the following line to your Powershell profile:
+To disable this behaviour, set `VIRTUAL_ENV_DISABLE_PROMPT` environment variable to `1` on your system. Example commands to run (with probable file locations you'll have to put them in for auto-loading):
 
 ```powershell
+# powershell - ~/Documents/WindowsPowerShell/profile.ps1
 $env:VIRTUAL_ENV_DISABLE_PROMPT=1
+```
+```bash
+# bash, zsh - ~/bashrc or ~/.zprofile ~/.zshrc
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+```
+```fish
+#fish - ~/.config/fish/config.fish
+set -x VIRTUAL_ENV_DISABLE_PROMPT 1
 ```
 
 [new-issue]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/new/choose

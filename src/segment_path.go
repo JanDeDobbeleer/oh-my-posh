@@ -10,6 +10,10 @@ import (
 type path struct {
 	props properties
 	env   environmentInfo
+
+	PWD        string
+	Path       string
+	StackCount int
 }
 
 const (
@@ -45,8 +49,6 @@ const (
 	MappedLocations Property = "mapped_locations"
 	// MappedLocationsEnabled enables overriding certain locations with an icon
 	MappedLocationsEnabled Property = "mapped_locations_enabled"
-	// StackCountEnabled enables the stack count display
-	StackCountEnabled Property = "stack_count_enabled"
 	// MaxDepth Maximum path depth to display whithout shortening
 	MaxDepth Property = "max_depth"
 )
@@ -56,45 +58,51 @@ func (pt *path) enabled() bool {
 }
 
 func (pt *path) string() string {
-	cwd := pt.env.getcwd()
-	var formattedPath string
+	pt.PWD = pt.env.getcwd()
 	switch style := pt.props.getString(Style, Agnoster); style {
 	case Agnoster:
-		formattedPath = pt.getAgnosterPath()
+		pt.Path = pt.getAgnosterPath()
 	case AgnosterFull:
-		formattedPath = pt.getAgnosterFullPath()
+		pt.Path = pt.getAgnosterFullPath()
 	case AgnosterShort:
-		formattedPath = pt.getAgnosterShortPath()
+		pt.Path = pt.getAgnosterShortPath()
 	case Mixed:
-		formattedPath = pt.getMixedPath()
+		pt.Path = pt.getMixedPath()
 	case Letter:
-		formattedPath = pt.getLetterPath()
+		pt.Path = pt.getLetterPath()
 	case AgnosterLeft:
-		formattedPath = pt.getAgnosterLeftPath()
+		pt.Path = pt.getAgnosterLeftPath()
 	case Short:
 		// "short" is a duplicate of "full", just here for backwards compatibility
 		fallthrough
 	case Full:
-		formattedPath = pt.getFullPath()
+		pt.Path = pt.getFullPath()
 	case Folder:
-		formattedPath = pt.getFolderPath()
+		pt.Path = pt.getFolderPath()
 	default:
 		return fmt.Sprintf("Path style: %s is not available", style)
 	}
-	formattedPath = pt.formatWindowsDrive(formattedPath)
+	pt.Path = pt.formatWindowsDrive(pt.Path)
 	if pt.props.getBool(EnableHyperlink, false) {
 		// wsl check
 		if pt.env.isWsl() {
-			cwd, _ = pt.env.runCommand("wslpath", "-m", cwd)
+			pt.PWD, _ = pt.env.runCommand("wslpath", "-m", pt.PWD)
 		}
-		return fmt.Sprintf("[%s](file://%s)", formattedPath, cwd)
+		pt.Path = fmt.Sprintf("[%s](file://%s)", pt.Path, pt.PWD)
 	}
 
-	if pt.props.getBool(StackCountEnabled, false) && pt.env.stackCount() > 0 {
-		return fmt.Sprintf("%d %s", pt.env.stackCount(), formattedPath)
+	pt.StackCount = pt.env.stackCount()
+	segmentTemplate := pt.props.getString(SegmentTemplate, "{{ .Path }}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  pt,
+		Env:      pt.env,
 	}
-
-	return formattedPath
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (pt *path) formatWindowsDrive(pwd string) string {

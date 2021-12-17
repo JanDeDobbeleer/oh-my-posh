@@ -387,6 +387,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		env.On("homeDir", nil).Return(tc.HomePath)
 		env.On("getcwd", nil).Return(tc.Pwd)
 		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		env.On("stackCount", nil).Return(0)
 		args := &args{
 			PSWD: &tc.Pswd,
 		}
@@ -397,6 +398,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 				FolderSeparatorIcon: tc.FolderSeparatorIcon,
 				Style:               tc.Style,
 				MaxDepth:            tc.MaxDepth,
+				SegmentTemplate:     "{{ .Path }}",
 			},
 		}
 		got := path.string()
@@ -415,8 +417,10 @@ func TestGetFullPath(t *testing.T) {
 		GOOS                   string
 		PathSeparator          string
 		StackCount             int
-		StackCountEnabled      bool
+		Template               string
 	}{
+		{Style: Full, Pwd: "/usr/home/abc", Template: "{{ .Path }}", StackCount: 2, Expected: "~/abc"},
+
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: "", Expected: ""},
 		{Style: Full, Pwd: "/", Expected: "/"},
@@ -449,49 +453,49 @@ func TestGetFullPath(t *testing.T) {
 		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\Jan", Expected: "C:\\Users\\Jan", PathSeparator: "\\", GOOS: windowsPlatform},
 
 		// StackCountEnabled=true and StackCount=2
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, StackCount: 2, Expected: "2 /"},
-		{Style: Full, Pwd: "", StackCountEnabled: true, StackCount: 2, Expected: "2 "},
-		{Style: Full, Pwd: "/", StackCountEnabled: true, StackCount: 2, Expected: "2 /"},
-		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, StackCount: 2, Expected: "2 ~"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 2, Expected: "2 ~/abc"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 2, Expected: "2 /usr/home/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, StackCount: 2, Expected: "2 /a/b/c/d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: 2, Expected: "2 /"},
+		{Style: Full, Pwd: "", StackCount: 2, Expected: "2 "},
+		{Style: Full, Pwd: "/", StackCount: 2, Expected: "2 /"},
+		{Style: Full, Pwd: "/usr/home", StackCount: 2, Expected: "2 ~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: 2, Expected: "2 ~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: 2, Expected: "2 /usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCount: 2, Expected: "2 /a/b/c/d"},
 
 		// StackCountEnabled=false and StackCount=2
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: false, StackCount: 2, Expected: "/"},
-		{Style: Full, Pwd: "", StackCountEnabled: false, StackCount: 2, Expected: ""},
-		{Style: Full, Pwd: "/", StackCountEnabled: false, StackCount: 2, Expected: "/"},
-		{Style: Full, Pwd: "/usr/home", StackCountEnabled: false, StackCount: 2, Expected: "~"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: false, StackCount: 2, Expected: "~/abc"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: false, StackCount: 2, Expected: "/usr/home/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: false, StackCount: 2, Expected: "/a/b/c/d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Template: "{{ .Path }}", StackCount: 2, Expected: "/"},
+		{Style: Full, Pwd: "", Template: "{{ .Path }}", StackCount: 2, Expected: ""},
+		{Style: Full, Pwd: "/", Template: "{{ .Path }}", StackCount: 2, Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", Template: "{{ .Path }}", StackCount: 2, Expected: "~"},
+
+		{Style: Full, Pwd: "/usr/home/abc", Template: "{{ .Path }}", StackCount: 2, Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", Template: "{{ .Path }}", StackCount: 2, Expected: "/a/b/c/d"},
 
 		// StackCountEnabled=true and StackCount=0
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, StackCount: 0, Expected: "/"},
-		{Style: Full, Pwd: "", StackCountEnabled: true, StackCount: 0, Expected: ""},
-		{Style: Full, Pwd: "/", StackCountEnabled: true, StackCount: 0, Expected: "/"},
-		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, StackCount: 0, Expected: "~"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 0, Expected: "~/abc"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 0, Expected: "/usr/home/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, StackCount: 0, Expected: "/a/b/c/d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: 0, Expected: "/"},
+		{Style: Full, Pwd: "", StackCount: 0, Expected: ""},
+		{Style: Full, Pwd: "/", StackCount: 0, Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", StackCount: 0, Expected: "~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: 0, Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: 0, Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCount: 0, Expected: "/a/b/c/d"},
 
 		// StackCountEnabled=true and StackCount<0
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, StackCount: -1, Expected: "/"},
-		{Style: Full, Pwd: "", StackCountEnabled: true, StackCount: -1, Expected: ""},
-		{Style: Full, Pwd: "/", StackCountEnabled: true, StackCount: -1, Expected: "/"},
-		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, StackCount: -1, Expected: "~"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: -1, Expected: "~/abc"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: -1, Expected: "/usr/home/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, StackCount: -1, Expected: "/a/b/c/d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: -1, Expected: "/"},
+		{Style: Full, Pwd: "", StackCount: -1, Expected: ""},
+		{Style: Full, Pwd: "/", StackCount: -1, Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", StackCount: -1, Expected: "~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: -1, Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: -1, Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCount: -1, Expected: "/a/b/c/d"},
 
 		// StackCountEnabled=true and StackCount not set
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, Expected: "/"},
-		{Style: Full, Pwd: "", StackCountEnabled: true, Expected: ""},
-		{Style: Full, Pwd: "/", StackCountEnabled: true, Expected: "/"},
-		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, Expected: "~"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, Expected: "~/abc"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, Expected: "/usr/home/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, Expected: "/a/b/c/d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
+		{Style: Full, Pwd: "", Expected: ""},
+		{Style: Full, Pwd: "/", Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", Expected: "~"},
+		{Style: Full, Pwd: "/usr/home/abc", Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", Expected: "/a/b/c/d"},
 	}
 
 	for _, tc := range cases {
@@ -508,9 +512,12 @@ func TestGetFullPath(t *testing.T) {
 			PSWD: &tc.Pswd,
 		}
 		env.On("getArgs", nil).Return(args)
+		if len(tc.Template) == 0 {
+			tc.Template = "{{ if gt .StackCount 0 }}{{ .StackCount }} {{ end }}{{ .Path }}"
+		}
 		var props properties = map[Property]interface{}{
-			Style:             tc.Style,
-			StackCountEnabled: tc.StackCountEnabled,
+			Style:           tc.Style,
+			SegmentTemplate: tc.Template,
 		}
 		if tc.FolderSeparatorIcon != "" {
 			props[FolderSeparatorIcon] = tc.FolderSeparatorIcon

@@ -63,6 +63,7 @@ func (b *Block) setActiveSegment(segment *Segment) {
 	b.activeSegment = segment
 	b.activeBackground = segment.background()
 	b.activeForeground = segment.foreground()
+	b.writer.setColors(b.activeBackground, b.activeForeground)
 }
 
 func (b *Block) enabled() bool {
@@ -102,13 +103,35 @@ func (b *Block) renderSegments() string {
 	return b.writer.string()
 }
 
-func (b *Block) writePowerline(end bool) {
+func (b *Block) renderSegment(segment *Segment) {
+	b.setActiveSegment(segment)
+	b.writePowerline(false)
+	switch b.activeSegment.Style {
+	case Plain, Powerline:
+		b.renderText(segment.stringValue)
+	case Diamond:
+		b.writer.write(Transparent, b.activeBackground, b.activeSegment.LeadingDiamond)
+		b.renderText(segment.stringValue)
+		b.writer.write(Transparent, b.activeBackground, b.activeSegment.TrailingDiamond)
+	}
+	b.previousActiveSegment = b.activeSegment
+	b.writer.setParentColors(b.activeBackground, b.activeForeground)
+}
+
+func (b *Block) renderText(text string) {
+	defaultValue := " "
+	b.writer.write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Prefix, defaultValue))
+	b.writer.write(b.activeBackground, b.activeForeground, text)
+	b.writer.write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Postfix, defaultValue))
+}
+
+func (b *Block) writePowerline(final bool) {
 	resolvePowerlineSymbol := func() string {
 		var symbol string
-		if b.previousActiveSegment != nil && b.previousActiveSegment.Style == Powerline {
-			symbol = b.previousActiveSegment.PowerlineSymbol
-		} else if b.activeSegment.Style == Powerline {
+		if b.activeSegment.Style == Powerline {
 			symbol = b.activeSegment.PowerlineSymbol
+		} else if b.previousActiveSegment != nil && b.previousActiveSegment.Style == Powerline {
+			symbol = b.previousActiveSegment.PowerlineSymbol
 		}
 		return symbol
 	}
@@ -117,7 +140,7 @@ func (b *Block) writePowerline(end bool) {
 		return
 	}
 	background := b.activeSegment.background()
-	if end || b.activeSegment.Style != Powerline {
+	if final || b.activeSegment.Style != Powerline {
 		background = Transparent
 	}
 	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
@@ -144,29 +167,6 @@ func (b *Block) getPowerlineColor() string {
 		return Transparent
 	}
 	return b.previousActiveSegment.background()
-}
-
-func (b *Block) renderSegment(segment *Segment) {
-	b.setActiveSegment(segment)
-	b.writePowerline(false)
-	b.writer.setColors(b.activeBackground, b.activeForeground)
-	switch b.activeSegment.Style {
-	case Plain, Powerline:
-		b.renderText(segment.stringValue)
-	case Diamond:
-		b.writer.write(Transparent, b.activeBackground, b.activeSegment.LeadingDiamond)
-		b.renderText(segment.stringValue)
-		b.writer.write(Transparent, b.activeBackground, b.activeSegment.TrailingDiamond)
-	}
-	b.previousActiveSegment = b.activeSegment
-	b.writer.setParentColors(b.activeBackground, b.activeForeground)
-}
-
-func (b *Block) renderText(text string) {
-	defaultValue := " "
-	b.writer.write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Prefix, defaultValue))
-	b.writer.write(b.activeBackground, b.activeForeground, text)
-	b.writer.write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Postfix, defaultValue))
 }
 
 func (b *Block) debug() (int, []*SegmentTiming) {

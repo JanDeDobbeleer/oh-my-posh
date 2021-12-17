@@ -1,8 +1,10 @@
 # Forked Repo Changes
-* Add theme "smoothie" in /Themes
+* Add theme "smoothie" in /themes
   * Font: [Recursive Mono](https://www.recursive.design/) by [Arrow Type](https://github.com/arrowtype)
 
-![smoothie theme](INSERT LINK)
+![smoothie theme](./20211217-182519.png)
+
+![smoothie theme alt](./20211217-182544.png)
 
 
 

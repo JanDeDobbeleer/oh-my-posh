@@ -2,7 +2,6 @@ package main
 
 import (
 	"path/filepath"
-	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -14,21 +13,21 @@ type kubectl struct {
 	props   properties
 	env     environmentInfo
 	Context string
-	KubeConfigContext
-}
-
-type KubeConfigContext struct {
-	Cluster   string `yaml:"cluster"`
-	User      string `yaml:"user"`
-	Namespace string `yaml:"namespace"`
+	KubeContext
 }
 
 type KubeConfig struct {
 	CurrentContext string `yaml:"current-context"`
 	Contexts       []struct {
-		Context KubeConfigContext `yaml:"context"`
-		Name    string            `yaml:"name"`
+		Context *KubeContext `yaml:"context"`
+		Name    string       `yaml:"name"`
 	} `yaml:"contexts"`
+}
+
+type KubeContext struct {
+	Cluster   string `yaml:"cluster"`
+	User      string `yaml:"user"`
+	Namespace string `yaml:"namespace"`
 }
 
 func (k *kubectl) string() string {
@@ -65,7 +64,7 @@ func (k *kubectl) doParseKubeConfig() bool {
 	if len(kubeconfigs) == 0 {
 		kubeconfigs = []string{filepath.Join(k.env.homeDir(), ".kube/config")}
 	}
-	contexts := make(map[string]KubeConfigContext)
+	contexts := make(map[string]*KubeContext)
 	k.Context = ""
 	for _, kubeconfig := range kubeconfigs {
 		if len(kubeconfig) == 0 {
@@ -91,10 +90,13 @@ func (k *kubectl) doParseKubeConfig() bool {
 		}
 
 		context, exists := contexts[k.Context]
-		if exists {
-			k.KubeConfigContext = context
-			return true
+		if !exists {
+			continue
 		}
+		if context != nil {
+			k.KubeContext = *context
+		}
+		return true
 	}
 
 	displayError := k.props.getBool(DisplayError, false)
@@ -110,7 +112,7 @@ func (k *kubectl) doCallKubectl() bool {
 	if !k.env.hasCommand(cmd) {
 		return false
 	}
-	result, err := k.env.runCommand(cmd, "config", "view", "--minify", "--output", "jsonpath={..current-context},{..namespace},{..context.user},{..context.cluster}")
+	result, err := k.env.runCommand(cmd, "config", "view", "--output", "yaml", "--minify")
 	displayError := k.props.getBool(DisplayError, false)
 	if err != nil && displayError {
 		k.setError("KUBECTL ERR")
@@ -120,15 +122,16 @@ func (k *kubectl) doCallKubectl() bool {
 		return false
 	}
 
-	values := strings.Split(result, ",")
-	if len(values) < 4 {
+	var config KubeConfig
+	err = yaml.Unmarshal([]byte(result), &config)
+	if err != nil {
 		return false
 	}
-	k.Context = values[0]
-	k.Namespace = values[1]
-	k.User = values[2]
-	k.Cluster = values[3]
-	return len(k.Context) > 0
+	k.Context = config.CurrentContext
+	if len(config.Contexts) > 0 {
+		k.KubeContext = *config.Contexts[0].Context
+	}
+	return true
 }
 
 func (k *kubectl) setError(message string) {

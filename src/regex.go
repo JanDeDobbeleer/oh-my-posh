@@ -87,7 +87,7 @@ func dirMatchesOneOf(env environmentInfo, dir string, regexes []string) bool {
 	for _, element := range regexes {
 		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
 		if strings.HasPrefix(normalizedElement, "~") {
-			normalizedElement = normalizedHomeDir + normalizedElement[1:]
+			normalizedElement = strings.Replace(normalizedElement, "~", normalizedHomeDir, 1)
 		}
 		pattern := fmt.Sprintf("^%s$", normalizedElement)
 		goos := env.getRuntimeGOOS()

@@ -235,7 +235,11 @@ func (l *language) buildVersionURL(text string) string {
 		if n == 0 {
 			return fmt.Sprintf(str, args...), nil
 		}
-		return fmt.Sprintf(str, args[:n]...), nil
+		arguments := make([]interface{}, 0, n)
+		for i := 0; i < n; i++ {
+			arguments = append(arguments, args[i])
+		}
+		return fmt.Sprintf(str, arguments...), nil
 	}
 	version, err := truncatingSprintf(l.versionURLTemplate, text, l.version.Major, l.version.Minor, l.version.Patch)
 	if err != nil {

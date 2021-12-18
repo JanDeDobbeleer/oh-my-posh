@@ -62,7 +62,6 @@
 		  "style": "plain",
 		  "foreground": "#fb0207",
 		  "properties": {
-			"postfix": " ",
 			"template": "×××"
 		  }
 		},

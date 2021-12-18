@@ -16,7 +16,6 @@
                     "foreground": "#dd1e1e",
                     "background": "#000000",
                     "properties": {
-                        "prefix": " ",
                         "root_icon": "⚡"
                     }
                 },
@@ -31,7 +30,7 @@
                 },
                 {
                     "type": "path",
-                    "style": "diamond",
+                    "style": "plain",
                     "foreground": "#43CCEA",
                     "background": "#5a3d29",
                     "properties": {

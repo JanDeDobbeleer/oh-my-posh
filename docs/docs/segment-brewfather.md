@@ -19,7 +19,7 @@ This example uses the default segment template to show a rendition of detail app
 Additionally, the background of the segment will turn red if the latest reading is over 4 hours old - possibly helping indicate
 an issue if, for example there is a Tilt or similar device that is supposed to be logging to Brewfather every 15 minutes.
 
-NOTE: Temperature units are in degrees C and specific gravity is expressed as `1.XYZ` values.
+NOTE: Temperature units are in degrees C and specific gravity is expressed as `X.XXX` values.
 
 ```json
 {
@@ -131,6 +131,30 @@ to build your own.  For reference, the built-in template looks like this:
     "template":"{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}{{.DayIcon}} {{end}}[{{.Recipe.Name}}]({{.URL}}) {{printf \"%.1f\" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{printf \"%.3f\" .Reading.Gravity}} {{.Reading.Temperature}}\u00b0 {{.TemperatureTrendIcon}}{{end}}"
   }
   ````
+
+### Unit conversion
+
+By default temperature readings are provided in degrees C, gravity readings in decimal Specific Gravity unts (X.XXX).
+
+The following conversion functions are available to the template to convert to other units:
+
+#### Temperature
+
+- DegCToF - input: `float` degrees in C;  output `float` degrees in F (1 decimal place).
+- DegCToKelvin- input: `float` degrees in C;  output `float` Kelvin (1 decimal place).
+
+#### Gravity
+
+- SGToBrix - input `float` SG in x.xxx decimal; output `float` Brix (2 decimal places)
+- SGToPlato - input `float` SG in x.xxx decimal; output `float` Plato (2 decimal places)
+
+#### Example
+
+```` json
+{
+  "template":"{{if .Reading}}{{.SGToBrix .Reading.Gravity}}°Bx, {{.DegCToF .Reading.Temperature}}°F{{end}}"
+}
+````
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

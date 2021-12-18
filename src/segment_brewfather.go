@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"net/http"
 	"sort"
 	"time"
@@ -313,6 +314,25 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	}
 
 	return &batch, nil
+}
+
+// Unit conversion functions available to template.
+func (bf *brewfather) DegCToF(degreesC float64) float64 {
+	return math.Round(10*((degreesC*1.8)+32)) / 10 // 1 decimal place
+}
+
+func (bf *brewfather) DegCToKelvin(degreesC float64) float64 {
+	return math.Round(10*(degreesC+273.15)) / 10 // 1 decimal place, only addition, but just to be sure
+}
+
+func (bf *brewfather) SGToBrix(sg float64) float64 {
+	// from https://en.wikipedia.org/wiki/Brix#Specific_gravity_2
+	return math.Round(100*(231.61*(sg-0.9977))) / 100
+}
+
+func (bf *brewfather) SGToPlato(sg float64) float64 {
+	// from https://en.wikipedia.org/wiki/Brix#Specific_gravity_2
+	return math.Round(100*((463-(sg*205))*(sg-1.0))) / 100 // 2 decimal places
 }
 
 func (bf *brewfather) init(props properties, env environmentInfo) {

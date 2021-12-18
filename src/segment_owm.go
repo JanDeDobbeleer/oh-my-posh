@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -122,10 +123,14 @@ func (d *owm) setStatus() error {
 	if err != nil {
 		return err
 	}
+	if len(q.Data) == 0 {
+		return errors.New("No data found")
+	}
+	id := q.Data[0].TypeID
 
 	d.Temperature = q.temperature.Value
 	icon := ""
-	switch q.Data[0].TypeID {
+	switch id {
 	case "01n":
 		fallthrough
 	case "01d":

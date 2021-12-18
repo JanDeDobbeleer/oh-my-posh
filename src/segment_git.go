@@ -247,24 +247,26 @@ func (g *git) setGitStatus() {
 	g.Staging = &GitStatus{}
 	output := g.getGitCommandOutput("status", "-unormal", "--branch", "--porcelain=2")
 	for _, line := range strings.Split(output, "\n") {
-		if strings.HasPrefix(line, HASH) {
+		if strings.HasPrefix(line, HASH) && len(line) >= len(HASH)+7 {
 			g.Hash = line[len(HASH) : len(HASH)+7]
 			continue
 		}
-		if strings.HasPrefix(line, REF) {
+		if strings.HasPrefix(line, REF) && len(line) > len(REF) {
 			g.Ref = line[len(REF):]
 			continue
 		}
-		if strings.HasPrefix(line, UPSTREAM) {
+		if strings.HasPrefix(line, UPSTREAM) && len(line) > len(UPSTREAM) {
 			g.Upstream = line[len(UPSTREAM):]
 			continue
 		}
-		if strings.HasPrefix(line, BRANCHSTATUS) {
+		if strings.HasPrefix(line, BRANCHSTATUS) && len(line) > len(BRANCHSTATUS) {
 			status := line[len(BRANCHSTATUS):]
 			splitted := strings.Split(status, " ")
-			g.Ahead, _ = strconv.Atoi(splitted[0])
-			behind, _ := strconv.Atoi(splitted[1])
-			g.Behind = -behind
+			if len(splitted) >= 2 {
+				g.Ahead, _ = strconv.Atoi(splitted[0])
+				behind, _ := strconv.Atoi(splitted[1])
+				g.Behind = -behind
+			}
 			continue
 		}
 		addToStatus(line)

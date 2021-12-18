@@ -84,9 +84,9 @@ type RGB struct {
 
 func NewRGBColor(ansiColor string) *RGB {
 	colors := strings.Split(ansiColor, ";")
-	r, _ := strconv.Atoi(colors[0])
-	g, _ := strconv.Atoi(colors[1])
 	b, _ := strconv.Atoi(colors[2])
+	g, _ := strconv.Atoi(colors[1])
+	r, _ := strconv.Atoi(colors[0])
 	return &RGB{
 		r: r,
 		g: g,
@@ -365,6 +365,9 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 			continue
 		}
 		runes := []rune(ir.ansiString)
+		if len(runes) == 0 {
+			continue
+		}
 		str := string(runes[0:1])
 		ir.ansiString = string(runes[1:])
 		switch ir.style {

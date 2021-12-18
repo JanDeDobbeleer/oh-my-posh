@@ -153,7 +153,9 @@ func (t *executiontime) formatDurationHouston() string {
 		// format milliseconds as a string with truncated trailing zeros
 		milliseconds = strconv.FormatFloat(float64(t.Ms%second)/second, 'f', -1, 64)
 		// at this point milliseconds looks like "0.5". remove the leading "0"
-		milliseconds = milliseconds[1:]
+		if len(milliseconds) >= 1 {
+			milliseconds = milliseconds[1:]
+		}
 	}
 
 	result := fmt.Sprintf("%02d:%02d:%02d%s", t.Ms/hour, t.Ms/minute%minutesPerHour, t.Ms%minute/second, milliseconds)
@@ -175,7 +177,9 @@ func (t *executiontime) formatDurationAmarillo() string {
 		decimalResult := strconv.FormatFloat(decimalNumber, 'f', -1, 64)
 		// at this point decimalResult looks like "0.5"
 		// remove the leading "0" and append
-		result += decimalResult[1:]
+		if len(decimalResult) >= 1 {
+			result += decimalResult[1:]
+		}
 	}
 	result += "s"
 

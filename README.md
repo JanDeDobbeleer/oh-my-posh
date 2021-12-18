@@ -1,4 +1,3 @@
-
 # A prompt theme engine for any shell
 
 ![Release Status][release-status]

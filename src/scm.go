@@ -56,7 +56,7 @@ func (s *scm) init(props properties, env environmentInfo) {
 func (s *scm) truncateBranch(branch string) string {
 	fullBranchPath := s.props.getBool(FullBranchPath, true)
 	maxLength := s.props.getInt(BranchMaxLength, 0)
-	if !fullBranchPath && len(branch) > 0 {
+	if !fullBranchPath && strings.Contains(branch, "/") {
 		index := strings.LastIndex(branch, "/")
 		branch = branch[index+1:]
 	}

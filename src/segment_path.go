@@ -206,7 +206,9 @@ func (pt *path) getLetterPath() string {
 
 		buffer.WriteString(fmt.Sprintf("%s%s", letter, separator))
 	}
-	buffer.WriteString(splitted[len(splitted)-1])
+	if len(splitted) > 0 {
+		buffer.WriteString(splitted[len(splitted)-1])
+	}
 	return buffer.String()
 }
 

@@ -62,7 +62,6 @@
 		  "style": "plain",
 		  "foreground": "#fb0207",
 		  "properties": {
-			"prefix": "",
 			"postfix": " ",
 			"template": "×××"
 		  }
@@ -91,7 +90,6 @@
           "foreground": "#3ce6bf",
           "properties": {
 		 	"prefix": "<#eaeaea>⎩</>",
-		 	"postfix": "",
             "text": " \u27E9\u27E9\u27E9\u27E9\u27E9\u27E9 "
           }
         }

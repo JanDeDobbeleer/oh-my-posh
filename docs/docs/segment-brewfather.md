@@ -156,6 +156,14 @@ The following conversion functions are available to the template to convert to o
 }
 ````
 
+To display gravity as SG in XXXX format (e.g. "1020" instead of "1.020"), use the `mulf` template function
+
+```` json
+{
+  "template":"{{if .Reading}}{{.mulf 1000 .Reading.Gravity}}, {{.DegCToF .Reading.Temperature}}°F{{end}}"
+}
+````
+
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
 [brewfather]: http://brewfather.app

@@ -69,8 +69,11 @@ func (a *aws) getConfigFileInfo() {
 			continue
 		}
 		if sectionActive && strings.HasPrefix(line, "region") {
-			a.Region = strings.TrimSpace(strings.Split(line, "=")[1])
-			break
+			splitted := strings.Split(line, "=")
+			if len(splitted) >= 2 {
+				a.Region = strings.TrimSpace(splitted[1])
+				break
+			}
 		}
 	}
 	if a.Profile == "" && a.Region != "" {

@@ -129,6 +129,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
   </tr>
   <tr>
     <td align="center"><a href="http://mattwojo.github.io/"><img src="https://avatars.githubusercontent.com/u/7566797?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Matt Wojciakowski</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mattwojo" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.powershellgallery.com/profiles/TaylorLee"><img src="https://avatars.githubusercontent.com/u/53202926?v=4?s=100" width="100px;" alt=""/><br /><sub><b>TheTaylorLee</b></sub></a><br /><a href="#design-TheTaylorLee" title="Design">🎨</a></td>
   </tr>
 </table>
 

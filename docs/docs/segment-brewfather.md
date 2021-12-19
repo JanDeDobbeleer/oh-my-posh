@@ -147,6 +147,8 @@ The following conversion functions are available to the template to convert to o
 
 - SGToBrix - input `float` SG in x.xxx decimal; output `float` Brix (2 decimal places)
 - SGToPlato - input `float` SG in x.xxx decimal; output `float` Plato (2 decimal places)
+  
+  *(These use the polynomial conversions from [Wikipedia][wikipedia_gravity_page])*
 
 #### Example
 
@@ -167,3 +169,4 @@ To display gravity as SG in XXXX format (e.g. "1020" instead of "1.020"), use th
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
 [brewfather]: http://brewfather.app
+[wikipedia_gravity_page]:https://en.wikipedia.org/wiki/Brix#Specific_gravity_2

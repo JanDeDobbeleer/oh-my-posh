@@ -327,12 +327,12 @@ func (bf *brewfather) DegCToKelvin(degreesC float64) float64 {
 
 func (bf *brewfather) SGToBrix(sg float64) float64 {
 	// from https://en.wikipedia.org/wiki/Brix#Specific_gravity_2
-	return math.Round(100*(231.61*(sg-0.9977))) / 100
+	return math.Round(100*((182.4601*sg*sg*sg)-(775.6821*sg*sg)+(1262.7794*sg)-669.5622)) / 100
 }
 
 func (bf *brewfather) SGToPlato(sg float64) float64 {
 	// from https://en.wikipedia.org/wiki/Brix#Specific_gravity_2
-	return math.Round(100*((463-(sg*205))*(sg-1.0))) / 100 // 2 decimal places
+	return math.Round(100*((135.997*sg*sg*sg)-(630.272*sg*sg)+(1111.14*sg)-616.868)) / 100 // 2 decimal places
 }
 
 func (bf *brewfather) init(props properties, env environmentInfo) {

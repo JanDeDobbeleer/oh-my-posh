@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+name: 'Setup Go'
+description: 'Install Go and override with the custom build'
+branding:
+  icon: download
+  color: purple
+runs:
+  using: "composite"
+  steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - name: Override Go ♻️
+      shell: pwsh
+      run: |
+        New-Item -Path ./bin -ItemType Directory
+        Invoke-WebRequest 'https://github.com/jandedobbeleer/go/releases/download/1.17.5/go' -OutFile "$env:GOROOT/bin/go"
+        chmod a+x "$env:GOROOT/bin/go" 2>&1

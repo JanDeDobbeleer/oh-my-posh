@@ -9,6 +9,7 @@ import (
 	"strings"
 	"syscall"
 	"time"
+	"unicode/utf16"
 	"unsafe"
 
 	"github.com/Azure/go-ansiterm/winterm"
@@ -259,4 +260,232 @@ func (env *environment) convertToWindowsPath(path string) string {
 
 func (env *environment) convertToLinuxPath(path string) string {
 	return path
+}
+
+func (env *environment) getWifiNetworks() (*wifiInfo, error) {
+	hapi := syscall.NewLazyDLL("wlanapi.dll")
+	hWlanOpenHandle := hapi.NewProc("WlanOpenHandle")
+	hWlanCloseHandle := hapi.NewProc("WlanCloseHandle")
+	//hWlanFreeMemory := hapi.NewProc("WlanFreeMemory")
+	hWlanEnumInterfaces := hapi.NewProc("WlanEnumInterfaces")
+	hWlanQueryInterface := hapi.NewProc("WlanQueryInterface")
+
+	// Open handle
+	var pdwNegotiatedVersion uint32
+	var phClientHandle uint32
+	e, _, err := hWlanOpenHandle.Call(uintptr(uint32(2)), uintptr(unsafe.Pointer(nil)), uintptr(unsafe.Pointer(&pdwNegotiatedVersion)), uintptr(unsafe.Pointer(&phClientHandle)))
+	if e != 0 {
+		return nil, err
+	}
+
+	// defer closing handle
+	defer hWlanCloseHandle.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)))
+
+	// enum interfaces
+	var interfaceList *WLAN_INTERFACE_INFO_LIST
+	e, _, err = hWlanEnumInterfaces.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)), uintptr(unsafe.Pointer(&interfaceList)))
+	if e != 0 {
+		return nil, err
+	}
+
+	// use first interface that is connected
+	var info wifiInfo
+	interfaces := make([]WLAN_INTERFACE_INFO, int(interfaceList.dwNumberOfItems))
+	infoSize := unsafe.Sizeof(interfaceList.InterfaceInfo[0])
+	for i := 0; i < int(interfaceList.dwNumberOfItems); i++ {
+		interfaces[i] = *(*WLAN_INTERFACE_INFO)(unsafe.Pointer(uintptr(unsafe.Pointer(&interfaceList.InterfaceInfo[0])) + uintptr(i)*infoSize))
+
+		info = wifiInfo{}
+		info.Interface = strings.TrimRight(string(utf16.Decode(interfaces[i].strInterfaceDescription[:])), "\x00")
+
+		// see https://docs.microsoft.com/en-us/windows/win32/api/wlanapi/ne-wlanapi-wlan_interface_state-r1
+		switch interfaces[i].isState {
+		case 0:
+			info.State = "Not ready"
+		case 1:
+			info.State = "Connected"
+			info.Connected = true
+		case 2:
+			info.State = "Ad-hoc network formed"
+		case 3:
+			info.State = "Disconnecting"
+		case 4:
+			info.State = "Disconnected"
+		case 5:
+			info.State = "Associating"
+		case 6:
+			info.State = "Discovering"
+		case 7:
+			info.State = "Authenticating"
+		default:
+			info.State = "Unknown"
+		}
+
+		if !info.Connected {
+			continue
+		}
+
+		// Query wifi connection state
+		var dataSize uint16
+		var wlanAttr *WLAN_CONNECTION_ATTRIBUTES
+		e, _, err = hWlanQueryInterface.Call(uintptr(phClientHandle),
+			uintptr(unsafe.Pointer(&interfaces[i].InterfaceGuid)),
+			uintptr(7), // wlan_intf_opcode_current_connection
+			uintptr(unsafe.Pointer(nil)),
+			uintptr(unsafe.Pointer(&dataSize)),
+			uintptr(unsafe.Pointer(&wlanAttr)),
+			uintptr(unsafe.Pointer(nil)))
+		if e != 0 {
+			return &info, err
+		}
+
+		// SSID
+		ssid := wlanAttr.wlanAssociationAttributes.dot11Ssid
+		if ssid.uSSIDLength > 0 {
+			info.SSID = string(ssid.ucSSID[0:ssid.uSSIDLength])
+		}
+
+		// see https://docs.microsoft.com/en-us/windows/win32/nativewifi/dot11-phy-type
+		switch wlanAttr.wlanAssociationAttributes.dot11PhyType {
+		case 1:
+			info.PhysType = "FHSS"
+		case 2:
+			info.PhysType = "DSSS"
+		case 3:
+			info.PhysType = "IR"
+		case 4:
+			info.PhysType = "802.11a"
+		case 5:
+			info.PhysType = "HRDSSS"
+		case 6:
+			info.PhysType = "802.11g"
+		case 7:
+			info.PhysType = "802.11n"
+		case 8:
+			info.PhysType = "802.11ac"
+		default:
+			info.PhysType = "Unknown"
+		}
+
+		// see https://docs.microsoft.com/en-us/windows/win32/nativewifi/dot11-bss-type
+		switch wlanAttr.wlanAssociationAttributes.dot11BssType {
+		case 1:
+			info.BSSType = "Infrastructure"
+		case 2:
+			info.BSSType = "Independent"
+		default:
+			info.BSSType = "Any"
+		}
+
+		if wlanAttr.wlanSecurityAttributes.bSecurityEnabled > 0 {
+			// see https://docs.microsoft.com/en-us/windows/win32/nativewifi/dot11-auth-algorithm
+			switch wlanAttr.wlanSecurityAttributes.dot11AuthAlgorithm {
+			case 1:
+				info.Auth = "802.11 Open System"
+			case 2:
+				info.Auth = "802.11 Shared Key"
+			case 3:
+				info.Auth = "WPA"
+			case 4:
+				info.Auth = "WPA PSK"
+			case 5:
+				info.Auth = "WPA NONE"
+			case 6:
+				info.Auth = "WPA2"
+			case 7:
+				info.Auth = "WPA2 PSK"
+			default:
+				info.Auth = "Unknown"
+			}
+
+			// see https://docs.microsoft.com/en-us/windows/win32/nativewifi/dot11-cipher-algorithm
+			switch wlanAttr.wlanSecurityAttributes.dot11CipherAlgorithm {
+			case 0:
+				info.Cipher = "None"
+			case 0x1:
+				info.Cipher = "WEP40"
+			case 0x2:
+				info.Cipher = "TKIP"
+			case 0x4:
+				info.Cipher = "CCMP"
+			case 0x5:
+				info.Cipher = "WEP104"
+			case 0x100:
+				info.Cipher = "WPA"
+			case 0x101:
+				info.Cipher = "WEP"
+			default:
+				info.Cipher = "Unknown"
+			}
+		} else {
+			info.Auth = "Disabled"
+		}
+
+		info.Signal = int(wlanAttr.wlanAssociationAttributes.wlanSignalQuality)
+		info.TransmitRate = int(wlanAttr.wlanAssociationAttributes.ulTxRate)
+		info.ReceiveRate = int(wlanAttr.wlanAssociationAttributes.ulRxRate)
+
+		// Query wifi channel
+		dataSize = 0
+		var channel *uint32
+		e, _, err = hWlanQueryInterface.Call(uintptr(phClientHandle),
+			uintptr(unsafe.Pointer(&interfaces[i].InterfaceGuid)),
+			uintptr(8), // wlan_intf_opcode_channel_number
+			uintptr(unsafe.Pointer(nil)),
+			uintptr(unsafe.Pointer(&dataSize)),
+			uintptr(unsafe.Pointer(&channel)),
+			uintptr(unsafe.Pointer(nil)))
+		if e != 0 {
+			return &info, err
+		}
+
+		info.Channel = int(*channel)
+
+		return &info, nil
+	}
+
+	return &info, nil
+}
+
+type WLAN_INTERFACE_INFO_LIST struct {
+	dwNumberOfItems uint32
+	dwIndex         uint32
+	InterfaceInfo   [1]WLAN_INTERFACE_INFO
+}
+
+type WLAN_INTERFACE_INFO struct {
+	InterfaceGuid           syscall.GUID
+	strInterfaceDescription [256]uint16
+	isState                 uint32
+}
+
+type WLAN_CONNECTION_ATTRIBUTES struct {
+	isState                   uint32
+	wlanConnectionMode        uint32
+	strProfileName            [256]uint16
+	wlanAssociationAttributes WLAN_ASSOCIATION_ATTRIBUTES
+	wlanSecurityAttributes    WLAN_SECURITY_ATTRIBUTES
+}
+
+type WLAN_ASSOCIATION_ATTRIBUTES struct {
+	dot11Ssid         DOT11_SSID
+	dot11BssType      uint32
+	dot11Bssid        [6]uint8
+	dot11PhyType      uint32
+	uDot11PhyIndex    uint32
+	wlanSignalQuality uint32
+	ulRxRate          uint32
+	ulTxRate          uint32
+}
+
+type WLAN_SECURITY_ATTRIBUTES struct {
+	bSecurityEnabled     uint32
+	bOneXEnabled         uint32
+	dot11AuthAlgorithm   uint32
+	dot11CipherAlgorithm uint32
+}
+
+type DOT11_SSID struct {
+	uSSIDLength uint32
+	ucSSID      [32]uint8
 }

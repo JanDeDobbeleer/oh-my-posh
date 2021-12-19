@@ -72,6 +72,21 @@ type windowsRegistryValue struct {
 	str       string
 }
 
+type wifiInfo struct {
+	SSID         string
+	Connected    bool
+	State        string
+	Interface    string
+	BSSType      string
+	PhysType     string
+	Auth         string
+	Cipher       string
+	Channel      int
+	ReceiveRate  int
+	TransmitRate int
+	Signal       int
+}
+
 type environmentInfo interface {
 	getenv(key string) string
 	getcwd() string
@@ -110,6 +125,7 @@ type environmentInfo interface {
 	inWSLSharedDrive() bool
 	convertToLinuxPath(path string) string
 	convertToWindowsPath(path string) string
+	getWifiNetworks() (*wifiInfo, error)
 }
 
 type commandCache struct {
@@ -137,12 +153,13 @@ const (
 )
 
 type environment struct {
-	args       *args
-	cwd        string
-	cmdCache   *commandCache
-	fileCache  *fileCache
-	logBuilder strings.Builder
-	debug      bool
+	args           *args
+	cwd            string
+	cmdCache       *commandCache
+	fileCache      *fileCache
+	logBuilder     strings.Builder
+	debug          bool
+	comInitialized bool
 }
 
 func (env *environment) init(args *args) {

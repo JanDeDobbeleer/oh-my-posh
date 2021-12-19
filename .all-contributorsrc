@@ -845,6 +845,24 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "TheTaylorLee",
+      "name": "TheTaylorLee",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53202926?v=4",
+      "profile": "https://www.powershellgallery.com/profiles/TaylorLee",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "PapiPeppers",
+      "name": "Papi Peppers",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57047860?v=4",
+      "profile": "https://github.com/PapiPeppers",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

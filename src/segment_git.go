@@ -116,6 +116,7 @@ func (g *git) enabled() bool {
 	if gitdir.isDir {
 		g.gitWorkingFolder = gitdir.path
 		g.gitRootFolder = gitdir.path
+		g.gitWorktreeFolder = strings.TrimSuffix(gitdir.path, ".git")
 		return true
 	}
 	// handle worktree

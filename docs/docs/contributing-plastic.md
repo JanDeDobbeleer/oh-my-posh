@@ -4,13 +4,13 @@ title: Setup for Plastic SCM testing
 sidebar_label: Plastic SCM testing
 ---
 
-When changig the `segment_plastic.go` file, you may need to test your changes against an actual instance of
+When changing the `segment_plastic.go` file, you may need to test your changes against an actual instance of
 [Plastic SCM][plastic]. This doc should bring you up to speed with Plastic SCM.
 
 In the [contributing doc][contributing] there is a section about [dev containers & codespaces][devcontainer].
 You can setup Plastic SCM inside these as well.
 
-## Sever Setup
+## Server Setup
 
 Here you can find the [official setup instructions][setup-instructions]. I'll describe it in short:
 
@@ -52,7 +52,7 @@ You are asked 5 questions. Choose these options:
 4. **1**: NameWorkingMode (use local users and groups)
 5. skip license token (**just hit return**)
 
-**Concrats!** Your server is configured. You can find out more in the [official configuration instructions][server-config].
+**Congrats!** Your server is configured. You can find out more in the [official configuration instructions][server-config].
 
 ### Run Server
 
@@ -69,7 +69,7 @@ cd /opt/plasticscm5/server/
 sudo ./plasticd start
 ```
 
-This will lock the current shell until the server process finishes. You might need to open another terminal to continue ;)
+This will lock the current shell until the server process finishes. You might need to open another terminal to continue.
 
 Your Plastic SCM server should be started now.
 
@@ -101,7 +101,7 @@ You are asked a few questions. Choose these options:
 4. No SSL (**just hit return**)
 5. No Proxy (**just hit return**)
 
-**Concrats!** Your client should now be connected to your server.
+**Congrats!** Your client should now be connected to your server.
 
 You can test if it worked and display some license info via:
 
@@ -154,16 +154,16 @@ cm status
 
 ### Commiting changes
 
-After locally adding, changing, moving or delting files you want to commit them to create a new changeset.
+After locally adding, changing, moving or deleting files you want to commit them to create a new changeset.
 Run this command to commit all local changes:
 
 ```bash
 cm status | cm ci . -c "my first commit"
 ```
 
-### Unding local changes
+### Undoing local changes
 
-Just in case you don't want or can commit your local changes, there is an undo command.
+Just in case you don't want or can't commit your local changes, there is an undo command.
 This will undo all local changes:
 
 ```bash
@@ -225,7 +225,7 @@ cm status
 
 #### Switch to a changeset
 
-Each commit gets a uniqe changeset number. You can switch to these via
+Each commit gets a unique changeset number. You can switch to these via
 
 ```bash
 cm switch cs:1
@@ -245,7 +245,7 @@ cm switch BL00001
 
 #### Merge a branch
 
-To merge a branch you have to switch to the *destionation* branch of the merge. After that you can merge another branch via
+To merge a branch you have to switch to the *destination* branch of the merge. After that you can merge another branch via
 
 ```bash
 cm switch /main
@@ -276,7 +276,7 @@ There are multiple causes for conflicts while merging
 
 ##### Evil Twin
 
-this happens when a merge is performed where two files with the same name were added on both the source and desitation branch.
+This happens when a merge is performed where two files with the same name were added on both the source and destination branch.
 
 ```bash
 cm br mk /main/sub-branch
@@ -297,7 +297,7 @@ Hint: this will prompt you to directly resolve the conflict
 
 ##### Changed on both sides
 
-this happens when a merge is performed where a file was changed on both sides: source and destination
+This happens when a merge is performed where a file was changed on both sides: source and destination
 
 ```bash
 cm switch /main
@@ -320,9 +320,9 @@ cm merge /main/test --merge
 
 Hint: this will try to open `gtkmergetool` which will fail inside the dev-container!
 
-##### changed vs. deleted file
+##### Changed vs. deleted file
 
-this happens when a merge is performed where a file was modified on one side and deleted on the other side of the merge
+This happens when a merge is performed where a file was modified on one side and deleted on the other side of the merge
 
 ```bash
 cm switch /main

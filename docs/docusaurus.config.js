@@ -45,6 +45,12 @@ module.exports = {
           'aria-label': 'GitHub repository',
           position: "right",
         },
+        {
+          href: "https://twitter.com/jandedobbeleer",
+          className: 'header-twitter-link',
+          'aria-label': 'Twitter',
+          position: "right",
+        }
       ],
     },
     footer: {

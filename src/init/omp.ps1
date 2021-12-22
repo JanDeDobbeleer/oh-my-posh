@@ -39,8 +39,8 @@ function global:Set-PoshContext {}
 
 function global:Get-PoshContext {
     $config = $env:POSH_THEME
-    $cleanPWD = $PWD.ProviderPath.TrimEnd("\")
-    $cleanPSWD = $PWD.ToString().TrimEnd("\")
+    $cleanPWD = $PWD.ProviderPath
+    $cleanPSWD = $PWD.ToString()
     return $config, $cleanPWD, $cleanPSWD
 }
 

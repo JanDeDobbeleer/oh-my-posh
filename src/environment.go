@@ -100,12 +100,16 @@ type environmentInfo interface {
 	doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
+	isWsl2() bool
 	stackCount() int
 	getTerminalWidth() (int, error)
 	getCachePath() string
 	cache() cache
 	close()
 	logs() string
+	inWSLSharedDrive() bool
+	convertToLinuxPath(path string) string
+	convertToWindowsPath(path string) string
 }
 
 type commandCache struct {

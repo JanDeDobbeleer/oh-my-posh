@@ -45,11 +45,13 @@ type git struct {
 	WorktreeCount int
 	IsWorkTree    bool
 
-	gitWorkingFolder  string // .git working folder, can be different of root if using worktree
-	gitRootFolder     string // .git root folder
-	gitWorktreeFolder string // .git real worktree path
+	gitWorkingFolder string // .git working folder
+	gitRootFolder    string // .git root folder
+	gitRealFolder    string // .git real folder(can be different from current path when in worktrees)
 
 	gitCommand string
+
+	IsWslSharedPath bool
 }
 
 const (
@@ -102,6 +104,10 @@ const (
 )
 
 func (g *git) enabled() bool {
+	// when in wsl/wsl2 and in a windows shared folder
+	// we must use git.exe and convert paths accordingly
+	// for worktrees, stashes, and path to work
+	g.IsWslSharedPath = g.env.inWSLSharedDrive()
 	if !g.env.hasCommand(g.getGitCommand()) {
 		return false
 	}
@@ -116,7 +122,8 @@ func (g *git) enabled() bool {
 	if gitdir.isDir {
 		g.gitWorkingFolder = gitdir.path
 		g.gitRootFolder = gitdir.path
-		g.gitWorktreeFolder = strings.TrimSuffix(gitdir.path, ".git")
+		// convert the worktree file path to a windows one when in wsl 2 shared folder
+		g.gitRealFolder = strings.TrimSuffix(g.convertToWindowsPath(gitdir.path), ".git")
 		return true
 	}
 	// handle worktree
@@ -124,13 +131,15 @@ func (g *git) enabled() bool {
 	dirPointer := strings.Trim(g.env.getFileContent(gitdir.path), " \r\n")
 	matches := findNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
 	if matches != nil && matches["dir"] != "" {
-		g.gitWorkingFolder = matches["dir"]
+		// if we open a worktree file in a shared wsl2 folder, we have to convert it back
+		// to the mounted path
+		g.gitWorkingFolder = g.convertToLinuxPath(matches["dir"])
 		// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
 		// strips the last .git/worktrees part
 		// :ind+5 = index + /.git
 		ind := strings.LastIndex(g.gitWorkingFolder, "/.git/worktrees")
 		g.gitRootFolder = g.gitWorkingFolder[:ind+5]
-		g.gitWorktreeFolder = strings.TrimSuffix(g.env.getFileContent(g.gitWorkingFolder+"/gitdir"), ".git\n")
+		g.gitRealFolder = strings.TrimSuffix(g.env.getFileContent(g.gitWorkingFolder+"/gitdir"), ".git\n")
 		g.IsWorkTree = true
 		return true
 	}
@@ -278,25 +287,15 @@ func (g *git) getGitCommand() string {
 	if len(g.gitCommand) > 0 {
 		return g.gitCommand
 	}
-	inWSL2SharedDrive := func(env environmentInfo) bool {
-		if !env.isWsl() {
-			return false
-		}
-		if !strings.HasPrefix(env.getcwd(), "/mnt/") {
-			return false
-		}
-		uname, _ := g.env.runCommand("uname", "-r")
-		return strings.Contains(uname, "WSL2")
-	}
 	g.gitCommand = "git"
-	if g.env.getRuntimeGOOS() == windowsPlatform || inWSL2SharedDrive(g.env) {
+	if g.env.getRuntimeGOOS() == windowsPlatform || g.IsWslSharedPath {
 		g.gitCommand = "git.exe"
 	}
 	return g.gitCommand
 }
 
 func (g *git) getGitCommandOutput(args ...string) string {
-	args = append([]string{"-C", g.gitWorktreeFolder, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+	args = append([]string{"-C", g.gitRealFolder, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	val, _ := g.env.runCommand(g.getGitCommand(), args...)
 	return val
 }
@@ -489,4 +488,18 @@ func (g *git) getOriginURL(upstream string) string {
 		return g.getGitCommandOutput("remote", "get-url", upstream)
 	}
 	return keyVal
+}
+
+func (g *git) convertToWindowsPath(path string) string {
+	if !g.IsWslSharedPath {
+		return path
+	}
+	return g.env.convertToWindowsPath(path)
+}
+
+func (g *git) convertToLinuxPath(path string) string {
+	if !g.IsWslSharedPath {
+		return path
+	}
+	return g.env.convertToLinuxPath(path)
 }

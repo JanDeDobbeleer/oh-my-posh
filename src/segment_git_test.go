@@ -15,6 +15,7 @@ const (
 
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(MockedEnvironment)
+	env.On("inWSLSharedDrive", nil).Return(false)
 	env.On("hasCommand", "git").Return(false)
 	env.On("getRuntimeGOOS", nil).Return("")
 	env.On("isWsl", nil).Return(false)
@@ -28,6 +29,7 @@ func TestEnabledGitNotFound(t *testing.T) {
 
 func TestEnabledInWorkingDirectory(t *testing.T) {
 	env := new(MockedEnvironment)
+	env.On("inWSLSharedDrive", nil).Return(false)
 	env.On("hasCommand", "git").Return(true)
 	env.On("getRuntimeGOOS", nil).Return("")
 	env.On("isWsl", nil).Return(false)
@@ -48,6 +50,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 
 func TestEnabledInWorkingTree(t *testing.T) {
 	env := new(MockedEnvironment)
+	env.On("inWSLSharedDrive", nil).Return(false)
 	env.On("hasCommand", "git").Return(true)
 	env.On("getRuntimeGOOS", nil).Return("")
 	env.On("isWsl", nil).Return(false)
@@ -66,7 +69,7 @@ func TestEnabledInWorkingTree(t *testing.T) {
 	}
 	assert.True(t, g.enabled())
 	assert.Equal(t, "/dev/real_folder/.git/worktrees/folder_worktree", g.gitWorkingFolder)
-	assert.Equal(t, "/dev/folder_worktree", g.gitWorktreeFolder)
+	assert.Equal(t, "/dev/folder_worktree", g.gitRealFolder)
 }
 
 func TestGetGitOutputForCommand(t *testing.T) {
@@ -195,6 +198,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
+		env.On("inWSLSharedDrive", nil).Return(false)
 		env.On("getRuntimeGOOS", nil).Return("unix")
 		env.On("isWsl", nil).Return(false)
 		env.mockGitCommand("", "describe", "--tags", "--exact-match")
@@ -537,17 +541,18 @@ func TestShouldIgnoreRootRepository(t *testing.T) {
 
 func TestGetGitCommand(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Expected string
-		IsWSL    bool
-		IsWSL1   bool
-		GOOS     string
-		CWD      string
+		Case            string
+		Expected        string
+		IsWSL           bool
+		IsWSL1          bool
+		GOOS            string
+		CWD             string
+		IsWslSharedPath bool
 	}{
 		{Case: "On Windows", Expected: "git.exe", GOOS: windowsPlatform},
 		{Case: "Non Windows", Expected: "git"},
 		{Case: "Iside WSL2, non shared", IsWSL: true, Expected: "git"},
-		{Case: "Iside WSL2, shared", Expected: "git.exe", IsWSL: true, CWD: "/mnt/bill"},
+		{Case: "Iside WSL2, shared", Expected: "git.exe", IsWSL: true, IsWslSharedPath: true, CWD: "/mnt/bill"},
 		{Case: "Iside WSL1, shared", Expected: "git", IsWSL: true, IsWSL1: true, CWD: "/mnt/bill"},
 	}
 
@@ -565,6 +570,12 @@ func TestGetGitCommand(t *testing.T) {
 			scm: scm{
 				env: env,
 			},
+		}
+		if tc.IsWslSharedPath {
+			env.On("inWSLSharedDrive", nil).Return(true)
+			g.IsWslSharedPath = tc.IsWslSharedPath
+		} else {
+			env.On("inWSLSharedDrive", nil).Return(false)
 		}
 		assert.Equal(t, tc.Expected, g.getGitCommand(), tc.Case)
 	}

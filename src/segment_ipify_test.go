@@ -1,0 +1,69 @@
+package main
+
+import (
+	"errors"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
+
+const (
+	IPIFYAPIURL = "https://api.ipify.org"
+)
+
+func TestIpifySegment(t *testing.T) {
+	cases := []struct {
+		Case            string
+		Response        string
+		ExpectedString  string
+		ExpectedEnabled bool
+		Template        string
+		Error           error
+	}{
+		{
+			Case:            "IPv4",
+			Response:        `127.0.0.1`,
+			ExpectedString:  "127.0.0.1",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "IPv6 (with template)",
+			Response:        `0000:aaaa:1111:bbbb:2222:cccc:3333:dddd`,
+			ExpectedString:  "Ext. IP: 0000:aaaa:1111:bbbb:2222:cccc:3333:dddd",
+			ExpectedEnabled: true,
+			Template:        "Ext. IP: {{.IP}}",
+		},
+		{
+			Case:            "Error in retrieving data",
+			Response:        "nonsense",
+			Error:           errors.New("Something went wrong"),
+			ExpectedEnabled: false,
+		},
+	}
+
+	for _, tc := range cases {
+		env := &MockedEnvironment{}
+		var props properties = map[Property]interface{}{
+			CacheTimeout: 0,
+		}
+
+		env.On("doGet", IPIFYAPIURL).Return([]byte(tc.Response), tc.Error)
+
+		if tc.Template != "" {
+			props[SegmentTemplate] = tc.Template
+		}
+
+		o := &ipify{
+			props: props,
+			env:   env,
+		}
+
+		enabled := o.enabled()
+		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
+		if !enabled {
+			continue
+		}
+
+		assert.Equal(t, tc.ExpectedString, o.string(), tc.Case)
+	}
+}

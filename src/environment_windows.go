@@ -75,6 +75,11 @@ func (env *environment) isWsl() bool {
 	return false
 }
 
+func (env *environment) isWsl2() bool {
+	defer env.trace(time.Now(), "isWsl2")
+	return false
+}
+
 func (env *environment) getTerminalWidth() (int, error) {
 	defer env.trace(time.Now(), "getTerminalWidth")
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
@@ -242,4 +247,16 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 		errorLogMsg := fmt.Sprintf("Error, no formatter for REG_? type:%d, data size:%d bytes", keyBufType, keyBufSize)
 		return nil, errors.New(errorLogMsg)
 	}
+}
+
+func (env *environment) inWSLSharedDrive() bool {
+	return false
+}
+
+func (env *environment) convertToWindowsPath(path string) string {
+	return path
+}
+
+func (env *environment) convertToLinuxPath(path string) string {
+	return path
 }

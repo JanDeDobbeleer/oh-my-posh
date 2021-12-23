@@ -141,6 +141,8 @@ const (
 	WinReg SegmentType = "winreg"
 	// Brewfather segment
 	BrewFather SegmentType = "brewfather"
+	// Ipify segment
+	Ipify SegmentType = "ipify"
 )
 
 func (segment *Segment) string() string {
@@ -274,6 +276,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		WiFi:          &wifi{},
 		WinReg:        &winreg{},
 		BrewFather:    &brewfather{},
+		Ipify:         &ipify{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties)

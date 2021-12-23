@@ -16,18 +16,11 @@ jobs:
       run:
         shell: pwsh
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.17
-    - name: Override Go ♻️
-      run: |
-        New-Item -Path ./bin -ItemType Directory
-        Invoke-WebRequest 'https://github.com/jandedobbeleer/go/releases/download/1.17.5/go' -OutFile "$env:GOROOT/bin/go"
-        chmod a+x "$env:GOROOT/bin/go" 2>&1
-    - name: Checkout code
+    - name: Checkout code 👋
       uses: actions/checkout@v2
-    - name: Run GoReleaser
+    - name: Install Go 🗳
+      uses: ./.github/workflows/composite/bootstrap-go
+    - name: Run GoReleaser 🚀
       uses: goreleaser/goreleaser-action@v2
       with:
         distribution: goreleaser

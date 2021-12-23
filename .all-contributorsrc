@@ -863,6 +863,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "erresen",
+      "name": "erresen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5566441?v=4",
+      "profile": "https://erresen.github.io",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

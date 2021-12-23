@@ -8,8 +8,6 @@ type ipify struct {
 
 const (
 	IpifyURL Property = "url"
-	// IpifyCacheTimeout cache timeout
-	IpifyCacheTimeoutout Property = "cache_timeout"
 )
 
 func (i *ipify) enabled() bool {
@@ -38,7 +36,7 @@ func (i *ipify) string() string {
 }
 
 func (i *ipify) getResult() (string, error) {
-	cacheTimeout := i.props.getInt(IpifyCacheTimeoutout, DefaultCacheTimeout)
+	cacheTimeout := i.props.getInt(CacheTimeout, DefaultCacheTimeout)
 
 	url := i.props.getString(IpifyURL, "https://api.ipify.org")
 

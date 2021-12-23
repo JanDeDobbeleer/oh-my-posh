@@ -1,0 +1,168 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "final_space": false,
+    "osc99": true,
+    "console_title": true,
+    "console_title_style": "template",
+    "console_title_template": "{{ .Folder }}",
+    "transient_prompt": {
+        "background": "transparent",
+        "foreground": "#FEF5ED",
+        "template": "\ue285 "
+    },
+    "blocks": [
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "newline": true,
+            "segments": [
+                {
+                    "type": "os",
+                    "style": "diamond",
+                    "leading_diamond": "\uE0B2",
+                    "trailing_diamond": "<transparent,#FEF5ED>\uE0B2</>",
+                    "foreground": "#011627",
+                    "background": "#FEF5ED",
+                    "properties": {
+                        "postfix": "",
+                        "windows": "\uf871 ",
+                        "macos": "\uf179 ",
+                        "ubuntu": "\uf31b "
+                    }
+                },
+                {
+                    "type": "shell",
+                    "style": "diamond",
+                    "leading_diamond": "\uE0B2",
+                    "trailing_diamond": "<transparent,#FEF5ED>\uE0B2</>",
+                    "foreground": "#011627",
+                    "background": "#FEF5ED",
+                    "properties": {
+                        "prefix": "\uf489 ",
+                        "postfix": ""
+                    }
+                },
+                {
+                    "type": "sysinfo",
+                    "style": "diamond",
+                    "leading_diamond": "\uE0B2",
+                    "trailing_diamond": "",
+                    "foreground": "#ffffff",
+                    "background": "#516BEB",
+                    "properties": {
+                        "prefix": "\uf85a CPU: ",
+                        "postfix": "% | ",
+                        "template": "{{ round .PhysicalPercentUsed .Precision }}"
+                    }
+                },
+                {
+                    "type": "sysinfo",
+                    "style": "diamond",
+                    "leading_diamond": "",
+                    "trailing_diamond": "<transparent,#516BEB>\uE0B2</>",
+                    "foreground": "#ffffff",
+                    "background": "#516BEB",
+                    "properties": {
+                        "prefix": "MEM: ",
+                        "postfix": "GB \uf85a ",
+                        "template": "{{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}"
+                    }
+                },
+                {
+                    "type": "executiontime",
+                    "style": "diamond",
+                    "leading_diamond": "\uE0B2",
+                    "trailing_diamond": "\uE0B0",
+                    "foreground": "#d6deeb",
+                    "background": "#575656",
+                    "properties": {
+                        "threshold": 0,
+                        "style": "roundrock"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "prompt",
+            "alignment": "right",
+            "newline": false,
+            "segments": [
+                {
+                    "type": "git",
+                    "style": "diamond",
+                    "leading_diamond": "\uE0B2",
+                    "trailing_diamond": "\uE0B0",
+                    "foreground": "#011627",
+                    "background": "#17D7A0",
+                    "properties": {
+                        "branch_icon": "\ue725 ",
+                        "fetch_status": true,
+                        "fetch_stash_count": true,
+                        "fetch_worktree_count": true,
+                        "fetch_upstream_icon": true,
+                        "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "newline": true,
+            "segments": [
+                {
+                    "type": "text",
+                    "style": "plain",
+                    "properties": {
+                        "prefix": "",
+                        "postfix": "",
+                        "text": "╭─"
+                    }
+                },
+                {
+                    "type": "time",
+                    "style": "plain",
+                    "properties": {
+                        "prefix": " \u2665 ",
+                        "postfix": " |",
+                        "time_format": "15:04"
+                    }
+                },
+                {
+                    "type": "root",
+                    "style": "plain",
+                    "properties": {
+                        "root_icon": "\uf292 "
+                    }
+                },
+                {
+                    "type": "path",
+                    "style": "plain",
+                    "properties": {
+                        "folder_separator_icon": " \uf554 ",
+                        "home_icon": "\uf7db ",
+                        "folder_icon": "\uf07b ",
+                        "style": "agnoster_full",
+                        "enable_hyperlink": true
+                    }
+                }
+            ]
+        },
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "newline": true,
+            "segments": [
+                {
+                    "type": "exit",
+                    "style": "plain",
+                    "properties": {
+                        "prefix": "",
+                        "template": "╰─",
+                        "always_enabled": true
+                    }
+                }
+            ]
+        }
+    ]
+}

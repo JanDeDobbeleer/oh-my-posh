@@ -7,8 +7,6 @@
         {
             "type": "prompt",
             "alignment": "left",
-            "horizontal_offset": 0,
-            "vertical_offset": 0,
             "segments": [
                 {
                     "type": "session",
@@ -30,8 +28,6 @@
                     "invert_powerline": false,
                     "foreground": "#ffffff",
                     "background": "#0080ff",
-                    "leading_diamond": "",
-                    "trailing_diamond": "\uE0B0",
                     "properties": {
                         "prefix": " \uE5FF ",
                         "style": "full",
@@ -45,30 +41,28 @@
                     "invert_powerline": false,
                     "foreground": "#193549",
                     "background": "#c19c00",
-                    "leading_diamond": "",
-                    "trailing_diamond": "",
                     "properties": {
-                        "display_status": true,
-                        "display_stash_count": true,
-                        "display_upstream_icon": true
+                        "fetch_status": true,
+                        "fetch_stash_count": true,
+                        "fetch_upstream_icon": true,
+                        "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
                     }
                 },
                 {
                     "type": "exit",
                     "style": "diamond",
-                    "powerline_symbol": "\uE0B0",
-                    "invert_powerline": false,
                     "foreground": "#ffffff",
                     "background": "#2e9599",
+                    "background_templates": [
+                        "{{ if gt .Code 0 }}#f1184c{{ end }}"
+                    ],
                     "leading_diamond": "",
                     "trailing_diamond": "\uE0B4",
                     "properties": {
                         "always_enabled": true,
-                        "color_background": true,
                         "display_exit_code": false,
                         "success_icon": "\uF00C",
                         "error_icon": "\uF00D",
-                        "error_color": "#f1184c",
                         "prefix": " "
                     }
                 }
@@ -109,8 +103,7 @@
                 },
                 {
                     "type": "shell",
-                    "style": "powerline",
-                    "powerline_symbol": "",
+                    "style": "plain",
                     "foreground": "#ffffff"
                 },
                 {

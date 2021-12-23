@@ -5,6 +5,7 @@ package main
 import (
 	"errors"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/shirou/gopsutil/v3/host"
@@ -31,6 +32,15 @@ func (env *environment) isWsl() bool {
 	// return strings.Contains(version, "microsoft")
 	// using env variable
 	return env.getenv("WSL_DISTRO_NAME") != ""
+}
+
+func (env *environment) isWsl2() bool {
+	defer env.trace(time.Now(), "isWsl2")
+	if !env.isWsl() {
+		return false
+	}
+	uname := env.getFileContent("/proc/sys/kernel/osrelease")
+	return strings.Contains(uname, "WSL2")
 }
 
 func (env *environment) getTerminalWidth() (int, error) {
@@ -62,4 +72,24 @@ func (env *environment) getCachePath() string {
 
 func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error) {
 	return nil, errors.New("not implemented")
+}
+
+func (env *environment) inWSLSharedDrive() bool {
+	return env.isWsl() && strings.HasPrefix(env.getcwd(), "/mnt/")
+}
+
+func (env *environment) convertToWindowsPath(path string) string {
+	windowsPath, err := env.runCommand("wslpath", "-w", path)
+	if err == nil {
+		return windowsPath
+	}
+	return path
+}
+
+func (env *environment) convertToLinuxPath(path string) string {
+	linuxPath, err := env.runCommand("wslpath", "-u", path)
+	if err == nil {
+		return linuxPath
+	}
+	return path
 }

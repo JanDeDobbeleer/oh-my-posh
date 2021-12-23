@@ -154,6 +154,11 @@ func (env *MockedEnvironment) isWsl() bool {
 	return args.Bool(0)
 }
 
+func (env *MockedEnvironment) isWsl2() bool {
+	args := env.Called(nil)
+	return args.Bool(0)
+}
+
 func (env *MockedEnvironment) getTerminalWidth() (int, error) {
 	args := env.Called(nil)
 	return args.Int(0), args.Error(1)
@@ -174,6 +179,21 @@ func (env *MockedEnvironment) close() {
 }
 
 func (env *MockedEnvironment) logs() string {
+	args := env.Called(nil)
+	return args.String(0)
+}
+
+func (env *MockedEnvironment) inWSLSharedDrive() bool {
+	args := env.Called(nil)
+	return args.Bool(0)
+}
+
+func (env *MockedEnvironment) convertToWindowsPath(path string) string {
+	args := env.Called(nil)
+	return args.String(0)
+}
+
+func (env *MockedEnvironment) convertToLinuxPath(path string) string {
 	args := env.Called(nil)
 	return args.String(0)
 }

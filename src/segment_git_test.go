@@ -72,6 +72,31 @@ func TestEnabledInWorkingTree(t *testing.T) {
 	assert.Equal(t, "/dev/folder_worktree", g.gitRealFolder)
 }
 
+func TestEnabledInSubmodule(t *testing.T) {
+	env := new(MockedEnvironment)
+	env.On("inWSLSharedDrive", nil).Return(false)
+	env.On("hasCommand", "git").Return(true)
+	env.On("getRuntimeGOOS", nil).Return("")
+	env.On("isWsl", nil).Return(false)
+	fileInfo := &fileInfo{
+		path:         "/dev/parent/test-submodule/.git",
+		parentFolder: "/dev/parent/test-submodule",
+		isDir:        false,
+	}
+	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
+	env.On("getFileContent", "/dev/parent/test-submodule/.git").Return("gitdir: ../.git/modules/test-submodule")
+	env.On("getFileContent", "/dev/parent/.git/modules/test-submodule").Return("/dev/folder_worktree.git\n")
+	g := &git{
+		scm: scm{
+			env: env,
+		},
+	}
+	assert.True(t, g.enabled())
+	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.gitWorkingFolder)
+	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.gitRealFolder)
+	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.gitRootFolder)
+}
+
 func TestGetGitOutputForCommand(t *testing.T) {
 	args := []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}

@@ -134,14 +134,28 @@ func (g *git) enabled() bool {
 		// if we open a worktree file in a shared wsl2 folder, we have to convert it back
 		// to the mounted path
 		g.gitWorkingFolder = g.convertToLinuxPath(matches["dir"])
+
 		// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
 		// strips the last .git/worktrees part
 		// :ind+5 = index + /.git
 		ind := strings.LastIndex(g.gitWorkingFolder, "/.git/worktrees")
-		g.gitRootFolder = g.gitWorkingFolder[:ind+5]
-		g.gitRealFolder = strings.TrimSuffix(g.env.getFileContent(g.gitWorkingFolder+"/gitdir"), ".git\n")
-		g.IsWorkTree = true
-		return true
+		if ind > -1 {
+			g.gitRootFolder = g.gitWorkingFolder[:ind+5]
+			g.gitRealFolder = strings.TrimSuffix(g.env.getFileContent(g.gitWorkingFolder+"/gitdir"), ".git\n")
+			g.IsWorkTree = true
+			return true
+		}
+		// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
+		// we need the parent folder to detect where the real .git folder is
+		ind = strings.LastIndex(g.gitWorkingFolder, "/.git/modules")
+		if ind > -1 {
+			g.gitRootFolder = gitdir.parentFolder + "/" + g.gitWorkingFolder
+			g.gitRealFolder = g.gitRootFolder
+			g.gitWorkingFolder = g.gitRootFolder
+			return true
+		}
+
+		return false
 	}
 	return false
 }

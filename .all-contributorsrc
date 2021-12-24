@@ -872,6 +872,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "icy-comet",
+      "name": "Aniket Teredesai",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50461557?v=4",
+      "profile": "https://aniketteredesai.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

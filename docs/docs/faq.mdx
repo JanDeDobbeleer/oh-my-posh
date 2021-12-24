@@ -138,11 +138,11 @@ To solely rely on Oh My Posh to set the prompt, you can configure the follwing s
 conda config --set changeps1 False
 ```
 
-### Python venv: Prompt is changed to display the environment name
-Upon activation, virtual environments created with `venv` change the prompt to add the activated environment's name.
-To disable this behaviour, set `VIRTUAL_ENV_DISABLE_PROMPT` environment variable to `1` on your system. Example commands to run, with probable file locations you'll have to put them in for auto-loading:
+### Python venv: Prompt changes on activating virtual environment
+Virtual environments created with `venv` add the active environment's name to the prompt automatically.
+To disable this behaviour, set `VIRTUAL_ENV_DISABLE_PROMPT` environment variable to `1` on your system. Example files:
 
-Note: Tilde (~) in paths here refers to your user's home directory.
+Note: Tilde (~) in paths refers to your user's home directory.
 
 <Tabs
   defaultValue="powershell"
@@ -156,7 +156,7 @@ Note: Tilde (~) in paths here refers to your user's home directory.
 <TabItem value="powershell">
 
 ```powershell
-# powershell - ~/Documents/WindowsPowerShell/profile.ps1
+# ~/Documents/WindowsPowerShell/profile.ps1
 $env:VIRTUAL_ENV_DISABLE_PROMPT=1
 ```
 
@@ -164,7 +164,7 @@ $env:VIRTUAL_ENV_DISABLE_PROMPT=1
 <TabItem value="fish">
 
 ```fish
-#fish - ~/.config/fish/config.fish
+# ~/.config/fish/config.fish
 set -x VIRTUAL_ENV_DISABLE_PROMPT 1
 ```
 
@@ -172,7 +172,7 @@ set -x VIRTUAL_ENV_DISABLE_PROMPT 1
 <TabItem value="others">
 
 ```bash
-# bash, zsh - ~/bashrc or ~/.zprofile ~/.zshrc
+# ~/.bashrc (bash) or ~/.zprofile or ~/.zshrc (zsh)
 export VIRTUAL_ENV_DISABLE_PROMPT=1
 ```
 

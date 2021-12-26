@@ -1,25 +1,14 @@
 package main
 
-import (
-	"fmt"
-)
-
 type wifi struct {
-	props          properties
-	env            environmentInfo
-	Connected      bool
-	State          string
-	SSID           string
-	RadioType      string
-	Authentication string
-	Channel        int
-	ReceiveRate    int
-	TransmitRate   int
-	Signal         int
+	props properties
+	env   environmentInfo
+
+	wifiInfo
 }
 
 const (
-	defaultTemplate = "{{ if .Connected }}\uFAA8{{ else }}\uFAA9{{ end }}{{ if .Connected }}{{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ else }}{{ .State }}{{ end }}"
+	defaultTemplate = "{{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }}"
 )
 
 func (w *wifi) enabled() bool {
@@ -27,30 +16,16 @@ func (w *wifi) enabled() bool {
 	if w.env.getPlatform() != windowsPlatform && !w.env.isWsl() {
 		return false
 	}
-	wifiInfo, err := w.env.getWifiNetworks()
+	wifiInfo, err := w.env.getWifiNetwork()
 	displayError := w.props.getBool(DisplayError, false)
 	if err != nil && displayError {
-		w.State = fmt.Sprintf("WIFI ERR: %s", err)
+		w.Error = err.Error()
 		return true
 	}
-	if err != nil {
+	if err != nil || wifiInfo == nil {
 		return false
 	}
-
-	if wifiInfo == nil {
-		return false
-	}
-
-	w.Connected = wifiInfo.Connected
-	w.State = wifiInfo.State
-	w.SSID = wifiInfo.SSID
-	w.RadioType = wifiInfo.BSSType
-	w.Authentication = wifiInfo.Auth
-	w.Channel = wifiInfo.Channel
-	w.ReceiveRate = wifiInfo.ReceiveRate / 1024
-	w.TransmitRate = wifiInfo.TransmitRate / 1024
-	w.Signal = wifiInfo.Signal
-
+	w.wifiInfo = *wifiInfo
 	return true
 }
 

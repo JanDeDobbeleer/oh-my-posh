@@ -71,15 +71,14 @@
       "type": "rprompt",
       "segments": [
         {
-          "type": "envvar",
+          "type": "text",
           "style": "diamond",
           "leading_diamond": "\uE0B2",
           "trailing_diamond": "\uE0B4",
           "foreground": "#ffffff",
           "background": "#1f4b8e",
           "properties": {
-            "var_name": "DAYS",
-            "template": "\uf1bb {{ .Value }} days till Christmas"
+            "template": "\uf1bb {{ .Env.DAYS }} days till Christmas"
           }
         }
       ]

@@ -160,7 +160,6 @@
             "shell",
             "node",
             "os",
-            "envvar",
             "az",
             "kubectl",
             "dotnet",
@@ -416,32 +415,6 @@
                   },
                   "enable_hyperlink": {
                     "$ref": "#/definitions/enable_hyperlink"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": { "const": "envvar" }
-            }
-          },
-          "then": {
-            "title": "Environment Variable Segment",
-            "description": "https://ohmyposh.dev/docs/environment",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
-                  "var_name": {
-                    "type": "string",
-                    "title": "Variable Name",
-                    "description": "The name of the environment variable",
-                    "default": ""
                   }
                 }
               }

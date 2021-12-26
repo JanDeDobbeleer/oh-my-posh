@@ -46,7 +46,6 @@ module.exports = {
         "crystal",
         "dart",
         "dotnet",
-        "environment",
         "executiontime",
         "exit",
         "git",

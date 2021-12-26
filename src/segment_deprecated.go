@@ -25,6 +25,14 @@ func (p properties) getOneOfBool(property, legacyProperty Property, defaultValue
 	return p.getBool(property, defaultValue)
 }
 
+func (p properties) getOneOfString(property, legacyProperty Property, defaultValue string) string {
+	_, found := p[legacyProperty]
+	if found {
+		return p.getString(legacyProperty, defaultValue)
+	}
+	return p.getString(property, defaultValue)
+}
+
 func (p properties) hasOneOf(properties ...Property) bool {
 	for _, property := range properties {
 		if _, found := p[property]; found {
@@ -405,3 +413,44 @@ const (
 	// DisplayPackageManager shows if NPM or Yarn is used
 	DisplayPackageManager Property = "display_package_manager"
 )
+
+// Environment Variable
+
+type envvar struct {
+	props properties
+	env   environmentInfo
+	Value string
+}
+
+const (
+	// VarName name of the variable
+	VarName Property = "var_name"
+)
+
+func (e *envvar) enabled() bool {
+	name := e.props.getString(VarName, "")
+	e.Value = e.env.getenv(name)
+	return e.Value != ""
+}
+
+func (e *envvar) string() string {
+	segmentTemplate := e.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) == 0 {
+		return e.Value
+	}
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  e,
+		Env:      e.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
+}
+
+func (e *envvar) init(props properties, env environmentInfo) {
+	e.props = props
+	e.env = env
+}

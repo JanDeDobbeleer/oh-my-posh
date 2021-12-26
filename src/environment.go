@@ -72,6 +72,22 @@ type windowsRegistryValue struct {
 	str       string
 }
 
+type WifiType string
+
+type wifiInfo struct {
+	SSID           string
+	Interface      string
+	RadioType      WifiType
+	PhysType       WifiType
+	Authentication WifiType
+	Cipher         WifiType
+	Channel        int
+	ReceiveRate    int
+	TransmitRate   int
+	Signal         int
+	Error          string
+}
+
 type environmentInfo interface {
 	getenv(key string) string
 	getcwd() string
@@ -110,6 +126,7 @@ type environmentInfo interface {
 	inWSLSharedDrive() bool
 	convertToLinuxPath(path string) string
 	convertToWindowsPath(path string) string
+	getWifiNetwork() (*wifiInfo, error)
 }
 
 type commandCache struct {

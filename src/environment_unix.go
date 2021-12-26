@@ -93,3 +93,7 @@ func (env *environment) convertToLinuxPath(path string) string {
 	}
 	return path
 }
+
+func (env *environment) getWifiNetwork() (*wifiInfo, error) {
+	return nil, errors.New("not implemented")
+}

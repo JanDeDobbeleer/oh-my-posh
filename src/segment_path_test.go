@@ -198,6 +198,11 @@ func (env *MockedEnvironment) convertToLinuxPath(path string) string {
 	return args.String(0)
 }
 
+func (env *MockedEnvironment) getWifiNetwork() (*wifiInfo, error) {
+	args := env.Called(nil)
+	return args.Get(0).(*wifiInfo), args.Error(1)
+}
+
 const (
 	homeBill        = "/home/bill"
 	homeJan         = "/usr/home/jan"

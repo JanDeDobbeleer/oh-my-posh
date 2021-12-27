@@ -2,6 +2,18 @@ $env:POSH_PATH = "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleB
 $env:POSH_THEMES_PATH = $env:POSH_PATH + "/themes"
 $env:PATH = $env:POSH_PATH + [System.IO.Path]::PathSeparator + $env:PATH
 
+if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
+    [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+}
+else {
+    Write-Host "[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
+When using PowerShell in ConstrainedLanguage mode, please set the
+console mode manually to UTF-8. See here for more information:
+https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
+"
+$env:POSH_CONSTRAINED_LANGUAGE_MODE = $true
+}
+
 function Get-PoshDownloadUrl {
     param(
         [Parameter(Mandatory = $true)]

@@ -124,8 +124,12 @@ In case you installed using AllUsers and are a non-admin user,
 please run the following command as an administrator:
 
 Import-Module oh-my-posh
+
+Original Error:
+
 '@
-    Write-Error $message
+    Write-Host $message
+    Write-Host $_
     exit 1
 }
 

@@ -3,7 +3,7 @@
 if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
     [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 }
-else {
+elseif ($env:POSH_CONSTRAINED_LANGUAGE_MODE -ne $true){
     Write-Host "[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
 When using PowerShell in ConstrainedLanguage mode, please set the
 console mode manually to UTF-8. See here for more information:

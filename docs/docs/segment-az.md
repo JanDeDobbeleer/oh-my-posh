@@ -8,11 +8,6 @@ sidebar_label: Azure
 
 Display the currently active Azure subscription information.
 
-:::caution
-PowerShell offers support for the `Az.Accounts` module, but it is disabled by default.
-To enable this, set `$env:AZ_ENABLED = $true` in your `$PROFILE`.
-:::
-
 ## Sample Configuration
 
 ```json
@@ -35,10 +30,6 @@ To enable this, set `$env:AZ_ENABLED = $true` in your `$PROFILE`.
 properties below - defaults to `{{.Name}}`
 
 ## Template Properties
-
-:::caution
-When using the PowerShell module, only `.EnvironmentName`, `.ID`, `.Name` and `.User.Name` are available.
-:::
 
 - `.EnvironmentName`: `string` - the account environment name
 - `.HomeTenantID`: `string` - the home tenant id

@@ -7,8 +7,6 @@ InstallerType: inno
 Scope: user
 InstallModes:
 - interactive
-- silent
-- silentWithProgress
 Installers:
 - Architecture: x64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-amd64.exe

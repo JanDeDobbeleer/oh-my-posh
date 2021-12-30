@@ -9,7 +9,7 @@ AppSupportURL=https://github.com/JanDeDobbeleer/oh-my-posh/issues
 LicenseFile="bin\COPYING.txt"
 OutputBaseFilename=install
 PrivilegesRequired=lowest
-PrivilegesRequiredOverridesAllowed=commandline dialog
+PrivilegesRequiredOverridesAllowed=dialog
 
 [Files]
 Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"

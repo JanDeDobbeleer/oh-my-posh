@@ -164,6 +164,7 @@ type environment struct {
 
 func (env *environment) init(args *args) {
 	env.args = args
+	env.resolveConfigPath()
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
@@ -173,6 +174,23 @@ func (env *environment) init(args *args) {
 	}
 	env.fileCache = &fileCache{}
 	env.fileCache.init(env.getCachePath())
+}
+
+func (env *environment) resolveConfigPath() {
+	if env.args == nil || env.args.Config == nil {
+		return
+	}
+	configFile := *env.args.Config
+	if strings.HasPrefix(configFile, "~") {
+		configFile = strings.TrimPrefix(configFile, "~")
+		configFile = filepath.Join(env.homeDir(), configFile)
+	}
+	if !filepath.IsAbs(configFile) {
+		if absConfigFile, err := filepath.Abs(configFile); err == nil {
+			configFile = absConfigFile
+		}
+	}
+	*env.args.Config = filepath.Clean(configFile)
 }
 
 func (env *environment) trace(start time.Time, function string, args ...string) {

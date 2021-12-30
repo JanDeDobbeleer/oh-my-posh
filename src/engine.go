@@ -67,9 +67,6 @@ func (e *engine) render() string {
 		return e.print()
 	}
 	cwd := e.env.getcwd()
-	if e.env.isWsl() {
-		cwd, _ = e.env.runCommand("wslpath", "-m", cwd)
-	}
 	e.writeANSI(e.ansi.consolePwd(cwd))
 	return e.print()
 }

@@ -144,5 +144,8 @@ func (a *az) getAzureRmContext() bool {
 	a.ID = defaultContext.Subscription.ID
 	a.Name = defaultContext.Subscription.Name
 	a.State = defaultContext.Subscription.State
+	a.User = &AzureUser{
+		Name: defaultContext.Subscription.ExtendedProperties.Account,
+	}
 	return true
 }

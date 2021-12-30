@@ -172,9 +172,17 @@ func main() {
 			"Print a plain prompt without ANSI"),
 	}
 	flag.Parse()
+	if *args.Version {
+		fmt.Println(Version)
+		return
+	}
 	env := &environment{}
 	env.init(args)
 	defer env.close()
+	if *args.PrintShell {
+		fmt.Println(env.getShellName())
+		return
+	}
 	if *args.Millis {
 		fmt.Print(time.Now().UnixNano() / 1000000)
 		return
@@ -194,15 +202,6 @@ func main() {
 		return
 	}
 	cfg := GetConfig(env)
-	if *args.PrintShell {
-		fmt.Println(env.getShellName())
-		return
-	}
-	if *args.Version {
-		fmt.Println(Version)
-		return
-	}
-
 	ansi := &ansiUtils{}
 	ansi.init(env.getShellName())
 	var writer promptWriter

@@ -3,12 +3,13 @@ AppName=Oh My Posh
 AppVersion=<VERSION>
 DefaultDirName={autopf}\oh-my-posh
 DefaultGroupName=Oh My Posh
-PrivilegesRequired=lowest
 AppPublisher=Jan De Dobbeleer
 AppPublisherURL=https://ohmyposh.dev
 AppSupportURL=https://github.com/JanDeDobbeleer/oh-my-posh/issues
 LicenseFile="bin\COPYING.txt"
 OutputBaseFilename=install
+PrivilegesRequired=lowest
+PrivilegesRequiredOverridesAllowed=commandline dialog
 
 [Files]
 Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"

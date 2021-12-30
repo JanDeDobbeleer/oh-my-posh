@@ -177,7 +177,7 @@ func (env *environment) init(args *args) {
 }
 
 func (env *environment) resolveConfigPath() {
-	if env.args == nil || env.args.Config == nil {
+	if env.args == nil || env.args.Config == nil || len(*env.args.Config) == 0 {
 		return
 	}
 	configFile := *env.args.Config

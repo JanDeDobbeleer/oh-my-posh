@@ -35,6 +35,10 @@ const (
 	DisplayError Property = "display_error"
 	// DisplayDefault hides or shows the default
 	DisplayDefault Property = "display_default"
+	// AccessToken is the access token to use for an API
+	AccessToken Property = "access_token"
+	// RefreshToken is the refresh token to use for an API
+	RefreshToken Property = "refresh_token"
 )
 
 type properties map[Property]interface{}

@@ -57,6 +57,8 @@ const (
 	Path SegmentType = "path"
 	// Git represents the git status and information
 	Git SegmentType = "git"
+	// Plastic represents the plastic scm status and information
+	Plastic SegmentType = "plastic"
 	// Exit writes the last exit code
 	Exit SegmentType = "exit"
 	// Python writes the virtual env name
@@ -131,10 +133,16 @@ const (
 	PHP SegmentType = "php"
 	// Nightscout is an open source diabetes system
 	Nightscout SegmentType = "nightscout"
+	// Wakatime writes tracked time spend in dev editors
+	Wakatime SegmentType = "wakatime"
 	// WiFi writes details about the current WiFi connection
 	WiFi SegmentType = "wifi"
 	// WinReg queries the Windows registry.
 	WinReg SegmentType = "winreg"
+	// Brewfather segment
+	BrewFather SegmentType = "brewfather"
+	// Ipify segment
+	Ipify SegmentType = "ipify"
 )
 
 func (segment *Segment) string() string {
@@ -230,6 +238,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Session:       &session{},
 		Path:          &path{},
 		Git:           &git{},
+		Plastic:       &plastic{},
 		Exit:          &exit{},
 		Python:        &python{},
 		Root:          &root{},
@@ -263,8 +272,11 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 		Angular:       &angular{},
 		PHP:           &php{},
 		Nightscout:    &nightscout{},
+		Wakatime:      &wakatime{},
 		WiFi:          &wifi{},
 		WinReg:        &winreg{},
+		BrewFather:    &brewfather{},
+		Ipify:         &ipify{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties)

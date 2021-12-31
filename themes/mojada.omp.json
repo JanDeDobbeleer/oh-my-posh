@@ -13,7 +13,6 @@
           "foreground": "#0077c2",
           "background": "#fbfbfb",
           "properties": {
-            "postfix": " ",
             "macos": "\uEF179",
             "windows": "\uF17A",
             "linux": "\uF17C",
@@ -34,8 +33,7 @@
           "properties": {
             "prefix": "",
             "display_host": true,
-            "host_color": "#e06c75",
-            "user_info_separator": "<#000000>@</>"
+            "template": "{{ .UserName }}<#000000>@</><#e06c75>{{ .ComputerName }}</>"
           }
         },
         {
@@ -88,7 +86,6 @@
           "style": "plain",
           "foreground": "#FFD54F",
           "properties": {
-            "prefix": " ",
             "text": "{{if .Root}}#{{else}}${{end}}",
             "postfix": ""
           }

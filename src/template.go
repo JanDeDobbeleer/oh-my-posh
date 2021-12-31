@@ -6,8 +6,6 @@ import (
 	"reflect"
 	"strings"
 	"text/template"
-
-	"github.com/Masterminds/sprig/v3"
 )
 
 const (
@@ -48,11 +46,11 @@ func (t *textTemplate) renderPlainContextTemplate(context map[string]interface{}
 }
 
 func (t *textTemplate) render() (string, error) {
-	tmpl, err := template.New("title").Funcs(sprig.TxtFuncMap()).Parse(t.Template)
+	tmpl, err := template.New("title").Funcs(funcMap()).Parse(t.Template)
 	if err != nil {
 		return "", errors.New(invalidTemplate)
 	}
-	if strings.Contains(t.Template, ".Env") {
+	if strings.Contains(t.Template, ".Env.") {
 		t.loadEnvVars()
 	}
 	buffer := new(bytes.Buffer)

@@ -1,6 +1,18 @@
 $env:POSH_PATH = "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent.FullName)"
 $env:POSH_THEMES_PATH = $env:POSH_PATH + "/themes"
-$env:PATH = "$env:POSH_PATH;$env:PATH"
+$env:PATH = $env:POSH_PATH + [System.IO.Path]::PathSeparator + $env:PATH
+
+if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
+    [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+}
+else {
+    Write-Host "[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
+When using PowerShell in ConstrainedLanguage mode, please set the
+console mode manually to UTF-8. See here for more information:
+https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
+"
+$env:POSH_CONSTRAINED_LANGUAGE_MODE = $true
+}
 
 function Get-PoshDownloadUrl {
     param(
@@ -113,8 +125,25 @@ function Sync-PoshArtifacts {
     Sync-PoshThemes -Version $Version
 }
 
-$moduleVersion = Split-Path -Leaf $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase
-Sync-PoshArtifacts -Version $moduleVersion
+try {
+    $moduleVersion = Split-Path -Leaf $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase
+    Sync-PoshArtifacts -Version $moduleVersion
+}
+catch {
+    $message = @'
+Oh My Posh is unable to download and store the latest version.
+In case you installed using AllUsers and are a non-admin user,
+please run the following command as an administrator:
+
+Import-Module oh-my-posh
+
+Original Error:
+
+'@
+    Write-Host $message
+    Write-Host $_
+    exit 1
+}
 
 # Legacy functions
 

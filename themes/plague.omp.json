@@ -11,7 +11,10 @@
           "foreground": "#ff0000",
           "background": "#333333",
           "leading_diamond": "\uE0B6",
-          "trailing_diamond": "\uE0B0"
+          "trailing_diamond": "\uE0B0",
+          "properties": {
+            "template": "{{ .UserName }}@{{ .ComputerName }}"
+          }
         },
         {
           "type": "spotify",

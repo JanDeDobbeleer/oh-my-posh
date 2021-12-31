@@ -1,0 +1,108 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "display_status": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "#88c0d0",
+          "properties": {
+            "prefix": "<#5e81ac>┏[</>",
+            "postfix": "<#5e81ac>]</>",
+            "template": "{{ .UserName }}"
+          }
+        },
+        {
+          "type": "git",
+          "style": "plain",
+          "foreground": "#b48ead",
+          "properties": {
+            "prefix": "<#5e81ac>--[</>",
+            "postfix": "<#5e81ac>]</>",
+            "fetch_status": true,
+	    "display_status": true,
+            "display_stash_count": true,
+            "display_upstream_icon": true,
+	    "template": "{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#8fbcbb> ● </>{{ end }}{{ if .Staging.Changed }}<#88c0d0> ● </>{{ end }}"
+          }	
+        },
+        {
+          "type": "aws",
+          "style": "plain",
+          "foreground": "#b48ead",
+          "properties": {
+	    "prefix": "<#5e81ac>--[</>",
+            "postfix": "<#5e81ac>]</>",
+            "template": "{{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+          }
+        },
+        {
+          "type": "kubectl",
+          "style": "plain",
+          "foreground": "#b48ead",
+          "properties": {
+	    "prefix": "<#5e81ac>--[</>",
+	    "postfix": "<#5e81ac>]</>",
+            "template": "{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}"
+          }
+        },	
+        {
+          "type": "root",
+          "style": "plain",
+          "foreground": "#d8dee9",
+          "properties": {
+            "prefix": "<#5e81ac>[</>",
+            "postfix": "<#5e81ac>]</>"
+          }
+        },
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "#d8dee9",
+          "properties": {
+            "template": "{{ .Text }}",
+            "prefix": "<#5e81ac>[x</>",
+            "postfix": "<#5e81ac>]</>"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "path",
+          "style": "plain",
+          "foreground": "#88c0d0",
+          "properties": {
+            "style": "full",
+            "prefix": "<#5e81ac>┖[</>",
+            "postfix": "<#5e81ac>]</>"
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#5e81ac",
+          "properties": {
+            "text": "\uE602"
+          }
+        }
+      ]
+    }    
+  ],
+  "final_space": true
+}

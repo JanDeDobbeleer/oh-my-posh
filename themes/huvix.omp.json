@@ -10,10 +10,9 @@
             "style": "plain",
             "foreground": "#FFE082",
             "properties": {
-              "user_info_separator": "",
-              "display_host": false,
               "prefix": "@",
-              "postfix": " \u279C"
+              "postfix": " \u279C",
+              "template": "{{ .UserName }}"
             }
           },
           {

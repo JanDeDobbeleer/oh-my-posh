@@ -12,7 +12,7 @@ const (
 )
 
 func (t *text) enabled() bool {
-	textProperty := t.props.getString(TextProperty, "!!text property not defined!!")
+	textProperty := t.props.getOneOfString(TextProperty, SegmentTemplate, "!!text property not defined!!")
 	template := &textTemplate{
 		Template: textProperty,
 		Context:  t,

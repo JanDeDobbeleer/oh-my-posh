@@ -101,7 +101,7 @@
           "properties": {
             "postfix": "",
             "prefix": "  ",
-            "user_info_separator": "<transparent> / </>"
+            "template": "{{ .UserName }}<transparent> / </>{{ .ComputerName }}"
           }
         },
         {

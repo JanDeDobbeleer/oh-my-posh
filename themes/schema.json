@@ -33,10 +33,10 @@
         "type": "string"
       }
     },
-    "display_version": {
+    "fetch_version": {
       "type": "boolean",
-      "title": "Display Version",
-      "description": "Show or hide the version number",
+      "title": "Fetch Version",
+      "description": "Fetch the version number",
       "default": true
     },
     "enable_hyperlink": {
@@ -160,7 +160,6 @@
             "shell",
             "node",
             "os",
-            "envvar",
             "az",
             "kubectl",
             "dotnet",
@@ -181,8 +180,11 @@
             "sysinfo",
             "angular",
             "php",
+            "wakatime",
             "wifi",
-            "winreg"
+            "winreg",
+            "plastic",
+            "ipify"
           ]
         },
         "style": {
@@ -402,8 +404,8 @@
                     "description": "Text/icon that is displayed when the active .NET SDK version (e.g., one specified by global.json) is not installed/supported",
                     "default": " \uE77F "
                   },
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -413,32 +415,6 @@
                   },
                   "enable_hyperlink": {
                     "$ref": "#/definitions/enable_hyperlink"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": { "const": "envvar" }
-            }
-          },
-          "then": {
-            "title": "Environment Variable Segment",
-            "description": "https://ohmyposh.dev/docs/environment",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
-                  "var_name": {
-                    "type": "string",
-                    "title": "Variable Name",
-                    "description": "The name of the environment variable",
-                    "default": ""
                   }
                 }
               }
@@ -635,8 +611,14 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "parse_mod_file": {
+                    "type": "boolean",
+                    "title": "Parse go.mod file",
+                    "description": "Parse go.mod file instead of calling out to go to improve performance.",
+                    "default": false
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -664,8 +646,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -693,8 +675,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -722,8 +704,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -751,8 +733,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -780,8 +762,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -806,8 +788,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -832,8 +814,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -916,8 +898,11 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -925,10 +910,10 @@
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
                   },
-                  "display_package_manager": {
+                  "fetch_package_manager": {
                     "type": "boolean",
-                    "title": "Display Package Manager",
-                    "description": "Show whether the current project uses Yarn or NPM",
+                    "title": "Fetch Display Package Manager",
+                    "description": "Assigns the Yarn or NPM icon to .PackageManagerIcon",
                     "default": false
                   },
                   "yarn_icon": {
@@ -963,8 +948,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1188,6 +1173,7 @@
                       "agnoster",
                       "agnoster_full",
                       "agnoster_short",
+                      "agnoster_left",
                       "short",
                       "full",
                       "folder",
@@ -1207,22 +1193,19 @@
                     "title": "Maximum Depth",
                     "description": "Maximum path depth to display whithout shortening",
                     "default": 1
-                  }
-                },
-                "mapped_locations_enabled": {
-                  "type": "boolean",
-                  "title": "Enable the Mapped Locations feature",
-                  "description": "Replace known locations in the path with the replacements before applying the style.",
-                  "default": true
-                },
-                "stack_count_enabled": {
-                  "type": "boolean",
-                  "title": "Show/hide stack count",
-                  "description": "Displays the stack count when using pushd/popd",
-                  "default": false
-                },
-                "enable_hyperlink": {
-                  "$ref": "#/definitions/enable_hyperlink"
+                  },
+                  "mapped_locations_enabled": {
+                    "type": "boolean",
+                    "title": "Enable the Mapped Locations feature",
+                    "description": "Replace known locations in the path with the replacements before applying the style.",
+                    "default": true
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
+                  },
+                  "template": {
+                      "$ref": "#/definitions/template"
+                    }
                 }
               }
             }
@@ -1240,19 +1223,10 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
-                  },
-                  "display_default": {
+                  "fetch_virtual_env": {
                     "type": "boolean",
-                    "title": "Display Default Env",
-                    "description": "Show the name of the virtualenv when it's default (`system`, `base`)",
-                    "default": true
-                  },
-                  "display_virtual_env": {
-                    "type": "boolean",
-                    "title": "Display Virtual Env",
-                    "description": "Show the name of the virtualenv or not",
+                    "title": "Fetch Virtual Env",
+                    "description": "Fetch the name of the virtualenv or not",
                     "default": true
                   },
                   "display_mode": {
@@ -1263,6 +1237,9 @@
                   },
                   "enable_hyperlink": {
                     "$ref": "#/definitions/enable_hyperlink"
+                  },
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1304,43 +1281,14 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "user_info_separator": {
-                    "type": "string",
-                    "title": "User Info Separator",
-                    "description": "Text/icon to put in between the user and host name",
-                    "default": "@"
-                  },
                   "ssh_icon": {
                     "type": "string",
                     "title": "SSH Icon",
                     "description": "Text/icon to display first when in an active SSH session",
                     "default": "\uF817"
                   },
-                  "user_color": { "$ref": "#/definitions/color" },
-                  "host_color": { "$ref": "#/definitions/color" },
-                  "display_user": {
-                    "type": "boolean",
-                    "title": "Display User",
-                    "description": "Display the user name or not",
-                    "default": true
-                  },
-                  "display_host": {
-                    "type": "boolean",
-                    "title": "Display Host",
-                    "description": "Display the host name or not",
-                    "default": true
-                  },
-                  "default_user_name": {
-                    "type": "string",
-                    "title": "Default User Name",
-                    "description": "The name of the default user",
-                    "default": ""
-                  },
-                  "display_default": {
-                    "type": "boolean",
-                    "title": "Display Default User",
-                    "description": "Display the segment when default user or not",
-                    "default": true
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1668,11 +1616,46 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "wakatime" }
+            }
+          },
+          "then": {
+            "title": "Wakatime",
+            "description": "Displays the tracked time on wakatime.com",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "apikey": {
+                    "type": "string",
+                    "title": "apikey",
+                    "description": "The apikey used for the api call (Required)",
+                    "default": "."
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout",
+                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 10
+                  },
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1717,13 +1700,7 @@
                   "path": {
                     "type": "string",
                     "title": "Registry Path",
-                    "description": "The path under which the registy key lives (case insensitive, must use backslashes), e.g. HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion",
-                    "default": ""
-                  },
-                  "key": {
-                    "type": "string",
-                    "title": "Registry Key",
-                    "description": "The key under he registry path to get (case insensitive).  If left blank, will get the value of the (Default) key in the registry_path",
+                    "description": "The path to the registry key (case insensitive, must use backslashes).  Ending with \\ will retrieve \"(Default)\" key in that path.",
                     "default": ""
                   },
                   "fallback": {
@@ -1731,6 +1708,228 @@
                     "title":"Fallback value",
                     "description":"Value to display if registry value cannot be retrieved",
                     "default":""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "plastic" }
+            }
+          },
+          "then": {
+            "title": "Plastic SCM Segment",
+            "description": "https://ohmyposh.dev/docs/plastic",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
+                  "fetch_status": {
+                    "type": "boolean",
+                    "title": "Display Status",
+                    "description": "Display the local changes or not",
+                    "default": false
+                  },
+                  "branch_icon": {
+                    "type": "string",
+                    "title": "Branch Icon",
+                    "description": "The icon to use in front of the selector branch name",
+                    "default": "\uE0A0 "
+                  },
+                  "commit_icon": {
+                    "type": "string",
+                    "title": "Commit Icon",
+                    "description": "Icon/text to display before the selector changeset",
+                    "default": "\uF417"
+                  },
+                  "tag_icon": {
+                    "type": "string",
+                    "title": "Tag Icon",
+                    "description": "Icon/text to display before the seletor label",
+                    "default": "\uF412"
+                  },
+                  "branch_max_length": {
+                    "type": "integer",
+                    "title": "Branch max length",
+                    "description": "the max length for the displayed branch name where 0 implies full length",
+                    "default": 0
+                  },
+                  "full_branch_path": {
+                    "type": "boolean",
+                    "title": "Full branch path",
+                    "description": "display the full branch path instead of only the branch name",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "brewfather" }
+            }
+          },
+          "then": {
+            "title": "Brewfather Batch Status",
+            "description": "https://ohmyposh.dev/docs/brewfather",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "template": {
+                    "$ref": "#/definitions/template"
+                  },
+                  "user_id": {
+                    "type": "string",
+                    "title": "Brewfather UserID (required)",
+                    "description": "Provided by Brewfather's Generate API Key settings option",
+                    "default": ""
+                  },
+                  "api_key": {
+                    "type":"string",
+                    "title":"Brewfather API Key (required)",
+                    "description":"Provided by Brewfather's Generate API Key settings option",
+                    "default":""
+                  },
+                  "batch_id": {
+                    "type":"string",
+                    "title":"ID of the batch in Brewfather (required)",
+                    "description":"At the end of the URL when viewing the batch on the Brewfather site",
+                    "default":""
+                  },
+                  "day_icon": {
+                    "type":"string",
+                    "title":"Icon to use to indicate days",
+                    "description":"Appended to a number to indicate days, e.g. 25d",
+                    "default":"d"
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout in minutes",
+                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 5
+                  },
+                  "doubleup_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, very high positive change",
+                    "description":"Delta between this and prior temperature reading is very high (> 4C by default), available intemplate as .TemperatureTrend",
+                    "default":"↑↑"
+                  },
+                  "singleup_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, high positive change",
+                    "description":"Delta between this and prior temperature reading is high (2C < delta < 4C by default), available intemplate as .TemperatureTrend",
+                    "default":"↑"
+                  },
+                  "fortyfiveup_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, positive change",
+                    "description":"Delta between this and prior temperature reading is positive (0.5C < delta < 2C by default), available intemplate as .TemperatureTrend",
+                    "default":"↗"
+                  },
+                  "flat_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, flat/small change",
+                    "description":"Delta between this and prior temperature and this temperature reading (< +-0.5C change), available intemplate as .TemperatureTrend",
+                    "default":"→"
+                  },
+                  "fortyfivedown_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, v. negative change",
+                    "description":"Delta between this and prior temperature reading is negative (-0.5C > delta > -2C by default), available intemplate as .TemperatureTrend",
+                    "default":"↘"
+                  },
+                  "singledown_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, high negative change",
+                    "description":"Delta between this and prior temperature reading is large negative (-2C > delta > -4C by default), available intemplate as .TemperatureTrend",
+                    "default":"↓"
+                  },
+                  "doubledown_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, very high negative change",
+                    "description":"Delta between this and prior temperature reading is very large negative (> -4C by default), available intemplate as .TemperatureTrend",
+                    "default":"↓↓"
+                  },
+                  "planning_status_icon": {
+                    "type":"string",
+                    "title":"Icon for batch in planning",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uF8EA"
+                  },
+                  "brewing_status_icon": {
+                    "type":"string",
+                    "title":"Icon for batch being brewed",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uF7DE"
+                  },
+                  "fermenting_status_icon": {
+                    "type":"string",
+                    "title":"Icon for batch fermenting",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uF499"
+                  },
+                  "conditioning_status_icon": {
+                    "type":"string",
+                    "title":"Icon for batch conditioning",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uE372"
+                  },
+                  "completed_status_icon": {
+                    "type":"string",
+                    "title":"Icon for completed batch",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uF7A5"
+                  },
+                  "archived_status_icon": {
+                    "type":"string",
+                    "title":"Icon for archived batch",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uF187"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "ipify" }
+            }
+          },
+          "then": {
+            "title": "Display your external IP Address",
+            "description": "https://ohmyposh.dev/docs/ipify",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "title": "URL",
+                    "description": "The Ipify API URL",
+                    "default": "https://api.ipify.org"
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout",
+                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 10
+                  },
+                  "template": {
+                    "$ref": "#/definitions/template"
                   }
                 }
               }

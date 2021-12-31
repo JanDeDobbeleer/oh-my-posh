@@ -10,6 +10,10 @@ import (
 type path struct {
 	props properties
 	env   environmentInfo
+
+	PWD        string
+	Path       string
+	StackCount int
 }
 
 const (
@@ -37,14 +41,14 @@ const (
 	Mixed string = "mixed"
 	// Letter like agnoster, but with the first letter of each folder name
 	Letter string = "letter"
+	// AgnosterLeft like agnoster, but keeps the left side of the path
+	AgnosterLeft string = "agnoster_left"
 	// MixedThreshold the threshold of the length of the path Mixed will display
 	MixedThreshold Property = "mixed_threshold"
 	// MappedLocations allows overriding certain location with an icon
 	MappedLocations Property = "mapped_locations"
 	// MappedLocationsEnabled enables overriding certain locations with an icon
 	MappedLocationsEnabled Property = "mapped_locations_enabled"
-	// StackCountEnabled enables the stack count display
-	StackCountEnabled Property = "stack_count_enabled"
 	// MaxDepth Maximum path depth to display whithout shortening
 	MaxDepth Property = "max_depth"
 )
@@ -54,43 +58,51 @@ func (pt *path) enabled() bool {
 }
 
 func (pt *path) string() string {
-	cwd := pt.env.getcwd()
-	var formattedPath string
+	pt.PWD = pt.env.getcwd()
 	switch style := pt.props.getString(Style, Agnoster); style {
 	case Agnoster:
-		formattedPath = pt.getAgnosterPath()
+		pt.Path = pt.getAgnosterPath()
 	case AgnosterFull:
-		formattedPath = pt.getAgnosterFullPath()
+		pt.Path = pt.getAgnosterFullPath()
 	case AgnosterShort:
-		formattedPath = pt.getAgnosterShortPath()
+		pt.Path = pt.getAgnosterShortPath()
 	case Mixed:
-		formattedPath = pt.getMixedPath()
+		pt.Path = pt.getMixedPath()
 	case Letter:
-		formattedPath = pt.getLetterPath()
+		pt.Path = pt.getLetterPath()
+	case AgnosterLeft:
+		pt.Path = pt.getAgnosterLeftPath()
 	case Short:
 		// "short" is a duplicate of "full", just here for backwards compatibility
 		fallthrough
 	case Full:
-		formattedPath = pt.getFullPath()
+		pt.Path = pt.getFullPath()
 	case Folder:
-		formattedPath = pt.getFolderPath()
+		pt.Path = pt.getFolderPath()
 	default:
 		return fmt.Sprintf("Path style: %s is not available", style)
 	}
-	formattedPath = pt.formatWindowsDrive(formattedPath)
+	pt.Path = pt.formatWindowsDrive(pt.Path)
 	if pt.props.getBool(EnableHyperlink, false) {
 		// wsl check
 		if pt.env.isWsl() {
-			cwd, _ = pt.env.runCommand("wslpath", "-m", cwd)
+			pt.PWD, _ = pt.env.runCommand("wslpath", "-m", pt.PWD)
 		}
-		return fmt.Sprintf("[%s](file://%s)", formattedPath, cwd)
+		pt.Path = fmt.Sprintf("[%s](file://%s)", pt.Path, pt.PWD)
 	}
 
-	if pt.props.getBool(StackCountEnabled, false) && pt.env.stackCount() > 0 {
-		return fmt.Sprintf("%d %s", pt.env.stackCount(), formattedPath)
+	pt.StackCount = pt.env.stackCount()
+	segmentTemplate := pt.props.getString(SegmentTemplate, "{{ .Path }}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  pt,
+		Env:      pt.env,
 	}
-
-	return formattedPath
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (pt *path) formatWindowsDrive(pwd string) string {
@@ -145,6 +157,29 @@ func (pt *path) getAgnosterPath() string {
 	return buffer.String()
 }
 
+func (pt *path) getAgnosterLeftPath() string {
+	pwd := pt.getPwd()
+	separator := pt.env.getPathSeperator()
+	pwd = strings.Trim(pwd, separator)
+	splitted := strings.Split(pwd, separator)
+	folderIcon := pt.props.getString(FolderIcon, "..")
+	separator = pt.props.getString(FolderSeparatorIcon, separator)
+	switch len(splitted) {
+	case 0:
+		return ""
+	case 1:
+		return splitted[0]
+	case 2:
+		return fmt.Sprintf("%s%s%s", splitted[0], separator, splitted[1])
+	}
+	var buffer strings.Builder
+	buffer.WriteString(fmt.Sprintf("%s%s%s", splitted[0], separator, splitted[1]))
+	for i := 2; i < len(splitted); i++ {
+		buffer.WriteString(fmt.Sprintf("%s%s", separator, folderIcon))
+	}
+	return buffer.String()
+}
+
 func (pt *path) getLetterPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
@@ -171,7 +206,9 @@ func (pt *path) getLetterPath() string {
 
 		buffer.WriteString(fmt.Sprintf("%s%s", letter, separator))
 	}
-	buffer.WriteString(splitted[len(splitted)-1])
+	if len(splitted) > 0 {
+		buffer.WriteString(splitted[len(splitted)-1])
+	}
 	return buffer.String()
 }
 

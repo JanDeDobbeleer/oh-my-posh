@@ -42,11 +42,8 @@
           "foreground": "#fafafa",
           "background": "#2f2f2f",
           "properties": {
-            "user_info_separator": "<#7a7a7a>\uf1fa</>",
-            "display_default": false,
-            "user_color": "#77f5d6",
-            "host_color": "#2EEFBF",
-            "postfix": "<#7a7a7a> \ue0b1</>"
+            "postfix": "<#7a7a7a> \ue0b1</>",
+            "template": "{{ if ne .Env.POSH_SESSION_DEFAULT_USER .UserName }}<#77f5d6>{{ .UserName }}</><#7a7a7a>\uf1fa</><#2EEFBF>{{ end }}{{ .ComputerName }}</>"
           }
         },
         {

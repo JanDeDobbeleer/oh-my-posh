@@ -26,8 +26,7 @@
           "foreground": "#26C6DA",
           "background": "#546E7A",
           "properties": {
-            "style": "full",
-            "postfix": " "
+            "style": "full"
           }
         },
         {
@@ -64,7 +63,8 @@
           "background": "#546E7A",
           "leading_diamond": "\uE0B2",
           "properties": {
-            "postfix": " <#26C6DA>\uE0B3</> "
+            "postfix": " <#26C6DA>\uE0B3</> ",
+            "template": "{{ .UserName }}@{{ .ComputerName }}"
           }
         },
         {

@@ -129,12 +129,12 @@ func (env *MockedEnvironment) getWindowTitle(imageName, windowTitleRegex string)
 	return args.String(0), args.Error(1)
 }
 
-func (env *MockedEnvironment) getWindowsRegistryKeyValue(regPath, regKey string) (string, error) {
-	args := env.Called(regPath, regKey)
-	return args.String(0), args.Error(1)
+func (env *MockedEnvironment) getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error) {
+	args := env.Called(path)
+	return args.Get(0).(*windowsRegistryValue), args.Error(1)
 }
 
-func (env *MockedEnvironment) doGet(url string, timeout int) ([]byte, error) {
+func (env *MockedEnvironment) doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
 	args := env.Called(url)
 	return args.Get(0).([]byte), args.Error(1)
 }
@@ -150,6 +150,11 @@ func (env *MockedEnvironment) stackCount() int {
 }
 
 func (env *MockedEnvironment) isWsl() bool {
+	args := env.Called(nil)
+	return args.Bool(0)
+}
+
+func (env *MockedEnvironment) isWsl2() bool {
 	args := env.Called(nil)
 	return args.Bool(0)
 }
@@ -176,6 +181,26 @@ func (env *MockedEnvironment) close() {
 func (env *MockedEnvironment) logs() string {
 	args := env.Called(nil)
 	return args.String(0)
+}
+
+func (env *MockedEnvironment) inWSLSharedDrive() bool {
+	args := env.Called(nil)
+	return args.Bool(0)
+}
+
+func (env *MockedEnvironment) convertToWindowsPath(path string) string {
+	args := env.Called(nil)
+	return args.String(0)
+}
+
+func (env *MockedEnvironment) convertToLinuxPath(path string) string {
+	args := env.Called(nil)
+	return args.String(0)
+}
+
+func (env *MockedEnvironment) getWifiNetwork() (*wifiInfo, error) {
+	args := env.Called(nil)
+	return args.Get(0).(*wifiInfo), args.Error(1)
 }
 
 const (
@@ -387,6 +412,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		env.On("homeDir", nil).Return(tc.HomePath)
 		env.On("getcwd", nil).Return(tc.Pwd)
 		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		env.On("stackCount", nil).Return(0)
 		args := &args{
 			PSWD: &tc.Pswd,
 		}
@@ -397,6 +423,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 				FolderSeparatorIcon: tc.FolderSeparatorIcon,
 				Style:               tc.Style,
 				MaxDepth:            tc.MaxDepth,
+				SegmentTemplate:     "{{ .Path }}",
 			},
 		}
 		got := path.string()
@@ -415,8 +442,10 @@ func TestGetFullPath(t *testing.T) {
 		GOOS                   string
 		PathSeparator          string
 		StackCount             int
-		StackCountEnabled      bool
+		Template               string
 	}{
+		{Style: Full, Pwd: "/usr/home/abc", Template: "{{ .Path }}", StackCount: 2, Expected: "~/abc"},
+
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: "", Expected: ""},
 		{Style: Full, Pwd: "/", Expected: "/"},
@@ -449,49 +478,49 @@ func TestGetFullPath(t *testing.T) {
 		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\Jan", Expected: "C:\\Users\\Jan", PathSeparator: "\\", GOOS: windowsPlatform},
 
 		// StackCountEnabled=true and StackCount=2
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, StackCount: 2, Expected: "2 /"},
-		{Style: Full, Pwd: "", StackCountEnabled: true, StackCount: 2, Expected: "2 "},
-		{Style: Full, Pwd: "/", StackCountEnabled: true, StackCount: 2, Expected: "2 /"},
-		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, StackCount: 2, Expected: "2 ~"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 2, Expected: "2 ~/abc"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 2, Expected: "2 /usr/home/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, StackCount: 2, Expected: "2 /a/b/c/d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: 2, Expected: "2 /"},
+		{Style: Full, Pwd: "", StackCount: 2, Expected: "2 "},
+		{Style: Full, Pwd: "/", StackCount: 2, Expected: "2 /"},
+		{Style: Full, Pwd: "/usr/home", StackCount: 2, Expected: "2 ~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: 2, Expected: "2 ~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: 2, Expected: "2 /usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCount: 2, Expected: "2 /a/b/c/d"},
 
 		// StackCountEnabled=false and StackCount=2
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: false, StackCount: 2, Expected: "/"},
-		{Style: Full, Pwd: "", StackCountEnabled: false, StackCount: 2, Expected: ""},
-		{Style: Full, Pwd: "/", StackCountEnabled: false, StackCount: 2, Expected: "/"},
-		{Style: Full, Pwd: "/usr/home", StackCountEnabled: false, StackCount: 2, Expected: "~"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: false, StackCount: 2, Expected: "~/abc"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: false, StackCount: 2, Expected: "/usr/home/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: false, StackCount: 2, Expected: "/a/b/c/d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Template: "{{ .Path }}", StackCount: 2, Expected: "/"},
+		{Style: Full, Pwd: "", Template: "{{ .Path }}", StackCount: 2, Expected: ""},
+		{Style: Full, Pwd: "/", Template: "{{ .Path }}", StackCount: 2, Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", Template: "{{ .Path }}", StackCount: 2, Expected: "~"},
+
+		{Style: Full, Pwd: "/usr/home/abc", Template: "{{ .Path }}", StackCount: 2, Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", Template: "{{ .Path }}", StackCount: 2, Expected: "/a/b/c/d"},
 
 		// StackCountEnabled=true and StackCount=0
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, StackCount: 0, Expected: "/"},
-		{Style: Full, Pwd: "", StackCountEnabled: true, StackCount: 0, Expected: ""},
-		{Style: Full, Pwd: "/", StackCountEnabled: true, StackCount: 0, Expected: "/"},
-		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, StackCount: 0, Expected: "~"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 0, Expected: "~/abc"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: 0, Expected: "/usr/home/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, StackCount: 0, Expected: "/a/b/c/d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: 0, Expected: "/"},
+		{Style: Full, Pwd: "", StackCount: 0, Expected: ""},
+		{Style: Full, Pwd: "/", StackCount: 0, Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", StackCount: 0, Expected: "~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: 0, Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: 0, Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCount: 0, Expected: "/a/b/c/d"},
 
 		// StackCountEnabled=true and StackCount<0
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, StackCount: -1, Expected: "/"},
-		{Style: Full, Pwd: "", StackCountEnabled: true, StackCount: -1, Expected: ""},
-		{Style: Full, Pwd: "/", StackCountEnabled: true, StackCount: -1, Expected: "/"},
-		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, StackCount: -1, Expected: "~"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: -1, Expected: "~/abc"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, StackCount: -1, Expected: "/usr/home/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, StackCount: -1, Expected: "/a/b/c/d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: -1, Expected: "/"},
+		{Style: Full, Pwd: "", StackCount: -1, Expected: ""},
+		{Style: Full, Pwd: "/", StackCount: -1, Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", StackCount: -1, Expected: "~"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: -1, Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", StackCount: -1, Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", StackCount: -1, Expected: "/a/b/c/d"},
 
 		// StackCountEnabled=true and StackCount not set
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCountEnabled: true, Expected: "/"},
-		{Style: Full, Pwd: "", StackCountEnabled: true, Expected: ""},
-		{Style: Full, Pwd: "/", StackCountEnabled: true, Expected: "/"},
-		{Style: Full, Pwd: "/usr/home", StackCountEnabled: true, Expected: "~"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, Expected: "~/abc"},
-		{Style: Full, Pwd: "/usr/home/abc", StackCountEnabled: true, Expected: "/usr/home/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCountEnabled: true, Expected: "/a/b/c/d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
+		{Style: Full, Pwd: "", Expected: ""},
+		{Style: Full, Pwd: "/", Expected: "/"},
+		{Style: Full, Pwd: "/usr/home", Expected: "~"},
+		{Style: Full, Pwd: "/usr/home/abc", Expected: "~/abc"},
+		{Style: Full, Pwd: "/usr/home/abc", Expected: "/usr/home/abc", DisableMappedLocations: true},
+		{Style: Full, Pwd: "/a/b/c/d", Expected: "/a/b/c/d"},
 	}
 
 	for _, tc := range cases {
@@ -508,9 +537,12 @@ func TestGetFullPath(t *testing.T) {
 			PSWD: &tc.Pswd,
 		}
 		env.On("getArgs", nil).Return(args)
+		if len(tc.Template) == 0 {
+			tc.Template = "{{ if gt .StackCount 0 }}{{ .StackCount }} {{ end }}{{ .Path }}"
+		}
 		var props properties = map[Property]interface{}{
-			Style:             tc.Style,
-			StackCountEnabled: tc.StackCountEnabled,
+			Style:           tc.Style,
+			SegmentTemplate: tc.Template,
 		}
 		if tc.FolderSeparatorIcon != "" {
 			props[FolderSeparatorIcon] = tc.FolderSeparatorIcon
@@ -617,7 +649,7 @@ func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	assert.Equal(t, "#", got)
 }
 
-func TestAgnosterPath(t *testing.T) {
+func TestAgnosterPath(t *testing.T) { // nolint:dupl
 	cases := []struct {
 		Case          string
 		Expected      string
@@ -661,6 +693,54 @@ func TestAgnosterPath(t *testing.T) {
 			},
 		}
 		got := path.getAgnosterPath()
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
+func TestAgnosterLeftPath(t *testing.T) { // nolint:dupl
+	cases := []struct {
+		Case          string
+		Expected      string
+		Home          string
+		PWD           string
+		PathSeparator string
+	}{
+		{Case: "Windows outside home", Expected: "C: > Program Files > f > f", Home: homeBillWindows, PWD: "C:\\Program Files\\Go\\location", PathSeparator: "\\"},
+		{Case: "Windows inside home", Expected: "~ > Documents > f > f", Home: homeBillWindows, PWD: homeBillWindows + "\\Documents\\Bill\\location", PathSeparator: "\\"},
+		{Case: "Windows inside home zero levels", Expected: "C: > location", Home: homeBillWindows, PWD: "C:\\location", PathSeparator: "\\"},
+		{Case: "Windows inside home one level", Expected: "C: > Program Files > f", Home: homeBillWindows, PWD: "C:\\Program Files\\location", PathSeparator: "\\"},
+		{Case: "Windows lower case drive letter", Expected: "C: > Windows", Home: homeBillWindows, PWD: "C:\\Windows\\", PathSeparator: "\\"},
+		{Case: "Windows lower case drive letter (other)", Expected: "P: > Other", Home: homeBillWindows, PWD: "P:\\Other\\", PathSeparator: "\\"},
+		{Case: "Windows lower word drive", Expected: "some: > some", Home: homeBillWindows, PWD: "some:\\some\\", PathSeparator: "\\"},
+		{Case: "Windows lower word drive (ending with c)", Expected: "src: > source", Home: homeBillWindows, PWD: "src:\\source\\", PathSeparator: "\\"},
+		{Case: "Windows lower word drive (arbitrary cases)", Expected: "sRc: > source", Home: homeBillWindows, PWD: "sRc:\\source\\", PathSeparator: "\\"},
+		{Case: "Windows registry drive", Expected: "\uf013 > SOFTWARE > f", Home: homeBillWindows, PWD: "HKLM:\\SOFTWARE\\magnetic:test\\", PathSeparator: "\\"},
+		{Case: "Windows registry drive case sensitive", Expected: "\uf013 > SOFTWARE > f", Home: homeBillWindows, PWD: "HKLM:\\SOFTWARE\\magnetic:TOAST\\", PathSeparator: "\\"},
+		{Case: "Unix outside home", Expected: "mnt > go > f > f", Home: homeJan, PWD: "/mnt/go/test/location", PathSeparator: "/"},
+		{Case: "Unix inside home", Expected: "~ > docs > f > f", Home: homeJan, PWD: homeJan + "/docs/jan/location", PathSeparator: "/"},
+		{Case: "Unix outside home zero levels", Expected: "mnt > location", Home: homeJan, PWD: "/mnt/location", PathSeparator: "/"},
+		{Case: "Unix outside home one level", Expected: "mnt > folder > f", Home: homeJan, PWD: "/mnt/folder/location", PathSeparator: "/"},
+	}
+
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("homeDir", nil).Return(tc.Home)
+		env.On("getPathSeperator", nil).Return(tc.PathSeparator)
+		env.On("getcwd", nil).Return(tc.PWD)
+		env.On("getRuntimeGOOS", nil).Return("")
+		args := &args{
+			PSWD: &tc.PWD,
+		}
+		env.On("getArgs", nil).Return(args)
+		path := &path{
+			env: env,
+			props: map[Property]interface{}{
+				FolderSeparatorIcon: " > ",
+				FolderIcon:          "f",
+				HomeIcon:            "~",
+			},
+		}
+		got := path.getAgnosterLeftPath()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

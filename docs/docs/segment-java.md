@@ -45,3 +45,15 @@ Display the currently active java version.
     - `*.jar`
     - `*.clj`
     - `*.cljc`
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{ .Full }}`
+
+## Template Properties
+
+- `.Full`: `string` - the full version
+- `.Major`: `string` - major number
+- `.Minor`: `string` - minor number
+- `.Patch`: `string` - patch number
+- `.Prerelease`: `string` - prerelease info text
+- `.BuildMetadata`: `string` - build metadata
+- `.Error`: `string` - when fetching the version string errors

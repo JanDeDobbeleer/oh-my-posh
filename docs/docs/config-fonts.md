@@ -27,7 +27,10 @@ by modifying the Windows Terminal settings (default shortcut: `CTRL + SHIFT + ,`
     {
         "defaults":
         {
-            "fontFace": "MesloLGM NF"
+            "font":
+            {
+                "face": "MesloLGM NF"
+            }
         }
     }
 }

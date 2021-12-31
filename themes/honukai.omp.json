@@ -10,10 +10,8 @@
           "style": "plain",
           "foreground": "#FFFFFF",
           "properties": {
-            "user_info_separator": " <#ffffff>in</> ",
             "prefix": "<#0377C8># </>",
-            "user_color": "#0377C8",
-            "host_color": "#4A9207"
+            "template": "<#0377C8>{{ .UserName }}</> <#ffffff>in</> <#4A9207>{{ .ComputerName }}</>"
           }
         },
         {

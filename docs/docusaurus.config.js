@@ -35,16 +35,23 @@ module.exports = {
           position: "left",
         },
         {
-          href: "https://www.gitkraken.com/invite/nQmDPR9D",
-          label: "GitKraken",
-          position: "left",
-        },
-        {
           href: "https://github.com/jandedobbeleer/oh-my-posh",
           className: 'header-github-link',
           'aria-label': 'GitHub repository',
           position: "right",
         },
+        {
+          href: "https://www.gitkraken.com/invite/nQmDPR9D",
+          className: 'header-gk-link',
+          'aria-label': 'GitKraken',
+          position: "right",
+        },
+        {
+          href: "https://twitter.com/jandedobbeleer",
+          className: 'header-twitter-link',
+          'aria-label': 'Twitter',
+          position: "right",
+        }
       ],
     },
     footer: {

@@ -14,10 +14,8 @@
           "style": "plain",
           "foreground": "#BF616A",
           "properties": {
-            "display_host": false,
-            "display_user": true,
-            "user_info_separator": "",
-            "prefix": ""
+            "prefix": "",
+            "template": "{{ .UserName }}"
           }
         },
         {

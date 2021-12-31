@@ -17,16 +17,28 @@ Display text.
   "foreground": "#E06C75",
   "properties": {
     "prefix": "",
-    "text": " \u276F"
+    "template": " \u276F"
   }
 }
 ```
 
+:::tip
+If you're using PowerShell, you can override a function to populate environment variables before the
+prompt is rendered.
+
+```powershell
+function Set-EnvVar {
+    $env:POSH=$(Get-Date)
+}
+New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
+```
+
+:::
+
 ## Properties
 
-- text: `string` - text/icon to display. Accepts [coloring foreground][coloring] just like `prefix` and `postfix`.
-Powered by go [text/template][go-text-template] templates extended with [sprig][sprig] utilizing the
-properties below.
+- template: `string` - text/icon to display. Powered by go [text/template][go-text-template] templates extended
+with [sprig][sprig] utilizing the properties below.
 
 ## Template Properties
 

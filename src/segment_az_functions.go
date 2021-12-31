@@ -1,7 +1,7 @@
 package main
 
 type azfunc struct {
-	language *language
+	language
 }
 
 func (az *azfunc) string() string {
@@ -9,7 +9,7 @@ func (az *azfunc) string() string {
 }
 
 func (az *azfunc) init(props properties, env environmentInfo) {
-	az.language = &language{
+	az.language = language{
 		env:        env,
 		props:      props,
 		extensions: []string{"host.json", "local.settings.json", "function.json"},

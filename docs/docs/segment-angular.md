@@ -29,3 +29,18 @@ Display the currently active Angular CLI version.
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when `angular.json` file is present (default)
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{ .Full }}`
+
+## Template Properties
+
+- `.Full`: `string` - the full version
+- `.Major`: `string` - major number
+- `.Minor`: `string` - minor number
+- `.Patch`: `string` - patch number
+- `.Prerelease`: `string` - prerelease info text
+- `.BuildMetadata`: `string` - build metadata
+- `.Error`: `string` - when fetching the version string errors
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/

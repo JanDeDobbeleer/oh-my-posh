@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	NSAPIURL = "FAKE"
+	FAKEAPIURL = "FAKE"
 )
 
 func TestNSSegment(t *testing.T) {
@@ -136,10 +136,10 @@ func TestNSSegment(t *testing.T) {
 		}
 
 		cache := &MockedCache{}
-		cache.On("get", NSAPIURL).Return(tc.JSONResponse, !tc.CacheFoundFail)
-		cache.On("set", NSAPIURL, tc.JSONResponse, tc.CacheTimeout).Return()
+		cache.On("get", FAKEAPIURL).Return(tc.JSONResponse, !tc.CacheFoundFail)
+		cache.On("set", FAKEAPIURL, tc.JSONResponse, tc.CacheTimeout).Return()
 
-		env.On("doGet", NSAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
+		env.On("doGet", FAKEAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
 		env.On("cache", nil).Return(cache)
 
 		if tc.Template != "" {

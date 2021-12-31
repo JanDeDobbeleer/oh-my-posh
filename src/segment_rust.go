@@ -1,7 +1,7 @@
 package main
 
 type rust struct {
-	language *language
+	language
 }
 
 func (r *rust) string() string {
@@ -9,7 +9,7 @@ func (r *rust) string() string {
 }
 
 func (r *rust) init(props properties, env environmentInfo) {
-	r.language = &language{
+	r.language = language{
 		env:        env,
 		props:      props,
 		extensions: []string{"*.rs", "Cargo.toml", "Cargo.lock"},

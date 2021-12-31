@@ -32,3 +32,16 @@ Display the currently active golang version.
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when `*.go` or `go.mod` files are present (default)
+- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+properties below. Defaults to `{{ .Full }}`
+- parse_mod_file: `boolean`: parse the go.mod file instead of calling `go version`
+
+## Template Properties
+
+- `.Full`: `string` - the full version
+- `.Major`: `string` - major number
+- `.Minor`: `string` - minor number
+- `.Patch`: `string` - patch number
+- `.Prerelease`: `string` - prerelease info text
+- `.BuildMetadata`: `string` - build metadata
+- `.Error`: `string` - when fetching the version string errors

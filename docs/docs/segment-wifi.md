@@ -21,24 +21,22 @@ Currently only supports Windows and WSL. Pull requests for Darwin and Linux supp
   "background": "#8822ee",
   "foreground": "#222222",
   "background_templates": [
-    "{{ if (not .Connected) }}#FF1111{{ end }}",
     "{{ if (lt .Signal 60) }}#DDDD11{{ else if (lt .Signal 90) }}#DD6611{{ else }}#11CC11{{ end }}"
   ],
   "powerline_symbol": "\uE0B0",
   "properties": {
-    "template": "{{ if .Connected }}\uFAA8{{ else }}\uFAA9{{ end }} {{ if .Connected }}{{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ else }}{{ .State }}{{ end }}"
+    "template": "\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps"
   }
 }
 ```
 
 ## Properties
 
-- template: `string` - A go [text/template][go-text-template]  extended with [sprig][sprig] using the properties below
+- template: `string` - A go [text/template][go-text-template]  extended with [sprig][sprig] using the properties below.
+Defaults to `{{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }}`
 
 ## Template Properties
 
-- `.Connected`: `bool` - if WiFi is currently connected
-- `.State`: `string` - WiFi connection status - _e.g. connected or disconnected_
 - `.SSID`: `string` - the SSID of the current wifi network
 - `.RadioType`: `string` - the radio type - _e.g. 802.11ac, 802.11ax, 802.11n, etc._
 - `.Authentication`: `string` - the authentication type - _e.g. WPA2-Personal, WPA2-Enterprise, etc._

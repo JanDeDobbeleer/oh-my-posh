@@ -48,7 +48,8 @@ properties below - defaults to `{{.Icon}}{{ if not .Error }}{{.Percentage}}{{ en
 - `.Full`: `float64` - Last known full capacity (in mWh)
 - `.Design`: `float64` - Reported design capacity (in mWh)
 - `.ChargeRate`: `float64` - Current (momentary) charge rate (in mW). It is always non-negative, consult .State
-field to check whether it means charging or discharging
+field to check whether it means charging or discharging (on some systems this might be always `0` if the battery
+doesn't support it)
 - `.Voltage`: `float64` - Current voltage (in V)
 - `.DesignVoltage`: `float64` - Design voltage (in V). Some systems (e.g. macOS) do not provide a separate
 value for this. In such cases, or if getting this fails, but getting `Voltage` succeeds, this field will have

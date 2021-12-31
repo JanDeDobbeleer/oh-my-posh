@@ -29,7 +29,7 @@ func bootStrapDotnetTest(args *dotnetArgs) *dotnet {
 	env.On("getcwd", nil).Return("/usr/home/project")
 	env.On("homeDir", nil).Return("/usr/home")
 	var props properties = map[Property]interface{}{
-		DisplayVersion:               args.displayVersion,
+		FetchVersion:                 args.displayVersion,
 		UnsupportedDotnetVersionIcon: args.unsupportedIcon,
 	}
 	dotnet := &dotnet{}

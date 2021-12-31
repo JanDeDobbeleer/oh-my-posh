@@ -23,8 +23,8 @@ const (
 	ExcludeFolders Property = "exclude_folders"
 	// IgnoreFolders duplicate of ExcludeFolders
 	IgnoreFolders Property = "ignore_folders"
-	// DisplayVersion show the version number or not
-	DisplayVersion Property = "display_version"
+	// FetchVersion fetch the version number or not
+	FetchVersion Property = "fetch_version"
 	// AlwaysEnabled decides whether or not to always display the info
 	AlwaysEnabled Property = "always_enabled"
 	// SegmentTemplate is the template to use to render the information
@@ -89,12 +89,17 @@ func (p properties) getFloat64(property Property, defaultValue float64) float64 
 		return defaultValue
 	}
 
-	floatValue, ok := val.(float64)
+	if floatValue, ok := val.(float64); ok {
+		return floatValue
+	}
+
+	// config parser parses an int
+	intValue, ok := val.(int)
 	if !ok {
 		return defaultValue
 	}
 
-	return floatValue
+	return float64(intValue)
 }
 
 func (p properties) getInt(property Property, defaultValue int) int {
@@ -107,7 +112,7 @@ func (p properties) getInt(property Property, defaultValue int) int {
 		return intValue
 	}
 
-	// json parses a float
+	// config parser parses a float
 	intValue, ok := val.(float64)
 	if !ok {
 		return defaultValue

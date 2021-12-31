@@ -10,6 +10,7 @@ type loadContext func()
 
 type inContext func() bool
 
+type getVersion func() (string, error)
 type matchesVersionFile func() bool
 
 type version struct {
@@ -25,44 +26,24 @@ type cmd struct {
 	executable string
 	args       []string
 	regex      string
-
-	version
+	getVersion getVersion
 }
 
-func (c *cmd) parse(versionInfo string) error {
+func (c *cmd) parse(versionInfo string) (*version, error) {
 	values := findNamedRegexMatch(c.regex, versionInfo)
 	if len(values) == 0 {
-		return errors.New("cannot parse version string")
+		return nil, errors.New("cannot parse version string")
 	}
 
-	c.version.Full = values["version"]
-	c.version.Major = values["major"]
-	c.version.Minor = values["minor"]
-	c.version.Patch = values["patch"]
-	c.version.Prerelease = values["prerelease"]
-	c.version.BuildMetadata = values["buildmetadata"]
-	return nil
-}
-
-func (c *cmd) buildVersionURL(text, template string) string {
-	if template == "" {
-		return text
+	version := &version{
+		Full:          values["version"],
+		Major:         values["major"],
+		Minor:         values["minor"],
+		Patch:         values["patch"],
+		Prerelease:    values["prerelease"],
+		BuildMetadata: values["buildmetadata"],
 	}
-	truncatingSprintf := func(str string, args ...interface{}) (string, error) {
-		n := strings.Count(str, "%s")
-		if n > len(args) {
-			return "", errors.New("Too many parameters")
-		}
-		if n == 0 {
-			return fmt.Sprintf(str, args...), nil
-		}
-		return fmt.Sprintf(str, args[:n]...), nil
-	}
-	version, err := truncatingSprintf(template, text, c.version.Major, c.version.Minor, c.version.Patch)
-	if err != nil {
-		return text
-	}
-	return version
+	return version, nil
 }
 
 type language struct {
@@ -71,13 +52,16 @@ type language struct {
 	extensions         []string
 	commands           []*cmd
 	versionURLTemplate string
-	activeCommand      *cmd
 	exitCode           int
 	loadContext        loadContext
 	inContext          inContext
 	matchesVersionFile matchesVersionFile
 	homeEnabled        bool
 	displayMode        string
+
+	version
+	Error    string
+	Mismatch bool
 }
 
 const (
@@ -93,34 +77,23 @@ const (
 	DisplayModeContext string = "context"
 	// MissingCommandText sets the text to display when the command is not present in the system
 	MissingCommandText Property = "missing_command_text"
-	// VersionMismatchColor displays empty string by default
-	VersionMismatchColor Property = "version_mismatch_color"
-	// EnableVersionMismatch displays empty string by default
-	EnableVersionMismatch Property = "enable_version_mismatch"
 	// HomeEnabled displays the segment in the HOME folder or not
 	HomeEnabled Property = "home_enabled"
 	// LanguageExtensions the list of extensions to validate
 	LanguageExtensions Property = "extensions"
 )
 
-func (l *language) string() string {
-	if !l.props.getBool(DisplayVersion, true) {
-		return ""
+func (l *language) renderTemplate(segmentTemplate string, context SegmentWriter) string {
+	if l.props.getBool(FetchVersion, true) {
+		err := l.setVersion()
+		if err != nil {
+			l.Error = err.Error()
+		}
 	}
 
-	err := l.setVersion()
-	displayError := l.props.getBool(DisplayError, true)
-	if err != nil && displayError {
-		return err.Error()
-	}
-	if err != nil {
-		return ""
-	}
-
-	segmentTemplate := l.props.getString(SegmentTemplate, "{{.Full}}")
 	template := &textTemplate{
 		Template: segmentTemplate,
-		Context:  l.activeCommand.version,
+		Context:  context,
 		Env:      l.env,
 	}
 	text, err := template.render()
@@ -128,27 +101,22 @@ func (l *language) string() string {
 		return err.Error()
 	}
 
-	if l.props.getBool(EnableHyperlink, false) {
-		versionURLTemplate := l.props.getString(VersionURLTemplate, "")
-		// backward compatibility
-		if versionURLTemplate == "" {
-			text = l.activeCommand.buildVersionURL(text, l.versionURLTemplate)
-		} else {
-			template := &textTemplate{
-				Template: versionURLTemplate,
-				Context:  l.activeCommand.version,
-				Env:      l.env,
-			}
-			url, err := template.render()
-			if err != nil {
-				return err.Error()
-			}
-			text = url
-		}
+	if !l.props.getBool(EnableHyperlink, false) {
+		return text
 	}
-
-	if l.props.getBool(EnableVersionMismatch, false) {
-		l.setVersionFileMismatch()
+	versionURLTemplate := l.props.getString(VersionURLTemplate, "")
+	// backward compatibility
+	if versionURLTemplate == "" {
+		return l.buildVersionURL(text)
+	}
+	template = &textTemplate{
+		Template: versionURLTemplate,
+		Context:  l.version,
+		Env:      l.env,
+	}
+	text, err = template.render()
+	if err != nil {
+		return err.Error()
 	}
 	return text
 }
@@ -200,22 +168,31 @@ func (l *language) hasLanguageFiles() bool {
 // setVersion parses the version string returned by the command
 func (l *language) setVersion() error {
 	for _, command := range l.commands {
-		if !l.env.hasCommand(command.executable) {
+		var versionStr string
+		var err error
+		if command.getVersion == nil {
+			if !l.env.hasCommand(command.executable) {
+				continue
+			}
+			versionStr, err = l.env.runCommand(command.executable, command.args...)
+			if exitErr, ok := err.(*commandError); ok {
+				l.exitCode = exitErr.exitCode
+				return fmt.Errorf("err executing %s with %s", command.executable, command.args)
+			}
+		} else {
+			versionStr, err = command.getVersion()
+			if err != nil {
+				return err
+			}
+		}
+		if versionStr == "" {
 			continue
 		}
-		version, err := l.env.runCommand(command.executable, command.args...)
-		if exitErr, ok := err.(*commandError); ok {
-			l.exitCode = exitErr.exitCode
-			return fmt.Errorf("err executing %s with %s", command.executable, command.args)
-		}
-		if version == "" {
-			continue
-		}
-		err = command.parse(version)
+		version, err := command.parse(versionStr)
 		if err != nil {
-			return fmt.Errorf("err parsing info from %s with %s", command.executable, version)
+			return fmt.Errorf("err parsing info from %s with %s", command.executable, versionStr)
 		}
-		l.activeCommand = command
+		l.version = *version
 		return nil
 	}
 	return errors.New(l.props.getString(MissingCommandText, ""))
@@ -236,12 +213,37 @@ func (l *language) inLanguageContext() bool {
 }
 
 func (l *language) setVersionFileMismatch() {
-	if l.matchesVersionFile == nil || l.matchesVersionFile() {
+	if l.matchesVersionFile == nil {
 		return
 	}
-	if l.props.getBool(ColorBackground, false) {
-		l.props[BackgroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(BackgroundOverride, ""))
+	l.Mismatch = !l.matchesVersionFile()
+	if !l.Mismatch {
 		return
 	}
-	l.props[ForegroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(ForegroundOverride, ""))
+	l.colorMismatch()
+}
+
+func (l *language) buildVersionURL(text string) string {
+	if l.versionURLTemplate == "" {
+		return text
+	}
+	truncatingSprintf := func(str string, args ...interface{}) (string, error) {
+		n := strings.Count(str, "%s")
+		if n > len(args) {
+			return "", errors.New("Too many parameters")
+		}
+		if n == 0 {
+			return fmt.Sprintf(str, args...), nil
+		}
+		arguments := make([]interface{}, 0, n)
+		for i := 0; i < n; i++ {
+			arguments = append(arguments, args[i])
+		}
+		return fmt.Sprintf(str, arguments...), nil
+	}
+	version, err := truncatingSprintf(l.versionURLTemplate, text, l.version.Major, l.version.Minor, l.version.Patch)
+	if err != nil {
+		return text
+	}
+	return version
 }

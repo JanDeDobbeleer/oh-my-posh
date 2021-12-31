@@ -14,7 +14,7 @@
           "trailing_diamond": "",
           "properties": {
             "prefix": "",
-            "display_host": false
+            "template": "{{ .UserName }}"
           }
         },
         {

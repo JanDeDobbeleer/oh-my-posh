@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
       "type": "prompt",
@@ -12,8 +13,7 @@
           "leading_diamond": "",
           "trailing_diamond": "\uE0B0",
           "properties": {
-            "postfix": " ",
-            "display_host": false
+            "template": "{{ .UserName }}"
           }
         },
         {
@@ -92,9 +92,9 @@
           "background": "#FFDE57",
           "properties": {
             "prefix": " \uE235 ",
-            "display_version": true,
             "display_mode": "files",
-            "display_virtual_env": false
+            "fetch_virtual_env": false,
+            "template": "{{ .Full }}"
           }
         },
         {

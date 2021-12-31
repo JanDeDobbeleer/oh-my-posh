@@ -144,9 +144,9 @@
           "foreground": "#9B6BDF",
           "background": "#424242",
           "properties": {
-            "display_host": false,
             "postfix": " \u276F",
-            "prefix": ""
+            "prefix": "",
+            "template": "{{ .UserName }}"
           }
         }
       ]

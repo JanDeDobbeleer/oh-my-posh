@@ -1,10 +1,10 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/distatus/battery"
@@ -56,6 +55,39 @@ type cache interface {
 	set(key, value string, ttl int)
 }
 
+type HTTPRequestModifier func(request *http.Request)
+
+type windowsRegistryValueType int
+
+const (
+	regQword windowsRegistryValueType = iota
+	regDword
+	regString
+)
+
+type windowsRegistryValue struct {
+	valueType windowsRegistryValueType
+	qword     uint64
+	dword     uint32
+	str       string
+}
+
+type WifiType string
+
+type wifiInfo struct {
+	SSID           string
+	Interface      string
+	RadioType      WifiType
+	PhysType       WifiType
+	Authentication WifiType
+	Cipher         WifiType
+	Channel        int
+	ReceiveRate    int
+	TransmitRate   int
+	Signal         int
+	Error          string
+}
+
 type environmentInfo interface {
 	getenv(key string) string
 	getcwd() string
@@ -80,16 +112,21 @@ type environmentInfo interface {
 	getBatteryInfo() ([]*battery.Battery, error)
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
-	getWindowsRegistryKeyValue(regPath, regKey string) (string, error)
-	doGet(url string, timeout int) ([]byte, error)
+	getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error)
+	doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
+	isWsl2() bool
 	stackCount() int
 	getTerminalWidth() (int, error)
 	getCachePath() string
 	cache() cache
 	close()
 	logs() string
+	inWSLSharedDrive() bool
+	convertToLinuxPath(path string) string
+	convertToWindowsPath(path string) string
+	getWifiNetwork() (*wifiInfo, error)
 }
 
 type commandCache struct {
@@ -127,6 +164,7 @@ type environment struct {
 
 func (env *environment) init(args *args) {
 	env.args = args
+	env.resolveConfigPath()
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
@@ -136,6 +174,23 @@ func (env *environment) init(args *args) {
 	}
 	env.fileCache = &fileCache{}
 	env.fileCache.init(env.getCachePath())
+}
+
+func (env *environment) resolveConfigPath() {
+	if env.args == nil || env.args.Config == nil || len(*env.args.Config) == 0 {
+		return
+	}
+	configFile := *env.args.Config
+	if strings.HasPrefix(configFile, "~") {
+		configFile = strings.TrimPrefix(configFile, "~")
+		configFile = filepath.Join(env.homeDir(), configFile)
+	}
+	if !filepath.IsAbs(configFile) {
+		if absConfigFile, err := filepath.Abs(configFile); err == nil {
+			configFile = absConfigFile
+		}
+	}
+	*env.args.Config = filepath.Clean(configFile)
 }
 
 func (env *environment) trace(start time.Time, function string, args ...string) {
@@ -274,70 +329,19 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	if cmd, ok := env.cmdCache.get(command); ok {
 		command = cmd
 	}
-	copyAndCapture := func(r io.Reader) ([]byte, error) {
-		var out []byte
-		buf := make([]byte, 1024)
-		for {
-			n, err := r.Read(buf)
-			if n > 0 {
-				d := buf[:n]
-				out = append(out, d...)
-			}
-			if err == nil {
-				continue
-			}
-			// Read returns io.EOF at the end of file, which is not an error for us
-			if err == io.EOF {
-				err = nil
-			}
-			return out, err
-		}
-	}
-	normalizeOutput := func(out []byte) string {
-		return strings.TrimSuffix(string(out), "\n")
-	}
 	cmd := exec.Command(command, args...)
-	var stdout, stderr []byte
-	var stdoutErr, stderrErr error
-	stdoutIn, _ := cmd.StdoutPipe()
-	stderrIn, _ := cmd.StderrPipe()
-	err := cmd.Start()
-	if err != nil {
-		errorStr := fmt.Sprintf("cmd.Start() failed with '%s'", err)
+	var out bytes.Buffer
+	var err bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &err
+	cmdErr := cmd.Run()
+	if cmdErr != nil {
+		output := err.String()
+		errorStr := fmt.Sprintf("cmd.Start() failed with '%s'", output)
 		env.log(Error, "runCommand", errorStr)
-		return "", errors.New(errorStr)
+		return output, cmdErr
 	}
-	// cmd.Wait() should be called only after we finish reading
-	// from stdoutIn and stderrIn.
-	// wg ensures that we finish
-	var wg sync.WaitGroup
-	wg.Add(1)
-	go func() {
-		stdout, stdoutErr = copyAndCapture(stdoutIn)
-		wg.Done()
-	}()
-	stderr, stderrErr = copyAndCapture(stderrIn)
-	wg.Wait()
-	err = cmd.Wait()
-	if err != nil {
-		env.log(Error, "runCommand", err.Error())
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			return "", &commandError{
-				err:      exitErr.Error(),
-				exitCode: exitErr.ExitCode(),
-			}
-		}
-	}
-	if stdoutErr != nil || stderrErr != nil {
-		errString := "failed to capture stdout or stderr"
-		env.log(Error, "runCommand", errString)
-		return "", errors.New(errString)
-	}
-	stderrStr := normalizeOutput(stderr)
-	if len(stderrStr) > 0 {
-		return stderrStr, nil
-	}
-	output := normalizeOutput(stdout)
+	output := strings.TrimSuffix(out.String(), "\n")
 	env.log(Debug, "runCommand", output)
 	return output, nil
 }
@@ -399,15 +403,42 @@ func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
 			validBatteries = append(validBatteries, batt)
 		}
 	}
+	// clean minor errors
 	unableToRetrieveBatteryInfo := "A device which does not exist was specified."
+	unknownChargeRate := "Unknown value received"
+	var fatalErr battery.Errors
+	ignoreErr := func(err error) bool {
+		if e, ok := err.(battery.ErrPartial); ok {
+			// ignore unknown charge rate value error
+			if e.Current == nil &&
+				e.Design == nil &&
+				e.DesignVoltage == nil &&
+				e.Full == nil &&
+				e.State == nil &&
+				e.Voltage == nil &&
+				e.ChargeRate != nil &&
+				e.ChargeRate.Error() == unknownChargeRate {
+				return true
+			}
+		}
+		return false
+	}
+	if batErr, ok := err.(battery.Errors); ok {
+		for _, err := range batErr {
+			if !ignoreErr(err) {
+				fatalErr = append(fatalErr, err)
+			}
+		}
+	}
+
 	// when battery info fails to get retrieved but there is at least one valid battery, return it without error
-	if len(validBatteries) > 0 && err != nil && strings.Contains(err.Error(), unableToRetrieveBatteryInfo) {
+	if len(validBatteries) > 0 && fatalErr != nil && strings.Contains(fatalErr.Error(), unableToRetrieveBatteryInfo) {
 		return validBatteries, nil
 	}
 	// another error occurred (possibly unmapped use-case), return it
-	if err != nil {
-		env.log(Error, "getBatteryInfo", err.Error())
-		return nil, err
+	if fatalErr != nil {
+		env.log(Error, "getBatteryInfo", fatalErr.Error())
+		return nil, fatalErr
 	}
 	// everything is fine
 	return validBatteries, nil
@@ -438,13 +469,16 @@ func (env *environment) getShellName() string {
 	return *env.args.Shell
 }
 
-func (env *environment) doGet(url string, timeout int) ([]byte, error) {
+func (env *environment) doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
 	defer env.trace(time.Now(), "doGet", url)
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
+	}
+	for _, modifier := range requestModifiers {
+		modifier(request)
 	}
 	response, err := client.Do(request)
 	if err != nil {

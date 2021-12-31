@@ -79,7 +79,7 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 
 func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {
 	props := map[Property]interface{}{
-		DisplayVersion: false,
+		FetchVersion: false,
 	}
 	args := &languageArgs{
 		commands: []*cmd{
@@ -229,7 +229,7 @@ func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
 
 func TestLanguageEnabledNoVersion(t *testing.T) {
 	props := map[Property]interface{}{
-		DisplayVersion: false,
+		FetchVersion: false,
 	}
 	args := &languageArgs{
 		commands: []*cmd{
@@ -252,7 +252,7 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 
 func TestLanguageEnabledMissingCommand(t *testing.T) {
 	props := map[Property]interface{}{
-		DisplayVersion: false,
+		FetchVersion: false,
 	}
 	args := &languageArgs{
 		commands:          []*cmd{},
@@ -269,7 +269,7 @@ func TestLanguageEnabledMissingCommand(t *testing.T) {
 
 func TestLanguageEnabledNoVersionData(t *testing.T) {
 	props := map[Property]interface{}{
-		DisplayVersion: true,
+		FetchVersion: true,
 	}
 	args := &languageArgs{
 		commands: []*cmd{
@@ -495,60 +495,4 @@ func TestLanguageHyperlinkEnabledMoreParamInTemplate(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
 	assert.Equal(t, "1.3.307", lang.string())
-}
-
-func TestLanguageVersionMismatch(t *testing.T) {
-	cases := []struct {
-		Case            string
-		Enabled         bool
-		Mismatch        bool
-		ExpectedColor   string
-		ColorBackground bool
-	}{
-		{Case: "Disabled", Enabled: false},
-		{Case: "Mismatch - Foreground color", Enabled: true, Mismatch: true, ExpectedColor: "#566777"},
-		{Case: "Mismatch - Background color", Enabled: true, Mismatch: true, ExpectedColor: "#566777", ColorBackground: true},
-		{Case: "No mismatch", Enabled: true, Mismatch: false},
-	}
-	for _, tc := range cases {
-		props := map[Property]interface{}{
-			EnableVersionMismatch: tc.Enabled,
-			VersionMismatchColor:  tc.ExpectedColor,
-			ColorBackground:       tc.ColorBackground,
-		}
-		var matchesVersionFile func() bool
-		switch tc.Mismatch {
-		case true:
-			matchesVersionFile = func() bool {
-				return false
-			}
-		default:
-			matchesVersionFile = func() bool {
-				return true
-			}
-		}
-		args := &languageArgs{
-			commands: []*cmd{
-				{
-					executable: "unicorn",
-					args:       []string{"--version"},
-					regex:      "(?P<version>.*)",
-				},
-			},
-			extensions:         []string{uni, corn},
-			enabledExtensions:  []string{uni, corn},
-			enabledCommands:    []string{"unicorn"},
-			version:            universion,
-			properties:         props,
-			matchesVersionFile: matchesVersionFile,
-		}
-		lang := bootStrapLanguageTest(args)
-		assert.True(t, lang.enabled(), tc.Case)
-		assert.Equal(t, universion, lang.string(), tc.Case)
-		if tc.ColorBackground {
-			assert.Equal(t, tc.ExpectedColor, lang.props[BackgroundOverride], tc.Case)
-			return
-		}
-		assert.Equal(t, tc.ExpectedColor, lang.props.getColor(ForegroundOverride, ""), tc.Case)
-	}
 }

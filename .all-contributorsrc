@@ -826,6 +826,61 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Khaos66",
+      "name": "Khaos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4013009?v=4",
+      "profile": "https://github.com/Khaos66",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "mattwojo",
+      "name": "Matt Wojciakowski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7566797?v=4",
+      "profile": "http://mattwojo.github.io/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "TheTaylorLee",
+      "name": "TheTaylorLee",
+      "avatar_url": "https://avatars.githubusercontent.com/u/53202926?v=4",
+      "profile": "https://www.powershellgallery.com/profiles/TaylorLee",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "PapiPeppers",
+      "name": "Papi Peppers",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57047860?v=4",
+      "profile": "https://github.com/PapiPeppers",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "erresen",
+      "name": "erresen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5566441?v=4",
+      "profile": "https://erresen.github.io",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "icy-comet",
+      "name": "Aniket Teredesai",
+      "avatar_url": "https://avatars.githubusercontent.com/u/50461557?v=4",
+      "profile": "https://aniketteredesai.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

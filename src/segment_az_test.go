@@ -60,7 +60,7 @@ func TestAzSegment(t *testing.T) {
 		env.On("getFileContent", filepath.Join(home, ".azure/azureProfile.json")).Return(azureProfile)
 		env.On("getFileContent", filepath.Join(home, ".azure/AzureRmContext.json")).Return(azureRmContext)
 
-		var props properties = map[Property]interface{}{
+		props := properties{
 			SegmentTemplate: tc.Template,
 		}
 		az := &az{

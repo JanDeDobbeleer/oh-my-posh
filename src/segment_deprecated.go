@@ -42,6 +42,10 @@ func (p properties) hasOneOf(properties ...Property) bool {
 	return false
 }
 
+func (p properties) set(property Property, value interface{}) {
+	p[property] = value
+}
+
 // GIT Segement
 
 const (
@@ -117,9 +121,9 @@ func (g *git) deprecatedString(statusColorsEnabled bool) string {
 
 func (g *git) SetStatusColor() {
 	if g.props.getBool(ColorBackground, true) {
-		g.props[BackgroundOverride] = g.getStatusColor(g.props.getColor(BackgroundOverride, ""))
+		g.props.set(BackgroundOverride, g.getStatusColor(g.props.getColor(BackgroundOverride, "")))
 	} else {
-		g.props[ForegroundOverride] = g.getStatusColor(g.props.getColor(ForegroundOverride, ""))
+		g.props.set(ForegroundOverride, g.getStatusColor(g.props.getColor(ForegroundOverride, "")))
 	}
 }
 
@@ -178,10 +182,10 @@ const (
 func (e *exit) deprecatedString() string {
 	colorBackground := e.props.getBool(ColorBackground, false)
 	if e.Code != 0 && !colorBackground {
-		e.props[ForegroundOverride] = e.props.getColor(ErrorColor, e.props.getColor(ForegroundOverride, ""))
+		e.props.set(ForegroundOverride, e.props.getColor(ErrorColor, e.props.getColor(ForegroundOverride, "")))
 	}
 	if e.Code != 0 && colorBackground {
-		e.props[BackgroundOverride] = e.props.getColor(ErrorColor, e.props.getColor(BackgroundOverride, ""))
+		e.props.set(BackgroundOverride, e.props.getColor(ErrorColor, e.props.getColor(BackgroundOverride, "")))
 	}
 	if e.Code == 0 {
 		return e.props.getString(SuccessIcon, "")
@@ -228,9 +232,9 @@ func (b *batt) colorSegment() {
 	}
 	colorBackground := b.props.getBool(ColorBackground, false)
 	if colorBackground {
-		b.props[BackgroundOverride] = b.props.getColor(colorProperty, b.props.getColor(BackgroundOverride, ""))
+		b.props.set(BackgroundOverride, b.props.getColor(colorProperty, b.props.getColor(BackgroundOverride, "")))
 	} else {
-		b.props[ForegroundOverride] = b.props.getColor(colorProperty, b.props.getColor(ForegroundOverride, ""))
+		b.props.set(ForegroundOverride, b.props.getColor(colorProperty, b.props.getColor(ForegroundOverride, "")))
 	}
 }
 
@@ -383,10 +387,10 @@ func (l *language) string() string {
 
 func (l *language) colorMismatch() {
 	if l.props.getBool(ColorBackground, false) {
-		l.props[BackgroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(BackgroundOverride, ""))
+		l.props.set(BackgroundOverride, l.props.getColor(VersionMismatchColor, l.props.getColor(BackgroundOverride, "")))
 		return
 	}
-	l.props[ForegroundOverride] = l.props.getColor(VersionMismatchColor, l.props.getColor(ForegroundOverride, ""))
+	l.props.set(ForegroundOverride, l.props.getColor(VersionMismatchColor, l.props.getColor(ForegroundOverride, "")))
 }
 
 // Python
@@ -417,7 +421,7 @@ const (
 // Environment Variable
 
 type envvar struct {
-	props properties
+	props Properties
 	env   environmentInfo
 	Value string
 }
@@ -450,7 +454,7 @@ func (e *envvar) string() string {
 	return text
 }
 
-func (e *envvar) init(props properties, env environmentInfo) {
+func (e *envvar) init(props Properties, env environmentInfo) {
 	e.props = props
 	e.env = env
 }

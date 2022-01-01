@@ -104,7 +104,7 @@ func TestTruncateBranch(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var props properties = map[Property]interface{}{
+		props := properties{
 			BranchMaxLength: tc.MaxLength,
 			FullBranchPath:  tc.FullBranch,
 		}
@@ -140,7 +140,7 @@ func TestTruncateBranchWithSymbol(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var props properties = map[Property]interface{}{
+		props := properties{
 			BranchMaxLength: tc.MaxLength,
 			TruncateSymbol:  tc.TruncateSymbol,
 			FullBranchPath:  tc.FullBranch,
@@ -167,7 +167,7 @@ func TestScmShouldIgnoreRootRepository(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var props properties = map[Property]interface{}{
+		props := properties{
 			ExcludeFolders: []string{
 				"/home/bill",
 				"/home/gates.*",

@@ -3,7 +3,7 @@ package main
 import "strings"
 
 type command struct {
-	props properties
+	props Properties
 	env   environmentInfo
 	value string
 }
@@ -48,7 +48,7 @@ func (c *command) string() string {
 	return c.value
 }
 
-func (c *command) init(props properties, env environmentInfo) {
+func (c *command) init(props Properties, env environmentInfo) {
 	c.props = props
 	c.env = env
 }

@@ -30,7 +30,7 @@ func TestAngularCliVersionDisplayed(t *testing.T) {
 		env.On("hasFilesInDir", "/usr/home/dev/my-app/node_modules/@angular/core", "package.json").Return(true)
 		env.On("getFileContent", "/usr/home/dev/my-app/node_modules/@angular/core/package.json").Return(ta.Version)
 
-		var props properties = map[Property]interface{}{}
+		props := properties{}
 		angular := &angular{}
 		angular.init(props, env)
 		assert.True(t, angular.enabled(), fmt.Sprintf("Failed in case: %s", ta.Case))

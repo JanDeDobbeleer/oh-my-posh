@@ -1,7 +1,7 @@
 package main
 
 type text struct {
-	props   properties
+	props   Properties
 	env     environmentInfo
 	content string
 }
@@ -26,7 +26,7 @@ func (t *text) string() string {
 	return t.content
 }
 
-func (t *text) init(props properties, env environmentInfo) {
+func (t *text) init(props Properties, env environmentInfo) {
 	t.props = props
 	t.env = env
 }

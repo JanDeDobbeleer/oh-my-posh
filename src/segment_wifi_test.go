@@ -48,7 +48,7 @@ func TestWiFiSegment(t *testing.T) {
 
 		w := &wifi{
 			env: env,
-			props: map[Property]interface{}{
+			props: properties{
 				DisplayError:    tc.DisplayError,
 				SegmentTemplate: "{{ if .Error }}{{ .Error }}{{ else }}{{ .SSID }}{{ end }}",
 			},

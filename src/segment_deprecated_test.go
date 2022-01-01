@@ -17,7 +17,11 @@ func TestGetStatusDetailStringDefault(t *testing.T) {
 			Added: 1,
 		},
 	}
-	g := &git{}
+	g := &git{
+		scm: scm{
+			props: properties{},
+		},
+	}
 	assert.Equal(t, expected, g.getStatusDetailString(status, WorkingColor, LocalWorkingIcon, "icon"))
 }
 
@@ -28,7 +32,7 @@ func TestGetStatusDetailStringDefaultColorOverride(t *testing.T) {
 			Added: 1,
 		},
 	}
-	var props properties = map[Property]interface{}{
+	props := properties{
 		WorkingColor: "#123456",
 	}
 	g := &git{
@@ -46,7 +50,7 @@ func TestGetStatusDetailStringDefaultColorOverrideAndIconColorOverride(t *testin
 			Added: 1,
 		},
 	}
-	var props properties = map[Property]interface{}{
+	props := properties{
 		WorkingColor:     "#123456",
 		LocalWorkingIcon: "<#789123>work</>",
 	}
@@ -65,7 +69,7 @@ func TestGetStatusDetailStringDefaultColorOverrideNoIconColorOverride(t *testing
 			Added: 1,
 		},
 	}
-	var props properties = map[Property]interface{}{
+	props := properties{
 		WorkingColor:     "#123456",
 		LocalWorkingIcon: "work",
 	}
@@ -84,7 +88,7 @@ func TestGetStatusDetailStringNoStatus(t *testing.T) {
 			Added: 1,
 		},
 	}
-	var props properties = map[Property]interface{}{
+	props := properties{
 		DisplayStatusDetail: false,
 	}
 	g := &git{
@@ -102,7 +106,7 @@ func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
 			Added: 1,
 		},
 	}
-	var props properties = map[Property]interface{}{
+	props := properties{
 		DisplayStatusDetail: false,
 		WorkingColor:        "#123456",
 	}
@@ -116,7 +120,7 @@ func TestGetStatusDetailStringNoStatusColorOverride(t *testing.T) {
 
 func TestGetStatusColorLocalChangesStaging(t *testing.T) {
 	expected := changesColor
-	var props properties = map[Property]interface{}{
+	props := properties{
 		LocalChangesColor: expected,
 	}
 	g := &git{
@@ -135,7 +139,7 @@ func TestGetStatusColorLocalChangesStaging(t *testing.T) {
 
 func TestGetStatusColorLocalChangesWorking(t *testing.T) {
 	expected := changesColor
-	var props properties = map[Property]interface{}{
+	props := properties{
 		LocalChangesColor: expected,
 	}
 	g := &git{
@@ -154,7 +158,7 @@ func TestGetStatusColorLocalChangesWorking(t *testing.T) {
 
 func TestGetStatusColorAheadAndBehind(t *testing.T) {
 	expected := changesColor
-	var props properties = map[Property]interface{}{
+	props := properties{
 		AheadAndBehindColor: expected,
 	}
 	g := &git{
@@ -171,7 +175,7 @@ func TestGetStatusColorAheadAndBehind(t *testing.T) {
 
 func TestGetStatusColorAhead(t *testing.T) {
 	expected := changesColor
-	var props properties = map[Property]interface{}{
+	props := properties{
 		AheadColor: expected,
 	}
 	g := &git{
@@ -188,7 +192,7 @@ func TestGetStatusColorAhead(t *testing.T) {
 
 func TestGetStatusColorBehind(t *testing.T) {
 	expected := changesColor
-	var props properties = map[Property]interface{}{
+	props := properties{
 		BehindColor: expected,
 	}
 	g := &git{
@@ -205,7 +209,7 @@ func TestGetStatusColorBehind(t *testing.T) {
 
 func TestGetStatusColorDefault(t *testing.T) {
 	expected := changesColor
-	var props properties = map[Property]interface{}{
+	props := properties{
 		BehindColor: changesColor,
 	}
 	g := &git{
@@ -222,7 +226,7 @@ func TestGetStatusColorDefault(t *testing.T) {
 
 func TestSetStatusColorForeground(t *testing.T) {
 	expected := changesColor
-	var props properties = map[Property]interface{}{
+	props := properties{
 		LocalChangesColor: changesColor,
 		ColorBackground:   false,
 	}
@@ -238,12 +242,12 @@ func TestSetStatusColorForeground(t *testing.T) {
 		Working: &GitStatus{},
 	}
 	g.SetStatusColor()
-	assert.Equal(t, expected, g.props[ForegroundOverride])
+	assert.Equal(t, expected, g.props.getColor(ForegroundOverride, ""))
 }
 
 func TestSetStatusColorBackground(t *testing.T) {
 	expected := changesColor
-	var props properties = map[Property]interface{}{
+	props := properties{
 		LocalChangesColor: changesColor,
 		ColorBackground:   true,
 	}
@@ -259,7 +263,7 @@ func TestSetStatusColorBackground(t *testing.T) {
 		},
 	}
 	g.SetStatusColor()
-	assert.Equal(t, expected, g.props[BackgroundOverride])
+	assert.Equal(t, expected, g.props.getColor(BackgroundOverride, ""))
 }
 
 func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
@@ -279,21 +283,22 @@ func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
 	env.On("hasFilesInDir", "", "sequencer/todo").Return(false)
 	env.mockGitCommand("", "describe", "--tags", "--exact-match")
 	env.mockGitCommand(status, "status", "-unormal", "--branch", "--porcelain=2")
+	props := properties{
+		DisplayStatus:       false,
+		StatusColorsEnabled: true,
+		LocalChangesColor:   expected,
+	}
 	g := &git{
 		scm: scm{
-			env: env,
-			props: map[Property]interface{}{
-				DisplayStatus:       false,
-				StatusColorsEnabled: true,
-				LocalChangesColor:   expected,
-			},
+			env:   env,
+			props: props,
 		},
 		gitWorkingFolder: "",
 	}
 	g.Working = &GitStatus{}
 	g.Staging = &GitStatus{}
 	g.string()
-	assert.Equal(t, expected, g.props[BackgroundOverride])
+	assert.Equal(t, expected, g.props.getColor(BackgroundOverride, ""))
 }
 
 // EXIT Segement
@@ -320,7 +325,7 @@ func TestExitWriterDeprecatedString(t *testing.T) {
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
 		env.On("lastErrorCode", nil).Return(tc.ExitCode)
-		var props properties = map[Property]interface{}{
+		props := properties{
 			SuccessIcon:     tc.SuccessIcon,
 			ErrorIcon:       tc.ErrorIcon,
 			DisplayExitCode: tc.DisplayExitCode,
@@ -424,7 +429,7 @@ func TestBatterySegmentSingle(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
-		var props properties = map[Property]interface{}{
+		props := properties{
 			ChargingIcon:     "charging ",
 			ChargedIcon:      "charged ",
 			DischargingIcon:  "going down ",
@@ -455,9 +460,9 @@ func TestBatterySegmentSingle(t *testing.T) {
 		if len(tc.ExpectedColor) == 0 {
 			continue
 		}
-		actualColor := b.props[ForegroundOverride]
+		actualColor := b.props.getColor(ForegroundOverride, "")
 		if tc.ColorBackground {
-			actualColor = b.props[BackgroundOverride]
+			actualColor = b.props.getColor(BackgroundOverride, "")
 		}
 		assert.Equal(t, tc.ExpectedColor, actualColor, tc.Case)
 	}
@@ -637,7 +642,7 @@ func TestPropertySessionSegment(t *testing.T) {
 		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
 		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserNameEnv)
 		env.On("isRunningAsRoot", nil).Return(tc.Root)
-		var props properties = map[Property]interface{}{
+		props := properties{
 			UserInfoSeparator: " at ",
 			SSHIcon:           "ssh ",
 			DefaultUserName:   tc.DefaultUserName,
@@ -674,7 +679,7 @@ func TestLanguageVersionMismatch(t *testing.T) {
 		{Case: "No mismatch", Enabled: true, Mismatch: false},
 	}
 	for _, tc := range cases {
-		props := map[Property]interface{}{
+		props := properties{
 			EnableVersionMismatch: tc.Enabled,
 			VersionMismatchColor:  tc.ExpectedColor,
 			ColorBackground:       tc.ColorBackground,
@@ -709,7 +714,7 @@ func TestLanguageVersionMismatch(t *testing.T) {
 		assert.True(t, lang.enabled(), tc.Case)
 		assert.Equal(t, universion, lang.string(), tc.Case)
 		if tc.ColorBackground {
-			assert.Equal(t, tc.ExpectedColor, lang.props[BackgroundOverride], tc.Case)
+			assert.Equal(t, tc.ExpectedColor, lang.props.getColor(BackgroundOverride, ""), tc.Case)
 			return
 		}
 		assert.Equal(t, tc.ExpectedColor, lang.props.getColor(ForegroundOverride, ""), tc.Case)
@@ -751,7 +756,7 @@ func TestPythonVirtualEnv(t *testing.T) {
 		env.On("getPathSeperator", nil).Return("")
 		env.On("getcwd", nil).Return("/usr/home/project")
 		env.On("homeDir", nil).Return("/usr/home")
-		var props properties = map[Property]interface{}{
+		props := properties{
 			FetchVersion:      tc.FetchVersion,
 			DisplayVirtualEnv: true,
 			DisplayDefault:    tc.DisplayDefault,
@@ -772,7 +777,7 @@ func TestEnvvarAvailable(t *testing.T) {
 	env.On("getenv", name).Return(expected)
 	e := &envvar{
 		env: env,
-		props: map[Property]interface{}{
+		props: properties{
 			VarName: name,
 		},
 	}
@@ -787,7 +792,7 @@ func TestEnvvarNotAvailable(t *testing.T) {
 	env.On("getenv", name).Return(expected)
 	e := &envvar{
 		env: env,
-		props: map[Property]interface{}{
+		props: properties{
 			VarName: name,
 		},
 	}

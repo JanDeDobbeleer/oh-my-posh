@@ -75,7 +75,7 @@ func TestWinReg(t *testing.T) {
 		env.On("getWindowsRegistryKeyValue", tc.Path).Return(tc.getWRKVOutput, tc.Err)
 		r := &winreg{
 			env: env,
-			props: map[Property]interface{}{
+			props: properties{
 				RegistryPath: tc.Path,
 				Fallback:     tc.Fallback,
 			},

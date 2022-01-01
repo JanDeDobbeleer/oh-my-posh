@@ -5,7 +5,7 @@ import (
 )
 
 type osInfo struct {
-	props properties
+	props Properties
 	env   environmentInfo
 	OS    string
 }
@@ -145,7 +145,7 @@ func (n *osInfo) getDistroName(distro, defaultName string) string {
 	return n.props.getString(Linux, "\uF17C")
 }
 
-func (n *osInfo) init(props properties, env environmentInfo) {
+func (n *osInfo) init(props Properties, env environmentInfo) {
 	n.props = props
 	n.env = env
 }

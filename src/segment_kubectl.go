@@ -10,7 +10,7 @@ import (
 const ParseKubeConfig Property = "parse_kubeconfig"
 
 type kubectl struct {
-	props   properties
+	props   Properties
 	env     environmentInfo
 	Context string
 	KubeContext
@@ -44,7 +44,7 @@ func (k *kubectl) string() string {
 	return text
 }
 
-func (k *kubectl) init(props properties, env environmentInfo) {
+func (k *kubectl) init(props Properties, env environmentInfo) {
 	k.props = props
 	k.env = env
 }

@@ -7,7 +7,7 @@ import (
 )
 
 type batt struct {
-	props properties
+	props Properties
 	env   environmentInfo
 
 	battery.Battery
@@ -118,7 +118,7 @@ func (b *batt) string() string {
 	return text
 }
 
-func (b *batt) init(props properties, env environmentInfo) {
+func (b *batt) init(props Properties, env environmentInfo) {
 	b.props = props
 	b.env = env
 }

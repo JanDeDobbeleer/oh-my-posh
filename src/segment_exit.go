@@ -3,7 +3,7 @@ package main
 import "strconv"
 
 type exit struct {
-	props properties
+	props Properties
 	env   environmentInfo
 
 	Code int
@@ -21,7 +21,7 @@ func (e *exit) string() string {
 	return e.getFormattedText()
 }
 
-func (e *exit) init(props properties, env environmentInfo) {
+func (e *exit) init(props Properties, env environmentInfo) {
 	e.props = props
 	e.env = env
 }

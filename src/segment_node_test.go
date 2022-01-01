@@ -67,7 +67,7 @@ func TestNodeInContext(t *testing.T) {
 		node := &node{
 			language: language{
 				env: env,
-				props: map[Property]interface{}{
+				props: properties{
 					YarnIcon:              "yarn",
 					NPMIcon:               "npm",
 					DisplayPackageManager: tc.PkgMgrEnabled,

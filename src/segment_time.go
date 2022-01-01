@@ -3,7 +3,7 @@ package main
 import "time"
 
 type tempus struct {
-	props        properties
+	props        Properties
 	env          environmentInfo
 	templateText string
 	CurrentDate  time.Time
@@ -40,7 +40,7 @@ func (t *tempus) string() string {
 	return t.getFormattedText()
 }
 
-func (t *tempus) init(props properties, env environmentInfo) {
+func (t *tempus) init(props Properties, env environmentInfo) {
 	t.props = props
 	t.env = env
 }

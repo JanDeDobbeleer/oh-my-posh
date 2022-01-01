@@ -26,7 +26,7 @@ func (n *node) string() string {
 	return n.language.renderTemplate(segmentTemplate, n)
 }
 
-func (n *node) init(props properties, env environmentInfo) {
+func (n *node) init(props Properties, env environmentInfo) {
 	n.language = language{
 		env:        env,
 		props:      props,

@@ -41,7 +41,7 @@ func TestTimeSegmentTemplate(t *testing.T) {
 		env := new(MockedEnvironment)
 		tempus := &tempus{
 			env: env,
-			props: map[Property]interface{}{
+			props: properties{
 				SegmentTemplate: tc.Template,
 			},
 			CurrentDate: currentDate,

@@ -15,8 +15,8 @@ You can use the following template as a guide.
 package main
 
 type new struct {
-    props          properties
-    env            environmentInfo
+    props          Properties
+    env            Environment
 
     Text string
 }
@@ -35,7 +35,7 @@ func (n *new) string() string {
     if useDefaultText {
       n.Text = "Hello"
     }
-    segmentTemplate := a.props.getString(SegmentTemplate, "{{.Text}} world")
+    segmentTemplate := n.props.getString(SegmentTemplate, "{{.Text}} world")
     template := &textTemplate{
       Template: segmentTemplate,
       Context:  n,
@@ -48,7 +48,7 @@ func (n *new) string() string {
     return text
 }
 
-func (n *new) init(props Properties, env environmentInfo) {
+func (n *new) init(props Properties, env Environment) {
     n.props = props
     n.env = env
 }

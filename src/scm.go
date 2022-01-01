@@ -35,7 +35,7 @@ func (s *ScmStatus) String() string {
 }
 
 type scm struct {
-	props properties
+	props Properties
 	env   environmentInfo
 }
 
@@ -48,7 +48,7 @@ const (
 	FullBranchPath Property = "full_branch_path"
 )
 
-func (s *scm) init(props properties, env environmentInfo) {
+func (s *scm) init(props Properties, env environmentInfo) {
 	s.props = props
 	s.env = env
 }
@@ -68,11 +68,10 @@ func (s *scm) truncateBranch(branch string) string {
 }
 
 func (s *scm) shouldIgnoreRootRepository(rootDir string) bool {
-	value, ok := s.props[ExcludeFolders]
-	if !ok {
+	excludedFolders := s.props.getStringArray(ExcludeFolders, []string{})
+	if len(excludedFolders) == 0 {
 		return false
 	}
-	excludedFolders := parseStringArray(value)
 	return dirMatchesOneOf(s.env, rootDir, excludedFolders)
 }
 

@@ -48,7 +48,7 @@ func (n *new) string() string {
     return text
 }
 
-func (n *new) init(props properties, env environmentInfo) {
+func (n *new) init(props Properties, env environmentInfo) {
     n.props = props
     n.env = env
 }

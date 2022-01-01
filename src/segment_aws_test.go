@@ -54,7 +54,7 @@ func TestAWSSegment(t *testing.T) {
 		env.On("getenv", "AWS_CONFIG_FILE").Return(tc.ConfigFile)
 		env.On("getFileContent", "/usr/home/.aws/config").Return("")
 		env.On("homeDir", nil).Return("/usr/home")
-		var props properties = map[Property]interface{}{
+		props := properties{
 			DisplayDefault: tc.DisplayDefault,
 		}
 		if tc.Template != "" {

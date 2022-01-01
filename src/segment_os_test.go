@@ -66,7 +66,7 @@ func TestOSInfo(t *testing.T) {
 		env.On("getPlatform", nil).Return(tc.Platform)
 		osInfo := &osInfo{
 			env: env,
-			props: map[Property]interface{}{
+			props: properties{
 				WSL:               "WSL",
 				WSLSeparator:      " at ",
 				DisplayDistroName: tc.DisplayDistroName,

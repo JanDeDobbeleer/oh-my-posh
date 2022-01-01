@@ -52,7 +52,7 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("getPathSeperator", nil).Return("")
 		env.On("getcwd", nil).Return("/usr/home/project")
 		env.On("homeDir", nil).Return("/usr/home")
-		var props properties = map[Property]interface{}{
+		props := properties{
 			FetchVersion:    tc.FetchVersion,
 			SegmentTemplate: tc.Template,
 			DisplayMode:     DisplayModeAlways,
@@ -81,7 +81,7 @@ func TestPythonPythonInContext(t *testing.T) {
 		env.On("getenv", "CONDA_DEFAULT_ENV").Return("")
 		env.On("getenv", "PYENV_VERSION").Return("")
 		python := &python{}
-		python.init(nil, env)
+		python.init(properties{}, env)
 		python.loadContext()
 		assert.Equal(t, tc.Expected, python.inContext())
 	}

@@ -3,7 +3,7 @@ package main
 import "strings"
 
 type session struct {
-	props properties
+	props Properties
 	env   environmentInfo
 	text  string
 
@@ -45,7 +45,7 @@ func (s *session) string() string {
 	return s.getFormattedText()
 }
 
-func (s *session) init(props properties, env environmentInfo) {
+func (s *session) init(props Properties, env environmentInfo) {
 	s.props = props
 	s.env = env
 }

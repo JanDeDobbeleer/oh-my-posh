@@ -128,7 +128,7 @@ func TestKubectlSegment(t *testing.T) {
 
 		k := &kubectl{
 			env: env,
-			props: map[Property]interface{}{
+			props: properties{
 				SegmentTemplate: tc.Template,
 				DisplayError:    tc.DisplayError,
 				ParseKubeConfig: tc.ParseKubeConfig,

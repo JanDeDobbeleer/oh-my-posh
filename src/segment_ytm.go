@@ -6,7 +6,7 @@ import (
 )
 
 type ytm struct {
-	props  properties
+	props  Properties
 	env    environmentInfo
 	status playStatus
 	artist string
@@ -39,7 +39,7 @@ func (y *ytm) enabled() bool {
 	return err == nil
 }
 
-func (y *ytm) init(props properties, env environmentInfo) {
+func (y *ytm) init(props Properties, env environmentInfo) {
 	y.props = props
 	y.env = env
 }

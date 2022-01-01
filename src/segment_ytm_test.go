@@ -13,6 +13,7 @@ func TestYTMStringPlayingSong(t *testing.T) {
 		artist: "Candlemass",
 		track:  "Spellbreaker",
 		status: playing,
+		props:  properties{},
 	}
 	assert.Equal(t, expected, y.string())
 }
@@ -23,6 +24,7 @@ func TestYTMStringPausedSong(t *testing.T) {
 		artist: "Candlemass",
 		track:  "Spellbreaker",
 		status: paused,
+		props:  properties{},
 	}
 	assert.Equal(t, expected, y.string())
 }
@@ -33,6 +35,7 @@ func TestYTMStringStoppedSong(t *testing.T) {
 		artist: "Candlemass",
 		track:  "Spellbreaker",
 		status: stopped,
+		props:  properties{},
 	}
 	assert.Equal(t, expected, y.string())
 }
@@ -43,7 +46,7 @@ func bootstrapYTMDATest(json string, err error) *ytm {
 	env.On("doGet", url+"/query").Return([]byte(json), err)
 	ytm := &ytm{
 		env: env,
-		props: map[Property]interface{}{
+		props: properties{
 			APIURL: url,
 		},
 	}

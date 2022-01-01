@@ -8,7 +8,7 @@ func (j *julia) string() string {
 	return j.language.string()
 }
 
-func (j *julia) init(props properties, env environmentInfo) {
+func (j *julia) init(props Properties, env environmentInfo) {
 	j.language = language{
 		env:        env,
 		props:      props,

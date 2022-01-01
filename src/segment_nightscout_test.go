@@ -130,7 +130,7 @@ func TestNSSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
-		var props properties = map[Property]interface{}{
+		props := properties{
 			CacheTimeout: tc.CacheTimeout,
 			URL:          "FAKE",
 		}

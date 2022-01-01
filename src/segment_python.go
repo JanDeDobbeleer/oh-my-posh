@@ -19,7 +19,7 @@ func (p *python) string() string {
 	return p.language.renderTemplate(segmentTemplate, p)
 }
 
-func (p *python) init(props properties, env environmentInfo) {
+func (p *python) init(props Properties, env environmentInfo) {
 	p.language = language{
 		env:         env,
 		props:       props,

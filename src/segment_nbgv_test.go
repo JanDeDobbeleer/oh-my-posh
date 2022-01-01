@@ -62,7 +62,7 @@ func TestNbgv(t *testing.T) {
 		env.On("runCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
 		nbgv := &nbgv{
 			env: env,
-			props: map[Property]interface{}{
+			props: properties{
 				SegmentTemplate: tc.SegmentTemplate,
 			},
 		}

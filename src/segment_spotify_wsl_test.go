@@ -55,7 +55,8 @@ func TestSpotifyWsl(t *testing.T) {
 		env.On("isWsl", nil).Return(true)
 		env.On("runCommand", "tasklist.exe", []string{"/V", "/FI", "Imagename eq Spotify.exe", "/FO", "CSV", "/NH"}).Return(tc.ExecOutput, nil)
 		s := &spotify{
-			env: env,
+			env:   env,
+			props: properties{},
 		}
 		assert.Equal(t, tc.ExpectedEnabled, s.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
 		assert.Equal(t, tc.ExpectedString, s.string(), fmt.Sprintf("Failed in case: %s", tc.Case))

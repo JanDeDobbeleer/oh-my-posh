@@ -35,7 +35,7 @@ func TestTextSegment(t *testing.T) {
 		env.On("getHostName", nil).Return("MyHost", nil)
 		txt := &text{
 			env: env,
-			props: map[Property]interface{}{
+			props: properties{
 				TextProperty: tc.Text,
 			},
 		}

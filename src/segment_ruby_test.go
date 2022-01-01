@@ -98,7 +98,7 @@ func TestRuby(t *testing.T) {
 		env.On("hasFiles", "Gemfile").Return(tc.HasGemFile)
 		env.On("getcwd", nil).Return("/usr/home/project")
 		env.On("homeDir", nil).Return("/usr/home")
-		var props properties = map[Property]interface{}{
+		props := properties{
 			FetchVersion: tc.FetchVersion,
 		}
 		ruby := &ruby{}

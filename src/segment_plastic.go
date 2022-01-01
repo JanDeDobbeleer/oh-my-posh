@@ -34,7 +34,7 @@ type plastic struct {
 	plasticWorkspaceFolder string // root folder of workspace
 }
 
-func (p *plastic) init(props properties, env environmentInfo) {
+func (p *plastic) init(props Properties, env environmentInfo) {
 	p.props = props
 	p.env = env
 }

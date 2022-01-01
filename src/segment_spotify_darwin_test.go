@@ -23,7 +23,8 @@ func bootStrapSpotifyDarwinTest(args *spotifyArgs) *spotify {
 	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to artist of current track as string"}).Return(args.artist, nil)
 	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to name of current track as string"}).Return(args.track, nil)
 	s := &spotify{
-		env: env,
+		env:   env,
+		props: properties{},
 	}
 	return s
 }

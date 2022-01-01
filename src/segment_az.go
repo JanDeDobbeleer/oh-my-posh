@@ -7,7 +7,7 @@ import (
 )
 
 type az struct {
-	props properties
+	props Properties
 	env   environmentInfo
 
 	AzureSubscription
@@ -91,7 +91,7 @@ func (a *az) string() string {
 	return text
 }
 
-func (a *az) init(props properties, env environmentInfo) {
+func (a *az) init(props Properties, env environmentInfo) {
 	a.props = props
 	a.env = env
 }

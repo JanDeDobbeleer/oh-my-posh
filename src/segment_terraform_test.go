@@ -19,7 +19,8 @@ func bootStrapTerraformTest(args *terraformArgs) *terraform {
 	env.On("getcwd", nil).Return("")
 	env.On("runCommand", "terraform", []string{"workspace", "show"}).Return(args.workspaceName, nil)
 	k := &terraform{
-		env: env,
+		env:   env,
+		props: properties{},
 	}
 	return k
 }

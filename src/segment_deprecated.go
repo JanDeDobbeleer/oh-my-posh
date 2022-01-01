@@ -422,7 +422,7 @@ const (
 
 type envvar struct {
 	props Properties
-	env   environmentInfo
+	env   Environment
 	Value string
 }
 
@@ -454,7 +454,7 @@ func (e *envvar) string() string {
 	return text
 }
 
-func (e *envvar) init(props Properties, env environmentInfo) {
+func (e *envvar) init(props Properties, env Environment) {
 	e.props = props
 	e.env = env
 }

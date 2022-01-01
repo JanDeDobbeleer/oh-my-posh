@@ -58,7 +58,7 @@ func printConfigError(err error, eval bool) {
 }
 
 // GetConfig returns the default configuration including possible user overrides
-func GetConfig(env environmentInfo) *Config {
+func GetConfig(env Environment) *Config {
 	cfg, err := loadConfig(env)
 	if err != nil {
 		return getDefaultConfig(err.Error())
@@ -66,7 +66,7 @@ func GetConfig(env environmentInfo) *Config {
 	return cfg
 }
 
-func loadConfig(env environmentInfo) (*Config, error) {
+func loadConfig(env Environment) (*Config, error) {
 	var cfg Config
 	configFile := *env.getArgs().Config
 	eval := *env.getArgs().Eval

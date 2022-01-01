@@ -9,7 +9,7 @@ import (
 
 type path struct {
 	props Properties
-	env   environmentInfo
+	env   Environment
 
 	PWD        string
 	Path       string
@@ -112,7 +112,7 @@ func (pt *path) formatWindowsDrive(pwd string) string {
 	return pwd + "\\"
 }
 
-func (pt *path) init(props Properties, env environmentInfo) {
+func (pt *path) init(props Properties, env Environment) {
 	pt.props = props
 	pt.env = env
 }
@@ -358,7 +358,7 @@ func (pt *path) pathDepth(pwd string) int {
 // Base returns the last element of path.
 // Trailing path separators are removed before extracting the last element.
 // If the path consists entirely of separators, Base returns a single separator.
-func base(path string, env environmentInfo) string {
+func base(path string, env Environment) string {
 	if path == "/" {
 		return path
 	}

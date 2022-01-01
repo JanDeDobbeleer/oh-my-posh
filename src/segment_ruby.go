@@ -13,7 +13,7 @@ func (r *ruby) string() string {
 	return version
 }
 
-func (r *ruby) init(props Properties, env environmentInfo) {
+func (r *ruby) init(props Properties, env Environment) {
 	r.language = language{
 		env:        env,
 		props:      props,

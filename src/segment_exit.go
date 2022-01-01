@@ -4,7 +4,7 @@ import "strconv"
 
 type exit struct {
 	props Properties
-	env   environmentInfo
+	env   Environment
 
 	Code int
 	Text string
@@ -21,7 +21,7 @@ func (e *exit) string() string {
 	return e.getFormattedText()
 }
 
-func (e *exit) init(props Properties, env environmentInfo) {
+func (e *exit) init(props Properties, env Environment) {
 	e.props = props
 	e.env = env
 }

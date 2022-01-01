@@ -80,7 +80,7 @@ func matchString(pattern, text string) bool {
 	return re.MatchString(text)
 }
 
-func dirMatchesOneOf(env environmentInfo, dir string, regexes []string) bool {
+func dirMatchesOneOf(env Environment, dir string, regexes []string) bool {
 	normalizedCwd := strings.ReplaceAll(dir, "\\", "/")
 	normalizedHomeDir := strings.ReplaceAll(env.homeDir(), "\\", "/")
 

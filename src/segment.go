@@ -24,7 +24,7 @@ type Segment struct {
 	writer              SegmentWriter
 	stringValue         string
 	active              bool
-	env                 environmentInfo
+	env                 Environment
 }
 
 // SegmentTiming holds the timing context for a segment
@@ -56,7 +56,7 @@ type Properties interface {
 type SegmentWriter interface {
 	enabled() bool
 	string() string
-	init(props Properties, env environmentInfo)
+	init(props Properties, env Environment)
 }
 
 // SegmentStyle the syle of segment, for more information, see the constants
@@ -246,7 +246,7 @@ func (segment *Segment) background() string {
 	return segment.getColor(segment.BackgroundTemplates, color)
 }
 
-func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
+func (segment *Segment) mapSegmentWithWriter(env Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
 		OWM:           &owm{},
@@ -304,7 +304,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 	return errors.New("unable to map writer")
 }
 
-func (segment *Segment) setStringValue(env environmentInfo) {
+func (segment *Segment) setStringValue(env Environment) {
 	defer func() {
 		err := recover()
 		if err == nil {

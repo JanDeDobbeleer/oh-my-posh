@@ -8,7 +8,7 @@ func (n *php) string() string {
 	return n.language.string()
 }
 
-func (n *php) init(props Properties, env environmentInfo) {
+func (n *php) init(props Properties, env Environment) {
 	n.language = language{
 		env:        env,
 		props:      props,

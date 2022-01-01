@@ -7,7 +7,7 @@ import (
 
 type winreg struct {
 	props Properties
-	env   environmentInfo
+	env   Environment
 
 	Value string
 }
@@ -19,7 +19,7 @@ const (
 	Fallback Property = "fallback"
 )
 
-func (wr *winreg) init(props Properties, env environmentInfo) {
+func (wr *winreg) init(props Properties, env Environment) {
 	wr.props = props
 	wr.env = env
 }

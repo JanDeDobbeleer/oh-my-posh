@@ -16,7 +16,7 @@ func (g *golang) string() string {
 	return g.language.string()
 }
 
-func (g *golang) init(props Properties, env environmentInfo) {
+func (g *golang) init(props Properties, env Environment) {
 	g.language = language{
 		env:        env,
 		props:      props,

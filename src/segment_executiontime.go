@@ -10,7 +10,7 @@ import (
 
 type executiontime struct {
 	props Properties
-	env   environmentInfo
+	env   Environment
 
 	FormattedMs string
 	Ms          int64
@@ -63,7 +63,7 @@ func (t *executiontime) string() string {
 	return t.FormattedMs
 }
 
-func (t *executiontime) init(props Properties, env environmentInfo) {
+func (t *executiontime) init(props Properties, env Environment) {
 	t.props = props
 	t.env = env
 }

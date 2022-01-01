@@ -10,7 +10,7 @@ func (j *java) string() string {
 	return j.language.string()
 }
 
-func (j *java) init(props Properties, env environmentInfo) {
+func (j *java) init(props Properties, env Environment) {
 	javaRegex := `(?: JRE)(?: \(.*\))? \((?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))?(?:\.(?P<patch>[0-9]+))?).*\),`
 	javaCmd := &cmd{
 		executable: "java",

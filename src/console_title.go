@@ -6,7 +6,7 @@ import (
 )
 
 type consoleTitle struct {
-	env    environmentInfo
+	env    Environment
 	config *Config
 	ansi   *ansiUtils
 }

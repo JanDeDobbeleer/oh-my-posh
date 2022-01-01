@@ -7,7 +7,7 @@ import (
 
 type aws struct {
 	props   Properties
-	env     environmentInfo
+	env     Environment
 	Profile string
 	Region  string
 }
@@ -16,7 +16,7 @@ const (
 	defaultUser = "default"
 )
 
-func (a *aws) init(props Properties, env environmentInfo) {
+func (a *aws) init(props Properties, env Environment) {
 	a.props = props
 	a.env = env
 }

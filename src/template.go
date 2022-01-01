@@ -19,7 +19,7 @@ const (
 type textTemplate struct {
 	Template string
 	Context  interface{}
-	Env      environmentInfo
+	Env      Environment
 }
 
 func (t *textTemplate) renderPlainContextTemplate(context map[string]interface{}) string {

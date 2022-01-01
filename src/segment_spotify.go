@@ -6,7 +6,7 @@ import (
 
 type spotify struct {
 	props  Properties
-	env    environmentInfo
+	env    Environment
 	status string
 	artist string
 	track  string
@@ -39,7 +39,7 @@ func (s *spotify) string() string {
 	return fmt.Sprintf("%s%s%s%s", icon, s.artist, separator, s.track)
 }
 
-func (s *spotify) init(props Properties, env environmentInfo) {
+func (s *spotify) init(props Properties, env Environment) {
 	s.props = props
 	s.env = env
 }

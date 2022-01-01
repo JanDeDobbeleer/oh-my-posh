@@ -8,7 +8,7 @@ func (r *rust) string() string {
 	return r.language.string()
 }
 
-func (r *rust) init(props Properties, env environmentInfo) {
+func (r *rust) init(props Properties, env Environment) {
 	r.language = language{
 		env:        env,
 		props:      props,

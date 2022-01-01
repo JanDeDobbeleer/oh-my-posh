@@ -88,7 +88,7 @@ type wifiInfo struct {
 	Error          string
 }
 
-type environmentInfo interface {
+type Environment interface {
 	getenv(key string) string
 	getcwd() string
 	homeDir() string

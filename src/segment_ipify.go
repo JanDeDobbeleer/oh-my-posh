@@ -2,7 +2,7 @@ package main
 
 type ipify struct {
 	props Properties
-	env   environmentInfo
+	env   Environment
 	IP    string
 }
 
@@ -66,7 +66,7 @@ func (i *ipify) getResult() (string, error) {
 	return response, nil
 }
 
-func (i *ipify) init(props Properties, env environmentInfo) {
+func (i *ipify) init(props Properties, env Environment) {
 	i.props = props
 	i.env = env
 }

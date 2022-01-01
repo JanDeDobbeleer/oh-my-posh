@@ -323,7 +323,7 @@ func getShellInitScript(executable, configFile, script string) string {
 	return script
 }
 
-func getConsoleBackgroundColor(env environmentInfo, backgroundColorTemplate string) string {
+func getConsoleBackgroundColor(env Environment, backgroundColorTemplate string) string {
 	if len(backgroundColorTemplate) == 0 {
 		return backgroundColorTemplate
 	}

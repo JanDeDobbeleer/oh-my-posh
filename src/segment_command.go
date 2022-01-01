@@ -4,7 +4,7 @@ import "strings"
 
 type command struct {
 	props Properties
-	env   environmentInfo
+	env   Environment
 	value string
 }
 
@@ -48,7 +48,7 @@ func (c *command) string() string {
 	return c.value
 }
 
-func (c *command) init(props Properties, env environmentInfo) {
+func (c *command) init(props Properties, env Environment) {
 	c.props = props
 	c.env = env
 }

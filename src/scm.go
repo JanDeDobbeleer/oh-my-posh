@@ -36,7 +36,7 @@ func (s *ScmStatus) String() string {
 
 type scm struct {
 	props Properties
-	env   environmentInfo
+	env   Environment
 }
 
 const (
@@ -48,7 +48,7 @@ const (
 	FullBranchPath Property = "full_branch_path"
 )
 
-func (s *scm) init(props Properties, env environmentInfo) {
+func (s *scm) init(props Properties, env Environment) {
 	s.props = props
 	s.env = env
 }

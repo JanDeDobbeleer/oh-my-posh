@@ -8,7 +8,7 @@ import (
 
 type engine struct {
 	config       *Config
-	env          environmentInfo
+	env          Environment
 	writer       promptWriter
 	ansi         *ansiUtils
 	consoleTitle *consoleTitle

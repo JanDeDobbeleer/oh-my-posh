@@ -2,7 +2,7 @@ package main
 
 type terraform struct {
 	props         Properties
-	env           environmentInfo
+	env           Environment
 	WorkspaceName string
 }
 
@@ -20,7 +20,7 @@ func (tf *terraform) string() string {
 	return text
 }
 
-func (tf *terraform) init(props Properties, env environmentInfo) {
+func (tf *terraform) init(props Properties, env Environment) {
 	tf.props = props
 	tf.env = env
 }

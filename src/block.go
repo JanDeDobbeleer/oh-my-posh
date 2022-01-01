@@ -33,7 +33,7 @@ type Block struct {
 	Segments         []*Segment     `config:"segments"`
 	Newline          bool           `config:"newline"`
 
-	env                   environmentInfo
+	env                   Environment
 	writer                promptWriter
 	ansi                  *ansiUtils
 	activeSegment         *Segment
@@ -42,13 +42,13 @@ type Block struct {
 	activeForeground      string
 }
 
-func (b *Block) init(env environmentInfo, writer promptWriter, ansi *ansiUtils) {
+func (b *Block) init(env Environment, writer promptWriter, ansi *ansiUtils) {
 	b.env = env
 	b.writer = writer
 	b.ansi = ansi
 }
 
-func (b *Block) initPlain(env environmentInfo, config *Config) {
+func (b *Block) initPlain(env Environment, config *Config) {
 	b.ansi = &ansiUtils{}
 	b.ansi.init(plain)
 	b.writer = &AnsiWriter{

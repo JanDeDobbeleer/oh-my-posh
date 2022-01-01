@@ -9,7 +9,7 @@ import (
 // segment struct, makes templating easier
 type nightscout struct {
 	props Properties
-	env   environmentInfo
+	env   Environment
 
 	NightscoutData
 	TrendIcon string
@@ -148,7 +148,7 @@ func (ns *nightscout) getResult() (*NightscoutData, error) {
 	return data, nil
 }
 
-func (ns *nightscout) init(props Properties, env environmentInfo) {
+func (ns *nightscout) init(props Properties, env Environment) {
 	ns.props = props
 	ns.env = env
 }

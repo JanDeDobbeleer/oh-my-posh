@@ -1,21 +1,39 @@
-const axios = require('axios').default;
+const axios = require('axios');
 
 module.exports = async function (context, req) {
   context.log('JavaScript HTTP trigger function processed a request.');
-  // http://www.strava.com/oauth/authorize?client_id=76033&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&approval_prompt=force&scope=read
+  // https://www.strava.com/oauth/authorize?client_id=76033&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&approval_prompt=force&scope=read,activity:read
 
-  const code = (req.query.code || (req.body && req.body.code));
+  try {
+    const code = (req.query._code || (req.body && req.body.code));
+    if (!code) {
+      context.res = {
+        status: 400
+      };
+      return;
+    }
 
-  var data = {
-    client_id: process.env.STRAVA_CLIENT_ID,
-    client_secret: process.env.STRAVA_CLIENT_SECRET,
-    code: code,
-    grant_type: 'authorization_code',
-  };
-  const resp = await axios.post('https://www.strava.com/oauth/token', data);
+    const params = {
+      client_id: process.env['STRAVA_CLIENT_ID'],
+      client_secret: process.env['STRAVA_CLIENT_SECRET'],
+      code: code,
+      grant_type: 'authorization_code',
+    };
+    const resp = await axios.post('https://www.strava.com/oauth/token', null, { params: params });
 
-  context.res = {
-    // status: 200, /* Defaults to 200 */
-    body: resp.data
-  };
+    const body = {
+      access_token: resp.data.access_token,
+      refresh_token: resp.data.refresh_token,
+    }
+
+    context.res = {
+      body: body
+    };
+  } catch (error) {
+    context.log(error);
+    context.res = {
+      body: error,
+      status: 500
+    };
+  }
 }

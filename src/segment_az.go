@@ -78,7 +78,7 @@ type AzurePowerShellSubscription struct {
 }
 
 func (a *az) string() string {
-	segmentTemplate := a.props.getString(SegmentTemplate, "{{ .EnvironmentName }}")
+	segmentTemplate := a.props.getString(SegmentTemplate, "{{ .Name }}")
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  a,

@@ -2,6 +2,8 @@
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "",
-    "FUNCTIONS_WORKER_RUNTIME": "node"
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "STRAVA_CLIENT_ID": "76033",
+    "STRAVA_CLIENT_SECRET": "d95e0efb231bdaea1b57d1617cabe120a6812b18"
   }
 }

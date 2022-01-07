@@ -271,7 +271,7 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	addAuthHeader := func(request *http.Request) {
 		request.Header.Add("authorization", authHeader)
 	}
-	body, err := bf.env.doGet(batchURL, httpTimeout, addAuthHeader)
+	body, err := bf.env.HTTPRequest(batchURL, httpTimeout, addAuthHeader)
 	if err != nil {
 		return nil, err
 	}
@@ -283,7 +283,7 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	}
 
 	// readings
-	body, err = bf.env.doGet(batchReadingsURL, httpTimeout, addAuthHeader)
+	body, err = bf.env.HTTPRequest(batchReadingsURL, httpTimeout, addAuthHeader)
 	if err != nil {
 		return nil, err
 	}

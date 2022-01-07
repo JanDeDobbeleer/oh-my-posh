@@ -43,7 +43,7 @@ func TestYTMStringStoppedSong(t *testing.T) {
 func bootstrapYTMDATest(json string, err error) *ytm {
 	url := "http://127.0.0.1:9863"
 	env := new(MockedEnvironment)
-	env.On("doGet", url+"/query").Return([]byte(json), err)
+	env.On("HTTPRequest", url+"/query").Return([]byte(json), err)
 	ytm := &ytm{
 		env: env,
 		props: properties{

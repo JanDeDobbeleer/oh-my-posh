@@ -51,7 +51,7 @@ func (i *ipify) getResult() (string, error) {
 
 	httpTimeout := i.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
 
-	body, err := i.env.doGet(url, httpTimeout)
+	body, err := i.env.HTTPRequest(url, httpTimeout)
 	if err != nil {
 		return "", err
 	}

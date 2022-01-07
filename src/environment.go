@@ -113,7 +113,7 @@ type Environment interface {
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
 	getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error)
-	doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
+	HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
 	isWsl2() bool
@@ -469,8 +469,8 @@ func (env *environment) getShellName() string {
 	return *env.args.Shell
 }
 
-func (env *environment) doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
-	defer env.trace(time.Now(), "doGet", url)
+func (env *environment) HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
+	defer env.trace(time.Now(), "HTTPRequest", url)
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -482,13 +482,13 @@ func (env *environment) doGet(url string, timeout int, requestModifiers ...HTTPR
 	}
 	response, err := client.Do(request)
 	if err != nil {
-		env.log(Error, "doGet", err.Error())
+		env.log(Error, "HTTPRequest", err.Error())
 		return nil, err
 	}
 	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		env.log(Error, "doGet", err.Error())
+		env.log(Error, "HTTPRequest", err.Error())
 		return nil, err
 	}
 	return body, nil

@@ -3,8 +3,8 @@ package main
 import "strings"
 
 type poshgit struct {
-	props     properties
-	env       environmentInfo
+	props     Properties
+	env       Environment
 	gitStatus string
 }
 
@@ -22,7 +22,7 @@ func (p *poshgit) string() string {
 	return p.gitStatus
 }
 
-func (p *poshgit) init(props properties, env environmentInfo) {
+func (p *poshgit) init(props Properties, env Environment) {
 	p.props = props
 	p.env = env
 }

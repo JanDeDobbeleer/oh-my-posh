@@ -7,8 +7,8 @@ import (
 )
 
 type owm struct {
-	props       properties
-	env         environmentInfo
+	props       Properties
+	env         Environment
 	Temperature float64
 	Weather     string
 	URL         string
@@ -173,7 +173,7 @@ func (d *owm) setStatus() error {
 	return nil
 }
 
-func (d *owm) init(props properties, env environmentInfo) {
+func (d *owm) init(props Properties, env Environment) {
 	d.props = props
 	d.env = env
 }

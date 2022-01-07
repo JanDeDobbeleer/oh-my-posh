@@ -13,7 +13,8 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 	env.On("isWsl", nil).Return(false)
 	p := &plastic{
 		scm: scm{
-			env: env,
+			env:   env,
+			props: properties{},
 		},
 	}
 	assert.False(t, p.enabled())
@@ -32,7 +33,8 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 	env.On("hasParentFilePath", ".plastic").Return(fileInfo, nil)
 	p := &plastic{
 		scm: scm{
-			env: env,
+			env:   env,
+			props: properties{},
 		},
 	}
 	assert.True(t, p.enabled())
@@ -45,7 +47,8 @@ func setupCmStatusEnv(status, headStatus string) *plastic {
 	env.On("runCommand", "cm", []string{"status", "--head", "--machinereadable"}).Return(headStatus, nil)
 	p := &plastic{
 		scm: scm{
-			env: env,
+			env:   env,
+			props: properties{},
 		},
 	}
 	return p
@@ -321,7 +324,7 @@ func TestPlasticTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var props properties = map[Property]interface{}{
+		props := properties{
 			FetchStatus: true,
 		}
 		tc.Plastic.props = props

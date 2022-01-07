@@ -20,7 +20,8 @@ func TestExitWriterEnabled(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("lastErrorCode", nil).Return(tc.ExitCode)
 		e := &exit{
-			env: env,
+			env:   env,
+			props: properties{},
 		}
 		assert.Equal(t, tc.Expected, e.enabled())
 	}
@@ -76,7 +77,7 @@ func TestExitWriterTemplateString(t *testing.T) {
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
 		env.On("lastErrorCode", nil).Return(tc.ExitCode)
-		var props properties = map[Property]interface{}{
+		props := properties{
 			SegmentTemplate: tc.Template,
 		}
 		e := &exit{

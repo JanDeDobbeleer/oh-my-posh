@@ -84,7 +84,7 @@ func TestShouldIncludeFolder(t *testing.T) {
 		env.On("homeDir", nil).Return("")
 		env.On("getcwd", nil).Return(cwd)
 		segment := &Segment{
-			Properties: map[Property]interface{}{
+			Properties: properties{
 				IncludeFolders: tc.IncludeFolders,
 				ExcludeFolders: tc.ExcludeFolders,
 			},
@@ -101,7 +101,7 @@ func TestShouldIncludeFolderRegexInverted(t *testing.T) {
 	env.On("homeDir", nil).Return("")
 	env.On("getcwd", nil).Return(cwd)
 	segment := &Segment{
-		Properties: map[Property]interface{}{
+		Properties: properties{
 			ExcludeFolders: []string{"(?!Projects[\\/]).*"},
 		},
 		env: env,
@@ -122,7 +122,7 @@ func TestShouldIncludeFolderRegexInvertedNonEscaped(t *testing.T) {
 	env.On("homeDir", nil).Return("")
 	env.On("getcwd", nil).Return(cwd)
 	segment := &Segment{
-		Properties: map[Property]interface{}{
+		Properties: properties{
 			ExcludeFolders: []string{"(?!Projects/).*"},
 		},
 		env: env,

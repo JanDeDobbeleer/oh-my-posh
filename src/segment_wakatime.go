@@ -5,8 +5,8 @@ import (
 )
 
 type wakatime struct {
-	props properties
-	env   environmentInfo
+	props Properties
+	env   Environment
 
 	wtData
 }
@@ -73,7 +73,7 @@ func (w *wakatime) setAPIData() error {
 	return nil
 }
 
-func (w *wakatime) init(props properties, env environmentInfo) {
+func (w *wakatime) init(props Properties, env Environment) {
 	w.props = props
 	w.env = env
 }

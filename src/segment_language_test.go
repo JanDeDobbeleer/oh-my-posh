@@ -20,7 +20,7 @@ type languageArgs struct {
 	enabledCommands    []string
 	versionURLTemplate string
 	expectedError      error
-	properties         map[Property]interface{}
+	properties         Properties
 	matchesVersionFile matchesVersionFile
 	inHome             bool
 }
@@ -50,6 +50,9 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	}
 	env.On("getcwd", nil).Return(cwd)
 	env.On("homeDir", nil).Return(home)
+	if args.properties == nil {
+		args.properties = properties{}
+	}
 	l := &language{
 		props:              args.properties,
 		env:                env,
@@ -78,7 +81,7 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 }
 
 func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {
-	props := map[Property]interface{}{
+	props := properties{
 		FetchVersion: false,
 	}
 	args := &languageArgs{
@@ -228,7 +231,7 @@ func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
 }
 
 func TestLanguageEnabledNoVersion(t *testing.T) {
-	props := map[Property]interface{}{
+	props := properties{
 		FetchVersion: false,
 	}
 	args := &languageArgs{
@@ -251,7 +254,7 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 }
 
 func TestLanguageEnabledMissingCommand(t *testing.T) {
-	props := map[Property]interface{}{
+	props := properties{
 		FetchVersion: false,
 	}
 	args := &languageArgs{
@@ -268,7 +271,7 @@ func TestLanguageEnabledMissingCommand(t *testing.T) {
 }
 
 func TestLanguageEnabledNoVersionData(t *testing.T) {
-	props := map[Property]interface{}{
+	props := properties{
 		FetchVersion: true,
 	}
 	args := &languageArgs{
@@ -292,7 +295,7 @@ func TestLanguageEnabledNoVersionData(t *testing.T) {
 
 func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 	expected := "missing"
-	props := map[Property]interface{}{
+	props := properties{
 		MissingCommandText: expected,
 	}
 	args := &languageArgs{
@@ -309,7 +312,7 @@ func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 }
 
 func TestLanguageEnabledMissingCommandCustomTextHideError(t *testing.T) {
-	props := map[Property]interface{}{
+	props := properties{
 		MissingCommandText: "missing",
 		DisplayError:       false,
 	}
@@ -349,7 +352,7 @@ func TestLanguageEnabledCommandExitCode(t *testing.T) {
 }
 
 func TestLanguageHyperlinkEnabled(t *testing.T) {
-	props := map[Property]interface{}{
+	props := properties{
 		EnableHyperlink: true,
 	}
 	args := &languageArgs{
@@ -378,7 +381,7 @@ func TestLanguageHyperlinkEnabled(t *testing.T) {
 }
 
 func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
-	props := map[Property]interface{}{
+	props := properties{
 		EnableHyperlink: true,
 	}
 	args := &languageArgs{
@@ -407,7 +410,7 @@ func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
 }
 
 func TestLanguageHyperlinkEnabledLessParamInTemplate(t *testing.T) {
-	props := map[Property]interface{}{
+	props := properties{
 		EnableHyperlink: true,
 	}
 	args := &languageArgs{
@@ -445,7 +448,7 @@ func TestLanguageEnabledInHome(t *testing.T) {
 		{Case: "Context disabled", HomeEnabled: false, ExpectedEnabled: false},
 	}
 	for _, tc := range cases {
-		props := map[Property]interface{}{
+		props := properties{
 			HomeEnabled: tc.HomeEnabled,
 		}
 		args := &languageArgs{
@@ -469,7 +472,7 @@ func TestLanguageEnabledInHome(t *testing.T) {
 }
 
 func TestLanguageHyperlinkEnabledMoreParamInTemplate(t *testing.T) {
-	props := map[Property]interface{}{
+	props := properties{
 		EnableHyperlink: true,
 	}
 	args := &languageArgs{

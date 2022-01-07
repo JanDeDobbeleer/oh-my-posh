@@ -58,7 +58,7 @@ func printConfigError(err error, eval bool) {
 }
 
 // GetConfig returns the default configuration including possible user overrides
-func GetConfig(env environmentInfo) *Config {
+func GetConfig(env Environment) *Config {
 	cfg, err := loadConfig(env)
 	if err != nil {
 		return getDefaultConfig(err.Error())
@@ -66,7 +66,7 @@ func GetConfig(env environmentInfo) *Config {
 	return cfg
 }
 
-func loadConfig(env environmentInfo) (*Config, error) {
+func loadConfig(env Environment) (*Config, error) {
 	var cfg Config
 	configFile := *env.getArgs().Config
 	eval := *env.getArgs().Eval
@@ -188,7 +188,7 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#ff479c",
 						Foreground:      "#ffffff",
-						Properties: map[Property]interface{}{
+						Properties: properties{
 							Prefix: " \uE5FF ",
 							Style:  "folder",
 						},
@@ -199,7 +199,7 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#fffb38",
 						Foreground:      "#193549",
-						Properties: map[Property]interface{}{
+						Properties: properties{
 							FetchStashCount:   true,
 							FetchUpstreamIcon: true,
 						},
@@ -210,7 +210,7 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#f36943",
 						Foreground:      "#193549",
-						Properties: map[Property]interface{}{
+						Properties: properties{
 							ColorBackground:  true,
 							ChargedColor:     "#4caf50",
 							ChargingColor:    "#40c4ff",
@@ -224,7 +224,7 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#6CA35E",
 						Foreground:      "#ffffff",
-						Properties: map[Property]interface{}{
+						Properties: properties{
 							Prefix:       " \uE718",
 							FetchVersion: false,
 						},
@@ -235,7 +235,7 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#0077c2",
 						Foreground:      "#ffffff",
-						Properties: map[Property]interface{}{
+						Properties: properties{
 							Prefix: " \uFCB5 ",
 						},
 					},
@@ -252,7 +252,7 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#ffffff",
 						Foreground:      "#111111",
-						Properties: map[Property]interface{}{
+						Properties: properties{
 							TextProperty: info,
 						},
 					},
@@ -263,7 +263,7 @@ func getDefaultConfig(info string) *Config {
 						Foreground:      "#ffffff",
 						LeadingDiamond:  "<transparent,#2e9599>\uE0B0</>",
 						TrailingDiamond: "\uE0B4",
-						Properties: map[Property]interface{}{
+						Properties: properties{
 							DisplayExitCode: false,
 							AlwaysEnabled:   true,
 							ErrorColor:      "#f1184c",

@@ -15,10 +15,6 @@ $env:POWERLINE_COMMAND = "oh-my-posh"
 $env:CONDA_PROMPT_MODIFIER = $false
 
 # specific module support (disabled by default)
-$omp_value = $env:AZ_ENABLED
-if ($null -eq $omp_value) {
-    $env:AZ_ENABLED = $false
-}
 $omp_value = $env:POSH_GIT_ENABLED
 if ($null -eq $omp_value) {
     $env:POSH_GIT_ENABLED = $false
@@ -49,24 +45,6 @@ function global:Initialize-ModuleSupport {
         [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used later(not in this scope)')]
         $global:GitStatus = Get-GitStatus
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
-    }
-
-    $env:AZ_ENVIRONMENT_NAME = $null
-    $env:AZ_USER_NAME = $null
-    $env:AZ_SUBSCRIPTION_ID = $null
-    $env:AZ_ACCOUNT_NAME = $null
-
-    if ($env:AZ_ENABLED -eq $true) {
-        try {
-            $context = Get-AzContext
-            if ($null -ne $context) {
-                $env:AZ_ENVIRONMENT_NAME = $context.Environment.Name
-                $env:AZ_USER_NAME = $context.Account.Id
-                $env:AZ_SUBSCRIPTION_ID = $context.Subscription.Id
-                $env:AZ_ACCOUNT_NAME = $context.Subscription.Name
-            }
-        }
-        catch {}
     }
 }
 

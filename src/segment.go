@@ -24,7 +24,7 @@ type Segment struct {
 	writer              SegmentWriter
 	stringValue         string
 	active              bool
-	env                 environmentInfo
+	env                 Environment
 }
 
 // SegmentTiming holds the timing context for a segment
@@ -37,11 +37,26 @@ type SegmentTiming struct {
 	stringDuration  time.Duration
 }
 
+type Properties interface {
+	getColor(property Property, defaultColor string) string
+	getBool(property Property, defaultValue bool) bool
+	getString(property Property, defaultValue string) string
+	getFloat64(property Property, defaultValue float64) float64
+	getInt(property Property, defaultValue int) int
+	getKeyValueMap(property Property, defaultValue map[string]string) map[string]string
+	getStringArray(property Property, defaultValue []string) []string
+	// for legacy purposes
+	getOneOfBool(property, legacyProperty Property, defaultValue bool) bool
+	getOneOfString(property, legacyProperty Property, defaultValue string) string
+	hasOneOf(properties ...Property) bool
+	set(property Property, value interface{})
+}
+
 // SegmentWriter is the interface used to define what and if to write to the prompt
 type SegmentWriter interface {
 	enabled() bool
 	string() string
-	init(props properties, env environmentInfo)
+	init(props Properties, env Environment)
 }
 
 // SegmentStyle the syle of segment, for more information, see the constants
@@ -231,7 +246,7 @@ func (segment *Segment) background() string {
 	return segment.getColor(segment.BackgroundTemplates, color)
 }
 
-func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
+func (segment *Segment) mapSegmentWithWriter(env Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
 		OWM:           &owm{},
@@ -289,7 +304,7 @@ func (segment *Segment) mapSegmentWithWriter(env environmentInfo) error {
 	return errors.New("unable to map writer")
 }
 
-func (segment *Segment) setStringValue(env environmentInfo) {
+func (segment *Segment) setStringValue(env Environment) {
 	defer func() {
 		err := recover()
 		if err == nil {

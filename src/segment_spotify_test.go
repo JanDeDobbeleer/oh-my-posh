@@ -12,6 +12,7 @@ func TestSpotifyStringPlayingSong(t *testing.T) {
 		artist: "Candlemass",
 		track:  "Spellbreaker",
 		status: "playing",
+		props:  properties{},
 	}
 	assert.Equal(t, expected, s.string())
 }
@@ -22,6 +23,7 @@ func TestSpotifyStringPausedSong(t *testing.T) {
 		artist: "Candlemass",
 		track:  "Spellbreaker",
 		status: "paused",
+		props:  properties{},
 	}
 	assert.Equal(t, expected, s.string())
 }
@@ -32,6 +34,7 @@ func TestSpotifyStringStoppedSong(t *testing.T) {
 		artist: "Candlemass",
 		track:  "Spellbreaker",
 		status: "stopped",
+		props:  properties{},
 	}
 	assert.Equal(t, expected, s.string())
 }

@@ -19,7 +19,7 @@ const (
 type textTemplate struct {
 	Template string
 	Context  interface{}
-	Env      environmentInfo
+	Env      Environment
 }
 
 func (t *textTemplate) renderPlainContextTemplate(context map[string]interface{}) string {
@@ -50,7 +50,7 @@ func (t *textTemplate) render() (string, error) {
 	if err != nil {
 		return "", errors.New(invalidTemplate)
 	}
-	if strings.Contains(t.Template, ".Env") {
+	if strings.Contains(t.Template, ".Env.") {
 		t.loadEnvVars()
 	}
 	buffer := new(bytes.Buffer)

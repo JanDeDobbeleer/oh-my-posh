@@ -21,7 +21,8 @@ func TestEnabledGitNotFound(t *testing.T) {
 	env.On("isWsl", nil).Return(false)
 	g := &git{
 		scm: scm{
-			env: env,
+			env:   env,
+			props: properties{},
 		},
 	}
 	assert.False(t, g.enabled())
@@ -41,7 +42,8 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
 	g := &git{
 		scm: scm{
-			env: env,
+			env:   env,
+			props: properties{},
 		},
 	}
 	assert.True(t, g.enabled())
@@ -64,7 +66,8 @@ func TestEnabledInWorkingTree(t *testing.T) {
 	env.On("getFileContent", "/dev/real_folder/.git/worktrees/folder_worktree/gitdir").Return("/dev/folder_worktree.git\n")
 	g := &git{
 		scm: scm{
-			env: env,
+			env:   env,
+			props: properties{},
 		},
 	}
 	assert.True(t, g.enabled())
@@ -88,7 +91,8 @@ func TestEnabledInSubmodule(t *testing.T) {
 	env.On("getFileContent", "/dev/parent/.git/modules/test-submodule").Return("/dev/folder_worktree.git\n")
 	g := &git{
 		scm: scm{
-			env: env,
+			env:   env,
+			props: properties{},
 		},
 	}
 	assert.True(t, g.enabled())
@@ -107,7 +111,8 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	env.On("getRuntimeGOOS", nil).Return("unix")
 	g := &git{
 		scm: scm{
-			env: env,
+			env:   env,
+			props: properties{},
 		},
 	}
 	got := g.getGitCommandOutput(commandArgs...)
@@ -256,7 +261,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		g := &git{
 			scm: scm{
 				env: env,
-				props: map[Property]interface{}{
+				props: properties{
 					BranchIcon:     "branch ",
 					CommitIcon:     "commit ",
 					RebaseIcon:     "rebase ",
@@ -298,7 +303,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 		g := &git{
 			scm: scm{
 				env: env,
-				props: map[Property]interface{}{
+				props: properties{
 					BranchIcon: "branch ",
 					CommitIcon: "commit ",
 					TagIcon:    "tag ",
@@ -476,7 +481,7 @@ func TestGitUpstream(t *testing.T) {
 		env.On("runCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
 		env.On("getRuntimeGOOS", nil).Return("unix")
-		var props properties = map[Property]interface{}{
+		props := properties{
 			GithubIcon:      "GH",
 			GitlabIcon:      "GL",
 			BitbucketIcon:   "BB",
@@ -512,7 +517,7 @@ func TestGetBranchStatus(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var props properties = map[Property]interface{}{
+		props := properties{
 			BranchAheadIcon:     "up",
 			BranchBehindIcon:    "down",
 			BranchIdenticalIcon: "equal",
@@ -544,7 +549,7 @@ func TestShouldIgnoreRootRepository(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var props properties = map[Property]interface{}{
+		props := properties{
 			ExcludeFolders: []string{
 				"/home/bill",
 				"/home/gates.*",
@@ -730,7 +735,7 @@ func TestGitTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var props properties = map[Property]interface{}{
+		props := properties{
 			FetchStatus: true,
 		}
 		tc.Git.props = props

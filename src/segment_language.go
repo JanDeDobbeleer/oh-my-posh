@@ -47,8 +47,8 @@ func (c *cmd) parse(versionInfo string) (*version, error) {
 }
 
 type language struct {
-	props              properties
-	env                environmentInfo
+	props              Properties
+	env                Environment
 	extensions         []string
 	commands           []*cmd
 	versionURLTemplate string

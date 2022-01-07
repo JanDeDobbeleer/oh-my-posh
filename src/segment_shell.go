@@ -3,8 +3,8 @@ package main
 import "strings"
 
 type shell struct {
-	props properties
-	env   environmentInfo
+	props Properties
+	env   Environment
 }
 
 const (
@@ -28,7 +28,7 @@ func (s *shell) string() string {
 	return shellName
 }
 
-func (s *shell) init(props properties, env environmentInfo) {
+func (s *shell) init(props Properties, env Environment) {
 	s.props = props
 	s.env = env
 }

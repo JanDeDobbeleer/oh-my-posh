@@ -109,7 +109,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserName)
 		session := &session{
 			env: env,
-			props: map[Property]interface{}{
+			props: properties{
 				SegmentTemplate: tc.Template,
 			},
 		}

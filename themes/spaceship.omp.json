@@ -55,7 +55,8 @@
           "foreground": "lightGreen",
           "properties": {
             "prefix": "",
-            "text": "\u276F"
+            "text": "\u276F",
+            "postfix": ""
           }
         }
       ]

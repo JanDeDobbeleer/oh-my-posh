@@ -15,8 +15,8 @@ You can use the following template as a guide.
 package main
 
 type new struct {
-    props          properties
-    env            environmentInfo
+    props          Properties
+    env            Environment
 
     Text string
 }
@@ -35,7 +35,7 @@ func (n *new) string() string {
     if useDefaultText {
       n.Text = "Hello"
     }
-    segmentTemplate := a.props.getString(SegmentTemplate, "{{.Text}} world")
+    segmentTemplate := n.props.getString(SegmentTemplate, "{{.Text}} world")
     template := &textTemplate{
       Template: segmentTemplate,
       Context:  n,
@@ -48,7 +48,7 @@ func (n *new) string() string {
     return text
 }
 
-func (n *new) init(props properties, env environmentInfo) {
+func (n *new) init(props Properties, env Environment) {
     n.props = props
     n.env = env
 }
@@ -62,7 +62,7 @@ For each segment, there's a single test file ensuring the functionality going fo
 is `new_segment_test.go`, have a look at [existing segment tests][tests] for inspiration. Oh My Posh makes
 use of the test tables pattern for all newly added tests. See [this][tables] blog post for more information.
 
-The use of a `SegmentTemplate` is required. We're currentlly in the process of refactoring all segments to use
+The use of a `SegmentTemplate` is required. We're currently in the process of refactoring all segments to use
 a template. As soon as this work is done, the templating logic will move outside of the segment's logic.
 
 ## Create a name for your Segment

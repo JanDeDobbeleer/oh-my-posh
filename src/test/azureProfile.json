@@ -1,0 +1,16 @@
+{
+  "installationId": "8d2919ac-a393-11eb-9100-acde48001122",
+  "subscriptions": [
+    {
+      "id": "g51ds77-a393-11eb-9100-acde48001122",
+      "name": "AzureCli",
+      "state": "Powerfull",
+      "user": { "name": "Melinda", "type": "user" },
+      "isDefault": true,
+      "tenantId": "6js98d-a393-11eb-9100-acde48001122",
+      "environmentName": "AzureCliCloud",
+      "homeTenantId": "8d934305-ac9f-46fe-b0e7-50fd32ad2acf",
+      "managedByTenants": []
+    }
+  ]
+}

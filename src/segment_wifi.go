@@ -1,8 +1,8 @@
 package main
 
 type wifi struct {
-	props properties
-	env   environmentInfo
+	props Properties
+	env   Environment
 
 	wifiInfo
 }
@@ -44,7 +44,7 @@ func (w *wifi) string() string {
 	return text
 }
 
-func (w *wifi) init(props properties, env environmentInfo) {
+func (w *wifi) init(props Properties, env Environment) {
 	w.props = props
 	w.env = env
 }

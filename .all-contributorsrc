@@ -881,6 +881,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "sdebruyn",
+      "name": "Sam Debruyn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/963413?v=4",
+      "profile": "https://debruyn.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

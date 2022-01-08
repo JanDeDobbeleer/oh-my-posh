@@ -28,9 +28,16 @@ module.exports = async function (context, req) {
         return;
     }
 
-    context.res = {
-      body: body
+    const url = `https://ohmyposh.dev/docs/auth?segment=${segment}&access_token=${body.access_token}&refresh_token=${body.refresh_token}`;
+
+    const res = {
+      status: 302,
+      headers: {
+        'Location': url
+      },
+      body: 'Redirecting...'
     };
+    context.done(null, res);
   } catch (error) {
     context.log(error);
     context.res = {

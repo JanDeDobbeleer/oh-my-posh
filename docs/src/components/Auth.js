@@ -1,6 +1,7 @@
 import React from 'react';
 import {useLocation} from "react-router-dom";
 import CodeBlock from '@theme/CodeBlock';
+import { URLSearchParams } from 'url';
 
 function Auth() {
   const search = useLocation().search;

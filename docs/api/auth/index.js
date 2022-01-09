@@ -33,14 +33,14 @@ module.exports = async function (context, req) {
 
     const url = `${process.env['DOCS_LOCATION']}/docs/auth?segment=${segment}&access_token=${body.access_token}&refresh_token=${body.refresh_token}`;
 
-    const res = {
+    context.res = {
       status: 302,
       headers: {
-        'Location': url
+        Location: url
       },
-      body: 'Redirecting...'
-    };
-    context.done(null, res);
+      body: {}
+    }
+    context.done();
   } catch (error) {
     context.log(`Issue processing request:\n${error}`);
     context.res = {

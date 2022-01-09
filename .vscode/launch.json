@@ -7,7 +7,10 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
-      "args": ["--config=${workspaceRoot}/themes/jandedobbeleer.omp.json", "--shell=pwsh"]
+      "args": [
+        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--shell=pwsh"
+      ]
     },
     {
       "name": "Launch Tooltip",
@@ -15,7 +18,11 @@
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
-      "args": ["--config=${workspaceRoot}/themes/jandedobbeleer.omp.json", "--command=git", "--shell=pwsh"]
+      "args": [
+        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--command=git",
+        "--shell=pwsh"
+      ]
     },
     {
       "name": "Launch tests",
@@ -23,7 +30,9 @@
       "request": "launch",
       "mode": "test",
       "program": "${workspaceRoot}/src",
-      "args": ["--test.v"]
+      "args": [
+        "--test.v"
+      ]
     },
     {
       "name": "Print debug",
@@ -69,6 +78,13 @@
       "cwd": "${workspaceFolder}/docs",
       "program": "${workspaceRoot}/docs/export_themes.js",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Docs API",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "preLaunchTask": "func: host start"
     }
   ]
 }

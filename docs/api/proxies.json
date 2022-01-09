@@ -7,7 +7,7 @@
         "methods": ["GET", "POST"],
         "route": "/api/auth"
       },
-      "backendUri": "%API_LOCATION%/api/auth",
+      "backendUri": "https://localhost/api/auth",
       "requestOverrides": {
         "backend.request.querystring.code": "",
         "backend.request.querystring._code": "{request.querystring.code}"

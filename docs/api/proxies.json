@@ -2,11 +2,12 @@
   "$schema": "http://json.schemastore.org/proxies",
   "proxies": {
     "callback": {
+      "debug": true,
       "matchCondition": {
         "methods": ["GET", "POST"],
         "route": "/api/auth"
       },
-      "backendUri": "http://localhost/api/auth",
+      "backendUri": "%API_LOCATION%/api/auth",
       "requestOverrides": {
         "backend.request.querystring.code": "",
         "backend.request.querystring._code": "{request.querystring.code}"

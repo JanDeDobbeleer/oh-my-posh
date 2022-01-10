@@ -15,7 +15,7 @@ type strava struct {
 	env   Environment
 
 	StravaData
-	ActivityIcon string
+	Icon         string
 	Ago          string
 	Hours        int
 	Authenticate bool
@@ -64,7 +64,7 @@ func (s *strava) enabled() bool {
 	data, err := s.getResult()
 	if err == nil {
 		s.StravaData = *data
-		s.ActivityIcon = s.getActivityIcon()
+		s.Icon = s.getActivityIcon()
 		s.Hours = s.getHours()
 		s.Ago = s.getAgo()
 		return true

@@ -72,7 +72,7 @@ func TestStravaSegment(t *testing.T) {
 			Case: "Ride 6",
 			JSONResponse: `
 			[{"type":"Ride","start_date":"` + sixHoursAgo + `","name":"Sesongens første på tjukkas","distance":16144.0}]`,
-			Template:        "{{.Ago}} {{.ActivityIcon}}",
+			Template:        "{{.Ago}} {{.Icon}}",
 			ExpectedString:  "6h \uf5a2",
 			ExpectedEnabled: true,
 		},
@@ -80,7 +80,7 @@ func TestStravaSegment(t *testing.T) {
 			Case: "Run 100",
 			JSONResponse: `
 			[{"type":"Run","start_date":"` + fourDaysAgo + `","name":"Sesongens første på tjukkas","distance":16144.0,"moving_time":7665}]`,
-			Template:        "{{.Ago}} {{.ActivityIcon}}",
+			Template:        "{{.Ago}} {{.Icon}}",
 			ExpectedString:  "4d \ufc0c",
 			ExpectedEnabled: true,
 		},
@@ -99,7 +99,7 @@ func TestStravaSegment(t *testing.T) {
 			Case: "Run from cache",
 			JSONResponse: `
 			[{"type":"Run","start_date":"` + fourDaysAgo + `","name":"Sesongens første på tjukkas","distance":16144.0,"moving_time":7665}]`,
-			Template:        "{{.Ago}} {{.ActivityIcon}}",
+			Template:        "{{.Ago}} {{.Icon}}",
 			ExpectedString:  "4d \ufc0c",
 			ExpectedEnabled: true,
 			CacheTimeout:    10,
@@ -108,7 +108,7 @@ func TestStravaSegment(t *testing.T) {
 			Case: "Run from not found cache",
 			JSONResponse: `
 			[{"type":"Run","start_date":"` + fourDaysAgo + `","name":"Morning ride","distance":16144.0,"moving_time":7665}]`,
-			Template:        "{{.Ago}} {{.ActivityIcon}} {{.Name}} {{.Hours}}h ago",
+			Template:        "{{.Ago}} {{.Icon}} {{.Name}} {{.Hours}}h ago",
 			ExpectedString:  "4d \ufc0c Morning ride 100h ago",
 			ExpectedEnabled: true,
 			CacheTimeout:    10,
@@ -118,7 +118,7 @@ func TestStravaSegment(t *testing.T) {
 			Case: "Error parsing response",
 			JSONResponse: `
 			4tffgt4e4567`,
-			Template:        "{{.Ago}}{{.ActivityIcon}}",
+			Template:        "{{.Ago}}{{.Icon}}",
 			ExpectedString:  "50",
 			ExpectedEnabled: false,
 			CacheTimeout:    10,

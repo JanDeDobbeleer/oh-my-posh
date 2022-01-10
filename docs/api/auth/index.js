@@ -31,7 +31,7 @@ module.exports = async function (context, req) {
     redirect(context, segment, tokens, '');
   } catch (error) {
     context.log(`Error: ${error.stack}`);
-    let buff = new Buffer(error.stack);
+    let buff = Buffer.from(error.stack);
     let message = buff.toString('base64');
     redirect(context, segment, tokens, message);
   }

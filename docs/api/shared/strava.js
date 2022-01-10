@@ -9,11 +9,11 @@ async function getStravaToken(code) {
   };
   const resp = await axios.post('https://www.strava.com/api/v3/oauth/token', null, { params: params });
 
-  const body = {
+  return {
     access_token: resp.data.access_token,
     refresh_token: resp.data.refresh_token,
-  }
-  return body;
+    expires_in: resp.data.expires_in
+  };
 }
 
 async function refreshStravaToken(refresh_token) {
@@ -25,11 +25,11 @@ async function refreshStravaToken(refresh_token) {
   };
   const resp = await axios.post('https://www.strava.com/api/v3/oauth/token', null, { params: params });
 
-  const body = {
+  return {
     access_token: resp.data.access_token,
     refresh_token: resp.data.refresh_token,
-  }
-  return body;
+    expires_in: resp.data.expires_in
+  };
 }
 
 module.exports = {

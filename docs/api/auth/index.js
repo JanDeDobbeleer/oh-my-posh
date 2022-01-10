@@ -4,48 +4,47 @@ module.exports = async function (context, req) {
   context.log('JavaScript HTTP trigger function processed a request.');
   // strava example:
   // https://www.strava.com/oauth/authorize?client_id=76033&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&approval_prompt=force&scope=read,activity:read&state=strava
-
+  const code = (req.query.code || req.query._code || (req.body && req.body.code));
+  const segment = (req.query.state || (req.body && req.body.state));
+  let tokens = {
+    access_token: '',
+    refresh_token: '',
+    expires_in: '',
+  };
   try {
-    const code = (req.query.code || req.query._code || (req.body && req.body.code));
-    const segment = (req.query.state || (req.body && req.body.state));
     if (!code || !segment) {
       context.log(`Issue processing request: missing code (${code}) or segment (${segment})`);
-      context.res = {
-        body: "not all query parameters are set",
-        status: 400
-      };
+      redirect(context, segment, tokens, 'missing code or segment');
       return;
     }
 
-    let body = null;
     switch (segment) {
       case "strava":
-        body = await strava.getStravaToken(code);
+        tokens = await strava.getStravaToken(code);
         break;
       default:
         context.log(`Unknown segment: ${segment}`);
-        context.res = {
-          body: "unknown segment",
-          status: 400
-        };
+        redirect(context, segment, tokens, `Unknown segment: ${segment}`);
         return;
     }
 
-    const url = `${process.env['DOCS_LOCATION']}/docs/auth?segment=${segment}&access_token=${body.access_token}&refresh_token=${body.refresh_token}`;
-
-    context.res = {
-      status: 302,
-      headers: {
-        Location: url
-      },
-      body: {}
-    }
-    context.done();
+    redirect(context, segment, tokens, '');
   } catch (error) {
-    context.log(`Issue processing request:\n${error}`);
-    context.res = {
-      body: error,
-      status: 500
-    };
+    context.log(`Error: ${error.stack}`);
+    let buff = new Buffer(error.stack);
+    let message = buff.toString('base64');
+    redirect(context, segment, tokens, message);
   }
+}
+
+function redirect(context, segment, tokens, error) {
+  const url = `${process.env['DOCS_LOCATION']}/docs/auth?segment=${segment}&access_token=${tokens.access_token}&refresh_token=${tokens.refresh_token}&expires_in=${tokens.expires_in}&error=${error}`;
+  context.res = {
+    status: 302,
+    headers: {
+      Location: url
+    },
+    body: {}
+  }
+  context.done();
 }

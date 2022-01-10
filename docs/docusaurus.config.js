@@ -9,12 +9,15 @@ module.exports = {
   organizationName: "jandedobbeleer",
   projectName: "oh-my-posh",
   onBrokenLinks: "ignore",
-  plugins: [path.resolve(__dirname, 'plugins', 'appinsights')],
+  plugins: [
+    path.resolve(__dirname, 'plugins', 'appinsights'),
+    'docusaurus-node-polyfills'
+  ],
   themeConfig: {
     prism: {
       theme: require("prism-react-renderer/themes/duotoneLight"),
       darkTheme: require("prism-react-renderer/themes/oceanicNext"),
-      additionalLanguages: ['powershell', 'lua'],
+      additionalLanguages: ['powershell', 'lua', 'jsstacktrace'],
     },
     navbar: {
       title: "Oh My Posh",

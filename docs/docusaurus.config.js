@@ -15,8 +15,6 @@ module.exports = {
   ],
   themeConfig: {
     prism: {
-      theme: require("prism-react-renderer/themes/duotoneLight"),
-      darkTheme: require("prism-react-renderer/themes/oceanicNext"),
       additionalLanguages: ['powershell', 'lua', 'jsstacktrace'],
     },
     navbar: {
@@ -124,7 +122,10 @@ module.exports = {
           editUrl: "https://github.com/jandedobbeleer/oh-my-posh/edit/main/docs/",
         },
         theme: {
-          customCss: require.resolve("./src/css/custom.css"),
+          customCss: [
+            require.resolve("./src/css/custom.css"),
+            require.resolve("./src/css/prism-rose-pine-moon.css")
+          ],
         },
       },
     ],

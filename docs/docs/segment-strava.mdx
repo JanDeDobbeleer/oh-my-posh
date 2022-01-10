@@ -8,10 +8,10 @@ import StravaConnect from '/img/strava_connect.svg';
 
 ## What
 
-[Strava][strava] ia a popular activity tracker for bike, run or any other traning.
-To keep up with your training goals it is important to be constantly reminded about it.
-A Strava Oh My Posh segment would show your last activity,
-and also indicate by a color if it is time to get away from your computer and do some workout.
+[Strava][strava] ia a popular activity tracker for bike, run or any other training.
+To keep up with your training goals it is important to be reminded about it.
+An Oh My Posh Strava segment shows your last activity,
+and can also indicate by a color if it is time to get away from your computer and get active.
 
 ## Accessing your Strava data
 
@@ -27,7 +27,7 @@ Click the following link to connect with Strava:
 ## Sample Configuration
 
 This configuration sets the background green if you have an activity the last two days,
-orange if you have one last 5 days, and red else. The `foreground_templates` example below could be set to just a single color,
+orange if you have one last 5 days, and red otherwise. The `foreground_templates` example below could be set to just a single color,
 if that color is visible against any of your backgrounds.
 
 ```json
@@ -51,7 +51,7 @@ if that color is visible against any of your backgrounds.
     "access_token":"11111111111111111",
     "refresh_token":"1111111111111111",
     "http_timeout": 1500,
-    "template": "{{.Name}} {{.Ago}} {{.ActivityIcon}}"
+    "template": "{{.Name}} {{.Ago}} {{.Icon}}"
   }
 }
 ```
@@ -60,6 +60,7 @@ if that color is visible against any of your backgrounds.
 
 - access_token: `string` - token from Strava login, see login link in section above. It has the following format: `1111111111111111111111111`
 - refresh_token: `string` - token from Strava login, see login link in section above. It has the following format: `1111111111111111111111111`
+- expires_in: `int` - the default timeout of the token from the Strava login
 - http_timeout: `int` - how long do you want to wait before you want to see your prompt more than your strava data? - defaults to 500ms
 - template: `string` - a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below.
 See the example above. Make sure your NerdFont has the glyph you want or search for one at nerdfonts.com
@@ -80,7 +81,8 @@ The properties below are availible for use in your template
 - `.Hours`: `int` - Number of hours since last activity
 - `.Name`: `string` - The name of the activity
 - `.Duration`: `float64` - Total duration in seconds
-- `.Distance`: `float64` - Toatal distance in meters
+- `.Distance`: `float64` - Total distance in meters
+- `.Icon`: `string` - Activity based icon
 
 Now, go out and have a fun ride or run!
 

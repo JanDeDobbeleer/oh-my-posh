@@ -85,7 +85,7 @@
             "access_token": "0ccbd2ac1e37a5b84101468df3d367177fe02ab3",
             "refresh_token": "111111111111111111111111111111",
             "http_timeout": 1500,
-            "template": "{{.Name}} {{.Ago}} {{.ActivityIcon}}"
+            "template": "{{.Name}} {{.Ago}} {{.Icon}}"
           }
         },
         {

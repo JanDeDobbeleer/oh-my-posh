@@ -1664,6 +1664,9 @@
                   },
                   "template": {
                     "$ref": "#/definitions/template"
+                  },
+                  "enable_hyperlink": {
+                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }

@@ -39,11 +39,18 @@ const (
 
 // StravaData struct contains the API data
 type StravaData struct {
-	Type      string    `json:"type"`
-	StartDate time.Time `json:"start_date"`
-	Name      string    `json:"name"`
-	Distance  float64   `json:"distance"`
-	Duration  float64   `json:"moving_time"`
+	ID                   int       `json:"id"`
+	Type                 string    `json:"type"`
+	StartDate            time.Time `json:"start_date"`
+	Name                 string    `json:"name"`
+	Distance             float64   `json:"distance"`
+	Duration             float64   `json:"moving_time"`
+	DeviceWatts          bool      `json:"device_watts"`
+	AverageWatts         float64   `json:"average_watts"`
+	WeightedAverageWatts float64   `json:"weighted_average_watts"`
+	AverageHeartRate     float64   `json:"average_heartrate"`
+	MaxHeartRate         float64   `json:"max_heartrate"`
+	KudosCount           int       `json:"kudos_count"`
 }
 
 type TokenExchange struct {
@@ -91,6 +98,8 @@ func (s *strava) getAgo() string {
 
 func (s *strava) getActivityIcon() string {
 	switch s.Type {
+	case "VirtualRide":
+		fallthrough
 	case "Ride":
 		return s.props.getString(RideIcon, "\uf5a2")
 	case "Run":
@@ -120,6 +129,9 @@ func (s *strava) string() string {
 	text, err := template.render()
 	if err != nil {
 		return err.Error()
+	}
+	if s.props.getBool(EnableHyperlink, false) {
+		text = fmt.Sprintf("[%s](https://www.strava.com/activities/%d)", text, s.ID)
 	}
 	return text
 }

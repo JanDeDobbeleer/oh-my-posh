@@ -890,6 +890,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "larserikfinholt",
+      "name": "Lars Erik Finholt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1328417?v=4",
+      "profile": "https://github.com/larserikfinholt",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

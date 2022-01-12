@@ -8,34 +8,41 @@ FROM mcr.microsoft.com/vscode/devcontainers/go:0-${VARIANT}
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
-# Download and register the Microsoft repository GPG keys
-RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb && \
-    dpkg -i packages-microsoft-prod.deb && \
-    rm -f packages-microsoft-prod.deb
+# Install powershell
+ARG PS_VERSION="7.2.1"
+RUN ARCH="$(dpkg --print-architecture)"; \
+    if [ "${ARCH}" = "amd64" ]; then \
+        PS_BIN="v$PS_VERSION/powershell-$PS_VERSION-linux-x64.tar.gz"; \
+    elif [ "${ARCH}" = "arm64" ]; then \
+        PS_BIN="v$PS_VERSION/powershell-$PS_VERSION-linux-arm64.tar.gz"; \
+    elif [ "${ARCH}" = "armhf" ]; then \
+        PS_BIN="v$PS_VERSION/powershell-$PS_VERSION-linux-arm32.tar.gz"; \
+    fi; \
+    wget https://github.com/PowerShell/PowerShell/releases/download/$PS_BIN -O pwsh.tar.gz; \
+    mkdir /usr/local/pwsh && \
+    tar Cxvfz /usr/local/pwsh pwsh.tar.gz && \
+    rm pwsh.tar.gz
 
-# [Optional] Uncomment this section to install additional OS packages.
+ENV PATH=$PATH:/usr/local/pwsh
+
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
-        fish \
-        powershell \
-        fzf \
+    fish \
+    tmux \
     && apt-get clean
 
 ARG USERNAME=vscode
 
 # Download the oh-my-posh binary
 RUN mkdir /home/${USERNAME}/bin; \
-    export ARCH=`uname -m`;\
-    if [[ "$ARCH" -eq "aarch64" ]]; then \
-        export POSH_BIN="posh-linux-arm64";\
-    elif [[ "$ARCH" -eq "armv7l" ]]; then \
-        export POSH_BIN="posh-linux-arm";\
-    else \
-        export POSH_BIN="posh-linux-amd64";\
-    fi;\
-    wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/${POSH_BIN} -O /home/${USERNAME}/bin/oh-my-posh; \
+    wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(dpkg --print-architecture) -O /home/${USERNAME}/bin/oh-my-posh; \
     chmod +x /home/${USERNAME}/bin/oh-my-posh; \
     chown ${USERNAME}: /home/${USERNAME}/bin;
+
+# Download the fzf binary
+RUN wget https://github.com/junegunn/fzf/releases/download/0.29.0/fzf-0.29.0-linux_$(dpkg --print-architecture).tar.gz -O /home/${USERNAME}/bin/fzf; \
+    chmod +x /home/${USERNAME}/bin/fzf;
+
 # NOTE: devcontainers are Linux-only at this time but when
 # Windows or Darwin is supported someone will need to improve
 # the code logic above.

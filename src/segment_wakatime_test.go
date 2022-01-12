@@ -71,7 +71,7 @@ func TestWTTrackedTime(t *testing.T) {
 
 		response := fmt.Sprintf(`{"cummulative_total": {"seconds": %.2f, "text": "x"}}`, float64(tc.Seconds))
 
-		env.On("doGet", FAKEAPIURL).Return([]byte(response), tc.Error)
+		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(response), tc.Error)
 
 		cache := &MockedCache{}
 		cache.On("get", FAKEAPIURL).Return(response, !tc.CacheFoundFail)

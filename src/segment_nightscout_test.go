@@ -141,6 +141,7 @@ func TestNSSegment(t *testing.T) {
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
 		env.On("cache", nil).Return(cache)
+		env.onTemplate()
 
 		if tc.Template != "" {
 			props[SegmentTemplate] = tc.Template

@@ -26,7 +26,7 @@ type KubeConfig struct {
 
 type KubeContext struct {
 	Cluster   string `yaml:"cluster"`
-	User      string `yaml:"user"`
+	UserName  string `yaml:"user"`
 	Namespace string `yaml:"namespace"`
 }
 
@@ -139,6 +139,6 @@ func (k *kubectl) setError(message string) {
 		k.Context = message
 	}
 	k.Namespace = message
-	k.User = message
+	k.UserName = message
 	k.Cluster = message
 }

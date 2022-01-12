@@ -181,13 +181,13 @@ const (
 
 func (e *exit) deprecatedString() string {
 	colorBackground := e.props.getBool(ColorBackground, false)
-	if e.Code != 0 && !colorBackground {
+	if e.code != 0 && !colorBackground {
 		e.props.set(ForegroundOverride, e.props.getColor(ErrorColor, e.props.getColor(ForegroundOverride, "")))
 	}
-	if e.Code != 0 && colorBackground {
+	if e.code != 0 && colorBackground {
 		e.props.set(BackgroundOverride, e.props.getColor(ErrorColor, e.props.getColor(BackgroundOverride, "")))
 	}
-	if e.Code == 0 {
+	if e.code == 0 {
 		return e.props.getString(SuccessIcon, "")
 	}
 	errorIcon := e.props.getString(ErrorIcon, "")
@@ -195,7 +195,7 @@ func (e *exit) deprecatedString() string {
 		return errorIcon
 	}
 	if e.props.getBool(AlwaysNumeric, false) {
-		return fmt.Sprintf("%s%d", errorIcon, e.Code)
+		return fmt.Sprintf("%s%d", errorIcon, e.code)
 	}
 	return fmt.Sprintf("%s%s", errorIcon, e.Text)
 }

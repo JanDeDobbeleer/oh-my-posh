@@ -34,7 +34,7 @@ Under the hood, this uses go's [text/template][go-text-template] feature extende
 offers a few standard properties to work with.
 
 - `.Root`: `boolean` - is the current user root/admin or not
-- `.Path`: `string` - the current working directory
+- `.PWD`: `string` - the current working directory
 - `.Folder`: `string` - the current working folder
 - `.Shell`: `string` - the current shell name
 - `.User`: `string` - the current user name
@@ -53,9 +53,9 @@ the current working directory is `/usr/home/omp` and the shell is `zsh`.
     // when root == false: omp :: zsh
     // when root == true: omp :: root :: zsh
     "console_title_template": "{{.Folder}}", // outputs: omp
-    "console_title_template": "{{.Shell}} in {{.Path}}", // outputs: zsh in /usr/home/omp
-    "console_title_template": "{{.User}}@{{.Host}} {{.Shell}} in {{.Path}}", // outputs: MyUser@MyMachine zsh in /usr/home/omp
-    "console_title_template": "{{.Env.USERDOMAIN}} {{.Shell}} in {{.Path}}", // outputs: MyCompany zsh in /usr/home/omp
+    "console_title_template": "{{.Shell}} in {{.PWD}}", // outputs: zsh in /usr/home/omp
+    "console_title_template": "{{.User}}@{{.Host}} {{.Shell}} in {{.PWD}}", // outputs: MyUser@MyMachine zsh in /usr/home/omp
+    "console_title_template": "{{.Env.USERDOMAIN}} {{.Shell}} in {{.PWD}}", // outputs: MyCompany zsh in /usr/home/omp
 }
 ```
 

@@ -18,8 +18,11 @@ func (t *text) enabled() bool {
 		Context:  t,
 		Env:      t.env,
 	}
-	t.content = template.renderPlainContextTemplate(nil)
-	return len(t.content) > 0
+	if text, err := template.render(); err == nil {
+		t.content = text
+		return len(t.content) > 0
+	}
+	return false
 }
 
 func (t *text) string() string {

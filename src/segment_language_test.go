@@ -50,6 +50,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	}
 	env.On("getcwd", nil).Return(cwd)
 	env.On("homeDir", nil).Return(home)
+	env.onTemplate()
 	if args.properties == nil {
 		args.properties = properties{}
 	}

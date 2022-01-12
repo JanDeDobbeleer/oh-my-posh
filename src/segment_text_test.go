@@ -33,6 +33,7 @@ func TestTextSegment(t *testing.T) {
 		env.On("getenv", "WORLD").Return("")
 		env.On("getCurrentUser", nil).Return("Posh")
 		env.On("getHostName", nil).Return("MyHost", nil)
+		env.onTemplate()
 		txt := &text{
 			env: env,
 			props: properties{

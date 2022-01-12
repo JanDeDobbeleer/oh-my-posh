@@ -107,6 +107,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
 		env.On("isRunningAsRoot", nil).Return(tc.Root)
 		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserName)
+		env.onTemplate()
 		session := &session{
 			env: env,
 			props: properties{

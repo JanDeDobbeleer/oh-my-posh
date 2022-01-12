@@ -447,6 +447,7 @@ func TestBatterySegmentSingle(t *testing.T) {
 			props[DisplayCharged] = false
 		}
 		env.On("getBatteryInfo", nil).Return(tc.Batteries, tc.Error)
+		env.onTemplate()
 		b := &batt{
 			props: props,
 			env:   env,
@@ -756,6 +757,7 @@ func TestPythonVirtualEnv(t *testing.T) {
 		env.On("getPathSeperator", nil).Return("")
 		env.On("getcwd", nil).Return("/usr/home/project")
 		env.On("homeDir", nil).Return("/usr/home")
+		env.onTemplate()
 		props := properties{
 			FetchVersion:      tc.FetchVersion,
 			DisplayVirtualEnv: true,

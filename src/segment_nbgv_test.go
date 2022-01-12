@@ -60,6 +60,7 @@ func TestNbgv(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("hasCommand", "nbgv").Return(tc.HasNbgv)
 		env.On("runCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
+		env.onTemplate()
 		nbgv := &nbgv{
 			env: env,
 			props: properties{

@@ -241,7 +241,10 @@ func (e *engine) renderTransientPrompt() string {
 		Template: promptTemplate,
 		Env:      e.env,
 	}
-	prompt := template.renderPlainContextTemplate(nil)
+	prompt, err := template.render()
+	if err != nil {
+		prompt = err.Error()
+	}
 	e.writer.setColors(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground)
 	e.writer.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
 	switch e.env.getShellName() {

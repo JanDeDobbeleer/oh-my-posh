@@ -136,6 +136,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://debruyn.dev"><img src="https://avatars.githubusercontent.com/u/963413?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sam Debruyn</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=sdebruyn" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/larserikfinholt"><img src="https://avatars.githubusercontent.com/u/1328417?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Lars Erik Finholt</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=larserikfinholt" title="Code">💻</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/simorgh1"><img src="https://avatars.githubusercontent.com/u/5792905?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bahram Maravandi</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=simorgh1" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->

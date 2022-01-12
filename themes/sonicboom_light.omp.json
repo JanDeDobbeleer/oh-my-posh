@@ -94,7 +94,6 @@
                     "background": "#4d4d4d",
                     "properties": {
                         "postfix": "",
-                        "prefix": " ",
                         "user_info_separator": "<transparent> / </>"
                     }
                 },

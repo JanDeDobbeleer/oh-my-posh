@@ -42,6 +42,20 @@ func TestAzSegment(t *testing.T) {
 			Template:        "{{ .Burp }}",
 			HasPowerShell:   true,
 		},
+		{
+			Case:            "PWSH",
+			ExpectedEnabled: true,
+			ExpectedString:  "PWSH",
+			Template:        "{{ .Origin }}",
+			HasPowerShell:   true,
+		},
+		{
+			Case:            "CLI",
+			ExpectedEnabled: true,
+			ExpectedString:  "CLI",
+			Template:        "{{ .Origin }}",
+			HasCLI:          true,
+		},
 	}
 
 	for _, tc := range cases {
@@ -57,8 +71,9 @@ func TestAzSegment(t *testing.T) {
 			content, _ := ioutil.ReadFile("./test/AzureRmContext.json")
 			azureRmContext = string(content)
 		}
-		env.On("getFileContent", filepath.Join(home, ".azure/azureProfile.json")).Return(azureProfile)
-		env.On("getFileContent", filepath.Join(home, ".azure/AzureRmContext.json")).Return(azureRmContext)
+		env.On("getRuntimeGOOS", nil).Return(linuxPlatform)
+		env.On("getFileContent", filepath.Join(home, ".Azure", "azureProfile.json")).Return(azureProfile)
+		env.On("getFileContent", filepath.Join(home, ".Azure", "AzureRmContext.json")).Return(azureRmContext)
 		env.onTemplate()
 		props := properties{
 			SegmentTemplate: tc.Template,

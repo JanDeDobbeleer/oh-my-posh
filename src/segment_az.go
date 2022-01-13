@@ -102,11 +102,6 @@ func (a *az) enabled() bool {
 }
 
 func (a *az) getFileContentWithoutBom(file string) string {
-	azFolder := ".azure"
-	if a.env.getRuntimeGOOS() == linuxPlatform {
-		azFolder = ".Azure"
-	}
-	file = filepath.Join(a.env.homeDir(), azFolder, file)
 	config := a.env.getFileContent(file)
 	const ByteOrderMark = "\ufeff"
 	return strings.TrimLeft(config, ByteOrderMark)
@@ -114,7 +109,8 @@ func (a *az) getFileContentWithoutBom(file string) string {
 
 func (a *az) getAzureProfile() bool {
 	var content string
-	if content = a.getFileContentWithoutBom("azureProfile.json"); len(content) == 0 {
+	profile := filepath.Join(a.env.homeDir(), ".azure", "azureProfile.json")
+	if content = a.getFileContentWithoutBom(profile); len(content) == 0 {
 		return false
 	}
 	var config AzureConfig
@@ -133,7 +129,16 @@ func (a *az) getAzureProfile() bool {
 
 func (a *az) getAzureRmContext() bool {
 	var content string
-	if content = a.getFileContentWithoutBom("AzureRmContext.json"); len(content) == 0 {
+	profiles := []string{
+		filepath.Join(a.env.homeDir(), ".azure", "AzureRmContext.json"),
+		filepath.Join(a.env.homeDir(), ".Azure", "AzureRmContext.json"),
+	}
+	for _, profile := range profiles {
+		if content = a.getFileContentWithoutBom(profile); len(content) != 0 {
+			break
+		}
+	}
+	if len(content) == 0 {
 		return false
 	}
 	var config AzurePowerShellConfig

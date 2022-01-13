@@ -11,6 +11,7 @@ type az struct {
 	env   Environment
 
 	AzureSubscription
+	Origin string
 }
 
 type AzureConfig struct {
@@ -123,6 +124,7 @@ func (a *az) getAzureProfile() bool {
 	for _, subscription := range config.Subscriptions {
 		if subscription.IsDefault {
 			a.AzureSubscription = *subscription
+			a.Origin = "CLI"
 			return true
 		}
 	}
@@ -151,5 +153,6 @@ func (a *az) getAzureRmContext() bool {
 	a.User = &AzureUser{
 		Name: defaultContext.Subscription.ExtendedProperties.Account,
 	}
+	a.Origin = "PWSH"
 	return true
 }

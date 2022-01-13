@@ -42,6 +42,20 @@ func TestAzSegment(t *testing.T) {
 			Template:        "{{ .Burp }}",
 			HasPowerShell:   true,
 		},
+		{
+			Case:            "PWSH",
+			ExpectedEnabled: true,
+			ExpectedString:  "PWSH",
+			Template:        "{{ .Origin }}",
+			HasPowerShell:   true,
+		},
+		{
+			Case:            "CLI",
+			ExpectedEnabled: true,
+			ExpectedString:  "CLI",
+			Template:        "{{ .Origin }}",
+			HasCLI:          true,
+		},
 	}
 
 	for _, tc := range cases {

@@ -180,6 +180,11 @@ func (env *environment) resolveConfigPath() {
 	if env.args == nil || env.args.Config == nil || len(*env.args.Config) == 0 {
 		return
 	}
+	// Cygwin path always needs the full path as we're on Windows but not really.
+	// Doing filepath actions will convert it to a Windows path and break the init script.
+	if env.getPlatform() == windowsPlatform && env.getShellName() == bash {
+		return
+	}
 	configFile := *env.args.Config
 	if strings.HasPrefix(configFile, "~") {
 		configFile = strings.TrimPrefix(configFile, "~")

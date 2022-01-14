@@ -138,6 +138,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/simorgh1"><img src="https://avatars.githubusercontent.com/u/5792905?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bahram Maravandi</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=simorgh1" title="Code">💻</a></td>
+    <td align="center"><a href="http://developingux.com"><img src="https://avatars.githubusercontent.com/u/211001?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Caleb Jenkins</b></sub></a><br /><a href="#ideas-calebjenkins" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 

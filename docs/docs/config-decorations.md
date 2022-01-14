@@ -20,6 +20,11 @@ This can be used in templates and icons/text inside your config.
 The engine has the ability to render hyperlinks. Your terminal has to support it and the option
 has to be enabled at the segment level. Hyperlink generation is disabled by default.
 
+When using in a template, the syntax is like markdown:
+
+- url: `[text](https://link)`
+- file: `[file](file://path)`
+
 ### Supported segments
 
 - [Path][path-segment]

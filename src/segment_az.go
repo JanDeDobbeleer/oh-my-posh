@@ -21,7 +21,7 @@ type AzureConfig struct {
 
 type AzureSubscription struct {
 	ID               string        `json:"id"`
-	Name             string        `json:"name"`
+	UserName         string        `json:"name"`
 	State            string        `json:"state"`
 	User             *AzureUser    `json:"user"`
 	IsDefault        bool          `json:"isDefault"`
@@ -153,7 +153,7 @@ func (a *az) getAzureRmContext() bool {
 	a.EnvironmentName = defaultContext.Environment.Name
 	a.TenantID = defaultContext.Tenant.ID
 	a.ID = defaultContext.Subscription.ID
-	a.Name = defaultContext.Subscription.Name
+	a.UserName = defaultContext.Subscription.Name
 	a.State = defaultContext.Subscription.State
 	a.User = &AzureUser{
 		Name: defaultContext.Subscription.ExtendedProperties.Account,

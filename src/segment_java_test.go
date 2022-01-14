@@ -66,6 +66,7 @@ func TestJava(t *testing.T) {
 		} else {
 			env.On("getenv", "JAVA_HOME").Return("")
 		}
+		env.onTemplate()
 		props := properties{
 			FetchVersion: true,
 		}

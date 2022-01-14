@@ -22,7 +22,7 @@ func TestGetConsoleTitle(t *testing.T) {
 		{Style: FullPath, Cwd: "/usr/home/jan", PathSeperator: "/", ShellName: "default", Expected: "\x1b]0;~/jan\a"},
 		{
 			Style:         Template,
-			Template:      "{{.Env.USERDOMAIN}} :: {{.Path}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
+			Template:      "{{.Env.USERDOMAIN}} :: {{.PWD}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
 			Cwd:           "C:\\vagrant",
 			PathSeperator: "\\",
 			ShellName:     "PowerShell",
@@ -62,6 +62,7 @@ func TestGetConsoleTitle(t *testing.T) {
 		env.On("getenv", "USERDOMAIN").Return("MyCompany")
 		env.On("getCurrentUser", nil).Return("MyUser")
 		env.On("getHostName", nil).Return("MyHost", nil)
+		env.onTemplate()
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)
 		ct := &consoleTitle{
@@ -117,6 +118,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		env.On("getenv", "USERDOMAIN").Return("MyCompany")
 		env.On("getCurrentUser", nil).Return("MyUser")
 		env.On("getHostName", nil).Return("", fmt.Errorf("I have a bad feeling about this"))
+		env.onTemplate()
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)
 		ct := &consoleTitle{

@@ -6,7 +6,7 @@ type exit struct {
 	props Properties
 	env   Environment
 
-	Code int
+	code int
 	Text string
 }
 
@@ -27,7 +27,7 @@ func (e *exit) init(props Properties, env Environment) {
 }
 
 func (e *exit) getFormattedText() string {
-	e.Code = e.env.lastErrorCode()
+	e.code = e.env.lastErrorCode()
 	e.Text = e.getMeaningFromExitCode()
 	segmentTemplate := e.props.getString(SegmentTemplate, "")
 	if len(segmentTemplate) == 0 {
@@ -46,7 +46,7 @@ func (e *exit) getFormattedText() string {
 }
 
 func (e *exit) getMeaningFromExitCode() string {
-	switch e.Code {
+	switch e.code {
 	case 1:
 		return "ERROR"
 	case 2:
@@ -100,6 +100,6 @@ func (e *exit) getMeaningFromExitCode() string {
 	case 128 + 22:
 		return "SIGTTOU"
 	default:
-		return strconv.Itoa(e.Code)
+		return strconv.Itoa(e.code)
 	}
 }

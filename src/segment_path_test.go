@@ -203,6 +203,25 @@ func (env *MockedEnvironment) getWifiNetwork() (*wifiInfo, error) {
 	return args.Get(0).(*wifiInfo), args.Error(1)
 }
 
+func (env *MockedEnvironment) onTemplate() {
+	patchMethodIfNotSpecified := func(method string, returnArguments ...interface{}) {
+		for _, call := range env.Mock.ExpectedCalls {
+			if call.Method == method {
+				return
+			}
+		}
+		env.On(method, nil).Return(returnArguments...)
+	}
+	patchMethodIfNotSpecified("isRunningAsRoot", false)
+	patchMethodIfNotSpecified("getcwd", "/usr/home/dev/my-app")
+	patchMethodIfNotSpecified("homeDir", "/usr/home/dev")
+	patchMethodIfNotSpecified("getPathSeperator", "/")
+	patchMethodIfNotSpecified("getShellName", "pwsh")
+	patchMethodIfNotSpecified("getCurrentUser", "dev")
+	patchMethodIfNotSpecified("getHostName", "laptop", nil)
+	patchMethodIfNotSpecified("lastErrorCode", 0)
+}
+
 const (
 	homeBill        = "/home/bill"
 	homeJan         = "/usr/home/jan"
@@ -417,6 +436,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 			PSWD: &tc.Pswd,
 		}
 		env.On("getArgs", nil).Return(args)
+		env.onTemplate()
 		path := &path{
 			env: env,
 			props: properties{
@@ -537,6 +557,7 @@ func TestGetFullPath(t *testing.T) {
 			PSWD: &tc.Pswd,
 		}
 		env.On("getArgs", nil).Return(args)
+		env.onTemplate()
 		if len(tc.Template) == 0 {
 			tc.Template = "{{ if gt .StackCount 0 }}{{ .StackCount }} {{ end }}{{ .Path }}"
 		}

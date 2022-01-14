@@ -69,6 +69,7 @@ func TestRenderTemplate(t *testing.T) {
 	}
 
 	env := &MockedEnvironment{}
+	env.onTemplate()
 	for _, tc := range cases {
 		template := &textTemplate{
 			Template: tc.Template,
@@ -94,17 +95,17 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		Context     interface{}
 	}{
 		{
+			Case:        "nil struct with env var",
+			ShouldError: true,
+			Template:    "{{.Env.HELLO }} world{{ .Text}}",
+			Context:     nil,
+			Env:         map[string]string{"HELLO": "hello"},
+		},
+		{
 			Case:     "map with env var",
 			Expected: "hello world",
 			Template: "{{.Env.HELLO}} {{.World}}",
 			Context:  map[string]interface{}{"World": "world"},
-			Env:      map[string]string{"HELLO": "hello"},
-		},
-		{
-			Case:     "nil struct with env var",
-			Expected: "hello world",
-			Template: "{{.Env.HELLO }} world{{ .Text}}",
-			Context:  nil,
 			Env:      map[string]string{"HELLO": "hello"},
 		},
 		{
@@ -120,6 +121,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
+		env.onTemplate()
 		for name, value := range tc.Env {
 			env.On("getenv", name).Return(value)
 		}
@@ -134,5 +136,51 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 			continue
 		}
 		assert.Equal(t, tc.Expected, text, tc.Case)
+	}
+}
+
+func TestCleanTemplate(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Template string
+	}{
+		{
+			Case:     "Variable",
+			Expected: "{{range $cpu := .Data.CPU}}{{round $cpu.Mhz 2 }} {{end}}",
+			Template: "{{range $cpu := .CPU}}{{round $cpu.Mhz 2 }} {{end}}",
+		},
+		{
+			Case:     "Same prefix",
+			Expected: "{{ .Env.HELLO }} {{ .Data.World }} {{ .Data.WorldTrend }}",
+			Template: "{{ .Env.HELLO }} {{ .World }} {{ .WorldTrend }}",
+		},
+		{
+			Case:     "Double use of property with different child",
+			Expected: "{{ .Env.HELLO }} {{ .Data.World.Trend }} {{ .Data.World.Hello }} {{ .Data.World }}",
+			Template: "{{ .Env.HELLO }} {{ .World.Trend }} {{ .World.Hello }} {{ .World }}",
+		},
+		{
+			Case:     "Hello world",
+			Expected: "{{.Env.HELLO}} {{.Data.World}}",
+			Template: "{{.Env.HELLO}} {{.World}}",
+		},
+		{
+			Case:     "Multiple vars",
+			Expected: "{{.Env.HELLO}} {{.Data.World}} {{.Data.World}}",
+			Template: "{{.Env.HELLO}} {{.World}} {{.World}}",
+		},
+		{
+			Case:     "Multiple vars with spaces",
+			Expected: "{{ .Env.HELLO }} {{ .Data.World }} {{ .Data.World }}",
+			Template: "{{ .Env.HELLO }} {{ .World }} {{ .World }}",
+		},
+	}
+	for _, tc := range cases {
+		template := &textTemplate{
+			Template: tc.Template,
+		}
+		template.cleanTemplate()
+		assert.Equal(t, tc.Expected, template.Template, tc.Case)
 	}
 }

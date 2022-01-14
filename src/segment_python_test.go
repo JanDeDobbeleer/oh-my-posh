@@ -52,6 +52,7 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("getPathSeperator", nil).Return("")
 		env.On("getcwd", nil).Return("/usr/home/project")
 		env.On("homeDir", nil).Return("/usr/home")
+		env.onTemplate()
 		props := properties{
 			FetchVersion:    tc.FetchVersion,
 			SegmentTemplate: tc.Template,

@@ -11,6 +11,7 @@ type az struct {
 	env   Environment
 
 	AzureSubscription
+	Origin string
 }
 
 type AzureConfig struct {
@@ -96,20 +97,20 @@ func (a *az) init(props Properties, env Environment) {
 	a.env = env
 }
 
-func (a *az) getFileContentWithoutBom(file string) string {
-	const ByteOrderMark = "\ufeff"
-	file = filepath.Join(a.env.homeDir(), file)
-	config := a.env.getFileContent(file)
-	return strings.TrimLeft(config, ByteOrderMark)
-}
-
 func (a *az) enabled() bool {
 	return a.getAzureProfile() || a.getAzureRmContext()
 }
 
+func (a *az) getFileContentWithoutBom(file string) string {
+	config := a.env.getFileContent(file)
+	const ByteOrderMark = "\ufeff"
+	return strings.TrimLeft(config, ByteOrderMark)
+}
+
 func (a *az) getAzureProfile() bool {
 	var content string
-	if content = a.getFileContentWithoutBom(".azure/azureProfile.json"); len(content) == 0 {
+	profile := filepath.Join(a.env.homeDir(), ".azure", "azureProfile.json")
+	if content = a.getFileContentWithoutBom(profile); len(content) == 0 {
 		return false
 	}
 	var config AzureConfig
@@ -119,6 +120,7 @@ func (a *az) getAzureProfile() bool {
 	for _, subscription := range config.Subscriptions {
 		if subscription.IsDefault {
 			a.AzureSubscription = *subscription
+			a.Origin = "CLI"
 			return true
 		}
 	}
@@ -127,7 +129,16 @@ func (a *az) getAzureProfile() bool {
 
 func (a *az) getAzureRmContext() bool {
 	var content string
-	if content = a.getFileContentWithoutBom(".azure/AzureRmContext.json"); len(content) == 0 {
+	profiles := []string{
+		filepath.Join(a.env.homeDir(), ".azure", "AzureRmContext.json"),
+		filepath.Join(a.env.homeDir(), ".Azure", "AzureRmContext.json"),
+	}
+	for _, profile := range profiles {
+		if content = a.getFileContentWithoutBom(profile); len(content) != 0 {
+			break
+		}
+	}
+	if len(content) == 0 {
 		return false
 	}
 	var config AzurePowerShellConfig
@@ -147,5 +158,6 @@ func (a *az) getAzureRmContext() bool {
 	a.User = &AzureUser{
 		Name: defaultContext.Subscription.ExtendedProperties.Account,
 	}
+	a.Origin = "PWSH"
 	return true
 }

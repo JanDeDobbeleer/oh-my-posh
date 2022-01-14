@@ -151,7 +151,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		env.On("HTTPRequest", BFBatchURL).Return([]byte(tc.BatchJSONResponse), tc.Error)
 		env.On("HTTPRequest", BFBatchReadingsURL).Return([]byte(tc.BatchReadingsJSONResponse), tc.Error)
 		env.On("cache", nil).Return(cache)
-
+		env.onTemplate()
 		if tc.Template != "" {
 			props[SegmentTemplate] = tc.Template
 		}

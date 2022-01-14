@@ -1,17 +1,11 @@
-$env:POSH_PATH = "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent.FullName)"
-$env:POSH_THEMES_PATH = $env:POSH_PATH + "/themes"
-$env:PATH = $env:POSH_PATH + [System.IO.Path]::PathSeparator + $env:PATH
-
-if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
-    [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
-}
-else {
-    Write-Host "[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
-When using PowerShell in ConstrainedLanguage mode, please set the
-console mode manually to UTF-8. See here for more information:
-https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
-"
-$env:POSH_CONSTRAINED_LANGUAGE_MODE = $true
+function Set-PoshRootPath {
+    $child = ".oh-my-posh"
+    $path = Join-Path -Path  $HOME -ChildPath $child
+    $env:POSH_PATH = $path
+    if (Test-Path -Path $path) {
+        return
+    }
+    New-Item -Path $HOME -Name $child -ItemType "directory"
 }
 
 function Get-PoshDownloadUrl {
@@ -77,11 +71,10 @@ function Get-PoshExecutable {
 }
 
 function Get-PoshCommand {
-    $extension = ""
     if ($PSVersionTable.PSEdition -ne "Core" -or $IsWindows) {
-        $extension = ".exe"
+        return Join-Path -Path $env:POSH_PATH -ChildPath "oh-my-posh.exe"
     }
-    return "$((Get-Item $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase).Parent.FullName)/oh-my-posh$extension"
+    return Join-Path -Path $env:POSH_PATH -ChildPath "oh-my-posh"
 }
 
 function Sync-PoshThemes {
@@ -125,25 +118,11 @@ function Sync-PoshArtifacts {
     Sync-PoshThemes -Version $Version
 }
 
-try {
-    $moduleVersion = Split-Path -Leaf $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase
-    Sync-PoshArtifacts -Version $moduleVersion
-}
-catch {
-    $message = @'
-Oh My Posh is unable to download and store the latest version.
-In case you installed using AllUsers and are a non-admin user,
-please run the following command as an administrator:
-
-Import-Module oh-my-posh
-
-Original Error:
-
-'@
-    Write-Host $message
-    Write-Host $_
-    exit 1
-}
+Set-PoshRootPath
+$env:PATH = $env:POSH_PATH + [System.IO.Path]::PathSeparator + $env:PATH
+$env:POSH_THEMES_PATH = Join-Path -Path $env:POSH_PATH -ChildPath "themes"
+$moduleVersion = Split-Path -Leaf $MyInvocation.MyCommand.ScriptBlock.Module.ModuleBase
+Sync-PoshArtifacts -Version $moduleVersion
 
 # Legacy functions
 

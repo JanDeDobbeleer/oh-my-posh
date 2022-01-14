@@ -38,7 +38,7 @@ properties below - defaults to `{{.Name}}`
 - `.Name`: `string` - the account name
 - `.State`: `string` - the account state
 - `.TenantID`: `string` - the tenant id
-- `.User.Name`: `string` - the user name
+- `.UserName`: `string` - the user name
 - `.Origin`: `string` - where we received the information from, can be `CLI` or `PWSH`
 
 [go-text-template]: https://golang.org/pkg/text/template/

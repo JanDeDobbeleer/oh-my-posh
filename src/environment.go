@@ -176,6 +176,18 @@ func (env *environment) init(args *args) {
 	}
 	env.fileCache = &fileCache{}
 	env.fileCache.init(env.getCachePath())
+	env.environCache = make(map[string]string)
+	const separator = "="
+	values := os.Environ()
+	for value := range values {
+		splitted := strings.Split(values[value], separator)
+		if len(splitted) != 2 {
+			continue
+		}
+		key := splitted[0]
+		val := splitted[1:]
+		env.environCache[key] = strings.Join(val, separator)
+	}
 }
 
 func (env *environment) resolveConfigPath() {
@@ -226,21 +238,6 @@ func (env *environment) getenv(key string) string {
 
 func (env *environment) environ() map[string]string {
 	defer env.trace(time.Now(), "environ")
-	if env.environCache != nil {
-		return env.environCache
-	}
-	env.environCache = make(map[string]string)
-	const separator = "="
-	values := os.Environ()
-	for value := range values {
-		splitted := strings.Split(values[value], separator)
-		if len(splitted) != 2 {
-			continue
-		}
-		key := splitted[0]
-		val := splitted[1:]
-		env.environCache[key] = strings.Join(val, separator)
-	}
 	return env.environCache
 }
 

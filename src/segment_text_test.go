@@ -24,15 +24,15 @@ func TestTextSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getcwd", nil).Return("/usr/home/posh")
-		env.On("homeDir", nil).Return("/usr/home")
-		env.On("getPathSeperator", nil).Return("/")
-		env.On("isRunningAsRoot", nil).Return(true)
-		env.On("getShellName", nil).Return("terminal")
+		env.On("getcwd").Return("/usr/home/posh")
+		env.On("homeDir").Return("/usr/home")
+		env.On("getPathSeperator").Return("/")
+		env.On("isRunningAsRoot").Return(true)
+		env.On("getShellName").Return("terminal")
 		env.On("getenv", "HELLO").Return("hello")
 		env.On("getenv", "WORLD").Return("")
-		env.On("getCurrentUser", nil).Return("Posh")
-		env.On("getHostName", nil).Return("MyHost", nil)
+		env.On("getCurrentUser").Return("Posh")
+		env.On("getHostName").Return("MyHost", nil)
 		env.onTemplate()
 		txt := &text{
 			env: env,

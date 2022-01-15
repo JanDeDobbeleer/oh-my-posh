@@ -32,8 +32,8 @@ func TestDirMatchesOneOf(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
-		env.On("homeDir", nil).Return(tc.HomeDir)
+		env.On("getRuntimeGOOS").Return(tc.GOOS)
+		env.On("homeDir").Return(tc.HomeDir)
 		got := dirMatchesOneOf(env, tc.Dir, []string{tc.Pattern})
 		assert.Equal(t, tc.Expected, got)
 	}

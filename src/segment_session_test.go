@@ -96,16 +96,16 @@ func TestSessionSegmentTemplate(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getCurrentUser", nil).Return(tc.UserName)
-		env.On("getRuntimeGOOS", nil).Return("burp")
-		env.On("getHostName", nil).Return(tc.ComputerName, nil)
+		env.On("getCurrentUser").Return(tc.UserName)
+		env.On("getRuntimeGOOS").Return("burp")
+		env.On("getHostName").Return(tc.ComputerName, nil)
 		var SSHSession string
 		if tc.SSHSession {
 			SSHSession = "zezzion"
 		}
 		env.On("getenv", "SSH_CONNECTION").Return(SSHSession)
 		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
-		env.On("isRunningAsRoot", nil).Return(tc.Root)
+		env.On("isRunningAsRoot").Return(tc.Root)
 		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserName)
 		env.onTemplate()
 		session := &session{

@@ -153,7 +153,7 @@ func TestStravaSegment(t *testing.T) {
 
 		env.On("HTTPRequest", url).Return([]byte(tc.JSONResponse), tc.Error)
 		env.On("HTTPRequest", tokenURL).Return([]byte(tc.TokenResponse), tc.Error)
-		env.On("cache", nil).Return(cache)
+		env.On("cache").Return(cache)
 		env.onTemplate()
 
 		if tc.Template != "" {

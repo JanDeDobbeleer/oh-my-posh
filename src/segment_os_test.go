@@ -61,9 +61,9 @@ func TestOSInfo(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		env.On("getRuntimeGOOS").Return(tc.GOOS)
 		env.On("getenv", "WSL_DISTRO_NAME").Return(tc.WSLDistro)
-		env.On("getPlatform", nil).Return(tc.Platform)
+		env.On("getPlatform").Return(tc.Platform)
 		osInfo := &osInfo{
 			env: env,
 			props: properties{

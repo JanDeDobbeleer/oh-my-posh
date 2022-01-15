@@ -54,14 +54,14 @@ func TestGetConsoleTitle(t *testing.T) {
 			ConsoleTitleTemplate: tc.Template,
 		}
 		env := new(MockedEnvironment)
-		env.On("getcwd", nil).Return(tc.Cwd)
-		env.On("homeDir", nil).Return("/usr/home")
-		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
-		env.On("isRunningAsRoot", nil).Return(tc.Root)
-		env.On("getShellName", nil).Return(tc.ShellName)
+		env.On("getcwd").Return(tc.Cwd)
+		env.On("homeDir").Return("/usr/home")
+		env.On("getPathSeperator").Return(tc.PathSeperator)
+		env.On("isRunningAsRoot").Return(tc.Root)
+		env.On("getShellName").Return(tc.ShellName)
 		env.On("getenv", "USERDOMAIN").Return("MyCompany")
-		env.On("getCurrentUser", nil).Return("MyUser")
-		env.On("getHostName", nil).Return("MyHost", nil)
+		env.On("getCurrentUser").Return("MyUser")
+		env.On("getHostName").Return("MyHost", nil)
 		env.onTemplate()
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)
@@ -110,14 +110,14 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			ConsoleTitleTemplate: tc.Template,
 		}
 		env := new(MockedEnvironment)
-		env.On("getcwd", nil).Return(tc.Cwd)
-		env.On("homeDir", nil).Return("/usr/home")
-		env.On("getPathSeperator", nil).Return(tc.PathSeperator)
-		env.On("isRunningAsRoot", nil).Return(tc.Root)
-		env.On("getShellName", nil).Return(tc.ShellName)
+		env.On("getcwd").Return(tc.Cwd)
+		env.On("homeDir").Return("/usr/home")
+		env.On("getPathSeperator").Return(tc.PathSeperator)
+		env.On("isRunningAsRoot").Return(tc.Root)
+		env.On("getShellName").Return(tc.ShellName)
 		env.On("getenv", "USERDOMAIN").Return("MyCompany")
-		env.On("getCurrentUser", nil).Return("MyUser")
-		env.On("getHostName", nil).Return("", fmt.Errorf("I have a bad feeling about this"))
+		env.On("getCurrentUser").Return("MyUser")
+		env.On("getHostName").Return("", fmt.Errorf("I have a bad feeling about this"))
 		env.onTemplate()
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)

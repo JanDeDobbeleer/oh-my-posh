@@ -15,10 +15,10 @@ const (
 
 func TestEnabledGitNotFound(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("inWSLSharedDrive", nil).Return(false)
+	env.On("inWSLSharedDrive").Return(false)
 	env.On("hasCommand", "git").Return(false)
-	env.On("getRuntimeGOOS", nil).Return("")
-	env.On("isWsl", nil).Return(false)
+	env.On("getRuntimeGOOS").Return("")
+	env.On("isWsl").Return(false)
 	g := &git{
 		scm: scm{
 			env:   env,
@@ -30,10 +30,10 @@ func TestEnabledGitNotFound(t *testing.T) {
 
 func TestEnabledInWorkingDirectory(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("inWSLSharedDrive", nil).Return(false)
+	env.On("inWSLSharedDrive").Return(false)
 	env.On("hasCommand", "git").Return(true)
-	env.On("getRuntimeGOOS", nil).Return("")
-	env.On("isWsl", nil).Return(false)
+	env.On("getRuntimeGOOS").Return("")
+	env.On("isWsl").Return(false)
 	fileInfo := &fileInfo{
 		path:         "/dir/hello",
 		parentFolder: "/dir",
@@ -52,10 +52,10 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 
 func TestEnabledInWorkingTree(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("inWSLSharedDrive", nil).Return(false)
+	env.On("inWSLSharedDrive").Return(false)
 	env.On("hasCommand", "git").Return(true)
-	env.On("getRuntimeGOOS", nil).Return("")
-	env.On("isWsl", nil).Return(false)
+	env.On("getRuntimeGOOS").Return("")
+	env.On("isWsl").Return(false)
 	fileInfo := &fileInfo{
 		path:         "/dev/folder_worktree/.git",
 		parentFolder: "/dev/folder_worktree",
@@ -77,10 +77,10 @@ func TestEnabledInWorkingTree(t *testing.T) {
 
 func TestEnabledInSubmodule(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("inWSLSharedDrive", nil).Return(false)
+	env.On("inWSLSharedDrive").Return(false)
 	env.On("hasCommand", "git").Return(true)
-	env.On("getRuntimeGOOS", nil).Return("")
-	env.On("isWsl", nil).Return(false)
+	env.On("getRuntimeGOOS").Return("")
+	env.On("isWsl").Return(false)
 	fileInfo := &fileInfo{
 		path:         "/dev/parent/test-submodule/.git",
 		parentFolder: "/dev/parent/test-submodule",
@@ -106,9 +106,9 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}
 	want := "je suis le output"
 	env := new(MockedEnvironment)
-	env.On("isWsl", nil).Return(false)
+	env.On("isWsl").Return(false)
 	env.On("runCommand", "git", append(args, commandArgs...)).Return(want, nil)
-	env.On("getRuntimeGOOS", nil).Return("unix")
+	env.On("getRuntimeGOOS").Return("unix")
 	g := &git{
 		scm: scm{
 			env:   env,
@@ -228,9 +228,9 @@ func TestSetGitHEADContextClean(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("inWSLSharedDrive", nil).Return(false)
-		env.On("getRuntimeGOOS", nil).Return("unix")
-		env.On("isWsl", nil).Return(false)
+		env.On("inWSLSharedDrive").Return(false)
+		env.On("getRuntimeGOOS").Return("unix")
+		env.On("isWsl").Return(false)
 		env.mockGitCommand("", "describe", "--tags", "--exact-match")
 		env.mockGitCommand(tc.Theirs, "name-rev", "--name-only", "--exclude=tags/*", tc.Theirs)
 		env.mockGitCommand(tc.Ours, "name-rev", "--name-only", "--exclude=tags/*", tc.Ours)
@@ -297,8 +297,8 @@ func TestSetPrettyHEADName(t *testing.T) {
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
 		env.On("getFileContent", "/HEAD").Return(tc.HEAD)
-		env.On("getRuntimeGOOS", nil).Return("unix")
-		env.On("isWsl", nil).Return(false)
+		env.On("getRuntimeGOOS").Return("unix")
+		env.On("isWsl").Return(false)
 		env.mockGitCommand(tc.Tag, "describe", "--tags", "--exact-match")
 		g := &git{
 			scm: scm{
@@ -414,8 +414,8 @@ func TestSetGitStatus(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getRuntimeGOOS", nil).Return("unix")
-		env.On("isWsl", nil).Return(false)
+		env.On("getRuntimeGOOS").Return("unix")
+		env.On("isWsl").Return(false)
 		env.mockGitCommand(strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
 		g := &git{
 			scm: scm{
@@ -477,10 +477,10 @@ func TestGitUpstream(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
-		env.On("isWsl", nil).Return(false)
+		env.On("isWsl").Return(false)
 		env.On("runCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
-		env.On("getRuntimeGOOS", nil).Return("unix")
+		env.On("getRuntimeGOOS").Return("unix")
 		props := properties{
 			GithubIcon:      "GH",
 			GitlabIcon:      "GL",
@@ -556,8 +556,8 @@ func TestShouldIgnoreRootRepository(t *testing.T) {
 			},
 		}
 		env := new(MockedEnvironment)
-		env.On("homeDir", nil).Return("/home/bill")
-		env.On("getRuntimeGOOS", nil).Return(windowsPlatform)
+		env.On("homeDir").Return("/home/bill")
+		env.On("getRuntimeGOOS").Return(windowsPlatform)
 		git := &git{
 			scm: scm{
 				props: props,
@@ -588,9 +588,9 @@ func TestGetGitCommand(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("isWsl", nil).Return(tc.IsWSL)
-		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
-		env.On("getcwd", nil).Return(tc.CWD)
+		env.On("isWsl").Return(tc.IsWSL)
+		env.On("getRuntimeGOOS").Return(tc.GOOS)
+		env.On("getcwd").Return(tc.CWD)
 		wslUname := "5.10.60.1-microsoft-standard-WSL2"
 		if tc.IsWSL1 {
 			wslUname = "4.4.0-19041-Microsoft"
@@ -602,10 +602,10 @@ func TestGetGitCommand(t *testing.T) {
 			},
 		}
 		if tc.IsWslSharedPath {
-			env.On("inWSLSharedDrive", nil).Return(true)
+			env.On("inWSLSharedDrive").Return(true)
 			g.IsWslSharedPath = tc.IsWslSharedPath
 		} else {
-			env.On("inWSLSharedDrive", nil).Return(false)
+			env.On("inWSLSharedDrive").Return(false)
 		}
 		assert.Equal(t, tc.Expected, g.getGitCommand(), tc.Case)
 	}

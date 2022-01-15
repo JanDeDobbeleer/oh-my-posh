@@ -16,7 +16,7 @@ func bootStrapTerraformTest(args *terraformArgs) *terraform {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "terraform").Return(args.hasTfCommand)
 	env.On("hasFolder", "/.terraform").Return(args.hasTfFolder)
-	env.On("getcwd", nil).Return("")
+	env.On("getcwd").Return("")
 	env.On("runCommand", "terraform", []string{"workspace", "show"}).Return(args.workspaceName, nil)
 	env.onTemplate()
 	k := &terraform{

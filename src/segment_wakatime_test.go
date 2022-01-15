@@ -76,7 +76,7 @@ func TestWTTrackedTime(t *testing.T) {
 		cache := &MockedCache{}
 		cache.On("get", FAKEAPIURL).Return(response, !tc.CacheFoundFail)
 		cache.On("set", FAKEAPIURL, response, tc.CacheTimeout).Return()
-		env.On("cache", nil).Return(cache)
+		env.On("cache").Return(cache)
 		env.onTemplate()
 
 		w := &wakatime{

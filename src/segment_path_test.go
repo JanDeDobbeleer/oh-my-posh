@@ -19,6 +19,11 @@ func (env *MockedEnvironment) getenv(key string) string {
 	return args.String(0)
 }
 
+func (env *MockedEnvironment) environ() map[string]string {
+	args := env.Called()
+	return args.Get(0).(map[string]string)
+}
+
 func (env *MockedEnvironment) getcwd() string {
 	args := env.Called()
 	return args.String(0)
@@ -212,6 +217,15 @@ func (env *MockedEnvironment) onTemplate() {
 		}
 		env.On(method).Return(returnArguments...)
 	}
+	patchEnvVars := func() map[string]string {
+		keyValueArray := make(map[string]string)
+		for _, call := range env.Mock.ExpectedCalls {
+			if call.Method == "getenv" {
+				keyValueArray[call.Arguments.String(0)] = call.ReturnArguments.String(0)
+			}
+		}
+		return keyValueArray
+	}
 	patchMethodIfNotSpecified("isRunningAsRoot", false)
 	patchMethodIfNotSpecified("getcwd", "/usr/home/dev/my-app")
 	patchMethodIfNotSpecified("homeDir", "/usr/home/dev")
@@ -220,6 +234,12 @@ func (env *MockedEnvironment) onTemplate() {
 	patchMethodIfNotSpecified("getCurrentUser", "dev")
 	patchMethodIfNotSpecified("getHostName", "laptop", nil)
 	patchMethodIfNotSpecified("lastErrorCode", 0)
+	patchMethodIfNotSpecified("getRuntimeGOOS", darwinPlatform)
+	if env.getRuntimeGOOS() == linuxPlatform {
+		env.On("getenv", "WSL_DISTRO_NAME").Return("ubuntu")
+		env.On("getPlatform").Return("ubuntu")
+	}
+	patchMethodIfNotSpecified("environ", patchEnvVars())
 }
 
 const (

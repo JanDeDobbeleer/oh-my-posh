@@ -34,6 +34,7 @@ type Context struct {
 	Host   string
 	Code   int
 	Env    map[string]string
+	OS     string
 
 	// Simple container to hold ANY object
 	Data
@@ -55,13 +56,16 @@ func (c *Context) init(t *textTemplate) {
 		c.Host = host
 	}
 	c.Code = t.Env.lastErrorCode()
-	if strings.Contains(t.Template, ".Env.") {
-		c.Env = map[string]string{}
-		matches := findAllNamedRegexMatch(templateEnvRegex, t.Template)
-		for _, match := range matches {
-			c.Env[match["ENV"]] = t.Env.getenv(match["ENV"])
+	c.Env = t.Env.environ()
+	goos := t.Env.getRuntimeGOOS()
+	if goos == linuxPlatform {
+		wsl := t.Env.getenv("WSL_DISTRO_NAME")
+		goos = t.Env.getPlatform()
+		if len(wsl) != 0 {
+			goos = wsl
 		}
 	}
+	c.OS = goos
 }
 
 func (t *textTemplate) render() (string, error) {
@@ -100,7 +104,7 @@ func (t *textTemplate) cleanTemplate() {
 		*knownVariables = append(*knownVariables, splitted[0])
 		return splitted[0], true
 	}
-	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "User", "Host", "Env", "Data", "Code"}
+	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "User", "Host", "Env", "Data", "Code", "OS"}
 	matches := findAllNamedRegexMatch(`(?: |{)(?P<var>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
 	for _, match := range matches {
 		if variable, OK := unknownVariable(match["var"], &knownVariables); OK {

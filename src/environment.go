@@ -90,6 +90,7 @@ type wifiInfo struct {
 
 type Environment interface {
 	getenv(key string) string
+	environ() map[string]string
 	getcwd() string
 	homeDir() string
 	hasFiles(pattern string) bool
@@ -154,12 +155,13 @@ const (
 )
 
 type environment struct {
-	args       *args
-	cwd        string
-	cmdCache   *commandCache
-	fileCache  *fileCache
-	logBuilder strings.Builder
-	debug      bool
+	args         *args
+	cwd          string
+	cmdCache     *commandCache
+	fileCache    *fileCache
+	environCache map[string]string
+	logBuilder   strings.Builder
+	debug        bool
 }
 
 func (env *environment) init(args *args) {
@@ -220,6 +222,25 @@ func (env *environment) getenv(key string) string {
 	val := os.Getenv(key)
 	env.log(Debug, "getenv", val)
 	return val
+}
+
+func (env *environment) environ() map[string]string {
+	defer env.trace(time.Now(), "environ")
+	if env.environCache != nil {
+		return env.environCache
+	}
+	const separator = "="
+	values := os.Environ()
+	for value := range values {
+		splitted := strings.Split(values[value], separator)
+		if len(splitted) != 2 {
+			continue
+		}
+		key := splitted[0]
+		val := splitted[1:]
+		env.environCache[key] = strings.Join(val, separator)
+	}
+	return env.environCache
 }
 
 func (env *environment) getcwd() string {

@@ -229,6 +229,7 @@ func (env *environment) environ() map[string]string {
 	if env.environCache != nil {
 		return env.environCache
 	}
+	env.environCache = make(map[string]string)
 	const separator = "="
 	values := os.Environ()
 	for value := range values {

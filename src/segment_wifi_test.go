@@ -42,9 +42,9 @@ func TestWiFiSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getPlatform", nil).Return(windowsPlatform)
-		env.On("isWsl", nil).Return(false)
-		env.On("getWifiNetwork", nil).Return(tc.Network, tc.WifiError)
+		env.On("getPlatform").Return(windowsPlatform)
+		env.On("isWsl").Return(false)
+		env.On("getWifiNetwork").Return(tc.Network, tc.WifiError)
 		env.onTemplate()
 
 		w := &wifi{

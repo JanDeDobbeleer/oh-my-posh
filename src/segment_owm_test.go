@@ -245,7 +245,7 @@ func TestOWMSegmentFromCache(t *testing.T) {
 	cache.On("get", "owm_response").Return(response, true)
 	cache.On("get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key", true)
 	cache.On("set").Return()
-	env.On("cache", nil).Return(cache)
+	env.On("cache").Return(cache)
 	env.onTemplate()
 
 	assert.Nil(t, o.setStatus())
@@ -272,7 +272,7 @@ func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 	cache.On("get", "owm_response").Return(response, true)
 	cache.On("get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key", true)
 	cache.On("set").Return()
-	env.On("cache", nil).Return(cache)
+	env.On("cache").Return(cache)
 	env.onTemplate()
 
 	assert.Nil(t, o.setStatus())

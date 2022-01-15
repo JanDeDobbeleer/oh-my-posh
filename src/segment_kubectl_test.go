@@ -124,7 +124,7 @@ func TestKubectlSegment(t *testing.T) {
 		for path, content := range tc.Files {
 			env.On("getFileContent", path).Return(content)
 		}
-		env.On("homeDir", nil).Return("testhome")
+		env.On("homeDir").Return("testhome")
 		env.onTemplate()
 
 		k := &kubectl{

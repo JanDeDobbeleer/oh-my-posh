@@ -96,8 +96,8 @@ func TestRuby(t *testing.T) {
 		env.On("hasFiles", "*.rb").Return(tc.HasRubyFiles)
 		env.On("hasFiles", "Rakefile").Return(tc.HasRakeFile)
 		env.On("hasFiles", "Gemfile").Return(tc.HasGemFile)
-		env.On("getcwd", nil).Return("/usr/home/project")
-		env.On("homeDir", nil).Return("/usr/home")
+		env.On("getcwd").Return("/usr/home/project")
+		env.On("homeDir").Return("/usr/home")
 		env.onTemplate()
 		props := properties{
 			FetchVersion: tc.FetchVersion,

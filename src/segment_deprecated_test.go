@@ -270,8 +270,8 @@ func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
 	expected := changesColor
 	status := "## main...origin/main [ahead 33]\n M myfile"
 	env := new(MockedEnvironment)
-	env.On("isWsl", nil).Return(false)
-	env.On("getRuntimeGOOS", nil).Return("unix")
+	env.On("isWsl").Return(false)
+	env.On("getRuntimeGOOS").Return("unix")
 	env.On("hasFolder", "/rebase-merge").Return(false)
 	env.On("hasFolder", "/rebase-apply").Return(false)
 	env.On("hasFolder", "/sequencer").Return(false)
@@ -324,7 +324,7 @@ func TestExitWriterDeprecatedString(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("lastErrorCode", nil).Return(tc.ExitCode)
+		env.On("lastErrorCode").Return(tc.ExitCode)
 		props := properties{
 			SuccessIcon:     tc.SuccessIcon,
 			ErrorIcon:       tc.ErrorIcon,
@@ -446,7 +446,7 @@ func TestBatterySegmentSingle(t *testing.T) {
 		if tc.DisableCharged {
 			props[DisplayCharged] = false
 		}
-		env.On("getBatteryInfo", nil).Return(tc.Batteries, tc.Error)
+		env.On("getBatteryInfo").Return(tc.Batteries, tc.Error)
 		env.onTemplate()
 		b := &batt{
 			props: props,
@@ -623,12 +623,12 @@ func TestPropertySessionSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getCurrentUser", nil).Return(tc.UserName)
-		env.On("getRuntimeGOOS", nil).Return(tc.GOOS)
+		env.On("getCurrentUser").Return(tc.UserName)
+		env.On("getRuntimeGOOS").Return(tc.GOOS)
 		if tc.HostError {
-			env.On("getHostName", nil).Return(tc.Host, errors.New("oh snap"))
+			env.On("getHostName").Return(tc.Host, errors.New("oh snap"))
 		} else {
-			env.On("getHostName", nil).Return(tc.Host, nil)
+			env.On("getHostName").Return(tc.Host, nil)
 		}
 		var SSHSession string
 		if tc.SSHSession {
@@ -642,7 +642,7 @@ func TestPropertySessionSegment(t *testing.T) {
 		env.On("getenv", "SSH_CLIENT").Return(SSHClient)
 		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
 		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserNameEnv)
-		env.On("isRunningAsRoot", nil).Return(tc.Root)
+		env.On("isRunningAsRoot").Return(tc.Root)
 		props := properties{
 			UserInfoSeparator: " at ",
 			SSHIcon:           "ssh ",
@@ -754,9 +754,9 @@ func TestPythonVirtualEnv(t *testing.T) {
 		env.On("getenv", "CONDA_ENV_PATH").Return(tc.CondaEnvName)
 		env.On("getenv", "CONDA_DEFAULT_ENV").Return(tc.CondaDefaultEnvName)
 		env.On("getenv", "PYENV_VERSION").Return(tc.PyEnvName)
-		env.On("getPathSeperator", nil).Return("")
-		env.On("getcwd", nil).Return("/usr/home/project")
-		env.On("homeDir", nil).Return("/usr/home")
+		env.On("getPathSeperator").Return("")
+		env.On("getcwd").Return("/usr/home/project")
+		env.On("homeDir").Return("/usr/home")
 		env.onTemplate()
 		props := properties{
 			FetchVersion:      tc.FetchVersion,

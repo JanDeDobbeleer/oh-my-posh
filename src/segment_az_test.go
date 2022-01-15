@@ -69,7 +69,7 @@ func TestAzSegment(t *testing.T) {
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
 		home := "/Users/posh"
-		env.On("homeDir", nil).Return(home)
+		env.On("homeDir").Return(home)
 		var azureProfile, azureRmContext, azureRMContext string
 		if tc.HasCLI {
 			content, _ := ioutil.ReadFile("./test/azureProfile.json")
@@ -83,7 +83,7 @@ func TestAzSegment(t *testing.T) {
 			content, _ := ioutil.ReadFile("./test/AzureRmContext.json")
 			azureRMContext = string(content)
 		}
-		env.On("getRuntimeGOOS", nil).Return(linuxPlatform)
+		env.On("getRuntimeGOOS").Return(linuxPlatform)
 		env.On("getFileContent", filepath.Join(home, ".azure", "azureProfile.json")).Return(azureProfile)
 		env.On("getFileContent", filepath.Join(home, ".Azure", "AzureRmContext.json")).Return(azureRmContext)
 		env.On("getFileContent", filepath.Join(home, ".azure", "AzureRmContext.json")).Return(azureRMContext)

@@ -9,7 +9,7 @@ import (
 
 func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(1337)
+	env.On("executionTime").Return(1337)
 	executionTime := &executiontime{
 		env:   env,
 		props: properties{},
@@ -19,7 +19,7 @@ func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
 
 func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(1)
+	env.On("executionTime").Return(1)
 	executionTime := &executiontime{
 		env:   env,
 		props: properties{},
@@ -29,7 +29,7 @@ func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 
 func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(99)
+	env.On("executionTime").Return(99)
 	props := properties{
 		ThresholdProperty: float64(10),
 	}
@@ -42,7 +42,7 @@ func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 
 func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(99)
+	env.On("executionTime").Return(99)
 	props := properties{
 		ThresholdProperty: float64(100),
 	}
@@ -57,7 +57,7 @@ func TestExecutionTimeWriterDuration(t *testing.T) {
 	input := 1337
 	expected := "1.337s"
 	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(input)
+	env.On("executionTime").Return(input)
 	executionTime := &executiontime{
 		env:   env,
 		props: properties{},
@@ -70,7 +70,7 @@ func TestExecutionTimeWriterDuration2(t *testing.T) {
 	input := 13371337
 	expected := "3h 42m 51.337s"
 	env := new(MockedEnvironment)
-	env.On("executionTime", nil).Return(input)
+	env.On("executionTime").Return(input)
 	executionTime := &executiontime{
 		env:   env,
 		props: properties{},

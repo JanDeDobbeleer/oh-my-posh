@@ -140,7 +140,7 @@ func TestNSSegment(t *testing.T) {
 		cache.On("set", FAKEAPIURL, tc.JSONResponse, tc.CacheTimeout).Return()
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
-		env.On("cache", nil).Return(cache)
+		env.On("cache").Return(cache)
 		env.onTemplate()
 
 		if tc.Template != "" {

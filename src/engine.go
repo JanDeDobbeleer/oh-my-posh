@@ -161,6 +161,7 @@ func (e *engine) debug() string {
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
 	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(start)))
+	e.write(fmt.Sprintf("\n\x1b[1mCache path:\x1b[0m %s\n", e.env.getCachePath()))
 	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
 	e.write(e.env.logs())
 	return e.string()

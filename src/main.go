@@ -66,6 +66,7 @@ type args struct {
 	Command        *string
 	PrintTransient *bool
 	Plain          *bool
+	CachePath      *bool
 }
 
 func main() {
@@ -170,6 +171,10 @@ func main() {
 			"plain",
 			false,
 			"Print a plain prompt without ANSI"),
+		CachePath: flag.Bool(
+			"cache-path",
+			false,
+			"Print the location of the cache"),
 	}
 	flag.Parse()
 	if *args.Version {
@@ -185,6 +190,10 @@ func main() {
 	}
 	if *args.Millis {
 		fmt.Print(time.Now().UnixNano() / 1000000)
+		return
+	}
+	if *args.CachePath {
+		fmt.Print(env.getCachePath())
 		return
 	}
 	if *args.Init {

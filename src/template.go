@@ -62,7 +62,7 @@ func (c *Context) init(t *textTemplate) {
 		wsl := t.Env.getenv("WSL_DISTRO_NAME")
 		goos = t.Env.getPlatform()
 		if len(wsl) != 0 {
-			goos = wsl
+			goos = strings.ToLower(wsl)
 		}
 	}
 	c.OS = goos

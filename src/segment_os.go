@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 )
 
 type osInfo struct {
@@ -84,7 +85,7 @@ func (n *osInfo) string() string {
 			n.os = p
 			return n.getDistroName(p, "")
 		}
-		n.os = wsl
+		n.os = strings.ToLower(wsl)
 		return fmt.Sprintf("%s%s%s",
 			n.props.getString(WSL, "WSL"),
 			n.props.getString(WSLSeparator, " - "),

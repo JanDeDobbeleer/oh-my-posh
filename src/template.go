@@ -26,15 +26,15 @@ type textTemplate struct {
 type Data interface{}
 
 type Context struct {
-	Root   bool
-	PWD    string
-	Folder string
-	Shell  string
-	User   string
-	Host   string
-	Code   int
-	Env    map[string]string
-	OS     string
+	Root     bool
+	PWD      string
+	Folder   string
+	Shell    string
+	UserName string
+	HostName string
+	Code     int
+	Env      map[string]string
+	OS       string
 
 	// Simple container to hold ANY object
 	Data
@@ -51,9 +51,9 @@ func (c *Context) init(t *textTemplate) {
 	c.PWD = pwd
 	c.Folder = base(c.PWD, t.Env)
 	c.Shell = t.Env.getShellName()
-	c.User = t.Env.getCurrentUser()
+	c.UserName = t.Env.getCurrentUser()
 	if host, err := t.Env.getHostName(); err == nil {
-		c.Host = host
+		c.HostName = host
 	}
 	c.Code = t.Env.lastErrorCode()
 	c.Env = t.Env.environ()
@@ -104,7 +104,7 @@ func (t *textTemplate) cleanTemplate() {
 		*knownVariables = append(*knownVariables, splitted[0])
 		return splitted[0], true
 	}
-	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "User", "Host", "Env", "Data", "Code", "OS"}
+	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "UserName", "HostName", "Env", "Data", "Code", "OS"}
 	matches := findAllNamedRegexMatch(`(?: |{)(?P<var>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
 	for _, match := range matches {
 		if variable, OK := unknownVariable(match["var"], &knownVariables); OK {

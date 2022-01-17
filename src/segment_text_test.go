@@ -17,7 +17,7 @@ func TestTextSegment(t *testing.T) {
 		{Case: "template text with env var", ExpectedString: "hello world", Text: "{{ .Env.HELLO }} world"},
 		{Case: "template text with shell name", ExpectedString: "hello world from terminal", Text: "{{ .Env.HELLO }} world from {{ .Shell }}"},
 		{Case: "template text with folder", ExpectedString: "hello world in posh", Text: "{{ .Env.HELLO }} world in {{ .Folder }}"},
-		{Case: "template text with user", ExpectedString: "hello Posh", Text: "{{ .Env.HELLO }} {{ .User }}"},
+		{Case: "template text with user", ExpectedString: "hello Posh", Text: "{{ .Env.HELLO }} {{ .UserName }}"},
 		{Case: "empty text", Text: "", ExpectedDisabled: true},
 		{Case: "empty template result", Text: "{{ .Env.WORLD }}", ExpectedDisabled: true},
 	}

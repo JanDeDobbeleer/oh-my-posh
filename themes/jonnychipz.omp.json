@@ -29,7 +29,7 @@
           "leading_diamond": "\uE0B6",
           "trailing_diamond": "\uE0B0",
           "properties": {
-            "template": "{{ .UserName }}@{{ .ComputerName }}"
+            "template": "{{ .UserName }}@{{ .HostName }}"
           }
         },
         {

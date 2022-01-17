@@ -36,7 +36,7 @@ performance - defaults to `false`
 
 - `.Context`: `string` - the current kubectl context
 - `.Namespace`: `string` - the current kubectl context namespace
-- `.UserName`: `string` - the current kubectl context user
+- `.User`: `string` - the current kubectl context user
 - `.Cluster`: `string` - the current kubectl context cluster
 
 ## Tips

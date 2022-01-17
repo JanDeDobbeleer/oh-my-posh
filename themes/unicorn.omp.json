@@ -3,7 +3,7 @@
   "final_space": true,
   "console_title": true,
   "console_title_style": "template",
-  "console_title_template": "{{.User}}@{{.Host}} in {{ .Path }}",
+  "console_title_template": "{{.UserName}}@{{.HostName}} in {{ .Path }}",
   "blocks": [
     {
       "type": "prompt",

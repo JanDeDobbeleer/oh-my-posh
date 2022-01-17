@@ -284,14 +284,14 @@ func (s *session) getDefaultUser() string {
 
 func (s *session) legacyEnabled() bool {
 	if s.props.getBool(DisplayUser, true) {
-		s.UserName = s.getUserName()
+		s.userName = s.getUserName()
 	}
 	if s.props.getBool(DisplayHost, true) {
-		s.ComputerName = s.getComputerName()
+		s.hostName = s.getComputerName()
 	}
 	s.DefaultUserName = s.getDefaultUser()
 	showDefaultUser := s.props.getBool(DisplayDefault, true)
-	if !showDefaultUser && s.DefaultUserName == s.UserName {
+	if !showDefaultUser && s.DefaultUserName == s.userName {
 		return false
 	}
 	return true
@@ -310,15 +310,15 @@ func (s *session) getFormattedText() string {
 	userColor := s.props.getColor(UserColor, defaulColor)
 	hostColor := s.props.getColor(HostColor, defaulColor)
 	if len(userColor) > 0 && len(hostColor) > 0 {
-		return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", sshIcon, userColor, s.UserName, separator, hostColor, s.ComputerName)
+		return fmt.Sprintf("%s<%s>%s</>%s<%s>%s</>", sshIcon, userColor, s.userName, separator, hostColor, s.hostName)
 	}
 	if len(userColor) > 0 {
-		return fmt.Sprintf("%s<%s>%s</>%s%s", sshIcon, userColor, s.UserName, separator, s.ComputerName)
+		return fmt.Sprintf("%s<%s>%s</>%s%s", sshIcon, userColor, s.userName, separator, s.hostName)
 	}
 	if len(hostColor) > 0 {
-		return fmt.Sprintf("%s%s%s<%s>%s</>", sshIcon, s.UserName, separator, hostColor, s.ComputerName)
+		return fmt.Sprintf("%s%s%s<%s>%s</>", sshIcon, s.userName, separator, hostColor, s.hostName)
 	}
-	return fmt.Sprintf("%s%s%s%s", sshIcon, s.UserName, separator, s.ComputerName)
+	return fmt.Sprintf("%s%s%s%s", sshIcon, s.userName, separator, s.hostName)
 }
 
 // Language

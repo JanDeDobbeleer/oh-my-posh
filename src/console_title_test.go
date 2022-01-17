@@ -39,7 +39,7 @@ func TestGetConsoleTitle(t *testing.T) {
 		},
 		{
 			Style:         Template,
-			Template:      "{{.User}}@{{.Host}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
+			Template:      "{{.UserName}}@{{.HostName}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
 			Root:          true,
 			User:          "MyUser",
 			PathSeperator: "\\",
@@ -88,7 +88,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 	}{
 		{
 			Style:         Template,
-			Template:      "Not using Host only {{.User}} and {{.Shell}}",
+			Template:      "Not using Host only {{.UserName}} and {{.Shell}}",
 			User:          "MyUser",
 			PathSeperator: "\\",
 			ShellName:     "PowerShell",
@@ -96,7 +96,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		},
 		{
 			Style:         Template,
-			Template:      "{{.User}}@{{.Host}} :: {{.Shell}}",
+			Template:      "{{.UserName}}@{{.HostName}} :: {{.Shell}}",
 			User:          "MyUser",
 			PathSeperator: "\\",
 			ShellName:     "PowerShell",

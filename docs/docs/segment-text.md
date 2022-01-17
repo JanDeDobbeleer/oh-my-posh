@@ -46,8 +46,8 @@ with [sprig][sprig] utilizing the properties below.
 - `.Path`: `string` - the current working directory
 - `.Folder`: `string` - the current working folder
 - `.Shell`: `string` - the current shell name
-- `.User`: `string` - the current user name
-- `.Host`: `string` - the host name
+- `.UserName`: `string` - the current user name
+- `.HostName`: `string` - the host name
 - `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
 
 [coloring]: /docs/config-colors

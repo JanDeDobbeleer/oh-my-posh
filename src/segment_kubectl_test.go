@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const testKubectlAllInfoTemplate = "{{.Context}} :: {{.Namespace}} :: {{.UserName}} :: {{.Cluster}}"
+const testKubectlAllInfoTemplate = "{{.Context}} :: {{.Namespace}} :: {{.User}} :: {{.Cluster}}"
 
 func TestKubectlSegment(t *testing.T) {
 	standardTemplate := "{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}"

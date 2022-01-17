@@ -11,7 +11,7 @@
           "foreground": "#FFFFFF",
           "properties": {
             "prefix": "<#0377C8># </>",
-            "template": "<#0377C8>{{ .UserName }}</> <#ffffff>in</> <#4A9207>{{ .ComputerName }}</>"
+            "template": "<#0377C8>{{ .UserName }}</> <#ffffff>in</> <#4A9207>{{ .HostName }}</>"
           }
         },
         {

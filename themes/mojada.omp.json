@@ -33,7 +33,7 @@
           "properties": {
             "prefix": "",
             "display_host": true,
-            "template": "{{ .UserName }}<#000000>@</><#e06c75>{{ .ComputerName }}</>"
+            "template": "{{ .UserName }}<#000000>@</><#e06c75>{{ .HostName }}</>"
           }
         },
         {
@@ -150,5 +150,5 @@
   "final_space": true,
   "console_title": true,
   "console_title_style": "template",
-  "console_title_template": "{{.User}}@{{.Host}} : {{.Folder}}"
+  "console_title_template": "{{.UserName}}@{{.HostName}} : {{.Folder}}"
 }

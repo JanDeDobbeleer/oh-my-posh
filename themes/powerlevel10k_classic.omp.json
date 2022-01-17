@@ -64,7 +64,7 @@
           "leading_diamond": "\uE0B2",
           "properties": {
             "postfix": " <#26C6DA>\uE0B3</> ",
-            "template": "{{ .UserName }}@{{ .ComputerName }}"
+            "template": "{{ .UserName }}@{{ .HostName }}"
           }
         },
         {

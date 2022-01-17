@@ -37,8 +37,8 @@ offers a few standard properties to work with.
 - `.PWD`: `string` - the current working directory
 - `.Folder`: `string` - the current working folder
 - `.Shell`: `string` - the current shell name
-- `.User`: `string` - the current user name
-- `.Host`: `string` - the host name
+- `.UserName`: `string` - the current user name
+- `.HostName`: `string` - the host name
 - `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
 
 A `boolean` can be used for conditional display purposes, a `string` can be displayed.
@@ -54,7 +54,7 @@ the current working directory is `/usr/home/omp` and the shell is `zsh`.
     // when root == true: omp :: root :: zsh
     "console_title_template": "{{.Folder}}", // outputs: omp
     "console_title_template": "{{.Shell}} in {{.PWD}}", // outputs: zsh in /usr/home/omp
-    "console_title_template": "{{.User}}@{{.Host}} {{.Shell}} in {{.PWD}}", // outputs: MyUser@MyMachine zsh in /usr/home/omp
+    "console_title_template": "{{.UserName}}@{{.HostName}} {{.Shell}} in {{.PWD}}", // outputs: MyUser@MyMachine zsh in /usr/home/omp
     "console_title_template": "{{.Env.USERDOMAIN}} {{.Shell}} in {{.PWD}}", // outputs: MyCompany zsh in /usr/home/omp
 }
 ```

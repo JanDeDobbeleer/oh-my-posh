@@ -23,7 +23,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			ExpectedString:  "john@company-laptop",
 			ComputerName:    "company-laptop",
 			UserName:        "john",
-			Template:        "{{.UserName}}@{{.ComputerName}}",
+			Template:        "{{.UserName}}@{{.HostName}}",
 			ExpectedEnabled: true,
 		},
 		{
@@ -39,7 +39,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			UserName:        "john",
 			SSHSession:      true,
 			ComputerName:    "remote",
-			Template:        "{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			Template:        "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
 			ExpectedEnabled: true,
 		},
 		{
@@ -48,7 +48,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			UserName:        "john",
 			SSHSession:      false,
 			ComputerName:    "remote",
-			Template:        "{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			Template:        "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
 			ExpectedEnabled: true,
 		},
 		{
@@ -58,7 +58,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			SSHSession:      true,
 			ComputerName:    "remote",
 			Root:            true,
-			Template:        "{{if .Root}}super {{end}}{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			Template:        "{{if .Root}}super {{end}}{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
 			ExpectedEnabled: true,
 		},
 		{

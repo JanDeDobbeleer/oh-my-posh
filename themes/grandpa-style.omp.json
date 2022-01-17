@@ -4,7 +4,7 @@
     "osc99": true,
     "console_title": true,
     "console_title_style": "template",
-    "console_title_template": "{{if .Root}} ⚡ {{end}}{{.Folder | replace \"~\" \"🏚\" }} @ {{.Host}}",
+    "console_title_template": "{{if .Root}} ⚡ {{end}}{{.Folder | replace \"~\" \"🏚\" }} @ {{.HostName}}",
     "blocks": [
         {
             "type": "prompt",

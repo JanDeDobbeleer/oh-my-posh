@@ -19,7 +19,7 @@
           "style": "plain",
           "properties": {
             "prefix": "",
-            "template": "{{ .UserName }}@{{ .ComputerName }}"
+            "template": "{{ .UserName }}@{{ .HostName }}"
           }
         },
         {

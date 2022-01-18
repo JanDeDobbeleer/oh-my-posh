@@ -77,6 +77,9 @@ func TestExitWriterTemplateString(t *testing.T) {
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
 		env.On("lastErrorCode").Return(tc.ExitCode)
+		env.On("templateCache").Return(&templateCache{
+			Code: tc.ExitCode,
+		})
 		env.onTemplate()
 		props := properties{
 			SegmentTemplate: tc.Template,

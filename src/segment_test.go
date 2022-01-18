@@ -190,11 +190,14 @@ func TestGetColors(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.onTemplate()
 		segment := &Segment{
 			writer: &aws{
 				Profile: tc.Profile,
 				Region:  tc.Region,
 			},
+			env: env,
 		}
 		if tc.Background {
 			segment.Background = tc.DefaultColor

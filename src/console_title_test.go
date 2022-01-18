@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -57,11 +56,17 @@ func TestGetConsoleTitle(t *testing.T) {
 		env.On("getcwd").Return(tc.Cwd)
 		env.On("homeDir").Return("/usr/home")
 		env.On("getPathSeperator").Return(tc.PathSeperator)
-		env.On("isRunningAsRoot").Return(tc.Root)
-		env.On("getShellName").Return(tc.ShellName)
-		env.On("getenv", "USERDOMAIN").Return("MyCompany")
-		env.On("getCurrentUser").Return("MyUser")
-		env.On("getHostName").Return("MyHost", nil)
+		env.On("templateCache").Return(&templateCache{
+			Env: map[string]string{
+				"USERDOMAIN": "MyCompany",
+			},
+			Shell:    tc.ShellName,
+			UserName: "MyUser",
+			Root:     tc.Root,
+			HostName: "MyHost",
+			PWD:      tc.Cwd,
+			Folder:   base(tc.Cwd, env),
+		})
 		env.onTemplate()
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)
@@ -112,12 +117,15 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("getcwd").Return(tc.Cwd)
 		env.On("homeDir").Return("/usr/home")
-		env.On("getPathSeperator").Return(tc.PathSeperator)
-		env.On("isRunningAsRoot").Return(tc.Root)
-		env.On("getShellName").Return(tc.ShellName)
-		env.On("getenv", "USERDOMAIN").Return("MyCompany")
-		env.On("getCurrentUser").Return("MyUser")
-		env.On("getHostName").Return("", fmt.Errorf("I have a bad feeling about this"))
+		env.On("templateCache").Return(&templateCache{
+			Env: map[string]string{
+				"USERDOMAIN": "MyCompany",
+			},
+			Shell:    tc.ShellName,
+			UserName: "MyUser",
+			Root:     tc.Root,
+			HostName: "",
+		})
 		env.onTemplate()
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)

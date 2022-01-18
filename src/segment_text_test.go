@@ -24,16 +24,18 @@ func TestTextSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getcwd").Return("/usr/home/posh")
-		env.On("homeDir").Return("/usr/home")
 		env.On("getPathSeperator").Return("/")
-		env.On("isRunningAsRoot").Return(true)
-		env.On("getShellName").Return("terminal")
-		env.On("getenv", "HELLO").Return("hello")
-		env.On("getenv", "WORLD").Return("")
-		env.On("getCurrentUser").Return("Posh")
-		env.On("getHostName").Return("MyHost", nil)
-		env.onTemplate()
+		env.On("templateCache").Return(&templateCache{
+			UserName: "Posh",
+			Env: map[string]string{
+				"HELLO": "hello",
+				"WORLD": "",
+			},
+			HostName: "MyHost",
+			Shell:    "terminal",
+			Root:     true,
+			Folder:   base("/usr/home/posh", env),
+		})
 		txt := &text{
 			env: env,
 			props: properties{

@@ -738,6 +738,9 @@ func TestGitTemplateString(t *testing.T) {
 		props := properties{
 			FetchStatus: true,
 		}
+		env := new(MockedEnvironment)
+		env.onTemplate()
+		tc.Git.env = env
 		tc.Git.props = props
 		assert.Equal(t, tc.Expected, tc.Git.templateString(tc.Template), tc.Case)
 	}

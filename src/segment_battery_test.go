@@ -70,6 +70,8 @@ func TestGetBatteryColors(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.onTemplate()
 		batt := &batt{
 			Percentage: tc.Percentage,
 		}
@@ -78,6 +80,7 @@ func TestGetBatteryColors(t *testing.T) {
 		}
 		segment := &Segment{
 			writer: batt,
+			env:    env,
 		}
 		segment.Foreground = tc.DefaultColor
 		segment.ForegroundTemplates = tc.Templates

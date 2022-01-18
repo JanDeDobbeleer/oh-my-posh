@@ -328,6 +328,9 @@ func TestPlasticTemplateString(t *testing.T) {
 			FetchStatus: true,
 		}
 		tc.Plastic.props = props
+		env := new(MockedEnvironment)
+		env.onTemplate()
+		tc.Plastic.env = env
 		assert.Equal(t, tc.Expected, tc.Plastic.templateString(tc.Template), tc.Case)
 	}
 }

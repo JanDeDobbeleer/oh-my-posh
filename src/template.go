@@ -12,9 +12,6 @@ const (
 	// Errors to show when the template handling fails
 	invalidTemplate   = "invalid template text"
 	incorrectTemplate = "unable to create text based on template"
-	// nostruct          = "unable to create map from non-struct type"
-
-	templateEnvRegex = `\.Env\.(?P<ENV>[^ \.}]*)`
 )
 
 type textTemplate struct {
@@ -26,6 +23,13 @@ type textTemplate struct {
 type Data interface{}
 
 type Context struct {
+	templateCache
+
+	// Simple container to hold ANY object
+	Data
+}
+
+type templateCache struct {
 	Root     bool
 	PWD      string
 	Folder   string
@@ -35,37 +39,14 @@ type Context struct {
 	Code     int
 	Env      map[string]string
 	OS       string
-
-	// Simple container to hold ANY object
-	Data
 }
 
 func (c *Context) init(t *textTemplate) {
 	c.Data = t.Context
-	if t.Env == nil {
+	if cache := t.Env.templateCache(); cache != nil {
+		c.templateCache = *cache
 		return
 	}
-	c.Root = t.Env.isRunningAsRoot()
-	pwd := t.Env.getcwd()
-	pwd = strings.Replace(pwd, t.Env.homeDir(), "~", 1)
-	c.PWD = pwd
-	c.Folder = base(c.PWD, t.Env)
-	c.Shell = t.Env.getShellName()
-	c.UserName = t.Env.getCurrentUser()
-	if host, err := t.Env.getHostName(); err == nil {
-		c.HostName = host
-	}
-	c.Code = t.Env.lastErrorCode()
-	c.Env = t.Env.environ()
-	goos := t.Env.getRuntimeGOOS()
-	if goos == linuxPlatform {
-		wsl := t.Env.getenv("WSL_DISTRO_NAME")
-		goos = t.Env.getPlatform()
-		if len(wsl) != 0 {
-			goos = strings.ToLower(wsl)
-		}
-	}
-	c.OS = goos
 }
 
 func (t *textTemplate) render() (string, error) {

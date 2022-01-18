@@ -121,10 +121,9 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
-		for name, value := range tc.Env {
-			env.On("getenv", name).Return(value)
-		}
-		env.onTemplate()
+		env.On("templateCache").Return(&templateCache{
+			Env: tc.Env,
+		})
 		template := &textTemplate{
 			Template: tc.Template,
 			Context:  tc.Context,

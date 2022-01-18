@@ -11,7 +11,7 @@ func TestOSInfo(t *testing.T) {
 		Case              string
 		ExpectedString    string
 		GOOS              string
-		WSLDistro         string
+		IsWSL             bool
 		Platform          string
 		DisplayDistroName bool
 	}{
@@ -19,14 +19,14 @@ func TestOSInfo(t *testing.T) {
 			Case:           "WSL debian - icon",
 			ExpectedString: "WSL at \uf306",
 			GOOS:           "linux",
-			WSLDistro:      "debian",
+			IsWSL:          true,
 			Platform:       "debian",
 		},
 		{
 			Case:              "WSL debian - name",
-			ExpectedString:    "WSL at burps",
+			ExpectedString:    "WSL at debian",
 			GOOS:              "linux",
-			WSLDistro:         "burps",
+			IsWSL:             true,
 			Platform:          "debian",
 			DisplayDistroName: true,
 		},
@@ -62,7 +62,7 @@ func TestOSInfo(t *testing.T) {
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
 		env.On("getRuntimeGOOS").Return(tc.GOOS)
-		env.On("getenv", "WSL_DISTRO_NAME").Return(tc.WSLDistro)
+		env.On("isWsl").Return(tc.IsWSL)
 		env.On("getPlatform").Return(tc.Platform)
 		osInfo := &osInfo{
 			env: env,
@@ -75,9 +75,7 @@ func TestOSInfo(t *testing.T) {
 			},
 		}
 		assert.Equal(t, tc.ExpectedString, osInfo.string(), tc.Case)
-		if tc.WSLDistro != "" {
-			assert.Equal(t, tc.WSLDistro, osInfo.os, tc.Case)
-		} else if tc.Platform != "" {
+		if tc.Platform != "" {
 			assert.Equal(t, tc.Platform, osInfo.os, tc.Case)
 		} else {
 			assert.Equal(t, tc.GOOS, osInfo.os, tc.Case)

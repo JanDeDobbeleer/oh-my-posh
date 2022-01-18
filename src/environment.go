@@ -166,6 +166,8 @@ type environment struct {
 
 func (env *environment) init(args *args) {
 	env.args = args
+	env.fileCache = &fileCache{}
+	env.fileCache.init(env.getCachePath())
 	env.resolveConfigPath()
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
@@ -174,8 +176,6 @@ func (env *environment) init(args *args) {
 		env.debug = true
 		log.SetOutput(&env.logBuilder)
 	}
-	env.fileCache = &fileCache{}
-	env.fileCache.init(env.getCachePath())
 }
 
 func (env *environment) resolveConfigPath() {

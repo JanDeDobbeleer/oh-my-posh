@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 )
 
 type osInfo struct {
@@ -79,17 +78,14 @@ func (n *osInfo) string() string {
 		n.os = darwinPlatform
 		return n.props.getString(MacOS, "\uF179")
 	case linuxPlatform:
-		wsl := n.env.getenv("WSL_DISTRO_NAME")
-		p := n.env.getPlatform()
-		if len(wsl) == 0 {
-			n.os = p
-			return n.getDistroName(p, "")
+		n.os = n.env.getPlatform()
+		if !n.env.isWsl() {
+			return n.getDistroName(n.os, "")
 		}
-		n.os = strings.ToLower(wsl)
 		return fmt.Sprintf("%s%s%s",
 			n.props.getString(WSL, "WSL"),
 			n.props.getString(WSLSeparator, " - "),
-			n.getDistroName(p, wsl))
+			n.getDistroName(n.os, n.os))
 	default:
 		n.os = goos
 		return goos

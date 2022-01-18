@@ -90,7 +90,6 @@ type wifiInfo struct {
 
 type Environment interface {
 	getenv(key string) string
-	environ() map[string]string
 	getcwd() string
 	homeDir() string
 	hasFiles(pattern string) bool
@@ -128,6 +127,7 @@ type Environment interface {
 	convertToLinuxPath(path string) string
 	convertToWindowsPath(path string) string
 	getWifiNetwork() (*wifiInfo, error)
+	templateCache() *templateCache
 }
 
 type commandCache struct {
@@ -155,13 +155,13 @@ const (
 )
 
 type environment struct {
-	args         *args
-	cwd          string
-	cmdCache     *commandCache
-	fileCache    *fileCache
-	environCache map[string]string
-	logBuilder   strings.Builder
-	debug        bool
+	args       *args
+	cwd        string
+	cmdCache   *commandCache
+	fileCache  *fileCache
+	tmplCache  *templateCache
+	logBuilder strings.Builder
+	debug      bool
 }
 
 func (env *environment) init(args *args) {
@@ -176,18 +176,6 @@ func (env *environment) init(args *args) {
 	}
 	env.fileCache = &fileCache{}
 	env.fileCache.init(env.getCachePath())
-	env.environCache = make(map[string]string)
-	const separator = "="
-	values := os.Environ()
-	for value := range values {
-		splitted := strings.Split(values[value], separator)
-		if len(splitted) != 2 {
-			continue
-		}
-		key := splitted[0]
-		val := splitted[1:]
-		env.environCache[key] = strings.Join(val, separator)
-	}
 }
 
 func (env *environment) resolveConfigPath() {
@@ -234,11 +222,6 @@ func (env *environment) getenv(key string) string {
 	val := os.Getenv(key)
 	env.log(Debug, "getenv", val)
 	return val
-}
-
-func (env *environment) environ() map[string]string {
-	defer env.trace(time.Now(), "environ")
-	return env.environCache
 }
 
 func (env *environment) getcwd() string {
@@ -561,6 +544,42 @@ func (env *environment) close() {
 
 func (env *environment) logs() string {
 	return env.logBuilder.String()
+}
+
+func (env *environment) templateCache() *templateCache {
+	defer env.trace(time.Now(), "templateCache")
+	if env.tmplCache != nil {
+		return env.tmplCache
+	}
+	tmplCache := &templateCache{
+		Root:  env.isRunningAsRoot(),
+		Shell: env.getShellName(),
+		Code:  env.lastErrorCode(),
+	}
+	tmplCache.Env = make(map[string]string)
+	const separator = "="
+	values := os.Environ()
+	for value := range values {
+		splitted := strings.Split(values[value], separator)
+		if len(splitted) != 2 {
+			continue
+		}
+		key := splitted[0]
+		val := splitted[1:]
+		tmplCache.Env[key] = strings.Join(val, separator)
+	}
+	pwd := env.getcwd()
+	pwd = strings.Replace(pwd, env.homeDir(), "~", 1)
+	tmplCache.PWD = pwd
+	tmplCache.Folder = base(pwd, env)
+	tmplCache.UserName = env.getCurrentUser()
+	if host, err := env.getHostName(); err == nil {
+		tmplCache.HostName = host
+	}
+	goos := env.getRuntimeGOOS()
+	tmplCache.OS = goos
+	env.tmplCache = tmplCache
+	return env.tmplCache
 }
 
 func cleanHostName(hostName string) string {

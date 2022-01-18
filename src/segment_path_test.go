@@ -19,11 +19,6 @@ func (env *MockedEnvironment) getenv(key string) string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) environ() map[string]string {
-	args := env.Called()
-	return args.Get(0).(map[string]string)
-}
-
 func (env *MockedEnvironment) getcwd() string {
 	args := env.Called()
 	return args.String(0)
@@ -208,38 +203,20 @@ func (env *MockedEnvironment) getWifiNetwork() (*wifiInfo, error) {
 	return args.Get(0).(*wifiInfo), args.Error(1)
 }
 
+func (env *MockedEnvironment) templateCache() *templateCache {
+	args := env.Called()
+	return args.Get(0).(*templateCache)
+}
+
 func (env *MockedEnvironment) onTemplate() {
-	patchMethodIfNotSpecified := func(method string, returnArguments ...interface{}) {
-		for _, call := range env.Mock.ExpectedCalls {
-			if call.Method == method {
-				return
-			}
+	for _, call := range env.Mock.ExpectedCalls {
+		if call.Method == "templateCache" {
+			return
 		}
-		env.On(method).Return(returnArguments...)
 	}
-	patchEnvVars := func() map[string]string {
-		keyValueArray := make(map[string]string)
-		for _, call := range env.Mock.ExpectedCalls {
-			if call.Method == "getenv" {
-				keyValueArray[call.Arguments.String(0)] = call.ReturnArguments.String(0)
-			}
-		}
-		return keyValueArray
-	}
-	patchMethodIfNotSpecified("isRunningAsRoot", false)
-	patchMethodIfNotSpecified("getcwd", "/usr/home/dev/my-app")
-	patchMethodIfNotSpecified("homeDir", "/usr/home/dev")
-	patchMethodIfNotSpecified("getPathSeperator", "/")
-	patchMethodIfNotSpecified("getShellName", "pwsh")
-	patchMethodIfNotSpecified("getCurrentUser", "dev")
-	patchMethodIfNotSpecified("getHostName", "laptop", nil)
-	patchMethodIfNotSpecified("lastErrorCode", 0)
-	patchMethodIfNotSpecified("getRuntimeGOOS", darwinPlatform)
-	if env.getRuntimeGOOS() == linuxPlatform {
-		env.On("getenv", "WSL_DISTRO_NAME").Return("ubuntu")
-		env.On("getPlatform").Return("ubuntu")
-	}
-	patchMethodIfNotSpecified("environ", patchEnvVars())
+	env.On("templateCache").Return(&templateCache{
+		Env: make(map[string]string),
+	})
 }
 
 const (

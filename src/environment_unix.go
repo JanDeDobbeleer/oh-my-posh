@@ -53,6 +53,9 @@ func (env *environment) getTerminalWidth() (int, error) {
 }
 
 func (env *environment) getPlatform() string {
+	if wsl := env.getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {
+		return strings.ToLower(wsl)
+	}
 	p, _, _, _ := host.PlatformInformation()
 	return p
 }

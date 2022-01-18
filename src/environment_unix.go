@@ -53,11 +53,18 @@ func (env *environment) getTerminalWidth() (int, error) {
 }
 
 func (env *environment) getPlatform() string {
-	if wsl := env.getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {
-		return strings.ToLower(wsl)
+	const key = "environment_platform"
+	if val, found := env.cache().get(key); found {
+		return val
 	}
-	p, _, _, _ := host.PlatformInformation()
-	return p
+	var platform string
+	defer env.cache().set(key, platform, -1)
+	if wsl := env.getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {
+		platform = strings.ToLower(wsl)
+		return platform
+	}
+	platform, _, _, _ = host.PlatformInformation()
+	return platform
 }
 
 func (env *environment) getCachePath() string {

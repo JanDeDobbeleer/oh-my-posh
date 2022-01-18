@@ -105,7 +105,7 @@ func (t *textTemplate) cleanTemplate() {
 		return splitted[0], true
 	}
 	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "UserName", "HostName", "Env", "Data", "Code", "OS"}
-	matches := findAllNamedRegexMatch(`(?: |{)(?P<var>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
+	matches := findAllNamedRegexMatch(`(?: |{|\()(?P<var>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
 	for _, match := range matches {
 		if variable, OK := unknownVariable(match["var"], &knownVariables); OK {
 			pattern := fmt.Sprintf(`\.%s\b`, variable)

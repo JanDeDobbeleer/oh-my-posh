@@ -175,6 +175,11 @@ func TestCleanTemplate(t *testing.T) {
 			Expected: "{{ .Env.HELLO }} {{ .Data.World }} {{ .Data.World }}",
 			Template: "{{ .Env.HELLO }} {{ .World }} {{ .World }}",
 		},
+		{
+			Case:     "Braces",
+			Expected: "{{ if or (.Data.Working.Changed) (.Data.Staging.Changed) }}#FF9248{{ end }}",
+			Template: "{{ if or (.Working.Changed) (.Staging.Changed) }}#FF9248{{ end }}",
+		},
 	}
 	for _, tc := range cases {
 		template := &textTemplate{

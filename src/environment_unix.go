@@ -58,7 +58,9 @@ func (env *environment) getPlatform() string {
 		return val
 	}
 	var platform string
-	defer env.cache().set(key, platform, -1)
+	defer func() {
+		env.cache().set(key, platform, -1)
+	}()
 	if wsl := env.getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {
 		platform = strings.ToLower(wsl)
 		return platform

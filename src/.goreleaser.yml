@@ -10,7 +10,13 @@ builds:
     flags:
       - -a
     ldflags:
-      - -s -w -X main.Version={{.Version}}
+      - -s -w -X main.Version={{.Version}} -extldflags "-static"
+    tags:
+      - netgo
+      - osusergo
+      - static_build
+    env:
+      - CGO_ENABLED=0
     goos:
       - linux
       - windows

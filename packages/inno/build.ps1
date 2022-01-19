@@ -1,7 +1,7 @@
 Param
 (
     [parameter(Mandatory = $true)]
-    [ValidateSet('amd64', 'arm64')]
+    [ValidateSet('amd64', 'arm64', '386')]
     [System.String]$Architecture,
     [parameter(Mandatory = $true)]
     [string]

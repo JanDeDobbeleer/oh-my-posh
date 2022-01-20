@@ -226,6 +226,9 @@ func (env *environment) getenv(key string) string {
 
 func (env *environment) getcwd() string {
 	defer env.trace(time.Now(), "getcwd")
+	defer func() {
+		env.log(Error, "getcwd", env.cwd)
+	}()
 	if env.cwd != "" {
 		return env.cwd
 	}

@@ -51,7 +51,7 @@ func (t *consoleTitle) getTemplateText() string {
 }
 
 func (t *consoleTitle) getPwd() string {
-	pwd := t.env.getcwd()
+	pwd := t.env.pwd()
 	pwd = strings.Replace(pwd, t.env.homeDir(), "~", 1)
 	return pwd
 }

@@ -198,7 +198,7 @@ func (segment *Segment) cwdIncluded() bool {
 		return true
 	}
 
-	return dirMatchesOneOf(segment.env, segment.env.getcwd(), list)
+	return dirMatchesOneOf(segment.env, segment.env.pwd(), list)
 }
 
 func (segment *Segment) cwdExcluded() bool {
@@ -207,7 +207,7 @@ func (segment *Segment) cwdExcluded() bool {
 		value = segment.Properties[IgnoreFolders]
 	}
 	list := parseStringArray(value)
-	return dirMatchesOneOf(segment.env, segment.env.getcwd(), list)
+	return dirMatchesOneOf(segment.env, segment.env.pwd(), list)
 }
 
 func (segment *Segment) getColor(templates []string, defaultColor string) string {

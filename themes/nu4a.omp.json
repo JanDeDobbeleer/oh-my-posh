@@ -4,7 +4,7 @@
   "osc99": false,
   "console_title": true,
   "console_title_style": "template",
-  "console_title_template": "{{if .Root}} ⚡ {{end}}{{.User}} ➔ 📁{{.Folder}}",
+  "console_title_template": "{{if .Root}} ⚡ {{end}}{{.UserName}} ➔ 📁{{.Folder}}",
   "blocks": [
     {
       "type": "prompt",

@@ -19,7 +19,7 @@ func (env *MockedEnvironment) getenv(key string) string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) getcwd() string {
+func (env *MockedEnvironment) pwd() string {
 	args := env.Called()
 	return args.String(0)
 }
@@ -274,7 +274,7 @@ func TestRootLocationHome(t *testing.T) {
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
 		env.On("homeDir").Return(tc.HomePath)
-		env.On("getcwd").Return(tc.Pwd)
+		env.On("pwd").Return(tc.Pwd)
 		args := &args{
 			PSWD: &tc.Pswd,
 		}
@@ -426,7 +426,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("getPathSeperator").Return(tc.PathSeperator)
 		env.On("homeDir").Return(tc.HomePath)
-		env.On("getcwd").Return(tc.Pwd)
+		env.On("pwd").Return(tc.Pwd)
 		env.On("getRuntimeGOOS").Return(tc.GOOS)
 		env.On("stackCount").Return(0)
 		args := &args{
@@ -547,7 +547,7 @@ func TestGetFullPath(t *testing.T) {
 		}
 		env.On("getPathSeperator").Return(tc.PathSeparator)
 		env.On("homeDir").Return("/usr/home")
-		env.On("getcwd").Return(tc.Pwd)
+		env.On("pwd").Return(tc.Pwd)
 		env.On("getRuntimeGOOS").Return(tc.GOOS)
 		env.On("stackCount").Return(tc.StackCount)
 		args := &args{
@@ -598,7 +598,7 @@ func TestGetFullPathCustomMappedLocations(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("getPathSeperator").Return("/")
 		env.On("homeDir").Return("/usr/home")
-		env.On("getcwd").Return(tc.Pwd)
+		env.On("pwd").Return(tc.Pwd)
 		env.On("getRuntimeGOOS").Return("")
 		args := &args{
 			PSWD: &tc.Pwd,
@@ -649,7 +649,7 @@ func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("getPathSeperator").Return("/")
 	env.On("homeDir").Return("/usr/home")
-	env.On("getcwd").Return(pwd)
+	env.On("pwd").Return(pwd)
 	env.On("getRuntimeGOOS").Return("")
 	args := &args{
 		PSWD: &pwd,
@@ -696,7 +696,7 @@ func TestAgnosterPath(t *testing.T) { // nolint:dupl
 		env := new(MockedEnvironment)
 		env.On("homeDir").Return(tc.Home)
 		env.On("getPathSeperator").Return(tc.PathSeparator)
-		env.On("getcwd").Return(tc.PWD)
+		env.On("pwd").Return(tc.PWD)
 		env.On("getRuntimeGOOS").Return("")
 		args := &args{
 			PSWD: &tc.PWD,
@@ -744,7 +744,7 @@ func TestAgnosterLeftPath(t *testing.T) { // nolint:dupl
 		env := new(MockedEnvironment)
 		env.On("homeDir").Return(tc.Home)
 		env.On("getPathSeperator").Return(tc.PathSeparator)
-		env.On("getcwd").Return(tc.PWD)
+		env.On("pwd").Return(tc.PWD)
 		env.On("getRuntimeGOOS").Return("")
 		args := &args{
 			PSWD: &tc.PWD,
@@ -792,7 +792,7 @@ func TestGetPwd(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("getPathSeperator").Return("/")
 		env.On("homeDir").Return("/usr/home")
-		env.On("getcwd").Return(tc.Pwd)
+		env.On("pwd").Return(tc.Pwd)
 		env.On("getRuntimeGOOS").Return("")
 		args := &args{
 			PSWD: &tc.Pswd,

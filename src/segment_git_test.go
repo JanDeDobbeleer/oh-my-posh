@@ -590,7 +590,7 @@ func TestGetGitCommand(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("isWsl").Return(tc.IsWSL)
 		env.On("getRuntimeGOOS").Return(tc.GOOS)
-		env.On("getcwd").Return(tc.CWD)
+		env.On("pwd").Return(tc.CWD)
 		wslUname := "5.10.60.1-microsoft-standard-WSL2"
 		if tc.IsWSL1 {
 			wslUname = "4.4.0-19041-Microsoft"

@@ -53,7 +53,7 @@ func TestGetConsoleTitle(t *testing.T) {
 			ConsoleTitleTemplate: tc.Template,
 		}
 		env := new(MockedEnvironment)
-		env.On("getcwd").Return(tc.Cwd)
+		env.On("pwd").Return(tc.Cwd)
 		env.On("homeDir").Return("/usr/home")
 		env.On("getPathSeperator").Return(tc.PathSeperator)
 		env.On("templateCache").Return(&templateCache{
@@ -115,7 +115,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			ConsoleTitleTemplate: tc.Template,
 		}
 		env := new(MockedEnvironment)
-		env.On("getcwd").Return(tc.Cwd)
+		env.On("pwd").Return(tc.Cwd)
 		env.On("homeDir").Return("/usr/home")
 		env.On("templateCache").Return(&templateCache{
 			Env: map[string]string{

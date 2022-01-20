@@ -66,7 +66,7 @@ func (e *engine) render() string {
 	if !e.config.OSC99 {
 		return e.print()
 	}
-	cwd := e.env.getcwd()
+	cwd := e.env.pwd()
 	e.writeANSI(e.ansi.consolePwd(cwd))
 	return e.print()
 }

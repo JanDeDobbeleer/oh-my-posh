@@ -90,7 +90,7 @@ type wifiInfo struct {
 
 type Environment interface {
 	getenv(key string) string
-	getcwd() string
+	pwd() string
 	homeDir() string
 	hasFiles(pattern string) bool
 	hasFilesInDir(dir, pattern string) bool
@@ -224,10 +224,10 @@ func (env *environment) getenv(key string) string {
 	return val
 }
 
-func (env *environment) getcwd() string {
-	defer env.trace(time.Now(), "getcwd")
+func (env *environment) pwd() string {
+	defer env.trace(time.Now(), "pwd")
 	defer func() {
-		env.log(Error, "getcwd", env.cwd)
+		env.log(Error, "pwd", env.cwd)
 	}()
 	if env.cwd != "" {
 		return env.cwd
@@ -243,7 +243,7 @@ func (env *environment) getcwd() string {
 	}
 	dir, err := os.Getwd()
 	if err != nil {
-		env.log(Error, "getcwd", err.Error())
+		env.log(Error, "pwd", err.Error())
 		return ""
 	}
 	env.cwd = correctPath(dir)
@@ -252,7 +252,7 @@ func (env *environment) getcwd() string {
 
 func (env *environment) hasFiles(pattern string) bool {
 	defer env.trace(time.Now(), "hasFiles", pattern)
-	cwd := env.getcwd()
+	cwd := env.pwd()
 	pattern = cwd + env.getPathSeperator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
@@ -506,7 +506,7 @@ func (env *environment) HTTPRequest(url string, timeout int, requestModifiers ..
 
 func (env *environment) hasParentFilePath(path string) (*fileInfo, error) {
 	defer env.trace(time.Now(), "hasParentFilePath", path)
-	currentFolder := env.getcwd()
+	currentFolder := env.pwd()
 	for {
 		searchPath := filepath.Join(currentFolder, path)
 		info, err := os.Stat(searchPath)
@@ -571,7 +571,7 @@ func (env *environment) templateCache() *templateCache {
 		val := splitted[1:]
 		tmplCache.Env[key] = strings.Join(val, separator)
 	}
-	pwd := env.getcwd()
+	pwd := env.pwd()
 	pwd = strings.Replace(pwd, env.homeDir(), "~", 1)
 	tmplCache.PWD = pwd
 	tmplCache.Folder = base(pwd, env)

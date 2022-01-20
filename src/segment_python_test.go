@@ -50,7 +50,7 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
 		env.On("getenv", "PYENV_VERSION").Return(tc.VirtualEnvName)
 		env.On("getPathSeperator").Return("")
-		env.On("getcwd").Return("/usr/home/project")
+		env.On("pwd").Return("/usr/home/project")
 		env.On("homeDir").Return("/usr/home")
 		env.onTemplate()
 		props := properties{

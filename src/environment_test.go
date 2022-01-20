@@ -41,6 +41,6 @@ func TestWindowsPathWithDriveLetter(t *testing.T) {
 				PWD: &tc.CWD,
 			},
 		}
-		assert.Equal(t, env.getcwd(), tc.Expected)
+		assert.Equal(t, env.pwd(), tc.Expected)
 	}
 }

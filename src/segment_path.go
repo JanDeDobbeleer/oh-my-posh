@@ -58,7 +58,7 @@ func (pt *path) enabled() bool {
 }
 
 func (pt *path) string() string {
-	pt.pwd = pt.env.getcwd()
+	pt.pwd = pt.env.pwd()
 	switch style := pt.props.getString(Style, Agnoster); style {
 	case Agnoster:
 		pt.Path = pt.getAgnosterPath()
@@ -259,7 +259,7 @@ func (pt *path) getFolderPath() string {
 func (pt *path) getPwd() string {
 	pwd := *pt.env.getArgs().PSWD
 	if pwd == "" {
-		pwd = pt.env.getcwd()
+		pwd = pt.env.pwd()
 	}
 	pwd = pt.replaceMappedLocations(pwd)
 	return pwd

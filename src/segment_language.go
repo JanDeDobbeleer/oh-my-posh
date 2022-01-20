@@ -126,7 +126,7 @@ func (l *language) enabled() bool {
 	l.extensions = l.props.getStringArray(LanguageExtensions, l.extensions)
 
 	inHomeDir := func() bool {
-		return l.env.getcwd() == l.env.homeDir()
+		return l.env.pwd() == l.env.homeDir()
 	}
 	homeEnabled := l.props.getBool(HomeEnabled, l.homeEnabled)
 	if inHomeDir() && !homeEnabled {

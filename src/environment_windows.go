@@ -56,7 +56,7 @@ func (env *environment) isRunningAsRoot() bool {
 func (env *environment) homeDir() string {
 	home := os.Getenv("HOME")
 	defer func() {
-		env.log(Error, "homeDir", home)
+		env.log(Debug, "homeDir", home)
 	}()
 	if len(home) > 0 {
 		return home

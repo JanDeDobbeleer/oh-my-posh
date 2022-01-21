@@ -32,11 +32,16 @@
           "foreground": "#100e23",
           "background": "#ec9706",
           "properties": {
-            "home_icon": "\uF7DB",
-            "folder_icon": "\uF115",
-            "folder_separator_icon": " \uE0B1 \uE5FF ",
-            "style": "full",
-            "enable_hyperlink": true
+            "home_icon": "\uf7db",
+            "folder_icon": "\uE5FF",
+            "folder_separator_icon": "\ue0b9",
+            "mixed_threshold": 8,
+            "style": "mixed",
+            "enable_hyperlink": true,
+            "mapped_locations": {
+              "C:\\Users": "\uf007",
+              "C:\\Windows": "\ue62a"
+            }
           }
         },
         {
@@ -44,7 +49,7 @@
           "style": "powerline",
           "powerline_symbol": "\uE0B0",
           "foreground": "#193549",
-          "background": "#95ffa4",
+          "background": "#3feb56",
           "properties": {
             "template": "{{ .HEAD }}"
           }

@@ -917,6 +917,15 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "FlavienMacquignon",
+      "name": "FlavienMacquignon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/70152975?v=4",
+      "profile": "https://github.com/FlavienMacquignon",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

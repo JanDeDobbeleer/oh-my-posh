@@ -9,15 +9,16 @@ func (s *spotify) enabled() bool {
 	if running == "false" || running == "" {
 		return false
 	}
-	s.status = s.runAppleScriptCommand("tell application \"Spotify\" to player state as string")
+	s.Status = s.runAppleScriptCommand("tell application \"Spotify\" to player state as string")
 	if err != nil {
 		return false
 	}
-	if s.status == "stopped" {
+	if s.Status == stopped {
 		return false
 	}
-	s.artist = s.runAppleScriptCommand("tell application \"Spotify\" to artist of current track as string")
-	s.track = s.runAppleScriptCommand("tell application \"Spotify\" to name of current track as string")
+	s.Artist = s.runAppleScriptCommand("tell application \"Spotify\" to artist of current track as string")
+	s.Track = s.runAppleScriptCommand("tell application \"Spotify\" to name of current track as string")
+	s.resolveIcon()
 	return true
 }
 

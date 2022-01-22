@@ -7,7 +7,11 @@ type java struct {
 }
 
 func (j *java) string() string {
-	return j.language.string()
+	segmentTemplate := j.language.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) == 0 {
+		return j.language.string()
+	}
+	return j.language.renderTemplate(segmentTemplate, j)
 }
 
 func (j *java) init(props Properties, env Environment) {

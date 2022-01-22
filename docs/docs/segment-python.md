@@ -30,7 +30,7 @@ Supports conda, virtualenv and pyenv.
 - fetch_virtual_env: `boolean` - fetch the name of the virtualenv or not - defaults to `true`
 - display_default: `boolean` - show the name of the virtualenv when it's default (`system`, `base`)
 or not - defaults to `true`
-- display_version: `boolean` - display the python version - defaults to `true`
+- fetch_version: `boolean` - fetch the python version - defaults to `true`
 - display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
@@ -39,10 +39,8 @@ or not - defaults to `true`
     files are present (default)
   - `environment`: the segment is only displayed when a virtual env is present
   - `context`: the segment is only displayed when either `environment` or `files` is active
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below. Defaults to `{{ .Full }}`
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.Venv`: `string` - the virtual environment name (if present)
 - `.Full`: `string` - the full version
@@ -53,5 +51,4 @@ properties below. Defaults to `{{ .Full }}`
 - `.BuildMetadata`: `string` - build metadata
 - `.Error`: `string` - when fetching the version string errors
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

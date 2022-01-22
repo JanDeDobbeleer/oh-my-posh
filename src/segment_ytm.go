@@ -2,15 +2,13 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 )
 
 type ytm struct {
-	props  Properties
-	env    Environment
-	status playStatus
-	artist string
-	track  string
+	props Properties
+	env   Environment
+
+	MusicPlayer
 }
 
 const (
@@ -19,17 +17,17 @@ const (
 )
 
 func (y *ytm) string() string {
-	icon := ""
-	separator := y.props.getString(TrackSeparator, " - ")
-	switch y.status {
-	case paused:
-		icon = y.props.getString(PausedIcon, "\uF8E3 ")
-	case playing:
-		icon = y.props.getString(PlayingIcon, "\uE602 ")
-	case stopped:
-		return y.props.getString(StoppedIcon, "\uF04D ")
+	segmentTemplate := y.props.getString(SegmentTemplate, "{{.Icon}}{{ if ne .Status \"stopped\"}}{{.Artist}} - {{.Track}}{{ end }}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  y,
+		Env:      y.env,
 	}
-	return fmt.Sprintf("%s%s%s%s", icon, y.artist, separator, y.track)
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (y *ytm) enabled() bool {
@@ -43,14 +41,6 @@ func (y *ytm) init(props Properties, env Environment) {
 	y.props = props
 	y.env = env
 }
-
-type playStatus int
-
-const (
-	playing playStatus = iota
-	paused
-	stopped
-)
 
 type ytmdaStatusResponse struct {
 	player `json:"player"`
@@ -95,13 +85,16 @@ func (y *ytm) setStatus() error {
 	if err != nil {
 		return err
 	}
-	y.status = playing
+	y.Status = playing
+	y.Icon = y.props.getString(PlayingIcon, "\uE602 ")
 	if !q.player.HasSong {
-		y.status = stopped
+		y.Status = stopped
+		y.Icon = y.props.getString(StoppedIcon, "\uF04D ")
 	} else if q.player.IsPaused {
-		y.status = paused
+		y.Status = paused
+		y.Icon = y.props.getString(PausedIcon, "\uF8E3 ")
 	}
-	y.artist = q.track.Author
-	y.track = q.track.Title
+	y.Artist = q.track.Author
+	y.Track = q.track.Title
 	return nil
 }

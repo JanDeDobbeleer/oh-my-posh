@@ -33,10 +33,8 @@ Display the currently active node version.
 - fetch_package_manager: `boolean` - define if the current project uses Yarn or NPM - defaults to `false`
 - yarn_icon: `string` - the icon/text to display when using Yarn - defaults to ` \uF61A`
 - npm_icon: `string` - the icon/text to display when using NPM - defaults to ` \uE71E`
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below. Defaults to `{{ .Full }}`
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.Full`: `string` - the full version
 - `.Major`: `string` - major number
@@ -48,5 +46,4 @@ properties below. Defaults to `{{ .Full }}`
 - `.PackageManagerIcon`: `string` - the Yarn on NPM icon when setting `fetch_package_manager` to `true`
 - `.Mismatch`: `boolean` - if the version in `.nvmrc` matches with `.Full`
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

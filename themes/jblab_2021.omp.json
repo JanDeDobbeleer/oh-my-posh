@@ -16,8 +16,7 @@
           "leading_diamond": "\uE0B6",
           "trailing_diamond": "\uE0B0",
           "properties": {
-            "wsl": "",
-            "wsl_separator": ""
+            "template": "{{ .Icon }}"
           },
           "style": "diamond",
           "type": "os"

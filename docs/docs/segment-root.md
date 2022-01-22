@@ -18,11 +18,7 @@ Show when the current user is root or when in an elevated shell (Windows).
   "foreground": "#111111",
   "background": "#ffff66",
   "properties": {
-    "root_icon": "\uF0E7"
+    "template": "\uF0E7"
   }
 }
 ```
-
-## Properties
-
-- root_icon: `string` - icon to display in case of root/elevated - defaults to `\uF0E7`

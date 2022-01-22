@@ -443,6 +443,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 				SegmentTemplate:     "{{ .Path }}",
 			},
 		}
+		_ = path.enabled()
 		got := path.string()
 		assert.Equal(t, tc.Expected, got)
 	}
@@ -572,6 +573,7 @@ func TestGetFullPath(t *testing.T) {
 			env:   env,
 			props: props,
 		}
+		_ = path.enabled()
 		got := path.string()
 		assert.Equal(t, tc.Expected, got)
 	}

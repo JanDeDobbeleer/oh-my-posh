@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"testing"
 
 	"github.com/distatus/battery"
@@ -271,18 +272,26 @@ func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
 	status := "## main...origin/main [ahead 33]\n M myfile"
 	env := new(MockedEnvironment)
 	env.On("isWsl").Return(false)
+	env.On("inWSLSharedDrive").Return(false)
 	env.On("getRuntimeGOOS").Return("unix")
-	env.On("hasFolder", "/rebase-merge").Return(false)
-	env.On("hasFolder", "/rebase-apply").Return(false)
-	env.On("hasFolder", "/sequencer").Return(false)
-	env.On("getFileContent", "/HEAD").Return(status)
-	env.On("hasFilesInDir", "", "CHERRY_PICK_HEAD").Return(false)
-	env.On("hasFilesInDir", "", "REVERT_HEAD").Return(false)
-	env.On("hasFilesInDir", "", "MERGE_MSG").Return(false)
-	env.On("hasFilesInDir", "", "MERGE_HEAD").Return(false)
-	env.On("hasFilesInDir", "", "sequencer/todo").Return(false)
-	env.mockGitCommand("", "describe", "--tags", "--exact-match")
-	env.mockGitCommand(status, "status", "-unormal", "--branch", "--porcelain=2")
+	env.On("hasCommand", "git").Return(true)
+	fileInfo := &fileInfo{
+		path:         "/dir/hello",
+		parentFolder: "/dir",
+		isDir:        true,
+	}
+	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
+	env.On("getFileContent", fmt.Sprintf("%s/HEAD", fileInfo.path)).Return("")
+	env.mockGitCommand(fileInfo.path, "", "describe", "--tags", "--exact-match")
+	env.mockGitCommand(fileInfo.path, status, "status", "-unormal", "--branch", "--porcelain=2")
+	env.On("hasFolder", fmt.Sprintf("%s/rebase-merge", fileInfo.path)).Return(false)
+	env.On("hasFolder", fmt.Sprintf("%s/rebase-apply", fileInfo.path)).Return(false)
+	env.On("hasFilesInDir", fileInfo.path, "CHERRY_PICK_HEAD").Return(false)
+	env.On("hasFilesInDir", fileInfo.path, "REVERT_HEAD").Return(false)
+	env.On("hasFilesInDir", fileInfo.path, "MERGE_MSG").Return(false)
+	env.On("hasFilesInDir", fileInfo.path, "MERGE_HEAD").Return(false)
+	env.On("hasFilesInDir", fileInfo.path, "sequencer/todo").Return(false)
+
 	props := properties{
 		DisplayStatus:       false,
 		StatusColorsEnabled: true,
@@ -297,6 +306,7 @@ func TestStatusColorsWithoutDisplayStatus(t *testing.T) {
 	}
 	g.Working = &GitStatus{}
 	g.Staging = &GitStatus{}
+	_ = g.enabled()
 	g.string()
 	assert.Equal(t, expected, g.props.getColor(BackgroundOverride, ""))
 }
@@ -335,7 +345,8 @@ func TestExitWriterDeprecatedString(t *testing.T) {
 			env:   env,
 			props: props,
 		}
-		assert.Equal(t, tc.Expected, e.string())
+		_ = e.enabled()
+		assert.Equal(t, tc.Expected, e.deprecatedString())
 	}
 }
 

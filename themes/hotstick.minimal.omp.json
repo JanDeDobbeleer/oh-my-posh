@@ -15,7 +15,7 @@
           "style": "plain",
           "foreground": "yellow",
           "properties": {
-            "root_icon": ""
+            "template": ""
           }
         },
         {

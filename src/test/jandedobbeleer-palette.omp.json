@@ -89,7 +89,7 @@
           "background": "p:node",
           "properties": {
             "prefix": " \uF898 ",
-            "display_version": true
+            "fetch_version": true
           }
         },
         {
@@ -100,7 +100,7 @@
           "background": "p:go",
           "properties": {
             "prefix": " \uE626 ",
-            "display_version": true
+            "fetch_version": true
           }
         },
         {
@@ -111,7 +111,7 @@
           "background": "p:julia",
           "properties": {
             "prefix": " \uE624 ",
-            "display_version": true
+            "fetch_version": true
           }
         },
         {
@@ -135,7 +135,7 @@
           "background": "p:ruby",
           "properties": {
             "prefix": " \uE791 ",
-            "display_version": true,
+            "fetch_version": true,
             "display_mode": "files"
           }
         },
@@ -147,7 +147,7 @@
           "background": "p:azfunc",
           "properties": {
             "prefix": " \uf0e7",
-            "display_version": false,
+            "fetch_version": false,
             "display_mode": "files"
           }
         },
@@ -172,7 +172,7 @@
           "foreground": "p:black",
           "background": "p:root",
           "properties": {
-            "root_icon": ""
+            "template": ""
           }
         },
         {

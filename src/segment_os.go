@@ -1,14 +1,10 @@
 package main
 
-import (
-	"fmt"
-)
-
 type osInfo struct {
 	props Properties
 	env   Environment
 
-	os string
+	Icon string
 }
 
 const (
@@ -18,10 +14,6 @@ const (
 	Linux Property = "linux"
 	// Windows the string/icon to use for windows
 	Windows Property = "windows"
-	// WSL the string/icon to use for WSL
-	WSL Property = "wsl"
-	// WSLSeparator shows between WSL and Linux properties when WSL is detected
-	WSLSeparator Property = "wsl_separator"
 	// Alpine the string/icon to use for Alpine
 	Alpine Property = "alpine"
 	// Aosc the string/icon to use for Aosc
@@ -65,41 +57,41 @@ const (
 )
 
 func (n *osInfo) enabled() bool {
+	goos := n.env.getRuntimeGOOS()
+	switch goos {
+	case windowsPlatform:
+		n.Icon = n.props.getString(Windows, "\uE62A")
+	case darwinPlatform:
+		n.Icon = n.props.getString(MacOS, "\uF179")
+	case linuxPlatform:
+		platform := n.env.getPlatform()
+		displayDistroName := n.props.getBool(DisplayDistroName, false)
+		if displayDistroName {
+			n.Icon = platform
+			break
+		}
+		n.Icon = n.getDistroIcon(platform)
+	default:
+		n.Icon = goos
+	}
 	return true
 }
 
 func (n *osInfo) string() string {
-	goos := n.env.getRuntimeGOOS()
-	switch goos {
-	case windowsPlatform:
-		n.os = windowsPlatform
-		return n.props.getString(Windows, "\uE62A")
-	case darwinPlatform:
-		n.os = darwinPlatform
-		return n.props.getString(MacOS, "\uF179")
-	case linuxPlatform:
-		n.os = n.env.getPlatform()
-		if !n.env.isWsl() {
-			return n.getDistroName(n.os, "")
-		}
-		return fmt.Sprintf("%s%s%s",
-			n.props.getString(WSL, "WSL"),
-			n.props.getString(WSLSeparator, " - "),
-			n.getDistroName(n.os, n.os))
-	default:
-		n.os = goos
-		return goos
+	segmentTemplate := n.props.getString(SegmentTemplate, "{{ if .WSL }}WSL at {{ end }}{{.Icon}}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  n,
+		Env:      n.env,
 	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
-func (n *osInfo) getDistroName(distro, defaultName string) string {
-	displayDistroName := n.props.getBool(DisplayDistroName, false)
-	if displayDistroName && len(defaultName) > 0 {
-		return defaultName
-	}
-	if displayDistroName {
-		return distro
-	}
+func (n *osInfo) getDistroIcon(distro string) string {
 	switch distro {
 	case "alpine":
 		return n.props.getString(Alpine, "\uF300")

@@ -50,34 +50,20 @@ func (p *plastic) enabled() bool {
 	if p.shouldIgnoreRootRepository(wkdir.parentFolder) {
 		return false
 	}
-
-	if wkdir.isDir {
-		p.plasticWorkspaceFolder = wkdir.parentFolder
-		return true
+	if !wkdir.isDir {
+		return false
 	}
-
-	return false
-}
-
-func (p *plastic) string() string {
+	p.plasticWorkspaceFolder = wkdir.parentFolder
 	displayStatus := p.props.getOneOfBool(FetchStatus, DisplayStatus, false)
-
 	p.setSelector()
 	if displayStatus {
 		p.setPlasticStatus()
 	}
-
-	// use template if available
-	segmentTemplate := p.props.getString(SegmentTemplate, "")
-	if len(segmentTemplate) > 0 {
-		return p.templateString(segmentTemplate)
-	}
-
-	// default: only selector is returned
-	return p.Selector
+	return true
 }
 
-func (p *plastic) templateString(segmentTemplate string) string {
+func (p *plastic) string() string {
+	segmentTemplate := p.props.getString(SegmentTemplate, "{{ .Selector }}")
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  p,

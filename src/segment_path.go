@@ -54,10 +54,6 @@ const (
 )
 
 func (pt *path) enabled() bool {
-	return true
-}
-
-func (pt *path) string() string {
 	pt.pwd = pt.env.pwd()
 	switch style := pt.props.getString(Style, Agnoster); style {
 	case Agnoster:
@@ -80,7 +76,7 @@ func (pt *path) string() string {
 	case Folder:
 		pt.Path = pt.getFolderPath()
 	default:
-		return fmt.Sprintf("Path style: %s is not available", style)
+		pt.Path = fmt.Sprintf("Path style: %s is not available", style)
 	}
 	pt.Path = pt.formatWindowsDrive(pt.Path)
 	if pt.props.getBool(EnableHyperlink, false) {
@@ -92,6 +88,10 @@ func (pt *path) string() string {
 	}
 
 	pt.StackCount = pt.env.stackCount()
+	return true
+}
+
+func (pt *path) string() string {
 	segmentTemplate := pt.props.getString(SegmentTemplate, "{{ .Path }}")
 	template := &textTemplate{
 		Template: segmentTemplate,

@@ -34,7 +34,7 @@
           "properties": {
             "prefix": "<#ffffff>─(</>",
             "postfix": "<#ffffff>)</>",
-            "root_icon": "#"
+            "template": "#"
           }
         }
       ]

@@ -87,7 +87,7 @@
           "style": "plain",
           "foreground": "#fff",
           "properties": {
-            "root_icon": "⚡"
+            "template": "⚡"
           }
         },
         {

@@ -28,3 +28,9 @@ Show the current shell name (ZSH, powershell, bash, ...).
 ## Properties
 
 - mapped_shell_names: `object` - custom glyph/text to use in place of specified shell names (case-insensitive)
+
+## [Template][templates] Properties
+
+- `.Name`: `string` - the shell name
+
+[templates]: /docs/config-text#templates

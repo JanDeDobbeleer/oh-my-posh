@@ -39,10 +39,8 @@ The free tier for is sufficient. You'll find the API key in your profile setting
 works if you can curl it yourself and a result. - defaults to ``
 - http_timeout: `int` - The default timeout for http request is 20ms. If no segment is shown, try increasing this timeout.
 - cache_timeout: `int` - The default timeout for request caching is 10m. A value of 0 disables the cache.
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `{{ secondsRound .CummulativeTotal.Seconds }}`
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.CummulativeTotal`: `wtTotals` - object holding total tracked time values
 
@@ -53,5 +51,4 @@ properties below - defaults to `{{ secondsRound .CummulativeTotal.Seconds }}`
 
 [wt]: https://wakatime.com
 [wk-summaries]: https://wakatime.com/developers#summaries
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

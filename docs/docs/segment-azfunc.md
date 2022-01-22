@@ -19,7 +19,7 @@ Display the currently active Azure functions CLI version.
     "background": "#FEAC19",
     "properties": {
         "prefix": " \uf0e7 ",
-        "display_version": true,
+        "fetch_version": true,
         "display_mode": "files"
     }
 }
@@ -27,16 +27,14 @@ Display the currently active Azure functions CLI version.
 
 ## Properties
 
-- display_version: `boolean` - display the Azure functions CLI version - defaults to `true`
+- fetch_version: `boolean` - fetch the Azure functions CLI version - defaults to `true`
 - display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when a `host.json` or `local.settings.json` files is present (default)
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below. Defaults to `{{ .Full }}`
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.Full`: `string` - the full version
 - `.Major`: `string` - major number
@@ -46,5 +44,4 @@ properties below. Defaults to `{{ .Full }}`
 - `.BuildMetadata`: `string` - build metadata
 - `.Error`: `string` - when fetching the version string errors
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

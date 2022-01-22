@@ -22,7 +22,7 @@
           "properties": {
             "prefix": " <#757575,>as</> ",
             "postfix": "",
-            "root_icon": "root"
+            "template": "root"
           }
         },
         {

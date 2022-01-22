@@ -1,7 +1,7 @@
 ---
 id: owm
 title: Open Weather Map
-sidebar_label: Open Weather Map 
+sidebar_label: Open Weather Map
 ---
 
 ## What
@@ -12,7 +12,6 @@ Shows the current weather of a given location.
 
 You **must** request an API key at the [Open Weather Map](https://openweathermap.org/price) website.
 The free tier for *Current weather and forecasts collection* is sufficient.
-
 :::
 
 ## Sample Configuration
@@ -50,9 +49,11 @@ The free tier for *Current weather and forecasts collection* is sufficient.
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
 properties below - defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.Weather`: `string` - the current weather icon
 - `.Temperature`: `string` - the current temperature
 - `.UnitIcon`: `string` - the current unit icon(based on units property)
 - `.URL`: `string` - the url of the current api call
+
+[templates]: /docs/config-text#templates

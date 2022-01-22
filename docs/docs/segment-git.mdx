@@ -53,9 +53,6 @@ An alternative is to use the [Posh-Git segment][poshgit]
 
 ## Properties
 
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to empty.
-
 ### Fetching information
 
 As doing multiple git calls can slow down the prompt experience, we do not fetch information by default.
@@ -96,7 +93,7 @@ You can set the following properties to `true` to enable fetching additional inf
 - azure_devops_icon: `string` - icon/text to display when the upstream is Azure DevOps - defaults to `\uFD03 `
 - git_icon: `string` - icon/text to display when the upstream is not known/mapped - defaults to `\uE5FB `
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.Working`: `GitStatus` - changes in the working tree (see below)
 - `.Staging`: `GitStatus` - staged changes in the work tree (see below)
@@ -121,6 +118,5 @@ You can set the following properties to `true` to enable fetching additional inf
 - `.String`: `string` - a string representation of the changes above
 
 [poshgit]: /docs/poshgit
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
-[hyperlinks]: /docs/config-text-style#hyperlinks
+[templates]: /docs/config-text#templates
+[hyperlinks]: /docs/config-text#hyperlinks

@@ -25,6 +25,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 	env.On("hasCommand", "cm").Return(true)
 	env.On("getRuntimeGOOS").Return("")
 	env.On("isWsl").Return(false)
+	env.On("getFileContent", "/dir/.plastic//plastic.selector").Return("")
 	fileInfo := &fileInfo{
 		path:         "/dir/hello",
 		parentFolder: "/dir",
@@ -288,7 +289,7 @@ func TestPlasticTemplateString(t *testing.T) {
 		Plastic  *plastic
 	}{
 		{
-			Case:     "Only Selector name",
+			Case:     "Default template",
 			Expected: "/main",
 			Template: "{{ .Selector }}",
 			Plastic: &plastic{
@@ -325,12 +326,13 @@ func TestPlasticTemplateString(t *testing.T) {
 
 	for _, tc := range cases {
 		props := properties{
-			FetchStatus: true,
+			FetchStatus:     true,
+			SegmentTemplate: tc.Template,
 		}
 		tc.Plastic.props = props
 		env := new(MockedEnvironment)
 		env.onTemplate()
 		tc.Plastic.env = env
-		assert.Equal(t, tc.Expected, tc.Plastic.templateString(tc.Template), tc.Case)
+		assert.Equal(t, tc.Expected, tc.Plastic.string(), tc.Case)
 	}
 }

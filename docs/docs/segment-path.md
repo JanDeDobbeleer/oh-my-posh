@@ -38,8 +38,6 @@ Display the current path.
 - mixed_threshold: `number` - the maximum length of a path segment that will be displayed when using `Mixed` -
   defaults to `4`
 - max_depth: `number` - maximum path depth to display before shortening when using `Agnoster Short` - defaults to `1`
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below. Defaults to `{{ .Path }}`
 
 ## Mapped Locations
 
@@ -125,10 +123,9 @@ starts with a symbol or icon.
 - `__pycache__` will be shortened to `__p`
 - `➼ folder` will be shortened to `➼ f`
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.Path`: `string` - the current directory (styled)
 - `.StackCount`: `int` - the stack count
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

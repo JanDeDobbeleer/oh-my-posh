@@ -19,6 +19,11 @@ func (t *tempus) enabled() bool {
 	if t.CurrentDate.IsZero() {
 		t.CurrentDate = time.Now()
 	}
+
+	return true
+}
+
+func (t *tempus) string() string {
 	segmentTemplate := t.props.getString(SegmentTemplate, "")
 	if segmentTemplate != "" {
 		template := &textTemplate{
@@ -31,25 +36,16 @@ func (t *tempus) enabled() bool {
 		if err != nil {
 			t.templateText = err.Error()
 		}
-		return len(t.templateText) > 0
+		if len(t.templateText) > 0 {
+			return t.templateText
+		}
 	}
-	return true
-}
-
-func (t *tempus) string() string {
-	return t.getFormattedText()
+	// keep old behaviour if no template for now
+	timeFormatProperty := t.props.getString(TimeFormat, "15:04:05")
+	return t.CurrentDate.Format(timeFormatProperty)
 }
 
 func (t *tempus) init(props Properties, env Environment) {
 	t.props = props
 	t.env = env
-}
-
-func (t *tempus) getFormattedText() string {
-	if len(t.templateText) > 0 {
-		return t.templateText
-	}
-	// keep old behaviour if no template
-	timeFormatProperty := t.props.getString(TimeFormat, "15:04:05")
-	return t.CurrentDate.Format(timeFormatProperty)
 }

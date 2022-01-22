@@ -14,7 +14,7 @@
           "foreground": "red",
           "properties": {
             "prefix": "",
-            "root_icon": "\uF0E7"
+            "template": "\uF0E7"
           }
         },
         {

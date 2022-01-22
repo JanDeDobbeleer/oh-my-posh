@@ -11,7 +11,7 @@
           "foreground": "#CECE04",
           "properties": {
             "prefix": "",
-            "root_icon": "#"
+            "template": "#"
           }
         },
         {

@@ -17,7 +17,7 @@
           "background": "#a313a8",
           "properties": {
             "prefix": "",
-            "root_icon": "⚡"
+            "template": "⚡"
           }
         },
         {

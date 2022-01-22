@@ -39,6 +39,7 @@ type templateCache struct {
 	Code     int
 	Env      map[string]string
 	OS       string
+	WSL      bool
 }
 
 func (c *Context) init(t *textTemplate) {
@@ -85,7 +86,7 @@ func (t *textTemplate) cleanTemplate() {
 		*knownVariables = append(*knownVariables, splitted[0])
 		return splitted[0], true
 	}
-	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "UserName", "HostName", "Env", "Data", "Code", "OS"}
+	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "UserName", "HostName", "Env", "Data", "Code", "OS", "WSL"}
 	matches := findAllNamedRegexMatch(`(?: |{|\()(?P<var>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
 	for _, match := range matches {
 		if variable, OK := unknownVariable(match["var"], &knownVariables); OK {

@@ -181,13 +181,14 @@ const (
 
 func (e *exit) deprecatedString() string {
 	colorBackground := e.props.getBool(ColorBackground, false)
-	if e.code != 0 && !colorBackground {
+	code := e.env.lastErrorCode()
+	if code != 0 && !colorBackground {
 		e.props.set(ForegroundOverride, e.props.getColor(ErrorColor, e.props.getColor(ForegroundOverride, "")))
 	}
-	if e.code != 0 && colorBackground {
+	if code != 0 && colorBackground {
 		e.props.set(BackgroundOverride, e.props.getColor(ErrorColor, e.props.getColor(BackgroundOverride, "")))
 	}
-	if e.code == 0 {
+	if code == 0 {
 		return e.props.getString(SuccessIcon, "")
 	}
 	errorIcon := e.props.getString(ErrorIcon, "")
@@ -195,7 +196,7 @@ func (e *exit) deprecatedString() string {
 		return errorIcon
 	}
 	if e.props.getBool(AlwaysNumeric, false) {
-		return fmt.Sprintf("%s%d", errorIcon, e.code)
+		return fmt.Sprintf("%s%d", errorIcon, code)
 	}
 	return fmt.Sprintf("%s%s", errorIcon, e.Text)
 }
@@ -297,7 +298,7 @@ func (s *session) legacyEnabled() bool {
 	return true
 }
 
-func (s *session) getFormattedText() string {
+func (s *session) legacyString() string {
 	separator := ""
 	if s.props.getBool(DisplayHost, true) && s.props.getBool(DisplayUser, true) {
 		separator = s.props.getString(UserInfoSeparator, "@")
@@ -336,17 +337,9 @@ func (l *language) string() string {
 	if !l.props.getOneOfBool(FetchVersion, DisplayVersion, true) {
 		return ""
 	}
-
-	err := l.setVersion()
-	if err != nil {
-		l.Error = err.Error()
-	}
 	displayError := l.props.getBool(DisplayError, true)
-	if err != nil && displayError {
-		return err.Error()
-	}
-	if err != nil {
-		return ""
+	if len(l.Error) != 0 && displayError {
+		return l.Error
 	}
 
 	segmentTemplate := l.props.getString(SegmentTemplate, "{{ .Full }}")
@@ -458,3 +451,11 @@ func (e *envvar) init(props Properties, env Environment) {
 	e.props = props
 	e.env = env
 }
+
+// Dotnet
+
+const (
+	// UnsupportedDotnetVersionIcon is displayed when the dotnet version in
+	// the current folder isn't supported by the installed dotnet SDK set.
+	UnsupportedDotnetVersionIcon Property = "unsupported_version_icon"
+)

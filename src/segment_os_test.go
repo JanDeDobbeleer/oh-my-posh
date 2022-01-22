@@ -62,23 +62,20 @@ func TestOSInfo(t *testing.T) {
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
 		env.On("getRuntimeGOOS").Return(tc.GOOS)
-		env.On("isWsl").Return(tc.IsWSL)
 		env.On("getPlatform").Return(tc.Platform)
+		env.On("templateCache").Return(&templateCache{
+			Env: make(map[string]string),
+			WSL: tc.IsWSL,
+		})
 		osInfo := &osInfo{
 			env: env,
 			props: properties{
-				WSL:               "WSL",
-				WSLSeparator:      " at ",
 				DisplayDistroName: tc.DisplayDistroName,
 				Windows:           "windows",
 				MacOS:             "darwin",
 			},
 		}
+		_ = osInfo.enabled()
 		assert.Equal(t, tc.ExpectedString, osInfo.string(), tc.Case)
-		if tc.Platform != "" {
-			assert.Equal(t, tc.Platform, osInfo.os, tc.Case)
-		} else {
-			assert.Equal(t, tc.GOOS, osInfo.os, tc.Case)
-		}
 	}
 }

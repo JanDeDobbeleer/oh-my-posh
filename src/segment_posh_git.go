@@ -3,9 +3,10 @@ package main
 import "strings"
 
 type poshgit struct {
-	props     Properties
-	env       Environment
-	gitStatus string
+	props Properties
+	env   Environment
+
+	Status string
 }
 
 const (
@@ -14,12 +15,22 @@ const (
 
 func (p *poshgit) enabled() bool {
 	status := p.env.getenv(poshGitEnv)
-	p.gitStatus = strings.TrimSpace(status)
-	return p.gitStatus != ""
+	p.Status = strings.TrimSpace(status)
+	return p.Status != ""
 }
 
 func (p *poshgit) string() string {
-	return p.gitStatus
+	segmentTemplate := p.props.getString(SegmentTemplate, "{{ .Status }}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  p,
+		Env:      p.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (p *poshgit) init(props Properties, env Environment) {

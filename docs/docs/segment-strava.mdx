@@ -62,8 +62,6 @@ if that color is visible against any of your backgrounds.
 - refresh_token: `string` - token from Strava login, see login link in section above. It has the following format: `1111111111111111111111111`
 - expires_in: `int` - the default timeout of the token from the Strava login
 - http_timeout: `int` - how long do you want to wait before you want to see your prompt more than your strava data? - defaults to 500ms
-- template: `string` - a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below.
-See the example above. Make sure your NerdFont has the glyph you want or search for one at nerdfonts.com
 - CacheTimeout: `int` in minutes - How long do you want your numbers cached? - defaults to 5 min
 - RideIcon - defaults to `\uf5a2`
 - RunIcon - defaults to `\ufc0c`
@@ -72,7 +70,7 @@ See the example above. Make sure your NerdFont has the glyph you want or search 
 - UnknownActivityIcon - defaults to `\ue213`
 - enable_hyperlink - display an hyperlink to activities - defaults to `false`
 
-## Template Properties
+## [Template][templates] Properties
 
 The properties below are available for use in your template
 
@@ -94,7 +92,6 @@ The properties below are available for use in your template
 
 Now, go out and have a fun ride or run!
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates
 [strava]: http://www.strava.com/
 [strava-connect]: https://www.strava.com/oauth/authorize?client_id=76033&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&approval_prompt=force&scope=read,activity:read

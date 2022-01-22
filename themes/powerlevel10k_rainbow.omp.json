@@ -59,7 +59,7 @@
           "background": "#689f63",
           "properties": {
             "postfix": " \uF898 ",
-            "display_version": true
+            "fetch_version": true
           }
         },
         {
@@ -71,7 +71,7 @@
           "background": "#00acd7",
           "properties": {
             "postfix": " \uE627 ",
-            "display_version": true
+            "fetch_version": true
           }
         },
         {
@@ -83,7 +83,7 @@
           "background": "#4063D8",
           "properties": {
             "postfix": " \uE624 ",
-            "display_version": true
+            "fetch_version": true
           }
         },
         {
@@ -109,7 +109,7 @@
           "background": "#AE1401",
           "properties": {
             "postfix": " \uE791 ",
-            "display_version": true,
+            "fetch_version": true,
             "display_mode": "files"
           }
         },
@@ -122,7 +122,7 @@
           "background": "#FEAC19",
           "properties": {
             "postfix": " \uf0e7",
-            "display_version": false,
+            "fetch_version": false,
             "display_mode": "files"
           }
         },
@@ -149,7 +149,7 @@
           "foreground": "#111111",
           "background": "#ffff66",
           "properties": {
-            "root_icon": "\uF0AD"
+            "template": "\uF0AD"
           }
         },
         {

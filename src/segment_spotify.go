@@ -1,15 +1,17 @@
 package main
 
-import (
-	"fmt"
-)
-
 type spotify struct {
-	props  Properties
-	env    Environment
-	status string
-	artist string
-	track  string
+	props Properties
+	env   Environment
+
+	MusicPlayer
+}
+
+type MusicPlayer struct {
+	Status string
+	Artist string
+	Track  string
+	Icon   string
 }
 
 const (
@@ -19,24 +21,35 @@ const (
 	PausedIcon Property = "paused_icon"
 	// StoppedIcon indicates a song is stopped
 	StoppedIcon Property = "stopped_icon"
-	// TrackSeparator is put between the artist and the track
-	TrackSeparator Property = "track_separator"
+
+	playing = "playing"
+	stopped = "stopped"
+	paused  = "paused"
 )
 
 func (s *spotify) string() string {
-	icon := ""
-	switch s.status {
-	case "stopped":
-		// in this case, no artist or track info
-		icon = s.props.getString(StoppedIcon, "\uF04D ")
-		return icon
-	case "paused":
-		icon = s.props.getString(PausedIcon, "\uF8E3 ")
-	case "playing":
-		icon = s.props.getString(PlayingIcon, "\uE602 ")
+	segmentTemplate := s.props.getString(SegmentTemplate, "{{.Icon}}{{ if ne .Status \"stopped\"}}{{.Artist}} - {{.Track}}{{ end }}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  s,
+		Env:      s.env,
 	}
-	separator := s.props.getString(TrackSeparator, " - ")
-	return fmt.Sprintf("%s%s%s%s", icon, s.artist, separator, s.track)
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
+}
+func (s *spotify) resolveIcon() {
+	switch s.Status {
+	case stopped:
+		// in this case, no artist or track info
+		s.Icon = s.props.getString(StoppedIcon, "\uF04D ")
+	case paused:
+		s.Icon = s.props.getString(PausedIcon, "\uF8E3 ")
+	case playing:
+		s.Icon = s.props.getString(PlayingIcon, "\uE602 ")
+	}
 }
 
 func (s *spotify) init(props Properties, env Environment) {

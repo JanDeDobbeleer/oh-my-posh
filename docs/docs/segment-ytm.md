@@ -26,8 +26,7 @@ Remote Control password.
     "prefix": "\uF16A ",
     "playing_icon": "\uE602 ",
     "paused_icon": "\uF8E3 ",
-    "stopped_icon": "\uF04D ",
-    "track_separator" : " - "
+    "stopped_icon": "\uF04D "
   }
 }
 ```
@@ -37,5 +36,15 @@ Remote Control password.
 - playing_icon: `string` - text/icon to show when playing - defaults to `\uE602 `
 - paused_icon: `string` - text/icon to show when paused - defaults to `\uF8E3 `
 - stopped_icon: `string` - text/icon to show when paused - defaults to `\uF04D `
-- track_separator: `string` - text/icon to put between the artist and song name - defaults to ` - `
 - api_url: `string` - the YTMDA Remote Control API URL- defaults to `http://127.0.0.1:9863`
+
+## [Template][templates] Properties
+
+- `.Status`: `string` - player status (`playing`, `paused`, `stopped`)
+- `.Artist`: `string` - current artist
+- `.Track`: `string` - current track
+- `.Icon`: `string` - icon (based on `.Status`)
+
+[templates]: /docs/config-text#templates
+
+[templates]: /docs/config-text#templates

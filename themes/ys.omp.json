@@ -12,7 +12,7 @@
           "properties": {
             "prefix": "(",
             "postfix": ")",
-            "display_version": false
+            "fetch_version": false
           }
         }
       ]
@@ -36,7 +36,7 @@
           "style": "plain",
           "foreground": "red",
           "properties": {
-            "root_icon": "%"
+            "template": "%"
           }
         },
         {

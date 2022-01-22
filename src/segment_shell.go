@@ -5,6 +5,8 @@ import "strings"
 type shell struct {
 	props Properties
 	env   Environment
+
+	Name string
 }
 
 const (
@@ -13,19 +15,29 @@ const (
 )
 
 func (s *shell) enabled() bool {
+	mappedNames := s.props.getKeyValueMap(MappedShellNames, make(map[string]string))
+	s.Name = s.env.getShellName()
+	for key, val := range mappedNames {
+		if strings.EqualFold(s.Name, key) {
+			s.Name = val
+			break
+		}
+	}
 	return true
 }
 
 func (s *shell) string() string {
-	mappedNames := s.props.getKeyValueMap(MappedShellNames, make(map[string]string))
-	shellName := s.env.getShellName()
-	for key, val := range mappedNames {
-		if strings.EqualFold(shellName, key) {
-			shellName = val
-			break
-		}
+	segmentTemplate := s.props.getString(SegmentTemplate, "{{.Name}}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  s,
+		Env:      s.env,
 	}
-	return shellName
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (s *shell) init(props Properties, env Environment) {

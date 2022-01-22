@@ -5,7 +5,8 @@ import "strings"
 type command struct {
 	props Properties
 	env   Environment
-	value string
+
+	Output string
 }
 
 const (
@@ -24,9 +25,9 @@ func (c *command) enabled() bool {
 	if strings.Contains(command, "||") {
 		commands := strings.Split(command, "||")
 		for _, cmd := range commands {
-			output := c.env.runShellCommand(shell, cmd)
+			output := c.env.runShellCommand(shell, strings.TrimSpace(cmd))
 			if output != "" {
-				c.value = output
+				c.Output = output
 				return true
 			}
 		}
@@ -35,17 +36,27 @@ func (c *command) enabled() bool {
 		var output string
 		commands := strings.Split(command, "&&")
 		for _, cmd := range commands {
-			output += c.env.runShellCommand(shell, cmd)
+			output += c.env.runShellCommand(shell, strings.TrimSpace(cmd))
 		}
-		c.value = output
-		return c.value != ""
+		c.Output = output
+		return c.Output != ""
 	}
-	c.value = c.env.runShellCommand(shell, command)
-	return c.value != ""
+	c.Output = c.env.runShellCommand(shell, strings.TrimSpace(command))
+	return c.Output != ""
 }
 
 func (c *command) string() string {
-	return c.value
+	segmentTemplate := c.props.getString(SegmentTemplate, "{{.Output}}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  c,
+		Env:      c.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (c *command) init(props Properties, env Environment) {

@@ -13,7 +13,11 @@ const (
 )
 
 func (g *golang) string() string {
-	return g.language.string()
+	segmentTemplate := g.language.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) == 0 {
+		return g.language.string()
+	}
+	return g.language.renderTemplate(segmentTemplate, g)
 }
 
 func (g *golang) init(props Properties, env Environment) {

@@ -24,17 +24,11 @@ Show the current user and host name.
 }
 ```
 
-## Properties
-
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below.
-
-## Template Properties
+## [Template][templates] Properties
 
 - `.UserName`: `string` - the current user's name
 - `.HostName`: `string` - the current computer's name
 - `.SSHSession`: `boolean` - active SSH session or not
 - `.Root`: `boolean` - are you a root/admin user or not
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

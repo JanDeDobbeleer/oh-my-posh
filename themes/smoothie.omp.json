@@ -46,7 +46,7 @@
           "style": "plain",
           "foreground": "#98C379",
           "properties": {
-            "display_version": true,
+            "fetch_version": true,
             "prefix": "<#ffffff>\u25E6</> \u2622"
           }
         }

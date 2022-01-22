@@ -33,13 +33,10 @@ sidebar_label: Ipify
   defaults to 20ms
 - cache_timeout: `int` in minutes - How long do you want your IP address cached? -
   defaults to 10 min
-- template: `string` - a go [text/template][go-text-template] template extended
-  with [sprig][sprig] utilizing the properties below. - defaults to `{{ .IP }}`
 
-## Template Properties
+## [Template][templates] Properties
 
 - .IP: `string` - Your external IP address
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates
 [ipify]: https://www.ipify.org/

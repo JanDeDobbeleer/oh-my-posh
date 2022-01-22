@@ -98,7 +98,7 @@
                     "foreground": "#ff0000",
                     "properties": {
                         "prefix": "",
-                        "root_icon": "\uE00A"
+                        "template": "\uE00A"
                     }
                 },
                 {

@@ -59,8 +59,7 @@ func TestGetMeaningFromExitCode(t *testing.T) {
 	errorMap[7000] = "7000"
 	for exitcode, want := range errorMap {
 		e := &exit{}
-		e.code = exitcode
-		assert.Equal(t, want, e.getMeaningFromExitCode())
+		assert.Equal(t, want, e.getMeaningFromExitCode(exitcode))
 	}
 }
 

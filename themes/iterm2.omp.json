@@ -132,7 +132,7 @@
           "style": "plain",
           "foreground": "#FFD700",
           "properties": {
-            "root_icon": "⚡"
+            "template": "⚡"
           }
         },
         {

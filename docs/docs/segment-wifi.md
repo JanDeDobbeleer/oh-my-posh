@@ -30,12 +30,7 @@ Currently only supports Windows and WSL. Pull requests for Darwin and Linux supp
 }
 ```
 
-## Properties
-
-- template: `string` - A go [text/template][go-text-template]  extended with [sprig][sprig] using the properties below.
-Defaults to `{{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }}`
-
-## Template Properties
+## [Template][templates] Properties
 
 - `.SSID`: `string` - the SSID of the current wifi network
 - `.RadioType`: `string` - the radio type - _e.g. 802.11ac, 802.11ax, 802.11n, etc._
@@ -45,5 +40,4 @@ Defaults to `{{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal 
 - `.TransmitRate`: `int` - the transmit rate (Mbps)
 - `.Signal`: `int` - the signal strength (%)
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

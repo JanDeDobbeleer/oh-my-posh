@@ -2,23 +2,19 @@ package main
 
 type dotnet struct {
 	language
+
+	Unsupported bool
 }
 
-const (
-	// UnsupportedDotnetVersionIcon is displayed when the dotnet version in
-	// the current folder isn't supported by the installed dotnet SDK set.
-	UnsupportedDotnetVersionIcon Property = "unsupported_version_icon"
-)
-
 func (d *dotnet) string() string {
-	version := d.language.string()
-
-	exitCode := d.language.exitCode
-	if exitCode == dotnetExitCode {
+	segmentTemplate := d.language.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) != 0 {
+		return d.language.renderTemplate(segmentTemplate, d)
+	}
+	if d.Unsupported {
 		return d.language.props.getString(UnsupportedDotnetVersionIcon, "\uf071 ")
 	}
-
-	return version
+	return d.language.string()
 }
 
 func (d *dotnet) init(props Properties, env Environment) {
@@ -39,5 +35,10 @@ func (d *dotnet) init(props Properties, env Environment) {
 }
 
 func (d *dotnet) enabled() bool {
-	return d.language.enabled()
+	enabled := d.language.enabled()
+	if !enabled {
+		return false
+	}
+	d.Unsupported = d.language.exitCode == dotnetExitCode
+	return true
 }

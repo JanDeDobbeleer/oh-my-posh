@@ -47,7 +47,7 @@
     },
     "http_timeout": {
       "type": "integer",
-      "title": "Http requst timeout",
+      "title": "Http request timeout",
       "description": "Timeout value to use for http request",
       "default": 20
     },

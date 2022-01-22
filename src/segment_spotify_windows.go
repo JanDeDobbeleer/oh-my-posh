@@ -15,14 +15,15 @@ func (s *spotify) enabled() bool {
 	}
 
 	if !strings.Contains(spotifyWindowTitle, " - ") {
-		s.status = "stopped"
+		s.Status = stopped
 		return false
 	}
 
 	infos := strings.Split(spotifyWindowTitle, " - ")
-	s.artist = infos[0]
+	s.Artist = infos[0]
 	// remove first element and concat others(a song can contains also a " - ")
-	s.track = strings.Join(infos[1:], " - ")
-	s.status = "playing"
+	s.Track = strings.Join(infos[1:], " - ")
+	s.Status = playing
+	s.resolveIcon()
 	return true
 }

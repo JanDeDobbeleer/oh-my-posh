@@ -25,14 +25,7 @@ Show the current timestamp.
 
 - time_format: `string` - format to use, follows the [golang standard][format] - defaults to `15:04:05`
 
-[format]: https://yourbasic.org/golang/format-parse-string-time-date-example/
-
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-  properties below. Only used when a value is set, making the above properties obsolete.
-
-  example: `{{ now | date \"January 02, 2006 15:04:05 PM\" | lower }}`
-
-## Template Properties
+## [Template][templates] Properties
 
 - `.CurrentDate`: `time` - The time to display(testing purpose)
 
@@ -72,5 +65,5 @@ Show the current timestamp.
 - StampMicro = "Jan _2 15:04:05.000000"
 - StampNano  = "Jan _2 15:04:05.000000000"
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates
+[format]: https://yourbasic.org/golang/format-parse-string-time-date-example/

@@ -44,7 +44,7 @@
           "foreground": "red",
           "properties": {
             "prefix": "| ",
-            "root_icon": "root"
+            "template": "root"
           }
         },
         {

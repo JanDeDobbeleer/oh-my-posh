@@ -558,6 +558,7 @@ func (env *environment) templateCache() *templateCache {
 		Root:  env.isRunningAsRoot(),
 		Shell: env.getShellName(),
 		Code:  env.lastErrorCode(),
+		WSL:   env.isWsl(),
 	}
 	tmplCache.Env = make(map[string]string)
 	const separator = "="

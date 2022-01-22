@@ -8,33 +8,34 @@ import (
 
 func TestSpotifyStringPlayingSong(t *testing.T) {
 	expected := "\ue602 Candlemass - Spellbreaker"
+	env := new(MockedEnvironment)
+	env.onTemplate()
 	s := &spotify{
-		artist: "Candlemass",
-		track:  "Spellbreaker",
-		status: "playing",
-		props:  properties{},
-	}
-	assert.Equal(t, expected, s.string())
-}
-
-func TestSpotifyStringPausedSong(t *testing.T) {
-	expected := "\uF8E3 Candlemass - Spellbreaker"
-	s := &spotify{
-		artist: "Candlemass",
-		track:  "Spellbreaker",
-		status: "paused",
-		props:  properties{},
+		MusicPlayer: MusicPlayer{
+			Artist: "Candlemass",
+			Track:  "Spellbreaker",
+			Status: "playing",
+			Icon:   "\ue602 ",
+		},
+		props: properties{},
+		env:   env,
 	}
 	assert.Equal(t, expected, s.string())
 }
 
 func TestSpotifyStringStoppedSong(t *testing.T) {
 	expected := "\uf04d "
+	env := new(MockedEnvironment)
+	env.onTemplate()
 	s := &spotify{
-		artist: "Candlemass",
-		track:  "Spellbreaker",
-		status: "stopped",
-		props:  properties{},
+		MusicPlayer: MusicPlayer{
+			Artist: "Candlemass",
+			Track:  "Spellbreaker",
+			Status: "stopped",
+			Icon:   "\uf04d ",
+		},
+		props: properties{},
+		env:   env,
 	}
 	assert.Equal(t, expected, s.string())
 }

@@ -27,12 +27,7 @@ The Nerdbank.GitVersioning CLI can be a bit slow causing the prompt to feel slow
 }
 ```
 
-## Properties
-
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `{{ .Version }}`
-
-## Template Properties
+## [Template][templates] Properties
 
 - `.Version`: `string` - the current version
 - `.AssemblyVersion`: `string` - the current assembly version
@@ -43,5 +38,4 @@ properties below - defaults to `{{ .Version }}`
 - `.SimpleVersion`: `string` - the current simple version
 
 [nbgv]: https://github.com/dotnet/Nerdbank.GitVersioning
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

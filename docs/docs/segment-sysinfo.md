@@ -1,7 +1,7 @@
 ---
 id: sysinfo
-title: SysInfo
-sidebar_label: SysInfo
+title: System Info
+sidebar_label: System Info
 ---
 
 ## SysInfo
@@ -30,10 +30,8 @@ Display SysInfo.
 ## Properties
 
 - Precision: `int` - The precision used for any float values - defaults to 2
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `{{ round .PhysicalPercentUsed .Precision }}> `
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.PhysicalTotalMemory`: `int` - is the total of used physical memory
 - `.PhysicalFreeMemory`: `int` - is the total of free physical memory
@@ -47,3 +45,4 @@ properties below - defaults to `{{ round .PhysicalPercentUsed .Precision }}> `
 - `.CPU`: `[]struct` - an array of [InfoStat][cpuinfo] object, you can use any property it has e.g. `(index .CPU 0).Cores`
 
 [cpuinfo]: https://github.com/shirou/gopsutil/blob/78065a7ce2021f6a78c8d6f586a2683ba501dcec/cpu/cpu.go#L32
+[templates]: /docs/config-text#templates

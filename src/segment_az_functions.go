@@ -5,7 +5,11 @@ type azfunc struct {
 }
 
 func (az *azfunc) string() string {
-	return az.language.string()
+	segmentTemplate := az.language.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) == 0 {
+		return az.language.string()
+	}
+	return az.language.renderTemplate(segmentTemplate, az)
 }
 
 func (az *azfunc) init(props Properties, env Environment) {

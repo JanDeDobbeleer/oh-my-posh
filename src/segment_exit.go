@@ -6,11 +6,11 @@ type exit struct {
 	props Properties
 	env   Environment
 
-	code int
 	Text string
 }
 
 func (e *exit) enabled() bool {
+	e.Text = e.getMeaningFromExitCode(e.env.lastErrorCode())
 	if e.props.getBool(AlwaysEnabled, false) {
 		return true
 	}
@@ -18,17 +18,6 @@ func (e *exit) enabled() bool {
 }
 
 func (e *exit) string() string {
-	return e.getFormattedText()
-}
-
-func (e *exit) init(props Properties, env Environment) {
-	e.props = props
-	e.env = env
-}
-
-func (e *exit) getFormattedText() string {
-	e.code = e.env.lastErrorCode()
-	e.Text = e.getMeaningFromExitCode()
 	segmentTemplate := e.props.getString(SegmentTemplate, "")
 	if len(segmentTemplate) == 0 {
 		return e.deprecatedString()
@@ -45,8 +34,13 @@ func (e *exit) getFormattedText() string {
 	return text
 }
 
-func (e *exit) getMeaningFromExitCode() string {
-	switch e.code {
+func (e *exit) init(props Properties, env Environment) {
+	e.props = props
+	e.env = env
+}
+
+func (e *exit) getMeaningFromExitCode(code int) string {
+	switch code {
 	case 1:
 		return "ERROR"
 	case 2:
@@ -100,6 +94,6 @@ func (e *exit) getMeaningFromExitCode() string {
 	case 128 + 22:
 		return "SIGTTOU"
 	default:
-		return strconv.Itoa(e.code)
+		return strconv.Itoa(code)
 	}
 }

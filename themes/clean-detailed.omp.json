@@ -132,7 +132,7 @@
                     "type": "root",
                     "style": "plain",
                     "properties": {
-                        "root_icon": "\uf292 "
+                        "template": "\uf292 "
                     }
                 },
                 {

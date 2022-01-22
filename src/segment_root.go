@@ -5,17 +5,22 @@ type root struct {
 	env   Environment
 }
 
-const (
-	// RootIcon indicates the root user
-	RootIcon Property = "root_icon"
-)
-
 func (rt *root) enabled() bool {
 	return rt.env.isRunningAsRoot()
 }
 
 func (rt *root) string() string {
-	return rt.props.getString(RootIcon, "\uF0E7")
+	segmentTemplate := rt.props.getString(SegmentTemplate, "\uF0E7")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  rt,
+		Env:      rt.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (rt *root) init(props Properties, env Environment) {

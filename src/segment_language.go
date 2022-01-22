@@ -84,13 +84,6 @@ const (
 )
 
 func (l *language) renderTemplate(segmentTemplate string, context SegmentWriter) string {
-	if l.props.getBool(FetchVersion, true) {
-		err := l.setVersion()
-		if err != nil {
-			l.Error = err.Error()
-		}
-	}
-
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  context,
@@ -101,6 +94,7 @@ func (l *language) renderTemplate(segmentTemplate string, context SegmentWriter)
 		return err.Error()
 	}
 
+	// TODO: this needs to be removed or refactored
 	if !l.props.getBool(EnableHyperlink, false) {
 		return text
 	}
@@ -124,31 +118,40 @@ func (l *language) renderTemplate(segmentTemplate string, context SegmentWriter)
 func (l *language) enabled() bool {
 	// override default extensions if needed
 	l.extensions = l.props.getStringArray(LanguageExtensions, l.extensions)
-
 	inHomeDir := func() bool {
 		return l.env.pwd() == l.env.homeDir()
 	}
+	var enabled bool
 	homeEnabled := l.props.getBool(HomeEnabled, l.homeEnabled)
 	if inHomeDir() && !homeEnabled {
-		return false
+		enabled = false
+	} else {
+		// set default mode when not set
+		if len(l.displayMode) == 0 {
+			l.displayMode = l.props.getString(DisplayMode, DisplayModeFiles)
+		}
+		l.loadLanguageContext()
+		switch l.displayMode {
+		case DisplayModeAlways:
+			enabled = true
+		case DisplayModeEnvironment:
+			enabled = l.inLanguageContext()
+		case DisplayModeFiles:
+			enabled = l.hasLanguageFiles()
+		case DisplayModeContext:
+			fallthrough
+		default:
+			enabled = l.hasLanguageFiles() || l.inLanguageContext()
+		}
 	}
-	// set default mode when not set
-	if len(l.displayMode) == 0 {
-		l.displayMode = l.props.getString(DisplayMode, DisplayModeFiles)
+	if !enabled || !l.props.getOneOfBool(FetchVersion, DisplayVersion, true) {
+		return enabled
 	}
-	l.loadLanguageContext()
-	switch l.displayMode {
-	case DisplayModeAlways:
-		return true
-	case DisplayModeEnvironment:
-		return l.inLanguageContext()
-	case DisplayModeFiles:
-		return l.hasLanguageFiles()
-	case DisplayModeContext:
-		fallthrough
-	default:
-		return l.hasLanguageFiles() || l.inLanguageContext()
+	err := l.setVersion()
+	if err != nil {
+		l.Error = err.Error()
 	}
+	return enabled
 }
 
 // hasLanguageFiles will return true at least one file matching the extensions is found

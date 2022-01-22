@@ -146,6 +146,7 @@ You can use these on any segment, the engine is responsible for adding them corr
 - postfix: `string`
 - include_folders: `[]string`
 - exclude_folders: `[]string`
+- template: `string` - A go text/template [template][templates] to render the text
 
 #### Prefix
 
@@ -217,3 +218,4 @@ This means that for user Bill, who has a user account `Bill` on Windows and `bil
 [fg-templ]: /docs/config-overview#foreground-templates
 [regex]: https://www.regular-expressions.info/tutorial.html
 [aws]: /docs/aws
+[templates]: /docs/config-text#templates

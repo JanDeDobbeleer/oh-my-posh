@@ -5,7 +5,11 @@ type rust struct {
 }
 
 func (r *rust) string() string {
-	return r.language.string()
+	segmentTemplate := r.language.props.getString(SegmentTemplate, "")
+	if len(segmentTemplate) == 0 {
+		return r.language.string()
+	}
+	return r.language.renderTemplate(segmentTemplate, r)
 }
 
 func (r *rust) init(props Properties, env Environment) {

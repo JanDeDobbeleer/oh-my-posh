@@ -16,7 +16,7 @@
                     "foreground": "#dd1e1e",
                     "background": "#000000",
                     "properties": {
-                        "root_icon": "⚡"
+                        "template": "⚡"
                     }
                 },
                 {

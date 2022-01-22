@@ -35,12 +35,7 @@ New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
 
 :::
 
-## Properties
-
-- template: `string` - text/icon to display. Powered by go [text/template][go-text-template] templates extended
-with [sprig][sprig] utilizing the properties below.
-
-## Template Properties
+## [Template][templates] Properties
 
 - `.Root`: `boolean` - is the current user root/admin or not
 - `.Path`: `string` - the current working directory
@@ -51,5 +46,4 @@ with [sprig][sprig] utilizing the properties below.
 - `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
 
 [coloring]: /docs/config-colors
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

@@ -50,7 +50,7 @@
           "foreground": "#cd5e42",
           "properties": {
             "prefix": "",
-            "root_icon": "\ue3bf"
+            "template": "\ue3bf"
           }
         },
         {

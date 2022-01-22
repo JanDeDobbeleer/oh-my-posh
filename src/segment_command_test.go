@@ -1,5 +1,3 @@
-//go:build !windows
-
 package main
 
 import (
@@ -9,11 +7,10 @@ import (
 )
 
 func TestExecuteCommand(t *testing.T) {
-	env := &environment{}
-	debug := false
-	env.init(&args{
-		Debug: &debug,
-	})
+	env := new(MockedEnvironment)
+	env.On("hasCommand", "bash").Return(true)
+	env.On("runShellCommand", "bash", "echo hello").Return("hello")
+	env.onTemplate()
 	props := properties{
 		Command: "echo hello",
 	}
@@ -27,11 +24,12 @@ func TestExecuteCommand(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
-	env := &environment{}
-	debug := false
-	env.init(&args{
-		Debug: &debug,
-	})
+	env := new(MockedEnvironment)
+	env.On("hasCommand", "bash").Return(true)
+	env.On("runShellCommand", "bash", "exit 1").Return("")
+	env.On("runShellCommand", "bash", "echo hello").Return("hello")
+	env.On("runShellCommand", "bash", "exit 1 || echo hello").Return("hello")
+	env.onTemplate()
 	props := properties{
 		Command: "exit 1 || echo hello",
 	}
@@ -45,11 +43,11 @@ func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
-	env := &environment{}
-	debug := false
-	env.init(&args{
-		Debug: &debug,
-	})
+	env := new(MockedEnvironment)
+	env.On("hasCommand", "bash").Return(true)
+	env.On("runShellCommand", "bash", "echo hello").Return("hello")
+	env.On("runShellCommand", "bash", "echo world").Return("world")
+	env.onTemplate()
 	props := properties{
 		Command: "echo hello || echo world",
 	}
@@ -63,11 +61,11 @@ func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsAnd(t *testing.T) {
-	env := &environment{}
-	debug := false
-	env.init(&args{
-		Debug: &debug,
-	})
+	env := new(MockedEnvironment)
+	env.On("hasCommand", "bash").Return(true)
+	env.On("runShellCommand", "bash", "echo hello").Return("hello")
+	env.On("runShellCommand", "bash", "echo world").Return("world")
+	env.onTemplate()
 	props := properties{
 		Command: "echo hello && echo world",
 	}
@@ -81,11 +79,10 @@ func TestExecuteMultipleCommandsAnd(t *testing.T) {
 }
 
 func TestExecuteSingleCommandEmpty(t *testing.T) {
-	env := &environment{}
-	debug := false
-	env.init(&args{
-		Debug: &debug,
-	})
+	env := new(MockedEnvironment)
+	env.On("hasCommand", "bash").Return(true)
+	env.On("runShellCommand", "bash", "").Return("")
+	env.onTemplate()
 	props := properties{
 		Command: "",
 	}
@@ -98,11 +95,10 @@ func TestExecuteSingleCommandEmpty(t *testing.T) {
 }
 
 func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
-	env := &environment{}
-	debug := false
-	env.init(&args{
-		Debug: &debug,
-	})
+	env := new(MockedEnvironment)
+	env.On("hasCommand", "bash").Return(true)
+	env.On("runShellCommand", "bash", "echo no command specified").Return("no command specified")
+	env.onTemplate()
 	var props properties
 	c := &command{
 		props: props,
@@ -110,15 +106,14 @@ func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
 	}
 	enabled := c.enabled()
 	assert.True(t, enabled)
-	assert.Equal(t, "no command specified", c.value)
+	assert.Equal(t, "no command specified", c.Output)
 }
 
 func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
-	env := &environment{}
-	debug := false
-	env.init(&args{
-		Debug: &debug,
-	})
+	env := new(MockedEnvironment)
+	env.On("hasCommand", "bash").Return(true)
+	env.On("runShellCommand", "bash", "echo").Return("")
+	env.onTemplate()
 	props := properties{
 		Command: "echo && echo",
 	}
@@ -131,11 +126,11 @@ func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsOrDisabled(t *testing.T) {
-	env := &environment{}
-	debug := false
-	env.init(&args{
-		Debug: &debug,
-	})
+	env := new(MockedEnvironment)
+	env.On("hasCommand", "bash").Return(true)
+	env.On("runShellCommand", "bash", "echo").Return("")
+	env.On("runShellCommand", "bash", "echo|| echo").Return("")
+	env.onTemplate()
 	props := properties{
 		Command: "echo|| echo",
 	}

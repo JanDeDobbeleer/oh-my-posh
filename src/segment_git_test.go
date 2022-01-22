@@ -29,16 +29,18 @@ func TestEnabledGitNotFound(t *testing.T) {
 }
 
 func TestEnabledInWorkingDirectory(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("inWSLSharedDrive").Return(false)
-	env.On("hasCommand", "git").Return(true)
-	env.On("getRuntimeGOOS").Return("")
-	env.On("isWsl").Return(false)
 	fileInfo := &fileInfo{
 		path:         "/dir/hello",
 		parentFolder: "/dir",
 		isDir:        true,
 	}
+	env := new(MockedEnvironment)
+	env.On("inWSLSharedDrive").Return(false)
+	env.On("hasCommand", "git").Return(true)
+	env.On("getRuntimeGOOS").Return("")
+	env.On("getFileContent", "/dir/hello/HEAD").Return("")
+	env.mockGitCommand(fileInfo.path, "", "describe", "--tags", "--exact-match")
+	env.On("isWsl").Return(false)
 	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
 	g := &git{
 		scm: scm{
@@ -61,6 +63,8 @@ func TestEnabledInWorkingTree(t *testing.T) {
 		parentFolder: "/dev/folder_worktree",
 		isDir:        false,
 	}
+	env.On("getFileContent", "/dev/real_folder/.git/worktrees/folder_worktree/HEAD").Return("")
+	env.mockGitCommand(fileInfo.parentFolder, "", "describe", "--tags", "--exact-match")
 	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("getFileContent", "/dev/folder_worktree/.git").Return("gitdir: /dev/real_folder/.git/worktrees/folder_worktree")
 	env.On("getFileContent", "/dev/real_folder/.git/worktrees/folder_worktree/gitdir").Return("/dev/folder_worktree.git\n")
@@ -86,6 +90,8 @@ func TestEnabledInSubmodule(t *testing.T) {
 		parentFolder: "/dev/parent/test-submodule",
 		isDir:        false,
 	}
+	env.On("getFileContent", "/dev/parent/test-submodule/../.git/modules/test-submodule/HEAD").Return("")
+	env.mockGitCommand("/dev/parent/test-submodule/../.git/modules/test-submodule", "", "describe", "--tags", "--exact-match")
 	env.On("hasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("getFileContent", "/dev/parent/test-submodule/.git").Return("gitdir: ../.git/modules/test-submodule")
 	env.On("getFileContent", "/dev/parent/.git/modules/test-submodule").Return("/dev/folder_worktree.git\n")
@@ -119,8 +125,8 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
-func (m *MockedEnvironment) mockGitCommand(returnValue string, args ...string) {
-	args = append([]string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
+func (m *MockedEnvironment) mockGitCommand(dir, returnValue string, args ...string) {
+	args = append([]string{"-C", dir, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	m.On("runCommand", "git", args).Return(returnValue, nil)
 }
 
@@ -231,9 +237,9 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		env.On("inWSLSharedDrive").Return(false)
 		env.On("getRuntimeGOOS").Return("unix")
 		env.On("isWsl").Return(false)
-		env.mockGitCommand("", "describe", "--tags", "--exact-match")
-		env.mockGitCommand(tc.Theirs, "name-rev", "--name-only", "--exclude=tags/*", tc.Theirs)
-		env.mockGitCommand(tc.Ours, "name-rev", "--name-only", "--exclude=tags/*", tc.Ours)
+		env.mockGitCommand("", "", "describe", "--tags", "--exact-match")
+		env.mockGitCommand("", tc.Theirs, "name-rev", "--name-only", "--exclude=tags/*", tc.Theirs)
+		env.mockGitCommand("", tc.Ours, "name-rev", "--name-only", "--exclude=tags/*", tc.Ours)
 		// rebase merge
 		env.On("hasFolder", "/rebase-merge").Return(tc.RebaseMerge)
 		env.On("getFileContent", "/rebase-merge/head-name").Return(tc.Ours)
@@ -299,7 +305,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 		env.On("getFileContent", "/HEAD").Return(tc.HEAD)
 		env.On("getRuntimeGOOS").Return("unix")
 		env.On("isWsl").Return(false)
-		env.mockGitCommand(tc.Tag, "describe", "--tags", "--exact-match")
+		env.mockGitCommand("", tc.Tag, "describe", "--tags", "--exact-match")
 		g := &git{
 			scm: scm{
 				env: env,
@@ -416,7 +422,7 @@ func TestSetGitStatus(t *testing.T) {
 		env := new(MockedEnvironment)
 		env.On("getRuntimeGOOS").Return("unix")
 		env.On("isWsl").Return(false)
-		env.mockGitCommand(strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
+		env.mockGitCommand("", strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
 		g := &git{
 			scm: scm{
 				env: env,

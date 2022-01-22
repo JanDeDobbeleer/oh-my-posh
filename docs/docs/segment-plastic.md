@@ -45,13 +45,10 @@ Local changes can also be displayed which uses the following syntax (see `.Statu
 ## Plastic SCM Icon
 
 If you want to use the icon of Plastic SCM in the segment, then please help me push the icon in this [issue][fa-issue]
-by leaving a like!  
+by leaving a like!
 ![icon](https://www.plasticscm.com/images/icon-logo-plasticscm.svg)
 
 ## Properties
-
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to empty.
 
 ### Fetching information
 
@@ -74,12 +71,12 @@ You can set the following property to `true` to enable fetching additional infor
 - commit_icon: `string` - icon/text to display before the commit context (detached HEAD) - defaults to `\uF417`
 - tag_icon: `string` - icon/text to display before the tag context - defaults to `\uF412`
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.Selector`: `string` - the current selector context (branch/changeset/label)
 - `.Behind`: `bool` - the current workspace is behind and changes are incoming
 - `.Status`: `PlasticStatus` - changes in the workspace (see below)
-- `.MergePending`: `bool` - if a merge is pending and needs to be commited  
+- `.MergePending`: `bool` - if a merge is pending and needs to be commited
 (kown issue: when no file is left after a *Change/Delete conflict* merge, the `MergePending` property is not set)
 
 ### PlasticStatus
@@ -92,6 +89,5 @@ You can set the following property to `true` to enable fetching additional infor
 - `.Changed`: `boolean` - if the status contains changes or not
 - `.String`: `string` - a string representation of the changes above
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates
 [fa-issue]: https://github.com/FortAwesome/Font-Awesome/issues/18504

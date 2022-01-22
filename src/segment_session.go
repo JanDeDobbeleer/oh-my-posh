@@ -5,7 +5,7 @@ import "strings"
 type session struct {
 	props Properties
 	env   Environment
-	text  string
+	// text  string
 
 	userName   string
 	hostName   string
@@ -21,24 +21,24 @@ func (s *session) enabled() bool {
 	if segmentTemplate == "" {
 		return s.legacyEnabled()
 	}
+	return true
+}
+
+func (s *session) string() string {
+	segmentTemplate := s.props.getString(SegmentTemplate, "")
+	if segmentTemplate == "" {
+		return s.legacyString()
+	}
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  s,
 		Env:      s.env,
 	}
-	var err error
-	s.text, err = template.render()
+	text, err := template.render()
 	if err != nil {
-		s.text = err.Error()
+		text = err.Error()
 	}
-	return len(s.text) > 0
-}
-
-func (s *session) string() string {
-	if len(s.text) != 0 {
-		return s.text
-	}
-	return s.getFormattedText()
+	return text
 }
 
 func (s *session) init(props Properties, env Environment) {

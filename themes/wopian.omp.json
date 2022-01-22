@@ -12,8 +12,7 @@
           "properties": {
             "prefix": "",
             "postfix": "",
-            "wsl": "",
-            "wsl_separator": ""
+            "template": "{{ .Icon }}"
           }
         },
         {
@@ -45,7 +44,7 @@
           "style": "plain",
           "foreground": "#68a063",
           "properties": {
-            "display_version": true,
+            "fetch_version": true,
             "postfix": "",
             "display_mode": "files",
             "display_package_manager": true,
@@ -58,7 +57,7 @@
           "style": "plain",
           "foreground": "#4063D8",
           "properties": {
-            "display_version": true,
+            "fetch_version": true,
             "display_mode": "files",
             "postfix": ""
           }
@@ -68,7 +67,7 @@
           "style": "plain",
           "foreground": "#DE3F24",
           "properties": {
-            "display_version": true,
+            "fetch_version": true,
             "postfix": "",
             "display_mode": "files"
           }

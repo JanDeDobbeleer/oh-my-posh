@@ -105,6 +105,35 @@ const (
 )
 
 func (g *git) enabled() bool {
+	if !g.shouldDisplay() {
+		return false
+	}
+	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
+	displayStatus := g.props.getOneOfBool(FetchStatus, DisplayStatus, false)
+	if !displayStatus {
+		g.setPrettyHEADName()
+	}
+	if displayStatus || statusColorsEnabled {
+		g.setGitStatus()
+		g.setGitHEADContext()
+		g.setBranchStatus()
+	} else {
+		g.Working = &GitStatus{}
+		g.Staging = &GitStatus{}
+	}
+	if g.Upstream != "" && g.props.getOneOfBool(FetchUpstreamIcon, DisplayUpstreamIcon, false) {
+		g.UpstreamIcon = g.getUpstreamIcon()
+	}
+	if g.props.getOneOfBool(FetchStashCount, DisplayStashCount, false) {
+		g.StashCount = g.getStashContext()
+	}
+	if g.props.getOneOfBool(FetchWorktreeCount, DisplayWorktreeCount, false) {
+		g.WorktreeCount = g.getWorktreeContext()
+	}
+	return true
+}
+
+func (g *git) shouldDisplay() bool {
 	// when in wsl/wsl2 and in a windows shared folder
 	// we must use git.exe and convert paths accordingly
 	// for worktrees, stashes, and path to work
@@ -162,36 +191,13 @@ func (g *git) enabled() bool {
 }
 
 func (g *git) string() string {
-	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
-	displayStatus := g.props.getOneOfBool(FetchStatus, DisplayStatus, false)
-	if !displayStatus {
-		g.setPrettyHEADName()
-	}
-	if displayStatus || statusColorsEnabled {
-		g.setGitStatus()
-		g.setGitHEADContext()
-		g.setBranchStatus()
-	} else {
-		g.Working = &GitStatus{}
-		g.Staging = &GitStatus{}
-	}
-	if g.Upstream != "" && g.props.getOneOfBool(FetchUpstreamIcon, DisplayUpstreamIcon, false) {
-		g.UpstreamIcon = g.getUpstreamIcon()
-	}
-	if g.props.getOneOfBool(FetchStashCount, DisplayStashCount, false) {
-		g.StashCount = g.getStashContext()
-	}
-	if g.props.getOneOfBool(FetchWorktreeCount, DisplayWorktreeCount, false) {
-		g.WorktreeCount = g.getWorktreeContext()
-	}
 	// use template if available
 	segmentTemplate := g.props.getString(SegmentTemplate, "")
 	if len(segmentTemplate) > 0 {
 		return g.templateString(segmentTemplate)
 	}
 	// legacy render string	if no template
-	// remove this for 6.0
-	return g.deprecatedString(statusColorsEnabled)
+	return g.deprecatedString(g.props.getBool(StatusColorsEnabled, false))
 }
 
 func (g *git) templateString(segmentTemplate string) string {

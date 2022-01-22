@@ -42,7 +42,7 @@
           "properties": {
             "prefix": "\uE235",
             "postfix": "",
-            "display_version": false
+            "fetch_version": false
           }
         },
         {
@@ -55,7 +55,7 @@
           "properties": {
             "prefix": "\uFCD1",
             "postfix": "",
-            "display_version": false
+            "fetch_version": false
           }
         },
         {
@@ -68,7 +68,7 @@
           "properties": {
             "prefix": "\uE718",
             "postfix": "",
-            "display_version": false
+            "fetch_version": false
           }
         },
         {
@@ -81,7 +81,7 @@
           "properties": {
             "prefix": "\uE791",
             "postfix": "",
-            "display_version": false
+            "fetch_version": false
           }
         },
         {
@@ -94,7 +94,7 @@
           "properties": {
             "prefix": "\uE738",
             "postfix": "",
-            "display_version": false
+            "fetch_version": false
           }
         },
         {
@@ -107,7 +107,7 @@
           "properties": {
             "prefix": "\uE624",
             "postfix": "",
-            "display_version": false
+            "fetch_version": false
           }
         },
         {

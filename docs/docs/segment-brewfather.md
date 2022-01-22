@@ -7,10 +7,10 @@ sidebar_label: Brewfather
 ## What
 
 Calling all brewers!  Keep up-to-date with the status of your [Brewfather][brewfather] batch directly in your
- commandline prompt using the brewfather segment!
+commandline prompt using the brewfather segment!
 
- You will need your User ID and API Key as generated in
- Brewfather's Settings screen, enabled with **batches.read** and **recipes.read** scopes.
+You will need your User ID and API Key as generated in
+Brewfather's Settings screen, enabled with **batches.read** and **recipes.read** scopes.
 
 ## Sample Configuration
 
@@ -46,8 +46,6 @@ NOTE: Temperature units are in degrees C and specific gravity is expressed as `X
 - batch_id: `string` - Get this by navigating to the desired batch on the brewfather website,
 the batch id is at the end of the URL in the address bar.
 - http_timeout: `int` in milliseconds - How long to wait for the Brewfather service to answer the request.  Default 2 seconds.
-- template: `string` - a go [text/template][go-text-template] template extended
-with [sprig][sprig] utilizing the properties below.
 - cache_timeout: `int` in minutes - How long to wait before updating the data from Brewfather.  Default is 5 minutes.
 - day_icon: `string` - icon or letter to use to indicate days.  Default is "d".
 
@@ -56,7 +54,7 @@ You can override the icons for temperature trend as used by template property `.
 - doubleup_icon - for increases of more than 4°C, default is ↑↑
 - singleup_icon - increase 2-4°C, default is ↑
 - fortyfiveup_icon - increase 0.5-2°C, default is ↗
-- flat_icon -change less than 0.5°C, default is →
+- flat_icon - change less than 0.5°C, default is →
 - fortyfivedown_icon - decrease 0.5-2°C, default is ↘
 - singledown_icon - decrease 2-4°C, default is ↓
 - doubledown_icon - decrease more than 4°C, default is ↓↓
@@ -70,7 +68,7 @@ You can override the default icons for batch status as used by template property
 - completed_status_icon
 - archived_status_icon
 
-## Template Properties
+## [Template][templates] Properties
 
 Commonly used fields
 
@@ -85,7 +83,7 @@ Commonly used fields
 - .BatchNumer `int` - The number of this batch
 - .MeasuredAbv: `float` - The ABV for the batch - either estimated from recipe or calculated from entered OG and FG values
 - .ReadingAge `int` - age in hours of most recent reading or -1 if there are no readings available
-  
+
 .Reading contains the most recent data from devices or manual entry as visible on the Brewfather's batch Readings graph.
 If there are no readings available, .Reading will be null.
 
@@ -95,7 +93,7 @@ If there are no readings available, .Reading will be null.
 - .Reading.Comment `string` - comment attached to this reading
 - .Reading.DeviceType `string` - source of the reading, e.g. "Tilt"
 - .Reading.DeviceID `string` - id of the device, e.g. "PINK"
-  
+
 Additional template properties
 
 - .MeasuredOg: `float` - The OG for the batch as manually entered into Brewfather
@@ -147,7 +145,7 @@ The following conversion functions are available to the template to convert to o
 
 - SGToBrix - input `float` SG in x.xxx decimal; output `float` Brix (2 decimal places)
 - SGToPlato - input `float` SG in x.xxx decimal; output `float` Plato (2 decimal places)
-  
+
   *(These use the polynomial conversions from [Wikipedia][wikipedia_gravity_page])*
 
 #### Example
@@ -166,7 +164,6 @@ To display gravity as SG in XXXX format (e.g. "1020" instead of "1.020"), use th
 }
 ````
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates
 [brewfather]: http://brewfather.app
 [wikipedia_gravity_page]:https://en.wikipedia.org/wiki/Brix#Specific_gravity_2

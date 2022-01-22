@@ -65,7 +65,7 @@
           "foreground": "#ffffff",
           "background": "#7FD5EA",
           "leading_diamond": "\uE0B6",
-          "display_version": true,
+          "fetch_version": true,
           "properties": {
             "postfix": " <#000000>\uE0B6</>"
           }

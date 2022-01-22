@@ -59,7 +59,7 @@
           "background": "#6CA35E",
           "properties": {
             "prefix": " \uF898 ",
-            "display_version": true
+            "fetch_version": true
           }
         },
         {
@@ -70,7 +70,7 @@
           "background": "#8ED1F7",
           "properties": {
             "prefix": " \uE626 ",
-            "display_version": true
+            "fetch_version": true
           }
         },
         {
@@ -81,7 +81,7 @@
           "background": "#4063D8",
           "properties": {
             "prefix": " \uE624 ",
-            "display_version": true
+            "fetch_version": true
           }
         },
         {
@@ -105,7 +105,7 @@
           "background": "#AE1401",
           "properties": {
             "prefix": " \uE791 ",
-            "display_version": true,
+            "fetch_version": true,
             "display_mode": "files"
           }
         },
@@ -117,7 +117,7 @@
           "background": "#FEAC19",
           "properties": {
             "prefix": " \uf0e7",
-            "display_version": false,
+            "fetch_version": false,
             "display_mode": "files"
           }
         },
@@ -142,7 +142,7 @@
           "foreground": "#111111",
           "background": "#ffff66",
           "properties": {
-            "root_icon": ""
+            "template": ""
           }
         },
         {

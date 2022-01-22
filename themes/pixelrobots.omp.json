@@ -70,10 +70,9 @@
             "opensuse": "\uf314",
             "raspbian": "\uf315",
             "ubuntu": "\uf31c",
-            "wsl": "\ue712",
-            "wsl_separator": " on ",
             "windows": "\ue70f",
-            "postfix": "<#ffea00> \ue0b1</>"
+            "postfix": "<#ffea00> \ue0b1</>",
+            "template": "{{ if .WSL }}\ue712 on {{ end }}{{ .Icon }}"
           }
         },
         {
@@ -92,7 +91,7 @@
           "foreground": "#ffea00",
           "background": "#2f2f2f",
           "properties": {
-            "root_icon": "\uF0E7",
+            "template": "\uF0E7",
             "postfix": "<#ffea00> \ue0b1</>"
           }
         },

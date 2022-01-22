@@ -9,7 +9,6 @@ import (
 func TestSessionSegmentTemplate(t *testing.T) {
 	cases := []struct {
 		Case            string
-		ExpectedEnabled bool
 		ExpectedString  string
 		UserName        string
 		DefaultUserName string
@@ -19,56 +18,50 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		Template        string
 	}{
 		{
-			Case:            "user and computer",
-			ExpectedString:  "john@company-laptop",
-			ComputerName:    "company-laptop",
-			UserName:        "john",
-			Template:        "{{.UserName}}@{{.HostName}}",
-			ExpectedEnabled: true,
+			Case:           "user and computer",
+			ExpectedString: "john@company-laptop",
+			ComputerName:   "company-laptop",
+			UserName:       "john",
+			Template:       "{{.UserName}}@{{.HostName}}",
 		},
 		{
-			Case:            "user only",
-			ExpectedString:  "john",
-			UserName:        "john",
-			Template:        "{{.UserName}}",
-			ExpectedEnabled: true,
+			Case:           "user only",
+			ExpectedString: "john",
+			UserName:       "john",
+			Template:       "{{.UserName}}",
 		},
 		{
-			Case:            "user with ssh",
-			ExpectedString:  "john on remote",
-			UserName:        "john",
-			SSHSession:      true,
-			ComputerName:    "remote",
-			Template:        "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
-			ExpectedEnabled: true,
+			Case:           "user with ssh",
+			ExpectedString: "john on remote",
+			UserName:       "john",
+			SSHSession:     true,
+			ComputerName:   "remote",
+			Template:       "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
 		},
 		{
-			Case:            "user without ssh",
-			ExpectedString:  "john",
-			UserName:        "john",
-			SSHSession:      false,
-			ComputerName:    "remote",
-			Template:        "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
-			ExpectedEnabled: true,
+			Case:           "user without ssh",
+			ExpectedString: "john",
+			UserName:       "john",
+			SSHSession:     false,
+			ComputerName:   "remote",
+			Template:       "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
 		},
 		{
-			Case:            "user with root and ssh",
-			ExpectedString:  "super john on remote",
-			UserName:        "john",
-			SSHSession:      true,
-			ComputerName:    "remote",
-			Root:            true,
-			Template:        "{{if .Root}}super {{end}}{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
-			ExpectedEnabled: true,
+			Case:           "user with root and ssh",
+			ExpectedString: "super john on remote",
+			UserName:       "john",
+			SSHSession:     true,
+			ComputerName:   "remote",
+			Root:           true,
+			Template:       "{{if .Root}}super {{end}}{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
 		},
 		{
-			Case:            "no template",
-			ExpectedString:  "\uf817 john@remote",
-			UserName:        "john",
-			SSHSession:      true,
-			ComputerName:    "remote",
-			Root:            true,
-			ExpectedEnabled: true,
+			Case:           "no template",
+			ExpectedString: "\uf817 john@remote",
+			UserName:       "john",
+			SSHSession:     true,
+			ComputerName:   "remote",
+			Root:           true,
 		},
 		{
 			Case:            "default user not equal",
@@ -79,7 +72,6 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			ComputerName:    "remote",
 			Root:            true,
 			Template:        "{{if ne .Env.POSH_SESSION_DEFAULT_USER .UserName}}{{.UserName}}{{end}}",
-			ExpectedEnabled: true,
 		},
 		{
 			Case:            "default user equal",
@@ -90,7 +82,6 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			ComputerName:    "remote",
 			Root:            true,
 			Template:        "{{if ne .Env.POSH_SESSION_DEFAULT_USER .UserName}}{{.UserName}}{{end}}",
-			ExpectedEnabled: false,
 		},
 	}
 
@@ -122,9 +113,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 				SegmentTemplate: tc.Template,
 			},
 		}
-		assert.Equal(t, tc.ExpectedEnabled, session.enabled(), tc.Case)
-		if tc.ExpectedEnabled {
-			assert.Equal(t, tc.ExpectedString, session.string(), tc.Case)
-		}
+		_ = session.enabled()
+		assert.Equal(t, tc.ExpectedString, session.string(), tc.Case)
 	}
 }

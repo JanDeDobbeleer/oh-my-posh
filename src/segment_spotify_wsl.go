@@ -23,9 +23,10 @@ func (s *spotify) enabled() bool {
 		title := record[len(record)-1]
 		if strings.Contains(title, " - ") {
 			infos := strings.Split(title, " - ")
-			s.artist = infos[0]
-			s.track = strings.Join(infos[1:], " - ")
-			s.status = "playing"
+			s.Artist = infos[0]
+			s.Track = strings.Join(infos[1:], " - ")
+			s.Status = playing
+			s.resolveIcon()
 			return true
 		}
 	}

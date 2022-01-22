@@ -30,21 +30,11 @@ To manipulate the console title, you can make use of the following properties:
 
 You can create a more custom console title with the use of `"console_title_style" = "template"`.
 When this is set, a `console_title_template` is also expected, otherwise, the title will remain empty.
-Under the hood, this uses go's [text/template][go-text-template] feature extended with [sprig][sprig] and
-offers a few standard properties to work with.
-
-- `.Root`: `boolean` - is the current user root/admin or not
-- `.PWD`: `string` - the current working directory
-- `.Folder`: `string` - the current working folder
-- `.Shell`: `string` - the current shell name
-- `.UserName`: `string` - the current user name
-- `.HostName`: `string` - the host name
-- `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
-
-A `boolean` can be used for conditional display purposes, a `string` can be displayed.
 
 The following examples illustrate possible contents for `console_title_template`, provided
 the current working directory is `/usr/home/omp` and the shell is `zsh`.
+
+To learn more about templates and their possibilities, have a look at the [template][templates] section.
 
 ```json
 {
@@ -61,3 +51,4 @@ the current working directory is `/usr/home/omp` and the shell is `zsh`.
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

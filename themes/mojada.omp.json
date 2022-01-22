@@ -43,7 +43,7 @@
           "foreground": "#ffffff",
           "background": "#e06c75",
           "properties": {
-            "root_icon": "\uE799 ",
+            "template": "\uE799 ",
             "postfix": "\u2800"
           }
         },

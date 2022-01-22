@@ -26,7 +26,7 @@
           "foreground": "#FFFB38",
           "background": "#ef5350",
           "properties": {
-            "root_icon": "\uf292",
+            "template": "\uf292",
             "prefix": "<parentBackground>\uE0B0</> "
           }
         },

@@ -26,13 +26,11 @@ Display the currently active Kubernetes context name and namespace name.
 
 ## Properties
 
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}`
 - display_error: `boolean` - show the error context when failing to retrieve the kubectl information - defaults to `false`
 - parse_kubeconfig: `boolean` - parse kubeconfig files instead of calling out to kubectl to improve
 performance - defaults to `false`
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.Context`: `string` - the current kubectl context
 - `.Namespace`: `string` - the current kubectl context namespace
@@ -46,5 +44,4 @@ It is common for the Kubernetes "default" namespace to be used when no namespace
 
 `{{.Context}} :: {{if .Namespace}}{{.Namespace}}{{else}}default{{end}}`
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-text#templates

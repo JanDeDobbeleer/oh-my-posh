@@ -17,8 +17,7 @@
           "background": "#E0E0E0",
           "foreground": "#EF7D00",
           "properties": {
-            "wsl": "",
-            "wsl_separator": ""
+            "template": "{{ .Icon }}"
           }
         },
         {

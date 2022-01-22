@@ -28,8 +28,6 @@ Display OS specific info - defaults to Icon.
 - macos: `string` - the string to use for macOS - defaults to macOS icon - defaults to `\uF179`
 - linux: `string` - the icon to use for Linux - defaults to Linux icon - defaults to `\uF17C`
 - windows: `string` - the icon to use for Windows - defaults to Windows icon - defaults to `\uE62A`
-- wsl: `string` - the string/icon to use for WSL - defaults to `WSL`
-- wsl_separator: `string` - the string to use for separating WSL from Linux - defaults to ` - `
 - display_distro_name: `boolean` - display the distro name or icon (for WSL and Linux) - defaults to `false`
 - alpine: `string` - the icon to use for Alpine - defaults to Alpine icon - defaults to `\uF300`
 - aosc: `string` - the icon to use for Aosc - defaults to Aosc icon - defaults to `\uF301`
@@ -51,6 +49,8 @@ Display OS specific info - defaults to Icon.
 - slackware: `string` - the icon to use for Slackware - defaults to Slackware icon - defaults to `\uF319`
 - ubuntu: `string` - the icon to use for Ubuntu - defaults to Ubuntu icon - defaults to `\uF31b`
 
-## Template Properties
+## [Template][templates] Properties
 
 - `.OS`: `string` - the OS platform
+
+[templates]: /docs/config-text#templates

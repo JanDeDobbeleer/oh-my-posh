@@ -51,17 +51,6 @@ func (d *owm) enabled() bool {
 }
 
 func (d *owm) string() string {
-	d.UnitIcon = "\ue33e"
-	switch d.units {
-	case "imperial":
-		d.UnitIcon = "°F" // \ue341"
-	case "metric":
-		d.UnitIcon = "°C" // \ue339"
-	case "":
-		fallthrough
-	case "standard":
-		d.UnitIcon = "°K" // \ufa05"
-	}
 	segmentTemplate := d.props.getString(SegmentTemplate, "{{.Weather}} ({{.Temperature}}{{.UnitIcon}})")
 	template := &textTemplate{
 		Template: segmentTemplate,
@@ -72,7 +61,6 @@ func (d *owm) string() string {
 	if err != nil {
 		return err.Error()
 	}
-
 	return text
 }
 
@@ -118,7 +106,6 @@ func (d *owm) getResult() (*owmDataResponse, error) {
 
 func (d *owm) setStatus() error {
 	units := d.props.getString(Units, "standard")
-
 	q, err := d.getResult()
 	if err != nil {
 		return err
@@ -170,6 +157,17 @@ func (d *owm) setStatus() error {
 	}
 	d.Weather = icon
 	d.units = units
+	d.UnitIcon = "\ue33e"
+	switch d.units {
+	case "imperial":
+		d.UnitIcon = "°F" // \ue341"
+	case "metric":
+		d.UnitIcon = "°C" // \ue339"
+	case "":
+		fallthrough
+	case "standard":
+		d.UnitIcon = "°K" // \ufa05"
+	}
 	return nil
 }
 

@@ -60,7 +60,17 @@ func (t *executiontime) enabled() bool {
 }
 
 func (t *executiontime) string() string {
-	return t.FormattedMs
+	segmentTemplate := t.props.getString(SegmentTemplate, "{{.FormattedMs}}")
+	template := &textTemplate{
+		Template: segmentTemplate,
+		Context:  t,
+		Env:      t.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (t *executiontime) init(props Properties, env Environment) {

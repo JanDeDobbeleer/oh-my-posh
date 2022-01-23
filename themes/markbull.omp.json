@@ -1,6 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "osc99": true,
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}}\u26a1 {{end}}{{.Folder}}",
   "blocks": [
     {
       "type": "prompt",
@@ -43,7 +46,7 @@
             "{{ if or (.Working.Changed) (.Staging.Changed) }}#ffeb95{{ end }}",
             "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#fcaf17{{ end }}",
             "{{ if gt .Ahead 0 }}#95ffa4{{ end }}",
-            "{{ if gt .Behind 0 }}#f391a9{{ end }}"
+            "{{ if gt .Behind 0 }}#f7acbc{{ end }}"
           ],
           "properties": {
             "fetch_status": true,
@@ -57,9 +60,9 @@
             "gitlab_icon": "\uF296  ",
             "bitbucket_icon": "\uF171  ",
             "azure_devops_icon": "\uFD03  ",
-            "git_icon": "\uE5FB  ",
-            "branch_identical_icon": "\uF44E ",
-            "branch_gone_icon": "\uF467 ",
+            "git_icon": "\uF1D3  ",
+            "branch_identical_icon": "\uF690 ",
+            "branch_gone_icon": "\uF68E ",
             "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} <#ed1941>\uF044 {{.Working.String}}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#225a1f>\uF046 {{.Staging.String}}</>{{ end }}{{ if gt .StashCount 0 }}  \uF692 {{.StashCount}}{{ end }}{{ if gt .WorktreeCount 0 }}{{if .IsWorkTree}}<#1d953f>{{ end }}  \uF1BB {{if .IsWorkTree}}</>{{ end }}{{.WorktreeCount}}{{ end }}"
           }
         },

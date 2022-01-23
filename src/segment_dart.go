@@ -24,7 +24,7 @@ func (d *dart) init(props Properties, env Environment) {
 				regex:      `Dart SDK version: (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
 			},
 		},
-		versionURLTemplate: "[%s](https://dart.dev/guides/language/evolution#dart-%s%s)",
+		versionURLTemplate: "https://dart.dev/guides/language/evolution#dart-{{ .Major }}{{ .Minor }}",
 	}
 }
 

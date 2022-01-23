@@ -49,8 +49,7 @@
             "folder_separator_icon": " <#011627>\uE0B1</> ",
             "home_icon": "\uf7db ",
             "folder_icon": "\uf07c ",
-            "style": "agnoster",
-            "enable_hyperlink": true
+            "style": "agnoster"
           }
         },
         {

@@ -37,7 +37,6 @@
             "folder_separator_icon": "\ue0b9",
             "mixed_threshold": 8,
             "style": "mixed",
-            "enable_hyperlink": true,
             "mapped_locations": {
               "C:\\Users": "\uf007",
               "C:\\Windows": "\ue62a"

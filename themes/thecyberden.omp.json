@@ -30,8 +30,7 @@
                     "background": "#0080ff",
                     "properties": {
                         "prefix": " \uE5FF ",
-                        "style": "full",
-                        "enable_hyperlink": true
+                        "style": "full"
                     }
                 },
                 {

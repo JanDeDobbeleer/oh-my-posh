@@ -141,9 +141,7 @@
                     "properties": {
                         "folder_separator_icon": " \uf554 ",
                         "home_icon": "\uf7db ",
-                        "folder_icon": "\uf07b ",
-                        "style": "agnoster_full",
-                        "enable_hyperlink": true
+                        "folder_icon": "\uf07b "
                     }
                 }
             ]

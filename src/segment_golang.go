@@ -36,7 +36,7 @@ func (g *golang) init(props Properties, env Environment) {
 				regex:      `(?:go(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+)(.(?P<patch>[0-9]+))?)))`,
 			},
 		},
-		versionURLTemplate: "[%s](https://golang.org/doc/go%s.%s)",
+		versionURLTemplate: "https://golang.org/doc/go{{ .Major }}.{{ .Minor }})",
 	}
 }
 

@@ -20,6 +20,7 @@ type strava struct {
 	Hours        int
 	Authenticate bool
 	Error        string
+	URL          string
 }
 
 const (
@@ -130,9 +131,7 @@ func (s *strava) string() string {
 	if err != nil {
 		return err.Error()
 	}
-	if s.props.getBool(EnableHyperlink, false) {
-		text = fmt.Sprintf("[%s](https://www.strava.com/activities/%d)", text, s.ID)
-	}
+	s.URL = fmt.Sprintf("https://www.strava.com/activities/%d", s.ID)
 	return text
 }
 

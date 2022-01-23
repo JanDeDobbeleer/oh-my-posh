@@ -58,8 +58,7 @@
           "properties": {
             "style": "mixed",
             "home_icon": "\uf7dd  ",
-            "prefix": "",
-            "enable_hyperlink": true
+            "prefix": ""
           }
         },
         {

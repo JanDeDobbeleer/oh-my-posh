@@ -14,6 +14,7 @@ type path struct {
 	pwd        string
 	Path       string
 	StackCount int
+	Location   string
 }
 
 const (
@@ -79,12 +80,10 @@ func (pt *path) enabled() bool {
 		pt.Path = fmt.Sprintf("Path style: %s is not available", style)
 	}
 	pt.Path = pt.formatWindowsDrive(pt.Path)
-	if pt.props.getBool(EnableHyperlink, false) {
-		// wsl check
-		if pt.env.isWsl() {
-			pt.pwd, _ = pt.env.runCommand("wslpath", "-m", pt.pwd)
-		}
-		pt.Path = fmt.Sprintf("[%s](file://%s)", pt.Path, pt.pwd)
+	if pt.env.isWsl() {
+		pt.Location, _ = pt.env.runCommand("wslpath", "-m", pt.pwd)
+	} else {
+		pt.Location = pt.pwd
 	}
 
 	pt.StackCount = pt.env.stackCount()

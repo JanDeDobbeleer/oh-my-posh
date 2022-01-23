@@ -39,8 +39,6 @@ type TransientPrompt struct {
 }
 
 const (
-	// EnableHyperlink enable hyperlink
-	EnableHyperlink Property = "enable_hyperlink"
 	// HTTPTimeout timeout used when executing http request
 	HTTPTimeout Property = "http_timeout"
 	// DefaultHTTPTimeout default timeout used when executing http request

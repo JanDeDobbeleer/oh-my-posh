@@ -19,7 +19,6 @@ Display the currently active php version.
   "background": "#4063D8",
   "properties": {
     "prefix": " \ue73d ",
-    "enable_hyperlink": false
   }
 }
 ```
@@ -33,7 +32,6 @@ Display the currently active php version.
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when `*.php, composer.json, composer.lock, .php-version` files are present (default)
-- enable_hyperlink: `bool` - display an hyperlink to the php release notes - defaults to `false`
 
 ## [Template][templates] Properties
 

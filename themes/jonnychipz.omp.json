@@ -109,7 +109,6 @@
           "properties": {
             "prefix": "<#000000> \ue5ff </>",
             "style": "agnoster_short",
-            "enable_hyperlink": true,
             "home_icon": "\uF7DB ",
             "folder_icon": "<#000000>\ue5fe </>",
             "folder_separator_icon": "<#000000>\uE0B1 </>"

@@ -83,7 +83,7 @@ const (
 	LanguageExtensions Property = "extensions"
 )
 
-func (l *language) renderTemplate(segmentTemplate string, context SegmentWriter) string {
+func (l *language) string(segmentTemplate string, context SegmentWriter) string {
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  context,
@@ -125,7 +125,7 @@ func (l *language) enabled() bool {
 			enabled = l.hasLanguageFiles() || l.inLanguageContext()
 		}
 	}
-	if !enabled || !l.props.getOneOfBool(FetchVersion, DisplayVersion, true) {
+	if !enabled || !l.props.getBool(FetchVersion, true) {
 		return enabled
 	}
 	err := l.setVersion()
@@ -195,17 +195,6 @@ func (l *language) inLanguageContext() bool {
 		return false
 	}
 	return l.inContext()
-}
-
-func (l *language) setVersionFileMismatch() {
-	if l.matchesVersionFile == nil {
-		return
-	}
-	l.Mismatch = !l.matchesVersionFile()
-	if !l.Mismatch {
-		return
-	}
-	l.colorMismatch()
 }
 
 func (l *language) buildVersionURL() {

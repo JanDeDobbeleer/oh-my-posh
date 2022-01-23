@@ -30,8 +30,7 @@ func bootStrapDotnetTest(args *dotnetArgs) *dotnet {
 	env.On("homeDir").Return("/usr/home")
 	env.onTemplate()
 	props := properties{
-		FetchVersion:                 args.displayVersion,
-		UnsupportedDotnetVersionIcon: args.unsupportedIcon,
+		FetchVersion: args.displayVersion,
 	}
 	dotnet := &dotnet{}
 	dotnet.init(props, env)
@@ -78,5 +77,5 @@ func TestDotnetVersionUnsupported(t *testing.T) {
 	}
 	dotnet := bootStrapDotnetTest(args)
 	assert.True(t, dotnet.enabled())
-	assert.Equal(t, expected, dotnet.string())
+	assert.Equal(t, "\uf071", dotnet.string())
 }

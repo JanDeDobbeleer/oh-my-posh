@@ -124,7 +124,7 @@
             "prefix": " \uE235 ",
             "display_mode": "files",
             "fetch_virtual_env": false,
-            "template": "{{ .Full }}"
+            "template": "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
           }
         },
         {

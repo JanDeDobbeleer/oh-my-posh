@@ -209,11 +209,7 @@ func getDefaultConfig(info string) *Config {
 						Background:      "#f36943",
 						Foreground:      "#193549",
 						Properties: properties{
-							ColorBackground:  true,
-							ChargedColor:     "#4caf50",
-							ChargingColor:    "#40c4ff",
-							DischargingColor: "#ff5722",
-							Postfix:          "\uF295 ",
+							Postfix: "\uF295 ",
 						},
 					},
 					{
@@ -262,11 +258,8 @@ func getDefaultConfig(info string) *Config {
 						LeadingDiamond:  "<transparent,#2e9599>\uE0B0</>",
 						TrailingDiamond: "\uE0B4",
 						Properties: properties{
-							DisplayExitCode: false,
-							AlwaysEnabled:   true,
-							ErrorColor:      "#f1184c",
-							ColorBackground: true,
-							Prefix:          " \uE23A",
+							AlwaysEnabled: true,
+							Prefix:        " \uE23A",
 						},
 					},
 				},

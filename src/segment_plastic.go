@@ -54,7 +54,7 @@ func (p *plastic) enabled() bool {
 		return false
 	}
 	p.plasticWorkspaceFolder = wkdir.parentFolder
-	displayStatus := p.props.getOneOfBool(FetchStatus, DisplayStatus, false)
+	displayStatus := p.props.getBool(FetchStatus, false)
 	p.setSelector()
 	if displayStatus {
 		p.setPlasticStatus()

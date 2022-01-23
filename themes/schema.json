@@ -387,12 +387,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "unsupported_version_icon": {
-                    "type": "string",
-                    "title": "Unsupported Version Icon",
-                    "description": "Text/icon that is displayed when the active .NET SDK version (e.g., one specified by global.json) is not installed/supported",
-                    "default": " \uE77F "
-                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },

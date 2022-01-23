@@ -34,10 +34,7 @@ Display the currently active .NET SDK version.
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when `*.cs`, `*.vb`, `*.fs`, `*.fsx`, `*.sln`, `*.csproj`, `*.vbproj`,
   or `*.fsproj` files are present (default)
-- unsupported_version_icon: `string` - text/icon that is displayed when the active .NET SDK version (e.g., one specified
-  by `global.json`) is not installed/supported - defaults to `\uf071` (X in a rectangle box)
-- version_url_template: `string` - A go [text/template][go-text-template] template extended
-with [sprig][sprig] utilizing the properties below. Defaults does nothing(backward compatibility).
+- version_url_template: `string` - A go text/template [template][templates] that creates the changelog URL
 
 ## [Template][templates] Properties
 

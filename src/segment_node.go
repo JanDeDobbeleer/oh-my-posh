@@ -18,12 +18,8 @@ const (
 )
 
 func (n *node) string() string {
-	segmentTemplate := n.language.props.getString(SegmentTemplate, "")
-	if len(segmentTemplate) == 0 {
-		version := n.language.string()
-		return fmt.Sprintf("%s%s", version, n.PackageManagerIcon)
-	}
-	return n.language.renderTemplate(segmentTemplate, n)
+	segmentTemplate := n.language.props.getString(SegmentTemplate, "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}")
+	return n.language.string(segmentTemplate, n)
 }
 
 func (n *node) init(props Properties, env Environment) {
@@ -49,7 +45,7 @@ func (n *node) enabled() bool {
 }
 
 func (n *node) loadContext() {
-	if !n.language.props.getOneOfBool(FetchPackageManager, DisplayPackageManager, false) {
+	if !n.language.props.getBool(FetchPackageManager, false) {
 		return
 	}
 	if n.language.env.hasFiles("yarn.lock") {

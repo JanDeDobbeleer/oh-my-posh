@@ -108,26 +108,23 @@ func (g *git) enabled() bool {
 	if !g.shouldDisplay() {
 		return false
 	}
-	statusColorsEnabled := g.props.getBool(StatusColorsEnabled, false)
-	displayStatus := g.props.getOneOfBool(FetchStatus, DisplayStatus, false)
-	if !displayStatus {
-		g.setPrettyHEADName()
-	}
-	if displayStatus || statusColorsEnabled {
+	displayStatus := g.props.getBool(FetchStatus, false)
+	if displayStatus {
 		g.setGitStatus()
 		g.setGitHEADContext()
 		g.setBranchStatus()
 	} else {
+		g.setPrettyHEADName()
 		g.Working = &GitStatus{}
 		g.Staging = &GitStatus{}
 	}
-	if g.Upstream != "" && g.props.getOneOfBool(FetchUpstreamIcon, DisplayUpstreamIcon, false) {
+	if g.Upstream != "" && g.props.getBool(FetchUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
-	if g.props.getOneOfBool(FetchStashCount, DisplayStashCount, false) {
+	if g.props.getBool(FetchStashCount, false) {
 		g.StashCount = g.getStashContext()
 	}
-	if g.props.getOneOfBool(FetchWorktreeCount, DisplayWorktreeCount, false) {
+	if g.props.getBool(FetchWorktreeCount, false) {
 		g.WorktreeCount = g.getWorktreeContext()
 	}
 	return true
@@ -191,13 +188,8 @@ func (g *git) shouldDisplay() bool {
 }
 
 func (g *git) string() string {
-	// use template if available
-	segmentTemplate := g.props.getString(SegmentTemplate, "")
-	if len(segmentTemplate) > 0 {
-		return g.templateString(segmentTemplate)
-	}
-	// legacy render string	if no template
-	return g.deprecatedString(g.props.getBool(StatusColorsEnabled, false))
+	segmentTemplate := g.props.getString(SegmentTemplate, "{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}") // nolint: lll
+	return g.templateString(segmentTemplate)
 }
 
 func (g *git) templateString(segmentTemplate string) string {

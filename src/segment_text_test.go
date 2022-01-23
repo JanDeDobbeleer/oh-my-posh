@@ -39,7 +39,7 @@ func TestTextSegment(t *testing.T) {
 		txt := &text{
 			env: env,
 			props: properties{
-				TextProperty: tc.Text,
+				SegmentTemplate: tc.Text,
 			},
 		}
 		assert.Equal(t, tc.ExpectedDisabled, !txt.enabled(), tc.Case)

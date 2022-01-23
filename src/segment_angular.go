@@ -10,11 +10,8 @@ type angular struct {
 }
 
 func (a *angular) string() string {
-	segmentTemplate := a.language.props.getString(SegmentTemplate, "")
-	if len(segmentTemplate) == 0 {
-		return a.language.string()
-	}
-	return a.language.renderTemplate(segmentTemplate, a)
+	segmentTemplate := a.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
+	return a.language.string(segmentTemplate, a)
 }
 
 func (a *angular) init(props Properties, env Environment) {

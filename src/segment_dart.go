@@ -5,11 +5,8 @@ type dart struct {
 }
 
 func (d *dart) string() string {
-	segmentTemplate := d.language.props.getString(SegmentTemplate, "")
-	if len(segmentTemplate) == 0 {
-		return d.language.string()
-	}
-	return d.language.renderTemplate(segmentTemplate, d)
+	segmentTemplate := d.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
+	return d.language.string(segmentTemplate, d)
 }
 
 func (d *dart) init(props Properties, env Environment) {

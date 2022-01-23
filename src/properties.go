@@ -15,8 +15,6 @@ const (
 	Prefix Property = "prefix"
 	// Postfix adds a text postfix to the segment
 	Postfix Property = "postfix"
-	// ColorBackground color the background or foreground when a specific color is set
-	ColorBackground Property = "color_background"
 	// IncludeFolders folders to be included for the segment logic
 	IncludeFolders Property = "include_folders"
 	// ExcludeFolders folders to be excluded for the segment logic

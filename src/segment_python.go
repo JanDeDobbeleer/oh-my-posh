@@ -12,11 +12,8 @@ const (
 )
 
 func (p *python) string() string {
-	segmentTemplate := p.language.props.getString(SegmentTemplate, "")
-	if len(segmentTemplate) == 0 {
-		return p.legacyString()
-	}
-	return p.language.renderTemplate(segmentTemplate, p)
+	segmentTemplate := p.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
+	return p.language.string(segmentTemplate, p)
 }
 
 func (p *python) init(props Properties, env Environment) {
@@ -49,7 +46,7 @@ func (p *python) enabled() bool {
 }
 
 func (p *python) loadContext() {
-	if !p.language.props.getOneOfBool(DisplayVirtualEnv, FetchVirtualEnv, true) {
+	if !p.language.props.getBool(FetchVirtualEnv, true) {
 		return
 	}
 	venvVars := []string{

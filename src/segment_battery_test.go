@@ -7,12 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	chargingColor    = "#123456"
-	dischargingColor = "#765432"
-	chargedColor     = "#248644"
-)
-
 func TestGetBatteryColors(t *testing.T) {
 	cases := []struct {
 		Case          string

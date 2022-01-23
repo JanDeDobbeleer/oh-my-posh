@@ -45,10 +45,6 @@ func (b *batt) enabled() bool {
 	batteryPercentage := b.Battery.Current / b.Battery.Full * 100
 	b.Percentage = int(math.Min(100, batteryPercentage))
 
-	if !b.shouldDisplay() {
-		return false
-	}
-
 	switch b.Battery.State {
 	case battery.Discharging, battery.NotCharging:
 		b.Icon = b.props.getString(DischargingIcon, "")
@@ -59,7 +55,6 @@ func (b *batt) enabled() bool {
 	case battery.Empty, battery.Unknown:
 		return true
 	}
-	b.colorSegment()
 	return true
 }
 

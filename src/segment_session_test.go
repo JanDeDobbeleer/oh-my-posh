@@ -57,7 +57,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		},
 		{
 			Case:           "no template",
-			ExpectedString: "\uf817 john@remote",
+			ExpectedString: "",
 			UserName:       "john",
 			SSHSession:     true,
 			ComputerName:   "remote",
@@ -96,14 +96,13 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		}
 		env.On("getenv", "SSH_CONNECTION").Return(SSHSession)
 		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
-		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserName)
 		env.On("templateCache").Return(&templateCache{
 			UserName: tc.UserName,
 			HostName: tc.ComputerName,
 			Env: map[string]string{
-				"SSH_CONNECTION":  SSHSession,
-				"SSH_CLIENT":      SSHSession,
-				defaultUserEnvVar: tc.DefaultUserName,
+				"SSH_CONNECTION":            SSHSession,
+				"SSH_CLIENT":                SSHSession,
+				"POSH_SESSION_DEFAULT_USER": tc.DefaultUserName,
 			},
 			Root: tc.Root,
 		})

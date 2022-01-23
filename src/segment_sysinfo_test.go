@@ -16,9 +16,24 @@ func TestSysInfo(t *testing.T) {
 		Precision      int
 		Template       string
 	}{
-		{Case: "physical mem", ExpectedString: "50", SysInfo: sysinfo{PhysicalPercentUsed: 50}},
-		{Case: "physical mem 2 digits", ExpectedString: "60.51", SysInfo: sysinfo{Precision: 2, PhysicalPercentUsed: 60.51}},
-		{Case: "physical meme rounded", ExpectedString: "61", SysInfo: sysinfo{Precision: 0, PhysicalPercentUsed: 61}},
+		{
+			Case:           "physical mem",
+			ExpectedString: "50",
+			SysInfo:        sysinfo{PhysicalPercentUsed: 50},
+			Template:       "{{ round .PhysicalPercentUsed .Precision }}",
+		},
+		{
+			Case:           "physical mem 2 digits",
+			ExpectedString: "60.51",
+			SysInfo:        sysinfo{Precision: 2, PhysicalPercentUsed: 60.51},
+			Template:       "{{ round .PhysicalPercentUsed .Precision }}",
+		},
+		{
+			Case:           "physical meme rounded",
+			ExpectedString: "61",
+			SysInfo:        sysinfo{Precision: 0, PhysicalPercentUsed: 61},
+			Template:       "{{ round .PhysicalPercentUsed .Precision }}",
+		},
 		{
 			Case:           "load",
 			ExpectedString: "0.22 0.12 0",
@@ -38,13 +53,12 @@ func TestSysInfo(t *testing.T) {
 		env.onTemplate()
 		tc.SysInfo.env = env
 		tc.SysInfo.props = properties{
-			Precision: tc.Precision,
+			Precision:       tc.Precision,
+			SegmentTemplate: tc.Template,
 		}
-		if tc.Template != "" {
-			tc.SysInfo.props.set(SegmentTemplate, tc.Template)
-		}
+		enabled := tc.SysInfo.enabled()
 		if tc.ExpectDisabled {
-			assert.Equal(t, false, tc.SysInfo.enabled(), tc.Case)
+			assert.Equal(t, false, enabled, tc.Case)
 		} else {
 			assert.Equal(t, tc.ExpectedString, tc.SysInfo.string(), tc.Case)
 		}

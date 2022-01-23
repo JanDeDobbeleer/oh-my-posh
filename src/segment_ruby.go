@@ -5,16 +5,8 @@ type ruby struct {
 }
 
 func (r *ruby) string() string {
-	segmentTemplate := r.language.props.getString(SegmentTemplate, "")
-	if len(segmentTemplate) == 0 {
-		version := r.language.string()
-		// asdf default non-set version
-		if version == "______" {
-			return ""
-		}
-		return version
-	}
-	return r.language.renderTemplate(segmentTemplate, r)
+	segmentTemplate := r.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
+	return r.language.string(segmentTemplate, r)
 }
 
 func (r *ruby) init(props Properties, env Environment) {
@@ -53,5 +45,10 @@ func (r *ruby) init(props Properties, env Environment) {
 }
 
 func (r *ruby) enabled() bool {
-	return r.language.enabled()
+	enabled := r.language.enabled()
+	// this happens when no version is set
+	if r.Full == "______" {
+		r.Full = ""
+	}
+	return enabled
 }

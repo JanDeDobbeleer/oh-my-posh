@@ -7,14 +7,8 @@ type dotnet struct {
 }
 
 func (d *dotnet) string() string {
-	segmentTemplate := d.language.props.getString(SegmentTemplate, "")
-	if len(segmentTemplate) != 0 {
-		return d.language.renderTemplate(segmentTemplate, d)
-	}
-	if d.Unsupported {
-		return d.language.props.getString(UnsupportedDotnetVersionIcon, "\uf071 ")
-	}
-	return d.language.string()
+	segmentTemplate := d.language.props.getString(SegmentTemplate, "{{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}")
+	return d.language.string(segmentTemplate, d)
 }
 
 func (d *dotnet) init(props Properties, env Environment) {

@@ -13,9 +13,9 @@ const (
 )
 
 func (t *text) enabled() bool {
-	textProperty := t.props.getOneOfString(TextProperty, SegmentTemplate, "!!text property not defined!!")
+	segmentTemplate := t.props.getString(SegmentTemplate, "{{ .Text }}")
 	template := &textTemplate{
-		Template: textProperty,
+		Template: segmentTemplate,
 		Context:  t,
 		Env:      t.env,
 	}
@@ -27,17 +27,7 @@ func (t *text) enabled() bool {
 }
 
 func (t *text) string() string {
-	segmentTemplate := t.props.getString(SegmentTemplate, "{{.Text}}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  t,
-		Env:      t.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
+	return t.Text
 }
 
 func (t *text) init(props Properties, env Environment) {

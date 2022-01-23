@@ -80,7 +80,7 @@
             "fetch_virtual_env": false,
             "postfix": "",
             "display_mode": "context",
-            "template": "{{ .Full }}"
+            "template": "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
           }
         },
         {

@@ -5,11 +5,8 @@ type php struct {
 }
 
 func (p *php) string() string {
-	segmentTemplate := p.language.props.getString(SegmentTemplate, "")
-	if len(segmentTemplate) == 0 {
-		return p.language.string()
-	}
-	return p.language.renderTemplate(segmentTemplate, p)
+	segmentTemplate := p.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
+	return p.language.string(segmentTemplate, p)
 }
 
 func (p *php) init(props Properties, env Environment) {

@@ -18,10 +18,7 @@ func (e *exit) enabled() bool {
 }
 
 func (e *exit) string() string {
-	segmentTemplate := e.props.getString(SegmentTemplate, "")
-	if len(segmentTemplate) == 0 {
-		return e.deprecatedString()
-	}
+	segmentTemplate := e.props.getString(SegmentTemplate, "{{ .Text }}")
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  e,

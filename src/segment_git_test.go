@@ -9,8 +9,7 @@ import (
 )
 
 const (
-	changesColor = "#BD8BDE"
-	branchName   = "main"
+	branchName = "main"
 )
 
 func TestEnabledGitNotFound(t *testing.T) {

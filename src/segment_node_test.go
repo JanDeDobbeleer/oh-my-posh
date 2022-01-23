@@ -68,9 +68,9 @@ func TestNodeInContext(t *testing.T) {
 			language: language{
 				env: env,
 				props: properties{
-					YarnIcon:              "yarn",
-					NPMIcon:               "npm",
-					DisplayPackageManager: tc.PkgMgrEnabled,
+					YarnIcon:            "yarn",
+					NPMIcon:             "npm",
+					FetchPackageManager: tc.PkgMgrEnabled,
 				},
 			},
 		}

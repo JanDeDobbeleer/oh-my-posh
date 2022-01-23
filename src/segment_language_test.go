@@ -78,7 +78,7 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, "", lang.string(), "unicorn is not available")
+	assert.Equal(t, "", lang.Error, "unicorn is not available")
 }
 
 func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {
@@ -147,7 +147,7 @@ func TestLanguageEnabledOneExtensionFound(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, universion, lang.string(), "unicorn is available and uni files are found")
+	assert.Equal(t, universion, lang.Full, "unicorn is available and uni files are found")
 }
 
 func TestLanguageDisabledInHome(t *testing.T) {
@@ -185,7 +185,7 @@ func TestLanguageEnabledSecondExtensionFound(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, universion, lang.string(), "unicorn is available and corn files are found")
+	assert.Equal(t, universion, lang.Full, "unicorn is available and corn files are found")
 }
 
 func TestLanguageEnabledSecondCommand(t *testing.T) {
@@ -209,7 +209,7 @@ func TestLanguageEnabledSecondCommand(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, universion, lang.string(), "unicorn is available and corn files are found")
+	assert.Equal(t, universion, lang.Full, "unicorn is available and corn files are found")
 }
 
 func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
@@ -228,7 +228,7 @@ func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, universion, lang.string(), "unicorn is available and uni and corn files are found")
+	assert.Equal(t, universion, lang.Full, "unicorn is available and uni and corn files are found")
 }
 
 func TestLanguageEnabledNoVersion(t *testing.T) {
@@ -251,7 +251,7 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, "", lang.string(), "unicorn is available and uni and corn files are found")
+	assert.Equal(t, "", lang.Full, "unicorn is available and uni and corn files are found")
 }
 
 func TestLanguageEnabledMissingCommand(t *testing.T) {
@@ -268,7 +268,7 @@ func TestLanguageEnabledMissingCommand(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, "", lang.string(), "unicorn is available and uni and corn files are found")
+	assert.Equal(t, "", lang.Full, "unicorn is unavailable and uni and corn files are found")
 }
 
 func TestLanguageEnabledNoVersionData(t *testing.T) {
@@ -291,7 +291,7 @@ func TestLanguageEnabledNoVersionData(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, "", lang.string())
+	assert.Equal(t, "", lang.Full)
 }
 
 func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
@@ -309,7 +309,7 @@ func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, expected, lang.string(), "unicorn is available and uni and corn files are found")
+	assert.Equal(t, expected, lang.Error, "unicorn is available and uni and corn files are found")
 }
 
 func TestLanguageEnabledMissingCommandCustomTextHideError(t *testing.T) {
@@ -327,7 +327,7 @@ func TestLanguageEnabledMissingCommandCustomTextHideError(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, "", lang.string())
+	assert.Equal(t, "", lang.Full)
 }
 
 func TestLanguageEnabledCommandExitCode(t *testing.T) {
@@ -348,7 +348,7 @@ func TestLanguageEnabledCommandExitCode(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, "err executing uni with [--version]", lang.string())
+	assert.Equal(t, "err executing uni with [--version]", lang.Error)
 	assert.Equal(t, expected, lang.exitCode)
 }
 
@@ -401,7 +401,7 @@ func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
-	assert.Equal(t, "err parsing info from corn with 1.3.307", lang.string())
+	assert.Equal(t, "err parsing info from corn with 1.3.307", lang.Error)
 }
 
 func TestLanguageEnabledInHome(t *testing.T) {

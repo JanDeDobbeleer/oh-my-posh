@@ -45,11 +45,6 @@ type Properties interface {
 	getInt(property Property, defaultValue int) int
 	getKeyValueMap(property Property, defaultValue map[string]string) map[string]string
 	getStringArray(property Property, defaultValue []string) []string
-	// for legacy purposes
-	getOneOfBool(property, legacyProperty Property, defaultValue bool) bool
-	getOneOfString(property, legacyProperty Property, defaultValue string) string
-	hasOneOf(properties ...Property) bool
-	set(property Property, value interface{})
 }
 
 // SegmentWriter is the interface used to define what and if to write to the prompt
@@ -96,8 +91,6 @@ const (
 	Node SegmentType = "node"
 	// Os write os specific icon
 	Os SegmentType = "os"
-	// EnvVar writes the content of an environment variable
-	EnvVar SegmentType = "envvar"
 	// Az writes the Azure subscription info we're currently in
 	Az SegmentType = "az"
 	// Kubectl writes the Kubernetes context we're currently in
@@ -239,13 +232,11 @@ func (segment *Segment) shouldInvokeWithTip(tip string) bool {
 }
 
 func (segment *Segment) foreground() string {
-	color := segment.Properties.getColor(ForegroundOverride, segment.Foreground)
-	return segment.getColor(segment.ForegroundTemplates, color)
+	return segment.getColor(segment.ForegroundTemplates, segment.Foreground)
 }
 
 func (segment *Segment) background() string {
-	color := segment.Properties.getColor(BackgroundOverride, segment.Background)
-	return segment.getColor(segment.BackgroundTemplates, color)
+	return segment.getColor(segment.BackgroundTemplates, segment.Background)
 }
 
 func (segment *Segment) mapSegmentWithWriter(env Environment) error {
@@ -267,7 +258,6 @@ func (segment *Segment) mapSegmentWithWriter(env Environment) error {
 		ShellInfo:     &shell{},
 		Node:          &node{},
 		Os:            &osInfo{},
-		EnvVar:        &envvar{},
 		Az:            &az{},
 		Kubectl:       &kubectl{},
 		Dotnet:        &dotnet{},

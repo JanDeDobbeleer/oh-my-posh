@@ -24,8 +24,7 @@
             "home_icon": "\u2764",
             "folder_separator_icon": " 🢖 ",
 			"prefix": "<#eaeaea>⎧</> ⟨",
-			"postfix": "⟩ ",
-            "enable_hyperlink": false
+			"postfix": "⟩ "
           }
         },
         {

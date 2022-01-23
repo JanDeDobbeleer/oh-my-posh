@@ -40,8 +40,7 @@
             "home_icon": "",
             "folder_icon": " \uf07b ",
             "style": "folder",
-            "prefix": " \uf07b\uf553",
-            "enable_hyperlink": true
+            "prefix": " \uf07b\uf553"
           }
         },
         {

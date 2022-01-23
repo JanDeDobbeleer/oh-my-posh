@@ -50,8 +50,7 @@
                         "home_icon": "\uF7DB",
                         "folder_icon": "\ue5fe",
                         "folder_separator_icon": "<transparent> \uE0BD </>",
-                        "style": "agnoster_short",
-                        "enable_hyperlink": true
+                        "style": "agnoster_short"
                     }
                 },
                 {

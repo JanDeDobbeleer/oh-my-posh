@@ -50,8 +50,7 @@ sidebar_label: Sample
             "style": "folder",
             "exclude_folders": [
               "/super/secret/project"
-            ],
-            "enable_hyperlink": false
+            ]
           }
         },
         {

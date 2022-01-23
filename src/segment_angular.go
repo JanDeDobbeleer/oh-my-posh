@@ -48,7 +48,7 @@ func (a *angular) init(props Properties, env Environment) {
 				},
 			},
 		},
-		versionURLTemplate: "[%s](https://github.com/angular/angular/releases/tag/%s.%s.%s)",
+		versionURLTemplate: "https://github.com/angular/angular/releases/tag/{{.Full}}",
 	}
 }
 

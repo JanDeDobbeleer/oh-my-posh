@@ -58,8 +58,7 @@
           "foreground": "#100e23",
           "background": "#91ddff",
           "properties": {
-            "style": "folder",
-            "enable_hyperlink": false
+            "style": "folder"
           }
         },
         {

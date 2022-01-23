@@ -45,9 +45,7 @@
           "foreground": "#fffef9",
           "background": "#C678DD",
           "properties": {
-            "style": "full",
-            "prefix": "",
-            "enable_hyperlink": false
+            "style": "full"
           }
         },
         {

@@ -353,25 +353,6 @@ func (l *language) string() string {
 		return err.Error()
 	}
 
-	if l.props.getBool(EnableHyperlink, false) {
-		versionURLTemplate := l.props.getString(VersionURLTemplate, "")
-		// backward compatibility
-		if versionURLTemplate == "" {
-			text = l.buildVersionURL(text)
-		} else {
-			template := &textTemplate{
-				Template: versionURLTemplate,
-				Context:  l.version,
-				Env:      l.env,
-			}
-			url, err := template.render()
-			if err != nil {
-				return err.Error()
-			}
-			text = url
-		}
-	}
-
 	if l.props.getBool(EnableVersionMismatch, false) {
 		l.setVersionFileMismatch()
 	}

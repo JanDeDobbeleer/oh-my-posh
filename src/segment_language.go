@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"fmt"
-	"strings"
 )
 
 type loadContext func()
@@ -20,6 +19,7 @@ type version struct {
 	Patch         string
 	Prerelease    string
 	BuildMetadata string
+	URL           string
 }
 
 type cmd struct {
@@ -90,25 +90,6 @@ func (l *language) renderTemplate(segmentTemplate string, context SegmentWriter)
 		Env:      l.env,
 	}
 	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-
-	// TODO: this needs to be removed or refactored
-	if !l.props.getBool(EnableHyperlink, false) {
-		return text
-	}
-	versionURLTemplate := l.props.getString(VersionURLTemplate, "")
-	// backward compatibility
-	if versionURLTemplate == "" {
-		return l.buildVersionURL(text)
-	}
-	template = &textTemplate{
-		Template: versionURLTemplate,
-		Context:  l.version,
-		Env:      l.env,
-	}
-	text, err = template.render()
 	if err != nil {
 		return err.Error()
 	}
@@ -196,6 +177,7 @@ func (l *language) setVersion() error {
 			return fmt.Errorf("err parsing info from %s with %s", command.executable, versionStr)
 		}
 		l.version = *version
+		l.buildVersionURL()
 		return nil
 	}
 	return errors.New(l.props.getString(MissingCommandText, ""))
@@ -226,27 +208,19 @@ func (l *language) setVersionFileMismatch() {
 	l.colorMismatch()
 }
 
-func (l *language) buildVersionURL(text string) string {
-	if l.versionURLTemplate == "" {
-		return text
+func (l *language) buildVersionURL() {
+	versionURLTemplate := l.props.getString(VersionURLTemplate, l.versionURLTemplate)
+	if len(versionURLTemplate) == 0 {
+		return
 	}
-	truncatingSprintf := func(str string, args ...interface{}) (string, error) {
-		n := strings.Count(str, "%s")
-		if n > len(args) {
-			return "", errors.New("Too many parameters")
-		}
-		if n == 0 {
-			return fmt.Sprintf(str, args...), nil
-		}
-		arguments := make([]interface{}, 0, n)
-		for i := 0; i < n; i++ {
-			arguments = append(arguments, args[i])
-		}
-		return fmt.Sprintf(str, arguments...), nil
+	template := &textTemplate{
+		Template: versionURLTemplate,
+		Context:  l.version,
+		Env:      l.env,
 	}
-	version, err := truncatingSprintf(l.versionURLTemplate, text, l.version.Major, l.version.Minor, l.version.Patch)
+	url, err := template.render()
 	if err != nil {
-		return text
+		return
 	}
-	return version
+	l.version.URL = url
 }

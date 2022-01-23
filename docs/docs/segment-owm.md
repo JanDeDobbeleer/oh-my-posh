@@ -27,7 +27,6 @@ The free tier for *Current weather and forecasts collection* is sufficient.
     "apikey": "<YOUR_API_KEY>",
     "location": "AMSTERDAM,NL",
     "units": "metric",
-    "enable_hyperlink" : false,
     "http_timeout": 20,
     "cache_timeout": 10,
     "template": "{{.Weather}} ({{.Temperature}}{{.UnitIcon}})"
@@ -43,7 +42,6 @@ The free tier for *Current weather and forecasts collection* is sufficient.
                         Please, refer to ISO 3166 for the state codes or country codes - defaults to `DE BILT,NL`
 - units: `string` - Units of measurement.
                     Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`
-- enable_hyperlink: `bool` - Displays an hyperlink to get openweathermap data
 - http_timeout: `int` - The default timeout for http request is 20ms.
 - cache_timeout: `int` - The default timeout for request caching is 10m. A value of 0 disables the cache.
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the

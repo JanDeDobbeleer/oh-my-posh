@@ -22,9 +22,7 @@
           "foreground": "#ff5555",
           "properties": {
             "prefix": "<#ffffff>[</>",
-            "postfix": "<#ffffff>]</>",
-            "style": "folder",
-            "enable_hyperlink": true
+            "postfix": "<#ffffff>]</>"
           }
         },
         {

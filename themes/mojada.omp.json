@@ -58,7 +58,6 @@
             "folder_separator_icon": "/",
             "prefix": " \uE5FE ",
             "home_icon": "~",
-            "enable_hyperlink": true,
             "max_depth": 2
           }
         },

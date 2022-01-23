@@ -63,7 +63,6 @@
           "properties": {
             "prefix": "<#f2f200> \ue5ff </>",
             "style": "agnoster_short",
-            "enable_hyperlink": true,
             "home_icon": "\uf015",
             "folder_icon": "<#B5B2C2>\ue5fe </>",
             "folder_separator_icon": "<#B5B2C2>\ue0bf </>"

@@ -25,8 +25,12 @@ const (
 	ChargedIcon Property = "charged_icon"
 )
 
+func (b *batt) template() string {
+	return "{{ if not .Error }}{{.Icon}}{{.Percentage}}{{ end }}{{.Error}}"
+}
+
 func (b *batt) enabled() bool {
-	batteries, err := b.env.getBatteryInfo()
+	batteries, err := b.env.BatteryInfo()
 
 	if !b.enabledWhileError(err) {
 		return false
@@ -97,20 +101,6 @@ func (b *batt) mapMostLogicalState(currentState, newState battery.State) battery
 		return newState
 	}
 	return newState
-}
-
-func (b *batt) string() string {
-	segmentTemplate := b.props.getString(SegmentTemplate, "{{ if not .Error }}{{.Icon}}{{.Percentage}}{{ end }}{{.Error}}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  b,
-		Env:      b.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
 }
 
 func (b *batt) init(props Properties, env Environment) {

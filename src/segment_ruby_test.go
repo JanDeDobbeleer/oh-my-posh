@@ -83,28 +83,27 @@ func TestRuby(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("hasCommand", "rbenv").Return(tc.HasRbenv)
-		env.On("runCommand", "rbenv", []string{"version-name"}).Return(tc.Version, nil)
-		env.On("hasCommand", "rvm-prompt").Return(tc.HasRvmprompt)
-		env.On("runCommand", "rvm-prompt", []string{"i", "v", "g"}).Return(tc.Version, nil)
-		env.On("hasCommand", "chruby").Return(tc.HasChruby)
-		env.On("runCommand", "chruby", []string(nil)).Return(tc.Version, nil)
-		env.On("hasCommand", "asdf").Return(tc.HasAsdf)
-		env.On("runCommand", "asdf", []string{"current", "ruby"}).Return(tc.Version, nil)
-		env.On("hasCommand", "ruby").Return(tc.HasRuby)
-		env.On("runCommand", "ruby", []string{"--version"}).Return(tc.Version, nil)
-		env.On("hasFiles", "*.rb").Return(tc.HasRubyFiles)
-		env.On("hasFiles", "Rakefile").Return(tc.HasRakeFile)
-		env.On("hasFiles", "Gemfile").Return(tc.HasGemFile)
-		env.On("pwd").Return("/usr/home/project")
-		env.On("homeDir").Return("/usr/home")
-		env.onTemplate()
+		env.On("HasCommand", "rbenv").Return(tc.HasRbenv)
+		env.On("RunCommand", "rbenv", []string{"version-name"}).Return(tc.Version, nil)
+		env.On("HasCommand", "rvm-prompt").Return(tc.HasRvmprompt)
+		env.On("RunCommand", "rvm-prompt", []string{"i", "v", "g"}).Return(tc.Version, nil)
+		env.On("HasCommand", "chruby").Return(tc.HasChruby)
+		env.On("RunCommand", "chruby", []string(nil)).Return(tc.Version, nil)
+		env.On("HasCommand", "asdf").Return(tc.HasAsdf)
+		env.On("RunCommand", "asdf", []string{"current", "ruby"}).Return(tc.Version, nil)
+		env.On("HasCommand", "ruby").Return(tc.HasRuby)
+		env.On("RunCommand", "ruby", []string{"--version"}).Return(tc.Version, nil)
+		env.On("HasFiles", "*.rb").Return(tc.HasRubyFiles)
+		env.On("HasFiles", "Rakefile").Return(tc.HasRakeFile)
+		env.On("HasFiles", "Gemfile").Return(tc.HasGemFile)
+		env.On("Pwd").Return("/usr/home/project")
+		env.On("Home").Return("/usr/home")
 		props := properties{
 			FetchVersion: tc.FetchVersion,
 		}
 		ruby := &ruby{}
 		ruby.init(props, env)
 		assert.Equal(t, tc.ExpectedEnabled, ruby.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
-		assert.Equal(t, tc.ExpectedString, ruby.string(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, ruby.template(), ruby), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

@@ -9,7 +9,7 @@ import (
 func (s *spotify) enabled() bool {
 	// search for spotify window to retrieve the title
 	// Can be either "Spotify xxx" or the song name "Candlemass - Spellbreaker"
-	spotifyWindowTitle, err := s.env.getWindowTitle("spotify.exe", "^(Spotify.*)|(.*\\s-\\s.*)$")
+	spotifyWindowTitle, err := s.env.WindowTitle("spotify.exe", "^(Spotify.*)|(.*\\s-\\s.*)$")
 	if err != nil {
 		return false
 	}

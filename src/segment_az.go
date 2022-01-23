@@ -78,18 +78,8 @@ type AzurePowerShellSubscription struct {
 	} `json:"Environment"`
 }
 
-func (a *az) string() string {
-	segmentTemplate := a.props.getString(SegmentTemplate, "{{ .Name }}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  a,
-		Env:      a.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
+func (a *az) template() string {
+	return "{{ .Name }}"
 }
 
 func (a *az) init(props Properties, env Environment) {
@@ -101,16 +91,16 @@ func (a *az) enabled() bool {
 	return a.getAzureProfile() || a.getAzureRmContext()
 }
 
-func (a *az) getFileContentWithoutBom(file string) string {
-	config := a.env.getFileContent(file)
+func (a *az) FileContentWithoutBom(file string) string {
+	config := a.env.FileContent(file)
 	const ByteOrderMark = "\ufeff"
 	return strings.TrimLeft(config, ByteOrderMark)
 }
 
 func (a *az) getAzureProfile() bool {
 	var content string
-	profile := filepath.Join(a.env.homeDir(), ".azure", "azureProfile.json")
-	if content = a.getFileContentWithoutBom(profile); len(content) == 0 {
+	profile := filepath.Join(a.env.Home(), ".azure", "azureProfile.json")
+	if content = a.FileContentWithoutBom(profile); len(content) == 0 {
 		return false
 	}
 	var config AzureConfig
@@ -130,11 +120,11 @@ func (a *az) getAzureProfile() bool {
 func (a *az) getAzureRmContext() bool {
 	var content string
 	profiles := []string{
-		filepath.Join(a.env.homeDir(), ".azure", "AzureRmContext.json"),
-		filepath.Join(a.env.homeDir(), ".Azure", "AzureRmContext.json"),
+		filepath.Join(a.env.Home(), ".azure", "AzureRmContext.json"),
+		filepath.Join(a.env.Home(), ".Azure", "AzureRmContext.json"),
 	}
 	for _, profile := range profiles {
-		if content = a.getFileContentWithoutBom(profile); len(content) != 0 {
+		if content = a.FileContentWithoutBom(profile); len(content) != 0 {
 			break
 		}
 	}

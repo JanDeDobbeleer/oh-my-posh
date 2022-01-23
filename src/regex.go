@@ -82,7 +82,7 @@ func matchString(pattern, text string) bool {
 
 func dirMatchesOneOf(env Environment, dir string, regexes []string) bool {
 	normalizedCwd := strings.ReplaceAll(dir, "\\", "/")
-	normalizedHomeDir := strings.ReplaceAll(env.homeDir(), "\\", "/")
+	normalizedHomeDir := strings.ReplaceAll(env.Home(), "\\", "/")
 
 	for _, element := range regexes {
 		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
@@ -90,7 +90,7 @@ func dirMatchesOneOf(env Environment, dir string, regexes []string) bool {
 			normalizedElement = strings.Replace(normalizedElement, "~", normalizedHomeDir, 1)
 		}
 		pattern := fmt.Sprintf("^%s$", normalizedElement)
-		goos := env.getRuntimeGOOS()
+		goos := env.GOOS()
 		if goos == windowsPlatform || goos == darwinPlatform {
 			pattern = "(?i)" + pattern
 		}

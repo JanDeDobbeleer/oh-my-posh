@@ -174,8 +174,8 @@ func TestScmShouldIgnoreRootRepository(t *testing.T) {
 			},
 		}
 		env := new(MockedEnvironment)
-		env.On("homeDir").Return("/home/bill")
-		env.On("getRuntimeGOOS").Return(windowsPlatform)
+		env.On("Home").Return("/home/bill")
+		env.On("GOOS").Return(windowsPlatform)
 		s := &scm{
 			props: props,
 			env:   env,

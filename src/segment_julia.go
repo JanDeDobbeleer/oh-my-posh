@@ -4,9 +4,8 @@ type julia struct {
 	language
 }
 
-func (j *julia) string() string {
-	segmentTemplate := j.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
-	return j.language.string(segmentTemplate, j)
+func (j *julia) template() string {
+	return languageTemplate
 }
 
 func (j *julia) init(props Properties, env Environment) {

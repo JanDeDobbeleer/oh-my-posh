@@ -4,9 +4,8 @@ type php struct {
 	language
 }
 
-func (p *php) string() string {
-	segmentTemplate := p.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
-	return p.language.string(segmentTemplate, p)
+func (p *php) template() string {
+	return languageTemplate
 }
 
 func (p *php) init(props Properties, env Environment) {

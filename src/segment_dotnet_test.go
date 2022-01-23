@@ -6,76 +6,44 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type dotnetArgs struct {
-	enabled         bool
-	version         string
-	exitCode        int
-	unsupportedIcon string
-	displayVersion  bool
-}
-
-func bootStrapDotnetTest(args *dotnetArgs) *dotnet {
-	env := new(MockedEnvironment)
-	env.On("hasCommand", "dotnet").Return(args.enabled)
-	if args.exitCode != 0 {
-		err := &commandError{exitCode: args.exitCode}
-		env.On("runCommand", "dotnet", []string{"--version"}).Return("", err)
-	} else {
-		env.On("runCommand", "dotnet", []string{"--version"}).Return(args.version, nil)
+func TestDotnetSegment(t *testing.T) {
+	cases := []struct {
+		Case         string
+		Expected     string
+		ExitCode     int
+		HasCommand   bool
+		Version      string
+		FetchVersion bool
+	}{
+		{Case: "Unsupported version", Expected: "\uf071", HasCommand: true, FetchVersion: true, ExitCode: dotnetExitCode, Version: "3.1.402"},
+		{Case: "Regular version", Expected: "3.1.402", HasCommand: true, FetchVersion: true, Version: "3.1.402"},
+		{Case: "Regular version", Expected: "", HasCommand: true, FetchVersion: false, Version: "3.1.402"},
+		{Case: "Regular version", Expected: "", HasCommand: false, FetchVersion: false, Version: "3.1.402"},
 	}
 
-	env.On("hasFiles", "*.cs").Return(true)
-	env.On("getPathSeperator").Return("")
-	env.On("pwd").Return("/usr/home/project")
-	env.On("homeDir").Return("/usr/home")
-	env.onTemplate()
-	props := properties{
-		FetchVersion: args.displayVersion,
-	}
-	dotnet := &dotnet{}
-	dotnet.init(props, env)
-	return dotnet
-}
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("HasCommand", "dotnet").Return(tc.HasCommand)
+		if tc.ExitCode != 0 {
+			err := &commandError{exitCode: tc.ExitCode}
+			env.On("RunCommand", "dotnet", []string{"--version"}).Return("", err)
+		} else {
+			env.On("RunCommand", "dotnet", []string{"--version"}).Return(tc.Version, nil)
+		}
 
-func TestEnabledDotnetNotFound(t *testing.T) {
-	args := &dotnetArgs{
-		enabled: false,
+		env.On("HasFiles", "*.cs").Return(true)
+		env.On("PathSeperator").Return("")
+		env.On("Pwd").Return("/usr/home/project")
+		env.On("Home").Return("/usr/home")
+		env.On("TemplateCache").Return(&TemplateCache{
+			Env: make(map[string]string),
+		})
+		props := properties{
+			FetchVersion: tc.FetchVersion,
+		}
+		dotnet := &dotnet{}
+		dotnet.init(props, env)
+		assert.True(t, dotnet.enabled())
+		assert.Equal(t, tc.Expected, renderTemplate(env, dotnet.template(), dotnet), tc.Case)
 	}
-	dotnet := bootStrapDotnetTest(args)
-	assert.True(t, dotnet.enabled())
-}
-
-func TestDotnetVersionNotDisplayed(t *testing.T) {
-	args := &dotnetArgs{
-		enabled:        true,
-		displayVersion: false,
-		version:        "3.1.402",
-	}
-	dotnet := bootStrapDotnetTest(args)
-	assert.True(t, dotnet.enabled())
-	assert.Equal(t, "", dotnet.string())
-}
-
-func TestDotnetVersionDisplayed(t *testing.T) {
-	expected := "3.1.402"
-	args := &dotnetArgs{
-		enabled:        true,
-		displayVersion: true,
-		version:        expected,
-	}
-	dotnet := bootStrapDotnetTest(args)
-	assert.True(t, dotnet.enabled())
-	assert.Equal(t, expected, dotnet.string())
-}
-
-func TestDotnetVersionUnsupported(t *testing.T) {
-	args := &dotnetArgs{
-		enabled:         true,
-		displayVersion:  true,
-		exitCode:        dotnetExitCode,
-		unsupportedIcon: expected,
-	}
-	dotnet := bootStrapDotnetTest(args)
-	assert.True(t, dotnet.enabled())
-	assert.Equal(t, "\uf071", dotnet.string())
 }

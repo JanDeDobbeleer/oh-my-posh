@@ -14,7 +14,7 @@ func TestWinReg(t *testing.T) {
 		Fallback        string
 		ExpectedSuccess bool
 		ExpectedValue   string
-		getWRKVOutput   *windowsRegistryValue
+		getWRKVOutput   *WindowsRegistryValue
 		Err             error
 	}{
 		{
@@ -26,7 +26,7 @@ func TestWinReg(t *testing.T) {
 		{
 			CaseDescription: "Value",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &windowsRegistryValue{valueType: regString, str: "xbox"},
+			getWRKVOutput:   &WindowsRegistryValue{valueType: regString, str: "xbox"},
 			ExpectedSuccess: true,
 			ExpectedValue:   "xbox",
 		},
@@ -41,7 +41,7 @@ func TestWinReg(t *testing.T) {
 		{
 			CaseDescription: "Empty string value (no error) should display empty string even in presence of fallback",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &windowsRegistryValue{valueType: regString, str: ""},
+			getWRKVOutput:   &WindowsRegistryValue{valueType: regString, str: ""},
 			Fallback:        "anaconda",
 			ExpectedSuccess: true,
 			ExpectedValue:   "",
@@ -49,21 +49,21 @@ func TestWinReg(t *testing.T) {
 		{
 			CaseDescription: "Empty string value (no error) should display empty string",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &windowsRegistryValue{valueType: regString, str: ""},
+			getWRKVOutput:   &WindowsRegistryValue{valueType: regString, str: ""},
 			ExpectedSuccess: true,
 			ExpectedValue:   "",
 		},
 		{
 			CaseDescription: "DWORD value",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &windowsRegistryValue{valueType: regDword, dword: 0xdeadbeef},
+			getWRKVOutput:   &WindowsRegistryValue{valueType: regDword, dword: 0xdeadbeef},
 			ExpectedSuccess: true,
 			ExpectedValue:   "0xDEADBEEF",
 		},
 		{
 			CaseDescription: "QWORD value",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &windowsRegistryValue{valueType: regQword, qword: 0x7eb199e57fa1afe1},
+			getWRKVOutput:   &WindowsRegistryValue{valueType: regQword, qword: 0x7eb199e57fa1afe1},
 			ExpectedSuccess: true,
 			ExpectedValue:   "0x7EB199E57FA1AFE1",
 		},
@@ -71,9 +71,8 @@ func TestWinReg(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getRuntimeGOOS").Return(windowsPlatform)
-		env.On("getWindowsRegistryKeyValue", tc.Path).Return(tc.getWRKVOutput, tc.Err)
-		env.onTemplate()
+		env.On("GOOS").Return(windowsPlatform)
+		env.On("WindowsRegistryKeyValue", tc.Path).Return(tc.getWRKVOutput, tc.Err)
 		r := &winreg{
 			env: env,
 			props: properties{
@@ -83,6 +82,6 @@ func TestWinReg(t *testing.T) {
 		}
 
 		assert.Equal(t, tc.ExpectedSuccess, r.enabled(), tc.CaseDescription)
-		assert.Equal(t, tc.ExpectedValue, r.string(), tc.CaseDescription)
+		assert.Equal(t, tc.ExpectedValue, renderTemplate(env, r.template(), r), tc.CaseDescription)
 	}
 }

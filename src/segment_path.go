@@ -54,8 +54,12 @@ const (
 	MaxDepth Property = "max_depth"
 )
 
+func (pt *path) template() string {
+	return "{{ .Path }}"
+}
+
 func (pt *path) enabled() bool {
-	pt.pwd = pt.env.pwd()
+	pt.pwd = pt.env.Pwd()
 	switch style := pt.props.getString(Style, Agnoster); style {
 	case Agnoster:
 		pt.Path = pt.getAgnosterPath()
@@ -80,32 +84,18 @@ func (pt *path) enabled() bool {
 		pt.Path = fmt.Sprintf("Path style: %s is not available", style)
 	}
 	pt.Path = pt.formatWindowsDrive(pt.Path)
-	if pt.env.isWsl() {
-		pt.Location, _ = pt.env.runCommand("wslpath", "-m", pt.pwd)
+	if pt.env.IsWsl() {
+		pt.Location, _ = pt.env.RunCommand("wslpath", "-m", pt.pwd)
 	} else {
 		pt.Location = pt.pwd
 	}
 
-	pt.StackCount = pt.env.stackCount()
+	pt.StackCount = pt.env.StackCount()
 	return true
 }
 
-func (pt *path) string() string {
-	segmentTemplate := pt.props.getString(SegmentTemplate, "{{ .Path }}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  pt,
-		Env:      pt.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
-}
-
 func (pt *path) formatWindowsDrive(pwd string) string {
-	if pt.env.getRuntimeGOOS() != windowsPlatform || !strings.HasSuffix(pwd, ":") {
+	if pt.env.GOOS() != windowsPlatform || !strings.HasSuffix(pwd, ":") {
 		return pwd
 	}
 	return pwd + "\\"
@@ -119,7 +109,7 @@ func (pt *path) init(props Properties, env Environment) {
 func (pt *path) getMixedPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
-	splitted := strings.Split(pwd, pt.env.getPathSeperator())
+	splitted := strings.Split(pwd, pt.env.PathSeperator())
 	threshold := int(pt.props.getFloat64(MixedThreshold, 4))
 	for i, part := range splitted {
 		if part == "" {
@@ -130,7 +120,7 @@ func (pt *path) getMixedPath() string {
 		if len(part) > threshold && i != 0 && i != len(splitted)-1 {
 			folder = pt.props.getString(FolderIcon, "..")
 		}
-		separator := pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator())
+		separator := pt.props.getString(FolderSeparatorIcon, pt.env.PathSeperator())
 		if i == 0 {
 			separator = ""
 		}
@@ -146,7 +136,7 @@ func (pt *path) getAgnosterPath() string {
 	buffer.WriteString(pt.rootLocation())
 	pathDepth := pt.pathDepth(pwd)
 	folderIcon := pt.props.getString(FolderIcon, "..")
-	separator := pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator())
+	separator := pt.props.getString(FolderSeparatorIcon, pt.env.PathSeperator())
 	for i := 1; i < pathDepth; i++ {
 		buffer.WriteString(fmt.Sprintf("%s%s", separator, folderIcon))
 	}
@@ -158,7 +148,7 @@ func (pt *path) getAgnosterPath() string {
 
 func (pt *path) getAgnosterLeftPath() string {
 	pwd := pt.getPwd()
-	separator := pt.env.getPathSeperator()
+	separator := pt.env.PathSeperator()
 	pwd = strings.Trim(pwd, separator)
 	splitted := strings.Split(pwd, separator)
 	folderIcon := pt.props.getString(FolderIcon, "..")
@@ -182,8 +172,8 @@ func (pt *path) getAgnosterLeftPath() string {
 func (pt *path) getLetterPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
-	splitted := strings.Split(pwd, pt.env.getPathSeperator())
-	separator := pt.props.getString(FolderSeparatorIcon, pt.env.getPathSeperator())
+	splitted := strings.Split(pwd, pt.env.PathSeperator())
+	separator := pt.props.getString(FolderSeparatorIcon, pt.env.PathSeperator())
 	for i := 0; i < len(splitted)-1; i++ {
 		folder := splitted[i]
 		if len(folder) == 0 {
@@ -213,7 +203,7 @@ func (pt *path) getLetterPath() string {
 
 func (pt *path) getAgnosterFullPath() string {
 	pwd := pt.getPwd()
-	if len(pwd) > 1 && string(pwd[0]) == pt.env.getPathSeperator() {
+	if len(pwd) > 1 && string(pwd[0]) == pt.env.PathSeperator() {
 		pwd = pwd[1:]
 	}
 	return pt.replaceFolderSeparators(pwd)
@@ -229,7 +219,7 @@ func (pt *path) getAgnosterShortPath() string {
 	if pathDepth <= maxDepth {
 		return pt.getAgnosterFullPath()
 	}
-	pathSeparator := pt.env.getPathSeperator()
+	pathSeparator := pt.env.PathSeperator()
 	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
 	folderIcon := pt.props.getString(FolderIcon, "..")
 	root := pt.rootLocation()
@@ -256,9 +246,9 @@ func (pt *path) getFolderPath() string {
 }
 
 func (pt *path) getPwd() string {
-	pwd := *pt.env.getArgs().PSWD
+	pwd := *pt.env.Args().PSWD
 	if pwd == "" {
-		pwd = pt.env.pwd()
+		pwd = pt.env.Pwd()
 	}
 	pwd = pt.replaceMappedLocations(pwd)
 	return pwd
@@ -267,10 +257,10 @@ func (pt *path) getPwd() string {
 func (pt *path) normalize(inputPath string) string {
 	normalized := inputPath
 	if strings.HasPrefix(inputPath, "~") {
-		normalized = pt.env.homeDir() + normalized[1:]
+		normalized = pt.env.Home() + normalized[1:]
 	}
 	normalized = strings.ReplaceAll(normalized, "\\", "/")
-	goos := pt.env.getRuntimeGOOS()
+	goos := pt.env.GOOS()
 	if goos == windowsPlatform || goos == darwinPlatform {
 		normalized = strings.ToLower(normalized)
 	}
@@ -286,7 +276,7 @@ func (pt *path) replaceMappedLocations(pwd string) string {
 	if pt.props.getBool(MappedLocationsEnabled, true) {
 		mappedLocations["HKCU:"] = pt.props.getString(WindowsRegistryIcon, "\uF013")
 		mappedLocations["HKLM:"] = pt.props.getString(WindowsRegistryIcon, "\uF013")
-		mappedLocations[pt.normalize(pt.env.homeDir())] = pt.props.getString(HomeIcon, "~")
+		mappedLocations[pt.normalize(pt.env.Home())] = pt.props.getString(HomeIcon, "~")
 	}
 
 	// merge custom locations with mapped locations
@@ -318,7 +308,7 @@ func (pt *path) replaceMappedLocations(pwd string) string {
 }
 
 func (pt *path) replaceFolderSeparators(pwd string) string {
-	defaultSeparator := pt.env.getPathSeperator()
+	defaultSeparator := pt.env.PathSeperator()
 	if pwd == defaultSeparator {
 		return pwd
 	}
@@ -332,19 +322,19 @@ func (pt *path) replaceFolderSeparators(pwd string) string {
 }
 
 func (pt *path) inHomeDir(pwd string) bool {
-	return strings.HasPrefix(pwd, pt.env.homeDir())
+	return strings.HasPrefix(pwd, pt.env.Home())
 }
 
 func (pt *path) rootLocation() string {
 	pwd := pt.getPwd()
-	pwd = strings.TrimPrefix(pwd, pt.env.getPathSeperator())
-	splitted := strings.Split(pwd, pt.env.getPathSeperator())
+	pwd = strings.TrimPrefix(pwd, pt.env.PathSeperator())
+	splitted := strings.Split(pwd, pt.env.PathSeperator())
 	rootLocation := splitted[0]
 	return rootLocation
 }
 
 func (pt *path) pathDepth(pwd string) int {
-	splitted := strings.Split(pwd, pt.env.getPathSeperator())
+	splitted := strings.Split(pwd, pt.env.PathSeperator())
 	depth := 0
 	for _, part := range splitted {
 		if part != "" {
@@ -363,7 +353,7 @@ func base(path string, env Environment) string {
 	}
 	volumeName := filepath.VolumeName(path)
 	// Strip trailing slashes.
-	for len(path) > 0 && string(path[len(path)-1]) == env.getPathSeperator() {
+	for len(path) > 0 && string(path[len(path)-1]) == env.PathSeperator() {
 		path = path[0 : len(path)-1]
 	}
 	if volumeName == path {
@@ -373,7 +363,7 @@ func base(path string, env Environment) string {
 	path = path[len(filepath.VolumeName(path)):]
 	// Find the last element
 	i := len(path) - 1
-	for i >= 0 && string(path[i]) != env.getPathSeperator() {
+	for i >= 0 && string(path[i]) != env.PathSeperator() {
 		i--
 	}
 	if i >= 0 {
@@ -381,7 +371,7 @@ func base(path string, env Environment) string {
 	}
 	// If empty now, it had only slashes.
 	if path == "" {
-		return env.getPathSeperator()
+		return env.PathSeperator()
 	}
 	return path
 }

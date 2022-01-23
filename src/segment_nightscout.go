@@ -45,6 +45,10 @@ type NightscoutData struct {
 	Mills      int64     `json:"mills"`
 }
 
+func (ns *nightscout) template() string {
+	return "{{ .Sgv }}"
+}
+
 func (ns *nightscout) enabled() bool {
 	data, err := ns.getResult()
 	if err != nil {
@@ -77,21 +81,6 @@ func (ns *nightscout) getTrendIcon() string {
 	}
 }
 
-func (ns *nightscout) string() string {
-	segmentTemplate := ns.props.getString(SegmentTemplate, "{{.Sgv}}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  ns,
-		Env:      ns.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-
-	return text
-}
-
 func (ns *nightscout) getResult() (*NightscoutData, error) {
 	parseSingleElement := func(data []byte) (*NightscoutData, error) {
 		var result []*NightscoutData
@@ -105,7 +94,7 @@ func (ns *nightscout) getResult() (*NightscoutData, error) {
 		return result[0], nil
 	}
 	getCacheValue := func(key string) (*NightscoutData, error) {
-		val, found := ns.env.cache().get(key)
+		val, found := ns.env.Cache().Get(key)
 		// we got something from the cache
 		if found {
 			if data, err := parseSingleElement([]byte(val)); err == nil {
@@ -143,7 +132,7 @@ func (ns *nightscout) getResult() (*NightscoutData, error) {
 
 	if cacheTimeout > 0 {
 		// persist new sugars in cache
-		ns.env.cache().set(url, string(body), cacheTimeout)
+		ns.env.Cache().Set(url, string(body), cacheTimeout)
 	}
 	return data, nil
 }

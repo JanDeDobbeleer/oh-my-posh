@@ -16,8 +16,8 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-func (env *environment) isRunningAsRoot() bool {
-	defer env.trace(time.Now(), "isRunningAsRoot")
+func (env *environment) Root() bool {
+	defer env.trace(time.Now(), "Root")
 	var sid *windows.SID
 
 	// Although this looks scary, it is directly copied from the
@@ -32,7 +32,7 @@ func (env *environment) isRunningAsRoot() bool {
 		0, 0, 0, 0, 0, 0,
 		&sid)
 	if err != nil {
-		env.log(Error, "isRunningAsRoot", err.Error())
+		env.log(Error, "Root", err.Error())
 		return false
 	}
 	defer func() {
@@ -46,17 +46,17 @@ func (env *environment) isRunningAsRoot() bool {
 
 	member, err := token.IsMember(sid)
 	if err != nil {
-		env.log(Error, "isRunningAsRoot", err.Error())
+		env.log(Error, "Root", err.Error())
 		return false
 	}
 
 	return member
 }
 
-func (env *environment) homeDir() string {
+func (env *environment) Home() string {
 	home := os.Getenv("HOME")
 	defer func() {
-		env.log(Debug, "homeDir", home)
+		env.log(Debug, "Home", home)
 	}()
 	if len(home) > 0 {
 		return home
@@ -69,48 +69,48 @@ func (env *environment) homeDir() string {
 	return home
 }
 
-func (env *environment) getWindowTitle(imageName, windowTitleRegex string) (string, error) {
-	defer env.trace(time.Now(), "getWindowTitle", imageName, windowTitleRegex)
-	return getWindowTitle(imageName, windowTitleRegex)
+func (env *environment) WindowTitle(imageName, windowTitleRegex string) (string, error) {
+	defer env.trace(time.Now(), "WindowTitle", imageName, windowTitleRegex)
+	return WindowTitle(imageName, windowTitleRegex)
 }
 
-func (env *environment) isWsl() bool {
-	defer env.trace(time.Now(), "isWsl")
+func (env *environment) IsWsl() bool {
+	defer env.trace(time.Now(), "IsWsl")
 	return false
 }
 
-func (env *environment) isWsl2() bool {
-	defer env.trace(time.Now(), "isWsl2")
+func (env *environment) IsWsl2() bool {
+	defer env.trace(time.Now(), "IsWsl2")
 	return false
 }
 
-func (env *environment) getTerminalWidth() (int, error) {
-	defer env.trace(time.Now(), "getTerminalWidth")
+func (env *environment) TerminalWidth() (int, error) {
+	defer env.trace(time.Now(), "TerminalWidth")
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
 	if err != nil {
-		env.log(Error, "getTerminalWidth", err.Error())
+		env.log(Error, "TerminalWidth", err.Error())
 		return 0, err
 	}
 	info, err := winterm.GetConsoleScreenBufferInfo(uintptr(handle))
 	if err != nil {
-		env.log(Error, "getTerminalWidth", err.Error())
+		env.log(Error, "TerminalWidth", err.Error())
 		return 0, err
 	}
 	// return int(float64(info.Size.X) * 0.57), nil
 	return int(info.Size.X), nil
 }
 
-func (env *environment) getPlatform() string {
+func (env *environment) Platform() string {
 	return windowsPlatform
 }
 
-func (env *environment) getCachePath() string {
-	defer env.trace(time.Now(), "getCachePath")
+func (env *environment) CachePath() string {
+	defer env.trace(time.Now(), "CachePath")
 	// get LOCALAPPDATA if present
-	if cachePath := returnOrBuildCachePath(env.getenv("LOCALAPPDATA")); len(cachePath) != 0 {
+	if cachePath := returnOrBuildCachePath(env.Getenv("LOCALAPPDATA")); len(cachePath) != 0 {
 		return cachePath
 	}
-	return env.homeDir()
+	return env.Home()
 }
 
 //
@@ -123,8 +123,8 @@ func (env *environment) getCachePath() string {
 //
 // Returns a variant type if successful; nil and an error if not.
 //
-func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error) {
-	env.trace(time.Now(), "getWindowsRegistryKeyValue", path)
+func (env *environment) WindowsRegistryKeyValue(path string) (*windowsRegistryValue, error) {
+	env.trace(time.Now(), "WindowsRegistryKeyValue", path)
 
 	// Format:
 	// "HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"
@@ -142,14 +142,14 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 
 	if len(regPathParts) < 2 {
 		errorLogMsg := fmt.Sprintf("Error, malformed registry path: '%s'", path)
-		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
+		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
 	regRootHKeyHandle := getHKEYHandleFromAbbrString(regPathParts[0])
 	if regRootHKeyHandle == 0 {
 		errorLogMsg := fmt.Sprintf("Error, Supplied root HKEY value not valid: '%s'", regPathParts[0])
-		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
+		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -158,7 +158,7 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 
 	if lastSlash < 0 {
 		errorLogMsg := fmt.Sprintf("Error, malformed registry path: '%s'", path)
-		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
+		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -170,13 +170,13 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	if len(regKeyLogged) == 0 {
 		regKeyLogged = "(Default)"
 	}
-	env.log(Debug, "getWindowsRegistryKeyValue", fmt.Sprintf("getWindowsRegistryKeyValue: root:\"%s\", path:\"%s\", key:\"%s\"", regPathParts[0], regPath, regKeyLogged))
+	env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("WindowsRegistryKeyValue: root:\"%s\", path:\"%s\", key:\"%s\"", regPathParts[0], regPath, regKeyLogged))
 
 	// Second part of split is registry path after HK part - needs to be UTF16 to pass to the windows. API
 	regPathUTF16, err := windows.UTF16FromString(regPath)
 	if err != nil {
 		errorLogMsg := fmt.Sprintf("Error, Could not convert supplied path '%s' to UTF16, error: '%s'", regPath, err)
-		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
+		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -185,14 +185,14 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	regOpenErr := windows.RegOpenKeyEx(regRootHKeyHandle, &regPathUTF16[0], 0, windows.KEY_READ, &hKeyHandle)
 	if regOpenErr != nil {
 		errorLogMsg := fmt.Sprintf("Error RegOpenKeyEx opening registry path to '%s', error: '%s'", regPath, regOpenErr)
-		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
+		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 	// Success - from here on out, when returning make sure to close that reg key with a deferred call to close:
 	defer func() {
 		err := windows.RegCloseKey(hKeyHandle)
 		if err != nil {
-			env.log(Error, "getWindowsRegistryKeyValue", fmt.Sprintf("Error closing registry key: %s", err))
+			env.log(Error, "WindowsRegistryKeyValue", fmt.Sprintf("Error closing registry key: %s", err))
 		}
 	}()
 
@@ -200,7 +200,7 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	regKeyUTF16, err := windows.UTF16FromString(regKey)
 	if err != nil {
 		errorLogMsg := fmt.Sprintf("Error, could not convert supplied key '%s' to UTF16, error: '%s'", regKey, err)
-		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
+		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -211,7 +211,7 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	regQueryErr := windows.RegQueryValueEx(hKeyHandle, &regKeyUTF16[0], nil, &keyBufType, nil, &keyBufSize)
 	if regQueryErr != nil {
 		errorLogMsg := fmt.Sprintf("Error calling RegQueryValueEx to retrieve key data size with error '%s'", regQueryErr)
-		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
+		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -221,7 +221,7 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	regQueryErr = windows.RegQueryValueEx(hKeyHandle, &regKeyUTF16[0], nil, &keyBufType, &keyBuf[0], &keyBufSize)
 	if regQueryErr != nil {
 		errorLogMsg := fmt.Sprintf("Error calling RegQueryValueEx to retrieve key data with error '%s'", regQueryErr)
-		env.log(Error, "getWindowsRegistryKeyValue", errorLogMsg)
+		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -232,20 +232,20 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 		uint16p = (*uint16)(unsafe.Pointer(&keyBuf[0])) // nasty casty
 
 		valueString := windows.UTF16PtrToString(uint16p)
-		env.log(Debug, "getWindowsRegistryKeyValue", fmt.Sprintf("success, string: %s", valueString))
+		env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, string: %s", valueString))
 
 		return &windowsRegistryValue{valueType: regString, str: valueString}, nil
 	case windows.REG_DWORD:
 		var uint32p *uint32
 		uint32p = (*uint32)(unsafe.Pointer(&keyBuf[0])) // more casting goodness
 
-		env.log(Debug, "getWindowsRegistryKeyValue", fmt.Sprintf("success, DWORD, 0x%08X", *uint32p))
+		env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, DWORD, 0x%08X", *uint32p))
 		return &windowsRegistryValue{valueType: regDword, dword: *uint32p}, nil
 	case windows.REG_QWORD:
 		var uint64p *uint64
 		uint64p = (*uint64)(unsafe.Pointer(&keyBuf[0])) // more casting goodness
 
-		env.log(Debug, "getWindowsRegistryKeyValue", fmt.Sprintf("success, QWORD, 0x%016X", *uint64p))
+		env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, QWORD, 0x%016X", *uint64p))
 		return &windowsRegistryValue{valueType: regQword, qword: *uint64p}, nil
 	default:
 		errorLogMsg := fmt.Sprintf("Error, no formatter for REG_? type:%d, data size:%d bytes", keyBufType, keyBufSize)
@@ -253,15 +253,15 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 	}
 }
 
-func (env *environment) inWSLSharedDrive() bool {
+func (env *environment) InWSLSharedDrive() bool {
 	return false
 }
 
-func (env *environment) convertToWindowsPath(path string) string {
+func (env *environment) ConvertToWindowsPath(path string) string {
 	return path
 }
 
-func (env *environment) convertToLinuxPath(path string) string {
+func (env *environment) ConvertToLinuxPath(path string) string {
 	return path
 }
 
@@ -273,8 +273,8 @@ var (
 	hWlanQueryInterface = hapi.NewProc("WlanQueryInterface")
 )
 
-func (env *environment) getWifiNetwork() (*wifiInfo, error) {
-	env.trace(time.Now(), "getWifiNetwork")
+func (env *environment) WifiNetwork() (*wifiInfo, error) {
+	env.trace(time.Now(), "WifiNetwork")
 	// Open handle
 	var pdwNegotiatedVersion uint32
 	var phClientHandle uint32

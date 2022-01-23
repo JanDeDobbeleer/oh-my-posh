@@ -75,6 +75,6 @@ func (s *scm) shouldIgnoreRootRepository(rootDir string) bool {
 	return dirMatchesOneOf(s.env, rootDir, excludedFolders)
 }
 
-func (s *scm) getFileContents(folder, file string) string {
-	return strings.Trim(s.env.getFileContent(folder+"/"+file), " \r\n")
+func (s *scm) FileContents(folder, file string) string {
+	return strings.Trim(s.env.FileContent(folder+"/"+file), " \r\n")
 }

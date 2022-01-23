@@ -27,19 +27,10 @@ const (
 	paused  = "paused"
 )
 
-func (s *spotify) string() string {
-	segmentTemplate := s.props.getString(SegmentTemplate, "{{.Icon}}{{ if ne .Status \"stopped\"}}{{.Artist}} - {{.Track}}{{ end }}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  s,
-		Env:      s.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
+func (s *spotify) template() string {
+	return "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}"
 }
+
 func (s *spotify) resolveIcon() {
 	switch s.Status {
 	case stopped:

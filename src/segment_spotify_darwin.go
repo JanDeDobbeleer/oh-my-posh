@@ -7,10 +7,12 @@ func (s *spotify) enabled() bool {
 	// Check if running
 	running := s.runAppleScriptCommand("application \"Spotify\" is running")
 	if running == "false" || running == "" {
+		s.Status = stopped
 		return false
 	}
 	s.Status = s.runAppleScriptCommand("tell application \"Spotify\" to player state as string")
 	if err != nil {
+		s.Status = stopped
 		return false
 	}
 	if s.Status == stopped {
@@ -23,6 +25,6 @@ func (s *spotify) enabled() bool {
 }
 
 func (s *spotify) runAppleScriptCommand(command string) string {
-	val, _ := s.env.runCommand("osascript", "-e", command)
+	val, _ := s.env.RunCommand("osascript", "-e", command)
 	return val
 }

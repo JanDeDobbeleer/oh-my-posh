@@ -52,8 +52,8 @@ func TestSpotifyWsl(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("isWsl").Return(true)
-		env.On("runCommand", "tasklist.exe", []string{"/V", "/FI", "Imagename eq Spotify.exe", "/FO", "CSV", "/NH"}).Return(tc.ExecOutput, nil)
+		env.On("IsWsl").Return(true)
+		env.On("RunCommand", "tasklist.exe", []string{"/V", "/FI", "Imagename eq Spotify.exe", "/FO", "CSV", "/NH"}).Return(tc.ExecOutput, nil)
 		env.onTemplate()
 		s := &spotify{
 			env:   env,

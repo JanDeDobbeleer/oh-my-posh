@@ -3,10 +3,10 @@ package main
 import "time"
 
 type tempus struct {
-	props        Properties
-	env          Environment
-	templateText string
-	CurrentDate  time.Time
+	props Properties
+	env   Environment
+
+	CurrentDate time.Time
 }
 
 const (
@@ -14,35 +14,16 @@ const (
 	TimeFormat Property = "time_format"
 )
 
+func (t *tempus) template() string {
+	return "{{ .CurrentDate | date \"" + t.props.getString(TimeFormat, "15:04:05") + "\" }}"
+}
+
 func (t *tempus) enabled() bool {
 	// if no date set, use now(unit testing)
 	if t.CurrentDate.IsZero() {
 		t.CurrentDate = time.Now()
 	}
-
 	return true
-}
-
-func (t *tempus) string() string {
-	segmentTemplate := t.props.getString(SegmentTemplate, "")
-	if segmentTemplate != "" {
-		template := &textTemplate{
-			Template: segmentTemplate,
-			Context:  t,
-			Env:      t.env,
-		}
-		var err error
-		t.templateText, err = template.render()
-		if err != nil {
-			t.templateText = err.Error()
-		}
-		if len(t.templateText) > 0 {
-			return t.templateText
-		}
-	}
-	// keep old behaviour if no template for now
-	timeFormatProperty := t.props.getString(TimeFormat, "15:04:05")
-	return t.CurrentDate.Format(timeFormatProperty)
 }
 
 func (t *tempus) init(props Properties, env Environment) {

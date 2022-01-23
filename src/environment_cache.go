@@ -21,7 +21,7 @@ type fileCache struct {
 	cachePath string
 }
 
-func (fc *fileCache) init(cachePath string) {
+func (fc *fileCache) Init(cachePath string) {
 	fc.cache = newConcurrentMap()
 	fc.cachePath = cachePath
 	content, err := ioutil.ReadFile(fc.cachePath + fileName)
@@ -39,7 +39,7 @@ func (fc *fileCache) init(cachePath string) {
 	}
 }
 
-func (fc *fileCache) close() {
+func (fc *fileCache) Close() {
 	cache := fc.cache.list()
 	if len(cache) == 0 {
 		return
@@ -51,7 +51,7 @@ func (fc *fileCache) close() {
 
 // returns the value for the given key as long as
 // the TTL (minutes) is not expired
-func (fc *fileCache) get(key string) (string, bool) {
+func (fc *fileCache) Get(key string) (string, bool) {
 	val, found := fc.cache.get(key)
 	if !found {
 		return "", false
@@ -72,7 +72,7 @@ func (fc *fileCache) get(key string) (string, bool) {
 }
 
 // sets the value for the given key with a TTL (minutes)
-func (fc *fileCache) set(key, value string, ttl int) {
+func (fc *fileCache) Set(key, value string, ttl int) {
 	fc.cache.set(key, &cacheObject{
 		Value:     value,
 		Timestamp: time.Now().Unix(),

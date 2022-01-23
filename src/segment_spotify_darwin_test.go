@@ -3,61 +3,37 @@
 package main
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-type spotifyArgs struct {
-	running  string
-	status   string
-	artist   string
-	track    string
-	runError error
-}
-
-func bootStrapSpotifyDarwinTest(args *spotifyArgs) *spotify {
-	env := new(MockedEnvironment)
-	env.On("runCommand", "osascript", []string{"-e", "application \"Spotify\" is running"}).Return(args.running, args.runError)
-	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to player state as string"}).Return(args.status, nil)
-	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to artist of current track as string"}).Return(args.artist, nil)
-	env.On("runCommand", "osascript", []string{"-e", "tell application \"Spotify\" to name of current track as string"}).Return(args.track, nil)
-	env.onTemplate()
-	s := &spotify{
-		env:   env,
-		props: properties{},
-	}
-	return s
-}
-
-func TestSpotifyDarwinEnabledAndSpotifyNotRunning(t *testing.T) {
-	args := &spotifyArgs{
-		running: "false",
-	}
-	s := bootStrapSpotifyDarwinTest(args)
-	assert.Equal(t, false, s.enabled())
-}
-
 func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
-	args := &spotifyArgs{
-		running: "true",
-		status:  "playing",
-		artist:  "Candlemass",
-		track:   "Spellbreaker",
+	cases := []struct {
+		Running  string
+		Expected string
+		Status   string
+		Artist   string
+		Track    string
+		Error    error
+	}{
+		{Running: "false", Expected: ""},
+		{Running: "false", Expected: "", Error: errors.New("oops")},
+		{Running: "true", Expected: "\ue602 Candlemass - Spellbreaker", Status: "playing", Artist: "Candlemass", Track: "Spellbreaker"},
+		{Running: "true", Expected: "\uF8E3 Candlemass - Spellbreaker", Status: "paused", Artist: "Candlemass", Track: "Spellbreaker"},
 	}
-	s := bootStrapSpotifyDarwinTest(args)
-	assert.Equal(t, true, s.enabled())
-	assert.Equal(t, "\ue602 Candlemass - Spellbreaker", s.string())
-}
-
-func TestSpotifyDarwinEnabledAndSpotifyPaused(t *testing.T) {
-	args := &spotifyArgs{
-		running: "true",
-		status:  "paused",
-		artist:  "Candlemass",
-		track:   "Spellbreaker",
+	for _, tc := range cases {
+		env := new(MockedEnvironment)
+		env.On("RunCommand", "osascript", []string{"-e", "application \"Spotify\" is running"}).Return(tc.Running, tc.Error)
+		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to player state as string"}).Return(tc.Status, nil)
+		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to artist of current track as string"}).Return(tc.Artist, nil)
+		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to name of current track as string"}).Return(tc.Track, nil)
+		s := &spotify{
+			env:   env,
+			props: properties{},
+		}
+		assert.Equal(t, tc.Running == "true", s.enabled())
+		assert.Equal(t, tc.Expected, renderTemplate(env, s.template(), s))
 	}
-	s := bootStrapSpotifyDarwinTest(args)
-	assert.Equal(t, true, s.enabled())
-	assert.Equal(t, "\uF8E3 Candlemass - Spellbreaker", s.string())
 }

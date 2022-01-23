@@ -16,18 +16,8 @@ const (
 	APIURL Property = "api_url"
 )
 
-func (y *ytm) string() string {
-	segmentTemplate := y.props.getString(SegmentTemplate, "{{.Icon}}{{ if ne .Status \"stopped\"}}{{.Artist}} - {{.Track}}{{ end }}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  y,
-		Env:      y.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
+func (y *ytm) template() string {
+	return "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}"
 }
 
 func (y *ytm) enabled() bool {

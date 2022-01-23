@@ -39,41 +39,31 @@ func (p *plastic) init(props Properties, env Environment) {
 	p.env = env
 }
 
+func (p *plastic) template() string {
+	return "{{ .Selector }}"
+}
+
 func (p *plastic) enabled() bool {
-	if !p.env.hasCommand("cm") {
+	if !p.env.HasCommand("cm") {
 		return false
 	}
-	wkdir, err := p.env.hasParentFilePath(".plastic")
+	wkdir, err := p.env.HasParentFilePath(".plastic")
 	if err != nil {
 		return false
 	}
-	if p.shouldIgnoreRootRepository(wkdir.parentFolder) {
+	if p.shouldIgnoreRootRepository(wkdir.ParentFolder) {
 		return false
 	}
-	if !wkdir.isDir {
+	if !wkdir.IsDir {
 		return false
 	}
-	p.plasticWorkspaceFolder = wkdir.parentFolder
+	p.plasticWorkspaceFolder = wkdir.ParentFolder
 	displayStatus := p.props.getBool(FetchStatus, false)
 	p.setSelector()
 	if displayStatus {
 		p.setPlasticStatus()
 	}
 	return true
-}
-
-func (p *plastic) string() string {
-	segmentTemplate := p.props.getString(SegmentTemplate, "{{ .Selector }}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  p,
-		Env:      p.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
 }
 
 func (p *plastic) setPlasticStatus() {
@@ -139,7 +129,7 @@ func (p *plastic) getHeadChangeset() int {
 
 func (p *plastic) setSelector() {
 	var ref string
-	selector := p.getFileContents(p.plasticWorkspaceFolder+"/.plastic/", "plastic.selector")
+	selector := p.FileContents(p.plasticWorkspaceFolder+"/.plastic/", "plastic.selector")
 	// changeset
 	ref = p.parseChangesetSelector(selector)
 	if len(ref) > 0 {
@@ -173,6 +163,6 @@ func (p *plastic) parseBranchSelector(selector string) string {
 }
 
 func (p *plastic) getCmCommandOutput(args ...string) string {
-	val, _ := p.env.runCommand("cm", args...)
+	val, _ := p.env.RunCommand("cm", args...)
 	return val
 }

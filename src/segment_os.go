@@ -56,86 +56,76 @@ const (
 	DisplayDistroName Property = "display_distro_name"
 )
 
-func (n *osInfo) enabled() bool {
-	goos := n.env.getRuntimeGOOS()
+func (oi *osInfo) template() string {
+	return "{{ if .WSL }}WSL at {{ end }}{{.Icon}}"
+}
+
+func (oi *osInfo) enabled() bool {
+	goos := oi.env.GOOS()
 	switch goos {
 	case windowsPlatform:
-		n.Icon = n.props.getString(Windows, "\uE62A")
+		oi.Icon = oi.props.getString(Windows, "\uE62A")
 	case darwinPlatform:
-		n.Icon = n.props.getString(MacOS, "\uF179")
+		oi.Icon = oi.props.getString(MacOS, "\uF179")
 	case linuxPlatform:
-		platform := n.env.getPlatform()
-		displayDistroName := n.props.getBool(DisplayDistroName, false)
+		platform := oi.env.Platform()
+		displayDistroName := oi.props.getBool(DisplayDistroName, false)
 		if displayDistroName {
-			n.Icon = platform
+			oi.Icon = platform
 			break
 		}
-		n.Icon = n.getDistroIcon(platform)
+		oi.Icon = oi.getDistroIcon(platform)
 	default:
-		n.Icon = goos
+		oi.Icon = goos
 	}
 	return true
 }
 
-func (n *osInfo) string() string {
-	segmentTemplate := n.props.getString(SegmentTemplate, "{{ if .WSL }}WSL at {{ end }}{{.Icon}}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  n,
-		Env:      n.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
-}
-
-func (n *osInfo) getDistroIcon(distro string) string {
+func (oi *osInfo) getDistroIcon(distro string) string {
 	switch distro {
 	case "alpine":
-		return n.props.getString(Alpine, "\uF300")
+		return oi.props.getString(Alpine, "\uF300")
 	case "aosc":
-		return n.props.getString(Aosc, "\uF301")
+		return oi.props.getString(Aosc, "\uF301")
 	case "arch":
-		return n.props.getString(Arch, "\uF303")
+		return oi.props.getString(Arch, "\uF303")
 	case "centos":
-		return n.props.getString(Centos, "\uF304")
+		return oi.props.getString(Centos, "\uF304")
 	case "coreos":
-		return n.props.getString(Coreos, "\uF305")
+		return oi.props.getString(Coreos, "\uF305")
 	case "debian":
-		return n.props.getString(Debian, "\uF306")
+		return oi.props.getString(Debian, "\uF306")
 	case "devuan":
-		return n.props.getString(Devuan, "\uF307")
+		return oi.props.getString(Devuan, "\uF307")
 	case "raspbian":
-		return n.props.getString(Raspbian, "\uF315")
+		return oi.props.getString(Raspbian, "\uF315")
 	case "elementary":
-		return n.props.getString(Elementary, "\uF309")
+		return oi.props.getString(Elementary, "\uF309")
 	case "fedora":
-		return n.props.getString(Fedora, "\uF30a")
+		return oi.props.getString(Fedora, "\uF30a")
 	case "gentoo":
-		return n.props.getString(Gentoo, "\uF30d")
+		return oi.props.getString(Gentoo, "\uF30d")
 	case "mageia":
-		return n.props.getString(Mageia, "\uF310")
+		return oi.props.getString(Mageia, "\uF310")
 	case "manjaro":
-		return n.props.getString(Manjaro, "\uF312")
+		return oi.props.getString(Manjaro, "\uF312")
 	case "mint":
-		return n.props.getString(Mint, "\uF30e")
+		return oi.props.getString(Mint, "\uF30e")
 	case "nixos":
-		return n.props.getString(Nixos, "\uF313")
+		return oi.props.getString(Nixos, "\uF313")
 	case "opensuse":
-		return n.props.getString(Opensuse, "\uF314")
+		return oi.props.getString(Opensuse, "\uF314")
 	case "sabayon":
-		return n.props.getString(Sabayon, "\uF317")
+		return oi.props.getString(Sabayon, "\uF317")
 	case "slackware":
-		return n.props.getString(Slackware, "\uF319")
+		return oi.props.getString(Slackware, "\uF319")
 	case "ubuntu":
-		return n.props.getString(Ubuntu, "\uF31b")
+		return oi.props.getString(Ubuntu, "\uF31b")
 	}
-	return n.props.getString(Linux, "\uF17C")
+	return oi.props.getString(Linux, "\uF17C")
 }
 
-func (n *osInfo) init(props Properties, env Environment) {
-	n.props = props
-	n.env = env
+func (oi *osInfo) init(props Properties, env Environment) {
+	oi.props = props
+	oi.env = env
 }

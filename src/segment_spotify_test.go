@@ -9,7 +9,6 @@ import (
 func TestSpotifyStringPlayingSong(t *testing.T) {
 	expected := "\ue602 Candlemass - Spellbreaker"
 	env := new(MockedEnvironment)
-	env.onTemplate()
 	s := &spotify{
 		MusicPlayer: MusicPlayer{
 			Artist: "Candlemass",
@@ -20,13 +19,12 @@ func TestSpotifyStringPlayingSong(t *testing.T) {
 		props: properties{},
 		env:   env,
 	}
-	assert.Equal(t, expected, s.string())
+	assert.Equal(t, expected, renderTemplate(env, s.template(), s))
 }
 
 func TestSpotifyStringStoppedSong(t *testing.T) {
 	expected := "\uf04d "
 	env := new(MockedEnvironment)
-	env.onTemplate()
 	s := &spotify{
 		MusicPlayer: MusicPlayer{
 			Artist: "Candlemass",
@@ -37,5 +35,5 @@ func TestSpotifyStringStoppedSong(t *testing.T) {
 		props: properties{},
 		env:   env,
 	}
-	assert.Equal(t, expected, s.string())
+	assert.Equal(t, expected, renderTemplate(env, s.template(), s))
 }

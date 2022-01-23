@@ -53,10 +53,10 @@ func TestGetConsoleTitle(t *testing.T) {
 			ConsoleTitleTemplate: tc.Template,
 		}
 		env := new(MockedEnvironment)
-		env.On("pwd").Return(tc.Cwd)
-		env.On("homeDir").Return("/usr/home")
-		env.On("getPathSeperator").Return(tc.PathSeperator)
-		env.On("templateCache").Return(&templateCache{
+		env.On("Pwd").Return(tc.Cwd)
+		env.On("Home").Return("/usr/home")
+		env.On("PathSeperator").Return(tc.PathSeperator)
+		env.On("TemplateCache").Return(&TemplateCache{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
 			},
@@ -67,7 +67,6 @@ func TestGetConsoleTitle(t *testing.T) {
 			PWD:      tc.Cwd,
 			Folder:   base(tc.Cwd, env),
 		})
-		env.onTemplate()
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)
 		ct := &consoleTitle{
@@ -115,9 +114,9 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			ConsoleTitleTemplate: tc.Template,
 		}
 		env := new(MockedEnvironment)
-		env.On("pwd").Return(tc.Cwd)
-		env.On("homeDir").Return("/usr/home")
-		env.On("templateCache").Return(&templateCache{
+		env.On("Pwd").Return(tc.Cwd)
+		env.On("Home").Return("/usr/home")
+		env.On("TemplateCache").Return(&TemplateCache{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
 			},
@@ -126,7 +125,6 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			Root:     tc.Root,
 			HostName: "",
 		})
-		env.onTemplate()
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)
 		ct := &consoleTitle{

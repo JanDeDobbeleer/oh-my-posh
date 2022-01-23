@@ -69,7 +69,7 @@ func TestAzSegment(t *testing.T) {
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
 		home := "/Users/posh"
-		env.On("homeDir").Return(home)
+		env.On("Home").Return(home)
 		var azureProfile, azureRmContext, azureRMContext string
 		if tc.HasCLI {
 			content, _ := ioutil.ReadFile("./test/azureProfile.json")
@@ -83,19 +83,15 @@ func TestAzSegment(t *testing.T) {
 			content, _ := ioutil.ReadFile("./test/AzureRmContext.json")
 			azureRMContext = string(content)
 		}
-		env.On("getRuntimeGOOS").Return(linuxPlatform)
-		env.On("getFileContent", filepath.Join(home, ".azure", "azureProfile.json")).Return(azureProfile)
-		env.On("getFileContent", filepath.Join(home, ".Azure", "AzureRmContext.json")).Return(azureRmContext)
-		env.On("getFileContent", filepath.Join(home, ".azure", "AzureRmContext.json")).Return(azureRMContext)
-		env.onTemplate()
-		props := properties{
-			SegmentTemplate: tc.Template,
-		}
+		env.On("GOOS").Return(linuxPlatform)
+		env.On("FileContent", filepath.Join(home, ".azure", "azureProfile.json")).Return(azureProfile)
+		env.On("FileContent", filepath.Join(home, ".Azure", "AzureRmContext.json")).Return(azureRmContext)
+		env.On("FileContent", filepath.Join(home, ".azure", "AzureRmContext.json")).Return(azureRMContext)
 		az := &az{
 			env:   env,
-			props: props,
+			props: properties{},
 		}
 		assert.Equal(t, tc.ExpectedEnabled, az.enabled(), tc.Case)
-		assert.Equal(t, tc.ExpectedString, az.string(), tc.Case)
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, az), tc.Case)
 	}
 }

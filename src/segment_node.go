@@ -17,9 +17,8 @@ const (
 	FetchPackageManager Property = "fetch_package_manager"
 )
 
-func (n *node) string() string {
-	segmentTemplate := n.language.props.getString(SegmentTemplate, "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}")
-	return n.language.string(segmentTemplate, n)
+func (n *node) template() string {
+	return "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
 }
 
 func (n *node) init(props Properties, env Environment) {
@@ -48,17 +47,17 @@ func (n *node) loadContext() {
 	if !n.language.props.getBool(FetchPackageManager, false) {
 		return
 	}
-	if n.language.env.hasFiles("yarn.lock") {
+	if n.language.env.HasFiles("yarn.lock") {
 		n.PackageManagerIcon = n.language.props.getString(YarnIcon, " \uF61A")
 		return
 	}
-	if n.language.env.hasFiles("package-lock.json") || n.language.env.hasFiles("package.json") {
+	if n.language.env.HasFiles("package-lock.json") || n.language.env.HasFiles("package.json") {
 		n.PackageManagerIcon = n.language.props.getString(NPMIcon, " \uE71E")
 	}
 }
 
 func (n *node) matchesVersionFile() bool {
-	fileVersion := n.language.env.getFileContent(".nvmrc")
+	fileVersion := n.language.env.FileContent(".nvmrc")
 	if len(fileVersion) == 0 {
 		return true
 	}

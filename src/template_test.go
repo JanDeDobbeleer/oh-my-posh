@@ -69,7 +69,9 @@ func TestRenderTemplate(t *testing.T) {
 	}
 
 	env := &MockedEnvironment{}
-	env.onTemplate()
+	env.On("TemplateCache").Return(&TemplateCache{
+		Env: make(map[string]string),
+	})
 	for _, tc := range cases {
 		template := &textTemplate{
 			Template: tc.Template,
@@ -121,7 +123,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := &MockedEnvironment{}
-		env.On("templateCache").Return(&templateCache{
+		env.On("TemplateCache").Return(&TemplateCache{
 			Env: tc.Env,
 		})
 		template := &textTemplate{

@@ -50,18 +50,8 @@ func (d *owm) enabled() bool {
 	return err == nil
 }
 
-func (d *owm) string() string {
-	segmentTemplate := d.props.getString(SegmentTemplate, "{{.Weather}} ({{.Temperature}}{{.UnitIcon}})")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  d,
-		Env:      d.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
+func (d *owm) template() string {
+	return "{{ .Weather }} ({{ .Temperature }}{{ .UnitIcon }})"
 }
 
 func (d *owm) getResult() (*owmDataResponse, error) {
@@ -69,14 +59,14 @@ func (d *owm) getResult() (*owmDataResponse, error) {
 	response := new(owmDataResponse)
 	if cacheTimeout > 0 {
 		// check if data stored in cache
-		val, found := d.env.cache().get(CacheKeyResponse)
+		val, found := d.env.Cache().Get(CacheKeyResponse)
 		// we got something from te cache
 		if found {
 			err := json.Unmarshal([]byte(val), response)
 			if err != nil {
 				return nil, err
 			}
-			d.URL, _ = d.env.cache().get(CacheKeyURL)
+			d.URL, _ = d.env.Cache().Get(CacheKeyURL)
 			return response, nil
 		}
 	}
@@ -98,8 +88,8 @@ func (d *owm) getResult() (*owmDataResponse, error) {
 
 	if cacheTimeout > 0 {
 		// persist new forecasts in cache
-		d.env.cache().set(CacheKeyResponse, string(body), cacheTimeout)
-		d.env.cache().set(CacheKeyURL, d.URL, cacheTimeout)
+		d.env.Cache().Set(CacheKeyResponse, string(body), cacheTimeout)
+		d.env.Cache().Set(CacheKeyURL, d.URL, cacheTimeout)
 	}
 	return response, nil
 }

@@ -5,6 +5,10 @@ import (
 	"fmt"
 )
 
+const (
+	languageTemplate = "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+)
+
 type loadContext func()
 
 type inContext func() bool
@@ -83,24 +87,11 @@ const (
 	LanguageExtensions Property = "extensions"
 )
 
-func (l *language) string(segmentTemplate string, context SegmentWriter) string {
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  context,
-		Env:      l.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
-}
-
 func (l *language) enabled() bool {
 	// override default extensions if needed
 	l.extensions = l.props.getStringArray(LanguageExtensions, l.extensions)
 	inHomeDir := func() bool {
-		return l.env.pwd() == l.env.homeDir()
+		return l.env.Pwd() == l.env.Home()
 	}
 	var enabled bool
 	homeEnabled := l.props.getBool(HomeEnabled, l.homeEnabled)
@@ -138,7 +129,7 @@ func (l *language) enabled() bool {
 // hasLanguageFiles will return true at least one file matching the extensions is found
 func (l *language) hasLanguageFiles() bool {
 	for i, extension := range l.extensions {
-		if l.env.hasFiles(extension) {
+		if l.env.HasFiles(extension) {
 			break
 		}
 		if i == len(l.extensions)-1 {
@@ -155,10 +146,10 @@ func (l *language) setVersion() error {
 		var versionStr string
 		var err error
 		if command.getVersion == nil {
-			if !l.env.hasCommand(command.executable) {
+			if !l.env.HasCommand(command.executable) {
 				continue
 			}
-			versionStr, err = l.env.runCommand(command.executable, command.args...)
+			versionStr, err = l.env.RunCommand(command.executable, command.args...)
 			if exitErr, ok := err.(*commandError); ok {
 				l.exitCode = exitErr.exitCode
 				return fmt.Errorf("err executing %s with %s", command.executable, command.args)

@@ -87,16 +87,16 @@ func TestSessionSegmentTemplate(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getCurrentUser").Return(tc.UserName)
-		env.On("getRuntimeGOOS").Return("burp")
-		env.On("getHostName").Return(tc.ComputerName, nil)
+		env.On("User").Return(tc.UserName)
+		env.On("GOOS").Return("burp")
+		env.On("Host").Return(tc.ComputerName, nil)
 		var SSHSession string
 		if tc.SSHSession {
 			SSHSession = "zezzion"
 		}
-		env.On("getenv", "SSH_CONNECTION").Return(SSHSession)
-		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
-		env.On("templateCache").Return(&templateCache{
+		env.On("Getenv", "SSH_CONNECTION").Return(SSHSession)
+		env.On("Getenv", "SSH_CLIENT").Return(SSHSession)
+		env.On("TemplateCache").Return(&TemplateCache{
 			UserName: tc.UserName,
 			HostName: tc.ComputerName,
 			Env: map[string]string{
@@ -107,12 +107,10 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			Root: tc.Root,
 		})
 		session := &session{
-			env: env,
-			props: properties{
-				SegmentTemplate: tc.Template,
-			},
+			env:   env,
+			props: properties{},
 		}
 		_ = session.enabled()
-		assert.Equal(t, tc.ExpectedString, session.string(), tc.Case)
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, session), tc.Case)
 	}
 }

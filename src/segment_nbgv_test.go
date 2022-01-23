@@ -14,7 +14,7 @@ func TestNbgv(t *testing.T) {
 		ExpectedString  string
 		Response        string
 		HasNbgv         bool
-		SegmentTemplate string
+		Template        string
 		Error           error
 	}{
 		{Case: "nbgv not installed"},
@@ -26,7 +26,7 @@ func TestNbgv(t *testing.T) {
 			ExpectedString:  "invalid template text",
 			HasNbgv:         true,
 			Response:        "{ \"VersionFileFound\": true }",
-			SegmentTemplate: "{{ err }}",
+			Template:        "{{ err }}",
 		},
 		{
 			Case:    "command error",
@@ -44,7 +44,7 @@ func TestNbgv(t *testing.T) {
 			ExpectedString:  "bump",
 			HasNbgv:         true,
 			Response:        "{ \"VersionFileFound\": true, \"Version\": \"bump\" }",
-			SegmentTemplate: "{{ .Version }}",
+			Template:        "{{ .Version }}",
 		},
 		{
 			Case:            "AssemblyVersion",
@@ -52,25 +52,25 @@ func TestNbgv(t *testing.T) {
 			ExpectedString:  "bump",
 			HasNbgv:         true,
 			Response:        "{ \"VersionFileFound\": true, \"AssemblyVersion\": \"bump\" }",
-			SegmentTemplate: "{{ .AssemblyVersion }}",
+			Template:        "{{ .AssemblyVersion }}",
 		},
 	}
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("hasCommand", "nbgv").Return(tc.HasNbgv)
-		env.On("runCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
-		env.onTemplate()
+		env.On("HasCommand", "nbgv").Return(tc.HasNbgv)
+		env.On("RunCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
 		nbgv := &nbgv{
-			env: env,
-			props: properties{
-				SegmentTemplate: tc.SegmentTemplate,
-			},
+			env:   env,
+			props: properties{},
 		}
 		enabled := nbgv.enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
+		if tc.Template == "" {
+			tc.Template = nbgv.template()
+		}
 		if enabled {
-			assert.Equal(t, tc.ExpectedString, nbgv.string(), tc.Case)
+			assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, nbgv), tc.Case)
 		}
 	}
 }

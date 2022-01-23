@@ -47,26 +47,24 @@ func TestAWSSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getenv", "AWS_VAULT").Return(tc.Vault)
-		env.On("getenv", "AWS_PROFILE").Return(tc.Profile)
-		env.On("getenv", "AWS_REGION").Return(tc.Region)
-		env.On("getenv", "AWS_DEFAULT_REGION").Return(tc.DefaultRegion)
-		env.On("getenv", "AWS_CONFIG_FILE").Return(tc.ConfigFile)
-		env.On("getFileContent", "/usr/home/.aws/config").Return("")
-		env.On("homeDir").Return("/usr/home")
-		env.onTemplate()
+		env.On("Getenv", "AWS_VAULT").Return(tc.Vault)
+		env.On("Getenv", "AWS_PROFILE").Return(tc.Profile)
+		env.On("Getenv", "AWS_REGION").Return(tc.Region)
+		env.On("Getenv", "AWS_DEFAULT_REGION").Return(tc.DefaultRegion)
+		env.On("Getenv", "AWS_CONFIG_FILE").Return(tc.ConfigFile)
+		env.On("FileContent", "/usr/home/.aws/config").Return("")
+		env.On("Home").Return("/usr/home")
 		props := properties{
 			DisplayDefault: tc.DisplayDefault,
 		}
-		if tc.Template != "" {
-			props[SegmentTemplate] = tc.Template
-		}
-
 		aws := &aws{
 			env:   env,
 			props: props,
 		}
+		if tc.Template == "" {
+			tc.Template = aws.template()
+		}
 		assert.Equal(t, tc.ExpectedEnabled, aws.enabled(), tc.Case)
-		assert.Equal(t, tc.ExpectedString, aws.string(), tc.Case)
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, aws), tc.Case)
 	}
 }

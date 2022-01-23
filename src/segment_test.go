@@ -80,9 +80,9 @@ func TestShouldIncludeFolder(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getRuntimeGOOS").Return(linuxPlatform)
-		env.On("homeDir").Return("")
-		env.On("pwd").Return(cwd)
+		env.On("GOOS").Return(linuxPlatform)
+		env.On("Home").Return("")
+		env.On("Pwd").Return(cwd)
 		segment := &Segment{
 			Properties: properties{
 				IncludeFolders: tc.IncludeFolders,
@@ -97,9 +97,9 @@ func TestShouldIncludeFolder(t *testing.T) {
 
 func TestShouldIncludeFolderRegexInverted(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("getRuntimeGOOS").Return(linuxPlatform)
-	env.On("homeDir").Return("")
-	env.On("pwd").Return(cwd)
+	env.On("GOOS").Return(linuxPlatform)
+	env.On("Home").Return("")
+	env.On("Pwd").Return(cwd)
 	segment := &Segment{
 		Properties: properties{
 			ExcludeFolders: []string{"(?!Projects[\\/]).*"},
@@ -118,9 +118,9 @@ func TestShouldIncludeFolderRegexInverted(t *testing.T) {
 
 func TestShouldIncludeFolderRegexInvertedNonEscaped(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("getRuntimeGOOS").Return(linuxPlatform)
-	env.On("homeDir").Return("")
-	env.On("pwd").Return(cwd)
+	env.On("GOOS").Return(linuxPlatform)
+	env.On("Home").Return("")
+	env.On("Pwd").Return(cwd)
 	segment := &Segment{
 		Properties: properties{
 			ExcludeFolders: []string{"(?!Projects/).*"},
@@ -191,7 +191,9 @@ func TestGetColors(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.onTemplate()
+		env.On("TemplateCache").Return(&TemplateCache{
+			Env: make(map[string]string),
+		})
 		segment := &Segment{
 			writer: &aws{
 				Profile: tc.Profile,

@@ -61,9 +61,9 @@ func TestOSInfo(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getRuntimeGOOS").Return(tc.GOOS)
-		env.On("getPlatform").Return(tc.Platform)
-		env.On("templateCache").Return(&templateCache{
+		env.On("GOOS").Return(tc.GOOS)
+		env.On("Platform").Return(tc.Platform)
+		env.On("TemplateCache").Return(&TemplateCache{
 			Env: make(map[string]string),
 			WSL: tc.IsWSL,
 		})
@@ -76,6 +76,6 @@ func TestOSInfo(t *testing.T) {
 			},
 		}
 		_ = osInfo.enabled()
-		assert.Equal(t, tc.ExpectedString, osInfo.string(), tc.Case)
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, osInfo.template(), osInfo), tc.Case)
 	}
 }

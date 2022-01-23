@@ -145,16 +145,12 @@ func TestBrewfatherSegment(t *testing.T) {
 		}
 
 		cache := &MockedCache{}
-		cache.On("get", BFCacheKey).Return(nil, false) // cache testing later because cache is a little more complicated than just the single response.
-		// cache.On("set", BFCacheKey, tc.JSONResponse, tc.CacheTimeout).Return()
+		cache.On("Get", BFCacheKey).Return(nil, false) // cache testing later because cache is a little more complicated than just the single response.
+		// cache.On("Set", BFCacheKey, tc.JSONResponse, tc.CacheTimeout).Return()
 
 		env.On("HTTPRequest", BFBatchURL).Return([]byte(tc.BatchJSONResponse), tc.Error)
 		env.On("HTTPRequest", BFBatchReadingsURL).Return([]byte(tc.BatchReadingsJSONResponse), tc.Error)
-		env.On("cache").Return(cache)
-		env.onTemplate()
-		if tc.Template != "" {
-			props[SegmentTemplate] = tc.Template
-		}
+		env.On("Cache").Return(cache)
 
 		ns := &brewfather{
 			props: props,
@@ -167,6 +163,9 @@ func TestBrewfatherSegment(t *testing.T) {
 			continue
 		}
 
-		assert.Equal(t, tc.ExpectedString, ns.string(), tc.Case)
+		if tc.Template == "" {
+			tc.Template = ns.template()
+		}
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, ns), tc.Case)
 	}
 }

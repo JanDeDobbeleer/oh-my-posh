@@ -6,9 +6,8 @@ type dotnet struct {
 	Unsupported bool
 }
 
-func (d *dotnet) string() string {
-	segmentTemplate := d.language.props.getString(SegmentTemplate, "{{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}")
-	return d.language.string(segmentTemplate, d)
+func (d *dotnet) template() string {
+	return "{{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}"
 }
 
 func (d *dotnet) init(props Properties, env Environment) {

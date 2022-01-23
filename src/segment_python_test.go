@@ -42,26 +42,27 @@ func TestPythonTemplate(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("hasCommand", "python").Return(true)
-		env.On("runCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
-		env.On("hasFiles", "*.py").Return(true)
-		env.On("getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
-		env.On("getenv", "CONDA_ENV_PATH").Return(tc.VirtualEnvName)
-		env.On("getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
-		env.On("getenv", "PYENV_VERSION").Return(tc.VirtualEnvName)
-		env.On("getPathSeperator").Return("")
-		env.On("pwd").Return("/usr/home/project")
-		env.On("homeDir").Return("/usr/home")
-		env.onTemplate()
+		env.On("HasCommand", "python").Return(true)
+		env.On("RunCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
+		env.On("HasFiles", "*.py").Return(true)
+		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
+		env.On("Getenv", "CONDA_ENV_PATH").Return(tc.VirtualEnvName)
+		env.On("Getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
+		env.On("Getenv", "PYENV_VERSION").Return(tc.VirtualEnvName)
+		env.On("PathSeperator").Return("")
+		env.On("Pwd").Return("/usr/home/project")
+		env.On("Home").Return("/usr/home")
 		props := properties{
-			FetchVersion:    tc.FetchVersion,
-			SegmentTemplate: tc.Template,
-			DisplayMode:     DisplayModeAlways,
+			FetchVersion: tc.FetchVersion,
+			DisplayMode:  DisplayModeAlways,
 		}
+		env.On("TemplateCache").Return(&TemplateCache{
+			Env: make(map[string]string),
+		})
 		python := &python{}
 		python.init(props, env)
 		assert.Equal(t, !tc.ExpectedDisabled, python.enabled(), tc.Case)
-		assert.Equal(t, tc.Expected, python.string(), tc.Case)
+		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, python), tc.Case)
 	}
 }
 
@@ -76,11 +77,11 @@ func TestPythonPythonInContext(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getPathSeperator").Return("")
-		env.On("getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
-		env.On("getenv", "CONDA_ENV_PATH").Return("")
-		env.On("getenv", "CONDA_DEFAULT_ENV").Return("")
-		env.On("getenv", "PYENV_VERSION").Return("")
+		env.On("PathSeperator").Return("")
+		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
+		env.On("Getenv", "CONDA_ENV_PATH").Return("")
+		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
+		env.On("Getenv", "PYENV_VERSION").Return("")
 		python := &python{}
 		python.init(properties{}, env)
 		python.loadContext()

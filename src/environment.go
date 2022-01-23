@@ -41,18 +41,18 @@ func (m *noBatteryError) Error() string {
 	return "no battery"
 }
 
-type fileInfo struct {
-	parentFolder string
-	path         string
-	isDir        bool
+type FileInfo struct {
+	ParentFolder string
+	Path         string
+	IsDir        bool
 }
 
-type cache interface {
-	init(home string)
-	close()
-	get(key string) (string, bool)
+type Cache interface {
+	Init(home string)
+	Close()
+	Get(key string) (string, bool)
 	// ttl in minutes
-	set(key, value string, ttl int)
+	Set(key, value string, ttl int)
 }
 
 type HTTPRequestModifier func(request *http.Request)
@@ -65,7 +65,7 @@ const (
 	regString
 )
 
-type windowsRegistryValue struct {
+type WindowsRegistryValue struct {
 	valueType windowsRegistryValueType
 	qword     uint64
 	dword     uint32
@@ -74,7 +74,7 @@ type windowsRegistryValue struct {
 
 type WifiType string
 
-type wifiInfo struct {
+type WifiInfo struct {
 	SSID           string
 	Interface      string
 	RadioType      WifiType
@@ -89,45 +89,45 @@ type wifiInfo struct {
 }
 
 type Environment interface {
-	getenv(key string) string
-	pwd() string
-	homeDir() string
-	hasFiles(pattern string) bool
-	hasFilesInDir(dir, pattern string) bool
-	hasFolder(folder string) bool
-	getFileContent(file string) string
-	getFoldersList(path string) []string
-	getPathSeperator() string
-	getCurrentUser() string
-	isRunningAsRoot() bool
-	getHostName() (string, error)
-	getRuntimeGOOS() string
-	getPlatform() string
-	hasCommand(command string) bool
-	runCommand(command string, args ...string) (string, error)
-	runShellCommand(shell, command string) string
-	lastErrorCode() int
-	executionTime() float64
-	getArgs() *args
-	getBatteryInfo() ([]*battery.Battery, error)
-	getShellName() string
-	getWindowTitle(imageName, windowTitleRegex string) (string, error)
-	getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error)
+	Getenv(key string) string
+	Pwd() string
+	Home() string
+	User() string
+	Root() bool
+	Host() (string, error)
+	GOOS() string
+	Shell() string
+	Platform() string
+	ErrorCode() int
+	PathSeperator() string
+	HasFiles(pattern string) bool
+	HasFilesInDir(dir, pattern string) bool
+	HasFolder(folder string) bool
+	HasParentFilePath(path string) (fileInfo *FileInfo, err error)
+	HasCommand(command string) bool
+	FileContent(file string) string
+	FolderList(path string) []string
+	RunCommand(command string, args ...string) (string, error)
+	RunShellCommand(shell, command string) string
+	ExecutionTime() float64
+	Args() *Args
+	BatteryInfo() ([]*battery.Battery, error)
+	WindowTitle(imageName, windowTitleRegex string) (string, error)
+	WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error)
 	HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
-	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
-	isWsl() bool
-	isWsl2() bool
-	stackCount() int
-	getTerminalWidth() (int, error)
-	getCachePath() string
-	cache() cache
-	close()
-	logs() string
-	inWSLSharedDrive() bool
-	convertToLinuxPath(path string) string
-	convertToWindowsPath(path string) string
-	getWifiNetwork() (*wifiInfo, error)
-	templateCache() *templateCache
+	IsWsl() bool
+	IsWsl2() bool
+	StackCount() int
+	TerminalWidth() (int, error)
+	CachePath() string
+	Cache() Cache
+	Close()
+	Logs() string
+	InWSLSharedDrive() bool
+	ConvertToLinuxPath(path string) string
+	ConvertToWindowsPath(path string) string
+	WifiNetwork() (*WifiInfo, error)
+	TemplateCache() *TemplateCache
 }
 
 type commandCache struct {
@@ -155,19 +155,19 @@ const (
 )
 
 type environment struct {
-	args       *args
+	args       *Args
 	cwd        string
 	cmdCache   *commandCache
 	fileCache  *fileCache
-	tmplCache  *templateCache
+	tmplCache  *TemplateCache
 	logBuilder strings.Builder
 	debug      bool
 }
 
-func (env *environment) init(args *args) {
+func (env *environment) init(args *Args) {
 	env.args = args
 	env.fileCache = &fileCache{}
-	env.fileCache.init(env.getCachePath())
+	env.fileCache.Init(env.CachePath())
 	env.resolveConfigPath()
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
@@ -184,13 +184,13 @@ func (env *environment) resolveConfigPath() {
 	}
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
-	if env.getPlatform() == windowsPlatform && env.getShellName() == bash {
+	if env.Platform() == windowsPlatform && env.Shell() == bash {
 		return
 	}
 	configFile := *env.args.Config
 	if strings.HasPrefix(configFile, "~") {
 		configFile = strings.TrimPrefix(configFile, "~")
-		configFile = filepath.Join(env.homeDir(), configFile)
+		configFile = filepath.Join(env.Home(), configFile)
 	}
 	if !filepath.IsAbs(configFile) {
 		if absConfigFile, err := filepath.Abs(configFile); err == nil {
@@ -217,17 +217,17 @@ func (env *environment) log(lt logType, function, message string) {
 	log.Println(trace)
 }
 
-func (env *environment) getenv(key string) string {
-	defer env.trace(time.Now(), "getenv", key)
+func (env *environment) Getenv(key string) string {
+	defer env.trace(time.Now(), "Getenv", key)
 	val := os.Getenv(key)
-	env.log(Debug, "getenv", val)
+	env.log(Debug, "Getenv", val)
 	return val
 }
 
-func (env *environment) pwd() string {
-	defer env.trace(time.Now(), "pwd")
+func (env *environment) Pwd() string {
+	defer env.trace(time.Now(), "Pwd")
 	defer func() {
-		env.log(Debug, "pwd", env.cwd)
+		env.log(Debug, "Pwd", env.cwd)
 	}()
 	if env.cwd != "" {
 		return env.cwd
@@ -243,57 +243,57 @@ func (env *environment) pwd() string {
 	}
 	dir, err := os.Getwd()
 	if err != nil {
-		env.log(Error, "pwd", err.Error())
+		env.log(Error, "Pwd", err.Error())
 		return ""
 	}
 	env.cwd = correctPath(dir)
 	return env.cwd
 }
 
-func (env *environment) hasFiles(pattern string) bool {
-	defer env.trace(time.Now(), "hasFiles", pattern)
-	cwd := env.pwd()
-	pattern = cwd + env.getPathSeperator() + pattern
+func (env *environment) HasFiles(pattern string) bool {
+	defer env.trace(time.Now(), "HasFiles", pattern)
+	cwd := env.Pwd()
+	pattern = cwd + env.PathSeperator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
-		env.log(Error, "hasFiles", err.Error())
+		env.log(Error, "HasFiles", err.Error())
 		return false
 	}
 	return len(matches) > 0
 }
 
-func (env *environment) hasFilesInDir(dir, pattern string) bool {
-	defer env.trace(time.Now(), "hasFilesInDir", pattern)
-	pattern = dir + env.getPathSeperator() + pattern
+func (env *environment) HasFilesInDir(dir, pattern string) bool {
+	defer env.trace(time.Now(), "HasFilesInDir", pattern)
+	pattern = dir + env.PathSeperator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
-		env.log(Error, "hasFilesInDir", err.Error())
+		env.log(Error, "HasFilesInDir", err.Error())
 		return false
 	}
 	return len(matches) > 0
 }
 
-func (env *environment) hasFolder(folder string) bool {
-	defer env.trace(time.Now(), "hasFolder", folder)
+func (env *environment) HasFolder(folder string) bool {
+	defer env.trace(time.Now(), "HasFolder", folder)
 	_, err := os.Stat(folder)
 	return !os.IsNotExist(err)
 }
 
-func (env *environment) getFileContent(file string) string {
-	defer env.trace(time.Now(), "getFileContent", file)
+func (env *environment) FileContent(file string) string {
+	defer env.trace(time.Now(), "FileContent", file)
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
-		env.log(Error, "getFileContent", err.Error())
+		env.log(Error, "FileContent", err.Error())
 		return ""
 	}
 	return string(content)
 }
 
-func (env *environment) getFoldersList(path string) []string {
-	defer env.trace(time.Now(), "getFoldersList", path)
+func (env *environment) FolderList(path string) []string {
+	defer env.trace(time.Now(), "FolderList", path)
 	content, err := os.ReadDir(path)
 	if err != nil {
-		env.log(Error, "getFoldersList", err.Error())
+		env.log(Error, "FolderList", err.Error())
 		return nil
 	}
 	var folderNames []string
@@ -305,13 +305,13 @@ func (env *environment) getFoldersList(path string) []string {
 	return folderNames
 }
 
-func (env *environment) getPathSeperator() string {
-	defer env.trace(time.Now(), "getPathSeperator")
+func (env *environment) PathSeperator() string {
+	defer env.trace(time.Now(), "PathSeperator")
 	return string(os.PathSeparator)
 }
 
-func (env *environment) getCurrentUser() string {
-	defer env.trace(time.Now(), "getCurrentUser")
+func (env *environment) User() string {
+	defer env.trace(time.Now(), "User")
 	user := os.Getenv("USER")
 	if user == "" {
 		user = os.Getenv("USERNAME")
@@ -319,23 +319,23 @@ func (env *environment) getCurrentUser() string {
 	return user
 }
 
-func (env *environment) getHostName() (string, error) {
-	defer env.trace(time.Now(), "getHostName")
+func (env *environment) Host() (string, error) {
+	defer env.trace(time.Now(), "Host")
 	hostName, err := os.Hostname()
 	if err != nil {
-		env.log(Error, "getHostName", err.Error())
+		env.log(Error, "Host", err.Error())
 		return "", err
 	}
 	return cleanHostName(hostName), nil
 }
 
-func (env *environment) getRuntimeGOOS() string {
-	defer env.trace(time.Now(), "getRuntimeGOOS")
+func (env *environment) GOOS() string {
+	defer env.trace(time.Now(), "GOOS")
 	return runtime.GOOS
 }
 
-func (env *environment) runCommand(command string, args ...string) (string, error) {
-	defer env.trace(time.Now(), "runCommand", append([]string{command}, args...)...)
+func (env *environment) RunCommand(command string, args ...string) (string, error) {
+	defer env.trace(time.Now(), "RunCommand", append([]string{command}, args...)...)
 	if cmd, ok := env.cmdCache.get(command); ok {
 		command = cmd
 	}
@@ -348,22 +348,22 @@ func (env *environment) runCommand(command string, args ...string) (string, erro
 	if cmdErr != nil {
 		output := err.String()
 		errorStr := fmt.Sprintf("cmd.Start() failed with '%s'", output)
-		env.log(Error, "runCommand", errorStr)
+		env.log(Error, "RunCommand", errorStr)
 		return output, cmdErr
 	}
 	output := strings.TrimSuffix(out.String(), "\n")
-	env.log(Debug, "runCommand", output)
+	env.log(Debug, "RunCommand", output)
 	return output, nil
 }
 
-func (env *environment) runShellCommand(shell, command string) string {
-	defer env.trace(time.Now(), "runShellCommand", shell, command)
-	out, _ := env.runCommand(shell, "-c", command)
+func (env *environment) RunShellCommand(shell, command string) string {
+	defer env.trace(time.Now(), "RunShellCommand", shell, command)
+	out, _ := env.RunCommand(shell, "-c", command)
 	return out
 }
 
-func (env *environment) hasCommand(command string) bool {
-	defer env.trace(time.Now(), "hasCommand", command)
+func (env *environment) HasCommand(command string) bool {
+	defer env.trace(time.Now(), "HasCommand", command)
 	if _, ok := env.cmdCache.get(command); ok {
 		return true
 	}
@@ -372,34 +372,34 @@ func (env *environment) hasCommand(command string) bool {
 		env.cmdCache.set(command, path)
 		return true
 	}
-	env.log(Error, "hasCommand", err.Error())
+	env.log(Error, "HasCommand", err.Error())
 	return false
 }
 
-func (env *environment) lastErrorCode() int {
-	defer env.trace(time.Now(), "lastErrorCode")
+func (env *environment) ErrorCode() int {
+	defer env.trace(time.Now(), "ErrorCode")
 	return *env.args.ErrorCode
 }
 
-func (env *environment) executionTime() float64 {
-	defer env.trace(time.Now(), "executionTime")
+func (env *environment) ExecutionTime() float64 {
+	defer env.trace(time.Now(), "ExecutionTime")
 	if *env.args.ExecutionTime < 0 {
 		return 0
 	}
 	return *env.args.ExecutionTime
 }
 
-func (env *environment) getArgs() *args {
-	defer env.trace(time.Now(), "getArgs")
+func (env *environment) Args() *Args {
+	defer env.trace(time.Now(), "Args")
 	return env.args
 }
 
-func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
-	defer env.trace(time.Now(), "getBatteryInfo")
+func (env *environment) BatteryInfo() ([]*battery.Battery, error) {
+	defer env.trace(time.Now(), "BatteryInfo")
 	batteries, err := battery.GetAll()
 	// actual error, return it
 	if err != nil && len(batteries) == 0 {
-		env.log(Error, "getBatteryInfo", err.Error())
+		env.log(Error, "BatteryInfo", err.Error())
 		return nil, err
 	}
 	// there are no batteries found
@@ -447,15 +447,15 @@ func (env *environment) getBatteryInfo() ([]*battery.Battery, error) {
 	}
 	// another error occurred (possibly unmapped use-case), return it
 	if fatalErr != nil {
-		env.log(Error, "getBatteryInfo", fatalErr.Error())
+		env.log(Error, "BatteryInfo", fatalErr.Error())
 		return nil, fatalErr
 	}
 	// everything is fine
 	return validBatteries, nil
 }
 
-func (env *environment) getShellName() string {
-	defer env.trace(time.Now(), "getShellName")
+func (env *environment) Shell() string {
+	defer env.trace(time.Now(), "Shell")
 	if *env.args.Shell != "" {
 		return *env.args.Shell
 	}
@@ -463,7 +463,7 @@ func (env *environment) getShellName() string {
 	p, _ := process.NewProcess(int32(pid))
 	name, err := p.Name()
 	if err != nil {
-		env.log(Error, "getShellName", err.Error())
+		env.log(Error, "Shell", err.Error())
 		return unknown
 	}
 	if name == "cmd.exe" {
@@ -471,7 +471,7 @@ func (env *environment) getShellName() string {
 		name, err = p.Name()
 	}
 	if err != nil {
-		env.log(Error, "getShellName", err.Error())
+		env.log(Error, "Shell", err.Error())
 		return unknown
 	}
 	// Cache the shell value to speed things up.
@@ -504,17 +504,17 @@ func (env *environment) HTTPRequest(url string, timeout int, requestModifiers ..
 	return body, nil
 }
 
-func (env *environment) hasParentFilePath(path string) (*fileInfo, error) {
-	defer env.trace(time.Now(), "hasParentFilePath", path)
-	currentFolder := env.pwd()
+func (env *environment) HasParentFilePath(path string) (*FileInfo, error) {
+	defer env.trace(time.Now(), "HasParentFilePath", path)
+	currentFolder := env.Pwd()
 	for {
 		searchPath := filepath.Join(currentFolder, path)
 		info, err := os.Stat(searchPath)
 		if err == nil {
-			return &fileInfo{
-				parentFolder: currentFolder,
-				path:         searchPath,
-				isDir:        info.IsDir(),
+			return &FileInfo{
+				ParentFolder: currentFolder,
+				Path:         searchPath,
+				IsDir:        info.IsDir(),
 			}, nil
 		}
 		if !os.IsNotExist(err) {
@@ -524,41 +524,41 @@ func (env *environment) hasParentFilePath(path string) (*fileInfo, error) {
 			currentFolder = dir
 			continue
 		}
-		env.log(Error, "hasParentFilePath", err.Error())
+		env.log(Error, "HasParentFilePath", err.Error())
 		return nil, errors.New("no match at root level")
 	}
 }
 
-func (env *environment) stackCount() int {
-	defer env.trace(time.Now(), "stackCount")
+func (env *environment) StackCount() int {
+	defer env.trace(time.Now(), "StackCount")
 	if *env.args.StackCount < 0 {
 		return 0
 	}
 	return *env.args.StackCount
 }
 
-func (env *environment) cache() cache {
+func (env *environment) Cache() Cache {
 	return env.fileCache
 }
 
-func (env *environment) close() {
-	env.fileCache.close()
+func (env *environment) Close() {
+	env.fileCache.Close()
 }
 
-func (env *environment) logs() string {
+func (env *environment) Logs() string {
 	return env.logBuilder.String()
 }
 
-func (env *environment) templateCache() *templateCache {
-	defer env.trace(time.Now(), "templateCache")
+func (env *environment) TemplateCache() *TemplateCache {
+	defer env.trace(time.Now(), "TemplateCache")
 	if env.tmplCache != nil {
 		return env.tmplCache
 	}
-	tmplCache := &templateCache{
-		Root:  env.isRunningAsRoot(),
-		Shell: env.getShellName(),
-		Code:  env.lastErrorCode(),
-		WSL:   env.isWsl(),
+	tmplCache := &TemplateCache{
+		Root:  env.Root(),
+		Shell: env.Shell(),
+		Code:  env.ErrorCode(),
+		WSL:   env.IsWsl(),
 	}
 	tmplCache.Env = make(map[string]string)
 	const separator = "="
@@ -572,15 +572,15 @@ func (env *environment) templateCache() *templateCache {
 		val := splitted[1:]
 		tmplCache.Env[key] = strings.Join(val, separator)
 	}
-	pwd := env.pwd()
-	pwd = strings.Replace(pwd, env.homeDir(), "~", 1)
+	pwd := env.Pwd()
+	pwd = strings.Replace(pwd, env.Home(), "~", 1)
 	tmplCache.PWD = pwd
 	tmplCache.Folder = base(pwd, env)
-	tmplCache.UserName = env.getCurrentUser()
-	if host, err := env.getHostName(); err == nil {
+	tmplCache.UserName = env.User()
+	if host, err := env.Host(); err == nil {
 		tmplCache.HostName = host
 	}
-	goos := env.getRuntimeGOOS()
+	goos := env.GOOS()
 	tmplCache.OS = goos
 	env.tmplCache = tmplCache
 	return env.tmplCache

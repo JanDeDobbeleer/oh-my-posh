@@ -4,9 +4,8 @@ type crystal struct {
 	language
 }
 
-func (c *crystal) string() string {
-	segmentTemplate := c.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
-	return c.language.string(segmentTemplate, c)
+func (c *crystal) template() string {
+	return languageTemplate
 }
 
 func (c *crystal) init(props Properties, env Environment) {

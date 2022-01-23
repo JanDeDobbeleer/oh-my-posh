@@ -35,7 +35,7 @@ func (e *engine) string() string {
 
 func (e *engine) canWriteRPrompt() bool {
 	prompt := e.string()
-	consoleWidth, err := e.env.getTerminalWidth()
+	consoleWidth, err := e.env.TerminalWidth()
 	if err != nil || consoleWidth == 0 {
 		return true
 	}
@@ -66,7 +66,7 @@ func (e *engine) render() string {
 	if !e.config.OSC99 {
 		return e.print()
 	}
-	cwd := e.env.pwd()
+	cwd := e.env.Pwd()
 	e.writeANSI(e.ansi.consolePwd(cwd))
 	return e.print()
 }
@@ -74,7 +74,7 @@ func (e *engine) render() string {
 func (e *engine) renderBlock(block *Block) {
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
-	if block.Type == RPrompt && e.env.getShellName() == bash {
+	if block.Type == RPrompt && e.env.Shell() == bash {
 		block.initPlain(e.env, e.config)
 	} else {
 		block.init(e.env, e.writer, e.ansi)
@@ -107,7 +107,7 @@ func (e *engine) renderBlock(block *Block) {
 		}
 	case RPrompt:
 		blockText := block.renderSegments()
-		if e.env.getShellName() == bash {
+		if e.env.Shell() == bash {
 			blockText = fmt.Sprintf(e.ansi.bashFormat, blockText)
 		}
 		e.rprompt = blockText
@@ -161,16 +161,16 @@ func (e *engine) debug() string {
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
 	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(start)))
-	e.write(fmt.Sprintf("\n\x1b[1mCache path:\x1b[0m %s\n", e.env.getCachePath()))
+	e.write(fmt.Sprintf("\n\x1b[1mCache path:\x1b[0m %s\n", e.env.CachePath()))
 	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
-	e.write(e.env.logs())
+	e.write(e.env.Logs())
 	return e.string()
 }
 
 func (e *engine) print() string {
-	switch e.env.getShellName() {
+	switch e.env.Shell() {
 	case zsh:
-		if !*e.env.getArgs().Eval {
+		if !*e.env.Args().Eval {
 			break
 		}
 		// escape double quotes contained in the prompt
@@ -214,7 +214,7 @@ func (e *engine) renderTooltip(tip string) string {
 		Alignment: Right,
 		Segments:  []*Segment{tooltip},
 	}
-	switch e.env.getShellName() {
+	switch e.env.Shell() {
 	case zsh, winCMD:
 		block.init(e.env, e.writer, e.ansi)
 		return block.renderSegments()
@@ -248,7 +248,7 @@ func (e *engine) renderTransientPrompt() string {
 	}
 	e.writer.setColors(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground)
 	e.writer.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
-	switch e.env.getShellName() {
+	switch e.env.Shell() {
 	case zsh:
 		// escape double quotes contained in the prompt
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.writer.string(), "\"", "\"\""))

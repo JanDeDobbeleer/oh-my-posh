@@ -8,9 +8,9 @@ import (
 
 func TestPlasticEnabledNotFound(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("hasCommand", "cm").Return(false)
-	env.On("getRuntimeGOOS").Return("")
-	env.On("isWsl").Return(false)
+	env.On("HasCommand", "cm").Return(false)
+	env.On("GOOS").Return("")
+	env.On("IsWsl").Return(false)
 	p := &plastic{
 		scm: scm{
 			env:   env,
@@ -22,16 +22,16 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 
 func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 	env := new(MockedEnvironment)
-	env.On("hasCommand", "cm").Return(true)
-	env.On("getRuntimeGOOS").Return("")
-	env.On("isWsl").Return(false)
-	env.On("getFileContent", "/dir/.plastic//plastic.selector").Return("")
-	fileInfo := &fileInfo{
-		path:         "/dir/hello",
-		parentFolder: "/dir",
-		isDir:        true,
+	env.On("HasCommand", "cm").Return(true)
+	env.On("GOOS").Return("")
+	env.On("IsWsl").Return(false)
+	env.On("FileContent", "/dir/.plastic//plastic.selector").Return("")
+	fileInfo := &FileInfo{
+		Path:         "/dir/hello",
+		ParentFolder: "/dir",
+		IsDir:        true,
 	}
-	env.On("hasParentFilePath", ".plastic").Return(fileInfo, nil)
+	env.On("HasParentFilePath", ".plastic").Return(fileInfo, nil)
 	p := &plastic{
 		scm: scm{
 			env:   env,
@@ -39,13 +39,13 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 		},
 	}
 	assert.True(t, p.enabled())
-	assert.Equal(t, fileInfo.parentFolder, p.plasticWorkspaceFolder)
+	assert.Equal(t, fileInfo.ParentFolder, p.plasticWorkspaceFolder)
 }
 
 func setupCmStatusEnv(status, headStatus string) *plastic {
 	env := new(MockedEnvironment)
-	env.On("runCommand", "cm", []string{"status", "--all", "--machinereadable"}).Return(status, nil)
-	env.On("runCommand", "cm", []string{"status", "--head", "--machinereadable"}).Return(headStatus, nil)
+	env.On("RunCommand", "cm", []string{"status", "--all", "--machinereadable"}).Return(status, nil)
+	env.On("RunCommand", "cm", []string{"status", "--head", "--machinereadable"}).Return(headStatus, nil)
 	p := &plastic{
 		scm: scm{
 			env:   env,
@@ -326,13 +326,11 @@ func TestPlasticTemplateString(t *testing.T) {
 
 	for _, tc := range cases {
 		props := properties{
-			FetchStatus:     true,
-			SegmentTemplate: tc.Template,
+			FetchStatus: true,
 		}
 		tc.Plastic.props = props
 		env := new(MockedEnvironment)
-		env.onTemplate()
 		tc.Plastic.env = env
-		assert.Equal(t, tc.Expected, tc.Plastic.string(), tc.Case)
+		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Plastic), tc.Case)
 	}
 }

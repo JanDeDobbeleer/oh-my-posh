@@ -48,7 +48,7 @@ const (
 
 func (t *executiontime) enabled() bool {
 	alwaysEnabled := t.props.getBool(AlwaysEnabled, false)
-	executionTimeMs := t.env.executionTime()
+	executionTimeMs := t.env.ExecutionTime()
 	thresholdMs := t.props.getFloat64(ThresholdProperty, float64(500))
 	if !alwaysEnabled && executionTimeMs < thresholdMs {
 		return false
@@ -59,18 +59,8 @@ func (t *executiontime) enabled() bool {
 	return t.FormattedMs != ""
 }
 
-func (t *executiontime) string() string {
-	segmentTemplate := t.props.getString(SegmentTemplate, "{{.FormattedMs}}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  t,
-		Env:      t.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
+func (t *executiontime) template() string {
+	return "{{ .FormattedMs }}"
 }
 
 func (t *executiontime) init(props Properties, env Environment) {

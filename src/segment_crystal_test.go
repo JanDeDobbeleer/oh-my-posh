@@ -26,6 +26,6 @@ func TestCrystal(t *testing.T) {
 		c := &crystal{}
 		c.init(props, env)
 		assert.True(t, c.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
-		assert.Equal(t, tc.ExpectedString, c.string(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, c.template(), c), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

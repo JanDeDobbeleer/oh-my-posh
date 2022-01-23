@@ -9,7 +9,7 @@ import (
 // MakeColors creates instance of AnsiColors to use in AnsiWriter according to
 // environment and configuration.
 func MakeColors(env Environment, cfg *Config) AnsiColors {
-	cacheDisabled := env.getenv("OMP_CACHE_DISABLED") == "1"
+	cacheDisabled := env.Getenv("OMP_CACHE_DISABLED") == "1"
 	return makeColors(cfg.Palette, !cacheDisabled)
 }
 

@@ -46,25 +46,22 @@ func TestIpifySegment(t *testing.T) {
 		props := properties{
 			CacheTimeout: 0,
 		}
-
 		env.On("HTTPRequest", IPIFYAPIURL).Return([]byte(tc.Response), tc.Error)
-		env.onTemplate()
 
-		if tc.Template != "" {
-			props[SegmentTemplate] = tc.Template
-		}
-
-		o := &ipify{
+		ipify := &ipify{
 			props: props,
 			env:   env,
 		}
 
-		enabled := o.enabled()
+		enabled := ipify.enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		if !enabled {
 			continue
 		}
 
-		assert.Equal(t, tc.ExpectedString, o.string(), tc.Case)
+		if tc.Template == "" {
+			tc.Template = ipify.template()
+		}
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, ipify), tc.Case)
 	}
 }

@@ -16,6 +16,10 @@ const (
 	defaultUser = "default"
 )
 
+func (a *aws) template() string {
+	return "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}"
+}
+
 func (a *aws) init(props Properties, env Environment) {
 	a.props = props
 	a.env = env
@@ -24,7 +28,7 @@ func (a *aws) init(props Properties, env Environment) {
 func (a *aws) enabled() bool {
 	getEnvFirstMatch := func(envs ...string) string {
 		for _, env := range envs {
-			value := a.env.getenv(env)
+			value := a.env.Getenv(env)
 			if value != "" {
 				return value
 			}
@@ -52,11 +56,11 @@ func (a *aws) enabled() bool {
 }
 
 func (a *aws) getConfigFileInfo() {
-	configPath := a.env.getenv("AWS_CONFIG_FILE")
+	configPath := a.env.Getenv("AWS_CONFIG_FILE")
 	if configPath == "" {
-		configPath = fmt.Sprintf("%s/.aws/config", a.env.homeDir())
+		configPath = fmt.Sprintf("%s/.aws/config", a.env.Home())
 	}
-	config := a.env.getFileContent(configPath)
+	config := a.env.FileContent(configPath)
 	configSection := "[default]"
 	if a.Profile != "" {
 		configSection = fmt.Sprintf("[profile %s]", a.Profile)
@@ -79,18 +83,4 @@ func (a *aws) getConfigFileInfo() {
 	if a.Profile == "" && a.Region != "" {
 		a.Profile = defaultUser
 	}
-}
-
-func (a *aws) string() string {
-	segmentTemplate := a.props.getString(SegmentTemplate, "{{.Profile}}{{if .Region}}@{{.Region}}{{end}}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  a,
-		Env:      a.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
 }

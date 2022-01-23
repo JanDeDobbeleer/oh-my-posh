@@ -22,24 +22,13 @@ type wtData struct {
 	End              string   `json:"end"`
 }
 
+func (w *wakatime) template() string {
+	return "{{ secondsRound .CummulativeTotal.Seconds }}"
+}
+
 func (w *wakatime) enabled() bool {
 	err := w.setAPIData()
 	return err == nil
-}
-
-func (w *wakatime) string() string {
-	segmentTemplate := w.props.getString(SegmentTemplate, "{{ secondsRound .CummulativeTotal.Seconds }}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  w,
-		Env:      w.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-
-	return text
 }
 
 func (w *wakatime) setAPIData() error {
@@ -47,7 +36,7 @@ func (w *wakatime) setAPIData() error {
 	cacheTimeout := w.props.getInt(CacheTimeout, DefaultCacheTimeout)
 	if cacheTimeout > 0 {
 		// check if data stored in cache
-		if val, found := w.env.cache().get(url); found {
+		if val, found := w.env.Cache().Get(url); found {
 			err := json.Unmarshal([]byte(val), &w.wtData)
 			if err != nil {
 				return err
@@ -68,7 +57,7 @@ func (w *wakatime) setAPIData() error {
 	}
 
 	if cacheTimeout > 0 {
-		w.env.cache().set(url, string(body), cacheTimeout)
+		w.env.Cache().Set(url, string(body), cacheTimeout)
 	}
 	return nil
 }

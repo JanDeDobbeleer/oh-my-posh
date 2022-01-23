@@ -12,9 +12,8 @@ const (
 	ParseModFile Property = "parse_mod_file"
 )
 
-func (g *golang) string() string {
-	segmentTemplate := g.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
-	return g.language.string(segmentTemplate, g)
+func (g *golang) template() string {
+	return languageTemplate
 }
 
 func (g *golang) init(props Properties, env Environment) {
@@ -41,12 +40,12 @@ func (g *golang) getVersion() (string, error) {
 	if !g.props.getBool(ParseModFile, false) {
 		return "", nil
 	}
-	gomod, err := g.language.env.hasParentFilePath("go.mod")
+	gomod, err := g.language.env.HasParentFilePath("go.mod")
 	if err != nil {
 		return "", nil
 	}
-	contents := g.language.env.getFileContent(gomod.path)
-	file, err := modfile.Parse(gomod.path, []byte(contents), nil)
+	contents := g.language.env.FileContent(gomod.Path)
+	file, err := modfile.Parse(gomod.Path, []byte(contents), nil)
 	if err != nil {
 		return "", err
 	}

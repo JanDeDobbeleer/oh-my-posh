@@ -9,26 +9,16 @@ type exit struct {
 	Text string
 }
 
+func (e *exit) template() string {
+	return "{{ .Text }}"
+}
+
 func (e *exit) enabled() bool {
-	e.Text = e.getMeaningFromExitCode(e.env.lastErrorCode())
+	e.Text = e.getMeaningFromExitCode(e.env.ErrorCode())
 	if e.props.getBool(AlwaysEnabled, false) {
 		return true
 	}
-	return e.env.lastErrorCode() != 0
-}
-
-func (e *exit) string() string {
-	segmentTemplate := e.props.getString(SegmentTemplate, "{{ .Text }}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  e,
-		Env:      e.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
+	return e.env.ErrorCode() != 0
 }
 
 func (e *exit) init(props Properties, env Environment) {

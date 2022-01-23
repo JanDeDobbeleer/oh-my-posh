@@ -142,23 +142,19 @@ func TestStravaSegment(t *testing.T) {
 			CacheTimeout: tc.CacheTimeout,
 		}
 		cache := &MockedCache{}
-		cache.On("get", url).Return(tc.JSONResponse, !tc.CacheFoundFail)
-		cache.On("set", url, tc.JSONResponse, tc.CacheTimeout).Return()
+		cache.On("Get", url).Return(tc.JSONResponse, !tc.CacheFoundFail)
+		cache.On("Set", url, tc.JSONResponse, tc.CacheTimeout).Return()
 
-		cache.On("get", StravaAccessToken).Return(tc.AccessToken, !tc.AccessTokenCacheFoundFail)
-		cache.On("get", StravaRefreshToken).Return(tc.RefreshToken, !tc.RefreshTokenCacheFoundFail)
+		cache.On("Get", StravaAccessToken).Return(tc.AccessToken, !tc.AccessTokenCacheFoundFail)
+		cache.On("Get", StravaRefreshToken).Return(tc.RefreshToken, !tc.RefreshTokenCacheFoundFail)
 
-		cache.On("set", StravaRefreshToken, "NEW_REFRESHTOKEN", 2*525960)
-		cache.On("set", StravaAccessToken, "NEW_ACCESSTOKEN", 20)
+		cache.On("Set", StravaRefreshToken, "NEW_REFRESHTOKEN", 2*525960)
+		cache.On("Set", StravaAccessToken, "NEW_ACCESSTOKEN", 20)
 
 		env.On("HTTPRequest", url).Return([]byte(tc.JSONResponse), tc.Error)
 		env.On("HTTPRequest", tokenURL).Return([]byte(tc.TokenResponse), tc.Error)
-		env.On("cache").Return(cache)
-		env.onTemplate()
+		env.On("Cache").Return(cache)
 
-		if tc.Template != "" {
-			props[SegmentTemplate] = tc.Template
-		}
 		if tc.InitialAccessToken != "" {
 			props[AccessToken] = tc.InitialAccessToken
 		}
@@ -192,8 +188,11 @@ func TestStravaSegment(t *testing.T) {
 			continue
 		}
 
-		var a = ns.string()
+		if tc.Template == "" {
+			tc.Template = ns.template()
+		}
+		var got = renderTemplate(env, tc.Template, ns)
 
-		assert.Equal(t, tc.ExpectedString, a, tc.Case)
+		assert.Equal(t, tc.ExpectedString, got, tc.Case)
 	}
 }

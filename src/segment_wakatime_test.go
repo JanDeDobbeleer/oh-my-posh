@@ -74,10 +74,9 @@ func TestWTTrackedTime(t *testing.T) {
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(response), tc.Error)
 
 		cache := &MockedCache{}
-		cache.On("get", FAKEAPIURL).Return(response, !tc.CacheFoundFail)
-		cache.On("set", FAKEAPIURL, response, tc.CacheTimeout).Return()
-		env.On("cache").Return(cache)
-		env.onTemplate()
+		cache.On("Get", FAKEAPIURL).Return(response, !tc.CacheFoundFail)
+		cache.On("Set", FAKEAPIURL, response, tc.CacheTimeout).Return()
+		env.On("Cache").Return(cache)
 
 		w := &wakatime{
 			props: properties{
@@ -89,6 +88,6 @@ func TestWTTrackedTime(t *testing.T) {
 		}
 
 		assert.ErrorIs(t, tc.Error, w.setAPIData(), tc.Case+" - Error")
-		assert.Equal(t, tc.Expected, w.string(), tc.Case+" - String")
+		assert.Equal(t, tc.Expected, renderTemplate(env, w.template(), w), tc.Case+" - String")
 	}
 }

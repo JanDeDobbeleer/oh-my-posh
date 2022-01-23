@@ -30,7 +30,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getFileContent", ".nvmrc").Return(tc.RCVersion)
+		env.On("FileContent", ".nvmrc").Return(tc.RCVersion)
 
 		node := &node{
 			language: language{
@@ -61,9 +61,9 @@ func TestNodeInContext(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("hasFiles", "yarn.lock").Return(tc.HasYarn)
-		env.On("hasFiles", "package-lock.json").Return(tc.hasNPM)
-		env.On("hasFiles", "package.json").Return(tc.hasDefault)
+		env.On("HasFiles", "yarn.lock").Return(tc.HasYarn)
+		env.On("HasFiles", "package-lock.json").Return(tc.hasNPM)
+		env.On("HasFiles", "package.json").Return(tc.hasDefault)
 		node := &node{
 			language: language{
 				env: env,

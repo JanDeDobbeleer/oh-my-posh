@@ -30,7 +30,7 @@ func TestCanWriteRPrompt(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getTerminalWidth").Return(tc.TerminalWidth, tc.TerminalWidthError)
+		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalWidthError)
 		ansi := &ansiUtils{}
 		ansi.init(plain)
 		engine := &engine{
@@ -73,7 +73,7 @@ func engineRender(configPath string) error {
 		execTime = 917.0
 	)
 
-	args := &args{
+	args := &Args{
 		Debug:         &debug,
 		Config:        &configPath,
 		Eval:          &eval,
@@ -87,13 +87,13 @@ func engineRender(configPath string) error {
 
 	env := &environment{}
 	env.init(args)
-	defer env.close()
+	defer env.Close()
 
 	cfg := GetConfig(env)
 	defer testClearDefaultConfig()
 
 	ansi := &ansiUtils{}
-	ansi.init(env.getShellName())
+	ansi.init(env.Shell())
 	writerColors := MakeColors(env, cfg)
 	writer := &AnsiWriter{
 		ansi:               ansi,

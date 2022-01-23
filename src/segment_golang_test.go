@@ -18,12 +18,14 @@ type mockedLanguageParams struct {
 
 func getMockedLanguageEnv(params *mockedLanguageParams) (*MockedEnvironment, properties) {
 	env := new(MockedEnvironment)
-	env.On("hasCommand", params.cmd).Return(true)
-	env.On("runCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
-	env.On("hasFiles", params.extension).Return(true)
-	env.On("pwd").Return("/usr/home/project")
-	env.On("homeDir").Return("/usr/home")
-	env.onTemplate()
+	env.On("HasCommand", params.cmd).Return(true)
+	env.On("RunCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
+	env.On("HasFiles", params.extension).Return(true)
+	env.On("Pwd").Return("/usr/home/project")
+	env.On("Home").Return("/usr/home")
+	env.On("TemplateCache").Return(&TemplateCache{
+		Env: make(map[string]string),
+	})
 	props := properties{
 		FetchVersion: true,
 	}
@@ -62,28 +64,28 @@ func TestGolang(t *testing.T) {
 		env, props := getMockedLanguageEnv(params)
 		if tc.ParseModFile {
 			props[ParseModFile] = tc.ParseModFile
-			fileInfo := &fileInfo{
-				path:         "./go.mod",
-				parentFolder: "./",
-				isDir:        false,
+			fileInfo := &FileInfo{
+				Path:         "./go.mod",
+				ParentFolder: "./",
+				IsDir:        false,
 			}
 			var err error
 			if !tc.HasModFileInParentDir {
 				err = errors.New("no match")
 			}
-			env.On("hasParentFilePath", "go.mod").Return(fileInfo, err)
+			env.On("HasParentFilePath", "go.mod").Return(fileInfo, err)
 			var content string
 			if tc.InvalidModfile {
 				content = "invalid go.mod file"
 			} else {
-				tmp, _ := ioutil.ReadFile(fileInfo.path)
+				tmp, _ := ioutil.ReadFile(fileInfo.Path)
 				content = string(tmp)
 			}
-			env.On("getFileContent", fileInfo.path).Return(content)
+			env.On("FileContent", fileInfo.Path).Return(content)
 		}
 		g := &golang{}
 		g.init(props, env)
 		assert.True(t, g.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
-		assert.Equal(t, tc.ExpectedString, g.string(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, g.template(), g), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

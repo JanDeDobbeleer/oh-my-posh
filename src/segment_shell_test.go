@@ -9,14 +9,13 @@ import (
 func TestWriteCurrentShell(t *testing.T) {
 	expected := "zsh"
 	env := new(MockedEnvironment)
-	env.On("getShellName").Return(expected, nil)
-	env.onTemplate()
+	env.On("Shell").Return(expected, nil)
 	s := &shell{
 		env:   env,
 		props: properties{},
 	}
 	_ = s.enabled()
-	assert.Equal(t, expected, s.string())
+	assert.Equal(t, expected, renderTemplate(env, s.template(), s))
 }
 
 func TestUseMappedShellNames(t *testing.T) {
@@ -30,8 +29,7 @@ func TestUseMappedShellNames(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getShellName").Return(tc.Expected, nil)
-		env.onTemplate()
+		env.On("Shell").Return(tc.Expected, nil)
 		s := &shell{
 			env: env,
 			props: properties{
@@ -39,7 +37,7 @@ func TestUseMappedShellNames(t *testing.T) {
 			},
 		}
 		_ = s.enabled()
-		got := s.string()
+		got := renderTemplate(env, s.template(), s)
 		assert.Equal(t, tc.Expected, got)
 	}
 }

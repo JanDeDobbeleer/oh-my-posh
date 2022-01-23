@@ -6,9 +6,8 @@ type java struct {
 	language
 }
 
-func (j *java) string() string {
-	segmentTemplate := j.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
-	return j.language.string(segmentTemplate, j)
+func (j *java) template() string {
+	return languageTemplate
 }
 
 func (j *java) init(props Properties, env Environment) {
@@ -37,7 +36,7 @@ func (j *java) init(props Properties, env Environment) {
 			"*.cljc",
 		},
 	}
-	javaHome := j.language.env.getenv("JAVA_HOME")
+	javaHome := j.language.env.Getenv("JAVA_HOME")
 	if len(javaHome) > 0 {
 		java := fmt.Sprintf("%s/bin/java", javaHome)
 		j.language.commands = []*cmd{

@@ -33,8 +33,8 @@ func getImagePid(imageName string) ([]int, error) {
 	return pids, nil
 }
 
-// getWindowTitle returns the title of a window linked to a process name
-func getWindowTitle(imageName, windowTitleRegex string) (string, error) {
+// WindowTitle returns the title of a window linked to a process name
+func WindowTitle(imageName, windowTitleRegex string) (string, error) {
 	processPid, err := getImagePid(imageName)
 	if err != nil {
 		return "", nil

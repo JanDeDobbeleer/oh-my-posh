@@ -20,15 +20,14 @@ func TestPoshGitSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.onTemplate()
-		env.On("getenv", poshGitEnv).Return(tc.PoshGitPrompt)
+		env.On("Getenv", poshGitEnv).Return(tc.PoshGitPrompt)
 		p := &poshgit{
 			env:   env,
 			props: &properties{},
 		}
-		assert.Equal(t, tc.Enabled, p.enabled())
+		assert.Equal(t, tc.Enabled, p.enabled(), tc.Case)
 		if tc.Enabled {
-			assert.Equal(t, tc.Expected, p.string())
+			assert.Equal(t, tc.Expected, renderTemplate(env, p.template(), p), tc.Case)
 		}
 	}
 }

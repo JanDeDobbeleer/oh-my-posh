@@ -104,6 +104,10 @@ const (
 	BRANCHPREFIX = "ref: refs/heads/"
 )
 
+func (g *git) template() string {
+	return "{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}" // nolint: lll
+}
+
 func (g *git) enabled() bool {
 	if !g.shouldDisplay() {
 		return false
@@ -134,28 +138,28 @@ func (g *git) shouldDisplay() bool {
 	// when in wsl/wsl2 and in a windows shared folder
 	// we must use git.exe and convert paths accordingly
 	// for worktrees, stashes, and path to work
-	g.IsWslSharedPath = g.env.inWSLSharedDrive()
-	if !g.env.hasCommand(g.getGitCommand()) {
+	g.IsWslSharedPath = g.env.InWSLSharedDrive()
+	if !g.env.HasCommand(g.getGitCommand()) {
 		return false
 	}
-	gitdir, err := g.env.hasParentFilePath(".git")
+	gitdir, err := g.env.HasParentFilePath(".git")
 	if err != nil {
 		return false
 	}
-	if g.shouldIgnoreRootRepository(gitdir.parentFolder) {
+	if g.shouldIgnoreRootRepository(gitdir.ParentFolder) {
 		return false
 	}
 
-	if gitdir.isDir {
-		g.gitWorkingFolder = gitdir.path
-		g.gitRootFolder = gitdir.path
+	if gitdir.IsDir {
+		g.gitWorkingFolder = gitdir.Path
+		g.gitRootFolder = gitdir.Path
 		// convert the worktree file path to a windows one when in wsl 2 shared folder
-		g.gitRealFolder = strings.TrimSuffix(g.convertToWindowsPath(gitdir.path), ".git")
+		g.gitRealFolder = strings.TrimSuffix(g.convertToWindowsPath(gitdir.Path), ".git")
 		return true
 	}
 	// handle worktree
-	g.gitRootFolder = gitdir.path
-	dirPointer := strings.Trim(g.env.getFileContent(gitdir.path), " \r\n")
+	g.gitRootFolder = gitdir.Path
+	dirPointer := strings.Trim(g.env.FileContent(gitdir.Path), " \r\n")
 	matches := findNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
 	if matches != nil && matches["dir"] != "" {
 		// if we open a worktree file in a shared wsl2 folder, we have to convert it back
@@ -168,7 +172,7 @@ func (g *git) shouldDisplay() bool {
 		ind := strings.LastIndex(g.gitWorkingFolder, "/.git/worktrees")
 		if ind > -1 {
 			g.gitRootFolder = g.gitWorkingFolder[:ind+5]
-			g.gitRealFolder = strings.TrimSuffix(g.env.getFileContent(g.gitWorkingFolder+"/gitdir"), ".git\n")
+			g.gitRealFolder = strings.TrimSuffix(g.env.FileContent(g.gitWorkingFolder+"/gitdir"), ".git\n")
 			g.IsWorkTree = true
 			return true
 		}
@@ -176,7 +180,7 @@ func (g *git) shouldDisplay() bool {
 		// we need the parent folder to detect where the real .git folder is
 		ind = strings.LastIndex(g.gitWorkingFolder, "/.git/modules")
 		if ind > -1 {
-			g.gitRootFolder = gitdir.parentFolder + "/" + g.gitWorkingFolder
+			g.gitRootFolder = gitdir.ParentFolder + "/" + g.gitWorkingFolder
 			g.gitRealFolder = g.gitRootFolder
 			g.gitWorkingFolder = g.gitRootFolder
 			return true
@@ -185,24 +189,6 @@ func (g *git) shouldDisplay() bool {
 		return false
 	}
 	return false
-}
-
-func (g *git) string() string {
-	segmentTemplate := g.props.getString(SegmentTemplate, "{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}") // nolint: lll
-	return g.templateString(segmentTemplate)
-}
-
-func (g *git) templateString(segmentTemplate string) string {
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  g,
-		Env:      g.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
 }
 
 func (g *git) setBranchStatus() {
@@ -301,7 +287,7 @@ func (g *git) getGitCommand() string {
 		return g.gitCommand
 	}
 	g.gitCommand = "git"
-	if g.env.getRuntimeGOOS() == windowsPlatform || g.IsWslSharedPath {
+	if g.env.GOOS() == windowsPlatform || g.IsWslSharedPath {
 		g.gitCommand = "git.exe"
 	}
 	return g.gitCommand
@@ -309,7 +295,7 @@ func (g *git) getGitCommand() string {
 
 func (g *git) getGitCommandOutput(args ...string) string {
 	args = append([]string{"-C", g.gitRealFolder, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
-	val, err := g.env.runCommand(g.getGitCommand(), args...)
+	val, err := g.env.RunCommand(g.getGitCommand(), args...)
 	if err != nil {
 		return ""
 	}
@@ -334,7 +320,7 @@ func (g *git) setGitHEADContext() {
 
 	getPrettyNameOrigin := func(file string) string {
 		var origin string
-		head := g.getFileContents(g.gitWorkingFolder, file)
+		head := g.FileContents(g.gitWorkingFolder, file)
 		if head == "detached HEAD" {
 			origin = formatDetached()
 		} else {
@@ -344,20 +330,20 @@ func (g *git) setGitHEADContext() {
 		return origin
 	}
 
-	if g.env.hasFolder(g.gitWorkingFolder + "/rebase-merge") {
+	if g.env.HasFolder(g.gitWorkingFolder + "/rebase-merge") {
 		origin := getPrettyNameOrigin("rebase-merge/head-name")
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
 		onto = g.formatHEAD(onto)
-		step := g.getFileContents(g.gitWorkingFolder, "rebase-merge/msgnum")
-		total := g.getFileContents(g.gitWorkingFolder, "rebase-merge/end")
+		step := g.FileContents(g.gitWorkingFolder, "rebase-merge/msgnum")
+		total := g.FileContents(g.gitWorkingFolder, "rebase-merge/end")
 		icon := g.props.getString(RebaseIcon, "\uE728 ")
 		g.HEAD = fmt.Sprintf("%s%s onto %s%s (%s/%s) at %s", icon, origin, branchIcon, onto, step, total, g.HEAD)
 		return
 	}
-	if g.env.hasFolder(g.gitWorkingFolder + "/rebase-apply") {
+	if g.env.HasFolder(g.gitWorkingFolder + "/rebase-apply") {
 		origin := getPrettyNameOrigin("rebase-apply/head-name")
-		step := g.getFileContents(g.gitWorkingFolder, "rebase-apply/next")
-		total := g.getFileContents(g.gitWorkingFolder, "rebase-apply/last")
+		step := g.FileContents(g.gitWorkingFolder, "rebase-apply/next")
+		total := g.FileContents(g.gitWorkingFolder, "rebase-apply/last")
 		icon := g.props.getString(RebaseIcon, "\uE728 ")
 		g.HEAD = fmt.Sprintf("%s%s (%s/%s) at %s", icon, origin, step, total, g.HEAD)
 		return
@@ -366,7 +352,7 @@ func (g *git) setGitHEADContext() {
 	commitIcon := g.props.getString(CommitIcon, "\uF417")
 	if g.hasGitFile("MERGE_MSG") {
 		icon := g.props.getString(MergeIcon, "\uE727 ")
-		mergeContext := g.getFileContents(g.gitWorkingFolder, "MERGE_MSG")
+		mergeContext := g.FileContents(g.gitWorkingFolder, "MERGE_MSG")
 		matches := findNamedRegexMatch(`Merge (remote-tracking )?(?P<type>branch|commit|tag) '(?P<theirs>.*)'`, mergeContext)
 		// head := g.getGitRefFileSymbolicName("ORIG_HEAD")
 		if matches != nil && matches["theirs"] != "" {
@@ -392,19 +378,19 @@ func (g *git) setGitHEADContext() {
 	// reverts then CHERRY_PICK_HEAD/REVERT_HEAD will not exist so we have to read
 	// the todo file.
 	if g.hasGitFile("CHERRY_PICK_HEAD") {
-		sha := g.getFileContents(g.gitWorkingFolder, "CHERRY_PICK_HEAD")
+		sha := g.FileContents(g.gitWorkingFolder, "CHERRY_PICK_HEAD")
 		cherry := g.props.getString(CherryPickIcon, "\uE29B ")
 		g.HEAD = fmt.Sprintf("%s%s%s onto %s", cherry, commitIcon, g.formatSHA(sha), formatDetached())
 		return
 	}
 	if g.hasGitFile("REVERT_HEAD") {
-		sha := g.getFileContents(g.gitWorkingFolder, "REVERT_HEAD")
+		sha := g.FileContents(g.gitWorkingFolder, "REVERT_HEAD")
 		revert := g.props.getString(RevertIcon, "\uF0E2 ")
 		g.HEAD = fmt.Sprintf("%s%s%s onto %s", revert, commitIcon, g.formatSHA(sha), formatDetached())
 		return
 	}
 	if g.hasGitFile("sequencer/todo") {
-		todo := g.getFileContents(g.gitWorkingFolder, "sequencer/todo")
+		todo := g.FileContents(g.gitWorkingFolder, "sequencer/todo")
 		matches := findNamedRegexMatch(`^(?P<action>p|pick|revert)\s+(?P<sha>\S+)`, todo)
 		if matches != nil && matches["sha"] != "" {
 			action := matches["action"]
@@ -441,18 +427,18 @@ func (g *git) formatSHA(sha string) string {
 }
 
 func (g *git) hasGitFile(file string) bool {
-	return g.env.hasFilesInDir(g.gitWorkingFolder, file)
+	return g.env.HasFilesInDir(g.gitWorkingFolder, file)
 }
 
 func (g *git) getGitRefFileSymbolicName(refFile string) string {
-	ref := g.getFileContents(g.gitWorkingFolder, refFile)
+	ref := g.FileContents(g.gitWorkingFolder, refFile)
 	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
 func (g *git) setPrettyHEADName() {
 	// we didn't fetch status, fallback to parsing the HEAD file
 	if len(g.Hash) == 0 {
-		HEADRef := g.getFileContents(g.gitWorkingFolder, "HEAD")
+		HEADRef := g.FileContents(g.gitWorkingFolder, "HEAD")
 		if strings.HasPrefix(HEADRef, BRANCHPREFIX) {
 			branchName := strings.TrimPrefix(HEADRef, BRANCHPREFIX)
 			g.HEAD = fmt.Sprintf("%s%s", g.props.getString(BranchIcon, "\uE0A0"), g.formatHEAD(branchName))
@@ -478,7 +464,7 @@ func (g *git) setPrettyHEADName() {
 }
 
 func (g *git) getStashContext() int {
-	stashContent := g.getFileContents(g.gitRootFolder, "logs/refs/stash")
+	stashContent := g.FileContents(g.gitRootFolder, "logs/refs/stash")
 	if stashContent == "" {
 		return 0
 	}
@@ -487,10 +473,10 @@ func (g *git) getStashContext() int {
 }
 
 func (g *git) getWorktreeContext() int {
-	if !g.env.hasFolder(g.gitRootFolder + "/worktrees") {
+	if !g.env.HasFolder(g.gitRootFolder + "/worktrees") {
 		return 0
 	}
-	worktreeFolders := g.env.getFoldersList(g.gitRootFolder + "/worktrees")
+	worktreeFolders := g.env.FolderList(g.gitRootFolder + "/worktrees")
 	return len(worktreeFolders)
 }
 
@@ -522,12 +508,12 @@ func (g *git) convertToWindowsPath(path string) string {
 	if !g.IsWslSharedPath {
 		return path
 	}
-	return g.env.convertToWindowsPath(path)
+	return g.env.ConvertToWindowsPath(path)
 }
 
 func (g *git) convertToLinuxPath(path string) string {
 	if !g.IsWslSharedPath {
 		return path
 	}
-	return g.env.convertToLinuxPath(path)
+	return g.env.ConvertToLinuxPath(path)
 }

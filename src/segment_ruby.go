@@ -4,9 +4,8 @@ type ruby struct {
 	language
 }
 
-func (r *ruby) string() string {
-	segmentTemplate := r.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
-	return r.language.string(segmentTemplate, r)
+func (r *ruby) template() string {
+	return languageTemplate
 }
 
 func (r *ruby) init(props Properties, env Environment) {

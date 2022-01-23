@@ -106,7 +106,7 @@ func TestKubectlSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("hasCommand", "kubectl").Return(tc.KubectlExists)
+		env.On("HasCommand", "kubectl").Return(tc.KubectlExists)
 		var kubeconfig string
 		content, err := ioutil.ReadFile("./test/kubectl.yml")
 		if err == nil {
@@ -119,25 +119,23 @@ func TestKubectlSegment(t *testing.T) {
 				exitCode: 1,
 			}
 		}
-		env.On("runCommand", "kubectl", []string{"config", "view", "--output", "yaml", "--minify"}).Return(kubeconfig, kubectlErr)
-		env.On("getenv", "KUBECONFIG").Return(tc.Kubeconfig)
+		env.On("RunCommand", "kubectl", []string{"config", "view", "--output", "yaml", "--minify"}).Return(kubeconfig, kubectlErr)
+		env.On("Getenv", "KUBECONFIG").Return(tc.Kubeconfig)
 		for path, content := range tc.Files {
-			env.On("getFileContent", path).Return(content)
+			env.On("FileContent", path).Return(content)
 		}
-		env.On("homeDir").Return("testhome")
-		env.onTemplate()
+		env.On("Home").Return("testhome")
 
 		k := &kubectl{
 			env: env,
 			props: properties{
-				SegmentTemplate: tc.Template,
 				DisplayError:    tc.DisplayError,
 				ParseKubeConfig: tc.ParseKubeConfig,
 			},
 		}
 		assert.Equal(t, tc.ExpectedEnabled, k.enabled(), tc.Case)
 		if tc.ExpectedEnabled {
-			assert.Equal(t, tc.ExpectedString, k.string(), tc.Case)
+			assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, k), tc.Case)
 		}
 	}
 }

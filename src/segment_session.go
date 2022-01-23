@@ -16,18 +16,8 @@ func (s *session) enabled() bool {
 	return true
 }
 
-func (s *session) string() string {
-	segmentTemplate := s.props.getString(SegmentTemplate, "{{ .UserName}}@{{ .HostName }}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  s,
-		Env:      s.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		text = err.Error()
-	}
-	return text
+func (s *session) template() string {
+	return "{{ .UserName }}@{{ .HostName }}"
 }
 
 func (s *session) init(props Properties, env Environment) {
@@ -41,7 +31,7 @@ func (s *session) activeSSHSession() bool {
 		"SSH_CLIENT",
 	}
 	for _, key := range keys {
-		content := s.env.getenv(key)
+		content := s.env.Getenv(key)
 		if content != "" {
 			return true
 		}

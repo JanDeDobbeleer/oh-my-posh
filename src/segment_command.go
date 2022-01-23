@@ -16,16 +16,20 @@ const (
 	Command Property = "command"
 )
 
+func (c *command) template() string {
+	return "{{ .Output }}"
+}
+
 func (c *command) enabled() bool {
 	shell := c.props.getString(ExecutableShell, "bash")
-	if !c.env.hasCommand(shell) {
+	if !c.env.HasCommand(shell) {
 		return false
 	}
 	command := c.props.getString(Command, "echo no command specified")
 	if strings.Contains(command, "||") {
 		commands := strings.Split(command, "||")
 		for _, cmd := range commands {
-			output := c.env.runShellCommand(shell, strings.TrimSpace(cmd))
+			output := c.env.RunShellCommand(shell, strings.TrimSpace(cmd))
 			if output != "" {
 				c.Output = output
 				return true
@@ -36,27 +40,13 @@ func (c *command) enabled() bool {
 		var output string
 		commands := strings.Split(command, "&&")
 		for _, cmd := range commands {
-			output += c.env.runShellCommand(shell, strings.TrimSpace(cmd))
+			output += c.env.RunShellCommand(shell, strings.TrimSpace(cmd))
 		}
 		c.Output = output
 		return c.Output != ""
 	}
-	c.Output = c.env.runShellCommand(shell, strings.TrimSpace(command))
+	c.Output = c.env.RunShellCommand(shell, strings.TrimSpace(command))
 	return c.Output != ""
-}
-
-func (c *command) string() string {
-	segmentTemplate := c.props.getString(SegmentTemplate, "{{.Output}}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  c,
-		Env:      c.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
 }
 
 func (c *command) init(props Properties, env Environment) {

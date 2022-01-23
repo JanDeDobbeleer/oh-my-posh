@@ -37,20 +37,22 @@ func (l *languageArgs) hasvalue(value string, list []string) bool {
 func bootStrapLanguageTest(args *languageArgs) *language {
 	env := new(MockedEnvironment)
 	for _, command := range args.commands {
-		env.On("hasCommand", command.executable).Return(args.hasvalue(command.executable, args.enabledCommands))
-		env.On("runCommand", command.executable, command.args).Return(args.version, args.expectedError)
+		env.On("HasCommand", command.executable).Return(args.hasvalue(command.executable, args.enabledCommands))
+		env.On("RunCommand", command.executable, command.args).Return(args.version, args.expectedError)
 	}
 	for _, extension := range args.extensions {
-		env.On("hasFiles", extension).Return(args.hasvalue(extension, args.enabledExtensions))
+		env.On("HasFiles", extension).Return(args.hasvalue(extension, args.enabledExtensions))
 	}
 	home := "/usr/home"
 	cwd := "/usr/home/project"
 	if args.inHome {
 		cwd = home
 	}
-	env.On("pwd").Return(cwd)
-	env.On("homeDir").Return(home)
-	env.onTemplate()
+	env.On("Pwd").Return(cwd)
+	env.On("Home").Return(home)
+	env.On("TemplateCache").Return(&TemplateCache{
+		Env: make(map[string]string),
+	})
 	if args.properties == nil {
 		args.properties = properties{}
 	}

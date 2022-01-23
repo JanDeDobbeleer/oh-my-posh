@@ -31,26 +31,15 @@ const (
 	Precision Property = "precision"
 )
 
+func (s *sysinfo) template() string {
+	return "{{ round .PhysicalPercentUsed .Precision }}"
+}
+
 func (s *sysinfo) enabled() bool {
 	if s.PhysicalPercentUsed == 0 && s.SwapPercentUsed == 0 {
 		return false
 	}
 	return true
-}
-
-func (s *sysinfo) string() string {
-	// keep old memory segment template
-	segmentTemplate := s.props.getString(SegmentTemplate, "{{ round .PhysicalPercentUsed .Precision }}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  s,
-		Env:      s.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
 }
 
 func (s *sysinfo) init(props Properties, env Environment) {

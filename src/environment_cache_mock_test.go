@@ -8,12 +8,12 @@ type MockedCache struct {
 }
 
 // close provides a mock function with given fields:
-func (_m *MockedCache) close() {
+func (_m *MockedCache) Close() {
 	_m.Called()
 }
 
 // get provides a mock function with given fields: key
-func (_m *MockedCache) get(key string) (string, bool) {
+func (_m *MockedCache) Get(key string) (string, bool) {
 	ret := _m.Called(key)
 
 	var r0 string
@@ -34,11 +34,11 @@ func (_m *MockedCache) get(key string) (string, bool) {
 }
 
 // init provides a mock function with given fields: home
-func (_m *MockedCache) init(home string) {
+func (_m *MockedCache) Init(home string) {
 	_m.Called(home)
 }
 
 // set provides a mock function with given fields: key, value, ttl
-func (_m *MockedCache) set(key, value string, ttl int) {
+func (_m *MockedCache) Set(key, value string, ttl int) {
 	_m.Called(key, value, ttl)
 }

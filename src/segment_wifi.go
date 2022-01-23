@@ -4,19 +4,23 @@ type wifi struct {
 	props Properties
 	env   Environment
 
-	wifiInfo
+	WifiInfo
 }
 
 const (
 	defaultTemplate = "{{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }}"
 )
 
+func (w *wifi) template() string {
+	return defaultTemplate
+}
+
 func (w *wifi) enabled() bool {
 	// This segment only supports Windows/WSL for now
-	if w.env.getPlatform() != windowsPlatform && !w.env.isWsl() {
+	if w.env.Platform() != windowsPlatform && !w.env.IsWsl() {
 		return false
 	}
-	wifiInfo, err := w.env.getWifiNetwork()
+	wifiInfo, err := w.env.WifiNetwork()
 	displayError := w.props.getBool(DisplayError, false)
 	if err != nil && displayError {
 		w.Error = err.Error()
@@ -25,23 +29,8 @@ func (w *wifi) enabled() bool {
 	if err != nil || wifiInfo == nil {
 		return false
 	}
-	w.wifiInfo = *wifiInfo
+	w.WifiInfo = *wifiInfo
 	return true
-}
-
-func (w *wifi) string() string {
-	segmentTemplate := w.props.getString(SegmentTemplate, defaultTemplate)
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  w,
-		Env:      w.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-
-	return text
 }
 
 func (w *wifi) init(props Properties, env Environment) {

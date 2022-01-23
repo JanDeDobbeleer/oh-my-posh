@@ -12,7 +12,7 @@ func TestWiFiSegment(t *testing.T) {
 		Case            string
 		ExpectedString  string
 		ExpectedEnabled bool
-		Network         *wifiInfo
+		Network         *WifiInfo
 		WifiError       error
 		DisplayError    bool
 	}{
@@ -34,7 +34,7 @@ func TestWiFiSegment(t *testing.T) {
 			Case:            "Display wifi state",
 			ExpectedString:  "pretty fly for a wifi",
 			ExpectedEnabled: true,
-			Network: &wifiInfo{
+			Network: &WifiInfo{
 				SSID: "pretty fly for a wifi",
 			},
 		},
@@ -42,22 +42,20 @@ func TestWiFiSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getPlatform").Return(windowsPlatform)
-		env.On("isWsl").Return(false)
-		env.On("getWifiNetwork").Return(tc.Network, tc.WifiError)
-		env.onTemplate()
+		env.On("Platform").Return(windowsPlatform)
+		env.On("IsWsl").Return(false)
+		env.On("WifiNetwork").Return(tc.Network, tc.WifiError)
 
 		w := &wifi{
 			env: env,
 			props: properties{
-				DisplayError:    tc.DisplayError,
-				SegmentTemplate: "{{ if .Error }}{{ .Error }}{{ else }}{{ .SSID }}{{ end }}",
+				DisplayError: tc.DisplayError,
 			},
 		}
 
 		assert.Equal(t, tc.ExpectedEnabled, w.enabled(), tc.Case)
 		if tc.Network != nil || tc.DisplayError {
-			assert.Equal(t, tc.ExpectedString, w.string(), tc.Case)
+			assert.Equal(t, tc.ExpectedString, renderTemplate(env, "{{ if .Error }}{{ .Error }}{{ else }}{{ .SSID }}{{ end }}", w), tc.Case)
 		}
 	}
 }

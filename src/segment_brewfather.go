@@ -98,6 +98,10 @@ type Batch struct {
 	TemperatureTrend float64 // diff between this and last, short term trend
 }
 
+func (bf *brewfather) template() string {
+	return DefaultTemplate
+}
+
 func (bf *brewfather) enabled() bool {
 	data, err := bf.getResult()
 	if err != nil {
@@ -197,24 +201,9 @@ func (bf *brewfather) getBatchStatusIcon(batchStatus string) string {
 	}
 }
 
-func (bf *brewfather) string() string {
-	segmentTemplate := bf.props.getString(SegmentTemplate, DefaultTemplate)
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  bf,
-		Env:      bf.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-
-	return text
-}
-
 func (bf *brewfather) getResult() (*Batch, error) {
 	getFromCache := func(key string) (*Batch, error) {
-		val, found := bf.env.cache().get(key)
+		val, found := bf.env.Cache().Get(key)
 		// we got something from the cache
 		if found {
 			var result Batch
@@ -232,7 +221,7 @@ func (bf *brewfather) getResult() (*Batch, error) {
 			return err
 		}
 
-		bf.env.cache().set(key, string(cacheJSON), cacheTimeout)
+		bf.env.Cache().Set(key, string(cacheJSON), cacheTimeout)
 
 		return nil
 	}

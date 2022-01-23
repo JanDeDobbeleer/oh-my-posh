@@ -54,25 +54,24 @@ func TestJava(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("hasCommand", "java").Return(true)
-		env.On("runCommand", "java", []string{"-Xinternalversion"}).Return(tc.Version, nil)
-		env.On("hasFiles", "pom.xml").Return(true)
-		env.On("pwd").Return("/usr/home/project")
-		env.On("homeDir").Return("/usr/home")
+		env.On("HasCommand", "java").Return(true)
+		env.On("RunCommand", "java", []string{"-Xinternalversion"}).Return(tc.Version, nil)
+		env.On("HasFiles", "pom.xml").Return(true)
+		env.On("Pwd").Return("/usr/home/project")
+		env.On("Home").Return("/usr/home")
 		if tc.JavaHomeEnabled {
-			env.On("getenv", "JAVA_HOME").Return("/usr/java")
-			env.On("hasCommand", "/usr/java/bin/java").Return(true)
-			env.On("runCommand", "/usr/java/bin/java", []string{"-Xinternalversion"}).Return(tc.JavaHomeVersion, nil)
+			env.On("Getenv", "JAVA_HOME").Return("/usr/java")
+			env.On("HasCommand", "/usr/java/bin/java").Return(true)
+			env.On("RunCommand", "/usr/java/bin/java", []string{"-Xinternalversion"}).Return(tc.JavaHomeVersion, nil)
 		} else {
-			env.On("getenv", "JAVA_HOME").Return("")
+			env.On("Getenv", "JAVA_HOME").Return("")
 		}
-		env.onTemplate()
 		props := properties{
 			FetchVersion: true,
 		}
 		j := &java{}
 		j.init(props, env)
 		assert.True(t, j.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
-		assert.Equal(t, tc.ExpectedString, j.string(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, j.template(), j), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

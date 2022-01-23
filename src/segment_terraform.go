@@ -6,18 +6,8 @@ type terraform struct {
 	WorkspaceName string
 }
 
-func (tf *terraform) string() string {
-	segmentTemplate := tf.props.getString(SegmentTemplate, "{{.WorkspaceName}}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  tf,
-		Env:      tf.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
+func (tf *terraform) template() string {
+	return "{{ .WorkspaceName }}"
 }
 
 func (tf *terraform) init(props Properties, env Environment) {
@@ -27,9 +17,9 @@ func (tf *terraform) init(props Properties, env Environment) {
 
 func (tf *terraform) enabled() bool {
 	cmd := "terraform"
-	if !tf.env.hasCommand(cmd) || !tf.env.hasFolder(tf.env.pwd()+"/.terraform") {
+	if !tf.env.HasCommand(cmd) || !tf.env.HasFolder(tf.env.Pwd()+"/.terraform") {
 		return false
 	}
-	tf.WorkspaceName, _ = tf.env.runCommand(cmd, "workspace", "show")
+	tf.WorkspaceName, _ = tf.env.RunCommand(cmd, "workspace", "show")
 	return true
 }

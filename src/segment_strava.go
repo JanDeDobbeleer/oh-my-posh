@@ -68,6 +68,10 @@ func (a *AuthError) Error() string {
 	return a.message
 }
 
+func (s *strava) template() string {
+	return "{{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }}"
+}
+
 func (s *strava) enabled() bool {
 	data, err := s.getResult()
 	if err == nil {
@@ -75,6 +79,7 @@ func (s *strava) enabled() bool {
 		s.Icon = s.getActivityIcon()
 		s.Hours = s.getHours()
 		s.Ago = s.getAgo()
+		s.URL = fmt.Sprintf("https://www.strava.com/activities/%d", s.ID)
 		return true
 	}
 	if _, s.Authenticate = err.(*AuthError); s.Authenticate {
@@ -117,31 +122,13 @@ func (s *strava) getActivityIcon() string {
 	return s.props.getString(UnknownActivityIcon, "\ue213")
 }
 
-func (s *strava) string() string {
-	if s.Error != "" {
-		return s.Error
-	}
-	segmentTemplate := s.props.getString(SegmentTemplate, "{{ .Ago }}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  s,
-		Env:      s.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	s.URL = fmt.Sprintf("https://www.strava.com/activities/%d", s.ID)
-	return text
-}
-
 func (s *strava) getAccessToken() (string, error) {
 	// get directly from cache
-	if acccessToken, OK := s.env.cache().get(StravaAccessToken); OK {
+	if acccessToken, OK := s.env.Cache().Get(StravaAccessToken); OK {
 		return acccessToken, nil
 	}
 	// use cached refersh token to get new access token
-	if refreshToken, OK := s.env.cache().get(StravaRefreshToken); OK {
+	if refreshToken, OK := s.env.Cache().Get(StravaRefreshToken); OK {
 		if acccessToken, err := s.refreshToken(refreshToken); err == nil {
 			return acccessToken, nil
 		}
@@ -176,8 +163,8 @@ func (s *strava) refreshToken(refreshToken string) (string, error) {
 		}
 	}
 	// add tokens to cache
-	s.env.cache().set(StravaAccessToken, tokens.AccessToken, tokens.ExpiresIn/60)
-	s.env.cache().set(StravaRefreshToken, tokens.RefreshToken, 2*525960) // it should never expire unless revoked, default to 2 year
+	s.env.Cache().Set(StravaAccessToken, tokens.AccessToken, tokens.ExpiresIn/60)
+	s.env.Cache().Set(StravaRefreshToken, tokens.RefreshToken, 2*525960) // it should never expire unless revoked, default to 2 year
 	return tokens.AccessToken, nil
 }
 
@@ -194,7 +181,7 @@ func (s *strava) getResult() (*StravaData, error) {
 		return result[0], nil
 	}
 	getCacheValue := func(key string) (*StravaData, error) {
-		val, found := s.env.cache().get(key)
+		val, found := s.env.Cache().Get(key)
 		// we got something from the cache
 		if found {
 			if data, err := parseSingleElement([]byte(val)); err == nil {
@@ -237,7 +224,7 @@ func (s *strava) getResult() (*StravaData, error) {
 	}
 	if cacheTimeout > 0 {
 		// persist new sugars in cache
-		s.env.cache().set(url, string(body), cacheTimeout)
+		s.env.Cache().Set(url, string(body), cacheTimeout)
 	}
 	return data, nil
 }

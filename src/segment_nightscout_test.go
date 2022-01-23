@@ -136,16 +136,11 @@ func TestNSSegment(t *testing.T) {
 		}
 
 		cache := &MockedCache{}
-		cache.On("get", FAKEAPIURL).Return(tc.JSONResponse, !tc.CacheFoundFail)
-		cache.On("set", FAKEAPIURL, tc.JSONResponse, tc.CacheTimeout).Return()
+		cache.On("Get", FAKEAPIURL).Return(tc.JSONResponse, !tc.CacheFoundFail)
+		cache.On("Set", FAKEAPIURL, tc.JSONResponse, tc.CacheTimeout).Return()
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
-		env.On("cache").Return(cache)
-		env.onTemplate()
-
-		if tc.Template != "" {
-			props[SegmentTemplate] = tc.Template
-		}
+		env.On("Cache").Return(cache)
 
 		ns := &nightscout{
 			props: props,
@@ -158,6 +153,9 @@ func TestNSSegment(t *testing.T) {
 			continue
 		}
 
-		assert.Equal(t, tc.ExpectedString, ns.string(), tc.Case)
+		if tc.Template == "" {
+			tc.Template = ns.template()
+		}
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, ns), tc.Case)
 	}
 }

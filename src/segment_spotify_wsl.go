@@ -8,10 +8,10 @@ import (
 )
 
 func (s *spotify) enabled() bool {
-	if !s.env.isWsl() {
+	if !s.env.IsWsl() {
 		return false
 	}
-	tlist, err := s.env.runCommand("tasklist.exe", "/V", "/FI", "Imagename eq Spotify.exe", "/FO", "CSV", "/NH")
+	tlist, err := s.env.RunCommand("tasklist.exe", "/V", "/FI", "Imagename eq Spotify.exe", "/FO", "CSV", "/NH")
 	if err != nil || strings.HasPrefix(tlist, "INFO") {
 		return false
 	}

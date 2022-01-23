@@ -50,7 +50,7 @@ type Properties interface {
 // SegmentWriter is the interface used to define what and if to write to the prompt
 type SegmentWriter interface {
 	enabled() bool
-	string() string
+	template() string
 	init(props Properties, env Environment)
 }
 
@@ -156,7 +156,16 @@ const (
 )
 
 func (segment *Segment) string() string {
-	return segment.writer.string()
+	template := &textTemplate{
+		Template: segment.writer.template(),
+		Context:  segment.writer,
+		Env:      segment.env,
+	}
+	text, err := template.render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
 }
 
 func (segment *Segment) enabled() bool {
@@ -191,7 +200,7 @@ func (segment *Segment) cwdIncluded() bool {
 		return true
 	}
 
-	return dirMatchesOneOf(segment.env, segment.env.pwd(), list)
+	return dirMatchesOneOf(segment.env, segment.env.Pwd(), list)
 }
 
 func (segment *Segment) cwdExcluded() bool {
@@ -200,7 +209,7 @@ func (segment *Segment) cwdExcluded() bool {
 		value = segment.Properties[IgnoreFolders]
 	}
 	list := parseStringArray(value)
-	return dirMatchesOneOf(segment.env, segment.env.pwd(), list)
+	return dirMatchesOneOf(segment.env, segment.env.Pwd(), list)
 }
 
 func (segment *Segment) getColor(templates []string, defaultColor string) string {

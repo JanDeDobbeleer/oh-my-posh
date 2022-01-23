@@ -40,7 +40,7 @@ const (
 	plain       = "shell"
 )
 
-type args struct {
+type Args struct {
 	ErrorCode      *int
 	PrintConfig    *bool
 	ConfigFormat   *string
@@ -70,7 +70,7 @@ type args struct {
 }
 
 func main() {
-	args := &args{
+	args := &Args{
 		ErrorCode: flag.Int(
 			"error",
 			0,
@@ -183,9 +183,9 @@ func main() {
 	}
 	env := &environment{}
 	env.init(args)
-	defer env.close()
+	defer env.Close()
 	if *args.PrintShell {
-		fmt.Println(env.getShellName())
+		fmt.Println(env.Shell())
 		return
 	}
 	if *args.Millis {
@@ -193,7 +193,7 @@ func main() {
 		return
 	}
 	if *args.CachePath {
-		fmt.Print(env.getCachePath())
+		fmt.Print(env.CachePath())
 		return
 	}
 	if *args.Init {
@@ -212,7 +212,7 @@ func main() {
 	}
 	cfg := GetConfig(env)
 	ansi := &ansiUtils{}
-	ansi.init(env.getShellName())
+	ansi.init(env.Shell())
 	var writer promptWriter
 	if *args.Plain {
 		writer = &PlainWriter{}

@@ -11,9 +11,8 @@ const (
 	FetchVirtualEnv Property = "fetch_virtual_env"
 )
 
-func (p *python) string() string {
-	segmentTemplate := p.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
-	return p.language.string(segmentTemplate, p)
+func (p *python) template() string {
+	return languageTemplate
 }
 
 func (p *python) init(props Properties, env Environment) {
@@ -57,7 +56,7 @@ func (p *python) loadContext() {
 	}
 	var venv string
 	for _, venvVar := range venvVars {
-		venv = p.language.env.getenv(venvVar)
+		venv = p.language.env.Getenv(venvVar)
 		name := base(venv, p.language.env)
 		if p.canUseVenvName(name) {
 			p.Venv = name

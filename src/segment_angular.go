@@ -9,9 +9,8 @@ type angular struct {
 	language
 }
 
-func (a *angular) string() string {
-	segmentTemplate := a.language.props.getString(SegmentTemplate, "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}")
-	return a.language.string(segmentTemplate, a)
+func (a *angular) template() string {
+	return languageTemplate
 }
 
 func (a *angular) init(props Properties, env Environment) {
@@ -25,13 +24,13 @@ func (a *angular) init(props Properties, env Environment) {
 				getVersion: func() (string, error) {
 					const fileName string = "package.json"
 					const fileFolder string = "/node_modules/@angular/core"
-					angularFilePath := a.language.env.pwd() + fileFolder
-					if !a.language.env.hasFilesInDir(angularFilePath, fileName) {
+					angularFilePath := a.language.env.Pwd() + fileFolder
+					if !a.language.env.HasFilesInDir(angularFilePath, fileName) {
 						return "", fmt.Errorf("%s not found in %s", fileName, angularFilePath)
 					}
 					// parse file
 					objmap := map[string]json.RawMessage{}
-					content := a.language.env.getFileContent(a.language.env.pwd() + fileFolder + "/" + fileName)
+					content := a.language.env.FileContent(a.language.env.Pwd() + fileFolder + "/" + fileName)
 					err := json.Unmarshal([]byte(content), &objmap)
 					if err != nil {
 						return "", err

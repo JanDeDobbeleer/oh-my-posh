@@ -18,7 +18,7 @@ func TestExitWriterEnabled(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("lastErrorCode").Return(tc.ExitCode)
+		env.On("ErrorCode").Return(tc.ExitCode)
 		e := &exit{
 			env:   env,
 			props: properties{},
@@ -75,18 +75,14 @@ func TestExitWriterTemplateString(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("lastErrorCode").Return(tc.ExitCode)
-		env.On("templateCache").Return(&templateCache{
+		env.On("ErrorCode").Return(tc.ExitCode)
+		env.On("TemplateCache").Return(&TemplateCache{
 			Code: tc.ExitCode,
 		})
-		env.onTemplate()
-		props := properties{
-			SegmentTemplate: tc.Template,
-		}
 		e := &exit{
 			env:   env,
-			props: props,
+			props: properties{},
 		}
-		assert.Equal(t, tc.Expected, e.string(), tc.Case)
+		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, e), tc.Case)
 	}
 }

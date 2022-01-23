@@ -30,18 +30,8 @@ type KubeContext struct {
 	Namespace string `yaml:"namespace"`
 }
 
-func (k *kubectl) string() string {
-	segmentTemplate := k.props.getString(SegmentTemplate, "{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}")
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  k,
-		Env:      k.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
+func (k *kubectl) template() string {
+	return "{{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }}"
 }
 
 func (k *kubectl) init(props Properties, env Environment) {
@@ -60,9 +50,9 @@ func (k *kubectl) enabled() bool {
 func (k *kubectl) doParseKubeConfig() bool {
 	// Follow kubectl search rules (see https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#the-kubeconfig-environment-variable)
 	// TL;DR: KUBECONFIG can contain a list of files. If it's empty ~/.kube/config is used. First file in list wins when merging keys.
-	kubeconfigs := filepath.SplitList(k.env.getenv("KUBECONFIG"))
+	kubeconfigs := filepath.SplitList(k.env.Getenv("KUBECONFIG"))
 	if len(kubeconfigs) == 0 {
-		kubeconfigs = []string{filepath.Join(k.env.homeDir(), ".kube/config")}
+		kubeconfigs = []string{filepath.Join(k.env.Home(), ".kube/config")}
 	}
 	contexts := make(map[string]*KubeContext)
 	k.Context = ""
@@ -71,7 +61,7 @@ func (k *kubectl) doParseKubeConfig() bool {
 			continue
 		}
 
-		content := k.env.getFileContent(kubeconfig)
+		content := k.env.FileContent(kubeconfig)
 
 		var config KubeConfig
 		err := yaml.Unmarshal([]byte(content), &config)
@@ -109,10 +99,10 @@ func (k *kubectl) doParseKubeConfig() bool {
 
 func (k *kubectl) doCallKubectl() bool {
 	cmd := "kubectl"
-	if !k.env.hasCommand(cmd) {
+	if !k.env.HasCommand(cmd) {
 		return false
 	}
-	result, err := k.env.runCommand(cmd, "config", "view", "--output", "yaml", "--minify")
+	result, err := k.env.RunCommand(cmd, "config", "view", "--output", "yaml", "--minify")
 	displayError := k.props.getBool(DisplayError, false)
 	if err != nil && displayError {
 		k.setError("KUBECTL ERR")

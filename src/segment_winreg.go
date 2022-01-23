@@ -19,21 +19,25 @@ const (
 	Fallback Property = "fallback"
 )
 
+func (wr *winreg) template() string {
+	return "{{ .Value }}"
+}
+
 func (wr *winreg) init(props Properties, env Environment) {
 	wr.props = props
 	wr.env = env
 }
 
 func (wr *winreg) enabled() bool {
-	if wr.env.getRuntimeGOOS() != windowsPlatform {
+	if wr.env.GOOS() != windowsPlatform {
 		return false
 	}
 
 	registryPath := wr.props.getString(RegistryPath, "")
 	fallback := wr.props.getString(Fallback, "")
 
-	var regValue *windowsRegistryValue
-	regValue, _ = wr.env.getWindowsRegistryKeyValue(registryPath)
+	var regValue *WindowsRegistryValue
+	regValue, _ = wr.env.WindowsRegistryKeyValue(registryPath)
 
 	if regValue != nil {
 		switch regValue.valueType {
@@ -57,26 +61,8 @@ func (wr *winreg) enabled() bool {
 	return false
 }
 
-func (wr *winreg) string() string {
-	segmentTemplate := wr.props.getString(SegmentTemplate, "{{ .Value }}")
-	return wr.templateString(segmentTemplate)
-}
-
-func (wr *winreg) templateString(segmentTemplate string) string {
-	template := &textTemplate{
-		Template: segmentTemplate,
-		Context:  wr,
-		Env:      wr.env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
-}
-
 func (wr winreg) GetRegistryString(path string) (string, error) {
-	regValue, err := wr.env.getWindowsRegistryKeyValue(path)
+	regValue, err := wr.env.WindowsRegistryKeyValue(path)
 
 	if regValue == nil {
 		return "", err
@@ -90,7 +76,7 @@ func (wr winreg) GetRegistryString(path string) (string, error) {
 }
 
 func (wr winreg) GetRegistryDword(path string) (uint32, error) {
-	regValue, err := wr.env.getWindowsRegistryKeyValue(path)
+	regValue, err := wr.env.WindowsRegistryKeyValue(path)
 
 	if regValue == nil {
 		return 0, err
@@ -104,7 +90,7 @@ func (wr winreg) GetRegistryDword(path string) (uint32, error) {
 }
 
 func (wr winreg) GetRegistryQword(path string) (uint64, error) {
-	regValue, err := wr.env.getWindowsRegistryKeyValue(path)
+	regValue, err := wr.env.WindowsRegistryKeyValue(path)
 
 	if regValue == nil {
 		return 0, err

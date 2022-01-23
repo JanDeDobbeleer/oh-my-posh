@@ -66,8 +66,8 @@ func GetConfig(env Environment) *Config {
 
 func loadConfig(env Environment) (*Config, error) {
 	var cfg Config
-	configFile := *env.getArgs().Config
-	eval := *env.getArgs().Eval
+	configFile := *env.Args().Config
+	eval := *env.Args().Eval
 	if configFile == "" {
 		return nil, errors.New("NO CONFIG")
 	}
@@ -247,7 +247,7 @@ func getDefaultConfig(info string) *Config {
 						Background:      "#ffffff",
 						Foreground:      "#111111",
 						Properties: properties{
-							TextProperty: info,
+							SegmentTemplate: info,
 						},
 					},
 					{

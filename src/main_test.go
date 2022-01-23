@@ -18,12 +18,11 @@ func TestConsoleBackgroundColorTemplate(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("templateCache").Return(&templateCache{
+		env.On("TemplateCache").Return(&TemplateCache{
 			Env: map[string]string{
 				"TERM_PROGRAM": tc.Term,
 			},
 		})
-		env.onTemplate()
 		color := getConsoleBackgroundColor(env, "{{ if eq \"vscode\" .Env.TERM_PROGRAM }}#123456{{end}}")
 		assert.Equal(t, tc.Expected, color, tc.Case)
 	}

@@ -23,13 +23,13 @@ type textTemplate struct {
 type Data interface{}
 
 type Context struct {
-	templateCache
+	TemplateCache
 
 	// Simple container to hold ANY object
 	Data
 }
 
-type templateCache struct {
+type TemplateCache struct {
 	Root     bool
 	PWD      string
 	Folder   string
@@ -44,8 +44,8 @@ type templateCache struct {
 
 func (c *Context) init(t *textTemplate) {
 	c.Data = t.Context
-	if cache := t.Env.templateCache(); cache != nil {
-		c.templateCache = *cache
+	if cache := t.Env.TemplateCache(); cache != nil {
+		c.TemplateCache = *cache
 		return
 	}
 }

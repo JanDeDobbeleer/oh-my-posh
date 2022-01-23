@@ -926,6 +926,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Victoria-DR",
+      "name": "Victoria",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68347113?v=4",
+      "profile": "https://github.com/Victoria-DR",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

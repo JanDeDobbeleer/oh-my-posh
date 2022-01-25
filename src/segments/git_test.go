@@ -321,15 +321,16 @@ func TestSetPrettyHEADName(t *testing.T) {
 
 func TestSetGitStatus(t *testing.T) {
 	cases := []struct {
-		Case             string
-		Output           string
-		ExpectedWorking  *GitStatus
-		ExpectedStaging  *GitStatus
-		ExpectedHash     string
-		ExpectedRef      string
-		ExpectedUpstream string
-		ExpectedAhead    int
-		ExpectedBehind   int
+		Case                 string
+		Output               string
+		ExpectedWorking      *GitStatus
+		ExpectedStaging      *GitStatus
+		ExpectedHash         string
+		ExpectedRef          string
+		ExpectedUpstream     string
+		ExpectedUpstreamGone bool
+		ExpectedAhead        int
+		ExpectedBehind       int
 	}{
 		{
 			Case: "all different options on working and staging, no remote",
@@ -357,6 +358,7 @@ func TestSetGitStatus(t *testing.T) {
 			# branch.oid 1234567891011121314
 			# branch.head rework-git-status
 			# branch.upstream origin/rework-git-status
+			# branch.ab +0 -0
 			1 .R N...
 			1 .C N...
 			1 .M N...
@@ -379,6 +381,7 @@ func TestSetGitStatus(t *testing.T) {
 			# branch.oid 1234567891011121314
 			# branch.head rework-git-status
 			# branch.upstream origin/rework-git-status
+			# branch.ab +0 -0
 			`,
 			ExpectedUpstream: "origin/rework-git-status",
 			ExpectedHash:     "1234567",
@@ -414,6 +417,18 @@ func TestSetGitStatus(t *testing.T) {
 			ExpectedRef:      "main",
 			ExpectedWorking:  &GitStatus{ScmStatus: ScmStatus{Added: 3}},
 		},
+		{
+			Case: "remote branch was deleted",
+			Output: `
+			# branch.oid 1234567891011121314
+			# branch.head branch-is-gone
+			# branch.upstream origin/branch-is-gone
+			`,
+			ExpectedUpstream:     "origin/branch-is-gone",
+			ExpectedHash:         "1234567",
+			ExpectedRef:          "branch-is-gone",
+			ExpectedUpstreamGone: true,
+		},
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
@@ -437,6 +452,7 @@ func TestSetGitStatus(t *testing.T) {
 		assert.Equal(t, tc.ExpectedHash, g.Hash, tc.Case)
 		assert.Equal(t, tc.ExpectedRef, g.Ref, tc.Case)
 		assert.Equal(t, tc.ExpectedUpstream, g.Upstream, tc.Case)
+		assert.Equal(t, tc.ExpectedUpstreamGone, g.UpstreamGone, tc.Case)
 		assert.Equal(t, tc.ExpectedAhead, g.Ahead, tc.Case)
 		assert.Equal(t, tc.ExpectedBehind, g.Behind, tc.Case)
 	}
@@ -505,17 +521,19 @@ func TestGitUpstream(t *testing.T) {
 
 func TestGetBranchStatus(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Expected string
-		Ahead    int
-		Behind   int
-		Upstream string
+		Case         string
+		Expected     string
+		Ahead        int
+		Behind       int
+		Upstream     string
+		UpstreamGone bool
 	}{
 		{Case: "Equal with remote", Expected: " equal", Upstream: branchName},
 		{Case: "Ahead", Expected: " up2", Ahead: 2},
 		{Case: "Behind", Expected: " down8", Behind: 8},
 		{Case: "Behind and ahead", Expected: " up7 down8", Behind: 8, Ahead: 7},
-		{Case: "Gone", Expected: " gone"},
+		{Case: "Gone", Expected: " gone", Upstream: branchName, UpstreamGone: true},
+		{Case: "No remote", Expected: "", Upstream: ""},
 		{Case: "Default (bug)", Expected: "", Behind: -8, Upstream: "wonky"},
 	}
 
@@ -530,9 +548,10 @@ func TestGetBranchStatus(t *testing.T) {
 			scm: scm{
 				props: props,
 			},
-			Ahead:    tc.Ahead,
-			Behind:   tc.Behind,
-			Upstream: tc.Upstream,
+			Ahead:        tc.Ahead,
+			Behind:       tc.Behind,
+			Upstream:     tc.Upstream,
+			UpstreamGone: tc.UpstreamGone,
 		}
 		g.setBranchStatus()
 		assert.Equal(t, tc.Expected, g.BranchStatus, tc.Case)

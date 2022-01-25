@@ -45,6 +45,7 @@ type Git struct {
 	Upstream      string
 	UpstreamIcon  string
 	UpstreamURL   string
+	UpstreamGone  bool
 	StashCount    int
 	WorktreeCount int
 	IsWorkTree    bool
@@ -205,11 +206,11 @@ func (g *Git) setBranchStatus() {
 		if g.Behind > 0 {
 			return fmt.Sprintf(" %s%d", g.props.GetString(BranchBehindIcon, "\u2193"), g.Behind)
 		}
+		if g.UpstreamGone {
+			return fmt.Sprintf(" %s", g.props.GetString(BranchGoneIcon, "\u2262"))
+		}
 		if g.Behind == 0 && g.Ahead == 0 && g.Upstream != "" {
 			return fmt.Sprintf(" %s", g.props.GetString(BranchIdenticalIcon, "\u2261"))
-		}
-		if g.Upstream == "" {
-			return fmt.Sprintf(" %s", g.props.GetString(BranchGoneIcon, "\u2262"))
 		}
 		return ""
 	}
@@ -268,7 +269,9 @@ func (g *Git) setGitStatus() {
 			continue
 		}
 		if strings.HasPrefix(line, UPSTREAM) && len(line) > len(UPSTREAM) {
+			// status reports upstream, but upstream may be gone (must check BRANCHSTATUS)
 			g.Upstream = line[len(UPSTREAM):]
+			g.UpstreamGone = true
 			continue
 		}
 		if strings.HasPrefix(line, BRANCHSTATUS) && len(line) > len(BRANCHSTATUS) {
@@ -279,6 +282,8 @@ func (g *Git) setGitStatus() {
 				behind, _ := strconv.Atoi(splitted[1])
 				g.Behind = -behind
 			}
+			// confirmed: upstream exists
+			g.UpstreamGone = false
 			continue
 		}
 		addToStatus(line)

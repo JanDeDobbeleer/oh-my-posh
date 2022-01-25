@@ -23,7 +23,20 @@
           "style": "powerline",
           "powerline_symbol": "\ue0b0",
           "foreground": "#1d1626",
-          "background": "#ffce7b"
+          "background": "#ffce7b",
+          "properties": {
+              "prefix": " \uF26C  "
+          }
+        },
+        {
+          "type": "os",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#fffef9",
+          "background": "#C678DD",
+          "properties": {
+            "windows": "\uF17A"
+          }
         },
         {
           "type": "path",
@@ -33,6 +46,7 @@
           "background": "#C678DD",
           "properties": {
             "style": "full",
+            "prefix": "",
             "enable_hyperlink": false
           }
         },
@@ -67,22 +81,26 @@
           }
         },
         {
+          "type": "executiontime",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#fffef9",
+          "background": "#33a3dc",
+          "properties": {
+            "prefix": " \uF064  ",
+            "always_enabled": true
+          }
+        },
+        {
           "type": "exit",
           "style": "powerline",
           "powerline_symbol": "\ue0b0",
-          "foreground": "#ffffff",
+          "foreground": "#fffef9",
           "background": "#ed1941",
           "properties": {
             "prefix": " \uF12A >>",
             "template": "{{ .Text }}"
           }
-        },
-        {
-          "type": "executiontime",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#ffffff",
-          "background": "#6f6d85"
         }
       ]
     },

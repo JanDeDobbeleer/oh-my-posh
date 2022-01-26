@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"oh-my-posh/color"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"os"
 	"strconv"
 	"strings"
@@ -49,7 +50,7 @@ type TransientPrompt struct {
 
 const (
 	// HTTPTimeout timeout used when executing http request
-	HTTPTimeout Property = "http_timeout"
+	HTTPTimeout properties.Property = "http_timeout"
 	// DefaultHTTPTimeout default timeout used when executing http request
 	DefaultHTTPTimeout = 20
 	// DefaultCacheTimeout default timeout used when caching data
@@ -195,9 +196,9 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#ff479c",
 						Foreground:      "#ffffff",
-						Properties: properties{
-							Prefix: " \uE5FF ",
-							Style:  "folder",
+						Properties: properties.Map{
+							properties.Prefix: " \uE5FF ",
+							properties.Style:  "folder",
 						},
 					},
 					{
@@ -206,7 +207,7 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#fffb38",
 						Foreground:      "#193549",
-						Properties: properties{
+						Properties: properties.Map{
 							FetchStashCount:   true,
 							FetchUpstreamIcon: true,
 						},
@@ -217,8 +218,8 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#f36943",
 						Foreground:      "#193549",
-						Properties: properties{
-							Postfix: "\uF295 ",
+						Properties: properties.Map{
+							properties.Postfix: "\uF295 ",
 						},
 					},
 					{
@@ -227,9 +228,9 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#6CA35E",
 						Foreground:      "#ffffff",
-						Properties: properties{
-							Prefix:       " \uE718",
-							FetchVersion: false,
+						Properties: properties.Map{
+							properties.Prefix:       " \uE718",
+							properties.FetchVersion: false,
 						},
 					},
 					{
@@ -238,8 +239,8 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#0077c2",
 						Foreground:      "#ffffff",
-						Properties: properties{
-							Prefix: " \uFCB5 ",
+						Properties: properties.Map{
+							properties.Prefix: " \uFCB5 ",
 						},
 					},
 					{
@@ -255,8 +256,8 @@ func getDefaultConfig(info string) *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#ffffff",
 						Foreground:      "#111111",
-						Properties: properties{
-							SegmentTemplate: info,
+						Properties: properties.Map{
+							properties.SegmentTemplate: info,
 						},
 					},
 					{
@@ -266,9 +267,9 @@ func getDefaultConfig(info string) *Config {
 						Foreground:      "#ffffff",
 						LeadingDiamond:  "<transparent,#2e9599>\uE0B0</>",
 						TrailingDiamond: "\uE0B4",
-						Properties: properties{
-							AlwaysEnabled: true,
-							Prefix:        " \uE23A",
+						Properties: properties.Map{
+							properties.AlwaysEnabled: true,
+							properties.Prefix:        " \uE23A",
 						},
 					},
 				},

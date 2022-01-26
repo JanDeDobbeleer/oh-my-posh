@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -17,7 +18,7 @@ func TestSpotifyStringPlayingSong(t *testing.T) {
 			Status: "playing",
 			Icon:   "\ue602 ",
 		},
-		props: properties{},
+		props: properties.Map{},
 		env:   env,
 	}
 	assert.Equal(t, expected, renderTemplate(env, s.template(), s))
@@ -33,7 +34,7 @@ func TestSpotifyStringStoppedSong(t *testing.T) {
 			Status: "stopped",
 			Icon:   "\uf04d ",
 		},
-		props: properties{},
+		props: properties.Map{},
 		env:   env,
 	}
 	assert.Equal(t, expected, renderTemplate(env, s.template(), s))

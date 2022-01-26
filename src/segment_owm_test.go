@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -52,7 +53,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
-		props := properties{
+		props := properties.Map{
 			APIKey:       "key",
 			Location:     "AMSTERDAM,NL",
 			Units:        "metric",
@@ -187,7 +188,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		env.On("HTTPRequest", OWMAPIURL).Return([]byte(response), nil)
 
 		o := &owm{
-			props: properties{
+			props: properties.Map{
 				APIKey:       "key",
 				Location:     "AMSTERDAM,NL",
 				Units:        "metric",
@@ -210,7 +211,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		env.On("HTTPRequest", OWMAPIURL).Return([]byte(response), nil)
 
 		o := &owm{
-			props: properties{
+			props: properties.Map{
 				APIKey:       "key",
 				Location:     "AMSTERDAM,NL",
 				Units:        "metric",
@@ -230,7 +231,7 @@ func TestOWMSegmentFromCache(t *testing.T) {
 	env := &mock.MockedEnvironment{}
 	cache := &mock.MockedCache{}
 	o := &owm{
-		props: properties{
+		props: properties.Map{
 			APIKey:   "key",
 			Location: "AMSTERDAM,NL",
 			Units:    "metric",
@@ -254,7 +255,7 @@ func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 	cache := &mock.MockedCache{}
 
 	o := &owm{
-		props: properties{
+		props: properties.Map{
 			APIKey:   "key",
 			Location: "AMSTERDAM,NL",
 			Units:    "metric",

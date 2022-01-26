@@ -5,10 +5,11 @@ import (
 	"errors"
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 )
 
 type owm struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Temperature float64
@@ -20,13 +21,13 @@ type owm struct {
 
 const (
 	// APIKey openweathermap api key
-	APIKey Property = "apikey"
+	APIKey properties.Property = "apikey"
 	// Location openweathermap location
-	Location Property = "location"
+	Location properties.Property = "location"
 	// Units openweathermap units
-	Units Property = "units"
+	Units properties.Property = "units"
 	// CacheTimeout cache timeout
-	CacheTimeout Property = "cache_timeout"
+	CacheTimeout properties.Property = "cache_timeout"
 	// CacheKeyResponse key used when caching the response
 	CacheKeyResponse string = "owm_response"
 	// CacheKeyURL key used when caching the url responsible for the response
@@ -163,7 +164,7 @@ func (d *owm) setStatus() error {
 	return nil
 }
 
-func (d *owm) init(props Properties, env environment.Environment) {
+func (d *owm) init(props properties.Properties, env environment.Environment) {
 	d.props = props
 	d.env = env
 }

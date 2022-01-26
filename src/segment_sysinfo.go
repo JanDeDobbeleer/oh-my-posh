@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 
 	cpu "github.com/shirou/gopsutil/v3/cpu"
 	load "github.com/shirou/gopsutil/v3/load"
@@ -9,8 +10,9 @@ import (
 )
 
 type sysinfo struct {
-	props     Properties
-	env       environment.Environment
+	props properties.Properties
+	env   environment.Environment
+
 	Precision int
 	// mem
 	PhysicalTotalMemory uint64
@@ -30,7 +32,7 @@ type sysinfo struct {
 
 const (
 	// Precision number of decimal places to show
-	Precision Property = "precision"
+	Precision properties.Property = "precision"
 )
 
 func (s *sysinfo) template() string {
@@ -44,7 +46,7 @@ func (s *sysinfo) enabled() bool {
 	return true
 }
 
-func (s *sysinfo) init(props Properties, env environment.Environment) {
+func (s *sysinfo) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 	s.Precision = s.props.GetInt(Precision, 2)

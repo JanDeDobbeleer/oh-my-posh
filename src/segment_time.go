@@ -2,11 +2,12 @@ package main
 
 import (
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"time"
 )
 
 type tempus struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	CurrentDate time.Time
@@ -14,7 +15,7 @@ type tempus struct {
 
 const (
 	// TimeFormat uses the reference time Mon Jan 2 15:04:05 MST 2006 to show the pattern with which to format the current time
-	TimeFormat Property = "time_format"
+	TimeFormat properties.Property = "time_format"
 )
 
 func (t *tempus) template() string {
@@ -29,7 +30,7 @@ func (t *tempus) enabled() bool {
 	return true
 }
 
-func (t *tempus) init(props Properties, env environment.Environment) {
+func (t *tempus) init(props properties.Properties, env environment.Environment) {
 	t.props = props
 	t.env = env
 }

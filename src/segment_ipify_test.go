@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -44,7 +45,7 @@ func TestIpifySegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
-		props := properties{
+		props := properties.Map{
 			CacheTimeout: 0,
 		}
 		env.On("HTTPRequest", IPIFYAPIURL).Return([]byte(tc.Response), tc.Error)

@@ -1,15 +1,18 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type ipify struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 	IP    string
 }
 
 const (
-	IpifyURL Property = "url"
+	IpifyURL properties.Property = "url"
 )
 
 func (i *ipify) template() string {
@@ -57,7 +60,7 @@ func (i *ipify) getResult() (string, error) {
 	return response, nil
 }
 
-func (i *ipify) init(props Properties, env environment.Environment) {
+func (i *ipify) init(props properties.Properties, env environment.Environment) {
 	i.props = props
 	i.env = env
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -99,8 +100,8 @@ func TestRuby(t *testing.T) {
 		env.On("HasFiles", "Gemfile").Return(tc.HasGemFile)
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
-		props := properties{
-			FetchVersion: tc.FetchVersion,
+		props := properties.Map{
+			properties.FetchVersion: tc.FetchVersion,
 		}
 		ruby := &ruby{}
 		ruby.init(props, env)

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"strings"
 	"testing"
 
@@ -23,7 +24,7 @@ func TestEnabledGitNotFound(t *testing.T) {
 	g := &git{
 		scm: scm{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		},
 	}
 	assert.False(t, g.enabled())
@@ -46,7 +47,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	g := &git{
 		scm: scm{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		},
 	}
 	assert.True(t, g.enabled())
@@ -72,7 +73,7 @@ func TestEnabledInWorkingTree(t *testing.T) {
 	g := &git{
 		scm: scm{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		},
 	}
 	assert.True(t, g.enabled())
@@ -99,7 +100,7 @@ func TestEnabledInSubmodule(t *testing.T) {
 	g := &git{
 		scm: scm{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		},
 	}
 	assert.True(t, g.enabled())
@@ -119,7 +120,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	g := &git{
 		scm: scm{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		},
 	}
 	got := g.getGitCommandOutput(commandArgs...)
@@ -263,7 +264,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		g := &git{
 			scm: scm{
 				env: env,
-				props: properties{
+				props: properties.Map{
 					BranchIcon:     "branch ",
 					CommitIcon:     "commit ",
 					RebaseIcon:     "rebase ",
@@ -305,7 +306,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 		g := &git{
 			scm: scm{
 				env: env,
-				props: properties{
+				props: properties.Map{
 					BranchIcon: "branch ",
 					CommitIcon: "commit ",
 					TagIcon:    "tag ",
@@ -483,7 +484,7 @@ func TestGitUpstream(t *testing.T) {
 		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
 		env.On("GOOS").Return("unix")
-		props := properties{
+		props := properties.Map{
 			GithubIcon:      "GH",
 			GitlabIcon:      "GL",
 			BitbucketIcon:   "BB",
@@ -519,7 +520,7 @@ func TestGetBranchStatus(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties{
+		props := properties.Map{
 			BranchAheadIcon:     "up",
 			BranchBehindIcon:    "down",
 			BranchIdenticalIcon: "equal",
@@ -704,7 +705,7 @@ func TestGitTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties{
+		props := properties.Map{
 			FetchStatus: true,
 		}
 		env := new(mock.MockedEnvironment)

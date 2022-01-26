@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,7 @@ func TestPoshGitSegment(t *testing.T) {
 		env.On("Getenv", poshGitEnv).Return(tc.PoshGitPrompt)
 		p := &poshgit{
 			env:   env,
-			props: &properties{},
+			props: &properties.Map{},
 		}
 		assert.Equal(t, tc.Enabled, p.enabled(), tc.Case)
 		if tc.Enabled {

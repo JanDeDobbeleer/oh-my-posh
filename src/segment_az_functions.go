@@ -1,6 +1,9 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type azfunc struct {
 	language
@@ -10,7 +13,7 @@ func (az *azfunc) template() string {
 	return languageTemplate
 }
 
-func (az *azfunc) init(props Properties, env environment.Environment) {
+func (az *azfunc) init(props properties.Properties, env environment.Environment) {
 	az.language = language{
 		env:        env,
 		props:      props,

@@ -5,6 +5,7 @@ package main
 import (
 	"errors"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -32,7 +33,7 @@ func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to name of current track as string"}).Return(tc.Track, nil)
 		s := &spotify{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		}
 		assert.Equal(t, tc.Running == "true", s.enabled())
 		assert.Equal(t, tc.Expected, renderTemplate(env, s.template(), s))

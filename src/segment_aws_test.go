@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -55,8 +56,8 @@ func TestAWSSegment(t *testing.T) {
 		env.On("Getenv", "AWS_CONFIG_FILE").Return(tc.ConfigFile)
 		env.On("FileContent", "/usr/home/.aws/config").Return("")
 		env.On("Home").Return("/usr/home")
-		props := properties{
-			DisplayDefault: tc.DisplayDefault,
+		props := properties.Map{
+			properties.DisplayDefault: tc.DisplayDefault,
 		}
 		aws := &aws{
 			env:   env,

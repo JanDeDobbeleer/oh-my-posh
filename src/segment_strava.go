@@ -7,12 +7,13 @@ import (
 	"math"
 	"net/http"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"time"
 )
 
 // segment struct, makes templating easier
 type strava struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	StravaData
@@ -25,11 +26,11 @@ type strava struct {
 }
 
 const (
-	RideIcon            Property = "ride_icon"
-	RunIcon             Property = "run_icon"
-	SkiingIcon          Property = "skiing_icon"
-	WorkOutIcon         Property = "workout_icon"
-	UnknownActivityIcon Property = "unknown_activity_icon"
+	RideIcon            properties.Property = "ride_icon"
+	RunIcon             properties.Property = "run_icon"
+	SkiingIcon          properties.Property = "skiing_icon"
+	WorkOutIcon         properties.Property = "workout_icon"
+	UnknownActivityIcon properties.Property = "unknown_activity_icon"
 
 	StravaAccessToken  = "strava_access_token"
 	StravaRefreshToken = "strava_refresh_token"
@@ -135,7 +136,7 @@ func (s *strava) getAccessToken() (string, error) {
 		}
 	}
 	// use initial refresh token from property
-	refreshToken := s.props.GetString(RefreshToken, "")
+	refreshToken := s.props.GetString(properties.RefreshToken, "")
 	if len(refreshToken) == 0 {
 		return "", &AuthError{
 			message: InvalidRefreshToken,
@@ -230,7 +231,7 @@ func (s *strava) getResult() (*StravaData, error) {
 	return data, nil
 }
 
-func (s *strava) init(props Properties, env environment.Environment) {
+func (s *strava) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

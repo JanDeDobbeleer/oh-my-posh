@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,7 +23,7 @@ type languageArgs struct {
 	enabledCommands    []string
 	versionURLTemplate string
 	expectedError      error
-	properties         Properties
+	properties         properties.Properties
 	matchesVersionFile matchesVersionFile
 	inHome             bool
 }
@@ -56,7 +57,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 		Env: make(map[string]string),
 	})
 	if args.properties == nil {
-		args.properties = properties{}
+		args.properties = properties.Map{}
 	}
 	l := &language{
 		props:              args.properties,
@@ -86,8 +87,8 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 }
 
 func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {
-	props := properties{
-		FetchVersion: false,
+	props := properties.Map{
+		properties.FetchVersion: false,
 	}
 	args := &languageArgs{
 		commands: []*cmd{
@@ -236,8 +237,8 @@ func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
 }
 
 func TestLanguageEnabledNoVersion(t *testing.T) {
-	props := properties{
-		FetchVersion: false,
+	props := properties.Map{
+		properties.FetchVersion: false,
 	}
 	args := &languageArgs{
 		commands: []*cmd{
@@ -259,8 +260,8 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 }
 
 func TestLanguageEnabledMissingCommand(t *testing.T) {
-	props := properties{
-		FetchVersion: false,
+	props := properties.Map{
+		properties.FetchVersion: false,
 	}
 	args := &languageArgs{
 		commands:          []*cmd{},
@@ -276,8 +277,8 @@ func TestLanguageEnabledMissingCommand(t *testing.T) {
 }
 
 func TestLanguageEnabledNoVersionData(t *testing.T) {
-	props := properties{
-		FetchVersion: true,
+	props := properties.Map{
+		properties.FetchVersion: true,
 	}
 	args := &languageArgs{
 		commands: []*cmd{
@@ -300,7 +301,7 @@ func TestLanguageEnabledNoVersionData(t *testing.T) {
 
 func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 	expected := "missing"
-	props := properties{
+	props := properties.Map{
 		MissingCommandText: expected,
 	}
 	args := &languageArgs{
@@ -317,9 +318,9 @@ func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 }
 
 func TestLanguageEnabledMissingCommandCustomTextHideError(t *testing.T) {
-	props := properties{
-		MissingCommandText: "missing",
-		DisplayError:       false,
+	props := properties.Map{
+		MissingCommandText:      "missing",
+		properties.DisplayError: false,
 	}
 	args := &languageArgs{
 		commands:          []*cmd{},
@@ -375,7 +376,7 @@ func TestLanguageHyperlinkEnabled(t *testing.T) {
 		enabledExtensions:  []string{corn},
 		enabledCommands:    []string{"corn"},
 		version:            universion,
-		properties:         properties{},
+		properties:         properties.Map{},
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -401,7 +402,7 @@ func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
 		enabledExtensions:  []string{corn},
 		enabledCommands:    []string{"corn"},
 		version:            universion,
-		properties:         properties{},
+		properties:         properties.Map{},
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())
@@ -418,7 +419,7 @@ func TestLanguageEnabledInHome(t *testing.T) {
 		{Case: "Context disabled", HomeEnabled: false, ExpectedEnabled: false},
 	}
 	for _, tc := range cases {
-		props := properties{
+		props := properties.Map{
 			HomeEnabled: tc.HomeEnabled,
 		}
 		args := &languageArgs{

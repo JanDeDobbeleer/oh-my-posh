@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 	"time"
 
@@ -13,7 +14,7 @@ func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
 	env.On("ExecutionTime").Return(1337)
 	executionTime := &executiontime{
 		env:   env,
-		props: properties{},
+		props: properties.Map{},
 	}
 	assert.True(t, executionTime.enabled())
 }
@@ -23,7 +24,7 @@ func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 	env.On("ExecutionTime").Return(1)
 	executionTime := &executiontime{
 		env:   env,
-		props: properties{},
+		props: properties.Map{},
 	}
 	assert.False(t, executionTime.enabled())
 }
@@ -31,7 +32,7 @@ func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 	env := new(mock.MockedEnvironment)
 	env.On("ExecutionTime").Return(99)
-	props := properties{
+	props := properties.Map{
 		ThresholdProperty: float64(10),
 	}
 	executionTime := &executiontime{
@@ -44,7 +45,7 @@ func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
 	env := new(mock.MockedEnvironment)
 	env.On("ExecutionTime").Return(99)
-	props := properties{
+	props := properties.Map{
 		ThresholdProperty: float64(100),
 	}
 	executionTime := &executiontime{
@@ -61,7 +62,7 @@ func TestExecutionTimeWriterDuration(t *testing.T) {
 	env.On("ExecutionTime").Return(input)
 	executionTime := &executiontime{
 		env:   env,
-		props: properties{},
+		props: properties.Map{},
 	}
 	executionTime.enabled()
 	assert.Equal(t, expected, executionTime.FormattedMs)
@@ -74,7 +75,7 @@ func TestExecutionTimeWriterDuration2(t *testing.T) {
 	env.On("ExecutionTime").Return(input)
 	executionTime := &executiontime{
 		env:   env,
-		props: properties{},
+		props: properties.Map{},
 	}
 	executionTime.enabled()
 	assert.Equal(t, expected, executionTime.FormattedMs)

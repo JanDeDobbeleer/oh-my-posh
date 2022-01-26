@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/alecthomas/assert"
@@ -68,7 +69,7 @@ func TestNodeInContext(t *testing.T) {
 		node := &node{
 			language: language{
 				env: env,
-				props: properties{
+				props: properties.Map{
 					YarnIcon:            "yarn",
 					NPMIcon:             "npm",
 					FetchPackageManager: tc.PkgMgrEnabled,

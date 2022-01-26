@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/alecthomas/assert"
@@ -54,9 +55,9 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("PathSeperator").Return("")
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
-		props := properties{
-			FetchVersion: tc.FetchVersion,
-			DisplayMode:  DisplayModeAlways,
+		props := properties.Map{
+			properties.FetchVersion: tc.FetchVersion,
+			DisplayMode:             DisplayModeAlways,
 		}
 		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: make(map[string]string),
@@ -85,7 +86,7 @@ func TestPythonPythonInContext(t *testing.T) {
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
 		env.On("Getenv", "PYENV_VERSION").Return("")
 		python := &python{}
-		python.init(properties{}, env)
+		python.init(properties.Map{}, env)
 		python.loadContext()
 		assert.Equal(t, tc.Expected, python.inContext())
 	}

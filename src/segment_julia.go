@@ -1,6 +1,9 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type julia struct {
 	language
@@ -10,7 +13,7 @@ func (j *julia) template() string {
 	return languageTemplate
 }
 
-func (j *julia) init(props Properties, env environment.Environment) {
+func (j *julia) init(props properties.Properties, env environment.Environment) {
 	j.language = language{
 		env:        env,
 		props:      props,

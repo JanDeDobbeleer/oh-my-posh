@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -71,7 +72,7 @@ func TestOSInfo(t *testing.T) {
 		})
 		osInfo := &osInfo{
 			env: env,
-			props: properties{
+			props: properties.Map{
 				DisplayDistroName: tc.DisplayDistroName,
 				Windows:           "windows",
 				MacOS:             "darwin",

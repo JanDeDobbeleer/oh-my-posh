@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/alecthomas/assert"
@@ -63,7 +64,7 @@ func TestNbgv(t *testing.T) {
 		env.On("RunCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
 		nbgv := &nbgv{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		}
 		enabled := nbgv.enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"strings"
 )
 
@@ -36,20 +37,20 @@ func (s *ScmStatus) String() string {
 }
 
 type scm struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 }
 
 const (
 	// BranchMaxLength truncates the length of the branch name
-	BranchMaxLength Property = "branch_max_length"
+	BranchMaxLength properties.Property = "branch_max_length"
 	// TruncateSymbol appends the set symbol to a truncated branch name
-	TruncateSymbol Property = "truncate_symbol"
+	TruncateSymbol properties.Property = "truncate_symbol"
 	// FullBranchPath displays the full path of a branch
-	FullBranchPath Property = "full_branch_path"
+	FullBranchPath properties.Property = "full_branch_path"
 )
 
-func (s *scm) init(props Properties, env environment.Environment) {
+func (s *scm) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }
@@ -69,7 +70,7 @@ func (s *scm) truncateBranch(branch string) string {
 }
 
 func (s *scm) shouldIgnoreRootRepository(rootDir string) bool {
-	excludedFolders := s.props.GetStringArray(ExcludeFolders, []string{})
+	excludedFolders := s.props.GetStringArray(properties.ExcludeFolders, []string{})
 	if len(excludedFolders) == 0 {
 		return false
 	}

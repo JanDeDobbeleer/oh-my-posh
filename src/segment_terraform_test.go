@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,7 +22,7 @@ func bootStrapTerraformTest(args *terraformArgs) *terraform {
 	env.On("RunCommand", "terraform", []string{"workspace", "show"}).Return(args.workspaceName, nil)
 	k := &terraform{
 		env:   env,
-		props: properties{},
+		props: properties.Map{},
 	}
 	return k
 }

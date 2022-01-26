@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"strconv"
 
 	lang "golang.org/x/text/language"
@@ -10,7 +11,7 @@ import (
 )
 
 type executiontime struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	FormattedMs string
@@ -22,7 +23,7 @@ type DurationStyle string
 
 const (
 	// ThresholdProperty represents minimum duration (milliseconds) required to enable this segment
-	ThresholdProperty Property = "threshold"
+	ThresholdProperty properties.Property = "threshold"
 	// Austin milliseconds short
 	Austin DurationStyle = "austin"
 	// Roundrock milliseconds long
@@ -48,13 +49,13 @@ const (
 )
 
 func (t *executiontime) enabled() bool {
-	alwaysEnabled := t.props.GetBool(AlwaysEnabled, false)
+	alwaysEnabled := t.props.GetBool(properties.AlwaysEnabled, false)
 	executionTimeMs := t.env.ExecutionTime()
 	thresholdMs := t.props.GetFloat64(ThresholdProperty, float64(500))
 	if !alwaysEnabled && executionTimeMs < thresholdMs {
 		return false
 	}
-	style := DurationStyle(t.props.GetString(Style, string(Austin)))
+	style := DurationStyle(t.props.GetString(properties.Style, string(Austin)))
 	t.Ms = int64(executionTimeMs)
 	t.FormattedMs = t.formatDuration(style)
 	return t.FormattedMs != ""
@@ -64,7 +65,7 @@ func (t *executiontime) template() string {
 	return "{{ .FormattedMs }}"
 }
 
-func (t *executiontime) init(props Properties, env environment.Environment) {
+func (t *executiontime) init(props properties.Properties, env environment.Environment) {
 	t.props = props
 	t.env = env
 }

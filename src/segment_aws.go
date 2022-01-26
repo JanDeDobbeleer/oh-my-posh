@@ -3,11 +3,12 @@ package main
 import (
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"strings"
 )
 
 type aws struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Profile string
@@ -22,7 +23,7 @@ func (a *aws) template() string {
 	return "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}"
 }
 
-func (a *aws) init(props Properties, env environment.Environment) {
+func (a *aws) init(props properties.Properties, env environment.Environment) {
 	a.props = props
 	a.env = env
 }
@@ -37,7 +38,7 @@ func (a *aws) enabled() bool {
 		}
 		return ""
 	}
-	displayDefaultUser := a.props.GetBool(DisplayDefault, true)
+	displayDefaultUser := a.props.GetBool(properties.DisplayDefault, true)
 	a.Profile = getEnvFirstMatch("AWS_VAULT", "AWS_PROFILE")
 	if !displayDefaultUser && a.Profile == defaultUser {
 		return false

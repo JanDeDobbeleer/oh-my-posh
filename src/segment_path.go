@@ -3,13 +3,14 @@ package main
 import (
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"oh-my-posh/regex"
 	"sort"
 	"strings"
 )
 
 type path struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	pwd        string
@@ -20,13 +21,13 @@ type path struct {
 
 const (
 	// FolderSeparatorIcon the path which is split will be separated by this icon
-	FolderSeparatorIcon Property = "folder_separator_icon"
+	FolderSeparatorIcon properties.Property = "folder_separator_icon"
 	// HomeIcon indicates the $HOME location
-	HomeIcon Property = "home_icon"
+	HomeIcon properties.Property = "home_icon"
 	// FolderIcon identifies one folder
-	FolderIcon Property = "folder_icon"
+	FolderIcon properties.Property = "folder_icon"
 	// WindowsRegistryIcon indicates the registry location on Windows
-	WindowsRegistryIcon Property = "windows_registry_icon"
+	WindowsRegistryIcon properties.Property = "windows_registry_icon"
 	// Agnoster displays a short path with separator icon, this the default style
 	Agnoster string = "agnoster"
 	// AgnosterFull displays all the folder names with the folder_separator_icon
@@ -46,13 +47,13 @@ const (
 	// AgnosterLeft like agnoster, but keeps the left side of the path
 	AgnosterLeft string = "agnoster_left"
 	// MixedThreshold the threshold of the length of the path Mixed will display
-	MixedThreshold Property = "mixed_threshold"
+	MixedThreshold properties.Property = "mixed_threshold"
 	// MappedLocations allows overriding certain location with an icon
-	MappedLocations Property = "mapped_locations"
+	MappedLocations properties.Property = "mapped_locations"
 	// MappedLocationsEnabled enables overriding certain locations with an icon
-	MappedLocationsEnabled Property = "mapped_locations_enabled"
+	MappedLocationsEnabled properties.Property = "mapped_locations_enabled"
 	// MaxDepth Maximum path depth to display whithout shortening
-	MaxDepth Property = "max_depth"
+	MaxDepth properties.Property = "max_depth"
 )
 
 func (pt *path) template() string {
@@ -61,7 +62,7 @@ func (pt *path) template() string {
 
 func (pt *path) enabled() bool {
 	pt.pwd = pt.env.Pwd()
-	switch style := pt.props.GetString(Style, Agnoster); style {
+	switch style := pt.props.GetString(properties.Style, Agnoster); style {
 	case Agnoster:
 		pt.Path = pt.getAgnosterPath()
 	case AgnosterFull:
@@ -102,7 +103,7 @@ func (pt *path) formatWindowsDrive(pwd string) string {
 	return pwd + "\\"
 }
 
-func (pt *path) init(props Properties, env environment.Environment) {
+func (pt *path) init(props properties.Properties, env environment.Environment) {
 	pt.props = props
 	pt.env = env
 }

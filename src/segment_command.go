@@ -2,11 +2,12 @@ package main
 
 import (
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"strings"
 )
 
 type command struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Output string
@@ -14,9 +15,9 @@ type command struct {
 
 const (
 	// ExecutableShell to execute command in
-	ExecutableShell Property = "shell"
+	ExecutableShell properties.Property = "shell"
 	// Command to execute
-	Command Property = "command"
+	Command properties.Property = "command"
 )
 
 func (c *command) template() string {
@@ -52,7 +53,7 @@ func (c *command) enabled() bool {
 	return c.Output != ""
 }
 
-func (c *command) init(props Properties, env environment.Environment) {
+func (c *command) init(props properties.Properties, env environment.Environment) {
 	c.props = props
 	c.env = env
 }

@@ -1,6 +1,9 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type rust struct {
 	language
@@ -10,7 +13,7 @@ func (r *rust) template() string {
 	return languageTemplate
 }
 
-func (r *rust) init(props Properties, env environment.Environment) {
+func (r *rust) init(props properties.Properties, env environment.Environment) {
 	r.language = language{
 		env:        env,
 		props:      props,

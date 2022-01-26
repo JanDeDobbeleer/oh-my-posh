@@ -2,11 +2,12 @@ package main
 
 import (
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"strings"
 )
 
 type shell struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Name string
@@ -14,7 +15,7 @@ type shell struct {
 
 const (
 	// MappedShellNames allows for custom text in place of shell names
-	MappedShellNames Property = "mapped_shell_names"
+	MappedShellNames properties.Property = "mapped_shell_names"
 )
 
 func (s *shell) template() string {
@@ -33,7 +34,7 @@ func (s *shell) enabled() bool {
 	return true
 }
 
-func (s *shell) init(props Properties, env environment.Environment) {
+func (s *shell) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/json"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 )
 
 type ytm struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	MusicPlayer
@@ -14,7 +15,7 @@ type ytm struct {
 
 const (
 	// APIURL is the YTMDA Remote Control API URL property.
-	APIURL Property = "api_url"
+	APIURL properties.Property = "api_url"
 )
 
 func (y *ytm) template() string {
@@ -28,7 +29,7 @@ func (y *ytm) enabled() bool {
 	return err == nil
 }
 
-func (y *ytm) init(props Properties, env environment.Environment) {
+func (y *ytm) init(props properties.Properties, env environment.Environment) {
 	y.props = props
 	y.env = env
 }

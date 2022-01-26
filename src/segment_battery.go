@@ -3,12 +3,13 @@ package main
 import (
 	"math"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 
 	"github.com/distatus/battery"
 )
 
 type batt struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	battery.Battery
@@ -19,11 +20,11 @@ type batt struct {
 
 const (
 	// ChargingIcon to display when charging
-	ChargingIcon Property = "charging_icon"
+	ChargingIcon properties.Property = "charging_icon"
 	// DischargingIcon o display when discharging
-	DischargingIcon Property = "discharging_icon"
+	DischargingIcon properties.Property = "discharging_icon"
 	// ChargedIcon to display when fully charged
-	ChargedIcon Property = "charged_icon"
+	ChargedIcon properties.Property = "charged_icon"
 )
 
 func (b *batt) template() string {
@@ -70,7 +71,7 @@ func (b *batt) enabledWhileError(err error) bool {
 	if _, ok := err.(*environment.NoBatteryError); ok {
 		return false
 	}
-	displayError := b.props.GetBool(DisplayError, false)
+	displayError := b.props.GetBool(properties.DisplayError, false)
 	if !displayError {
 		return false
 	}
@@ -104,7 +105,7 @@ func (b *batt) mapMostLogicalState(currentState, newState battery.State) battery
 	return newState
 }
 
-func (b *batt) init(props Properties, env environment.Environment) {
+func (b *batt) init(props properties.Properties, env environment.Environment) {
 	b.props = props
 	b.env = env
 }

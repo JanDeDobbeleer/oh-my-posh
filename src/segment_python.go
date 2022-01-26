@@ -1,6 +1,9 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type python struct {
 	language
@@ -10,14 +13,14 @@ type python struct {
 
 const (
 	// FetchVirtualEnv fetches the virtual env
-	FetchVirtualEnv Property = "fetch_virtual_env"
+	FetchVirtualEnv properties.Property = "fetch_virtual_env"
 )
 
 func (p *python) template() string {
 	return languageTemplate
 }
 
-func (p *python) init(props Properties, env environment.Environment) {
+func (p *python) init(props properties.Properties, env environment.Environment) {
 	p.language = language{
 		env:         env,
 		props:       props,
@@ -75,7 +78,7 @@ func (p *python) canUseVenvName(name string) bool {
 	if name == "" || name == "." {
 		return false
 	}
-	if p.language.props.GetBool(DisplayDefault, true) {
+	if p.language.props.GetBool(properties.DisplayDefault, true) {
 		return true
 	}
 	invalidNames := [2]string{"system", "base"}

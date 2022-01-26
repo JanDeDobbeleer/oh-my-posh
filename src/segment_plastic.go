@@ -26,7 +26,7 @@ func (s *PlasticStatus) add(code string) {
 	}
 }
 
-type plastic struct {
+type Plastic struct {
 	scm
 
 	Status       *PlasticStatus
@@ -37,16 +37,16 @@ type plastic struct {
 	plasticWorkspaceFolder string // root folder of workspace
 }
 
-func (p *plastic) init(props properties.Properties, env environment.Environment) {
+func (p *Plastic) init(props properties.Properties, env environment.Environment) {
 	p.props = props
 	p.env = env
 }
 
-func (p *plastic) template() string {
+func (p *Plastic) template() string {
 	return "{{ .Selector }}"
 }
 
-func (p *plastic) enabled() bool {
+func (p *Plastic) enabled() bool {
 	if !p.env.HasCommand("cm") {
 		return false
 	}
@@ -69,7 +69,7 @@ func (p *plastic) enabled() bool {
 	return true
 }
 
-func (p *plastic) setPlasticStatus() {
+func (p *Plastic) setPlasticStatus() {
 	output := p.getCmCommandOutput("status", "--all", "--machinereadable")
 	splittedOutput := strings.Split(output, "\n")
 	// compare to head
@@ -83,7 +83,7 @@ func (p *plastic) setPlasticStatus() {
 	p.parseFilesStatus(splittedOutput)
 }
 
-func (p *plastic) parseFilesStatus(output []string) {
+func (p *Plastic) parseFilesStatus(output []string) {
 	if len(output) <= 1 {
 		return
 	}
@@ -104,7 +104,7 @@ func (p *plastic) parseFilesStatus(output []string) {
 	}
 }
 
-func (p *plastic) parseStringPattern(output, pattern, name string) string {
+func (p *Plastic) parseStringPattern(output, pattern, name string) string {
 	match := regex.FindNamedRegexMatch(pattern, output)
 	if sValue, ok := match[name]; ok {
 		return sValue
@@ -112,7 +112,7 @@ func (p *plastic) parseStringPattern(output, pattern, name string) string {
 	return ""
 }
 
-func (p *plastic) parseIntPattern(output, pattern, name string, defValue int) int {
+func (p *Plastic) parseIntPattern(output, pattern, name string, defValue int) int {
 	sValue := p.parseStringPattern(output, pattern, name)
 	if len(sValue) > 0 {
 		iValue, _ := strconv.Atoi(sValue)
@@ -121,16 +121,16 @@ func (p *plastic) parseIntPattern(output, pattern, name string, defValue int) in
 	return defValue
 }
 
-func (p *plastic) parseStatusChangeset(status string) int {
+func (p *Plastic) parseStatusChangeset(status string) int {
 	return p.parseIntPattern(status, `STATUS\s+(?P<cs>[0-9]+?)\s`, "cs", 0)
 }
 
-func (p *plastic) getHeadChangeset() int {
+func (p *Plastic) getHeadChangeset() int {
 	output := p.getCmCommandOutput("status", "--head", "--machinereadable")
 	return p.parseIntPattern(output, `\bcs:(?P<cs>[0-9]+?)\s`, "cs", 0)
 }
 
-func (p *plastic) setSelector() {
+func (p *Plastic) setSelector() {
 	var ref string
 	selector := p.FileContents(p.plasticWorkspaceFolder+"/.plastic/", "plastic.selector")
 	// changeset
@@ -153,19 +153,19 @@ func (p *plastic) setSelector() {
 	p.Selector = fmt.Sprintf("%s%s", p.props.GetString(BranchIcon, "\uE0A0"), ref)
 }
 
-func (p *plastic) parseChangesetSelector(selector string) string {
+func (p *Plastic) parseChangesetSelector(selector string) string {
 	return p.parseStringPattern(selector, `\bchangeset "(?P<cs>[0-9]+?)"`, "cs")
 }
 
-func (p *plastic) parseLabelSelector(selector string) string {
+func (p *Plastic) parseLabelSelector(selector string) string {
 	return p.parseStringPattern(selector, `label "(?P<label>[a-zA-Z0-9\-\_]+?)"`, "label")
 }
 
-func (p *plastic) parseBranchSelector(selector string) string {
+func (p *Plastic) parseBranchSelector(selector string) string {
 	return p.parseStringPattern(selector, `branch "(?P<branch>[\/a-zA-Z0-9\-\_]+?)"`, "branch")
 }
 
-func (p *plastic) getCmCommandOutput(args ...string) string {
+func (p *Plastic) getCmCommandOutput(args ...string) string {
 	val, _ := p.env.RunCommand("cm", args...)
 	return val
 }

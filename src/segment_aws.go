@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-type aws struct {
+type Aws struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -19,16 +19,16 @@ const (
 	defaultUser = "default"
 )
 
-func (a *aws) template() string {
+func (a *Aws) template() string {
 	return "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}"
 }
 
-func (a *aws) init(props properties.Properties, env environment.Environment) {
+func (a *Aws) init(props properties.Properties, env environment.Environment) {
 	a.props = props
 	a.env = env
 }
 
-func (a *aws) enabled() bool {
+func (a *Aws) enabled() bool {
 	getEnvFirstMatch := func(envs ...string) string {
 		for _, env := range envs {
 			value := a.env.Getenv(env)
@@ -58,7 +58,7 @@ func (a *aws) enabled() bool {
 	return a.Profile != ""
 }
 
-func (a *aws) getConfigFileInfo() {
+func (a *Aws) getConfigFileInfo() {
 	configPath := a.env.Getenv("AWS_CONFIG_FILE")
 	if configPath == "" {
 		configPath = fmt.Sprintf("%s/.aws/config", a.env.Home())

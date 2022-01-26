@@ -5,20 +5,20 @@ import (
 	"oh-my-posh/properties"
 )
 
-type root struct {
+type Root struct {
 	props properties.Properties
 	env   environment.Environment
 }
 
-func (rt *root) template() string {
+func (rt *Root) template() string {
 	return "\uF0E7"
 }
 
-func (rt *root) enabled() bool {
+func (rt *Root) enabled() bool {
 	return rt.env.Root()
 }
 
-func (rt *root) init(props properties.Properties, env environment.Environment) {
+func (rt *Root) init(props properties.Properties, env environment.Environment) {
 	rt.props = props
 	rt.env = env
 }

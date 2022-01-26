@@ -71,7 +71,7 @@ func TestJava(t *testing.T) {
 		props := properties.Map{
 			properties.FetchVersion: true,
 		}
-		j := &java{}
+		j := &Java{}
 		j.init(props, env)
 		assert.True(t, j.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, j.template(), j), fmt.Sprintf("Failed in case: %s", tc.Case))

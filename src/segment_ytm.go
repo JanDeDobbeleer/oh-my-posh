@@ -6,7 +6,7 @@ import (
 	"oh-my-posh/properties"
 )
 
-type ytm struct {
+type Ytm struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -18,18 +18,18 @@ const (
 	APIURL properties.Property = "api_url"
 )
 
-func (y *ytm) template() string {
+func (y *Ytm) template() string {
 	return "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}"
 }
 
-func (y *ytm) enabled() bool {
+func (y *Ytm) enabled() bool {
 	err := y.setStatus()
 	// If we don't get a response back (error), the user isn't running
 	// YTMDA, or they don't have the RC API enabled.
 	return err == nil
 }
 
-func (y *ytm) init(props properties.Properties, env environment.Environment) {
+func (y *Ytm) init(props properties.Properties, env environment.Environment) {
 	y.props = props
 	y.env = env
 }
@@ -64,7 +64,7 @@ type track struct {
 	InLibrary       bool   `json:"inLibrary"`
 }
 
-func (y *ytm) setStatus() error {
+func (y *Ytm) setStatus() error {
 	// https://github.com/ytmdesktop/ytmdesktop/wiki/Remote-Control-API
 	url := y.props.GetString(APIURL, "http://127.0.0.1:9863")
 	httpTimeout := y.props.GetInt(APIURL, DefaultHTTPTimeout)

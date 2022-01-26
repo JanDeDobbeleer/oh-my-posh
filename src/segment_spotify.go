@@ -5,7 +5,7 @@ import (
 	"oh-my-posh/properties"
 )
 
-type spotify struct {
+type Spotify struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -32,11 +32,11 @@ const (
 	paused  = "paused"
 )
 
-func (s *spotify) template() string {
+func (s *Spotify) template() string {
 	return "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}"
 }
 
-func (s *spotify) resolveIcon() {
+func (s *Spotify) resolveIcon() {
 	switch s.Status {
 	case stopped:
 		// in this case, no artist or track info
@@ -48,7 +48,7 @@ func (s *spotify) resolveIcon() {
 	}
 }
 
-func (s *spotify) init(props properties.Properties, env environment.Environment) {
+func (s *Spotify) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

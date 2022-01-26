@@ -144,7 +144,7 @@ func TestNSSegment(t *testing.T) {
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
 		env.On("Cache").Return(cache)
 
-		ns := &nightscout{
+		ns := &Nightscout{
 			props: props,
 			env:   env,
 		}

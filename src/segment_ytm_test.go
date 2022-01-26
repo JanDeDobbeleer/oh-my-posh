@@ -9,11 +9,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func bootstrapYTMDATest(json string, err error) *ytm {
+func bootstrapYTMDATest(json string, err error) *Ytm {
 	url := "http://127.0.0.1:9863"
 	env := new(mock.MockedEnvironment)
 	env.On("HTTPRequest", url+"/query").Return([]byte(json), err)
-	ytm := &ytm{
+	ytm := &Ytm{
 		env: env,
 		props: properties.Map{
 			APIURL: url,

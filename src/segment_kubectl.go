@@ -11,7 +11,7 @@ import (
 // Whether to use kubectl or read kubeconfig ourselves
 const ParseKubeConfig properties.Property = "parse_kubeconfig"
 
-type kubectl struct {
+type Kubectl struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -34,16 +34,16 @@ type KubeContext struct {
 	Namespace string `yaml:"namespace"`
 }
 
-func (k *kubectl) template() string {
+func (k *Kubectl) template() string {
 	return "{{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }}"
 }
 
-func (k *kubectl) init(props properties.Properties, env environment.Environment) {
+func (k *Kubectl) init(props properties.Properties, env environment.Environment) {
 	k.props = props
 	k.env = env
 }
 
-func (k *kubectl) enabled() bool {
+func (k *Kubectl) enabled() bool {
 	parseKubeConfig := k.props.GetBool(ParseKubeConfig, false)
 	if parseKubeConfig {
 		return k.doParseKubeConfig()
@@ -51,7 +51,7 @@ func (k *kubectl) enabled() bool {
 	return k.doCallKubectl()
 }
 
-func (k *kubectl) doParseKubeConfig() bool {
+func (k *Kubectl) doParseKubeConfig() bool {
 	// Follow kubectl search rules (see https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#the-kubeconfig-environment-variable)
 	// TL;DR: KUBECONFIG can contain a list of files. If it's empty ~/.kube/config is used. First file in list wins when merging keys.
 	kubeconfigs := filepath.SplitList(k.env.Getenv("KUBECONFIG"))
@@ -101,7 +101,7 @@ func (k *kubectl) doParseKubeConfig() bool {
 	return true
 }
 
-func (k *kubectl) doCallKubectl() bool {
+func (k *Kubectl) doCallKubectl() bool {
 	cmd := "kubectl"
 	if !k.env.HasCommand(cmd) {
 		return false
@@ -128,7 +128,7 @@ func (k *kubectl) doCallKubectl() bool {
 	return true
 }
 
-func (k *kubectl) setError(message string) {
+func (k *Kubectl) setError(message string) {
 	if len(k.Context) == 0 {
 		k.Context = message
 	}

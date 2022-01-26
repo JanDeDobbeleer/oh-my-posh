@@ -6,18 +6,18 @@ import (
 	"strconv"
 )
 
-type exit struct {
+type Exit struct {
 	props properties.Properties
 	env   environment.Environment
 
 	Text string
 }
 
-func (e *exit) template() string {
+func (e *Exit) template() string {
 	return "{{ .Text }}"
 }
 
-func (e *exit) enabled() bool {
+func (e *Exit) enabled() bool {
 	e.Text = e.getMeaningFromExitCode(e.env.ErrorCode())
 	if e.props.GetBool(properties.AlwaysEnabled, false) {
 		return true
@@ -25,12 +25,12 @@ func (e *exit) enabled() bool {
 	return e.env.ErrorCode() != 0
 }
 
-func (e *exit) init(props properties.Properties, env environment.Environment) {
+func (e *Exit) init(props properties.Properties, env environment.Environment) {
 	e.props = props
 	e.env = env
 }
 
-func (e *exit) getMeaningFromExitCode(code int) string {
+func (e *Exit) getMeaningFromExitCode(code int) string {
 	switch code {
 	case 1:
 		return "ERROR"

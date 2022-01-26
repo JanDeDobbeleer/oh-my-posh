@@ -103,7 +103,7 @@ func TestRuby(t *testing.T) {
 		props := properties.Map{
 			properties.FetchVersion: tc.FetchVersion,
 		}
-		ruby := &ruby{}
+		ruby := &Ruby{}
 		ruby.init(props, env)
 		assert.Equal(t, tc.ExpectedEnabled, ruby.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, ruby.template(), ruby), fmt.Sprintf("Failed in case: %s", tc.Case))

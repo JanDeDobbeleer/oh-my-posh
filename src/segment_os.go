@@ -5,7 +5,7 @@ import (
 	"oh-my-posh/properties"
 )
 
-type osInfo struct {
+type Os struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -61,11 +61,11 @@ const (
 	DisplayDistroName properties.Property = "display_distro_name"
 )
 
-func (oi *osInfo) template() string {
+func (oi *Os) template() string {
 	return "{{ if .WSL }}WSL at {{ end }}{{.Icon}}"
 }
 
-func (oi *osInfo) enabled() bool {
+func (oi *Os) enabled() bool {
 	goos := oi.env.GOOS()
 	switch goos {
 	case environment.WindowsPlatform:
@@ -86,7 +86,7 @@ func (oi *osInfo) enabled() bool {
 	return true
 }
 
-func (oi *osInfo) getDistroIcon(distro string) string {
+func (oi *Os) getDistroIcon(distro string) string {
 	switch distro {
 	case "alpine":
 		return oi.props.GetString(Alpine, "\uF300")
@@ -130,7 +130,7 @@ func (oi *osInfo) getDistroIcon(distro string) string {
 	return oi.props.GetString(Linux, "\uF17C")
 }
 
-func (oi *osInfo) init(props properties.Properties, env environment.Environment) {
+func (oi *Os) init(props properties.Properties, env environment.Environment) {
 	oi.props = props
 	oi.env = env
 }

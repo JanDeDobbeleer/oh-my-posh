@@ -5,22 +5,22 @@ import (
 	"oh-my-posh/properties"
 )
 
-type text struct {
+type Text struct {
 	props properties.Properties
 	env   environment.Environment
 
 	Text string
 }
 
-func (t *text) template() string {
+func (t *Text) template() string {
 	return "{{ .Text }}"
 }
 
-func (t *text) enabled() bool {
+func (t *Text) enabled() bool {
 	return true
 }
 
-func (t *text) init(props properties.Properties, env environment.Environment) {
+func (t *Text) init(props properties.Properties, env environment.Environment) {
 	t.props = props
 	t.env = env
 }

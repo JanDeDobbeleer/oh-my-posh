@@ -8,7 +8,7 @@ import (
 	"oh-my-posh/properties"
 )
 
-type owm struct {
+type Owm struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -48,16 +48,16 @@ type owmDataResponse struct {
 	temperature `json:"main"`
 }
 
-func (d *owm) enabled() bool {
+func (d *Owm) enabled() bool {
 	err := d.setStatus()
 	return err == nil
 }
 
-func (d *owm) template() string {
+func (d *Owm) template() string {
 	return "{{ .Weather }} ({{ .Temperature }}{{ .UnitIcon }})"
 }
 
-func (d *owm) getResult() (*owmDataResponse, error) {
+func (d *Owm) getResult() (*owmDataResponse, error) {
 	cacheTimeout := d.props.GetInt(CacheTimeout, DefaultCacheTimeout)
 	response := new(owmDataResponse)
 	if cacheTimeout > 0 {
@@ -97,7 +97,7 @@ func (d *owm) getResult() (*owmDataResponse, error) {
 	return response, nil
 }
 
-func (d *owm) setStatus() error {
+func (d *Owm) setStatus() error {
 	units := d.props.GetString(Units, "standard")
 	q, err := d.getResult()
 	if err != nil {
@@ -164,7 +164,7 @@ func (d *owm) setStatus() error {
 	return nil
 }
 
-func (d *owm) init(props properties.Properties, env environment.Environment) {
+func (d *Owm) init(props properties.Properties, env environment.Environment) {
 	d.props = props
 	d.env = env
 }

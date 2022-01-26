@@ -14,7 +14,7 @@ import (
 )
 
 // segment struct, makes templating easier
-type brewfather struct {
+type Brewfather struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -100,11 +100,11 @@ type Batch struct {
 	TemperatureTrend float64 // diff between this and last, short term trend
 }
 
-func (bf *brewfather) template() string {
+func (bf *Brewfather) template() string {
 	return DefaultTemplate
 }
 
-func (bf *brewfather) enabled() bool {
+func (bf *Brewfather) enabled() bool {
 	data, err := bf.getResult()
 	if err != nil {
 		return false
@@ -151,7 +151,7 @@ func (bf *brewfather) enabled() bool {
 	return true
 }
 
-func (bf *brewfather) getTrendIcon(trend float64) string {
+func (bf *Brewfather) getTrendIcon(trend float64) string {
 	// Not a fan of this logic - wondering if Go lets us do something cleaner...
 	if trend >= 0 {
 		if trend > 4 {
@@ -184,7 +184,7 @@ func (bf *brewfather) getTrendIcon(trend float64) string {
 	return bf.props.GetString(BFFlatIcon, "→")
 }
 
-func (bf *brewfather) getBatchStatusIcon(batchStatus string) string {
+func (bf *Brewfather) getBatchStatusIcon(batchStatus string) string {
 	switch batchStatus {
 	case BFStatusPlanning:
 		return bf.props.GetString(BFPlanningStatusIcon, "\uF8EA")
@@ -203,7 +203,7 @@ func (bf *brewfather) getBatchStatusIcon(batchStatus string) string {
 	}
 }
 
-func (bf *brewfather) getResult() (*Batch, error) {
+func (bf *Brewfather) getResult() (*Batch, error) {
 	getFromCache := func(key string) (*Batch, error) {
 		val, found := bf.env.Cache().Get(key)
 		// we got something from the cache
@@ -308,25 +308,25 @@ func (bf *brewfather) getResult() (*Batch, error) {
 }
 
 // Unit conversion functions available to template.
-func (bf *brewfather) DegCToF(degreesC float64) float64 {
+func (bf *Brewfather) DegCToF(degreesC float64) float64 {
 	return math.Round(10*((degreesC*1.8)+32)) / 10 // 1 decimal place
 }
 
-func (bf *brewfather) DegCToKelvin(degreesC float64) float64 {
+func (bf *Brewfather) DegCToKelvin(degreesC float64) float64 {
 	return math.Round(10*(degreesC+273.15)) / 10 // 1 decimal place, only addition, but just to be sure
 }
 
-func (bf *brewfather) SGToBrix(sg float64) float64 {
+func (bf *Brewfather) SGToBrix(sg float64) float64 {
 	// from https://en.wikipedia.org/wiki/Brix#Specific_gravity_2
 	return math.Round(100*((182.4601*sg*sg*sg)-(775.6821*sg*sg)+(1262.7794*sg)-669.5622)) / 100
 }
 
-func (bf *brewfather) SGToPlato(sg float64) float64 {
+func (bf *Brewfather) SGToPlato(sg float64) float64 {
 	// from https://en.wikipedia.org/wiki/Brix#Specific_gravity_2
 	return math.Round(100*((135.997*sg*sg*sg)-(630.272*sg*sg)+(1111.14*sg)-616.868)) / 100 // 2 decimal places
 }
 
-func (bf *brewfather) init(props properties.Properties, env environment.Environment) {
+func (bf *Brewfather) init(props properties.Properties, env environment.Environment) {
 	bf.props = props
 	bf.env = env
 }

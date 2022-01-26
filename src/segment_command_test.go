@@ -15,7 +15,7 @@ func TestExecuteCommand(t *testing.T) {
 	props := properties.Map{
 		Command: "echo hello",
 	}
-	c := &command{
+	c := &Cmd{
 		props: props,
 		env:   env,
 	}
@@ -33,7 +33,7 @@ func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
 	props := properties.Map{
 		Command: "exit 1 || echo hello",
 	}
-	c := &command{
+	c := &Cmd{
 		props: props,
 		env:   env,
 	}
@@ -50,7 +50,7 @@ func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
 	props := properties.Map{
 		Command: "echo hello || echo world",
 	}
-	c := &command{
+	c := &Cmd{
 		props: props,
 		env:   env,
 	}
@@ -67,7 +67,7 @@ func TestExecuteMultipleCommandsAnd(t *testing.T) {
 	props := properties.Map{
 		Command: "echo hello && echo world",
 	}
-	c := &command{
+	c := &Cmd{
 		props: props,
 		env:   env,
 	}
@@ -83,7 +83,7 @@ func TestExecuteSingleCommandEmpty(t *testing.T) {
 	props := properties.Map{
 		Command: "",
 	}
-	c := &command{
+	c := &Cmd{
 		props: props,
 		env:   env,
 	}
@@ -96,7 +96,7 @@ func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo no command specified").Return("no command specified")
 	var props properties.Map
-	c := &command{
+	c := &Cmd{
 		props: props,
 		env:   env,
 	}
@@ -112,7 +112,7 @@ func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
 	props := properties.Map{
 		Command: "echo && echo",
 	}
-	c := &command{
+	c := &Cmd{
 		props: props,
 		env:   env,
 	}
@@ -128,7 +128,7 @@ func TestExecuteMultipleCommandsOrDisabled(t *testing.T) {
 	props := properties.Map{
 		Command: "echo|| echo",
 	}
-	c := &command{
+	c := &Cmd{
 		props: props,
 		env:   env,
 	}

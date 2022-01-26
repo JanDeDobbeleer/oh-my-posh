@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type az struct {
+type Az struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -80,26 +80,26 @@ type AzurePowerShellSubscription struct {
 	} `json:"Environment"`
 }
 
-func (a *az) template() string {
+func (a *Az) template() string {
 	return "{{ .Name }}"
 }
 
-func (a *az) init(props properties.Properties, env environment.Environment) {
+func (a *Az) init(props properties.Properties, env environment.Environment) {
 	a.props = props
 	a.env = env
 }
 
-func (a *az) enabled() bool {
+func (a *Az) enabled() bool {
 	return a.getAzureProfile() || a.getAzureRmContext()
 }
 
-func (a *az) FileContentWithoutBom(file string) string {
+func (a *Az) FileContentWithoutBom(file string) string {
 	config := a.env.FileContent(file)
 	const ByteOrderMark = "\ufeff"
 	return strings.TrimLeft(config, ByteOrderMark)
 }
 
-func (a *az) getAzureProfile() bool {
+func (a *Az) getAzureProfile() bool {
 	var content string
 	profile := filepath.Join(a.env.Home(), ".azure", "azureProfile.json")
 	if content = a.FileContentWithoutBom(profile); len(content) == 0 {
@@ -119,7 +119,7 @@ func (a *az) getAzureProfile() bool {
 	return false
 }
 
-func (a *az) getAzureRmContext() bool {
+func (a *Az) getAzureRmContext() bool {
 	var content string
 	profiles := []string{
 		filepath.Join(a.env.Home(), ".azure", "AzureRmContext.json"),

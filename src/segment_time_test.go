@@ -41,7 +41,7 @@ func TestTimeSegmentTemplate(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		tempus := &tempus{
+		tempus := &Time{
 			env:         env,
 			props:       properties.Map{},
 			CurrentDate: currentDate,

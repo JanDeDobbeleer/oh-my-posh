@@ -5,23 +5,23 @@ import (
 	"oh-my-posh/properties"
 )
 
-type terraform struct {
+type Terraform struct {
 	props properties.Properties
 	env   environment.Environment
 
 	WorkspaceName string
 }
 
-func (tf *terraform) template() string {
+func (tf *Terraform) template() string {
 	return "{{ .WorkspaceName }}"
 }
 
-func (tf *terraform) init(props properties.Properties, env environment.Environment) {
+func (tf *Terraform) init(props properties.Properties, env environment.Environment) {
 	tf.props = props
 	tf.env = env
 }
 
-func (tf *terraform) enabled() bool {
+func (tf *Terraform) enabled() bool {
 	cmd := "terraform"
 	if !tf.env.HasCommand(cmd) || !tf.env.HasFolder(tf.env.Pwd()+"/.terraform") {
 		return false

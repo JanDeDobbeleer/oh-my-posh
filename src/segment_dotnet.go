@@ -5,17 +5,17 @@ import (
 	"oh-my-posh/properties"
 )
 
-type dotnet struct {
+type Dotnet struct {
 	language
 
 	Unsupported bool
 }
 
-func (d *dotnet) template() string {
+func (d *Dotnet) template() string {
 	return "{{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}"
 }
 
-func (d *dotnet) init(props properties.Properties, env environment.Environment) {
+func (d *Dotnet) init(props properties.Properties, env environment.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,
@@ -32,7 +32,7 @@ func (d *dotnet) init(props properties.Properties, env environment.Environment) 
 	}
 }
 
-func (d *dotnet) enabled() bool {
+func (d *Dotnet) enabled() bool {
 	enabled := d.language.enabled()
 	if !enabled {
 		return false

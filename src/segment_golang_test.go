@@ -86,7 +86,7 @@ func TestGolang(t *testing.T) {
 			}
 			env.On("FileContent", fileInfo.Path).Return(content)
 		}
-		g := &golang{}
+		g := &Golang{}
 		g.init(props, env)
 		assert.True(t, g.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, g.template(), g), fmt.Sprintf("Failed in case: %s", tc.Case))

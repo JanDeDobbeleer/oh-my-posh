@@ -70,7 +70,7 @@ func TestOSInfo(t *testing.T) {
 			Env: make(map[string]string),
 			WSL: tc.IsWSL,
 		})
-		osInfo := &osInfo{
+		osInfo := &Os{
 			env: env,
 			props: properties.Map{
 				DisplayDistroName: tc.DisplayDistroName,

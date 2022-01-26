@@ -164,7 +164,7 @@ func TestStravaSegment(t *testing.T) {
 			props[properties.RefreshToken] = tc.InitialRefreshToken
 		}
 
-		ns := &strava{
+		ns := &Strava{
 			props: props,
 			env:   env,
 		}

@@ -5,15 +5,15 @@ import (
 	"oh-my-posh/properties"
 )
 
-type php struct {
+type Php struct {
 	language
 }
 
-func (p *php) template() string {
+func (p *Php) template() string {
 	return languageTemplate
 }
 
-func (p *php) init(props properties.Properties, env environment.Environment) {
+func (p *Php) init(props properties.Properties, env environment.Environment) {
 	p.language = language{
 		env:        env,
 		props:      props,
@@ -29,6 +29,6 @@ func (p *php) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (p *php) enabled() bool {
+func (p *Php) enabled() bool {
 	return p.language.enabled()
 }

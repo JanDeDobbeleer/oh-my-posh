@@ -9,7 +9,7 @@ import (
 )
 
 // segment struct, makes templating easier
-type nightscout struct {
+type Nightscout struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -47,11 +47,11 @@ type NightscoutData struct {
 	Mills      int64     `json:"mills"`
 }
 
-func (ns *nightscout) template() string {
+func (ns *Nightscout) template() string {
 	return "{{ .Sgv }}"
 }
 
-func (ns *nightscout) enabled() bool {
+func (ns *Nightscout) enabled() bool {
 	data, err := ns.getResult()
 	if err != nil {
 		return false
@@ -62,7 +62,7 @@ func (ns *nightscout) enabled() bool {
 	return true
 }
 
-func (ns *nightscout) getTrendIcon() string {
+func (ns *Nightscout) getTrendIcon() string {
 	switch ns.Direction {
 	case "DoubleUp":
 		return ns.props.GetString(DoubleUpIcon, "↑↑")
@@ -83,7 +83,7 @@ func (ns *nightscout) getTrendIcon() string {
 	}
 }
 
-func (ns *nightscout) getResult() (*NightscoutData, error) {
+func (ns *Nightscout) getResult() (*NightscoutData, error) {
 	parseSingleElement := func(data []byte) (*NightscoutData, error) {
 		var result []*NightscoutData
 		err := json.Unmarshal(data, &result)
@@ -139,7 +139,7 @@ func (ns *nightscout) getResult() (*NightscoutData, error) {
 	return data, nil
 }
 
-func (ns *nightscout) init(props properties.Properties, env environment.Environment) {
+func (ns *Nightscout) init(props properties.Properties, env environment.Environment) {
 	ns.props = props
 	ns.env = env
 }

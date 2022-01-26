@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-type path struct {
+type Path struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -56,11 +56,11 @@ const (
 	MaxDepth properties.Property = "max_depth"
 )
 
-func (pt *path) template() string {
+func (pt *Path) template() string {
 	return "{{ .Path }}"
 }
 
-func (pt *path) enabled() bool {
+func (pt *Path) enabled() bool {
 	pt.pwd = pt.env.Pwd()
 	switch style := pt.props.GetString(properties.Style, Agnoster); style {
 	case Agnoster:
@@ -96,19 +96,19 @@ func (pt *path) enabled() bool {
 	return true
 }
 
-func (pt *path) formatWindowsDrive(pwd string) string {
+func (pt *Path) formatWindowsDrive(pwd string) string {
 	if pt.env.GOOS() != environment.WindowsPlatform || !strings.HasSuffix(pwd, ":") {
 		return pwd
 	}
 	return pwd + "\\"
 }
 
-func (pt *path) init(props properties.Properties, env environment.Environment) {
+func (pt *Path) init(props properties.Properties, env environment.Environment) {
 	pt.props = props
 	pt.env = env
 }
 
-func (pt *path) getMixedPath() string {
+func (pt *Path) getMixedPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
 	splitted := strings.Split(pwd, pt.env.PathSeperator())
@@ -132,7 +132,7 @@ func (pt *path) getMixedPath() string {
 	return buffer.String()
 }
 
-func (pt *path) getAgnosterPath() string {
+func (pt *Path) getAgnosterPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
 	buffer.WriteString(pt.rootLocation())
@@ -148,7 +148,7 @@ func (pt *path) getAgnosterPath() string {
 	return buffer.String()
 }
 
-func (pt *path) getAgnosterLeftPath() string {
+func (pt *Path) getAgnosterLeftPath() string {
 	pwd := pt.getPwd()
 	separator := pt.env.PathSeperator()
 	pwd = strings.Trim(pwd, separator)
@@ -171,7 +171,7 @@ func (pt *path) getAgnosterLeftPath() string {
 	return buffer.String()
 }
 
-func (pt *path) getLetterPath() string {
+func (pt *Path) getLetterPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
 	splitted := strings.Split(pwd, pt.env.PathSeperator())
@@ -203,7 +203,7 @@ func (pt *path) getLetterPath() string {
 	return buffer.String()
 }
 
-func (pt *path) getAgnosterFullPath() string {
+func (pt *Path) getAgnosterFullPath() string {
 	pwd := pt.getPwd()
 	if len(pwd) > 1 && string(pwd[0]) == pt.env.PathSeperator() {
 		pwd = pwd[1:]
@@ -211,7 +211,7 @@ func (pt *path) getAgnosterFullPath() string {
 	return pt.replaceFolderSeparators(pwd)
 }
 
-func (pt *path) getAgnosterShortPath() string {
+func (pt *Path) getAgnosterShortPath() string {
 	pwd := pt.getPwd()
 	pathDepth := pt.pathDepth(pwd)
 	maxDepth := pt.props.GetInt(MaxDepth, 1)
@@ -236,18 +236,18 @@ func (pt *path) getAgnosterShortPath() string {
 	return buffer.String()
 }
 
-func (pt *path) getFullPath() string {
+func (pt *Path) getFullPath() string {
 	pwd := pt.getPwd()
 	return pt.replaceFolderSeparators(pwd)
 }
 
-func (pt *path) getFolderPath() string {
+func (pt *Path) getFolderPath() string {
 	pwd := pt.getPwd()
 	pwd = environment.Base(pt.env, pwd)
 	return pt.replaceFolderSeparators(pwd)
 }
 
-func (pt *path) getPwd() string {
+func (pt *Path) getPwd() string {
 	pwd := *pt.env.Args().PSWD
 	if pwd == "" {
 		pwd = pt.env.Pwd()
@@ -256,7 +256,7 @@ func (pt *path) getPwd() string {
 	return pwd
 }
 
-func (pt *path) normalize(inputPath string) string {
+func (pt *Path) normalize(inputPath string) string {
 	normalized := inputPath
 	if strings.HasPrefix(inputPath, "~") {
 		normalized = pt.env.Home() + normalized[1:]
@@ -269,7 +269,7 @@ func (pt *path) normalize(inputPath string) string {
 	return normalized
 }
 
-func (pt *path) replaceMappedLocations(pwd string) string {
+func (pt *Path) replaceMappedLocations(pwd string) string {
 	if strings.HasPrefix(pwd, "Microsoft.PowerShell.Core\\FileSystem::") {
 		pwd = strings.Replace(pwd, "Microsoft.PowerShell.Core\\FileSystem::", "", 1)
 	}
@@ -309,7 +309,7 @@ func (pt *path) replaceMappedLocations(pwd string) string {
 	return pwd
 }
 
-func (pt *path) replaceFolderSeparators(pwd string) string {
+func (pt *Path) replaceFolderSeparators(pwd string) string {
 	defaultSeparator := pt.env.PathSeperator()
 	if pwd == defaultSeparator {
 		return pwd
@@ -323,11 +323,11 @@ func (pt *path) replaceFolderSeparators(pwd string) string {
 	return pwd
 }
 
-func (pt *path) inHomeDir(pwd string) bool {
+func (pt *Path) inHomeDir(pwd string) bool {
 	return strings.HasPrefix(pwd, pt.env.Home())
 }
 
-func (pt *path) rootLocation() string {
+func (pt *Path) rootLocation() string {
 	pwd := pt.getPwd()
 	pwd = strings.TrimPrefix(pwd, pt.env.PathSeperator())
 	splitted := strings.Split(pwd, pt.env.PathSeperator())
@@ -335,7 +335,7 @@ func (pt *path) rootLocation() string {
 	return rootLocation
 }
 
-func (pt *path) pathDepth(pwd string) int {
+func (pt *Path) pathDepth(pwd string) int {
 	splitted := strings.Split(pwd, pt.env.PathSeperator())
 	depth := 0
 	for _, part := range splitted {

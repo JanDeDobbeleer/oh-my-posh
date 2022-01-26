@@ -49,7 +49,7 @@ func TestWiFiSegment(t *testing.T) {
 		env.On("IsWsl").Return(false)
 		env.On("WifiNetwork").Return(tc.Network, tc.WifiError)
 
-		w := &wifi{
+		w := &Wifi{
 			env: env,
 			props: properties.Map{
 				properties.DisplayError: tc.DisplayError,

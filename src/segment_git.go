@@ -31,7 +31,7 @@ func (s *GitStatus) add(code string) {
 	}
 }
 
-type git struct {
+type Git struct {
 	scm
 
 	Working       *GitStatus
@@ -107,11 +107,11 @@ const (
 	BRANCHPREFIX = "ref: refs/heads/"
 )
 
-func (g *git) template() string {
+func (g *Git) template() string {
 	return "{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}" // nolint: lll
 }
 
-func (g *git) enabled() bool {
+func (g *Git) enabled() bool {
 	if !g.shouldDisplay() {
 		return false
 	}
@@ -137,7 +137,7 @@ func (g *git) enabled() bool {
 	return true
 }
 
-func (g *git) shouldDisplay() bool {
+func (g *Git) shouldDisplay() bool {
 	// when in wsl/wsl2 and in a windows shared folder
 	// we must use git.exe and convert paths accordingly
 	// for worktrees, stashes, and path to work
@@ -194,7 +194,7 @@ func (g *git) shouldDisplay() bool {
 	return false
 }
 
-func (g *git) setBranchStatus() {
+func (g *Git) setBranchStatus() {
 	getBranchStatus := func() string {
 		if g.Ahead > 0 && g.Behind > 0 {
 			return fmt.Sprintf(" %s%d %s%d", g.props.GetString(BranchAheadIcon, "\u2191"), g.Ahead, g.props.GetString(BranchBehindIcon, "\u2193"), g.Behind)
@@ -216,7 +216,7 @@ func (g *git) setBranchStatus() {
 	g.BranchStatus = getBranchStatus()
 }
 
-func (g *git) getUpstreamIcon() string {
+func (g *Git) getUpstreamIcon() string {
 	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
 	g.UpstreamURL = g.getOriginURL(upstream)
 	if strings.Contains(g.UpstreamURL, "github") {
@@ -234,7 +234,7 @@ func (g *git) getUpstreamIcon() string {
 	return g.props.GetString(GitIcon, "\uE5FB ")
 }
 
-func (g *git) setGitStatus() {
+func (g *Git) setGitStatus() {
 	addToStatus := func(status string) {
 		const UNTRACKED = "?"
 		if strings.HasPrefix(status, UNTRACKED) {
@@ -285,7 +285,7 @@ func (g *git) setGitStatus() {
 	}
 }
 
-func (g *git) getGitCommand() string {
+func (g *Git) getGitCommand() string {
 	if len(g.gitCommand) > 0 {
 		return g.gitCommand
 	}
@@ -296,7 +296,7 @@ func (g *git) getGitCommand() string {
 	return g.gitCommand
 }
 
-func (g *git) getGitCommandOutput(args ...string) string {
+func (g *Git) getGitCommandOutput(args ...string) string {
 	args = append([]string{"-C", g.gitRealFolder, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	val, err := g.env.RunCommand(g.getGitCommand(), args...)
 	if err != nil {
@@ -305,7 +305,7 @@ func (g *git) getGitCommandOutput(args ...string) string {
 	return val
 }
 
-func (g *git) setGitHEADContext() {
+func (g *Git) setGitHEADContext() {
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	if g.Ref == DETACHED {
 		g.setPrettyHEADName()
@@ -413,7 +413,7 @@ func (g *git) setGitHEADContext() {
 	g.HEAD = formatDetached()
 }
 
-func (g *git) formatHEAD(head string) string {
+func (g *Git) formatHEAD(head string) string {
 	maxLength := g.props.GetInt(BranchMaxLength, 0)
 	if maxLength == 0 || len(head) < maxLength {
 		return head
@@ -422,23 +422,23 @@ func (g *git) formatHEAD(head string) string {
 	return head[0:maxLength] + symbol
 }
 
-func (g *git) formatSHA(sha string) string {
+func (g *Git) formatSHA(sha string) string {
 	if len(sha) <= 7 {
 		return sha
 	}
 	return sha[0:7]
 }
 
-func (g *git) hasGitFile(file string) bool {
+func (g *Git) hasGitFile(file string) bool {
 	return g.env.HasFilesInDir(g.gitWorkingFolder, file)
 }
 
-func (g *git) getGitRefFileSymbolicName(refFile string) string {
+func (g *Git) getGitRefFileSymbolicName(refFile string) string {
 	ref := g.FileContents(g.gitWorkingFolder, refFile)
 	return g.getGitCommandOutput("name-rev", "--name-only", "--exclude=tags/*", ref)
 }
 
-func (g *git) setPrettyHEADName() {
+func (g *Git) setPrettyHEADName() {
 	// we didn't fetch status, fallback to parsing the HEAD file
 	if len(g.Hash) == 0 {
 		HEADRef := g.FileContents(g.gitWorkingFolder, "HEAD")
@@ -466,7 +466,7 @@ func (g *git) setPrettyHEADName() {
 	g.HEAD = fmt.Sprintf("%s%s", g.props.GetString(CommitIcon, "\uF417"), g.Hash)
 }
 
-func (g *git) getStashContext() int {
+func (g *Git) getStashContext() int {
 	stashContent := g.FileContents(g.gitRootFolder, "logs/refs/stash")
 	if stashContent == "" {
 		return 0
@@ -475,7 +475,7 @@ func (g *git) getStashContext() int {
 	return len(lines)
 }
 
-func (g *git) getWorktreeContext() int {
+func (g *Git) getWorktreeContext() int {
 	if !g.env.HasFolder(g.gitRootFolder + "/worktrees") {
 		return 0
 	}
@@ -483,7 +483,7 @@ func (g *git) getWorktreeContext() int {
 	return len(worktreeFolders)
 }
 
-func (g *git) getOriginURL(upstream string) string {
+func (g *Git) getOriginURL(upstream string) string {
 	cleanSSHURL := func(url string) string {
 		if strings.HasPrefix(url, "http") {
 			return url
@@ -507,14 +507,14 @@ func (g *git) getOriginURL(upstream string) string {
 	return cleanSSHURL(url)
 }
 
-func (g *git) convertToWindowsPath(path string) string {
+func (g *Git) convertToWindowsPath(path string) string {
 	if !g.IsWslSharedPath {
 		return path
 	}
 	return g.env.ConvertToWindowsPath(path)
 }
 
-func (g *git) convertToLinuxPath(path string) string {
+func (g *Git) convertToLinuxPath(path string) string {
 	if !g.IsWslSharedPath {
 		return path
 	}

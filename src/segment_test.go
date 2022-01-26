@@ -16,7 +16,7 @@ const (
 
 func TestMapSegmentWriterCanMap(t *testing.T) {
 	sc := &Segment{
-		Type: Session,
+		Type: SESSION,
 	}
 	env := new(mock.MockedEnvironment)
 	err := sc.mapSegmentWithWriter(env)
@@ -198,7 +198,7 @@ func TestGetColors(t *testing.T) {
 			Env: make(map[string]string),
 		})
 		segment := &Segment{
-			writer: &aws{
+			writer: &Aws{
 				Profile: tc.Profile,
 				Region:  tc.Region,
 			},

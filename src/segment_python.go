@@ -5,7 +5,7 @@ import (
 	"oh-my-posh/properties"
 )
 
-type python struct {
+type Python struct {
 	language
 
 	Venv string
@@ -16,11 +16,11 @@ const (
 	FetchVirtualEnv properties.Property = "fetch_virtual_env"
 )
 
-func (p *python) template() string {
+func (p *Python) template() string {
 	return languageTemplate
 }
 
-func (p *python) init(props properties.Properties, env environment.Environment) {
+func (p *Python) init(props properties.Properties, env environment.Environment) {
 	p.language = language{
 		env:         env,
 		props:       props,
@@ -45,11 +45,11 @@ func (p *python) init(props properties.Properties, env environment.Environment) 
 	}
 }
 
-func (p *python) enabled() bool {
+func (p *Python) enabled() bool {
 	return p.language.enabled()
 }
 
-func (p *python) loadContext() {
+func (p *Python) loadContext() {
 	if !p.language.props.GetBool(FetchVirtualEnv, true) {
 		return
 	}
@@ -70,11 +70,11 @@ func (p *python) loadContext() {
 	}
 }
 
-func (p *python) inContext() bool {
+func (p *Python) inContext() bool {
 	return p.Venv != ""
 }
 
-func (p *python) canUseVenvName(name string) bool {
+func (p *Python) canUseVenvName(name string) bool {
 	if name == "" || name == "." {
 		return false
 	}

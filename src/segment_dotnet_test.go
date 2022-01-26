@@ -44,7 +44,7 @@ func TestDotnetSegment(t *testing.T) {
 		props := properties.Map{
 			properties.FetchVersion: tc.FetchVersion,
 		}
-		dotnet := &dotnet{}
+		dotnet := &Dotnet{}
 		dotnet.init(props, env)
 		assert.True(t, dotnet.enabled())
 		assert.Equal(t, tc.Expected, renderTemplate(env, dotnet.template(), dotnet), tc.Case)

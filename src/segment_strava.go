@@ -12,7 +12,7 @@ import (
 )
 
 // segment struct, makes templating easier
-type strava struct {
+type Strava struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -70,11 +70,11 @@ func (a *AuthError) Error() string {
 	return a.message
 }
 
-func (s *strava) template() string {
+func (s *Strava) template() string {
 	return "{{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }}"
 }
 
-func (s *strava) enabled() bool {
+func (s *Strava) enabled() bool {
 	data, err := s.getResult()
 	if err == nil {
 		s.StravaData = *data
@@ -91,12 +91,12 @@ func (s *strava) enabled() bool {
 	return false
 }
 
-func (s *strava) getHours() int {
+func (s *Strava) getHours() int {
 	hours := time.Since(s.StartDate).Hours()
 	return int(math.Floor(hours))
 }
 
-func (s *strava) getAgo() string {
+func (s *Strava) getAgo() string {
 	if s.Hours > 24 {
 		days := int32(math.Floor(float64(s.Hours) / float64(24)))
 		return fmt.Sprintf("%d", days) + string('d')
@@ -104,7 +104,7 @@ func (s *strava) getAgo() string {
 	return fmt.Sprintf("%d", s.Hours) + string("h")
 }
 
-func (s *strava) getActivityIcon() string {
+func (s *Strava) getActivityIcon() string {
 	switch s.Type {
 	case "VirtualRide":
 		fallthrough
@@ -124,7 +124,7 @@ func (s *strava) getActivityIcon() string {
 	return s.props.GetString(UnknownActivityIcon, "\ue213")
 }
 
-func (s *strava) getAccessToken() (string, error) {
+func (s *Strava) getAccessToken() (string, error) {
 	// get directly from cache
 	if acccessToken, OK := s.env.Cache().Get(StravaAccessToken); OK {
 		return acccessToken, nil
@@ -147,7 +147,7 @@ func (s *strava) getAccessToken() (string, error) {
 	return acccessToken, err
 }
 
-func (s *strava) refreshToken(refreshToken string) (string, error) {
+func (s *Strava) refreshToken(refreshToken string) (string, error) {
 	httpTimeout := s.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
 	url := fmt.Sprintf("https://ohmyposh.dev/api/refresh?segment=strava&token=%s", refreshToken)
 	body, err := s.env.HTTPRequest(url, httpTimeout)
@@ -170,7 +170,7 @@ func (s *strava) refreshToken(refreshToken string) (string, error) {
 	return tokens.AccessToken, nil
 }
 
-func (s *strava) getResult() (*StravaData, error) {
+func (s *Strava) getResult() (*StravaData, error) {
 	parseSingleElement := func(data []byte) (*StravaData, error) {
 		var result []*StravaData
 		err := json.Unmarshal(data, &result)
@@ -231,7 +231,7 @@ func (s *strava) getResult() (*StravaData, error) {
 	return data, nil
 }
 
-func (s *strava) init(props properties.Properties, env environment.Environment) {
+func (s *Strava) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

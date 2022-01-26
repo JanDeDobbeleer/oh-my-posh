@@ -6,15 +6,15 @@ import (
 	"oh-my-posh/properties"
 )
 
-type java struct {
+type Java struct {
 	language
 }
 
-func (j *java) template() string {
+func (j *Java) template() string {
 	return languageTemplate
 }
 
-func (j *java) init(props properties.Properties, env environment.Environment) {
+func (j *Java) init(props properties.Properties, env environment.Environment) {
 	javaRegex := `(?: JRE)(?: \(.*\))? \((?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))?(?:\.(?P<patch>[0-9]+))?).*\),`
 	javaCmd := &cmd{
 		executable: "java",
@@ -56,6 +56,6 @@ func (j *java) init(props properties.Properties, env environment.Environment) {
 	j.language.commands = []*cmd{javaCmd}
 }
 
-func (j *java) enabled() bool {
+func (j *Java) enabled() bool {
 	return j.language.enabled()
 }

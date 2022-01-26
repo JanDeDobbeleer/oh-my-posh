@@ -6,7 +6,7 @@ import (
 	"oh-my-posh/properties"
 )
 
-type nbgv struct {
+type Nbgv struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -24,11 +24,11 @@ type VersionInfo struct {
 	SimpleVersion                string `json:"SimpleVersion"`
 }
 
-func (n *nbgv) template() string {
+func (n *Nbgv) template() string {
 	return "{{ .Version }}"
 }
 
-func (n *nbgv) enabled() bool {
+func (n *Nbgv) enabled() bool {
 	nbgv := "nbgv"
 	if !n.env.HasCommand(nbgv) {
 		return false
@@ -45,7 +45,7 @@ func (n *nbgv) enabled() bool {
 	return n.VersionInfo.VersionFileFound
 }
 
-func (n *nbgv) init(props properties.Properties, env environment.Environment) {
+func (n *Nbgv) init(props properties.Properties, env environment.Environment) {
 	n.props = props
 	n.env = env
 }

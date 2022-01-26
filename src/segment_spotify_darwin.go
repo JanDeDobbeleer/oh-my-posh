@@ -2,7 +2,7 @@
 
 package main
 
-func (s *spotify) enabled() bool {
+func (s *Spotify) enabled() bool {
 	var err error
 	// Check if running
 	running := s.runAppleScriptCommand("application \"Spotify\" is running")
@@ -24,7 +24,7 @@ func (s *spotify) enabled() bool {
 	return true
 }
 
-func (s *spotify) runAppleScriptCommand(command string) string {
+func (s *Spotify) runAppleScriptCommand(command string) string {
 	val, _ := s.env.RunCommand("osascript", "-e", command)
 	return val
 }

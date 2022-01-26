@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type shell struct {
+type Shell struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -18,11 +18,11 @@ const (
 	MappedShellNames properties.Property = "mapped_shell_names"
 )
 
-func (s *shell) template() string {
+func (s *Shell) template() string {
 	return "{{ .Name }}"
 }
 
-func (s *shell) enabled() bool {
+func (s *Shell) enabled() bool {
 	mappedNames := s.props.GetKeyValueMap(MappedShellNames, make(map[string]string))
 	s.Name = s.env.Shell()
 	for key, val := range mappedNames {
@@ -34,7 +34,7 @@ func (s *shell) enabled() bool {
 	return true
 }
 
-func (s *shell) init(props properties.Properties, env environment.Environment) {
+func (s *Shell) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

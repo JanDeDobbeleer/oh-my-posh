@@ -154,7 +154,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		env.On("HTTPRequest", BFBatchReadingsURL).Return([]byte(tc.BatchReadingsJSONResponse), tc.Error)
 		env.On("Cache").Return(cache)
 
-		ns := &brewfather{
+		ns := &Brewfather{
 			props: props,
 			env:   env,
 		}

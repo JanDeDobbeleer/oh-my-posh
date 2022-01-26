@@ -159,14 +159,14 @@ func TestBrewfatherSegment(t *testing.T) {
 			env:   env,
 		}
 
-		enabled := ns.enabled()
+		enabled := ns.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		if !enabled {
 			continue
 		}
 
 		if tc.Template == "" {
-			tc.Template = ns.template()
+			tc.Template = ns.Template()
 		}
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, ns), tc.Case)
 	}

@@ -27,11 +27,11 @@ const (
 	ChargedIcon properties.Property = "charged_icon"
 )
 
-func (b *Battery) template() string {
+func (b *Battery) Template() string {
 	return "{{ if not .Error }}{{.Icon}}{{.Percentage}}{{ end }}{{.Error}}"
 }
 
-func (b *Battery) enabled() bool {
+func (b *Battery) Enabled() bool {
 	batteries, err := b.env.BatteryInfo()
 
 	if !b.enabledWhileError(err) {
@@ -105,7 +105,7 @@ func (b *Battery) mapMostLogicalState(currentState, newState battery.State) batt
 	return newState
 }
 
-func (b *Battery) init(props properties.Properties, env environment.Environment) {
+func (b *Battery) Init(props properties.Properties, env environment.Environment) {
 	b.props = props
 	b.env = env
 }

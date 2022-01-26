@@ -27,7 +27,7 @@ func TestEnabledGitNotFound(t *testing.T) {
 			props: properties.Map{},
 		},
 	}
-	assert.False(t, g.enabled())
+	assert.False(t, g.Enabled())
 }
 
 func TestEnabledInWorkingDirectory(t *testing.T) {
@@ -50,7 +50,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 			props: properties.Map{},
 		},
 	}
-	assert.True(t, g.enabled())
+	assert.True(t, g.Enabled())
 	assert.Equal(t, fileInfo.Path, g.gitWorkingFolder)
 }
 
@@ -76,7 +76,7 @@ func TestEnabledInWorkingTree(t *testing.T) {
 			props: properties.Map{},
 		},
 	}
-	assert.True(t, g.enabled())
+	assert.True(t, g.Enabled())
 	assert.Equal(t, "/dev/real_folder/.git/worktrees/folder_worktree", g.gitWorkingFolder)
 	assert.Equal(t, "/dev/folder_worktree", g.gitRealFolder)
 }
@@ -103,7 +103,7 @@ func TestEnabledInSubmodule(t *testing.T) {
 			props: properties.Map{},
 		},
 	}
-	assert.True(t, g.enabled())
+	assert.True(t, g.Enabled())
 	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.gitWorkingFolder)
 	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.gitRealFolder)
 	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.gitRootFolder)

@@ -11,11 +11,11 @@ type Angular struct {
 	language
 }
 
-func (a *Angular) template() string {
+func (a *Angular) Template() string {
 	return languageTemplate
 }
 
-func (a *Angular) init(props properties.Properties, env environment.Environment) {
+func (a *Angular) Init(props properties.Properties, env environment.Environment) {
 	a.language = language{
 		env:        env,
 		props:      props,
@@ -50,6 +50,6 @@ func (a *Angular) init(props properties.Properties, env environment.Environment)
 	}
 }
 
-func (a *Angular) enabled() bool {
-	return a.language.enabled()
+func (a *Angular) Enabled() bool {
+	return a.language.Enabled()
 }

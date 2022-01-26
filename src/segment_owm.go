@@ -48,12 +48,12 @@ type owmDataResponse struct {
 	temperature `json:"main"`
 }
 
-func (d *Owm) enabled() bool {
+func (d *Owm) Enabled() bool {
 	err := d.setStatus()
 	return err == nil
 }
 
-func (d *Owm) template() string {
+func (d *Owm) Template() string {
 	return "{{ .Weather }} ({{ .Temperature }}{{ .UnitIcon }})"
 }
 
@@ -164,7 +164,7 @@ func (d *Owm) setStatus() error {
 	return nil
 }
 
-func (d *Owm) init(props properties.Properties, env environment.Environment) {
+func (d *Owm) Init(props properties.Properties, env environment.Environment) {
 	d.props = props
 	d.env = env
 }

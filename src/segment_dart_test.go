@@ -24,8 +24,8 @@ func TestDart(t *testing.T) {
 		}
 		env, props := getMockedLanguageEnv(params)
 		d := &Dart{}
-		d.init(props, env)
-		assert.True(t, d.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
-		assert.Equal(t, tc.ExpectedString, renderTemplate(env, d.template(), d), fmt.Sprintf("Failed in case: %s", tc.Case))
+		d.Init(props, env)
+		assert.True(t, d.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, d.Template(), d), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

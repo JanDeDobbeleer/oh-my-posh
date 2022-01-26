@@ -9,11 +9,11 @@ type Julia struct {
 	language
 }
 
-func (j *Julia) template() string {
+func (j *Julia) Template() string {
 	return languageTemplate
 }
 
-func (j *Julia) init(props properties.Properties, env environment.Environment) {
+func (j *Julia) Init(props properties.Properties, env environment.Environment) {
 	j.language = language{
 		env:        env,
 		props:      props,
@@ -29,6 +29,6 @@ func (j *Julia) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (j *Julia) enabled() bool {
-	return j.language.enabled()
+func (j *Julia) Enabled() bool {
+	return j.language.Enabled()
 }

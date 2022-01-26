@@ -20,11 +20,11 @@ const (
 	Command properties.Property = "command"
 )
 
-func (c *Cmd) template() string {
+func (c *Cmd) Template() string {
 	return "{{ .Output }}"
 }
 
-func (c *Cmd) enabled() bool {
+func (c *Cmd) Enabled() bool {
 	shell := c.props.GetString(ExecutableShell, "bash")
 	if !c.env.HasCommand(shell) {
 		return false
@@ -53,7 +53,7 @@ func (c *Cmd) enabled() bool {
 	return c.Output != ""
 }
 
-func (c *Cmd) init(props properties.Properties, env environment.Environment) {
+func (c *Cmd) Init(props properties.Properties, env environment.Environment) {
 	c.props = props
 	c.env = env
 }

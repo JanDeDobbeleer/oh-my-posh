@@ -11,11 +11,11 @@ type Dotnet struct {
 	Unsupported bool
 }
 
-func (d *Dotnet) template() string {
+func (d *Dotnet) Template() string {
 	return "{{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}"
 }
 
-func (d *Dotnet) init(props properties.Properties, env environment.Environment) {
+func (d *Dotnet) Init(props properties.Properties, env environment.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,
@@ -32,8 +32,8 @@ func (d *Dotnet) init(props properties.Properties, env environment.Environment) 
 	}
 }
 
-func (d *Dotnet) enabled() bool {
-	enabled := d.language.enabled()
+func (d *Dotnet) Enabled() bool {
+	enabled := d.language.Enabled()
 	if !enabled {
 		return false
 	}

@@ -9,11 +9,11 @@ type Crystal struct {
 	language
 }
 
-func (c *Crystal) template() string {
+func (c *Crystal) Template() string {
 	return languageTemplate
 }
 
-func (c *Crystal) init(props properties.Properties, env environment.Environment) {
+func (c *Crystal) Init(props properties.Properties, env environment.Environment) {
 	c.language = language{
 		env:        env,
 		props:      props,
@@ -29,6 +29,6 @@ func (c *Crystal) init(props properties.Properties, env environment.Environment)
 	}
 }
 
-func (c *Crystal) enabled() bool {
-	return c.language.enabled()
+func (c *Crystal) Enabled() bool {
+	return c.language.Enabled()
 }

@@ -18,11 +18,11 @@ const (
 	MappedShellNames properties.Property = "mapped_shell_names"
 )
 
-func (s *Shell) template() string {
+func (s *Shell) Template() string {
 	return "{{ .Name }}"
 }
 
-func (s *Shell) enabled() bool {
+func (s *Shell) Enabled() bool {
 	mappedNames := s.props.GetKeyValueMap(MappedShellNames, make(map[string]string))
 	s.Name = s.env.Shell()
 	for key, val := range mappedNames {
@@ -34,7 +34,7 @@ func (s *Shell) enabled() bool {
 	return true
 }
 
-func (s *Shell) init(props properties.Properties, env environment.Environment) {
+func (s *Shell) Init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

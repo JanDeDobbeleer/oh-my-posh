@@ -113,7 +113,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			env:   env,
 			props: properties.Map{},
 		}
-		_ = session.enabled()
+		_ = session.Enabled()
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, session), tc.Case)
 	}
 }

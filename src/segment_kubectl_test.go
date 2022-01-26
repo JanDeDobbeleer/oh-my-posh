@@ -136,7 +136,7 @@ func TestKubectlSegment(t *testing.T) {
 				ParseKubeConfig:         tc.ParseKubeConfig,
 			},
 		}
-		assert.Equal(t, tc.ExpectedEnabled, k.enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, k.Enabled(), tc.Case)
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, k), tc.Case)
 		}

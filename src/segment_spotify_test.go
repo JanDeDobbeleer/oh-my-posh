@@ -21,7 +21,7 @@ func TestSpotifyStringPlayingSong(t *testing.T) {
 		props: properties.Map{},
 		env:   env,
 	}
-	assert.Equal(t, expected, renderTemplate(env, s.template(), s))
+	assert.Equal(t, expected, renderTemplate(env, s.Template(), s))
 }
 
 func TestSpotifyStringStoppedSong(t *testing.T) {
@@ -37,5 +37,5 @@ func TestSpotifyStringStoppedSong(t *testing.T) {
 		props: properties.Map{},
 		env:   env,
 	}
-	assert.Equal(t, expected, renderTemplate(env, s.template(), s))
+	assert.Equal(t, expected, renderTemplate(env, s.Template(), s))
 }

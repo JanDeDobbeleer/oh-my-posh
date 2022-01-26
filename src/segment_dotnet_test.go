@@ -45,8 +45,8 @@ func TestDotnetSegment(t *testing.T) {
 			properties.FetchVersion: tc.FetchVersion,
 		}
 		dotnet := &Dotnet{}
-		dotnet.init(props, env)
-		assert.True(t, dotnet.enabled())
-		assert.Equal(t, tc.Expected, renderTemplate(env, dotnet.template(), dotnet), tc.Case)
+		dotnet.Init(props, env)
+		assert.True(t, dotnet.Enabled())
+		assert.Equal(t, tc.Expected, renderTemplate(env, dotnet.Template(), dotnet), tc.Case)
 	}
 }

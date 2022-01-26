@@ -13,11 +13,11 @@ type Exit struct {
 	Text string
 }
 
-func (e *Exit) template() string {
+func (e *Exit) Template() string {
 	return "{{ .Text }}"
 }
 
-func (e *Exit) enabled() bool {
+func (e *Exit) Enabled() bool {
 	e.Text = e.getMeaningFromExitCode(e.env.ErrorCode())
 	if e.props.GetBool(properties.AlwaysEnabled, false) {
 		return true
@@ -25,7 +25,7 @@ func (e *Exit) enabled() bool {
 	return e.env.ErrorCode() != 0
 }
 
-func (e *Exit) init(props properties.Properties, env environment.Environment) {
+func (e *Exit) Init(props properties.Properties, env environment.Environment) {
 	e.props = props
 	e.env = env
 }

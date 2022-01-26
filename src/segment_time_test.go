@@ -46,9 +46,9 @@ func TestTimeSegmentTemplate(t *testing.T) {
 			props:       properties.Map{},
 			CurrentDate: currentDate,
 		}
-		assert.Equal(t, tc.ExpectedEnabled, tempus.enabled())
+		assert.Equal(t, tc.ExpectedEnabled, tempus.Enabled())
 		if tc.Template == "" {
-			tc.Template = tempus.template()
+			tc.Template = tempus.Template()
 		}
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, tempus), tc.Case)

@@ -61,7 +61,7 @@ func TestSpotifyWsl(t *testing.T) {
 			env:   env,
 			props: properties.Map{},
 		}
-		assert.Equal(t, tc.ExpectedEnabled, s.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
-		assert.Equal(t, tc.ExpectedString, renderTemplate(env, s.template(), s), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedEnabled, s.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, s.Template(), s), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

@@ -50,7 +50,7 @@ const (
 	FullBranchPath properties.Property = "full_branch_path"
 )
 
-func (s *scm) init(props properties.Properties, env environment.Environment) {
+func (s *scm) Init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

@@ -9,11 +9,11 @@ type Ruby struct {
 	language
 }
 
-func (r *Ruby) template() string {
+func (r *Ruby) Template() string {
 	return languageTemplate
 }
 
-func (r *Ruby) init(props properties.Properties, env environment.Environment) {
+func (r *Ruby) Init(props properties.Properties, env environment.Environment) {
 	r.language = language{
 		env:        env,
 		props:      props,
@@ -48,8 +48,8 @@ func (r *Ruby) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (r *Ruby) enabled() bool {
-	enabled := r.language.enabled()
+func (r *Ruby) Enabled() bool {
+	enabled := r.language.Enabled()
 	// this happens when no version is set
 	if r.Full == "______" {
 		r.Full = ""

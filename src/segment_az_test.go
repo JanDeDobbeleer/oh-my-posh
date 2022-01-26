@@ -94,7 +94,7 @@ func TestAzSegment(t *testing.T) {
 			env:   env,
 			props: properties.Map{},
 		}
-		assert.Equal(t, tc.ExpectedEnabled, az.enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, az.Enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, az), tc.Case)
 	}
 }

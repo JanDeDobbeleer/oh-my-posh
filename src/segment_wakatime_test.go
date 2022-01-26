@@ -90,6 +90,6 @@ func TestWTTrackedTime(t *testing.T) {
 		}
 
 		assert.ErrorIs(t, tc.Error, w.setAPIData(), tc.Case+" - Error")
-		assert.Equal(t, tc.Expected, renderTemplate(env, w.template(), w), tc.Case+" - String")
+		assert.Equal(t, tc.Expected, renderTemplate(env, w.Template(), w), tc.Case+" - String")
 	}
 }

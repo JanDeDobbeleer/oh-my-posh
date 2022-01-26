@@ -56,7 +56,7 @@ func TestWiFiSegment(t *testing.T) {
 			},
 		}
 
-		assert.Equal(t, tc.ExpectedEnabled, w.enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, w.Enabled(), tc.Case)
 		if tc.Network != nil || tc.DisplayError {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, "{{ if .Error }}{{ .Error }}{{ else }}{{ .SSID }}{{ end }}", w), tc.Case)
 		}

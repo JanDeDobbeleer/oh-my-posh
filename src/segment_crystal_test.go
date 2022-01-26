@@ -24,8 +24,8 @@ func TestCrystal(t *testing.T) {
 		}
 		env, props := getMockedLanguageEnv(params)
 		c := &Crystal{}
-		c.init(props, env)
-		assert.True(t, c.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
-		assert.Equal(t, tc.ExpectedString, renderTemplate(env, c.template(), c), fmt.Sprintf("Failed in case: %s", tc.Case))
+		c.Init(props, env)
+		assert.True(t, c.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, c.Template(), c), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

@@ -82,7 +82,7 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 		enabledExtensions: []string{uni},
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, "", lang.Error, "unicorn is not available")
 }
 
@@ -102,7 +102,7 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testin
 		properties:        props,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled(), "unicorn is not available")
+	assert.True(t, lang.Enabled(), "unicorn is not available")
 }
 
 func TestLanguageFilesFoundButNoCommandAndNoVersion(t *testing.T) {
@@ -117,7 +117,7 @@ func TestLanguageFilesFoundButNoCommandAndNoVersion(t *testing.T) {
 		enabledExtensions: []string{uni},
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled(), "unicorn is not available")
+	assert.True(t, lang.Enabled(), "unicorn is not available")
 }
 
 func TestLanguageDisabledNoFiles(t *testing.T) {
@@ -133,7 +133,7 @@ func TestLanguageDisabledNoFiles(t *testing.T) {
 		enabledCommands:   []string{"unicorn"},
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.False(t, lang.enabled(), "no files in the current directory")
+	assert.False(t, lang.Enabled(), "no files in the current directory")
 }
 
 func TestLanguageEnabledOneExtensionFound(t *testing.T) {
@@ -151,7 +151,7 @@ func TestLanguageEnabledOneExtensionFound(t *testing.T) {
 		version:           universion,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, universion, lang.Full, "unicorn is available and uni files are found")
 }
 
@@ -171,7 +171,7 @@ func TestLanguageDisabledInHome(t *testing.T) {
 		inHome:            true,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.False(t, lang.enabled())
+	assert.False(t, lang.Enabled())
 }
 
 func TestLanguageEnabledSecondExtensionFound(t *testing.T) {
@@ -189,7 +189,7 @@ func TestLanguageEnabledSecondExtensionFound(t *testing.T) {
 		version:           universion,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, universion, lang.Full, "unicorn is available and corn files are found")
 }
 
@@ -213,7 +213,7 @@ func TestLanguageEnabledSecondCommand(t *testing.T) {
 		version:           universion,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, universion, lang.Full, "unicorn is available and corn files are found")
 }
 
@@ -232,7 +232,7 @@ func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
 		version:           universion,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, universion, lang.Full, "unicorn is available and uni and corn files are found")
 }
 
@@ -255,7 +255,7 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 		properties:        props,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, "", lang.Full, "unicorn is available and uni and corn files are found")
 }
 
@@ -272,7 +272,7 @@ func TestLanguageEnabledMissingCommand(t *testing.T) {
 		properties:        props,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, "", lang.Full, "unicorn is unavailable and uni and corn files are found")
 }
 
@@ -295,7 +295,7 @@ func TestLanguageEnabledNoVersionData(t *testing.T) {
 		properties:        props,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, "", lang.Full)
 }
 
@@ -313,7 +313,7 @@ func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 		properties:        props,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, expected, lang.Error, "unicorn is available and uni and corn files are found")
 }
 
@@ -331,7 +331,7 @@ func TestLanguageEnabledMissingCommandCustomTextHideError(t *testing.T) {
 		properties:        props,
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, "", lang.Full)
 }
 
@@ -352,7 +352,7 @@ func TestLanguageEnabledCommandExitCode(t *testing.T) {
 		expectedError:     &environment.CommandError{ExitCode: expected},
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, "err executing uni with [--version]", lang.Error)
 	assert.Equal(t, expected, lang.exitCode)
 }
@@ -379,7 +379,7 @@ func TestLanguageHyperlinkEnabled(t *testing.T) {
 		properties:         properties.Map{},
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, "https://unicor.org/doc/1.3.307", lang.version.URL)
 }
 
@@ -405,7 +405,7 @@ func TestLanguageHyperlinkEnabledWrongRegex(t *testing.T) {
 		properties:         properties.Map{},
 	}
 	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.enabled())
+	assert.True(t, lang.Enabled())
 	assert.Equal(t, "err parsing info from corn with 1.3.307", lang.Error)
 }
 
@@ -438,6 +438,6 @@ func TestLanguageEnabledInHome(t *testing.T) {
 			inHome:            true,
 		}
 		lang := bootStrapLanguageTest(args)
-		assert.Equal(t, tc.ExpectedEnabled, lang.enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, lang.Enabled(), tc.Case)
 	}
 }

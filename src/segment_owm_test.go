@@ -67,14 +67,14 @@ func TestOWMSegmentSingle(t *testing.T) {
 			env:   env,
 		}
 
-		enabled := o.enabled()
+		enabled := o.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		if !enabled {
 			continue
 		}
 
 		if tc.Template == "" {
-			tc.Template = o.template()
+			tc.Template = o.Template()
 		}
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, o), tc.Case)
 	}
@@ -198,7 +198,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		}
 
 		assert.Nil(t, o.setStatus())
-		assert.Equal(t, expectedString, renderTemplate(env, o.template(), o), tc.Case)
+		assert.Equal(t, expectedString, renderTemplate(env, o.Template(), o), tc.Case)
 	}
 
 	// test with hyperlink enabled
@@ -244,7 +244,7 @@ func TestOWMSegmentFromCache(t *testing.T) {
 	env.On("Cache").Return(cache)
 
 	assert.Nil(t, o.setStatus())
-	assert.Equal(t, expectedString, renderTemplate(env, o.template(), o), "should return the cached response")
+	assert.Equal(t, expectedString, renderTemplate(env, o.Template(), o), "should return the cached response")
 }
 
 func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {

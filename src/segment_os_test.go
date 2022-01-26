@@ -78,7 +78,7 @@ func TestOSInfo(t *testing.T) {
 				MacOS:             "darwin",
 			},
 		}
-		_ = osInfo.enabled()
-		assert.Equal(t, tc.ExpectedString, renderTemplate(env, osInfo.template(), osInfo), tc.Case)
+		_ = osInfo.Enabled()
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, osInfo.Template(), osInfo), tc.Case)
 	}
 }

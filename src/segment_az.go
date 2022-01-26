@@ -80,16 +80,16 @@ type AzurePowerShellSubscription struct {
 	} `json:"Environment"`
 }
 
-func (a *Az) template() string {
+func (a *Az) Template() string {
 	return "{{ .Name }}"
 }
 
-func (a *Az) init(props properties.Properties, env environment.Environment) {
+func (a *Az) Init(props properties.Properties, env environment.Environment) {
 	a.props = props
 	a.env = env
 }
 
-func (a *Az) enabled() bool {
+func (a *Az) Enabled() bool {
 	return a.getAzureProfile() || a.getAzureRmContext()
 }
 

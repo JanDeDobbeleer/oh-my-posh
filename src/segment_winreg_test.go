@@ -84,7 +84,7 @@ func TestWinReg(t *testing.T) {
 			},
 		}
 
-		assert.Equal(t, tc.ExpectedSuccess, r.enabled(), tc.CaseDescription)
-		assert.Equal(t, tc.ExpectedValue, renderTemplate(env, r.template(), r), tc.CaseDescription)
+		assert.Equal(t, tc.ExpectedSuccess, r.Enabled(), tc.CaseDescription)
+		assert.Equal(t, tc.ExpectedValue, renderTemplate(env, r.Template(), r), tc.CaseDescription)
 	}
 }

@@ -18,11 +18,11 @@ const (
 	TimeFormat properties.Property = "time_format"
 )
 
-func (t *Time) template() string {
+func (t *Time) Template() string {
 	return "{{ .CurrentDate | date \"" + t.props.GetString(TimeFormat, "15:04:05") + "\" }}"
 }
 
-func (t *Time) enabled() bool {
+func (t *Time) Enabled() bool {
 	// if no date set, use now(unit testing)
 	if t.CurrentDate.IsZero() {
 		t.CurrentDate = time.Now()
@@ -30,7 +30,7 @@ func (t *Time) enabled() bool {
 	return true
 }
 
-func (t *Time) init(props properties.Properties, env environment.Environment) {
+func (t *Time) Init(props properties.Properties, env environment.Environment) {
 	t.props = props
 	t.env = env
 }

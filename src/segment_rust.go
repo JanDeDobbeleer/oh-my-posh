@@ -9,11 +9,11 @@ type Rust struct {
 	language
 }
 
-func (r *Rust) template() string {
+func (r *Rust) Template() string {
 	return languageTemplate
 }
 
-func (r *Rust) init(props properties.Properties, env environment.Environment) {
+func (r *Rust) Init(props properties.Properties, env environment.Environment) {
 	r.language = language{
 		env:        env,
 		props:      props,
@@ -28,6 +28,6 @@ func (r *Rust) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (r *Rust) enabled() bool {
-	return r.language.enabled()
+func (r *Rust) Enabled() bool {
+	return r.language.Enabled()
 }

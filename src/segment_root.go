@@ -10,15 +10,15 @@ type Root struct {
 	env   environment.Environment
 }
 
-func (rt *Root) template() string {
+func (rt *Root) Template() string {
 	return "\uF0E7"
 }
 
-func (rt *Root) enabled() bool {
+func (rt *Root) Enabled() bool {
 	return rt.env.Root()
 }
 
-func (rt *Root) init(props properties.Properties, env environment.Environment) {
+func (rt *Root) Init(props properties.Properties, env environment.Environment) {
 	rt.props = props
 	rt.env = env
 }

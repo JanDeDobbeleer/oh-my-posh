@@ -21,16 +21,16 @@ const (
 	Fallback properties.Property = "fallback"
 )
 
-func (wr *WindowsRegistry) template() string {
+func (wr *WindowsRegistry) Template() string {
 	return "{{ .Value }}"
 }
 
-func (wr *WindowsRegistry) init(props properties.Properties, env environment.Environment) {
+func (wr *WindowsRegistry) Init(props properties.Properties, env environment.Environment) {
 	wr.props = props
 	wr.env = env
 }
 
-func (wr *WindowsRegistry) enabled() bool {
+func (wr *WindowsRegistry) Enabled() bool {
 	if wr.env.GOOS() != environment.WindowsPlatform {
 		return false
 	}

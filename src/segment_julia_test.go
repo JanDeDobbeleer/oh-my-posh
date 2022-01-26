@@ -25,8 +25,8 @@ func TestJulia(t *testing.T) {
 		}
 		env, props := getMockedLanguageEnv(params)
 		j := &Julia{}
-		j.init(props, env)
-		assert.True(t, j.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
-		assert.Equal(t, tc.ExpectedString, renderTemplate(env, j.template(), j), fmt.Sprintf("Failed in case: %s", tc.Case))
+		j.Init(props, env)
+		assert.True(t, j.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, j.Template(), j), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

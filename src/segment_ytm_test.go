@@ -55,6 +55,6 @@ func TestYTMDAStopped(t *testing.T) {
 func TestYTMDAError(t *testing.T) {
 	json := `{ "player": { "hasSong": false }, "track": { "author": "", "title": "" } }`
 	ytm := bootstrapYTMDATest(json, errors.New("Oh noes"))
-	enabled := ytm.enabled()
+	enabled := ytm.Enabled()
 	assert.False(t, enabled)
 }

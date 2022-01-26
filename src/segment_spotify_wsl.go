@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func (s *spotify) enabled() bool {
+func (s *spotify) Enabled() bool {
 	if !s.env.IsWsl() {
 		return false
 	}

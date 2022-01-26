@@ -7,6 +7,7 @@ import (
 	json2 "encoding/json"
 	"errors"
 	"fmt"
+	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"os"
 	"strconv"
@@ -30,7 +31,14 @@ type Config struct {
 	Blocks               []*Block          `config:"blocks"`
 	Tooltips             []*Segment        `config:"tooltips"`
 	TransientPrompt      *TransientPrompt  `config:"transient_prompt"`
-	Palette              Palette           `config:"palette"`
+	Palette              color.Palette     `config:"palette"`
+}
+
+// MakeColors creates instance of AnsiColors to use in AnsiWriter according to
+// environment and configuration.
+func (cfg *Config) MakeColors(env environment.Environment) color.AnsiColors {
+	cacheDisabled := env.Getenv("OMP_CACHE_DISABLED") == "1"
+	return color.MakeColors(cfg.Palette, !cacheDisabled)
 }
 
 type TransientPrompt struct {

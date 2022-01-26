@@ -24,11 +24,11 @@ func (c *command) template() string {
 }
 
 func (c *command) enabled() bool {
-	shell := c.props.getString(ExecutableShell, "bash")
+	shell := c.props.GetString(ExecutableShell, "bash")
 	if !c.env.HasCommand(shell) {
 		return false
 	}
-	command := c.props.getString(Command, "echo no command specified")
+	command := c.props.GetString(Command, "echo no command specified")
 	if strings.Contains(command, "||") {
 		commands := strings.Split(command, "||")
 		for _, cmd := range commands {

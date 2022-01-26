@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"oh-my-posh/color"
 	"os"
 	"testing"
 
@@ -15,8 +16,8 @@ func runImageTest(content string) error {
 		return err
 	}
 	defer os.Remove(file.Name())
-	ansi := &ansiUtils{}
-	ansi.init(plain)
+	ansi := &color.Ansi{}
+	ansi.Init(plain)
 	image := &ImageRenderer{
 		ansiString: content,
 		ansi:       ansi,

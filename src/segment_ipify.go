@@ -27,9 +27,9 @@ func (i *ipify) enabled() bool {
 }
 
 func (i *ipify) getResult() (string, error) {
-	cacheTimeout := i.props.getInt(CacheTimeout, DefaultCacheTimeout)
+	cacheTimeout := i.props.GetInt(CacheTimeout, DefaultCacheTimeout)
 
-	url := i.props.getString(IpifyURL, "https://api.ipify.org")
+	url := i.props.GetString(IpifyURL, "https://api.ipify.org")
 
 	if cacheTimeout > 0 {
 		// check if data stored in cache
@@ -40,7 +40,7 @@ func (i *ipify) getResult() (string, error) {
 		}
 	}
 
-	httpTimeout := i.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
+	httpTimeout := i.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
 
 	body, err := i.env.HTTPRequest(url, httpTimeout)
 	if err != nil {

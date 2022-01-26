@@ -37,11 +37,11 @@ func (s *spotify) resolveIcon() {
 	switch s.Status {
 	case stopped:
 		// in this case, no artist or track info
-		s.Icon = s.props.getString(StoppedIcon, "\uF04D ")
+		s.Icon = s.props.GetString(StoppedIcon, "\uF04D ")
 	case paused:
-		s.Icon = s.props.getString(PausedIcon, "\uF8E3 ")
+		s.Icon = s.props.GetString(PausedIcon, "\uF8E3 ")
 	case playing:
-		s.Icon = s.props.getString(PlayingIcon, "\uE602 ")
+		s.Icon = s.props.GetString(PlayingIcon, "\uE602 ")
 	}
 }
 

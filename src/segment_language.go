@@ -91,18 +91,18 @@ const (
 
 func (l *language) enabled() bool {
 	// override default extensions if needed
-	l.extensions = l.props.getStringArray(LanguageExtensions, l.extensions)
+	l.extensions = l.props.GetStringArray(LanguageExtensions, l.extensions)
 	inHomeDir := func() bool {
 		return l.env.Pwd() == l.env.Home()
 	}
 	var enabled bool
-	homeEnabled := l.props.getBool(HomeEnabled, l.homeEnabled)
+	homeEnabled := l.props.GetBool(HomeEnabled, l.homeEnabled)
 	if inHomeDir() && !homeEnabled {
 		enabled = false
 	} else {
 		// set default mode when not set
 		if len(l.displayMode) == 0 {
-			l.displayMode = l.props.getString(DisplayMode, DisplayModeFiles)
+			l.displayMode = l.props.GetString(DisplayMode, DisplayModeFiles)
 		}
 		l.loadLanguageContext()
 		switch l.displayMode {
@@ -118,7 +118,7 @@ func (l *language) enabled() bool {
 			enabled = l.hasLanguageFiles() || l.inLanguageContext()
 		}
 	}
-	if !enabled || !l.props.getBool(FetchVersion, true) {
+	if !enabled || !l.props.GetBool(FetchVersion, true) {
 		return enabled
 	}
 	err := l.setVersion()
@@ -173,7 +173,7 @@ func (l *language) setVersion() error {
 		l.buildVersionURL()
 		return nil
 	}
-	return errors.New(l.props.getString(MissingCommandText, ""))
+	return errors.New(l.props.GetString(MissingCommandText, ""))
 }
 
 func (l *language) loadLanguageContext() {
@@ -191,7 +191,7 @@ func (l *language) inLanguageContext() bool {
 }
 
 func (l *language) buildVersionURL() {
-	versionURLTemplate := l.props.getString(VersionURLTemplate, l.versionURLTemplate)
+	versionURLTemplate := l.props.GetString(VersionURLTemplate, l.versionURLTemplate)
 	if len(versionURLTemplate) == 0 {
 		return
 	}

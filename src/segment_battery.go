@@ -52,11 +52,11 @@ func (b *batt) enabled() bool {
 
 	switch b.Battery.State {
 	case battery.Discharging, battery.NotCharging:
-		b.Icon = b.props.getString(DischargingIcon, "")
+		b.Icon = b.props.GetString(DischargingIcon, "")
 	case battery.Charging:
-		b.Icon = b.props.getString(ChargingIcon, "")
+		b.Icon = b.props.GetString(ChargingIcon, "")
 	case battery.Full:
-		b.Icon = b.props.getString(ChargedIcon, "")
+		b.Icon = b.props.GetString(ChargedIcon, "")
 	case battery.Empty, battery.Unknown:
 		return true
 	}
@@ -70,7 +70,7 @@ func (b *batt) enabledWhileError(err error) bool {
 	if _, ok := err.(*environment.NoBatteryError); ok {
 		return false
 	}
-	displayError := b.props.getBool(DisplayError, false)
+	displayError := b.props.GetBool(DisplayError, false)
 	if !displayError {
 		return false
 	}

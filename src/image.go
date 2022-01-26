@@ -26,6 +26,7 @@ import (
 	_ "embed"
 	"fmt"
 	"math"
+	"oh-my-posh/color"
 	"oh-my-posh/regex"
 	"strconv"
 	"strings"
@@ -98,7 +99,7 @@ func NewRGBColor(ansiColor string) *RGB {
 type ImageRenderer struct {
 	ansiString string
 	author     string
-	ansi       *ansiUtils
+	ansi       *color.Ansi
 	bgColor    string
 
 	factor float64
@@ -244,7 +245,7 @@ func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
 func (ir *ImageRenderer) calculateWidth() int {
 	longest := 0
 	for _, line := range strings.Split(ir.ansiString, "\n") {
-		length := ir.ansi.lenWithoutANSI(line)
+		length := ir.ansi.LenWithoutANSI(line)
 		for _, char := range line {
 			length += ir.runeAdditionalWidth(char)
 		}
@@ -435,9 +436,9 @@ func (ir *ImageRenderer) shouldPrint() bool {
 			return false
 		case invertedColorSingle:
 			ir.foregroundColor = ir.defaultBackgroundColor
-			color, _ := strconv.Atoi(match[bg])
-			color += 10
-			ir.setBase16Color(fmt.Sprint(color))
+			bgColor, _ := strconv.Atoi(match[bg])
+			bgColor += 10
+			ir.setBase16Color(fmt.Sprint(bgColor))
 			return false
 		case fullColor:
 			ir.foregroundColor = NewRGBColor(match[fg])
@@ -469,48 +470,48 @@ func (ir *ImageRenderer) shouldPrint() bool {
 }
 
 func (ir *ImageRenderer) setBase16Color(colorStr string) {
-	color := ir.defaultForegroundColor
+	tempColor := ir.defaultForegroundColor
 	colorInt, err := strconv.Atoi(colorStr)
 	if err != nil {
-		ir.foregroundColor = color
+		ir.foregroundColor = tempColor
 	}
 	switch colorInt {
 	case 30, 40: // Black
-		color = &RGB{1, 1, 1}
+		tempColor = &RGB{1, 1, 1}
 	case 31, 41: // Red
-		color = &RGB{222, 56, 43}
+		tempColor = &RGB{222, 56, 43}
 	case 32, 42: // Green
-		color = &RGB{57, 181, 74}
+		tempColor = &RGB{57, 181, 74}
 	case 33, 43: // Yellow
-		color = &RGB{255, 199, 6}
+		tempColor = &RGB{255, 199, 6}
 	case 34, 44: // Blue
-		color = &RGB{0, 111, 184}
+		tempColor = &RGB{0, 111, 184}
 	case 35, 45: // Magenta
-		color = &RGB{118, 38, 113}
+		tempColor = &RGB{118, 38, 113}
 	case 36, 46: // Cyan
-		color = &RGB{44, 181, 233}
+		tempColor = &RGB{44, 181, 233}
 	case 37, 47: // White
-		color = &RGB{204, 204, 204}
+		tempColor = &RGB{204, 204, 204}
 	case 90, 100: // Bright Black (Gray)
-		color = &RGB{128, 128, 128}
+		tempColor = &RGB{128, 128, 128}
 	case 91, 101: // Bright Red
-		color = &RGB{255, 0, 0}
+		tempColor = &RGB{255, 0, 0}
 	case 92, 102: // Bright Green
-		color = &RGB{0, 255, 0}
+		tempColor = &RGB{0, 255, 0}
 	case 93, 103: // Bright Yellow
-		color = &RGB{255, 255, 0}
+		tempColor = &RGB{255, 255, 0}
 	case 94, 104: // Bright Blue
-		color = &RGB{0, 0, 255}
+		tempColor = &RGB{0, 0, 255}
 	case 95, 105: // Bright Magenta
-		color = &RGB{255, 0, 255}
+		tempColor = &RGB{255, 0, 255}
 	case 96, 106: // Bright Cyan
-		color = &RGB{101, 194, 205}
+		tempColor = &RGB{101, 194, 205}
 	case 97, 107: // Bright White
-		color = &RGB{255, 255, 255}
+		tempColor = &RGB{255, 255, 255}
 	}
 	if colorInt < 40 || (colorInt >= 90 && colorInt < 100) {
-		ir.foregroundColor = color
+		ir.foregroundColor = tempColor
 		return
 	}
-	ir.backgroundColor = color
+	ir.backgroundColor = tempColor
 }

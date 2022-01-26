@@ -1,4 +1,4 @@
-package main
+package color
 
 import (
 	"testing"
@@ -30,29 +30,19 @@ func TestGetAnsiFromColorString(t *testing.T) {
 }
 
 func TestMakeColors(t *testing.T) {
-	colors := makeColors(nil, false)
+	colors := MakeColors(nil, false)
 	assert.IsType(t, &DefaultColors{}, colors)
 
-	colors = makeColors(nil, true)
+	colors = MakeColors(nil, true)
 	assert.IsType(t, &CachedColors{}, colors)
 	assert.IsType(t, &DefaultColors{}, colors.(*CachedColors).ansiColors)
 
-	colors = makeColors(testPalette, false)
+	colors = MakeColors(testPalette, false)
 	assert.IsType(t, &PaletteColors{}, colors)
 	assert.IsType(t, &DefaultColors{}, colors.(*PaletteColors).ansiColors)
 
-	colors = makeColors(testPalette, true)
+	colors = MakeColors(testPalette, true)
 	assert.IsType(t, &CachedColors{}, colors)
 	assert.IsType(t, &PaletteColors{}, colors.(*CachedColors).ansiColors)
 	assert.IsType(t, &DefaultColors{}, colors.(*CachedColors).ansiColors.(*PaletteColors).ansiColors)
-}
-
-func BenchmarkEngineRenderPalette(b *testing.B) {
-	var err error
-	for i := 0; i < b.N; i++ {
-		err = engineRender("jandedobbeleer-palette.omp.json")
-		if err != nil {
-			b.Fatal(err)
-		}
-	}
 }

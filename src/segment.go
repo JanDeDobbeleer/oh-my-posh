@@ -38,16 +38,6 @@ type SegmentTiming struct {
 	stringDuration  time.Duration
 }
 
-type Properties interface {
-	getColor(property Property, defaultColor string) string
-	getBool(property Property, defaultValue bool) bool
-	getString(property Property, defaultValue string) string
-	getFloat64(property Property, defaultValue float64) float64
-	getInt(property Property, defaultValue int) int
-	getKeyValueMap(property Property, defaultValue map[string]string) map[string]string
-	getStringArray(property Property, defaultValue []string) []string
-}
-
 // SegmentWriter is the interface used to define what and if to write to the prompt
 type SegmentWriter interface {
 	enabled() bool

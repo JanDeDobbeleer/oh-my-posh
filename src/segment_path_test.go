@@ -649,7 +649,7 @@ func TestParseMappedLocations(t *testing.T) {
 		var segment Segment
 		err = config.BindStruct("", &segment)
 		assert.NoError(t, err)
-		mappedLocations := segment.Properties.getKeyValueMap(MappedLocations, make(map[string]string))
+		mappedLocations := segment.Properties.GetKeyValueMap(MappedLocations, make(map[string]string))
 		assert.Equal(t, "two", mappedLocations["folder2"])
 	}
 }

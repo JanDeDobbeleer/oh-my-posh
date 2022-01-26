@@ -64,19 +64,19 @@ func (ns *nightscout) enabled() bool {
 func (ns *nightscout) getTrendIcon() string {
 	switch ns.Direction {
 	case "DoubleUp":
-		return ns.props.getString(DoubleUpIcon, "↑↑")
+		return ns.props.GetString(DoubleUpIcon, "↑↑")
 	case "SingleUp":
-		return ns.props.getString(SingleUpIcon, "↑")
+		return ns.props.GetString(SingleUpIcon, "↑")
 	case "FortyFiveUp":
-		return ns.props.getString(FortyFiveUpIcon, "↗")
+		return ns.props.GetString(FortyFiveUpIcon, "↗")
 	case "Flat":
-		return ns.props.getString(FlatIcon, "→")
+		return ns.props.GetString(FlatIcon, "→")
 	case "FortyFiveDown":
-		return ns.props.getString(FortyFiveDownIcon, "↘")
+		return ns.props.GetString(FortyFiveDownIcon, "↘")
 	case "SingleDown":
-		return ns.props.getString(SingleDownIcon, "↓")
+		return ns.props.GetString(SingleDownIcon, "↓")
 	case "DoubleDown":
-		return ns.props.getString(DoubleDownIcon, "↓↓")
+		return ns.props.GetString(DoubleDownIcon, "↓↓")
 	default:
 		return ""
 	}
@@ -105,10 +105,10 @@ func (ns *nightscout) getResult() (*NightscoutData, error) {
 		return nil, errors.New("no data in cache")
 	}
 
-	url := ns.props.getString(URL, "")
-	httpTimeout := ns.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
+	url := ns.props.GetString(URL, "")
+	httpTimeout := ns.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
 	// natural and understood NS timeout is 5, anything else is unusual
-	cacheTimeout := ns.props.getInt(NSCacheTimeout, 5)
+	cacheTimeout := ns.props.GetInt(NSCacheTimeout, 5)
 
 	if cacheTimeout > 0 {
 		if data, err := getCacheValue(url); err == nil {

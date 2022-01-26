@@ -18,7 +18,7 @@ const (
 )
 
 func (t *tempus) template() string {
-	return "{{ .CurrentDate | date \"" + t.props.getString(TimeFormat, "15:04:05") + "\" }}"
+	return "{{ .CurrentDate | date \"" + t.props.GetString(TimeFormat, "15:04:05") + "\" }}"
 }
 
 func (t *tempus) enabled() bool {

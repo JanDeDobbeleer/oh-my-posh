@@ -1,4 +1,4 @@
-package main
+package color
 
 import (
 	"oh-my-posh/regex"
@@ -10,11 +10,11 @@ type PlainWriter struct {
 	builder strings.Builder
 }
 
-func (a *PlainWriter) setColors(background, foreground string)       {}
-func (a *PlainWriter) setParentColors(background, foreground string) {}
-func (a *PlainWriter) clearParentColors()                            {}
+func (a *PlainWriter) SetColors(background, foreground string)       {}
+func (a *PlainWriter) SetParentColors(background, foreground string) {}
+func (a *PlainWriter) ClearParentColors()                            {}
 
-func (a *PlainWriter) write(background, foreground, text string) {
+func (a *PlainWriter) Write(background, foreground, text string) {
 	if len(text) == 0 {
 		return
 	}
@@ -33,10 +33,10 @@ func (a *PlainWriter) write(background, foreground, text string) {
 	a.builder.WriteString(text)
 }
 
-func (a *PlainWriter) string() string {
+func (a *PlainWriter) String() string {
 	return a.builder.String()
 }
 
-func (a *PlainWriter) reset() {
+func (a *PlainWriter) Reset() {
 	a.builder.Reset()
 }

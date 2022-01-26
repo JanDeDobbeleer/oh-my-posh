@@ -18,7 +18,7 @@ func (e *exit) template() string {
 
 func (e *exit) enabled() bool {
 	e.Text = e.getMeaningFromExitCode(e.env.ErrorCode())
-	if e.props.getBool(AlwaysEnabled, false) {
+	if e.props.GetBool(AlwaysEnabled, false) {
 		return true
 	}
 	return e.env.ErrorCode() != 0

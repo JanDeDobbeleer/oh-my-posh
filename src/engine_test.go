@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
 	"os"
@@ -33,8 +34,8 @@ func TestCanWriteRPrompt(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalWidthError)
-		ansi := &ansiUtils{}
-		ansi.init(plain)
+		ansi := &color.Ansi{}
+		ansi.Init(plain)
 		engine := &engine{
 			env:  env,
 			ansi: ansi,
@@ -94,13 +95,13 @@ func engineRender(configPath string) error {
 	cfg := GetConfig(env)
 	defer testClearDefaultConfig()
 
-	ansi := &ansiUtils{}
-	ansi.init(env.Shell())
-	writerColors := MakeColors(env, cfg)
-	writer := &AnsiWriter{
-		ansi:               ansi,
-		terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
-		ansiColors:         writerColors,
+	ansi := &color.Ansi{}
+	ansi.Init(env.Shell())
+	writerColors := cfg.MakeColors(env)
+	writer := &color.AnsiWriter{
+		Ansi:               ansi,
+		TerminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
+		AnsiColors:         writerColors,
 	}
 	title := &consoleTitle{
 		env:    env,
@@ -119,4 +120,14 @@ func engineRender(configPath string) error {
 	engine.render()
 
 	return nil
+}
+
+func BenchmarkEngineRenderPalette(b *testing.B) {
+	var err error
+	for i := 0; i < b.N; i++ {
+		err = engineRender("jandedobbeleer-palette.omp.json")
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
 }

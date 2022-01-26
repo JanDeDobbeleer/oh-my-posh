@@ -37,7 +37,7 @@ func (a *aws) enabled() bool {
 		}
 		return ""
 	}
-	displayDefaultUser := a.props.getBool(DisplayDefault, true)
+	displayDefaultUser := a.props.GetBool(DisplayDefault, true)
 	a.Profile = getEnvFirstMatch("AWS_VAULT", "AWS_PROFILE")
 	if !displayDefaultUser && a.Profile == defaultUser {
 		return false

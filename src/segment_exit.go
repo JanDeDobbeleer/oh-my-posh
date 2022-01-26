@@ -1,10 +1,13 @@
 package main
 
-import "strconv"
+import (
+	"oh-my-posh/environment"
+	"strconv"
+)
 
 type exit struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	Text string
 }
@@ -21,7 +24,7 @@ func (e *exit) enabled() bool {
 	return e.env.ErrorCode() != 0
 }
 
-func (e *exit) init(props Properties, env Environment) {
+func (e *exit) init(props Properties, env environment.Environment) {
 	e.props = props
 	e.env = env
 }

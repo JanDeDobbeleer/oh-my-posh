@@ -4,6 +4,7 @@ package main
 
 import (
 	"errors"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,9 +16,8 @@ type spotifyArgs struct {
 }
 
 func bootStrapSpotifyWindowsTest(args *spotifyArgs) *spotify {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("WindowTitle", "spotify.exe").Return(args.title, args.runError)
-	env.onTemplate()
 	s := &spotify{
 		env:   env,
 		props: properties{},
@@ -37,9 +37,14 @@ func TestSpotifyWindowsEnabledAndSpotifyPlaying(t *testing.T) {
 	args := &spotifyArgs{
 		title: "Candlemass - Spellbreaker",
 	}
-	s := bootStrapSpotifyWindowsTest(args)
+	env := new(mock.MockedEnvironment)
+	env.On("WindowTitle", "spotify.exe").Return(args.title, args.runError)
+	s := &spotify{
+		env:   env,
+		props: properties{},
+	}
 	assert.Equal(t, true, s.enabled())
-	assert.Equal(t, "\ue602 Candlemass - Spellbreaker", s.string())
+	assert.Equal(t, "\ue602 Candlemass - Spellbreaker", renderTemplate(env, s.template(), s))
 }
 
 func TestSpotifyWindowsEnabledAndSpotifyStopped(t *testing.T) {

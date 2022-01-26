@@ -1,6 +1,8 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,10 +24,10 @@ func TestDotnetSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "dotnet").Return(tc.HasCommand)
 		if tc.ExitCode != 0 {
-			err := &commandError{exitCode: tc.ExitCode}
+			err := &environment.CommandError{ExitCode: tc.ExitCode}
 			env.On("RunCommand", "dotnet", []string{"--version"}).Return("", err)
 		} else {
 			env.On("RunCommand", "dotnet", []string{"--version"}).Return(tc.Version, nil)
@@ -35,7 +37,7 @@ func TestDotnetSegment(t *testing.T) {
 		env.On("PathSeperator").Return("")
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
-		env.On("TemplateCache").Return(&TemplateCache{
+		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: make(map[string]string),
 		})
 		props := properties{

@@ -1,5 +1,7 @@
 package main
 
+import "oh-my-posh/environment"
+
 type dotnet struct {
 	language
 
@@ -10,7 +12,7 @@ func (d *dotnet) template() string {
 	return "{{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}"
 }
 
-func (d *dotnet) init(props Properties, env Environment) {
+func (d *dotnet) init(props Properties, env environment.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,

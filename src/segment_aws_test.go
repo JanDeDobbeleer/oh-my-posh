@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,7 +47,7 @@ func TestAWSSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("Getenv", "AWS_VAULT").Return(tc.Vault)
 		env.On("Getenv", "AWS_PROFILE").Return(tc.Profile)
 		env.On("Getenv", "AWS_REGION").Return(tc.Region)

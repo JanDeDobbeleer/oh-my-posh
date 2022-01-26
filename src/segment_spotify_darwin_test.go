@@ -4,6 +4,7 @@ package main
 
 import (
 	"errors"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,7 @@ func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 		{Running: "true", Expected: "\uF8E3 Candlemass - Spellbreaker", Status: "paused", Artist: "Candlemass", Track: "Spellbreaker"},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("RunCommand", "osascript", []string{"-e", "application \"Spotify\" is running"}).Return(tc.Running, tc.Error)
 		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to player state as string"}).Return(tc.Status, nil)
 		env.On("RunCommand", "osascript", []string{"-e", "tell application \"Spotify\" to artist of current track as string"}).Return(tc.Artist, nil)

@@ -4,6 +4,8 @@ import (
 	_ "embed"
 	"flag"
 	"fmt"
+	"oh-my-posh/environment"
+	"oh-my-posh/regex"
 	"os"
 	"strings"
 	"time"
@@ -40,37 +42,8 @@ const (
 	plain       = "shell"
 )
 
-type Args struct {
-	ErrorCode      *int
-	PrintConfig    *bool
-	ConfigFormat   *string
-	PrintShell     *bool
-	Config         *string
-	Shell          *string
-	PWD            *string
-	PSWD           *string
-	Version        *bool
-	Debug          *bool
-	ExecutionTime  *float64
-	Millis         *bool
-	Eval           *bool
-	Init           *bool
-	PrintInit      *bool
-	ExportPNG      *bool
-	Author         *string
-	CursorPadding  *int
-	RPromptOffset  *int
-	RPrompt        *bool
-	BGColor        *string
-	StackCount     *int
-	Command        *string
-	PrintTransient *bool
-	Plain          *bool
-	CachePath      *bool
-}
-
 func main() {
-	args := &Args{
+	args := &environment.Args{
 		ErrorCode: flag.Int(
 			"error",
 			0,
@@ -181,8 +154,8 @@ func main() {
 		fmt.Println(Version)
 		return
 	}
-	env := &environment{}
-	env.init(args)
+	env := &environment.ShellEnvironment{}
+	env.Init(args)
 	defer env.Close()
 	if *args.PrintShell {
 		fmt.Println(env.Shell())
@@ -267,7 +240,7 @@ func main() {
 		ansi:          ansi,
 	}
 	imageCreator.init()
-	match := findNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, *args.Config)
+	match := regex.FindNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, *args.Config)
 	err := imageCreator.SavePNG(fmt.Sprintf("%s.png", match[str]))
 	if err != nil {
 		fmt.Print(err.Error())
@@ -332,7 +305,7 @@ func getShellInitScript(executable, configFile, script string) string {
 	return script
 }
 
-func getConsoleBackgroundColor(env Environment, backgroundColorTemplate string) string {
+func getConsoleBackgroundColor(env environment.Environment, backgroundColorTemplate string) string {
 	if len(backgroundColorTemplate) == 0 {
 		return backgroundColorTemplate
 	}

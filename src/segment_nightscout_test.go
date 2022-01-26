@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -129,13 +130,13 @@ func TestNSSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &mock.MockedEnvironment{}
 		props := properties{
 			CacheTimeout: tc.CacheTimeout,
 			URL:          "FAKE",
 		}
 
-		cache := &MockedCache{}
+		cache := &mock.MockedCache{}
 		cache.On("Get", FAKEAPIURL).Return(tc.JSONResponse, !tc.CacheFoundFail)
 		cache.On("Set", FAKEAPIURL, tc.JSONResponse, tc.CacheTimeout).Return()
 

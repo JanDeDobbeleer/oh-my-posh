@@ -1,8 +1,10 @@
 package main
 
+import "oh-my-posh/environment"
+
 type spotify struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	MusicPlayer
 }
@@ -43,7 +45,7 @@ func (s *spotify) resolveIcon() {
 	}
 }
 
-func (s *spotify) init(props Properties, env Environment) {
+func (s *spotify) init(props Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

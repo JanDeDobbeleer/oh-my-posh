@@ -1,6 +1,8 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -35,7 +37,7 @@ func (l *languageArgs) hasvalue(value string, list []string) bool {
 }
 
 func bootStrapLanguageTest(args *languageArgs) *language {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	for _, command := range args.commands {
 		env.On("HasCommand", command.executable).Return(args.hasvalue(command.executable, args.enabledCommands))
 		env.On("RunCommand", command.executable, command.args).Return(args.version, args.expectedError)
@@ -50,7 +52,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	}
 	env.On("Pwd").Return(cwd)
 	env.On("Home").Return(home)
-	env.On("TemplateCache").Return(&TemplateCache{
+	env.On("TemplateCache").Return(&environment.TemplateCache{
 		Env: make(map[string]string),
 	})
 	if args.properties == nil {
@@ -346,7 +348,7 @@ func TestLanguageEnabledCommandExitCode(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"uni"},
 		version:           universion,
-		expectedError:     &commandError{exitCode: expected},
+		expectedError:     &environment.CommandError{ExitCode: expected},
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.enabled())

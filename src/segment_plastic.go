@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
+	"oh-my-posh/regex"
 	"strconv"
 	"strings"
 )
@@ -34,7 +36,7 @@ type plastic struct {
 	plasticWorkspaceFolder string // root folder of workspace
 }
 
-func (p *plastic) init(props Properties, env Environment) {
+func (p *plastic) init(props Properties, env environment.Environment) {
 	p.props = props
 	p.env = env
 }
@@ -94,7 +96,7 @@ func (p *plastic) parseFilesStatus(output []string) {
 			continue
 		}
 
-		p.MergePending = p.MergePending || matchString(`(?i)\smerge\s+from\s+[0-9]+\s*$`, line)
+		p.MergePending = p.MergePending || regex.MatchString(`(?i)\smerge\s+from\s+[0-9]+\s*$`, line)
 
 		code := line[:2]
 		p.Status.add(code)
@@ -102,7 +104,7 @@ func (p *plastic) parseFilesStatus(output []string) {
 }
 
 func (p *plastic) parseStringPattern(output, pattern, name string) string {
-	match := findNamedRegexMatch(pattern, output)
+	match := regex.FindNamedRegexMatch(pattern, output)
 	if sValue, ok := match[name]; ok {
 		return sValue
 	}

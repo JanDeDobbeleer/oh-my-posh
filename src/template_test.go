@@ -1,6 +1,8 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -68,8 +70,8 @@ func TestRenderTemplate(t *testing.T) {
 		},
 	}
 
-	env := &MockedEnvironment{}
-	env.On("TemplateCache").Return(&TemplateCache{
+	env := &mock.MockedEnvironment{}
+	env.On("TemplateCache").Return(&environment.TemplateCache{
 		Env: make(map[string]string),
 	})
 	for _, tc := range cases {
@@ -122,8 +124,8 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		{Case: "empty map", Expected: " world", Template: "{{.Text}} world", Context: map[string]string{}},
 	}
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
-		env.On("TemplateCache").Return(&TemplateCache{
+		env := &mock.MockedEnvironment{}
+		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: tc.Env,
 		})
 		template := &textTemplate{

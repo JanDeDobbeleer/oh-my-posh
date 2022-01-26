@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-	"path/filepath"
+	"oh-my-posh/environment"
+	"oh-my-posh/regex"
 	"sort"
 	"strings"
 )
 
 type path struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	pwd        string
 	Path       string
@@ -95,13 +96,13 @@ func (pt *path) enabled() bool {
 }
 
 func (pt *path) formatWindowsDrive(pwd string) string {
-	if pt.env.GOOS() != windowsPlatform || !strings.HasSuffix(pwd, ":") {
+	if pt.env.GOOS() != environment.WindowsPlatform || !strings.HasSuffix(pwd, ":") {
 		return pwd
 	}
 	return pwd + "\\"
 }
 
-func (pt *path) init(props Properties, env Environment) {
+func (pt *path) init(props Properties, env environment.Environment) {
 	pt.props = props
 	pt.env = env
 }
@@ -141,7 +142,7 @@ func (pt *path) getAgnosterPath() string {
 		buffer.WriteString(fmt.Sprintf("%s%s", separator, folderIcon))
 	}
 	if pathDepth > 0 {
-		buffer.WriteString(fmt.Sprintf("%s%s", separator, base(pwd, pt.env)))
+		buffer.WriteString(fmt.Sprintf("%s%s", separator, environment.Base(pt.env, pwd)))
 	}
 	return buffer.String()
 }
@@ -181,7 +182,7 @@ func (pt *path) getLetterPath() string {
 		}
 
 		// check if there is at least a letter we can use
-		matches := findNamedRegexMatch(`(?P<letter>[\p{L}0-9]).*`, folder)
+		matches := regex.FindNamedRegexMatch(`(?P<letter>[\p{L}0-9]).*`, folder)
 
 		if matches == nil || matches["letter"] == "" {
 			// no letter found, keep the folder unchanged
@@ -241,7 +242,7 @@ func (pt *path) getFullPath() string {
 
 func (pt *path) getFolderPath() string {
 	pwd := pt.getPwd()
-	pwd = base(pwd, pt.env)
+	pwd = environment.Base(pt.env, pwd)
 	return pt.replaceFolderSeparators(pwd)
 }
 
@@ -261,7 +262,7 @@ func (pt *path) normalize(inputPath string) string {
 	}
 	normalized = strings.ReplaceAll(normalized, "\\", "/")
 	goos := pt.env.GOOS()
-	if goos == windowsPlatform || goos == darwinPlatform {
+	if goos == environment.WindowsPlatform || goos == environment.DarwinPlatform {
 		normalized = strings.ToLower(normalized)
 	}
 	return normalized
@@ -342,36 +343,4 @@ func (pt *path) pathDepth(pwd string) int {
 		}
 	}
 	return depth - 1
-}
-
-// Base returns the last element of path.
-// Trailing path separators are removed before extracting the last element.
-// If the path consists entirely of separators, Base returns a single separator.
-func base(path string, env Environment) string {
-	if path == "/" {
-		return path
-	}
-	volumeName := filepath.VolumeName(path)
-	// Strip trailing slashes.
-	for len(path) > 0 && string(path[len(path)-1]) == env.PathSeperator() {
-		path = path[0 : len(path)-1]
-	}
-	if volumeName == path {
-		return path
-	}
-	// Throw away volume name
-	path = path[len(filepath.VolumeName(path)):]
-	// Find the last element
-	i := len(path) - 1
-	for i >= 0 && string(path[i]) != env.PathSeperator() {
-		i--
-	}
-	if i >= 0 {
-		path = path[i+1:]
-	}
-	// If empty now, it had only slashes.
-	if path == "" {
-		return env.PathSeperator()
-	}
-	return path
 }

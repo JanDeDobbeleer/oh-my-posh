@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -50,7 +51,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &mock.MockedEnvironment{}
 		props := properties{
 			APIKey:       "key",
 			Location:     "AMSTERDAM,NL",
@@ -178,7 +179,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &mock.MockedEnvironment{}
 
 		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, tc.IconID)
 		expectedString := fmt.Sprintf("%s (20°C)", tc.ExpectedIconString)
@@ -201,7 +202,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 	// test with hyperlink enabled
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &mock.MockedEnvironment{}
 
 		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, tc.IconID)
 		expectedString := fmt.Sprintf("[%s (20°C)](http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", tc.ExpectedIconString)
@@ -226,8 +227,8 @@ func TestOWMSegmentFromCache(t *testing.T) {
 	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
 	expectedString := fmt.Sprintf("%s (20°C)", "\ufa98")
 
-	env := &MockedEnvironment{}
-	cache := &MockedCache{}
+	env := &mock.MockedEnvironment{}
+	cache := &mock.MockedCache{}
 	o := &owm{
 		props: properties{
 			APIKey:   "key",
@@ -249,8 +250,8 @@ func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
 	expectedString := fmt.Sprintf("[%s (20°C)](http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", "\ufa98")
 
-	env := &MockedEnvironment{}
-	cache := &MockedCache{}
+	env := &mock.MockedEnvironment{}
+	cache := &mock.MockedCache{}
 
 	o := &owm{
 		props: properties{

@@ -4,11 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"oh-my-posh/environment"
 )
 
 type owm struct {
-	props       Properties
-	env         Environment
+	props Properties
+	env   environment.Environment
+
 	Temperature float64
 	Weather     string
 	URL         string
@@ -161,7 +163,7 @@ func (d *owm) setStatus() error {
 	return nil
 }
 
-func (d *owm) init(props Properties, env Environment) {
+func (d *owm) init(props Properties, env environment.Environment) {
 	d.props = props
 	d.env = env
 }

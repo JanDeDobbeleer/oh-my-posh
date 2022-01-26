@@ -1,4 +1,4 @@
-package main
+package environment
 
 import (
 	"testing"
@@ -36,7 +36,7 @@ func TestWindowsPathWithDriveLetter(t *testing.T) {
 		{Case: "registry drive", CWD: `HKLM:\SOFTWARE\magnetic:test\`, Expected: `HKLM:\SOFTWARE\magnetic:test\`},
 	}
 	for _, tc := range cases {
-		env := &environment{
+		env := &ShellEnvironment{
 			args: &Args{
 				PWD: &tc.CWD,
 			},

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/environment"
 	"path/filepath"
 
 	"gopkg.in/yaml.v3"
@@ -10,9 +11,11 @@ import (
 const ParseKubeConfig Property = "parse_kubeconfig"
 
 type kubectl struct {
-	props   Properties
-	env     Environment
+	props Properties
+	env   environment.Environment
+
 	Context string
+
 	KubeContext
 }
 
@@ -34,7 +37,7 @@ func (k *kubectl) template() string {
 	return "{{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }}"
 }
 
-func (k *kubectl) init(props Properties, env Environment) {
+func (k *kubectl) init(props Properties, env environment.Environment) {
 	k.props = props
 	k.env = env
 }

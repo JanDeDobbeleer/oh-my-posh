@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,7 +14,7 @@ func TestWiFiSegment(t *testing.T) {
 		Case            string
 		ExpectedString  string
 		ExpectedEnabled bool
-		Network         *WifiInfo
+		Network         *environment.WifiInfo
 		WifiError       error
 		DisplayError    bool
 	}{
@@ -34,15 +36,15 @@ func TestWiFiSegment(t *testing.T) {
 			Case:            "Display wifi state",
 			ExpectedString:  "pretty fly for a wifi",
 			ExpectedEnabled: true,
-			Network: &WifiInfo{
+			Network: &environment.WifiInfo{
 				SSID: "pretty fly for a wifi",
 			},
 		},
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("Platform").Return(windowsPlatform)
+		env := new(mock.MockedEnvironment)
+		env.On("Platform").Return(environment.WindowsPlatform)
 		env.On("IsWsl").Return(false)
 		env.On("WifiNetwork").Return(tc.Network, tc.WifiError)
 

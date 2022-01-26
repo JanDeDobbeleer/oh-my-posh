@@ -1,6 +1,8 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/alecthomas/assert"
@@ -41,7 +43,7 @@ func TestPythonTemplate(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "python").Return(true)
 		env.On("RunCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
 		env.On("HasFiles", "*.py").Return(true)
@@ -56,7 +58,7 @@ func TestPythonTemplate(t *testing.T) {
 			FetchVersion: tc.FetchVersion,
 			DisplayMode:  DisplayModeAlways,
 		}
-		env.On("TemplateCache").Return(&TemplateCache{
+		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: make(map[string]string),
 		})
 		python := &python{}
@@ -76,7 +78,7 @@ func TestPythonPythonInContext(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("PathSeperator").Return("")
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")

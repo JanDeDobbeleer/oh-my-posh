@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -53,7 +54,7 @@ func TestJava(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "java").Return(true)
 		env.On("RunCommand", "java", []string{"-Xinternalversion"}).Return(tc.Version, nil)
 		env.On("HasFiles", "pom.xml").Return(true)

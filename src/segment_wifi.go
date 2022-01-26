@@ -1,10 +1,14 @@
 package main
 
+import "oh-my-posh/environment"
+
 type wifi struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
-	WifiInfo
+	Error string
+
+	environment.WifiInfo
 }
 
 const (
@@ -17,7 +21,7 @@ func (w *wifi) template() string {
 
 func (w *wifi) enabled() bool {
 	// This segment only supports Windows/WSL for now
-	if w.env.Platform() != windowsPlatform && !w.env.IsWsl() {
+	if w.env.Platform() != environment.WindowsPlatform && !w.env.IsWsl() {
 		return false
 	}
 	wifiInfo, err := w.env.WifiNetwork()
@@ -33,7 +37,7 @@ func (w *wifi) enabled() bool {
 	return true
 }
 
-func (w *wifi) init(props Properties, env Environment) {
+func (w *wifi) init(props Properties, env environment.Environment) {
 	w.props = props
 	w.env = env
 }

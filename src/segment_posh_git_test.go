@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,7 +20,7 @@ func TestPoshGitSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("Getenv", poshGitEnv).Return(tc.PoshGitPrompt)
 		p := &poshgit{
 			env:   env,

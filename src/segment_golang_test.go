@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,14 +18,14 @@ type mockedLanguageParams struct {
 	extension     string
 }
 
-func getMockedLanguageEnv(params *mockedLanguageParams) (*MockedEnvironment, properties) {
-	env := new(MockedEnvironment)
+func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.MockedEnvironment, properties) {
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", params.cmd).Return(true)
 	env.On("RunCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
 	env.On("HasFiles", params.extension).Return(true)
 	env.On("Pwd").Return("/usr/home/project")
 	env.On("Home").Return("/usr/home")
-	env.On("TemplateCache").Return(&TemplateCache{
+	env.On("TemplateCache").Return(&environment.TemplateCache{
 		Env: make(map[string]string),
 	})
 	props := properties{
@@ -64,7 +66,7 @@ func TestGolang(t *testing.T) {
 		env, props := getMockedLanguageEnv(params)
 		if tc.ParseModFile {
 			props[ParseModFile] = tc.ParseModFile
-			fileInfo := &FileInfo{
+			fileInfo := &environment.FileInfo{
 				Path:         "./go.mod",
 				ParentFolder: "./",
 				IsDir:        false,

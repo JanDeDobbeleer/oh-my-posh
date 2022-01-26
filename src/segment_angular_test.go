@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,14 +24,14 @@ func TestAngularCliVersionDisplayed(t *testing.T) {
 			extension: "angular.json",
 		}
 
-		var env = new(MockedEnvironment)
+		var env = new(mock.MockedEnvironment)
 		// mock  getVersion methods
 		env.On("Pwd").Return("/usr/home/dev/my-app")
 		env.On("Home").Return("/usr/home")
 		env.On("HasFiles", params.extension).Return(true)
 		env.On("HasFilesInDir", "/usr/home/dev/my-app/node_modules/@angular/core", "package.json").Return(true)
 		env.On("FileContent", "/usr/home/dev/my-app/node_modules/@angular/core/package.json").Return(ta.Version)
-		env.On("TemplateCache").Return(&TemplateCache{
+		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: make(map[string]string),
 		})
 		props := properties{}

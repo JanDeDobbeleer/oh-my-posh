@@ -1,10 +1,13 @@
 package main
 
-import "strings"
+import (
+	"oh-my-posh/environment"
+	"strings"
+)
 
 type command struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	Output string
 }
@@ -49,7 +52,7 @@ func (c *command) enabled() bool {
 	return c.Output != ""
 }
 
-func (c *command) init(props Properties, env Environment) {
+func (c *command) init(props Properties, env environment.Environment) {
 	c.props = props
 	c.env = env
 }

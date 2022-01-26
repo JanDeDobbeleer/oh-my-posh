@@ -3,11 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
+	"oh-my-posh/environment"
 )
 
 type winreg struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	Value string
 }
@@ -23,32 +24,32 @@ func (wr *winreg) template() string {
 	return "{{ .Value }}"
 }
 
-func (wr *winreg) init(props Properties, env Environment) {
+func (wr *winreg) init(props Properties, env environment.Environment) {
 	wr.props = props
 	wr.env = env
 }
 
 func (wr *winreg) enabled() bool {
-	if wr.env.GOOS() != windowsPlatform {
+	if wr.env.GOOS() != environment.WindowsPlatform {
 		return false
 	}
 
 	registryPath := wr.props.getString(RegistryPath, "")
 	fallback := wr.props.getString(Fallback, "")
 
-	var regValue *WindowsRegistryValue
+	var regValue *environment.WindowsRegistryValue
 	regValue, _ = wr.env.WindowsRegistryKeyValue(registryPath)
 
 	if regValue != nil {
-		switch regValue.valueType {
-		case regString:
-			wr.Value = regValue.str
+		switch regValue.ValueType {
+		case environment.RegString:
+			wr.Value = regValue.Str
 			return true
-		case regDword:
-			wr.Value = fmt.Sprintf("0x%08X", regValue.dword)
+		case environment.RegDword:
+			wr.Value = fmt.Sprintf("0x%08X", regValue.Dword)
 			return true
-		case regQword:
-			wr.Value = fmt.Sprintf("0x%016X", regValue.qword)
+		case environment.RegQword:
+			wr.Value = fmt.Sprintf("0x%016X", regValue.Qword)
 			return true
 		}
 	}
@@ -68,11 +69,11 @@ func (wr winreg) GetRegistryString(path string) (string, error) {
 		return "", err
 	}
 
-	if regValue.valueType != regString {
+	if regValue.ValueType != environment.RegString {
 		return "", errors.New("type mismatch, registry value is not a string")
 	}
 
-	return regValue.str, nil
+	return regValue.Str, nil
 }
 
 func (wr winreg) GetRegistryDword(path string) (uint32, error) {
@@ -82,11 +83,11 @@ func (wr winreg) GetRegistryDword(path string) (uint32, error) {
 		return 0, err
 	}
 
-	if regValue.valueType != regDword {
+	if regValue.ValueType != environment.RegDword {
 		return 0, errors.New("type mismatch, registry value is not a dword")
 	}
 
-	return regValue.dword, nil
+	return regValue.Dword, nil
 }
 
 func (wr winreg) GetRegistryQword(path string) (uint64, error) {
@@ -96,9 +97,9 @@ func (wr winreg) GetRegistryQword(path string) (uint64, error) {
 		return 0, err
 	}
 
-	if regValue.valueType != regQword {
+	if regValue.ValueType != environment.RegQword {
 		return 0, errors.New("type mismatch, registry value is not a qword")
 	}
 
-	return regValue.qword, nil
+	return regValue.Qword, nil
 }

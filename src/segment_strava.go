@@ -6,13 +6,14 @@ import (
 	"fmt"
 	"math"
 	"net/http"
+	"oh-my-posh/environment"
 	"time"
 )
 
 // segment struct, makes templating easier
 type strava struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	StravaData
 	Icon         string
@@ -229,7 +230,7 @@ func (s *strava) getResult() (*StravaData, error) {
 	return data, nil
 }
 
-func (s *strava) init(props Properties, env Environment) {
+func (s *strava) init(props Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

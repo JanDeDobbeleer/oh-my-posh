@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/alecthomas/assert"
@@ -29,7 +30,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("FileContent", ".nvmrc").Return(tc.RCVersion)
 
 		node := &node{
@@ -60,7 +61,7 @@ func TestNodeInContext(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("HasFiles", "yarn.lock").Return(tc.HasYarn)
 		env.On("HasFiles", "package-lock.json").Return(tc.hasNPM)
 		env.On("HasFiles", "package.json").Return(tc.hasDefault)

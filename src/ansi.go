@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/regex"
 	"strings"
 )
 
@@ -122,16 +123,16 @@ func (a *ansiUtils) lenWithoutANSI(text string) int {
 		return 0
 	}
 	// replace hyperlinks(file/http/https)
-	matches := findAllNamedRegexMatch(`(?P<STR>\x1b]8;;(file|http|https):\/\/(.+?)\x1b\\(?P<URL>.+?)\x1b]8;;\x1b\\)`, text)
+	matches := regex.FindAllNamedRegexMatch(`(?P<STR>\x1b]8;;(file|http|https):\/\/(.+?)\x1b\\(?P<URL>.+?)\x1b]8;;\x1b\\)`, text)
 	for _, match := range matches {
 		text = strings.ReplaceAll(text, match[str], match[url])
 	}
 	// replace console title
-	matches = findAllNamedRegexMatch(`(?P<STR>\x1b\]0;(.+)\007)`, text)
+	matches = regex.FindAllNamedRegexMatch(`(?P<STR>\x1b\]0;(.+)\007)`, text)
 	for _, match := range matches {
 		text = strings.ReplaceAll(text, match[str], "")
 	}
-	stripped := replaceAllString(ansiRegex, text, "")
+	stripped := regex.ReplaceAllString(ansiRegex, text, "")
 	stripped = strings.ReplaceAll(stripped, a.escapeLeft, "")
 	stripped = strings.ReplaceAll(stripped, a.escapeRight, "")
 	runeText := []rune(stripped)
@@ -140,7 +141,7 @@ func (a *ansiUtils) lenWithoutANSI(text string) int {
 
 func (a *ansiUtils) generateHyperlink(text string) string {
 	// hyperlink matching
-	results := findNamedRegexMatch("(?P<all>(?:\\[(?P<name>.+)\\])(?:\\((?P<url>.*)\\)))", text)
+	results := regex.FindNamedRegexMatch("(?P<all>(?:\\[(?P<name>.+)\\])(?:\\((?P<url>.*)\\)))", text)
 	if len(results) != 3 {
 		return text
 	}
@@ -151,7 +152,7 @@ func (a *ansiUtils) generateHyperlink(text string) string {
 }
 
 func (a *ansiUtils) formatText(text string) string {
-	results := findAllNamedRegexMatch("(?P<context><(?P<format>[buis])>(?P<text>[^<]+)</[buis]>)", text)
+	results := regex.FindAllNamedRegexMatch("(?P<context><(?P<format>[buis])>(?P<text>[^<]+)</[buis]>)", text)
 	for _, result := range results {
 		var formatted string
 		switch result["format"] {

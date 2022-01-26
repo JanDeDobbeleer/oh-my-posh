@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/mock"
 	"testing"
 	"time"
 
@@ -136,7 +137,7 @@ func TestBrewfatherSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &mock.MockedEnvironment{}
 		props := properties{
 			CacheTimeout: tc.CacheTimeout,
 			BFBatchID:    BFFakeBatchID,
@@ -144,7 +145,7 @@ func TestBrewfatherSegment(t *testing.T) {
 			BFUserID:     "FAKE",
 		}
 
-		cache := &MockedCache{}
+		cache := &mock.MockedCache{}
 		cache.On("Get", BFCacheKey).Return(nil, false) // cache testing later because cache is a little more complicated than just the single response.
 		// cache.On("Set", BFCacheKey, tc.JSONResponse, tc.CacheTimeout).Return()
 

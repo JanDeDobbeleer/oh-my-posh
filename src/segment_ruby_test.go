@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -82,7 +83,7 @@ func TestRuby(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "rbenv").Return(tc.HasRbenv)
 		env.On("RunCommand", "rbenv", []string{"version-name"}).Return(tc.Version, nil)
 		env.On("HasCommand", "rvm-prompt").Return(tc.HasRvmprompt)

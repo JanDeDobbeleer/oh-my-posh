@@ -1,4 +1,4 @@
-package main
+package environment
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"oh-my-posh/regex"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -20,24 +21,53 @@ import (
 )
 
 const (
-	unknown         = "unknown"
-	windowsPlatform = "windows"
-	darwinPlatform  = "darwin"
-	linuxPlatform   = "linux"
+	Unknown         = "unknown"
+	WindowsPlatform = "windows"
+	DarwinPlatform  = "darwin"
+	LinuxPlatform   = "linux"
 )
 
-type commandError struct {
-	err      string
-	exitCode int
+type Args struct {
+	ErrorCode      *int
+	PrintConfig    *bool
+	ConfigFormat   *string
+	PrintShell     *bool
+	Config         *string
+	Shell          *string
+	PWD            *string
+	PSWD           *string
+	Version        *bool
+	Debug          *bool
+	ExecutionTime  *float64
+	Millis         *bool
+	Eval           *bool
+	Init           *bool
+	PrintInit      *bool
+	ExportPNG      *bool
+	Author         *string
+	CursorPadding  *int
+	RPromptOffset  *int
+	RPrompt        *bool
+	BGColor        *string
+	StackCount     *int
+	Command        *string
+	PrintTransient *bool
+	Plain          *bool
+	CachePath      *bool
 }
 
-func (e *commandError) Error() string {
-	return e.err
+type CommandError struct {
+	Err      string
+	ExitCode int
 }
 
-type noBatteryError struct{}
+func (e *CommandError) Error() string {
+	return e.Err
+}
 
-func (m *noBatteryError) Error() string {
+type NoBatteryError struct{}
+
+func (m *NoBatteryError) Error() string {
 	return "no battery"
 }
 
@@ -57,19 +87,19 @@ type Cache interface {
 
 type HTTPRequestModifier func(request *http.Request)
 
-type windowsRegistryValueType int
+type WindowsRegistryValueType int
 
 const (
-	regQword windowsRegistryValueType = iota
-	regDword
-	regString
+	RegQword WindowsRegistryValueType = iota
+	RegDword
+	RegString
 )
 
 type WindowsRegistryValue struct {
-	valueType windowsRegistryValueType
-	qword     uint64
-	dword     uint32
-	str       string
+	ValueType WindowsRegistryValueType
+	Qword     uint64
+	Dword     uint32
+	Str       string
 }
 
 type WifiType string
@@ -86,6 +116,19 @@ type WifiInfo struct {
 	TransmitRate   int
 	Signal         int
 	Error          string
+}
+
+type TemplateCache struct {
+	Root     bool
+	PWD      string
+	Folder   string
+	Shell    string
+	UserName string
+	HostName string
+	Code     int
+	Env      map[string]string
+	OS       string
+	WSL      bool
 }
 
 type Environment interface {
@@ -154,7 +197,7 @@ const (
 	Debug logType = "debug"
 )
 
-type environment struct {
+type ShellEnvironment struct {
 	args       *Args
 	cwd        string
 	cmdCache   *commandCache
@@ -164,11 +207,11 @@ type environment struct {
 	debug      bool
 }
 
-func (env *environment) init(args *Args) {
+func (env *ShellEnvironment) Init(args *Args) {
 	env.args = args
 	env.fileCache = &fileCache{}
 	env.fileCache.Init(env.CachePath())
-	env.resolveConfigPath()
+	env.ResolveConfigPath()
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
@@ -178,13 +221,13 @@ func (env *environment) init(args *Args) {
 	}
 }
 
-func (env *environment) resolveConfigPath() {
+func (env *ShellEnvironment) ResolveConfigPath() {
 	if env.args == nil || env.args.Config == nil || len(*env.args.Config) == 0 {
 		return
 	}
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
-	if env.Platform() == windowsPlatform && env.Shell() == bash {
+	if env.Platform() == WindowsPlatform && env.Shell() == "bash" {
 		return
 	}
 	configFile := *env.args.Config
@@ -200,7 +243,7 @@ func (env *environment) resolveConfigPath() {
 	*env.args.Config = filepath.Clean(configFile)
 }
 
-func (env *environment) trace(start time.Time, function string, args ...string) {
+func (env *ShellEnvironment) trace(start time.Time, function string, args ...string) {
 	if !env.debug {
 		return
 	}
@@ -209,7 +252,7 @@ func (env *environment) trace(start time.Time, function string, args ...string) 
 	log.Println(trace)
 }
 
-func (env *environment) log(lt logType, function, message string) {
+func (env *ShellEnvironment) log(lt logType, function, message string) {
 	if !env.debug {
 		return
 	}
@@ -217,14 +260,14 @@ func (env *environment) log(lt logType, function, message string) {
 	log.Println(trace)
 }
 
-func (env *environment) Getenv(key string) string {
+func (env *ShellEnvironment) Getenv(key string) string {
 	defer env.trace(time.Now(), "Getenv", key)
 	val := os.Getenv(key)
 	env.log(Debug, "Getenv", val)
 	return val
 }
 
-func (env *environment) Pwd() string {
+func (env *ShellEnvironment) Pwd() string {
 	defer env.trace(time.Now(), "Pwd")
 	defer func() {
 		env.log(Debug, "Pwd", env.cwd)
@@ -234,7 +277,7 @@ func (env *environment) Pwd() string {
 	}
 	correctPath := func(pwd string) string {
 		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
-		driveLetter := getCompiledRegex(`^[a-z]:`)
+		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
 		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
 	}
 	if env.args != nil && *env.args.PWD != "" {
@@ -250,7 +293,7 @@ func (env *environment) Pwd() string {
 	return env.cwd
 }
 
-func (env *environment) HasFiles(pattern string) bool {
+func (env *ShellEnvironment) HasFiles(pattern string) bool {
 	defer env.trace(time.Now(), "HasFiles", pattern)
 	cwd := env.Pwd()
 	pattern = cwd + env.PathSeperator() + pattern
@@ -262,7 +305,7 @@ func (env *environment) HasFiles(pattern string) bool {
 	return len(matches) > 0
 }
 
-func (env *environment) HasFilesInDir(dir, pattern string) bool {
+func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
 	defer env.trace(time.Now(), "HasFilesInDir", pattern)
 	pattern = dir + env.PathSeperator() + pattern
 	matches, err := filepath.Glob(pattern)
@@ -273,13 +316,13 @@ func (env *environment) HasFilesInDir(dir, pattern string) bool {
 	return len(matches) > 0
 }
 
-func (env *environment) HasFolder(folder string) bool {
+func (env *ShellEnvironment) HasFolder(folder string) bool {
 	defer env.trace(time.Now(), "HasFolder", folder)
 	_, err := os.Stat(folder)
 	return !os.IsNotExist(err)
 }
 
-func (env *environment) FileContent(file string) string {
+func (env *ShellEnvironment) FileContent(file string) string {
 	defer env.trace(time.Now(), "FileContent", file)
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
@@ -289,7 +332,7 @@ func (env *environment) FileContent(file string) string {
 	return string(content)
 }
 
-func (env *environment) FolderList(path string) []string {
+func (env *ShellEnvironment) FolderList(path string) []string {
 	defer env.trace(time.Now(), "FolderList", path)
 	content, err := os.ReadDir(path)
 	if err != nil {
@@ -305,12 +348,12 @@ func (env *environment) FolderList(path string) []string {
 	return folderNames
 }
 
-func (env *environment) PathSeperator() string {
+func (env *ShellEnvironment) PathSeperator() string {
 	defer env.trace(time.Now(), "PathSeperator")
 	return string(os.PathSeparator)
 }
 
-func (env *environment) User() string {
+func (env *ShellEnvironment) User() string {
 	defer env.trace(time.Now(), "User")
 	user := os.Getenv("USER")
 	if user == "" {
@@ -319,7 +362,7 @@ func (env *environment) User() string {
 	return user
 }
 
-func (env *environment) Host() (string, error) {
+func (env *ShellEnvironment) Host() (string, error) {
 	defer env.trace(time.Now(), "Host")
 	hostName, err := os.Hostname()
 	if err != nil {
@@ -329,12 +372,12 @@ func (env *environment) Host() (string, error) {
 	return cleanHostName(hostName), nil
 }
 
-func (env *environment) GOOS() string {
+func (env *ShellEnvironment) GOOS() string {
 	defer env.trace(time.Now(), "GOOS")
 	return runtime.GOOS
 }
 
-func (env *environment) RunCommand(command string, args ...string) (string, error) {
+func (env *ShellEnvironment) RunCommand(command string, args ...string) (string, error) {
 	defer env.trace(time.Now(), "RunCommand", append([]string{command}, args...)...)
 	if cmd, ok := env.cmdCache.get(command); ok {
 		command = cmd
@@ -356,13 +399,13 @@ func (env *environment) RunCommand(command string, args ...string) (string, erro
 	return output, nil
 }
 
-func (env *environment) RunShellCommand(shell, command string) string {
+func (env *ShellEnvironment) RunShellCommand(shell, command string) string {
 	defer env.trace(time.Now(), "RunShellCommand", shell, command)
 	out, _ := env.RunCommand(shell, "-c", command)
 	return out
 }
 
-func (env *environment) HasCommand(command string) bool {
+func (env *ShellEnvironment) HasCommand(command string) bool {
 	defer env.trace(time.Now(), "HasCommand", command)
 	if _, ok := env.cmdCache.get(command); ok {
 		return true
@@ -376,12 +419,12 @@ func (env *environment) HasCommand(command string) bool {
 	return false
 }
 
-func (env *environment) ErrorCode() int {
+func (env *ShellEnvironment) ErrorCode() int {
 	defer env.trace(time.Now(), "ErrorCode")
 	return *env.args.ErrorCode
 }
 
-func (env *environment) ExecutionTime() float64 {
+func (env *ShellEnvironment) ExecutionTime() float64 {
 	defer env.trace(time.Now(), "ExecutionTime")
 	if *env.args.ExecutionTime < 0 {
 		return 0
@@ -389,12 +432,12 @@ func (env *environment) ExecutionTime() float64 {
 	return *env.args.ExecutionTime
 }
 
-func (env *environment) Args() *Args {
+func (env *ShellEnvironment) Args() *Args {
 	defer env.trace(time.Now(), "Args")
 	return env.args
 }
 
-func (env *environment) BatteryInfo() ([]*battery.Battery, error) {
+func (env *ShellEnvironment) BatteryInfo() ([]*battery.Battery, error) {
 	defer env.trace(time.Now(), "BatteryInfo")
 	batteries, err := battery.GetAll()
 	// actual error, return it
@@ -404,7 +447,7 @@ func (env *environment) BatteryInfo() ([]*battery.Battery, error) {
 	}
 	// there are no batteries found
 	if len(batteries) == 0 {
-		return nil, &noBatteryError{}
+		return nil, &NoBatteryError{}
 	}
 	// some batteries fail to get retrieved, filter them out if present
 	validBatteries := []*battery.Battery{}
@@ -454,7 +497,7 @@ func (env *environment) BatteryInfo() ([]*battery.Battery, error) {
 	return validBatteries, nil
 }
 
-func (env *environment) Shell() string {
+func (env *ShellEnvironment) Shell() string {
 	defer env.trace(time.Now(), "Shell")
 	if *env.args.Shell != "" {
 		return *env.args.Shell
@@ -464,7 +507,7 @@ func (env *environment) Shell() string {
 	name, err := p.Name()
 	if err != nil {
 		env.log(Error, "Shell", err.Error())
-		return unknown
+		return Unknown
 	}
 	if name == "cmd.exe" {
 		p, _ = p.Parent()
@@ -472,14 +515,14 @@ func (env *environment) Shell() string {
 	}
 	if err != nil {
 		env.log(Error, "Shell", err.Error())
-		return unknown
+		return Unknown
 	}
 	// Cache the shell value to speed things up.
 	*env.args.Shell = strings.Trim(strings.Replace(name, ".exe", "", 1), " ")
 	return *env.args.Shell
 }
 
-func (env *environment) HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
+func (env *ShellEnvironment) HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
 	defer env.trace(time.Now(), "HTTPRequest", url)
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
@@ -504,7 +547,7 @@ func (env *environment) HTTPRequest(url string, timeout int, requestModifiers ..
 	return body, nil
 }
 
-func (env *environment) HasParentFilePath(path string) (*FileInfo, error) {
+func (env *ShellEnvironment) HasParentFilePath(path string) (*FileInfo, error) {
 	defer env.trace(time.Now(), "HasParentFilePath", path)
 	currentFolder := env.Pwd()
 	for {
@@ -529,7 +572,7 @@ func (env *environment) HasParentFilePath(path string) (*FileInfo, error) {
 	}
 }
 
-func (env *environment) StackCount() int {
+func (env *ShellEnvironment) StackCount() int {
 	defer env.trace(time.Now(), "StackCount")
 	if *env.args.StackCount < 0 {
 		return 0
@@ -537,19 +580,19 @@ func (env *environment) StackCount() int {
 	return *env.args.StackCount
 }
 
-func (env *environment) Cache() Cache {
+func (env *ShellEnvironment) Cache() Cache {
 	return env.fileCache
 }
 
-func (env *environment) Close() {
+func (env *ShellEnvironment) Close() {
 	env.fileCache.Close()
 }
 
-func (env *environment) Logs() string {
+func (env *ShellEnvironment) Logs() string {
 	return env.logBuilder.String()
 }
 
-func (env *environment) TemplateCache() *TemplateCache {
+func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 	defer env.trace(time.Now(), "TemplateCache")
 	if env.tmplCache != nil {
 		return env.tmplCache
@@ -575,7 +618,7 @@ func (env *environment) TemplateCache() *TemplateCache {
 	pwd := env.Pwd()
 	pwd = strings.Replace(pwd, env.Home(), "~", 1)
 	tmplCache.PWD = pwd
-	tmplCache.Folder = base(pwd, env)
+	tmplCache.Folder = Base(env, pwd)
 	tmplCache.UserName = env.User()
 	if host, err := env.Host(); err == nil {
 		tmplCache.HostName = host
@@ -584,6 +627,60 @@ func (env *environment) TemplateCache() *TemplateCache {
 	tmplCache.OS = goos
 	env.tmplCache = tmplCache
 	return env.tmplCache
+}
+
+func DirMatchesOneOf(env Environment, dir string, regexes []string) bool {
+	normalizedCwd := strings.ReplaceAll(dir, "\\", "/")
+	normalizedHomeDir := strings.ReplaceAll(env.Home(), "\\", "/")
+
+	for _, element := range regexes {
+		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
+		if strings.HasPrefix(normalizedElement, "~") {
+			normalizedElement = strings.Replace(normalizedElement, "~", normalizedHomeDir, 1)
+		}
+		pattern := fmt.Sprintf("^%s$", normalizedElement)
+		goos := env.GOOS()
+		if goos == WindowsPlatform || goos == DarwinPlatform {
+			pattern = "(?i)" + pattern
+		}
+		matched := regex.MatchString(pattern, normalizedCwd)
+		if matched {
+			return true
+		}
+	}
+	return false
+}
+
+// Base returns the last element of path.
+// Trailing path separators are removed before extracting the last element.
+// If the path consists entirely of separators, Base returns a single separator.
+func Base(env Environment, path string) string {
+	if path == "/" {
+		return path
+	}
+	volumeName := filepath.VolumeName(path)
+	// Strip trailing slashes.
+	for len(path) > 0 && string(path[len(path)-1]) == env.PathSeperator() {
+		path = path[0 : len(path)-1]
+	}
+	if volumeName == path {
+		return path
+	}
+	// Throw away volume name
+	path = path[len(filepath.VolumeName(path)):]
+	// Find the last element
+	i := len(path) - 1
+	for i >= 0 && string(path[i]) != env.PathSeperator() {
+		i--
+	}
+	if i >= 0 {
+		path = path[i+1:]
+	}
+	// If empty now, it had only slashes.
+	if path == "" {
+		return env.PathSeperator()
+	}
+	return path
 }
 
 func cleanHostName(hostName string) string {

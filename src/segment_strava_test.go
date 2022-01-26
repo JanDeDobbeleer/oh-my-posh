@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"oh-my-posh/mock"
 	"testing"
 	"time"
 
@@ -135,13 +136,13 @@ func TestStravaSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &mock.MockedEnvironment{}
 		url := "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1"
 		tokenURL := fmt.Sprintf("https://ohmyposh.dev/api/refresh?segment=strava&token=%s", tc.TokenRefreshToken)
 		var props properties = map[Property]interface{}{
 			CacheTimeout: tc.CacheTimeout,
 		}
-		cache := &MockedCache{}
+		cache := &mock.MockedCache{}
 		cache.On("Get", url).Return(tc.JSONResponse, !tc.CacheFoundFail)
 		cache.On("Set", url, tc.JSONResponse, tc.CacheTimeout).Return()
 

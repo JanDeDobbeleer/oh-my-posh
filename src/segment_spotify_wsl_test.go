@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"testing"
 
+	"oh-my-posh/mock"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,15 +53,14 @@ func TestSpotifyWsl(t *testing.T) {
 			ExecOutput:      ""},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("IsWsl").Return(true)
 		env.On("RunCommand", "tasklist.exe", []string{"/V", "/FI", "Imagename eq Spotify.exe", "/FO", "CSV", "/NH"}).Return(tc.ExecOutput, nil)
-		env.onTemplate()
 		s := &spotify{
 			env:   env,
 			props: properties{},
 		}
 		assert.Equal(t, tc.ExpectedEnabled, s.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
-		assert.Equal(t, tc.ExpectedString, s.string(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, s.template(), s), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

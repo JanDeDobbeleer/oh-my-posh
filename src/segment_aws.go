@@ -2,12 +2,14 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
 	"strings"
 )
 
 type aws struct {
-	props   Properties
-	env     Environment
+	props Properties
+	env   environment.Environment
+
 	Profile string
 	Region  string
 }
@@ -20,7 +22,7 @@ func (a *aws) template() string {
 	return "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}"
 }
 
-func (a *aws) init(props Properties, env Environment) {
+func (a *aws) init(props Properties, env environment.Environment) {
 	a.props = props
 	a.env = env
 }

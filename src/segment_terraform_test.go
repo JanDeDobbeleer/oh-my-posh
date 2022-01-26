@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,7 +14,7 @@ type terraformArgs struct {
 }
 
 func bootStrapTerraformTest(args *terraformArgs) *terraform {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "terraform").Return(args.hasTfCommand)
 	env.On("HasFolder", "/.terraform").Return(args.hasTfFolder)
 	env.On("Pwd").Return("")

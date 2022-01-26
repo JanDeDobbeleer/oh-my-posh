@@ -26,6 +26,7 @@ import (
 	_ "embed"
 	"fmt"
 	"math"
+	"oh-my-posh/regex"
 	"strconv"
 	"strings"
 
@@ -421,8 +422,8 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 }
 
 func (ir *ImageRenderer) shouldPrint() bool {
-	for sequence, regex := range ir.ansiSequenceRegexMap {
-		match := findNamedRegexMatch(regex, ir.ansiString)
+	for sequence, re := range ir.ansiSequenceRegexMap {
+		match := regex.FindNamedRegexMatch(re, ir.ansiString)
 		if len(match) == 0 {
 			continue
 		}

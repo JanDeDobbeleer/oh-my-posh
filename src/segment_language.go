@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
+	"oh-my-posh/environment"
+	"oh-my-posh/regex"
 )
 
 const (
@@ -34,7 +36,7 @@ type cmd struct {
 }
 
 func (c *cmd) parse(versionInfo string) (*version, error) {
-	values := findNamedRegexMatch(c.regex, versionInfo)
+	values := regex.FindNamedRegexMatch(c.regex, versionInfo)
 	if len(values) == 0 {
 		return nil, errors.New("cannot parse version string")
 	}
@@ -52,7 +54,7 @@ func (c *cmd) parse(versionInfo string) (*version, error) {
 
 type language struct {
 	props              Properties
-	env                Environment
+	env                environment.Environment
 	extensions         []string
 	commands           []*cmd
 	versionURLTemplate string
@@ -150,8 +152,8 @@ func (l *language) setVersion() error {
 				continue
 			}
 			versionStr, err = l.env.RunCommand(command.executable, command.args...)
-			if exitErr, ok := err.(*commandError); ok {
-				l.exitCode = exitErr.exitCode
+			if exitErr, ok := err.(*environment.CommandError); ok {
+				l.exitCode = exitErr.ExitCode
 				return fmt.Errorf("err executing %s with %s", command.executable, command.args)
 			}
 		} else {

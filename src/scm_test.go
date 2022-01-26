@@ -1,6 +1,8 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -167,15 +169,16 @@ func TestScmShouldIgnoreRootRepository(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties{
-			ExcludeFolders: []string{
-				"/home/bill",
-				"/home/gates.*",
-			},
+		excludeFolders := []string{
+			"/home/bill",
+			"/home/gates.*",
 		}
-		env := new(MockedEnvironment)
+		props := properties{
+			ExcludeFolders: excludeFolders,
+		}
+		env := new(mock.MockedEnvironment)
 		env.On("Home").Return("/home/bill")
-		env.On("GOOS").Return(windowsPlatform)
+		env.On("GOOS").Return(environment.WindowsPlatform)
 		s := &scm{
 			props: props,
 			env:   env,

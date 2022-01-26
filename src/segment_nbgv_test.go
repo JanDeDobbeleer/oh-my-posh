@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/alecthomas/assert"
@@ -57,7 +58,7 @@ func TestNbgv(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "nbgv").Return(tc.HasNbgv)
 		env.On("RunCommand", "nbgv", []string{"get-version", "--format=json"}).Return(tc.Response, tc.Error)
 		nbgv := &nbgv{

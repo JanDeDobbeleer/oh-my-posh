@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
+	"oh-my-posh/regex"
 	"strconv"
 	"strings"
 
@@ -160,7 +162,7 @@ func (g *git) shouldDisplay() bool {
 	// handle worktree
 	g.gitRootFolder = gitdir.Path
 	dirPointer := strings.Trim(g.env.FileContent(gitdir.Path), " \r\n")
-	matches := findNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
+	matches := regex.FindNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
 	if matches != nil && matches["dir"] != "" {
 		// if we open a worktree file in a shared wsl2 folder, we have to convert it back
 		// to the mounted path
@@ -214,7 +216,7 @@ func (g *git) setBranchStatus() {
 }
 
 func (g *git) getUpstreamIcon() string {
-	upstream := replaceAllString("/.*", g.Upstream, "")
+	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
 	g.UpstreamURL = g.getOriginURL(upstream)
 	if strings.Contains(g.UpstreamURL, "github") {
 		return g.props.getString(GithubIcon, "\uF408 ")
@@ -287,7 +289,7 @@ func (g *git) getGitCommand() string {
 		return g.gitCommand
 	}
 	g.gitCommand = "git"
-	if g.env.GOOS() == windowsPlatform || g.IsWslSharedPath {
+	if g.env.GOOS() == environment.WindowsPlatform || g.IsWslSharedPath {
 		g.gitCommand = "git.exe"
 	}
 	return g.gitCommand
@@ -353,7 +355,7 @@ func (g *git) setGitHEADContext() {
 	if g.hasGitFile("MERGE_MSG") {
 		icon := g.props.getString(MergeIcon, "\uE727 ")
 		mergeContext := g.FileContents(g.gitWorkingFolder, "MERGE_MSG")
-		matches := findNamedRegexMatch(`Merge (remote-tracking )?(?P<type>branch|commit|tag) '(?P<theirs>.*)'`, mergeContext)
+		matches := regex.FindNamedRegexMatch(`Merge (remote-tracking )?(?P<type>branch|commit|tag) '(?P<theirs>.*)'`, mergeContext)
 		// head := g.getGitRefFileSymbolicName("ORIG_HEAD")
 		if matches != nil && matches["theirs"] != "" {
 			var headIcon, theirs string
@@ -391,7 +393,7 @@ func (g *git) setGitHEADContext() {
 	}
 	if g.hasGitFile("sequencer/todo") {
 		todo := g.FileContents(g.gitWorkingFolder, "sequencer/todo")
-		matches := findNamedRegexMatch(`^(?P<action>p|pick|revert)\s+(?P<sha>\S+)`, todo)
+		matches := regex.FindNamedRegexMatch(`^(?P<action>p|pick|revert)\s+(?P<sha>\S+)`, todo)
 		if matches != nil && matches["sha"] != "" {
 			action := matches["action"]
 			sha := matches["sha"]

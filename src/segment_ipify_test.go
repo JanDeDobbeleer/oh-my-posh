@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,7 +43,7 @@ func TestIpifySegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &mock.MockedEnvironment{}
 		props := properties{
 			CacheTimeout: 0,
 		}

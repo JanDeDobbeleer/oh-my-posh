@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"oh-my-posh/environment"
 )
 
 type ytm struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	MusicPlayer
 }
@@ -27,7 +28,7 @@ func (y *ytm) enabled() bool {
 	return err == nil
 }
 
-func (y *ytm) init(props Properties, env Environment) {
+func (y *ytm) init(props Properties, env environment.Environment) {
 	y.props = props
 	y.env = env
 }

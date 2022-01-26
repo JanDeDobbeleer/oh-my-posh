@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"oh-my-posh/environment"
+	"oh-my-posh/regex"
+)
 
 type node struct {
 	language
@@ -21,7 +25,7 @@ func (n *node) template() string {
 	return "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
 }
 
-func (n *node) init(props Properties, env Environment) {
+func (n *node) init(props Properties, env environment.Environment) {
 	n.language = language{
 		env:        env,
 		props:      props,
@@ -62,12 +66,12 @@ func (n *node) matchesVersionFile() bool {
 		return true
 	}
 
-	regex := fmt.Sprintf(
+	re := fmt.Sprintf(
 		`(?im)^v?%s(\.?%s)?(\.?%s)?$`,
 		n.language.version.Major,
 		n.language.version.Minor,
 		n.language.version.Patch,
 	)
 
-	return matchString(regex, fileVersion)
+	return regex.MatchString(re, fileVersion)
 }

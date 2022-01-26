@@ -1,13 +1,15 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPlasticEnabledNotFound(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "cm").Return(false)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
@@ -21,12 +23,12 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 }
 
 func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "cm").Return(true)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
 	env.On("FileContent", "/dir/.plastic//plastic.selector").Return("")
-	fileInfo := &FileInfo{
+	fileInfo := &environment.FileInfo{
 		Path:         "/dir/hello",
 		ParentFolder: "/dir",
 		IsDir:        true,
@@ -43,7 +45,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 }
 
 func setupCmStatusEnv(status, headStatus string) *plastic {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("RunCommand", "cm", []string{"status", "--all", "--machinereadable"}).Return(status, nil)
 	env.On("RunCommand", "cm", []string{"status", "--head", "--machinereadable"}).Return(headStatus, nil)
 	p := &plastic{
@@ -329,7 +331,7 @@ func TestPlasticTemplateString(t *testing.T) {
 			FetchStatus: true,
 		}
 		tc.Plastic.props = props
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		tc.Plastic.env = env
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Plastic), tc.Case)
 	}

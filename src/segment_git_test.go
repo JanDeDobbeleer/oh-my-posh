@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"strings"
 	"testing"
 
@@ -13,7 +15,7 @@ const (
 )
 
 func TestEnabledGitNotFound(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("InWSLSharedDrive").Return(false)
 	env.On("HasCommand", "git").Return(false)
 	env.On("GOOS").Return("")
@@ -28,17 +30,17 @@ func TestEnabledGitNotFound(t *testing.T) {
 }
 
 func TestEnabledInWorkingDirectory(t *testing.T) {
-	fileInfo := &FileInfo{
+	fileInfo := &environment.FileInfo{
 		Path:         "/dir/hello",
 		ParentFolder: "/dir",
 		IsDir:        true,
 	}
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("InWSLSharedDrive").Return(false)
 	env.On("HasCommand", "git").Return(true)
 	env.On("GOOS").Return("")
 	env.On("FileContent", "/dir/hello/HEAD").Return("")
-	env.mockGitCommand(fileInfo.Path, "", "describe", "--tags", "--exact-match")
+	env.MockGitCommand(fileInfo.Path, "", "describe", "--tags", "--exact-match")
 	env.On("IsWsl").Return(false)
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	g := &git{
@@ -52,18 +54,18 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 }
 
 func TestEnabledInWorkingTree(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("InWSLSharedDrive").Return(false)
 	env.On("HasCommand", "git").Return(true)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
-	fileInfo := &FileInfo{
+	fileInfo := &environment.FileInfo{
 		Path:         "/dev/folder_worktree/.git",
 		ParentFolder: "/dev/folder_worktree",
 		IsDir:        false,
 	}
 	env.On("FileContent", "/dev/real_folder/.git/worktrees/folder_worktree/HEAD").Return("")
-	env.mockGitCommand(fileInfo.ParentFolder, "", "describe", "--tags", "--exact-match")
+	env.MockGitCommand(fileInfo.ParentFolder, "", "describe", "--tags", "--exact-match")
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("FileContent", "/dev/folder_worktree/.git").Return("gitdir: /dev/real_folder/.git/worktrees/folder_worktree")
 	env.On("FileContent", "/dev/real_folder/.git/worktrees/folder_worktree/gitdir").Return("/dev/folder_worktree.git\n")
@@ -79,18 +81,18 @@ func TestEnabledInWorkingTree(t *testing.T) {
 }
 
 func TestEnabledInSubmodule(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("InWSLSharedDrive").Return(false)
 	env.On("HasCommand", "git").Return(true)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
-	fileInfo := &FileInfo{
+	fileInfo := &environment.FileInfo{
 		Path:         "/dev/parent/test-submodule/.git",
 		ParentFolder: "/dev/parent/test-submodule",
 		IsDir:        false,
 	}
 	env.On("FileContent", "/dev/parent/test-submodule/../.git/modules/test-submodule/HEAD").Return("")
-	env.mockGitCommand("/dev/parent/test-submodule/../.git/modules/test-submodule", "", "describe", "--tags", "--exact-match")
+	env.MockGitCommand("/dev/parent/test-submodule/../.git/modules/test-submodule", "", "describe", "--tags", "--exact-match")
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("FileContent", "/dev/parent/test-submodule/.git").Return("gitdir: ../.git/modules/test-submodule")
 	env.On("FileContent", "/dev/parent/.git/modules/test-submodule").Return("/dev/folder_worktree.git\n")
@@ -110,7 +112,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	args := []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}
 	want := "je suis le output"
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("IsWsl").Return(false)
 	env.On("RunCommand", "git", append(args, commandArgs...)).Return(want, nil)
 	env.On("GOOS").Return("unix")
@@ -122,11 +124,6 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	}
 	got := g.getGitCommandOutput(commandArgs...)
 	assert.Equal(t, want, got)
-}
-
-func (m *MockedEnvironment) mockGitCommand(dir, returnValue string, args ...string) {
-	args = append([]string{"-C", dir, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
-	m.On("RunCommand", "git", args).Return(returnValue, nil)
 }
 
 func TestSetGitHEADContextClean(t *testing.T) {
@@ -232,13 +229,13 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
-		env.mockGitCommand("", "", "describe", "--tags", "--exact-match")
-		env.mockGitCommand("", tc.Theirs, "name-rev", "--name-only", "--exclude=tags/*", tc.Theirs)
-		env.mockGitCommand("", tc.Ours, "name-rev", "--name-only", "--exclude=tags/*", tc.Ours)
+		env.MockGitCommand("", "", "describe", "--tags", "--exact-match")
+		env.MockGitCommand("", tc.Theirs, "name-rev", "--name-only", "--exclude=tags/*", tc.Theirs)
+		env.MockGitCommand("", tc.Ours, "name-rev", "--name-only", "--exclude=tags/*", tc.Ours)
 		// rebase merge
 		env.On("HasFolder", "/rebase-merge").Return(tc.RebaseMerge)
 		env.On("FileContent", "/rebase-merge/head-name").Return(tc.Ours)
@@ -300,11 +297,11 @@ func TestSetPrettyHEADName(t *testing.T) {
 		{Case: "no hash on commit", Expected: "commit 1234567", HEAD: "12345678910"},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("FileContent", "/HEAD").Return(tc.HEAD)
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
-		env.mockGitCommand("", tc.Tag, "describe", "--tags", "--exact-match")
+		env.MockGitCommand("", tc.Tag, "describe", "--tags", "--exact-match")
 		g := &git{
 			scm: scm{
 				env: env,
@@ -418,10 +415,10 @@ func TestSetGitStatus(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
-		env.mockGitCommand("", strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
+		env.MockGitCommand("", strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
 		g := &git{
 			scm: scm{
 				env: env,
@@ -454,7 +451,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 		{Expected: 4, StashContent: "1\n2\n3\n4\n\n"},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("FileContent", "/logs/refs/stash").Return(tc.StashContent)
 		g := &git{
 			scm: scm{
@@ -481,7 +478,7 @@ func TestGitUpstream(t *testing.T) {
 		{Case: "Gitstash", Expected: "G", Upstream: "gitstash.com/test"},
 	}
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &mock.MockedEnvironment{}
 		env.On("IsWsl").Return(false)
 		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
@@ -541,39 +538,6 @@ func TestGetBranchStatus(t *testing.T) {
 	}
 }
 
-func TestShouldIgnoreRootRepository(t *testing.T) {
-	cases := []struct {
-		Case     string
-		Dir      string
-		Expected bool
-	}{
-		{Case: "inside excluded", Dir: "/home/bill/repo"},
-		{Case: "oustide excluded", Dir: "/home/melinda"},
-		{Case: "excluded exact match", Dir: "/home/gates", Expected: true},
-		{Case: "excluded inside match", Dir: "/home/gates/bill", Expected: true},
-	}
-
-	for _, tc := range cases {
-		props := properties{
-			ExcludeFolders: []string{
-				"/home/bill",
-				"/home/gates.*",
-			},
-		}
-		env := new(MockedEnvironment)
-		env.On("Home").Return("/home/bill")
-		env.On("GOOS").Return(windowsPlatform)
-		git := &git{
-			scm: scm{
-				props: props,
-				env:   env,
-			},
-		}
-		got := git.shouldIgnoreRootRepository(tc.Dir)
-		assert.Equal(t, tc.Expected, got, tc.Case)
-	}
-}
-
 func TestGetGitCommand(t *testing.T) {
 	cases := []struct {
 		Case            string
@@ -584,7 +548,7 @@ func TestGetGitCommand(t *testing.T) {
 		CWD             string
 		IsWslSharedPath bool
 	}{
-		{Case: "On Windows", Expected: "git.exe", GOOS: windowsPlatform},
+		{Case: "On Windows", Expected: "git.exe", GOOS: environment.WindowsPlatform},
 		{Case: "Non Windows", Expected: "git"},
 		{Case: "Iside WSL2, non shared", IsWSL: true, Expected: "git"},
 		{Case: "Iside WSL2, shared", Expected: "git.exe", IsWSL: true, IsWslSharedPath: true, CWD: "/mnt/bill"},
@@ -592,7 +556,7 @@ func TestGetGitCommand(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("IsWsl").Return(tc.IsWSL)
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("Pwd").Return(tc.CWD)
@@ -743,7 +707,7 @@ func TestGitTemplateString(t *testing.T) {
 		props := properties{
 			FetchStatus: true,
 		}
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		tc.Git.env = env
 		tc.Git.props = props
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Git), tc.Case)

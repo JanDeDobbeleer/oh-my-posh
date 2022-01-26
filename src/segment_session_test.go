@@ -109,7 +109,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			},
 			Root: tc.Root,
 		})
-		session := &session{
+		session := &Session{
 			env:   env,
 			props: properties.Map{},
 		}

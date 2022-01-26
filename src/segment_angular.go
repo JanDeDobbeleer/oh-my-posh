@@ -7,15 +7,15 @@ import (
 	"oh-my-posh/properties"
 )
 
-type angular struct {
+type Angular struct {
 	language
 }
 
-func (a *angular) template() string {
+func (a *Angular) template() string {
 	return languageTemplate
 }
 
-func (a *angular) init(props properties.Properties, env environment.Environment) {
+func (a *Angular) init(props properties.Properties, env environment.Environment) {
 	a.language = language{
 		env:        env,
 		props:      props,
@@ -50,6 +50,6 @@ func (a *angular) init(props properties.Properties, env environment.Environment)
 	}
 }
 
-func (a *angular) enabled() bool {
+func (a *Angular) enabled() bool {
 	return a.language.enabled()
 }

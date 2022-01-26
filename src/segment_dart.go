@@ -5,15 +5,15 @@ import (
 	"oh-my-posh/properties"
 )
 
-type dart struct {
+type Dart struct {
 	language
 }
 
-func (d *dart) template() string {
+func (d *Dart) template() string {
 	return languageTemplate
 }
 
-func (d *dart) init(props properties.Properties, env environment.Environment) {
+func (d *Dart) init(props properties.Properties, env environment.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,
@@ -29,6 +29,6 @@ func (d *dart) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (d *dart) enabled() bool {
+func (d *Dart) enabled() bool {
 	return d.language.enabled()
 }

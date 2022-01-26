@@ -23,7 +23,7 @@ func TestPoshGitSegment(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("Getenv", poshGitEnv).Return(tc.PoshGitPrompt)
-		p := &poshgit{
+		p := &PoshGit{
 			env:   env,
 			props: &properties.Map{},
 		}

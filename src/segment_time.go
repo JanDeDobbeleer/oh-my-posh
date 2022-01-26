@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-type tempus struct {
+type Time struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -18,11 +18,11 @@ const (
 	TimeFormat properties.Property = "time_format"
 )
 
-func (t *tempus) template() string {
+func (t *Time) template() string {
 	return "{{ .CurrentDate | date \"" + t.props.GetString(TimeFormat, "15:04:05") + "\" }}"
 }
 
-func (t *tempus) enabled() bool {
+func (t *Time) enabled() bool {
 	// if no date set, use now(unit testing)
 	if t.CurrentDate.IsZero() {
 		t.CurrentDate = time.Now()
@@ -30,7 +30,7 @@ func (t *tempus) enabled() bool {
 	return true
 }
 
-func (t *tempus) init(props properties.Properties, env environment.Environment) {
+func (t *Time) init(props properties.Properties, env environment.Environment) {
 	t.props = props
 	t.env = env
 }

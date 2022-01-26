@@ -11,7 +11,7 @@ import (
 func TestSpotifyStringPlayingSong(t *testing.T) {
 	expected := "\ue602 Candlemass - Spellbreaker"
 	env := new(mock.MockedEnvironment)
-	s := &spotify{
+	s := &Spotify{
 		MusicPlayer: MusicPlayer{
 			Artist: "Candlemass",
 			Track:  "Spellbreaker",
@@ -27,7 +27,7 @@ func TestSpotifyStringPlayingSong(t *testing.T) {
 func TestSpotifyStringStoppedSong(t *testing.T) {
 	expected := "\uf04d "
 	env := new(mock.MockedEnvironment)
-	s := &spotify{
+	s := &Spotify{
 		MusicPlayer: MusicPlayer{
 			Artist: "Candlemass",
 			Track:  "Spellbreaker",

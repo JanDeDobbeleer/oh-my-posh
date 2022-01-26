@@ -39,7 +39,7 @@ func TestTextSegment(t *testing.T) {
 			Root:     true,
 			Folder:   "posh",
 		})
-		txt := &text{
+		txt := &Text{
 			env: env,
 			props: properties.Map{
 				properties.SegmentTemplate: tc.Template,

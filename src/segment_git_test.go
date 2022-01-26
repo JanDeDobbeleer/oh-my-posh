@@ -21,7 +21,7 @@ func TestEnabledGitNotFound(t *testing.T) {
 	env.On("HasCommand", "git").Return(false)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
-	g := &git{
+	g := &Git{
 		scm: scm{
 			env:   env,
 			props: properties.Map{},
@@ -44,7 +44,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.MockGitCommand(fileInfo.Path, "", "describe", "--tags", "--exact-match")
 	env.On("IsWsl").Return(false)
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
-	g := &git{
+	g := &Git{
 		scm: scm{
 			env:   env,
 			props: properties.Map{},
@@ -70,7 +70,7 @@ func TestEnabledInWorkingTree(t *testing.T) {
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("FileContent", "/dev/folder_worktree/.git").Return("gitdir: /dev/real_folder/.git/worktrees/folder_worktree")
 	env.On("FileContent", "/dev/real_folder/.git/worktrees/folder_worktree/gitdir").Return("/dev/folder_worktree.git\n")
-	g := &git{
+	g := &Git{
 		scm: scm{
 			env:   env,
 			props: properties.Map{},
@@ -97,7 +97,7 @@ func TestEnabledInSubmodule(t *testing.T) {
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("FileContent", "/dev/parent/test-submodule/.git").Return("gitdir: ../.git/modules/test-submodule")
 	env.On("FileContent", "/dev/parent/.git/modules/test-submodule").Return("/dev/folder_worktree.git\n")
-	g := &git{
+	g := &Git{
 		scm: scm{
 			env:   env,
 			props: properties.Map{},
@@ -117,7 +117,7 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	env.On("IsWsl").Return(false)
 	env.On("RunCommand", "git", append(args, commandArgs...)).Return(want, nil)
 	env.On("GOOS").Return("unix")
-	g := &git{
+	g := &Git{
 		scm: scm{
 			env:   env,
 			props: properties.Map{},
@@ -261,7 +261,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		env.On("HasFilesInDir", "", "sequencer/todo").Return(tc.Sequencer)
 		env.On("FileContent", "/sequencer/todo").Return(tc.Theirs)
 
-		g := &git{
+		g := &Git{
 			scm: scm{
 				env: env,
 				props: properties.Map{
@@ -303,7 +303,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
 		env.MockGitCommand("", tc.Tag, "describe", "--tags", "--exact-match")
-		g := &git{
+		g := &Git{
 			scm: scm{
 				env: env,
 				props: properties.Map{
@@ -420,7 +420,7 @@ func TestSetGitStatus(t *testing.T) {
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
 		env.MockGitCommand("", strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
-		g := &git{
+		g := &Git{
 			scm: scm{
 				env: env,
 			},
@@ -454,7 +454,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("FileContent", "/logs/refs/stash").Return(tc.StashContent)
-		g := &git{
+		g := &Git{
 			scm: scm{
 				env: env,
 			},
@@ -491,7 +491,7 @@ func TestGitUpstream(t *testing.T) {
 			AzureDevOpsIcon: "AD",
 			GitIcon:         "G",
 		}
-		g := &git{
+		g := &Git{
 			scm: scm{
 				env:   env,
 				props: props,
@@ -526,7 +526,7 @@ func TestGetBranchStatus(t *testing.T) {
 			BranchIdenticalIcon: "equal",
 			BranchGoneIcon:      "gone",
 		}
-		g := &git{
+		g := &Git{
 			scm: scm{
 				props: props,
 			},
@@ -566,7 +566,7 @@ func TestGetGitCommand(t *testing.T) {
 			wslUname = "4.4.0-19041-Microsoft"
 		}
 		env.On("RunCommand", "uname", []string{"-r"}).Return(wslUname, nil)
-		g := &git{
+		g := &Git{
 			scm: scm{
 				env: env,
 			},
@@ -586,13 +586,13 @@ func TestGitTemplateString(t *testing.T) {
 		Case     string
 		Expected string
 		Template string
-		Git      *git
+		Git      *Git
 	}{
 		{
 			Case:     "Only HEAD name",
 			Expected: branchName,
 			Template: "{{ .HEAD }}",
-			Git: &git{
+			Git: &Git{
 				HEAD:   branchName,
 				Behind: 2,
 			},
@@ -601,7 +601,7 @@ func TestGitTemplateString(t *testing.T) {
 			Case:     "Working area changes",
 			Expected: "main \uF044 +2 ~3",
 			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
-			Git: &git{
+			Git: &Git{
 				HEAD: branchName,
 				Working: &GitStatus{
 					ScmStatus: ScmStatus{
@@ -615,7 +615,7 @@ func TestGitTemplateString(t *testing.T) {
 			Case:     "No working area changes",
 			Expected: branchName,
 			Template: "{{ .HEAD }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
-			Git: &git{
+			Git: &Git{
 				HEAD:    branchName,
 				Working: &GitStatus{},
 			},
@@ -624,7 +624,7 @@ func TestGitTemplateString(t *testing.T) {
 			Case:     "Working and staging area changes",
 			Expected: "main \uF046 +5 ~1 \uF044 +2 ~3",
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
-			Git: &git{
+			Git: &Git{
 				HEAD: branchName,
 				Working: &GitStatus{
 					ScmStatus: ScmStatus{
@@ -644,7 +644,7 @@ func TestGitTemplateString(t *testing.T) {
 			Case:     "Working and staging area changes with separator",
 			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3",
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}", //nolint:lll
-			Git: &git{
+			Git: &Git{
 				HEAD: branchName,
 				Working: &GitStatus{
 					ScmStatus: ScmStatus{
@@ -664,7 +664,7 @@ func TestGitTemplateString(t *testing.T) {
 			Case:     "Working and staging area changes with separator and stash count",
 			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3 \uf692 3",
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}", //nolint:lll
-			Git: &git{
+			Git: &Git{
 				HEAD: branchName,
 				Working: &GitStatus{
 					ScmStatus: ScmStatus{
@@ -685,7 +685,7 @@ func TestGitTemplateString(t *testing.T) {
 			Case:     "No local changes",
 			Expected: branchName,
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046{{ .Staging.String }}{{ end }}{{ if .Working.Changed }} \uF044{{ .Working.String }}{{ end }}",
-			Git: &git{
+			Git: &Git{
 				HEAD:    branchName,
 				Staging: &GitStatus{},
 				Working: &GitStatus{},
@@ -695,7 +695,7 @@ func TestGitTemplateString(t *testing.T) {
 			Case:     "Upstream Icon",
 			Expected: "from GitHub on main",
 			Template: "from {{ .UpstreamIcon }} on {{ .HEAD }}",
-			Git: &git{
+			Git: &Git{
 				HEAD:         branchName,
 				Staging:      &GitStatus{},
 				Working:      &GitStatus{},

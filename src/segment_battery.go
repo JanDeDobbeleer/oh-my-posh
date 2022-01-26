@@ -8,7 +8,7 @@ import (
 	"github.com/distatus/battery"
 )
 
-type batt struct {
+type Battery struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -27,11 +27,11 @@ const (
 	ChargedIcon properties.Property = "charged_icon"
 )
 
-func (b *batt) template() string {
+func (b *Battery) template() string {
 	return "{{ if not .Error }}{{.Icon}}{{.Percentage}}{{ end }}{{.Error}}"
 }
 
-func (b *batt) enabled() bool {
+func (b *Battery) enabled() bool {
 	batteries, err := b.env.BatteryInfo()
 
 	if !b.enabledWhileError(err) {
@@ -64,7 +64,7 @@ func (b *batt) enabled() bool {
 	return true
 }
 
-func (b *batt) enabledWhileError(err error) bool {
+func (b *Battery) enabledWhileError(err error) bool {
 	if err == nil {
 		return true
 	}
@@ -86,7 +86,7 @@ func (b *batt) enabledWhileError(err error) bool {
 	return true
 }
 
-func (b *batt) mapMostLogicalState(currentState, newState battery.State) battery.State {
+func (b *Battery) mapMostLogicalState(currentState, newState battery.State) battery.State {
 	switch currentState {
 	case battery.Discharging, battery.NotCharging:
 		return battery.Discharging
@@ -105,7 +105,7 @@ func (b *batt) mapMostLogicalState(currentState, newState battery.State) battery
 	return newState
 }
 
-func (b *batt) init(props properties.Properties, env environment.Environment) {
+func (b *Battery) init(props properties.Properties, env environment.Environment) {
 	b.props = props
 	b.env = env
 }

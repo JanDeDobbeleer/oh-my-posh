@@ -14,7 +14,7 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 	env.On("HasCommand", "cm").Return(false)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
-	p := &plastic{
+	p := &Plastic{
 		scm: scm{
 			env:   env,
 			props: properties.Map{},
@@ -35,7 +35,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 		IsDir:        true,
 	}
 	env.On("HasParentFilePath", ".plastic").Return(fileInfo, nil)
-	p := &plastic{
+	p := &Plastic{
 		scm: scm{
 			env:   env,
 			props: properties.Map{},
@@ -45,11 +45,11 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 	assert.Equal(t, fileInfo.ParentFolder, p.plasticWorkspaceFolder)
 }
 
-func setupCmStatusEnv(status, headStatus string) *plastic {
+func setupCmStatusEnv(status, headStatus string) *Plastic {
 	env := new(mock.MockedEnvironment)
 	env.On("RunCommand", "cm", []string{"status", "--all", "--machinereadable"}).Return(status, nil)
 	env.On("RunCommand", "cm", []string{"status", "--head", "--machinereadable"}).Return(headStatus, nil)
-	p := &plastic{
+	p := &Plastic{
 		scm: scm{
 			env:   env,
 			props: properties.Map{},
@@ -219,7 +219,7 @@ func TestPlasticParseIntPattern(t *testing.T) {
 		},
 	}
 
-	p := &plastic{}
+	p := &Plastic{}
 	for _, tc := range cases {
 		value := p.parseIntPattern(tc.Text, tc.Pattern, tc.Name, tc.Default)
 		assert.Equal(t, tc.Expected, value, tc.Case)
@@ -227,7 +227,7 @@ func TestPlasticParseIntPattern(t *testing.T) {
 }
 
 func TestPlasticParseStatusChangeset(t *testing.T) {
-	p := &plastic{}
+	p := &Plastic{}
 	cs := p.parseStatusChangeset("STATUS 321 default localhost:8087")
 	assert.Equal(t, 321, cs)
 }
@@ -241,34 +241,34 @@ func TestPlasticGetHeadChangeset(t *testing.T) {
 
 func TestPlasticParseChangesetSelector(t *testing.T) {
 	content := "repository \"default\"\r\n	path \"/\"\r\n	  smartbranch \"/main\" changeset \"321\""
-	p := &plastic{}
+	p := &Plastic{}
 	selector := p.parseChangesetSelector(content)
 	assert.Equal(t, "321", selector)
 }
 
 func TestPlasticParseLabelSelector(t *testing.T) {
 	content := "repository \"default\"\r\n	path \"/\"\r\n	  label \"BL003\""
-	p := &plastic{}
+	p := &Plastic{}
 	selector := p.parseLabelSelector(content)
 	assert.Equal(t, "BL003", selector)
 }
 
 func TestPlasticParseBranchSelector(t *testing.T) {
 	content := "repository \"default\"\r\n	path \"/\"\r\n	  branch \"/main/fix-004\""
-	p := &plastic{}
+	p := &Plastic{}
 	selector := p.parseBranchSelector(content)
 	assert.Equal(t, "/main/fix-004", selector)
 }
 
 func TestPlasticParseSmartbranchSelector(t *testing.T) {
 	content := "repository \"default\"\r\n	path \"/\"\r\n	  smartbranch \"/main/fix-002\""
-	p := &plastic{}
+	p := &Plastic{}
 	selector := p.parseBranchSelector(content)
 	assert.Equal(t, "/main/fix-002", selector)
 }
 
 func TestPlasticStatus(t *testing.T) {
-	p := &plastic{
+	p := &Plastic{
 		Status: &PlasticStatus{
 			ScmStatus: ScmStatus{
 				Added:    1,
@@ -289,13 +289,13 @@ func TestPlasticTemplateString(t *testing.T) {
 		Case     string
 		Expected string
 		Template string
-		Plastic  *plastic
+		Plastic  *Plastic
 	}{
 		{
 			Case:     "Default template",
 			Expected: "/main",
 			Template: "{{ .Selector }}",
-			Plastic: &plastic{
+			Plastic: &Plastic{
 				Selector: "/main",
 				Behind:   false,
 			},
@@ -304,7 +304,7 @@ func TestPlasticTemplateString(t *testing.T) {
 			Case:     "Workspace changes",
 			Expected: "/main \uF044 +2 ~3 -1 >4",
 			Template: "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ .Status.String }}{{ end }}",
-			Plastic: &plastic{
+			Plastic: &Plastic{
 				Selector: "/main",
 				Status: &PlasticStatus{
 					ScmStatus: ScmStatus{
@@ -320,7 +320,7 @@ func TestPlasticTemplateString(t *testing.T) {
 			Case:     "No workspace changes",
 			Expected: "/main",
 			Template: "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ .Status.String }}{{ end }}",
-			Plastic: &plastic{
+			Plastic: &Plastic{
 				Selector: "/main",
 				Status:   &PlasticStatus{},
 			},

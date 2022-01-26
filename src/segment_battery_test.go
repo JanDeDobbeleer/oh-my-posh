@@ -24,7 +24,7 @@ func TestMapBatteriesState(t *testing.T) {
 		{Case: "discharging > empty", ExpectedState: battery.Discharging, CurrentState: battery.Empty, NewState: battery.Discharging},
 	}
 	for _, tc := range cases {
-		batt := &batt{}
+		batt := &Battery{}
 		assert.Equal(t, tc.ExpectedState, batt.mapMostLogicalState(tc.CurrentState, tc.NewState), tc.Case)
 	}
 }

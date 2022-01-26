@@ -7,7 +7,7 @@ import (
 	"oh-my-posh/properties"
 )
 
-type winreg struct {
+type WindowsRegistry struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -21,16 +21,16 @@ const (
 	Fallback properties.Property = "fallback"
 )
 
-func (wr *winreg) template() string {
+func (wr *WindowsRegistry) template() string {
 	return "{{ .Value }}"
 }
 
-func (wr *winreg) init(props properties.Properties, env environment.Environment) {
+func (wr *WindowsRegistry) init(props properties.Properties, env environment.Environment) {
 	wr.props = props
 	wr.env = env
 }
 
-func (wr *winreg) enabled() bool {
+func (wr *WindowsRegistry) enabled() bool {
 	if wr.env.GOOS() != environment.WindowsPlatform {
 		return false
 	}
@@ -63,7 +63,7 @@ func (wr *winreg) enabled() bool {
 	return false
 }
 
-func (wr winreg) GetRegistryString(path string) (string, error) {
+func (wr WindowsRegistry) GetRegistryString(path string) (string, error) {
 	regValue, err := wr.env.WindowsRegistryKeyValue(path)
 
 	if regValue == nil {
@@ -77,7 +77,7 @@ func (wr winreg) GetRegistryString(path string) (string, error) {
 	return regValue.Str, nil
 }
 
-func (wr winreg) GetRegistryDword(path string) (uint32, error) {
+func (wr WindowsRegistry) GetRegistryDword(path string) (uint32, error) {
 	regValue, err := wr.env.WindowsRegistryKeyValue(path)
 
 	if regValue == nil {
@@ -91,7 +91,7 @@ func (wr winreg) GetRegistryDword(path string) (uint32, error) {
 	return regValue.Dword, nil
 }
 
-func (wr winreg) GetRegistryQword(path string) (uint64, error) {
+func (wr WindowsRegistry) GetRegistryQword(path string) (uint64, error) {
 	regValue, err := wr.env.WindowsRegistryKeyValue(path)
 
 	if regValue == nil {

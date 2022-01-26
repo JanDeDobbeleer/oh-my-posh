@@ -5,15 +5,15 @@ import (
 	"oh-my-posh/properties"
 )
 
-type crystal struct {
+type Crystal struct {
 	language
 }
 
-func (c *crystal) template() string {
+func (c *Crystal) template() string {
 	return languageTemplate
 }
 
-func (c *crystal) init(props properties.Properties, env environment.Environment) {
+func (c *Crystal) init(props properties.Properties, env environment.Environment) {
 	c.language = language{
 		env:        env,
 		props:      props,
@@ -29,6 +29,6 @@ func (c *crystal) init(props properties.Properties, env environment.Environment)
 	}
 }
 
-func (c *crystal) enabled() bool {
+func (c *Crystal) enabled() bool {
 	return c.language.enabled()
 }

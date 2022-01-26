@@ -5,15 +5,15 @@ import (
 	"oh-my-posh/properties"
 )
 
-type azfunc struct {
+type AzFunc struct {
 	language
 }
 
-func (az *azfunc) template() string {
+func (az *AzFunc) template() string {
 	return languageTemplate
 }
 
-func (az *azfunc) init(props properties.Properties, env environment.Environment) {
+func (az *AzFunc) init(props properties.Properties, env environment.Environment) {
 	az.language = language{
 		env:        env,
 		props:      props,
@@ -28,6 +28,6 @@ func (az *azfunc) init(props properties.Properties, env environment.Environment)
 	}
 }
 
-func (az *azfunc) enabled() bool {
+func (az *AzFunc) enabled() bool {
 	return az.language.enabled()
 }

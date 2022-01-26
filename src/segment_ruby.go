@@ -5,15 +5,15 @@ import (
 	"oh-my-posh/properties"
 )
 
-type ruby struct {
+type Ruby struct {
 	language
 }
 
-func (r *ruby) template() string {
+func (r *Ruby) template() string {
 	return languageTemplate
 }
 
-func (r *ruby) init(props properties.Properties, env environment.Environment) {
+func (r *Ruby) init(props properties.Properties, env environment.Environment) {
 	r.language = language{
 		env:        env,
 		props:      props,
@@ -48,7 +48,7 @@ func (r *ruby) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (r *ruby) enabled() bool {
+func (r *Ruby) enabled() bool {
 	enabled := r.language.enabled()
 	// this happens when no version is set
 	if r.Full == "______" {

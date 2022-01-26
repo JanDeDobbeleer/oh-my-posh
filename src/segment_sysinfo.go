@@ -9,7 +9,7 @@ import (
 	mem "github.com/shirou/gopsutil/v3/mem"
 )
 
-type sysinfo struct {
+type SystemInfo struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -35,18 +35,18 @@ const (
 	Precision properties.Property = "precision"
 )
 
-func (s *sysinfo) template() string {
+func (s *SystemInfo) template() string {
 	return "{{ round .PhysicalPercentUsed .Precision }}"
 }
 
-func (s *sysinfo) enabled() bool {
+func (s *SystemInfo) enabled() bool {
 	if s.PhysicalPercentUsed == 0 && s.SwapPercentUsed == 0 {
 		return false
 	}
 	return true
 }
 
-func (s *sysinfo) init(props properties.Properties, env environment.Environment) {
+func (s *SystemInfo) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 	s.Precision = s.props.GetInt(Precision, 2)

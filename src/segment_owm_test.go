@@ -62,7 +62,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 
 		env.On("HTTPRequest", OWMAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
 
-		o := &owm{
+		o := &Owm{
 			props: props,
 			env:   env,
 		}
@@ -187,7 +187,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 		env.On("HTTPRequest", OWMAPIURL).Return([]byte(response), nil)
 
-		o := &owm{
+		o := &Owm{
 			props: properties.Map{
 				APIKey:       "key",
 				Location:     "AMSTERDAM,NL",
@@ -210,7 +210,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 		env.On("HTTPRequest", OWMAPIURL).Return([]byte(response), nil)
 
-		o := &owm{
+		o := &Owm{
 			props: properties.Map{
 				APIKey:       "key",
 				Location:     "AMSTERDAM,NL",
@@ -230,7 +230,7 @@ func TestOWMSegmentFromCache(t *testing.T) {
 
 	env := &mock.MockedEnvironment{}
 	cache := &mock.MockedCache{}
-	o := &owm{
+	o := &Owm{
 		props: properties.Map{
 			APIKey:   "key",
 			Location: "AMSTERDAM,NL",
@@ -254,7 +254,7 @@ func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 	env := &mock.MockedEnvironment{}
 	cache := &mock.MockedCache{}
 
-	o := &owm{
+	o := &Owm{
 		props: properties.Map{
 			APIKey:   "key",
 			Location: "AMSTERDAM,NL",

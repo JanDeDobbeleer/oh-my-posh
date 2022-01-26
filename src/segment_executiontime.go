@@ -10,7 +10,7 @@ import (
 	"golang.org/x/text/message"
 )
 
-type executiontime struct {
+type Executiontime struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -48,7 +48,7 @@ const (
 	hoursPerDay      = 24
 )
 
-func (t *executiontime) enabled() bool {
+func (t *Executiontime) enabled() bool {
 	alwaysEnabled := t.props.GetBool(properties.AlwaysEnabled, false)
 	executionTimeMs := t.env.ExecutionTime()
 	thresholdMs := t.props.GetFloat64(ThresholdProperty, float64(500))
@@ -61,16 +61,16 @@ func (t *executiontime) enabled() bool {
 	return t.FormattedMs != ""
 }
 
-func (t *executiontime) template() string {
+func (t *Executiontime) template() string {
 	return "{{ .FormattedMs }}"
 }
 
-func (t *executiontime) init(props properties.Properties, env environment.Environment) {
+func (t *Executiontime) init(props properties.Properties, env environment.Environment) {
 	t.props = props
 	t.env = env
 }
 
-func (t *executiontime) formatDuration(style DurationStyle) string {
+func (t *Executiontime) formatDuration(style DurationStyle) string {
 	switch style {
 	case Austin:
 		return t.formatDurationAustin()
@@ -91,7 +91,7 @@ func (t *executiontime) formatDuration(style DurationStyle) string {
 	}
 }
 
-func (t *executiontime) formatDurationAustin() string {
+func (t *Executiontime) formatDurationAustin() string {
 	if t.Ms < second {
 		return fmt.Sprintf("%dms", t.Ms%second)
 	}
@@ -111,7 +111,7 @@ func (t *executiontime) formatDurationAustin() string {
 	return result
 }
 
-func (t *executiontime) formatDurationRoundrock() string {
+func (t *Executiontime) formatDurationRoundrock() string {
 	result := fmt.Sprintf("%dms", t.Ms%second)
 	if t.Ms >= second {
 		result = fmt.Sprintf("%ds %s", t.Ms/second%secondsPerMinute, result)
@@ -128,7 +128,7 @@ func (t *executiontime) formatDurationRoundrock() string {
 	return result
 }
 
-func (t *executiontime) formatDurationDallas() string {
+func (t *Executiontime) formatDurationDallas() string {
 	seconds := float64(t.Ms%minute) / second
 	result := strconv.FormatFloat(seconds, 'f', -1, 64)
 
@@ -144,12 +144,12 @@ func (t *executiontime) formatDurationDallas() string {
 	return result
 }
 
-func (t *executiontime) formatDurationGalveston() string {
+func (t *Executiontime) formatDurationGalveston() string {
 	result := fmt.Sprintf("%02d:%02d:%02d", t.Ms/hour, t.Ms/minute%minutesPerHour, t.Ms%minute/second)
 	return result
 }
 
-func (t *executiontime) formatDurationHouston() string {
+func (t *Executiontime) formatDurationHouston() string {
 	milliseconds := ".0"
 	if t.Ms%second > 0 {
 		// format milliseconds as a string with truncated trailing zeros
@@ -164,7 +164,7 @@ func (t *executiontime) formatDurationHouston() string {
 	return result
 }
 
-func (t *executiontime) formatDurationAmarillo() string {
+func (t *Executiontime) formatDurationAmarillo() string {
 	// wholeNumber represents the value to the left of the decimal point (seconds)
 	wholeNumber := t.Ms / second
 	// decimalNumber represents the value to the right of the decimal point (milliseconds)
@@ -188,7 +188,7 @@ func (t *executiontime) formatDurationAmarillo() string {
 	return result
 }
 
-func (t *executiontime) formatDurationRound() string {
+func (t *Executiontime) formatDurationRound() string {
 	toRoundString := func(one, two int64, oneText, twoText string) string {
 		if two == 0 {
 			return fmt.Sprintf("%d%s", one, oneText)

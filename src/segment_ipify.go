@@ -5,7 +5,7 @@ import (
 	"oh-my-posh/properties"
 )
 
-type ipify struct {
+type IPify struct {
 	props properties.Properties
 	env   environment.Environment
 	IP    string
@@ -15,11 +15,11 @@ const (
 	IpifyURL properties.Property = "url"
 )
 
-func (i *ipify) template() string {
+func (i *IPify) template() string {
 	return "{{ .IP }}"
 }
 
-func (i *ipify) enabled() bool {
+func (i *IPify) enabled() bool {
 	ip, err := i.getResult()
 	if err != nil {
 		return false
@@ -29,7 +29,7 @@ func (i *ipify) enabled() bool {
 	return true
 }
 
-func (i *ipify) getResult() (string, error) {
+func (i *IPify) getResult() (string, error) {
 	cacheTimeout := i.props.GetInt(CacheTimeout, DefaultCacheTimeout)
 
 	url := i.props.GetString(IpifyURL, "https://api.ipify.org")
@@ -60,7 +60,7 @@ func (i *ipify) getResult() (string, error) {
 	return response, nil
 }
 
-func (i *ipify) init(props properties.Properties, env environment.Environment) {
+func (i *IPify) init(props properties.Properties, env environment.Environment) {
 	i.props = props
 	i.env = env
 }

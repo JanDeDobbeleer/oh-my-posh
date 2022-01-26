@@ -5,7 +5,7 @@ import (
 	"oh-my-posh/properties"
 )
 
-type session struct {
+type Session struct {
 	props properties.Properties
 	env   environment.Environment
 	// text  string
@@ -16,21 +16,21 @@ type session struct {
 	DefaultUserName string
 }
 
-func (s *session) enabled() bool {
+func (s *Session) enabled() bool {
 	s.SSHSession = s.activeSSHSession()
 	return true
 }
 
-func (s *session) template() string {
+func (s *Session) template() string {
 	return "{{ .UserName }}@{{ .HostName }}"
 }
 
-func (s *session) init(props properties.Properties, env environment.Environment) {
+func (s *Session) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }
 
-func (s *session) activeSSHSession() bool {
+func (s *Session) activeSSHSession() bool {
 	keys := []string{
 		"SSH_CONNECTION",
 		"SSH_CLIENT",

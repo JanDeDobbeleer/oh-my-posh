@@ -14,13 +14,13 @@ type terraformArgs struct {
 	workspaceName string
 }
 
-func bootStrapTerraformTest(args *terraformArgs) *terraform {
+func bootStrapTerraformTest(args *terraformArgs) *Terraform {
 	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "terraform").Return(args.hasTfCommand)
 	env.On("HasFolder", "/.terraform").Return(args.hasTfFolder)
 	env.On("Pwd").Return("")
 	env.On("RunCommand", "terraform", []string{"workspace", "show"}).Return(args.workspaceName, nil)
-	k := &terraform{
+	k := &Terraform{
 		env:   env,
 		props: properties.Map{},
 	}

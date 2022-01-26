@@ -50,7 +50,7 @@ func TestIpifySegment(t *testing.T) {
 		}
 		env.On("HTTPRequest", IPIFYAPIURL).Return([]byte(tc.Response), tc.Error)
 
-		ipify := &ipify{
+		ipify := &IPify{
 			props: props,
 			env:   env,
 		}

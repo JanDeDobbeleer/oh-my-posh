@@ -47,7 +47,7 @@ func TestIsInHomeDirTrue(t *testing.T) {
 	home := homeBill
 	env := new(mock.MockedEnvironment)
 	env.On("Home").Return(home)
-	path := &path{
+	path := &Path{
 		env: env,
 	}
 	got := path.inHomeDir(home)
@@ -62,7 +62,7 @@ func TestIsInHomeDirLevelTrue(t *testing.T) {
 	}
 	env := new(mock.MockedEnvironment)
 	env.On("Home").Return(home)
-	path := &path{
+	path := &Path{
 		env: env,
 	}
 	got := path.inHomeDir(pwd)
@@ -98,7 +98,7 @@ func TestRootLocationHome(t *testing.T) {
 		env.On("Args").Return(args)
 		env.On("PathSeperator").Return(tc.PathSeperator)
 		env.On("GOOS").Return("")
-		path := &path{
+		path := &Path{
 			env: env,
 			props: properties.Map{
 				HomeIcon:            tc.HomeIcon,
@@ -114,7 +114,7 @@ func TestIsInHomeDirFalse(t *testing.T) {
 	home := homeBill
 	env := new(mock.MockedEnvironment)
 	env.On("Home").Return(home)
-	path := &path{
+	path := &Path{
 		env: env,
 	}
 	got := path.inHomeDir("/usr/error")
@@ -129,7 +129,7 @@ func TestPathDepthMultipleLevelsDeep(t *testing.T) {
 	env := new(mock.MockedEnvironment)
 	env.On("PathSeperator").Return("/")
 	env.On("getRunteGOOS").Return("")
-	path := &path{
+	path := &Path{
 		env: env,
 	}
 	got := path.pathDepth(pwd)
@@ -140,7 +140,7 @@ func TestPathDepthZeroLevelsDeep(t *testing.T) {
 	pwd := "/usr/"
 	env := new(mock.MockedEnvironment)
 	env.On("PathSeperator").Return("/")
-	path := &path{
+	path := &Path{
 		env: env,
 	}
 	got := path.pathDepth(pwd)
@@ -151,7 +151,7 @@ func TestPathDepthOneLevelDeep(t *testing.T) {
 	pwd := "/usr/location"
 	env := new(mock.MockedEnvironment)
 	env.On("PathSeperator").Return("/")
-	path := &path{
+	path := &Path{
 		env: env,
 	}
 	got := path.pathDepth(pwd)
@@ -251,7 +251,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 			PSWD: &tc.Pswd,
 		}
 		env.On("Args").Return(args)
-		path := &path{
+		path := &Path{
 			env: env,
 			props: properties.Map{
 				FolderSeparatorIcon: tc.FolderSeparatorIcon,
@@ -384,7 +384,7 @@ func TestGetFullPath(t *testing.T) {
 		if tc.DisableMappedLocations {
 			props[MappedLocationsEnabled] = false
 		}
-		path := &path{
+		path := &Path{
 			env:   env,
 			props: props,
 		}
@@ -421,7 +421,7 @@ func TestGetFullPathCustomMappedLocations(t *testing.T) {
 			PSWD: &tc.Pwd,
 		}
 		env.On("Args").Return(args)
-		path := &path{
+		path := &Path{
 			env: env,
 			props: properties.Map{
 				MappedLocationsEnabled: false,
@@ -453,7 +453,7 @@ func TestNormalizePath(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("Home").Return("/usr/home")
 		env.On("GOOS").Return(tc.GOOS)
-		pt := &path{
+		pt := &Path{
 			env: env,
 		}
 		got := pt.normalize(tc.Input)
@@ -472,7 +472,7 @@ func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 		PSWD: &pwd,
 	}
 	env.On("Args").Return(args)
-	path := &path{
+	path := &Path{
 		env: env,
 		props: properties.Map{
 			MappedLocations: map[string]string{
@@ -519,7 +519,7 @@ func TestAgnosterPath(t *testing.T) { // nolint:dupl
 			PSWD: &tc.PWD,
 		}
 		env.On("Args").Return(args)
-		path := &path{
+		path := &Path{
 			env: env,
 			props: properties.Map{
 				FolderSeparatorIcon: " > ",
@@ -567,7 +567,7 @@ func TestAgnosterLeftPath(t *testing.T) { // nolint:dupl
 			PSWD: &tc.PWD,
 		}
 		env.On("Args").Return(args)
-		path := &path{
+		path := &Path{
 			env: env,
 			props: properties.Map{
 				FolderSeparatorIcon: " > ",
@@ -615,7 +615,7 @@ func TestGetPwd(t *testing.T) {
 			PSWD: &tc.Pswd,
 		}
 		env.On("Args").Return(args)
-		path := &path{
+		path := &Path{
 			env: env,
 			props: properties.Map{
 				MappedLocationsEnabled: tc.MappedLocationsEnabled,

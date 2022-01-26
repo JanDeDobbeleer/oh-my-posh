@@ -7,7 +7,7 @@ import (
 	"golang.org/x/mod/modfile"
 )
 
-type golang struct {
+type Golang struct {
 	language
 }
 
@@ -15,11 +15,11 @@ const (
 	ParseModFile properties.Property = "parse_mod_file"
 )
 
-func (g *golang) template() string {
+func (g *Golang) template() string {
 	return languageTemplate
 }
 
-func (g *golang) init(props properties.Properties, env environment.Environment) {
+func (g *Golang) init(props properties.Properties, env environment.Environment) {
 	g.language = language{
 		env:        env,
 		props:      props,
@@ -39,7 +39,7 @@ func (g *golang) init(props properties.Properties, env environment.Environment) 
 	}
 }
 
-func (g *golang) getVersion() (string, error) {
+func (g *Golang) getVersion() (string, error) {
 	if !g.props.GetBool(ParseModFile, false) {
 		return "", nil
 	}
@@ -55,6 +55,6 @@ func (g *golang) getVersion() (string, error) {
 	return file.Go.Version, nil
 }
 
-func (g *golang) enabled() bool {
+func (g *Golang) enabled() bool {
 	return g.language.enabled()
 }

@@ -34,7 +34,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("FileContent", ".nvmrc").Return(tc.RCVersion)
 
-		node := &node{
+		node := &Node{
 			language: language{
 				env:     env,
 				version: nodeVersion,
@@ -66,7 +66,7 @@ func TestNodeInContext(t *testing.T) {
 		env.On("HasFiles", "yarn.lock").Return(tc.HasYarn)
 		env.On("HasFiles", "package-lock.json").Return(tc.hasNPM)
 		env.On("HasFiles", "package.json").Return(tc.hasDefault)
-		node := &node{
+		node := &Node{
 			language: language{
 				env: env,
 				props: properties.Map{

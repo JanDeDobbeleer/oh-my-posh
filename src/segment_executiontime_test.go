@@ -12,7 +12,7 @@ import (
 func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
 	env := new(mock.MockedEnvironment)
 	env.On("ExecutionTime").Return(1337)
-	executionTime := &executiontime{
+	executionTime := &Executiontime{
 		env:   env,
 		props: properties.Map{},
 	}
@@ -22,7 +22,7 @@ func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
 func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 	env := new(mock.MockedEnvironment)
 	env.On("ExecutionTime").Return(1)
-	executionTime := &executiontime{
+	executionTime := &Executiontime{
 		env:   env,
 		props: properties.Map{},
 	}
@@ -35,7 +35,7 @@ func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 	props := properties.Map{
 		ThresholdProperty: float64(10),
 	}
-	executionTime := &executiontime{
+	executionTime := &Executiontime{
 		env:   env,
 		props: props,
 	}
@@ -48,7 +48,7 @@ func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
 	props := properties.Map{
 		ThresholdProperty: float64(100),
 	}
-	executionTime := &executiontime{
+	executionTime := &Executiontime{
 		env:   env,
 		props: props,
 	}
@@ -60,7 +60,7 @@ func TestExecutionTimeWriterDuration(t *testing.T) {
 	expected := "1.337s"
 	env := new(mock.MockedEnvironment)
 	env.On("ExecutionTime").Return(input)
-	executionTime := &executiontime{
+	executionTime := &Executiontime{
 		env:   env,
 		props: properties.Map{},
 	}
@@ -73,7 +73,7 @@ func TestExecutionTimeWriterDuration2(t *testing.T) {
 	expected := "3h 42m 51.337s"
 	env := new(mock.MockedEnvironment)
 	env.On("ExecutionTime").Return(input)
-	executionTime := &executiontime{
+	executionTime := &Executiontime{
 		env:   env,
 		props: properties.Map{},
 	}
@@ -100,7 +100,7 @@ func TestExecutionTimeFormatDurationAustin(t *testing.T) {
 
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
-		executionTime := &executiontime{}
+		executionTime := &Executiontime{}
 		executionTime.Ms = duration.Milliseconds()
 		output := executionTime.formatDurationAustin()
 		assert.Equal(t, tc.Expected, output)
@@ -126,7 +126,7 @@ func TestExecutionTimeFormatDurationRoundrock(t *testing.T) {
 
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
-		executionTime := &executiontime{}
+		executionTime := &Executiontime{}
 		executionTime.Ms = duration.Milliseconds()
 		output := executionTime.formatDurationRoundrock()
 		assert.Equal(t, tc.Expected, output)
@@ -152,7 +152,7 @@ func TestExecutionTimeFormatDallas(t *testing.T) {
 
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
-		executionTime := &executiontime{}
+		executionTime := &Executiontime{}
 		executionTime.Ms = duration.Milliseconds()
 		output := executionTime.formatDurationDallas()
 		assert.Equal(t, tc.Expected, output)
@@ -178,7 +178,7 @@ func TestExecutionTimeFormatGalveston(t *testing.T) {
 
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
-		executionTime := &executiontime{}
+		executionTime := &Executiontime{}
 		executionTime.Ms = duration.Milliseconds()
 		output := executionTime.formatDurationGalveston()
 		assert.Equal(t, tc.Expected, output)
@@ -204,7 +204,7 @@ func TestExecutionTimeFormatHouston(t *testing.T) {
 
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
-		executionTime := &executiontime{}
+		executionTime := &Executiontime{}
 		executionTime.Ms = duration.Milliseconds()
 		output := executionTime.formatDurationHouston()
 		assert.Equal(t, tc.Expected, output)
@@ -230,7 +230,7 @@ func TestExecutionTimeFormatAmarillo(t *testing.T) {
 
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
-		executionTime := &executiontime{}
+		executionTime := &Executiontime{}
 		executionTime.Ms = duration.Milliseconds()
 		output := executionTime.formatDurationAmarillo()
 		assert.Equal(t, tc.Expected, output)
@@ -256,7 +256,7 @@ func TestExecutionTimeFormatDurationRound(t *testing.T) {
 
 	for _, tc := range cases {
 		duration, _ := time.ParseDuration(tc.Input)
-		executionTime := &executiontime{}
+		executionTime := &Executiontime{}
 		executionTime.Ms = duration.Milliseconds()
 		output := executionTime.formatDurationRound()
 		assert.Equal(t, tc.Expected, output)

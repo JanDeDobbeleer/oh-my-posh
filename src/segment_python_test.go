@@ -62,7 +62,7 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: make(map[string]string),
 		})
-		python := &python{}
+		python := &Python{}
 		python.init(props, env)
 		assert.Equal(t, !tc.ExpectedDisabled, python.enabled(), tc.Case)
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, python), tc.Case)
@@ -85,7 +85,7 @@ func TestPythonPythonInContext(t *testing.T) {
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
 		env.On("Getenv", "PYENV_VERSION").Return("")
-		python := &python{}
+		python := &Python{}
 		python.init(properties.Map{}, env)
 		python.loadContext()
 		assert.Equal(t, tc.Expected, python.inContext())

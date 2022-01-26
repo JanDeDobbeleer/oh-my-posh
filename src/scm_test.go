@@ -111,7 +111,7 @@ func TestTruncateBranch(t *testing.T) {
 			BranchMaxLength: tc.MaxLength,
 			FullBranchPath:  tc.FullBranch,
 		}
-		p := &plastic{
+		p := &Plastic{
 			scm: scm{
 				props: props,
 			},
@@ -148,7 +148,7 @@ func TestTruncateBranchWithSymbol(t *testing.T) {
 			TruncateSymbol:  tc.TruncateSymbol,
 			FullBranchPath:  tc.FullBranch,
 		}
-		p := &plastic{
+		p := &Plastic{
 			scm: scm{
 				props: props,
 			},

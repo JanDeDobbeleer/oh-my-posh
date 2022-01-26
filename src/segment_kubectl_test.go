@@ -129,7 +129,7 @@ func TestKubectlSegment(t *testing.T) {
 		}
 		env.On("Home").Return("testhome")
 
-		k := &kubectl{
+		k := &Kubectl{
 			env: env,
 			props: properties.Map{
 				properties.DisplayError: tc.DisplayError,

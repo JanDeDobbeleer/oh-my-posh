@@ -23,7 +23,7 @@ func TestCrystal(t *testing.T) {
 			extension:     "*.cr",
 		}
 		env, props := getMockedLanguageEnv(params)
-		c := &crystal{}
+		c := &Crystal{}
 		c.init(props, env)
 		assert.True(t, c.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, c.template(), c), fmt.Sprintf("Failed in case: %s", tc.Case))

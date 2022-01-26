@@ -7,7 +7,7 @@ import (
 	"oh-my-posh/regex"
 )
 
-type node struct {
+type Node struct {
 	language
 
 	PackageManagerIcon string
@@ -22,11 +22,11 @@ const (
 	FetchPackageManager properties.Property = "fetch_package_manager"
 )
 
-func (n *node) template() string {
+func (n *Node) template() string {
 	return "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
 }
 
-func (n *node) init(props properties.Properties, env environment.Environment) {
+func (n *Node) init(props properties.Properties, env environment.Environment) {
 	n.language = language{
 		env:        env,
 		props:      props,
@@ -44,11 +44,11 @@ func (n *node) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (n *node) enabled() bool {
+func (n *Node) enabled() bool {
 	return n.language.enabled()
 }
 
-func (n *node) loadContext() {
+func (n *Node) loadContext() {
 	if !n.language.props.GetBool(FetchPackageManager, false) {
 		return
 	}
@@ -61,7 +61,7 @@ func (n *node) loadContext() {
 	}
 }
 
-func (n *node) matchesVersionFile() bool {
+func (n *Node) matchesVersionFile() bool {
 	fileVersion := n.language.env.FileContent(".nvmrc")
 	if len(fileVersion) == 0 {
 		return true

@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type command struct {
+type Cmd struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -20,11 +20,11 @@ const (
 	Command properties.Property = "command"
 )
 
-func (c *command) template() string {
+func (c *Cmd) template() string {
 	return "{{ .Output }}"
 }
 
-func (c *command) enabled() bool {
+func (c *Cmd) enabled() bool {
 	shell := c.props.GetString(ExecutableShell, "bash")
 	if !c.env.HasCommand(shell) {
 		return false
@@ -53,7 +53,7 @@ func (c *command) enabled() bool {
 	return c.Output != ""
 }
 
-func (c *command) init(props properties.Properties, env environment.Environment) {
+func (c *Cmd) init(props properties.Properties, env environment.Environment) {
 	c.props = props
 	c.env = env
 }

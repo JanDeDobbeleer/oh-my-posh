@@ -59,7 +59,7 @@ func TestAWSSegment(t *testing.T) {
 		props := properties.Map{
 			properties.DisplayDefault: tc.DisplayDefault,
 		}
-		aws := &aws{
+		aws := &Aws{
 			env:   env,
 			props: props,
 		}

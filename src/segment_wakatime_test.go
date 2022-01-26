@@ -80,7 +80,7 @@ func TestWTTrackedTime(t *testing.T) {
 		cache.On("Set", FAKEAPIURL, response, tc.CacheTimeout).Return()
 		env.On("Cache").Return(cache)
 
-		w := &wakatime{
+		w := &Wakatime{
 			props: properties.Map{
 				APIKey:       "key",
 				CacheTimeout: tc.CacheTimeout,

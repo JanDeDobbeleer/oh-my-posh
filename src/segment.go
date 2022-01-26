@@ -53,48 +53,48 @@ type SegmentStyle string
 type SegmentType string
 
 const (
-	// Session represents the user info segment
-	Session SegmentType = "session"
-	// Path represents the current path segment
-	Path SegmentType = "path"
-	// Git represents the git status and information
-	Git SegmentType = "git"
-	// Plastic represents the plastic scm status and information
-	Plastic SegmentType = "plastic"
-	// Exit writes the last exit code
-	Exit SegmentType = "exit"
-	// Python writes the virtual env name
-	Python SegmentType = "python"
-	// Root writes root symbol
-	Root SegmentType = "root"
-	// Time writes the current timestamp
-	Time SegmentType = "time"
-	// Text writes a text
-	Text SegmentType = "text"
-	// Cmd writes the output of a shell command
-	Cmd SegmentType = "command"
-	// Battery writes the battery percentage
-	Battery SegmentType = "battery"
-	// Spotify writes the Spotify status for Mac
-	Spotify SegmentType = "spotify"
-	// ShellInfo writes which shell we're currently in
-	ShellInfo SegmentType = "shell"
-	// Node writes which node version is currently active
-	Node SegmentType = "node"
-	// Os write os specific icon
-	Os SegmentType = "os"
-	// Az writes the Azure subscription info we're currently in
-	Az SegmentType = "az"
-	// Kubectl writes the Kubernetes context we're currently in
-	Kubectl SegmentType = "kubectl"
-	// Dotnet writes which dotnet version is currently active
-	Dotnet SegmentType = "dotnet"
-	// Terraform writes the terraform workspace we're currently in
-	Terraform SegmentType = "terraform"
-	// Golang writes which go version is currently active
-	Golang SegmentType = "go"
-	// Julia writes which julia version is currently active
-	Julia SegmentType = "julia"
+	// SESSION represents the user info segment
+	SESSION SegmentType = "session"
+	// PATH represents the current path segment
+	PATH SegmentType = "path"
+	// GIT represents the git status and information
+	GIT SegmentType = "git"
+	// PLASTIC represents the plastic scm status and information
+	PLASTIC SegmentType = "plastic"
+	// EXIT writes the last exit code
+	EXIT SegmentType = "exit"
+	// PYTHON writes the virtual env name
+	PYTHON SegmentType = "python"
+	// ROOT writes root symbol
+	ROOT SegmentType = "root"
+	// TIME writes the current timestamp
+	TIME SegmentType = "time"
+	// TEXT writes a text
+	TEXT SegmentType = "text"
+	// CMD writes the output of a shell command
+	CMD SegmentType = "command"
+	// BATTERY writes the battery percentage
+	BATTERY SegmentType = "battery"
+	// SPOTIFY writes the SPOTIFY status for Mac
+	SPOTIFY SegmentType = "spotify"
+	// SHELL writes which shell we're currently in
+	SHELL SegmentType = "shell"
+	// NODE writes which node version is currently active
+	NODE SegmentType = "node"
+	// OS write os specific icon
+	OS SegmentType = "os"
+	// AZ writes the Azure subscription info we're currently in
+	AZ SegmentType = "az"
+	// KUBECTL writes the Kubernetes context we're currently in
+	KUBECTL SegmentType = "kubectl"
+	// DOTNET writes which dotnet version is currently active
+	DOTNET SegmentType = "dotnet"
+	// TERRAFORM writes the terraform workspace we're currently in
+	TERRAFORM SegmentType = "terraform"
+	// GOLANG writes which go version is currently active
+	GOLANG SegmentType = "go"
+	// JULIA writes which julia version is currently active
+	JULIA SegmentType = "julia"
 	// Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	// Plain writes it without ornaments
@@ -103,48 +103,48 @@ const (
 	Diamond SegmentStyle = "diamond"
 	// YTM writes YouTube Music information and status
 	YTM SegmentType = "ytm"
-	// ExecutionTime writes the execution time of the last run command
-	ExecutionTime SegmentType = "executiontime"
-	// Ruby writes which ruby version is currently active
-	Ruby SegmentType = "ruby"
-	// Aws writes the active aws context
-	Aws SegmentType = "aws"
-	// Java writes the active java version
-	Java SegmentType = "java"
-	// PoshGit writes the posh git prompt
-	PoshGit SegmentType = "poshgit"
-	// AZFunc writes current AZ func version
-	AZFunc SegmentType = "azfunc"
-	// Crystal writes the active crystal version
-	Crystal SegmentType = "crystal"
-	// Dart writes the active dart version
-	Dart SegmentType = "dart"
-	// Nbgv writes the nbgv version information
-	Nbgv SegmentType = "nbgv"
-	// Rust writes the cargo version information if cargo.toml is present
-	Rust SegmentType = "rust"
+	// EXECUTIONTIME writes the execution time of the last run command
+	EXECUTIONTIME SegmentType = "executiontime"
+	// RUBY writes which ruby version is currently active
+	RUBY SegmentType = "ruby"
+	// AWS writes the active aws context
+	AWS SegmentType = "aws"
+	// JAVA writes the active java version
+	JAVA SegmentType = "java"
+	// POSHGIT writes the posh git prompt
+	POSHGIT SegmentType = "poshgit"
+	// AZFUNC writes current AZ func version
+	AZFUNC SegmentType = "azfunc"
+	// CRYSTAL writes the active crystal version
+	CRYSTAL SegmentType = "crystal"
+	// DART writes the active dart version
+	DART SegmentType = "dart"
+	// NBGV writes the nbgv version information
+	NBGV SegmentType = "nbgv"
+	// RUST writes the cargo version information if cargo.toml is present
+	RUST SegmentType = "rust"
 	// OWM writes the weather coming from openweatherdata
 	OWM SegmentType = "owm"
-	// SysInfo writes system information (memory, cpu, load)
-	SysInfo SegmentType = "sysinfo"
-	// Angular writes which angular cli version us currently active
-	Angular SegmentType = "angular"
+	// SYSTEMINFO writes system information (memory, cpu, load)
+	SYSTEMINFO SegmentType = "sysinfo"
+	// ANGULAR writes which angular cli version us currently active
+	ANGULAR SegmentType = "angular"
 	// PHP writes which php version is currently active
 	PHP SegmentType = "php"
-	// Nightscout is an open source diabetes system
-	Nightscout SegmentType = "nightscout"
-	// Strava is a sports activity tracker
-	Strava SegmentType = "strava"
-	// Wakatime writes tracked time spend in dev editors
-	Wakatime SegmentType = "wakatime"
-	// WiFi writes details about the current WiFi connection
-	WiFi SegmentType = "wifi"
-	// WinReg queries the Windows registry.
-	WinReg SegmentType = "winreg"
+	// NIGHTSCOUT is an open source diabetes system
+	NIGHTSCOUT SegmentType = "nightscout"
+	// STRAVA is a sports activity tracker
+	STRAVA SegmentType = "strava"
+	// WAKATIME writes tracked time spend in dev editors
+	WAKATIME SegmentType = "wakatime"
+	// WIFI writes details about the current WIFI connection
+	WIFI SegmentType = "wifi"
+	// WINREG queries the Windows registry.
+	WINREG SegmentType = "winreg"
 	// Brewfather segment
-	BrewFather SegmentType = "brewfather"
-	// Ipify segment
-	Ipify SegmentType = "ipify"
+	BREWFATHER SegmentType = "brewfather"
+	// IPIFY segment
+	IPIFY SegmentType = "ipify"
 )
 
 func (segment *Segment) string() string {
@@ -243,49 +243,49 @@ func (segment *Segment) background() string {
 func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
-		OWM:           &owm{},
-		Session:       &session{},
-		Path:          &path{},
-		Git:           &git{},
-		Plastic:       &plastic{},
-		Exit:          &exit{},
-		Python:        &python{},
-		Root:          &root{},
-		Text:          &text{},
-		Time:          &tempus{},
-		Cmd:           &command{},
-		Battery:       &batt{},
-		Spotify:       &spotify{},
-		ShellInfo:     &shell{},
-		Node:          &node{},
-		Os:            &osInfo{},
-		Az:            &az{},
-		Kubectl:       &kubectl{},
-		Dotnet:        &dotnet{},
-		Terraform:     &terraform{},
-		Golang:        &golang{},
-		Julia:         &julia{},
-		YTM:           &ytm{},
-		ExecutionTime: &executiontime{},
-		Ruby:          &ruby{},
-		Aws:           &aws{},
-		Java:          &java{},
-		PoshGit:       &poshgit{},
-		AZFunc:        &azfunc{},
-		Crystal:       &crystal{},
-		Dart:          &dart{},
-		Nbgv:          &nbgv{},
-		Rust:          &rust{},
-		SysInfo:       &sysinfo{},
-		Angular:       &angular{},
-		PHP:           &php{},
-		Nightscout:    &nightscout{},
-		Strava:        &strava{},
-		Wakatime:      &wakatime{},
-		WiFi:          &wifi{},
-		WinReg:        &winreg{},
-		BrewFather:    &brewfather{},
-		Ipify:         &ipify{},
+		OWM:           &Owm{},
+		SESSION:       &Session{},
+		PATH:          &Path{},
+		GIT:           &Git{},
+		PLASTIC:       &Plastic{},
+		EXIT:          &Exit{},
+		PYTHON:        &Python{},
+		ROOT:          &Root{},
+		TEXT:          &Text{},
+		TIME:          &Time{},
+		CMD:           &Cmd{},
+		BATTERY:       &Battery{},
+		SPOTIFY:       &Spotify{},
+		SHELL:         &Shell{},
+		NODE:          &Node{},
+		OS:            &Os{},
+		AZ:            &Az{},
+		KUBECTL:       &Kubectl{},
+		DOTNET:        &Dotnet{},
+		TERRAFORM:     &Terraform{},
+		GOLANG:        &Golang{},
+		JULIA:         &Julia{},
+		YTM:           &Ytm{},
+		EXECUTIONTIME: &Executiontime{},
+		RUBY:          &Ruby{},
+		AWS:           &Aws{},
+		JAVA:          &Java{},
+		POSHGIT:       &PoshGit{},
+		AZFUNC:        &AzFunc{},
+		CRYSTAL:       &Crystal{},
+		DART:          &Dart{},
+		NBGV:          &Nbgv{},
+		RUST:          &Rust{},
+		SYSTEMINFO:    &SystemInfo{},
+		ANGULAR:       &Angular{},
+		PHP:           &Php{},
+		NIGHTSCOUT:    &Nightscout{},
+		STRAVA:        &Strava{},
+		WAKATIME:      &Wakatime{},
+		WIFI:          &Wifi{},
+		WINREG:        &WindowsRegistry{},
+		BREWFATHER:    &Brewfather{},
+		IPIFY:         &IPify{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)

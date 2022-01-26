@@ -183,7 +183,7 @@ func getDefaultConfig(info string) *Config {
 				Alignment: Left,
 				Segments: []*Segment{
 					{
-						Type:            Session,
+						Type:            SESSION,
 						Style:           Diamond,
 						Background:      "#c386f1",
 						Foreground:      "#ffffff",
@@ -191,7 +191,7 @@ func getDefaultConfig(info string) *Config {
 						TrailingDiamond: "\uE0B0",
 					},
 					{
-						Type:            Path,
+						Type:            PATH,
 						Style:           Powerline,
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#ff479c",
@@ -202,7 +202,7 @@ func getDefaultConfig(info string) *Config {
 						},
 					},
 					{
-						Type:            Git,
+						Type:            GIT,
 						Style:           Powerline,
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#fffb38",
@@ -213,7 +213,7 @@ func getDefaultConfig(info string) *Config {
 						},
 					},
 					{
-						Type:            Battery,
+						Type:            BATTERY,
 						Style:           Powerline,
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#f36943",
@@ -223,7 +223,7 @@ func getDefaultConfig(info string) *Config {
 						},
 					},
 					{
-						Type:            Node,
+						Type:            NODE,
 						Style:           Powerline,
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#6CA35E",
@@ -234,7 +234,7 @@ func getDefaultConfig(info string) *Config {
 						},
 					},
 					{
-						Type:            ShellInfo,
+						Type:            SHELL,
 						Style:           Powerline,
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#0077c2",
@@ -244,14 +244,14 @@ func getDefaultConfig(info string) *Config {
 						},
 					},
 					{
-						Type:            Root,
+						Type:            ROOT,
 						Style:           Powerline,
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#ffff66",
 						Foreground:      "#ffffff",
 					},
 					{
-						Type:            Text,
+						Type:            TEXT,
 						Style:           Powerline,
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#ffffff",
@@ -261,7 +261,7 @@ func getDefaultConfig(info string) *Config {
 						},
 					},
 					{
-						Type:            Exit,
+						Type:            EXIT,
 						Style:           Diamond,
 						Background:      "#2e9599",
 						Foreground:      "#ffffff",

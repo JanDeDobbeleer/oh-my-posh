@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type poshgit struct {
+type PoshGit struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -17,17 +17,17 @@ const (
 	poshGitEnv = "POSH_GIT_STATUS"
 )
 
-func (p *poshgit) template() string {
+func (p *PoshGit) template() string {
 	return "{{ .Status }}"
 }
 
-func (p *poshgit) enabled() bool {
+func (p *PoshGit) enabled() bool {
 	status := p.env.Getenv(poshGitEnv)
 	p.Status = strings.TrimSpace(status)
 	return p.Status != ""
 }
 
-func (p *poshgit) init(props properties.Properties, env environment.Environment) {
+func (p *PoshGit) init(props properties.Properties, env environment.Environment) {
 	p.props = props
 	p.env = env
 }

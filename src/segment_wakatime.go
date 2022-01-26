@@ -6,7 +6,7 @@ import (
 	"oh-my-posh/properties"
 )
 
-type wakatime struct {
+type Wakatime struct {
 	props properties.Properties
 	env   environment.Environment
 
@@ -24,16 +24,16 @@ type wtData struct {
 	End              string   `json:"end"`
 }
 
-func (w *wakatime) template() string {
+func (w *Wakatime) template() string {
 	return "{{ secondsRound .CummulativeTotal.Seconds }}"
 }
 
-func (w *wakatime) enabled() bool {
+func (w *Wakatime) enabled() bool {
 	err := w.setAPIData()
 	return err == nil
 }
 
-func (w *wakatime) setAPIData() error {
+func (w *Wakatime) setAPIData() error {
 	url := w.props.GetString(URL, "")
 	cacheTimeout := w.props.GetInt(CacheTimeout, DefaultCacheTimeout)
 	if cacheTimeout > 0 {
@@ -64,7 +64,7 @@ func (w *wakatime) setAPIData() error {
 	return nil
 }
 
-func (w *wakatime) init(props properties.Properties, env environment.Environment) {
+func (w *Wakatime) init(props properties.Properties, env environment.Environment) {
 	w.props = props
 	w.env = env
 }

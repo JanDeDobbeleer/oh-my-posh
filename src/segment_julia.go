@@ -5,15 +5,15 @@ import (
 	"oh-my-posh/properties"
 )
 
-type julia struct {
+type Julia struct {
 	language
 }
 
-func (j *julia) template() string {
+func (j *Julia) template() string {
 	return languageTemplate
 }
 
-func (j *julia) init(props properties.Properties, env environment.Environment) {
+func (j *Julia) init(props properties.Properties, env environment.Environment) {
 	j.language = language{
 		env:        env,
 		props:      props,
@@ -29,6 +29,6 @@ func (j *julia) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (j *julia) enabled() bool {
+func (j *Julia) enabled() bool {
 	return j.language.enabled()
 }

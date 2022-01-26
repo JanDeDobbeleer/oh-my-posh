@@ -76,7 +76,7 @@ func TestWinReg(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("GOOS").Return(environment.WindowsPlatform)
 		env.On("WindowsRegistryKeyValue", tc.Path).Return(tc.getWRKVOutput, tc.Err)
-		r := &winreg{
+		r := &WindowsRegistry{
 			env: env,
 			props: properties.Map{
 				RegistryPath: tc.Path,

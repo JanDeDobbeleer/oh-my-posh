@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
 	"strings"
 )
 
 type consoleTitle struct {
-	env    Environment
+	env    environment.Environment
 	config *Config
 	ansi   *ansiUtils
 }
@@ -33,7 +34,7 @@ func (t *consoleTitle) getConsoleTitle() string {
 	case FolderName:
 		fallthrough
 	default:
-		title = base(t.getPwd(), t.env)
+		title = environment.Base(t.env, t.getPwd())
 	}
 	title = t.ansi.escapeText(title)
 	return fmt.Sprintf(t.ansi.title, title)

@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"oh-my-posh/environment"
 )
 
 type nbgv struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	VersionInfo
 }
@@ -43,7 +44,7 @@ func (n *nbgv) enabled() bool {
 	return n.VersionInfo.VersionFileFound
 }
 
-func (n *nbgv) init(props Properties, env Environment) {
+func (n *nbgv) init(props Properties, env environment.Environment) {
 	n.props = props
 	n.env = env
 }

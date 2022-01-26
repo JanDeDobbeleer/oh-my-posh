@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/environment"
 	"sync"
 	"time"
 )
@@ -33,7 +34,7 @@ type Block struct {
 	Segments         []*Segment     `config:"segments"`
 	Newline          bool           `config:"newline"`
 
-	env                   Environment
+	env                   environment.Environment
 	writer                promptWriter
 	ansi                  *ansiUtils
 	activeSegment         *Segment
@@ -42,13 +43,13 @@ type Block struct {
 	activeForeground      string
 }
 
-func (b *Block) init(env Environment, writer promptWriter, ansi *ansiUtils) {
+func (b *Block) init(env environment.Environment, writer promptWriter, ansi *ansiUtils) {
 	b.env = env
 	b.writer = writer
 	b.ansi = ansi
 }
 
-func (b *Block) initPlain(env Environment, config *Config) {
+func (b *Block) initPlain(env environment.Environment, config *Config) {
 	b.ansi = &ansiUtils{}
 	b.ansi.init(plain)
 	b.writer = &AnsiWriter{

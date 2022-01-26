@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"oh-my-posh/environment"
+)
 
 type java struct {
 	language
@@ -10,7 +13,7 @@ func (j *java) template() string {
 	return languageTemplate
 }
 
-func (j *java) init(props Properties, env Environment) {
+func (j *java) init(props Properties, env environment.Environment) {
 	javaRegex := `(?: JRE)(?: \(.*\))? \((?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))?(?:\.(?P<patch>[0-9]+))?).*\),`
 	javaCmd := &cmd{
 		executable: "java",

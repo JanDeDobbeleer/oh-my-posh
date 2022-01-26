@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
 	"strings"
 )
 
@@ -36,7 +37,7 @@ func (s *ScmStatus) String() string {
 
 type scm struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 }
 
 const (
@@ -48,7 +49,7 @@ const (
 	FullBranchPath Property = "full_branch_path"
 )
 
-func (s *scm) init(props Properties, env Environment) {
+func (s *scm) init(props Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }
@@ -72,7 +73,7 @@ func (s *scm) shouldIgnoreRootRepository(rootDir string) bool {
 	if len(excludedFolders) == 0 {
 		return false
 	}
-	return dirMatchesOneOf(s.env, rootDir, excludedFolders)
+	return environment.DirMatchesOneOf(s.env, rootDir, excludedFolders)
 }
 
 func (s *scm) FileContents(folder, file string) string {

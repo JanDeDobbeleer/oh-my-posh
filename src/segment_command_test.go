@@ -1,13 +1,14 @@
 package main
 
 import (
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExecuteCommand(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo hello").Return("hello")
 	props := properties{
@@ -23,7 +24,7 @@ func TestExecuteCommand(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "exit 1").Return("")
 	env.On("RunShellCommand", "bash", "echo hello").Return("hello")
@@ -41,7 +42,7 @@ func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo hello").Return("hello")
 	env.On("RunShellCommand", "bash", "echo world").Return("world")
@@ -58,7 +59,7 @@ func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsAnd(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo hello").Return("hello")
 	env.On("RunShellCommand", "bash", "echo world").Return("world")
@@ -75,7 +76,7 @@ func TestExecuteMultipleCommandsAnd(t *testing.T) {
 }
 
 func TestExecuteSingleCommandEmpty(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "").Return("")
 	props := properties{
@@ -90,7 +91,7 @@ func TestExecuteSingleCommandEmpty(t *testing.T) {
 }
 
 func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo no command specified").Return("no command specified")
 	var props properties
@@ -104,7 +105,7 @@ func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo").Return("")
 	props := properties{
@@ -119,7 +120,7 @@ func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsOrDisabled(t *testing.T) {
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo").Return("")
 	env.On("RunShellCommand", "bash", "echo|| echo").Return("")

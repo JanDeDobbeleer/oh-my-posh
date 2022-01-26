@@ -1,5 +1,7 @@
 package main
 
+import "oh-my-posh/environment"
+
 type python struct {
 	language
 
@@ -15,7 +17,7 @@ func (p *python) template() string {
 	return languageTemplate
 }
 
-func (p *python) init(props Properties, env Environment) {
+func (p *python) init(props Properties, env environment.Environment) {
 	p.language = language{
 		env:         env,
 		props:       props,
@@ -57,7 +59,7 @@ func (p *python) loadContext() {
 	var venv string
 	for _, venvVar := range venvVars {
 		venv = p.language.env.Getenv(venvVar)
-		name := base(venv, p.language.env)
+		name := environment.Base(p.language.env, venv)
 		if p.canUseVenvName(name) {
 			p.Venv = name
 			break

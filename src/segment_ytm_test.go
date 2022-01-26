@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,7 +10,7 @@ import (
 
 func bootstrapYTMDATest(json string, err error) *ytm {
 	url := "http://127.0.0.1:9863"
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HTTPRequest", url+"/query").Return([]byte(json), err)
 	ytm := &ytm{
 		env: env,

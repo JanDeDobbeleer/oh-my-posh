@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
 	"strconv"
 
 	lang "golang.org/x/text/language"
@@ -10,7 +11,7 @@ import (
 
 type executiontime struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	FormattedMs string
 	Ms          int64
@@ -63,7 +64,7 @@ func (t *executiontime) template() string {
 	return "{{ .FormattedMs }}"
 }
 
-func (t *executiontime) init(props Properties, env Environment) {
+func (t *executiontime) init(props Properties, env environment.Environment) {
 	t.props = props
 	t.env = env
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/mock"
 	"strings"
 	"testing"
 	"time"
@@ -38,7 +39,7 @@ func TestTimeSegmentTemplate(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		tempus := &tempus{
 			env:         env,
 			props:       properties{},

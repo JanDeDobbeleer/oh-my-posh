@@ -1,214 +1,16 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
-	"github.com/distatus/battery"
 	"github.com/gookit/config/v2"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
-type MockedEnvironment struct {
-	mock.Mock
-}
-
-func (env *MockedEnvironment) Getenv(key string) string {
-	args := env.Called(key)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) Pwd() string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) Home() string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) HasFiles(pattern string) bool {
-	args := env.Called(pattern)
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) HasFilesInDir(dir, pattern string) bool {
-	args := env.Called(dir, pattern)
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) HasFolder(folder string) bool {
-	args := env.Called(folder)
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) FileContent(file string) string {
-	args := env.Called(file)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) FolderList(path string) []string {
-	args := env.Called(path)
-	return args.Get(0).([]string)
-}
-
-func (env *MockedEnvironment) PathSeperator() string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) User() string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) Host() (string, error) {
-	args := env.Called()
-	return args.String(0), args.Error(1)
-}
-
-func (env *MockedEnvironment) GOOS() string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) Platform() string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) HasCommand(command string) bool {
-	args := env.Called(command)
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) RunCommand(command string, args ...string) (string, error) {
-	arguments := env.Called(command, args)
-	return arguments.String(0), arguments.Error(1)
-}
-
-func (env *MockedEnvironment) RunShellCommand(shell, command string) string {
-	args := env.Called(shell, command)
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) ErrorCode() int {
-	args := env.Called()
-	return args.Int(0)
-}
-
-func (env *MockedEnvironment) ExecutionTime() float64 {
-	args := env.Called()
-	return float64(args.Int(0))
-}
-
-func (env *MockedEnvironment) Root() bool {
-	args := env.Called()
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) Args() *Args {
-	arguments := env.Called()
-	return arguments.Get(0).(*Args)
-}
-
-func (env *MockedEnvironment) BatteryInfo() ([]*battery.Battery, error) {
-	args := env.Called()
-	return args.Get(0).([]*battery.Battery), args.Error(1)
-}
-
-func (env *MockedEnvironment) Shell() string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) WindowTitle(imageName, windowTitleRegex string) (string, error) {
-	args := env.Called(imageName)
-	return args.String(0), args.Error(1)
-}
-
-func (env *MockedEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
-	args := env.Called(path)
-	return args.Get(0).(*WindowsRegistryValue), args.Error(1)
-}
-
-func (env *MockedEnvironment) HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
-	args := env.Called(url)
-	return args.Get(0).([]byte), args.Error(1)
-}
-
-func (env *MockedEnvironment) HasParentFilePath(path string) (*FileInfo, error) {
-	args := env.Called(path)
-	return args.Get(0).(*FileInfo), args.Error(1)
-}
-
-func (env *MockedEnvironment) StackCount() int {
-	args := env.Called()
-	return args.Int(0)
-}
-
-func (env *MockedEnvironment) IsWsl() bool {
-	args := env.Called()
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) IsWsl2() bool {
-	args := env.Called()
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) TerminalWidth() (int, error) {
-	args := env.Called()
-	return args.Int(0), args.Error(1)
-}
-
-func (env *MockedEnvironment) CachePath() string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) Cache() Cache {
-	args := env.Called()
-	return args.Get(0).(Cache)
-}
-
-func (env *MockedEnvironment) Close() {
-	_ = env.Called()
-}
-
-func (env *MockedEnvironment) Logs() string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) InWSLSharedDrive() bool {
-	args := env.Called()
-	return args.Bool(0)
-}
-
-func (env *MockedEnvironment) ConvertToWindowsPath(path string) string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) ConvertToLinuxPath(path string) string {
-	args := env.Called()
-	return args.String(0)
-}
-
-func (env *MockedEnvironment) WifiNetwork() (*WifiInfo, error) {
-	args := env.Called()
-	return args.Get(0).(*WifiInfo), args.Error(1)
-}
-
-func (env *MockedEnvironment) TemplateCache() *TemplateCache {
-	args := env.Called()
-	return args.Get(0).(*TemplateCache)
-}
-
-func renderTemplate(env *MockedEnvironment, segmentTemplate string, context interface{}) string {
+func renderTemplate(env *mock.MockedEnvironment, segmentTemplate string, context interface{}) string {
 	found := false
 	for _, call := range env.Mock.ExpectedCalls {
 		if call.Method == "TemplateCache" {
@@ -217,7 +19,7 @@ func renderTemplate(env *MockedEnvironment, segmentTemplate string, context inte
 		}
 	}
 	if !found {
-		env.On("TemplateCache").Return(&TemplateCache{
+		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: make(map[string]string),
 		})
 	}
@@ -242,7 +44,7 @@ const (
 
 func TestIsInHomeDirTrue(t *testing.T) {
 	home := homeBill
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("Home").Return(home)
 	path := &path{
 		env: env,
@@ -257,7 +59,7 @@ func TestIsInHomeDirLevelTrue(t *testing.T) {
 	for i := 0; i < 99; i++ {
 		pwd += levelDir
 	}
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("Home").Return(home)
 	path := &path{
 		env: env,
@@ -286,10 +88,10 @@ func TestRootLocationHome(t *testing.T) {
 		{Expected: "DRIVE:", HomePath: "/home/bill/", Pwd: "/usr/error/what", Pswd: "DRIVE:", PathSeperator: "/"},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("Home").Return(tc.HomePath)
 		env.On("Pwd").Return(tc.Pwd)
-		args := &Args{
+		args := &environment.Args{
 			PSWD: &tc.Pswd,
 		}
 		env.On("Args").Return(args)
@@ -309,7 +111,7 @@ func TestRootLocationHome(t *testing.T) {
 
 func TestIsInHomeDirFalse(t *testing.T) {
 	home := homeBill
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("Home").Return(home)
 	path := &path{
 		env: env,
@@ -323,7 +125,7 @@ func TestPathDepthMultipleLevelsDeep(t *testing.T) {
 	for i := 0; i < 99; i++ {
 		pwd += levelDir
 	}
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("PathSeperator").Return("/")
 	env.On("getRunteGOOS").Return("")
 	path := &path{
@@ -335,7 +137,7 @@ func TestPathDepthMultipleLevelsDeep(t *testing.T) {
 
 func TestPathDepthZeroLevelsDeep(t *testing.T) {
 	pwd := "/usr/"
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("PathSeperator").Return("/")
 	path := &path{
 		env: env,
@@ -346,7 +148,7 @@ func TestPathDepthZeroLevelsDeep(t *testing.T) {
 
 func TestPathDepthOneLevelDeep(t *testing.T) {
 	pwd := "/usr/location"
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("PathSeperator").Return("/")
 	path := &path{
 		env: env,
@@ -437,14 +239,14 @@ func TestAgnosterPathStyles(t *testing.T) {
 		{Style: Letter, Expected: "➼ s > .w > man", HomePath: "/usr/home", Pwd: "➼ something/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("PathSeperator").Return(tc.PathSeperator)
 		env.On("Home").Return(tc.HomePath)
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("StackCount").Return(0)
 		env.On("IsWsl").Return(false)
-		args := &Args{
+		args := &environment.Args{
 			PSWD: &tc.Pswd,
 		}
 		env.On("Args").Return(args)
@@ -505,8 +307,8 @@ func TestGetFullPath(t *testing.T) {
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/usr/home/abc", Expected: "abc"},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/a/b/c/d", Expected: "d"},
 
-		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: windowsPlatform},
-		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\Jan", Expected: "C:\\Users\\Jan", PathSeparator: "\\", GOOS: windowsPlatform},
+		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: environment.WindowsPlatform},
+		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\Jan", Expected: "C:\\Users\\Jan", PathSeparator: "\\", GOOS: environment.WindowsPlatform},
 
 		// StackCountEnabled=true and StackCount=2
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: 2, Expected: "2 /"},
@@ -555,7 +357,7 @@ func TestGetFullPath(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		if len(tc.PathSeparator) == 0 {
 			tc.PathSeparator = "/"
 		}
@@ -565,7 +367,7 @@ func TestGetFullPath(t *testing.T) {
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("StackCount").Return(tc.StackCount)
 		env.On("IsWsl").Return(false)
-		args := &Args{
+		args := &environment.Args{
 			PSWD: &tc.Pswd,
 		}
 		env.On("Args").Return(args)
@@ -609,12 +411,12 @@ func TestGetFullPathCustomMappedLocations(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("PathSeperator").Return("/")
 		env.On("Home").Return("/usr/home")
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return("")
-		args := &Args{
+		args := &environment.Args{
 			PSWD: &tc.Pwd,
 		}
 		env.On("Args").Return(args)
@@ -636,18 +438,18 @@ func TestNormalizePath(t *testing.T) {
 		GOOS     string
 		Expected string
 	}{
-		{Input: "C:\\Users\\Bob\\Foo", GOOS: linuxPlatform, Expected: "C:/Users/Bob/Foo"},
-		{Input: "C:\\Users\\Bob\\Foo", GOOS: windowsPlatform, Expected: "c:/users/bob/foo"},
-		{Input: "~\\Bob\\Foo", GOOS: linuxPlatform, Expected: "/usr/home/Bob/Foo"},
-		{Input: "~\\Bob\\Foo", GOOS: windowsPlatform, Expected: "/usr/home/bob/foo"},
-		{Input: "/foo/~/bar", GOOS: linuxPlatform, Expected: "/foo/~/bar"},
-		{Input: "/foo/~/bar", GOOS: windowsPlatform, Expected: "/foo/~/bar"},
-		{Input: "~/baz", GOOS: linuxPlatform, Expected: "/usr/home/baz"},
-		{Input: "~/baz", GOOS: windowsPlatform, Expected: "/usr/home/baz"},
+		{Input: "C:\\Users\\Bob\\Foo", GOOS: environment.LinuxPlatform, Expected: "C:/Users/Bob/Foo"},
+		{Input: "C:\\Users\\Bob\\Foo", GOOS: environment.WindowsPlatform, Expected: "c:/users/bob/foo"},
+		{Input: "~\\Bob\\Foo", GOOS: environment.LinuxPlatform, Expected: "/usr/home/Bob/Foo"},
+		{Input: "~\\Bob\\Foo", GOOS: environment.WindowsPlatform, Expected: "/usr/home/bob/foo"},
+		{Input: "/foo/~/bar", GOOS: environment.LinuxPlatform, Expected: "/foo/~/bar"},
+		{Input: "/foo/~/bar", GOOS: environment.WindowsPlatform, Expected: "/foo/~/bar"},
+		{Input: "~/baz", GOOS: environment.LinuxPlatform, Expected: "/usr/home/baz"},
+		{Input: "~/baz", GOOS: environment.WindowsPlatform, Expected: "/usr/home/baz"},
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("Home").Return("/usr/home")
 		env.On("GOOS").Return(tc.GOOS)
 		pt := &path{
@@ -660,12 +462,12 @@ func TestNormalizePath(t *testing.T) {
 
 func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	pwd := "/a/b/c/d"
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("PathSeperator").Return("/")
 	env.On("Home").Return("/usr/home")
 	env.On("Pwd").Return(pwd)
 	env.On("GOOS").Return("")
-	args := &Args{
+	args := &environment.Args{
 		PSWD: &pwd,
 	}
 	env.On("Args").Return(args)
@@ -707,12 +509,12 @@ func TestAgnosterPath(t *testing.T) { // nolint:dupl
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("Home").Return(tc.Home)
 		env.On("PathSeperator").Return(tc.PathSeparator)
 		env.On("Pwd").Return(tc.PWD)
 		env.On("GOOS").Return("")
-		args := &Args{
+		args := &environment.Args{
 			PSWD: &tc.PWD,
 		}
 		env.On("Args").Return(args)
@@ -755,12 +557,12 @@ func TestAgnosterLeftPath(t *testing.T) { // nolint:dupl
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("Home").Return(tc.Home)
 		env.On("PathSeperator").Return(tc.PathSeparator)
 		env.On("Pwd").Return(tc.PWD)
 		env.On("GOOS").Return("")
-		args := &Args{
+		args := &environment.Args{
 			PSWD: &tc.PWD,
 		}
 		env.On("Args").Return(args)
@@ -803,12 +605,12 @@ func TestGetPwd(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("PathSeperator").Return("/")
 		env.On("Home").Return("/usr/home")
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return("")
-		args := &Args{
+		args := &environment.Args{
 			PSWD: &tc.Pswd,
 		}
 		env.On("Args").Return(args)

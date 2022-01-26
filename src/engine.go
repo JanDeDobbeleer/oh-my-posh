@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
 	"strings"
 	"time"
 )
 
 type engine struct {
 	config       *Config
-	env          Environment
+	env          environment.Environment
 	writer       promptWriter
 	ansi         *ansiUtils
 	consoleTitle *consoleTitle

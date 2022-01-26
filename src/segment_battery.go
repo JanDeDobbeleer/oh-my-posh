@@ -2,13 +2,14 @@ package main
 
 import (
 	"math"
+	"oh-my-posh/environment"
 
 	"github.com/distatus/battery"
 )
 
 type batt struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	battery.Battery
 	Percentage int
@@ -66,7 +67,7 @@ func (b *batt) enabledWhileError(err error) bool {
 	if err == nil {
 		return true
 	}
-	if _, ok := err.(*noBatteryError); ok {
+	if _, ok := err.(*environment.NoBatteryError); ok {
 		return false
 	}
 	displayError := b.props.getBool(DisplayError, false)
@@ -103,7 +104,7 @@ func (b *batt) mapMostLogicalState(currentState, newState battery.State) battery
 	return newState
 }
 
-func (b *batt) init(props Properties, env Environment) {
+func (b *batt) init(props Properties, env environment.Environment) {
 	b.props = props
 	b.env = env
 }

@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
 
 	"github.com/gookit/color"
 )
 
 // MakeColors creates instance of AnsiColors to use in AnsiWriter according to
 // environment and configuration.
-func MakeColors(env Environment, cfg *Config) AnsiColors {
+func MakeColors(env environment.Environment, cfg *Config) AnsiColors {
 	cacheDisabled := env.Getenv("OMP_CACHE_DISABLED") == "1"
 	return makeColors(cfg.Palette, !cacheDisabled)
 }

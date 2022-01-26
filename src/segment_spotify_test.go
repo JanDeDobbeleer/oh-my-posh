@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,7 +9,7 @@ import (
 
 func TestSpotifyStringPlayingSong(t *testing.T) {
 	expected := "\ue602 Candlemass - Spellbreaker"
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	s := &spotify{
 		MusicPlayer: MusicPlayer{
 			Artist: "Candlemass",
@@ -24,7 +25,7 @@ func TestSpotifyStringPlayingSong(t *testing.T) {
 
 func TestSpotifyStringStoppedSong(t *testing.T) {
 	expected := "\uf04d "
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	s := &spotify{
 		MusicPlayer: MusicPlayer{
 			Artist: "Candlemass",

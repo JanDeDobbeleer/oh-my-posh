@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/regex"
 )
 
 // Property defines one property of a segment for context
@@ -66,7 +67,7 @@ func (p properties) getColor(property Property, defaultValue string) string {
 	if IsAnsiColorName(colorString) {
 		return colorString
 	}
-	values := findNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|p:.*)`, colorString)
+	values := regex.FindNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|p:.*)`, colorString)
 	if values != nil && values["color"] != "" {
 		return values["color"]
 	}

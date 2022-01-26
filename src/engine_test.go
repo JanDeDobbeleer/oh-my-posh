@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"os"
 	"path/filepath"
 	"strings"
@@ -29,7 +31,7 @@ func TestCanWriteRPrompt(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalWidthError)
 		ansi := &ansiUtils{}
 		ansi.init(plain)
@@ -73,7 +75,7 @@ func engineRender(configPath string) error {
 		execTime = 917.0
 	)
 
-	args := &Args{
+	args := &environment.Args{
 		Debug:         &debug,
 		Config:        &configPath,
 		Eval:          &eval,
@@ -85,8 +87,8 @@ func engineRender(configPath string) error {
 		ExecutionTime: &execTime,
 	}
 
-	env := &environment{}
-	env.init(args)
+	env := &environment.ShellEnvironment{}
+	env.Init(args)
 	defer env.Close()
 
 	cfg := GetConfig(env)

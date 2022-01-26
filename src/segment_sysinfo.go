@@ -1,6 +1,8 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+
 	cpu "github.com/shirou/gopsutil/v3/cpu"
 	load "github.com/shirou/gopsutil/v3/load"
 	mem "github.com/shirou/gopsutil/v3/mem"
@@ -8,7 +10,7 @@ import (
 
 type sysinfo struct {
 	props     Properties
-	env       Environment
+	env       environment.Environment
 	Precision int
 	// mem
 	PhysicalTotalMemory uint64
@@ -42,7 +44,7 @@ func (s *sysinfo) enabled() bool {
 	return true
 }
 
-func (s *sysinfo) init(props Properties, env Environment) {
+func (s *sysinfo) init(props Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 	s.Precision = s.props.getInt(Precision, 2)

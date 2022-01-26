@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"oh-my-posh/environment"
+	"oh-my-posh/regex"
 	"strings"
 	"text/template"
 )
@@ -17,29 +19,16 @@ const (
 type textTemplate struct {
 	Template string
 	Context  interface{}
-	Env      Environment
+	Env      environment.Environment
 }
 
 type Data interface{}
 
 type Context struct {
-	TemplateCache
+	environment.TemplateCache
 
 	// Simple container to hold ANY object
 	Data
-}
-
-type TemplateCache struct {
-	Root     bool
-	PWD      string
-	Folder   string
-	Shell    string
-	UserName string
-	HostName string
-	Code     int
-	Env      map[string]string
-	OS       string
-	WSL      bool
 }
 
 func (c *Context) init(t *textTemplate) {
@@ -87,12 +76,12 @@ func (t *textTemplate) cleanTemplate() {
 		return splitted[0], true
 	}
 	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "UserName", "HostName", "Env", "Data", "Code", "OS", "WSL"}
-	matches := findAllNamedRegexMatch(`(?: |{|\()(?P<var>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
+	matches := regex.FindAllNamedRegexMatch(`(?: |{|\()(?P<var>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
 	for _, match := range matches {
 		if variable, OK := unknownVariable(match["var"], &knownVariables); OK {
 			pattern := fmt.Sprintf(`\.%s\b`, variable)
 			dataVar := fmt.Sprintf(".Data.%s", variable)
-			t.Template = replaceAllString(pattern, t.Template, dataVar)
+			t.Template = regex.ReplaceAllString(pattern, t.Template, dataVar)
 		}
 	}
 }

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -17,7 +19,7 @@ func TestExitWriterEnabled(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("ErrorCode").Return(tc.ExitCode)
 		e := &exit{
 			env:   env,
@@ -74,9 +76,9 @@ func TestExitWriterTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("ErrorCode").Return(tc.ExitCode)
-		env.On("TemplateCache").Return(&TemplateCache{
+		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Code: tc.ExitCode,
 		})
 		e := &exit{

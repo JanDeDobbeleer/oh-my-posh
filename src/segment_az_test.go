@@ -2,6 +2,8 @@ package main
 
 import (
 	"io/ioutil"
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"path/filepath"
 	"testing"
 
@@ -67,7 +69,7 @@ func TestAzSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		home := "/Users/posh"
 		env.On("Home").Return(home)
 		var azureProfile, azureRmContext, azureRMContext string
@@ -83,7 +85,7 @@ func TestAzSegment(t *testing.T) {
 			content, _ := ioutil.ReadFile("./test/AzureRmContext.json")
 			azureRMContext = string(content)
 		}
-		env.On("GOOS").Return(linuxPlatform)
+		env.On("GOOS").Return(environment.LinuxPlatform)
 		env.On("FileContent", filepath.Join(home, ".azure", "azureProfile.json")).Return(azureProfile)
 		env.On("FileContent", filepath.Join(home, ".Azure", "AzureRmContext.json")).Return(azureRmContext)
 		env.On("FileContent", filepath.Join(home, ".azure", "AzureRmContext.json")).Return(azureRMContext)

@@ -1,9 +1,7 @@
-package main
+package regex
 
 import (
-	"fmt"
 	"regexp"
-	"strings"
 	"sync"
 )
 
@@ -12,7 +10,7 @@ var (
 	regexCacheLock = sync.RWMutex{}
 )
 
-func getCompiledRegex(pattern string) *regexp.Regexp {
+func GetCompiledRegex(pattern string) *regexp.Regexp {
 	// try in cache first
 	regexCacheLock.RLock()
 	re := regexCache[pattern]
@@ -32,9 +30,9 @@ func getCompiledRegex(pattern string) *regexp.Regexp {
 	return re
 }
 
-func findNamedRegexMatch(pattern, text string) map[string]string {
+func FindNamedRegexMatch(pattern, text string) map[string]string {
 	// error ignored because mustCompile will cause a panic
-	re := getCompiledRegex(pattern)
+	re := GetCompiledRegex(pattern)
 	match := re.FindStringSubmatch(text)
 	result := make(map[string]string)
 	if len(match) == 0 {
@@ -49,8 +47,8 @@ func findNamedRegexMatch(pattern, text string) map[string]string {
 	return result
 }
 
-func findAllNamedRegexMatch(pattern, text string) []map[string]string {
-	re := getCompiledRegex(pattern)
+func FindAllNamedRegexMatch(pattern, text string) []map[string]string {
+	re := GetCompiledRegex(pattern)
 	match := re.FindAllStringSubmatch(text, -1)
 	var results []map[string]string
 	if len(match) == 0 {
@@ -70,34 +68,12 @@ func findAllNamedRegexMatch(pattern, text string) []map[string]string {
 	return results
 }
 
-func replaceAllString(pattern, text, replaceText string) string {
-	re := getCompiledRegex(pattern)
+func ReplaceAllString(pattern, text, replaceText string) string {
+	re := GetCompiledRegex(pattern)
 	return re.ReplaceAllString(text, replaceText)
 }
 
-func matchString(pattern, text string) bool {
-	re := getCompiledRegex(pattern)
+func MatchString(pattern, text string) bool {
+	re := GetCompiledRegex(pattern)
 	return re.MatchString(text)
-}
-
-func dirMatchesOneOf(env Environment, dir string, regexes []string) bool {
-	normalizedCwd := strings.ReplaceAll(dir, "\\", "/")
-	normalizedHomeDir := strings.ReplaceAll(env.Home(), "\\", "/")
-
-	for _, element := range regexes {
-		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
-		if strings.HasPrefix(normalizedElement, "~") {
-			normalizedElement = strings.Replace(normalizedElement, "~", normalizedHomeDir, 1)
-		}
-		pattern := fmt.Sprintf("^%s$", normalizedElement)
-		goos := env.GOOS()
-		if goos == windowsPlatform || goos == darwinPlatform {
-			pattern = "(?i)" + pattern
-		}
-		matched := matchString(pattern, normalizedCwd)
-		if matched {
-			return true
-		}
-	}
-	return false
 }

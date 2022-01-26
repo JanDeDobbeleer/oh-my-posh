@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"oh-my-posh/environment"
 	"runtime/debug"
 	"time"
 )
@@ -24,7 +25,7 @@ type Segment struct {
 	writer              SegmentWriter
 	stringValue         string
 	active              bool
-	env                 Environment
+	env                 environment.Environment
 }
 
 // SegmentTiming holds the timing context for a segment
@@ -51,7 +52,7 @@ type Properties interface {
 type SegmentWriter interface {
 	enabled() bool
 	template() string
-	init(props Properties, env Environment)
+	init(props Properties, env environment.Environment)
 }
 
 // SegmentStyle the syle of segment, for more information, see the constants
@@ -200,7 +201,7 @@ func (segment *Segment) cwdIncluded() bool {
 		return true
 	}
 
-	return dirMatchesOneOf(segment.env, segment.env.Pwd(), list)
+	return environment.DirMatchesOneOf(segment.env, segment.env.Pwd(), list)
 }
 
 func (segment *Segment) cwdExcluded() bool {
@@ -209,7 +210,7 @@ func (segment *Segment) cwdExcluded() bool {
 		value = segment.Properties[IgnoreFolders]
 	}
 	list := parseStringArray(value)
-	return dirMatchesOneOf(segment.env, segment.env.Pwd(), list)
+	return environment.DirMatchesOneOf(segment.env, segment.env.Pwd(), list)
 }
 
 func (segment *Segment) getColor(templates []string, defaultColor string) string {
@@ -248,7 +249,7 @@ func (segment *Segment) background() string {
 	return segment.getColor(segment.BackgroundTemplates, segment.Background)
 }
 
-func (segment *Segment) mapSegmentWithWriter(env Environment) error {
+func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
 		OWM:           &owm{},
@@ -306,7 +307,7 @@ func (segment *Segment) mapSegmentWithWriter(env Environment) error {
 	return errors.New("unable to map writer")
 }
 
-func (segment *Segment) setStringValue(env Environment) {
+func (segment *Segment) setStringValue(env environment.Environment) {
 	defer func() {
 		err := recover()
 		if err == nil {

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -52,11 +54,11 @@ func TestGetConsoleTitle(t *testing.T) {
 			ConsoleTitleStyle:    tc.Style,
 			ConsoleTitleTemplate: tc.Template,
 		}
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
 		env.On("PathSeperator").Return(tc.PathSeperator)
-		env.On("TemplateCache").Return(&TemplateCache{
+		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
 			},
@@ -65,7 +67,7 @@ func TestGetConsoleTitle(t *testing.T) {
 			Root:     tc.Root,
 			HostName: "MyHost",
 			PWD:      tc.Cwd,
-			Folder:   base(tc.Cwd, env),
+			Folder:   "vagrant",
 		})
 		ansi := &ansiUtils{}
 		ansi.init(tc.ShellName)
@@ -113,10 +115,10 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			ConsoleTitleStyle:    tc.Style,
 			ConsoleTitleTemplate: tc.Template,
 		}
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
-		env.On("TemplateCache").Return(&TemplateCache{
+		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
 			},

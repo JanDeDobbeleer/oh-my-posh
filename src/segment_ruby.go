@@ -1,5 +1,7 @@
 package main
 
+import "oh-my-posh/environment"
+
 type ruby struct {
 	language
 }
@@ -8,7 +10,7 @@ func (r *ruby) template() string {
 	return languageTemplate
 }
 
-func (r *ruby) init(props Properties, env Environment) {
+func (r *ruby) init(props Properties, env environment.Environment) {
 	r.language = language{
 		env:        env,
 		props:      props,

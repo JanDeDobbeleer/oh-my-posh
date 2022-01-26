@@ -3,13 +3,14 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"oh-my-posh/environment"
 	"time"
 )
 
 // segment struct, makes templating easier
 type nightscout struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	NightscoutData
 	TrendIcon string
@@ -137,7 +138,7 @@ func (ns *nightscout) getResult() (*NightscoutData, error) {
 	return data, nil
 }
 
-func (ns *nightscout) init(props Properties, env Environment) {
+func (ns *nightscout) init(props Properties, env environment.Environment) {
 	ns.props = props
 	ns.env = env
 }

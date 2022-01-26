@@ -7,6 +7,7 @@ import (
 	json2 "encoding/json"
 	"errors"
 	"fmt"
+	"oh-my-posh/environment"
 	"os"
 	"strconv"
 	"strings"
@@ -56,7 +57,7 @@ func printConfigError(err error, eval bool) {
 }
 
 // GetConfig returns the default configuration including possible user overrides
-func GetConfig(env Environment) *Config {
+func GetConfig(env environment.Environment) *Config {
 	cfg, err := loadConfig(env)
 	if err != nil {
 		return getDefaultConfig(err.Error())
@@ -64,7 +65,7 @@ func GetConfig(env Environment) *Config {
 	return cfg
 }
 
-func loadConfig(env Environment) (*Config, error) {
+func loadConfig(env environment.Environment) (*Config, error) {
 	var cfg Config
 	configFile := *env.Args().Config
 	eval := *env.Args().Eval

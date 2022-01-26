@@ -1,8 +1,10 @@
 package main
 
+import "oh-my-posh/environment"
+
 type session struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 	// text  string
 
 	SSHSession bool
@@ -20,7 +22,7 @@ func (s *session) template() string {
 	return "{{ .UserName }}@{{ .HostName }}"
 }
 
-func (s *session) init(props Properties, env Environment) {
+func (s *session) init(props Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

@@ -1,6 +1,8 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+
 	"golang.org/x/mod/modfile"
 )
 
@@ -16,7 +18,7 @@ func (g *golang) template() string {
 	return languageTemplate
 }
 
-func (g *golang) init(props Properties, env Environment) {
+func (g *golang) init(props Properties, env environment.Environment) {
 	g.language = language{
 		env:        env,
 		props:      props,

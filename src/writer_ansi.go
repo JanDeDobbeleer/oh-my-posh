@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/regex"
 	"strings"
 )
 
@@ -142,7 +143,7 @@ func (a *AnsiWriter) write(background, foreground, text string) {
 
 	// first we match for any potentially valid colors enclosed in <>
 	// i.e., find color overrides
-	overrides := findAllNamedRegexMatch(colorRegex, text)
+	overrides := regex.FindAllNamedRegexMatch(colorRegex, text)
 	for _, override := range overrides {
 		fgOverride := override["foreground"]
 		bgOverride := override["background"]

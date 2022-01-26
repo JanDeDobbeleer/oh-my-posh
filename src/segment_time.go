@@ -1,10 +1,13 @@
 package main
 
-import "time"
+import (
+	"oh-my-posh/environment"
+	"time"
+)
 
 type tempus struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	CurrentDate time.Time
 }
@@ -26,7 +29,7 @@ func (t *tempus) enabled() bool {
 	return true
 }
 
-func (t *tempus) init(props Properties, env Environment) {
+func (t *tempus) init(props Properties, env environment.Environment) {
 	t.props = props
 	t.env = env
 }

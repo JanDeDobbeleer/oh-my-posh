@@ -1,6 +1,6 @@
 //go:build windows
 
-package main
+package environment
 
 import (
 	"errors"
@@ -16,7 +16,7 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-func (env *environment) Root() bool {
+func (env *ShellEnvironment) Root() bool {
 	defer env.trace(time.Now(), "Root")
 	var sid *windows.SID
 
@@ -53,7 +53,7 @@ func (env *environment) Root() bool {
 	return member
 }
 
-func (env *environment) Home() string {
+func (env *ShellEnvironment) Home() string {
 	home := os.Getenv("HOME")
 	defer func() {
 		env.log(Debug, "Home", home)
@@ -69,22 +69,22 @@ func (env *environment) Home() string {
 	return home
 }
 
-func (env *environment) WindowTitle(imageName, windowTitleRegex string) (string, error) {
+func (env *ShellEnvironment) WindowTitle(imageName, windowTitleRegex string) (string, error) {
 	defer env.trace(time.Now(), "WindowTitle", imageName, windowTitleRegex)
 	return WindowTitle(imageName, windowTitleRegex)
 }
 
-func (env *environment) IsWsl() bool {
+func (env *ShellEnvironment) IsWsl() bool {
 	defer env.trace(time.Now(), "IsWsl")
 	return false
 }
 
-func (env *environment) IsWsl2() bool {
+func (env *ShellEnvironment) IsWsl2() bool {
 	defer env.trace(time.Now(), "IsWsl2")
 	return false
 }
 
-func (env *environment) TerminalWidth() (int, error) {
+func (env *ShellEnvironment) TerminalWidth() (int, error) {
 	defer env.trace(time.Now(), "TerminalWidth")
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
 	if err != nil {
@@ -100,11 +100,11 @@ func (env *environment) TerminalWidth() (int, error) {
 	return int(info.Size.X), nil
 }
 
-func (env *environment) Platform() string {
-	return windowsPlatform
+func (env *ShellEnvironment) Platform() string {
+	return WindowsPlatform
 }
 
-func (env *environment) CachePath() string {
+func (env *ShellEnvironment) CachePath() string {
 	defer env.trace(time.Now(), "CachePath")
 	// get LOCALAPPDATA if present
 	if cachePath := returnOrBuildCachePath(env.Getenv("LOCALAPPDATA")); len(cachePath) != 0 {
@@ -123,7 +123,7 @@ func (env *environment) CachePath() string {
 //
 // Returns a variant type if successful; nil and an error if not.
 //
-func (env *environment) WindowsRegistryKeyValue(path string) (*windowsRegistryValue, error) {
+func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
 	env.trace(time.Now(), "WindowsRegistryKeyValue", path)
 
 	// Format:
@@ -234,34 +234,34 @@ func (env *environment) WindowsRegistryKeyValue(path string) (*windowsRegistryVa
 		valueString := windows.UTF16PtrToString(uint16p)
 		env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, string: %s", valueString))
 
-		return &windowsRegistryValue{valueType: regString, str: valueString}, nil
+		return &WindowsRegistryValue{ValueType: RegString, Str: valueString}, nil
 	case windows.REG_DWORD:
 		var uint32p *uint32
 		uint32p = (*uint32)(unsafe.Pointer(&keyBuf[0])) // more casting goodness
 
 		env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, DWORD, 0x%08X", *uint32p))
-		return &windowsRegistryValue{valueType: regDword, dword: *uint32p}, nil
+		return &WindowsRegistryValue{ValueType: RegDword, Dword: *uint32p}, nil
 	case windows.REG_QWORD:
 		var uint64p *uint64
 		uint64p = (*uint64)(unsafe.Pointer(&keyBuf[0])) // more casting goodness
 
 		env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, QWORD, 0x%016X", *uint64p))
-		return &windowsRegistryValue{valueType: regQword, qword: *uint64p}, nil
+		return &WindowsRegistryValue{ValueType: RegQword, Qword: *uint64p}, nil
 	default:
 		errorLogMsg := fmt.Sprintf("Error, no formatter for REG_? type:%d, data size:%d bytes", keyBufType, keyBufSize)
 		return nil, errors.New(errorLogMsg)
 	}
 }
 
-func (env *environment) InWSLSharedDrive() bool {
+func (env *ShellEnvironment) InWSLSharedDrive() bool {
 	return false
 }
 
-func (env *environment) ConvertToWindowsPath(path string) string {
+func (env *ShellEnvironment) ConvertToWindowsPath(path string) string {
 	return path
 }
 
-func (env *environment) ConvertToLinuxPath(path string) string {
+func (env *ShellEnvironment) ConvertToLinuxPath(path string) string {
 	return path
 }
 
@@ -273,7 +273,38 @@ var (
 	hWlanQueryInterface = hapi.NewProc("WlanQueryInterface")
 )
 
-func (env *environment) WifiNetwork() (*wifiInfo, error) {
+const (
+	FHSS   WifiType = "FHSS"
+	DSSS   WifiType = "DSSS"
+	IR     WifiType = "IR"
+	A      WifiType = "802.11a"
+	HRDSSS WifiType = "HRDSSS"
+	G      WifiType = "802.11g"
+	N      WifiType = "802.11n"
+	AC     WifiType = "802.11ac"
+
+	Infrastructure WifiType = "Infrastructure"
+	Independent    WifiType = "Independent"
+	Any            WifiType = "Any"
+
+	OpenSystem WifiType = "802.11 Open System"
+	SharedKey  WifiType = "802.11 Shared Key"
+	WPA        WifiType = "WPA"
+	WPAPSK     WifiType = "WPA PSK"
+	WPANone    WifiType = "WPA NONE"
+	WPA2       WifiType = "WPA2"
+	WPA2PSK    WifiType = "WPA2 PSK"
+	Disabled   WifiType = "disabled"
+
+	None   WifiType = "None"
+	WEP40  WifiType = "WEP40"
+	TKIP   WifiType = "TKIP"
+	CCMP   WifiType = "CCMP"
+	WEP104 WifiType = "WEP104"
+	WEP    WifiType = "WEP"
+)
+
+func (env *ShellEnvironment) WifiNetwork() (*WifiInfo, error) {
 	env.trace(time.Now(), "WifiNetwork")
 	// Open handle
 	var pdwNegotiatedVersion uint32
@@ -308,8 +339,8 @@ func (env *environment) WifiNetwork() (*wifiInfo, error) {
 	return nil, errors.New("Not connected")
 }
 
-func (env *environment) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHandle uint32) (*wifiInfo, error) {
-	info := wifiInfo{}
+func (env *ShellEnvironment) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHandle uint32) (*WifiInfo, error) {
+	info := WifiInfo{}
 	info.Interface = strings.TrimRight(string(utf16.Decode(network.strInterfaceDescription[:])), "\x00")
 
 	// Query wifi connection state

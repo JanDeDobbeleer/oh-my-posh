@@ -2,6 +2,8 @@ package main
 
 import (
 	"errors"
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,7 +16,7 @@ func TestWinReg(t *testing.T) {
 		Fallback        string
 		ExpectedSuccess bool
 		ExpectedValue   string
-		getWRKVOutput   *WindowsRegistryValue
+		getWRKVOutput   *environment.WindowsRegistryValue
 		Err             error
 	}{
 		{
@@ -26,7 +28,7 @@ func TestWinReg(t *testing.T) {
 		{
 			CaseDescription: "Value",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &WindowsRegistryValue{valueType: regString, str: "xbox"},
+			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.RegString, Str: "xbox"},
 			ExpectedSuccess: true,
 			ExpectedValue:   "xbox",
 		},
@@ -41,7 +43,7 @@ func TestWinReg(t *testing.T) {
 		{
 			CaseDescription: "Empty string value (no error) should display empty string even in presence of fallback",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &WindowsRegistryValue{valueType: regString, str: ""},
+			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.RegString, Str: ""},
 			Fallback:        "anaconda",
 			ExpectedSuccess: true,
 			ExpectedValue:   "",
@@ -49,29 +51,29 @@ func TestWinReg(t *testing.T) {
 		{
 			CaseDescription: "Empty string value (no error) should display empty string",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &WindowsRegistryValue{valueType: regString, str: ""},
+			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.RegString, Str: ""},
 			ExpectedSuccess: true,
 			ExpectedValue:   "",
 		},
 		{
 			CaseDescription: "DWORD value",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &WindowsRegistryValue{valueType: regDword, dword: 0xdeadbeef},
+			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.RegDword, Dword: 0xdeadbeef},
 			ExpectedSuccess: true,
 			ExpectedValue:   "0xDEADBEEF",
 		},
 		{
 			CaseDescription: "QWORD value",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &WindowsRegistryValue{valueType: regQword, qword: 0x7eb199e57fa1afe1},
+			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.RegQword, Qword: 0x7eb199e57fa1afe1},
 			ExpectedSuccess: true,
 			ExpectedValue:   "0x7EB199E57FA1AFE1",
 		},
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("GOOS").Return(windowsPlatform)
+		env := new(mock.MockedEnvironment)
+		env.On("GOOS").Return(environment.WindowsPlatform)
 		env.On("WindowsRegistryKeyValue", tc.Path).Return(tc.getWRKVOutput, tc.Err)
 		r := &winreg{
 			env: env,

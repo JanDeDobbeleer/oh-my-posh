@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/regex"
 	"strings"
 )
 
@@ -21,7 +22,7 @@ func (a *PlainWriter) write(background, foreground, text string) {
 		a.builder.WriteString(text)
 		return strings.Replace(parentText, textToRemove, "", 1)
 	}
-	match := findAllNamedRegexMatch(colorRegex, text)
+	match := regex.FindAllNamedRegexMatch(colorRegex, text)
 	for i := range match {
 		escapedTextSegment := match[i]["text"]
 		innerText := match[i]["content"]

@@ -1,8 +1,10 @@
 package main
 
+import "oh-my-posh/environment"
+
 type osInfo struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	Icon string
 }
@@ -63,11 +65,11 @@ func (oi *osInfo) template() string {
 func (oi *osInfo) enabled() bool {
 	goos := oi.env.GOOS()
 	switch goos {
-	case windowsPlatform:
+	case environment.WindowsPlatform:
 		oi.Icon = oi.props.getString(Windows, "\uE62A")
-	case darwinPlatform:
+	case environment.DarwinPlatform:
 		oi.Icon = oi.props.getString(MacOS, "\uF179")
-	case linuxPlatform:
+	case environment.LinuxPlatform:
 		platform := oi.env.Platform()
 		displayDistroName := oi.props.getBool(DisplayDistroName, false)
 		if displayDistroName {
@@ -125,7 +127,7 @@ func (oi *osInfo) getDistroIcon(distro string) string {
 	return oi.props.getString(Linux, "\uF17C")
 }
 
-func (oi *osInfo) init(props Properties, env Environment) {
+func (oi *osInfo) init(props Properties, env environment.Environment) {
 	oi.props = props
 	oi.env = env
 }

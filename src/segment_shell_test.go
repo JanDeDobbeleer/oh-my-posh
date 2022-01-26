@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,7 +9,7 @@ import (
 
 func TestWriteCurrentShell(t *testing.T) {
 	expected := "zsh"
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("Shell").Return(expected, nil)
 	s := &shell{
 		env:   env,
@@ -28,7 +29,7 @@ func TestUseMappedShellNames(t *testing.T) {
 		{Shell: "PWSH", Expected: "PS"},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("Shell").Return(tc.Expected, nil)
 		s := &shell{
 			env: env,

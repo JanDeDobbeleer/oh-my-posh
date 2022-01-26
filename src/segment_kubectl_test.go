@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"path/filepath"
 	"testing"
 
@@ -105,7 +107,7 @@ func TestKubectlSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "kubectl").Return(tc.KubectlExists)
 		var kubeconfig string
 		content, err := ioutil.ReadFile("./test/kubectl.yml")
@@ -114,9 +116,9 @@ func TestKubectlSegment(t *testing.T) {
 		}
 		var kubectlErr error
 		if tc.KubectlErr {
-			kubectlErr = &commandError{
-				err:      "oops",
-				exitCode: 1,
+			kubectlErr = &environment.CommandError{
+				Err:      "oops",
+				ExitCode: 1,
 			}
 		}
 		env.On("RunCommand", "kubectl", []string{"config", "view", "--output", "yaml", "--minify"}).Return(kubeconfig, kubectlErr)

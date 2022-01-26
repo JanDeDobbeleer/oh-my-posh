@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -67,13 +68,13 @@ func TestWTTrackedTime(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &MockedEnvironment{}
+		env := &mock.MockedEnvironment{}
 
 		response := fmt.Sprintf(`{"cummulative_total": {"seconds": %.2f, "text": "x"}}`, float64(tc.Seconds))
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(response), tc.Error)
 
-		cache := &MockedCache{}
+		cache := &mock.MockedCache{}
 		cache.On("Get", FAKEAPIURL).Return(response, !tc.CacheFoundFail)
 		cache.On("Set", FAKEAPIURL, response, tc.CacheTimeout).Return()
 		env.On("Cache").Return(cache)

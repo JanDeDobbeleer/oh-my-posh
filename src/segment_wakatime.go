@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"oh-my-posh/environment"
 )
 
 type wakatime struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	wtData
 }
@@ -62,7 +63,7 @@ func (w *wakatime) setAPIData() error {
 	return nil
 }
 
-func (w *wakatime) init(props Properties, env Environment) {
+func (w *wakatime) init(props Properties, env environment.Environment) {
 	w.props = props
 	w.env = env
 }

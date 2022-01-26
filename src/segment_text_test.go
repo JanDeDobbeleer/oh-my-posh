@@ -1,6 +1,8 @@
 package main
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -23,9 +25,9 @@ func TestTextSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("PathSeperator").Return("/")
-		env.On("TemplateCache").Return(&TemplateCache{
+		env.On("TemplateCache").Return(&environment.TemplateCache{
 			UserName: "Posh",
 			Env: map[string]string{
 				"HELLO": "hello",
@@ -34,7 +36,7 @@ func TestTextSegment(t *testing.T) {
 			HostName: "MyHost",
 			Shell:    "terminal",
 			Root:     true,
-			Folder:   base("/usr/home/posh", env),
+			Folder:   "posh",
 		})
 		txt := &text{
 			env: env,

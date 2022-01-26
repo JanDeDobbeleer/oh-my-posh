@@ -1,10 +1,13 @@
 package main
 
-import "strings"
+import (
+	"oh-my-posh/environment"
+	"strings"
+)
 
 type shell struct {
 	props Properties
-	env   Environment
+	env   environment.Environment
 
 	Name string
 }
@@ -30,7 +33,7 @@ func (s *shell) enabled() bool {
 	return true
 }
 
-func (s *shell) init(props Properties, env Environment) {
+func (s *shell) init(props Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

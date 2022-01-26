@@ -1,9 +1,10 @@
 //go:build windows
 
-package main
+package environment
 
 import (
 	"fmt"
+	"oh-my-posh/regex"
 	"strings"
 	"syscall"
 	"unsafe"
@@ -162,7 +163,7 @@ func GetWindowTitle(pid int, windowTitleRegex string) (syscall.Handle, string) {
 				return 1 // continue enumeration
 			}
 			title = syscall.UTF16ToString(b)
-			if matchString(windowTitleRegex, title) {
+			if regex.MatchString(windowTitleRegex, title) {
 				// will cause EnumWindows to return 0 (error)
 				// but we don't want to enumerate all windows since we got what we want
 				hwnd = h

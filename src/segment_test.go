@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,7 +17,7 @@ func TestMapSegmentWriterCanMap(t *testing.T) {
 	sc := &Segment{
 		Type: Session,
 	}
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	err := sc.mapSegmentWithWriter(env)
 	assert.NoError(t, err)
 	assert.NotNil(t, sc.writer)
@@ -25,7 +27,7 @@ func TestMapSegmentWriterCannotMap(t *testing.T) {
 	sc := &Segment{
 		Type: "nilwriter",
 	}
-	env := new(MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	err := sc.mapSegmentWithWriter(env)
 	assert.Error(t, err)
 }
@@ -79,8 +81,8 @@ func TestShouldIncludeFolder(t *testing.T) {
 		{Case: "Include Mismatch / Exclude Mismatch", IncludeFolders: []string{"zProjects.*"}, ExcludeFolders: []string{"Projects/nope"}, Expected: false},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("GOOS").Return(linuxPlatform)
+		env := new(mock.MockedEnvironment)
+		env.On("GOOS").Return(environment.LinuxPlatform)
 		env.On("Home").Return("")
 		env.On("Pwd").Return(cwd)
 		segment := &Segment{
@@ -96,8 +98,8 @@ func TestShouldIncludeFolder(t *testing.T) {
 }
 
 func TestShouldIncludeFolderRegexInverted(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("GOOS").Return(linuxPlatform)
+	env := new(mock.MockedEnvironment)
+	env.On("GOOS").Return(environment.LinuxPlatform)
 	env.On("Home").Return("")
 	env.On("Pwd").Return(cwd)
 	segment := &Segment{
@@ -117,8 +119,8 @@ func TestShouldIncludeFolderRegexInverted(t *testing.T) {
 }
 
 func TestShouldIncludeFolderRegexInvertedNonEscaped(t *testing.T) {
-	env := new(MockedEnvironment)
-	env.On("GOOS").Return(linuxPlatform)
+	env := new(mock.MockedEnvironment)
+	env.On("GOOS").Return(environment.LinuxPlatform)
 	env.On("Home").Return("")
 	env.On("Pwd").Return(cwd)
 	segment := &Segment{
@@ -190,8 +192,8 @@ func TestGetColors(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(MockedEnvironment)
-		env.On("TemplateCache").Return(&TemplateCache{
+		env := new(mock.MockedEnvironment)
+		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: make(map[string]string),
 		})
 		segment := &Segment{

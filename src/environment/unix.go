@@ -1,6 +1,6 @@
 //go:build !windows
 
-package main
+package environment
 
 import (
 	"errors"
@@ -12,20 +12,20 @@ import (
 	terminal "github.com/wayneashleyberry/terminal-dimensions"
 )
 
-func (env *environment) Root() bool {
+func (env *ShellEnvironment) Root() bool {
 	defer env.trace(time.Now(), "Root")
 	return os.Geteuid() == 0
 }
 
-func (env *environment) Home() string {
+func (env *ShellEnvironment) Home() string {
 	return os.Getenv("HOME")
 }
 
-func (env *environment) WindowTitle(imageName, windowTitleRegex string) (string, error) {
+func (env *ShellEnvironment) WindowTitle(imageName, windowTitleRegex string) (string, error) {
 	return "", errors.New("not implemented")
 }
 
-func (env *environment) IsWsl() bool {
+func (env *ShellEnvironment) IsWsl() bool {
 	defer env.trace(time.Now(), "IsWsl")
 	// one way to check
 	// version := env.FileContent("/proc/version")
@@ -34,7 +34,7 @@ func (env *environment) IsWsl() bool {
 	return env.Getenv("WSL_DISTRO_NAME") != ""
 }
 
-func (env *environment) IsWsl2() bool {
+func (env *ShellEnvironment) IsWsl2() bool {
 	defer env.trace(time.Now(), "IsWsl2")
 	if !env.IsWsl() {
 		return false
@@ -43,7 +43,7 @@ func (env *environment) IsWsl2() bool {
 	return strings.Contains(uname, "WSL2")
 }
 
-func (env *environment) TerminalWidth() (int, error) {
+func (env *ShellEnvironment) TerminalWidth() (int, error) {
 	defer env.trace(time.Now(), "TerminalWidth")
 	width, err := terminal.Width()
 	if err != nil {
@@ -52,7 +52,7 @@ func (env *environment) TerminalWidth() (int, error) {
 	return int(width), err
 }
 
-func (env *environment) Platform() string {
+func (env *ShellEnvironment) Platform() string {
 	const key = "environment_platform"
 	if val, found := env.Cache().Get(key); found {
 		return val
@@ -69,7 +69,7 @@ func (env *environment) Platform() string {
 	return platform
 }
 
-func (env *environment) CachePath() string {
+func (env *ShellEnvironment) CachePath() string {
 	defer env.trace(time.Now(), "CachePath")
 	// get XDG_CACHE_HOME if present
 	if cachePath := returnOrBuildCachePath(env.Getenv("XDG_CACHE_HOME")); len(cachePath) != 0 {
@@ -82,15 +82,15 @@ func (env *environment) CachePath() string {
 	return env.Home()
 }
 
-func (env *environment) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
+func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (env *environment) InWSLSharedDrive() bool {
+func (env *ShellEnvironment) InWSLSharedDrive() bool {
 	return env.IsWsl() && strings.HasPrefix(env.Pwd(), "/mnt/")
 }
 
-func (env *environment) ConvertToWindowsPath(path string) string {
+func (env *ShellEnvironment) ConvertToWindowsPath(path string) string {
 	windowsPath, err := env.RunCommand("wslpath", "-w", path)
 	if err == nil {
 		return windowsPath
@@ -98,7 +98,7 @@ func (env *environment) ConvertToWindowsPath(path string) string {
 	return path
 }
 
-func (env *environment) ConvertToLinuxPath(path string) string {
+func (env *ShellEnvironment) ConvertToLinuxPath(path string) string {
 	linuxPath, err := env.RunCommand("wslpath", "-u", path)
 	if err == nil {
 		return linuxPath
@@ -106,6 +106,6 @@ func (env *environment) ConvertToLinuxPath(path string) string {
 	return path
 }
 
-func (env *environment) WifiNetwork() (*WifiInfo, error) {
+func (env *ShellEnvironment) WifiNetwork() (*WifiInfo, error) {
 	return nil, errors.New("not implemented")
 }

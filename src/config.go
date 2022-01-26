@@ -10,6 +10,7 @@ import (
 	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
+	"oh-my-posh/segments"
 	"os"
 	"strconv"
 	"strings"
@@ -47,15 +48,6 @@ type TransientPrompt struct {
 	Background string `config:"background"`
 	Foreground string `config:"foreground"`
 }
-
-const (
-	// HTTPTimeout timeout used when executing http request
-	HTTPTimeout properties.Property = "http_timeout"
-	// DefaultHTTPTimeout default timeout used when executing http request
-	DefaultHTTPTimeout = 20
-	// DefaultCacheTimeout default timeout used when caching data
-	DefaultCacheTimeout = 10
-)
 
 func printConfigError(err error, eval bool) {
 	if eval {
@@ -208,8 +200,8 @@ func getDefaultConfig(info string) *Config {
 						Background:      "#fffb38",
 						Foreground:      "#193549",
 						Properties: properties.Map{
-							FetchStashCount:   true,
-							FetchUpstreamIcon: true,
+							segments.FetchStashCount:   true,
+							segments.FetchUpstreamIcon: true,
 						},
 					},
 					{

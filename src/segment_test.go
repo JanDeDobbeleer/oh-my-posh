@@ -5,6 +5,7 @@ import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
+	"oh-my-posh/segments"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -198,7 +199,7 @@ func TestGetColors(t *testing.T) {
 			Env: make(map[string]string),
 		})
 		segment := &Segment{
-			writer: &Aws{
+			writer: &segments.Aws{
 				Profile: tc.Profile,
 				Region:  tc.Region,
 			},

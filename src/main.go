@@ -7,6 +7,7 @@ import (
 	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"oh-my-posh/regex"
+	"oh-my-posh/template"
 	"os"
 	"strings"
 	"time"
@@ -311,12 +312,12 @@ func getConsoleBackgroundColor(env environment.Environment, backgroundColorTempl
 	if len(backgroundColorTemplate) == 0 {
 		return backgroundColorTemplate
 	}
-	template := &textTemplate{
+	tmpl := &template.Text{
 		Template: backgroundColorTemplate,
 		Context:  nil,
 		Env:      env,
 	}
-	text, err := template.render()
+	text, err := tmpl.Render()
 	if err != nil {
 		return err.Error()
 	}

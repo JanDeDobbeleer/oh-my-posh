@@ -107,11 +107,11 @@ const (
 	BRANCHPREFIX = "ref: refs/heads/"
 )
 
-func (g *Git) template() string {
+func (g *Git) Template() string {
 	return "{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}" // nolint: lll
 }
 
-func (g *Git) enabled() bool {
+func (g *Git) Enabled() bool {
 	if !g.shouldDisplay() {
 		return false
 	}

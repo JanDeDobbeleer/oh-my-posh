@@ -24,11 +24,11 @@ type VersionInfo struct {
 	SimpleVersion                string `json:"SimpleVersion"`
 }
 
-func (n *Nbgv) template() string {
+func (n *Nbgv) Template() string {
 	return "{{ .Version }}"
 }
 
-func (n *Nbgv) enabled() bool {
+func (n *Nbgv) Enabled() bool {
 	nbgv := "nbgv"
 	if !n.env.HasCommand(nbgv) {
 		return false
@@ -45,7 +45,7 @@ func (n *Nbgv) enabled() bool {
 	return n.VersionInfo.VersionFileFound
 }
 
-func (n *Nbgv) init(props properties.Properties, env environment.Environment) {
+func (n *Nbgv) Init(props properties.Properties, env environment.Environment) {
 	n.props = props
 	n.env = env
 }

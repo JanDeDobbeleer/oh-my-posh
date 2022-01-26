@@ -37,16 +37,16 @@ type Plastic struct {
 	plasticWorkspaceFolder string // root folder of workspace
 }
 
-func (p *Plastic) init(props properties.Properties, env environment.Environment) {
+func (p *Plastic) Init(props properties.Properties, env environment.Environment) {
 	p.props = props
 	p.env = env
 }
 
-func (p *Plastic) template() string {
+func (p *Plastic) Template() string {
 	return "{{ .Selector }}"
 }
 
-func (p *Plastic) enabled() bool {
+func (p *Plastic) Enabled() bool {
 	if !p.env.HasCommand("cm") {
 		return false
 	}

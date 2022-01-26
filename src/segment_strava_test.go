@@ -184,14 +184,14 @@ func TestStravaSegment(t *testing.T) {
 			continue
 		}
 
-		enabled := ns.enabled()
+		enabled := ns.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		if !enabled {
 			continue
 		}
 
 		if tc.Template == "" {
-			tc.Template = ns.template()
+			tc.Template = ns.Template()
 		}
 		var got = renderTemplate(env, tc.Template, ns)
 

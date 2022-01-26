@@ -7,63 +7,51 @@ sidebar_label: Add Segment
 ## Create the logic
 
 Add a new file following this convention: `new_segment.go`.
-Ensure `new` is a single verb indicating the context the segment renders.
+Ensure `New` is a single verb indicating the context the segment renders.
 
 You can use the following template as a guide.
 
 ```go
 package main
 
-type new struct {
-    props          Properties
-    env            Environment
+import (
+  "oh-my-posh/environment"
+  "oh-my-posh/properties"
+)
+
+type New struct {
+    props   properties.Properties
+    env     environment.Environment
 
     Text string
 }
 
 const (
     //NewProp enables something
-    NewProp Property = "newprop"
+    NewProp properties.Property = "newprop"
 )
 
-func (n *new) enabled() bool {
+func (n *new) Enabled() bool {
     true
 }
 
-func (n *new) string() string {
-    useDefaultText := n.props.getBool(NewProp, true)
-    if useDefaultText {
-      n.Text = "Hello"
-    }
-    segmentTemplate := n.props.getString(SegmentTemplate, "{{.Text}} world")
-    template := &textTemplate{
-      Template: segmentTemplate,
-      Context:  n,
-      Env:      n.env,
-    }
-    text, err := template.render()
-    if err != nil {
-      return err.Error()
-    }
-    return text
+func (n *new) Template() string {
+    return "{{.Text}} world"
 }
 
-func (n *new) init(props Properties, env Environment) {
+func (n *new) Init(props properties.Properties, env environment.Environment) {
     n.props = props
     n.env = env
 }
 ```
 
-When it comes to icon properties, make sure to use the UTF32 representation (e.g. "\uEFF1") rather than the icon itself.
+When it comes to icon Properties, make sure to use the UTF32 representation (e.g. "\uEFF1") rather than the icon itself.
 This will facilitate the review process as not all environments display the icons based on the font being used.
 You can find these values and query for icons easily at [Nerd Fonts][nf-icons].
 
 For each segment, there's a single test file ensuring the functionality going forward. The convention
 is `new_segment_test.go`, have a look at [existing segment tests][tests] for inspiration. Oh My Posh makes
 use of the test tables pattern for all newly added tests. See [this][tables] blog post for more information.
-
-The use of a `SegmentTemplate` is required. We're currently in the process of refactoring all segments to use
-a template. As soon as this work is done, the templating logic will move outside of the segment's logic.
 
 ## Create a name for your Segment
 
@@ -73,8 +61,8 @@ a template. As soon as this work is done, the templating logic will move outside
 Add your segment.
 
 ```go
-//New is brand new
-New SegmentType = "new"
+// NEW is brand new
+NEW SegmentType = "new"
 ```
 
 ## Add the SegmentType mapping
@@ -82,7 +70,7 @@ New SegmentType = "new"
 Map your `SegmentType` to your Segment in the `mapSegmentWithWriter` function.
 
 ```go
-New: &new{},
+NEW: &New{},
 ```
 
 ## Test your functionality

@@ -100,11 +100,11 @@ type Batch struct {
 	TemperatureTrend float64 // diff between this and last, short term trend
 }
 
-func (bf *Brewfather) template() string {
+func (bf *Brewfather) Template() string {
 	return DefaultTemplate
 }
 
-func (bf *Brewfather) enabled() bool {
+func (bf *Brewfather) Enabled() bool {
 	data, err := bf.getResult()
 	if err != nil {
 		return false
@@ -326,7 +326,7 @@ func (bf *Brewfather) SGToPlato(sg float64) float64 {
 	return math.Round(100*((135.997*sg*sg*sg)-(630.272*sg*sg)+(1111.14*sg)-616.868)) / 100 // 2 decimal places
 }
 
-func (bf *Brewfather) init(props properties.Properties, env environment.Environment) {
+func (bf *Brewfather) Init(props properties.Properties, env environment.Environment) {
 	bf.props = props
 	bf.env = env
 }

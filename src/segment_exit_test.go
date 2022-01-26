@@ -26,7 +26,7 @@ func TestExitWriterEnabled(t *testing.T) {
 			env:   env,
 			props: properties.Map{},
 		}
-		assert.Equal(t, tc.Expected, e.enabled())
+		assert.Equal(t, tc.Expected, e.Enabled())
 	}
 }
 

@@ -24,8 +24,8 @@ func TestRust(t *testing.T) {
 		}
 		env, props := getMockedLanguageEnv(params)
 		r := &Rust{}
-		r.init(props, env)
-		assert.True(t, r.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
-		assert.Equal(t, tc.ExpectedString, renderTemplate(env, r.template(), r), fmt.Sprintf("Failed in case: %s", tc.Case))
+		r.Init(props, env)
+		assert.True(t, r.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, r.Template(), r), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}
 }

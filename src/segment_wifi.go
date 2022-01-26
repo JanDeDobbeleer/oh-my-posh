@@ -18,11 +18,11 @@ const (
 	defaultTemplate = "{{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }}"
 )
 
-func (w *Wifi) template() string {
+func (w *Wifi) Template() string {
 	return defaultTemplate
 }
 
-func (w *Wifi) enabled() bool {
+func (w *Wifi) Enabled() bool {
 	// This segment only supports Windows/WSL for now
 	if w.env.Platform() != environment.WindowsPlatform && !w.env.IsWsl() {
 		return false
@@ -40,7 +40,7 @@ func (w *Wifi) enabled() bool {
 	return true
 }
 
-func (w *Wifi) init(props properties.Properties, env environment.Environment) {
+func (w *Wifi) Init(props properties.Properties, env environment.Environment) {
 	w.props = props
 	w.env = env
 }

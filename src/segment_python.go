@@ -16,11 +16,11 @@ const (
 	FetchVirtualEnv properties.Property = "fetch_virtual_env"
 )
 
-func (p *Python) template() string {
+func (p *Python) Template() string {
 	return languageTemplate
 }
 
-func (p *Python) init(props properties.Properties, env environment.Environment) {
+func (p *Python) Init(props properties.Properties, env environment.Environment) {
 	p.language = language{
 		env:         env,
 		props:       props,
@@ -45,8 +45,8 @@ func (p *Python) init(props properties.Properties, env environment.Environment) 
 	}
 }
 
-func (p *Python) enabled() bool {
-	return p.language.enabled()
+func (p *Python) Enabled() bool {
+	return p.language.Enabled()
 }
 
 func (p *Python) loadContext() {

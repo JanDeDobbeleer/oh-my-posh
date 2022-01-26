@@ -19,16 +19,16 @@ const (
 	defaultUser = "default"
 )
 
-func (a *Aws) template() string {
+func (a *Aws) Template() string {
 	return "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}"
 }
 
-func (a *Aws) init(props properties.Properties, env environment.Environment) {
+func (a *Aws) Init(props properties.Properties, env environment.Environment) {
 	a.props = props
 	a.env = env
 }
 
-func (a *Aws) enabled() bool {
+func (a *Aws) Enabled() bool {
 	getEnvFirstMatch := func(envs ...string) string {
 		for _, env := range envs {
 			value := a.env.Getenv(env)

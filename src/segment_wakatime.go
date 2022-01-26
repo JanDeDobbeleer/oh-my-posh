@@ -24,11 +24,11 @@ type wtData struct {
 	End              string   `json:"end"`
 }
 
-func (w *Wakatime) template() string {
+func (w *Wakatime) Template() string {
 	return "{{ secondsRound .CummulativeTotal.Seconds }}"
 }
 
-func (w *Wakatime) enabled() bool {
+func (w *Wakatime) Enabled() bool {
 	err := w.setAPIData()
 	return err == nil
 }
@@ -64,7 +64,7 @@ func (w *Wakatime) setAPIData() error {
 	return nil
 }
 
-func (w *Wakatime) init(props properties.Properties, env environment.Environment) {
+func (w *Wakatime) Init(props properties.Properties, env environment.Environment) {
 	w.props = props
 	w.env = env
 }

@@ -47,11 +47,11 @@ type NightscoutData struct {
 	Mills      int64     `json:"mills"`
 }
 
-func (ns *Nightscout) template() string {
+func (ns *Nightscout) Template() string {
 	return "{{ .Sgv }}"
 }
 
-func (ns *Nightscout) enabled() bool {
+func (ns *Nightscout) Enabled() bool {
 	data, err := ns.getResult()
 	if err != nil {
 		return false
@@ -139,7 +139,7 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 	return data, nil
 }
 
-func (ns *Nightscout) init(props properties.Properties, env environment.Environment) {
+func (ns *Nightscout) Init(props properties.Properties, env environment.Environment) {
 	ns.props = props
 	ns.env = env
 }

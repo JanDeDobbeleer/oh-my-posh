@@ -15,11 +15,11 @@ const (
 	IpifyURL properties.Property = "url"
 )
 
-func (i *IPify) template() string {
+func (i *IPify) Template() string {
 	return "{{ .IP }}"
 }
 
-func (i *IPify) enabled() bool {
+func (i *IPify) Enabled() bool {
 	ip, err := i.getResult()
 	if err != nil {
 		return false
@@ -60,7 +60,7 @@ func (i *IPify) getResult() (string, error) {
 	return response, nil
 }
 
-func (i *IPify) init(props properties.Properties, env environment.Environment) {
+func (i *IPify) Init(props properties.Properties, env environment.Environment) {
 	i.props = props
 	i.env = env
 }

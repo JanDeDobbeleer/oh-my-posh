@@ -12,15 +12,15 @@ type Text struct {
 	Text string
 }
 
-func (t *Text) template() string {
+func (t *Text) Template() string {
 	return "{{ .Text }}"
 }
 
-func (t *Text) enabled() bool {
+func (t *Text) Enabled() bool {
 	return true
 }
 
-func (t *Text) init(props properties.Properties, env environment.Environment) {
+func (t *Text) Init(props properties.Properties, env environment.Environment) {
 	t.props = props
 	t.env = env
 }

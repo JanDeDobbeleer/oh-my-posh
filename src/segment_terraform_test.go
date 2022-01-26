@@ -33,7 +33,7 @@ func TestTerraformWriterDisabled(t *testing.T) {
 		hasTfFolder:  false,
 	}
 	terraform := bootStrapTerraformTest(args)
-	assert.False(t, terraform.enabled())
+	assert.False(t, terraform.Enabled())
 }
 
 func TestTerraformMissingDir(t *testing.T) {
@@ -42,7 +42,7 @@ func TestTerraformMissingDir(t *testing.T) {
 		hasTfFolder:  false,
 	}
 	terraform := bootStrapTerraformTest(args)
-	assert.False(t, terraform.enabled())
+	assert.False(t, terraform.Enabled())
 }
 
 func TestTerraformMissingBinary(t *testing.T) {
@@ -51,7 +51,7 @@ func TestTerraformMissingBinary(t *testing.T) {
 		hasTfFolder:  true,
 	}
 	terraform := bootStrapTerraformTest(args)
-	assert.False(t, terraform.enabled())
+	assert.False(t, terraform.Enabled())
 }
 
 func TestTerraformEnabled(t *testing.T) {
@@ -62,5 +62,5 @@ func TestTerraformEnabled(t *testing.T) {
 		workspaceName: expected,
 	}
 	terraform := bootStrapTerraformTest(args)
-	assert.True(t, terraform.enabled())
+	assert.True(t, terraform.Enabled())
 }

@@ -9,11 +9,11 @@ type Php struct {
 	language
 }
 
-func (p *Php) template() string {
+func (p *Php) Template() string {
 	return languageTemplate
 }
 
-func (p *Php) init(props properties.Properties, env environment.Environment) {
+func (p *Php) Init(props properties.Properties, env environment.Environment) {
 	p.language = language{
 		env:        env,
 		props:      props,
@@ -29,6 +29,6 @@ func (p *Php) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (p *Php) enabled() bool {
-	return p.language.enabled()
+func (p *Php) Enabled() bool {
+	return p.language.Enabled()
 }

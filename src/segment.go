@@ -41,9 +41,9 @@ type SegmentTiming struct {
 
 // SegmentWriter is the interface used to define what and if to write to the prompt
 type SegmentWriter interface {
-	enabled() bool
-	template() string
-	init(props properties.Properties, env environment.Environment)
+	Enabled() bool
+	Template() string
+	Init(props properties.Properties, env environment.Environment)
 }
 
 // SegmentStyle the syle of segment, for more information, see the constants
@@ -149,7 +149,7 @@ const (
 
 func (segment *Segment) string() string {
 	template := &textTemplate{
-		Template: segment.writer.template(),
+		Template: segment.writer.Template(),
 		Context:  segment.writer,
 		Env:      segment.env,
 	}
@@ -161,7 +161,7 @@ func (segment *Segment) string() string {
 }
 
 func (segment *Segment) enabled() bool {
-	segment.active = segment.writer.enabled()
+	segment.active = segment.writer.Enabled()
 	return segment.active
 }
 
@@ -291,7 +291,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		segment.Properties = make(properties.Map)
 	}
 	if writer, ok := functions[segment.Type]; ok {
-		writer.init(segment.Properties, env)
+		writer.Init(segment.Properties, env)
 		segment.writer = writer
 		return nil
 	}

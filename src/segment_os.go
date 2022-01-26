@@ -61,11 +61,11 @@ const (
 	DisplayDistroName properties.Property = "display_distro_name"
 )
 
-func (oi *Os) template() string {
+func (oi *Os) Template() string {
 	return "{{ if .WSL }}WSL at {{ end }}{{.Icon}}"
 }
 
-func (oi *Os) enabled() bool {
+func (oi *Os) Enabled() bool {
 	goos := oi.env.GOOS()
 	switch goos {
 	case environment.WindowsPlatform:
@@ -130,7 +130,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 	return oi.props.GetString(Linux, "\uF17C")
 }
 
-func (oi *Os) init(props properties.Properties, env environment.Environment) {
+func (oi *Os) Init(props properties.Properties, env environment.Environment) {
 	oi.props = props
 	oi.env = env
 }

@@ -27,9 +27,9 @@ func TestPoshGitSegment(t *testing.T) {
 			env:   env,
 			props: &properties.Map{},
 		}
-		assert.Equal(t, tc.Enabled, p.enabled(), tc.Case)
+		assert.Equal(t, tc.Enabled, p.Enabled(), tc.Case)
 		if tc.Enabled {
-			assert.Equal(t, tc.Expected, renderTemplate(env, p.template(), p), tc.Case)
+			assert.Equal(t, tc.Expected, renderTemplate(env, p.Template(), p), tc.Case)
 		}
 	}
 }

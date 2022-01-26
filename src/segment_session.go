@@ -16,16 +16,16 @@ type Session struct {
 	DefaultUserName string
 }
 
-func (s *Session) enabled() bool {
+func (s *Session) Enabled() bool {
 	s.SSHSession = s.activeSSHSession()
 	return true
 }
 
-func (s *Session) template() string {
+func (s *Session) Template() string {
 	return "{{ .UserName }}@{{ .HostName }}"
 }
 
-func (s *Session) init(props properties.Properties, env environment.Environment) {
+func (s *Session) Init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

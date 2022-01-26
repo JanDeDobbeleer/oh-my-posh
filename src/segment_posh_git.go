@@ -17,17 +17,17 @@ const (
 	poshGitEnv = "POSH_GIT_STATUS"
 )
 
-func (p *PoshGit) template() string {
+func (p *PoshGit) Template() string {
 	return "{{ .Status }}"
 }
 
-func (p *PoshGit) enabled() bool {
+func (p *PoshGit) Enabled() bool {
 	status := p.env.Getenv(poshGitEnv)
 	p.Status = strings.TrimSpace(status)
 	return p.Status != ""
 }
 
-func (p *PoshGit) init(props properties.Properties, env environment.Environment) {
+func (p *PoshGit) Init(props properties.Properties, env environment.Environment) {
 	p.props = props
 	p.env = env
 }

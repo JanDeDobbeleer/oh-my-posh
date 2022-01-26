@@ -56,7 +56,7 @@ func TestSysInfo(t *testing.T) {
 		tc.SysInfo.props = properties.Map{
 			Precision: tc.Precision,
 		}
-		enabled := tc.SysInfo.enabled()
+		enabled := tc.SysInfo.Enabled()
 		if tc.ExpectDisabled {
 			assert.Equal(t, false, enabled, tc.Case)
 		} else {

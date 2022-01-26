@@ -64,9 +64,9 @@ func TestAWSSegment(t *testing.T) {
 			props: props,
 		}
 		if tc.Template == "" {
-			tc.Template = aws.template()
+			tc.Template = aws.Template()
 		}
-		assert.Equal(t, tc.ExpectedEnabled, aws.enabled(), tc.Case)
+		assert.Equal(t, tc.ExpectedEnabled, aws.Enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, aws), tc.Case)
 	}
 }

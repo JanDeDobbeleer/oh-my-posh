@@ -55,14 +55,14 @@ func TestIpifySegment(t *testing.T) {
 			env:   env,
 		}
 
-		enabled := ipify.enabled()
+		enabled := ipify.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		if !enabled {
 			continue
 		}
 
 		if tc.Template == "" {
-			tc.Template = ipify.template()
+			tc.Template = ipify.Template()
 		}
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, ipify), tc.Case)
 	}

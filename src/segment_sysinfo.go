@@ -35,18 +35,18 @@ const (
 	Precision properties.Property = "precision"
 )
 
-func (s *SystemInfo) template() string {
+func (s *SystemInfo) Template() string {
 	return "{{ round .PhysicalPercentUsed .Precision }}"
 }
 
-func (s *SystemInfo) enabled() bool {
+func (s *SystemInfo) Enabled() bool {
 	if s.PhysicalPercentUsed == 0 && s.SwapPercentUsed == 0 {
 		return false
 	}
 	return true
 }
 
-func (s *SystemInfo) init(props properties.Properties, env environment.Environment) {
+func (s *SystemInfo) Init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 	s.Precision = s.props.GetInt(Precision, 2)

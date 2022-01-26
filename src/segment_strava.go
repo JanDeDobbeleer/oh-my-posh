@@ -70,11 +70,11 @@ func (a *AuthError) Error() string {
 	return a.message
 }
 
-func (s *Strava) template() string {
+func (s *Strava) Template() string {
 	return "{{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }}"
 }
 
-func (s *Strava) enabled() bool {
+func (s *Strava) Enabled() bool {
 	data, err := s.getResult()
 	if err == nil {
 		s.StravaData = *data
@@ -231,7 +231,7 @@ func (s *Strava) getResult() (*StravaData, error) {
 	return data, nil
 }
 
-func (s *Strava) init(props properties.Properties, env environment.Environment) {
+func (s *Strava) Init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

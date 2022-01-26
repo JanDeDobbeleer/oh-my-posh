@@ -48,7 +48,7 @@ const (
 	hoursPerDay      = 24
 )
 
-func (t *Executiontime) enabled() bool {
+func (t *Executiontime) Enabled() bool {
 	alwaysEnabled := t.props.GetBool(properties.AlwaysEnabled, false)
 	executionTimeMs := t.env.ExecutionTime()
 	thresholdMs := t.props.GetFloat64(ThresholdProperty, float64(500))
@@ -61,11 +61,11 @@ func (t *Executiontime) enabled() bool {
 	return t.FormattedMs != ""
 }
 
-func (t *Executiontime) template() string {
+func (t *Executiontime) Template() string {
 	return "{{ .FormattedMs }}"
 }
 
-func (t *Executiontime) init(props properties.Properties, env environment.Environment) {
+func (t *Executiontime) Init(props properties.Properties, env environment.Environment) {
 	t.props = props
 	t.env = env
 }

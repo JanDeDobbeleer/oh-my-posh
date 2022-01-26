@@ -259,7 +259,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 				MaxDepth:            tc.MaxDepth,
 			},
 		}
-		_ = path.enabled()
+		_ = path.Enabled()
 		got := renderTemplate(env, "{{ .Path }}", path)
 		assert.Equal(t, tc.Expected, got)
 	}
@@ -388,7 +388,7 @@ func TestGetFullPath(t *testing.T) {
 			env:   env,
 			props: props,
 		}
-		_ = path.enabled()
+		_ = path.Enabled()
 		got := renderTemplate(env, tc.Template, path)
 		assert.Equal(t, tc.Expected, got)
 	}

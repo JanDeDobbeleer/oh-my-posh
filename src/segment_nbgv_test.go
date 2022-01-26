@@ -66,10 +66,10 @@ func TestNbgv(t *testing.T) {
 			env:   env,
 			props: properties.Map{},
 		}
-		enabled := nbgv.enabled()
+		enabled := nbgv.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
 		if tc.Template == "" {
-			tc.Template = nbgv.template()
+			tc.Template = nbgv.Template()
 		}
 		if enabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, nbgv), tc.Case)

@@ -2,7 +2,7 @@
 
 package main
 
-func (s *Spotify) enabled() bool {
+func (s *Spotify) Enabled() bool {
 	var err error
 	// Check if running
 	running := s.runAppleScriptCommand("application \"Spotify\" is running")

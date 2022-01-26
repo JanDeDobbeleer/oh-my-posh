@@ -19,9 +19,9 @@ func TestExecuteCommand(t *testing.T) {
 		props: props,
 		env:   env,
 	}
-	enabled := c.enabled()
+	enabled := c.Enabled()
 	assert.True(t, enabled)
-	assert.Equal(t, "hello", renderTemplate(env, c.template(), c))
+	assert.Equal(t, "hello", renderTemplate(env, c.Template(), c))
 }
 
 func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
@@ -37,9 +37,9 @@ func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
 		props: props,
 		env:   env,
 	}
-	enabled := c.enabled()
+	enabled := c.Enabled()
 	assert.True(t, enabled)
-	assert.Equal(t, "hello", renderTemplate(env, c.template(), c))
+	assert.Equal(t, "hello", renderTemplate(env, c.Template(), c))
 }
 
 func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
@@ -54,9 +54,9 @@ func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
 		props: props,
 		env:   env,
 	}
-	enabled := c.enabled()
+	enabled := c.Enabled()
 	assert.True(t, enabled)
-	assert.Equal(t, "hello", renderTemplate(env, c.template(), c))
+	assert.Equal(t, "hello", renderTemplate(env, c.Template(), c))
 }
 
 func TestExecuteMultipleCommandsAnd(t *testing.T) {
@@ -71,9 +71,9 @@ func TestExecuteMultipleCommandsAnd(t *testing.T) {
 		props: props,
 		env:   env,
 	}
-	enabled := c.enabled()
+	enabled := c.Enabled()
 	assert.True(t, enabled)
-	assert.Equal(t, "helloworld", renderTemplate(env, c.template(), c))
+	assert.Equal(t, "helloworld", renderTemplate(env, c.Template(), c))
 }
 
 func TestExecuteSingleCommandEmpty(t *testing.T) {
@@ -87,7 +87,7 @@ func TestExecuteSingleCommandEmpty(t *testing.T) {
 		props: props,
 		env:   env,
 	}
-	enabled := c.enabled()
+	enabled := c.Enabled()
 	assert.False(t, enabled)
 }
 
@@ -100,7 +100,7 @@ func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
 		props: props,
 		env:   env,
 	}
-	enabled := c.enabled()
+	enabled := c.Enabled()
 	assert.True(t, enabled)
 	assert.Equal(t, "no command specified", c.Output)
 }
@@ -116,7 +116,7 @@ func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
 		props: props,
 		env:   env,
 	}
-	enabled := c.enabled()
+	enabled := c.Enabled()
 	assert.False(t, enabled)
 }
 
@@ -132,6 +132,6 @@ func TestExecuteMultipleCommandsOrDisabled(t *testing.T) {
 		props: props,
 		env:   env,
 	}
-	enabled := c.enabled()
+	enabled := c.Enabled()
 	assert.False(t, enabled)
 }

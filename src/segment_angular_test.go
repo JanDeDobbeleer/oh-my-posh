@@ -37,8 +37,8 @@ func TestAngularCliVersionDisplayed(t *testing.T) {
 		})
 		props := properties.Map{}
 		angular := &Angular{}
-		angular.init(props, env)
-		assert.True(t, angular.enabled(), fmt.Sprintf("Failed in case: %s", ta.Case))
-		assert.Equal(t, ta.FullVersion, renderTemplate(env, angular.template(), angular), fmt.Sprintf("Failed in case: %s", ta.Case))
+		angular.Init(props, env)
+		assert.True(t, angular.Enabled(), fmt.Sprintf("Failed in case: %s", ta.Case))
+		assert.Equal(t, ta.FullVersion, renderTemplate(env, angular.Template(), angular), fmt.Sprintf("Failed in case: %s", ta.Case))
 	}
 }

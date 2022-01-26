@@ -34,16 +34,16 @@ type KubeContext struct {
 	Namespace string `yaml:"namespace"`
 }
 
-func (k *Kubectl) template() string {
+func (k *Kubectl) Template() string {
 	return "{{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }}"
 }
 
-func (k *Kubectl) init(props properties.Properties, env environment.Environment) {
+func (k *Kubectl) Init(props properties.Properties, env environment.Environment) {
 	k.props = props
 	k.env = env
 }
 
-func (k *Kubectl) enabled() bool {
+func (k *Kubectl) Enabled() bool {
 	parseKubeConfig := k.props.GetBool(ParseKubeConfig, false)
 	if parseKubeConfig {
 		return k.doParseKubeConfig()

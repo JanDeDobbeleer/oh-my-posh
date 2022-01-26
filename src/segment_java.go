@@ -10,11 +10,11 @@ type Java struct {
 	language
 }
 
-func (j *Java) template() string {
+func (j *Java) Template() string {
 	return languageTemplate
 }
 
-func (j *Java) init(props properties.Properties, env environment.Environment) {
+func (j *Java) Init(props properties.Properties, env environment.Environment) {
 	javaRegex := `(?: JRE)(?: \(.*\))? \((?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))?(?:\.(?P<patch>[0-9]+))?).*\),`
 	javaCmd := &cmd{
 		executable: "java",
@@ -56,6 +56,6 @@ func (j *Java) init(props properties.Properties, env environment.Environment) {
 	j.language.commands = []*cmd{javaCmd}
 }
 
-func (j *Java) enabled() bool {
-	return j.language.enabled()
+func (j *Java) Enabled() bool {
+	return j.language.Enabled()
 }

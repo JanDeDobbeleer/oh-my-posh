@@ -56,11 +56,11 @@ const (
 	MaxDepth properties.Property = "max_depth"
 )
 
-func (pt *Path) template() string {
+func (pt *Path) Template() string {
 	return "{{ .Path }}"
 }
 
-func (pt *Path) enabled() bool {
+func (pt *Path) Enabled() bool {
 	pt.pwd = pt.env.Pwd()
 	switch style := pt.props.GetString(properties.Style, Agnoster); style {
 	case Agnoster:
@@ -103,7 +103,7 @@ func (pt *Path) formatWindowsDrive(pwd string) string {
 	return pwd + "\\"
 }
 
-func (pt *Path) init(props properties.Properties, env environment.Environment) {
+func (pt *Path) Init(props properties.Properties, env environment.Environment) {
 	pt.props = props
 	pt.env = env
 }

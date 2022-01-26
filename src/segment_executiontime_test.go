@@ -16,7 +16,7 @@ func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
 		env:   env,
 		props: properties.Map{},
 	}
-	assert.True(t, executionTime.enabled())
+	assert.True(t, executionTime.Enabled())
 }
 
 func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
@@ -26,7 +26,7 @@ func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 		env:   env,
 		props: properties.Map{},
 	}
-	assert.False(t, executionTime.enabled())
+	assert.False(t, executionTime.Enabled())
 }
 
 func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
@@ -39,7 +39,7 @@ func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 		env:   env,
 		props: props,
 	}
-	assert.True(t, executionTime.enabled())
+	assert.True(t, executionTime.Enabled())
 }
 
 func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
@@ -52,7 +52,7 @@ func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
 		env:   env,
 		props: props,
 	}
-	assert.False(t, executionTime.enabled())
+	assert.False(t, executionTime.Enabled())
 }
 
 func TestExecutionTimeWriterDuration(t *testing.T) {
@@ -64,7 +64,7 @@ func TestExecutionTimeWriterDuration(t *testing.T) {
 		env:   env,
 		props: properties.Map{},
 	}
-	executionTime.enabled()
+	executionTime.Enabled()
 	assert.Equal(t, expected, executionTime.FormattedMs)
 }
 
@@ -77,7 +77,7 @@ func TestExecutionTimeWriterDuration2(t *testing.T) {
 		env:   env,
 		props: properties.Map{},
 	}
-	executionTime.enabled()
+	executionTime.Enabled()
 	assert.Equal(t, expected, executionTime.FormattedMs)
 }
 

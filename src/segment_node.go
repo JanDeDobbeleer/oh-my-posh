@@ -22,11 +22,11 @@ const (
 	FetchPackageManager properties.Property = "fetch_package_manager"
 )
 
-func (n *Node) template() string {
+func (n *Node) Template() string {
 	return "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
 }
 
-func (n *Node) init(props properties.Properties, env environment.Environment) {
+func (n *Node) Init(props properties.Properties, env environment.Environment) {
 	n.language = language{
 		env:        env,
 		props:      props,
@@ -44,8 +44,8 @@ func (n *Node) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (n *Node) enabled() bool {
-	return n.language.enabled()
+func (n *Node) Enabled() bool {
+	return n.language.Enabled()
 }
 
 func (n *Node) loadContext() {

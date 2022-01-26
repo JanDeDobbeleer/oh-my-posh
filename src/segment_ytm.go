@@ -18,18 +18,18 @@ const (
 	APIURL properties.Property = "api_url"
 )
 
-func (y *Ytm) template() string {
+func (y *Ytm) Template() string {
 	return "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}"
 }
 
-func (y *Ytm) enabled() bool {
+func (y *Ytm) Enabled() bool {
 	err := y.setStatus()
 	// If we don't get a response back (error), the user isn't running
 	// YTMDA, or they don't have the RC API enabled.
 	return err == nil
 }
 
-func (y *Ytm) init(props properties.Properties, env environment.Environment) {
+func (y *Ytm) Init(props properties.Properties, env environment.Environment) {
 	y.props = props
 	y.env = env
 }

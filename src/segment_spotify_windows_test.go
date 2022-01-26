@@ -16,10 +16,10 @@ type spotifyArgs struct {
 	runError error
 }
 
-func bootStrapSpotifyWindowsTest(args *spotifyArgs) *spotify {
+func bootStrapSpotifyWindowsTest(args *spotifyArgs) *Spotify {
 	env := new(mock.MockedEnvironment)
 	env.On("WindowTitle", "spotify.exe").Return(args.title, args.runError)
-	s := &spotify{
+	s := &Spotify{
 		env:   env,
 		props: properties.Map{},
 	}
@@ -31,7 +31,7 @@ func TestSpotifyWindowsEnabledAndSpotifyNotRunning(t *testing.T) {
 		runError: errors.New(""),
 	}
 	s := bootStrapSpotifyWindowsTest(args)
-	assert.Equal(t, false, s.enabled())
+	assert.Equal(t, false, s.Enabled())
 }
 
 func TestSpotifyWindowsEnabledAndSpotifyPlaying(t *testing.T) {
@@ -40,12 +40,12 @@ func TestSpotifyWindowsEnabledAndSpotifyPlaying(t *testing.T) {
 	}
 	env := new(mock.MockedEnvironment)
 	env.On("WindowTitle", "spotify.exe").Return(args.title, args.runError)
-	s := &spotify{
+	s := &Spotify{
 		env:   env,
 		props: properties.Map{},
 	}
-	assert.Equal(t, true, s.enabled())
-	assert.Equal(t, "\ue602 Candlemass - Spellbreaker", renderTemplate(env, s.template(), s))
+	assert.Equal(t, true, s.Enabled())
+	assert.Equal(t, "\ue602 Candlemass - Spellbreaker", renderTemplate(env, s.Template(), s))
 }
 
 func TestSpotifyWindowsEnabledAndSpotifyStopped(t *testing.T) {
@@ -53,5 +53,5 @@ func TestSpotifyWindowsEnabledAndSpotifyStopped(t *testing.T) {
 		title: "Spotify premium",
 	}
 	s := bootStrapSpotifyWindowsTest(args)
-	assert.Equal(t, false, s.enabled())
+	assert.Equal(t, false, s.Enabled())
 }

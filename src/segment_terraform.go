@@ -12,16 +12,16 @@ type Terraform struct {
 	WorkspaceName string
 }
 
-func (tf *Terraform) template() string {
+func (tf *Terraform) Template() string {
 	return "{{ .WorkspaceName }}"
 }
 
-func (tf *Terraform) init(props properties.Properties, env environment.Environment) {
+func (tf *Terraform) Init(props properties.Properties, env environment.Environment) {
 	tf.props = props
 	tf.env = env
 }
 
-func (tf *Terraform) enabled() bool {
+func (tf *Terraform) Enabled() bool {
 	cmd := "terraform"
 	if !tf.env.HasCommand(cmd) || !tf.env.HasFolder(tf.env.Pwd()+"/.terraform") {
 		return false

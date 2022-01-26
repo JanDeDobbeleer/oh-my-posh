@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func (s *spotify) enabled() bool {
+func (s *Spotify) Enabled() bool {
 	// search for spotify window to retrieve the title
 	// Can be either "Spotify xxx" or the song name "Candlemass - Spellbreaker"
 	spotifyWindowTitle, err := s.env.WindowTitle("spotify.exe", "^(Spotify.*)|(.*\\s-\\s.*)$")

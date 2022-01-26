@@ -35,7 +35,7 @@ func TestSpotifyDarwinEnabledAndSpotifyPlaying(t *testing.T) {
 			env:   env,
 			props: properties.Map{},
 		}
-		assert.Equal(t, tc.Running == "true", s.enabled())
-		assert.Equal(t, tc.Expected, renderTemplate(env, s.template(), s))
+		assert.Equal(t, tc.Running == "true", s.Enabled())
+		assert.Equal(t, tc.Expected, renderTemplate(env, s.Template(), s))
 	}
 }

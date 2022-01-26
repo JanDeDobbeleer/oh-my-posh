@@ -20,7 +20,7 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 			props: properties.Map{},
 		},
 	}
-	assert.False(t, p.enabled())
+	assert.False(t, p.Enabled())
 }
 
 func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
@@ -41,7 +41,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 			props: properties.Map{},
 		},
 	}
-	assert.True(t, p.enabled())
+	assert.True(t, p.Enabled())
 	assert.Equal(t, fileInfo.ParentFolder, p.plasticWorkspaceFolder)
 }
 

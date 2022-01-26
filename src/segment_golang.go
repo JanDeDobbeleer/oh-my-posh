@@ -15,11 +15,11 @@ const (
 	ParseModFile properties.Property = "parse_mod_file"
 )
 
-func (g *Golang) template() string {
+func (g *Golang) Template() string {
 	return languageTemplate
 }
 
-func (g *Golang) init(props properties.Properties, env environment.Environment) {
+func (g *Golang) Init(props properties.Properties, env environment.Environment) {
 	g.language = language{
 		env:        env,
 		props:      props,
@@ -55,6 +55,6 @@ func (g *Golang) getVersion() (string, error) {
 	return file.Go.Version, nil
 }
 
-func (g *Golang) enabled() bool {
-	return g.language.enabled()
+func (g *Golang) Enabled() bool {
+	return g.language.Enabled()
 }

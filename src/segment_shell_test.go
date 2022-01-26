@@ -16,8 +16,8 @@ func TestWriteCurrentShell(t *testing.T) {
 		env:   env,
 		props: properties.Map{},
 	}
-	_ = s.enabled()
-	assert.Equal(t, expected, renderTemplate(env, s.template(), s))
+	_ = s.Enabled()
+	assert.Equal(t, expected, renderTemplate(env, s.Template(), s))
 }
 
 func TestUseMappedShellNames(t *testing.T) {
@@ -38,8 +38,8 @@ func TestUseMappedShellNames(t *testing.T) {
 				MappedShellNames: map[string]string{"pwsh": "PS"},
 			},
 		}
-		_ = s.enabled()
-		got := renderTemplate(env, s.template(), s)
+		_ = s.Enabled()
+		got := renderTemplate(env, s.Template(), s)
 		assert.Equal(t, tc.Expected, got)
 	}
 }

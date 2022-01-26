@@ -32,7 +32,7 @@ const (
 	paused  = "paused"
 )
 
-func (s *Spotify) template() string {
+func (s *Spotify) Template() string {
 	return "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}"
 }
 
@@ -48,7 +48,7 @@ func (s *Spotify) resolveIcon() {
 	}
 }
 
-func (s *Spotify) init(props properties.Properties, env environment.Environment) {
+func (s *Spotify) Init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

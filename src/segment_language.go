@@ -90,7 +90,7 @@ const (
 	LanguageExtensions properties.Property = "extensions"
 )
 
-func (l *language) enabled() bool {
+func (l *language) Enabled() bool {
 	// override default extensions if needed
 	l.extensions = l.props.GetStringArray(LanguageExtensions, l.extensions)
 	inHomeDir := func() bool {

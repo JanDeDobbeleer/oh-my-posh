@@ -9,11 +9,11 @@ type Dart struct {
 	language
 }
 
-func (d *Dart) template() string {
+func (d *Dart) Template() string {
 	return languageTemplate
 }
 
-func (d *Dart) init(props properties.Properties, env environment.Environment) {
+func (d *Dart) Init(props properties.Properties, env environment.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,
@@ -29,6 +29,6 @@ func (d *Dart) init(props properties.Properties, env environment.Environment) {
 	}
 }
 
-func (d *Dart) enabled() bool {
-	return d.language.enabled()
+func (d *Dart) Enabled() bool {
+	return d.language.Enabled()
 }

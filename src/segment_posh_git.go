@@ -2,11 +2,12 @@ package main
 
 import (
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"strings"
 )
 
 type poshgit struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Status string
@@ -26,7 +27,7 @@ func (p *poshgit) enabled() bool {
 	return p.Status != ""
 }
 
-func (p *poshgit) init(props Properties, env environment.Environment) {
+func (p *poshgit) init(props properties.Properties, env environment.Environment) {
 	p.props = props
 	p.env = env
 }

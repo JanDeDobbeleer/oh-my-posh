@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/shirou/gopsutil/v3/cpu"
@@ -52,7 +53,7 @@ func TestSysInfo(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		tc.SysInfo.env = env
-		tc.SysInfo.props = properties{
+		tc.SysInfo.props = properties.Map{
 			Precision: tc.Precision,
 		}
 		enabled := tc.SysInfo.enabled()

@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"path/filepath"
 	"testing"
 
@@ -91,7 +92,7 @@ func TestAzSegment(t *testing.T) {
 		env.On("FileContent", filepath.Join(home, ".azure", "AzureRmContext.json")).Return(azureRMContext)
 		az := &az{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		}
 		assert.Equal(t, tc.ExpectedEnabled, az.enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, az), tc.Case)

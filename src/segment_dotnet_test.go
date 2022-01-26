@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -40,8 +41,8 @@ func TestDotnetSegment(t *testing.T) {
 		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: make(map[string]string),
 		})
-		props := properties{
-			FetchVersion: tc.FetchVersion,
+		props := properties.Map{
+			properties.FetchVersion: tc.FetchVersion,
 		}
 		dotnet := &dotnet{}
 		dotnet.init(props, env)

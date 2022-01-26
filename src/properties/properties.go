@@ -1,4 +1,4 @@
-package main
+package properties
 
 import (
 	"fmt"
@@ -51,17 +51,17 @@ const (
 	RefreshToken Property = "refresh_token"
 )
 
-type properties map[Property]interface{}
+type Map map[Property]interface{}
 
-func (p properties) GetString(property Property, defaultValue string) string {
-	val, found := p[property]
+func (m Map) GetString(property Property, defaultValue string) string {
+	val, found := m[property]
 	if !found {
 		return defaultValue
 	}
-	return parseString(val, defaultValue)
+	return ParseString(val, defaultValue)
 }
 
-func parseString(value interface{}, defaultValue string) string {
+func ParseString(value interface{}, defaultValue string) string {
 	stringValue, ok := value.(string)
 	if !ok {
 		return defaultValue
@@ -69,12 +69,12 @@ func parseString(value interface{}, defaultValue string) string {
 	return stringValue
 }
 
-func (p properties) GetColor(property Property, defaultValue string) string {
-	val, found := p[property]
+func (m Map) GetColor(property Property, defaultValue string) string {
+	val, found := m[property]
 	if !found {
 		return defaultValue
 	}
-	colorString := parseString(val, defaultValue)
+	colorString := ParseString(val, defaultValue)
 	if color.IsAnsiColorName(colorString) {
 		return colorString
 	}
@@ -85,8 +85,8 @@ func (p properties) GetColor(property Property, defaultValue string) string {
 	return defaultValue
 }
 
-func (p properties) GetBool(property Property, defaultValue bool) bool {
-	val, found := p[property]
+func (m Map) GetBool(property Property, defaultValue bool) bool {
+	val, found := m[property]
 	if !found {
 		return defaultValue
 	}
@@ -97,8 +97,8 @@ func (p properties) GetBool(property Property, defaultValue bool) bool {
 	return boolValue
 }
 
-func (p properties) GetFloat64(property Property, defaultValue float64) float64 {
-	val, found := p[property]
+func (m Map) GetFloat64(property Property, defaultValue float64) float64 {
+	val, found := m[property]
 	if !found {
 		return defaultValue
 	}
@@ -116,8 +116,8 @@ func (p properties) GetFloat64(property Property, defaultValue float64) float64 
 	return float64(intValue)
 }
 
-func (p properties) GetInt(property Property, defaultValue int) int {
-	val, found := p[property]
+func (m Map) GetInt(property Property, defaultValue int) int {
+	val, found := m[property]
 	if !found {
 		return defaultValue
 	}
@@ -135,8 +135,8 @@ func (p properties) GetInt(property Property, defaultValue int) int {
 	return int(intValue)
 }
 
-func (p properties) GetKeyValueMap(property Property, defaultValue map[string]string) map[string]string {
-	val, found := p[property]
+func (m Map) GetKeyValueMap(property Property, defaultValue map[string]string) map[string]string {
+	val, found := m[property]
 	if !found {
 		return defaultValue
 	}
@@ -146,18 +146,18 @@ func (p properties) GetKeyValueMap(property Property, defaultValue map[string]st
 	return keyValues
 }
 
-func (p properties) GetStringArray(property Property, defaultValue []string) []string {
-	val, found := p[property]
+func (m Map) GetStringArray(property Property, defaultValue []string) []string {
+	val, found := m[property]
 	if !found {
 		return defaultValue
 	}
 
-	keyValues := parseStringArray(val)
+	keyValues := ParseStringArray(val)
 
 	return keyValues
 }
 
-func parseStringArray(param interface{}) []string {
+func ParseStringArray(param interface{}) []string {
 	switch v := param.(type) {
 	default:
 		return []string{}
@@ -194,7 +194,7 @@ func parseKeyValueArray(param interface{}) map[string]string {
 	case []interface{}:
 		keyValueArray := make(map[string]string)
 		for _, s := range v {
-			l := parseStringArray(s)
+			l := ParseStringArray(s)
 			if len(l) == 2 {
 				key := l[0]
 				val := l[1]

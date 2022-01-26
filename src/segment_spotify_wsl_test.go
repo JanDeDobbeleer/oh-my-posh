@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -58,7 +59,7 @@ func TestSpotifyWsl(t *testing.T) {
 		env.On("RunCommand", "tasklist.exe", []string{"/V", "/FI", "Imagename eq Spotify.exe", "/FO", "CSV", "/NH"}).Return(tc.ExecOutput, nil)
 		s := &spotify{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		}
 		assert.Equal(t, tc.ExpectedEnabled, s.enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, s.template(), s), fmt.Sprintf("Failed in case: %s", tc.Case))

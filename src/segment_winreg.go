@@ -4,10 +4,11 @@ import (
 	"errors"
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 )
 
 type winreg struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Value string
@@ -15,16 +16,16 @@ type winreg struct {
 
 const (
 	// full path to the key; if ends in \, gets "(Default)" key in that path
-	RegistryPath Property = "path"
+	RegistryPath properties.Property = "path"
 	// Fallback is the text to display if the key is not found
-	Fallback Property = "fallback"
+	Fallback properties.Property = "fallback"
 )
 
 func (wr *winreg) template() string {
 	return "{{ .Value }}"
 }
 
-func (wr *winreg) init(props Properties, env environment.Environment) {
+func (wr *winreg) init(props properties.Properties, env environment.Environment) {
 	wr.props = props
 	wr.env = env
 }

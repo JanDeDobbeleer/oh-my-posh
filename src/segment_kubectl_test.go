@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"path/filepath"
 	"testing"
 
@@ -130,9 +131,9 @@ func TestKubectlSegment(t *testing.T) {
 
 		k := &kubectl{
 			env: env,
-			props: properties{
-				DisplayError:    tc.DisplayError,
-				ParseKubeConfig: tc.ParseKubeConfig,
+			props: properties.Map{
+				properties.DisplayError: tc.DisplayError,
+				ParseKubeConfig:         tc.ParseKubeConfig,
 			},
 		}
 		assert.Equal(t, tc.ExpectedEnabled, k.enabled(), tc.Case)

@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"errors"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"time"
 )
 
 // segment struct, makes templating easier
 type nightscout struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	NightscoutData
@@ -18,17 +19,17 @@ type nightscout struct {
 
 const (
 	// Your complete Nightscout URL and APIKey like this
-	URL Property = "url"
+	URL properties.Property = "url"
 
-	DoubleUpIcon      Property = "doubleup_icon"
-	SingleUpIcon      Property = "singleup_icon"
-	FortyFiveUpIcon   Property = "fortyfiveup_icon"
-	FlatIcon          Property = "flat_icon"
-	FortyFiveDownIcon Property = "fortyfivedown_icon"
-	SingleDownIcon    Property = "singledown_icon"
-	DoubleDownIcon    Property = "doubledown_icon"
+	DoubleUpIcon      properties.Property = "doubleup_icon"
+	SingleUpIcon      properties.Property = "singleup_icon"
+	FortyFiveUpIcon   properties.Property = "fortyfiveup_icon"
+	FlatIcon          properties.Property = "flat_icon"
+	FortyFiveDownIcon properties.Property = "fortyfivedown_icon"
+	SingleDownIcon    properties.Property = "singledown_icon"
+	DoubleDownIcon    properties.Property = "doubledown_icon"
 
-	NSCacheTimeout Property = "cache_timeout"
+	NSCacheTimeout properties.Property = "cache_timeout"
 )
 
 // NightscoutData struct contains the API data
@@ -138,7 +139,7 @@ func (ns *nightscout) getResult() (*NightscoutData, error) {
 	return data, nil
 }
 
-func (ns *nightscout) init(props Properties, env environment.Environment) {
+func (ns *nightscout) init(props properties.Properties, env environment.Environment) {
 	ns.props = props
 	ns.env = env
 }

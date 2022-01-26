@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"oh-my-posh/regex"
 )
 
@@ -53,7 +54,7 @@ func (c *cmd) parse(versionInfo string) (*version, error) {
 }
 
 type language struct {
-	props              Properties
+	props              properties.Properties
 	env                environment.Environment
 	extensions         []string
 	commands           []*cmd
@@ -72,7 +73,7 @@ type language struct {
 
 const (
 	// DisplayMode sets the display mode (always, when_in_context, never)
-	DisplayMode Property = "display_mode"
+	DisplayMode properties.Property = "display_mode"
 	// DisplayModeAlways displays the segment always
 	DisplayModeAlways string = "always"
 	// DisplayModeFiles displays the segment when the current folder contains certain extensions
@@ -82,11 +83,11 @@ const (
 	// DisplayModeContext displays the segment when the environment or files is active
 	DisplayModeContext string = "context"
 	// MissingCommandText sets the text to display when the command is not present in the system
-	MissingCommandText Property = "missing_command_text"
+	MissingCommandText properties.Property = "missing_command_text"
 	// HomeEnabled displays the segment in the HOME folder or not
-	HomeEnabled Property = "home_enabled"
+	HomeEnabled properties.Property = "home_enabled"
 	// LanguageExtensions the list of extensions to validate
-	LanguageExtensions Property = "extensions"
+	LanguageExtensions properties.Property = "extensions"
 )
 
 func (l *language) enabled() bool {
@@ -118,7 +119,7 @@ func (l *language) enabled() bool {
 			enabled = l.hasLanguageFiles() || l.inLanguageContext()
 		}
 	}
-	if !enabled || !l.props.GetBool(FetchVersion, true) {
+	if !enabled || !l.props.GetBool(properties.FetchVersion, true) {
 		return enabled
 	}
 	err := l.setVersion()
@@ -191,7 +192,7 @@ func (l *language) inLanguageContext() bool {
 }
 
 func (l *language) buildVersionURL() {
-	versionURLTemplate := l.props.GetString(VersionURLTemplate, l.versionURLTemplate)
+	versionURLTemplate := l.props.GetString(properties.VersionURLTemplate, l.versionURLTemplate)
 	if len(versionURLTemplate) == 0 {
 		return
 	}

@@ -2,16 +2,17 @@ package main
 
 import (
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"path/filepath"
 
 	"gopkg.in/yaml.v3"
 )
 
 // Whether to use kubectl or read kubeconfig ourselves
-const ParseKubeConfig Property = "parse_kubeconfig"
+const ParseKubeConfig properties.Property = "parse_kubeconfig"
 
 type kubectl struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Context string
@@ -37,7 +38,7 @@ func (k *kubectl) template() string {
 	return "{{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }}"
 }
 
-func (k *kubectl) init(props Properties, env environment.Environment) {
+func (k *kubectl) init(props properties.Properties, env environment.Environment) {
 	k.props = props
 	k.env = env
 }
@@ -92,7 +93,7 @@ func (k *kubectl) doParseKubeConfig() bool {
 		return true
 	}
 
-	displayError := k.props.GetBool(DisplayError, false)
+	displayError := k.props.GetBool(properties.DisplayError, false)
 	if !displayError {
 		return false
 	}
@@ -106,7 +107,7 @@ func (k *kubectl) doCallKubectl() bool {
 		return false
 	}
 	result, err := k.env.RunCommand(cmd, "config", "view", "--output", "yaml", "--minify")
-	displayError := k.props.GetBool(DisplayError, false)
+	displayError := k.props.GetBool(properties.DisplayError, false)
 	if err != nil && displayError {
 		k.setError("KUBECTL ERR")
 		return true

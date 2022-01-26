@@ -1,9 +1,12 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type spotify struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	MusicPlayer
@@ -18,11 +21,11 @@ type MusicPlayer struct {
 
 const (
 	// PlayingIcon indicates a song is playing
-	PlayingIcon Property = "playing_icon"
+	PlayingIcon properties.Property = "playing_icon"
 	// PausedIcon indicates a song is paused
-	PausedIcon Property = "paused_icon"
+	PausedIcon properties.Property = "paused_icon"
 	// StoppedIcon indicates a song is stopped
-	StoppedIcon Property = "stopped_icon"
+	StoppedIcon properties.Property = "stopped_icon"
 
 	playing = "playing"
 	stopped = "stopped"
@@ -45,7 +48,7 @@ func (s *spotify) resolveIcon() {
 	}
 }
 
-func (s *spotify) init(props Properties, env environment.Environment) {
+func (s *spotify) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

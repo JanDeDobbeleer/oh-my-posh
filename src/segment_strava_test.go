@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 	"time"
 
@@ -139,7 +140,7 @@ func TestStravaSegment(t *testing.T) {
 		env := &mock.MockedEnvironment{}
 		url := "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1"
 		tokenURL := fmt.Sprintf("https://ohmyposh.dev/api/refresh?segment=strava&token=%s", tc.TokenRefreshToken)
-		var props properties = map[Property]interface{}{
+		var props properties.Map = map[properties.Property]interface{}{
 			CacheTimeout: tc.CacheTimeout,
 		}
 		cache := &mock.MockedCache{}
@@ -157,10 +158,10 @@ func TestStravaSegment(t *testing.T) {
 		env.On("Cache").Return(cache)
 
 		if tc.InitialAccessToken != "" {
-			props[AccessToken] = tc.InitialAccessToken
+			props[properties.AccessToken] = tc.InitialAccessToken
 		}
 		if tc.InitialRefreshToken != "" {
-			props[RefreshToken] = tc.InitialRefreshToken
+			props[properties.RefreshToken] = tc.InitialRefreshToken
 		}
 
 		ns := &strava{

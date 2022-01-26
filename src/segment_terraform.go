@@ -2,10 +2,11 @@ package main
 
 import (
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 )
 
 type terraform struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	WorkspaceName string
@@ -15,7 +16,7 @@ func (tf *terraform) template() string {
 	return "{{ .WorkspaceName }}"
 }
 
-func (tf *terraform) init(props Properties, env environment.Environment) {
+func (tf *terraform) init(props properties.Properties, env environment.Environment) {
 	tf.props = props
 	tf.env = env
 }

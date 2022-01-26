@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/gookit/config/v2"
@@ -99,7 +100,7 @@ func TestRootLocationHome(t *testing.T) {
 		env.On("GOOS").Return("")
 		path := &path{
 			env: env,
-			props: properties{
+			props: properties.Map{
 				HomeIcon:            tc.HomeIcon,
 				WindowsRegistryIcon: tc.RegistryIcon,
 			},
@@ -252,9 +253,9 @@ func TestAgnosterPathStyles(t *testing.T) {
 		env.On("Args").Return(args)
 		path := &path{
 			env: env,
-			props: properties{
+			props: properties.Map{
 				FolderSeparatorIcon: tc.FolderSeparatorIcon,
-				Style:               tc.Style,
+				properties.Style:    tc.Style,
 				MaxDepth:            tc.MaxDepth,
 			},
 		}
@@ -374,8 +375,8 @@ func TestGetFullPath(t *testing.T) {
 		if len(tc.Template) == 0 {
 			tc.Template = "{{ if gt .StackCount 0 }}{{ .StackCount }} {{ end }}{{ .Path }}"
 		}
-		props := properties{
-			Style: tc.Style,
+		props := properties.Map{
+			properties.Style: tc.Style,
 		}
 		if tc.FolderSeparatorIcon != "" {
 			props[FolderSeparatorIcon] = tc.FolderSeparatorIcon
@@ -422,7 +423,7 @@ func TestGetFullPathCustomMappedLocations(t *testing.T) {
 		env.On("Args").Return(args)
 		path := &path{
 			env: env,
-			props: properties{
+			props: properties.Map{
 				MappedLocationsEnabled: false,
 				MappedLocations:        tc.MappedLocations,
 			},
@@ -473,7 +474,7 @@ func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	env.On("Args").Return(args)
 	path := &path{
 		env: env,
-		props: properties{
+		props: properties.Map{
 			MappedLocations: map[string]string{
 				"/a/b/c/d": "#",
 			},
@@ -520,7 +521,7 @@ func TestAgnosterPath(t *testing.T) { // nolint:dupl
 		env.On("Args").Return(args)
 		path := &path{
 			env: env,
-			props: properties{
+			props: properties.Map{
 				FolderSeparatorIcon: " > ",
 				FolderIcon:          "f",
 				HomeIcon:            "~",
@@ -568,7 +569,7 @@ func TestAgnosterLeftPath(t *testing.T) { // nolint:dupl
 		env.On("Args").Return(args)
 		path := &path{
 			env: env,
-			props: properties{
+			props: properties.Map{
 				FolderSeparatorIcon: " > ",
 				FolderIcon:          "f",
 				HomeIcon:            "~",
@@ -616,7 +617,7 @@ func TestGetPwd(t *testing.T) {
 		env.On("Args").Return(args)
 		path := &path{
 			env: env,
-			props: properties{
+			props: properties.Map{
 				MappedLocationsEnabled: tc.MappedLocationsEnabled,
 				MappedLocations: map[string]string{
 					"/a/b/c/d": "#",

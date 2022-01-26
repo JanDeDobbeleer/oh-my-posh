@@ -3,12 +3,13 @@ package main
 import (
 	"encoding/json"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"path/filepath"
 	"strings"
 )
 
 type az struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	AzureSubscription
@@ -83,7 +84,7 @@ func (a *az) template() string {
 	return "{{ .Name }}"
 }
 
-func (a *az) init(props Properties, env environment.Environment) {
+func (a *az) init(props properties.Properties, env environment.Environment) {
 	a.props = props
 	a.env = env
 }

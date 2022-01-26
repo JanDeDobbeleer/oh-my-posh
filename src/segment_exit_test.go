@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -23,7 +24,7 @@ func TestExitWriterEnabled(t *testing.T) {
 		env.On("ErrorCode").Return(tc.ExitCode)
 		e := &exit{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		}
 		assert.Equal(t, tc.Expected, e.enabled())
 	}
@@ -83,7 +84,7 @@ func TestExitWriterTemplateString(t *testing.T) {
 		})
 		e := &exit{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		}
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, e), tc.Case)
 	}

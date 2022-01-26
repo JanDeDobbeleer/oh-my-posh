@@ -4,6 +4,7 @@ import (
 	"errors"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -77,7 +78,7 @@ func TestWinReg(t *testing.T) {
 		env.On("WindowsRegistryKeyValue", tc.Path).Return(tc.getWRKVOutput, tc.Err)
 		r := &winreg{
 			env: env,
-			props: properties{
+			props: properties.Map{
 				RegistryPath: tc.Path,
 				Fallback:     tc.Fallback,
 			},

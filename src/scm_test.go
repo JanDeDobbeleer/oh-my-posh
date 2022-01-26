@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -106,7 +107,7 @@ func TestTruncateBranch(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties{
+		props := properties.Map{
 			BranchMaxLength: tc.MaxLength,
 			FullBranchPath:  tc.FullBranch,
 		}
@@ -142,7 +143,7 @@ func TestTruncateBranchWithSymbol(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties{
+		props := properties.Map{
 			BranchMaxLength: tc.MaxLength,
 			TruncateSymbol:  tc.TruncateSymbol,
 			FullBranchPath:  tc.FullBranch,
@@ -173,8 +174,8 @@ func TestScmShouldIgnoreRootRepository(t *testing.T) {
 			"/home/bill",
 			"/home/gates.*",
 		}
-		props := properties{
-			ExcludeFolders: excludeFolders,
+		props := properties.Map{
+			properties.ExcludeFolders: excludeFolders,
 		}
 		env := new(mock.MockedEnvironment)
 		env.On("Home").Return("/home/bill")

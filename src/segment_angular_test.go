@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -34,7 +35,7 @@ func TestAngularCliVersionDisplayed(t *testing.T) {
 		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: make(map[string]string),
 		})
-		props := properties{}
+		props := properties.Map{}
 		angular := &angular{}
 		angular.init(props, env)
 		assert.True(t, angular.enabled(), fmt.Sprintf("Failed in case: %s", ta.Case))

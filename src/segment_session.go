@@ -1,9 +1,12 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type session struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 	// text  string
 
@@ -22,7 +25,7 @@ func (s *session) template() string {
 	return "{{ .UserName }}@{{ .HostName }}"
 }
 
-func (s *session) init(props Properties, env environment.Environment) {
+func (s *session) init(props properties.Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
 }

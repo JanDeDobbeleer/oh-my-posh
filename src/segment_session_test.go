@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -110,7 +111,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		})
 		session := &session{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		}
 		_ = session.enabled()
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, session), tc.Case)

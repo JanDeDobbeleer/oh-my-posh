@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"oh-my-posh/regex"
 	"strconv"
 	"strings"
@@ -59,48 +60,48 @@ type git struct {
 
 const (
 	// FetchStatus fetches the status of the repository
-	FetchStatus Property = "fetch_status"
+	FetchStatus properties.Property = "fetch_status"
 	// FetchStashCount fetches the stash count
-	FetchStashCount Property = "fetch_stash_count"
+	FetchStashCount properties.Property = "fetch_stash_count"
 	// FetchWorktreeCount fetches the worktree count
-	FetchWorktreeCount Property = "fetch_worktree_count"
+	FetchWorktreeCount properties.Property = "fetch_worktree_count"
 	// FetchUpstreamIcon fetches the upstream icon
-	FetchUpstreamIcon Property = "fetch_upstream_icon"
+	FetchUpstreamIcon properties.Property = "fetch_upstream_icon"
 
 	// BranchIcon the icon to use as branch indicator
-	BranchIcon Property = "branch_icon"
+	BranchIcon properties.Property = "branch_icon"
 	// BranchIdenticalIcon the icon to display when the remote and local branch are identical
-	BranchIdenticalIcon Property = "branch_identical_icon"
+	BranchIdenticalIcon properties.Property = "branch_identical_icon"
 	// BranchAheadIcon the icon to display when the local branch is ahead of the remote
-	BranchAheadIcon Property = "branch_ahead_icon"
+	BranchAheadIcon properties.Property = "branch_ahead_icon"
 	// BranchBehindIcon the icon to display when the local branch is behind the remote
-	BranchBehindIcon Property = "branch_behind_icon"
+	BranchBehindIcon properties.Property = "branch_behind_icon"
 	// BranchGoneIcon the icon to use when ther's no remote
-	BranchGoneIcon Property = "branch_gone_icon"
+	BranchGoneIcon properties.Property = "branch_gone_icon"
 	// RebaseIcon shows before the rebase context
-	RebaseIcon Property = "rebase_icon"
+	RebaseIcon properties.Property = "rebase_icon"
 	// CherryPickIcon shows before the cherry-pick context
-	CherryPickIcon Property = "cherry_pick_icon"
+	CherryPickIcon properties.Property = "cherry_pick_icon"
 	// RevertIcon shows before the revert context
-	RevertIcon Property = "revert_icon"
+	RevertIcon properties.Property = "revert_icon"
 	// CommitIcon shows before the detached context
-	CommitIcon Property = "commit_icon"
+	CommitIcon properties.Property = "commit_icon"
 	// NoCommitsIcon shows when there are no commits in the repo yet
-	NoCommitsIcon Property = "no_commits_icon"
+	NoCommitsIcon properties.Property = "no_commits_icon"
 	// TagIcon shows before the tag context
-	TagIcon Property = "tag_icon"
+	TagIcon properties.Property = "tag_icon"
 	// MergeIcon shows before the merge context
-	MergeIcon Property = "merge_icon"
+	MergeIcon properties.Property = "merge_icon"
 	// GithubIcon shows√ when upstream is github
-	GithubIcon Property = "github_icon"
+	GithubIcon properties.Property = "github_icon"
 	// BitbucketIcon shows  when upstream is bitbucket
-	BitbucketIcon Property = "bitbucket_icon"
+	BitbucketIcon properties.Property = "bitbucket_icon"
 	// AzureDevOpsIcon shows  when upstream is azure devops
-	AzureDevOpsIcon Property = "azure_devops_icon"
+	AzureDevOpsIcon properties.Property = "azure_devops_icon"
 	// GitlabIcon shows when upstream is gitlab
-	GitlabIcon Property = "gitlab_icon"
+	GitlabIcon properties.Property = "gitlab_icon"
 	// GitIcon shows when the upstream can't be identified
-	GitIcon Property = "git_icon"
+	GitIcon properties.Property = "git_icon"
 
 	DETACHED     = "(detached)"
 	BRANCHPREFIX = "ref: refs/heads/"

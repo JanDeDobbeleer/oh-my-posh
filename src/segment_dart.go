@@ -1,6 +1,9 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type dart struct {
 	language
@@ -10,7 +13,7 @@ func (d *dart) template() string {
 	return languageTemplate
 }
 
-func (d *dart) init(props Properties, env environment.Environment) {
+func (d *dart) init(props properties.Properties, env environment.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,

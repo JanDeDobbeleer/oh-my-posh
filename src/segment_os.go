@@ -1,9 +1,12 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type osInfo struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Icon string
@@ -11,51 +14,51 @@ type osInfo struct {
 
 const (
 	// MacOS the string/icon to use for MacOS
-	MacOS Property = "macos"
+	MacOS properties.Property = "macos"
 	// Linux the string/icon to use for linux
-	Linux Property = "linux"
+	Linux properties.Property = "linux"
 	// Windows the string/icon to use for windows
-	Windows Property = "windows"
+	Windows properties.Property = "windows"
 	// Alpine the string/icon to use for Alpine
-	Alpine Property = "alpine"
+	Alpine properties.Property = "alpine"
 	// Aosc the string/icon to use for Aosc
-	Aosc Property = "aosc"
+	Aosc properties.Property = "aosc"
 	// Arch the string/icon to use for Arch
-	Arch Property = "arch"
+	Arch properties.Property = "arch"
 	// Centos the string/icon to use for Centos
-	Centos Property = "centos"
+	Centos properties.Property = "centos"
 	// Coreos the string/icon to use for Coreos
-	Coreos Property = "coreos"
+	Coreos properties.Property = "coreos"
 	// Debian the string/icon to use for Debian
-	Debian Property = "debian"
+	Debian properties.Property = "debian"
 	// Devuan the string/icon to use for Devuan
-	Devuan Property = "devuan"
+	Devuan properties.Property = "devuan"
 	// Raspbian the string/icon to use for Raspbian
-	Raspbian Property = "raspbian"
+	Raspbian properties.Property = "raspbian"
 	// Elementary the string/icon to use for Elementary
-	Elementary Property = "elementary"
+	Elementary properties.Property = "elementary"
 	// Fedora the string/icon to use for Fedora
-	Fedora Property = "fedora"
+	Fedora properties.Property = "fedora"
 	// Gentoo the string/icon to use for Gentoo
-	Gentoo Property = "gentoo"
+	Gentoo properties.Property = "gentoo"
 	// Mageia the string/icon to use for Mageia
-	Mageia Property = "mageia"
+	Mageia properties.Property = "mageia"
 	// Manjaro the string/icon to use for Manjaro
-	Manjaro Property = "manjaro"
+	Manjaro properties.Property = "manjaro"
 	// Mint the string/icon to use for Mint
-	Mint Property = "mint"
+	Mint properties.Property = "mint"
 	// Nixos the string/icon to use for Nixos
-	Nixos Property = "nixos"
+	Nixos properties.Property = "nixos"
 	// Opensuse the string/icon to use for Opensuse
-	Opensuse Property = "opensuse"
+	Opensuse properties.Property = "opensuse"
 	// Sabayon the string/icon to use for Sabayon
-	Sabayon Property = "sabayon"
+	Sabayon properties.Property = "sabayon"
 	// Slackware the string/icon to use for Slackware
-	Slackware Property = "slackware"
+	Slackware properties.Property = "slackware"
 	// Ubuntu the string/icon to use for Ubuntu
-	Ubuntu Property = "ubuntu"
+	Ubuntu properties.Property = "ubuntu"
 	// DisplayDistroName display the distro name or not
-	DisplayDistroName Property = "display_distro_name"
+	DisplayDistroName properties.Property = "display_distro_name"
 )
 
 func (oi *osInfo) template() string {
@@ -127,7 +130,7 @@ func (oi *osInfo) getDistroIcon(distro string) string {
 	return oi.props.GetString(Linux, "\uF17C")
 }
 
-func (oi *osInfo) init(props Properties, env environment.Environment) {
+func (oi *osInfo) init(props properties.Properties, env environment.Environment) {
 	oi.props = props
 	oi.env = env
 }

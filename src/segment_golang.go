@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 
 	"golang.org/x/mod/modfile"
 )
@@ -11,14 +12,14 @@ type golang struct {
 }
 
 const (
-	ParseModFile Property = "parse_mod_file"
+	ParseModFile properties.Property = "parse_mod_file"
 )
 
 func (g *golang) template() string {
 	return languageTemplate
 }
 
-func (g *golang) init(props Properties, env environment.Environment) {
+func (g *golang) init(props properties.Properties, env environment.Environment) {
 	g.language = language{
 		env:        env,
 		props:      props,

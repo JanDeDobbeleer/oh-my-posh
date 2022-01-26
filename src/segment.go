@@ -4,24 +4,25 @@ import (
 	"errors"
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"runtime/debug"
 	"time"
 )
 
 // Segment represent a single segment and it's configuration
 type Segment struct {
-	Type                SegmentType  `config:"type"`
-	Tips                []string     `config:"tips"`
-	Style               SegmentStyle `config:"style"`
-	PowerlineSymbol     string       `config:"powerline_symbol"`
-	InvertPowerline     bool         `config:"invert_powerline"`
-	Foreground          string       `config:"foreground"`
-	ForegroundTemplates []string     `config:"foreground_templates"`
-	Background          string       `config:"background"`
-	BackgroundTemplates []string     `config:"background_templates"`
-	LeadingDiamond      string       `config:"leading_diamond"`
-	TrailingDiamond     string       `config:"trailing_diamond"`
-	Properties          properties   `config:"properties"`
+	Type                SegmentType    `config:"type"`
+	Tips                []string       `config:"tips"`
+	Style               SegmentStyle   `config:"style"`
+	PowerlineSymbol     string         `config:"powerline_symbol"`
+	InvertPowerline     bool           `config:"invert_powerline"`
+	Foreground          string         `config:"foreground"`
+	ForegroundTemplates []string       `config:"foreground_templates"`
+	Background          string         `config:"background"`
+	BackgroundTemplates []string       `config:"background_templates"`
+	LeadingDiamond      string         `config:"leading_diamond"`
+	TrailingDiamond     string         `config:"trailing_diamond"`
+	Properties          properties.Map `config:"properties"`
 	writer              SegmentWriter
 	stringValue         string
 	active              bool
@@ -42,7 +43,7 @@ type SegmentTiming struct {
 type SegmentWriter interface {
 	enabled() bool
 	template() string
-	init(props Properties, env environment.Environment)
+	init(props properties.Properties, env environment.Environment)
 }
 
 // SegmentStyle the syle of segment, for more information, see the constants
@@ -164,9 +165,9 @@ func (segment *Segment) enabled() bool {
 	return segment.active
 }
 
-func (segment *Segment) getValue(property Property, defaultValue string) string {
+func (segment *Segment) getValue(property properties.Property, defaultValue string) string {
 	if value, ok := segment.Properties[property]; ok {
-		return parseString(value, defaultValue)
+		return properties.ParseString(value, defaultValue)
 	}
 	return defaultValue
 }
@@ -178,13 +179,13 @@ func (segment *Segment) shouldIncludeFolder() bool {
 }
 
 func (segment *Segment) cwdIncluded() bool {
-	value, ok := segment.Properties[IncludeFolders]
+	value, ok := segment.Properties[properties.IncludeFolders]
 	if !ok {
 		// IncludeFolders isn't specified, everything is included
 		return true
 	}
 
-	list := parseStringArray(value)
+	list := properties.ParseStringArray(value)
 
 	if len(list) == 0 {
 		// IncludeFolders is an empty array, everything is included
@@ -195,11 +196,11 @@ func (segment *Segment) cwdIncluded() bool {
 }
 
 func (segment *Segment) cwdExcluded() bool {
-	value, ok := segment.Properties[ExcludeFolders]
+	value, ok := segment.Properties[properties.ExcludeFolders]
 	if !ok {
-		value = segment.Properties[IgnoreFolders]
+		value = segment.Properties[properties.IgnoreFolders]
 	}
-	list := parseStringArray(value)
+	list := properties.ParseStringArray(value)
 	return environment.DirMatchesOneOf(segment.env, segment.env.Pwd(), list)
 }
 
@@ -287,7 +288,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		Ipify:         &ipify{},
 	}
 	if segment.Properties == nil {
-		segment.Properties = make(properties)
+		segment.Properties = make(properties.Map)
 	}
 	if writer, ok := functions[segment.Type]; ok {
 		writer.init(segment.Properties, env)

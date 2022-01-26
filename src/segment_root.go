@@ -1,9 +1,12 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type root struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 }
 
@@ -15,7 +18,7 @@ func (rt *root) enabled() bool {
 	return rt.env.Root()
 }
 
-func (rt *root) init(props Properties, env environment.Environment) {
+func (rt *root) init(props properties.Properties, env environment.Environment) {
 	rt.props = props
 	rt.env = env
 }

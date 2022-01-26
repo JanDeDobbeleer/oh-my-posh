@@ -8,13 +8,14 @@ import (
 	"math"
 	"net/http"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"sort"
 	"time"
 )
 
 // segment struct, makes templating easier
 type brewfather struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Batch
@@ -31,28 +32,28 @@ type brewfather struct {
 }
 
 const (
-	BFUserID  Property = "user_id"
-	BFAPIKey  Property = "api_key"
-	BFBatchID Property = "batch_id"
+	BFUserID  properties.Property = "user_id"
+	BFAPIKey  properties.Property = "api_key"
+	BFBatchID properties.Property = "batch_id"
 
-	BFDoubleUpIcon      Property = "doubleup_icon"
-	BFSingleUpIcon      Property = "singleup_icon"
-	BFFortyFiveUpIcon   Property = "fortyfiveup_icon"
-	BFFlatIcon          Property = "flat_icon"
-	BFFortyFiveDownIcon Property = "fortyfivedown_icon"
-	BFSingleDownIcon    Property = "singledown_icon"
-	BFDoubleDownIcon    Property = "doubledown_icon"
+	BFDoubleUpIcon      properties.Property = "doubleup_icon"
+	BFSingleUpIcon      properties.Property = "singleup_icon"
+	BFFortyFiveUpIcon   properties.Property = "fortyfiveup_icon"
+	BFFlatIcon          properties.Property = "flat_icon"
+	BFFortyFiveDownIcon properties.Property = "fortyfivedown_icon"
+	BFSingleDownIcon    properties.Property = "singledown_icon"
+	BFDoubleDownIcon    properties.Property = "doubledown_icon"
 
-	BFPlanningStatusIcon     Property = "planning_status_icon"
-	BFBrewingStatusIcon      Property = "brewing_status_icon"
-	BFFermentingStatusIcon   Property = "fermenting_status_icon"
-	BFConditioningStatusIcon Property = "conditioning_status_icon"
-	BFCompletedStatusIcon    Property = "completed_status_icon"
-	BFArchivedStatusIcon     Property = "archived_status_icon"
+	BFPlanningStatusIcon     properties.Property = "planning_status_icon"
+	BFBrewingStatusIcon      properties.Property = "brewing_status_icon"
+	BFFermentingStatusIcon   properties.Property = "fermenting_status_icon"
+	BFConditioningStatusIcon properties.Property = "conditioning_status_icon"
+	BFCompletedStatusIcon    properties.Property = "completed_status_icon"
+	BFArchivedStatusIcon     properties.Property = "archived_status_icon"
 
-	BFDayIcon Property = "day_icon"
+	BFDayIcon properties.Property = "day_icon"
 
-	BFCacheTimeout Property = "cache_timeout"
+	BFCacheTimeout properties.Property = "cache_timeout"
 
 	DefaultTemplate string = "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}{{.DayIcon}} {{end}}[{{.Recipe.Name}}]({{.URL}})" +
 		" {{printf \"%.1f\" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}} " +
@@ -325,7 +326,7 @@ func (bf *brewfather) SGToPlato(sg float64) float64 {
 	return math.Round(100*((135.997*sg*sg*sg)-(630.272*sg*sg)+(1111.14*sg)-616.868)) / 100 // 2 decimal places
 }
 
-func (bf *brewfather) init(props Properties, env environment.Environment) {
+func (bf *brewfather) init(props properties.Properties, env environment.Environment) {
 	bf.props = props
 	bf.env = env
 }

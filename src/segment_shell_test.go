@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,7 +14,7 @@ func TestWriteCurrentShell(t *testing.T) {
 	env.On("Shell").Return(expected, nil)
 	s := &shell{
 		env:   env,
-		props: properties{},
+		props: properties.Map{},
 	}
 	_ = s.enabled()
 	assert.Equal(t, expected, renderTemplate(env, s.template(), s))
@@ -33,7 +34,7 @@ func TestUseMappedShellNames(t *testing.T) {
 		env.On("Shell").Return(tc.Expected, nil)
 		s := &shell{
 			env: env,
-			props: properties{
+			props: properties.Map{
 				MappedShellNames: map[string]string{"pwsh": "PS"},
 			},
 		}

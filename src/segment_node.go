@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"oh-my-posh/regex"
 )
 
@@ -14,18 +15,18 @@ type node struct {
 
 const (
 	// YarnIcon illustrates Yarn is used
-	YarnIcon Property = "yarn_icon"
+	YarnIcon properties.Property = "yarn_icon"
 	// NPMIcon illustrates NPM is used
-	NPMIcon Property = "npm_icon"
+	NPMIcon properties.Property = "npm_icon"
 	// FetchPackageManager shows if NPM or Yarn is used
-	FetchPackageManager Property = "fetch_package_manager"
+	FetchPackageManager properties.Property = "fetch_package_manager"
 )
 
 func (n *node) template() string {
 	return "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
 }
 
-func (n *node) init(props Properties, env environment.Environment) {
+func (n *node) init(props properties.Properties, env environment.Environment) {
 	n.language = language{
 		env:        env,
 		props:      props,

@@ -1,9 +1,12 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type wifi struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Error string
@@ -25,7 +28,7 @@ func (w *wifi) enabled() bool {
 		return false
 	}
 	wifiInfo, err := w.env.WifiNetwork()
-	displayError := w.props.GetBool(DisplayError, false)
+	displayError := w.props.GetBool(properties.DisplayError, false)
 	if err != nil && displayError {
 		w.Error = err.Error()
 		return true
@@ -37,7 +40,7 @@ func (w *wifi) enabled() bool {
 	return true
 }
 
-func (w *wifi) init(props Properties, env environment.Environment) {
+func (w *wifi) init(props properties.Properties, env environment.Environment) {
 	w.props = props
 	w.env = env
 }

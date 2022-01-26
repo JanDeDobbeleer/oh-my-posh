@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 	"time"
 
@@ -138,7 +139,7 @@ func TestBrewfatherSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
-		props := properties{
+		props := properties.Map{
 			CacheTimeout: tc.CacheTimeout,
 			BFBatchID:    BFFakeBatchID,
 			BFAPIKey:     "FAKE",

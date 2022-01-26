@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,7 +15,7 @@ func bootstrapYTMDATest(json string, err error) *ytm {
 	env.On("HTTPRequest", url+"/query").Return([]byte(json), err)
 	ytm := &ytm{
 		env: env,
-		props: properties{
+		props: properties.Map{
 			APIURL: url,
 		},
 	}

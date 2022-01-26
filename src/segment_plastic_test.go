@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -16,7 +17,7 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 	p := &plastic{
 		scm: scm{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		},
 	}
 	assert.False(t, p.enabled())
@@ -37,7 +38,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 	p := &plastic{
 		scm: scm{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		},
 	}
 	assert.True(t, p.enabled())
@@ -51,7 +52,7 @@ func setupCmStatusEnv(status, headStatus string) *plastic {
 	p := &plastic{
 		scm: scm{
 			env:   env,
-			props: properties{},
+			props: properties.Map{},
 		},
 	}
 	return p
@@ -327,7 +328,7 @@ func TestPlasticTemplateString(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		props := properties{
+		props := properties.Map{
 			FetchStatus: true,
 		}
 		tc.Plastic.props = props

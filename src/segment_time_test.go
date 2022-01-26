@@ -2,6 +2,7 @@ package main
 
 import (
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"strings"
 	"testing"
 	"time"
@@ -42,7 +43,7 @@ func TestTimeSegmentTemplate(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		tempus := &tempus{
 			env:         env,
-			props:       properties{},
+			props:       properties.Map{},
 			CurrentDate: currentDate,
 		}
 		assert.Equal(t, tc.ExpectedEnabled, tempus.enabled())

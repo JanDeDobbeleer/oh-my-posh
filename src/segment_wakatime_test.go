@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -80,7 +81,7 @@ func TestWTTrackedTime(t *testing.T) {
 		env.On("Cache").Return(cache)
 
 		w := &wakatime{
-			props: properties{
+			props: properties.Map{
 				APIKey:       "key",
 				CacheTimeout: tc.CacheTimeout,
 				URL:          FAKEAPIURL,

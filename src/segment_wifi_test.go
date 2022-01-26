@@ -4,6 +4,7 @@ import (
 	"errors"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -50,8 +51,8 @@ func TestWiFiSegment(t *testing.T) {
 
 		w := &wifi{
 			env: env,
-			props: properties{
-				DisplayError: tc.DisplayError,
+			props: properties.Map{
+				properties.DisplayError: tc.DisplayError,
 			},
 		}
 

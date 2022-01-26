@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -86,9 +87,9 @@ func TestShouldIncludeFolder(t *testing.T) {
 		env.On("Home").Return("")
 		env.On("Pwd").Return(cwd)
 		segment := &Segment{
-			Properties: properties{
-				IncludeFolders: tc.IncludeFolders,
-				ExcludeFolders: tc.ExcludeFolders,
+			Properties: properties.Map{
+				properties.IncludeFolders: tc.IncludeFolders,
+				properties.ExcludeFolders: tc.ExcludeFolders,
 			},
 			env: env,
 		}
@@ -103,8 +104,8 @@ func TestShouldIncludeFolderRegexInverted(t *testing.T) {
 	env.On("Home").Return("")
 	env.On("Pwd").Return(cwd)
 	segment := &Segment{
-		Properties: properties{
-			ExcludeFolders: []string{"(?!Projects[\\/]).*"},
+		Properties: properties.Map{
+			properties.ExcludeFolders: []string{"(?!Projects[\\/]).*"},
 		},
 		env: env,
 	}
@@ -124,8 +125,8 @@ func TestShouldIncludeFolderRegexInvertedNonEscaped(t *testing.T) {
 	env.On("Home").Return("")
 	env.On("Pwd").Return(cwd)
 	segment := &Segment{
-		Properties: properties{
-			ExcludeFolders: []string{"(?!Projects/).*"},
+		Properties: properties.Map{
+			properties.ExcludeFolders: []string{"(?!Projects/).*"},
 		},
 		env: env,
 	}

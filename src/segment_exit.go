@@ -2,11 +2,12 @@ package main
 
 import (
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"strconv"
 )
 
 type exit struct {
-	props Properties
+	props properties.Properties
 	env   environment.Environment
 
 	Text string
@@ -18,13 +19,13 @@ func (e *exit) template() string {
 
 func (e *exit) enabled() bool {
 	e.Text = e.getMeaningFromExitCode(e.env.ErrorCode())
-	if e.props.GetBool(AlwaysEnabled, false) {
+	if e.props.GetBool(properties.AlwaysEnabled, false) {
 		return true
 	}
 	return e.env.ErrorCode() != 0
 }
 
-func (e *exit) init(props Properties, env environment.Environment) {
+func (e *exit) init(props properties.Properties, env environment.Environment) {
 	e.props = props
 	e.env = env
 }

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -18,7 +19,7 @@ type mockedLanguageParams struct {
 	extension     string
 }
 
-func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.MockedEnvironment, properties) {
+func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.MockedEnvironment, properties.Map) {
 	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", params.cmd).Return(true)
 	env.On("RunCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
@@ -28,8 +29,8 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.MockedEnvironment
 	env.On("TemplateCache").Return(&environment.TemplateCache{
 		Env: make(map[string]string),
 	})
-	props := properties{
-		FetchVersion: true,
+	props := properties.Map{
+		properties.FetchVersion: true,
 	}
 	return env, props
 }

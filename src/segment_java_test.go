@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"oh-my-posh/mock"
+	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -67,8 +68,8 @@ func TestJava(t *testing.T) {
 		} else {
 			env.On("Getenv", "JAVA_HOME").Return("")
 		}
-		props := properties{
-			FetchVersion: true,
+		props := properties.Map{
+			properties.FetchVersion: true,
 		}
 		j := &java{}
 		j.init(props, env)

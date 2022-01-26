@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/color"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"sync"
 	"time"
 )
@@ -122,9 +123,9 @@ func (b *Block) renderSegment(segment *Segment) {
 
 func (b *Block) renderText(text string) {
 	defaultValue := " "
-	b.writer.Write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Prefix, defaultValue))
+	b.writer.Write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(properties.Prefix, defaultValue))
 	b.writer.Write(b.activeBackground, b.activeForeground, text)
-	b.writer.Write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Postfix, defaultValue))
+	b.writer.Write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(properties.Postfix, defaultValue))
 }
 
 func (b *Block) writePowerline(final bool) {

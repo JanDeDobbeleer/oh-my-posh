@@ -1,6 +1,9 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type crystal struct {
 	language
@@ -10,7 +13,7 @@ func (c *crystal) template() string {
 	return languageTemplate
 }
 
-func (c *crystal) init(props Properties, env environment.Environment) {
+func (c *crystal) init(props properties.Properties, env environment.Environment) {
 	c.language = language{
 		env:        env,
 		props:      props,

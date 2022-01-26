@@ -1,6 +1,9 @@
 package main
 
-import "oh-my-posh/environment"
+import (
+	"oh-my-posh/environment"
+	"oh-my-posh/properties"
+)
 
 type php struct {
 	language
@@ -10,7 +13,7 @@ func (p *php) template() string {
 	return languageTemplate
 }
 
-func (p *php) init(props Properties, env environment.Environment) {
+func (p *php) init(props properties.Properties, env environment.Environment) {
 	p.language = language{
 		env:        env,
 		props:      props,

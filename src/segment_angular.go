@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 )
 
 type angular struct {
@@ -14,7 +15,7 @@ func (a *angular) template() string {
 	return languageTemplate
 }
 
-func (a *angular) init(props Properties, env environment.Environment) {
+func (a *angular) init(props properties.Properties, env environment.Environment) {
 	a.language = language{
 		env:        env,
 		props:      props,

@@ -141,6 +141,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="http://developingux.com"><img src="https://avatars.githubusercontent.com/u/211001?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Caleb Jenkins</b></sub></a><br /><a href="#ideas-calebjenkins" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/FlavienMacquignon"><img src="https://avatars.githubusercontent.com/u/70152975?v=4?s=100" width="100px;" alt=""/><br /><sub><b>FlavienMacquignon</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=FlavienMacquignon" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/Victoria-DR"><img src="https://avatars.githubusercontent.com/u/68347113?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Victoria</b></sub></a><br /><a href="#design-Victoria-DR" title="Design">🎨</a></td>
+    <td align="center"><a href="https://github.com/UlanaXY"><img src="https://avatars.githubusercontent.com/u/12629308?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mikolaj</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=UlanaXY" title="Documentation">📖</a></td>
   </tr>
 </table>
 

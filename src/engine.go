@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"oh-my-posh/color"
 	"oh-my-posh/environment"
+	"oh-my-posh/template"
 	"strings"
 	"time"
 )
@@ -240,11 +241,11 @@ func (e *engine) renderTransientPrompt() string {
 	if len(promptTemplate) == 0 {
 		promptTemplate = "{{ .Shell }}> "
 	}
-	template := &textTemplate{
+	tmpl := &template.Text{
 		Template: promptTemplate,
 		Env:      e.env,
 	}
-	prompt, err := template.render()
+	prompt, err := tmpl.Render()
 	if err != nil {
 		prompt = err.Error()
 	}

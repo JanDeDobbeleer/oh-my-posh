@@ -3,6 +3,7 @@ package main
 import (
 	"oh-my-posh/color"
 	"oh-my-posh/environment"
+	"oh-my-posh/template"
 	"strings"
 )
 
@@ -41,11 +42,11 @@ func (t *consoleTitle) getConsoleTitle() string {
 }
 
 func (t *consoleTitle) getTemplateText() string {
-	template := &textTemplate{
+	tmpl := &template.Text{
 		Template: t.config.ConsoleTitleTemplate,
 		Env:      t.env,
 	}
-	if text, err := template.render(); err == nil {
+	if text, err := tmpl.Render(); err == nil {
 		return text
 	}
 	return ""

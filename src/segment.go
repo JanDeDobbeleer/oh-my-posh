@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
+	"oh-my-posh/segments"
+	"oh-my-posh/template"
 	"runtime/debug"
 	"time"
 )
@@ -148,12 +150,12 @@ const (
 )
 
 func (segment *Segment) string() string {
-	template := &textTemplate{
+	tmpl := &template.Text{
 		Template: segment.writer.Template(),
 		Context:  segment.writer,
 		Env:      segment.env,
 	}
-	text, err := template.render()
+	text, err := tmpl.Render()
 	if err != nil {
 		return err.Error()
 	}
@@ -208,13 +210,13 @@ func (segment *Segment) getColor(templates []string, defaultColor string) string
 	if len(templates) == 0 {
 		return defaultColor
 	}
-	txtTemplate := &textTemplate{
+	txtTemplate := &template.Text{
 		Context: segment.writer,
 		Env:     segment.env,
 	}
-	for _, template := range templates {
-		txtTemplate.Template = template
-		value, err := txtTemplate.render()
+	for _, tmpl := range templates {
+		txtTemplate.Template = tmpl
+		value, err := txtTemplate.Render()
 		if err != nil || value == "" {
 			continue
 		}
@@ -243,49 +245,49 @@ func (segment *Segment) background() string {
 func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
-		OWM:           &Owm{},
-		SESSION:       &Session{},
-		PATH:          &Path{},
-		GIT:           &Git{},
-		PLASTIC:       &Plastic{},
-		EXIT:          &Exit{},
-		PYTHON:        &Python{},
-		ROOT:          &Root{},
-		TEXT:          &Text{},
-		TIME:          &Time{},
-		CMD:           &Cmd{},
-		BATTERY:       &Battery{},
-		SPOTIFY:       &Spotify{},
-		SHELL:         &Shell{},
-		NODE:          &Node{},
-		OS:            &Os{},
-		AZ:            &Az{},
-		KUBECTL:       &Kubectl{},
-		DOTNET:        &Dotnet{},
-		TERRAFORM:     &Terraform{},
-		GOLANG:        &Golang{},
-		JULIA:         &Julia{},
-		YTM:           &Ytm{},
-		EXECUTIONTIME: &Executiontime{},
-		RUBY:          &Ruby{},
-		AWS:           &Aws{},
-		JAVA:          &Java{},
-		POSHGIT:       &PoshGit{},
-		AZFUNC:        &AzFunc{},
-		CRYSTAL:       &Crystal{},
-		DART:          &Dart{},
-		NBGV:          &Nbgv{},
-		RUST:          &Rust{},
-		SYSTEMINFO:    &SystemInfo{},
-		ANGULAR:       &Angular{},
-		PHP:           &Php{},
-		NIGHTSCOUT:    &Nightscout{},
-		STRAVA:        &Strava{},
-		WAKATIME:      &Wakatime{},
-		WIFI:          &Wifi{},
-		WINREG:        &WindowsRegistry{},
-		BREWFATHER:    &Brewfather{},
-		IPIFY:         &IPify{},
+		OWM:           &segments.Owm{},
+		SESSION:       &segments.Session{},
+		PATH:          &segments.Path{},
+		GIT:           &segments.Git{},
+		PLASTIC:       &segments.Plastic{},
+		EXIT:          &segments.Exit{},
+		PYTHON:        &segments.Python{},
+		ROOT:          &segments.Root{},
+		TEXT:          &segments.Text{},
+		TIME:          &segments.Time{},
+		CMD:           &segments.Cmd{},
+		BATTERY:       &segments.Battery{},
+		SPOTIFY:       &segments.Spotify{},
+		SHELL:         &segments.Shell{},
+		NODE:          &segments.Node{},
+		OS:            &segments.Os{},
+		AZ:            &segments.Az{},
+		KUBECTL:       &segments.Kubectl{},
+		DOTNET:        &segments.Dotnet{},
+		TERRAFORM:     &segments.Terraform{},
+		GOLANG:        &segments.Golang{},
+		JULIA:         &segments.Julia{},
+		YTM:           &segments.Ytm{},
+		EXECUTIONTIME: &segments.Executiontime{},
+		RUBY:          &segments.Ruby{},
+		AWS:           &segments.Aws{},
+		JAVA:          &segments.Java{},
+		POSHGIT:       &segments.PoshGit{},
+		AZFUNC:        &segments.AzFunc{},
+		CRYSTAL:       &segments.Crystal{},
+		DART:          &segments.Dart{},
+		NBGV:          &segments.Nbgv{},
+		RUST:          &segments.Rust{},
+		SYSTEMINFO:    &segments.SystemInfo{},
+		ANGULAR:       &segments.Angular{},
+		PHP:           &segments.Php{},
+		NIGHTSCOUT:    &segments.Nightscout{},
+		STRAVA:        &segments.Strava{},
+		WAKATIME:      &segments.Wakatime{},
+		WIFI:          &segments.Wifi{},
+		WINREG:        &segments.WindowsRegistry{},
+		BREWFATHER:    &segments.Brewfather{},
+		IPIFY:         &segments.IPify{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)

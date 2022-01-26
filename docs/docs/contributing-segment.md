@@ -6,7 +6,7 @@ sidebar_label: Add Segment
 
 ## Create the logic
 
-Add a new file following this convention: `new_segment.go`.
+Add a new file in the `./src/segments` folder: `new.go`.
 Ensure `New` is a single verb indicating the context the segment renders.
 
 You can use the following template as a guide.
@@ -50,7 +50,7 @@ This will facilitate the review process as not all environments display the icon
 You can find these values and query for icons easily at [Nerd Fonts][nf-icons].
 
 For each segment, there's a single test file ensuring the functionality going forward. The convention
-is `new_segment_test.go`, have a look at [existing segment tests][tests] for inspiration. Oh My Posh makes
+is `new_test.go`, have a look at [existing segment tests][tests] for inspiration. Oh My Posh makes
 use of the test tables pattern for all newly added tests. See [this][tables] blog post for more information.
 
 ## Create a name for your Segment
@@ -168,5 +168,5 @@ And be patient, I'm going as fast as I can 🏎
 [docs]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/docs/docs
 [sidebars]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/docs/sidebars.js
 [nf-icons]: https://www.nerdfonts.com/cheat-sheet
-[tests]: hhttps://github.com/JanDeDobbeleer/oh-my-posh/blob/main/src/segment_az_test.go
+[tests]: hhttps://github.com/JanDeDobbeleer/oh-my-posh/blob/main/src/segments/az_test.go
 [tables]: https://blog.alexellis.io/golang-writing-unit-tests/

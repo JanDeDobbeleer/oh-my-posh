@@ -61,7 +61,7 @@ func (pt *path) template() string {
 
 func (pt *path) enabled() bool {
 	pt.pwd = pt.env.Pwd()
-	switch style := pt.props.getString(Style, Agnoster); style {
+	switch style := pt.props.GetString(Style, Agnoster); style {
 	case Agnoster:
 		pt.Path = pt.getAgnosterPath()
 	case AgnosterFull:
@@ -111,7 +111,7 @@ func (pt *path) getMixedPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
 	splitted := strings.Split(pwd, pt.env.PathSeperator())
-	threshold := int(pt.props.getFloat64(MixedThreshold, 4))
+	threshold := int(pt.props.GetFloat64(MixedThreshold, 4))
 	for i, part := range splitted {
 		if part == "" {
 			continue
@@ -119,9 +119,9 @@ func (pt *path) getMixedPath() string {
 
 		folder := part
 		if len(part) > threshold && i != 0 && i != len(splitted)-1 {
-			folder = pt.props.getString(FolderIcon, "..")
+			folder = pt.props.GetString(FolderIcon, "..")
 		}
-		separator := pt.props.getString(FolderSeparatorIcon, pt.env.PathSeperator())
+		separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeperator())
 		if i == 0 {
 			separator = ""
 		}
@@ -136,8 +136,8 @@ func (pt *path) getAgnosterPath() string {
 	pwd := pt.getPwd()
 	buffer.WriteString(pt.rootLocation())
 	pathDepth := pt.pathDepth(pwd)
-	folderIcon := pt.props.getString(FolderIcon, "..")
-	separator := pt.props.getString(FolderSeparatorIcon, pt.env.PathSeperator())
+	folderIcon := pt.props.GetString(FolderIcon, "..")
+	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeperator())
 	for i := 1; i < pathDepth; i++ {
 		buffer.WriteString(fmt.Sprintf("%s%s", separator, folderIcon))
 	}
@@ -152,8 +152,8 @@ func (pt *path) getAgnosterLeftPath() string {
 	separator := pt.env.PathSeperator()
 	pwd = strings.Trim(pwd, separator)
 	splitted := strings.Split(pwd, separator)
-	folderIcon := pt.props.getString(FolderIcon, "..")
-	separator = pt.props.getString(FolderSeparatorIcon, separator)
+	folderIcon := pt.props.GetString(FolderIcon, "..")
+	separator = pt.props.GetString(FolderSeparatorIcon, separator)
 	switch len(splitted) {
 	case 0:
 		return ""
@@ -174,7 +174,7 @@ func (pt *path) getLetterPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
 	splitted := strings.Split(pwd, pt.env.PathSeperator())
-	separator := pt.props.getString(FolderSeparatorIcon, pt.env.PathSeperator())
+	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeperator())
 	for i := 0; i < len(splitted)-1; i++ {
 		folder := splitted[i]
 		if len(folder) == 0 {
@@ -213,7 +213,7 @@ func (pt *path) getAgnosterFullPath() string {
 func (pt *path) getAgnosterShortPath() string {
 	pwd := pt.getPwd()
 	pathDepth := pt.pathDepth(pwd)
-	maxDepth := pt.props.getInt(MaxDepth, 1)
+	maxDepth := pt.props.GetInt(MaxDepth, 1)
 	if maxDepth < 1 {
 		maxDepth = 1
 	}
@@ -221,8 +221,8 @@ func (pt *path) getAgnosterShortPath() string {
 		return pt.getAgnosterFullPath()
 	}
 	pathSeparator := pt.env.PathSeperator()
-	folderSeparator := pt.props.getString(FolderSeparatorIcon, pathSeparator)
-	folderIcon := pt.props.getString(FolderIcon, "..")
+	folderSeparator := pt.props.GetString(FolderSeparatorIcon, pathSeparator)
+	folderIcon := pt.props.GetString(FolderIcon, "..")
 	root := pt.rootLocation()
 	splitted := strings.Split(pwd, pathSeparator)
 	fullPathDepth := len(splitted)
@@ -274,15 +274,15 @@ func (pt *path) replaceMappedLocations(pwd string) string {
 	}
 
 	mappedLocations := map[string]string{}
-	if pt.props.getBool(MappedLocationsEnabled, true) {
-		mappedLocations["HKCU:"] = pt.props.getString(WindowsRegistryIcon, "\uF013")
-		mappedLocations["HKLM:"] = pt.props.getString(WindowsRegistryIcon, "\uF013")
-		mappedLocations[pt.normalize(pt.env.Home())] = pt.props.getString(HomeIcon, "~")
+	if pt.props.GetBool(MappedLocationsEnabled, true) {
+		mappedLocations["HKCU:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
+		mappedLocations["HKLM:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
+		mappedLocations[pt.normalize(pt.env.Home())] = pt.props.GetString(HomeIcon, "~")
 	}
 
 	// merge custom locations with mapped locations
 	// mapped locations can override predefined locations
-	keyValues := pt.props.getKeyValueMap(MappedLocations, make(map[string]string))
+	keyValues := pt.props.GetKeyValueMap(MappedLocations, make(map[string]string))
 	for key, val := range keyValues {
 		mappedLocations[pt.normalize(key)] = val
 	}
@@ -313,7 +313,7 @@ func (pt *path) replaceFolderSeparators(pwd string) string {
 	if pwd == defaultSeparator {
 		return pwd
 	}
-	folderSeparator := pt.props.getString(FolderSeparatorIcon, defaultSeparator)
+	folderSeparator := pt.props.GetString(FolderSeparatorIcon, defaultSeparator)
 	if folderSeparator == defaultSeparator {
 		return pwd
 	}

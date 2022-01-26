@@ -48,15 +48,15 @@ func (n *node) enabled() bool {
 }
 
 func (n *node) loadContext() {
-	if !n.language.props.getBool(FetchPackageManager, false) {
+	if !n.language.props.GetBool(FetchPackageManager, false) {
 		return
 	}
 	if n.language.env.HasFiles("yarn.lock") {
-		n.PackageManagerIcon = n.language.props.getString(YarnIcon, " \uF61A")
+		n.PackageManagerIcon = n.language.props.GetString(YarnIcon, " \uF61A")
 		return
 	}
 	if n.language.env.HasFiles("package-lock.json") || n.language.env.HasFiles("package.json") {
-		n.PackageManagerIcon = n.language.props.getString(NPMIcon, " \uE71E")
+		n.PackageManagerIcon = n.language.props.GetString(NPMIcon, " \uE71E")
 	}
 }
 

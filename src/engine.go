@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"strings"
 	"time"
@@ -10,8 +11,8 @@ import (
 type engine struct {
 	config       *Config
 	env          environment.Environment
-	writer       promptWriter
-	ansi         *ansiUtils
+	writer       color.Writer
+	ansi         *color.Ansi
 	consoleTitle *consoleTitle
 	plain        bool
 
@@ -40,7 +41,7 @@ func (e *engine) canWriteRPrompt() bool {
 	if err != nil || consoleWidth == 0 {
 		return true
 	}
-	promptWidth := e.ansi.lenWithoutANSI(prompt)
+	promptWidth := e.ansi.LenWithoutANSI(prompt)
 	availableSpace := consoleWidth - promptWidth
 	// spanning multiple lines
 	if availableSpace < 0 {
@@ -48,7 +49,7 @@ func (e *engine) canWriteRPrompt() bool {
 		availableSpace = consoleWidth - overflow
 	}
 	promptBreathingRoom := 30
-	canWrite := (availableSpace - e.ansi.lenWithoutANSI(e.rprompt)) >= promptBreathingRoom
+	canWrite := (availableSpace - e.ansi.LenWithoutANSI(e.rprompt)) >= promptBreathingRoom
 	return canWrite
 }
 
@@ -59,7 +60,7 @@ func (e *engine) render() string {
 	if e.config.ConsoleTitle {
 		e.writeANSI(e.consoleTitle.getConsoleTitle())
 	}
-	e.writeANSI(e.ansi.creset)
+	e.writeANSI(e.ansi.ColorReset())
 	if e.config.FinalSpace {
 		e.write(" ")
 	}
@@ -68,7 +69,7 @@ func (e *engine) render() string {
 		return e.print()
 	}
 	cwd := e.env.Pwd()
-	e.writeANSI(e.ansi.consolePwd(cwd))
+	e.writeANSI(e.ansi.ConsolePwd(cwd))
 	return e.print()
 }
 
@@ -95,13 +96,13 @@ func (e *engine) renderBlock(block *Block) {
 		e.write("\n")
 	case Prompt:
 		if block.VerticalOffset != 0 {
-			e.writeANSI(e.ansi.changeLine(block.VerticalOffset))
+			e.writeANSI(e.ansi.ChangeLine(block.VerticalOffset))
 		}
 		switch block.Alignment {
 		case Right:
-			e.writeANSI(e.ansi.carriageForward())
+			e.writeANSI(e.ansi.CarriageForward())
 			blockText := block.renderSegments()
-			e.writeANSI(e.ansi.getCursorForRightWrite(blockText, block.HorizontalOffset))
+			e.writeANSI(e.ansi.GetCursorForRightWrite(blockText, block.HorizontalOffset))
 			e.write(blockText)
 		case Left:
 			e.write(block.renderSegments())
@@ -109,7 +110,7 @@ func (e *engine) renderBlock(block *Block) {
 	case RPrompt:
 		blockText := block.renderSegments()
 		if e.env.Shell() == bash {
-			blockText = fmt.Sprintf(e.ansi.bashFormat, blockText)
+			blockText = e.ansi.FormatText(blockText)
 		}
 		e.rprompt = blockText
 	}
@@ -117,8 +118,8 @@ func (e *engine) renderBlock(block *Block) {
 	// If this doesn't happen, the portion after the prompt gets colored in the background
 	// color of the line above the new input line. Clearing the line fixes this,
 	// but can hopefully one day be removed when this is resolved natively.
-	if e.ansi.shell == pwsh || e.ansi.shell == powershell5 {
-		e.writeANSI(e.ansi.clearAfter())
+	if e.env.Shell() == pwsh || e.env.Shell() == powershell5 {
+		e.writeANSI(e.ansi.ClearAfter())
 	}
 }
 
@@ -182,11 +183,11 @@ func (e *engine) print() string {
 		if e.rprompt == "" || !e.canWriteRPrompt() || e.plain {
 			break
 		}
-		e.write(e.ansi.saveCursorPosition)
-		e.write(e.ansi.carriageForward())
-		e.write(e.ansi.getCursorForRightWrite(e.rprompt, 0))
+		e.write(e.ansi.SaveCursorPosition())
+		e.write(e.ansi.CarriageForward())
+		e.write(e.ansi.GetCursorForRightWrite(e.rprompt, 0))
 		e.write(e.rprompt)
-		e.write(e.ansi.restoreCursorPosition)
+		e.write(e.ansi.RestoreCursorPosition())
 	}
 	return e.string()
 }
@@ -222,9 +223,9 @@ func (e *engine) renderTooltip(tip string) string {
 	case pwsh, powershell5:
 		block.initPlain(e.env, e.config)
 		tooltipText := block.renderSegments()
-		e.write(e.ansi.clearAfter())
-		e.write(e.ansi.carriageForward())
-		e.write(e.ansi.getCursorForRightWrite(tooltipText, 0))
+		e.write(e.ansi.ClearAfter())
+		e.write(e.ansi.CarriageForward())
+		e.write(e.ansi.GetCursorForRightWrite(tooltipText, 0))
 		e.write(tooltipText)
 		return e.string()
 	}
@@ -247,16 +248,16 @@ func (e *engine) renderTransientPrompt() string {
 	if err != nil {
 		prompt = err.Error()
 	}
-	e.writer.setColors(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground)
-	e.writer.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
+	e.writer.SetColors(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground)
+	e.writer.Write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
 	switch e.env.Shell() {
 	case zsh:
 		// escape double quotes contained in the prompt
-		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.writer.string(), "\"", "\"\""))
+		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.writer.String(), "\"", "\"\""))
 		prompt += "\nRPROMPT=\"\""
 		return prompt
 	case pwsh, powershell5, winCMD:
-		return e.writer.string()
+		return e.writer.String()
 	}
 	return ""
 }

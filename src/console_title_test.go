@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
 	"testing"
@@ -69,8 +70,8 @@ func TestGetConsoleTitle(t *testing.T) {
 			PWD:      tc.Cwd,
 			Folder:   "vagrant",
 		})
-		ansi := &ansiUtils{}
-		ansi.init(tc.ShellName)
+		ansi := &color.Ansi{}
+		ansi.Init(tc.ShellName)
 		ct := &consoleTitle{
 			env:    env,
 			config: config,
@@ -127,8 +128,8 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			Root:     tc.Root,
 			HostName: "",
 		})
-		ansi := &ansiUtils{}
-		ansi.init(tc.ShellName)
+		ansi := &color.Ansi{}
+		ansi.Init(tc.ShellName)
 		ct := &consoleTitle{
 			env:    env,
 			config: config,

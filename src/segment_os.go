@@ -66,12 +66,12 @@ func (oi *osInfo) enabled() bool {
 	goos := oi.env.GOOS()
 	switch goos {
 	case environment.WindowsPlatform:
-		oi.Icon = oi.props.getString(Windows, "\uE62A")
+		oi.Icon = oi.props.GetString(Windows, "\uE62A")
 	case environment.DarwinPlatform:
-		oi.Icon = oi.props.getString(MacOS, "\uF179")
+		oi.Icon = oi.props.GetString(MacOS, "\uF179")
 	case environment.LinuxPlatform:
 		platform := oi.env.Platform()
-		displayDistroName := oi.props.getBool(DisplayDistroName, false)
+		displayDistroName := oi.props.GetBool(DisplayDistroName, false)
 		if displayDistroName {
 			oi.Icon = platform
 			break
@@ -86,45 +86,45 @@ func (oi *osInfo) enabled() bool {
 func (oi *osInfo) getDistroIcon(distro string) string {
 	switch distro {
 	case "alpine":
-		return oi.props.getString(Alpine, "\uF300")
+		return oi.props.GetString(Alpine, "\uF300")
 	case "aosc":
-		return oi.props.getString(Aosc, "\uF301")
+		return oi.props.GetString(Aosc, "\uF301")
 	case "arch":
-		return oi.props.getString(Arch, "\uF303")
+		return oi.props.GetString(Arch, "\uF303")
 	case "centos":
-		return oi.props.getString(Centos, "\uF304")
+		return oi.props.GetString(Centos, "\uF304")
 	case "coreos":
-		return oi.props.getString(Coreos, "\uF305")
+		return oi.props.GetString(Coreos, "\uF305")
 	case "debian":
-		return oi.props.getString(Debian, "\uF306")
+		return oi.props.GetString(Debian, "\uF306")
 	case "devuan":
-		return oi.props.getString(Devuan, "\uF307")
+		return oi.props.GetString(Devuan, "\uF307")
 	case "raspbian":
-		return oi.props.getString(Raspbian, "\uF315")
+		return oi.props.GetString(Raspbian, "\uF315")
 	case "elementary":
-		return oi.props.getString(Elementary, "\uF309")
+		return oi.props.GetString(Elementary, "\uF309")
 	case "fedora":
-		return oi.props.getString(Fedora, "\uF30a")
+		return oi.props.GetString(Fedora, "\uF30a")
 	case "gentoo":
-		return oi.props.getString(Gentoo, "\uF30d")
+		return oi.props.GetString(Gentoo, "\uF30d")
 	case "mageia":
-		return oi.props.getString(Mageia, "\uF310")
+		return oi.props.GetString(Mageia, "\uF310")
 	case "manjaro":
-		return oi.props.getString(Manjaro, "\uF312")
+		return oi.props.GetString(Manjaro, "\uF312")
 	case "mint":
-		return oi.props.getString(Mint, "\uF30e")
+		return oi.props.GetString(Mint, "\uF30e")
 	case "nixos":
-		return oi.props.getString(Nixos, "\uF313")
+		return oi.props.GetString(Nixos, "\uF313")
 	case "opensuse":
-		return oi.props.getString(Opensuse, "\uF314")
+		return oi.props.GetString(Opensuse, "\uF314")
 	case "sabayon":
-		return oi.props.getString(Sabayon, "\uF317")
+		return oi.props.GetString(Sabayon, "\uF317")
 	case "slackware":
-		return oi.props.getString(Slackware, "\uF319")
+		return oi.props.GetString(Slackware, "\uF319")
 	case "ubuntu":
-		return oi.props.getString(Ubuntu, "\uF31b")
+		return oi.props.GetString(Ubuntu, "\uF31b")
 	}
-	return oi.props.getString(Linux, "\uF17C")
+	return oi.props.GetString(Linux, "\uF17C")
 }
 
 func (oi *osInfo) init(props Properties, env environment.Environment) {

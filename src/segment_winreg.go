@@ -34,8 +34,8 @@ func (wr *winreg) enabled() bool {
 		return false
 	}
 
-	registryPath := wr.props.getString(RegistryPath, "")
-	fallback := wr.props.getString(Fallback, "")
+	registryPath := wr.props.GetString(RegistryPath, "")
+	fallback := wr.props.GetString(Fallback, "")
 
 	var regValue *environment.WindowsRegistryValue
 	regValue, _ = wr.env.WindowsRegistryKeyValue(registryPath)

@@ -55,8 +55,8 @@ func (s *scm) init(props Properties, env environment.Environment) {
 }
 
 func (s *scm) truncateBranch(branch string) string {
-	fullBranchPath := s.props.getBool(FullBranchPath, true)
-	maxLength := s.props.getInt(BranchMaxLength, 0)
+	fullBranchPath := s.props.GetBool(FullBranchPath, true)
+	maxLength := s.props.GetInt(BranchMaxLength, 0)
 	if !fullBranchPath && strings.Contains(branch, "/") {
 		index := strings.LastIndex(branch, "/")
 		branch = branch[index+1:]
@@ -64,12 +64,12 @@ func (s *scm) truncateBranch(branch string) string {
 	if maxLength == 0 || len(branch) <= maxLength {
 		return branch
 	}
-	symbol := s.props.getString(TruncateSymbol, "")
+	symbol := s.props.GetString(TruncateSymbol, "")
 	return branch[0:maxLength] + symbol
 }
 
 func (s *scm) shouldIgnoreRootRepository(rootDir string) bool {
-	excludedFolders := s.props.getStringArray(ExcludeFolders, []string{})
+	excludedFolders := s.props.GetStringArray(ExcludeFolders, []string{})
 	if len(excludedFolders) == 0 {
 		return false
 	}

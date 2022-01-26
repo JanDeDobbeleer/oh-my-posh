@@ -1,4 +1,4 @@
-package main
+package color
 
 import (
 	"fmt"
@@ -8,9 +8,17 @@ import (
 
 const (
 	ansiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
+
+	zsh  = "zsh"
+	bash = "bash"
+	pwsh = "pwsh"
+
+	str = "STR"
+	url = "URL"
 )
 
-type ansiUtils struct {
+type Ansi struct {
+	title                 string
 	shell                 string
 	linechange            string
 	left                  string
@@ -20,7 +28,6 @@ type ansiUtils struct {
 	clearLine             string
 	saveCursorPosition    string
 	restoreCursorPosition string
-	title                 string
 	colorSingle           string
 	colorFull             string
 	colorTransparent      string
@@ -32,7 +39,7 @@ type ansiUtils struct {
 	italic                string
 	underline             string
 	strikethrough         string
-	bashFormat            string
+	format                string
 	shellReservedKeywords []shellKeyWordReplacement
 }
 
@@ -41,11 +48,11 @@ type shellKeyWordReplacement struct {
 	replacement string
 }
 
-func (a *ansiUtils) init(shell string) {
+func (a *Ansi) Init(shell string) {
 	a.shell = shell
-	a.bashFormat = "\\[%s\\]"
 	switch shell {
 	case zsh:
+		a.format = "%%{%s%%}"
 		a.linechange = "%%{\x1b[%d%s%%}"
 		a.right = "%%{\x1b[%dC%%}"
 		a.left = "%%{\x1b[%dD%%}"
@@ -69,6 +76,7 @@ func (a *ansiUtils) init(shell string) {
 		// escape double quotes and variable expansion
 		a.shellReservedKeywords = append(a.shellReservedKeywords, shellKeyWordReplacement{"\\", "\\\\"}, shellKeyWordReplacement{"%", "%%"})
 	case bash:
+		a.format = "\\[%s\\]"
 		a.linechange = "\\[\x1b[%d%s\\]"
 		a.right = "\\[\x1b[%dC\\]"
 		a.left = "\\[\x1b[%dD\\]"
@@ -93,6 +101,7 @@ func (a *ansiUtils) init(shell string) {
 		// https://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
 		a.shellReservedKeywords = append(a.shellReservedKeywords, shellKeyWordReplacement{"\\", "\\\\"})
 	default:
+		a.format = "%s"
 		a.linechange = "\x1b[%d%s"
 		a.right = "\x1b[%dC"
 		a.left = "\x1b[%dD"
@@ -118,7 +127,7 @@ func (a *ansiUtils) init(shell string) {
 	a.shellReservedKeywords = append(a.shellReservedKeywords, shellKeyWordReplacement{"`", "'"})
 }
 
-func (a *ansiUtils) lenWithoutANSI(text string) int {
+func (a *Ansi) LenWithoutANSI(text string) int {
 	if len(text) == 0 {
 		return 0
 	}
@@ -139,7 +148,7 @@ func (a *ansiUtils) lenWithoutANSI(text string) int {
 	return len(runeText)
 }
 
-func (a *ansiUtils) generateHyperlink(text string) string {
+func (a *Ansi) generateHyperlink(text string) string {
 	// hyperlink matching
 	results := regex.FindNamedRegexMatch("(?P<all>(?:\\[(?P<name>.+)\\])(?:\\((?P<url>.*)\\)))", text)
 	if len(results) != 3 {
@@ -151,7 +160,7 @@ func (a *ansiUtils) generateHyperlink(text string) string {
 	return strings.Replace(text, results["all"], hyperlink, 1)
 }
 
-func (a *ansiUtils) formatText(text string) string {
+func (a *Ansi) formatText(text string) string {
 	results := regex.FindAllNamedRegexMatch("(?P<context><(?P<format>[buis])>(?P<text>[^<]+)</[buis]>)", text)
 	for _, result := range results {
 		var formatted string
@@ -170,16 +179,16 @@ func (a *ansiUtils) formatText(text string) string {
 	return text
 }
 
-func (a *ansiUtils) carriageForward() string {
+func (a *Ansi) CarriageForward() string {
 	return fmt.Sprintf(a.right, 1000)
 }
 
-func (a *ansiUtils) getCursorForRightWrite(text string, offset int) string {
-	strippedLen := a.lenWithoutANSI(text) + -offset
+func (a *Ansi) GetCursorForRightWrite(text string, offset int) string {
+	strippedLen := a.LenWithoutANSI(text) + -offset
 	return fmt.Sprintf(a.left, strippedLen)
 }
 
-func (a *ansiUtils) changeLine(numberOfLines int) string {
+func (a *Ansi) ChangeLine(numberOfLines int) string {
 	position := "B"
 	if numberOfLines < 0 {
 		position = "F"
@@ -188,21 +197,41 @@ func (a *ansiUtils) changeLine(numberOfLines int) string {
 	return fmt.Sprintf(a.linechange, numberOfLines, position)
 }
 
-func (a *ansiUtils) consolePwd(pwd string) string {
+func (a *Ansi) ConsolePwd(pwd string) string {
 	if strings.HasSuffix(pwd, ":") {
 		pwd += "\\"
 	}
 	return fmt.Sprintf(a.osc99, pwd)
 }
 
-func (a *ansiUtils) clearAfter() string {
+func (a *Ansi) ClearAfter() string {
 	return a.clearLine + a.clearBelow
 }
 
-func (a *ansiUtils) escapeText(text string) string {
+func (a *Ansi) EscapeText(text string) string {
 	// what to escape/replace is different per shell
 	for _, s := range a.shellReservedKeywords {
 		text = strings.ReplaceAll(text, s.text, s.replacement)
 	}
 	return text
+}
+
+func (a *Ansi) Title(title string) string {
+	return fmt.Sprintf(a.title, title)
+}
+
+func (a *Ansi) ColorReset() string {
+	return a.creset
+}
+
+func (a *Ansi) FormatText(text string) string {
+	return fmt.Sprintf(a.format, text)
+}
+
+func (a *Ansi) SaveCursorPosition() string {
+	return a.saveCursorPosition
+}
+
+func (a *Ansi) RestoreCursorPosition() string {
+	return a.restoreCursorPosition
 }

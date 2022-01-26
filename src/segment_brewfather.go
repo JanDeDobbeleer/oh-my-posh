@@ -140,12 +140,12 @@ func (bf *brewfather) enabled() bool {
 	}
 
 	// URL property set to weblink to the full batch page
-	batchID := bf.props.getString(BFBatchID, "")
+	batchID := bf.props.GetString(BFBatchID, "")
 	if len(batchID) > 0 {
 		bf.URL = fmt.Sprintf("https://web.brewfather.app/tabs/batches/batch/%s", batchID)
 	}
 
-	bf.DayIcon = bf.props.getString(BFDayIcon, "d")
+	bf.DayIcon = bf.props.GetString(BFDayIcon, "d")
 
 	return true
 }
@@ -154,49 +154,49 @@ func (bf *brewfather) getTrendIcon(trend float64) string {
 	// Not a fan of this logic - wondering if Go lets us do something cleaner...
 	if trend >= 0 {
 		if trend > 4 {
-			return bf.props.getString(BFDoubleUpIcon, "↑↑")
+			return bf.props.GetString(BFDoubleUpIcon, "↑↑")
 		}
 
 		if trend > 2 {
-			return bf.props.getString(BFSingleUpIcon, "↑")
+			return bf.props.GetString(BFSingleUpIcon, "↑")
 		}
 
 		if trend > 0.5 {
-			return bf.props.getString(BFFortyFiveUpIcon, "↗")
+			return bf.props.GetString(BFFortyFiveUpIcon, "↗")
 		}
 
-		return bf.props.getString(BFFlatIcon, "→")
+		return bf.props.GetString(BFFlatIcon, "→")
 	}
 
 	if trend < -4 {
-		return bf.props.getString(BFDoubleDownIcon, "↓↓")
+		return bf.props.GetString(BFDoubleDownIcon, "↓↓")
 	}
 
 	if trend < -2 {
-		return bf.props.getString(BFSingleDownIcon, "↓")
+		return bf.props.GetString(BFSingleDownIcon, "↓")
 	}
 
 	if trend < -0.5 {
-		return bf.props.getString(BFFortyFiveDownIcon, "↘")
+		return bf.props.GetString(BFFortyFiveDownIcon, "↘")
 	}
 
-	return bf.props.getString(BFFlatIcon, "→")
+	return bf.props.GetString(BFFlatIcon, "→")
 }
 
 func (bf *brewfather) getBatchStatusIcon(batchStatus string) string {
 	switch batchStatus {
 	case BFStatusPlanning:
-		return bf.props.getString(BFPlanningStatusIcon, "\uF8EA")
+		return bf.props.GetString(BFPlanningStatusIcon, "\uF8EA")
 	case BFStatusBrewing:
-		return bf.props.getString(BFBrewingStatusIcon, "\uF7DE")
+		return bf.props.GetString(BFBrewingStatusIcon, "\uF7DE")
 	case BFStatusFermenting:
-		return bf.props.getString(BFFermentingStatusIcon, "\uF499")
+		return bf.props.GetString(BFFermentingStatusIcon, "\uF499")
 	case BFStatusConditioning:
-		return bf.props.getString(BFConditioningStatusIcon, "\uE372")
+		return bf.props.GetString(BFConditioningStatusIcon, "\uE372")
 	case BFStatusCompleted:
-		return bf.props.getString(BFCompletedStatusIcon, "\uF7A5")
+		return bf.props.GetString(BFCompletedStatusIcon, "\uF7A5")
 	case BFStatusArchived:
-		return bf.props.getString(BFArchivedStatusIcon, "\uF187")
+		return bf.props.GetString(BFArchivedStatusIcon, "\uF187")
 	default:
 		return ""
 	}
@@ -227,17 +227,17 @@ func (bf *brewfather) getResult() (*Batch, error) {
 		return nil
 	}
 
-	userID := bf.props.getString(BFUserID, "")
+	userID := bf.props.GetString(BFUserID, "")
 	if len(userID) == 0 {
 		return nil, errors.New("missing Brewfather user id (user_id)")
 	}
 
-	apiKey := bf.props.getString(BFAPIKey, "")
+	apiKey := bf.props.GetString(BFAPIKey, "")
 	if len(apiKey) == 0 {
 		return nil, errors.New("missing Brewfather api key (api_key)")
 	}
 
-	batchID := bf.props.getString(BFBatchID, "")
+	batchID := bf.props.GetString(BFBatchID, "")
 	if len(batchID) == 0 {
 		return nil, errors.New("missing Brewfather batch id (batch_id)")
 	}
@@ -248,8 +248,8 @@ func (bf *brewfather) getResult() (*Batch, error) {
 	batchURL := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s", batchID)
 	batchReadingsURL := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s/readings", batchID)
 
-	httpTimeout := bf.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
-	cacheTimeout := bf.props.getInt(BFCacheTimeout, 5)
+	httpTimeout := bf.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
+	cacheTimeout := bf.props.GetInt(BFCacheTimeout, 5)
 
 	if cacheTimeout > 0 {
 		if data, err := getFromCache(batchURL); err == nil {

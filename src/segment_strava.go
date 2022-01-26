@@ -108,19 +108,19 @@ func (s *strava) getActivityIcon() string {
 	case "VirtualRide":
 		fallthrough
 	case "Ride":
-		return s.props.getString(RideIcon, "\uf5a2")
+		return s.props.GetString(RideIcon, "\uf5a2")
 	case "Run":
-		return s.props.getString(RunIcon, "\ufc0c")
+		return s.props.GetString(RunIcon, "\ufc0c")
 	case "NordicSki":
 	case "AlpineSki":
 	case "BackcountrySki":
-		return s.props.getString(SkiingIcon, "\ue213")
+		return s.props.GetString(SkiingIcon, "\ue213")
 	case "WorkOut":
-		return s.props.getString(WorkOutIcon, "\ue213")
+		return s.props.GetString(WorkOutIcon, "\ue213")
 	default:
-		return s.props.getString(UnknownActivityIcon, "\ue213")
+		return s.props.GetString(UnknownActivityIcon, "\ue213")
 	}
-	return s.props.getString(UnknownActivityIcon, "\ue213")
+	return s.props.GetString(UnknownActivityIcon, "\ue213")
 }
 
 func (s *strava) getAccessToken() (string, error) {
@@ -135,7 +135,7 @@ func (s *strava) getAccessToken() (string, error) {
 		}
 	}
 	// use initial refresh token from property
-	refreshToken := s.props.getString(RefreshToken, "")
+	refreshToken := s.props.GetString(RefreshToken, "")
 	if len(refreshToken) == 0 {
 		return "", &AuthError{
 			message: InvalidRefreshToken,
@@ -147,7 +147,7 @@ func (s *strava) getAccessToken() (string, error) {
 }
 
 func (s *strava) refreshToken(refreshToken string) (string, error) {
-	httpTimeout := s.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
+	httpTimeout := s.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
 	url := fmt.Sprintf("https://ohmyposh.dev/api/refresh?segment=strava&token=%s", refreshToken)
 	body, err := s.env.HTTPRequest(url, httpTimeout)
 	if err != nil {
@@ -194,10 +194,10 @@ func (s *strava) getResult() (*StravaData, error) {
 
 	// We only want the last activity
 	url := "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1"
-	httpTimeout := s.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
+	httpTimeout := s.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
 
 	// No need to check more the every 30 min
-	cacheTimeout := s.props.getInt(CacheTimeout, 30)
+	cacheTimeout := s.props.GetInt(CacheTimeout, 30)
 	if cacheTimeout > 0 {
 		if data, err := getCacheValue(url); err == nil {
 			return data, nil

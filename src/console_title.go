@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"strings"
 )
@@ -9,7 +9,7 @@ import (
 type consoleTitle struct {
 	env    environment.Environment
 	config *Config
-	ansi   *ansiUtils
+	ansi   *color.Ansi
 }
 
 // ConsoleTitleStyle defines how to show the title in the console window
@@ -36,8 +36,8 @@ func (t *consoleTitle) getConsoleTitle() string {
 	default:
 		title = environment.Base(t.env, t.getPwd())
 	}
-	title = t.ansi.escapeText(title)
-	return fmt.Sprintf(t.ansi.title, title)
+	title = t.ansi.EscapeText(title)
+	return t.ansi.Title(title)
 }
 
 func (t *consoleTitle) getTemplateText() string {

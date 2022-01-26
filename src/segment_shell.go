@@ -22,7 +22,7 @@ func (s *shell) template() string {
 }
 
 func (s *shell) enabled() bool {
-	mappedNames := s.props.getKeyValueMap(MappedShellNames, make(map[string]string))
+	mappedNames := s.props.GetKeyValueMap(MappedShellNames, make(map[string]string))
 	s.Name = s.env.Shell()
 	for key, val := range mappedNames {
 		if strings.EqualFold(s.Name, key) {

@@ -37,8 +37,8 @@ func (p *python) init(props Properties, env environment.Environment) {
 			},
 		},
 		versionURLTemplate: "[%s](https://www.python.org/downloads/release/python-%s%s%s/)",
-		displayMode:        props.getString(DisplayMode, DisplayModeEnvironment),
-		homeEnabled:        props.getBool(HomeEnabled, true),
+		displayMode:        props.GetString(DisplayMode, DisplayModeEnvironment),
+		homeEnabled:        props.GetBool(HomeEnabled, true),
 	}
 }
 
@@ -47,7 +47,7 @@ func (p *python) enabled() bool {
 }
 
 func (p *python) loadContext() {
-	if !p.language.props.getBool(FetchVirtualEnv, true) {
+	if !p.language.props.GetBool(FetchVirtualEnv, true) {
 		return
 	}
 	venvVars := []string{
@@ -75,7 +75,7 @@ func (p *python) canUseVenvName(name string) bool {
 	if name == "" || name == "." {
 		return false
 	}
-	if p.language.props.getBool(DisplayDefault, true) {
+	if p.language.props.GetBool(DisplayDefault, true) {
 		return true
 	}
 	invalidNames := [2]string{"system", "base"}

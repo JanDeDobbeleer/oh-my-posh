@@ -1,6 +1,7 @@
 package main
 
 import (
+	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"sync"
 	"time"
@@ -35,27 +36,27 @@ type Block struct {
 	Newline          bool           `config:"newline"`
 
 	env                   environment.Environment
-	writer                promptWriter
-	ansi                  *ansiUtils
+	writer                color.Writer
+	ansi                  *color.Ansi
 	activeSegment         *Segment
 	previousActiveSegment *Segment
 	activeBackground      string
 	activeForeground      string
 }
 
-func (b *Block) init(env environment.Environment, writer promptWriter, ansi *ansiUtils) {
+func (b *Block) init(env environment.Environment, writer color.Writer, ansi *color.Ansi) {
 	b.env = env
 	b.writer = writer
 	b.ansi = ansi
 }
 
 func (b *Block) initPlain(env environment.Environment, config *Config) {
-	b.ansi = &ansiUtils{}
-	b.ansi.init(plain)
-	b.writer = &AnsiWriter{
-		ansi:               b.ansi,
-		terminalBackground: getConsoleBackgroundColor(env, config.TerminalBackground),
-		ansiColors:         MakeColors(env, config),
+	b.ansi = &color.Ansi{}
+	b.ansi.Init(plain)
+	b.writer = &color.AnsiWriter{
+		Ansi:               b.ansi,
+		TerminalBackground: getConsoleBackgroundColor(env, config.TerminalBackground),
+		AnsiColors:         config.MakeColors(env),
 	}
 	b.env = env
 }
@@ -64,7 +65,7 @@ func (b *Block) setActiveSegment(segment *Segment) {
 	b.activeSegment = segment
 	b.activeBackground = segment.background()
 	b.activeForeground = segment.foreground()
-	b.writer.setColors(b.activeBackground, b.activeForeground)
+	b.writer.SetColors(b.activeBackground, b.activeForeground)
 }
 
 func (b *Block) enabled() bool {
@@ -92,7 +93,7 @@ func (b *Block) setStringValues() {
 }
 
 func (b *Block) renderSegments() string {
-	defer b.writer.reset()
+	defer b.writer.Reset()
 	for _, segment := range b.Segments {
 		if !segment.active {
 			continue
@@ -100,8 +101,8 @@ func (b *Block) renderSegments() string {
 		b.renderSegment(segment)
 	}
 	b.writePowerline(true)
-	b.writer.clearParentColors()
-	return b.writer.string()
+	b.writer.ClearParentColors()
+	return b.writer.String()
 }
 
 func (b *Block) renderSegment(segment *Segment) {
@@ -111,19 +112,19 @@ func (b *Block) renderSegment(segment *Segment) {
 	case Plain, Powerline:
 		b.renderText(segment.stringValue)
 	case Diamond:
-		b.writer.write(Transparent, b.activeBackground, b.activeSegment.LeadingDiamond)
+		b.writer.Write(color.Transparent, b.activeBackground, b.activeSegment.LeadingDiamond)
 		b.renderText(segment.stringValue)
-		b.writer.write(Transparent, b.activeBackground, b.activeSegment.TrailingDiamond)
+		b.writer.Write(color.Transparent, b.activeBackground, b.activeSegment.TrailingDiamond)
 	}
 	b.previousActiveSegment = b.activeSegment
-	b.writer.setParentColors(b.activeBackground, b.activeForeground)
+	b.writer.SetParentColors(b.activeBackground, b.activeForeground)
 }
 
 func (b *Block) renderText(text string) {
 	defaultValue := " "
-	b.writer.write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Prefix, defaultValue))
-	b.writer.write(b.activeBackground, b.activeForeground, text)
-	b.writer.write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Postfix, defaultValue))
+	b.writer.Write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Prefix, defaultValue))
+	b.writer.Write(b.activeBackground, b.activeForeground, text)
+	b.writer.Write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(Postfix, defaultValue))
 }
 
 func (b *Block) writePowerline(final bool) {
@@ -142,21 +143,21 @@ func (b *Block) writePowerline(final bool) {
 	}
 	background := b.activeSegment.background()
 	if final || b.activeSegment.Style != Powerline {
-		background = Transparent
+		background = color.Transparent
 	}
 	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
 		background = b.activeSegment.background()
 	}
 	if b.activeSegment.InvertPowerline {
-		b.writer.write(b.getPowerlineColor(), background, symbol)
+		b.writer.Write(b.getPowerlineColor(), background, symbol)
 		return
 	}
-	b.writer.write(background, b.getPowerlineColor(), symbol)
+	b.writer.Write(background, b.getPowerlineColor(), symbol)
 }
 
 func (b *Block) getPowerlineColor() string {
 	if b.previousActiveSegment == nil {
-		return Transparent
+		return color.Transparent
 	}
 	if b.previousActiveSegment.Style == Diamond && len(b.previousActiveSegment.TrailingDiamond) == 0 {
 		return b.previousActiveSegment.background()
@@ -165,7 +166,7 @@ func (b *Block) getPowerlineColor() string {
 		return b.previousActiveSegment.background()
 	}
 	if b.previousActiveSegment.Style != Powerline {
-		return Transparent
+		return color.Transparent
 	}
 	return b.previousActiveSegment.background()
 }
@@ -195,8 +196,8 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 			segmentTiming.stringDuration = time.Since(start)
 			b.renderSegment(segment)
 			b.writePowerline(true)
-			segmentTiming.stringValue = b.writer.string()
-			b.writer.reset()
+			segmentTiming.stringValue = b.writer.String()
+			b.writer.Reset()
 		}
 		segmentTimings = append(segmentTimings, &segmentTiming)
 	}

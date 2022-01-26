@@ -48,13 +48,13 @@ const (
 )
 
 func (t *executiontime) enabled() bool {
-	alwaysEnabled := t.props.getBool(AlwaysEnabled, false)
+	alwaysEnabled := t.props.GetBool(AlwaysEnabled, false)
 	executionTimeMs := t.env.ExecutionTime()
-	thresholdMs := t.props.getFloat64(ThresholdProperty, float64(500))
+	thresholdMs := t.props.GetFloat64(ThresholdProperty, float64(500))
 	if !alwaysEnabled && executionTimeMs < thresholdMs {
 		return false
 	}
-	style := DurationStyle(t.props.getString(Style, string(Austin)))
+	style := DurationStyle(t.props.GetString(Style, string(Austin)))
 	t.Ms = int64(executionTimeMs)
 	t.FormattedMs = t.formatDuration(style)
 	return t.FormattedMs != ""

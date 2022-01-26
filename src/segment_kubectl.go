@@ -43,7 +43,7 @@ func (k *kubectl) init(props Properties, env environment.Environment) {
 }
 
 func (k *kubectl) enabled() bool {
-	parseKubeConfig := k.props.getBool(ParseKubeConfig, false)
+	parseKubeConfig := k.props.GetBool(ParseKubeConfig, false)
 	if parseKubeConfig {
 		return k.doParseKubeConfig()
 	}
@@ -92,7 +92,7 @@ func (k *kubectl) doParseKubeConfig() bool {
 		return true
 	}
 
-	displayError := k.props.getBool(DisplayError, false)
+	displayError := k.props.GetBool(DisplayError, false)
 	if !displayError {
 		return false
 	}
@@ -106,7 +106,7 @@ func (k *kubectl) doCallKubectl() bool {
 		return false
 	}
 	result, err := k.env.RunCommand(cmd, "config", "view", "--output", "yaml", "--minify")
-	displayError := k.props.getBool(DisplayError, false)
+	displayError := k.props.GetBool(DisplayError, false)
 	if err != nil && displayError {
 		k.setError("KUBECTL ERR")
 		return true

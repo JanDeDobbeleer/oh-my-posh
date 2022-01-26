@@ -1,4 +1,4 @@
-package main
+package color
 
 import (
 	"testing"
@@ -171,17 +171,17 @@ func TestWriteANSIColors(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		ansi := &ansiUtils{}
-		ansi.init("pwsh")
+		ansi := &Ansi{}
+		ansi.Init("pwsh")
 		renderer := &AnsiWriter{
-			ansi:               ansi,
+			Ansi:               ansi,
 			ParentColors:       []*Color{tc.Parent},
 			Colors:             tc.Colors,
-			terminalBackground: tc.TerminalBackground,
-			ansiColors:         &DefaultColors{},
+			TerminalBackground: tc.TerminalBackground,
+			AnsiColors:         &DefaultColors{},
 		}
-		renderer.write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
-		got := renderer.string()
+		renderer.Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
+		got := renderer.String()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

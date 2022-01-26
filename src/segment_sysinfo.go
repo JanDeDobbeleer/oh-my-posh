@@ -47,7 +47,7 @@ func (s *sysinfo) enabled() bool {
 func (s *sysinfo) init(props Properties, env environment.Environment) {
 	s.props = props
 	s.env = env
-	s.Precision = s.props.getInt(Precision, 2)
+	s.Precision = s.props.GetInt(Precision, 2)
 	// mem
 	memStat, err := mem.VirtualMemory()
 	if err == nil {

@@ -60,7 +60,7 @@ func (p *plastic) enabled() bool {
 		return false
 	}
 	p.plasticWorkspaceFolder = wkdir.ParentFolder
-	displayStatus := p.props.getBool(FetchStatus, false)
+	displayStatus := p.props.GetBool(FetchStatus, false)
 	p.setSelector()
 	if displayStatus {
 		p.setPlasticStatus()
@@ -135,13 +135,13 @@ func (p *plastic) setSelector() {
 	// changeset
 	ref = p.parseChangesetSelector(selector)
 	if len(ref) > 0 {
-		p.Selector = fmt.Sprintf("%s%s", p.props.getString(CommitIcon, "\uF417"), ref)
+		p.Selector = fmt.Sprintf("%s%s", p.props.GetString(CommitIcon, "\uF417"), ref)
 		return
 	}
 	// fallback to label
 	ref = p.parseLabelSelector(selector)
 	if len(ref) > 0 {
-		p.Selector = fmt.Sprintf("%s%s", p.props.getString(TagIcon, "\uF412"), ref)
+		p.Selector = fmt.Sprintf("%s%s", p.props.GetString(TagIcon, "\uF412"), ref)
 		return
 	}
 	// fallback to branch/smartbranch
@@ -149,7 +149,7 @@ func (p *plastic) setSelector() {
 	if len(ref) > 0 {
 		ref = p.truncateBranch(ref)
 	}
-	p.Selector = fmt.Sprintf("%s%s", p.props.getString(BranchIcon, "\uE0A0"), ref)
+	p.Selector = fmt.Sprintf("%s%s", p.props.GetString(BranchIcon, "\uE0A0"), ref)
 }
 
 func (p *plastic) parseChangesetSelector(selector string) string {

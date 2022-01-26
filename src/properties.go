@@ -2,8 +2,19 @@ package main
 
 import (
 	"fmt"
+	"oh-my-posh/color"
 	"oh-my-posh/regex"
 )
+
+type Properties interface {
+	GetColor(property Property, defaultColor string) string
+	GetBool(property Property, defaultValue bool) bool
+	GetString(property Property, defaultValue string) string
+	GetFloat64(property Property, defaultValue float64) float64
+	GetInt(property Property, defaultValue int) int
+	GetKeyValueMap(property Property, defaultValue map[string]string) map[string]string
+	GetStringArray(property Property, defaultValue []string) []string
+}
 
 // Property defines one property of a segment for context
 type Property string
@@ -42,7 +53,7 @@ const (
 
 type properties map[Property]interface{}
 
-func (p properties) getString(property Property, defaultValue string) string {
+func (p properties) GetString(property Property, defaultValue string) string {
 	val, found := p[property]
 	if !found {
 		return defaultValue
@@ -58,13 +69,13 @@ func parseString(value interface{}, defaultValue string) string {
 	return stringValue
 }
 
-func (p properties) getColor(property Property, defaultValue string) string {
+func (p properties) GetColor(property Property, defaultValue string) string {
 	val, found := p[property]
 	if !found {
 		return defaultValue
 	}
 	colorString := parseString(val, defaultValue)
-	if IsAnsiColorName(colorString) {
+	if color.IsAnsiColorName(colorString) {
 		return colorString
 	}
 	values := regex.FindNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|p:.*)`, colorString)
@@ -74,7 +85,7 @@ func (p properties) getColor(property Property, defaultValue string) string {
 	return defaultValue
 }
 
-func (p properties) getBool(property Property, defaultValue bool) bool {
+func (p properties) GetBool(property Property, defaultValue bool) bool {
 	val, found := p[property]
 	if !found {
 		return defaultValue
@@ -86,7 +97,7 @@ func (p properties) getBool(property Property, defaultValue bool) bool {
 	return boolValue
 }
 
-func (p properties) getFloat64(property Property, defaultValue float64) float64 {
+func (p properties) GetFloat64(property Property, defaultValue float64) float64 {
 	val, found := p[property]
 	if !found {
 		return defaultValue
@@ -105,7 +116,7 @@ func (p properties) getFloat64(property Property, defaultValue float64) float64 
 	return float64(intValue)
 }
 
-func (p properties) getInt(property Property, defaultValue int) int {
+func (p properties) GetInt(property Property, defaultValue int) int {
 	val, found := p[property]
 	if !found {
 		return defaultValue
@@ -124,7 +135,7 @@ func (p properties) getInt(property Property, defaultValue int) int {
 	return int(intValue)
 }
 
-func (p properties) getKeyValueMap(property Property, defaultValue map[string]string) map[string]string {
+func (p properties) GetKeyValueMap(property Property, defaultValue map[string]string) map[string]string {
 	val, found := p[property]
 	if !found {
 		return defaultValue
@@ -135,7 +146,7 @@ func (p properties) getKeyValueMap(property Property, defaultValue map[string]st
 	return keyValues
 }
 
-func (p properties) getStringArray(property Property, defaultValue []string) []string {
+func (p properties) GetStringArray(property Property, defaultValue []string) []string {
 	val, found := p[property]
 	if !found {
 		return defaultValue

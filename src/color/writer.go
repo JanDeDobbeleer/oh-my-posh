@@ -1,4 +1,4 @@
-package main
+package color
 
 import (
 	"fmt"
@@ -10,23 +10,24 @@ const (
 	colorRegex = `<(?P<foreground>[^,>]+)?,?(?P<background>[^>]+)?>(?P<content>[^<]*)<\/>`
 )
 
-type promptWriter interface {
-	write(background, foreground, text string)
-	string() string
-	reset()
-	setColors(background, foreground string)
-	setParentColors(background, foreground string)
-	clearParentColors()
+type Writer interface {
+	Write(background, foreground, text string)
+	String() string
+	Reset()
+	SetColors(background, foreground string)
+	SetParentColors(background, foreground string)
+	ClearParentColors()
 }
 
-// AnsiWriter writes colorized strings
+// AnsiWriter writes colorized ANSI strings
 type AnsiWriter struct {
-	builder            strings.Builder
-	ansi               *ansiUtils
-	terminalBackground string
+	Ansi               *Ansi
+	TerminalBackground string
 	Colors             *Color
 	ParentColors       []*Color
-	ansiColors         AnsiColors
+	AnsiColors         AnsiColors
+
+	builder strings.Builder
 }
 
 type Color struct {
@@ -73,14 +74,14 @@ const (
 	Foreground = "foreground"
 )
 
-func (a *AnsiWriter) setColors(background, foreground string) {
+func (a *AnsiWriter) SetColors(background, foreground string) {
 	a.Colors = &Color{
 		Background: background,
 		Foreground: foreground,
 	}
 }
 
-func (a *AnsiWriter) setParentColors(background, foreground string) {
+func (a *AnsiWriter) SetParentColors(background, foreground string) {
 	if a.ParentColors == nil {
 		a.ParentColors = make([]*Color, 0)
 	}
@@ -90,12 +91,12 @@ func (a *AnsiWriter) setParentColors(background, foreground string) {
 	}}, a.ParentColors...)
 }
 
-func (a *AnsiWriter) clearParentColors() {
+func (a *AnsiWriter) ClearParentColors() {
 	a.ParentColors = nil
 }
 
 func (a *AnsiWriter) getAnsiFromColorString(colorString string, isBackground bool) AnsiColor {
-	return a.ansiColors.AnsiColorFromString(colorString, isBackground)
+	return a.AnsiColors.AnsiColorFromString(colorString, isBackground)
 }
 
 func (a *AnsiWriter) writeColoredText(background, foreground AnsiColor, text string) {
@@ -107,22 +108,22 @@ func (a *AnsiWriter) writeColoredText(background, foreground AnsiColor, text str
 	if foreground.IsEmpty() {
 		foreground = a.getAnsiFromColorString("white", false)
 	}
-	if foreground.IsTransparent() && !background.IsEmpty() && len(a.terminalBackground) != 0 {
-		fgAnsiColor := a.getAnsiFromColorString(a.terminalBackground, false)
-		coloredText := fmt.Sprintf(a.ansi.colorFull, background, fgAnsiColor, text)
+	if foreground.IsTransparent() && !background.IsEmpty() && len(a.TerminalBackground) != 0 {
+		fgAnsiColor := a.getAnsiFromColorString(a.TerminalBackground, false)
+		coloredText := fmt.Sprintf(a.Ansi.colorFull, background, fgAnsiColor, text)
 		a.builder.WriteString(coloredText)
 		return
 	}
 	if foreground.IsTransparent() && !background.IsEmpty() {
-		coloredText := fmt.Sprintf(a.ansi.colorTransparent, background, text)
+		coloredText := fmt.Sprintf(a.Ansi.colorTransparent, background, text)
 		a.builder.WriteString(coloredText)
 		return
 	} else if background.IsEmpty() || background.IsTransparent() {
-		coloredText := fmt.Sprintf(a.ansi.colorSingle, foreground, text)
+		coloredText := fmt.Sprintf(a.Ansi.colorSingle, foreground, text)
 		a.builder.WriteString(coloredText)
 		return
 	}
-	coloredText := fmt.Sprintf(a.ansi.colorFull, background, foreground, text)
+	coloredText := fmt.Sprintf(a.Ansi.colorFull, background, foreground, text)
 	a.builder.WriteString(coloredText)
 }
 
@@ -131,15 +132,15 @@ func (a *AnsiWriter) writeAndRemoveText(background, foreground AnsiColor, text, 
 	return strings.Replace(parentText, textToRemove, "", 1)
 }
 
-func (a *AnsiWriter) write(background, foreground, text string) {
+func (a *AnsiWriter) Write(background, foreground, text string) {
 	if len(text) == 0 {
 		return
 	}
 
 	bgAnsi, fgAnsi := a.asAnsiColors(background, foreground)
-	text = a.ansi.escapeText(text)
-	text = a.ansi.formatText(text)
-	text = a.ansi.generateHyperlink(text)
+	text = a.Ansi.EscapeText(text)
+	text = a.Ansi.formatText(text)
+	text = a.Ansi.generateHyperlink(text)
 
 	// first we match for any potentially valid colors enclosed in <>
 	// i.e., find color overrides
@@ -225,10 +226,10 @@ func (a *AnsiWriter) expandKeyword(keyword string) string {
 	return keyword
 }
 
-func (a *AnsiWriter) string() string {
+func (a *AnsiWriter) String() string {
 	return a.builder.String()
 }
 
-func (a *AnsiWriter) reset() {
+func (a *AnsiWriter) Reset() {
 	a.builder.Reset()
 }

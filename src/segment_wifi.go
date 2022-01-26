@@ -25,7 +25,7 @@ func (w *wifi) enabled() bool {
 		return false
 	}
 	wifiInfo, err := w.env.WifiNetwork()
-	displayError := w.props.getBool(DisplayError, false)
+	displayError := w.props.GetBool(DisplayError, false)
 	if err != nil && displayError {
 		w.Error = err.Error()
 		return true

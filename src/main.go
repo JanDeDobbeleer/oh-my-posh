@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"flag"
 	"fmt"
+	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"oh-my-posh/regex"
 	"os"
@@ -32,7 +33,8 @@ var zshInit string
 var cmdInit string
 
 const (
-	noExe       = "echo \"Unable to find Oh My Posh executable\""
+	noExe = "echo \"Unable to find Oh My Posh executable\""
+
 	zsh         = "zsh"
 	bash        = "bash"
 	pwsh        = "pwsh"
@@ -184,17 +186,17 @@ func main() {
 		return
 	}
 	cfg := GetConfig(env)
-	ansi := &ansiUtils{}
-	ansi.init(env.Shell())
-	var writer promptWriter
+	ansi := &color.Ansi{}
+	ansi.Init(env.Shell())
+	var writer color.Writer
 	if *args.Plain {
-		writer = &PlainWriter{}
+		writer = &color.PlainWriter{}
 	} else {
-		writerColors := MakeColors(env, cfg)
-		writer = &AnsiWriter{
-			ansi:               ansi,
-			terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
-			ansiColors:         writerColors,
+		writerColors := cfg.MakeColors(env)
+		writer = &color.AnsiWriter{
+			Ansi:               ansi,
+			TerminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
+			AnsiColors:         writerColors,
 		}
 	}
 	title := &consoleTitle{

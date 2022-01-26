@@ -57,7 +57,7 @@ func (d *owm) template() string {
 }
 
 func (d *owm) getResult() (*owmDataResponse, error) {
-	cacheTimeout := d.props.getInt(CacheTimeout, DefaultCacheTimeout)
+	cacheTimeout := d.props.GetInt(CacheTimeout, DefaultCacheTimeout)
 	response := new(owmDataResponse)
 	if cacheTimeout > 0 {
 		// check if data stored in cache
@@ -73,10 +73,10 @@ func (d *owm) getResult() (*owmDataResponse, error) {
 		}
 	}
 
-	apikey := d.props.getString(APIKey, ".")
-	location := d.props.getString(Location, "De Bilt,NL")
-	units := d.props.getString(Units, "standard")
-	httpTimeout := d.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
+	apikey := d.props.GetString(APIKey, ".")
+	location := d.props.GetString(Location, "De Bilt,NL")
+	units := d.props.GetString(Units, "standard")
+	httpTimeout := d.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
 	d.URL = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?q=%s&units=%s&appid=%s", location, units, apikey)
 
 	body, err := d.env.HTTPRequest(d.URL, httpTimeout)
@@ -97,7 +97,7 @@ func (d *owm) getResult() (*owmDataResponse, error) {
 }
 
 func (d *owm) setStatus() error {
-	units := d.props.getString(Units, "standard")
+	units := d.props.GetString(Units, "standard")
 	q, err := d.getResult()
 	if err != nil {
 		return err

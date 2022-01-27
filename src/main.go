@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"oh-my-posh/color"
+	"oh-my-posh/console"
 	"oh-my-posh/environment"
 	"oh-my-posh/regex"
 	"oh-my-posh/template"
@@ -200,16 +201,17 @@ func main() {
 			AnsiColors:         writerColors,
 		}
 	}
-	title := &consoleTitle{
-		env:    env,
-		config: cfg,
-		ansi:   ansi,
+	consoleTitle := &console.Title{
+		Env:      env,
+		Ansi:     ansi,
+		Template: cfg.ConsoleTitleTemplate,
+		Style:    cfg.ConsoleTitleStyle,
 	}
 	engine := &engine{
 		config:       cfg,
 		env:          env,
 		writer:       writer,
-		consoleTitle: title,
+		consoleTitle: consoleTitle,
 		ansi:         ansi,
 		plain:        *args.Plain,
 	}

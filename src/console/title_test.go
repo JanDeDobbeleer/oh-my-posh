@@ -1,4 +1,4 @@
-package main
+package console
 
 import (
 	"oh-my-posh/color"
@@ -9,9 +9,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetConsoleTitle(t *testing.T) {
+func TestGetTitle(t *testing.T) {
 	cases := []struct {
-		Style         ConsoleTitleStyle
+		Style         Style
 		Template      string
 		Root          bool
 		User          string
@@ -51,10 +51,6 @@ func TestGetConsoleTitle(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		config := &Config{
-			ConsoleTitleStyle:    tc.Style,
-			ConsoleTitleTemplate: tc.Template,
-		}
 		env := new(mock.MockedEnvironment)
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
@@ -72,19 +68,20 @@ func TestGetConsoleTitle(t *testing.T) {
 		})
 		ansi := &color.Ansi{}
 		ansi.Init(tc.ShellName)
-		ct := &consoleTitle{
-			env:    env,
-			config: config,
-			ansi:   ansi,
+		ct := &Title{
+			Env:      env,
+			Ansi:     ansi,
+			Style:    tc.Style,
+			Template: tc.Template,
 		}
-		got := ct.getConsoleTitle()
+		got := ct.GetTitle()
 		assert.Equal(t, tc.Expected, got)
 	}
 }
 
 func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 	cases := []struct {
-		Style         ConsoleTitleStyle
+		Style         Style
 		Template      string
 		Root          bool
 		User          string
@@ -112,10 +109,6 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		config := &Config{
-			ConsoleTitleStyle:    tc.Style,
-			ConsoleTitleTemplate: tc.Template,
-		}
 		env := new(mock.MockedEnvironment)
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
@@ -130,12 +123,13 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		})
 		ansi := &color.Ansi{}
 		ansi.Init(tc.ShellName)
-		ct := &consoleTitle{
-			env:    env,
-			config: config,
-			ansi:   ansi,
+		ct := &Title{
+			Env:      env,
+			Ansi:     ansi,
+			Style:    tc.Style,
+			Template: tc.Template,
 		}
-		got := ct.getConsoleTitle()
+		got := ct.GetTitle()
 		assert.Equal(t, tc.Expected, got)
 	}
 }

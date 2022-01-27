@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"oh-my-posh/color"
+	"oh-my-posh/console"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/segments"
@@ -24,16 +25,16 @@ import (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	FinalSpace           bool              `config:"final_space"`
-	OSC99                bool              `config:"osc99"`
-	ConsoleTitle         bool              `config:"console_title"`
-	ConsoleTitleStyle    ConsoleTitleStyle `config:"console_title_style"`
-	ConsoleTitleTemplate string            `config:"console_title_template"`
-	TerminalBackground   string            `config:"terminal_background"`
-	Blocks               []*Block          `config:"blocks"`
-	Tooltips             []*Segment        `config:"tooltips"`
-	TransientPrompt      *TransientPrompt  `config:"transient_prompt"`
-	Palette              color.Palette     `config:"palette"`
+	FinalSpace           bool             `config:"final_space"`
+	OSC99                bool             `config:"osc99"`
+	ConsoleTitle         bool             `config:"console_title"`
+	ConsoleTitleStyle    console.Style    `config:"console_title_style"`
+	ConsoleTitleTemplate string           `config:"console_title_template"`
+	TerminalBackground   string           `config:"terminal_background"`
+	Blocks               []*Block         `config:"blocks"`
+	Tooltips             []*Segment       `config:"tooltips"`
+	TransientPrompt      *TransientPrompt `config:"transient_prompt"`
+	Palette              color.Palette    `config:"palette"`
 }
 
 // MakeColors creates instance of AnsiColors to use in AnsiWriter according to
@@ -168,7 +169,7 @@ func getDefaultConfig(info string) *Config {
 	cfg := &Config{
 		FinalSpace:        true,
 		ConsoleTitle:      true,
-		ConsoleTitleStyle: FolderName,
+		ConsoleTitleStyle: console.FolderName,
 		Blocks: []*Block{
 			{
 				Type:      Prompt,

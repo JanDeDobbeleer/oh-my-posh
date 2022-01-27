@@ -65,7 +65,7 @@ const (
 	left                = "left"
 	osc99               = "osc99"
 	lineChange          = "linechange"
-	title               = "title"
+	consoleTitle        = "title"
 	link                = "link"
 )
 
@@ -181,7 +181,7 @@ func (ir *ImageRenderer) init() {
 		left:                `^(?P<STR>\x1b\[(\d{1,3})D)`,
 		osc99:               `^(?P<STR>\x1b\]9;9;(.+)\x1b\\)`,
 		lineChange:          `^(?P<STR>\x1b\[(\d)[FB])`,
-		title:               `^(?P<STR>\x1b\]0;(.+)\007)`,
+		consoleTitle:        `^(?P<STR>\x1b\]0;(.+)\007)`,
 		link:                `^(?P<STR>\x1b]8;;file:\/\/(.+)\x1b\\(?P<URL>.+)\x1b]8;;\x1b\\)`,
 	}
 }
@@ -457,7 +457,7 @@ func (ir *ImageRenderer) shouldPrint() bool {
 		case boldReset, italicReset, underlineReset:
 			ir.style = ""
 			return false
-		case strikethrough, strikethroughReset, left, osc99, lineChange, title:
+		case strikethrough, strikethroughReset, left, osc99, lineChange, consoleTitle:
 			return false
 		case color16:
 			ir.setBase16Color(match[fg])

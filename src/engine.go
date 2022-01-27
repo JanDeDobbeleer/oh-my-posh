@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"oh-my-posh/color"
+	"oh-my-posh/console"
 	"oh-my-posh/environment"
 	"oh-my-posh/template"
 	"strings"
@@ -14,7 +15,7 @@ type engine struct {
 	env          environment.Environment
 	writer       color.Writer
 	ansi         *color.Ansi
-	consoleTitle *consoleTitle
+	consoleTitle *console.Title
 	plain        bool
 
 	console strings.Builder
@@ -59,7 +60,7 @@ func (e *engine) render() string {
 		e.renderBlock(block)
 	}
 	if e.config.ConsoleTitle {
-		e.writeANSI(e.consoleTitle.getConsoleTitle())
+		e.writeANSI(e.consoleTitle.GetTitle())
 	}
 	e.writeANSI(e.ansi.ColorReset())
 	if e.config.FinalSpace {
@@ -132,7 +133,7 @@ func (e *engine) debug() string {
 	e.write("\n\x1b[1mSegments:\x1b[0m\n\n")
 	// console title timing
 	start := time.Now()
-	consoleTitle := e.consoleTitle.getTemplateText()
+	consoleTitle := e.consoleTitle.GetTitle()
 	duration := time.Since(start)
 	segmentTiming := &SegmentTiming{
 		name:            "ConsoleTitle",

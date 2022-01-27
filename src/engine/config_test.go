@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"oh-my-posh/segments"
@@ -11,7 +11,7 @@ import (
 
 func TestSettingsExportJSON(t *testing.T) {
 	defer testClearDefaultConfig()
-	content := exportConfig("../themes/jandedobbeleer.omp.json", "json")
+	content := ExportConfig("../themes/jandedobbeleer.omp.json", "json")
 	assert.NotContains(t, content, "\\u003ctransparent\\u003e")
 	assert.Contains(t, content, "<transparent>")
 }

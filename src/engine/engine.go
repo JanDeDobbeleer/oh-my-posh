@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"fmt"
@@ -10,40 +10,40 @@ import (
 	"time"
 )
 
-type engine struct {
-	config       *Config
-	env          environment.Environment
-	writer       color.Writer
-	ansi         *color.Ansi
-	consoleTitle *console.Title
-	plain        bool
+type Engine struct {
+	Config       *Config
+	Env          environment.Environment
+	Writer       color.Writer
+	Ansi         *color.Ansi
+	ConsoleTitle *console.Title
+	Plain        bool
 
 	console strings.Builder
 	rprompt string
 }
 
-func (e *engine) write(text string) {
+func (e *Engine) write(text string) {
 	e.console.WriteString(text)
 }
 
-func (e *engine) writeANSI(text string) {
-	if e.plain {
+func (e *Engine) writeANSI(text string) {
+	if e.Plain {
 		return
 	}
 	e.console.WriteString(text)
 }
 
-func (e *engine) string() string {
+func (e *Engine) string() string {
 	return e.console.String()
 }
 
-func (e *engine) canWriteRPrompt() bool {
+func (e *Engine) canWriteRPrompt() bool {
 	prompt := e.string()
-	consoleWidth, err := e.env.TerminalWidth()
+	consoleWidth, err := e.Env.TerminalWidth()
 	if err != nil || consoleWidth == 0 {
 		return true
 	}
-	promptWidth := e.ansi.LenWithoutANSI(prompt)
+	promptWidth := e.Ansi.LenWithoutANSI(prompt)
 	availableSpace := consoleWidth - promptWidth
 	// spanning multiple lines
 	if availableSpace < 0 {
@@ -51,37 +51,37 @@ func (e *engine) canWriteRPrompt() bool {
 		availableSpace = consoleWidth - overflow
 	}
 	promptBreathingRoom := 30
-	canWrite := (availableSpace - e.ansi.LenWithoutANSI(e.rprompt)) >= promptBreathingRoom
+	canWrite := (availableSpace - e.Ansi.LenWithoutANSI(e.rprompt)) >= promptBreathingRoom
 	return canWrite
 }
 
-func (e *engine) render() string {
-	for _, block := range e.config.Blocks {
+func (e *Engine) Render() string {
+	for _, block := range e.Config.Blocks {
 		e.renderBlock(block)
 	}
-	if e.config.ConsoleTitle {
-		e.writeANSI(e.consoleTitle.GetTitle())
+	if e.Config.ConsoleTitle {
+		e.writeANSI(e.ConsoleTitle.GetTitle())
 	}
-	e.writeANSI(e.ansi.ColorReset())
-	if e.config.FinalSpace {
+	e.writeANSI(e.Ansi.ColorReset())
+	if e.Config.FinalSpace {
 		e.write(" ")
 	}
 
-	if !e.config.OSC99 {
+	if !e.Config.OSC99 {
 		return e.print()
 	}
-	cwd := e.env.Pwd()
-	e.writeANSI(e.ansi.ConsolePwd(cwd))
+	cwd := e.Env.Pwd()
+	e.writeANSI(e.Ansi.ConsolePwd(cwd))
 	return e.print()
 }
 
-func (e *engine) renderBlock(block *Block) {
+func (e *Engine) renderBlock(block *Block) {
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
-	if block.Type == RPrompt && e.env.Shell() == bash {
-		block.initPlain(e.env, e.config)
+	if block.Type == RPrompt && e.Env.Shell() == bash {
+		block.initPlain(e.Env, e.Config)
 	} else {
-		block.init(e.env, e.writer, e.ansi)
+		block.init(e.Env, e.Writer, e.Ansi)
 	}
 	block.setStringValues()
 	if !block.enabled() {
@@ -98,21 +98,21 @@ func (e *engine) renderBlock(block *Block) {
 		e.write("\n")
 	case Prompt:
 		if block.VerticalOffset != 0 {
-			e.writeANSI(e.ansi.ChangeLine(block.VerticalOffset))
+			e.writeANSI(e.Ansi.ChangeLine(block.VerticalOffset))
 		}
 		switch block.Alignment {
 		case Right:
-			e.writeANSI(e.ansi.CarriageForward())
+			e.writeANSI(e.Ansi.CarriageForward())
 			blockText := block.renderSegments()
-			e.writeANSI(e.ansi.GetCursorForRightWrite(blockText, block.HorizontalOffset))
+			e.writeANSI(e.Ansi.GetCursorForRightWrite(blockText, block.HorizontalOffset))
 			e.write(blockText)
 		case Left:
 			e.write(block.renderSegments())
 		}
 	case RPrompt:
 		blockText := block.renderSegments()
-		if e.env.Shell() == bash {
-			blockText = e.ansi.FormatText(blockText)
+		if e.Env.Shell() == bash {
+			blockText = e.Ansi.FormatText(blockText)
 		}
 		e.rprompt = blockText
 	}
@@ -120,33 +120,33 @@ func (e *engine) renderBlock(block *Block) {
 	// If this doesn't happen, the portion after the prompt gets colored in the background
 	// color of the line above the new input line. Clearing the line fixes this,
 	// but can hopefully one day be removed when this is resolved natively.
-	if e.env.Shell() == pwsh || e.env.Shell() == powershell5 {
-		e.writeANSI(e.ansi.ClearAfter())
+	if e.Env.Shell() == pwsh || e.Env.Shell() == powershell5 {
+		e.writeANSI(e.Ansi.ClearAfter())
 	}
 }
 
 // debug will loop through your config file and output the timings for each segments
-func (e *engine) debug() string {
+func (e *Engine) Debug(version string) string {
 	var segmentTimings []*SegmentTiming
 	largestSegmentNameLength := 0
-	e.write(fmt.Sprintf("\n\x1b[1mVersion:\x1b[0m %s\n", Version))
+	e.write(fmt.Sprintf("\n\x1b[1mVersion:\x1b[0m %s\n", version))
 	e.write("\n\x1b[1mSegments:\x1b[0m\n\n")
 	// console title timing
 	start := time.Now()
-	consoleTitle := e.consoleTitle.GetTitle()
+	consoleTitle := e.ConsoleTitle.GetTitle()
 	duration := time.Since(start)
 	segmentTiming := &SegmentTiming{
 		name:            "ConsoleTitle",
 		nameLength:      12,
-		enabled:         e.config.ConsoleTitle,
+		enabled:         e.Config.ConsoleTitle,
 		stringValue:     consoleTitle,
 		enabledDuration: 0,
 		stringDuration:  duration,
 	}
 	segmentTimings = append(segmentTimings, segmentTiming)
 	// loop each segments of each blocks
-	for _, block := range e.config.Blocks {
-		block.init(e.env, e.writer, e.ansi)
+	for _, block := range e.Config.Blocks {
+		block.init(e.Env, e.Writer, e.Ansi)
 		longestSegmentName, timings := block.debug()
 		segmentTimings = append(segmentTimings, timings...)
 		if longestSegmentName > largestSegmentNameLength {
@@ -165,16 +165,16 @@ func (e *engine) debug() string {
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
 	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(start)))
-	e.write(fmt.Sprintf("\n\x1b[1mCache path:\x1b[0m %s\n", e.env.CachePath()))
+	e.write(fmt.Sprintf("\n\x1b[1mCache path:\x1b[0m %s\n", e.Env.CachePath()))
 	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
-	e.write(e.env.Logs())
+	e.write(e.Env.Logs())
 	return e.string()
 }
 
-func (e *engine) print() string {
-	switch e.env.Shell() {
+func (e *Engine) print() string {
+	switch e.Env.Shell() {
 	case zsh:
-		if !*e.env.Args().Eval {
+		if !*e.Env.Args().Eval {
 			break
 		}
 		// escape double quotes contained in the prompt
@@ -182,22 +182,22 @@ func (e *engine) print() string {
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
 	case pwsh, powershell5, bash, plain:
-		if e.rprompt == "" || !e.canWriteRPrompt() || e.plain {
+		if e.rprompt == "" || !e.canWriteRPrompt() || e.Plain {
 			break
 		}
-		e.write(e.ansi.SaveCursorPosition())
-		e.write(e.ansi.CarriageForward())
-		e.write(e.ansi.GetCursorForRightWrite(e.rprompt, 0))
+		e.write(e.Ansi.SaveCursorPosition())
+		e.write(e.Ansi.CarriageForward())
+		e.write(e.Ansi.GetCursorForRightWrite(e.rprompt, 0))
 		e.write(e.rprompt)
-		e.write(e.ansi.RestoreCursorPosition())
+		e.write(e.Ansi.RestoreCursorPosition())
 	}
 	return e.string()
 }
 
-func (e *engine) renderTooltip(tip string) string {
+func (e *Engine) RenderTooltip(tip string) string {
 	tip = strings.Trim(tip, " ")
 	var tooltip *Segment
-	for _, tp := range e.config.Tooltips {
+	for _, tp := range e.Config.Tooltips {
 		if !tp.shouldInvokeWithTip(tip) {
 			continue
 		}
@@ -206,7 +206,7 @@ func (e *engine) renderTooltip(tip string) string {
 	if tooltip == nil {
 		return ""
 	}
-	if err := tooltip.mapSegmentWithWriter(e.env); err != nil {
+	if err := tooltip.mapSegmentWithWriter(e.Env); err != nil {
 		return ""
 	}
 	if !tooltip.enabled() {
@@ -218,53 +218,53 @@ func (e *engine) renderTooltip(tip string) string {
 		Alignment: Right,
 		Segments:  []*Segment{tooltip},
 	}
-	switch e.env.Shell() {
+	switch e.Env.Shell() {
 	case zsh, winCMD:
-		block.init(e.env, e.writer, e.ansi)
+		block.init(e.Env, e.Writer, e.Ansi)
 		return block.renderSegments()
 	case pwsh, powershell5:
-		block.initPlain(e.env, e.config)
+		block.initPlain(e.Env, e.Config)
 		tooltipText := block.renderSegments()
-		e.write(e.ansi.ClearAfter())
-		e.write(e.ansi.CarriageForward())
-		e.write(e.ansi.GetCursorForRightWrite(tooltipText, 0))
+		e.write(e.Ansi.ClearAfter())
+		e.write(e.Ansi.CarriageForward())
+		e.write(e.Ansi.GetCursorForRightWrite(tooltipText, 0))
 		e.write(tooltipText)
 		return e.string()
 	}
 	return ""
 }
 
-func (e *engine) renderTransientPrompt() string {
-	if e.config.TransientPrompt == nil {
+func (e *Engine) RenderTransientPrompt() string {
+	if e.Config.TransientPrompt == nil {
 		return ""
 	}
-	promptTemplate := e.config.TransientPrompt.Template
+	promptTemplate := e.Config.TransientPrompt.Template
 	if len(promptTemplate) == 0 {
 		promptTemplate = "{{ .Shell }}> "
 	}
 	tmpl := &template.Text{
 		Template: promptTemplate,
-		Env:      e.env,
+		Env:      e.Env,
 	}
 	prompt, err := tmpl.Render()
 	if err != nil {
 		prompt = err.Error()
 	}
-	e.writer.SetColors(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground)
-	e.writer.Write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
-	switch e.env.Shell() {
+	e.Writer.SetColors(e.Config.TransientPrompt.Background, e.Config.TransientPrompt.Foreground)
+	e.Writer.Write(e.Config.TransientPrompt.Background, e.Config.TransientPrompt.Foreground, prompt)
+	switch e.Env.Shell() {
 	case zsh:
 		// escape double quotes contained in the prompt
-		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.writer.String(), "\"", "\"\""))
+		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.Writer.String(), "\"", "\"\""))
 		prompt += "\nRPROMPT=\"\""
 		return prompt
 	case pwsh, powershell5, winCMD:
-		return e.writer.String()
+		return e.Writer.String()
 	}
 	return ""
 }
 
-func (e *engine) renderRPrompt() string {
+func (e *Engine) RenderRPrompt() string {
 	filterRPromptBlock := func(blocks []*Block) *Block {
 		for _, block := range blocks {
 			if block.Type == RPrompt {
@@ -273,11 +273,11 @@ func (e *engine) renderRPrompt() string {
 		}
 		return nil
 	}
-	block := filterRPromptBlock(e.config.Blocks)
+	block := filterRPromptBlock(e.Config.Blocks)
 	if block == nil {
 		return ""
 	}
-	block.init(e.env, e.writer, e.ansi)
+	block.init(e.Env, e.Writer, e.Ansi)
 	block.setStringValues()
 	if !block.enabled() {
 		return ""

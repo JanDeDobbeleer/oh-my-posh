@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"io/ioutil"
@@ -10,7 +10,7 @@ import (
 )
 
 func runImageTest(content string) error {
-	poshImagePath := "ohmyposh.png"
+	poshImagePath := "jandedobbeleer.png"
 	file, err := ioutil.TempFile("", poshImagePath)
 	if err != nil {
 		return err
@@ -19,11 +19,11 @@ func runImageTest(content string) error {
 	ansi := &color.Ansi{}
 	ansi.Init(plain)
 	image := &ImageRenderer{
-		ansiString: content,
-		ansi:       ansi,
+		AnsiString: content,
+		Ansi:       ansi,
 	}
-	image.init()
-	err = image.SavePNG(poshImagePath)
+	image.Init("~/jandedobbeleer.omp.json")
+	err = image.SavePNG()
 	return err
 }
 

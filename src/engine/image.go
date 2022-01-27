@@ -20,7 +20,7 @@
 
 // https://github.com/homeport/termshot
 
-package main
+package engine
 
 import (
 	_ "embed"
@@ -97,10 +97,14 @@ func NewRGBColor(ansiColor string) *RGB {
 }
 
 type ImageRenderer struct {
-	ansiString string
-	author     string
-	ansi       *color.Ansi
-	bgColor    string
+	AnsiString    string
+	Author        string
+	CursorPadding int
+	RPromptOffset int
+	BgColor       string
+	Ansi          *color.Ansi
+
+	path string
 
 	factor float64
 
@@ -128,11 +132,12 @@ type ImageRenderer struct {
 	backgroundColor      *RGB
 	foregroundColor      *RGB
 	ansiSequenceRegexMap map[string]string
-	rPromptOffset        int
-	cursorPadding        int
 }
 
-func (ir *ImageRenderer) init() {
+func (ir *ImageRenderer) Init(config string) {
+	match := regex.FindNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, config)
+	ir.path = fmt.Sprintf("%s.png", match[str])
+
 	f := 2.0
 
 	ir.cleanContent()
@@ -244,8 +249,8 @@ func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
 
 func (ir *ImageRenderer) calculateWidth() int {
 	longest := 0
-	for _, line := range strings.Split(ir.ansiString, "\n") {
-		length := ir.ansi.LenWithoutANSI(line)
+	for _, line := range strings.Split(ir.AnsiString, "\n") {
+		length := ir.Ansi.LenWithoutANSI(line)
 		for _, char := range line {
 			length += ir.runeAdditionalWidth(char)
 		}
@@ -258,27 +263,27 @@ func (ir *ImageRenderer) calculateWidth() int {
 
 func (ir *ImageRenderer) cleanContent() {
 	rPromptAnsi := "\x1b7\x1b[1000C"
-	hasRPrompt := strings.Contains(ir.ansiString, rPromptAnsi)
+	hasRPrompt := strings.Contains(ir.AnsiString, rPromptAnsi)
 	// clean abundance of empty lines
-	ir.ansiString = strings.Trim(ir.ansiString, "\n")
-	ir.ansiString = "\n" + ir.ansiString
+	ir.AnsiString = strings.Trim(ir.AnsiString, "\n")
+	ir.AnsiString = "\n" + ir.AnsiString
 	// clean string before render
-	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\x1b[m", "\x1b[0m")
-	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\x1b[K", "")
-	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\x1b[1F", "")
-	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\x1b8", "")
-	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\u2800", " ")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[m", "\x1b[0m")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[K", "")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[1F", "")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b8", "")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\u2800", " ")
 	// replace rprompt with adding and mark right aligned blocks with a pointer
-	ir.ansiString = strings.ReplaceAll(ir.ansiString, rPromptAnsi, fmt.Sprintf("_%s", strings.Repeat(" ", ir.cursorPadding)))
-	ir.ansiString = strings.ReplaceAll(ir.ansiString, "\x1b[1000C", strings.Repeat(" ", ir.rPromptOffset))
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, rPromptAnsi, fmt.Sprintf("_%s", strings.Repeat(" ", ir.CursorPadding)))
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[1000C", strings.Repeat(" ", ir.RPromptOffset))
 	if !hasRPrompt {
-		ir.ansiString += fmt.Sprintf("_%s", strings.Repeat(" ", ir.cursorPadding))
+		ir.AnsiString += fmt.Sprintf("_%s", strings.Repeat(" ", ir.CursorPadding))
 	}
 	// add watermarks
-	ir.ansiString += "\n\n\x1b[1mhttps://ohmyposh.dev\x1b[22m"
-	if len(ir.author) > 0 {
-		createdBy := fmt.Sprintf(" by \x1b[1m%s\x1b[22m", ir.author)
-		ir.ansiString += createdBy
+	ir.AnsiString += "\n\n\x1b[1mhttps://ohmyposh.dev\x1b[22m"
+	if len(ir.Author) > 0 {
+		createdBy := fmt.Sprintf(" by \x1b[1m%s\x1b[22m", ir.Author)
+		ir.AnsiString += createdBy
 	}
 }
 
@@ -290,11 +295,11 @@ func (ir *ImageRenderer) measureContent() (width, height float64) {
 	advance := tmpDrawer.MeasureString(strings.Repeat(" ", linewidth))
 	width = float64(advance >> 6)
 	// height, lines times font height and line spacing
-	height = float64(len(strings.Split(ir.ansiString, "\n"))) * ir.fontHeight() * ir.lineSpacing
+	height = float64(len(strings.Split(ir.AnsiString, "\n"))) * ir.fontHeight() * ir.lineSpacing
 	return width, height
 }
 
-func (ir *ImageRenderer) SavePNG(path string) error {
+func (ir *ImageRenderer) SavePNG() error {
 	var f = func(value float64) float64 { return ir.factor * value }
 
 	var (
@@ -345,7 +350,7 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 	// Draw rounded rectangle with outline and three button to produce the
 	// impression of a window with controls and a content area
 	dc.DrawRoundedRectangle(xOffset, yOffset, width-2*marginX, height-2*marginY, corner)
-	dc.SetHexColor(ir.bgColor)
+	dc.SetHexColor(ir.BgColor)
 	dc.Fill()
 
 	dc.DrawRoundedRectangle(xOffset, yOffset, width-2*marginX, height-2*marginY, corner)
@@ -362,16 +367,16 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 	// Apply the actual text into the prepared content area of the window
 	var x, y float64 = xOffset + paddingX, yOffset + paddingY + titleOffset + ir.fontHeight()
 
-	for len(ir.ansiString) != 0 {
+	for len(ir.AnsiString) != 0 {
 		if !ir.shouldPrint() {
 			continue
 		}
-		runes := []rune(ir.ansiString)
+		runes := []rune(ir.AnsiString)
 		if len(runes) == 0 {
 			continue
 		}
 		str := string(runes[0:1])
-		ir.ansiString = string(runes[1:])
+		ir.AnsiString = string(runes[1:])
 		switch ir.style {
 		case bold:
 			dc.SetFontFace(ir.bold)
@@ -419,16 +424,16 @@ func (ir *ImageRenderer) SavePNG(path string) error {
 		x += w
 	}
 
-	return dc.SavePNG(path)
+	return dc.SavePNG(ir.path)
 }
 
 func (ir *ImageRenderer) shouldPrint() bool {
 	for sequence, re := range ir.ansiSequenceRegexMap {
-		match := regex.FindNamedRegexMatch(re, ir.ansiString)
+		match := regex.FindNamedRegexMatch(re, ir.AnsiString)
 		if len(match) == 0 {
 			continue
 		}
-		ir.ansiString = strings.TrimPrefix(ir.ansiString, match[str])
+		ir.AnsiString = strings.TrimPrefix(ir.AnsiString, match[str])
 		switch sequence {
 		case invertedColor:
 			ir.foregroundColor = ir.defaultBackgroundColor
@@ -463,7 +468,7 @@ func (ir *ImageRenderer) shouldPrint() bool {
 			ir.setBase16Color(match[fg])
 			return false
 		case link:
-			ir.ansiString = match[url] + ir.ansiString
+			ir.AnsiString = match[url] + ir.AnsiString
 		}
 	}
 	return true

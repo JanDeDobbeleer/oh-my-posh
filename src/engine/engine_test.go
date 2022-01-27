@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"errors"
@@ -37,9 +37,9 @@ func TestCanWriteRPrompt(t *testing.T) {
 		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalWidthError)
 		ansi := &color.Ansi{}
 		ansi.Init(plain)
-		engine := &engine{
-			env:  env,
-			ansi: ansi,
+		engine := &Engine{
+			Env:  env,
+			Ansi: ansi,
 		}
 		engine.rprompt = strings.Repeat("x", tc.RPromptLength)
 		engine.console.WriteString(strings.Repeat("x", tc.PromptLength))
@@ -101,7 +101,7 @@ func engineRender(configPath string) error {
 	writerColors := cfg.MakeColors(env)
 	writer := &color.AnsiWriter{
 		Ansi:               ansi,
-		TerminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
+		TerminalBackground: GetConsoleBackgroundColor(env, cfg.TerminalBackground),
 		AnsiColors:         writerColors,
 	}
 	consoleTitle := &console.Title{
@@ -110,16 +110,16 @@ func engineRender(configPath string) error {
 		Style:    cfg.ConsoleTitleStyle,
 		Template: cfg.ConsoleTitleTemplate,
 	}
-	engine := &engine{
-		config:       cfg,
-		env:          env,
-		writer:       writer,
-		consoleTitle: consoleTitle,
-		ansi:         ansi,
-		plain:        *args.Plain,
+	engine := &Engine{
+		Config:       cfg,
+		Env:          env,
+		Writer:       writer,
+		ConsoleTitle: consoleTitle,
+		Ansi:         ansi,
+		Plain:        *args.Plain,
 	}
 
-	engine.render()
+	engine.Render()
 
 	return nil
 }

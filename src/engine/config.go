@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	// "encoding/json"
@@ -108,7 +108,7 @@ func loadConfig(env environment.Environment) (*Config, error) {
 	return &cfg, nil
 }
 
-func exportConfig(configFile, format string) string {
+func ExportConfig(configFile, format string) string {
 	if len(format) == 0 {
 		format = config.JSON
 	}

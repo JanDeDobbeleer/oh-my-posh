@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"oh-my-posh/color"
@@ -56,7 +56,7 @@ func (b *Block) initPlain(env environment.Environment, config *Config) {
 	b.ansi.Init(plain)
 	b.writer = &color.AnsiWriter{
 		Ansi:               b.ansi,
-		TerminalBackground: getConsoleBackgroundColor(env, config.TerminalBackground),
+		TerminalBackground: GetConsoleBackgroundColor(env, config.TerminalBackground),
 		AnsiColors:         config.MakeColors(env),
 	}
 	b.env = env

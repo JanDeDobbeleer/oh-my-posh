@@ -168,5 +168,5 @@ And be patient, I'm going as fast as I can 🏎
 [docs]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/docs/docs
 [sidebars]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/docs/sidebars.js
 [nf-icons]: https://www.nerdfonts.com/cheat-sheet
-[tests]: hhttps://github.com/JanDeDobbeleer/oh-my-posh/blob/main/src/segments/az_test.go
+[tests]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/src/segments/az_test.go
 [tables]: https://blog.alexellis.io/golang-writing-unit-tests/

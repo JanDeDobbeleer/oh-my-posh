@@ -150,8 +150,9 @@ const (
 )
 
 func (segment *Segment) string() string {
+	segmentTemplate := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
 	tmpl := &template.Text{
-		Template: segment.writer.Template(),
+		Template: segmentTemplate,
 		Context:  segment.writer,
 		Env:      segment.env,
 	}

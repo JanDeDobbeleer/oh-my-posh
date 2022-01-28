@@ -89,5 +89,5 @@ You can set the following property to `true` to enable fetching additional infor
 - `.Changed`: `boolean` - if the status contains changes or not
 - `.String`: `string` - a string representation of the changes above
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates
 [fa-issue]: https://github.com/FortAwesome/Font-Awesome/issues/18504

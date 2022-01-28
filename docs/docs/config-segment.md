@@ -218,4 +218,4 @@ This means that for user Bill, who has a user account `Bill` on Windows and `bil
 [fg-templ]: /docs/config-overview#foreground-templates
 [regex]: https://www.regular-expressions.info/tutorial.html
 [aws]: /docs/aws
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

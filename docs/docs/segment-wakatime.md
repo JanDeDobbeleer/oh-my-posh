@@ -51,4 +51,4 @@ works if you can curl it yourself and a result. - defaults to ``
 
 [wt]: https://wakatime.com
 [wk-summaries]: https://wakatime.com/developers#summaries
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

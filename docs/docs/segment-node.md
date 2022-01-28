@@ -46,4 +46,4 @@ Display the currently active node version.
 - `.PackageManagerIcon`: `string` - the Yarn on NPM icon when setting `fetch_package_manager` to `true`
 - `.Mismatch`: `boolean` - if the version in `.nvmrc` matches with `.Full`
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

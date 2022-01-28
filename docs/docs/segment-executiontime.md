@@ -54,4 +54,4 @@ Style specifies the format in which the time will be displayed. The table below 
 - `.Ms`: `number` - the execution time in milliseconds
 - `.FormattedMs`: `string` - the formatted value based on the `style` above.
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

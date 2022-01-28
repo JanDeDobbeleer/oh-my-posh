@@ -8,7 +8,7 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--config=/Users/jan/.jandedobbeleer.omp.json",
         "--shell=pwsh"
       ]
     },

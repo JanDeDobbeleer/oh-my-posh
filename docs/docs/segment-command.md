@@ -50,4 +50,4 @@ error). The `&&` functionality will join the output of the commands when success
 - `.Output`: `string` - the output of the command.
 
 [env]: /docs/environment
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

@@ -42,4 +42,4 @@ Supported registry key types:
 
 - .Value: `string` - The result of your query, or fallback if not found.
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

@@ -33,4 +33,4 @@ Show the current shell name (ZSH, powershell, bash, ...).
 
 - `.Name`: `string` - the shell name
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

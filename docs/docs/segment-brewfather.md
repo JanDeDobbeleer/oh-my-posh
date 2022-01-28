@@ -164,6 +164,6 @@ To display gravity as SG in XXXX format (e.g. "1020" instead of "1.020"), use th
 }
 ````
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates
 [brewfather]: http://brewfather.app
 [wikipedia_gravity_page]:https://en.wikipedia.org/wiki/Brix#Specific_gravity_2

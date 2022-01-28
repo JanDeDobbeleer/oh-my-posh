@@ -126,4 +126,4 @@ starts with a symbol or icon.
 - `.Path`: `string` - the current directory (styled)
 - `.StackCount`: `int` - the stack count
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

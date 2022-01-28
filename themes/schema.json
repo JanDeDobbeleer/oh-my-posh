@@ -61,7 +61,7 @@
     "template": {
       "type": "string",
       "title": "Template text",
-      "description": "https://ohmyposh.dev/docs/config-text#templates",
+      "description": "https://ohmyposh.dev/docs/config-templates",
       "default": ""
     },
     "block": {

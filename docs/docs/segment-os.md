@@ -53,4 +53,4 @@ Display OS specific info - defaults to Icon.
 
 - `.OS`: `string` - the OS platform
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

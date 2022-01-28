@@ -44,4 +44,4 @@ It is common for the Kubernetes "default" namespace to be used when no namespace
 
 `{{.Context}} :: {{if .Namespace}}{{.Namespace}}{{else}}default{{end}}`
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

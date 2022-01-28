@@ -36,4 +36,4 @@ Display the currently active Azure subscription information.
 - `.UserName`: `string` - the user name
 - `.Origin`: `string` - where we received the information from, can be `CLI` or `PWSH`
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

@@ -94,5 +94,5 @@ Or display in mmol/l (instead of the default mg/dl) with the following template:
 - .TrendIcon: `string` - By default, this will be something like ↑↑ or ↘ etc but you can
   override them with any glpyh as seen above
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates
 [nightscout]: http://www.nightscout.info/

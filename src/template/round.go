@@ -37,10 +37,10 @@ func secondsRound(seconds interface{}) string {
 	var (
 		second = 1
 		minute = 60
-		hour   = minute * 60
-		day    = hour * 24
-		month  = day * 30
-		year   = day * 365
+		hour   = 3600
+		day    = 86400
+		month  = 2629800
+		year   = 31560000
 	)
 	var builder strings.Builder
 	writePart := func(unit int, name string) {

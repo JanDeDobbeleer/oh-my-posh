@@ -45,6 +45,6 @@ Remote Control password.
 - `.Track`: `string` - current track
 - `.Icon`: `string` - icon (based on `.Status`)
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

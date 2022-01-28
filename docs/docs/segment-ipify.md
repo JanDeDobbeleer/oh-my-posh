@@ -38,5 +38,5 @@ sidebar_label: Ipify
 
 - .IP: `string` - Your external IP address
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates
 [ipify]: https://www.ipify.org/

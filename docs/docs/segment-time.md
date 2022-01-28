@@ -65,5 +65,5 @@ Show the current timestamp.
 - StampMicro = "Jan _2 15:04:05.000000"
 - StampNano  = "Jan _2 15:04:05.000000000"
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates
 [format]: https://yourbasic.org/golang/format-parse-string-time-date-example/

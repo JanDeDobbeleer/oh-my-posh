@@ -103,7 +103,7 @@ You can set the following properties to `true` to enable fetching additional inf
 - `.BranchStatus`: `string` - the current branch context (ahead/behind string representation)
 - `.Upstream`: `string` - the upstream name (remote)
 - `.UpstreamIcon`: `string` - the upstream icon (based on the icons above)
-- `.UpstreamURL`: `string` - the upstream URL for use in [hyperlinks][hyperlinks] in templates: `[{{ .UpstreamIcon }} {{ .HEAD }}]({{ .UpstreamURL }})`
+- `.UpstreamURL`: `string` - the upstream URL for use in [hyperlinks][hyperlinks] in templates: `{{ url .UpstreamIcon .UpstreamURL }}`
 - `.StashCount`: `int` - the stash count
 - `.WorktreeCount`: `int` - the worktree count
 - `.IsWorkTree`: `boolean` - if in a worktree repo or not
@@ -118,5 +118,5 @@ You can set the following properties to `true` to enable fetching additional inf
 - `.String`: `string` - a string representation of the changes above
 
 [poshgit]: /docs/poshgit
-[templates]: /docs/config-text#templates
-[hyperlinks]: /docs/config-text#hyperlinks
+[templates]: /docs/config-templates
+[hyperlinks]: /docs/config-templates#helper-functions

@@ -34,4 +34,4 @@ to `true`
 - `.Profile`: `string` - the currently active profile
 - `.Region`: `string` - the currently active region
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

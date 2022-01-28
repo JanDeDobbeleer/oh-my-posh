@@ -46,4 +46,4 @@ New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
 - `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
 
 [coloring]: /docs/config-colors
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

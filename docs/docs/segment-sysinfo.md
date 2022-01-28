@@ -45,4 +45,4 @@ Display SysInfo.
 - `.CPU`: `[]struct` - an array of [InfoStat][cpuinfo] object, you can use any property it has e.g. `(index .CPU 0).Cores`
 
 [cpuinfo]: https://github.com/shirou/gopsutil/blob/78065a7ce2021f6a78c8d6f586a2683ba501dcec/cpu/cpu.go#L32
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

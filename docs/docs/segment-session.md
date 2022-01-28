@@ -31,4 +31,4 @@ Show the current user and host name.
 - `.SSHSession`: `boolean` - active SSH session or not
 - `.Root`: `boolean` - are you a root/admin user or not
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

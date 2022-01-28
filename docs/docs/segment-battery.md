@@ -58,4 +58,4 @@ the same value as `Voltage`, for convenience
 
 [colors]: /docs/config-colors
 [battery]: https://github.com/distatus/battery/blob/master/battery.go#L78
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

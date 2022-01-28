@@ -9,6 +9,8 @@ import (
 func funcMap() template.FuncMap {
 	funcMap := map[string]interface{}{
 		"secondsRound": secondsRound,
+		"url":          url,
+		"path":         path,
 	}
 	for key, fun := range sprig.TxtFuncMap() {
 		if _, ok := funcMap[key]; !ok {

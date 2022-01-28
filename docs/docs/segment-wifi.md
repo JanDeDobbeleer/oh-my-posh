@@ -40,4 +40,4 @@ Currently only supports Windows and WSL. Pull requests for Darwin and Linux supp
 - `.TransmitRate`: `int` - the transmit rate (Mbps)
 - `.Signal`: `int` - the signal strength (%)
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

@@ -31,4 +31,4 @@ This requires a terraform binary in your PATH and will only show in directories 
 
 - `.WorkspaceName`: `string` - is the current workspace name
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

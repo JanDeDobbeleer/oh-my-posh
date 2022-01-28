@@ -54,4 +54,4 @@ properties below - defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`
 - `.UnitIcon`: `string` - the current unit icon(based on units property)
 - `.URL`: `string` - the url of the current api call
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

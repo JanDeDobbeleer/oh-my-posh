@@ -44,4 +44,4 @@ folder are present (default)
 - `.BuildMetadata`: `string` - build metadata
 - `.Error`: `string` - when fetching the version string errors
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

@@ -42,4 +42,4 @@ On macOS, all states are supported (playing/paused/stopped).
 - `.Track`: `string` - current track
 - `.Icon`: `string` - icon (based on `.Status`)
 
-[templates]: /docs/config-text#templates
+[templates]: /docs/config-templates

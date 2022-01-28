@@ -4,22 +4,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
-	"text/template"
-
-	"github.com/Masterminds/sprig/v3"
 )
-
-func funcMap() template.FuncMap {
-	funcMap := map[string]interface{}{
-		"secondsRound": secondsRound,
-	}
-	for key, fun := range sprig.TxtFuncMap() {
-		if _, ok := funcMap[key]; !ok {
-			funcMap[key] = fun
-		}
-	}
-	return template.FuncMap(funcMap)
-}
 
 func parseSeconds(seconds interface{}) (int, error) {
 	switch seconds := seconds.(type) {

@@ -39,6 +39,7 @@ func TestTimeSegmentTemplate(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
+		env.onTemplate()
 		tempus := &tempus{
 			env: env,
 			props: properties{

@@ -7,7 +7,7 @@
 
 ### Description
 
-[Description of the change]
+<!--TemplateBody-->
 
 <!---
 

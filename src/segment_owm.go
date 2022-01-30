@@ -99,7 +99,7 @@ func (d *owm) getResult() (*owmDataResponse, error) {
 	httpTimeout := d.props.getInt(HTTPTimeout, DefaultHTTPTimeout)
 	d.URL = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?q=%s&units=%s&appid=%s", location, units, apikey)
 
-	body, err := d.env.doGet(d.URL, httpTimeout)
+	body, err := d.env.HTTPRequest(d.URL, httpTimeout)
 	if err != nil {
 		return new(owmDataResponse), err
 	}

@@ -106,6 +106,7 @@ You can set the following properties to `true` to enable fetching additional inf
 - `.BranchStatus`: `string` - the current branch context (ahead/behind string representation)
 - `.Upstream`: `string` - the upstream name (remote)
 - `.UpstreamIcon`: `string` - the upstream icon (based on the icons above)
+- `.UpstreamURL`: `string` - the upstream URL for use in [hyperlinks][hyperlinks] in templates: `[{{ .UpstreamIcon }} {{ .HEAD }}]({{ .UpstreamURL }})`
 - `.StashCount`: `int` - the stash count
 - `.WorktreeCount`: `int` - the worktree count
 - `.IsWorkTree`: `boolean` - if in a worktree repo or not
@@ -122,3 +123,4 @@ You can set the following properties to `true` to enable fetching additional inf
 [poshgit]: /docs/poshgit
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
+[hyperlinks]: /docs/config-text-style#hyperlinks

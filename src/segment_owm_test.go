@@ -58,7 +58,8 @@ func TestOWMSegmentSingle(t *testing.T) {
 			CacheTimeout: 0,
 		}
 
-		env.On("doGet", OWMAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
+		env.On("HTTPRequest", OWMAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
+		env.onTemplate()
 
 		if tc.Template != "" {
 			props[SegmentTemplate] = tc.Template
@@ -184,7 +185,8 @@ func TestOWMSegmentIcons(t *testing.T) {
 		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, tc.IconID)
 		expectedString := fmt.Sprintf("%s (20°C)", tc.ExpectedIconString)
 
-		env.On("doGet", OWMAPIURL).Return([]byte(response), nil)
+		env.On("HTTPRequest", OWMAPIURL).Return([]byte(response), nil)
+		env.onTemplate()
 
 		o := &owm{
 			props: properties{
@@ -207,7 +209,8 @@ func TestOWMSegmentIcons(t *testing.T) {
 		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, tc.IconID)
 		expectedString := fmt.Sprintf("[%s (20°C)](http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", tc.ExpectedIconString)
 
-		env.On("doGet", OWMAPIURL).Return([]byte(response), nil)
+		env.On("HTTPRequest", OWMAPIURL).Return([]byte(response), nil)
+		env.onTemplate()
 
 		o := &owm{
 			props: properties{
@@ -242,7 +245,8 @@ func TestOWMSegmentFromCache(t *testing.T) {
 	cache.On("get", "owm_response").Return(response, true)
 	cache.On("get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key", true)
 	cache.On("set").Return()
-	env.On("cache", nil).Return(cache)
+	env.On("cache").Return(cache)
+	env.onTemplate()
 
 	assert.Nil(t, o.setStatus())
 	assert.Equal(t, expectedString, o.string())
@@ -268,7 +272,8 @@ func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 	cache.On("get", "owm_response").Return(response, true)
 	cache.On("get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key", true)
 	cache.On("set").Return()
-	env.On("cache", nil).Return(cache)
+	env.On("cache").Return(cache)
+	env.onTemplate()
 
 	assert.Nil(t, o.setStatus())
 	assert.Equal(t, expectedString, o.string())

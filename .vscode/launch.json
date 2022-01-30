@@ -2,20 +2,39 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch Package",
+      "name": "Debug Prompt",
       "type": "go",
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
-      "args": ["--config=${workspaceRoot}/themes/jandedobbeleer.omp.json", "--shell=pwsh"]
+      "args": [
+        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--shell=pwsh"
+      ]
     },
     {
-      "name": "Launch Tooltip",
+      "name": "Debug Tooltip",
       "type": "go",
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
-      "args": ["--config=${workspaceRoot}/themes/jandedobbeleer.omp.json", "--command=git", "--shell=pwsh"]
+      "args": [
+        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--command=git",
+        "--shell=pwsh"
+      ]
+    },
+    {
+      "name": "Debug Transient",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "--config=/Users/jan/.jandedobbeleer.omp.json",
+        "--shell=pwsh",
+        "--print-transient"
+      ]
     },
     {
       "name": "Launch tests",
@@ -23,7 +42,9 @@
       "request": "launch",
       "mode": "test",
       "program": "${workspaceRoot}/src",
-      "args": ["--test.v"]
+      "args": [
+        "--test.v"
+      ]
     },
     {
       "name": "Print debug",
@@ -69,6 +90,13 @@
       "cwd": "${workspaceFolder}/docs",
       "program": "${workspaceRoot}/docs/export_themes.js",
       "console": "integratedTerminal"
+    },
+    {
+      "name": "Docs API",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "preDebugTask": "func: host start"
     }
   ]
 }

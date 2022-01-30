@@ -43,7 +43,7 @@
           "background": "#2f2f2f",
           "properties": {
             "postfix": "<#7a7a7a> \ue0b1</>",
-            "template": "{{ if ne .Env.POSH_SESSION_DEFAULT_USER .UserName }}<#77f5d6>{{ .UserName }}</><#7a7a7a>\uf1fa</><#2EEFBF>{{ end }}{{ .ComputerName }}</>"
+            "template": "{{ if ne .Env.POSH_SESSION_DEFAULT_USER .UserName }}<#77f5d6>{{ .UserName }}</><#7a7a7a>\uf1fa</><#2EEFBF>{{ end }}{{ .HostName }}</>"
           }
         },
         {

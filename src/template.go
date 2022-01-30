@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"errors"
-	"reflect"
+	"fmt"
 	"strings"
 	"text/template"
 )
@@ -12,8 +12,6 @@ const (
 	// Errors to show when the template handling fails
 	invalidTemplate   = "invalid template text"
 	incorrectTemplate = "unable to create text based on template"
-
-	templateEnvRegex = `\.Env\.(?P<ENV>[^ \.}]*)`
 )
 
 type textTemplate struct {
@@ -22,40 +20,46 @@ type textTemplate struct {
 	Env      Environment
 }
 
-func (t *textTemplate) renderPlainContextTemplate(context map[string]interface{}) string {
-	if context == nil {
-		context = make(map[string]interface{})
+type Data interface{}
+
+type Context struct {
+	templateCache
+
+	// Simple container to hold ANY object
+	Data
+}
+
+type templateCache struct {
+	Root     bool
+	PWD      string
+	Folder   string
+	Shell    string
+	UserName string
+	HostName string
+	Code     int
+	Env      map[string]string
+	OS       string
+}
+
+func (c *Context) init(t *textTemplate) {
+	c.Data = t.Context
+	if cache := t.Env.templateCache(); cache != nil {
+		c.templateCache = *cache
+		return
 	}
-	context["Root"] = t.Env.isRunningAsRoot()
-	pwd := t.Env.getcwd()
-	pwd = strings.Replace(pwd, t.Env.homeDir(), "~", 1)
-	context["Path"] = pwd
-	context["Folder"] = base(pwd, t.Env)
-	context["Shell"] = t.Env.getShellName()
-	context["User"] = t.Env.getCurrentUser()
-	context["Host"] = ""
-	if host, err := t.Env.getHostName(); err == nil {
-		context["Host"] = host
-	}
-	t.Context = context
-	text, err := t.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
 }
 
 func (t *textTemplate) render() (string, error) {
+	t.cleanTemplate()
 	tmpl, err := template.New("title").Funcs(funcMap()).Parse(t.Template)
 	if err != nil {
 		return "", errors.New(invalidTemplate)
 	}
-	if strings.Contains(t.Template, ".Env.") {
-		t.loadEnvVars()
-	}
+	context := &Context{}
+	context.init(t)
 	buffer := new(bytes.Buffer)
 	defer buffer.Reset()
-	err = tmpl.Execute(buffer, t.Context)
+	err = tmpl.Execute(buffer, context)
 	if err != nil {
 		return "", errors.New(incorrectTemplate)
 	}
@@ -66,56 +70,28 @@ func (t *textTemplate) render() (string, error) {
 	return text, nil
 }
 
-func (t *textTemplate) loadEnvVars() {
-	context := make(map[string]interface{})
-	switch v := t.Context.(type) {
-	case map[string]interface{}:
-		context = v
-	default:
-		// we currently only support structs
-		if !t.isStruct() {
-			break
+func (t *textTemplate) cleanTemplate() {
+	unknownVariable := func(variable string, knownVariables *[]string) (string, bool) {
+		variable = strings.TrimPrefix(variable, ".")
+		splitted := strings.Split(variable, ".")
+		if len(splitted) == 0 {
+			return "", false
 		}
-		context = t.structToMap()
+		for _, b := range *knownVariables {
+			if b == splitted[0] {
+				return "", false
+			}
+		}
+		*knownVariables = append(*knownVariables, splitted[0])
+		return splitted[0], true
 	}
-	envVars := map[string]string{}
-	matches := findAllNamedRegexMatch(templateEnvRegex, t.Template)
+	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "UserName", "HostName", "Env", "Data", "Code", "OS"}
+	matches := findAllNamedRegexMatch(`(?: |{|\()(?P<var>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
 	for _, match := range matches {
-		envVars[match["ENV"]] = t.Env.getenv(match["ENV"])
-	}
-	context["Env"] = envVars
-	t.Context = context
-}
-
-func (t *textTemplate) isStruct() bool {
-	v := reflect.TypeOf(t.Context)
-	if v == nil {
-		return false
-	}
-	if v.Kind() == reflect.Ptr {
-		v = v.Elem()
-	}
-	if v.Kind() == reflect.Invalid {
-		return false
-	}
-	return v.Kind() == reflect.Struct
-}
-
-func (t *textTemplate) structToMap() map[string]interface{} {
-	context := make(map[string]interface{})
-	v := reflect.ValueOf(t.Context)
-	if v.Kind() == reflect.Ptr {
-		v = v.Elem()
-	}
-	strct := v.Type()
-	for i := 0; i < strct.NumField(); i++ {
-		sf := strct.Field(i)
-		if !v.Field(i).CanInterface() {
-			continue
+		if variable, OK := unknownVariable(match["var"], &knownVariables); OK {
+			pattern := fmt.Sprintf(`\.%s\b`, variable)
+			dataVar := fmt.Sprintf(".Data.%s", variable)
+			t.Template = replaceAllString(pattern, t.Template, dataVar)
 		}
-		name := sf.Name
-		value := v.Field(i).Interface()
-		context[name] = value
 	}
-	return context
 }

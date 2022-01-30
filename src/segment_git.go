@@ -41,6 +41,7 @@ type git struct {
 	BranchStatus  string
 	Upstream      string
 	UpstreamIcon  string
+	UpstreamURL   string
 	StashCount    int
 	WorktreeCount int
 	IsWorkTree    bool
@@ -230,17 +231,17 @@ func (g *git) setBranchStatus() {
 
 func (g *git) getUpstreamIcon() string {
 	upstream := replaceAllString("/.*", g.Upstream, "")
-	url := g.getOriginURL(upstream)
-	if strings.Contains(url, "github") {
+	g.UpstreamURL = g.getOriginURL(upstream)
+	if strings.Contains(g.UpstreamURL, "github") {
 		return g.props.getString(GithubIcon, "\uF408 ")
 	}
-	if strings.Contains(url, "gitlab") {
+	if strings.Contains(g.UpstreamURL, "gitlab") {
 		return g.props.getString(GitlabIcon, "\uF296 ")
 	}
-	if strings.Contains(url, "bitbucket") {
+	if strings.Contains(g.UpstreamURL, "bitbucket") {
 		return g.props.getString(BitbucketIcon, "\uF171 ")
 	}
-	if strings.Contains(url, "dev.azure.com") || strings.Contains(url, "visualstudio.com") {
+	if strings.Contains(g.UpstreamURL, "dev.azure.com") || strings.Contains(g.UpstreamURL, "visualstudio.com") {
 		return g.props.getString(AzureDevOpsIcon, "\uFD03 ")
 	}
 	return g.props.getString(GitIcon, "\uE5FB ")
@@ -496,15 +497,27 @@ func (g *git) getWorktreeContext() int {
 }
 
 func (g *git) getOriginURL(upstream string) string {
+	cleanSSHURL := func(url string) string {
+		if strings.HasPrefix(url, "http") {
+			return url
+		}
+		url = strings.TrimPrefix(url, "git://")
+		url = strings.TrimPrefix(url, "git@")
+		url = strings.TrimSuffix(url, ".git")
+		url = strings.ReplaceAll(url, ":", "/")
+		return fmt.Sprintf("https://%s", url)
+	}
+	var url string
 	cfg, err := ini.Load(g.gitRootFolder + "/config")
 	if err != nil {
-		return g.getGitCommandOutput("remote", "get-url", upstream)
+		url = g.getGitCommandOutput("remote", "get-url", upstream)
+		return cleanSSHURL(url)
 	}
-	keyVal := cfg.Section("remote \"" + upstream + "\"").Key("url").String()
-	if keyVal == "" {
-		return g.getGitCommandOutput("remote", "get-url", upstream)
+	url = cfg.Section("remote \"" + upstream + "\"").Key("url").String()
+	if url == "" {
+		url = g.getGitCommandOutput("remote", "get-url", upstream)
 	}
-	return keyVal
+	return cleanSSHURL(url)
 }
 
 func (g *git) convertToWindowsPath(path string) string {

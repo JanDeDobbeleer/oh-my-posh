@@ -47,7 +47,8 @@ func TestIpifySegment(t *testing.T) {
 			CacheTimeout: 0,
 		}
 
-		env.On("doGet", IPIFYAPIURL).Return([]byte(tc.Response), tc.Error)
+		env.On("HTTPRequest", IPIFYAPIURL).Return([]byte(tc.Response), tc.Error)
+		env.onTemplate()
 
 		if tc.Template != "" {
 			props[SegmentTemplate] = tc.Template

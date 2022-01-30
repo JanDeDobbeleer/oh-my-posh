@@ -13,7 +13,7 @@ Show the current user and host name.
 ```json
 {
   "type": "session",
-  "style": "diamond", 
+  "style": "diamond",
   "foreground": "#ffffff",
   "background": "#c386f1",
   "leading_diamond": "\uE0B6",
@@ -32,7 +32,7 @@ properties below.
 ## Template Properties
 
 - `.UserName`: `string` - the current user's name
-- `.ComputerName`: `string` - the current computer's name
+- `.HostName`: `string` - the current computer's name
 - `.SSHSession`: `boolean` - active SSH session or not
 - `.Root`: `boolean` - are you a root/admin user or not
 

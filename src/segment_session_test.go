@@ -23,7 +23,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			ExpectedString:  "john@company-laptop",
 			ComputerName:    "company-laptop",
 			UserName:        "john",
-			Template:        "{{.UserName}}@{{.ComputerName}}",
+			Template:        "{{.UserName}}@{{.HostName}}",
 			ExpectedEnabled: true,
 		},
 		{
@@ -39,7 +39,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			UserName:        "john",
 			SSHSession:      true,
 			ComputerName:    "remote",
-			Template:        "{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			Template:        "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
 			ExpectedEnabled: true,
 		},
 		{
@@ -48,7 +48,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			UserName:        "john",
 			SSHSession:      false,
 			ComputerName:    "remote",
-			Template:        "{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			Template:        "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
 			ExpectedEnabled: true,
 		},
 		{
@@ -58,7 +58,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			SSHSession:      true,
 			ComputerName:    "remote",
 			Root:            true,
-			Template:        "{{if .Root}}super {{end}}{{.UserName}}{{if .SSHSession}} on {{.ComputerName}}{{end}}",
+			Template:        "{{if .Root}}super {{end}}{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
 			ExpectedEnabled: true,
 		},
 		{
@@ -96,17 +96,26 @@ func TestSessionSegmentTemplate(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getCurrentUser", nil).Return(tc.UserName)
-		env.On("getRuntimeGOOS", nil).Return("burp")
-		env.On("getHostName", nil).Return(tc.ComputerName, nil)
+		env.On("getCurrentUser").Return(tc.UserName)
+		env.On("getRuntimeGOOS").Return("burp")
+		env.On("getHostName").Return(tc.ComputerName, nil)
 		var SSHSession string
 		if tc.SSHSession {
 			SSHSession = "zezzion"
 		}
 		env.On("getenv", "SSH_CONNECTION").Return(SSHSession)
 		env.On("getenv", "SSH_CLIENT").Return(SSHSession)
-		env.On("isRunningAsRoot", nil).Return(tc.Root)
 		env.On("getenv", defaultUserEnvVar).Return(tc.DefaultUserName)
+		env.On("templateCache").Return(&templateCache{
+			UserName: tc.UserName,
+			HostName: tc.ComputerName,
+			Env: map[string]string{
+				"SSH_CONNECTION":  SSHSession,
+				"SSH_CLIENT":      SSHSession,
+				defaultUserEnvVar: tc.DefaultUserName,
+			},
+			Root: tc.Root,
+		})
 		session := &session{
 			env: env,
 			props: properties{

@@ -148,7 +148,7 @@
           "type": "java",
           "style": "diamond",
           "leading_diamond": "\uE0B2",
-          "trailing_diamond": "<transparent,#0e8ac8>\uE0B2</>",
+          "trailing_diamond": "<transparent,#ffffff>\uE0B2</>",
           "foreground": "#ec2729",
           "background": "#ffffff",
           "properties": {

@@ -24,7 +24,7 @@
           "background": "#546E7A",
           "powerline_symbol": "\uE0B0",
           "properties": {
-            "template": "{{ .UserName }}@{{ .ComputerName }}"
+            "template": "{{ .UserName }}@{{ .HostName }}"
           }
         },
         {

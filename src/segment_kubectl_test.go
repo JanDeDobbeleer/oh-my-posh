@@ -24,7 +24,7 @@ func TestKubectlSegment(t *testing.T) {
 		ParseKubeConfig bool
 		Context         string
 		Namespace       string
-		User            string
+		UserName        string
 		Cluster         string
 		KubectlErr      bool
 		ExpectedEnabled bool
@@ -47,7 +47,7 @@ func TestKubectlSegment(t *testing.T) {
 			KubectlExists:   true,
 			Context:         "aaa",
 			Namespace:       "bbb",
-			User:            "ccc",
+			UserName:        "ccc",
 			Cluster:         "ddd",
 			ExpectedString:  "aaa :: bbb :: ccc :: ddd",
 			ExpectedEnabled: true,
@@ -110,7 +110,7 @@ func TestKubectlSegment(t *testing.T) {
 		var kubeconfig string
 		content, err := ioutil.ReadFile("./test/kubectl.yml")
 		if err == nil {
-			kubeconfig = fmt.Sprintf(string(content), tc.Cluster, tc.User, tc.Namespace, tc.Context)
+			kubeconfig = fmt.Sprintf(string(content), tc.Cluster, tc.UserName, tc.Namespace, tc.Context)
 		}
 		var kubectlErr error
 		if tc.KubectlErr {
@@ -124,7 +124,8 @@ func TestKubectlSegment(t *testing.T) {
 		for path, content := range tc.Files {
 			env.On("getFileContent", path).Return(content)
 		}
-		env.On("homeDir", nil).Return("testhome")
+		env.On("homeDir").Return("testhome")
+		env.onTemplate()
 
 		k := &kubectl{
 			env: env,

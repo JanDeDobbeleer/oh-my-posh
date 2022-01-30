@@ -12,7 +12,7 @@
             "background": "#07585c",
             "leading_diamond": "\uE0B6",
             "properties": {
-              "template": "{{ .UserName }}@{{ .ComputerName }}"
+              "template": "{{ .UserName }}@{{ .HostName }}"
             }
           },
           {

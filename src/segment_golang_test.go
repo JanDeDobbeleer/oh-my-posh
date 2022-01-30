@@ -21,8 +21,9 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*MockedEnvironment, pro
 	env.On("hasCommand", params.cmd).Return(true)
 	env.On("runCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
 	env.On("hasFiles", params.extension).Return(true)
-	env.On("getcwd", nil).Return("/usr/home/project")
-	env.On("homeDir", nil).Return("/usr/home")
+	env.On("pwd").Return("/usr/home/project")
+	env.On("homeDir").Return("/usr/home")
+	env.onTemplate()
 	props := properties{
 		FetchVersion: true,
 	}

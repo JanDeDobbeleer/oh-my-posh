@@ -53,8 +53,20 @@ func (env *environment) getTerminalWidth() (int, error) {
 }
 
 func (env *environment) getPlatform() string {
-	p, _, _, _ := host.PlatformInformation()
-	return p
+	const key = "environment_platform"
+	if val, found := env.cache().get(key); found {
+		return val
+	}
+	var platform string
+	defer func() {
+		env.cache().set(key, platform, -1)
+	}()
+	if wsl := env.getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {
+		platform = strings.ToLower(wsl)
+		return platform
+	}
+	platform, _, _, _ = host.PlatformInformation()
+	return platform
 }
 
 func (env *environment) getCachePath() string {
@@ -75,7 +87,7 @@ func (env *environment) getWindowsRegistryKeyValue(path string) (*windowsRegistr
 }
 
 func (env *environment) inWSLSharedDrive() bool {
-	return env.isWsl() && strings.HasPrefix(env.getcwd(), "/mnt/")
+	return env.isWsl() && strings.HasPrefix(env.pwd(), "/mnt/")
 }
 
 func (env *environment) convertToWindowsPath(path string) string {

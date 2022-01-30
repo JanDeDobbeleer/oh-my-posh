@@ -11,7 +11,7 @@ type path struct {
 	props Properties
 	env   Environment
 
-	PWD        string
+	pwd        string
 	Path       string
 	StackCount int
 }
@@ -58,7 +58,7 @@ func (pt *path) enabled() bool {
 }
 
 func (pt *path) string() string {
-	pt.PWD = pt.env.getcwd()
+	pt.pwd = pt.env.pwd()
 	switch style := pt.props.getString(Style, Agnoster); style {
 	case Agnoster:
 		pt.Path = pt.getAgnosterPath()
@@ -86,9 +86,9 @@ func (pt *path) string() string {
 	if pt.props.getBool(EnableHyperlink, false) {
 		// wsl check
 		if pt.env.isWsl() {
-			pt.PWD, _ = pt.env.runCommand("wslpath", "-m", pt.PWD)
+			pt.pwd, _ = pt.env.runCommand("wslpath", "-m", pt.pwd)
 		}
-		pt.Path = fmt.Sprintf("[%s](file://%s)", pt.Path, pt.PWD)
+		pt.Path = fmt.Sprintf("[%s](file://%s)", pt.Path, pt.pwd)
 	}
 
 	pt.StackCount = pt.env.stackCount()
@@ -259,7 +259,7 @@ func (pt *path) getFolderPath() string {
 func (pt *path) getPwd() string {
 	pwd := *pt.env.getArgs().PSWD
 	if pwd == "" {
-		pwd = pt.env.getcwd()
+		pwd = pt.env.pwd()
 	}
 	pwd = pt.replaceMappedLocations(pwd)
 	return pwd

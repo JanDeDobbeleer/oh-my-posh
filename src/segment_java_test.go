@@ -57,8 +57,8 @@ func TestJava(t *testing.T) {
 		env.On("hasCommand", "java").Return(true)
 		env.On("runCommand", "java", []string{"-Xinternalversion"}).Return(tc.Version, nil)
 		env.On("hasFiles", "pom.xml").Return(true)
-		env.On("getcwd", nil).Return("/usr/home/project")
-		env.On("homeDir", nil).Return("/usr/home")
+		env.On("pwd").Return("/usr/home/project")
+		env.On("homeDir").Return("/usr/home")
 		if tc.JavaHomeEnabled {
 			env.On("getenv", "JAVA_HOME").Return("/usr/java")
 			env.On("hasCommand", "/usr/java/bin/java").Return(true)
@@ -66,6 +66,7 @@ func TestJava(t *testing.T) {
 		} else {
 			env.On("getenv", "JAVA_HOME").Return("")
 		}
+		env.onTemplate()
 		props := properties{
 			FetchVersion: true,
 		}

@@ -17,22 +17,25 @@ func TestTextSegment(t *testing.T) {
 		{Case: "template text with env var", ExpectedString: "hello world", Text: "{{ .Env.HELLO }} world"},
 		{Case: "template text with shell name", ExpectedString: "hello world from terminal", Text: "{{ .Env.HELLO }} world from {{ .Shell }}"},
 		{Case: "template text with folder", ExpectedString: "hello world in posh", Text: "{{ .Env.HELLO }} world in {{ .Folder }}"},
-		{Case: "template text with user", ExpectedString: "hello Posh", Text: "{{ .Env.HELLO }} {{ .User }}"},
+		{Case: "template text with user", ExpectedString: "hello Posh", Text: "{{ .Env.HELLO }} {{ .UserName }}"},
 		{Case: "empty text", Text: "", ExpectedDisabled: true},
 		{Case: "empty template result", Text: "{{ .Env.WORLD }}", ExpectedDisabled: true},
 	}
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getcwd", nil).Return("/usr/home/posh")
-		env.On("homeDir", nil).Return("/usr/home")
-		env.On("getPathSeperator", nil).Return("/")
-		env.On("isRunningAsRoot", nil).Return(true)
-		env.On("getShellName", nil).Return("terminal")
-		env.On("getenv", "HELLO").Return("hello")
-		env.On("getenv", "WORLD").Return("")
-		env.On("getCurrentUser", nil).Return("Posh")
-		env.On("getHostName", nil).Return("MyHost", nil)
+		env.On("getPathSeperator").Return("/")
+		env.On("templateCache").Return(&templateCache{
+			UserName: "Posh",
+			Env: map[string]string{
+				"HELLO": "hello",
+				"WORLD": "",
+			},
+			HostName: "MyHost",
+			Shell:    "terminal",
+			Root:     true,
+			Folder:   base("/usr/home/posh", env),
+		})
 		txt := &text{
 			env: env,
 			props: properties{

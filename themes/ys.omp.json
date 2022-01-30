@@ -44,7 +44,7 @@
           "style": "plain",
           "properties": {
             "prefix": "",
-            "template": "<cyan>{{ .UserName }}</> <darkGray>@</> <green>{{ .ComputerName }}</>"
+            "template": "<cyan>{{ .UserName }}</> <darkGray>@</> <green>{{ .HostName }}</>"
           }
         },
         {

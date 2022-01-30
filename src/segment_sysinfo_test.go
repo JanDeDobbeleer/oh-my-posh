@@ -34,7 +34,9 @@ func TestSysInfo(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		tc.SysInfo.env = new(MockedEnvironment)
+		env := new(MockedEnvironment)
+		env.onTemplate()
+		tc.SysInfo.env = env
 		tc.SysInfo.props = properties{
 			Precision: tc.Precision,
 		}

@@ -24,12 +24,12 @@ func TestAngularCliVersionDisplayed(t *testing.T) {
 
 		var env = new(MockedEnvironment)
 		// mock  getVersion methods
-		env.On("getcwd", nil).Return("/usr/home/dev/my-app")
-		env.On("homeDir", nil).Return("/usr/home")
+		env.On("pwd").Return("/usr/home/dev/my-app")
+		env.On("homeDir").Return("/usr/home")
 		env.On("hasFiles", params.extension).Return(true)
 		env.On("hasFilesInDir", "/usr/home/dev/my-app/node_modules/@angular/core", "package.json").Return(true)
 		env.On("getFileContent", "/usr/home/dev/my-app/node_modules/@angular/core/package.json").Return(ta.Version)
-
+		env.onTemplate()
 		props := properties{}
 		angular := &angular{}
 		angular.init(props, env)

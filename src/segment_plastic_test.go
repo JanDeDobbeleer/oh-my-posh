@@ -9,8 +9,8 @@ import (
 func TestPlasticEnabledNotFound(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "cm").Return(false)
-	env.On("getRuntimeGOOS", nil).Return("")
-	env.On("isWsl", nil).Return(false)
+	env.On("getRuntimeGOOS").Return("")
+	env.On("isWsl").Return(false)
 	p := &plastic{
 		scm: scm{
 			env:   env,
@@ -23,8 +23,8 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 	env := new(MockedEnvironment)
 	env.On("hasCommand", "cm").Return(true)
-	env.On("getRuntimeGOOS", nil).Return("")
-	env.On("isWsl", nil).Return(false)
+	env.On("getRuntimeGOOS").Return("")
+	env.On("isWsl").Return(false)
 	fileInfo := &fileInfo{
 		path:         "/dir/hello",
 		parentFolder: "/dir",
@@ -328,6 +328,9 @@ func TestPlasticTemplateString(t *testing.T) {
 			FetchStatus: true,
 		}
 		tc.Plastic.props = props
+		env := new(MockedEnvironment)
+		env.onTemplate()
+		tc.Plastic.env = env
 		assert.Equal(t, tc.Expected, tc.Plastic.templateString(tc.Template), tc.Case)
 	}
 }

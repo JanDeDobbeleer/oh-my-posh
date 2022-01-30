@@ -7,10 +7,9 @@ type session struct {
 	env   Environment
 	text  string
 
-	UserName     string
-	ComputerName string
-	SSHSession   bool
-	Root         bool
+	userName   string
+	hostName   string
+	SSHSession bool
 
 	// Deprecated
 	DefaultUserName string
@@ -22,9 +21,6 @@ func (s *session) enabled() bool {
 	if segmentTemplate == "" {
 		return s.legacyEnabled()
 	}
-	s.UserName = s.getUserName()
-	s.ComputerName = s.getComputerName()
-	s.Root = s.env.isRunningAsRoot()
 	template := &textTemplate{
 		Template: segmentTemplate,
 		Context:  s,

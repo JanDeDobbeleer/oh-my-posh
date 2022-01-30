@@ -60,6 +60,9 @@ func (fc *fileCache) get(key string) (string, bool) {
 	if !ok {
 		return "", false
 	}
+	if co.TTL <= 0 {
+		return co.Value, true
+	}
 	expired := time.Now().Unix() >= (co.Timestamp + int64(co.TTL)*60)
 	if expired {
 		fc.cache.remove(key)

@@ -28,7 +28,7 @@
           "foreground": "#100e23",
           "background": "#ffffff",
           "properties": {
-            "template": "{{ .UserName }}@{{ .ComputerName }}"
+            "template": "{{ .UserName }}@{{ .HostName }}"
           }
         },
         {

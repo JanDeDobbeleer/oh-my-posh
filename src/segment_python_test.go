@@ -49,9 +49,10 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("getenv", "CONDA_ENV_PATH").Return(tc.VirtualEnvName)
 		env.On("getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
 		env.On("getenv", "PYENV_VERSION").Return(tc.VirtualEnvName)
-		env.On("getPathSeperator", nil).Return("")
-		env.On("getcwd", nil).Return("/usr/home/project")
-		env.On("homeDir", nil).Return("/usr/home")
+		env.On("getPathSeperator").Return("")
+		env.On("pwd").Return("/usr/home/project")
+		env.On("homeDir").Return("/usr/home")
+		env.onTemplate()
 		props := properties{
 			FetchVersion:    tc.FetchVersion,
 			SegmentTemplate: tc.Template,
@@ -75,7 +76,7 @@ func TestPythonPythonInContext(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getPathSeperator", nil).Return("")
+		env.On("getPathSeperator").Return("")
 		env.On("getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("getenv", "CONDA_ENV_PATH").Return("")
 		env.On("getenv", "CONDA_DEFAULT_ENV").Return("")

@@ -71,12 +71,13 @@ func TestWTTrackedTime(t *testing.T) {
 
 		response := fmt.Sprintf(`{"cummulative_total": {"seconds": %.2f, "text": "x"}}`, float64(tc.Seconds))
 
-		env.On("doGet", FAKEAPIURL).Return([]byte(response), tc.Error)
+		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(response), tc.Error)
 
 		cache := &MockedCache{}
 		cache.On("get", FAKEAPIURL).Return(response, !tc.CacheFoundFail)
 		cache.On("set", FAKEAPIURL, response, tc.CacheTimeout).Return()
-		env.On("cache", nil).Return(cache)
+		env.On("cache").Return(cache)
+		env.onTemplate()
 
 		w := &wakatime{
 			props: properties{

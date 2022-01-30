@@ -30,7 +30,7 @@ func TestCanWriteRPrompt(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getTerminalWidth", nil).Return(tc.TerminalWidth, tc.TerminalWidthError)
+		env.On("getTerminalWidth").Return(tc.TerminalWidth, tc.TerminalWidthError)
 		ansi := &ansiUtils{}
 		ansi.init(plain)
 		engine := &engine{

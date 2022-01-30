@@ -90,7 +90,7 @@ type wifiInfo struct {
 
 type Environment interface {
 	getenv(key string) string
-	getcwd() string
+	pwd() string
 	homeDir() string
 	hasFiles(pattern string) bool
 	hasFilesInDir(dir, pattern string) bool
@@ -113,7 +113,7 @@ type Environment interface {
 	getShellName() string
 	getWindowTitle(imageName, windowTitleRegex string) (string, error)
 	getWindowsRegistryKeyValue(path string) (*windowsRegistryValue, error)
-	doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
+	HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
 	hasParentFilePath(path string) (fileInfo *fileInfo, err error)
 	isWsl() bool
 	isWsl2() bool
@@ -127,6 +127,7 @@ type Environment interface {
 	convertToLinuxPath(path string) string
 	convertToWindowsPath(path string) string
 	getWifiNetwork() (*wifiInfo, error)
+	templateCache() *templateCache
 }
 
 type commandCache struct {
@@ -158,12 +159,15 @@ type environment struct {
 	cwd        string
 	cmdCache   *commandCache
 	fileCache  *fileCache
+	tmplCache  *templateCache
 	logBuilder strings.Builder
 	debug      bool
 }
 
 func (env *environment) init(args *args) {
 	env.args = args
+	env.fileCache = &fileCache{}
+	env.fileCache.init(env.getCachePath())
 	env.resolveConfigPath()
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
@@ -172,12 +176,15 @@ func (env *environment) init(args *args) {
 		env.debug = true
 		log.SetOutput(&env.logBuilder)
 	}
-	env.fileCache = &fileCache{}
-	env.fileCache.init(env.getCachePath())
 }
 
 func (env *environment) resolveConfigPath() {
 	if env.args == nil || env.args.Config == nil || len(*env.args.Config) == 0 {
+		return
+	}
+	// Cygwin path always needs the full path as we're on Windows but not really.
+	// Doing filepath actions will convert it to a Windows path and break the init script.
+	if env.getPlatform() == windowsPlatform && env.getShellName() == bash {
 		return
 	}
 	configFile := *env.args.Config
@@ -217,8 +224,11 @@ func (env *environment) getenv(key string) string {
 	return val
 }
 
-func (env *environment) getcwd() string {
-	defer env.trace(time.Now(), "getcwd")
+func (env *environment) pwd() string {
+	defer env.trace(time.Now(), "pwd")
+	defer func() {
+		env.log(Debug, "pwd", env.cwd)
+	}()
 	if env.cwd != "" {
 		return env.cwd
 	}
@@ -233,7 +243,7 @@ func (env *environment) getcwd() string {
 	}
 	dir, err := os.Getwd()
 	if err != nil {
-		env.log(Error, "getcwd", err.Error())
+		env.log(Error, "pwd", err.Error())
 		return ""
 	}
 	env.cwd = correctPath(dir)
@@ -242,7 +252,7 @@ func (env *environment) getcwd() string {
 
 func (env *environment) hasFiles(pattern string) bool {
 	defer env.trace(time.Now(), "hasFiles", pattern)
-	cwd := env.getcwd()
+	cwd := env.pwd()
 	pattern = cwd + env.getPathSeperator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
@@ -469,8 +479,8 @@ func (env *environment) getShellName() string {
 	return *env.args.Shell
 }
 
-func (env *environment) doGet(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
-	defer env.trace(time.Now(), "doGet", url)
+func (env *environment) HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
+	defer env.trace(time.Now(), "HTTPRequest", url)
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
@@ -482,13 +492,13 @@ func (env *environment) doGet(url string, timeout int, requestModifiers ...HTTPR
 	}
 	response, err := client.Do(request)
 	if err != nil {
-		env.log(Error, "doGet", err.Error())
+		env.log(Error, "HTTPRequest", err.Error())
 		return nil, err
 	}
 	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		env.log(Error, "doGet", err.Error())
+		env.log(Error, "HTTPRequest", err.Error())
 		return nil, err
 	}
 	return body, nil
@@ -496,7 +506,7 @@ func (env *environment) doGet(url string, timeout int, requestModifiers ...HTTPR
 
 func (env *environment) hasParentFilePath(path string) (*fileInfo, error) {
 	defer env.trace(time.Now(), "hasParentFilePath", path)
-	currentFolder := env.getcwd()
+	currentFolder := env.pwd()
 	for {
 		searchPath := filepath.Join(currentFolder, path)
 		info, err := os.Stat(searchPath)
@@ -537,6 +547,42 @@ func (env *environment) close() {
 
 func (env *environment) logs() string {
 	return env.logBuilder.String()
+}
+
+func (env *environment) templateCache() *templateCache {
+	defer env.trace(time.Now(), "templateCache")
+	if env.tmplCache != nil {
+		return env.tmplCache
+	}
+	tmplCache := &templateCache{
+		Root:  env.isRunningAsRoot(),
+		Shell: env.getShellName(),
+		Code:  env.lastErrorCode(),
+	}
+	tmplCache.Env = make(map[string]string)
+	const separator = "="
+	values := os.Environ()
+	for value := range values {
+		splitted := strings.Split(values[value], separator)
+		if len(splitted) != 2 {
+			continue
+		}
+		key := splitted[0]
+		val := splitted[1:]
+		tmplCache.Env[key] = strings.Join(val, separator)
+	}
+	pwd := env.pwd()
+	pwd = strings.Replace(pwd, env.homeDir(), "~", 1)
+	tmplCache.PWD = pwd
+	tmplCache.Folder = base(pwd, env)
+	tmplCache.UserName = env.getCurrentUser()
+	if host, err := env.getHostName(); err == nil {
+		tmplCache.HostName = host
+	}
+	goos := env.getRuntimeGOOS()
+	tmplCache.OS = goos
+	env.tmplCache = tmplCache
+	return env.tmplCache
 }
 
 func cleanHostName(hostName string) string {

@@ -127,7 +127,6 @@ starts with a symbol or icon.
 
 ## Template Properties
 
-- `.PWD`: `string` - the current directory (non styled)
 - `.Path`: `string` - the current directory (styled)
 - `.StackCount`: `int` - the stack count
 

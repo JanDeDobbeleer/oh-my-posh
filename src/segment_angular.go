@@ -24,13 +24,13 @@ func (a *angular) init(props Properties, env Environment) {
 				getVersion: func() (string, error) {
 					const fileName string = "package.json"
 					const fileFolder string = "/node_modules/@angular/core"
-					angularFilePath := a.language.env.getcwd() + fileFolder
+					angularFilePath := a.language.env.pwd() + fileFolder
 					if !a.language.env.hasFilesInDir(angularFilePath, fileName) {
 						return "", fmt.Errorf("%s not found in %s", fileName, angularFilePath)
 					}
 					// parse file
 					objmap := map[string]json.RawMessage{}
-					content := a.language.env.getFileContent(a.language.env.getcwd() + fileFolder + "/" + fileName)
+					content := a.language.env.getFileContent(a.language.env.pwd() + fileFolder + "/" + fileName)
 					err := json.Unmarshal([]byte(content), &objmap)
 					if err != nil {
 						return "", err

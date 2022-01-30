@@ -66,7 +66,7 @@ func (e *engine) render() string {
 	if !e.config.OSC99 {
 		return e.print()
 	}
-	cwd := e.env.getcwd()
+	cwd := e.env.pwd()
 	e.writeANSI(e.ansi.consolePwd(cwd))
 	return e.print()
 }
@@ -161,6 +161,7 @@ func (e *engine) debug() string {
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
 	}
 	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(start)))
+	e.write(fmt.Sprintf("\n\x1b[1mCache path:\x1b[0m %s\n", e.env.getCachePath()))
 	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
 	e.write(e.env.logs())
 	return e.string()
@@ -241,7 +242,10 @@ func (e *engine) renderTransientPrompt() string {
 		Template: promptTemplate,
 		Env:      e.env,
 	}
-	prompt := template.renderPlainContextTemplate(nil)
+	prompt, err := template.render()
+	if err != nil {
+		prompt = err.Error()
+	}
 	e.writer.setColors(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground)
 	e.writer.write(e.config.TransientPrompt.Background, e.config.TransientPrompt.Foreground, prompt)
 	switch e.env.getShellName() {

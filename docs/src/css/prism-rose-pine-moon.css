@@ -1,0 +1,201 @@
+/**
+ * MIT License
+ * Rosé Pine Theme
+ * https://github.com/rose-pine
+ * Ported for PrismJS by fvrests [@fvrests]
+ */
+
+ code[class*="language-"],
+ pre[class*="language-"] {
+     color: #e0def4;
+     background: #232136;
+     font-family: "Cartograph CF", ui-monospace, SFMono-Regular, Menlo, Monaco,
+         Consolas, "Liberation Mono", "Courier New", monospace;
+     text-align: left;
+     white-space: pre;
+     word-spacing: normal;
+     word-break: normal;
+     word-wrap: normal;
+     line-height: 1.5;
+
+     -moz-tab-size: 4;
+     -o-tab-size: 4;
+     tab-size: 4;
+
+     -webkit-hyphens: none;
+     -moz-hyphens: none;
+     -ms-hyphens: none;
+     hyphens: none;
+
+     @media print {
+         text-shadow: none;
+     }
+ }
+
+ /* Selection */
+ code[class*="language-"]::-moz-selection,
+ pre[class*="language-"]::-moz-selection,
+ code[class*="language-"] ::-moz-selection,
+ pre[class*="language-"] ::-moz-selection {
+     background: #312f44;
+ }
+
+ code[class*="language-"]::selection,
+ pre[class*="language-"]::selection,
+ code[class*="language-"] ::selection,
+ pre[class*="language-"] ::selection {
+     background: #312f44;
+ }
+
+ /* Code (block & inline) */
+ :not(pre) > code[class*="language-"],
+ pre[class*="language-"] {
+     color: #e0def4;
+     background: #232136;
+ }
+
+ /* Code blocks */
+ pre[class*="language-"] {
+     padding: 1em;
+     margin: 0.5em 0;
+     overflow: auto;
+ }
+
+ /* Inline code */
+ :not(pre) > code[class*="language-"] {
+     padding: 0.1em;
+     border-radius: 0.3em;
+     white-space: normal;
+     color: #e0def4;
+     background: #232136;
+ }
+
+ /* Text style & opacity */
+ .token.entity {
+     cursor: help;
+ }
+
+ .token.important,
+ .token.bold {
+     font-weight: bold;
+ }
+
+ .token.italic,
+ .token.selector,
+ .token.doctype,
+ .token.attr-name,
+ .token.inserted,
+ .token.deleted,
+ .token.comment,
+ .token.prolog,
+ .token.cdata,
+ .token.constant,
+ .token.parameter,
+ .token.url {
+     font-style: italic;
+ }
+
+ .token.url {
+     text-decoration: underline;
+ }
+
+ .namespace {
+     opacity: 0.7;
+ }
+
+ /* Syntax highlighting */
+ .token.constant {
+     color: #e0def4;
+ }
+
+ .token.comment,
+ .token.prolog,
+ .token.cdata,
+ .token.punctuation {
+     color: #59546d;
+ }
+
+ .token.delimiter,
+ .token.important,
+ .token.atrule,
+ .token.operator,
+ .token.keyword {
+     color: #3e8fb0;
+ }
+
+ .token.tag,
+ .token.tag .punctuation,
+ .token.doctype,
+ .token.variable,
+ .token.regex,
+ .token.class-name,
+ .token.selector,
+ .token.inserted {
+     color: #9ccfd8;
+ }
+
+ .token.boolean,
+ .token.entity,
+ .token.number,
+ .token.symbol,
+ .token.function {
+     color: #ea9a97;
+ }
+
+ .token.string,
+ .token.char,
+ .token.property,
+ .token.attr-value,
+ .token.attr-value .punctuation {
+     color: #f6c177;
+ }
+
+ .token.parameter,
+ .token.url,
+ .token.name,
+ .token.attr-name,
+ .token.builtin {
+     color: #c4a7e7;
+ }
+
+ .token.deleted {
+     color: #eb6f92;
+ }
+
+ /* Insertions & deletions */
+ .token.inserted {
+     background: rgba(156 207 216 0.12);
+ }
+
+ .token.deleted {
+     background: rgba(235 111 146 0.12);
+ }
+
+ /* Line highlighting */
+ pre[data-line] {
+     position: relative;
+ }
+
+ pre[class*="language-"] > code[class*="language-"] {
+     position: relative;
+     z-index: 1;
+ }
+
+ .line-highlight,
+ .highlight-lines .highlighted {
+     position: absolute;
+     left: 0;
+     right: 0;
+     padding: inherit 0;
+     margin-top: 1em;
+
+     background: #312f44;
+     box-shadow: inset 5px 0 0 #e0def4;
+
+     z-index: 0;
+
+     pointer-events: none;
+
+     line-height: inherit;
+     white-space: pre;
+ }

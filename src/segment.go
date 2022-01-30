@@ -148,6 +148,8 @@ const (
 	PHP SegmentType = "php"
 	// Nightscout is an open source diabetes system
 	Nightscout SegmentType = "nightscout"
+	// Strava is a sports activity tracker
+	Strava SegmentType = "strava"
 	// Wakatime writes tracked time spend in dev editors
 	Wakatime SegmentType = "wakatime"
 	// WiFi writes details about the current WiFi connection
@@ -196,7 +198,7 @@ func (segment *Segment) cwdIncluded() bool {
 		return true
 	}
 
-	return dirMatchesOneOf(segment.env, segment.env.getcwd(), list)
+	return dirMatchesOneOf(segment.env, segment.env.pwd(), list)
 }
 
 func (segment *Segment) cwdExcluded() bool {
@@ -205,7 +207,7 @@ func (segment *Segment) cwdExcluded() bool {
 		value = segment.Properties[IgnoreFolders]
 	}
 	list := parseStringArray(value)
-	return dirMatchesOneOf(segment.env, segment.env.getcwd(), list)
+	return dirMatchesOneOf(segment.env, segment.env.pwd(), list)
 }
 
 func (segment *Segment) getColor(templates []string, defaultColor string) string {
@@ -287,6 +289,7 @@ func (segment *Segment) mapSegmentWithWriter(env Environment) error {
 		Angular:       &angular{},
 		PHP:           &php{},
 		Nightscout:    &nightscout{},
+		Strava:        &strava{},
 		Wakatime:      &wakatime{},
 		WiFi:          &wifi{},
 		WinReg:        &winreg{},

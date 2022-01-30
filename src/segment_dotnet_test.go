@@ -25,9 +25,10 @@ func bootStrapDotnetTest(args *dotnetArgs) *dotnet {
 	}
 
 	env.On("hasFiles", "*.cs").Return(true)
-	env.On("getPathSeperator", nil).Return("")
-	env.On("getcwd", nil).Return("/usr/home/project")
-	env.On("homeDir", nil).Return("/usr/home")
+	env.On("getPathSeperator").Return("")
+	env.On("pwd").Return("/usr/home/project")
+	env.On("homeDir").Return("/usr/home")
+	env.onTemplate()
 	props := properties{
 		FetchVersion:                 args.displayVersion,
 		UnsupportedDotnetVersionIcon: args.unsupportedIcon,

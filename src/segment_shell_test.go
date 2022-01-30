@@ -9,7 +9,7 @@ import (
 func TestWriteCurrentShell(t *testing.T) {
 	expected := "zsh"
 	env := new(MockedEnvironment)
-	env.On("getShellName", nil).Return(expected, nil)
+	env.On("getShellName").Return(expected, nil)
 	s := &shell{
 		env:   env,
 		props: properties{},
@@ -28,7 +28,7 @@ func TestUseMappedShellNames(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(MockedEnvironment)
-		env.On("getShellName", nil).Return(tc.Expected, nil)
+		env.On("getShellName").Return(tc.Expected, nil)
 		s := &shell{
 			env: env,
 			props: properties{

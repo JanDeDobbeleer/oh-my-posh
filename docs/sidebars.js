@@ -70,6 +70,7 @@ module.exports = {
         "session",
         "shell",
         "spotify",
+        "strava",
         "sysinfo",
         "terraform",
         "text",

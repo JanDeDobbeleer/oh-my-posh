@@ -139,8 +139,9 @@ func TestNSSegment(t *testing.T) {
 		cache.On("get", FAKEAPIURL).Return(tc.JSONResponse, !tc.CacheFoundFail)
 		cache.On("set", FAKEAPIURL, tc.JSONResponse, tc.CacheTimeout).Return()
 
-		env.On("doGet", FAKEAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
-		env.On("cache", nil).Return(cache)
+		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
+		env.On("cache").Return(cache)
+		env.onTemplate()
 
 		if tc.Template != "" {
 			props[SegmentTemplate] = tc.Template

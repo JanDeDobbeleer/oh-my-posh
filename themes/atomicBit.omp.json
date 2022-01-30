@@ -13,7 +13,7 @@
           "properties": {
             "prefix": "╭─[",
             "postfix": "]─",
-            "template": "<#ffff55>{{ .UserName }}</><#ff5555>@</><#55ff55>{{ .ComputerName }}</>"
+            "template": "<#ffff55>{{ .UserName }}</><#ff5555>@</><#55ff55>{{ .HostName }}</>"
           }
         },
         {

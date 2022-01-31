@@ -93,7 +93,7 @@ func engineRender(configPath string) error {
 	env.Init(args)
 	defer env.Close()
 
-	cfg := GetConfig(env)
+	cfg := LoadConfig(env)
 	defer testClearDefaultConfig()
 
 	ansi := &color.Ansi{}

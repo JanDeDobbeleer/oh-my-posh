@@ -26,7 +26,7 @@ func main() {
 			false,
 			"Print the current config in json format"),
 		ConfigFormat: flag.String(
-			"config-format",
+			"format",
 			config.JSON,
 			"The format to print the config in. Valid options are:\n- json\n- yaml\n- toml\n"),
 		PrintShell: flag.Bool(
@@ -121,6 +121,14 @@ func main() {
 			"cache-path",
 			false,
 			"Print the location of the cache"),
+		Migrate: flag.Bool(
+			"migrate",
+			false,
+			"Migrate the config to the latest version"),
+		Write: flag.Bool(
+			"write",
+			false,
+			"Write the config to the file"),
 	}
 	flag.Parse()
 	if *args.Version {
@@ -152,11 +160,20 @@ func main() {
 		fmt.Print(init)
 		return
 	}
+	cfg := engine.LoadConfig(env)
 	if *args.PrintConfig {
-		fmt.Print(engine.ExportConfig(*args.Config, *args.ConfigFormat))
+		fmt.Print(cfg.Export(*args.ConfigFormat))
 		return
 	}
-	cfg := engine.GetConfig(env)
+	if *args.Migrate {
+		cfg.Migrate(env)
+		if *args.Write {
+			cfg.Write()
+			return
+		}
+		fmt.Print(cfg.Export(*args.ConfigFormat))
+		return
+	}
 	ansi := &color.Ansi{}
 	ansi.Init(env.Shell())
 	var writer color.Writer

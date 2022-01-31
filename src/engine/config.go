@@ -1,8 +1,6 @@
 package engine
 
 import (
-	// "encoding/json"
-
 	"bytes"
 	json2 "encoding/json"
 	"errors"
@@ -10,9 +8,8 @@ import (
 	"oh-my-posh/color"
 	"oh-my-posh/console"
 	"oh-my-posh/environment"
-	"oh-my-posh/properties"
-	"oh-my-posh/segments"
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -23,18 +20,29 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
+const (
+	JSON string = "json"
+	YAML string = "yaml"
+	TOML string = "toml"
+)
+
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	FinalSpace           bool             `config:"final_space"`
-	OSC99                bool             `config:"osc99"`
-	ConsoleTitle         bool             `config:"console_title"`
-	ConsoleTitleStyle    console.Style    `config:"console_title_style"`
-	ConsoleTitleTemplate string           `config:"console_title_template"`
-	TerminalBackground   string           `config:"terminal_background"`
-	Blocks               []*Block         `config:"blocks"`
-	Tooltips             []*Segment       `config:"tooltips"`
-	TransientPrompt      *TransientPrompt `config:"transient_prompt"`
-	Palette              color.Palette    `config:"palette"`
+	FinalSpace           bool             `json:"final_space,omitempty"`
+	OSC99                bool             `json:"osc99,omitempty"`
+	ConsoleTitle         bool             `json:"console_title,omitempty"`
+	ConsoleTitleStyle    console.Style    `json:"console_title_style,omitempty"`
+	ConsoleTitleTemplate string           `json:"console_title_template,omitempty"`
+	TerminalBackground   string           `json:"terminal_background,omitempty"`
+	Blocks               []*Block         `json:"blocks,omitempty"`
+	Tooltips             []*Segment       `json:"tooltips,omitempty"`
+	TransientPrompt      *TransientPrompt `json:"transient_prompt,omitempty"`
+	Palette              color.Palette    `json:"palette,omitempty"`
+
+	format  string
+	origin  string
+	eval    bool
+	updated bool
 }
 
 // MakeColors creates instance of AnsiColors to use in AnsiWriter according to
@@ -45,229 +53,138 @@ func (cfg *Config) MakeColors(env environment.Environment) color.AnsiColors {
 }
 
 type TransientPrompt struct {
-	Template   string `config:"template"`
-	Background string `config:"background"`
-	Foreground string `config:"foreground"`
+	Template   string `json:"template,omitempty"`
+	Background string `json:"background,omitempty"`
+	Foreground string `json:"foreground,omitempty"`
 }
 
-func printConfigError(err error, eval bool) {
-	if eval {
+func (cfg *Config) exitWithError(err error) {
+	if err == nil {
+		return
+	}
+	defer os.Exit(1)
+	if cfg.eval {
 		fmt.Println("echo \"Oh My Posh Error:\n\"", err.Error())
 		return
 	}
 	fmt.Println("Oh My Posh Error:\n", err.Error())
 }
 
-// GetConfig returns the default configuration including possible user overrides
-func GetConfig(env environment.Environment) *Config {
-	cfg, err := loadConfig(env)
-	if err != nil {
-		return getDefaultConfig(err.Error())
-	}
+// LoadConfig returns the default configuration including possible user overrides
+func LoadConfig(env environment.Environment) *Config {
+	cfg := loadConfig(env)
 	return cfg
 }
 
-func loadConfig(env environment.Environment) (*Config, error) {
+func loadConfig(env environment.Environment) *Config {
 	var cfg Config
 	configFile := *env.Args().Config
-	eval := *env.Args().Eval
+	cfg.eval = *env.Args().Eval
 	if configFile == "" {
-		return nil, errors.New("NO CONFIG")
+		cfg.exitWithError(errors.New("NO CONFIG"))
 	}
 	if _, err := os.Stat(configFile); os.IsNotExist(err) {
-		printConfigError(err, eval)
-		return nil, errors.New("INVALID CONFIG PATH")
+		cfg.exitWithError(err)
 	}
+
+	cfg.origin = configFile
+	cfg.format = strings.TrimPrefix(filepath.Ext(configFile), ".")
 
 	config.AddDriver(yaml.Driver)
 	config.AddDriver(json.Driver)
 	config.AddDriver(toml.Driver)
 	config.WithOptions(func(opt *config.Options) {
 		opt.DecoderConfig = &mapstructure.DecoderConfig{
-			TagName: "config",
+			TagName: "json",
 		}
 	})
 
 	err := config.LoadFiles(configFile)
-	if err != nil {
-		printConfigError(err, eval)
-		return nil, errors.New("UNABLE TO OPEN CONFIG")
-	}
+	cfg.exitWithError(err)
 
 	err = config.BindStruct("", &cfg)
-	if err != nil {
-		printConfigError(err, eval)
-		return nil, errors.New("INVALID CONFIG")
-	}
+	cfg.exitWithError(err)
 
 	// initialize default values
 	if cfg.TransientPrompt == nil {
 		cfg.TransientPrompt = &TransientPrompt{}
 	}
 
-	return &cfg, nil
+	return &cfg
 }
 
-func ExportConfig(configFile, format string) string {
-	if len(format) == 0 {
-		format = config.JSON
+func (cfg *Config) sync() {
+	if !cfg.updated {
+		return
+	}
+	var structMap map[string]interface{}
+	inrec, _ := json2.Marshal(cfg)
+	_ = json2.Unmarshal(inrec, &structMap)
+	// remove empty structs
+	for k, v := range structMap {
+		if smap, OK := v.(map[string]interface{}); OK && len(smap) == 0 {
+			delete(structMap, k)
+		}
+	}
+	config.SetData(structMap)
+}
+
+func (cfg *Config) Export(format string) string {
+	cfg.sync()
+
+	if len(format) != 0 {
+		cfg.format = format
+	}
+
+	unicodeEscape := func(s string) string {
+		var builder strings.Builder
+		for _, r := range s {
+			if r < 0x1000 {
+				builder.WriteRune(r)
+				continue
+			}
+			quoted := strconv.QuoteRune(r)
+			quoted = strings.Trim(quoted, "'")
+			builder.WriteString(quoted)
+		}
+		return builder.String()
 	}
 
 	config.AddDriver(yaml.Driver)
-	config.AddDriver(json.Driver)
 	config.AddDriver(toml.Driver)
 
-	err := config.LoadFiles(configFile)
-	if err != nil {
-		printConfigError(err, false)
-		return fmt.Sprintf("INVALID CONFIG:\n\n%s", err.Error())
-	}
+	var result bytes.Buffer
 
-	schemaKey := "$schema"
-	if format == config.JSON && !config.Exists(schemaKey) {
+	if cfg.format == JSON {
 		data := config.Data()
-		data[schemaKey] = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
-		config.SetData(data)
+		data["$schema"] = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+		jsonEncoder := json2.NewEncoder(&result)
+		jsonEncoder.SetEscapeHTML(false)
+		jsonEncoder.SetIndent("", "  ")
+		err := jsonEncoder.Encode(data)
+		cfg.exitWithError(err)
+		return unicodeEscape(result.String())
 	}
 
-	buf := new(bytes.Buffer)
-	_, err = config.DumpTo(buf, format)
-	if err != nil {
-		printConfigError(err, false)
-		return "UNABLE TO DUMP CONFIG"
+	_, err := config.DumpTo(&result, cfg.format)
+	cfg.exitWithError(err)
+	var prefix string
+	switch cfg.format {
+	case YAML:
+		prefix = "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
+	case TOML:
+		prefix = "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 	}
-
-	switch format {
-	case config.JSON:
-		var prettyJSON bytes.Buffer
-		err := json2.Indent(&prettyJSON, buf.Bytes(), "", "  ")
-		if err == nil {
-			unescapeUnicodeCharactersInJSON := func(rawJSON []byte) string {
-				str, err := strconv.Unquote(strings.ReplaceAll(strconv.Quote(string(rawJSON)), `\\u`, `\u`))
-				if err != nil {
-					return err.Error()
-				}
-				return str
-			}
-			return unescapeUnicodeCharactersInJSON(prettyJSON.Bytes())
-		}
-	case config.Yaml:
-		prefix := "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-		content := buf.String()
-		return prefix + content
-
-	case config.Toml:
-		prefix := "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-		content := buf.String()
-		return prefix + content
-	}
-
-	return buf.String()
+	return prefix + unicodeEscape(result.String())
 }
 
-func getDefaultConfig(info string) *Config {
-	cfg := &Config{
-		FinalSpace:        true,
-		ConsoleTitle:      true,
-		ConsoleTitleStyle: console.FolderName,
-		Blocks: []*Block{
-			{
-				Type:      Prompt,
-				Alignment: Left,
-				Segments: []*Segment{
-					{
-						Type:            SESSION,
-						Style:           Diamond,
-						Background:      "#c386f1",
-						Foreground:      "#ffffff",
-						LeadingDiamond:  "\uE0B6",
-						TrailingDiamond: "\uE0B0",
-					},
-					{
-						Type:            PATH,
-						Style:           Powerline,
-						PowerlineSymbol: "\uE0B0",
-						Background:      "#ff479c",
-						Foreground:      "#ffffff",
-						Properties: properties.Map{
-							properties.Prefix: " \uE5FF ",
-							properties.Style:  "folder",
-						},
-					},
-					{
-						Type:            GIT,
-						Style:           Powerline,
-						PowerlineSymbol: "\uE0B0",
-						Background:      "#fffb38",
-						Foreground:      "#193549",
-						Properties: properties.Map{
-							segments.FetchStashCount:   true,
-							segments.FetchUpstreamIcon: true,
-						},
-					},
-					{
-						Type:            BATTERY,
-						Style:           Powerline,
-						PowerlineSymbol: "\uE0B0",
-						Background:      "#f36943",
-						Foreground:      "#193549",
-						Properties: properties.Map{
-							properties.Postfix: "\uF295 ",
-						},
-					},
-					{
-						Type:            NODE,
-						Style:           Powerline,
-						PowerlineSymbol: "\uE0B0",
-						Background:      "#6CA35E",
-						Foreground:      "#ffffff",
-						Properties: properties.Map{
-							properties.Prefix:       " \uE718",
-							properties.FetchVersion: false,
-						},
-					},
-					{
-						Type:            SHELL,
-						Style:           Powerline,
-						PowerlineSymbol: "\uE0B0",
-						Background:      "#0077c2",
-						Foreground:      "#ffffff",
-						Properties: properties.Map{
-							properties.Prefix: " \uFCB5 ",
-						},
-					},
-					{
-						Type:            ROOT,
-						Style:           Powerline,
-						PowerlineSymbol: "\uE0B0",
-						Background:      "#ffff66",
-						Foreground:      "#ffffff",
-					},
-					{
-						Type:            TEXT,
-						Style:           Powerline,
-						PowerlineSymbol: "\uE0B0",
-						Background:      "#ffffff",
-						Foreground:      "#111111",
-						Properties: properties.Map{
-							properties.SegmentTemplate: info,
-						},
-					},
-					{
-						Type:            EXIT,
-						Style:           Diamond,
-						Background:      "#2e9599",
-						Foreground:      "#ffffff",
-						LeadingDiamond:  "<transparent,#2e9599>\uE0B0</>",
-						TrailingDiamond: "\uE0B4",
-						Properties: properties.Map{
-							properties.AlwaysEnabled: true,
-							properties.Prefix:        " \uE23A",
-						},
-					},
-				},
-			},
-		},
+func (cfg *Config) Write() {
+	content := cfg.Export(cfg.format)
+	f, err := os.OpenFile(cfg.origin, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	cfg.exitWithError(err)
+	_, err = f.WriteString(content)
+	cfg.exitWithError(err)
+	if err := f.Close(); err != nil {
+		cfg.exitWithError(err)
 	}
-	return cfg
 }

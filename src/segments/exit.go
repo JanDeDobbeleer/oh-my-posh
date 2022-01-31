@@ -10,15 +10,15 @@ type Exit struct {
 	props properties.Properties
 	env   environment.Environment
 
-	Text string
+	Meaning string
 }
 
 func (e *Exit) Template() string {
-	return "{{ .Text }}"
+	return "{{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf42e{{ end }}"
 }
 
 func (e *Exit) Enabled() bool {
-	e.Text = e.getMeaningFromExitCode(e.env.ErrorCode())
+	e.Meaning = e.getMeaningFromExitCode(e.env.ErrorCode())
 	if e.props.GetBool(properties.AlwaysEnabled, false) {
 		return true
 	}

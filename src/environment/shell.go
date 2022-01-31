@@ -54,6 +54,8 @@ type Args struct {
 	PrintTransient *bool
 	Plain          *bool
 	CachePath      *bool
+	Migrate        *bool
+	Write          *bool
 }
 
 type CommandError struct {

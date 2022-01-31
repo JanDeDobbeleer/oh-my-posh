@@ -38,6 +38,6 @@ Displays the last exit code or that the last command failed based on the configu
 ## [Template][templates] Properties
 
 - `.Code`: `number` - the last known exit code
-- `.Text`: `string` - the textual meaning linked to exit code (if applicable, otherwise identical to `.Code`)
+- `.Meaning`: `string` - the textual meaning linked to exit code (if applicable, otherwise identical to `.Code`)
 
 [templates]: /docs/config-templates

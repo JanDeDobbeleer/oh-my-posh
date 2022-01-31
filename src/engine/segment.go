@@ -13,18 +13,18 @@ import (
 
 // Segment represent a single segment and it's configuration
 type Segment struct {
-	Type                SegmentType    `config:"type"`
-	Tips                []string       `config:"tips"`
-	Style               SegmentStyle   `config:"style"`
-	PowerlineSymbol     string         `config:"powerline_symbol"`
-	InvertPowerline     bool           `config:"invert_powerline"`
-	Foreground          string         `config:"foreground"`
-	ForegroundTemplates []string       `config:"foreground_templates"`
-	Background          string         `config:"background"`
-	BackgroundTemplates []string       `config:"background_templates"`
-	LeadingDiamond      string         `config:"leading_diamond"`
-	TrailingDiamond     string         `config:"trailing_diamond"`
-	Properties          properties.Map `config:"properties"`
+	Type                SegmentType    `json:"type,omitempty"`
+	Tips                []string       `json:"tips,omitempty"`
+	Style               SegmentStyle   `json:"style,omitempty"`
+	PowerlineSymbol     string         `json:"powerline_symbol,omitempty"`
+	InvertPowerline     bool           `json:"invert_powerline,omitempty"`
+	Foreground          string         `json:"foreground,omitempty"`
+	ForegroundTemplates []string       `json:"foreground_templates,omitempty"`
+	Background          string         `json:"background,omitempty"`
+	BackgroundTemplates []string       `json:"background_templates,omitempty"`
+	LeadingDiamond      string         `json:"leading_diamond,omitempty"`
+	TrailingDiamond     string         `json:"trailing_diamond,omitempty"`
+	Properties          properties.Map `json:"properties,omitempty"`
 	writer              SegmentWriter
 	stringValue         string
 	active              bool
@@ -160,6 +160,7 @@ func (segment *Segment) string() string {
 	if err != nil {
 		return err.Error()
 	}
+	segment.active = len(text) > 0
 	return text
 }
 

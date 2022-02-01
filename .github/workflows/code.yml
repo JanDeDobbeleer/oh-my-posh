@@ -31,4 +31,4 @@ jobs:
         version: latest
         working-directory: src
     - name: Unit Tests
-      run: go test . -v
+      run: go test -v ./...

@@ -11,6 +11,7 @@ type Time struct {
 	env   environment.Environment
 
 	CurrentDate time.Time
+	Format      string
 }
 
 const (
@@ -19,11 +20,12 @@ const (
 )
 
 func (t *Time) Template() string {
-	return "{{ .CurrentDate | date \"" + t.props.GetString(TimeFormat, "15:04:05") + "\" }}"
+	return "{{ .CurrentDate | date .Format }}"
 }
 
 func (t *Time) Enabled() bool {
 	// if no date set, use now(unit testing)
+	t.Format = t.props.GetString(TimeFormat, "15:04:05")
 	if t.CurrentDate.IsZero() {
 		t.CurrentDate = time.Now()
 	}

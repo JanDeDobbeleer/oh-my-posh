@@ -35,7 +35,17 @@ Displays the last exit code or that the last command failed based on the configu
 
 [colors]: /docs/config-colors
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf42e{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Code`: `number` - the last known exit code
 - `.Meaning`: `string` - the textual meaning linked to exit code (if applicable, otherwise identical to `.Code`)

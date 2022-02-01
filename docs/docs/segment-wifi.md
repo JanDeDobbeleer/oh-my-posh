@@ -30,7 +30,17 @@ Currently only supports Windows and WSL. Pull requests for Darwin and Linux supp
 }
 ```
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.SSID`: `string` - the SSID of the current wifi network
 - `.RadioType`: `string` - the radio type - _e.g. 802.11ac, 802.11ax, 802.11n, etc._

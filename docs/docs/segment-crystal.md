@@ -33,7 +33,17 @@ Display the currently active crystal version.
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when `*.cr` or `shard.yml` files are present (default)
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Full`: `string` - the full version
 - `.Major`: `string` - major number

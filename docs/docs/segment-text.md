@@ -35,7 +35,17 @@ New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
 
 :::
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Text }}
+```
+
+:::
+
+### Properties
 
 - `.Root`: `boolean` - is the current user root/admin or not
 - `.Path`: `string` - the current working directory

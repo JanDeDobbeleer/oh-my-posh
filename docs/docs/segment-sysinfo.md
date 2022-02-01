@@ -31,7 +31,17 @@ Display SysInfo.
 
 - Precision: `int` - The precision used for any float values - defaults to 2
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ round .PhysicalPercentUsed .Precision }}
+```
+
+:::
+
+### Properties
 
 - `.PhysicalTotalMemory`: `int` - is the total of used physical memory
 - `.PhysicalFreeMemory`: `int` - is the total of free physical memory

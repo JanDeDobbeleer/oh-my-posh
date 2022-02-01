@@ -35,7 +35,17 @@ On macOS, all states are supported (playing/paused/stopped).
 - paused_icon: `string` - text/icon to show when paused - defaults to `\uF8E3 `
 - stopped_icon: `string` - text/icon to show when stopped - defaults to `\uF04D `
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Status`: `string` - player status (`playing`, `paused`, `stopped`)
 - `.Artist`: `string` - current artist

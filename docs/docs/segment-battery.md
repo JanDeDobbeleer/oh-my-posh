@@ -39,7 +39,17 @@ Battery displays the remaining power percentage for your battery.
 - discharging_icon: `string` - icon to display on the left when discharging - defaults to empty
 - charged_icon: `string` - icon to display on the left when fully charged - defaults to empty
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}
+```
+
+:::
+
+### Properties
 
 - `.State`: `struct` - the battery state, has a `.String` function
 - `.Current`: `float64` - Current (momentary) charge rate (in mW).

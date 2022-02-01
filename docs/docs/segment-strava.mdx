@@ -69,7 +69,17 @@ if that color is visible against any of your backgrounds.
 - WorkOutIcon - defaults to `\ue213`
 - UnknownActivityIcon - defaults to `\ue213`
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }}
+```
+
+:::
+
+### Properties
 
 The properties below are available for use in your template
 

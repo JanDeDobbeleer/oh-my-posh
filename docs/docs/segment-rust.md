@@ -33,7 +33,17 @@ Display the currently active rust version.
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when `*.rs`, `Cargo.toml` or `Cargo.lock` files are present (default)
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Full`: `string` - the full version
 - `.Major`: `string` - major number

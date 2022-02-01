@@ -34,7 +34,17 @@ sidebar_label: Ipify
 - cache_timeout: `int` in minutes - How long do you want your IP address cached? -
   defaults to 10 min
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .IP }}
+```
+
+:::
+
+### Properties
 
 - .IP: `string` - Your external IP address
 

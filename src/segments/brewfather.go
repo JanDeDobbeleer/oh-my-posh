@@ -55,10 +55,6 @@ const (
 
 	BFCacheTimeout properties.Property = "cache_timeout"
 
-	DefaultTemplate string = "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}{{.DayIcon}} {{end}}[{{.Recipe.Name}}]({{.URL}})" +
-		" {{printf \"%.1f\" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}} " +
-		"{{printf \"%.3f\" .Reading.Gravity}} {{.Reading.Temperature}}\u00b0 {{.TemperatureTrendIcon}}{{end}}"
-
 	BFStatusPlanning     string = "Planning"
 	BFStatusBrewing      string = "Brewing"
 	BFStatusFermenting   string = "Fermenting"
@@ -101,7 +97,7 @@ type Batch struct {
 }
 
 func (bf *Brewfather) Template() string {
-	return DefaultTemplate
+	return "{{ .StatusIcon }} {{ if .DaysBottledOrFermented }}{{ .DaysBottledOrFermented }}{{ .DayIcon }} {{ end }}{{ url .Recipe.Name .URL }} {{ printf \"%.1f\" .MeasuredAbv }}%{{ if and (.Reading) (eq .Status \"Fermenting\") }} {{ printf \"%.3f\" .Reading.Gravity }} {{ .Reading.Temperature }}\u00b0 {{ .TemperatureTrendIcon }}{{ end }}" // nolint:lll
 }
 
 func (bf *Brewfather) Enabled() bool {

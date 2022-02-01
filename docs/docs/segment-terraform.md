@@ -27,7 +27,17 @@ This requires a terraform binary in your PATH and will only show in directories 
 }
 ```
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .WorkspaceName }}
+```
+
+:::
+
+### Properties
 
 - `.WorkspaceName`: `string` - is the current workspace name
 

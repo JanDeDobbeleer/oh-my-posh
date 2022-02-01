@@ -40,7 +40,17 @@ or not - defaults to `true`
   - `environment`: the segment is only displayed when a virtual env is present
   - `context`: the segment is only displayed when either `environment` or `files` is active
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Venv`: `string` - the virtual environment name (if present)
 - `.Full`: `string` - the full version

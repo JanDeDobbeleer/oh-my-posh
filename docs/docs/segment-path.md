@@ -121,9 +121,19 @@ starts with a symbol or icon.
 - `__pycache__` will be shortened to `__p`
 - `➼ folder` will be shortened to `➼ f`
 
-## [Template][templates] Properties
+## Template ([info][templates])
 
-- `.Path`: `string` - the current directory (styled)
+:::note default template
+
+``` template
+{{ .Path }}
+```
+
+:::
+
+### Properties
+
+- `.Path`: `string` - the current directory (based on the `style` property)
 - `.StackCount`: `int` - the stack count
 
 [templates]: /docs/config-templates

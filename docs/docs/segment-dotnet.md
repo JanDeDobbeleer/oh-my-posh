@@ -36,7 +36,17 @@ Display the currently active .NET SDK version.
   or `*.fsproj` files are present (default)
 - version_url_template: `string` - A go text/template [template][templates] that creates the changelog URL
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Full`: `string` - the full version
 - `.Major`: `string` - major number

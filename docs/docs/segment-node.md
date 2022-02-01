@@ -34,7 +34,17 @@ Display the currently active node version.
 - yarn_icon: `string` - the icon/text to display when using Yarn - defaults to ` \uF61A`
 - npm_icon: `string` - the icon/text to display when using NPM - defaults to ` \uE71E`
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}
+```
+
+:::
+
+### Properties
 
 - `.Full`: `string` - the full version
 - `.Major`: `string` - major number

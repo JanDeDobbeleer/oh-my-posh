@@ -25,11 +25,22 @@ Show the current timestamp.
 
 - time_format: `string` - format to use, follows the [golang standard][format] - defaults to `15:04:05`
 
-## [Template][templates] Properties
+## Template ([info][templates])
 
-- `.CurrentDate`: `time` - The time to display(testing purpose)
+:::note default template
 
-### Standard time and date formats
+``` template
+{{ .CurrentDate | date .Format }}
+```
+
+:::
+
+### Properties
+
+- `.Format`: `string` - The time format (set via `time_format`)
+- `.CurrentDate`: `time` - The time to display (testing purpose)
+
+## Standard time and date formats
 
 - January 2, 2006 **Date**
 - 01/02/06
@@ -46,7 +57,7 @@ Show the current timestamp.
 - Mon, 02 Jan 2006 15:04:05 MST 27e95cb
 - Mon, 02 Jan 2006 15:04:05 -0700 **with numeric zone**
 
-#### The following predefined date and timestamp format constants are also available
+### The following predefined date and timestamp format constants are also available
 
 - ANSIC       = "Mon Jan _2 15:04:05 2006"
 - UnixDate    = "Mon Jan _2 15:04:05 MST 2006"

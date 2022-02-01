@@ -23,7 +23,7 @@ const (
 )
 
 func (n *Node) Template() string {
-	return "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
+	return " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
 }
 
 func (n *Node) Init(props properties.Properties, env environment.Environment) {

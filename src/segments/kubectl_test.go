@@ -40,7 +40,7 @@ func TestKubectlSegment(t *testing.T) {
 			ParseKubeConfig: true,
 			Kubeconfig:      "currentcontextmarker" + lsep + "contextdefinitionincomplete",
 			Files:           testKubeConfigFiles,
-			ExpectedString:  "ctx ::  ::  :: ",
+			ExpectedString:  "ctx ::  ::  ::",
 			ExpectedEnabled: true,
 		},
 		{Case: "disabled", Template: standardTemplate, KubectlExists: false, Context: "aaa", Namespace: "bbb", ExpectedEnabled: false},

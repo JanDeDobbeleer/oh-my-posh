@@ -57,7 +57,7 @@ const (
 )
 
 func (pt *Path) Template() string {
-	return "{{ .Path }}"
+	return " {{ .Path }} "
 }
 
 func (pt *Path) Enabled() bool {

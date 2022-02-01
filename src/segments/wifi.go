@@ -15,7 +15,7 @@ type Wifi struct {
 }
 
 const (
-	defaultTemplate = "{{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }}"
+	defaultTemplate = " {{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }} "
 )
 
 func (w *Wifi) Template() string {

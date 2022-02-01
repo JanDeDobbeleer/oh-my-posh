@@ -62,7 +62,7 @@ func (t *Executiontime) Enabled() bool {
 }
 
 func (t *Executiontime) Template() string {
-	return "{{ .FormattedMs }}"
+	return " {{ .FormattedMs }} "
 }
 
 func (t *Executiontime) Init(props properties.Properties, env environment.Environment) {

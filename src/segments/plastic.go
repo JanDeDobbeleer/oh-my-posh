@@ -43,7 +43,7 @@ func (p *Plastic) Init(props properties.Properties, env environment.Environment)
 }
 
 func (p *Plastic) Template() string {
-	return "{{ .Selector }}"
+	return " {{ .Selector }} "
 }
 
 func (p *Plastic) Enabled() bool {

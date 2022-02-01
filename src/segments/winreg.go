@@ -22,7 +22,7 @@ const (
 )
 
 func (wr *WindowsRegistry) Template() string {
-	return "{{ .Value }}"
+	return " {{ .Value }} "
 }
 
 func (wr *WindowsRegistry) Init(props properties.Properties, env environment.Environment) {

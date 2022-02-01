@@ -5,6 +5,7 @@ import (
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
 	"oh-my-posh/template"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -32,7 +33,7 @@ func renderTemplate(env *mock.MockedEnvironment, segmentTemplate string, context
 	if err != nil {
 		return err.Error()
 	}
-	return text
+	return strings.TrimSpace(text)
 }
 
 const (
@@ -312,7 +313,7 @@ func TestGetFullPath(t *testing.T) {
 
 		// StackCountEnabled=true and StackCount=2
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: 2, Expected: "2 /"},
-		{Style: Full, Pwd: "", StackCount: 2, Expected: "2 "},
+		{Style: Full, Pwd: "", StackCount: 2, Expected: "2"},
 		{Style: Full, Pwd: "/", StackCount: 2, Expected: "2 /"},
 		{Style: Full, Pwd: "/usr/home", StackCount: 2, Expected: "2 ~"},
 		{Style: Full, Pwd: "/usr/home/abc", StackCount: 2, Expected: "2 ~/abc"},

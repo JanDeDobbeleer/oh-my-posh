@@ -62,7 +62,7 @@ const (
 )
 
 func (oi *Os) Template() string {
-	return "{{ if .WSL }}WSL at {{ end }}{{.Icon}}"
+	return " {{ if .WSL }}WSL at {{ end }}{{.Icon}} "
 }
 
 func (oi *Os) Enabled() bool {

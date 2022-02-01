@@ -71,7 +71,7 @@ func (a *AuthError) Error() string {
 }
 
 func (s *Strava) Template() string {
-	return "{{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }}"
+	return " {{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }} "
 }
 
 func (s *Strava) Enabled() bool {

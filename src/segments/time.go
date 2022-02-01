@@ -20,7 +20,7 @@ const (
 )
 
 func (t *Time) Template() string {
-	return "{{ .CurrentDate | date .Format }}"
+	return " {{ .CurrentDate | date .Format }} "
 }
 
 func (t *Time) Enabled() bool {

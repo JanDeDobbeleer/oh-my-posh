@@ -33,7 +33,7 @@ const (
 )
 
 func (s *Spotify) Template() string {
-	return "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}"
+	return " {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} "
 }
 
 func (s *Spotify) resolveIcon() {

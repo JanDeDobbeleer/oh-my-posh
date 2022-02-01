@@ -13,7 +13,7 @@ type Text struct {
 }
 
 func (t *Text) Template() string {
-	return "{{ .Text }}"
+	return " {{ .Text }} "
 }
 
 func (t *Text) Enabled() bool {

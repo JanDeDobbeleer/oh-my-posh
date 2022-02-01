@@ -19,7 +19,7 @@ const (
 )
 
 func (y *Ytm) Template() string {
-	return "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}"
+	return " {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} "
 }
 
 func (y *Ytm) Enabled() bool {

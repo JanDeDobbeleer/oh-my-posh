@@ -195,7 +195,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 	}{
 		{
 			Case:     "GIT",
-			Expected: "{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} working {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} and{{ end }}{{ if .Staging.Changed }} staged {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} stash {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} worktree {{ .WorktreeCount }}{{ end }}", // nolint: lll
+			Expected: " {{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} working {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} and{{ end }}{{ if .Staging.Changed }} staged {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} stash {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} worktree {{ .WorktreeCount }}{{ end }} ", // nolint: lll
 			Type:     GIT,
 			Props: properties.Map{
 				"local_working_icon":    " working ",
@@ -207,7 +207,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "GIT - Staging and Working Color",
-			Expected: "{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} working <#123456>{{ .Working.String }}</>{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} and{{ end }}{{ if .Staging.Changed }} staged <#123456>{{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0}} stash {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} worktree {{ .WorktreeCount }}{{ end }}", // nolint: lll
+			Expected: " {{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} working <#123456>{{ .Working.String }}</>{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} and{{ end }}{{ if .Staging.Changed }} staged <#123456>{{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0}} stash {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} worktree {{ .WorktreeCount }}{{ end }} ", // nolint: lll
 			Type:     GIT,
 			Props: properties.Map{
 				"local_working_icon":    " working ",
@@ -221,7 +221,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "EXIT - No exit Code with Icon overrides",
-			Expected: "{{ if gt .Code 0 }}FAIL{{ else }}SUCCESS{{ end }}",
+			Expected: " {{ if gt .Code 0 }}FAIL{{ else }}SUCCESS{{ end }} ",
 			Type:     EXIT,
 			Props: properties.Map{
 				"display_exit_code": false,
@@ -231,7 +231,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "EXIT - Always numeric",
-			Expected: "{{ if gt .Code 0 }}FAIL {{ .Code }}{{ else }}SUCCESS{{ end }}",
+			Expected: " {{ if gt .Code 0 }}FAIL {{ .Code }}{{ else }}SUCCESS{{ end }} ",
 			Type:     EXIT,
 			Props: properties.Map{
 				"always_numeric": true,
@@ -241,7 +241,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "BATTERY",
-			Expected: `{{ if not .Error }}{{ $stateList := list "Discharging" "Full" }}{{ if has .State.String $stateList }}{{.Icon}}{{.Percentage}}{{ end }}{{ end }}{{.Error}}`,
+			Expected: ` {{ if not .Error }}{{ $stateList := list "Discharging" "Full" }}{{ if has .State.String $stateList }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ end }}{{ .Error }} `,
 			Type:     BATTERY,
 			Props: properties.Map{
 				"display_charging": false,
@@ -249,7 +249,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "SESSION",
-			Expected: "{{ if .SSHSession }}SSH {{ end }}{{ .UserName }}@{{ .HostName }}",
+			Expected: " {{ if .SSHSession }}SSH {{ end }}{{ .UserName }}@{{ .HostName }} ",
 			Type:     SESSION,
 			Props: properties.Map{
 				"ssh_icon": "SSH ",
@@ -257,7 +257,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "SESSION no HOST",
-			Expected: "{{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}",
+			Expected: " {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }} ",
 			Type:     SESSION,
 			Props: properties.Map{
 				"display_host": false,
@@ -265,7 +265,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "SESSION no USER",
-			Expected: "{{ if .SSHSession }}\uf817 {{ end }}{{ .HostName }}",
+			Expected: " {{ if .SSHSession }}\uf817 {{ end }}{{ .HostName }} ",
 			Type:     SESSION,
 			Props: properties.Map{
 				"display_user": false,
@@ -273,7 +273,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "SESSION no USER nor HOST",
-			Expected: "{{ if .SSHSession }}\uf817 {{ end }}",
+			Expected: " {{ if .SSHSession }}\uf817 {{ end }} ",
 			Type:     SESSION,
 			Props: properties.Map{
 				"display_user": false,
@@ -282,7 +282,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "SESSION - Color overrides",
-			Expected: "{{ if .SSHSession }}\uf817 {{ end }}<#123456>{{ .UserName }}</>@<#789012>{{ .HostName }}</>",
+			Expected: " {{ if .SSHSession }}\uf817 {{ end }}<#123456>{{ .UserName }}</>@<#789012>{{ .HostName }}</> ",
 			Type:     SESSION,
 			Props: properties.Map{
 				"user_color": "#123456",
@@ -335,5 +335,51 @@ func TestInlineColorOverride(t *testing.T) {
 		}
 		segment.migrateInlineColorOverride(tc.Property, "foo")
 		assert.Equal(t, tc.Expected, segment.Properties[properties.SegmentTemplate], tc.Case)
+	}
+}
+
+func TestMigratePreAndPostfix(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Props    properties.Map
+	}{
+		{
+			Case:     "Pre and Postfix",
+			Expected: "<background,transparent>\ue0b6</> \uf489 {{ .Name }} <transparent,background>\ue0b2</>",
+			Props: properties.Map{
+				"postfix":  " <transparent,background>\ue0b2</>",
+				"prefix":   "<background,transparent>\ue0b6</> \uf489 ",
+				"template": "{{ .Name }}",
+			},
+		},
+		{
+			Case:     "Prefix",
+			Expected: " {{ .Name }} ",
+			Props: properties.Map{
+				"prefix":   " ",
+				"template": "{{ .Name }}",
+			},
+		},
+		{
+			Case:     "Postfix",
+			Expected: " {{ .Name }} ",
+			Props: properties.Map{
+				"postfix":  " ",
+				"template": "{{ .Name }} ",
+			},
+		},
+	}
+	for _, tc := range cases {
+		segment := &Segment{
+			Properties: tc.Props,
+			writer: &MockedWriter{
+				template: tc.Props.GetString(properties.SegmentTemplate, ""),
+			},
+		}
+		segment.migrateTemplate()
+		assert.Equal(t, tc.Expected, segment.Properties[properties.SegmentTemplate], tc.Case)
+		assert.NotContains(t, segment.Properties, "prefix", tc.Case)
+		assert.NotContains(t, segment.Properties, "postfix", tc.Case)
 	}
 }

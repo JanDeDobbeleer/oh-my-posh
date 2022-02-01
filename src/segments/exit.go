@@ -14,7 +14,7 @@ type Exit struct {
 }
 
 func (e *Exit) Template() string {
-	return "{{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf42e{{ end }}"
+	return " {{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf42e{{ end }} "
 }
 
 func (e *Exit) Enabled() bool {

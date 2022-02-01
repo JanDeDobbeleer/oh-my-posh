@@ -48,7 +48,7 @@ type NightscoutData struct {
 }
 
 func (ns *Nightscout) Template() string {
-	return "{{ .Sgv }}"
+	return " {{ .Sgv }} "
 }
 
 func (ns *Nightscout) Enabled() bool {

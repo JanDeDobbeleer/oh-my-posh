@@ -3,7 +3,6 @@ package engine
 import (
 	"oh-my-posh/color"
 	"oh-my-posh/environment"
-	"oh-my-posh/properties"
 	"sync"
 	"time"
 )
@@ -111,21 +110,14 @@ func (b *Block) renderSegment(segment *Segment) {
 	b.writePowerline(false)
 	switch b.activeSegment.Style {
 	case Plain, Powerline:
-		b.renderText(segment.stringValue)
+		b.writer.Write(b.activeBackground, b.activeForeground, segment.stringValue)
 	case Diamond:
 		b.writer.Write(color.Transparent, b.activeBackground, b.activeSegment.LeadingDiamond)
-		b.renderText(segment.stringValue)
+		b.writer.Write(b.activeBackground, b.activeForeground, segment.stringValue)
 		b.writer.Write(color.Transparent, b.activeBackground, b.activeSegment.TrailingDiamond)
 	}
 	b.previousActiveSegment = b.activeSegment
 	b.writer.SetParentColors(b.activeBackground, b.activeForeground)
-}
-
-func (b *Block) renderText(text string) {
-	defaultValue := " "
-	b.writer.Write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(properties.Prefix, defaultValue))
-	b.writer.Write(b.activeBackground, b.activeForeground, text)
-	b.writer.Write(b.activeBackground, b.activeForeground, b.activeSegment.getValue(properties.Postfix, defaultValue))
 }
 
 func (b *Block) writePowerline(final bool) {

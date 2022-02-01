@@ -169,13 +169,6 @@ func (segment *Segment) enabled() bool {
 	return segment.active
 }
 
-func (segment *Segment) getValue(property properties.Property, defaultValue string) string {
-	if value, ok := segment.Properties[property]; ok {
-		return properties.ParseString(value, defaultValue)
-	}
-	return defaultValue
-}
-
 func (segment *Segment) shouldIncludeFolder() bool {
 	cwdIncluded := segment.cwdIncluded()
 	cwdExcluded := segment.cwdExcluded()

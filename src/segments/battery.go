@@ -28,7 +28,7 @@ const (
 )
 
 func (b *Battery) Template() string {
-	return "{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}"
+	return " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }} "
 }
 
 func (b *Battery) Enabled() bool {

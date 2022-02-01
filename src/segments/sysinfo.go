@@ -36,7 +36,7 @@ const (
 )
 
 func (s *SystemInfo) Template() string {
-	return "{{ round .PhysicalPercentUsed .Precision }}"
+	return " {{ round .PhysicalPercentUsed .Precision }} "
 }
 
 func (s *SystemInfo) Enabled() bool {

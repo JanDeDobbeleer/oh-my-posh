@@ -21,13 +21,13 @@ func TestSpotifyWsl(t *testing.T) {
 	}{
 		{
 			Case:            "Spotify not running",
-			ExpectedString:  " - ",
+			ExpectedString:  "-",
 			ExpectedEnabled: false,
 			ExecOutput:      "INFO: No tasks are running which match the specified criteria.\n",
 		},
 		{
 			Case:            "Spotify stopped/paused",
-			ExpectedString:  " - ",
+			ExpectedString:  "-",
 			ExpectedEnabled: false,
 			ExecOutput: `"Spotify.exe","21824","Console","1","124,928 K","Running","PC\user","0:09:44","Spotify Premium"
 "Spotify.exe","21876","Console","1","25,520 K","Running","PC\user","0:00:00","N/A"
@@ -49,7 +49,7 @@ func TestSpotifyWsl(t *testing.T) {
 		},
 		{
 			Case:            "tasklist.exe not in path",
-			ExpectedString:  " - ",
+			ExpectedString:  "-",
 			ExpectedEnabled: false,
 			ExecOutput:      ""},
 	}

@@ -20,7 +20,7 @@ const (
 )
 
 func (a *Aws) Template() string {
-	return "{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}"
+	return " {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
 }
 
 func (a *Aws) Init(props properties.Properties, env environment.Environment) {

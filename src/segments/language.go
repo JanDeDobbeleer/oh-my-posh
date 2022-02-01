@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	languageTemplate = "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+	languageTemplate = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
 )
 
 type loadContext func()

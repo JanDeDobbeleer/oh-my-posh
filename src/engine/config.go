@@ -10,7 +10,6 @@ import (
 	"oh-my-posh/environment"
 	"os"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/gookit/config/v2"
@@ -136,20 +135,6 @@ func (cfg *Config) Export(format string) string {
 		cfg.format = format
 	}
 
-	unicodeEscape := func(s string) string {
-		var builder strings.Builder
-		for _, r := range s {
-			if r < 0x1000 {
-				builder.WriteRune(r)
-				continue
-			}
-			quoted := strconv.QuoteRune(r)
-			quoted = strings.Trim(quoted, "'")
-			builder.WriteString(quoted)
-		}
-		return builder.String()
-	}
-
 	config.AddDriver(yaml.Driver)
 	config.AddDriver(toml.Driver)
 
@@ -163,7 +148,7 @@ func (cfg *Config) Export(format string) string {
 		jsonEncoder.SetIndent("", "  ")
 		err := jsonEncoder.Encode(data)
 		cfg.exitWithError(err)
-		return unicodeEscape(result.String())
+		return escapeGlyphs(result.String())
 	}
 
 	_, err := config.DumpTo(&result, cfg.format)
@@ -175,7 +160,7 @@ func (cfg *Config) Export(format string) string {
 	case TOML:
 		prefix = "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 	}
-	return prefix + unicodeEscape(result.String())
+	return prefix + escapeGlyphs(result.String())
 }
 
 func (cfg *Config) Write() {
@@ -187,4 +172,17 @@ func (cfg *Config) Write() {
 	if err := f.Close(); err != nil {
 		cfg.exitWithError(err)
 	}
+}
+
+func escapeGlyphs(s string) string {
+	var builder strings.Builder
+	for _, r := range s {
+		if r < 0x1000 {
+			builder.WriteRune(r)
+			continue
+		}
+		quoted := fmt.Sprintf("\\u%04x", r)
+		builder.WriteString(quoted)
+	}
+	return builder.String()
 }

@@ -11,7 +11,7 @@ type Root struct {
 }
 
 func (rt *Root) Template() string {
-	return "\uF0E7"
+	return " \uF0E7 "
 }
 
 func (rt *Root) Enabled() bool {

@@ -39,7 +39,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 		{
 			Case:            "Sunny Display",
 			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
-			ExpectedString:  "\ufa98 ",
+			ExpectedString:  "\ufa98",
 			ExpectedEnabled: true,
 			Template:        "{{.Weather}} ",
 		},

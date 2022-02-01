@@ -22,7 +22,7 @@ func (s *Session) Enabled() bool {
 }
 
 func (s *Session) Template() string {
-	return "{{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .HostName }}"
+	return " {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .HostName }} "
 }
 
 func (s *Session) Init(props properties.Properties, env environment.Environment) {

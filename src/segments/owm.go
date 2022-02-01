@@ -54,7 +54,7 @@ func (d *Owm) Enabled() bool {
 }
 
 func (d *Owm) Template() string {
-	return "{{ .Weather }} ({{ .Temperature }}{{ .UnitIcon }})"
+	return " {{ .Weather }} ({{ .Temperature }}{{ .UnitIcon }}) "
 }
 
 func (d *Owm) getResult() (*owmDataResponse, error) {

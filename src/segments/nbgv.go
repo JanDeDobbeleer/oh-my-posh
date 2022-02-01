@@ -25,7 +25,7 @@ type VersionInfo struct {
 }
 
 func (n *Nbgv) Template() string {
-	return "{{ .Version }}"
+	return " {{ .Version }} "
 }
 
 func (n *Nbgv) Enabled() bool {

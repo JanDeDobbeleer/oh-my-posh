@@ -25,7 +25,7 @@ type wtData struct {
 }
 
 func (w *Wakatime) Template() string {
-	return "{{ secondsRound .CummulativeTotal.Seconds }}"
+	return " {{ secondsRound .CummulativeTotal.Seconds }} "
 }
 
 func (w *Wakatime) Enabled() bool {

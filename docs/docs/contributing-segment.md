@@ -36,7 +36,7 @@ func (n *new) Enabled() bool {
 }
 
 func (n *new) Template() string {
-    return "{{.Text}} world"
+    return " {{.Text}} world "
 }
 
 func (n *new) Init(props properties.Properties, env environment.Environment) {

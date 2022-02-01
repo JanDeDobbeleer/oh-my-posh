@@ -16,7 +16,7 @@ const (
 )
 
 func (i *IPify) Template() string {
-	return "{{ .IP }}"
+	return " {{ .IP }} "
 }
 
 func (i *IPify) Enabled() bool {

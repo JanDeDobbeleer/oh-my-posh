@@ -13,7 +13,7 @@ type Dotnet struct {
 }
 
 func (d *Dotnet) Template() string {
-	return "{{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}"
+	return " {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} "
 }
 
 func (d *Dotnet) Init(props properties.Properties, env environment.Environment) {

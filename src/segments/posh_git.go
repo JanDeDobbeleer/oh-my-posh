@@ -18,7 +18,7 @@ const (
 )
 
 func (p *PoshGit) Template() string {
-	return "{{ .Status }}"
+	return " {{ .Status }} "
 }
 
 func (p *PoshGit) Enabled() bool {

@@ -21,7 +21,7 @@ const (
 )
 
 func (c *Cmd) Template() string {
-	return "{{ .Output }}"
+	return " {{ .Output }} "
 }
 
 func (c *Cmd) Enabled() bool {

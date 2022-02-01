@@ -25,7 +25,7 @@ func TestSpotifyStringPlayingSong(t *testing.T) {
 }
 
 func TestSpotifyStringStoppedSong(t *testing.T) {
-	expected := "\uf04d "
+	expected := "\uf04d"
 	env := new(mock.MockedEnvironment)
 	s := &Spotify{
 		MusicPlayer: MusicPlayer{

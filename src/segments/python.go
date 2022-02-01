@@ -17,7 +17,7 @@ const (
 )
 
 func (p *Python) Template() string {
-	return "{{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}"
+	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} "
 }
 
 func (p *Python) Init(props properties.Properties, env environment.Environment) {

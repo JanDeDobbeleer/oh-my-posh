@@ -35,7 +35,7 @@ type KubeContext struct {
 }
 
 func (k *Kubectl) Template() string {
-	return "{{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }}"
+	return " {{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }} "
 }
 
 func (k *Kubectl) Init(props properties.Properties, env environment.Environment) {

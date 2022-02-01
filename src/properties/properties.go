@@ -23,10 +23,6 @@ type Property string
 const (
 	// Style indicates with style to use
 	Style Property = "style"
-	// Prefix adds a text prefix to the segment
-	Prefix Property = "prefix"
-	// Postfix adds a text postfix to the segment
-	Postfix Property = "postfix"
 	// IncludeFolders folders to be included for the segment logic
 	IncludeFolders Property = "include_folders"
 	// ExcludeFolders folders to be excluded for the segment logic

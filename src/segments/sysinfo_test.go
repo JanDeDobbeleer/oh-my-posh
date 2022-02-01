@@ -44,7 +44,7 @@ func TestSysInfo(t *testing.T) {
 		{Case: "not enabled", ExpectDisabled: true, SysInfo: SystemInfo{PhysicalPercentUsed: 0, SwapPercentUsed: 0}},
 		{
 			Case:           "2 physical cpus",
-			ExpectedString: "1200 1200 ",
+			ExpectedString: "1200 1200",
 			Template:       "{{range $cpu := .CPU}}{{round $cpu.Mhz 2 }} {{end}}",
 			SysInfo:        SystemInfo{CPU: []cpu.InfoStat{{Mhz: 1200}, {Mhz: 1200}}},
 		},

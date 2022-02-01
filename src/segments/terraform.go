@@ -13,7 +13,7 @@ type Terraform struct {
 }
 
 func (tf *Terraform) Template() string {
-	return "{{ .WorkspaceName }}"
+	return " {{ .WorkspaceName }} "
 }
 
 func (tf *Terraform) Init(props properties.Properties, env environment.Environment) {

@@ -9,23 +9,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// func TestSettingsExportJSON(t *testing.T) {
-// 	defer testClearDefaultConfig()
-// 	configFile := "../../themes/jandedobbeleer.omp.json"
-// 	debug := false
-// 	args := &environment.Args{
-// 		Config: &configFile,
-// 		Debug:  &debug,
-// 		Eval:   &debug,
-// 	}
-// 	env := &environment.ShellEnvironment{}
-// 	env.Init(args)
-// 	cfg := LoadConfig(env)
-// 	content := cfg.Export()
-// 	assert.NotContains(t, content, "\\u003ctransparent\\u003e")
-// 	assert.Contains(t, content, "<transparent>")
-// }
-
 func testClearDefaultConfig() {
 	config.Default().ClearAll()
 }
@@ -53,5 +36,21 @@ func TestParseMappedLocations(t *testing.T) {
 		assert.NoError(t, err)
 		mappedLocations := segment.Properties.GetKeyValueMap(segments.MappedLocations, make(map[string]string))
 		assert.Equal(t, "two", mappedLocations["folder2"])
+	}
+}
+
+func TestEscapeGlyphs(t *testing.T) {
+	defer testClearDefaultConfig()
+	cases := []struct {
+		Input    string
+		Expected string
+	}{
+		{Input: "a", Expected: "a"},
+		{Input: "\ue0b4", Expected: "\\ue0b4"},
+		{Input: "\ufd03", Expected: "\\ufd03"},
+		{Input: "}", Expected: "}"},
+	}
+	for _, tc := range cases {
+		assert.Equal(t, tc.Expected, escapeGlyphs(tc.Input), tc.Input)
 	}
 }

@@ -38,7 +38,17 @@ Remote Control password.
 - stopped_icon: `string` - text/icon to show when paused - defaults to `\uF04D `
 - api_url: `string` - the YTMDA Remote Control API URL- defaults to `http://127.0.0.1:9863`
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Status`: `string` - player status (`playing`, `paused`, `stopped`)
 - `.Artist`: `string` - current artist

@@ -47,7 +47,17 @@ The free tier for *Current weather and forecasts collection* is sufficient.
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
 properties below - defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Weather }} ({{ .Temperature }}{{ .UnitIcon }})
+```
+
+:::
+
+### Properties
 
 - `.Weather`: `string` - the current weather icon
 - `.Temperature`: `string` - the current temperature

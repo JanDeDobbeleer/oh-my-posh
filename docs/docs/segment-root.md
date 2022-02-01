@@ -22,3 +22,15 @@ Show when the current user is root or when in an elevated shell (Windows).
   }
 }
 ```
+
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+\uF0E7
+```
+
+:::
+
+[templates]: /docs/config-templates

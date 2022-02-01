@@ -46,7 +46,17 @@ Display the currently active java version.
     - `*.clj`
     - `*.cljc`
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Full`: `string` - the full version
 - `.Major`: `string` - major number

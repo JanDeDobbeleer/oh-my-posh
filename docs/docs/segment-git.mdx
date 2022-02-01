@@ -93,7 +93,17 @@ You can set the following properties to `true` to enable fetching additional inf
 - azure_devops_icon: `string` - icon/text to display when the upstream is Azure DevOps - defaults to `\uFD03 `
 - git_icon: `string` - icon/text to display when the upstream is not known/mapped - defaults to `\uE5FB `
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} \uF692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Working`: `GitStatus` - changes in the working tree (see below)
 - `.Staging`: `GitStatus` - staged changes in the work tree (see below)

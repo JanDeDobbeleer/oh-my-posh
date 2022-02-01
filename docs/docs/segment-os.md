@@ -49,8 +49,18 @@ Display OS specific info - defaults to Icon.
 - slackware: `string` - the icon to use for Slackware - defaults to Slackware icon - defaults to `\uF319`
 - ubuntu: `string` - the icon to use for Ubuntu - defaults to Ubuntu icon - defaults to `\uF31b`
 
-## [Template][templates] Properties
+## Template ([info][templates])
 
-- `.OS`: `string` - the OS platform
+:::note default template
+
+``` template
+{{ if .WSL }}WSL at {{ end }}{{.Icon}}
+```
+
+:::
+
+### Properties
+
+- `.Icon`: `string` - the OS icon
 
 [templates]: /docs/config-templates

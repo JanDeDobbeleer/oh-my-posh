@@ -30,7 +30,17 @@ Display the currently active Kubernetes context name and namespace name.
 - parse_kubeconfig: `boolean` - parse kubeconfig files instead of calling out to kubectl to improve
 performance - defaults to `false`
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Context`: `string` - the current kubectl context
 - `.Namespace`: `string` - the current kubectl context namespace

@@ -29,7 +29,17 @@ Display the currently active AWS profile and region.
 - display_default: `boolean` - display the segment or not when the user profile matches `default` - defaults
 to `true`
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Profile`: `string` - the currently active profile
 - `.Region`: `string` - the currently active region

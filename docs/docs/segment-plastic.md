@@ -71,7 +71,17 @@ You can set the following property to `true` to enable fetching additional infor
 - commit_icon: `string` - icon/text to display before the commit context (detached HEAD) - defaults to `\uF417`
 - tag_icon: `string` - icon/text to display before the tag context - defaults to `\uF412`
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Selector }}
+```
+
+:::
+
+### Properties
 
 - `.Selector`: `string` - the current selector context (branch/changeset/label)
 - `.Behind`: `bool` - the current workspace is behind and changes are incoming

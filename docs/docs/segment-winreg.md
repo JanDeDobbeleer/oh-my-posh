@@ -38,7 +38,17 @@ Supported registry key types:
   Ending path with \ will get the (Default) key from that path.
 - fallback: `string` - the value to fall back to if no entry is found
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Value }}
+```
+
+:::
+
+### Properties
 
 - .Value: `string` - The result of your query, or fallback if not found.
 

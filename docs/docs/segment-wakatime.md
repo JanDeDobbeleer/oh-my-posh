@@ -40,11 +40,21 @@ works if you can curl it yourself and a result. - defaults to ``
 - http_timeout: `int` - The default timeout for http request is 20ms. If no segment is shown, try increasing this timeout.
 - cache_timeout: `int` - The default timeout for request caching is 10m. A value of 0 disables the cache.
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ secondsRound .CummulativeTotal.Seconds }}
+```
+
+:::
+
+### Properties
 
 - `.CummulativeTotal`: `wtTotals` - object holding total tracked time values
 
-### wtTotal Properties
+### wtTotals Properties
 
 - `.Seconds`: `int` - a number reprecenting the total tracked time in seconds
 - `.Text`: `string` - a string with human readable tracked time (eg: "2 hrs 30 mins")

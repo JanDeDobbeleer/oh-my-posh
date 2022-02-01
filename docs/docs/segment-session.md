@@ -24,7 +24,17 @@ Show the current user and host name.
 }
 ```
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .HostName }}
+```
+
+:::
+
+### Properties
 
 - `.UserName`: `string` - the current user's name
 - `.HostName`: `string` - the current computer's name

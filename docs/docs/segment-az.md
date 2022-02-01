@@ -14,7 +14,7 @@ Display the currently active Azure subscription information.
 {
   "type": "az",
   "style": "powerline",
-  "powerline_symbol": "\uE0B0",
+"powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#9ec3f0",
   "properties": {
@@ -24,7 +24,17 @@ Display the currently active Azure subscription information.
 }
 ```
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Name }}
+```
+
+:::
+
+### Properties
 
 - `.EnvironmentName`: `string` - the account environment name
 - `.HomeTenantID`: `string` - the home tenant id
@@ -33,7 +43,7 @@ Display the currently active Azure subscription information.
 - `.Name`: `string` - the account name
 - `.State`: `string` - the account state
 - `.TenantID`: `string` - the tenant id
-- `.UserName`: `string` - the user name
+- `.User.Name`: `string` - the user name
 - `.Origin`: `string` - where we received the information from, can be `CLI` or `PWSH`
 
 [templates]: /docs/config-templates

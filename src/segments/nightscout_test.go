@@ -29,56 +29,56 @@ func TestNSSegment(t *testing.T) {
 			Case: "Flat 150",
 			JSONResponse: `
 			[{"_id":"619d6fa819696e8ded5b2206","sgv":150,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"Flat","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
-			Template:        " {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  " 150→",
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 150→",
 			ExpectedEnabled: true,
 		},
 		{
 			Case: "DoubleDown 50",
 			JSONResponse: `
 			[{"_id":"619d6fa819696e8ded5b2206","sgv":50,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"DoubleDown","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
-			Template:        " {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  " 50↓↓",
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 50↓↓",
 			ExpectedEnabled: true,
 		},
 		{
 			Case: "DoubleUp 250",
 			JSONResponse: `
 			[{"_id":"619d6fa819696e8ded5b2206","sgv":250,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"DoubleUp","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
-			Template:        " {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  " 250↑↑",
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 250↑↑",
 			ExpectedEnabled: true,
 		},
 		{
 			Case: "SingleUp 130",
 			JSONResponse: `
 			[{"_id":"619d6fa819696e8ded5b2206","sgv":130,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"SingleUp","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
-			Template:        " {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  " 130↑",
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 130↑",
 			ExpectedEnabled: true,
 		},
 		{
 			Case: "FortyFiveUp 174",
 			JSONResponse: `
 			[{"_id":"619d6fa819696e8ded5b2206","sgv":174,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"FortyFiveUp","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
-			Template:        " {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  " 174↗",
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 174↗",
 			ExpectedEnabled: true,
 		},
 		{
 			Case: "FortyFiveDown 61",
 			JSONResponse: `
 			[{"_id":"619d6fa819696e8ded5b2206","sgv":61,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"FortyFiveDown","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
-			Template:        " {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  " 61↘",
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 61↘",
 			ExpectedEnabled: true,
 		},
 		{
 			Case: "DoubleDown 50",
 			JSONResponse: `
 			[{"_id":"619d6fa819696e8ded5b2206","sgv":50,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"DoubleDown","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
-			Template:        " {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  " 50↓↓",
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 50↓↓",
 			ExpectedEnabled: true,
 		},
 		{
@@ -96,8 +96,8 @@ func TestNSSegment(t *testing.T) {
 			Case: "DoubleDown 50 from cache",
 			JSONResponse: `
 			[{"_id":"619d6fa819696e8ded5b2206","sgv":50,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"DoubleDown","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
-			Template:        " {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  " 50↓↓",
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 50↓↓",
 			ExpectedEnabled: true,
 			CacheTimeout:    10,
 		},
@@ -105,8 +105,8 @@ func TestNSSegment(t *testing.T) {
 			Case: "DoubleDown 50 from cache not found",
 			JSONResponse: `
 			[{"_id":"619d6fa819696e8ded5b2206","sgv":50,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"DoubleDown","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, // nolint:lll
-			Template:        " {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  " 50↓↓",
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 50↓↓",
 			ExpectedEnabled: true,
 			CacheTimeout:    10,
 			CacheFoundFail:  true,
@@ -115,8 +115,8 @@ func TestNSSegment(t *testing.T) {
 			Case: "Error parsing response",
 			JSONResponse: `
 			4tffgt4e4567`,
-			Template:        " {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  " 50↓↓",
+			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
+			ExpectedString:  "\ue2a1 50↓↓",
 			ExpectedEnabled: false,
 			CacheTimeout:    10,
 		},
@@ -124,7 +124,7 @@ func TestNSSegment(t *testing.T) {
 			Case: "Faulty template",
 			JSONResponse: `
 			[{"sgv":50,"direction":"DoubleDown"}]`,
-			Template:        " {{.Sgv}}{{.Burp}}",
+			Template:        "\ue2a1 {{.Sgv}}{{.Burp}}",
 			ExpectedString:  template.IncorrectTemplate,
 			ExpectedEnabled: true,
 			CacheTimeout:    10,

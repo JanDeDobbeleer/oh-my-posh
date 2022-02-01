@@ -34,7 +34,17 @@ Display the currently active golang version.
   - `files`: the segment is only displayed when `*.go` or `go.mod` files are present (default)
 - parse_mod_file: `boolean`: parse the go.mod file instead of calling `go version`
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Full`: `string` - the full version
 - `.Major`: `string` - major number

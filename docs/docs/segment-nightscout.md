@@ -45,7 +45,7 @@ if that color is visible against any of your backgrounds.
   "properties": {
     "url": "https://YOURNIGHTSCOUTAPP.herokuapp.com/api/v1/entries.json?count=1&token=APITOKENFROMYOURADMIN",
     "http_timeout": 1500,
-    "template": " {{.Sgv}}{{.TrendIcon}}"
+    "template": "\ue2a1 {{ .Sgv }}{{ .TrendIcon }}"
   }
 }
 ```
@@ -53,7 +53,7 @@ if that color is visible against any of your backgrounds.
 Or display in mmol/l (instead of the default mg/dl) with the following template:
 
 ```json
-"template": " {{ if eq (mod .Sgv 18) 0 }}{{divf .Sgv 18}}.0{{ else }} {{ round (divf .Sgv 18) 1 }}{{ end }}{{.TrendIcon}}"
+"template": "\ue2a1 {{ if eq (mod .Sgv 18) 0 }}{{divf .Sgv 18}}.0{{ else }} {{ round (divf .Sgv 18) 1 }}{{ end }}{{ .TrendIcon }}"
 ```
 
 ## Properties
@@ -79,7 +79,17 @@ Or display in mmol/l (instead of the default mg/dl) with the following template:
 - SingleDownIcon - defaults to ↓
 - DoubleDownIcon - defaults to ↓↓
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Sgv }}
+```
+
+:::
+
+### Properties
 
 - .ID: `string` - The internal ID of the object
 - .Sgv: `int` - Your Serum Glucose Value (your sugar)

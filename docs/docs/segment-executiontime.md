@@ -49,7 +49,17 @@ Style specifies the format in which the time will be displayed. The table below 
 | amarillo  | `0.001s`       | `2.1s`       | `182.1s`      | `14,582.1s`      |
 | round     | `1ms`          | `2s`         | `3m 2s`       | `4h 3m`          |
 
-## [Template][templates] Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .FormattedMs }}
+```
+
+:::
+
+### Properties
 
 - `.Ms`: `number` - the execution time in milliseconds
 - `.FormattedMs`: `string` - the formatted value based on the `style` above.

@@ -166,11 +166,13 @@ func main() {
 		return
 	}
 	if *args.Migrate {
-		cfg.Migrate(env)
 		if *args.Write {
+			cfg.Backup()
+			cfg.Migrate(env)
 			cfg.Write()
 			return
 		}
+		cfg.Migrate(env)
 		fmt.Print(cfg.Export(*args.ConfigFormat))
 		return
 	}

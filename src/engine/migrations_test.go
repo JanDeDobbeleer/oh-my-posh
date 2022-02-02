@@ -220,8 +220,8 @@ func TestSegmentTemplateMigration(t *testing.T) {
 			},
 		},
 		{
-			Case:     "EXIT - No exit Code with Icon overrides",
-			Expected: " {{ if gt .Code 0 }}FAIL{{ else }}SUCCESS{{ end }} ",
+			Case:     "EXIT - No exit code",
+			Expected: "  ",
 			Type:     EXIT,
 			Props: properties.Map{
 				"display_exit_code": false,

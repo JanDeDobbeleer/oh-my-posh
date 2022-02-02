@@ -122,19 +122,19 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 			segment.migrateColorOverride("version_mismatch_color", "{{ if .Mismatch }}%s{{ end }}")
 		}
 	case EXIT:
-		segment.migrateTemplate()
 		template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
-		displayExitCode := properties.Property("display_exit_code")
-		if !segment.Properties.GetBool(displayExitCode, true) {
-			delete(segment.Properties, displayExitCode)
-			template = strings.ReplaceAll(template, " {{ .Meaning }}", "")
-		}
 		alwaysNumeric := properties.Property("always_numeric")
 		if segment.Properties.GetBool(alwaysNumeric, false) {
 			delete(segment.Properties, alwaysNumeric)
 			template = strings.ReplaceAll(template, ".Meaning", ".Code")
 		}
+		displayExitCode := properties.Property("display_exit_code")
+		if !segment.Properties.GetBool(displayExitCode, true) {
+			delete(segment.Properties, displayExitCode)
+			template = "  "
+		}
 		segment.Properties[properties.SegmentTemplate] = template
+		segment.migrateTemplate()
 		segment.migrateIconOverride("success_icon", "\uf42e")
 		segment.migrateIconOverride("error_icon", "\uf00d")
 		segment.migrateColorOverride("error_color", "{{ if gt .Code 0 }}%s{{ end }}")

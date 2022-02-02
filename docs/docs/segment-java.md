@@ -18,7 +18,7 @@ Display the currently active java version.
   "foreground": "#ffffff",
   "background": "#4063D8",
   "properties": {
-    "prefix": " \uE738 "
+    "template": " \uE738 {{ .Full }}"
   }
 }
 ```

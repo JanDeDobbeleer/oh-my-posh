@@ -18,7 +18,7 @@ Display the currently active php version.
   "foreground": "#ffffff",
   "background": "#4063D8",
   "properties": {
-    "prefix": " \ue73d ",
+    "template": " \ue73d {{ .Full }} ",
   }
 }
 ```

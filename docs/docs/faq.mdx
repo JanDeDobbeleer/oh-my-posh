@@ -65,13 +65,12 @@ A temporary workaround is to use an invisible character at the end (`\u2800`).
 
 ```json
 {
-    "type": "executiontime",
-    /* other attributes here */
-    "properties": {
+  "type": "executiontime",
+  /* other attributes here */
+  "properties": {
     "always_enabled": true,
-    "prefix": "\ufbab",
-    "postfix": "\u2800" // invisible spacing character
-    }
+    "template": "\ufbab\u2800" // invisible spacing character
+  }
 }
 ```
 

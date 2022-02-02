@@ -36,19 +36,19 @@ If you want `prefix` to print a colored bracket that isn't the same as the segme
 do so like this:
 
 ```json
-"prefix": "<#CB4B16>┏[</>",
+"template": "<#CB4B16>┏[</>",
 ```
 
 If you also wanted to change the background color in the previous command, you would do so like this:
 
 ```json
-"prefix": "<#CB4B16,#FFFFFF>┏[</>",
+"template": "<#CB4B16,#FFFFFF>┏[</>",
 ```
 
 To change *only* the background color, just omit the first color from the above string:
 
 ```json
-"prefix": "<,#FFFFFF>┏[</>",
+"template": "<,#FFFFFF>┏[</>",
 ```
 
 ## Palette

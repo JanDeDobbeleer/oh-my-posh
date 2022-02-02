@@ -18,7 +18,7 @@ Display the currently active golang version.
   "foreground": "#ffffff",
   "background": "#7FD5EA",
   "properties": {
-    "prefix": " \uFCD1 "
+    "template": " \uFCD1 {{ .Full }} "
   }
 }
 ```

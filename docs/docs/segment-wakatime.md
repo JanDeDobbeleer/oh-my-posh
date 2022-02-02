@@ -25,7 +25,6 @@ The free tier for is sufficient. You'll find the API key in your profile setting
     "foreground": "#ffffff",
     "background": "#007acc",
     "properties": {
-        "prefix": " \uf7d9  ",
         "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=API_KEY",
         "cache_timeout": 10,
         "http_timeout": 500

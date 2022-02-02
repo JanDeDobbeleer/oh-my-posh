@@ -18,7 +18,7 @@ Display the currently active dart version.
   "foreground": "#ffffff",
   "background": "#06A4CE",
   "properties": {
-    "prefix": " \uE798 "
+    "template": " \uE798 {{ .Full }} "
   }
 }
 ```

@@ -36,14 +36,6 @@ New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
 
 ## Template ([info][templates])
 
-:::note default template
-
-``` template
-{{ .Text }}
-```
-
-:::
-
 ### Properties
 
 - `.Root`: `boolean` - is the current user root/admin or not

@@ -43,7 +43,8 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 	delete(segment.Properties, "enable_hyperlink")
 	switch segment.Type { // nolint:exhaustive
 	case TEXT:
-		segment.migratePropertyValue("text", properties.SegmentTemplate)
+		segment.migratePropertyKey("text", properties.SegmentTemplate)
+		segment.migrateTemplate()
 	case GIT:
 		hasTemplate := segment.hasProperty(properties.SegmentTemplate)
 		segment.migratePropertyKey("display_status", segments.FetchStatus)

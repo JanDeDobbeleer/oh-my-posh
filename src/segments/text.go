@@ -8,12 +8,10 @@ import (
 type Text struct {
 	props properties.Properties
 	env   environment.Environment
-
-	Text string
 }
 
 func (t *Text) Template() string {
-	return " {{ .Text }} "
+	return "  "
 }
 
 func (t *Text) Enabled() bool {

@@ -17,21 +17,24 @@ const (
 
 func (cfg *Config) Migrate(env environment.Environment) {
 	for _, block := range cfg.Blocks {
-		block.migrate(env)
+		for _, segment := range block.Segments {
+			segment.migrate(env, cfg.Version)
+		}
 	}
 	for _, segment := range cfg.Tooltips {
-		segment.migrate(env)
+		segment.migrate(env, cfg.Version)
 	}
 	cfg.updated = true
+	cfg.Version = configVersion
 }
 
-func (block *Block) migrate(env environment.Environment) {
-	for _, segment := range block.Segments {
-		segment.migrate(env)
+func (segment *Segment) migrate(env environment.Environment, version int) {
+	if version < 1 {
+		segment.migrationOne(env)
 	}
 }
 
-func (segment *Segment) migrate(env environment.Environment) {
+func (segment *Segment) migrationOne(env environment.Environment) {
 	if err := segment.mapSegmentWithWriter(env); err != nil {
 		return
 	}

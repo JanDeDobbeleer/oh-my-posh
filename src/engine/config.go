@@ -76,6 +76,7 @@ func (cfg *Config) exitWithError(err error) {
 func LoadConfig(env environment.Environment) *Config {
 	cfg := loadConfig(env)
 	if cfg.Version != configVersion {
+		cfg.Backup()
 		cfg.Migrate(env)
 		cfg.Write()
 	}
@@ -171,8 +172,16 @@ func (cfg *Config) Export(format string) string {
 }
 
 func (cfg *Config) Write() {
+	cfg.write(cfg.origin)
+}
+
+func (cfg *Config) Backup() {
+	cfg.write(cfg.origin + ".bak")
+}
+
+func (cfg *Config) write(destination string) {
 	content := cfg.Export(cfg.format)
-	f, err := os.OpenFile(cfg.origin, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	cfg.exitWithError(err)
 	_, err = f.WriteString(content)
 	cfg.exitWithError(err)

@@ -8,6 +8,7 @@ import (
 	"oh-my-posh/segments"
 	"oh-my-posh/template"
 	"runtime/debug"
+	"strings"
 	"time"
 )
 
@@ -160,7 +161,7 @@ func (segment *Segment) string() string {
 	if err != nil {
 		return err.Error()
 	}
-	segment.active = len(text) > 0
+	segment.active = len(strings.TrimSpace(text)) > 0
 	return text
 }
 

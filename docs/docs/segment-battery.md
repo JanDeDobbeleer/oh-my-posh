@@ -27,7 +27,7 @@ Battery displays the remaining power percentage for your battery.
     "charging_icon": "\uE234 ",
     "charged_icon": "\uE22F ",
     "postfix": "\uF295 ",
-    "template": "{{ if not .Error }}{{.Icon}}{{.Percentage}}{{ end }}"
+    "template": "{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}"
   }
 }
 ```

@@ -40,10 +40,12 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 	}
 	// General properties that need replacement
 	segment.migratePropertyKey("display_version", properties.FetchVersion)
+	delete(segment.Properties, "enable_hyperlink")
 	switch segment.Type { // nolint:exhaustive
 	case TEXT:
 		segment.migratePropertyValue("text", properties.SegmentTemplate)
 	case GIT:
+		hasTemplate := segment.hasProperty(properties.SegmentTemplate)
 		segment.migratePropertyKey("display_status", segments.FetchStatus)
 		segment.migratePropertyKey("display_stash_count", segments.FetchStashCount)
 		segment.migratePropertyKey("display_worktree_count", segments.FetchWorktreeCount)
@@ -60,8 +62,14 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 			segment.migrateColorOverride("behind_color", "{{ if gt .Ahead 0 }}%s{{ end }}")
 			segment.migrateColorOverride("ahead_color", "{{ if gt .Behind 0 }}%s{{ end }}")
 		}
-		segment.migrateInlineColorOverride("working_color", "{{ .Working.String }}")
-		segment.migrateInlineColorOverride("staging_color", "{{ .Staging.String }}")
+		if !hasTemplate {
+			segment.migrateInlineColorOverride("working_color", "{{ .Working.String }}")
+			segment.migrateInlineColorOverride("staging_color", "{{ .Staging.String }}")
+		}
+		// legacy properties
+		delete(segment.Properties, "display_branch_status")
+		delete(segment.Properties, "display_status_detail")
+		delete(segment.Properties, "status_colors_enabled")
 	case BATTERY:
 		segment.migrateTemplate()
 		segment.migrateColorOverride("charged_color", `{{ if eq "Full" .State.String }}%s{{ end }}`)
@@ -80,10 +88,15 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 			template = strings.ReplaceAll(template, "{{ .Icon }}{{ .Percentage }}", fmt.Sprintf(enabledTemplate, strings.Join(stateList, " ")))
 			segment.Properties[properties.SegmentTemplate] = template
 		}
+		// legacy properties
+		delete(segment.Properties, "display_charging")
+		delete(segment.Properties, "display_charged")
+		delete(segment.Properties, "battery_icon")
 	case PYTHON:
 		segment.migrateTemplate()
 		segment.migratePropertyKey("display_virtual_env", segments.FetchVirtualEnv)
 	case SESSION:
+		hasTemplate := segment.hasProperty(properties.SegmentTemplate)
 		segment.migrateTemplate()
 		segment.migrateIconOverride("ssh_icon", "\uf817 ")
 		template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
@@ -96,8 +109,10 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 		}
 		segment.Properties[properties.SegmentTemplate] = template
 		segment.migrateIconOverride("user_info_separator", "@")
-		segment.migrateInlineColorOverride("user_color", "{{ .UserName }}")
-		segment.migrateInlineColorOverride("host_color", "{{ .HostName }}")
+		if !hasTemplate {
+			segment.migrateInlineColorOverride("user_color", "{{ .UserName }}")
+			segment.migrateInlineColorOverride("host_color", "{{ .HostName }}")
+		}
 	case NODE:
 		segment.migrateTemplate()
 		segment.migratePropertyKey("display_package_manager", segments.FetchPackageManager)
@@ -126,6 +141,7 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 	default:
 		segment.migrateTemplate()
 	}
+	delete(segment.Properties, colorBackground)
 }
 
 func (segment *Segment) hasProperty(property properties.Property) bool {
@@ -168,15 +184,16 @@ func (segment *Segment) migrateTemplate() {
 	segment.Properties[properties.SegmentTemplate] = segment.writer.Template()
 }
 
-func (segment *Segment) migrateIconOverride(icon properties.Property, overrideValue string) {
-	if !segment.hasProperty(icon) {
+func (segment *Segment) migrateIconOverride(property properties.Property, overrideValue string) {
+	if !segment.hasProperty(property) {
 		return
 	}
 	template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
 	if strings.Contains(template, overrideValue) {
-		template = strings.ReplaceAll(template, overrideValue, segment.Properties.GetString(icon, ""))
+		template = strings.ReplaceAll(template, overrideValue, segment.Properties.GetString(property, ""))
 	}
 	segment.Properties[properties.SegmentTemplate] = template
+	delete(segment.Properties, property)
 }
 
 func (segment *Segment) migrateColorOverride(property properties.Property, template string) {
@@ -184,6 +201,7 @@ func (segment *Segment) migrateColorOverride(property properties.Property, templ
 		return
 	}
 	color := segment.Properties.GetColor(property, "")
+	delete(segment.Properties, property)
 	if len(color) == 0 {
 		return
 	}
@@ -201,6 +219,7 @@ func (segment *Segment) migrateInlineColorOverride(property properties.Property,
 		return
 	}
 	color := segment.Properties.GetColor(property, "")
+	delete(segment.Properties, property)
 	if len(color) == 0 {
 		return
 	}

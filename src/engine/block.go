@@ -80,14 +80,14 @@ func (b *Block) enabled() bool {
 	return false
 }
 
-func (b *Block) setStringValues() {
+func (b *Block) renderSegmentsText() {
 	wg := sync.WaitGroup{}
 	wg.Add(len(b.Segments))
 	defer wg.Wait()
 	for _, segment := range b.Segments {
 		go func(s *Segment) {
 			defer wg.Done()
-			s.setStringValue(b.env)
+			s.renderText(b.env)
 		}(segment)
 	}
 }
@@ -110,10 +110,10 @@ func (b *Block) renderSegment(segment *Segment) {
 	b.writePowerline(false)
 	switch b.activeSegment.Style {
 	case Plain, Powerline:
-		b.writer.Write(b.activeBackground, b.activeForeground, segment.stringValue)
+		b.writer.Write(b.activeBackground, b.activeForeground, segment.text)
 	case Diamond:
 		b.writer.Write(color.Transparent, b.activeBackground, b.activeSegment.LeadingDiamond)
-		b.writer.Write(b.activeBackground, b.activeForeground, segment.stringValue)
+		b.writer.Write(b.activeBackground, b.activeForeground, segment.text)
 		b.writer.Write(color.Transparent, b.activeBackground, b.activeSegment.TrailingDiamond)
 	}
 	b.previousActiveSegment = b.activeSegment
@@ -168,30 +168,22 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 	var segmentTimings []*SegmentTiming
 	largestSegmentNameLength := 0
 	for _, segment := range b.Segments {
-		err := segment.mapSegmentWithWriter(b.env)
-		if err != nil || !segment.shouldIncludeFolder() {
-			continue
-		}
 		var segmentTiming SegmentTiming
 		segmentTiming.name = string(segment.Type)
 		segmentTiming.nameLength = len(segmentTiming.name)
 		if segmentTiming.nameLength > largestSegmentNameLength {
 			largestSegmentNameLength = segmentTiming.nameLength
 		}
-		// enabled() timing
 		start := time.Now()
-		segmentTiming.enabled = segment.enabled()
-		segmentTiming.enabledDuration = time.Since(start)
-		// string() timing
-		if segmentTiming.enabled {
-			start = time.Now()
-			segment.stringValue = segment.string()
-			segmentTiming.stringDuration = time.Since(start)
+		segment.renderText(b.env)
+		segmentTiming.active = segment.active
+		segmentTiming.text = segment.text
+		if segmentTiming.active {
 			b.renderSegment(segment)
-			b.writePowerline(true)
-			segmentTiming.stringValue = b.writer.String()
+			segmentTiming.text = b.writer.String()
 			b.writer.Reset()
 		}
+		segmentTiming.duration = time.Since(start)
 		segmentTimings = append(segmentTimings, &segmentTiming)
 	}
 	return largestSegmentNameLength, segmentTimings

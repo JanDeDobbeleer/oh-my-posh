@@ -83,7 +83,7 @@ func (e *Engine) renderBlock(block *Block) {
 	} else {
 		block.init(e.Env, e.Writer, e.Ansi)
 	}
-	block.setStringValues()
+	block.renderSegmentsText()
 	if !block.enabled() {
 		return
 	}
@@ -136,12 +136,11 @@ func (e *Engine) Debug(version string) string {
 	consoleTitle := e.ConsoleTitle.GetTitle()
 	duration := time.Since(start)
 	segmentTiming := &SegmentTiming{
-		name:            "ConsoleTitle",
-		nameLength:      12,
-		enabled:         e.Config.ConsoleTitle,
-		stringValue:     consoleTitle,
-		enabledDuration: 0,
-		stringDuration:  duration,
+		name:       "ConsoleTitle",
+		nameLength: 12,
+		active:     e.Config.ConsoleTitle,
+		text:       consoleTitle,
+		duration:   duration,
 	}
 	segmentTimings = append(segmentTimings, segmentTiming)
 	// loop each segments of each blocks
@@ -157,12 +156,9 @@ func (e *Engine) Debug(version string) string {
 	// pad the output so the tabs render correctly
 	largestSegmentNameLength += 7
 	for _, segment := range segmentTimings {
-		duration := segment.enabledDuration.Milliseconds()
-		if segment.enabled {
-			duration += segment.stringDuration.Milliseconds()
-		}
-		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.enabled)
-		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.stringValue))
+		duration := segment.duration.Milliseconds()
+		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.active)
+		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.text))
 	}
 	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(start)))
 	e.write(fmt.Sprintf("\n\x1b[1mCache path:\x1b[0m %s\n", e.Env.CachePath()))
@@ -209,10 +205,10 @@ func (e *Engine) RenderTooltip(tip string) string {
 	if err := tooltip.mapSegmentWithWriter(e.Env); err != nil {
 		return ""
 	}
-	if !tooltip.enabled() {
+	if !tooltip.writer.Enabled() {
 		return ""
 	}
-	tooltip.stringValue = tooltip.string()
+	tooltip.text = tooltip.string()
 	// little hack to reuse the current logic
 	block := &Block{
 		Alignment: Right,
@@ -278,7 +274,7 @@ func (e *Engine) RenderRPrompt() string {
 		return ""
 	}
 	block.init(e.Env, e.Writer, e.Ansi)
-	block.setStringValues()
+	block.renderSegmentsText()
 	if !block.enabled() {
 		return ""
 	}

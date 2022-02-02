@@ -26,8 +26,7 @@ Supported registry key types:
     "properties": {
       "path": "HKLM\\software\\microsoft\\windows nt\\currentversion\\buildlab",
       "fallback":"unknown",
-      "template":"{{ .Value }}",
-      "prefix": " \uE62A "
+      "template":" \uE62A {{ .Value }}"
     }
   },
 ```

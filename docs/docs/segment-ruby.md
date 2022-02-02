@@ -18,7 +18,7 @@ Display the currently active ruby version.
   "foreground": "#ffffff",
   "background": "#4063D8",
   "properties": {
-    "prefix": " \uE791 "
+    "template": " \uE791 {{ .Full }}"
   }
 }
 ```

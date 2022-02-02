@@ -21,7 +21,6 @@ On macOS, all states are supported (playing/paused/stopped).
   "foreground": "#ffffff",
   "background": "#1BD760",
   "properties": {
-    "prefix": "\uF9C6 ",
     "playing_icon": "\uE602 ",
     "paused_icon": "\uF8E3 ",
     "stopped_icon": "\uF04D "

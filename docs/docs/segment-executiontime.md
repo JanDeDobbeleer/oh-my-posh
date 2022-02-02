@@ -24,7 +24,7 @@ The installation guide shows how to include this argument for PowerShell and Zsh
   "properties": {
     "threshold": 500,
     "style": "austin",
-    "prefix": " <#fefefe>\ufbab</> "
+    "template": " <#fefefe>\ufbab</> "
   }
 }
 ```

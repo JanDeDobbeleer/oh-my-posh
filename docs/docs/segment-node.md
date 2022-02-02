@@ -18,7 +18,7 @@ Display the currently active node version.
   "foreground": "#ffffff",
   "background": "#6CA35E",
   "properties": {
-    "prefix": " \uE718 "
+    "template": " \uE718 {{ .Full }} "
   }
 }
 ```

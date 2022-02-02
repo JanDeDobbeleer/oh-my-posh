@@ -112,10 +112,7 @@ The following sample is based on the [AWS Segment][aws].
   "foreground_templates": [
     "{{if contains \"default\" .Profile}}#FFA400{{end}}",
     "{{if contains \"jan\" .Profile}}#f1184c{{end}}"
-  ],
-  "properties": {
-    "prefix": " \uE7AD "
-  }
+  ]
 }
 ```
 

@@ -18,7 +18,7 @@ Display the currently active rust version.
   "foreground": "#193549",
   "background": "#99908a",
   "properties": {
-    "prefix": " \uE7a8 "
+    "template": " \uE7a8 {{ .Full }} "
   }
 }
 ```

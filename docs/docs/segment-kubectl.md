@@ -18,8 +18,7 @@ Display the currently active Kubernetes context name and namespace name.
   "foreground": "#000000",
   "background": "#ebcc34",
   "properties": {
-    "prefix": " \uFD31 ",
-    "template": "{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}"
+    "template": " \uFD31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
   }
 }
 ```

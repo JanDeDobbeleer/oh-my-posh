@@ -23,7 +23,6 @@ Remote Control password.
   "foreground": "#ffffff",
   "background": "#FF0000",
   "properties": {
-    "prefix": "\uF16A ",
     "playing_icon": "\uE602 ",
     "paused_icon": "\uF8E3 ",
     "stopped_icon": "\uF04D "

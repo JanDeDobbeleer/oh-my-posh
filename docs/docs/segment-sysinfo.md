@@ -18,10 +18,8 @@ Display SysInfo.
   "background": "#8f43f3",
   "invert_powerline": true,
   "properties": {
-    "prefix": " \uf85a ",
-    "postfix": "% ",
     "precision": 2,
-    "template":"{{ round .PhysicalPercentUsed .Precision }}"
+    "template":" \uf85a {{ round .PhysicalPercentUsed .Precision }}% "
   },
   "style":"powerline"
 },

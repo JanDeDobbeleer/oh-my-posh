@@ -18,7 +18,7 @@ Display the currently active julia version.
   "foreground": "#ffffff",
   "background": "#4063D8",
   "properties": {
-    "prefix": " \uE624 "
+    "template": " \uE624 {{ .Full }} "
   }
 }
 ```

@@ -18,7 +18,7 @@ Display the currently active Angular CLI version.
   "foreground": "#000000",
   "background": "#1976d2",
   "properties": {
-    "prefix": "\uE753"
+    "template": " \uE753 {{ .Full }} "
   }
 }
 ```

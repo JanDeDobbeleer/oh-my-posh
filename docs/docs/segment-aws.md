@@ -18,8 +18,7 @@ Display the currently active AWS profile and region.
   "foreground": "#ffffff",
   "background": "#FFA400",
   "properties": {
-    "prefix": " \uE7AD ",
-    "template": "{{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+    "template": " \uE7AD {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
   }
 }
 ```

@@ -23,8 +23,7 @@ Displays the last exit code or that the last command failed based on the configu
   "trailing_diamond": "\uE0B4",
   "properties": {
     "always_enabled": true,
-    "template": "\uE23A",
-    "prefix": "<#193549>\uE0B0</> "
+    "template": "<#193549>\uE0B0</> \uE23A "
   }
 }
 ```

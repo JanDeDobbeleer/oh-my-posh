@@ -18,7 +18,7 @@ Display the currently active .NET SDK version.
   "foreground": "#000000",
   "background": "#00ffff",
   "properties": {
-    "prefix": " \uE77F "
+    "template": " \uE77F {{ .Full }} "
   }
 }
 ```

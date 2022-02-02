@@ -18,7 +18,7 @@ Display the currently active crystal version.
   "foreground": "#ffffff",
   "background": "#4063D8",
   "properties": {
-    "prefix": " \uE370 "
+    "template": " \uE370 {{ .Full }} "
   }
 }
 ```

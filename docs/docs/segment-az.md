@@ -14,12 +14,11 @@ Display the currently active Azure subscription information.
 {
   "type": "az",
   "style": "powerline",
-"powerline_symbol": "\uE0B0",
+  "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#9ec3f0",
   "properties": {
-    "template": "{{ .EnvironmentName }}",
-    "prefix": " \uFD03 "
+    "template": " \uFD03 {{ .EnvironmentName }}"
   }
 }
 ```

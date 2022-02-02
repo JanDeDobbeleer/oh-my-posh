@@ -27,19 +27,18 @@ type Segment struct {
 	TrailingDiamond     string         `json:"trailing_diamond,omitempty"`
 	Properties          properties.Map `json:"properties,omitempty"`
 	writer              SegmentWriter
-	stringValue         string
+	text                string
 	active              bool
 	env                 environment.Environment
 }
 
 // SegmentTiming holds the timing context for a segment
 type SegmentTiming struct {
-	name            string
-	nameLength      int
-	enabled         bool
-	stringValue     string
-	enabledDuration time.Duration
-	stringDuration  time.Duration
+	name       string
+	nameLength int
+	active     bool
+	text       string
+	duration   time.Duration
 }
 
 // SegmentWriter is the interface used to define what and if to write to the prompt
@@ -149,26 +148,6 @@ const (
 	// IPIFY segment
 	IPIFY SegmentType = "ipify"
 )
-
-func (segment *Segment) string() string {
-	segmentTemplate := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
-	tmpl := &template.Text{
-		Template: segmentTemplate,
-		Context:  segment.writer,
-		Env:      segment.env,
-	}
-	text, err := tmpl.Render()
-	if err != nil {
-		return err.Error()
-	}
-	segment.active = len(strings.TrimSpace(text)) > 0
-	return text
-}
-
-func (segment *Segment) enabled() bool {
-	segment.active = segment.writer.Enabled()
-	return segment.active
-}
 
 func (segment *Segment) shouldIncludeFolder() bool {
 	cwdIncluded := segment.cwdIncluded()
@@ -296,7 +275,21 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 	return errors.New("unable to map writer")
 }
 
-func (segment *Segment) setStringValue(env environment.Environment) {
+func (segment *Segment) string() string {
+	segmentTemplate := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
+	tmpl := &template.Text{
+		Template: segmentTemplate,
+		Context:  segment.writer,
+		Env:      segment.env,
+	}
+	text, err := tmpl.Render()
+	if err != nil {
+		return err.Error()
+	}
+	return text
+}
+
+func (segment *Segment) renderText(env environment.Environment) {
 	defer func() {
 		err := recover()
 		if err == nil {
@@ -305,14 +298,15 @@ func (segment *Segment) setStringValue(env environment.Environment) {
 		// display a message explaining omp failed(with the err)
 		message := fmt.Sprintf("\noh-my-posh fatal error rendering %s segment:%s\n\n%s\n", segment.Type, err, debug.Stack())
 		fmt.Println(message)
-		segment.stringValue = "error"
+		segment.text = "error"
 		segment.active = true
 	}()
 	err := segment.mapSegmentWithWriter(env)
 	if err != nil || !segment.shouldIncludeFolder() {
 		return
 	}
-	if segment.enabled() {
-		segment.stringValue = segment.string()
+	if segment.writer.Enabled() {
+		segment.text = segment.string()
+		segment.active = len(strings.TrimSpace(segment.text)) > 0
 	}
 }

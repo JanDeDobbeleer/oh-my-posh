@@ -75,7 +75,8 @@ func (cfg *Config) exitWithError(err error) {
 // LoadConfig returns the default configuration including possible user overrides
 func LoadConfig(env environment.Environment) *Config {
 	cfg := loadConfig(env)
-	if cfg.Version != configVersion {
+	// only migrate automatically when the switch isn't set
+	if !*env.Args().Migrate && cfg.Version != configVersion {
 		cfg.Backup()
 		cfg.Migrate(env)
 		cfg.Write()

@@ -295,7 +295,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 			Type:       tc.Type,
 			Properties: tc.Props,
 		}
-		segment.migrate(&mock.MockedEnvironment{})
+		segment.migrationOne(&mock.MockedEnvironment{})
 		assert.Equal(t, tc.Expected, segment.Properties[properties.SegmentTemplate], tc.Case)
 	}
 }

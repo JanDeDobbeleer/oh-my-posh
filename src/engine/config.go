@@ -23,10 +23,13 @@ const (
 	JSON string = "json"
 	YAML string = "yaml"
 	TOML string = "toml"
+
+	configVersion = 1
 )
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
+	Version              int              `json:"version"`
 	FinalSpace           bool             `json:"final_space,omitempty"`
 	OSC99                bool             `json:"osc99,omitempty"`
 	ConsoleTitle         bool             `json:"console_title,omitempty"`
@@ -72,6 +75,10 @@ func (cfg *Config) exitWithError(err error) {
 // LoadConfig returns the default configuration including possible user overrides
 func LoadConfig(env environment.Environment) *Config {
 	cfg := loadConfig(env)
+	if cfg.Version != configVersion {
+		cfg.Migrate(env)
+		cfg.Write()
+	}
 	return cfg
 }
 

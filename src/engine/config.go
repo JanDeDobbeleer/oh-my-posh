@@ -194,7 +194,8 @@ func (cfg *Config) write(destination string) {
 func escapeGlyphs(s string) string {
 	var builder strings.Builder
 	for _, r := range s {
-		if r < 0x1000 {
+		// exclude regular characters and emoji
+		if r < 0x1000 || r > 0x10000 {
 			builder.WriteRune(r)
 			continue
 		}

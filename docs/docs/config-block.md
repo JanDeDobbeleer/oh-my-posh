@@ -31,7 +31,7 @@ Let's take a closer look at what defines a block.
 
 ### Type
 
-Tells the engine what to do with the block. There are three options:
+Tells the engine what to do with the block. There are two options:
 
 - `prompt` renders one or more segments
 - `rprompt` renders one or more segments aligned to the right of the cursor. Only one `rprompt` block is permitted.

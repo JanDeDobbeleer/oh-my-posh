@@ -599,13 +599,13 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 	if env.tmplCache != nil {
 		return env.tmplCache
 	}
-	tmplCache := &TemplateCache{
+	env.tmplCache = &TemplateCache{
 		Root:  env.Root(),
 		Shell: env.Shell(),
 		Code:  env.ErrorCode(),
 		WSL:   env.IsWsl(),
 	}
-	tmplCache.Env = make(map[string]string)
+	env.tmplCache.Env = make(map[string]string)
 	const separator = "="
 	values := os.Environ()
 	for value := range values {
@@ -615,19 +615,21 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 		}
 		key := splitted[0]
 		val := splitted[1:]
-		tmplCache.Env[key] = strings.Join(val, separator)
+		env.tmplCache.Env[key] = strings.Join(val, separator)
 	}
 	pwd := env.Pwd()
 	pwd = strings.Replace(pwd, env.Home(), "~", 1)
-	tmplCache.PWD = pwd
-	tmplCache.Folder = Base(env, pwd)
-	tmplCache.UserName = env.User()
+	env.tmplCache.PWD = pwd
+	env.tmplCache.Folder = Base(env, pwd)
+	env.tmplCache.UserName = env.User()
 	if host, err := env.Host(); err == nil {
-		tmplCache.HostName = host
+		env.tmplCache.HostName = host
 	}
 	goos := env.GOOS()
-	tmplCache.OS = goos
-	env.tmplCache = tmplCache
+	env.tmplCache.OS = goos
+	if goos == LinuxPlatform {
+		env.tmplCache.OS = env.Platform()
+	}
 	return env.tmplCache
 }
 

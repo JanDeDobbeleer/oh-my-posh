@@ -29,7 +29,6 @@ starting point to create your own configuration.
           "foreground": "#ffffff",
           "background": "#61AFEF",
           "properties": {
-            "prefix": " \uE5FF ",
             "style": "folder"
           }
         }

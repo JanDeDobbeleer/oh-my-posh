@@ -2,63 +2,64 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "exit",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "template": "{{ .Text }}",
-            "postfix": ""
-          }
+            "template": " {{ .Text }}"
+          },
+          "style": "plain",
+          "type": "exit"
         },
         {
-          "type": "root",
+          "foreground": "#100e23",
+          "properties": {
+            "template": " \uf0e7 "
+          },
           "style": "plain",
-          "foreground": "#100e23"
+          "type": "root"
         },
         {
-          "type": "session",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "template": "{{ .UserName }}@{{ .HostName }}"
-          }
+            "template": " {{ .UserName }}@{{ .HostName }} "
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "path",
-          "style": "plain",
-          "foreground": "#ffffff",
           "background": "#007ACC",
+          "foreground": "#ffffff",
           "properties": {
-            "folder_icon": "\uF115",
-            "folder_separator_icon": " \uE0B1 ",
+            "folder_icon": "\uf115",
+            "folder_separator_icon": " \ue0b1 ",
             "style": "full",
-            "prefix": "<transparent>\uE0B0</> "
-          }
+            "template": "<transparent>\ue0b0</> {{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
-          "foreground": "#ffffff",
           "background": "#007ACC",
+          "foreground": "#ffffff",
           "properties": {
-            "prefix": "<#ffffff>\uE0B1</> ",
-            "template": "{{ .HEAD }}"
-          }
+            "template": "<#ffffff>\ue0b1</> {{ .HEAD }} "
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#007ACC",
           "properties": {
-            "prefix": "",
-            "text": "\uE0B0"
-          }
+            "template": "\ue0b0 "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "version": 1
 }

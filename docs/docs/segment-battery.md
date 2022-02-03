@@ -26,22 +26,29 @@ Battery displays the remaining power percentage for your battery.
     "discharging_icon": "\uE231 ",
     "charging_icon": "\uE234 ",
     "charged_icon": "\uE22F ",
-    "postfix": "\uF295 ",
-    "template": "{{ if not .Error }}{{.Icon}}{{.Percentage}}{{ end }}"
+    "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}\uF295 "
   }
 }
 ```
 
 ## Properties
 
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `{{.Icon}}{{ if not .Error }}{{.Percentage}}{{ end }}{{.Error}}`
 - display_error: `boolean` - show the error context when failing to retrieve the battery information - defaults to `false`
 - charging_icon: `string` - icon to display on the left when charging - defaults to empty
 - discharging_icon: `string` - icon to display on the left when discharging - defaults to empty
 - charged_icon: `string` - icon to display on the left when fully charged - defaults to empty
 
-## Template Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}
+```
+
+:::
+
+### Properties
 
 - `.State`: `struct` - the battery state, has a `.String` function
 - `.Current`: `float64` - Current (momentary) charge rate (in mW).
@@ -60,5 +67,4 @@ the same value as `Voltage`, for convenience
 
 [colors]: /docs/config-colors
 [battery]: https://github.com/distatus/battery/blob/master/battery.go#L78
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-templates

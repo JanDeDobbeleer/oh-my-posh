@@ -23,8 +23,7 @@ Displays the last exit code or that the last command failed based on the configu
   "trailing_diamond": "\uE0B4",
   "properties": {
     "always_enabled": true,
-    "template": "\uE23A",
-    "prefix": "<#193549>\uE0B0</> "
+    "template": "<#193549>\uE0B0</> \uE23A "
   }
 }
 ```
@@ -35,7 +34,19 @@ Displays the last exit code or that the last command failed based on the configu
 
 [colors]: /docs/config-colors
 
-## Template Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf42e{{ end }}
+```
+
+:::
+
+### Properties
 
 - `.Code`: `number` - the last known exit code
-- `.Text`: `string` - the textual meaning linked to exit code (if applicable, otherwise identical to `.Code`)
+- `.Meaning`: `string` - the textual meaning linked to exit code (if applicable, otherwise identical to `.Code`)
+
+[templates]: /docs/config-templates

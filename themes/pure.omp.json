@@ -1,88 +1,87 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "console_title": true,
-  "console_title_style": "template",
-  "console_title_template": "{{if .Root}}(Admin){{end}} {{.Path}}",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
-      "newline": false,
       "segments": [
         {
-          "type": "session",
-          "style": "plain",
           "foreground": "#BF616A",
           "properties": {
-            "prefix": "",
-            "template": "{{ .UserName }}"
-          }
+            "template": "{{ .UserName }} "
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "#81A1C1",
           "properties": {
-            "prefix": "",
-            "style": "full"
-          }
+            "style": "full",
+            "template": "{{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "#6C6C6C",
           "properties": {
-            "prefix": "",
+            "branch_ahead_icon": "<#88C0D0>\u21e1 </>",
+            "branch_behind_icon": "<#88C0D0>\u21e3 </>",
+            "branch_icon": "",
             "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true,
-            "branch_icon": "",
             "github_icon": "",
-            "branch_ahead_icon": "<#88C0D0>\u21e1 </>",
-            "branch_behind_icon": "<#88C0D0>\u21e3 </>",
-            "local_working_icon": "<#FFAFD7>\u002a</>",
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
-          }
+            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#FFAFD7>*</>{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+          },
+          "style": "plain",
+          "type": "git"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "executiontime",
-          "style": "plain",
           "foreground": "#A3BE8C",
           "properties": {
-            "style": "austin"
-          }
+            "style": "austin",
+            "template": " {{ .FormattedMs }} "
+          },
+          "style": "plain",
+          "type": "executiontime"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "exit",
-          "style": "plain",
           "foreground": "#B48EAD",
-          "foreground_templates": ["{{ if gt .Code 0 }}#BF616A{{ end }}"],
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#BF616A{{ end }}"
+          ],
           "properties": {
-            "template": "\u276f",
-            "prefix": "",
-            "always_enabled": true
-          }
+            "always_enabled": true,
+            "template": "\u276f "
+          },
+          "style": "plain",
+          "type": "exit"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}}(Admin){{end}} {{.Path}}",
+  "version": 1
 }

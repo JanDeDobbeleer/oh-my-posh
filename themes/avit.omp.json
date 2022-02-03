@@ -2,59 +2,60 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": "",
-            "style": "full"
-          }
+            "style": "full",
+            "template": "{{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "#C2C206",
           "properties": {
-            "prefix": "",
-            "template": "{{ .HEAD }}"
-          }
+            "template": "{{ .HEAD }} "
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "root",
+          "foreground": "#B5B50D",
+          "properties": {
+            "template": " \uf0e7 "
+          },
           "style": "plain",
-          "foreground": "#B5B50D"
+          "type": "root"
         },
         {
-          "type": "exit",
-          "style": "plain",
           "foreground": "#C94A16",
           "properties": {
-            "template": "x{{ .Text }}",
-            "prefix": ""
-          }
+            "template": "x{{ .Text }} "
+          },
+          "style": "plain",
+          "type": "exit"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#007ACC",
           "properties": {
-            "prefix": "",
-            "text": "\uE602"
-          }
+            "template": "\ue602 "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
   ],
-  "final_space": true
+  "final_space": true,
+  "version": 1
 }

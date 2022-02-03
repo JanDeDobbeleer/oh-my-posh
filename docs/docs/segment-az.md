@@ -18,18 +18,22 @@ Display the currently active Azure subscription information.
   "foreground": "#000000",
   "background": "#9ec3f0",
   "properties": {
-    "template": "{{ .EnvironmentName }}",
-    "prefix": " \uFD03 "
+    "template": " \uFD03 {{ .EnvironmentName }}"
   }
 }
 ```
 
-## Properties
+## Template ([info][templates])
 
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `{{.Name}}`
+:::note default template
 
-## Template Properties
+``` template
+{{ .Name }}
+```
+
+:::
+
+### Properties
 
 - `.EnvironmentName`: `string` - the account environment name
 - `.HomeTenantID`: `string` - the home tenant id
@@ -38,8 +42,7 @@ properties below - defaults to `{{.Name}}`
 - `.Name`: `string` - the account name
 - `.State`: `string` - the account state
 - `.TenantID`: `string` - the tenant id
-- `.UserName`: `string` - the user name
+- `.User.Name`: `string` - the user name
 - `.Origin`: `string` - where we received the information from, can be `CLI` or `PWSH`
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-templates

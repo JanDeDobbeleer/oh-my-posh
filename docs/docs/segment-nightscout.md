@@ -45,7 +45,7 @@ if that color is visible against any of your backgrounds.
   "properties": {
     "url": "https://YOURNIGHTSCOUTAPP.herokuapp.com/api/v1/entries.json?count=1&token=APITOKENFROMYOURADMIN",
     "http_timeout": 1500,
-    "template": " {{.Sgv}}{{.TrendIcon}}"
+    "template": "\ue2a1 {{ .Sgv }}{{ .TrendIcon }}"
   }
 }
 ```
@@ -53,7 +53,7 @@ if that color is visible against any of your backgrounds.
 Or display in mmol/l (instead of the default mg/dl) with the following template:
 
 ```json
-"template": " {{ if eq (mod .Sgv 18) 0 }}{{divf .Sgv 18}}.0{{ else }} {{ round (divf .Sgv 18) 1 }}{{ end }}{{.TrendIcon}}"
+"template": "\ue2a1 {{ if eq (mod .Sgv 18) 0 }}{{divf .Sgv 18}}.0{{ else }} {{ round (divf .Sgv 18) 1 }}{{ end }}{{ .TrendIcon }}"
 ```
 
 ## Properties
@@ -64,12 +64,6 @@ Or display in mmol/l (instead of the default mg/dl) with the following template:
 - http_timeout: `int` - How long do you want to wait before you want to see
   your prompt more than your sugar? I figure a half second is a good default -
   defaults to 500ms
-- template: `string` - a go [text/template][go-text-template] template extended
-  with [sprig][sprig] utilizing the properties below.
-  See the example above where I added a syringe.
-  You can change the icon, put the trend elsewhere, add text, however you like!
-  Make sure your NerdFont has the glyph you want or search for one
-  at nerdfonts.com
 - NSCacheTimeout: `int` in minutes - How long do you want your numbers cached? -
   defaults to 5 min
 
@@ -85,7 +79,17 @@ Or display in mmol/l (instead of the default mg/dl) with the following template:
 - SingleDownIcon - defaults to ↓
 - DoubleDownIcon - defaults to ↓↓
 
-## Template Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Sgv }}
+```
+
+:::
+
+### Properties
 
 - .ID: `string` - The internal ID of the object
 - .Sgv: `int` - Your Serum Glucose Value (your sugar)
@@ -100,6 +104,5 @@ Or display in mmol/l (instead of the default mg/dl) with the following template:
 - .TrendIcon: `string` - By default, this will be something like ↑↑ or ↘ etc but you can
   override them with any glpyh as seen above
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-templates
 [nightscout]: http://www.nightscout.info/

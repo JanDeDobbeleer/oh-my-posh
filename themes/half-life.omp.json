@@ -2,68 +2,64 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "session",
-          "style": "plain",
           "foreground": "#7E46B6",
           "properties": {
-            "prefix": "",
-            "template": "{{ .UserName }}"
-          }
+            "template": "{{ .UserName }} "
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": "",
-            "text": "in"
-          }
+            "template": "in "
+          },
+          "style": "plain",
+          "type": "text"
         },
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "#87FF00",
           "properties": {
             "style": "full",
-            "prefix": ""
-          }
+            "template": "{{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "#5FD7FF",
           "properties": {
-            "prefix": "<#ffffff>on</> ",
-            "branch_icon": "",
             "branch_ahead_icon": "",
             "branch_behind_icon": "",
             "branch_gone_icon": "",
+            "branch_icon": "",
             "branch_identical_icon": "",
+            "cherry_pick_icon": "",
             "commit_icon": "",
-            "tag_icon": "",
+            "fetch_status": true,
             "merge_icon": "",
             "rebase_icon": "",
-            "cherry_pick_icon": "",
             "revert_icon": "",
-            "template": "{{ .HEAD }}{{ if .Staging.Changed }}<#87FF00> ● {{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }}<#D75F00> ● {{ .Working.String }}</>{{ end }}",
-            "fetch_status": true
-          }
+            "tag_icon": "",
+            "template": "<#ffffff>on</> {{ .HEAD }}{{ if .Staging.Changed }}<#87FF00> \u25cf {{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }}<#D75F00> \u25cf {{ .Working.String }}</>{{ end }} "
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#D75F00",
           "properties": {
-            "text": "λ",
-            "prefix": ""
-          }
+            "template": "λ "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
   ],
-  "final_space": false
+  "version": 1
 }

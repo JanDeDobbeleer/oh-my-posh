@@ -25,7 +25,6 @@ The free tier for is sufficient. You'll find the API key in your profile setting
     "foreground": "#ffffff",
     "background": "#007acc",
     "properties": {
-        "prefix": " \uf7d9  ",
         "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=API_KEY",
         "cache_timeout": 10,
         "http_timeout": 500
@@ -39,19 +38,26 @@ The free tier for is sufficient. You'll find the API key in your profile setting
 works if you can curl it yourself and a result. - defaults to ``
 - http_timeout: `int` - The default timeout for http request is 20ms. If no segment is shown, try increasing this timeout.
 - cache_timeout: `int` - The default timeout for request caching is 10m. A value of 0 disables the cache.
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `{{ secondsRound .CummulativeTotal.Seconds }}`
 
-## Template Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ secondsRound .CummulativeTotal.Seconds }}
+```
+
+:::
+
+### Properties
 
 - `.CummulativeTotal`: `wtTotals` - object holding total tracked time values
 
-### wtTotal Properties
+### wtTotals Properties
 
 - `.Seconds`: `int` - a number reprecenting the total tracked time in seconds
 - `.Text`: `string` - a string with human readable tracked time (eg: "2 hrs 30 mins")
 
 [wt]: https://wakatime.com
 [wk-summaries]: https://wakatime.com/developers#summaries
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-templates

@@ -25,7 +25,7 @@ module.exports = {
         "config-sample",
         "config-title",
         "config-colors",
-        "config-text-style",
+        "config-templates",
         "config-transient",
         "config-tooltips",
         "config-fonts"

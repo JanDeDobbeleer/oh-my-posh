@@ -1,79 +1,70 @@
 {
-    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "blocks": [
-      {
-        "type": "prompt",
-        "alignment": "left",
-        "segments": [
-          {
-            "type": "session",
-            "style": "plain",
-            "foreground": "#FFE082",
-            "properties": {
-              "prefix": "@",
-              "postfix": " \u279C",
-              "template": "{{ .UserName }}"
-            }
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "#FFE082",
+          "properties": {
+            "template": "@{{ .UserName }} \u279c"
           },
-          {
-            "type": "path",
-            "style": "plain",
-            "foreground": "#56B6C2",
-            "properties": {
-              "style": "agnoster_short"
-            }
+          "style": "plain",
+          "type": "session"
+        },
+        {
+          "foreground": "#56B6C2",
+          "properties": {
+            "style": "agnoster_short",
+            "template": " {{ .Path }} "
           },
-          {
-            "type": "go",
-            "style": "powerline",
-            "foreground": "#7FD5EA",
-            "properties": {
-                "prefix": "\u0028\uFCD1",
-                "postfix": "\u0029 "
-              }
-            },
-            {
-            "type": "python",
-            "style": "powerline",
-            "foreground": "#9e7eff",
-            "properties": {
-                "prefix": "\u0028\uE235 ",
-                "postfix": "\u0029 "
-              }
-            },
-            {
-              "type": "git",
-              "style": "plain",
-              "foreground": "#56B6C2",
-              "properties": {
-                "branch_icon": "",
-                "template": "{{ .HEAD }}",
-                "prefix": "<#E8CC97>git(</>",
-                "postfix": "<#E8CC97>) </>"
-              }
-            },
-            {
-              "type": "executiontime",
-              "style": "powerline",
-              "foreground": "#FFAB91",
-              "properties": {
-                "threshold": 100,
-                "style": "austin",
-                "prefix": "\u007B",
-                "postfix": "\u007D",
-                "always_enabled": false
-              }
-            }
-        ]
-      },
-      {
-        "type": "prompt",
-        "alignment": "left",
-        "newline": true,
-        "segments": [
-          {
-          "type": "battery",
+          "style": "plain",
+          "type": "path"
+        },
+        {
+          "foreground": "#7FD5EA",
+          "properties": {
+            "template": "(\ufcd1{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}) "
+          },
           "style": "powerline",
+          "type": "go"
+        },
+        {
+          "foreground": "#9e7eff",
+          "properties": {
+            "template": "(\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}) "
+          },
+          "style": "powerline",
+          "type": "python"
+        },
+        {
+          "foreground": "#56B6C2",
+          "properties": {
+            "branch_icon": "",
+            "template": "<#E8CC97>git(</>{{ .HEAD }}<#E8CC97>) </>"
+          },
+          "style": "plain",
+          "type": "git"
+        },
+        {
+          "foreground": "#FFAB91",
+          "properties": {
+            "always_enabled": false,
+            "style": "austin",
+            "template": "{{{ .FormattedMs }}}",
+            "threshold": 100
+          },
+          "style": "powerline",
+          "type": "executiontime"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
           "foreground": "#193549",
           "foreground_templates": [
             "{{if eq \"Charging\" .State.String}}#64B5F6{{end}}",
@@ -81,16 +72,18 @@
             "{{if eq \"Full\" .State.String}}#66BB6A{{end}}"
           ],
           "properties": {
-              "discharging_icon": "\uE231 ",
-              "charging_icon": "\uE234 ",
-              "charged_icon": "\uE22F ",
-              "prefix": "\u005B",
-              "postfix": "\uF295\u005D"
-            }
-          }
-        ]
-      }
-    ],
-    "final_space": true
-  }
-
+            "charged_icon": "\ue22f ",
+            "charging_icon": "\ue234 ",
+            "discharging_icon": "\ue231 ",
+            "template": "[{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295]"
+          },
+          "style": "powerline",
+          "type": "battery"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 1
+}

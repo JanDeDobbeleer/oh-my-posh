@@ -26,23 +26,29 @@ Supported registry key types:
     "properties": {
       "path": "HKLM\\software\\microsoft\\windows nt\\currentversion\\buildlab",
       "fallback":"unknown",
-      "template":"{{ .Value }}",
-      "prefix": " \uE62A "
+      "template":" \uE62A {{ .Value }}"
     }
   },
 ```
 
 ## Properties
 
-- path: `string` - registry path to the desired key using backslashes and with a valid root HKEY name.  
+- path: `string` - registry path to the desired key using backslashes and with a valid root HKEY name.
   Ending path with \ will get the (Default) key from that path.
 - fallback: `string` - the value to fall back to if no entry is found
-- template: `string` - a go [text/template][go-text-template] template extended
-  with [sprig][sprig] utilizing the properties below.
 
-## Template Properties
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Value }}
+```
+
+:::
+
+### Properties
 
 - .Value: `string` - The result of your query, or fallback if not found.
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-templates

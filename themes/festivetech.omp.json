@@ -1,93 +1,91 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "final_space": true,
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "session",
-          "style": "diamond",
-          "foreground": "#0f1225",
           "background": "#adbccd",
-          "leading_diamond": "\uE0B6",
-          "trailing_diamond": "",
-          "properties": {
-            "prefix": "",
-            "template": "{{ .UserName }}"
-          }
-        },
-        {
-          "type": "path",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
           "foreground": "#0f1225",
-          "background": "#f1ece6",
+          "leading_diamond": "\ue0b6",
           "properties": {
-            "style": "folder"
-          }
-        },
-        {
-          "type": "git",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#0f1225",
-          "background": "#90a7c4",
-          "properties": {
-            "fetch_stash_count": true,
-            "fetch_upstream_icon": true,
-            "branch_icon": "",
-            "fetch_status": true,
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}",
-            "prefix": " \u279C (",
-            "postfix": ") "
-          }
-        },
-        {
-          "type": "node",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#ffffff",
-          "background": "#86BBD8",
-          "properties": {
-            "prefix": " \uE718 "
-          }
-        },
-        {
-          "type": "time",
+            "template": "{{ .UserName }} "
+          },
           "style": "diamond",
-          "trailing_diamond": "\uE0B0",
-          "foreground": "#ffffff",
-          "background": "#1f4b8e",
+          "type": "session"
+        },
+        {
+          "background": "#f1ece6",
+          "foreground": "#0f1225",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "prefix": " \uf9b6",
+            "style": "folder",
+            "template": " {{ .Path }} "
+          },
+          "style": "powerline",
+          "type": "path"
+        },
+        {
+          "background": "#90a7c4",
+          "foreground": "#0f1225",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "branch_icon": "",
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) "
+          },
+          "style": "powerline",
+          "type": "git"
+        },
+        {
+          "background": "#86BBD8",
+          "foreground": "#ffffff",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+          },
+          "style": "powerline",
+          "type": "node"
+        },
+        {
+          "background": "#1f4b8e",
+          "foreground": "#ffffff",
+          "properties": {
+            "template": " \uf9b6{{ .CurrentDate | date .Format }} ",
             "time_format": "15:04"
-          }
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "type": "time"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "rprompt",
       "segments": [
         {
-          "type": "text",
-          "style": "diamond",
-          "leading_diamond": "\uE0B2",
-          "trailing_diamond": "\uE0B4",
-          "foreground": "#ffffff",
           "background": "#1f4b8e",
+          "foreground": "#ffffff",
+          "leading_diamond": "\ue0b2",
           "properties": {
-            "template": "\uf1bb {{ .Env.DAYS }} days till Christmas"
-          }
+            "template": " \uf1bb {{ .Env.DAYS }} days till Christmas "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "rprompt"
     }
   ],
   "console_title_template": "{{ .Shell }} in {{ .Folder }}",
+  "final_space": true,
   "transient_prompt": {
     "background": "transparent",
     "foreground": "#ffffff",
-    "template": "<#1f4b8e,transparent></><#ffffff,#1f4b8e>\uf2dc</><#1f4b8e,transparent>\uE0B4</> {{ .Command }}"
-  }
+    "template": "<#1f4b8e,transparent>\ue0b6</><#ffffff,#1f4b8e>\uf2dc</><#1f4b8e,transparent>\ue0b4</> {{ .Command }}"
+  },
+  "version": 1
 }

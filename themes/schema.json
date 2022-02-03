@@ -30,7 +30,7 @@
       "description": "https://ohmyposh.dev/docs/config-overview#foreground-templates",
       "default": [],
       "items": {
-        "type": "string"
+        "$ref": "#/definitions/template"
       }
     },
     "fetch_version": {
@@ -38,12 +38,6 @@
       "title": "Fetch Version",
       "description": "Fetch the version number",
       "default": true
-    },
-    "enable_hyperlink": {
-      "type": "boolean",
-      "title": "Enable hyperlink",
-      "description": "Displays an hyperlink for the current segment",
-      "default": false
     },
     "http_timeout": {
       "type": "integer",
@@ -65,7 +59,10 @@
       "default": ""
     },
     "template": {
-      "$ref": "#/definitions/template"
+      "type": "string",
+      "title": "Template text",
+      "description": "https://ohmyposh.dev/docs/config-templates",
+      "default": ""
     },
     "block": {
       "type": "object",
@@ -216,6 +213,9 @@
               "description": "https://ohmyposh.dev/docs/config-overview#postfix",
               "default": " "
             },
+            "template": {
+              "$ref": "#/definitions/template"
+            },
             "include_folders": {
               "type": "array",
               "title": "If specified, segment will only render in these folders",
@@ -302,16 +302,7 @@
           },
           "then": {
             "title": "Azure Segment",
-            "description": "https://ohmyposh.dev/docs/az",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  }
-                }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/az"
           }
         },
         {
@@ -349,9 +340,6 @@
                     "title": "Charged Icon",
                     "description": "Text/icon to display on the left when fully charged",
                     "default": ""
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -399,12 +387,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "unsupported_version_icon": {
-                    "type": "string",
-                    "title": "Unsupported Version Icon",
-                    "description": "Text/icon that is displayed when the active .NET SDK version (e.g., one specified by global.json) is not installed/supported",
-                    "default": " \uE77F "
-                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -413,9 +395,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -439,9 +418,6 @@
                     "title": "Always Enabled",
                     "description": "Always show the status",
                     "default": false
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -460,9 +436,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "fetch_status": {
                     "type": "boolean",
                     "title": "Display Status",
@@ -626,9 +599,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -655,9 +625,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -684,9 +651,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -713,9 +677,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -742,9 +703,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -841,9 +799,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "display_error": {
                     "type": "boolean",
                     "title": "Display Error",
@@ -873,9 +828,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "display_default": {
                     "type": "boolean",
                     "title": "Display Default User Profile",
@@ -899,9 +851,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -928,9 +877,6 @@
                     "title": "NPM Icon",
                     "description": "Icon/text to use for NPM",
                     "default": " \uE71E"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -992,18 +938,6 @@
                     "title": "Windows Icon",
                     "description": "Icon/text to use for Windows",
                     "default": "\uE62A"
-                  },
-                  "wsl": {
-                    "type": "string",
-                    "title": "WSL Icon",
-                    "description": "Icon/text to use for WSL",
-                    "default": "WSL"
-                  },
-                  "wsl_separator": {
-                    "type": "string",
-                    "title": "WSL Separator",
-                    "description": "Icon/text to use for separating WSL from Linux",
-                    "default": " - "
                   },
                   "display_distro_name": {
                     "type": "boolean",
@@ -1200,13 +1134,7 @@
                     "title": "Enable the Mapped Locations feature",
                     "description": "Replace known locations in the path with the replacements before applying the style.",
                     "default": true
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
-                  },
-                  "template": {
-                      "$ref": "#/definitions/template"
-                    }
+                  }
                 }
               }
             }
@@ -1235,12 +1163,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1255,19 +1177,7 @@
           },
           "then": {
             "title": "Root Segment",
-            "description": "https://ohmyposh.dev/docs/root",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "root_icon": {
-                    "type": "string",
-                    "title": "Root Icon",
-                    "description": "The icon to display in case of root/elevated",
-                    "default": "\uF0E7"
-                  }
-                }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/root"
           }
         },
         {
@@ -1287,9 +1197,6 @@
                     "title": "SSH Icon",
                     "description": "Text/icon to display first when in an active SSH session",
                     "default": "\uF817"
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1411,9 +1318,6 @@
                     "title": "Time Format",
                     "description": "Format to use, follows the golang standard: https://gobyexample.com/time-formatting-parsing",
                     "default": "15:04:05"
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1501,9 +1405,6 @@
                     "default": "standard",
                     "enum": ["standard", "metric", "imperial"]
                   },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
-                  },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   },
@@ -1512,9 +1413,6 @@
                     "title": "cache timeout",
                     "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
                     "default": 10
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1533,9 +1431,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "always_enabled": {
                     "type": "boolean",
                     "title": "Always Enabled",
@@ -1596,9 +1491,6 @@
                     "title": "Precision",
                     "description": "number of decimal places to show",
                     "default": 0
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1661,12 +1553,6 @@
                     "title": "cache timeout",
                     "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
                     "default": 10
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -1722,9 +1608,6 @@
                     "title": "cache timeout",
                     "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
                     "default": 10
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1739,16 +1622,7 @@
           },
           "then": {
             "title": "WiFi Segment",
-            "description": "https://ohmyposh.dev/docs/wifi",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  }
-                }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/wifi"
           }
         },
         {
@@ -1763,9 +1637,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "path": {
                     "type": "string",
                     "title": "Registry Path",
@@ -1795,9 +1666,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "fetch_status": {
                     "type": "boolean",
                     "title": "Display Status",
@@ -1851,9 +1719,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "user_id": {
                     "type": "string",
                     "title": "Brewfather UserID (required)",
@@ -1996,9 +1861,6 @@
                     "title": "cache timeout",
                     "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
                     "default": 10
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }

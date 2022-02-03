@@ -3,48 +3,48 @@
   "blocks": [
     {
       "alignment": "left",
-      "horizontal_offset": 0,
-      "vertical_offset": 0,
       "segments": [
         {
           "background": "#18354c",
           "foreground": "#ffc107",
-          "leading_diamond": "",
-          "trailing_diamond": "\uE0B0",
+          "leading_diamond": "\ue0b6",
           "properties": {
-            "prefix": "  ",
-            "style": "folder"
+            "style": "folder",
+            "template": " \ue5ff {{ .Path }} "
           },
           "style": "diamond",
+          "trailing_diamond": "\ue0b0",
           "type": "path"
         },
         {
           "background": "#18354c",
           "foreground": "#ffc107",
-          "powerline_symbol": "\uE0B0",
+          "powerline_symbol": "\ue0b0",
           "properties": {
             "fetch_stash_count": true,
             "fetch_upstream_icon": true,
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
+            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
           },
           "style": "powerline",
           "type": "git"
         },
         {
-          "type": "python",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#18354c",
           "background": "#ffc107",
+          "foreground": "#18354c",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "prefix": " \uE235 "
-          }
+            "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} "
+          },
+          "style": "powerline",
+          "type": "python"
         },
-
         {
           "background": "#ffc107",
           "foreground": "#18354c",
-          "powerline_symbol": "\uE0B0",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "template": " \uf0e7 "
+          },
           "style": "powerline",
           "type": "root"
         }
@@ -52,5 +52,6 @@
       "type": "prompt"
     }
   ],
-  "final_space": true
+  "final_space": true,
+  "version": 1
 }

@@ -5,6 +5,7 @@ import (
 	json2 "encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"oh-my-posh/color"
 	"oh-my-posh/console"
 	"oh-my-posh/environment"
@@ -173,22 +174,26 @@ func (cfg *Config) Export(format string) string {
 }
 
 func (cfg *Config) Write() {
-	cfg.write(cfg.origin)
-}
-
-func (cfg *Config) Backup() {
-	cfg.write(cfg.origin + ".bak")
-}
-
-func (cfg *Config) write(destination string) {
 	content := cfg.Export(cfg.format)
-	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	f, err := os.OpenFile(cfg.origin, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	cfg.exitWithError(err)
 	_, err = f.WriteString(content)
 	cfg.exitWithError(err)
 	if err := f.Close(); err != nil {
 		cfg.exitWithError(err)
 	}
+}
+
+func (cfg *Config) Backup() {
+	dst := cfg.origin + ".bak"
+	source, err := os.Open(cfg.origin)
+	cfg.exitWithError(err)
+	defer source.Close()
+	destination, err := os.Create(dst)
+	cfg.exitWithError(err)
+	defer destination.Close()
+	_, err = io.Copy(destination, source)
+	cfg.exitWithError(err)
 }
 
 func escapeGlyphs(s string) string {

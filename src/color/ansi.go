@@ -7,14 +7,9 @@ import (
 )
 
 const (
-	ansiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
-
 	zsh  = "zsh"
 	bash = "bash"
 	pwsh = "pwsh"
-
-	str = "STR"
-	url = "URL"
 )
 
 type Ansi struct {
@@ -127,27 +122,6 @@ func (a *Ansi) Init(shell string) {
 	a.shellReservedKeywords = append(a.shellReservedKeywords, shellKeyWordReplacement{"`", "'"})
 }
 
-func (a *Ansi) LenWithoutANSI(text string) int {
-	if len(text) == 0 {
-		return 0
-	}
-	// replace hyperlinks(file/http/https)
-	matches := regex.FindAllNamedRegexMatch(`(?P<STR>\x1b]8;;(file|http|https):\/\/(.+?)\x1b\\(?P<URL>.+?)\x1b]8;;\x1b\\)`, text)
-	for _, match := range matches {
-		text = strings.ReplaceAll(text, match[str], match[url])
-	}
-	// replace console title
-	matches = regex.FindAllNamedRegexMatch(`(?P<STR>\x1b\]0;(.+)\007)`, text)
-	for _, match := range matches {
-		text = strings.ReplaceAll(text, match[str], "")
-	}
-	stripped := regex.ReplaceAllString(ansiRegex, text, "")
-	stripped = strings.ReplaceAll(stripped, a.escapeLeft, "")
-	stripped = strings.ReplaceAll(stripped, a.escapeRight, "")
-	runeText := []rune(stripped)
-	return len(runeText)
-}
-
 func (a *Ansi) generateHyperlink(text string) string {
 	// hyperlink matching
 	results := regex.FindNamedRegexMatch("(?P<all>(?:\\[(?P<name>.+)\\])(?:\\((?P<url>.*)\\)))", text)
@@ -183,8 +157,8 @@ func (a *Ansi) CarriageForward() string {
 	return fmt.Sprintf(a.right, 1000)
 }
 
-func (a *Ansi) GetCursorForRightWrite(text string, offset int) string {
-	strippedLen := a.LenWithoutANSI(text) + -offset
+func (a *Ansi) GetCursorForRightWrite(length, offset int) string {
+	strippedLen := length + (-offset)
 	return fmt.Sprintf(a.left, strippedLen)
 }
 

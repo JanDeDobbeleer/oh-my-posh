@@ -12,7 +12,7 @@ const (
 
 type Writer interface {
 	Write(background, foreground, text string)
-	String() string
+	String() (string, int)
 	Reset()
 	SetColors(background, foreground string)
 	SetParentColors(background, foreground string)
@@ -28,6 +28,7 @@ type AnsiWriter struct {
 	AnsiColors         AnsiColors
 
 	builder strings.Builder
+	length  int
 }
 
 type Color struct {
@@ -104,6 +105,7 @@ func (a *AnsiWriter) writeColoredText(background, foreground AnsiColor, text str
 	if text == "" || (foreground.IsTransparent() && background.IsTransparent()) {
 		return
 	}
+	a.length += measureText(text)
 	// default to white fg if empty, empty backgrond is supported
 	if foreground.IsEmpty() {
 		foreground = a.getAnsiFromColorString("white", false)
@@ -226,10 +228,11 @@ func (a *AnsiWriter) expandKeyword(keyword string) string {
 	return keyword
 }
 
-func (a *AnsiWriter) String() string {
-	return a.builder.String()
+func (a *AnsiWriter) String() (string, int) {
+	return a.builder.String(), a.length
 }
 
 func (a *AnsiWriter) Reset() {
+	a.length = 0
 	a.builder.Reset()
 }

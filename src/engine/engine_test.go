@@ -8,7 +8,6 @@ import (
 	"oh-my-posh/mock"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -26,8 +25,8 @@ func TestCanWriteRPrompt(t *testing.T) {
 		{Case: "Width Error", Expected: true, TerminalWidthError: errors.New("burp")},
 		{Case: "Terminal > Prompt enabled", Expected: true, TerminalWidth: 200, PromptLength: 100, RPromptLength: 10},
 		{Case: "Terminal > Prompt enabled edge", Expected: true, TerminalWidth: 200, PromptLength: 100, RPromptLength: 70},
-		{Case: "Terminal > Prompt disabled no breathing", Expected: false, TerminalWidth: 200, PromptLength: 100, RPromptLength: 71},
 		{Case: "Prompt > Terminal enabled", Expected: true, TerminalWidth: 200, PromptLength: 300, RPromptLength: 70},
+		{Case: "Terminal > Prompt disabled no breathing", Expected: false, TerminalWidth: 200, PromptLength: 100, RPromptLength: 71},
 		{Case: "Prompt > Terminal disabled no breathing", Expected: false, TerminalWidth: 200, PromptLength: 300, RPromptLength: 80},
 		{Case: "Prompt > Terminal disabled no room", Expected: true, TerminalWidth: 200, PromptLength: 400, RPromptLength: 80},
 	}
@@ -35,14 +34,11 @@ func TestCanWriteRPrompt(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalWidthError)
-		ansi := &color.Ansi{}
-		ansi.Init(plain)
 		engine := &Engine{
-			Env:  env,
-			Ansi: ansi,
+			Env: env,
 		}
-		engine.rprompt = strings.Repeat("x", tc.RPromptLength)
-		engine.console.WriteString(strings.Repeat("x", tc.PromptLength))
+		engine.rpromptLength = tc.RPromptLength
+		engine.currentLineLength = tc.PromptLength
 		got := engine.canWriteRPrompt()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}

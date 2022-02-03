@@ -33,9 +33,7 @@ func TestStringImageFileWithText(t *testing.T) {
 }
 
 func TestStringImageFileWithANSI(t *testing.T) {
-	prompt := `[38;2;0;55;218;49m[7m\uE0B0[m[0m[48;2;0;55;218m[38;2;255;255;255m oh-my-posh
-	 [0m[48;2;193;156;0m[38;2;0;55;218m\uE0B0[0m[48;2;193;156;0m[38;2;17;17;17m main ≡  ~4 -8 ?7 [0m[38;2;193;156;0m\uE0B0[0m
-	[37m [0m[0m`
+	prompt := `[38;2;40;105;131m[0m[48;2;40;105;131m[38;2;224;222;244m jan [0m[38;2;40;105;131m[0m[38;2;224;222;244m [0m`
 	err := runImageTest(prompt)
 	assert.NoError(t, err)
 }

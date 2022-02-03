@@ -18,8 +18,10 @@ type Engine struct {
 	ConsoleTitle *console.Title
 	Plain        bool
 
-	console strings.Builder
-	rprompt string
+	console           strings.Builder
+	currentLineLength int
+	rprompt           string
+	rpromptLength     int
 }
 
 func (e *Engine) write(text string) {
@@ -38,12 +40,11 @@ func (e *Engine) string() string {
 }
 
 func (e *Engine) canWriteRPrompt() bool {
-	prompt := e.string()
 	consoleWidth, err := e.Env.TerminalWidth()
 	if err != nil || consoleWidth == 0 {
 		return true
 	}
-	promptWidth := e.Ansi.LenWithoutANSI(prompt)
+	promptWidth := e.currentLineLength
 	availableSpace := consoleWidth - promptWidth
 	// spanning multiple lines
 	if availableSpace < 0 {
@@ -51,7 +52,7 @@ func (e *Engine) canWriteRPrompt() bool {
 		availableSpace = consoleWidth - overflow
 	}
 	promptBreathingRoom := 30
-	canWrite := (availableSpace - e.Ansi.LenWithoutANSI(e.rprompt)) >= promptBreathingRoom
+	canWrite := (availableSpace - e.rpromptLength) >= promptBreathingRoom
 	return canWrite
 }
 
@@ -66,13 +67,17 @@ func (e *Engine) Render() string {
 	if e.Config.FinalSpace {
 		e.write(" ")
 	}
-
 	if !e.Config.OSC99 {
 		return e.print()
 	}
 	cwd := e.Env.Pwd()
 	e.writeANSI(e.Ansi.ConsolePwd(cwd))
 	return e.print()
+}
+
+func (e *Engine) newline() {
+	e.write("\n")
+	e.currentLineLength = 0
 }
 
 func (e *Engine) renderBlock(block *Block) {
@@ -88,14 +93,14 @@ func (e *Engine) renderBlock(block *Block) {
 		return
 	}
 	if block.Newline {
-		e.write("\n")
+		e.newline()
 	}
 	switch block.Type {
 	// This is deprecated but leave if to not break current configs
 	// It is encouraged to used "newline": true on block level
 	// rather than the standalone the linebreak block
 	case LineBreak:
-		e.write("\n")
+		e.newline()
 	case Prompt:
 		if block.VerticalOffset != 0 {
 			e.writeANSI(e.Ansi.ChangeLine(block.VerticalOffset))
@@ -103,18 +108,22 @@ func (e *Engine) renderBlock(block *Block) {
 		switch block.Alignment {
 		case Right:
 			e.writeANSI(e.Ansi.CarriageForward())
-			blockText := block.renderSegments()
-			e.writeANSI(e.Ansi.GetCursorForRightWrite(blockText, block.HorizontalOffset))
-			e.write(blockText)
+			text, length := block.renderSegments()
+			e.currentLineLength += length
+			e.writeANSI(e.Ansi.GetCursorForRightWrite(length, block.HorizontalOffset))
+			e.write(text)
 		case Left:
-			e.write(block.renderSegments())
+			text, length := block.renderSegments()
+			e.currentLineLength += length
+			e.write(text)
 		}
 	case RPrompt:
-		blockText := block.renderSegments()
+		text, length := block.renderSegments()
+		e.rpromptLength = length
 		if e.Env.Shell() == bash {
-			blockText = e.Ansi.FormatText(blockText)
+			text = e.Ansi.FormatText(text)
 		}
-		e.rprompt = blockText
+		e.rprompt = text
 	}
 	// Due to a bug in Powershell, the end of the line needs to be cleared.
 	// If this doesn't happen, the portion after the prompt gets colored in the background
@@ -183,7 +192,7 @@ func (e *Engine) print() string {
 		}
 		e.write(e.Ansi.SaveCursorPosition())
 		e.write(e.Ansi.CarriageForward())
-		e.write(e.Ansi.GetCursorForRightWrite(e.rprompt, 0))
+		e.write(e.Ansi.GetCursorForRightWrite(e.rpromptLength, 0))
 		e.write(e.rprompt)
 		e.write(e.Ansi.RestoreCursorPosition())
 	}
@@ -217,14 +226,15 @@ func (e *Engine) RenderTooltip(tip string) string {
 	switch e.Env.Shell() {
 	case zsh, winCMD:
 		block.init(e.Env, e.Writer, e.Ansi)
-		return block.renderSegments()
+		text, _ := block.renderSegments()
+		return text
 	case pwsh, powershell5:
 		block.initPlain(e.Env, e.Config)
-		tooltipText := block.renderSegments()
+		text, length := block.renderSegments()
 		e.write(e.Ansi.ClearAfter())
 		e.write(e.Ansi.CarriageForward())
-		e.write(e.Ansi.GetCursorForRightWrite(tooltipText, 0))
-		e.write(tooltipText)
+		e.write(e.Ansi.GetCursorForRightWrite(length, 0))
+		e.write(text)
 		return e.string()
 	}
 	return ""
@@ -251,11 +261,13 @@ func (e *Engine) RenderTransientPrompt() string {
 	switch e.Env.Shell() {
 	case zsh:
 		// escape double quotes contained in the prompt
-		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.Writer.String(), "\"", "\"\""))
+		str, _ := e.Writer.String()
+		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(str, "\"", "\"\""))
 		prompt += "\nRPROMPT=\"\""
 		return prompt
 	case pwsh, powershell5, winCMD:
-		return e.Writer.String()
+		str, _ := e.Writer.String()
+		return str
 	}
 	return ""
 }
@@ -278,5 +290,7 @@ func (e *Engine) RenderRPrompt() string {
 	if !block.enabled() {
 		return ""
 	}
-	return block.renderSegments()
+	text, length := block.renderSegments()
+	e.rpromptLength = length
+	return text
 }

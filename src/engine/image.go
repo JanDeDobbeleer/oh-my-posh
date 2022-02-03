@@ -67,6 +67,8 @@ const (
 	lineChange          = "linechange"
 	consoleTitle        = "title"
 	link                = "link"
+
+	ansiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 )
 
 //go:embed font/Hack-Nerd-Bold.ttf
@@ -187,7 +189,7 @@ func (ir *ImageRenderer) Init(config string) {
 		osc99:               `^(?P<STR>\x1b\]9;9;(.+)\x1b\\)`,
 		lineChange:          `^(?P<STR>\x1b\[(\d)[FB])`,
 		consoleTitle:        `^(?P<STR>\x1b\]0;(.+)\007)`,
-		link:                `^(?P<STR>\x1b]8;;file:\/\/(.+)\x1b\\(?P<URL>.+)\x1b]8;;\x1b\\)`,
+		link:                `^(?P<STR>\x1b]8;;(file|https)(.+)\x1b\\(?P<URL>.+)\x1b]8;;\x1b\\)`,
 	}
 }
 
@@ -247,13 +249,35 @@ func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
 	return 0
 }
 
+func (ir *ImageRenderer) lenWithoutANSI(text string) int {
+	if len(text) == 0 {
+		return 0
+	}
+	// replace hyperlinks(file/http/https)
+	regexStr := ir.ansiSequenceRegexMap[link]
+	matches := regex.FindAllNamedRegexMatch(regexStr, text)
+	for _, match := range matches {
+		text = strings.ReplaceAll(text, match[str], match[url])
+	}
+	// replace console title
+	regexStr = ir.ansiSequenceRegexMap[consoleTitle]
+	matches = regex.FindAllNamedRegexMatch(regexStr, text)
+	for _, match := range matches {
+		text = strings.ReplaceAll(text, match[str], "")
+	}
+	stripped := regex.ReplaceAllString(ansiRegex, text, "")
+	runeText := []rune(stripped)
+	length := len(runeText)
+	for _, rune := range runeText {
+		length += ir.runeAdditionalWidth(rune)
+	}
+	return length
+}
+
 func (ir *ImageRenderer) calculateWidth() int {
 	longest := 0
 	for _, line := range strings.Split(ir.AnsiString, "\n") {
-		length := ir.Ansi.LenWithoutANSI(line)
-		for _, char := range line {
-			length += ir.runeAdditionalWidth(char)
-		}
+		length := ir.lenWithoutANSI(line)
 		if length > longest {
 			longest = length
 		}

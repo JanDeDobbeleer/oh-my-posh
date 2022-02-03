@@ -599,13 +599,13 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 	if env.tmplCache != nil {
 		return env.tmplCache
 	}
-	env.tmplCache = &TemplateCache{
+	tmplCache := &TemplateCache{
 		Root:  env.Root(),
 		Shell: env.Shell(),
 		Code:  env.ErrorCode(),
 		WSL:   env.IsWsl(),
 	}
-	env.tmplCache.Env = make(map[string]string)
+	tmplCache.Env = make(map[string]string)
 	const separator = "="
 	values := os.Environ()
 	for value := range values {
@@ -615,22 +615,23 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 		}
 		key := splitted[0]
 		val := splitted[1:]
-		env.tmplCache.Env[key] = strings.Join(val, separator)
+		tmplCache.Env[key] = strings.Join(val, separator)
 	}
 	pwd := env.Pwd()
 	pwd = strings.Replace(pwd, env.Home(), "~", 1)
-	env.tmplCache.PWD = pwd
-	env.tmplCache.Folder = Base(env, pwd)
-	env.tmplCache.UserName = env.User()
+	tmplCache.PWD = pwd
+	tmplCache.Folder = Base(env, pwd)
+	tmplCache.UserName = env.User()
 	if host, err := env.Host(); err == nil {
-		env.tmplCache.HostName = host
+		tmplCache.HostName = host
 	}
 	goos := env.GOOS()
-	env.tmplCache.OS = goos
+	tmplCache.OS = goos
 	if goos == LinuxPlatform {
-		env.tmplCache.OS = env.Platform()
+		tmplCache.OS = env.Platform()
 	}
-	return env.tmplCache
+	env.tmplCache = tmplCache
+	return tmplCache
 }
 
 func DirMatchesOneOf(env Environment, dir string, regexes []string) bool {

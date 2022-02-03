@@ -181,7 +181,7 @@ func TestWriteANSIColors(t *testing.T) {
 			AnsiColors:         &DefaultColors{},
 		}
 		renderer.Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
-		got := renderer.String()
+		got, _ := renderer.String()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

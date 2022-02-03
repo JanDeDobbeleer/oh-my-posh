@@ -17,7 +17,7 @@ func (p *Php) Init(props properties.Properties, env environment.Environment) {
 	p.language = language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.php", "composer.json", "composer.lock", ".php-version"},
+		extensions: []string{"*.php", "composer.json", "composer.lock", ".php-version", "blade.php"},
 		commands: []*cmd{
 			{
 				executable: "php",

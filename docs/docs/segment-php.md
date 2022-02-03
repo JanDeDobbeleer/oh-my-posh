@@ -31,7 +31,8 @@ Display the currently active php version.
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
-  - `files`: the segment is only displayed when `*.php, composer.json, composer.lock, .php-version` files are present (default)
+  - `files`: the segment is only displayed when `*.php`, `composer.json`, `composer.lock`, `.php-version` or `blade.php`
+files are present (default)
 
 ## Template ([info][templates])
 

@@ -30,7 +30,7 @@ func (n *Node) Init(props properties.Properties, env environment.Environment) {
 	n.language = language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.js", "*.ts", "package.json", ".nvmrc", "pnpm-workspace.yaml", ".pnpmfile.cjs", ".npmrc"},
+		extensions: []string{"*.js", "*.ts", "package.json", ".nvmrc", "pnpm-workspace.yaml", ".pnpmfile.cjs", ".npmrc", ".vue"},
 		commands: []*cmd{
 			{
 				executable: "node",

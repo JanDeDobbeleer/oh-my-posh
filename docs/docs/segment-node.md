@@ -29,7 +29,8 @@ Display the currently active node version.
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: The segment is always displayed
-  - `files`: The segment is only displayed when `*.js`, `*.ts`, or `package.json` files are present (default)
+  - `files`: The segment is only displayed when `*.js`, `*.ts`, `package.json`, `.nvmrc`, `pnpm-workspace.yaml`,
+`.pnpmfile.cjs`, `.npmrc` or `.vue` files are present (default)
 - fetch_package_manager: `boolean` - define if the current project uses Yarn or NPM - defaults to `false`
 - yarn_icon: `string` - the icon/text to display when using Yarn - defaults to ` \uF61A`
 - npm_icon: `string` - the icon/text to display when using NPM - defaults to ` \uE71E`

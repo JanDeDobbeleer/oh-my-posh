@@ -2,38 +2,36 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "root",
-          "style": "plain",
           "background": "#E0E0E0",
-          "foreground": "#BF231D"
+          "foreground": "#BF231D",
+          "properties": {
+            "template": " \uf0e7 "
+          },
+          "style": "plain",
+          "type": "root"
         },
         {
-          "type": "os",
-          "style": "plain",
           "background": "#E0E0E0",
           "foreground": "#EF7D00",
           "properties": {
-            "template": "{{ .Icon }}"
-          }
+            "template": " {{ .Icon }} "
+          },
+          "style": "plain",
+          "type": "os"
         },
         {
-          "type": "session",
-          "style": "plain",
           "background": "#E0E0E0",
           "foreground": "#424242",
           "properties": {
-            "prefix": "",
-            "postfix": "",
             "template": "{{ .UserName }}"
-          }
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "git",
-          "style": "plain",
           "background": "#E0E0E0",
           "foreground": "#424242",
           "foreground_templates": [
@@ -41,34 +39,35 @@
             "{{ if or (gt .Ahead 0) (gt .Behind 0) }}#0A703E{{ end }}"
           ],
           "properties": {
-            "fetch_status": true,
             "branch_max_length": 30,
+            "fetch_status": true,
             "fetch_upstream_icon": true,
-            "prefix": " [",
-            "postfix": "] ",
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#BD6200> \uF044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#053F22> \uF046 {{ .Staging.String }}</>{{ end }}"
-          }
+            "template": " [{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#BD6200> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#053F22> \uf046 {{ .Staging.String }}</>{{ end }}] "
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "path",
-          "style": "plain",
           "background": "#E0E0E0",
           "foreground": "#424242",
           "properties": {
             "style": "full",
-            "postfix": ""
-          }
+            "template": " {{ .Path }}"
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#E0E0E0",
           "properties": {
-            "prefix": "",
-            "text": "\uE0B0"
-          }
+            "template": "\ue0b0 "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "version": 1
 }

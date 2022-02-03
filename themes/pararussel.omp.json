@@ -2,78 +2,76 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": "",
-            "text": "<#C591E8>\u276F</><#69FF94>\u276F</>"
-          }
+            "template": "<#C591E8>\u276f</><#69FF94>\u276f</> "
+          },
+          "style": "plain",
+          "type": "text"
         },
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "#56B6C2",
           "properties": {
-            "prefix": "",
-            "style": "folder"
-          }
+            "style": "folder",
+            "template": "{{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "#D0666F",
           "properties": {
             "branch_icon": "",
-            "prefix": "<#5FAAE8>git:(</>",
-            "postfix": "<#5FAAE8>)</>",
-            "template": "{{ .HEAD }}"
-          }
+            "template": "<#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>"
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "exit",
-          "style": "plain",
           "foreground": "#DCB977",
           "properties": {
-            "template": "\uF119"
-          }
+            "template": " \uf119 "
+          },
+          "style": "plain",
+          "type": "exit"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "right",
       "segments": [
         {
-          "type": "command",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
+            "command": "git log --pretty=format:%cr -1 || date +%H:%m:%S",
             "shell": "bash",
-            "command": "git log --pretty=format:%cr -1 || date +%H:%m:%S"
-          }
+            "template": " {{ .Output }} "
+          },
+          "style": "plain",
+          "type": "command"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": "",
-            "text": "\uF441"
-          }
+            "template": "\uf441 "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "version": 1
 }

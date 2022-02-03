@@ -1,108 +1,95 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "display_status": true,
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "session",
-          "style": "plain",
           "foreground": "#88c0d0",
           "properties": {
-            "prefix": "<#5e81ac>┏[</>",
-            "postfix": "<#5e81ac>]</>",
-            "template": "{{ .UserName }}"
-          }
+            "template": "<#5e81ac>\u250f[</>{{ .UserName }}<#5e81ac>]</>"
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "#b48ead",
           "properties": {
-            "prefix": "<#5e81ac>--[</>",
-            "postfix": "<#5e81ac>]</>",
+            "fetch_stash_count": true,
             "fetch_status": true,
-	    "display_status": true,
-            "display_stash_count": true,
-            "display_upstream_icon": true,
-	    "template": "{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#8fbcbb> ● </>{{ end }}{{ if .Staging.Changed }}<#88c0d0> ● </>{{ end }}"
-          }	
+            "fetch_upstream_icon": true,
+            "template": "<#5e81ac>--[</>{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#8fbcbb> \u25cf </>{{ end }}{{ if .Staging.Changed }}<#88c0d0> \u25cf </>{{ end }}<#5e81ac>]</>"
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "aws",
-          "style": "plain",
           "foreground": "#b48ead",
           "properties": {
-	    "prefix": "<#5e81ac>--[</>",
-            "postfix": "<#5e81ac>]</>",
-            "template": "{{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
-          }
+            "template": "<#5e81ac>--[</>{{.Profile}}{{if .Region}}@{{.Region}}{{end}}<#5e81ac>]</>"
+          },
+          "style": "plain",
+          "type": "aws"
         },
         {
-          "type": "kubectl",
-          "style": "plain",
           "foreground": "#b48ead",
           "properties": {
-	    "prefix": "<#5e81ac>--[</>",
-	    "postfix": "<#5e81ac>]</>",
-            "template": "{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}"
-          }
-        },	
-        {
-          "type": "root",
+            "template": "<#5e81ac>--[</>{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}<#5e81ac>]</>"
+          },
           "style": "plain",
-          "foreground": "#d8dee9",
-          "properties": {
-            "prefix": "<#5e81ac>[</>",
-            "postfix": "<#5e81ac>]</>"
-          }
+          "type": "kubectl"
         },
         {
-          "type": "exit",
-          "style": "plain",
           "foreground": "#d8dee9",
           "properties": {
-            "template": "{{ .Text }}",
-            "prefix": "<#5e81ac>[x</>",
-            "postfix": "<#5e81ac>]</>"
-          }
+            "template": "<#5e81ac>[</>\uf0e7<#5e81ac>]</>"
+          },
+          "style": "plain",
+          "type": "root"
+        },
+        {
+          "foreground": "#d8dee9",
+          "properties": {
+            "template": "<#5e81ac>[x</>{{ .Text }}<#5e81ac>]</>"
+          },
+          "style": "plain",
+          "type": "exit"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "#88c0d0",
           "properties": {
             "style": "full",
-            "prefix": "<#5e81ac>┖[</>",
-            "postfix": "<#5e81ac>]</>"
-          }
+            "template": "<#5e81ac>\u2516[</>{{ .Path }}<#5e81ac>]</>"
+          },
+          "style": "plain",
+          "type": "path"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#5e81ac",
           "properties": {
-            "text": "\uE602"
-          }
+            "template": " \ue602 "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
-    }    
+      ],
+      "type": "prompt"
+    }
   ],
-  "final_space": true
+  "final_space": true,
+  "version": 1
 }

@@ -2,58 +2,57 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "root",
-          "style": "plain",
           "foreground": "#CECE04",
           "properties": {
-            "prefix": "",
-            "template": "#"
-          }
+            "template": "# "
+          },
+          "style": "plain",
+          "type": "root"
         },
         {
-          "type": "session",
-          "style": "plain",
           "properties": {
-            "prefix": "",
-            "template": "{{ .UserName }}@{{ .HostName }}"
-          }
+            "template": "{{ .UserName }}@{{ .HostName }} "
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "#7B68EE",
           "properties": {
             "style": "agnoster_short",
-            "prefix": ""
-          }
+            "template": "{{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "#48D1CC",
           "properties": {
-            "prefix": "HEAD:",
             "branch_icon": "",
             "fetch_upstream_icon": false,
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}"
-          }
+            "template": "HEAD:{{ .UpstreamIcon }}{{ .HEAD }} "
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "exit",
-          "style": "plain",
           "foreground": "#7FFFD4",
-          "foreground_templates": ["{{ if gt .Code 0 }}#E84855{{ end }}"],
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#E84855{{ end }}"
+          ],
           "properties": {
             "always_enabled": true,
-            "template": "<#66CDAA>\u276F</><#76EEC6>\u276F</><foreground>\u276F</>",
-            "prefix": ""
-          }
+            "template": "<#66CDAA>\u276f</><#76EEC6>\u276f</><foreground>\u276f</> "
+          },
+          "style": "plain",
+          "type": "exit"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "version": 1
 }

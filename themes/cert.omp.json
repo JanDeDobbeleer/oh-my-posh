@@ -1,60 +1,60 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "blocks":[
+  "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "session",
-          "style": "diamond",
-          "leading_diamond": "\uE0B6",
-          "trailing_diamond": "\uE0C6",
           "background": "#E36464",
           "foreground": "#fff",
+          "leading_diamond": "\ue0b6",
           "properties": {
-            "prefix": "",
-            "template": "{{ .UserName }}"
-          }
+            "template": "{{ .UserName }} "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0c6",
+          "type": "session"
         },
         {
-          "type":"path",
-          "style": "diamond",
-          "leading_diamond": "\uE0C7",
-          "trailing_diamond": "\uE0C6",
           "background": "green",
           "foreground": "#fff",
+          "leading_diamond": "\ue0c7",
           "properties": {
-            "style": "folder"
-          }
+            "style": "folder",
+            "template": " {{ .Path }} "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0c6",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "diamond",
-          "leading_diamond": "\uE0C7",
-          "trailing_diamond": "\uE0C6",
           "background": "lightCyan",
           "foreground": "#fff",
+          "leading_diamond": "\ue0c7",
           "properties": {
             "branch_icon": "",
-            "template": "{{ .HEAD }}",
-            "prefix": " git(",
-            "postfix": ") "
-          }
+            "template": " git({{ .HEAD }}) "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0c6",
+          "type": "git"
         },
         {
-          "type": "time",
-          "style": "diamond",
-          "leading_diamond": "\uE0C7",
-          "trailing_diamond": "\uE0C6",
-          "foreground": "#fff",
           "background": "lightMagenta",
+          "foreground": "#fff",
+          "leading_diamond": "\ue0c7",
           "properties": {
+            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04"
-          }
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0c6",
+          "type": "time"
         }
-      ]
+      ],
+      "type": "prompt"
     }
   ],
-  "final_space": true
+  "final_space": true,
+  "version": 1
 }

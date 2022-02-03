@@ -2,57 +2,55 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": "",
-            "postfix": "",
-            "text": "<#C591E8>\u276F</><#69FF94>\u276F</>"
-          }
+            "template": "<#C591E8>\u276f</><#69FF94>\u276f</>"
+          },
+          "style": "plain",
+          "type": "text"
         },
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "#56B6C2",
           "properties": {
-            "style": "folder"
-          }
+            "style": "folder",
+            "template": " {{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "#D0666F",
           "properties": {
             "branch_icon": "",
             "fetch_status": false,
-            "template": "{{ .HEAD }}",
-            "prefix": "<#5FAAE8>git:(</>",
-            "postfix": "<#5FAAE8>)</>"
-          }
+            "template": "<#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>"
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "exit",
-          "style": "plain",
           "foreground": "#DCB977",
           "properties": {
-            "template": "\uF119",
-            "postfix": ""
-          }
+            "template": " \uf119"
+          },
+          "style": "plain",
+          "type": "exit"
         },
         {
-          "type": "time",
-          "style": "plain",
           "foreground": "#66F68F",
           "properties": {
+            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04"
-          }
+          },
+          "style": "plain",
+          "type": "time"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "version": 1
 }

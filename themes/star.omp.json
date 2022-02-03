@@ -2,73 +2,69 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "root",
-          "style": "plain",
           "foreground": "#E06C75",
           "properties": {
-            "template": "root",
-            "prefix": "",
-            "postfix": " <#ffffff>in</> "
-          }
+            "template": "root <#ffffff>in</> "
+          },
+          "style": "plain",
+          "type": "root"
         },
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "#55B9C4",
           "properties": {
             "style": "folder",
-            "prefix": ""
-          }
+            "template": "{{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "#C678DD",
           "properties": {
-            "prefix": "<#ffffff>on</> ",
             "fetch_status": true,
-            "template": "{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}"
-          }
+            "template": "<#ffffff>on</> {{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} "
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "node",
-          "style": "plain",
           "foreground": "#98C379",
           "properties": {
             "fetch_version": true,
-            "prefix": "<#ffffff>via</> \uE781 "
-          }
+            "template": "<#ffffff>via</> \ue781 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+          },
+          "style": "plain",
+          "type": "node"
         },
         {
-          "type": "exit",
-          "style": "plain",
           "foreground": "#C94A16",
           "properties": {
-            "prefix": "",
-            "template": "x"
-          }
+            "template": "x "
+          },
+          "style": "plain",
+          "type": "exit"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#63F08C",
           "properties": {
-            "prefix": "",
-            "text": "\u279C"
-          }
+            "template": "\u279c "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "version": 1
 }

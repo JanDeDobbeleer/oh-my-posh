@@ -1,118 +1,103 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "final_space": false,
-  "osc99": false,
-  "console_title": false,
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
-      "horizontal_offset": 0,
-      "vertical_offset": 0,
       "segments": [
         {
-          "type": "os",
-          "style": "plain",
           "foreground": "#26C6DA",
           "properties": {
-            "prefix": "",
-            "postfix": "",
-            "macos": "mac"
-          }
+            "macos": "mac",
+            "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}}"
+          },
+          "style": "plain",
+          "type": "os"
         },
         {
-          "type": "session",
-          "style": "plain",
           "foreground": "#26C6DA",
           "properties": {
-            "postfix": ": ",
-            "template": "{{ .UserName }}"
-          }
+            "template": " {{ .UserName }}: "
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "path",
-          "style": "plain",
-          "invert_powerline": false,
           "foreground": "lightGreen",
           "properties": {
-            "prefix": "",
-            "style": "folder"
-          }
+            "style": "folder",
+            "template": "{{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
-          "invert_powerline": false,
           "properties": {
             "branch_icon": "",
             "fetch_stash_count": true,
-            "prefix": "<#ffffff>on</> ",
-            "template": "{{ .HEAD }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
-          }
+            "template": "<#ffffff>on</> {{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "python",
-          "style": "powerline",
           "foreground": "#906cff",
           "properties": {
-            "prefix": "\u005b\uE235 ",
-            "postfix": "\u005D "
-          }
+            "template": "[\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}] "
+          },
+          "style": "powerline",
+          "type": "python"
         },
         {
-          "type": "go",
-          "style": "powerline",
           "foreground": "#7FD5EA",
           "properties": {
-            "prefix": "\u005b\uFCD1 ",
-            "postfix": "\u005D "
-          }
+            "template": "[\ufcd1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] "
+          },
+          "style": "powerline",
+          "type": "go"
         },
         {
-          "type": "node",
-          "style": "powerline",
           "foreground": "#76b367",
           "properties": {
-            "prefix": "\u005b\uE718 ",
-            "postfix": "\u005D "
-          }
+            "template": "[\ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}] "
+          },
+          "style": "powerline",
+          "type": "node"
         },
         {
-          "type": "ruby",
-          "style": "powerline",
           "foreground": "#f44336",
           "properties": {
-            "prefix": "\u005b\uE791",
-            "postfix": "\u005D "
-          }
+            "template": "[\ue791{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] "
+          },
+          "style": "powerline",
+          "type": "ruby"
         },
         {
-          "type": "java",
-          "style": "powerline",
           "foreground": "#ea2d2e",
           "properties": {
-            "prefix": "\u005b\uE738 ",
-            "postfix": "\u005D "
-          }
+            "template": "[\ue738 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] "
+          },
+          "style": "powerline",
+          "type": "java"
         },
         {
-          "type": "julia",
-          "style": "powerline",
           "foreground": "#4063D8",
           "properties": {
-            "prefix": " \uE624 "
-          }
+            "template": " \ue624 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+          },
+          "style": "powerline",
+          "type": "julia"
         },
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#FFD54F",
           "properties": {
-            "prefix": "",
-            "text": "\u276F"
-          }
+            "template": "\u276f "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "version": 1
 }

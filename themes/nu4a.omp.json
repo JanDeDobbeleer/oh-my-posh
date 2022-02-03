@@ -1,96 +1,96 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "final_space": true,
-  "osc99": false,
-  "console_title": true,
-  "console_title_style": "template",
-  "console_title_template": "{{if .Root}} ⚡ {{end}}{{.UserName}} ➔ 📁{{.Folder}}",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "session",
-          "style": "powerline",
-          "foreground": "#100e23",
           "background": "#cfcfc4",
           "background_templates": [
             "{{if .Root}}#ff3026{{else}}#cfcfc4{{end}}"
           ],
+          "foreground": "#100e23",
           "properties": {
-            "prefix": "",
-            "postfix": "",
             "display_host": false,
-            "template": "{{if .Root}} \uF0E7 {{.UserName}} {{else}} {{.UserName}} {{end}}"
-          }
+            "template": "{{if .Root}} \uf0e7 {{.UserName}} {{else}} {{.UserName}} {{end}}"
+          },
+          "style": "powerline",
+          "type": "session"
         },
         {
-          "type": "path",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#100e23",
           "background": "#ec9706",
+          "foreground": "#100e23",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "home_icon": "\uf7db",
-            "folder_icon": "\uE5FF",
+            "folder_icon": "\ue5ff",
             "folder_separator_icon": "\ue0b9",
-            "mixed_threshold": 8,
-            "style": "mixed",
+            "home_icon": "\uf7db",
             "mapped_locations": {
               "C:\\Users": "\uf007",
               "C:\\Windows": "\ue62a"
-            }
-          }
+            },
+            "mixed_threshold": 8,
+            "style": "mixed",
+            "template": " {{ .Path }} "
+          },
+          "style": "powerline",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#193549",
           "background": "#3feb56",
+          "foreground": "#193549",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "template": "{{ .HEAD }}"
-          }
+            "template": " {{ .HEAD }} "
+          },
+          "style": "powerline",
+          "type": "git"
         },
         {
-          "type": "python",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#100e23",
           "background": "#906cff",
+          "foreground": "#100e23",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "prefix": " \uE235 "
-          }
+            "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} "
+          },
+          "style": "powerline",
+          "type": "python"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "rprompt",
       "alignment": "right",
       "segments": [
         {
-          "type": "exit",
-          "style": "diamond",
-          "leading_diamond": "\ue0c2",
-          "trailing_diamond": "\ue0c0",
-          "foreground": "#ffffff",
           "background": "#ff4040",
+          "foreground": "#ffffff",
+          "leading_diamond": "\ue0c2",
           "properties": {
-            "template": "\ue70f"
-          }
+            "template": " \ue70f "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0c0",
+          "type": "exit"
         },
         {
-          "type": "executiontime",
-          "style": "diamond",
-          "foreground": "#fafafa",
           "background": "#2f2f2f",
+          "foreground": "#fafafa",
           "leading_diamond": "\ue0b2",
           "properties": {
-            "style": "austin"
-          }
+            "style": "austin",
+            "template": " {{ .FormattedMs }} "
+          },
+          "style": "diamond",
+          "type": "executiontime"
         }
-      ]
+      ],
+      "type": "rprompt"
     }
-  ]
+  ],
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}} \u26a1 {{end}}{{.UserName}} \u2794 📁{{.Folder}}",
+  "final_space": true,
+  "version": 1
 }

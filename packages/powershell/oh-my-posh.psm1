@@ -109,6 +109,10 @@ function Sync-PoshArtifacts {
         return
     }
     $poshVersion = & $executable --version
+    if ($poshVersion -eq "development") {
+        Write-Warning "omp development version detected"
+        return
+    }
     if ($poshVersion -eq $Version) {
         return
     }

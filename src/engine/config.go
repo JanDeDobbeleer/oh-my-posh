@@ -61,16 +61,21 @@ type TransientPrompt struct {
 	Foreground string `json:"foreground,omitempty"`
 }
 
+func (cfg *Config) print(message string) {
+	if cfg.eval {
+		fmt.Printf("echo \"%s\"", message)
+		return
+	}
+	fmt.Println(message)
+}
+
 func (cfg *Config) exitWithError(err error) {
 	if err == nil {
 		return
 	}
 	defer os.Exit(1)
-	if cfg.eval {
-		fmt.Println("echo \"Oh My Posh Error:\n\"", err.Error())
-		return
-	}
-	fmt.Println("Oh My Posh Error:\n", err.Error())
+	message := "Oh My Posh Error:\n\n" + err.Error()
+	cfg.print(message)
 }
 
 // LoadConfig returns the default configuration including possible user overrides
@@ -78,9 +83,7 @@ func LoadConfig(env environment.Environment) *Config {
 	cfg := loadConfig(env)
 	// only migrate automatically when the switch isn't set
 	if !*env.Args().Migrate && cfg.Version != configVersion {
-		cfg.Backup()
-		cfg.Migrate(env)
-		cfg.Write()
+		cfg.BackupAndMigrate(env)
 	}
 	return cfg
 }
@@ -173,7 +176,14 @@ func (cfg *Config) Export(format string) string {
 	return prefix + escapeGlyphs(result.String())
 }
 
-func (cfg *Config) Write() {
+func (cfg *Config) BackupAndMigrate(env environment.Environment) {
+	origin := cfg.backup()
+	cfg.Migrate(env)
+	cfg.write()
+	cfg.print(fmt.Sprintf("\nOh My Posh config migrated to version %d\nBackup config available at %s\n\n", cfg.Version, origin))
+}
+
+func (cfg *Config) write() {
 	content := cfg.Export(cfg.format)
 	f, err := os.OpenFile(cfg.origin, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	cfg.exitWithError(err)
@@ -184,7 +194,7 @@ func (cfg *Config) Write() {
 	}
 }
 
-func (cfg *Config) Backup() {
+func (cfg *Config) backup() string {
 	dst := cfg.origin + ".bak"
 	source, err := os.Open(cfg.origin)
 	cfg.exitWithError(err)
@@ -194,6 +204,7 @@ func (cfg *Config) Backup() {
 	defer destination.Close()
 	_, err = io.Copy(destination, source)
 	cfg.exitWithError(err)
+	return dst
 }
 
 func escapeGlyphs(s string) string {

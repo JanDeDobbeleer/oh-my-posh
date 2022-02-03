@@ -167,9 +167,7 @@ func main() {
 	}
 	if *args.Migrate {
 		if *args.Write {
-			cfg.Backup()
-			cfg.Migrate(env)
-			cfg.Write()
+			cfg.BackupAndMigrate(env)
 			return
 		}
 		cfg.Migrate(env)

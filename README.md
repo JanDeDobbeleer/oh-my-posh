@@ -10,6 +10,10 @@
 
 ![Twitter][twitter]
 
+This repo was made with love using GitKraken.
+
+[![GitKraken shield][kraken]][kraken-ref]
+
 What started as the offspring of [oh-my-posh2][oh-my-posh2] for PowerShell resulted in a cross platform,
 highly customizable and extensible prompt theme engine. After 4 years of working on oh-my-posh,
 a modern and more efficient tool was needed to suit my personal needs.
@@ -50,6 +54,8 @@ using Go (and the amazing [README][powerline-go])
 [powershell-gallery]: https://www.powershellgallery.com/packages/oh-my-posh/
 [gh-downloads]: https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads
 [twitter]: https://shields.io/twitter/follow/jandedobbeleer?label=Follow
+[kraken]: https://img.shields.io/badge/GitKraken-Legendary%20Git%20Tools-teal?style=plastic&logo=gitkraken
+[kraken-ref]: https://www.gitkraken.com/invite/nQmDPR9D
 [oh-my-posh2]: https://github.com/JanDeDobbeleer/oh-my-posh2
 [patreon-badge]: https://img.shields.io/badge/Support-Become%20a%20Patreon!-red.svg
 [patreon]: https://www.patreon.com/jandedobbeleer

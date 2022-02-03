@@ -3,12 +3,12 @@ package engine
 import (
 	"bytes"
 	json2 "encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"oh-my-posh/color"
 	"oh-my-posh/console"
 	"oh-my-posh/environment"
+	"oh-my-posh/properties"
 	"os"
 	"path/filepath"
 	"strings"
@@ -93,7 +93,7 @@ func loadConfig(env environment.Environment) *Config {
 	configFile := *env.Args().Config
 	cfg.eval = *env.Args().Eval
 	if configFile == "" {
-		cfg.exitWithError(errors.New("NO CONFIG"))
+		return defaultConfig()
 	}
 	if _, err := os.Stat(configFile); os.IsNotExist(err) {
 		cfg.exitWithError(err)
@@ -219,4 +219,70 @@ func escapeGlyphs(s string) string {
 		builder.WriteString(quoted)
 	}
 	return builder.String()
+}
+
+func defaultConfig() *Config {
+	cfg := &Config{
+		Version:    1,
+		FinalSpace: true,
+		Blocks: []*Block{
+			{
+				Type:      Prompt,
+				Alignment: Left,
+				Segments: []*Segment{
+					{
+						Type:            SESSION,
+						Style:           Diamond,
+						Background:      "#c386f1",
+						Foreground:      "#ffffff",
+						LeadingDiamond:  "\uE0B6",
+						TrailingDiamond: "\uE0B0",
+					},
+					{
+						Type:            PATH,
+						Style:           Powerline,
+						PowerlineSymbol: "\uE0B0",
+						Background:      "#ff479c",
+						Foreground:      "#ffffff",
+						Properties: properties.Map{
+							properties.Style: "folder",
+						},
+					},
+					{
+						Type:            SHELL,
+						Style:           Powerline,
+						PowerlineSymbol: "\uE0B0",
+						Background:      "#0077c2",
+						Foreground:      "#ffffff",
+					},
+					{
+						Type:            TEXT,
+						Style:           Powerline,
+						PowerlineSymbol: "\uE0B0",
+						Background:      "#ffffff",
+						Foreground:      "#111111",
+						Properties: properties.Map{
+							properties.SegmentTemplate: " no config ",
+						},
+					},
+					{
+						Type:            EXIT,
+						Style:           Diamond,
+						Background:      "#2e9599",
+						Foreground:      "#ffffff",
+						LeadingDiamond:  "<transparent,background>\uE0B0</>",
+						TrailingDiamond: "\uE0B4",
+						BackgroundTemplates: []string{
+							"{{ if gt .Code 0 }}#f1184c{{ end }}",
+						},
+						Properties: properties.Map{
+							properties.AlwaysEnabled:   true,
+							properties.SegmentTemplate: " \uE23A",
+						},
+					},
+				},
+			},
+		},
+	}
+	return cfg
 }

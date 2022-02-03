@@ -1,61 +1,62 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "final_space": true,
-  "osc99": true,
-  "console_title": true,
-  "console_title_style": "template",
-  "console_title_template": "{{.Folder}}{{if .Root}} :: root{{end}} :: {{.Shell}}",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "root",
-          "style": "plain",
           "foreground": "yellow",
           "properties": {
-            "template": ""
-          }
+            "template": " \ue0a2 "
+          },
+          "style": "plain",
+          "type": "root"
         },
         {
-          "type": "path",
-          "style": "diamond",
-          "foreground": "black",
           "background": "lightBlue",
-          "leading_diamond": "",
-          "trailing_diamond": "\uE0B0",
+          "foreground": "black",
+          "leading_diamond": "\ue0b6",
           "properties": {
-            "style": "mixed"
-          }
+            "style": "mixed",
+            "template": " {{ .Path }} "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "black",
           "background": "green",
           "background_templates": [
             "{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}"
           ],
+          "foreground": "black",
+          "powerline_symbol": "\ue0b0",
           "properties": {
+            "branch_ahead_icon": "\u2191",
+            "branch_behind_icon": "\u2193",
+            "branch_gone": "\u2262",
+            "branch_icon": "\ue0a0 ",
+            "branch_identical_icon": "\u2261",
+            "cherry_pick_icon": "\u2713 ",
+            "commit_icon": "\u25b7 ",
             "fetch_status": true,
-            "template": "{{ .HEAD }}{{ if .Staging.Changed }} {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}",
-            "branch_icon": " ",
-            "branch_identical_icon": "≡",
-            "branch_ahead_icon": "↑",
-            "branch_behind_icon": "↓",
-            "branch_gone": "≢",
-            "stash_count_icon": "",
-            "commit_icon": "▷ ",
-            "tag_icon": "▶ ",
-            "rebase_icon": "Ɫ ",
-            "cherry_pick_icon": "✓ ",
-            "merge_icon": "◴ ",
-            "no_commits_icon": "[no commits]"
-          }
+            "merge_icon": "\u25f4 ",
+            "no_commits_icon": "[no commits]",
+            "rebase_icon": "\u2c62 ",
+            "tag_icon": "\u25b6 ",
+            "template": " {{ .HEAD }}{{ if .Staging.Changed }} {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }} "
+          },
+          "style": "powerline",
+          "type": "git"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{.Folder}}{{if .Root}} :: root{{end}} :: {{.Shell}}",
+  "final_space": true,
+  "osc99": true,
+  "version": 1
 }

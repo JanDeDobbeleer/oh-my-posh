@@ -1,75 +1,65 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "final_space": true,
-  "console_title": true,
-  "console_title_style": "template",
-  "console_title_template": "{{if .Root}}root :: {{end}}{{.Shell}} :: {{.Folder}}",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "text",
-          "style": "diamond",
-          "leading_diamond": "\ue0c2\ue0c2",
+          "background": "#4707a8",
           "foreground": "#000000",
-          "background": "#4707a8",
+          "leading_diamond": "\ue0c2\ue0c2",
           "properties": {
-            "text": "",
-            "postfix": "",
-            "prefix": ""
-          }
-        },
-        {
-          "type": "session",
+            "template": ""
+          },
           "style": "diamond",
-          "foreground": "#ffffff",
-          "background": "#4707a8",
-          "leading_diamond": "\uE0B6",
-          "trailing_diamond": "\uE0B0",
-          "properties": {
-            "template": "{{ .UserName }}@{{ .HostName }}"
-          }
+          "type": "text"
         },
         {
-          "type": "az",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
+          "background": "#4707a8",
           "foreground": "#ffffff",
+          "leading_diamond": "\ue0b6",
+          "properties": {
+            "template": " {{ .UserName }}@{{ .HostName }} "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "type": "session"
+        },
+        {
           "background": "#1a1af5",
-          "properties": {
-            "prefix": " \uFD03 "
-          }
-        },
-
-        {
-          "type": "exit",
-          "style": "diamond",
           "foreground": "#ffffff",
-          "background": "#4707a8",
-          "background_templates": ["{{ if gt .Code 0 }}#f1184c{{ end }}"],
-          "leading_diamond": "",
-          "trailing_diamond": "\uE0B4",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "template": " \uE23A",
+            "template": " \ufd03 {{ .Name }} "
+          },
+          "style": "powerline",
+          "type": "az"
+        },
+        {
+          "background": "#4707a8",
+          "background_templates": [
+            "{{ if gt .Code 0 }}#f1184c{{ end }}"
+          ],
+          "foreground": "#ffffff",
+          "properties": {
             "always_enabled": true,
-            "prefix": "<transparent>\uE0B0</>"
-          }
+            "template": "<transparent>\ue0b0</>\ue23a "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "type": "exit"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "os",
-          "style": "diamond",
-          "leading_diamond": "\ue0c2\ue0c2",
-          "foreground": "#000000",
           "background": "#ffffff",
+          "foreground": "#000000",
+          "leading_diamond": "\ue0c2\ue0c2",
           "properties": {
             "alpine": "\uf300",
             "arch": "\uf303",
@@ -84,41 +74,38 @@
             "mint": "\uf30f",
             "opensuse": "\uf314",
             "raspbian": "\uf315",
+            "template": " {{ if .WSL }}\ue712 on {{ end }}{{ .Icon }}<#000000> \ue0b1</>",
             "ubuntu": "\uf31c",
-            "windows": "\ue70f",
-            "postfix": "<#000000> \ue0b1</>",
-            "template": "{{ if .WSL }}\ue712 on {{ end }}{{ .Icon }}"
-          }
-        },
-
-        {
-          "type": "root",
+            "windows": "\ue70f"
+          },
           "style": "diamond",
-          "foreground": "#ffffff",
+          "type": "os"
+        },
+        {
           "background": "#000000",
+          "foreground": "#ffffff",
           "properties": {
-            "template": "\uF0E7",
-            "postfix": "<#ffffff> \ue0b1</>"
-          }
+            "template": " \uf0e7<#ffffff> \ue0b1</>"
+          },
+          "style": "diamond",
+          "type": "root"
         },
         {
-          "type": "path",
-          "style": "diamond",
-          "foreground": "#000000",
           "background": "#ffffff",
+          "foreground": "#000000",
           "properties": {
-            "prefix": "<#000000> \ue5ff </>",
-            "style": "agnoster_short",
-            "home_icon": "\uF7DB ",
             "folder_icon": "<#000000>\ue5fe </>",
-            "folder_separator_icon": "<#000000>\uE0B1 </>"
-          }
+            "folder_separator_icon": "<#000000>\ue0b1 </>",
+            "home_icon": "\uf7db ",
+            "style": "agnoster_short",
+            "template": "<#000000> \ue5ff </>{{ .Path }} "
+          },
+          "style": "diamond",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "diamond",
-          "foreground": "#000000",
           "background": "#ffffff",
+          "foreground": "#000000",
           "foreground_templates": [
             "{{ if or (.Working.Changed) (.Staging.Changed) }}#ffea00{{ end }}",
             "{{ if gt .Ahead 0 }}#2EC4B6{{ end }}",
@@ -126,46 +113,53 @@
           ],
           "properties": {
             "fetch_stash_count": true,
-            "fetch_upstream_icon": true,
             "fetch_status": true,
-            "prefix": "<#000000>\ue0b1 </>",
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }}<#2FDA4E> \uF046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }}<#E84855> \uF044 {{ .Working.String }}</>{{ end }}"
-          }
+            "fetch_upstream_icon": true,
+            "template": "<#000000>\ue0b1 </>{{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }}<#2FDA4E> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }}<#E84855> \uf044 {{ .Working.String }}</>{{ end }} "
+          },
+          "style": "diamond",
+          "type": "git"
         },
         {
-          "type": "terraform",
-          "style": "powerline",
-          "powerline_symbol": "",
+          "background": "#ffffff",
           "foreground": "#000000",
-          "background": "#ffffff"
+          "properties": {
+            "template": " {{ .WorkspaceName }} "
+          },
+          "style": "powerline",
+          "type": "terraform"
         },
         {
-          "type": "text",
+          "background": "#ffffff",
+          "foreground": "#000000",
+          "properties": {
+            "template": ""
+          },
           "style": "diamond",
           "trailing_diamond": "\ue0b0",
-          "foreground": "#000000",
-          "background": "#ffffff",
-          "properties": {
-            "text": "",
-            "postfix": "",
-            "prefix": ""
-          }
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#1a1af5",
           "properties": {
-            "text": "\u276F"
-          }
+            "template": " \u276f "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}}root :: {{end}}{{.Shell}} :: {{.Folder}}",
+  "final_space": true,
+  "version": 1
 }

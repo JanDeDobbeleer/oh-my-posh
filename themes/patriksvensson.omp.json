@@ -1,38 +1,32 @@
 {
-  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh3/main/themes/schema.json",
-  "final_space": true,
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "root",
-          "style": "plain",
-          "powerline_symbol": "\uE0B0",
           "foreground": "red",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "prefix": "",
-            "template": "\uF0E7"
-          }
+            "template": "\uf0e7 "
+          },
+          "style": "plain",
+          "type": "root"
         },
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "blue",
           "properties": {
-            "prefix": "",
-            "postfix": "",
-            "home_icon": "\uF7DB",
-            "folder_icon": "\uE5FF",
+            "folder_icon": "\ue5ff",
             "folder_separator_icon": "/",
-            "style": "agnoster"
-          }
+            "home_icon": "\uf7db",
+            "style": "agnoster",
+            "template": "{{ .Path }}"
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "green",
           "foreground_templates": [
             "{{ if or (.Working.Changed) (.Staging.Changed) }}yellow{{ end }}",
@@ -41,50 +35,51 @@
             "{{ if gt .Behind 0 }}green{{ end }}"
           ],
           "properties": {
-            "fetch_status": true,
             "fetch_stash_count": true,
+            "fetch_status": true,
             "fetch_upstream_icon": true,
-            "prefix": " on ",
-            "postfix": "",
-            "github_icon": " ",
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<red> \uF044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<yellow> \uF046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
-          }
+            "github_icon": "\uf408 ",
+            "template": " on {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<red> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<yellow> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}"
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "dotnet",
-          "style": "plain",
           "foreground": "magenta",
           "properties": {
-            "prefix": " [.NET] "
-          }
+            "template": " [.NET] {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} "
+          },
+          "style": "plain",
+          "type": "dotnet"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "time",
-          "style": "plain",
           "foreground": "yellow",
           "properties": {
-            "prefix": "",
+            "template": "{{ .CurrentDate | date .Format }} ",
             "time_format": "15:04:05"
-          }
+          },
+          "style": "plain",
+          "type": "time"
         },
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "green",
           "properties": {
-            "prefix": "",
-            "postfix": "",
-            "text": "\u276F"
-          }
+            "template": "\u276f"
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "final_space": true,
+  "version": 1
 }

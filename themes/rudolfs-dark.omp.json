@@ -2,71 +2,72 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "root",
-          "style": "plain",
+          "background": "#BF231D",
           "foreground": "#ffffff",
-          "background": "#BF231D"
+          "properties": {
+            "template": " \uf0e7 "
+          },
+          "style": "plain",
+          "type": "root"
         },
         {
-          "type": "os",
-          "style": "plain",
           "background": "#0A703E",
           "foreground": "#ffffff",
           "properties": {
-            "template": "{{ .Icon }}"
-          }
+            "template": " {{ .Icon }} "
+          },
+          "style": "plain",
+          "type": "os"
         },
         {
-          "type": "session",
-          "style": "plain",
           "background": "#0A703E",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": "",
-            "template": "{{ .UserName }}"
-          }
+            "template": "{{ .UserName }} "
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "path",
-          "style": "plain",
-          "foreground": "#ffffff",
           "background": "#256C9D",
+          "foreground": "#ffffff",
           "properties": {
+            "folder_icon": "\uf115",
+            "folder_separator_icon": " \ue0b1 ",
             "max_depth": 2,
-            "folder_icon": "\uF115",
-            "folder_separator_icon": " \uE0B1 ",
-            "style": "agnoster_short"
-          }
+            "style": "agnoster_short",
+            "template": " {{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
-          "foreground": "#ffffff",
           "background": "#256C9D",
+          "foreground": "#ffffff",
           "properties": {
-            "fetch_status": true,
-            "fetch_stash_count": false,
             "branch_max_length": 30,
+            "fetch_stash_count": false,
+            "fetch_status": true,
             "fetch_upstream_icon": true,
-            "prefix": "[ ",
-            "postfix": " ]",
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
-          }
+            "template": "[ {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ]"
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#256C9D",
           "properties": {
-            "prefix": "",
-            "text": "\uE0B0"
-          }
+            "template": "\ue0b0 "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "version": 1
 }

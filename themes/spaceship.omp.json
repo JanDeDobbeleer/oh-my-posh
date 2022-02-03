@@ -1,65 +1,55 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "final_space": true,
-  "osc99": false,
-  "console_title": false,
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
-      "horizontal_offset": 0,
-      "vertical_offset": 0,
       "segments": [
         {
-          "type": "session",
-          "style": "plain",
-          "invert_powerline": false,
           "foreground": "lightYellow",
           "properties": {
-            "prefix": "",
-            "template": "{{ .UserName }}"
-          }
+            "template": "{{ .UserName }} "
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "path",
-          "style": "plain",
-          "invert_powerline": false,
           "foreground": "cyan",
           "properties": {
-            "prefix": "<#ffffff>in</> ",
-            "style": "folder"
-          }
+            "style": "folder",
+            "template": "<#ffffff>in</> {{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
-          "invert_powerline": false,
           "foreground": "#ff94df",
           "properties": {
-            "branch_icon": " <#ff94df><b> </b></>",
+            "branch_icon": " <#ff94df><b>\ue0a0 </b></>",
             "fetch_stash_count": true,
-            "prefix": "<#ffffff>on</> ",
-            "template": "{{ .HEAD }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}"
-          }
+            "template": "<#ffffff>on</> {{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+          },
+          "style": "plain",
+          "type": "git"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "lightGreen",
           "properties": {
-            "prefix": "",
-            "text": "\u276F",
-            "postfix": ""
-          }
+            "template": "\u276f"
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "final_space": true,
+  "version": 1
 }

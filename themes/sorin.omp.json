@@ -2,67 +2,68 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "exit",
-          "style": "plain",
           "foreground": "#CB4B16",
           "properties": {
-            "template": "{{ .Text }}"
-          }
+            "template": " {{ .Text }} "
+          },
+          "style": "plain",
+          "type": "exit"
         },
         {
-          "type": "root",
+          "foreground": "#CECE04",
+          "properties": {
+            "template": " \uf0e7 "
+          },
           "style": "plain",
-          "foreground": "#CECE04"
+          "type": "root"
         },
         {
-          "type": "session",
-          "style": "plain",
           "foreground": "#FFFFFF",
           "properties": {
-            "prefix": "",
-            "template": "{{ .UserName }}@{{ .HostName }}"
-          }
+            "template": "{{ .UserName }}@{{ .HostName }} "
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "#0973C0",
           "properties": {
             "style": "full",
-            "prefix": ""
-          }
+            "template": "{{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
         },
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "#C1C106",
           "properties": {
-            "prefix": "<#ffffff>git:</>",
-            "template": "{{ .HEAD }}"
-          }
+            "template": "<#ffffff>git:</>{{ .HEAD }} "
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "python",
-          "style": "plain",
           "foreground": "#100e23",
           "properties": {
-            "prefix": " \uE235 "
-          }
+            "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} "
+          },
+          "style": "plain",
+          "type": "python"
         },
         {
-          "type": "text",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": "",
-            "text": "<#CB4B16>\u276F</><#CACA02>\u276F</><#4E9A06>\u276F</>"
-          }
+            "template": "<#CB4B16>\u276f</><#CACA02>\u276f</><#4E9A06>\u276f</> "
+          },
+          "style": "plain",
+          "type": "text"
         }
-      ]
+      ],
+      "type": "prompt"
     }
-  ]
+  ],
+  "version": 1
 }

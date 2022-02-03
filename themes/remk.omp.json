@@ -2,54 +2,53 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "session",
-          "style": "diamond",
-          "foreground": "#ffffff",
           "background": "lightMagenta",
-          "leading_diamond": "\uE0B6",
-          "trailing_diamond": "",
-          "properties": {
-            "prefix": "",
-            "template": "{{ .UserName }}"
-          }
-        },
-        {
-          "type": "path",
-          "style": "plain",
-          "foreground": "#3f3f3f",
-          "background": "lightYellow",
-          "properties": {
-            "style": "folder"
-          }
-        },
-        {
-          "type": "git",
-          "style": "plain",
           "foreground": "#ffffff",
+          "leading_diamond": "\ue0b6",
+          "properties": {
+            "template": "{{ .UserName }} "
+          },
+          "style": "diamond",
+          "type": "session"
+        },
+        {
+          "background": "lightYellow",
+          "foreground": "#3f3f3f",
+          "properties": {
+            "style": "folder",
+            "template": " {{ .Path }} "
+          },
+          "style": "plain",
+          "type": "path"
+        },
+        {
           "background": "lightCyan",
+          "foreground": "#ffffff",
           "properties": {
             "branch_icon": "",
-            "prefix": " git(",
-            "postfix": ") ",
-            "template": "{{ .HEAD }}"
-          }
+            "template": " git({{ .HEAD }}) "
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "time",
-          "style": "diamond",
-          "trailing_diamond": "\uE0B0",
-          "foreground": "#ffffff",
           "background": "lightGreen",
+          "foreground": "#ffffff",
           "properties": {
+            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04"
-          }
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "type": "time"
         }
-      ]
+      ],
+      "type": "prompt"
     }
   ],
-  "final_space": true
+  "final_space": true,
+  "version": 1
 }

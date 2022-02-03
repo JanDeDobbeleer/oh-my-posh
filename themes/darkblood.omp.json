@@ -2,67 +2,60 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "session",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": "<#CB4B16>┏[</>",
-            "postfix": "<#CB4B16>]</>",
-            "template": "{{ .UserName }}"
-          }
+            "template": "<#CB4B16>\u250f[</>{{ .UserName }}<#CB4B16>]</>"
+          },
+          "style": "plain",
+          "type": "session"
         },
         {
-          "type": "git",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": "<#CB4B16>[</>",
-            "postfix": "<#CB4B16>]</>",
-            "template": "{{ .HEAD }}"
-          }
+            "template": "<#CB4B16>[</>{{ .HEAD }}<#CB4B16>]</>"
+          },
+          "style": "plain",
+          "type": "git"
         },
         {
-          "type": "root",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "prefix": "<#CB4B16>[</>",
-            "postfix": "<#CB4B16>]</>"
-          }
+            "template": "<#CB4B16>[</>\uf0e7<#CB4B16>]</>"
+          },
+          "style": "plain",
+          "type": "root"
         },
         {
-          "type": "exit",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
-            "template": "{{ .Text }}",
-            "prefix": "<#CB4B16>[x</>",
-            "postfix": "<#CB4B16>]</>"
-          }
+            "template": "<#CB4B16>[x</>{{ .Text }}<#CB4B16>]</>"
+          },
+          "style": "plain",
+          "type": "exit"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "prompt",
       "alignment": "left",
       "newline": true,
       "segments": [
         {
-          "type": "path",
-          "style": "plain",
           "foreground": "#ffffff",
           "properties": {
             "style": "full",
-            "prefix": "<#CB4B16>┖[</>",
-            "postfix": "<#CB4B16>]></>"
-          }
+            "template": "<#CB4B16>\u2516[</>{{ .Path }}<#CB4B16>]></>"
+          },
+          "style": "plain",
+          "type": "path"
         }
-      ]
+      ],
+      "type": "prompt"
     }
   ],
-  "final_space": true
+  "final_space": true,
+  "version": 1
 }

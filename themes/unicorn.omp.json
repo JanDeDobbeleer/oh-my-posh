@@ -97,7 +97,7 @@
   ],
   "console_title": true,
   "console_title_style": "template",
-  "console_title_template": "{{.UserName}}@{{.HostName}} in {{ .Path }}",
+  "console_title_template": "{{.UserName}}@{{.HostName}} in {{ .PWD }}",
   "final_space": true,
   "version": 1
 }

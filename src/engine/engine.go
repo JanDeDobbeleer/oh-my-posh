@@ -8,6 +8,7 @@ import (
 	"oh-my-posh/template"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 type Engine struct {
@@ -92,6 +93,20 @@ func (e *Engine) renderBlock(block *Block) {
 	if !block.enabled() {
 		return
 	}
+	shouldFill := func(blockLength int) (string, bool) {
+		if len(block.Filler) == 0 {
+			return "", false
+		}
+		if terminalWidth, err := e.Env.TerminalWidth(); err == nil && terminalWidth > 0 {
+			padLength := terminalWidth - e.currentLineLength - blockLength
+			var filler string
+			for utf8.RuneCountInString(filler) < padLength {
+				filler += block.Filler
+			}
+			return filler, true
+		}
+		return "", false
+	}
 	if block.Newline {
 		e.newline()
 	}
@@ -107,10 +122,13 @@ func (e *Engine) renderBlock(block *Block) {
 		}
 		switch block.Alignment {
 		case Right:
-			e.writeANSI(e.Ansi.CarriageForward())
 			text, length := block.renderSegments()
-			e.currentLineLength += length
+			if padText, OK := shouldFill(length); OK {
+				e.write(padText)
+			}
+			e.writeANSI(e.Ansi.CarriageForward())
 			e.writeANSI(e.Ansi.GetCursorForRightWrite(length, block.HorizontalOffset))
+			e.currentLineLength = 0
 			e.write(text)
 		case Left:
 			text, length := block.renderSegments()

@@ -34,6 +34,7 @@ type Block struct {
 	VerticalOffset   int            `json:"vertical_offset,omitempty"`
 	Segments         []*Segment     `json:"segments,omitempty"`
 	Newline          bool           `json:"newline,omitempty"`
+	Filler           string         `json:"filler,omitempty"`
 
 	env                   environment.Environment
 	writer                color.Writer

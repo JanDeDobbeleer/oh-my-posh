@@ -145,6 +145,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://github.com/markbullplus"><img src="https://avatars.githubusercontent.com/u/88931495?v=4?s=100" width="100px;" alt=""/><br /><sub><b>markbull</b></sub></a><br /><a href="#design-markbullplus" title="Design">🎨</a></td>
     <td align="center"><a href="https://github.com/brian6932"><img src="https://avatars.githubusercontent.com/u/18603393?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Brian</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=brian6932" title="Code">💻</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="http://www.patrickhyatt.com"><img src="https://avatars.githubusercontent.com/u/296125?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Patrick Hyatt</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=patHyatt" title="Documentation">📖</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->

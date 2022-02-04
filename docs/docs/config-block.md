@@ -25,8 +25,7 @@ Let's take a closer look at what defines a block.
 - type: `prompt` | `rprompt`
 - newline: `boolean`
 - alignment: `left` | `right`
-- vertical_offset: `int`
-- horizontal_offset: `int`
+- filler: `string`
 - segments: `array` of one or more `segments`
 
 ### Type
@@ -45,15 +44,15 @@ Start the block on a new line - defaults to `false`.
 
 Tell the engine if the block should be left or right-aligned.
 
-### Vertical offset
+### Filler
 
-Move the block up or down x lines. For example, `vertical_offset: 1` moves the prompt down one line, `vertical_offset: -1`
-moves it up one line.
+When you want to join a right and left aligned block with a repeated set of characters, add the character
+to be repeated to this property. Add this property to the _left_ aligned block.
 
-### Horizontal offset
-
-Moves the segment to the left or the right to have it exactly where you want it to be. Works like `vertical_offset`
-but on a horizontal level where a negative number moves the block left and a positive number right.
+```json
+"alignment": "left",
+"filler": "."
+```
 
 ### Segments
 

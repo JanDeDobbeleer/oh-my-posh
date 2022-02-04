@@ -24,6 +24,9 @@ func (cfg *Config) Migrate(env environment.Environment) {
 	for _, segment := range cfg.Tooltips {
 		segment.migrate(env, cfg.Version)
 	}
+	if strings.Contains(cfg.ConsoleTitleTemplate, ".Path") {
+		cfg.ConsoleTitleTemplate = strings.ReplaceAll(cfg.ConsoleTitleTemplate, ".Path", ".PWD")
+	}
 	cfg.updated = true
 	cfg.Version = configVersion
 }

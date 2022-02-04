@@ -383,3 +383,22 @@ func TestMigratePreAndPostfix(t *testing.T) {
 		assert.NotContains(t, segment.Properties, "postfix", tc.Case)
 	}
 }
+
+func TestMigrateConfig(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Template string
+	}{
+		{Case: "Path", Expected: "{{ .PWD }}", Template: "{{ .Path }}"},
+		{Case: "No Path", Expected: "foo", Template: "foo"},
+		{Case: "Empty", Expected: "", Template: ""},
+	}
+	for _, tc := range cases {
+		cfg := &Config{
+			ConsoleTitleTemplate: tc.Template,
+		}
+		cfg.Migrate(&mock.MockedEnvironment{})
+		assert.Equal(t, tc.Expected, cfg.ConsoleTitleTemplate, tc.Case)
+	}
+}

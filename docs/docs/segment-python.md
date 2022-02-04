@@ -36,8 +36,8 @@ or not - defaults to `true`
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when `*.py`, `*.ipynb`, `pyproject.toml`, `venv.bak`, `venv`, or `.venv`
-    files are present (default)
-  - `environment`: the segment is only displayed when a virtual env is present
+    files are present
+  - `environment`: the segment is only displayed when a virtual env is present (default)
   - `context`: the segment is only displayed when either `environment` or `files` is active
 
 ## Template ([info][templates])

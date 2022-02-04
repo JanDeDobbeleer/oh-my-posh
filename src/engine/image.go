@@ -30,6 +30,7 @@ import (
 	"oh-my-posh/regex"
 	"strconv"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/esimov/stackblur-go"
 	"github.com/fogleman/gg"
@@ -266,9 +267,8 @@ func (ir *ImageRenderer) lenWithoutANSI(text string) int {
 		text = strings.ReplaceAll(text, match[str], "")
 	}
 	stripped := regex.ReplaceAllString(ansiRegex, text, "")
-	runeText := []rune(stripped)
-	length := len(runeText)
-	for _, rune := range runeText {
+	length := utf8.RuneCountInString(stripped)
+	for _, rune := range stripped {
 		length += ir.runeAdditionalWidth(rune)
 	}
 	return length

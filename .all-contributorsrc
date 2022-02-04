@@ -944,6 +944,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "markbullplus",
+      "name": "markbull",
+      "avatar_url": "https://avatars.githubusercontent.com/u/88931495?v=4",
+      "profile": "https://github.com/markbullplus",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

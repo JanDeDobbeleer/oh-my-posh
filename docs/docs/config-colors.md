@@ -45,7 +45,7 @@ If you also wanted to change the background color in the previous command, you w
 "template": "<#CB4B16,#FFFFFF>┏[</>",
 ```
 
-To change *only* the background color, just omit the first color from the above string:
+To change _only_ the background color, just omit the first color from the above string:
 
 ```json
 "template": "<,#FFFFFF>┏[</>",
@@ -54,11 +54,11 @@ To change *only* the background color, just omit the first color from the above 
 ## Palette
 
 If your theme defined the Palette, you can use the _Palette reference_ `p:<palette key>` in places where the
-__Standard color__ is expected.
+**Standard color** is expected.
 
 ### Defining a Palette
 
-Palette is a set of named __Standard colors__. To use a Palette, define a `"palette"` object
+Palette is a set of named **Standard colors**. To use a Palette, define a `"palette"` object
 at the top level of your theme:
 
 ```json
@@ -84,12 +84,12 @@ at the top level of your theme:
 ```
 
 Color names (palette keys) can have any string value, so be creative.
-Color values, on the other hand, should adhere to the __Standard color__ format.
+Color values, on the other hand, should adhere to the **Standard color** format.
 
 ### Using a Palette
 
 You can now _Palette references_ in any [Segment's][segment] `foreground`, `foreground_templates`,
-`background`, `background_templates` properties, and other config properties that expect __Standard color__ value.
+`background`, `background_templates` properties, and other config properties that expect **Standard color** value.
 _Palette reference_ format is `p:<palette key>`. Take a look at the [Git][git] segment using _Palette references_:
 
 ```json
@@ -113,9 +113,9 @@ Having all of the colors defined in one place allows you to import existing colo
 tweaking to adhere to the format), easily change colors of multiple segments at once, and have a more
 organized theme overall. Be creative!
 
-### _Palette references_ and __Standard colors__
+### _Palette references_ and **Standard colors**
 
-Using Palette does not interfere with using __Standard colors__ in your theme. You can still use __Standard colors__
+Using Palette does not interfere with using **Standard colors** in your theme. You can still use **Standard colors**
 everywhere. This can be useful if you want to use a specific color for a single segment element, or in a
 _Color override_ ([Battery segment][battery]):
 
@@ -145,7 +145,7 @@ rendered with incorrect colors, and you are using a Palette, be sure to check th
 
 Palette allows for recursive _Palette reference_ resolution. You can use a _Palette reference_ as a color
 value in Palette. This allows you to define named colors, and use references to those colors as Palette values.
-For example, `p:foreground` and `p:background`  will be correctly set to "#CAF0F80" and "#023E8A":
+For example, `p:foreground` and `p:background` will be correctly set to "#CAF0F80" and "#023E8A":
 
 ```json
     "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",

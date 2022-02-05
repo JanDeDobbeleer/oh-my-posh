@@ -31,7 +31,7 @@
         {
           "foreground": "#ffffff",
           "properties": {
-            "template": "<#CB4B16>[x</>{{ .Text }}<#CB4B16>]</>"
+            "template": "<#CB4B16>[x</>{{ .Meaning }}<#CB4B16>]</>"
           },
           "style": "plain",
           "type": "exit"

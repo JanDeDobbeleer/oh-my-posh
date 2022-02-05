@@ -43,7 +43,7 @@
         {
           "foreground": "#C94A16",
           "properties": {
-            "template": "x{{ .Text }} "
+            "template": "x{{ .Meaning }} "
           },
           "style": "plain",
           "type": "exit"

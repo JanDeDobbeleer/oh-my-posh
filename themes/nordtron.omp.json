@@ -50,7 +50,7 @@
         {
           "foreground": "#d8dee9",
           "properties": {
-            "template": "<#5e81ac>[x</>{{ .Text }}<#5e81ac>]</>"
+            "template": "<#5e81ac>[x</>{{ .Meaning }}<#5e81ac>]</>"
           },
           "style": "plain",
           "type": "exit"

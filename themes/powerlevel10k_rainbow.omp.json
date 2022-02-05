@@ -174,7 +174,7 @@
           "powerline_symbol": "\ue0b2",
           "properties": {
             "always_enabled": true,
-            "template": " {{ if gt .Code 0 }}{{ .Text }}{{ else }}\u2714{{ end }} "
+            "template": " {{ if gt .Code 0 }}{{ .Meaning }}{{ else }}\u2714{{ end }} "
           },
           "style": "powerline",
           "type": "exit"

@@ -90,7 +90,7 @@
           "foreground": "#ffffff",
           "leading_diamond": "<transparent,background>\ue0b0</>",
           "properties": {
-            "template": "<transparent> \uf12a</> {{ .Text }} "
+            "template": "<transparent> \uf12a</> {{ .Meaning }} "
           },
           "style": "diamond",
           "trailing_diamond": "\ue0b0",

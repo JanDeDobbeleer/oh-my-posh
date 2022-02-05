@@ -240,6 +240,14 @@ func TestSegmentTemplateMigration(t *testing.T) {
 			},
 		},
 		{
+			Case:     "EXIT - .Text",
+			Expected: " {{ .Meaning }} ",
+			Type:     EXIT,
+			Props: properties.Map{
+				"template": "{{ .Text }}",
+			},
+		},
+		{
 			Case:     "BATTERY",
 			Expected: ` {{ if not .Error }}{{ $stateList := list "Discharging" "Full" }}{{ if has .State.String $stateList }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ end }}{{ .Error }} `,
 			Type:     BATTERY,

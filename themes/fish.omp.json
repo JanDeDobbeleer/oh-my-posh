@@ -7,7 +7,7 @@
         {
           "foreground": "#ffffff",
           "properties": {
-            "template": " {{ .Text }}"
+            "template": " {{ .Meaning }}"
           },
           "style": "plain",
           "type": "exit"

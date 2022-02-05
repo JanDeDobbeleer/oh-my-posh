@@ -127,6 +127,10 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 		}
 	case EXIT:
 		template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
+		if strings.Contains(template, ".Text") {
+			template = strings.ReplaceAll(template, ".Text", ".Meaning")
+			segment.Properties[properties.SegmentTemplate] = template
+		}
 		alwaysNumeric := properties.Property("always_numeric")
 		if segment.Properties.GetBool(alwaysNumeric, false) {
 			delete(segment.Properties, alwaysNumeric)

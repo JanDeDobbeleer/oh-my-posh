@@ -73,7 +73,7 @@
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "template": "<transparent> \uf12a</> {{ .Text }} "
+            "template": "<transparent> \uf12a</> {{ .Meaning }} "
           },
           "style": "powerline",
           "type": "exit"

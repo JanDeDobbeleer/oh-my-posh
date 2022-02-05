@@ -7,7 +7,7 @@
         {
           "foreground": "#CB4B16",
           "properties": {
-            "template": " {{ .Text }} "
+            "template": " {{ .Meaning }} "
           },
           "style": "plain",
           "type": "exit"

@@ -26,4 +26,6 @@ Tags:
 - utilities
 - wsl
 ManifestType: defaultLocale
-ManifestVersion: 1.0.0
+ManifestVersion: 1.1.0
+ReleaseNotesUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v<VERSION>
+

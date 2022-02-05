@@ -10,6 +10,10 @@ var (
 	regexCacheLock = sync.RWMutex{}
 )
 
+const (
+	LINK = `(?P<STR>\x1b]8;;(file|https)(.+)\x1b\\(?P<TEXT>.+)\x1b]8;;\x1b\\)`
+)
+
 func GetCompiledRegex(pattern string) *regexp.Regexp {
 	// try in cache first
 	regexCacheLock.RLock()

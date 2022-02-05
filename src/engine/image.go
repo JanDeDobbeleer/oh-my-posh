@@ -190,7 +190,7 @@ func (ir *ImageRenderer) Init(config string) {
 		osc99:               `^(?P<STR>\x1b\]9;9;(.+)\x1b\\)`,
 		lineChange:          `^(?P<STR>\x1b\[(\d)[FB])`,
 		consoleTitle:        `^(?P<STR>\x1b\]0;(.+)\007)`,
-		link:                `^(?P<STR>\x1b]8;;(file|https)(.+)\x1b\\(?P<URL>.+)\x1b]8;;\x1b\\)`,
+		link:                fmt.Sprintf(`^%s`, regex.LINK),
 	}
 }
 

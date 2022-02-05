@@ -41,6 +41,8 @@ function Write-MetaData {
     $content = $content.Replace('<VERSION>', $Version)
     $content = $content.Replace('<HASH-AMD64>', $HashAmd64)
     $content = $content.Replace('<HASH-ARM64>', $HashArm64)
+    $date = Get-Date -Format "yyyy-MM-dd"
+    $content = $content.Replace('<DATE>', $date)
     $content | Out-File -Encoding 'UTF8' "./$Version/$FileName"
 }
 

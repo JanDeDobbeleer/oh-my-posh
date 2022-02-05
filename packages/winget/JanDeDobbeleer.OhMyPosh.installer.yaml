@@ -1,5 +1,6 @@
 PackageIdentifier: JanDeDobbeleer.OhMyPosh
 PackageVersion: <VERSION>
+ReleaseDate: <DATE>
 Platform:
 - Windows.Desktop
 MinimumOSVersion: 10.0.0.0
@@ -35,4 +36,4 @@ Installers:
   InstallerSwitches:
      Custom: /CURRENTUSER
 ManifestType: installer
-ManifestVersion: 1.0.0
+ManifestVersion: 1.1.0

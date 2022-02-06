@@ -68,8 +68,8 @@ func (env *ShellEnvironment) Platform() string {
 	platform, _, _, _ = host.PlatformInformation()
 	if platform == "arch" {
 		// validate for Manjaro
-		lsbInfo := env.FileContent("/etc/os-release")
-		if strings.Contains(lsbInfo, "Manjaro") {
+		lsbInfo := env.FileContent("/etc/lsb-release")
+		if strings.Contains(strings.ToLower(lsbInfo), "manjaro") {
 			platform = "manjaro"
 		}
 	}

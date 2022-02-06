@@ -47,10 +47,10 @@ Tell the engine if the block should be left or right-aligned.
 ### Filler
 
 When you want to join a right and left aligned block with a repeated set of characters, add the character
-to be repeated to this property. Add this property to the _left_ aligned block.
+to be repeated to this property. Add this property to the _right_ aligned block.
 
 ```json
-"alignment": "left",
+"alignment": "right",
 "filler": "."
 ```
 

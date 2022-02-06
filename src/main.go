@@ -129,6 +129,10 @@ func main() {
 			"write",
 			false,
 			"Write the config to the file"),
+		TerminalWidth: flag.Int(
+			"terminal-width",
+			0,
+			"The width of the terminal"),
 	}
 	flag.Parse()
 	if *args.Version {

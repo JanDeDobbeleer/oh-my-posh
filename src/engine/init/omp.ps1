@@ -89,7 +89,8 @@ function global:Initialize-ModuleSupport {
         $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
         $global:omp_lastHistoryId = $history.Id
     }
-    $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --stack-count="$stackCount" --config="$config" 2>&1)
+    $terminalWidth = $Host.UI.RawUI.WindowSize.Width
+    $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --stack-count="$stackCount" --config="$config" --terminal-width=$terminalWidth 2>&1)
     # make sure PSReadLine knows we have a multiline prompt
     $extraLines = $standardOut.Count - 1
     if ($extraLines -gt 0) {

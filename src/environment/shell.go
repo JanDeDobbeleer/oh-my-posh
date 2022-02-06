@@ -56,6 +56,7 @@ type Args struct {
 	CachePath      *bool
 	Migrate        *bool
 	Write          *bool
+	TerminalWidth  *int
 }
 
 type CommandError struct {

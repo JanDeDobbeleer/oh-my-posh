@@ -19,6 +19,7 @@ type cacheObject struct {
 type fileCache struct {
 	cache     *concurrentMap
 	cachePath string
+	dirty     bool
 }
 
 func (fc *fileCache) Init(cachePath string) {
@@ -40,10 +41,10 @@ func (fc *fileCache) Init(cachePath string) {
 }
 
 func (fc *fileCache) Close() {
-	cache := fc.cache.list()
-	if len(cache) == 0 {
+	if !fc.dirty {
 		return
 	}
+	cache := fc.cache.list()
 	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
 		_ = ioutil.WriteFile(fc.cachePath+fileName, dump, 0644)
 	}
@@ -78,4 +79,5 @@ func (fc *fileCache) Set(key, value string, ttl int) {
 		Timestamp: time.Now().Unix(),
 		TTL:       ttl,
 	})
+	fc.dirty = true
 }

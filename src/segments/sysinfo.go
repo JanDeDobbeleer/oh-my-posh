@@ -5,6 +5,7 @@ import (
 	"oh-my-posh/properties"
 
 	cpu "github.com/shirou/gopsutil/v3/cpu"
+	disk "github.com/shirou/gopsutil/v3/disk"
 	load "github.com/shirou/gopsutil/v3/load"
 	mem "github.com/shirou/gopsutil/v3/mem"
 )
@@ -28,6 +29,8 @@ type SystemInfo struct {
 	Load1  float64
 	Load5  float64
 	Load15 float64
+	// disk
+	Disks map[string]disk.IOCountersStat
 }
 
 const (
@@ -79,5 +82,10 @@ func (s *SystemInfo) Init(props properties.Properties, env environment.Environme
 	processors, err := cpu.Info()
 	if err == nil {
 		s.CPU = processors
+	}
+	// disk
+	diskIO, err := disk.IOCounters()
+	if err == nil {
+		s.Disks = diskIO
 	}
 }

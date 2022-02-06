@@ -1,0 +1,64 @@
+name: Notify When Maintainers Cannot Edit
+
+# **What it does**: Notifies the author of a PR when their PR does not allow maintainers to edit it.
+# **Why we have it**: To prevent having to do this manually.
+# **Who does it impact**: Open-source.
+
+on:
+  pull_request_target:
+    types:
+      - opened
+
+permissions:
+  pull-requests: write
+
+jobs:
+  notify-when-maintainers-cannot-edit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            const query = `
+              query($number: Int!) {
+                repository(owner: "jandedobbeleer", name: "oh-my-posh") {
+                  pullRequest(number: $number) {
+                    headRepositoryOwner {
+                      login
+                    }
+                    maintainerCanModify
+                  }
+                }
+              }
+            `;
+
+            const pullNumber = context.issue.number;
+            const variables = { number: pullNumber };
+
+            try {
+              console.log(`Check jandedobbeleer/oh-my-posh#${pullNumber} for maintainer edit access ...`);
+              const result = await github.graphql(query, variables);
+
+              console.log(JSON.stringify(result, null, 2));
+
+              const pullRequest = result.repository.pullRequest;
+
+              if (pullRequest.headRepositoryOwner.login === 'jandedobbeleer') {
+                console.log('PR owned by jandedobbeleer');
+                return;
+              }
+
+              if (!pullRequest.maintainerCanModify) {
+                console.log('PR not owned by jandedobbeleer and does not have maintainer edits enabled');
+
+                await github.issues.createComment({
+                  issue_number: pullNumber,
+                  owner: 'jandedobbeleer',
+                  repo: 'oh-my-posh',
+                  body: "Thanks for submitting a PR to the Oh My Posh project!\n\nIn order to review and merge PRs most efficiently, we require that all PRs grant maintainer edit access before we review them. For information on how to do this, [see the documentation](https://docs.github.com/en/github/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork)."
+                });
+              }
+            } catch(e) {
+              console.log(e);
+            }

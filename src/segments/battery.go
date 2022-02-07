@@ -32,6 +32,10 @@ func (b *Battery) Template() string {
 }
 
 func (b *Battery) Enabled() bool {
+	if !b.env.IsWsl2() {
+		return false
+	}
+
 	batteries, err := b.env.BatteryInfo()
 
 	if !b.enabledWhileError(err) {

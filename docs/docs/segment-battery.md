@@ -6,6 +6,10 @@ sidebar_label: Battery
 
 ## What
 
+:::caution
+The segment is not supported and automatically disabled on windows when WSL 1 is detected. Works fine with WSL 2.
+:::
+
 Battery displays the remaining power percentage for your battery.
 
 ## Sample Configuration

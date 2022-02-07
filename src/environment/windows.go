@@ -116,6 +116,19 @@ func (env *ShellEnvironment) CachePath() string {
 	return env.Home()
 }
 
+func (env *ShellEnvironment) LookWinAppPath(file string) (string, error) {
+	winAppPath := env.Home() + `\AppData\Local\Microsoft\WindowsApps\`
+	command := file + ".exe"
+	isWinStoreApp := func() bool {
+		return env.HasFilesInDir(winAppPath, command)
+	}
+	if isWinStoreApp() {
+		commandFile := winAppPath + command
+		return readWinAppLink(commandFile)
+	}
+	return "", errors.New("no Windows Store App")
+}
+
 //
 // Takes a registry path to a key like
 //		"HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"

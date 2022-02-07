@@ -397,7 +397,7 @@ func (env *ShellEnvironment) RunCommand(command string, args ...string) (string,
 		env.log(Error, "RunCommand", errorStr)
 		return output, cmdErr
 	}
-	output := strings.TrimSuffix(out.String(), "\n")
+	output := strings.TrimSpace(out.String())
 	env.log(Debug, "RunCommand", output)
 	return output, nil
 }
@@ -415,6 +415,10 @@ func (env *ShellEnvironment) HasCommand(command string) bool {
 	}
 	path, err := exec.LookPath(command)
 	if err == nil {
+		env.cmdCache.set(command, path)
+		return true
+	}
+	if path, err := env.LookWinAppPath(command); err == nil {
 		env.cmdCache.set(command, path)
 		return true
 	}

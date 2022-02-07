@@ -3,10 +3,12 @@
 package environment
 
 import (
+	"errors"
 	"fmt"
 	"oh-my-posh/regex"
 	"strings"
 	"syscall"
+	"unicode/utf16"
 	"unsafe"
 
 	"golang.org/x/sys/windows"
@@ -198,4 +200,84 @@ func getHKEYHandleFromAbbrString(abbr string) windows.Handle {
 	}
 
 	return 0
+}
+
+type REPARSE_DATA_BUFFER struct { // nolint: revive
+	ReparseTag        uint32
+	ReparseDataLength uint16
+	Reserved          uint16
+	DUMMYUNIONNAME    byte
+}
+
+type GenericDataBuffer struct {
+	DataBuffer [1]uint8
+}
+
+type AppExecLinkReparseBuffer struct {
+	Version    uint32
+	StringList [1]uint16
+}
+
+func (rb *AppExecLinkReparseBuffer) Path() string {
+	UTF16ToStringPosition := func(s []uint16) (string, int) {
+		for i, v := range s {
+			if v == 0 {
+				s = s[0:i]
+				return string(utf16.Decode(s)), i
+			}
+		}
+		return "", 0
+	}
+	s := (*[0xffff]uint16)(unsafe.Pointer(&rb.StringList[0]))[0:]
+	var link string
+	position := 0
+	for i := 0; i <= 2; i++ {
+		link, position = UTF16ToStringPosition(s)
+		position++
+		s = s[position:]
+	}
+	return link
+}
+
+// openSymlink calls CreateFile Windows API with FILE_FLAG_OPEN_REPARSE_POINT
+// parameter, so that Windows does not follow symlink, if path is a symlink.
+// openSymlink returns opened file handle.
+func openSymlink(path string) (syscall.Handle, error) {
+	p, err := syscall.UTF16PtrFromString(path)
+	if err != nil {
+		return 0, err
+	}
+	attrs := uint32(syscall.FILE_FLAG_BACKUP_SEMANTICS)
+	// Use FILE_FLAG_OPEN_REPARSE_POINT, otherwise CreateFile will follow symlink.
+	// See https://docs.microsoft.com/en-us/windows/desktop/FileIO/symbolic-link-effects-on-file-systems-functions#createfile-and-createfiletransacted
+	attrs |= syscall.FILE_FLAG_OPEN_REPARSE_POINT
+	h, err := syscall.CreateFile(p, 0, 0, nil, syscall.OPEN_EXISTING, attrs, 0)
+	if err != nil {
+		return 0, err
+	}
+	return h, nil
+}
+
+func readWinAppLink(path string) (string, error) {
+	h, err := openSymlink(path)
+	if err != nil {
+		return "", err
+	}
+	defer syscall.CloseHandle(h) // nolint: errcheck
+
+	rdbbuf := make([]byte, syscall.MAXIMUM_REPARSE_DATA_BUFFER_SIZE)
+	var bytesReturned uint32
+	err = syscall.DeviceIoControl(h, syscall.FSCTL_GET_REPARSE_POINT, nil, 0, &rdbbuf[0], uint32(len(rdbbuf)), &bytesReturned, nil)
+	if err != nil {
+		return "", err
+	}
+
+	rdb := (*REPARSE_DATA_BUFFER)(unsafe.Pointer(&rdbbuf[0]))
+	rb := (*GenericDataBuffer)(unsafe.Pointer(&rdb.DUMMYUNIONNAME))
+	appExecLink := (*AppExecLinkReparseBuffer)(unsafe.Pointer(&rb.DataBuffer))
+	if appExecLink.Version != 3 {
+		return " ", errors.New("unknown appexec link version")
+	}
+	link := appExecLink.Path()
+	return link, nil
 }

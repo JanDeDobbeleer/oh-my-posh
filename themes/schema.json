@@ -1126,7 +1126,7 @@
                   "max_depth": {
                     "type": "integer",
                     "title": "Maximum Depth",
-                    "description": "Maximum path depth to display whithout shortening",
+                    "description": "Maximum path depth to display without shortening",
                     "default": 1
                   },
                   "mapped_locations_enabled": {
@@ -1134,6 +1134,12 @@
                     "title": "Enable the Mapped Locations feature",
                     "description": "Replace known locations in the path with the replacements before applying the style.",
                     "default": true
+                  },
+                  "mixed_threshold":{
+                    "type": "integer",
+                    "title": "Mixed threshold",
+                    "description": "The maximum length of a path segment that will be displayed when using mixed style.",
+                    "default": 4
                   }
                 }
               }

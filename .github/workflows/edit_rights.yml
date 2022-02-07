@@ -22,7 +22,7 @@ jobs:
           script: |
             const query = `
               query($number: Int!) {
-                repository(owner: "jandedobbeleer", name: "oh-my-posh") {
+                repository(owner: "JanDeDobbeleer", name: "oh-my-posh") {
                   pullRequest(number: $number) {
                     headRepositoryOwner {
                       login
@@ -37,24 +37,24 @@ jobs:
             const variables = { number: pullNumber };
 
             try {
-              console.log(`Check jandedobbeleer/oh-my-posh#${pullNumber} for maintainer edit access ...`);
+              console.log(`Check JanDeDobbeleer/oh-my-posh#${pullNumber} for maintainer edit access ...`);
               const result = await github.graphql(query, variables);
 
               console.log(JSON.stringify(result, null, 2));
 
               const pullRequest = result.repository.pullRequest;
 
-              if (pullRequest.headRepositoryOwner.login === 'jandedobbeleer') {
-                console.log('PR owned by jandedobbeleer');
+              if (pullRequest.headRepositoryOwner.login === 'JanDeDobbeleer') {
+                console.log('PR owned by JanDeDobbeleer');
                 return;
               }
 
               if (!pullRequest.maintainerCanModify) {
-                console.log('PR not owned by jandedobbeleer and does not have maintainer edits enabled');
+                console.log('PR not owned by JanDeDobbeleer and does not have maintainer edits enabled');
 
-                await github.issues.createComment({
+                await github.rest.issues.createComment({
                   issue_number: pullNumber,
-                  owner: 'jandedobbeleer',
+                  owner: 'JanDeDobbeleer',
                   repo: 'oh-my-posh',
                   body: "Thanks for submitting a PR to the Oh My Posh project!\n\nIn order to review and merge PRs most efficiently, we require that all PRs grant maintainer edit access before we review them. For information on how to do this, [see the documentation](https://docs.github.com/en/github/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork)."
                 });

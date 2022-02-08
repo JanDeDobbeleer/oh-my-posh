@@ -51,6 +51,7 @@ module.exports = {
         "git",
         "poshgit",
         "golang",
+        "haskell",
         "ipify",
         "java",
         "julia",

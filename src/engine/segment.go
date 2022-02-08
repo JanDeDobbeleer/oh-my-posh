@@ -147,6 +147,8 @@ const (
 	BREWFATHER SegmentType = "brewfather"
 	// IPIFY segment
 	IPIFY SegmentType = "ipify"
+	// HASKELL segment
+	HASKELL SegmentType = "haskell"
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
@@ -263,6 +265,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		WINREG:        &segments.WindowsRegistry{},
 		BREWFATHER:    &segments.Brewfather{},
 		IPIFY:         &segments.IPify{},
+		HASKELL:       &segments.Haskell{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)

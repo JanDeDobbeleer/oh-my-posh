@@ -149,6 +149,8 @@ const (
 	IPIFY SegmentType = "ipify"
 	// HASKELL segment
 	HASKELL SegmentType = "haskell"
+	// UI5 Tooling segment
+	UI5TOOLING SegmentType = "ui5tooling"
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
@@ -266,6 +268,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		BREWFATHER:    &segments.Brewfather{},
 		IPIFY:         &segments.IPify{},
 		HASKELL:       &segments.Haskell{},
+		UI5TOOLING:    &segments.UI5Tooling{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)

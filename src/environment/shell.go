@@ -418,7 +418,8 @@ func (env *ShellEnvironment) HasCommand(command string) bool {
 		env.cmdCache.set(command, path)
 		return true
 	}
-	if path, err := env.LookWinAppPath(command); err == nil {
+	path, err = env.LookWinAppPath(command)
+	if err == nil {
 		env.cmdCache.set(command, path)
 		return true
 	}

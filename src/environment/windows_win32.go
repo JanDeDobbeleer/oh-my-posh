@@ -218,7 +218,7 @@ type AppExecLinkReparseBuffer struct {
 	StringList [1]uint16
 }
 
-func (rb *AppExecLinkReparseBuffer) Path() string {
+func (rb *AppExecLinkReparseBuffer) Path() (string, error) {
 	UTF16ToStringPosition := func(s []uint16) (string, int) {
 		for i, v := range s {
 			if v == 0 {
@@ -228,15 +228,18 @@ func (rb *AppExecLinkReparseBuffer) Path() string {
 		}
 		return "", 0
 	}
-	s := (*[0xffff]uint16)(unsafe.Pointer(&rb.StringList[0]))[0:]
+	stringList := (*[0xffff]uint16)(unsafe.Pointer(&rb.StringList[0]))[0:]
 	var link string
-	position := 0
+	var position int
 	for i := 0; i <= 2; i++ {
-		link, position = UTF16ToStringPosition(s)
+		link, position = UTF16ToStringPosition(stringList)
 		position++
-		s = s[position:]
+		if position >= len(stringList) {
+			return "", errors.New("invalid AppExecLinkReparseBuffer")
+		}
+		stringList = stringList[position:]
 	}
-	return link
+	return link, nil
 }
 
 // openSymlink calls CreateFile Windows API with FILE_FLAG_OPEN_REPARSE_POINT
@@ -276,8 +279,7 @@ func readWinAppLink(path string) (string, error) {
 	rb := (*GenericDataBuffer)(unsafe.Pointer(&rdb.DUMMYUNIONNAME))
 	appExecLink := (*AppExecLinkReparseBuffer)(unsafe.Pointer(&rb.DataBuffer))
 	if appExecLink.Version != 3 {
-		return " ", errors.New("unknown appexec link version")
+		return " ", errors.New("unknown AppExecLink version")
 	}
-	link := appExecLink.Path()
-	return link, nil
+	return appExecLink.Path()
 }

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
@@ -117,13 +118,13 @@ func (env *ShellEnvironment) CachePath() string {
 }
 
 func (env *ShellEnvironment) LookWinAppPath(file string) (string, error) {
-	winAppPath := env.Home() + `\AppData\Local\Microsoft\WindowsApps\`
+	winAppPath := filepath.Join(env.Getenv("LOCALAPPDATA"), `\Microsoft\WindowsApps\`)
 	command := file + ".exe"
 	isWinStoreApp := func() bool {
 		return env.HasFilesInDir(winAppPath, command)
 	}
 	if isWinStoreApp() {
-		commandFile := winAppPath + command
+		commandFile := filepath.Join(winAppPath, command)
 		return readWinAppLink(commandFile)
 	}
 	return "", errors.New("no Windows Store App")

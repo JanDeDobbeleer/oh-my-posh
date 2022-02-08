@@ -37,16 +37,6 @@
           "type": "git"
         },
         {
-          "background": "#fee761",
-          "foreground": "#262b44",
-          "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \uf0e7 "
-          },
-          "style": "powerline",
-          "type": "root"
-        },
-        {
           "background": "#0095e9",
           "background_templates": [
             "{{ if gt .Code 0 }}#ff0044{{ end }}"

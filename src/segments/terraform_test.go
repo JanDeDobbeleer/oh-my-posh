@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"io/ioutil"
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
 	"testing"
@@ -8,59 +9,98 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type terraformArgs struct {
-	hasTfCommand  bool
-	hasTfFolder   bool
-	workspaceName string
-}
-
-func bootStrapTerraformTest(args *terraformArgs) *Terraform {
-	env := new(mock.MockedEnvironment)
-	env.On("HasCommand", "terraform").Return(args.hasTfCommand)
-	env.On("HasFolder", "/.terraform").Return(args.hasTfFolder)
-	env.On("Pwd").Return("")
-	env.On("RunCommand", "terraform", []string{"workspace", "show"}).Return(args.workspaceName, nil)
-	k := &Terraform{
-		env:   env,
-		props: properties.Map{},
+func TestTerraform(t *testing.T) {
+	cases := []struct {
+		Case            string
+		Template        string
+		HasTfCommand    bool
+		HasTfFolder     bool
+		HasTfFiles      bool
+		HasTfStateFile  bool
+		FetchVersion    bool
+		WorkspaceName   string
+		ExpectedString  string
+		ExpectedEnabled bool
+	}{
+		{
+			Case:            "default workspace",
+			ExpectedString:  "default",
+			ExpectedEnabled: true,
+			WorkspaceName:   "default",
+			HasTfFolder:     true,
+			HasTfCommand:    true,
+		},
+		{
+			Case:           "no command",
+			ExpectedString: "",
+			WorkspaceName:  "default",
+			HasTfFolder:    true,
+		},
+		{
+			Case:           "no directory, no files",
+			ExpectedString: "",
+			WorkspaceName:  "default",
+			HasTfCommand:   true,
+		},
+		{
+			Case:           "no files",
+			ExpectedString: "",
+			WorkspaceName:  "default",
+			HasTfCommand:   true,
+			FetchVersion:   true,
+		},
+		{
+			Case:            "files",
+			ExpectedString:  ">= 1.0.10",
+			ExpectedEnabled: true,
+			WorkspaceName:   "default",
+			Template:        "{{ .Version }}",
+			HasTfFiles:      true,
+			HasTfCommand:    true,
+			FetchVersion:    true,
+		},
+		{
+			Case:            "files",
+			ExpectedString:  "0.12.24",
+			ExpectedEnabled: true,
+			WorkspaceName:   "default",
+			Template:        "{{ .Version }}",
+			HasTfStateFile:  true,
+			HasTfCommand:    true,
+			FetchVersion:    true,
+		},
 	}
-	return k
-}
 
-func TestTerraformWriterDisabled(t *testing.T) {
-	args := &terraformArgs{
-		hasTfCommand: false,
-		hasTfFolder:  false,
-	}
-	terraform := bootStrapTerraformTest(args)
-	assert.False(t, terraform.Enabled())
-}
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
 
-func TestTerraformMissingDir(t *testing.T) {
-	args := &terraformArgs{
-		hasTfCommand: true,
-		hasTfFolder:  false,
+		env.On("HasCommand", "terraform").Return(tc.HasTfCommand)
+		env.On("HasFolder", ".terraform").Return(tc.HasTfFolder)
+		env.On("Pwd").Return("")
+		env.On("RunCommand", "terraform", []string{"workspace", "show"}).Return(tc.WorkspaceName, nil)
+		env.On("HasFiles", "versions.tf").Return(tc.HasTfFiles)
+		env.On("HasFiles", "main.tf").Return(tc.HasTfFiles)
+		env.On("HasFiles", "terraform.tfstate").Return(tc.HasTfStateFile)
+		if tc.HasTfFiles {
+			content, _ := ioutil.ReadFile("../test/versions.tf")
+			env.On("FileContent", "versions.tf").Return(string(content))
+		}
+		if tc.HasTfStateFile {
+			content, _ := ioutil.ReadFile("../test/terraform.tfstate")
+			env.On("FileContent", "terraform.tfstate").Return(string(content))
+		}
+		tf := &Terraform{
+			env: env,
+			props: properties.Map{
+				properties.FetchVersion: tc.FetchVersion,
+			},
+		}
+		template := tc.Template
+		if len(template) == 0 {
+			template = tf.Template()
+		}
+		assert.Equal(t, tc.ExpectedEnabled, tf.Enabled(), tc.Case)
+		var got = renderTemplate(env, template, tf)
+		assert.Equal(t, tc.ExpectedString, got, tc.Case)
 	}
-	terraform := bootStrapTerraformTest(args)
-	assert.False(t, terraform.Enabled())
-}
-
-func TestTerraformMissingBinary(t *testing.T) {
-	args := &terraformArgs{
-		hasTfCommand: false,
-		hasTfFolder:  true,
-	}
-	terraform := bootStrapTerraformTest(args)
-	assert.False(t, terraform.Enabled())
-}
-
-func TestTerraformEnabled(t *testing.T) {
-	expected := "default"
-	args := &terraformArgs{
-		hasTfCommand:  true,
-		hasTfFolder:   true,
-		workspaceName: expected,
-	}
-	terraform := bootStrapTerraformTest(args)
-	assert.True(t, terraform.Enabled())
 }

@@ -1114,7 +1114,8 @@
                       "full",
                       "folder",
                       "mixed",
-                      "letter"
+                      "letter",
+                      "unique"
                     ],
                     "default": "folder"
                   },

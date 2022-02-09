@@ -44,6 +44,8 @@ const (
 	Mixed string = "mixed"
 	// Letter like agnoster, but with the first letter of each folder name
 	Letter string = "letter"
+	// Unique like agnoster, but with the first unique letters of each folder name
+	Unique string = "unique"
 	// AgnosterLeft like agnoster, but keeps the left side of the path
 	AgnosterLeft string = "agnoster_left"
 	// MixedThreshold the threshold of the length of the path Mixed will display
@@ -73,6 +75,8 @@ func (pt *Path) Enabled() bool {
 		pt.Path = pt.getMixedPath()
 	case Letter:
 		pt.Path = pt.getLetterPath()
+	case Unique:
+		pt.Path = pt.getUniqueLettersPath()
 	case AgnosterLeft:
 		pt.Path = pt.getAgnosterLeftPath()
 	case Short:
@@ -171,6 +175,19 @@ func (pt *Path) getAgnosterLeftPath() string {
 	return buffer.String()
 }
 
+func (pt *Path) getRelevantLetter(folder string) string {
+	// check if there is at least a letter we can use
+	matches := regex.FindNamedRegexMatch(`(?P<letter>[\p{L}0-9]).*`, folder)
+	if matches == nil || matches["letter"] == "" {
+		// no letter found, keep the folder unchanged
+		return folder
+	}
+	letter := matches["letter"]
+	// handle non-letter characters before the first found letter
+	letter = folder[0:strings.Index(folder, letter)] + letter
+	return letter
+}
+
 func (pt *Path) getLetterPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
@@ -181,20 +198,34 @@ func (pt *Path) getLetterPath() string {
 		if len(folder) == 0 {
 			continue
 		}
+		letter := pt.getRelevantLetter(folder)
+		buffer.WriteString(fmt.Sprintf("%s%s", letter, separator))
+	}
+	if len(splitted) > 0 {
+		buffer.WriteString(splitted[len(splitted)-1])
+	}
+	return buffer.String()
+}
 
-		// check if there is at least a letter we can use
-		matches := regex.FindNamedRegexMatch(`(?P<letter>[\p{L}0-9]).*`, folder)
-
-		if matches == nil || matches["letter"] == "" {
-			// no letter found, keep the folder unchanged
-			buffer.WriteString(fmt.Sprintf("%s%s", folder, separator))
+func (pt *Path) getUniqueLettersPath() string {
+	var buffer strings.Builder
+	pwd := pt.getPwd()
+	splitted := strings.Split(pwd, pt.env.PathSeperator())
+	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeperator())
+	letters := make(map[string]bool, len(splitted))
+	for i := 0; i < len(splitted)-1; i++ {
+		folder := splitted[i]
+		if len(folder) == 0 {
 			continue
 		}
-
-		letter := matches["letter"]
-		// handle non-letter characters before the first found letter
-		letter = folder[0:strings.Index(folder, letter)] + letter
-
+		letter := pt.getRelevantLetter(folder)
+		for letters[letter] {
+			if letter == folder {
+				break
+			}
+			letter += folder[len(letter) : len(letter)+1]
+		}
+		letters[letter] = true
 		buffer.WriteString(fmt.Sprintf("%s%s", letter, separator))
 	}
 	if len(splitted) > 0 {

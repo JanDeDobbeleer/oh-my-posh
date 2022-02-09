@@ -147,6 +147,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
   </tr>
   <tr>
     <td align="center"><a href="http://www.patrickhyatt.com"><img src="https://avatars.githubusercontent.com/u/296125?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Patrick Hyatt</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=patHyatt" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/hezhizhen"><img src="https://avatars.githubusercontent.com/u/7611700?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Zhizhen He</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=hezhizhen" title="Code">💻</a></td>
   </tr>
 </table>
 

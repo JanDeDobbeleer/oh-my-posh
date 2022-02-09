@@ -48,7 +48,7 @@ type SegmentWriter interface {
 	Init(props properties.Properties, env environment.Environment)
 }
 
-// SegmentStyle the syle of segment, for more information, see the constants
+// SegmentStyle the style of segment, for more information, see the constants
 type SegmentStyle string
 
 // SegmentType the type of segment, for more information, see the constants
@@ -154,7 +154,7 @@ const (
 func (segment *Segment) shouldIncludeFolder() bool {
 	cwdIncluded := segment.cwdIncluded()
 	cwdExcluded := segment.cwdExcluded()
-	return (cwdIncluded && !cwdExcluded)
+	return cwdIncluded && !cwdExcluded
 }
 
 func (segment *Segment) cwdIncluded() bool {

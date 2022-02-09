@@ -73,11 +73,18 @@ properties below - defaults to `{{ .Shell }}> `
 <TabItem value="pwsh">
 
 
-Import/invoke Oh My Posh in your `$PROFILE` and add the following line below:
+Invoke Oh My Posh in your `$PROFILE` and add the following line below.
 
 ```powershell
+oh-my-posh --init --shell pwsh --config $env:POSH_THEMES_PATH/jandedobbeleer.omp.json | Invoke-Expression
+// highlight-start
 Enable-PoshTransientPrompt
+// highlight-end
 ```
+
+:::caution
+If you import **PSReadLine** separately, make sure to import it before the `Enable-PoshTransientPrompt` command.
+:::
 
 Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes to take effect.
 

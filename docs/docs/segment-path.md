@@ -78,6 +78,7 @@ Style sets the way the path is displayed. Based on previous experience and popul
 - folder
 - mixed
 - letter
+- unique
 
 ### Agnoster
 
@@ -120,6 +121,10 @@ starts with a symbol or icon.
 - `.config` will be shortened to `.c`
 - `__pycache__` will be shortened to `__p`
 - `➼ folder` will be shortened to `➼ f`
+
+### Unique
+
+Works like `Letter`, but will make sure every folder name is the shortest unique value.
 
 ## Template ([info][templates])
 

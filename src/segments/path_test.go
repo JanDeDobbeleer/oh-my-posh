@@ -238,6 +238,10 @@ func TestAgnosterPathStyles(t *testing.T) {
 		{Style: Letter, Expected: "u > .b > __p > .w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/__pycache__/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
 		{Style: Letter, Expected: "➼ > .w > man", HomePath: "/usr/home", Pwd: "➼/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
 		{Style: Letter, Expected: "➼ s > .w > man", HomePath: "/usr/home", Pwd: "➼ something/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
+
+		{Style: Unique, Expected: "~ > a > ab > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/abc/abcd", PathSeperator: "/", FolderSeparatorIcon: " > "},
+		{Style: Unique, Expected: "~ > a > .a > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/.abc/abcd", PathSeperator: "/", FolderSeparatorIcon: " > "},
+		{Style: Unique, Expected: "~ > a > ab > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/ab/abcd", PathSeperator: "/", FolderSeparatorIcon: " > "},
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)

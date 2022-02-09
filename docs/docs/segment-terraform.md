@@ -27,12 +27,17 @@ This requires a terraform binary in your PATH and will only show in directories 
 }
 ```
 
+## Properties
+
+- fetch_version: `boolean` - fetch the version information from `versions.tf`, `main.tf` or `terraform.tfstate` -
+defaults to `false`
+
 ## Template ([info][templates])
 
 :::note default template
 
 ``` template
-{{ .WorkspaceName }}
+{{ .WorkspaceName }}{{ if .Version }} {{ .Version }}{{ end }}
 ```
 
 :::
@@ -40,5 +45,6 @@ This requires a terraform binary in your PATH and will only show in directories 
 ### Properties
 
 - `.WorkspaceName`: `string` - is the current workspace name
+- `.Version`: `string` - terraform version (set `fetch_version` to `true`)
 
 [templates]: /docs/config-templates

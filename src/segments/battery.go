@@ -32,7 +32,8 @@ func (b *Battery) Template() string {
 }
 
 func (b *Battery) Enabled() bool {
-	if !b.env.IsWsl2() {
+	// disable in WSL1
+	if b.env.IsWsl() && !b.env.IsWsl2() {
 		return false
 	}
 

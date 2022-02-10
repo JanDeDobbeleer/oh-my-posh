@@ -8,11 +8,11 @@
     "themes": "node export_themes.js"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-beta.14",
-    "@docusaurus/preset-classic": "^2.0.0-beta.14",
+    "@docusaurus/core": "^2.0.0-beta.15",
+    "@docusaurus/preset-classic": "^2.0.0-beta.15",
     "@docusaurus/theme-search-algolia": "^2.0.0-beta.ff31de0ff",
     "classnames": "^2.3.1",
-    "query-string": "^7.1.0",
+    "query-string": "^7.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },

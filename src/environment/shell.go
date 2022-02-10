@@ -397,7 +397,12 @@ func (env *ShellEnvironment) RunCommand(command string, args ...string) (string,
 		env.log(Error, "RunCommand", errorStr)
 		return output, cmdErr
 	}
-	output := strings.TrimSpace(out.String())
+	// some silly commands return 0 and the output is in stderr instead of stdout
+	result := out.String()
+	if len(result) == 0 {
+		result = err.String()
+	}
+	output := strings.TrimSpace(result)
 	env.log(Debug, "RunCommand", output)
 	return output, nil
 }

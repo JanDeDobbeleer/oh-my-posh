@@ -9,7 +9,8 @@
       "program": "${workspaceRoot}/src",
       "args": [
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
-        "--shell=pwsh"
+        "--shell=pwsh",
+        "--pwd=/Users/jan/Projects/test"
       ]
     },
     {

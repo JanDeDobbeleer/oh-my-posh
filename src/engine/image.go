@@ -68,8 +68,6 @@ const (
 	lineChange          = "linechange"
 	consoleTitle        = "title"
 	link                = "link"
-
-	ansiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 )
 
 //go:embed font/Hack-Nerd-Bold.ttf
@@ -266,7 +264,7 @@ func (ir *ImageRenderer) lenWithoutANSI(text string) int {
 	for _, match := range matches {
 		text = strings.ReplaceAll(text, match[str], "")
 	}
-	stripped := regex.ReplaceAllString(ansiRegex, text, "")
+	stripped := regex.ReplaceAllString(color.AnsiRegex, text, "")
 	length := utf8.RuneCountInString(stripped)
 	for _, rune := range stripped {
 		length += ir.runeAdditionalWidth(rune)

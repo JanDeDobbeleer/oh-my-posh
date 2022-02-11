@@ -7,14 +7,23 @@ import (
 )
 
 func measureText(text string) int {
-	// skip hyperlinks
-	if !strings.Contains(text, "\x1b]8;;") {
+	// skip strings with ANSI
+	if !strings.Contains(text, "\x1b") {
 		return utf8.RuneCountInString(text)
 	}
-	matches := regex.FindAllNamedRegexMatch(regex.LINK, text)
-	for _, match := range matches {
-		text = strings.ReplaceAll(text, match["STR"], match["TEXT"])
+	if strings.Contains(text, "\x1b]8;;") {
+		matches := regex.FindAllNamedRegexMatch(regex.LINK, text)
+		for _, match := range matches {
+			text = strings.ReplaceAll(text, match["STR"], match["TEXT"])
+		}
 	}
-	length := utf8.RuneCountInString(text)
-	return length
+	text = textWithoutAnsi(text)
+	return utf8.RuneCountInString(text)
+}
+
+func textWithoutAnsi(text string) string {
+	if len(text) == 0 || !strings.Contains(text, "\x1b") {
+		return text
+	}
+	return regex.ReplaceAllString(AnsiRegex, text, "")
 }

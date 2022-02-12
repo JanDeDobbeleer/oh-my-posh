@@ -10,7 +10,7 @@
       "args": [
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
         "--shell=pwsh",
-        "--pwd=/Users/jan/Projects/test"
+        "--terminal-width=200",
       ]
     },
     {

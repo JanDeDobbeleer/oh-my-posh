@@ -46,8 +46,9 @@ Tell the engine if the block should be left or right-aligned.
 
 ### Filler
 
-When you want to join a right and left aligned block with a repeated set of characters, add the character
-to be repeated to this property. Add this property to the _right_ aligned block.
+When you want to join a right and left aligned block with a repeated set of characters, add the character(s)
+to be repeated to this property. Add this property to the _right_ aligned block. This supports the use of
+[color overrides][color-overrides].
 
 ```json
 "alignment": "right",
@@ -57,3 +58,5 @@ to be repeated to this property. Add this property to the _right_ aligned block.
 ### Segments
 
 Array of one or more segments.
+
+[color-overrides]: /docs/config-colors#color-overrides

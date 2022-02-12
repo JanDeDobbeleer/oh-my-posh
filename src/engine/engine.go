@@ -8,7 +8,6 @@ import (
 	"oh-my-posh/template"
 	"strings"
 	"time"
-	"unicode/utf8"
 )
 
 type Engine struct {
@@ -81,6 +80,28 @@ func (e *Engine) newline() {
 	e.currentLineLength = 0
 }
 
+func (e *Engine) shouldFill(block *Block, length int) (string, bool) {
+	if len(block.Filler) == 0 {
+		return "", false
+	}
+	terminalWidth, err := e.Env.TerminalWidth()
+	if err != nil && terminalWidth == 0 {
+		return "", false
+	}
+	padLength := terminalWidth - e.currentLineLength - length
+	if padLength <= 0 {
+		return "", false
+	}
+	e.Writer.Write("", "", block.Filler)
+	filler, lenFiller := e.Writer.String()
+	e.Writer.Reset()
+	if lenFiller == 0 {
+		return "", false
+	}
+	repeat := padLength / lenFiller
+	return strings.Repeat(filler, repeat), true
+}
+
 func (e *Engine) renderBlock(block *Block) {
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
@@ -92,20 +113,6 @@ func (e *Engine) renderBlock(block *Block) {
 	block.renderSegmentsText()
 	if !block.enabled() {
 		return
-	}
-	shouldFill := func(blockLength int) (string, bool) {
-		if len(block.Filler) == 0 {
-			return "", false
-		}
-		if terminalWidth, err := e.Env.TerminalWidth(); err == nil && terminalWidth > 0 {
-			padLength := terminalWidth - e.currentLineLength - blockLength
-			var filler string
-			for utf8.RuneCountInString(filler) < padLength {
-				filler += block.Filler
-			}
-			return filler, true
-		}
-		return "", false
 	}
 	if block.Newline {
 		e.newline()
@@ -123,7 +130,7 @@ func (e *Engine) renderBlock(block *Block) {
 		switch block.Alignment {
 		case Right:
 			text, length := block.renderSegments()
-			if padText, OK := shouldFill(length); OK {
+			if padText, OK := e.shouldFill(block, length); OK {
 				e.write(padText)
 			}
 			e.writeANSI(e.Ansi.CarriageForward())

@@ -31,7 +31,7 @@
             },
             "mixed_threshold": 8,
             "style": "mixed",
-            "template": " {{ .Path }} "
+            "template": " {{ path .Path .Location }} "
           },
           "style": "powerline",
           "type": "path"

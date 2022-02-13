@@ -89,7 +89,7 @@ function Sync-PoshThemes {
     $themesUrl = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/themes.zip"
     Invoke-WebRequest -OutFile $tmp $themesUrl
     $destination = $env:POSH_THEMES_PATH
-    $tmp | Expand-Archive -DestinationPath $destination -Force
+    $tmp | Microsoft.PowerShell.Archive\Expand-Archive -DestinationPath $destination -Force
     $tmp | Remove-Item
 }
 

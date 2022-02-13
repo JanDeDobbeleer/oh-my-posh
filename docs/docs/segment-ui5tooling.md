@@ -6,8 +6,8 @@ sidebar_label: UI5 Tooling
 
 ## What
 
-Display the active [UI5 tooling](https://sap.github.io/ui5-tooling/) version (global or local if present -
-see [the documentation](https://sap.github.io/ui5-tooling/pages/CLI/#ui5-versions)).
+Display the active [UI5 tooling][ui5-homepage] version (global or local if present -
+see [the documentation][ui5-version-help]).
 
 ## Sample Configuration
 
@@ -57,3 +57,5 @@ see [the documentation](https://sap.github.io/ui5-tooling/pages/CLI/#ui5-version
 - `.Error`: `string` - when fetching the version string errors
 
 [templates]: /docs/config-templates
+[ui5-homepage]: https://sap.github.io/ui5-tooling
+[ui5-version-help]: https://sap.github.io/ui5-tooling/pages/CLI/#ui5-versions

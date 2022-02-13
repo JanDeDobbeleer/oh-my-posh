@@ -31,7 +31,7 @@ func (u *UI5Tooling) Init(props properties.Properties, env environment.Environme
 				regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 			},
 		},
-		versionURLTemplate: "[%[1]s](https://github.com/SAP/ui5-cli/blob/master/CHANGELOG.md_V%[2]s.md#%[1]s)",
+		versionURLTemplate: "https://github.com/SAP/ui5-cli/releases/tag/v{{ .Full }}",
 	}
 }
 

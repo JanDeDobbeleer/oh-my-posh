@@ -76,6 +76,7 @@ module.exports = {
         "terraform",
         "text",
         "time",
+        "ui5tooling",
         "wakatime",
         "wifi",
         "winreg",

@@ -150,6 +150,7 @@ type Environment interface {
 	HasFilesInDir(dir, pattern string) bool
 	HasFolder(folder string) bool
 	HasParentFilePath(path string) (fileInfo *FileInfo, err error)
+	HasFileInParentDirs(pattern string, depth uint) bool
 	HasCommand(command string) bool
 	FileContent(file string) string
 	FolderList(path string) []string
@@ -317,6 +318,25 @@ func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
 		return false
 	}
 	return len(matches) > 0
+}
+
+func (env *ShellEnvironment) HasFileInParentDirs(pattern string, depth uint) bool {
+	defer env.trace(time.Now(), "HasFileInParent", pattern, fmt.Sprint(depth))
+	currentFolder := env.Pwd()
+
+	for c := 0; c < int(depth); c++ {
+		if env.HasFilesInDir(currentFolder, pattern) {
+			return true
+		}
+
+		if dir := filepath.Dir(currentFolder); dir != currentFolder {
+			currentFolder = dir
+		} else {
+			return false
+		}
+	}
+
+	return false
 }
 
 func (env *ShellEnvironment) HasFolder(folder string) bool {

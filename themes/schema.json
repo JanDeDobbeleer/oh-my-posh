@@ -183,7 +183,8 @@
             "winreg",
             "plastic",
             "ipify",
-            "haskell"
+            "haskell",
+            "ui5tooling"
           ]
         },
         "style": {
@@ -1896,6 +1897,32 @@
                     "description": "Get the GHC version used by Stack. Will decrease performance. Boolean indicating whether stack ghc was used available in template as .StackGhc",
                     "enum": ["always", "package", "never"],
                     "default": "never"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "ui5tooling" }
+            }
+          },
+          "then": {
+            "title": "UI5 tooling CLI segment",
+            "description": "https://ohmyposh.dev/docs/ui5tooling",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"

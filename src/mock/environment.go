@@ -209,3 +209,8 @@ func (env *MockedEnvironment) MockGitCommand(dir, returnValue string, args ...st
 	args = append([]string{"-C", dir, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	env.On("RunCommand", "git", args).Return(returnValue, nil)
 }
+
+func (env *MockedEnvironment) HasFileInParentDirs(pattern string, depth uint) bool {
+	args := env.Called(pattern, depth)
+	return args.Bool(0)
+}

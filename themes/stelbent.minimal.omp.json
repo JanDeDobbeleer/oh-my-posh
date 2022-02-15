@@ -114,7 +114,7 @@
         {
           "foreground": "#757575",
           "properties": {
-            "template": "\u2514"
+            "template": "\u2514 "
           },
           "style": "plain",
           "type": "text"

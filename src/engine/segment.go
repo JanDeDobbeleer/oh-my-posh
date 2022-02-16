@@ -26,10 +26,13 @@ type Segment struct {
 	LeadingDiamond      string         `json:"leading_diamond,omitempty"`
 	TrailingDiamond     string         `json:"trailing_diamond,omitempty"`
 	Properties          properties.Map `json:"properties,omitempty"`
-	writer              SegmentWriter
-	text                string
-	active              bool
-	env                 environment.Environment
+
+	writer          SegmentWriter
+	text            string
+	active          bool
+	env             environment.Environment
+	backgroundCache string
+	foregroundCache string
 }
 
 // SegmentTiming holds the timing context for a segment
@@ -216,11 +219,17 @@ func (segment *Segment) shouldInvokeWithTip(tip string) bool {
 }
 
 func (segment *Segment) foreground() string {
-	return segment.getColor(segment.ForegroundTemplates, segment.Foreground)
+	if len(segment.foregroundCache) == 0 {
+		segment.foregroundCache = segment.getColor(segment.ForegroundTemplates, segment.Foreground)
+	}
+	return segment.foregroundCache
 }
 
 func (segment *Segment) background() string {
-	return segment.getColor(segment.BackgroundTemplates, segment.Background)
+	if len(segment.backgroundCache) == 0 {
+		segment.backgroundCache = segment.getColor(segment.BackgroundTemplates, segment.Background)
+	}
+	return segment.backgroundCache
 }
 
 func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error {

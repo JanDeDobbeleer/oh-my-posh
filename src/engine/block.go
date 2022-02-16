@@ -41,8 +41,6 @@ type Block struct {
 	ansi                  *color.Ansi
 	activeSegment         *Segment
 	previousActiveSegment *Segment
-	activeBackground      string
-	activeForeground      string
 	length                int
 }
 
@@ -65,9 +63,7 @@ func (b *Block) initPlain(env environment.Environment, config *Config) {
 
 func (b *Block) setActiveSegment(segment *Segment) {
 	b.activeSegment = segment
-	b.activeBackground = segment.background()
-	b.activeForeground = segment.foreground()
-	b.writer.SetColors(b.activeBackground, b.activeForeground)
+	b.writer.SetColors(segment.background(), segment.foreground())
 }
 
 func (b *Block) enabled() bool {
@@ -112,14 +108,14 @@ func (b *Block) renderSegment(segment *Segment) {
 	b.writePowerline(false)
 	switch b.activeSegment.Style {
 	case Plain, Powerline:
-		b.writer.Write(b.activeBackground, b.activeForeground, segment.text)
+		b.writer.Write(color.Background, color.Foreground, segment.text)
 	case Diamond:
-		b.writer.Write(color.Transparent, b.activeBackground, b.activeSegment.LeadingDiamond)
-		b.writer.Write(b.activeBackground, b.activeForeground, segment.text)
-		b.writer.Write(color.Transparent, b.activeBackground, b.activeSegment.TrailingDiamond)
+		b.writer.Write(color.Transparent, color.Background, b.activeSegment.LeadingDiamond)
+		b.writer.Write(color.Background, color.Foreground, segment.text)
+		b.writer.Write(color.Transparent, color.Background, b.activeSegment.TrailingDiamond)
 	}
 	b.previousActiveSegment = b.activeSegment
-	b.writer.SetParentColors(b.activeBackground, b.activeForeground)
+	b.writer.SetParentColors(b.previousActiveSegment.background(), b.previousActiveSegment.foreground())
 }
 
 func (b *Block) writePowerline(final bool) {
@@ -136,18 +132,18 @@ func (b *Block) writePowerline(final bool) {
 	if len(symbol) == 0 {
 		return
 	}
-	background := b.activeSegment.background()
+	bgColor := color.Background
 	if final || b.activeSegment.Style != Powerline {
-		background = color.Transparent
+		bgColor = color.Transparent
 	}
 	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
-		background = b.activeSegment.background()
+		bgColor = color.Background
 	}
 	if b.activeSegment.InvertPowerline {
-		b.writer.Write(b.getPowerlineColor(), background, symbol)
+		b.writer.Write(b.getPowerlineColor(), bgColor, symbol)
 		return
 	}
-	b.writer.Write(background, b.getPowerlineColor(), symbol)
+	b.writer.Write(bgColor, b.getPowerlineColor(), symbol)
 }
 
 func (b *Block) getPowerlineColor() string {

@@ -17,7 +17,7 @@
           "foreground": "#1d1626",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "template": " \uf26c  {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .HostName }} "
+            "template": " \uf26c  {{ if .SSHSession }}\uf817  {{ end }}{{ .UserName }}@{{ .HostName }} "
           },
           "style": "powerline",
           "type": "session"
@@ -50,13 +50,14 @@
             "{{ if or (.Working.Changed) (.Staging.Changed) }}#ffeb95{{ end }}",
             "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#fcaf17{{ end }}",
             "{{ if gt .Ahead 0 }}#95ffa4{{ end }}",
-            "{{ if gt .Behind 0 }}#f7acbc{{ end }}"
+            "{{ if gt .Behind 0 }}#f7acbc{{ end }}",
+            "{{ if .UpstreamGone }}#d1c7b7{{ end }}"
           ],
           "foreground": "#100e23",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "azure_devops_icon": "\ufd03  ",
-            "bitbucket_icon": "\uf171  ",
+            "azure_devops_icon": "\ufd03 ",
+            "bitbucket_icon": "\uf171 ",
             "branch_gone_icon": "\uf68e ",
             "branch_icon": "\ue0a0 ",
             "branch_identical_icon": "\uf690 ",
@@ -65,11 +66,11 @@
             "fetch_status": true,
             "fetch_upstream_icon": true,
             "fetch_worktree_count": true,
-            "git_icon": "\uf1d3  ",
-            "github_icon": "\uf408  ",
-            "gitlab_icon": "\uf296  ",
+            "git_icon": "\uf1d3 ",
+            "github_icon": "\uf408 ",
+            "gitlab_icon": "\uf296 ",
             "tag_icon": "\uf412 ",
-            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} <#ed1941>\uf044 {{.Working.String}}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#225a1f>\uf046 {{.Staging.String}}</>{{ end }}{{ if gt .StashCount 0 }}  \uf692 {{.StashCount}}{{ end }}{{ if gt .WorktreeCount 0 }}{{if .IsWorkTree}}<#1d953f>{{ end }}  \uf1bb {{if .IsWorkTree}}</>{{ end }}{{.WorktreeCount}}{{ end }} "
+            "template": " {{ if( .UpstreamIcon ) }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} <#ed1941>\uf044 {{.Working.String}}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#225a1f>\uf046 {{.Staging.String}}</>{{ end }}{{ if gt .StashCount 0 }}  \uf692 {{.StashCount}}{{ end }}{{ if gt .WorktreeCount 0 }}{{if .IsWorkTree}}<#1d953f>{{ end }}  \uf1bb {{if .IsWorkTree}}</>{{ end }}{{.WorktreeCount}}{{ end }} "
           },
           "style": "powerline",
           "type": "git"

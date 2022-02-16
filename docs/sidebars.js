@@ -28,7 +28,7 @@ module.exports = {
         "config-templates",
         "config-transient",
         "config-tooltips",
-        "config-fonts"
+        "config-fonts",
       ],
     },
     {
@@ -44,6 +44,7 @@ module.exports = {
         "brewfather",
         "command",
         "crystal",
+        "cf",
         "dart",
         "dotnet",
         "executiontime",

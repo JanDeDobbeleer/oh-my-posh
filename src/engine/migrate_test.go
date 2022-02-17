@@ -172,7 +172,7 @@ func TestColorMigration(t *testing.T) {
 		if tc.Background {
 			segment.Properties[colorBackground] = true
 		}
-		segment.migrateColorOverride(tc.Property, tc.Template)
+		segment.migrateColorOverride(tc.Property, tc.Template, tc.Background)
 		templates := segment.ForegroundTemplates
 		if tc.Background {
 			templates = segment.BackgroundTemplates

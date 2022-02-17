@@ -61,10 +61,11 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 		segment.migrateIconOverride("worktree_count_icon", " \uf1bb ")
 		segment.migrateIconOverride("status_separator_icon", " |")
 		if segment.Properties.GetBool(properties.Property("status_colors_enabled"), false) {
-			segment.migrateColorOverride("local_changes_color", "{{ if or (.Working.Changed) (.Staging.Changed) }}%s{{ end }}")
-			segment.migrateColorOverride("ahead_and_behind_color", "{{ if and (gt .Ahead 0) (gt .Behind 0) }}%s{{ end }}")
-			segment.migrateColorOverride("behind_color", "{{ if gt .Ahead 0 }}%s{{ end }}")
-			segment.migrateColorOverride("ahead_color", "{{ if gt .Behind 0 }}%s{{ end }}")
+			background := segment.Properties.GetBool(colorBackground, true)
+			segment.migrateColorOverride("local_changes_color", "{{ if or (.Working.Changed) (.Staging.Changed) }}%s{{ end }}", background)
+			segment.migrateColorOverride("ahead_and_behind_color", "{{ if and (gt .Ahead 0) (gt .Behind 0) }}%s{{ end }}", background)
+			segment.migrateColorOverride("behind_color", "{{ if gt .Ahead 0 }}%s{{ end }}", background)
+			segment.migrateColorOverride("ahead_color", "{{ if gt .Behind 0 }}%s{{ end }}", background)
 		}
 		if !hasTemplate {
 			segment.migrateInlineColorOverride("working_color", "{{ .Working.String }}")
@@ -76,9 +77,10 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 		delete(segment.Properties, "status_colors_enabled")
 	case BATTERY:
 		segment.migrateTemplate()
-		segment.migrateColorOverride("charged_color", `{{ if eq "Full" .State.String }}%s{{ end }}`)
-		segment.migrateColorOverride("charging_color", `{{ if eq "Charging" .State.String }}%s{{ end }}`)
-		segment.migrateColorOverride("discharging_color", `{{ if eq "Discharging" .State.String }}%s{{ end }}`)
+		background := segment.Properties.GetBool(colorBackground, false)
+		segment.migrateColorOverride("charged_color", `{{ if eq "Full" .State.String }}%s{{ end }}`, background)
+		segment.migrateColorOverride("charging_color", `{{ if eq "Charging" .State.String }}%s{{ end }}`, background)
+		segment.migrateColorOverride("discharging_color", `{{ if eq "Discharging" .State.String }}%s{{ end }}`, background)
 		stateList := []string{`"Discharging"`}
 		if segment.Properties.GetBool(properties.Property("display_charging"), true) {
 			stateList = append(stateList, `"Charging"`)
@@ -123,7 +125,8 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 		enableVersionMismatch := "enable_version_mismatch"
 		if segment.Properties.GetBool(properties.Property(enableVersionMismatch), false) {
 			delete(segment.Properties, properties.Property(enableVersionMismatch))
-			segment.migrateColorOverride("version_mismatch_color", "{{ if .Mismatch }}%s{{ end }}")
+			background := segment.Properties.GetBool(colorBackground, false)
+			segment.migrateColorOverride("version_mismatch_color", "{{ if .Mismatch }}%s{{ end }}", background)
 		}
 	case EXIT:
 		template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
@@ -145,7 +148,8 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 		segment.migrateTemplate()
 		segment.migrateIconOverride("success_icon", "\uf42e")
 		segment.migrateIconOverride("error_icon", "\uf00d")
-		segment.migrateColorOverride("error_color", "{{ if gt .Code 0 }}%s{{ end }}")
+		background := segment.Properties.GetBool(colorBackground, false)
+		segment.migrateColorOverride("error_color", "{{ if gt .Code 0 }}%s{{ end }}", background)
 	default:
 		segment.migrateTemplate()
 	}
@@ -204,7 +208,7 @@ func (segment *Segment) migrateIconOverride(property properties.Property, overri
 	delete(segment.Properties, property)
 }
 
-func (segment *Segment) migrateColorOverride(property properties.Property, template string) {
+func (segment *Segment) migrateColorOverride(property properties.Property, template string, background bool) {
 	if !segment.hasProperty(property) {
 		return
 	}
@@ -213,7 +217,6 @@ func (segment *Segment) migrateColorOverride(property properties.Property, templ
 	if len(color) == 0 {
 		return
 	}
-	background := segment.Properties.GetBool(colorBackground, false)
 	colorTemplate := fmt.Sprintf(template, color)
 	if background {
 		segment.BackgroundTemplates = append(segment.BackgroundTemplates, colorTemplate)

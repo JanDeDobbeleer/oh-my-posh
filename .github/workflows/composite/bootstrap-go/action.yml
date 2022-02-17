@@ -15,5 +15,5 @@ runs:
       shell: pwsh
       run: |
         New-Item -Path ./bin -ItemType Directory
-        Invoke-WebRequest 'https://github.com/jandedobbeleer/go/releases/download/1.17.6/go' -OutFile "$env:GOROOT/bin/go"
+        Invoke-WebRequest 'https://github.com/jandedobbeleer/go/releases/download/1.17.7/go' -OutFile "$env:GOROOT/bin/go"
         chmod a+x "$env:GOROOT/bin/go" 2>&1

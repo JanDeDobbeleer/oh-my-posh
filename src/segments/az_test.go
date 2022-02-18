@@ -14,13 +14,12 @@ import (
 
 func TestAzSegment(t *testing.T) {
 	cases := []struct {
-		Case              string
-		ExpectedEnabled   bool
-		ExpectedString    string
-		HasCLI            bool
-		HasPowerShell     bool
-		HasPowerShellUnix bool
-		Template          string
+		Case            string
+		ExpectedEnabled bool
+		ExpectedString  string
+		HasCLI          bool
+		HasPowerShell   bool
+		Template        string
 	}{
 		{
 			Case:            "no config files found",
@@ -41,11 +40,11 @@ func TestAzSegment(t *testing.T) {
 			HasPowerShell:   true,
 		},
 		{
-			Case:              "Az Pwsh Profile",
-			ExpectedEnabled:   true,
-			ExpectedString:    "AzurePoshCloud",
-			Template:          "{{ .EnvironmentName }}",
-			HasPowerShellUnix: true,
+			Case:            "Az Pwsh Profile",
+			ExpectedEnabled: true,
+			ExpectedString:  "AzurePoshCloud",
+			Template:        "{{ .EnvironmentName }}",
+			HasPowerShell:   true,
 		},
 		{
 			Case:            "Faulty template",
@@ -74,7 +73,7 @@ func TestAzSegment(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		home := "/Users/posh"
 		env.On("Home").Return(home)
-		var azureProfile, azureRmContext, azureRMContext string
+		var azureProfile, azureRmContext string
 		if tc.HasCLI {
 			content, _ := ioutil.ReadFile("../test/azureProfile.json")
 			azureProfile = string(content)
@@ -83,14 +82,10 @@ func TestAzSegment(t *testing.T) {
 			content, _ := ioutil.ReadFile("../test/AzureRmContext.json")
 			azureRmContext = string(content)
 		}
-		if tc.HasPowerShellUnix {
-			content, _ := ioutil.ReadFile("../test/AzureRmContext.json")
-			azureRMContext = string(content)
-		}
 		env.On("GOOS").Return(environment.LinuxPlatform)
 		env.On("FileContent", filepath.Join(home, ".azure", "azureProfile.json")).Return(azureProfile)
-		env.On("FileContent", filepath.Join(home, ".Azure", "AzureRmContext.json")).Return(azureRmContext)
-		env.On("FileContent", filepath.Join(home, ".azure", "AzureRmContext.json")).Return(azureRMContext)
+		env.On("FileContent", filepath.Join(home, ".azure", "AzureRmContext.json")).Return(azureRmContext)
+		env.On("Getenv", "AZURE_CONFIG_DIR").Return("")
 		az := &Az{
 			env:   env,
 			props: properties.Map{},

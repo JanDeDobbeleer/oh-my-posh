@@ -101,7 +101,7 @@ func (a *Az) FileContentWithoutBom(file string) string {
 
 func (a *Az) getAzureProfile() bool {
 	var content string
-	profile := filepath.Join(a.env.Home(), ".azure", "azureProfile.json")
+	profile := filepath.Join(a.ConfigHome(), "azureProfile.json")
 	if content = a.FileContentWithoutBom(profile); len(content) == 0 {
 		return false
 	}
@@ -121,9 +121,9 @@ func (a *Az) getAzureProfile() bool {
 
 func (a *Az) getAzureRmContext() bool {
 	var content string
+	cfgHome := a.ConfigHome()
 	profiles := []string{
-		filepath.Join(a.env.Home(), ".azure", "AzureRmContext.json"),
-		filepath.Join(a.env.Home(), ".Azure", "AzureRmContext.json"),
+		filepath.Join(cfgHome, "AzureRmContext.json"),
 	}
 	for _, profile := range profiles {
 		if content = a.FileContentWithoutBom(profile); len(content) != 0 {
@@ -152,4 +152,12 @@ func (a *Az) getAzureRmContext() bool {
 	}
 	a.Origin = "PWSH"
 	return true
+}
+
+func (a *Az) ConfigHome() string {
+	cfgHome := a.env.Getenv("AZURE_CONFIG_DIR")
+	if len(cfgHome) != 0 {
+		return cfgHome
+	}
+	return filepath.Join(a.env.Home(), ".azure")
 }

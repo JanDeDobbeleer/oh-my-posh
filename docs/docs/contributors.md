@@ -150,6 +150,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://github.com/hezhizhen"><img src="https://avatars.githubusercontent.com/u/7611700?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Zhizhen He</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=hezhizhen" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/jedwillick"><img src="https://avatars.githubusercontent.com/u/85419773?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jed Willick</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jedwillick" title="Code">💻</a></td>
     <td align="center"><a href="https://bandism.net/"><img src="https://avatars.githubusercontent.com/u/22633385?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ikko Ashimine</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=eltociear" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://prokopto.dev/"><img src="https://avatars.githubusercontent.com/u/32304933?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Courtney Caldwell</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=CapularisPerpetua" title="Documentation">📖</a></td>
   </tr>
 </table>
 

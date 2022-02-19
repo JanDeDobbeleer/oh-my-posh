@@ -266,24 +266,48 @@ func (e *Engine) RenderTooltip(tip string) string {
 	return ""
 }
 
-func (e *Engine) RenderTransientPrompt() string {
-	if e.Config.TransientPrompt == nil {
+type ExtraPromptType int
+
+const (
+	Transient ExtraPromptType = iota
+	Valid
+	Error
+)
+
+func (e *Engine) RenderExtraPrompt(promptType ExtraPromptType) string {
+	var prompt *ExtraPrompt
+	switch promptType {
+	case Transient:
+		prompt = e.Config.TransientPrompt
+	case Valid:
+		prompt = e.Config.ValidLine
+	case Error:
+		prompt = e.Config.ErrorLine
+	}
+	if prompt == nil {
 		return ""
 	}
-	promptTemplate := e.Config.TransientPrompt.Template
-	if len(promptTemplate) == 0 {
-		promptTemplate = "{{ .Shell }}> "
+	getTemplate := func(template string) string {
+		if len(template) != 0 {
+			return template
+		}
+		switch promptType { // nolint: exhaustive
+		case Transient:
+			return "{{ .Shell }}> "
+		default:
+			return ""
+		}
 	}
 	tmpl := &template.Text{
-		Template: promptTemplate,
+		Template: getTemplate(prompt.Template),
 		Env:      e.Env,
 	}
-	prompt, err := tmpl.Render()
+	promptText, err := tmpl.Render()
 	if err != nil {
-		prompt = err.Error()
+		promptText = err.Error()
 	}
-	e.Writer.SetColors(e.Config.TransientPrompt.Background, e.Config.TransientPrompt.Foreground)
-	e.Writer.Write(e.Config.TransientPrompt.Background, e.Config.TransientPrompt.Foreground, prompt)
+	e.Writer.SetColors(prompt.Background, prompt.Foreground)
+	e.Writer.Write(prompt.Background, prompt.Foreground, promptText)
 	switch e.Env.Shell() {
 	case zsh:
 		// escape double quotes contained in the prompt

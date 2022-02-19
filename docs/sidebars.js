@@ -27,6 +27,7 @@ module.exports = {
         "config-colors",
         "config-templates",
         "config-transient",
+        "config-line-error",
         "config-tooltips",
         "config-fonts",
       ],

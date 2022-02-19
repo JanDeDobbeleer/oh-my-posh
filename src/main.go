@@ -133,6 +133,14 @@ func main() {
 			"terminal-width",
 			0,
 			"The width of the terminal"),
+		PrintValid: flag.Bool(
+			"print-valid",
+			false,
+			"Print the valid prompt"),
+		PrintError: flag.Bool(
+			"print-error",
+			false,
+			"Print the failed prompt"),
 	}
 	flag.Parse()
 	if *args.Version {
@@ -210,7 +218,15 @@ func main() {
 		return
 	}
 	if *args.PrintTransient {
-		fmt.Print(eng.RenderTransientPrompt())
+		fmt.Print(eng.RenderExtraPrompt(engine.Transient))
+		return
+	}
+	if *args.PrintValid {
+		fmt.Print(eng.RenderExtraPrompt(engine.Valid))
+		return
+	}
+	if *args.PrintError {
+		fmt.Print(eng.RenderExtraPrompt(engine.Error))
 		return
 	}
 	if len(*args.Command) != 0 {

@@ -30,17 +30,19 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Version              int              `json:"version"`
-	FinalSpace           bool             `json:"final_space,omitempty"`
-	OSC99                bool             `json:"osc99,omitempty"`
-	ConsoleTitle         bool             `json:"console_title,omitempty"`
-	ConsoleTitleStyle    console.Style    `json:"console_title_style,omitempty"`
-	ConsoleTitleTemplate string           `json:"console_title_template,omitempty"`
-	TerminalBackground   string           `json:"terminal_background,omitempty"`
-	Blocks               []*Block         `json:"blocks,omitempty"`
-	Tooltips             []*Segment       `json:"tooltips,omitempty"`
-	TransientPrompt      *TransientPrompt `json:"transient_prompt,omitempty"`
-	Palette              color.Palette    `json:"palette,omitempty"`
+	Version              int           `json:"version"`
+	FinalSpace           bool          `json:"final_space,omitempty"`
+	OSC99                bool          `json:"osc99,omitempty"`
+	ConsoleTitle         bool          `json:"console_title,omitempty"`
+	ConsoleTitleStyle    console.Style `json:"console_title_style,omitempty"`
+	ConsoleTitleTemplate string        `json:"console_title_template,omitempty"`
+	TerminalBackground   string        `json:"terminal_background,omitempty"`
+	Blocks               []*Block      `json:"blocks,omitempty"`
+	Tooltips             []*Segment    `json:"tooltips,omitempty"`
+	TransientPrompt      *ExtraPrompt  `json:"transient_prompt,omitempty"`
+	ValidLine            *ExtraPrompt  `json:"valid_line,omitempty"`
+	ErrorLine            *ExtraPrompt  `json:"error_line,omitempty"`
+	Palette              color.Palette `json:"palette,omitempty"`
 
 	format  string
 	origin  string
@@ -55,7 +57,7 @@ func (cfg *Config) MakeColors(env environment.Environment) color.AnsiColors {
 	return color.MakeColors(cfg.Palette, !cacheDisabled)
 }
 
-type TransientPrompt struct {
+type ExtraPrompt struct {
 	Template   string `json:"template,omitempty"`
 	Background string `json:"background,omitempty"`
 	Foreground string `json:"foreground,omitempty"`
@@ -119,7 +121,7 @@ func loadConfig(env environment.Environment) *Config {
 
 	// initialize default values
 	if cfg.TransientPrompt == nil {
-		cfg.TransientPrompt = &TransientPrompt{}
+		cfg.TransientPrompt = &ExtraPrompt{}
 	}
 
 	return &cfg

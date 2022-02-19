@@ -44,8 +44,8 @@ Display SysInfo.
 - `.PhysicalFreeMemory`: `int` - is the total of free physical memory
 - `.PhysicalPercentUsed`: `float64` - is the percentage of physical memory in usage
 - `.SwapTotalMemory`: `int` - is the total of used swap memory
-- `.SwapFreeMemory`: `int` - is the percentage of swap memory in usage
-- `.SwapPercentUsed`: `float64` - is the current user root/admin or not
+- `.SwapFreeMemory`: `int` -  is the total of free swap memory
+- `.SwapPercentUsed`: `float64` - is the percentage of swap memory in usage
 - `.Load1`: `float64` - is the current load1 (can be empty on windows)
 - `.Load5`: `float64` - is the current load5 (can be empty on windows)
 - `.Load15`: `float64` - is the current load15 (can be empty on windows)

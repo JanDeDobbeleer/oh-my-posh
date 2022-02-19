@@ -429,8 +429,10 @@ func (env *ShellEnvironment) RunCommand(command string, args ...string) (string,
 
 func (env *ShellEnvironment) RunShellCommand(shell, command string) string {
 	defer env.trace(time.Now(), "RunShellCommand", shell, command)
-	out, _ := env.RunCommand(shell, "-c", command)
-	return out
+	if out, err := env.RunCommand(shell, "-c", command); err == nil {
+		return out
+	}
+	return ""
 }
 
 func (env *ShellEnvironment) HasCommand(command string) bool {

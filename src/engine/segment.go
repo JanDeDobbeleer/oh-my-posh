@@ -156,6 +156,8 @@ const (
 	UI5TOOLING SegmentType = "ui5tooling"
 	// Cloud Foundry segment
 	CF SegmentType = "cf"
+	// Cloud Foundry logged in target
+	CFTARGET SegmentType = "cftarget"
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
@@ -281,6 +283,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		HASKELL:       &segments.Haskell{},
 		UI5TOOLING:    &segments.UI5Tooling{},
 		CF:            &segments.Cf{},
+		CFTARGET:      &segments.CfTarget{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)

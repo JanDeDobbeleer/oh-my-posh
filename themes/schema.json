@@ -1972,6 +1972,17 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "cftarget" }
+            }
+          },
+          "then": {
+            "title": "Clound Foundry Target segment",
+            "description": "https://ohmyposh.dev/docs/cftarget"
+          }
         }
       ]
     }

@@ -47,6 +47,7 @@ module.exports = {
         "command",
         "crystal",
         "cf",
+        "cftarget",
         "dart",
         "dotnet",
         "executiontime",

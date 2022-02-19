@@ -51,7 +51,7 @@ func (env *MockedEnvironment) FolderList(path string) []string {
 	return args.Get(0).([]string)
 }
 
-func (env *MockedEnvironment) PathSeperator() string {
+func (env *MockedEnvironment) PathSeparator() string {
 	args := env.Called()
 	return args.String(0)
 }

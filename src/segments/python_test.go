@@ -52,7 +52,7 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("Getenv", "CONDA_ENV_PATH").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "PYENV_VERSION").Return(tc.VirtualEnvName)
-		env.On("PathSeperator").Return("")
+		env.On("PathSeparator").Return("")
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
 		props := properties.Map{
@@ -80,7 +80,7 @@ func TestPythonPythonInContext(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("PathSeperator").Return("")
+		env.On("PathSeparator").Return("")
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")

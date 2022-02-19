@@ -36,7 +36,7 @@ func TestDotnetSegment(t *testing.T) {
 		}
 
 		env.On("HasFiles", "*.cs").Return(true)
-		env.On("PathSeperator").Return("")
+		env.On("PathSeparator").Return("")
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
 		env.On("TemplateCache").Return(&environment.TemplateCache{

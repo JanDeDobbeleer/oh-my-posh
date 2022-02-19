@@ -27,7 +27,7 @@ func TestTextSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("PathSeperator").Return("/")
+		env.On("PathSeparator").Return("/")
 		env.On("TemplateCache").Return(&environment.TemplateCache{
 			UserName: "Posh",
 			Env: map[string]string{

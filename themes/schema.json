@@ -64,6 +64,18 @@
       "description": "https://ohmyposh.dev/docs/config-templates",
       "default": ""
     },
+    "extra_prompt": {
+      "type": "object",
+      "default": {},
+      "properties": {
+        "template": {
+          "type": "string",
+          "title": "Prompt Template"
+        },
+        "background": { "$ref": "#/definitions/color" },
+        "foreground": { "$ref": "#/definitions/color" }
+      }
+    },
     "block": {
       "type": "object",
       "description": "https://ohmyposh.dev/docs/config-overview#block",
@@ -2008,7 +2020,7 @@
     "tooltips": {
       "type": "array",
       "title": "Tooltip list, prompt elements to display based on context",
-      "description": "https://ohmyposh.dev/docs/beta#tooltips",
+      "description": "https://ohmyposh.dev/docs/config-tooltips",
       "default": [],
       "items": {
         "allOf": [{ "$ref": "#/definitions/segment" }],
@@ -2025,19 +2037,19 @@
       }
     },
     "transient_prompt": {
-      "type": "object",
-      "title": "Transient Prompt Settings",
-      "description": "https://ohmyposh.dev/docs/beta#transient-prompt",
-      "default": {},
-      "properties": {
-        "template": {
-          "type": "string",
-          "title": "Transient Prompt Template",
-          "default": "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"
-        },
-        "background": { "$ref": "#/definitions/color" },
-        "foreground": { "$ref": "#/definitions/color" }
-      }
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Transient Prompt Setting",
+      "description": "https://ohmyposh.dev/docs/config-transient"
+    },
+    "valid_line": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Valid Prompt Setting",
+      "description": "https://ohmyposh.dev/docs/config-prompt-override"
+    },
+    "error_line": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Error Prompt Setting",
+      "description": "https://ohmyposh.dev/docs/config-prompt-override"
     },
     "palette": {
       "type": "object",

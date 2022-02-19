@@ -29,10 +29,14 @@ const (
 
 type Args struct {
 	ErrorCode      *int
+	PrintInit      *bool
 	PrintConfig    *bool
-	ConfigFormat   *string
 	PrintShell     *bool
+	PrintTransient *bool
+	PrintValid     *bool
+	PrintError     *bool
 	Config         *string
+	ConfigFormat   *string
 	Shell          *string
 	PWD            *string
 	PSWD           *string
@@ -42,7 +46,6 @@ type Args struct {
 	Millis         *bool
 	Eval           *bool
 	Init           *bool
-	PrintInit      *bool
 	ExportPNG      *bool
 	Author         *string
 	CursorPadding  *int
@@ -51,7 +54,6 @@ type Args struct {
 	BGColor        *string
 	StackCount     *int
 	Command        *string
-	PrintTransient *bool
 	Plain          *bool
 	CachePath      *bool
 	Migrate        *bool

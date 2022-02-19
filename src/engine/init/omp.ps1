@@ -3,7 +3,7 @@
 if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
     [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 }
-elseif ($env:POSH_CONSTRAINED_LANGUAGE_MODE -ne $true){
+elseif ($env:POSH_CONSTRAINED_LANGUAGE_MODE -ne $true) {
     Write-Host "[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
 When using PowerShell in ConstrainedLanguage mode, please set the
 console mode manually to UTF-8. See here for more information:
@@ -208,6 +208,13 @@ function global:Enable-PoshTransientPrompt {
         [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
         [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
     }
+}
+
+function global:Enable-PoshLineError {
+    $omp = "::OMP::"
+    $validLine = @(&$omp --config="$Env:POSH_THEME" --print-valid 2>&1) -join "`n"
+    $errorLine = @(&$omp --config="$Env:POSH_THEME" --print-error 2>&1) -join "`n"
+    Set-PSReadLineOption -PromptText $validLine, $errorLine
 }
 
 <#

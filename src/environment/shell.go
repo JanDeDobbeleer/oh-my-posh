@@ -145,7 +145,7 @@ type Environment interface {
 	Shell() string
 	Platform() string
 	ErrorCode() int
-	PathSeperator() string
+	PathSeparator() string
 	HasFiles(pattern string) bool
 	HasFilesInDir(dir, pattern string) bool
 	HasFolder(folder string) bool
@@ -300,7 +300,7 @@ func (env *ShellEnvironment) Pwd() string {
 func (env *ShellEnvironment) HasFiles(pattern string) bool {
 	defer env.trace(time.Now(), "HasFiles", pattern)
 	cwd := env.Pwd()
-	pattern = cwd + env.PathSeperator() + pattern
+	pattern = cwd + env.PathSeparator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
 		env.log(Error, "HasFiles", err.Error())
@@ -311,7 +311,7 @@ func (env *ShellEnvironment) HasFiles(pattern string) bool {
 
 func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
 	defer env.trace(time.Now(), "HasFilesInDir", pattern)
-	pattern = dir + env.PathSeperator() + pattern
+	pattern = dir + env.PathSeparator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
 		env.log(Error, "HasFilesInDir", err.Error())
@@ -371,8 +371,8 @@ func (env *ShellEnvironment) FolderList(path string) []string {
 	return folderNames
 }
 
-func (env *ShellEnvironment) PathSeperator() string {
-	defer env.trace(time.Now(), "PathSeperator")
+func (env *ShellEnvironment) PathSeparator() string {
+	defer env.trace(time.Now(), "PathSeparator")
 	return string(os.PathSeparator)
 }
 
@@ -698,7 +698,7 @@ func Base(env Environment, path string) string {
 	}
 	volumeName := filepath.VolumeName(path)
 	// Strip trailing slashes.
-	for len(path) > 0 && string(path[len(path)-1]) == env.PathSeperator() {
+	for len(path) > 0 && string(path[len(path)-1]) == env.PathSeparator() {
 		path = path[0 : len(path)-1]
 	}
 	if volumeName == path {
@@ -708,7 +708,7 @@ func Base(env Environment, path string) string {
 	path = path[len(filepath.VolumeName(path)):]
 	// Find the last element
 	i := len(path) - 1
-	for i >= 0 && string(path[i]) != env.PathSeperator() {
+	for i >= 0 && string(path[i]) != env.PathSeparator() {
 		i--
 	}
 	if i >= 0 {
@@ -716,7 +716,7 @@ func Base(env Environment, path string) string {
 	}
 	// If empty now, it had only slashes.
 	if path == "" {
-		return env.PathSeperator()
+		return env.PathSeparator()
 	}
 	return path
 }

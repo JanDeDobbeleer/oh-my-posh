@@ -75,18 +75,18 @@ func TestRootLocationHome(t *testing.T) {
 		HomePath      string
 		Pswd          string
 		Pwd           string
-		PathSeperator string
+		PathSeparator string
 		HomeIcon      string
 		RegistryIcon  string
 	}{
-		{Expected: "~", HomeIcon: "~", HomePath: "/home/bill/", Pwd: "/home/bill/", PathSeperator: "/"},
-		{Expected: "usr", HomePath: "/home/bill/", Pwd: "/usr/error/what", PathSeperator: "/"},
-		{Expected: "C:", HomePath: "C:\\Users\\Bill", Pwd: "C:\\Program Files\\Go", PathSeperator: "\\"},
-		{Expected: "REG", RegistryIcon: "REG", HomePath: "C:\\Users\\Bill", Pwd: "HKCU:\\Program Files\\Go", PathSeperator: "\\"},
-		{Expected: "~", HomeIcon: "~", HomePath: "C:\\Users\\Bill", Pwd: "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\Bill", PathSeperator: "\\"},
-		{Expected: "C:", HomePath: "C:\\Users\\Jack", Pwd: "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\Bill", PathSeperator: "\\"},
-		{Expected: "", HomePath: "C:\\Users\\Jack", Pwd: "", PathSeperator: "\\"},
-		{Expected: "DRIVE:", HomePath: "/home/bill/", Pwd: "/usr/error/what", Pswd: "DRIVE:", PathSeperator: "/"},
+		{Expected: "~", HomeIcon: "~", HomePath: "/home/bill/", Pwd: "/home/bill/", PathSeparator: "/"},
+		{Expected: "usr", HomePath: "/home/bill/", Pwd: "/usr/error/what", PathSeparator: "/"},
+		{Expected: "C:", HomePath: "C:\\Users\\Bill", Pwd: "C:\\Program Files\\Go", PathSeparator: "\\"},
+		{Expected: "REG", RegistryIcon: "REG", HomePath: "C:\\Users\\Bill", Pwd: "HKCU:\\Program Files\\Go", PathSeparator: "\\"},
+		{Expected: "~", HomeIcon: "~", HomePath: "C:\\Users\\Bill", Pwd: "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\Bill", PathSeparator: "\\"},
+		{Expected: "C:", HomePath: "C:\\Users\\Jack", Pwd: "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\Bill", PathSeparator: "\\"},
+		{Expected: "", HomePath: "C:\\Users\\Jack", Pwd: "", PathSeparator: "\\"},
+		{Expected: "DRIVE:", HomePath: "/home/bill/", Pwd: "/usr/error/what", Pswd: "DRIVE:", PathSeparator: "/"},
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
@@ -96,7 +96,7 @@ func TestRootLocationHome(t *testing.T) {
 			PSWD: &tc.Pswd,
 		}
 		env.On("Args").Return(args)
-		env.On("PathSeperator").Return(tc.PathSeperator)
+		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("GOOS").Return("")
 		path := &Path{
 			env: env,
@@ -127,7 +127,7 @@ func TestPathDepthMultipleLevelsDeep(t *testing.T) {
 		pwd += levelDir
 	}
 	env := new(mock.MockedEnvironment)
-	env.On("PathSeperator").Return("/")
+	env.On("PathSeparator").Return("/")
 	env.On("getRunteGOOS").Return("")
 	path := &Path{
 		env: env,
@@ -139,7 +139,7 @@ func TestPathDepthMultipleLevelsDeep(t *testing.T) {
 func TestPathDepthZeroLevelsDeep(t *testing.T) {
 	pwd := "/usr/"
 	env := new(mock.MockedEnvironment)
-	env.On("PathSeperator").Return("/")
+	env.On("PathSeparator").Return("/")
 	path := &Path{
 		env: env,
 	}
@@ -150,7 +150,7 @@ func TestPathDepthZeroLevelsDeep(t *testing.T) {
 func TestPathDepthOneLevelDeep(t *testing.T) {
 	pwd := "/usr/location"
 	env := new(mock.MockedEnvironment)
-	env.On("PathSeperator").Return("/")
+	env.On("PathSeparator").Return("/")
 	path := &Path{
 		env: env,
 	}
@@ -164,32 +164,32 @@ func TestAgnosterPathStyles(t *testing.T) {
 		HomePath            string
 		Pswd                string
 		Pwd                 string
-		PathSeperator       string
+		PathSeparator       string
 		HomeIcon            string
 		FolderSeparatorIcon string
 		Style               string
 		GOOS                string
 		MaxDepth            int
 	}{
-		{Style: AgnosterFull, Expected: "usr > location > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: AgnosterShort, Expected: "usr > .. > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: AgnosterShort, Expected: "~ > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: AgnosterShort, Expected: "~ > projects", HomePath: "/usr/home", Pwd: "/usr/home/projects", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: AgnosterShort, Expected: "C:", HomePath: homeBillWindows, Pwd: "C:", PathSeperator: "\\", FolderSeparatorIcon: " > "},
-		{Style: AgnosterShort, Expected: "/", HomePath: homeBillWindows, Pwd: "/", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: AgnosterShort, Expected: "foo", HomePath: homeBillWindows, Pwd: "/foo", PathSeperator: "/", FolderSeparatorIcon: " > "},
+		{Style: AgnosterFull, Expected: "usr > location > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: AgnosterShort, Expected: "usr > .. > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: AgnosterShort, Expected: "~ > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: AgnosterShort, Expected: "~ > projects", HomePath: "/usr/home", Pwd: "/usr/home/projects", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: AgnosterShort, Expected: "C:", HomePath: homeBillWindows, Pwd: "C:", PathSeparator: "\\", FolderSeparatorIcon: " > "},
+		{Style: AgnosterShort, Expected: "/", HomePath: homeBillWindows, Pwd: "/", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: AgnosterShort, Expected: "foo", HomePath: homeBillWindows, Pwd: "/foo", PathSeparator: "/", FolderSeparatorIcon: " > "},
 
-		{Style: AgnosterShort, Expected: "usr > .. > bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2},
-		{Style: AgnosterShort, Expected: "usr > foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 3},
-		{Style: AgnosterShort, Expected: "~ > .. > bar > man", HomePath: "/usr/home", Pwd: "/usr/home/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2},
-		{Style: AgnosterShort, Expected: "~ > foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/home/foo/bar/man", PathSeperator: "/", FolderSeparatorIcon: " > ", MaxDepth: 3},
+		{Style: AgnosterShort, Expected: "usr > .. > bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2},
+		{Style: AgnosterShort, Expected: "usr > foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 3},
+		{Style: AgnosterShort, Expected: "~ > .. > bar > man", HomePath: "/usr/home", Pwd: "/usr/home/foo/bar/man", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2},
+		{Style: AgnosterShort, Expected: "~ > foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/home/foo/bar/man", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 3},
 
 		{
 			Style:               AgnosterShort,
 			Expected:            "C: > .. > bar > man",
 			HomePath:            homeBillWindows,
 			Pwd:                 "C:\\usr\\foo\\bar\\man",
-			PathSeperator:       "\\",
+			PathSeparator:       "\\",
 			FolderSeparatorIcon: " > ",
 			MaxDepth:            2,
 		},
@@ -198,7 +198,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 			Expected:            "C: > .. > foo > bar > man",
 			HomePath:            homeBillWindows,
 			Pwd:                 "C:\\usr\\foo\\bar\\man",
-			PathSeperator:       "\\",
+			PathSeparator:       "\\",
 			FolderSeparatorIcon: " > ",
 			MaxDepth:            3,
 		},
@@ -207,7 +207,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 			Expected:            "~ > .. > bar > man",
 			HomePath:            homeBillWindows,
 			Pwd:                 "C:\\Users\\Bill\\foo\\bar\\man",
-			PathSeperator:       "\\",
+			PathSeparator:       "\\",
 			FolderSeparatorIcon: " > ",
 			MaxDepth:            2,
 		},
@@ -216,36 +216,36 @@ func TestAgnosterPathStyles(t *testing.T) {
 			Expected:            "~ > foo > bar > man",
 			HomePath:            homeBillWindows,
 			Pwd:                 "C:\\Users\\Bill\\foo\\bar\\man",
-			PathSeperator:       "\\",
+			PathSeparator:       "\\",
 			FolderSeparatorIcon: " > ",
 			MaxDepth:            3,
 		},
 
-		{Style: AgnosterFull, Expected: "PSDRIVE: | src", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src", PathSeperator: "/", FolderSeparatorIcon: " | "},
-		{Style: AgnosterShort, Expected: "PSDRIVE: | .. | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeperator: "/", FolderSeparatorIcon: " | "},
+		{Style: AgnosterFull, Expected: "PSDRIVE: | src", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src", PathSeparator: "/", FolderSeparatorIcon: " | "},
+		{Style: AgnosterShort, Expected: "PSDRIVE: | .. | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeparator: "/", FolderSeparatorIcon: " | "},
 
-		{Style: Mixed, Expected: "~ > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Mixed, Expected: "~ > ab > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/ab/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
+		{Style: Mixed, Expected: "~ > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Mixed, Expected: "~ > ab > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/ab/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
 
-		{Style: Letter, Expected: "~ > a > w > man", HomePath: "/usr/home", Pwd: "/usr/home/ab/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Letter, Expected: "u > b > a > w > man", HomePath: "/usr/home", Pwd: "/usr/burp/ab/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Letter, Expected: "u > .b > a > w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/ab/whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Letter, Expected: "u > .b > a > .w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/ab/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Letter, Expected: "u > .b > a > ._w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/ab/._whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Letter, Expected: "u > .ä > ū > .w > man", HomePath: "/usr/home", Pwd: "/usr/.äufbau/ūmgebung/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Letter, Expected: "u > .b > 1 > .w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/12345/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Letter, Expected: "u > .b > 1 > .w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/12345abc/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Letter, Expected: "u > .b > __p > .w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/__pycache__/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Letter, Expected: "➼ > .w > man", HomePath: "/usr/home", Pwd: "➼/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Letter, Expected: "➼ s > .w > man", HomePath: "/usr/home", Pwd: "➼ something/.whatever/man", PathSeperator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "~ > a > w > man", HomePath: "/usr/home", Pwd: "/usr/home/ab/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "u > b > a > w > man", HomePath: "/usr/home", Pwd: "/usr/burp/ab/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "u > .b > a > w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/ab/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "u > .b > a > .w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/ab/.whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "u > .b > a > ._w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/ab/._whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "u > .ä > ū > .w > man", HomePath: "/usr/home", Pwd: "/usr/.äufbau/ūmgebung/.whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "u > .b > 1 > .w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/12345/.whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "u > .b > 1 > .w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/12345abc/.whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "u > .b > __p > .w > man", HomePath: "/usr/home", Pwd: "/usr/.burp/__pycache__/.whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "➼ > .w > man", HomePath: "/usr/home", Pwd: "➼/.whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Letter, Expected: "➼ s > .w > man", HomePath: "/usr/home", Pwd: "➼ something/.whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
 
-		{Style: Unique, Expected: "~ > a > ab > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/abc/abcd", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Unique, Expected: "~ > a > .a > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/.abc/abcd", PathSeperator: "/", FolderSeparatorIcon: " > "},
-		{Style: Unique, Expected: "~ > a > ab > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/ab/abcd", PathSeperator: "/", FolderSeparatorIcon: " > "},
+		{Style: Unique, Expected: "~ > a > ab > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/abc/abcd", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Unique, Expected: "~ > a > .a > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/.abc/abcd", PathSeparator: "/", FolderSeparatorIcon: " > "},
+		{Style: Unique, Expected: "~ > a > ab > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/ab/abcd", PathSeparator: "/", FolderSeparatorIcon: " > "},
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("PathSeperator").Return(tc.PathSeperator)
+		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("Home").Return(tc.HomePath)
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return(tc.GOOS)
@@ -366,7 +366,7 @@ func TestGetFullPath(t *testing.T) {
 		if len(tc.PathSeparator) == 0 {
 			tc.PathSeparator = "/"
 		}
-		env.On("PathSeperator").Return(tc.PathSeparator)
+		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("Home").Return("/usr/home")
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return(tc.GOOS)
@@ -417,7 +417,7 @@ func TestGetFullPathCustomMappedLocations(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("PathSeperator").Return("/")
+		env.On("PathSeparator").Return("/")
 		env.On("Home").Return("/usr/home")
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return("")
@@ -468,7 +468,7 @@ func TestNormalizePath(t *testing.T) {
 func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	pwd := "/a/b/c/d"
 	env := new(mock.MockedEnvironment)
-	env.On("PathSeperator").Return("/")
+	env.On("PathSeparator").Return("/")
 	env.On("Home").Return("/usr/home")
 	env.On("Pwd").Return(pwd)
 	env.On("GOOS").Return("")
@@ -516,7 +516,7 @@ func TestAgnosterPath(t *testing.T) { // nolint:dupl
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("Home").Return(tc.Home)
-		env.On("PathSeperator").Return(tc.PathSeparator)
+		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("Pwd").Return(tc.PWD)
 		env.On("GOOS").Return("")
 		args := &environment.Args{
@@ -564,7 +564,7 @@ func TestAgnosterLeftPath(t *testing.T) { // nolint:dupl
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("Home").Return(tc.Home)
-		env.On("PathSeperator").Return(tc.PathSeparator)
+		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("Pwd").Return(tc.PWD)
 		env.On("GOOS").Return("")
 		args := &environment.Args{
@@ -611,7 +611,7 @@ func TestGetPwd(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("PathSeperator").Return("/")
+		env.On("PathSeparator").Return("/")
 		env.On("Home").Return("/usr/home")
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return("")

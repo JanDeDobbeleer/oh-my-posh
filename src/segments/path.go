@@ -115,7 +115,7 @@ func (pt *Path) Init(props properties.Properties, env environment.Environment) {
 func (pt *Path) getMixedPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
-	splitted := strings.Split(pwd, pt.env.PathSeperator())
+	splitted := strings.Split(pwd, pt.env.PathSeparator())
 	threshold := int(pt.props.GetFloat64(MixedThreshold, 4))
 	for i, part := range splitted {
 		if part == "" {
@@ -126,7 +126,7 @@ func (pt *Path) getMixedPath() string {
 		if len(part) > threshold && i != 0 && i != len(splitted)-1 {
 			folder = pt.props.GetString(FolderIcon, "..")
 		}
-		separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeperator())
+		separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeparator())
 		if i == 0 {
 			separator = ""
 		}
@@ -142,7 +142,7 @@ func (pt *Path) getAgnosterPath() string {
 	buffer.WriteString(pt.rootLocation())
 	pathDepth := pt.pathDepth(pwd)
 	folderIcon := pt.props.GetString(FolderIcon, "..")
-	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeperator())
+	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeparator())
 	for i := 1; i < pathDepth; i++ {
 		buffer.WriteString(fmt.Sprintf("%s%s", separator, folderIcon))
 	}
@@ -154,7 +154,7 @@ func (pt *Path) getAgnosterPath() string {
 
 func (pt *Path) getAgnosterLeftPath() string {
 	pwd := pt.getPwd()
-	separator := pt.env.PathSeperator()
+	separator := pt.env.PathSeparator()
 	pwd = strings.Trim(pwd, separator)
 	splitted := strings.Split(pwd, separator)
 	folderIcon := pt.props.GetString(FolderIcon, "..")
@@ -191,8 +191,8 @@ func (pt *Path) getRelevantLetter(folder string) string {
 func (pt *Path) getLetterPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
-	splitted := strings.Split(pwd, pt.env.PathSeperator())
-	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeperator())
+	splitted := strings.Split(pwd, pt.env.PathSeparator())
+	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeparator())
 	for i := 0; i < len(splitted)-1; i++ {
 		folder := splitted[i]
 		if len(folder) == 0 {
@@ -210,8 +210,8 @@ func (pt *Path) getLetterPath() string {
 func (pt *Path) getUniqueLettersPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
-	splitted := strings.Split(pwd, pt.env.PathSeperator())
-	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeperator())
+	splitted := strings.Split(pwd, pt.env.PathSeparator())
+	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeparator())
 	letters := make(map[string]bool, len(splitted))
 	for i := 0; i < len(splitted)-1; i++ {
 		folder := splitted[i]
@@ -236,7 +236,7 @@ func (pt *Path) getUniqueLettersPath() string {
 
 func (pt *Path) getAgnosterFullPath() string {
 	pwd := pt.getPwd()
-	if len(pwd) > 1 && string(pwd[0]) == pt.env.PathSeperator() {
+	if len(pwd) > 1 && string(pwd[0]) == pt.env.PathSeparator() {
 		pwd = pwd[1:]
 	}
 	return pt.replaceFolderSeparators(pwd)
@@ -252,7 +252,7 @@ func (pt *Path) getAgnosterShortPath() string {
 	if pathDepth <= maxDepth {
 		return pt.getAgnosterFullPath()
 	}
-	pathSeparator := pt.env.PathSeperator()
+	pathSeparator := pt.env.PathSeparator()
 	folderSeparator := pt.props.GetString(FolderSeparatorIcon, pathSeparator)
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 	root := pt.rootLocation()
@@ -341,7 +341,7 @@ func (pt *Path) replaceMappedLocations(pwd string) string {
 }
 
 func (pt *Path) replaceFolderSeparators(pwd string) string {
-	defaultSeparator := pt.env.PathSeperator()
+	defaultSeparator := pt.env.PathSeparator()
 	if pwd == defaultSeparator {
 		return pwd
 	}
@@ -360,14 +360,14 @@ func (pt *Path) inHomeDir(pwd string) bool {
 
 func (pt *Path) rootLocation() string {
 	pwd := pt.getPwd()
-	pwd = strings.TrimPrefix(pwd, pt.env.PathSeperator())
-	splitted := strings.Split(pwd, pt.env.PathSeperator())
+	pwd = strings.TrimPrefix(pwd, pt.env.PathSeparator())
+	splitted := strings.Split(pwd, pt.env.PathSeparator())
 	rootLocation := splitted[0]
 	return rootLocation
 }
 
 func (pt *Path) pathDepth(pwd string) int {
-	splitted := strings.Split(pwd, pt.env.PathSeperator())
+	splitted := strings.Split(pwd, pt.env.PathSeparator())
 	depth := 0
 	for _, part := range splitted {
 		if part != "" {

@@ -33,6 +33,7 @@ type Args struct {
 	PrintConfig    *bool
 	PrintShell     *bool
 	PrintTransient *bool
+	PrintSecondary *bool
 	PrintValid     *bool
 	PrintError     *bool
 	Config         *string

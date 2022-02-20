@@ -9,7 +9,10 @@ if [[ ! -d "/tmp" ]]; then
   TIMER_START="${HOME}/.${USER}.start.$$"
 fi
 
+# start timer on command start
 PS0='$(::OMP:: --millis > "$TIMER_START")'
+# set secondary prompt
+PS2="$(::OMP:: --config="$POSH_THEME" --shell=bash --print-secondary)"
 
 function _omp_hook() {
     local ret=$?

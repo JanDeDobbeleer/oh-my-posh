@@ -31,7 +31,7 @@ You need to extend or create a custom theme with your prompt overrides. For exam
     "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
     "blocks": {
         ...
-    }
+    },
     "valid_line": {
         "background": "transparent",
         "foreground": "#ffffff",

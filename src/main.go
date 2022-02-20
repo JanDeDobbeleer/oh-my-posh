@@ -141,6 +141,10 @@ func main() {
 			"print-error",
 			false,
 			"Print the failed prompt"),
+		PrintSecondary: flag.Bool(
+			"print-secondary",
+			false,
+			"Print the secondary prompt"),
 	}
 	flag.Parse()
 	if *args.Version {
@@ -227,6 +231,10 @@ func main() {
 	}
 	if *args.PrintError {
 		fmt.Print(eng.RenderExtraPrompt(engine.Error))
+		return
+	}
+	if *args.PrintSecondary {
+		fmt.Print(eng.RenderExtraPrompt(engine.Secondary))
 		return
 	}
 	if len(*args.Command) != 0 {

@@ -2,6 +2,9 @@ export POSH_THEME="::CONFIG::"
 export POWERLINE_COMMAND="oh-my-posh"
 export CONDA_PROMPT_MODIFIER=false
 
+# set secondary prompt
+PS2="$(::OMP:: --config="$POSH_THEME" --shell=zsh --print-secondary)"
+
 function _omp-preexec() {
   omp_start_time=$(::OMP:: --millis)
 }

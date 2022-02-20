@@ -42,6 +42,7 @@ type Config struct {
 	TransientPrompt      *ExtraPrompt  `json:"transient_prompt,omitempty"`
 	ValidLine            *ExtraPrompt  `json:"valid_line,omitempty"`
 	ErrorLine            *ExtraPrompt  `json:"error_line,omitempty"`
+	SecondaryPrompt      *ExtraPrompt  `json:"secondary_prompt,omitempty"`
 	Palette              color.Palette `json:"palette,omitempty"`
 
 	format  string

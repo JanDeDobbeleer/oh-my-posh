@@ -91,7 +91,7 @@
   "secondary_prompt": {
     "background": "#ec9706",
     "foreground": "#100e23",
-    "template": "  "
+    "template": " \uf061 "
   },
   "console_title": true,
   "console_title_style": "template",

@@ -48,7 +48,10 @@ func getExecutablePath(shell string) (string, error) {
 	executable = strings.ReplaceAll(executable, "\\", "/")
 	switch shell {
 	case bash, zsh:
-		return strings.ReplaceAll(executable, " ", "\\ "), nil
+		executable = strings.ReplaceAll(executable, " ", "\\ ")
+		executable = strings.ReplaceAll(executable, "(", "\\(")
+		executable = strings.ReplaceAll(executable, ")", "\\)")
+		return executable, nil
 	}
 	return executable, nil
 }

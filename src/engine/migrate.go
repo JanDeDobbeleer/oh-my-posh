@@ -134,15 +134,15 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 			template = strings.ReplaceAll(template, ".Text", ".Meaning")
 			segment.Properties[properties.SegmentTemplate] = template
 		}
+		displayExitCode := properties.Property("display_exit_code")
+		if !segment.Properties.GetBool(displayExitCode, true) {
+			delete(segment.Properties, displayExitCode)
+			template = strings.ReplaceAll(template, " {{ .Meaning }}", "")
+		}
 		alwaysNumeric := properties.Property("always_numeric")
 		if segment.Properties.GetBool(alwaysNumeric, false) {
 			delete(segment.Properties, alwaysNumeric)
 			template = strings.ReplaceAll(template, ".Meaning", ".Code")
-		}
-		displayExitCode := properties.Property("display_exit_code")
-		if !segment.Properties.GetBool(displayExitCode, true) {
-			delete(segment.Properties, displayExitCode)
-			template = "  "
 		}
 		segment.Properties[properties.SegmentTemplate] = template
 		segment.migrateTemplate()

@@ -31,6 +31,10 @@ if (Test-Path $omp_config) {
 Remove-Variable omp_value -Confirm:$false
 Remove-Variable omp_config -Confirm:$false
 
+# set secondary prompt
+$secondaryPrompt = @(&"::OMP::" --config="$Env:POSH_THEME" --print-secondary 2>&1) -join "`n"
+Set-PSReadLineOption -ContinuationPrompt $secondaryPrompt
+
 function global:Set-PoshContext {}
 
 function global:Get-PoshContext {

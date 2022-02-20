@@ -272,6 +272,7 @@ const (
 	Transient ExtraPromptType = iota
 	Valid
 	Error
+	Secondary
 )
 
 func (e *Engine) RenderExtraPrompt(promptType ExtraPromptType) string {
@@ -283,6 +284,8 @@ func (e *Engine) RenderExtraPrompt(promptType ExtraPromptType) string {
 		prompt = e.Config.ValidLine
 	case Error:
 		prompt = e.Config.ErrorLine
+	case Secondary:
+		prompt = e.Config.SecondaryPrompt
 	}
 	if prompt == nil {
 		return ""
@@ -294,6 +297,8 @@ func (e *Engine) RenderExtraPrompt(promptType ExtraPromptType) string {
 		switch promptType { // nolint: exhaustive
 		case Transient:
 			return "{{ .Shell }}> "
+		case Secondary:
+			return "> "
 		default:
 			return ""
 		}
@@ -312,10 +317,14 @@ func (e *Engine) RenderExtraPrompt(promptType ExtraPromptType) string {
 	case zsh:
 		// escape double quotes contained in the prompt
 		str, _ := e.Writer.String()
-		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(str, "\"", "\"\""))
-		prompt += "\nRPROMPT=\"\""
-		return prompt
-	case pwsh, powershell5, winCMD:
+		if promptType == Transient {
+			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(str, "\"", "\"\""))
+			// empty RPROMPT
+			prompt += "\nRPROMPT=\"\""
+			return prompt
+		}
+		return str
+	case pwsh, powershell5, winCMD, bash:
 		str, _ := e.Writer.String()
 		return str
 	}

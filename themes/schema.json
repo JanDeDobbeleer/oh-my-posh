@@ -2051,6 +2051,11 @@
       "title": "Error Prompt Setting",
       "description": "https://ohmyposh.dev/docs/config-prompt-override"
     },
+    "secondary_prompt": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Secondary Prompt Setting",
+      "description": "https://ohmyposh.dev/docs/config-secondary-prompt"
+    },
     "palette": {
       "type": "object",
       "title": "Palette",

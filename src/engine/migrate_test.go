@@ -221,12 +221,25 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "EXIT - No exit code",
-			Expected: "  ",
+			Expected: " {{ if gt .Code 0 }}FAIL{{ else }}SUCCESS{{ end }} ",
 			Type:     EXIT,
 			Props: properties.Map{
 				"display_exit_code": false,
 				"success_icon":      "SUCCESS",
 				"error_icon":        "FAIL",
+			},
+		},
+		{
+			Case:     "EXIT - No spaces",
+			Expected: "{{ if gt .Code 0 }}💩{{ else }}🌵{{ end }}",
+			Type:     EXIT,
+			Props: properties.Map{
+				"prefix":            "",
+				"postfix":           "",
+				"display_exit_code": false,
+				"always_enabled":    true,
+				"success_icon":      "🌵",
+				"error_icon":        "💩",
 			},
 		},
 		{

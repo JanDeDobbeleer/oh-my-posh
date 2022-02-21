@@ -10,6 +10,7 @@ LicenseFile="bin\COPYING.txt"
 OutputBaseFilename=install
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
+ChangesEnvironment=yes
 
 [Files]
 Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"
@@ -17,7 +18,7 @@ Source: "bin\themes\*"; DestDir: "{app}\themes"
 
 [Registry]
 Root: "HKCU"; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\bin"; Check: NeedsAddPathHKCU(ExpandConstant('{app}\bin'))
-Root: "HKCU"; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\themes"; Check: NeedsAddPathHKCU(ExpandConstant('{app}\themes'))
+Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "POSH_THEMES_PATH"; ValueData: {app}\themes; Flags: preservestringtype
 
 [Code]
 function NeedsAddPathHKCU(Param: string): boolean;

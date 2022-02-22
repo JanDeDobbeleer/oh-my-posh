@@ -26,7 +26,7 @@ Display the active [Cloud Foundry CLI][cloud-foundry] version.
 ## Properties
 
 - home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
-- fetch_version: `boolean` - display the UI5 tooling version - defaults to `true`
+- fetch_version: `boolean` - display the Cloud Foundry CLI version - defaults to `true`
 - display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`
 - missing_command_text: `string` - text to display when the java command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed

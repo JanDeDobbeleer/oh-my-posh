@@ -78,7 +78,7 @@ This installs a couple of things:
 - `oh-my-posh.exe` - Windows executable
 - `themes` - The latest Oh My Posh [themes][themes]
 
-For the `$PATH` to reload, a restart of your shell session is advised.
+For the `$PATH` to reload, a restart of your terminal is advised.
 
 ## Update
 
@@ -136,8 +136,8 @@ choco upgrade oh-my-posh
 }>
 <TabItem value="winget">
 
-You can find the themes winget installs inside the `~\AppData\Local\Programs\oh-my-posh\themes\` folder.
-To use `jandedobbeleer.omp.json` for example, you can refer to it using `~\AppData\Local\Programs\oh-my-posh\themes\jandedobbeleer.omp.json`
+You can find the themes winget installs inside the `$env:POSH_THEMES_PATH` folder.
+To use `jandedobbeleer.omp.json` for example, you can refer to it using `$env:POSH_THEMES_PATH\jandedobbeleer.omp.json`
 when setting the prompt using the `--config` flag.
 
 </TabItem>
@@ -167,7 +167,7 @@ when setting the prompt using the `--config` flag.
 The guides below assume you copied the theme called `jandedobbeleer.omp.json` to your user's `$HOME` folder.
 
 :::caution
-When using oh-my-posh inside the WSL, make sure to follow the [linux](linux) installation guide.
+When using oh-my-posh inside the WSL, make sure to follow the [linux][linux] installation guide.
 :::
 
 <Shells />

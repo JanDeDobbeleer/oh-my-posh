@@ -5,9 +5,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"oh-my-posh/regex"
 	"os"
 	"os/exec"
@@ -228,8 +230,31 @@ func (env *ShellEnvironment) Init(args *Args) {
 	}
 }
 
+func (env *ShellEnvironment) getConfigPath(location string) {
+	cfg, err := env.HTTPRequest(location, 5000)
+	if err != nil {
+		return
+	}
+	configPath := filepath.Join(env.CachePath(), "config.omp.json")
+	out, err := os.Create(configPath)
+	if err != nil {
+		return
+	}
+	defer out.Close()
+	_, err = io.Copy(out, bytes.NewReader(cfg))
+	if err != nil {
+		return
+	}
+	env.args.Config = &configPath
+}
+
 func (env *ShellEnvironment) ResolveConfigPath() {
 	if env.args == nil || env.args.Config == nil || len(*env.args.Config) == 0 {
+		return
+	}
+	location, err := url.ParseRequestURI(*env.Args().Config)
+	if err == nil {
+		env.getConfigPath(location.String())
 		return
 	}
 	// Cygwin path always needs the full path as we're on Windows but not really.
@@ -560,11 +585,11 @@ func (env *ShellEnvironment) Shell() string {
 	return *env.args.Shell
 }
 
-func (env *ShellEnvironment) HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
-	defer env.trace(time.Now(), "HTTPRequest", url)
+func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
+	defer env.trace(time.Now(), "HTTPRequest", targetURL)
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
-	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, nil)
 	if err != nil {
 		return nil, err
 	}

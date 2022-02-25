@@ -167,12 +167,12 @@ func main() {
 		return
 	}
 	if *args.Init {
-		init := engine.InitShell(*args.Shell, *args.Config)
+		init := engine.InitShell(env)
 		fmt.Print(init)
 		return
 	}
 	if *args.PrintInit {
-		init := engine.PrintShellInit(*args.Shell, *args.Config)
+		init := engine.PrintShellInit(env)
 		fmt.Print(init)
 		return
 	}

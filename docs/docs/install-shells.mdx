@@ -41,7 +41,7 @@ Import-Module oh-my-posh
 :::
 
 ```powershell
-oh-my-posh --init --shell pwsh --config ~/jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh --init --shell pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$(oh-my-posh --version)/themes/jandedobbeleer.omp.json | Invoke-Expression
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -65,7 +65,7 @@ Use the full path to the config file, not the relative path.
 :::
 
 ```lua title="oh-my-posh.lua"
-load(io.popen('oh-my-posh --config="C:/Users/jan/jandedobbeleer.omp.json" --init --shell cmd'):read("*a"))()
+load(io.popen('oh-my-posh --config="https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json" --init --shell cmd'):read("*a"))()
 ```
 
 Once added, restart cmd for the changes to take effect.
@@ -76,7 +76,7 @@ Once added, restart cmd for the changes to take effect.
 Add the following to `~/.zshrc`:
 
 ```bash
-eval "$(oh-my-posh --init --shell zsh --config ~/jandedobbeleer.omp.json)"
+eval "$(oh-my-posh --init --shell zsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$(oh-my-posh --version)/themes/jandedobbeleer.omp.json)"
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -91,7 +91,7 @@ source ~/.zshrc
 Add the following to `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
 
 ```bash
-eval "$(oh-my-posh --init --shell bash --config ~/jandedobbeleer.omp.json)"
+eval "$(oh-my-posh --init --shell bash --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$(oh-my-posh --version)/themes/jandedobbeleer.omp.json)"
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -116,7 +116,7 @@ It's advised to be on the latest version of fish. Versions below 3.1.2 have issu
 Initialize Oh My Posh in `~/.config/fish/config.fish`:
 
 ```bash
-oh-my-posh --init --shell fish --config ~/jandedobbeleer.omp.json | source
+oh-my-posh --init --shell fish --config hhttps://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v(oh-my-posh --version)/themes/jandedobbeleer.omp.json | source
 ```
 
 Once added, reload your config for the changes to take effect.
@@ -133,13 +133,13 @@ Set the prompt and restart nu shell:
 ### Nu < 0.32.0
 
 ```bash
-config set prompt  "= `{{$(oh-my-posh --config ~/jandedobbeleer.omp.json | str collect)}}`"
+config set prompt  "= `{{$(oh-my-posh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json | str collect)}}`"
 ```
 
 ### Nu >= 0.32.0
 
 ```bash
-config set prompt  "(oh-my-posh --config ~/jandedobbeleer.omp.json | str collect)"
+config set prompt  "(oh-my-posh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json | str collect)"
 ```
 
 Restart nu shell for the changes to take effect.

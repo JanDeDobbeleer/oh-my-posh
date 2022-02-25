@@ -1,4 +1,7 @@
-ohmyposh is licensed under GPL, except for .github/workflows/winget.yml
+ohmyposh is licensed under GPL, except for the following folders which are under MIT
+
+- .github
+- packages
 
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007

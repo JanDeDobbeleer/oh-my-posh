@@ -149,7 +149,7 @@ function global:Export-PoshTheme {
 
     $config = $env:POSH_THEME
     $omp = "::OMP::"
-    $configString = @(&$omp --config="$config" --config-format="$Format" --print-config 2>&1)
+    $configString = @(&$omp --config="$config" --format="$Format" --print-config 2>&1)
     # if no path, copy to clipboard by default
     if ($FilePath -ne "") {
         #https://stackoverflow.com/questions/3038337/powershell-resolve-path-that-might-not-exist

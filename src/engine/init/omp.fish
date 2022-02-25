@@ -42,5 +42,5 @@ function export_poshconfig
   if not test -n "$format"
     set format "json"
   end
-  ::OMP:: --config $POSH_THEME --print-config --config-format $format > $file_name
+  ::OMP:: --config $POSH_THEME --print-config --format $format > $file_name
 end

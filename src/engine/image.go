@@ -302,7 +302,7 @@ func (ir *ImageRenderer) cleanContent() {
 		ir.AnsiString += fmt.Sprintf("_%s", strings.Repeat(" ", ir.CursorPadding))
 	}
 	// add watermarks
-	ir.AnsiString += "\n\n\x1b[1mhttps://ohmyposh.dev\x1b[22m"
+	ir.AnsiString += "\n\n\x1b[1mohmyposh.dev\x1b[22m"
 	if len(ir.Author) > 0 {
 		createdBy := fmt.Sprintf(" by \x1b[1m%s\x1b[22m", ir.Author)
 		ir.AnsiString += createdBy

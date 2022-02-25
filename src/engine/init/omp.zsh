@@ -51,7 +51,7 @@ function export_poshconfig() {
     if [ -z "$format" ]; then
       format="json"
     fi
-    ::OMP:: --config="$POSH_THEME" --print-config --config-format="$format" > $1
+    ::OMP:: --config="$POSH_THEME" --print-config --format="$format" > $1
 }
 
 function self-insert() {

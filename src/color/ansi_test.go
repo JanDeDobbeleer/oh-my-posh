@@ -71,6 +71,9 @@ func TestFormatText(t *testing.T) {
 		{Case: "underline", Text: "This <u>is</u> white", Expected: "This \x1b[4mis\x1b[24m white"},
 		{Case: "italic", Text: "This <i>is</i> white", Expected: "This \x1b[3mis\x1b[23m white"},
 		{Case: "strikethrough", Text: "This <s>is</s> white", Expected: "This \x1b[9mis\x1b[29m white"},
+		{Case: "dimmed", Text: "This <d>is</d> white", Expected: "This \x1b[2mis\x1b[22m white"},
+		{Case: "flash", Text: "This <f>is</f> white", Expected: "This \x1b[5mis\x1b[25m white"},
+		{Case: "reversed", Text: "This <r>is</r> white", Expected: "This \x1b[7mis\x1b[27m white"},
 	}
 	for _, tc := range cases {
 		a := Ansi{}

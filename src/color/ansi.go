@@ -36,6 +36,9 @@ type Ansi struct {
 	italic                string
 	underline             string
 	strikethrough         string
+	blink                 string
+	reverse               string
+	dimmed                string
 	format                string
 	shellReservedKeywords []shellKeyWordReplacement
 }
@@ -69,6 +72,9 @@ func (a *Ansi) Init(shell string) {
 		a.bold = "%%{\x1b[1m%%}%s%%{\x1b[22m%%}"
 		a.italic = "%%{\x1b[3m%%}%s%%{\x1b[23m%%}"
 		a.underline = "%%{\x1b[4m%%}%s%%{\x1b[24m%%}"
+		a.blink = "%%{\x1b[5m%%}%s%%{\x1b[25m%%}"
+		a.reverse = "%%{\x1b[7m%%}%s%%{\x1b[27m%%}"
+		a.dimmed = "%%{\x1b[2m%%}%s%%{\x1b[22m%%}"
 		a.strikethrough = "%%{\x1b[9m%%}%s%%{\x1b[29m%%}"
 		// escape double quotes and variable expansion
 		a.shellReservedKeywords = append(a.shellReservedKeywords, shellKeyWordReplacement{"\\", "\\\\"}, shellKeyWordReplacement{"%", "%%"})
@@ -93,6 +99,9 @@ func (a *Ansi) Init(shell string) {
 		a.bold = "\\[\x1b[1m\\]%s\\[\x1b[22m\\]"
 		a.italic = "\\[\x1b[3m\\]%s\\[\x1b[23m\\]"
 		a.underline = "\\[\x1b[4m\\]%s\\[\x1b[24m\\]"
+		a.blink = "\\[\x1b[5m%s\\[\x1b[25m\\]"
+		a.reverse = "\\[\x1b[7m\\]%s\\[\x1b[27m\\]"
+		a.dimmed = "\\[\x1b[2m\\]%s\\[\x1b[22m\\]"
 		a.strikethrough = "\\[\x1b[9m\\]%s\\[\x1b[29m\\]"
 		// escape backslashes to avoid replacements
 		// https://tldp.org/HOWTO/Bash-Prompt-HOWTO/bash-prompt-escape-sequences.html
@@ -118,6 +127,9 @@ func (a *Ansi) Init(shell string) {
 		a.bold = "\x1b[1m%s\x1b[22m"
 		a.italic = "\x1b[3m%s\x1b[23m"
 		a.underline = "\x1b[4m%s\x1b[24m"
+		a.blink = "\x1b[5m%s\x1b[25m"
+		a.reverse = "\x1b[7m%s\x1b[27m"
+		a.dimmed = "\x1b[2m%s\x1b[22m"
 		a.strikethrough = "\x1b[9m%s\x1b[29m"
 	}
 	// common replacement for all shells
@@ -137,7 +149,7 @@ func (a *Ansi) generateHyperlink(text string) string {
 }
 
 func (a *Ansi) formatText(text string) string {
-	results := regex.FindAllNamedRegexMatch("(?P<context><(?P<format>[buis])>(?P<text>[^<]+)</[buis]>)", text)
+	results := regex.FindAllNamedRegexMatch("(?P<context><(?P<format>[buisrdf])>(?P<text>[^<]+)</[buisrdf]>)", text)
 	for _, result := range results {
 		var formatted string
 		switch result["format"] {
@@ -149,6 +161,12 @@ func (a *Ansi) formatText(text string) string {
 			formatted = fmt.Sprintf(a.italic, result["text"])
 		case "s":
 			formatted = fmt.Sprintf(a.strikethrough, result["text"])
+		case "d":
+			formatted = fmt.Sprintf(a.dimmed, result["text"])
+		case "f":
+			formatted = fmt.Sprintf(a.blink, result["text"])
+		case "r":
+			formatted = fmt.Sprintf(a.reverse, result["text"])
 		}
 		text = strings.Replace(text, result["context"], formatted, 1)
 	}

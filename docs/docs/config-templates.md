@@ -34,6 +34,9 @@ You can make use of the following syntax to decorate text:
 - `<u>underline</u>`: renders `underline` as underlined text
 - `<i>italic</i>`: renders `italic` as italic text
 - `<s>strikethrough</s>`: renders `strikethrough` as strikethrough text
+- `<d>dimmed</d>`: renders `dimmed` as dimmed text
+- `<f>blink</f>`: renders `blink` as blinking (flashing) text
+- `<r>reversed</r>`: renders `reversed` as reversed text
 
 This can be used in templates and icons/text inside your config.
 

@@ -106,6 +106,7 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 		segment.migrateTemplate()
 		segment.migrateIconOverride("ssh_icon", "\uf817 ")
 		template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
+		template = strings.ReplaceAll(template, ".ComputerName", ".HostName")
 		if !segment.Properties.GetBool(properties.Property("display_host"), true) {
 			template = strings.ReplaceAll(template, "@{{ .HostName }}", "")
 		}

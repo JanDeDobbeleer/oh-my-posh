@@ -108,7 +108,7 @@
         {
           "foreground": "#CD4277",
           "properties": {
-            "template": " <#45F1C2><b>⚡</b></><b>Manthan</b> <#26C6DA>\u276f</><#45F1C2>\u276f</>"
+            "template": " <#45F1C2><b>⚡</b></><b>{{ .UserName }}</b> <#26C6DA>\u276f</><#45F1C2>\u276f</>"
           },
           "style": "plain",
           "type": "text"

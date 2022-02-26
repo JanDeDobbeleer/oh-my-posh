@@ -310,6 +310,14 @@ func TestSegmentTemplateMigration(t *testing.T) {
 				"host_color": "#789012",
 			},
 		},
+		{
+			Case:     "SESSION - Existing template",
+			Expected: " {{ .UserName }}@{{ .HostName }} ",
+			Type:     SESSION,
+			Props: properties.Map{
+				"template": "{{ .UserName }}@{{ .ComputerName }}",
+			},
+		},
 	}
 	for _, tc := range cases {
 		segment := &Segment{

@@ -74,6 +74,7 @@ func TestFormatText(t *testing.T) {
 		{Case: "dimmed", Text: "This <d>is</d> white", Expected: "This \x1b[2mis\x1b[22m white"},
 		{Case: "flash", Text: "This <f>is</f> white", Expected: "This \x1b[5mis\x1b[25m white"},
 		{Case: "reversed", Text: "This <r>is</r> white", Expected: "This \x1b[7mis\x1b[27m white"},
+		{Case: "double", Text: "This <i><f>is</f></i> white", Expected: "This \x1b[3m\x1b[5mis\x1b[25m\x1b[23m white"},
 	}
 	for _, tc := range cases {
 		a := Ansi{}

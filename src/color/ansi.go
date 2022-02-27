@@ -149,26 +149,31 @@ func (a *Ansi) generateHyperlink(text string) string {
 }
 
 func (a *Ansi) formatText(text string) string {
-	results := regex.FindAllNamedRegexMatch("(?P<context><(?P<format>[buisrdf])>(?P<text>[^<]+)</[buisrdf]>)", text)
-	for _, result := range results {
-		var formatted string
-		switch result["format"] {
-		case "b":
-			formatted = fmt.Sprintf(a.bold, result["text"])
-		case "u":
-			formatted = fmt.Sprintf(a.underline, result["text"])
-		case "i":
-			formatted = fmt.Sprintf(a.italic, result["text"])
-		case "s":
-			formatted = fmt.Sprintf(a.strikethrough, result["text"])
-		case "d":
-			formatted = fmt.Sprintf(a.dimmed, result["text"])
-		case "f":
-			formatted = fmt.Sprintf(a.blink, result["text"])
-		case "r":
-			formatted = fmt.Sprintf(a.reverse, result["text"])
+	replaceFormats := func(results []map[string]string) {
+		for _, result := range results {
+			var formatted string
+			switch result["format"] {
+			case "b":
+				formatted = fmt.Sprintf(a.bold, result["text"])
+			case "u":
+				formatted = fmt.Sprintf(a.underline, result["text"])
+			case "i":
+				formatted = fmt.Sprintf(a.italic, result["text"])
+			case "s":
+				formatted = fmt.Sprintf(a.strikethrough, result["text"])
+			case "d":
+				formatted = fmt.Sprintf(a.dimmed, result["text"])
+			case "f":
+				formatted = fmt.Sprintf(a.blink, result["text"])
+			case "r":
+				formatted = fmt.Sprintf(a.reverse, result["text"])
+			}
+			text = strings.Replace(text, result["context"], formatted, 1)
 		}
-		text = strings.Replace(text, result["context"], formatted, 1)
+	}
+	rgx := "(?P<context><(?P<format>[buisrdf])>(?P<text>[^<]+)</[buisrdf]>)"
+	for results := regex.FindAllNamedRegexMatch(rgx, text); len(results) != 0; results = regex.FindAllNamedRegexMatch(rgx, text) {
+		replaceFormats(results)
 	}
 	return text
 }

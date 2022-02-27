@@ -1,11 +1,41 @@
+function Get-CachePath {
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        [string]
+        $Path
+    )
+
+    if (-Not (Test-Path -Path $Path)) {
+        return ""
+    }
+    $child = "oh-my-posh"
+    $cachePath = Join-Path -Path $Path -ChildPath $child
+    if (Test-Path -Path $Path) {
+        return $cachePath
+    }
+    New-Item -Path $Path -Name $child -ItemType "directory"
+    return $cachePath
+}
+
 function Set-PoshRootPath {
-    $child = ".oh-my-posh"
-    $path = Join-Path -Path  $HOME -ChildPath $child
-    $env:POSH_PATH = $path
-    if (Test-Path -Path $path) {
+    $path = Get-CachePath -Path $env:LOCALAPPDATA
+    if ($path) {
+        $env:POSH_PATH = $path
         return
     }
-    New-Item -Path $HOME -Name $child -ItemType "directory"
+    $path = Get-CachePath -Path $env:XDG_CACHE_HOME
+    if ($path) {
+        $env:POSH_PATH = $path
+        return
+    }
+    $homeCache = Join-Path -Path $env:HOME -ChildPath ".cache"
+    $path = Get-CachePath -Path $homeCache
+    if ($path) {
+        $env:POSH_PATH = $path
+        return
+    }
+    $env:POSH_PATH = $env:HOME
 }
 
 function Get-PoshDownloadUrl {

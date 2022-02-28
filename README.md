@@ -26,15 +26,13 @@ a modern and more efficient tool was needed to suit my personal needs.
 
 ## Features
 
-* Shell independent
-* Git status indications
-* Failed command indication
-* Admin indication
-* Current session indications
-* Language info
-* Shell info
-* Configurable
+* Shell and platform agnostic
+* Easily configurable
+* The **most** configurable prompt utility
 * Fast
+* Secondary prompt
+* Right prompt
+* Transient prompt
 
 ## Documentation
 

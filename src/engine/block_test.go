@@ -14,10 +14,10 @@ func TestBlockEnabled(t *testing.T) {
 		Type     BlockType
 	}{
 		{Case: "line break block", Expected: true, Type: LineBreak},
-		{Case: "prompt enabled", Expected: true, Type: Prompt, Segments: []*Segment{{active: true}}},
-		{Case: "prompt disabled", Expected: false, Type: Prompt, Segments: []*Segment{{active: false}}},
-		{Case: "prompt enabled multiple", Expected: true, Type: Prompt, Segments: []*Segment{{active: false}, {active: true}}},
-		{Case: "rprompt enabled multiple", Expected: true, Type: RPrompt, Segments: []*Segment{{active: false}, {active: true}}},
+		{Case: "prompt enabled", Expected: true, Type: Prompt, Segments: []*Segment{{enabled: true}}},
+		{Case: "prompt disabled", Expected: false, Type: Prompt, Segments: []*Segment{{enabled: false}}},
+		{Case: "prompt enabled multiple", Expected: true, Type: Prompt, Segments: []*Segment{{enabled: false}, {enabled: true}}},
+		{Case: "rprompt enabled multiple", Expected: true, Type: RPrompt, Segments: []*Segment{{enabled: false}, {enabled: true}}},
 	}
 	for _, tc := range cases {
 		block := &Block{

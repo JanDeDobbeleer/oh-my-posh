@@ -29,7 +29,7 @@ type Segment struct {
 
 	writer          SegmentWriter
 	text            string
-	active          bool
+	enabled         bool
 	env             environment.Environment
 	backgroundCache string
 	foregroundCache string
@@ -320,7 +320,7 @@ func (segment *Segment) renderText(env environment.Environment) {
 		message := fmt.Sprintf("\noh-my-posh fatal error rendering %s segment:%s\n\n%s\n", segment.Type, err, debug.Stack())
 		fmt.Println(message)
 		segment.text = "error"
-		segment.active = true
+		segment.enabled = true
 	}()
 	err := segment.mapSegmentWithWriter(env)
 	if err != nil || !segment.shouldIncludeFolder() {
@@ -328,6 +328,6 @@ func (segment *Segment) renderText(env environment.Environment) {
 	}
 	if segment.writer.Enabled() {
 		segment.text = segment.string()
-		segment.active = len(strings.TrimSpace(segment.text)) > 0
+		segment.enabled = len(strings.ReplaceAll(segment.text, " ", "")) > 0
 	}
 }

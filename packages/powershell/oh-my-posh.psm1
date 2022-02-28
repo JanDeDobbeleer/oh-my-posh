@@ -11,7 +11,7 @@ function Get-CachePath {
     }
     $child = "oh-my-posh"
     $cachePath = Join-Path -Path $Path -ChildPath $child
-    if (Test-Path -Path $Path) {
+    if (Test-Path -Path $cachePath) {
         return $cachePath
     }
     New-Item -Path $Path -Name $child -ItemType "directory"

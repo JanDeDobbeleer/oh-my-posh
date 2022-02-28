@@ -45,7 +45,12 @@ func (n *Node) Init(props properties.Properties, env environment.Environment) {
 }
 
 func (n *Node) Enabled() bool {
-	return n.language.Enabled()
+	if n.language.Enabled() {
+		n.Mismatch = !n.matchesVersionFile()
+		return true
+	}
+
+	return false
 }
 
 func (n *Node) loadContext() {

@@ -1007,6 +1007,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "rfverbruggen",
+      "name": "Robbert Verbruggen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2320197?v=4",
+      "profile": "https://github.com/rfverbruggen",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

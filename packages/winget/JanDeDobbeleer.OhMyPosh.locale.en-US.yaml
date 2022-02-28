@@ -7,7 +7,7 @@ PublisherSupportUrl: https://github.com/JanDeDobbeleer/oh-my-posh/issues
 Author: Jan De Dobbeleer
 PackageName: Oh My Posh
 PackageUrl: https://ohmyposh.dev/
-License: GNU General Public License v3.0
+License: MIT
 LicenseUrl: https://github.com/JanDeDobbeleer/oh-my-posh/raw/main/COPYING
 ShortDescription: Prompt theme engine for any shell
 Moniker: oh-my-posh

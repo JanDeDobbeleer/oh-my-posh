@@ -71,7 +71,7 @@ func (b *Block) enabled() bool {
 		return true
 	}
 	for _, segment := range b.Segments {
-		if segment.active {
+		if segment.enabled {
 			return true
 		}
 	}
@@ -93,7 +93,7 @@ func (b *Block) renderSegmentsText() {
 func (b *Block) renderSegments() (string, int) {
 	defer b.writer.Reset()
 	for _, segment := range b.Segments {
-		if !segment.active {
+		if !segment.enabled {
 			continue
 		}
 		b.renderSegment(segment)
@@ -174,7 +174,7 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 		}
 		start := time.Now()
 		segment.renderText(b.env)
-		segmentTiming.active = segment.active
+		segmentTiming.active = segment.enabled
 		segmentTiming.text = segment.text
 		if segmentTiming.active {
 			b.renderSegment(segment)

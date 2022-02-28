@@ -243,7 +243,7 @@ func (e *Engine) RenderTooltip(tip string) string {
 		return ""
 	}
 	tooltip.text = tooltip.string()
-	tooltip.active = true
+	tooltip.enabled = true
 	// little hack to reuse the current logic
 	block := &Block{
 		Alignment: Right,

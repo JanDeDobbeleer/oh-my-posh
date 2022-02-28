@@ -3,7 +3,7 @@ PackageVersion: <VERSION>
 PackageLocale: en-US
 Publisher: Jan De Dobbeleer
 PackageName: Oh My Posh
-License: GPL
+License: MIT
 ShortDescription: Prompt theme engine for any shell
 Tags:
 - "console"

@@ -5,7 +5,6 @@ Platform:
 - Windows.Desktop
 MinimumOSVersion: 10.0.0.0
 InstallerType: inno
-Scope: user
 InstallModes:
 - interactive
 - silent

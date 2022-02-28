@@ -16,28 +16,35 @@ Display text.
   "style": "plain",
   "foreground": "#E06C75",
   "properties": {
-    "prefix": "",
-    "text": " \u276F"
+    "template": "\u276F"
   }
 }
 ```
 
-## Properties
+:::tip
+If you're using PowerShell, you can override a function to populate environment variables before the
+prompt is rendered.
 
-- text: `string` - text/icon to display. Accepts [coloring foreground][coloring] just like `prefix` and `postfix`.
-Powered by go [text/template][go-text-template] templates extended with [sprig][sprig] utilizing the
-properties below.
+```powershell
+function Set-EnvVar {
+    $env:POSH=$(Get-Date)
+}
+New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
+```
 
-## Template Properties
+:::
+
+## Template ([info][templates])
+
+### Properties
 
 - `.Root`: `boolean` - is the current user root/admin or not
 - `.Path`: `string` - the current working directory
 - `.Folder`: `string` - the current working folder
 - `.Shell`: `string` - the current shell name
-- `.User`: `string` - the current user name
-- `.Host`: `string` - the host name
+- `.UserName`: `string` - the current user name
+- `.HostName`: `string` - the host name
 - `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
 
-[coloring]: /docs/configure#colors
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[coloring]: /docs/config-colors
+[templates]: /docs/config-templates

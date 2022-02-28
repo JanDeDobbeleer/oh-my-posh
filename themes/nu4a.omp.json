@@ -2,90 +2,100 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "type": "prompt",
       "alignment": "left",
       "segments": [
         {
-          "type": "root",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
+          "background": "#cfcfc4",
+          "background_templates": [
+            "{{if .Root}}#ff3026{{else}}#cfcfc4{{end}}"
+          ],
           "foreground": "#100e23",
-          "background": "#ff3026",
           "properties": {
-            "root_icon": "\uF0E7"
-          }
+            "display_host": false,
+            "template": "{{if .Root}} \uf0e7 {{.UserName}} {{else}} {{.UserName}} {{end}}"
+          },
+          "style": "powerline",
+          "type": "session"
         },
         {
-          "type": "session",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#100e23",
-          "background": "#cfcfc4"
-        },
-        {
-          "type": "path",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#100e23",
           "background": "#ec9706",
-          "properties": {
-            "home_icon": "\uF7DB",
-            "folder_icon": "\uF115",
-            "folder_separator_icon": " \uE0B1 ",
-            "style": "full"
-          }
-        },
-        {
-          "type": "git",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
-          "foreground": "#193549",
-          "background": "#95ffa4",
-          "properties": {
-            "template": "{{ .HEAD }}"
-          }
-        },
-        {
-          "type": "python",
-          "style": "powerline",
-          "powerline_symbol": "\uE0B0",
           "foreground": "#100e23",
-          "background": "#906cff",
+          "powerline_symbol": "\ue0b0",
           "properties": {
-            "prefix": " \uE235 "
-          }
+            "folder_icon": "\ue5ff",
+            "folder_separator_icon": "\ue0b9",
+            "home_icon": "\uf7db",
+            "mapped_locations": {
+              "C:\\Users": "\uf007",
+              "C:\\Windows": "\ue62a"
+            },
+            "mixed_threshold": 8,
+            "style": "mixed",
+            "template": " {{ path .Path .Location }} "
+          },
+          "style": "powerline",
+          "type": "path"
+        },
+        {
+          "background": "#3feb56",
+          "foreground": "#193549",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "template": " {{ .HEAD }} "
+          },
+          "style": "powerline",
+          "type": "git"
+        },
+        {
+          "background": "#906cff",
+          "foreground": "#100e23",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} "
+          },
+          "style": "powerline",
+          "type": "python"
         }
-      ]
+      ],
+      "type": "prompt"
     },
     {
-      "type": "rprompt",
       "alignment": "right",
       "segments": [
         {
-          "type": "exit",
-          "style": "diamond",
-          "leading_diamond": "\ue0c2",
-          "trailing_diamond": "\ue0c0",
-          "foreground": "#ffffff",
           "background": "#ff4040",
+          "foreground": "#ffffff",
+          "leading_diamond": "\ue0c2",
           "properties": {
-            "display_exit_code": false,
-            "always_enabled": false,
-            "prefix": " \ue70f"
-          }
+            "template": " \ue70f "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0c0",
+          "type": "exit"
         },
         {
-          "type": "executiontime",
-          "style": "diamond",
-          "foreground": "#fafafa",
           "background": "#2f2f2f",
+          "foreground": "#fafafa",
           "leading_diamond": "\ue0b2",
           "properties": {
-            "style": "austin"
-          }
+            "style": "austin",
+            "template": " {{ .FormattedMs }} "
+          },
+          "style": "diamond",
+          "type": "executiontime"
         }
-      ]
+      ],
+      "type": "rprompt"
     }
   ],
-  "final_space": true
+  "secondary_prompt": {
+    "background": "#ec9706",
+    "foreground": "#100e23",
+    "template": " \uf061 "
+  },
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}} \u26a1 {{end}}{{.UserName}} \u2794 📁{{.Folder}}",
+  "final_space": true,
+  "version": 1
 }

@@ -24,7 +24,7 @@ The installation guide shows how to include this argument for PowerShell and Zsh
   "properties": {
     "threshold": 500,
     "style": "austin",
-    "prefix": " <#fefefe>\ufbab</> "
+    "template": " <#fefefe>\ufbab</> "
   }
 }
 ```
@@ -48,3 +48,20 @@ Style specifies the format in which the time will be displayed. The table below 
 | houston   | `00:00:00.001` | `00:00:02.1` | `00:03:02.1`  | `04:03:02.1`     |
 | amarillo  | `0.001s`       | `2.1s`       | `182.1s`      | `14,582.1s`      |
 | round     | `1ms`          | `2s`         | `3m 2s`       | `4h 3m`          |
+
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .FormattedMs }}
+```
+
+:::
+
+### Properties
+
+- `.Ms`: `number` - the execution time in milliseconds
+- `.FormattedMs`: `string` - the formatted value based on the `style` above.
+
+[templates]: /docs/config-templates

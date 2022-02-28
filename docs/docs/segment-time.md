@@ -25,18 +25,22 @@ Show the current timestamp.
 
 - time_format: `string` - format to use, follows the [golang standard][format] - defaults to `15:04:05`
 
-[format]: https://yourbasic.org/golang/format-parse-string-time-date-example/
+## Template ([info][templates])
 
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-  properties below. Only used when a value is set, making the above properties obsolete.
+:::note default template
 
-  example: `{{ now | date \"January 02, 2006 15:04:05 PM\" | lower }}`
+``` template
+{{ .CurrentDate | date .Format }}
+```
 
-## Template Properties
+:::
 
-- `.CurrentDate`: `time` - The time to display(testing purpose)
+### Properties
 
-### Standard time and date formats
+- `.Format`: `string` - The time format (set via `time_format`)
+- `.CurrentDate`: `time` - The time to display (testing purpose)
+
+## Standard time and date formats
 
 - January 2, 2006 **Date**
 - 01/02/06
@@ -53,7 +57,7 @@ Show the current timestamp.
 - Mon, 02 Jan 2006 15:04:05 MST 27e95cb
 - Mon, 02 Jan 2006 15:04:05 -0700 **with numeric zone**
 
-#### The following predefined date and timestamp format constants are also available
+### The following predefined date and timestamp format constants are also available
 
 - ANSIC       = "Mon Jan _2 15:04:05 2006"
 - UnixDate    = "Mon Jan _2 15:04:05 MST 2006"
@@ -72,5 +76,5 @@ Show the current timestamp.
 - StampMicro = "Jan _2 15:04:05.000000"
 - StampNano  = "Jan _2 15:04:05.000000000"
 
-[go-text-template]: https://golang.org/pkg/text/template/
-[sprig]: https://masterminds.github.io/sprig/
+[templates]: /docs/config-templates
+[format]: https://yourbasic.org/golang/format-parse-string-time-date-example/

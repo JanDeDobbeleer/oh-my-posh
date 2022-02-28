@@ -1,11 +1,12 @@
 package main
 
 import (
-	_ "embed"
 	"flag"
 	"fmt"
-	"os"
-	"strings"
+	"oh-my-posh/color"
+	"oh-my-posh/console"
+	"oh-my-posh/engine"
+	"oh-my-posh/environment"
 	"time"
 
 	"github.com/gookit/config/v2"
@@ -14,57 +15,8 @@ import (
 // Version number of oh-my-posh
 var Version = "development"
 
-//go:embed init/omp.ps1
-var pwshInit string
-
-//go:embed init/omp.fish
-var fishInit string
-
-//go:embed init/omp.bash
-var bashInit string
-
-//go:embed init/omp.zsh
-var zshInit string
-
-const (
-	noExe       = "echo \"Unable to find Oh My Posh executable\""
-	zsh         = "zsh"
-	bash        = "bash"
-	pwsh        = "pwsh"
-	fish        = "fish"
-	powershell5 = "powershell"
-	plain       = "shell"
-)
-
-type args struct {
-	ErrorCode      *int
-	PrintConfig    *bool
-	ConfigFormat   *string
-	PrintShell     *bool
-	Config         *string
-	Shell          *string
-	PWD            *string
-	PSWD           *string
-	Version        *bool
-	Debug          *bool
-	ExecutionTime  *float64
-	Millis         *bool
-	Eval           *bool
-	Init           *bool
-	PrintInit      *bool
-	ExportPNG      *bool
-	Author         *string
-	CursorPadding  *int
-	RPromptOffset  *int
-	BGColor        *string
-	StackCount     *int
-	Command        *string
-	PrintTransient *bool
-	Plain          *bool
-}
-
 func main() {
-	args := &args{
+	args := &environment.Args{
 		ErrorCode: flag.Int(
 			"error",
 			0,
@@ -74,7 +26,7 @@ func main() {
 			false,
 			"Print the current config in json format"),
 		ConfigFormat: flag.String(
-			"config-format",
+			"format",
 			config.JSON,
 			"The format to print the config in. Valid options are:\n- json\n- yaml\n- toml\n"),
 		PrintShell: flag.Bool(
@@ -141,6 +93,10 @@ func main() {
 			"rprompt-offset",
 			40,
 			"Offset the right prompt with x when using --export-img"),
+		RPrompt: flag.Bool(
+			"rprompt",
+			false,
+			"Only print the rprompt block"),
 		BGColor: flag.String(
 			"bg-color",
 			"#151515",
@@ -161,173 +117,150 @@ func main() {
 			"plain",
 			false,
 			"Print a plain prompt without ANSI"),
+		CachePath: flag.Bool(
+			"cache-path",
+			false,
+			"Print the location of the cache"),
+		Migrate: flag.Bool(
+			"migrate",
+			false,
+			"Migrate the config to the latest version"),
+		Write: flag.Bool(
+			"write",
+			false,
+			"Write the config to the file"),
+		TerminalWidth: flag.Int(
+			"terminal-width",
+			0,
+			"The width of the terminal"),
+		PrintValid: flag.Bool(
+			"print-valid",
+			false,
+			"Print the valid prompt"),
+		PrintError: flag.Bool(
+			"print-error",
+			false,
+			"Print the failed prompt"),
+		PrintSecondary: flag.Bool(
+			"print-secondary",
+			false,
+			"Print the secondary prompt"),
 	}
 	flag.Parse()
-	env := &environment{}
-	env.init(args)
-	defer env.close()
-	if *args.Millis {
-		fmt.Print(time.Now().UnixNano() / 1000000)
-		return
-	}
-	if *args.Init {
-		init := initShell(*args.Shell, *args.Config)
-		fmt.Print(init)
-		return
-	}
-	if *args.PrintInit {
-		init := printShellInit(*args.Shell, *args.Config)
-		fmt.Print(init)
-		return
-	}
-	if *args.PrintConfig {
-		fmt.Print(exportConfig(*args.Config, *args.ConfigFormat))
-		return
-	}
-	cfg := GetConfig(env)
-	if *args.PrintShell {
-		fmt.Println(env.getShellName())
-		return
-	}
 	if *args.Version {
 		fmt.Println(Version)
 		return
 	}
-
-	ansi := &ansiUtils{}
-	ansi.init(env.getShellName())
-	var writer promptWriter
+	env := &environment.ShellEnvironment{}
+	env.Init(args)
+	defer env.Close()
+	if *args.PrintShell {
+		fmt.Println(env.Shell())
+		return
+	}
+	if *args.Millis {
+		fmt.Print(time.Now().UnixNano() / 1000000)
+		return
+	}
+	if *args.CachePath {
+		fmt.Print(env.CachePath())
+		return
+	}
+	if *args.Init {
+		init := engine.InitShell(env)
+		fmt.Print(init)
+		return
+	}
+	if *args.PrintInit {
+		init := engine.PrintShellInit(env)
+		fmt.Print(init)
+		return
+	}
+	cfg := engine.LoadConfig(env)
+	if *args.PrintConfig {
+		fmt.Print(cfg.Export(*args.ConfigFormat))
+		return
+	}
+	if *args.Migrate {
+		if *args.Write {
+			cfg.BackupAndMigrate(env)
+			return
+		}
+		cfg.Migrate(env)
+		fmt.Print(cfg.Export(*args.ConfigFormat))
+		return
+	}
+	ansi := &color.Ansi{}
+	ansi.Init(env.Shell())
+	var writer color.Writer
 	if *args.Plain {
-		writer = &PlainWriter{}
+		writer = &color.PlainWriter{}
 	} else {
-		writer = &AnsiWriter{
-			ansi:               ansi,
-			terminalBackground: getConsoleBackgroundColor(env, cfg.TerminalBackground),
+		writerColors := cfg.MakeColors(env)
+		writer = &color.AnsiWriter{
+			Ansi:               ansi,
+			TerminalBackground: engine.GetConsoleBackgroundColor(env, cfg.TerminalBackground),
+			AnsiColors:         writerColors,
 		}
 	}
-	title := &consoleTitle{
-		env:    env,
-		config: cfg,
-		ansi:   ansi,
+	consoleTitle := &console.Title{
+		Env:      env,
+		Ansi:     ansi,
+		Template: cfg.ConsoleTitleTemplate,
+		Style:    cfg.ConsoleTitleStyle,
 	}
-	engine := &engine{
-		config:       cfg,
-		env:          env,
-		writer:       writer,
-		consoleTitle: title,
-		ansi:         ansi,
-		plain:        *args.Plain,
+	eng := &engine.Engine{
+		Config:       cfg,
+		Env:          env,
+		Writer:       writer,
+		ConsoleTitle: consoleTitle,
+		Ansi:         ansi,
+		Plain:        *args.Plain,
 	}
 	if *args.Debug {
-		fmt.Print(engine.debug())
+		fmt.Print(eng.Debug(Version))
 		return
 	}
 	if *args.PrintTransient {
-		fmt.Print(engine.renderTransientPrompt())
+		fmt.Print(eng.RenderExtraPrompt(engine.Transient))
+		return
+	}
+	if *args.PrintValid {
+		fmt.Print(eng.RenderExtraPrompt(engine.Valid))
+		return
+	}
+	if *args.PrintError {
+		fmt.Print(eng.RenderExtraPrompt(engine.Error))
+		return
+	}
+	if *args.PrintSecondary {
+		fmt.Print(eng.RenderExtraPrompt(engine.Secondary))
 		return
 	}
 	if len(*args.Command) != 0 {
-		fmt.Print(engine.renderTooltip(*args.Command))
+		fmt.Print(eng.RenderTooltip(*args.Command))
 		return
 	}
-	prompt := engine.render()
+	if *args.RPrompt {
+		fmt.Print(eng.RenderRPrompt())
+		return
+	}
+	prompt := eng.Render()
 	if !*args.ExportPNG {
 		fmt.Print(prompt)
 		return
 	}
-	imageCreator := &ImageRenderer{
-		ansiString:    prompt,
-		author:        *args.Author,
-		cursorPadding: *args.CursorPadding,
-		rPromptOffset: *args.RPromptOffset,
-		bgColor:       *args.BGColor,
-		ansi:          ansi,
+	imageCreator := &engine.ImageRenderer{
+		AnsiString:    prompt,
+		Author:        *args.Author,
+		CursorPadding: *args.CursorPadding,
+		RPromptOffset: *args.RPromptOffset,
+		BgColor:       *args.BGColor,
+		Ansi:          ansi,
 	}
-	imageCreator.init()
-	match := findNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, *args.Config)
-	err := imageCreator.SavePNG(fmt.Sprintf("%s.png", match[str]))
+	imageCreator.Init(*args.Config)
+	err := imageCreator.SavePNG()
 	if err != nil {
 		fmt.Print(err.Error())
 	}
-}
-
-func getExecutablePath(shell string) (string, error) {
-	executable, err := os.Executable()
-	if err != nil {
-		return "", err
-	}
-	// On Windows, it fails when the excutable is called in MSYS2 for example
-	// which uses unix style paths to resolve the executable's location.
-	// PowerShell knows how to resolve both, so we can swap this without any issue.
-	executable = strings.ReplaceAll(executable, "\\", "/")
-	switch shell {
-	case bash, zsh:
-		return strings.ReplaceAll(executable, " ", "\\ "), nil
-	}
-	return executable, nil
-}
-
-func initShell(shell, configFile string) string {
-	executable, err := getExecutablePath(shell)
-	if err != nil {
-		return noExe
-	}
-	switch shell {
-	case pwsh:
-		return fmt.Sprintf("(@(&\"%s\" --print-init --shell=pwsh --config=\"%s\") -join \"`n\") | Invoke-Expression", executable, configFile)
-	case zsh, bash, fish:
-		return printShellInit(shell, configFile)
-	default:
-		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
-	}
-}
-
-func printShellInit(shell, configFile string) string {
-	executable, err := getExecutablePath(shell)
-	if err != nil {
-		return noExe
-	}
-	switch shell {
-	case pwsh:
-		return getShellInitScript(executable, configFile, pwshInit)
-	case zsh:
-		return getShellInitScript(executable, configFile, zshInit)
-	case bash:
-		return getShellInitScript(executable, configFile, bashInit)
-	case fish:
-		return getShellInitScript(executable, configFile, fishInit)
-	default:
-		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
-	}
-}
-
-func getShellInitScript(executable, configFile, script string) string {
-	script = strings.ReplaceAll(script, "::OMP::", executable)
-	script = strings.ReplaceAll(script, "::CONFIG::", configFile)
-	return script
-}
-
-func getConsoleBackgroundColor(env environmentInfo, backgroundColorTemplate string) string {
-	if len(backgroundColorTemplate) == 0 {
-		return backgroundColorTemplate
-	}
-	context := struct {
-		Env map[string]string
-	}{
-		Env: map[string]string{},
-	}
-	matches := findAllNamedRegexMatch(templateEnvRegex, backgroundColorTemplate)
-	for _, match := range matches {
-		context.Env[match["ENV"]] = env.getenv(match["ENV"])
-	}
-	template := &textTemplate{
-		Template: backgroundColorTemplate,
-		Context:  context,
-		Env:      env,
-	}
-	text, err := template.render()
-	if err != nil {
-		return err.Error()
-	}
-	return text
 }

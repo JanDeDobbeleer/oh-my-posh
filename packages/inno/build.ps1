@@ -1,7 +1,7 @@
 Param
 (
     [parameter(Mandatory = $true)]
-    [ValidateSet('amd64', 'arm64')]
+    [ValidateSet('amd64', 'arm64', '386')]
     [System.String]$Architecture,
     [parameter(Mandatory = $true)]
     [string]
@@ -12,7 +12,7 @@ New-Item -Path "." -Name "bin" -ItemType Directory
 Copy-Item -Path "../../themes" -Destination "./bin" -Recurse
 
 # download the files and pack them
-@{file = "posh-windows-$Architecture.exe"; name = "oh-my-posh.exe" }, @{file = "posh-linux-$Architecture"; name = "oh-my-posh-wsl" } | ForEach-Object -Process {
+@{file = "posh-windows-$Architecture.exe"; name = "oh-my-posh.exe" } | ForEach-Object -Process {
     $download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($_.file)"
     Invoke-WebRequest $download -Out "./bin/$($_.name)"
 }

@@ -1,0 +1,29 @@
+on:
+  pull_request:
+    paths-ignore:
+      - 'README.md'
+      - 'CONTRIBUTING.md'
+      - 'COPYING'
+      - 'docs/**'
+      - '.github/*.md'
+      - '.github/FUNDING.yml'
+
+name: Build Code
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - name: Checkout code 👋
+      uses: actions/checkout@v2
+    - name: Install Go 🗳
+      uses: ./.github/workflows/composite/bootstrap-go
+    - name: Run GoReleaser 🚀
+      uses: goreleaser/goreleaser-action@v2
+      with:
+        distribution: goreleaser
+        version: latest
+        args: build --rm-dist --snapshot --skip-post-hooks
+        workdir: src

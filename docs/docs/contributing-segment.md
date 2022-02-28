@@ -6,45 +6,52 @@ sidebar_label: Add Segment
 
 ## Create the logic
 
-Add a new file following this convention: `new_segment.go`.
-Ensure `new` is a single verb indicating the context the segment renders.
+Add a new file in the `./src/segments` folder: `new.go`.
+Ensure `New` is a single verb indicating the context the segment renders.
 
 You can use the following template as a guide.
 
 ```go
 package main
 
-type new struct {
-    props          *properties
-    env            environmentInfo
+import (
+  "oh-my-posh/environment"
+  "oh-my-posh/properties"
+)
+
+type New struct {
+    props   properties.Properties
+    env     environment.Environment
+
+    Text string
 }
 
 const (
-    //NewProp switches something
-    NewProp Property = "newprop"
+    //NewProp enables something
+    NewProp properties.Property = "newprop"
 )
 
-func (n *new) enabled() bool {
+func (n *new) Enabled() bool {
     true
 }
 
-func (n *new) string() string {
-    newText := n.props.getString(NewProp, "\uEFF1")
-    return newText
+func (n *new) Template() string {
+    return " {{.Text}} world "
 }
 
-func (n *new) init(props *properties, env environmentInfo) {
+func (n *new) Init(props properties.Properties, env environment.Environment) {
     n.props = props
     n.env = env
 }
 ```
 
-When it comes to properties, make sure to use the UTF32 representation (e.g. "\uEFF1") rather than the icon itself.
+When it comes to icon Properties, make sure to use the UTF32 representation (e.g. "\uEFF1") rather than the icon itself.
 This will facilitate the review process as not all environments display the icons based on the font being used.
 You can find these values and query for icons easily at [Nerd Fonts][nf-icons].
 
 For each segment, there's a single test file ensuring the functionality going forward. The convention
-is `new_segment_test.go`, have a look at existing segment tests for inspiration.
+is `new_test.go`, have a look at [existing segment tests][tests] for inspiration. Oh My Posh makes
+use of the test tables pattern for all newly added tests. See [this][tables] blog post for more information.
 
 ## Create a name for your Segment
 
@@ -54,8 +61,8 @@ is `new_segment_test.go`, have a look at existing segment tests for inspiration.
 Add your segment.
 
 ```go
-//New is brand new
-New SegmentType = "new"
+// NEW is brand new
+NEW SegmentType = "new"
 ```
 
 ## Add the SegmentType mapping
@@ -63,7 +70,7 @@ New SegmentType = "new"
 Map your `SegmentType` to your Segment in the `mapSegmentWithWriter` function.
 
 ```go
-New: &new{},
+NEW: &New{},
 ```
 
 ## Test your functionality
@@ -140,10 +147,10 @@ At `$.definitions.segment.allOf`, add your segment details:
       "properties": {
         "properties": {
           "nwprop": {
-            "type": "string",
-            "title": "New Prop",
-            "description": "the new text to show",
-            "default": "\uEFF1"
+            "type": "boolean",
+            "title": "New Property",
+            "description": "the default text to display",
+            "default": "Hello"
           }
         }
       }
@@ -161,3 +168,5 @@ And be patient, I'm going as fast as I can 🏎
 [docs]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/docs/docs
 [sidebars]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/docs/sidebars.js
 [nf-icons]: https://www.nerdfonts.com/cheat-sheet
+[tests]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/src/segments/az_test.go
+[tables]: https://blog.alexellis.io/golang-writing-unit-tests/

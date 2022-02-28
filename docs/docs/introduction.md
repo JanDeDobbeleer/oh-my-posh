@@ -48,7 +48,7 @@ installation guide to get started right away!
 
 [omp]: https://github.com/JanDeDobbeleer/oh-my-posh2
 [omz]: https://github.com/ohmyzsh/ohmyzsh
-[block]: /docs/configure#block
-[segment]: /docs/configure#segment
+[block]: /docs/config-overview#block
+[segment]: /docs/config-overview#segment
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [omp-themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/master/Themes

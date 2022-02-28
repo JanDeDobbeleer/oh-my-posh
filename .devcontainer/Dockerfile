@@ -8,16 +8,77 @@ FROM mcr.microsoft.com/vscode/devcontainers/go:0-${VARIANT}
 ARG NODE_VERSION="none"
 RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
 
-# Download the Microsoft repository GPG keys
-RUN wget https://packages.microsoft.com/config/debian/10/packages-microsoft-prod.deb
-# Register the Microsoft repository GPG keys
-RUN  dpkg -i packages-microsoft-prod.deb
+# Install powershell
+ARG PS_VERSION="7.2.1"
+RUN ARCH="$(dpkg --print-architecture)"; \
+    if [ "${ARCH}" = "amd64" ]; then \
+        PS_BIN="v$PS_VERSION/powershell-$PS_VERSION-linux-x64.tar.gz"; \
+    elif [ "${ARCH}" = "arm64" ]; then \
+        PS_BIN="v$PS_VERSION/powershell-$PS_VERSION-linux-arm64.tar.gz"; \
+    elif [ "${ARCH}" = "armhf" ]; then \
+        PS_BIN="v$PS_VERSION/powershell-$PS_VERSION-linux-arm32.tar.gz"; \
+    fi; \
+    wget https://github.com/PowerShell/PowerShell/releases/download/$PS_BIN -O pwsh.tar.gz; \
+    mkdir /usr/local/pwsh && \
+    tar Cxvfz /usr/local/pwsh pwsh.tar.gz && \
+    rm pwsh.tar.gz
 
-# [Optional] Uncomment this section to install additional OS packages.
+ENV PATH=$PATH:/usr/local/pwsh
+
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y --no-install-recommends fish\
-    && apt-get install -y --no-install-recommends powershell
+    && apt-get install -y --no-install-recommends \
+    fish \
+    tmux \
+    && apt-get clean
 
+ARG USERNAME=vscode
+
+# Download the oh-my-posh binary
+RUN mkdir /home/${USERNAME}/bin; \
+    wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(dpkg --print-architecture) -O /home/${USERNAME}/bin/oh-my-posh; \
+    chmod +x /home/${USERNAME}/bin/oh-my-posh; \
+    chown ${USERNAME}: /home/${USERNAME}/bin;
+
+# Download the fzf binary
+RUN wget https://github.com/junegunn/fzf/releases/download/0.29.0/fzf-0.29.0-linux_$(dpkg --print-architecture).tar.gz -O /home/${USERNAME}/bin/fzf; \
+    chmod +x /home/${USERNAME}/bin/fzf;
+
+# NOTE: devcontainers are Linux-only at this time but when
+# Windows or Darwin is supported someone will need to improve
+# the code logic above.
+
+# Setup a neat little PowerShell experience
+RUN pwsh -Command Install-Module posh-git -Scope AllUsers -Force; \
+    pwsh -Command Install-Module z -Scope AllUsers -Force; \
+    pwsh -Command Install-Module PSFzf -Scope AllUsers -Force; \
+    pwsh -Command Install-Module Terminal-Icons -Scope AllUsers -Force;
+
+# add the oh-my-posh path to the PATH variable
+ENV PATH "$PATH:/home/${USERNAME}/bin"
+
+# Can be used to override the devcontainer prompt default theme:
+ENV POSH_THEME="/workspaces/oh-my-posh/themes/jandedobbeleer.omp.json"
+
+# Deploy oh-my-posh prompt to Powershell:
+COPY Microsoft.PowerShell_profile.ps1 /home/${USERNAME}/.config/powershell/Microsoft.PowerShell_profile.ps1
+
+# Deploy oh-my-posh prompt to Fish:
+COPY config.fish /home/${USERNAME}/.config/fish/config.fish
+
+# Everything runs as root during build time, so we want
+# to make sure the vscode user can edit these paths too:
+RUN chmod 777 -R /home/${USERNAME}/.config
+
+# Override vscode's own Bash prompt with oh-my-posh:
+RUN sed -i 's/^__bash_prompt$/#&/' /home/${USERNAME}/.bashrc && \
+    echo "eval \"\$(oh-my-posh --init --shell bash --config $POSH_THEME)\"" >> /home/${USERNAME}/.bashrc
+
+# Override vscode's own ZSH prompt with oh-my-posh:
+RUN echo "eval \"\$(oh-my-posh --init --shell zsh --config $POSH_THEME)\"" >> /home/${USERNAME}/.zshrc
+
+# Set container timezone:
+ARG TZ="UTC"
+RUN ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 
 # [Optional] Uncomment the next line to use go get to install anything else you need
 # RUN go get -x github.com/JanDeDobbeleer/battery

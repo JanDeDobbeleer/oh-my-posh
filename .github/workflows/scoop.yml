@@ -1,0 +1,46 @@
+name: Scoop
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
+        working-directory: ${{ github.workspace }}/packages/scoop
+    steps:
+    - name: Checkout code 👋
+      uses: actions/checkout@v2
+    - name: Get release ⬇️
+      id: get_release
+      uses: bruceadams/get-release@v1.2.3
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+    - name: Update Template ✍️
+      run: |
+        $version = $env:GITHUB_REF.TrimStart("refs/tags/v")
+        ./build.ps1 -Version $version
+    - name: Upload artifacts 🆙
+      uses: actions/github-script@v5
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          console.log('environment', process.versions);
+
+          const fs = require('fs').promises;
+
+          const { repo: { owner, repo }, sha } = context;
+          console.log({ owner, repo, sha });
+
+          for (let file of await fs.readdir('./packages/scoop/dist')) {
+            console.log('uploading', file);
+
+            await github.rest.repos.uploadReleaseAsset({
+              owner, repo,
+              release_id: ${{ steps.get_release.outputs.id }},
+              name: file,
+              data: await fs.readFile(`./packages/scoop/dist/${file}`)
+            });
+          }

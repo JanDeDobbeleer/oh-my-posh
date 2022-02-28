@@ -3,12 +3,12 @@
   "description": "A prompt theme engine for any shell",
   "homepage": "https://ohmyposh.dev",
   "license": {
-      "identifier": "GPL-3.0-only",
+      "identifier": "MIT",
       "url": "https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/COPYING"
   },
   "architecture": {
       "64bit": {
-          "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/posh-windows-wsl-amd64.7z",
+          "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/posh-windows-amd64.7z",
           "hash": "<HASH>"
       }
   },
@@ -18,12 +18,12 @@
   },
   "post_install": [
       "Write-Host 'Thanks for installing Oh My Posh.'",
-      "Write-Host 'Have a look at https://ohmyposh.dev/docs/installation for detailed instructions for your shell.'"
+      "Write-Host 'Have a look at https://ohmyposh.dev for detailed instructions for your shell.'"
   ],
   "autoupdate": {
       "architecture": {
           "64bit": {
-              "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/posh-windows-wsl-amd64.7z",
+              "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/posh-windows-amd64.7z",
               "hash": {
                   "url": "$url.sha256"
               }

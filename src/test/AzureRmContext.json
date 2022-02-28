@@ -1,0 +1,81 @@
+{
+  "DefaultContextKey": "My Azure Subscription (subscription_id) - tenant_id - user_name",
+  "EnvironmentTable": {},
+  "Contexts": {
+    "My Azure Subscription (subscription_id) - tenant_id - user_name": {
+      "Account": {
+        "Id": "232-232-232-232",
+        "Type": "User",
+        "TenantMap": {},
+        "ExtendedProperties": {
+          "Subscriptions": "subscription_ids",
+          "Tenants": "tenants_ids",
+          "HomeAccountId": "tenants_ids"
+        }
+      },
+      "Tenant": {
+        "Id": "4777-4777-4777-4777",
+        "Directory": null,
+        "IsHome": true,
+        "ExtendedProperties": {}
+      },
+      "Subscription": {
+        "Id": "97hkk-97hkk-97hkk-97hkk",
+        "Name": "AzurePosh",
+        "State": "Poshfull",
+        "ExtendedProperties": {
+          "HomeTenant": "688ab8f8-d8d8-4c8b-b8b8-b8b8b8b8b8b8",
+          "AuthorizationSource": "Legacy",
+          "SubscriptionPolices": "{\"locationPlacementId\":\"Public_2014-09-01\",\"quotaId\":\"MSDN_2014-09-01\",\"spendingLimit\":\"On\"}",
+          "Tenants": "4777-4777-4777-4777",
+          "Account": "Bill",
+          "Environment": "AzurePoshCloud"
+        }
+      },
+      "Environment": {
+        "Name": "AzurePoshCloud",
+        "Type": "Built-in",
+        "OnPremise": false,
+        "ServiceManagementUrl": "https://management.core.windows.net/",
+        "ResourceManagerUrl": "https://management.azure.com/",
+        "ManagementPortalUrl": "https://portal.azure.com/",
+        "PublishSettingsFileUrl": "https://go.microsoft.com/fwlink/?LinkID=301775",
+        "ActiveDirectoryAuthority": "https://login.microsoftonline.com/",
+        "GalleryUrl": "https://gallery.azure.com/",
+        "GraphUrl": "https://graph.windows.net/",
+        "ActiveDirectoryServiceEndpointResourceId": "https://management.core.windows.net/",
+        "StorageEndpointSuffix": "core.windows.net",
+        "SqlDatabaseDnsSuffix": ".database.windows.net",
+        "TrafficManagerDnsSuffix": "trafficmanager.net",
+        "AzureKeyVaultDnsSuffix": "vault.azure.net",
+        "AzureKeyVaultServiceEndpointResourceId": "https://vault.azure.net",
+        "GraphEndpointResourceId": "https://graph.windows.net/",
+        "DataLakeEndpointResourceId": "https://datalake.azure.net/",
+        "BatchEndpointResourceId": "https://batch.core.windows.net/",
+        "AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix": "azuredatalakeanalytics.net",
+        "AzureDataLakeStoreFileSystemEndpointSuffix": "azuredatalakestore.net",
+        "AdTenant": "Common",
+        "ContainerRegistryEndpointSuffix": "azurecr.io",
+        "VersionProfiles": [],
+        "ExtendedProperties": {
+          "OperationalInsightsEndpoint": "https://api.loganalytics.io/v1",
+          "OperationalInsightsEndpointResourceId": "https://api.loganalytics.io",
+          "AzureAnalysisServicesEndpointSuffix": "asazure.windows.net",
+          "AnalysisServicesEndpointResourceId": "https://region.asazure.windows.net",
+          "AzureAttestationServiceEndpointSuffix": "attest.azure.net",
+          "AzureAttestationServiceEndpointResourceId": "https://attest.azure.net",
+          "AzureSynapseAnalyticsEndpointSuffix": "dev.azuresynapse.net",
+          "AzureSynapseAnalyticsEndpointResourceId": "https://dev.azuresynapse.net",
+          "ManagedHsmServiceEndpointResourceId": "https://managedhsm.azure.net",
+          "ManagedHsmServiceEndpointSuffix": "managedhsm.azure.net",
+          "MicrosoftGraphEndpointResourceId": "https://graph.microsoft.com/",
+          "MicrosoftGraphUrl": "https://graph.microsoft.com"
+        }
+      },
+      "VersionProfile": null,
+      "TokenCache": { "CacheData": null },
+      "ExtendedProperties": {}
+    }
+  },
+  "ExtendedProperties": {}
+}

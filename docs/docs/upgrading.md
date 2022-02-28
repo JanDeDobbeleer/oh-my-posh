@@ -107,5 +107,5 @@ Do not hesitate to [ask for assistance][issues] when you notice an issue or unex
 [introduction]: /docs/#concept
 [v3]: https://github.com/JanDeDobbeleer/oh-my-posh/
 [themesv3]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
-[configuration]: /docs/configure
+[configuration]: /docs/config-overview
 [issues]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/new

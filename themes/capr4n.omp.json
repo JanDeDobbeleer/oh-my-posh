@@ -1,0 +1,76 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "background": "#003543",
+          "foreground": "#ffffff",
+          "properties": {
+            "template": " \uf64f {{ .CurrentDate | date .Format }} "
+          },
+          "style": "plain",
+          "type": "time"
+        },
+        {
+          "background": "#83769c",
+          "foreground": "#ffffff",
+          "properties": {
+            "always_enabled": true,
+            "template": " \ufa1e{{ .FormattedMs }} "
+          },
+          "style": "plain",
+          "type": "executiontime"
+        }
+      ],
+      "type": "rprompt"
+    },
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "#61AFEF",
+          "foreground": "#ffffff",
+          "properties": {
+            "display_host": false,
+            "template": "{{if .Root}} \uf0e7 {{.UserName}} {{else}} {{.UserName}} {{end}}"
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "type": "session"
+        },
+        {
+          "background": "#C678DD",
+          "foreground": "ffffff",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "folder_icon": "\uf115",
+            "folder_separator_icon": " \ue0b1 ",
+            "max_depth": 2,
+            "style": "agnoster_short",
+            "template": " {{ .Path }} "
+          },
+          "style": "powerline",
+          "type": "path"
+        },
+        {
+          "background": "#95ffa4",
+          "foreground": "#193549",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "template": " {{ .HEAD }} "
+          },
+          "style": "powerline",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}} \u26a1 {{end}}{{.UserName}} \u2794 📁{{.Folder}}",
+  "final_space": true,
+  "version": 1
+}

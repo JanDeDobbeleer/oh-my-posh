@@ -9,11 +9,13 @@ module.exports = {
   organizationName: "jandedobbeleer",
   projectName: "oh-my-posh",
   onBrokenLinks: "ignore",
-  plugins: [path.resolve(__dirname, 'plugins', 'appinsights')],
+  plugins: [
+    path.resolve(__dirname, 'plugins', 'appinsights'),
+    'docusaurus-node-polyfills'
+  ],
   themeConfig: {
     prism: {
-      theme: require("prism-react-renderer/themes/duotoneLight"),
-      darkTheme: require("prism-react-renderer/themes/oceanicNext"),
+      additionalLanguages: ['powershell', 'lua', 'jsstacktrace'],
     },
     navbar: {
       title: "Oh My Posh",
@@ -34,16 +36,23 @@ module.exports = {
           position: "left",
         },
         {
-          href: "https://www.gitkraken.com/invite/nQmDPR9D",
-          label: "GitKraken",
-          position: "left",
-        },
-        {
           href: "https://github.com/jandedobbeleer/oh-my-posh",
           className: 'header-github-link',
           'aria-label': 'GitHub repository',
           position: "right",
         },
+        {
+          href: "https://www.gitkraken.com/invite/nQmDPR9D",
+          className: 'header-gk-link',
+          'aria-label': 'GitKraken',
+          position: "right",
+        },
+        {
+          href: "https://twitter.com/jandedobbeleer",
+          className: 'header-twitter-link',
+          'aria-label': 'Twitter',
+          position: "right",
+        }
       ],
     },
     footer: {
@@ -99,8 +108,8 @@ module.exports = {
       instrumentationKey: "72804848-dc30-4856-8245-4fa1450b041f",
     },
     algolia: {
-      appId: 'BH4D9OD16A',
-      apiKey: '539391a0be386508c6a80cb2bca8ebfe',
+      appId: 'XIR4RB3TM1',
+      apiKey: '15c5f4340520612ed98fe21d15882029',
       indexName: 'ohmyposh',
     },
   },
@@ -113,7 +122,10 @@ module.exports = {
           editUrl: "https://github.com/jandedobbeleer/oh-my-posh/edit/main/docs/",
         },
         theme: {
-          customCss: require.resolve("./src/css/custom.css"),
+          customCss: [
+            require.resolve("./src/css/custom.css"),
+            require.resolve("./src/css/prism-rose-pine-moon.css")
+          ],
         },
       },
     ],

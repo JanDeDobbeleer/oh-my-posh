@@ -7,20 +7,20 @@
         {
           "background": "#EB9654",
           "foreground": "#ffffff",
-          "leading_diamond": "",
+          "leading_diamond": "\ue0b6",
           "properties": {
             "display_host": false,
-            "prefix": ""
+            "template": "{{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }} "
           },
           "style": "diamond",
-          "trailing_diamond": "",
           "type": "session"
         },
         {
           "background": "lightYellow",
           "foreground": "#3f3f3f",
           "properties": {
-            "style": "full"
+            "style": "full",
+            "template": " {{ .Path }} "
           },
           "style": "plain",
           "type": "path"
@@ -30,38 +30,39 @@
           "foreground": "#ffffff",
           "properties": {
             "fetch_status": true,
-            "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
-            "postfix": ") ",
-            "prefix": " branch ("
+            "template": " branch ({{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}) "
           },
           "style": "plain",
           "type": "git"
         },
         {
-          "type": "spotify",
-          "style": "plain",
-          "foreground": "#ffffff",
           "background": "#1BD760",
+          "foreground": "#ffffff",
           "properties": {
-            "track_separator": " - ",
+            "paused_icon": "",
             "playing_icon": "",
             "stopped_icon": "",
-            "paused_icon": ""
-          }
+            "template": " {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} ",
+            "track_separator": " - "
+          },
+          "style": "plain",
+          "type": "spotify"
         },
         {
           "background": "#cc00ff",
           "foreground": "#ffffff",
           "properties": {
+            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04:05"
           },
           "style": "diamond",
-          "trailing_diamond": "\uE0B0",
+          "trailing_diamond": "\ue0b0",
           "type": "time"
         }
       ],
       "type": "prompt"
     }
   ],
-  "final_space": true
+  "final_space": true,
+  "version": 1
 }

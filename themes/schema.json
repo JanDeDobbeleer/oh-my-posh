@@ -3,39 +3,45 @@
   "$id": "http://example.com/example.json",
   "type": "object",
   "title": "The Oh My Posh theme definition",
-  "description": "https://ohmyposh.dev/docs/configure",
+  "description": "https://ohmyposh.dev/docs/config-overview",
   "definitions": {
     "color": {
+      "anyOf": [
+        { "$ref": "#/definitions/color_string" },
+        { "$ref": "#/definitions/palette_reference" }
+      ]
+    },
+    "color_string": {
       "type": "string",
       "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite|transparent|parentBackground|parentForeground|background|foreground)$",
       "title": "Color string",
-      "description": "https://ohmyposh.dev/docs/configure#colors",
+      "description": "https://ohmyposh.dev/docs/config-colors",
       "format": "color"
+    },
+    "palette_reference": {
+      "type": "string",
+      "pattern": "^p:.*$",
+      "title": "Palette reference",
+      "description": "https://ohmyposh.dev/docs/config-colors#palette"
     },
     "color_templates": {
       "type": "array",
       "title": "Templates to define a color",
-      "description": "https://ohmyposh.dev/docs/configure#foreground-templates",
+      "description": "https://ohmyposh.dev/docs/config-overview#foreground-templates",
       "default": [],
       "items": {
-        "type": "string"
+        "$ref": "#/definitions/template"
       }
     },
-    "display_version": {
+    "fetch_version": {
       "type": "boolean",
-      "title": "Display Version",
-      "description": "Show or hide the version number",
+      "title": "Fetch Version",
+      "description": "Fetch the version number",
       "default": true
-    },
-    "enable_hyperlink": {
-      "type": "boolean",
-      "title": "Enable hyperlink",
-      "description": "Displays an hyperlink for the current segment",
-      "default": false
     },
     "http_timeout": {
       "type": "integer",
-      "title": "Http requst timeout",
+      "title": "Http request timeout",
       "description": "Timeout value to use for http request",
       "default": 20
     },
@@ -55,12 +61,24 @@
     "template": {
       "type": "string",
       "title": "Template text",
-      "description": "The template to use to render the segment text",
+      "description": "https://ohmyposh.dev/docs/config-templates",
       "default": ""
+    },
+    "extra_prompt": {
+      "type": "object",
+      "default": {},
+      "properties": {
+        "template": {
+          "type": "string",
+          "title": "Prompt Template"
+        },
+        "background": { "$ref": "#/definitions/color" },
+        "foreground": { "$ref": "#/definitions/color" }
+      }
     },
     "block": {
       "type": "object",
-      "description": "https://ohmyposh.dev/docs/configure#block",
+      "description": "https://ohmyposh.dev/docs/config-overview#block",
       "allOf": [
         {
           "if": {
@@ -89,37 +107,37 @@
         "type": {
           "type": "string",
           "title": "Block type",
-          "description": "https://ohmyposh.dev/docs/configure#type",
+          "description": "https://ohmyposh.dev/docs/config-overview#type",
           "enum": ["prompt", "rprompt"],
           "default": "prompt"
         },
         "alignment": {
           "type": "string",
           "title": "Block alignment",
-          "description": "https://ohmyposh.dev/docs/configure#alignment",
+          "description": "https://ohmyposh.dev/docs/config-overview#alignment",
           "enum": ["left", "right"],
           "default": "left"
         },
         "newline": {
           "type": "boolean",
           "title": "Newline",
-          "description": "https://ohmyposh.dev/docs/configure#newline",
+          "description": "https://ohmyposh.dev/docs/config-overview#newline",
           "default": false
         },
         "vertical_offset": {
           "type": "integer",
           "title": "Block vertical offset",
-          "description": "https://ohmyposh.dev/docs/configure#vertical-offset"
+          "description": "https://ohmyposh.dev/docs/config-overview#vertical-offset"
         },
         "horizontal-offset": {
           "type": "integer",
           "title": "Block vertical offset",
-          "description": "https://ohmyposh.dev/docs/configure#horizontal-offset"
+          "description": "https://ohmyposh.dev/docs/config-overview#horizontal-offset"
         },
         "segments": {
           "type": "array",
           "title": "Segments list, prompt elements to display based on context",
-          "description": "https://ohmyposh.dev/docs/configure#segment",
+          "description": "https://ohmyposh.dev/docs/config-overview#segment",
           "default": [],
           "items": { "$ref": "#/definitions/segment" }
         }
@@ -128,14 +146,14 @@
     "segment": {
       "type": "object",
       "title": "A segment",
-      "description": "https://ohmyposh.dev/docs/configure#segment",
+      "description": "https://ohmyposh.dev/docs/config-overview#segment",
       "default": {},
       "required": ["type", "style"],
       "properties": {
         "type": {
           "type": "string",
           "title": "Segment Type",
-          "description": "https://ohmyposh.dev/docs/configure#type-1",
+          "description": "https://ohmyposh.dev/docs/config-overview#type-1",
           "enum": [
             "session",
             "path",
@@ -151,7 +169,6 @@
             "shell",
             "node",
             "os",
-            "envvar",
             "az",
             "kubectl",
             "dotnet",
@@ -169,15 +186,23 @@
             "dart",
             "rust",
             "owm",
-            "memory",
+            "sysinfo",
+            "strava",
             "angular",
-            "php"
+            "php",
+            "wakatime",
+            "wifi",
+            "winreg",
+            "plastic",
+            "ipify",
+            "haskell",
+            "ui5tooling"
           ]
         },
         "style": {
           "type": "string",
           "title": "Segment Style",
-          "description": "https://ohmyposh.dev/docs/configure#style",
+          "description": "https://ohmyposh.dev/docs/config-overview#style",
           "enum": ["powerline", "plain", "diamond"]
         },
         "foreground": { "$ref": "#/definitions/color" },
@@ -187,25 +212,28 @@
         "properties": {
           "type": "object",
           "title": "Segment Properties, used to change behavior/displaying",
-          "description": "https://ohmyposh.dev/docs/configure#properties",
+          "description": "https://ohmyposh.dev/docs/config-overview#properties",
           "default": {},
           "properties": {
             "prefix": {
               "type": "string",
               "title": "Text prefix",
-              "description": "https://ohmyposh.dev/docs/configure#prefix",
+              "description": "https://ohmyposh.dev/docs/config-overview#prefix",
               "default": " "
             },
             "postfix": {
               "type": "string",
               "title": "Text postfix",
-              "description": "https://ohmyposh.dev/docs/configure#postfix",
+              "description": "https://ohmyposh.dev/docs/config-overview#postfix",
               "default": " "
+            },
+            "template": {
+              "$ref": "#/definitions/template"
             },
             "include_folders": {
               "type": "array",
               "title": "If specified, segment will only render in these folders",
-              "description": "https://ohmyposh.dev/docs/configure#include--exclude-folders",
+              "description": "https://ohmyposh.dev/docs/config-overview#include--exclude-folders",
               "default": [],
               "items": {
                 "type": "string"
@@ -214,7 +242,7 @@
             "exclude_folders": {
               "type": "array",
               "title": "Exclude rendering in these folders",
-              "description": "https://ohmyposh.dev/docs/configure#include--exclude-folders",
+              "description": "https://ohmyposh.dev/docs/config-overview#include--exclude-folders",
               "default": [],
               "items": {
                 "type": "string"
@@ -223,7 +251,7 @@
             "ignore_folders": {
               "type": "array",
               "title": "Deprecated - please use `exclude_folders` instead",
-              "description": "https://ohmyposh.dev/docs/configure#include--exclude-folders",
+              "description": "https://ohmyposh.dev/docs/config-overview#include--exclude-folders",
               "default": [],
               "items": {
                 "type": "string"
@@ -245,13 +273,13 @@
               "powerline_symbol": {
                 "type": "string",
                 "title": "Powerline Symbol",
-                "description": "https://ohmyposh.dev/docs/configure#powerline-symbol",
+                "description": "https://ohmyposh.dev/docs/config-overview#powerline-symbol",
                 "default": "\uE0B0"
               },
               "invert_powerline": {
                 "type": "boolean",
                 "title": "Flip the Powerline symbol vertically",
-                "description": "https://ohmyposh.dev/docs/configure#invert-powerline",
+                "description": "https://ohmyposh.dev/docs/config-overview#invert-powerline",
                 "default": false
               }
             }
@@ -268,13 +296,13 @@
               "leading_diamond": {
                 "type": "string",
                 "title": "Leading diamond",
-                "description": "https://ohmyposh.dev/docs/configure#leading-diamond",
+                "description": "https://ohmyposh.dev/docs/config-overview#leading-diamond",
                 "default": ""
               },
               "trailing_diamond": {
                 "type": "string",
                 "title": "Trailing diamond",
-                "description": "https://ohmyposh.dev/docs/configure#trailing-diamond",
+                "description": "https://ohmyposh.dev/docs/config-overview#trailing-diamond",
                 "default": ""
               }
             }
@@ -288,16 +316,7 @@
           },
           "then": {
             "title": "Azure Segment",
-            "description": "https://ohmyposh.dev/docs/az",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  }
-                }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/az"
           }
         },
         {
@@ -312,12 +331,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "battery_icon": {
-                    "type": "string",
-                    "title": "Battery Icon",
-                    "description": "Text/icon to use as a prefix for the battery percentage",
-                    "default": ""
-                  },
                   "display_error": {
                     "type": "boolean",
                     "title": "Display Error",
@@ -341,30 +354,6 @@
                     "title": "Charged Icon",
                     "description": "Text/icon to display on the left when fully charged",
                     "default": ""
-                  },
-                  "color_background": {
-                    "type": "boolean",
-                    "title": "Color Background",
-                    "description": "Color the background or foreground",
-                    "default": false
-                  },
-                  "charged_color": { "$ref": "#/definitions/color" },
-                  "charging_color": { "$ref": "#/definitions/color" },
-                  "discharging_color": { "$ref": "#/definitions/color" },
-                  "display_charging": {
-                    "type": "boolean",
-                    "title": "Display while charging",
-                    "description": "displays the battery status while charging (Charging)",
-                    "default": true
-                  },
-                  "display_charged": {
-                    "type": "boolean",
-                    "title": "Display when full",
-                    "description": "displays the battery status when charged (Full)",
-                    "default": true
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -412,46 +401,14 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "unsupported_version_icon": {
-                    "type": "string",
-                    "title": "Unsupported Version Icon",
-                    "description": "Text/icon that is displayed when the active .NET SDK version (e.g., one specified by global.json) is not installed/supported",
-                    "default": " \uE77F "
-                  },
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": { "const": "envvar" }
-            }
-          },
-          "then": {
-            "title": "Environment Variable Segment",
-            "description": "https://ohmyposh.dev/docs/environment",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "var_name": {
-                    "type": "string",
-                    "title": "Variable Name",
-                    "description": "The name of the environment variable",
-                    "default": ""
                   }
                 }
               }
@@ -470,29 +427,10 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_exit_code": {
-                    "type": "boolean",
-                    "title": "Display Exit Code",
-                    "description": "Show or hide the exit code",
-                    "default": true
-                  },
                   "always_enabled": {
                     "type": "boolean",
                     "title": "Always Enabled",
                     "description": "Always show the status",
-                    "default": false
-                  },
-                  "color_background": {
-                    "type": "boolean",
-                    "title": "Color Background",
-                    "description": "Color the background or foreground",
-                    "default": false
-                  },
-                  "error_color": { "$ref": "#/definitions/color" },
-                  "always_numeric": {
-                    "type": "boolean",
-                    "title": "Always Numeric",
-                    "description": "Always display the exit code as a number",
                     "default": false
                   }
                 }
@@ -512,9 +450,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "fetch_status": {
                     "type": "boolean",
                     "title": "Display Status",
@@ -664,17 +599,20 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "parse_mod_file": {
+                    "type": "boolean",
+                    "title": "Parse go.mod file",
+                    "description": "Parse go.mod file instead of calling out to go to improve performance.",
+                    "default": false
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -693,17 +631,14 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -722,17 +657,14 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -751,17 +683,14 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -780,17 +709,14 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -809,8 +735,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -835,8 +761,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -861,8 +787,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -887,13 +813,16 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "display_error": {
                     "type": "boolean",
                     "title": "Display Error",
                     "description": "Show the error context when failing to retrieve the kubectl information",
+                    "default": false
+                  },
+                  "parse_kubeconfig": {
+                    "type": "boolean",
+                    "title": "Parse kubeconfig",
+                    "description": "Parse kubeconfig files instead of calling out to kubectl to improve performance.",
                     "default": false
                   }
                 }
@@ -913,9 +842,6 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "template": {
-                    "$ref": "#/definitions/template"
-                  },
                   "display_default": {
                     "type": "boolean",
                     "title": "Display Default User Profile",
@@ -939,8 +865,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -948,10 +874,10 @@
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
                   },
-                  "display_package_manager": {
+                  "fetch_package_manager": {
                     "type": "boolean",
-                    "title": "Display Package Manager",
-                    "description": "Show whether the current project uses Yarn or NPM",
+                    "title": "Fetch Display Package Manager",
+                    "description": "Assigns the Yarn or NPM icon to .PackageManagerIcon",
                     "default": false
                   },
                   "yarn_icon": {
@@ -965,9 +891,6 @@
                     "title": "NPM Icon",
                     "description": "Icon/text to use for NPM",
                     "default": " \uE71E"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -986,8 +909,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1029,18 +952,6 @@
                     "title": "Windows Icon",
                     "description": "Icon/text to use for Windows",
                     "default": "\uE62A"
-                  },
-                  "wsl": {
-                    "type": "string",
-                    "title": "WSL Icon",
-                    "description": "Icon/text to use for WSL",
-                    "default": "WSL"
-                  },
-                  "wsl_separator": {
-                    "type": "string",
-                    "title": "WSL Separator",
-                    "description": "Icon/text to use for separating WSL from Linux",
-                    "default": " - "
                   },
                   "display_distro_name": {
                     "type": "boolean",
@@ -1211,11 +1122,13 @@
                       "agnoster",
                       "agnoster_full",
                       "agnoster_short",
+                      "agnoster_left",
                       "short",
                       "full",
                       "folder",
                       "mixed",
-                      "letter"
+                      "letter",
+                      "unique"
                     ],
                     "default": "folder"
                   },
@@ -1228,24 +1141,21 @@
                   "max_depth": {
                     "type": "integer",
                     "title": "Maximum Depth",
-                    "description": "Maximum path depth to display whithout shortening",
+                    "description": "Maximum path depth to display without shortening",
                     "default": 1
+                  },
+                  "mapped_locations_enabled": {
+                    "type": "boolean",
+                    "title": "Enable the Mapped Locations feature",
+                    "description": "Replace known locations in the path with the replacements before applying the style.",
+                    "default": true
+                  },
+                  "mixed_threshold":{
+                    "type": "integer",
+                    "title": "Mixed threshold",
+                    "description": "The maximum length of a path segment that will be displayed when using mixed style.",
+                    "default": 4
                   }
-                },
-                "mapped_locations_enabled": {
-                  "type": "boolean",
-                  "title": "Enable the Mapped Locations feature",
-                  "description": "Replace known locations in the path with the replacements before applying the style.",
-                  "default": true
-                },
-                "stack_count_enabled": {
-                  "type": "boolean",
-                  "title": "Show/hide stack count",
-                  "description": "Displays the stack count when using pushd/popd",
-                  "default": false
-                },
-                "enable_hyperlink": {
-                  "$ref": "#/definitions/enable_hyperlink"
                 }
               }
             }
@@ -1263,19 +1173,10 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
-                  },
-                  "display_default": {
+                  "fetch_virtual_env": {
                     "type": "boolean",
-                    "title": "Display Default Env",
-                    "description": "Show the name of the virtualenv when it's default (`system`, `base`)",
-                    "default": true
-                  },
-                  "display_virtual_env": {
-                    "type": "boolean",
-                    "title": "Display Virtual Env",
-                    "description": "Show the name of the virtualenv or not",
+                    "title": "Fetch Virtual Env",
+                    "description": "Fetch the name of the virtualenv or not",
                     "default": true
                   },
                   "display_mode": {
@@ -1283,9 +1184,6 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
-                  },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
                   }
                 }
               }
@@ -1300,19 +1198,7 @@
           },
           "then": {
             "title": "Root Segment",
-            "description": "https://ohmyposh.dev/docs/root",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "root_icon": {
-                    "type": "string",
-                    "title": "Root Icon",
-                    "description": "The icon to display in case of root/elevated",
-                    "default": "\uF0E7"
-                  }
-                }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/root"
           }
         },
         {
@@ -1327,43 +1213,11 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "user_info_separator": {
-                    "type": "string",
-                    "title": "User Info Separator",
-                    "description": "Text/icon to put in between the user and host name",
-                    "default": "@"
-                  },
                   "ssh_icon": {
                     "type": "string",
                     "title": "SSH Icon",
                     "description": "Text/icon to display first when in an active SSH session",
                     "default": "\uF817"
-                  },
-                  "user_color": { "$ref": "#/definitions/color" },
-                  "host_color": { "$ref": "#/definitions/color" },
-                  "display_user": {
-                    "type": "boolean",
-                    "title": "Display User",
-                    "description": "Display the user name or not",
-                    "default": true
-                  },
-                  "display_host": {
-                    "type": "boolean",
-                    "title": "Display Host",
-                    "description": "Display the host name or not",
-                    "default": true
-                  },
-                  "default_user_name": {
-                    "type": "string",
-                    "title": "Default User Name",
-                    "description": "The name of the default user",
-                    "default": ""
-                  },
-                  "display_default": {
-                    "type": "boolean",
-                    "title": "Display Default User",
-                    "description": "Display the segment when default user or not",
-                    "default": true
                   }
                 }
               }
@@ -1485,9 +1339,6 @@
                     "title": "Time Format",
                     "description": "Format to use, follows the golang standard: https://gobyexample.com/time-formatting-parsing",
                     "default": "15:04:05"
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1575,9 +1426,6 @@
                     "default": "standard",
                     "enum": ["standard", "metric", "imperial"]
                   },
-                  "enable_hyperlink": {
-                    "$ref": "#/definitions/enable_hyperlink"
-                  },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
                   },
@@ -1586,9 +1434,6 @@
                     "title": "cache timeout",
                     "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
                     "default": 10
-                  },
-                  "template": {
-                    "$ref": "#/definitions/template"
                   }
                 }
               }
@@ -1653,12 +1498,12 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "memory" }
+              "type": { "const": "sysinfo" }
             }
           },
           "then": {
-            "title": "Get used memory percentage",
-            "description": "https://ohmyposh.dev/docs/memory",
+            "title": "Get sysinfo",
+            "description": "https://ohmyposh.dev/docs/sysinfo",
             "properties": {
               "properties": {
                 "properties": {
@@ -1667,19 +1512,68 @@
                     "title": "Precision",
                     "description": "number of decimal places to show",
                     "default": 0
-                  },
-                  "use_available": {
-                    "type": "boolean",
-                    "title": "Use available memory",
-                    "description": "whether to use available or free memory on Linux",
-                    "default": true
-                  },
-                  "memory_type": {
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "strava" }
+            }
+          },
+          "then": {
+            "title": "Display training data from Strava",
+            "description": "https://ohmyposh.dev/docs/strava",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "url": {
                     "type": "string",
-                    "enum": ["physical", "swap"],
-                    "title": "Memory type",
-                    "description": "whether to show physical or swap memory",
-                    "default": "physical"
+                    "title": "URL of API with Strava data",
+                    "description": "Url of your api provinding a Strava activity",
+                    "default": ""
+                  },
+                  "ride_icon": {
+                    "type": "string",
+                    "title": "Alternative icon",
+                    "description": "Alternative icon for this activity type",
+                    "default": "\uf5a2"
+                  },
+                  "run_icon": {
+                    "type": "string",
+                    "title": "Alternative icon",
+                    "description": "Alternative icon for this activity type",
+                    "default": "\ufc0c"
+                  },
+                  "skiing_icon": {
+                    "type": "string",
+                    "title": "Alternative icon",
+                    "description": "Alternative icon for this activity type",
+                    "default": "\ue213"
+                  },
+                  "workout_icon": {
+                    "type": "string",
+                    "title": "Alternative icon",
+                    "description": "Alternative icon for this activity type",
+                    "default": "\ue213"
+                  },
+                  "unknown_activity_icon": {
+                    "type": "string",
+                    "title": "Fallback icon",
+                    "description": "Fallback icon for other activity types",
+                    "default": "\ue213"
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout",
+                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 10
                   }
                 }
               }
@@ -1698,8 +1592,8 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "display_version": {
-                    "$ref": "#/definitions/display_version"
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
@@ -1707,6 +1601,387 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "wakatime" }
+            }
+          },
+          "then": {
+            "title": "Wakatime",
+            "description": "Displays the tracked time on wakatime.com",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "apikey": {
+                    "type": "string",
+                    "title": "apikey",
+                    "description": "The apikey used for the api call (Required)",
+                    "default": "."
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout",
+                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "wifi" }
+            }
+          },
+          "then": {
+            "title": "WiFi Segment",
+            "description": "https://ohmyposh.dev/docs/wifi"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "winreg" }
+            }
+          },
+          "then": {
+            "title": "Windows Registry Query",
+            "description": "https://ohmyposh.dev/docs/winreg",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "title": "Registry Path",
+                    "description": "The path to the registry key (case insensitive, must use backslashes).  Ending with \\ will retrieve \"(Default)\" key in that path.",
+                    "default": ""
+                  },
+                  "fallback": {
+                    "type":"string",
+                    "title":"Fallback value",
+                    "description":"Value to display if registry value cannot be retrieved",
+                    "default":""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "plastic" }
+            }
+          },
+          "then": {
+            "title": "Plastic SCM Segment",
+            "description": "https://ohmyposh.dev/docs/plastic",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_status": {
+                    "type": "boolean",
+                    "title": "Display Status",
+                    "description": "Display the local changes or not",
+                    "default": false
+                  },
+                  "branch_icon": {
+                    "type": "string",
+                    "title": "Branch Icon",
+                    "description": "The icon to use in front of the selector branch name",
+                    "default": "\uE0A0 "
+                  },
+                  "commit_icon": {
+                    "type": "string",
+                    "title": "Commit Icon",
+                    "description": "Icon/text to display before the selector changeset",
+                    "default": "\uF417"
+                  },
+                  "tag_icon": {
+                    "type": "string",
+                    "title": "Tag Icon",
+                    "description": "Icon/text to display before the seletor label",
+                    "default": "\uF412"
+                  },
+                  "branch_max_length": {
+                    "type": "integer",
+                    "title": "Branch max length",
+                    "description": "the max length for the displayed branch name where 0 implies full length",
+                    "default": 0
+                  },
+                  "full_branch_path": {
+                    "type": "boolean",
+                    "title": "Full branch path",
+                    "description": "display the full branch path instead of only the branch name",
+                    "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "brewfather" }
+            }
+          },
+          "then": {
+            "title": "Brewfather Batch Status",
+            "description": "https://ohmyposh.dev/docs/brewfather",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "user_id": {
+                    "type": "string",
+                    "title": "Brewfather UserID (required)",
+                    "description": "Provided by Brewfather's Generate API Key settings option",
+                    "default": ""
+                  },
+                  "api_key": {
+                    "type":"string",
+                    "title":"Brewfather API Key (required)",
+                    "description":"Provided by Brewfather's Generate API Key settings option",
+                    "default":""
+                  },
+                  "batch_id": {
+                    "type":"string",
+                    "title":"ID of the batch in Brewfather (required)",
+                    "description":"At the end of the URL when viewing the batch on the Brewfather site",
+                    "default":""
+                  },
+                  "day_icon": {
+                    "type":"string",
+                    "title":"Icon to use to indicate days",
+                    "description":"Appended to a number to indicate days, e.g. 25d",
+                    "default":"d"
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout in minutes",
+                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 5
+                  },
+                  "doubleup_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, very high positive change",
+                    "description":"Delta between this and prior temperature reading is very high (> 4C by default), available intemplate as .TemperatureTrend",
+                    "default":"↑↑"
+                  },
+                  "singleup_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, high positive change",
+                    "description":"Delta between this and prior temperature reading is high (2C < delta < 4C by default), available intemplate as .TemperatureTrend",
+                    "default":"↑"
+                  },
+                  "fortyfiveup_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, positive change",
+                    "description":"Delta between this and prior temperature reading is positive (0.5C < delta < 2C by default), available intemplate as .TemperatureTrend",
+                    "default":"↗"
+                  },
+                  "flat_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, flat/small change",
+                    "description":"Delta between this and prior temperature and this temperature reading (< +-0.5C change), available intemplate as .TemperatureTrend",
+                    "default":"→"
+                  },
+                  "fortyfivedown_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, v. negative change",
+                    "description":"Delta between this and prior temperature reading is negative (-0.5C > delta > -2C by default), available intemplate as .TemperatureTrend",
+                    "default":"↘"
+                  },
+                  "singledown_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, high negative change",
+                    "description":"Delta between this and prior temperature reading is large negative (-2C > delta > -4C by default), available intemplate as .TemperatureTrend",
+                    "default":"↓"
+                  },
+                  "doubledown_icon": {
+                    "type":"string",
+                    "title":"Temperature trend icon, very high negative change",
+                    "description":"Delta between this and prior temperature reading is very large negative (> -4C by default), available intemplate as .TemperatureTrend",
+                    "default":"↓↓"
+                  },
+                  "planning_status_icon": {
+                    "type":"string",
+                    "title":"Icon for batch in planning",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uF8EA"
+                  },
+                  "brewing_status_icon": {
+                    "type":"string",
+                    "title":"Icon for batch being brewed",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uF7DE"
+                  },
+                  "fermenting_status_icon": {
+                    "type":"string",
+                    "title":"Icon for batch fermenting",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uF499"
+                  },
+                  "conditioning_status_icon": {
+                    "type":"string",
+                    "title":"Icon for batch conditioning",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uE372"
+                  },
+                  "completed_status_icon": {
+                    "type":"string",
+                    "title":"Icon for completed batch",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uF7A5"
+                  },
+                  "archived_status_icon": {
+                    "type":"string",
+                    "title":"Icon for archived batch",
+                    "description":"Available in template as .StatusIcon",
+                    "default":"\uF187"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "ipify" }
+            }
+          },
+          "then": {
+            "title": "Display your external IP Address",
+            "description": "https://ohmyposh.dev/docs/ipify",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "title": "URL",
+                    "description": "The Ipify API URL",
+                    "default": "https://api.ipify.org"
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout",
+                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "haskell" }
+            }
+          },
+          "then": {
+            "title": "Haskell Segment",
+            "description": "https://ohmyposh.dev/docs/haskell",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "stack_ghc_mode": {
+                    "type": "string",
+                    "title": "Use Stack GHC",
+                    "description": "Get the GHC version used by Stack. Will decrease performance. Boolean indicating whether stack ghc was used available in template as .StackGhc",
+                    "enum": ["always", "package", "never"],
+                    "default": "never"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "ui5tooling" }
+            }
+          },
+          "then": {
+            "title": "UI5 tooling CLI segment",
+            "description": "https://ohmyposh.dev/docs/ui5tooling",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "cf" }
+            }
+          },
+          "then": {
+            "title": "Clound Foundry CLI segment",
+            "description": "https://ohmyposh.dev/docs/cf",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "cftarget" }
+            }
+          },
+          "then": {
+            "title": "Clound Foundry Target segment",
+            "description": "https://ohmyposh.dev/docs/cftarget"
           }
         }
       ]
@@ -1717,32 +1992,32 @@
     "final_space": {
       "type": "boolean",
       "title": "Final Space",
-      "description": "https://ohmyposh.dev/docs/configure#general-settings",
+      "description": "https://ohmyposh.dev/docs/config-overview#general-settings",
       "default": true
     },
     "osc99": {
       "type": "boolean",
       "title": "Enable OSC99",
-      "description": "https://ohmyposh.dev/docs/configure#general-settings",
+      "description": "https://ohmyposh.dev/docs/config-overview#general-settings",
       "default": false
     },
     "console_title": {
       "type": "boolean",
       "title": "Console Title",
-      "description": "https://ohmyposh.dev/docs/configure#general-settings",
+      "description": "https://ohmyposh.dev/docs/config-overview#general-settings",
       "default": true
     },
     "console_title_style": {
       "type": "string",
       "title": "Console Title Style",
-      "description": "https://ohmyposh.dev/docs/configure#console-title-style",
+      "description": "https://ohmyposh.dev/docs/config-title#console-title-style",
       "enum": ["folder", "path", "template"],
       "default": "folder"
     },
     "console_title_template": {
       "type": "string",
       "title": "Console Title Template",
-      "description": "https://ohmyposh.dev/docs/configure#console-title-template",
+      "description": "https://ohmyposh.dev/docs/config-title#console-title-template",
       "default": "{{ .Shell }} in {{ .Folder }}"
     },
     "terminal_background": { "$ref": "#/definitions/color" },
@@ -1750,13 +2025,13 @@
       "type": "array",
       "title": "Block array",
       "default": [],
-      "description": "https://ohmyposh.dev/docs/configure",
+      "description": "https://ohmyposh.dev/docs/config-overview",
       "items": { "$ref": "#/definitions/block" }
     },
     "tooltips": {
       "type": "array",
       "title": "Tooltip list, prompt elements to display based on context",
-      "description": "https://ohmyposh.dev/docs/beta#tooltips",
+      "description": "https://ohmyposh.dev/docs/config-tooltips",
       "default": [],
       "items": {
         "allOf": [{ "$ref": "#/definitions/segment" }],
@@ -1773,18 +2048,32 @@
       }
     },
     "transient_prompt": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Transient Prompt Setting",
+      "description": "https://ohmyposh.dev/docs/config-transient"
+    },
+    "valid_line": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Valid Prompt Setting",
+      "description": "https://ohmyposh.dev/docs/config-prompt-override"
+    },
+    "error_line": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Error Prompt Setting",
+      "description": "https://ohmyposh.dev/docs/config-prompt-override"
+    },
+    "secondary_prompt": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Secondary Prompt Setting",
+      "description": "https://ohmyposh.dev/docs/config-secondary-prompt"
+    },
+    "palette": {
       "type": "object",
-      "title": "Transient Prompt Settings",
-      "description": "https://ohmyposh.dev/docs/beta#transient-prompt",
+      "title": "Palette",
+      "description": "https://ohmyposh.dev/docs/config-colors#palette",
       "default": {},
-      "properties": {
-        "template": {
-          "type": "string",
-          "title": "Transient Prompt Template",
-          "default": "{{ .Shell }}> <#f7dc66>{{ .Command }}</>"
-        },
-        "background": { "$ref": "#/definitions/color" },
-        "foreground": { "$ref": "#/definitions/color" }
+      "patternProperties": {
+        ".*": { "$ref": "#/definitions/color" }
       }
     }
   }

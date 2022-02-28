@@ -33,11 +33,8 @@ Display the current path.
 - folder_icon: `string` - the icon to use as a folder indication - defaults to `..`
 - windows_registry_icon: `string` - the icon to display when in the Windows registry - defaults to `\uE0B1`
 - style: `enum` - how to display the current path
-
-- enable_hyperlink: `boolean` - displays an hyperlink for the path - defaults to `false`
 - mixed_threshold: `number` - the maximum length of a path segment that will be displayed when using `Mixed` -
   defaults to `4`
-- stack_count_enabled: `boolean` - displays the stack count when using pushd/popd - defaults to `false`
 - max_depth: `number` - maximum path depth to display before shortening when using `Agnoster Short` - defaults to `1`
 
 ## Mapped Locations
@@ -76,16 +73,17 @@ Style sets the way the path is displayed. Based on previous experience and popul
 - agnoster
 - agnoster_full
 - agnoster_short
+- agnoster_left
 - full
 - folder
 - mixed
 - letter
+- unique
 
 ### Agnoster
 
 Renders each folder as the `folder_icon` separated by the `folder_separator_icon`.
-Only the current folder name is displayed at the end, `$HOME` is replaced by the `home_icon` if you're
-inside the `$HOME` location or one of its children.
+Only the current folder name is displayed at the end.
 
 ### Agnoster Full
 
@@ -95,6 +93,11 @@ Renders each folder name separated by the `folder_separator_icon`.
 
 When more than `max_depth` levels deep, it renders one `folder_icon` followed by the names of the last `max_depth` folders,
 separated by the `folder_separator_icon`.
+
+### Agnoster Left
+
+Renders each folder as the `folder_icon` separated by the `folder_separator_icon`.
+Only the root folder name and it's child are displayed in full.
 
 ### Full
 
@@ -118,3 +121,24 @@ starts with a symbol or icon.
 - `.config` will be shortened to `.c`
 - `__pycache__` will be shortened to `__p`
 - `➼ folder` will be shortened to `➼ f`
+
+### Unique
+
+Works like `Letter`, but will make sure every folder name is the shortest unique value.
+
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Path }}
+```
+
+:::
+
+### Properties
+
+- `.Path`: `string` - the current directory (based on the `style` property)
+- `.StackCount`: `int` - the stack count
+
+[templates]: /docs/config-templates

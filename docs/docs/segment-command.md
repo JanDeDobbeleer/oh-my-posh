@@ -45,4 +45,19 @@ error). The `&&` functionality will join the output of the commands when success
 - shell: `string` - the shell in which to run the command in. Uses `shell -c command` under the hood.
 - command: `string` - the command(s) to run
 
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Output }}
+```
+
+:::
+
+### Properties
+
+- `.Output`: `string` - the output of the command.
+
 [env]: /docs/environment
+[templates]: /docs/config-templates

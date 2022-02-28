@@ -146,5 +146,10 @@
   "console_title_style": "template",
   "console_title_template": "{{ .Shell }} in {{ .Folder }}",
   "final_space": true,
+  "transient_prompt": {
+    "background": "transparent",
+    "foreground": "#FFD700",
+    "template": "{{if .Root}}\u26a1 {{end}}🚀 "
+  },
   "version": 1
 }

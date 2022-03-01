@@ -56,6 +56,8 @@ const (
 	MappedLocationsEnabled properties.Property = "mapped_locations_enabled"
 	// MaxDepth Maximum path depth to display whithout shortening
 	MaxDepth properties.Property = "max_depth"
+	// Hides the root location if it doesn't fit in max_depth. Used in Agnoster Short
+	HideRootLocation properties.Property = "hide_root_location"
 )
 
 func (pt *Path) Template() string {
@@ -249,18 +251,28 @@ func (pt *Path) getAgnosterShortPath() string {
 	if maxDepth < 1 {
 		maxDepth = 1
 	}
+	hideRootLocation := pt.props.GetBool(HideRootLocation, false)
+	if hideRootLocation {
+		// 1-indexing to avoid showing the root location when exceeding the max depth
+		pathDepth++
+	}
 	if pathDepth <= maxDepth {
 		return pt.getAgnosterFullPath()
 	}
 	pathSeparator := pt.env.PathSeparator()
 	folderSeparator := pt.props.GetString(FolderSeparatorIcon, pathSeparator)
-	folderIcon := pt.props.GetString(FolderIcon, "..")
-	root := pt.rootLocation()
 	splitted := strings.Split(pwd, pathSeparator)
 	fullPathDepth := len(splitted)
 	splitPos := fullPathDepth - maxDepth
 	var buffer strings.Builder
-	buffer.WriteString(fmt.Sprintf("%s%s%s", root, folderSeparator, folderIcon))
+	if hideRootLocation {
+		buffer.WriteString(splitted[splitPos])
+		splitPos++
+	} else {
+		folderIcon := pt.props.GetString(FolderIcon, "..")
+		root := pt.rootLocation()
+		buffer.WriteString(fmt.Sprintf("%s%s%s", root, folderSeparator, folderIcon))
+	}
 	for i := splitPos; i < fullPathDepth; i++ {
 		buffer.WriteString(fmt.Sprintf("%s%s", folderSeparator, splitted[i]))
 	}

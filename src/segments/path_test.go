@@ -170,6 +170,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		Style               string
 		GOOS                string
 		MaxDepth            int
+		HideRootLocation    bool
 	}{
 		{Style: AgnosterFull, Expected: "usr > location > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeparator: "/", FolderSeparatorIcon: " > "},
 		{Style: AgnosterShort, Expected: "usr > .. > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
@@ -224,6 +225,30 @@ func TestAgnosterPathStyles(t *testing.T) {
 		{Style: AgnosterFull, Expected: "PSDRIVE: | src", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src", PathSeparator: "/", FolderSeparatorIcon: " | "},
 		{Style: AgnosterShort, Expected: "PSDRIVE: | .. | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeparator: "/", FolderSeparatorIcon: " | "},
 
+		{Style: AgnosterShort, Expected: "src | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeparator: "/", FolderSeparatorIcon: " | ", MaxDepth: 2,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "PSDRIVE: | src", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src", PathSeparator: "/", FolderSeparatorIcon: " | ", MaxDepth: 2,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~", HomePath: homeBillWindows, Pwd: homeBillWindows, PathSeparator: "\\", FolderSeparatorIcon: " > ", MaxDepth: 1, HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "foo", HomePath: homeBillWindows, Pwd: homeBillWindows + "\\foo", PathSeparator: "\\", FolderSeparatorIcon: "\\", MaxDepth: 1,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~\\foo", HomePath: homeBillWindows, Pwd: homeBillWindows + "\\foo", PathSeparator: "\\", FolderSeparatorIcon: "\\", MaxDepth: 2,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~", HomePath: "/usr/home", Pwd: "/usr/home", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 1, HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "foo", HomePath: "/usr/home", Pwd: "/usr/home/foo", PathSeparator: "/", FolderSeparatorIcon: "/", MaxDepth: 1, HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 3,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~ > foo", HomePath: "/usr/home", Pwd: "/usr/home/foo", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2, HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~ > foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/home/foo/bar/man", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 4,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "C:", HomePath: "/usr/home", Pwd: "/mnt/c", Pswd: "C:", PathSeparator: "/", FolderSeparatorIcon: " | ", MaxDepth: 2, HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~ | space foo", HomePath: "/usr/home", Pwd: "/usr/home/space foo", PathSeparator: "/", FolderSeparatorIcon: " | ", MaxDepth: 2,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "space foo", HomePath: "/usr/home", Pwd: "/usr/home/space foo", PathSeparator: "/", FolderSeparatorIcon: " | ", MaxDepth: 1,
+			HideRootLocation: true},
+
 		{Style: Mixed, Expected: "~ > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
 		{Style: Mixed, Expected: "~ > ab > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/ab/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
 
@@ -261,6 +286,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 				FolderSeparatorIcon: tc.FolderSeparatorIcon,
 				properties.Style:    tc.Style,
 				MaxDepth:            tc.MaxDepth,
+				HideRootLocation:    tc.HideRootLocation,
 			},
 		}
 		_ = path.Enabled()

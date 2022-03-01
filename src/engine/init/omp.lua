@@ -5,11 +5,17 @@ local last_duration
 local tip_word
 
 local function omp_exe()
-    return [[::OMP::]]
+    return [["::OMP::"]]
 end
 
 local function omp_config()
     return [[::CONFIG::]]
+end
+
+local function run_posh_command(command)
+    command = '"'..command..'"'
+    output = io.popen(command):read("*a")
+    return output
 end
 
 local function os_clock_millis()
@@ -19,7 +25,8 @@ local function os_clock_millis()
     if (clink.version_encoded or 0) >= 10020030 then
         return math.floor(os.clock() * 1000)
     else
-        return io.popen(omp_exe().." --millis"):read("*n")
+        local prompt_exe = string.format('%s --millis', omp_exe())
+        return run_posh_command(prompt_exe)
     end
 end
 
@@ -56,8 +63,7 @@ end
 
 local function get_posh_prompt(rprompt)
     local prompt_exe = string.format('%s --shell=cmd --config="%s" %s %s --rprompt=%s', omp_exe(), omp_config(), execution_time_option(), error_level_option(), rprompt)
-    prompt = io.popen(prompt_exe):read("*a")
-    return prompt
+    return run_posh_command(prompt_exe)
 end
 
 local p = clink.promptfilter(1)
@@ -69,7 +75,7 @@ function p:rightfilter(prompt)
         return get_posh_prompt(true), false
     end
     local prompt_exe = string.format('%s --shell=cmd --config="%s" --command="%s"', omp_exe(), omp_config(), tip_word)
-    tooltip = io.popen(prompt_exe):read("*a")
+    tooltip = run_posh_command(prompt_exe)
     if tooltip ~= "" then
         return tooltip, false
     end
@@ -77,7 +83,7 @@ function p:rightfilter(prompt)
 end
 function p:transientfilter(prompt)
     local prompt_exe = string.format('%s --shell=cmd --config="%s" --print-transient', omp_exe(), omp_config())
-    prompt = io.popen(prompt_exe):read("*a")
+    prompt = run_posh_command(prompt_exe)
     if prompt == "" then
         prompt = nil
     end

@@ -1157,6 +1157,12 @@
                     "title": "Mixed threshold",
                     "description": "The maximum length of a path segment that will be displayed when using mixed style.",
                     "default": 4
+                  },
+                  "hide_root_location": {
+                    "type": "boolean",
+                    "title": "Hide the root location",
+                    "description": "Hides the root location, when using agnoster_short style, if it doesn't fit in the last max_depth folders.",
+                    "default": false
                   }
                 }
               }

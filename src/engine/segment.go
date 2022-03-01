@@ -158,6 +158,8 @@ const (
 	CF SegmentType = "cf"
 	// Cloud Foundry logged in target
 	CFTARGET SegmentType = "cftarget"
+	// KOTLIN writes the active kotlin version
+	KOTLIN SegmentType = "kotlin"
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
@@ -284,6 +286,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		UI5TOOLING:    &segments.UI5Tooling{},
 		CF:            &segments.Cf{},
 		CFTARGET:      &segments.CfTarget{},
+		KOTLIN:        &segments.Kotlin{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)

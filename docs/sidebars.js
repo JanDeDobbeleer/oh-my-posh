@@ -59,6 +59,7 @@ module.exports = {
         "ipify",
         "java",
         "julia",
+        "kotlin",
         "kubectl",
         "nbgv",
         "nightscout",

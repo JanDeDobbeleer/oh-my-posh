@@ -25,6 +25,7 @@ offers a few standard properties to work with.
 - path: create a link to a folder to open your file explorer `{{ path .Path .Location }}`
 (needs terminal [support][terminal-list-hyperlinks])
 - secondsRound: round seconds to a time indication `{{ secondsRound 3600 }}` -> 1h
+- glob: exposes [filepath.Glob][glob] as a boolean template function `{{ if glob "*.go" }}OK{{ else }}NOK{{ end }}`
 
 ## Text decoration
 
@@ -45,3 +46,4 @@ This can be used in templates and icons/text inside your config.
 [git-segment]: /docs/git
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
+[glob]: https://pkg.go.dev/path/filepath#Glob

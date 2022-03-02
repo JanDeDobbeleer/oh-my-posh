@@ -42,6 +42,12 @@ func getExecutablePath(env environment.Environment) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	// Intermediate fix for file paths with spaces in CMD
+	// See https://github.com/JanDeDobbeleer/oh-my-posh/issues/1852
+	if *env.Args().Shell == winCMD {
+		fileName := environment.Base(env, executable)
+		return fileName, nil
+	}
 	// On Windows, it fails when the excutable is called in MSYS2 for example
 	// which uses unix style paths to resolve the executable's location.
 	// PowerShell knows how to resolve both, so we can swap this without any issue.
@@ -51,7 +57,6 @@ func getExecutablePath(env environment.Environment) (string, error) {
 		executable = strings.ReplaceAll(executable, " ", "\\ ")
 		executable = strings.ReplaceAll(executable, "(", "\\(")
 		executable = strings.ReplaceAll(executable, ")", "\\)")
-		return executable, nil
 	}
 	return executable, nil
 }

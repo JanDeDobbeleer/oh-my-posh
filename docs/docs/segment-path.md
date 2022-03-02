@@ -126,6 +126,11 @@ starts with a symbol or icon.
 
 Works like `Letter`, but will make sure every folder name is the shortest unique value.
 
+The uniqueness refers to the displayed path, so `C:\dev\dev\dev\development` will be displayed as
+`C:\d\de\dev\development` (instead of `C:\d\d\d\development` for `Letter`). Uniqueness does _not_ refer to other
+folders at the same level, so if `C:\projectA\dev` and `C:\projectB\dev` exist, then both will be displayed as
+`C:\p\dev`.
+
 ## Template ([info][templates])
 
 :::note default template

@@ -1016,6 +1016,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Merlin2001",
+      "name": "Marcus Mangelsdorf",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13134791?v=4",
+      "profile": "https://github.com/Merlin2001",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

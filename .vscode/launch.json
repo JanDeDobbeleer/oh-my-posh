@@ -59,14 +59,14 @@
       ]
     },
     {
-      "name": "Print init pwsh",
+      "name": "Print init",
       "type": "go",
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
         "--print-init",
-        "--shell=pwsh",
+        "--shell=cmd",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
       ]
     },

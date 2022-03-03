@@ -1,0 +1,101 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "session",
+          "style": "plain",
+          "foreground": "lightBlue",
+          "foreground_templates": [
+            "{{ if .Root }}red{{ end }}"
+          ],
+          "properties": {
+            "display_host": true,
+            "prefix": "<green>┌──(</>",
+            "postfix": "<green>)</>",
+            "template": "{{ if .Root }}root💀{{ else }}{{ .UserName }}@{{ end }}{{ .ComputerName }}"
+          }
+        },
+        {
+          "foreground": "yellow",
+          "properties": {
+            "prefix": "<green>-[</>\uE235 ",
+            "postfix": "<green>]</>",
+            "display_version": false,
+            "display_virtual_env": true
+          },
+          "style": "plain",
+          "type": "python"
+        },
+        {
+          "foreground": "lightWhite",
+          "properties": {
+            "folder_separator_icon": "<#c0c0c0>/</>",
+            "style": "full",
+            "prefix": "<green>-[</>",
+            "postfix": "<green>]</>"
+          },
+          "style": "plain",
+          "type": "path"
+        },
+        {
+          "foreground": "white",
+          "properties": {
+            "prefix": "<green>-[</>",
+            "postfix": "<green>]</>",
+            "template": "{{ .HEAD }}"
+          },
+          "style": "plain",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "executiontime",
+          "style": "plain",
+          "foreground": "white",
+          "properties": {
+            "style":"round",
+            "always_enabled": true
+          }
+        },
+        {
+          "type": "exit",
+          "style": "plain",
+          "foreground": "green",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}red{{ end }}"
+          ],
+          "properties": {
+            "always_enabled": true,
+            "template": "{{ if gt .Code 0 }}⨯{{else}}✓{{ end }}"
+          }
+        }
+      ]
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "lightBlue",
+          "properties": {
+            "prefix": "<green>└─</>",
+            "text": "{{ if .Root }}<red>#</>{{ else }}${{ end }}"
+          },
+          "style": "plain",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": false
+}

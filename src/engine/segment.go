@@ -160,6 +160,8 @@ const (
 	CFTARGET SegmentType = "cftarget"
 	// KOTLIN writes the active kotlin version
 	KOTLIN SegmentType = "kotlin"
+	// SWIFT writes the active swift version
+	SWIFT SegmentType = "swift"
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
@@ -287,6 +289,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		CF:            &segments.Cf{},
 		CFTARGET:      &segments.CfTarget{},
 		KOTLIN:        &segments.Kotlin{},
+		SWIFT:         &segments.Swift{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)

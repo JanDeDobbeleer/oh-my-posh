@@ -77,6 +77,7 @@ module.exports = {
         "shell",
         "spotify",
         "strava",
+        "swift",
         "sysinfo",
         "terraform",
         "text",

@@ -197,7 +197,8 @@
             "ipify",
             "haskell",
             "ui5tooling",
-            "kotlin"
+            "kotlin",
+            "swift"
           ]
         },
         "style": {
@@ -1994,6 +1995,32 @@
           "then": {
             "title": "Kotlin Segment",
             "description": "https://ohmyposh.dev/docs/kotlin",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "swift" }
+            }
+          },
+          "then": {
+            "title": "Swift Segment",
+            "description": "https://ohmyposh.dev/docs/swift",
             "properties": {
               "properties": {
                 "properties": {

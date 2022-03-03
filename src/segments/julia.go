@@ -25,7 +25,7 @@ func (j *Julia) Init(props properties.Properties, env environment.Environment) {
 				regex:      `julia version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
 			},
 		},
-		versionURLTemplate: "https://github.com/JuliaLang/julia/releases/tag/v{{ .Full }})",
+		versionURLTemplate: "https://github.com/JuliaLang/julia/releases/tag/v{{ .Full }}",
 	}
 }
 

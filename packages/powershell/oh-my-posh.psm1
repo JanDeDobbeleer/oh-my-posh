@@ -14,7 +14,7 @@ function Get-CachePath {
     if (Test-Path -Path $cachePath) {
         return $cachePath
     }
-    New-Item -Path $Path -Name $child -ItemType "directory"
+    $null = New-Item -Path $Path -Name $child -ItemType Directory
     return $cachePath
 }
 

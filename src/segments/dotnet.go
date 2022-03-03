@@ -29,7 +29,7 @@ func (d *Dotnet) Init(props properties.Properties, env environment.Environment) 
 					`(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?))`,
 			},
 		},
-		versionURLTemplate: "https://github.com/dotnet/core/blob/master/release-notes/{{ .Major }}.{{ .Minor }}/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/{{ .Major }}.{{ .Minor }}.{{ .Patch }}.md)", // nolint: lll
+		versionURLTemplate: "https://github.com/dotnet/core/blob/master/release-notes/{{ .Major }}.{{ .Minor }}/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/{{ .Major }}.{{ .Minor }}.{{ .Patch }}.md", // nolint: lll
 	}
 }
 

@@ -44,6 +44,7 @@ module.exports = {
         "azfunc",
         "battery",
         "brewfather",
+        "cds",
         "command",
         "crystal",
         "cf",

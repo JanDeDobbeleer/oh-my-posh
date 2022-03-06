@@ -34,21 +34,21 @@
                     }
                 },
                 {
+                    "type": "os",
+                    "style": "plain",
+                    "background": "#222222",
+                    "foreground": "#666666",
+                    "properties": {
+                        "template": " {{ if .WSL }}\uF68E {{ end }}{{.Icon}}"
+                    }
+                },
+                {
                     "type": "session",
                     "style": "plain",
                     "background": "#222222",
                     "foreground": "#666666",
                     "properties": {
                         "template": " {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .HostName }} "
-                    }
-                },
-                {
-                    "type": "os",
-                    "style": "plain",
-                    "background": "#222222",
-                    "foreground": "#666666",
-                    "properties": {
-                        "template": "{{ if .WSL }}({{ end }}{{.Icon}}{{ if .WSL }}){{ end }} "
                     }
                 },
                 {
@@ -68,8 +68,17 @@
                     "background": "#f14e32",
                     "foreground": "#f0efe7",
                     "properties": {
-                        "branch_icon": "\ue725 ",
-                        "template": " {{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} \uF692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }} "
+                        "fetch_status": false,
+                        "fetch_upstream_icon": false,
+                        "branch_icon": "\uE725 ",
+                        "commit_icon": "\uF417 ",
+                        "tag_icon": "\uF412 ",
+                        "rebase_icon": "\uE728 ",
+                        "cherry_pick_icon": "\uE29B ",
+                        "revert_icon": "\uF0E2 ",
+                        "merge_icon": "\uE727 ",
+                        "no_commits_icon": "\uF594 ",
+                        "template": " {{ .HEAD }} "
                     }
                 },
                 {
@@ -79,7 +88,7 @@
                     "foreground": "#ffffff",
                     "properties": {
                         "fetch_version": false,
-                        "template": " \ue77f "
+                        "template": " \uE77f "
                     }
                 },
                 {

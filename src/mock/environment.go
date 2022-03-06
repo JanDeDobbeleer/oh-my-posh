@@ -121,8 +121,8 @@ func (env *MockedEnvironment) Shell() string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) WindowTitle(imageName, windowTitleRegex string) (string, error) {
-	args := env.Called(imageName)
+func (env *MockedEnvironment) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
+	args := env.Called(processName, windowTitleRegex)
 	return args.String(0), args.Error(1)
 }
 

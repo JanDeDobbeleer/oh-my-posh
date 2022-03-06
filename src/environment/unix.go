@@ -21,7 +21,7 @@ func (env *ShellEnvironment) Home() string {
 	return os.Getenv("HOME")
 }
 
-func (env *ShellEnvironment) WindowTitle(imageName, windowTitleRegex string) (string, error) {
+func (env *ShellEnvironment) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
 	return "", errors.New("not implemented")
 }
 

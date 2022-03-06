@@ -70,9 +70,9 @@ func (env *ShellEnvironment) Home() string {
 	return home
 }
 
-func (env *ShellEnvironment) WindowTitle(imageName, windowTitleRegex string) (string, error) {
-	defer env.trace(time.Now(), "WindowTitle", imageName, windowTitleRegex)
-	return WindowTitle(imageName, windowTitleRegex)
+func (env *ShellEnvironment) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
+	defer env.trace(time.Now(), "WindowTitle", windowTitleRegex)
+	return queryWindowTitles(processName, windowTitleRegex)
 }
 
 func (env *ShellEnvironment) IsWsl() bool {

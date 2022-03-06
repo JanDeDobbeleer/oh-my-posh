@@ -11,47 +11,72 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type spotifyArgs struct {
-	title    string
-	runError error
+func TestSpotifyWindowsNative(t *testing.T) {
+	cases := []struct {
+		Case            string
+		ExpectedString  string
+		ExpectedEnabled bool
+		Title           string
+		Error           error
+	}{
+		{
+			Case:            "Playing",
+			ExpectedString:  "\ue602 Candlemass - Spellbreaker",
+			ExpectedEnabled: true,
+			Title:           "Candlemass - Spellbreaker",
+		},
+		{
+			Case:            "Stopped",
+			ExpectedEnabled: false,
+			Title:           "Spotify premium",
+		},
+	}
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("QueryWindowTitles", "spotify.exe", "^(Spotify.*)|(.*\\s-\\s.*)$").Return(tc.Title, tc.Error)
+		env.On("QueryWindowTitles", "msedge.exe", "^(Spotify.*)").Return("", errors.New("not implemented"))
+		s := &Spotify{
+			env:   env,
+			props: properties.Map{},
+		}
+		assert.Equal(t, tc.ExpectedEnabled, s.Enabled())
+		if tc.ExpectedEnabled {
+			assert.Equal(t, tc.ExpectedString, renderTemplate(env, s.Template(), s))
+		}
+	}
 }
 
-func bootStrapSpotifyWindowsTest(args *spotifyArgs) *Spotify {
-	env := new(mock.MockedEnvironment)
-	env.On("WindowTitle", "spotify.exe").Return(args.title, args.runError)
-	s := &Spotify{
-		env:   env,
-		props: properties.Map{},
+func TestSpotifyWindowsPWA(t *testing.T) {
+	cases := []struct {
+		Case            string
+		ExpectedString  string
+		ExpectedEnabled bool
+		Title           string
+		Error           error
+	}{
+		{
+			Case:            "Playing",
+			ExpectedString:  "\ue602 Snow in Stockholm - Sarah, the Illstrumentalist",
+			ExpectedEnabled: true,
+			Title:           "Spotify - Snow in Stockholm · Sarah, the Illstrumentalist",
+		},
+		{
+			Case:            "Stopped",
+			ExpectedEnabled: false,
+			Title:           "Spotify - Web Player",
+		},
 	}
-	return s
-}
-
-func TestSpotifyWindowsEnabledAndSpotifyNotRunning(t *testing.T) {
-	args := &spotifyArgs{
-		runError: errors.New(""),
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("QueryWindowTitles", "spotify.exe", "^(Spotify.*)|(.*\\s-\\s.*)$").Return("", errors.New("not implemented"))
+		env.On("QueryWindowTitles", "msedge.exe", "^(Spotify.*)").Return(tc.Title, tc.Error)
+		s := &Spotify{
+			env:   env,
+			props: properties.Map{},
+		}
+		assert.Equal(t, tc.ExpectedEnabled, s.Enabled())
+		if tc.ExpectedEnabled {
+			assert.Equal(t, tc.ExpectedString, renderTemplate(env, s.Template(), s))
+		}
 	}
-	s := bootStrapSpotifyWindowsTest(args)
-	assert.Equal(t, false, s.Enabled())
-}
-
-func TestSpotifyWindowsEnabledAndSpotifyPlaying(t *testing.T) {
-	args := &spotifyArgs{
-		title: "Candlemass - Spellbreaker",
-	}
-	env := new(mock.MockedEnvironment)
-	env.On("WindowTitle", "spotify.exe").Return(args.title, args.runError)
-	s := &Spotify{
-		env:   env,
-		props: properties.Map{},
-	}
-	assert.Equal(t, true, s.Enabled())
-	assert.Equal(t, "\ue602 Candlemass - Spellbreaker", renderTemplate(env, s.Template(), s))
-}
-
-func TestSpotifyWindowsEnabledAndSpotifyStopped(t *testing.T) {
-	args := &spotifyArgs{
-		title: "Spotify premium",
-	}
-	s := bootStrapSpotifyWindowsTest(args)
-	assert.Equal(t, false, s.Enabled())
 }

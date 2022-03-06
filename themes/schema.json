@@ -2043,6 +2043,32 @@
               }
             }
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "cds" }
+            }
+          },
+          "then": {
+            "title": "CDS (SAP CAP) segment",
+            "description": "https://ohmyposh.dev/docs/cds",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
         }
       ]
     }

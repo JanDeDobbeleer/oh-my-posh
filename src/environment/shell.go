@@ -164,7 +164,7 @@ type Environment interface {
 	ExecutionTime() float64
 	Args() *Args
 	BatteryInfo() ([]*battery.Battery, error)
-	WindowTitle(imageName, windowTitleRegex string) (string, error)
+	QueryWindowTitles(processName, windowTitleRegex string) (string, error)
 	WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error)
 	HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
 	IsWsl() bool

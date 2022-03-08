@@ -154,6 +154,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://github.com/rfverbruggen"><img src="https://avatars.githubusercontent.com/u/2320197?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Robbert Verbruggen</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=rfverbruggen" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/Merlin2001"><img src="https://avatars.githubusercontent.com/u/13134791?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Marcus Mangelsdorf</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Merlin2001" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="http://linkedin.com/andresrinivasan"><img src="https://avatars.githubusercontent.com/u/134301?v=4?s=100" width="100px;" alt=""/><br /><sub><b>André Srinivasan</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=andresrinivasan" title="Documentation">📖</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->

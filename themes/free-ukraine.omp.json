@@ -1,0 +1,256 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#ffffff",
+          "properties": {
+            "template": ""
+          },
+          "style": "plain",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "segments": [        
+        {
+          "foreground": "#0057b7",
+          "properties": {
+            "template": "\ue0c5"
+          },
+          "style": "plain",
+          "type": "text"
+        },
+        {
+          "background": "#0057b7",
+          "foreground": "#FBD951",
+          "powerline_symbol": "\ue0c4",
+          "properties": {
+            "template": " \ue795 "
+          },
+          "style": "powerline",
+          "type": "text"
+        },
+        {
+          "background": "#0057b7",
+          "foreground": "#FBD951",
+          "properties": {
+            "home_icon": "\uf7dd",
+            "style": "mixed",            
+            "template": "{{ .Path }} "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "type": "path"
+        },        
+        {
+          "background": "#0057b7",
+          "foreground": "#ffd700",
+          "powerline_symbol": "\ue0b0",
+          "properties": {          
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "template": " \uf1d3  {{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}}\uf692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }} "
+          },
+          "style": "powerline",
+          "type": "git"
+        },
+        {
+          "background": "#3379c5",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#3379c5{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#c57f33{{ end }}",
+            "{{ if gt .Ahead 0 }}#79c533{{ end }}",
+            "{{ if gt .Behind 0 }}#c53379{{ end }}"
+          ],
+          "foreground": "#0057b7",
+          "powerline_symbol": "\ue0b0",
+          "properties": {          
+            "fetch_stash_count": false,
+            "fetch_status": false,
+            "fetch_upstream_icon": false,
+            "template": "\uf105"
+          },
+          "style": "powerline",
+          "type": "git"
+        },
+        {
+          "leading_diamond": "<transparent,#49404f>\ue0b0</>",
+          "properties": {
+            "template": ""
+          },
+          "style": "plain",
+          "trailing_diamond": "\ue0b0",
+          "type": "text"
+        },        
+        {
+          "foreground": "#0057b7",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#a30000{{ end }}"
+          ],
+          "background": "#ffd700",
+          "leading_diamond": "<transparent,#ffd700>\ue0b0</>",
+          "properties": {
+            "always_enabled": true,
+            "template": " {{ if gt .Code 0 }}\uf421 \uf119 {{ else }}\uf469 \u2665 {{ end }}"
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "type": "exit"
+        }        
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "background": "#0057b7",        
+          "foreground": "#FBD951",
+          "leading_diamond": "\ue0b6",
+          "properties": {
+            "template": " \uf0ac <#111111>\ue0b2</>"
+          },
+          "style": "diamond",
+          "type": "text"
+        },
+        {
+          "background": "#0057b7",
+          "foreground": "#FBD951",
+          "invert_powerline": true,
+          "leading_diamond": "\ue0b2",
+          "properties": {
+            "charged_icon": "\uf583 ",
+            "charging_icon": "\uf492 ",
+            "discharging_icon": "\uf58c ",
+            "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}% <#111111>\ue0b2</>"
+          },
+          "style": "diamond",
+          "type": "battery"
+        },
+        {
+          "background": "#0057b7",
+          "foreground": "#FBD951",
+          "invert_powerline": true,
+          "leading_diamond": "\ue0b2",
+          "properties": {
+            "always_enabled": true,
+            "template": " \uf608 {{ .FormattedMs }} <#111111>\ue0b2</>"
+          },
+          "style": "diamond",
+          "type": "executiontime"
+        },
+        {
+          "background": "#0057b7",
+          "foreground": "#FBD951",
+          "invert_powerline": true,
+          "leading_diamond": "\ue0b2",
+          "properties": {
+            "template": " \uf5ef {{ .CurrentDate | date .Format }}",
+            "time_format": "_2,15:04"
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "type": "time"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#0057b7",
+          "properties": {
+            "template": "\ue0c5"
+          },
+          "style": "plain",
+          "type": "text"
+        },
+        {
+          "background": "#0057b7",
+          "foreground": "#ffd700",
+          "powerline_symbol": "\ue0c4",
+          "properties": {
+            "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} "
+          },
+          "style": "powerline",
+          "type": "os"
+        },
+        {
+          "background": "#0057b7",
+          "foreground": "#FBD951",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "template": "\uf0e7 "
+          },
+          "style": "powerline",
+          "type": "root"
+        },        
+        {
+          "background": "#FBD951",
+          "foreground": "#0057b7",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "display_host": false,
+            "template": " {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }} "
+          },
+          "style": "powerline",
+          "type": "session"
+        }       
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "foreground": "#0057b7",
+          "properties": {
+            "template": "\uf004"
+          },
+          "style": "plain",
+          "type": "text"
+        },
+        {
+          "foreground": "#FBD951",
+          "properties": {
+            "template": "\uf004"
+          },
+          "style": "plain",
+          "type": "text"
+        },
+        {
+          "foreground": "#0057b7",
+          "properties": {
+            "template": "\uf004"
+          },
+          "style": "plain",
+          "type": "text"
+        },
+        {
+          "foreground": "#FBD951",
+          "properties": {
+            "template": "\uf004  Ukraine"
+          },
+          "style": "plain",
+          "type": "text"
+        }
+      ],
+      "type": "rprompt"
+    }
+  ],
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{if .Root}}Admin: {{end}} {{.Folder}}",
+  "final_space": true,
+  "version": 1
+}

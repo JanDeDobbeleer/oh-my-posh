@@ -1025,6 +1025,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "andresrinivasan",
+      "name": "André Srinivasan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/134301?v=4",
+      "profile": "http://linkedin.com/andresrinivasan",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

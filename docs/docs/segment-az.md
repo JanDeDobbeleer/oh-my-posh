@@ -23,6 +23,13 @@ Display the currently active Azure subscription information.
 }
 ```
 
+## Properties
+
+- source: `string` - where to fetch the information from - defaults to `first_match`
+  - `first_match`: try the CLI config first, then the PowerShell module. The first to resolve is displayed
+  - `cli`: fetch the information from the CLI config
+  - `pwsh`: fetch the information from the PowerShell Module config
+
 ## Template ([info][templates])
 
 :::note default template

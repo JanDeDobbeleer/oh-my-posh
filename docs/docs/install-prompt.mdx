@@ -1,3 +1,9 @@
+---
+id: prompt
+title: Change your prompt
+sidebar_label: ✨ Prompt
+---
+
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
@@ -31,15 +37,6 @@ notepad $PROFILE
 
 Then add the following line.
 
-:::caution
-If you installed Oh My Posh using `Install-Module oh-my-posh`, you need to first import
-Oh My Posh in your `$PROFILE` before adding the line below:
-
-```powershell
-Import-Module oh-my-posh
-```
-:::
-
 ```powershell
 oh-my-posh --init --shell pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$(oh-my-posh --version)/themes/jandedobbeleer.omp.json | Invoke-Expression
 ```
@@ -49,6 +46,15 @@ Once added, reload your profile for the changes to take effect.
 ```powershell
 . $PROFILE
 ```
+
+:::caution
+If you installed Oh My Posh using `Install-Module oh-my-posh`, you need to first import
+Oh My Posh in your `$PROFILE` before adding the line above:
+
+```powershell
+Import-Module oh-my-posh
+```
+:::
 
 </TabItem>
 <TabItem value="cmd">
@@ -130,13 +136,13 @@ Once added, reload your config for the changes to take effect.
 
 Set the prompt and restart nu shell:
 
-### Nu < 0.32.0
+**Nu < 0.32.0**
 
 ```bash
 config set prompt  "= `{{$(oh-my-posh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json | str collect)}}`"
 ```
 
-### Nu >= 0.32.0
+**Nu >= 0.32.0**
 
 ```bash
 config set prompt  "(oh-my-posh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json | str collect)"

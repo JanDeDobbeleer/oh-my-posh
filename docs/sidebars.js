@@ -9,9 +9,22 @@ module.exports = {
         "upgrading",
         {
           type: "category",
-          label: "🚀 Installation",
+          label: "🚀 Get started",
           collapsed: false,
-          items: ["windows", "macos", "linux"],
+          items: [
+            {
+              type: "category",
+              label: "📦 Installation",
+              collapsed: false,
+              items: [
+                "windows",
+                "macos",
+                "linux",
+              ],
+            },
+            "prompt",
+            "customize"
+          ],
         },
       ],
     },

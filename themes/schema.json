@@ -318,7 +318,20 @@
           },
           "then": {
             "title": "Azure Segment",
-            "description": "https://ohmyposh.dev/docs/az"
+            "description": "https://ohmyposh.dev/docs/az",
+            "properties": {
+              "source": {
+                "type": "string",
+                "title": "Source",
+                "description": "https://ohmyposh.dev/docs/az#properties",
+                "default": "first_match",
+                "enum": [
+                  "first_match",
+                  "cli",
+                  "pwsh"
+                ]
+              }
+            }
           }
         },
         {
@@ -2027,6 +2040,32 @@
           "then": {
             "title": "Swift Segment",
             "description": "https://ohmyposh.dev/docs/swift",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "cds" }
+            }
+          },
+          "then": {
+            "title": "CDS (SAP CAP) segment",
+            "description": "https://ohmyposh.dev/docs/cds",
             "properties": {
               "properties": {
                 "properties": {

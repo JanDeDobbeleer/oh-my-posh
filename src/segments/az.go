@@ -16,6 +16,14 @@ type Az struct {
 	Origin string
 }
 
+const (
+	Source properties.Property = "source"
+
+	pwsh       = "pwsh"
+	cli        = "cli"
+	firstMatch = "first_match"
+)
+
 type AzureConfig struct {
 	Subscriptions  []*AzureSubscription `json:"subscriptions"`
 	InstallationID string               `json:"installationId"`
@@ -90,7 +98,16 @@ func (a *Az) Init(props properties.Properties, env environment.Environment) {
 }
 
 func (a *Az) Enabled() bool {
-	return a.getAzureProfile() || a.getAzureRmContext()
+	source := a.props.GetString(Source, firstMatch)
+	switch source {
+	case firstMatch:
+		return a.getCLISubscription() || a.getModuleSubscription()
+	case pwsh:
+		return a.getModuleSubscription()
+	case cli:
+		return a.getCLISubscription()
+	}
+	return false
 }
 
 func (a *Az) FileContentWithoutBom(file string) string {
@@ -99,7 +116,7 @@ func (a *Az) FileContentWithoutBom(file string) string {
 	return strings.TrimLeft(config, ByteOrderMark)
 }
 
-func (a *Az) getAzureProfile() bool {
+func (a *Az) getCLISubscription() bool {
 	var content string
 	profile := filepath.Join(a.ConfigHome(), "azureProfile.json")
 	if content = a.FileContentWithoutBom(profile); len(content) == 0 {
@@ -119,7 +136,7 @@ func (a *Az) getAzureProfile() bool {
 	return false
 }
 
-func (a *Az) getAzureRmContext() bool {
+func (a *Az) getModuleSubscription() bool {
 	var content string
 	cfgHome := a.ConfigHome()
 	profiles := []string{

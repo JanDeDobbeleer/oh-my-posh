@@ -143,7 +143,7 @@ conda config --set changeps1 False
 Virtual environments created with `venv` add the active environment's name to the prompt automatically.
 To disable this behaviour, set `VIRTUAL_ENV_DISABLE_PROMPT` environment variable to `1` on your system. Example files:
 
-Note: Tilde (~) in paths refers to your user's home directory. 
+Note: Tilde (~) in paths refers to your user's home directory.
 
 <Tabs
   defaultValue="powershell"
@@ -188,6 +188,20 @@ Refer [this page on ArchWiki][arch-terminfo].
 
 If you are on Windows, use Windows Terminal. It closely copies the `xterm-256color` capabilities.
 See the [PowerShell docs on terminal support][ps-ansi-docs] and [this GitHub comment][xterm-gh-comment].
+
+## The term xx/oh-my-posh.exe is not recognized as a name of a cmdlet
+
+```
+&: The term 'C:/Users/TommiGr├╢nlund/.oh-my-posh/oh-my-posh.exe' is not recognized as a name of a cmdlet, function, script file, or executable program.
+Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
+```
+
+The issue is that PowerShell on Windows doesn't yet default to UTF8. Resolve the issue by adding the following line
+to the top of your `$PROFILE`:
+
+```powershell
+$OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+```
 
 [arch-terminfo]: https://wiki.archlinux.org/title/Bash/Prompt_customization#Terminfo_escape_sequences
 [ps-ansi-docs]: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_ansi_terminals?view=powershell-7.2

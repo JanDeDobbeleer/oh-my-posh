@@ -6,9 +6,6 @@ sidebar_label: ⊞ Windows
 
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
-import Shells from "./install-shells.mdx";
-import Customize from "./install-customize.md";
-import CustomizeCmd from "./install-customize-cmd.mdx";
 
 ## Setup your terminal
 
@@ -16,6 +13,10 @@ While Oh My Posh works on the standard terminal, we advise using the [Windows Te
 
 :::info
 To display all icons, we recommend the use of a [Nerd Font][fonts].
+:::
+
+:::caution
+When using oh-my-posh inside the WSL, make sure to follow the [linux][linux] installation guide.
 :::
 
 ## Install
@@ -122,7 +123,7 @@ choco upgrade oh-my-posh
 </TabItem>
 </Tabs>
 
-## Replace your existing prompt
+## Default themes
 
 <Tabs
   defaultValue="winget"
@@ -163,27 +164,6 @@ when setting the prompt using the `--config` flag.
 
 </TabItem>
 </Tabs>
-
-:::caution
-When using oh-my-posh inside the WSL, make sure to follow the [linux][linux] installation guide.
-:::
-
-<Shells />
-
-## Customize
-
-<Customize />
-
-:::tip
-When using oh-my-posh in Windows and the WSL, know that you can share your theme with the WSL by pointing to a theme in your
-Windows user's home folder.
-
-Inside the WSL, replace `~` with the following path: `/mnt/c/Users/<WINDOWSUSERNAME>`.
-:::
-
-<CustomizeCmd />
-
-🎉🎉🎉
 
 [fonts]: /docs/config-fonts
 [scoop]: https://scoop.sh/

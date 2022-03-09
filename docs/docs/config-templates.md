@@ -41,6 +41,24 @@ You can make use of the following syntax to decorate text:
 
 This can be used in templates and icons/text inside your config.
 
+## Hidings segments
+
+To hide a whole segment including the leading and trailing symbol based on a template, the template must render an into an empty string. This can be combined with an `if`, check the following example. The example will render a diamond segment, if the environment variable `OHMYPOSH_MICROSOFTONLINE` is not empty.
+
+```
+{
+  "type": "text",
+  "style": "diamond",
+  "leading_diamond": " \ue0b6",
+  "trailing_diamond": "\ue0b4",
+  "foreground": "#ffffff",
+  "background": "#d53c14",
+  "properties": {
+    "template": "{{ if .Env.OHMYPOSH_MICROSOFTONLINE }} \uf8c5 {{ .Env.OHMYPOSH_MICROSOFTONLINE }} {{ end }}"
+  }
+}
+```
+
 [terminal-list-hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
 [path-segment]: /docs/path
 [git-segment]: /docs/git

@@ -318,7 +318,20 @@
           },
           "then": {
             "title": "Azure Segment",
-            "description": "https://ohmyposh.dev/docs/az"
+            "description": "https://ohmyposh.dev/docs/az",
+            "properties": {
+              "source": {
+                "type": "string",
+                "title": "Source",
+                "description": "https://ohmyposh.dev/docs/az#properties",
+                "default": "first_match",
+                "enum": [
+                  "first_match",
+                  "cli",
+                  "pwsh"
+                ]
+              }
+            }
           }
         },
         {

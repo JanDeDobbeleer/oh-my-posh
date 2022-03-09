@@ -50,11 +50,18 @@ theme.
 :::
 
 ```bash
-oh-my-posh --config sample.json --shell uni
+oh-my-posh prompt print primary --config sample.json --shell uni
 ```
 
 If all goes according to plan, you should see the prompt being printed out on the line below. In case you see a lot of
 boxes with question marks, set up your terminal to use a [supported font][font] before continuing.
+
+:::tip
+The `--config` flag can accept either a local filepath or a remotely hosted config file.
+
+For example, the following is a valid `--config` flag:
+`--config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json'`
+:::
 
 ## General Settings
 

@@ -149,7 +149,7 @@ At `$.definitions.segment.allOf`, add your segment details:
       "properties": {
         "properties": {
           "newprop": {
-            "type": "boolean",
+            "type": "string",
             "title": "New Property",
             "description": "the default text to display",
             "default": "Hello"

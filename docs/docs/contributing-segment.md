@@ -12,7 +12,7 @@ Ensure `New` is a single verb indicating the context the segment renders.
 You can use the following template as a guide.
 
 ```go
-package main
+package segments
 
 import (
   "oh-my-posh/environment"

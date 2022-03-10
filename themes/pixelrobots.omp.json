@@ -28,7 +28,19 @@
           "foreground": "#000000",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "template": " \ufd03 {{ .Name }} "
+            "template": " \ufd03 {{ .Name }} [ {{ .Origin }} ] ",
+            "source": "cli"
+          },
+          "style": "powerline",
+          "type": "az"
+        },
+        {
+          "background": "#012456",
+          "foreground": "#FFFFFF",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "template": " \ufd03 {{ .Name }} [ {{ .Origin }} ] ",
+            "source": "pwsh"
           },
           "style": "powerline",
           "type": "az"
@@ -58,7 +70,7 @@
             "mint": "\uf30f",
             "opensuse": "\uf314",
             "raspbian": "\uf315",
-            "template": " {{ if .WSL }}\ue712 on {{ end }}{{ .Icon }}<#ffea00> \ue0b1</>",
+            "template": " {{ if .WSL }}{{ .Icon }} on \ue70f{{ end }} <#ffea00>\uE0B1</>",
             "ubuntu": "\uf31c",
             "windows": "\ue70f"
           },

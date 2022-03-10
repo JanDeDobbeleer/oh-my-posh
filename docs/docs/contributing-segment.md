@@ -12,7 +12,7 @@ Ensure `New` is a single verb indicating the context the segment renders.
 You can use the following template as a guide.
 
 ```go
-package main
+package segments
 
 import (
   "oh-my-posh/environment"
@@ -32,7 +32,7 @@ const (
 )
 
 func (n *new) Enabled() bool {
-    true
+    return true
 }
 
 func (n *new) Template() string {
@@ -42,6 +42,8 @@ func (n *new) Template() string {
 func (n *new) Init(props properties.Properties, env environment.Environment) {
     n.props = props
     n.env = env
+
+    n.Text = props.GetString(NewProp, "Hello")
 }
 ```
 
@@ -146,7 +148,7 @@ At `$.definitions.segment.allOf`, add your segment details:
     "properties": {
       "properties": {
         "properties": {
-          "nwprop": {
+          "newprop": {
             "type": "boolean",
             "title": "New Property",
             "description": "the default text to display",

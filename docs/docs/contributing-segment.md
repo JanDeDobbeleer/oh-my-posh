@@ -39,9 +39,11 @@ func (n *new) Template() string {
     return " {{.Text}} world "
 }
 
-func (n *new) Init(props properties.Properties, env environment.Environment) {
+func (n *Npm) Init(props properties.Properties, env environment.Environment) {
     n.props = props
     n.env = env
+
+    n.Text = props.GetString(NewProp, "Hello")
 }
 ```
 

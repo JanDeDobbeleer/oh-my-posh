@@ -164,6 +164,8 @@ const (
 	SWIFT SegmentType = "swift"
 	// cds (SAP CAP) version
 	CDS SegmentType = "cds"
+	// npm version
+	NPM SegmentType = "npm"
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
@@ -243,6 +245,7 @@ func (segment *Segment) background() string {
 func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
+		NPM:           &segments.Npm{},
 		OWM:           &segments.Owm{},
 		SESSION:       &segments.Session{},
 		PATH:          &segments.Path{},

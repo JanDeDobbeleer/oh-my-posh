@@ -146,7 +146,7 @@ At `$.definitions.segment.allOf`, add your segment details:
     "properties": {
       "properties": {
         "properties": {
-          "nwprop": {
+          "newprop": {
             "type": "boolean",
             "title": "New Property",
             "description": "the default text to display",

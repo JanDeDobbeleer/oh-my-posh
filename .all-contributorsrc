@@ -1043,6 +1043,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "claudiospizzi",
+      "name": "Claudio Spizzi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1934246?v=4",
+      "profile": "https://spizzi.net/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

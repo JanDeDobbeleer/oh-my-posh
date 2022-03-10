@@ -198,7 +198,8 @@
             "haskell",
             "ui5tooling",
             "kotlin",
-            "swift"
+            "swift",
+            "npm"
           ]
         },
         "style": {
@@ -264,6 +265,17 @@
         }
       },
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "npm" }
+            }
+          },
+          "then": {
+            "title": "NPM Segment",
+            "description": "https://ohmyposh.dev/docs/npm"
+          }
+        },
         {
           "if": {
             "properties": {

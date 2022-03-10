@@ -32,7 +32,7 @@ const (
 )
 
 func (n *new) Enabled() bool {
-    true
+    return true
 }
 
 func (n *new) Template() string {

@@ -156,6 +156,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
   </tr>
   <tr>
     <td align="center"><a href="http://linkedin.com/andresrinivasan"><img src="https://avatars.githubusercontent.com/u/134301?v=4?s=100" width="100px;" alt=""/><br /><sub><b>André Srinivasan</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=andresrinivasan" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/ehawman-rosenberg"><img src="https://avatars.githubusercontent.com/u/81652082?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ehawman-rosenberg</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ehawman-rosenberg" title="Documentation">📖</a></td>
   </tr>
 </table>
 

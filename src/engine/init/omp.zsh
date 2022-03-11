@@ -5,11 +5,11 @@ export CONDA_PROMPT_MODIFIER=false
 # set secondary prompt
 PS2="$(::OMP:: --config="$POSH_THEME" --shell=zsh --print-secondary)"
 
-function _omp-preexec() {
+function prompt_ohmyposh_preexec() {
   omp_start_time=$(::OMP:: --millis)
 }
 
-function _omp-precmd() {
+function prompt_ohmyposh_precmd() {
   omp_last_error=$?
   omp_stack_count=${#dirstack[@]}
   omp_elapsed=-1
@@ -27,18 +27,18 @@ function _omp-precmd() {
 
 function _install-omp-hooks() {
   for s in "${preexec_functions[@]}"; do
-    if [ "$s" = "_omp-preexec" ]; then
+    if [ "$s" = "prompt_ohmyposh_preexec" ]; then
       return
     fi
   done
-  preexec_functions+=(_omp-preexec)
+  preexec_functions+=(prompt_ohmyposh_preexec)
 
   for s in "${precmd_functions[@]}"; do
-    if [ "$s" = "_omp-precmd" ]; then
+    if [ "$s" = "prompt_ohmyposh_precmd" ]; then
       return
     fi
   done
-  precmd_functions+=(_omp-precmd)
+  precmd_functions+=(prompt_ohmyposh_precmd)
 }
 
 if [ "$TERM" != "linux" ]; then

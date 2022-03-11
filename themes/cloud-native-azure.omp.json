@@ -119,7 +119,7 @@
           "foreground": "#000000",
           "leading_diamond": "\ue0b6",
           "properties": {
-            "template": " \uefd31 Kubernetes {{.Context}} cluster {{if .Namespace}}- {{.Namespace}} namespace{{end}} "
+            "template": " \ufd31 Kubernetes {{.Context}} cluster {{if .Namespace}}- {{.Namespace}} namespace{{end}} "
           },
           "style": "diamond",
           "trailing_diamond": "\ue0b0",

@@ -166,6 +166,8 @@ const (
 	CDS SegmentType = "cds"
 	// npm version
 	NPM SegmentType = "npm"
+	// Project version
+	PROJECT SegmentType = "project"
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
@@ -245,6 +247,7 @@ func (segment *Segment) background() string {
 func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
+		PROJECT:       &segments.Project{},
 		NPM:           &segments.Npm{},
 		OWM:           &segments.Owm{},
 		SESSION:       &segments.Session{},

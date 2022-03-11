@@ -199,7 +199,8 @@
             "ui5tooling",
             "kotlin",
             "swift",
-            "npm"
+            "npm",
+            "project"
           ]
         },
         "style": {
@@ -265,6 +266,17 @@
         }
       },
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "project" }
+            }
+          },
+          "then": {
+            "title": "Project Segment",
+            "description": "https://ohmyposh.dev/docs/project"
+          }
+        },
         {
           "if": {
             "properties": {

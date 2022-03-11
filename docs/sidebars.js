@@ -84,6 +84,7 @@ module.exports = {
         "path",
         "php",
         "plastic",
+        "project",
         "python",
         "root",
         "ruby",

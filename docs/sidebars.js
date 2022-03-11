@@ -77,6 +77,7 @@ module.exports = {
         "kubectl",
         "nbgv",
         "nightscout",
+        "npm",
         "node",
         "os",
         "owm",

@@ -21,6 +21,13 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.17
+        # Create Kind cluster to have a Kubernetes context for cloud-native-azure theme
+        # Images are defined on every Kind release
+        # See https://github.com/kubernetes-sigs/kind/releases
+      - name: Create k8s v1.23 Kind Cluster
+        uses: helm/kind-action@v1.2.0
+        with:
+          node_image: kindest/node:v1.23.4@sha256:0e34f0d0fd448aa2f2819cfd74e99fe5793a6e4938b328f657c8e3f81ee0dfb9
       - name: Build oh-my-posh 🔧
         run: |
           cd src

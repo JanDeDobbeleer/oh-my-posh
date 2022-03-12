@@ -171,6 +171,9 @@ const (
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
+	if segment.env == nil {
+		return true
+	}
 	cwdIncluded := segment.cwdIncluded()
 	cwdExcluded := segment.cwdExcluded()
 	return cwdIncluded && !cwdExcluded

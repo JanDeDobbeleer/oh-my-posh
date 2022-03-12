@@ -106,9 +106,9 @@ func (env *MockedEnvironment) Root() bool {
 	return args.Bool(0)
 }
 
-func (env *MockedEnvironment) Args() *environment.Args {
+func (env *MockedEnvironment) Flags() *environment.Flags {
 	arguments := env.Called()
-	return arguments.Get(0).(*environment.Args)
+	return arguments.Get(0).(*environment.Flags)
 }
 
 func (env *MockedEnvironment) BatteryInfo() ([]*battery.Battery, error) {

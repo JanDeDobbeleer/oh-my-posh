@@ -291,7 +291,7 @@ func (pt *Path) getFolderPath() string {
 }
 
 func (pt *Path) getPwd() string {
-	pwd := *pt.env.Args().PSWD
+	pwd := pt.env.Flags().PSWD
 	if pwd == "" {
 		pwd = pt.env.Pwd()
 	}

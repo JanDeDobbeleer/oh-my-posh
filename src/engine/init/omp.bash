@@ -10,9 +10,9 @@ if [[ ! -d "/tmp" ]]; then
 fi
 
 # start timer on command start
-PS0='$(::OMP:: --millis > "$TIMER_START")'
+PS0='$(::OMP:: config get millis > "$TIMER_START")'
 # set secondary prompt
-PS2="$(::OMP:: --config="$POSH_THEME" --shell=bash --print-secondary)"
+PS2="$(::OMP:: prompt print secondary --config="$POSH_THEME" --shell=bash)"
 
 function _omp_hook() {
     local ret=$?
@@ -20,12 +20,12 @@ function _omp_hook() {
     omp_stack_count=$((${#DIRSTACK[@]} - 1))
     omp_elapsed=-1
     if [[ -f "$TIMER_START" ]]; then
-        omp_now=$(::OMP:: --millis)
+        omp_now=$(::OMP:: config get millis)
         omp_start_time=$(cat "$TIMER_START")
         omp_elapsed=$((omp_now-omp_start_time))
         rm -f "$TIMER_START"
     fi
-    PS1="$(::OMP:: --config="$POSH_THEME" --shell=bash --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" | tr -d '\0')"
+    PS1="$(::OMP:: prompt print primary --config="$POSH_THEME" --shell=bash --exit="$ret" --timing="$omp_elapsed" --stack-count="$omp_stack_count" | tr -d '\0')"
 
     return $ret
 }
@@ -39,12 +39,3 @@ function _omp_runonexit() {
 }
 
 trap _omp_runonexit EXIT
-
-function export_poshconfig() {
-    [ $# -eq 0 ] && { echo "Usage: $0 \"filename\""; return; }
-    format=$2
-    if [ -z "$format" ]; then
-      format="json"
-    fi
-    ::OMP:: --config="$POSH_THEME" --print-config --format="$format" > $1
-}

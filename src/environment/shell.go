@@ -29,39 +29,38 @@ const (
 	LinuxPlatform   = "linux"
 )
 
-type Args struct {
-	ErrorCode      *int
-	PrintInit      *bool
-	PrintConfig    *bool
-	PrintShell     *bool
-	PrintTransient *bool
-	PrintSecondary *bool
-	PrintValid     *bool
-	PrintError     *bool
-	Config         *string
-	ConfigFormat   *string
-	Shell          *string
-	PWD            *string
-	PSWD           *string
-	Version        *bool
-	Debug          *bool
-	ExecutionTime  *float64
-	Millis         *bool
-	Eval           *bool
-	Init           *bool
-	ExportPNG      *bool
-	Author         *string
-	CursorPadding  *int
-	RPromptOffset  *int
-	RPrompt        *bool
-	BGColor        *string
-	StackCount     *int
-	Command        *string
-	Plain          *bool
-	CachePath      *bool
-	Migrate        *bool
-	Write          *bool
-	TerminalWidth  *int
+type Flags struct {
+	ErrorCode     int
+	Config        string
+	Shell         string
+	PWD           string
+	PSWD          string
+	ExecutionTime float64
+	Eval          bool
+	StackCount    int
+	Migrate       bool
+	TerminalWidth int
+
+	// PrintInit      *bool
+	// PrintConfig    *bool
+	// PrintShell     *bool
+	// PrintTransient *bool
+	// PrintSecondary *bool
+	// PrintValid     *bool
+	// PrintError     *bool
+	// ConfigFormat   *string
+	// Version        *bool
+	// Millis         *bool
+	// Init           *bool
+	// ExportPNG      *bool
+	// Author         *string
+	// CursorPadding  *int
+	// RPromptOffset  *int
+	// RPrompt        *bool
+	// BGColor        *string
+	// Command        *string
+	// CachePath      *bool
+	// Write          *bool
 }
 
 type CommandError struct {
@@ -162,7 +161,7 @@ type Environment interface {
 	RunCommand(command string, args ...string) (string, error)
 	RunShellCommand(shell, command string) string
 	ExecutionTime() float64
-	Args() *Args
+	Flags() *Flags
 	BatteryInfo() ([]*battery.Battery, error)
 	QueryWindowTitles(processName, windowTitleRegex string) (string, error)
 	WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error)
@@ -207,7 +206,7 @@ const (
 )
 
 type ShellEnvironment struct {
-	args       *Args
+	CmdFlags   *Flags
 	cwd        string
 	cmdCache   *commandCache
 	fileCache  *fileCache
@@ -216,15 +215,20 @@ type ShellEnvironment struct {
 	debug      bool
 }
 
-func (env *ShellEnvironment) Init(args *Args) {
-	env.args = args
+func (env *ShellEnvironment) Init(debug bool) {
+	if env.CmdFlags == nil {
+		env.CmdFlags = &Flags{}
+	}
+	if len(env.CmdFlags.Config) == 0 {
+		env.CmdFlags.Config = env.Getenv("POSH_THEME")
+	}
 	env.fileCache = &fileCache{}
 	env.fileCache.Init(env.CachePath())
 	env.ResolveConfigPath()
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
-	if env.args != nil && *env.args.Debug {
+	if debug {
 		env.debug = true
 		log.SetOutput(&env.logBuilder)
 	}
@@ -245,14 +249,14 @@ func (env *ShellEnvironment) getConfigPath(location string) {
 	if err != nil {
 		return
 	}
-	env.args.Config = &configPath
+	env.CmdFlags.Config = configPath
 }
 
 func (env *ShellEnvironment) ResolveConfigPath() {
-	if env.args == nil || env.args.Config == nil || len(*env.args.Config) == 0 {
+	if env.CmdFlags == nil || len(env.CmdFlags.Config) == 0 {
 		return
 	}
-	location, err := url.ParseRequestURI(*env.Args().Config)
+	location, err := url.ParseRequestURI(env.CmdFlags.Config)
 	if err == nil {
 		env.getConfigPath(location.String())
 		return
@@ -262,7 +266,7 @@ func (env *ShellEnvironment) ResolveConfigPath() {
 	if env.Platform() == WindowsPlatform && env.Shell() == "bash" {
 		return
 	}
-	configFile := *env.args.Config
+	configFile := env.CmdFlags.Config
 	if strings.HasPrefix(configFile, "~") {
 		configFile = strings.TrimPrefix(configFile, "~")
 		configFile = filepath.Join(env.Home(), configFile)
@@ -272,7 +276,7 @@ func (env *ShellEnvironment) ResolveConfigPath() {
 			configFile = absConfigFile
 		}
 	}
-	*env.args.Config = filepath.Clean(configFile)
+	env.CmdFlags.Config = filepath.Clean(configFile)
 }
 
 func (env *ShellEnvironment) trace(start time.Time, function string, args ...string) {
@@ -312,8 +316,8 @@ func (env *ShellEnvironment) Pwd() string {
 		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
 		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
 	}
-	if env.args != nil && *env.args.PWD != "" {
-		env.cwd = correctPath(*env.args.PWD)
+	if env.CmdFlags != nil && env.CmdFlags.PWD != "" {
+		env.cwd = correctPath(env.CmdFlags.PWD)
 		return env.cwd
 	}
 	dir, err := os.Getwd()
@@ -484,20 +488,20 @@ func (env *ShellEnvironment) HasCommand(command string) bool {
 
 func (env *ShellEnvironment) ErrorCode() int {
 	defer env.trace(time.Now(), "ErrorCode")
-	return *env.args.ErrorCode
+	return env.CmdFlags.ErrorCode
 }
 
 func (env *ShellEnvironment) ExecutionTime() float64 {
 	defer env.trace(time.Now(), "ExecutionTime")
-	if *env.args.ExecutionTime < 0 {
+	if env.CmdFlags.ExecutionTime < 0 {
 		return 0
 	}
-	return *env.args.ExecutionTime
+	return env.CmdFlags.ExecutionTime
 }
 
-func (env *ShellEnvironment) Args() *Args {
-	defer env.trace(time.Now(), "Args")
-	return env.args
+func (env *ShellEnvironment) Flags() *Flags {
+	defer env.trace(time.Now(), "Flags")
+	return env.CmdFlags
 }
 
 func (env *ShellEnvironment) BatteryInfo() ([]*battery.Battery, error) {
@@ -562,8 +566,8 @@ func (env *ShellEnvironment) BatteryInfo() ([]*battery.Battery, error) {
 
 func (env *ShellEnvironment) Shell() string {
 	defer env.trace(time.Now(), "Shell")
-	if *env.args.Shell != "" {
-		return *env.args.Shell
+	if env.CmdFlags.Shell != "" {
+		return env.CmdFlags.Shell
 	}
 	pid := os.Getppid()
 	p, _ := process.NewProcess(int32(pid))
@@ -581,8 +585,8 @@ func (env *ShellEnvironment) Shell() string {
 		return Unknown
 	}
 	// Cache the shell value to speed things up.
-	*env.args.Shell = strings.Trim(strings.Replace(name, ".exe", "", 1), " ")
-	return *env.args.Shell
+	env.CmdFlags.Shell = strings.Trim(strings.Replace(name, ".exe", "", 1), " ")
+	return env.CmdFlags.Shell
 }
 
 func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
@@ -637,10 +641,10 @@ func (env *ShellEnvironment) HasParentFilePath(path string) (*FileInfo, error) {
 
 func (env *ShellEnvironment) StackCount() int {
 	defer env.trace(time.Now(), "StackCount")
-	if *env.args.StackCount < 0 {
+	if env.CmdFlags.StackCount < 0 {
 		return 0
 	}
-	return *env.args.StackCount
+	return env.CmdFlags.StackCount
 }
 
 func (env *ShellEnvironment) Cache() Cache {

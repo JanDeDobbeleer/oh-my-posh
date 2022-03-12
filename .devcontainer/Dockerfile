@@ -71,10 +71,10 @@ RUN chmod 777 -R /home/${USERNAME}/.config
 
 # Override vscode's own Bash prompt with oh-my-posh:
 RUN sed -i 's/^__bash_prompt$/#&/' /home/${USERNAME}/.bashrc && \
-    echo "eval \"\$(oh-my-posh --init --shell bash --config $POSH_THEME)\"" >> /home/${USERNAME}/.bashrc
+    echo "eval \"\$(oh-my-posh prompt init bash --config $POSH_THEME)\"" >> /home/${USERNAME}/.bashrc
 
 # Override vscode's own ZSH prompt with oh-my-posh:
-RUN echo "eval \"\$(oh-my-posh --init --shell zsh --config $POSH_THEME)\"" >> /home/${USERNAME}/.zshrc
+RUN echo "eval \"\$(oh-my-posh prompt init zsh --config $POSH_THEME)\"" >> /home/${USERNAME}/.zshrc
 
 # Set container timezone:
 ARG TZ="UTC"

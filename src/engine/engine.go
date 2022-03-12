@@ -56,7 +56,7 @@ func (e *Engine) canWriteRPrompt() bool {
 	return canWrite
 }
 
-func (e *Engine) Render() string {
+func (e *Engine) PrintPrimary() string {
 	for _, block := range e.Config.Blocks {
 		e.renderBlock(block)
 	}
@@ -160,7 +160,7 @@ func (e *Engine) renderBlock(block *Block) {
 }
 
 // debug will loop through your config file and output the timings for each segments
-func (e *Engine) Debug(version string) string {
+func (e *Engine) PrintDebug(version string) string {
 	var segmentTimings []*SegmentTiming
 	largestSegmentNameLength := 0
 	e.write(fmt.Sprintf("\n\x1b[1mVersion:\x1b[0m %s\n", version))
@@ -204,7 +204,7 @@ func (e *Engine) Debug(version string) string {
 func (e *Engine) print() string {
 	switch e.Env.Shell() {
 	case zsh:
-		if !*e.Env.Args().Eval {
+		if !e.Env.Flags().Eval {
 			break
 		}
 		// escape double quotes contained in the prompt
@@ -224,7 +224,7 @@ func (e *Engine) print() string {
 	return e.string()
 }
 
-func (e *Engine) RenderTooltip(tip string) string {
+func (e *Engine) PrintTooltip(tip string) string {
 	tip = strings.Trim(tip, " ")
 	var tooltip *Segment
 	for _, tp := range e.Config.Tooltips {
@@ -275,7 +275,7 @@ const (
 	Secondary
 )
 
-func (e *Engine) RenderExtraPrompt(promptType ExtraPromptType) string {
+func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 	var prompt *ExtraPrompt
 	switch promptType {
 	case Transient:
@@ -331,7 +331,7 @@ func (e *Engine) RenderExtraPrompt(promptType ExtraPromptType) string {
 	return ""
 }
 
-func (e *Engine) RenderRPrompt() string {
+func (e *Engine) PrintRPrompt() string {
 	filterRPromptBlock := func(blocks []*Block) *Block {
 		for _, block := range blocks {
 			if block.Type == RPrompt {

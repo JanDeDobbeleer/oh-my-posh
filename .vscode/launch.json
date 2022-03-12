@@ -8,6 +8,9 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
+        "prompt",
+        "print",
+        "primary",
         "--config=${workspaceRoot}/themes/cinnamon.omp.json",
         "--shell=pwsh",
         "--terminal-width=200",
@@ -20,6 +23,9 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
+        "prompt",
+        "print",
+        "tooltip",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
         "--command=git",
         "--shell=pwsh"
@@ -32,9 +38,11 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
+        "prompt",
+        "print",
+        "transient",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
         "--shell=pwsh",
-        "--print-transient"
       ]
     },
     {
@@ -54,7 +62,9 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "--debug",
+        "prompt",
+        "print",
+        "debug",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
       ]
     },
@@ -65,9 +75,11 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "--print-init",
-        "--shell=cmd",
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
+        "prompt",
+        "init",
+        "cmd",
+        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--print"
       ]
     },
     {
@@ -77,8 +89,9 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "--export-png",
-        "--shell=shell",
+        "config",
+        "export",
+        "png",
         "--rprompt-offset=40",
         "--cursor-padding=15",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
@@ -91,8 +104,9 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
+        "config",
+        "migrate",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
-        "--migrate"
       ]
     },
     {

@@ -85,7 +85,7 @@ func (cfg *Config) exitWithError(err error) {
 func LoadConfig(env environment.Environment) *Config {
 	cfg := loadConfig(env)
 	// only migrate automatically when the switch isn't set
-	if !*env.Args().Migrate && cfg.Version != configVersion {
+	if !env.Flags().Migrate && cfg.Version != configVersion {
 		cfg.BackupAndMigrate(env)
 	}
 	return cfg
@@ -93,8 +93,7 @@ func LoadConfig(env environment.Environment) *Config {
 
 func loadConfig(env environment.Environment) *Config {
 	var cfg Config
-	configFile := *env.Args().Config
-	cfg.eval = *env.Args().Eval
+	configFile := env.Flags().Config
 	if configFile == "" {
 		return defaultConfig()
 	}
@@ -182,11 +181,11 @@ func (cfg *Config) Export(format string) string {
 func (cfg *Config) BackupAndMigrate(env environment.Environment) {
 	origin := cfg.backup()
 	cfg.Migrate(env)
-	cfg.write()
+	cfg.Write()
 	cfg.print(fmt.Sprintf("\nOh My Posh config migrated to version %d\nBackup config available at %s\n\n", cfg.Version, origin))
 }
 
-func (cfg *Config) write() {
+func (cfg *Config) Write() {
 	content := cfg.Export(cfg.format)
 	f, err := os.OpenFile(cfg.origin, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	cfg.exitWithError(err)

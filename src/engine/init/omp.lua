@@ -37,7 +37,7 @@ local function os_clock_millis()
     if (clink.version_encoded or 0) >= 10020030 then
         return math.floor(os.clock() * 1000)
     else
-        local prompt_exe = string.format('%s --millis', omp_exe())
+        local prompt_exe = string.format('%s config get millis', omp_exe())
         return run_posh_command(prompt_exe)
     end
 end
@@ -61,25 +61,29 @@ end
 
 local function execution_time_option()
     if last_duration ~= nil then
-        return "--execution-time "..last_duration
+        return "--timing "..last_duration
     end
     return ""
 end
 
 local function error_level_option()
     if os.geterrorlevel ~= nil and settings.get("cmd.get_errorlevel") then
-        return "--error "..os.geterrorlevel()
+        return "--exit "..os.geterrorlevel()
     end
     return ""
 end
 
 local function get_posh_prompt(rprompt)
-    local prompt_exe = string.format('%s --shell=cmd --config=%s %s %s --rprompt=%s', omp_exe(), omp_config(), execution_time_option(), error_level_option(), rprompt)
+    local prompt = "primary"
+    if rprompt then
+        prompt = "right"
+    end
+    local prompt_exe = string.format('%s prompt print %s --shell=cmd --config=%s %s %s', omp_exe(), prompt, omp_config(), execution_time_option(), error_level_option(), rprompt)
     return run_posh_command(prompt_exe)
 end
 
 local function get_posh_tooltip(command)
-    local prompt_exe = string.format('%s --shell=cmd --config=%s --command="%s"', omp_exe(), omp_config(), command)
+    local prompt_exe = string.format('%s prompt print tooltip --shell=cmd --config=%s --command="%s"', omp_exe(), omp_config(), command)
     local tooltip = run_posh_command(prompt_exe)
     if tooltip == "" then
         -- If no tooltip, generate normal rprompt.
@@ -133,7 +137,7 @@ function p:rightfilter(prompt)
     return cached_prompt.right, false
 end
 function p:transientfilter(prompt)
-    local prompt_exe = string.format('%s --shell=cmd --config=%s --print-transient', omp_exe(), omp_config())
+    local prompt_exe = string.format('%s prompt print transient --config=%s', omp_exe(), omp_config())
     prompt = run_posh_command(prompt_exe)
     if prompt == "" then
         prompt = nil

@@ -92,10 +92,10 @@ func TestRootLocationHome(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("Home").Return(tc.HomePath)
 		env.On("Pwd").Return(tc.Pwd)
-		args := &environment.Args{
-			PSWD: &tc.Pswd,
+		args := &environment.Flags{
+			PSWD: tc.Pswd,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("GOOS").Return("")
 		path := &Path{
@@ -276,10 +276,10 @@ func TestAgnosterPathStyles(t *testing.T) {
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("StackCount").Return(0)
 		env.On("IsWsl").Return(false)
-		args := &environment.Args{
-			PSWD: &tc.Pswd,
+		args := &environment.Flags{
+			PSWD: tc.Pswd,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -398,10 +398,10 @@ func TestGetFullPath(t *testing.T) {
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("StackCount").Return(tc.StackCount)
 		env.On("IsWsl").Return(false)
-		args := &environment.Args{
-			PSWD: &tc.Pswd,
+		args := &environment.Flags{
+			PSWD: tc.Pswd,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		if len(tc.Template) == 0 {
 			tc.Template = "{{ if gt .StackCount 0 }}{{ .StackCount }} {{ end }}{{ .Path }}"
 		}
@@ -447,10 +447,10 @@ func TestGetFullPathCustomMappedLocations(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return("")
-		args := &environment.Args{
-			PSWD: &tc.Pwd,
+		args := &environment.Flags{
+			PSWD: tc.Pwd,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -498,10 +498,10 @@ func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	env.On("Home").Return("/usr/home")
 	env.On("Pwd").Return(pwd)
 	env.On("GOOS").Return("")
-	args := &environment.Args{
-		PSWD: &pwd,
+	args := &environment.Flags{
+		PSWD: pwd,
 	}
-	env.On("Args").Return(args)
+	env.On("Flags").Return(args)
 	path := &Path{
 		env: env,
 		props: properties.Map{
@@ -545,10 +545,10 @@ func TestAgnosterPath(t *testing.T) { // nolint:dupl
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("Pwd").Return(tc.PWD)
 		env.On("GOOS").Return("")
-		args := &environment.Args{
-			PSWD: &tc.PWD,
+		args := &environment.Flags{
+			PSWD: tc.PWD,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -593,10 +593,10 @@ func TestAgnosterLeftPath(t *testing.T) { // nolint:dupl
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("Pwd").Return(tc.PWD)
 		env.On("GOOS").Return("")
-		args := &environment.Args{
-			PSWD: &tc.PWD,
+		args := &environment.Flags{
+			PSWD: tc.PWD,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -641,10 +641,10 @@ func TestGetPwd(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return("")
-		args := &environment.Args{
-			PSWD: &tc.Pswd,
+		args := &environment.Flags{
+			PSWD: tc.Pswd,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		path := &Path{
 			env: env,
 			props: properties.Map{

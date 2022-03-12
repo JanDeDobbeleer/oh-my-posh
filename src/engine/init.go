@@ -46,7 +46,7 @@ func getExecutablePath(env environment.Environment) (string, error) {
 	// which uses unix style paths to resolve the executable's location.
 	// PowerShell knows how to resolve both, so we can swap this without any issue.
 	executable = strings.ReplaceAll(executable, "\\", "/")
-	switch *env.Args().Shell {
+	switch env.Flags().Shell {
 	case bash, zsh:
 		executable = strings.ReplaceAll(executable, " ", "\\ ")
 		executable = strings.ReplaceAll(executable, "(", "\\(")
@@ -60,10 +60,10 @@ func InitShell(env environment.Environment) string {
 	if err != nil {
 		return noExe
 	}
-	shell := *env.Args().Shell
+	shell := env.Flags().Shell
 	switch shell {
 	case pwsh, powershell5:
-		return fmt.Sprintf("(@(&\"%s\" --print-init --shell=%s --config=\"%s\") -join \"`n\") | Invoke-Expression", executable, shell, *env.Args().Config)
+		return fmt.Sprintf("(@(&\"%s\" prompt init %s --config=\"%s\" --print) -join \"`n\") | Invoke-Expression", executable, shell, env.Flags().Config)
 	case zsh, bash, fish, winCMD:
 		return PrintShellInit(env)
 	default:
@@ -76,8 +76,8 @@ func PrintShellInit(env environment.Environment) string {
 	if err != nil {
 		return noExe
 	}
-	shell := *env.Args().Shell
-	configFile := *env.Args().Config
+	shell := env.Flags().Shell
+	configFile := env.Flags().Config
 	switch shell {
 	case pwsh, powershell5:
 		return getShellInitScript(executable, configFile, pwshInit)

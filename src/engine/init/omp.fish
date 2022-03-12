@@ -18,29 +18,15 @@ function fish_prompt
       set -gx omp_last_status_generation $status_generation
     end
 
-    ::OMP:: --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
+    ::OMP:: prompt print primary --config $POSH_THEME --shell fish --exit $omp_status_cache --timing $omp_duration --stack-count $omp_stack_count
 end
 
 function fish_right_prompt
-    ::OMP:: --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --rprompt
+    ::OMP:: prompt print right --config $POSH_THEME --shell fish --exit $omp_status_cache --timing $omp_duration --stack-count $omp_stack_count
 end
 
 function postexec_omp --on-event fish_postexec
   # works with fish <3.2
   # pre and postexec not fired for empty command in fish >=3.2
   set -gx omp_lastcommand $argv
-end
-
-
-function export_poshconfig
-  set -l file_name $argv[1]
-  set -l format $argv[2]
-  if not test -n "$file_name"
-    echo "Usage: export_poshconfig \"filename\""
-    return
-  end
-  if not test -n "$format"
-    set format "json"
-  end
-  ::OMP:: --config $POSH_THEME --print-config --format $format > $file_name
 end

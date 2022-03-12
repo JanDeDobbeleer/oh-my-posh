@@ -1052,6 +1052,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "estruyf",
+      "name": "Elio Struyf",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2900833?v=4",
+      "profile": "https://www.eliostruyf.com",
+      "contributions": [
+        "doc",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

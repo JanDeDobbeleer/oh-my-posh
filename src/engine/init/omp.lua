@@ -61,14 +61,14 @@ end
 
 local function execution_time_option()
     if last_duration ~= nil then
-        return "--timing "..last_duration
+        return "--execution-time "..last_duration
     end
     return ""
 end
 
 local function error_level_option()
     if os.geterrorlevel ~= nil and settings.get("cmd.get_errorlevel") then
-        return "--exit "..os.geterrorlevel()
+        return "--error "..os.geterrorlevel()
     end
     return ""
 end

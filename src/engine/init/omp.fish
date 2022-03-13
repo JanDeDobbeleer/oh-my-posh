@@ -18,11 +18,11 @@ function fish_prompt
       set -gx omp_last_status_generation $status_generation
     end
 
-    ::OMP:: prompt print primary --config $POSH_THEME --shell fish --exit $omp_status_cache --timing $omp_duration --stack-count $omp_stack_count
+    ::OMP:: prompt print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
 end
 
 function fish_right_prompt
-    ::OMP:: prompt print right --config $POSH_THEME --shell fish --exit $omp_status_cache --timing $omp_duration --stack-count $omp_stack_count
+    ::OMP:: prompt print right --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
 end
 
 function postexec_omp --on-event fish_postexec

@@ -2,7 +2,7 @@
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 
 */
-package cmd
+package cli
 
 import (
 	"fmt"
@@ -16,7 +16,7 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version",
 	Long:  "Print oh-my-posh version and build information.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(Version)
+		fmt.Println(cliVersion)
 	},
 }
 

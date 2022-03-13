@@ -1,7 +1,11 @@
 package main
 
-import "oh-my-posh/cmd"
+import "oh-my-posh/cli"
+
+var (
+	Version = "development"
+)
 
 func main() {
-	cmd.Execute()
+	cli.Execute(Version)
 }

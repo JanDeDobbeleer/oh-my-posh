@@ -1,4 +1,4 @@
-package cmd
+package cli
 
 import (
 	"fmt"
@@ -9,8 +9,9 @@ import (
 
 // Version number of oh-my-posh
 var (
-	Version = "development"
-	config  string
+	config         string
+	displayVersion bool
+	cliVersion     string
 )
 
 var rootCmd = &cobra.Command{
@@ -25,11 +26,15 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 			runInit(shell)
 			return
 		}
-		fmt.Println(Version)
+		if displayVersion {
+			fmt.Println(cliVersion)
+			return
+		}
 	},
 }
 
-func Execute() {
+func Execute(version string) {
+	cliVersion = version
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
@@ -45,5 +50,6 @@ var (
 func init() { // nolint:gochecknoinits
 	rootCmd.PersistentFlags().StringVarP(&config, "config", "c", "", "config (required)")
 	rootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init (deprecated)")
+	rootCmd.Flags().BoolVar(&displayVersion, "version", false, "version")
 	rootCmd.Flags().StringVarP(&shell, "shell", "s", "", "shell (deprecated)")
 }

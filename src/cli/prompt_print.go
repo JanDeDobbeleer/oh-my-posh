@@ -2,7 +2,7 @@
 Copyright © 2022 NAME HERE <EMAIL ADDRESS>
 
 */
-package cmd
+package cli
 
 import (
 	"fmt"
@@ -90,7 +90,7 @@ var printCmd = &cobra.Command{
 		}
 		switch args[0] {
 		case "debug":
-			fmt.Print(eng.PrintDebug(Version))
+			fmt.Print(eng.PrintDebug(cliVersion))
 		case "primary":
 			fmt.Print(eng.PrintPrimary())
 		case "secondary":

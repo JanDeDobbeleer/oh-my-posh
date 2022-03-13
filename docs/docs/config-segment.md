@@ -139,23 +139,9 @@ engine which allow you to customize the output even more.
 
 You can use these on any segment, the engine is responsible for adding them correctly.
 
-- prefix: `string`
-- postfix: `string`
 - include_folders: `[]string`
 - exclude_folders: `[]string`
 - template: `string` - A go text/template [template][templates] to render the text
-
-#### Prefix
-
-The string content will be put in front of the segment's output text. Useful for symbols, text or other customizations.
-If this is not set, it will be an empty space in `plain` mode. If you want to remove the space before the segment,
-specify this as `''`.
-
-#### Postfix
-
-The string content will be put after the segment's output text. Useful for symbols, text or other customizations.
-If this is not set, it will default to an empty space in `plain` mode. If you want to remove the space after the segment,
-specify this as `''`.
 
 #### Include / Exclude Folders
 

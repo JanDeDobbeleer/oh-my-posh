@@ -219,18 +219,6 @@
           "description": "https://ohmyposh.dev/docs/config-overview#properties",
           "default": {},
           "properties": {
-            "prefix": {
-              "type": "string",
-              "title": "Text prefix",
-              "description": "https://ohmyposh.dev/docs/config-overview#prefix",
-              "default": " "
-            },
-            "postfix": {
-              "type": "string",
-              "title": "Text postfix",
-              "description": "https://ohmyposh.dev/docs/config-overview#postfix",
-              "default": " "
-            },
             "template": {
               "$ref": "#/definitions/template"
             },

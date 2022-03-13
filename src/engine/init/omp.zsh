@@ -17,7 +17,7 @@ function prompt_ohmyposh_precmd() {
     omp_now=$(::OMP:: config get millis)
     omp_elapsed=$(($omp_now-$omp_start_time))
   fi
-  eval "$(::OMP:: prompt print primary --config="$POSH_THEME" --exit="$omp_last_error" --timing="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh)"
+  eval "$(::OMP:: prompt print primary --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh)"
   unset omp_start_time
   unset omp_now
   unset omp_elapsed

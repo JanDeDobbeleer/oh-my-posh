@@ -94,7 +94,7 @@ function global:Initialize-ModuleSupport {
         $global:omp_lastHistoryId = $history.Id
     }
     $terminalWidth = $Host.UI.RawUI.WindowSize.Width
-    $standardOut = @(&$omp prompt print primary --exit="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --timing="$executionTime" --stack-count="$stackCount" --config="$config" --terminal-width=$terminalWidth 2>&1)
+    $standardOut = @(&$omp prompt print primary --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --stack-count="$stackCount" --config="$config" --terminal-width=$terminalWidth 2>&1)
     # make sure PSReadLine knows we have a multiline prompt
     $extraLines = $standardOut.Count - 1
     if ($extraLines -gt 0) {
@@ -112,7 +112,7 @@ Set-Item -Path Function:prompt -Value $Prompt -Force
 function global:Write-PoshDebug {
     $omp = "::OMP::"
     $config, $cleanPWD, $cleanPSWD = Get-PoshContext
-    $standardOut = @(&$omp prompt print debug --exit=1337 --pwd="$cleanPWD" --pswd="$cleanPSWD" --timing=9001 --config="$config" 2>&1)
+    $standardOut = @(&$omp prompt print debug --error=1337 --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time=9001 --config="$config" 2>&1)
     $standardOut -join "`n"
 }
 

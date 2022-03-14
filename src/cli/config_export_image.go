@@ -61,7 +61,6 @@ You can tweak the output by using additional flags:
 			Env:      env,
 			Ansi:     ansi,
 			Template: cfg.ConsoleTitleTemplate,
-			Style:    cfg.ConsoleTitleStyle,
 		}
 		eng := &engine.Engine{
 			Config:       cfg,

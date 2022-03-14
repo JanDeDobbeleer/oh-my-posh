@@ -67,7 +67,6 @@ func engineRender() {
 	consoleTitle := &console.Title{
 		Env:      env,
 		Ansi:     ansi,
-		Style:    cfg.ConsoleTitleStyle,
 		Template: cfg.ConsoleTitleTemplate,
 	}
 	engine := &Engine{

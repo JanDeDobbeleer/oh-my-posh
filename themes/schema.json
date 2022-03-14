@@ -2112,19 +2112,6 @@
       "description": "https://ohmyposh.dev/docs/config-overview#general-settings",
       "default": false
     },
-    "console_title": {
-      "type": "boolean",
-      "title": "Console Title",
-      "description": "https://ohmyposh.dev/docs/config-overview#general-settings",
-      "default": true
-    },
-    "console_title_style": {
-      "type": "string",
-      "title": "Console Title Style",
-      "description": "https://ohmyposh.dev/docs/config-title#console-title-style",
-      "enum": ["folder", "path", "template"],
-      "default": "folder"
-    },
     "console_title_template": {
       "type": "string",
       "title": "Console Title Template",

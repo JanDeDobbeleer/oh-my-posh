@@ -11,7 +11,6 @@ import (
 
 func TestGetTitle(t *testing.T) {
 	cases := []struct {
-		Style         Style
 		Template      string
 		Root          bool
 		User          string
@@ -20,10 +19,7 @@ func TestGetTitle(t *testing.T) {
 		ShellName     string
 		Expected      string
 	}{
-		{Style: FolderName, Cwd: "/usr/home", PathSeparator: "/", ShellName: "default", Expected: "\x1b]0;~\a"},
-		{Style: FullPath, Cwd: "/usr/home/jan", PathSeparator: "/", ShellName: "default", Expected: "\x1b]0;~/jan\a"},
 		{
-			Style:         Template,
 			Template:      "{{.Env.USERDOMAIN}} :: {{.PWD}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
 			Cwd:           "C:\\vagrant",
 			PathSeparator: "\\",
@@ -32,7 +28,6 @@ func TestGetTitle(t *testing.T) {
 			Expected:      "\x1b]0;MyCompany :: C:\\vagrant :: Admin :: PowerShell\a",
 		},
 		{
-			Style:         Template,
 			Template:      "{{.Folder}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
 			Cwd:           "C:\\vagrant",
 			PathSeparator: "\\",
@@ -40,7 +35,6 @@ func TestGetTitle(t *testing.T) {
 			Expected:      "\x1b]0;vagrant :: PowerShell\a",
 		},
 		{
-			Style:         Template,
 			Template:      "{{.UserName}}@{{.HostName}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
 			Root:          true,
 			User:          "MyUser",
@@ -71,7 +65,6 @@ func TestGetTitle(t *testing.T) {
 		ct := &Title{
 			Env:      env,
 			Ansi:     ansi,
-			Style:    tc.Style,
 			Template: tc.Template,
 		}
 		got := ct.GetTitle()
@@ -81,7 +74,6 @@ func TestGetTitle(t *testing.T) {
 
 func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 	cases := []struct {
-		Style         Style
 		Template      string
 		Root          bool
 		User          string
@@ -91,7 +83,6 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		Expected      string
 	}{
 		{
-			Style:         Template,
 			Template:      "Not using Host only {{.UserName}} and {{.Shell}}",
 			User:          "MyUser",
 			PathSeparator: "\\",
@@ -99,7 +90,6 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			Expected:      "\x1b]0;Not using Host only MyUser and PowerShell\a",
 		},
 		{
-			Style:         Template,
 			Template:      "{{.UserName}}@{{.HostName}} :: {{.Shell}}",
 			User:          "MyUser",
 			PathSeparator: "\\",
@@ -126,7 +116,6 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		ct := &Title{
 			Env:      env,
 			Ansi:     ansi,
-			Style:    tc.Style,
 			Template: tc.Template,
 		}
 		got := ct.GetTitle()

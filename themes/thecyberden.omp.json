@@ -112,6 +112,6 @@
             "type": "prompt"
         }
     ],
-    "console_title_style": "folder",
+    "console_title_template": "{{ .Folder }}",
     "version": 1
 }

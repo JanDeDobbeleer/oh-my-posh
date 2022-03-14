@@ -60,7 +60,7 @@ func (e *Engine) PrintPrimary() string {
 	for _, block := range e.Config.Blocks {
 		e.renderBlock(block)
 	}
-	if e.Config.ConsoleTitle {
+	if len(e.Config.ConsoleTitleTemplate) > 0 {
 		e.writeANSI(e.ConsoleTitle.GetTitle())
 	}
 	e.writeANSI(e.Ansi.ColorReset())
@@ -167,13 +167,15 @@ func (e *Engine) PrintDebug(version string) string {
 	e.write("\n\x1b[1mSegments:\x1b[0m\n\n")
 	// console title timing
 	start := time.Now()
-	consoleTitle := e.ConsoleTitle.GetTitle()
+	title := e.ConsoleTitle.GetTitle()
+	title = strings.TrimPrefix(title, "\x1b]0;")
+	title = strings.TrimSuffix(title, "\a")
 	duration := time.Since(start)
 	segmentTiming := &SegmentTiming{
 		name:       "ConsoleTitle",
 		nameLength: 12,
-		active:     e.Config.ConsoleTitle,
-		text:       consoleTitle,
+		active:     len(e.Config.ConsoleTitleTemplate) > 0,
+		text:       title,
 		duration:   duration,
 	}
 	segmentTimings = append(segmentTimings, segmentTiming)

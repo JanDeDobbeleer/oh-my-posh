@@ -18,7 +18,7 @@
     },
     {
       "alignment": "left",
-      "segments": [        
+      "segments": [
         {
           "foreground": "#0057b7",
           "properties": {
@@ -42,18 +42,18 @@
           "foreground": "#FBD951",
           "properties": {
             "home_icon": "\uf7dd",
-            "style": "mixed",            
+            "style": "mixed",
             "template": "{{ .Path }} "
           },
           "style": "diamond",
           "trailing_diamond": "\ue0b0",
           "type": "path"
-        },        
+        },
         {
           "background": "#0057b7",
           "foreground": "#ffd700",
           "powerline_symbol": "\ue0b0",
-          "properties": {          
+          "properties": {
             "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true,
@@ -72,7 +72,7 @@
           ],
           "foreground": "#0057b7",
           "powerline_symbol": "\ue0b0",
-          "properties": {          
+          "properties": {
             "fetch_stash_count": false,
             "fetch_status": false,
             "fetch_upstream_icon": false,
@@ -89,7 +89,7 @@
           "style": "plain",
           "trailing_diamond": "\ue0b0",
           "type": "text"
-        },        
+        },
         {
           "foreground": "#0057b7",
           "foreground_templates": [
@@ -104,7 +104,7 @@
           "style": "diamond",
           "trailing_diamond": "\ue0b0",
           "type": "exit"
-        }        
+        }
       ],
       "type": "prompt"
     },
@@ -112,7 +112,7 @@
       "alignment": "right",
       "segments": [
         {
-          "background": "#0057b7",        
+          "background": "#0057b7",
           "foreground": "#FBD951",
           "leading_diamond": "\ue0b6",
           "properties": {
@@ -194,7 +194,7 @@
           },
           "style": "powerline",
           "type": "root"
-        },        
+        },
         {
           "background": "#FBD951",
           "foreground": "#0057b7",
@@ -205,7 +205,7 @@
           },
           "style": "powerline",
           "type": "session"
-        }       
+        }
       ],
       "type": "prompt"
     },
@@ -248,8 +248,6 @@
       "type": "rprompt"
     }
   ],
-  "console_title": true,
-  "console_title_style": "template",
   "console_title_template": "{{if .Root}}Admin: {{end}} {{.Folder}}",
   "final_space": true,
   "version": 1

@@ -164,8 +164,6 @@
       "type": "prompt"
     }
   ],
-  "console_title": true,
-  "console_title_style": "template",
   "console_title_template": "{{ .Shell }} - {{ .Folder }}",
   "final_space": true,
   "osc99": true,

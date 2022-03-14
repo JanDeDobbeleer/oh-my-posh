@@ -114,8 +114,6 @@
       "type": "prompt"
     }
   ],
-  "console_title": true,
-  "console_title_style": "template",
   "console_title_template": "{{if .Root}}(Admin) {{end}}{{.Folder}}",
   "version": 1
 }

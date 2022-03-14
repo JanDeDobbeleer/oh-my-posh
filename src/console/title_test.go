@@ -96,6 +96,10 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			ShellName:     "PowerShell",
 			Expected:      "\x1b]0;MyUser@ :: PowerShell\a",
 		},
+		{
+			Template: "\x1b[93m[\x1b[39m\x1b[96mconsole-title\x1b[39m\x1b[96m ≡\x1b[39m\x1b[31m +0\x1b[39m\x1b[31m ~1\x1b[39m\x1b[31m -0\x1b[39m\x1b[31m !\x1b[39m\x1b[93m]\x1b[39m",
+			Expected: "\x1b]0;[console-title ≡ +0 ~1 -0 !]\a",
+		},
 	}
 
 	for _, tc := range cases {

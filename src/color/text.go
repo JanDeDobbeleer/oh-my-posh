@@ -17,11 +17,11 @@ func measureText(text string) int {
 			text = strings.ReplaceAll(text, match["STR"], match["TEXT"])
 		}
 	}
-	text = textWithoutAnsi(text)
+	text = TrimAnsi(text)
 	return utf8.RuneCountInString(text)
 }
 
-func textWithoutAnsi(text string) string {
+func TrimAnsi(text string) string {
 	if len(text) == 0 || !strings.Contains(text, "\x1b") {
 		return text
 	}

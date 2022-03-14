@@ -103,6 +103,9 @@ func loadConfig(env environment.Environment) *Config {
 
 	cfg.origin = configFile
 	cfg.format = strings.TrimPrefix(filepath.Ext(configFile), ".")
+	if cfg.format == "yml" {
+		cfg.format = YAML
+	}
 
 	config.AddDriver(yaml.Driver)
 	config.AddDriver(json.Driver)

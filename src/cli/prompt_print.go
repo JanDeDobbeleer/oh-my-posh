@@ -62,7 +62,11 @@ var printCmd = &cobra.Command{
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 		ansi := &color.Ansi{}
-		ansi.Init(env.Shell())
+		shell := env.Shell()
+		if debug {
+			shell = "shell"
+		}
+		ansi.Init(shell)
 		var writer color.Writer
 		if plain {
 			writer = &color.PlainWriter{}
@@ -78,7 +82,6 @@ var printCmd = &cobra.Command{
 			Env:      env,
 			Ansi:     ansi,
 			Template: cfg.ConsoleTitleTemplate,
-			Style:    cfg.ConsoleTitleStyle,
 		}
 		eng := &engine.Engine{
 			Config:       cfg,

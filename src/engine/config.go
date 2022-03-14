@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"oh-my-posh/color"
-	"oh-my-posh/console"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"os"
@@ -33,8 +32,6 @@ type Config struct {
 	Version              int           `json:"version"`
 	FinalSpace           bool          `json:"final_space,omitempty"`
 	OSC99                bool          `json:"osc99,omitempty"`
-	ConsoleTitle         bool          `json:"console_title,omitempty"`
-	ConsoleTitleStyle    console.Style `json:"console_title_style,omitempty"`
 	ConsoleTitleTemplate string        `json:"console_title_template,omitempty"`
 	TerminalBackground   string        `json:"terminal_background,omitempty"`
 	Blocks               []*Block      `json:"blocks,omitempty"`

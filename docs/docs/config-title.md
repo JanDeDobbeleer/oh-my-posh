@@ -14,22 +14,7 @@ sidebar_label: Console title
 }
 ```
 
-To manipulate the console title, you can make use of the following properties:
-
-- console_title: `boolean` - when true sets the current location as the console title
-- console_title_style: `string` - the title to set in the console - defaults to `folder`
-- console_title_template: `string` - the template to use when `"console_title_style" = "template"`
-
-### Console Title Style
-
-- `folder`: show the current folder name
-- `path`: show the current path
-- `template`: show a custom template
-
 ### Console Title Template
-
-You can create a more custom console title with the use of `"console_title_style" = "template"`.
-When this is set, a `console_title_template` is also expected, otherwise, the title will remain empty.
 
 The following examples illustrate possible contents for `console_title_template`, provided
 the current working directory is `/usr/home/omp` and the shell is `zsh`.

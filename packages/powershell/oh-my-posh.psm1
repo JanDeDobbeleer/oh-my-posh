@@ -19,6 +19,9 @@ function Get-CachePath {
 }
 
 function Set-PoshRootPath {
+    if ($env:POSH_PATH) {
+        return
+    }
     $path = Get-CachePath -Path $env:LOCALAPPDATA
     if ($path) {
         $env:POSH_PATH = $path

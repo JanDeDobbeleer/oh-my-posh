@@ -46,8 +46,10 @@ function global:Get-PoshContext {
 
 function global:Initialize-ModuleSupport {
     if ($env:POSH_GIT_ENABLED -eq $true -and (Get-Module -Name "posh-git")) {
-        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used later(not in this scope)')]
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used later (not in this scope)')]
         $global:GitStatus = Get-GitStatus
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used by posh-git (not in this script)')]
+        $GitPromptSettings = $null
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
     }
 }

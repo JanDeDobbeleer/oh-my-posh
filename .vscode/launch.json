@@ -63,7 +63,6 @@
       "program": "${workspaceRoot}/src",
       "args": [
         "prompt",
-        "print",
         "debug",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
       ]

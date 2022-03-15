@@ -114,7 +114,7 @@ Set-Item -Path Function:prompt -Value $Prompt -Force
 function global:Write-PoshDebug {
     $omp = "::OMP::"
     $config, $cleanPWD, $cleanPSWD = Get-PoshContext
-    $standardOut = @(&$omp prompt print debug --error=1337 --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time=9001 --config="$config" 2>&1)
+    $standardOut = @(&$omp prompt debug --config="$config" 2>&1)
     $standardOut -join "`n"
 }
 

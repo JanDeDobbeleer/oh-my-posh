@@ -275,11 +275,14 @@ const (
 	Valid
 	Error
 	Secondary
+	Debug
 )
 
 func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 	var prompt *ExtraPrompt
 	switch promptType {
+	case Debug:
+		prompt = e.Config.DebugPrompt
 	case Transient:
 		prompt = e.Config.TransientPrompt
 	case Valid:
@@ -297,6 +300,8 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 			return template
 		}
 		switch promptType { // nolint: exhaustive
+		case Debug:
+			return "[DBG]: "
 		case Transient:
 			return "{{ .Shell }}> "
 		case Secondary:

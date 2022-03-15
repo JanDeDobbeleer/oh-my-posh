@@ -29,10 +29,11 @@ var (
 
 // printCmd represents the prompt command
 var printCmd = &cobra.Command{
-	Use:   "print [primary|secondary|transient|right|tooltip|valid|error]",
+	Use:   "print [debug|primary|secondary|transient|right|tooltip|valid|error]",
 	Short: "Print the prompt/context",
 	Long:  "Print one of the prompts based on the location/use-case.",
 	ValidArgs: []string{
+		"debug",
 		"primary",
 		"secondary",
 		"transient",
@@ -86,6 +87,8 @@ var printCmd = &cobra.Command{
 			Plain:        plain,
 		}
 		switch args[0] {
+		case "debug":
+			fmt.Print(eng.PrintExtraPrompt(engine.Debug))
 		case "primary":
 			fmt.Print(eng.PrintPrimary())
 		case "secondary":

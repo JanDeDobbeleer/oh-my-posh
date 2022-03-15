@@ -67,6 +67,11 @@ function global:Initialize-ModuleSupport {
         $env:POSH_TRANSIENT = $false
         return
     }
+    if (Test-Path variable:/PSDebugContext) {
+        $standardOut = @(&$omp prompt print debug --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" 2>&1)
+        $standardOut -join "`n"
+        return
+    }
     $errorCode = 0
     Initialize-ModuleSupport
     Set-PoshContext

@@ -8,7 +8,7 @@ When changing the `segment_plastic.go` file, you may need to test your changes a
 [Plastic SCM][plastic]. This doc should bring you up to speed with Plastic SCM.
 
 In the [contributing doc][contributing] there is a section about [dev containers & codespaces][devcontainer].
-You can setup Plastic SCM inside these as well.
+You can set up Plastic SCM inside these as well.
 
 ## Server Setup
 
@@ -87,7 +87,7 @@ sudo apt-get install plasticscm-client-core
 
 ### Client configuration
 
-To connect the client to the server and setup an account run:
+To connect the client to the server and set up an account run:
 
 ```bash
 clconfigureclient 
@@ -111,7 +111,7 @@ cm li
 
 ## Testing stuff
 
-Now to the fun part! The server is automatically setup to host a `default` repo with the branch `/main`.
+Now to the fun part! The server is automatically set up to host a `default` repo with the branch `/main`.
 
 The Plastic SCM CLI command is: `cm`
 

@@ -159,6 +159,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://github.com/ehawman-rosenberg"><img src="https://avatars.githubusercontent.com/u/81652082?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ehawman-rosenberg</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ehawman-rosenberg" title="Documentation">📖</a></td>
     <td align="center"><a href="https://spizzi.net/"><img src="https://avatars.githubusercontent.com/u/1934246?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Claudio Spizzi</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=claudiospizzi" title="Documentation">📖</a></td>
     <td align="center"><a href="https://www.eliostruyf.com"><img src="https://avatars.githubusercontent.com/u/2900833?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Elio Struyf</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=estruyf" title="Documentation">📖</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=estruyf" title="Code">💻</a></td>
+    <td align="center"><a href="https://www.olafalders.com/"><img src="https://avatars.githubusercontent.com/u/96205?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Olaf Alders</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=oalders" title="Documentation">📖</a></td>
   </tr>
 </table>
 

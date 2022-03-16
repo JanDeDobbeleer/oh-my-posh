@@ -43,6 +43,7 @@ func init() { // nolint:gochecknoinits
 
 func runInit(shell string) {
 	env := &environment.ShellEnvironment{
+		Version: cliVersion,
 		CmdFlags: &environment.Flags{
 			Shell:  shell,
 			Config: config,

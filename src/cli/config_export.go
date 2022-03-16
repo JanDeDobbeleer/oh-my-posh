@@ -35,6 +35,7 @@ Exports the  ~/myconfig.omp.json config file to toml and writes the result to yo
 A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &environment.ShellEnvironment{
+			Version: cliVersion,
 			CmdFlags: &environment.Flags{
 				Config: config,
 			},

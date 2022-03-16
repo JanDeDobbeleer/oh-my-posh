@@ -29,7 +29,9 @@ This command is used to get the value of the following variables:
 	},
 	Args: cobra.OnlyValidArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		env := &environment.ShellEnvironment{}
+		env := &environment.ShellEnvironment{
+			Version: cliVersion,
+		}
 		env.Init(false)
 		defer env.Close()
 		switch args[0] {

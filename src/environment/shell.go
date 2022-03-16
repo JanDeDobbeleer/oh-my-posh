@@ -207,6 +207,7 @@ const (
 
 type ShellEnvironment struct {
 	CmdFlags   *Flags
+	Version    string
 	cwd        string
 	cmdCache   *commandCache
 	fileCache  *fileCache
@@ -219,12 +220,9 @@ func (env *ShellEnvironment) Init(debug bool) {
 	if env.CmdFlags == nil {
 		env.CmdFlags = &Flags{}
 	}
-	if len(env.CmdFlags.Config) == 0 {
-		env.CmdFlags.Config = env.Getenv("POSH_THEME")
-	}
 	env.fileCache = &fileCache{}
 	env.fileCache.Init(env.CachePath())
-	env.ResolveConfigPath()
+	env.resolveConfigPath()
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
@@ -234,27 +232,12 @@ func (env *ShellEnvironment) Init(debug bool) {
 	}
 }
 
-func (env *ShellEnvironment) getConfigPath(location string) {
-	cfg, err := env.HTTPRequest(location, 5000)
-	if err != nil {
-		return
+func (env *ShellEnvironment) resolveConfigPath() {
+	if len(env.CmdFlags.Config) == 0 {
+		env.CmdFlags.Config = env.Getenv("POSH_THEME")
 	}
-	configPath := filepath.Join(env.CachePath(), "config.omp.json")
-	out, err := os.Create(configPath)
-	if err != nil {
-		return
-	}
-	defer out.Close()
-	_, err = io.Copy(out, bytes.NewReader(cfg))
-	if err != nil {
-		return
-	}
-	env.CmdFlags.Config = configPath
-}
-
-func (env *ShellEnvironment) ResolveConfigPath() {
-	if env.CmdFlags == nil || len(env.CmdFlags.Config) == 0 {
-		return
+	if len(env.CmdFlags.Config) == 0 {
+		env.CmdFlags.Config = fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v%s/themes/jandedobbeleer.omp.json", env.Version)
 	}
 	location, err := url.ParseRequestURI(env.CmdFlags.Config)
 	if err == nil {
@@ -277,6 +260,24 @@ func (env *ShellEnvironment) ResolveConfigPath() {
 		}
 	}
 	env.CmdFlags.Config = filepath.Clean(configFile)
+}
+
+func (env *ShellEnvironment) getConfigPath(location string) {
+	cfg, err := env.HTTPRequest(location, 5000)
+	if err != nil {
+		return
+	}
+	configPath := filepath.Join(env.CachePath(), "config.omp.json")
+	out, err := os.Create(configPath)
+	if err != nil {
+		return
+	}
+	defer out.Close()
+	_, err = io.Copy(out, bytes.NewReader(cfg))
+	if err != nil {
+		return
+	}
+	env.CmdFlags.Config = configPath
 }
 
 func (env *ShellEnvironment) trace(start time.Time, function string, args ...string) {

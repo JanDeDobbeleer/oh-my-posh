@@ -41,6 +41,7 @@ You can tweak the output by using additional flags:
 - background-color: the background color of the image`,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &environment.ShellEnvironment{
+			Version: cliVersion,
 			CmdFlags: &environment.Flags{
 				Config: config,
 				Shell:  "shell",

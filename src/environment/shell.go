@@ -237,7 +237,7 @@ func (env *ShellEnvironment) resolveConfigPath() {
 		env.CmdFlags.Config = env.Getenv("POSH_THEME")
 	}
 	if len(env.CmdFlags.Config) == 0 {
-		env.CmdFlags.Config = fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v%s/themes/jandedobbeleer.omp.json", env.Version)
+		env.CmdFlags.Config = fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v%s/themes/default.omp.json", env.Version)
 	}
 	location, err := url.ParseRequestURI(env.CmdFlags.Config)
 	if err == nil {

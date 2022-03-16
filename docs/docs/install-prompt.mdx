@@ -38,7 +38,7 @@ notepad $PROFILE
 Then add the following line.
 
 ```powershell
-oh-my-posh prompt init pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$(oh-my-posh --version)/themes/jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh prompt init pwsh | Invoke-Expression
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -71,7 +71,7 @@ Use the full path to the config file, not the relative path.
 :::
 
 ```lua title="oh-my-posh.lua"
-load(io.popen('oh-my-posh prompt init cmd --config="https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json"'):read("*a"))()
+load(io.popen('oh-my-posh prompt init cmd'):read("*a"))()
 ```
 
 Once added, restart cmd for the changes to take effect.
@@ -82,7 +82,7 @@ Once added, restart cmd for the changes to take effect.
 Add the following to `~/.zshrc`:
 
 ```bash
-eval "$(oh-my-posh prompt init zsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$(oh-my-posh --version)/themes/jandedobbeleer.omp.json)"
+eval "$(oh-my-posh prompt init zsh)"
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -97,7 +97,7 @@ source ~/.zshrc
 Add the following to `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
 
 ```bash
-eval "$(oh-my-posh prompt init bash --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$(oh-my-posh --version)/themes/jandedobbeleer.omp.json)"
+eval "$(oh-my-posh prompt init bash)"
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -122,7 +122,7 @@ It's advised to be on the latest version of fish. Versions below 3.1.2 have issu
 Initialize Oh My Posh in `~/.config/fish/config.fish`:
 
 ```bash
-oh-my-posh prompt init fish --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v(oh-my-posh --version)/themes/jandedobbeleer.omp.json | source
+oh-my-posh prompt init fish | source
 ```
 
 Once added, reload your config for the changes to take effect.
@@ -139,13 +139,13 @@ Set the prompt and restart nu shell:
 **Nu < 0.32.0**
 
 ```bash
-config set prompt  "= `{{$(oh-my-posh prompt print primary --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json | str collect)}}`"
+config set prompt  "= `{{$(oh-my-posh prompt print primary | str collect)}}`"
 ```
 
 **Nu >= 0.32.0**
 
 ```bash
-config set prompt  "(oh-my-posh prompt print primary --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json | str collect)"
+config set prompt  "(oh-my-posh prompt print primary | str collect)"
 ```
 
 Restart nu shell for the changes to take effect.

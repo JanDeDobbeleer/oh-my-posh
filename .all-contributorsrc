@@ -1062,6 +1062,15 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "oalders",
+      "name": "Olaf Alders",
+      "avatar_url": "https://avatars.githubusercontent.com/u/96205?v=4",
+      "profile": "https://www.olafalders.com/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

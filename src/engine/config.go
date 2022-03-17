@@ -133,8 +133,14 @@ func (cfg *Config) sync() {
 		return
 	}
 	var structMap map[string]interface{}
-	inrec, _ := json2.Marshal(cfg)
-	_ = json2.Unmarshal(inrec, &structMap)
+	inrec, err := json2.Marshal(cfg)
+	if err != nil {
+		return
+	}
+	err = json2.Unmarshal(inrec, &structMap)
+	if err != nil {
+		return
+	}
 	// remove empty structs
 	for k, v := range structMap {
 		if smap, OK := v.(map[string]interface{}); OK && len(smap) == 0 {

@@ -76,6 +76,10 @@ func (cfg *Config) exitWithError(err error) {
 	}
 	defer os.Exit(1)
 	message := "Oh My Posh Error:\n\n" + err.Error()
+	if cfg.eval {
+		fmt.Printf("echo \"%s\"\n", message)
+		return
+	}
 	cfg.print(message)
 }
 

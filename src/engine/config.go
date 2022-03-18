@@ -43,6 +43,8 @@ type Config struct {
 	DebugPrompt          *ExtraPrompt  `json:"debug_prompt,omitempty"`
 	Palette              color.Palette `json:"palette,omitempty"`
 
+	Output string
+
 	format  string
 	origin  string
 	eval    bool
@@ -192,13 +194,17 @@ func (cfg *Config) Export(format string) string {
 func (cfg *Config) BackupAndMigrate(env environment.Environment) {
 	origin := cfg.backup()
 	cfg.Migrate(env)
-	cfg.Write()
+	cfg.Write(cfg.format)
 	cfg.print(fmt.Sprintf("\nOh My Posh config migrated to version %d\nBackup config available at %s\n\n", cfg.Version, origin))
 }
 
-func (cfg *Config) Write() {
-	content := cfg.Export(cfg.format)
-	f, err := os.OpenFile(cfg.origin, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+func (cfg *Config) Write(format string) {
+	content := cfg.Export(format)
+	destination := cfg.Output
+	if len(destination) == 0 {
+		destination = cfg.origin
+	}
+	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	cfg.exitWithError(err)
 	_, err = f.WriteString(content)
 	cfg.exitWithError(err)

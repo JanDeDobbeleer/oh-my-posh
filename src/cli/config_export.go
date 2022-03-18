@@ -8,8 +8,14 @@ import (
 	"fmt"
 	"oh-my-posh/engine"
 	"oh-my-posh/environment"
+	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
+)
+
+var (
+	output string
 )
 
 // exportCmd represents the export command
@@ -43,16 +49,34 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 		env.Init(false)
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
-		if write {
-			cfg.Write()
+		if len(output) == 0 {
+			fmt.Print(cfg.Export(format))
 			return
 		}
-		fmt.Print(cfg.Export(format))
+		cfg.Output = cleanOutputPath(output, env)
+		format := strings.TrimPrefix(filepath.Ext(output), ".")
+		if format == "yml" {
+			format = engine.YAML
+		}
+		cfg.Write(format)
 	},
 }
 
+func cleanOutputPath(path string, env environment.Environment) string {
+	if strings.HasPrefix(path, "~") {
+		path = strings.TrimPrefix(path, "~")
+		path = filepath.Join(env.Home(), path)
+	}
+	if !filepath.IsAbs(path) {
+		if absConfigFile, err := filepath.Abs(path); err == nil {
+			path = absConfigFile
+		}
+	}
+	return filepath.Clean(path)
+}
+
 func init() { // nolint:gochecknoinits
-	exportCmd.Flags().BoolVarP(&write, "write", "w", false, "write the migrated configuration back to the config file")
 	exportCmd.Flags().StringVarP(&format, "format", "f", "json", "configuration format to migrate to")
+	exportCmd.Flags().StringVarP(&output, "output", "o", "", "config file to export to")
 	configCmd.AddCommand(exportCmd)
 }

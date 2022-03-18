@@ -1,4 +1,13 @@
-# A prompt theme engine for any shell
+<!-- markdownlint-disable -->
+<p align="center">
+  <img
+    width="400"
+    src="https://raw.githubusercontent.com/jandedobbeleer/oh-my-posh/main/docs/static/img/logo.svg"
+    alt="Oh My Posh – Prompt theme engine for any shell"
+  />
+</p>
+<!-- markdownlint-enable -->
+<!-- markdownlint-disable first-header-h1 -->
 
 ![Release Status][release-status]
 
@@ -20,8 +29,8 @@ a modern and more efficient tool was needed to suit my personal needs.
 
 ## ❤ Support ❤
 
-[![Patreon][patreon-badge]][patreon]
-[![Liberapay][liberapay-badge]][liberapay]
+[![Swag][swag-badge]][swag]
+[![GitHub][github-badge]][github-sponsors]
 [![Ko-Fi][kofi-badge]][kofi]
 
 ## Features
@@ -55,10 +64,10 @@ using Go (and the amazing [README][powerline-go])
 [kraken]: https://img.shields.io/badge/GitKraken-Legendary%20Git%20Tools-teal?style=plastic&logo=gitkraken
 [kraken-ref]: https://www.gitkraken.com/invite/nQmDPR9D
 [oh-my-posh2]: https://github.com/JanDeDobbeleer/oh-my-posh2
-[patreon-badge]: https://img.shields.io/badge/Support-Become%20a%20Patreon!-red.svg
-[patreon]: https://www.patreon.com/jandedobbeleer
-[liberapay-badge]: https://img.shields.io/badge/Liberapay-Donate-%23f6c915.svg
-[liberapay]: https://liberapay.com/jandedobbeleer
+[swag-badge]: https://img.shields.io/badge/Swag-Get%20some!-blue
+[swag]: https://swag.ohmyposh.dev
+[github-badge]: https://img.shields.io/badge/-Sponsor-fafbfc?logo=GitHub%20Sponsors
+[github-sponsors]: https://github.com/sponsors/JanDeDobbeleer
 [kofi-badge]: https://img.shields.io/badge/Ko--fi-Buy%20me%20a%20coffee!-%2346b798.svg
 [kofi]: https://ko-fi.com/jandedobbeleer
 [docs-badge]: https://img.shields.io/badge/Docs-ohmyposh.dev-blue

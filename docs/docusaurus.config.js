@@ -36,6 +36,11 @@ module.exports = {
           position: "left",
         },
         {
+          href: "https://swag.ohmyposh.dev",
+          label: "Swag",
+          position: "left",
+        },
+        {
           href: "https://github.com/jandedobbeleer/oh-my-posh",
           className: 'header-github-link',
           'aria-label': 'GitHub repository',

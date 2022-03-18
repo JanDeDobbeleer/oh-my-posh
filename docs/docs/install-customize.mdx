@@ -7,6 +7,112 @@ sidebar_label: 💅🏼 Customize
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
+The standard prompt initialization sets Oh My Posh' [default theme][default-theme]. This configuration is downloaded
+and kept up-to-date with Oh My Posh' version every time the shell starts. To change/alter the configuration, you need to
+add the `--config` command-line option to change the configuration to use a specific file.
+
+The best place to get started is by looking at the [themes][themes], as these are predefined configurations to use/alter.
+To change to for example the [jandedobbeleer][jandedobbeleer] theme, alter the Oh My Posh init line to the following (assuming you
+downloaded the configuration file to your user's home folder):
+
+<Tabs
+  defaultValue="powershell"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'powershell', },
+    { label: 'cmd', value: 'cmd', },
+    { label: 'zsh', value: 'zsh', },
+    { label: 'bash', value: 'bash', },
+    { label: 'fish', value: 'fish', },
+    { label: 'nu', value: 'nu', },
+  ]
+}>
+<TabItem value="powershell">
+
+```powershell
+oh-my-posh prompt init pwsh --config ~/.jandedobbeleer.omp.json | Invoke-Expression
+```
+
+Once altered, reload your profile for the changes to take effect.
+
+```powershell
+. $PROFILE
+```
+
+</TabItem>
+<TabItem value="cmd">
+
+```lua title="oh-my-posh.lua"
+load(io.popen('oh-my-posh prompt init cmd --config ~/.jandedobbeleer.omp.json'):read("*a"))()
+```
+
+Once altered, restart cmd for the changes to take effect.
+
+</TabItem>
+<TabItem value="zsh">
+
+```bash
+eval "$(oh-my-posh prompt init zsh --config ~/.jandedobbeleer.omp.json)"
+```
+
+Once altered, reload your profile for the changes to take effect.
+
+```bash
+source ~/.zshrc
+```
+
+</TabItem>
+<TabItem value="bash">
+
+```bash
+eval "$(oh-my-posh prompt init bash --config ~/.jandedobbeleer.omp.json)"
+```
+
+Once altered, reload your profile for the changes to take effect.
+
+```bash
+exec bash
+```
+
+Or, when using `~/.profile`.
+
+```bash
+. ~/.profile
+```
+
+</TabItem>
+<TabItem value="fish">
+
+```bash
+oh-my-posh prompt init fish --config ~/.jandedobbeleer.omp.json | source
+```
+
+Once altered, reload your config for the changes to take effect.
+
+```bash
+. ~/.config/fish/config.fish
+```
+
+</TabItem>
+<TabItem value="nu">
+
+**Nu < 0.32.0**
+
+```bash
+config set prompt  "= `{{$(oh-my-posh prompt print primary --config ~/.jandedobbeleer.omp.json | str collect)}}`"
+```
+
+**Nu >= 0.32.0**
+
+```bash
+config set prompt  "(oh-my-posh prompt print primary --config ~/.jandedobbeleer.omp.json | str collect)"
+```
+
+Once altered, restart nu shell for the changes to take effect.
+
+</TabItem>
+</Tabs>
+
 :::tip
 When using oh-my-posh in Windows and the WSL, know that you can share your theme with the WSL by pointing to a theme in your
 Windows user's home folder.
@@ -14,19 +120,14 @@ Windows user's home folder.
 Inside the WSL, you can find your Windows user's home folder here: `/mnt/c/Users/<WINDOWSUSERNAME>`.
 :::
 
-### Change the theme
-
-We downloaded all the themes and set `jandedobbeleer.omp.json` as the one to use.
-However, there are [a lot more][themes] to be discovered and maybe there are some you like better.
-
 ### Override the theme settings
 
 Maybe there's a theme you like, but you don't fancy the colors. Or, maybe there's a segment you
 want to tweak/add, or replace some of the icons with a different one. Whatever the case, read through all
 available options first, by starting with the [configuration guide][configuration].
 
-You can output the current theme to the format you like (`json`, `yaml` or `toml`) which can be used to tweak
-and store as your custom theme.
+You can output the current theme (default, or set via `--config`) to the format you like (`json`, `yaml` or `toml`)
+which can be used to tweak and store as your own custom theme.
 
 <Tabs
   defaultValue="powershell"
@@ -113,10 +214,12 @@ Once adjusted, reload your config for the changes to take effect.
 :::tip
 The `--config` flag can accept either a local filepath or remotely hosted JSON.
 
-For example, the following is a valid `--config` flag:  
+For example, the following is a valid `--config` flag:
 `--config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json'`
 :::
 
 
 [themes]: themes.md
 [configuration]: config-overview.md
+[default-theme]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/default.omp.json
+[jandedobbeleer]: /docs/themes#jandedobbeleer

@@ -22,7 +22,7 @@ var migrateCmd = &cobra.Command{
 	Use:   "migrate",
 	Short: "Migrate your configuration",
 	Long: `Migrate your configuration
-You can choose to print the output to stdout, or migrate your configuration in the format of you choice.
+You can choose to print the output to stdout, or migrate your configuration in the format of your choice.
 
 Example usage
 

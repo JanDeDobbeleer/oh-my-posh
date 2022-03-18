@@ -23,7 +23,7 @@ var exportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export your configuration",
 	Long: `Export your configuration
-You can choose to print the output to stdout, or export your configuration in the format of you choice.
+You can choose to print the output to stdout, or export your configuration in the format of your choice.
 
 Example usage
 

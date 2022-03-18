@@ -65,8 +65,8 @@ func (env *ShellEnvironment) Platform() string {
 		env.Cache().Set(key, platform, -1)
 	}()
 	if wsl := env.Getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {
-		platform = strings.ToLower(wsl)
-		return strings.Split(platform, "-")[0]
+		platform = strings.Split(strings.ToLower(wsl), "-")[0]
+		return platform
 	}
 	platform, _, _, _ = host.PlatformInformation()
 	if platform == "arch" {

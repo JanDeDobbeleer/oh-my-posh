@@ -104,6 +104,8 @@ var printCmd = &cobra.Command{
 			fmt.Print(eng.PrintExtraPrompt(engine.Valid))
 		case "error":
 			fmt.Print(eng.PrintExtraPrompt(engine.Error))
+		default:
+			_ = cmd.Help()
 		}
 	},
 }

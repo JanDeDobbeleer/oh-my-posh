@@ -30,6 +30,7 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 			fmt.Println(cliVersion)
 			return
 		}
+		_ = cmd.Help()
 	},
 }
 

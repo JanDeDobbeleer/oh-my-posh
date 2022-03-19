@@ -37,8 +37,8 @@ This command is used to get the value of the following variables:
 			fmt.Print(time.Now().UnixNano() / 1000000)
 		case "shell":
 			fmt.Println(env.Shell())
-			// case "cache-path":
-			// 	fmt.Print(env.CachePath())
+		default:
+			_ = cmd.Help()
 		}
 	},
 }

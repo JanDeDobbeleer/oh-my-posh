@@ -15,17 +15,15 @@ import (
 // getCmd represents the get command
 var getCmd = &cobra.Command{
 	Use:   "get [shell|cache-path|millies]",
-	Short: "Get a value from the oh-my-posh configuration",
-	Long: `Get a value from the oh-my-posh configuration.
+	Short: "Get a value from oh-my-posh",
+	Long: `Get a value from oh-my-posh.
 This command is used to get the value of the following variables:
 
 - shell
-- cache-path
 - millis`,
 	ValidArgs: []string{
 		"millis",
 		"shell",
-		"cache-path",
 	},
 	Args: cobra.OnlyValidArgs,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -39,12 +37,12 @@ This command is used to get the value of the following variables:
 			fmt.Print(time.Now().UnixNano() / 1000000)
 		case "shell":
 			fmt.Println(env.Shell())
-		case "cache-path":
-			fmt.Print(env.CachePath())
+			// case "cache-path":
+			// 	fmt.Print(env.CachePath())
 		}
 	},
 }
 
 func init() { // nolint:gochecknoinits
-	configCmd.AddCommand(getCmd)
+	rootCmd.AddCommand(getCmd)
 }

@@ -37,7 +37,7 @@ local function os_clock_millis()
     if (clink.version_encoded or 0) >= 10020030 then
         return math.floor(os.clock() * 1000)
     else
-        local prompt_exe = string.format('%s config get millis', omp_exe())
+        local prompt_exe = string.format('%s get millis', omp_exe())
         return run_posh_command(prompt_exe)
     end
 end

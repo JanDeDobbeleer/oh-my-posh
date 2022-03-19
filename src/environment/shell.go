@@ -612,6 +612,7 @@ func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestM
 		env.log(Error, "HTTPRequest", err.Error())
 		return nil, err
 	}
+	env.log(Debug, "HTTPRequest", string(body))
 	return body, nil
 }
 

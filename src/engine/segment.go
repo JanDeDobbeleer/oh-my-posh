@@ -168,6 +168,8 @@ const (
 	NPM SegmentType = "npm"
 	// Project version
 	PROJECT SegmentType = "project"
+	// R version
+	R SegmentType = "r"
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
@@ -302,6 +304,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		KOTLIN:        &segments.Kotlin{},
 		SWIFT:         &segments.Swift{},
 		CDS:           &segments.Cds{},
+		R:             &segments.R{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)

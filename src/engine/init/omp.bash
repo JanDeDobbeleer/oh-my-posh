@@ -10,7 +10,7 @@ if [[ ! -d "/tmp" ]]; then
 fi
 
 # start timer on command start
-PS0='$(::OMP:: config get millis > "$TIMER_START")'
+PS0='$(::OMP:: get millis > "$TIMER_START")'
 # set secondary prompt
 PS2="$(::OMP:: prompt print secondary --config="$POSH_THEME" --shell=bash)"
 
@@ -20,7 +20,7 @@ function _omp_hook() {
     omp_stack_count=$((${#DIRSTACK[@]} - 1))
     omp_elapsed=-1
     if [[ -f "$TIMER_START" ]]; then
-        omp_now=$(::OMP:: config get millis)
+        omp_now=$(::OMP:: get millis)
         omp_start_time=$(cat "$TIMER_START")
         omp_elapsed=$((omp_now-omp_start_time))
         rm -f "$TIMER_START"

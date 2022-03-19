@@ -86,6 +86,7 @@ module.exports = {
         "plastic",
         "project",
         "python",
+        "r",
         "root",
         "ruby",
         "rust",

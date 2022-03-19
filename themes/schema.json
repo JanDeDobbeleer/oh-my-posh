@@ -200,7 +200,8 @@
             "kotlin",
             "swift",
             "npm",
-            "project"
+            "project",
+            "r"
           ]
         },
         "style": {
@@ -2078,6 +2079,32 @@
           "then": {
             "title": "CDS (SAP CAP) segment",
             "description": "https://ohmyposh.dev/docs/cds",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "r" }
+            }
+          },
+          "then": {
+            "title": "R Segment",
+            "description": "https://ohmyposh.dev/docs/r",
             "properties": {
               "properties": {
                 "properties": {

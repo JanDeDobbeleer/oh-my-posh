@@ -95,3 +95,26 @@ div.admonition.admonition-tip.alert.alert--success {
   background-color: #3e8fb0;
   border-color: #3e8fb0;
 }
+
+iframe.youtube {
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+@media screen and (max-width: 350px) {
+  iframe.youtube {
+     height: 200px;
+  }
+}
+
+@media screen and (min-width: 350px) {
+  iframe.youtube {
+     height: 300px;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  iframe.youtube {
+     height: 400px;
+  }
+}

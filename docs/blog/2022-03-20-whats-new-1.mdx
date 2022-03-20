@@ -1,0 +1,117 @@
+---
+title: "What's new #1"
+description: "What's new #1"
+slug: whats-new-1
+authors:
+- name: Jan De Dobbeleer
+  title: Maintainer
+  url: https://github.com/jandedobbeleer
+  image_url: https://avatars.githubusercontent.com/u/2492783?v=4
+tags: [weekly, ohmyposh]
+hide_table_of_contents: false
+---
+
+What a week it’s been! Oh My Posh turned 6 years old and we dropped a ton of stuff!
+
+<!--truncate-->
+## Swag
+
+After seeing Scott Hanselman wear his oh my zsh shirt while we got to talk about
+Oh My posh on [Windows Wednesdays] [windows-wednesdays], I got the sudden urge to expand his wardrobe.
+
+<iframe class="youtube" src="https://www.youtube.com/embed/uO_F5W2LbSk" frameborder="0" allowfullscreen></iframe>
+
+And so, we did. Got in touch with [Marc Duiker][marc] and we got to work. The result? A ton of new goodies.
+Consider this to be **the first artist series** for Oh My posh, a way to also highlight some talented
+people in the community. All profits go to the development of the project and artists also get a 20% royalty
+per item sold. If you know any interesting artists to work with for the next batch, be sure to let me know!
+
+So, what are you waiting for? Get some!
+
+- [Shirts][shirts]
+- [Stickers][stickers]
+
+## Features
+
+### CLI interface
+
+Something I've been sleeping on for a long time, Oh My posh finally has a new CLI interface.
+Starting out I had no experience in Go, nor any idea on how to create a proper CLI interface.
+Over the years the interface grew, but **_not in a very sustainable way_**, it was a chain of if statements
+which was a bit of a pain to support.
+
+You can now interact with Oh my Posh via an interface powered by [Cobra][cobra]. Not only does this
+bring maintainability and extensibility, it at once introduces a few added features.
+
+#### Init
+
+If you paid attention to the evolution of the `init` functionality which automatically supercharges
+your prompt, you might have noticed I was always trying to make it easier for anyone to get started. When working on the
+[shirts][shirts] with Marc, it hit me we didn't really have an identifiable prompt as a first time
+experience. So, as of [7.42.0][7.42.0] Oh My Posh can initialize your prompt without specifying the
+`--config` flag. Because we have no way to know how you installed Oh My Posh, and if you have themes
+installed locally, we download the default theme, cache and use it to get you up and running right there.
+
+When using PowerShell for example, this is all it takes from now on:
+
+```powershell
+oh-my-posh prompt init pwsh | Invoke-Expression
+```
+
+:::info remote config
+In case you missed it, as I haven't really done these updates before, you can also use
+a remote config file nowadays. Also **triggered by Scott Hanselman** who uses multiple devices
+but still wants the same, seamless experience everywhere. I'm sure he's not alone 😄.
+:::
+
+#### Export config
+
+While this functionality was already present, you can now also save the current config to a new
+file in the format of your choice. Combining that with the new initialization above, new users can
+right away save the default config elsewhere and tweak it to make it their own.
+
+```powershell
+
+oh-my-posh config export --output=~/.mytheme.omp.json
+
+```
+
+#### Edit
+
+Putting things together, all we needed additionally was a way to edit the config.
+
+```powershell
+
+oh-my-posh config edit
+
+```
+
+Almost feels natural right?
+
+### RRRRRRR Matey!
+
+Thanks to [Jed Willick][jed], who's already been on a roll for a while adding segments to Oh My Posh,
+we now have a [segment][r-segment] for [R][r] 🏴‍☠️. Read all about it [here][r-segment].
+
+## Bug fixes
+
+Obviously, nothing is perfect. But we aim to be! The following issues have been found and fixed:
+
+- We now display the right distro name in WSL
+- The poshgit prompt is now disabled when using Oh My Posh
+- Terminal titles are stripped from ANSI escape sequences, otherwise they are not displayed correctly
+- The config file now also works with the `.yml` extension and not only `.yaml`
+
+That's it for this week, I'll try to keep this up 🤞🏻.
+
+_Keep that prompt posh everyone! _
+
+[windows-wednesdays]: https://devblogs.microsoft.com/commandline/windows-wednesday/
+[marc]: https://twitter.com/marcduiker
+[shirts]: https://swag.ohmyposh.dev
+[stickers]: https://pimpyourowndevice.com/community/
+[cobra]: https://github.com/spf13/cobra
+[7.42.0]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v7.42.0
+[jed]: https://github.com/jedwillick
+[r-segment]: https://ohmyposh.dev/docs/r
+[r]: https://www.r-project.org/about.html

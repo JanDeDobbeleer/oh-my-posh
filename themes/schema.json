@@ -201,7 +201,10 @@
             "swift",
             "npm",
             "project",
-            "r"
+            "r",
+            "cds",
+            "cf",
+            "cftarget"
           ]
         },
         "style": {

@@ -43,6 +43,7 @@ type AzureSubscription struct {
 
 type AzureUser struct {
 	Name string `json:"name"`
+	Type string `json:"type"`
 }
 
 type AzurePowerShellConfig struct {
@@ -166,6 +167,7 @@ func (a *Az) getModuleSubscription() bool {
 	a.State = defaultContext.Subscription.State
 	a.User = &AzureUser{
 		Name: defaultContext.Subscription.ExtendedProperties.Account,
+		Type: defaultContext.Account.Type,
 	}
 	a.Origin = "PWSH"
 	return true

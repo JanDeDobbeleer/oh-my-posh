@@ -97,6 +97,14 @@ func TestAzSegment(t *testing.T) {
 			Template:        "{{ .EnvironmentName }}",
 			Source:          pwsh,
 		},
+		{
+			Case:            "Az CLI account type",
+			ExpectedEnabled: true,
+			ExpectedString:  "user",
+			Template:        "{{ .User.Type }}",
+			HasCLI:          true,
+			Source:          cli,
+		},
 	}
 
 	for _, tc := range cases {

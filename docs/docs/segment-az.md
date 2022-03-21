@@ -42,14 +42,15 @@ Display the currently active Azure subscription information.
 
 ### Properties
 
-- `.EnvironmentName`: `string` - the account environment name
-- `.HomeTenantID`: `string` - the home tenant id
-- `.ID`: `string` - the account/subscription id
+- `.EnvironmentName`: `string` - account environment name
+- `.HomeTenantID`: `string` - home tenant id
+- `.ID`: `string` - account/subscription id
 - `.IsDefault`: `boolean` - is the default account or not
-- `.Name`: `string` - the account name
-- `.State`: `string` - the account state
-- `.TenantID`: `string` - the tenant id
-- `.User.Name`: `string` - the user name
+- `.Name`: `string` - account name
+- `.State`: `string` - account state
+- `.TenantID`: `string` - tenant id
+- `.User.Name`: `string` - user name
+- `.User.Type`: `string` - user type
 - `.Origin`: `string` - where we received the information from, can be `CLI` or `PWSH`
 
 [templates]: /docs/config-templates

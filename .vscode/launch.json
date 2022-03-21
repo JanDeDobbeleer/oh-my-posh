@@ -122,6 +122,16 @@
       "request": "attach",
       "port": 9229,
       "preDebugTask": "func: host start"
-    }
+    },
+    {
+      "name": "Debug CLI(cache)",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "cache",
+      ]
+    },
   ]
 }

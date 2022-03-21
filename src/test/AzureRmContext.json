@@ -5,7 +5,7 @@
     "My Azure Subscription (subscription_id) - tenant_id - user_name": {
       "Account": {
         "Id": "232-232-232-232",
-        "Type": "User",
+        "Type": "user",
         "TenantMap": {},
         "ExtendedProperties": {
           "Subscriptions": "subscription_ids",

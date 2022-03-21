@@ -22,7 +22,7 @@ func (s *Spotify) Enabled() bool {
 
 func (s *Spotify) parseWebSpotifyTitle(windowTitle string) bool {
 	windowTitle = strings.TrimPrefix(windowTitle, "Spotify - ")
-	return s.parseSpotifyTitle(windowTitle, " · ")
+	return s.parseSpotifyTitle(windowTitle, " • ")
 }
 
 func (s *Spotify) parseSpotifyTitle(windowTitle, separator string) bool {

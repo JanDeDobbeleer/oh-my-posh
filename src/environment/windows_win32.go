@@ -29,7 +29,7 @@ var (
 // enumWindows call enumWindows from user32 and returns all active windows
 // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindows
 func enumWindows(enumFunc, lparam uintptr) (err error) {
-	r1, _, e1 := syscall.Syscall(procEnumWindows.Addr(), 2, enumFunc, lparam, 0)
+	r1, _, e1 := syscall.SyscallN(procEnumWindows.Addr(), enumFunc, lparam, 0)
 	if r1 == 0 {
 		if e1 != 0 {
 			err = error(e1)
@@ -43,7 +43,7 @@ func enumWindows(enumFunc, lparam uintptr) (err error) {
 // getWindowText returns the title and text of a window from a window handle
 // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getwindowtextw
 func getWindowText(hwnd syscall.Handle, str *uint16, maxCount int32) (length int32, err error) {
-	r0, _, e1 := syscall.Syscall(procGetWindowTextW.Addr(), 3, uintptr(hwnd), uintptr(unsafe.Pointer(str)), uintptr(maxCount))
+	r0, _, e1 := syscall.SyscallN(procGetWindowTextW.Addr(), uintptr(hwnd), uintptr(unsafe.Pointer(str)), uintptr(maxCount))
 	length = int32(r0)
 	if length == 0 {
 		if e1 != 0 {

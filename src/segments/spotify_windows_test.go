@@ -58,7 +58,7 @@ func TestSpotifyWindowsPWA(t *testing.T) {
 			Case:            "Playing",
 			ExpectedString:  "\ue602 Snow in Stockholm - Sarah, the Illstrumentalist",
 			ExpectedEnabled: true,
-			Title:           "Spotify - Snow in Stockholm · Sarah, the Illstrumentalist",
+			Title:           "Spotify - Snow in Stockholm • Sarah, the Illstrumentalist",
 		},
 		{
 			Case:            "Stopped",

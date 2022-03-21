@@ -15,7 +15,7 @@ import (
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/json"
 	"github.com/gookit/config/v2/toml"
-	"github.com/gookit/config/v2/yaml"
+	yaml "github.com/gookit/config/v2/yamlv3"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -181,13 +181,11 @@ func (cfg *Config) Export(format string) string {
 
 	_, err := config.DumpTo(&result, cfg.format)
 	cfg.exitWithError(err)
-	var prefix string
-	switch cfg.format {
-	case YAML:
-		prefix = "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-	case TOML:
-		prefix = "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
+	if cfg.format == YAML {
+		prefix := "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
+		return prefix + result.String()
 	}
+	prefix := "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 	return prefix + escapeGlyphs(result.String())
 }
 

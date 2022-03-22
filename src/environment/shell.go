@@ -246,7 +246,7 @@ func (env *ShellEnvironment) resolveConfigPath() {
 	}
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
-	if env.Platform() == WindowsPlatform && env.Shell() == "bash" {
+	if env.Platform() == WindowsPlatform && env.Shell() == "constants.BASH" {
 		return
 	}
 	configFile := env.CmdFlags.Config

@@ -6,8 +6,8 @@ package cli
 
 import (
 	"fmt"
-	"oh-my-posh/engine"
 	"oh-my-posh/environment"
+	"oh-my-posh/shell"
 
 	"github.com/spf13/cobra"
 )
@@ -41,21 +41,21 @@ func init() { // nolint:gochecknoinits
 	promptCmd.AddCommand(initCmd)
 }
 
-func runInit(shell string) {
+func runInit(shellName string) {
 	env := &environment.ShellEnvironment{
 		Version: cliVersion,
 		CmdFlags: &environment.Flags{
-			Shell:  shell,
+			Shell:  shellName,
 			Config: config,
 		},
 	}
 	env.Init(false)
 	defer env.Close()
 	if print {
-		init := engine.PrintShellInit(env)
+		init := shell.PrintInit(env)
 		fmt.Print(init)
 		return
 	}
-	init := engine.InitShell(env)
+	init := shell.Init(env)
 	fmt.Print(init)
 }

@@ -10,6 +10,7 @@ import (
 	"oh-my-posh/console"
 	"oh-my-posh/engine"
 	"oh-my-posh/environment"
+	"oh-my-posh/shell"
 
 	"github.com/spf13/cobra"
 )
@@ -44,7 +45,7 @@ You can tweak the output by using additional flags:
 			Version: cliVersion,
 			CmdFlags: &environment.Flags{
 				Config: config,
-				Shell:  "shell",
+				Shell:  shell.PLAIN,
 			},
 		}
 		env.Init(false)
@@ -55,7 +56,7 @@ You can tweak the output by using additional flags:
 		writerColors := cfg.MakeColors(env)
 		writer := &color.AnsiWriter{
 			Ansi:               ansi,
-			TerminalBackground: engine.GetConsoleBackgroundColor(env, cfg.TerminalBackground),
+			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
 		}
 		consoleTitle := &console.Title{

@@ -5,6 +5,7 @@ import (
 	"oh-my-posh/color"
 	"oh-my-posh/console"
 	"oh-my-posh/environment"
+	"oh-my-posh/shell"
 	"oh-my-posh/template"
 	"strings"
 	"time"
@@ -105,7 +106,7 @@ func (e *Engine) shouldFill(block *Block, length int) (string, bool) {
 func (e *Engine) renderBlock(block *Block) {
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
-	if block.Type == RPrompt && e.Env.Shell() == bash {
+	if block.Type == RPrompt && e.Env.Shell() == shell.BASH {
 		block.initPlain(e.Env, e.Config)
 	} else {
 		block.init(e.Env, e.Writer, e.Ansi)
@@ -145,7 +146,7 @@ func (e *Engine) renderBlock(block *Block) {
 	case RPrompt:
 		text, length := block.renderSegments()
 		e.rpromptLength = length
-		if e.Env.Shell() == bash {
+		if e.Env.Shell() == shell.BASH {
 			text = e.Ansi.FormatText(text)
 		}
 		e.rprompt = text
@@ -154,7 +155,7 @@ func (e *Engine) renderBlock(block *Block) {
 	// If this doesn't happen, the portion after the prompt gets colored in the background
 	// color of the line above the new input line. Clearing the line fixes this,
 	// but can hopefully one day be removed when this is resolved natively.
-	if e.Env.Shell() == pwsh || e.Env.Shell() == powershell5 {
+	if e.Env.Shell() == shell.PWSH || e.Env.Shell() == shell.PWSH5 {
 		e.writeANSI(e.Ansi.ClearAfter())
 	}
 }
@@ -205,7 +206,7 @@ func (e *Engine) PrintDebug(version string) string {
 
 func (e *Engine) print() string {
 	switch e.Env.Shell() {
-	case zsh:
+	case shell.ZSH:
 		if !e.Env.Flags().Eval {
 			break
 		}
@@ -213,7 +214,7 @@ func (e *Engine) print() string {
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), "\"", "\"\""))
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
-	case pwsh, powershell5, bash, plain:
+	case shell.PWSH, shell.PWSH5, shell.BASH, shell.PLAIN:
 		if e.rprompt == "" || !e.canWriteRPrompt() || e.Plain {
 			break
 		}
@@ -252,11 +253,11 @@ func (e *Engine) PrintTooltip(tip string) string {
 		Segments:  []*Segment{tooltip},
 	}
 	switch e.Env.Shell() {
-	case zsh, winCMD:
+	case shell.ZSH, shell.CMD:
 		block.init(e.Env, e.Writer, e.Ansi)
 		text, _ := block.renderSegments()
 		return text
-	case pwsh, powershell5:
+	case shell.PWSH, shell.PWSH5:
 		block.initPlain(e.Env, e.Config)
 		text, length := block.renderSegments()
 		e.write(e.Ansi.ClearAfter())
@@ -321,7 +322,7 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 	e.Writer.SetColors(prompt.Background, prompt.Foreground)
 	e.Writer.Write(prompt.Background, prompt.Foreground, promptText)
 	switch e.Env.Shell() {
-	case zsh:
+	case shell.ZSH:
 		// escape double quotes contained in the prompt
 		str, _ := e.Writer.String()
 		if promptType == Transient {
@@ -331,7 +332,7 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 			return prompt
 		}
 		return str
-	case pwsh, powershell5, winCMD, bash:
+	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH:
 		str, _ := e.Writer.String()
 		return str
 	}

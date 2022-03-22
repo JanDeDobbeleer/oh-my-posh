@@ -178,6 +178,7 @@ function global:Enable-PoshTooltips {
         $command = $null
         $cursor = $null
         [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
+        $command = $command -replace "`"", "'"
         $standardOut = @(&$omp prompt print tooltip --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --command="$command" 2>&1)
         Write-Host $standardOut -NoNewline
         $host.UI.RawUI.CursorPosition = $position

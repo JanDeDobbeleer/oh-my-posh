@@ -253,7 +253,7 @@ func (e *Engine) PrintTooltip(tip string) string {
 		Segments:  []*Segment{tooltip},
 	}
 	switch e.Env.Shell() {
-	case shell.ZSH, shell.CMD:
+	case shell.ZSH, shell.CMD, shell.FISH:
 		block.init(e.Env, e.Writer, e.Ansi)
 		text, _ := block.renderSegments()
 		return text
@@ -266,7 +266,7 @@ func (e *Engine) PrintTooltip(tip string) string {
 		e.write(text)
 		return e.string()
 	}
-	return ""
+	return " "
 }
 
 type ExtraPromptType int

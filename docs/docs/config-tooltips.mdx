@@ -8,7 +8,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
 :::info
-Due to limitations (or not having found a way just yet), this feature only works in `zsh`, `powershell` and `cmd` (as of [clink][clink] version v1.2.46) for
+Due to limitations (or not having found a way just yet), this feature only works in `fish`, `zsh`, `powershell` and `cmd` (as of [clink][clink] version v1.2.46) for
 the time being.
 :::
 
@@ -61,6 +61,7 @@ are being explored.
   values={[
     { label: 'powershell', value: 'pwsh', },
     { label: 'zsh', value: 'zsh', },
+    { label: 'fish', value: 'fish', },
   ]
 }>
 <TabItem value="pwsh">
@@ -91,6 +92,17 @@ enable_poshtooltips
 ```
 
 Restart your shell or reload `.zshrc` using `exec zsh` for the changes to take effect.
+
+</TabItem>
+<TabItem value="fish">
+
+Invoke Oh My Posh in `~/.config/fish/config.fish` and add the following line below:
+
+```bash
+enable_poshtooltips
+```
+
+Restart your shell or reload fish using `exec fish` for the changes to take effect.
 
 </TabItem>
 </Tabs>

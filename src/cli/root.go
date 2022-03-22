@@ -23,7 +23,7 @@ experience, regardless of where you are. For a detailed guide
 on getting started, have a look at the docs at https://ohmyposh.dev`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if initialize {
-			runInit(shell)
+			runInit(shellName)
 			return
 		}
 		if displayVersion {
@@ -44,7 +44,7 @@ func Execute(version string) {
 
 // Backwards compatibility
 var (
-	shell      string
+	shellName  string
 	initialize bool
 )
 
@@ -52,5 +52,5 @@ func init() { // nolint:gochecknoinits
 	rootCmd.PersistentFlags().StringVarP(&config, "config", "c", "", "config (required)")
 	rootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init (deprecated)")
 	rootCmd.Flags().BoolVar(&displayVersion, "version", false, "version")
-	rootCmd.Flags().StringVarP(&shell, "shell", "s", "", "shell (deprecated)")
+	rootCmd.Flags().StringVarP(&shellName, "shell", "s", "", "shell (deprecated)")
 }

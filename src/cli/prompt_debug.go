@@ -10,6 +10,7 @@ import (
 	"oh-my-posh/console"
 	"oh-my-posh/engine"
 	"oh-my-posh/environment"
+	"oh-my-posh/shell"
 
 	"github.com/spf13/cobra"
 )
@@ -34,7 +35,7 @@ var debugCmd = &cobra.Command{
 		writerColors := cfg.MakeColors(env)
 		writer := &color.AnsiWriter{
 			Ansi:               ansi,
-			TerminalBackground: engine.GetConsoleBackgroundColor(env, cfg.TerminalBackground),
+			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
 		}
 		consoleTitle := &console.Title{

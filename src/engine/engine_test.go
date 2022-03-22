@@ -6,6 +6,7 @@ import (
 	"oh-my-posh/console"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/shell"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -61,7 +62,7 @@ func engineRender() {
 	writerColors := cfg.MakeColors(env)
 	writer := &color.AnsiWriter{
 		Ansi:               ansi,
-		TerminalBackground: GetConsoleBackgroundColor(env, cfg.TerminalBackground),
+		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 		AnsiColors:         writerColors,
 	}
 	consoleTitle := &console.Title{

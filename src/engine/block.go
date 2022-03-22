@@ -3,6 +3,7 @@ package engine
 import (
 	"oh-my-posh/color"
 	"oh-my-posh/environment"
+	"oh-my-posh/shell"
 	"sync"
 	"time"
 )
@@ -51,10 +52,10 @@ func (b *Block) init(env environment.Environment, writer color.Writer, ansi *col
 
 func (b *Block) initPlain(env environment.Environment, config *Config) {
 	b.ansi = &color.Ansi{}
-	b.ansi.Init(plain)
+	b.ansi.Init(shell.PLAIN)
 	b.writer = &color.AnsiWriter{
 		Ansi:               b.ansi,
-		TerminalBackground: GetConsoleBackgroundColor(env, config.TerminalBackground),
+		TerminalBackground: shell.ConsoleBackgroundColor(env, config.TerminalBackground),
 		AnsiColors:         config.MakeColors(env),
 	}
 	b.env = env

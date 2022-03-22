@@ -3,14 +3,11 @@ package color
 import (
 	"fmt"
 	"oh-my-posh/regex"
+	"oh-my-posh/shell"
 	"strings"
 )
 
 const (
-	zsh  = "zsh"
-	bash = "bash"
-	pwsh = "pwsh"
-
 	AnsiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 )
 
@@ -48,10 +45,10 @@ type shellKeyWordReplacement struct {
 	replacement string
 }
 
-func (a *Ansi) Init(shell string) {
-	a.shell = shell
-	switch shell {
-	case zsh:
+func (a *Ansi) Init(shellName string) {
+	a.shell = shellName
+	switch shellName {
+	case shell.ZSH:
 		a.format = "%%{%s%%}"
 		a.linechange = "%%{\x1b[%d%s%%}"
 		a.right = "%%{\x1b[%dC%%}"
@@ -78,7 +75,7 @@ func (a *Ansi) Init(shell string) {
 		a.strikethrough = "%%{\x1b[9m%%}%s%%{\x1b[29m%%}"
 		// escape double quotes and variable expansion
 		a.shellReservedKeywords = append(a.shellReservedKeywords, shellKeyWordReplacement{"\\", "\\\\"}, shellKeyWordReplacement{"%", "%%"})
-	case bash:
+	case shell.BASH:
 		a.format = "\\[%s\\]"
 		a.linechange = "\\[\x1b[%d%s\\]"
 		a.right = "\\[\x1b[%dC\\]"

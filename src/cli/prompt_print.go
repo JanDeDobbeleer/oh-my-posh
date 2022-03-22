@@ -10,6 +10,7 @@ import (
 	"oh-my-posh/console"
 	"oh-my-posh/engine"
 	"oh-my-posh/environment"
+	"oh-my-posh/shell"
 
 	"github.com/spf13/cobra"
 )
@@ -55,7 +56,7 @@ var printCmd = &cobra.Command{
 				StackCount:    stackCount,
 				TerminalWidth: terminalWidth,
 				Eval:          eval,
-				Shell:         shell,
+				Shell:         shellName,
 			},
 		}
 		env.Init(false)
@@ -70,7 +71,7 @@ var printCmd = &cobra.Command{
 			writerColors := cfg.MakeColors(env)
 			writer = &color.AnsiWriter{
 				Ansi:               ansi,
-				TerminalBackground: engine.GetConsoleBackgroundColor(env, cfg.TerminalBackground),
+				TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 				AnsiColors:         writerColors,
 			}
 		}
@@ -113,7 +114,7 @@ var printCmd = &cobra.Command{
 func init() { // nolint:gochecknoinits
 	printCmd.Flags().StringVar(&pwd, "pwd", "", "current working directory")
 	printCmd.Flags().StringVar(&pswd, "pswd", "", "current working directory (according to pwsh)")
-	printCmd.Flags().StringVar(&shell, "shell", "", "the shell to print for")
+	printCmd.Flags().StringVar(&shellName, "shell", "", "the shell to print for")
 	printCmd.Flags().IntVarP(&exitCode, "error", "e", 0, "last exit code")
 	printCmd.Flags().Float64Var(&timing, "execution-time", 0, "timing of the last command")
 	printCmd.Flags().IntVarP(&stackCount, "stack-count", "s", 0, "number of locations on the stack")

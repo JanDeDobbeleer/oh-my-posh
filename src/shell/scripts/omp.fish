@@ -1,28 +1,38 @@
-set -g POSH_THEME "::CONFIG::"
-set -g POWERLINE_COMMAND "oh-my-posh"
-set -g CONDA_PROMPT_MODIFIER false
-set -g omp_tooltip_command ""
+set --global POSH_THEME "::CONFIG::"
+set --global POWERLINE_COMMAND "oh-my-posh"
+set --global CONDA_PROMPT_MODIFIER false
+set --global omp_tooltip_command ""
+set --global omp_transient 0
 
 function fish_prompt
-    set -g omp_status_cache $status
-    set -g omp_stack_count (count $dirstack)
-    set -g omp_duration "$CMD_DURATION$cmd_duration"
+    if test "$omp_transient" = "1"
+      ::OMP:: prompt print transient --config $POSH_THEME --shell fish
+      return
+    end
+    set --global omp_status_cache $status
+    set --global omp_stack_count (count $dirstack)
+    set --global omp_duration "$CMD_DURATION$cmd_duration"
     # check if variable set, < 3.2 case
-    if set -q omp_lastcommand; and test "$omp_lastcommand" = ""
+    if set --query omp_lastcommand; and test "$omp_lastcommand" = ""
       set omp_duration 0
     end
     # works with fish >=3.2
-    if set -q omp_last_status_generation; and test "$omp_last_status_generation" = "$status_generation"
+    if set --query omp_last_status_generation; and test "$omp_last_status_generation" = "$status_generation"
       set omp_duration 0
     end
-    if set -q status_generation
-      set -gx omp_last_status_generation $status_generation
+    if set --query status_generation
+      set --global --export omp_last_status_generation $status_generation
     end
 
     ::OMP:: prompt print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
 end
 
 function fish_right_prompt
+    if test "$omp_transient" = "1"
+      echo -n ""
+      set omp_transient 0
+      return
+    end
     if test -n "$omp_tooltip_command"
       ::OMP:: prompt print tooltip --config $POSH_THEME --shell fish --command $omp_tooltip_command
       set omp_tooltip_command ""
@@ -34,7 +44,7 @@ end
 function postexec_omp --on-event fish_postexec
   # works with fish <3.2
   # pre and postexec not fired for empty command in fish >=3.2
-  set -gx omp_lastcommand $argv
+  set --global --export omp_lastcommand $argv
 end
 
 # tooltip
@@ -47,4 +57,16 @@ end
 
 function enable_poshtooltips
   bind \x20 _render_tooltip
+end
+
+# transient prompt
+
+function _render_transient
+  set omp_transient 1
+  commandline --function repaint
+  commandline --function execute
+end
+
+function enable_poshtransientprompt
+  bind \r _render_transient
 end

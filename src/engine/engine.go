@@ -332,7 +332,7 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 			return prompt
 		}
 		return str
-	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH:
+	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH, shell.FISH:
 		str, _ := e.Writer.String()
 		return str
 	}

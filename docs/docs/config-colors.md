@@ -25,6 +25,34 @@ Oh My Posh supports multiple different color references, being:
 
   `darkGray` `lightRed` `lightGreen` `lightYellow` `lightBlue` `lightMagenta` `lightCyan` `lightWhite`
 
+## Color templates
+
+Array of string templates to define the color based on the current context.
+Under the hood this uses go's [text/template][go-text-template] feature extended with [sprig][sprig] and
+offers a few standard properties to work with. For segments, you can look at the **Template Properties**
+section in the documentation. The general template properties are listed [here][template-properties].
+
+The following sample is based on the [AWS Segment][aws].
+
+```json
+{
+  "type": "aws",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#111111",
+  "foreground_templates": [
+    "{{if contains \"default\" .Profile}}#FFA400{{end}}",
+    "{{if contains \"jan\" .Profile}}#f1184c{{end}}"
+  ]
+}
+```
+
+The logic is as follows: when `foreground_templates` contains an array, we will check every template line until there's
+one that returns a non-empty string. So, when the contents of `.Profile` contain the word `default`, the first template
+returns `#FFA400` and that's the color that will be used. If it contains `jan`, it returns `#f1184c`. When none of the
+templates returns a value, the foreground value `#ffffff` is used as a fallback value.
+
 ## Color overrides
 
 You have the ability to override the foreground and/or background color for text in any property that accepts it.
@@ -164,3 +192,5 @@ For example, `p:foreground` and `p:background` will be correctly set to "#CAF0F8
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [git]: /docs/segment-git
 [battery]: /docs/segment-battery
+[template-properties]: /docs/config-templates#global-properties
+[aws]: /docs/aws

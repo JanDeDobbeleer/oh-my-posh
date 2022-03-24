@@ -72,8 +72,10 @@
           "type": "string",
           "title": "Prompt Template"
         },
+        "foreground": { "$ref": "#/definitions/color" },
+        "foreground_templates": { "$ref": "#/definitions/color_templates" },
         "background": { "$ref": "#/definitions/color" },
-        "foreground": { "$ref": "#/definitions/color" }
+        "background_templates": { "$ref": "#/definitions/color_templates" }
       }
     },
     "block": {

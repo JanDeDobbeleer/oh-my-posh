@@ -261,11 +261,30 @@ func (env *ShellEnvironment) resolveConfigPath() {
 }
 
 func (env *ShellEnvironment) getConfigPath(location string) {
+	configFileName := fmt.Sprintf("%s.omp.json", env.Version)
+	configPath := filepath.Join(env.CachePath(), configFileName)
+	if env.HasFilesInDir(env.CachePath(), configFileName) {
+		env.CmdFlags.Config = configPath
+		return
+	}
+	// clean old config files
+	cleanCacheDir := func() {
+		dir, err := ioutil.ReadDir(env.CachePath())
+		if err != nil {
+			return
+		}
+		for _, file := range dir {
+			if strings.HasSuffix(file.Name(), ".omp.json") {
+				os.Remove(filepath.Join(env.CachePath(), file.Name()))
+			}
+		}
+	}
+	cleanCacheDir()
+
 	cfg, err := env.HTTPRequest(location, 5000)
 	if err != nil {
 		return
 	}
-	configPath := filepath.Join(env.CachePath(), "config.omp.json")
 	out, err := os.Create(configPath)
 	if err != nil {
 		return

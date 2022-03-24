@@ -294,7 +294,7 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 		prompt = e.Config.SecondaryPrompt
 	}
 	if prompt == nil {
-		return ""
+		prompt = &ExtraPrompt{}
 	}
 	getTemplate := func(template string) string {
 		if len(template) != 0 {

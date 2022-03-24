@@ -3,6 +3,7 @@ package engine
 import (
 	"errors"
 	"fmt"
+	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/segments"
@@ -14,18 +15,18 @@ import (
 
 // Segment represent a single segment and it's configuration
 type Segment struct {
-	Type                SegmentType    `json:"type,omitempty"`
-	Tips                []string       `json:"tips,omitempty"`
-	Style               SegmentStyle   `json:"style,omitempty"`
-	PowerlineSymbol     string         `json:"powerline_symbol,omitempty"`
-	InvertPowerline     bool           `json:"invert_powerline,omitempty"`
-	Foreground          string         `json:"foreground,omitempty"`
-	ForegroundTemplates []string       `json:"foreground_templates,omitempty"`
-	Background          string         `json:"background,omitempty"`
-	BackgroundTemplates []string       `json:"background_templates,omitempty"`
-	LeadingDiamond      string         `json:"leading_diamond,omitempty"`
-	TrailingDiamond     string         `json:"trailing_diamond,omitempty"`
-	Properties          properties.Map `json:"properties,omitempty"`
+	Type                SegmentType     `json:"type,omitempty"`
+	Tips                []string        `json:"tips,omitempty"`
+	Style               SegmentStyle    `json:"style,omitempty"`
+	PowerlineSymbol     string          `json:"powerline_symbol,omitempty"`
+	InvertPowerline     bool            `json:"invert_powerline,omitempty"`
+	Foreground          string          `json:"foreground,omitempty"`
+	ForegroundTemplates color.Templates `json:"foreground_templates,omitempty"`
+	Background          string          `json:"background,omitempty"`
+	BackgroundTemplates color.Templates `json:"background_templates,omitempty"`
+	LeadingDiamond      string          `json:"leading_diamond,omitempty"`
+	TrailingDiamond     string          `json:"trailing_diamond,omitempty"`
+	Properties          properties.Map  `json:"properties,omitempty"`
 
 	writer          SegmentWriter
 	text            string
@@ -207,25 +208,6 @@ func (segment *Segment) cwdExcluded() bool {
 	return environment.DirMatchesOneOf(segment.env, segment.env.Pwd(), list)
 }
 
-func (segment *Segment) getColor(templates []string, defaultColor string) string {
-	if len(templates) == 0 {
-		return defaultColor
-	}
-	txtTemplate := &template.Text{
-		Context: segment.writer,
-		Env:     segment.env,
-	}
-	for _, tmpl := range templates {
-		txtTemplate.Template = tmpl
-		value, err := txtTemplate.Render()
-		if err != nil || value == "" {
-			continue
-		}
-		return value
-	}
-	return defaultColor
-}
-
 func (segment *Segment) shouldInvokeWithTip(tip string) bool {
 	for _, t := range segment.Tips {
 		if t == tip {
@@ -237,14 +219,14 @@ func (segment *Segment) shouldInvokeWithTip(tip string) bool {
 
 func (segment *Segment) foreground() string {
 	if len(segment.foregroundCache) == 0 {
-		segment.foregroundCache = segment.getColor(segment.ForegroundTemplates, segment.Foreground)
+		segment.foregroundCache = segment.ForegroundTemplates.Resolve(segment.writer, segment.env, segment.Foreground)
 	}
 	return segment.foregroundCache
 }
 
 func (segment *Segment) background() string {
 	if len(segment.backgroundCache) == 0 {
-		segment.backgroundCache = segment.getColor(segment.BackgroundTemplates, segment.Background)
+		segment.backgroundCache = segment.BackgroundTemplates.Resolve(segment.writer, segment.env, segment.Background)
 	}
 	return segment.backgroundCache
 }

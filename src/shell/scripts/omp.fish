@@ -5,11 +5,12 @@ set --global omp_tooltip_command ""
 set --global omp_transient 0
 
 function fish_prompt
+    set --local omp_status_cache_temp $status
     if test "$omp_transient" = "1"
-      ::OMP:: prompt print transient --config $POSH_THEME --shell fish
+      ::OMP:: prompt print transient --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
       return
     end
-    set --global omp_status_cache $status
+    set --global omp_status_cache $omp_status_cache_temp
     set --global omp_stack_count (count $dirstack)
     set --global omp_duration "$CMD_DURATION$cmd_duration"
     # check if variable set, < 3.2 case

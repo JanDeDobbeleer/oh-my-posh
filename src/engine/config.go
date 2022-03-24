@@ -59,9 +59,11 @@ func (cfg *Config) MakeColors(env environment.Environment) color.AnsiColors {
 }
 
 type ExtraPrompt struct {
-	Template   string `json:"template,omitempty"`
-	Background string `json:"background,omitempty"`
-	Foreground string `json:"foreground,omitempty"`
+	Template            string          `json:"template,omitempty"`
+	Foreground          string          `json:"foreground,omitempty"`
+	ForegroundTemplates color.Templates `json:"foreground_templates,omitempty"`
+	Background          string          `json:"background,omitempty"`
+	BackgroundTemplates color.Templates `json:"background_templates,omitempty"`
 }
 
 func (cfg *Config) print(message string) {

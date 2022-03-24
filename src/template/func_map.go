@@ -11,6 +11,7 @@ func funcMap() template.FuncMap {
 		"secondsRound": secondsRound,
 		"url":          url,
 		"path":         path,
+		"glob":         glob,
 	}
 	for key, fun := range sprig.TxtFuncMap() {
 		if _, ok := funcMap[key]; !ok {

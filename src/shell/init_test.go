@@ -1,4 +1,4 @@
-package engine
+package shell
 
 import (
 	"oh-my-posh/environment"
@@ -25,7 +25,7 @@ func TestConsoleBackgroundColorTemplate(t *testing.T) {
 				"TERM_PROGRAM": tc.Term,
 			},
 		})
-		color := GetConsoleBackgroundColor(env, "{{ if eq \"vscode\" .Env.TERM_PROGRAM }}#123456{{end}}")
+		color := ConsoleBackgroundColor(env, "{{ if eq \"vscode\" .Env.TERM_PROGRAM }}#123456{{end}}")
 		assert.Equal(t, tc.Expected, color, tc.Case)
 	}
 }

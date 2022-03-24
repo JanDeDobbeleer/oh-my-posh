@@ -35,7 +35,9 @@ Display the current path.
 - style: `enum` - how to display the current path
 - mixed_threshold: `number` - the maximum length of a path segment that will be displayed when using `Mixed` -
   defaults to `4`
-- max_depth: `number` - maximum path depth to display before shortening when using `Agnoster Short` - defaults to `1`
+- max_depth: `number` - maximum path depth to display before shortening when using `agnoster_short` - defaults to `1`
+- hide_root_location: `boolean` -  hides the root location if it doesn't fit in the last `max_depth` folders, when using
+  `agnoster_short` - defaults to `false`
 
 ## Mapped Locations
 
@@ -91,8 +93,8 @@ Renders each folder name separated by the `folder_separator_icon`.
 
 ### Agnoster Short
 
-When more than `max_depth` levels deep, it renders one `folder_icon` followed by the names of the last `max_depth` folders,
-separated by the `folder_separator_icon`.
+When more than `max_depth` levels deep, it renders one `folder_icon` (if `hide_root_location` is `false`) followed by
+the names of the last `max_depth` folders, separated by the `folder_separator_icon`.
 
 ### Agnoster Left
 
@@ -125,6 +127,11 @@ starts with a symbol or icon.
 ### Unique
 
 Works like `Letter`, but will make sure every folder name is the shortest unique value.
+
+The uniqueness refers to the displayed path, so `C:\dev\dev\dev\development` will be displayed as
+`C:\d\de\dev\development` (instead of `C:\d\d\d\development` for `Letter`). Uniqueness does _not_ refer to other
+folders at the same level, so if `C:\projectA\dev` and `C:\projectB\dev` exist, then both will be displayed as
+`C:\p\dev`.
 
 ## Template ([info][templates])
 

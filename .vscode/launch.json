@@ -8,7 +8,10 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "prompt",
+        "print",
+        "primary",
+        "--config=${workspaceRoot}/themes/cinnamon.omp.json",
         "--shell=pwsh",
         "--terminal-width=200",
       ]
@@ -20,6 +23,9 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
+        "prompt",
+        "print",
+        "tooltip",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
         "--command=git",
         "--shell=pwsh"
@@ -32,9 +38,11 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
+        "prompt",
+        "print",
+        "transient",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
         "--shell=pwsh",
-        "--print-transient"
       ]
     },
     {
@@ -54,20 +62,23 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "--debug",
+        "prompt",
+        "debug",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
       ]
     },
     {
-      "name": "Print init pwsh",
+      "name": "Print init",
       "type": "go",
       "request": "launch",
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "--print-init",
-        "--shell=pwsh",
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
+        "prompt",
+        "init",
+        "cmd",
+        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--print"
       ]
     },
     {
@@ -77,8 +88,9 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "--export-png",
-        "--shell=shell",
+        "config",
+        "export",
+        "png",
         "--rprompt-offset=40",
         "--cursor-padding=15",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
@@ -91,8 +103,9 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
+        "config",
+        "migrate",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
-        "--migrate"
       ]
     },
     {
@@ -109,6 +122,16 @@
       "request": "attach",
       "port": 9229,
       "preDebugTask": "func: host start"
-    }
+    },
+    {
+      "name": "Debug CLI(cache)",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "cache",
+      ]
+    },
   ]
 }

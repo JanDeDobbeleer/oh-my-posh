@@ -38,14 +38,19 @@ func (n *Node) Init(props properties.Properties, env environment.Environment) {
 				regex:      `(?:v(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 			},
 		},
-		versionURLTemplate: "[%[1]s](https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V%[2]s.md#%[1]s)",
+		versionURLTemplate: "https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V{{ .Major }}.md#{{ .Full }}",
 		matchesVersionFile: n.matchesVersionFile,
 		loadContext:        n.loadContext,
 	}
 }
 
 func (n *Node) Enabled() bool {
-	return n.language.Enabled()
+	if n.language.Enabled() {
+		n.Mismatch = !n.matchesVersionFile()
+		return true
+	}
+
+	return false
 }
 
 func (n *Node) loadContext() {

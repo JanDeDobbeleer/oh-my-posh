@@ -1007,6 +1007,79 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "rfverbruggen",
+      "name": "Robbert Verbruggen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2320197?v=4",
+      "profile": "https://github.com/rfverbruggen",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Merlin2001",
+      "name": "Marcus Mangelsdorf",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13134791?v=4",
+      "profile": "https://github.com/Merlin2001",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "andresrinivasan",
+      "name": "André Srinivasan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/134301?v=4",
+      "profile": "http://linkedin.com/andresrinivasan",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "ehawman-rosenberg",
+      "name": "ehawman-rosenberg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/81652082?v=4",
+      "profile": "https://github.com/ehawman-rosenberg",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "claudiospizzi",
+      "name": "Claudio Spizzi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1934246?v=4",
+      "profile": "https://spizzi.net/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "estruyf",
+      "name": "Elio Struyf",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2900833?v=4",
+      "profile": "https://www.eliostruyf.com",
+      "contributions": [
+        "doc",
+        "code"
+      ]
+    },
+    {
+      "login": "oalders",
+      "name": "Olaf Alders",
+      "avatar_url": "https://avatars.githubusercontent.com/u/96205?v=4",
+      "profile": "https://www.olafalders.com/",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "DavidDeSloovere",
+      "name": "David De Sloovere",
+      "avatar_url": "https://avatars.githubusercontent.com/u/352626?v=4",
+      "profile": "https://blog.deltacode.be",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

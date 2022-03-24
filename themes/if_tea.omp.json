@@ -162,6 +162,7 @@
           "properties": {
             "always_enabled": true,
             "template": "\u2570\u2500\ue285  "
+
           },
           "style": "plain",
           "type": "exit"
@@ -172,6 +173,7 @@
   ],
   "console_title": true,
   "console_title_style": "template",
+
   "console_title_template": "{{ .Folder }}",
   "osc99": true,
   "transient_prompt": {
@@ -179,5 +181,5 @@
     "foreground": "#FEF5ED",
     "template": "\ue285 "
   },
-  "version": 1.3
+  "version": 2
 }

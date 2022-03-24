@@ -25,6 +25,7 @@ offers a few standard properties to work with.
 - path: create a link to a folder to open your file explorer `{{ path .Path .Location }}`
 (needs terminal [support][terminal-list-hyperlinks])
 - secondsRound: round seconds to a time indication `{{ secondsRound 3600 }}` -> 1h
+- glob: exposes [filepath.Glob][glob] as a boolean template function `{{ if glob "*.go" }}OK{{ else }}NOK{{ end }}`
 
 ## Text decoration
 
@@ -40,8 +41,31 @@ You can make use of the following syntax to decorate text:
 
 This can be used in templates and icons/text inside your config.
 
+## Hidings segments
+
+To hide a whole segment including the leading and trailing symbol based on a template, the template must render into
+an empty string. This can be achieved with conditional statements (`if`). The example below will render a diamond
+segment, only if the environment variable `POSH_ENV` is not empty.
+
+Only spaces are excluded, meaning you can still add line breaks and tabs if that is something you're after.
+
+```json
+{
+  "type": "text",
+  "style": "diamond",
+  "leading_diamond": " \ue0b6",
+  "trailing_diamond": "\ue0b4",
+  "foreground": "#ffffff",
+  "background": "#d53c14",
+  "properties": {
+    "template": "{{ if .Env.POSH_ENV }} \uf8c5 {{ .Env.POSH_ENV }} {{ end }}"
+  }
+}
+```
+
 [terminal-list-hyperlinks]: https://gist.github.com/egmontkob/eb114294efbcd5adb1944c9f3cb5feda
 [path-segment]: /docs/path
 [git-segment]: /docs/git
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
+[glob]: https://pkg.go.dev/path/filepath#Glob

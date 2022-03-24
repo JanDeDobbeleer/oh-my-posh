@@ -1,3 +1,9 @@
+---
+id: prompt
+title: Change your prompt
+sidebar_label: ✨ Prompt
+---
+
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
@@ -6,7 +12,7 @@ If you have no idea which shell you're currently using, Oh My Posh has a utility
 :::
 
 ```bash
-oh-my-posh --print-shell
+oh-my-posh get shell
 ```
 
 <Tabs
@@ -31,17 +37,8 @@ notepad $PROFILE
 
 Then add the following line.
 
-:::caution
-If you installed Oh My Posh using `Install-Module oh-my-posh`, you need to first import
-Oh My Posh in your `$PROFILE` before adding the line below:
-
 ```powershell
-Import-Module oh-my-posh
-```
-:::
-
-```powershell
-oh-my-posh --init --shell pwsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$(oh-my-posh --version)/themes/jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh prompt init pwsh | Invoke-Expression
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -49,6 +46,15 @@ Once added, reload your profile for the changes to take effect.
 ```powershell
 . $PROFILE
 ```
+
+:::caution
+If you installed Oh My Posh using `Install-Module oh-my-posh`, you need to first import
+Oh My Posh in your `$PROFILE` before adding the line above:
+
+```powershell
+Import-Module oh-my-posh
+```
+:::
 
 </TabItem>
 <TabItem value="cmd">
@@ -65,7 +71,7 @@ Use the full path to the config file, not the relative path.
 :::
 
 ```lua title="oh-my-posh.lua"
-load(io.popen('oh-my-posh --config="https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json" --init --shell cmd'):read("*a"))()
+load(io.popen('oh-my-posh prompt init cmd'):read("*a"))()
 ```
 
 Once added, restart cmd for the changes to take effect.
@@ -76,7 +82,7 @@ Once added, restart cmd for the changes to take effect.
 Add the following to `~/.zshrc`:
 
 ```bash
-eval "$(oh-my-posh --init --shell zsh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$(oh-my-posh --version)/themes/jandedobbeleer.omp.json)"
+eval "$(oh-my-posh prompt init zsh)"
 ```
 
 Once added, reload your profile for the changes to take effect.
@@ -91,13 +97,13 @@ source ~/.zshrc
 Add the following to `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
 
 ```bash
-eval "$(oh-my-posh --init --shell bash --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$(oh-my-posh --version)/themes/jandedobbeleer.omp.json)"
+eval "$(oh-my-posh prompt init bash)"
 ```
 
 Once added, reload your profile for the changes to take effect.
 
 ```bash
-. ~/.bashrc
+exec bash
 ```
 
 Or, when using `~/.profile`.
@@ -116,13 +122,13 @@ It's advised to be on the latest version of fish. Versions below 3.1.2 have issu
 Initialize Oh My Posh in `~/.config/fish/config.fish`:
 
 ```bash
-oh-my-posh --init --shell fish --config hhttps://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v(oh-my-posh --version)/themes/jandedobbeleer.omp.json | source
+oh-my-posh prompt init fish | source
 ```
 
 Once added, reload your config for the changes to take effect.
 
 ```bash
-. ~/.config/fish/config.fish
+exec fish
 ```
 
 </TabItem>
@@ -130,16 +136,16 @@ Once added, reload your config for the changes to take effect.
 
 Set the prompt and restart nu shell:
 
-### Nu < 0.32.0
+**Nu < 0.32.0**
 
 ```bash
-config set prompt  "= `{{$(oh-my-posh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json | str collect)}}`"
+config set prompt  "= `{{$(oh-my-posh prompt print primary | str collect)}}`"
 ```
 
-### Nu >= 0.32.0
+**Nu >= 0.32.0**
 
 ```bash
-config set prompt  "(oh-my-posh --config https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json | str collect)"
+config set prompt  "(oh-my-posh prompt print primary | str collect)"
 ```
 
 Restart nu shell for the changes to take effect.

@@ -32,7 +32,7 @@ Remove-Variable omp_value -Confirm:$false
 Remove-Variable omp_config -Confirm:$false
 
 # set secondary prompt
-$secondaryPrompt = @(&"::OMP::" --config="$Env:POSH_THEME" --print-secondary 2>&1) -join "`n"
+$secondaryPrompt = @(&"::OMP::" prompt print secondary --config="$Env:POSH_THEME" 2>&1) -join "`n"
 Set-PSReadLineOption -ContinuationPrompt $secondaryPrompt
 
 function global:Set-PoshContext {}
@@ -46,8 +46,10 @@ function global:Get-PoshContext {
 
 function global:Initialize-ModuleSupport {
     if ($env:POSH_GIT_ENABLED -eq $true -and (Get-Module -Name "posh-git")) {
-        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used later(not in this scope)')]
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used later (not in this scope)')]
         $global:GitStatus = Get-GitStatus
+        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used by posh-git (not in this script)')]
+        $GitPromptSettings = $null
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
     }
 }
@@ -60,9 +62,14 @@ function global:Initialize-ModuleSupport {
     $omp = "::OMP::"
     $config, $cleanPWD, $cleanPSWD = Get-PoshContext
     if ($env:POSH_TRANSIENT -eq $true) {
-        $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --print-transient 2>&1)
+        $standardOut = @(&$omp prompt print transient --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" 2>&1)
         $standardOut -join "`n"
         $env:POSH_TRANSIENT = $false
+        return
+    }
+    if (Test-Path variable:/PSDebugContext) {
+        $standardOut = @(&$omp prompt print debug --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" 2>&1)
+        $standardOut -join "`n"
         return
     }
     $errorCode = 0
@@ -94,7 +101,7 @@ function global:Initialize-ModuleSupport {
         $global:omp_lastHistoryId = $history.Id
     }
     $terminalWidth = $Host.UI.RawUI.WindowSize.Width
-    $standardOut = @(&$omp --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --stack-count="$stackCount" --config="$config" --terminal-width=$terminalWidth 2>&1)
+    $standardOut = @(&$omp prompt print primary --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --stack-count="$stackCount" --config="$config" --terminal-width=$terminalWidth 2>&1)
     # make sure PSReadLine knows we have a multiline prompt
     $extraLines = $standardOut.Count - 1
     if ($extraLines -gt 0) {
@@ -112,7 +119,7 @@ Set-Item -Path Function:prompt -Value $Prompt -Force
 function global:Write-PoshDebug {
     $omp = "::OMP::"
     $config, $cleanPWD, $cleanPSWD = Get-PoshContext
-    $standardOut = @(&$omp --error=1337 --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time=9001 --config="$config" --debug 2>&1)
+    $standardOut = @(&$omp prompt debug --config="$config" 2>&1)
     $standardOut -join "`n"
 }
 
@@ -149,7 +156,7 @@ function global:Export-PoshTheme {
 
     $config = $env:POSH_THEME
     $omp = "::OMP::"
-    $configString = @(&$omp --config="$config" --format="$Format" --print-config 2>&1)
+    $configString = @(&$omp config export --config="$config" --format="$Format" 2>&1)
     # if no path, copy to clipboard by default
     if ($FilePath -ne "") {
         #https://stackoverflow.com/questions/3038337/powershell-resolve-path-that-might-not-exist
@@ -162,35 +169,6 @@ function global:Export-PoshTheme {
     }
 }
 
-function global:Export-PoshImage {
-    param(
-        [Parameter(Mandatory = $false)]
-        [int]
-        $RPromptOffset = 40,
-        [Parameter(Mandatory = $false)]
-        [int]
-        $CursorPadding = 30,
-        [Parameter(Mandatory = $false)]
-        [string]
-        $Author,
-        [Parameter(Mandatory = $false)]
-        [string]
-        $BGColor
-    )
-
-    if ($Author) {
-        $Author = "--author=$Author"
-    }
-    if ($BGColor) {
-        $BGColor = "--bg-color=$BGColor"
-    }
-
-    $omp = "::OMP::"
-    $config, $cleanPWD, $cleanPSWD = Get-PoshContext
-    $standardOut = @(&$omp --shell=shell --config="$config" --pwd="$cleanPWD" --pswd="$cleanPSWD" --export-png --rprompt-offset="$RPromptOffset" --cursor-padding="$CursorPadding" $Author $BGColor 2>&1)
-    $standardOut -join "`n"
-}
-
 function global:Enable-PoshTooltips {
     Set-PSReadlineKeyHandler -Key SpaceBar -ScriptBlock {
         [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
@@ -200,7 +178,8 @@ function global:Enable-PoshTooltips {
         $command = $null
         $cursor = $null
         [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
-        $standardOut = @(&$omp --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --command="$command" 2>&1)
+        $command = $command -replace "`"", "'"
+        $standardOut = @(&$omp prompt print tooltip --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --command="$command" 2>&1)
         Write-Host $standardOut -NoNewline
         $host.UI.RawUI.CursorPosition = $position
     }
@@ -216,8 +195,8 @@ function global:Enable-PoshTransientPrompt {
 
 function global:Enable-PoshLineError {
     $omp = "::OMP::"
-    $validLine = @(&$omp --config="$Env:POSH_THEME" --print-valid 2>&1) -join "`n"
-    $errorLine = @(&$omp --config="$Env:POSH_THEME" --print-error 2>&1) -join "`n"
+    $validLine = @(&$omp prompt print valid --config="$Env:POSH_THEME" 2>&1) -join "`n"
+    $errorLine = @(&$omp prompt print error --config="$Env:POSH_THEME" 2>&1) -join "`n"
     Set-PSReadLineOption -PromptText $validLine, $errorLine
 }
 
@@ -284,7 +263,7 @@ function global:Get-PoshThemes() {
         $themes | ForEach-Object -Process {
             Write-Host "Theme: $(Get-Hyperlink -uri $_.fullname -name $_.BaseName.Replace('.omp', ''))"
             Write-Host ""
-            & $omp -config $($_.FullName) -pwd $PWD -shell pwsh
+            & $omp prompt print primary --config $($_.FullName) --pwd $PWD --shell pwsh
             Write-Host ""
             Write-Host ""
         }
@@ -294,6 +273,6 @@ function global:Get-PoshThemes() {
     Write-Host ""
     Write-Host "To change your theme, adjust the init script in $PROFILE."
     Write-Host "Example:"
-    Write-Host "  oh-my-posh --init --shell pwsh --config $Path/jandedobbeleer.omp.json | Invoke-Expression"
+    Write-Host "  oh-my-posh prompt init pwsh --config $Path/jandedobbeleer.omp.json | Invoke-Expression"
     Write-Host ""
 }

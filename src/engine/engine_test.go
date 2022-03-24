@@ -6,8 +6,7 @@ import (
 	"oh-my-posh/console"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
-	"os"
-	"path/filepath"
+	"oh-my-posh/shell"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -45,48 +44,14 @@ func TestCanWriteRPrompt(t *testing.T) {
 }
 
 func BenchmarkEngineRender(b *testing.B) {
-	var err error
 	for i := 0; i < b.N; i++ {
-		err = engineRender("jandedobbeleer.omp.json")
-		if err != nil {
-			b.Fatal(err)
-		}
+		engineRender()
 	}
 }
 
-func engineRender(configPath string) error {
-	testDir, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-
-	configPath = filepath.Join(testDir, "test", configPath)
-
-	var (
-		debug    = false
-		eval     = false
-		shell    = "pwsh"
-		plain    = false
-		pwd      = ""
-		pswd     = ""
-		code     = 2
-		execTime = 917.0
-	)
-
-	args := &environment.Args{
-		Debug:         &debug,
-		Config:        &configPath,
-		Eval:          &eval,
-		Shell:         &shell,
-		Plain:         &plain,
-		PWD:           &pwd,
-		PSWD:          &pswd,
-		ErrorCode:     &code,
-		ExecutionTime: &execTime,
-	}
-
+func engineRender() {
 	env := &environment.ShellEnvironment{}
-	env.Init(args)
+	env.Init(false)
 	defer env.Close()
 
 	cfg := LoadConfig(env)
@@ -97,13 +62,12 @@ func engineRender(configPath string) error {
 	writerColors := cfg.MakeColors(env)
 	writer := &color.AnsiWriter{
 		Ansi:               ansi,
-		TerminalBackground: GetConsoleBackgroundColor(env, cfg.TerminalBackground),
+		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 		AnsiColors:         writerColors,
 	}
 	consoleTitle := &console.Title{
 		Env:      env,
 		Ansi:     ansi,
-		Style:    cfg.ConsoleTitleStyle,
 		Template: cfg.ConsoleTitleTemplate,
 	}
 	engine := &Engine{
@@ -112,20 +76,13 @@ func engineRender(configPath string) error {
 		Writer:       writer,
 		ConsoleTitle: consoleTitle,
 		Ansi:         ansi,
-		Plain:        *args.Plain,
 	}
 
-	engine.Render()
-
-	return nil
+	engine.PrintPrimary()
 }
 
 func BenchmarkEngineRenderPalette(b *testing.B) {
-	var err error
 	for i := 0; i < b.N; i++ {
-		err = engineRender("jandedobbeleer-palette.omp.json")
-		if err != nil {
-			b.Fatal(err)
-		}
+		engineRender()
 	}
 }

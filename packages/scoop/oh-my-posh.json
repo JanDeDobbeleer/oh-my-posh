@@ -3,7 +3,7 @@
   "description": "A prompt theme engine for any shell",
   "homepage": "https://ohmyposh.dev",
   "license": {
-      "identifier": "GPL-3.0-only",
+      "identifier": "MIT",
       "url": "https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/COPYING"
   },
   "architecture": {

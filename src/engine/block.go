@@ -3,6 +3,7 @@ package engine
 import (
 	"oh-my-posh/color"
 	"oh-my-posh/environment"
+	"oh-my-posh/shell"
 	"sync"
 	"time"
 )
@@ -41,7 +42,6 @@ type Block struct {
 	ansi                  *color.Ansi
 	activeSegment         *Segment
 	previousActiveSegment *Segment
-	length                int
 }
 
 func (b *Block) init(env environment.Environment, writer color.Writer, ansi *color.Ansi) {
@@ -52,10 +52,10 @@ func (b *Block) init(env environment.Environment, writer color.Writer, ansi *col
 
 func (b *Block) initPlain(env environment.Environment, config *Config) {
 	b.ansi = &color.Ansi{}
-	b.ansi.Init(plain)
+	b.ansi.Init(shell.PLAIN)
 	b.writer = &color.AnsiWriter{
 		Ansi:               b.ansi,
-		TerminalBackground: GetConsoleBackgroundColor(env, config.TerminalBackground),
+		TerminalBackground: shell.ConsoleBackgroundColor(env, config.TerminalBackground),
 		AnsiColors:         config.MakeColors(env),
 	}
 	b.env = env
@@ -71,7 +71,7 @@ func (b *Block) enabled() bool {
 		return true
 	}
 	for _, segment := range b.Segments {
-		if segment.active {
+		if segment.enabled {
 			return true
 		}
 	}
@@ -93,7 +93,7 @@ func (b *Block) renderSegmentsText() {
 func (b *Block) renderSegments() (string, int) {
 	defer b.writer.Reset()
 	for _, segment := range b.Segments {
-		if !segment.active {
+		if !segment.enabled {
 			continue
 		}
 		b.renderSegment(segment)
@@ -174,11 +174,11 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 		}
 		start := time.Now()
 		segment.renderText(b.env)
-		segmentTiming.active = segment.active
+		segmentTiming.active = segment.enabled
 		segmentTiming.text = segment.text
 		if segmentTiming.active {
 			b.renderSegment(segment)
-			segmentTiming.text, b.length = b.writer.String()
+			segmentTiming.text, _ = b.writer.String()
 			b.writer.Reset()
 		}
 		segmentTiming.duration = time.Since(start)

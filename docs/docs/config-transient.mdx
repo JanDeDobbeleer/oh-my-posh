@@ -8,7 +8,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
 :::info
-This feature only works in `zsh`, `powershell` and `cmd` for the time being.
+This feature only works in `fish`, `zsh`, `powershell` and `cmd` for the time being.
 :::
 
 Transient prompt, when enabled, replaces the prompt with a simpler one to allow more screen real estate.
@@ -68,6 +68,7 @@ properties below - defaults to `{{ .Shell }}> `
     { label: 'powershell', value: 'pwsh', },
     { label: 'cmd', value: 'cmd', },
     { label: 'zsh', value: 'zsh', },
+    { label: 'fish', value: 'fish', },
   ]
 }>
 <TabItem value="pwsh">
@@ -76,7 +77,7 @@ properties below - defaults to `{{ .Shell }}> `
 Invoke Oh My Posh in your `$PROFILE` and add the following line below.
 
 ```powershell
-oh-my-posh --init --shell pwsh --config $env:POSH_THEMES_PATH/jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh prompt init pwsh --config $env:POSH_THEMES_PATH/jandedobbeleer.omp.json | Invoke-Expression
 // highlight-start
 Enable-PoshTransientPrompt
 // highlight-end
@@ -108,7 +109,18 @@ Invoke Oh My Posh in `.zshrc` and add the following line below:
 enable_poshtransientprompt
 ```
 
-Restart your shell or reload `.zshrc` using `source ~/.zshrc` for the changes to take effect.
+Restart your shell or reload `.zshrc` using `exec zsh` for the changes to take effect.
+
+</TabItem>
+<TabItem value="fish">
+
+Invoke Oh My Posh in `~/.config/fish/config.fish` and add the following line below:
+
+```bash
+enable_poshtransientprompt
+```
+
+Restart your shell or reload fish using `exec fish` for the changes to take effect.
 
 </TabItem>
 </Tabs>

@@ -72,10 +72,10 @@ themeConfigOverrrides.set('zash.omp.json', newThemeConfig(40, 40));
       config = themeConfigOverrrides.get(theme);
     }
 
-    let poshCommand = `oh-my-posh --config=${configPath} --shell shell --export-png`;
+    let poshCommand = `oh-my-posh config export image --config=${configPath}`;
     poshCommand += ` --rprompt-offset=${config.rpromptOffset}`;
     poshCommand += ` --cursor-padding=${config.cursorPadding}`;
-    poshCommand += ` --bg-color=${config.bgColor}`;
+    poshCommand += ` --background-color=${config.bgColor}`;
     if (config.author !== '') {
       poshCommand += ` --author="${config.author}"`;
     }

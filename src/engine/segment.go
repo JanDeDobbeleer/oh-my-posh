@@ -29,7 +29,7 @@ type Segment struct {
 
 	writer          SegmentWriter
 	text            string
-	active          bool
+	enabled         bool
 	env             environment.Environment
 	backgroundCache string
 	foregroundCache string
@@ -158,9 +158,24 @@ const (
 	CF SegmentType = "cf"
 	// Cloud Foundry logged in target
 	CFTARGET SegmentType = "cftarget"
+	// KOTLIN writes the active kotlin version
+	KOTLIN SegmentType = "kotlin"
+	// SWIFT writes the active swift version
+	SWIFT SegmentType = "swift"
+	// cds (SAP CAP) version
+	CDS SegmentType = "cds"
+	// npm version
+	NPM SegmentType = "npm"
+	// Project version
+	PROJECT SegmentType = "project"
+	// R version
+	R SegmentType = "r"
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
+	if segment.env == nil {
+		return true
+	}
 	cwdIncluded := segment.cwdIncluded()
 	cwdExcluded := segment.cwdExcluded()
 	return cwdIncluded && !cwdExcluded
@@ -237,6 +252,8 @@ func (segment *Segment) background() string {
 func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
+		PROJECT:       &segments.Project{},
+		NPM:           &segments.Npm{},
 		OWM:           &segments.Owm{},
 		SESSION:       &segments.Session{},
 		PATH:          &segments.Path{},
@@ -284,6 +301,10 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		UI5TOOLING:    &segments.UI5Tooling{},
 		CF:            &segments.Cf{},
 		CFTARGET:      &segments.CfTarget{},
+		KOTLIN:        &segments.Kotlin{},
+		SWIFT:         &segments.Swift{},
+		CDS:           &segments.Cds{},
+		R:             &segments.R{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)
@@ -320,7 +341,7 @@ func (segment *Segment) renderText(env environment.Environment) {
 		message := fmt.Sprintf("\noh-my-posh fatal error rendering %s segment:%s\n\n%s\n", segment.Type, err, debug.Stack())
 		fmt.Println(message)
 		segment.text = "error"
-		segment.active = true
+		segment.enabled = true
 	}()
 	err := segment.mapSegmentWithWriter(env)
 	if err != nil || !segment.shouldIncludeFolder() {
@@ -328,6 +349,6 @@ func (segment *Segment) renderText(env environment.Environment) {
 	}
 	if segment.writer.Enabled() {
 		segment.text = segment.string()
-		segment.active = len(strings.TrimSpace(segment.text)) > 0
+		segment.enabled = len(strings.ReplaceAll(segment.text, " ", "")) > 0
 	}
 }

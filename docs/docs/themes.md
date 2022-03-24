@@ -12,12 +12,12 @@ display every available theme using the following PowerShell cmdlet.
 Get-PoshThemes
 ```
 
-Once you're ready to swap to a theme, follow the steps described in [🚀Installation/Replace your existing prompt][replace-you-existing-prompt].
+Once you're ready to swap to a theme, follow the steps described in [🚀 Replace your existing prompt][replace-you-existing-prompt].
 
 Themes with `minimal` in their names do not require a Nerd Font. Read about [🆎Fonts][fonts] for more information.
 
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [fonts]: /docs/config-fonts
-[replace-you-existing-prompt]: /docs/windows#override-the-theme-settings
+[replace-you-existing-prompt]: /docs/prompt
 
 <!-- Do not change the content below, themes are rendered automatically -->

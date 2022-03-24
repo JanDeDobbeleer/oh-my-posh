@@ -39,7 +39,7 @@ func (p *Python) Init(props properties.Properties, env environment.Environment) 
 				regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 			},
 		},
-		versionURLTemplate: "[%s](https://www.python.org/downloads/release/python-%s%s%s/)",
+		versionURLTemplate: "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}",
 		displayMode:        props.GetString(DisplayMode, DisplayModeEnvironment),
 		homeEnabled:        props.GetBool(HomeEnabled, true),
 	}

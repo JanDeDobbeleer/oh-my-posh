@@ -92,10 +92,10 @@ func TestRootLocationHome(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("Home").Return(tc.HomePath)
 		env.On("Pwd").Return(tc.Pwd)
-		args := &environment.Args{
-			PSWD: &tc.Pswd,
+		args := &environment.Flags{
+			PSWD: tc.Pswd,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("GOOS").Return("")
 		path := &Path{
@@ -170,6 +170,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		Style               string
 		GOOS                string
 		MaxDepth            int
+		HideRootLocation    bool
 	}{
 		{Style: AgnosterFull, Expected: "usr > location > whatever", HomePath: "/usr/home", Pwd: "/usr/location/whatever", PathSeparator: "/", FolderSeparatorIcon: " > "},
 		{Style: AgnosterShort, Expected: "usr > .. > man", HomePath: "/usr/home", Pwd: "/usr/location/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
@@ -224,6 +225,30 @@ func TestAgnosterPathStyles(t *testing.T) {
 		{Style: AgnosterFull, Expected: "PSDRIVE: | src", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src", PathSeparator: "/", FolderSeparatorIcon: " | "},
 		{Style: AgnosterShort, Expected: "PSDRIVE: | .. | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeparator: "/", FolderSeparatorIcon: " | "},
 
+		{Style: AgnosterShort, Expected: "src | init", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src/init", PathSeparator: "/", FolderSeparatorIcon: " | ", MaxDepth: 2,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "PSDRIVE: | src", HomePath: homeBillWindows, Pwd: "/foo", Pswd: "PSDRIVE:/src", PathSeparator: "/", FolderSeparatorIcon: " | ", MaxDepth: 2,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~", HomePath: homeBillWindows, Pwd: homeBillWindows, PathSeparator: "\\", FolderSeparatorIcon: " > ", MaxDepth: 1, HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "foo", HomePath: homeBillWindows, Pwd: homeBillWindows + "\\foo", PathSeparator: "\\", FolderSeparatorIcon: "\\", MaxDepth: 1,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~\\foo", HomePath: homeBillWindows, Pwd: homeBillWindows + "\\foo", PathSeparator: "\\", FolderSeparatorIcon: "\\", MaxDepth: 2,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~", HomePath: "/usr/home", Pwd: "/usr/home", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 1, HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "foo", HomePath: "/usr/home", Pwd: "/usr/home/foo", PathSeparator: "/", FolderSeparatorIcon: "/", MaxDepth: 1, HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/foo/bar/man", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 3,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~ > foo", HomePath: "/usr/home", Pwd: "/usr/home/foo", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 2, HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~ > foo > bar > man", HomePath: "/usr/home", Pwd: "/usr/home/foo/bar/man", PathSeparator: "/", FolderSeparatorIcon: " > ", MaxDepth: 4,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "C:", HomePath: "/usr/home", Pwd: "/mnt/c", Pswd: "C:", PathSeparator: "/", FolderSeparatorIcon: " | ", MaxDepth: 2, HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "~ | space foo", HomePath: "/usr/home", Pwd: "/usr/home/space foo", PathSeparator: "/", FolderSeparatorIcon: " | ", MaxDepth: 2,
+			HideRootLocation: true},
+		{Style: AgnosterShort, Expected: "space foo", HomePath: "/usr/home", Pwd: "/usr/home/space foo", PathSeparator: "/", FolderSeparatorIcon: " | ", MaxDepth: 1,
+			HideRootLocation: true},
+
 		{Style: Mixed, Expected: "~ > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
 		{Style: Mixed, Expected: "~ > ab > .. > man", HomePath: "/usr/home", Pwd: "/usr/home/ab/whatever/man", PathSeparator: "/", FolderSeparatorIcon: " > "},
 
@@ -251,16 +276,17 @@ func TestAgnosterPathStyles(t *testing.T) {
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("StackCount").Return(0)
 		env.On("IsWsl").Return(false)
-		args := &environment.Args{
-			PSWD: &tc.Pswd,
+		args := &environment.Flags{
+			PSWD: tc.Pswd,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		path := &Path{
 			env: env,
 			props: properties.Map{
 				FolderSeparatorIcon: tc.FolderSeparatorIcon,
 				properties.Style:    tc.Style,
 				MaxDepth:            tc.MaxDepth,
+				HideRootLocation:    tc.HideRootLocation,
 			},
 		}
 		_ = path.Enabled()
@@ -372,10 +398,10 @@ func TestGetFullPath(t *testing.T) {
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("StackCount").Return(tc.StackCount)
 		env.On("IsWsl").Return(false)
-		args := &environment.Args{
-			PSWD: &tc.Pswd,
+		args := &environment.Flags{
+			PSWD: tc.Pswd,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		if len(tc.Template) == 0 {
 			tc.Template = "{{ if gt .StackCount 0 }}{{ .StackCount }} {{ end }}{{ .Path }}"
 		}
@@ -421,10 +447,10 @@ func TestGetFullPathCustomMappedLocations(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return("")
-		args := &environment.Args{
-			PSWD: &tc.Pwd,
+		args := &environment.Flags{
+			PSWD: tc.Pwd,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -472,10 +498,10 @@ func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	env.On("Home").Return("/usr/home")
 	env.On("Pwd").Return(pwd)
 	env.On("GOOS").Return("")
-	args := &environment.Args{
-		PSWD: &pwd,
+	args := &environment.Flags{
+		PSWD: pwd,
 	}
-	env.On("Args").Return(args)
+	env.On("Flags").Return(args)
 	path := &Path{
 		env: env,
 		props: properties.Map{
@@ -519,10 +545,10 @@ func TestAgnosterPath(t *testing.T) { // nolint:dupl
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("Pwd").Return(tc.PWD)
 		env.On("GOOS").Return("")
-		args := &environment.Args{
-			PSWD: &tc.PWD,
+		args := &environment.Flags{
+			PSWD: tc.PWD,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -567,10 +593,10 @@ func TestAgnosterLeftPath(t *testing.T) { // nolint:dupl
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("Pwd").Return(tc.PWD)
 		env.On("GOOS").Return("")
-		args := &environment.Args{
-			PSWD: &tc.PWD,
+		args := &environment.Flags{
+			PSWD: tc.PWD,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -615,10 +641,10 @@ func TestGetPwd(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return("")
-		args := &environment.Args{
-			PSWD: &tc.Pswd,
+		args := &environment.Flags{
+			PSWD: tc.Pswd,
 		}
-		env.On("Args").Return(args)
+		env.On("Flags").Return(args)
 		path := &Path{
 			env: env,
 			props: properties.Map{

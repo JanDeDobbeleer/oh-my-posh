@@ -196,7 +196,15 @@
             "plastic",
             "ipify",
             "haskell",
-            "ui5tooling"
+            "ui5tooling",
+            "kotlin",
+            "swift",
+            "npm",
+            "project",
+            "r",
+            "cds",
+            "cf",
+            "cftarget"
           ]
         },
         "style": {
@@ -215,18 +223,6 @@
           "description": "https://ohmyposh.dev/docs/config-overview#properties",
           "default": {},
           "properties": {
-            "prefix": {
-              "type": "string",
-              "title": "Text prefix",
-              "description": "https://ohmyposh.dev/docs/config-overview#prefix",
-              "default": " "
-            },
-            "postfix": {
-              "type": "string",
-              "title": "Text postfix",
-              "description": "https://ohmyposh.dev/docs/config-overview#postfix",
-              "default": " "
-            },
             "template": {
               "$ref": "#/definitions/template"
             },
@@ -262,6 +258,28 @@
         }
       },
       "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "project" }
+            }
+          },
+          "then": {
+            "title": "Project Segment",
+            "description": "https://ohmyposh.dev/docs/project"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "npm" }
+            }
+          },
+          "then": {
+            "title": "NPM Segment",
+            "description": "https://ohmyposh.dev/docs/npm"
+          }
+        },
         {
           "if": {
             "properties": {
@@ -316,7 +334,20 @@
           },
           "then": {
             "title": "Azure Segment",
-            "description": "https://ohmyposh.dev/docs/az"
+            "description": "https://ohmyposh.dev/docs/az",
+            "properties": {
+              "source": {
+                "type": "string",
+                "title": "Source",
+                "description": "https://ohmyposh.dev/docs/az#properties",
+                "default": "first_match",
+                "enum": [
+                  "first_match",
+                  "cli",
+                  "pwsh"
+                ]
+              }
+            }
           }
         },
         {
@@ -1150,11 +1181,17 @@
                     "description": "Replace known locations in the path with the replacements before applying the style.",
                     "default": true
                   },
-                  "mixed_threshold":{
+                  "mixed_threshold": {
                     "type": "integer",
                     "title": "Mixed threshold",
                     "description": "The maximum length of a path segment that will be displayed when using mixed style.",
                     "default": 4
+                  },
+                  "hide_root_location": {
+                    "type": "boolean",
+                    "title": "Hide the root location",
+                    "description": "Hides the root location, when using agnoster_short style, if it doesn't fit in the last max_depth folders.",
+                    "default": false
                   }
                 }
               }
@@ -1665,10 +1702,10 @@
                     "default": ""
                   },
                   "fallback": {
-                    "type":"string",
-                    "title":"Fallback value",
-                    "description":"Value to display if registry value cannot be retrieved",
-                    "default":""
+                    "type": "string",
+                    "title": "Fallback value",
+                    "description": "Value to display if registry value cannot be retrieved",
+                    "default": ""
                   }
                 }
               }
@@ -1747,22 +1784,22 @@
                     "default": ""
                   },
                   "api_key": {
-                    "type":"string",
-                    "title":"Brewfather API Key (required)",
-                    "description":"Provided by Brewfather's Generate API Key settings option",
-                    "default":""
+                    "type": "string",
+                    "title": "Brewfather API Key (required)",
+                    "description": "Provided by Brewfather's Generate API Key settings option",
+                    "default": ""
                   },
                   "batch_id": {
-                    "type":"string",
-                    "title":"ID of the batch in Brewfather (required)",
-                    "description":"At the end of the URL when viewing the batch on the Brewfather site",
-                    "default":""
+                    "type": "string",
+                    "title": "ID of the batch in Brewfather (required)",
+                    "description": "At the end of the URL when viewing the batch on the Brewfather site",
+                    "default": ""
                   },
                   "day_icon": {
-                    "type":"string",
-                    "title":"Icon to use to indicate days",
-                    "description":"Appended to a number to indicate days, e.g. 25d",
-                    "default":"d"
+                    "type": "string",
+                    "title": "Icon to use to indicate days",
+                    "description": "Appended to a number to indicate days, e.g. 25d",
+                    "default": "d"
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
@@ -1774,82 +1811,82 @@
                     "default": 5
                   },
                   "doubleup_icon": {
-                    "type":"string",
-                    "title":"Temperature trend icon, very high positive change",
-                    "description":"Delta between this and prior temperature reading is very high (> 4C by default), available intemplate as .TemperatureTrend",
-                    "default":"↑↑"
+                    "type": "string",
+                    "title": "Temperature trend icon, very high positive change",
+                    "description": "Delta between this and prior temperature reading is very high (> 4C by default), available intemplate as .TemperatureTrend",
+                    "default": "↑↑"
                   },
                   "singleup_icon": {
-                    "type":"string",
-                    "title":"Temperature trend icon, high positive change",
-                    "description":"Delta between this and prior temperature reading is high (2C < delta < 4C by default), available intemplate as .TemperatureTrend",
-                    "default":"↑"
+                    "type": "string",
+                    "title": "Temperature trend icon, high positive change",
+                    "description": "Delta between this and prior temperature reading is high (2C < delta < 4C by default), available intemplate as .TemperatureTrend",
+                    "default": "↑"
                   },
                   "fortyfiveup_icon": {
-                    "type":"string",
-                    "title":"Temperature trend icon, positive change",
-                    "description":"Delta between this and prior temperature reading is positive (0.5C < delta < 2C by default), available intemplate as .TemperatureTrend",
-                    "default":"↗"
+                    "type": "string",
+                    "title": "Temperature trend icon, positive change",
+                    "description": "Delta between this and prior temperature reading is positive (0.5C < delta < 2C by default), available intemplate as .TemperatureTrend",
+                    "default": "↗"
                   },
                   "flat_icon": {
-                    "type":"string",
-                    "title":"Temperature trend icon, flat/small change",
-                    "description":"Delta between this and prior temperature and this temperature reading (< +-0.5C change), available intemplate as .TemperatureTrend",
-                    "default":"→"
+                    "type": "string",
+                    "title": "Temperature trend icon, flat/small change",
+                    "description": "Delta between this and prior temperature and this temperature reading (< +-0.5C change), available intemplate as .TemperatureTrend",
+                    "default": "→"
                   },
                   "fortyfivedown_icon": {
-                    "type":"string",
-                    "title":"Temperature trend icon, v. negative change",
-                    "description":"Delta between this and prior temperature reading is negative (-0.5C > delta > -2C by default), available intemplate as .TemperatureTrend",
-                    "default":"↘"
+                    "type": "string",
+                    "title": "Temperature trend icon, v. negative change",
+                    "description": "Delta between this and prior temperature reading is negative (-0.5C > delta > -2C by default), available intemplate as .TemperatureTrend",
+                    "default": "↘"
                   },
                   "singledown_icon": {
-                    "type":"string",
-                    "title":"Temperature trend icon, high negative change",
-                    "description":"Delta between this and prior temperature reading is large negative (-2C > delta > -4C by default), available intemplate as .TemperatureTrend",
-                    "default":"↓"
+                    "type": "string",
+                    "title": "Temperature trend icon, high negative change",
+                    "description": "Delta between this and prior temperature reading is large negative (-2C > delta > -4C by default), available intemplate as .TemperatureTrend",
+                    "default": "↓"
                   },
                   "doubledown_icon": {
-                    "type":"string",
-                    "title":"Temperature trend icon, very high negative change",
-                    "description":"Delta between this and prior temperature reading is very large negative (> -4C by default), available intemplate as .TemperatureTrend",
-                    "default":"↓↓"
+                    "type": "string",
+                    "title": "Temperature trend icon, very high negative change",
+                    "description": "Delta between this and prior temperature reading is very large negative (> -4C by default), available intemplate as .TemperatureTrend",
+                    "default": "↓↓"
                   },
                   "planning_status_icon": {
-                    "type":"string",
-                    "title":"Icon for batch in planning",
-                    "description":"Available in template as .StatusIcon",
-                    "default":"\uF8EA"
+                    "type": "string",
+                    "title": "Icon for batch in planning",
+                    "description": "Available in template as .StatusIcon",
+                    "default": "\uF8EA"
                   },
                   "brewing_status_icon": {
-                    "type":"string",
-                    "title":"Icon for batch being brewed",
-                    "description":"Available in template as .StatusIcon",
-                    "default":"\uF7DE"
+                    "type": "string",
+                    "title": "Icon for batch being brewed",
+                    "description": "Available in template as .StatusIcon",
+                    "default": "\uF7DE"
                   },
                   "fermenting_status_icon": {
-                    "type":"string",
-                    "title":"Icon for batch fermenting",
-                    "description":"Available in template as .StatusIcon",
-                    "default":"\uF499"
+                    "type": "string",
+                    "title": "Icon for batch fermenting",
+                    "description": "Available in template as .StatusIcon",
+                    "default": "\uF499"
                   },
                   "conditioning_status_icon": {
-                    "type":"string",
-                    "title":"Icon for batch conditioning",
-                    "description":"Available in template as .StatusIcon",
-                    "default":"\uE372"
+                    "type": "string",
+                    "title": "Icon for batch conditioning",
+                    "description": "Available in template as .StatusIcon",
+                    "default": "\uE372"
                   },
                   "completed_status_icon": {
-                    "type":"string",
-                    "title":"Icon for completed batch",
-                    "description":"Available in template as .StatusIcon",
-                    "default":"\uF7A5"
+                    "type": "string",
+                    "title": "Icon for completed batch",
+                    "description": "Available in template as .StatusIcon",
+                    "default": "\uF7A5"
                   },
                   "archived_status_icon": {
-                    "type":"string",
-                    "title":"Icon for archived batch",
-                    "description":"Available in template as .StatusIcon",
-                    "default":"\uF187"
+                    "type": "string",
+                    "title": "Icon for archived batch",
+                    "description": "Available in template as .StatusIcon",
+                    "default": "\uF187"
                   }
                 }
               }
@@ -1983,6 +2020,110 @@
             "title": "Clound Foundry Target segment",
             "description": "https://ohmyposh.dev/docs/cftarget"
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "kotlin" }
+            }
+          },
+          "then": {
+            "title": "Kotlin Segment",
+            "description": "https://ohmyposh.dev/docs/kotlin",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "swift" }
+            }
+          },
+          "then": {
+            "title": "Swift Segment",
+            "description": "https://ohmyposh.dev/docs/swift",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "cds" }
+            }
+          },
+          "then": {
+            "title": "CDS (SAP CAP) segment",
+            "description": "https://ohmyposh.dev/docs/cds",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "r" }
+            }
+          },
+          "then": {
+            "title": "R Segment",
+            "description": "https://ohmyposh.dev/docs/r",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
         }
       ]
     }
@@ -2000,19 +2141,6 @@
       "title": "Enable OSC99",
       "description": "https://ohmyposh.dev/docs/config-overview#general-settings",
       "default": false
-    },
-    "console_title": {
-      "type": "boolean",
-      "title": "Console Title",
-      "description": "https://ohmyposh.dev/docs/config-overview#general-settings",
-      "default": true
-    },
-    "console_title_style": {
-      "type": "string",
-      "title": "Console Title Style",
-      "description": "https://ohmyposh.dev/docs/config-title#console-title-style",
-      "enum": ["folder", "path", "template"],
-      "default": "folder"
     },
     "console_title_template": {
       "type": "string",

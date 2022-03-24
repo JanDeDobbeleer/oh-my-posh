@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"oh-my-posh/color"
-	"oh-my-posh/console"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"os"
@@ -16,7 +15,7 @@ import (
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/json"
 	"github.com/gookit/config/v2/toml"
-	"github.com/gookit/config/v2/yaml"
+	yaml "github.com/gookit/config/v2/yamlv3"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -33,8 +32,6 @@ type Config struct {
 	Version              int           `json:"version"`
 	FinalSpace           bool          `json:"final_space,omitempty"`
 	OSC99                bool          `json:"osc99,omitempty"`
-	ConsoleTitle         bool          `json:"console_title,omitempty"`
-	ConsoleTitleStyle    console.Style `json:"console_title_style,omitempty"`
 	ConsoleTitleTemplate string        `json:"console_title_template,omitempty"`
 	TerminalBackground   string        `json:"terminal_background,omitempty"`
 	Blocks               []*Block      `json:"blocks,omitempty"`
@@ -43,7 +40,10 @@ type Config struct {
 	ValidLine            *ExtraPrompt  `json:"valid_line,omitempty"`
 	ErrorLine            *ExtraPrompt  `json:"error_line,omitempty"`
 	SecondaryPrompt      *ExtraPrompt  `json:"secondary_prompt,omitempty"`
+	DebugPrompt          *ExtraPrompt  `json:"debug_prompt,omitempty"`
 	Palette              color.Palette `json:"palette,omitempty"`
+
+	Output string
 
 	format  string
 	origin  string
@@ -78,6 +78,10 @@ func (cfg *Config) exitWithError(err error) {
 	}
 	defer os.Exit(1)
 	message := "Oh My Posh Error:\n\n" + err.Error()
+	if cfg.eval {
+		fmt.Printf("echo \"%s\"\n", message)
+		return
+	}
 	cfg.print(message)
 }
 
@@ -85,7 +89,7 @@ func (cfg *Config) exitWithError(err error) {
 func LoadConfig(env environment.Environment) *Config {
 	cfg := loadConfig(env)
 	// only migrate automatically when the switch isn't set
-	if !*env.Args().Migrate && cfg.Version != configVersion {
+	if !env.Flags().Migrate && cfg.Version != configVersion {
 		cfg.BackupAndMigrate(env)
 	}
 	return cfg
@@ -93,8 +97,7 @@ func LoadConfig(env environment.Environment) *Config {
 
 func loadConfig(env environment.Environment) *Config {
 	var cfg Config
-	configFile := *env.Args().Config
-	cfg.eval = *env.Args().Eval
+	configFile := env.Flags().Config
 	if configFile == "" {
 		return defaultConfig()
 	}
@@ -104,6 +107,9 @@ func loadConfig(env environment.Environment) *Config {
 
 	cfg.origin = configFile
 	cfg.format = strings.TrimPrefix(filepath.Ext(configFile), ".")
+	if cfg.format == "yml" {
+		cfg.format = YAML
+	}
 
 	config.AddDriver(yaml.Driver)
 	config.AddDriver(json.Driver)
@@ -133,8 +139,14 @@ func (cfg *Config) sync() {
 		return
 	}
 	var structMap map[string]interface{}
-	inrec, _ := json2.Marshal(cfg)
-	_ = json2.Unmarshal(inrec, &structMap)
+	inrec, err := json2.Marshal(cfg)
+	if err != nil {
+		return
+	}
+	err = json2.Unmarshal(inrec, &structMap)
+	if err != nil {
+		return
+	}
 	// remove empty structs
 	for k, v := range structMap {
 		if smap, OK := v.(map[string]interface{}); OK && len(smap) == 0 {
@@ -169,26 +181,28 @@ func (cfg *Config) Export(format string) string {
 
 	_, err := config.DumpTo(&result, cfg.format)
 	cfg.exitWithError(err)
-	var prefix string
-	switch cfg.format {
-	case YAML:
-		prefix = "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-	case TOML:
-		prefix = "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
+	if cfg.format == YAML {
+		prefix := "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
+		return prefix + result.String()
 	}
+	prefix := "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 	return prefix + escapeGlyphs(result.String())
 }
 
 func (cfg *Config) BackupAndMigrate(env environment.Environment) {
 	origin := cfg.backup()
 	cfg.Migrate(env)
-	cfg.write()
+	cfg.Write(cfg.format)
 	cfg.print(fmt.Sprintf("\nOh My Posh config migrated to version %d\nBackup config available at %s\n\n", cfg.Version, origin))
 }
 
-func (cfg *Config) write() {
-	content := cfg.Export(cfg.format)
-	f, err := os.OpenFile(cfg.origin, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+func (cfg *Config) Write(format string) {
+	content := cfg.Export(format)
+	destination := cfg.Output
+	if len(destination) == 0 {
+		destination = cfg.origin
+	}
+	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	cfg.exitWithError(err)
 	_, err = f.WriteString(content)
 	cfg.exitWithError(err)

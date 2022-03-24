@@ -51,7 +51,8 @@ func TestSpotifyWsl(t *testing.T) {
 			Case:            "tasklist.exe not in path",
 			ExpectedString:  "-",
 			ExpectedEnabled: false,
-			ExecOutput:      ""},
+			ExecOutput:      "",
+		},
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)

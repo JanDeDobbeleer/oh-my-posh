@@ -37,8 +37,8 @@ func TestWindowsPathWithDriveLetter(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := &ShellEnvironment{
-			args: &Args{
-				PWD: &tc.CWD,
+			CmdFlags: &Flags{
+				PWD: tc.CWD,
 			},
 		}
 		assert.Equal(t, env.Pwd(), tc.Expected)

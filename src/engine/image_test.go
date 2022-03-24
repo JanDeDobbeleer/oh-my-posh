@@ -3,6 +3,7 @@ package engine
 import (
 	"io/ioutil"
 	"oh-my-posh/color"
+	"oh-my-posh/shell"
 	"os"
 	"testing"
 
@@ -17,7 +18,7 @@ func runImageTest(content string) error {
 	}
 	defer os.Remove(file.Name())
 	ansi := &color.Ansi{}
-	ansi.Init(plain)
+	ansi.Init(shell.PLAIN)
 	image := &ImageRenderer{
 		AnsiString: content,
 		Ansi:       ansi,

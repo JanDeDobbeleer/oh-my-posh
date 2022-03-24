@@ -143,8 +143,6 @@
       "type": "prompt"
     }
   ],
-  "console_title": true,
-  "console_title_style": "template",
   "console_title_template": "{{ .Folder }}",
   "osc99": true,
   "transient_prompt": {

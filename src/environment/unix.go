@@ -21,7 +21,7 @@ func (env *ShellEnvironment) Home() string {
 	return os.Getenv("HOME")
 }
 
-func (env *ShellEnvironment) WindowTitle(imageName, windowTitleRegex string) (string, error) {
+func (env *ShellEnvironment) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
 	return "", errors.New("not implemented")
 }
 
@@ -45,8 +45,8 @@ func (env *ShellEnvironment) IsWsl2() bool {
 
 func (env *ShellEnvironment) TerminalWidth() (int, error) {
 	defer env.trace(time.Now(), "TerminalWidth")
-	if *env.args.TerminalWidth != 0 {
-		return *env.args.TerminalWidth, nil
+	if env.CmdFlags.TerminalWidth != 0 {
+		return env.CmdFlags.TerminalWidth, nil
 	}
 	width, err := terminal.Width()
 	if err != nil {
@@ -65,8 +65,8 @@ func (env *ShellEnvironment) Platform() string {
 		env.Cache().Set(key, platform, -1)
 	}()
 	if wsl := env.Getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {
-		platform = strings.ToLower(wsl)
-		return strings.Split(platform, "-")[0]
+		platform = strings.Split(strings.ToLower(wsl), "-")[0]
+		return platform
 	}
 	platform, _, _, _ = host.PlatformInformation()
 	if platform == "arch" {

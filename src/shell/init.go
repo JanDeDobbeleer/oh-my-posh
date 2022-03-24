@@ -1,4 +1,4 @@
-package engine
+package shell
 
 import (
 	_ "embed"
@@ -10,31 +10,23 @@ import (
 	"strings"
 )
 
-//go:embed init/omp.ps1
+//go:embed scripts/omp.ps1
 var pwshInit string
 
-//go:embed init/omp.fish
+//go:embed scripts/omp.fish
 var fishInit string
 
-//go:embed init/omp.bash
+//go:embed scripts/omp.bash
 var bashInit string
 
-//go:embed init/omp.zsh
+//go:embed scripts/omp.zsh
 var zshInit string
 
-//go:embed init/omp.lua
+//go:embed scripts/omp.lua
 var cmdInit string
 
 const (
 	noExe = "echo \"Unable to find Oh My Posh executable\""
-
-	zsh         = "zsh"
-	bash        = "bash"
-	pwsh        = "pwsh"
-	fish        = "fish"
-	powershell5 = "powershell"
-	winCMD      = "cmd"
-	plain       = "shell"
 )
 
 func getExecutablePath(env environment.Environment) (string, error) {
@@ -46,49 +38,48 @@ func getExecutablePath(env environment.Environment) (string, error) {
 	// which uses unix style paths to resolve the executable's location.
 	// PowerShell knows how to resolve both, so we can swap this without any issue.
 	executable = strings.ReplaceAll(executable, "\\", "/")
-	switch *env.Args().Shell {
-	case bash, zsh:
+	switch env.Flags().Shell {
+	case BASH, ZSH:
 		executable = strings.ReplaceAll(executable, " ", "\\ ")
 		executable = strings.ReplaceAll(executable, "(", "\\(")
 		executable = strings.ReplaceAll(executable, ")", "\\)")
-		return executable, nil
 	}
 	return executable, nil
 }
 
-func InitShell(env environment.Environment) string {
+func Init(env environment.Environment) string {
 	executable, err := getExecutablePath(env)
 	if err != nil {
 		return noExe
 	}
-	shell := *env.Args().Shell
+	shell := env.Flags().Shell
 	switch shell {
-	case pwsh, powershell5:
-		return fmt.Sprintf("(@(&\"%s\" --print-init --shell=%s --config=\"%s\") -join \"`n\") | Invoke-Expression", executable, shell, *env.Args().Config)
-	case zsh, bash, fish, winCMD:
-		return PrintShellInit(env)
+	case PWSH, PWSH5:
+		return fmt.Sprintf("(@(&\"%s\" prompt init %s --config=\"%s\" --print) -join \"`n\") | Invoke-Expression", executable, shell, env.Flags().Config)
+	case ZSH, BASH, FISH, CMD:
+		return PrintInit(env)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}
 }
 
-func PrintShellInit(env environment.Environment) string {
+func PrintInit(env environment.Environment) string {
 	executable, err := getExecutablePath(env)
 	if err != nil {
 		return noExe
 	}
-	shell := *env.Args().Shell
-	configFile := *env.Args().Config
+	shell := env.Flags().Shell
+	configFile := env.Flags().Config
 	switch shell {
-	case pwsh, powershell5:
+	case PWSH, PWSH5:
 		return getShellInitScript(executable, configFile, pwshInit)
-	case zsh:
+	case ZSH:
 		return getShellInitScript(executable, configFile, zshInit)
-	case bash:
+	case BASH:
 		return getShellInitScript(executable, configFile, bashInit)
-	case fish:
+	case FISH:
 		return getShellInitScript(executable, configFile, fishInit)
-	case winCMD:
+	case CMD:
 		return getShellInitScript(executable, configFile, cmdInit)
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
@@ -101,7 +92,7 @@ func getShellInitScript(executable, configFile, script string) string {
 	return script
 }
 
-func GetConsoleBackgroundColor(env environment.Environment, backgroundColorTemplate string) string {
+func ConsoleBackgroundColor(env environment.Environment, backgroundColorTemplate string) string {
 	if len(backgroundColorTemplate) == 0 {
 		return backgroundColorTemplate
 	}

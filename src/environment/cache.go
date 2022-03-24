@@ -3,11 +3,12 @@ package environment
 import (
 	"encoding/json"
 	"io/ioutil"
+	"path/filepath"
 	"time"
 )
 
 const (
-	fileName = "/omp.cache"
+	CacheFile = "/omp.cache"
 )
 
 type cacheObject struct {
@@ -25,7 +26,8 @@ type fileCache struct {
 func (fc *fileCache) Init(cachePath string) {
 	fc.cache = newConcurrentMap()
 	fc.cachePath = cachePath
-	content, err := ioutil.ReadFile(fc.cachePath + fileName)
+	cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
+	content, err := ioutil.ReadFile(cacheFilePath)
 	if err != nil {
 		return
 	}
@@ -46,7 +48,8 @@ func (fc *fileCache) Close() {
 	}
 	cache := fc.cache.list()
 	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
-		_ = ioutil.WriteFile(fc.cachePath+fileName, dump, 0644)
+		cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
+		_ = ioutil.WriteFile(cacheFilePath, dump, 0644)
 	}
 }
 

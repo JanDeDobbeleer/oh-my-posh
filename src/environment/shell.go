@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"oh-my-posh/regex"
 	"os"
 	"os/exec"
@@ -239,9 +238,8 @@ func (env *ShellEnvironment) resolveConfigPath() {
 	if len(env.CmdFlags.Config) == 0 {
 		env.CmdFlags.Config = fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v%s/themes/default.omp.json", env.Version)
 	}
-	location, err := url.ParseRequestURI(env.CmdFlags.Config)
-	if err == nil {
-		env.getConfigPath(location.String())
+	if strings.HasPrefix(env.CmdFlags.Config, "https://") {
+		env.getConfigPath(env.CmdFlags.Config)
 		return
 	}
 	// Cygwin path always needs the full path as we're on Windows but not really.

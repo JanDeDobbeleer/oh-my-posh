@@ -43,6 +43,7 @@
         "transient",
         "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
         "--shell=pwsh",
+        "--error=1"
       ]
     },
     {

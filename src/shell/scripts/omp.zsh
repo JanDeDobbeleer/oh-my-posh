@@ -20,9 +20,6 @@ function prompt_ohmyposh_precmd() {
   eval "$(::OMP:: prompt print primary --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh)"
   unset omp_start_time
   unset omp_now
-  unset omp_elapsed
-  unset omp_last_error
-  unset omp_stack_count
 }
 
 function _install-omp-hooks() {
@@ -73,7 +70,7 @@ _posh-zle-line-init() {
     local -i ret=$?
     (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
-    eval "$(::OMP:: prompt print transient --config="$POSH_THEME" --eval --shell=zsh)"
+    eval "$(::OMP:: prompt print transient --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --config="$POSH_THEME" --eval --shell=zsh)"
     zle .reset-prompt
 
     # If we received EOT, we exit the shell

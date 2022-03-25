@@ -122,5 +122,5 @@ func init() { // nolint:gochecknoinits
 	printCmd.Flags().StringVar(&command, "command", "", "tooltip command")
 	printCmd.Flags().BoolVarP(&plain, "plain", "p", false, "plain text output (no ANSI)")
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
-	promptCmd.AddCommand(printCmd)
+	rootCmd.AddCommand(printCmd)
 }

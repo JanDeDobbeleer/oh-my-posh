@@ -3,7 +3,7 @@ export POWERLINE_COMMAND="oh-my-posh"
 export CONDA_PROMPT_MODIFIER=false
 
 # set secondary prompt
-PS2="$(::OMP:: prompt print secondary --config="$POSH_THEME" --shell=zsh)"
+PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=zsh)"
 
 function prompt_ohmyposh_preexec() {
   omp_start_time=$(::OMP:: get millis)
@@ -17,7 +17,7 @@ function prompt_ohmyposh_precmd() {
     omp_now=$(::OMP:: get millis)
     omp_elapsed=$(($omp_now-$omp_start_time))
   fi
-  eval "$(::OMP:: prompt print primary --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh)"
+  eval "$(::OMP:: print primary --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh)"
   unset omp_start_time
   unset omp_now
 }
@@ -48,7 +48,7 @@ function self-insert() {
     zle .self-insert
     return
   fi
-  tooltip=$(::OMP:: prompt print tooltip --config="$POSH_THEME" --shell=zsh --command="$BUFFER")
+  tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --command="$BUFFER")
   # ignore an empty tooltip
   if [[ ! -z "$tooltip" ]]; then
     RPROMPT=$tooltip
@@ -70,7 +70,7 @@ _posh-zle-line-init() {
     local -i ret=$?
     (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
-    eval "$(::OMP:: prompt print transient --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --config="$POSH_THEME" --eval --shell=zsh)"
+    eval "$(::OMP:: print transient --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --config="$POSH_THEME" --eval --shell=zsh)"
     zle .reset-prompt
 
     # If we received EOT, we exit the shell

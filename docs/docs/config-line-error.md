@@ -67,7 +67,7 @@ properties below - defaults to ` `
 Invoke Oh My Posh in your `$PROFILE` and add the following line below.
 
 ```powershell
-oh-my-posh prompt init pwsh --config $env:POSH_THEMES_PATH/jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh init pwsh --config $env:POSH_THEMES_PATH/jandedobbeleer.omp.json | Invoke-Expression
 // highlight-start
 Enable-PoshLineError
 // highlight-end

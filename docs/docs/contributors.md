@@ -161,6 +161,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://www.eliostruyf.com"><img src="https://avatars.githubusercontent.com/u/2900833?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Elio Struyf</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=estruyf" title="Documentation">📖</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=estruyf" title="Code">💻</a></td>
     <td align="center"><a href="https://www.olafalders.com/"><img src="https://avatars.githubusercontent.com/u/96205?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Olaf Alders</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=oalders" title="Documentation">📖</a></td>
     <td align="center"><a href="https://blog.deltacode.be"><img src="https://avatars.githubusercontent.com/u/352626?v=4?s=100" width="100px;" alt=""/><br /><sub><b>David De Sloovere</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=DavidDeSloovere" title="Code">💻</a></td>
+    <td align="center"><a href="https://lensor-radii.netlify.app"><img src="https://avatars.githubusercontent.com/u/69637718?v=4?s=100" width="100px;" alt=""/><br /><sub><b>LensPlaysGames</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=LensPlaysGames" title="Documentation">📖</a></td>
   </tr>
 </table>
 

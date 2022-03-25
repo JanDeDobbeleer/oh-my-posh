@@ -1080,6 +1080,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "LensPlaysGames",
+      "name": "LensPlaysGames",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69637718?v=4",
+      "profile": "https://lensor-radii.netlify.app",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

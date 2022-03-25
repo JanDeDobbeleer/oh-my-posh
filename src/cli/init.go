@@ -38,7 +38,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/prompt
 func init() { // nolint:gochecknoinits
 	initCmd.Flags().BoolVarP(&print, "print", "p", false, "print the init script")
 	_ = initCmd.MarkPersistentFlagRequired("config")
-	promptCmd.AddCommand(initCmd)
+	rootCmd.AddCommand(initCmd)
 }
 
 func runInit(shellName string) {

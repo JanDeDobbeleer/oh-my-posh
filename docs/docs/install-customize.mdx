@@ -7,7 +7,7 @@ sidebar_label: 💅🏼 Customize
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem"
 
-The standard prompt initialization sets Oh My Posh' [default theme][default-theme]. This configuration is downloaded
+The standard initialization sets Oh My Posh' [default theme][default-theme]. This configuration is downloaded
 and kept up-to-date with Oh My Posh' version every time the shell starts. To change/alter the configuration, you need to
 add the `--config` command-line option to change the configuration to use a specific file.
 
@@ -32,7 +32,7 @@ downloaded the configuration file to your user's home folder):
 <TabItem value="powershell">
 
 ```powershell
-oh-my-posh prompt init pwsh --config ~/.jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh init pwsh --config ~/.jandedobbeleer.omp.json | Invoke-Expression
 ```
 
 Once altered, reload your profile for the changes to take effect.
@@ -45,7 +45,7 @@ Once altered, reload your profile for the changes to take effect.
 <TabItem value="cmd">
 
 ```lua title="oh-my-posh.lua"
-load(io.popen('oh-my-posh prompt init cmd --config ~/.jandedobbeleer.omp.json'):read("*a"))()
+load(io.popen('oh-my-posh init cmd --config ~/.jandedobbeleer.omp.json'):read("*a"))()
 ```
 
 Once altered, restart cmd for the changes to take effect.
@@ -54,7 +54,7 @@ Once altered, restart cmd for the changes to take effect.
 <TabItem value="zsh">
 
 ```bash
-eval "$(oh-my-posh prompt init zsh --config ~/.jandedobbeleer.omp.json)"
+eval "$(oh-my-posh init zsh --config ~/.jandedobbeleer.omp.json)"
 ```
 
 Once altered, reload your profile for the changes to take effect.
@@ -67,7 +67,7 @@ exec zsh
 <TabItem value="bash">
 
 ```bash
-eval "$(oh-my-posh prompt init bash --config ~/.jandedobbeleer.omp.json)"
+eval "$(oh-my-posh init bash --config ~/.jandedobbeleer.omp.json)"
 ```
 
 Once altered, reload your profile for the changes to take effect.
@@ -80,7 +80,7 @@ exec bash
 <TabItem value="fish">
 
 ```bash
-oh-my-posh prompt init fish --config ~/.jandedobbeleer.omp.json | source
+oh-my-posh init fish --config ~/.jandedobbeleer.omp.json | source
 ```
 
 Once altered, reload your config for the changes to take effect.
@@ -95,20 +95,20 @@ Once altered, reload your config for the changes to take effect.
 **Nu < 0.32.0**
 
 ```bash
-config set prompt  "= `{{$(oh-my-posh prompt print primary --config ~/.jandedobbeleer.omp.json | str collect)}}`"
+config set prompt  "= `{{$(oh-my-posh print primary --config ~/.jandedobbeleer.omp.json | str collect)}}`"
 ```
 
 **Nu >= 0.32.0**
 
 ```bash
-config set prompt  "(oh-my-posh prompt print primary --config ~/.jandedobbeleer.omp.json | str collect)"
+config set prompt  "(oh-my-posh print primary --config ~/.jandedobbeleer.omp.json | str collect)"
 ```
 
 **Nu >= 0.60.0**
 
 ```bash
-let-env PROMPT_COMMAND = { oh-my-posh prompt print primary --config ~/.jandedobbeleer.omp.json }
-let-env PROMPT_COMMAND_RIGHT = { oh-my-posh prompt print right --config ~/.jandedobbeleer.omp.json }
+let-env PROMPT_COMMAND = { oh-my-posh print primary --config ~/.jandedobbeleer.omp.json }
+let-env PROMPT_COMMAND_RIGHT = { oh-my-posh print right --config ~/.jandedobbeleer.omp.json }
 ```
 
 Once altered, restart nu shell for the changes to take effect.

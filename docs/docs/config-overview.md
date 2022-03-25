@@ -50,7 +50,7 @@ theme.
 :::
 
 ```bash
-oh-my-posh prompt print primary --config sample.json --shell uni
+oh-my-posh print primary --config sample.json --shell uni
 ```
 
 If all goes according to plan, you should see the prompt being printed out on the line below. In case you see a lot of

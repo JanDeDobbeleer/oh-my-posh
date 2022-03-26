@@ -62,7 +62,7 @@ function global:Initialize-ModuleSupport {
     $omp = "::OMP::"
     $config, $cleanPWD, $cleanPSWD = Get-PoshContext
     if ($env:POSH_TRANSIENT -eq $true) {
-        $standardOut = @(&$omp print transient --error="$global:ERRORCODE" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$global:EXECUTIONTIME" --config="$config" 2>&1)
+        $standardOut = @(&$omp print transient --error="$global:OMP_ERRORCODE" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$global:OMP_EXECUTIONTIME" --config="$config" 2>&1)
         $standardOut -join "`n"
         $env:POSH_TRANSIENT = $false
         return
@@ -72,16 +72,16 @@ function global:Initialize-ModuleSupport {
         $standardOut -join "`n"
         return
     }
-    $global:ERRORCODE = 0
+    $global:OMP_ERRORCODE = 0
     Initialize-ModuleSupport
     Set-PoshContext
     if ($lastCommandSuccess -eq $false) {
         #native app exit code
         if ($realLASTEXITCODE -is [int] -and $realLASTEXITCODE -gt 0) {
-            $global:ERRORCODE = $realLASTEXITCODE
+            $global:OMP_ERRORCODE = $realLASTEXITCODE
         }
         else {
-            $global:ERRORCODE = 1
+            $global:OMP_ERRORCODE = 1
         }
     }
 
@@ -94,14 +94,14 @@ function global:Initialize-ModuleSupport {
     }
     catch {}
 
-    $global:EXECUTIONTIME = -1
+    $global:OMP_EXECUTIONTIME = -1
     $history = Get-History -ErrorAction Ignore -Count 1
     if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime -and $global:omp_lastHistoryId -ne $history.Id) {
-        $global:EXECUTIONTIME = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
+        $global:OMP_EXECUTIONTIME = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
         $global:omp_lastHistoryId = $history.Id
     }
     $terminalWidth = $Host.UI.RawUI.WindowSize.Width
-    $standardOut = @(&$omp print primary --error="$global:ERRORCODE" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$global:EXECUTIONTIME" --stack-count="$stackCount" --config="$config" --terminal-width=$terminalWidth 2>&1)
+    $standardOut = @(&$omp print primary --error="$global:OMP_ERRORCODE" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$global:OMP_EXECUTIONTIME" --stack-count="$stackCount" --config="$config" --terminal-width=$terminalWidth 2>&1)
     # make sure PSReadLine knows we have a multiline prompt
     $extraLines = $standardOut.Count - 1
     if ($extraLines -gt 0) {

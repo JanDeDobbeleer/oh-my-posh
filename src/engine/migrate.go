@@ -11,8 +11,9 @@ import (
 const (
 	colorBackground = properties.Property("color_background")
 
-	prefix  = properties.Property("prefix")
-	postfix = properties.Property("postfix")
+	prefix          = properties.Property("prefix")
+	postfix         = properties.Property("postfix")
+	segmentTemplate = properties.Property("template")
 )
 
 func (cfg *Config) Migrate(env environment.Environment) {
@@ -35,6 +36,9 @@ func (segment *Segment) migrate(env environment.Environment, version int) {
 	if version < 1 {
 		segment.migrationOne(env)
 	}
+	if version < 2 {
+		segment.migrationTwo(env)
+	}
 }
 
 func (segment *Segment) migrationOne(env environment.Environment) {
@@ -46,10 +50,10 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 	delete(segment.Properties, "enable_hyperlink")
 	switch segment.Type { // nolint:exhaustive
 	case TEXT:
-		segment.migratePropertyKey("text", properties.SegmentTemplate)
+		segment.migratePropertyKey("text", segmentTemplate)
 		segment.migrateTemplate()
 	case GIT:
-		hasTemplate := segment.hasProperty(properties.SegmentTemplate)
+		hasTemplate := segment.hasProperty(segmentTemplate)
 		segment.migratePropertyKey("display_status", segments.FetchStatus)
 		segment.migratePropertyKey("display_stash_count", segments.FetchStashCount)
 		segment.migratePropertyKey("display_worktree_count", segments.FetchWorktreeCount)
@@ -90,9 +94,9 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 		}
 		if len(stateList) < 3 {
 			enabledTemplate := "{{ $stateList := list %s }}{{ if has .State.String $stateList }}{{ .Icon }}{{ .Percentage }}{{ end }}"
-			template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
+			template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
 			template = strings.ReplaceAll(template, "{{ .Icon }}{{ .Percentage }}", fmt.Sprintf(enabledTemplate, strings.Join(stateList, " ")))
-			segment.Properties[properties.SegmentTemplate] = template
+			segment.Properties[segmentTemplate] = template
 		}
 		// legacy properties
 		delete(segment.Properties, "display_charging")
@@ -102,10 +106,10 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 		segment.migrateTemplate()
 		segment.migratePropertyKey("display_virtual_env", segments.FetchVirtualEnv)
 	case SESSION:
-		hasTemplate := segment.hasProperty(properties.SegmentTemplate)
+		hasTemplate := segment.hasProperty(segmentTemplate)
 		segment.migrateTemplate()
 		segment.migrateIconOverride("ssh_icon", "\uf817 ")
-		template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
+		template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
 		template = strings.ReplaceAll(template, ".ComputerName", ".HostName")
 		if !segment.Properties.GetBool(properties.Property("display_host"), true) {
 			template = strings.ReplaceAll(template, "@{{ .HostName }}", "")
@@ -114,7 +118,7 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 			template = strings.ReplaceAll(template, "@", "")
 			template = strings.ReplaceAll(template, "{{ .UserName }}", "")
 		}
-		segment.Properties[properties.SegmentTemplate] = template
+		segment.Properties[segmentTemplate] = template
 		segment.migrateIconOverride("user_info_separator", "@")
 		if !hasTemplate {
 			segment.migrateInlineColorOverride("user_color", "{{ .UserName }}")
@@ -130,10 +134,10 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 			segment.migrateColorOverride("version_mismatch_color", "{{ if .Mismatch }}%s{{ end }}", background)
 		}
 	case EXIT:
-		template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
+		template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
 		if strings.Contains(template, ".Text") {
 			template = strings.ReplaceAll(template, ".Text", ".Meaning")
-			segment.Properties[properties.SegmentTemplate] = template
+			segment.Properties[segmentTemplate] = template
 		}
 		displayExitCode := properties.Property("display_exit_code")
 		if !segment.Properties.GetBool(displayExitCode, true) {
@@ -145,7 +149,7 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 			delete(segment.Properties, alwaysNumeric)
 			template = strings.ReplaceAll(template, ".Meaning", ".Code")
 		}
-		segment.Properties[properties.SegmentTemplate] = template
+		segment.Properties[segmentTemplate] = template
 		segment.migrateTemplate()
 		segment.migrateIconOverride("success_icon", "\uf42e")
 		segment.migrateIconOverride("error_icon", "\uf00d")
@@ -155,6 +159,18 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 		segment.migrateTemplate()
 	}
 	delete(segment.Properties, colorBackground)
+}
+
+func (segment *Segment) migrationTwo(env environment.Environment) {
+	if err := segment.mapSegmentWithWriter(env); err != nil {
+		return
+	}
+	if !segment.hasProperty(segmentTemplate) {
+		return
+	}
+	template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
+	segment.Template = template
+	delete(segment.Properties, segmentTemplate)
 }
 
 func (segment *Segment) hasProperty(property properties.Property) bool {
@@ -184,7 +200,7 @@ func (segment *Segment) migratePropertyKey(oldProperty, newProperty properties.P
 
 func (segment *Segment) migrateTemplate() {
 	defer segment.migratePreAndPostFix()
-	if segment.hasProperty(properties.SegmentTemplate) {
+	if segment.hasProperty(segmentTemplate) {
 		// existing template, ensure to add default pre/postfix values
 		if !segment.hasProperty(prefix) {
 			segment.Properties[prefix] = " "
@@ -194,18 +210,18 @@ func (segment *Segment) migrateTemplate() {
 		}
 		return
 	}
-	segment.Properties[properties.SegmentTemplate] = segment.writer.Template()
+	segment.Properties[segmentTemplate] = segment.writer.Template()
 }
 
 func (segment *Segment) migrateIconOverride(property properties.Property, overrideValue string) {
 	if !segment.hasProperty(property) {
 		return
 	}
-	template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
+	template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
 	if strings.Contains(template, overrideValue) {
 		template = strings.ReplaceAll(template, overrideValue, segment.Properties.GetString(property, ""))
 	}
-	segment.Properties[properties.SegmentTemplate] = template
+	segment.Properties[segmentTemplate] = template
 	delete(segment.Properties, property)
 }
 
@@ -236,13 +252,13 @@ func (segment *Segment) migrateInlineColorOverride(property properties.Property,
 		return
 	}
 	colorTemplate := fmt.Sprintf("<%s>%s</>", color, old)
-	template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
+	template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
 	template = strings.ReplaceAll(template, old, colorTemplate)
-	segment.Properties[properties.SegmentTemplate] = template
+	segment.Properties[segmentTemplate] = template
 }
 
 func (segment *Segment) migratePreAndPostFix() {
-	template := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
+	template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
 	defaultValue := " "
 	if segment.hasProperty(prefix) {
 		prefix := segment.Properties.GetString(prefix, defaultValue)
@@ -256,5 +272,5 @@ func (segment *Segment) migratePreAndPostFix() {
 		template += postfix
 		delete(segment.Properties, "postfix")
 	}
-	segment.Properties[properties.SegmentTemplate] = template
+	segment.Properties[segmentTemplate] = template
 }

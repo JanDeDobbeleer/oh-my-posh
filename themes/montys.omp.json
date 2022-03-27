@@ -8,25 +8,22 @@
           "background": "#003543",
           "foreground": "#00c983",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": "{{ .Icon }} {{ .HostName }} "
-          },
           "style": "diamond",
+          "template": "{{ .Icon }} {{ .HostName }} ",
           "type": "os"
         },
-        
         {
           "background": "#DA627D",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "home_icon": "\uf7db",
             "folder_icon": "\uf115",
             "folder_separator_icon": "\\",
-            "style": "full",
-            "template": " <#000>\uf07b \uf553</> {{ .Path }} "
+            "home_icon": "\uf7db",
+            "style": "full"
           },
           "style": "powerline",
+          "template": " <#000>\uf07b \uf553</> {{ .Path }} ",
           "type": "path"
         },
         {
@@ -37,20 +34,18 @@
             "branch_icon": " <#ffffff>\ue0a0 </>",
             "fetch_stash_count": true,
             "fetch_status": false,
-            "fetch_upstream_icon": true,
-            "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) "
+            "fetch_upstream_icon": true
           },
           "style": "powerline",
+          "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) ",
           "type": "git"
         },
         {
           "background": "#76b367",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
-          },
           "style": "powerline",
+          "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"
         },
         {
@@ -58,10 +53,10 @@
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "always_enabled": true,
-            "template": " \ufbab {{ .FormattedMs }} "
+            "always_enabled": true
           },
           "style": "powerline",
+          "template": " \ufbab {{ .FormattedMs }} ",
           "type": "executiontime"
         },
         {
@@ -69,10 +64,10 @@
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "template": " \uf017 {{ .CurrentDate | date .Format }} ",
             "time_format": "3:04 PM"
           },
           "style": "powerline",
+          "template": " \uf017 {{ .CurrentDate | date .Format }} ",
           "type": "time"
         },
         {
@@ -83,10 +78,10 @@
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "always_enabled": true,
-            "template": " {{ if gt .Code 0 }}\uf525{{ else }}\uf469{{ end }}"
+            "always_enabled": true
           },
           "style": "diamond",
+          "template": " {{ if gt .Code 0 }}\uf525{{ else }}\uf469{{ end }}",
           "trailing_diamond": "\ue0b4",
           "type": "exit"
         }
@@ -99,18 +94,14 @@
       "segments": [
         {
           "foreground": "#cd5e42",
-          "properties": {
-            "template": "\ue3bf "
-          },
           "style": "plain",
+          "template": "\ue3bf ",
           "type": "root"
         },
         {
           "foreground": "#CD4277",
-          "properties": {
-            "template": " <#45F1C2><b>⚡</b></><b>{{ .UserName }}</b> <#26C6DA>\u276f</><#45F1C2>\u276f</>"
-          },
           "style": "plain",
+          "template": " <#45F1C2><b>\u26a1</b></><b>{{ .UserName }}</b> <#26C6DA>\u276f</><#45F1C2>\u276f</>",
           "type": "text"
         }
       ],
@@ -118,5 +109,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

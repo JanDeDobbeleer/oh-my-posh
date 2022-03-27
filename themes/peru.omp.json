@@ -6,26 +6,20 @@
       "segments": [
         {
           "foreground": "#26C6DA",
-          "properties": {
-            "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}} "
-          },
           "style": "plain",
+          "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
           "type": "os"
         },
         {
           "foreground": "#26C6DA",
-          "properties": {
-            "template": "{{ .UserName }}@{{ .HostName }} "
-          },
           "style": "diamond",
+          "template": "{{ .UserName }}@{{ .HostName }} ",
           "type": "session"
         },
         {
           "foreground": "#0fc469",
-          "properties": {
-            "template": "\u279c \ue235({{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}{{ end }}) "
-          },
           "style": "powerline",
+          "template": "\u279c \ue235({{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}{{ end }}) ",
           "type": "python"
         },
         {
@@ -37,10 +31,10 @@
           ],
           "properties": {
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_upstream_icon": true
           },
           "style": "plain",
+          "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
       ],
@@ -54,10 +48,8 @@
           "background": "#6CA35E",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": "\ue718 {{ .Full }} "
-          },
           "style": "diamond",
+          "template": "\ue718 {{ .Full }} ",
           "trailing_diamond": "\ue0b4",
           "type": "node"
         },
@@ -65,37 +57,35 @@
           "background": "#4c1f5e",
           "foreground": "#ffffff",
           "leading_diamond": " \ue0b6",
-          "properties": {
-            "template": "\ue738 {{ .Full }} "
-          },
           "style": "diamond",
+          "template": "\ue738 {{ .Full }} ",
           "trailing_diamond": "\ue0b4",
           "type": "java"
         },
         {
           "properties": {
-            "always_enabled": true,
-            "template": " {{ if gt .Code 0 }}<#ff0000>\uf00d \ue23a</>{{ else }}<#23d18b>\uf42e \ue23a</>{{ end }} "
+            "always_enabled": true
           },
           "style": "plain",
+          "template": " {{ if gt .Code 0 }}<#ff0000>\uf00d \ue23a</>{{ else }}<#23d18b>\uf42e \ue23a</>{{ end }} ",
           "type": "exit"
         },
         {
           "foreground": "#bab02a",
           "properties": {
-            "template": "took \uf252 {{ .FormattedMs }} ",
             "threshold": 10
           },
           "style": "plain",
+          "template": "took \uf252 {{ .FormattedMs }} ",
           "type": "executiontime"
         },
         {
           "foreground": "#00C5C7",
           "properties": {
-            "template": " {{ .CurrentDate | date .Format }} \uf017 ",
             "time_format": "15:04:05"
           },
           "style": "plain",
+          "template": " {{ .CurrentDate | date .Format }} \uf017 ",
           "type": "time"
         }
       ],
@@ -108,23 +98,21 @@
         {
           "foreground": "#77E4F7",
           "properties": {
-            "style": "full",
-            "template": "{{ .Path }} "
+            "style": "full"
           },
           "style": "plain",
+          "template": "{{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#43D426",
-          "properties": {
-            "template": "\u276f "
-          },
           "style": "plain",
+          "template": "\u276f ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

@@ -17,9 +17,7 @@ Display the currently active .NET SDK version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#00ffff",
-  "properties": {
-    "template": " \uE77F {{ .Full }} "
-  }
+  "template": " \uE77F {{ .Full }} "
 }
 ```
 

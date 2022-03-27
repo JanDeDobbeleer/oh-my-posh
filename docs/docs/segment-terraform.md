@@ -21,9 +21,7 @@ This requires a terraform binary in your PATH and will only show in directories 
   "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#ebcc34",
-  "properties": {
-    "template": "{{.WorkspaceName}}"
-  },
+  "template": "{{.WorkspaceName}}"
 }
 ```
 

@@ -11,11 +11,11 @@
           "leading_diamond": "\ue0b2",
           "properties": {
             "macos": "\uf179 ",
-            "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}",
             "ubuntu": "\uf31b ",
             "windows": "\uf871 "
           },
           "style": "diamond",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}",
           "trailing_diamond": "<transparent,#FEF5ED>\ue0b2</>",
           "type": "os"
         },
@@ -23,10 +23,8 @@
           "background": "#FEF5ED",
           "foreground": "#011627",
           "leading_diamond": "\ue0b2",
-          "properties": {
-            "template": "\uf489 {{ .Name }}"
-          },
           "style": "diamond",
+          "template": "\uf489 {{ .Name }}",
           "trailing_diamond": "<transparent,#FEF5ED>\ue0b2</>",
           "type": "shell"
         },
@@ -34,19 +32,15 @@
           "background": "#516BEB",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b2",
-          "properties": {
-            "template": "\uf85a CPU: {{ round .PhysicalPercentUsed .Precision }}% | "
-          },
           "style": "diamond",
+          "template": "\uf85a CPU: {{ round .PhysicalPercentUsed .Precision }}% | ",
           "type": "sysinfo"
         },
         {
           "background": "#516BEB",
           "foreground": "#ffffff",
-          "properties": {
-            "template": "MEM: {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB \uf85a "
-          },
           "style": "diamond",
+          "template": "MEM: {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB \uf85a ",
           "trailing_diamond": "<transparent,#516BEB>\ue0b2</>",
           "type": "sysinfo"
         },
@@ -56,10 +50,10 @@
           "leading_diamond": "\ue0b2",
           "properties": {
             "style": "roundrock",
-            "template": " {{ .FormattedMs }} ",
             "threshold": 0
           },
           "style": "diamond",
+          "template": " {{ .FormattedMs }} ",
           "trailing_diamond": "\ue0b0",
           "type": "executiontime"
         }
@@ -78,10 +72,10 @@
             "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true,
-            "fetch_worktree_count": true,
-            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_worktree_count": true
           },
           "style": "diamond",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "trailing_diamond": "\ue0b0",
           "type": "git"
         }
@@ -93,35 +87,31 @@
       "newline": true,
       "segments": [
         {
-          "properties": {
-            "template": "\u256d\u2500"
-          },
           "style": "plain",
+          "template": "\u256d\u2500",
           "type": "text"
         },
         {
           "properties": {
-            "template": " \u2665 {{ .CurrentDate | date .Format }} |",
             "time_format": "15:04"
           },
           "style": "plain",
+          "template": " \u2665 {{ .CurrentDate | date .Format }} |",
           "type": "time"
         },
         {
-          "properties": {
-            "template": " \uf292 "
-          },
           "style": "plain",
+          "template": " \uf292 ",
           "type": "root"
         },
         {
           "properties": {
             "folder_icon": "\uf07b ",
             "folder_separator_icon": " \uf554 ",
-            "home_icon": "\uf7db ",
-            "template": " {{ .Path }} "
+            "home_icon": "\uf7db "
           },
           "style": "plain",
+          "template": " {{ .Path }} ",
           "type": "path"
         }
       ],
@@ -133,10 +123,10 @@
       "segments": [
         {
           "properties": {
-            "always_enabled": true,
-            "template": "\u2570\u2500 "
+            "always_enabled": true
           },
           "style": "plain",
+          "template": "\u2570\u2500 ",
           "type": "exit"
         }
       ],
@@ -150,5 +140,5 @@
     "foreground": "#FEF5ED",
     "template": "\ue285 "
   },
-  "version": 1
+  "version": 2
 }

@@ -9,10 +9,10 @@
           "foreground": "#26C6DA",
           "leading_diamond": "\ue0c5",
           "properties": {
-            "macos": "mac",
-            "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} \ue0b1"
+            "macos": "mac"
           },
           "style": "diamond",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} \ue0b1",
           "trailing_diamond": "\ue0b0",
           "type": "os"
         },
@@ -20,10 +20,8 @@
           "background": "#546E7A",
           "foreground": "#26C6DA",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " {{ .UserName }}@{{ .HostName }} "
-          },
           "style": "powerline",
+          "template": " {{ .UserName }}@{{ .HostName }} ",
           "type": "session"
         },
         {
@@ -35,10 +33,8 @@
           ],
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295 \uf583 "
-          },
           "style": "powerline",
+          "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295 \uf583 ",
           "type": "battery"
         },
         {
@@ -46,10 +42,10 @@
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "style": "folder",
-            "template": " \ue5ff {{ .Path }} "
+            "style": "folder"
           },
           "style": "powerline",
+          "template": " \ue5ff {{ .Path }} ",
           "type": "path"
         },
         {
@@ -58,40 +54,34 @@
           "powerline_symbol": "\ue0b0",
           "properties": {
             "fetch_stash_count": true,
-            "fetch_upstream_icon": true,
-            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_upstream_icon": true
           },
           "style": "powerline",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
           "background": "#6CA35E",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
-          },
           "style": "powerline",
+          "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"
         },
         {
           "background": "#ffff66",
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \uf0e7 "
-          },
           "style": "powerline",
+          "template": " \uf0e7 ",
           "type": "root"
         },
         {
           "background": "#0077c2",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \ufd31 {{.Context}} :: {{if .Namespace}}{{.Namespace}}{{else}}default{{end}} "
-          },
           "style": "powerline",
+          "template": " \ufd31 {{.Context}} :: {{if .Namespace}}{{.Namespace}}{{else}}default{{end}} ",
           "type": "kubectl"
         },
         {
@@ -102,10 +92,10 @@
           "foreground": "#ffffff",
           "leading_diamond": "<transparent,background>\ue0b0</>",
           "properties": {
-            "always_enabled": true,
-            "template": " \ufc8d "
+            "always_enabled": true
           },
           "style": "diamond",
+          "template": " \ufc8d ",
           "trailing_diamond": "\ue0b0",
           "type": "exit"
         }
@@ -118,10 +108,8 @@
       "segments": [
         {
           "foreground": "#007ACC",
-          "properties": {
-            "template": "\u279c "
-          },
           "style": "plain",
+          "template": "\u279c ",
           "type": "text"
         }
       ],
@@ -129,5 +117,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

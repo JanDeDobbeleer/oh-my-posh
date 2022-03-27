@@ -6,27 +6,23 @@
       "segments": [
         {
           "foreground": "#7E46B6",
-          "properties": {
-            "template": "{{ .UserName }} "
-          },
           "style": "plain",
+          "template": "{{ .UserName }} ",
           "type": "session"
         },
         {
           "foreground": "#ffffff",
-          "properties": {
-            "template": "in "
-          },
           "style": "plain",
+          "template": "in ",
           "type": "text"
         },
         {
           "foreground": "#87FF00",
           "properties": {
-            "style": "full",
-            "template": "{{ .Path }} "
+            "style": "full"
           },
           "style": "plain",
+          "template": "{{ .Path }} ",
           "type": "path"
         },
         {
@@ -43,23 +39,21 @@
             "merge_icon": "",
             "rebase_icon": "",
             "revert_icon": "",
-            "tag_icon": "",
-            "template": "<#ffffff>on</> {{ .HEAD }}{{ if .Staging.Changed }}<#87FF00> \u25cf {{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }}<#D75F00> \u25cf {{ .Working.String }}</>{{ end }} "
+            "tag_icon": ""
           },
           "style": "plain",
+          "template": "<#ffffff>on</> {{ .HEAD }}{{ if .Staging.Changed }}<#87FF00> \u25cf {{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }}<#D75F00> \u25cf {{ .Working.String }}</>{{ end }} ",
           "type": "git"
         },
         {
           "foreground": "#D75F00",
-          "properties": {
-            "template": "λ "
-          },
           "style": "plain",
+          "template": "λ ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

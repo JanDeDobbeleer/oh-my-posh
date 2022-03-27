@@ -58,12 +58,6 @@
       "description": "The string to display when the command is not available",
       "default": ""
     },
-    "template": {
-      "type": "string",
-      "title": "Template text",
-      "description": "https://ohmyposh.dev/docs/config-templates",
-      "default": ""
-    },
     "extra_prompt": {
       "type": "object",
       "default": {},
@@ -219,15 +213,18 @@
         "foreground_templates": { "$ref": "#/definitions/color_templates" },
         "background": { "$ref": "#/definitions/color" },
         "background_templates": { "$ref": "#/definitions/color_templates" },
+        "template": {
+          "type": "string",
+          "title": "Template text",
+          "description": "https://ohmyposh.dev/docs/config-templates",
+          "default": ""
+        },
         "properties": {
           "type": "object",
           "title": "Segment Properties, used to change behavior/displaying",
           "description": "https://ohmyposh.dev/docs/config-overview#properties",
           "default": {},
           "properties": {
-            "template": {
-              "$ref": "#/definitions/template"
-            },
             "include_folders": {
               "type": "array",
               "title": "If specified, segment will only render in these folders",

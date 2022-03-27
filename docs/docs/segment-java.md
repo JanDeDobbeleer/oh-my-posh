@@ -17,9 +17,7 @@ Display the currently active java version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#4063D8",
-  "properties": {
-    "template": " \uE738 {{ .Full }}"
-  }
+  "template": " \uE738 {{ .Full }}"
 }
 ```
 

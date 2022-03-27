@@ -7,28 +7,22 @@
         {
           "background": "#E0E0E0",
           "foreground": "#BF231D",
-          "properties": {
-            "template": " \uf0e7 "
-          },
           "style": "plain",
+          "template": " \uf0e7 ",
           "type": "root"
         },
         {
           "background": "#E0E0E0",
           "foreground": "#EF7D00",
-          "properties": {
-            "template": " {{ .Icon }} "
-          },
           "style": "plain",
+          "template": " {{ .Icon }} ",
           "type": "os"
         },
         {
           "background": "#E0E0E0",
           "foreground": "#424242",
-          "properties": {
-            "template": "{{ .UserName }}"
-          },
           "style": "plain",
+          "template": "{{ .UserName }}",
           "type": "session"
         },
         {
@@ -41,33 +35,31 @@
           "properties": {
             "branch_max_length": 30,
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": " [{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#BD6200> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#053F22> \uf046 {{ .Staging.String }}</>{{ end }}] "
+            "fetch_upstream_icon": true
           },
           "style": "plain",
+          "template": " [{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#BD6200> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#053F22> \uf046 {{ .Staging.String }}</>{{ end }}] ",
           "type": "git"
         },
         {
           "background": "#E0E0E0",
           "foreground": "#424242",
           "properties": {
-            "style": "full",
-            "template": " {{ .Path }}"
+            "style": "full"
           },
           "style": "plain",
+          "template": " {{ .Path }}",
           "type": "path"
         },
         {
           "foreground": "#E0E0E0",
-          "properties": {
-            "template": "\ue0b0 "
-          },
           "style": "plain",
+          "template": "\ue0b0 ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

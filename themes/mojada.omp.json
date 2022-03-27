@@ -17,11 +17,11 @@
             "macos": "\uf179",
             "manjaro": "\uf312",
             "opensuse": "\uf314",
-            "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
             "ubuntu": "\uf31b",
             "windows": "\uf17a"
           },
           "style": "diamond",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
           "type": "os"
         },
         {
@@ -29,20 +29,18 @@
           "foreground": "#0077c2",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "display_host": true,
-            "template": "{{ .UserName }}<#000000>@</><#e06c75>{{ .HostName }}</> "
+            "display_host": true
           },
           "style": "powerline",
+          "template": "{{ .UserName }}<#000000>@</><#e06c75>{{ .HostName }}</> ",
           "type": "session"
         },
         {
           "background": "#e06c75",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \ue799\u2800"
-          },
           "style": "powerline",
+          "template": " \ue799\u2800",
           "type": "root"
         },
         {
@@ -53,10 +51,10 @@
             "folder_separator_icon": "/",
             "home_icon": "~",
             "max_depth": 2,
-            "style": "letter",
-            "template": " \ue5fe {{ .Path }} "
+            "style": "letter"
           },
           "style": "powerline",
+          "template": " \ue5fe {{ .Path }} ",
           "type": "path"
         },
         {
@@ -72,18 +70,16 @@
           "properties": {
             "fetch_stash_count": true,
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_upstream_icon": true
           },
           "style": "powerline",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
           "foreground": "#FFD54F",
-          "properties": {
-            "template": " {{if .Root}}#{{else}}${{end}}"
-          },
           "style": "plain",
+          "template": " {{if .Root}}#{{else}}${{end}}",
           "type": "text"
         }
       ],
@@ -94,19 +90,19 @@
         {
           "foreground": "#ffffff",
           "properties": {
-            "always_enabled": true,
-            "template": " {{ if gt .Code 0 }}\uf659{{ else }}\uf633{{ end }} "
+            "always_enabled": true
           },
           "style": "plain",
+          "template": " {{ if gt .Code 0 }}\uf659{{ else }}\uf633{{ end }} ",
           "type": "exit"
         },
         {
           "foreground": "#ffffff",
           "properties": {
-            "always_enabled": true,
-            "template": "{{ .FormattedMs }} "
+            "always_enabled": true
           },
           "style": "plain",
+          "template": "{{ .FormattedMs }} ",
           "type": "executiontime"
         },
         {
@@ -122,10 +118,10 @@
           "properties": {
             "charged_icon": "\uf583 ",
             "charging_icon": "\uf588 ",
-            "discharging_icon": "\uf57d ",
-            "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}% "
+            "discharging_icon": "\uf57d "
           },
           "style": "powerline",
+          "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}% ",
           "type": "battery"
         },
         {
@@ -133,10 +129,10 @@
           "foreground": "#ffffff",
           "invert_powerline": true,
           "properties": {
-            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04 (Mon)"
           },
           "style": "diamond",
+          "template": " {{ .CurrentDate | date .Format }} ",
           "trailing_diamond": "\ue0b4",
           "type": "time"
         }
@@ -146,5 +142,5 @@
   ],
   "console_title_template": "{{.UserName}}@{{.HostName}} : {{.Folder}}",
   "final_space": true,
-  "version": 1
+  "version": 2
 }

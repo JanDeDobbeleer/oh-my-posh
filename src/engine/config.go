@@ -24,7 +24,7 @@ const (
 	YAML string = "yaml"
 	TOML string = "toml"
 
-	configVersion = 1
+	configVersion = 2
 )
 
 // Config holds all the theme for rendering the prompt
@@ -43,7 +43,7 @@ type Config struct {
 	DebugPrompt          *ExtraPrompt  `json:"debug_prompt,omitempty"`
 	Palette              color.Palette `json:"palette,omitempty"`
 
-	Output string
+	Output string `json:"-"`
 
 	format  string
 	origin  string
@@ -280,9 +280,7 @@ func defaultConfig() *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#ffffff",
 						Foreground:      "#111111",
-						Properties: properties.Map{
-							properties.SegmentTemplate: " no config ",
-						},
+						Template:        " no config ",
 					},
 					{
 						Type:            EXIT,
@@ -294,9 +292,9 @@ func defaultConfig() *Config {
 						BackgroundTemplates: []string{
 							"{{ if gt .Code 0 }}#f1184c{{ end }}",
 						},
+						Template: " \uE23A",
 						Properties: properties.Map{
-							properties.AlwaysEnabled:   true,
-							properties.SegmentTemplate: " \uE23A",
+							properties.AlwaysEnabled: true,
 						},
 					},
 				},

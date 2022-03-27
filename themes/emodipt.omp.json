@@ -7,58 +7,52 @@
         {
           "foreground": "#E5C07B",
           "properties": {
-            "template": "[{{ .CurrentDate | date .Format }}]",
             "time_format": "15:04:05"
           },
           "style": "plain",
+          "template": "[{{ .CurrentDate | date .Format }}]",
           "type": "time"
         },
         {
           "foreground": "#B5B50D",
-          "properties": {
-            "template": " \uf0e7 "
-          },
           "style": "plain",
+          "template": " \uf0e7 ",
           "type": "root"
         },
         {
           "foreground": "#61AFEF",
           "properties": {
-            "style": "agnoster",
-            "template": " {{ .Path }} on"
+            "style": "agnoster"
           },
           "style": "plain",
+          "template": " {{ .Path }} on",
           "type": "path"
         },
         {
           "foreground": "#F3C267",
           "properties": {
             "branch_gone_icon": "\u274e",
-            "branch_identical_icon": "\uf14a",
-            "template": " {{ .HEAD }} "
+            "branch_identical_icon": "\uf14a"
           },
           "style": "plain",
+          "template": " {{ .HEAD }} ",
           "type": "git"
         },
         {
           "foreground": "#C94A16",
-          "properties": {
-            "template": "x{{ .Meaning }} "
-          },
           "style": "plain",
+          "template": "x{{ .Meaning }} ",
           "type": "exit"
         },
         {
           "foreground": "#E06C75",
-          "properties": {
-            "template": "\u276f "
-          },
           "style": "plain",
+          "template": "\u276f ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

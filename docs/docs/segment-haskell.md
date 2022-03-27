@@ -17,9 +17,7 @@ Display the currently active Glasgow Haskell Compiler (GHC) version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#906cff",
   "background": "#100e23",
-  "properties": {
-    "template": " \ue61f {{ .Full }}"
-  }
+  "template": " \ue61f {{ .Full }}"
 }
 ```
 

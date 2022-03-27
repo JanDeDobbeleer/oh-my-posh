@@ -33,8 +33,6 @@ const (
 	FetchVersion Property = "fetch_version"
 	// AlwaysEnabled decides whether or not to always display the info
 	AlwaysEnabled Property = "always_enabled"
-	// SegmentTemplate is the template to use to render the information
-	SegmentTemplate Property = "template"
 	// VersionURLTemplate is the template to use when building language segment hyperlink
 	VersionURLTemplate Property = "version_url_template"
 	// DisplayError to display when an error occurs or not

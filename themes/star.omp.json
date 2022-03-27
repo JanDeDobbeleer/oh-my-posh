@@ -6,45 +6,41 @@
       "segments": [
         {
           "foreground": "#E06C75",
-          "properties": {
-            "template": "root <#ffffff>in</> "
-          },
           "style": "plain",
+          "template": "root <#ffffff>in</> ",
           "type": "root"
         },
         {
           "foreground": "#55B9C4",
           "properties": {
-            "style": "folder",
-            "template": "{{ .Path }} "
+            "style": "folder"
           },
           "style": "plain",
+          "template": "{{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#C678DD",
           "properties": {
-            "fetch_status": true,
-            "template": "<#ffffff>on</> {{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} "
+            "fetch_status": true
           },
           "style": "plain",
+          "template": "<#ffffff>on</> {{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ",
           "type": "git"
         },
         {
           "foreground": "#98C379",
           "properties": {
-            "fetch_version": true,
-            "template": "<#ffffff>via</> \ue781 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+            "fetch_version": true
           },
           "style": "plain",
+          "template": "<#ffffff>via</> \ue781 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"
         },
         {
           "foreground": "#C94A16",
-          "properties": {
-            "template": "x "
-          },
           "style": "plain",
+          "template": "x ",
           "type": "exit"
         }
       ],
@@ -56,15 +52,13 @@
       "segments": [
         {
           "foreground": "#63F08C",
-          "properties": {
-            "template": "\u279c "
-          },
           "style": "plain",
+          "template": "\u279c ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

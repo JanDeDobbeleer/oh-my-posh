@@ -33,11 +33,11 @@ Local changes can also be displayed which uses the following syntax (see `.Statu
     "{{ if and .Changed .Behind }}#ff4500{{ end }}",
     "{{ if .Behind }}#B388FF{{ end }}"
   ],
+  "template": "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ end }}{{ .Status.String }}",
   "properties": {
     "fetch_status": true,
     "branch_max_length": 25,
-    "truncate_symbol": "\u2026",
-    "template": "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ end }}{{ .Status.String }}"
+    "truncate_symbol": "\u2026"
   }
 }
 ```

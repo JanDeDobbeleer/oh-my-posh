@@ -18,9 +18,7 @@ Supports conda, virtualenv and pyenv.
   "powerline_symbol": "\uE0B0",
   "foreground": "#100e23",
   "background": "#906cff",
-  "properties": {
-    "template": " \uE235 {{ .Full }} "
-  }
+  "template": " \uE235 {{ .Full }} "
 }
 ```
 

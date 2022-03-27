@@ -15,9 +15,7 @@ Display the active [CDS CLI][sap-cap-cds] version.
   "background": "#a7cae1",
   "foreground": "#100e23",
   "powerline_symbol": "\ue0b0",
-  "properties": {
-    "template": " \ue311 cds {{ .Full }} "
-  },
+  "template": " \ue311 cds {{ .Full }} ",
   "style": "powerline",
   "type": "cds"
 }

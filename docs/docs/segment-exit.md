@@ -21,9 +21,9 @@ Displays the last exit code or that the last command failed based on the configu
   ],
   "leading_diamond": "",
   "trailing_diamond": "\uE0B4",
+  "template": "<#193549>\uE0B0</> \uE23A ",
   "properties": {
-    "always_enabled": true,
-    "template": "<#193549>\uE0B0</> \uE23A "
+    "always_enabled": true
   }
 }
 ```

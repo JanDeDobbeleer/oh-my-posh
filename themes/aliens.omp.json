@@ -8,10 +8,8 @@
           "background": "#61AFEF",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": " {{ .UserName }}@{{ .HostName }} "
-          },
           "style": "diamond",
+          "template": " {{ .UserName }}@{{ .HostName }} ",
           "trailing_diamond": "\ue0b0",
           "type": "session"
         },
@@ -20,30 +18,26 @@
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "style": "full",
-            "template": " {{ .Path }} "
+            "style": "full"
           },
           "style": "powerline",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
           "background": "#95ffa4",
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " {{ .HEAD }} "
-          },
           "style": "powerline",
+          "template": " {{ .HEAD }} ",
           "type": "git"
         },
         {
           "background": "#FF6471",
           "foreground": "#ffffff",
           "leading_diamond": "<transparent,background>\ue0b0</>",
-          "properties": {
-            "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} "
-          },
           "style": "diamond",
+          "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
           "trailing_diamond": "\ue0b4",
           "type": "python"
         }
@@ -52,5 +46,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

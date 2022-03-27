@@ -8,9 +8,6 @@
           "background": "#4707a8",
           "foreground": "#000000",
           "leading_diamond": "\ue0c2\ue0c2",
-          "properties": {
-            "template": ""
-          },
           "style": "diamond",
           "type": "text"
         },
@@ -18,10 +15,8 @@
           "background": "#4707a8",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": " {{ .UserName }}@{{ .HostName }} "
-          },
           "style": "diamond",
+          "template": " {{ .UserName }}@{{ .HostName }} ",
           "trailing_diamond": "\ue0b0",
           "type": "session"
         },
@@ -29,10 +24,8 @@
           "background": "#1a1af5",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \ufd03 {{ .Name }} "
-          },
           "style": "powerline",
+          "template": " \ufd03 {{ .Name }} ",
           "type": "az"
         },
         {
@@ -42,10 +35,10 @@
           ],
           "foreground": "#ffffff",
           "properties": {
-            "always_enabled": true,
-            "template": "<transparent>\ue0b0</>\ue23a "
+            "always_enabled": true
           },
           "style": "diamond",
+          "template": "<transparent>\ue0b0</>\ue23a ",
           "trailing_diamond": "\ue0b4",
           "type": "exit"
         }
@@ -74,20 +67,18 @@
             "mint": "\uf30f",
             "opensuse": "\uf314",
             "raspbian": "\uf315",
-            "template": " {{ if .WSL }}\ue712 on {{ end }}{{ .Icon }}<#000000> \ue0b1</>",
             "ubuntu": "\uf31c",
             "windows": "\ue70f"
           },
           "style": "diamond",
+          "template": " {{ if .WSL }}\ue712 on {{ end }}{{ .Icon }}<#000000> \ue0b1</>",
           "type": "os"
         },
         {
           "background": "#000000",
           "foreground": "#ffffff",
-          "properties": {
-            "template": " \uf0e7<#ffffff> \ue0b1</>"
-          },
           "style": "diamond",
+          "template": " \uf0e7<#ffffff> \ue0b1</>",
           "type": "root"
         },
         {
@@ -97,10 +88,10 @@
             "folder_icon": "<#000000>\ue5fe </>",
             "folder_separator_icon": "<#000000>\ue0b1 </>",
             "home_icon": "\uf7db ",
-            "style": "agnoster_short",
-            "template": "<#000000> \ue5ff </>{{ .Path }} "
+            "style": "agnoster_short"
           },
           "style": "diamond",
+          "template": "<#000000> \ue5ff </>{{ .Path }} ",
           "type": "path"
         },
         {
@@ -114,27 +105,22 @@
           "properties": {
             "fetch_stash_count": true,
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": "<#000000>\ue0b1 </>{{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }}<#2FDA4E> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }}<#E84855> \uf044 {{ .Working.String }}</>{{ end }} "
+            "fetch_upstream_icon": true
           },
           "style": "diamond",
+          "template": "<#000000>\ue0b1 </>{{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }}<#2FDA4E> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }}<#E84855> \uf044 {{ .Working.String }}</>{{ end }} ",
           "type": "git"
         },
         {
           "background": "#ffffff",
           "foreground": "#000000",
-          "properties": {
-            "template": " {{ .WorkspaceName }} "
-          },
           "style": "powerline",
+          "template": " {{ .WorkspaceName }} ",
           "type": "terraform"
         },
         {
           "background": "#ffffff",
           "foreground": "#000000",
-          "properties": {
-            "template": ""
-          },
           "style": "diamond",
           "trailing_diamond": "\ue0b0",
           "type": "text"
@@ -147,10 +133,8 @@
       "segments": [
         {
           "foreground": "#1a1af5",
-          "properties": {
-            "template": " \u276f "
-          },
           "style": "plain",
+          "template": " \u276f ",
           "type": "text"
         }
       ],
@@ -159,5 +143,5 @@
   ],
   "console_title_template": "{{if .Root}}root :: {{end}}{{.Shell}} :: {{.Folder}}",
   "final_space": true,
-  "version": 1
+  "version": 2
 }

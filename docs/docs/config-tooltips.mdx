@@ -39,10 +39,10 @@ You need to extend or create a custom theme with your tooltips. For example:
       "background": "#fffb38",
       "leading_diamond": "",
       "trailing_diamond": "",
+      "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
       "properties": {
         "fetch_status": true,
-        "fetch_upstream_icon": true,
-        "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}"
+        "fetch_upstream_icon": true
       }
     }
   ]

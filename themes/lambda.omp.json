@@ -6,32 +6,28 @@
       "segments": [
         {
           "foreground": "#F5F5F5",
-          "properties": {
-            "template": "\ufb26 "
-          },
           "style": "plain",
+          "template": "\ufb26 ",
           "type": "text"
         },
         {
           "foreground": "#B80101",
           "properties": {
-            "style": "agnoster",
-            "template": " {{ .Path }} "
+            "style": "agnoster"
           },
           "style": "plain",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#B80101",
-          "properties": {
-            "template": " <#F5F5F5>git:</>{{ .HEAD }} "
-          },
           "style": "plain",
+          "template": " <#F5F5F5>git:</>{{ .HEAD }} ",
           "type": "git"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

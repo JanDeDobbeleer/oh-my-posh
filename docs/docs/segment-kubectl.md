@@ -17,9 +17,7 @@ Display the currently active Kubernetes context name and namespace name.
   "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#ebcc34",
-  "properties": {
-    "template": " \uFD31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
-  }
+  "template": " \uFD31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
 }
 ```
 

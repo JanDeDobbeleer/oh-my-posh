@@ -17,9 +17,7 @@ Display the currently active dart version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#06A4CE",
-  "properties": {
-    "template": " \uE798 {{ .Full }} "
-  }
+  "template": " \uE798 {{ .Full }} "
 }
 ```
 

@@ -15,9 +15,7 @@ Display the details of the logged [Cloud Foundry endpoint][cf-target] (`cf targe
   "background": "#a7cae1",
   "foreground": "#100e23",
   "powerline_symbol": "\ue0b0",
-  "properties": {
-    "template": " \uf40a {{ .Org }}/{{ .Space }} "
-  },
+  "template": " \uf40a {{ .Org }}/{{ .Space }} ",
   "style": "powerline",
   "type": "cftarget"
 }

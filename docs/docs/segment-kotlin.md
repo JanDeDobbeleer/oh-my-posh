@@ -17,9 +17,7 @@ Display the currently active [Kotlin][kotlin] version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#906cff",
-  "properties": {
-    "template": " \ufa05 {{ .Full }} "
-  }
+  "template": " \ufa05 {{ .Full }} "
 }
 ```
 

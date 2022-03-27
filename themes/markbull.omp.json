@@ -6,20 +6,16 @@
       "segments": [
         {
           "foreground": "#ffce7b",
-          "properties": {
-            "template": "\u250c "
-          },
           "style": "plain",
+          "template": "\u250c ",
           "type": "text"
         },
         {
           "background": "#ffce7b",
           "foreground": "#1d1626",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \uf26c  {{ if .SSHSession }}\uf817  {{ end }}{{ .UserName }}@{{ .HostName }} "
-          },
           "style": "powerline",
+          "template": " \uf26c  {{ if .SSHSession }}\uf817  {{ end }}{{ .UserName }}@{{ .HostName }} ",
           "type": "session"
         },
         {
@@ -27,10 +23,10 @@
           "foreground": "#fffef9",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
             "windows": "\uf17a"
           },
           "style": "powerline",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
           "type": "os"
         },
         {
@@ -38,10 +34,10 @@
           "foreground": "#fffef9",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "style": "full",
-            "template": "{{ path .Path .Location }} "
+            "style": "full"
           },
           "style": "powerline",
+          "template": "{{ path .Path .Location }} ",
           "type": "path"
         },
         {
@@ -69,10 +65,10 @@
             "git_icon": "\uf1d3 ",
             "github_icon": "\uf408 ",
             "gitlab_icon": "\uf296 ",
-            "tag_icon": "\uf412 ",
-            "template": " {{ if( .UpstreamIcon ) }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} <#ed1941>\uf044 {{.Working.String}}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#225a1f>\uf046 {{.Staging.String}}</>{{ end }}{{ if gt .StashCount 0 }}  \uf692 {{.StashCount}}{{ end }}{{ if gt .WorktreeCount 0 }}{{if .IsWorkTree}}<#1d953f>{{ end }}  \uf1bb {{if .IsWorkTree}}</>{{ end }}{{.WorktreeCount}}{{ end }} "
+            "tag_icon": "\uf412 "
           },
           "style": "powerline",
+          "template": " {{ if( .UpstreamIcon ) }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} <#ed1941>\uf044 {{.Working.String}}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#225a1f>\uf046 {{.Staging.String}}</>{{ end }}{{ if gt .StashCount 0 }}  \uf692 {{.StashCount}}{{ end }}{{ if gt .WorktreeCount 0 }}{{if .IsWorkTree}}<#1d953f>{{ end }}  \uf1bb {{if .IsWorkTree}}</>{{ end }}{{.WorktreeCount}}{{ end }} ",
           "type": "git"
         },
         {
@@ -80,20 +76,18 @@
           "foreground": "#fffef9",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "always_enabled": true,
-            "template": " \uf064  {{ .FormattedMs }} "
+            "always_enabled": true
           },
           "style": "powerline",
+          "template": " \uf064  {{ .FormattedMs }} ",
           "type": "executiontime"
         },
         {
           "background": "#ed1941",
           "foreground": "#fffef9",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \uf12a >>{{ .Meaning }} "
-          },
           "style": "powerline",
+          "template": " \uf12a >>{{ .Meaning }} ",
           "type": "exit"
         }
       ],
@@ -105,18 +99,14 @@
       "segments": [
         {
           "foreground": "#ffce7b",
-          "properties": {
-            "template": "\u2514"
-          },
           "style": "plain",
+          "template": "\u2514",
           "type": "text"
         },
         {
           "foreground": "#ffffff",
-          "properties": {
-            "template": " $"
-          },
           "style": "plain",
+          "template": " $",
           "type": "text"
         }
       ],
@@ -126,5 +116,5 @@
   "console_title_template": "{{if .Root}}\u26a1 {{end}}{{.Folder}}",
   "final_space": true,
   "osc99": true,
-  "version": 1
+  "version": 2
 }

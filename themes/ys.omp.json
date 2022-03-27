@@ -7,10 +7,10 @@
         {
           "foreground": "white",
           "properties": {
-            "fetch_version": false,
-            "template": "({{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }})"
+            "fetch_version": false
           },
           "style": "plain",
+          "template": "({{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }})",
           "type": "python"
         }
       ],
@@ -22,57 +22,45 @@
       "segments": [
         {
           "foreground": "lightBlue",
-          "properties": {
-            "template": "# "
-          },
           "style": "plain",
+          "template": "# ",
           "type": "text"
         },
         {
           "foreground": "red",
-          "properties": {
-            "template": " % "
-          },
           "style": "plain",
+          "template": " % ",
           "type": "root"
         },
         {
-          "properties": {
-            "template": "<cyan>{{ .UserName }}</> <darkGray>@</> <green>{{ .HostName }}</> "
-          },
           "style": "plain",
+          "template": "<cyan>{{ .UserName }}</> <darkGray>@</> <green>{{ .HostName }}</> ",
           "type": "session"
         },
         {
           "foreground": "lightYellow",
           "properties": {
-            "style": "full",
-            "template": "<darkGray>in </>{{ .Path }} "
+            "style": "full"
           },
           "style": "plain",
+          "template": "<darkGray>in </>{{ .Path }} ",
           "type": "path"
         },
         {
-          "properties": {
-            "template": "<darkGray>on</> <white>git:</>{{ .HEAD }} "
-          },
           "style": "plain",
+          "template": "<darkGray>on</> <white>git:</>{{ .HEAD }} ",
           "type": "git"
         },
         {
           "foreground": "darkGray",
-          "properties": {
-            "template": "[{{ .CurrentDate | date .Format }}]"
-          },
           "style": "plain",
+          "template": "[{{ .CurrentDate | date .Format }}]",
           "type": "time"
         },
         {
           "foreground": "red",
-          "properties": {
-            "template": " C:{{ if gt .Code 0 }}{{ .Code }}{{ end }} "
-          },
           "style": "plain",
+          "template": " C:{{ if gt .Code 0 }}{{ .Code }}{{ end }} ",
           "type": "exit"
         }
       ],
@@ -84,10 +72,8 @@
       "segments": [
         {
           "foreground": "lightRed",
-          "properties": {
-            "template": "$"
-          },
           "style": "plain",
+          "template": "$",
           "type": "text"
         }
       ],
@@ -95,5 +81,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

@@ -1,4 +1,4 @@
-set --global POSH_THEME "::CONFIG::"
+set --export POSH_THEME "::CONFIG::"
 set --global POWERLINE_COMMAND "oh-my-posh"
 set --global CONDA_PROMPT_MODIFIER false
 set --global omp_tooltip_command ""

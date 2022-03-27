@@ -30,7 +30,7 @@
       "description": "https://ohmyposh.dev/docs/config-overview#foreground-templates",
       "default": [],
       "items": {
-        "$ref": "#/definitions/template"
+        "$ref": "#/definitions/segment/properties/template"
       }
     },
     "fetch_version": {

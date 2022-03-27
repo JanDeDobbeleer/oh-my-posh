@@ -16,6 +16,7 @@ offers a few standard properties to work with.
 - `.Shell`: `string` - the current shell name
 - `.UserName`: `string` - the current user name
 - `.HostName`: `string` - the host name
+- `.Code`: `int` - the last exit code
 - `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
 
 ## Helper functions

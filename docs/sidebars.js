@@ -40,6 +40,7 @@ module.exports = {
         "config-colors",
         "config-templates",
         "config-secondary-prompt",
+        "config-debug-prompt",
         "config-transient",
         "config-line-error",
         "config-tooltips",

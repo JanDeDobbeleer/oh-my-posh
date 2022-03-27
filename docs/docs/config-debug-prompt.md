@@ -1,21 +1,22 @@
 ---
-id: config-secondary-prompt
-title: Secondary prompt
-sidebar_label: Secondary prompt
+id: config-debug-prompt
+title: Debug prompt
+sidebar_label: Debug prompt
 ---
 
 :::info
-This feature only works in `powershell`, `zsh` and `bash` for the time being.
+This feature only works in `powershell` for the time being.
 :::
 
-The secondary prompt is displayed when a command text spans multiple lines. The default is `> `.
+The debug prompt is displayed when you debug a script from the command line or Visual Studio Code.
+The default is `[DBG]: `.
 
 You can use go [text/template][go-text-template] templates extended with [sprig][sprig] to enrich the text.
 Environment variables are available, just like the [`console_title_template`][console-title] functionality.
 
 ## Configuration
 
-You need to extend or create a custom theme with your secondary prompt override. For example:
+You need to extend or create a custom theme with your debug prompt override. For example:
 
 ```json
 {
@@ -23,20 +24,22 @@ You need to extend or create a custom theme with your secondary prompt override.
     "blocks": {
         ...
     },
-    "secondary_prompt": {
+    "debug_prompt": {
         "background": "transparent",
         "foreground": "#ffffff",
-        "template": "-> "
+        "template": "Debugging "
     }
 }
 ```
 
 The configuration has the following properties:
 
-- background: `string` [color][colors]
 - foreground: `string` [color][colors]
+- foreground_templates: foreground [color templates][color-templates]
+- background: `string` [color][colors]
+- background_templates: background [color templates][color-templates]
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `> `
+properties below - defaults to `[DBG]: `
 
 ## Template ([info][templates])
 
@@ -53,3 +56,4 @@ properties below - defaults to `> `
 [console-title]: /docs/config-title#console-title-template
 [templates]: /docs/config-templates
 [colors]: /docs/config-colors
+[color-templates]: /docs/config-colors#color-templates

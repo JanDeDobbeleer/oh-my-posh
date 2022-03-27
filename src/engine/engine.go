@@ -280,7 +280,7 @@ const (
 )
 
 func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
-	var prompt *ExtraPrompt
+	var prompt *Segment
 	switch promptType {
 	case Debug:
 		prompt = e.Config.DebugPrompt
@@ -294,7 +294,7 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 		prompt = e.Config.SecondaryPrompt
 	}
 	if prompt == nil {
-		prompt = &ExtraPrompt{}
+		prompt = &Segment{}
 	}
 	getTemplate := func(template string) string {
 		if len(template) != 0 {

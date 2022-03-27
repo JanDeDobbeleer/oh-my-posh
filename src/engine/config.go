@@ -36,11 +36,11 @@ type Config struct {
 	TerminalBackground   string        `json:"terminal_background,omitempty"`
 	Blocks               []*Block      `json:"blocks,omitempty"`
 	Tooltips             []*Segment    `json:"tooltips,omitempty"`
-	TransientPrompt      *ExtraPrompt  `json:"transient_prompt,omitempty"`
-	ValidLine            *ExtraPrompt  `json:"valid_line,omitempty"`
-	ErrorLine            *ExtraPrompt  `json:"error_line,omitempty"`
-	SecondaryPrompt      *ExtraPrompt  `json:"secondary_prompt,omitempty"`
-	DebugPrompt          *ExtraPrompt  `json:"debug_prompt,omitempty"`
+	TransientPrompt      *Segment      `json:"transient_prompt,omitempty"`
+	ValidLine            *Segment      `json:"valid_line,omitempty"`
+	ErrorLine            *Segment      `json:"error_line,omitempty"`
+	SecondaryPrompt      *Segment      `json:"secondary_prompt,omitempty"`
+	DebugPrompt          *Segment      `json:"debug_prompt,omitempty"`
 	Palette              color.Palette `json:"palette,omitempty"`
 
 	Output string `json:"-"`
@@ -56,14 +56,6 @@ type Config struct {
 func (cfg *Config) MakeColors(env environment.Environment) color.AnsiColors {
 	cacheDisabled := env.Getenv("OMP_CACHE_DISABLED") == "1"
 	return color.MakeColors(cfg.Palette, !cacheDisabled)
-}
-
-type ExtraPrompt struct {
-	Template            string          `json:"template,omitempty"`
-	Foreground          string          `json:"foreground,omitempty"`
-	ForegroundTemplates color.Templates `json:"foreground_templates,omitempty"`
-	Background          string          `json:"background,omitempty"`
-	BackgroundTemplates color.Templates `json:"background_templates,omitempty"`
 }
 
 func (cfg *Config) print(message string) {
@@ -130,7 +122,7 @@ func loadConfig(env environment.Environment) *Config {
 
 	// initialize default values
 	if cfg.TransientPrompt == nil {
-		cfg.TransientPrompt = &ExtraPrompt{}
+		cfg.TransientPrompt = &Segment{}
 	}
 
 	return &cfg

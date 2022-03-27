@@ -74,7 +74,6 @@ function global:Initialize-ModuleSupport {
     }
     $global:OMP_ERRORCODE = 0
     Initialize-ModuleSupport
-    Set-PoshContext
     if ($lastCommandSuccess -eq $false) {
         #native app exit code
         if ($realLASTEXITCODE -is [int] -and $realLASTEXITCODE -gt 0) {
@@ -100,6 +99,7 @@ function global:Initialize-ModuleSupport {
         $global:OMP_EXECUTIONTIME = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
         $global:omp_lastHistoryId = $history.Id
     }
+    Set-PoshContext
     $terminalWidth = $Host.UI.RawUI.WindowSize.Width
     $standardOut = @(&$omp print primary --error="$global:OMP_ERRORCODE" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$global:OMP_EXECUTIONTIME" --stack-count="$stackCount" --config="$config" --terminal-width=$terminalWidth 2>&1)
     # make sure PSReadLine knows we have a multiline prompt

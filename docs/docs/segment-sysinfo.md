@@ -16,9 +16,9 @@ Display SysInfo.
   "powerline_symbol": "\ue0b0",
   "foreground": "#ffffff",
   "background": "#8f43f3",
+  "template":" \uf85a {{ round .PhysicalPercentUsed .Precision }}% ",
   "properties": {
-    "precision": 2,
-    "template":" \uf85a {{ round .PhysicalPercentUsed .Precision }}% "
+    "precision": 2
   },
   "style":"powerline"
 },

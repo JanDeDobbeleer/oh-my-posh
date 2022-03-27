@@ -7,28 +7,22 @@
         {
           "background": "#BF231D",
           "foreground": "#ffffff",
-          "properties": {
-            "template": " \uf0e7 "
-          },
           "style": "plain",
+          "template": " \uf0e7 ",
           "type": "root"
         },
         {
           "background": "#0A703E",
           "foreground": "#ffffff",
-          "properties": {
-            "template": " {{ .Icon }} "
-          },
           "style": "plain",
+          "template": " {{ .Icon }} ",
           "type": "os"
         },
         {
           "background": "#0A703E",
           "foreground": "#ffffff",
-          "properties": {
-            "template": "{{ .UserName }} "
-          },
           "style": "plain",
+          "template": "{{ .UserName }} ",
           "type": "session"
         },
         {
@@ -38,10 +32,10 @@
             "folder_icon": "\uf115",
             "folder_separator_icon": " \ue0b1 ",
             "max_depth": 2,
-            "style": "agnoster_short",
-            "template": " {{ .Path }} "
+            "style": "agnoster_short"
           },
           "style": "plain",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
@@ -51,23 +45,21 @@
             "branch_max_length": 30,
             "fetch_stash_count": false,
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": "[ {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ]"
+            "fetch_upstream_icon": true
           },
           "style": "plain",
+          "template": "[ {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ]",
           "type": "git"
         },
         {
           "foreground": "#256C9D",
-          "properties": {
-            "template": "\ue0b0 "
-          },
           "style": "plain",
+          "template": "\ue0b0 ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

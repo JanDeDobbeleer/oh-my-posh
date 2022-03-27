@@ -8,10 +8,8 @@
           "background": "#E36464",
           "foreground": "#fff",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": "{{ .UserName }} "
-          },
           "style": "diamond",
+          "template": "{{ .UserName }} ",
           "trailing_diamond": "\ue0c6",
           "type": "session"
         },
@@ -20,10 +18,10 @@
           "foreground": "#fff",
           "leading_diamond": "\ue0c7",
           "properties": {
-            "style": "folder",
-            "template": " {{ .Path }} "
+            "style": "folder"
           },
           "style": "diamond",
+          "template": " {{ .Path }} ",
           "trailing_diamond": "\ue0c6",
           "type": "path"
         },
@@ -32,10 +30,10 @@
           "foreground": "#fff",
           "leading_diamond": "\ue0c7",
           "properties": {
-            "branch_icon": "",
-            "template": " git({{ .HEAD }}) "
+            "branch_icon": ""
           },
           "style": "diamond",
+          "template": " git({{ .HEAD }}) ",
           "trailing_diamond": "\ue0c6",
           "type": "git"
         },
@@ -44,10 +42,10 @@
           "foreground": "#fff",
           "leading_diamond": "\ue0c7",
           "properties": {
-            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04"
           },
           "style": "diamond",
+          "template": " {{ .CurrentDate | date .Format }} ",
           "trailing_diamond": "\ue0c6",
           "type": "time"
         }
@@ -56,5 +54,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

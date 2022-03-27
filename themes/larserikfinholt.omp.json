@@ -8,10 +8,8 @@
           "background": "#c386f1",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": " {{ .UserName }} "
-          },
           "style": "diamond",
+          "template": " {{ .UserName }} ",
           "trailing_diamond": "\ue0b0",
           "type": "session"
         },
@@ -22,10 +20,10 @@
           "properties": {
             "folder_separator_icon": " \ue0b1 ",
             "home_icon": "~",
-            "style": "folder",
-            "template": " \uf74a  {{ .Path }} "
+            "style": "folder"
           },
           "style": "powerline",
+          "template": " \uf74a  {{ .Path }} ",
           "type": "path"
         },
         {
@@ -42,20 +40,20 @@
             "branch_max_length": 25,
             "fetch_stash_count": true,
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_upstream_icon": true
           },
           "style": "powerline",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
           "background": "#83769c",
           "foreground": "#ffffff",
           "properties": {
-            "always_enabled": true,
-            "template": "<transparent>\ue0b0</> \ufbab{{ .FormattedMs }}\u2800"
+            "always_enabled": true
           },
           "style": "plain",
+          "template": "<transparent>\ue0b0</> \ufbab{{ .FormattedMs }}\u2800",
           "type": "executiontime"
         },
         {
@@ -74,10 +72,10 @@
           "properties": {
             "access_token": "0ccbd2ac1e37a5b84101468df3d367177fe02ab3",
             "http_timeout": 1500,
-            "refresh_token": "111111111111111111111111111111",
-            "template": " {{.Name}} {{.Ago}} {{.Icon}} "
+            "refresh_token": "111111111111111111111111111111"
           },
           "style": "powerline",
+          "template": " {{.Name}} {{.Ago}} {{.Icon}} ",
           "type": "strava"
         },
         {
@@ -87,10 +85,10 @@
           ],
           "foreground": "#ffffff",
           "properties": {
-            "always_enabled": true,
-            "template": "<parentBackground>\ue0b0</> \ue23a "
+            "always_enabled": true
           },
           "style": "diamond",
+          "template": "<parentBackground>\ue0b0</> \ue23a ",
           "trailing_diamond": "\ue0b4",
           "type": "exit"
         }
@@ -100,5 +98,5 @@
   ],
   "console_title_template": "{{ .Shell }} in {{ .Folder }}",
   "final_space": true,
-  "version": 1
+  "version": 2
 }

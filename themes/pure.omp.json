@@ -6,19 +6,17 @@
       "segments": [
         {
           "foreground": "#BF616A",
-          "properties": {
-            "template": "{{ .UserName }} "
-          },
           "style": "plain",
+          "template": "{{ .UserName }} ",
           "type": "session"
         },
         {
           "foreground": "#81A1C1",
           "properties": {
-            "style": "full",
-            "template": "{{ .Path }} "
+            "style": "full"
           },
           "style": "plain",
+          "template": "{{ .Path }} ",
           "type": "path"
         }
       ],
@@ -36,10 +34,10 @@
             "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true,
-            "github_icon": "",
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#FFAFD7>*</>{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "github_icon": ""
           },
           "style": "plain",
+          "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#FFAFD7>*</>{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
       ],
@@ -51,10 +49,10 @@
         {
           "foreground": "#A3BE8C",
           "properties": {
-            "style": "austin",
-            "template": " {{ .FormattedMs }} "
+            "style": "austin"
           },
           "style": "plain",
+          "template": " {{ .FormattedMs }} ",
           "type": "executiontime"
         }
       ],
@@ -70,10 +68,10 @@
             "{{ if gt .Code 0 }}#BF616A{{ end }}"
           ],
           "properties": {
-            "always_enabled": true,
-            "template": "\u276f "
+            "always_enabled": true
           },
           "style": "plain",
+          "template": "\u276f ",
           "type": "exit"
         }
       ],
@@ -81,5 +79,5 @@
     }
   ],
   "console_title_template": "{{if .Root}}(Admin){{end}} {{.PWD}}",
-  "version": 1
+  "version": 2
 }

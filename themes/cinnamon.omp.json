@@ -8,20 +8,18 @@
           "background": "#07585c",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": " {{ .UserName }}@{{ .HostName }} "
-          },
           "style": "diamond",
+          "template": " {{ .UserName }}@{{ .HostName }} ",
           "type": "session"
         },
         {
           "background": "#3e9022",
           "foreground": "#ffffff",
           "properties": {
-            "style": "folder",
-            "template": " \ue5ff {{ .Path }} "
+            "style": "folder"
           },
           "style": "plain",
+          "template": " \ue5ff {{ .Path }} ",
           "type": "path"
         },
         {
@@ -29,10 +27,10 @@
           "foreground": "#ffffff",
           "properties": {
             "branch_icon": "",
-            "fetch_upstream_icon": true,
-            "template": " {{ .UpstreamIcon }}{{ .HEAD }} "
+            "fetch_upstream_icon": true
           },
           "style": "plain",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }} ",
           "type": "git"
         },
         {
@@ -42,10 +40,10 @@
             "paused_icon": "\uf8e3 ",
             "playing_icon": "\ue602 ",
             "stopped_icon": "\uf04d ",
-            "template": " \uf9c6 {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} ",
             "track_separator": " - "
           },
           "style": "plain",
+          "template": " \uf9c6 {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} ",
           "type": "spotify"
         },
         {
@@ -55,10 +53,10 @@
           ],
           "foreground": "#ffffff",
           "properties": {
-            "always_enabled": true,
-            "template": " \uf7d4 "
+            "always_enabled": true
           },
           "style": "diamond",
+          "template": " \uf7d4 ",
           "trailing_diamond": "\ue0b4",
           "type": "exit"
         }
@@ -67,5 +65,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

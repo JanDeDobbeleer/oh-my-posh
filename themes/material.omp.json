@@ -6,51 +6,47 @@
       "segments": [
         {
           "foreground": "#ffffff",
-          "properties": {
-            "template": "<#C591E8>\u276f</><#69FF94>\u276f</>"
-          },
           "style": "plain",
+          "template": "<#C591E8>\u276f</><#69FF94>\u276f</>",
           "type": "text"
         },
         {
           "foreground": "#56B6C2",
           "properties": {
-            "style": "folder",
-            "template": " {{ .Path }} "
+            "style": "folder"
           },
           "style": "plain",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#D0666F",
           "properties": {
             "branch_icon": "",
-            "fetch_status": false,
-            "template": "<#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>"
+            "fetch_status": false
           },
           "style": "plain",
+          "template": "<#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>",
           "type": "git"
         },
         {
           "foreground": "#DCB977",
-          "properties": {
-            "template": " \uf119"
-          },
           "style": "plain",
+          "template": " \uf119",
           "type": "exit"
         },
         {
           "foreground": "#66F68F",
           "properties": {
-            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04"
           },
           "style": "plain",
+          "template": " {{ .CurrentDate | date .Format }} ",
           "type": "time"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

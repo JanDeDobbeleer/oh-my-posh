@@ -16,9 +16,7 @@ see [the documentation][ui5-version-help]).
   "background": "#f5a834",
   "foreground": "#100e23",
   "powerline_symbol": "\ue0b0",
-  "properties": {
-    "template": " \ufab6ui5 {{ .Full }} "
-  },
+  "template": " \ufab6ui5 {{ .Full }} ",
   "style": "powerline",
   "type": "ui5tooling"
 }

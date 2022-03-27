@@ -6,36 +6,32 @@
       "segments": [
         {
           "foreground": "#CECE04",
-          "properties": {
-            "template": "# "
-          },
           "style": "plain",
+          "template": "# ",
           "type": "root"
         },
         {
-          "properties": {
-            "template": "{{ .UserName }}@{{ .HostName }} "
-          },
           "style": "plain",
+          "template": "{{ .UserName }}@{{ .HostName }} ",
           "type": "session"
         },
         {
           "foreground": "#7B68EE",
           "properties": {
-            "style": "agnoster_short",
-            "template": "{{ .Path }} "
+            "style": "agnoster_short"
           },
           "style": "plain",
+          "template": "{{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#48D1CC",
           "properties": {
             "branch_icon": "",
-            "fetch_upstream_icon": false,
-            "template": "HEAD:{{ .UpstreamIcon }}{{ .HEAD }} "
+            "fetch_upstream_icon": false
           },
           "style": "plain",
+          "template": "HEAD:{{ .UpstreamIcon }}{{ .HEAD }} ",
           "type": "git"
         },
         {
@@ -44,15 +40,15 @@
             "{{ if gt .Code 0 }}#E84855{{ end }}"
           ],
           "properties": {
-            "always_enabled": true,
-            "template": "<#66CDAA>\u276f</><#76EEC6>\u276f</><foreground>\u276f</> "
+            "always_enabled": true
           },
           "style": "plain",
+          "template": "<#66CDAA>\u276f</><#76EEC6>\u276f</><foreground>\u276f</> ",
           "type": "exit"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

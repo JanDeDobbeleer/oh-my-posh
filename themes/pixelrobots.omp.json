@@ -8,19 +8,14 @@
           "background": "#ffea00",
           "foreground": "#000000",
           "leading_diamond": "\ue0c7\u2593",
-          "properties": {
-            "template": ""
-          },
           "style": "diamond",
           "type": "text"
         },
         {
           "background": "#ffea00",
           "foreground": "#000000",
-          "properties": {
-            "template": " \ufd31{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
-          },
           "style": "powerline",
+          "template": " \ufd31{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} ",
           "type": "kubectl"
         },
         {
@@ -28,10 +23,10 @@
           "foreground": "#000000",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "template": " \ufd03 {{ .Name }} [ {{ .Origin }} ] ",
             "source": "cli"
           },
           "style": "powerline",
+          "template": " \ufd03 {{ .Name }} [ {{ .Origin }} ] ",
           "type": "az"
         },
         {
@@ -39,10 +34,10 @@
           "foreground": "#FFFFFF",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "template": " \ufd03 {{ .Name }} [ {{ .Origin }} ] ",
             "source": "pwsh"
           },
           "style": "powerline",
+          "template": " \ufd03 {{ .Name }} [ {{ .Origin }} ] ",
           "type": "az"
         }
       ],
@@ -70,29 +65,25 @@
             "mint": "\uf30f",
             "opensuse": "\uf314",
             "raspbian": "\uf315",
-            "template": " {{ if .WSL }}{{ .Icon }} on \ue70f{{ end }} <#ffea00>\uE0B1</>",
             "ubuntu": "\uf31c",
             "windows": "\ue70f"
           },
           "style": "diamond",
+          "template": " {{ if .WSL }}{{ .Icon }} on \ue70f{{ end }} <#ffea00>\ue0b1</>",
           "type": "os"
         },
         {
           "background": "#2f2f2f",
           "foreground": "#ffea00",
-          "properties": {
-            "template": " {{ if ne .Env.POSH_SESSION_DEFAULT_USER .UserName }}{{ .UserName }}{{ end }}<#ffea00> \ue0b1</>"
-          },
           "style": "diamond",
+          "template": " {{ if ne .Env.POSH_SESSION_DEFAULT_USER .UserName }}{{ .UserName }}{{ end }}<#ffea00> \ue0b1</>",
           "type": "session"
         },
         {
           "background": "#2f2f2f",
           "foreground": "#ffea00",
-          "properties": {
-            "template": " \uf0e7<#ffea00> \ue0b1</>"
-          },
           "style": "diamond",
+          "template": " \uf0e7<#ffea00> \ue0b1</>",
           "type": "root"
         },
         {
@@ -102,10 +93,10 @@
             "folder_icon": "<#B5B2C2>\ue5fe </>",
             "folder_separator_icon": "<#ffea00>\ue0b1 </>",
             "home_icon": "\uf7db ",
-            "style": "agnoster_short",
-            "template": "<#f2f200> \ue5ff </>{{ .Path }} "
+            "style": "agnoster_short"
           },
           "style": "diamond",
+          "template": "<#f2f200> \ue5ff </>{{ .Path }} ",
           "type": "path"
         },
         {
@@ -119,18 +110,15 @@
           "properties": {
             "fetch_stash_count": true,
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": "<#ffea00>\ue0b1 </>{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#E84855> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#2FDA4E> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_upstream_icon": true
           },
           "style": "diamond",
+          "template": "<#ffea00>\ue0b1 </>{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#E84855> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#2FDA4E> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
           "background": "#2f2f2f",
           "foreground": "#fafafa",
-          "properties": {
-            "template": ""
-          },
           "style": "diamond",
           "trailing_diamond": "\ue0b0",
           "type": "text"
@@ -143,10 +131,8 @@
       "segments": [
         {
           "foreground": "#ffea00",
-          "properties": {
-            "template": " \u276f "
-          },
           "style": "plain",
+          "template": " \u276f ",
           "type": "text"
         }
       ],
@@ -155,5 +141,5 @@
   ],
   "console_title_template": "{{if .Root}}root :: {{end}}{{.Shell}} :: {{.Folder}}",
   "final_space": true,
-  "version": 1
+  "version": 2
 }

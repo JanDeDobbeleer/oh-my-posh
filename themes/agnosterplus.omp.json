@@ -7,10 +7,10 @@
         {
           "foreground": "#007ACC",
           "properties": {
-            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04:05"
           },
           "style": "plain",
+          "template": " {{ .CurrentDate | date .Format }} ",
           "type": "time"
         }
       ],
@@ -25,10 +25,8 @@
           "background": "#ffffff",
           "foreground": "#100e23",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " {{ .UserName }}@{{ .HostName }} "
-          },
           "style": "powerline",
+          "template": " {{ .UserName }}@{{ .HostName }} ",
           "type": "session"
         },
         {
@@ -39,20 +37,18 @@
             "folder_icon": "\uf115",
             "folder_separator_icon": " \ue0b1 ",
             "home_icon": "\uf7db",
-            "style": "agnoster",
-            "template": " {{ .Path }} "
+            "style": "agnoster"
           },
           "style": "powerline",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
           "background": "#95ffa4",
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " {{ .HEAD }} "
-          },
           "style": "powerline",
+          "template": " {{ .HEAD }} ",
           "type": "git"
         }
       ],
@@ -60,5 +56,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

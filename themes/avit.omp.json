@@ -7,34 +7,28 @@
         {
           "foreground": "#ffffff",
           "properties": {
-            "style": "full",
-            "template": "{{ .Path }} "
+            "style": "full"
           },
           "style": "plain",
+          "template": "{{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#C2C206",
-          "properties": {
-            "template": "{{ .HEAD }} "
-          },
           "style": "plain",
+          "template": "{{ .HEAD }} ",
           "type": "git"
         },
         {
           "foreground": "#B5B50D",
-          "properties": {
-            "template": " \uf0e7 "
-          },
           "style": "plain",
+          "template": " \uf0e7 ",
           "type": "root"
         },
         {
           "foreground": "#C94A16",
-          "properties": {
-            "template": "x{{ .Meaning }} "
-          },
           "style": "plain",
+          "template": "x{{ .Meaning }} ",
           "type": "exit"
         }
       ],
@@ -46,10 +40,8 @@
       "segments": [
         {
           "foreground": "#007ACC",
-          "properties": {
-            "template": "\ue602 "
-          },
           "style": "plain",
+          "template": "\ue602 ",
           "type": "text"
         }
       ],
@@ -57,5 +49,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

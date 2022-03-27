@@ -7,97 +7,81 @@
         {
           "foreground": "#26C6DA",
           "properties": {
-            "macos": "mac",
-            "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}}"
+            "macos": "mac"
           },
           "style": "plain",
+          "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}}",
           "type": "os"
         },
         {
           "foreground": "#26C6DA",
-          "properties": {
-            "template": " {{ .UserName }}: "
-          },
           "style": "plain",
+          "template": " {{ .UserName }}: ",
           "type": "session"
         },
         {
           "foreground": "lightGreen",
           "properties": {
-            "style": "folder",
-            "template": "{{ .Path }} "
+            "style": "folder"
           },
           "style": "plain",
+          "template": "{{ .Path }} ",
           "type": "path"
         },
         {
           "properties": {
             "branch_icon": "",
-            "fetch_stash_count": true,
-            "template": "<#ffffff>on</> {{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_stash_count": true
           },
           "style": "plain",
+          "template": "<#ffffff>on</> {{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
           "foreground": "#906cff",
-          "properties": {
-            "template": "[\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}] "
-          },
           "style": "powerline",
+          "template": "[\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}] ",
           "type": "python"
         },
         {
           "foreground": "#7FD5EA",
-          "properties": {
-            "template": "[\ufcd1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] "
-          },
           "style": "powerline",
+          "template": "[\ufcd1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] ",
           "type": "go"
         },
         {
           "foreground": "#76b367",
-          "properties": {
-            "template": "[\ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}] "
-          },
           "style": "powerline",
+          "template": "[\ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}] ",
           "type": "node"
         },
         {
           "foreground": "#f44336",
-          "properties": {
-            "template": "[\ue791{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] "
-          },
           "style": "powerline",
+          "template": "[\ue791{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] ",
           "type": "ruby"
         },
         {
           "foreground": "#ea2d2e",
-          "properties": {
-            "template": "[\ue738 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] "
-          },
           "style": "powerline",
+          "template": "[\ue738 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] ",
           "type": "java"
         },
         {
           "foreground": "#4063D8",
-          "properties": {
-            "template": " \ue624 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
-          },
           "style": "powerline",
+          "template": " \ue624 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "type": "julia"
         },
         {
           "foreground": "#FFD54F",
-          "properties": {
-            "template": "\u276f "
-          },
           "style": "plain",
+          "template": "\u276f ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

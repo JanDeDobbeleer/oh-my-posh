@@ -17,9 +17,7 @@ Display the currently active ruby version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#4063D8",
-  "properties": {
-    "template": " \uE791 {{ .Full }}"
-  }
+  "template": " \uE791 {{ .Full }}"
 }
 ```
 

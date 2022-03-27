@@ -6,44 +6,38 @@
       "segments": [
         {
           "foreground": "#E36464",
-          "properties": {
-            "template": "@{{ .UserName }} "
-          },
           "style": "plain",
+          "template": "@{{ .UserName }} ",
           "type": "session"
         },
         {
           "foreground": "#62ED8B",
-          "properties": {
-            "template": "\u279c"
-          },
           "style": "plain",
+          "template": "\u279c",
           "type": "text"
         },
         {
           "foreground": "#56B6C2",
           "properties": {
-            "style": "folder",
-            "template": " {{ .Path }}"
+            "style": "folder"
           },
           "style": "plain",
+          "template": " {{ .Path }}",
           "type": "path"
         },
         {
           "foreground": "#D4AAFC",
           "properties": {
-            "branch_icon": "",
-            "template": " <#DDB15F>git(</>{{ .HEAD }}<#DDB15F>)</>"
+            "branch_icon": ""
           },
           "style": "plain",
+          "template": " <#DDB15F>git(</>{{ .HEAD }}<#DDB15F>)</>",
           "type": "git"
         },
         {
           "foreground": "#DCB977",
-          "properties": {
-            "template": " \uf119"
-          },
           "style": "plain",
+          "template": " \uf119",
           "type": "exit"
         }
       ],
@@ -51,5 +45,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

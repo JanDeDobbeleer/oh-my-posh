@@ -6,44 +6,38 @@
       "segments": [
         {
           "foreground": "#FFE082",
-          "properties": {
-            "template": "@{{ .UserName }} \u279c"
-          },
           "style": "plain",
+          "template": "@{{ .UserName }} \u279c",
           "type": "session"
         },
         {
           "foreground": "#56B6C2",
           "properties": {
-            "style": "agnoster_short",
-            "template": " {{ .Path }} "
+            "style": "agnoster_short"
           },
           "style": "plain",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#7FD5EA",
-          "properties": {
-            "template": "(\ufcd1{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}) "
-          },
           "style": "powerline",
+          "template": "(\ufcd1{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}) ",
           "type": "go"
         },
         {
           "foreground": "#9e7eff",
-          "properties": {
-            "template": "(\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}) "
-          },
           "style": "powerline",
+          "template": "(\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}) ",
           "type": "python"
         },
         {
           "foreground": "#56B6C2",
           "properties": {
-            "branch_icon": "",
-            "template": "<#E8CC97>git(</>{{ .HEAD }}<#E8CC97>) </>"
+            "branch_icon": ""
           },
           "style": "plain",
+          "template": "<#E8CC97>git(</>{{ .HEAD }}<#E8CC97>) </>",
           "type": "git"
         },
         {
@@ -51,10 +45,10 @@
           "properties": {
             "always_enabled": false,
             "style": "austin",
-            "template": "{{{ .FormattedMs }}}",
             "threshold": 100
           },
           "style": "powerline",
+          "template": "{{{ .FormattedMs }}}",
           "type": "executiontime"
         }
       ],
@@ -74,10 +68,10 @@
           "properties": {
             "charged_icon": "\ue22f ",
             "charging_icon": "\ue234 ",
-            "discharging_icon": "\ue231 ",
-            "template": "[{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295]"
+            "discharging_icon": "\ue231 "
           },
           "style": "powerline",
+          "template": "[{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295]",
           "type": "battery"
         }
       ],
@@ -85,5 +79,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

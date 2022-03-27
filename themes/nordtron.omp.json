@@ -6,10 +6,8 @@
       "segments": [
         {
           "foreground": "#88c0d0",
-          "properties": {
-            "template": "<#5e81ac>\u250f[</>{{ .UserName }}<#5e81ac>]</>"
-          },
           "style": "plain",
+          "template": "<#5e81ac>\u250f[</>{{ .UserName }}<#5e81ac>]</>",
           "type": "session"
         },
         {
@@ -17,42 +15,34 @@
           "properties": {
             "fetch_stash_count": true,
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": "<#5e81ac>--[</>{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#8fbcbb> \u25cf </>{{ end }}{{ if .Staging.Changed }}<#88c0d0> \u25cf </>{{ end }}<#5e81ac>]</>"
+            "fetch_upstream_icon": true
           },
           "style": "plain",
+          "template": "<#5e81ac>--[</>{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#8fbcbb> \u25cf </>{{ end }}{{ if .Staging.Changed }}<#88c0d0> \u25cf </>{{ end }}<#5e81ac>]</>",
           "type": "git"
         },
         {
           "foreground": "#b48ead",
-          "properties": {
-            "template": "<#5e81ac>--[</>{{.Profile}}{{if .Region}}@{{.Region}}{{end}}<#5e81ac>]</>"
-          },
           "style": "plain",
+          "template": "<#5e81ac>--[</>{{.Profile}}{{if .Region}}@{{.Region}}{{end}}<#5e81ac>]</>",
           "type": "aws"
         },
         {
           "foreground": "#b48ead",
-          "properties": {
-            "template": "<#5e81ac>--[</>{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}<#5e81ac>]</>"
-          },
           "style": "plain",
+          "template": "<#5e81ac>--[</>{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}<#5e81ac>]</>",
           "type": "kubectl"
         },
         {
           "foreground": "#d8dee9",
-          "properties": {
-            "template": "<#5e81ac>[</>\uf0e7<#5e81ac>]</>"
-          },
           "style": "plain",
+          "template": "<#5e81ac>[</>\uf0e7<#5e81ac>]</>",
           "type": "root"
         },
         {
           "foreground": "#d8dee9",
-          "properties": {
-            "template": "<#5e81ac>[x</>{{ .Meaning }}<#5e81ac>]</>"
-          },
           "style": "plain",
+          "template": "<#5e81ac>[x</>{{ .Meaning }}<#5e81ac>]</>",
           "type": "exit"
         }
       ],
@@ -65,10 +55,10 @@
         {
           "foreground": "#88c0d0",
           "properties": {
-            "style": "full",
-            "template": "<#5e81ac>\u2516[</>{{ .Path }}<#5e81ac>]</>"
+            "style": "full"
           },
           "style": "plain",
+          "template": "<#5e81ac>\u2516[</>{{ .Path }}<#5e81ac>]</>",
           "type": "path"
         }
       ],
@@ -80,10 +70,8 @@
       "segments": [
         {
           "foreground": "#5e81ac",
-          "properties": {
-            "template": " \ue602 "
-          },
           "style": "plain",
+          "template": " \ue602 ",
           "type": "text"
         }
       ],
@@ -91,5 +79,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

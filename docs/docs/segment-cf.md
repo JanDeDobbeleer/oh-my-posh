@@ -15,9 +15,7 @@ Display the active [Cloud Foundry CLI][cloud-foundry] version.
   "background": "#a7cae1",
   "foreground": "#100e23",
   "powerline_symbol": "\ue0b0",
-  "properties": {
-    "template": " \uf40a cf {{ .Full }} "
-  },
+  "template": " \uf40a cf {{ .Full }} ",
   "style": "powerline",
   "type": "cf"
 }

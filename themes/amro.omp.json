@@ -6,20 +6,18 @@
       "segments": [
         {
           "foreground": "#45F1C2",
-          "properties": {
-            "template": "\uf508 {{ .UserName }} on"
-          },
           "style": "plain",
+          "template": "\uf508 {{ .UserName }} on",
           "type": "session"
         },
         {
           "foreground": "#0CA0D8",
           "properties": {
             "folder_separator_icon": "/",
-            "style": "full",
-            "template": " \uf07b {{ .Path }} "
+            "style": "full"
           },
           "style": "plain",
+          "template": " \uf07b {{ .Path }} ",
           "type": "path"
         },
         {
@@ -27,10 +25,10 @@
           "powerline_symbol": "\ue0b0",
           "properties": {
             "fetch_stash_count": true,
-            "fetch_upstream_icon": true,
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_upstream_icon": true
           },
           "style": "plain",
+          "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
       ],
@@ -42,23 +40,19 @@
       "segments": [
         {
           "foreground": "#cd5e42",
-          "properties": {
-            "template": "\ue3bf "
-          },
           "style": "plain",
+          "template": "\ue3bf ",
           "type": "root"
         },
         {
           "foreground": "#CD4277",
-          "properties": {
-            "template": "# "
-          },
           "style": "plain",
+          "template": "# ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

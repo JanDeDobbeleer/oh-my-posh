@@ -3,7 +3,6 @@ package segments
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
-	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -41,9 +40,6 @@ func TestTextSegment(t *testing.T) {
 		})
 		txt := &Text{
 			env: env,
-			props: properties.Map{
-				properties.SegmentTemplate: tc.Template,
-			},
 		}
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, txt), tc.Case)
 	}

@@ -18,9 +18,7 @@ Show the current user and host name.
   "background": "#c386f1",
   "leading_diamond": "\uE0B6",
   "trailing_diamond": "\uE0B0",
-  "properties": {
-    "template": "{{ if .SSHSession }}\uF817 {{ end }}{{ .UserName }}"
-  }
+  "template": "{{ if .SSHSession }}\uF817 {{ end }}{{ .UserName }}"
 }
 ```
 

@@ -17,9 +17,7 @@ Display the currently active AWS profile and region.
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#FFA400",
-  "properties": {
-    "template": " \uE7AD {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
-  }
+  "template": " \uE7AD {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
 }
 ```
 

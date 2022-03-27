@@ -7,10 +7,8 @@
       "segments": [
         {
           "foreground": "#b1ff4f",
-          "properties": {
-            "template": "[🐍 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}] "
-          },
           "style": "powerline",
+          "template": "[🐍 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}] ",
           "type": "python"
         },
         {
@@ -18,10 +16,10 @@
           "properties": {
             "folder_separator_icon": " 🢖 ",
             "home_icon": "\u2764",
-            "style": "letter",
-            "template": "<#eaeaea>\u23a7</> \u27e8{{ .Path }}\u27e9 "
+            "style": "letter"
           },
           "style": "plain",
+          "template": "<#eaeaea>\u23a7</> \u27e8{{ .Path }}\u27e9 ",
           "type": "path"
         },
         {
@@ -29,19 +27,19 @@
           "properties": {
             "branch_icon": "\u27df",
             "branch_identical_icon": "\u2261",
-            "fetch_status": true,
-            "template": "\u27e8{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \u2206{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}\u27e9"
+            "fetch_status": true
           },
           "style": "plain",
+          "template": "\u27e8{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \u2206{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}\u27e9",
           "type": "git"
         },
         {
           "foreground": "#98C379",
           "properties": {
-            "fetch_version": true,
-            "template": "<#ffffff>\u25e6</> \u2622{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+            "fetch_version": true
           },
           "style": "plain",
+          "template": "<#ffffff>\u25e6</> \u2622{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"
         }
       ],
@@ -52,20 +50,18 @@
       "segments": [
         {
           "foreground": "#fb0207",
-          "properties": {
-            "template": " ××× "
-          },
           "style": "plain",
+          "template": " ××× ",
           "type": "exit"
         },
         {
           "foreground": "#9966ff",
           "properties": {
             "style": "austin",
-            "template": "\u27e8{{ .FormattedMs }}\u27e9 <#eaeaea>\u23ab</>",
             "threshold": 0
           },
           "style": "plain",
+          "template": "\u27e8{{ .FormattedMs }}\u27e9 <#eaeaea>\u23ab</>",
           "type": "executiontime"
         }
       ],
@@ -77,10 +73,8 @@
       "segments": [
         {
           "foreground": "#3ce6bf",
-          "properties": {
-            "template": "<#eaeaea>\u23a9</>\u27e9\u27e9\u27e9\u27e9\u27e9\u27e9 "
-          },
           "style": "plain",
+          "template": "<#eaeaea>\u23a9</>\u27e9\u27e9\u27e9\u27e9\u27e9\u27e9 ",
           "type": "text"
         }
       ],
@@ -92,15 +86,15 @@
         {
           "foreground": "#f5f5a6",
           "properties": {
-            "template": "\u27e8{{ .CurrentDate | date .Format }}\u27e9 <#eaeaea>\u23ad</>",
             "time_format": "15:04:05"
           },
           "style": "plain",
+          "template": "\u27e8{{ .CurrentDate | date .Format }}\u27e9 <#eaeaea>\u23ad</>",
           "type": "time"
         }
       ],
       "type": "rprompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

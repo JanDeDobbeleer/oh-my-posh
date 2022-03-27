@@ -26,6 +26,7 @@ type Segment struct {
 	BackgroundTemplates color.Templates `json:"background_templates,omitempty"`
 	LeadingDiamond      string          `json:"leading_diamond,omitempty"`
 	TrailingDiamond     string          `json:"trailing_diamond,omitempty"`
+	Template            string          `json:"template,omitempty"`
 	Properties          properties.Map  `json:"properties,omitempty"`
 
 	writer          SegmentWriter
@@ -300,9 +301,11 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 }
 
 func (segment *Segment) string() string {
-	segmentTemplate := segment.Properties.GetString(properties.SegmentTemplate, segment.writer.Template())
+	if len(segment.Template) == 0 {
+		segment.Template = segment.writer.Template()
+	}
 	tmpl := &template.Text{
-		Template: segmentTemplate,
+		Template: segment.Template,
 		Context:  segment.writer,
 		Env:      segment.env,
 	}

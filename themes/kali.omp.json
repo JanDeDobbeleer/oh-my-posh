@@ -10,38 +10,36 @@
             "{{ if .Root }}red{{ end }}"
           ],
           "properties": {
-            "display_host": true,
-            "template": "<green>\u250c\u2500\u2500(</>{{ if .Root }}root💀{{ else }}{{ .UserName }}@{{ end }}{{ .HostName }}<green>)</>"
+            "display_host": true
           },
           "style": "plain",
+          "template": "<green>\u250c\u2500\u2500(</>{{ if .Root }}root💀{{ else }}{{ .UserName }}@{{ end }}{{ .HostName }}<green>)</>",
           "type": "session"
         },
         {
           "foreground": "yellow",
           "properties": {
             "fetch_version": false,
-            "fetch_virtual_env": true,
-            "template": "<green>-[</>\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }}{{ end }}{{ .Full }}{{ end }}<green>]</>"
+            "fetch_virtual_env": true
           },
           "style": "plain",
+          "template": "<green>-[</>\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }}{{ end }}{{ .Full }}{{ end }}<green>]</>",
           "type": "python"
         },
         {
           "foreground": "lightWhite",
           "properties": {
             "folder_separator_icon": "<#c0c0c0>/</>",
-            "style": "full",
-            "template": "<green>-[</>{{ .Path }}<green>]</>"
+            "style": "full"
           },
           "style": "plain",
+          "template": "<green>-[</>{{ .Path }}<green>]</>",
           "type": "path"
         },
         {
           "foreground": "white",
-          "properties": {
-            "template": "<green>-[</>{{ .HEAD }}<green>]</>"
-          },
           "style": "plain",
+          "template": "<green>-[</>{{ .HEAD }}<green>]</>",
           "type": "git"
         }
       ],
@@ -54,10 +52,10 @@
           "foreground": "white",
           "properties": {
             "always_enabled": true,
-            "style": "round",
-            "template": " {{ .FormattedMs }} "
+            "style": "round"
           },
           "style": "plain",
+          "template": " {{ .FormattedMs }} ",
           "type": "executiontime"
         },
         {
@@ -66,10 +64,10 @@
             "{{ if gt .Code 0 }}red{{ end }}"
           ],
           "properties": {
-            "always_enabled": true,
-            "template": " {{ if gt .Code 0 }}\u2a2f{{else}}\u2713{{ end }} "
+            "always_enabled": true
           },
           "style": "plain",
+          "template": " {{ if gt .Code 0 }}\u2a2f{{else}}\u2713{{ end }} ",
           "type": "exit"
         }
       ],
@@ -81,15 +79,13 @@
       "segments": [
         {
           "foreground": "lightBlue",
-          "properties": {
-            "template": "<green>\u2514\u2500</>{{ if .Root }}<red>#</>{{ else }}${{ end }} "
-          },
           "style": "plain",
+          "template": "<green>\u2514\u2500</>{{ if .Root }}<red>#</>{{ else }}${{ end }} ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

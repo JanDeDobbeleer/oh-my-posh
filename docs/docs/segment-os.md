@@ -16,8 +16,8 @@ Display OS specific info - defaults to Icon.
   "style": "plain",
   "foreground": "#26C6DA",
   "background": "#546E7A",
+  "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}\uE0B1",
   "properties": {
-    "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}\uE0B1",
     "macos": "mac"
   }
 }

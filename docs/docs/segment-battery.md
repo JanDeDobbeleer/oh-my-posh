@@ -26,11 +26,11 @@ Battery displays the remaining power percentage for your battery.
     "{{if eq \"Discharging\" .State.String}}#ff5722{{end}}",
     "{{if eq \"Full\" .State.String}}#4caf50{{end}}"
   ],
+  "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}\uF295 ",
   "properties": {
     "discharging_icon": "\uE231 ",
     "charging_icon": "\uE234 ",
-    "charged_icon": "\uE22F ",
-    "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}\uF295 "
+    "charged_icon": "\uE22F "
   }
 }
 ```

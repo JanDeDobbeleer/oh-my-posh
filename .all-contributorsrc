@@ -1089,6 +1089,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "atakiya",
+      "name": "Alex 'Avunia' Takiya",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6952402?v=4",
+      "profile": "https://takiya.eu",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

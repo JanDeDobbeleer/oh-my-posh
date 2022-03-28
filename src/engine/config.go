@@ -83,7 +83,7 @@ func (cfg *Config) exitWithError(err error) {
 func LoadConfig(env environment.Environment) *Config {
 	cfg := loadConfig(env)
 	// only migrate automatically when the switch isn't set
-	if !env.Flags().Migrate && cfg.Version != configVersion {
+	if !env.Flags().Migrate && cfg.Version < configVersion {
 		cfg.BackupAndMigrate(env)
 	}
 	return cfg

@@ -163,6 +163,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://blog.deltacode.be"><img src="https://avatars.githubusercontent.com/u/352626?v=4?s=100" width="100px;" alt=""/><br /><sub><b>David De Sloovere</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=DavidDeSloovere" title="Code">💻</a></td>
     <td align="center"><a href="https://lensor-radii.netlify.app"><img src="https://avatars.githubusercontent.com/u/69637718?v=4?s=100" width="100px;" alt=""/><br /><sub><b>LensPlaysGames</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=LensPlaysGames" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://takiya.eu"><img src="https://avatars.githubusercontent.com/u/6952402?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex 'Avunia' Takiya</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=atakiya" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->

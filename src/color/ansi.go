@@ -64,7 +64,7 @@ func (a *Ansi) Init(shellName string) {
 		a.colorTransparent = "%%{\x1b[%s;49m\x1b[7m%%}%s%%{\x1b[0m%%}"
 		a.escapeLeft = "%{"
 		a.escapeRight = "%}"
-		a.hyperlink = "%%{\x1b]8;;%s\x1b\\%%}%s%%{\x1b]8;;\x1b\\%%}"
+		a.hyperlink = "%%{\x1b]8;;%s\x1b\\\\%%}%s%%{\x1b]8;;\x1b\\\\%%}"
 		a.osc99 = "%%{\x1b]9;9;\"%s\"\x1b\\%%}"
 		a.bold = "%%{\x1b[1m%%}%s%%{\x1b[22m%%}"
 		a.italic = "%%{\x1b[3m%%}%s%%{\x1b[23m%%}"
@@ -128,6 +128,9 @@ func (a *Ansi) Init(shellName string) {
 		a.reverse = "\x1b[7m%s\x1b[27m"
 		a.dimmed = "\x1b[2m%s\x1b[22m"
 		a.strikethrough = "\x1b[9m%s\x1b[29m"
+	}
+	if shellName == shell.FISH {
+		a.hyperlink = "\x1b]8;;%s\x1b\\\\%s\x1b]8;;\x1b\\\\"
 	}
 	// common replacement for all shells
 	a.shellReservedKeywords = append(a.shellReservedKeywords, shellKeyWordReplacement{"`", "'"})

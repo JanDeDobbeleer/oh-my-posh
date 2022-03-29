@@ -357,7 +357,7 @@ func (ir *ImageRenderer) SavePNG() error {
 	bc.Fill()
 
 	// var done = make(chan struct{}, ir.shadowRadius)
-	shadow, err := stackblur.Run(
+	shadow, err := stackblur.Process(
 		bc.Image(),
 		uint32(ir.shadowRadius),
 	)

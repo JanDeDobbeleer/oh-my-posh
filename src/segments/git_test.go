@@ -51,7 +51,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 		},
 	}
 	assert.True(t, g.Enabled())
-	assert.Equal(t, fileInfo.Path, g.gitWorkingFolder)
+	assert.Equal(t, fileInfo.Path, g.workingFolder)
 }
 
 func TestEnabledInWorkingTree(t *testing.T) {
@@ -77,8 +77,8 @@ func TestEnabledInWorkingTree(t *testing.T) {
 		},
 	}
 	assert.True(t, g.Enabled())
-	assert.Equal(t, "/dev/real_folder/.git/worktrees/folder_worktree", g.gitWorkingFolder)
-	assert.Equal(t, "/dev/folder_worktree", g.gitRealFolder)
+	assert.Equal(t, "/dev/real_folder/.git/worktrees/folder_worktree", g.workingFolder)
+	assert.Equal(t, "/dev/folder_worktree", g.realFolder)
 }
 
 func TestEnabledInSubmodule(t *testing.T) {
@@ -104,9 +104,9 @@ func TestEnabledInSubmodule(t *testing.T) {
 		},
 	}
 	assert.True(t, g.Enabled())
-	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.gitWorkingFolder)
-	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.gitRealFolder)
-	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.gitRootFolder)
+	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.workingFolder)
+	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.realFolder)
+	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.rootFolder)
 }
 
 func TestEnabledInSeparateGitDir(t *testing.T) {
@@ -132,9 +132,9 @@ func TestEnabledInSeparateGitDir(t *testing.T) {
 		},
 	}
 	assert.True(t, g.Enabled())
-	assert.Equal(t, "/dev/parent/test-separate-git-dir/", g.gitWorkingFolder)
-	assert.Equal(t, "/dev/parent/test-separate-git-dir/", g.gitRealFolder)
-	assert.Equal(t, "/dev/separate-git-dir", g.gitRootFolder)
+	assert.Equal(t, "/dev/parent/test-separate-git-dir/", g.workingFolder)
+	assert.Equal(t, "/dev/parent/test-separate-git-dir/", g.realFolder)
+	assert.Equal(t, "/dev/separate-git-dir", g.rootFolder)
 }
 func TestGetGitOutputForCommand(t *testing.T) {
 	args := []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
@@ -501,9 +501,9 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 		env.On("FileContent", "/logs/refs/stash").Return(tc.StashContent)
 		g := &Git{
 			scm: scm{
-				env: env,
+				env:           env,
+				workingFolder: "",
 			},
-			gitWorkingFolder: "",
 		}
 		got := g.getStashContext()
 		assert.Equal(t, tc.Expected, got)
@@ -625,7 +625,7 @@ func TestGetGitCommand(t *testing.T) {
 		} else {
 			env.On("InWSLSharedDrive").Return(false)
 		}
-		assert.Equal(t, tc.Expected, g.getGitCommand(), tc.Case)
+		assert.Equal(t, tc.Expected, g.getCommand(GITCOMMAND), tc.Case)
 	}
 }
 
@@ -796,8 +796,8 @@ func TestGitUntrackedMode(t *testing.T) {
 				props: properties.Map{
 					UntrackedModes: tc.UntrackedModes,
 				},
+				realFolder: "foo",
 			},
-			gitRealFolder: "foo",
 		}
 		got := g.getUntrackedFilesMode()
 		assert.Equal(t, tc.Expected, got, tc.Case)

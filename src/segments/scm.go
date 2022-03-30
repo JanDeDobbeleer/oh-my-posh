@@ -9,15 +9,16 @@ import (
 
 // ScmStatus represents part of the status of a repository
 type ScmStatus struct {
-	Unmerged int
-	Deleted  int
-	Added    int
-	Modified int
-	Moved    int
+	Unmerged   int
+	Deleted    int
+	Added      int
+	Modified   int
+	Moved      int
+	Conflicted int
 }
 
 func (s *ScmStatus) Changed() bool {
-	return s.Added > 0 || s.Deleted > 0 || s.Modified > 0 || s.Unmerged > 0 || s.Moved > 0
+	return s.Added > 0 || s.Deleted > 0 || s.Modified > 0 || s.Unmerged > 0 || s.Moved > 0 || s.Conflicted > 0
 }
 
 func (s *ScmStatus) String() string {
@@ -33,12 +34,19 @@ func (s *ScmStatus) String() string {
 	status += stringIfValue(s.Deleted, "-")
 	status += stringIfValue(s.Moved, ">")
 	status += stringIfValue(s.Unmerged, "x")
+	status += stringIfValue(s.Conflicted, "!")
 	return strings.TrimSpace(status)
 }
 
 type scm struct {
 	props properties.Properties
 	env   environment.Environment
+
+	IsWslSharedPath bool
+	workingFolder   string
+	rootFolder      string
+	realFolder      string // real folder (can be different from current path when in worktrees)
+	command         string
 }
 
 const (
@@ -79,4 +87,29 @@ func (s *scm) shouldIgnoreRootRepository(rootDir string) bool {
 
 func (s *scm) FileContents(folder, file string) string {
 	return strings.Trim(s.env.FileContent(folder+"/"+file), " \r\n")
+}
+
+func (s *scm) convertToWindowsPath(path string) string {
+	if !s.IsWslSharedPath {
+		return path
+	}
+	return s.env.ConvertToWindowsPath(path)
+}
+
+func (s *scm) convertToLinuxPath(path string) string {
+	if !s.IsWslSharedPath {
+		return path
+	}
+	return s.env.ConvertToLinuxPath(path)
+}
+
+func (s *scm) getCommand(command string) string {
+	if len(s.command) > 0 {
+		return s.command
+	}
+	s.command = command
+	if s.env.GOOS() == environment.WindowsPlatform || s.IsWslSharedPath {
+		s.command += ".exe"
+	}
+	return s.command
 }

@@ -163,6 +163,8 @@ const (
 	SPOTIFY SegmentType = "spotify"
 	// STRAVA is a sports activity tracker
 	STRAVA SegmentType = "strava"
+	// Subversion segment
+	SVN SegmentType = "svn"
 	// SWIFT writes the active swift version
 	SWIFT SegmentType = "swift"
 	// SYSTEMINFO writes system information (memory, cpu, load)
@@ -296,6 +298,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		SHELL:         &segments.Shell{},
 		SPOTIFY:       &segments.Spotify{},
 		STRAVA:        &segments.Strava{},
+		SVN:           &segments.Svn{},
 		SWIFT:         &segments.Swift{},
 		SYSTEMINFO:    &segments.SystemInfo{},
 		TERRAFORM:     &segments.Terraform{},

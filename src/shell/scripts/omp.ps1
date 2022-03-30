@@ -15,7 +15,11 @@ function global:Start-Utf8Process
     $StartInfo.CreateNoWindow = $true
 	$_ = $Process.Start();
 	$_ = $Process.WaitForExit();
-	return $Process.StandardOutput.ReadToEnd() + $Process.StandardError.ReadToEnd()
+    $stderr = $Process.StandardError.ReadToEnd().Trim()
+    if ($stderr -ne '') {
+        $Host.UI.WriteErrorLine($stderr)
+    }
+	return $Process.StandardOutput.ReadToEnd().Trim()
 }
 
 $env:POWERLINE_COMMAND = "oh-my-posh"

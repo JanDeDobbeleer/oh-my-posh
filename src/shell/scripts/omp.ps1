@@ -1,4 +1,4 @@
-function Start-Utf8Process
+function global:Start-Utf8Process
 {
 	 param(
         [string] $FileName,
@@ -16,20 +16,6 @@ function Start-Utf8Process
 	$_ = $Process.Start();
 	$_ = $Process.WaitForExit();
 	return $Process.StandardOutput.ReadToEnd() + $Process.StandardError.ReadToEnd()
-}
-
-# Copyright (c) 2016 Michael Kelley
-# https://github.com/kelleyma49/PSFzf/issues/71
-function script:Invoke-Prompt()
-{
-	$previousOutputEncoding = [Console]::OutputEncoding
-	[Console]::OutputEncoding = [Text.Encoding]::UTF8
-
-	try {
-		[Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-	} finally {
-		[Console]::OutputEncoding = $previousOutputEncoding
-	}
 }
 
 $env:POWERLINE_COMMAND = "oh-my-posh"

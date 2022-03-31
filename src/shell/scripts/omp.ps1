@@ -19,7 +19,7 @@ function global:Start-Utf8Process
     if ($stderr -ne '') {
         $Host.UI.WriteErrorLine($stderr)
     }
-	return $Process.StandardOutput.ReadToEnd().Trim()
+	return $Process.StandardOutput.ReadToEnd()
 }
 
 $env:POWERLINE_COMMAND = "oh-my-posh"

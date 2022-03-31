@@ -51,6 +51,8 @@ function global:Set-PoshContext {}
 function global:Get-PoshContext {
     $cleanPWD = $PWD.ProviderPath
     $cleanPSWD = $PWD.ToString()
+    $cleanPWD = $cleanPWD.TrimEnd('\')
+    $cleanPSWD = $cleanPSWD.TrimEnd('\')
     return $cleanPWD, $cleanPSWD
 }
 

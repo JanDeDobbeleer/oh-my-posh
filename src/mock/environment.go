@@ -11,6 +11,10 @@ type MockedEnvironment struct {
 	mock.Mock
 }
 
+// func (env *MockedEnvironment) ReturnFn(fn func(args mock.Arguments) interface{}) string {
+// 	fn(env.Arguments)
+// }
+
 func (env *MockedEnvironment) Getenv(key string) string {
 	args := env.Called(key)
 	return args.String(0)

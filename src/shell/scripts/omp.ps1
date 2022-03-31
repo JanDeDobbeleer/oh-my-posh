@@ -59,7 +59,6 @@ function global:Get-PoshContext {
 function global:Initialize-ModuleSupport {
     if ($GitPromptSettings.EnablePromptStatus) {
         $global:GitStatus = Get-GitStatus
-        $GitPromptSettings.EnablePromptStatus = $false
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
     }
 }

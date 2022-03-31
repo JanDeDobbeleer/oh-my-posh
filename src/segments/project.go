@@ -14,20 +14,14 @@ type ProjectItem struct {
 	Fetcher func(item ProjectItem) (string, string)
 }
 
-//Node.js Package
-type NodePackageJSON struct {
-	Name    string `json:"name"`
-	Version string `json:"version"`
+type ProjectData struct {
+	Version string
+	Name    string
 }
 
 // Rust Cargo package
 type CargoTOML struct {
-	Package CargoPackageTOML
-}
-
-type CargoPackageTOML struct {
-	Name    string
-	Version string
+	Package ProjectData
 }
 
 // Python Poetrey package
@@ -36,12 +30,7 @@ type PyprojectTOML struct {
 }
 
 type PyprojectToolTOML struct {
-	Poetry PyprojectPoetryTOML
-}
-
-type PyprojectPoetryTOML struct {
-	Name    string
-	Version string
+	Poetry ProjectData
 }
 
 type Project struct {
@@ -49,9 +38,9 @@ type Project struct {
 	env   environment.Environment
 
 	projects []*ProjectItem
-	Version  string
-	Name     string
 	Error    string
+
+	ProjectData
 }
 
 func (n *Project) Enabled() bool {
@@ -108,7 +97,7 @@ func (n *Project) hasProjectFile(p *ProjectItem) bool {
 func (n *Project) getNodePackage(item ProjectItem) (string, string) {
 	content := n.env.FileContent(item.File)
 
-	var data NodePackageJSON
+	var data ProjectData
 	err := json.Unmarshal([]byte(content), &data)
 	if err != nil {
 		n.Error = err.Error()

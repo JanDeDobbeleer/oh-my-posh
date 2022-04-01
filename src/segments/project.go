@@ -24,12 +24,12 @@ type CargoTOML struct {
 	Package ProjectData
 }
 
-// Python Poetrey package
-type PyprojectTOML struct {
-	Tool PyprojectToolTOML
+// Python Poetry package
+type PyProjectTOML struct {
+	Tool PyProjectToolTOML
 }
 
-type PyprojectToolTOML struct {
+type PyProjectToolTOML struct {
 	Poetry ProjectData
 }
 
@@ -123,7 +123,7 @@ func (n *Project) getCargoPackage(item ProjectItem) (string, string) {
 func (n *Project) getPoetryPackage(item ProjectItem) (string, string) {
 	content := n.env.FileContent(item.File)
 
-	var data PyprojectTOML
+	var data PyProjectTOML
 	_, err := toml.Decode(content, &data)
 	if err != nil {
 		n.Error = err.Error()

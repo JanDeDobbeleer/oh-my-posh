@@ -1135,7 +1135,7 @@
                   "folder_icon": {
                     "type": "string",
                     "title": "Folder Icon",
-                    "description": "The con to use as a folder indication",
+                    "description": "The icon to use as a folder indication",
                     "default": ".."
                   },
                   "windows_registry_icon": {

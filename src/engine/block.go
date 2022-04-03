@@ -52,7 +52,7 @@ func (b *Block) init(env environment.Environment, writer color.Writer, ansi *col
 
 func (b *Block) initPlain(env environment.Environment, config *Config) {
 	b.ansi = &color.Ansi{}
-	b.ansi.Init(shell.PLAIN)
+	b.ansi.InitPlain(env.Shell())
 	b.writer = &color.AnsiWriter{
 		Ansi:               b.ansi,
 		TerminalBackground: shell.ConsoleBackgroundColor(env, config.TerminalBackground),

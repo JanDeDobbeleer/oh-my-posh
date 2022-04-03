@@ -1,6 +1,7 @@
 package color
 
 import (
+	"oh-my-posh/shell"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -172,7 +173,7 @@ func TestWriteANSIColors(t *testing.T) {
 
 	for _, tc := range cases {
 		ansi := &Ansi{}
-		ansi.Init("pwsh")
+		ansi.Init(shell.PWSH)
 		renderer := &AnsiWriter{
 			Ansi:               ansi,
 			ParentColors:       []*Color{tc.Parent},

@@ -11,7 +11,7 @@
         "prompt",
         "print",
         "primary",
-        "--config=${workspaceRoot}/themes/cinnamon.omp.json",
+        "--config==${workspaceRoot}/themes/cinnamon.omp.json",
         "--shell=pwsh",
         "--terminal-width=200",
       ]

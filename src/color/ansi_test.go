@@ -20,7 +20,7 @@ func TestGenerateHyperlinkNoUrl(t *testing.T) {
 	for _, tc := range cases {
 		a := Ansi{}
 		a.Init(tc.ShellName)
-		hyperlinkText := a.generateHyperlink(tc.Text)
+		hyperlinkText := a.GenerateHyperlink(tc.Text)
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
 }
@@ -38,7 +38,7 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 	for _, tc := range cases {
 		a := Ansi{}
 		a.Init(tc.ShellName)
-		hyperlinkText := a.generateHyperlink(tc.Text)
+		hyperlinkText := a.GenerateHyperlink(tc.Text)
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
 }
@@ -56,7 +56,7 @@ func TestGenerateHyperlinkWithUrlNoName(t *testing.T) {
 	for _, tc := range cases {
 		a := Ansi{}
 		a.Init(tc.ShellName)
-		hyperlinkText := a.generateHyperlink(tc.Text)
+		hyperlinkText := a.GenerateHyperlink(tc.Text)
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
 }

@@ -67,7 +67,7 @@ func (a *Ansi) Init(shellName string) {
 		a.escapeLeft = "%{"
 		a.escapeRight = "%}"
 		a.hyperlink = "%%{\x1b]8;;%s\x1b\\\\%%}%s%%{\x1b]8;;\x1b\\\\%%}"
-		a.hyperlinkRegex = `(?P<STR>\x1b]8;;(.+)\x1b\\\\(?P<TEXT>.+)\x1b]8;;\x1b\\\\)`
+		a.hyperlinkRegex = `(?P<STR>%{\x1b]8;;(.+)\x1b\\\\%}(?P<TEXT>.+)%{\x1b]8;;\x1b\\\\%})`
 		a.osc99 = "%%{\x1b]9;9;\"%s\"\x1b\\%%}"
 		a.bold = "%%{\x1b[1m%%}%s%%{\x1b[22m%%}"
 		a.italic = "%%{\x1b[3m%%}%s%%{\x1b[23m%%}"
@@ -93,7 +93,7 @@ func (a *Ansi) Init(shellName string) {
 		a.escapeLeft = "\\["
 		a.escapeRight = "\\]"
 		a.hyperlink = "\\[\x1b]8;;%s\x1b\\\\\\]%s\\[\x1b]8;;\x1b\\\\\\]"
-		a.hyperlinkRegex = `(?P<STR>\x1b]8;;(.+)\x1b\\\\(?P<TEXT>.+)\x1b]8;;\x1b\\\\)`
+		a.hyperlinkRegex = `(?P<STR>\\\[\x1b\]8;;(.+)\x1b\\\\\\\](?P<TEXT>.+)\\\[\x1b\]8;;\x1b\\\\\\\])`
 		a.osc99 = "\\[\x1b]9;9;\"%s\"\x1b\\\\\\]"
 		a.bold = "\\[\x1b[1m\\]%s\\[\x1b[22m\\]"
 		a.italic = "\\[\x1b[3m\\]%s\\[\x1b[23m\\]"
@@ -119,7 +119,9 @@ func (a *Ansi) Init(shellName string) {
 		a.escapeLeft = ""
 		a.escapeRight = ""
 		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
-		a.hyperlinkRegex = `(?P<STR>\x1b]8;;(.+)\x1b\\(?P<TEXT>.+)\x1b]8;;\x1b\\)`
+		// a.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b\\(?P<TEXT>.+)\x1b]8;;\x1b\\)"
+		// \x1b]8;;https://ohmyposh.dev\x1b\\link\x1b]8;;\x1b\\
+		a.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b\\\\\\\\?(?P<TEXT>.+)\x1b]8;;\x1b\\\\)"
 		a.osc99 = "\x1b]9;9;\"%s\"\x1b\\"
 		a.bold = "\x1b[1m%s\x1b[22m"
 		a.italic = "\x1b[3m%s\x1b[23m"
@@ -224,7 +226,7 @@ func (a *Ansi) initEscapeSequences(shellName string) {
 	}
 }
 
-func (a *Ansi) generateHyperlink(text string) string {
+func (a *Ansi) GenerateHyperlink(text string) string {
 	// hyperlink matching
 	results := regex.FindNamedRegexMatch("(?P<all>(?:\\[(?P<name>.+)\\])(?:\\((?P<url>.*)\\)))", text)
 	if len(results) != 3 {

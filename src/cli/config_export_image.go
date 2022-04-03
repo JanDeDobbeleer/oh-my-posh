@@ -52,7 +52,7 @@ You can tweak the output by using additional flags:
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 		ansi := &color.Ansi{}
-		ansi.Init(env.Shell())
+		ansi.InitPlain(shell.PLAIN)
 		writerColors := cfg.MakeColors(env)
 		writer := &color.AnsiWriter{
 			Ansi:               ansi,

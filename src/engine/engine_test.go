@@ -58,7 +58,7 @@ func engineRender() {
 	defer testClearDefaultConfig()
 
 	ansi := &color.Ansi{}
-	ansi.Init(env.Shell())
+	ansi.InitPlain(env.Shell())
 	writerColors := cfg.MakeColors(env)
 	writer := &color.AnsiWriter{
 		Ansi:               ansi,

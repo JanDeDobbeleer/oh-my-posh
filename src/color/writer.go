@@ -105,7 +105,7 @@ func (a *AnsiWriter) writeColoredText(background, foreground AnsiColor, text str
 	if text == "" || (foreground.IsTransparent() && background.IsTransparent()) {
 		return
 	}
-	a.length += measureText(text)
+	a.length += a.Ansi.MeasureText(text)
 	// default to white fg if empty, empty backgrond is supported
 	if foreground.IsEmpty() {
 		foreground = a.getAnsiFromColorString("white", false)
@@ -140,9 +140,9 @@ func (a *AnsiWriter) Write(background, foreground, text string) {
 	}
 
 	bgAnsi, fgAnsi := a.asAnsiColors(background, foreground)
-	text = a.Ansi.EscapeText(text)
 	text = a.Ansi.formatText(text)
 	text = a.Ansi.generateHyperlink(text)
+	text = a.Ansi.EscapeText(text)
 
 	// first we match for any potentially valid colors enclosed in <>
 	// i.e., find color overrides

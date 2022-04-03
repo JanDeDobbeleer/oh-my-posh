@@ -141,7 +141,7 @@ func (a *AnsiWriter) Write(background, foreground, text string) {
 
 	bgAnsi, fgAnsi := a.asAnsiColors(background, foreground)
 	text = a.Ansi.formatText(text)
-	text = a.Ansi.generateHyperlink(text)
+	text = a.Ansi.GenerateHyperlink(text)
 	text = a.Ansi.EscapeText(text)
 
 	// first we match for any potentially valid colors enclosed in <>

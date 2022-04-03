@@ -45,6 +45,10 @@ var printCmd = &cobra.Command{
 	},
 	Args: cobra.OnlyValidArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			_ = cmd.Help()
+			return
+		}
 		env := &environment.ShellEnvironment{
 			Version: cliVersion,
 			CmdFlags: &environment.Flags{

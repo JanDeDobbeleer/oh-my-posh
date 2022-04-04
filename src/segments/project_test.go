@@ -36,6 +36,7 @@ func getMockedPackageEnv(tc *MockData) (*mock.MockedEnvironment, properties.Map)
 func TestPackage(t *testing.T) {
 	cases := []*MockData{
 		{Case: "1.0.0 node.js", ExpectedString: "\uf487 1.0.0 test", Name: "node", File: "package.json", PackageContents: "{\"version\":\"1.0.0\",\"name\":\"test\"}"},
+		{Case: "1.0.0 php", ExpectedString: "\uf487 1.0.0 test", Name: "php", File: "composer.json", PackageContents: "{\"version\":\"1.0.0\",\"name\":\"test\"}"},
 		{Case: "3.2.1 node.js", ExpectedString: "\uf487 3.2.1 test", Name: "node", File: "package.json", PackageContents: "{\"version\":\"3.2.1\",\"name\":\"test\"}"},
 		{Case: "1.0.0 cargo", ExpectedString: "\uf487 1.0.0 test", Name: "cargo", File: "Cargo.toml", PackageContents: "[package]\nname=\"test\"\nversion=\"1.0.0\"\n"},
 		{Case: "3.2.1 cargo", ExpectedString: "\uf487 3.2.1 test", Name: "cargo", File: "Cargo.toml", PackageContents: "[package]\nname=\"test\"\nversion=\"3.2.1\"\n"},

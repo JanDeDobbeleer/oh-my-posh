@@ -78,6 +78,11 @@ func (n *Project) Init(props properties.Properties, env environment.Environment)
 			File:    "pyproject.toml",
 			Fetcher: n.getPoetryPackage,
 		},
+		{
+			Name:    "php",
+			File:    "composer.json",
+			Fetcher: n.getNodePackage,
+		},
 	}
 
 	n.Version = ""

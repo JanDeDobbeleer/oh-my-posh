@@ -72,7 +72,11 @@ func (env *ShellEnvironment) Home() string {
 
 func (env *ShellEnvironment) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
 	defer env.trace(time.Now(), "WindowTitle", windowTitleRegex)
-	return queryWindowTitles(processName, windowTitleRegex)
+	title, err := queryWindowTitles(processName, windowTitleRegex)
+	if err != nil {
+		env.log(Error, "QueryWindowTitles", err.Error())
+	}
+	return title, err
 }
 
 func (env *ShellEnvironment) IsWsl() bool {

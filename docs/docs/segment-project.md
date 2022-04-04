@@ -13,6 +13,7 @@ Supports:
 - Node.js project (`package.json`)
 - Cargo project (`Cargo.toml`)
 - Poetry project (`pyproject.toml`)
+- PHP project (`composer.json`)
 
 ## Sample Configuration
 
@@ -32,7 +33,7 @@ Supports:
 :::note default template
 
 ``` template
- {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }} 
+ {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }}
 ```
 
 :::

@@ -119,8 +119,6 @@ func (a *Ansi) Init(shellName string) {
 		a.escapeLeft = ""
 		a.escapeRight = ""
 		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
-		// a.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b\\(?P<TEXT>.+)\x1b]8;;\x1b\\)"
-		// \x1b]8;;https://ohmyposh.dev\x1b\\link\x1b]8;;\x1b\\
 		a.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b\\\\\\\\?(?P<TEXT>.+)\x1b]8;;\x1b\\\\)"
 		a.osc99 = "\x1b]9;9;\"%s\"\x1b\\"
 		a.bold = "\x1b[1m%s\x1b[22m"
@@ -130,9 +128,6 @@ func (a *Ansi) Init(shellName string) {
 		a.reverse = "\x1b[7m%s\x1b[27m"
 		a.dimmed = "\x1b[2m%s\x1b[22m"
 		a.strikethrough = "\x1b[9m%s\x1b[29m"
-	}
-	if shellName == shell.FISH {
-		a.hyperlink = "\x1b]8;;%s\x1b\\\\%s\x1b]8;;\x1b\\\\"
 	}
 }
 
@@ -147,7 +142,6 @@ func (a *Ansi) initEscapeSequences(shellName string) {
 		// escape double quotes and variable expansion
 		a.reservedSequences = []sequenceReplacement{
 			{text: "`", replacement: "'"},
-			// {text: `\`, replacement: `\\`},
 			{text: `%l`, replacement: `%%l`},
 			{text: `%M`, replacement: `%%M`},
 			{text: `%m`, replacement: `%%m`},
@@ -218,6 +212,17 @@ func (a *Ansi) initEscapeSequences(shellName string) {
 			{text: `\#`, replacement: `\\#`},
 			{text: `\$`, replacement: `\\$`},
 			{text: `\nnn`, replacement: `\\nnn`},
+		}
+	case shell.FISH:
+		a.reservedSequences = []sequenceReplacement{
+			{text: "`", replacement: "'"},
+			{text: `\a`, replacement: `\\a`},
+			{text: `\b`, replacement: `\\b`},
+			{text: `\e`, replacement: `\\e`},
+			{text: `\f`, replacement: `\\f`},
+			{text: `\r`, replacement: `\\r`},
+			{text: `\t`, replacement: `\\t`},
+			{text: `\v`, replacement: `\\v`},
 		}
 	default:
 		a.reservedSequences = []sequenceReplacement{

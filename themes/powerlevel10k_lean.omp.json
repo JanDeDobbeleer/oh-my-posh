@@ -7,10 +7,10 @@
         {
           "foreground": "#00C5C7",
           "properties": {
-            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04:05"
           },
           "style": "plain",
+          "template": " {{ .CurrentDate | date .Format }} ",
           "type": "time"
         }
       ],
@@ -24,31 +24,27 @@
         {
           "foreground": "#77E4F7",
           "properties": {
-            "style": "full",
-            "template": "{{ .Path }} "
+            "style": "full"
           },
           "style": "plain",
+          "template": "{{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#FFE700",
-          "properties": {
-            "template": "{{ .HEAD }} "
-          },
           "style": "plain",
+          "template": "{{ .HEAD }} ",
           "type": "git"
         },
         {
           "foreground": "#43D426",
-          "properties": {
-            "template": "\u276f "
-          },
           "style": "plain",
+          "template": "\u276f ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

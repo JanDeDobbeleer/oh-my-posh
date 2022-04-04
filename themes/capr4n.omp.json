@@ -7,20 +7,18 @@
         {
           "background": "#003543",
           "foreground": "#ffffff",
-          "properties": {
-            "template": " \uf64f {{ .CurrentDate | date .Format }} "
-          },
           "style": "plain",
+          "template": " \uf64f {{ .CurrentDate | date .Format }} ",
           "type": "time"
         },
         {
           "background": "#83769c",
           "foreground": "#ffffff",
           "properties": {
-            "always_enabled": true,
-            "template": " \ufa1e{{ .FormattedMs }} "
+            "always_enabled": true
           },
           "style": "plain",
+          "template": " \ufa1e{{ .FormattedMs }} ",
           "type": "executiontime"
         }
       ],
@@ -33,10 +31,10 @@
           "background": "#61AFEF",
           "foreground": "#ffffff",
           "properties": {
-            "display_host": false,
-            "template": "{{if .Root}} \uf0e7 {{.UserName}} {{else}} {{.UserName}} {{end}}"
+            "display_host": false
           },
           "style": "diamond",
+          "template": "{{if .Root}} \uf0e7 {{.UserName}} {{else}} {{.UserName}} {{end}}",
           "trailing_diamond": "\ue0b0",
           "type": "session"
         },
@@ -48,20 +46,18 @@
             "folder_icon": "\uf115",
             "folder_separator_icon": " \ue0b1 ",
             "max_depth": 2,
-            "style": "agnoster_short",
-            "template": " {{ .Path }} "
+            "style": "agnoster_short"
           },
           "style": "powerline",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
           "background": "#95ffa4",
           "foreground": "#193549",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " {{ .HEAD }} "
-          },
           "style": "powerline",
+          "template": " {{ .HEAD }} ",
           "type": "git"
         }
       ],
@@ -70,5 +66,5 @@
   ],
   "console_title_template": "{{if .Root}} \u26a1 {{end}}{{.UserName}} \u2794 📁{{.Folder}}",
   "final_space": true,
-  "version": 1
+  "version": 2
 }

@@ -15,9 +15,7 @@ Display text.
   "type": "text",
   "style": "plain",
   "foreground": "#E06C75",
-  "properties": {
-    "template": "\u276F"
-  }
+  "template": "\u276F"
 }
 ```
 

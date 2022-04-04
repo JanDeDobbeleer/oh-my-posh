@@ -102,8 +102,8 @@ func TestIconOverride(t *testing.T) {
 			Expected: "hello bar bar",
 			Property: Foo,
 			Props: properties.Map{
-				Foo:                        " bar ",
-				properties.SegmentTemplate: "hello foo bar",
+				Foo:             " bar ",
+				segmentTemplate: "hello foo bar",
 			},
 		},
 		{
@@ -111,8 +111,8 @@ func TestIconOverride(t *testing.T) {
 			Expected: "hello foo bar",
 			Property: Foo,
 			Props: properties.Map{
-				Bar:                        " bar ",
-				properties.SegmentTemplate: "hello foo bar",
+				Bar:             " bar ",
+				segmentTemplate: "hello foo bar",
 			},
 		},
 	}
@@ -120,11 +120,11 @@ func TestIconOverride(t *testing.T) {
 		segment := &Segment{
 			Properties: tc.Props,
 			writer: &MockedWriter{
-				template: tc.Props.GetString(properties.SegmentTemplate, ""),
+				template: tc.Props.GetString(segmentTemplate, ""),
 			},
 		}
 		segment.migrateIconOverride(tc.Property, " foo ")
-		assert.Equal(t, tc.Expected, segment.Properties[properties.SegmentTemplate], tc.Case)
+		assert.Equal(t, tc.Expected, segment.Properties[segmentTemplate], tc.Case)
 	}
 }
 
@@ -325,7 +325,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 			Properties: tc.Props,
 		}
 		segment.migrationOne(&mock.MockedEnvironment{})
-		assert.Equal(t, tc.Expected, segment.Properties[properties.SegmentTemplate], tc.Case)
+		assert.Equal(t, tc.Expected, segment.Properties[segmentTemplate], tc.Case)
 	}
 }
 
@@ -341,8 +341,8 @@ func TestInlineColorOverride(t *testing.T) {
 			Expected: "hello <#123456>foo</> bar",
 			Property: Foo,
 			Props: properties.Map{
-				Foo:                        "#123456",
-				properties.SegmentTemplate: "hello foo bar",
+				Foo:             "#123456",
+				segmentTemplate: "hello foo bar",
 			},
 		},
 		{
@@ -350,8 +350,8 @@ func TestInlineColorOverride(t *testing.T) {
 			Expected: "hello foo bar",
 			Property: Foo,
 			Props: properties.Map{
-				Bar:                        "#123456",
-				properties.SegmentTemplate: "hello foo bar",
+				Bar:             "#123456",
+				segmentTemplate: "hello foo bar",
 			},
 		},
 	}
@@ -359,11 +359,11 @@ func TestInlineColorOverride(t *testing.T) {
 		segment := &Segment{
 			Properties: tc.Props,
 			writer: &MockedWriter{
-				template: tc.Props.GetString(properties.SegmentTemplate, ""),
+				template: tc.Props.GetString(segmentTemplate, ""),
 			},
 		}
 		segment.migrateInlineColorOverride(tc.Property, "foo")
-		assert.Equal(t, tc.Expected, segment.Properties[properties.SegmentTemplate], tc.Case)
+		assert.Equal(t, tc.Expected, segment.Properties[segmentTemplate], tc.Case)
 	}
 }
 
@@ -403,11 +403,11 @@ func TestMigratePreAndPostfix(t *testing.T) {
 		segment := &Segment{
 			Properties: tc.Props,
 			writer: &MockedWriter{
-				template: tc.Props.GetString(properties.SegmentTemplate, ""),
+				template: tc.Props.GetString(segmentTemplate, ""),
 			},
 		}
 		segment.migrateTemplate()
-		assert.Equal(t, tc.Expected, segment.Properties[properties.SegmentTemplate], tc.Case)
+		assert.Equal(t, tc.Expected, segment.Properties[segmentTemplate], tc.Case)
 		assert.NotContains(t, segment.Properties, "prefix", tc.Case)
 		assert.NotContains(t, segment.Properties, "postfix", tc.Case)
 	}
@@ -429,5 +429,38 @@ func TestMigrateConfig(t *testing.T) {
 		}
 		cfg.Migrate(&mock.MockedEnvironment{})
 		assert.Equal(t, tc.Expected, cfg.ConsoleTitleTemplate, tc.Case)
+	}
+}
+
+func TestMigrationTwo(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Template string
+	}{
+		{
+			Case:     "With template",
+			Expected: "{{ .Name }}",
+			Template: "{{ .Name }}",
+		},
+		{
+			Case:     "No template",
+			Expected: "",
+		},
+	}
+	for _, tc := range cases {
+		segment := &Segment{
+			Type:       SESSION,
+			Properties: properties.Map{},
+			writer: &MockedWriter{
+				template: tc.Template,
+			},
+		}
+		if tc.Template != "" {
+			segment.Properties[segmentTemplate] = tc.Template
+		}
+		segment.migrationTwo(&mock.MockedEnvironment{})
+		assert.Equal(t, tc.Expected, segment.Template, tc.Case)
+		assert.NotContains(t, segment.Properties, segmentTemplate, tc.Case)
 	}
 }

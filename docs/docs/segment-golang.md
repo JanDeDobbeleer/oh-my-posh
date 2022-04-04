@@ -17,9 +17,7 @@ Display the currently active golang version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#7FD5EA",
-  "properties": {
-    "template": " \uFCD1 {{ .Full }} "
-  }
+  "template": " \uFCD1 {{ .Full }} "
 }
 ```
 

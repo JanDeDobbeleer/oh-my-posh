@@ -1,15 +1,16 @@
-set --global POSH_THEME "::CONFIG::"
+set --export POSH_THEME "::CONFIG::"
 set --global POWERLINE_COMMAND "oh-my-posh"
 set --global CONDA_PROMPT_MODIFIER false
 set --global omp_tooltip_command ""
 set --global omp_transient 0
 
 function fish_prompt
+    set --local omp_status_cache_temp $status
     if test "$omp_transient" = "1"
-      ::OMP:: prompt print transient --config $POSH_THEME --shell fish
+      ::OMP:: print transient --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
       return
     end
-    set --global omp_status_cache $status
+    set --global omp_status_cache $omp_status_cache_temp
     set --global omp_stack_count (count $dirstack)
     set --global omp_duration "$CMD_DURATION$cmd_duration"
     # check if variable set, < 3.2 case
@@ -24,7 +25,7 @@ function fish_prompt
       set --global --export omp_last_status_generation $status_generation
     end
 
-    ::OMP:: prompt print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
+    ::OMP:: print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
 end
 
 function fish_right_prompt
@@ -34,11 +35,11 @@ function fish_right_prompt
       return
     end
     if test -n "$omp_tooltip_command"
-      ::OMP:: prompt print tooltip --config $POSH_THEME --shell fish --command $omp_tooltip_command
+      ::OMP:: print tooltip --config $POSH_THEME --shell fish --command $omp_tooltip_command
       set omp_tooltip_command ""
       return
     end
-    ::OMP:: prompt print right --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
+    ::OMP:: print right --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
 end
 
 function postexec_omp --on-event fish_postexec

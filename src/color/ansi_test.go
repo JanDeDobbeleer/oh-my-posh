@@ -20,7 +20,7 @@ func TestGenerateHyperlinkNoUrl(t *testing.T) {
 	for _, tc := range cases {
 		a := Ansi{}
 		a.Init(tc.ShellName)
-		hyperlinkText := a.generateHyperlink(tc.Text)
+		hyperlinkText := a.GenerateHyperlink(tc.Text)
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
 }
@@ -31,14 +31,14 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 		ShellName string
 		Expected  string
 	}{
-		{Text: "[google](http://www.google.be)", ShellName: shell.ZSH, Expected: "%{\x1b]8;;http://www.google.be\x1b\\%}google%{\x1b]8;;\x1b\\%}"},
+		{Text: "[google](http://www.google.be)", ShellName: shell.ZSH, Expected: "%{\x1b]8;;http://www.google.be\x1b\\\\%}google%{\x1b]8;;\x1b\\\\%}"},
 		{Text: "[google](http://www.google.be)", ShellName: shell.PWSH, Expected: "\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\"},
 		{Text: "[google](http://www.google.be)", ShellName: shell.BASH, Expected: "\\[\x1b]8;;http://www.google.be\x1b\\\\\\]google\\[\x1b]8;;\x1b\\\\\\]"},
 	}
 	for _, tc := range cases {
 		a := Ansi{}
 		a.Init(tc.ShellName)
-		hyperlinkText := a.generateHyperlink(tc.Text)
+		hyperlinkText := a.GenerateHyperlink(tc.Text)
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
 }
@@ -56,7 +56,7 @@ func TestGenerateHyperlinkWithUrlNoName(t *testing.T) {
 	for _, tc := range cases {
 		a := Ansi{}
 		a.Init(tc.ShellName)
-		hyperlinkText := a.generateHyperlink(tc.Text)
+		hyperlinkText := a.GenerateHyperlink(tc.Text)
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
 }
@@ -79,7 +79,7 @@ func TestFormatText(t *testing.T) {
 	}
 	for _, tc := range cases {
 		a := Ansi{}
-		a.Init("")
+		a.InitPlain(shell.PLAIN)
 		formattedText := a.formatText(tc.Text)
 		assert.Equal(t, tc.Expected, formattedText, tc.Case)
 	}

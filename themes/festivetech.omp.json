@@ -8,10 +8,8 @@
           "background": "#adbccd",
           "foreground": "#0f1225",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": "{{ .UserName }} "
-          },
           "style": "diamond",
+          "template": "{{ .UserName }} ",
           "type": "session"
         },
         {
@@ -19,10 +17,10 @@
           "foreground": "#0f1225",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "style": "folder",
-            "template": " {{ .Path }} "
+            "style": "folder"
           },
           "style": "powerline",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
@@ -33,30 +31,28 @@
             "branch_icon": "",
             "fetch_stash_count": true,
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) "
+            "fetch_upstream_icon": true
           },
           "style": "powerline",
+          "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) ",
           "type": "git"
         },
         {
           "background": "#86BBD8",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
-          },
           "style": "powerline",
+          "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"
         },
         {
           "background": "#1f4b8e",
           "foreground": "#ffffff",
           "properties": {
-            "template": " \uf9b6{{ .CurrentDate | date .Format }} ",
             "time_format": "15:04"
           },
           "style": "diamond",
+          "template": " \uf9b6{{ .CurrentDate | date .Format }} ",
           "trailing_diamond": "\ue0b0",
           "type": "time"
         }
@@ -69,10 +65,8 @@
           "background": "#1f4b8e",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b2",
-          "properties": {
-            "template": " \uf1bb {{ .Env.DAYS }} days till Christmas "
-          },
           "style": "diamond",
+          "template": " \uf1bb {{ .Env.DAYS }} days till Christmas ",
           "trailing_diamond": "\ue0b4",
           "type": "text"
         }
@@ -87,5 +81,5 @@
     "foreground": "#ffffff",
     "template": "<#1f4b8e,transparent>\ue0b6</><#ffffff,#1f4b8e>\uf2dc</><#1f4b8e,transparent>\ue0b4</> {{ .Command }}"
   },
-  "version": 1
+  "version": 2
 }

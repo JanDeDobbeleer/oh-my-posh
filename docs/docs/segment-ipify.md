@@ -18,8 +18,8 @@ sidebar_label: Ipify
   "background": "#c386f1",
   "leading_diamond": "",
   "trailing_diamond": "\uE0B0",
+  "template": "{{ .IP }}",
   "properties": {
-    "template": "{{ .IP }}",
     "cache_timeout": 5,
     "http_timeout": 1000
   }

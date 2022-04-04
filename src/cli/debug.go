@@ -31,7 +31,7 @@ var debugCmd = &cobra.Command{
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 		ansi := &color.Ansi{}
-		ansi.Init("shell")
+		ansi.InitPlain(shell.PLAIN)
 		writerColors := cfg.MakeColors(env)
 		writer := &color.AnsiWriter{
 			Ansi:               ansi,
@@ -56,5 +56,5 @@ var debugCmd = &cobra.Command{
 }
 
 func init() { // nolint:gochecknoinits
-	promptCmd.AddCommand(debugCmd)
+	rootCmd.AddCommand(debugCmd)
 }

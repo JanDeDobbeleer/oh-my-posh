@@ -78,12 +78,12 @@ local function get_posh_prompt(rprompt)
     if rprompt then
         prompt = "right"
     end
-    local prompt_exe = string.format('%s prompt print %s --shell=cmd --config=%s %s %s', omp_exe(), prompt, omp_config(), execution_time_option(), error_level_option(), rprompt)
+    local prompt_exe = string.format('%s print %s --shell=cmd --config=%s %s %s', omp_exe(), prompt, omp_config(), execution_time_option(), error_level_option(), rprompt)
     return run_posh_command(prompt_exe)
 end
 
 local function get_posh_tooltip(command)
-    local prompt_exe = string.format('%s prompt print tooltip --shell=cmd --config=%s --command="%s"', omp_exe(), omp_config(), command)
+    local prompt_exe = string.format('%s print tooltip --shell=cmd --config=%s --command="%s"', omp_exe(), omp_config(), command)
     local tooltip = run_posh_command(prompt_exe)
     if tooltip == "" then
         -- If no tooltip, generate normal rprompt.
@@ -137,7 +137,7 @@ function p:rightfilter(prompt)
     return cached_prompt.right, false
 end
 function p:transientfilter(prompt)
-    local prompt_exe = string.format('%s prompt print transient --config=%s', omp_exe(), omp_config())
+    local prompt_exe = string.format('%s print transient --config=%s', omp_exe(), omp_config())
     prompt = run_posh_command(prompt_exe)
     if prompt == "" then
         prompt = nil

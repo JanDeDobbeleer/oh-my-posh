@@ -1,14 +1,25 @@
-# Powershell doesn't default to UTF8 just yet, so we're forcing it as there are too many problems
-# that pop up when we don't
-if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
-    [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
-}
-elseif ($env:POSH_CONSTRAINED_LANGUAGE_MODE -ne $true) {
-    Write-Host "[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
-When using PowerShell in ConstrainedLanguage mode, please set the
-console mode manually to UTF-8. See here for more information:
-https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
-"
+function global:Start-Utf8Process
+{
+	 param(
+        [string] $FileName,
+        [string] $Arguments
+    )
+
+	$Process = New-Object System.Diagnostics.Process
+	$StartInfo = $Process.StartInfo
+	$StartInfo.StandardErrorEncoding = $StartInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+	$StartInfo.RedirectStandardError = $StartInfo.RedirectStandardInput = $StartInfo.RedirectStandardOutput = $true
+	$StartInfo.FileName = $filename
+	$StartInfo.Arguments = $Arguments
+    $StartInfo.UseShellExecute = $false
+    $StartInfo.CreateNoWindow = $true
+	$_ = $Process.Start();
+	$_ = $Process.WaitForExit();
+    $stderr = $Process.StandardError.ReadToEnd().Trim()
+    if ($stderr -ne '') {
+        $Host.UI.WriteErrorLine($stderr)
+    }
+	return $Process.StandardOutput.ReadToEnd()
 }
 
 $env:POWERLINE_COMMAND = "oh-my-posh"
@@ -31,25 +42,23 @@ if (Test-Path $omp_config) {
 Remove-Variable omp_value -Confirm:$false
 Remove-Variable omp_config -Confirm:$false
 
-# set secondary prompt
-$secondaryPrompt = @(&"::OMP::" prompt print secondary --config="$Env:POSH_THEME" 2>&1) -join "`n"
+# set secondary prompt`
+$secondaryPrompt = @(Start-Utf8Process "::OMP::" "print secondary --config=""$Env:POSH_THEME""") -join "`n"
 Set-PSReadLineOption -ContinuationPrompt $secondaryPrompt
 
 function global:Set-PoshContext {}
 
 function global:Get-PoshContext {
-    $config = $env:POSH_THEME
     $cleanPWD = $PWD.ProviderPath
     $cleanPSWD = $PWD.ToString()
-    return $config, $cleanPWD, $cleanPSWD
+    $cleanPWD = $cleanPWD.TrimEnd('\')
+    $cleanPSWD = $cleanPSWD.TrimEnd('\')
+    return $cleanPWD, $cleanPSWD
 }
 
 function global:Initialize-ModuleSupport {
-    if ($env:POSH_GIT_ENABLED -eq $true -and (Get-Module -Name "posh-git")) {
-        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used later (not in this scope)')]
+    if ($GitPromptSettings.EnablePromptStatus) {
         $global:GitStatus = Get-GitStatus
-        [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSProvideCommentHelp', '', Justification = 'Variable used by posh-git (not in this script)')]
-        $GitPromptSettings = $null
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
     }
 }
@@ -60,28 +69,25 @@ function global:Initialize-ModuleSupport {
     #store the last exit code for restore
     $realLASTEXITCODE = $global:LASTEXITCODE
     $omp = "::OMP::"
-    $config, $cleanPWD, $cleanPSWD = Get-PoshContext
+    $cleanPWD, $cleanPSWD = Get-PoshContext
     if ($env:POSH_TRANSIENT -eq $true) {
-        $standardOut = @(&$omp prompt print transient --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" 2>&1)
-        $standardOut -join "`n"
+        @(Start-Utf8Process $omp "print transient --error=$global:OMP_ERRORCODE --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$global:OMP_EXECUTIONTIME --config=""$Env:POSH_THEME""") -join "`n"
         $env:POSH_TRANSIENT = $false
         return
     }
     if (Test-Path variable:/PSDebugContext) {
-        $standardOut = @(&$omp prompt print debug --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" 2>&1)
-        $standardOut -join "`n"
+        @(Start-Utf8Process $omp "print debug --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --config=""$Env:POSH_THEME""") -join "`n"
         return
     }
-    $errorCode = 0
+    $global:OMP_ERRORCODE = 0
     Initialize-ModuleSupport
-    Set-PoshContext
     if ($lastCommandSuccess -eq $false) {
         #native app exit code
         if ($realLASTEXITCODE -is [int] -and $realLASTEXITCODE -gt 0) {
-            $errorCode = $realLASTEXITCODE
+            $global:OMP_ERRORCODE = $realLASTEXITCODE
         }
         else {
-            $errorCode = 1
+            $global:OMP_ERRORCODE = 1
         }
     }
 
@@ -94,14 +100,15 @@ function global:Initialize-ModuleSupport {
     }
     catch {}
 
-    $executionTime = -1
+    $global:OMP_EXECUTIONTIME = -1
     $history = Get-History -ErrorAction Ignore -Count 1
     if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime -and $global:omp_lastHistoryId -ne $history.Id) {
-        $executionTime = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
+        $global:OMP_EXECUTIONTIME = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
         $global:omp_lastHistoryId = $history.Id
     }
+    Set-PoshContext
     $terminalWidth = $Host.UI.RawUI.WindowSize.Width
-    $standardOut = @(&$omp prompt print primary --error="$errorCode" --pwd="$cleanPWD" --pswd="$cleanPSWD" --execution-time="$executionTime" --stack-count="$stackCount" --config="$config" --terminal-width=$terminalWidth 2>&1)
+    $standardOut = @(Start-Utf8Process $omp "print primary --error=$global:OMP_ERRORCODE --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$global:OMP_EXECUTIONTIME --stack-count=$stackCount --config=""$Env:POSH_THEME"" --terminal-width=$terminalWidth")
     # make sure PSReadLine knows we have a multiline prompt
     $extraLines = $standardOut.Count - 1
     if ($extraLines -gt 0) {
@@ -118,9 +125,8 @@ Set-Item -Path Function:prompt -Value $Prompt -Force
 
 function global:Write-PoshDebug {
     $omp = "::OMP::"
-    $config, $cleanPWD, $cleanPSWD = Get-PoshContext
-    $standardOut = @(&$omp prompt debug --config="$config" 2>&1)
-    $standardOut -join "`n"
+    $cleanPWD, $cleanPSWD = Get-PoshContext
+    @(Start-Utf8Process $omp "debug --config=""$Env:POSH_THEME""") -join "`n"
 }
 
 <#
@@ -154,9 +160,8 @@ function global:Export-PoshTheme {
         $Format = 'json'
     )
 
-    $config = $env:POSH_THEME
     $omp = "::OMP::"
-    $configString = @(&$omp config export --config="$config" --format="$Format" 2>&1)
+    $configString = @(Start-Utf8Process $omp "config export --config=""$Env:POSH_THEME"" --format=$Format")
     # if no path, copy to clipboard by default
     if ($FilePath -ne "") {
         #https://stackoverflow.com/questions/3038337/powershell-resolve-path-that-might-not-exist
@@ -174,12 +179,12 @@ function global:Enable-PoshTooltips {
         [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
         $position = $host.UI.RawUI.CursorPosition
         $omp = "::OMP::"
-        $config, $cleanPWD, $cleanPSWD = Get-PoshContext
+        $cleanPWD, $cleanPSWD = Get-PoshContext
         $command = $null
         $cursor = $null
         [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
-        $command = $command -replace "`"", "'"
-        $standardOut = @(&$omp prompt print tooltip --pwd="$cleanPWD" --pswd="$cleanPSWD" --config="$config" --command="$command" 2>&1)
+        $command = ($command -split " ")[0]
+        $standardOut = @(Start-Utf8Process $omp "print tooltip --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --config=""$Env:POSH_THEME"" --command=""$command""")
         Write-Host $standardOut -NoNewline
         $host.UI.RawUI.CursorPosition = $position
     }
@@ -188,15 +193,21 @@ function global:Enable-PoshTooltips {
 function global:Enable-PoshTransientPrompt {
     Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
         $env:POSH_TRANSIENT = $true
-        [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-        [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+        $previousOutputEncoding = [Console]::OutputEncoding
+        [Console]::OutputEncoding = [Text.Encoding]::UTF8
+        try {
+            [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+        } finally {
+            [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+            [Console]::OutputEncoding = $previousOutputEncoding
+        }
     }
 }
 
 function global:Enable-PoshLineError {
     $omp = "::OMP::"
-    $validLine = @(&$omp prompt print valid --config="$Env:POSH_THEME" 2>&1) -join "`n"
-    $errorLine = @(&$omp prompt print error --config="$Env:POSH_THEME" 2>&1) -join "`n"
+    $validLine = @(Start-Utf8Process $omp "print valid --config=""$Env:POSH_THEME""") -join "`n"
+    $errorLine = @(Start-Utf8Process $omp "print error --config=""$Env:POSH_THEME""") -join "`n"
     Set-PSReadLineOption -PromptText $validLine, $errorLine
 }
 
@@ -263,7 +274,7 @@ function global:Get-PoshThemes() {
         $themes | ForEach-Object -Process {
             Write-Host "Theme: $(Get-Hyperlink -uri $_.fullname -name $_.BaseName.Replace('.omp', ''))"
             Write-Host ""
-            & $omp prompt print primary --config $($_.FullName) --pwd $PWD --shell pwsh
+            @(Start-Utf8Process $omp "print primary --config=""$($_.FullName)"" --pwd=""$PWD"" --shell pwsh")
             Write-Host ""
             Write-Host ""
         }
@@ -273,6 +284,6 @@ function global:Get-PoshThemes() {
     Write-Host ""
     Write-Host "To change your theme, adjust the init script in $PROFILE."
     Write-Host "Example:"
-    Write-Host "  oh-my-posh prompt init pwsh --config $Path/jandedobbeleer.omp.json | Invoke-Expression"
+    Write-Host "  oh-my-posh init pwsh --config $Path/jandedobbeleer.omp.json | Invoke-Expression"
     Write-Host ""
 }

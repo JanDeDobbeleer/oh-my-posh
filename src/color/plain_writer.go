@@ -7,6 +7,8 @@ import (
 
 // PlainWriter writes a plain string
 type PlainWriter struct {
+	Ansi *Ansi
+
 	builder strings.Builder
 	length  int
 }
@@ -20,7 +22,7 @@ func (a *PlainWriter) Write(background, foreground, text string) {
 		return
 	}
 	writeAndRemoveText := func(text, textToRemove, parentText string) string {
-		a.length += measureText(text)
+		a.length += a.Ansi.MeasureText(text)
 		a.builder.WriteString(text)
 		return strings.Replace(parentText, textToRemove, "", 1)
 	}
@@ -32,7 +34,7 @@ func (a *PlainWriter) Write(background, foreground, text string) {
 		text = writeAndRemoveText(textBeforeColorOverride, textBeforeColorOverride, text)
 		text = writeAndRemoveText(innerText, escapedTextSegment, text)
 	}
-	a.length += measureText(text)
+	a.length += a.Ansi.MeasureText(text)
 	a.builder.WriteString(text)
 }
 

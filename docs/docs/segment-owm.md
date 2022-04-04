@@ -23,13 +23,13 @@ The free tier for *Current weather and forecasts collection* is sufficient.
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#FF0000",
+  "template": "{{.Weather}} ({{.Temperature}}{{.UnitIcon}})",
   "properties": {
     "apikey": "<YOUR_API_KEY>",
     "location": "AMSTERDAM,NL",
     "units": "metric",
     "http_timeout": 20,
-    "cache_timeout": 10,
-    "template": "{{.Weather}} ({{.Temperature}}{{.UnitIcon}})"
+    "cache_timeout": 10
   }
 }
 ```

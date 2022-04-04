@@ -6,29 +6,27 @@
       "segments": [
         {
           "foreground": "lightYellow",
-          "properties": {
-            "template": "{{ .UserName }} "
-          },
           "style": "plain",
+          "template": "{{ .UserName }} ",
           "type": "session"
         },
         {
           "foreground": "cyan",
           "properties": {
-            "style": "folder",
-            "template": "<#ffffff>in</> {{ .Path }} "
+            "style": "folder"
           },
           "style": "plain",
+          "template": "<#ffffff>in</> {{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#ff94df",
           "properties": {
             "branch_icon": " <#ff94df><b>\ue0a0 </b></>",
-            "fetch_stash_count": true,
-            "template": "<#ffffff>on</> {{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_stash_count": true
           },
           "style": "plain",
+          "template": "<#ffffff>on</> {{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
       ],
@@ -40,10 +38,8 @@
       "segments": [
         {
           "foreground": "lightGreen",
-          "properties": {
-            "template": "\u276f"
-          },
           "style": "plain",
+          "template": "\u276f",
           "type": "text"
         }
       ],
@@ -51,5 +47,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

@@ -6,28 +6,26 @@
       "segments": [
         {
           "foreground": "cyan",
-          "properties": {
-            "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}}"
-          },
           "style": "powerline",
+          "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}}",
           "type": "os"
         },
         {
           "foreground": "cyan",
           "properties": {
-            "style": "full",
-            "template": " {{ .Path }} "
+            "style": "full"
           },
           "style": "plain",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#F1502F",
           "properties": {
-            "fetch_status": true,
-            "template": ":: {{ .HEAD }}{{ .BranchStatus }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }} "
+            "fetch_status": true
           },
           "style": "plain",
+          "template": ":: {{ .HEAD }}{{ .BranchStatus }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }} ",
           "type": "git"
         }
       ],
@@ -38,36 +36,30 @@
       "segments": [
         {
           "foreground": "red",
-          "properties": {
-            "template": "| root "
-          },
           "style": "plain",
+          "template": "| root ",
           "type": "root"
         },
         {
           "foreground": "#06A4CE",
-          "properties": {
-            "template": "| \ue798 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
-          },
           "style": "powerline",
+          "template": "| \ue798 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "type": "dart"
         },
         {
           "foreground": "#6CA35E",
-          "properties": {
-            "template": "| \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
-          },
           "style": "powerline",
+          "template": "| \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"
         },
         {
           "foreground": "#4584b6",
           "properties": {
             "display_mode": "context",
-            "fetch_virtual_env": true,
-            "template": "| \ue235 {{ .Venv }} "
+            "fetch_virtual_env": true
           },
           "style": "plain",
+          "template": "| \ue235 {{ .Venv }} ",
           "type": "python"
         },
         {
@@ -79,18 +71,16 @@
           "invert_powerline": true,
           "properties": {
             "charged_icon": "\uf00d ",
-            "charging_icon": "\ue234 ",
-            "template": "| {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }} \uf295 "
+            "charging_icon": "\ue234 "
           },
           "style": "powerline",
+          "template": "| {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }} \uf295 ",
           "type": "battery"
         },
         {
           "foreground": "lightGreen",
-          "properties": {
-            "template": "| {{ .CurrentDate | date .Format }} "
-          },
           "style": "plain",
+          "template": "| {{ .CurrentDate | date .Format }} ",
           "type": "time"
         }
       ],
@@ -106,15 +96,15 @@
             "{{ if gt .Code 0 }}red{{ end }}"
           ],
           "properties": {
-            "always_enabled": true,
-            "template": "\u279c "
+            "always_enabled": true
           },
           "style": "powerline",
+          "template": "\u279c ",
           "type": "exit"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

@@ -17,9 +17,7 @@ Display the currently active Azure subscription information.
   "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#9ec3f0",
-  "properties": {
-    "template": " \uFD03 {{ .EnvironmentName }}"
-  }
+  "template": " \uFD03 {{ .EnvironmentName }}"
 }
 ```
 

@@ -8,10 +8,8 @@
           "background": "#B4009E",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": "{{ .UserName }} "
-          },
           "style": "diamond",
+          "template": "{{ .UserName }} ",
           "type": "session"
         },
         {
@@ -19,10 +17,10 @@
           "foreground": "#000000",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "style": "folder",
-            "template": " {{ .Path }} "
+            "style": "folder"
           },
           "style": "powerline",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
@@ -33,30 +31,28 @@
             "branch_icon": "",
             "fetch_stash_count": true,
             "fetch_status": false,
-            "fetch_upstream_icon": true,
-            "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) "
+            "fetch_upstream_icon": true
           },
           "style": "powerline",
+          "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) ",
           "type": "git"
         },
         {
           "background": "#4e903d",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
-          },
           "style": "powerline",
+          "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"
         },
         {
           "background": "#16C60C",
           "foreground": "#ffffff",
           "properties": {
-            "template": " \u2665 {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04"
           },
           "style": "diamond",
+          "template": " \u2665 {{ .CurrentDate | date .Format }} ",
           "trailing_diamond": "\ue0b0",
           "type": "time"
         }
@@ -65,5 +61,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

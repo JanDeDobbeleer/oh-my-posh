@@ -6,64 +6,52 @@
       "segments": [
         {
           "foreground": "#CB4B16",
-          "properties": {
-            "template": " {{ .Meaning }} "
-          },
           "style": "plain",
+          "template": " {{ .Meaning }} ",
           "type": "exit"
         },
         {
           "foreground": "#CECE04",
-          "properties": {
-            "template": " \uf0e7 "
-          },
           "style": "plain",
+          "template": " \uf0e7 ",
           "type": "root"
         },
         {
           "foreground": "#FFFFFF",
-          "properties": {
-            "template": "{{ .UserName }}@{{ .HostName }} "
-          },
           "style": "plain",
+          "template": "{{ .UserName }}@{{ .HostName }} ",
           "type": "session"
         },
         {
           "foreground": "#0973C0",
           "properties": {
-            "style": "full",
-            "template": "{{ .Path }} "
+            "style": "full"
           },
           "style": "plain",
+          "template": "{{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#C1C106",
-          "properties": {
-            "template": "<#ffffff>git:</>{{ .HEAD }} "
-          },
           "style": "plain",
+          "template": "<#ffffff>git:</>{{ .HEAD }} ",
           "type": "git"
         },
         {
           "foreground": "#100e23",
-          "properties": {
-            "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} "
-          },
           "style": "plain",
+          "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
           "type": "python"
         },
         {
           "foreground": "#ffffff",
-          "properties": {
-            "template": "<#CB4B16>\u276f</><#CACA02>\u276f</><#4E9A06>\u276f</> "
-          },
           "style": "plain",
+          "template": "<#CB4B16>\u276f</><#CACA02>\u276f</><#4E9A06>\u276f</> ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

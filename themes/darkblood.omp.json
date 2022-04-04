@@ -6,34 +6,26 @@
       "segments": [
         {
           "foreground": "#ffffff",
-          "properties": {
-            "template": "<#CB4B16>\u250f[</>{{ .UserName }}<#CB4B16>]</>"
-          },
           "style": "plain",
+          "template": "<#CB4B16>\u250f[</>{{ .UserName }}<#CB4B16>]</>",
           "type": "session"
         },
         {
           "foreground": "#ffffff",
-          "properties": {
-            "template": "<#CB4B16>[</>{{ .HEAD }}<#CB4B16>]</>"
-          },
           "style": "plain",
+          "template": "<#CB4B16>[</>{{ .HEAD }}<#CB4B16>]</>",
           "type": "git"
         },
         {
           "foreground": "#ffffff",
-          "properties": {
-            "template": "<#CB4B16>[</>\uf0e7<#CB4B16>]</>"
-          },
           "style": "plain",
+          "template": "<#CB4B16>[</>\uf0e7<#CB4B16>]</>",
           "type": "root"
         },
         {
           "foreground": "#ffffff",
-          "properties": {
-            "template": "<#CB4B16>[x</>{{ .Meaning }}<#CB4B16>]</>"
-          },
           "style": "plain",
+          "template": "<#CB4B16>[x</>{{ .Meaning }}<#CB4B16>]</>",
           "type": "exit"
         }
       ],
@@ -46,10 +38,10 @@
         {
           "foreground": "#ffffff",
           "properties": {
-            "style": "full",
-            "template": "<#CB4B16>\u2516[</>{{ .Path }}<#CB4B16>]></>"
+            "style": "full"
           },
           "style": "plain",
+          "template": "<#CB4B16>\u2516[</>{{ .Path }}<#CB4B16>]></>",
           "type": "path"
         }
       ],
@@ -57,5 +49,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

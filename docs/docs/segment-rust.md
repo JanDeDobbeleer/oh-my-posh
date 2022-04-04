@@ -17,9 +17,7 @@ Display the currently active rust version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#193549",
   "background": "#99908a",
-  "properties": {
-    "template": " \uE7a8 {{ .Full }} "
-  }
+  "template": " \uE7a8 {{ .Full }} "
 }
 ```
 

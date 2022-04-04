@@ -8,10 +8,8 @@
         {
           "foreground": "red",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": "\uf0e7 "
-          },
           "style": "plain",
+          "template": "\uf0e7 ",
           "type": "root"
         },
         {
@@ -20,10 +18,10 @@
             "folder_icon": "\ue5ff",
             "folder_separator_icon": "/",
             "home_icon": "\uf7db",
-            "style": "agnoster",
-            "template": "{{ .Path }}"
+            "style": "agnoster"
           },
           "style": "plain",
+          "template": "{{ .Path }}",
           "type": "path"
         },
         {
@@ -38,18 +36,16 @@
             "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true,
-            "github_icon": "\uf408 ",
-            "template": " on {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<red> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<yellow> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}"
+            "github_icon": "\uf408 "
           },
           "style": "plain",
+          "template": " on {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<red> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<yellow> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}",
           "type": "git"
         },
         {
           "foreground": "magenta",
-          "properties": {
-            "template": " [.NET] {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} "
-          },
           "style": "plain",
+          "template": " [.NET] {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} ",
           "type": "dotnet"
         }
       ],
@@ -62,18 +58,16 @@
         {
           "foreground": "yellow",
           "properties": {
-            "template": "{{ .CurrentDate | date .Format }} ",
             "time_format": "15:04:05"
           },
           "style": "plain",
+          "template": "{{ .CurrentDate | date .Format }} ",
           "type": "time"
         },
         {
           "foreground": "green",
-          "properties": {
-            "template": "\u276f"
-          },
           "style": "plain",
+          "template": "\u276f",
           "type": "text"
         }
       ],
@@ -81,5 +75,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

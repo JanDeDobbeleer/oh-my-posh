@@ -13,8 +13,8 @@ sidebar_label: Sample
       "segments": [
         {
           "foreground": "#007ACC",
+          "template": " {{ .CurrentDate | date .Format }} ",
           "properties": {
-            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04:05"
           },
           "style": "plain",
@@ -32,9 +32,7 @@ sidebar_label: Sample
           "background": "#ffb300",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": " {{ .UserName }} "
-          },
+          "template": " {{ .UserName }} ",
           "style": "diamond",
           "trailing_diamond": "\ue0b0",
           "type": "session"
@@ -43,12 +41,12 @@ sidebar_label: Sample
           "background": "#61AFEF",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
+          "template": " {{ .Path }} ",
           "properties": {
             "exclude_folders": [
               "/super/secret/project"
             ],
-            "style": "folder",
-            "template": " {{ .Path }} "
+            "style": "folder"
           },
           "style": "powerline",
           "type": "path"
@@ -66,10 +64,10 @@ sidebar_label: Sample
             "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ffffff{{ end }}"
           ],
           "powerline_symbol": "\ue0b0",
+          "template": " {{ .HEAD }}{{ .BranchStatus }} ",
           "properties": {
             "branch_max_length": 25,
-            "fetch_status": true,
-            "template": " {{ .HEAD }}{{ .BranchStatus }} "
+            "fetch_status": true
           },
           "style": "powerline",
           "type": "git"
@@ -80,9 +78,9 @@ sidebar_label: Sample
             "{{ if gt .Code 0 }}#e91e63{{ end }}"
           ],
           "foreground": "#ffffff",
+          "template": "<parentBackground>\ue0b0</> \ue23a ",
           "properties": {
-            "always_enabled": true,
-            "template": "<parentBackground>\ue0b0</> \ue23a "
+            "always_enabled": true
           },
           "style": "diamond",
           "trailing_diamond": "\ue0b4",
@@ -93,6 +91,6 @@ sidebar_label: Sample
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }
 ```

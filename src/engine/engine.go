@@ -280,7 +280,7 @@ const (
 )
 
 func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
-	var prompt *ExtraPrompt
+	var prompt *Segment
 	switch promptType {
 	case Debug:
 		prompt = e.Config.DebugPrompt
@@ -294,7 +294,7 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 		prompt = e.Config.SecondaryPrompt
 	}
 	if prompt == nil {
-		return ""
+		prompt = &Segment{}
 	}
 	getTemplate := func(template string) string {
 		if len(template) != 0 {
@@ -319,8 +319,10 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 	if err != nil {
 		promptText = err.Error()
 	}
-	e.Writer.SetColors(prompt.Background, prompt.Foreground)
-	e.Writer.Write(prompt.Background, prompt.Foreground, promptText)
+	foreground := prompt.ForegroundTemplates.Resolve(nil, e.Env, prompt.Foreground)
+	background := prompt.BackgroundTemplates.Resolve(nil, e.Env, prompt.Background)
+	e.Writer.SetColors(background, foreground)
+	e.Writer.Write(background, foreground, promptText)
 	switch e.Env.Shell() {
 	case shell.ZSH:
 		// escape double quotes contained in the prompt

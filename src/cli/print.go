@@ -45,6 +45,10 @@ var printCmd = &cobra.Command{
 	},
 	Args: cobra.OnlyValidArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		if len(args) == 0 {
+			_ = cmd.Help()
+			return
+		}
 		env := &environment.ShellEnvironment{
 			Version: cliVersion,
 			CmdFlags: &environment.Flags{
@@ -66,7 +70,10 @@ var printCmd = &cobra.Command{
 		ansi.Init(env.Shell())
 		var writer color.Writer
 		if plain {
-			writer = &color.PlainWriter{}
+			ansi.InitPlain(env.Shell())
+			writer = &color.PlainWriter{
+				Ansi: ansi,
+			}
 		} else {
 			writerColors := cfg.MakeColors(env)
 			writer = &color.AnsiWriter{
@@ -122,5 +129,5 @@ func init() { // nolint:gochecknoinits
 	printCmd.Flags().StringVar(&command, "command", "", "tooltip command")
 	printCmd.Flags().BoolVarP(&plain, "plain", "p", false, "plain text output (no ANSI)")
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
-	promptCmd.AddCommand(printCmd)
+	rootCmd.AddCommand(printCmd)
 }

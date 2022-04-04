@@ -8,20 +8,16 @@
           "background": "#f1184c",
           "foreground": "#242424",
           "powerline_symbol": "\ue0c4",
-          "properties": {
-            "template": "\uf0e7"
-          },
           "style": "powerline",
+          "template": "\uf0e7",
           "type": "root"
         },
         {
           "background": "#282c34",
           "foreground": "#3A86FF",
           "leading_diamond": " ",
-          "properties": {
-            "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}} "
-          },
           "style": "diamond",
+          "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
           "type": "os"
         },
         {
@@ -29,10 +25,10 @@
           "foreground": "#FFBB00",
           "powerline_symbol": "\ue0c4",
           "properties": {
-            "template": "{{ .CurrentDate | date .Format }} ",
             "time_format": "15:04:05"
           },
           "style": "powerline",
+          "template": "{{ .CurrentDate | date .Format }} ",
           "type": "time"
         },
         {
@@ -41,10 +37,10 @@
           "powerline_symbol": "\ue0b0",
           "properties": {
             "folder_separator_icon": "/",
-            "style": "folder",
-            "template": "\ue5ff {{ .Path }} "
+            "style": "folder"
           },
           "style": "powerline",
+          "template": "\ue5ff {{ .Path }} ",
           "type": "path"
         },
         {
@@ -54,20 +50,18 @@
           "properties": {
             "fetch_stash_count": true,
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_upstream_icon": true
           },
           "style": "powerline",
+          "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
           "background": "#0184bc",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0c4",
-          "properties": {
-            "template": " \ue70c {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} "
-          },
           "style": "powerline",
+          "template": " \ue70c {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} ",
           "type": "dotnet"
         },
         {
@@ -76,10 +70,10 @@
           "powerline_symbol": "\ue0c4",
           "properties": {
             "style": "austin",
-            "template": " <#fefefe>\ufbab</> {{ .FormattedMs }} ",
             "threshold": 1
           },
           "style": "powerline",
+          "template": " <#fefefe>\ufbab</> {{ .FormattedMs }} ",
           "type": "executiontime"
         },
         {
@@ -89,10 +83,8 @@
           ],
           "foreground": "#242424",
           "powerline_symbol": "\ue0b4",
-          "properties": {
-            "template": " \uf7d4 "
-          },
           "style": "powerline",
+          "template": " \uf7d4 ",
           "type": "exit"
         }
       ],
@@ -104,10 +96,8 @@
       "segments": [
         {
           "foreground": "#f1184c",
-          "properties": {
-            "template": "\u279c "
-          },
           "style": "plain",
+          "template": "\u279c ",
           "type": "text"
         }
       ],
@@ -115,5 +105,5 @@
     }
   ],
   "console_title_template": "{{if .Root}}(Admin) {{end}}{{.Folder}}",
-  "version": 1
+  "version": 2
 }

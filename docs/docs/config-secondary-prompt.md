@@ -36,19 +36,17 @@ The configuration has the following properties:
 - background: `string` [color][colors]
 - foreground: `string` [color][colors]
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to ` `
+properties below - defaults to `> `
 
 ## Template ([info][templates])
 
 - `.Root`: `boolean` - is the current user root/admin or not
-- `.PWD`: `string` - the current working directory
-- `.Folder`: `string` - the current working folder
 - `.Shell`: `string` - the current shell name
 - `.UserName`: `string` - the current user name
 - `.HostName`: `string` - the host name
-- `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
 [console-title]: /docs/config-title#console-title-template
 [templates]: /docs/config-templates
+[colors]: /docs/config-colors

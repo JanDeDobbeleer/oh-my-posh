@@ -17,8 +17,8 @@ Display the currently active Azure functions CLI version.
     "powerline_symbol": "\uE0B0",
     "foreground": "#ffffff",
     "background": "#FEAC19",
+    "template": " \uf0e7 {{ .Full }} ",
     "properties": {
-        "template": " \uf0e7 {{ .Full }} ",
         "fetch_version": true,
         "display_mode": "files"
     }

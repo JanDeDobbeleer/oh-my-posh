@@ -24,9 +24,7 @@ Currently only supports Windows and WSL. Pull requests for Darwin and Linux supp
     "{{ if (lt .Signal 60) }}#DDDD11{{ else if (lt .Signal 90) }}#DD6611{{ else }}#11CC11{{ end }}"
   ],
   "powerline_symbol": "\uE0B0",
-  "properties": {
-    "template": "\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps"
-  }
+  "template": "\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps"
 }
 ```
 

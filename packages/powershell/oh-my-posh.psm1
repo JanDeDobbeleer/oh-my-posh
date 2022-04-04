@@ -188,5 +188,5 @@ function Set-PoshPrompt {
     $global:omp_global_sessionstate = $PSCmdlet.SessionState
 
     $poshCommand = Get-PoshCommand
-    (& $poshCommand prompt init pwsh --config="$config") | Invoke-Expression
+    (& $poshCommand init pwsh --config="$config") | Invoke-Expression
 }

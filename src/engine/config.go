@@ -24,7 +24,7 @@ const (
 	YAML string = "yaml"
 	TOML string = "toml"
 
-	configVersion = 1
+	configVersion = 2
 )
 
 // Config holds all the theme for rendering the prompt
@@ -36,14 +36,14 @@ type Config struct {
 	TerminalBackground   string        `json:"terminal_background,omitempty"`
 	Blocks               []*Block      `json:"blocks,omitempty"`
 	Tooltips             []*Segment    `json:"tooltips,omitempty"`
-	TransientPrompt      *ExtraPrompt  `json:"transient_prompt,omitempty"`
-	ValidLine            *ExtraPrompt  `json:"valid_line,omitempty"`
-	ErrorLine            *ExtraPrompt  `json:"error_line,omitempty"`
-	SecondaryPrompt      *ExtraPrompt  `json:"secondary_prompt,omitempty"`
-	DebugPrompt          *ExtraPrompt  `json:"debug_prompt,omitempty"`
+	TransientPrompt      *Segment      `json:"transient_prompt,omitempty"`
+	ValidLine            *Segment      `json:"valid_line,omitempty"`
+	ErrorLine            *Segment      `json:"error_line,omitempty"`
+	SecondaryPrompt      *Segment      `json:"secondary_prompt,omitempty"`
+	DebugPrompt          *Segment      `json:"debug_prompt,omitempty"`
 	Palette              color.Palette `json:"palette,omitempty"`
 
-	Output string
+	Output string `json:"-"`
 
 	format  string
 	origin  string
@@ -56,12 +56,6 @@ type Config struct {
 func (cfg *Config) MakeColors(env environment.Environment) color.AnsiColors {
 	cacheDisabled := env.Getenv("OMP_CACHE_DISABLED") == "1"
 	return color.MakeColors(cfg.Palette, !cacheDisabled)
-}
-
-type ExtraPrompt struct {
-	Template   string `json:"template,omitempty"`
-	Background string `json:"background,omitempty"`
-	Foreground string `json:"foreground,omitempty"`
 }
 
 func (cfg *Config) print(message string) {
@@ -89,7 +83,7 @@ func (cfg *Config) exitWithError(err error) {
 func LoadConfig(env environment.Environment) *Config {
 	cfg := loadConfig(env)
 	// only migrate automatically when the switch isn't set
-	if !env.Flags().Migrate && cfg.Version != configVersion {
+	if !env.Flags().Migrate && cfg.Version < configVersion {
 		cfg.BackupAndMigrate(env)
 	}
 	return cfg
@@ -128,7 +122,7 @@ func loadConfig(env environment.Environment) *Config {
 
 	// initialize default values
 	if cfg.TransientPrompt == nil {
-		cfg.TransientPrompt = &ExtraPrompt{}
+		cfg.TransientPrompt = &Segment{}
 	}
 
 	return &cfg
@@ -278,9 +272,7 @@ func defaultConfig() *Config {
 						PowerlineSymbol: "\uE0B0",
 						Background:      "#ffffff",
 						Foreground:      "#111111",
-						Properties: properties.Map{
-							properties.SegmentTemplate: " no config ",
-						},
+						Template:        " no config ",
 					},
 					{
 						Type:            EXIT,
@@ -292,9 +284,9 @@ func defaultConfig() *Config {
 						BackgroundTemplates: []string{
 							"{{ if gt .Code 0 }}#f1184c{{ end }}",
 						},
+						Template: " \uE23A",
 						Properties: properties.Map{
-							properties.AlwaysEnabled:   true,
-							properties.SegmentTemplate: " \uE23A",
+							properties.AlwaysEnabled: true,
 						},
 					},
 				},

@@ -14,7 +14,7 @@ type Title struct {
 
 func (t *Title) GetTitle() string {
 	title := t.getTitleTemplateText()
-	title = color.TrimAnsi(title)
+	title = t.Ansi.TrimAnsi(title)
 	title = t.Ansi.EscapeText(title)
 	return t.Ansi.Title(title)
 }

@@ -7,47 +7,39 @@
         {
           "background": "#546E7A",
           "foreground": "#26C6DA",
-          "properties": {
-            "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} \ue0b1"
-          },
           "style": "plain",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} \ue0b1",
           "type": "os"
         },
         {
           "background": "#546E7A",
           "foreground": "#26C6DA",
-          "properties": {
-            "template": " \uf0e7 "
-          },
           "style": "plain",
+          "template": " \uf0e7 ",
           "type": "root"
         },
         {
           "background": "#546E7A",
           "foreground": "#26C6DA",
           "properties": {
-            "style": "full",
-            "template": " {{ .Path }} "
+            "style": "full"
           },
           "style": "plain",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
           "background": "#546E7A",
           "foreground": "#D4E157",
-          "properties": {
-            "template": "<#26C6DA>\ue0b1 </>{{ .HEAD }} "
-          },
           "style": "plain",
+          "template": "<#26C6DA>\ue0b1 </>{{ .HEAD }} ",
           "type": "git"
         },
         {
           "background": "transparent",
           "foreground": "#546E7A",
-          "properties": {
-            "template": "\ue0b0"
-          },
           "style": "plain",
+          "template": "\ue0b0",
           "type": "text"
         }
       ],
@@ -60,20 +52,18 @@
           "background": "#546E7A",
           "foreground": "#D4E157",
           "leading_diamond": "\ue0b2",
-          "properties": {
-            "template": " {{ .UserName }}@{{ .HostName }} <#26C6DA>\ue0b3</> "
-          },
           "style": "diamond",
+          "template": " {{ .UserName }}@{{ .HostName }} <#26C6DA>\ue0b3</> ",
           "type": "session"
         },
         {
           "background": "#546E7A",
           "foreground": "#D4E157",
           "properties": {
-            "template": " {{ .CurrentDate | date .Format }} \uf017 ",
             "time_format": "15:04:05"
           },
           "style": "plain",
+          "template": " {{ .CurrentDate | date .Format }} \uf017 ",
           "type": "time"
         }
       ],
@@ -89,15 +79,15 @@
             "{{ if gt .Code 0 }}#FF5252{{ end }}"
           ],
           "properties": {
-            "always_enabled": true,
-            "template": "\u276f "
+            "always_enabled": true
           },
           "style": "plain",
+          "template": "\u276f ",
           "type": "exit"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

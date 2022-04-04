@@ -12,7 +12,7 @@ fi
 # start timer on command start
 PS0='$(::OMP:: get millis > "$TIMER_START")'
 # set secondary prompt
-PS2="$(::OMP:: prompt print secondary --config="$POSH_THEME" --shell=bash)"
+PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=bash)"
 
 function _omp_hook() {
     local ret=$?
@@ -25,7 +25,7 @@ function _omp_hook() {
         omp_elapsed=$((omp_now-omp_start_time))
         rm -f "$TIMER_START"
     fi
-    PS1="$(::OMP:: prompt print primary --config="$POSH_THEME" --shell=bash --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" | tr -d '\0')"
+    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" | tr -d '\0')"
 
     return $ret
 }

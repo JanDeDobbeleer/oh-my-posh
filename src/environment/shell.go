@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/url"
 	"oh-my-posh/regex"
 	"os"
 	"os/exec"
@@ -239,9 +238,8 @@ func (env *ShellEnvironment) resolveConfigPath() {
 	if len(env.CmdFlags.Config) == 0 {
 		env.CmdFlags.Config = fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v%s/themes/default.omp.json", env.Version)
 	}
-	location, err := url.ParseRequestURI(env.CmdFlags.Config)
-	if err == nil {
-		env.getConfigPath(location.String())
+	if strings.HasPrefix(env.CmdFlags.Config, "https://") {
+		env.getConfigPath(env.CmdFlags.Config)
 		return
 	}
 	// Cygwin path always needs the full path as we're on Windows but not really.
@@ -263,11 +261,30 @@ func (env *ShellEnvironment) resolveConfigPath() {
 }
 
 func (env *ShellEnvironment) getConfigPath(location string) {
+	configFileName := fmt.Sprintf("%s.omp.json", env.Version)
+	configPath := filepath.Join(env.CachePath(), configFileName)
+	if env.HasFilesInDir(env.CachePath(), configFileName) {
+		env.CmdFlags.Config = configPath
+		return
+	}
+	// clean old config files
+	cleanCacheDir := func() {
+		dir, err := ioutil.ReadDir(env.CachePath())
+		if err != nil {
+			return
+		}
+		for _, file := range dir {
+			if strings.HasSuffix(file.Name(), ".omp.json") {
+				os.Remove(filepath.Join(env.CachePath(), file.Name()))
+			}
+		}
+	}
+	cleanCacheDir()
+
 	cfg, err := env.HTTPRequest(location, 5000)
 	if err != nil {
 		return
 	}
-	configPath := filepath.Join(env.CachePath(), "config.omp.json")
 	out, err := os.Create(configPath)
 	if err != nil {
 		return

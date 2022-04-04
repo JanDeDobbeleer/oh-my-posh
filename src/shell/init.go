@@ -55,7 +55,7 @@ func Init(env environment.Environment) string {
 	shell := env.Flags().Shell
 	switch shell {
 	case PWSH, PWSH5:
-		return fmt.Sprintf("(@(&\"%s\" prompt init %s --config=\"%s\" --print) -join \"`n\") | Invoke-Expression", executable, shell, env.Flags().Config)
+		return fmt.Sprintf("(@(&\"%s\" init %s --config=\"%s\" --print) -join \"`n\") | Invoke-Expression", executable, shell, env.Flags().Config)
 	case ZSH, BASH, FISH, CMD:
 		return PrintInit(env)
 	default:

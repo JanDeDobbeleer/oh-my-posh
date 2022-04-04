@@ -17,9 +17,7 @@ Display the currently active php version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#4063D8",
-  "properties": {
-    "template": " \ue73d {{ .Full }} ",
-  }
+  "template": " \ue73d {{ .Full }} ",
 }
 ```
 

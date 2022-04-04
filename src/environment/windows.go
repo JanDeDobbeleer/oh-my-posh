@@ -483,7 +483,7 @@ func (env *ShellEnvironment) parseNetworkInterface(network *WLAN_INTERFACE_INFO,
 
 type WLAN_INTERFACE_INFO_LIST struct { // nolint: revive
 	dwNumberOfItems uint32
-	dwIndex         uint32 // nolint: structcheck,unused
+	dwIndex         uint32
 	InterfaceInfo   [1]WLAN_INTERFACE_INFO
 }
 
@@ -494,9 +494,9 @@ type WLAN_INTERFACE_INFO struct { // nolint: revive
 }
 
 type WLAN_CONNECTION_ATTRIBUTES struct { // nolint: revive
-	isState                   uint32      // nolint: structcheck,unused
-	wlanConnectionMode        uint32      // nolint: structcheck,unused
-	strProfileName            [256]uint16 // nolint: structcheck,unused
+	isState                   uint32
+	wlanConnectionMode        uint32
+	strProfileName            [256]uint16
 	wlanAssociationAttributes WLAN_ASSOCIATION_ATTRIBUTES
 	wlanSecurityAttributes    WLAN_SECURITY_ATTRIBUTES
 }
@@ -504,9 +504,9 @@ type WLAN_CONNECTION_ATTRIBUTES struct { // nolint: revive
 type WLAN_ASSOCIATION_ATTRIBUTES struct { // nolint: revive
 	dot11Ssid         DOT11_SSID
 	dot11BssType      uint32
-	dot11Bssid        [6]uint8 // nolint: structcheck,unused
+	dot11Bssid        [6]uint8
 	dot11PhyType      uint32
-	uDot11PhyIndex    uint32 // nolint: structcheck,unused
+	uDot11PhyIndex    uint32
 	wlanSignalQuality uint32
 	ulRxRate          uint32
 	ulTxRate          uint32
@@ -514,7 +514,7 @@ type WLAN_ASSOCIATION_ATTRIBUTES struct { // nolint: revive
 
 type WLAN_SECURITY_ATTRIBUTES struct { // nolint: revive
 	bSecurityEnabled     uint32
-	bOneXEnabled         uint32 // nolint: structcheck,unused
+	bOneXEnabled         uint32
 	dot11AuthAlgorithm   uint32
 	dot11CipherAlgorithm uint32
 }

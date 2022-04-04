@@ -35,8 +35,6 @@ builds:
         goarch: arm
       - goos: windows
         goarch: arm
-      - goos: darwin
-        goarch: arm64
     hooks:
       post:
       - sh -c "cosign sign-blob --key $COSIGN_KEY_LOCATION {{ .Path }} > dist/{{ .Name }}.sig"

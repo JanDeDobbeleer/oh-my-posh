@@ -8,40 +8,38 @@
           "background": "lightMagenta",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": "{{ .UserName }} "
-          },
           "style": "diamond",
+          "template": "{{ .UserName }} ",
           "type": "session"
         },
         {
           "background": "lightYellow",
           "foreground": "#3f3f3f",
           "properties": {
-            "style": "folder",
-            "template": " {{ .Path }} "
+            "style": "folder"
           },
           "style": "plain",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
           "background": "lightCyan",
           "foreground": "#ffffff",
           "properties": {
-            "branch_icon": "",
-            "template": " git({{ .HEAD }}) "
+            "branch_icon": ""
           },
           "style": "plain",
+          "template": " git({{ .HEAD }}) ",
           "type": "git"
         },
         {
           "background": "lightGreen",
           "foreground": "#ffffff",
           "properties": {
-            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "15:04"
           },
           "style": "diamond",
+          "template": " {{ .CurrentDate | date .Format }} ",
           "trailing_diamond": "\ue0b0",
           "type": "time"
         }
@@ -50,5 +48,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

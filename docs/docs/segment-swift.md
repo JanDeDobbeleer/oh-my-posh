@@ -17,9 +17,7 @@ Display the currently active [Swift][swift] version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#f6553c",
-  "properties": {
-    "template": " \ue755 {{ .Full }} "
-  }
+  "template": " \ue755 {{ .Full }} "
 }
 ```
 

@@ -17,9 +17,7 @@ Display the currently active node version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#6CA35E",
-  "properties": {
-    "template": " \uE718 {{ .Full }} "
-  }
+  "template": " \uE718 {{ .Full }} "
 }
 ```
 

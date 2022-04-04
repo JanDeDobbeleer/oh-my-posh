@@ -8,10 +8,8 @@
           "background": "#333333",
           "foreground": "#ff0000",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": " {{ .UserName }}@{{ .HostName }} "
-          },
           "style": "diamond",
+          "template": " {{ .UserName }}@{{ .HostName }} ",
           "trailing_diamond": "\ue0b0",
           "type": "session"
         },
@@ -19,10 +17,8 @@
           "background": "#1BD760",
           "foreground": "#434343",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \uf9c6 {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} "
-          },
           "style": "powerline",
+          "template": " \uf9c6 {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} ",
           "type": "spotify"
         },
         {
@@ -30,10 +26,10 @@
           "foreground": "#000000",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "style": "folder",
-            "template": " \ue5ff {{ .Path }} "
+            "style": "folder"
           },
           "style": "powerline",
+          "template": " \ue5ff {{ .Path }} ",
           "type": "path"
         },
         {
@@ -42,40 +38,34 @@
           "powerline_symbol": "\ue0b0",
           "properties": {
             "fetch_stash_count": true,
-            "fetch_upstream_icon": true,
-            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_upstream_icon": true
           },
           "style": "powerline",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
           "background": "#6CA35E",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
-          },
           "style": "powerline",
+          "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"
         },
         {
           "background": "#203248",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \ufcb5 {{ .Name }} "
-          },
           "style": "powerline",
+          "template": " \ufcb5 {{ .Name }} ",
           "type": "shell"
         },
         {
           "background": "#ffff66",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \uf0e7 "
-          },
           "style": "powerline",
+          "template": " \uf0e7 ",
           "type": "root"
         },
         {
@@ -85,10 +75,10 @@
           ],
           "foreground": "#ffffff",
           "properties": {
-            "always_enabled": true,
-            "template": "<transparent>\ue0b0</> \ue23a <background,transparent>\ue0b4</>"
+            "always_enabled": true
           },
           "style": "plain",
+          "template": "<transparent>\ue0b0</> \ue23a <background,transparent>\ue0b4</>",
           "type": "exit"
         }
       ],
@@ -96,5 +86,5 @@
     }
   ],
   "final_space": true,
-  "version": 1
+  "version": 2
 }

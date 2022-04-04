@@ -17,9 +17,7 @@ Display the currently active [R][r-homepage] version.
   "powerline_symbol": "\uE0B0",
   "foreground": "blue",
   "background": "lightWhite",
-  "properties": {
-    "template": " R {{ .Full }} "
-  }
+  "template": " R {{ .Full }} "
 }
 ```
 

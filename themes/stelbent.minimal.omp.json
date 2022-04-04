@@ -6,27 +6,23 @@
       "segments": [
         {
           "foreground": "#007acc",
-          "properties": {
-            "template": "{{ .Name }}"
-          },
           "style": "plain",
+          "template": "{{ .Name }}",
           "type": "shell"
         },
         {
           "foreground": "#ff8080",
-          "properties": {
-            "template": " <#757575,>as</> root"
-          },
           "style": "plain",
+          "template": " <#757575,>as</> root",
           "type": "root"
         },
         {
           "foreground": "#689f38",
           "properties": {
-            "template": " <#757575,>|</> {{ .CurrentDate | date .Format }}",
             "time_format": "15:04:05"
           },
           "style": "plain",
+          "template": " <#757575,>|</> {{ .CurrentDate | date .Format }}",
           "type": "time"
         }
       ],
@@ -38,10 +34,8 @@
       "segments": [
         {
           "foreground": "#757575",
-          "properties": {
-            "template": "\u250c {{ .UserName }}@{{ .HostName }} "
-          },
           "style": "plain",
+          "template": "\u250c {{ .UserName }}@{{ .HostName }} ",
           "type": "session"
         },
         {
@@ -49,10 +43,10 @@
           "foreground": "#100e23",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "style": "folder",
-            "template": " {{ .Path }} "
+            "style": "folder"
           },
           "style": "powerline",
+          "template": " {{ .Path }} ",
           "type": "path"
         },
         {
@@ -78,30 +72,26 @@
             "merge_icon": "\u25f4 ",
             "no_commits_icon": "[no commits]",
             "rebase_icon": "\u2c62 ",
-            "tag_icon": "\u25b6 ",
-            "template": " {{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} \u2502{{ end }}{{ if .Staging.Changed }} {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} {{ .StashCount }}{{ end }} "
+            "tag_icon": "\u25b6 "
           },
           "style": "powerline",
+          "template": " {{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} \u2502{{ end }}{{ if .Staging.Changed }} {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
           "background": "#ffee58",
           "foreground": "#100e23",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " {{ .WorkspaceName }} "
-          },
           "style": "powerline",
+          "template": " {{ .WorkspaceName }} ",
           "type": "terraform"
         },
         {
           "background": "#ff8080",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " error "
-          },
           "style": "powerline",
+          "template": " error ",
           "type": "exit"
         }
       ],
@@ -113,18 +103,14 @@
       "segments": [
         {
           "foreground": "#757575",
-          "properties": {
-            "template": "\u2514 "
-          },
           "style": "plain",
+          "template": "\u2514 ",
           "type": "text"
         },
         {
           "foreground": "#ffffff",
-          "properties": {
-            "template": "$"
-          },
           "style": "plain",
+          "template": "$",
           "type": "text"
         }
       ],
@@ -133,5 +119,5 @@
   ],
   "final_space": true,
   "osc99": true,
-  "version": 1
+  "version": 2
 }

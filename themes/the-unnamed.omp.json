@@ -7,45 +7,41 @@
         {
           "foreground": "#15C2CB",
           "properties": {
-            "style": "folder",
-            "template": "{{ .Path }} "
+            "style": "folder"
           },
           "style": "plain",
+          "template": "{{ .Path }} ",
           "type": "path"
         },
         {
           "foreground": "#F141A8",
           "properties": {
-            "branch_icon": "\uE0A0 ",
-            "template": "<#F3EFF5>on</> {{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} "
+            "branch_icon": "\ue0a0 "
           },
           "style": "plain",
+          "template": "<#F3EFF5>on</> {{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ",
           "type": "git"
         },
         {
-          "type": "project",
-          "style": "plain",
           "foreground": "#5EADF2",
-          "properties": {
-            "template": "{{if .Version}}<#F3EFF5>is</> \uf487 {{.Version}} {{end}}"
-          }
+          "style": "plain",
+          "template": "{{if .Version}}<#F3EFF5>is</> \uf487 {{.Version}} {{end}}",
+          "type": "project"
         },
         {
           "foreground": "#44FFD2",
           "properties": {
-            "fetch_version": true,
-            "template": "<#F3EFF5>via</> \ue718 {{ .Full }} "
+            "fetch_version": true
           },
           "style": "plain",
+          "template": "<#F3EFF5>via</> \ue718 {{ .Full }} ",
           "type": "node"
         },
         {
-          "type": "npm",
-          "style": "plain",
           "foreground": "#FE4A49",
-          "properties": {
-            "template": "<#F3EFF5>and</> \ue71e {{.Full}} "
-          }
+          "style": "plain",
+          "template": "<#F3EFF5>and</> \ue71e {{.Full}} ",
+          "type": "npm"
         }
       ],
       "type": "prompt"
@@ -56,15 +52,13 @@
       "segments": [
         {
           "foreground": "#FFE45E",
-          "properties": {
-            "template": "\u276F "
-          },
           "style": "plain",
+          "template": "\u276f ",
           "type": "text"
         }
       ],
       "type": "prompt"
     }
   ],
-  "version": 1
+  "version": 2
 }

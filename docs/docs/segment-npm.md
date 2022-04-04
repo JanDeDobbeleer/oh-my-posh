@@ -17,9 +17,7 @@ Display the currently active npm version.
   "powerline_symbol": "\uE0B0",
   "foreground": "#193549",
   "background": "#ffeb3b",
-  "properties": {
-    "template": "\ue71e {{ .Full }} "
-  }
+  "template": "\ue71e {{ .Full }} "
 }
 ```
 

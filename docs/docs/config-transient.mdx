@@ -44,8 +44,10 @@ You need to extend or create a custom theme with your transient prompt. For exam
 
 The configuration has the following properties:
 
-- background: `string` [color][colors]
 - foreground: `string` [color][colors]
+- foreground_templates: foreground [color templates][color-templates]
+- background: `string` [color][colors]
+- background_templates: background [color templates][color-templates]
 - template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
 properties below - defaults to `{{ .Shell }}> `
 
@@ -57,6 +59,7 @@ properties below - defaults to `{{ .Shell }}> `
 - `.Shell`: `string` - the current shell name
 - `.UserName`: `string` - the current user name
 - `.HostName`: `string` - the host name
+- `.Code`: `int` - the last exit code
 - `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
 
 ## Enable the feature
@@ -77,7 +80,7 @@ properties below - defaults to `{{ .Shell }}> `
 Invoke Oh My Posh in your `$PROFILE` and add the following line below.
 
 ```powershell
-oh-my-posh prompt init pwsh --config $env:POSH_THEMES_PATH/jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh init pwsh --config $env:POSH_THEMES_PATH/jandedobbeleer.omp.json | Invoke-Expression
 // highlight-start
 Enable-PoshTransientPrompt
 // highlight-end
@@ -131,3 +134,4 @@ Restart your shell or reload fish using `exec fish` for the changes to take effe
 [sprig]: https://masterminds.github.io/sprig/
 [clink]: https://chrisant996.github.io/clink/
 [templates]: /docs/config-templates
+[color-templates]: /docs/config-colors#color-templates

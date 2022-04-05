@@ -14,6 +14,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -293,6 +294,14 @@ func (env *ShellEnvironment) log(lt logType, function, message string) {
 	log.Println(trace)
 }
 
+func (env *ShellEnvironment) debugF(function string, fn func() string) {
+	if !env.debug {
+		return
+	}
+	trace := fmt.Sprintf("%s: %s\n%s", Debug, function, fn())
+	log.Println(trace)
+}
+
 func (env *ShellEnvironment) Getenv(key string) string {
 	defer env.trace(time.Now(), "Getenv", key)
 	val := os.Getenv(key)
@@ -335,7 +344,9 @@ func (env *ShellEnvironment) HasFiles(pattern string) bool {
 		env.log(Error, "HasFiles", err.Error())
 		return false
 	}
-	return len(matches) > 0
+	hasFiles := len(matches) > 0
+	env.debugF("HasFiles", func() string { return strconv.FormatBool(hasFiles) })
+	return hasFiles
 }
 
 func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
@@ -346,7 +357,9 @@ func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
 		env.log(Error, "HasFilesInDir", err.Error())
 		return false
 	}
-	return len(matches) > 0
+	hasFilesInDir := len(matches) > 0
+	env.debugF("HasFilesInDir", func() string { return strconv.FormatBool(hasFilesInDir) })
+	return hasFilesInDir
 }
 
 func (env *ShellEnvironment) HasFileInParentDirs(pattern string, depth uint) bool {
@@ -355,23 +368,27 @@ func (env *ShellEnvironment) HasFileInParentDirs(pattern string, depth uint) boo
 
 	for c := 0; c < int(depth); c++ {
 		if env.HasFilesInDir(currentFolder, pattern) {
+			env.log(Debug, "HasFileInParentDirs", "true")
 			return true
 		}
 
 		if dir := filepath.Dir(currentFolder); dir != currentFolder {
 			currentFolder = dir
 		} else {
+			env.log(Debug, "HasFileInParentDirs", "false")
 			return false
 		}
 	}
-
+	env.log(Debug, "HasFileInParentDirs", "false")
 	return false
 }
 
 func (env *ShellEnvironment) HasFolder(folder string) bool {
 	defer env.trace(time.Now(), "HasFolder", folder)
 	_, err := os.Stat(folder)
-	return !os.IsNotExist(err)
+	hasFolder := !os.IsNotExist(err)
+	env.debugF("HasFolder", func() string { return strconv.FormatBool(hasFolder) })
+	return hasFolder
 }
 
 func (env *ShellEnvironment) FileContent(file string) string {
@@ -381,7 +398,9 @@ func (env *ShellEnvironment) FileContent(file string) string {
 		env.log(Error, "FileContent", err.Error())
 		return ""
 	}
-	return string(content)
+	fileContent := string(content)
+	env.log(Debug, "FileContent", fileContent)
+	return fileContent
 }
 
 func (env *ShellEnvironment) FolderList(path string) []string {
@@ -397,6 +416,7 @@ func (env *ShellEnvironment) FolderList(path string) []string {
 			folderNames = append(folderNames, s.Name())
 		}
 	}
+	env.debugF("FolderList", func() string { return strings.Join(folderNames, ",") })
 	return folderNames
 }
 
@@ -411,6 +431,7 @@ func (env *ShellEnvironment) User() string {
 	if user == "" {
 		user = os.Getenv("USERNAME")
 	}
+	env.log(Debug, "User", user)
 	return user
 }
 
@@ -421,7 +442,9 @@ func (env *ShellEnvironment) Host() (string, error) {
 		env.log(Error, "Host", err.Error())
 		return "", err
 	}
-	return cleanHostName(hostName), nil
+	hostName = cleanHostName(hostName)
+	env.log(Debug, "Host", hostName)
+	return hostName, nil
 }
 
 func (env *ShellEnvironment) GOOS() string {

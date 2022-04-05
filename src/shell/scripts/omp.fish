@@ -35,9 +35,12 @@ function fish_right_prompt
       return
     end
     if test -n "$omp_tooltip_command"
-      ::OMP:: print tooltip --config $POSH_THEME --shell fish --command $omp_tooltip_command
-      set omp_tooltip_command ""
-      return
+      set omp_tooltip_prompt (::OMP:: print tooltip --config $POSH_THEME --shell fish --command $omp_tooltip_command)
+      if test -n "$omp_tooltip_prompt"
+        echo -n $omp_tooltip_prompt
+        set omp_tooltip_command ""
+        return
+      end
     end
     ::OMP:: print right --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count
 end

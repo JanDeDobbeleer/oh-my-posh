@@ -110,7 +110,11 @@ func queryWindowTitles(processName, windowTitleRegex string) (string, error) {
 	// In our case, title will equal "" or the title of the window anyway
 	err := enumWindows(cb, 0)
 	if len(title) == 0 {
-		return "", errors.New("no matching window title found\n" + err.Error())
+		var message string
+		if err != nil {
+			message = err.Error()
+		}
+		return "", errors.New("no matching window title found\n" + message)
 	}
 	return title, nil
 }

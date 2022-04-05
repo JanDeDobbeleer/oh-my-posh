@@ -108,9 +108,9 @@ func queryWindowTitles(processName, windowTitleRegex string) (string, error) {
 	// The error is not checked because if EnumWindows is stopped bofere enumerating all windows
 	// it returns 0(error occurred) instead of 1(success)
 	// In our case, title will equal "" or the title of the window anyway
-	_ = enumWindows(cb, 0)
+	err := enumWindows(cb, 0)
 	if len(title) == 0 {
-		return "", errors.New("no matching window title found")
+		return "", errors.New("no matching window title found\n" + err.Error())
 	}
 	return title, nil
 }

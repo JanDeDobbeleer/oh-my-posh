@@ -124,9 +124,7 @@ function global:Initialize-ModuleSupport {
 Set-Item -Path Function:prompt -Value $Prompt -Force
 
 function global:Write-PoshDebug {
-    $omp = "::OMP::"
-    $cleanPWD, $cleanPSWD = Get-PoshContext
-    @(Start-Utf8Process $omp "debug --config=""$Env:POSH_THEME""") -join "`n"
+    @(Start-Utf8Process "::OMP::" "debug") -join "`n"
 }
 
 <#

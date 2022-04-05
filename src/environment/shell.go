@@ -39,27 +39,6 @@ type Flags struct {
 	StackCount    int
 	Migrate       bool
 	TerminalWidth int
-
-	// PrintInit      *bool
-	// PrintConfig    *bool
-	// PrintShell     *bool
-	// PrintTransient *bool
-	// PrintSecondary *bool
-	// PrintValid     *bool
-	// PrintError     *bool
-	// ConfigFormat   *string
-	// Version        *bool
-	// Millis         *bool
-	// Init           *bool
-	// ExportPNG      *bool
-	// Author         *string
-	// CursorPadding  *int
-	// RPromptOffset  *int
-	// RPrompt        *bool
-	// BGColor        *string
-	// Command        *string
-	// CachePath      *bool
-	// Write          *bool
 }
 
 type CommandError struct {

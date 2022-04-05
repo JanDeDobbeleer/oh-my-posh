@@ -9,11 +9,11 @@ import (
 func (s *Spotify) Enabled() bool {
 	// search for spotify window to retrieve the title
 	// Can be either "Spotify xxx" or the song name "Candlemass - Spellbreaker"
-	windowTitle, err := s.env.QueryWindowTitles("spotify.exe", "^(Spotify.*)|(.*\\s-\\s.*)$")
+	windowTitle, err := s.env.QueryWindowTitles("spotify.exe", `^(Spotify.*)|(.*\s-\s.*)$`)
 	if err == nil {
 		return s.parseSpotifyTitle(windowTitle, " - ")
 	}
-	windowTitle, err = s.env.QueryWindowTitles("msedge.exe", "^(Spotify.*)")
+	windowTitle, err = s.env.QueryWindowTitles("msedge.exe", `^(Spotify.*)`)
 	if err != nil {
 		return false
 	}

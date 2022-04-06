@@ -214,3 +214,8 @@ func (env *MockedEnvironment) HasFileInParentDirs(pattern string, depth uint) bo
 	args := env.Called(pattern, depth)
 	return args.Bool(0)
 }
+
+func (env *MockedEnvironment) DirMatchesOneOf(dir string, regexes []string) bool {
+	args := env.Called(dir, regexes)
+	return args.Bool(0)
+}

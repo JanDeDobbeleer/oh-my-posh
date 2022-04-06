@@ -124,10 +124,6 @@ function global:Initialize-ModuleSupport {
 }
 Set-Item -Path Function:prompt -Value $Prompt -Force
 
-function global:Write-PoshDebug {
-    @(Start-Utf8Process "::OMP::" "debug") -join "`n"
-}
-
 <#
 .SYNOPSIS
     Exports the current oh-my-posh theme

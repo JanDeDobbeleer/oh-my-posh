@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
+	"path/filepath"
 	"strings"
 )
 
@@ -78,5 +79,6 @@ func (s *scm) shouldIgnoreRootRepository(rootDir string) bool {
 }
 
 func (s *scm) FileContents(folder, file string) string {
-	return strings.Trim(s.env.FileContent(folder+"/"+file), " \r\n")
+	filePath := filepath.Join(folder, file)
+	return strings.Trim(s.env.FileContent(filePath), " \r\n")
 }

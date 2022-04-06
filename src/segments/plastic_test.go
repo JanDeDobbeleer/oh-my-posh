@@ -28,7 +28,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 	env.On("HasCommand", "cm").Return(true)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
-	env.On("FileContent", "/dir/.plastic//plastic.selector").Return("")
+	env.On("FileContent", "/dir/.plastic/plastic.selector").Return("")
 	fileInfo := &environment.FileInfo{
 		Path:         "/dir/hello",
 		ParentFolder: "/dir",

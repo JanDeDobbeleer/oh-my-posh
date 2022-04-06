@@ -92,7 +92,7 @@ func TestEnabledInSubmodule(t *testing.T) {
 		ParentFolder: "/dev/parent/test-submodule",
 		IsDir:        false,
 	}
-	env.On("FileContent", "/dev/parent/test-submodule/../.git/modules/test-submodule/HEAD").Return("")
+	env.On("FileContent", "/dev/parent/.git/modules/test-submodule/HEAD").Return("")
 	env.MockGitCommand("/dev/parent/test-submodule/../.git/modules/test-submodule", "", "describe", "--tags", "--exact-match")
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("FileContent", "/dev/parent/test-submodule/.git").Return("gitdir: ../.git/modules/test-submodule")
@@ -239,27 +239,27 @@ func TestSetGitHEADContextClean(t *testing.T) {
 		env.MockGitCommand("", tc.Ours, "name-rev", "--name-only", "--exclude=tags/*", tc.Ours)
 		// rebase merge
 		env.On("HasFolder", "/rebase-merge").Return(tc.RebaseMerge)
-		env.On("FileContent", "/rebase-merge/head-name").Return(tc.Ours)
-		env.On("FileContent", "/rebase-merge/onto").Return(tc.Theirs)
-		env.On("FileContent", "/rebase-merge/msgnum").Return(tc.Step)
-		env.On("FileContent", "/rebase-merge/end").Return(tc.Total)
+		env.On("FileContent", "rebase-merge/head-name").Return(tc.Ours)
+		env.On("FileContent", "rebase-merge/onto").Return(tc.Theirs)
+		env.On("FileContent", "rebase-merge/msgnum").Return(tc.Step)
+		env.On("FileContent", "rebase-merge/end").Return(tc.Total)
 		// rebase apply
 		env.On("HasFolder", "/rebase-apply").Return(tc.RebaseApply)
-		env.On("FileContent", "/rebase-apply/head-name").Return(tc.Ours)
-		env.On("FileContent", "/rebase-apply/next").Return(tc.Step)
-		env.On("FileContent", "/rebase-apply/last").Return(tc.Total)
+		env.On("FileContent", "rebase-apply/head-name").Return(tc.Ours)
+		env.On("FileContent", "rebase-apply/next").Return(tc.Step)
+		env.On("FileContent", "rebase-apply/last").Return(tc.Total)
 		// merge
 		env.On("HasFilesInDir", "", "MERGE_MSG").Return(tc.Merge)
-		env.On("FileContent", "/MERGE_MSG").Return(fmt.Sprintf("Merge %s into %s", tc.Theirs, tc.Ours))
+		env.On("FileContent", "MERGE_MSG").Return(fmt.Sprintf("Merge %s into %s", tc.Theirs, tc.Ours))
 		// cherry pick
 		env.On("HasFilesInDir", "", "CHERRY_PICK_HEAD").Return(tc.CherryPick)
-		env.On("FileContent", "/CHERRY_PICK_HEAD").Return(tc.Theirs)
+		env.On("FileContent", "CHERRY_PICK_HEAD").Return(tc.Theirs)
 		// revert
 		env.On("HasFilesInDir", "", "REVERT_HEAD").Return(tc.Revert)
-		env.On("FileContent", "/REVERT_HEAD").Return(tc.Theirs)
+		env.On("FileContent", "REVERT_HEAD").Return(tc.Theirs)
 		// sequencer
 		env.On("HasFilesInDir", "", "sequencer/todo").Return(tc.Sequencer)
-		env.On("FileContent", "/sequencer/todo").Return(tc.Theirs)
+		env.On("FileContent", "sequencer/todo").Return(tc.Theirs)
 
 		g := &Git{
 			scm: scm{
@@ -299,7 +299,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("FileContent", "/HEAD").Return(tc.HEAD)
+		env.On("FileContent", "HEAD").Return(tc.HEAD)
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
 		env.MockGitCommand("", tc.Tag, "describe", "--tags", "--exact-match")
@@ -469,7 +469,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("FileContent", "/logs/refs/stash").Return(tc.StashContent)
+		env.On("FileContent", "logs/refs/stash").Return(tc.StashContent)
 		g := &Git{
 			scm: scm{
 				env: env,

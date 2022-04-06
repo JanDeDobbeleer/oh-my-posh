@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
+	"path/filepath"
 )
 
 type Angular struct {
@@ -32,7 +33,8 @@ func (a *Angular) Init(props properties.Properties, env environment.Environment)
 					}
 					// parse file
 					objmap := map[string]json.RawMessage{}
-					content := a.language.env.FileContent(a.language.env.Pwd() + fileFolder + "/" + fileName)
+					filePath := filepath.Join(a.language.env.Pwd(), fileFolder, fileName)
+					content := a.language.env.FileContent(filePath)
 					err := json.Unmarshal([]byte(content), &objmap)
 					if err != nil {
 						return "", err

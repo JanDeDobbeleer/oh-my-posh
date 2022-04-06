@@ -397,6 +397,9 @@ func (env *ShellEnvironment) HasFolder(folder string) bool {
 
 func (env *ShellEnvironment) FileContent(file string) string {
 	defer env.trace(time.Now(), "FileContent", file)
+	if !filepath.IsAbs(file) {
+		file = filepath.Join(env.Pwd(), file)
+	}
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
 		env.log(Error, "FileContent", err.Error())

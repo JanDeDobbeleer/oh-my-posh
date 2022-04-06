@@ -12,6 +12,7 @@ function global:Start-Utf8Process
 	$StartInfo.FileName = $filename
 	$StartInfo.Arguments = $Arguments
     $StartInfo.UseShellExecute = $false
+    $StartInfo.WorkingDirectory = $PWD #when UseShellExecute=false, workingDirectory=""
     $StartInfo.CreateNoWindow = $true
 	$_ = $Process.Start();
 	$_ = $Process.WaitForExit();

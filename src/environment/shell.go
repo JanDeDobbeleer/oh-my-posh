@@ -16,6 +16,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/distatus/battery"
@@ -134,6 +135,7 @@ type Environment interface {
 	HasFolder(folder string) bool
 	HasParentFilePath(path string) (fileInfo *FileInfo, err error)
 	HasFileInParentDirs(pattern string, depth uint) bool
+	DirMatchesOneOf(dir string, regexes []string) bool
 	HasCommand(command string) bool
 	FileContent(file string) string
 	FolderList(path string) []string
@@ -185,14 +187,16 @@ const (
 )
 
 type ShellEnvironment struct {
-	CmdFlags   *Flags
-	Version    string
+	CmdFlags *Flags
+	Version  string
+
 	cwd        string
 	cmdCache   *commandCache
 	fileCache  *fileCache
 	tmplCache  *TemplateCache
 	logBuilder strings.Builder
 	debug      bool
+	lock       sync.Mutex
 }
 
 func (env *ShellEnvironment) Init(debug bool) {
@@ -720,9 +724,15 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 	return tmplCache
 }
 
-func DirMatchesOneOf(env Environment, dir string, regexes []string) bool {
+func (env *ShellEnvironment) DirMatchesOneOf(dir string, regexes []string) bool {
+	env.lock.Lock()
+	defer env.lock.Unlock()
+	return dirMatchesOneOf(dir, env.Home(), env.GOOS(), regexes)
+}
+
+func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 	normalizedCwd := strings.ReplaceAll(dir, "\\", "/")
-	normalizedHomeDir := strings.ReplaceAll(env.Home(), "\\", "/")
+	normalizedHomeDir := strings.ReplaceAll(home, "\\", "/")
 
 	for _, element := range regexes {
 		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
@@ -730,7 +740,6 @@ func DirMatchesOneOf(env Environment, dir string, regexes []string) bool {
 			normalizedElement = strings.Replace(normalizedElement, "~", normalizedHomeDir, 1)
 		}
 		pattern := fmt.Sprintf("^%s$", normalizedElement)
-		goos := env.GOOS()
 		if goos == WindowsPlatform || goos == DarwinPlatform {
 			pattern = "(?i)" + pattern
 		}

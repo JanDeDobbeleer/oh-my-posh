@@ -197,7 +197,7 @@ func (segment *Segment) cwdIncluded() bool {
 		return true
 	}
 
-	return environment.DirMatchesOneOf(segment.env, segment.env.Pwd(), list)
+	return segment.env.DirMatchesOneOf(segment.env.Pwd(), list)
 }
 
 func (segment *Segment) cwdExcluded() bool {
@@ -206,7 +206,7 @@ func (segment *Segment) cwdExcluded() bool {
 		value = segment.Properties[properties.IgnoreFolders]
 	}
 	list := properties.ParseStringArray(value)
-	return environment.DirMatchesOneOf(segment.env, segment.env.Pwd(), list)
+	return segment.env.DirMatchesOneOf(segment.env.Pwd(), list)
 }
 
 func (segment *Segment) shouldInvokeWithTip(tip string) bool {

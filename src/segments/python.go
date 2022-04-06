@@ -3,6 +3,8 @@ package segments
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
+	"oh-my-posh/regex"
+	"strings"
 )
 
 type Python struct {
@@ -13,7 +15,8 @@ type Python struct {
 
 const (
 	// FetchVirtualEnv fetches the virtual env
-	FetchVirtualEnv properties.Property = "fetch_virtual_env"
+	FetchVirtualEnv      properties.Property = "fetch_virtual_env"
+	UsePythonVersionFile properties.Property = "use_python_version_file"
 )
 
 func (p *Python) Template() string {
@@ -66,6 +69,15 @@ func (p *Python) loadContext() {
 		if p.canUseVenvName(name) {
 			p.Venv = name
 			break
+		}
+	}
+	if !p.language.props.GetBool(UsePythonVersionFile, false) {
+		return
+	}
+	if f, err := p.language.env.HasParentFilePath(".python-version"); err == nil {
+		contents := strings.Split(p.language.env.FileContent(f.Path), "\n")
+		if contents[0] != "" && regex.MatchString("[0-9]+.[0-9]+.[0-9]", contents[0]) == false && p.canUseVenvName(contents[0]) {
+			p.Venv = contents[0]
 		}
 	}
 }

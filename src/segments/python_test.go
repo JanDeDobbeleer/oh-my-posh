@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"errors"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
@@ -17,6 +18,7 @@ func TestPythonTemplate(t *testing.T) {
 		Template         string
 		VirtualEnvName   string
 		FetchVersion     bool
+		PyenvLocal       string
 	}{
 		{Case: "No virtual env present", FetchVersion: true, Expected: "3.8.4", Template: "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}"},
 		{Case: "Virtual env present", FetchVersion: true, Expected: "VENV 3.8.4", VirtualEnvName: "VENV", Template: "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}"},
@@ -41,6 +43,20 @@ func TestPythonTemplate(t *testing.T) {
 			VirtualEnvName: "billy",
 			Template:       "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
 		},
+		{
+			Case:         "Pyenv show env",
+			FetchVersion: true,
+			Expected:     "VENV 3.8",
+			PyenvLocal:   "VENV\n",
+			Template:     "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+		},
+		{
+			Case:         "Pyenv skip version",
+			FetchVersion: true,
+			Expected:     "3.8",
+			PyenvLocal:   "3.8.7\n",
+			Template:     "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+		},
 	}
 
 	for _, tc := range cases {
@@ -48,6 +64,12 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("HasCommand", "python").Return(true)
 		env.On("RunCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
 		env.On("HasFiles", "*.py").Return(true)
+		env.On("HasParentFilePath", ".python-version").Return(&environment.FileInfo{
+			ParentFolder: "/usr/home/project",
+			Path:         "/usr/home/project/.python-version",
+			IsDir:        false,
+		}, nil)
+		env.On("FileContent", "/usr/home/project/.python-version").Return(tc.PyenvLocal)
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
@@ -57,6 +79,7 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		props := properties.Map{
 			properties.FetchVersion: tc.FetchVersion,
+			UsePythonVersionFile:    true,
 			DisplayMode:             DisplayModeAlways,
 		}
 		env.On("TemplateCache").Return(&environment.TemplateCache{
@@ -85,6 +108,7 @@ func TestPythonPythonInContext(t *testing.T) {
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
 		env.On("Getenv", "PYENV_VERSION").Return("")
+		env.On("HasParentFilePath", ".python-version").Return(&environment.FileInfo{}, errors.New("no match at root level"))
 		python := &Python{}
 		python.Init(properties.Map{}, env)
 		python.loadContext()

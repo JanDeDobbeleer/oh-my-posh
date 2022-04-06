@@ -21,34 +21,21 @@ Before validating anything, make sure you're on the [latest version][latest] of 
 }>
 <TabItem value="powershell">
 
-You can use the `Write-PoshDebug` function to see where Oh my posh spends its time.
+You can use the `oh-my-posh debug` functionality to see where Oh My Posh spends its time.
 In case there's no clear culprit (timings indicate everything's OK), chances are some modules are the culprit.
-We bootstrap afew PowerShell modules to maximise compatibility, but sometimes these can introduce unwanted side-effects.
+We bootstrap a few PowerShell modules to maximise compatibility, but sometimes these can introduce unwanted side-effects.
 
 The modules we support are:
 
 - posh-git
-- Az.Accounts
-
-Especially the latter can slow things down so the first thing to do is disable that one:
-
-```powershell
-$env:AZ_ENABLED=$false
-```
-
-Once added, reload your profile for the changes to take effect.
-
-```powershell
-. $PROFILE
-```
 
 </TabItem>
 <TabItem value="others">
 
-You can use the Oh My Posh's built-in `--debug` flag to identify slow segments.
+You can use Oh My Posh's built-in debug functionality to identify slow segments.
 
 ```bash
-oh-my-posh --config ~/.mytheme.omp.json --debug --shell uni
+oh-my-posh debug
 ```
 
 Whenever there's a segment that spikes, see if there might be updates to the underlying functionality (usually shell commands).

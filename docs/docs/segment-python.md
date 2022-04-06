@@ -26,6 +26,7 @@ Supports conda, virtualenv and pyenv.
 
 - home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
 - fetch_virtual_env: `boolean` - fetch the name of the virtualenv or not - defaults to `true`
+- use_python_version_file: `boolean` - Use pyenv `.python-version` files to determine virtual env - defaults to `false`
 - display_default: `boolean` - show the name of the virtualenv when it's default (`system`, `base`)
 or not - defaults to `true`
 - fetch_version: `boolean` - fetch the python version - defaults to `true`

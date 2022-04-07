@@ -1107,6 +1107,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Gary-H9",
+      "name": "Gary",
+      "avatar_url": "https://avatars.githubusercontent.com/u/26419401?v=4",
+      "profile": "https://www.gazbuilds.com",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

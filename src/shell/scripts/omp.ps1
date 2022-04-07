@@ -1,26 +1,27 @@
-function global:Start-Utf8Process
-{
-	 param(
+function global:Start-Utf8Process {
+    param(
         [string] $FileName,
         [string] $Arguments
     )
 
-	$Process = New-Object System.Diagnostics.Process
-	$StartInfo = $Process.StartInfo
-	$StartInfo.StandardErrorEncoding = $StartInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
-	$StartInfo.RedirectStandardError = $StartInfo.RedirectStandardInput = $StartInfo.RedirectStandardOutput = $true
-	$StartInfo.FileName = $filename
-	$StartInfo.Arguments = $Arguments
+    $Process = New-Object System.Diagnostics.Process
+    $StartInfo = $Process.StartInfo
+    $StartInfo.StandardErrorEncoding = $StartInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+    $StartInfo.RedirectStandardError = $StartInfo.RedirectStandardInput = $StartInfo.RedirectStandardOutput = $true
+    $StartInfo.FileName = $filename
+    $StartInfo.Arguments = $Arguments
     $StartInfo.UseShellExecute = $false
-    $StartInfo.WorkingDirectory = $PWD #when UseShellExecute=false, workingDirectory=""
+    if ($pwd.provider.name -eq "FileSystem") { #workingdirectory does not work with registry path
+        $StartInfo.WorkingDirectory = convert-path $pwd #when UseShellExecute=false, workingDirectory=""
+    }
     $StartInfo.CreateNoWindow = $true
-	$_ = $Process.Start();
-	$_ = $Process.WaitForExit();
+    $_ = $Process.Start();
+    $_ = $Process.WaitForExit();
     $stderr = $Process.StandardError.ReadToEnd().Trim()
     if ($stderr -ne '') {
         $Host.UI.WriteErrorLine($stderr)
     }
-	return $Process.StandardOutput.ReadToEnd()
+    return $Process.StandardOutput.ReadToEnd()
 }
 
 $env:POWERLINE_COMMAND = "oh-my-posh"
@@ -192,7 +193,8 @@ function global:Enable-PoshTransientPrompt {
         [Console]::OutputEncoding = [Text.Encoding]::UTF8
         try {
             [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-        } finally {
+        }
+        finally {
             [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
             [Console]::OutputEncoding = $previousOutputEncoding
         }

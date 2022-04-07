@@ -1107,6 +1107,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "xadozuk",
+      "name": "xadozuk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/780423?v=4",
+      "profile": "https://github.com/xadozuk",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

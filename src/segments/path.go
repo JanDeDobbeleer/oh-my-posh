@@ -238,7 +238,7 @@ func (pt *Path) getUniqueLettersPath() string {
 
 func (pt *Path) getAgnosterFullPath() string {
 	pwd := pt.getPwd()
-	if len(pwd) > 1 && string(pwd[0]) == pt.env.PathSeparator() {
+	for len(pwd) > 1 && string(pwd[0]) == pt.env.PathSeparator() {
 		pwd = pwd[1:]
 	}
 	return pt.replaceFolderSeparators(pwd)

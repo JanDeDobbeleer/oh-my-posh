@@ -165,6 +165,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
   </tr>
   <tr>
     <td align="center"><a href="https://takiya.eu"><img src="https://avatars.githubusercontent.com/u/6952402?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex 'Avunia' Takiya</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=atakiya" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/kenmorse"><img src="https://avatars.githubusercontent.com/u/63734484?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kenmorse</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kenmorse" title="Documentation">📖</a></td>
   </tr>
 </table>
 

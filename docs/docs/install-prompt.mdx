@@ -85,6 +85,18 @@ Add the following to `~/.zshrc`:
 eval "$(oh-my-posh init zsh)"
 ```
 
+:::tip
+As the standard terminal has issues displaying the ANSI characters correctly, you might want to skip loading just for that terminal and instead of the line above, place this in your `~/.zshrc`:
+
+```bash
+if [ $TERM_PROGRAM != "Apple_Terminal" ]; then
+  eval "$(oh-my-posh init zsh)"
+fi
+```
+
+Note this will still load Oh My Posh for [iTerm2][iterm2] or any other modern day macOS terminal that supports ANSI characters.
+:::
+
 Once added, reload your profile for the changes to take effect.
 
 ```bash
@@ -161,3 +173,4 @@ Restart nu shell for the changes to take effect.
 </Tabs>
 
 [clink]: https://chrisant996.github.io/clink/
+[iterm2]: https://www.iterm2.com/

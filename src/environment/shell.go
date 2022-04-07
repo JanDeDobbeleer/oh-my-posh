@@ -727,10 +727,21 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 	return tmplCache
 }
 
-func (env *ShellEnvironment) DirMatchesOneOf(dir string, regexes []string) bool {
+func (env *ShellEnvironment) DirMatchesOneOf(dir string, regexes []string) (match bool) {
+	// sometimes the function panics inside golang, we want to silence that error
+	// and assume that there's no match. Not perfect, but better than crashing
+	// for the time being until we figure out what the actual root cause is
+	defer func() {
+		if err := recover(); err != nil {
+			message := fmt.Sprintf("%s", err)
+			env.log(Error, "DirMatchesOneOf", message)
+			match = false
+		}
+	}()
 	env.lock.Lock()
 	defer env.lock.Unlock()
-	return dirMatchesOneOf(dir, env.Home(), env.GOOS(), regexes)
+	match = dirMatchesOneOf(dir, env.Home(), env.GOOS(), regexes)
+	return
 }
 
 func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {

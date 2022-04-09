@@ -50,3 +50,14 @@ Displays the last exit code or that the last command failed based on the configu
 - `.Meaning`: `string` - the textual meaning linked to exit code (if applicable, otherwise identical to `.Code`)
 
 [templates]: /docs/config-templates
+
+** Nu >= 0.60.0 **
+
+`nu` stores the last error code in the environment variable `LAST_EXIT_CODE`.
+
+To make this `Exit Code` segment works with it, you need to configure the mapping accordingly:
+
+```sh
+let-env PROMPT_COMMAND = { oh-my-posh print primary --error $env.LAST_EXIT_CODE }
+```
+

@@ -38,6 +38,7 @@ understand how to configure a segment.
 - invert_powerline: `boolean`
 - leading_diamond: `string`
 - trailing_diamond: `string`
+- template: `string` a go text/template [template][templates] to render the prompt
 - foreground: `string` [color][colors]
 - foreground_templates: foreground [color templates][color-templates]
 - background: `string` [color][colors]
@@ -101,7 +102,6 @@ You can use these on any segment, the engine is responsible for adding them corr
 
 - include_folders: `[]string`
 - exclude_folders: `[]string`
-- template: `string` - A go text/template [template][templates] to render the text
 
 #### Include / Exclude Folders
 

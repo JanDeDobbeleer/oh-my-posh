@@ -214,7 +214,7 @@ func (e *Engine) print() string {
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), "\"", "\"\""))
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
-	case shell.PWSH, shell.PWSH5, shell.BASH, shell.PLAIN:
+	case shell.PWSH, shell.PWSH5, shell.BASH, shell.PLAIN, shell.NU:
 		if e.rprompt == "" || !e.canWriteRPrompt() || e.Plain {
 			break
 		}
@@ -334,7 +334,7 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 			return prompt
 		}
 		return str
-	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH, shell.FISH:
+	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH, shell.FISH, shell.NU:
 		str, _ := e.Writer.String()
 		return str
 	}

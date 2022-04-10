@@ -146,28 +146,25 @@ exec fish
 </TabItem>
 <TabItem value="nu">
 
-Set the prompt and restart nu shell:
+:::warning
+Oh My Posh requires Nushell >= 0.60.0
+:::
 
-**Nu < 0.32.0**
-
-```bash
-config set prompt  "= `{{$(oh-my-posh print primary | str collect)}}`"
-```
-
-**Nu >= 0.32.0**
+Edit `$nu.config-path` and add the following lines at the bottom.
 
 ```bash
-config set prompt  "(oh-my-posh print primary | str collect)"
+oh-my-posh init nu
+source ~/.oh-my-posh.nu
 ```
 
-**Nu >= 0.60.0**
+If you want to save the initialization script elsewhere, replace the lines above with these:
 
 ```bash
-let-env PROMPT_COMMAND = { oh-my-posh print primary }
-let-env PROMPT_COMMAND_RIGHT = { oh-my-posh print right }
+oh-my-posh init nu --print | save /mylocation/myscript.nu
+source /mylocation/myscript.nu
 ```
 
-Restart nu shell for the changes to take effect.
+Restart Nushell for the changes to take effect.
 
 </TabItem>
 </Tabs>

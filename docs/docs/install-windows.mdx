@@ -81,6 +81,14 @@ This installs a couple of things:
 
 For the `$PATH` to reload, a restart of your terminal is advised.
 
+:::warning Windows Defender
+To ensure Oh My Posh isn't blocked by Windows Defender, open an elevated PowerShell prompt and run the following command:
+
+```powershell
+Add-MpPreference -ExclusionProcess oh-my-posh.exe
+```
+:::
+
 ## Update
 
 <Tabs

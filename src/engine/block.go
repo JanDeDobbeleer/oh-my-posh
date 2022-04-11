@@ -93,7 +93,7 @@ func (b *Block) renderSegmentsText() {
 func (b *Block) renderSegments() (string, int) {
 	defer b.writer.Reset()
 	for _, segment := range b.Segments {
-		if !segment.enabled {
+		if !segment.enabled && segment.Style != Accordion {
 			continue
 		}
 		b.renderSegment(segment)
@@ -113,6 +113,10 @@ func (b *Block) renderSegment(segment *Segment) {
 		b.writer.Write(color.Transparent, color.Background, b.activeSegment.LeadingDiamond)
 		b.writer.Write(color.Background, color.Foreground, segment.text)
 		b.writer.Write(color.Transparent, color.Background, b.activeSegment.TrailingDiamond)
+	case Accordion:
+		if segment.enabled {
+			b.writer.Write(color.Background, color.Foreground, segment.text)
+		}
 	}
 	b.previousActiveSegment = b.activeSegment
 	b.writer.SetParentColors(b.previousActiveSegment.background(), b.previousActiveSegment.foreground())
@@ -121,9 +125,9 @@ func (b *Block) renderSegment(segment *Segment) {
 func (b *Block) writePowerline(final bool) {
 	resolvePowerlineSymbol := func() string {
 		var symbol string
-		if b.activeSegment.Style == Powerline {
+		if b.activeSegment.isPowerline() {
 			symbol = b.activeSegment.PowerlineSymbol
-		} else if b.previousActiveSegment != nil && b.previousActiveSegment.Style == Powerline {
+		} else if b.previousActiveSegment != nil && b.previousActiveSegment.isPowerline() {
 			symbol = b.previousActiveSegment.PowerlineSymbol
 		}
 		return symbol
@@ -133,7 +137,7 @@ func (b *Block) writePowerline(final bool) {
 		return
 	}
 	bgColor := color.Background
-	if final || b.activeSegment.Style != Powerline {
+	if final || !b.activeSegment.isPowerline() {
 		bgColor = color.Transparent
 	}
 	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
@@ -156,7 +160,7 @@ func (b *Block) getPowerlineColor() string {
 	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
 		return b.previousActiveSegment.background()
 	}
-	if b.previousActiveSegment.Style != Powerline {
+	if !b.previousActiveSegment.isPowerline() {
 		return color.Transparent
 	}
 	return b.previousActiveSegment.background()

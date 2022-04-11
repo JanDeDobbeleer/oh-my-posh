@@ -109,6 +109,33 @@ func TestEnabledInSubmodule(t *testing.T) {
 	assert.Equal(t, "/dev/parent/test-submodule/../.git/modules/test-submodule", g.gitRootFolder)
 }
 
+func TestEnabledInSeparateGitDir(t *testing.T) {
+	env := new(mock.MockedEnvironment)
+	env.On("InWSLSharedDrive").Return(false)
+	env.On("HasCommand", "git").Return(true)
+	env.On("GOOS").Return("")
+	env.On("IsWsl").Return(false)
+	fileInfo := &environment.FileInfo{
+		Path:         "/dev/parent/test-separate-git-dir/.git",
+		ParentFolder: "/dev/parent/test-separate-git-dir",
+		IsDir:        false,
+	}
+	env.On("HasFilesInDir", "/dev/separate-git-dir", "HEAD").Return(true)
+	env.On("FileContent", "/dev/parent/test-separate-git-dir//HEAD").Return("")
+	env.MockGitCommand("/dev/parent/test-separate-git-dir/", "", "describe", "--tags", "--exact-match")
+	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
+	env.On("FileContent", "/dev/parent/test-separate-git-dir/.git").Return("gitdir: /dev/separate-git-dir")
+	g := &Git{
+		scm: scm{
+			env:   env,
+			props: properties.Map{},
+		},
+	}
+	assert.True(t, g.Enabled())
+	assert.Equal(t, "/dev/parent/test-separate-git-dir/", g.gitWorkingFolder)
+	assert.Equal(t, "/dev/parent/test-separate-git-dir/", g.gitRealFolder)
+	assert.Equal(t, "/dev/separate-git-dir", g.gitRootFolder)
+}
 func TestGetGitOutputForCommand(t *testing.T) {
 	args := []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}
 	commandArgs := []string{"symbolic-ref", "--short", "HEAD"}

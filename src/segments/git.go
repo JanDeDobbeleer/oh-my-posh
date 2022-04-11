@@ -190,6 +190,15 @@ func (g *Git) shouldDisplay() bool {
 			return true
 		}
 
+		// check for separate git folder(--separate-git-dir)
+		// check if the folder contains a HEAD file
+		if g.env.HasFilesInDir(g.gitWorkingFolder, "HEAD") {
+			gitFolder := strings.TrimSuffix(g.gitRootFolder, ".git")
+			g.gitRootFolder = g.gitWorkingFolder
+			g.gitWorkingFolder = gitFolder
+			g.gitRealFolder = gitFolder
+			return true
+		}
 		return false
 	}
 	return false

@@ -207,7 +207,7 @@
           "type": "string",
           "title": "Segment Style",
           "description": "https://ohmyposh.dev/docs/config-segment#style",
-          "enum": ["powerline", "plain", "diamond"]
+          "enum": ["powerline", "plain", "diamond", "accordion"]
         },
         "foreground": { "$ref": "#/definitions/color" },
         "foreground_templates": { "$ref": "#/definitions/color_templates" },

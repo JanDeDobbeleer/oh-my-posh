@@ -33,7 +33,7 @@ understand how to configure a segment.
 ```
 
 - type: `string` any of the included [segments][segments]
-- style: `powerline` | `plain` | `diamond`
+- style: `powerline` | `plain` | `diamond` | `accordion`
 - powerline_symbol: `string`
 - invert_powerline: `boolean`
 - leading_diamond: `string`
@@ -71,6 +71,11 @@ Segments will be separated by empty spaces unless you specify `''` for the `pref
 While Powerline works great with a single symbol, sometimes you want a segment to have a different start and end symbol.
 Just like a diamond: `< my segment text >`. The difference between this and plain is that the diamond symbols take the
 segment background as their foreground color.
+
+### Accordion
+
+Same as Powerline except that it will display even when disabled, but without text. That way it seems
+as if the segment is not expanded, just like an accordion.
 
 ## Powerline symbol
 

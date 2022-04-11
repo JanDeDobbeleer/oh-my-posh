@@ -60,6 +60,15 @@ type SegmentStyle string
 type SegmentType string
 
 const (
+	// Powerline writes it Powerline style
+	Powerline SegmentStyle = "powerline"
+	// Accordion writes it Powerline style but collapses the segment when disabled instead of hiding
+	Accordion SegmentStyle = "accordion"
+	// Plain writes it without ornaments
+	Plain SegmentStyle = "plain"
+	// Diamond writes the prompt shaped with a leading and trailing symbol
+	Diamond SegmentStyle = "diamond"
+
 	// SESSION represents the user info segment
 	SESSION SegmentType = "session"
 	// PATH represents the current path segment
@@ -102,12 +111,6 @@ const (
 	GOLANG SegmentType = "go"
 	// JULIA writes which julia version is currently active
 	JULIA SegmentType = "julia"
-	// Powerline writes it Powerline style
-	Powerline SegmentStyle = "powerline"
-	// Plain writes it without ornaments
-	Plain SegmentStyle = "plain"
-	// Diamond writes the prompt shaped with a leading and trailing symbol
-	Diamond SegmentStyle = "diamond"
 	// YTM writes YouTube Music information and status
 	YTM SegmentType = "ytm"
 	// EXECUTIONTIME writes the execution time of the last run command
@@ -181,6 +184,10 @@ func (segment *Segment) shouldIncludeFolder() bool {
 	cwdIncluded := segment.cwdIncluded()
 	cwdExcluded := segment.cwdExcluded()
 	return cwdIncluded && !cwdExcluded
+}
+
+func (segment *Segment) isPowerline() bool {
+	return segment.Style == Powerline || segment.Style == Accordion
 }
 
 func (segment *Segment) cwdIncluded() bool {

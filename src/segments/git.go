@@ -265,6 +265,8 @@ func (g *Git) setGitStatus() {
 		UPSTREAM     = "# branch.upstream "
 		BRANCHSTATUS = "# branch.ab "
 	)
+	// firstly assume that upstream is gone
+	g.UpstreamGone = true
 	g.Working = &GitStatus{}
 	g.Staging = &GitStatus{}
 	output := g.getGitCommandOutput("status", "-unormal", "--branch", "--porcelain=2")

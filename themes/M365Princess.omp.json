@@ -29,11 +29,10 @@
           "template": "{{ if .Env.PNPPSSITE }}\u00A0{{ end }}"
         }
       ],
-      "type": "prompt"
+      "type": "rprompt"
     },
     {
       "alignment": "left",
-      "newline": true,
       "segments": [
         {
           "background": "#9A348E",

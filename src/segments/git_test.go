@@ -374,10 +374,11 @@ func TestSetGitStatus(t *testing.T) {
 			1 .U N...
 			1 A. N...
 			`,
-			ExpectedWorking: &GitStatus{ScmStatus: ScmStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1}},
-			ExpectedStaging: &GitStatus{ScmStatus: ScmStatus{Added: 1}},
-			ExpectedHash:    "1234567",
-			ExpectedRef:     "rework-git-status",
+			ExpectedWorking:      &GitStatus{ScmStatus: ScmStatus{Modified: 4, Added: 2, Deleted: 1, Unmerged: 1}},
+			ExpectedStaging:      &GitStatus{ScmStatus: ScmStatus{Added: 1}},
+			ExpectedHash:         "1234567",
+			ExpectedRef:          "rework-git-status",
+			ExpectedUpstreamGone: true,
 		},
 		{
 			Case: "all different options on working and staging, with remote",

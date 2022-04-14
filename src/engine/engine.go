@@ -211,7 +211,7 @@ func (e *Engine) print() string {
 			break
 		}
 		// escape double quotes contained in the prompt
-		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), "\"", "\"\""))
+		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
 	case shell.PWSH, shell.PWSH5, shell.BASH, shell.PLAIN, shell.NU:

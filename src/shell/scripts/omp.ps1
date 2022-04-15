@@ -59,7 +59,7 @@ function global:Get-PoshContext {
 }
 
 function global:Initialize-ModuleSupport {
-    if ($env:POSH_GIT_ENABLED) {
+    if ($env:POSH_GIT_ENABLED -eq $true) {
         $global:GitStatus = Get-GitStatus
         $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
     }

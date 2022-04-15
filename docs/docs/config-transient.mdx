@@ -11,6 +11,11 @@ import TabItem from "@theme/TabItem";
 This feature only works in `fish`, `zsh`, `powershell` and `cmd` for the time being.
 :::
 
+:::warning
+This features currently **doesn't work when using a multiline prompt in PowerShell** due
+to limitations of PSReadline.
+:::
+
 Transient prompt, when enabled, replaces the prompt with a simpler one to allow more screen real estate.
 You can use go [text/template][go-text-template] templates extended with [sprig][sprig] to enrich the text.
 Environment variables are available, just like the [`console_title_template`][console-title] functionality.

@@ -17,7 +17,23 @@ offers a few standard properties to work with.
 - `.UserName`: `string` - the current user name
 - `.HostName`: `string` - the host name
 - `.Code`: `int` - the last exit code
+
+## Environment variables
+
 - `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
+
+:::tip
+If you're using PowerShell, you can override a function to populate environment variables before the
+prompt is rendered.
+
+```powershell
+function Set-EnvVar {
+    $env:POSH=$(Get-Date)
+}
+New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
+```
+
+:::
 
 ## Helper functions
 

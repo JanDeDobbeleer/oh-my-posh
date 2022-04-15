@@ -59,5 +59,5 @@ error). The `&&` functionality will join the output of the commands when success
 
 - `.Output`: `string` - the output of the command.
 
-[env]: /docs/environment
+[env]: /docs/config-templates#environment-variables
 [templates]: /docs/config-templates

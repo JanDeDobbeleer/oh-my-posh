@@ -19,19 +19,6 @@ Display text.
 }
 ```
 
-:::tip
-If you're using PowerShell, you can override a function to populate environment variables before the
-prompt is rendered.
-
-```powershell
-function Set-EnvVar {
-    $env:POSH=$(Get-Date)
-}
-New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
-```
-
-:::
-
 ## Template ([info][templates])
 
 ### Properties

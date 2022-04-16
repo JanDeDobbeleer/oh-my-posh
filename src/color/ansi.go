@@ -98,7 +98,7 @@ func (a *Ansi) Init(shellName string) {
 		a.bold = "\\[\x1b[1m\\]%s\\[\x1b[22m\\]"
 		a.italic = "\\[\x1b[3m\\]%s\\[\x1b[23m\\]"
 		a.underline = "\\[\x1b[4m\\]%s\\[\x1b[24m\\]"
-		a.blink = "\\[\x1b[5m%s\\[\x1b[25m\\]"
+		a.blink = "\\[\x1b[5m\\]%s\\[\x1b[25m\\]"
 		a.reverse = "\\[\x1b[7m\\]%s\\[\x1b[27m\\]"
 		a.dimmed = "\\[\x1b[2m\\]%s\\[\x1b[22m\\]"
 		a.strikethrough = "\\[\x1b[9m\\]%s\\[\x1b[29m\\]"

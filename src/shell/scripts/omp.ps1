@@ -11,8 +11,8 @@ function global:Start-Utf8Process {
     $StartInfo.FileName = $filename
     $StartInfo.Arguments = $Arguments
     $StartInfo.UseShellExecute = $false
-    if ($pwd.provider.name -eq "FileSystem") { #workingdirectory does not work with registry path
-        $StartInfo.WorkingDirectory = convert-path $pwd #when UseShellExecute=false, workingDirectory=""
+    if ($PWD.Provider.Name -eq 'FileSystem') {
+        $StartInfo.WorkingDirectory = $PWD.ProviderPath
     }
     $StartInfo.CreateNoWindow = $true
     $_ = $Process.Start();

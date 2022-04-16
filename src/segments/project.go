@@ -2,8 +2,10 @@ package segments
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
+	"path/filepath"
 
 	"github.com/BurntSushi/toml"
 )
@@ -33,6 +35,14 @@ type PyProjectToolTOML struct {
 	Poetry ProjectData
 }
 
+type NuSpec struct {
+	XMLName  xml.Name `xml:"package"`
+	MetaData struct {
+		Title   string `xml:"title"`
+		Version string `xml:"version"`
+	} `xml:"metadata"`
+}
+
 type Project struct {
 	props properties.Properties
 	env   environment.Environment
@@ -44,14 +54,13 @@ type Project struct {
 }
 
 func (n *Project) Enabled() bool {
-	var enabled = false
 	for _, item := range n.projects {
-		if !enabled {
-			enabled = n.hasProjectFile(item)
+		if n.hasProjectFile(item) {
+			n.Version, n.Name = item.Fetcher(*item)
+			return len(n.Version) > 0 || len(n.Name) > 0
 		}
 	}
-
-	return enabled
+	return false
 }
 
 func (n *Project) Template() string {
@@ -83,15 +92,11 @@ func (n *Project) Init(props properties.Properties, env environment.Environment)
 			File:    "composer.json",
 			Fetcher: n.getNodePackage,
 		},
-	}
-
-	n.Version = ""
-	n.Name = ""
-	for _, item := range n.projects {
-		if n.hasProjectFile(item) {
-			n.Version, n.Name = item.Fetcher(*item)
-			break
-		}
+		{
+			Name:    "nuspec",
+			File:    "*.nuspec",
+			Fetcher: n.getNuSpecPackage,
+		},
 	}
 }
 
@@ -136,4 +141,25 @@ func (n *Project) getPoetryPackage(item ProjectItem) (string, string) {
 	}
 
 	return data.Tool.Poetry.Version, data.Tool.Poetry.Name
+}
+
+func (n *Project) getNuSpecPackage(item ProjectItem) (string, string) {
+	files := n.env.LsDir(n.env.Pwd())
+	var content string
+	// get the first match only
+	for _, file := range files {
+		if filepath.Ext(file.Name()) == ".nuspec" {
+			content = n.env.FileContent(file.Name())
+			break
+		}
+	}
+
+	var data NuSpec
+	err := xml.Unmarshal([]byte(content), &data)
+	if err != nil {
+		n.Error = err.Error()
+		return "", ""
+	}
+
+	return data.MetaData.Version, data.MetaData.Title
 }

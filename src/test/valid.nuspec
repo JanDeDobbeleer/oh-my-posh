@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>Az.Compute</id>
+    <title>Az.Compute</title>
+    <version>0.1.0</version>
+    <authors>Microsoft Corporation</authors>
+    <owners>Microsoft Corporation</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>https://aka.ms/azps-license</licenseUrl>
+    <projectUrl>https://github.com/Azure/azure-powershell</projectUrl>
+    <description>Microsoft Azure PowerShell: $(service-name) cmdlets</description>
+    <releaseNotes></releaseNotes>
+    <copyright>Microsoft Corporation. All rights reserved.</copyright>
+    <tags>Azure ResourceManager ARM PSModule $(service-name)</tags>
+    <dependencies>
+      <dependency id="Az.Accounts" version="2.2.3" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Az.Compute.format.ps1xml" />
+    <file src="Az.Compute.psd1" />
+    <file src="Az.Compute.psm1" />
+    <!-- https://github.com/NuGet/Home/issues/3584 -->
+    <file src="bin/Az.Compute.private.dll" target="bin" />
+    <file src="bin\Az.Compute.private.deps.json" target="bin" />
+    <file src="internal\**\*.*" exclude="internal\README.md" target="internal" />
+    <file src="custom\**\*.*" exclude="custom\README.md;custom\**\*.cs" target="custom" />
+    <file src="docs\**\*.md" exclude="docs\README.md" target="docs" />
+    <file src="exports\**\ProxyCmdletDefinitions.ps1" target="exports" />
+    <file src="utils\**\*.*" target="utils" />
+  </files>
+</package>

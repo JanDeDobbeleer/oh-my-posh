@@ -14,6 +14,7 @@ Supports:
 - Cargo project (`Cargo.toml`)
 - Poetry project (`pyproject.toml`)
 - PHP project (`composer.json`)
+- Any nuspec based project (`*.nuspec`, first file match info is displayed)
 
 ## Sample Configuration
 

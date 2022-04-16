@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"io/fs"
 	"oh-my-posh/environment"
 
 	"github.com/distatus/battery"
@@ -46,9 +47,9 @@ func (env *MockedEnvironment) FileContent(file string) string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) FolderList(path string) []string {
+func (env *MockedEnvironment) LsDir(path string) []fs.DirEntry {
 	args := env.Called(path)
-	return args.Get(0).([]string)
+	return args.Get(0).([]fs.DirEntry)
 }
 
 func (env *MockedEnvironment) PathSeparator() string {

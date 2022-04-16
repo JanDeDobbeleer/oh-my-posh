@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -138,7 +139,7 @@ type Environment interface {
 	DirMatchesOneOf(dir string, regexes []string) bool
 	HasCommand(command string) bool
 	FileContent(file string) string
-	FolderList(path string) []string
+	LsDir(path string) []fs.DirEntry
 	RunCommand(command string, args ...string) (string, error)
 	RunShellCommand(shell, command string) string
 	ExecutionTime() float64
@@ -410,21 +411,21 @@ func (env *ShellEnvironment) FileContent(file string) string {
 	return fileContent
 }
 
-func (env *ShellEnvironment) FolderList(path string) []string {
-	defer env.trace(time.Now(), "FolderList", path)
-	content, err := os.ReadDir(path)
+func (env *ShellEnvironment) LsDir(path string) []fs.DirEntry {
+	defer env.trace(time.Now(), "LsDir", path)
+	entries, err := os.ReadDir(path)
 	if err != nil {
-		env.log(Error, "FolderList", err.Error())
+		env.log(Error, "LsDir", err.Error())
 		return nil
 	}
-	var folderNames []string
-	for _, s := range content {
-		if s.IsDir() {
-			folderNames = append(folderNames, s.Name())
+	env.debugF("LsDir", func() string {
+		var entriesStr string
+		for _, entry := range entries {
+			entriesStr += entry.Name() + "\n"
 		}
-	}
-	env.debugF("FolderList", func() string { return strings.Join(folderNames, ",") })
-	return folderNames
+		return entriesStr
+	})
+	return entries
 }
 
 func (env *ShellEnvironment) PathSeparator() string {

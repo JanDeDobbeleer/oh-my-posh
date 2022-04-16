@@ -495,8 +495,14 @@ func (g *Git) getWorktreeContext() int {
 	if !g.env.HasFolder(g.gitRootFolder + "/worktrees") {
 		return 0
 	}
-	worktreeFolders := g.env.FolderList(g.gitRootFolder + "/worktrees")
-	return len(worktreeFolders)
+	worktreeFolders := g.env.LsDir(g.gitRootFolder + "/worktrees")
+	var count int
+	for _, folder := range worktreeFolders {
+		if folder.IsDir() {
+			count++
+		}
+	}
+	return count
 }
 
 func (g *Git) getOriginURL(upstream string) string {

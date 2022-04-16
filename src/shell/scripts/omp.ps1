@@ -112,7 +112,7 @@ function global:Initialize-ModuleSupport {
     $terminalWidth = $Host.UI.RawUI.WindowSize.Width
     $standardOut = @(Start-Utf8Process $omp "print primary --error=$global:OMP_ERRORCODE --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$global:OMP_EXECUTIONTIME --stack-count=$stackCount --config=""$Env:POSH_THEME"" --terminal-width=$terminalWidth")
     # make sure PSReadLine knows we have a multiline prompt
-    $extraLines = $standardOut.Count - 1
+    $extraLines = ($standardOut | Measure-Object -Line).Lines - 1
     if ($extraLines -gt 0) {
         Set-PSReadlineOption -ExtraPromptLineCount $extraLines
     }

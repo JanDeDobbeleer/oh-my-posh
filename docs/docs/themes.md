@@ -17,7 +17,7 @@ Once you're ready to swap to a theme, follow the steps described in [🚀 Replac
 Themes with `minimal` in their names do not require a Nerd Font. Read about [🆎Fonts][fonts] for more information.
 
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
-[fonts]: /docs/config-fonts
+[fonts]: /docs/configuration/fonts
 [replace-you-existing-prompt]: /docs/prompt
 
 <!-- Do not change the content below, themes are rendered automatically -->

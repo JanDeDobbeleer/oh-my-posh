@@ -1,0 +1,96 @@
+---
+id: sample
+title: Sample
+sidebar_label: Sample
+---
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "foreground": "#007ACC",
+          "template": " {{ .CurrentDate | date .Format }} ",
+          "properties": {
+            "time_format": "15:04:05"
+          },
+          "style": "plain",
+          "type": "time"
+        }
+      ],
+      "type": "prompt",
+      "vertical_offset": -1
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "background": "#ffb300",
+          "foreground": "#ffffff",
+          "leading_diamond": "\ue0b6",
+          "template": " {{ .UserName }} ",
+          "style": "diamond",
+          "trailing_diamond": "\ue0b0",
+          "type": "session"
+        },
+        {
+          "background": "#61AFEF",
+          "foreground": "#ffffff",
+          "powerline_symbol": "\ue0b0",
+          "template": " {{ .Path }} ",
+          "properties": {
+            "exclude_folders": [
+              "/super/secret/project"
+            ],
+            "style": "folder"
+          },
+          "style": "powerline",
+          "type": "path"
+        },
+        {
+          "background": "#2e9599",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#f36943{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#a8216b{{ end }}",
+            "{{ if gt .Ahead 0 }}#35b5ff{{ end }}",
+            "{{ if gt .Behind 0 }}#f89cfa{{ end }}"
+          ],
+          "foreground": "#193549",
+          "foreground_templates": [
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ffffff{{ end }}"
+          ],
+          "powerline_symbol": "\ue0b0",
+          "template": " {{ .HEAD }}{{ .BranchStatus }} ",
+          "properties": {
+            "branch_max_length": 25,
+            "fetch_status": true
+          },
+          "style": "powerline",
+          "type": "git"
+        },
+        {
+          "background": "#00897b",
+          "background_templates": [
+            "{{ if gt .Code 0 }}#e91e63{{ end }}"
+          ],
+          "foreground": "#ffffff",
+          "template": "<parentBackground>\ue0b0</> \ue23a ",
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "type": "exit"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 2
+}
+```

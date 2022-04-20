@@ -1,0 +1,106 @@
+---
+id: strava
+title: Strava
+sidebar_label: Strava
+---
+
+import StravaConnect from '/img/strava_connect.svg';
+
+## What
+
+[Strava][strava] ia a popular activity tracker for bike, run or any other training.
+To keep up with your training goals it is important to be reminded about it.
+An Oh My Posh Strava segment shows your last activity,
+and can also indicate by a color if it is time to get away from your computer and get active.
+
+## Accessing your Strava data
+
+To allow Oh My Posh access your Strava data you need to grant access to read your public activities.
+This will give you an access and a refresh token. Paste the tokens into your Strava segment configuration.
+
+Click the following link to connect with Strava:
+
+<a href="https://www.strava.com/oauth/authorize?client_id=76033&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&approval_prompt=force&scope=read,activity:read&state=strava">
+  <StravaConnect/>
+</a>
+
+## Sample Configuration
+
+This configuration sets the background green if you have an activity the last two days,
+orange if you have one last 5 days, and red otherwise. The `foreground_templates` example below could be set to just a single color,
+if that color is visible against any of your backgrounds.
+
+```json
+{
+  "type": "strava",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#000000",
+  "background_templates": [
+    "{{ if gt .Hours 100 }}#dc3545{{ end }}",
+    "{{ if and (lt .Hours 100) (gt .Hours 50) }}#ffc107{{ end }}",
+    "{{ if lt .Hours 50 }}#28a745{{ end }}"
+  ],
+  "foreground_templates": [
+    "{{ if gt .Hours 100 }}#FFFFFF{{ end }}",
+    "{{ if and (lt .Hours 100) (gt .Hours 50) }}#343a40{{ end }}",
+    "{{ if lt .Hours 50 }}#FFFFFF{{ end }}"
+  ],
+  "template": "{{.Name}} {{.Ago}} {{.Icon}}",
+  "properties": {
+    "access_token":"11111111111111111",
+    "refresh_token":"1111111111111111",
+    "http_timeout": 1500
+  }
+}
+```
+
+## Properties
+
+- access_token: `string` - token from Strava login, see login link in section above. It has the following format: `1111111111111111111111111`
+- refresh_token: `string` - token from Strava login, see login link in section above. It has the following format: `1111111111111111111111111`
+- expires_in: `int` - the default timeout of the token from the Strava login
+- http_timeout: `int` - how long do you want to wait before you want to see your prompt more than your strava data? - defaults to 500ms
+- CacheTimeout: `int` in minutes - How long do you want your numbers cached? - defaults to 5 min
+- RideIcon - defaults to `\uf5a2`
+- RunIcon - defaults to `\ufc0c`
+- SkiingIcon - defaults to `\ue213`
+- WorkOutIcon - defaults to `\ue213`
+- UnknownActivityIcon - defaults to `\ue213`
+
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }}
+```
+
+:::
+
+### Properties
+
+The properties below are available for use in your template
+
+- `.ID`: `time` - The id of the entry
+- `.DateString`: `time` - The timestamp of the entry
+- `.Type`: `string` - Activity types as used in strava
+- `.UtcOffset`: `int` - The UTC offset
+- `.Hours`: `int` - Number of hours since last activity
+- `.Name`: `string` - The name of the activity
+- `.Duration`: `float64` - Total duration in seconds
+- `.Distance`: `float64` - Total distance in meters
+- `.DeviceWatts`: `bool`  - Device has watts
+- `.AverageWatts`: `float64` - Average watts
+- `.WeightedAverageWatts`:`float64` - Weighted average watts
+- `.AverageHeartRate`:`float64` - Average heart rate
+- `.MaxHeartRate`: `float64` - Max heart rate
+- `.KudosCount`: `int` - Kudos count
+- `.Icon`: `string` - Activity based icon
+
+Now, go out and have a fun ride or run!
+
+[templates]: /docs/configuration/templates
+[strava]: http://www.strava.com/
+[strava-connect]: https://www.strava.com/oauth/authorize?client_id=76033&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&approval_prompt=force&scope=read,activity:read

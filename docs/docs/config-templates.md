@@ -58,7 +58,7 @@ You can make use of the following syntax to decorate text:
 
 This can be used in templates and icons/text inside your config.
 
-## Hidings segments
+## Hiding segments
 
 To hide a whole segment including the leading and trailing symbol based on a template, the template must render into
 an empty string. This can be achieved with conditional statements (`if`). The example below will render a diamond
@@ -74,9 +74,7 @@ Only spaces are excluded, meaning you can still add line breaks and tabs if that
   "trailing_diamond": "\ue0b4",
   "foreground": "#ffffff",
   "background": "#d53c14",
-  "properties": {
-    "template": "{{ if .Env.POSH_ENV }} \uf8c5 {{ .Env.POSH_ENV }} {{ end }}"
-  }
+  "template": "{{ if .Env.POSH_ENV }} \uf8c5 {{ .Env.POSH_ENV }} {{ end }}"
 }
 ```
 

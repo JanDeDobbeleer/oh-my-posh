@@ -3,7 +3,7 @@ package segments
 import (
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
-	"oh-my-posh/regex"
+	"path/filepath"
 	"strings"
 )
 
@@ -31,6 +31,10 @@ func (p *Python) Init(props properties.Properties, env environment.Environment) 
 		loadContext: p.loadContext,
 		inContext:   p.inContext,
 		commands: []*cmd{
+			{
+				getVersion: p.pyenvVersion,
+				regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+			},
 			{
 				executable: "python",
 				args:       []string{"--version"},
@@ -60,7 +64,6 @@ func (p *Python) loadContext() {
 		"VIRTUAL_ENV",
 		"CONDA_ENV_PATH",
 		"CONDA_DEFAULT_ENV",
-		"PYENV_VERSION",
 	}
 	var venv string
 	for _, venvVar := range venvVars {
@@ -69,15 +72,6 @@ func (p *Python) loadContext() {
 		if p.canUseVenvName(name) {
 			p.Venv = name
 			break
-		}
-	}
-	if !p.language.props.GetBool(UsePythonVersionFile, false) {
-		return
-	}
-	if f, err := p.language.env.HasParentFilePath(".python-version"); err == nil {
-		contents := strings.Split(p.language.env.FileContent(f.Path), "\n")
-		if contents[0] != "" && regex.MatchString("[0-9]+.[0-9]+.[0-9]", contents[0]) == false && p.canUseVenvName(contents[0]) {
-			p.Venv = contents[0]
 		}
 	}
 }
@@ -100,4 +94,49 @@ func (p *Python) canUseVenvName(name string) bool {
 		}
 	}
 	return true
+}
+
+func (p *Python) pyenvVersion() (string, error) {
+	// Use `pyenv root` instead of $PYENV_ROOT?
+	// Is our Python executable at $PYENV_ROOT/bin/python ?
+	// Should p.env expose command paths?
+	path := p.env.CommandPath("python")
+	if path == "" {
+		path = p.env.CommandPath("python3")
+	}
+	if path == "" {
+		return "", nil
+	}
+	// TODO:  pyenv-win has this at $PYENV_ROOT/pyenv-win/shims
+	if path != filepath.Join(p.env.Getenv("PYENV_ROOT"), "shims", "python") {
+		return "", nil
+	}
+	// pyenv version-name will return current version or virtualenv
+	cmdOutput, err := p.env.RunCommand("pyenv", "version-name")
+	if err != nil {
+		// TODO: Improve reporting
+		return "", nil
+	}
+	versionString := strings.Split(cmdOutput, ":")[0]
+	if versionString == "" {
+		return "", nil
+	}
+
+	// $PYENV_ROOT/versions + versionString (symlinks resolved) == $PYENV_ROOT/versions/(version)[/envs/(virtualenv)]
+	realPath, err := p.env.ResolveSymlink(filepath.Join(p.env.Getenv("PYENV_ROOT"), "versions", versionString))
+	if err != nil {
+		return "", nil
+	}
+	// ../versions/(version)[/envs/(virtualenv)]
+	shortPath, err := filepath.Rel(filepath.Join(p.env.Getenv("PYENV_ROOT"), "versions"), realPath)
+	if err != nil {
+		return "", nil
+	}
+	// Unset whatever loadContext thinks Venv should be
+	p.Venv = ""
+	parts := strings.Split(shortPath, string(filepath.Separator))
+	if len(parts) > 2 && p.canUseVenvName(parts[2]) {
+		p.Venv = parts[2]
+	}
+	return parts[0], nil
 }

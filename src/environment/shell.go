@@ -139,7 +139,9 @@ type Environment interface {
 	HasFolder(folder string) bool
 	HasParentFilePath(path string) (fileInfo *FileInfo, err error)
 	HasFileInParentDirs(pattern string, depth uint) bool
+	ResolveSymlink(path string) (string, error)
 	DirMatchesOneOf(dir string, regexes []string) bool
+	CommandPath(command string) string
 	HasCommand(command string) bool
 	FileContent(file string) string
 	LsDir(path string) []fs.DirEntry
@@ -401,6 +403,10 @@ func (env *ShellEnvironment) HasFolder(folder string) bool {
 	return hasFolder
 }
 
+func (env *ShellEnvironment) ResolveSymlink(path string) (string, error) {
+	return filepath.EvalSymlinks(path)
+}
+
 func (env *ShellEnvironment) FileContent(file string) string {
 	defer env.trace(time.Now(), "FileContent", file)
 	if !filepath.IsAbs(file) {
@@ -500,22 +506,29 @@ func (env *ShellEnvironment) RunShellCommand(shell, command string) string {
 	return ""
 }
 
-func (env *ShellEnvironment) HasCommand(command string) bool {
+func (env *ShellEnvironment) CommandPath(command string) string {
 	defer env.trace(time.Now(), "HasCommand", command)
-	if _, ok := env.cmdCache.get(command); ok {
-		return true
+	if path, ok := env.cmdCache.get(command); ok {
+		return path
 	}
 	path, err := exec.LookPath(command)
 	if err == nil {
 		env.cmdCache.set(command, path)
-		return true
+		return path
 	}
 	path, err = env.LookWinAppPath(command)
 	if err == nil {
 		env.cmdCache.set(command, path)
+		return path
+	}
+	env.log(Error, "CommandPath", err.Error())
+	return ""
+}
+
+func (env *ShellEnvironment) HasCommand(command string) bool {
+	if path := env.CommandPath(command); path != "" {
 		return true
 	}
-	env.log(Error, "HasCommand", err.Error())
 	return false
 }
 

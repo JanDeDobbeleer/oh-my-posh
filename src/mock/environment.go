@@ -42,6 +42,11 @@ func (env *MockedEnvironment) HasFolder(folder string) bool {
 	return args.Bool(0)
 }
 
+func (env *MockedEnvironment) ResolveSymlink(path string) (string, error) {
+	args := env.Called(path)
+	return args.String(0), args.Error(1)
+}
+
 func (env *MockedEnvironment) FileContent(file string) string {
 	args := env.Called(file)
 	return args.String(0)
@@ -74,6 +79,11 @@ func (env *MockedEnvironment) GOOS() string {
 
 func (env *MockedEnvironment) Platform() string {
 	args := env.Called()
+	return args.String(0)
+}
+
+func (env *MockedEnvironment) CommandPath(command string) string {
+	args := env.Called(command)
 	return args.String(0)
 }
 

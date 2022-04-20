@@ -11,6 +11,10 @@ import (
 )
 
 func TestPythonTemplate(t *testing.T) {
+	type ResolveSymlink struct {
+		Path string
+		Err  error
+	}
 	cases := []struct {
 		Case             string
 		Expected         string
@@ -18,7 +22,8 @@ func TestPythonTemplate(t *testing.T) {
 		Template         string
 		VirtualEnvName   string
 		FetchVersion     bool
-		PyenvLocal       string
+		PythonPath       string
+		ResolveSymlink   ResolveSymlink
 	}{
 		{Case: "No virtual env present", FetchVersion: true, Expected: "3.8.4", Template: "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}"},
 		{Case: "Virtual env present", FetchVersion: true, Expected: "VENV 3.8.4", VirtualEnvName: "VENV", Template: "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}"},
@@ -44,39 +49,39 @@ func TestPythonTemplate(t *testing.T) {
 			Template:       "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
 		},
 		{
-			Case:         "Pyenv show env",
-			FetchVersion: true,
-			Expected:     "VENV 3.8",
-			PyenvLocal:   "VENV\n",
-			Template:     "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+			Case:           "Pyenv show env",
+			FetchVersion:   true,
+			Expected:       "VENV 3.8",
+			PythonPath:     "/home/user/.pyenv/shims/python",
+			VirtualEnvName: "VENV",
+			Template:       "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+			ResolveSymlink: ResolveSymlink{Path: "/home/user/.pyenv/versions/3.8.8/envs/VENV", Err: nil},
 		},
 		{
-			Case:         "Pyenv skip version",
-			FetchVersion: true,
-			Expected:     "3.8",
-			PyenvLocal:   "3.8.7\n",
-			Template:     "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+			Case:           "Pyenv no venv",
+			FetchVersion:   true,
+			Expected:       "3.8",
+			PythonPath:     "/home/user/.pyenv/shims/python",
+			Template:       "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+			ResolveSymlink: ResolveSymlink{Path: "/home/user.pyenv/versions/3.8.8", Err: nil},
 		},
 	}
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "python").Return(true)
+		env.On("CommandPath", "mock.Anything").Return(tc.PythonPath)
 		env.On("RunCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
+		env.On("RunCommand", "pyenv", []string{"version-name"}).Return(tc.VirtualEnvName, nil)
 		env.On("HasFiles", "*.py").Return(true)
-		env.On("HasParentFilePath", ".python-version").Return(&environment.FileInfo{
-			ParentFolder: "/usr/home/project",
-			Path:         "/usr/home/project/.python-version",
-			IsDir:        false,
-		}, nil)
-		env.On("FileContent", "/usr/home/project/.python-version").Return(tc.PyenvLocal)
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
-		env.On("Getenv", "PYENV_VERSION").Return(tc.VirtualEnvName)
+		env.On("Getenv", "PYENV_ROOT").Return("/home/user/.pyenv")
 		env.On("PathSeparator").Return("")
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
+		env.On("ResolveSymlink", "mock.Anything").Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
 		props := properties.Map{
 			properties.FetchVersion: tc.FetchVersion,
 			UsePythonVersionFile:    true,

@@ -42,5 +42,6 @@ Show the current shell name (ZSH, powershell, bash, ...).
 ### Properties
 
 - `.Name`: `string` - the shell name
+- `.Version`: `string` - the shell version
 
 [templates]: /docs/configuration/templates

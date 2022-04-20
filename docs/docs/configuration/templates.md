@@ -14,6 +14,7 @@ offers a few standard properties to work with.
 - `.PWD`: `string` - the current working directory
 - `.Folder`: `string` - the current working folder
 - `.Shell`: `string` - the current shell name
+- `.ShellVersion`: `string` - the current shell version
 - `.UserName`: `string` - the current user name
 - `.HostName`: `string` - the host name
 - `.Code`: `int` - the last exit code

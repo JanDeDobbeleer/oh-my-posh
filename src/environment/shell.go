@@ -42,6 +42,7 @@ type Flags struct {
 	StackCount    int
 	Migrate       bool
 	TerminalWidth int
+	Strict        bool
 }
 
 type CommandError struct {

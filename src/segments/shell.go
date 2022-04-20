@@ -10,7 +10,8 @@ type Shell struct {
 	props properties.Properties
 	env   environment.Environment
 
-	Name string
+	Name    string
+	Version string
 }
 
 const (
@@ -25,6 +26,7 @@ func (s *Shell) Template() string {
 func (s *Shell) Enabled() bool {
 	mappedNames := s.props.GetKeyValueMap(MappedShellNames, make(map[string]string))
 	s.Name = s.env.Shell()
+	s.Version = s.env.Flags().ShellVersion
 	for key, val := range mappedNames {
 		if strings.EqualFold(s.Name, key) {
 			s.Name = val

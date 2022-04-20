@@ -35,6 +35,7 @@ type Flags struct {
 	ErrorCode     int
 	Config        string
 	Shell         string
+	ShellVersion  string
 	PWD           string
 	PSWD          string
 	ExecutionTime float64
@@ -108,16 +109,17 @@ type WifiInfo struct {
 }
 
 type TemplateCache struct {
-	Root     bool
-	PWD      string
-	Folder   string
-	Shell    string
-	UserName string
-	HostName string
-	Code     int
-	Env      map[string]string
-	OS       string
-	WSL      bool
+	Root         bool
+	PWD          string
+	Folder       string
+	Shell        string
+	ShellVersion string
+	UserName     string
+	HostName     string
+	Code         int
+	Env          map[string]string
+	OS           string
+	WSL          bool
 }
 
 type Environment interface {
@@ -697,10 +699,11 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 		return env.tmplCache
 	}
 	tmplCache := &TemplateCache{
-		Root:  env.Root(),
-		Shell: env.Shell(),
-		Code:  env.ErrorCode(),
-		WSL:   env.IsWsl(),
+		Root:         env.Root(),
+		Shell:        env.Shell(),
+		ShellVersion: env.CmdFlags.ShellVersion,
+		Code:         env.ErrorCode(),
+		WSL:          env.IsWsl(),
 	}
 	tmplCache.Env = make(map[string]string)
 	const separator = "="

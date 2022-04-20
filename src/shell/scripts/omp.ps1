@@ -26,6 +26,7 @@ function global:Start-Utf8Process {
 
 $env:POWERLINE_COMMAND = "oh-my-posh"
 $env:CONDA_PROMPT_MODIFIER = $false
+$env:SHELL_VERSION = $PSVersionTable.PSVersion.ToString()
 
 # specific module support (disabled by default)
 $omp_value = $env:POSH_GIT_ENABLED
@@ -73,7 +74,7 @@ function global:Initialize-ModuleSupport {
     $omp = "::OMP::"
     $cleanPWD, $cleanPSWD = Get-PoshContext
     if ($env:POSH_TRANSIENT -eq $true) {
-        @(Start-Utf8Process $omp "print transient --error=$global:OMP_ERRORCODE --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$global:OMP_EXECUTIONTIME --config=""$Env:POSH_THEME""") -join "`n"
+        @(Start-Utf8Process $omp "print transient --error=$global:OMP_ERRORCODE --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$global:OMP_EXECUTIONTIME --config=""$Env:POSH_THEME"" --shell-version=""$env:SHELL_VERSION""") -join "`n"
         $env:POSH_TRANSIENT = $false
         return
     }
@@ -110,7 +111,7 @@ function global:Initialize-ModuleSupport {
     }
     Set-PoshContext
     $terminalWidth = $Host.UI.RawUI.WindowSize.Width
-    $standardOut = @(Start-Utf8Process $omp "print primary --error=$global:OMP_ERRORCODE --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$global:OMP_EXECUTIONTIME --stack-count=$stackCount --config=""$Env:POSH_THEME"" --terminal-width=$terminalWidth")
+    $standardOut = @(Start-Utf8Process $omp "print primary --error=$global:OMP_ERRORCODE --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$global:OMP_EXECUTIONTIME --stack-count=$stackCount --config=""$Env:POSH_THEME"" --shell-version=""$env:SHELL_VERSION"" --terminal-width=$terminalWidth")
     # make sure PSReadLine knows we have a multiline prompt
     $extraLines = ($standardOut | Measure-Object -Line).Lines - 1
     if ($extraLines -gt 0) {
@@ -180,7 +181,7 @@ function global:Enable-PoshTooltips {
         $cursor = $null
         [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
         $command = ($command -split " ")[0]
-        $standardOut = @(Start-Utf8Process $omp "print tooltip --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --config=""$Env:POSH_THEME"" --command=""$command""")
+        $standardOut = @(Start-Utf8Process $omp "print tooltip --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --config=""$Env:POSH_THEME"" --command=""$command"" --shell-version=""$env:SHELL_VERSION""")
         Write-Host $standardOut -NoNewline
         $host.UI.RawUI.CursorPosition = $position
     }

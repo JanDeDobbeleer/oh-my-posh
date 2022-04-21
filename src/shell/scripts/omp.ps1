@@ -8,15 +8,15 @@ function global:Start-Utf8Process {
     $StartInfo = $Process.StartInfo
     $StartInfo.StandardErrorEncoding = $StartInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
     $StartInfo.RedirectStandardError = $StartInfo.RedirectStandardInput = $StartInfo.RedirectStandardOutput = $true
-    $StartInfo.FileName = $filename
+    $StartInfo.FileName = $Filename
     $StartInfo.Arguments = $Arguments
     $StartInfo.UseShellExecute = $false
     if ($PWD.Provider.Name -eq 'FileSystem') {
         $StartInfo.WorkingDirectory = $PWD.ProviderPath
     }
     $StartInfo.CreateNoWindow = $true
-    $_ = $Process.Start();
-    $_ = $Process.WaitForExit();
+    $Process.Start() | Out-Null
+    $Process.WaitForExit() | Out-Null
     $stderr = $Process.StandardError.ReadToEnd().Trim()
     if ($stderr -ne '') {
         $Host.UI.WriteErrorLine($stderr)
@@ -29,25 +29,19 @@ $env:CONDA_PROMPT_MODIFIER = $false
 $env:SHELL_VERSION = $PSVersionTable.PSVersion.ToString()
 
 # specific module support (disabled by default)
-$omp_value = $env:POSH_GIT_ENABLED
-if ($null -eq $omp_value) {
+if ($null -eq $env:POSH_GIT_ENABLED) {
     $env:POSH_GIT_ENABLED = $false
 }
 
 # used to detect empty hit
-$global:omp_lastHistoryId = -1
+$global:OMP_LASTHISTORYID = -1
 
-$omp_config = "::CONFIG::"
-if (Test-Path $omp_config) {
-    $env:POSH_THEME = (Resolve-Path -Path $omp_config).ProviderPath
+if (Test-Path "::CONFIG::") {
+    $env:POSH_THEME = (Resolve-Path -Path "::CONFIG::").ProviderPath
 }
 
-Remove-Variable omp_value -Confirm:$false
-Remove-Variable omp_config -Confirm:$false
-
 # set secondary prompt`
-$secondaryPrompt = @(Start-Utf8Process "::OMP::" "print secondary --config=""$Env:POSH_THEME""") -join "`n"
-Set-PSReadLineOption -ContinuationPrompt $secondaryPrompt
+Set-PSReadLineOption -ContinuationPrompt (@(Start-Utf8Process "::OMP::" "print secondary --config=""$Env:POSH_THEME""") -join "`n")
 
 function global:Set-PoshContext {}
 
@@ -66,16 +60,16 @@ function global:Initialize-ModuleSupport {
     }
 }
 
-[ScriptBlock]$Prompt = {
+Set-Item -Force -Path Function:prompt -Value {
     #store if the last command was successful
     $lastCommandSuccess = $?
     #store the last exit code for restore
     $realLASTEXITCODE = $global:LASTEXITCODE
     $omp = "::OMP::"
     $cleanPWD, $cleanPSWD = Get-PoshContext
-    if ($env:POSH_TRANSIENT -eq $true) {
+    if ($global:POSH_TRANSIENT -eq $true) {
         @(Start-Utf8Process $omp "print transient --error=$global:OMP_ERRORCODE --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$global:OMP_EXECUTIONTIME --config=""$Env:POSH_THEME"" --shell-version=""$env:SHELL_VERSION""") -join "`n"
-        $env:POSH_TRANSIENT = $false
+        $global:POSH_TRANSIENT = $false
         return
     }
     if (Test-Path variable:/PSDebugContext) {
@@ -85,8 +79,8 @@ function global:Initialize-ModuleSupport {
     $global:OMP_ERRORCODE = 0
     Initialize-ModuleSupport
     if ($lastCommandSuccess -eq $false) {
-        #native app exit code
-        if ($realLASTEXITCODE -is [int] -and $realLASTEXITCODE -gt 0) {
+        # native app exit code
+        if ($realLASTEXITCODE -is [int] -and $realLASTEXITCODE -ne 0) {
             $global:OMP_ERRORCODE = $realLASTEXITCODE
         }
         else {
@@ -94,20 +88,20 @@ function global:Initialize-ModuleSupport {
         }
     }
 
-    # read stack count from current stack(if invoked from profile=right value,otherwise use the global variable set in Set-PoshPrompt(stack scoped to module))
+    # read stack count from current stack(if invoked from profile=right value, otherwise use the global variable set in Set-PoshPrompt(stack scoped to module))
     $stackCount = (Get-Location -stack).Count
     try {
-        if ($global:omp_global_sessionstate -ne $null) {
-            $stackCount = ($global:omp_global_sessionstate).path.locationstack('').count
+        if ($global:OMP_GLOBAL_SESSIONSTATE -ne $null) {
+            $stackCount = ($global:OMP_GLOBAL_SESSIONSTATE).path.locationstack('').count
         }
     }
     catch {}
 
     $global:OMP_EXECUTIONTIME = -1
     $history = Get-History -ErrorAction Ignore -Count 1
-    if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime -and $global:omp_lastHistoryId -ne $history.Id) {
+    if ($null -ne $history -and $null -ne $history.EndExecutionTime -and $null -ne $history.StartExecutionTime -and $global:OMP_LASTHISTORYID -ne $history.Id) {
         $global:OMP_EXECUTIONTIME = ($history.EndExecutionTime - $history.StartExecutionTime).TotalMilliseconds
-        $global:omp_lastHistoryId = $history.Id
+        $global:OMP_LASTHISTORYID = $history.Id
     }
     Set-PoshContext
     $terminalWidth = $Host.UI.RawUI.WindowSize.Width
@@ -120,11 +114,7 @@ function global:Initialize-ModuleSupport {
     # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n
     $standardOut -join "`n"
     $global:LASTEXITCODE = $realLASTEXITCODE
-    #remove temp variables
-    Remove-Variable realLASTEXITCODE -Confirm:$false
-    Remove-Variable lastCommandSuccess -Confirm:$false
 }
-Set-Item -Path Function:prompt -Value $Prompt -Force
 
 <#
 .SYNOPSIS
@@ -189,7 +179,7 @@ function global:Enable-PoshTooltips {
 
 function global:Enable-PoshTransientPrompt {
     Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
-        $env:POSH_TRANSIENT = $true
+        $global:POSH_TRANSIENT = $true
         $previousOutputEncoding = [Console]::OutputEncoding
         [Console]::OutputEncoding = [Text.Encoding]::UTF8
         try {
@@ -270,18 +260,18 @@ function global:Get-PoshThemes() {
     else {
         $omp = "::OMP::"
         $themes | ForEach-Object -Process {
-            Write-Host "Theme: $(Get-Hyperlink -uri $_.fullname -name $_.BaseName.Replace('.omp', ''))"
-            Write-Host ""
+            Write-Host "Theme: $(Get-Hyperlink -uri $_.fullname -name $_.BaseName.Replace('.omp', ''))`n"
             @(Start-Utf8Process $omp "print primary --config=""$($_.FullName)"" --pwd=""$PWD"" --shell pwsh")
-            Write-Host ""
-            Write-Host ""
+            Write-Host "`n"
         }
     }
-    Write-Host ""
-    Write-Host "Themes location: $(Get-Hyperlink -uri "$Path")"
-    Write-Host ""
-    Write-Host "To change your theme, adjust the init script in $PROFILE."
-    Write-Host "Example:"
-    Write-Host "  oh-my-posh init pwsh --config $Path/jandedobbeleer.omp.json | Invoke-Expression"
-    Write-Host ""
+    Write-Host @"
+
+Themes location: $(Get-Hyperlink -uri "$Path")
+
+To change your theme, adjust the init script in $PROFILE.
+Example:
+  oh-my-posh init pwsh --config $Path/jandedobbeleer.omp.json | Invoke-Expression
+
+"@
 }

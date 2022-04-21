@@ -185,7 +185,7 @@ function Set-PoshPrompt {
     # Workaround for get-location/push-location/pop-location from within a module
     # https://github.com/PowerShell/PowerShell/issues/12868
     # https://github.com/JanDeDobbeleer/oh-my-posh2/issues/113
-    $global:omp_global_sessionstate = $PSCmdlet.SessionState
+    $global:OMP_GLOBAL_SESSIONSTATE = $PSCmdlet.SessionState
 
     $poshCommand = Get-PoshCommand
     (& $poshCommand init pwsh --config="$config") | Invoke-Expression

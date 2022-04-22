@@ -465,7 +465,8 @@ func TestSetGitStatus(t *testing.T) {
 		env.MockGitCommand("", strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
 		g := &Git{
 			scm: scm{
-				env: env,
+				env:   env,
+				props: properties.Map{},
 			},
 		}
 		if tc.ExpectedWorking == nil {
@@ -759,5 +760,46 @@ func TestGitTemplateString(t *testing.T) {
 		tc.Git.env = env
 		tc.Git.props = props
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Git), tc.Case)
+	}
+}
+
+func TestGitUntrackedMode(t *testing.T) {
+	cases := []struct {
+		Case           string
+		Expected       string
+		UntrackedModes map[string]string
+	}{
+		{
+			Case:     "Default mode - no map",
+			Expected: "-unormal",
+		},
+		{
+			Case:     "Default mode - no match",
+			Expected: "-unormal",
+			UntrackedModes: map[string]string{
+				"bar": "no",
+			},
+		},
+		{
+			Case:     "No mode - match",
+			Expected: "-uno",
+			UntrackedModes: map[string]string{
+				"foo": "no",
+				"bar": "normal",
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		g := &Git{
+			scm: scm{
+				props: properties.Map{
+					UntrackedModes: tc.UntrackedModes,
+				},
+			},
+			gitRealFolder: "foo",
+		}
+		got := g.getUntrackedFilesMode()
+		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

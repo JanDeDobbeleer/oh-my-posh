@@ -615,6 +615,12 @@
                     "title": "Branch max length",
                     "description": "the max length for the displayed branch name where 0 implies full length",
                     "default": 0
+                  },
+                  "untracked_modes": {
+                    "type": "object",
+                    "title": "Untracked files mode",
+                    "description": "Set the untracked files mode for a repository",
+                    "default": {}
                   }
                 }
               }

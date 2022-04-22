@@ -169,6 +169,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://github.com/xadozuk"><img src="https://avatars.githubusercontent.com/u/780423?v=4?s=100" width="100px;" alt=""/><br /><sub><b>xadozuk</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=xadozuk" title="Code">💻</a></td>
     <td align="center"><a href="https://bittu.eu.org"><img src="https://avatars.githubusercontent.com/u/83997633?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Begula</b></sub></a><br /><a href="#design-vedantmgoyal2009" title="Design">🎨</a></td>
     <td align="center"><a href="https://github.com/lewis-yeung"><img src="https://avatars.githubusercontent.com/u/83903009?v=4?s=100" width="100px;" alt=""/><br /><sub><b>L. Yeung</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=lewis-yeung" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=lewis-yeung" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/antoson"><img src="https://avatars.githubusercontent.com/u/36371990?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ondrej Antos</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=antoson" title="Documentation">📖</a></td>
   </tr>
 </table>
 

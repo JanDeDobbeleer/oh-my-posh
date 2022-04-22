@@ -1135,6 +1135,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "antoson",
+      "name": "Ondrej Antos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36371990?v=4",
+      "profile": "https://github.com/antoson",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

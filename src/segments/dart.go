@@ -17,7 +17,8 @@ func (d *Dart) Init(props properties.Properties, env environment.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.dart", "pubspec.yaml", "pubspec.yml", "pubspec.lock", ".dart_tool"},
+		extensions: []string{"*.dart", "pubspec.yaml", "pubspec.yml", "pubspec.lock"},
+		folders:    []string{".dart_tool"},
 		commands: []*cmd{
 			{
 				executable: "dart",

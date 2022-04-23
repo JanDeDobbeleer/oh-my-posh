@@ -356,9 +356,16 @@ func (env *ShellEnvironment) HasFiles(pattern string) bool {
 		env.log(Error, "HasFiles", err.Error())
 		return false
 	}
-	hasFiles := len(matches) > 0
-	env.debugF("HasFiles", func() string { return strconv.FormatBool(hasFiles) })
-	return hasFiles
+	for _, match := range matches {
+		f, _ := os.Stat(match)
+		if f.IsDir() {
+			continue
+		}
+		env.log(Debug, "HasFiles", "true")
+		return true
+	}
+	env.log(Debug, "HasFiles", "false")
+	return false
 }
 
 func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
@@ -397,10 +404,13 @@ func (env *ShellEnvironment) HasFileInParentDirs(pattern string, depth uint) boo
 
 func (env *ShellEnvironment) HasFolder(folder string) bool {
 	defer env.trace(time.Now(), "HasFolder", folder)
-	_, err := os.Stat(folder)
-	hasFolder := !os.IsNotExist(err)
-	env.debugF("HasFolder", func() string { return strconv.FormatBool(hasFolder) })
-	return hasFolder
+	f, err := os.Stat(folder)
+	if err != nil {
+		env.log(Debug, "HasFolder", "false")
+		return false
+	}
+	env.debugF("HasFolder", func() string { return strconv.FormatBool(f.IsDir()) })
+	return f.IsDir()
 }
 
 func (env *ShellEnvironment) ResolveSymlink(path string) (string, error) {

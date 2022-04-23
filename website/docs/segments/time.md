@@ -76,5 +76,14 @@ Show the current timestamp.
 - StampMicro = "Jan _2 15:04:05.000000"
 - StampNano  = "Jan _2 15:04:05.000000000"
 
+## Examples
+
+To display the time in multiple time zones, using [Sprig's Date Functions][sprig-date]:
+
+```text
+{{ .CurrentDate | date .Format }} {{ dateInZone "15:04Z" .CurrentDate "UTC" }}
+```
+
 [templates]: /docs/configuration/templates
 [format]: https://yourbasic.org/golang/format-parse-string-time-date-example/
+[sprig-date]: https://masterminds.github.io/sprig/date.html

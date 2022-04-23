@@ -3,7 +3,7 @@
   "$id": "http://example.com/example.json",
   "type": "object",
   "title": "The Oh My Posh theme definition",
-  "description": "https://ohmyposh.dev/docs/config-overview",
+  "description": "https://ohmyposh.dev/docs/configuration/overview",
   "definitions": {
     "color": {
       "anyOf": [
@@ -15,19 +15,19 @@
       "type": "string",
       "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite|transparent|parentBackground|parentForeground|background|foreground)$",
       "title": "Color string",
-      "description": "https://ohmyposh.dev/docs/config-colors",
+      "description": "https://ohmyposh.dev/docs/configuration/colors",
       "format": "color"
     },
     "palette_reference": {
       "type": "string",
       "pattern": "^p:.*$",
       "title": "Palette reference",
-      "description": "https://ohmyposh.dev/docs/config-colors#palette"
+      "description": "https://ohmyposh.dev/docs/configuration/colors#palette"
     },
     "color_templates": {
       "type": "array",
       "title": "Templates to define a color",
-      "description": "https://ohmyposh.dev/docs/config-colors#color-templates",
+      "description": "https://ohmyposh.dev/docs/configuration/colors#color-templates",
       "default": [],
       "items": {
         "$ref": "#/definitions/segment/properties/template"
@@ -74,7 +74,7 @@
     },
     "block": {
       "type": "object",
-      "description": "https://ohmyposh.dev/docs/config-block",
+      "description": "https://ohmyposh.dev/docs/configuration/block",
       "allOf": [
         {
           "if": {
@@ -103,37 +103,37 @@
         "type": {
           "type": "string",
           "title": "Block type",
-          "description": "https://ohmyposh.dev/docs/config-block#type",
+          "description": "https://ohmyposh.dev/docs/configuration/block#type",
           "enum": ["prompt", "rprompt"],
           "default": "prompt"
         },
         "alignment": {
           "type": "string",
           "title": "Block alignment",
-          "description": "https://ohmyposh.dev/docs/config-block#alignment",
+          "description": "https://ohmyposh.dev/docs/configuration/block#alignment",
           "enum": ["left", "right"],
           "default": "left"
         },
         "newline": {
           "type": "boolean",
           "title": "Newline",
-          "description": "https://ohmyposh.dev/docs/config-block#newline",
+          "description": "https://ohmyposh.dev/docs/configuration/block#newline",
           "default": false
         },
         "vertical_offset": {
           "type": "integer",
           "title": "Block vertical offset",
-          "description": "https://ohmyposh.dev/docs/config-block#vertical-offset"
+          "description": "https://ohmyposh.dev/docs/configuration/block#vertical-offset"
         },
         "horizontal-offset": {
           "type": "integer",
           "title": "Block vertical offset",
-          "description": "https://ohmyposh.dev/docs/config-block#horizontal-offset"
+          "description": "https://ohmyposh.dev/docs/configuration/block#horizontal-offset"
         },
         "segments": {
           "type": "array",
           "title": "Segments list, prompt elements to display based on context",
-          "description": "https://ohmyposh.dev/docs/config-block#segments",
+          "description": "https://ohmyposh.dev/docs/configuration/block#segments",
           "default": [],
           "items": { "$ref": "#/definitions/segment" }
         }
@@ -142,14 +142,14 @@
     "segment": {
       "type": "object",
       "title": "A segment",
-      "description": "https://ohmyposh.dev/docs/config-segment",
+      "description": "https://ohmyposh.dev/docs/configuration/segment",
       "default": {},
       "required": ["type", "style"],
       "properties": {
         "type": {
           "type": "string",
           "title": "Segment Type",
-          "description": "https://ohmyposh.dev/docs/config-segment#type",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#type",
           "enum": [
             "session",
             "path",
@@ -206,7 +206,7 @@
         "style": {
           "type": "string",
           "title": "Segment Style",
-          "description": "https://ohmyposh.dev/docs/config-segment#style",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#style",
           "enum": ["powerline", "plain", "diamond", "accordion"]
         },
         "foreground": { "$ref": "#/definitions/color" },
@@ -216,19 +216,19 @@
         "template": {
           "type": "string",
           "title": "Template text",
-          "description": "https://ohmyposh.dev/docs/config-templates",
+          "description": "https://ohmyposh.dev/docs/configuration/templates",
           "default": ""
         },
         "properties": {
           "type": "object",
           "title": "Segment Properties, used to change behavior/displaying",
-          "description": "https://ohmyposh.dev/docs/config-segment#properties",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#properties",
           "default": {},
           "properties": {
             "include_folders": {
               "type": "array",
               "title": "If specified, segment will only render in these folders",
-              "description": "https://ohmyposh.dev/docs/config-segment#include--exclude-folders",
+              "description": "https://ohmyposh.dev/docs/configuration/segment#include--exclude-folders",
               "default": [],
               "items": {
                 "type": "string"
@@ -237,7 +237,7 @@
             "exclude_folders": {
               "type": "array",
               "title": "Exclude rendering in these folders",
-              "description": "https://ohmyposh.dev/docs/config-segment#include--exclude-folders",
+              "description": "https://ohmyposh.dev/docs/configuration/segment#include--exclude-folders",
               "default": [],
               "items": {
                 "type": "string"
@@ -246,7 +246,7 @@
             "ignore_folders": {
               "type": "array",
               "title": "Deprecated - please use `exclude_folders` instead",
-              "description": "https://ohmyposh.dev/docs/config-segment#include--exclude-folders",
+              "description": "https://ohmyposh.dev/docs/configuration/segment#include--exclude-folders",
               "default": [],
               "items": {
                 "type": "string"
@@ -290,13 +290,13 @@
               "powerline_symbol": {
                 "type": "string",
                 "title": "Powerline Symbol",
-                "description": "https://ohmyposh.dev/docs/config-segment#powerline-symbol",
+                "description": "https://ohmyposh.dev/docs/configuration/segment#powerline-symbol",
                 "default": "\uE0B0"
               },
               "invert_powerline": {
                 "type": "boolean",
                 "title": "Flip the Powerline symbol vertically",
-                "description": "https://ohmyposh.dev/docs/config-segment#invert-powerline",
+                "description": "https://ohmyposh.dev/docs/configuration/segment#invert-powerline",
                 "default": false
               }
             }
@@ -313,13 +313,13 @@
               "leading_diamond": {
                 "type": "string",
                 "title": "Leading diamond",
-                "description": "https://ohmyposh.dev/docs/config-segment#leading-diamond",
+                "description": "https://ohmyposh.dev/docs/configuration/segment#leading-diamond",
                 "default": ""
               },
               "trailing_diamond": {
                 "type": "string",
                 "title": "Trailing diamond",
-                "description": "https://ohmyposh.dev/docs/config-segment#trailing-diamond",
+                "description": "https://ohmyposh.dev/docs/configuration/segment#trailing-diamond",
                 "default": ""
               }
             }
@@ -2142,19 +2142,19 @@
     "final_space": {
       "type": "boolean",
       "title": "Final Space",
-      "description": "https://ohmyposh.dev/docs/config-overview#general-settings",
+      "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
       "default": true
     },
     "osc99": {
       "type": "boolean",
       "title": "Enable OSC99",
-      "description": "https://ohmyposh.dev/docs/config-overview#general-settings",
+      "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
       "default": false
     },
     "console_title_template": {
       "type": "string",
       "title": "Console Title Template",
-      "description": "https://ohmyposh.dev/docs/config-title#console-title-template",
+      "description": "https://ohmyposh.dev/docs/configuration/title#console-title-template",
       "default": "{{ .Shell }} in {{ .Folder }}"
     },
     "terminal_background": { "$ref": "#/definitions/color" },
@@ -2162,13 +2162,13 @@
       "type": "array",
       "title": "Block array",
       "default": [],
-      "description": "https://ohmyposh.dev/docs/config-overview#blocks",
+      "description": "https://ohmyposh.dev/docs/configuration/overview#blocks",
       "items": { "$ref": "#/definitions/block" }
     },
     "tooltips": {
       "type": "array",
       "title": "Tooltip list, prompt elements to display based on context",
-      "description": "https://ohmyposh.dev/docs/config-tooltips",
+      "description": "https://ohmyposh.dev/docs/configuration/tooltips",
       "default": [],
       "items": {
         "allOf": [{ "$ref": "#/definitions/segment" }],
@@ -2187,27 +2187,27 @@
     "transient_prompt": {
       "$ref": "#/definitions/extra_prompt",
       "title": "Transient Prompt Setting",
-      "description": "https://ohmyposh.dev/docs/config-transient"
+      "description": "https://ohmyposh.dev/docs/configuration/transient"
     },
     "valid_line": {
       "$ref": "#/definitions/extra_prompt",
       "title": "Valid Prompt Setting",
-      "description": "https://ohmyposh.dev/docs/config-prompt-override"
+      "description": "https://ohmyposh.dev/docs/configuration/prompt-override"
     },
     "error_line": {
       "$ref": "#/definitions/extra_prompt",
       "title": "Error Prompt Setting",
-      "description": "https://ohmyposh.dev/docs/config-prompt-override"
+      "description": "https://ohmyposh.dev/docs/configuration/prompt-override"
     },
     "secondary_prompt": {
       "$ref": "#/definitions/extra_prompt",
       "title": "Secondary Prompt Setting",
-      "description": "https://ohmyposh.dev/docs/config-secondary-prompt"
+      "description": "https://ohmyposh.dev/docs/configuration/secondary-prompt"
     },
     "palette": {
       "type": "object",
       "title": "Palette",
-      "description": "https://ohmyposh.dev/docs/config-colors#palette",
+      "description": "https://ohmyposh.dev/docs/configuration/colors#palette",
       "default": {},
       "patternProperties": {
         ".*": { "$ref": "#/definitions/color" }

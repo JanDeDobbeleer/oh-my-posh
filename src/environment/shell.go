@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"io/ioutil"
 	"log"
+	"math"
 	"net/http"
 	"oh-my-posh/regex"
 	"os"
@@ -122,6 +123,11 @@ type TemplateCache struct {
 	WSL          bool
 }
 
+type BatteryInfo struct {
+	Percentage int
+	State      battery.State
+}
+
 type Environment interface {
 	Getenv(key string) string
 	Pwd() string
@@ -149,7 +155,7 @@ type Environment interface {
 	RunShellCommand(shell, command string) string
 	ExecutionTime() float64
 	Flags() *Flags
-	BatteryInfo() ([]*battery.Battery, error)
+	BatteryState() (*BatteryInfo, error)
 	QueryWindowTitles(processName, windowTitleRegex string) (string, error)
 	WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error)
 	HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
@@ -560,8 +566,43 @@ func (env *ShellEnvironment) Flags() *Flags {
 	return env.CmdFlags
 }
 
-func (env *ShellEnvironment) BatteryInfo() ([]*battery.Battery, error) {
+func mapMostLogicalState(currentState, newState battery.State) battery.State {
+	switch currentState {
+	case battery.Discharging, battery.NotCharging:
+		return battery.Discharging
+	case battery.Empty:
+		return newState
+	case battery.Charging:
+		if newState == battery.Discharging {
+			return battery.Discharging
+		}
+		return battery.Charging
+	case battery.Unknown:
+		return newState
+	case battery.Full:
+		return newState
+	}
+	return newState
+}
+
+func (env *ShellEnvironment) BatteryState() (*BatteryInfo, error) {
 	defer env.trace(time.Now(), "BatteryInfo")
+
+	parseBatteryInfo := func(batteries []*battery.Battery) *BatteryInfo {
+		var info BatteryInfo
+		var current, total float64
+		var state battery.State
+		for _, bt := range batteries {
+			current += bt.Current
+			total += bt.Full
+			state = mapMostLogicalState(state, bt.State)
+		}
+		batteryPercentage := current / total * 100
+		info.Percentage = int(math.Min(100, batteryPercentage))
+		info.State = state
+		return &info
+	}
+
 	batteries, err := battery.GetAll()
 	// actual error, return it
 	if err != nil && len(batteries) == 0 {
@@ -609,7 +650,7 @@ func (env *ShellEnvironment) BatteryInfo() ([]*battery.Battery, error) {
 
 	// when battery info fails to get retrieved but there is at least one valid battery, return it without error
 	if len(validBatteries) > 0 && fatalErr != nil && strings.Contains(fatalErr.Error(), unableToRetrieveBatteryInfo) {
-		return validBatteries, nil
+		return parseBatteryInfo(validBatteries), nil
 	}
 	// another error occurred (possibly unmapped use-case), return it
 	if fatalErr != nil {
@@ -617,7 +658,7 @@ func (env *ShellEnvironment) BatteryInfo() ([]*battery.Battery, error) {
 		return nil, fatalErr
 	}
 	// everything is fine
-	return validBatteries, nil
+	return parseBatteryInfo(validBatteries), nil
 }
 
 func (env *ShellEnvironment) Shell() string {

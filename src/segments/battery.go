@@ -1,7 +1,6 @@
 package segments
 
 import (
-	"math"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 
@@ -12,10 +11,9 @@ type Battery struct {
 	props properties.Properties
 	env   environment.Environment
 
-	battery.Battery
-	Percentage int
-	Error      string
-	Icon       string
+	*environment.BatteryInfo
+	Error string
+	Icon  string
 }
 
 const (
@@ -37,26 +35,19 @@ func (b *Battery) Enabled() bool {
 		return false
 	}
 
-	batteries, err := b.env.BatteryInfo()
+	var err error
+	b.BatteryInfo, err = b.env.BatteryState()
 
 	if !b.enabledWhileError(err) {
 		return false
 	}
 
 	// case on computer without batteries(no error, empty array)
-	if err == nil && len(batteries) == 0 {
+	if err == nil && b.BatteryInfo == nil {
 		return false
 	}
 
-	for _, bt := range batteries {
-		b.Battery.Current += bt.Current
-		b.Battery.Full += bt.Full
-		b.Battery.State = b.mapMostLogicalState(b.Battery.State, bt.State)
-	}
-	batteryPercentage := b.Battery.Current / b.Battery.Full * 100
-	b.Percentage = int(math.Min(100, batteryPercentage))
-
-	switch b.Battery.State {
+	switch b.BatteryInfo.State {
 	case battery.Discharging, battery.NotCharging:
 		b.Icon = b.props.GetString(DischargingIcon, "")
 	case battery.Charging:
@@ -85,29 +76,9 @@ func (b *Battery) enabledWhileError(err error) bool {
 	// This hack ensures we display a fully charged battery, even if
 	// that state can be incorrect. It's better to "ignore" the error
 	// than to not display the segment at all as that will confuse users.
-	b.Battery.Current = 100
-	b.Battery.Full = 10
-	b.Battery.State = battery.Full
+	b.Percentage = 100
+	b.State = battery.Full
 	return true
-}
-
-func (b *Battery) mapMostLogicalState(currentState, newState battery.State) battery.State {
-	switch currentState {
-	case battery.Discharging, battery.NotCharging:
-		return battery.Discharging
-	case battery.Empty:
-		return newState
-	case battery.Charging:
-		if newState == battery.Discharging {
-			return battery.Discharging
-		}
-		return battery.Charging
-	case battery.Unknown:
-		return newState
-	case battery.Full:
-		return newState
-	}
-	return newState
 }
 
 func (b *Battery) Init(props properties.Properties, env environment.Environment) {

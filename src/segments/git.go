@@ -103,6 +103,8 @@ const (
 	GitlabIcon properties.Property = "gitlab_icon"
 	// GitIcon shows when the upstream can't be identified
 	GitIcon properties.Property = "git_icon"
+	// UntrackedModes list the optional untracked files mode per repo
+	UntrackedModes properties.Property = "untracked_modes"
 
 	DETACHED     = "(detached)"
 	BRANCHPREFIX = "ref: refs/heads/"
@@ -190,6 +192,15 @@ func (g *Git) shouldDisplay() bool {
 			return true
 		}
 
+		// check for separate git folder(--separate-git-dir)
+		// check if the folder contains a HEAD file
+		if g.env.HasFilesInDir(g.gitWorkingFolder, "HEAD") {
+			gitFolder := strings.TrimSuffix(g.gitRootFolder, ".git")
+			g.gitRootFolder = g.gitWorkingFolder
+			g.gitWorkingFolder = gitFolder
+			g.gitRealFolder = gitFolder
+			return true
+		}
 		return false
 	}
 	return false
@@ -256,9 +267,12 @@ func (g *Git) setGitStatus() {
 		UPSTREAM     = "# branch.upstream "
 		BRANCHSTATUS = "# branch.ab "
 	)
+	// firstly assume that upstream is gone
+	g.UpstreamGone = true
 	g.Working = &GitStatus{}
 	g.Staging = &GitStatus{}
-	output := g.getGitCommandOutput("status", "-unormal", "--branch", "--porcelain=2")
+	untrackedMode := g.getUntrackedFilesMode()
+	output := g.getGitCommandOutput("status", untrackedMode, "--branch", "--porcelain=2")
 	for _, line := range strings.Split(output, "\n") {
 		if strings.HasPrefix(line, HASH) && len(line) >= len(HASH)+7 {
 			g.Hash = line[len(HASH) : len(HASH)+7]
@@ -484,8 +498,14 @@ func (g *Git) getWorktreeContext() int {
 	if !g.env.HasFolder(g.gitRootFolder + "/worktrees") {
 		return 0
 	}
-	worktreeFolders := g.env.FolderList(g.gitRootFolder + "/worktrees")
-	return len(worktreeFolders)
+	worktreeFolders := g.env.LsDir(g.gitRootFolder + "/worktrees")
+	var count int
+	for _, folder := range worktreeFolders {
+		if folder.IsDir() {
+			count++
+		}
+	}
+	return count
 }
 
 func (g *Git) getOriginURL(upstream string) string {
@@ -524,4 +544,13 @@ func (g *Git) convertToLinuxPath(path string) string {
 		return path
 	}
 	return g.env.ConvertToLinuxPath(path)
+}
+
+func (g *Git) getUntrackedFilesMode() string {
+	mode := "normal"
+	repoModes := g.props.GetKeyValueMap(UntrackedModes, map[string]string{})
+	if val := repoModes[g.gitRealFolder]; len(val) != 0 {
+		mode = val
+	}
+	return fmt.Sprintf("-u%s", mode)
 }

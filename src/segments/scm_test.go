@@ -1,8 +1,6 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
-	"oh-my-posh/mock"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -154,37 +152,5 @@ func TestTruncateBranchWithSymbol(t *testing.T) {
 			},
 		}
 		assert.Equal(t, tc.Expected, p.truncateBranch(tc.Branch), tc.Case)
-	}
-}
-
-func TestScmShouldIgnoreRootRepository(t *testing.T) {
-	cases := []struct {
-		Case     string
-		Dir      string
-		Expected bool
-	}{
-		{Case: "inside excluded", Dir: "/home/bill/repo"},
-		{Case: "oustide excluded", Dir: "/home/melinda"},
-		{Case: "excluded exact match", Dir: "/home/gates", Expected: true},
-		{Case: "excluded inside match", Dir: "/home/gates/bill", Expected: true},
-	}
-
-	for _, tc := range cases {
-		excludeFolders := []string{
-			"/home/bill",
-			"/home/gates.*",
-		}
-		props := properties.Map{
-			properties.ExcludeFolders: excludeFolders,
-		}
-		env := new(mock.MockedEnvironment)
-		env.On("Home").Return("/home/bill")
-		env.On("GOOS").Return(environment.WindowsPlatform)
-		s := &scm{
-			props: props,
-			env:   env,
-		}
-		got := s.shouldIgnoreRootRepository(tc.Dir)
-		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

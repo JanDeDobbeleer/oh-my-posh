@@ -74,7 +74,7 @@ func (s *scm) shouldIgnoreRootRepository(rootDir string) bool {
 	if len(excludedFolders) == 0 {
 		return false
 	}
-	return environment.DirMatchesOneOf(s.env, rootDir, excludedFolders)
+	return s.env.DirMatchesOneOf(rootDir, excludedFolders)
 }
 
 func (s *scm) FileContents(folder, file string) string {

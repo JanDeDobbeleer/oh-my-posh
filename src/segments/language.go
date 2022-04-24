@@ -58,6 +58,7 @@ type language struct {
 	props              properties.Properties
 	env                environment.Environment
 	extensions         []string
+	folders            []string
 	commands           []*cmd
 	versionURLTemplate string
 	exitCode           int
@@ -89,11 +90,14 @@ const (
 	HomeEnabled properties.Property = "home_enabled"
 	// LanguageExtensions the list of extensions to validate
 	LanguageExtensions properties.Property = "extensions"
+	// LanguageFolders the list of folders to validate
+	LanguageFolders properties.Property = "folders"
 )
 
 func (l *language) Enabled() bool {
 	// override default extensions if needed
 	l.extensions = l.props.GetStringArray(LanguageExtensions, l.extensions)
+	l.folders = l.props.GetStringArray(LanguageFolders, l.folders)
 	inHomeDir := func() bool {
 		return l.env.Pwd() == l.env.Home()
 	}
@@ -113,11 +117,11 @@ func (l *language) Enabled() bool {
 		case DisplayModeEnvironment:
 			enabled = l.inLanguageContext()
 		case DisplayModeFiles:
-			enabled = l.hasLanguageFiles()
+			enabled = l.hasLanguageFiles() || l.hasLanguageFolders()
 		case DisplayModeContext:
 			fallthrough
 		default:
-			enabled = l.hasLanguageFiles() || l.inLanguageContext()
+			enabled = l.hasLanguageFiles() || l.hasLanguageFolders() || l.inLanguageContext()
 		}
 	}
 	if !enabled || !l.props.GetBool(properties.FetchVersion, true) {
@@ -130,18 +134,22 @@ func (l *language) Enabled() bool {
 	return enabled
 }
 
-// hasLanguageFiles will return true at least one file matching the extensions is found
 func (l *language) hasLanguageFiles() bool {
-	for i, extension := range l.extensions {
+	for _, extension := range l.extensions {
 		if l.env.HasFiles(extension) {
-			break
-		}
-		if i == len(l.extensions)-1 {
-			return false
+			return true
 		}
 	}
+	return false
+}
 
-	return true
+func (l *language) hasLanguageFolders() bool {
+	for _, folder := range l.folders {
+		if l.env.HasFolder(folder) {
+			return true
+		}
+	}
+	return false
 }
 
 // setVersion parses the version string returned by the command

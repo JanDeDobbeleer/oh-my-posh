@@ -1,7 +1,3 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cli
 
 import (
@@ -24,8 +20,9 @@ var (
 	terminalWidth int
 	eval          bool
 
-	command string
-	plain   bool
+	command      string
+	shellVersion string
+	plain        bool
 )
 
 // printCmd represents the prompt command
@@ -61,6 +58,7 @@ var printCmd = &cobra.Command{
 				TerminalWidth: terminalWidth,
 				Eval:          eval,
 				Shell:         shellName,
+				ShellVersion:  shellVersion,
 			},
 		}
 		env.Init(false)
@@ -122,6 +120,7 @@ func init() { // nolint:gochecknoinits
 	printCmd.Flags().StringVar(&pwd, "pwd", "", "current working directory")
 	printCmd.Flags().StringVar(&pswd, "pswd", "", "current working directory (according to pwsh)")
 	printCmd.Flags().StringVar(&shellName, "shell", "", "the shell to print for")
+	printCmd.Flags().StringVar(&shellVersion, "shell-version", "", "the shell version")
 	printCmd.Flags().IntVarP(&exitCode, "error", "e", 0, "last exit code")
 	printCmd.Flags().Float64Var(&timing, "execution-time", 0, "timing of the last command")
 	printCmd.Flags().IntVarP(&stackCount, "stack-count", "s", 0, "number of locations on the stack")

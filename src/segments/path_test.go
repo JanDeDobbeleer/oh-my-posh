@@ -267,6 +267,9 @@ func TestAgnosterPathStyles(t *testing.T) {
 		{Style: Unique, Expected: "~ > a > ab > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/abc/abcd", PathSeparator: "/", FolderSeparatorIcon: " > "},
 		{Style: Unique, Expected: "~ > a > .a > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/.abc/abcd", PathSeparator: "/", FolderSeparatorIcon: " > "},
 		{Style: Unique, Expected: "~ > a > ab > abcd", HomePath: "/usr/home", Pwd: "/usr/home/ab/ab/abcd", PathSeparator: "/", FolderSeparatorIcon: " > "},
+
+		{Style: AgnosterShort, Expected: "localhost > c$", HomePath: homeBillWindows, Pwd: "\\\\localhost\\c$", PathSeparator: "\\", FolderSeparatorIcon: " > "},
+		{Style: AgnosterShort, Expected: "localhost\\c$", HomePath: homeBillWindows, Pwd: "\\\\localhost\\c$", PathSeparator: "\\", FolderSeparatorIcon: "\\"},
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)

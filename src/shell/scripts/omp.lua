@@ -1,3 +1,23 @@
+-- Helper functions
+
+function get_priority_number(name, default)
+	local value = os.getenv(name)
+	if os.envmap ~= nil and type(os.envmap) == 'table' then
+		local t = os.envmap[name]
+		value = (t ~= nil and type(t) == 'string') and t or value
+	end
+	if type(default) == 'number' then
+		value = tonumber(value)
+		if value == nil then
+			return default
+		else
+			return value
+		end
+	else
+        return default
+	end
+end
+
 -- Duration functions
 
 local endedit_time
@@ -92,7 +112,10 @@ local function get_posh_tooltip(command)
     return tooltip
 end
 
-local p = clink.promptfilter(1)
+-- set priority lower than z.lua
+-- https://github.com/skywind3000/z.lua/pull/125/commits/48a77adf3575952b2e951aa820a1ce11ed4ce56b
+local zl_prompt_priority = get_priority_number('_ZL_CLINK_PROMPT_PRIORITY', 0)
+local p = clink.promptfilter(zl_prompt_priority + 1)
 function p:filter(prompt)
     if cached_prompt.left and cached_prompt.tip_space then
         -- Use the cached left prompt when updating the rprompt (tooltip) in

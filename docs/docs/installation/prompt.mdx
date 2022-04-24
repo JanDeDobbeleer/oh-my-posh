@@ -1,0 +1,173 @@
+---
+id: prompt
+title: Change your prompt
+sidebar_label: ✨ Prompt
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+:::tip
+If you have no idea which shell you're currently using, Oh My Posh has a utility switch that can tell that to you.
+:::
+
+```bash
+oh-my-posh get shell
+```
+
+<Tabs
+  defaultValue="powershell"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'powershell', },
+    { label: 'cmd', value: 'cmd', },
+    { label: 'zsh', value: 'zsh', },
+    { label: 'bash', value: 'bash', },
+    { label: 'fish', value: 'fish', },
+    { label: 'nu', value: 'nu', },
+  ]
+}>
+<TabItem value="powershell">
+
+Edit your PowerShell profile script, you can find its location under the `$PROFILE` variable in your preferred PowerShell version. For example, using notepad:
+
+```powershell
+notepad $PROFILE
+```
+
+Then add the following line.
+
+```powershell
+oh-my-posh init pwsh | Invoke-Expression
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```powershell
+. $PROFILE
+```
+
+:::caution
+If you installed Oh My Posh using `Install-Module oh-my-posh`, you need to first import
+Oh My Posh in your `$PROFILE` before adding the line above:
+
+```powershell
+Import-Module oh-my-posh
+```
+:::
+
+</TabItem>
+<TabItem value="cmd">
+
+There's no out of the box support for Windows CMD when it comes to custom prompts.
+There is however a way to do it using [Clink][clink], which at the same time supercharges
+your cmd experience. Follow the installation instructions and make sure you select autostart.
+
+Integrating Oh my Posh with Clink is easy: create a new file called oh-my-posh.lua in your Clink
+scripts directory (run `clink info` inside cmd to find that file's location).
+
+:::warning
+Use the full path to the config file, not the relative path.
+:::
+
+```lua title="oh-my-posh.lua"
+load(io.popen('oh-my-posh init cmd'):read("*a"))()
+```
+
+Once added, restart cmd for the changes to take effect.
+
+</TabItem>
+<TabItem value="zsh">
+
+Add the following to `~/.zshrc`:
+
+```bash
+eval "$(oh-my-posh init zsh)"
+```
+
+:::tip
+As the standard terminal has issues displaying the ANSI characters correctly, you might want to skip loading just for that terminal and instead of the line above, place this in your `~/.zshrc`:
+
+```bash
+if [ $TERM_PROGRAM != "Apple_Terminal" ]; then
+  eval "$(oh-my-posh init zsh)"
+fi
+```
+
+Note this will still load Oh My Posh for [iTerm2][iterm2] or any other modern day macOS terminal that supports ANSI characters.
+:::
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+source ~/.zshrc
+```
+
+</TabItem>
+<TabItem value="bash">
+
+Add the following to `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
+
+```bash
+eval "$(oh-my-posh init bash)"
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec bash
+```
+
+Or, when using `~/.profile`.
+
+```bash
+. ~/.profile
+```
+
+</TabItem>
+<TabItem value="fish">
+
+:::caution
+It's advised to be on the latest version of fish. Versions below 3.1.2 have issues displaying the prompt.
+:::
+
+Initialize Oh My Posh in `~/.config/fish/config.fish`:
+
+```bash
+oh-my-posh init fish | source
+```
+
+Once added, reload your config for the changes to take effect.
+
+```bash
+exec fish
+```
+
+</TabItem>
+<TabItem value="nu">
+
+:::warning
+Oh My Posh requires Nushell >= 0.60.0
+:::
+
+Edit `$nu.configuration/path` and add the following lines at the bottom.
+
+```bash
+oh-my-posh init nu
+source ~/.oh-my-posh.nu
+```
+
+If you want to save the initialization script elsewhere, replace the lines above with these:
+
+```bash
+oh-my-posh init nu --print | save /mylocation/myscript.nu
+source /mylocation/myscript.nu
+```
+
+Restart Nushell for the changes to take effect.
+
+</TabItem>
+</Tabs>
+
+[clink]: https://chrisant996.github.io/clink/
+[iterm2]: https://www.iterm2.com/

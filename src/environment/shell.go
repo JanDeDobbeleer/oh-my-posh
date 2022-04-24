@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,7 +15,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/distatus/battery"
@@ -32,6 +35,7 @@ type Flags struct {
 	ErrorCode     int
 	Config        string
 	Shell         string
+	ShellVersion  string
 	PWD           string
 	PSWD          string
 	ExecutionTime float64
@@ -39,27 +43,7 @@ type Flags struct {
 	StackCount    int
 	Migrate       bool
 	TerminalWidth int
-
-	// PrintInit      *bool
-	// PrintConfig    *bool
-	// PrintShell     *bool
-	// PrintTransient *bool
-	// PrintSecondary *bool
-	// PrintValid     *bool
-	// PrintError     *bool
-	// ConfigFormat   *string
-	// Version        *bool
-	// Millis         *bool
-	// Init           *bool
-	// ExportPNG      *bool
-	// Author         *string
-	// CursorPadding  *int
-	// RPromptOffset  *int
-	// RPrompt        *bool
-	// BGColor        *string
-	// Command        *string
-	// CachePath      *bool
-	// Write          *bool
+	Strict        bool
 }
 
 type CommandError struct {
@@ -125,16 +109,17 @@ type WifiInfo struct {
 }
 
 type TemplateCache struct {
-	Root     bool
-	PWD      string
-	Folder   string
-	Shell    string
-	UserName string
-	HostName string
-	Code     int
-	Env      map[string]string
-	OS       string
-	WSL      bool
+	Root         bool
+	PWD          string
+	Folder       string
+	Shell        string
+	ShellVersion string
+	UserName     string
+	HostName     string
+	Code         int
+	Env          map[string]string
+	OS           string
+	WSL          bool
 }
 
 type Environment interface {
@@ -154,9 +139,12 @@ type Environment interface {
 	HasFolder(folder string) bool
 	HasParentFilePath(path string) (fileInfo *FileInfo, err error)
 	HasFileInParentDirs(pattern string, depth uint) bool
+	ResolveSymlink(path string) (string, error)
+	DirMatchesOneOf(dir string, regexes []string) bool
+	CommandPath(command string) string
 	HasCommand(command string) bool
 	FileContent(file string) string
-	FolderList(path string) []string
+	LsDir(path string) []fs.DirEntry
 	RunCommand(command string, args ...string) (string, error)
 	RunShellCommand(shell, command string) string
 	ExecutionTime() float64
@@ -205,14 +193,16 @@ const (
 )
 
 type ShellEnvironment struct {
-	CmdFlags   *Flags
-	Version    string
+	CmdFlags *Flags
+	Version  string
+
 	cwd        string
 	cmdCache   *commandCache
 	fileCache  *fileCache
 	tmplCache  *TemplateCache
 	logBuilder strings.Builder
 	debug      bool
+	lock       sync.Mutex
 }
 
 func (env *ShellEnvironment) Init(debug bool) {
@@ -314,6 +304,14 @@ func (env *ShellEnvironment) log(lt logType, function, message string) {
 	log.Println(trace)
 }
 
+func (env *ShellEnvironment) debugF(function string, fn func() string) {
+	if !env.debug {
+		return
+	}
+	trace := fmt.Sprintf("%s: %s\n%s", Debug, function, fn())
+	log.Println(trace)
+}
+
 func (env *ShellEnvironment) Getenv(key string) string {
 	defer env.trace(time.Now(), "Getenv", key)
 	val := os.Getenv(key)
@@ -323,7 +321,9 @@ func (env *ShellEnvironment) Getenv(key string) string {
 
 func (env *ShellEnvironment) Pwd() string {
 	defer env.trace(time.Now(), "Pwd")
+	env.lock.Lock()
 	defer func() {
+		env.lock.Unlock()
 		env.log(Debug, "Pwd", env.cwd)
 	}()
 	if env.cwd != "" {
@@ -356,7 +356,16 @@ func (env *ShellEnvironment) HasFiles(pattern string) bool {
 		env.log(Error, "HasFiles", err.Error())
 		return false
 	}
-	return len(matches) > 0
+	for _, match := range matches {
+		f, _ := os.Stat(match)
+		if f.IsDir() {
+			continue
+		}
+		env.log(Debug, "HasFiles", "true")
+		return true
+	}
+	env.log(Debug, "HasFiles", "false")
+	return false
 }
 
 func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
@@ -367,7 +376,9 @@ func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
 		env.log(Error, "HasFilesInDir", err.Error())
 		return false
 	}
-	return len(matches) > 0
+	hasFilesInDir := len(matches) > 0
+	env.debugF("HasFilesInDir", func() string { return strconv.FormatBool(hasFilesInDir) })
+	return hasFilesInDir
 }
 
 func (env *ShellEnvironment) HasFileInParentDirs(pattern string, depth uint) bool {
@@ -376,49 +387,66 @@ func (env *ShellEnvironment) HasFileInParentDirs(pattern string, depth uint) boo
 
 	for c := 0; c < int(depth); c++ {
 		if env.HasFilesInDir(currentFolder, pattern) {
+			env.log(Debug, "HasFileInParentDirs", "true")
 			return true
 		}
 
 		if dir := filepath.Dir(currentFolder); dir != currentFolder {
 			currentFolder = dir
 		} else {
+			env.log(Debug, "HasFileInParentDirs", "false")
 			return false
 		}
 	}
-
+	env.log(Debug, "HasFileInParentDirs", "false")
 	return false
 }
 
 func (env *ShellEnvironment) HasFolder(folder string) bool {
 	defer env.trace(time.Now(), "HasFolder", folder)
-	_, err := os.Stat(folder)
-	return !os.IsNotExist(err)
+	f, err := os.Stat(folder)
+	if err != nil {
+		env.log(Debug, "HasFolder", "false")
+		return false
+	}
+	env.debugF("HasFolder", func() string { return strconv.FormatBool(f.IsDir()) })
+	return f.IsDir()
+}
+
+func (env *ShellEnvironment) ResolveSymlink(path string) (string, error) {
+	return filepath.EvalSymlinks(path)
 }
 
 func (env *ShellEnvironment) FileContent(file string) string {
 	defer env.trace(time.Now(), "FileContent", file)
+	if !filepath.IsAbs(file) {
+		file = filepath.Join(env.Pwd(), file)
+	}
 	content, err := ioutil.ReadFile(file)
 	if err != nil {
 		env.log(Error, "FileContent", err.Error())
 		return ""
 	}
-	return string(content)
+	fileContent := string(content)
+	env.log(Debug, "FileContent", fileContent)
+	return fileContent
 }
 
-func (env *ShellEnvironment) FolderList(path string) []string {
-	defer env.trace(time.Now(), "FolderList", path)
-	content, err := os.ReadDir(path)
+func (env *ShellEnvironment) LsDir(path string) []fs.DirEntry {
+	defer env.trace(time.Now(), "LsDir", path)
+	entries, err := os.ReadDir(path)
 	if err != nil {
-		env.log(Error, "FolderList", err.Error())
+		env.log(Error, "LsDir", err.Error())
 		return nil
 	}
-	var folderNames []string
-	for _, s := range content {
-		if s.IsDir() {
-			folderNames = append(folderNames, s.Name())
+	env.debugF("LsDir", func() string {
+		var entriesStr string
+		for _, entry := range entries {
+			entriesStr += entry.Name() + "\n"
 		}
-	}
-	return folderNames
+		return entriesStr
+	})
+	return entries
 }
 
 func (env *ShellEnvironment) PathSeparator() string {
@@ -432,6 +460,7 @@ func (env *ShellEnvironment) User() string {
 	if user == "" {
 		user = os.Getenv("USERNAME")
 	}
+	env.log(Debug, "User", user)
 	return user
 }
 
@@ -442,7 +471,9 @@ func (env *ShellEnvironment) Host() (string, error) {
 		env.log(Error, "Host", err.Error())
 		return "", err
 	}
-	return cleanHostName(hostName), nil
+	hostName = cleanHostName(hostName)
+	env.log(Debug, "Host", hostName)
+	return hostName, nil
 }
 
 func (env *ShellEnvironment) GOOS() string {
@@ -485,22 +516,29 @@ func (env *ShellEnvironment) RunShellCommand(shell, command string) string {
 	return ""
 }
 
-func (env *ShellEnvironment) HasCommand(command string) bool {
+func (env *ShellEnvironment) CommandPath(command string) string {
 	defer env.trace(time.Now(), "HasCommand", command)
-	if _, ok := env.cmdCache.get(command); ok {
-		return true
+	if path, ok := env.cmdCache.get(command); ok {
+		return path
 	}
 	path, err := exec.LookPath(command)
 	if err == nil {
 		env.cmdCache.set(command, path)
-		return true
+		return path
 	}
 	path, err = env.LookWinAppPath(command)
 	if err == nil {
 		env.cmdCache.set(command, path)
+		return path
+	}
+	env.log(Error, "CommandPath", err.Error())
+	return ""
+}
+
+func (env *ShellEnvironment) HasCommand(command string) bool {
+	if path := env.CommandPath(command); path != "" {
 		return true
 	}
-	env.log(Error, "HasCommand", err.Error())
 	return false
 }
 
@@ -684,10 +722,11 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 		return env.tmplCache
 	}
 	tmplCache := &TemplateCache{
-		Root:  env.Root(),
-		Shell: env.Shell(),
-		Code:  env.ErrorCode(),
-		WSL:   env.IsWsl(),
+		Root:         env.Root(),
+		Shell:        env.Shell(),
+		ShellVersion: env.CmdFlags.ShellVersion,
+		Code:         env.ErrorCode(),
+		WSL:          env.IsWsl(),
 	}
 	tmplCache.Env = make(map[string]string)
 	const separator = "="
@@ -718,9 +757,13 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 	return tmplCache
 }
 
-func DirMatchesOneOf(env Environment, dir string, regexes []string) bool {
+func (env *ShellEnvironment) DirMatchesOneOf(dir string, regexes []string) bool {
+	return dirMatchesOneOf(dir, env.Home(), env.GOOS(), regexes)
+}
+
+func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 	normalizedCwd := strings.ReplaceAll(dir, "\\", "/")
-	normalizedHomeDir := strings.ReplaceAll(env.Home(), "\\", "/")
+	normalizedHomeDir := strings.ReplaceAll(home, "\\", "/")
 
 	for _, element := range regexes {
 		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
@@ -728,7 +771,6 @@ func DirMatchesOneOf(env Environment, dir string, regexes []string) bool {
 			normalizedElement = strings.Replace(normalizedElement, "~", normalizedHomeDir, 1)
 		}
 		pattern := fmt.Sprintf("^%s$", normalizedElement)
-		goos := env.GOOS()
 		if goos == WindowsPlatform || goos == DarwinPlatform {
 			pattern = "(?i)" + pattern
 		}

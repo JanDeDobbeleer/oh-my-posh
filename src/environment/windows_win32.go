@@ -57,21 +57,14 @@ func getWindowText(hwnd syscall.Handle, str *uint16, maxCount int32) (length int
 
 func getWindowFileName(handle syscall.Handle) (string, error) {
 	var pid int
-	// get pid
-	_, _, err := procGetWindowThreadProcessID.Call(uintptr(handle), uintptr(unsafe.Pointer(&pid)))
-	if err != nil && err.Error() != "The operation completed successfully." {
-		return "", errors.New("unable to get window process pid")
-	}
+	_, _, _ = procGetWindowThreadProcessID.Call(uintptr(handle), uintptr(unsafe.Pointer(&pid)))
 	const query = windows.PROCESS_QUERY_INFORMATION | windows.PROCESS_VM_READ
 	h, err := windows.OpenProcess(query, false, uint32(pid))
 	if err != nil {
 		return "", errors.New("unable to open window process")
 	}
 	buf := [1024]byte{}
-	length, _, err := getModuleBaseNameA.Call(uintptr(h), 0, uintptr(unsafe.Pointer(&buf)), 1024)
-	if err != nil && err.Error() != "The operation completed successfully." {
-		return "", errors.New("unable to get window process name")
-	}
+	length, _, _ := getModuleBaseNameA.Call(uintptr(h), 0, uintptr(unsafe.Pointer(&buf)), 1024)
 	filename := string(buf[:length])
 	return strings.ToLower(filename), nil
 }
@@ -108,9 +101,13 @@ func queryWindowTitles(processName, windowTitleRegex string) (string, error) {
 	// The error is not checked because if EnumWindows is stopped bofere enumerating all windows
 	// it returns 0(error occurred) instead of 1(success)
 	// In our case, title will equal "" or the title of the window anyway
-	_ = enumWindows(cb, 0)
+	err := enumWindows(cb, 0)
 	if len(title) == 0 {
-		return "", errors.New("no matching window title found")
+		var message string
+		if err != nil {
+			message = err.Error()
+		}
+		return "", errors.New("no matching window title found\n" + message)
 	}
 	return title, nil
 }

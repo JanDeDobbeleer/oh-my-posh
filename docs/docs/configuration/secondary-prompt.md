@@ -20,9 +20,9 @@ You need to extend or create a custom theme with your secondary prompt override.
 ```json
 {
     "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "blocks": {
+    "blocks": [
         ...
-    },
+    ],
     "secondary_prompt": {
         "background": "transparent",
         "foreground": "#ffffff",

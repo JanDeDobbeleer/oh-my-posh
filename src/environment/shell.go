@@ -606,6 +606,13 @@ func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestM
 		env.log(Error, "HTTPRequest", err.Error())
 		return nil, err
 	}
+	// anything inside the range [200, 299] is considered a success
+	if response.StatusCode >= 200 && response.StatusCode < 300 {
+		message := "HTTP status code " + strconv.Itoa(response.StatusCode)
+		err := errors.New(message)
+		env.log(Error, "HTTPRequest", message)
+		return nil, err
+	}
 	defer response.Body.Close()
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {

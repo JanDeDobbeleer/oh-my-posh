@@ -234,7 +234,7 @@ func escapeGlyphs(s string) string {
 
 func defaultConfig() *Config {
 	cfg := &Config{
-		Version:    1,
+		Version:    2,
 		FinalSpace: true,
 		Blocks: []*Block{
 			{

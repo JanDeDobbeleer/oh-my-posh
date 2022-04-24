@@ -21,9 +21,9 @@ You need to extend or create a custom theme with your debug prompt override. For
 ```json
 {
     "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-    "blocks": {
+    "blocks": [
         ...
-    },
+    ],
     "debug_prompt": {
         "background": "transparent",
         "foreground": "#ffffff",

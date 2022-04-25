@@ -92,11 +92,8 @@ func LoadConfig(env environment.Environment) *Config {
 func loadConfig(env environment.Environment) *Config {
 	var cfg Config
 	configFile := env.Flags().Config
-	if configFile == "" {
+	if _, err := os.Stat(configFile); err != nil {
 		return defaultConfig()
-	}
-	if _, err := os.Stat(configFile); os.IsNotExist(err) {
-		cfg.exitWithError(err)
 	}
 
 	cfg.origin = configFile

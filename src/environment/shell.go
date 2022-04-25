@@ -234,8 +234,9 @@ func (env *ShellEnvironment) resolveConfigPath() {
 		env.CmdFlags.Config = fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v%s/themes/default.omp.json", env.Version)
 	}
 	if strings.HasPrefix(env.CmdFlags.Config, "https://") {
-		env.getConfigPath(env.CmdFlags.Config)
-		return
+		if err := env.downloadConfig(env.CmdFlags.Config); err == nil {
+			return
+		}
 	}
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
@@ -255,12 +256,12 @@ func (env *ShellEnvironment) resolveConfigPath() {
 	env.CmdFlags.Config = filepath.Clean(configFile)
 }
 
-func (env *ShellEnvironment) getConfigPath(location string) {
+func (env *ShellEnvironment) downloadConfig(location string) error {
 	configFileName := fmt.Sprintf("%s.omp.json", env.Version)
 	configPath := filepath.Join(env.CachePath(), configFileName)
 	if env.HasFilesInDir(env.CachePath(), configFileName) {
 		env.CmdFlags.Config = configPath
-		return
+		return nil
 	}
 	// clean old config files
 	cleanCacheDir := func() {
@@ -278,18 +279,19 @@ func (env *ShellEnvironment) getConfigPath(location string) {
 
 	cfg, err := env.HTTPRequest(location, 5000)
 	if err != nil {
-		return
+		return err
 	}
 	out, err := os.Create(configPath)
 	if err != nil {
-		return
+		return err
 	}
 	defer out.Close()
 	_, err = io.Copy(out, bytes.NewReader(cfg))
 	if err != nil {
-		return
+		return err
 	}
 	env.CmdFlags.Config = configPath
+	return nil
 }
 
 func (env *ShellEnvironment) trace(start time.Time, function string, args ...string) {

@@ -607,7 +607,7 @@ func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestM
 		return nil, err
 	}
 	// anything inside the range [200, 299] is considered a success
-	if response.StatusCode >= 200 && response.StatusCode < 300 {
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
 		message := "HTTP status code " + strconv.Itoa(response.StatusCode)
 		err := errors.New(message)
 		env.log(Error, "HTTPRequest", message)

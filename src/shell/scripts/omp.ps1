@@ -27,6 +27,7 @@ function global:Start-Utf8Process {
 $env:POWERLINE_COMMAND = "oh-my-posh"
 $env:CONDA_PROMPT_MODIFIER = $false
 $env:SHELL_VERSION = $PSVersionTable.PSVersion.ToString()
+$global:POSH_TRANSIENT = $false
 
 # specific module support (disabled by default)
 if ($null -eq $env:POSH_GIT_ENABLED) {

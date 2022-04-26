@@ -37,12 +37,12 @@ if ($null -eq $env:POSH_GIT_ENABLED) {
 # used to detect empty hit
 $global:OMP_LASTHISTORYID = -1
 
-if (Test-Path "::CONFIG::") {
-    $env:POSH_THEME = (Resolve-Path -Path "::CONFIG::").ProviderPath
+if (Test-Path '::CONFIG::') {
+    $env:POSH_THEME = (Resolve-Path -Path '::CONFIG::').ProviderPath
 }
 
 # set secondary prompt`
-Set-PSReadLineOption -ContinuationPrompt (@(Start-Utf8Process "::OMP::" "print secondary --config=""$Env:POSH_THEME""") -join "`n")
+Set-PSReadLineOption -ContinuationPrompt (@(Start-Utf8Process '::OMP::' "print secondary --config=""$Env:POSH_THEME""") -join "`n")
 
 function global:Set-PoshContext {}
 
@@ -66,7 +66,7 @@ Set-Item -Force -Path Function:prompt -Value {
     $lastCommandSuccess = $?
     #store the last exit code for restore
     $realLASTEXITCODE = $global:LASTEXITCODE
-    $omp = "::OMP::"
+    $omp = '::OMP::'
     $cleanPWD, $cleanPSWD = Get-PoshContext
     if ($global:POSH_TRANSIENT -eq $true) {
         @(Start-Utf8Process $omp "print transient --error=$global:OMP_ERRORCODE --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$global:OMP_EXECUTIONTIME --config=""$Env:POSH_THEME"" --shell-version=""$env:SHELL_VERSION""") -join "`n"
@@ -148,7 +148,7 @@ function global:Export-PoshTheme {
         $Format = 'json'
     )
 
-    $omp = "::OMP::"
+    $omp = '::OMP::'
     $configString = @(Start-Utf8Process $omp "config export --config=""$Env:POSH_THEME"" --format=$Format")
     # if no path, copy to clipboard by default
     if ($FilePath -ne "") {
@@ -166,7 +166,7 @@ function global:Enable-PoshTooltips {
     Set-PSReadlineKeyHandler -Key SpaceBar -ScriptBlock {
         [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
         $position = $host.UI.RawUI.CursorPosition
-        $omp = "::OMP::"
+        $omp = '::OMP::'
         $cleanPWD, $cleanPSWD = Get-PoshContext
         $command = $null
         $cursor = $null
@@ -194,7 +194,7 @@ function global:Enable-PoshTransientPrompt {
 }
 
 function global:Enable-PoshLineError {
-    $omp = "::OMP::"
+    $omp = '::OMP::'
     $validLine = @(Start-Utf8Process $omp "print valid --config=""$Env:POSH_THEME""") -join "`n"
     $errorLine = @(Start-Utf8Process $omp "print error --config=""$Env:POSH_THEME""") -join "`n"
     Set-PSReadLineOption -PromptText $validLine, $errorLine
@@ -259,7 +259,7 @@ function global:Get-PoshThemes() {
         $themes | Select-Object @{ Name = 'hyperlink'; Expression = { Get-Hyperlink -uri $_.fullname } } | Format-Table -HideTableHeaders
     }
     else {
-        $omp = "::OMP::"
+        $omp = '::OMP::'
         $themes | ForEach-Object -Process {
             Write-Host "Theme: $(Get-Hyperlink -uri $_.fullname -name $_.BaseName.Replace('.omp', ''))`n"
             @(Start-Utf8Process $omp "print primary --config=""$($_.FullName)"" --pwd=""$PWD"" --shell pwsh")

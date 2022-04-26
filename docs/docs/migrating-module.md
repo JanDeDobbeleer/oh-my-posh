@@ -43,7 +43,7 @@ See your platform's installation guide. The preferred ways are **winget** and **
 ### Uninstall the PowerShell module
 
 ```powershell
-Uninstall-Module oh-my-posh --AllVersions
+Uninstall-Module oh-my-posh -AllVersions
 ```
 
 Delete the import of the PowerShell module in your `$PROFILE`

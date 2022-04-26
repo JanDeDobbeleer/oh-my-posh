@@ -59,6 +59,8 @@ function Set-PoshRootPath {
 }
 
 Set-PoshRootPath
+$env:PATH = $env:POSH_PATH + [System.IO.Path]::PathSeparator + $env:PATH
+$env:POSH_THEMES_PATH = Join-Path -Path $env:POSH_PATH -ChildPath "themes"
 
 function Set-PoshPrompt {
     param(
@@ -66,4 +68,23 @@ function Set-PoshPrompt {
         [string]
         $Theme
     )
+
+    $config = ""
+    if (Test-Path "$($env:POSH_THEMES_PATH)/$Theme.omp.json") {
+        $path = "$($env:POSH_THEMES_PATH)/$Theme.omp.json"
+        $config = (Resolve-Path -Path $path).ProviderPath
+    }
+    elseif (Test-Path $Theme) {
+        $config = (Resolve-Path -Path $Theme).ProviderPath
+    }
+    else {
+        $config = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v7.71.2/themes/default.omp.json"
+    }
+
+    # Workaround for get-location/push-location/pop-location from within a module
+    # https://github.com/PowerShell/PowerShell/issues/12868
+    # https://github.com/JanDeDobbeleer/oh-my-posh2/issues/113
+    $global:OMP_GLOBAL_SESSIONSTATE = $PSCmdlet.SessionState
+
+    oh-my-posh init pwsh --config="$config" | Invoke-Expression
 }

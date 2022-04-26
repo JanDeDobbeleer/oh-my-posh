@@ -223,6 +223,11 @@ func (a *Ansi) initEscapeSequences(shellName string) {
 			{text: `\r`, replacement: `\\r`},
 			{text: `\t`, replacement: `\\t`},
 			{text: `\v`, replacement: `\\v`},
+			{text: `\c`, replacement: `\\c`},
+			{text: `\x`, replacement: `\\x`},
+			{text: `\X`, replacement: `\\X`},
+			{text: `\0`, replacement: `\\0`},
+			{text: `\U`, replacement: `\\U`},
 		}
 	default:
 		a.reservedSequences = []sequenceReplacement{

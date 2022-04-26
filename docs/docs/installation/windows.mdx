@@ -27,8 +27,6 @@ When using oh-my-posh inside the WSL, make sure to follow the [linux][linux] ins
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
-    { label: 'powershell', value: 'powershell', },
-    { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
 <TabItem value="winget">
@@ -42,33 +40,6 @@ winget install JanDeDobbeleer.OhMyPosh
 
 ```powershell
 scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
-```
-
-</TabItem>
-<TabItem value="powershell">
-
-```powershell
-Install-Module oh-my-posh -Scope CurrentUser
-```
-
-:::warning
-The PowerShell module only installs the Oh My Posh executable inside PowerShell, to use Oh My posh outside of PowerShell
-(bash, cmd, ...), add the following folder to your `$PATH`:
-
-```powershell
-$env:POSH_PATH
-```
-:::
-
-</TabItem>
-<TabItem value="chocolatey">
-
-:::info
-The chocolatey package is managed by [Curtis Carter][cc]. In case of problems, please create an issue [here][cc-choco].
-:::
-
-```powershell
-choco install oh-my-posh
 ```
 
 </TabItem>
@@ -97,8 +68,6 @@ Add-MpPreference -ExclusionProcess oh-my-posh.exe
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
-    { label: 'powershell', value: 'powershell', },
-    { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
 <TabItem value="winget">
@@ -115,20 +84,6 @@ scoop update oh-my-posh
 ```
 
 </TabItem>
-<TabItem value="powershell">
-
-```powershell
-Update-Module oh-my-posh
-```
-
-</TabItem>
-<TabItem value="chocolatey">
-
-```powershell
-choco upgrade oh-my-posh
-```
-
-</TabItem>
 </Tabs>
 
 ## Default themes
@@ -139,8 +94,6 @@ choco upgrade oh-my-posh
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
-    { label: 'powershell', value: 'powershell', },
-    { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
 <TabItem value="winget">
@@ -157,27 +110,10 @@ To use `jandedobbeleer.omp.json` for example, you can refer to it using `"$(scoo
 when setting the prompt using the `--config` flag.
 
 </TabItem>
-<TabItem value="powershell">
-
-You can find the themes PowerShell installs inside the `$env:POSH_THEMES_PATH` folder.
-To use `jandedobbeleer.omp.json` for example, you can refer to it using `"$env:POSH_THEMES_PATH\jandedobbeleer.omp.json"`
-when setting the prompt using the `--config` flag.
-
-</TabItem>
-<TabItem value="chocolatey">
-
-You can find the themes winget installs inside the `~\AppData\Local\Programs\oh-my-posh\themes\` folder.
-To use `jandedobbeleer.omp.json` for example, you can refer to it using `~\AppData\Local\Programs\oh-my-posh\themes\jandedobbeleer.omp.json`
-when setting the prompt using the `--config` flag.
-
-</TabItem>
 </Tabs>
 
 [fonts]: /docs/configuration/fonts
 [scoop]: https://scoop.sh/
 [wt]: https://github.com/microsoft/terminal
-[powershell]: https://www.powershellgallery.com/packages/oh-my-posh
-[cc]: https://github.com/digitalcoyote
-[cc-choco]: https://github.com/digitalcoyote/chocolatey-packages/tree/master/oh-my-posh
 [linux]: /docs/installation/linux
 [themes]: /docs/themes

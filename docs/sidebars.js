@@ -6,7 +6,6 @@ module.exports = {
       collapsed: false,
       items: [
         "introduction",
-        "upgrading",
         {
           type: "category",
           label: "🚀 Get started",
@@ -121,6 +120,7 @@ module.exports = {
     "themes",
     "share",
     "faq",
+    "migrating",
     "contributors",
   ],
 };

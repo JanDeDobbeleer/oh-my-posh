@@ -34,13 +34,15 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $StartInfo.WorkingDirectory = $PWD.ProviderPath
         }
         $StartInfo.CreateNoWindow = $true
-        $Process.Start() | Out-Null
-        $Process.WaitForExit() | Out-Null
-        $stderr = $Process.StandardError.ReadToEnd().Trim()
+        [void]$Process.Start()
+        $stdoutTask = $Process.StandardOutput.ReadToEndAsync()
+        $stderrTask = $Process.StandardError.ReadToEndAsync()
+        [void]$Process.WaitForExit()
+        $stderr = $stderrTask.Result.Trim()
         if ($stderr -ne '') {
             $Host.UI.WriteErrorLine($stderr)
         }
-        return $Process.StandardOutput.ReadToEnd()
+        $stdoutTask.Result
     }
 
     function Set-PoshContext {}

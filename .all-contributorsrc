@@ -1153,6 +1153,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jakeboone02",
+      "name": "Jake Boone",
+      "avatar_url": "https://avatars.githubusercontent.com/u/366438?v=4",
+      "profile": "https://github.com/jakeboone02",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

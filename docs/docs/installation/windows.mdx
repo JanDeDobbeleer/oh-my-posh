@@ -52,11 +52,14 @@ This installs a couple of things:
 
 For the `$PATH` to reload, a restart of your terminal is advised.
 
-:::warning Windows Defender
-To ensure Oh My Posh isn't blocked by Windows Defender, open an elevated PowerShell prompt and run the following command:
+:::warning Antivirus software
+Due to frequent updates of Oh My Posh, Antivirus software occasionally flags it (false positive).  
+To ensure Oh My Posh isn't blocked you can either report it to your favorite Antivirus software as false positive 
+(e.g. [Report a false positive/negative to Microsoft for analysis][report-false-positive]) or create an exclusion for it.  
+Exclusions should be added with the full path to the executable, you can get it with the following command from a PowerShell prompt:
 
 ```powershell
-Add-MpPreference -ExclusionProcess oh-my-posh.exe
+(Get-Command oh-my-posh).Source
 ```
 :::
 
@@ -117,3 +120,4 @@ when setting the prompt using the `--config` flag.
 [wt]: https://github.com/microsoft/terminal
 [linux]: /docs/installation/linux
 [themes]: /docs/themes
+[report-false-positive]: https://docs.microsoft.com/en-us/microsoft-365/security/defender/m365d-autoir-report-false-positives-negatives#report-a-false-positivenegative-to-microsoft-for-analysis

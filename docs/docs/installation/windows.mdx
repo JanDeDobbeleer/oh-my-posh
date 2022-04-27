@@ -27,9 +27,12 @@ When using oh-my-posh inside the WSL, make sure to follow the [linux][linux] ins
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
+    { label: 'manual', value: 'manual', },
   ]
 }>
 <TabItem value="winget">
+
+Open a PowerShell prompt and run the following command:
 
 ```powershell
 winget install JanDeDobbeleer.OhMyPosh
@@ -38,8 +41,19 @@ winget install JanDeDobbeleer.OhMyPosh
 </TabItem>
 <TabItem value="scoop">
 
+Open a PowerShell prompt and run the following command:
+
 ```powershell
 scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/oh-my-posh.json
+```
+
+</TabItem>
+<TabItem value="manual">
+
+Open a PowerShell prompt and run the following command:
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://ohmyposh.dev/install.ps1'))
 ```
 
 </TabItem>
@@ -53,9 +67,9 @@ This installs a couple of things:
 For the `$PATH` to reload, a restart of your terminal is advised.
 
 :::warning Antivirus software
-Due to frequent updates of Oh My Posh, Antivirus software occasionally flags it (false positive).  
-To ensure Oh My Posh isn't blocked you can either report it to your favorite Antivirus software as false positive 
-(e.g. [Report a false positive/negative to Microsoft for analysis][report-false-positive]) or create an exclusion for it.  
+Due to frequent updates of Oh My Posh, Antivirus software occasionally flags it (false positive).
+To ensure Oh My Posh isn't blocked you can either report it to your favorite Antivirus software as false positive
+(e.g. [Report a false positive/negative to Microsoft for analysis][report-false-positive]) or create an exclusion for it.
 Exclusions should be added with the full path to the executable, you can get it with the following command from a PowerShell prompt:
 
 ```powershell
@@ -71,9 +85,12 @@ Exclusions should be added with the full path to the executable, you can get it 
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
+    { label: 'manual', value: 'manual', },
   ]
 }>
 <TabItem value="winget">
+
+Open a PowerShell prompt and run the following command:
 
 ```powershell
 winget upgrade JanDeDobbeleer.OhMyPosh
@@ -82,8 +99,19 @@ winget upgrade JanDeDobbeleer.OhMyPosh
 </TabItem>
 <TabItem value="scoop">
 
+Open a PowerShell prompt and run the following command:
+
 ```powershell
 scoop update oh-my-posh
+```
+
+</TabItem>
+<TabItem value="manual">
+
+Open a PowerShell prompt and run the following command:
+
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://ohmyposh.dev/install.ps1'))
 ```
 
 </TabItem>
@@ -97,6 +125,7 @@ scoop update oh-my-posh
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
+    { label: 'manual', value: 'manual', },
   ]
 }>
 <TabItem value="winget">
@@ -110,6 +139,13 @@ when setting the prompt using the `--config` flag.
 
 You can find the themes scoop installs inside the `"$(scoop prefix oh-my-posh)\themes\"` folder.
 To use `jandedobbeleer.omp.json` for example, you can refer to it using `"$(scoop prefix oh-my-posh)\themes\jandedobbeleer.omp.json"`
+when setting the prompt using the `--config` flag.
+
+</TabItem>
+<TabItem value="manual">
+
+You can find the themes winget installs inside the `$env:POSH_THEMES_PATH` folder.
+To use `jandedobbeleer.omp.json` for example, you can refer to it using `$env:POSH_THEMES_PATH\jandedobbeleer.omp.json`
 when setting the prompt using the `--config` flag.
 
 </TabItem>

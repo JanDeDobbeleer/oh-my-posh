@@ -272,7 +272,7 @@ Example:
 
         $stackCount = (Get-Location -Stack).Count
         try {
-            if ($null -ne $global:OMP_GLOBAL_SESSIONSTATE) {
+            if (Test-Path variable:global:OMP_GLOBAL_SESSIONSTATE) {
                 $stackCount = $global:OMP_GLOBAL_SESSIONSTATE.Path.LocationStack('').Count
             }
         } catch {}

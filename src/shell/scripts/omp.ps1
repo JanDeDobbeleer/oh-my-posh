@@ -88,7 +88,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $command = $null
             $cursor = $null
             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
-            $command = ($command -split " ")[0]
             $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position

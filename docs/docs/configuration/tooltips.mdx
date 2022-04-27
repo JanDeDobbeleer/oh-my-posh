@@ -49,9 +49,9 @@ You need to extend or create a custom theme with your tooltips. For example:
 }
 ```
 
-This configuration will render a right-aligned git segment when you type `git` or `g` followed by a space. Keep in mind that
-this is a blocking call, meaning that if the segment renders slow, you can't type until it's visible. Optimizations in this space
-are being explored.
+This configuration will render a right-aligned git segment when you type `git` or `g` followed by a space.
+A tip should not include any leading or trailing space but an interpolated one can be used, e.g., `g s`.
+Keep in mind that this is a blocking call, meaning that if the segment renders slow, you can't type until it's visible. Optimizations in this space are being explored.
 
 ## Enable the feature
 

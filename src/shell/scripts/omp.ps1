@@ -20,21 +20,40 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     function Start-Utf8Process {
         param(
             [string] $FileName,
-            [string] $Arguments
+            [string[]] $Arguments = @()
         )
 
         $Process = New-Object System.Diagnostics.Process
         $StartInfo = $Process.StartInfo
+        $StartInfo.FileName = $FileName
+        if ($StartInfo.ArgumentList.Add) {
+            # ArgumentList is supported in PowerShell 6.1 and later (built on .NET Core 2.1+)
+            # ref-1: https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.processstartinfo.argumentlist?view=net-6.0
+            # ref-2: https://docs.microsoft.com/en-us/powershell/scripting/whats-new/differences-from-windows-powershell?view=powershell-7.2#net-framework-vs-net-core
+            $Arguments | ForEach-Object -Process { $StartInfo.ArgumentList.Add($_) }
+        } else {
+            # escape arguments manually in lower versions, refer to https://docs.microsoft.com/en-us/previous-versions/17w5ykft(v=vs.85)
+            $escapedArgs = $Arguments | ForEach-Object {
+                # escape N consecutive backslash(es), which are followed by a double quote, to 2N consecutive ones
+                $s = $_ -replace '(\\+)"', '$1$1"'
+                # escape N consecutive backslash(es), which are at the end of the string, to 2N consecutive ones
+                $s = $s -replace '(\\+)$', '$1$1'
+                # escape double quotes
+                $s = $s -replace '"', '\"'
+                # quote the argument
+                "`"$s`""
+            }
+            $StartInfo.Arguments = $escapedArgs -join ' '
+        }
         $StartInfo.StandardErrorEncoding = $StartInfo.StandardOutputEncoding = [System.Text.Encoding]::UTF8
         $StartInfo.RedirectStandardError = $StartInfo.RedirectStandardInput = $StartInfo.RedirectStandardOutput = $true
-        $StartInfo.FileName = $Filename
-        $StartInfo.Arguments = $Arguments
         $StartInfo.UseShellExecute = $false
         if ($PWD.Provider.Name -eq 'FileSystem') {
             $StartInfo.WorkingDirectory = $PWD.ProviderPath
         }
         $StartInfo.CreateNoWindow = $true
         [void]$Process.Start()
+        # we do this to remove a deadlock potential on Windows
         $stdoutTask = $Process.StandardOutput.ReadToEndAsync()
         $stderrTask = $Process.StandardError.ReadToEndAsync()
         [void]$Process.WaitForExit()
@@ -70,7 +89,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $cursor = $null
             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
             $command = ($command -split " ")[0]
-            $standardOut = @(Start-Utf8Process $script:OMPExecutable "print tooltip --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --config=""$env:POSH_THEME"" --command=""$command"" --shell-version=""$script:PSVersion""")
+            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position
         }
@@ -91,8 +110,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Enable-PoshLineError {
-        $validLine = @(Start-Utf8Process $script:OMPExecutable "print valid --config=""$env:POSH_THEME""") -join "`n"
-        $errorLine = @(Start-Utf8Process $script:OMPExecutable "print error --config=""$env:POSH_THEME""") -join "`n"
+        $validLine = @(Start-Utf8Process $script:OMPExecutable @("print", "valid", "--config=$env:POSH_THEME")) -join "`n"
+        $errorLine = @(Start-Utf8Process $script:OMPExecutable @("print", "error", "--config=$env:POSH_THEME")) -join "`n"
         Set-PSReadLineOption -PromptText $validLine, $errorLine
     }
 
@@ -131,7 +150,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $Format = 'json'
         )
 
-        $configString = @(Start-Utf8Process $script:OMPExecutable "config export --config=""$env:POSH_THEME"" --format=$Format")
+        $configString = @(Start-Utf8Process $script:OMPExecutable @("config", "export", "--config=$env:POSH_THEME", "--format=$Format"))
         # if no path, copy to clipboard by default
         if ('' -ne $FilePath) {
             # https://stackoverflow.com/questions/3038337/powershell-resolve-path-that-might-not-exist
@@ -198,7 +217,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         } else {
             $themes | ForEach-Object -Process {
                 Write-Host "Theme: $(Get-FileHyperlink -uri $_.FullName -Name ($_.BaseName -replace '\.omp$', ''))`n"
-                @(Start-Utf8Process $script:OMPExecutable "print primary --config=""$($_.FullName)"" --pwd=""$PWD"" --shell pwsh")
+                @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--config=$($_.FullName)", "--pwd=$PWD", "--shell=pwsh"))
                 Write-Host "`n"
             }
         }
@@ -220,12 +239,12 @@ Example:
         $realLASTEXITCODE = $global:LASTEXITCODE
         $cleanPWD, $cleanPSWD = Get-PoshContext
         if ($script:TransientPrompt -eq $true) {
-            @(Start-Utf8Process $script:OMPExecutable "print transient --error=$script:ErrorCode --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$script:ExecutionTime --config=""$env:POSH_THEME"" --shell-version=""$script:PSVersion""") -join "`n"
+            @(Start-Utf8Process $script:OMPExecutable @("print", "transient", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion")) -join "`n"
             $script:TransientPrompt = $false
             return
         }
         if (Test-Path variable:/PSDebugContext) {
-            @(Start-Utf8Process $script:OMPExecutable "print debug --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --config=""$env:POSH_THEME""") -join "`n"
+            @(Start-Utf8Process $script:OMPExecutable @("print", "debug", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME")) -join "`n"
             return
         }
         Initialize-ModuleSupport
@@ -261,7 +280,7 @@ Example:
 
         Set-PoshContext
         $terminalWidth = $Host.UI.RawUI.WindowSize.Width
-        $standardOut = @(Start-Utf8Process $script:OMPExecutable "print primary --error=$script:ErrorCode --pwd=""$cleanPWD"" --pswd=""$cleanPSWD"" --execution-time=$script:ExecutionTime --stack-count=$stackCount --config=""$env:POSH_THEME"" --shell-version=""$script:PSVersion"" --terminal-width=$terminalWidth")
+        $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth"))
         # make sure PSReadLine knows we have a multiline prompt
         $extraLines = ($standardOut | Measure-Object -Line).Lines - 1
         if ($extraLines -gt 0) {
@@ -273,7 +292,7 @@ Example:
     }
 
     # set secondary prompt
-    Set-PSReadLineOption -ContinuationPrompt (@(Start-Utf8Process $script:OMPExecutable "print secondary --config=""$env:POSH_THEME""") -join "`n")
+    Set-PSReadLineOption -ContinuationPrompt (@(Start-Utf8Process $script:OMPExecutable @("print", "secondary", "--config=$env:POSH_THEME")) -join "`n")
 
     Export-ModuleMember -Function @(
         "Set-PoshContext"

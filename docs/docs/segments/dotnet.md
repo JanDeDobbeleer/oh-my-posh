@@ -30,7 +30,7 @@ Display the currently active .NET SDK version.
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
-  - `files`: the segment is only displayed when `*.cs`, `*.vb`, `*.fs`, `*.fsx`, `*.sln`, `*.csproj`, `*.vbproj`,
+  - `files`: the segment is only displayed when `*.cs`, `*.vb`, `*.fs`, `*.fsx`, `*.sln`, `*.slnf`, `*.csproj`, `*.vbproj`,
   or `*.fsproj` files are present (default)
 - version_url_template: `string` - A go text/template [template][templates] that creates the changelog URL
 

@@ -16,31 +16,23 @@ Installers:
   Scope: machine
   InstallerSwitches:
      Custom: /ALLUSERS
-     Silent: /VERYSILENT
-     SilentWithProgress: /SILENT
 - Architecture: x64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-amd64.exe
   InstallerSha256: <HASH-AMD64>
   Scope: user
   InstallerSwitches:
      Custom: /CURRENTUSER
-     Silent: /VERYSILENT
-     SilentWithProgress: /SILENT
 - Architecture: arm64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-arm64.exe
   InstallerSha256: <HASH-ARM64>
   Scope: machine
   InstallerSwitches:
      Custom: /ALLUSERS
-     Silent: /VERYSILENT
-     SilentWithProgress: /SILENT
 - Architecture: arm64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-arm64.exe
   InstallerSha256: <HASH-ARM64>
   Scope: user
   InstallerSwitches:
      Custom: /CURRENTUSER
-     Silent: /VERYSILENT
-     SilentWithProgress: /SILENT
 ManifestType: installer
 ManifestVersion: 1.1.0

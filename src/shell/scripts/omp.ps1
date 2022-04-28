@@ -76,7 +76,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     function Initialize-ModuleSupport {
         if ($env:POSH_GIT_ENABLED -eq $true) {
-            $env:POSH_GIT_STATUS = Write-GitStatus -Status (Get-GitStatus)
+            # We need to set the status so posh-git can facilitate autocomplete
+            $global:GitStatus = Get-GitStatus
+            $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
         }
     }
 

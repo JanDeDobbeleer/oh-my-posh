@@ -17,22 +17,28 @@ Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"
 Source: "bin\themes\*"; DestDir: "{app}\themes"
 
 [Registry]
-Root: "HKCU"; Subkey: "Environment"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\bin"; Check: NeedsAddPathHKCU(ExpandConstant('{app}\bin'))
-Root: "HKCU"; Subkey: "Environment"; ValueType: string; ValueName: "POSH_THEMES_PATH"; ValueData: {app}\themes; Flags: preservestringtype
+Root: "HKA"; Subkey: "{code:GetEnvironmentKey}"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\bin"; Check: NeedsAddPathHKA(ExpandConstant('{app}\bin'))
+Root: "HKA"; Subkey: "{code:GetEnvironmentKey}"; ValueType: string; ValueName: "POSH_THEMES_PATH"; ValueData: {app}\themes; Flags: preservestringtype
 
 [Code]
-function NeedsAddPathHKCU(Param: string): boolean;
-var
-OrigPath: string;
+function GetEnvironmentKey(Param: string): string;
 begin
-if not RegQueryStringValue(HKEY_CURRENT_USER,
-'Environment',
-'Path', OrigPath)
-then begin
-Result := True;
-exit;
+  if IsAdminInstallMode then
+    Result := 'System\CurrentControlSet\Control\Session Manager\Environment'
+  else
+    Result := 'Environment';
 end;
-// look for the path with leading and trailing semicolon
-// Pos() returns 0 if not found
-Result := Pos(';' + Param + ';', ';' + OrigPath + ';') = 0;
+
+function NeedsAddPathHKA(Param: string): boolean;
+var
+    OrigPath: string;
+begin
+    if not RegQueryStringValue(HKA, GetEnvironmentKey(''), 'Path', OrigPath)
+    then begin
+        Result := True;
+        exit;
+    end;
+    // look for the path with leading and trailing semicolon
+    // Pos() returns 0 if not found
+    Result := Pos(';' + Param + ';', ';' + OrigPath + ';') = 0;
 end;

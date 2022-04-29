@@ -234,13 +234,15 @@ func (env *ShellEnvironment) resolveConfigPath() {
 		env.CmdFlags.Config = fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v%s/themes/default.omp.json", env.Version)
 	}
 	if strings.HasPrefix(env.CmdFlags.Config, "https://") {
-		if err := env.downloadConfig(env.CmdFlags.Config); err == nil {
+		if err := env.downloadConfig(env.CmdFlags.Config); err != nil {
+			// make it use default config when download fails
+			env.CmdFlags.Config = ""
 			return
 		}
 	}
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
-	if env.Platform() == WindowsPlatform && env.Shell() == "constants.BASH" {
+	if env.Platform() == WindowsPlatform && env.Shell() == "bash" {
 		return
 	}
 	configFile := env.CmdFlags.Config
@@ -569,7 +571,7 @@ func (env *ShellEnvironment) Shell() string {
 		return Unknown
 	}
 	// Cache the shell value to speed things up.
-	env.CmdFlags.Shell = strings.Trim(strings.Replace(name, ".exe", "", 1), " ")
+	env.CmdFlags.Shell = strings.Trim(strings.TrimSuffix(name, ".exe"), " ")
 	return env.CmdFlags.Shell
 }
 

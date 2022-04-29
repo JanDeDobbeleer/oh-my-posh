@@ -71,6 +71,7 @@ module.exports = {
         "segments/golang",
         "segments/haskell",
         "segments/ipify",
+        "segments/iterm",
         "segments/java",
         "segments/julia",
         "segments/kotlin",

@@ -69,7 +69,7 @@ NEW SegmentType = "new"
 
 ## Add the SegmentType mapping
 
-Map your `SegmentType` to your Segment in the `mapSegmentWithWriter` function.
+Map your `SegmentType` to your Segment in the `mapSegmentWithWriter` function (respect the alphabetical order).
 
 ```go
 NEW: &New{},

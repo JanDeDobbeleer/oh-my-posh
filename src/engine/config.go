@@ -92,11 +92,8 @@ func LoadConfig(env environment.Environment) *Config {
 func loadConfig(env environment.Environment) *Config {
 	var cfg Config
 	configFile := env.Flags().Config
-	if configFile == "" {
+	if _, err := os.Stat(configFile); err != nil {
 		return defaultConfig()
-	}
-	if _, err := os.Stat(configFile); os.IsNotExist(err) {
-		cfg.exitWithError(err)
 	}
 
 	cfg.origin = configFile
@@ -234,7 +231,7 @@ func escapeGlyphs(s string) string {
 
 func defaultConfig() *Config {
 	cfg := &Config{
-		Version:    1,
+		Version:    2,
 		FinalSpace: true,
 		Blocks: []*Block{
 			{
@@ -284,7 +281,7 @@ func defaultConfig() *Config {
 						BackgroundTemplates: []string{
 							"{{ if gt .Code 0 }}#f1184c{{ end }}",
 						},
-						Template: " \uE23A",
+						Template: " \uE23A ",
 						Properties: properties.Map{
 							properties.AlwaysEnabled: true,
 						},

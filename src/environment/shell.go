@@ -122,6 +122,11 @@ type TemplateCache struct {
 	WSL          bool
 }
 
+type BatteryInfo struct {
+	Percentage int
+	State      battery.State
+}
+
 type Environment interface {
 	Getenv(key string) string
 	Pwd() string
@@ -149,7 +154,7 @@ type Environment interface {
 	RunShellCommand(shell, command string) string
 	ExecutionTime() float64
 	Flags() *Flags
-	BatteryInfo() ([]*battery.Battery, error)
+	BatteryState() (*BatteryInfo, error)
 	QueryWindowTitles(processName, windowTitleRegex string) (string, error)
 	WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error)
 	HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
@@ -229,12 +234,15 @@ func (env *ShellEnvironment) resolveConfigPath() {
 		env.CmdFlags.Config = fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v%s/themes/default.omp.json", env.Version)
 	}
 	if strings.HasPrefix(env.CmdFlags.Config, "https://") {
-		env.getConfigPath(env.CmdFlags.Config)
-		return
+		if err := env.downloadConfig(env.CmdFlags.Config); err != nil {
+			// make it use default config when download fails
+			env.CmdFlags.Config = ""
+			return
+		}
 	}
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
-	if env.Platform() == WindowsPlatform && env.Shell() == "constants.BASH" {
+	if env.Platform() == WindowsPlatform && env.Shell() == "bash" {
 		return
 	}
 	configFile := env.CmdFlags.Config
@@ -250,41 +258,23 @@ func (env *ShellEnvironment) resolveConfigPath() {
 	env.CmdFlags.Config = filepath.Clean(configFile)
 }
 
-func (env *ShellEnvironment) getConfigPath(location string) {
-	configFileName := fmt.Sprintf("%s.omp.json", env.Version)
-	configPath := filepath.Join(env.CachePath(), configFileName)
-	if env.HasFilesInDir(env.CachePath(), configFileName) {
-		env.CmdFlags.Config = configPath
-		return
-	}
-	// clean old config files
-	cleanCacheDir := func() {
-		dir, err := ioutil.ReadDir(env.CachePath())
-		if err != nil {
-			return
-		}
-		for _, file := range dir {
-			if strings.HasSuffix(file.Name(), ".omp.json") {
-				os.Remove(filepath.Join(env.CachePath(), file.Name()))
-			}
-		}
-	}
-	cleanCacheDir()
-
+func (env *ShellEnvironment) downloadConfig(location string) error {
+	configPath := filepath.Join(env.CachePath(), "config.omp.json")
 	cfg, err := env.HTTPRequest(location, 5000)
 	if err != nil {
-		return
+		return err
 	}
 	out, err := os.Create(configPath)
 	if err != nil {
-		return
+		return err
 	}
 	defer out.Close()
 	_, err = io.Copy(out, bytes.NewReader(cfg))
 	if err != nil {
-		return
+		return err
 	}
 	env.CmdFlags.Config = configPath
+	return nil
 }
 
 func (env *ShellEnvironment) trace(start time.Time, function string, args ...string) {
@@ -560,66 +550,6 @@ func (env *ShellEnvironment) Flags() *Flags {
 	return env.CmdFlags
 }
 
-func (env *ShellEnvironment) BatteryInfo() ([]*battery.Battery, error) {
-	defer env.trace(time.Now(), "BatteryInfo")
-	batteries, err := battery.GetAll()
-	// actual error, return it
-	if err != nil && len(batteries) == 0 {
-		env.log(Error, "BatteryInfo", err.Error())
-		return nil, err
-	}
-	// there are no batteries found
-	if len(batteries) == 0 {
-		return nil, &NoBatteryError{}
-	}
-	// some batteries fail to get retrieved, filter them out if present
-	validBatteries := []*battery.Battery{}
-	for _, batt := range batteries {
-		if batt != nil {
-			validBatteries = append(validBatteries, batt)
-		}
-	}
-	// clean minor errors
-	unableToRetrieveBatteryInfo := "A device which does not exist was specified."
-	unknownChargeRate := "Unknown value received"
-	var fatalErr battery.Errors
-	ignoreErr := func(err error) bool {
-		if e, ok := err.(battery.ErrPartial); ok {
-			// ignore unknown charge rate value error
-			if e.Current == nil &&
-				e.Design == nil &&
-				e.DesignVoltage == nil &&
-				e.Full == nil &&
-				e.State == nil &&
-				e.Voltage == nil &&
-				e.ChargeRate != nil &&
-				e.ChargeRate.Error() == unknownChargeRate {
-				return true
-			}
-		}
-		return false
-	}
-	if batErr, ok := err.(battery.Errors); ok {
-		for _, err := range batErr {
-			if !ignoreErr(err) {
-				fatalErr = append(fatalErr, err)
-			}
-		}
-	}
-
-	// when battery info fails to get retrieved but there is at least one valid battery, return it without error
-	if len(validBatteries) > 0 && fatalErr != nil && strings.Contains(fatalErr.Error(), unableToRetrieveBatteryInfo) {
-		return validBatteries, nil
-	}
-	// another error occurred (possibly unmapped use-case), return it
-	if fatalErr != nil {
-		env.log(Error, "BatteryInfo", fatalErr.Error())
-		return nil, fatalErr
-	}
-	// everything is fine
-	return validBatteries, nil
-}
-
 func (env *ShellEnvironment) Shell() string {
 	defer env.trace(time.Now(), "Shell")
 	if env.CmdFlags.Shell != "" {
@@ -641,7 +571,7 @@ func (env *ShellEnvironment) Shell() string {
 		return Unknown
 	}
 	// Cache the shell value to speed things up.
-	env.CmdFlags.Shell = strings.Trim(strings.Replace(name, ".exe", "", 1), " ")
+	env.CmdFlags.Shell = strings.Trim(strings.TrimSuffix(name, ".exe"), " ")
 	return env.CmdFlags.Shell
 }
 
@@ -659,6 +589,13 @@ func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestM
 	response, err := client.Do(request)
 	if err != nil {
 		env.log(Error, "HTTPRequest", err.Error())
+		return nil, err
+	}
+	// anything inside the range [200, 299] is considered a success
+	if response.StatusCode < 200 || response.StatusCode >= 300 {
+		message := "HTTP status code " + strconv.Itoa(response.StatusCode)
+		err := errors.New(message)
+		env.log(Error, "HTTPRequest", message)
 		return nil, err
 	}
 	defer response.Body.Close()
@@ -757,8 +694,21 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 	return tmplCache
 }
 
-func (env *ShellEnvironment) DirMatchesOneOf(dir string, regexes []string) bool {
-	return dirMatchesOneOf(dir, env.Home(), env.GOOS(), regexes)
+func (env *ShellEnvironment) DirMatchesOneOf(dir string, regexes []string) (match bool) {
+	// sometimes the function panics inside golang, we want to silence that error
+	// and assume that there's no match. Not perfect, but better than crashing
+	// for the time being until we figure out what the actual root cause is
+	defer func() {
+		if err := recover(); err != nil {
+			message := fmt.Sprintf("%s", err)
+			env.log(Error, "DirMatchesOneOf", message)
+			match = false
+		}
+	}()
+	env.lock.Lock()
+	defer env.lock.Unlock()
+	match = dirMatchesOneOf(dir, env.Home(), env.GOOS(), regexes)
+	return
 }
 
 func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {

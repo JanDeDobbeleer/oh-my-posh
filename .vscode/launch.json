@@ -11,7 +11,7 @@
         "prompt",
         "print",
         "primary",
-        "--config=${workspaceRoot}/themes/cinnamon.omp.json",
+        "--config=https://gist.githubusercontent.com/ehawman-rosenberg/50b3b695526f03690cfd396d02c2cca3/raw/c2e0bc78cdf551b0cc76f593e4fd70428f981c0e/eh-tea.omp.json",
         "--shell=pwsh",
         "--terminal-width=200",
       ]

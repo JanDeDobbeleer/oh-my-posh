@@ -172,6 +172,11 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://github.com/antoson"><img src="https://avatars.githubusercontent.com/u/36371990?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ondrej Antos</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=antoson" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/Bahnschrift"><img src="https://avatars.githubusercontent.com/u/31170809?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bahnschrift</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Bahnschrift" title="Documentation">📖</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/jakeboone02"><img src="https://avatars.githubusercontent.com/u/366438?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jake Boone</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jakeboone02" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/kapsiR"><img src="https://avatars.githubusercontent.com/u/7165033?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kapsiR</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kapsiR" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://xximo.com/"><img src="https://avatars.githubusercontent.com/u/1303967?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Christiaan Rakowski</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=csrakowski" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=csrakowski" title="Documentation">📖</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->

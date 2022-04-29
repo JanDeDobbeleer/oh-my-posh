@@ -7,11 +7,12 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Version number of oh-my-posh
 var (
 	config         string
 	displayVersion bool
-	cliVersion     string
+
+	// Version number of oh-my-posh
+	cliVersion string
 )
 
 var rootCmd = &cobra.Command{

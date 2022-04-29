@@ -1153,6 +1153,34 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jakeboone02",
+      "name": "Jake Boone",
+      "avatar_url": "https://avatars.githubusercontent.com/u/366438?v=4",
+      "profile": "https://github.com/jakeboone02",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "kapsiR",
+      "name": "kapsiR",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7165033?v=4",
+      "profile": "https://github.com/kapsiR",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "csrakowski",
+      "name": "Christiaan Rakowski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1303967?v=4",
+      "profile": "https://xximo.com/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -1,4 +1,6 @@
-package segments
+//go:build !darwin
+
+package environment
 
 import (
 	"testing"
@@ -24,7 +26,6 @@ func TestMapBatteriesState(t *testing.T) {
 		{Case: "discharging > empty", ExpectedState: battery.Discharging, CurrentState: battery.Empty, NewState: battery.Discharging},
 	}
 	for _, tc := range cases {
-		batt := &Battery{}
-		assert.Equal(t, tc.ExpectedState, batt.mapMostLogicalState(tc.CurrentState, tc.NewState), tc.Case)
+		assert.Equal(t, tc.ExpectedState, mapMostLogicalState(tc.CurrentState, tc.NewState), tc.Case)
 	}
 }

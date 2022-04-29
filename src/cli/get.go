@@ -10,7 +10,7 @@ import (
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
-	Use:   "get [shell|millies]",
+	Use:   "get [shell|millis]",
 	Short: "Get a value from oh-my-posh",
 	Long: `Get a value from oh-my-posh.
 This command is used to get the value of the following variables:

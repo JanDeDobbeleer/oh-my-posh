@@ -55,10 +55,6 @@ func (env *ShellEnvironment) Root() bool {
 }
 
 func (env *ShellEnvironment) Home() string {
-	env.lock.Lock()
-	defer func() {
-		env.lock.Unlock()
-	}()
 	home := os.Getenv("HOME")
 	defer func() {
 		env.log(Debug, "Home", home)

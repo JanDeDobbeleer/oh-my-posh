@@ -23,8 +23,7 @@
             "raspbian": "\uf315",
             "ubuntu": "\uf31b ",
             "windows": "\uf871 ",
-            "wsl": "\ue712",
-            "wsl_separator": " on "
+            "wsl": "\ue712"
           },
           "style": "diamond",
           "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}",

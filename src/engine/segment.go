@@ -60,121 +60,123 @@ type SegmentStyle string
 type SegmentType string
 
 const (
+	// Plain writes it without ornaments
+	Plain SegmentStyle = "plain"
 	// Powerline writes it Powerline style
 	Powerline SegmentStyle = "powerline"
 	// Accordion writes it Powerline style but collapses the segment when disabled instead of hiding
 	Accordion SegmentStyle = "accordion"
-	// Plain writes it without ornaments
-	Plain SegmentStyle = "plain"
 	// Diamond writes the prompt shaped with a leading and trailing symbol
 	Diamond SegmentStyle = "diamond"
 
-	// SESSION represents the user info segment
-	SESSION SegmentType = "session"
-	// PATH represents the current path segment
-	PATH SegmentType = "path"
-	// GIT represents the git status and information
-	GIT SegmentType = "git"
-	// PLASTIC represents the plastic scm status and information
-	PLASTIC SegmentType = "plastic"
-	// EXIT writes the last exit code
-	EXIT SegmentType = "exit"
-	// PYTHON writes the virtual env name
-	PYTHON SegmentType = "python"
-	// ROOT writes root symbol
-	ROOT SegmentType = "root"
-	// TIME writes the current timestamp
-	TIME SegmentType = "time"
-	// TEXT writes a text
-	TEXT SegmentType = "text"
-	// CMD writes the output of a shell command
-	CMD SegmentType = "command"
-	// BATTERY writes the battery percentage
-	BATTERY SegmentType = "battery"
-	// SPOTIFY writes the SPOTIFY status for Mac
-	SPOTIFY SegmentType = "spotify"
-	// SHELL writes which shell we're currently in
-	SHELL SegmentType = "shell"
-	// NODE writes which node version is currently active
-	NODE SegmentType = "node"
-	// OS write os specific icon
-	OS SegmentType = "os"
-	// AZ writes the Azure subscription info we're currently in
-	AZ SegmentType = "az"
-	// KUBECTL writes the Kubernetes context we're currently in
-	KUBECTL SegmentType = "kubectl"
-	// DOTNET writes which dotnet version is currently active
-	DOTNET SegmentType = "dotnet"
-	// TERRAFORM writes the terraform workspace we're currently in
-	TERRAFORM SegmentType = "terraform"
-	// GOLANG writes which go version is currently active
-	GOLANG SegmentType = "go"
-	// JULIA writes which julia version is currently active
-	JULIA SegmentType = "julia"
-	// YTM writes YouTube Music information and status
-	YTM SegmentType = "ytm"
-	// EXECUTIONTIME writes the execution time of the last run command
-	EXECUTIONTIME SegmentType = "executiontime"
-	// RUBY writes which ruby version is currently active
-	RUBY SegmentType = "ruby"
+	// ANGULAR writes which angular cli version us currently active
+	ANGULAR SegmentType = "angular"
 	// AWS writes the active aws context
 	AWS SegmentType = "aws"
-	// JAVA writes the active java version
-	JAVA SegmentType = "java"
-	// POSHGIT writes the posh git prompt
-	POSHGIT SegmentType = "poshgit"
+	// AZ writes the Azure subscription info we're currently in
+	AZ SegmentType = "az"
 	// AZFUNC writes current AZ func version
 	AZFUNC SegmentType = "azfunc"
+	// BATTERY writes the battery percentage
+	BATTERY SegmentType = "battery"
+	// Brewfather segment
+	BREWFATHER SegmentType = "brewfather"
+	// cds (SAP CAP) version
+	CDS SegmentType = "cds"
+	// Cloud Foundry segment
+	CF SegmentType = "cf"
+	// Cloud Foundry logged in target
+	CFTARGET SegmentType = "cftarget"
+	// CMD writes the output of a shell command
+	CMD SegmentType = "command"
 	// CRYSTAL writes the active crystal version
 	CRYSTAL SegmentType = "crystal"
 	// DART writes the active dart version
 	DART SegmentType = "dart"
+	// DOTNET writes which dotnet version is currently active
+	DOTNET SegmentType = "dotnet"
+	// EXECUTIONTIME writes the execution time of the last run command
+	EXECUTIONTIME SegmentType = "executiontime"
+	// EXIT writes the last exit code
+	EXIT SegmentType = "exit"
+	// GIT represents the git status and information
+	GIT SegmentType = "git"
+	// GOLANG writes which go version is currently active
+	GOLANG SegmentType = "go"
+	// HASKELL segment
+	HASKELL SegmentType = "haskell"
+	// IPIFY segment
+	IPIFY SegmentType = "ipify"
+	// ITERM inserts the Shell Integration prompt mark on iTerm zsh/bash/fish
+	ITERM SegmentType = "iterm"
+	// JAVA writes the active java version
+	JAVA SegmentType = "java"
+	// JULIA writes which julia version is currently active
+	JULIA SegmentType = "julia"
+	// KOTLIN writes the active kotlin version
+	KOTLIN SegmentType = "kotlin"
+	// KUBECTL writes the Kubernetes context we're currently in
+	KUBECTL SegmentType = "kubectl"
 	// NBGV writes the nbgv version information
 	NBGV SegmentType = "nbgv"
-	// RUST writes the cargo version information if cargo.toml is present
-	RUST SegmentType = "rust"
-	// OWM writes the weather coming from openweatherdata
-	OWM SegmentType = "owm"
-	// SYSTEMINFO writes system information (memory, cpu, load)
-	SYSTEMINFO SegmentType = "sysinfo"
-	// ANGULAR writes which angular cli version us currently active
-	ANGULAR SegmentType = "angular"
-	// PHP writes which php version is currently active
-	PHP SegmentType = "php"
 	// NIGHTSCOUT is an open source diabetes system
 	NIGHTSCOUT SegmentType = "nightscout"
+	// NODE writes which node version is currently active
+	NODE SegmentType = "node"
+	// npm version
+	NPM SegmentType = "npm"
+	// OS write os specific icon
+	OS SegmentType = "os"
+	// OWM writes the weather coming from openweatherdata
+	OWM SegmentType = "owm"
+	// PATH represents the current path segment
+	PATH SegmentType = "path"
+	// PHP writes which php version is currently active
+	PHP SegmentType = "php"
+	// PLASTIC represents the plastic scm status and information
+	PLASTIC SegmentType = "plastic"
+	// POSHGIT writes the posh git prompt
+	POSHGIT SegmentType = "poshgit"
+	// Project version
+	PROJECT SegmentType = "project"
+	// PYTHON writes the virtual env name
+	PYTHON SegmentType = "python"
+	// R version
+	R SegmentType = "r"
+	// ROOT writes root symbol
+	ROOT SegmentType = "root"
+	// RUBY writes which ruby version is currently active
+	RUBY SegmentType = "ruby"
+	// RUST writes the cargo version information if cargo.toml is present
+	RUST SegmentType = "rust"
+	// SESSION represents the user info segment
+	SESSION SegmentType = "session"
+	// SHELL writes which shell we're currently in
+	SHELL SegmentType = "shell"
+	// SPOTIFY writes the SPOTIFY status for Mac
+	SPOTIFY SegmentType = "spotify"
 	// STRAVA is a sports activity tracker
 	STRAVA SegmentType = "strava"
+	// SWIFT writes the active swift version
+	SWIFT SegmentType = "swift"
+	// SYSTEMINFO writes system information (memory, cpu, load)
+	SYSTEMINFO SegmentType = "sysinfo"
+	// TERRAFORM writes the terraform workspace we're currently in
+	TERRAFORM SegmentType = "terraform"
+	// TEXT writes a text
+	TEXT SegmentType = "text"
+	// TIME writes the current timestamp
+	TIME SegmentType = "time"
+	// UI5 Tooling segment
+	UI5TOOLING SegmentType = "ui5tooling"
 	// WAKATIME writes tracked time spend in dev editors
 	WAKATIME SegmentType = "wakatime"
 	// WIFI writes details about the current WIFI connection
 	WIFI SegmentType = "wifi"
 	// WINREG queries the Windows registry.
 	WINREG SegmentType = "winreg"
-	// Brewfather segment
-	BREWFATHER SegmentType = "brewfather"
-	// IPIFY segment
-	IPIFY SegmentType = "ipify"
-	// HASKELL segment
-	HASKELL SegmentType = "haskell"
-	// UI5 Tooling segment
-	UI5TOOLING SegmentType = "ui5tooling"
-	// Cloud Foundry segment
-	CF SegmentType = "cf"
-	// Cloud Foundry logged in target
-	CFTARGET SegmentType = "cftarget"
-	// KOTLIN writes the active kotlin version
-	KOTLIN SegmentType = "kotlin"
-	// SWIFT writes the active swift version
-	SWIFT SegmentType = "swift"
-	// cds (SAP CAP) version
-	CDS SegmentType = "cds"
-	// npm version
-	NPM SegmentType = "npm"
-	// Project version
-	PROJECT SegmentType = "project"
-	// R version
-	R SegmentType = "r"
+	// YTM writes YouTube Music information and status
+	YTM SegmentType = "ytm"
 )
 
 func (segment *Segment) shouldIncludeFolder() bool {
@@ -242,59 +244,60 @@ func (segment *Segment) background() string {
 func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
-		PROJECT:       &segments.Project{},
-		NPM:           &segments.Npm{},
-		OWM:           &segments.Owm{},
-		SESSION:       &segments.Session{},
-		PATH:          &segments.Path{},
-		GIT:           &segments.Git{},
-		PLASTIC:       &segments.Plastic{},
-		EXIT:          &segments.Exit{},
-		PYTHON:        &segments.Python{},
-		ROOT:          &segments.Root{},
-		TEXT:          &segments.Text{},
-		TIME:          &segments.Time{},
-		CMD:           &segments.Cmd{},
-		BATTERY:       &segments.Battery{},
-		SPOTIFY:       &segments.Spotify{},
-		SHELL:         &segments.Shell{},
-		NODE:          &segments.Node{},
-		OS:            &segments.Os{},
-		AZ:            &segments.Az{},
-		KUBECTL:       &segments.Kubectl{},
-		DOTNET:        &segments.Dotnet{},
-		TERRAFORM:     &segments.Terraform{},
-		GOLANG:        &segments.Golang{},
-		JULIA:         &segments.Julia{},
-		YTM:           &segments.Ytm{},
-		EXECUTIONTIME: &segments.Executiontime{},
-		RUBY:          &segments.Ruby{},
+		ANGULAR:       &segments.Angular{},
 		AWS:           &segments.Aws{},
-		JAVA:          &segments.Java{},
-		POSHGIT:       &segments.PoshGit{},
+		AZ:            &segments.Az{},
 		AZFUNC:        &segments.AzFunc{},
+		BATTERY:       &segments.Battery{},
+		BREWFATHER:    &segments.Brewfather{},
+		CDS:           &segments.Cds{},
+		CF:            &segments.Cf{},
+		CFTARGET:      &segments.CfTarget{},
+		CMD:           &segments.Cmd{},
 		CRYSTAL:       &segments.Crystal{},
 		DART:          &segments.Dart{},
+		DOTNET:        &segments.Dotnet{},
+		EXECUTIONTIME: &segments.Executiontime{},
+		EXIT:          &segments.Exit{},
+		GIT:           &segments.Git{},
+		GOLANG:        &segments.Golang{},
+		HASKELL:       &segments.Haskell{},
+		IPIFY:         &segments.IPify{},
+		ITERM:         &segments.ITerm{},
+		JAVA:          &segments.Java{},
+		JULIA:         &segments.Julia{},
+		KOTLIN:        &segments.Kotlin{},
+		KUBECTL:       &segments.Kubectl{},
 		NBGV:          &segments.Nbgv{},
-		RUST:          &segments.Rust{},
-		SYSTEMINFO:    &segments.SystemInfo{},
-		ANGULAR:       &segments.Angular{},
-		PHP:           &segments.Php{},
 		NIGHTSCOUT:    &segments.Nightscout{},
+		NODE:          &segments.Node{},
+		NPM:           &segments.Npm{},
+		OS:            &segments.Os{},
+		OWM:           &segments.Owm{},
+		PATH:          &segments.Path{},
+		PHP:           &segments.Php{},
+		PLASTIC:       &segments.Plastic{},
+		POSHGIT:       &segments.PoshGit{},
+		PROJECT:       &segments.Project{},
+		PYTHON:        &segments.Python{},
+		R:             &segments.R{},
+		ROOT:          &segments.Root{},
+		RUBY:          &segments.Ruby{},
+		RUST:          &segments.Rust{},
+		SESSION:       &segments.Session{},
+		SHELL:         &segments.Shell{},
+		SPOTIFY:       &segments.Spotify{},
 		STRAVA:        &segments.Strava{},
+		SWIFT:         &segments.Swift{},
+		SYSTEMINFO:    &segments.SystemInfo{},
+		TERRAFORM:     &segments.Terraform{},
+		TEXT:          &segments.Text{},
+		TIME:          &segments.Time{},
+		UI5TOOLING:    &segments.UI5Tooling{},
 		WAKATIME:      &segments.Wakatime{},
 		WIFI:          &segments.Wifi{},
 		WINREG:        &segments.WindowsRegistry{},
-		BREWFATHER:    &segments.Brewfather{},
-		IPIFY:         &segments.IPify{},
-		HASKELL:       &segments.Haskell{},
-		UI5TOOLING:    &segments.UI5Tooling{},
-		CF:            &segments.Cf{},
-		CFTARGET:      &segments.CfTarget{},
-		KOTLIN:        &segments.Kotlin{},
-		SWIFT:         &segments.Swift{},
-		CDS:           &segments.Cds{},
-		R:             &segments.R{},
+		YTM:           &segments.Ytm{},
 	}
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)

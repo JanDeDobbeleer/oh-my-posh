@@ -281,7 +281,7 @@ func defaultConfig() *Config {
 						BackgroundTemplates: []string{
 							"{{ if gt .Code 0 }}#f1184c{{ end }}",
 						},
-						Template: " \uE23A",
+						Template: " \uE23A ",
 						Properties: properties.Map{
 							properties.AlwaysEnabled: true,
 						},

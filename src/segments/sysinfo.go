@@ -16,12 +16,13 @@ type SystemInfo struct {
 
 	Precision int
 	// mem
-	PhysicalTotalMemory uint64
-	PhysicalFreeMemory  uint64
-	PhysicalPercentUsed float64
-	SwapTotalMemory     uint64
-	SwapFreeMemory      uint64
-	SwapPercentUsed     float64
+	PhysicalTotalMemory     uint64
+	PhysicalAvailableMemory uint64
+	PhysicalFreeMemory      uint64
+	PhysicalPercentUsed     float64
+	SwapTotalMemory         uint64
+	SwapFreeMemory          uint64
+	SwapPercentUsed         float64
 	// cpu
 	Times float64
 	CPU   []cpu.InfoStat
@@ -57,6 +58,7 @@ func (s *SystemInfo) Init(props properties.Properties, env environment.Environme
 	memStat, err := mem.VirtualMemory()
 	if err == nil {
 		s.PhysicalTotalMemory = memStat.Total
+		s.PhysicalAvailableMemory = memStat.Available
 		s.PhysicalFreeMemory = memStat.Free
 		s.PhysicalPercentUsed = memStat.UsedPercent
 	}

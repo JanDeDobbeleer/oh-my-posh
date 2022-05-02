@@ -41,7 +41,9 @@ Display SysInfo.
 ### Properties
 
 - `.PhysicalTotalMemory`: `int` - is the total of used physical memory
-- `.PhysicalFreeMemory`: `int` - is the total of free physical memory
+- `.PhysicalAvailableMemory`: `int` - is the total available physical memory (i.e. the amount immediately available to processes)
+- `.PhysicalFreeMemory`: `int` - is the total of free physical memory (i.e. considers memory used by the system for any reason
+[e.g. caching] as occupied)
 - `.PhysicalPercentUsed`: `float64` - is the percentage of physical memory in usage
 - `.SwapTotalMemory`: `int` - is the total of used swap memory
 - `.SwapFreeMemory`: `int` -  is the total of free swap memory

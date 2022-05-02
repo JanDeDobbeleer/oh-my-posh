@@ -77,7 +77,7 @@
         },
         {
           "background": "p:bright-cyan",
-          "foreground": "p:dracula-white",
+          "foreground": "p:dracula-black",
           "powerline_symbol": "\ue0bc",
           "style": "powerline",
           "template": " \ue738 {{ .Full }}",
@@ -85,7 +85,7 @@
         },
         {
           "background": "p:bright-cyan",
-          "foreground": "p:dracula-white",
+          "foreground": "p:dracula-black",
           "powerline_symbol": "\ue0bc",
           "style": "powerline",
           "template": " \ue73d {{ .Full }} ",
@@ -93,7 +93,7 @@
         },
         {
           "background": "p:bright-green",
-          "foreground": "p:dracula-white",
+          "foreground": "p:dracula-black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "fetch_version": true
@@ -104,7 +104,7 @@
         },
         {
           "background": "p:bright-orange",
-          "foreground": "p:dracula-white",
+          "foreground": "p:dracula-black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "display_mode": "files",
@@ -116,7 +116,7 @@
         },
         {
           "background": "p:bright-red",
-          "foreground": "p:dracula-white",
+          "foreground": "p:dracula-black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "display_mode": "files",
@@ -148,10 +148,10 @@
         },
         {
           "background_templates": [
-            "{{if contains \"default\" .Profile}}#FFA400{{end}}",
-            "{{if contains \"jan\" .Profile}}#f1184c{{end}}"
+            "{{if contains \"default\" .Profile}}p:orange{{end}}",
+            "{{if contains \"jan\" .Profile}}p:pink{{end}}"
           ],
-          "foreground": "p:dracula-white",
+          "foreground": "p:dracula-black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "display_default": false

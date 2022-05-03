@@ -29,7 +29,7 @@
             "style": "folder"
           },
           "style": "powerline",
-          "template": " \uf07b\uf553{{ .Path }} ",
+          "template": " \uf07b  \uf553 {{ .Path }} ",
           "type": "path"
         },
         {

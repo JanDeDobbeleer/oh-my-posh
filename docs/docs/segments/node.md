@@ -6,7 +6,7 @@ sidebar_label: Node
 
 ## What
 
-Display the currently active node version.
+Display the currently active [Node.js][node-js] version.
 
 ## Sample Configuration
 
@@ -56,3 +56,4 @@ Display the currently active node version.
 - `.Mismatch`: `boolean` - if the version in `.nvmrc` matches with `.Full`
 
 [templates]: /docs/configuration/templates
+[node-js]: https://nodejs.org

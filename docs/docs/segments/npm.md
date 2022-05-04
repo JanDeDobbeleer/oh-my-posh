@@ -6,7 +6,7 @@ sidebar_label: NPM
 
 ## What
 
-Display the currently active npm version.
+Display the currently active [npm][npm-docs] version.
 
 ## Sample Configuration
 
@@ -40,3 +40,4 @@ Display the currently active npm version.
 - `.Error`: `string` - when fetching the version string errors
 
 [templates]: /docs/configuration/templates
+[npm-docs]: https://docs.npmjs.com/about-npm

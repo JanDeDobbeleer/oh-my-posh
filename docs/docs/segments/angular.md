@@ -6,7 +6,7 @@ sidebar_label: Angular
 
 ## What
 
-Display the currently active Angular CLI version.
+Display the currently active [Angular CLI][angular-cli-docs] version.
 
 ## Sample Configuration
 
@@ -49,3 +49,4 @@ Display the currently active Angular CLI version.
 - `.Error`: `string` - when fetching the version string errors
 
 [templates]: /docs/configuration/templates
+[angular-cli-docs]: https://angular.io/cli

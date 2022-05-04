@@ -77,7 +77,7 @@ module.exports = {
             },
             {
               label: 'Contributing',
-              to: 'docs/contributing_started',
+              to: 'docs/contributing/started',
             },
           ],
         },

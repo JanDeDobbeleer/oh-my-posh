@@ -6,7 +6,7 @@ sidebar_label: Dotnet
 
 ## What
 
-Display the currently active .NET SDK version.
+Display the currently active [.NET SDK][net-sdk-docs] version.
 
 ## Sample Configuration
 
@@ -55,3 +55,4 @@ Display the currently active .NET SDK version.
 - `.Error`: `string` - when fetching the version string errors
 
 [templates]: /docs/configuration/templates
+[net-sdk-docs]: https://docs.microsoft.com/en-us/dotnet/core/tools

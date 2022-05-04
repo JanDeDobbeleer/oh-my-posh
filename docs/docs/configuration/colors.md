@@ -193,4 +193,4 @@ For example, `p:foreground` and `p:background` will be correctly set to "#CAF0F8
 [git]: /docs/segments/git
 [battery]: /docs/segments/battery
 [template-properties]: /docs/configuration/templates#global-properties
-[aws]: /docs/aws
+[aws]: /docs/segments/aws

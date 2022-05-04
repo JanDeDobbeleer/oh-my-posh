@@ -6,11 +6,11 @@ sidebar_label: Open Weather Map
 
 ## What
 
-Shows the current weather of a given location.
+Shows the current weather of a given location with [Open Weather Map][owm].
 
 :::caution
 
-You **must** request an API key at the [Open Weather Map](https://openweathermap.org/price) website.
+You **must** request an API key at the [Open Weather Map][owm-price] website.
 The free tier for *Current weather and forecasts collection* is sufficient.
 :::
 
@@ -36,7 +36,7 @@ The free tier for *Current weather and forecasts collection* is sufficient.
 
 ## Properties
 
-- apikey: `string` - Your apikey from [Open Weather Map](https://openweathermap.org)
+- apikey: `string` - Your API key from [Open Weather Map][owm]
 - location: `string` - The requested location.
                         Formatted as <City,STATE,COUNTRY_CODE>. City name, state code and country code divided by comma.
                         Please, refer to ISO 3166 for the state codes or country codes - defaults to `DE BILT,NL`
@@ -65,3 +65,5 @@ properties below - defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`
 - `.URL`: `string` - the url of the current api call
 
 [templates]: /docs/configuration/templates
+[owm]: https://openweathermap.org
+[owm-price]: https://openweathermap.org/price

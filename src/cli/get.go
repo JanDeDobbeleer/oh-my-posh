@@ -13,6 +13,7 @@ var getCmd = &cobra.Command{
 	Use:   "get [shell|millis]",
 	Short: "Get a value from oh-my-posh",
 	Long: `Get a value from oh-my-posh.
+
 This command is used to get the value of the following variables:
 
 - shell
@@ -21,7 +22,7 @@ This command is used to get the value of the following variables:
 		"millis",
 		"shell",
 	},
-	Args: cobra.OnlyValidArgs,
+	Args: NoArgsOrOneValidArg,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()

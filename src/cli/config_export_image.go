@@ -22,20 +22,25 @@ var (
 var imageCmd = &cobra.Command{
 	Use:   "image",
 	Short: "Export your config to an image",
-	Long: `Export your config to an image
-
-> oh-my-posh config export image --config ~/myconfig.omp.json
-
-Exports the configuration to an image file called ~/myconfig.png.
-
-> oh-my-posh config export image --config ~/myconfig.omp.json --author "John Doe"
+	Long: `Export your config to an image.
 
 You can tweak the output by using additional flags:
 
 - author: displays the author below the prompt
 - cursor-padding: the padding of the prompt cursor
 - rprompt-offset: the offset of the right prompt
-- background-color: the background color of the image`,
+- background-color: the background color of the image
+
+Example usage:
+
+> oh-my-posh config export image --config ~/myconfig.omp.json
+
+Exports the config to an image file called myconfig.png in the current working directory.
+
+> oh-my-posh config export image --config ~/myconfig.omp.json --author "John Doe"
+
+Exports the config to an image file using customized output options.`,
+	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &environment.ShellEnvironment{
 			Version: cliVersion,

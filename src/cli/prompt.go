@@ -8,8 +8,8 @@ import (
 var promptCmd = &cobra.Command{
 	Use:   "prompt",
 	Short: "Set up the prompt for your shell (deprecated)",
-	Long: `Set up the prompt for your shell (deprecated)
-Allows to initialize one of the supported shells, or to set the prompt manually for a custom shell.`,
+	Long:  `Set up the prompt for your shell. (deprecated)`,
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		_ = cmd.Help()
 	},

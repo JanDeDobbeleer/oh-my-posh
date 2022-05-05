@@ -16,6 +16,7 @@ var getCache = &cobra.Command{
 	Use:   "cache [path|clear|edit]",
 	Short: "Interact with the oh-my-posh cache",
 	Long: `Interact with the oh-my-posh cache.
+
 You can do the following:
 
 - path: list cache path
@@ -26,7 +27,7 @@ You can do the following:
 		"clear",
 		"edit",
 	},
-	Args: cobra.OnlyValidArgs,
+	Args: NoArgsOrOneValidArg,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()

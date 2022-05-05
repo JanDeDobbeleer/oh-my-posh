@@ -1192,6 +1192,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "felpel",
+      "name": "Félix Pelletier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5000004?v=4",
+      "profile": "https://github.com/felpel",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

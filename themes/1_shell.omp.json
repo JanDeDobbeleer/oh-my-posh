@@ -1,0 +1,145 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#ffbebc",
+          "leading_diamond": "<#ff70a6>  </>",
+          "powerline_symbol": "",
+          "properties": {
+            "display_host": true,
+            "template": "{{ .UserName }} <#ffffff>on</>"
+          },
+          "style": "diamond",
+          "trailing_diamond": "",
+          "type": "session"
+        },
+        {
+          "foreground": "#bc93ff",
+          "leading_diamond": "",
+          "properties": {
+            "template": " {{ .CurrentDate | date .Format }} ",
+            "time_format": "Monday <#ffffff>at</> 3:04 PM"
+          },
+          "style": "diamond",
+          "trailing_diamond": "",
+          "type": "time"
+        },
+        {
+          "foreground": "#ee79d1",
+          "leading_diamond": "",
+          "properties": {
+            "branch_icon": "\ue725 ",
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true,
+            "fetch_worktree_count": true,
+            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+          },
+          "style": "diamond",
+          "trailing_diamond": "",
+          "type": "git"
+        }
+      ],
+
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "newline": false,
+      "segments": [
+        {
+          "foreground": "#a9ffb4",
+          "properties": {
+            "template": ""
+          },
+          "style": "plain",
+          "type": "text"
+        },
+        {
+          "foreground": "#a9ffb4",
+          "leading_diamond": "",
+          "properties": {
+            "style": "dallas",
+            "template": " {{ .FormattedMs }}s <#ffffff></>",
+            "threshold": 0
+          },
+          "style": "diamond",
+          "trailing_diamond": "",
+          "type": "executiontime"
+        },
+        {
+          "properties": {
+            "root_icon": "\uf292 ",
+            "template": " \uf0e7 "
+          },
+          "style": "diamond",
+          "type": "root"
+        },
+        {
+          "foreground": "#94ffa2",
+          "leading_diamond": "",
+          "properties": {
+            "template": " <#ffffff>CPU:</> {{ round .PhysicalPercentUsed .Precision }}% "
+          },
+          "style": "diamond",
+          "type": "sysinfo"
+        },
+        {
+          "foreground": "#81ff91",
+          "properties": {
+            "template": "<#ffffff></> <#ffffff>RAM:</> {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB "
+          },
+          "style": "diamond",
+          "trailing_diamond": "",
+          "type": "sysinfo"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#ffafd2",
+          "leading_diamond": "<#00c7fc>  </><#ffafd2>{</>",
+          "properties": {
+            "folder_icon": "",
+            "folder_separator_icon": "易",
+            "home_icon": "home",
+            "style": "agnoster_full",
+            "template": " \ue5ff {{ .Path }} "
+          },
+          "style": "diamond",
+          "trailing_diamond": "<#ffafd2>}</>",
+          "type": "path"
+        },
+        {
+          "foreground": "#A9FFB4",
+          "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
+          "properties": {
+            "always_enabled": true,
+            "template": "  "
+          },
+          "style": "plain",
+          "type": "exit"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "console_title": true,
+  "console_title_style": "template",
+  "console_title_template": "{{ .Folder }}",
+  "osc99": true,
+  "transient_prompt": {
+    "background": "transparent",
+    "foreground": "#FEF5ED",
+    "template": "\ue285 "
+  },
+  "version": 1
+}

@@ -14,9 +14,10 @@ var (
 
 	initCmd = &cobra.Command{
 		Use:   "init [bash|zsh|fish|powershell|pwsh|cmd|nu] --config ~/.mytheme.omp.json",
-		Short: "Initialize your shell and configuration",
-		Long: `Allows to initialize your shell and configuration.
-See the documentation to initialize your shell: https://ohmyposh.dev/docs/prompt.`,
+		Short: "Initialize your shell and config",
+		Long: `Initialize your shell and config.
+
+See the documentation to initialize your shell: https://ohmyposh.dev/docs/installation/prompt.`,
 		ValidArgs: []string{
 			"bash",
 			"zsh",
@@ -26,7 +27,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/prompt
 			"cmd",
 			"nu",
 		},
-		Args: cobra.OnlyValidArgs,
+		Args: NoArgsOrOneValidArg,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
 				_ = cmd.Help()

@@ -40,7 +40,7 @@ var printCmd = &cobra.Command{
 		"valid",
 		"error",
 	},
-	Args: cobra.OnlyValidArgs,
+	Args: NoArgsOrOneValidArg,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()

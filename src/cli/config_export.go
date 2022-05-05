@@ -17,11 +17,12 @@ var (
 // exportCmd represents the export command
 var exportCmd = &cobra.Command{
 	Use:   "export",
-	Short: "Export your configuration",
-	Long: `Export your configuration
-You can choose to print the output to stdout, or export your configuration in the format of your choice.
+	Short: "Export your config",
+	Long: `Export your config.
 
-Example usage
+You can choose to print the output to stdout, or export your config in the format of your choice.
+
+Example usage:
 
 > oh-my-posh config export --config ~/myconfig.omp.json
 
@@ -33,8 +34,9 @@ Exports the ~/myconfig.omp.json config file to toml and prints the result to std
 
 > oh-my-posh config export --config ~/myconfig.omp.json --format toml --write
 
-Exports the  ~/myconfig.omp.json config file to toml and writes the result to your config file.
+Exports the ~/myconfig.omp.json config file to toml and writes the result to your config file.
 A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
+	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &environment.ShellEnvironment{
 			Version: cliVersion,
@@ -72,7 +74,7 @@ func cleanOutputPath(path string, env environment.Environment) string {
 }
 
 func init() { // nolint:gochecknoinits
-	exportCmd.Flags().StringVarP(&format, "format", "f", "json", "configuration format to migrate to")
+	exportCmd.Flags().StringVarP(&format, "format", "f", "json", "config format to migrate to")
 	exportCmd.Flags().StringVarP(&output, "output", "o", "", "config file to export to")
 	configCmd.AddCommand(exportCmd)
 }

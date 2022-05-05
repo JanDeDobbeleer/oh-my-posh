@@ -15,7 +15,7 @@ import (
 var debugCmd = &cobra.Command{
 	Use:   "debug",
 	Short: "Print the prompt in debug mode",
-	Long:  "Print the prompt in debug mode",
+	Long:  "Print the prompt in debug mode.",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &environment.ShellEnvironment{

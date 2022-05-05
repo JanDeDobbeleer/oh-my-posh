@@ -11,9 +11,17 @@ import (
 // configCmd represents the config command
 var configCmd = &cobra.Command{
 	Use:   "config [export|migrate|edit]",
-	Short: "Interact with the configuration",
-	Long: `Interact with the configuration
-It allows to export, migrate or edit the configuration.`,
+	Short: "Interact with the config",
+	Long: `Interact with the config.
+
+You can export, migrate or edit the config.`,
+	ValidArgs: []string{
+		"export",
+		"migrate",
+		"edit",
+		"get",
+	},
+	Args: NoArgsOrOneValidArg,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
 			_ = cmd.Help()

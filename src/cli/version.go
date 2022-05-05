@@ -10,7 +10,8 @@ import (
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print the version",
-	Long:  "Print oh-my-posh version and build information.",
+	Long:  "Print the version number of oh-my-posh.",
+	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println(cliVersion)
 	},

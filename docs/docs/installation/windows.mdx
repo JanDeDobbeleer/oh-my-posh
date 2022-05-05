@@ -64,7 +64,7 @@ This installs a couple of things:
 - `oh-my-posh.exe` - Windows executable
 - `themes` - The latest Oh My Posh [themes][themes]
 
-For the `$PATH` to reload, a restart of your terminal is advised.
+For the `PATH` to be reloaded, a restart of your terminal is advised.
 
 :::warning Antivirus software
 Due to frequent updates of Oh My Posh, Antivirus software occasionally flags it (false positive).
@@ -130,22 +130,22 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object
 }>
 <TabItem value="winget">
 
-You can find the themes winget installs inside the `$env:POSH_THEMES_PATH` folder.
-To use `jandedobbeleer.omp.json` for example, you can refer to it using `$env:POSH_THEMES_PATH\jandedobbeleer.omp.json`
+You can find the themes winget installs inside the folder indicated by the environment variable `POSH_THEMES_PATH`.
+To use `jandedobbeleer.omp.json` in PowerShell for example, you can refer to it using `$env:POSH_THEMES_PATH\jandedobbeleer.omp.json`
 when setting the prompt using the `--config` flag.
 
 </TabItem>
 <TabItem value="scoop">
 
 You can find the themes scoop installs inside the `"$(scoop prefix oh-my-posh)\themes\"` folder.
-To use `jandedobbeleer.omp.json` for example, you can refer to it using `"$(scoop prefix oh-my-posh)\themes\jandedobbeleer.omp.json"`
+To use `jandedobbeleer.omp.json` in PowerShell for example, you can refer to it using `"$(scoop prefix oh-my-posh)\themes\jandedobbeleer.omp.json"`
 when setting the prompt using the `--config` flag.
 
 </TabItem>
 <TabItem value="manual">
 
-You can find the themes inside the `$env:POSH_THEMES_PATH` folder.
-To use `jandedobbeleer.omp.json` for example, you can refer to it using `$env:POSH_THEMES_PATH\jandedobbeleer.omp.json`
+You can find the themes inside the folder indicated by the environment variable `POSH_THEMES_PATH`.
+To use `jandedobbeleer.omp.json` in PowerShell for example, you can refer to it using `$env:POSH_THEMES_PATH\jandedobbeleer.omp.json`
 when setting the prompt using the `--config` flag.
 
 </TabItem>

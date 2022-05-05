@@ -38,7 +38,6 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 func Execute(version string) {
 	cliVersion = version
 	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }

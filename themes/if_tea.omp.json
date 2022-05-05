@@ -23,8 +23,7 @@
             "raspbian": "\uf315",
             "ubuntu": "\uf31b ",
             "windows": "\uf871 ",
-            "wsl": "\ue712",
-            "wsl_separator": " on "
+            "wsl": "\ue712"
           },
           "style": "diamond",
           "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}",
@@ -34,9 +33,11 @@
         {
           "background": "#00c7fc",
           "foreground": "#000000",
-          "leading_diamond": "\ue0c2",
           "style": "diamond",
-          "template": " \uf85a CPU: {{ round .PhysicalPercentUsed .Precision }}% | ",
+          "leading_diamond": "<transparent,#00c7fc>\ue0b0</>",
+          "properties": {
+            "template": " \uf85a CPU: {{ round .PhysicalPercentUsed .Precision }}% | "
+          },
           "type": "sysinfo"
         },
         {
@@ -69,7 +70,7 @@
         {
           "background": "#ee79d1",
           "foreground": "#000000",
-          "leading_diamond": "\ue0b2",
+          "leading_diamond": "",
           "properties": {
             "branch_icon": "\ue725 ",
             "fetch_stash_count": true,
@@ -131,12 +132,12 @@
           "properties": {
             "folder_icon": "\uf07b ",
             "folder_separator_icon": " \uf554 ",
-            "home_icon": "\uf7db ",
-            "style": "agnoster_full"
+            "home_icon": " ",
+            "style": "agnoster_full",
+            "template": " \ue5ff {{ .Path }} "
           },
           "style": "diamond",
-          "template": " \ue5ff {{ .Path }} ",
-          "trailing_diamond": "\ue0b0",
+          "trailing_diamond": "",
           "type": "path"
         }
       ],
@@ -148,11 +149,10 @@
       "segments": [
         {
           "foreground": "#00BCF9",
-          "foreground_templates": [
-            "{{ if gt .Code 0 }}#ef5350{{ end }}"
-          ],
+          "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
           "properties": {
-            "always_enabled": true
+            "always_enabled": true,
+            "template": "\u2570\u2500\ue285  "
           },
           "style": "plain",
           "template": " ",
@@ -162,6 +162,9 @@
       "type": "prompt"
     }
   ],
+  "console_title": true,
+  "console_title_style": "template",
+
   "console_title_template": "{{ .Folder }}",
   "osc99": true,
   "transient_prompt": {

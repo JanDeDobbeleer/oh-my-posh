@@ -13,13 +13,13 @@ Depending on your config, you might have to tweak the output a little bit.
 :::
 
 The oh-my-posh executable has the `config export image` command to export your current theme configuration
-to the current directory.
+to an image file (.png).
 
 ```powershell
 oh-my-posh config export image --cursor-padding 50
 ```
 
-There are a couple of additional switches you can use to tweak the image rendering:
+There are a couple of additional flags you can use to tweak the image rendering:
 
 - `--cursor-padding`: spaces to add after the cursor indication (`_`)
 - `--rprompt-offset`: spaces to add **before** a block that's right aligned

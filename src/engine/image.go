@@ -105,7 +105,7 @@ type ImageRenderer struct {
 	BgColor       string
 	Ansi          *color.Ansi
 
-	path string
+	Path string
 
 	factor float64
 
@@ -136,8 +136,10 @@ type ImageRenderer struct {
 }
 
 func (ir *ImageRenderer) Init(config string) {
-	match := regex.FindNamedRegexMatch(`.*(\/|\\)(?P<STR>.+).omp.(json|yaml|toml)`, config)
-	ir.path = fmt.Sprintf("%s.png", match[str])
+	if ir.Path == "" {
+		match := regex.FindNamedRegexMatch(`.*(\/|\\)(?P<STR>.+)\.(json|yaml|yml|toml)`, config)
+		ir.Path = fmt.Sprintf("%s.png", strings.TrimSuffix(match[str], ".omp"))
+	}
 
 	f := 2.0
 
@@ -446,7 +448,7 @@ func (ir *ImageRenderer) SavePNG() error {
 		x += w
 	}
 
-	return dc.SavePNG(ir.path)
+	return dc.SavePNG(ir.Path)
 }
 
 func (ir *ImageRenderer) shouldPrint() bool {

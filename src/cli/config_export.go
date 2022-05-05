@@ -66,8 +66,8 @@ func cleanOutputPath(path string, env environment.Environment) string {
 		path = filepath.Join(env.Home(), path)
 	}
 	if !filepath.IsAbs(path) {
-		if absConfigFile, err := filepath.Abs(path); err == nil {
-			path = absConfigFile
+		if absPath, err := filepath.Abs(path); err == nil {
+			path = absPath
 		}
 	}
 	return filepath.Clean(path)

@@ -24,6 +24,6 @@ func TestBlockEnabled(t *testing.T) {
 			Type:     tc.Type,
 			Segments: tc.Segments,
 		}
-		assert.Equal(t, tc.Expected, block.enabled(), tc.Case)
+		assert.Equal(t, tc.Expected, block.Enabled(), tc.Case)
 	}
 }

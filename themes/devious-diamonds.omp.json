@@ -8,11 +8,11 @@
         {
           "type": "iterm",
           "style": "plain",
-          "foreground": "p:cyan",
+          "foreground": "cyan",
           "template": "{{ .PromptMark }}"
         },
         {
-          "foreground": "p:cyan",
+          "foreground": "cyan",
           "properties": {
             "alpine": "\uf300",
             "arch": "\uf303",
@@ -33,29 +33,29 @@
             "wsl_separator": " on "
           },
           "style": "diamond",
-          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}\u2550",
+          "template": " {{ if .WSL }}\ue62a\uf44c{{ end }}{{.Icon}}\u2550",
           "trailing_diamond": "<transparent,>\ue0b2</>",
           "type": "os"
         },
         {
-          "background": "p:green",
-          "foreground": "p:dracula-black",
+          "background": "green",
+          "foreground": "black",
           "leading_diamond": "\ue0b2",
           "style": "diamond",
           "template": " \uf489 {{ .Name }} ",
           "type": "shell"
         },
         {
-          "background": "p:pink",
-          "foreground": "p:dracula-black",
+          "background": "magenta",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "style": "powerline",
-          "template": "{{ if .SSHSession }}\uf817{{ end }}{{ .UserName }}@{{ .HostName }}",
+          "template": " {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .HostName }} ",
           "type": "session"
         },
         {
-          "background": "p:bright-cyan",
-          "foreground": "p:dracula-black",
+          "background": "lightCyan",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "fetch_version": true
@@ -65,8 +65,8 @@
           "type": "julia"
         },
         {
-          "background": "p:bright-cyan",
-          "foreground": "p:dracula-black",
+          "background": "lightCyan",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "fetch_version": true
@@ -76,24 +76,24 @@
           "type": "go"
         },
         {
-          "background": "p:bright-cyan",
-          "foreground": "p:dracula-black",
+          "background": "lightCyan",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "style": "powerline",
           "template": " \ue738 {{ .Full }}",
           "type": "java"
         },
         {
-          "background": "p:bright-cyan",
-          "foreground": "p:dracula-black",
+          "background": "lightCyan",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "style": "powerline",
           "template": " \ue73d {{ .Full }} ",
           "type": "php"
         },
         {
-          "background": "p:bright-green",
-          "foreground": "p:dracula-black",
+          "background": "lightGreen",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "fetch_version": true
@@ -103,8 +103,8 @@
           "type": "node"
         },
         {
-          "background": "p:bright-orange",
-          "foreground": "p:dracula-black",
+          "background": "yellow",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "display_mode": "files",
@@ -115,8 +115,8 @@
           "type": "azfunc"
         },
         {
-          "background": "p:bright-red",
-          "foreground": "p:dracula-black",
+          "background": "red",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "display_mode": "files",
@@ -127,16 +127,16 @@
           "type": "ruby"
         },
         {
-          "background": "p:bright-yellow",
-          "foreground": "p:dracula-black",
+          "background": "lightYellow",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "style": "powerline",
           "template": " \ufd31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} ",
           "type": "kubectl"
         },
         {
-          "background": "p:yellow",
-          "foreground": "p:dracula-black",
+          "background": "lightYellow",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "display_mode": "files",
@@ -148,10 +148,10 @@
         },
         {
           "background_templates": [
-            "{{if contains \"default\" .Profile}}p:orange{{end}}",
-            "{{if contains \"jan\" .Profile}}p:pink{{end}}"
+            "{{if contains \"default\" .Profile}}yellow{{end}}",
+            "{{if contains \"jan\" .Profile}}magenta{{end}}"
           ],
-          "foreground": "p:dracula-black",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "display_default": false
@@ -161,8 +161,8 @@
           "type": "aws"
         },
         {
-          "background": "p:orange",
-          "foreground": "p:dracula-black",
+          "background": "yellow",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "time_format": "Mon | 15:04:05"
@@ -172,8 +172,8 @@
           "type": "time"
         },
         {
-          "background": "p:cyan",
-          "foreground": "p:dracula-black",
+          "background": "cyan",
+          "foreground": "black",
           "properties": {
             "style": "austin",
             "threshold": 0
@@ -190,8 +190,8 @@
       "alignment": "right",
       "segments": [
         {
-          "background": "p:pink",
-          "foreground": "p:dracula-black",
+          "background": "magenta",
+          "foreground": "black",
           "leading_diamond": "\ue0b2",
           "properties": {
             "branch_icon": "\ue725 ",
@@ -213,15 +213,15 @@
       "newline": true,
       "segments": [
         {
-          "foreground": "p:cyan",
+          "foreground": "cyan",
           "style": "plain",
           "template": " \u255a",
           "type": "text"
         },
         {
-          "background": "p:purple",
-          "background_templates": ["{{ if gt .Code 0 }}#FF5555{{ end }}"],
-          "foreground": "p:dracula-black",
+          "background": "blue",
+          "background_templates": ["{{ if gt .Code 0 }}red{{ end }}"],
+          "foreground": "black",
           "leading_diamond": "\ue0b2",
           "properties": {
             "always_enabled": true
@@ -231,8 +231,8 @@
           "type": "exit"
         },
         {
-          "background": "p:purple",
-          "foreground": "p:dracula-black",
+          "background": "blue",
+          "foreground": "black",
           "powerline_symbol": "\ue0bc",
           "properties": {
             "folder_icon": "\uf07b",
@@ -242,37 +242,20 @@
             "style": "agnoster_short"
           },
           "style": "powerline",
-          "template": " \ue5ff {{ .Path }}{{ if .Root }} {{ else }}\u200b{{ end }}",
+          "template": "{{ if gt .Code 0 }} {{ else }}{{ end }}\ue5ff {{ .Path }} ",
           "type": "path"
         },
         {
-          "background": "p:purple",
-          "background_templates": ["{{ if .Root }}p:red{{ end }}"],
-          "foreground": "p:dracula-white",
+          "background": "blue",
+          "background_templates": ["{{ if .Root }}red{{ end }}"],
+          "foreground": "white",
           "properties": {
             "root_icon": "\uf292"
           },
           "style": "diamond",
-          "template": "{{ if .Root }} \uf0e7 {{ else }}\u200b{{ end }}",
+          "template": "{{ if .Root }} \uf0e7 {{ else }}\u0008{{ end }}",
           "trailing_diamond": "\ue0b0",
           "type": "text"
-        }
-      ],
-      "type": "prompt"
-    },
-    {
-      "alignment": "left",
-      "newline": true,
-      "segments": [
-        {
-          "foreground": "p:cyan",
-          "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
-          "properties": {
-            "always_enabled": true
-          },
-          "style": "plain",
-          "template": " ",
-          "type": "exit"
         }
       ],
       "type": "prompt"
@@ -281,36 +264,24 @@
   "console_title_template": "{{ .Folder }}",
   "osc99": true,
   "palette": {
-    "black": "#1b1a23",
-    "comment": "#7970a9",
-    "cyan": "#80ffea",
-    "bright-cyan": "#99ffee",
-    "bright-green": "#a2ff99",
-    "bright-orange": "#ffaa99",
-    "bright-pink": "#ff99cc",
-    "bright-purple": "#ff99cc",
-    "bright-red": "#ffaa99",
-    "bright-yellow": "#ffff99",
-    "dracula-black": "#22212c",
-    "dracula-white": "#f8f8f2",
-    "green": "#8aff80",
-    "orange": "#ffca80",
-    "pink": "#ff80bf",
-    "purple": "#9580ff",
-    "red": "#ff9580",
-    "selection": "#454158",
-    "white": "#ffffff",
-    "yellow": "#ffff80"
-  },
-  "secondary_prompt": {
-    "background": "transparent",
-    "foreground": "p:dracula-white",
-    "template": "\ue285 "
-  },
-  "transient_prompt": {
-    "background": "transparent",
-    "foreground": "p:dracula-white",
-    "template": "\ue285{{ .Shell }}"
+    "black": "#1B1A23",
+    "blue": "#9580FF",
+    "black-background": "#22212C",
+    "lightBlue-brightBlue": "#AA99FF",
+    "lightCyan-brightCyan": "#99FFEE",
+    "lightGreen-brightGreen": "#A2FF99",
+    "lightMagenta-brightPurple": "#FF99CC",
+    "lightRed-brightRed": "#FFAA99",
+    "lightWhite-brightWhite": "#FFFFFF",
+    "lightYellow-brightYellow": "#FFFF80",
+    "selection-selectionBackground": "#454158",
+    "comment-brightBlack": "#7970A9",
+    "cyan": "#80FFEA",
+    "green": "#8AFF80",
+    "magenta-purple": "#FF80BF",
+    "red": "#FF9580",
+    "white-cursorColor-foreground": "#F8F8F2",
+    "yellow": "#FFCA80"
   },
   "version": 2
 }

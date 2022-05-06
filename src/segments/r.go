@@ -14,7 +14,7 @@ func (r *R) Template() string {
 }
 
 func (r *R) Init(props properties.Properties, env environment.Environment) {
-	rRegex := `R (scripting front-end )?version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`
+	rRegex := `version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`
 	r.language = language{
 		env:        env,
 		props:      props,

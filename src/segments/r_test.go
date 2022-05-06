@@ -19,6 +19,7 @@ func TestR(t *testing.T) {
 		HasRexe        bool
 		Version        string
 	}{
+		{Case: "Rscript 4.2.0", ExpectedString: "4.2.0", HasRscript: true, Version: "Rscript (R) version 4.2.0 (2022-04-22)"},
 		{Case: "Rscript 4.1.3", ExpectedString: "4.1.3", HasRscript: true, Version: "R scripting front-end version 4.1.3 (2022-03-10)"},
 		{Case: "Rscript 4.1.3 patched", ExpectedString: "4.1.3", HasRscript: true, Version: "R scripting front-end version 4.1.3 Patched (2022-03-10 r81896)"},
 		{Case: "Rscript 4.0.0", ExpectedString: "4.0.0", HasRscript: true, Version: "R scripting front-end version 4.0.0 (2020-04-24)"},

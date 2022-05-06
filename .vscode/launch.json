@@ -11,7 +11,7 @@
         "prompt",
         "print",
         "primary",
-        "--config=~/.posh.omp.json",
+        "--config=${workspaceRoot}/themes/default.omp.json",
         "--shell=pwsh",
         "--terminal-width=200",
       ]
@@ -26,7 +26,7 @@
         "prompt",
         "print",
         "tooltip",
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--config=${workspaceRoot}/themes/default.omp.json",
         "--command=git",
         "--shell=pwsh"
       ]
@@ -41,7 +41,7 @@
         "prompt",
         "print",
         "transient",
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--config=${workspaceRoot}/themes/default.omp.json",
         "--shell=pwsh",
         "--error=1"
       ]
@@ -65,7 +65,7 @@
       "args": [
         "prompt",
         "debug",
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
+        "--config=${workspaceRoot}/themes/default.omp.json"
       ]
     },
     {
@@ -78,7 +78,7 @@
         "prompt",
         "init",
         "cmd",
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--config=${workspaceRoot}/themes/default.omp.json",
         "--print"
       ]
     },
@@ -94,7 +94,7 @@
         "png",
         "--rprompt-offset=40",
         "--cursor-padding=15",
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json"
+        "--config=${workspaceRoot}/themes/default.omp.json"
       ]
     },
     {
@@ -106,7 +106,7 @@
       "args": [
         "config",
         "migrate",
-        "--config=${workspaceRoot}/themes/jandedobbeleer.omp.json",
+        "--config=${workspaceRoot}/themes/default.omp.json",
       ]
     },
     {

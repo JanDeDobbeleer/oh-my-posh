@@ -62,6 +62,14 @@ func (c AnsiColor) IsTransparent() bool {
 	return c == transparentAnsiColor
 }
 
+func (c AnsiColor) ToForeground() AnsiColor {
+	colorString := string(c)
+	if strings.HasPrefix(colorString, "38;") {
+		return AnsiColor(strings.Replace(colorString, "38;", "48;", 1))
+	}
+	return c
+}
+
 const (
 	// Transparent implies a transparent color
 	Transparent = "transparent"
@@ -111,8 +119,8 @@ func (a *AnsiWriter) writeColoredText(background, foreground AnsiColor, text str
 		foreground = a.getAnsiFromColorString("white", false)
 	}
 	if foreground.IsTransparent() && !background.IsEmpty() && len(a.TerminalBackground) != 0 {
-		fgAnsiColor := a.getAnsiFromColorString(a.TerminalBackground, false)
-		coloredText := fmt.Sprintf(a.Ansi.colorFull, background, fgAnsiColor, text)
+		bgAnsiColor := a.getAnsiFromColorString(a.TerminalBackground, false)
+		coloredText := fmt.Sprintf(a.Ansi.colorFull, background.ToForeground(), bgAnsiColor, text)
 		a.builder.WriteString(coloredText)
 		return
 	}

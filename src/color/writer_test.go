@@ -129,7 +129,7 @@ func TestWriteANSIColors(t *testing.T) {
 		{
 			Case:               "Transparent foreground, terminal background set",
 			Input:              "test",
-			Expected:           "\x1b[38;2;255;87;51m\x1b[38;2;33;47;60mtest\x1b[0m",
+			Expected:           "\x1b[48;2;255;87;51m\x1b[38;2;33;47;60mtest\x1b[0m",
 			Colors:             &Color{Foreground: Transparent, Background: "#FF5733"},
 			TerminalBackground: "#212F3C",
 		},

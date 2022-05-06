@@ -107,12 +107,11 @@ func (e *Engine) renderBlock(block *Block) {
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
 	if block.Type == RPrompt && e.Env.Shell() == shell.BASH {
-		block.initPlain(e.Env, e.Config)
+		block.InitPlain(e.Env, e.Config)
 	} else {
-		block.init(e.Env, e.Writer, e.Ansi)
+		block.Init(e.Env, e.Writer, e.Ansi)
 	}
-	block.renderSegmentsText()
-	if !block.enabled() {
+	if !block.Enabled() {
 		return
 	}
 	if block.Newline {
@@ -161,17 +160,16 @@ func (e *Engine) renderBlock(block *Block) {
 }
 
 // debug will loop through your config file and output the timings for each segments
-func (e *Engine) PrintDebug(version string) string {
+func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	var segmentTimings []*SegmentTiming
 	largestSegmentNameLength := 0
 	e.write(fmt.Sprintf("\n\x1b[1mVersion:\x1b[0m %s\n", version))
 	e.write("\n\x1b[1mSegments:\x1b[0m\n\n")
 	// console title timing
-	start := time.Now()
 	title := e.ConsoleTitle.GetTitle()
 	title = strings.TrimPrefix(title, "\x1b]0;")
 	title = strings.TrimSuffix(title, "\a")
-	duration := time.Since(start)
+	duration := time.Since(startTime)
 	segmentTiming := &SegmentTiming{
 		name:       "ConsoleTitle",
 		nameLength: 12,
@@ -182,7 +180,7 @@ func (e *Engine) PrintDebug(version string) string {
 	segmentTimings = append(segmentTimings, segmentTiming)
 	// loop each segments of each blocks
 	for _, block := range e.Config.Blocks {
-		block.init(e.Env, e.Writer, e.Ansi)
+		block.Init(e.Env, e.Writer, e.Ansi)
 		longestSegmentName, timings := block.debug()
 		segmentTimings = append(segmentTimings, timings...)
 		if longestSegmentName > largestSegmentNameLength {
@@ -197,7 +195,7 @@ func (e *Engine) PrintDebug(version string) string {
 		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.active)
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.text))
 	}
-	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(start)))
+	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(startTime)))
 	e.write(fmt.Sprintf("\n\x1b[1mCache path:\x1b[0m %s\n", e.Env.CachePath()))
 	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
 	e.write(e.Env.Logs())
@@ -245,7 +243,6 @@ func (e *Engine) PrintTooltip(tip string) string {
 	if !tooltip.writer.Enabled() {
 		return ""
 	}
-	tooltip.text = tooltip.string()
 	tooltip.enabled = true
 	// little hack to reuse the current logic
 	block := &Block{
@@ -254,11 +251,11 @@ func (e *Engine) PrintTooltip(tip string) string {
 	}
 	switch e.Env.Shell() {
 	case shell.ZSH, shell.CMD, shell.FISH:
-		block.init(e.Env, e.Writer, e.Ansi)
+		block.Init(e.Env, e.Writer, e.Ansi)
 		text, _ := block.renderSegments()
 		return text
 	case shell.PWSH, shell.PWSH5:
-		block.initPlain(e.Env, e.Config)
+		block.InitPlain(e.Env, e.Config)
 		text, length := block.renderSegments()
 		e.write(e.Ansi.ClearAfter())
 		e.write(e.Ansi.CarriageForward())
@@ -354,9 +351,8 @@ func (e *Engine) PrintRPrompt() string {
 	if block == nil {
 		return ""
 	}
-	block.init(e.Env, e.Writer, e.Ansi)
-	block.renderSegmentsText()
-	if !block.enabled() {
+	block.Init(e.Env, e.Writer, e.Ansi)
+	if !block.Enabled() {
 		return ""
 	}
 	text, length := block.renderSegments()

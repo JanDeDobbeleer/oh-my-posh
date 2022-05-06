@@ -7,8 +7,9 @@ import (
 )
 
 type ITerm struct {
-	props      properties.Properties
-	env        environment.Environment
+	props properties.Properties
+	env   environment.Environment
+
 	PromptMark string
 }
 

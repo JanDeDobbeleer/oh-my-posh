@@ -25,7 +25,7 @@ type Text struct {
 type Data interface{}
 
 type Context struct {
-	environment.TemplateCache
+	*environment.TemplateCache
 
 	// Simple container to hold ANY object
 	Data
@@ -34,7 +34,7 @@ type Context struct {
 func (c *Context) init(t *Text) {
 	c.Data = t.Context
 	if cache := t.Env.TemplateCache(); cache != nil {
-		c.TemplateCache = *cache
+		c.TemplateCache = cache
 		return
 	}
 }
@@ -75,7 +75,7 @@ func (t *Text) cleanTemplate() {
 		*knownVariables = append(*knownVariables, splitted[0])
 		return splitted[0], true
 	}
-	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "ShellVersion", "UserName", "HostName", "Env", "Data", "Code", "OS", "WSL"}
+	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "ShellVersion", "UserName", "HostName", "Env", "Data", "Code", "OS", "WSL", "Segments"}
 	matches := regex.FindAllNamedRegexMatch(`(?: |{|\()(?P<var>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
 	for _, match := range matches {
 		if variable, OK := unknownVariable(match["var"], &knownVariables); OK {

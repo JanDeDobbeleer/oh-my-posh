@@ -9,7 +9,6 @@ import (
 	"oh-my-posh/segments"
 	"oh-my-posh/template"
 	"runtime/debug"
-	"strings"
 	"time"
 )
 
@@ -30,8 +29,8 @@ type Segment struct {
 	Properties          properties.Map  `json:"properties,omitempty"`
 
 	writer          SegmentWriter
-	text            string
 	enabled         bool
+	text            string
 	env             environment.Environment
 	backgroundCache string
 	foregroundCache string
@@ -326,7 +325,7 @@ func (segment *Segment) string() string {
 	return text
 }
 
-func (segment *Segment) renderText(env environment.Environment) {
+func (segment *Segment) setEnabled(env environment.Environment) {
 	defer func() {
 		err := recover()
 		if err == nil {
@@ -335,7 +334,6 @@ func (segment *Segment) renderText(env environment.Environment) {
 		// display a message explaining omp failed(with the err)
 		message := fmt.Sprintf("\noh-my-posh fatal error rendering %s segment:%s\n\n%s\n", segment.Type, err, debug.Stack())
 		fmt.Println(message)
-		segment.text = "error"
 		segment.enabled = true
 	}()
 	err := segment.mapSegmentWithWriter(env)
@@ -343,7 +341,7 @@ func (segment *Segment) renderText(env environment.Environment) {
 		return
 	}
 	if segment.writer.Enabled() {
-		segment.text = segment.string()
-		segment.enabled = len(strings.ReplaceAll(segment.text, " ", "")) > 0
+		segment.enabled = true
+		env.TemplateCache().AddSegmentData(string(segment.Type), segment.writer)
 	}
 }

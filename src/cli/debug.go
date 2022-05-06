@@ -7,6 +7,7 @@ import (
 	"oh-my-posh/engine"
 	"oh-my-posh/environment"
 	"oh-my-posh/shell"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -18,6 +19,7 @@ var debugCmd = &cobra.Command{
 	Long:  "Print the prompt in debug mode.",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		startTime := time.Now()
 		env := &environment.ShellEnvironment{
 			CmdFlags: &environment.Flags{
 				Config: config,
@@ -47,7 +49,7 @@ var debugCmd = &cobra.Command{
 			Ansi:         ansi,
 			Plain:        plain,
 		}
-		fmt.Print(eng.PrintDebug(cliVersion))
+		fmt.Print(eng.PrintDebug(startTime, cliVersion))
 	},
 }
 

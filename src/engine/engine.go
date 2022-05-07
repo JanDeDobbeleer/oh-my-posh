@@ -129,7 +129,7 @@ func (e *Engine) renderBlock(block *Block) {
 		}
 		switch block.Alignment {
 		case Right:
-			text, length := block.renderSegments()
+			text, length := block.RenderSegments()
 			if padText, OK := e.shouldFill(block, length); OK {
 				e.write(padText)
 			}
@@ -138,12 +138,12 @@ func (e *Engine) renderBlock(block *Block) {
 			e.currentLineLength = 0
 			e.write(text)
 		case Left:
-			text, length := block.renderSegments()
+			text, length := block.RenderSegments()
 			e.currentLineLength += length
 			e.write(text)
 		}
 	case RPrompt:
-		text, length := block.renderSegments()
+		text, length := block.RenderSegments()
 		e.rpromptLength = length
 		if e.Env.Shell() == shell.BASH {
 			text = e.Ansi.FormatText(text)
@@ -166,22 +166,22 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	e.write(fmt.Sprintf("\n\x1b[1mVersion:\x1b[0m %s\n", version))
 	e.write("\n\x1b[1mSegments:\x1b[0m\n\n")
 	// console title timing
+	titleStartTime := time.Now()
 	title := e.ConsoleTitle.GetTitle()
 	title = strings.TrimPrefix(title, "\x1b]0;")
 	title = strings.TrimSuffix(title, "\a")
-	duration := time.Since(startTime)
 	segmentTiming := &SegmentTiming{
 		name:       "ConsoleTitle",
 		nameLength: 12,
 		active:     len(e.Config.ConsoleTitleTemplate) > 0,
 		text:       title,
-		duration:   duration,
+		duration:   time.Since(titleStartTime),
 	}
 	segmentTimings = append(segmentTimings, segmentTiming)
 	// loop each segments of each blocks
 	for _, block := range e.Config.Blocks {
 		block.Init(e.Env, e.Writer, e.Ansi)
-		longestSegmentName, timings := block.debug()
+		longestSegmentName, timings := block.Debug()
 		segmentTimings = append(segmentTimings, timings...)
 		if longestSegmentName > largestSegmentNameLength {
 			largestSegmentNameLength = longestSegmentName
@@ -243,7 +243,7 @@ func (e *Engine) PrintTooltip(tip string) string {
 	if !tooltip.writer.Enabled() {
 		return ""
 	}
-	tooltip.enabled = true
+	tooltip.Enabled = true
 	// little hack to reuse the current logic
 	block := &Block{
 		Alignment: Right,
@@ -252,11 +252,11 @@ func (e *Engine) PrintTooltip(tip string) string {
 	switch e.Env.Shell() {
 	case shell.ZSH, shell.CMD, shell.FISH:
 		block.Init(e.Env, e.Writer, e.Ansi)
-		text, _ := block.renderSegments()
+		text, _ := block.RenderSegments()
 		return text
 	case shell.PWSH, shell.PWSH5:
 		block.InitPlain(e.Env, e.Config)
-		text, length := block.renderSegments()
+		text, length := block.RenderSegments()
 		e.write(e.Ansi.ClearAfter())
 		e.write(e.Ansi.CarriageForward())
 		e.write(e.Ansi.GetCursorForRightWrite(length, 0))
@@ -355,7 +355,7 @@ func (e *Engine) PrintRPrompt() string {
 	if !block.Enabled() {
 		return ""
 	}
-	text, length := block.renderSegments()
+	text, length := block.RenderSegments()
 	e.rpromptLength = length
 	return text
 }

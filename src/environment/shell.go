@@ -50,6 +50,7 @@ type Flags struct {
 	Migrate       bool
 	TerminalWidth int
 	Strict        bool
+	Debug         bool
 }
 
 type CommandError struct {
@@ -223,10 +224,9 @@ type ShellEnvironment struct {
 	fileCache  *fileCache
 	tmplCache  *TemplateCache
 	logBuilder strings.Builder
-	debug      bool
 }
 
-func (env *ShellEnvironment) Init(debug bool) {
+func (env *ShellEnvironment) Init() {
 	if env.CmdFlags == nil {
 		env.CmdFlags = &Flags{}
 	}
@@ -236,8 +236,7 @@ func (env *ShellEnvironment) Init(debug bool) {
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
-	if debug {
-		env.debug = true
+	if env.CmdFlags.Debug {
 		log.SetOutput(&env.logBuilder)
 	}
 }
@@ -294,7 +293,7 @@ func (env *ShellEnvironment) downloadConfig(location string) error {
 }
 
 func (env *ShellEnvironment) trace(start time.Time, function string, args ...string) {
-	if !env.debug {
+	if !env.CmdFlags.Debug {
 		return
 	}
 	elapsed := time.Since(start)
@@ -303,7 +302,7 @@ func (env *ShellEnvironment) trace(start time.Time, function string, args ...str
 }
 
 func (env *ShellEnvironment) log(lt logType, function, message string) {
-	if !env.debug {
+	if !env.CmdFlags.Debug {
 		return
 	}
 	trace := fmt.Sprintf("%s: %s\n%s", lt, function, message)
@@ -311,7 +310,7 @@ func (env *ShellEnvironment) log(lt logType, function, message string) {
 }
 
 func (env *ShellEnvironment) debugF(function string, fn func() string) {
-	if !env.debug {
+	if !env.CmdFlags.Debug {
 		return
 	}
 	trace := fmt.Sprintf("%s: %s\n%s", Debug, function, fn())

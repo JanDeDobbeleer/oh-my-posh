@@ -61,7 +61,7 @@ var printCmd = &cobra.Command{
 				ShellVersion:  shellVersion,
 			},
 		}
-		env.Init(false)
+		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 		ansi := &color.Ansi{}

@@ -31,7 +31,7 @@ This command is used to get the value of the following variables:
 		env := &environment.ShellEnvironment{
 			Version: cliVersion,
 		}
-		env.Init(false)
+		env.Init()
 		defer env.Close()
 		switch args[0] {
 		case "millis":

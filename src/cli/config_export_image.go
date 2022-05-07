@@ -54,7 +54,7 @@ Exports the config to an image file using customized output options.`,
 				Shell:  shell.PLAIN,
 			},
 		}
-		env.Init(false)
+		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 		ansi := &color.Ansi{}

@@ -4,7 +4,6 @@ import (
 	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"oh-my-posh/shell"
-	"strings"
 	"sync"
 	"time"
 )
@@ -49,8 +48,7 @@ func (b *Block) Init(env environment.Environment, writer color.Writer, ansi *col
 	b.env = env
 	b.writer = writer
 	b.ansi = ansi
-	b.setEnabledSegments()
-	b.setSegmentsText()
+	b.executeSegmentLogic()
 }
 
 func (b *Block) InitPlain(env environment.Environment, config *Config) {
@@ -62,6 +60,13 @@ func (b *Block) InitPlain(env environment.Environment, config *Config) {
 		AnsiColors:         config.MakeColors(env),
 	}
 	b.env = env
+	b.executeSegmentLogic()
+}
+
+func (b *Block) executeSegmentLogic() {
+	if b.env.Flags().Debug {
+		return
+	}
 	b.setEnabledSegments()
 	b.setSegmentsText()
 }
@@ -76,7 +81,7 @@ func (b *Block) Enabled() bool {
 		return true
 	}
 	for _, segment := range b.Segments {
-		if segment.enabled {
+		if segment.Enabled {
 			return true
 		}
 	}
@@ -90,7 +95,7 @@ func (b *Block) setEnabledSegments() {
 	for _, segment := range b.Segments {
 		go func(s *Segment) {
 			defer wg.Done()
-			s.setEnabled(b.env)
+			s.SetEnabled(b.env)
 		}(segment)
 	}
 }
@@ -102,19 +107,15 @@ func (b *Block) setSegmentsText() {
 	for _, segment := range b.Segments {
 		go func(s *Segment) {
 			defer wg.Done()
-			if !s.enabled {
-				return
-			}
-			s.text = s.string()
-			s.enabled = len(strings.ReplaceAll(s.text, " ", "")) > 0
+			s.SetText()
 		}(segment)
 	}
 }
 
-func (b *Block) renderSegments() (string, int) {
+func (b *Block) RenderSegments() (string, int) {
 	defer b.writer.Reset()
 	for _, segment := range b.Segments {
-		if !segment.enabled && segment.Style != Accordion {
+		if !segment.Enabled && segment.Style != Accordion {
 			continue
 		}
 		b.setActiveSegment(segment)
@@ -135,7 +136,7 @@ func (b *Block) renderActiveSegment() {
 		b.writer.Write(color.Background, color.Foreground, b.activeSegment.text)
 		b.writer.Write(color.Transparent, color.Background, b.activeSegment.TrailingDiamond)
 	case Accordion:
-		if b.activeSegment.enabled {
+		if b.activeSegment.Enabled {
 			b.writer.Write(color.Background, color.Foreground, b.activeSegment.text)
 		}
 	}
@@ -187,7 +188,7 @@ func (b *Block) getPowerlineColor() string {
 	return b.previousActiveSegment.background()
 }
 
-func (b *Block) debug() (int, []*SegmentTiming) {
+func (b *Block) Debug() (int, []*SegmentTiming) {
 	var segmentTimings []*SegmentTiming
 	largestSegmentNameLength := 0
 	for _, segment := range b.Segments {
@@ -198,7 +199,9 @@ func (b *Block) debug() (int, []*SegmentTiming) {
 			largestSegmentNameLength = segmentTiming.nameLength
 		}
 		start := time.Now()
-		segmentTiming.active = segment.enabled
+		segment.SetEnabled(b.env)
+		segment.SetText()
+		segmentTiming.active = segment.Enabled
 		if segmentTiming.active || segment.Style == Accordion {
 			b.setActiveSegment(segment)
 			b.renderActiveSegment()

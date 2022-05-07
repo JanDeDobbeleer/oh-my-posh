@@ -51,7 +51,7 @@ func BenchmarkEngineRender(b *testing.B) {
 
 func engineRender() {
 	env := &environment.ShellEnvironment{}
-	env.Init(false)
+	env.Init()
 	defer env.Close()
 
 	cfg := LoadConfig(env)

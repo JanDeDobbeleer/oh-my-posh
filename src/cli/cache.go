@@ -36,7 +36,7 @@ You can do the following:
 		env := &environment.ShellEnvironment{
 			Version: cliVersion,
 		}
-		env.Init(false)
+		env.Init()
 		defer env.Close()
 		switch args[0] {
 		case "path":

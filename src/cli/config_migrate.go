@@ -44,7 +44,7 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 				Migrate: true,
 			},
 		}
-		env.Init(false)
+		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 		if write {

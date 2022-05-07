@@ -54,7 +54,7 @@ func runInit(shellName string) {
 			Strict: strict,
 		},
 	}
-	env.Init(false)
+	env.Init()
 	defer env.Close()
 	if print {
 		init := shell.PrintInit(env)

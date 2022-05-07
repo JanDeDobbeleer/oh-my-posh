@@ -23,9 +23,10 @@ var debugCmd = &cobra.Command{
 		env := &environment.ShellEnvironment{
 			CmdFlags: &environment.Flags{
 				Config: config,
+				Debug:  true,
 			},
 		}
-		env.Init(true)
+		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 		ansi := &color.Ansi{}

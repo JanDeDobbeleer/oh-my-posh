@@ -3,6 +3,7 @@ package mock
 import (
 	"io/fs"
 	"oh-my-posh/environment"
+	"time"
 
 	mock "github.com/stretchr/testify/mock"
 )
@@ -228,4 +229,8 @@ func (env *MockedEnvironment) HasFileInParentDirs(pattern string, depth uint) bo
 func (env *MockedEnvironment) DirMatchesOneOf(dir string, regexes []string) bool {
 	args := env.Called(dir, regexes)
 	return args.Bool(0)
+}
+
+func (env *MockedEnvironment) Trace(start time.Time, function string, args ...string) {
+	_ = env.Called(start, function, args)
 }

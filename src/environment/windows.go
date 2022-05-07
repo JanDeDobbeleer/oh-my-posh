@@ -18,7 +18,7 @@ import (
 )
 
 func (env *ShellEnvironment) Root() bool {
-	defer env.trace(time.Now(), "Root")
+	defer env.Trace(time.Now(), "Root")
 	var sid *windows.SID
 
 	// Although this looks scary, it is directly copied from the
@@ -71,7 +71,7 @@ func (env *ShellEnvironment) Home() string {
 }
 
 func (env *ShellEnvironment) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
-	defer env.trace(time.Now(), "WindowTitle", windowTitleRegex)
+	defer env.Trace(time.Now(), "WindowTitle", windowTitleRegex)
 	title, err := queryWindowTitles(processName, windowTitleRegex)
 	if err != nil {
 		env.log(Error, "QueryWindowTitles", err.Error())
@@ -80,17 +80,17 @@ func (env *ShellEnvironment) QueryWindowTitles(processName, windowTitleRegex str
 }
 
 func (env *ShellEnvironment) IsWsl() bool {
-	defer env.trace(time.Now(), "IsWsl")
+	defer env.Trace(time.Now(), "IsWsl")
 	return false
 }
 
 func (env *ShellEnvironment) IsWsl2() bool {
-	defer env.trace(time.Now(), "IsWsl2")
+	defer env.Trace(time.Now(), "IsWsl2")
 	return false
 }
 
 func (env *ShellEnvironment) TerminalWidth() (int, error) {
-	defer env.trace(time.Now(), "TerminalWidth")
+	defer env.Trace(time.Now(), "TerminalWidth")
 	if env.CmdFlags.TerminalWidth != 0 {
 		return env.CmdFlags.TerminalWidth, nil
 	}
@@ -113,7 +113,7 @@ func (env *ShellEnvironment) Platform() string {
 }
 
 func (env *ShellEnvironment) CachePath() string {
-	defer env.trace(time.Now(), "CachePath")
+	defer env.Trace(time.Now(), "CachePath")
 	// get LOCALAPPDATA if present
 	if cachePath := returnOrBuildCachePath(env.Getenv("LOCALAPPDATA")); len(cachePath) != 0 {
 		return cachePath
@@ -145,7 +145,7 @@ func (env *ShellEnvironment) LookWinAppPath(file string) (string, error) {
 // Returns a variant type if successful; nil and an error if not.
 //
 func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
-	env.trace(time.Now(), "WindowsRegistryKeyValue", path)
+	env.Trace(time.Now(), "WindowsRegistryKeyValue", path)
 
 	// Format:
 	// "HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"
@@ -326,7 +326,7 @@ const (
 )
 
 func (env *ShellEnvironment) WifiNetwork() (*WifiInfo, error) {
-	env.trace(time.Now(), "WifiNetwork")
+	env.Trace(time.Now(), "WifiNetwork")
 	// Open handle
 	var pdwNegotiatedVersion uint32
 	var phClientHandle uint32

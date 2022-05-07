@@ -197,6 +197,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	}
 	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(startTime)))
 	e.write(fmt.Sprintf("\n\x1b[1mCache path:\x1b[0m %s\n", e.Env.CachePath()))
+	e.write(fmt.Sprintf("\n\x1b[1mConfig path:\x1b[0m %s\n", e.Env.Flags().Config))
 	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
 	e.write(e.Env.Logs())
 	return e.string()

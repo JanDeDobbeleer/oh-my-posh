@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/json"
@@ -90,6 +91,7 @@ func LoadConfig(env environment.Environment) *Config {
 }
 
 func loadConfig(env environment.Environment) *Config {
+	defer env.Trace(time.Now(), "config.loadConfig")
 	var cfg Config
 	configFile := env.Flags().Config
 	if _, err := os.Stat(configFile); err != nil {

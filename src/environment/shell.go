@@ -189,6 +189,7 @@ type Environment interface {
 	ConvertToWindowsPath(path string) string
 	WifiNetwork() (*WifiInfo, error)
 	TemplateCache() *TemplateCache
+	Trace(start time.Time, function string, args ...string)
 }
 
 type commandCache struct {
@@ -227,6 +228,10 @@ type ShellEnvironment struct {
 }
 
 func (env *ShellEnvironment) Init() {
+	defer env.Trace(time.Now(), "Init")
+	if env.CmdFlags.Debug {
+		log.SetOutput(&env.logBuilder)
+	}
 	if env.CmdFlags == nil {
 		env.CmdFlags = &Flags{}
 	}
@@ -236,12 +241,10 @@ func (env *ShellEnvironment) Init() {
 	env.cmdCache = &commandCache{
 		commands: newConcurrentMap(),
 	}
-	if env.CmdFlags.Debug {
-		log.SetOutput(&env.logBuilder)
-	}
 }
 
 func (env *ShellEnvironment) resolveConfigPath() {
+	defer env.Trace(time.Now(), "resolveConfigPath")
 	if len(env.CmdFlags.Config) == 0 {
 		env.CmdFlags.Config = env.Getenv("POSH_THEME")
 	}
@@ -274,6 +277,7 @@ func (env *ShellEnvironment) resolveConfigPath() {
 }
 
 func (env *ShellEnvironment) downloadConfig(location string) error {
+	defer env.Trace(time.Now(), "downloadConfig", location)
 	configPath := filepath.Join(env.CachePath(), "config.omp.json")
 	cfg, err := env.HTTPRequest(location, 5000)
 	if err != nil {
@@ -292,7 +296,7 @@ func (env *ShellEnvironment) downloadConfig(location string) error {
 	return nil
 }
 
-func (env *ShellEnvironment) trace(start time.Time, function string, args ...string) {
+func (env *ShellEnvironment) Trace(start time.Time, function string, args ...string) {
 	if !env.CmdFlags.Debug {
 		return
 	}
@@ -318,14 +322,14 @@ func (env *ShellEnvironment) debugF(function string, fn func() string) {
 }
 
 func (env *ShellEnvironment) Getenv(key string) string {
-	defer env.trace(time.Now(), "Getenv", key)
+	defer env.Trace(time.Now(), "Getenv", key)
 	val := os.Getenv(key)
 	env.log(Debug, "Getenv", val)
 	return val
 }
 
 func (env *ShellEnvironment) Pwd() string {
-	defer env.trace(time.Now(), "Pwd")
+	defer env.Trace(time.Now(), "Pwd")
 	lock.Lock()
 	defer func() {
 		lock.Unlock()
@@ -353,7 +357,7 @@ func (env *ShellEnvironment) Pwd() string {
 }
 
 func (env *ShellEnvironment) HasFiles(pattern string) bool {
-	defer env.trace(time.Now(), "HasFiles", pattern)
+	defer env.Trace(time.Now(), "HasFiles", pattern)
 	cwd := env.Pwd()
 	pattern = cwd + env.PathSeparator() + pattern
 	matches, err := filepath.Glob(pattern)
@@ -374,7 +378,7 @@ func (env *ShellEnvironment) HasFiles(pattern string) bool {
 }
 
 func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
-	defer env.trace(time.Now(), "HasFilesInDir", pattern)
+	defer env.Trace(time.Now(), "HasFilesInDir", pattern)
 	pattern = dir + env.PathSeparator() + pattern
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
@@ -387,7 +391,7 @@ func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
 }
 
 func (env *ShellEnvironment) HasFileInParentDirs(pattern string, depth uint) bool {
-	defer env.trace(time.Now(), "HasFileInParent", pattern, fmt.Sprint(depth))
+	defer env.Trace(time.Now(), "HasFileInParent", pattern, fmt.Sprint(depth))
 	currentFolder := env.Pwd()
 
 	for c := 0; c < int(depth); c++ {
@@ -408,7 +412,7 @@ func (env *ShellEnvironment) HasFileInParentDirs(pattern string, depth uint) boo
 }
 
 func (env *ShellEnvironment) HasFolder(folder string) bool {
-	defer env.trace(time.Now(), "HasFolder", folder)
+	defer env.Trace(time.Now(), "HasFolder", folder)
 	f, err := os.Stat(folder)
 	if err != nil {
 		env.log(Debug, "HasFolder", "false")
@@ -423,7 +427,7 @@ func (env *ShellEnvironment) ResolveSymlink(path string) (string, error) {
 }
 
 func (env *ShellEnvironment) FileContent(file string) string {
-	defer env.trace(time.Now(), "FileContent", file)
+	defer env.Trace(time.Now(), "FileContent", file)
 	if !filepath.IsAbs(file) {
 		file = filepath.Join(env.Pwd(), file)
 	}
@@ -438,7 +442,7 @@ func (env *ShellEnvironment) FileContent(file string) string {
 }
 
 func (env *ShellEnvironment) LsDir(path string) []fs.DirEntry {
-	defer env.trace(time.Now(), "LsDir", path)
+	defer env.Trace(time.Now(), "LsDir", path)
 	entries, err := os.ReadDir(path)
 	if err != nil {
 		env.log(Error, "LsDir", err.Error())
@@ -455,12 +459,12 @@ func (env *ShellEnvironment) LsDir(path string) []fs.DirEntry {
 }
 
 func (env *ShellEnvironment) PathSeparator() string {
-	defer env.trace(time.Now(), "PathSeparator")
+	defer env.Trace(time.Now(), "PathSeparator")
 	return string(os.PathSeparator)
 }
 
 func (env *ShellEnvironment) User() string {
-	defer env.trace(time.Now(), "User")
+	defer env.Trace(time.Now(), "User")
 	user := os.Getenv("USER")
 	if user == "" {
 		user = os.Getenv("USERNAME")
@@ -470,7 +474,7 @@ func (env *ShellEnvironment) User() string {
 }
 
 func (env *ShellEnvironment) Host() (string, error) {
-	defer env.trace(time.Now(), "Host")
+	defer env.Trace(time.Now(), "Host")
 	hostName, err := os.Hostname()
 	if err != nil {
 		env.log(Error, "Host", err.Error())
@@ -482,12 +486,12 @@ func (env *ShellEnvironment) Host() (string, error) {
 }
 
 func (env *ShellEnvironment) GOOS() string {
-	defer env.trace(time.Now(), "GOOS")
+	defer env.Trace(time.Now(), "GOOS")
 	return runtime.GOOS
 }
 
 func (env *ShellEnvironment) RunCommand(command string, args ...string) (string, error) {
-	defer env.trace(time.Now(), "RunCommand", append([]string{command}, args...)...)
+	defer env.Trace(time.Now(), "RunCommand", append([]string{command}, args...)...)
 	if cmd, ok := env.cmdCache.get(command); ok {
 		command = cmd
 	}
@@ -514,7 +518,7 @@ func (env *ShellEnvironment) RunCommand(command string, args ...string) (string,
 }
 
 func (env *ShellEnvironment) RunShellCommand(shell, command string) string {
-	defer env.trace(time.Now(), "RunShellCommand", shell, command)
+	defer env.Trace(time.Now(), "RunShellCommand", shell, command)
 	if out, err := env.RunCommand(shell, "-c", command); err == nil {
 		return out
 	}
@@ -522,7 +526,7 @@ func (env *ShellEnvironment) RunShellCommand(shell, command string) string {
 }
 
 func (env *ShellEnvironment) CommandPath(command string) string {
-	defer env.trace(time.Now(), "HasCommand", command)
+	defer env.Trace(time.Now(), "HasCommand", command)
 	if path, ok := env.cmdCache.get(command); ok {
 		return path
 	}
@@ -548,12 +552,12 @@ func (env *ShellEnvironment) HasCommand(command string) bool {
 }
 
 func (env *ShellEnvironment) ErrorCode() int {
-	defer env.trace(time.Now(), "ErrorCode")
+	defer env.Trace(time.Now(), "ErrorCode")
 	return env.CmdFlags.ErrorCode
 }
 
 func (env *ShellEnvironment) ExecutionTime() float64 {
-	defer env.trace(time.Now(), "ExecutionTime")
+	defer env.Trace(time.Now(), "ExecutionTime")
 	if env.CmdFlags.ExecutionTime < 0 {
 		return 0
 	}
@@ -561,12 +565,12 @@ func (env *ShellEnvironment) ExecutionTime() float64 {
 }
 
 func (env *ShellEnvironment) Flags() *Flags {
-	defer env.trace(time.Now(), "Flags")
+	defer env.Trace(time.Now(), "Flags")
 	return env.CmdFlags
 }
 
 func (env *ShellEnvironment) Shell() string {
-	defer env.trace(time.Now(), "Shell")
+	defer env.Trace(time.Now(), "Shell")
 	if env.CmdFlags.Shell != "" {
 		return env.CmdFlags.Shell
 	}
@@ -591,7 +595,7 @@ func (env *ShellEnvironment) Shell() string {
 }
 
 func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
-	defer env.trace(time.Now(), "HTTPRequest", targetURL)
+	defer env.Trace(time.Now(), "HTTPRequest", targetURL)
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, nil)
@@ -624,7 +628,7 @@ func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestM
 }
 
 func (env *ShellEnvironment) HasParentFilePath(path string) (*FileInfo, error) {
-	defer env.trace(time.Now(), "HasParentFilePath", path)
+	defer env.Trace(time.Now(), "HasParentFilePath", path)
 	currentFolder := env.Pwd()
 	for {
 		searchPath := filepath.Join(currentFolder, path)
@@ -649,7 +653,7 @@ func (env *ShellEnvironment) HasParentFilePath(path string) (*FileInfo, error) {
 }
 
 func (env *ShellEnvironment) StackCount() int {
-	defer env.trace(time.Now(), "StackCount")
+	defer env.Trace(time.Now(), "StackCount")
 	if env.CmdFlags.StackCount < 0 {
 		return 0
 	}
@@ -669,7 +673,7 @@ func (env *ShellEnvironment) Logs() string {
 }
 
 func (env *ShellEnvironment) TemplateCache() *TemplateCache {
-	defer env.trace(time.Now(), "TemplateCache")
+	defer env.Trace(time.Now(), "TemplateCache")
 	if env.tmplCache != nil {
 		return env.tmplCache
 	}

@@ -30,7 +30,7 @@ func mapMostLogicalState(currentState, newState battery.State) battery.State {
 }
 
 func (env *ShellEnvironment) BatteryState() (*BatteryInfo, error) {
-	defer env.trace(time.Now(), "BatteryInfo")
+	defer env.Trace(time.Now(), "BatteryInfo")
 
 	parseBatteryInfo := func(batteries []*battery.Battery) *BatteryInfo {
 		var info BatteryInfo

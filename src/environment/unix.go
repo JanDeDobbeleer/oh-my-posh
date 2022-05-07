@@ -13,7 +13,7 @@ import (
 )
 
 func (env *ShellEnvironment) Root() bool {
-	defer env.trace(time.Now(), "Root")
+	defer env.Trace(time.Now(), "Root")
 	return os.Geteuid() == 0
 }
 
@@ -26,7 +26,7 @@ func (env *ShellEnvironment) QueryWindowTitles(processName, windowTitleRegex str
 }
 
 func (env *ShellEnvironment) IsWsl() bool {
-	defer env.trace(time.Now(), "IsWsl")
+	defer env.Trace(time.Now(), "IsWsl")
 	// one way to check
 	// version := env.FileContent("/proc/version")
 	// return strings.Contains(version, "microsoft")
@@ -35,7 +35,7 @@ func (env *ShellEnvironment) IsWsl() bool {
 }
 
 func (env *ShellEnvironment) IsWsl2() bool {
-	defer env.trace(time.Now(), "IsWsl2")
+	defer env.Trace(time.Now(), "IsWsl2")
 	if !env.IsWsl() {
 		return false
 	}
@@ -44,7 +44,7 @@ func (env *ShellEnvironment) IsWsl2() bool {
 }
 
 func (env *ShellEnvironment) TerminalWidth() (int, error) {
-	defer env.trace(time.Now(), "TerminalWidth")
+	defer env.Trace(time.Now(), "TerminalWidth")
 	if env.CmdFlags.TerminalWidth != 0 {
 		return env.CmdFlags.TerminalWidth, nil
 	}
@@ -80,7 +80,7 @@ func (env *ShellEnvironment) Platform() string {
 }
 
 func (env *ShellEnvironment) CachePath() string {
-	defer env.trace(time.Now(), "CachePath")
+	defer env.Trace(time.Now(), "CachePath")
 	// get XDG_CACHE_HOME if present
 	if cachePath := returnOrBuildCachePath(env.Getenv("XDG_CACHE_HOME")); len(cachePath) != 0 {
 		return cachePath

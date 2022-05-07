@@ -51,7 +51,7 @@ func (env *ShellEnvironment) parseBatteryOutput(output string) (*BatteryInfo, er
 }
 
 func (env *ShellEnvironment) BatteryState() (*BatteryInfo, error) {
-	defer env.trace(time.Now(), "BatteryInfo")
+	defer env.Trace(time.Now(), "BatteryInfo")
 	output, err := env.RunCommand("pmset", "-g", "batt")
 	if err != nil {
 		env.log(Error, "BatteryInfo", err.Error())

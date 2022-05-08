@@ -34,7 +34,7 @@ Make sure to move these before running the command.
 
 ### Install oh-my-posh
 
-See your platform's installation guide. The preferred ways are **winget** and **homebrew**.
+See your platform's installation guide. The preferred ways are **winget** and **Homebrew**.
 
 - [Windows][windows]
 - [macOS][macos]
@@ -64,7 +64,7 @@ oh-my-posh init pwsh --config ~/.custom.omp.json | Invoke-Expression
 
 And replace `~/.custom.omp.json` with the location of your theme.
 
-#### I have an out of the box theme
+#### I have an out-of-the-box theme
 
 ```powershell
 oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" | Invoke-Expression
@@ -73,8 +73,8 @@ oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" | 
 Replace `jandedobbeleer.omp.json` with the theme you use.
 
 :::caution
-Only winget can add the `$env:POSH_THEMES_PATH` variable. For homebrew, use
-`$(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json`
+Only winget can add the environment variable `POSH_THEMES_PATH` automatically. For Homebrew, use
+`$(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json`.
 :::
 
 [init]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/src/shell/scripts/omp.ps1

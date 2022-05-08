@@ -13,7 +13,7 @@
         "primary",
         "--config=${workspaceRoot}/themes/default.omp.json",
         "--shell=pwsh",
-        "--terminal-width=200",
+        "--terminal-width=200"
       ]
     },
     {
@@ -106,7 +106,7 @@
       "args": [
         "config",
         "migrate",
-        "--config=${workspaceRoot}/themes/default.omp.json",
+        "--config=${workspaceRoot}/themes/default.omp.json"
       ]
     },
     {
@@ -131,8 +131,8 @@
       "mode": "debug",
       "program": "${workspaceRoot}/src",
       "args": [
-        "cache",
+        "cache"
       ]
-    },
+    }
   ]
 }

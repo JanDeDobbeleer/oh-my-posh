@@ -12,7 +12,7 @@ hide_table_of_contents: false
 ---
 
 It finally happened, **I introduced a bug** that only appears in 1 use case and it can’t be resolved as it’s the result of
-using an old and new version of Oh My posh at the same time. Who does that you might ask? Well, it can be because you’re
+using an old and new version of Oh My Posh at the same time. Who does that you might ask? Well, it can be because you’re
 using WSL on Windows, or VM’s on any system while sharing the same configuration cross installation.
 Not the main use-case, but also not exotic either.
 

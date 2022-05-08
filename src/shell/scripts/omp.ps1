@@ -90,7 +90,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $command = $null
             $cursor = $null
             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
-            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
+            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--pwd=$cleanPWD", "--shell=::SHELL::", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position
         }
@@ -111,8 +111,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Enable-PoshLineError {
-        $validLine = @(Start-Utf8Process $script:OMPExecutable @("print", "valid", "--config=$env:POSH_THEME")) -join "`n"
-        $errorLine = @(Start-Utf8Process $script:OMPExecutable @("print", "error", "--config=$env:POSH_THEME")) -join "`n"
+        $validLine = @(Start-Utf8Process $script:OMPExecutable @("print", "valid", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
+        $errorLine = @(Start-Utf8Process $script:OMPExecutable @("print", "error", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
         Set-PSReadLineOption -PromptText $validLine, $errorLine
     }
 
@@ -240,12 +240,12 @@ Example:
         $realLASTEXITCODE = $global:LASTEXITCODE
         $cleanPWD, $cleanPSWD = Get-PoshContext
         if ($script:TransientPrompt -eq $true) {
-            @(Start-Utf8Process $script:OMPExecutable @("print", "transient", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion")) -join "`n"
+            @(Start-Utf8Process $script:OMPExecutable @("print", "transient", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--shell=::SHELL::")) -join "`n"
             $script:TransientPrompt = $false
             return
         }
         if (Test-Path variable:/PSDebugContext) {
-            @(Start-Utf8Process $script:OMPExecutable @("print", "debug", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME")) -join "`n"
+            @(Start-Utf8Process $script:OMPExecutable @("print", "debug", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
             return
         }
         Initialize-ModuleSupport
@@ -281,7 +281,7 @@ Example:
 
         Set-PoshContext
         $terminalWidth = $Host.UI.RawUI.WindowSize.Width
-        $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth"))
+        $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=::SHELL::"))
         # make sure PSReadLine knows we have a multiline prompt
         $extraLines = ($standardOut | Measure-Object -Line).Lines - 1
         if ($extraLines -gt 0) {
@@ -293,7 +293,7 @@ Example:
     }
 
     # set secondary prompt
-    Set-PSReadLineOption -ContinuationPrompt (@(Start-Utf8Process $script:OMPExecutable @("print", "secondary", "--config=$env:POSH_THEME")) -join "`n")
+    Set-PSReadLineOption -ContinuationPrompt (@(Start-Utf8Process $script:OMPExecutable @("print", "secondary", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n")
 
     Export-ModuleMember -Function @(
         "Set-PoshContext"

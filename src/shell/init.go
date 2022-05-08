@@ -82,7 +82,8 @@ func PrintInit(env environment.Environment) string {
 	configFile := env.Flags().Config
 	switch shell {
 	case PWSH, PWSH5:
-		return getShellInitScript(executable, configFile, pwshInit)
+		script := getShellInitScript(executable, configFile, pwshInit)
+		return strings.ReplaceAll(script, "::SHELL::", shell)
 	case ZSH:
 		return getShellInitScript(executable, configFile, zshInit)
 	case BASH:

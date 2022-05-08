@@ -229,11 +229,11 @@ type ShellEnvironment struct {
 
 func (env *ShellEnvironment) Init() {
 	defer env.Trace(time.Now(), "Init")
-	if env.CmdFlags.Debug {
-		log.SetOutput(&env.logBuilder)
-	}
 	if env.CmdFlags == nil {
 		env.CmdFlags = &Flags{}
+	}
+	if env.CmdFlags.Debug {
+		log.SetOutput(&env.logBuilder)
 	}
 	env.fileCache = &fileCache{}
 	env.fileCache.Init(env.CachePath())

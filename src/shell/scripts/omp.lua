@@ -33,6 +33,8 @@ local function omp_config()
     return [["::CONFIG::"]]
 end
 
+os.setenv("POSH_THEME", omp_config())
+
 local function can_async()
     if (clink.version_encoded or 0) >= 10030001 then
         return settings.get("prompt.async")

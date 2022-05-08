@@ -21,6 +21,7 @@ var debugCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		startTime := time.Now()
 		env := &environment.ShellEnvironment{
+			Version: cliVersion,
 			CmdFlags: &environment.Flags{
 				Config: config,
 				Debug:  true,

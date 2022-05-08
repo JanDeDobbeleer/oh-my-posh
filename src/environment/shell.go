@@ -297,7 +297,7 @@ func (env *ShellEnvironment) downloadConfig(location string) error {
 }
 
 func (env *ShellEnvironment) Trace(start time.Time, function string, args ...string) {
-	if !env.CmdFlags.Debug {
+	if env.CmdFlags != nil && !env.CmdFlags.Debug {
 		return
 	}
 	elapsed := time.Since(start)

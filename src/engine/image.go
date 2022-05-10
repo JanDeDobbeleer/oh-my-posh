@@ -47,12 +47,14 @@ const (
 
 	fg                  = "FG"
 	bg                  = "BG"
+	bc                  = "BC" // for base 16 colors
 	str                 = "STR"
 	url                 = "URL"
 	invertedColor       = "inverted"
 	invertedColorSingle = "invertedsingle"
 	fullColor           = "full"
 	foreground          = "foreground"
+	background          = "background"
 	reset               = "reset"
 	bold                = "bold"
 	boldReset           = "boldr"
@@ -176,6 +178,7 @@ func (ir *ImageRenderer) Init(config string) {
 		invertedColorSingle: `^(?P<STR>\x1b\[(?P<BG>\d{2,3});49m\x1b\[7m)`,
 		fullColor:           `^(?P<STR>(\x1b\[48;2;(?P<BG>(\d+;?){3})m)(\x1b\[38;2;(?P<FG>(\d+;?){3})m))`,
 		foreground:          `^(?P<STR>(\x1b\[38;2;(?P<FG>(\d+;?){3})m))`,
+		background:          `^(?P<STR>(\x1b\[48;2;(?P<BG>(\d+;?){3})m))`,
 		reset:               `^(?P<STR>\x1b\[0m)`,
 		bold:                `^(?P<STR>\x1b\[1m)`,
 		boldReset:           `^(?P<STR>\x1b\[22m)`,
@@ -185,7 +188,7 @@ func (ir *ImageRenderer) Init(config string) {
 		underlineReset:      `^(?P<STR>\x1b\[24m)`,
 		strikethrough:       `^(?P<STR>\x1b\[9m)`,
 		strikethroughReset:  `^(?P<STR>\x1b\[29m)`,
-		color16:             `^(?P<STR>\x1b\[(?P<FG>\d{2,3})m)`,
+		color16:             `^(?P<STR>\x1b\[(?P<BC>\d{2,3})m)`,
 		left:                `^(?P<STR>\x1b\[(\d{1,3})D)`,
 		osc99:               `^(?P<STR>\x1b\]9;9;(.+)\x1b\\)`,
 		lineChange:          `^(?P<STR>\x1b\[(\d)[FB])`,
@@ -476,6 +479,9 @@ func (ir *ImageRenderer) shouldPrint() bool {
 		case foreground:
 			ir.foregroundColor = NewRGBColor(match[fg])
 			return false
+		case background:
+			ir.backgroundColor = NewRGBColor(match[bg])
+			return false
 		case reset:
 			ir.foregroundColor = ir.defaultForegroundColor
 			ir.backgroundColor = nil
@@ -489,7 +495,7 @@ func (ir *ImageRenderer) shouldPrint() bool {
 		case strikethrough, strikethroughReset, left, osc99, lineChange, consoleTitle:
 			return false
 		case color16:
-			ir.setBase16Color(match[fg])
+			ir.setBase16Color(match[bc])
 			return false
 		case link:
 			ir.AnsiString = match[url] + ir.AnsiString

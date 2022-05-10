@@ -371,19 +371,25 @@
                   "charging_icon": {
                     "type": "string",
                     "title": "Charging Icon",
-                    "description": "Text/icon to display on the left when charging",
+                    "description": "Text/icon to display when charging",
                     "default": ""
                   },
                   "discharging_icon": {
                     "type": "string",
                     "title": "discharging Dcon",
-                    "description": "Text/icon to display on the left when discharging",
+                    "description": "Text/icon to display when discharging",
                     "default": ""
                   },
                   "charged_icon": {
                     "type": "string",
                     "title": "Charged Icon",
-                    "description": "Text/icon to display on the left when fully charged",
+                    "description": "Text/icon to display when fully charged",
+                    "default": ""
+                  },
+                  "not_charging_icon": {
+                    "type": "string",
+                    "title": "Not Charging Icon",
+                    "description": "Text/icon to display when on AC power",
                     "default": ""
                   }
                 }

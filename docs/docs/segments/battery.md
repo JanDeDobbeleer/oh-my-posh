@@ -38,9 +38,10 @@ Battery displays the remaining power percentage for your battery.
 ## Properties
 
 - display_error: `boolean` - show the error context when failing to retrieve the battery information - defaults to `false`
-- charging_icon: `string` - icon to display on the left when charging - defaults to empty
-- discharging_icon: `string` - icon to display on the left when discharging - defaults to empty
-- charged_icon: `string` - icon to display on the left when fully charged - defaults to empty
+- charging_icon: `string` - icon to display when charging - defaults to empty
+- discharging_icon: `string` - icon to display when discharging - defaults to empty
+- charged_icon: `string` - icon to display when fully charged - defaults to empty
+- not_charging_icon: `string` - icon to display when fully charged - defaults to empty
 
 ## Template ([info][templates])
 

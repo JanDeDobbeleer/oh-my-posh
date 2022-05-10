@@ -23,6 +23,8 @@ const (
 	DischargingIcon properties.Property = "discharging_icon"
 	// ChargedIcon to display when fully charged
 	ChargedIcon properties.Property = "charged_icon"
+	// NotChargingIcon to display when on AC power
+	NotChargingIcon properties.Property = "not_charging_icon"
 )
 
 func (b *Battery) Template() string {
@@ -48,8 +50,10 @@ func (b *Battery) Enabled() bool {
 	}
 
 	switch b.BatteryInfo.State {
-	case battery.Discharging, battery.NotCharging:
+	case battery.Discharging:
 		b.Icon = b.props.GetString(DischargingIcon, "")
+	case battery.NotCharging:
+		b.Icon = b.props.GetString(NotChargingIcon, "")
 	case battery.Charging:
 		b.Icon = b.props.GetString(ChargingIcon, "")
 	case battery.Full:

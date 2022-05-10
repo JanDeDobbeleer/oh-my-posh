@@ -8,10 +8,8 @@
           "background": "p:session",
           "foreground": "p:white",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "template": " {{ .UserName }} "
-          },
           "style": "diamond",
+          "template": " {{ .UserName }} ",
           "trailing_diamond": "\ue0b0",
           "type": "session"
         },
@@ -22,10 +20,10 @@
           "properties": {
             "folder_separator_icon": " \ue0b1 ",
             "home_icon": "~",
-            "style": "folder",
-            "template": " \uf74a  {{ .Path }} "
+            "style": "folder"
           },
           "style": "powerline",
+          "template": " \uf74a  {{ .Path }} ",
           "type": "path"
         },
         {
@@ -43,10 +41,10 @@
             "branch_max_length": 25,
             "fetch_stash_count": true,
             "fetch_status": true,
-            "fetch_upstream_icon": true,
-            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_upstream_icon": true
           },
           "style": "powerline",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "trailing_diamond": "\ue0b4",
           "type": "git"
         },
@@ -55,10 +53,10 @@
           "foreground": "p:white",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "fetch_version": true,
-            "template": " \uf898 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+            "fetch_version": true
           },
           "style": "powerline",
+          "template": " \uf898 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
           "type": "node"
         },
         {
@@ -66,10 +64,10 @@
           "foreground": "p:black",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "fetch_version": true,
-            "template": " \ue626 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+            "fetch_version": true
           },
           "style": "powerline",
+          "template": " \ue626 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "type": "go"
         },
         {
@@ -77,10 +75,10 @@
           "foreground": "p:black",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "fetch_version": true,
-            "template": " \ue624 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+            "fetch_version": true
           },
           "style": "powerline",
+          "template": " \ue624 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "type": "julia"
         },
         {
@@ -89,10 +87,10 @@
           "powerline_symbol": "\ue0b0",
           "properties": {
             "display_mode": "files",
-            "fetch_virtual_env": false,
-            "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+            "fetch_virtual_env": false
           },
           "style": "powerline",
+          "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "type": "python"
         },
         {
@@ -101,10 +99,10 @@
           "powerline_symbol": "\ue0b0",
           "properties": {
             "display_mode": "files",
-            "fetch_version": true,
-            "template": " \ue791 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+            "fetch_version": true
           },
           "style": "powerline",
+          "template": " \ue791 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "type": "ruby"
         },
         {
@@ -113,10 +111,10 @@
           "powerline_symbol": "\ue0b0",
           "properties": {
             "display_mode": "files",
-            "fetch_version": false,
-            "template": " \uf0e7{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+            "fetch_version": false
           },
           "style": "powerline",
+          "template": " \uf0e7{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "type": "azfunc"
         },
         {
@@ -127,30 +125,28 @@
           "foreground": "p:white",
           "powerline_symbol": "\ue0b0",
           "properties": {
-            "display_default": false,
-            "template": " \ue7ad {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
+            "display_default": false
           },
           "style": "powerline",
+          "template": " \ue7ad {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} ",
           "type": "aws"
         },
         {
           "background": "p:root",
           "foreground": "p:black",
           "powerline_symbol": "\ue0b0",
-          "properties": {
-            "template": " \uf0ad "
-          },
           "style": "powerline",
+          "template": " \uf0ad ",
           "type": "root"
         },
         {
           "background": "p:executiontime",
           "foreground": "p:white",
           "properties": {
-            "always_enabled": true,
-            "template": "<transparent>\ue0b0</> \ufbab{{ .FormattedMs }}\u2800"
+            "always_enabled": true
           },
           "style": "plain",
+          "template": "<transparent>\ue0b0</> \ufbab{{ .FormattedMs }}\u2800",
           "type": "executiontime"
         },
         {
@@ -160,10 +156,10 @@
           ],
           "foreground": "p:white",
           "properties": {
-            "always_enabled": true,
-            "template": "<parentBackground>\ue0b0</> \ue23a "
+            "always_enabled": true
           },
           "style": "diamond",
+          "template": "<parentBackground>\ue0b0</> \ue23a ",
           "trailing_diamond": "\ue0b4",
           "type": "exit"
         }
@@ -175,10 +171,8 @@
         {
           "background": "p:shell",
           "foreground": "p:white",
-          "properties": {
-            "template": "<#0077c2,transparent>\ue0b6</> \uf489 {{ .Name }} <transparent,#0077c2>\ue0b2</>"
-          },
           "style": "plain",
+          "template": "<#0077c2,transparent>\ue0b6</> \uf489 {{ .Name }} <transparent,#0077c2>\ue0b2</>",
           "type": "shell"
         },
         {
@@ -188,10 +182,10 @@
           "powerline_symbol": "\ue0b2",
           "properties": {
             "paused_icon": "\uf04c ",
-            "playing_icon": "\uf04b ",
-            "template": " \uf167 {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} "
+            "playing_icon": "\uf04b "
           },
           "style": "powerline",
+          "template": " \uf167 {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} ",
           "type": "ytm"
         },
         {
@@ -207,10 +201,10 @@
           "properties": {
             "charged_icon": "\ue22f ",
             "charging_icon": "\ue234 ",
-            "discharging_icon": "\ue231 ",
-            "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295 "
+            "discharging_icon": "\ue231 "
           },
           "style": "powerline",
+          "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}\uf295 ",
           "type": "battery"
         },
         {
@@ -218,10 +212,8 @@
           "foreground": "p:black",
           "invert_powerline": true,
           "leading_diamond": "\ue0b2",
-          "properties": {
-            "template": " {{ .CurrentDate | date .Format }} "
-          },
           "style": "diamond",
+          "template": " {{ .CurrentDate | date .Format }} ",
           "trailing_diamond": "\ue0b4",
           "type": "time"
         }
@@ -262,5 +254,5 @@
     "white": "#FFFFFF",
     "ytm": "#1BD760"
   },
-  "version": 1
+  "version": 2
 }

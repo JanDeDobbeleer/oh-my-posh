@@ -7,94 +7,75 @@
       "segments": [
         {
           "foreground": "#ffbebc",
-          "leading_diamond": "<#ff70a6>  </>",
-          "powerline_symbol": "",
+          "leading_diamond": "<#ff70a6> \ue200 </>",
           "properties": {
-            "display_host": true,
-            "template": "{{ .UserName }} <#ffffff>on</>"
+            "display_host": true
           },
           "style": "diamond",
-          "trailing_diamond": "",
+          "template": "{{ .UserName }} <#ffffff>on</>",
           "type": "session"
         },
         {
           "foreground": "#bc93ff",
-          "leading_diamond": "",
           "properties": {
-            "template": " {{ .CurrentDate | date .Format }} ",
             "time_format": "Monday <#ffffff>at</> 3:04 PM"
           },
           "style": "diamond",
-          "trailing_diamond": "",
+          "template": " {{ .CurrentDate | date .Format }} ",
           "type": "time"
         },
         {
           "foreground": "#ee79d1",
-          "leading_diamond": "",
           "properties": {
             "branch_icon": "\ue725 ",
             "fetch_stash_count": true,
             "fetch_status": true,
             "fetch_upstream_icon": true,
-            "fetch_worktree_count": true,
-            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} "
+            "fetch_worktree_count": true
           },
           "style": "diamond",
-          "trailing_diamond": "",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
       ],
-
       "type": "prompt"
     },
     {
       "alignment": "right",
-      "newline": false,
       "segments": [
         {
           "foreground": "#a9ffb4",
-          "properties": {
-            "template": ""
-          },
           "style": "plain",
           "type": "text"
         },
         {
           "foreground": "#a9ffb4",
-          "leading_diamond": "",
           "properties": {
             "style": "dallas",
-            "template": " {{ .FormattedMs }}s <#ffffff></>",
             "threshold": 0
           },
           "style": "diamond",
-          "trailing_diamond": "",
+          "template": " {{ .FormattedMs }}s <#ffffff>\ue601</>",
           "type": "executiontime"
         },
         {
           "properties": {
-            "root_icon": "\uf292 ",
-            "template": " \uf0e7 "
+            "root_icon": "\uf292 "
           },
           "style": "diamond",
+          "template": " \uf0e7 ",
           "type": "root"
         },
         {
           "foreground": "#94ffa2",
-          "leading_diamond": "",
-          "properties": {
-            "template": " <#ffffff>CPU:</> {{ round .PhysicalPercentUsed .Precision }}% "
-          },
           "style": "diamond",
+          "template": " <#ffffff>CPU:</> {{ round .PhysicalPercentUsed .Precision }}% ",
           "type": "sysinfo"
         },
         {
           "foreground": "#81ff91",
-          "properties": {
-            "template": "<#ffffff></> <#ffffff>RAM:</> {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB "
-          },
           "style": "diamond",
-          "trailing_diamond": "",
+          "template": "<#ffffff>\uf6dc</> <#ffffff>RAM:</> {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB ",
           "type": "sysinfo"
         }
       ],
@@ -106,34 +87,34 @@
       "segments": [
         {
           "foreground": "#ffafd2",
-          "leading_diamond": "<#00c7fc>  </><#ffafd2>{</>",
+          "leading_diamond": "<#00c7fc> \ue285 </><#ffafd2>{</>",
           "properties": {
-            "folder_icon": "",
-            "folder_separator_icon": "易",
+            "folder_icon": "\uf07b",
+            "folder_separator_icon": "\uf9e0",
             "home_icon": "home",
-            "style": "agnoster_full",
-            "template": " \ue5ff {{ .Path }} "
+            "style": "agnoster_full"
           },
           "style": "diamond",
+          "template": " \ue5ff {{ .Path }} ",
           "trailing_diamond": "<#ffafd2>}</>",
           "type": "path"
         },
         {
           "foreground": "#A9FFB4",
-          "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#ef5350{{ end }}"
+          ],
           "properties": {
-            "always_enabled": true,
-            "template": "  "
+            "always_enabled": true
           },
           "style": "plain",
+          "template": " \ue286 ",
           "type": "exit"
         }
       ],
       "type": "prompt"
     }
   ],
-  "console_title": true,
-  "console_title_style": "template",
   "console_title_template": "{{ .Folder }}",
   "osc99": true,
   "transient_prompt": {
@@ -141,5 +122,5 @@
     "foreground": "#FEF5ED",
     "template": "\ue285 "
   },
-  "version": 1
+  "version": 2
 }

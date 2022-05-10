@@ -30,7 +30,7 @@ type Segment struct {
 	Properties          properties.Map  `json:"properties,omitempty"`
 
 	writer          SegmentWriter
-	Enabled         bool
+	Enabled         bool `json:"-"`
 	text            string
 	env             environment.Environment
 	backgroundCache string

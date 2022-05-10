@@ -1,3 +1,8 @@
+param(
+    [switch]
+    $AllUsers
+)
+
 $installInstructions = @'
 Hey friend
 
@@ -42,7 +47,11 @@ $tmp = New-TemporaryFile | Rename-Item -NewName { $_ -replace 'tmp$', 'exe' } -P
 $url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/$installer"
 Invoke-WebRequest -OutFile $tmp $url
 Write-Host 'Running installer...'
-& "$tmp" /VERYSILENT | Out-Null
+$installMode = "/CURRENTUSER"
+if ($AllUsers) {
+    $installMode = "/ALLUSERS"
+}
+& "$tmp" /VERYSILENT $installMode | Out-Null
 $tmp | Remove-Item
 Write-Host @'
 Done!

@@ -281,6 +281,10 @@ Example:
 
         Set-PoshContext
         $terminalWidth = $Host.UI.RawUI.WindowSize.Width
+        # set a sane default when the value can't be retrieved
+        if (-not $terminalWidth) {
+            $terminalWidth = 0
+        }
         $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=::SHELL::"))
         # make sure PSReadLine knows we have a multiline prompt
         $extraLines = ($standardOut | Measure-Object -Line).Lines - 1

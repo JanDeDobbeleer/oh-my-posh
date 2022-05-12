@@ -253,10 +253,16 @@ func (e *Engine) PrintTooltip(tip string) string {
 	switch e.Env.Shell() {
 	case shell.ZSH, shell.CMD, shell.FISH:
 		block.Init(e.Env, e.Writer, e.Ansi)
+		if !block.Enabled() {
+			return ""
+		}
 		text, _ := block.RenderSegments()
 		return text
 	case shell.PWSH, shell.PWSH5:
 		block.InitPlain(e.Env, e.Config)
+		if !block.Enabled() {
+			return ""
+		}
 		text, length := block.RenderSegments()
 		e.write(e.Ansi.ClearAfter())
 		e.write(e.Ansi.CarriageForward())
@@ -264,7 +270,7 @@ func (e *Engine) PrintTooltip(tip string) string {
 		e.write(text)
 		return e.string()
 	}
-	return " "
+	return ""
 }
 
 type ExtraPromptType int

@@ -49,9 +49,8 @@ Display the currently active [Node.js][node-js] version.
 - `.Major`: `string` - major number
 - `.Minor`: `string` - minor number
 - `.Patch`: `string` - patch number
-- `.Prerelease`: `string` - prerelease info text
-- `.BuildMetadata`: `string` - build metadata
-- `.Error`: `string` - when fetching the version string errors
+- `.URL`: `string` - URL of the version info / release notes
+- `.Error`: `string` - error encountered when fetching the version string
 - `.PackageManagerIcon`: `string` - the Yarn on NPM icon when setting `fetch_package_manager` to `true`
 - `.Mismatch`: `boolean` - if the version in `.nvmrc` matches with `.Full`
 

@@ -48,9 +48,7 @@ Display the active [CDS CLI][sap-cap-cds] version.
 - `.Major`: `string` - major number
 - `.Minor`: `string` - minor number
 - `.Patch`: `string` - patch number
-- `.Prerelease`: `string` - prerelease info text
-- `.BuildMetadata`: `string` - build metadata
-- `.Error`: `string` - when fetching the version string errors
+- `.Error`: `string` - error encountered when fetching the version string
 - `.HasDependency`: `bool` - a flag if `@sap/cds` was found in `package.json`
 
 [templates]: /docs/configuration/templates

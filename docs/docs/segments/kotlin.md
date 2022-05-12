@@ -47,9 +47,8 @@ Display the currently active [Kotlin][kotlin] version.
 - `.Major`: `string` - major number
 - `.Minor`: `string` - minor number
 - `.Patch`: `string` - patch number
-- `.Prerelease`: `string` - prerelease info text
-- `.BuildMetadata`: `string` - build metadata
-- `.Error`: `string` - when fetching the version string errors
+- `.URL`: `string` - URL of the version info / release notes
+- `.Error`: `string` - error encountered when fetching the version string
 
 [templates]: /docs/configuration/templates
 [kotlin]: https://kotlinlang.org/

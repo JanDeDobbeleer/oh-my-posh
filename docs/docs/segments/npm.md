@@ -37,7 +37,8 @@ Display the currently active [npm][npm-docs] version.
 - `.Major`: `string` - major number
 - `.Minor`: `string` - minor number
 - `.Patch`: `string` - patch number
-- `.Error`: `string` - when fetching the version string errors
+- `.URL`: `string` - URL of the version info / release notes
+- `.Error`: `string` - error encountered when fetching the version string
 
 [templates]: /docs/configuration/templates
 [npm-docs]: https://docs.npmjs.com/about-npm

@@ -52,7 +52,8 @@ Display the currently active [.NET SDK][net-sdk-docs] version.
 - `.Patch`: `string` - patch number
 - `.Prerelease`: `string` - prerelease info text
 - `.BuildMetadata`: `string` - build metadata
-- `.Error`: `string` - when fetching the version string errors
+- `.URL`: `string` - URL of the version info / release notes
+- `.Error`: `string` - error encountered when fetching the version string
 
 [templates]: /docs/configuration/templates
 [net-sdk-docs]: https://docs.microsoft.com/en-us/dotnet/core/tools

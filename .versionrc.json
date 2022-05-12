@@ -14,7 +14,7 @@
     },
     {
       "type": "revert",
-      "section": "Refactor"
+      "section": "Reverts"
     },
     {
       "type": "theme",

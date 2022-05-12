@@ -50,9 +50,7 @@ Display the currently active [Azure Functions CLI][az-func-core-tools] version.
 - `.Major`: `string` - major number
 - `.Minor`: `string` - minor number
 - `.Patch`: `string` - patch number
-- `.Prerelease`: `string` - prerelease info text
-- `.BuildMetadata`: `string` - build metadata
-- `.Error`: `string` - when fetching the version string errors
+- `.Error`: `string` - error encountered when fetching the version string
 
 [templates]: /docs/configuration/templates
 [az-func-core-tools]: https://github.com/Azure/azure-functions-core-tools

@@ -7,6 +7,7 @@ import (
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/segments"
+	"oh-my-posh/shell"
 	"oh-my-posh/template"
 	"runtime/debug"
 	"strings"
@@ -352,5 +353,11 @@ func (segment *Segment) SetText() {
 		return
 	}
 	segment.text = segment.string()
+	// see https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2255
+	// this can't happen where we do regular text replacement in ansi.go
+	// as that would also replace valid \[\] sequences and break the prompt
+	if segment.env.Shell() == shell.BASH {
+		segment.text = strings.ReplaceAll(segment.text, `\`, `\\`)
+	}
 	segment.Enabled = len(strings.ReplaceAll(segment.text, " ", "")) > 0
 }

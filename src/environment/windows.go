@@ -33,7 +33,7 @@ func (env *ShellEnvironment) Root() bool {
 		0, 0, 0, 0, 0, 0,
 		&sid)
 	if err != nil {
-		env.log(Error, "Root", err.Error())
+		env.Log(Error, "Root", err.Error())
 		return false
 	}
 	defer func() {
@@ -47,7 +47,7 @@ func (env *ShellEnvironment) Root() bool {
 
 	member, err := token.IsMember(sid)
 	if err != nil {
-		env.log(Error, "Root", err.Error())
+		env.Log(Error, "Root", err.Error())
 		return false
 	}
 
@@ -57,7 +57,7 @@ func (env *ShellEnvironment) Root() bool {
 func (env *ShellEnvironment) Home() string {
 	home := os.Getenv("HOME")
 	defer func() {
-		env.log(Debug, "Home", home)
+		env.Log(Debug, "Home", home)
 	}()
 	if len(home) > 0 {
 		return home
@@ -74,7 +74,7 @@ func (env *ShellEnvironment) QueryWindowTitles(processName, windowTitleRegex str
 	defer env.Trace(time.Now(), "WindowTitle", windowTitleRegex)
 	title, err := queryWindowTitles(processName, windowTitleRegex)
 	if err != nil {
-		env.log(Error, "QueryWindowTitles", err.Error())
+		env.Log(Error, "QueryWindowTitles", err.Error())
 	}
 	return title, err
 }
@@ -96,12 +96,12 @@ func (env *ShellEnvironment) TerminalWidth() (int, error) {
 	}
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
 	if err != nil {
-		env.log(Error, "TerminalWidth", err.Error())
+		env.Log(Error, "TerminalWidth", err.Error())
 		return 0, err
 	}
 	info, err := winterm.GetConsoleScreenBufferInfo(uintptr(handle))
 	if err != nil {
-		env.log(Error, "TerminalWidth", err.Error())
+		env.Log(Error, "TerminalWidth", err.Error())
 		return 0, err
 	}
 	// return int(float64(info.Size.X) * 0.57), nil
@@ -163,14 +163,14 @@ func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegis
 
 	if len(regPathParts) < 2 {
 		errorLogMsg := fmt.Sprintf("Error, malformed registry path: '%s'", path)
-		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
+		env.Log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
 	regRootHKeyHandle := getHKEYHandleFromAbbrString(regPathParts[0])
 	if regRootHKeyHandle == 0 {
 		errorLogMsg := fmt.Sprintf("Error, Supplied root HKEY value not valid: '%s'", regPathParts[0])
-		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
+		env.Log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -179,7 +179,7 @@ func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegis
 
 	if lastSlash < 0 {
 		errorLogMsg := fmt.Sprintf("Error, malformed registry path: '%s'", path)
-		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
+		env.Log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -191,13 +191,13 @@ func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegis
 	if len(regKeyLogged) == 0 {
 		regKeyLogged = "(Default)"
 	}
-	env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("WindowsRegistryKeyValue: root:\"%s\", path:\"%s\", key:\"%s\"", regPathParts[0], regPath, regKeyLogged))
+	env.Log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("WindowsRegistryKeyValue: root:\"%s\", path:\"%s\", key:\"%s\"", regPathParts[0], regPath, regKeyLogged))
 
 	// Second part of split is registry path after HK part - needs to be UTF16 to pass to the windows. API
 	regPathUTF16, err := windows.UTF16FromString(regPath)
 	if err != nil {
 		errorLogMsg := fmt.Sprintf("Error, Could not convert supplied path '%s' to UTF16, error: '%s'", regPath, err)
-		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
+		env.Log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -206,14 +206,14 @@ func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegis
 	regOpenErr := windows.RegOpenKeyEx(regRootHKeyHandle, &regPathUTF16[0], 0, windows.KEY_READ, &hKeyHandle)
 	if regOpenErr != nil {
 		errorLogMsg := fmt.Sprintf("Error RegOpenKeyEx opening registry path to '%s', error: '%s'", regPath, regOpenErr)
-		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
+		env.Log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 	// Success - from here on out, when returning make sure to close that reg key with a deferred call to close:
 	defer func() {
 		err := windows.RegCloseKey(hKeyHandle)
 		if err != nil {
-			env.log(Error, "WindowsRegistryKeyValue", fmt.Sprintf("Error closing registry key: %s", err))
+			env.Log(Error, "WindowsRegistryKeyValue", fmt.Sprintf("Error closing registry key: %s", err))
 		}
 	}()
 
@@ -221,7 +221,7 @@ func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegis
 	regKeyUTF16, err := windows.UTF16FromString(regKey)
 	if err != nil {
 		errorLogMsg := fmt.Sprintf("Error, could not convert supplied key '%s' to UTF16, error: '%s'", regKey, err)
-		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
+		env.Log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -232,7 +232,7 @@ func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegis
 	regQueryErr := windows.RegQueryValueEx(hKeyHandle, &regKeyUTF16[0], nil, &keyBufType, nil, &keyBufSize)
 	if regQueryErr != nil {
 		errorLogMsg := fmt.Sprintf("Error calling RegQueryValueEx to retrieve key data size with error '%s'", regQueryErr)
-		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
+		env.Log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -242,7 +242,7 @@ func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegis
 	regQueryErr = windows.RegQueryValueEx(hKeyHandle, &regKeyUTF16[0], nil, &keyBufType, &keyBuf[0], &keyBufSize)
 	if regQueryErr != nil {
 		errorLogMsg := fmt.Sprintf("Error calling RegQueryValueEx to retrieve key data with error '%s'", regQueryErr)
-		env.log(Error, "WindowsRegistryKeyValue", errorLogMsg)
+		env.Log(Error, "WindowsRegistryKeyValue", errorLogMsg)
 		return nil, errors.New(errorLogMsg)
 	}
 
@@ -253,20 +253,20 @@ func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegis
 		uint16p = (*uint16)(unsafe.Pointer(&keyBuf[0])) // nasty casty
 
 		valueString := windows.UTF16PtrToString(uint16p)
-		env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, string: %s", valueString))
+		env.Log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, string: %s", valueString))
 
 		return &WindowsRegistryValue{ValueType: RegString, Str: valueString}, nil
 	case windows.REG_DWORD:
 		var uint32p *uint32
 		uint32p = (*uint32)(unsafe.Pointer(&keyBuf[0])) // more casting goodness
 
-		env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, DWORD, 0x%08X", *uint32p))
+		env.Log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, DWORD, 0x%08X", *uint32p))
 		return &WindowsRegistryValue{ValueType: RegDword, Dword: *uint32p}, nil
 	case windows.REG_QWORD:
 		var uint64p *uint64
 		uint64p = (*uint64)(unsafe.Pointer(&keyBuf[0])) // more casting goodness
 
-		env.log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, QWORD, 0x%016X", *uint64p))
+		env.Log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("success, QWORD, 0x%016X", *uint64p))
 		return &WindowsRegistryValue{ValueType: RegQword, Qword: *uint64p}, nil
 	default:
 		errorLogMsg := fmt.Sprintf("Error, no formatter for REG_? type:%d, data size:%d bytes", keyBufType, keyBufSize)
@@ -375,7 +375,7 @@ func (env *ShellEnvironment) parseNetworkInterface(network *WLAN_INTERFACE_INFO,
 		uintptr(unsafe.Pointer(&wlanAttr)),
 		uintptr(unsafe.Pointer(nil)))
 	if e != 0 {
-		env.log(Error, "parseNetworkInterface", "wlan_intf_opcode_current_connection error")
+		env.Log(Error, "parseNetworkInterface", "wlan_intf_opcode_current_connection error")
 		return &info, err
 	}
 
@@ -432,7 +432,7 @@ func (env *ShellEnvironment) parseNetworkInterface(network *WLAN_INTERFACE_INFO,
 		uintptr(unsafe.Pointer(&channel)),
 		uintptr(unsafe.Pointer(nil)))
 	if e != 0 {
-		env.log(Error, "parseNetworkInterface", "wlan_intf_opcode_channel_number error")
+		env.Log(Error, "parseNetworkInterface", "wlan_intf_opcode_channel_number error")
 		return &info, err
 	}
 	info.Channel = int(*channel)

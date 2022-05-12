@@ -50,7 +50,7 @@ func (env *ShellEnvironment) BatteryState() (*BatteryInfo, error) {
 	batteries, err := battery.GetAll()
 	// actual error, return it
 	if err != nil && len(batteries) == 0 {
-		env.log(Error, "BatteryInfo", err.Error())
+		env.Log(Error, "BatteryInfo", err.Error())
 		return nil, err
 	}
 	// there are no batteries found
@@ -98,7 +98,7 @@ func (env *ShellEnvironment) BatteryState() (*BatteryInfo, error) {
 	}
 	// another error occurred (possibly unmapped use-case), return it
 	if fatalErr != nil {
-		env.log(Error, "BatteryInfo", fatalErr.Error())
+		env.Log(Error, "BatteryInfo", fatalErr.Error())
 		return nil, fatalErr
 	}
 	// everything is fine

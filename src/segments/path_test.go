@@ -663,3 +663,41 @@ func TestGetPwd(t *testing.T) {
 		assert.Equal(t, tc.Expected, got)
 	}
 }
+
+func TestGetFolderSeparator(t *testing.T) {
+	cases := []struct {
+		Case                    string
+		FolderSeparatorIcon     string
+		FolderSeparatorTemplate string
+		Expected                string
+	}{
+		{Case: "default", Expected: "/"},
+		{Case: "icon - no template", FolderSeparatorIcon: "\ue5fe", Expected: "\ue5fe"},
+		{Case: "template", FolderSeparatorTemplate: "{{ if eq .Shell \"bash\" }}\\{{ end }}", Expected: "\\"},
+		{Case: "template empty", FolderSeparatorTemplate: "{{ if eq .Shell \"pwsh\" }}\\{{ end }}", Expected: ""},
+		{Case: "invalid template", FolderSeparatorTemplate: "{{ if eq .Shell \"pwsh\" }}", Expected: ""},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("PathSeparator").Return("/")
+		env.On("Log", mock2.Anything, mock2.Anything, mock2.Anything)
+		path := &Path{
+			env: env,
+		}
+		props := properties.Map{}
+		if len(tc.FolderSeparatorTemplate) > 0 {
+			props[FolderSeparatorTemplate] = tc.FolderSeparatorTemplate
+		}
+		if len(tc.FolderSeparatorIcon) > 0 {
+			props[FolderSeparatorIcon] = tc.FolderSeparatorIcon
+		}
+		env.On("TemplateCache").Return(&environment.TemplateCache{
+			Env:   make(map[string]string),
+			Shell: "bash",
+		})
+		path.props = props
+		got := path.getFolderSeparator()
+		assert.Equal(t, tc.Expected, got)
+	}
+}

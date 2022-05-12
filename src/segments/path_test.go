@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 func renderTemplate(env *mock.MockedEnvironment, segmentTemplate string, context interface{}) string {
@@ -24,6 +25,7 @@ func renderTemplate(env *mock.MockedEnvironment, segmentTemplate string, context
 			Env: make(map[string]string),
 		})
 	}
+	env.On("Log", mock2.Anything, mock2.Anything, mock2.Anything)
 	tmpl := &template.Text{
 		Template: segmentTemplate,
 		Context:  context,

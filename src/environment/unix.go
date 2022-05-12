@@ -50,7 +50,7 @@ func (env *ShellEnvironment) TerminalWidth() (int, error) {
 	}
 	width, err := terminal.Width()
 	if err != nil {
-		env.log(Error, "TerminalWidth", err.Error())
+		env.Log(Error, "TerminalWidth", err.Error())
 	}
 	return int(width), err
 }

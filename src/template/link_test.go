@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestUrl(t *testing.T) {
@@ -23,6 +24,7 @@ func TestUrl(t *testing.T) {
 	env.On("TemplateCache").Return(&environment.TemplateCache{
 		Env: make(map[string]string),
 	})
+	env.On("Log", mock2.Anything, mock2.Anything, mock2.Anything)
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,

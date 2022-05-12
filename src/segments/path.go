@@ -5,6 +5,7 @@ import (
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/regex"
+	"oh-my-posh/template"
 	"sort"
 	"strings"
 )
@@ -22,6 +23,8 @@ type Path struct {
 const (
 	// FolderSeparatorIcon the path which is split will be separated by this icon
 	FolderSeparatorIcon properties.Property = "folder_separator_icon"
+	// FolderSeparatorTemplate the path which is split will be separated by this template
+	FolderSeparatorTemplate properties.Property = "folder_separator_template"
 	// HomeIcon indicates the $HOME location
 	HomeIcon properties.Property = "home_icon"
 	// FolderIcon identifies one folder
@@ -114,6 +117,23 @@ func (pt *Path) Init(props properties.Properties, env environment.Environment) {
 	pt.env = env
 }
 
+func (pt *Path) getFolderSeparator() string {
+	separatorTemplate := pt.props.GetString(FolderSeparatorTemplate, "")
+	if len(separatorTemplate) == 0 {
+		return pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeparator())
+	}
+	tmpl := &template.Text{
+		Template: separatorTemplate,
+		Context:  pt,
+		Env:      pt.env,
+	}
+	text, err := tmpl.Render()
+	if err != nil {
+		pt.env.Log(environment.Error, "getFolderSeparator", err.Error())
+	}
+	return text
+}
+
 func (pt *Path) getMixedPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
@@ -128,7 +148,7 @@ func (pt *Path) getMixedPath() string {
 		if len(part) > threshold && i != 0 && i != len(splitted)-1 {
 			folder = pt.props.GetString(FolderIcon, "..")
 		}
-		separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeparator())
+		separator := pt.getFolderSeparator()
 		if i == 0 {
 			separator = ""
 		}
@@ -144,7 +164,7 @@ func (pt *Path) getAgnosterPath() string {
 	buffer.WriteString(pt.rootLocation())
 	pathDepth := pt.pathDepth(pwd)
 	folderIcon := pt.props.GetString(FolderIcon, "..")
-	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeparator())
+	separator := pt.getFolderSeparator()
 	for i := 1; i < pathDepth; i++ {
 		buffer.WriteString(fmt.Sprintf("%s%s", separator, folderIcon))
 	}
@@ -160,7 +180,7 @@ func (pt *Path) getAgnosterLeftPath() string {
 	pwd = strings.Trim(pwd, separator)
 	splitted := strings.Split(pwd, separator)
 	folderIcon := pt.props.GetString(FolderIcon, "..")
-	separator = pt.props.GetString(FolderSeparatorIcon, separator)
+	separator = pt.getFolderSeparator()
 	switch len(splitted) {
 	case 0:
 		return ""
@@ -194,7 +214,7 @@ func (pt *Path) getLetterPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
 	splitted := strings.Split(pwd, pt.env.PathSeparator())
-	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeparator())
+	separator := pt.getFolderSeparator()
 	for i := 0; i < len(splitted)-1; i++ {
 		folder := splitted[i]
 		if len(folder) == 0 {
@@ -213,7 +233,7 @@ func (pt *Path) getUniqueLettersPath() string {
 	var buffer strings.Builder
 	pwd := pt.getPwd()
 	splitted := strings.Split(pwd, pt.env.PathSeparator())
-	separator := pt.props.GetString(FolderSeparatorIcon, pt.env.PathSeparator())
+	separator := pt.getFolderSeparator()
 	letters := make(map[string]bool, len(splitted))
 	for i := 0; i < len(splitted)-1; i++ {
 		folder := splitted[i]
@@ -259,8 +279,8 @@ func (pt *Path) getAgnosterShortPath() string {
 	if pathDepth <= maxDepth {
 		return pt.getAgnosterFullPath()
 	}
+	folderSeparator := pt.getFolderSeparator()
 	pathSeparator := pt.env.PathSeparator()
-	folderSeparator := pt.props.GetString(FolderSeparatorIcon, pathSeparator)
 	splitted := strings.Split(pwd, pathSeparator)
 	fullPathDepth := len(splitted)
 	splitPos := fullPathDepth - maxDepth
@@ -357,7 +377,7 @@ func (pt *Path) replaceFolderSeparators(pwd string) string {
 	if pwd == defaultSeparator {
 		return pwd
 	}
-	folderSeparator := pt.props.GetString(FolderSeparatorIcon, defaultSeparator)
+	folderSeparator := pt.getFolderSeparator()
 	if folderSeparator == defaultSeparator {
 		return pwd
 	}

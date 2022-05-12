@@ -234,3 +234,7 @@ func (env *MockedEnvironment) DirMatchesOneOf(dir string, regexes []string) bool
 func (env *MockedEnvironment) Trace(start time.Time, function string, args ...string) {
 	_ = env.Called(start, function, args)
 }
+
+func (env *MockedEnvironment) Log(logType environment.LogType, funcName, message string) {
+	_ = env.Called(logType, funcName, message)
+}

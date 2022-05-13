@@ -1,9 +1,0 @@
-{
-  "IsEncrypted": false,
-  "Values": {
-    "AzureWebJobsStorage": "",
-    "FUNCTIONS_WORKER_RUNTIME": "node",
-    "API_LOCATION": "http://localhost:7071",
-    "DOCS_LOCATION": "http://localhost:3000"
-  }
-}

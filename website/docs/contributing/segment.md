@@ -167,8 +167,8 @@ And be patient, I'm going as fast as I can 🏎
 
 [segment-go]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/segment.go
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
-[docs]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/docs/docs/segments
-[sidebars]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/docs/sidebars.js
+[docs]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/website/docs/segments
+[sidebars]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/website/sidebars.js
 [nf-icons]: https://www.nerdfonts.com/cheat-sheet
 [tests]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/src/segments/az_test.go
 [tables]: https://blog.alexellis.io/golang-writing-unit-tests/

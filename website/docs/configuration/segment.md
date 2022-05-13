@@ -159,7 +159,7 @@ directory name, you need to specify it as `\\\\`.
 This means that for user Bill, who has a user account `Bill` on Windows and `bill` on Linux,  `~/Foo` might match
 `C:\Users\Bill\Foo` or `C:\Users\Bill\foo` on Windows but only `/home/bill/Foo` on Linux.
 
-[segments]: /docs/segments/angular.md
+[segments]: /docs/segments/angular
 [colors]: /docs/configuration/colors
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

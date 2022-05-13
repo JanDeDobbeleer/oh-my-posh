@@ -113,8 +113,8 @@
       "type": "node",
       "request": "launch",
       "name": "Theme export",
-      "cwd": "${workspaceFolder}/docs",
-      "program": "${workspaceRoot}/docs/export_themes.js",
+      "cwd": "${workspaceFolder}/website",
+      "program": "${workspaceRoot}/website/export_themes.js",
       "console": "integratedTerminal"
     },
     {

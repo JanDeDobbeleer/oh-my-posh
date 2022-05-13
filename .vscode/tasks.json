@@ -60,9 +60,9 @@
     {
       "type": "npm",
       "script": "start",
-      "path": "docs/",
+      "path": "website/",
       "problemMatcher": [],
-      "label": "docs: start site",
+      "label": "website: start",
       "detail": "cross-env NODE_ENV=development docusaurus start"
     },
     {
@@ -72,7 +72,7 @@
       "isBackground": true,
       "dependsOn": "npm install (functions)",
       "options": {
-        "cwd": "${workspaceFolder}/docs/api"
+        "cwd": "${workspaceFolder}/website/api"
       }
     },
     {
@@ -80,7 +80,7 @@
       "label": "npm install (functions)",
       "command": "npm install",
       "options": {
-        "cwd": "${workspaceFolder}/docs/api"
+        "cwd": "${workspaceFolder}/website/api"
       }
     },
     {
@@ -89,7 +89,7 @@
       "command": "npm prune --production",
       "problemMatcher": [],
       "options": {
-        "cwd": "${workspaceFolder}/docs/api"
+        "cwd": "${workspaceFolder}/website/api"
       }
     }
   ]

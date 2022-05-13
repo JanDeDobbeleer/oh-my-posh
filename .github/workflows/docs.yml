@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-    - 'docs/**'
+    - 'website/**'
     - 'themes/**'
 
 jobs:
@@ -46,7 +46,7 @@ jobs:
       - name: Render themes 🎨
         run: |
           export PATH="$PWD/src/bin:$PATH"
-          cd docs
+          cd website
           npm install
           npm run themes
           cd ..
@@ -59,6 +59,6 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/docs" # App source code path
-          api_location: "/docs/api" # Api source code path - optional
+          app_location: "/website" # App source code path
+          api_location: "/website/api" # Api source code path - optional
           output_location: "build" # Built app content directory - optional

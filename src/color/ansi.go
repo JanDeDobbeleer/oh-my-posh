@@ -38,17 +38,10 @@ type Ansi struct {
 	reverse               string
 	dimmed                string
 	format                string
-	reservedSequences     []sequenceReplacement
-}
-
-type sequenceReplacement struct {
-	text        string
-	replacement string
 }
 
 func (a *Ansi) Init(shellName string) {
 	a.shell = shellName
-	a.initEscapeSequences(shellName)
 	switch shellName {
 	case shell.ZSH:
 		a.format = "%%{%s%%}"
@@ -129,111 +122,13 @@ func (a *Ansi) Init(shellName string) {
 		a.dimmed = "\x1b[2m%s\x1b[22m"
 		a.strikethrough = "\x1b[9m%s\x1b[29m"
 	}
+	if shellName == shell.FISH {
+		a.hyperlink = "\x1b]8;;%s\x1b\\\\%s\x1b]8;;\x1b\\"
+	}
 }
 
 func (a *Ansi) InitPlain(shellName string) {
 	a.Init(shell.PLAIN)
-	a.initEscapeSequences(shellName)
-}
-
-func (a *Ansi) initEscapeSequences(shellName string) {
-	switch shellName {
-	case shell.ZSH:
-		// escape double quotes and variable expansion
-		a.reservedSequences = []sequenceReplacement{
-			{text: "`", replacement: "'"},
-			{text: `%l`, replacement: `%%l`},
-			{text: `%M`, replacement: `%%M`},
-			{text: `%m`, replacement: `%%m`},
-			{text: `%n`, replacement: `%%n`},
-			{text: `%y`, replacement: `%%y`},
-			{text: `%#`, replacement: `%%#`},
-			{text: `%?`, replacement: `%%?`},
-			{text: `%_`, replacement: `%%_`},
-			{text: `%^`, replacement: `%%^`},
-			{text: `%d`, replacement: `%%d`},
-			{text: `%/`, replacement: `%%/`},
-			{text: `%~`, replacement: `%%~`},
-			{text: `%e`, replacement: `%%e`},
-			{text: `%h`, replacement: `%%h`},
-			{text: `%!`, replacement: `%%!`},
-			{text: `%i`, replacement: `%%i`},
-			{text: `%I`, replacement: `%%I`},
-			{text: `%j`, replacement: `%%j`},
-			{text: `%L`, replacement: `%%L`},
-			{text: `%N`, replacement: `%%N`},
-			{text: `%x`, replacement: `%%x`},
-			{text: `%c`, replacement: `%%c`},
-			{text: `%.`, replacement: `%%.`},
-			{text: `%C`, replacement: `%%C`},
-			{text: `%D`, replacement: `%%D`},
-			{text: `%T`, replacement: `%%T`},
-			{text: `%t`, replacement: `%%t`},
-			{text: `%@`, replacement: `%%@`},
-			{text: `%*`, replacement: `%%*`},
-			{text: `%w`, replacement: `%%w`},
-			{text: `%W`, replacement: `%%W`},
-			{text: `%D`, replacement: `%%D`},
-			{text: `%B`, replacement: `%%B`},
-			{text: `%b`, replacement: `%%b`},
-			{text: `%E`, replacement: `%%E`},
-			{text: `%U`, replacement: `%%U`},
-			{text: `%S`, replacement: `%%S`},
-			{text: `%F`, replacement: `%%F`},
-			{text: `%K`, replacement: `%%K`},
-			{text: `%G`, replacement: `%%G`},
-			{text: `%v`, replacement: `%%v`},
-			{text: `%(`, replacement: `%%(`},
-		}
-	case shell.BASH:
-		a.reservedSequences = []sequenceReplacement{
-			{text: "`", replacement: "'"},
-			{text: `\a`, replacement: `\\a`},
-			{text: `\d`, replacement: `\\d`},
-			{text: `\D`, replacement: `\\D`},
-			{text: `\e`, replacement: `\\e`},
-			{text: `\h`, replacement: `\\h`},
-			{text: `\H`, replacement: `\\H`},
-			{text: `\j`, replacement: `\\j`},
-			{text: `\l`, replacement: `\\l`},
-			{text: `\n`, replacement: `\\n`},
-			{text: `\r`, replacement: `\\r`},
-			{text: `\s`, replacement: `\\s`},
-			{text: `\t`, replacement: `\\t`},
-			{text: `\T`, replacement: `\\T`},
-			{text: `\@`, replacement: `\\@`},
-			{text: `\A`, replacement: `\\A`},
-			{text: `\u`, replacement: `\\u`},
-			{text: `\v`, replacement: `\\v`},
-			{text: `\V`, replacement: `\\V`},
-			{text: `\w`, replacement: `\\w`},
-			{text: `\W`, replacement: `\\W`},
-			{text: `\!`, replacement: `\\!`},
-			{text: `\#`, replacement: `\\#`},
-			{text: `\$`, replacement: `\\$`},
-			{text: `\nnn`, replacement: `\\nnn`},
-		}
-	case shell.FISH:
-		a.reservedSequences = []sequenceReplacement{
-			{text: "`", replacement: "'"},
-			{text: `\a`, replacement: `\\a`},
-			{text: `\b`, replacement: `\\b`},
-			{text: `\e`, replacement: `\\e`},
-			{text: `\f`, replacement: `\\f`},
-			{text: `\r`, replacement: `\\r`},
-			{text: `\t`, replacement: `\\t`},
-			{text: `\v`, replacement: `\\v`},
-			{text: `\c`, replacement: `\\c`},
-			{text: `\x`, replacement: `\\x`},
-			{text: `\X`, replacement: `\\X`},
-			{text: `\0`, replacement: `\\0`},
-			{text: `\U`, replacement: `\\U`},
-		}
-	default:
-		a.reservedSequences = []sequenceReplacement{
-			{text: "`", replacement: "'"},
-		}
-	}
 }
 
 func (a *Ansi) GenerateHyperlink(text string) string {
@@ -305,15 +200,6 @@ func (a *Ansi) ConsolePwd(pwd string) string {
 
 func (a *Ansi) ClearAfter() string {
 	return a.clearLine + a.clearBelow
-}
-
-func (a *Ansi) EscapeText(text string) string {
-	// what to escape/replace is different per shell
-
-	for _, s := range a.reservedSequences {
-		text = strings.ReplaceAll(text, s.text, s.replacement)
-	}
-	return text
 }
 
 func (a *Ansi) Title(title string) string {

@@ -44,6 +44,7 @@ understand how to configure a segment.
 - background: `string` [color][colors]
 - background_templates: background [color templates][color-templates]
 - properties: `array` of `Property`: `string`
+- interactive: `boolean`
 
 ## Type
 
@@ -146,6 +147,10 @@ You can also combine these properties:
   "/Users/posh/Projects/secret-project.*"
 ]
 ```
+
+#### Interactive
+
+When this is true, the segment text is not escaped to allow the use of interactive prompt escape sequences.
 
 #### Notes
 

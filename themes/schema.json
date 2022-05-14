@@ -7,8 +7,12 @@
   "definitions": {
     "color": {
       "anyOf": [
-        { "$ref": "#/definitions/color_string" },
-        { "$ref": "#/definitions/palette_reference" }
+        {
+          "$ref": "#/definitions/color_string"
+        },
+        {
+          "$ref": "#/definitions/palette_reference"
+        }
       ]
     },
     "color_string": {
@@ -49,7 +53,12 @@
       "type": "string",
       "title": "Display Mode",
       "description": "Determines whether the segment is displayed always or only if a file matching the extensions are present in the current folder",
-      "enum": ["always", "files", "environment", "context"],
+      "enum": [
+        "always",
+        "files",
+        "environment",
+        "context"
+      ],
       "default": "context"
     },
     "missing_command_text": {
@@ -66,10 +75,18 @@
           "type": "string",
           "title": "Prompt Template"
         },
-        "foreground": { "$ref": "#/definitions/color" },
-        "foreground_templates": { "$ref": "#/definitions/color_templates" },
-        "background": { "$ref": "#/definitions/color" },
-        "background_templates": { "$ref": "#/definitions/color_templates" }
+        "foreground": {
+          "$ref": "#/definitions/color"
+        },
+        "foreground_templates": {
+          "$ref": "#/definitions/color_templates"
+        },
+        "background": {
+          "$ref": "#/definitions/color"
+        },
+        "background_templates": {
+          "$ref": "#/definitions/color_templates"
+        }
       }
     },
     "block": {
@@ -79,22 +96,33 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "prompt" }
+              "type": {
+                "const": "prompt"
+              }
             }
           },
           "then": {
-            "required": ["type", "alignment", "segments"],
+            "required": [
+              "type",
+              "alignment",
+              "segments"
+            ],
             "title": "Prompt definition, contains 1 or more segments to render"
           }
         },
         {
           "if": {
             "properties": {
-              "type": { "const": "rprompt" }
+              "type": {
+                "const": "rprompt"
+              }
             }
           },
           "then": {
-            "required": ["type", "segments"],
+            "required": [
+              "type",
+              "segments"
+            ],
             "title": "RPrompt definition, contains 1 or more segments to render to the right of the cursor"
           }
         }
@@ -104,14 +132,20 @@
           "type": "string",
           "title": "Block type",
           "description": "https://ohmyposh.dev/docs/configuration/block#type",
-          "enum": ["prompt", "rprompt"],
+          "enum": [
+            "prompt",
+            "rprompt"
+          ],
           "default": "prompt"
         },
         "alignment": {
           "type": "string",
           "title": "Block alignment",
           "description": "https://ohmyposh.dev/docs/configuration/block#alignment",
-          "enum": ["left", "right"],
+          "enum": [
+            "left",
+            "right"
+          ],
           "default": "left"
         },
         "newline": {
@@ -135,7 +169,9 @@
           "title": "Segments list, prompt elements to display based on context",
           "description": "https://ohmyposh.dev/docs/configuration/block#segments",
           "default": [],
-          "items": { "$ref": "#/definitions/segment" }
+          "items": {
+            "$ref": "#/definitions/segment"
+          }
         }
       }
     },
@@ -144,7 +180,10 @@
       "title": "A segment",
       "description": "https://ohmyposh.dev/docs/configuration/segment",
       "default": {},
-      "required": ["type", "style"],
+      "required": [
+        "type",
+        "style"
+      ],
       "properties": {
         "type": {
           "type": "string",
@@ -208,12 +247,25 @@
           "type": "string",
           "title": "Segment Style",
           "description": "https://ohmyposh.dev/docs/configuration/segment#style",
-          "enum": ["plain", "powerline", "diamond", "accordion"]
+          "enum": [
+            "plain",
+            "powerline",
+            "diamond",
+            "accordion"
+          ]
         },
-        "foreground": { "$ref": "#/definitions/color" },
-        "foreground_templates": { "$ref": "#/definitions/color_templates" },
-        "background": { "$ref": "#/definitions/color" },
-        "background_templates": { "$ref": "#/definitions/color_templates" },
+        "foreground": {
+          "$ref": "#/definitions/color"
+        },
+        "foreground_templates": {
+          "$ref": "#/definitions/color_templates"
+        },
+        "background": {
+          "$ref": "#/definitions/color"
+        },
+        "background_templates": {
+          "$ref": "#/definitions/color_templates"
+        },
         "template": {
           "type": "string",
           "title": "Template text",
@@ -255,13 +307,21 @@
               "deprecated": true
             }
           }
+        },
+        "interactive": {
+          "type": "boolean",
+          "title": "Allow the use of interactive prompt escape sequences",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#interactive",
+          "default": false
         }
       },
       "allOf": [
         {
           "if": {
             "properties": {
-              "type": { "const": "project" }
+              "type": {
+                "const": "project"
+              }
             }
           },
           "then": {
@@ -272,7 +332,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "npm" }
+              "type": {
+                "const": "npm"
+              }
             }
           },
           "then": {
@@ -283,7 +345,9 @@
         {
           "if": {
             "properties": {
-              "style": { "const": "powerline" }
+              "style": {
+                "const": "powerline"
+              }
             }
           },
           "then": {
@@ -306,7 +370,9 @@
         {
           "if": {
             "properties": {
-              "style": { "const": "diamond" }
+              "style": {
+                "const": "diamond"
+              }
             }
           },
           "then": {
@@ -329,7 +395,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "az" }
+              "type": {
+                "const": "az"
+              }
             }
           },
           "then": {
@@ -343,7 +411,11 @@
                     "title": "Source",
                     "description": "https://ohmyposh.dev/docs/az#properties",
                     "default": "first_match",
-                    "enum": ["first_match", "cli", "pwsh"]
+                    "enum": [
+                      "first_match",
+                      "cli",
+                      "pwsh"
+                    ]
                   }
                 }
               }
@@ -353,7 +425,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "battery" }
+              "type": {
+                "const": "battery"
+              }
             }
           },
           "then": {
@@ -400,7 +474,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "command" }
+              "type": {
+                "const": "command"
+              }
             }
           },
           "then": {
@@ -429,7 +505,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "dotnet" }
+              "type": {
+                "const": "dotnet"
+              }
             }
           },
           "then": {
@@ -455,7 +533,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "exit" }
+              "type": {
+                "const": "exit"
+              }
             }
           },
           "then": {
@@ -478,7 +558,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "git" }
+              "type": {
+                "const": "git"
+              }
             }
           },
           "then": {
@@ -633,7 +715,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "go" }
+              "type": {
+                "const": "go"
+              }
             }
           },
           "then": {
@@ -665,7 +749,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "dart" }
+              "type": {
+                "const": "dart"
+              }
             }
           },
           "then": {
@@ -691,7 +777,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "crystal" }
+              "type": {
+                "const": "crystal"
+              }
             }
           },
           "then": {
@@ -717,7 +805,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "julia" }
+              "type": {
+                "const": "julia"
+              }
             }
           },
           "then": {
@@ -743,7 +833,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "php" }
+              "type": {
+                "const": "php"
+              }
             }
           },
           "then": {
@@ -769,7 +861,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "java" }
+              "type": {
+                "const": "java"
+              }
             }
           },
           "then": {
@@ -795,7 +889,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "ruby" }
+              "type": {
+                "const": "ruby"
+              }
             }
           },
           "then": {
@@ -821,7 +917,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "rust" }
+              "type": {
+                "const": "rust"
+              }
             }
           },
           "then": {
@@ -847,7 +945,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "kubectl" }
+              "type": {
+                "const": "kubectl"
+              }
             }
           },
           "then": {
@@ -876,7 +976,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "aws" }
+              "type": {
+                "const": "aws"
+              }
             }
           },
           "then": {
@@ -899,7 +1001,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "node" }
+              "type": {
+                "const": "node"
+              }
             }
           },
           "then": {
@@ -943,7 +1047,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "azfunc" }
+              "type": {
+                "const": "azfunc"
+              }
             }
           },
           "then": {
@@ -969,7 +1075,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "os" }
+              "type": {
+                "const": "os"
+              }
             }
           },
           "then": {
@@ -1124,7 +1232,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "path" }
+              "type": {
+                "const": "path"
+              }
             }
           },
           "then": {
@@ -1213,7 +1323,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "python" }
+              "type": {
+                "const": "python"
+              }
             }
           },
           "then": {
@@ -1242,7 +1354,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "root" }
+              "type": {
+                "const": "root"
+              }
             }
           },
           "then": {
@@ -1253,7 +1367,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "session" }
+              "type": {
+                "const": "session"
+              }
             }
           },
           "then": {
@@ -1276,7 +1392,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "shell" }
+              "type": {
+                "const": "shell"
+              }
             }
           },
           "then": {
@@ -1299,7 +1417,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "spotify" }
+              "type": {
+                "const": "spotify"
+              }
             }
           },
           "then": {
@@ -1340,7 +1460,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "terraform" }
+              "type": {
+                "const": "terraform"
+              }
             }
           },
           "then": {
@@ -1351,7 +1473,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "text" }
+              "type": {
+                "const": "text"
+              }
             }
           },
           "then": {
@@ -1374,7 +1498,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "time" }
+              "type": {
+                "const": "time"
+              }
             }
           },
           "then": {
@@ -1397,7 +1523,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "ytm" }
+              "type": {
+                "const": "ytm"
+              }
             }
           },
           "then": {
@@ -1447,7 +1575,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "owm" }
+              "type": {
+                "const": "owm"
+              }
             }
           },
           "then": {
@@ -1473,7 +1603,11 @@
                     "title": "units",
                     "description": "Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit). Default is standard",
                     "default": "standard",
-                    "enum": ["standard", "metric", "imperial"]
+                    "enum": [
+                      "standard",
+                      "metric",
+                      "imperial"
+                    ]
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
@@ -1492,7 +1626,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "executiontime" }
+              "type": {
+                "const": "executiontime"
+              }
             }
           },
           "then": {
@@ -1536,7 +1672,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "poshgit" }
+              "type": {
+                "const": "poshgit"
+              }
             }
           },
           "then": {
@@ -1547,7 +1685,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "sysinfo" }
+              "type": {
+                "const": "sysinfo"
+              }
             }
           },
           "then": {
@@ -1570,7 +1710,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "strava" }
+              "type": {
+                "const": "strava"
+              }
             }
           },
           "then": {
@@ -1632,7 +1774,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "angular" }
+              "type": {
+                "const": "angular"
+              }
             }
           },
           "then": {
@@ -1655,7 +1799,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "wakatime" }
+              "type": {
+                "const": "wakatime"
+              }
             }
           },
           "then": {
@@ -1687,7 +1833,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "wifi" }
+              "type": {
+                "const": "wifi"
+              }
             }
           },
           "then": {
@@ -1698,7 +1846,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "winreg" }
+              "type": {
+                "const": "winreg"
+              }
             }
           },
           "then": {
@@ -1727,7 +1877,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "plastic" }
+              "type": {
+                "const": "plastic"
+              }
             }
           },
           "then": {
@@ -1780,7 +1932,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "brewfather" }
+              "type": {
+                "const": "brewfather"
+              }
             }
           },
           "then": {
@@ -1908,7 +2062,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "ipify" }
+              "type": {
+                "const": "ipify"
+              }
             }
           },
           "then": {
@@ -1940,7 +2096,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "haskell" }
+              "type": {
+                "const": "haskell"
+              }
             }
           },
           "then": {
@@ -1956,7 +2114,11 @@
                     "type": "string",
                     "title": "Use Stack GHC",
                     "description": "Get the GHC version used by Stack. Will decrease performance. Boolean indicating whether stack ghc was used available in template as .StackGhc",
-                    "enum": ["always", "package", "never"],
+                    "enum": [
+                      "always",
+                      "package",
+                      "never"
+                    ],
                     "default": "never"
                   },
                   "display_mode": {
@@ -1973,7 +2135,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "ui5tooling" }
+              "type": {
+                "const": "ui5tooling"
+              }
             }
           },
           "then": {
@@ -1999,7 +2163,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "cf" }
+              "type": {
+                "const": "cf"
+              }
             }
           },
           "then": {
@@ -2025,7 +2191,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "cftarget" }
+              "type": {
+                "const": "cftarget"
+              }
             }
           },
           "then": {
@@ -2036,7 +2204,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "kotlin" }
+              "type": {
+                "const": "kotlin"
+              }
             }
           },
           "then": {
@@ -2062,7 +2232,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "swift" }
+              "type": {
+                "const": "swift"
+              }
             }
           },
           "then": {
@@ -2088,7 +2260,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "cds" }
+              "type": {
+                "const": "cds"
+              }
             }
           },
           "then": {
@@ -2114,7 +2288,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "r" }
+              "type": {
+                "const": "r"
+              }
             }
           },
           "then": {
@@ -2140,7 +2316,9 @@
       ]
     }
   },
-  "required": ["blocks"],
+  "required": [
+    "blocks"
+  ],
   "properties": {
     "final_space": {
       "type": "boolean",
@@ -2160,13 +2338,17 @@
       "description": "https://ohmyposh.dev/docs/configuration/title#console-title-template",
       "default": "{{ .Shell }} in {{ .Folder }}"
     },
-    "terminal_background": { "$ref": "#/definitions/color" },
+    "terminal_background": {
+      "$ref": "#/definitions/color"
+    },
     "blocks": {
       "type": "array",
       "title": "Block array",
       "default": [],
       "description": "https://ohmyposh.dev/docs/configuration/overview#blocks",
-      "items": { "$ref": "#/definitions/block" }
+      "items": {
+        "$ref": "#/definitions/block"
+      }
     },
     "tooltips": {
       "type": "array",
@@ -2174,7 +2356,11 @@
       "description": "https://ohmyposh.dev/docs/configuration/tooltips",
       "default": [],
       "items": {
-        "allOf": [{ "$ref": "#/definitions/segment" }],
+        "allOf": [
+          {
+            "$ref": "#/definitions/segment"
+          }
+        ],
         "properties": {
           "tips": {
             "type": "array",
@@ -2184,7 +2370,9 @@
             }
           }
         },
-        "required": ["tips"]
+        "required": [
+          "tips"
+        ]
       }
     },
     "transient_prompt": {
@@ -2213,7 +2401,9 @@
       "description": "https://ohmyposh.dev/docs/configuration/colors#palette",
       "default": {},
       "patternProperties": {
-        ".*": { "$ref": "#/definitions/color" }
+        ".*": {
+          "$ref": "#/definitions/color"
+        }
       }
     }
   }

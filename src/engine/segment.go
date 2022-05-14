@@ -29,6 +29,7 @@ type Segment struct {
 	TrailingDiamond     string          `json:"trailing_diamond,omitempty"`
 	Template            string          `json:"template,omitempty"`
 	Properties          properties.Map  `json:"properties,omitempty"`
+	Interactive         bool            `json:"interactive,omitempty"`
 
 	writer          SegmentWriter
 	Enabled         bool `json:"-"`
@@ -353,10 +354,10 @@ func (segment *Segment) SetText() {
 		return
 	}
 	segment.text = segment.string()
-	// see https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2255
-	// this can't happen where we do regular text replacement in ansi.go
-	// as that would also replace valid \[\] sequences and break the prompt
-	// except for git bash on Windows
+	segment.Enabled = len(strings.ReplaceAll(segment.text, " ", "")) > 0
+	if segment.Interactive {
+		return
+	}
 	switch segment.env.Shell() {
 	case shell.BASH, shell.FISH:
 		segment.text = strings.ReplaceAll(segment.text, `\`, `\\`)
@@ -364,8 +365,4 @@ func (segment *Segment) SetText() {
 		segment.text = strings.ReplaceAll(segment.text, `%`, `%%`)
 	}
 	segment.text = strings.ReplaceAll(segment.text, "`", "'")
-	// if segment.env.Shell() == shell.BASH && segment.env.Platform() != environment.WindowsPlatform {
-	// 	segment.text = strings.ReplaceAll(segment.text, `\`, `\\`)
-	// }
-	segment.Enabled = len(strings.ReplaceAll(segment.text, " ", "")) > 0
 }

@@ -122,9 +122,6 @@ func (a *Ansi) Init(shellName string) {
 		a.dimmed = "\x1b[2m%s\x1b[22m"
 		a.strikethrough = "\x1b[9m%s\x1b[29m"
 	}
-	if shellName == shell.FISH {
-		a.hyperlink = "\x1b]8;;%s\x1b\\\\%s\x1b]8;;\x1b\\"
-	}
 }
 
 func (a *Ansi) InitPlain(shellName string) {
@@ -133,14 +130,60 @@ func (a *Ansi) InitPlain(shellName string) {
 
 func (a *Ansi) GenerateHyperlink(text string) string {
 	// hyperlink matching
-	results := regex.FindNamedRegexMatch("(?P<all>(?:\\[(?P<name>.+)\\])(?:\\((?P<url>.*)\\)))", text)
+	results := regex.FindNamedRegexMatch("(?P<ALL>(?:\\[(?P<TEXT>.+)\\])(?:\\((?P<URL>.*)\\)))", text)
 	if len(results) != 3 {
 		return text
 	}
+	linkText := a.escapeLinkTextForFishShell(results["TEXT"])
 	// build hyperlink ansi
-	hyperlink := fmt.Sprintf(a.hyperlink, results["url"], results["name"])
-	// replace original text by the new one
-	return strings.Replace(text, results["all"], hyperlink, 1)
+	hyperlink := fmt.Sprintf(a.hyperlink, results["URL"], linkText)
+	// replace original text by the new onex
+	return strings.Replace(text, results["ALL"], hyperlink, 1)
+}
+
+func (a *Ansi) escapeLinkTextForFishShell(text string) string {
+	if a.shell != shell.FISH {
+		return text
+	}
+	escapeChars := map[string]string{
+		`c`: `\c`,
+		`a`: `\a`,
+		`b`: `\b`,
+		`e`: `\e`,
+		`f`: `\f`,
+		`n`: `\n`,
+		`r`: `\r`,
+		`t`: `\t`,
+		`v`: `\v`,
+		`$`: `\$`,
+		`*`: `\*`,
+		`?`: `\?`,
+		`~`: `\~`,
+		`%`: `\%`,
+		`#`: `\#`,
+		`(`: `\(`,
+		`)`: `\)`,
+		`{`: `\{`,
+		`}`: `\}`,
+		`[`: `\[`,
+		`]`: `\]`,
+		`<`: `\<`,
+		`>`: `\>`,
+		`^`: `\^`,
+		`&`: `\&`,
+		`;`: `\;`,
+		`"`: `\"`,
+		`'`: `\'`,
+		`x`: `\x`,
+		`X`: `\X`,
+		`0`: `\0`,
+		`u`: `\u`,
+		`U`: `\U`,
+	}
+	if val, ok := escapeChars[text[0:1]]; ok {
+		return val + text[1:]
+	}
+	return text
 }
 
 func (a *Ansi) formatText(text string) string {

@@ -73,7 +73,7 @@ oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" | 
 Replace `jandedobbeleer.omp.json` with the theme you use.
 
 :::caution
-Only winget can add the environment variable `POSH_THEMES_PATH` automatically. For Homebrew, use
+Only winget and scoop add the environment variable `POSH_THEMES_PATH` automatically. For Homebrew, use
 `$(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json`.
 :::
 

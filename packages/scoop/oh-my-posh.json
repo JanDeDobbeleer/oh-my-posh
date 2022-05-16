@@ -13,6 +13,9 @@
       }
   },
   "env_add_path": "bin",
+  "env_set": {
+    "POSH_THEMES_PATH": "$dir\\themes"
+  },
   "checkver": {
       "github": "https://github.com/JanDeDobbeleer/oh-my-posh"
   },

@@ -164,6 +164,7 @@ type Environment interface {
 	HasFileInParentDirs(pattern string, depth uint) bool
 	ResolveSymlink(path string) (string, error)
 	DirMatchesOneOf(dir string, regexes []string) bool
+	DirIsWritable(path string) bool
 	CommandPath(command string) string
 	HasCommand(command string) bool
 	FileContent(file string) string

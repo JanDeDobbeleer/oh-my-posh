@@ -238,3 +238,8 @@ func (env *MockedEnvironment) Trace(start time.Time, function string, args ...st
 func (env *MockedEnvironment) Log(logType environment.LogType, funcName, message string) {
 	_ = env.Called(logType, funcName, message)
 }
+
+func (env *MockedEnvironment) DirIsWritable(path string) bool {
+	args := env.Called(path)
+	return args.Bool(0)
+}

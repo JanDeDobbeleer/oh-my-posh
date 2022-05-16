@@ -281,6 +281,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("StackCount").Return(0)
 		env.On("IsWsl").Return(false)
+		env.On("DirIsWritable", tc.Pwd).Return(true)
 		args := &environment.Flags{
 			PSWD: tc.Pswd,
 		}
@@ -403,6 +404,7 @@ func TestGetFullPath(t *testing.T) {
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("StackCount").Return(tc.StackCount)
 		env.On("IsWsl").Return(false)
+		env.On("DirIsWritable", tc.Pwd).Return(true)
 		args := &environment.Flags{
 			PSWD: tc.Pswd,
 		}

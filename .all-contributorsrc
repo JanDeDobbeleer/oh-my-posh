@@ -1201,6 +1201,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ralish",
+      "name": "Samuel D. Leslie",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3214803?v=4",
+      "profile": "https://nexiom.net/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

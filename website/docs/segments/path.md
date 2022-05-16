@@ -147,6 +147,8 @@ folders at the same level, so if `C:\projectA\dev` and `C:\projectB\dev` exist, 
 ### Properties
 
 - `.Path`: `string` - the current directory (based on the `style` property)
+- `.Location`: `string` - the current directory (raw value)
 - `.StackCount`: `int` - the stack count
+- `.Writable`: `boolean` - is the current directory writable by the user or not
 
 [templates]: /docs/configuration/templates

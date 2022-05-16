@@ -18,6 +18,7 @@ type Path struct {
 	Path       string
 	StackCount int
 	Location   string
+	Writable   bool
 }
 
 const (
@@ -102,6 +103,7 @@ func (pt *Path) Enabled() bool {
 	}
 
 	pt.StackCount = pt.env.StackCount()
+	pt.Writable = pt.env.DirIsWritable(pt.pwd)
 	return true
 }
 

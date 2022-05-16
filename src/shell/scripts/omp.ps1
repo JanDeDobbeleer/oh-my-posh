@@ -263,7 +263,7 @@ Example:
                     $global:Error[0] | Where-Object { $_ -ne $null } | Select-Object -ExpandProperty InvocationInfo
                 } catch { $null }
                 # check if the last command caused the last error
-                if ($null -ne $invocationInfo -and $lastHistory.CommandLine -eq $invocationInfo.Line) {
+                if ($null -ne $invocationInfo -and $script:LastHistoryId -eq $invocationInfo.HistoryId) {
                     $script:ErrorCode = 1
                 } elseif ($realLASTEXITCODE -is [int] -and $realLASTEXITCODE -ne 0) {
                     # native app exit code

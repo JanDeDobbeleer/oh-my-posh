@@ -37,6 +37,12 @@
         "$ref": "#/definitions/segment/properties/template"
       }
     },
+    "home_enabled": {
+      "type": "boolean",
+      "title": "Enable in the HOME folder",
+      "description": "Display the segment in the HOME folder",
+      "default": false
+    },
     "fetch_version": {
       "type": "boolean",
       "title": "Fetch Version",
@@ -65,6 +71,12 @@
       "type": "string",
       "title": "Missing command text",
       "description": "The string to display when the command is not available",
+      "default": ""
+    },
+    "version_url_template": {
+      "type": "string",
+      "title": "Version Url Template",
+      "description": "Template that creates the URL of the version info / release notes",
       "default": ""
     },
     "extra_prompt": {
@@ -339,7 +351,28 @@
           },
           "then": {
             "title": "NPM Segment",
-            "description": "https://ohmyposh.dev/docs/npm"
+            "description": "https://ohmyposh.dev/docs/npm",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
           }
         },
         {
@@ -516,6 +549,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -524,6 +560,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -726,20 +765,26 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
-                  },
-                  "parse_mod_file": {
-                    "type": "boolean",
-                    "title": "Parse go.mod file",
-                    "description": "Parse go.mod file instead of calling out to go to improve performance.",
-                    "default": false
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "parse_mod_file": {
+                    "type": "boolean",
+                    "title": "Parse go.mod file",
+                    "description": "Parse go.mod file instead of calling out to go to improve performance.",
+                    "default": false
                   }
                 }
               }
@@ -760,6 +805,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -768,6 +816,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -788,6 +839,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -796,6 +850,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -816,6 +873,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -824,6 +884,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -844,6 +907,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -852,6 +918,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -872,6 +941,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -900,6 +972,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -928,6 +1003,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -1012,6 +1090,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -1020,6 +1101,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   },
                   "fetch_package_manager": {
                     "type": "boolean",
@@ -1058,6 +1142,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -1334,17 +1421,32 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_virtual_env": {
                     "type": "boolean",
                     "title": "Fetch Virtual Env",
                     "description": "Fetch the name of the virtualenv or not",
                     "default": true
                   },
+                  "display_default": {
+                    "type": "boolean",
+                    "title": "Display Default",
+                    "description": "Show the name of the virtualenv when it's default",
+                    "default": true
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -1785,11 +1887,17 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
                   "display_mode": {
                     "$ref": "#/definitions/display_mode"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -2107,8 +2215,20 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   },
                   "stack_ghc_mode": {
                     "type": "string",
@@ -2120,12 +2240,6 @@
                       "never"
                     ],
                     "default": "never"
-                  },
-                  "display_mode": {
-                    "$ref": "#/definitions/display_mode"
-                  },
-                  "missing_command_text": {
-                    "$ref": "#/definitions/missing_command_text"
                   }
                 }
               }
@@ -2146,6 +2260,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -2154,6 +2271,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -2174,6 +2294,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -2182,6 +2305,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -2215,6 +2341,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -2223,6 +2352,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -2243,6 +2375,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -2251,6 +2386,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }
@@ -2271,6 +2409,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -2299,6 +2440,9 @@
             "properties": {
               "properties": {
                 "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
                   "fetch_version": {
                     "$ref": "#/definitions/fetch_version"
                   },
@@ -2307,6 +2451,9 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
                   }
                 }
               }

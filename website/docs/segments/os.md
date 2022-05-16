@@ -1,6 +1,6 @@
 ---
 id: os
-title: os
+title: OS
 sidebar_label: OS
 ---
 

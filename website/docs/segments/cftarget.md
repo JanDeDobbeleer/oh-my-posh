@@ -31,7 +31,7 @@ Display the details of the logged [Cloud Foundry endpoint][cf-target] (`cf targe
 
 :::
 
-## Template Properties
+### Properties
 
 - `.Org`: `string` - Cloud Foundry organization
 - `.Space`: `string` - Cloud Foundry space

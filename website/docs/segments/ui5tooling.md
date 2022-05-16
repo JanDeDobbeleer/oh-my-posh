@@ -26,13 +26,14 @@ see [the documentation][ui5-version-help]).
 
 - home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
 - fetch_version: `boolean` - display the UI5 tooling version - defaults to `true`
-- display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`
 - missing_command_text: `string` - text to display when the java command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when `*ui5*.y(a)ml` file is present in the current folder
   - `context`: (default) the segment is only displayed when `*ui5*.y(a)ml` file is present in the current folder
     or it has been found in the parent folders (check up to 4 levels)
+- version_url_template: `string` - a go [text/template][go-text-template] [template][templates] that creates
+the URL of the version info / release notes
 
 ## Template ([info][templates])
 
@@ -44,7 +45,7 @@ see [the documentation][ui5-version-help]).
 
 :::
 
-## Template Properties
+### Properties
 
 - `.Full`: `string` - the full version
 - `.Major`: `string` - major number
@@ -53,6 +54,7 @@ see [the documentation][ui5-version-help]).
 - `.URL`: `string` - URL of the version info / release notes
 - `.Error`: `string` - error encountered when fetching the version string
 
+[go-text-template]: https://golang.org/pkg/text/template/
 [templates]: /docs/configuration/templates
 [ui5-homepage]: https://sap.github.io/ui5-tooling
 [ui5-version-help]: https://sap.github.io/ui5-tooling/pages/CLI/#ui5-versions

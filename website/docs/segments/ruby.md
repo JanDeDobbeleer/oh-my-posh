@@ -25,7 +25,6 @@ Display the currently active ruby version.
 
 - home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
 - fetch_version: `boolean` - display the ruby version - defaults to `true`
-- display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed

@@ -318,10 +318,7 @@ func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
 }
 
 func TestLanguageEnabledMissingCommandCustomTextHideError(t *testing.T) {
-	props := properties.Map{
-		MissingCommandText:      "missing",
-		properties.DisplayError: false,
-	}
+	props := properties.Map{MissingCommandText: "missing"}
 	args := &languageArgs{
 		commands:          []*cmd{},
 		extensions:        []string{uni, corn},

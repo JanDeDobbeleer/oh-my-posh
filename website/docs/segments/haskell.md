@@ -25,12 +25,13 @@ Display the currently active Glasgow Haskell Compiler (GHC) version.
 
 - home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
 - fetch_version: `boolean` - display the GHC version - defaults to `true`
-- display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
   - `files`: the segment is only displayed when `*.hs`, `*.lhs`, `stack.yaml`, `package.yaml`, `*.cabal`,
 or `cabal.project` files are present (default)
+- version_url_template: `string` - a go [text/template][go-text-template] [template][templates] that creates
+the URL of the version info / release notes
 - stack_ghc_mode: `string` - determines when to use stack ghc to retrieve the version information.
 Using stack ghc will decrease performance.
   - `never`: never use stack ghc (default)
@@ -57,4 +58,5 @@ Using stack ghc will decrease performance.
 - `.Error`: `string` - error encountered when fetching the version string
 - `.StackGhc`: `boolean` - `true` if stack ghc was used, otherwise `false`
 
+[go-text-template]: https://golang.org/pkg/text/template/
 [templates]: /docs/configuration/templates

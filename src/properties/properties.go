@@ -21,21 +21,21 @@ type Property string
 
 // general Properties used across Segments
 const (
-	// Style indicates with style to use
+	// Style indicates the style to use
 	Style Property = "style"
-	// IncludeFolders folders to be included for the segment logic
+	// IncludeFolders indicates folders to be included for the segment logic
 	IncludeFolders Property = "include_folders"
-	// ExcludeFolders folders to be excluded for the segment logic
+	// ExcludeFolders indicates folders to be excluded for the segment logic
 	ExcludeFolders Property = "exclude_folders"
-	// IgnoreFolders duplicate of ExcludeFolders
+	// IgnoreFolders is a duplicate of ExcludeFolders
 	IgnoreFolders Property = "ignore_folders"
-	// FetchVersion fetch the version number or not
+	// FetchVersion decides whether to fetch the version number or not
 	FetchVersion Property = "fetch_version"
 	// AlwaysEnabled decides whether or not to always display the info
 	AlwaysEnabled Property = "always_enabled"
 	// VersionURLTemplate is the template to use when building language segment hyperlink
 	VersionURLTemplate Property = "version_url_template"
-	// DisplayError to display when an error occurs or not
+	// DisplayError decides whether to display when an error occurs or not
 	DisplayError Property = "display_error"
 	// DisplayDefault hides or shows the default
 	DisplayDefault Property = "display_default"

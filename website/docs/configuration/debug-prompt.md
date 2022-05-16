@@ -11,7 +11,7 @@ This feature only works in `powershell` for the time being.
 The debug prompt is displayed when you debug a script from the command line or Visual Studio Code.
 The default is `[DBG]: `.
 
-You can use go [text/template][go-text-template] templates extended with [sprig][sprig] to enrich the text.
+You can use go [text/template][go-text-template] [templates][templates] extended with [sprig][sprig] to enrich the text.
 Environment variables are available, just like the [`console_title_template`][console-title] functionality.
 
 ## Configuration
@@ -38,7 +38,7 @@ The configuration has the following properties:
 - foreground_templates: foreground [color templates][color-templates]
 - background: `string` [color][colors]
 - background_templates: background [color templates][color-templates]
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+- template: `string` - a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
 properties below - defaults to `[DBG]: `
 
 ## Template ([info][templates])

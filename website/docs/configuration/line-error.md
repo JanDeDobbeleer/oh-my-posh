@@ -49,7 +49,7 @@ The configuration has the following properties:
 
 - background: `string` [color][colors]
 - foreground: `string` [color][colors]
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
+- template: `string` - a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
 properties below - defaults to ` `
 
 ## Template ([info][templates])

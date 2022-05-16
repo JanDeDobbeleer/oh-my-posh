@@ -34,6 +34,5 @@ To learn more about templates and their possibilities, have a look at the [templ
 }
 ```
 
-[go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
 [templates]: /docs/configuration/templates

@@ -38,7 +38,7 @@ understand how to configure a segment.
 - invert_powerline: `boolean`
 - leading_diamond: `string`
 - trailing_diamond: `string`
-- template: `string` a go text/template [template][templates] to render the prompt
+- template: `string` a go [text/template][go-text-template] [template][templates] to render the prompt
 - foreground: `string` [color][colors]
 - foreground_templates: foreground [color templates][color-templates]
 - background: `string` [color][colors]

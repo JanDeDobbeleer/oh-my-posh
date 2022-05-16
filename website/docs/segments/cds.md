@@ -24,7 +24,7 @@ Display the active [CDS CLI][sap-cap-cds] version.
 ## Properties
 
 - home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
-- display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`
+- fetch_version: `boolean` - fetch the CDS version - defaults to `true`
 - missing_command_text: `string` - text to display when the cds command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
@@ -42,7 +42,7 @@ Display the active [CDS CLI][sap-cap-cds] version.
 
 :::
 
-## Template Properties
+### Properties
 
 - `.Full`: `string` - the full version
 - `.Major`: `string` - major number

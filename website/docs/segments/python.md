@@ -29,7 +29,6 @@ Supports conda, virtualenv and pyenv (if python points to pyenv shim).
 - display_default: `boolean` - show the name of the virtualenv when it's default (`system`, `base`)
 or not - defaults to `true`
 - fetch_version: `boolean` - fetch the python version - defaults to `true`
-- display_error: `boolean` - show the error context when failing to retrieve the version information - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed
@@ -37,6 +36,8 @@ or not - defaults to `true`
     files are present
   - `environment`: the segment is only displayed when a virtual env is present (default)
   - `context`: the segment is only displayed when either `environment` or `files` is active
+- version_url_template: `string` - a go [text/template][go-text-template] [template][templates] that creates
+the URL of the version info / release notes
 
 ## Template ([info][templates])
 
@@ -58,4 +59,5 @@ or not - defaults to `true`
 - `.URL`: `string` - URL of the version info / release notes
 - `.Error`: `string` - error encountered when fetching the version string
 
+[go-text-template]: https://golang.org/pkg/text/template/
 [templates]: /docs/configuration/templates

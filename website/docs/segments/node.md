@@ -24,11 +24,14 @@ Display the currently active [Node.js][node-js] version.
 ## Properties
 
 - home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
+- fetch_version: `boolean` - display the Node.js version - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: The segment is always displayed
   - `files`: The segment is only displayed when `*.js`, `*.ts`, `package.json`, `.nvmrc`, `pnpm-workspace.yaml`,
 `.pnpmfile.cjs`, `.npmrc` or `.vue` files are present (default)
+- version_url_template: `string` - a go [text/template][go-text-template] [template][templates] that creates
+the URL of the version info / release notes
 - fetch_package_manager: `boolean` - define if the current project uses Yarn or NPM - defaults to `false`
 - yarn_icon: `string` - the icon/text to display when using Yarn - defaults to ` \uF61A`
 - npm_icon: `string` - the icon/text to display when using NPM - defaults to ` \uE71E`
@@ -54,5 +57,6 @@ Display the currently active [Node.js][node-js] version.
 - `.PackageManagerIcon`: `string` - the Yarn on NPM icon when setting `fetch_package_manager` to `true`
 - `.Mismatch`: `boolean` - if the version in `.nvmrc` matches with `.Full`
 
+[go-text-template]: https://golang.org/pkg/text/template/
 [templates]: /docs/configuration/templates
 [node-js]: https://nodejs.org

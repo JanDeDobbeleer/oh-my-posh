@@ -124,6 +124,7 @@ func TestAzSegment(t *testing.T) {
 		env.On("FileContent", filepath.Join(home, ".azure", "azureProfile.json")).Return(azureProfile)
 		env.On("FileContent", filepath.Join(home, ".azure", "AzureRmContext.json")).Return(azureRmContext)
 		env.On("Getenv", "AZURE_CONFIG_DIR").Return("")
+		env.On("HasFolder", filepath.Clean("/Users/posh/.azure")).Return(true)
 		if tc.Source == "" {
 			tc.Source = firstMatch
 		}

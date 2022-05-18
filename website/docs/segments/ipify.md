@@ -6,7 +6,7 @@ sidebar_label: Ipify
 
 ## What
 
-[Ipify][ipify] is a simple Public IP Address API, it returns your public IP Adress in plain text.
+[Ipify][ipify] is a simple Public IP Address API, it returns your public IP Address in plain text.
 
 ## Sample Configuration
 

@@ -42,7 +42,7 @@ if [ "$TERM" != "linux" ]; then
   _install-omp-hooks
 fi
 
-function _render_tooltip() {
+function self-insert() {
   # ignore an empty buffer
   if [[ -z  "$BUFFER"  ]]; then
     zle .self-insert
@@ -58,8 +58,7 @@ function _render_tooltip() {
 }
 
 function enable_poshtooltips() {
-  zle -N _render_tooltip
-  bindkey " " _render_tooltip
+  zle -N self-insert
 }
 
 _posh-zle-line-init() {

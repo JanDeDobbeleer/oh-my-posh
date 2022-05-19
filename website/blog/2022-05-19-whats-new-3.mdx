@@ -1,0 +1,173 @@
+---
+title: "What's new #3"
+description: "What's new #3"
+slug: whats-new-3
+authors:
+- name: Jan De Dobbeleer
+  title: Maintainer
+  url: https://github.com/jandedobbeleer
+  image_url: https://avatars.githubusercontent.com/u/2492783?v=4
+tags: [weekly, ohmyposh]
+hide_table_of_contents: false
+---
+
+So long, old friend!
+
+<!--truncate-->
+## PowerShell module
+
+In the beginning, all we had was the [PowerShell Module][module]. It's the _origin of Oh My Posh_
+and has remained available ever since, even with the move to Go. With that evolution however,
+its advantages have been greatly reduced. In fact, it even introduced [additional hurdles][hurdles] along
+the way.
+
+As of March, the module no longer offers new functionality and displays a warning message. Have a look
+at the [migration page][migration] for a guide on how to migrate from the module to other means of
+installation. It only takes a minute.
+
+## Giveaway
+
+A fews weeks ago I started a [giveaway][giveaway] to celebrate the 6 year anniversary of Oh My Posh.
+But then I went on holiday, and didn't follow up to announce the winner. So without further ado,
+**congratulations to [@samerde][samerde]** for getting picked by a random online random picker and
+winning the giveaway!
+
+## Features
+
+It's been a while, so you might want to hang tight 😅
+
+### PowerShell UTF-8
+
+In the early days, Oh My Posh was forcibly setting PowerShell to UTF-8 due to issues with fonts and paths.
+However, it turned out that wasn't really necessary. A new way of invocation was introduced, which removes
+the need to set this shell wide and **avoids unwanted side effects**. This can however still break path when
+for example your `--config` path contains a non-ascii character. Can't win them all I guess. In that case,
+set the shell to UTF-8 in the scope of initializing Oh My Posh.
+
+```powershell
+$previousOutputEncoding = [Console]::OutputEncoding
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+try {
+    oh-my-posh init pwsh --config ~/custom.omp.json | Invoke-Expression
+} finally {
+    [Console]::OutputEncoding = $previousOutputEncoding
+}
+```
+
+### Nu shell
+
+If you haven't seen [Nu shell][nu] yet, it's a new kid on the block. Oh My Posh now supports it just
+like we support any other popular shell (bash, zsh, fish, etc). This means we can keep adding functionality
+without the need for user interaction apart from updating Oh My Posh.
+
+### Accordeon
+
+Ever wanted to have a `powerline` segment to display collapsed when disabled? Now you can!
+Use the `accordeon` style to display a segment in a collapsible state.
+
+![Accordeon prompt](/img/accordeon.png)
+
+### Project
+
+Things just keep growing. The [project][project] segment now supports the following project definitions:
+
+- [cargo][cargo]
+- [poetry][poetry]
+- [php][php]
+- [nuspec][nuspec]
+
+### Shell
+
+If you work with multiple shell versions, this one's for you. You can now use the `.Version` property
+in the [shell][shell] segment to distinct between versions:
+
+```json
+"template": " in {{ .Name }} {{ .Version }} "
+```
+
+### Git
+
+The [git][git] segment learned a new trick to make your life easier (or faster). Before we hardcoded the
+untracked files mode to `normal`. However, on larger repo's this can get rather cumbersome, so we now allow
+you to **override this per repo**.
+
+```json
+"untracked_modes": {
+  "/Users/user/Projects/oh-my-posh/": "no"
+}
+```
+
+The available options are listed in the [git documentation][git-status], use them as you see fit!
+
+### Cross segment template properties
+
+Wait, what? Yes, you read that right. Oh My Posh now supports **cross segment template properties**.
+This means you can use one segment's properties in another segment's template. How? Oh My Posh
+exposes the `.Segments` property which contains all segment's properties in a map. To make use
+of another segment's data, use `{{ .Segments.Segment }}` in your template where `.Segment`
+is the name of the segment you want to use with the first letter uppercased.
+
+If you want to for example use the [git][git] segment's `.UpstreamGone` property in the [exit][exit] segment, you can
+do so like this:
+
+```json
+"template": " {{ if .Segments.Git.UpstreamGone }}\uf7d3{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
+```
+
+:::warning
+For this to work, the segment you refer to needs to be in your config. The above example won't work if
+your config does not contain a git segment as Oh My Posh only populates the properties when it needs to.
+:::
+
+### Other
+
+- `oh-my-posh debug` now measures the run time correctly and can log startup logic
+- The language segments can now distinct between files and folders
+- The [python][python] segment now supports pyenv `.python-version` files
+- The `init` command has a new switch called `--strict` which no longer resolves the executable
+- The [battery][battery] segment can now display all relevant states on macOS
+- The [dotnet][dotnet] segment now supports `.slnf` files
+- A [new][iterm] segment to display iTerm shell integration prompt marks
+- The [memory][memory] segment can now display available memory
+- The [path][path] segment now has a `.Writable` property, indicating if the current user
+can write to the current folder
+
+### Fixes
+
+- The [git][git] segment can now handle repo's with `--separate-git-dir`
+- Hyperlinks are correctly measured (which should display the right aligned prompt correctly)
+- Prompt escape sequences are correctly escaped, this avoids unwanted visual side effects
+- Spotify now works correctly on Windows for non-English systems
+- Parallel logic to make things fast no longer randomly crashes on Windows
+- Upstream gone logic for git was broken, and has been fixed
+- PSReadLine in PowerShell now receives the correct amount of prompt lines (`Set-PSReadlineOption -ExtraPromptLineCount`),
+this fixes weird behaviour when using a transient prompt when your config results in a multiline prompt
+- The [winget][winget] installer now adds `PATH` entries correctly, rgeardless of the installation mode
+
+That's it for this time, see you for the next one 🤞🏻
+
+Keep that prompt posh everyone!
+
+
+[module]: https://www.powershellgallery.com/packages/oh-my-posh/7.85.2
+[hurdles]: http://localhost:3000/docs/migrating#problem-statement
+[migration]: /docs/migrating
+[giveaway]: https://twitter.com/jandedobbeleer/status/1511031115569639428?s=20&t=5aZbBZxGXbCBmc-R4WAdIQ
+[samerde]: https://twitter.com/samerde
+[project]: /docs/segments/project
+[git]: /docs/segments/git
+[python]: /docs/segments/python
+[shell]: /docs/segments/shell
+[nu]: https://www.nushell.sh
+[git-status]: https://git-scm.com/docs/git-status#Documentation/git-status.txt--ultmodegt
+[cargo]: https://crates.io
+[poetry]: https://python-poetry.org
+[php]: https://getcomposer.org
+[nuspec]: https://docs.microsoft.com/en-us/nuget/reference/nuspec
+[battery]: /docs/segments/battery
+[winget]: https://docs.microsoft.com/en-us/windows/package-manager/winget/
+[dotnet]: /docs/segments/dotnet
+[iterm]: /docs/segments/iterm
+[memory]: /docs/segments/memory
+[exit]: /docs/segments/exit
+[path]: /docs/segments/path

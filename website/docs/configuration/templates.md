@@ -45,6 +45,23 @@ New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
 - secondsRound: round seconds to a time indication `{{ secondsRound 3600 }}` -> 1h
 - glob: exposes [filepath.Glob][glob] as a boolean template function `{{ if glob "*.go" }}OK{{ else }}NOK{{ end }}`
 
+## Cross segment template properties
+
+To use another segment's template properties in a template, you can make use of `{{ .Segments.Segment }}`
+in your template where `.Segment` is the name of the segment you want to use with the first letter uppercased.
+
+If you want to for example use the [git][git] segment's `.UpstreamGone` property in the [exit][exit] segment, you can
+do so like this:
+
+```json
+"template": " {{ if .Segments.Git.UpstreamGone }}\uf7d3{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
+```
+
+:::warning
+For this to work, the segment you refer to needs to be in your config. The above example won't work if
+your config does not contain a git segment as Oh My Posh only populates the properties when it needs to.
+:::
+
 ## Text decoration
 
 You can make use of the following syntax to decorate text:
@@ -85,3 +102,5 @@ Only spaces are excluded, meaning you can still add line breaks and tabs if that
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
 [glob]: https://pkg.go.dev/path/filepath#Glob
+[git]: /docs/segments/git
+[exit]: /docs/segments/exit

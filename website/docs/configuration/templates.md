@@ -36,14 +36,40 @@ New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
 
 :::
 
+## Template logic
+
+<!-- markdownlint-disable MD013 -->
+| Template                                                             | Description                                                                                                                                                                                                                                                                                                     |
+| -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `{{.}}`                                                              | Root element.                                                                                                                                                                                                                                                                                                   |
+| `{{.Var}}`                                                           | Variable in a struct, where Var is a variable.                                                                                                                                                                                                                                                                  |
+| `{{- .Var -}}`                                                       | Remove extra white space surrounding the .Var variable and remove the newline. Either side is fine too.                                                                                                                                                                                                         |
+| `{{ $planet := "Earth"}}`                                            | `{{ $planet }}` Store a value in a custom variable to reference later. Note that .$ is used to reference the global/parent context, like in the full example below with $.                                                                                                                                      |
+| `Hi {{if .Name}} {{.Name}} {{else}} visitor {{end}}`                 | If-else statement. If will will evaluate whether or not the argument is empty. Using the elseif conditional is also an option. The not negation is available too.                                                                                                                                               |
+| `{{if and .Arg1 .Arg2}} both complete. {{else}} incomplete. {{end}}` | The and function compares multiple arguments to return the boolean AND (if arg1 then arg2 else arg1). Both arguments are evaluated. The or function compares multiple arguments to return the boolean OR. Similar to if arg1 then arg1 else arg2, so arg2 will never be evaluated if arg1 is false (not empty). |
+| `{{with .Var}} {{end}}`                                              | With statement, where Var is a variable. It skips the block if the variable is absent.                                                                                                                                                                                                                          |
+| `{{range .Array}} {{end}}`                                           | Range statement, where Array is an array, slice, map, or channel.                                                                                                                                                                                                                                               |
+| `{{ lt 3 4 }}`                                                       | This lt comparison function evaluates to true since 3 is less than 4 (other boolean operators: eq, ne, lt, le, gt, ge).                                                                                                                                                                                         |
+<!-- markdownlint-enable MD013 -->
+
 ## Helper functions
 
-- url: create a hyperlink to a website to open your default browser `{{ url .UpstreamIcon .UpstreamURL }}`
-(needs terminal [support][terminal-list-hyperlinks])
-- path: create a link to a folder to open your file explorer `{{ path .Path .Location }}`
-(needs terminal [support][terminal-list-hyperlinks])
-- secondsRound: round seconds to a time indication `{{ secondsRound 3600 }}` -> 1h
-- glob: exposes [filepath.Glob][glob] as a boolean template function `{{ if glob "*.go" }}OK{{ else }}NOK{{ end }}`
+### Sprig
+
+Oh My Posh has all [sprig][sprig] functions included, meaning you can do operations on strings, paths and a lot of other
+manipulations straight from your template. Have a look at [their documentation][sprig] for available options and how to
+use them.
+
+### Custom
+
+<!-- markdownlint-disable MD013 -->
+| Template                                       | Description                                                                                                        |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `{{ url .UpstreamIcon .UpstreamURL }}`         | Create a hyperlink to a website to open your default browser (needs terminal [support][terminal-list-hyperlinks]). |
+| `{{ path .Path .Location }}`                   | Create a link to a folder to open your file explorer (needs terminal [support][terminal-list-hyperlinks]).         |
+| `{{ secondsRound 3600 }}`                      | Round seconds to a time indication. In this case the output is `1h`.                                               |
+| `{{ if glob "*.go" }}OK{{ else }}NOK{{ end }}` | Exposes [filepath.Glob][glob] as a boolean template function.                                                      |
+<!-- markdownlint-enable MD013 -->
 
 ## Cross segment template properties
 

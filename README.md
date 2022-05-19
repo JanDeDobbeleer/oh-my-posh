@@ -14,7 +14,6 @@
 [![Release][release-badge]][release]
 [![Documentation][docs-badge]][docs]
 
-[![PS Gallery][psgallery-badge]][powershell-gallery]
 ![GitHub Downloads][gh-downloads]
 
 ![Twitter][twitter]
@@ -59,8 +58,6 @@ using Go (and the amazing [README][powerline-go])
 * [Starship][starship] for creating an amazing way to initialize the prompt
 
 [release-status]: https://img.shields.io/github/workflow/status/jandedobbeleer/oh-my-posh/Release?label=Build
-[psgallery-badge]: https://img.shields.io/powershellgallery/dt/oh-my-posh?color=pink&label=PowerShell%20Downloads
-[powershell-gallery]: https://www.powershellgallery.com/packages/oh-my-posh/
 [gh-downloads]: https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads
 [twitter]: https://shields.io/twitter/follow/jandedobbeleer?label=Follow
 [kraken]: https://img.shields.io/badge/GitKraken-Legendary%20Git%20Tools-teal?style=plastic&logo=gitkraken

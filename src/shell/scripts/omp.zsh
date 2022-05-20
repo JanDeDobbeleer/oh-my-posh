@@ -48,7 +48,10 @@ function self-insert() {
     zle .self-insert
     return
   fi
-  tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --command="$BUFFER" --shell-version="$ZSH_VERSION")
+  # trigger a tip check only if the input is a space character
+  if [[ "$KEYS" = " " ]]; then
+    tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --command="$BUFFER" --shell-version="$ZSH_VERSION")
+  fi
   # ignore an empty tooltip
   if [[ ! -z "$tooltip" ]]; then
     RPROMPT=$tooltip

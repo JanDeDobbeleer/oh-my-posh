@@ -19,8 +19,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     function Start-Utf8Process {
         param(
-            [string] $FileName,
-            [string[]] $Arguments = @()
+            [string]$FileName,
+            [string[]]$Arguments = @()
         )
 
         $Process = New-Object System.Diagnostics.Process
@@ -124,19 +124,19 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     .EXAMPLE
         Export-PoshTheme
 
-        Export the current theme in JSON to the clipboard.
+        Exports the current theme in JSON to the clipboard.
     .EXAMPLE
         Export-PoshTheme -Format toml
 
-        Export the current theme in TOML to the clipboard.
+        Exports the current theme in TOML to the clipboard.
     .EXAMPLE
         Export-PoshTheme C:\temp\theme.yaml yaml
 
-        Export the current theme in YAML to 'C:\temp\theme.yaml'.
+        Exports the current theme in YAML to 'C:\temp\theme.yaml'.
     .EXAMPLE
         Export-PoshTheme ~\theme.toml toml
 
-        Export the current theme in TOML to '$HOME\theme.toml'
+        Exports the current theme in TOML to '$HOME\theme.toml'
     #>
     function Export-PoshTheme {
         param(
@@ -147,7 +147,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             [Parameter(Mandatory = $false)]
             [ValidateSet('json', 'yaml', 'toml')]
             [string]
-            # The format of the theme
+            # The format of the theme.
             $Format = 'json'
         )
 
@@ -244,7 +244,7 @@ Example:
             $script:TransientPrompt = $false
             return
         }
-        if (Test-Path variable:/PSDebugContext) {
+        if (Test-PSDebugContext) {
             @(Start-Utf8Process $script:OMPExecutable @("print", "debug", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
             return
         }
@@ -274,7 +274,7 @@ Example:
 
         $stackCount = (Get-Location -Stack).Count
         try {
-            if (Test-Path variable:global:OMP_GLOBAL_SESSIONSTATE) {
+            if (Test-Path Variable:/global:OMP_GLOBAL_SESSIONSTATE) {
                 $stackCount = $global:OMP_GLOBAL_SESSIONSTATE.Path.LocationStack('').Count
             }
         } catch {}
@@ -309,3 +309,5 @@ Example:
         "prompt"
     )
 } | Import-Module -Global
+
+function Test-PSDebugContext { return Test-Path Variable:/PSDebugContext }

@@ -33,6 +33,7 @@ type Ansi struct {
 	bold                  string
 	italic                string
 	underline             string
+	overline              string
 	strikethrough         string
 	blink                 string
 	reverse               string
@@ -65,6 +66,7 @@ func (a *Ansi) Init(shellName string) {
 		a.bold = "%%{\x1b[1m%%}%s%%{\x1b[22m%%}"
 		a.italic = "%%{\x1b[3m%%}%s%%{\x1b[23m%%}"
 		a.underline = "%%{\x1b[4m%%}%s%%{\x1b[24m%%}"
+		a.overline = "%%{\x1b[53m%%}%s%%{\x1b[55m%%}"
 		a.blink = "%%{\x1b[5m%%}%s%%{\x1b[25m%%}"
 		a.reverse = "%%{\x1b[7m%%}%s%%{\x1b[27m%%}"
 		a.dimmed = "%%{\x1b[2m%%}%s%%{\x1b[22m%%}"
@@ -91,6 +93,7 @@ func (a *Ansi) Init(shellName string) {
 		a.bold = "\\[\x1b[1m\\]%s\\[\x1b[22m\\]"
 		a.italic = "\\[\x1b[3m\\]%s\\[\x1b[23m\\]"
 		a.underline = "\\[\x1b[4m\\]%s\\[\x1b[24m\\]"
+		a.overline = "\\[\x1b[53m\\]%s\\[\x1b[55m\\]"
 		a.blink = "\\[\x1b[5m\\]%s\\[\x1b[25m\\]"
 		a.reverse = "\\[\x1b[7m\\]%s\\[\x1b[27m\\]"
 		a.dimmed = "\\[\x1b[2m\\]%s\\[\x1b[22m\\]"
@@ -117,6 +120,7 @@ func (a *Ansi) Init(shellName string) {
 		a.bold = "\x1b[1m%s\x1b[22m"
 		a.italic = "\x1b[3m%s\x1b[23m"
 		a.underline = "\x1b[4m%s\x1b[24m"
+		a.overline = "\x1b[53m%s\x1b[55m"
 		a.blink = "\x1b[5m%s\x1b[25m"
 		a.reverse = "\x1b[7m%s\x1b[27m"
 		a.dimmed = "\x1b[2m%s\x1b[22m"
@@ -195,6 +199,8 @@ func (a *Ansi) formatText(text string) string {
 				formatted = fmt.Sprintf(a.bold, result["text"])
 			case "u":
 				formatted = fmt.Sprintf(a.underline, result["text"])
+			case "o":
+				formatted = fmt.Sprintf(a.overline, result["text"])
 			case "i":
 				formatted = fmt.Sprintf(a.italic, result["text"])
 			case "s":
@@ -209,7 +215,7 @@ func (a *Ansi) formatText(text string) string {
 			text = strings.Replace(text, result["context"], formatted, 1)
 		}
 	}
-	rgx := "(?P<context><(?P<format>[buisrdf])>(?P<text>[^<]+)</[buisrdf]>)"
+	rgx := "(?P<context><(?P<format>[buisrdfo])>(?P<text>[^<]+)</[buisrdfo]>)"
 	for results := regex.FindAllNamedRegexMatch(rgx, text); len(results) != 0; results = regex.FindAllNamedRegexMatch(rgx, text) {
 		replaceFormats(results)
 	}

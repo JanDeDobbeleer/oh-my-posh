@@ -94,6 +94,7 @@ You can make use of the following syntax to decorate text:
 
 - `<b>bold</b>`: renders `bold` as bold text
 - `<u>underline</u>`: renders `underline` as underlined text
+- `<o>overline</o>`: renders `overline` as overlined text
 - `<i>italic</i>`: renders `italic` as italic text
 - `<s>strikethrough</s>`: renders `strikethrough` as strikethrough text
 - `<d>dimmed</d>`: renders `dimmed` as dimmed text

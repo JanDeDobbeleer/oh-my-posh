@@ -179,6 +179,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://github.com/mosullivan93"><img src="https://avatars.githubusercontent.com/u/7676935?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mitchell J. O'Sullivan</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mosullivan93" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mosullivan93" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/felpel"><img src="https://avatars.githubusercontent.com/u/5000004?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Félix Pelletier</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=felpel" title="Documentation">📖</a></td>
     <td align="center"><a href="https://nexiom.net/"><img src="https://avatars.githubusercontent.com/u/3214803?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Samuel D. Leslie</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ralish" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/AjayKMehta"><img src="https://avatars.githubusercontent.com/u/11180071?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Ajay Mehta</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=AjayKMehta" title="Code">💻</a></td>
   </tr>
 </table>
 

@@ -2,6 +2,11 @@
 if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }
+
+function Get-PoshStackCount {
+    return (Get-Location -Stack).Count
+}
+
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:ErrorCode = 0
     $script:OMPExecutable = '::OMP::'
@@ -272,13 +277,7 @@ Example:
             }
         }
 
-        $stackCount = (Get-Location -Stack).Count
-        try {
-            if (Test-Path Variable:/global:OMP_GLOBAL_SESSIONSTATE) {
-                $stackCount = $global:OMP_GLOBAL_SESSIONSTATE.Path.LocationStack('').Count
-            }
-        } catch {}
-
+        $stackCount = Get-PoshStackCount
         Set-PoshContext
         $terminalWidth = $Host.UI.RawUI.WindowSize.Width
         # set a sane default when the value can't be retrieved

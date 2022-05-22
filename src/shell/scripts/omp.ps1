@@ -4,7 +4,11 @@ if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
 }
 
 function Get-PoshStackCount {
-    return (Get-Location -Stack).Count
+    $locations = Get-Location -Stack
+    if ($locations) {
+        return $locations.Count
+    }
+    return 0
 }
 
 New-Module -Name "oh-my-posh-core" -ScriptBlock {

@@ -10,20 +10,20 @@ Oh My Posh supports multiple different color references, being:
 
 - Typical [hex colors][hexcolors] (for example `#CB4B16`).
 - 16 [ANSI color names][ansicolors].
-- The `transparent` keyword which can be used to create either a transparent foreground override
-  or transparent background color using the segment's foreground property.
-- The `foreground` keyword which can be used to reference the current segment's foreground color.
-- The `background` keyword which can be used to reference the current segment's background color.
-- The `parentForeground` keyword which can be used to inherit the previous active segment's foreground color.
-- The `parentBackground` keyword which can be used to inherit the previous active segment's background color.
-
-  These include 8 basic ANSI colors and `default`:
+  These include 8 basic ANSI colors and `default`
 
   `black` `red` `green` `yellow` `blue` `magenta` `cyan` `white` `default`
 
   as well as 8 extended ANSI colors:
 
   `darkGray` `lightRed` `lightGreen` `lightYellow` `lightBlue` `lightMagenta` `lightCyan` `lightWhite`
+- The `transparent` keyword which can be used to create either a transparent foreground override
+  or transparent background color using the segment's foreground property.
+- The `foreground` keyword which can be used to reference the current segment's foreground color.
+- The `background` keyword which can be used to reference the current segment's background color.
+- The `parentForeground` keyword which can be used to inherit the previous active segment's foreground color.
+- The `parentBackground` keyword which can be used to inherit the previous active segment's background color.
+- The `accent` keyword which references the OS accent color (Windows only).
 
 ## Color templates
 

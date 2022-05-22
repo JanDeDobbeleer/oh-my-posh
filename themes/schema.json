@@ -17,7 +17,7 @@
     },
     "color_string": {
       "type": "string",
-      "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite|transparent|parentBackground|parentForeground|background|foreground)$",
+      "pattern": "^(#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|black|red|green|yellow|blue|magenta|cyan|white|default|darkGray|lightRed|lightGreen|lightYellow|lightBlue|lightMagenta|lightCyan|lightWhite|transparent|parentBackground|parentForeground|background|foreground|accent)$",
       "title": "Color string",
       "description": "https://ohmyposh.dev/docs/configuration/colors",
       "format": "color"
@@ -2552,6 +2552,10 @@
           "$ref": "#/definitions/color"
         }
       }
+    },
+    "accent_color": {
+      "title": "Accent color",
+      "$ref": "#/definitions/color"
     }
   }
 }

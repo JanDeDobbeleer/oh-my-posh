@@ -35,6 +35,7 @@ type Config struct {
 	OSC99                bool          `json:"osc99,omitempty"`
 	ConsoleTitleTemplate string        `json:"console_title_template,omitempty"`
 	TerminalBackground   string        `json:"terminal_background,omitempty"`
+	AccentColor          string        `json:"accent_color,omitempty"`
 	Blocks               []*Block      `json:"blocks,omitempty"`
 	Tooltips             []*Segment    `json:"tooltips,omitempty"`
 	TransientPrompt      *Segment      `json:"transient_prompt,omitempty"`
@@ -56,7 +57,7 @@ type Config struct {
 // environment and configuration.
 func (cfg *Config) MakeColors(env environment.Environment) color.AnsiColors {
 	cacheDisabled := env.Getenv("OMP_CACHE_DISABLED") == "1"
-	return color.MakeColors(cfg.Palette, !cacheDisabled)
+	return color.MakeColors(cfg.Palette, !cacheDisabled, cfg.AccentColor)
 }
 
 func (cfg *Config) print(message string) {

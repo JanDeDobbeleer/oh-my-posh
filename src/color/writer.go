@@ -73,6 +73,8 @@ func (c AnsiColor) ToForeground() AnsiColor {
 const (
 	// Transparent implies a transparent color
 	Transparent = "transparent"
+	// Accent is the OS accent color
+	Accent = "accent"
 	// ParentBackground takes the previous segment's background color
 	ParentBackground = "parentBackground"
 	// ParentForeground takes the previous segment's color

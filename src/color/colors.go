@@ -6,8 +6,10 @@ import (
 	"github.com/gookit/color"
 )
 
-func MakeColors(palette Palette, cacheEnabled bool) (colors AnsiColors) {
-	colors = &DefaultColors{}
+func MakeColors(palette Palette, cacheEnabled bool, accentColor string) (colors AnsiColors) {
+	defaultColors := &DefaultColors{}
+	defaultColors.SetAccentColor(accentColor)
+	colors = defaultColors
 	if palette != nil {
 		colors = &PaletteColors{ansiColors: colors, palette: palette}
 	}
@@ -18,7 +20,9 @@ func MakeColors(palette Palette, cacheEnabled bool) (colors AnsiColors) {
 }
 
 // DefaultColors is the default AnsiColors implementation.
-type DefaultColors struct{}
+type DefaultColors struct {
+	accent *Color
+}
 
 var (
 	// Map for color names and their respective foreground [0] or background [1] color codes
@@ -48,12 +52,21 @@ const (
 	backgroundIndex = 1
 )
 
-func (*DefaultColors) AnsiColorFromString(colorString string, isBackground bool) AnsiColor {
+func (d *DefaultColors) AnsiColorFromString(colorString string, isBackground bool) AnsiColor {
 	if len(colorString) == 0 {
 		return emptyAnsiColor
 	}
 	if colorString == Transparent {
 		return transparentAnsiColor
+	}
+	if colorString == Accent {
+		if d.accent == nil {
+			return emptyAnsiColor
+		}
+		if isBackground {
+			return AnsiColor(d.accent.Background)
+		}
+		return AnsiColor(d.accent.Foreground)
 	}
 	colorFromName, err := getAnsiColorFromName(colorString, isBackground)
 	if err == nil {

@@ -69,8 +69,11 @@ For example, the following is a valid `--config` flag:
 - osc99: `boolean` - when true adds support for OSC9;9; (notify terminal of current working directory)
 - terminal_background: `string` [color][colors] - terminal background color, set to your terminal's background color when
 you notice black elements in Windows Terminal or the Visual Studio Code integrated terminal
+- accent_color: `string` [color][colors] - accent color, used as a fallback when the `accent` [color][accent] is not supported
 
 [releases]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
 [font]: /docs/configuration/fonts
 [schema]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/schema.json
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
+[colors]: /docs/configuration/colors
+[accent]: /docs/configuration/colors#standard-colors

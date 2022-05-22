@@ -2,25 +2,29 @@ package cli
 
 import (
 	"fmt"
+	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"time"
 
+	color2 "github.com/gookit/color"
 	"github.com/spf13/cobra"
 )
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
-	Use:   "get [shell|millis]",
+	Use:   "get [shell|millis|accent]",
 	Short: "Get a value from oh-my-posh",
 	Long: `Get a value from oh-my-posh.
 
 This command is used to get the value of the following variables:
 
 - shell
-- millis`,
+- millis
+- accent`,
 	ValidArgs: []string{
 		"millis",
 		"shell",
+		"accent",
 	},
 	Args: NoArgsOrOneValidArg,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -38,6 +42,14 @@ This command is used to get the value of the following variables:
 			fmt.Print(time.Now().UnixNano() / 1000000)
 		case "shell":
 			fmt.Println(env.Shell())
+		case "accent":
+			rgb, err := color.GetAccentColor()
+			if err != nil {
+				fmt.Println("error getting accent color:", err.Error())
+				return
+			}
+			accent := color2.RGB(rgb.R, rgb.G, rgb.B)
+			fmt.Println("#" + accent.Hex())
 		default:
 			_ = cmd.Help()
 		}

@@ -22,6 +22,18 @@ Installers:
   Scope: user
   InstallerSwitches:
      Custom: /CURRENTUSER
+- Architecture: x86
+  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-386.exe
+  InstallerSha256: <HASH-386>
+  Scope: machine
+  InstallerSwitches:
+     Custom: /ALLUSERS
+- Architecture: x86
+  InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-386.exe
+  InstallerSha256: <HASH-386>
+  Scope: user
+  InstallerSwitches:
+     Custom: /CURRENTUSER
 - Architecture: arm64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-arm64.exe
   InstallerSha256: <HASH-ARM64>

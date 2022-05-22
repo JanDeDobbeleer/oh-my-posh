@@ -31,7 +31,13 @@ $arch = (Get-CimInstance -Class Win32_Processor -Property Architecture).Architec
 switch ($arch) {
     0 { $installer = "install-386.exe" } # x86
     5 { $installer = "install-arm64.exe" } # ARM
-    9 { $installer = "install-amd64.exe" } # x64
+    9 {
+        if ([Environment]::Is64BitOperatingSystem) {
+            $installer = "install-amd64.exe"
+        } else {
+            $installer = "install-386.exe"
+        }
+    }
     12 { $installer = "install-amd64.exe" } # x64 emulated on Surface Pro X
 }
 

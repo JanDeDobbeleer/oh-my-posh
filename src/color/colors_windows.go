@@ -1,6 +1,7 @@
 package color
 
 import (
+	"errors"
 	"syscall"
 	"unsafe"
 
@@ -13,24 +14,33 @@ var (
 	procDwmGetColorizationColor = dwmapi.NewProc("DwmGetColorizationColor")
 )
 
-func (d *DefaultColors) SetAccentColor(defaultColor string) {
+func GetAccentColor() (*RGB, error) {
 	var accentColor uint32
 	var pfOpaqueBlend bool
 	_, _, e := procDwmGetColorizationColor.Call(
 		uintptr(unsafe.Pointer(&accentColor)),
 		uintptr(unsafe.Pointer(&pfOpaqueBlend)))
 	if e != windows.ERROR_SUCCESS {
+		return nil, errors.New("unable to get accent color")
+	}
+	return &RGB{
+		R: byte(accentColor >> 16),
+		G: byte(accentColor >> 8),
+		B: byte(accentColor),
+	}, nil
+}
+
+func (d *DefaultColors) SetAccentColor(defaultColor string) {
+	rgb, err := GetAccentColor()
+	if err != nil {
 		d.accent = &Color{
 			Foreground: string(d.AnsiColorFromString(defaultColor, false)),
 			Background: string(d.AnsiColorFromString(defaultColor, true)),
 		}
 		return
 	}
-	r := byte(accentColor >> 16)
-	g := byte(accentColor >> 8)
-	b := byte(accentColor)
-	foreground := color.RGB(r, g, b, false)
-	background := color.RGB(r, g, b, true)
+	foreground := color.RGB(rgb.R, rgb.G, rgb.B, false)
+	background := color.RGB(rgb.R, rgb.G, rgb.B, true)
 	d.accent = &Color{
 		Foreground: foreground.String(),
 		Background: background.String(),

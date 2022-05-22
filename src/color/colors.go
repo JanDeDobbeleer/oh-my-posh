@@ -19,6 +19,10 @@ func MakeColors(palette Palette, cacheEnabled bool, accentColor string) (colors 
 	return
 }
 
+type RGB struct {
+	R, G, B uint8
+}
+
 // DefaultColors is the default AnsiColors implementation.
 type DefaultColors struct {
 	accent *Color

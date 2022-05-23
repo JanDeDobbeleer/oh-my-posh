@@ -1219,6 +1219,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "the-eduardo",
+      "name": "the-eduardo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/40523695?v=4",
+      "profile": "https://github.com/the-eduardo",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -2177,7 +2177,7 @@
           },
           "then": {
             "title": "Display your external IP Address",
-            "description": "https://ohmyposh.dev/docs/ipify",
+            "description": "https://ohmyposh.dev/docs/segments/ipify",
             "properties": {
               "properties": {
                 "properties": {

@@ -62,6 +62,8 @@ const (
 	italicReset         = "italicr"
 	underline           = "underline"
 	underlineReset      = "underliner"
+	overline            = "overline"
+	overlineReset       = "overliner"
 	strikethrough       = "strikethrough"
 	strikethroughReset  = "strikethroughr"
 	color16             = "color16"
@@ -186,9 +188,11 @@ func (ir *ImageRenderer) Init(config string) {
 		italicReset:         `^(?P<STR>\x1b\[23m)`,
 		underline:           `^(?P<STR>\x1b\[4m)`,
 		underlineReset:      `^(?P<STR>\x1b\[24m)`,
+		overline:            `^(?P<STR>\x1b\[53m)`,
+		overlineReset:       `^(?P<STR>\x1b\[55m)`,
 		strikethrough:       `^(?P<STR>\x1b\[9m)`,
 		strikethroughReset:  `^(?P<STR>\x1b\[29m)`,
-		color16:             `^(?P<STR>\x1b\[(?P<BC>\d{2,3})m)`,
+		color16:             `^(?P<STR>\x1b\[(?P<BC>[349][0-7]|10[0-7]|39)m)`,
 		left:                `^(?P<STR>\x1b\[(\d{1,3})D)`,
 		osc99:               `^(?P<STR>\x1b\]9;9;(.+)\x1b\\)`,
 		lineChange:          `^(?P<STR>\x1b\[(\d)[FB])`,
@@ -448,6 +452,12 @@ func (ir *ImageRenderer) SavePNG() error {
 			dc.Stroke()
 		}
 
+		if ir.style == overline {
+			dc.DrawLine(x, y-f(22), x+w, y-f(22))
+			dc.SetLineWidth(f(1))
+			dc.Stroke()
+		}
+
 		x += w
 	}
 
@@ -486,10 +496,10 @@ func (ir *ImageRenderer) shouldPrint() bool {
 			ir.foregroundColor = ir.defaultForegroundColor
 			ir.backgroundColor = nil
 			return false
-		case bold, italic, underline:
+		case bold, italic, underline, overline:
 			ir.style = sequence
 			return false
-		case boldReset, italicReset, underlineReset:
+		case boldReset, italicReset, underlineReset, overlineReset:
 			ir.style = ""
 			return false
 		case strikethrough, strikethroughReset, left, osc99, lineChange, consoleTitle:

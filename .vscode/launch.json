@@ -83,7 +83,7 @@
       ]
     },
     {
-      "name": "Export PNG",
+      "name": "Export Image",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -91,9 +91,7 @@
       "args": [
         "config",
         "export",
-        "png",
-        "--rprompt-offset=40",
-        "--cursor-padding=15",
+        "image",
         "--config=${workspaceRoot}/themes/default.omp.json"
       ]
     },

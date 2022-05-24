@@ -51,7 +51,7 @@ Should you somehow mess up your devcontainer's OMP install catastrophically, rem
 if you do `Codespaces: Rebuild Container` again, you'll be back to the latest stable release.
 
 [docs]: https://ohmyposh.dev/docs
-[guide]: https://ohmyposh.dev/docs/contributing_started
+[guide]: https://ohmyposh.dev/docs/contributing/started
 [cc]: https://www.conventionalcommits.org/en/v1.0.0/#summary
 [conduct]: mailto:conduct@ohmyposh.dev
 [codespaces]: https://github.com/features/codespaces

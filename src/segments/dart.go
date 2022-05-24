@@ -5,6 +5,11 @@ import (
 	"oh-my-posh/properties"
 )
 
+var (
+	dartExtensions = []string{"*.dart", "pubspec.yaml", "pubspec.yml", "pubspec.lock"}
+	dartFolders    = []string{".dart_tool"}
+)
+
 type Dart struct {
 	language
 }
@@ -17,8 +22,8 @@ func (d *Dart) Init(props properties.Properties, env environment.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.dart", "pubspec.yaml", "pubspec.yml", "pubspec.lock"},
-		folders:    []string{".dart_tool"},
+		extensions: dartExtensions,
+		folders:    dartFolders,
 		commands: []*cmd{
 			{
 				executable: "dart",

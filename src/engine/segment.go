@@ -101,6 +101,8 @@ const (
 	EXECUTIONTIME SegmentType = "executiontime"
 	// EXIT writes the last exit code
 	EXIT SegmentType = "exit"
+	// FLUTTER writes the flutter version
+	FLUTTER SegmentType = "flutter"
 	// GIT represents the git status and information
 	GIT SegmentType = "git"
 	// GOLANG writes which go version is currently active
@@ -261,6 +263,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		DOTNET:        &segments.Dotnet{},
 		EXECUTIONTIME: &segments.Executiontime{},
 		EXIT:          &segments.Exit{},
+		FLUTTER:       &segments.Flutter{},
 		GIT:           &segments.Git{},
 		GOLANG:        &segments.Golang{},
 		HASKELL:       &segments.Haskell{},

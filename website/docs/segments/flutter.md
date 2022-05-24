@@ -6,7 +6,7 @@ sidebar_label: Flutter
 
 ## What
 
-Display the currently active dart version.
+Display the currently active flutter version.
 
 ## Sample Configuration
 
@@ -24,7 +24,7 @@ Display the currently active dart version.
 ## Properties
 
 - home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
-- fetch_version: `boolean` - fetch the dart version - defaults to `true`
+- fetch_version: `boolean` - fetch the flutter version - defaults to `true`
 - missing_command_text: `string` - text to display when the command is missing - defaults to empty
 - display_mode: `string` - determines when the segment is displayed
   - `always`: the segment is always displayed

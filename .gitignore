@@ -243,3 +243,4 @@ cosign.key
 *.omp.json.bak
 
 __debug_bin
+night-owl-mod.omp.json

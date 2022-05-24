@@ -66,6 +66,7 @@ module.exports = {
         "segments/dotnet",
         "segments/executiontime",
         "segments/exit",
+        "segments/flutter",
         "segments/git",
         "segments/poshgit",
         "segments/golang",

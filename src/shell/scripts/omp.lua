@@ -162,7 +162,7 @@ function p:rightfilter(prompt)
     return cached_prompt.right, false
 end
 function p:transientfilter(prompt)
-    local prompt_exe = string.format('%s print transient --config=%s', omp_exe(), omp_config())
+    local prompt_exe = string.format('%s print transient --config=%s %s', omp_exe(), omp_config(), error_level_option())
     prompt = run_posh_command(prompt_exe)
     if prompt == "" then
         prompt = nil

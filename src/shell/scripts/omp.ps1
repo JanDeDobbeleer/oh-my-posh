@@ -3,6 +3,8 @@ if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }
 
+# Helper functions which need to be defined before the module is loaded
+# See https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2300
 function Get-PoshStackCount {
     $locations = Get-Location -Stack
     if ($locations) {
@@ -10,6 +12,9 @@ function Get-PoshStackCount {
     }
     return 0
 }
+
+# See https://github.com/JanDeDobbeleer/oh-my-posh/discussions/1928
+function Test-PSDebugContext { return Test-Path Variable:/PSDebugContext }
 
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:ErrorCode = 0
@@ -312,5 +317,3 @@ Example:
         "prompt"
     )
 } | Import-Module -Global
-
-function Test-PSDebugContext { return Test-Path Variable:/PSDebugContext }

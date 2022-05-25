@@ -5,7 +5,7 @@ if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
 
 # Helper functions which need to be defined before the module is loaded
 # See https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2300
-function Get-PoshStackCount {
+function global:Get-PoshStackCount {
     $locations = Get-Location -Stack
     if ($locations) {
         return $locations.Count
@@ -14,7 +14,7 @@ function Get-PoshStackCount {
 }
 
 # See https://github.com/JanDeDobbeleer/oh-my-posh/discussions/1928
-function Test-PSDebugContext { return Test-Path Variable:/PSDebugContext }
+function global:Test-PSDebugContext { return Test-Path Variable:/PSDebugContext }
 
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:ErrorCode = 0
@@ -258,7 +258,7 @@ Example:
             $script:TransientPrompt = $false
             return
         }
-        if (Test-PSDebugContext) {
+        if (global:Test-PSDebugContext) {
             @(Start-Utf8Process $script:OMPExecutable @("print", "debug", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
             return
         }
@@ -286,7 +286,7 @@ Example:
             }
         }
 
-        $stackCount = Get-PoshStackCount
+        $stackCount = global:Get-PoshStackCount
         Set-PoshContext
         $terminalWidth = $Host.UI.RawUI.WindowSize.Width
         # set a sane default when the value can't be retrieved

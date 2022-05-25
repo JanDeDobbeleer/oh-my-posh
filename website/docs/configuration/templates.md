@@ -18,6 +18,8 @@ offers a few standard properties to work with.
 - `.UserName`: `string` - the current user name
 - `.HostName`: `string` - the host name
 - `.Code`: `int` - the last exit code
+- `.OS`: `string` - the operating system
+- `.WSL`: `boolean` - in WSL yes/no
 
 ## Environment variables
 

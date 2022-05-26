@@ -22,7 +22,7 @@ module.exports = {
               ],
             },
             "installation/prompt",
-            "installation/customize"
+            "installation/customize",
           ],
         },
       ],
@@ -81,6 +81,7 @@ module.exports = {
         "segments/nightscout",
         "segments/npm",
         "segments/node",
+        "segments/nx",
         "segments/os",
         "segments/owm",
         "segments/path",

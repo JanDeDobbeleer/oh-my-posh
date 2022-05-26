@@ -129,6 +129,8 @@ const (
 	NODE SegmentType = "node"
 	// npm version
 	NPM SegmentType = "npm"
+	// NX writes which Nx version us currently active
+	NX SegmentType = "nx"
 	// OS write os specific icon
 	OS SegmentType = "os"
 	// OWM writes the weather coming from openweatherdata
@@ -277,6 +279,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		NIGHTSCOUT:    &segments.Nightscout{},
 		NODE:          &segments.Node{},
 		NPM:           &segments.Npm{},
+		NX:            &segments.Nx{},
 		OS:            &segments.Os{},
 		OWM:           &segments.Owm{},
 		PATH:          &segments.Path{},

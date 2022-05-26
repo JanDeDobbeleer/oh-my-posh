@@ -1,0 +1,46 @@
+name: Submit Oh My Posh to the Windows Store
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The version to publish'
+        required: true
+
+jobs:
+
+  microsoft_store:
+    name: Publish Microsoft Store
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Store Credentials 🔑
+        uses: microsoft/store-submission@v1
+        with:
+          command: configure
+          type: win32
+          seller-id: ${{ secrets.SELLER_ID }}
+          product-id: ${{ secrets.PRODUCT_ID }}
+          tenant-id: ${{ secrets.TENANT_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+
+      - name: Update draft submission
+        uses: microsoft/store-submission@v1
+        with:
+          command: update
+          product-update: '{
+              "packages":[
+                  {
+                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-amd64.exe",
+                    "languages":["en"],
+                    "architectures":["X64"],
+                    "installerParameters":"/VERYSILENT",
+                    "isSilentInstall":true
+                  }
+              ]
+            }'
+
+      - name: Publish Submission
+        uses: microsoft/store-submission@v1
+        with:
+          command: publish

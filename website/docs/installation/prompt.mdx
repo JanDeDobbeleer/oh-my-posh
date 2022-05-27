@@ -35,6 +35,14 @@ Edit your PowerShell profile script, you can find its location under the `$PROFI
 notepad $PROFILE
 ```
 
+:::info
+When the above command gives an error, make sure to create the profile first.
+
+```powershell
+New-Item -Path $PROFILE -Type File -Force
+```
+:::
+
 Then add the following line.
 
 ```powershell

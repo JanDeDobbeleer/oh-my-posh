@@ -150,13 +150,6 @@ func (e *Engine) renderBlock(block *Block) {
 		}
 		e.rprompt = text
 	}
-	// Due to a bug in Powershell, the end of the line needs to be cleared.
-	// If this doesn't happen, the portion after the prompt gets colored in the background
-	// color of the line above the new input line. Clearing the line fixes this,
-	// but can hopefully one day be removed when this is resolved natively.
-	if e.Env.Shell() == shell.PWSH || e.Env.Shell() == shell.PWSH5 {
-		e.writeANSI(e.Ansi.ClearAfter())
-	}
 }
 
 // debug will loop through your config file and output the timings for each segments

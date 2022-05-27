@@ -32,9 +32,16 @@ oh-my-posh get shell
 Edit your PowerShell profile script, you can find its location under the `$PROFILE` variable in your preferred PowerShell version. For example, using notepad:
 
 ```powershell
-mkdir ~/Documents/PowerShell/ | notepad $PROFILE
+notepad $PROFILE
 ```
+:::info
+When the above command gives an error, make sure you create the profile first.
 
+```powershell
+New-Item –Path $Profile –Type File –Force
+```
+:::
+  
 Then add the following line.
 
 ```powershell

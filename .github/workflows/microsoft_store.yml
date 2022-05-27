@@ -1,20 +1,18 @@
 name: Submit Oh My Posh to the Windows Store
-
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'The version to publish'
+        description: 'The latest version'
         required: true
 
 jobs:
-
   microsoft_store:
     name: Publish Microsoft Store
     runs-on: ubuntu-latest
     steps:
       - name: Configure Store Credentials 🔑
-        uses: microsoft/store-submission@v1
+        uses: jandedobbeleer/store-submission@submission-status
         with:
           command: configure
           type: win32
@@ -23,9 +21,9 @@ jobs:
           tenant-id: ${{ secrets.TENANT_ID }}
           client-id: ${{ secrets.CLIENT_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
-
+          only-on-ready: true
       - name: Update draft submission
-        uses: microsoft/store-submission@v1
+        uses: jandedobbeleer/store-submission@submission-status
         with:
           command: update
           product-update: '{
@@ -39,8 +37,7 @@ jobs:
                   }
               ]
             }'
-
       - name: Publish Submission
-        uses: microsoft/store-submission@v1
+        uses: jandedobbeleer/store-submission@submission-status
         with:
           command: publish

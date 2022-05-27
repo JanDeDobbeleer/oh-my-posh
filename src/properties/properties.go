@@ -116,17 +116,20 @@ func (m Map) GetInt(property Property, defaultValue int) int {
 		return defaultValue
 	}
 
-	if intValue, ok := val.(int); ok {
-		return intValue
-	}
-
-	// config parser parses a float
-	intValue, ok := val.(float64)
-	if !ok {
+	switch v := val.(type) {
+	case int:
+		return v
+	case int64:
+		return int(v)
+	case float64:
+		intValue, ok := val.(float64)
+		if !ok {
+			return defaultValue
+		}
+		return int(intValue)
+	default:
 		return defaultValue
 	}
-
-	return int(intValue)
 }
 
 func (m Map) GetKeyValueMap(property Property, defaultValue map[string]string) map[string]string {

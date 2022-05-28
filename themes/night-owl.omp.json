@@ -185,6 +185,15 @@
           "type": "angular"
         },
         {
+          "background": "#1e293b",
+          "foreground": "#ffffff",
+          "leading_diamond": "\ue0b2",
+          "style": "diamond",
+          "template": "\ue753 {{ if .Error }}{{ .Error }}{{ else }}Nx {{ .Full }}{{ end }} ",
+          "trailing_diamond": "<transparent,#1e293b>\ue0b2</>",
+          "type": "nx"
+        },
+        {
           "background": "#945bb3",
           "foreground": "#359a25",
           "leading_diamond": "\ue0b2",
@@ -269,9 +278,7 @@
         },
         {
           "foreground": "#22da6e",
-          "foreground_templates": [
-            "{{ if gt .Code 0 }}#ef5350{{ end }}"
-          ],
+          "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
           "properties": {
             "always_enabled": true
           },

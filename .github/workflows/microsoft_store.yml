@@ -2,17 +2,25 @@ name: Submit Oh My Posh to the Windows Store
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'The version to publish'
-        required: true
+    branches:
+      - main
+  schedule:
+    - cron: '0 0 * * 6' # At 00:00 on Saturday.
 
 jobs:
-
   microsoft_store:
     name: Publish Microsoft Store
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code 👋
+        uses: actions/checkout@v3
+      - name: Get version
+        id: version
+        run: >-
+          echo "::set-output name=VERSION::$(
+            git describe --tags --abbrev=0 |
+            cut -c2-
+          )"
       - name: Configure Store Credentials 🔑
         uses: microsoft/store-submission@v1
         with:
@@ -23,7 +31,6 @@ jobs:
           tenant-id: ${{ secrets.TENANT_ID }}
           client-id: ${{ secrets.CLIENT_ID }}
           client-secret: ${{ secrets.CLIENT_SECRET }}
-
       - name: Update draft submission
         uses: microsoft/store-submission@v1
         with:
@@ -31,7 +38,7 @@ jobs:
           product-update: '{
               "packages":[
                   {
-                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-amd64.exe",
+                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ steps.version.outputs.VERSION }}/install-amd64.exe",
                     "languages":["en"],
                     "architectures":["X64"],
                     "installerParameters":"/VERYSILENT",
@@ -39,7 +46,6 @@ jobs:
                   }
               ]
             }'
-
       - name: Publish Submission
         uses: microsoft/store-submission@v1
         with:

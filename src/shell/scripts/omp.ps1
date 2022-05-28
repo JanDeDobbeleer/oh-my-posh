@@ -23,7 +23,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:TransientPrompt = $false
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:CONDA_PROMPT_MODIFIER = $false
-    if (Test-Path '::CONFIG::') {
+    if ('::CONFIG::' -ne '' -and (Test-Path '::CONFIG::')) {
         $env:POSH_THEME = (Resolve-Path -Path '::CONFIG::').ProviderPath
     }
     # specific module support (disabled by default)

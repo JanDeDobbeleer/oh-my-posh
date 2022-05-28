@@ -11,6 +11,10 @@ Before validating anything, make sure you're on the [latest version][latest] of 
 
 ### The prompt is slow (delay in showing the prompt between commands)
 
+:::tip Windows
+Make sure Windows Defender, or your AntiVirus, has an exclusion [configured][exclusion].
+:::
+
 <Tabs
   defaultValue="powershell"
   groupId="shell"
@@ -189,6 +193,7 @@ to the top of your `$PROFILE`:
 $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 ```
 
+[exclusion]: https://support.microsoft.com/en-us/windows/add-an-exclusion-to-windows-security-811816c0-4dfd-af4a-47e4-c301afe13b26
 [arch-terminfo]: https://wiki.archlinux.org/title/Bash/Prompt_customization#Terminfo_escape_sequences
 [ps-ansi-docs]: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_ansi_terminals?view=powershell-7.2
 [xterm-gh-comment]: https://github.com/microsoft/terminal/issues/6045#issuecomment-631743728

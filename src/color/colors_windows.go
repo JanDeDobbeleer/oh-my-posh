@@ -2,36 +2,29 @@ package color
 
 import (
 	"errors"
-	"syscall"
-	"unsafe"
+	"oh-my-posh/environment"
 
 	"github.com/gookit/color"
-	"golang.org/x/sys/windows"
 )
 
-var (
-	dwmapi                      = syscall.NewLazyDLL("dwmapi.dll")
-	procDwmGetColorizationColor = dwmapi.NewProc("DwmGetColorizationColor")
-)
-
-func GetAccentColor() (*RGB, error) {
-	var accentColor uint32
-	var pfOpaqueBlend bool
-	_, _, e := procDwmGetColorizationColor.Call(
-		uintptr(unsafe.Pointer(&accentColor)),
-		uintptr(unsafe.Pointer(&pfOpaqueBlend)))
-	if e != windows.ERROR_SUCCESS {
-		return nil, errors.New("unable to get accent color")
+func GetAccentColor(env environment.Environment) (*RGB, error) {
+	if env == nil {
+		return nil, errors.New("unable to get color without environment")
+	}
+	// see https://stackoverflow.com/questions/3560890/vista-7-how-to-get-glass-color
+	value, err := env.WindowsRegistryKeyValue(`HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM\ColorizationColor`)
+	if err != nil {
+		return nil, err
 	}
 	return &RGB{
-		R: byte(accentColor >> 16),
-		G: byte(accentColor >> 8),
-		B: byte(accentColor),
+		R: byte(value.Dword >> 16),
+		G: byte(value.Dword >> 8),
+		B: byte(value.Dword),
 	}, nil
 }
 
-func (d *DefaultColors) SetAccentColor(defaultColor string) {
-	rgb, err := GetAccentColor()
+func (d *DefaultColors) SetAccentColor(env environment.Environment, defaultColor string) {
+	rgb, err := GetAccentColor(env)
 	if err != nil {
 		d.accent = &Color{
 			Foreground: string(d.AnsiColorFromString(defaultColor, false)),

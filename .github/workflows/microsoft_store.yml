@@ -1,4 +1,4 @@
-name: Submit Oh My Posh to the Windows Store
+name: Windows Store
 on:
   workflow_dispatch:
     inputs:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   microsoft_store:
-    name: Publish Microsoft Store
+    name: Publish To Windows Store
     runs-on: ubuntu-latest
     steps:
       - name: Configure Store Credentials 🔑

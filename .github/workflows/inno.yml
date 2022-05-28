@@ -64,7 +64,7 @@ jobs:
             ref: 'main',
             inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', '')}
           })
-    - name: Notify App Store Build 👋
+    - name: Notify Windows Store Build 👋
       uses: actions/github-script@v5
       with:
         github-token: ${{ secrets.GH_PAT }}

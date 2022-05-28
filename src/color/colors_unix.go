@@ -2,13 +2,16 @@
 
 package color
 
-import "errors"
+import (
+	"errors"
+	"oh-my-posh/environment"
+)
 
-func GetAccentColor() (*RGB, error) {
+func GetAccentColor(env environment.Environment) (*RGB, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (d *DefaultColors) SetAccentColor(defaultColor string) {
+func (d *DefaultColors) SetAccentColor(env environment.Environment, defaultColor string) {
 	if len(defaultColor) == 0 {
 		return
 	}

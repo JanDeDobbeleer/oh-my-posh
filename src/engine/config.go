@@ -57,7 +57,7 @@ type Config struct {
 // environment and configuration.
 func (cfg *Config) MakeColors(env environment.Environment) color.AnsiColors {
 	cacheDisabled := env.Getenv("OMP_CACHE_DISABLED") == "1"
-	return color.MakeColors(cfg.Palette, !cacheDisabled, cfg.AccentColor)
+	return color.MakeColors(cfg.Palette, !cacheDisabled, cfg.AccentColor, env)
 }
 
 func (cfg *Config) print(message string) {

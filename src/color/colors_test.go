@@ -30,18 +30,18 @@ func TestGetAnsiFromColorString(t *testing.T) {
 }
 
 func TestMakeColors(t *testing.T) {
-	colors := MakeColors(nil, false, "")
+	colors := MakeColors(nil, false, "", nil)
 	assert.IsType(t, &DefaultColors{}, colors)
 
-	colors = MakeColors(nil, true, "")
+	colors = MakeColors(nil, true, "", nil)
 	assert.IsType(t, &CachedColors{}, colors)
 	assert.IsType(t, &DefaultColors{}, colors.(*CachedColors).ansiColors)
 
-	colors = MakeColors(testPalette, false, "")
+	colors = MakeColors(testPalette, false, "", nil)
 	assert.IsType(t, &PaletteColors{}, colors)
 	assert.IsType(t, &DefaultColors{}, colors.(*PaletteColors).ansiColors)
 
-	colors = MakeColors(testPalette, true, "")
+	colors = MakeColors(testPalette, true, "", nil)
 	assert.IsType(t, &CachedColors{}, colors)
 	assert.IsType(t, &PaletteColors{}, colors.(*CachedColors).ansiColors)
 	assert.IsType(t, &DefaultColors{}, colors.(*CachedColors).ansiColors.(*PaletteColors).ansiColors)

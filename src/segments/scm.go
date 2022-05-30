@@ -19,7 +19,7 @@ type ScmStatus struct {
 }
 
 func (s *ScmStatus) Changed() bool {
-	return s.Added > 0 || s.Deleted > 0 || s.Modified > 0 || s.Unmerged > 0 || s.Moved > 0 || s.Conflicted > 0
+	return s.Added > 0 || s.Deleted > 0 || s.Modified > 0 || s.Unmerged > 0 || s.Moved > 0 || s.Conflicted > 0 || s.Untracked > 0
 }
 
 func (s *ScmStatus) String() string {

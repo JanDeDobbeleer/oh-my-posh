@@ -21,8 +21,10 @@ func (s *GitStatus) add(code string) {
 		return
 	case "D":
 		s.Deleted++
-	case "A", "?":
+	case "A":
 		s.Added++
+	case "?":
+		s.Untracked++
 	case "U":
 		s.Unmerged++
 	case "M", "R", "C", "m":

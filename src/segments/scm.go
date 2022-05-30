@@ -15,6 +15,7 @@ type ScmStatus struct {
 	Modified   int
 	Moved      int
 	Conflicted int
+	Untracked  int
 }
 
 func (s *ScmStatus) Changed() bool {
@@ -29,6 +30,7 @@ func (s *ScmStatus) String() string {
 		}
 		return ""
 	}
+	status += stringIfValue(s.Untracked, "?")
 	status += stringIfValue(s.Added, "+")
 	status += stringIfValue(s.Modified, "~")
 	status += stringIfValue(s.Deleted, "-")

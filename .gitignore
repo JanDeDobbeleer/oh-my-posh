@@ -241,6 +241,6 @@ $RECYCLE.BIN/
 cosign.key
 
 *.omp.json.bak
-
+sync-upstream.yml
 __debug_bin
 night-owl-mod.omp.json

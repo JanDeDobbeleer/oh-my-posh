@@ -129,6 +129,8 @@ const (
 	NODE SegmentType = "node"
 	// npm version
 	NPM SegmentType = "npm"
+	// NX writes which Nx version us currently active
+	NX SegmentType = "nx"
 	// OS write os specific icon
 	OS SegmentType = "os"
 	// OWM writes the weather coming from openweatherdata
@@ -161,6 +163,8 @@ const (
 	SPOTIFY SegmentType = "spotify"
 	// STRAVA is a sports activity tracker
 	STRAVA SegmentType = "strava"
+	// Subversion segment
+	SVN SegmentType = "svn"
 	// SWIFT writes the active swift version
 	SWIFT SegmentType = "swift"
 	// SYSTEMINFO writes system information (memory, cpu, load)
@@ -277,6 +281,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		NIGHTSCOUT:    &segments.Nightscout{},
 		NODE:          &segments.Node{},
 		NPM:           &segments.Npm{},
+		NX:            &segments.Nx{},
 		OS:            &segments.Os{},
 		OWM:           &segments.Owm{},
 		PATH:          &segments.Path{},
@@ -293,6 +298,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		SHELL:         &segments.Shell{},
 		SPOTIFY:       &segments.Spotify{},
 		STRAVA:        &segments.Strava{},
+		SVN:           &segments.Svn{},
 		SWIFT:         &segments.Swift{},
 		SYSTEMINFO:    &segments.SystemInfo{},
 		TERRAFORM:     &segments.Terraform{},

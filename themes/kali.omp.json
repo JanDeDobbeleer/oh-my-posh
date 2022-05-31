@@ -7,13 +7,13 @@
         {
           "foreground": "lightBlue",
           "foreground_templates": [
-            "{{ if .Root }}red{{ end }}"
+            "{{ if .Root }}lightRed{{ end }}"
           ],
           "properties": {
             "display_host": true
           },
           "style": "plain",
-          "template": "<green>\u250c\u2500\u2500(</>{{ if .Root }}root💀{{ else }}{{ .UserName }}@{{ end }}{{ .HostName }}<green>)</>",
+          "template": "<{{ if .Root }}lightBlue{{ else }}green{{ end }}>\u250c\u2500\u2500(</>{{ .UserName }}{{ if .Root }}💀{{ else }}㉿{{ end }}{{ .HostName }}<{{ if .Root }}lightBlue{{ else }}green{{ end }}>)</>",
           "type": "session"
         },
         {
@@ -23,7 +23,7 @@
             "fetch_virtual_env": true
           },
           "style": "plain",
-          "template": "<green>-[</>\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }}{{ end }}{{ .Full }}{{ end }}<green>]</>",
+          "template": "<{{ if .Root }}lightBlue{{ else }}green{{ end }}>-[</>\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }}{{ end }}{{ .Full }}{{ end }}<{{ if .Root }}lightBlue{{ else }}green{{ end }}>]</>",
           "type": "python"
         },
         {
@@ -33,13 +33,13 @@
             "style": "full"
           },
           "style": "plain",
-          "template": "<green>-[</>{{ .Path }}<green>]</>",
+          "template": "<{{ if .Root }}lightBlue{{ else }}green{{ end }}>-[</>{{ .Path }}<{{ if .Root }}lightBlue{{ else }}green{{ end }}>]</>",
           "type": "path"
         },
         {
           "foreground": "white",
           "style": "plain",
-          "template": "<green>-[</>{{ .HEAD }}<green>]</>",
+          "template": "<{{ if .Root }}lightBlue{{ else }}green{{ end }}>-[</>{{ .HEAD }}<{{ if .Root }}lightBlue{{ else }}green{{ end }}>]</>",
           "type": "git"
         }
       ],
@@ -80,7 +80,7 @@
         {
           "foreground": "lightBlue",
           "style": "plain",
-          "template": "<green>\u2514\u2500</>{{ if .Root }}<red>#</>{{ else }}${{ end }} ",
+          "template": "<{{ if .Root }}lightBlue{{ else }}green{{ end }}>\u2514\u2500</>{{ if .Root }}<lightRed>#</>{{ else }}${{ end }} ",
           "type": "text"
         }
       ],

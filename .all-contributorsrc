@@ -1228,6 +1228,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "antonpiatek",
+      "name": "Anton Piatek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175077?v=4",
+      "profile": "https://github.com/antonpiatek",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

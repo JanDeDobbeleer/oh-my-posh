@@ -59,12 +59,7 @@
       "type": "string",
       "title": "Display Mode",
       "description": "Determines whether the segment is displayed always or only if a file matching the extensions are present in the current folder",
-      "enum": [
-        "always",
-        "files",
-        "environment",
-        "context"
-      ],
+      "enum": ["always", "files", "environment", "context"],
       "default": "context"
     },
     "missing_command_text": {
@@ -114,11 +109,7 @@
             }
           },
           "then": {
-            "required": [
-              "type",
-              "alignment",
-              "segments"
-            ],
+            "required": ["type", "alignment", "segments"],
             "title": "Prompt definition, contains 1 or more segments to render"
           }
         },
@@ -131,10 +122,7 @@
             }
           },
           "then": {
-            "required": [
-              "type",
-              "segments"
-            ],
+            "required": ["type", "segments"],
             "title": "RPrompt definition, contains 1 or more segments to render to the right of the cursor"
           }
         }
@@ -144,20 +132,14 @@
           "type": "string",
           "title": "Block type",
           "description": "https://ohmyposh.dev/docs/configuration/block#type",
-          "enum": [
-            "prompt",
-            "rprompt"
-          ],
+          "enum": ["prompt", "rprompt"],
           "default": "prompt"
         },
         "alignment": {
           "type": "string",
           "title": "Block alignment",
           "description": "https://ohmyposh.dev/docs/configuration/block#alignment",
-          "enum": [
-            "left",
-            "right"
-          ],
+          "enum": ["left", "right"],
           "default": "left"
         },
         "newline": {
@@ -192,10 +174,7 @@
       "title": "A segment",
       "description": "https://ohmyposh.dev/docs/configuration/segment",
       "default": {},
-      "required": [
-        "type",
-        "style"
-      ],
+      "required": ["type", "style"],
       "properties": {
         "type": {
           "type": "string",
@@ -227,6 +206,7 @@
             "kotlin",
             "node",
             "npm",
+            "nx",
             "os",
             "owm",
             "path",
@@ -259,12 +239,7 @@
           "type": "string",
           "title": "Segment Style",
           "description": "https://ohmyposh.dev/docs/configuration/segment#style",
-          "enum": [
-            "plain",
-            "powerline",
-            "diamond",
-            "accordion"
-          ]
+          "enum": ["plain", "powerline", "diamond", "accordion"]
         },
         "foreground": {
           "$ref": "#/definitions/color"
@@ -444,11 +419,7 @@
                     "title": "Source",
                     "description": "https://ohmyposh.dev/docs/az#properties",
                     "default": "first_match",
-                    "enum": [
-                      "first_match",
-                      "cli",
-                      "pwsh"
-                    ]
+                    "enum": ["first_match", "cli", "pwsh"]
                   }
                 }
               }
@@ -1705,11 +1676,7 @@
                     "title": "units",
                     "description": "Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit). Default is standard",
                     "default": "standard",
-                    "enum": [
-                      "standard",
-                      "metric",
-                      "imperial"
-                    ]
+                    "enum": ["standard", "metric", "imperial"]
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
@@ -1884,6 +1851,37 @@
           "then": {
             "title": "Angular CLI Segment",
             "description": "https://ohmyposh.dev/docs/segments/angular",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nx"
+              }
+            }
+          },
+          "then": {
+            "title": "Nx Segment",
+            "description": "https://ohmyposh.dev/docs/segments/nx",
             "properties": {
               "properties": {
                 "properties": {
@@ -2234,11 +2232,7 @@
                     "type": "string",
                     "title": "Use Stack GHC",
                     "description": "Get the GHC version used by Stack. Will decrease performance. Boolean indicating whether stack ghc was used available in template as .StackGhc",
-                    "enum": [
-                      "always",
-                      "package",
-                      "never"
-                    ],
+                    "enum": ["always", "package", "never"],
                     "default": "never"
                   }
                 }
@@ -2463,9 +2457,7 @@
       ]
     }
   },
-  "required": [
-    "blocks"
-  ],
+  "required": ["blocks"],
   "properties": {
     "final_space": {
       "type": "boolean",
@@ -2517,9 +2509,7 @@
             }
           }
         },
-        "required": [
-          "tips"
-        ]
+        "required": ["tips"]
       }
     },
     "transient_prompt": {

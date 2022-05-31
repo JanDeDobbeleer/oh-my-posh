@@ -5,7 +5,7 @@ env:
   UPSTREAM_URL: "https://github.com/JanDeDobbeleer/oh-my-posh"
   # Required, token to authenticate bot, could use ${{ secrets.GITHUB_TOKEN }} 
   # Over here, we use a PAT instead to authenticate workflow file changes.
-  WORKFLOW_TOKEN: ${{ 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 }}
+  WORKFLOW_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
   # Optional, defaults to main
   UPSTREAM_BRANCH: "main"
   # Optional, defaults to UPSTREAM_BRANCH

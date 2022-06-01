@@ -1,0 +1,241 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+blocks:
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
+      - type: iterm
+        style: plain
+        foreground: cyan
+        template: "{{ .PromptMark }}"
+      - type: os
+        style: diamond
+        trailing_diamond: <transparent,></>
+        foreground: cyan
+        properties:
+          alpine: 
+          arch: 
+          centos: 
+          debian: 
+          elementary: 
+          fedora: 
+          gentoo: 
+          linux: 
+          macos: 
+          manjaro: 
+          mint: 
+          opensuse: 
+          raspbian: 
+          ubuntu: 
+          windows: 
+          wsl: 
+          wsl_separator: 
+        template: " {{ if .WSL }}{{ end }}{{.Icon}}═"
+      - type: shell
+        style: diamond
+        leading_diamond: 
+        background: green
+        foreground: black
+        template: "  {{ .Name }} "
+      - type: session
+        style: powerline
+        powerline_symbol: 
+        background: magenta
+        foreground: black
+        template: " {{ if .SSHSession }} {{ end }}{{ .UserName }}@{{ .HostName }} "
+      - type: angular
+        style: powerline
+        powerline_symbol: 
+        background: lightRed
+        foreground: black
+        properties:
+          fetch_version: true
+        template: " ﮰ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: aws
+        style: powerline
+        powerline_symbol: 
+        background: yellow
+        foreground: black
+        properties:
+          display_default: false
+        template: "  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
+      - type: az
+        style: powerline
+        powerline_symbol: 
+        background: lightBlue
+        foreground: black
+        properties:
+          display_default: false
+        template: " ﴃ Subscription {{ .Name }} ({{ if .EnvironmentName | contains 'AzureCloud' }}{{ 'Global' }}{{ else }}{{ .EnvironmentName }}{{ end }}) "
+      - type: azfunc
+        style: powerline
+        powerline_symbol: 
+        background: yellow
+        foreground: black
+        properties:
+          display_mode: files
+          fetch_version: false
+        template: " ﴃ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: go
+        style: powerline
+        powerline_symbol: 
+        background: lightCyan
+        foreground: black
+        properties:
+          fetch_version: true
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: java
+        style: powerline
+        powerline_symbol: 
+        background: lightCyan
+        foreground: black
+        template: "  {{ .Full }}"
+      - type: julia
+        style: powerline
+        powerline_symbol: 
+        background: lightCyan
+        foreground: black
+        properties:
+          fetch_version: true
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: kubectl
+        style: powerline
+        powerline_symbol: 
+        background: lightYellow
+        foreground: black
+        template: " ﴱ {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
+      - type: node
+        style: powerline
+        powerline_symbol: 
+        background: lightGreen
+        foreground: black
+        properties:
+          fetch_version: true
+        template: "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+      - type: php
+        style: powerline
+        powerline_symbol: 
+        background: lightCyan
+        foreground: black
+        template: "  {{ .Full }} "
+      - type: project
+        style: powerline
+        powerline_symbol: 
+        background: lightYellow
+        foreground: black
+        template: " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }} {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }} "
+      - type: python
+        style: powerline
+        powerline_symbol: 
+        background: lightYellow
+        foreground: black
+        properties:
+          display_mode: files
+          fetch_virtual_env: false
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: ruby
+        style: powerline
+        powerline_symbol: 
+        background: red
+        foreground: black
+        properties:
+          display_mode: files
+          fetch_version: true
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: time
+        style: powerline
+        powerline_symbol: 
+        background: yellow
+        foreground: black
+        properties:
+          time_format: Mon | 15:04:05
+        template: " {{ .CurrentDate | date .Format }} "
+      - type: executiontime
+        style: diamond
+        trailing_diamond: 
+        background: cyan
+        foreground: black
+        properties:
+          style: austin
+          threshold: 0
+        template: " {{ .FormattedMs }} "
+  - type: prompt
+    alignment: right
+    segments:
+      - type: git
+        style: diamond
+        leading_diamond: 
+        trailing_diamond: 
+        background: magenta
+        foreground: black
+        properties:
+          branch_icon: " "
+          fetch_stash_count: true
+          fetch_status: true
+          fetch_upstream_icon: true
+          fetch_worktree_count: true
+        template: "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }}"
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
+      - type: text
+        style: plain
+        foreground: cyan
+        template: " ╚"
+      - type: exit
+        style: diamond
+        leading_diamond: 
+        background: blue
+        background_templates:
+          - "{{ if gt .Code 0 }}red{{ end }}"
+        foreground: black
+        properties:
+          always_enabled: true
+        template: " {{ if gt .Code 0 }}{{ else }}{{ end }}{{ if eq ( gt .Code 0 ) .Segments.Path.Writable}} {{ end }}"
+      - type: path
+        style: powerline
+        powerline_symbol: 
+        background: blue
+        background_templates:
+          - "{{ if not .Writable }}red{{ end }}"
+        foreground: black
+        properties:
+          style: agnoster_short
+          folder_icon: 
+          folder_separator_icon: "  "
+          home_icon: 
+          max_depth: 3
+        template: "{{ if eq ( gt .Code 0 ) .Writable }} {{ end }} {{ .Path }}{{ if not .Writable  }} {{ end }}"
+      - type: text
+        style: diamond
+        trailing_diamond: 
+        background: blue
+        background_templates:
+          - "{{ if and .Segments.Path.Writable (not .Root) }}{{ else }}red{{ end }}"
+        foreground: white
+        properties:
+          root_icon: 
+        template: "{{ if and .Root ( not .Segments.Path.Writable ) }} {{ end }}{{ if and .Root .Segments.Path.Writable }}  {{ end }} \b"
+console_title_template: "{{ .Folder }}"
+osc99: true
+palette:
+  black: "#1B1A23"
+  blue: "#9580FF"
+  black-background: "#22212C"
+  lightBlue-brightBlue: "#AA99FF"
+  lightCyan-brightCyan: "#99FFEE"
+  lightGreen-brightGreen: "#A2FF99"
+  lightMagenta-brightPurple: "#FF99CC"
+  lightRed-brightRed: "#FFAA99"
+  lightWhite-brightWhite: "#FFFFFF"
+  lightYellow-brightYellow: "#FFFF80"
+  selection-selectionBackground: "#454158"
+  comment-brightBlack: "#7970A9"
+  cyan: "#80FFEA"
+  green: "#8AFF80"
+  magenta-purple: "#FF80BF"
+  red: "#FF9580"
+  white-cursorColor-foreground: "#F8F8F2"
+  yellow: "#FFCA80"
+version: 2

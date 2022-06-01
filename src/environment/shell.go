@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"oh-my-posh/regex"
@@ -84,19 +83,20 @@ type Cache interface {
 
 type HTTPRequestModifier func(request *http.Request)
 
-type WindowsRegistryValueType int
+type WindowsRegistryValueType string
 
 const (
-	RegQword WindowsRegistryValueType = iota
-	RegDword
-	RegString
+	DWORD  = "DWORD"
+	QWORD  = "QWORD"
+	BINARY = "BINARY"
+	STRING = "STRING"
 )
 
 type WindowsRegistryValue struct {
 	ValueType WindowsRegistryValueType
-	Qword     uint64
-	Dword     uint32
-	Str       string
+	DWord     uint64
+	QWord     uint64
+	String    string
 }
 
 type WifiType string
@@ -433,7 +433,7 @@ func (env *ShellEnvironment) FileContent(file string) string {
 	if !filepath.IsAbs(file) {
 		file = filepath.Join(env.Pwd(), file)
 	}
-	content, err := ioutil.ReadFile(file)
+	content, err := os.ReadFile(file)
 	if err != nil {
 		env.Log(Error, "FileContent", err.Error())
 		return ""
@@ -620,7 +620,7 @@ func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestM
 		return nil, err
 	}
 	defer response.Body.Close()
-	body, err := ioutil.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		env.Log(Error, "HTTPRequest", err.Error())
 		return nil, err

@@ -10,9 +10,11 @@ Display the content of the requested Windows registry key.
 
 Supported registry key types:
 
-- String
-- DWORD (displayed in upper-case 0x hex)
-- QWORD (displayed in upper-case 0x hex)
+- `SZ` (displayed as string value)
+- `EXPAND_SZ` (displayed as string value)
+- `BINARY` (displayed as string value)
+- `DWORD` (displayed in upper-case 0x hex)
+- `QWORD` (displayed in upper-case 0x hex)
 
 ## Sample Configuration
 

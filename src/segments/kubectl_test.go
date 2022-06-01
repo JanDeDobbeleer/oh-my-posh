@@ -2,10 +2,10 @@ package segments
 
 import (
 	"fmt"
-	"io/ioutil"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -111,7 +111,7 @@ func TestKubectlSegment(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "kubectl").Return(tc.KubectlExists)
 		var kubeconfig string
-		content, err := ioutil.ReadFile("../test/kubectl.yml")
+		content, err := os.ReadFile("../test/kubectl.yml")
 		if err == nil {
 			kubeconfig = fmt.Sprintf(string(content), tc.Cluster, tc.UserName, tc.Namespace, tc.Context)
 		}

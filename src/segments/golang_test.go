@@ -3,10 +3,10 @@ package segments
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -81,7 +81,7 @@ func TestGolang(t *testing.T) {
 			if tc.InvalidModfile {
 				content = "invalid go.mod file"
 			} else {
-				tmp, _ := ioutil.ReadFile(fileInfo.Path)
+				tmp, _ := os.ReadFile(fileInfo.Path)
 				content = string(tmp)
 			}
 			env.On("FileContent", fileInfo.Path).Return(content)

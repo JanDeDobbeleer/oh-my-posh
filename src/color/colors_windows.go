@@ -13,13 +13,13 @@ func GetAccentColor(env environment.Environment) (*RGB, error) {
 	}
 	// see https://stackoverflow.com/questions/3560890/vista-7-how-to-get-glass-color
 	value, err := env.WindowsRegistryKeyValue(`HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM\ColorizationColor`)
-	if err != nil {
+	if err != nil || value.ValueType != environment.DWORD {
 		return nil, err
 	}
 	return &RGB{
-		R: byte(value.Dword >> 16),
-		G: byte(value.Dword >> 8),
-		B: byte(value.Dword),
+		R: byte(value.DWord >> 16),
+		G: byte(value.DWord >> 8),
+		B: byte(value.DWord),
 	}, nil
 }
 

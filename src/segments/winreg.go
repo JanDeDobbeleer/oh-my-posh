@@ -1,8 +1,6 @@
 package segments
 
 import (
-	"errors"
-	"fmt"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 )
@@ -36,71 +34,16 @@ func (wr *WindowsRegistry) Enabled() bool {
 	}
 
 	registryPath := wr.props.GetString(RegistryPath, "")
-	fallback := wr.props.GetString(Fallback, "")
+	wr.Value = wr.props.GetString(Fallback, "")
 
-	var regValue *environment.WindowsRegistryValue
-	regValue, _ = wr.env.WindowsRegistryKeyValue(registryPath)
-
-	if regValue != nil {
-		switch regValue.ValueType {
-		case environment.RegString:
-			wr.Value = regValue.Str
-			return true
-		case environment.RegDword:
-			wr.Value = fmt.Sprintf("0x%08X", regValue.Dword)
-			return true
-		case environment.RegQword:
-			wr.Value = fmt.Sprintf("0x%016X", regValue.Qword)
-			return true
-		}
-	}
-
-	if len(fallback) > 0 {
-		wr.Value = fallback
+	regValue, err := wr.env.WindowsRegistryKeyValue(registryPath)
+	if err == nil {
+		wr.Value = regValue.String
 		return true
 	}
-
+	if len(wr.Value) > 0 {
+		// we have fallback value
+		return true
+	}
 	return false
-}
-
-func (wr WindowsRegistry) GetRegistryString(path string) (string, error) {
-	regValue, err := wr.env.WindowsRegistryKeyValue(path)
-
-	if regValue == nil {
-		return "", err
-	}
-
-	if regValue.ValueType != environment.RegString {
-		return "", errors.New("type mismatch, registry value is not a string")
-	}
-
-	return regValue.Str, nil
-}
-
-func (wr WindowsRegistry) GetRegistryDword(path string) (uint32, error) {
-	regValue, err := wr.env.WindowsRegistryKeyValue(path)
-
-	if regValue == nil {
-		return 0, err
-	}
-
-	if regValue.ValueType != environment.RegDword {
-		return 0, errors.New("type mismatch, registry value is not a dword")
-	}
-
-	return regValue.Dword, nil
-}
-
-func (wr WindowsRegistry) GetRegistryQword(path string) (uint64, error) {
-	regValue, err := wr.env.WindowsRegistryKeyValue(path)
-
-	if regValue == nil {
-		return 0, err
-	}
-
-	if regValue.ValueType != environment.RegQword {
-		return 0, errors.New("type mismatch, registry value is not a qword")
-	}
-
-	return regValue.Qword, nil
 }

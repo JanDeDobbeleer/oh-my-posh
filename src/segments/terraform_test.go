@@ -1,9 +1,9 @@
 package segments
 
 import (
-	"io/ioutil"
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -82,11 +82,11 @@ func TestTerraform(t *testing.T) {
 		env.On("HasFiles", "main.tf").Return(tc.HasTfFiles)
 		env.On("HasFiles", "terraform.tfstate").Return(tc.HasTfStateFile)
 		if tc.HasTfFiles {
-			content, _ := ioutil.ReadFile("../test/versions.tf")
+			content, _ := os.ReadFile("../test/versions.tf")
 			env.On("FileContent", "versions.tf").Return(string(content))
 		}
 		if tc.HasTfStateFile {
-			content, _ := ioutil.ReadFile("../test/terraform.tfstate")
+			content, _ := os.ReadFile("../test/terraform.tfstate")
 			env.On("FileContent", "terraform.tfstate").Return(string(content))
 		}
 		tf := &Terraform{

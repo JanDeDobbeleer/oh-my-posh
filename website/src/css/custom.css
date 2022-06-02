@@ -118,3 +118,9 @@ iframe.youtube {
      height: 400px;
   }
 }
+
+.winstore {
+  width: 200px;
+  border-radius: 8px;
+  margin-top: 25px;
+}

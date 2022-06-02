@@ -184,6 +184,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
   <tr>
     <td align="center"><a href="https://github.com/the-eduardo"><img src="https://avatars.githubusercontent.com/u/40523695?v=4?s=100" width="100px;" alt=""/><br /><sub><b>the-eduardo</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=the-eduardo" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/antonpiatek"><img src="https://avatars.githubusercontent.com/u/175077?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Anton Piatek</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=antonpiatek" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://careers.stackoverflow.com/dehghan"><img src="https://avatars.githubusercontent.com/u/1384790?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Mohammad Dehghan</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=prodehghan" title="Documentation">📖</a></td>
   </tr>
 </table>
 

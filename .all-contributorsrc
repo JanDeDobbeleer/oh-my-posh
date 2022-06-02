@@ -1237,6 +1237,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "prodehghan",
+      "name": "Mohammad Dehghan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1384790?v=4",
+      "profile": "https://careers.stackoverflow.com/dehghan",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

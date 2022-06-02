@@ -4,6 +4,9 @@ title: General
 sidebar_label: General
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem"
+
 Oh My Posh renders your prompt based on the definition of _blocks_ (like Lego) which contain one or more _segments_.
 A really simple configuration could look like this. The default format is `json`, but we also support `toml` and `yaml`.
 There's a [schema][schema] available which is kept up-to-date and helps with autocomplete and validation of the configuration.
@@ -13,6 +16,16 @@ There are a few [themes][themes] available which are basically predefined config
 starting point to create your own configuration.
 :::
 
+<Tabs
+  defaultValue="json"
+  groupId="sample"
+  values={[
+    { label: 'json', value: 'json', },
+    { label: 'yaml', value: 'yaml', },
+    { label: 'toml', value: 'toml', },
+  ]
+}>
+<TabItem value="json">
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
@@ -37,10 +50,49 @@ starting point to create your own configuration.
   ]
 }
 ```
+</TabItem>
+<TabItem value="yaml">
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+final_space: true
+blocks:
+- type: prompt
+  alignment: left
+  segments:
+  - type: path
+    style: powerline
+    powerline_symbol: ""
+    foreground: "#ffffff"
+    background: "#61AFEF"
+    properties:
+      style: folder
+```
+</TabItem>
+<TabItem value="toml">
+```toml
+"$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+final_space = true
+
+[[blocks]]
+type = "prompt"
+alignment = "left"
+
+  [[blocks.segments]]
+  type = "path"
+  style = "powerline"
+  powerline_symbol = ""
+  foreground = "#ffffff"
+  background = "#61AFEF"
+
+    [blocks.segments.properties]
+    style = "folder"
+```
+</TabItem>
+</Tabs>
 
 With this configuration, a single powerline segment is rendered that shows the name of the folder you're currently in.
 To set this configuration in combination with a Oh My Posh [executable][releases], use the `--config` flag to
-set a path to a JSON file containing the above code. The `--shell universal` flag is used to print the prompt without
+set a path to a file containing the above code. The `--shell universal` flag is used to print the prompt without
 escape characters to see the prompt as it would be shown inside a prompt function for your shell.
 
 :::caution

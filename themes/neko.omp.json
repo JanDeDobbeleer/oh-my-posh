@@ -1,0 +1,68 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
+      {
+        "alignment": "left",
+        "segments": [
+          {
+            "style": "plain",
+            "template": "😺💬<#FF8000> Meow! What should I do next? ...</>",
+            "type": "text"
+          }],
+          "type": "prompt"
+        },
+      {
+        "alignment": "right",
+        "segments": [
+          {
+            "foreground": "#56B6C2",
+            "properties": {
+              "style": "folder"
+            },
+            "style": "plain",
+            "template": "🏡 {{ .Path }} ",
+            "type": "path"
+          },
+          {
+            "foreground": "#D0666F",
+            "properties": {
+              "branch_icon": "",
+              "fetch_status": false
+            },
+            "style": "plain",
+            "template":  "<#5FAAE8>git:(</>{{ .HEAD }}<#5FAAE8>)</>",
+            "type": "git"
+          },
+          {
+            "foreground": "#1a415d",
+						"style": "plain",
+						"template": "⌚",
+						"type": "text"
+					},
+          {
+            "foreground": "#1a415d",
+            "properties": {
+              "time_format": "15:04"
+            },
+            "style": "plain",
+            "template": " {{ .CurrentDate | date .Format }} ",
+            "type": "time"
+          }
+        ],
+        "type": "prompt"
+      },
+			{
+				"alignment": "left",
+				"segments": [
+					{
+						"foreground": "#FF8000",
+						"style": "plain",
+						"template": "😀💬<#FF8000> ~ </>",
+						"type": "text"
+					}
+				],
+				"type": "prompt"
+			}
+    ],
+    "version": 2
+  }

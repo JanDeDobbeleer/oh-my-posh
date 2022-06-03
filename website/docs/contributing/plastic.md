@@ -26,7 +26,7 @@ wget https://www.plasticscm.com/plasticrepo/stable/debian/Release.key -O - | sud
 sudo apt-get update
 ```
 
-Then install the server: *this might throw an error at the end of the setup **see below***
+Then install the server: \*this might throw an error at the end of the setup **see below\***
 
 ```bash
 sudo apt-get install plasticscm-server-core
@@ -245,7 +245,7 @@ cm switch BL00001
 
 #### Merge a branch
 
-To merge a branch you have to switch to the *destination* branch of the merge. After that you can merge another branch via
+To merge a branch you have to switch to the _destination_ branch of the merge. After that you can merge another branch via
 
 ```bash
 cm switch /main
@@ -348,5 +348,5 @@ Hint: This will prompt you to directly resolve the merge conflict
 [plastic]: https://www.plasticscm.com/
 [setup-instructions]: https://www.plasticscm.com/documentation/administration/plastic-scm-version-control-administrator-guide#Chapter3:PlasticSCMinstallation
 [server-config]: https://www.plasticscm.com/documentation/administration/plastic-scm-version-control-administrator-guide#Serverconfiguration
-[contributing]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/CONTRIBUTING.md
-[devcontainer]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/CONTRIBUTING.md#codespaces--devcontainer-development-environment
+[contributing]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/CONTRIBUTING.mdx
+[devcontainer]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/CONTRIBUTING.mdx#codespaces--devcontainer-development-environment

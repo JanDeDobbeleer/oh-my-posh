@@ -5,7 +5,7 @@ sidebar_label: 💅🏼 Customize
 ---
 
 import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem"
+import TabItem from "@theme/TabItem";
 
 The standard initialization sets Oh My Posh' [default theme][default-theme]. This configuration is downloaded
 and kept up-to-date with Oh My Posh' version every time the shell starts. To change/alter the configuration, you need to
@@ -130,6 +130,7 @@ For example, the following is a valid `--config` flag:
 ```
 --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json'
 ```
+
 :::
 
 ### Export the current theme
@@ -141,13 +142,11 @@ available options first**, by starting with the [configuration guide][configurat
 You can export the current theme (default, or set via `--config`) to the format you like (`json` or `toml`)
 which can be used to tweak and store as your own custom theme.
 
-
 ```bash
 oh-my-posh config export --output ~/.mytheme.omp.json
 ```
 
-
-[themes]: themes.md
-[configuration]: configuration/overview.md
+[themes]: themes.mdx
+[configuration]: configuration/overview.mdx
 [default-theme]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/default.omp.json
 [jandedobbeleer]: /docs/themes#jandedobbeleer

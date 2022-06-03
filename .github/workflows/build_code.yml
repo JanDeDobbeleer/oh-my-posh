@@ -1,12 +1,12 @@
 on:
   pull_request:
     paths-ignore:
-      - 'README.md'
-      - 'CONTRIBUTING.md'
-      - 'COPYING'
-      - 'website/**'
-      - '.github/*.md'
-      - '.github/FUNDING.yml'
+      - "README.mdx"
+      - "CONTRIBUTING.mdx"
+      - "COPYING"
+      - "website/**"
+      - ".github/*.mdx"
+      - ".github/FUNDING.yml"
 
 name: Build Code
 jobs:
@@ -16,14 +16,14 @@ jobs:
       run:
         shell: pwsh
     steps:
-    - name: Checkout code 👋
-      uses: actions/checkout@v2
-    - name: Install Go 🗳
-      uses: ./.github/workflows/composite/bootstrap-go
-    - name: Run GoReleaser 🚀
-      uses: goreleaser/goreleaser-action@v2
-      with:
-        distribution: goreleaser
-        version: latest
-        args: build --rm-dist --snapshot --skip-post-hooks
-        workdir: src
+      - name: Checkout code 👋
+        uses: actions/checkout@v2
+      - name: Install Go 🗳
+        uses: ./.github/workflows/composite/bootstrap-go
+      - name: Run GoReleaser 🚀
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          distribution: goreleaser
+          version: latest
+          args: build --rm-dist --snapshot --skip-post-hooks
+          workdir: src

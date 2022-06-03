@@ -85,7 +85,7 @@ go build -o $GOPATH/bin/oh-my-posh
 
 ## Add the documentation
 
-Create a new `markdown` file underneath the [`docs/docs/segments`][docs] folder called `new.md`.
+Create a new `markdown` file underneath the [`docs/docs/segments`][docs] folder called `new.mdx`.
 Use the following template as a guide.
 
 ````markdown

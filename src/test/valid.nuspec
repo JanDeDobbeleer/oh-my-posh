@@ -24,9 +24,9 @@
     <!-- https://github.com/NuGet/Home/issues/3584 -->
     <file src="bin/Az.Compute.private.dll" target="bin" />
     <file src="bin\Az.Compute.private.deps.json" target="bin" />
-    <file src="internal\**\*.*" exclude="internal\README.md" target="internal" />
-    <file src="custom\**\*.*" exclude="custom\README.md;custom\**\*.cs" target="custom" />
-    <file src="docs\**\*.md" exclude="docs\README.md" target="docs" />
+    <file src="internal\**\*.*" exclude="internal\README.mdx" target="internal" />
+    <file src="custom\**\*.*" exclude="custom\README.mdx;custom\**\*.cs" target="custom" />
+    <file src="docs\**\*.mdx" exclude="docs\README.mdx" target="docs" />
     <file src="exports\**\ProxyCmdletDefinitions.ps1" target="exports" />
     <file src="utils\**\*.*" target="utils" />
   </files>

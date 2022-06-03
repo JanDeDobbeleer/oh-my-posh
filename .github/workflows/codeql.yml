@@ -1,12 +1,12 @@
 on:
   pull_request:
     paths-ignore:
-      - 'README.md'
-      - 'CONTRIBUTING.md'
-      - 'COPYING'
-      - 'website/**'
-      - '.github/*.md'
-      - '.github/FUNDING.yml'
+      - "README.mdx"
+      - "CONTRIBUTING.mdx"
+      - "COPYING"
+      - "website/**"
+      - ".github/*.mdx"
+      - ".github/FUNDING.yml"
   push:
     branches:
       - main
@@ -19,17 +19,17 @@ jobs:
       run:
         working-directory: ${{ github.workspace }}/src
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.18
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
-      with:
-        languages: go
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@v1
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: go
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v1
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1

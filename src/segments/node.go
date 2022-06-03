@@ -38,7 +38,7 @@ func (n *Node) Init(props properties.Properties, env environment.Environment) {
 				regex:      `(?:v(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 			},
 		},
-		versionURLTemplate: "https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V{{ .Major }}.md#{{ .Full }}",
+		versionURLTemplate: "https://github.com/nodejs/node/blob/master/doc/changelogs/CHANGELOG_V{{ .Major }}.mdx#{{ .Full }}",
 		matchesVersionFile: n.matchesVersionFile,
 		loadContext:        n.loadContext,
 	}

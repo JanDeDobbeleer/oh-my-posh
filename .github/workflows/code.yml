@@ -1,12 +1,12 @@
 on:
   pull_request:
     paths-ignore:
-      - 'README.md'
-      - 'CONTRIBUTING.md'
-      - 'COPYING'
-      - 'website/**'
-      - '.github/*.md'
-      - '.github/FUNDING.yml'
+      - "README.mdx"
+      - "CONTRIBUTING.mdx"
+      - "COPYING"
+      - "website/**"
+      - ".github/*.mdx"
+      - ".github/FUNDING.yml"
 
 name: Validate Code
 jobs:
@@ -19,16 +19,16 @@ jobs:
       run:
         working-directory: ${{ github.workspace }}/src
     steps:
-    - name: Install Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.18
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Golang CI
-      uses: golangci/golangci-lint-action@v2
-      with:
-        version: latest
-        working-directory: src
-    - name: Unit Tests
-      run: go test -v ./...
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Golang CI
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
+          working-directory: src
+      - name: Unit Tests
+        run: go test -v ./...

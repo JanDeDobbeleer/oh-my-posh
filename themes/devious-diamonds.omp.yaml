@@ -206,7 +206,7 @@ blocks:
           folder_separator_icon: "  "
           home_icon: 
           max_depth: 3
-        template: "{{ if eq ( gt .Code 0 ) .Writable }} {{ end }} {{ .Path }}{{ if not .Writable  }} {{ end }}"
+        template: "{{ if eq ( gt .Code 0 ) .Writable }} {{ end }} {{ .Path }}{{ if not .Writable  }} {{ end }}{{ if and .Writable .Root }} {{end}}"
       - type: text
         style: diamond
         trailing_diamond: 

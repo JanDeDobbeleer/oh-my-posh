@@ -84,9 +84,9 @@ func (m *main) buildFontList(nerdFonts []*Asset) {
 	const defaultWidth = 20
 
 	l := list.New(items, itemDelegate{}, defaultWidth, listHeight)
-	l.Title = "Which font do you want to install?"
+	l.Title = "Select font"
 	l.SetShowStatusBar(false)
-	l.SetFilteringEnabled(true)
+	l.SetFilteringEnabled(false)
 	l.Styles.Title = titleStyle
 	l.Styles.PaginationStyle = paginationStyle
 	l.Styles.HelpStyle = helpStyle
@@ -122,7 +122,14 @@ func installFontZIP(zipFile []byte) {
 }
 
 func (m *main) Init() tea.Cmd {
-	go getFontsList()
+	defer func() {
+		go getFontsList()
+	}()
+	s := spinner.New()
+	s.Spinner = spinner.Dot
+	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
+	m.spinner = s
+	m.state = getFonts
 	return m.spinner.Tick
 }
 
@@ -155,14 +162,18 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			m.state = downloadFont
 			m.fontname = font.Name
-			go downloadFontZip(font.URL)
+			defer func() {
+				go downloadFontZip(font.URL)
+			}()
 			m.spinner.Spinner = spinner.Globe
 			return m, m.spinner.Tick
 		}
 
 	case zipMsg:
 		m.state = installFont
-		go installFontZIP(msg)
+		defer func() {
+			go installFontZIP(msg)
+		}()
 		m.spinner.Spinner = spinner.Dot
 		return m, m.spinner.Tick
 
@@ -174,13 +185,10 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.err = msg
 		return m, tea.Quit
 
-	case spinner.TickMsg:
+	default:
 		var cmd tea.Cmd
 		m.spinner, cmd = m.spinner.Update(msg)
 		return m, cmd
-
-	default:
-		return m, nil
 	}
 
 	lst, cmd := m.list.Update(msg)
@@ -212,15 +220,7 @@ func (m *main) View() string {
 }
 
 func Run() {
-	s := spinner.New()
-	s.Spinner = spinner.Dot
-	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
-
-	m := &main{
-		spinner: s,
-		state:   getFonts,
-	}
-	program = tea.NewProgram(m)
+	program = tea.NewProgram(&main{})
 	if err := program.Start(); err != nil {
 		print("Error running program: %v", err)
 		os.Exit(1)

@@ -4,6 +4,20 @@ title: Sample
 sidebar_label: Sample
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem"
+
+<Tabs
+  defaultValue="json"
+  groupId="sample"
+  values={[
+    { label: 'json', value: 'json', },
+    { label: 'yaml', value: 'yaml', },
+    { label: 'toml', value: 'toml', },
+  ]
+}>
+<TabItem value="json">
+
 ```json
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
@@ -94,3 +108,154 @@ sidebar_label: Sample
   "version": 2
 }
 ```
+
+</TabItem>
+<TabItem value="yaml">
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+blocks:
+- alignment: right
+  segments:
+  - foreground: "#007ACC"
+    template: " {{ .CurrentDate | date .Format }} "
+    properties:
+      time_format: '15:04:05'
+    style: plain
+    type: time
+  type: prompt
+  vertical_offset: -1
+- alignment: left
+  newline: true
+  segments:
+  - background: "#ffb300"
+    foreground: "#ffffff"
+    leading_diamond: "\ue0b6"
+    template: " {{ .UserName }} "
+    style: diamond
+    trailing_diamond: "\ue0b0"
+    type: session
+  - background: "#61AFEF"
+    foreground: "#ffffff"
+    powerline_symbol: "\ue0b0"
+    template: " {{ .Path }} "
+    properties:
+      exclude_folders:
+      - "/super/secret/project"
+      style: folder
+    style: powerline
+    type: path
+  - background: "#2e9599"
+    background_templates:
+    - "{{ if or (.Working.Changed) (.Staging.Changed) }}#f36943{{ end }}"
+    - "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#a8216b{{ end }}"
+    - "{{ if gt .Ahead 0 }}#35b5ff{{ end }}"
+    - "{{ if gt .Behind 0 }}#f89cfa{{ end }}"
+    foreground: "#193549"
+    foreground_templates:
+    - "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ffffff{{ end }}"
+    powerline_symbol: "\ue0b0"
+    template: " {{ .HEAD }}{{ .BranchStatus }} "
+    properties:
+      branch_max_length: 25
+      fetch_status: true
+    style: powerline
+    type: git
+  - background: "#00897b"
+    background_templates:
+    - "{{ if gt .Code 0 }}#e91e63{{ end }}"
+    foreground: "#ffffff"
+    template: "<parentBackground>\ue0b0</> \ue23a "
+    properties:
+      always_enabled: true
+    style: diamond
+    trailing_diamond: "\ue0b4"
+    type: exit
+  type: prompt
+final_space: true
+version: 2
+```
+
+</TabItem>
+<TabItem value="toml">
+
+```toml
+"$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+final_space = true
+version = 2
+
+[[blocks]]
+alignment = "right"
+type = "prompt"
+vertical_offset = -1
+
+  [[blocks.segments]]
+  foreground = "#007ACC"
+  template = " {{ .CurrentDate | date .Format }} "
+  style = "plain"
+  type = "time"
+
+    [blocks.segments.properties]
+    time_format = "15:04:05"
+
+[[blocks]]
+alignment = "left"
+newline = true
+type = "prompt"
+
+  [[blocks.segments]]
+  background = "#ffb300"
+  foreground = "#ffffff"
+  leading_diamond = "\ue0b6"
+  template = " {{ .UserName }} "
+  style = "diamond"
+  trailing_diamond = "\ue0b0"
+  type = "session"
+
+  [[blocks.segments]]
+  background = "#61AFEF"
+  foreground = "#ffffff"
+  powerline_symbol = "\ue0b0"
+  template = " {{ .Path }} "
+  style = "powerline"
+  type = "path"
+
+    [blocks.segments.properties]
+    exclude_folders = [ "/super/secret/project" ]
+    style = "folder"
+
+  [[blocks.segments]]
+  background = "#2e9599"
+  background_templates = [
+  "{{ if or (.Working.Changed) (.Staging.Changed) }}#f36943{{ end }}",
+  "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#a8216b{{ end }}",
+  "{{ if gt .Ahead 0 }}#35b5ff{{ end }}",
+  "{{ if gt .Behind 0 }}#f89cfa{{ end }}"
+]
+  foreground = "#193549"
+  foreground_templates = [ "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ffffff{{ end }}" ]
+  powerline_symbol = "\ue0b0"
+  template = " {{ .HEAD }}{{ .BranchStatus }} "
+  style = "powerline"
+  type = "git"
+
+    [blocks.segments.properties]
+    branch_max_length = 25
+    fetch_status = true
+
+  [[blocks.segments]]
+  background = "#00897b"
+  background_templates = [ "{{ if gt .Code 0 }}#e91e63{{ end }}" ]
+  foreground = "#ffffff"
+  template = "<parentBackground>\ue0b0</> \ue23a "
+  style = "diamond"
+  trailing_diamond = "\ue0b4"
+  type = "exit"
+
+    [blocks.segments.properties]
+    always_enabled = true
+```
+
+</TabItem>
+</Tabs>
+

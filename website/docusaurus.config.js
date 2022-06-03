@@ -15,7 +15,7 @@ module.exports = {
   ],
   themeConfig: {
     prism: {
-      additionalLanguages: ['powershell', 'lua', 'jsstacktrace'],
+      additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml'],
     },
     navbar: {
       title: 'Oh My Posh',

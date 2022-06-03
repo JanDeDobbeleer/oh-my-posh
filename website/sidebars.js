@@ -21,6 +21,7 @@ module.exports = {
                 "installation/linux",
               ],
             },
+            "installation/fonts",
             "installation/prompt",
             "installation/customize",
           ],
@@ -43,7 +44,6 @@ module.exports = {
         "configuration/transient",
         "configuration/line-error",
         "configuration/tooltips",
-        "configuration/fonts",
       ],
     },
     {

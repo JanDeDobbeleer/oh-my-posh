@@ -72,7 +72,7 @@ you notice black elements in Windows Terminal or the Visual Studio Code integrat
 - accent_color: `string` [color][colors] - accent color, used as a fallback when the `accent` [color][accent] is not supported
 
 [releases]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
-[font]: /docs/configuration/fonts
+[font]: /docs/installation/fonts
 [schema]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/schema.json
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [colors]: /docs/configuration/colors

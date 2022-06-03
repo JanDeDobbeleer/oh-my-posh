@@ -1,7 +1,7 @@
 ---
 id: fonts
 title: Fonts
-sidebar_label: Fonts
+sidebar_label: 🔤 Fonts
 ---
 
 ### Nerd Fonts
@@ -11,9 +11,17 @@ We recommend [Meslo LGM NF][meslo], but any Nerd Font should be compatible with 
 
 To see the icons displayed in Oh My Posh, **install** a [Nerd Font][nerdfonts], and **configure** your terminal to use it.
 
-#### Windows
+#### Installation
 
-Download your chosen Nerd Font, and install the font system-wide. See this [thread][font-thread] for more context.
+Oh My Posh has a CLI to help you select and install a [Nerd Font][nerdfonts] (beta):
+
+:::warning Windows
+This command needs to be executed as admin. The fonts are installed system wide.
+:::
+
+```bash
+oh-my-posh font install
+```
 
 #### Windows Terminal
 

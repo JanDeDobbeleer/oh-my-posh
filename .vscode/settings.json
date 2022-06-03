@@ -10,7 +10,9 @@
     }
   },
   "go.formatTool": "gofmt",
-  "go.formatFlags": ["-s"],
+  "go.formatFlags": [
+    "-s"
+  ],
   "azureFunctions.deploySubpath": "docs/api",
   "azureFunctions.postDeployTask": "npm install (functions)",
   "azureFunctions.projectLanguage": "JavaScript",

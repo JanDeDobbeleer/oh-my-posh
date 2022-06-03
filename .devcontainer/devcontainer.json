@@ -12,7 +12,7 @@
 
       // Options:
 
-      "POSH_THEME": "/workspaces/oh-my-posh/themes/jandedobbeleer.omp.yaml",
+      "POSH_THEME": "/workspaces/oh-my-posh/themes/jandedobbeleer.omp.json",
 
       // Override me with your own timezone:
       "TZ": "UTC",

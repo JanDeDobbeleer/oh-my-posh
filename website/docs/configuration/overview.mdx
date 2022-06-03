@@ -4,6 +4,9 @@ title: General
 sidebar_label: General
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem"
+
 Oh My Posh renders your prompt based on the definition of _blocks_ (like Lego) which contain one or more _segments_.
 A really simple configuration could look like this. The default format is `json`, but we also support `toml` and `yaml`.
 There's a [schema][schema] available which is kept up-to-date and helps with autocomplete and validation of the configuration.
@@ -12,6 +15,17 @@ There's a [schema][schema] available which is kept up-to-date and helps with aut
 There are a few [themes][themes] available which are basically predefined configs. You can use these as they are, or as a
 starting point to create your own configuration.
 :::
+
+<Tabs
+  defaultValue="json"
+  groupId="sample"
+  values={[
+    { label: 'json', value: 'json', },
+    { label: 'yaml', value: 'yaml', },
+    { label: 'toml', value: 'toml', },
+  ]
+}>
+<TabItem value="json">
 
 ```json
 {
@@ -38,9 +52,53 @@ starting point to create your own configuration.
 }
 ```
 
+</TabItem>
+<TabItem value="yaml">
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+final_space: true
+blocks:
+- type: prompt
+  alignment: left
+  segments:
+  - type: path
+    style: powerline
+    powerline_symbol: ""
+    foreground: "#ffffff"
+    background: "#61AFEF"
+    properties:
+      style: folder
+```
+
+</TabItem>
+<TabItem value="toml">
+
+```toml
+"$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+final_space = true
+
+[[blocks]]
+type = "prompt"
+alignment = "left"
+
+  [[blocks.segments]]
+  type = "path"
+  style = "powerline"
+  powerline_symbol = ""
+  foreground = "#ffffff"
+  background = "#61AFEF"
+
+    [blocks.segments.properties]
+    style = "folder"
+```
+
+</TabItem>
+</Tabs>
+
 With this configuration, a single powerline segment is rendered that shows the name of the folder you're currently in.
 To set this configuration in combination with a Oh My Posh [executable][releases], use the `--config` flag to
-set a path to a JSON file containing the above code. The `--shell universal` flag is used to print the prompt without
+set a path to a file containing the above code. The `--shell universal` flag is used to print the prompt without
 escape characters to see the prompt as it would be shown inside a prompt function for your shell.
 
 :::caution
@@ -71,8 +129,53 @@ For example, the following is a valid `--config` flag:
 you notice black elements in Windows Terminal or the Visual Studio Code integrated terminal
 - accent_color: `string` [color][colors] - accent color, used as a fallback when the `accent` [color][accent] is not supported
 
+### JSON Schema Validation
+
+As mentioned above, Oh My Posh themes can utilize JSON Schema to validate their contents. Themes should include a link to
+the [external schema document][schema] which prescribes the appropriate structure and contents for various elements. If
+your code editor is configured to use JSON Schema, it will compare your custom theme to the external document, and issue
+warnings for discrepancies.
+
+For example, given the following code:
+
+```json
+...
+"segments": [
+  {
+    "type": "an_invalid_entry",
+    "template": "{{ if gt .Code 0 }}\uf134{{ end }}",
+  }
+]
+...
+```
+
+Warnings will be raised for type, since `an_invalid_entry` is not in the list of acceptable values, as well as
+for the entire segment item (enclosed in {}), since it lacks the required `style` key. Take advantage of these
+warnings, and ignore them at your peril.
+
+### Accepted Formats
+
+Oh My Posh supports three file formats for themes: `json`, `yaml`, and `toml`.
+
+Various converters exist to convert between these, although they aren't perfect and will require manaual
+adjustment. Notably, the schema implementation for json is as follows:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+}
+```
+
+While for yaml:
+
+```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+```
+
+Converters won't catch this change, so you will need to adjust manually.
+
 [releases]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
-[font]: /docs/installation/fonts
+[font]: /docs/configuration/fonts
 [schema]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/schema.json
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [colors]: /docs/configuration/colors

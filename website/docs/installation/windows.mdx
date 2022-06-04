@@ -16,7 +16,7 @@ To display all icons, we recommend the use of a [Nerd Font][fonts].
 :::
 
 :::caution
-When using oh-my-posh inside the WSL, make sure to follow the [linux][linux] installation guide.
+When using oh-my-posh inside the WSL, make sure to follow the [Linux][linux] installation guide.
 :::
 
 <a href="pathname://ms-windows-store://pdp/?productid=XP8K0HKJFRXGCK" target="_blank">
@@ -138,23 +138,23 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object
 }>
 <TabItem value="winget">
 
-You can find the themes winget installs inside the folder indicated by the environment variable `POSH_THEMES_PATH`.
-To use `jandedobbeleer.omp.json` in PowerShell for example, you can refer to it using `$env:POSH_THEMES_PATH\jandedobbeleer.omp.json`
-when setting the prompt using the `--config` flag.
+You can find the themes in the folder indicated by the environment variable `POSH_THEMES_PATH`.
+For example, you can use `oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json"`
+for the prompt initialization in PowerShell.
 
 </TabItem>
 <TabItem value="scoop">
 
-You can find the themes scoop installs inside the `"$(scoop prefix oh-my-posh)\themes\"` folder.
-To use `jandedobbeleer.omp.json` in PowerShell for example, you can refer to it using `"$(scoop prefix oh-my-posh)\themes\jandedobbeleer.omp.json"`
-when setting the prompt using the `--config` flag.
+You can find the themes in the `$(scoop prefix oh-my-posh)\themes` folder.
+For example, you can use `oh-my-posh init pwsh --config "$(scoop prefix oh-my-posh)\themes\jandedobbeleer.omp.json"`
+for the prompt initialization in PowerShell.
 
 </TabItem>
 <TabItem value="manual">
 
-You can find the themes inside the folder indicated by the environment variable `POSH_THEMES_PATH`.
-To use `jandedobbeleer.omp.json` in PowerShell for example, you can refer to it using `$env:POSH_THEMES_PATH\jandedobbeleer.omp.json`
-when setting the prompt using the `--config` flag.
+You can find the themes in the folder indicated by the environment variable `POSH_THEMES_PATH`.
+For example, you can use `oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json"`
+for the prompt initialization in PowerShell.
 
 </TabItem>
 </Tabs>

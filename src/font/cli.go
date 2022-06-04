@@ -212,7 +212,7 @@ func (m *main) View() string {
 	case installFont:
 		return textStyle.Render(fmt.Sprintf("%s Installing %s", m.spinner.View(), m.fontname))
 	case quit:
-		return textStyle.Render("No need to install a new font? That’s cool.")
+		return textStyle.Render("No need to install a new font? That's cool.")
 	case done:
 		return textStyle.Render(fmt.Sprintf("Successfully installed %s 🚀", m.fontname))
 	}

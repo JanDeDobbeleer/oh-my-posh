@@ -15,7 +15,7 @@ var fontCmd = &cobra.Command{
 
 This command is used to install fonts and configure the font in your terminal.
 
-  - install: oh-my-posh install font https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/3270.zip`,
+  - install: oh-my-posh font install https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/3270.zip`,
 	ValidArgs: []string{
 		"install",
 		"configure",

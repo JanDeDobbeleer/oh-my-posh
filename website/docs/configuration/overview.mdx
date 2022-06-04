@@ -5,7 +5,7 @@ sidebar_label: General
 ---
 
 import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem"
+import TabItem from "@theme/TabItem";
 
 Oh My Posh renders your prompt based on the definition of _blocks_ (like Lego) which contain one or more _segments_.
 A really simple configuration could look like this. The default format is `json`, but we also support `toml` and `yaml`.
@@ -59,16 +59,16 @@ starting point to create your own configuration.
 # yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
 final_space: true
 blocks:
-- type: prompt
-  alignment: left
-  segments:
-  - type: path
-    style: powerline
-    powerline_symbol: ""
-    foreground: "#ffffff"
-    background: "#61AFEF"
-    properties:
-      style: folder
+  - type: prompt
+    alignment: left
+    segments:
+      - type: path
+        style: powerline
+        powerline_symbol: ""
+        foreground: "#ffffff"
+        background: "#61AFEF"
+        properties:
+          style: folder
 ```
 
 </TabItem>
@@ -126,7 +126,7 @@ For example, the following is a valid `--config` flag:
 - final_space: `boolean` - when true adds a space at the end of the prompt
 - osc99: `boolean` - when true adds support for OSC9;9; (notify terminal of current working directory)
 - terminal_background: `string` [color][colors] - terminal background color, set to your terminal's background color when
-you notice black elements in Windows Terminal or the Visual Studio Code integrated terminal
+  you notice black elements in Windows Terminal or the Visual Studio Code integrated terminal
 - accent_color: `string` [color][colors] - accent color, used as a fallback when the `accent` [color][accent] is not supported
 
 ### JSON Schema Validation
@@ -175,7 +175,7 @@ While for yaml:
 Converters won't catch this change, so you will need to adjust manually.
 
 [releases]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
-[font]: /docs/configuration/fonts
+[font]: /docs/installation/fonts
 [schema]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/schema.json
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [colors]: /docs/configuration/colors

@@ -1,0 +1,59 @@
+---
+id: fossil
+title: Fossil
+sidebar_label: Fossil
+---
+
+## What
+
+Display [fossil][fossil] information when in a fossil repository.
+
+Local changes can also be displayed which uses the following syntax:
+
+- `+` added
+- `!` conflicted
+- `-` deleted
+- `~` modified
+- `>` moved
+
+## Sample Configuration
+
+```json
+{
+  "type": "fossil",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#193549",
+  "background": "#ffeb3b"
+}
+```
+
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+ \ufb2b {{.Branch}} {{.Status.String}}
+```
+
+:::
+
+### Properties
+
+- `.Status`: `FossilStatus` - changes in the worktree (see below)
+- `.Branch`: `string` - current branch
+
+### FossilStatus
+
+- `.Modified`: `int` - number of edited, updated and changed files
+- `.Deleted`: `int` - number of deleted files
+- `.Added`: `int` - number of added files
+- `.Moved`: `int` - number of renamed files
+- `.Conflicted`: `int` - number of conflicting files
+- `.Changed`: `boolean` - if the status contains changes or not
+- `.HasConflicts`: `boolean` - if the status contains conflicts or not
+- `.String`: `string` - a string representation of the changes above
+
+[fossil]: https://fossil-scm.org
+[templates]: /docs/config-templates
+[hyperlinks]: /docs/config-templates#helper-functions

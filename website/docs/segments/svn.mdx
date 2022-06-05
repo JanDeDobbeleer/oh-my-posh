@@ -1,12 +1,12 @@
 ---
 id: svn
-title: Svn
-sidebar_label: Svn
+title: Subversion
+sidebar_label: Subversion
 ---
 
 ## What
 
-Display svn information when in a svn repository. Also works for subfolders. For maximum compatibility,
+Display subversion information when in a subversion repository. Also works for subfolders. For maximum compatibility,
 make sure your `svn` executable is up-to-date (when branch or status information is incorrect for example).
 
 Local changes can also be displayed which uses the following syntax:
@@ -16,7 +16,6 @@ Local changes can also be displayed which uses the following syntax:
 - `-` deleted
 - `~` modified
 - `>` moved
-- `?` untracked
 
 ## Sample Configuration
 
@@ -28,10 +27,7 @@ Local changes can also be displayed which uses the following syntax:
   "foreground": "#193549",
   "background": "#ffeb3b",
   "properties": {
-    "fetch_status": true,
-    "fetch_stash_count": true,
-    "fetch_upstream_icon": true,
-    "template": " \ue0a0{{ .Branch }} r{{ .BaseRev }} {{ .Working.String }} "
+    "fetch_status": true
   }
 }
 ```
@@ -40,7 +36,7 @@ Local changes can also be displayed which uses the following syntax:
 
 ### Fetching information
 
-As doing multiple svn calls can slow down the prompt experience, we do not fetch information by default.
+As doing multiple [subversion][svn] calls can slow down the prompt experience, we do not fetch information by default.
 You can set the following properties to `true` to enable fetching additional information (and populate the template).
 
 - fetch_status: `boolean` - fetch the local changes - defaults to `false`
@@ -63,14 +59,15 @@ You can set the following properties to `true` to enable fetching additional inf
 
 ### SvnStatus
 
-- `.Untracked`: `int` - number of untracked files
+- `.Modified`: `int` - number of modified files
 - `.Deleted`: `int` - number of deleted files
 - `.Added`: `int` - number of added files
-- `.Tracked`: `int` - number of changed tracked files
+- `.Moved`: `int` - number of changed moved files
 - `.Conflicted`: `int` - number of changed tracked files with conflicts
 - `.Changed`: `boolean` - if the status contains changes or not
 - `.HasConflicts`: `boolean` - if the status contains conflicts or not
 - `.String`: `string` - a string representation of the changes above
 
+[svn]: https://subversion.apache.org
 [templates]: /docs/config-templates
 [hyperlinks]: /docs/config-templates#helper-functions

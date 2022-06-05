@@ -195,6 +195,7 @@
             "dart",
             "exit",
             "executiontime",
+            "flutter",
             "fossil",
             "git",
             "go",
@@ -560,6 +561,37 @@
                     "title": "Always Enabled",
                     "description": "Always show the status",
                     "default": false
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "flutter"
+              }
+            }
+          },
+          "then": {
+            "title": "Flutter Segment",
+            "description": "https://ohmyposh.dev/docs/segments/flutter",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
                   }
                 }
               }

@@ -98,6 +98,7 @@ module.exports = {
         "segments/shell",
         "segments/spotify",
         "segments/strava",
+        "segments/svn",
         "segments/swift",
         "segments/sysinfo",
         "segments/terraform",

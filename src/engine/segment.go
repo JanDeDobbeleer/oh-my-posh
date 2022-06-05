@@ -103,6 +103,8 @@ const (
 	EXIT SegmentType = "exit"
 	// FLUTTER writes the flutter version
 	FLUTTER SegmentType = "flutter"
+	// FOSSIL writes the fossil status
+	FOSSIL SegmentType = "fossil"
 	// GIT represents the git status and information
 	GIT SegmentType = "git"
 	// GOLANG writes which go version is currently active
@@ -268,6 +270,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		EXECUTIONTIME: &segments.Executiontime{},
 		EXIT:          &segments.Exit{},
 		FLUTTER:       &segments.Flutter{},
+		FOSSIL:        &segments.Fossil{},
 		GIT:           &segments.Git{},
 		GOLANG:        &segments.Golang{},
 		HASKELL:       &segments.Haskell{},

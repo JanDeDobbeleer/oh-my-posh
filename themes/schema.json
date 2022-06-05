@@ -195,6 +195,7 @@
             "dart",
             "exit",
             "executiontime",
+            "fossil",
             "git",
             "go",
             "haskell",
@@ -563,6 +564,19 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "fossil"
+              }
+            }
+          },
+          "then": {
+            "title": "Fossil Segment",
+            "description": "https://ohmyposh.dev/docs/segments/fossil"
           }
         },
         {

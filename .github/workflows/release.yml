@@ -68,7 +68,7 @@ jobs:
       - name: Zip theme files 🤐
         run: |
           $compress = @{
-            Path = "../themes/*.omp.json"
+            Path = "../themes/*.omp.*"
             CompressionLevel = "Fastest"
             DestinationPath = "./dist/themes.zip"
           }

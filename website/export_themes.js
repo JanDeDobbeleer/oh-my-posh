@@ -18,6 +18,10 @@ function newThemeConfig(rpromptOffset = 40, cursorPadding = 30, author = "", bgC
   return config;
 }
 
+function isValidTheme(theme) {
+  return theme.endsWith('.omp.json') || theme.endsWith('.omp.toml') || theme.endsWith('.omp.yaml')
+}
+
 let themeConfigOverrrides = new Map();
 themeConfigOverrrides.set('agnoster.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('agnosterplus.omp.json', newThemeConfig(80));
@@ -62,7 +66,7 @@ themeConfigOverrrides.set('zash.omp.json', newThemeConfig(40, 40));
   let links = new Array();
 
   for (const theme of themes) {
-    if (!theme.endsWith('.omp.json')) {
+    if (!isValidTheme(theme)) {
       continue;
     }
     const configPath = path.join(themesConfigDir, theme);
@@ -87,12 +91,11 @@ themeConfigOverrrides.set('zash.omp.json', newThemeConfig(40, 40));
       continue;
     }
 
-    const image = theme.replace('.omp.json', '.png');
+    const themeName = theme.slice(0, -9);
+    const image = themeName + '.png';
     const toPath = path.join(themesStaticDir, image);
 
     await fs.promises.rename(image, toPath);
-
-    const themeName = theme.replace('.omp.json', '');
 
     const themeData = `
 ### [${themeName}]

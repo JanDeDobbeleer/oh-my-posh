@@ -9,8 +9,6 @@ import (
 )
 
 var (
-	fontName string
-
 	// fontCmd can work with fonts
 	fontCmd = &cobra.Command{
 		Use:   "font [install|configure]",
@@ -31,11 +29,11 @@ This command is used to install fonts and configure the font in your terminal.
 			}
 			switch args[0] {
 			case "install":
-				if len(fontName) == 0 {
+				if len(args) == 1 {
 					font.Run()
 					return
 				}
-				err := font.Install(fontName)
+				err := font.Install(args[1])
 				if err != nil {
 					fmt.Println(err.Error())
 					os.Exit(1)
@@ -51,6 +49,5 @@ This command is used to install fonts and configure the font in your terminal.
 )
 
 func init() { // nolint:gochecknoinits
-	fontCmd.Flags().StringVarP(&fontName, "font", "f", "", "the font name to install")
 	rootCmd.AddCommand(fontCmd)
 }

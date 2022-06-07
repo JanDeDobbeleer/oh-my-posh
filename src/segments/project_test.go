@@ -2,9 +2,9 @@ package segments
 
 import (
 	"io/fs"
-	"io/ioutil"
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
+	"os"
 	"testing"
 
 	"github.com/alecthomas/assert"
@@ -256,7 +256,7 @@ func TestNuspecPackage(t *testing.T) {
 				name: tc.FileName,
 			},
 		})
-		content, _ := ioutil.ReadFile(tc.FileName)
+		content, _ := os.ReadFile(tc.FileName)
 		env.On("FileContent", tc.FileName).Return(string(content))
 		pkg := &Project{}
 		pkg.Init(properties.Map{}, env)

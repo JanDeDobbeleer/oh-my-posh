@@ -2,7 +2,7 @@ package environment
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -27,7 +27,7 @@ func (fc *fileCache) Init(cachePath string) {
 	fc.cache = newConcurrentMap()
 	fc.cachePath = cachePath
 	cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
-	content, err := ioutil.ReadFile(cacheFilePath)
+	content, err := os.ReadFile(cacheFilePath)
 	if err != nil {
 		return
 	}
@@ -49,7 +49,7 @@ func (fc *fileCache) Close() {
 	cache := fc.cache.list()
 	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
 		cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
-		_ = ioutil.WriteFile(cacheFilePath, dump, 0644)
+		_ = os.WriteFile(cacheFilePath, dump, 0644)
 	}
 }
 

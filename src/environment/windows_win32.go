@@ -112,25 +112,6 @@ func queryWindowTitles(processName, windowTitleRegex string) (string, error) {
 	return title, nil
 }
 
-// Return the windows handles corresponding to the names of the root registry keys.
-// A returned value of 0 means there was no match.
-func getHKEYHandleFromAbbrString(abbr string) windows.Handle {
-	switch abbr {
-	case "HKCR", "HKEY_CLASSES_ROOT":
-		return windows.HKEY_CLASSES_ROOT
-	case "HKCC", "HKEY_CURRENT_CONFIG":
-		return windows.HKEY_CURRENT_CONFIG
-	case "HKCU", "HKEY_CURRENT_USER":
-		return windows.HKEY_CURRENT_USER
-	case "HKLM", "HKEY_LOCAL_MACHINE":
-		return windows.HKEY_LOCAL_MACHINE
-	case "HKU", "HKEY_USERS":
-		return windows.HKEY_USERS
-	}
-
-	return 0
-}
-
 type REPARSE_DATA_BUFFER struct { // nolint: revive
 	ReparseTag        uint32
 	ReparseDataLength uint16

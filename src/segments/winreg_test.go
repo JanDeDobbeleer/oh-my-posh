@@ -29,7 +29,7 @@ func TestWinReg(t *testing.T) {
 		{
 			CaseDescription: "Value",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.RegString, Str: "xbox"},
+			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.STRING, String: "xbox"},
 			ExpectedSuccess: true,
 			ExpectedValue:   "xbox",
 		},
@@ -44,7 +44,7 @@ func TestWinReg(t *testing.T) {
 		{
 			CaseDescription: "Empty string value (no error) should display empty string even in presence of fallback",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.RegString, Str: ""},
+			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.STRING, String: ""},
 			Fallback:        "anaconda",
 			ExpectedSuccess: true,
 			ExpectedValue:   "",
@@ -52,23 +52,9 @@ func TestWinReg(t *testing.T) {
 		{
 			CaseDescription: "Empty string value (no error) should display empty string",
 			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.RegString, Str: ""},
+			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.STRING, String: ""},
 			ExpectedSuccess: true,
 			ExpectedValue:   "",
-		},
-		{
-			CaseDescription: "DWORD value",
-			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.RegDword, Dword: 0xdeadbeef},
-			ExpectedSuccess: true,
-			ExpectedValue:   "0xDEADBEEF",
-		},
-		{
-			CaseDescription: "QWORD value",
-			Path:            "HKLM\\Software\\Microsoft\\Windows NT\\CurrentVersion\\InstallTime",
-			getWRKVOutput:   &environment.WindowsRegistryValue{ValueType: environment.RegQword, Qword: 0x7eb199e57fa1afe1},
-			ExpectedSuccess: true,
-			ExpectedValue:   "0x7EB199E57FA1AFE1",
 		},
 	}
 

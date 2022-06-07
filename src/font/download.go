@@ -35,7 +35,6 @@ func isZipFile(data []byte) bool {
 }
 
 func getRemoteFile(location string) (data []byte, err error) {
-	print("Downloading %s", location)
 	var client = http.Client{}
 
 	resp, err := client.Get(location)

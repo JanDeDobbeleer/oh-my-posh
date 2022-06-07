@@ -5,11 +5,21 @@ package font
 import (
 	"archive/zip"
 	"bytes"
+	"fmt"
 	"io"
 	"path"
 	"runtime"
 	"strings"
 )
+
+func Install(font string) error {
+	location := fmt.Sprintf("https://github.com/ryanoasis/nerd-fonts/releases/latest/download/%s.zip", font)
+	zipFile, err := Download(location)
+	if err != nil {
+		return err
+	}
+	return InstallZIP(zipFile)
+}
 
 func InstallZIP(data []byte) (err error) {
 	bytesReader := bytes.NewReader(data)

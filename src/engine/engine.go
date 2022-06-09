@@ -5,6 +5,7 @@ import (
 	"oh-my-posh/color"
 	"oh-my-posh/console"
 	"oh-my-posh/environment"
+	"oh-my-posh/regex"
 	"oh-my-posh/shell"
 	"oh-my-posh/template"
 	"strings"
@@ -37,7 +38,16 @@ func (e *Engine) writeANSI(text string) {
 }
 
 func (e *Engine) string() string {
-	return e.console.String()
+	ansiSequence := e.console.String()
+	// Contract consecutive quoted ANSI sequences as
+	// %{...%}%{...%} -> %{......%} (zsh) or \[...\]\[...\] -> \[......\] (bash)
+	switch e.Env.Shell() {
+	case shell.ZSH:
+		ansiSequence = regex.ReplaceAllString(`((?:^|[^%])(?:%%)*)%\}%\{`, ansiSequence, "$1")
+	case shell.BASH:
+		ansiSequence = regex.ReplaceAllString(`((?:^|[^\\])(?:\\\\)*)\\\]\\\[`, ansiSequence, "$1")
+	}
+	return ansiSequence
 }
 
 func (e *Engine) canWriteRPrompt() bool {

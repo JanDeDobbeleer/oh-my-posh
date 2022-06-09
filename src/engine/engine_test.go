@@ -43,6 +43,57 @@ func TestCanWriteRPrompt(t *testing.T) {
 	}
 }
 
+func createEngineForShell(shellName string) *Engine {
+	env := &environment.ShellEnvironment{
+		CmdFlags: &environment.Flags{
+			Shell:  shellName,
+		},
+	}
+	env.Init()
+	defer env.Close()
+
+	cfg := LoadConfig(env)
+	defer testClearDefaultConfig()
+
+	ansi := &color.Ansi{}
+	ansi.Init(env.Shell())
+	writerColors := cfg.MakeColors(env)
+	writer := &color.AnsiWriter{
+		Ansi:               ansi,
+		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
+		AnsiColors:         writerColors,
+	}
+	consoleTitle := &console.Title{
+		Env:      env,
+		Ansi:     ansi,
+		Template: cfg.ConsoleTitleTemplate,
+	}
+	engine := &Engine{
+		Config:       cfg,
+		Env:          env,
+		Writer:       writer,
+		ConsoleTitle: consoleTitle,
+		Ansi:         ansi,
+	}
+	return engine
+}
+
+func TestContractionOfQuotedAnsiSequences(t *testing.T) {
+	e := createEngineForShell(shell.BASH)
+	e.write(e.Ansi.CarriageForward())
+	e.write(e.Ansi.GetCursorForRightWrite(10, 0))
+	assert.Equal(t, "\\[\x1b[1000C\\]", e.Ansi.CarriageForward())
+	assert.Equal(t, "\\[\x1b[10D\\]", e.Ansi.GetCursorForRightWrite(10, 0))
+	assert.Equal(t, "\\[\x1b[1000C\x1b[10D\\]", e.string())
+
+	e = createEngineForShell(shell.ZSH)
+	e.write(e.Ansi.CarriageForward())
+	e.write(e.Ansi.GetCursorForRightWrite(10, 0))
+	assert.Equal(t, "%{\x1b[1000C%}", e.Ansi.CarriageForward())
+	assert.Equal(t, "%{\x1b[10D%}", e.Ansi.GetCursorForRightWrite(10, 0))
+	assert.Equal(t, "%{\x1b[1000C\x1b[10D%}", e.string())
+}
+
 func BenchmarkEngineRender(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		engineRender()

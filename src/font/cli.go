@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -124,9 +125,11 @@ func installFontZIP(zipFile []byte) {
 func (m *main) Init() tea.Cmd {
 	if len(m.fontname) != 0 {
 		m.state = downloadFont
-		url := fmt.Sprintf("https://github.com/ryanoasis/nerd-fonts/releases/latest/download/%s.zip", m.fontname)
+		if !strings.HasPrefix(m.fontname, "https") {
+			m.fontname = fmt.Sprintf("https://github.com/ryanoasis/nerd-fonts/releases/latest/download/%s.zip", m.fontname)
+		}
 		defer func() {
-			go downloadFontZip(url)
+			go downloadFontZip(m.fontname)
 		}()
 		m.spinner.Spinner = spinner.Globe
 		return m.spinner.Tick

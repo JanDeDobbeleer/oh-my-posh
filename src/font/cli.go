@@ -122,6 +122,15 @@ func installFontZIP(zipFile []byte) {
 }
 
 func (m *main) Init() tea.Cmd {
+	if len(m.fontname) != 0 {
+		m.state = downloadFont
+		url := fmt.Sprintf("https://github.com/ryanoasis/nerd-fonts/releases/latest/download/%s.zip", m.fontname)
+		defer func() {
+			go downloadFontZip(url)
+		}()
+		m.spinner.Spinner = spinner.Globe
+		return m.spinner.Tick
+	}
 	defer func() {
 		go getFontsList()
 	}()
@@ -219,8 +228,11 @@ func (m *main) View() string {
 	return ""
 }
 
-func Run() {
-	program = tea.NewProgram(&main{})
+func Run(font string) {
+	main := &main{
+		fontname: font,
+	}
+	program = tea.NewProgram(main)
 	if err := program.Start(); err != nil {
 		print("Error running program: %v", err)
 		os.Exit(1)

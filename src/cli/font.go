@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"oh-my-posh/font"
-	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -17,7 +16,7 @@ var (
 
 This command is used to install fonts and configure the font in your terminal.
 
-  - install: oh-my-posh font install https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/3270.zip`,
+  - install: oh-my-posh font install 3270`,
 		ValidArgs: []string{
 			"install",
 			"configure",
@@ -29,15 +28,11 @@ This command is used to install fonts and configure the font in your terminal.
 			}
 			switch args[0] {
 			case "install":
-				if len(args) == 1 {
-					font.Run()
-					return
+				var fontName string
+				if len(args) > 1 {
+					fontName = args[1]
 				}
-				err := font.Install(args[1])
-				if err != nil {
-					fmt.Println(err.Error())
-					os.Exit(1)
-				}
+				font.Run(fontName)
 				return
 			case "configure":
 				fmt.Println("not implemented")

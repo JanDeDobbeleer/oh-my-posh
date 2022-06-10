@@ -1246,6 +1246,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "bhagerty",
+      "name": "bhagerty",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7828454?v=4",
+      "profile": "https://github.com/bhagerty",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

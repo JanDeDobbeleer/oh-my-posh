@@ -10,7 +10,8 @@ func (ansi *Ansi) MeasureText(text string) int {
 	// skip strings with ANSI
 	if !strings.Contains(text, "\x1b") {
 		text = ansi.TrimEscapeSequences(text)
-		return utf8.RuneCountInString(text)
+		length := utf8.RuneCountInString(text)
+		return length
 	}
 	if strings.Contains(text, "\x1b]8;;") {
 		matches := regex.FindAllNamedRegexMatch(ansi.hyperlinkRegex, text)
@@ -20,7 +21,8 @@ func (ansi *Ansi) MeasureText(text string) int {
 	}
 	text = ansi.TrimAnsi(text)
 	text = ansi.TrimEscapeSequences(text)
-	return utf8.RuneCountInString(text)
+	length := utf8.RuneCountInString(text)
+	return length
 }
 
 func (ansi *Ansi) TrimAnsi(text string) string {

@@ -34,10 +34,11 @@ func TestCanWriteRPrompt(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalWidthError)
 		engine := &Engine{
-			Env: env,
+			Env:               env,
+			rpromptLength:     tc.RPromptLength,
+			currentLineLength: tc.PromptLength,
+			rprompt:           "hello",
 		}
-		engine.rpromptLength = tc.RPromptLength
-		engine.currentLineLength = tc.PromptLength
 		got := engine.canWriteRPrompt()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}

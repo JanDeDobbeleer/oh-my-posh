@@ -128,7 +128,7 @@ func (a *Ansi) Init(shellName string) {
 	}
 }
 
-func (a *Ansi) InitPlain(shellName string) {
+func (a *Ansi) InitPlain() {
 	a.Init(shell.PLAIN)
 }
 

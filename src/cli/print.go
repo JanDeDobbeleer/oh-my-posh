@@ -68,7 +68,7 @@ var printCmd = &cobra.Command{
 		ansi.Init(env.Shell())
 		var writer color.Writer
 		if plain {
-			ansi.InitPlain(env.Shell())
+			ansi.InitPlain()
 			writer = &color.PlainWriter{
 				Ansi: ansi,
 			}

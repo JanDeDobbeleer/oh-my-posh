@@ -1255,6 +1255,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "CodyScavenger",
+      "name": "Cody Scavenger",
+      "avatar_url": "https://avatars.githubusercontent.com/u/94334877?v=4",
+      "profile": "https://github.com/CodyScavenger",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

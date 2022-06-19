@@ -8,14 +8,30 @@ Param
     $Version
 )
 
+$sign = $false
+$pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx"
+$signtool = 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22000.0/x86/signtool.exe'
+if ($env:CERTIFICATE -ne "") {
+    # create a base64 encoded value of your certificate using
+    # [convert]::ToBase64String((Get-Content -path "certificate.pfx" -AsByteStream))
+    # requires Windows Dev Kit 10.0.22000.0
+    $encodedBytes = [System.Convert]::FromBase64String($env:CERTIFICATE)
+    Set-Content -Path $pfxPath -Value $encodedBytes -AsByteStream
+    $sign = $true
+}
+
 New-Item -Path "." -Name "bin" -ItemType Directory
 Copy-Item -Path "../../themes" -Destination "./bin" -Recurse
 
-# download the files and pack them
-@{file = "posh-windows-$Architecture.exe"; name = "oh-my-posh.exe" } | ForEach-Object -Process {
-    $download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($_.file)"
-    Invoke-WebRequest $download -Out "./bin/$($_.name)"
+# download the file
+$file = "posh-windows-$Architecture.exe"
+$name = "oh-my-posh.exe"
+$download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($file)"
+Invoke-WebRequest $download -Out "./bin/$($name)"
+if ($sign) {
+    & $signtool sign /f $pfxPath /p $env:CERTIFICATE_PASSWORD /t http://timestamp.digicert.com "./bin/$($name)"
 }
+
 # license
 Invoke-WebRequest "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v$Version/COPYING" -Out "./bin/COPYING.txt"
 $content = Get-Content '.\oh-my-posh.iss' -Raw
@@ -25,6 +41,10 @@ $content | Out-File -Encoding 'UTF8' $ISSName
 # package content
 $installer = "install-$Architecture"
 ISCC.exe /F$installer $ISSName
+if ($sign) {
+    & $signtool sign /f $pfxPath /p $env:CERTIFICATE_PASSWORD /t http://timestamp.digicert.com "Output/$installer.exe"
+    Remove-Item -Path $pfxPath
+}
 # get hash
 $zipHash = Get-FileHash "Output/$installer.exe" -Algorithm SHA256
 $zipHash.Hash | Out-File -Encoding 'UTF8' "Output/$installer.exe.sha256"

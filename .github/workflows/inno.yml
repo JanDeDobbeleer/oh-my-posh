@@ -18,6 +18,9 @@ jobs:
       uses: actions/checkout@v2
     - name: Build installer 📦
       id: build
+      env:
+        CERTIFICATE: ${{ secrets.CERTIFICATE }}
+        CERTIFICATE_PASSWORD: ${{ secrets.CERTIFICATE_PASSWORD }}
       run: |
         $version = $env:GITHUB_REF.TrimStart("refs/tags/v")
         ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version

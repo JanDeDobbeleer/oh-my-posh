@@ -97,13 +97,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Enable-PoshTooltips {
-        Set-PSReadlineKeyHandler -Key SpaceBar -ScriptBlock {
+        Set-PSReadLineKeyHandler -Key SpaceBar -ScriptBlock {
             [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
             $position = $host.UI.RawUI.CursorPosition
             $cleanPWD, $cleanPSWD = Get-PoshContext
             $command = $null
-            $cursor = $null
-            [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$cursor)
+            [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
             $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--pwd=$cleanPWD", "--shell=::SHELL::", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position
@@ -111,12 +110,16 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Enable-PoshTransientPrompt {
-        Set-PSReadlineKeyHandler -Key Enter -ScriptBlock {
-            $script:TransientPrompt = $true
+        Set-PSReadLineKeyHandler -Key Enter -ScriptBlock {
             $previousOutputEncoding = [Console]::OutputEncoding
-            [Console]::OutputEncoding = [Text.Encoding]::UTF8
             try {
-                [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+                $parseErrors = $null
+                [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
+                if ($parseErrors.Count -eq 0) {
+                    $script:TransientPrompt = $true
+                    [Console]::OutputEncoding = [Text.Encoding]::UTF8
+                    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+                }
             } finally {
                 [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
                 [Console]::OutputEncoding = $previousOutputEncoding
@@ -297,7 +300,7 @@ Example:
         # make sure PSReadLine knows we have a multiline prompt
         $extraLines = ($standardOut | Measure-Object -Line).Lines - 1
         if ($extraLines -gt 0) {
-            Set-PSReadlineOption -ExtraPromptLineCount $extraLines
+            Set-PSReadLineOption -ExtraPromptLineCount $extraLines
         }
         # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n
         $standardOut -join "`n"

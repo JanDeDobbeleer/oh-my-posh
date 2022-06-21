@@ -1,0 +1,126 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
+      {
+        "alignment": "left",
+        "newline": true,
+        "segments": [
+          {
+            "foreground": "#BBC4B9",
+            "leading_diamond":"<#BFA8BF>~</> ",
+            "properties": {
+              "display_host": true
+            },
+            "style": "diamond",
+            "template": "{{ .UserName }} ",
+            "type": "session"
+          },
+          {
+            "foreground": "#BFA8BF",
+            "properties": {
+              "branch_icon": "\ue725 ",
+              "fetch_stash_count": true,
+              "fetch_status": true,
+              "fetch_upstream_icon": true,
+              "fetch_worktree_count": true
+            },
+            "style": "diamond",
+            "template": "<#fff>{{ .UpstreamIcon }}</>{{ .HEAD }}",
+            "type": "git"
+          },
+          {
+            "foreground": "#BFA8BF",
+            "style": "powerline",
+            "template": " <#fff>\ufcb5</> {{ .Name }} ",
+            "type": "shell"
+          }
+        ],
+        "type": "prompt"
+      },
+      {
+        "alignment": "right",
+        "segments": [
+          {
+            "foreground": "#fff",
+            "style": "plain",
+            "type": "text"
+          },
+          {
+            "foreground": "#fff",
+            "properties": {
+              "style": "dallas",
+              "threshold": 0
+            },
+            "style": "diamond",
+            "template": " <#BBC4B9>{{ .FormattedMs }}s</> <#fff>\uf6dc</>",
+            "type": "executiontime"
+          },
+          {
+            "foreground": "#BBC4B9",
+            "properties": {
+              "time_format": "Monday <#fff>at</> 3:04 PM"
+            },
+            "style": "diamond",
+            "template": " {{ .CurrentDate | date .Format }} ",
+            "type": "time"
+          },
+          {
+            "properties": {
+              "root_icon": "\uf292 "
+            },
+            "style": "diamond",
+            "template": " \uf0e7",
+            "type": "root"
+          },
+          {
+            "foreground": "#BBC4B9",
+            "style": "diamond",
+            "template": "<#fff>\uf6dc \ue718</> {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
+            "type": "node"
+          }
+        ],
+        "type": "prompt"
+      },
+      {
+        "alignment": "left",
+        "newline": true,
+        "segments": [
+          {
+            "foreground": "#B6D6F2",
+            "leading_diamond": "<#BFA8BF>~</>",
+            "properties": {
+              "folder_icon": "\u002F",
+              "folder_separator_icon": " \u002F ",
+              "home_icon": "home",
+              "style": "agnoster_full"
+            },
+            "style": "diamond",
+            "template": " \ue5ff {{ .Path }}",
+            "trailing_diamond": "",
+            "type": "path"
+          },
+          {
+            "foreground": "#BFA8BF",
+            "foreground_templates": [
+              "{{ if gt .Code 0 }}#fff{{ end }}"
+            ],
+            "properties": {
+              "always_enabled": true
+            },
+            "style": "plain",
+            "template": " \u007E ",
+            "type": "exit"
+          }
+        ],
+        "type": "prompt"
+      }
+    ],
+    "console_title_template": "{{ .Folder }}",
+    "osc99": true,
+    "transient_prompt": {
+      "background": "transparent",
+      "foreground": "#FEF5ED",
+      "template": "\ue285 "
+    },
+    "version": 2
+  }

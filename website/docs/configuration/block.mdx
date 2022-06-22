@@ -80,10 +80,29 @@ Tells the engine what to do with the block. There are two options:
 - `prompt` renders one or more segments
 - `rprompt` renders one or more segments aligned to the right of the cursor. Only one `rprompt` block is permitted.
 Supported on zsh, bash, PowerShell, cmd and fish.
+- `newline` renders your cursor in a new line, useful if your custom prompt is full of segments and you aim at readabilty. 
+
+:::info
+Example given shows a segment with just this property as the last segment in the `blocks` list:
+
+```json
+        {
+            "type": "newline"
+        }
+```
+:::
+
+:::tip
+Do not confuse this `"type": "newline"` argument with the property `"newline": true`. The former is to append a new line (after a segment or prompt), the later is to prepend a new line (before a segment or prompt)
+:::
 
 ### Newline
 
 Start the block on a new line - defaults to `false`.
+
+:::info
+See TIP in [Type](#type 'feeling lazy, uh?') section above.
+:::
 
 ### Alignment
 

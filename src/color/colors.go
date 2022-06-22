@@ -3,6 +3,7 @@ package color
 import (
 	"fmt"
 	"oh-my-posh/environment"
+	"strconv"
 
 	"github.com/gookit/color"
 )
@@ -78,10 +79,14 @@ func (d *DefaultColors) AnsiColorFromString(colorString string, isBackground boo
 		return colorFromName
 	}
 	style := color.HEX(colorString, isBackground)
-	if style.IsEmpty() {
-		return emptyAnsiColor
+	if !style.IsEmpty() {
+		return AnsiColor(style.String())
 	}
-	return AnsiColor(style.String())
+	if colorInt, err := strconv.ParseInt(colorString, 10, 8); err == nil {
+		c := color.C256(uint8(colorInt), isBackground)
+		return AnsiColor(c.String())
+	}
+	return emptyAnsiColor
 }
 
 // getAnsiColorFromName returns the color code for a given color name if the name is

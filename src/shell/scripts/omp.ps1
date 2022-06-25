@@ -235,7 +235,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         } else {
             $themes | ForEach-Object -Process {
                 Write-Host "Theme: $(Get-FileHyperlink -uri $_.FullName -Name ($_.BaseName -replace '\.omp$', ''))`n"
-                @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--config=$($_.FullName)", "--pwd=$PWD", "--shell=pwsh"))
+                @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--config=$($_.FullName)", "--pwd=$PWD", "--shell=::SHELL::"))
                 Write-Host "`n"
             }
         }

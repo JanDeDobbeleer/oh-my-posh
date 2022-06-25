@@ -15,8 +15,6 @@ type Az struct {
 
 	AzureSubscription
 	Origin string
-
-	configDir string
 }
 
 const (
@@ -103,11 +101,6 @@ func (a *Az) Init(props properties.Properties, env environment.Environment) {
 
 func (a *Az) Enabled() bool {
 	source := a.props.GetString(Source, firstMatch)
-	var err error
-	a.configDir, err = a.ConfigDir()
-	if err != nil {
-		return false
-	}
 	switch source {
 	case firstMatch:
 		return a.getCLISubscription() || a.getModuleSubscription()
@@ -127,7 +120,11 @@ func (a *Az) FileContentWithoutBom(file string) string {
 
 func (a *Az) getCLISubscription() bool {
 	var content string
-	profile := filepath.Join(a.configDir, "azureProfile.json")
+	configDir, err := a.ConfigDir(true)
+	if err != nil {
+		return false
+	}
+	profile := filepath.Join(configDir, "azureProfile.json")
 	if content = a.FileContentWithoutBom(profile); len(content) == 0 {
 		return false
 	}
@@ -147,8 +144,12 @@ func (a *Az) getCLISubscription() bool {
 
 func (a *Az) getModuleSubscription() bool {
 	var content string
+	configDir, err := a.ConfigDir(false)
+	if err != nil {
+		return false
+	}
 	profiles := []string{
-		filepath.Join(a.configDir, "AzureRmContext.json"),
+		filepath.Join(configDir, "AzureRmContext.json"),
 	}
 	for _, profile := range profiles {
 		if content = a.FileContentWithoutBom(profile); len(content) != 0 {
@@ -180,11 +181,13 @@ func (a *Az) getModuleSubscription() bool {
 	return true
 }
 
-func (a *Az) ConfigDir() (string, error) {
+func (a *Az) ConfigDir(cli bool) (string, error) {
 	configDirs := []string{
-		a.env.Getenv("AZURE_CONFIG_DIR"),
 		filepath.Join(a.env.Home(), ".azure"),
 		filepath.Join(a.env.Home(), ".Azure"),
+	}
+	if cli {
+		configDirs = append([]string{a.env.Getenv("AZURE_CONFIG_DIR")}, configDirs...)
 	}
 	for _, dir := range configDirs {
 		if len(dir) != 0 && a.env.HasFolder(dir) {

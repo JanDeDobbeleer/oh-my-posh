@@ -40,8 +40,8 @@ func (e *Engine) string() string {
 	return e.console.String()
 }
 
-func (e *Engine) canWriteRPrompt() bool {
-	if e.rprompt == "" || e.Plain {
+func (e *Engine) canWriteRPrompt(rprompt bool) bool {
+	if rprompt && (e.rprompt == "" || e.Plain) {
 		return false
 	}
 	consoleWidth, err := e.Env.TerminalWidth()
@@ -55,7 +55,10 @@ func (e *Engine) canWriteRPrompt() bool {
 		overflow := promptWidth % consoleWidth
 		availableSpace = consoleWidth - overflow
 	}
-	promptBreathingRoom := 30
+	promptBreathingRoom := 5
+	if rprompt {
+		promptBreathingRoom = 30
+	}
 	canWrite := (availableSpace - e.rpromptLength) >= promptBreathingRoom
 	return canWrite
 }
@@ -107,6 +110,15 @@ func (e *Engine) shouldFill(block *Block, length int) (string, bool) {
 }
 
 func (e *Engine) renderBlock(block *Block) {
+	defer func() {
+		// Due to a bug in Powershell, the end of the line needs to be cleared.
+		// If this doesn't happen, the portion after the prompt gets colored in the background
+		// color of the line above the new input line. Clearing the line fixes this,
+		// but can hopefully one day be removed when this is resolved natively.
+		if e.Env.Shell() == shell.PWSH || e.Env.Shell() == shell.PWSH5 {
+			e.writeANSI(e.Ansi.ClearAfter())
+		}
+	}()
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
 	if e.Env.Shell() == shell.BASH && (block.Type == RPrompt || block.Alignment == Right) {
@@ -135,20 +147,34 @@ func (e *Engine) renderBlock(block *Block) {
 			text, length := block.RenderSegments()
 			e.currentLineLength += length
 			e.write(text)
-			break
+			return
 		}
 
 		if block.Alignment != Right {
-			break
+			return
 		}
 
 		text, length := block.RenderSegments()
-		padText, hasPadText := e.shouldFill(block, length)
-		if hasPadText {
+		e.rpromptLength = length
+
+		if !e.canWriteRPrompt(false) {
+			switch block.Overflow {
+			case Break:
+				e.newline()
+			case Hide:
+				// make sure to fill if needed
+				if padText, OK := e.shouldFill(block, 0); OK {
+					e.write(padText)
+				}
+				return
+			}
+		}
+
+		if padText, OK := e.shouldFill(block, length); OK {
 			// in this case we can print plain
 			e.write(padText)
 			e.write(text)
-			break
+			return
 		}
 		// this can contain ANSI escape sequences
 		ansi := e.Ansi
@@ -166,13 +192,6 @@ func (e *Engine) renderBlock(block *Block) {
 		e.write(prompt)
 	case RPrompt:
 		e.rprompt, e.rpromptLength = block.RenderSegments()
-	}
-	// Due to a bug in Powershell, the end of the line needs to be cleared.
-	// If this doesn't happen, the portion after the prompt gets colored in the background
-	// color of the line above the new input line. Clearing the line fixes this,
-	// but can hopefully one day be removed when this is resolved natively.
-	if e.Env.Shell() == shell.PWSH || e.Env.Shell() == shell.PWSH5 {
-		e.writeANSI(e.Ansi.ClearAfter())
 	}
 }
 
@@ -231,7 +250,7 @@ func (e *Engine) print() string {
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
 	case shell.PWSH, shell.PWSH5, shell.PLAIN, shell.NU:
-		if !e.canWriteRPrompt() {
+		if !e.canWriteRPrompt(true) {
 			break
 		}
 		e.write(e.Ansi.SaveCursorPosition())
@@ -240,7 +259,7 @@ func (e *Engine) print() string {
 		e.write(e.rprompt)
 		e.write(e.Ansi.RestoreCursorPosition())
 	case shell.BASH:
-		if !e.canWriteRPrompt() {
+		if !e.canWriteRPrompt(true) {
 			break
 		}
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly

@@ -14,6 +14,9 @@ type BlockType string
 // BlockAlignment aligment of a Block
 type BlockAlignment string
 
+// Overflow defines how to handle a right block that overflows with the previous block
+type Overflow string
+
 const (
 	// Prompt writes one or more Segments
 	Prompt BlockType = "prompt"
@@ -25,6 +28,10 @@ const (
 	Left BlockAlignment = "left"
 	// Right aligns right
 	Right BlockAlignment = "right"
+	// Break adds a line break
+	Break Overflow = "break"
+	// Hide hides the block
+	Hide Overflow = "hide"
 )
 
 // Block defines a part of the prompt with optional segments
@@ -36,6 +43,7 @@ type Block struct {
 	Segments         []*Segment     `json:"segments,omitempty"`
 	Newline          bool           `json:"newline,omitempty"`
 	Filler           string         `json:"filler,omitempty"`
+	Overflow         Overflow       `json:"overflow,omitempty"`
 
 	env                   environment.Environment
 	writer                color.Writer

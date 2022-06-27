@@ -71,6 +71,7 @@ segments = [
 - newline: `boolean`
 - alignment: `left` | `right`
 - filler: `string`
+- overflow: `break` | `hide`
 - segments: `array` of one or more `segments`
 
 ### Type
@@ -99,6 +100,11 @@ to be repeated to this property. Add this property to the _right_ aligned block.
 "alignment": "right",
 "filler": "."
 ```
+
+### Overflow
+
+When the right aligned block is so long it will overflow the left aligned block, the engine will either
+break the block or hide it based on the setting. By default it is printed as is on the same line.
 
 ### Segments
 

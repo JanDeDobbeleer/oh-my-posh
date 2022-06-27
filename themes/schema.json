@@ -125,6 +125,29 @@
             "required": ["type", "segments"],
             "title": "RPrompt definition, contains 1 or more segments to render to the right of the cursor"
           }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "prompt"
+              },
+              "alignment": {
+                "const": "right"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "type": {
+                "type": "string",
+                "title": "Block overflow",
+                "description": "https://ohmyposh.dev/docs/configuration/block#overflow",
+                "enum": ["break", "hide"],
+                "default": ""
+              }
+            }
+          }
         }
       ],
       "properties": {

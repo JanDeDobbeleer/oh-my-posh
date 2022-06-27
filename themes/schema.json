@@ -139,7 +139,7 @@
           },
           "then": {
             "properties": {
-              "type": {
+              "overflow": {
                 "type": "string",
                 "title": "Block overflow",
                 "description": "https://ohmyposh.dev/docs/configuration/block#overflow",

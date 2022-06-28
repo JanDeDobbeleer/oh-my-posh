@@ -66,6 +66,14 @@ Once added, reload your profile for the changes to take effect.
 . $PROFILE
 ```
 
+:::tip
+To add command autocompletion to oh-my-posh, reopen your PowerShell profile and add the next line.
+
+```powershell
+oh-my-posh completion powershell | Invoke-Expression
+```
+:::
+
 </TabItem>
 <TabItem value="cmd">
 
@@ -95,7 +103,7 @@ Add the following to `~/.zshrc`:
 eval "$(oh-my-posh init zsh)"
 ```
 
-:::tip
+:::info
 As the standard terminal has issues displaying the ANSI characters correctly, you might want to skip loading just for that terminal and instead of the line above, place this in your `~/.zshrc`:
 
 ```bash
@@ -112,6 +120,14 @@ Once added, reload your profile for the changes to take effect.
 ```bash
 source ~/.zshrc
 ```
+
+:::tip
+To add command autocompletion to oh-my-posh, add the next line to `~/.zshrc`.
+
+```bash
+eval "$(oh-my-posh completion zsh)"
+```
+:::
 
 </TabItem>
 <TabItem value="bash">
@@ -134,6 +150,14 @@ Or, when using `~/.profile`.
 . ~/.profile
 ```
 
+:::tip
+To add command autocompletion to oh-my-posh, add the next line to your profile file.
+
+```bash
+eval "$(oh-my-posh completion bash)"
+```
+:::
+
 </TabItem>
 <TabItem value="fish">
 
@@ -152,6 +176,14 @@ Once added, reload your config for the changes to take effect.
 ```bash
 exec fish
 ```
+
+:::tip
+To add command autocompletion to oh-my-posh, initialize in `~/.config/fish/config.fish`:
+
+```bash
+oh-my-posh completion fish | source
+```
+:::
 
 </TabItem>
 <TabItem value="nu">

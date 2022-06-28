@@ -6,7 +6,7 @@
       "segments": [
         {
           "background": "#6272a4",
-          "foreground": "#ffffff",
+          "foreground": "#f8f8f2",
           "leading_diamond": "\ue0b6",
           "style": "diamond",
           "template": "{{ .UserName }} ",
@@ -14,7 +14,7 @@
         },
         {
           "background": "#bd93f9",
-          "foreground": "#ffffff",
+          "foreground": "#f8f8f2",
           "powerline_symbol": "\ue0b0",
           "properties": {
             "style": "folder"
@@ -25,7 +25,7 @@
         },
         {
           "background": "#ffb86c",
-          "foreground": "#ffffff",
+          "foreground": "#f8f8f2",
           "powerline_symbol": "\ue0b0",
           "properties": {
             "branch_icon": "",
@@ -34,12 +34,12 @@
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) ",
+          "template": " \ue725 ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) ",
           "type": "git"
         },
         {
           "background": "#8be9fd",
-          "foreground": "#ffffff",
+          "foreground": "#f8f8f2",
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
           "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
@@ -47,7 +47,7 @@
         },
         {
           "background": "#ff79c6",
-          "foreground": "#ffffff",
+          "foreground": "#f8f8f2",
           "properties": {
             "time_format": "15:04"
           },
@@ -58,6 +58,22 @@
         }
       ],
       "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "#f1fa8c",
+          "foreground": "#282a36",
+          "invert_powerline": true,
+          "leading_diamond": "\ue0b2",
+          "style": "diamond",
+          "template": " \ue7ad {{.Profile}}{{if .Region}}@{{.Region}}{{end}}",
+          "trailing_diamond": "\ue0b4",
+          "type": "aws"
+        }
+      ],
+      "type": "rprompt"
     }
   ],
   "final_space": true,

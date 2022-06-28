@@ -39,7 +39,7 @@ func TestCanWriteRPrompt(t *testing.T) {
 			currentLineLength: tc.PromptLength,
 			rprompt:           "hello",
 		}
-		got := engine.canWriteRPrompt()
+		got := engine.canWriteRPrompt(true)
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

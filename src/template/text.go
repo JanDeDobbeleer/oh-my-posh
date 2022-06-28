@@ -77,13 +77,16 @@ func (t *Text) cleanTemplate() {
 		*knownVariables = append(*knownVariables, splitted[0])
 		return splitted[0], true
 	}
+
 	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "ShellVersion", "UserName", "HostName", "Env", "Data", "Code", "OS", "WSL", "Segments"}
-	matches := regex.FindAllNamedRegexMatch(`(?: |{|\()(?P<var>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
+	matches := regex.FindAllNamedRegexMatch(`(?: |{|\()(?P<VAR>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
 	for _, match := range matches {
-		if variable, OK := unknownVariable(match["var"], &knownVariables); OK {
+		if variable, OK := unknownVariable(match["VAR"], &knownVariables); OK {
 			pattern := fmt.Sprintf(`\.%s\b`, variable)
 			dataVar := fmt.Sprintf(".Data.%s", variable)
 			t.Template = regex.ReplaceAllString(pattern, t.Template, dataVar)
 		}
 	}
+	// allow literal dots in template
+	t.Template = strings.ReplaceAll(t.Template, `\.`, ".")
 }

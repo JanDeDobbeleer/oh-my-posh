@@ -40,6 +40,15 @@ New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
 
 ## Template logic
 
+:::tip
+Oh My Posh replaces all unknown `.Var` variables in the template with the right references. If you need a literal `.Var`, use `\.Var`
+in the template.
+
+```json
+"template": " \\.NET \uE77F "
+```
+:::
+
 <!-- markdownlint-disable MD013 -->
 | Template                                                             | Description                                                                                                                                                                                                                                                                                                     |
 | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

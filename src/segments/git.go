@@ -98,6 +98,8 @@ const (
 	GitIcon properties.Property = "git_icon"
 	// UntrackedModes list the optional untracked files mode per repo
 	UntrackedModes properties.Property = "untracked_modes"
+	// IgnoreSubmodules list the optional ignore-submodules mode per repo
+	IgnoreSubmodules properties.Property = "ignore_submodules"
 
 	DETACHED     = "(detached)"
 	BRANCHPREFIX = "ref: refs/heads/"
@@ -266,7 +268,12 @@ func (g *Git) setGitStatus() {
 	g.Working = &GitStatus{}
 	g.Staging = &GitStatus{}
 	untrackedMode := g.getUntrackedFilesMode()
-	output := g.getGitCommandOutput("status", untrackedMode, "--branch", "--porcelain=2")
+	args := []string{"status", untrackedMode, "--branch", "--porcelain=2"}
+	ignoreSubmodulesMode := g.getIgnoreSubmodulesMode()
+	if len(ignoreSubmodulesMode) > 0 {
+		args = append(args, ignoreSubmodulesMode)
+	}
+	output := g.getGitCommandOutput(args...)
 	for _, line := range strings.Split(output, "\n") {
 		if strings.HasPrefix(line, HASH) && len(line) >= len(HASH)+7 {
 			g.Hash = line[len(HASH) : len(HASH)+7]
@@ -516,8 +523,15 @@ func (g *Git) getOriginURL(upstream string) string {
 }
 
 func (g *Git) getUntrackedFilesMode() string {
-	mode := "normal"
-	repoModes := g.props.GetKeyValueMap(UntrackedModes, map[string]string{})
+	return g.getSwitchMode(UntrackedModes, "-u", "normal")
+}
+
+func (g *Git) getIgnoreSubmodulesMode() string {
+	return g.getSwitchMode(IgnoreSubmodules, "--ignore-submodules=", "")
+}
+
+func (g *Git) getSwitchMode(property properties.Property, gitSwitch, mode string) string {
+	repoModes := g.props.GetKeyValueMap(property, map[string]string{})
 	// make use of a wildcard for all repo's
 	if val := repoModes["*"]; len(val) != 0 {
 		mode = val
@@ -526,5 +540,8 @@ func (g *Git) getUntrackedFilesMode() string {
 	if val := repoModes[g.realFolder]; len(val) != 0 {
 		mode = val
 	}
-	return fmt.Sprintf("-u%s", mode)
+	if len(mode) == 0 {
+		return ""
+	}
+	return fmt.Sprintf("%s%s", gitSwitch, mode)
 }

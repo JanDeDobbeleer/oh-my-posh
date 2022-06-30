@@ -786,6 +786,12 @@
                     "title": "Untracked files mode",
                     "description": "Set the untracked files mode for a repository",
                     "default": {}
+                  },
+                  "ignore_submodules": {
+                    "type": "object",
+                    "title": "Ignore submodules",
+                    "description": "Ignore changes to submodules when looking for changes",
+                    "default": {}
                   }
                 }
               }

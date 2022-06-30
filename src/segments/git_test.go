@@ -788,6 +788,13 @@ func TestGitUntrackedMode(t *testing.T) {
 				"bar": "normal",
 			},
 		},
+		{
+			Case:     "Global mode",
+			Expected: "-uno",
+			UntrackedModes: map[string]string{
+				"*": "no",
+			},
+		},
 	}
 
 	for _, tc := range cases {
@@ -800,6 +807,48 @@ func TestGitUntrackedMode(t *testing.T) {
 			},
 		}
 		got := g.getUntrackedFilesMode()
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
+func TestGitIgnoreSubmodules(t *testing.T) {
+	cases := []struct {
+		Case             string
+		Expected         string
+		IgnoreSubmodules map[string]string
+	}{
+		{
+			Case:     "Overide",
+			Expected: "--ignore-submodules=all",
+			IgnoreSubmodules: map[string]string{
+				"foo": "all",
+			},
+		},
+		{
+			Case: "Default mode - empty",
+			IgnoreSubmodules: map[string]string{
+				"bar": "no",
+			},
+		},
+		{
+			Case:     "Global mode",
+			Expected: "--ignore-submodules=dirty",
+			IgnoreSubmodules: map[string]string{
+				"*": "dirty",
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		g := &Git{
+			scm: scm{
+				props: properties.Map{
+					IgnoreSubmodules: tc.IgnoreSubmodules,
+				},
+				realFolder: "foo",
+			},
+		}
+		got := g.getIgnoreSubmodulesMode()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

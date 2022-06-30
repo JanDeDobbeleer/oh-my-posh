@@ -788,6 +788,13 @@ func TestGitUntrackedMode(t *testing.T) {
 				"bar": "normal",
 			},
 		},
+		{
+			Case:     "Global mode",
+			Expected: "-uno",
+			UntrackedModes: map[string]string{
+				"*": "no",
+			},
+		},
 	}
 
 	for _, tc := range cases {

@@ -67,7 +67,8 @@ You can set the following properties to `true` to enable fetching additional inf
 - fetch_worktree_count: `boolean` fetch worktree count - defaults to `false`
 - fetch_upstream_icon: `boolean` - fetch upstream icon - defaults to `false`
 - untracked_modes: `map[string]string` - map of repo's where to override the default untracked mode (`no` | `normal` | `all`). For example
-`"untracked_modes": { "/Users/me/repos/repo1": "no" }` - defaults to `normal` for all repo's
+`"untracked_modes": { "/Users/me/repos/repo1": "no" }` - defaults to `normal` for all repo's. If you want to override for all repo's, use
+`*` to set the mode instead of the repo path.
 
 ### Icons
 

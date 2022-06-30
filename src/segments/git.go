@@ -518,6 +518,11 @@ func (g *Git) getOriginURL(upstream string) string {
 func (g *Git) getUntrackedFilesMode() string {
 	mode := "normal"
 	repoModes := g.props.GetKeyValueMap(UntrackedModes, map[string]string{})
+	// make use of a wildcard for all repo's
+	if val := repoModes["*"]; len(val) != 0 {
+		mode = val
+	}
+	// get the specific repo mode
 	if val := repoModes[g.realFolder]; len(val) != 0 {
 		mode = val
 	}

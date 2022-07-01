@@ -2,6 +2,7 @@ package segments
 
 import (
 	"fmt"
+	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/regex"
 	"strconv"
@@ -50,6 +51,7 @@ type Git struct {
 	StashCount    int
 	WorktreeCount int
 	IsWorkTree    bool
+	RepoName      string
 }
 
 const (
@@ -114,6 +116,7 @@ func (g *Git) Enabled() bool {
 	if !g.shouldDisplay() {
 		return false
 	}
+	g.RepoName = environment.Base(g.env, g.realFolder)
 	displayStatus := g.props.GetBool(FetchStatus, false)
 	if displayStatus {
 		g.setGitStatus()

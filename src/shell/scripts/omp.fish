@@ -54,6 +54,7 @@ end
 # tooltip
 
 function _render_tooltip
+  commandline --function expand-abbr
   set omp_tooltip_command (commandline --current-buffer | string collect)
   commandline --insert " "
   commandline --function repaint

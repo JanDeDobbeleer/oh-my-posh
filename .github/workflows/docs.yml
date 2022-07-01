@@ -21,6 +21,9 @@ jobs:
         uses: actions/setup-go@v2
         with:
           go-version: 1.18
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
         # Create Kind cluster to have a Kubernetes context for cloud-native-azure theme
         # Images are defined on every Kind release
         # See https://github.com/kubernetes-sigs/kind/releases
@@ -47,7 +50,7 @@ jobs:
         run: |
           export PATH="$PWD/src/bin:$PATH"
           cd website
-          npm install
+          npm install --legacy-peer-deps
           npm run themes
           cd ..
       - name: Build Docs And Deploy 🚀

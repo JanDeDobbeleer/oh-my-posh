@@ -110,15 +110,6 @@ func (e *Engine) shouldFill(block *Block, length int) (string, bool) {
 }
 
 func (e *Engine) renderBlock(block *Block) {
-	defer func() {
-		// Due to a bug in Powershell, the end of the line needs to be cleared.
-		// If this doesn't happen, the portion after the prompt gets colored in the background
-		// color of the line above the new input line. Clearing the line fixes this,
-		// but can hopefully one day be removed when this is resolved natively.
-		if e.Env.Shell() == shell.PWSH || e.Env.Shell() == shell.PWSH5 {
-			e.writeANSI(e.Ansi.ClearAfter())
-		}
-	}()
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
 	if e.Env.Shell() == shell.BASH && (block.Type == RPrompt || block.Alignment == Right) {

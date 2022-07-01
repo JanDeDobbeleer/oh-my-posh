@@ -5,6 +5,10 @@ set --global omp_tooltip_command ""
 set --global omp_transient 0
 
 function fish_prompt
+    # clear from cursor to end of screen as
+    # commandline --function repaint does not do this
+    # see https://github.com/fish-shell/fish-shell/issues/8418
+    printf \e\[0J
     set --local omp_status_cache_temp $status
     if test "$omp_transient" = "1"
       '::OMP::' print transient --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION

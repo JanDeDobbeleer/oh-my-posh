@@ -32,7 +32,11 @@
       "last 1 safari version"
     ]
   },
+  "engines" : {
+    "npm" : "8.5.1",
+    "node" : "17.6.0"
+  },
   "volta": {
-    "node": "18.4.0"
+    "node": "17.6.0"
   }
 }

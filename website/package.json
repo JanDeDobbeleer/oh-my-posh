@@ -8,13 +8,13 @@
     "themes": "node export_themes.js"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-beta.20",
-    "@docusaurus/preset-classic": "^2.0.0-beta.20",
-    "@docusaurus/theme-search-algolia": "^2.0.0-beta.20",
+    "@docusaurus/core": "^2.0.0-beta.21",
+    "@docusaurus/preset-classic": "^2.0.0-beta.21",
+    "@docusaurus/theme-search-algolia": "^2.0.0-beta.21",
     "classnames": "^2.3.1",
     "query-string": "^7.1.1",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
@@ -31,5 +31,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "volta": {
+    "node": "18.4.0"
   }
 }

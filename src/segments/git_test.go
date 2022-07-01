@@ -44,6 +44,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.MockGitCommand(fileInfo.Path, "", "describe", "--tags", "--exact-match")
 	env.On("IsWsl").Return(false)
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
+	env.On("PathSeparator").Return("/")
 	g := &Git{
 		scm: scm{
 			env:   env,
@@ -60,6 +61,7 @@ func TestEnabledInWorkingTree(t *testing.T) {
 	env.On("HasCommand", "git").Return(true)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
+	env.On("PathSeparator").Return("/")
 	fileInfo := &environment.FileInfo{
 		Path:         "/dev/folder_worktree/.git",
 		ParentFolder: "/dev/folder_worktree",
@@ -87,6 +89,7 @@ func TestEnabledInSubmodule(t *testing.T) {
 	env.On("HasCommand", "git").Return(true)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
+	env.On("PathSeparator").Return("/")
 	fileInfo := &environment.FileInfo{
 		Path:         "/dev/parent/test-submodule/.git",
 		ParentFolder: "/dev/parent/test-submodule",
@@ -115,6 +118,7 @@ func TestEnabledInSeparateGitDir(t *testing.T) {
 	env.On("HasCommand", "git").Return(true)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
+	env.On("PathSeparator").Return("/")
 	fileInfo := &environment.FileInfo{
 		Path:         "/dev/parent/test-separate-git-dir/.git",
 		ParentFolder: "/dev/parent/test-separate-git-dir",

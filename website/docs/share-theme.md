@@ -19,6 +19,9 @@ to an image file (.png).
 oh-my-posh config export image --cursor-padding 50
 ```
 
+Be aware that "vertical-offset" and "horizontal-offset" block properties in your config,
+will **not** be taken into consideration when exporting the image.
+
 There are a couple of additional flags you can use to tweak the image rendering:
 
 - `--cursor-padding`: spaces to add after the cursor indication (`_`)

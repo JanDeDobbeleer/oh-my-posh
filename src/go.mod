@@ -38,6 +38,7 @@ require (
 	github.com/charmbracelet/bubbletea v0.22.0
 	github.com/charmbracelet/lipgloss v0.5.0
 	github.com/hashicorp/hcl/v2 v2.13.0
+	github.com/mattn/go-runewidth v0.0.13
 	github.com/spf13/cobra v1.5.0
 	golang.org/x/mod v0.5.1
 	gopkg.in/yaml.v3 v3.0.1
@@ -74,7 +75,6 @@ require (
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/muesli/ansi v0.0.0-20211031195517-c9f0611b6c70 // indirect
 	github.com/muesli/cancelreader v0.2.2 // indirect

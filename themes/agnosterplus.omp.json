@@ -2,7 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "alignment": "right",
+      "type": "rprompt",
       "segments": [
         {
           "foreground": "#007ACC",
@@ -13,13 +13,10 @@
           "template": " {{ .CurrentDate | date .Format }} ",
           "type": "time"
         }
-      ],
-      "type": "prompt",
-      "vertical_offset": -1
+      ]
     },
     {
       "alignment": "left",
-      "newline": true,
       "segments": [
         {
           "background": "#ffffff",

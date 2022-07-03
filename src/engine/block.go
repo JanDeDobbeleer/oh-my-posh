@@ -36,14 +36,16 @@ const (
 
 // Block defines a part of the prompt with optional segments
 type Block struct {
-	Type             BlockType      `json:"type,omitempty"`
-	Alignment        BlockAlignment `json:"alignment,omitempty"`
-	HorizontalOffset int            `json:"horizontal_offset,omitempty"`
-	VerticalOffset   int            `json:"vertical_offset,omitempty"`
-	Segments         []*Segment     `json:"segments,omitempty"`
-	Newline          bool           `json:"newline,omitempty"`
-	Filler           string         `json:"filler,omitempty"`
-	Overflow         Overflow       `json:"overflow,omitempty"`
+	Type      BlockType      `json:"type,omitempty"`
+	Alignment BlockAlignment `json:"alignment,omitempty"`
+	Segments  []*Segment     `json:"segments,omitempty"`
+	Newline   bool           `json:"newline,omitempty"`
+	Filler    string         `json:"filler,omitempty"`
+	Overflow  Overflow       `json:"overflow,omitempty"`
+
+	// Deprecated: keep the logic for legacy purposes
+	HorizontalOffset int `json:"horizontal_offset,omitempty"`
+	VerticalOffset   int `json:"vertical_offset,omitempty"`
 
 	env                   environment.Environment
 	writer                color.Writer

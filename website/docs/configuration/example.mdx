@@ -23,7 +23,6 @@ import TabItem from "@theme/TabItem"
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "alignment": "right",
       "segments": [
         {
           "foreground": "#007ACC",
@@ -35,8 +34,7 @@ import TabItem from "@theme/TabItem"
           "type": "time"
         }
       ],
-      "type": "prompt",
-      "vertical_offset": -1
+      "type": "rprompt",
     },
     {
       "alignment": "left",
@@ -115,7 +113,7 @@ import TabItem from "@theme/TabItem"
 ```yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
 blocks:
-- alignment: right
+- type: rprompt
   segments:
   - foreground: "#007ACC"
     template: " {{ .CurrentDate | date .Format }} "
@@ -123,8 +121,6 @@ blocks:
       time_format: '15:04:05'
     style: plain
     type: time
-  type: prompt
-  vertical_offset: -1
 - alignment: left
   newline: true
   segments:
@@ -185,9 +181,7 @@ final_space = true
 version = 2
 
 [[blocks]]
-alignment = "right"
-type = "prompt"
-vertical_offset = -1
+type = "rprompt"
 
   [[blocks.segments]]
   foreground = "#007ACC"

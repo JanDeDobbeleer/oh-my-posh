@@ -2,7 +2,6 @@
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "blocks": [
     {
-      "alignment": "right",
       "segments": [
         {
           "foreground": "#00C5C7",
@@ -14,12 +13,10 @@
           "type": "time"
         }
       ],
-      "type": "prompt",
-      "vertical_offset": -1
+      "type": "rprompt"
     },
     {
       "alignment": "left",
-      "newline": true,
       "segments": [
         {
           "foreground": "#77E4F7",

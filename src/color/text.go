@@ -3,14 +3,19 @@ package color
 import (
 	"oh-my-posh/regex"
 	"strings"
-	"unicode/utf8"
+
+	"github.com/mattn/go-runewidth"
 )
+
+func init() { // nolint:gochecknoinits
+	runewidth.DefaultCondition.EastAsianWidth = false
+}
 
 func (ansi *Ansi) MeasureText(text string) int {
 	// skip strings with ANSI
 	if !strings.Contains(text, "\x1b") {
 		text = ansi.TrimEscapeSequences(text)
-		length := utf8.RuneCountInString(text)
+		length := runewidth.StringWidth(text)
 		return length
 	}
 	if strings.Contains(text, "\x1b]8;;") {
@@ -21,7 +26,7 @@ func (ansi *Ansi) MeasureText(text string) int {
 	}
 	text = ansi.TrimAnsi(text)
 	text = ansi.TrimEscapeSequences(text)
-	length := utf8.RuneCountInString(text)
+	length := runewidth.StringWidth(text)
 	return length
 }
 

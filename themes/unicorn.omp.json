@@ -66,8 +66,7 @@
           "type": "executiontime"
         }
       ],
-      "type": "prompt",
-      "vertical_offset": 1
+      "type": "prompt"
     },
     {
       "alignment": "left",

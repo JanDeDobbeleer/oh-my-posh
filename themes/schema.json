@@ -171,16 +171,6 @@
           "description": "https://ohmyposh.dev/docs/configuration/block#newline",
           "default": false
         },
-        "vertical_offset": {
-          "type": "integer",
-          "title": "Block vertical offset",
-          "description": "https://ohmyposh.dev/docs/configuration/block#vertical-offset"
-        },
-        "horizontal-offset": {
-          "type": "integer",
-          "title": "Block vertical offset",
-          "description": "https://ohmyposh.dev/docs/configuration/block#horizontal-offset"
-        },
         "segments": {
           "type": "array",
           "title": "Segments list, prompt elements to display based on context",

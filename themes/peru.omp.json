@@ -38,8 +38,7 @@
           "type": "git"
         }
       ],
-      "type": "prompt",
-      "vertical_offset": 1
+      "type": "prompt"
     },
     {
       "alignment": "right",
@@ -67,7 +66,7 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": " {{ if gt .Code 0 }}<#ff0000>\uf00d \ue23a</>{{ else }}<#23d18b>\uf42e \ue23a</>{{ end }} ",
+          "template": " {{ if gt .Code 0 }}<#ff0000>\uf00d</>{{ else }}<#23d18b>\uf42e</>{{ end }} ",
           "type": "exit"
         },
         {

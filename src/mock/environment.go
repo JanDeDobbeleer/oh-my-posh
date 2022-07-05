@@ -3,6 +3,7 @@ package mock
 import (
 	"io/fs"
 	"oh-my-posh/environment"
+	"oh-my-posh/environment/battery"
 	"time"
 
 	mock "github.com/stretchr/testify/mock"
@@ -122,9 +123,9 @@ func (env *MockedEnvironment) Flags() *environment.Flags {
 	return arguments.Get(0).(*environment.Flags)
 }
 
-func (env *MockedEnvironment) BatteryState() (*environment.BatteryInfo, error) {
+func (env *MockedEnvironment) BatteryState() (*battery.Info, error) {
 	args := env.Called()
-	return args.Get(0).(*environment.BatteryInfo), args.Error(1)
+	return args.Get(0).(*battery.Info), args.Error(1)
 }
 
 func (env *MockedEnvironment) Shell() string {

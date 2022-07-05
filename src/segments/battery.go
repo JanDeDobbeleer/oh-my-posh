@@ -2,16 +2,15 @@ package segments
 
 import (
 	"oh-my-posh/environment"
+	"oh-my-posh/environment/battery"
 	"oh-my-posh/properties"
-
-	"github.com/distatus/battery"
 )
 
 type Battery struct {
 	props properties.Properties
 	env   environment.Environment
 
-	*environment.BatteryInfo
+	*battery.Info
 	Error string
 	Icon  string
 }
@@ -38,18 +37,18 @@ func (b *Battery) Enabled() bool {
 	}
 
 	var err error
-	b.BatteryInfo, err = b.env.BatteryState()
+	b.Info, err = b.env.BatteryState()
 
 	if !b.enabledWhileError(err) {
 		return false
 	}
 
 	// case on computer without batteries(no error, empty array)
-	if err == nil && b.BatteryInfo == nil {
+	if err == nil && b.Info == nil {
 		return false
 	}
 
-	switch b.BatteryInfo.State {
+	switch b.Info.State {
 	case battery.Discharging:
 		b.Icon = b.props.GetString(DischargingIcon, "")
 	case battery.NotCharging:
@@ -68,7 +67,7 @@ func (b *Battery) enabledWhileError(err error) bool {
 	if err == nil {
 		return true
 	}
-	if _, ok := err.(*environment.NoBatteryError); ok {
+	if _, ok := err.(*battery.NoBatteryError); ok {
 		return false
 	}
 	displayError := b.props.GetBool(properties.DisplayError, false)

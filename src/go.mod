@@ -8,7 +8,6 @@ require (
 	github.com/alecthomas/assert v1.0.0
 	github.com/alecthomas/colour v0.1.0 // indirect
 	github.com/alecthomas/repr v0.1.0 // indirect
-	github.com/distatus/battery v0.10.0
 	github.com/esimov/stackblur-go v1.1.0
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
@@ -29,7 +28,6 @@ require (
 	golang.org/x/sys v0.0.0-20220627191245-f75cf1eec38b
 	golang.org/x/text v0.3.7
 	gopkg.in/ini.v1 v1.66.6
-	howett.net/plist v1.0.0 // indirect
 )
 
 require (
@@ -89,7 +87,5 @@ require (
 	github.com/zclconf/go-cty v1.10.0 // indirect
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467 // indirect
 )
-
-replace github.com/distatus/battery v0.10.0 => github.com/JanDeDobbeleer/battery v0.10.0-5
 
 replace github.com/atotto/clipboard v0.1.4 => github.com/jandedobbeleer/clipboard v0.1.4-1

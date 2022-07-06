@@ -29,7 +29,7 @@ $name = "oh-my-posh.exe"
 $download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($file)"
 Invoke-WebRequest $download -Out "./bin/$($name)"
 if ($sign) {
-    & $signtool sign /f $pfxPath /p $env:CERTIFICATE_PASSWORD /t http://timestamp.digicert.com "./bin/$($name)"
+    & $signtool sign /f $pfxPath /p $env:CERTIFICATE_PASSWORD /fd SHA256 /t http://timestamp.digicert.com "./bin/$($name)"
 }
 
 # license
@@ -42,7 +42,7 @@ $content | Out-File -Encoding 'UTF8' $ISSName
 $installer = "install-$Architecture"
 ISCC.exe /F$installer $ISSName
 if ($sign) {
-    & $signtool sign /f $pfxPath /p $env:CERTIFICATE_PASSWORD /t http://timestamp.digicert.com "Output/$installer.exe"
+    & $signtool sign /f $pfxPath /p $env:CERTIFICATE_PASSWORD /fd SHA256 /t http://timestamp.digicert.com "Output/$installer.exe"
     Remove-Item -Path $pfxPath
 }
 # get hash

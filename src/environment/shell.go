@@ -9,6 +9,8 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"oh-my-posh/environment/battery"
+	"oh-my-posh/environment/cmd"
 	"oh-my-posh/regex"
 	"os"
 	"os/exec"
@@ -19,7 +21,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/distatus/battery"
 	process "github.com/shirou/gopsutil/v3/process"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -59,12 +60,6 @@ type CommandError struct {
 
 func (e *CommandError) Error() string {
 	return e.Err
-}
-
-type NoBatteryError struct{}
-
-func (m *NoBatteryError) Error() string {
-	return "no battery"
 }
 
 type FileInfo struct {
@@ -140,11 +135,6 @@ func (t *TemplateCache) AddSegmentData(key string, value interface{}) {
 	t.Segments[key] = value
 }
 
-type BatteryInfo struct {
-	Percentage int
-	State      battery.State
-}
-
 type Environment interface {
 	Getenv(key string) string
 	Pwd() string
@@ -173,7 +163,7 @@ type Environment interface {
 	RunShellCommand(shell, command string) string
 	ExecutionTime() float64
 	Flags() *Flags
-	BatteryState() (*BatteryInfo, error)
+	BatteryState() (*battery.Info, error)
 	QueryWindowTitles(processName, windowTitleRegex string) (string, error)
 	WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error)
 	HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
@@ -203,11 +193,11 @@ func (c *commandCache) set(command, path string) {
 }
 
 func (c *commandCache) get(command string) (string, bool) {
-	cmd, found := c.commands.get(command)
+	cacheCommand, found := c.commands.get(command)
 	if !found {
 		return "", false
 	}
-	command, ok := cmd.(string)
+	command, ok := cacheCommand.(string)
 	return command, ok
 }
 
@@ -494,29 +484,15 @@ func (env *ShellEnvironment) GOOS() string {
 
 func (env *ShellEnvironment) RunCommand(command string, args ...string) (string, error) {
 	defer env.Trace(time.Now(), "RunCommand", append([]string{command}, args...)...)
-	if cmd, ok := env.cmdCache.get(command); ok {
-		command = cmd
+	if cacheCommand, ok := env.cmdCache.get(command); ok {
+		command = cacheCommand
 	}
-	cmd := exec.Command(command, args...)
-	var out bytes.Buffer
-	var err bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = &err
-	cmdErr := cmd.Run()
-	if cmdErr != nil {
-		output := err.String()
-		errorStr := fmt.Sprintf("cmd.Start() failed with '%s'", output)
-		env.Log(Error, "RunCommand", errorStr)
-		return output, cmdErr
+	output, err := cmd.Run(command, args...)
+	if err != nil {
+		env.Log(Error, "RunCommand", "cmd.Run() failed")
 	}
-	// some silly commands return 0 and the output is in stderr instead of stdout
-	result := out.String()
-	if len(result) == 0 {
-		result = err.String()
-	}
-	output := strings.TrimSpace(result)
 	env.Log(Debug, "RunCommand", output)
-	return output, nil
+	return output, err
 }
 
 func (env *ShellEnvironment) RunShellCommand(shell, command string) string {

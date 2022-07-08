@@ -17,9 +17,10 @@ const (
 )
 
 type Text struct {
-	Template string
-	Context  interface{}
-	Env      environment.Environment
+	Template        string
+	Context         interface{}
+	Env             environment.Environment
+	TemplatesResult string
 }
 
 type Data interface{}
@@ -29,10 +30,12 @@ type Context struct {
 
 	// Simple container to hold ANY object
 	Data
+	Templates string
 }
 
 func (c *Context) init(t *Text) {
 	c.Data = t.Context
+	c.Templates = t.TemplatesResult
 	if cache := t.Env.TemplateCache(); cache != nil {
 		c.TemplateCache = cache
 		return
@@ -78,7 +81,22 @@ func (t *Text) cleanTemplate() {
 		return splitted[0], true
 	}
 
-	knownVariables := []string{"Root", "PWD", "Folder", "Shell", "ShellVersion", "UserName", "HostName", "Env", "Data", "Code", "OS", "WSL", "Segments"}
+	knownVariables := []string{
+		"Root",
+		"PWD",
+		"Folder",
+		"Shell",
+		"ShellVersion",
+		"UserName",
+		"HostName",
+		"Env",
+		"Data",
+		"Code",
+		"OS",
+		"WSL",
+		"Segments",
+		"Templates",
+	}
 	matches := regex.FindAllNamedRegexMatch(`(?: |{|\()(?P<VAR>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
 	for _, match := range matches {
 		if variable, OK := unknownVariable(match["VAR"], &knownVariables); OK {

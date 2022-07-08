@@ -28,10 +28,9 @@
       "title": "Palette reference",
       "description": "https://ohmyposh.dev/docs/configuration/colors#palette"
     },
-    "color_templates": {
+    "templates": {
       "type": "array",
-      "title": "Templates to define a color",
-      "description": "https://ohmyposh.dev/docs/configuration/colors#color-templates",
+      "title": "An array of templates",
       "default": [],
       "items": {
         "$ref": "#/definitions/segment/properties/template"
@@ -86,13 +85,15 @@
           "$ref": "#/definitions/color"
         },
         "foreground_templates": {
-          "$ref": "#/definitions/color_templates"
+          "$ref": "#/definitions/templates",
+          "description": "https://ohmyposh.dev/docs/configuration/colors#color-templates"
         },
         "background": {
           "$ref": "#/definitions/color"
         },
         "background_templates": {
-          "$ref": "#/definitions/color_templates"
+          "$ref": "#/definitions/templates",
+          "description": "https://ohmyposh.dev/docs/configuration/colors#color-templates"
         }
       }
     },
@@ -261,19 +262,31 @@
           "$ref": "#/definitions/color"
         },
         "foreground_templates": {
-          "$ref": "#/definitions/color_templates"
+          "$ref": "#/definitions/templates",
+          "description": "https://ohmyposh.dev/docs/configuration/colors#color-templates"
         },
         "background": {
           "$ref": "#/definitions/color"
         },
         "background_templates": {
-          "$ref": "#/definitions/color_templates"
+          "$ref": "#/definitions/templates",
+          "description": "https://ohmyposh.dev/docs/configuration/colors#color-templates"
         },
         "template": {
           "type": "string",
           "title": "Template text",
           "description": "https://ohmyposh.dev/docs/configuration/templates",
           "default": ""
+        },
+        "templates": {
+          "$ref": "#/definitions/templates",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#templates"
+        },
+        "templates_logic": {
+          "type": "string",
+          "title": "Templates Logic",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#templates",
+          "enum": ["first_match", "join"]
         },
         "properties": {
           "type": "object",

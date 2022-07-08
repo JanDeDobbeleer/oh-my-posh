@@ -10,16 +10,19 @@ offers a few standard properties to work with.
 
 ## Global properties
 
-- `.Root`: `boolean` - is the current user root/admin or not
-- `.PWD`: `string` - the current working directory
-- `.Folder`: `string` - the current working folder
-- `.Shell`: `string` - the current shell name
-- `.ShellVersion`: `string` - the current shell version
-- `.UserName`: `string` - the current user name
-- `.HostName`: `string` - the host name
-- `.Code`: `int` - the last exit code
-- `.OS`: `string` - the operating system
-- `.WSL`: `boolean` - in WSL yes/no
+| Name            | Type      | Description                           |
+| --------------- | --------- | ------------------------------------- |
+| `.Root`         | `boolean` | is the current user root/admin or not |
+| `.PWD`          | `string`  | the current working directory         |
+| `.Folder`       | `string`  | the current working folder            |
+| `.Shell`        | `string`  | the current shell name                |
+| `.ShellVersion` | `string`  | the current shell version             |
+| `.UserName`     | `string`  | the current user name                 |
+| `.HostName`     | `string`  | the host name                         |
+| `.Code`         | `int`     | the last exit code                    |
+| `.OS`           | `string`  | the operating system                  |
+| `.WSL`          | `boolean` | in WSL yes/no                         |
+| `.Templates`    | `string`  | the [templates][templates] result     |
 
 ## Environment variables
 
@@ -47,9 +50,11 @@ in the template.
 ```json
 "template": " \\.NET \uE77F "
 ```
+
 :::
 
 <!-- markdownlint-disable MD013 -->
+
 | Template                                                             | Description                                                                                                                                                                                                                                                                                                     |
 | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `{{.}}`                                                              | Root element.                                                                                                                                                                                                                                                                                                   |
@@ -61,6 +66,7 @@ in the template.
 | `{{with .Var}} {{end}}`                                              | With statement, where Var is a variable. It skips the block if the variable is absent.                                                                                                                                                                                                                          |
 | `{{range .Array}} {{end}}`                                           | Range statement, where Array is an array, slice, map, or channel.                                                                                                                                                                                                                                               |
 | `{{ lt 3 4 }}`                                                       | This lt comparison function evaluates to true since 3 is less than 4 (other boolean operators: eq, ne, lt, le, gt, ge).                                                                                                                                                                                         |
+
 <!-- markdownlint-enable MD013 -->
 
 ## Helper functions
@@ -74,12 +80,14 @@ use them.
 ### Custom
 
 <!-- markdownlint-disable MD013 -->
+
 | Template                                       | Description                                                                                                        |
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | `{{ url .UpstreamIcon .UpstreamURL }}`         | Create a hyperlink to a website to open your default browser (needs terminal [support][terminal-list-hyperlinks]). |
 | `{{ path .Path .Location }}`                   | Create a link to a folder to open your file explorer (needs terminal [support][terminal-list-hyperlinks]).         |
 | `{{ secondsRound 3600 }}`                      | Round seconds to a time indication. In this case the output is `1h`.                                               |
 | `{{ if glob "*.go" }}OK{{ else }}NOK{{ end }}` | Exposes [filepath.Glob][glob] as a boolean template function.                                                      |
+
 <!-- markdownlint-enable MD013 -->
 
 ## Cross segment template properties
@@ -103,14 +111,16 @@ your config does not contain a git segment as Oh My Posh only populates the prop
 
 You can make use of the following syntax to decorate text:
 
-- `<b>bold</b>`: renders `bold` as bold text
-- `<u>underline</u>`: renders `underline` as underlined text
-- `<o>overline</o>`: renders `overline` as overlined text
-- `<i>italic</i>`: renders `italic` as italic text
-- `<s>strikethrough</s>`: renders `strikethrough` as strikethrough text
-- `<d>dimmed</d>`: renders `dimmed` as dimmed text
-- `<f>blink</f>`: renders `blink` as blinking (flashing) text
-- `<r>reversed</r>`: renders `reversed` as reversed text
+| Syntax                 | Description                                   |
+| ---------------------- | --------------------------------------------- |
+| `<b>bold</b>`          | `bold` as bold text                   |
+| `<u>underline</u>`     | `underline` as underlined text        |
+| `<o>overline</o>`      | `overline` as overlined text          |
+| `<i>italic</i>`        | `italic` as italic text               |
+| `<s>strikethrough</s>` | `strikethrough` as strikethrough text |
+| `<d>dimmed</d>`        | `dimmed` as dimmed text               |
+| `<f>blink</f>`         | `blink` as blinking (flashing) text   |
+| `<r>reversed</r>`      | `reversed` as reversed text           |
 
 This can be used in templates and icons/text inside your config.
 
@@ -142,3 +152,4 @@ Only spaces are excluded, meaning you can still add line breaks and tabs if that
 [glob]: https://pkg.go.dev/path/filepath#Glob
 [git]: /docs/segments/git
 [exit]: /docs/segments/exit
+[templates]: /docs/configuration/segment#templates

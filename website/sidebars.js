@@ -86,6 +86,7 @@ module.exports = {
         "segments/os",
         "segments/owm",
         "segments/path",
+        "segments/perl",
         "segments/php",
         "segments/plastic",
         "segments/project",

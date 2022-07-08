@@ -140,6 +140,8 @@ const (
 	OWM SegmentType = "owm"
 	// PATH represents the current path segment
 	PATH SegmentType = "path"
+	// PERL writes which perl version is currently active
+	PERL SegmentType = "perl"
 	// PHP writes which php version is currently active
 	PHP SegmentType = "php"
 	// PLASTIC represents the plastic scm status and information
@@ -289,6 +291,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		OS:            &segments.Os{},
 		OWM:           &segments.Owm{},
 		PATH:          &segments.Path{},
+		PERL:          &segments.Perl{},
 		PHP:           &segments.Php{},
 		PLASTIC:       &segments.Plastic{},
 		POSHGIT:       &segments.PoshGit{},

@@ -14,7 +14,7 @@ func (p *Perl) Template() string {
 }
 
 func (p *Perl) Init(props properties.Properties, env environment.Environment) {
-	perlRegex := `(?:This is perl .*)? \(v(?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))(?:\.(?P<patch>[0-9]+))?)\)`
+	perlRegex := `This is perl.*v(?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))(?:\.(?P<patch>[0-9]+))?).* built for .+`
 	p.language = language{
 		env:   env,
 		props: props,

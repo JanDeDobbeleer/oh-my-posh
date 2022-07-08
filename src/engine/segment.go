@@ -3,7 +3,6 @@ package engine
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/color"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/segments"
@@ -16,20 +15,22 @@ import (
 
 // Segment represent a single segment and it's configuration
 type Segment struct {
-	Type                SegmentType     `json:"type,omitempty"`
-	Tips                []string        `json:"tips,omitempty"`
-	Style               SegmentStyle    `json:"style,omitempty"`
-	PowerlineSymbol     string          `json:"powerline_symbol,omitempty"`
-	InvertPowerline     bool            `json:"invert_powerline,omitempty"`
-	Foreground          string          `json:"foreground,omitempty"`
-	ForegroundTemplates color.Templates `json:"foreground_templates,omitempty"`
-	Background          string          `json:"background,omitempty"`
-	BackgroundTemplates color.Templates `json:"background_templates,omitempty"`
-	LeadingDiamond      string          `json:"leading_diamond,omitempty"`
-	TrailingDiamond     string          `json:"trailing_diamond,omitempty"`
-	Template            string          `json:"template,omitempty"`
-	Properties          properties.Map  `json:"properties,omitempty"`
-	Interactive         bool            `json:"interactive,omitempty"`
+	Type                SegmentType    `json:"type,omitempty"`
+	Tips                []string       `json:"tips,omitempty"`
+	Style               SegmentStyle   `json:"style,omitempty"`
+	PowerlineSymbol     string         `json:"powerline_symbol,omitempty"`
+	InvertPowerline     bool           `json:"invert_powerline,omitempty"`
+	Foreground          string         `json:"foreground,omitempty"`
+	ForegroundTemplates template.List  `json:"foreground_templates,omitempty"`
+	Background          string         `json:"background,omitempty"`
+	BackgroundTemplates template.List  `json:"background_templates,omitempty"`
+	LeadingDiamond      string         `json:"leading_diamond,omitempty"`
+	TrailingDiamond     string         `json:"trailing_diamond,omitempty"`
+	Template            string         `json:"template,omitempty"`
+	Templates           template.List  `json:"templates,omitempty"`
+	TemplatesLogic      template.Logic `json:"templates_logic,omitempty"`
+	Properties          properties.Map `json:"properties,omitempty"`
+	Interactive         bool           `json:"interactive,omitempty"`
 
 	writer          SegmentWriter
 	Enabled         bool `json:"-"`
@@ -239,14 +240,14 @@ func (segment *Segment) shouldInvokeWithTip(tip string) bool {
 
 func (segment *Segment) foreground() string {
 	if len(segment.foregroundCache) == 0 {
-		segment.foregroundCache = segment.ForegroundTemplates.Resolve(segment.writer, segment.env, segment.Foreground)
+		segment.foregroundCache = segment.ForegroundTemplates.FirstMatch(segment.writer, segment.env, segment.Foreground)
 	}
 	return segment.foregroundCache
 }
 
 func (segment *Segment) background() string {
 	if len(segment.backgroundCache) == 0 {
-		segment.backgroundCache = segment.BackgroundTemplates.Resolve(segment.writer, segment.env, segment.Background)
+		segment.backgroundCache = segment.BackgroundTemplates.FirstMatch(segment.writer, segment.env, segment.Background)
 	}
 	return segment.backgroundCache
 }
@@ -325,13 +326,21 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 }
 
 func (segment *Segment) string() string {
+	var templatesResult string
+	if !segment.Templates.Empty() {
+		templatesResult = segment.Templates.Resolve(segment.writer, segment.env, "", segment.TemplatesLogic)
+		if len(templatesResult) != 0 && len(segment.Template) == 0 {
+			return templatesResult
+		}
+	}
 	if len(segment.Template) == 0 {
 		segment.Template = segment.writer.Template()
 	}
 	tmpl := &template.Text{
-		Template: segment.Template,
-		Context:  segment.writer,
-		Env:      segment.env,
+		Template:        segment.Template,
+		Context:         segment.writer,
+		Env:             segment.env,
+		TemplatesResult: templatesResult,
 	}
 	text, err := tmpl.Render()
 	if err != nil {

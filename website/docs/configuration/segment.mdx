@@ -22,6 +22,7 @@ understand how to configure a segment.
           "powerline_symbol": "\uE0B0",
           "foreground": "#ffffff",
           "background": "#61AFEF",
+          "template": " {{ .Path }}} ",
           "properties": {
             ...
           }
@@ -38,11 +39,13 @@ understand how to configure a segment.
 - invert_powerline: `boolean`
 - leading_diamond: `string`
 - trailing_diamond: `string`
-- template: `string` a go [text/template][go-text-template] [template][templates] to render the prompt
 - foreground: `string` [color][colors]
 - foreground_templates: foreground [color templates][color-templates]
 - background: `string` [color][colors]
 - background_templates: background [color templates][color-templates]
+- template: `string` a go [text/template][go-text-template] [template][templates] to render the prompt
+- templates: `array` of `template`
+- templates_logic: `first_match` | `join`
 - properties: `array` of `Property`: `string`
 - interactive: `boolean`
 
@@ -52,7 +55,7 @@ Takes the `string` value referencing which segment logic it needs to run (see [s
 
 ## Style
 
-Oh Hi! You made it to a really interesting part, great! Style defines how a prompt is rendered. Looking at the most prompt
+Style defines how a prompt is rendered. Looking at the most prompt
 themes out there, we identified 3 types. All of these require a different configuration and depending on the look
 you want to achieve you might need to understand/use them all.
 
@@ -95,6 +98,21 @@ its foreground color.
 ## Trailing diamond
 
 Text character to use at the end of the segment. Will take the background color of the segment as its foreground color.
+
+## Template
+
+A single line [template][templates] string leveraging a segment's properties to render the text.
+
+## Templates
+
+In some cases having a single [template][templates] string is a bit cumbersome. Templates allows you to span the
+segment's [template][templates] string multiple lines where every [template][templates] is evaluated and depending
+on what you aim to achieve, there are two possible outcomes based on `templates_logic`:
+
+- `first_match`: return the first non-whitespace string and skip everything else
+- `join`: evaluate all templates and join all non-whitespace strings
+
+The default is `join`.
 
 ## Properties
 

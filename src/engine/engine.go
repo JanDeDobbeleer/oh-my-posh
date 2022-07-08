@@ -374,8 +374,8 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 	if err != nil {
 		promptText = err.Error()
 	}
-	foreground := prompt.ForegroundTemplates.Resolve(nil, e.Env, prompt.Foreground)
-	background := prompt.BackgroundTemplates.Resolve(nil, e.Env, prompt.Background)
+	foreground := prompt.ForegroundTemplates.FirstMatch(nil, e.Env, prompt.Foreground)
+	background := prompt.BackgroundTemplates.FirstMatch(nil, e.Env, prompt.Background)
 	e.Writer.SetColors(background, foreground)
 	e.Writer.Write(background, foreground, promptText)
 	switch e.Env.Shell() {

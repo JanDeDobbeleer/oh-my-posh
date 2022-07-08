@@ -1273,6 +1273,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mjcarman",
+      "name": "Michael Carman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/121028?v=4",
+      "profile": "https://github.com/mjcarman",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

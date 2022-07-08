@@ -226,6 +226,7 @@
             "os",
             "owm",
             "path",
+            "perl",
             "python",
             "poshgit",
             "php",
@@ -937,6 +938,37 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "perl"
+              }
+            }
+          },
+          "then": {
+            "title": "Perl Segment",
+            "description": "https://ohmyposh.dev/docs/segments/perl",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
                   }
                 }
               }

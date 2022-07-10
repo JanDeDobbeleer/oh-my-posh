@@ -13,9 +13,6 @@ function global:Get-PoshStackCount {
     return 0
 }
 
-# See https://github.com/JanDeDobbeleer/oh-my-posh/discussions/1928
-function global:Test-PSDebugContext { return Test-Path Variable:/PSDebugContext }
-
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:ErrorCode = 0
     $script:OMPExecutable = '::OMP::'
@@ -268,7 +265,8 @@ Example:
             $script:TransientPrompt = $false
             return
         }
-        if (global:Test-PSDebugContext) {
+        # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/2483#issuecomment-1175761456
+        if ((Get-PSCallStack).Location[0] -ne "<No file>") {
             @(Start-Utf8Process $script:OMPExecutable @("print", "debug", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
             return
         }

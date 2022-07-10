@@ -41,6 +41,14 @@ Once altered, reload your profile for the changes to take effect.
 . $PROFILE
 ```
 
+:::info
+When the above command gives an error, make sure to create the profile first and add the `oh-my-posh init` above.
+
+```powershell
+New-Item -Path $PROFILE -Type File -Force
+```
+:::
+
 </TabItem>
 <TabItem value="cmd">
 

@@ -2655,18 +2655,23 @@
     },
     "valid_line": {
       "$ref": "#/definitions/extra_prompt",
-      "title": "Valid Prompt Setting",
-      "description": "https://ohmyposh.dev/docs/configuration/prompt-override"
+      "title": "Valid Line Setting (for PowerShell only)",
+      "description": "https://ohmyposh.dev/docs/configuration/line-error"
     },
     "error_line": {
       "$ref": "#/definitions/extra_prompt",
-      "title": "Error Prompt Setting",
-      "description": "https://ohmyposh.dev/docs/configuration/prompt-override"
+      "title": "Error Line Setting (for PowerShell only)",
+      "description": "https://ohmyposh.dev/docs/configuration/line-error"
     },
     "secondary_prompt": {
       "$ref": "#/definitions/extra_prompt",
       "title": "Secondary Prompt Setting",
       "description": "https://ohmyposh.dev/docs/configuration/secondary-prompt"
+    },
+    "debug_prompt": {
+      "$ref": "#/definitions/extra_prompt",
+      "title": "Debug Prompt Setting (for PowerShell only)",
+      "description": "https://ohmyposh.dev/docs/configuration/debug-prompt"
     },
     "palette": {
       "type": "object",

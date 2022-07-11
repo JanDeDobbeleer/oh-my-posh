@@ -10,7 +10,7 @@
           "leading_diamond": "\ue0b6",
           "powerline_symbol": "\ue0b0",
           "style": "diamond",
-          "template": "\uf91c {{ .HostName }} ",
+          "template": "\uf91c {{ .HostName }}\u2800",
           "type": "session"
         },
         {

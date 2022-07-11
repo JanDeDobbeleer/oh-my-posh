@@ -266,7 +266,8 @@ Example:
             return
         }
         # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/2483#issuecomment-1175761456
-        if ((Get-PSCallStack).Location[0] -ne "<No file>") {
+        # and https://github.com/JanDeDobbeleer/oh-my-posh/issues/2502#issuecomment-1179968052
+        if (-not ((Get-PSCallStack).Location -join "").StartsWith("<")) {
             @(Start-Utf8Process $script:OMPExecutable @("print", "debug", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
             return
         }

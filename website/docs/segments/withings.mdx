@@ -1,0 +1,70 @@
+---
+id: withings
+title: Withings
+sidebar_label: Withings
+---
+
+import WithingsConnect from '/img/withings.svg';
+
+## What
+
+The [Withings][withings] health ecosystem of connected devices & apps is designed to improve daily wellbeing
+and long-term health.
+
+## Accessing your Withings data
+
+To allow Oh My Posh access your Withings data you need to grant access to read your public activities.
+This will give you an access and a refresh token. Paste the tokens into your Withings segment configuration.
+
+Click the following link to connect with Withings:
+
+<a href="https://account.withings.com/oauth2_user/authorize2?client_id=93675962e88ddfe53f83c0c900558f72174e0ac70ccfb57e48053530c7e6e494&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&scope=user.activity,user.metrics&state=withings">
+  <WithingsConnect className="withings"/>
+</a>
+
+## Sample Configuration
+
+```json
+{
+  "type": "withings",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#000000",
+  "template": "{{.Name}} {{.Ago}} {{.Icon}}",
+  "properties": {
+    "access_token":"11111111111111111",
+    "refresh_token":"1111111111111111",
+    "http_timeout": 1500
+  }
+}
+```
+
+## Properties
+
+- access_token: `string` - token from Withings login, see login link in section above. It has the following format: `1111111111111111111111111`
+- refresh_token: `string` - token from Withings login, see login link in section above. It has the following format: `1111111111111111111111111`
+- expires_in: `int` - the default timeout of the token from the Withings login
+- http_timeout: `int` - how long do you want to wait before you want to see your prompt more than your Withings data? - defaults to 500ms
+- CacheTimeout: `int` in minutes - How long do you want your numbers cached? - defaults to 5 min
+
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }}
+```
+
+:::
+
+### Properties
+
+The properties below are available for use in your template
+
+- `.ID`: `time` - The id of the entry
+
+Now, go out and be active!
+
+[templates]: /docs/configuration/templates
+[withings]: http://www.ithings.com/

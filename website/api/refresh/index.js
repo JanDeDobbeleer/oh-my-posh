@@ -1,4 +1,5 @@
 const strava = require('../shared/strava.js');
+const withings = require('../shared/withings.js');
 
 module.exports = async function (context, req) {
   context.log('JavaScript HTTP trigger function processed a request.');
@@ -18,7 +19,10 @@ module.exports = async function (context, req) {
     let body = null;
     switch (segment) {
       case "strava":
-        body = await strava.refreshStravaToken(refresh_token);
+        body = await strava.refreshToken(refresh_token);
+        break;
+      case "withings":
+        body = await withings.refreshToken(refresh_token);
         break;
       default:
         context.res = {

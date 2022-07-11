@@ -124,3 +124,15 @@ iframe.youtube {
   border-radius: 8px;
   margin-top: 25px;
 }
+
+.withings {
+  width: 150px;
+}
+
+[data-theme='light'] .withings path {
+  fill: black;
+}
+
+[data-theme='dark'] .withings path {
+  fill: white;
+}

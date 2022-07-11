@@ -1,4 +1,5 @@
 const strava = require('../shared/strava.js');
+const withings = require('../shared/withings.js');
 
 module.exports = async function (context, req) {
   context.log('JavaScript HTTP trigger function processed a request.');
@@ -20,7 +21,10 @@ module.exports = async function (context, req) {
 
     switch (segment) {
       case "strava":
-        tokens = await strava.getStravaToken(code);
+        tokens = await strava.getToken(code);
+        break;
+      case "withings":
+        tokens = await withings.getToken(code);
         break;
       default:
         context.log(`Unknown segment: ${segment}`);

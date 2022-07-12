@@ -2,7 +2,7 @@ const strava = require('../shared/strava.js');
 const withings = require('../shared/withings.js');
 
 module.exports = async function (context, req) {
-  context.log('JavaScript HTTP trigger function processed a request.');
+  context.log('Auth function processed a request');
   // strava example:
   // https://www.strava.com/oauth/authorize?client_id=76033&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&approval_prompt=force&scope=read,activity:read&state=strava
   const code = (req.query.code || req.query._code || (req.body && req.body.code));
@@ -18,6 +18,8 @@ module.exports = async function (context, req) {
       redirect(context, segment, tokens, 'missing code or segment');
       return;
     }
+
+    context.log(`Processing the ${segment} code`);
 
     switch (segment) {
       case "strava":

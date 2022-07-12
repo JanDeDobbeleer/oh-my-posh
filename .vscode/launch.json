@@ -131,7 +131,9 @@
       "type": "node",
       "request": "attach",
       "port": 9229,
-      "preDebugTask": "func: host start"
+      "preLaunchTask": "func: host start",
+      "cwd": "${workspaceFolder}/website",
+      "envFile": "${workspaceFolder}/website/.env"
     },
     {
       "name": "Debug CLI(cache)",

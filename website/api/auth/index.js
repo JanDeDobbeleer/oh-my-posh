@@ -36,11 +36,17 @@ module.exports = async function (context, req) {
 
     redirect(context, segment, tokens, '');
   } catch (error) {
+    if (!error.stack) {
+      redirect(context, segment, tokens, toBase64(error));
+      return;
+    }
     context.log(`Error: ${error.stack}`);
-    let buff = Buffer.from(error.stack);
-    let message = buff.toString('base64');
-    redirect(context, segment, tokens, message);
+    redirect(context, segment, tokens, toBase64(error.stack));
   }
+}
+
+function toBase64(str) {
+  return Buffer.from(str).toString('base64');
 }
 
 function redirect(context, segment, tokens, error) {

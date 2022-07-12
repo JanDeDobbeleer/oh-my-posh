@@ -44,7 +44,7 @@ func (c *Context) init(t *Text) {
 
 func (t *Text) Render() (string, error) {
 	t.cleanTemplate()
-	tmpl, err := template.New("title").Funcs(funcMap()).Parse(t.Template)
+	tmpl, err := template.New(t.Template).Funcs(funcMap()).Parse(t.Template)
 	if err != nil {
 		t.Env.Log(environment.Error, "Render", err.Error())
 		return "", errors.New(InvalidTemplate)

@@ -166,6 +166,5 @@
   ],
   "console_title_template": "{{ .Shell }} - {{ .Folder }}",
   "final_space": true,
-  "osc99": true,
   "version": 2
 }

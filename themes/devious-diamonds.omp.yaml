@@ -218,7 +218,6 @@ blocks:
           root_icon: 
         template: "{{ if and .Root ( not .Segments.Path.Writable ) }} {{ end }}{{ if and .Root .Segments.Path.Writable }}  {{ end }} \b"
 console_title_template: "{{ .Folder }}"
-osc99: true
 palette:
   black: "#1B1A23"
   blue: "#9580FF"

@@ -124,7 +124,7 @@ For example, the following is a valid `--config` flag:
 ## General Settings
 
 - final_space: `boolean` - when true adds a space at the end of the prompt
-- osc99: `boolean` - when true adds support for OSC9;9; (notify terminal of current working directory)
+- pwd: `string` - notify terminal of current working directory, values can be `osc99` or `osc7` depending on your terminal
 - terminal_background: `string` [color][colors] - terminal background color, set to your terminal's background color when
   you notice black elements in Windows Terminal or the Visual Studio Code integrated terminal
 - accent_color: `string` [color][colors] - accent color, used as a fallback when the `accent` [color][accent] is not supported

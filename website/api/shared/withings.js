@@ -7,14 +7,19 @@ async function getToken(code) {
     code: code,
     grant_type: 'authorization_code',
     action: 'requesttoken',
-    redirect_uri: 'https://ohmyposh.dev',
+    redirect_uri: 'https://ohmyposh.dev/api/auth',
   };
+
   const resp = await axios.post('https://wbsapi.withings.net/v2/oauth2', null, { params: params });
 
+  if (resp.data.error) {
+    throw resp.data.error;
+  }
+
   return {
-    access_token: resp.data.access_token,
-    refresh_token: resp.data.refresh_token,
-    expires_in: resp.data.expires_in
+    access_token: resp.data.body.access_token,
+    refresh_token: resp.data.body.refresh_token,
+    expires_in: resp.data.body.expires_in
   };
 }
 
@@ -25,14 +30,14 @@ async function refreshToken(refresh_token) {
     refresh_token: refresh_token,
     grant_type: 'refresh_token',
     action: 'requesttoken',
-    redirect_uri: 'https://ohmyposh.dev',
+    redirect_uri: 'https://ohmyposh.dev/api/auth',
   };
   const resp = await axios.post('https://wbsapi.withings.net/v2/oauth2', null, { params: params });
 
   return {
-    access_token: resp.data.access_token,
-    refresh_token: resp.data.refresh_token,
-    expires_in: resp.data.expires_in
+    access_token: resp.data.body.access_token,
+    refresh_token: resp.data.body.refresh_token,
+    expires_in: resp.data.body.expires_in
   };
 }
 

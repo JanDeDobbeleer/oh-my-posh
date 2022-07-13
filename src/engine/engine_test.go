@@ -44,6 +44,45 @@ func TestCanWriteRPrompt(t *testing.T) {
 	}
 }
 
+func TestPrintPWD(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		PWD      string
+		OSC99    bool
+	}{
+		{Case: "Empty PWD"},
+		{Case: "OSC99", PWD: color.OSC99, Expected: "\x1b]9;9;\"pwd\"\x1b\\"},
+		{Case: "OSC7", PWD: color.OSC7, Expected: "\x1b]7;\"pwd\"\x1b\\"},
+		{Case: "Deprecated OSC99", OSC99: true, Expected: "\x1b]9;9;\"pwd\"\x1b\\"},
+		{Case: "Template (empty)", PWD: "{{ if eq .Shell \"pwsh\" }}osc7{{ end }}"},
+		{Case: "Template (non empty)", PWD: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;\"pwd\"\x1b\\"},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("Pwd").Return("pwd")
+		env.On("Shell").Return("shell")
+		env.On("TemplateCache").Return(&environment.TemplateCache{
+			Env:   make(map[string]string),
+			Shell: "shell",
+		})
+		ansi := &color.Ansi{}
+		ansi.InitPlain()
+		engine := &Engine{
+			Env: env,
+			Config: &Config{
+				PWD:   tc.PWD,
+				OSC99: tc.OSC99,
+			},
+			Ansi: ansi,
+		}
+		engine.printPWD()
+		got := engine.print()
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
 func BenchmarkEngineRender(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		engineRender()

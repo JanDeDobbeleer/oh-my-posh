@@ -178,5 +178,10 @@
   ],
   "console_title_template": "{{if .Root}}root :: {{end}}{{.Shell}} :: {{.Folder}}",
   "final_space": true,
+    "transient_prompt": {
+    "background": "transparent",
+    "foreground": "#7a7a7a",
+    "template": " ~#@\u276f "
+  },
   "version": 2
 }

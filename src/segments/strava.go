@@ -129,7 +129,7 @@ func (s *Strava) getAccessToken() (string, error) {
 	if acccessToken, OK := s.env.Cache().Get(StravaAccessToken); OK {
 		return acccessToken, nil
 	}
-	// use cached refersh token to get new access token
+	// use cached refresh token to get new access token
 	if refreshToken, OK := s.env.Cache().Get(StravaRefreshToken); OK {
 		if acccessToken, err := s.refreshToken(refreshToken); err == nil {
 			return acccessToken, nil
@@ -137,7 +137,8 @@ func (s *Strava) getAccessToken() (string, error) {
 	}
 	// use initial refresh token from property
 	refreshToken := s.props.GetString(properties.RefreshToken, "")
-	if len(refreshToken) == 0 {
+	// ignore an empty or default refresh token
+	if len(refreshToken) == 0 || refreshToken == "111111111111111111111111111111" {
 		return "", &AuthError{
 			message: InvalidRefreshToken,
 		}

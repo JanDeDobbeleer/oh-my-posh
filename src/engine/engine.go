@@ -74,12 +74,30 @@ func (e *Engine) PrintPrimary() string {
 	if e.Config.FinalSpace {
 		e.write(" ")
 	}
-	if !e.Config.OSC99 {
-		return e.print()
+	e.printPWD()
+	return e.print()
+}
+
+func (e *Engine) printPWD() {
+	if len(e.Config.PWD) == 0 && !e.Config.OSC99 {
+		return
 	}
 	cwd := e.Env.Pwd()
-	e.writeANSI(e.Ansi.ConsolePwd(cwd))
-	return e.print()
+	// Backwards compatibility for deprecated OSC99
+	if e.Config.OSC99 {
+		e.writeANSI(e.Ansi.ConsolePwd(color.OSC99, cwd))
+		return
+	}
+	// Allow template logic to define when to enable the PWD (when supported)
+	tmpl := &template.Text{
+		Template: e.Config.PWD,
+		Env:      e.Env,
+	}
+	pwdType, err := tmpl.Render()
+	if err != nil || len(pwdType) == 0 {
+		return
+	}
+	e.writeANSI(e.Ansi.ConsolePwd(pwdType, cwd))
 }
 
 func (e *Engine) newline() {

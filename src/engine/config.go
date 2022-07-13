@@ -32,7 +32,6 @@ const (
 type Config struct {
 	Version              int           `json:"version"`
 	FinalSpace           bool          `json:"final_space,omitempty"`
-	OSC99                bool          `json:"osc99,omitempty"`
 	ConsoleTitleTemplate string        `json:"console_title_template,omitempty"`
 	TerminalBackground   string        `json:"terminal_background,omitempty"`
 	AccentColor          string        `json:"accent_color,omitempty"`
@@ -44,6 +43,10 @@ type Config struct {
 	SecondaryPrompt      *Segment      `json:"secondary_prompt,omitempty"`
 	DebugPrompt          *Segment      `json:"debug_prompt,omitempty"`
 	Palette              color.Palette `json:"palette,omitempty"`
+	PWD                  string        `json:"pwd,omitempty"`
+
+	// Deprecated
+	OSC99 bool `json:"osc99,omitempty"`
 
 	Output string `json:"-"`
 

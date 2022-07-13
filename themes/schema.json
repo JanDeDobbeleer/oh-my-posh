@@ -2601,11 +2601,11 @@
       "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
       "default": true
     },
-    "osc99": {
-      "type": "boolean",
-      "title": "Enable OSC99",
+    "pwd": {
+      "type": "string",
+      "title": "Enable OSC99/7",
       "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
-      "default": false
+      "default": ""
     },
     "console_title_template": {
       "type": "string",

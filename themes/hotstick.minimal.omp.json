@@ -53,6 +53,5 @@
   ],
   "console_title_template": "{{.Folder}}{{if .Root}} :: root{{end}} :: {{.Shell}}",
   "final_space": true,
-  "osc99": true,
   "version": 2
 }

@@ -110,8 +110,7 @@ func (env *ShellEnvironment) ConvertToWindowsPath(path string) string {
 }
 
 func (env *ShellEnvironment) ConvertToLinuxPath(path string) string {
-	linuxPath, err := env.RunCommand("wslpath", "-u", path)
-	if err == nil {
+	if linuxPath, err := env.RunCommand("wslpath", "-u", path); err == nil {
 		return linuxPath
 	}
 	return path

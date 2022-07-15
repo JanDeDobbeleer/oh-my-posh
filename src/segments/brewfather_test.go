@@ -140,10 +140,10 @@ func TestBrewfatherSegment(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 		props := properties.Map{
-			CacheTimeout: tc.CacheTimeout,
-			BFBatchID:    BFFakeBatchID,
-			BFAPIKey:     "FAKE",
-			BFUserID:     "FAKE",
+			properties.CacheTimeout: tc.CacheTimeout,
+			BFBatchID:               BFFakeBatchID,
+			BFAPIKey:                "FAKE",
+			BFUserID:                "FAKE",
 		}
 
 		cache := &mock.MockedCache{}

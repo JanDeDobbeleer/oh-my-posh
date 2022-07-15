@@ -46,7 +46,7 @@ func TestIpifySegment(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 		props := properties.Map{
-			CacheTimeout: 0,
+			properties.CacheTimeout: 0,
 		}
 		env.On("HTTPRequest", IPIFYAPIURL).Return([]byte(tc.Response), tc.Error)
 

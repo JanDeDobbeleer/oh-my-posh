@@ -107,7 +107,7 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 	}
 
 	url := ns.props.GetString(URL, "")
-	httpTimeout := ns.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
+	httpTimeout := ns.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 	// natural and understood NS timeout is 5, anything else is unusual
 	cacheTimeout := ns.props.GetInt(NSCacheTimeout, 5)
 

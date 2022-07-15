@@ -1,20 +1,31 @@
 package segments
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"math"
-	"net/http"
 	"oh-my-posh/environment"
+	"oh-my-posh/http"
 	"oh-my-posh/properties"
 	"time"
 )
 
+// StravaAPI is a wrapper around http.Oauth
+type StravaAPI interface {
+	GetActivities() ([]*StravaData, error)
+}
+
+type stravaAPI struct {
+	http.OAuth
+}
+
+func (s *stravaAPI) GetActivities() ([]*StravaData, error) {
+	url := "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1"
+	return http.OauthResult[[]*StravaData](&s.OAuth, url)
+}
+
 // segment struct, makes templating easier
 type Strava struct {
 	props properties.Properties
-	env   environment.Environment
 
 	StravaData
 	Icon         string
@@ -23,6 +34,8 @@ type Strava struct {
 	Authenticate bool
 	Error        string
 	URL          string
+
+	api StravaAPI
 }
 
 const (
@@ -32,12 +45,10 @@ const (
 	WorkOutIcon         properties.Property = "workout_icon"
 	UnknownActivityIcon properties.Property = "unknown_activity_icon"
 
-	StravaAccessToken  = "strava_access_token"
-	StravaRefreshToken = "strava_refresh_token"
+	StravaAccessTokenKey  = "strava_access_token"
+	StravaRefreshTokenKey = "strava_refresh_token"
 
-	Timeout             = "timeout"
-	InvalidRefreshToken = "invalid refresh token"
-	TokenRefreshFailed  = "token refresh error"
+	noActivitiesFound = "No activities found"
 )
 
 // StravaData struct contains the API data
@@ -56,36 +67,26 @@ type StravaData struct {
 	KudosCount           int       `json:"kudos_count"`
 }
 
-type TokenExchange struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	ExpiresIn    int    `json:"expires_in"`
-}
-
-type AuthError struct {
-	message string
-}
-
-func (a *AuthError) Error() string {
-	return a.message
-}
-
 func (s *Strava) Template() string {
 	return " {{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }} "
 }
 
 func (s *Strava) Enabled() bool {
-	data, err := s.getResult()
-	if err == nil {
-		s.StravaData = *data
+	data, err := s.api.GetActivities()
+	if err == nil && len(data) > 0 {
+		s.StravaData = *data[0]
 		s.Icon = s.getActivityIcon()
 		s.Hours = s.getHours()
 		s.Ago = s.getAgo()
 		s.URL = fmt.Sprintf("https://www.strava.com/activities/%d", s.ID)
 		return true
 	}
-	if _, s.Authenticate = err.(*AuthError); s.Authenticate {
-		s.Error = err.(*AuthError).Error()
+	if err == nil && len(data) == 0 {
+		s.Error = noActivitiesFound
+		return true
+	}
+	if _, s.Authenticate = err.(*http.OAuthError); s.Authenticate {
+		s.Error = err.(*http.OAuthError).Error()
 		return true
 	}
 	return false
@@ -124,115 +125,16 @@ func (s *Strava) getActivityIcon() string {
 	return s.props.GetString(UnknownActivityIcon, "\ue213")
 }
 
-func (s *Strava) getAccessToken() (string, error) {
-	// get directly from cache
-	if acccessToken, OK := s.env.Cache().Get(StravaAccessToken); OK {
-		return acccessToken, nil
-	}
-	// use cached refresh token to get new access token
-	if refreshToken, OK := s.env.Cache().Get(StravaRefreshToken); OK {
-		if acccessToken, err := s.refreshToken(refreshToken); err == nil {
-			return acccessToken, nil
-		}
-	}
-	// use initial refresh token from property
-	refreshToken := s.props.GetString(properties.RefreshToken, "")
-	// ignore an empty or default refresh token
-	if len(refreshToken) == 0 || refreshToken == "111111111111111111111111111111" {
-		return "", &AuthError{
-			message: InvalidRefreshToken,
-		}
-	}
-	// no need to let the user provide access token, we'll always verify the refresh token
-	acccessToken, err := s.refreshToken(refreshToken)
-	return acccessToken, err
-}
-
-func (s *Strava) refreshToken(refreshToken string) (string, error) {
-	httpTimeout := s.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
-	url := fmt.Sprintf("https://ohmyposh.dev/api/refresh?segment=strava&token=%s", refreshToken)
-	body, err := s.env.HTTPRequest(url, httpTimeout)
-	if err != nil {
-		return "", &AuthError{
-			// This might happen if /api was asleep. Assume the user will just retry
-			message: Timeout,
-		}
-	}
-	tokens := &TokenExchange{}
-	err = json.Unmarshal(body, &tokens)
-	if err != nil {
-		return "", &AuthError{
-			message: TokenRefreshFailed,
-		}
-	}
-	// add tokens to cache
-	s.env.Cache().Set(StravaAccessToken, tokens.AccessToken, tokens.ExpiresIn/60)
-	s.env.Cache().Set(StravaRefreshToken, tokens.RefreshToken, 2*525960) // it should never expire unless revoked, default to 2 year
-	return tokens.AccessToken, nil
-}
-
-func (s *Strava) getResult() (*StravaData, error) {
-	parseSingleElement := func(data []byte) (*StravaData, error) {
-		var result []*StravaData
-		err := json.Unmarshal(data, &result)
-		if err != nil {
-			return nil, err
-		}
-		if len(result) == 0 {
-			return nil, errors.New("no elements in the array")
-		}
-		return result[0], nil
-	}
-	getCacheValue := func(key string) (*StravaData, error) {
-		val, found := s.env.Cache().Get(key)
-		// we got something from the cache
-		if found {
-			if data, err := parseSingleElement([]byte(val)); err == nil {
-				return data, nil
-			}
-		}
-		return nil, errors.New("no data in cache")
-	}
-
-	// We only want the last activity
-	url := "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1"
-	httpTimeout := s.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
-
-	// No need to check more the every 30 min
-	cacheTimeout := s.props.GetInt(CacheTimeout, 30)
-	if cacheTimeout > 0 {
-		if data, err := getCacheValue(url); err == nil {
-			return data, nil
-		}
-	}
-	accessToken, err := s.getAccessToken()
-	if err != nil {
-		return nil, err
-	}
-	addAuthHeader := func(request *http.Request) {
-		request.Header.Add("Authorization", "Bearer "+accessToken)
-	}
-	body, err := s.env.HTTPRequest(url, httpTimeout, addAuthHeader)
-	if err != nil {
-		return nil, err
-	}
-	var arr []*StravaData
-	err = json.Unmarshal(body, &arr)
-	if err != nil {
-		return nil, err
-	}
-	data, err := parseSingleElement(body)
-	if err != nil {
-		return nil, err
-	}
-	if cacheTimeout > 0 {
-		// persist new sugars in cache
-		s.env.Cache().Set(url, string(body), cacheTimeout)
-	}
-	return data, nil
-}
-
 func (s *Strava) Init(props properties.Properties, env environment.Environment) {
 	s.props = props
-	s.env = env
+
+	s.api = &stravaAPI{
+		OAuth: http.OAuth{
+			Props:           props,
+			Env:             env,
+			AccessTokenKey:  StravaAccessTokenKey,
+			RefreshTokenKey: StravaRefreshTokenKey,
+			SegmentName:     "strava",
+		},
+	}
 }

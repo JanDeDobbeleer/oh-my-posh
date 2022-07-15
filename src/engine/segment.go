@@ -90,6 +90,8 @@ const (
 	CF SegmentType = "cf"
 	// Cloud Foundry logged in target
 	CFTARGET SegmentType = "cftarget"
+	// CMAKE writes the active cmake version
+	CMAKE SegmentType = "cmake"
 	// CMD writes the output of a shell command
 	CMD SegmentType = "command"
 	// CRYSTAL writes the active crystal version
@@ -268,6 +270,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		CFTARGET:      &segments.CfTarget{},
 		CMD:           &segments.Cmd{},
 		CRYSTAL:       &segments.Crystal{},
+		CMAKE:         &segments.Cmake{},
 		DART:          &segments.Dart{},
 		DOTNET:        &segments.Dotnet{},
 		EXECUTIONTIME: &segments.Executiontime{},

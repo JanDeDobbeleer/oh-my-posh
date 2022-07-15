@@ -27,7 +27,7 @@
             "windows": "\ue70f"
           },
           "style": "diamond",
-          "template": " {{ if .WSL }}\ue712 on {{ end }}{{ .Icon }}  ",
+          "template": " {{ if .WSL }}\ue712 on {{ end }}{{ .Icon }} ",
           "type": "os"
         },
         {
@@ -47,6 +47,14 @@
           "type": "root"
         },
         {
+          "type": "cmake",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#E8EAEE",
+          "background": "#1E9748",
+          "template": " \ue61e \ue61d cmake {{ .Full }} "
+        },
+        {
           "background": "#1BD4CD",
           "background_templates": [
             "{{ if or (.Working.Changed) (.Staging.Changed) }}#16B1AC{{ end }}",
@@ -64,7 +72,7 @@
             "fetch_worktree_count": true
           },
           "style": "powerline",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#DAE15F> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#CAEBE1> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
       ],
@@ -114,7 +122,7 @@
         {
           "foreground": "#F2D3B6",
           "properties": {
-            "time_format": "<#D6DEEB>\uf64f 15:04:05</> <#79DFE1>|</> \uf5ef 1 Jan, Monday"
+            "time_format": "<#D6DEEB>\uf64f 15:04:05</> <#79DFE1>|</> \uf5ef 2 Jan, Monday"
           },
           "style": "plain",
           "template": "{{ .CurrentDate | date .Format }} <#79DFE1>|</>",

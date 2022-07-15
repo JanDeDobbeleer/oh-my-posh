@@ -5,6 +5,7 @@ import (
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/regex"
+	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -144,63 +145,84 @@ func (g *Git) shouldDisplay() bool {
 	// we must use git.exe and convert paths accordingly
 	// for worktrees, stashes, and path to work
 	g.IsWslSharedPath = g.env.InWSLSharedDrive()
+
 	if !g.env.HasCommand(g.getCommand(GITCOMMAND)) {
 		return false
 	}
+
 	gitdir, err := g.env.HasParentFilePath(".git")
 	if err != nil {
 		return false
 	}
+
 	if g.shouldIgnoreRootRepository(gitdir.ParentFolder) {
 		return false
 	}
 
-	if gitdir.IsDir {
-		g.workingFolder = gitdir.Path
-		g.rootFolder = gitdir.Path
-		// convert the worktree file path to a windows one when in wsl 2 shared folder
-		g.realFolder = strings.TrimSuffix(g.convertToWindowsPath(gitdir.Path), ".git")
-		return true
+	if !gitdir.IsDir {
+		return g.hasWorktree(gitdir)
 	}
-	// handle worktree
+
+	g.workingFolder = gitdir.Path
+	g.rootFolder = gitdir.Path
+	// convert the worktree file path to a windows one when in wsl 2 shared folder
+	g.realFolder = strings.TrimSuffix(g.convertToWindowsPath(gitdir.Path), ".git")
+	return true
+}
+
+func (g *Git) hasWorktree(gitdir *environment.FileInfo) bool {
 	g.rootFolder = gitdir.Path
 	dirPointer := strings.Trim(g.env.FileContent(gitdir.Path), " \r\n")
 	matches := regex.FindNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
-	if matches != nil && matches["dir"] != "" {
-		// if we open a worktree file in a shared wsl2 folder, we have to convert it back
-		// to the mounted path
-		g.workingFolder = g.convertToLinuxPath(matches["dir"])
+	if matches == nil || matches["dir"] == "" {
+		return false
+	}
+	// if we open a worktree file in a shared wsl2 folder, we have to convert it back
+	// to the mounted path
+	g.workingFolder = g.convertToLinuxPath(matches["dir"])
 
-		// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
-		// strips the last .git/worktrees part
-		// :ind+5 = index + /.git
-		ind := strings.LastIndex(g.workingFolder, "/.git/worktrees")
-		if ind > -1 {
-			g.rootFolder = g.workingFolder[:ind+5]
-			g.realFolder = strings.TrimSuffix(g.env.FileContent(g.workingFolder+"/gitdir"), ".git\n")
+	// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
+	// strips the last .git/worktrees part
+	// :ind+5 = index + /.git
+	ind := strings.LastIndex(g.workingFolder, "/.git/worktrees")
+	if ind > -1 {
+		gitDir := filepath.Join(g.workingFolder, "gitdir")
+		g.rootFolder = g.workingFolder[:ind+5]
+		g.realFolder = strings.TrimSuffix(g.env.FileContent(gitDir), ".git\n")
+		g.IsWorkTree = true
+		return true
+	}
+	// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
+	// we need the parent folder to detect where the real .git folder is
+	ind = strings.LastIndex(g.workingFolder, "/.git/modules")
+	if ind > -1 {
+		g.rootFolder = filepath.Join(gitdir.ParentFolder, g.workingFolder)
+		// this might be both a worktree and a submodule, where the path would look like
+		// this: ../.git/modules/module/path/worktrees/location. We cannot distinguish
+		// between worktree and a module path containing the word 'worktree,' however.
+		ind = strings.LastIndex(g.rootFolder, g.env.PathSeparator()+"worktrees"+g.env.PathSeparator())
+		if ind > -1 && g.env.HasFilesInDir(g.rootFolder, "gitdir") {
+			gitDir := filepath.Join(g.rootFolder, "gitdir")
+			realGitFolder := filepath.Clean(g.env.FileContent(gitDir))
+			g.realFolder = strings.TrimSuffix(realGitFolder, ".git\n")
+			g.rootFolder = g.rootFolder[:ind]
+			g.workingFolder = g.rootFolder
 			g.IsWorkTree = true
 			return true
 		}
-		// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
-		// we need the parent folder to detect where the real .git folder is
-		ind = strings.LastIndex(g.workingFolder, "/.git/modules")
-		if ind > -1 {
-			g.rootFolder = gitdir.ParentFolder + "/" + g.workingFolder
-			g.realFolder = g.rootFolder
-			g.workingFolder = g.rootFolder
-			return true
-		}
+		g.realFolder = g.rootFolder
+		g.workingFolder = g.rootFolder
+		return true
+	}
 
-		// check for separate git folder(--separate-git-dir)
-		// check if the folder contains a HEAD file
-		if g.env.HasFilesInDir(g.workingFolder, "HEAD") {
-			gitFolder := strings.TrimSuffix(g.rootFolder, ".git")
-			g.rootFolder = g.workingFolder
-			g.workingFolder = gitFolder
-			g.realFolder = gitFolder
-			return true
-		}
-		return false
+	// check for separate git folder(--separate-git-dir)
+	// check if the folder contains a HEAD file
+	if g.env.HasFilesInDir(g.workingFolder, "HEAD") {
+		gitFolder := strings.TrimSuffix(g.rootFolder, ".git")
+		g.rootFolder = g.workingFolder
+		g.workingFolder = gitFolder
+		g.realFolder = gitFolder
+		return true
 	}
 	return false
 }

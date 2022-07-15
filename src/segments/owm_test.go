@@ -54,10 +54,10 @@ func TestOWMSegmentSingle(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 		props := properties.Map{
-			APIKey:       "key",
-			Location:     "AMSTERDAM,NL",
-			Units:        "metric",
-			CacheTimeout: 0,
+			APIKey:                  "key",
+			Location:                "AMSTERDAM,NL",
+			Units:                   "metric",
+			properties.CacheTimeout: 0,
 		}
 
 		env.On("HTTPRequest", OWMAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
@@ -189,10 +189,10 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 		o := &Owm{
 			props: properties.Map{
-				APIKey:       "key",
-				Location:     "AMSTERDAM,NL",
-				Units:        "metric",
-				CacheTimeout: 0,
+				APIKey:                  "key",
+				Location:                "AMSTERDAM,NL",
+				Units:                   "metric",
+				properties.CacheTimeout: 0,
 			},
 			env: env,
 		}
@@ -212,10 +212,10 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 		o := &Owm{
 			props: properties.Map{
-				APIKey:       "key",
-				Location:     "AMSTERDAM,NL",
-				Units:        "metric",
-				CacheTimeout: 0,
+				APIKey:                  "key",
+				Location:                "AMSTERDAM,NL",
+				Units:                   "metric",
+				properties.CacheTimeout: 0,
 			},
 			env: env,
 		}

@@ -43,6 +43,14 @@ const (
 	AccessToken Property = "access_token"
 	// RefreshToken is the refresh token to use for an API
 	RefreshToken Property = "refresh_token"
+	// HTTPTimeout timeout used when executing http request
+	HTTPTimeout Property = "http_timeout"
+	// DefaultHTTPTimeout default timeout used when executing http request
+	DefaultHTTPTimeout = 20
+	// DefaultCacheTimeout default timeout used when caching data
+	DefaultCacheTimeout = 10
+	// CacheTimeout cache timeout
+	CacheTimeout Property = "cache_timeout"
 )
 
 type Map map[Property]interface{}

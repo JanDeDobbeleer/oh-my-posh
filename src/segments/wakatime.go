@@ -35,7 +35,7 @@ func (w *Wakatime) Enabled() bool {
 
 func (w *Wakatime) setAPIData() error {
 	url := w.props.GetString(URL, "")
-	cacheTimeout := w.props.GetInt(CacheTimeout, DefaultCacheTimeout)
+	cacheTimeout := w.props.GetInt(properties.CacheTimeout, properties.DefaultCacheTimeout)
 	if cacheTimeout > 0 {
 		// check if data stored in cache
 		if val, found := w.env.Cache().Get(url); found {
@@ -47,7 +47,7 @@ func (w *Wakatime) setAPIData() error {
 		}
 	}
 
-	httpTimeout := w.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
+	httpTimeout := w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
 	body, err := w.env.HTTPRequest(url, httpTimeout)
 	if err != nil {

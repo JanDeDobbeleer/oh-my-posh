@@ -82,9 +82,9 @@ func TestWTTrackedTime(t *testing.T) {
 
 		w := &Wakatime{
 			props: properties.Map{
-				APIKey:       "key",
-				CacheTimeout: tc.CacheTimeout,
-				URL:          FAKEAPIURL,
+				APIKey:                  "key",
+				properties.CacheTimeout: tc.CacheTimeout,
+				URL:                     FAKEAPIURL,
 			},
 			env: env,
 		}

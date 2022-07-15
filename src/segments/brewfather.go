@@ -245,7 +245,7 @@ func (bf *Brewfather) getResult() (*Batch, error) {
 	batchURL := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s", batchID)
 	batchReadingsURL := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s/readings", batchID)
 
-	httpTimeout := bf.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
+	httpTimeout := bf.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 	cacheTimeout := bf.props.GetInt(BFCacheTimeout, 5)
 
 	if cacheTimeout > 0 {

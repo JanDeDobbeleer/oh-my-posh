@@ -30,7 +30,7 @@ func (i *IPify) Enabled() bool {
 }
 
 func (i *IPify) getResult() (string, error) {
-	cacheTimeout := i.props.GetInt(CacheTimeout, DefaultCacheTimeout)
+	cacheTimeout := i.props.GetInt(properties.CacheTimeout, properties.DefaultCacheTimeout)
 
 	url := i.props.GetString(IpifyURL, "https://api.ipify.org")
 
@@ -43,7 +43,7 @@ func (i *IPify) getResult() (string, error) {
 		}
 	}
 
-	httpTimeout := i.props.GetInt(HTTPTimeout, DefaultHTTPTimeout)
+	httpTimeout := i.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
 	body, err := i.env.HTTPRequest(url, httpTimeout)
 	if err != nil {

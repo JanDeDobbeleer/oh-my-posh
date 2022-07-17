@@ -109,6 +109,7 @@ module.exports = {
         "segments/ui5tooling",
         "segments/wakatime",
         "segments/wifi",
+        "segments/withings",
         "segments/winreg",
         "segments/ytm",
       ],

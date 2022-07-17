@@ -1,6 +1,7 @@
 package mock
 
 import (
+	"io"
 	"io/fs"
 	"oh-my-posh/environment"
 	"oh-my-posh/environment/battery"
@@ -143,7 +144,7 @@ func (env *MockedEnvironment) WindowsRegistryKeyValue(path string) (*environment
 	return args.Get(0).(*environment.WindowsRegistryValue), args.Error(1)
 }
 
-func (env *MockedEnvironment) HTTPRequest(url string, timeout int, requestModifiers ...environment.HTTPRequestModifier) ([]byte, error) {
+func (env *MockedEnvironment) HTTPRequest(url string, body io.Reader, timeout int, requestModifiers ...environment.HTTPRequestModifier) ([]byte, error) {
 	args := env.Called(url)
 	return args.Get(0).([]byte), args.Error(1)
 }

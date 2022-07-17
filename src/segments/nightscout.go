@@ -117,7 +117,7 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 		}
 	}
 
-	body, err := ns.env.HTTPRequest(url, httpTimeout)
+	body, err := ns.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {
 		return nil, err
 	}

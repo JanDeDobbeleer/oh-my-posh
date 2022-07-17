@@ -49,7 +49,7 @@ func (w *Wakatime) setAPIData() error {
 
 	httpTimeout := w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
-	body, err := w.env.HTTPRequest(url, httpTimeout)
+	body, err := w.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {
 		return err
 	}

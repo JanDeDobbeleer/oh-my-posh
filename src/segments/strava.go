@@ -20,7 +20,7 @@ type stravaAPI struct {
 
 func (s *stravaAPI) GetActivities() ([]*StravaData, error) {
 	url := "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1"
-	return http.OauthResult[[]*StravaData](&s.OAuth, url)
+	return http.OauthResult[[]*StravaData](&s.OAuth, url, nil)
 }
 
 // segment struct, makes templating easier

@@ -190,6 +190,8 @@ const (
 	WIFI SegmentType = "wifi"
 	// WINREG queries the Windows registry.
 	WINREG SegmentType = "winreg"
+	// WITHINGS queries the Withings API.
+	WITHINGS SegmentType = "withings"
 	// YTM writes YouTube Music information and status
 	YTM SegmentType = "ytm"
 )
@@ -318,6 +320,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		WAKATIME:      &segments.Wakatime{},
 		WIFI:          &segments.Wifi{},
 		WINREG:        &segments.WindowsRegistry{},
+		WITHINGS:      &segments.Withings{},
 		YTM:           &segments.Ytm{},
 	}
 	if segment.Properties == nil {

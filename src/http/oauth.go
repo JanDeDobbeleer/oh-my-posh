@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
@@ -45,11 +46,11 @@ func (o *OAuth) error(err error) {
 
 func (o *OAuth) getAccessToken() (string, error) {
 	// get directly from cache
-	if acccessToken, OK := o.Env.Cache().Get(o.AccessTokenKey); OK {
+	if acccessToken, OK := o.Env.Cache().Get(o.AccessTokenKey); OK && len(acccessToken) != 0 {
 		return acccessToken, nil
 	}
 	// use cached refresh token to get new access token
-	if refreshToken, OK := o.Env.Cache().Get(o.RefreshTokenKey); OK {
+	if refreshToken, OK := o.Env.Cache().Get(o.RefreshTokenKey); OK && len(refreshToken) != 0 {
 		if acccessToken, err := o.refreshToken(refreshToken); err == nil {
 			return acccessToken, nil
 		}
@@ -70,7 +71,7 @@ func (o *OAuth) getAccessToken() (string, error) {
 func (o *OAuth) refreshToken(refreshToken string) (string, error) {
 	httpTimeout := o.Props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 	url := fmt.Sprintf("https://ohmyposh.dev/api/refresh?segment=%s&token=%s", o.SegmentName, refreshToken)
-	body, err := o.Env.HTTPRequest(url, httpTimeout)
+	body, err := o.Env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {
 		return "", &OAuthError{
 			// This might happen if /api was asleep. Assume the user will just retry
@@ -90,7 +91,7 @@ func (o *OAuth) refreshToken(refreshToken string) (string, error) {
 	return tokens.AccessToken, nil
 }
 
-func OauthResult[a any](o *OAuth, url string) (a, error) {
+func OauthResult[a any](o *OAuth, url string, body io.Reader, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
 	var data a
 
 	getCacheValue := func(key string) (a, error) {
@@ -126,20 +127,26 @@ func OauthResult[a any](o *OAuth, url string) (a, error) {
 		request.Header.Add("Authorization", "Bearer "+accessToken)
 	}
 
-	body, err := o.Env.HTTPRequest(url, httpTimeout, addAuthHeader)
+	if requestModifiers == nil {
+		requestModifiers = []environment.HTTPRequestModifier{}
+	}
+
+	requestModifiers = append(requestModifiers, addAuthHeader)
+
+	responseBody, err := o.Env.HTTPRequest(url, body, httpTimeout, requestModifiers...)
 	if err != nil {
 		o.error(err)
 		return data, err
 	}
 
-	err = json.Unmarshal(body, &data)
+	err = json.Unmarshal(responseBody, &data)
 	if err != nil {
 		o.error(err)
 		return data, err
 	}
 
 	if cacheTimeout > 0 {
-		o.Env.Cache().Set(url, string(body), cacheTimeout)
+		o.Env.Cache().Set(url, string(responseBody), cacheTimeout)
 	}
 
 	return data, nil

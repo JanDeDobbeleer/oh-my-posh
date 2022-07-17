@@ -47,7 +47,6 @@ can get started even without having to understand the theming. So, let's no long
 installation guide to get started right away!
 
 [omp]: https://github.com/JanDeDobbeleer/oh-my-posh2
-[omz]: https://github.com/ohmyzsh/ohmyzsh
 [block]: /docs/configuration/block
 [segment]: /docs/configuration/segment
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes

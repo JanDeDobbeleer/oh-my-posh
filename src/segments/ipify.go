@@ -45,7 +45,7 @@ func (i *IPify) getResult() (string, error) {
 
 	httpTimeout := i.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
-	body, err := i.env.HTTPRequest(url, httpTimeout)
+	body, err := i.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {
 		return "", err
 	}

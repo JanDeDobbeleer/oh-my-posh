@@ -171,7 +171,7 @@ func TestOauthResult(t *testing.T) {
 			SegmentName:     "test",
 		}
 
-		got, err := OauthResult[*data](oauth, url)
+		got, err := OauthResult[*data](oauth, url, nil)
 		assert.Equal(t, tc.ExpectedData, got, tc.Case)
 		if len(tc.ExpectedErrorMessage) == 0 {
 			assert.Nil(t, err, tc.Case)

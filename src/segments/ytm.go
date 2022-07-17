@@ -68,7 +68,7 @@ func (y *Ytm) setStatus() error {
 	// https://github.com/ytmdesktop/ytmdesktop/wiki/Remote-Control-API
 	url := y.props.GetString(APIURL, "http://127.0.0.1:9863")
 	httpTimeout := y.props.GetInt(APIURL, properties.DefaultHTTPTimeout)
-	body, err := y.env.HTTPRequest(url+"/query", httpTimeout)
+	body, err := y.env.HTTPRequest(url+"/query", nil, httpTimeout)
 	if err != nil {
 		return err
 	}

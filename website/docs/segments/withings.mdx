@@ -18,9 +18,11 @@ This will give you an access and a refresh token. Paste the tokens into your Wit
 
 Click the following link to connect with Withings:
 
-<a href="https://account.withings.com/oauth2_user/authorize2?client_id=93675962e88ddfe53f83c0c900558f72174e0ac70ccfb57e48053530c7e6e494&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&scope=user.activity,user.metrics&state=withings">
-  <WithingsConnect className="withings"/>
-</a>
+<div className="withings">
+  <a href="https://account.withings.com/oauth2_user/authorize2?client_id=93675962e88ddfe53f83c0c900558f72174e0ac70ccfb57e48053530c7e6e494&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&scope=user.activity,user.metrics&state=withings">
+    <WithingsConnect className="withings"/>
+  </a>
+</div>
 
 ## Sample Configuration
 
@@ -31,7 +33,7 @@ Click the following link to connect with Withings:
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#000000",
-  "template": "{{.Name}} {{.Ago}} {{.Icon}}",
+  "template": "{{ if gt .Weight 0.0 }} {{ round .Weight 2 }}kg {{ end }}",
   "properties": {
     "access_token":"11111111111111111",
     "refresh_token":"1111111111111111",
@@ -42,18 +44,18 @@ Click the following link to connect with Withings:
 
 ## Properties
 
-- access_token: `string` - token from Withings login, see login link in section above. It has the following format: `1111111111111111111111111`
-- refresh_token: `string` - token from Withings login, see login link in section above. It has the following format: `1111111111111111111111111`
+- access_token: `string` - token from Withings login, see login link in section above.
+- refresh_token: `string` - token from Withings login, see login link in section above.
 - expires_in: `int` - the default timeout of the token from the Withings login
 - http_timeout: `int` - how long do you want to wait before you want to see your prompt more than your Withings data? - defaults to 500ms
-- CacheTimeout: `int` in minutes - How long do you want your numbers cached? - defaults to 5 min
+- CacheTimeout: `int` in minutes - How long do you want your Withings data cached? - defaults to 5 min
 
 ## Template ([info][templates])
 
 :::note default template
 
 ``` template
-{{ if .Error }}{{ .Error }}{{ else }}{{ .Ago }}{{ end }}
+{{ if gt .Weight 0.0 }} {{ round .Weight 2 }}kg {{ end }}
 ```
 
 :::
@@ -62,7 +64,9 @@ Click the following link to connect with Withings:
 
 The properties below are available for use in your template
 
-- `.ID`: `time` - The id of the entry
+- `.Weight`: `float` - your last measured weight
+- `.SleepHours`: `string` - your last measured sleep SleepHours
+- `.Steps`: `int` - your last measured steps
 
 Now, go out and be active!
 

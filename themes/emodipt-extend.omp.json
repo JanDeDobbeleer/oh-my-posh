@@ -7,20 +7,25 @@
           {
             "foreground": "#E5C07B",
             "properties": {
-              "time_format": "3:04 PM"
+              "time_format": "15:04"
             },
             "style": "plain",
             "template": "[{{ .CurrentDate | date .Format }}]",
             "type": "time"
           },
           {
-            "foreground": "#61AFEF",
-            "properties": {
-              "style": "full"
-            },
+            "type": "shell",
             "style": "plain",
-            "template": " {{ .Path }}",
-            "type": "path"
+            "foreground": "#E06C75",
+            "properties": {
+              "mapped_shell_names": {
+                "pwsh": "Shell",
+                "powershell": "Shell",
+                "cmd": "Cmd",
+                "bash": "Bash"
+              }
+            },
+            "template": " \ue795 {{ .Name }}"
           },
           {
             "foreground": "#F3C267",
@@ -53,7 +58,7 @@
             "foreground_templates": [
               "{{ if gt .Code 0 }}#E06C75{{ end }}"
             ],
-            "template": "x{{ .Meaning }}"
+            "template": " x{{ .Meaning }}"
           },
           {
             "foreground": "#b8ff75",
@@ -65,9 +70,9 @@
               "always_enabled": true
             },
             "style": "diamond",
-            "template": " {{ .FormattedMs }}",
+            "template": " {{ .FormattedMs }} ",
             "type": "executiontime"
-          }
+          }          
         ],
         "type": "prompt"
       },
@@ -75,6 +80,22 @@
         "alignment": "left",
         "newline": true,
         "segments": [
+          {
+            "foreground": "#61AFEF",
+            "properties": {
+              "style": "full"
+            },
+            "style": "plain",
+            "template": "\ue5ff {{ .Path }}",
+            "type": "path"
+          }
+        ],
+        "type": "prompt"
+      },
+      {
+        "alignment": "left",
+        "newline": true,
+        "segments": [          
           {
             "foreground": "#E06C75",
             "style": "plain",

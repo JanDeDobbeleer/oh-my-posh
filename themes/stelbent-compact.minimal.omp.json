@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "console_title_template": "{{if .Segments.Git.RepoName}} {{.Segments.Git.RepoName}} {{else}} {{.PWD}} {{end}}",
+  "console_title_template": "{{if .Segments.Git.RepoName}} {{.Segments.Git.RepoName}} {{else}} {{.Folder}} {{end}}",
   "blocks": [
     {
       "type": "prompt",

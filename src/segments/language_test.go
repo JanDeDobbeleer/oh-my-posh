@@ -153,6 +153,7 @@ func TestLanguageEnabledOneExtensionFound(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
 	assert.Equal(t, universion, lang.Full, "unicorn is available and uni files are found")
+	assert.Equal(t, "unicorn", lang.Executable, "unicorn was used")
 }
 
 func TestLanguageDisabledInHome(t *testing.T) {
@@ -191,6 +192,7 @@ func TestLanguageEnabledSecondExtensionFound(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
 	assert.Equal(t, universion, lang.Full, "unicorn is available and corn files are found")
+	assert.Equal(t, "unicorn", lang.Executable, "unicorn was used")
 }
 
 func TestLanguageEnabledSecondCommand(t *testing.T) {
@@ -215,6 +217,7 @@ func TestLanguageEnabledSecondCommand(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
 	assert.Equal(t, universion, lang.Full, "unicorn is available and corn files are found")
+	assert.Equal(t, "corn", lang.Executable, "corn was used")
 }
 
 func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
@@ -234,6 +237,7 @@ func TestLanguageEnabledAllExtensionsFound(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
 	assert.Equal(t, universion, lang.Full, "unicorn is available and uni and corn files are found")
+	assert.Equal(t, "unicorn", lang.Executable, "unicorn was used")
 }
 
 func TestLanguageEnabledNoVersion(t *testing.T) {
@@ -257,6 +261,7 @@ func TestLanguageEnabledNoVersion(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
 	assert.Equal(t, "", lang.Full, "unicorn is available and uni and corn files are found")
+	assert.Equal(t, "", lang.Executable, "no version was found")
 }
 
 func TestLanguageEnabledMissingCommand(t *testing.T) {
@@ -274,6 +279,7 @@ func TestLanguageEnabledMissingCommand(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
 	assert.Equal(t, "", lang.Full, "unicorn is unavailable and uni and corn files are found")
+	assert.Equal(t, "", lang.Executable, "no executable was found")
 }
 
 func TestLanguageEnabledNoVersionData(t *testing.T) {
@@ -297,6 +303,7 @@ func TestLanguageEnabledNoVersionData(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
 	assert.Equal(t, "", lang.Full)
+	assert.Equal(t, "", lang.Executable, "no version was found")
 }
 
 func TestLanguageEnabledMissingCommandCustomText(t *testing.T) {
@@ -437,4 +444,55 @@ func TestLanguageEnabledInHome(t *testing.T) {
 		lang := bootStrapLanguageTest(args)
 		assert.Equal(t, tc.ExpectedEnabled, lang.Enabled(), tc.Case)
 	}
+}
+
+func TestLanguageInnerHyperlink(t *testing.T) {
+	args := &languageArgs{
+		commands: []*cmd{
+			{
+				executable:         "uni",
+				args:               []string{"--version"},
+				regex:              `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+				versionURLTemplate: "https://uni.org/release/{{ .Full }}",
+			},
+			{
+				executable:         "corn",
+				args:               []string{"--version"},
+				regex:              `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+				versionURLTemplate: "https://unicor.org/doc/{{ .Full }}",
+			},
+		},
+		versionURLTemplate: "This gets replaced with inner template",
+		extensions:         []string{uni, corn},
+		enabledExtensions:  []string{corn},
+		enabledCommands:    []string{"corn"},
+		version:            universion,
+		properties:         properties.Map{},
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.Enabled())
+	assert.Equal(t, "https://unicor.org/doc/1.3.307", lang.version.URL)
+}
+
+func TestLanguageHyperlinkTemplatePropertyTakesPriority(t *testing.T) {
+	args := &languageArgs{
+		commands: []*cmd{
+			{
+				executable:         "uni",
+				args:               []string{"--version"},
+				regex:              `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+				versionURLTemplate: "https://uni.org/release/{{ .Full }}",
+			},
+		},
+		extensions:        []string{uni},
+		enabledExtensions: []string{uni},
+		enabledCommands:   []string{"uni"},
+		version:           universion,
+		properties: properties.Map{
+			properties.VersionURLTemplate: "https://custom/url/template/{{ .Major }}.{{ .Minor }}",
+		},
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.Enabled())
+	assert.Equal(t, "https://custom/url/template/1.3", lang.version.URL)
 }

@@ -243,8 +243,9 @@
             "iterm",
             "julia",
             "java",
-            "kubectl",
             "kotlin",
+            "kubectl",
+            "lua",
             "node",
             "npm",
             "nx",
@@ -2573,6 +2574,47 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "lua"
+              }
+            }
+          },
+          "then": {
+            "title": "Lua Segment",
+            "description": "https://ohmyposh.dev/docs/segments/lua",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "preferred_executable": {
+                    "type": "string",
+                    "title": "Preferred Executable",
+                    "description": "The preferred executable to use when fetching the version.",
+                    "enum": ["lua", "luajit"],
+                    "default": "lua"
                   }
                 }
               }

@@ -205,9 +205,9 @@
           "foreground": "#222222",
           "leading_diamond": "\ue0b6",
           "properties": {
-            "linux": "\ue27f",
-            "macos": "\ue27f",
-            "windows": "\ue27f"
+            "linux": "\ue712",
+            "macos": "\ue711",
+            "windows": "\ue70f"
           },
           "style": "diamond",
           "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}<#262626> \ue0b2</>",

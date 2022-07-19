@@ -79,6 +79,7 @@ module.exports = {
         "segments/julia",
         "segments/kotlin",
         "segments/kubectl",
+        "segments/lua",
         "segments/nbgv",
         "segments/nightscout",
         "segments/npm",

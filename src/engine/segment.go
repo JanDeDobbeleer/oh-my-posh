@@ -126,6 +126,8 @@ const (
 	KOTLIN SegmentType = "kotlin"
 	// KUBECTL writes the Kubernetes context we're currently in
 	KUBECTL SegmentType = "kubectl"
+	// LUA writes the active lua version
+	LUA SegmentType = "lua"
 	// NBGV writes the nbgv version information
 	NBGV SegmentType = "nbgv"
 	// NIGHTSCOUT is an open source diabetes system
@@ -288,6 +290,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		JULIA:         &segments.Julia{},
 		KOTLIN:        &segments.Kotlin{},
 		KUBECTL:       &segments.Kubectl{},
+		LUA:           &segments.Lua{},
 		NBGV:          &segments.Nbgv{},
 		NIGHTSCOUT:    &segments.Nightscout{},
 		NODE:          &segments.Node{},

@@ -192,6 +192,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/entr0pia"><img src="https://avatars.githubusercontent.com/u/30486766?v=4?s=100" width="100px;" alt=""/><br /><sub><b>风沐白</b></sub></a><br /><a href="#design-entr0pia" title="Design">🎨</a></td>
+    <td align="center"><a href="https://github.com/schallm"><img src="https://avatars.githubusercontent.com/u/331167?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michael T. Schall</b></sub></a><br /><a href="#design-schallm" title="Design">🎨</a></td>
   </tr>
 </table>
 

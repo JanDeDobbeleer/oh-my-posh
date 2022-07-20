@@ -190,6 +190,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="http://fwest98.nl/"><img src="https://avatars.githubusercontent.com/u/1918658?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Floris Westerman</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=FWest98" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/mjcarman"><img src="https://avatars.githubusercontent.com/u/121028?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michael Carman</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mjcarman" title="Code">💻</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/entr0pia"><img src="https://avatars.githubusercontent.com/u/30486766?v=4?s=100" width="100px;" alt=""/><br /><sub><b>风沐白</b></sub></a><br /><a href="#design-entr0pia" title="Design">🎨</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-restore -->

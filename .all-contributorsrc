@@ -1291,6 +1291,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "schallm",
+      "name": "Michael T. Schall",
+      "avatar_url": "https://avatars.githubusercontent.com/u/331167?v=4",
+      "profile": "https://github.com/schallm",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -3,7 +3,6 @@
   "blocks": [
     {
       "alignment": "left",
-      "newline": true,
       "segments": [
         {
           "background": "#FEF5ED",
@@ -129,7 +128,6 @@
     }
   ],
   "console_title_template": "{{ .Folder }}",
-  "osc99": true,
   "transient_prompt": {
     "background": "transparent",
     "foreground": "#FEF5ED",

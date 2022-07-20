@@ -64,7 +64,6 @@ func TestEnabledInWorktree(t *testing.T) {
 		WorkingFolder         string
 		WorkingFolderAddon    string
 		WorkingFolderContent  string
-		GitDirContent         string
 		ExpectedRealFolder    string
 		ExpectedWorkingFolder string
 		ExpectedRootFolder    string
@@ -93,17 +92,17 @@ func TestEnabledInWorktree(t *testing.T) {
 			Case:                  "submodule with root working folder",
 			ExpectedEnabled:       true,
 			WorkingFolder:         "/repo/.git/modules/submodule",
-			ExpectedWorkingFolder: "/dev/repo/.git/modules/submodule",
-			ExpectedRealFolder:    "/dev/repo/.git/modules/submodule",
-			ExpectedRootFolder:    "/dev/repo/.git/modules/submodule",
+			ExpectedWorkingFolder: "/repo/.git/modules/submodule",
+			ExpectedRealFolder:    "/repo/.git/modules/submodule",
+			ExpectedRootFolder:    "/repo/.git/modules/submodule",
 			WindowsPaths:          true,
 		},
 		{
 			Case:                  "submodule with worktrees",
 			ExpectedEnabled:       true,
-			WorkingFolder:         "./.git/modules/module/path/worktrees/location",
-			WorkingFolderAddon:    "/dev/",
-			GitDirContent:         "/dev/worktree.git\n",
+			WorkingFolder:         "/dev/.git/modules/module/path/worktrees/location",
+			WorkingFolderAddon:    "gitdir",
+			WorkingFolderContent:  "/dev/worktree.git\n",
 			ExpectedWorkingFolder: "/dev/.git/modules/module/path",
 			ExpectedRealFolder:    "/dev/worktree",
 			ExpectedRootFolder:    "/dev/.git/modules/module/path",
@@ -126,9 +125,8 @@ func TestEnabledInWorktree(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("FileContent", "/dev/.git").Return(fmt.Sprintf("gitdir: %s", tc.WorkingFolder))
 		env.On("FileContent", filepath.Join(tc.WorkingFolder, tc.WorkingFolderAddon)).Return(tc.WorkingFolderContent)
+		env.On("HasFilesInDir", tc.WorkingFolder, tc.WorkingFolderAddon).Return(true)
 		env.On("HasFilesInDir", tc.WorkingFolder, "HEAD").Return(true)
-		env.On("HasFilesInDir", filepath.Join(tc.WorkingFolderAddon, tc.WorkingFolder), "gitdir").Return(true)
-		env.On("FileContent", filepath.Join(tc.WorkingFolderAddon, tc.WorkingFolder, "gitdir")).Return(tc.GitDirContent)
 		env.On("PathSeparator").Return(string(os.PathSeparator))
 		g := &Git{
 			scm: scm{

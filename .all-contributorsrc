@@ -1282,6 +1282,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "entr0pia",
+      "name": "风沐白",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30486766?v=4",
+      "profile": "https://github.com/entr0pia",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

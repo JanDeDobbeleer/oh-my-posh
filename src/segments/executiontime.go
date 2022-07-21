@@ -32,6 +32,8 @@ const (
 	Dallas DurationStyle = "dallas"
 	// Galveston hour
 	Galveston DurationStyle = "galveston"
+	// Galveston hour
+	GalvestonMs DurationStyle = "galvestonms"
 	// Houston hour and milliseconds
 	Houston DurationStyle = "houston"
 	// Amarillo seconds
@@ -80,6 +82,8 @@ func (t *Executiontime) formatDuration(style DurationStyle) string {
 		return t.formatDurationDallas()
 	case Galveston:
 		return t.formatDurationGalveston()
+	case GalvestonMs:
+		return t.formatDurationGalvestonMs()
 	case Houston:
 		return t.formatDurationHouston()
 	case Amarillo:
@@ -146,6 +150,12 @@ func (t *Executiontime) formatDurationDallas() string {
 
 func (t *Executiontime) formatDurationGalveston() string {
 	result := fmt.Sprintf("%02d:%02d:%02d", t.Ms/hour, t.Ms/minute%minutesPerHour, t.Ms%minute/second)
+	return result
+}
+
+func (t *Executiontime) formatDurationGalvestonMs() string {
+	millies := t.Ms % second
+	result := fmt.Sprintf("%02d:%02d:%02d:%03d", t.Ms/hour, t.Ms/minute%minutesPerHour, t.Ms%minute/second, millies)
 	return result
 }
 

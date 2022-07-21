@@ -556,7 +556,13 @@
                     "type": "string",
                     "title": "Command",
                     "description": "the command(s) to run",
-                    "default": "echo no command specified"
+                    "default": ""
+                  },
+                  "script": {
+                    "type": "string",
+                    "title": "Script",
+                    "description": "A script to run",
+                    "default": ""
                   }
                 }
               }

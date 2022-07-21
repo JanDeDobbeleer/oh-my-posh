@@ -32,7 +32,7 @@ downloaded the configuration file to your user's home folder):
 <TabItem value="powershell">
 
 ```powershell
-oh-my-posh init pwsh --config ~/.jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh init pwsh --config ~/.poshthemes/jandedobbeleer.omp.json | Invoke-Expression
 ```
 
 Once altered, reload your profile for the changes to take effect.
@@ -53,7 +53,7 @@ New-Item -Path $PROFILE -Type File -Force
 <TabItem value="cmd">
 
 ```lua title="oh-my-posh.lua"
-load(io.popen('oh-my-posh init cmd --config ~/.jandedobbeleer.omp.json'):read("*a"))()
+load(io.popen('oh-my-posh init cmd --config ~/.poshthemes/jandedobbeleer.omp.json'):read("*a"))()
 ```
 
 Once altered, restart cmd for the changes to take effect.
@@ -62,7 +62,7 @@ Once altered, restart cmd for the changes to take effect.
 <TabItem value="zsh">
 
 ```bash
-eval "$(oh-my-posh init zsh --config ~/.jandedobbeleer.omp.json)"
+eval "$(oh-my-posh init zsh --config ~/.poshthemes/jandedobbeleer.omp.json)"
 ```
 
 Once altered, reload your profile for the changes to take effect.
@@ -75,7 +75,7 @@ exec zsh
 <TabItem value="bash">
 
 ```bash
-eval "$(oh-my-posh init bash --config ~/.jandedobbeleer.omp.json)"
+eval "$(oh-my-posh init bash --config ~/.poshthemes/jandedobbeleer.omp.json)"
 ```
 
 Once altered, reload your profile for the changes to take effect.
@@ -88,7 +88,7 @@ exec bash
 <TabItem value="fish">
 
 ```bash
-oh-my-posh init fish --config ~/.jandedobbeleer.omp.json | source
+oh-my-posh init fish --config ~/.poshthemes/jandedobbeleer.omp.json | source
 ```
 
 Once altered, reload your config for the changes to take effect.
@@ -107,14 +107,14 @@ Oh My Posh requires Nushell >= 0.60.0
 Edit `$nu.configuration/path` and add the following lines at the bottom.
 
 ```bash
-oh-my-posh init nu --config ~/.jandedobbeleer.omp.json
+oh-my-posh init nu --config ~/.poshthemes/jandedobbeleer.omp.json
 source ~/.oh-my-posh.nu
 ```
 
 If you want to save the initialization script elsewhere, replace the lines above with these:
 
 ```bash
-oh-my-posh init nu --config ~/.jandedobbeleer.omp.json --print | save /mylocation/myscript.nu
+oh-my-posh init nu --config ~/.poshthemes/jandedobbeleer.omp.json --print | save /mylocation/myscript.nu
 source /mylocation/myscript.nu
 ```
 

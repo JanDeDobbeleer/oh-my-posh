@@ -9,7 +9,6 @@ import (
 	"oh-my-posh/properties"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	http2 "net/http"
@@ -147,24 +146,16 @@ func (w *Withings) Template() string {
 }
 
 func (w *Withings) Enabled() bool {
-	wg := sync.WaitGroup{}
-	wg.Add(3)
-	functions := []func() bool{
-		w.getMeasures,
-		w.getActivities,
-		w.getSleep,
-	}
 	var enabled bool
-	for _, function := range functions {
-		go func(f func() bool) {
-			defer wg.Done()
-			success := f()
-			if success {
-				enabled = true
-			}
-		}(function)
+	if w.getActivities() {
+		enabled = true
 	}
-	wg.Wait()
+	if w.getMeasures() {
+		enabled = true
+	}
+	if w.getSleep() {
+		enabled = true
+	}
 	return enabled
 }
 

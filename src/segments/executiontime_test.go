@@ -185,6 +185,32 @@ func TestExecutionTimeFormatGalveston(t *testing.T) {
 	}
 }
 
+func TestExecutionTimeFormatGalvestonMs(t *testing.T) {
+	cases := []struct {
+		Input    string
+		Expected string
+	}{
+		{Input: "0.001s", Expected: "00:00:00:001"},
+		{Input: "0.1s", Expected: "00:00:00:100"},
+		{Input: "1s", Expected: "00:00:01:000"},
+		{Input: "2.1s", Expected: "00:00:02:100"},
+		{Input: "1m", Expected: "00:01:00:000"},
+		{Input: "3m2.1s", Expected: "00:03:02:100"},
+		{Input: "1h", Expected: "01:00:00:000"},
+		{Input: "4h3m2.1s", Expected: "04:03:02:100"},
+		{Input: "124h3m2.1s", Expected: "124:03:02:100"},
+		{Input: "124h3m2.0s", Expected: "124:03:02:000"},
+	}
+
+	for _, tc := range cases {
+		duration, _ := time.ParseDuration(tc.Input)
+		executionTime := &Executiontime{}
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationGalvestonMs()
+		assert.Equal(t, tc.Expected, output, tc.Input)
+	}
+}
+
 func TestExecutionTimeFormatHouston(t *testing.T) {
 	cases := []struct {
 		Input    string

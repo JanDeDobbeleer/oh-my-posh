@@ -126,6 +126,8 @@ const (
 	KOTLIN SegmentType = "kotlin"
 	// KUBECTL writes the Kubernetes context we're currently in
 	KUBECTL SegmentType = "kubectl"
+	// LUA writes the active lua version
+	LUA SegmentType = "lua"
 	// NBGV writes the nbgv version information
 	NBGV SegmentType = "nbgv"
 	// NIGHTSCOUT is an open source diabetes system
@@ -190,6 +192,8 @@ const (
 	WIFI SegmentType = "wifi"
 	// WINREG queries the Windows registry.
 	WINREG SegmentType = "winreg"
+	// WITHINGS queries the Withings API.
+	WITHINGS SegmentType = "withings"
 	// YTM writes YouTube Music information and status
 	YTM SegmentType = "ytm"
 )
@@ -286,6 +290,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		JULIA:         &segments.Julia{},
 		KOTLIN:        &segments.Kotlin{},
 		KUBECTL:       &segments.Kubectl{},
+		LUA:           &segments.Lua{},
 		NBGV:          &segments.Nbgv{},
 		NIGHTSCOUT:    &segments.Nightscout{},
 		NODE:          &segments.Node{},
@@ -318,6 +323,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		WAKATIME:      &segments.Wakatime{},
 		WIFI:          &segments.Wifi{},
 		WINREG:        &segments.WindowsRegistry{},
+		WITHINGS:      &segments.Withings{},
 		YTM:           &segments.Ytm{},
 	}
 	if segment.Properties == nil {

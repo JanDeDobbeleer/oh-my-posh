@@ -1,0 +1,61 @@
+---
+id: lua
+title: Lua
+sidebar_label: Lua
+---
+
+## What
+
+Display the currently active [Lua][lua] or [LuaJIT][luajit] version.
+
+## Sample Configuration
+
+```json
+{
+  "type": "lua",
+  "style": "powerline",
+  "powerline_symbol": "\ue0b0",
+  "foreground": "white",
+  "background": "blue",
+  "template": " \ue620 {{ .Full }} "
+}
+```
+
+## Properties
+
+- home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
+- fetch_version: `boolean` - display the lua version - defaults to `true`
+- missing_command_text: `string` - text to display when the command is missing - defaults to empty
+- display_mode: `string` - determines when the segment is displayed
+  - `always`: the segment is always displayed
+  - `files`: the segment is only displayed when `*.lua`, `*.rockspec` files or the `lua` folder are present (default)
+- version_url_template: `string` - a go [text/template][go-text-template] [template][templates] that creates
+the URL of the version info / release notes
+- preferred_executable: `string` - the preferred executable to use when fetching the version
+  - `lua`: the Lua executable (default)
+  - `luajit`: the LuaJIT executable
+
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
+
+- `.Full`: `string` - the full version
+- `.Major`: `string` - major number
+- `.Minor`: `string` - minor number
+- `.Patch`: `string` - patch number
+- `.URL`: `string` - URL of the version info / release notes
+- `.Error`: `string` - error encountered when fetching the version string
+- `.Executable`: `string` - the executable used to fetch the version
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[templates]: /docs/configuration/templates
+[lua]: https://www.lua.org/
+[luajit]: https://luajit.org/

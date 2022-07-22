@@ -82,4 +82,3 @@ Only winget and scoop add the environment variable `POSH_THEMES_PATH` automatica
 [windows]: /docs/installation/windows
 [macos]: /docs/installation/macos
 [linux]: /docs/installation/linux
-[set-prompt]: /docs/installation/prompt

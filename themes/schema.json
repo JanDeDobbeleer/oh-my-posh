@@ -54,6 +54,30 @@
       "description": "Timeout value to use for http request",
       "default": 20
     },
+    "cache_timeout": {
+      "type": "integer",
+      "title": "cache timeout",
+      "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
+      "default": 10
+    },
+    "expires_in": {
+      "type": "integer",
+      "title": "Expires in",
+      "description": "Access token expiration time in seconds",
+      "default": 0
+    },
+    "access_token": {
+      "type": "string",
+      "title": "Access token",
+      "description": "The initial access token",
+      "default": ""
+    },
+    "refresh_token": {
+      "type": "string",
+      "title": "Refresh token",
+      "description": "The initial refresh token",
+      "default": ""
+    },
     "display_mode": {
       "type": "string",
       "title": "Display Mode",
@@ -219,8 +243,9 @@
             "iterm",
             "julia",
             "java",
-            "kubectl",
             "kotlin",
+            "kubectl",
+            "lua",
             "node",
             "npm",
             "nx",
@@ -251,6 +276,7 @@
             "wakatime",
             "wifi",
             "winreg",
+            "withings",
             "ytm"
           ]
         },
@@ -530,7 +556,13 @@
                     "type": "string",
                     "title": "Command",
                     "description": "the command(s) to run",
-                    "default": "echo no command specified"
+                    "default": ""
+                  },
+                  "script": {
+                    "type": "string",
+                    "title": "Script",
+                    "description": "A script to run",
+                    "default": ""
                   }
                 }
               }
@@ -1828,10 +1860,7 @@
                     "$ref": "#/definitions/http_timeout"
                   },
                   "cache_timeout": {
-                    "type": "integer",
-                    "title": "cache timeout",
-                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
-                    "default": 10
+                    "$ref": "#/definitions/cache_timeout"
                   }
                 }
               }
@@ -1873,6 +1902,7 @@
                       "roundrock",
                       "dallas",
                       "galveston",
+                      "galvestonms",
                       "houston",
                       "amarillo",
                       "round"
@@ -1976,10 +2006,16 @@
                     "$ref": "#/definitions/http_timeout"
                   },
                   "cache_timeout": {
-                    "type": "integer",
-                    "title": "cache timeout",
-                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
-                    "default": 10
+                    "$ref": "#/definitions/cache_timeout"
+                  },
+                  "access_token": {
+                    "$ref": "#/definitions/access_token"
+                  },
+                  "refresh_token": {
+                    "$ref": "#/definitions/refresh_token"
+                  },
+                  "expires_in": {
+                    "$ref": "#/definitions/expires_in"
                   }
                 }
               }
@@ -2097,10 +2133,7 @@
                     "$ref": "#/definitions/http_timeout"
                   },
                   "cache_timeout": {
-                    "type": "integer",
-                    "title": "cache timeout",
-                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
-                    "default": 10
+                    "$ref": "#/definitions/cache_timeout"
                   }
                 }
               }
@@ -2145,6 +2178,40 @@
                     "title": "Fallback value",
                     "description": "Value to display if registry value cannot be retrieved",
                     "default": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "withings"
+              }
+            }
+          },
+          "then": {
+            "title": "Display activity data from Withings",
+            "description": "https://ohmyposh.dev/docs/segments/withings",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "$ref": "#/definitions/cache_timeout"
+                  },
+                  "access_token": {
+                    "$ref": "#/definitions/access_token"
+                  },
+                  "refresh_token": {
+                    "$ref": "#/definitions/refresh_token"
+                  },
+                  "expires_in": {
+                    "$ref": "#/definitions/expires_in"
                   }
                 }
               }
@@ -2248,10 +2315,7 @@
                     "$ref": "#/definitions/http_timeout"
                   },
                   "cache_timeout": {
-                    "type": "integer",
-                    "title": "cache timeout in minutes",
-                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
-                    "default": 5
+                    "$ref": "#/definitions/cache_timeout"
                   },
                   "doubleup_icon": {
                     "type": "string",
@@ -2360,10 +2424,7 @@
                     "$ref": "#/definitions/http_timeout"
                   },
                   "cache_timeout": {
-                    "type": "integer",
-                    "title": "cache timeout",
-                    "description": "The number of minutes the response is cached. A value of 0 disables the cache.",
-                    "default": 10
+                    "$ref": "#/definitions/cache_timeout"
                   }
                 }
               }
@@ -2520,6 +2581,47 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "lua"
+              }
+            }
+          },
+          "then": {
+            "title": "Lua Segment",
+            "description": "https://ohmyposh.dev/docs/segments/lua",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "preferred_executable": {
+                    "type": "string",
+                    "title": "Preferred Executable",
+                    "description": "The preferred executable to use when fetching the version.",
+                    "enum": ["lua", "luajit"],
+                    "default": "lua"
                   }
                 }
               }

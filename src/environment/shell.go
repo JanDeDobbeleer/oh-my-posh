@@ -9,6 +9,7 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"net/http/httputil"
 	"oh-my-posh/environment/battery"
 	"oh-my-posh/environment/cmd"
 	"oh-my-posh/regex"
@@ -166,7 +167,7 @@ type Environment interface {
 	BatteryState() (*battery.Info, error)
 	QueryWindowTitles(processName, windowTitleRegex string) (string, error)
 	WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error)
-	HTTPRequest(url string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
+	HTTPRequest(url string, body io.Reader, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
 	IsWsl() bool
 	IsWsl2() bool
 	StackCount() int
@@ -271,7 +272,7 @@ func (env *ShellEnvironment) resolveConfigPath() {
 func (env *ShellEnvironment) downloadConfig(location string) error {
 	defer env.Trace(time.Now(), "downloadConfig", location)
 	configPath := filepath.Join(env.CachePath(), "config.omp.json")
-	cfg, err := env.HTTPRequest(location, 5000)
+	cfg, err := env.HTTPRequest(location, nil, 5000)
 	if err != nil {
 		return err
 	}
@@ -572,16 +573,20 @@ func (env *ShellEnvironment) Shell() string {
 	return env.CmdFlags.Shell
 }
 
-func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
+func (env *ShellEnvironment) HTTPRequest(targetURL string, body io.Reader, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
 	defer env.Trace(time.Now(), "HTTPRequest", targetURL)
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
-	request, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, nil)
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, body)
 	if err != nil {
 		return nil, err
 	}
 	for _, modifier := range requestModifiers {
 		modifier(request)
+	}
+	if env.CmdFlags.Debug {
+		dump, _ := httputil.DumpRequestOut(request, true)
+		env.Log(Debug, "HTTPRequest", string(dump))
 	}
 	response, err := client.Do(request)
 	if err != nil {
@@ -596,13 +601,13 @@ func (env *ShellEnvironment) HTTPRequest(targetURL string, timeout int, requestM
 		return nil, err
 	}
 	defer response.Body.Close()
-	body, err := io.ReadAll(response.Body)
+	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
 		env.Log(Error, "HTTPRequest", err.Error())
 		return nil, err
 	}
-	env.Log(Debug, "HTTPRequest", string(body))
-	return body, nil
+	env.Log(Debug, "HTTPRequest", string(responseBody))
+	return responseBody, nil
 }
 
 func (env *ShellEnvironment) HasParentFilePath(path string) (*FileInfo, error) {

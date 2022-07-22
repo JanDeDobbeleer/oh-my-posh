@@ -28,13 +28,15 @@ type version struct {
 	Prerelease    string
 	BuildMetadata string
 	URL           string
+	Executable    string
 }
 
 type cmd struct {
-	executable string
-	args       []string
-	regex      string
-	getVersion getVersion
+	executable         string
+	args               []string
+	regex              string
+	getVersion         getVersion
+	versionURLTemplate string
 }
 
 func (c *cmd) parse(versionInfo string) (*version, error) {
@@ -180,7 +182,11 @@ func (l *language) setVersion() error {
 			return fmt.Errorf("err parsing info from %s with %s", command.executable, versionStr)
 		}
 		l.version = *version
+		if command.versionURLTemplate != "" {
+			l.versionURLTemplate = command.versionURLTemplate
+		}
 		l.buildVersionURL()
+		l.version.Executable = command.executable
 		return nil
 	}
 	return errors.New(l.props.GetString(MissingCommandText, ""))

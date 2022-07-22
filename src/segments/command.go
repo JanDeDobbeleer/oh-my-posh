@@ -18,6 +18,8 @@ const (
 	ExecutableShell properties.Property = "shell"
 	// Command to execute
 	Command properties.Property = "command"
+	// Command to execute
+	Script properties.Property = "script"
 )
 
 func (c *Cmd) Template() string {
@@ -29,12 +31,23 @@ func (c *Cmd) Enabled() bool {
 	if !c.env.HasCommand(shell) {
 		return false
 	}
-	command := c.props.GetString(Command, "echo no command specified")
+	command := c.props.GetString(Command, "")
+	if len(command) != 0 {
+		return c.runCommand(shell, command)
+	}
+	script := c.props.GetString(Script, "")
+	if len(script) != 0 {
+		return c.runScript(shell, script)
+	}
+	return false
+}
+
+func (c *Cmd) runCommand(shell, command string) bool {
 	if strings.Contains(command, "||") {
 		commands := strings.Split(command, "||")
 		for _, cmd := range commands {
 			output := c.env.RunShellCommand(shell, strings.TrimSpace(cmd))
-			if output != "" {
+			if len(output) != 0 {
 				c.Output = output
 				return true
 			}
@@ -47,10 +60,15 @@ func (c *Cmd) Enabled() bool {
 			output += c.env.RunShellCommand(shell, strings.TrimSpace(cmd))
 		}
 		c.Output = output
-		return c.Output != ""
+		return len(c.Output) != 0
 	}
 	c.Output = c.env.RunShellCommand(shell, strings.TrimSpace(command))
-	return c.Output != ""
+	return len(c.Output) != 0
+}
+
+func (c *Cmd) runScript(shell, script string) bool {
+	c.Output = c.env.RunShellCommand(shell, script)
+	return len(c.Output) != 0
 }
 
 func (c *Cmd) Init(props properties.Properties, env environment.Environment) {

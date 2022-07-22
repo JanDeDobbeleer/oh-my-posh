@@ -53,7 +53,6 @@ if you do `Codespaces: Rebuild Container` again, you'll be back to the latest st
 [docs]: https://ohmyposh.dev/docs
 [guide]: https://ohmyposh.dev/docs/contributing/started
 [cc]: https://www.conventionalcommits.org/en/v1.0.0/#summary
-[conduct]: mailto:conduct@ohmyposh.dev
 [codespaces]: https://github.com/features/codespaces
 [devcontainer-ext]: https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers
 [timezones]: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones

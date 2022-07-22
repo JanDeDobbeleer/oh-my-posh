@@ -30,9 +30,9 @@ function Auth() {
     ...
     "properties": {
       // highlight-start
-      "access_token":"${params.access_token}",
-      "refresh_token":"${params.refresh_token}",
-      "expires_in":"${params.expires_in}"
+      "access_token": "${params.access_token}",
+      "refresh_token": "${params.refresh_token}",
+      "expires_in": ${params.expires_in}
       // highlight-end
     }
   }

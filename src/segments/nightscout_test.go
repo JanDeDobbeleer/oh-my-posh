@@ -134,8 +134,8 @@ func TestNSSegment(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 		props := properties.Map{
-			CacheTimeout: tc.CacheTimeout,
-			URL:          "FAKE",
+			properties.CacheTimeout: tc.CacheTimeout,
+			URL:                     "FAKE",
 		}
 
 		cache := &mock.MockedCache{}

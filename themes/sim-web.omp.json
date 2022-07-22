@@ -4,7 +4,7 @@
     {
       "type": "prompt",
       "alignment": "right",
-      "filler": " ",
+      "filler": "",
       "newline": true,
       "overflow": "break",
       "segments": [

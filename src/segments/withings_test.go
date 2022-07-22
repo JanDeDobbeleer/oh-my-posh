@@ -5,6 +5,7 @@ import (
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -85,7 +86,12 @@ func TestWithingsSegment(t *testing.T) {
 				Body: &Body{
 					Activities: []*Activity{
 						{
+							Steps: 5066,
+							Date:  time.Now().AddDate(0, 0, -1).Format("2006-01-02"),
+						},
+						{
 							Steps: 7077,
+							Date:  time.Now().Format("2006-01-02"),
 						},
 					},
 				},
@@ -127,6 +133,7 @@ func TestWithingsSegment(t *testing.T) {
 					Activities: []*Activity{
 						{
 							Steps: 976,
+							Date:  time.Now().Format("2006-01-02"),
 						},
 					},
 				},

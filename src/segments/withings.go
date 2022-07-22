@@ -179,8 +179,15 @@ func (w *Withings) getActivities() bool {
 	if err != nil || len(data.Body.Activities) == 0 {
 		return false
 	}
-	w.Steps = data.Body.Activities[0].Steps
-	return true
+	today := time.Now().Format("2006-01-02")
+	for _, activity := range data.Body.Activities {
+		if activity.Date != today {
+			continue
+		}
+		w.Steps = activity.Steps
+		return true
+	}
+	return false
 }
 
 func (w *Withings) getSleep() bool {

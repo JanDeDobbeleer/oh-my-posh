@@ -104,11 +104,16 @@ func (w *withingsAPI) GetActivities(activities string) (*WithingsData, error) {
 }
 
 func (w *withingsAPI) GetSleep() (*WithingsData, error) {
-	now := time.Now()
+	today := time.Now()
+	yesterday := today.AddDate(0, 0, -1)
+	// start from 21:00 yesterday
+	start := time.Date(yesterday.Year(), yesterday.Month(), yesterday.Day(), 21, 0, 0, 0, time.UTC).Unix()
+	// end at 12PM today
+	end := time.Date(today.Year(), today.Month(), today.Day(), 12, 0, 0, 0, time.UTC).Unix()
 	formData := url.Values{
 		"action":    {"get"},
-		"startdate": {strconv.FormatInt(now.AddDate(0, -1, 0).Unix(), 10)},
-		"enddate":   {strconv.FormatInt(now.Unix(), 10)},
+		"startdate": {strconv.FormatInt(start, 10)},
+		"enddate":   {strconv.FormatInt(end, 10)},
 	}
 	return w.getWithingsData("https://wbsapi.withings.net/v2/sleep", formData)
 }
@@ -195,8 +200,17 @@ func (w *Withings) getSleep() bool {
 	if err != nil || len(data.Body.Series) == 0 {
 		return false
 	}
-	sleepStart := time.Unix(data.Body.Series[0].Startdate, 0)
-	sleepEnd := time.Unix(data.Body.Series[0].Enddate, 0)
+	var sleepStart, sleepEnd time.Time
+	for _, series := range data.Body.Series {
+		start := time.Unix(series.Startdate, 0)
+		if sleepStart.IsZero() || start.Before(sleepStart) {
+			sleepStart = start
+		}
+		end := time.Unix(series.Enddate, 0)
+		if sleepStart.IsZero() || start.After(sleepEnd) {
+			sleepEnd = end
+		}
+	}
 	sleepHours := sleepEnd.Sub(sleepStart).Hours()
 	w.SleepHours = fmt.Sprintf("%0.1f", sleepHours)
 	return true

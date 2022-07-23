@@ -35,8 +35,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         )
 
         if ($ExecutionContext.SessionState.LanguageMode -eq "ConstrainedLanguage") {
-            $_arguments = $Arguments -join ' '
-            $standardOut = Invoke-Expression "& $FileName $_arguments 2>&1"
+            $standardOut = Invoke-Expression "& '$FileName' `$Arguments 2>&1"
             $standardOut -join "`n"
             return
         }

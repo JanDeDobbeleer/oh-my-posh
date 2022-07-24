@@ -1,0 +1,180 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+blocks:
+  - alignment: left
+    segments:
+      # Session
+      - background: p:black
+        foreground: p:white
+        invert_powerline: true
+        powerline_symbol: 
+        style: powerline
+        template: "{{ .UserName }}@{{ .HostName }} "
+        type: session
+
+      # Path
+      - background: p:orange
+        foreground: p:white
+        powerline_symbol: 
+        properties:
+          home_icon: ""
+          style: folder
+        style: powerline
+        template: "  {{ .Path }} "
+        type: path
+
+      # Git
+      - background: p:green
+        foreground: p:white
+        powerline_symbol: 
+        properties:
+          script: |
+            BRANCH=$(git branch --show-current 2>/dev/null)
+            [[ -z $BRANCH ]] && exit
+            status=$(git status --porcelain | awk '{print $1}')
+            [[ $status == *"R"* ]] && bits+='>'
+            [[ $status == *"A"* ]] && bits+='+'
+            [[ $status == *"??"* ]] && bits+='?'
+            [[ $status == *"D"* ]] && bits+='x'
+            [[ $status == *"M"* ]] && bits+='!'
+            [[ "$(git rev-list --count "@{u}..")" -gt 0 ]] && bits+='*'
+            [[ -n $bits ]] && STAT="  $bits"
+            echo -n " $BRANCH$STAT"
+          shell: bash
+        style: powerline
+        template: " {{ .Output }} "
+        type: command
+
+      # Execution time
+      - background: p:darkred
+        foreground: p:white
+        powerline_symbol: 
+        properties:
+          always_enabled: true
+          style: round
+        style: powerline
+        template: " 羽{{ .FormattedMs }} "
+        type: executiontime
+
+      # Exit code
+      - background: p:blue
+        background_templates:
+          - "{{ if gt .Code 0 }}p:red{{ end }}"
+        foreground: p:white
+        powerline_symbol: 
+        properties:
+          always_enabled: true
+        style: diamond
+        template: " {{ if gt .Code 0 }} {{ .Meaning }}{{ else }}{{ end }} "
+        trailing_diamond: 
+        type: exit
+    type: prompt
+  - alignment: right
+    segments:
+      # Shell
+      - background: p:black
+        foreground: p:white
+        style: plain
+        template: <p:black,transparent></> {{ .Name }}<transparent,p:black></>
+        type: shell
+
+      # Battery
+      - background_templates:
+          - '{{if eq "Charging" .State.String }}p:green{{end}}'
+          - '{{if eq "Discharging" .State.String}}p:orange{{end}}'
+        foreground: p:white
+        leading_diamond: 
+        properties:
+          charged_icon: 
+          charging_icon: 
+          discharging_icon: " "
+        style: diamond
+        template: " {{.Templates }}{{ .Percentage}} <transparent></>"
+        templates:
+          - '{{if eq "Discharging" .State.String}}{{if lt .Percentage 11}}{{else if lt .Percentage 21}}{{else if lt .Percentage 31}}{{else if lt .Percentage 41}}{{else if lt .Percentage 51}}{{else if lt .Percentage 61}}{{else if lt .Percentage 71}}{{else if lt .Percentage 81}}{{else if lt .Percentage 91}}{{else}}{{end}}{{end}}'
+          - '{{if eq "Charging" .State.String}}{{ if lt .Percentage 21}}{{else if lt .Percentage 31}}{{else if lt .Percentage 41}}{{else if lt .Percentage 61}}{{else if lt .Percentage 81}}{{else if lt .Percentage 91}}{{else}}{{end}}{{end}}'
+        templates_logic: first_match
+        type: battery
+
+      # Weather & time of day
+      - background: p:blue
+        foreground: p:white
+        leading_diamond: 
+        properties:
+          script: |
+            api_key="$OWM_API_KEY" # change this
+            now=$(date +'%I:%M')
+            [[ $(date +'%p') == 'am' ]] && now+='滛' || now+=''
+            [[ -z $api_key ]] && echo "$now" && exit
+            update=$(jq '.minute' /tmp/weather.w | tr -d '"')
+            if [[ -f '/tmp/weather.w' && $NO_WEATHER_CACHE -ne 1 && $(bc -l <<<"$(date +'%M')<=($update+10)") -eq 1 ]]; then
+                echo $now "$(jq .weather /tmp/weather.w | tr -d '"')" && exit 0
+            else
+                location=$(curl -s 'https://freegeoip.live/json/')
+                url="https://api.openweathermap.org/data/2.5/weather?lat=$(echo "$location" | jq .latitude)&lon=$(echo "$location" | jq .longitude)&units=metric&appid=$api_key"
+                res=$(curl -s "$url")
+                temp=$(echo "$res" | jq .main.temp)
+                temp_min=$(echo "$res" | jq .main.temp_min)
+                temp_max=$(echo "$res" | jq .main.temp_max)
+                [[ $(bc -l <<<"$temp_min!=$temp") -eq 1 ]] && temp_min_s="$temp_min-"
+                [[ $(bc -l <<<"$temp_max==$temp") -eq 1 ]] && temp_s="$temp_min_s$temp糖" || temp_s+="(${temp_min}${temp}-${temp_max})糖"
+                feels_like=$(echo "$res" | jq .main.feels_like)
+                [[ $(bc -l <<<"$feels_like!=$temp_min&&$feels_like!=$temp&&$feels_like!=$temp_max") -eq 1 ]] && feels_string="feels $feels_like糖"
+                case $(echo "$res" | jq .weather[0].icon | tr -d '"') in
+                01n | 01d)
+                    icon='\ufa98'
+                    ;;
+                02n | 02d)
+                    icon='\ufa94'
+                    ;;
+                03n | 03d)
+                    icon='\ue33d'
+                    ;;
+                04n | 04d)
+                    icon='\ue312'
+                    ;;
+                09n | 09d)
+                    icon='\ufa95'
+                    ;;
+                10n | 10d)
+                    icon='\ue308'
+                    ;;
+                11n | 11d)
+                    icon='\ue31d'
+                    ;;
+                13n | 13d)
+                    icon='\ue31a'
+                    ;;
+                50n | 50d)
+                    icon='\ue313'
+                    ;;
+                *)
+                    icon=''
+                    ;;
+                esac
+                weather="${icon} ${temp_s} ${feels_string}"
+                echo -e "$now $weather"
+                echo -e "{\"minute\": \"$(date +'%M')\", \"weather\": \"$weather\"}" >/tmp/weather.w
+            fi
+        style: diamond
+        template: "{{ .Output }}"
+        trailing_diamond: 
+        type: command
+    type: rprompt
+final_space: true
+palette:
+  black: "#33395b"
+  blue: "#359ddd"
+  darkred: "#7c0a16"
+  green: "#277b48"
+  orange: "#ff972e"
+  red: "#de3142"
+  white: "#efeef4"
+secondary_prompt:
+  background: transparent
+  foreground: p:white
+  template: " "
+transient_prompt:
+  background: transparent
+  foreground: p:white
+  template: " "
+version: 2

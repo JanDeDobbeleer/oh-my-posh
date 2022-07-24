@@ -4,9 +4,7 @@
     {
       "type": "prompt",
       "alignment": "right",
-      "filler": "",
-      "newline": true,
-      "overflow": "break",
+      "overflow": "hide",
       "segments": [
         {
           "type": "executiontime",

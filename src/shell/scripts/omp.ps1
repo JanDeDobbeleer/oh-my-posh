@@ -73,7 +73,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         # we do this to remove a deadlock potential on Windows
         $stdoutTask = $Process.StandardOutput.ReadToEndAsync()
         $stderrTask = $Process.StandardError.ReadToEndAsync()
-        [void]$Process.WaitForExit()
+        $Process.WaitForExit()
         $stderr = $stderrTask.Result.Trim()
         if ($stderr -ne '') {
             $Host.UI.WriteErrorLine($stderr)
@@ -124,6 +124,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
                 }
             } finally {
+                if ((Get-PSReadLineOption).PredictionViewStyle -eq 'ListView') {
+                    # If PSReadline is set to display suggestion list, this workaround is needed to clear the buffer below
+                    # before accepting the current commandline. The max amount of items in the list is 10, so 12 lines
+                    # are cleared (10 + 1 more for the prompt + 1 more for current commandline).
+                    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("`n" * [System.Math]::Min($Host.UI.RawUI.WindowSize.Height - $Host.UI.RawUI.CursorPosition.Y - 1, 12))
+                    [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
+                }
                 [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
                 [Console]::OutputEncoding = $previousOutputEncoding
             }

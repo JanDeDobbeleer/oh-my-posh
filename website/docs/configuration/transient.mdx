@@ -80,7 +80,7 @@ properties below - defaults to `{{ .Shell }}> `
 Invoke Oh My Posh in your `$PROFILE` and add the following line below.
 
 ```powershell
-oh-my-posh init pwsh --config $env:POSH_THEMES_PATH/jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/jandedobbeleer.omp.json" | Invoke-Expression
 // highlight-start
 Enable-PoshTransientPrompt
 // highlight-end
@@ -95,7 +95,7 @@ Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes 
 </TabItem>
 <TabItem value="cmd">
 
-Set the transient prompt in [clink][clink] to `always` in the `oh-my-posh.lua` script to enable the feature:
+You can run the command below to enable the feature permanently:
 
 ```shell
 clink set prompt.transient always

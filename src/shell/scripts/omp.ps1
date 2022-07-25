@@ -130,6 +130,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
     }
 
+    function Disable-PoshTransientPrompt {
+        Set-PSReadLineKeyHandler -Key Enter -Function AcceptLine
+        $script:TransientPrompt = $false
+    }
+
     function Enable-PoshLineError {
         $validLine = @(Start-Utf8Process $script:OMPExecutable @("print", "valid", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
         $errorLine = @(Start-Utf8Process $script:OMPExecutable @("print", "error", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
@@ -319,6 +324,7 @@ Example:
         "Set-PoshContext"
         "Enable-PoshTooltips"
         "Enable-PoshTransientPrompt"
+        "Disable-PoshTransientPrompt"
         "Enable-PoshLineError"
         "Export-PoshTheme"
         "Get-PoshThemes"

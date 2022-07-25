@@ -76,11 +76,10 @@ properties below - defaults to `{{ .Shell }}> `
 }>
 <TabItem value="pwsh">
 
-
 Invoke Oh My Posh in your `$PROFILE` and add the following line below.
 
 ```powershell
-oh-my-posh init pwsh --config $env:POSH_THEMES_PATH/jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/jandedobbeleer.omp.json" | Invoke-Expression
 // highlight-start
 Enable-PoshTransientPrompt
 // highlight-end
@@ -95,7 +94,7 @@ Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes 
 </TabItem>
 <TabItem value="cmd">
 
-Set the transient prompt in [clink][clink] to `always` in the `oh-my-posh.lua` script to enable the feature:
+You can run the command below to enable the feature permanently:
 
 ```shell
 clink set prompt.transient always
@@ -123,10 +122,61 @@ Invoke Oh My Posh in `~/.config/fish/config.fish` and add the following line bel
 enable_poshtransientprompt
 ```
 
-Restart your shell or reload fish using `exec fish` for the changes to take effect.
+Restart your shell or reload `~/.config/fish/config.fish` using `exec fish` for the changes to take effect.
 
 </TabItem>
 </Tabs>
+
+## Disable the feature
+
+<Tabs
+  defaultValue="pwsh"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'pwsh', },
+    { label: 'cmd', value: 'cmd', },
+    { label: 'zsh', value: 'zsh', },
+    { label: 'fish', value: 'fish', },
+  ]
+}>
+<TabItem value="pwsh">
+
+You can use this function to disable the feature when you are in a PowerShell session:
+
+```powershell
+Disable-PoshTransientPrompt
+```
+
+</TabItem>
+<TabItem value="cmd">
+
+You can run the command below to disable the feature permanently:
+
+```shell
+clink set prompt.transient off
+```
+
+Restart your shell for the changes to take effect.
+
+</TabItem>
+<TabItem value="zsh">
+
+You can use this function to disable the feature when you are in a zsh session:
+
+```bash
+disable_poshtransientprompt
+```
+
+</TabItem>
+<TabItem value="fish">
+
+You can use this function to disable the feature when you are in a fish session:
+
+```bash
+disable_poshtransientprompt
+```
+
+</TabItem>
 
 [colors]: /docs/configuration/colors
 [go-text-template]: https://golang.org/pkg/text/template/

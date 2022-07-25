@@ -94,3 +94,7 @@ _posh-zle-line-init() {
 function enable_poshtransientprompt() {
   zle -N zle-line-init _posh-zle-line-init
 }
+
+function disable_poshtransientprompt() {
+  zle -N zle-line-init
+}

@@ -79,3 +79,7 @@ end
 function enable_poshtransientprompt
   bind \r _render_transient
 end
+
+function disable_poshtransientprompt
+  bind -e \r
+end

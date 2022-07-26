@@ -53,7 +53,7 @@ func TestGolang(t *testing.T) {
 			ParseModFile:          true,
 			HasModFileInParentDir: true,
 			InvalidModfile:        true,
-			ExpectedString:        "../go.mod:1: unknown directive: invalid",
+			ExpectedString:        "1.16",
 			Version:               "go version go1.16 darwin/amd64",
 		},
 	}

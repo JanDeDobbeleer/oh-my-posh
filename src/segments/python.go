@@ -1,6 +1,8 @@
 package segments
 
 import (
+	"errors"
+	"fmt"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"path/filepath"
@@ -102,36 +104,36 @@ func (p *Python) pyenvVersion() (string, error) {
 	// Is our Python executable at $PYENV_ROOT/bin/python ?
 	// Should p.env expose command paths?
 	path := p.env.CommandPath("python")
-	if path == "" {
+	if len(path) == 0 {
 		path = p.env.CommandPath("python3")
 	}
-	if path == "" {
-		return "", nil
+	if len(path) == 0 {
+		return "", errors.New("no python executable found")
 	}
+	pyEnvRoot := p.env.Getenv("PYENV_ROOT")
 	// TODO:  pyenv-win has this at $PYENV_ROOT/pyenv-win/shims
-	if path != filepath.Join(p.env.Getenv("PYENV_ROOT"), "shims", "python") {
-		return "", nil
+	if path != filepath.Join(pyEnvRoot, "shims", "python") {
+		return "", fmt.Errorf("executable at %s is not a pyenv shim", path)
 	}
 	// pyenv version-name will return current version or virtualenv
 	cmdOutput, err := p.env.RunCommand("pyenv", "version-name")
 	if err != nil {
-		// TODO: Improve reporting
-		return "", nil
+		return "", err
 	}
 	versionString := strings.Split(cmdOutput, ":")[0]
-	if versionString == "" {
-		return "", nil
+	if len(versionString) == 0 {
+		return "", errors.New("no pyenv version-name found")
 	}
 
 	// $PYENV_ROOT/versions + versionString (symlinks resolved) == $PYENV_ROOT/versions/(version)[/envs/(virtualenv)]
-	realPath, err := p.env.ResolveSymlink(filepath.Join(p.env.Getenv("PYENV_ROOT"), "versions", versionString))
+	realPath, err := p.env.ResolveSymlink(filepath.Join(pyEnvRoot, "versions", versionString))
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	// ../versions/(version)[/envs/(virtualenv)]
-	shortPath, err := filepath.Rel(filepath.Join(p.env.Getenv("PYENV_ROOT"), "versions"), realPath)
+	shortPath, err := filepath.Rel(filepath.Join(pyEnvRoot, "versions"), realPath)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	// Unset whatever loadContext thinks Venv should be
 	p.Venv = ""

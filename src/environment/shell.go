@@ -416,7 +416,14 @@ func (env *ShellEnvironment) HasFolder(folder string) bool {
 }
 
 func (env *ShellEnvironment) ResolveSymlink(path string) (string, error) {
-	return filepath.EvalSymlinks(path)
+	defer env.Trace(time.Now(), "ResolveSymlink", path)
+	link, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		env.Log(Error, "ResolveSymlink", err.Error())
+		return "", err
+	}
+	env.Log(Debug, "ResolveSymlink", link)
+	return link, nil
 }
 
 func (env *ShellEnvironment) FileContent(file string) string {
@@ -505,18 +512,21 @@ func (env *ShellEnvironment) RunShellCommand(shell, command string) string {
 }
 
 func (env *ShellEnvironment) CommandPath(command string) string {
-	defer env.Trace(time.Now(), "HasCommand", command)
+	defer env.Trace(time.Now(), "CommandPath", command)
 	if path, ok := env.cmdCache.get(command); ok {
+		env.Log(Debug, "CommandPath", path)
 		return path
 	}
 	path, err := exec.LookPath(command)
 	if err == nil {
 		env.cmdCache.set(command, path)
+		env.Log(Debug, "CommandPath", path)
 		return path
 	}
 	path, err = env.LookWinAppPath(command)
 	if err == nil {
 		env.cmdCache.set(command, path)
+		env.Log(Debug, "CommandPath", path)
 		return path
 	}
 	env.Log(Error, "CommandPath", err.Error())
@@ -524,6 +534,7 @@ func (env *ShellEnvironment) CommandPath(command string) string {
 }
 
 func (env *ShellEnvironment) HasCommand(command string) bool {
+	defer env.Trace(time.Now(), "HasCommand", command)
 	if path := env.CommandPath(command); path != "" {
 		return true
 	}

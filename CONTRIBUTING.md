@@ -20,7 +20,7 @@ Arguably the easiest way to contribute anything is to use our prepared developme
 
 We have a `.devcontainer/devcontainer.json` file, meaning we are compatible with:
 
-- [Github Codespaces][codespaces], or
+- [![Open in GitHub Codespaces][codespaces-badge]][codespaces-link], or
 - the [Visual Studio Code Remote - Containers][devcontainer-ext] extension.
 
 This Linux environment includes all shells supported by oh-my-posh, including Bash, ZSH,
@@ -53,7 +53,8 @@ if you do `Codespaces: Rebuild Container` again, you'll be back to the latest st
 [docs]: https://ohmyposh.dev/docs
 [guide]: https://ohmyposh.dev/docs/contributing/started
 [cc]: https://www.conventionalcommits.org/en/v1.0.0/#summary
-[codespaces]: https://github.com/features/codespaces
+[codespaces-badge]: https://github.com/codespaces/badge.svg
+[codespaces-link]: https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=175405157
 [devcontainer-ext]: https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers
 [timezones]: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 [themes]: https://ohmyposh.dev/docs/themes

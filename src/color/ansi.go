@@ -32,7 +32,8 @@ type Ansi struct {
 	escapeRight           string
 	hyperlink             string
 	hyperlinkRegex        string
-	pwd                   string
+	osc99                 string
+	osc7                  string
 	bold                  string
 	italic                string
 	underline             string
@@ -65,7 +66,8 @@ func (a *Ansi) Init(shellName string) {
 		a.escapeRight = "%}"
 		a.hyperlink = "%%{\x1b]8;;%s\x1b\\%%}%s%%{\x1b]8;;\x1b\\%%}"
 		a.hyperlinkRegex = `(?P<STR>%{\x1b]8;;(.+)\x1b\\%}(?P<TEXT>.+)%{\x1b]8;;\x1b\\%})`
-		a.pwd = "%%{\x1b]%s;\"%s\"\x1b\\%%}"
+		a.osc99 = "%%{\x1b]9;9;\"%s\"\x1b\\%%}"
+		a.osc7 = "%%{\x1b]7;file://%s/%s\x1b\\%%}"
 		a.bold = "%%{\x1b[1m%%}%s%%{\x1b[22m%%}"
 		a.italic = "%%{\x1b[3m%%}%s%%{\x1b[23m%%}"
 		a.underline = "%%{\x1b[4m%%}%s%%{\x1b[24m%%}"
@@ -92,7 +94,8 @@ func (a *Ansi) Init(shellName string) {
 		a.escapeRight = "\\]"
 		a.hyperlink = "\\[\x1b]8;;%s\x1b\\\\\\]%s\\[\x1b]8;;\x1b\\\\\\]"
 		a.hyperlinkRegex = `(?P<STR>\\\[\x1b\]8;;(.+)\x1b\\\\\\\](?P<TEXT>.+)\\\[\x1b\]8;;\x1b\\\\\\\])`
-		a.pwd = "\\[\x1b]%s;\"%s\"\x1b\\\\\\]"
+		a.osc99 = "\\[\x1b]9;9;\"%s\"\x1b\\\\\\]"
+		a.osc7 = "\\[\x1b]7;file://%s/%s\x1b\\\\]"
 		a.bold = "\\[\x1b[1m\\]%s\\[\x1b[22m\\]"
 		a.italic = "\\[\x1b[3m\\]%s\\[\x1b[23m\\]"
 		a.underline = "\\[\x1b[4m\\]%s\\[\x1b[24m\\]"
@@ -119,7 +122,8 @@ func (a *Ansi) Init(shellName string) {
 		a.escapeRight = ""
 		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
 		a.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b\\\\\\\\?(?P<TEXT>.+)\x1b]8;;\x1b\\\\)"
-		a.pwd = "\x1b]%s;\"%s\"\x1b\\"
+		a.osc99 = "\x1b]9;9;\"%s\"\x1b\\"
+		a.osc7 = "\x1b]7;file://%s/%s\x1b\\"
 		a.bold = "\x1b[1m%s\x1b[22m"
 		a.italic = "\x1b[3m%s\x1b[23m"
 		a.underline = "\x1b[4m%s\x1b[24m"
@@ -243,17 +247,17 @@ func (a *Ansi) ChangeLine(numberOfLines int) string {
 	return fmt.Sprintf(a.linechange, numberOfLines, position)
 }
 
-func (a *Ansi) ConsolePwd(pwdType, pwd string) string {
+func (a *Ansi) ConsolePwd(pwdType, hostName, pwd string) string {
 	if strings.HasSuffix(pwd, ":") {
 		pwd += "\\"
 	}
 	switch pwdType {
 	case OSC7:
-		return fmt.Sprintf(a.pwd, "7", pwd)
+		return fmt.Sprintf(a.osc7, hostName, pwd)
 	case OSC99:
 		fallthrough
 	default:
-		return fmt.Sprintf(a.pwd, "9;9", pwd)
+		return fmt.Sprintf(a.osc99, pwd)
 	}
 }
 

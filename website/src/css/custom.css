@@ -171,6 +171,21 @@ a.getStarted_Sjon {
   filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(226deg) brightness(102%) contrast(101%);
 }
 
+/* Fonts */
+
+:root {
+  --ifm-font-family-monospace: "Inter";
+  --ifm-font-family-base: "Inter"
+}
+
+code {
+  font-family: 'Fira Code', monospace;
+}
+
+code[class*="language-"], pre[class*="language-"] {
+  font-family: 'Fira Code', monospace;
+}
+
 /* Dev settings */
 
 [data-theme="dark"] .themedImage_node_modules-\@docusaurus-theme-classic-lib-theme-ThemedImage-styles-module {

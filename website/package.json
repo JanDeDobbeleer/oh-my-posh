@@ -8,9 +8,9 @@
     "themes": "node export_themes.js"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.0.0-beta.21",
-    "@docusaurus/preset-classic": "^2.0.0-beta.21",
-    "@docusaurus/theme-search-algolia": "^2.0.0-beta.21",
+    "@docusaurus/core": "^2.0.0-rc.1",
+    "@docusaurus/preset-classic": "^2.0.0-rc.1",
+    "@docusaurus/theme-search-algolia": "^2.0.0-rc.1",
     "classnames": "^2.3.1",
     "query-string": "^7.1.1",
     "react": "^18.2.0",
@@ -32,9 +32,9 @@
       "last 1 safari version"
     ]
   },
-  "engines" : {
-    "npm" : "8.5.1",
-    "node" : "17.6.0"
+  "engines": {
+    "npm": "8.5.1",
+    "node": "17.6.0"
   },
   "volta": {
     "node": "17.6.0"

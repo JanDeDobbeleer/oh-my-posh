@@ -161,6 +161,7 @@ blocks:
         type: command
     type: rprompt
 final_space: true
+console_title_template: " {{ .Shell }} in {{ if ne .Folder \"~\"}} {{ .Folder }}{{else}}{{end}}"
 palette:
   black: "#33395b"
   blue: "#359ddd"

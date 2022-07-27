@@ -13,6 +13,10 @@ module.exports = {
     path.resolve(__dirname, 'plugins', 'appinsights'),
     'docusaurus-node-polyfills'
   ],
+  stylesheets: [
+    "https://rsms.me/inter/inter.css",
+    "https://fonts.googleapis.com/css2?family=Fira+Code&display=swap"
+  ],
   themeConfig: {
     prism: {
       additionalLanguages: ['powershell', 'lua', 'jsstacktrace', 'toml'],
@@ -133,8 +137,8 @@ module.exports = {
         },
         theme: {
           customCss: [
-            require.resolve('./src/css/custom.css'),
-            require.resolve('./src/css/prism-rose-pine-moon.css')
+            require.resolve('./src/css/prism-rose-pine-moon.css'),
+            require.resolve('./src/css/custom.css')
           ],
         },
       },

@@ -1300,6 +1300,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "craiglpeters",
+      "name": "Craig Peters",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9445180?v=4",
+      "profile": "https://github.com/craiglpeters",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

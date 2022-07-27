@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestPythonTemplate(t *testing.T) {
@@ -70,7 +71,7 @@ func TestPythonTemplate(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "python").Return(true)
-		env.On("CommandPath", "mock.Anything").Return(tc.PythonPath)
+		env.On("CommandPath", mock2.Anything).Return(tc.PythonPath)
 		env.On("RunCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
 		env.On("RunCommand", "pyenv", []string{"version-name"}).Return(tc.VirtualEnvName, nil)
 		env.On("HasFiles", "*.py").Return(true)
@@ -81,7 +82,7 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("PathSeparator").Return("")
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
-		env.On("ResolveSymlink", "mock.Anything").Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
+		env.On("ResolveSymlink", mock2.Anything).Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
 		props := properties.Map{
 			properties.FetchVersion: tc.FetchVersion,
 			UsePythonVersionFile:    true,

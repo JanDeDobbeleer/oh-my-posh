@@ -171,7 +171,7 @@ func (l *language) setVersion() error {
 		} else {
 			versionStr, err = command.getVersion()
 			if err != nil {
-				return err
+				continue
 			}
 		}
 		if versionStr == "" {

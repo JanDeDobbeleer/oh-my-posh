@@ -85,7 +85,7 @@ func (e *Engine) printPWD() {
 	cwd := e.Env.Pwd()
 	// Backwards compatibility for deprecated OSC99
 	if e.Config.OSC99 {
-		e.writeANSI(e.Ansi.ConsolePwd(color.OSC99, cwd))
+		e.writeANSI(e.Ansi.ConsolePwd(color.OSC99, "", cwd))
 		return
 	}
 	// Allow template logic to define when to enable the PWD (when supported)
@@ -97,7 +97,8 @@ func (e *Engine) printPWD() {
 	if err != nil || len(pwdType) == 0 {
 		return
 	}
-	e.writeANSI(e.Ansi.ConsolePwd(pwdType, cwd))
+	host, _ := e.Env.Host()
+	e.writeANSI(e.Ansi.ConsolePwd(pwdType, host, cwd))
 }
 
 func (e *Engine) newline() {

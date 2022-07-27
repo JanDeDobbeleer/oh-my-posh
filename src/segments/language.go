@@ -156,6 +156,7 @@ func (l *language) hasLanguageFolders() bool {
 
 // setVersion parses the version string returned by the command
 func (l *language) setVersion() error {
+	var lastError error
 	for _, command := range l.commands {
 		var versionStr string
 		var err error
@@ -166,20 +167,20 @@ func (l *language) setVersion() error {
 			versionStr, err = l.env.RunCommand(command.executable, command.args...)
 			if exitErr, ok := err.(*environment.CommandError); ok {
 				l.exitCode = exitErr.ExitCode
-				return fmt.Errorf("err executing %s with %s", command.executable, command.args)
+				lastError = fmt.Errorf("err executing %s with %s", command.executable, command.args)
+				continue
 			}
 		} else {
 			versionStr, err = command.getVersion()
-			if err != nil {
+			if err != nil || versionStr == "" {
+				lastError = errors.New("cannot get version")
 				continue
 			}
 		}
-		if versionStr == "" {
-			continue
-		}
 		version, err := command.parse(versionStr)
 		if err != nil {
-			return fmt.Errorf("err parsing info from %s with %s", command.executable, versionStr)
+			lastError = fmt.Errorf("err parsing info from %s with %s", command.executable, versionStr)
+			continue
 		}
 		l.version = *version
 		if command.versionURLTemplate != "" {
@@ -188,6 +189,9 @@ func (l *language) setVersion() error {
 		l.buildVersionURL()
 		l.version.Executable = command.executable
 		return nil
+	}
+	if lastError != nil {
+		return lastError
 	}
 	return errors.New(l.props.GetString(MissingCommandText, ""))
 }

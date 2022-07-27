@@ -66,6 +66,15 @@ func TestPythonTemplate(t *testing.T) {
 			Template:       "{{ if ne .Venv \"default\" }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
 			ResolveSymlink: ResolveSymlink{Path: "/home/user.pyenv/versions/3.8.8", Err: nil},
 		},
+		{
+			Case:           "Pyenv virtual env version name",
+			FetchVersion:   true,
+			VirtualEnvName: "demo",
+			Expected:       "3.8.4",
+			PythonPath:     "/home/user/.pyenv/shims/python",
+			Template:       "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
+			ResolveSymlink: ResolveSymlink{Path: "/home/user/.pyenv/versions/demo", Err: nil},
+		},
 	}
 
 	for _, tc := range cases {

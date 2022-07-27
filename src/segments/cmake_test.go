@@ -15,7 +15,7 @@ func TestCmake(t *testing.T) {
 	}{
 		{Case: "Cmake 3.23.2", ExpectedString: "3.23.2", Version: "cmake version 3.23.2"},
 		{Case: "Cmake 2.3.13", ExpectedString: "2.3.12", Version: "cmake version 2.3.12"},
-		{Case: "", ExpectedString: "", Version: ""},
+		{Case: "", ExpectedString: "err parsing info from cmake with", Version: ""},
 	}
 	for _, tc := range cases {
 		params := &mockedLanguageParams{

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "overflow": "hide",
+      "segments": [
+        {
+          "type": "executiontime",
+          "style": "powerline",
+          "foreground": "#a9ffb4",
+          "template": " {{ .FormattedMs }}s <#ffffff>\ue601</>",
+          "properties": {
+            "threshold": 0,
+            "style": "dallas"
+          }
+        },
+        {
+          "type": "node",
+          "style": "powerline",
+          "foreground": "#45bf17",
+          "template": " \ue718 {{ .Full }} "
+        },
+        {
+          "type": "npm",
+          "style": "powerline",
+          "foreground": "#FE4A49",
+          "template": "<#F3EFF5>and</> \ue71e {{ .Full }} "
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "overflow": "break",
+      "segments": [
+        {
+          "type": "path",
+          "style": "powerline",
+          "foreground": "#ffafd2",
+          "properties": {
+            "style": "agnoster_full",
+            "home_icon": "home",
+            "folder_icon": "\uf07b",
+            "folder_separator_icon": " \u276f "
+          },
+          "template": "\ue5ff {{ .Path }} "
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "foreground": "#f14e32",
+          "properties": {
+            "branch_icon": "\ue725 "
+          },
+          "template": "({{ .HEAD }})"
+        }
+      ]
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "type": "prompt",
+      "segments": [
+        {
+          "type": "exit",
+          "style": "diamond",
+          "foreground": "#00c7fc",
+          "properties": {
+            "always_enabled": true
+          },
+          "template": "<#00c7fc>\u276f</>_: "
+        }
+      ]
+    }
+  ],
+  "console_title_template": "{{ .Folder }}",
+  "transient_prompt": {
+    "background": "transparent",
+    "foreground": "#FEF5ED",
+    "template": "{{ .Shell }}"
+  },
+  "version": 2
+}

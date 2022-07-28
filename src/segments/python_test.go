@@ -70,9 +70,9 @@ func TestPythonTemplate(t *testing.T) {
 			Case:           "Pyenv virtual env version name",
 			FetchVersion:   true,
 			VirtualEnvName: "demo",
-			Expected:       "3.8.4",
+			Expected:       "demo 3.8.4",
 			PythonPath:     "/home/user/.pyenv/shims/python",
-			Template:       "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
+			Template:       "{{ .Venv }} {{ .Full }}",
 			ResolveSymlink: ResolveSymlink{Path: "/home/user/.pyenv/versions/demo", Err: nil},
 		},
 	}

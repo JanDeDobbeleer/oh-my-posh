@@ -135,8 +135,7 @@ func (p *Python) pyenvVersion() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	// Unset whatever loadContext thinks Venv should be
-	p.Venv = ""
+	// override virtualenv if pyenv set one
 	parts := strings.Split(shortPath, string(filepath.Separator))
 	if len(parts) > 2 && p.canUseVenvName(parts[2]) {
 		p.Venv = parts[2]

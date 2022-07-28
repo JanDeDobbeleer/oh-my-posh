@@ -50,7 +50,7 @@ function self-insert() {
   fi
   # trigger a tip check only if the input is a space character
   if [[ "$KEYS" = " " ]]; then
-    tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --command="$BUFFER" --shell-version="$ZSH_VERSION")
+    tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --error="$omp_last_error" --command="$BUFFER" --shell-version="$ZSH_VERSION")
   fi
   # ignore an empty tooltip
   if [[ ! -z "$tooltip" ]]; then

@@ -107,7 +107,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $cleanPWD, $cleanPSWD = Get-PoshContext
             $command = $null
             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
-            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--pwd=$cleanPWD", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
+            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position
         }

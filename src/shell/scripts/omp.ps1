@@ -110,6 +110,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position
+            # we need this workaround to prevent the text after cursor from disappearing when the tooltip is rendered
+            [Microsoft.PowerShell.PSConsoleReadLine]::Insert(" ")
+            [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
         }
     }
 

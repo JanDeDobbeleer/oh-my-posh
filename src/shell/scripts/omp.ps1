@@ -15,13 +15,14 @@ function global:Get-PoshStackCount {
 
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:ErrorCode = 0
-    $script:OMPExecutable = '::OMP::'
+    $script:OMPExecutable = "::OMP::"
+    $script:ShellName = "::SHELL::"
     $script:PSVersion = $PSVersionTable.PSVersion.ToString()
     $script:TransientPrompt = $false
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:CONDA_PROMPT_MODIFIER = $false
-    if ('::CONFIG::' -ne '' -and (Test-Path '::CONFIG::')) {
-        $env:POSH_THEME = (Resolve-Path -Path '::CONFIG::').ProviderPath
+    if (("::CONFIG::" -ne '') -and (Test-Path "::CONFIG::")) {
+        $env:POSH_THEME = (Resolve-Path -Path "::CONFIG::").ProviderPath
     }
     # specific module support (disabled by default)
     if ($null -eq $env:POSH_GIT_ENABLED) {
@@ -106,7 +107,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $cleanPWD, $cleanPSWD = Get-PoshContext
             $command = $null
             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
-            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--pwd=$cleanPWD", "--shell=::SHELL::", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
+            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--pwd=$cleanPWD", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position
         }
@@ -138,8 +139,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Enable-PoshLineError {
-        $validLine = @(Start-Utf8Process $script:OMPExecutable @("print", "valid", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
-        $errorLine = @(Start-Utf8Process $script:OMPExecutable @("print", "error", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
+        $validLine = @(Start-Utf8Process $script:OMPExecutable @("print", "valid", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n"
+        $errorLine = @(Start-Utf8Process $script:OMPExecutable @("print", "error", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n"
         Set-PSReadLineOption -PromptText $validLine, $errorLine
     }
 
@@ -245,7 +246,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         } else {
             $themes | ForEach-Object -Process {
                 Write-Host "Theme: $(Get-FileHyperlink -uri $_.FullName -Name ($_.BaseName -replace '\.omp$', ''))`n"
-                @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--config=$($_.FullName)", "--pwd=$PWD", "--shell=::SHELL::"))
+                @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--config=$($_.FullName)", "--pwd=$PWD", "--shell=$script:ShellName"))
                 Write-Host "`n"
             }
         }
@@ -260,47 +261,62 @@ Example:
 "@
     }
 
-    function prompt {
-        # store if the last command was successful
-        $lastCommandSuccess = $?
-        # store the last exit code for restore
-        $realLASTEXITCODE = $global:LASTEXITCODE
-        $cleanPWD, $cleanPSWD = Get-PoshContext
+    function Set-PoshPromptType {
         if ($script:TransientPrompt -eq $true) {
-            @(Start-Utf8Process $script:OMPExecutable @("print", "transient", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--shell=::SHELL::")) -join "`n"
+            $script:PromptType = "transient"
             $script:TransientPrompt = $false
             return
         }
-        # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/2483#issuecomment-1175761456
-        # and https://github.com/JanDeDobbeleer/oh-my-posh/issues/2502#issuecomment-1179968052
+        # for details about the trick to detect a debugging context, see these comments:
+        # 1) https://github.com/JanDeDobbeleer/oh-my-posh/issues/2483#issuecomment-1175761456
+        # 2) https://github.com/JanDeDobbeleer/oh-my-posh/issues/2502#issuecomment-1179968052
         if (-not ((Get-PSCallStack).Location -join "").StartsWith("<")) {
-            @(Start-Utf8Process $script:OMPExecutable @("print", "debug", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n"
+            $script:PromptType = "debug"
             return
         }
+        $script:PromptType = "primary"
         Initialize-ModuleSupport
+    }
 
+    function Update-PoshErrorCode {
         $script:ExecutionTime = -1
         $lastHistory = Get-History -ErrorAction Ignore -Count 1
-        if ($null -ne $lastHistory -and $script:LastHistoryId -ne $lastHistory.Id) {
-            $script:LastHistoryId = $lastHistory.Id
-            $script:ExecutionTime = ($lastHistory.EndExecutionTime - $lastHistory.StartExecutionTime).TotalMilliseconds
-            # error code should be changed only when a non-empty command is called
-            $script:ErrorCode = 0
-            if (!$lastCommandSuccess) {
-                $invocationInfo = try {
-                    # retrieve info of the most recent error
-                    $global:Error[0] | Where-Object { $_ -ne $null } | Select-Object -ExpandProperty InvocationInfo
-                } catch { $null }
-                # check if the last command caused the last error
-                if ($null -ne $invocationInfo -and $lastHistory.CommandLine -eq $invocationInfo.Line) {
-                    $script:ErrorCode = 1
-                } elseif ($realLASTEXITCODE -is [int] -and $realLASTEXITCODE -ne 0) {
-                    # native app exit code
-                    $script:ErrorCode = $realLASTEXITCODE
-                }
-            }
+        # error code should be updated only when a non-empty command is run
+        if (($null -eq $lastHistory) -or ($script:LastHistoryId -eq $lastHistory.Id)) {
+            return
         }
+        $script:LastHistoryId = $lastHistory.Id
+        $script:ExecutionTime = ($lastHistory.EndExecutionTime - $lastHistory.StartExecutionTime).TotalMilliseconds
+        if ($script:OriginalLastExecutionStatus) {
+            $script:ErrorCode = 0
+            return
+        }
+        $invocationInfo = try {
+            # retrieve info of the most recent error
+            $global:Error[0] | Where-Object { $_ -ne $null } | Select-Object -ExpandProperty InvocationInfo
+        } catch { $null }
+        # check if the last command caused the last error
+        if ($null -ne $invocationInfo -and $lastHistory.CommandLine -eq $invocationInfo.Line) {
+            $script:ErrorCode = 1
+            return
+        }
+        if ($script:OriginalLastExitCode -is [int] -and $script:OriginalLastExitCode -ne 0) {
+            # native app exit code
+            $script:ErrorCode = $script:OriginalLastExitCode
+            return
+        }
+    }
 
+    function prompt {
+        # store the orignal last command execution status and last exit code
+        $script:OriginalLastExecutionStatus = $?
+        $script:OriginalLastExitCode = $global:LASTEXITCODE
+
+        Set-PoshPromptType
+        if ($script:PromptType -ne 'transient') {
+            Update-PoshErrorCode
+        }
+        $cleanPWD, $cleanPSWD = Get-PoshContext
         $stackCount = global:Get-PoshStackCount
         Set-PoshContext
         $terminalWidth = $Host.UI.RawUI.WindowSize.Width
@@ -308,19 +324,18 @@ Example:
         if (-not $terminalWidth) {
             $terminalWidth = 0
         }
-        $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=::SHELL::"))
-        # make sure PSReadLine knows we have a multiline prompt
-        $extraLines = ($standardOut | Measure-Object -Line).Lines - 1
-        if ($extraLines -gt 0) {
-            Set-PSReadLineOption -ExtraPromptLineCount $extraLines
-        }
+        $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", $script:PromptType, "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName"))
+        # make sure PSReadLine knows if we have a multiline prompt
+        Set-PSReadLineOption -ExtraPromptLineCount (($standardOut | Measure-Object -Line).Lines - 1)
         # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n
         $standardOut -join "`n"
-        $global:LASTEXITCODE = $realLASTEXITCODE
+
+        # restore the orignal last exit code
+        $global:LASTEXITCODE = $script:OriginalLastExitCode
     }
 
     # set secondary prompt
-    Set-PSReadLineOption -ContinuationPrompt (@(Start-Utf8Process $script:OMPExecutable @("print", "secondary", "--config=$env:POSH_THEME", "--shell=::SHELL::")) -join "`n")
+    Set-PSReadLineOption -ContinuationPrompt (@(Start-Utf8Process $script:OMPExecutable @("print", "secondary", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n")
 
     Export-ModuleMember -Function @(
         "Set-PoshContext"

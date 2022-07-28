@@ -113,7 +113,7 @@ local function set_posh_tooltip(command)
     command = string.gsub(command, '\\+"', '%1%1"')
     command = string.gsub(command, '\\+$', '%1%1')
     command = string.gsub(command, '"', '\\"')
-    local prompt_exe = string.format('%s print tooltip --shell=cmd --config=%s --command="%s"', omp_exe(), omp_config(), command)
+    local prompt_exe = string.format('%s print tooltip --shell=cmd %s --config=%s --command="%s"', omp_exe(), error_level_option(), omp_config(), command)
     local tooltip = run_posh_command(prompt_exe)
     if tooltip ~= "" then
         tooltip_active = true

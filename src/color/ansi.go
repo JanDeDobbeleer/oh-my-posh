@@ -67,7 +67,7 @@ func (a *Ansi) Init(shellName string) {
 		a.hyperlink = "%%{\x1b]8;;%s\x1b\\%%}%s%%{\x1b]8;;\x1b\\%%}"
 		a.hyperlinkRegex = `(?P<STR>%{\x1b]8;;(.+)\x1b\\%}(?P<TEXT>.+)%{\x1b]8;;\x1b\\%})`
 		a.osc99 = "%%{\x1b]9;9;\"%s\"\x1b\\%%}"
-		a.osc7 = "%%{\x1b]7;file://%s/%s\x1b\\%%}"
+		a.osc7 = "%%{\x1b]7;file:\"//%s/%s\"\x1b\\\\%%}"
 		a.bold = "%%{\x1b[1m%%}%s%%{\x1b[22m%%}"
 		a.italic = "%%{\x1b[3m%%}%s%%{\x1b[23m%%}"
 		a.underline = "%%{\x1b[4m%%}%s%%{\x1b[24m%%}"
@@ -95,7 +95,7 @@ func (a *Ansi) Init(shellName string) {
 		a.hyperlink = "\\[\x1b]8;;%s\x1b\\\\\\]%s\\[\x1b]8;;\x1b\\\\\\]"
 		a.hyperlinkRegex = `(?P<STR>\\\[\x1b\]8;;(.+)\x1b\\\\\\\](?P<TEXT>.+)\\\[\x1b\]8;;\x1b\\\\\\\])`
 		a.osc99 = "\\[\x1b]9;9;\"%s\"\x1b\\\\\\]"
-		a.osc7 = "\\[\x1b]7;file://%s/%s\x1b\\\\]"
+		a.osc7 = "\\[\x1b]7;\"file://%s/%s\"\x1b\\\\\\]"
 		a.bold = "\\[\x1b[1m\\]%s\\[\x1b[22m\\]"
 		a.italic = "\\[\x1b[3m\\]%s\\[\x1b[23m\\]"
 		a.underline = "\\[\x1b[4m\\]%s\\[\x1b[24m\\]"
@@ -123,7 +123,7 @@ func (a *Ansi) Init(shellName string) {
 		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
 		a.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b\\\\\\\\?(?P<TEXT>.+)\x1b]8;;\x1b\\\\)"
 		a.osc99 = "\x1b]9;9;\"%s\"\x1b\\"
-		a.osc7 = "\x1b]7;file://%s/%s\x1b\\"
+		a.osc7 = "\x1b]7;\"file://%s/%s\"\x1b\\\\"
 		a.bold = "\x1b[1m%s\x1b[22m"
 		a.italic = "\x1b[3m%s\x1b[23m"
 		a.underline = "\x1b[4m%s\x1b[24m"

@@ -74,7 +74,13 @@ _posh-zle-line-init() {
     (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
     eval "$(::OMP:: print transient --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --config="$POSH_THEME" --eval --shell=zsh --shell-version="$ZSH_VERSION")"
+
+    if (( ${+terminfo[smkx]} )); then
+      printf '%s' ${terminfo[smkx]}
+    fi
+
     zle .reset-prompt
+    zle -R
 
     # If we received EOT, we exit the shell
     if [[ $ret == 0 && $KEYS == $'\4' ]]; then

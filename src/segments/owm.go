@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 )
@@ -12,7 +13,7 @@ type Owm struct {
 	props properties.Properties
 	env   environment.Environment
 
-	Temperature float64
+	Temperature int
 	Weather     string
 	URL         string
 	units       string
@@ -106,7 +107,7 @@ func (d *Owm) setStatus() error {
 	}
 	id := q.Data[0].TypeID
 
-	d.Temperature = q.temperature.Value
+	d.Temperature = int(math.Round(q.temperature.Value))
 	icon := ""
 	switch id {
 	case "01n":

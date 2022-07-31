@@ -103,15 +103,18 @@ blocks:
           script: |
             api_key="$OWM_API_KEY" # change this
             now=$(date +'%I:%M')
-            [[ $(date +'%p') == 'am' ]] && now+='滛' || now+=''
-            [[ -z $api_key ]] && echo "$now" && exit
+            [[ $(date +'%p') == 'am' ]] && now+='滛 ' || now+=' '
+            echo -n "$now"
+            [[ -z $api_key ]] && exit 0
             update=$(jq '.minute' /tmp/weather.w | tr -d '"')
             if [[ -f '/tmp/weather.w' && $NO_WEATHER_CACHE -ne 1 && $(bc -l <<<"$(date +'%M')<=($update+10)") -eq 1 ]]; then
-                echo $now "$(jq .weather /tmp/weather.w | tr -d '"')" && exit 0
+                echo -n "$(jq .weather /tmp/weather.w | tr -d '"')" && exit 0
             else
-                location=$(curl -s 'https://freegeoip.live/json/')
+                location=$(curl -m .25 -s 'https://freegeoip.live/json/')
+                [[ $? -ne 0 ]] && echo -n '(睊)' && exit 0
                 url="https://api.openweathermap.org/data/2.5/weather?lat=$(echo "$location" | jq .latitude)&lon=$(echo "$location" | jq .longitude)&units=metric&appid=$api_key"
-                res=$(curl -s "$url")
+                res=$(curl -m .25 -s "$url")
+                [[ $? -ne 0 ]] && echo -n '(睊)' && exit 0
                 temp=$(echo "$res" | jq .main.temp)
                 temp_min=$(echo "$res" | jq .main.temp_min)
                 temp_max=$(echo "$res" | jq .main.temp_max)
@@ -152,8 +155,8 @@ blocks:
                     ;;
                 esac
                 weather="${icon} ${temp_s} ${feels_string}"
-                echo -e "$now $weather"
-                echo -e "{\"minute\": \"$(date +'%M')\", \"weather\": \"$weather\"}" >/tmp/weather.w
+                echo -ne "$weather"
+                echo -ne "{\"minute\": \"$(date +'%M')\", \"weather\": \"$weather\"}" >/tmp/weather.w
             fi
         style: diamond
         template: "{{ .Output }}"
@@ -161,7 +164,7 @@ blocks:
         type: command
     type: rprompt
 final_space: true
-console_title_template: " {{ .Shell }} in {{ if ne .Folder \"~\"}} {{ .Folder }}{{else}}{{end}}"
+console_title_template:  {{ .Shell }} in {{ if ne .Folder "~"}} {{ .Folder }}{{else}}{{end}}
 palette:
   black: "#33395b"
   blue: "#359ddd"

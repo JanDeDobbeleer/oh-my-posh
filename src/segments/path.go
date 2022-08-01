@@ -6,6 +6,7 @@ import (
 	"oh-my-posh/properties"
 	"oh-my-posh/regex"
 	"oh-my-posh/template"
+	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -105,6 +106,10 @@ func (pt *Path) Enabled() bool {
 	pt.StackCount = pt.env.StackCount()
 	pt.Writable = pt.env.DirIsWritable(pt.pwd)
 	return true
+}
+
+func (pt *Path) Parent() string {
+	return filepath.Dir(pt.pwd)
 }
 
 func (pt *Path) formatWindowsDrive(pwd string) string {

@@ -57,6 +57,11 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	assert.Equal(t, fileInfo.Path, g.workingFolder)
 }
 
+func TestResolveEmptyGitPath(t *testing.T) {
+	base := "base"
+	assert.Equal(t, base, resolveGitPath(base, ""))
+}
+
 func TestEnabledInWorktree(t *testing.T) {
 	cases := []struct {
 		Case                  string
@@ -67,63 +72,59 @@ func TestEnabledInWorktree(t *testing.T) {
 		ExpectedRealFolder    string
 		ExpectedWorkingFolder string
 		ExpectedRootFolder    string
-		WindowsPaths          bool
 	}{
 		{
 			Case:                  "worktree",
 			ExpectedEnabled:       true,
-			WorkingFolder:         "/dev/.git/worktrees/folder_worktree",
+			WorkingFolder:         TestRootPath + "dev/.git/worktrees/folder_worktree",
 			WorkingFolderAddon:    "gitdir",
-			WorkingFolderContent:  "/dev/worktree.git\n",
-			ExpectedWorkingFolder: "/dev/.git/worktrees/folder_worktree",
-			ExpectedRealFolder:    "/dev/worktree",
-			ExpectedRootFolder:    "/dev/.git",
+			WorkingFolderContent:  TestRootPath + "dev/worktree.git\n",
+			ExpectedWorkingFolder: TestRootPath + "dev/.git/worktrees/folder_worktree",
+			ExpectedRealFolder:    TestRootPath + "dev/worktree",
+			ExpectedRootFolder:    TestRootPath + "dev/.git",
 		},
 		{
 			Case:                  "submodule",
 			ExpectedEnabled:       true,
 			WorkingFolder:         "./.git/modules/submodule",
-			ExpectedWorkingFolder: "/dev/.git/modules/submodule",
-			ExpectedRealFolder:    "/dev/.git/modules/submodule",
-			ExpectedRootFolder:    "/dev/.git/modules/submodule",
-			WindowsPaths:          true,
+			ExpectedWorkingFolder: TestRootPath + "dev/.git/modules/submodule",
+			ExpectedRealFolder:    TestRootPath + "dev/.git/modules/submodule",
+			ExpectedRootFolder:    TestRootPath + "dev/.git/modules/submodule",
 		},
 		{
 			Case:                  "submodule with root working folder",
 			ExpectedEnabled:       true,
-			WorkingFolder:         "/repo/.git/modules/submodule",
-			ExpectedWorkingFolder: "/repo/.git/modules/submodule",
-			ExpectedRealFolder:    "/repo/.git/modules/submodule",
-			ExpectedRootFolder:    "/repo/.git/modules/submodule",
-			WindowsPaths:          true,
+			WorkingFolder:         TestRootPath + "repo/.git/modules/submodule",
+			ExpectedWorkingFolder: TestRootPath + "repo/.git/modules/submodule",
+			ExpectedRealFolder:    TestRootPath + "repo/.git/modules/submodule",
+			ExpectedRootFolder:    TestRootPath + "repo/.git/modules/submodule",
 		},
 		{
 			Case:                  "submodule with worktrees",
 			ExpectedEnabled:       true,
-			WorkingFolder:         "/dev/.git/modules/module/path/worktrees/location",
+			WorkingFolder:         TestRootPath + "dev/.git/modules/module/path/worktrees/location",
 			WorkingFolderAddon:    "gitdir",
-			WorkingFolderContent:  "/dev/worktree.git\n",
-			ExpectedWorkingFolder: "/dev/.git/modules/module/path",
-			ExpectedRealFolder:    "/dev/worktree",
-			ExpectedRootFolder:    "/dev/.git/modules/module/path",
-			WindowsPaths:          true,
+			WorkingFolderContent:  TestRootPath + "dev/worktree.git\n",
+			ExpectedWorkingFolder: TestRootPath + "dev/.git/modules/module/path",
+			ExpectedRealFolder:    TestRootPath + "dev/worktree",
+			ExpectedRootFolder:    TestRootPath + "dev/.git/modules/module/path",
 		},
 		{
 			Case:                  "separate git dir",
 			ExpectedEnabled:       true,
-			WorkingFolder:         "/dev/separate/.git/posh",
-			ExpectedWorkingFolder: "/dev/",
-			ExpectedRealFolder:    "/dev/",
-			ExpectedRootFolder:    "/dev/separate/.git/posh",
+			WorkingFolder:         TestRootPath + "dev/separate/.git/posh",
+			ExpectedWorkingFolder: TestRootPath + "dev/",
+			ExpectedRealFolder:    TestRootPath + "dev/",
+			ExpectedRootFolder:    TestRootPath + "dev/separate/.git/posh",
 		},
 	}
 	fileInfo := &environment.FileInfo{
-		Path:         "/dev/.git",
-		ParentFolder: "/dev",
+		Path:         TestRootPath + "dev/.git",
+		ParentFolder: TestRootPath + "dev",
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("FileContent", "/dev/.git").Return(fmt.Sprintf("gitdir: %s", tc.WorkingFolder))
+		env.On("FileContent", TestRootPath+"dev/.git").Return(fmt.Sprintf("gitdir: %s", tc.WorkingFolder))
 		env.On("FileContent", filepath.Join(tc.WorkingFolder, tc.WorkingFolderAddon)).Return(tc.WorkingFolderContent)
 		env.On("HasFilesInDir", tc.WorkingFolder, tc.WorkingFolderAddon).Return(true)
 		env.On("HasFilesInDir", tc.WorkingFolder, "HEAD").Return(true)
@@ -135,11 +136,6 @@ func TestEnabledInWorktree(t *testing.T) {
 			},
 		}
 		assert.Equal(t, tc.ExpectedEnabled, g.hasWorktree(fileInfo), tc.Case)
-		if tc.WindowsPaths {
-			tc.ExpectedRealFolder = filepath.Clean(tc.ExpectedRealFolder)
-			tc.ExpectedRootFolder = filepath.Clean(tc.ExpectedRootFolder)
-			tc.ExpectedWorkingFolder = filepath.Clean(tc.ExpectedWorkingFolder)
-		}
 		assert.Equal(t, tc.ExpectedWorkingFolder, g.workingFolder, tc.Case)
 		assert.Equal(t, tc.ExpectedRealFolder, g.realFolder, tc.Case)
 		assert.Equal(t, tc.ExpectedRootFolder, g.rootFolder, tc.Case)

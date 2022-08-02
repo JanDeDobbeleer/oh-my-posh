@@ -196,18 +196,14 @@ func (g *Git) hasWorktree(gitdir *environment.FileInfo) bool {
 	// we need the parent folder to detect where the real .git folder is
 	ind = strings.LastIndex(g.workingFolder, "/.git/modules")
 	if ind > -1 {
-		if !filepath.IsAbs(g.workingFolder) {
-			g.rootFolder = filepath.Join(gitdir.ParentFolder, g.workingFolder)
-		} else {
-			g.rootFolder = g.workingFolder
-		}
+		g.rootFolder = resolveGitPath(gitdir.ParentFolder, g.workingFolder)
 		// this might be both a worktree and a submodule, where the path would look like
 		// this: path/.git/modules/module/path/worktrees/location. We cannot distinguish
 		// between worktree and a module path containing the word 'worktree,' however.
 		ind = strings.LastIndex(g.rootFolder, "/worktrees/")
 		if ind > -1 && g.env.HasFilesInDir(g.rootFolder, "gitdir") {
 			gitDir := filepath.Join(g.rootFolder, "gitdir")
-			realGitFolder := filepath.Clean(g.env.FileContent(gitDir))
+			realGitFolder := g.env.FileContent(gitDir)
 			g.realFolder = strings.TrimSuffix(realGitFolder, ".git\n")
 			g.rootFolder = g.rootFolder[:ind]
 			g.workingFolder = g.rootFolder

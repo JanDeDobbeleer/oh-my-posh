@@ -5,6 +5,7 @@ import (
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
 	"oh-my-posh/template"
+	"runtime"
 	"strings"
 	"testing"
 
@@ -109,6 +110,41 @@ func TestRootLocationHome(t *testing.T) {
 		}
 		got := path.rootLocation()
 		assert.EqualValues(t, tc.Expected, got)
+	}
+}
+
+func TestParent(t *testing.T) {
+	// there's no Windows support/validation for this just yet
+	// mainly due to root being a special case
+	if runtime.GOOS == environment.WINDOWS {
+		return
+	}
+	cases := []struct {
+		Case          string
+		Expected      string
+		HomePath      string
+		Pwd           string
+		PathSeparator string
+	}{
+		{Case: "Home folder", Expected: "", HomePath: "/home/bill", Pwd: "/home/bill", PathSeparator: "/"},
+		{Case: "Inside home folder", Expected: "~/", HomePath: "/home/bill", Pwd: "/home/bill/test", PathSeparator: "/"},
+		{Case: "Root", Expected: "", HomePath: "/home/bill", Pwd: "/", PathSeparator: "/"},
+		{Case: "Root + 1", Expected: "/", HomePath: "/home/bill", Pwd: "/usr", PathSeparator: "/"},
+	}
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("Home").Return(tc.HomePath)
+		env.On("Pwd").Return(tc.Pwd)
+		env.On("Flags").Return(&environment.Flags{})
+		env.On("PathSeparator").Return(tc.PathSeparator)
+		env.On("GOOS").Return(environment.DARWIN)
+		path := &Path{
+			env:   env,
+			props: properties.Map{},
+		}
+		path.pwd = tc.Pwd
+		got := path.Parent()
+		assert.EqualValues(t, tc.Expected, got, tc.Case)
 	}
 }
 

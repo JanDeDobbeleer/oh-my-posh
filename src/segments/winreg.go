@@ -29,7 +29,7 @@ func (wr *WindowsRegistry) Init(props properties.Properties, env environment.Env
 }
 
 func (wr *WindowsRegistry) Enabled() bool {
-	if wr.env.GOOS() != environment.WindowsPlatform {
+	if wr.env.GOOS() != environment.WINDOWS {
 		return false
 	}
 

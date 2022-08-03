@@ -29,10 +29,10 @@ import (
 )
 
 const (
-	Unknown         = "unknown"
-	WindowsPlatform = "windows"
-	DarwinPlatform  = "darwin"
-	LinuxPlatform   = "linux"
+	UNKNOWN = "unknown"
+	WINDOWS = "windows"
+	DARWIN  = "darwin"
+	LINUX   = "linux"
 )
 
 var (
@@ -256,7 +256,7 @@ func (env *ShellEnvironment) resolveConfigPath() {
 	}
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
-	if env.Platform() == WindowsPlatform && env.Shell() == "bash" {
+	if env.Platform() == WINDOWS && env.Shell() == "bash" {
 		return
 	}
 	configFile := env.CmdFlags.Config
@@ -572,7 +572,7 @@ func (env *ShellEnvironment) Shell() string {
 	name, err := p.Name()
 	if err != nil {
 		env.Log(Error, "Shell", err.Error())
-		return Unknown
+		return UNKNOWN
 	}
 	if name == "cmd.exe" {
 		p, _ = p.Parent()
@@ -580,7 +580,7 @@ func (env *ShellEnvironment) Shell() string {
 	}
 	if err != nil {
 		env.Log(Error, "Shell", err.Error())
-		return Unknown
+		return UNKNOWN
 	}
 	// Cache the shell value to speed things up.
 	env.CmdFlags.Shell = strings.Trim(strings.TrimSuffix(name, ".exe"), " ")
@@ -723,7 +723,7 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 	}
 	goos := env.GOOS()
 	tmplCache.OS = goos
-	if goos == LinuxPlatform {
+	if goos == LINUX {
 		tmplCache.OS = env.Platform()
 	}
 	env.tmplCache = tmplCache
@@ -757,7 +757,7 @@ func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 			normalizedElement = strings.Replace(normalizedElement, "~", normalizedHomeDir, 1)
 		}
 		pattern := fmt.Sprintf("^%s$", normalizedElement)
-		if goos == WindowsPlatform || goos == DarwinPlatform {
+		if goos == WINDOWS || goos == DARWIN {
 			pattern = "(?i)" + pattern
 		}
 		matched := regex.MatchString(pattern, normalizedCwd)

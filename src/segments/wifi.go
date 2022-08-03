@@ -24,7 +24,7 @@ func (w *Wifi) Template() string {
 
 func (w *Wifi) Enabled() bool {
 	// This segment only supports Windows/WSL for now
-	if w.env.Platform() != environment.WindowsPlatform && !w.env.IsWsl() {
+	if w.env.Platform() != environment.WINDOWS && !w.env.IsWsl() {
 		return false
 	}
 	wifiInfo, err := w.env.WifiNetwork()

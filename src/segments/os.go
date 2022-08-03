@@ -68,11 +68,11 @@ func (oi *Os) Template() string {
 func (oi *Os) Enabled() bool {
 	goos := oi.env.GOOS()
 	switch goos {
-	case environment.WindowsPlatform:
+	case environment.WINDOWS:
 		oi.Icon = oi.props.GetString(Windows, "\uE62A")
-	case environment.DarwinPlatform:
+	case environment.DARWIN:
 		oi.Icon = oi.props.GetString(MacOS, "\uF179")
-	case environment.LinuxPlatform:
+	case environment.LINUX:
 		platform := oi.env.Platform()
 		displayDistroName := oi.props.GetBool(DisplayDistroName, false)
 		if displayDistroName {

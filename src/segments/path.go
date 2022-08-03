@@ -109,7 +109,18 @@ func (pt *Path) Enabled() bool {
 }
 
 func (pt *Path) Parent() string {
-	return filepath.Dir(pt.pwd)
+	if pt.pwd == pt.env.Home() {
+		return ""
+	}
+	parent := filepath.Dir(pt.pwd)
+	if pt.pwd == parent {
+		return ""
+	}
+	separator := pt.env.PathSeparator()
+	if parent == pt.rootLocation() || parent == separator {
+		separator = ""
+	}
+	return pt.replaceMappedLocations(parent) + separator
 }
 
 func (pt *Path) formatWindowsDrive(pwd string) string {

@@ -1,10 +1,12 @@
 package font
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"strings"
+	"time"
 )
 
 type release struct {
@@ -21,7 +23,9 @@ func (a Asset) FilterValue() string { return a.Name }
 
 func Nerds() ([]*Asset, error) {
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", "https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest", nil)
+	ctx, cancelF := context.WithTimeout(context.Background(), time.Second*time.Duration(20))
+	defer cancelF()
+	req, err := http.NewRequestWithContext(ctx, "GET", "https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest", nil)
 	if err != nil {
 		return nil, err
 	}

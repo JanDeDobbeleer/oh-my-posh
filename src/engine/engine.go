@@ -354,6 +354,8 @@ const (
 )
 
 func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
+	// populate env with latest context
+	e.Env.LoadTemplateCache()
 	var prompt *Segment
 	switch promptType {
 	case Debug:

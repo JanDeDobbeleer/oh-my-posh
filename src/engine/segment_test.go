@@ -71,7 +71,7 @@ func TestShouldIncludeFolder(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("GOOS").Return(environment.LinuxPlatform)
+		env.On("GOOS").Return(environment.LINUX)
 		env.On("Home").Return("")
 		env.On("Pwd").Return(cwd)
 		env.On("DirMatchesOneOf", cwd, []string{"Projects/oh-my-posh"}).Return(tc.Included)

@@ -609,7 +609,7 @@ func TestGetGitCommand(t *testing.T) {
 		CWD             string
 		IsWslSharedPath bool
 	}{
-		{Case: "On Windows", Expected: "git.exe", GOOS: environment.WindowsPlatform},
+		{Case: "On Windows", Expected: "git.exe", GOOS: environment.WINDOWS},
 		{Case: "Non Windows", Expected: "git"},
 		{Case: "Iside WSL2, non shared", IsWSL: true, Expected: "git"},
 		{Case: "Iside WSL2, shared", Expected: "git.exe", IsWSL: true, IsWslSharedPath: true, CWD: "/mnt/bill"},

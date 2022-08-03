@@ -120,7 +120,7 @@ func TestAzSegment(t *testing.T) {
 			content, _ := os.ReadFile("../test/AzureRmContext.json")
 			azureRmContext = string(content)
 		}
-		env.On("GOOS").Return(environment.LinuxPlatform)
+		env.On("GOOS").Return(environment.LINUX)
 		env.On("FileContent", filepath.Join(home, ".azure", "azureProfile.json")).Return(azureProfile)
 		env.On("FileContent", filepath.Join(home, ".azure", "AzureRmContext.json")).Return(azureRmContext)
 		env.On("Getenv", "AZURE_CONFIG_DIR").Return("")

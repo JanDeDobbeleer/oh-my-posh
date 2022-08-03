@@ -110,7 +110,7 @@ func (s *scm) getCommand(command string) string {
 		return s.command
 	}
 	s.command = command
-	if s.env.GOOS() == environment.WindowsPlatform || s.IsWslSharedPath {
+	if s.env.GOOS() == environment.WINDOWS || s.IsWslSharedPath {
 		s.command += ".exe"
 	}
 	return s.command

@@ -113,7 +113,7 @@ func (pt *Path) Parent() string {
 }
 
 func (pt *Path) formatWindowsDrive(pwd string) string {
-	if pt.env.GOOS() != environment.WindowsPlatform || !strings.HasSuffix(pwd, ":") {
+	if pt.env.GOOS() != environment.WINDOWS || !strings.HasSuffix(pwd, ":") {
 		return pwd
 	}
 	return pwd + "\\"
@@ -333,7 +333,7 @@ func (pt *Path) normalize(inputPath string) string {
 	}
 	normalized = strings.ReplaceAll(normalized, "\\", "/")
 	goos := pt.env.GOOS()
-	if goos == environment.WindowsPlatform || goos == environment.DarwinPlatform {
+	if goos == environment.WINDOWS || goos == environment.DARWIN {
 		normalized = strings.ToLower(normalized)
 	}
 	return normalized

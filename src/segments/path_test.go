@@ -344,8 +344,8 @@ func TestGetFullPath(t *testing.T) {
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/usr/home/abc", Expected: "abc"},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/a/b/c/d", Expected: "d"},
 
-		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: environment.WindowsPlatform},
-		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\Jan", Expected: "C:\\Users\\Jan", PathSeparator: "\\", GOOS: environment.WindowsPlatform},
+		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: environment.WINDOWS},
+		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\Jan", Expected: "C:\\Users\\Jan", PathSeparator: "\\", GOOS: environment.WINDOWS},
 
 		// StackCountEnabled=true and StackCount=2
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: 2, Expected: "2 /"},
@@ -476,14 +476,14 @@ func TestNormalizePath(t *testing.T) {
 		GOOS     string
 		Expected string
 	}{
-		{Input: "C:\\Users\\Bob\\Foo", GOOS: environment.LinuxPlatform, Expected: "C:/Users/Bob/Foo"},
-		{Input: "C:\\Users\\Bob\\Foo", GOOS: environment.WindowsPlatform, Expected: "c:/users/bob/foo"},
-		{Input: "~\\Bob\\Foo", GOOS: environment.LinuxPlatform, Expected: "/usr/home/Bob/Foo"},
-		{Input: "~\\Bob\\Foo", GOOS: environment.WindowsPlatform, Expected: "/usr/home/bob/foo"},
-		{Input: "/foo/~/bar", GOOS: environment.LinuxPlatform, Expected: "/foo/~/bar"},
-		{Input: "/foo/~/bar", GOOS: environment.WindowsPlatform, Expected: "/foo/~/bar"},
-		{Input: "~/baz", GOOS: environment.LinuxPlatform, Expected: "/usr/home/baz"},
-		{Input: "~/baz", GOOS: environment.WindowsPlatform, Expected: "/usr/home/baz"},
+		{Input: "C:\\Users\\Bob\\Foo", GOOS: environment.LINUX, Expected: "C:/Users/Bob/Foo"},
+		{Input: "C:\\Users\\Bob\\Foo", GOOS: environment.WINDOWS, Expected: "c:/users/bob/foo"},
+		{Input: "~\\Bob\\Foo", GOOS: environment.LINUX, Expected: "/usr/home/Bob/Foo"},
+		{Input: "~\\Bob\\Foo", GOOS: environment.WINDOWS, Expected: "/usr/home/bob/foo"},
+		{Input: "/foo/~/bar", GOOS: environment.LINUX, Expected: "/foo/~/bar"},
+		{Input: "/foo/~/bar", GOOS: environment.WINDOWS, Expected: "/foo/~/bar"},
+		{Input: "~/baz", GOOS: environment.LINUX, Expected: "/usr/home/baz"},
+		{Input: "~/baz", GOOS: environment.WINDOWS, Expected: "/usr/home/baz"},
 	}
 
 	for _, tc := range cases {

@@ -108,7 +108,7 @@ func (env *ShellEnvironment) TerminalWidth() (int, error) {
 }
 
 func (env *ShellEnvironment) Platform() string {
-	return WindowsPlatform
+	return WINDOWS
 }
 
 func (env *ShellEnvironment) CachePath() string {
@@ -353,7 +353,7 @@ func (env *ShellEnvironment) parseNetworkInterface(network *WLAN_INTERFACE_INFO,
 	case 8:
 		info.PhysType = AC
 	default:
-		info.PhysType = Unknown
+		info.PhysType = UNKNOWN
 	}
 
 	// see https://docs.microsoft.com/en-us/windows/win32/nativewifi/dot11-bss-type
@@ -408,7 +408,7 @@ func (env *ShellEnvironment) parseNetworkInterface(network *WLAN_INTERFACE_INFO,
 	case 7:
 		info.Authentication = WPA2PSK
 	default:
-		info.Authentication = Unknown
+		info.Authentication = UNKNOWN
 	}
 
 	// see https://docs.microsoft.com/en-us/windows/win32/nativewifi/dot11-cipher-algorithm
@@ -428,7 +428,7 @@ func (env *ShellEnvironment) parseNetworkInterface(network *WLAN_INTERFACE_INFO,
 	case 0x101:
 		info.Cipher = WEP
 	default:
-		info.Cipher = Unknown
+		info.Cipher = UNKNOWN
 	}
 
 	return &info, nil

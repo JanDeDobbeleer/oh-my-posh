@@ -4,11 +4,13 @@ package font
 // component library.
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 func Download(fontPath string) ([]byte, error) {
@@ -35,9 +37,14 @@ func isZipFile(data []byte) bool {
 }
 
 func getRemoteFile(location string) (data []byte, err error) {
-	var client = http.Client{}
-
-	resp, err := client.Get(location)
+	client := &http.Client{}
+	ctx, cancelF := context.WithTimeout(context.Background(), time.Second*time.Duration(60))
+	defer cancelF()
+	req, err := http.NewRequestWithContext(ctx, "GET", location, nil)
+	if err != nil {
+		return nil, err
+	}
+	resp, err := client.Do(req)
 	if err != nil {
 		return
 	}

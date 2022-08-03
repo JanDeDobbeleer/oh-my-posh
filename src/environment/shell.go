@@ -3,6 +3,7 @@ package environment
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -35,7 +36,8 @@ const (
 )
 
 var (
-	lock = sync.RWMutex{}
+	lock          = sync.RWMutex{}
+	TEMPLATECACHE = fmt.Sprintf("template_cache_%d", os.Getppid())
 )
 
 type Flags struct {
@@ -181,6 +183,7 @@ type Environment interface {
 	ConvertToWindowsPath(path string) string
 	WifiNetwork() (*WifiInfo, error)
 	TemplateCache() *TemplateCache
+	LoadTemplateCache()
 	Log(logType LogType, funcName, message string)
 	Trace(start time.Time, function string, args ...string)
 }
@@ -659,7 +662,27 @@ func (env *ShellEnvironment) Cache() Cache {
 }
 
 func (env *ShellEnvironment) Close() {
+	defer env.Trace(time.Now(), "Close")
+	templateCache, err := json.Marshal(env.TemplateCache())
+	if err == nil {
+		env.fileCache.Set(TEMPLATECACHE, string(templateCache), 1440)
+	}
 	env.fileCache.Close()
+}
+
+func (env *ShellEnvironment) LoadTemplateCache() {
+	defer env.Trace(time.Now(), "LoadTemplateCache")
+	val, OK := env.fileCache.Get(TEMPLATECACHE)
+	if !OK {
+		return
+	}
+	var templateCache TemplateCache
+	err := json.Unmarshal([]byte(val), &templateCache)
+	if err != nil {
+		env.Log(Error, "LoadTemplateCache", err.Error())
+		return
+	}
+	env.tmplCache = &templateCache
 }
 
 func (env *ShellEnvironment) Logs() string {

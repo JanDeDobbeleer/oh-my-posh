@@ -20,11 +20,11 @@ func (i *IPify) Template() string {
 }
 
 func (i *IPify) Enabled() bool {
-	ip, _ := i.getResult()
-	i.IP = ip
-	/*if err != nil {
-		return true
-	}*/
+	i.IP, _ = i.getResult()
+	/*	if err != nil {
+			return false
+		}
+		i.IP = ip*/
 	return true
 }
 

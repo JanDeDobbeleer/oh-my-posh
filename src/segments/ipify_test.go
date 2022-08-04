@@ -37,9 +37,10 @@ func TestIpifySegment(t *testing.T) {
 		},
 		{
 			Case:            "Error in retrieving data",
-			Response:        "nonsense",
+			Response:        "OFFLINE",
+			ExpectedString:  "OFFLINE",
 			Error:           errors.New("Something went wrong"),
-			ExpectedEnabled: false,
+			ExpectedEnabled: true,
 		},
 	}
 

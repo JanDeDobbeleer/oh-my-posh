@@ -21,10 +21,11 @@ func (i *IPify) Template() string {
 
 func (i *IPify) Enabled() bool {
 	i.IP, _ = i.getResult()
-	/*	if err != nil {
-			return false
-		}
-		i.IP = ip*/
+	/*i.IP = ip
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}*/
 	return true
 }
 

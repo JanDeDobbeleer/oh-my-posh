@@ -2,6 +2,7 @@ package segments
 
 import (
 	"errors"
+	"net"
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
 	"testing"
@@ -36,10 +37,17 @@ func TestIpifySegment(t *testing.T) {
 			Template:        "Ext. IP: {{.IP}}",
 		},
 		{
-			Case:            "Error in retrieving data",
+			Case:            "Network Error",
 			Response:        "nonsense",
-			Error:           errors.New("Something went wrong"),
+			ExpectedString:  "",
+			Error:           errors.New("network is unreachable"),
 			ExpectedEnabled: false,
+		},
+		{
+			Case:            "Offline",
+			ExpectedString:  OFFLINE,
+			Error:           &net.DNSError{IsNotFound: true},
+			ExpectedEnabled: true,
 		},
 	}
 

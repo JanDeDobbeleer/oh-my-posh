@@ -587,6 +587,19 @@ func (env *ShellEnvironment) Shell() string {
 	return env.CmdFlags.Shell
 }
 
+func (env *ShellEnvironment) unWrapError(err error) error {
+	cause := err
+	for {
+		type nested interface{ Unwrap() error }
+		unwrap, ok := cause.(nested)
+		if !ok {
+			break
+		}
+		cause = unwrap.Unwrap()
+	}
+	return cause
+}
+
 func (env *ShellEnvironment) HTTPRequest(targetURL string, body io.Reader, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
 	defer env.Trace(time.Now(), "HTTPRequest", targetURL)
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
@@ -605,7 +618,7 @@ func (env *ShellEnvironment) HTTPRequest(targetURL string, body io.Reader, timeo
 	response, err := client.Do(request)
 	if err != nil {
 		env.Log(Error, "HTTPRequest", err.Error())
-		return nil, err
+		return nil, env.unWrapError(err)
 	}
 	// anything inside the range [200, 299] is considered a success
 	if response.StatusCode < 200 || response.StatusCode >= 300 {

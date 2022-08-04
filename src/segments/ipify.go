@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"net"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 )
@@ -13,6 +14,8 @@ type IPify struct {
 
 const (
 	IpifyURL properties.Property = "url"
+
+	OFFLINE = "OFFLINE"
 )
 
 func (i *IPify) Template() string {
@@ -46,6 +49,9 @@ func (i *IPify) getResult() (string, error) {
 	httpTimeout := i.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
 	body, err := i.env.HTTPRequest(url, nil, httpTimeout)
+	if dnsErr, OK := err.(*net.DNSError); OK && dnsErr.IsNotFound {
+		return OFFLINE, nil
+	}
 	if err != nil {
 		return "", err
 	}

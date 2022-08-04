@@ -20,12 +20,11 @@ func (i *IPify) Template() string {
 }
 
 func (i *IPify) Enabled() bool {
-	ip, err := i.getResult()
-	if err != nil {
-		return false
-	}
+	ip, _ := i.getResult()
 	i.IP = ip
-
+	/*if err != nil {
+		return true
+	}*/
 	return true
 }
 
@@ -47,7 +46,7 @@ func (i *IPify) getResult() (string, error) {
 
 	body, err := i.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {
-		return "", err
+		return "OFFLINE", err
 	}
 
 	// convert the body to a string

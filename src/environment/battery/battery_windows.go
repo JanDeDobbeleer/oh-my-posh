@@ -72,7 +72,7 @@ type guid struct {
 
 type spDeviceInterfaceData struct {
 	cbSize             uint32
-	InterfaceClassGuid guid // nolint:revive
+	InterfaceClassGuid guid //nolint:revive
 	Flags              uint32
 	Reserved           uint
 }
@@ -92,7 +92,7 @@ func uint32ToFloat64(num uint32) (float64, error) {
 }
 
 func setupDiSetup(proc *windows.LazyProc, nargs, a1, a2, a3, a4, a5, a6 uintptr) (uintptr, error) {
-	r1, _, errno := syscall.Syscall6(proc.Addr(), nargs, a1, a2, a3, a4, a5, a6) // nolint:staticcheck
+	r1, _, errno := syscall.Syscall6(proc.Addr(), nargs, a1, a2, a3, a4, a5, a6) //nolint:staticcheck
 	if windows.Handle(r1) == windows.InvalidHandle {
 		if errno != 0 {
 			return 0, error(errno)
@@ -103,7 +103,7 @@ func setupDiSetup(proc *windows.LazyProc, nargs, a1, a2, a3, a4, a5, a6 uintptr)
 }
 
 func setupDiCall(proc *windows.LazyProc, nargs, a1, a2, a3, a4, a5, a6 uintptr) syscall.Errno {
-	r1, _, errno := syscall.Syscall6(proc.Addr(), nargs, a1, a2, a3, a4, a5, a6) // nolint:staticcheck
+	r1, _, errno := syscall.Syscall6(proc.Addr(), nargs, a1, a2, a3, a4, a5, a6) //nolint:staticcheck
 	if r1 == 0 {
 		if errno != 0 {
 			return errno
@@ -148,7 +148,7 @@ func systemGet(idx int) (*battery, error) {
 		return nil, err
 	}
 	defer func() {
-		_, _, _ = syscall.Syscall(setupDiDestroyDeviceInfoList.Addr(), 1, hdev, 0, 0) // nolint:staticcheck
+		_, _, _ = syscall.Syscall(setupDiDestroyDeviceInfoList.Addr(), 1, hdev, 0, 0) //nolint:staticcheck
 	}()
 
 	var did spDeviceInterfaceData

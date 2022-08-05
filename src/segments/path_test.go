@@ -557,7 +557,7 @@ func TestGetFolderPathCustomMappedLocations(t *testing.T) {
 	assert.Equal(t, "#", got)
 }
 
-func TestAgnosterPath(t *testing.T) { // nolint:dupl
+func TestAgnosterPath(t *testing.T) { //nolint:dupl
 	cases := []struct {
 		Case          string
 		Expected      string
@@ -605,7 +605,7 @@ func TestAgnosterPath(t *testing.T) { // nolint:dupl
 	}
 }
 
-func TestAgnosterLeftPath(t *testing.T) { // nolint:dupl
+func TestAgnosterLeftPath(t *testing.T) { //nolint:dupl
 	cases := []struct {
 		Case          string
 		Expected      string

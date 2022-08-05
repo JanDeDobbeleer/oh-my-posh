@@ -43,6 +43,6 @@ This command is used to install fonts and configure the font in your terminal.
 	}
 )
 
-func init() { // nolint:gochecknoinits
+func init() { //nolint:gochecknoinits
 	rootCmd.AddCommand(fontCmd)
 }

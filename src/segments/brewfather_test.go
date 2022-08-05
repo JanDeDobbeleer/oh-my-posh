@@ -49,7 +49,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		{
 			Case: "Planning Status",
 			BatchJSONResponse: `
-			{"batchNo":18,"status":"Planning","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, // nolint:lll
+			{"batchNo":18,"status":"Planning","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, //nolint:lll
 			BatchReadingsJSONResponse: `[]`,
 			Template:                  "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d {{end}}{{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}", //nolint:lll
 			ExpectedString:            " Fake Beer 1.3%",
@@ -58,7 +58,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		{
 			Case: "Brewing Status",
 			BatchJSONResponse: `
-			{"batchNo":18,"status":"Brewing","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, // nolint:lll
+			{"batchNo":18,"status":"Brewing","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, //nolint:lll
 			BatchReadingsJSONResponse: `[]`,
 			Template:                  "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d {{end}}{{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}", //nolint:lll
 			ExpectedString:            " Fake Beer 1.3%",
@@ -67,7 +67,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		{
 			Case: "Fermenting Status, no readings",
 			BatchJSONResponse: `
-			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, // nolint:lll
+			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, //nolint:lll
 			BatchReadingsJSONResponse: `[]`,
 			Template:                  "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d {{end}}{{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}", //nolint:lll
 			ExpectedString:            " 19d Fake Beer 1.3%",
@@ -76,7 +76,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		{
 			Case: "Fermenting Status, one reading",
 			BatchJSONResponse: `
-			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, // nolint:lll
+			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, //nolint:lll
 			BatchReadingsJSONResponse: `[{"id":"manual","temp":19.5,"comment":"","sg":1.066,"time":` + FakeReading1DateString + `,"type":"manual"}]`,
 			Template:                  "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d {{end}}{{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}", //nolint:lll
 			ExpectedString:            " 19d Fake Beer 1.3%: 1.066 19.5° →",
@@ -85,8 +85,8 @@ func TestBrewfatherSegment(t *testing.T) {
 		{
 			Case: "Fermenting Status, two readings, temp trending up",
 			BatchJSONResponse: `
-			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, // nolint:lll
-			BatchReadingsJSONResponse: `[{"id":"manual","temp":19.5,"comment":"","sg":1.066,"time":` + FakeReading1DateString + `,"type":"manual"}, {"id":"manual","temp":21,"comment":"","sg":1.063,"time":` + FakeReading2DateString + `,"type":"manual"}]`,                                    // nolint:lll
+			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, //nolint:lll
+			BatchReadingsJSONResponse: `[{"id":"manual","temp":19.5,"comment":"","sg":1.066,"time":` + FakeReading1DateString + `,"type":"manual"}, {"id":"manual","temp":21,"comment":"","sg":1.063,"time":` + FakeReading2DateString + `,"type":"manual"}]`,                                    //nolint:lll
 			Template:                  "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d {{end}}{{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}", //nolint:lll
 			ExpectedString:            " 19d Fake Beer 1.3%: 1.063 21° ↗",
 			ExpectedEnabled:           true,
@@ -94,8 +94,8 @@ func TestBrewfatherSegment(t *testing.T) {
 		{
 			Case: "Fermenting Status, three readings, temp trending hard down, include age of most recent reading",
 			BatchJSONResponse: `
-			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, // nolint:lll
-			BatchReadingsJSONResponse: `[{"id":"manual","temp":19.5,"comment":"","sg":1.066,"time":` + FakeReading1DateString + `,"type":"manual"}, {"id":"manual","temp":21,"comment":"","sg":1.063,"time":` + FakeReading2DateString + `,"type":"manual"}, {"id":"manual","temp":15,"comment":"","sg":1.050,"time":` + FakeReading3DateString + `,"type":"manual"}]`, // nolint:lll
+			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, //nolint:lll
+			BatchReadingsJSONResponse: `[{"id":"manual","temp":19.5,"comment":"","sg":1.066,"time":` + FakeReading1DateString + `,"type":"manual"}, {"id":"manual","temp":21,"comment":"","sg":1.063,"time":` + FakeReading2DateString + `,"type":"manual"}, {"id":"manual","temp":15,"comment":"","sg":1.050,"time":` + FakeReading3DateString + `,"type":"manual"}]`, //nolint:lll
 			Template:                  "{{.StatusIcon}} {{.ReadingAge}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d {{end}}{{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}",                                                       //nolint:lll
 			ExpectedString:            " 451 19d Fake Beer 1.3%: 1.05 15° ↓↓",
 			ExpectedEnabled:           true,
@@ -103,7 +103,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		{
 			Case:                      "Bad batch json, readings fine",
 			BatchJSONResponse:         ``,
-			BatchReadingsJSONResponse: `[{"id":"manual","temp":19.5,"comment":"","sg":1.066,"time":` + FakeReading1DateString + `,"type":"manual"}, {"id":"manual","temp":21,"comment":"","sg":1.063,"time":` + FakeReading2DateString + `,"type":"manual"}, {"id":"manual","temp":15,"comment":"","sg":1.050,"time":` + FakeReading3DateString + `,"type":"manual"}]`, // nolint:lll
+			BatchReadingsJSONResponse: `[{"id":"manual","temp":19.5,"comment":"","sg":1.066,"time":` + FakeReading1DateString + `,"type":"manual"}, {"id":"manual","temp":21,"comment":"","sg":1.063,"time":` + FakeReading2DateString + `,"type":"manual"}, {"id":"manual","temp":15,"comment":"","sg":1.050,"time":` + FakeReading3DateString + `,"type":"manual"}]`, //nolint:lll
 			Template:                  "{{.StatusIcon}} {{.ReadingAge}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d {{end}}{{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}",                                                       //nolint:lll
 			ExpectedString:            "",
 			ExpectedEnabled:           false,
@@ -111,8 +111,8 @@ func TestBrewfatherSegment(t *testing.T) {
 		{
 			Case: "Conditioning Status",
 			BatchJSONResponse: `
-			{"batchNo":18,"status":"Conditioning","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, // nolint:lll
-			BatchReadingsJSONResponse: `[{"id":"manual","temp":19.5,"comment":"","sg":1.066,"time":` + FakeReading1DateString + `,"type":"manual"}, {"id":"manual","temp":21,"comment":"","sg":1.063,"time":` + FakeReading2DateString + `,"type":"manual"}, {"id":"manual","temp":15,"comment":"","sg":1.050,"time":` + FakeReading3DateString + `,"type":"manual"}]`, // nolint:lll
+			{"batchNo":18,"status":"Conditioning","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, //nolint:lll
+			BatchReadingsJSONResponse: `[{"id":"manual","temp":19.5,"comment":"","sg":1.066,"time":` + FakeReading1DateString + `,"type":"manual"}, {"id":"manual","temp":21,"comment":"","sg":1.063,"time":` + FakeReading2DateString + `,"type":"manual"}, {"id":"manual","temp":15,"comment":"","sg":1.050,"time":` + FakeReading3DateString + `,"type":"manual"}]`, //nolint:lll
 			Template:                  "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d {{end}}{{.Recipe.Name}} {{.MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{.Reading.Gravity}} {{.Reading.Temperature}}° {{.TemperatureTrendIcon}}{{end}}",                                                                       //nolint:lll
 			ExpectedString:            " 5d Fake Beer 1.3%",
 			ExpectedEnabled:           true,
@@ -120,7 +120,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		{
 			Case: "Fermenting Status, test all unit conversions",
 			BatchJSONResponse: `
-			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, // nolint:lll
+			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, //nolint:lll
 			BatchReadingsJSONResponse: `[{"id":"manual","temp":34.5,"comment":"","sg":1.066,"time":` + FakeReading1DateString + `,"type":"manual"}]`,
 			Template:                  "{{ if and (.Reading) (eq .Status \"Fermenting\") }}SG: ({{.Reading.Gravity}} Bx:{{.SGToBrix .Reading.Gravity}} P:{{.SGToPlato .Reading.Gravity}}), Temp: (C:{{.Reading.Temperature}} F:{{.DegCToF .Reading.Temperature}} K:{{.DegCToKelvin .Reading.Temperature}}){{end}}", //nolint:lll
 			ExpectedString:            "SG: (1.066 Bx:16.13 P:16.13), Temp: (C:34.5 F:94.1 K:307.7)",
@@ -129,7 +129,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		{
 			Case: "Fermenting Status, test all unit conversions 2",
 			BatchJSONResponse: `
-			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, // nolint:lll
+			{"batchNo":18,"status":"Fermenting","brewDate":` + FakeBrewDateString + `,"bottlingDate":` + FakeBottlingDateString + `,"recipe":{"name":"Fake Beer"},"fermentationStartDate":` + FakeFermStartDateString + `,"name":"Batch","measuredAbv": 1.3}`, //nolint:lll
 			BatchReadingsJSONResponse: `[{"id":"manual","temp":3.5,"comment":"","sg":1.004,"time":` + FakeReading1DateString + `,"type":"manual"}]`,
 			Template:                  "{{ if and (.Reading) (eq .Status \"Fermenting\") }}SG: ({{.Reading.Gravity}} Bx:{{.SGToBrix .Reading.Gravity}} P:{{.SGToPlato .Reading.Gravity}}), Temp: (C:{{.Reading.Temperature}} F:{{.DegCToF .Reading.Temperature}} K:{{.DegCToKelvin .Reading.Temperature}}){{end}}", //nolint:lll
 			ExpectedString:            "SG: (1.004 Bx:1.03 P:1.03), Temp: (C:3.5 F:38.3 K:276.7)",

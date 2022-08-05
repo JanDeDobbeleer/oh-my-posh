@@ -20,7 +20,7 @@ func TestJava(t *testing.T) {
 		{
 			Case:           "Zulu LTS",
 			ExpectedString: "11.0.13",
-			Version:        "OpenJDK 64-Bit Server VM (11.0.13+8-LTS) for windows-amd64 JRE (Zulu11.52+13-CA) (11.0.13+8-LTS), built on Oct 7 2021 16:00:23 by \"zulu_re\" with MS VC++ 15.9 (VS2017)", // nolint:lll
+			Version:        "OpenJDK 64-Bit Server VM (11.0.13+8-LTS) for windows-amd64 JRE (Zulu11.52+13-CA) (11.0.13+8-LTS), built on Oct 7 2021 16:00:23 by \"zulu_re\" with MS VC++ 15.9 (VS2017)", //nolint:lll
 		},
 		{
 			Case:           "OpenJDK macOS",

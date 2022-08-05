@@ -4,42 +4,41 @@ import (
 	"errors"
 	"net"
 	"oh-my-posh/mock"
-	"oh-my-posh/properties"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 const (
 	IPIFYAPIURL = "https://api.ipify.org"
 )
 
+type mockedipAPI struct {
+	mock2.Mock
+}
+
+func (s *mockedipAPI) Get() (*ipData, error) {
+	args := s.Called()
+	return args.Get(0).(*ipData), args.Error(1)
+}
+
 func TestIpifySegment(t *testing.T) {
 	cases := []struct {
 		Case            string
-		Response        string
+		IPDate          *ipData
+		Error           error
 		ExpectedString  string
 		ExpectedEnabled bool
-		Template        string
-		Error           error
 	}{
 		{
-			Case:            "IPv4",
-			Response:        `127.0.0.1`,
+			Case:            "IP data",
+			IPDate:          &ipData{IP: "127.0.0.1"},
 			ExpectedString:  "127.0.0.1",
 			ExpectedEnabled: true,
 		},
 		{
-			Case:            "IPv6 (with template)",
-			Response:        `0000:aaaa:1111:bbbb:2222:cccc:3333:dddd`,
-			ExpectedString:  "Ext. IP: 0000:aaaa:1111:bbbb:2222:cccc:3333:dddd",
-			ExpectedEnabled: true,
-			Template:        "Ext. IP: {{.IP}}",
-		},
-		{
-			Case:            "Network Error",
-			Response:        "nonsense",
-			ExpectedString:  "",
+			Case:            "Error",
 			Error:           errors.New("network is unreachable"),
 			ExpectedEnabled: false,
 		},
@@ -52,26 +51,20 @@ func TestIpifySegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
-		props := properties.Map{
-			properties.CacheTimeout: 0,
-		}
-		env.On("HTTPRequest", IPIFYAPIURL).Return([]byte(tc.Response), tc.Error)
+		api := &mockedipAPI{}
+		api.On("Get").Return(tc.IPDate, tc.Error)
 
 		ipify := &IPify{
-			props: props,
-			env:   env,
+			api: api,
 		}
 
 		enabled := ipify.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)
+
 		if !enabled {
 			continue
 		}
 
-		if tc.Template == "" {
-			tc.Template = ipify.Template()
-		}
-		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, ipify), tc.Case)
+		assert.Equal(t, tc.ExpectedString, renderTemplate(&mock.MockedEnvironment{}, ipify.Template(), ipify), tc.Case)
 	}
 }

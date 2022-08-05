@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"oh-my-posh/engine"
 	"oh-my-posh/environment"
 	"oh-my-posh/shell"
 
@@ -56,6 +57,10 @@ func runInit(shellName string) {
 	}
 	env.Init()
 	defer env.Close()
+	cfg := engine.LoadConfig(env)
+	shell.Transient = cfg.TransientPrompt != nil
+	shell.ErrorLine = cfg.ErrorLine != nil || cfg.ValidLine != nil
+	shell.Tooltips = len(cfg.Tooltips) > 0
 	if print {
 		init := shell.PrintInit(env)
 		fmt.Print(init)

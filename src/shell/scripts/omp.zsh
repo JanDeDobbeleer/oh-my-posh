@@ -60,9 +60,9 @@ function self-insert() {
   zle .self-insert
 }
 
-function enable_poshtooltips() {
+if [[ "::TOOLTIPS::" = "true" ]]; then
   zle -N self-insert
-}
+fi
 
 _posh-zle-line-init() {
     [[ $CONTEXT == start ]] || return 0
@@ -91,6 +91,10 @@ _posh-zle-line-init() {
     return ret
 }
 
-function enable_poshtransientprompt() {
+if [[ "::TRANSIENT::" = "true" ]]; then
   zle -N zle-line-init _posh-zle-line-init
-}
+fi
+
+# legacy functions for backwards compatibility
+function enable_poshtooltips() {}
+function enable_poshtransientprompt() {}

@@ -100,7 +100,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
     }
 
-    function Enable-PoshTooltips {
+    if ("::TOOLTIPS::" -eq "true") {
         Set-PSReadLineKeyHandler -Key SpaceBar -ScriptBlock {
             [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
             $position = $host.UI.RawUI.CursorPosition
@@ -116,7 +116,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
     }
 
-    function Enable-PoshTransientPrompt {
+    if ("::TRANSIENT::" -eq "true") {
         Set-PSReadLineKeyHandler -Key Enter -ScriptBlock {
             $previousOutputEncoding = [Console]::OutputEncoding
             try {
@@ -145,7 +145,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
     }
 
-    function Enable-PoshLineError {
+    if ("::ERROR_LINE::" -eq "true") {
         $validLine = @(Start-Utf8Process $script:OMPExecutable @("print", "valid", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n"
         $errorLine = @(Start-Utf8Process $script:OMPExecutable @("print", "error", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n"
         Set-PSReadLineOption -PromptText $validLine, $errorLine
@@ -343,6 +343,11 @@ Example:
 
     # set secondary prompt
     Set-PSReadLineOption -ContinuationPrompt (@(Start-Utf8Process $script:OMPExecutable @("print", "secondary", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n")
+
+    # legacy functions
+    function Enable-PoshTooltips {}
+    function Enable-PoshTransientPrompt {}
+    function Enable-PoshLineError {}
 
     Export-ModuleMember -Function @(
         "Set-PoshContext"

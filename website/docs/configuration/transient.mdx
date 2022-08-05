@@ -13,7 +13,8 @@ This feature only works in `fish`, `zsh`, `powershell` and `cmd` for the time be
 
 Transient prompt, when enabled, replaces the prompt with a simpler one to allow more screen real estate.
 You can use go [text/template][go-text-template] templates extended with [sprig][sprig] to enrich the text.
-Environment variables are available, just like the [`console_title_template`][console-title] functionality.
+All [template][templates] functionality is available, even reusing [cross segment template properties][cstp] from
+the previous primary prompt run.
 
 Typically, your prompt will simply leave the prompt on the screen when you execute a command (or press enter) like so:
 
@@ -48,85 +49,16 @@ The configuration has the following properties:
 - foreground_templates: foreground [color templates][color-templates]
 - background: `string` [color][colors]
 - background_templates: background [color templates][color-templates]
-- template: `string` - a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `{{ .Shell }}> `
-
-## Template ([info][templates])
-
-- `.Root`: `boolean` - is the current user root/admin or not
-- `.PWD`: `string` - the current working directory
-- `.Folder`: `string` - the current working folder
-- `.Shell`: `string` - the current shell name
-- `.UserName`: `string` - the current user name
-- `.HostName`: `string` - the host name
-- `.Code`: `int` - the last exit code
-- `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
+- template: `string` - a fully featured [template][templates] - defaults to `{{ .Shell }}> `
 
 ## Enable the feature
 
-<Tabs
-  defaultValue="pwsh"
-  groupId="shell"
-  values={[
-    { label: 'powershell', value: 'pwsh', },
-    { label: 'cmd', value: 'cmd', },
-    { label: 'zsh', value: 'zsh', },
-    { label: 'fish', value: 'fish', },
-  ]
-}>
-<TabItem value="pwsh">
-
-
-Invoke Oh My Posh in your `$PROFILE` and add the following line below.
-
-```powershell
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/jandedobbeleer.omp.json" | Invoke-Expression
-// highlight-start
-Enable-PoshTransientPrompt
-// highlight-end
-```
-
-:::caution
-If you import **PSReadLine** separately, make sure to import it before the `Enable-PoshTransientPrompt` command.
-:::
-
-Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes to take effect.
-
-</TabItem>
-<TabItem value="cmd">
-
-You can run the command below to enable the feature permanently:
+Oh My posh handles enabling the feature automatically for all shells except `cmd` when the config contains a
+transient prompt configuration. For `cmd`, you can run the command below once to enable the feature permanently:
 
 ```shell
 clink set prompt.transient always
 ```
-
-Restart your shell for the changes to take effect.
-
-</TabItem>
-<TabItem value="zsh">
-
-Invoke Oh My Posh in `.zshrc` and add the following line below:
-
-```bash
-enable_poshtransientprompt
-```
-
-Restart your shell or reload `.zshrc` using `exec zsh` for the changes to take effect.
-
-</TabItem>
-<TabItem value="fish">
-
-Invoke Oh My Posh in `~/.config/fish/config.fish` and add the following line below:
-
-```bash
-enable_poshtransientprompt
-```
-
-Restart your shell or reload fish using `exec fish` for the changes to take effect.
-
-</TabItem>
-</Tabs>
 
 [colors]: /docs/configuration/colors
 [go-text-template]: https://golang.org/pkg/text/template/
@@ -135,3 +67,4 @@ Restart your shell or reload fish using `exec fish` for the changes to take effe
 [clink]: https://chrisant996.github.io/clink/
 [templates]: /docs/configuration/templates
 [color-templates]: /docs/configuration/colors#color-templates
+[cstp]: /docs/configuration/templates#cross-segment-template-properties

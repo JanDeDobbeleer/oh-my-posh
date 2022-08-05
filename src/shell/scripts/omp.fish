@@ -64,7 +64,7 @@ function _render_tooltip
   commandline --function repaint
 end
 
-function enable_poshtooltips
+if test "::TOOLTIPS::" = "true"
   bind \x20 _render_tooltip
 end
 
@@ -76,6 +76,12 @@ function _render_transient
   commandline --function execute
 end
 
-function enable_poshtransientprompt
+if test "::TRANSIENT::" = "true"
   bind \r _render_transient
+end
+
+# legacy functions
+function enable_poshtooltips
+end
+function enable_poshtransientprompt
 end

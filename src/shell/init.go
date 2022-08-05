@@ -3,6 +3,7 @@ package shell
 import (
 	_ "embed"
 	"path/filepath"
+	"strconv"
 
 	"fmt"
 	"oh-my-posh/environment"
@@ -31,6 +32,12 @@ var nuInit string
 
 const (
 	noExe = "echo \"Unable to find Oh My Posh executable\""
+)
+
+var (
+	Transient bool
+	ErrorLine bool
+	Tooltips  bool
 )
 
 func getExecutablePath(env environment.Environment) (string, error) {
@@ -102,6 +109,9 @@ func PrintInit(env environment.Environment) string {
 func getShellInitScript(executable, configFile, script string) string {
 	script = strings.ReplaceAll(script, "::OMP::", executable)
 	script = strings.ReplaceAll(script, "::CONFIG::", configFile)
+	script = strings.ReplaceAll(script, "::TRANSIENT::", strconv.FormatBool(Transient))
+	script = strings.ReplaceAll(script, "::ERROR_LINE::", strconv.FormatBool(ErrorLine))
+	script = strings.ReplaceAll(script, "::TOOLTIPS::", strconv.FormatBool(Tooltips))
 	return script
 }
 

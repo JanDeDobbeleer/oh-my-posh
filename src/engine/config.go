@@ -123,11 +123,6 @@ func loadConfig(env environment.Environment) *Config {
 	err = config.BindStruct("", &cfg)
 	cfg.exitWithError(err)
 
-	// initialize default values
-	if cfg.TransientPrompt == nil {
-		cfg.TransientPrompt = &Segment{}
-	}
-
 	return &cfg
 }
 

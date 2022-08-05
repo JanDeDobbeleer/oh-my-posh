@@ -20,7 +20,8 @@ There are two config settings you need to tweak:
 - `error_line`:  displays when the line is faulty
 
 You can use go [text/template][go-text-template] templates extended with [sprig][sprig] to enrich the text.
-Environment variables are available, just like the [`console_title_template`][console-title] functionality.
+All [template][templates] functionality is available, even reusing [cross segment template properties][cstp] from
+the previous primary prompt run.
 
 ## Configuration
 
@@ -49,35 +50,7 @@ The configuration has the following properties:
 
 - background: `string` [color][colors]
 - foreground: `string` [color][colors]
-- template: `string` - a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to ` `
-
-## Template ([info][templates])
-
-- `.Root`: `boolean` - is the current user root/admin or not
-- `.PWD`: `string` - the current working directory
-- `.Folder`: `string` - the current working folder
-- `.Shell`: `string` - the current shell name
-- `.UserName`: `string` - the current user name
-- `.HostName`: `string` - the host name
-- `.Env.VarName`: `string` - Any environment variable where `VarName` is the environment variable name
-
-## Enable the feature
-
-Invoke Oh My Posh in your `$PROFILE` and add the following line below.
-
-```powershell
-oh-my-posh init pwsh --config $env:POSH_THEMES_PATH/jandedobbeleer.omp.json | Invoke-Expression
-// highlight-start
-Enable-PoshLineError
-// highlight-end
-```
-
-:::caution
-If you import **PSReadLine** separately, make sure to import it before the `Enable-PoshLineError` command.
-:::
-
-Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes to take effect.
+- template: `string` - a fully featured [template][templates] - defaults to ` `
 
 [colors]: /docs/configuration/colors
 [go-text-template]: https://golang.org/pkg/text/template/
@@ -85,3 +58,4 @@ Restart your shell or reload your `$PROFILE` using `. $PROFILE` for the changes 
 [console-title]: /docs/configuration/title#console-title-template
 [psreadline]: https://github.com/PowerShell/PSReadLine
 [templates]: /docs/configuration/templates
+[cstp]: /docs/configuration/templates#cross-segment-template-properties

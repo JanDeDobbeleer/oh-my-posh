@@ -56,7 +56,7 @@ You can do the following:
 	},
 }
 
-func init() { // nolint:gochecknoinits
+func init() { //nolint:gochecknoinits
 	rootCmd.AddCommand(getCache)
 }
 

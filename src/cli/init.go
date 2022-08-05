@@ -39,7 +39,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 	}
 )
 
-func init() { // nolint:gochecknoinits
+func init() { //nolint:gochecknoinits
 	initCmd.Flags().BoolVarP(&print, "print", "p", false, "print the init script")
 	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "run in strict mode")
 	_ = initCmd.MarkPersistentFlagRequired("config")

@@ -15,8 +15,8 @@ import (
 var FontsDir = filepath.Join(os.Getenv("WINDIR"), "Fonts")
 
 const (
-	WM_FONTCHANGE  = 0x001D // nolint:revive
-	HWND_BROADCAST = 0xFFFF // nolint:revive
+	WM_FONTCHANGE  = 0x001D //nolint:revive
+	HWND_BROADCAST = 0xFFFF //nolint:revive
 )
 
 func install(font *Font) (err error) {

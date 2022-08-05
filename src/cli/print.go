@@ -116,7 +116,7 @@ var printCmd = &cobra.Command{
 	},
 }
 
-func init() { // nolint:gochecknoinits
+func init() { //nolint:gochecknoinits
 	printCmd.Flags().StringVar(&pwd, "pwd", "", "current working directory")
 	printCmd.Flags().StringVar(&pswd, "pswd", "", "current working directory (according to pwsh)")
 	printCmd.Flags().StringVar(&shellName, "shell", "", "the shell to print for")

@@ -48,7 +48,7 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 	// General properties that need replacement
 	segment.migratePropertyKey("display_version", properties.FetchVersion)
 	delete(segment.Properties, "enable_hyperlink")
-	switch segment.Type { // nolint:exhaustive
+	switch segment.Type { //nolint:exhaustive
 	case TEXT:
 		segment.migratePropertyKey("text", segmentTemplate)
 		segment.migrateTemplate()

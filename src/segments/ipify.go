@@ -3,13 +3,31 @@ package segments
 import (
 	"net"
 	"oh-my-posh/environment"
+	"oh-my-posh/http"
 	"oh-my-posh/properties"
 )
 
+type ipData struct {
+	IP string `json:"ip"`
+}
+
+type IPAPI interface {
+	Get() (*ipData, error)
+}
+
+type ipAPI struct {
+	http.Request
+}
+
+func (i *ipAPI) Get() (*ipData, error) {
+	url := "https://api.ipify.org?format=json"
+	return http.Do[*ipData](&i.Request, url)
+}
+
 type IPify struct {
-	props properties.Properties
-	env   environment.Environment
-	IP    string
+	IP string
+
+	api IPAPI
 }
 
 const (
@@ -33,40 +51,21 @@ func (i *IPify) Enabled() bool {
 }
 
 func (i *IPify) getResult() (string, error) {
-	cacheTimeout := i.props.GetInt(properties.CacheTimeout, properties.DefaultCacheTimeout)
-
-	url := i.props.GetString(IpifyURL, "https://api.ipify.org")
-
-	if cacheTimeout > 0 {
-		// check if data stored in cache
-		val, found := i.env.Cache().Get(url)
-		// we got something from te cache
-		if found {
-			return val, nil
-		}
-	}
-
-	httpTimeout := i.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
-
-	body, err := i.env.HTTPRequest(url, nil, httpTimeout)
+	data, err := i.api.Get()
 	if dnsErr, OK := err.(*net.DNSError); OK && dnsErr.IsNotFound {
 		return OFFLINE, nil
 	}
 	if err != nil {
 		return "", err
 	}
-
-	// convert the body to a string
-	response := string(body)
-
-	if cacheTimeout > 0 {
-		// persist public ip in cache
-		i.env.Cache().Set(url, response, cacheTimeout)
-	}
-	return response, nil
+	return data.IP, err
 }
 
 func (i *IPify) Init(props properties.Properties, env environment.Environment) {
-	i.props = props
-	i.env = env
+	request := &http.Request{}
+	request.Init(env, props)
+
+	i.api = &ipAPI{
+		Request: *request,
+	}
 }

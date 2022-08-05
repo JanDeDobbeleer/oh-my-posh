@@ -76,7 +76,7 @@ type WithingsAPI interface {
 }
 
 type withingsAPI struct {
-	*http.OAuth
+	*http.OAuthRequest
 }
 
 func (w *withingsAPI) GetMeasures(meastypes string) (*WithingsData, error) {
@@ -124,7 +124,7 @@ func (w *withingsAPI) getWithingsData(endpoint string, formData url.Values) (*Wi
 		request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
 	body := strings.NewReader(formData.Encode())
-	data, err := http.OauthResult[*WithingsData](w.OAuth, endpoint, body, modifiers)
+	data, err := http.OauthResult[*WithingsData](w.OAuthRequest, endpoint, body, modifiers)
 	if data != nil && data.Status != 0 {
 		return nil, errors.New("Withings API error: " + strconv.Itoa(data.Status))
 	}
@@ -219,13 +219,14 @@ func (w *Withings) getSleep() bool {
 func (w *Withings) Init(props properties.Properties, env environment.Environment) {
 	w.props = props
 
+	oauth := &http.OAuthRequest{
+		AccessTokenKey:  WithingsAccessTokenKey,
+		RefreshTokenKey: WithingsRefreshTokenKey,
+		SegmentName:     "withings",
+	}
+	oauth.Init(env, props)
+
 	w.api = &withingsAPI{
-		OAuth: &http.OAuth{
-			Props:           props,
-			Env:             env,
-			AccessTokenKey:  WithingsAccessTokenKey,
-			RefreshTokenKey: WithingsRefreshTokenKey,
-			SegmentName:     "withings",
-		},
+		OAuthRequest: oauth,
 	}
 }

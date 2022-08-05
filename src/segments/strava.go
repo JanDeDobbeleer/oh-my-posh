@@ -15,12 +15,12 @@ type StravaAPI interface {
 }
 
 type stravaAPI struct {
-	http.OAuth
+	http.OAuthRequest
 }
 
 func (s *stravaAPI) GetActivities() ([]*StravaData, error) {
 	url := "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1"
-	return http.OauthResult[[]*StravaData](&s.OAuth, url, nil)
+	return http.OauthResult[[]*StravaData](&s.OAuthRequest, url, nil)
 }
 
 // segment struct, makes templating easier
@@ -128,13 +128,14 @@ func (s *Strava) getActivityIcon() string {
 func (s *Strava) Init(props properties.Properties, env environment.Environment) {
 	s.props = props
 
+	oauth := &http.OAuthRequest{
+		AccessTokenKey:  StravaAccessTokenKey,
+		RefreshTokenKey: StravaRefreshTokenKey,
+		SegmentName:     "strava",
+	}
+	oauth.Init(env, props)
+
 	s.api = &stravaAPI{
-		OAuth: http.OAuth{
-			Props:           props,
-			Env:             env,
-			AccessTokenKey:  StravaAccessTokenKey,
-			RefreshTokenKey: StravaRefreshTokenKey,
-			SegmentName:     "strava",
-		},
+		OAuthRequest: *oauth,
 	}
 }

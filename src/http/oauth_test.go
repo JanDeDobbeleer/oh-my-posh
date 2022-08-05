@@ -163,13 +163,12 @@ func TestOauthResult(t *testing.T) {
 		env.On("HTTPRequest", tokenURL).Return([]byte(tc.TokenResponse), tc.Error)
 		env.On("Log", environment.Error, "OAuth", mock2.Anything).Return()
 
-		oauth := &OAuth{
-			Props:           props,
-			Env:             env,
+		oauth := &OAuthRequest{
 			AccessTokenKey:  accessTokenKey,
 			RefreshTokenKey: refreshTokenKey,
 			SegmentName:     "test",
 		}
+		oauth.Init(env, props)
 
 		got, err := OauthResult[*data](oauth, url, nil)
 		assert.Equal(t, tc.ExpectedData, got, tc.Case)

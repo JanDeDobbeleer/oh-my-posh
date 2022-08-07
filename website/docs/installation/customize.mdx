@@ -8,8 +8,43 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem"
 
 The standard initialization sets Oh My Posh' [default theme][default-theme]. This configuration is downloaded
-and kept up-to-date with Oh My Posh' version every time the shell starts. To change/alter the configuration, you need to
-add the `--config` command-line option to change the configuration to use a specific file.
+and kept up-to-date with Oh My Posh' version every time the shell starts.
+
+To set a new config/theme you need
+to change the `--config` option of the `oh-my-posh init <shell>` line in your `profile` or `.<shell>rc` script
+(see [prompt][prompt]) and point it to the location of a predefined [theme][themes] or custom configuration on your file system.
+
+<Tabs
+  defaultValue="windows"
+  groupId="shell"
+  values={[
+    { label: 'windows', value: 'windows', },
+    { label: 'homebrew', value: 'homebrew', },
+  ]
+}>
+<TabItem value="windows">
+
+When using the Windows installer (winget or Store install), you can make use of the `$POSH_THEMES` environment variable
+that points to all [themes][themes] on your file system.
+
+For example, to use the [jandedobbeleer][jandedobbeleer] theme, alter the init line like this (`powershell`):
+
+```powershell
+oh-my-posh init pwsh --config "$env:POSH_THEMES/jandedobbeleer.omp.json" | Invoke-Expression
+```
+
+</TabItem>
+<TabItem value="homebrew">
+
+When using homebrew, all themes are installed alongside Oh My Posh in `$(brew --prefix oh-my-posh)/themes`.
+To use any of the themes, use the following syntax (`zsh`):
+
+```bash
+eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json)"
+```
+
+</TabItem>
+</Tabs>
 
 ### Get inspiration
 
@@ -162,6 +197,7 @@ segments section covers how to configure each available segment.
 
 [themes]: themes.md
 [configuration]: configuration/overview.mdx
+[prompt]: prompt.mdx
 [default-theme]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/default.omp.json
 [jandedobbeleer]: /docs/themes#jandedobbeleer
 [json-schema]: https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json

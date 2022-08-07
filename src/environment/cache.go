@@ -17,6 +17,13 @@ type cacheObject struct {
 	TTL       int    `json:"ttl"`
 }
 
+func (c *cacheObject) expired() bool {
+	if c.TTL < 0 {
+		return false
+	}
+	return time.Now().Unix() >= (c.Timestamp + int64(c.TTL)*60)
+}
+
 type fileCache struct {
 	cache     *concurrentMap
 	cachePath string
@@ -38,6 +45,9 @@ func (fc *fileCache) Init(cachePath string) {
 	}
 
 	for key, co := range list {
+		if co.expired() {
+			continue
+		}
 		fc.cache.set(key, co)
 	}
 }
@@ -60,19 +70,10 @@ func (fc *fileCache) Get(key string) (string, bool) {
 	if !found {
 		return "", false
 	}
-	co, ok := val.(*cacheObject)
-	if !ok {
-		return "", false
-	}
-	if co.TTL <= 0 {
+	if co, ok := val.(*cacheObject); ok {
 		return co.Value, true
 	}
-	expired := time.Now().Unix() >= (co.Timestamp + int64(co.TTL)*60)
-	if expired {
-		fc.cache.remove(key)
-		return "", false
-	}
-	return co.Value, true
+	return "", false
 }
 
 // sets the value for the given key with a TTL (minutes)

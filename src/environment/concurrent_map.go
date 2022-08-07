@@ -25,12 +25,6 @@ func (c *concurrentMap) get(key string) (interface{}, bool) {
 	return "", false
 }
 
-func (c *concurrentMap) remove(key string) {
-	lock.RLock()
-	defer lock.RUnlock()
-	delete(c.values, key)
-}
-
 func (c *concurrentMap) list() map[string]interface{} {
 	return c.values
 }

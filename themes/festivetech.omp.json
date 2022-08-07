@@ -79,7 +79,7 @@
   "transient_prompt": {
     "background": "transparent",
     "foreground": "#ffffff",
-    "template": "<#1f4b8e,transparent>\ue0b6</><#ffffff,#1f4b8e>\uf2dc</><#1f4b8e,transparent>\ue0b4</> {{ .Command }}"
+    "template": "<#1f4b8e,transparent>\ue0b6</><#ffffff,#1f4b8e>\uf2dc</><#1f4b8e,transparent>\ue0b4</> "
   },
   "version": 2
 }

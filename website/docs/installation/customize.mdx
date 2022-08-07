@@ -24,13 +24,13 @@ to change the `--config` option of the `oh-my-posh init <shell>` line in your `p
 }>
 <TabItem value="windows">
 
-When using the Windows installer (winget or Store install), you can make use of the `$POSH_THEMES` environment variable
-that points to all [themes][themes] on your file system.
+When using the Windows installer (via winget or Store), you can make use of the `POSH_THEMES_PATH` environment variable
+that points to a directory including all [themes][themes] on your file system.
 
 For example, to use the [jandedobbeleer][jandedobbeleer] theme, alter the init line like this (`powershell`):
 
 ```powershell
-oh-my-posh init pwsh --config "$env:POSH_THEMES/jandedobbeleer.omp.json" | Invoke-Expression
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/jandedobbeleer.omp.json" | Invoke-Expression
 ```
 
 </TabItem>

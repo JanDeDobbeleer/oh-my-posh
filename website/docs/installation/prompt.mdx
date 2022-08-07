@@ -160,21 +160,32 @@ exec fish
 Oh My Posh requires Nushell >= 0.60.0
 :::
 
-Edit `$nu.config-path` and add the following lines at the bottom.
+Run the following command:
 
 ```bash
 oh-my-posh init nu
+```
+
+it saves the initialization script to `~/.oh-my-posh.nu` by default.
+Then edit the Nushell config file (`$nu.config-path`) and add the following line at the bottom:
+
+```bash
 source ~/.oh-my-posh.nu
 ```
 
-If you want to save the initialization script elsewhere, replace the lines above with these:
+If you want to save the initialization script elsewhere, you should run a command like:
 
 ```bash
 oh-my-posh init nu --print | save /mylocation/myscript.nu
+```
+
+and add the `source` line like:
+
+```bash
 source /mylocation/myscript.nu
 ```
 
-Restart Nushell for the changes to take effect.
+Once added, restart Nushell for the changes to take effect.
 
 </TabItem>
 </Tabs>

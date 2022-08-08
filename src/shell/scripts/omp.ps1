@@ -15,14 +15,14 @@ function global:Get-PoshStackCount {
 
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:ErrorCode = 0
-    $script:OMPExecutable = "::OMP::"
+    $script:OMPExecutable = ::OMP::
     $script:ShellName = "::SHELL::"
     $script:PSVersion = $PSVersionTable.PSVersion.ToString()
     $script:TransientPrompt = $false
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:CONDA_PROMPT_MODIFIER = $false
-    if (("::CONFIG::" -ne '') -and (Test-Path "::CONFIG::")) {
-        $env:POSH_THEME = (Resolve-Path -Path "::CONFIG::").ProviderPath
+    if ((::CONFIG:: -ne '') -and (Test-Path ::CONFIG::)) {
+        $env:POSH_THEME = (Resolve-Path -Path ::CONFIG::).ProviderPath
     }
     # specific module support (disabled by default)
     if ($null -eq $env:POSH_GIT_ENABLED) {
@@ -247,7 +247,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                             |___/
 '@
         Write-Host $logo
-        $themes = Get-ChildItem -Path "$Path\*" -Include '*.omp.json' | Sort-Object Name
+        $themes = Get-ChildItem -Path "$Path/*" -Include '*.omp.json' | Sort-Object Name
         if ($List -eq $true) {
             $themes | Select-Object @{ Name = 'hyperlink'; Expression = { Get-FileHyperlink -uri $_.FullName } } | Format-Table -HideTableHeaders
         } else {
@@ -263,7 +263,7 @@ Themes location: $(Get-FileHyperlink -uri "$Path")
 
 To change your theme, adjust the init script in $PROFILE.
 Example:
-  oh-my-posh init pwsh --config $Path/jandedobbeleer.omp.json | Invoke-Expression
+  oh-my-posh init pwsh --config '$((Join-Path $Path "jandedobbeleer.omp.json") -replace "'", "''")' | Invoke-Expression
 
 "@
     }

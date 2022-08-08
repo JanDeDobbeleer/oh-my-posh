@@ -27,14 +27,14 @@ local tooltip_active = false
 local cached_prompt = {}
 
 local function omp_exe()
-    return [["::OMP::"]]
+    return '"'..::OMP::..'"'
 end
 
 local function omp_config()
-    return [["::CONFIG::"]]
+    return '"'..::CONFIG::..'"'
 end
 
-os.setenv("POSH_THEME", omp_config())
+os.setenv("POSH_THEME", ::CONFIG::)
 
 local function can_async()
     if (clink.version_encoded or 0) >= 10030001 then

@@ -1,4 +1,4 @@
-export POSH_THEME='::CONFIG::'
+export POSH_THEME=::CONFIG::
 export POWERLINE_COMMAND="oh-my-posh"
 export CONDA_PROMPT_MODIFIER=false
 
@@ -64,7 +64,7 @@ if [[ "::TOOLTIPS::" = "true" ]]; then
   zle -N self-insert
 fi
 
-_posh-zle-line-init() {
+function _posh-zle-line-init() {
     [[ $CONTEXT == start ]] || return 0
 
     # Start regular line editor

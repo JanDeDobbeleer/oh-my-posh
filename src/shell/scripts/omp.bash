@@ -1,4 +1,4 @@
-export POSH_THEME='::CONFIG::'
+export POSH_THEME=::CONFIG::
 export POWERLINE_COMMAND="oh-my-posh"
 export CONDA_PROMPT_MODIFIER=false
 
@@ -10,15 +10,18 @@ if [[ ! -d "/tmp" ]]; then
 fi
 
 # start timer on command start
-PS0='$(::OMP:: get millis > "$TIMER_START")'
+PS0='$(_omp_start_timer)'
 # set secondary prompt
 PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION")"
 
+function _omp_start_timer() {
+    ::OMP:: get millis > "$TIMER_START"
+}
+
 function _omp_hook() {
     local ret=$?
-
-    omp_stack_count=$((${#DIRSTACK[@]} - 1))
-    omp_elapsed=-1
+    local omp_stack_count=$((${#DIRSTACK[@]} - 1))
+    local omp_elapsed=-1
     if [[ -f "$TIMER_START" ]]; then
         omp_now=$(::OMP:: get millis)
         omp_start_time=$(cat "$TIMER_START")

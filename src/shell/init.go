@@ -3,6 +3,7 @@ package shell
 import (
 	_ "embed"
 	"path/filepath"
+	"runtime"
 	"strconv"
 
 	"fmt"
@@ -51,25 +52,111 @@ func getExecutablePath(env environment.Environment) (string, error) {
 	// On Windows, it fails when the excutable is called in MSYS2 for example
 	// which uses unix style paths to resolve the executable's location.
 	// PowerShell knows how to resolve both, so we can swap this without any issue.
-	executable = strings.ReplaceAll(executable, "\\", "/")
-	switch env.Flags().Shell {
-	case BASH, ZSH:
-		executable = strings.ReplaceAll(executable, " ", "\\ ")
-		executable = strings.ReplaceAll(executable, "(", "\\(")
-		executable = strings.ReplaceAll(executable, ")", "\\)")
+	if runtime.GOOS == environment.WINDOWS {
+		executable = strings.ReplaceAll(executable, "\\", "/")
 	}
 	return executable, nil
 }
 
-func Init(env environment.Environment) string {
-	executable, err := getExecutablePath(env)
-	if err != nil {
-		return noExe
+func quotePwshStr(str string) string {
+	return fmt.Sprintf("'%s'", strings.ReplaceAll(str, "'", "''"))
+}
+
+func quotePosixStr(str string) string {
+	if len(str) == 0 {
+		return "''"
 	}
+	needQuoting := false
+	var b strings.Builder
+	for _, r := range str {
+		normal := false
+		switch r {
+		case '!', ';', '"', '(', ')', '[', ']', '{', '}', '$', '|', '&', '>', '<', '`', ' ', '#', '~', '*', '?', '=':
+			b.WriteRune(r)
+		case '\\', '\'':
+			b.WriteByte('\\')
+			b.WriteRune(r)
+		case '\a':
+			b.WriteString(`\a`)
+		case '\b':
+			b.WriteString(`\b`)
+		case '\f':
+			b.WriteString(`\f`)
+		case '\n':
+			b.WriteString(`\n`)
+		case '\r':
+			b.WriteString(`\r`)
+		case '\t':
+			b.WriteString(`\t`)
+		case '\v':
+			b.WriteString(`\v`)
+		default:
+			b.WriteRune(r)
+			normal = true
+		}
+		if !normal {
+			needQuoting = true
+		}
+	}
+	// the quoting form $'...' is used for a string includes any special characters
+	if needQuoting {
+		return fmt.Sprintf("$'%s'", b.String())
+	}
+	return b.String()
+}
+
+func quoteFishStr(str string) string {
+	if len(str) == 0 {
+		return "''"
+	}
+	needQuoting := false
+	var b strings.Builder
+	for _, r := range str {
+		normal := false
+		switch r {
+		case ';', '"', '(', ')', '[', ']', '{', '}', '$', '|', '&', '>', '<', ' ', '#', '~', '*', '?', '=':
+			b.WriteRune(r)
+		case '\\', '\'':
+			b.WriteByte('\\')
+			b.WriteRune(r)
+		default:
+			b.WriteRune(r)
+			normal = true
+		}
+		if !normal {
+			needQuoting = true
+		}
+	}
+	// single quotes are used when the string includes any special characters
+	if needQuoting {
+		return fmt.Sprintf("'%s'", b.String())
+	}
+	return b.String()
+}
+
+func quoteLuaStr(str string) string {
+	if len(str) == 0 {
+		return "''"
+	}
+	return fmt.Sprintf("'%s'", strings.NewReplacer(`\`, `\\`, `'`, `\'`).Replace(str))
+}
+
+func quoteNuStr(str string) string {
+	if len(str) == 0 {
+		return "''"
+	}
+	return fmt.Sprintf(`"%s"`, strings.NewReplacer(`\`, `\\`, `"`, `\"`).Replace(str))
+}
+
+func Init(env environment.Environment) string {
 	shell := env.Flags().Shell
 	switch shell {
 	case PWSH, PWSH5:
-		return fmt.Sprintf("(@(&\"%s\" init %s --config=\"%s\" --print) -join \"`n\") | Invoke-Expression", executable, shell, env.Flags().Config)
+		executable, err := getExecutablePath(env)
+		if err != nil {
+			return noExe
+		}
+		return fmt.Sprintf("(@(& %s init %s --config=%s --print) -join \"`n\") | Invoke-Expression", quotePwshStr(executable), shell, quotePwshStr(env.Flags().Config))
 	case ZSH, BASH, FISH, CMD:
 		return PrintInit(env)
 	case NU:
@@ -87,32 +174,43 @@ func PrintInit(env environment.Environment) string {
 	}
 	shell := env.Flags().Shell
 	configFile := env.Flags().Config
+	var script string
 	switch shell {
 	case PWSH, PWSH5:
-		script := getShellInitScript(executable, configFile, pwshInit)
-		return strings.ReplaceAll(script, "::SHELL::", shell)
+		executable = quotePwshStr(executable)
+		configFile = quotePwshStr(configFile)
+		script = pwshInit
 	case ZSH:
-		return getShellInitScript(executable, configFile, zshInit)
+		executable = quotePosixStr(executable)
+		configFile = quotePosixStr(configFile)
+		script = zshInit
 	case BASH:
-		return getShellInitScript(executable, configFile, bashInit)
+		executable = quotePosixStr(executable)
+		configFile = quotePosixStr(configFile)
+		script = bashInit
 	case FISH:
-		return getShellInitScript(executable, configFile, fishInit)
+		executable = quoteFishStr(executable)
+		configFile = quoteFishStr(configFile)
+		script = fishInit
 	case CMD:
-		return getShellInitScript(executable, configFile, cmdInit)
+		executable = quoteLuaStr(executable)
+		configFile = quoteLuaStr(configFile)
+		script = cmdInit
 	case NU:
-		return getShellInitScript(executable, configFile, nuInit)
+		executable = quoteNuStr(executable)
+		configFile = quoteNuStr(configFile)
+		script = nuInit
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}
-}
-
-func getShellInitScript(executable, configFile, script string) string {
-	script = strings.ReplaceAll(script, "::OMP::", executable)
-	script = strings.ReplaceAll(script, "::CONFIG::", configFile)
-	script = strings.ReplaceAll(script, "::TRANSIENT::", strconv.FormatBool(Transient))
-	script = strings.ReplaceAll(script, "::ERROR_LINE::", strconv.FormatBool(ErrorLine))
-	script = strings.ReplaceAll(script, "::TOOLTIPS::", strconv.FormatBool(Tooltips))
-	return script
+	return strings.NewReplacer(
+		"::OMP::", executable,
+		"::CONFIG::", configFile,
+		"::SHELL::", shell,
+		"::TRANSIENT::", strconv.FormatBool(Transient),
+		"::ERROR_LINE::", strconv.FormatBool(ErrorLine),
+		"::TOOLTIPS::", strconv.FormatBool(Tooltips),
+	).Replace(script)
 }
 
 func createNuInit(env environment.Environment) {

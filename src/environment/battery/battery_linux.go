@@ -24,7 +24,7 @@ package battery
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io/ioutil" //nolint:staticcheck,nolintlint
 	"os"
 	"path/filepath"
 	"strconv"

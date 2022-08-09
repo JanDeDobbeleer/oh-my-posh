@@ -5,7 +5,7 @@
 package font
 
 import (
-	"io/ioutil"
+	"io/ioutil" //nolint:staticcheck,nolintlint
 	"os"
 	"path"
 	"strings"

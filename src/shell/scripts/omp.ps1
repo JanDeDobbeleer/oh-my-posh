@@ -15,6 +15,7 @@ function global:Get-PoshStackCount {
 
 New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:ErrorCode = 0
+    $script:ExecutionTime = 0
     $script:OMPExecutable = ::OMP::
     $script:ShellName = "::SHELL::"
     $script:PSVersion = $PSVersionTable.PSVersion.ToString()
@@ -286,17 +287,14 @@ Example:
     }
 
     function Update-PoshErrorCode {
-        $script:ExecutionTime = -1
         $lastHistory = Get-History -ErrorAction Ignore -Count 1
         # error code should be updated only when a non-empty command is run
         if (($null -eq $lastHistory) -or ($script:LastHistoryId -eq $lastHistory.Id)) {
+            $script:ExecutionTime = 0
             return
         }
         $script:LastHistoryId = $lastHistory.Id
         $script:ExecutionTime = ($lastHistory.EndExecutionTime - $lastHistory.StartExecutionTime).TotalMilliseconds
-        if (-not ($script:ExecutionTime -is [int])) {
-            $script:ExecutionTime = 0
-        }
         if ($script:OriginalLastExecutionStatus) {
             $script:ErrorCode = 0
             return

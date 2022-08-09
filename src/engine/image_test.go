@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"io/ioutil"
+	"io/ioutil" //nolint: staticcheck
 	"oh-my-posh/color"
 	"os"
 	"path/filepath"

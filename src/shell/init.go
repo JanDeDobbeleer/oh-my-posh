@@ -3,7 +3,6 @@ package shell
 import (
 	_ "embed"
 	"path/filepath"
-	"runtime"
 	"strconv"
 
 	"fmt"
@@ -52,7 +51,7 @@ func getExecutablePath(env environment.Environment) (string, error) {
 	// On Windows, it fails when the excutable is called in MSYS2 for example
 	// which uses unix style paths to resolve the executable's location.
 	// PowerShell knows how to resolve both, so we can swap this without any issue.
-	if runtime.GOOS == environment.WINDOWS {
+	if env.GOOS() == environment.WINDOWS {
 		executable = strings.ReplaceAll(executable, "\\", "/")
 	}
 	return executable, nil
@@ -98,7 +97,7 @@ func quotePosixStr(str string) string {
 			needQuoting = true
 		}
 	}
-	// the quoting form $'...' is used for a string includes any special characters
+	// the quoting form $'...' is used for a string contains any special characters
 	if needQuoting {
 		return fmt.Sprintf("$'%s'", b.String())
 	}
@@ -127,7 +126,7 @@ func quoteFishStr(str string) string {
 			needQuoting = true
 		}
 	}
-	// single quotes are used when the string includes any special characters
+	// single quotes are used when the string contains any special characters
 	if needQuoting {
 		return fmt.Sprintf("'%s'", b.String())
 	}

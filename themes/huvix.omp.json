@@ -48,7 +48,7 @@
             "threshold": 100
           },
           "style": "powerline",
-          "template": "{{{ .FormattedMs }}}",
+          "template": "{{ .FormattedMs }}",
           "type": "executiontime"
         }
       ],

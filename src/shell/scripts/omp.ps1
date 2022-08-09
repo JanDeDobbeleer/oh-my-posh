@@ -286,27 +286,34 @@ Example:
     }
 
     function Update-PoshErrorCode {
-        $script:ExecutionTime = -1
         $lastHistory = Get-History -ErrorAction Ignore -Count 1
+
+        # default values
+        $script:ErrorCode = 0
+        $script:ExecutionTime = -1
+
         # error code should be updated only when a non-empty command is run
         if (($null -eq $lastHistory) -or ($script:LastHistoryId -eq $lastHistory.Id)) {
             return
         }
+
         $script:LastHistoryId = $lastHistory.Id
         $script:ExecutionTime = ($lastHistory.EndExecutionTime - $lastHistory.StartExecutionTime).TotalMilliseconds
         if ($script:OriginalLastExecutionStatus) {
-            $script:ErrorCode = 0
             return
         }
+
         $invocationInfo = try {
             # retrieve info of the most recent error
             $global:Error[0] | Where-Object { $_ -ne $null } | Select-Object -ExpandProperty InvocationInfo
         } catch { $null }
+
         # check if the last command caused the last error
         if ($null -ne $invocationInfo -and $lastHistory.CommandLine -eq $invocationInfo.Line) {
             $script:ErrorCode = 1
             return
         }
+
         if ($script:OriginalLastExitCode -is [int] -and $script:OriginalLastExitCode -ne 0) {
             # native app exit code
             $script:ErrorCode = $script:OriginalLastExitCode

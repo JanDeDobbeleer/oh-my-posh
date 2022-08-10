@@ -7,7 +7,7 @@ sidebar_label: 📸 Share theme
 You can export your prompt to an image which you can share online. You have the ability to align
 it correctly and add your name for credits too.
 
-:::warning
+:::caution
 Some glyphs aren't rendered correctly, that's not you but the limitations of the renderer.
 Depending on your config, you might have to tweak the output a little bit.
 :::

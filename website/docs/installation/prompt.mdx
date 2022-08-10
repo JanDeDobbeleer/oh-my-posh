@@ -49,7 +49,7 @@ Then add the following line.
 oh-my-posh init pwsh | Invoke-Expression
 ```
 
-:::warning Antivirus software
+:::tip Antivirus software
 If adding an exception to your Antivirus software still blocks Oh My Posh for Windows, you can try using the below
 alternate line in your PowerShell profile. This is a drop-in replacement to the above call with Invoke-Expression.
 Tested with PowerShell 7.2.4 with Bitdefender Antivirus installed and requires NO exceptions for oh-my-posh.exe.
@@ -76,7 +76,7 @@ your cmd experience. Follow the installation instructions and make sure you sele
 Integrating Oh My Posh with Clink is easy: create a new file called oh-my-posh.lua in your Clink
 scripts directory (run `clink info` inside cmd to find that file's location).
 
-:::warning
+:::caution
 Use the full path to the config file, not the relative path.
 :::
 
@@ -156,7 +156,7 @@ exec fish
 </TabItem>
 <TabItem value="nu">
 
-:::warning
+:::caution
 Oh My Posh requires Nushell >= 0.60.0
 :::
 

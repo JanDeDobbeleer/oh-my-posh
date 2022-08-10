@@ -114,7 +114,7 @@ do so like this:
 "template": " {{ if .Segments.Git.UpstreamGone }}\uf7d3{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
 ```
 
-:::warning
+:::caution
 For this to work, the segment you refer to needs to be in your config. The above example won't work if
 your config does not contain a git segment as Oh My Posh only populates the properties when it needs to.
 :::

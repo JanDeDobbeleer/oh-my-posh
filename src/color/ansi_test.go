@@ -33,7 +33,7 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 	}{
 		{Text: "[google](http://www.google.be)", ShellName: shell.ZSH, Expected: "%{\x1b]8;;http://www.google.be\x1b\\%}google%{\x1b]8;;\x1b\\%}"},
 		{Text: "[google](http://www.google.be)", ShellName: shell.PWSH, Expected: "\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\"},
-		{Text: "[google](http://www.google.be)", ShellName: shell.BASH, Expected: "\001\x1b]8;;http://www.google.be\x1b\\\\\002google\001\x1b]8;;\x1b\\\\\002"},
+		{Text: "[google](http://www.google.be)", ShellName: shell.BASH, Expected: "\\[\x1b]8;;http://www.google.be\x1b\\\\\\]google\\[\x1b]8;;\x1b\\\\\\]"},
 	}
 	for _, tc := range cases {
 		a := Ansi{}

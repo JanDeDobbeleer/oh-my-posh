@@ -123,8 +123,19 @@
         {
           "foreground": "#007ACC",
           "style": "plain",
-          "template": "\u276f ",
-          "type": "text"
+          "template": "{{ .Name }} ",
+          "type": "shell",
+          "properties": {
+            "mapped_shell_names": {
+              "pwsh": "\u276f",
+              "cmd": ">",
+              "lua": ">",
+              "nu": ">",
+              "fish": "~>",
+              "zsh": "%",
+              "bash": "$"
+            }
+          }
         }
       ],
       "type": "prompt"

@@ -128,9 +128,10 @@
           "properties": {
             "mapped_shell_names": {
               "pwsh": "\u276f",
+              "shell": "\u276f",
               "cmd": ">",
               "lua": ">",
-              "nu": ">",
+              "nu": ":)",
               "fish": "~>",
               "zsh": "%",
               "bash": "$"

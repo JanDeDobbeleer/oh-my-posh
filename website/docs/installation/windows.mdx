@@ -125,6 +125,22 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object
 </TabItem>
 </Tabs>
 
+## Usage
+(You may have to restart your terminal after installing). To activate a theme, run in your terminal:
+
+```powershell
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" | Invoke-Expression
+```
+
+For more themes, navigate to the directory given by (run the following in your terminal)
+
+```powershell
+$env:POSH_THEMES_PATH
+```
+In that folder, you should see a list of jsons and themes. Simply replace `jandedobbeleer.omp.json` in the previous command with your corresponding Json.
+
+If there are rectangles or strange symbols after activating the theme, you may have to install a font. See https://ohmyposh.dev/docs/faq#there-are-rectangles-instead-of-icons-in-my-prompt
+
 ## Default themes
 
 <Tabs

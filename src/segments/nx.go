@@ -20,7 +20,7 @@ func (a *Nx) Init(props properties.Properties, env environment.Environment) {
 	a.language = language{
 		env:        env,
 		props:      props,
-		extensions: []string{"workspace.json"},
+		extensions: []string{"workspace.json", "nx.json"},
 		commands: []*cmd{
 			{
 				regex:      `(?:(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,

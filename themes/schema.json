@@ -236,6 +236,7 @@
             "executiontime",
             "flutter",
             "fossil",
+            "gcp",
             "git",
             "go",
             "haskell",
@@ -2721,6 +2722,31 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "gcp"
+              }
+            }
+          },
+          "then": {
+            "title": "GCP Segment",
+            "description": "https://ohmyposh.dev/docs/segments/gcp",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_error": {
+                    "type": "boolean",
+                    "title": "Display Error",
+                    "description": "Show the error message when failing to retrieve the GCP information",
+                    "default": false
                   }
                 }
               }

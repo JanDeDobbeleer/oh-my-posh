@@ -69,6 +69,7 @@ module.exports = {
         "segments/exit",
         "segments/flutter",
         "segments/fossil",
+        "segments/gcp",
         "segments/git",
         "segments/poshgit",
         "segments/golang",

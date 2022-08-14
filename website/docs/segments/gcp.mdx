@@ -1,0 +1,44 @@
+---
+id: gcp
+title: GCP Context
+sidebar_label: GCP
+---
+
+## What
+
+Display the currently active GCP project, region and account
+
+## Sample Configuration
+
+```json
+{
+  "type": "gcp",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#47888d",
+  "template": " \uE7B2 {{.Project} :: {{.Account}} "
+}
+```
+
+## Properties
+
+- display_error: `boolean` - show the error message when failing to retrieve the GCP information (defaults to `false`)
+
+## Template ([info][templates])
+
+:::note default template
+
+``` template
+{{ .Project }}
+```
+
+:::
+
+### Properties
+
+- `.Project`: `string` - the currently active project
+- `.Account`: `string` - the currently active account
+- `.Region`: `string` - default region for the active context
+
+[templates]: /docs/configuration/templates

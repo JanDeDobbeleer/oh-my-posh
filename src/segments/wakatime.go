@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
+	"oh-my-posh/template"
 )
 
 type Wakatime struct {

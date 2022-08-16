@@ -108,7 +108,7 @@ func TestWTGetUrl(t *testing.T) {
 		{
 			Case:     "no template",
 			Expected: "test",
-			URL      "test",
+			URL:      "test",
 		},
 		{
 			Case:     "template",

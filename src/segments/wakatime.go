@@ -71,9 +71,9 @@ func (w *Wakatime) setAPIData() error {
 func (w *Wakatime) getUrl() (string, error) {
 	url := w.props.GetString(URL, "")
 	tmpl := &template.Text{
-		Template:        url,
-		Context:         w,
-		Env:             w.env,
+		Template: url,
+		Context:  w,
+		Env:      w.env,
 	}
 	return tmpl.Render()
 }

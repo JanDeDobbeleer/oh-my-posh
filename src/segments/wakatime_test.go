@@ -117,7 +117,7 @@ func TestWTGetUrl(t *testing.T) {
 		},
 		{
 			Case:        "error",
-			URL:         "{{ .Env.BURR }}",
+			URL:         "{{ .BURR }}",
 			ShouldError: true,
 		},
 	}

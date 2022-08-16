@@ -112,12 +112,12 @@ func TestWTGetUrl(t *testing.T) {
 		},
 		{
 			Case:     "template",
-			Expected: "{{ .Env.HELLO }} world",
-			URL:      "hello world",
+			URL:      "{{ .Env.HELLO }} world",
+			Expected: "hello world",
 		},
 		{
 			Case:        "error",
-			Expected:    "{{ .Env.BURR }}",
+			URL:         "{{ .Env.BURR }}",
 			ShouldError: true,
 		},
 	}

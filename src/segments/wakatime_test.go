@@ -3,6 +3,7 @@ package segments
 import (
 	"errors"
 	"fmt"
+	"oh-my-posh/environment"
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
 	"testing"
@@ -79,6 +80,10 @@ func TestWTTrackedTime(t *testing.T) {
 		cache.On("Get", FAKEAPIURL).Return(response, !tc.CacheFoundFail)
 		cache.On("Set", FAKEAPIURL, response, tc.CacheTimeout).Return()
 		env.On("Cache").Return(cache)
+		
+		env.On("TemplateCache").Return(&environment.TemplateCache{
+			Env: make(map[string]string),
+		})
 
 		w := &Wakatime{
 			props: properties.Map{

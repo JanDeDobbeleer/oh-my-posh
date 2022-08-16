@@ -35,7 +35,7 @@ func (w *Wakatime) Enabled() bool {
 }
 
 func (w *Wakatime) setAPIData() error {
-	url, err := w.getUrl()
+	url, err := w.getURL()
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func (w *Wakatime) setAPIData() error {
 	return nil
 }
 
-func (w *Wakatime) getUrl() (string, error) {
+func (w *Wakatime) getURL() (string, error) {
 	url := w.props.GetString(URL, "")
 	tmpl := &template.Text{
 		Template: url,

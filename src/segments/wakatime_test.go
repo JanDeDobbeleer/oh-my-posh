@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestWTTrackedTime(t *testing.T) {
@@ -125,6 +126,7 @@ func TestWTGetUrl(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 
+		env.On("Log", mock2.Anything, mock2.Anything, mock2.Anything)
 		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: map[string]string{"HELLO": "hello"},
 		})

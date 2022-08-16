@@ -131,8 +131,7 @@ func TestWTGetUrl(t *testing.T) {
 
 		w := &Wakatime{
 			props: properties.Map{
-				properties.CacheTimeout: tc.CacheTimeout,
-				URL:                     tc.url,
+				URL: tc.Url,
 			},
 			env: env,
 		}

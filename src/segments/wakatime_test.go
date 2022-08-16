@@ -102,18 +102,18 @@ func TestWTGetUrl(t *testing.T) {
 	cases := []struct {
 		Case        string
 		Expected    string
-		Url         string
+		URL         string
 		ShouldError bool
 	}{
 		{
 			Case:     "no template",
 			Expected: "test",
-			Url:      "test",
+			URL      "test",
 		},
 		{
 			Case:     "template",
 			Expected: "{{ .Env.HELLO }} world",
-			Url:      "hello world",
+			URL:      "hello world",
 		},
 		{
 			Case:        "error",
@@ -131,7 +131,7 @@ func TestWTGetUrl(t *testing.T) {
 
 		w := &Wakatime{
 			props: properties.Map{
-				URL: tc.Url,
+				URL: tc.URL,
 			},
 			env: env,
 		}

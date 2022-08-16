@@ -82,7 +82,7 @@ func TestWTTrackedTime(t *testing.T) {
 		env.On("Cache").Return(cache)
 
 		env.On("TemplateCache").Return(&environment.TemplateCache{
-			Env: make(map[string]string),
+			Env: map[string]string{"HELLO": "hello"},
 		})
 
 		w := &Wakatime{
@@ -95,5 +95,54 @@ func TestWTTrackedTime(t *testing.T) {
 
 		assert.ErrorIs(t, tc.Error, w.setAPIData(), tc.Case+" - Error")
 		assert.Equal(t, tc.Expected, renderTemplate(env, w.Template(), w), tc.Case+" - String")
+	}
+}
+
+func TestWTGetUrl(t *testing.T) {
+	cases := []struct {
+		Case        string
+		Expected    string
+		Url         string
+		ShouldError bool
+	}{
+		{
+			Case:     "no template",
+			Expected: "test",
+			Url:      "test",
+		},
+		{
+			Case:     "template",
+			Expected: "{{ .Env.HELLO }} world",
+			Url:      "hello world",
+		},
+		{
+			Case:        "error",
+			Expected:    "{{",
+			ShouldError: true,
+		},
+	}
+
+	for _, tc := range cases {
+		env := &mock.MockedEnvironment{}
+
+		env.On("TemplateCache").Return(&environment.TemplateCache{
+			Env: map[string]string{"HELLO": "hello"},
+		})
+
+		w := &Wakatime{
+			props: properties.Map{
+				properties.CacheTimeout: tc.CacheTimeout,
+				URL:                     tc.url,
+			},
+			env: env,
+		}
+
+		got, err := w.getURL()
+
+		if tc.ShouldError {
+			assert.Error(t, err, tc.Case)
+			continue
+		}
+		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

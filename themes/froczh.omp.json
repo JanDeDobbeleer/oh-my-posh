@@ -67,7 +67,7 @@
                     "powerline_symbol": "\uE0B0",
                     "background": "#000000",
                     "foreground": "#ffffff",
-                    "template": " \uE753 {{ if .Error }}<#FE4A49>?{{ else }}{{ .Full }}{{ end }} "
+                    "template": " \uE753 {{ if .Error }}<#FE4A49>?</>{{ else }}{{ .Full }}{{ end }} "
                 },
                 {
                     "type": "node",

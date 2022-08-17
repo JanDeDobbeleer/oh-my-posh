@@ -47,7 +47,7 @@ func getCacheValue[a any](r *Request, key string) (a, error) {
 func do[a any](r *Request, url string, body io.Reader, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
 	var data a
 	httpTimeout := r.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
-	
+
 	responseBody, err := r.env.HTTPRequest(url, body, httpTimeout, requestModifiers...)
 	if err != nil {
 		r.env.Log(environment.Error, "OAuth", err.Error())
@@ -59,7 +59,7 @@ func do[a any](r *Request, url string, body io.Reader, requestModifiers ...envir
 		r.env.Log(environment.Error, "OAuth", err.Error())
 		return data, err
 	}
-	
+
 	cacheTimeout := r.props.GetInt(properties.CacheTimeout, 30)
 	if cacheTimeout > 0 {
 		r.env.Cache().Set(url, string(responseBody), cacheTimeout)

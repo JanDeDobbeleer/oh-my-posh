@@ -89,7 +89,7 @@ func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModi
 	if data, err := getCacheValue[a](&o.Request, url); err == nil {
 		return data, nil
 	}
-	
+
 	accessToken, err := o.getAccessToken()
 	if err != nil {
 		var data a

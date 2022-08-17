@@ -77,7 +77,7 @@ func (s *SystemInfo) Init(props properties.Properties, env environment.Environme
 	}
 	// times
 	processorTimes, err := cpu.Percent(0, false)
-	if err == nil {
+	if err == nil && len(processorTimes) > 0 {
 		s.Times = processorTimes[0]
 	}
 	// cpu

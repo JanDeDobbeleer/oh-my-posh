@@ -1318,6 +1318,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "cyberbliss",
+      "name": "Stephen Judd",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5401528?v=4",
+      "profile": "https://github.com/cyberbliss",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

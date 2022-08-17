@@ -19,10 +19,10 @@ func (r *Request) Init(env environment.Environment, props properties.Properties)
 }
 
 func Do[a any](r *Request, url string, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
-	return do[a](r, url, nil, nil, requestModifiers...)
+	return do[a](r, url, nil, requestModifiers...)
 }
 
-func do[a any](r *Request, url string, body io.Reader, preRequestFunc func() error, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
+func do[a any](r *Request, url string, body io.Reader, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
 	var data a
 
 	getCacheValue := func(key string) (a, error) {
@@ -46,12 +46,6 @@ func do[a any](r *Request, url string, body io.Reader, preRequestFunc func() err
 	if cacheTimeout > 0 {
 		if data, err := getCacheValue(url); err == nil {
 			return data, nil
-		}
-	}
-
-	if preRequestFunc != nil {
-		if err := preRequestFunc(); err != nil {
-			return data, err
 		}
 	}
 

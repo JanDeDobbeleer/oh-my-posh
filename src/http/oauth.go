@@ -86,25 +86,22 @@ func (o *OAuthRequest) refreshToken(refreshToken string) (string, error) {
 }
 
 func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
-	addToken := func() error {
-		accessToken, err := o.getAccessToken()
-		if err != nil {
-			return err
-		}
-
-		// add token to header for authentication
-		addAuthHeader := func(request *http.Request) {
-			request.Header.Add("Authorization", "Bearer "+accessToken)
-		}
-
-		if requestModifiers == nil {
-			requestModifiers = []environment.HTTPRequestModifier{}
-		}
-
-		requestModifiers = append(requestModifiers, addAuthHeader)
-
-		return nil
+	accessToken, err := o.getAccessToken()
+	if err != nil {
+		var data a
+		return data, err
 	}
 
-	return do[a](&o.Request, url, body, addToken, requestModifiers...)
+	// add token to header for authentication
+	addAuthHeader := func(request *http.Request) {
+		request.Header.Add("Authorization", "Bearer "+accessToken)
+	}
+
+	if requestModifiers == nil {
+		requestModifiers = []environment.HTTPRequestModifier{}
+	}
+
+	requestModifiers = append(requestModifiers, addAuthHeader)
+
+	return do[a](&o.Request, url, body, requestModifiers...)
 }

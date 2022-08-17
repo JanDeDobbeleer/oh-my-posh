@@ -17,10 +17,11 @@ type Gcp struct {
 	Account string
 	Project string
 	Region  string
+	Error   string
 }
 
 func (g *Gcp) Template() string {
-	return " {{ .Project }} "
+	return " {{ if .Error }}{{ .Error }}{{ else }}{{ .Project }}{{ end }} "
 }
 
 func (g *Gcp) Init(props properties.Properties, env environment.Environment) {
@@ -32,14 +33,16 @@ func (g *Gcp) Enabled() bool {
 	cfgDir := g.getConfigDirectory()
 	configFile, err := g.getActiveConfig(cfgDir)
 	if err != nil {
-		return g.setError(err.Error())
+		g.Error = err.Error()
+		return true
 	}
 
 	cfgpath := path.Join(cfgDir, "configurations", "config_"+configFile)
 
 	cfg, err := ini.Load(cfgpath)
 	if err != nil {
-		return g.setError("GCLOUD CONFIG ERROR")
+		g.Error = "GCLOUD CONFIG ERROR"
+		return true
 	}
 
 	g.Project = cfg.Section("core").Key("project").String()
@@ -57,30 +60,17 @@ func (g *Gcp) getActiveConfig(cfgDir string) (string, error) {
 	}
 
 	fileContent := g.env.FileContent(absolutePath)
-	if fileContent == "" {
-		return "", errors.New("NO ACTIVE CONFIG")
+	if len(fileContent) == 0 {
+		return "", errors.New("NO ACTIVE CONFIG FOUND")
 	}
 	return fileContent, nil
 }
 
 func (g *Gcp) getConfigDirectory() string {
 	cfgDir := g.env.Getenv("CLOUDSDK_CONFIG")
-	if cfgDir == "" {
+	if len(cfgDir) == 0 {
 		cfgDir = path.Join(g.env.Home(), ".config", "gcloud")
 	}
 
 	return cfgDir
-}
-
-func (g *Gcp) setError(message string) bool {
-	displayError := g.props.GetBool(properties.DisplayError, false)
-	if !displayError {
-		return false
-	}
-
-	g.Project = message
-	g.Account = message
-	g.Region = message
-
-	return true
 }

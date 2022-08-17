@@ -1682,15 +1682,9 @@
                 "properties": {
                   "playing_icon": {
                     "type": "string",
-                    "title": "User Info Separator",
-                    "description": "Text/icon to show when playing",
-                    "default": "\uE602"
-                  },
-                  "paused_icon": {
-                    "type": "string",
-                    "title": "SSH Icon",
-                    "description": "Text/icon to show when paused",
-                    "default": "\uF8E3"
+                    "title": "User Info Separator",			props: properties.Map{
+                      properties.DisplayError: tc.DisplayError,
+                    },
                   },
                   "stopped_icon": {
                     "type": "string",
@@ -2738,19 +2732,7 @@
           },
           "then": {
             "title": "GCP Segment",
-            "description": "https://ohmyposh.dev/docs/segments/gcp",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "display_error": {
-                    "type": "boolean",
-                    "title": "Display Error",
-                    "description": "Show the error message when failing to retrieve the GCP information",
-                    "default": false
-                  }
-                }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/segments/gcp"
           }
         }
       ]

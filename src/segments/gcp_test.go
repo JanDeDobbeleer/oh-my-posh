@@ -6,19 +6,17 @@ import (
 	"testing"
 
 	"oh-my-posh/mock"
-	"oh-my-posh/properties"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGcpSegment(t *testing.T) {
-	standardTemplate := "{{.Project}}"
+	standardTemplate := "{{ if .Error }}{{ .Error }}{{ else }}{{ .Project }}{{ end }}"
 	allTemplate := "{{.Project}} :: {{.Region}} :: {{.Account}}"
 
 	cases := []struct {
 		Case            string
 		Template        string
-		DisplayError    bool
 		ConfigPath      string
 		ActiveConfig    string
 		ExpectedEnabled bool
@@ -35,7 +33,6 @@ func TestGcpSegment(t *testing.T) {
 		{
 			Case:            "non-existent config file",
 			Template:        standardTemplate,
-			DisplayError:    true,
 			ConfigPath:      "../invalid/",
 			ActiveConfig:    "nofile",
 			ExpectedEnabled: true,
@@ -44,11 +41,10 @@ func TestGcpSegment(t *testing.T) {
 		{
 			Case:            "invalid active config file",
 			Template:        standardTemplate,
-			DisplayError:    true,
 			ConfigPath:      "../invalid/",
 			ActiveConfig:    "",
 			ExpectedEnabled: true,
-			ExpectedString:  "NO ACTIVE CONFIG",
+			ExpectedString:  "NO ACTIVE CONFIG FOUND",
 		},
 	}
 
@@ -58,9 +54,6 @@ func TestGcpSegment(t *testing.T) {
 		fcPath, _ := filepath.Abs(path.Join(tc.ConfigPath, "active_config"))
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
 		g := &Gcp{
-			props: properties.Map{
-				properties.DisplayError: tc.DisplayError,
-			},
 			env: env,
 		}
 		assert.Equal(t, tc.ExpectedEnabled, g.Enabled(), tc.Case)

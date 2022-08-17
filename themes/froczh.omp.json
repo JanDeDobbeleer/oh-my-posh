@@ -1,0 +1,149 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
+        {
+            "alignment": "left",
+            "segments": [
+                {
+                    "background": "#40189c",
+                    "foreground": "#ffffff",
+                    "leading_diamond": "\ue0b6",
+                    "style": "diamond",
+                    "template": "{{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
+                    "type": "os"
+                },
+                {
+                    "background": "#40189c",
+                    "foreground": "#ffffff",
+                    "style": "diamond",
+                    "template": "| {{ .UserName }}@{{ .HostName }} ",
+                    "type": "session",
+                    "trailing_diamond": "\ue0b0"
+                },
+                {
+                    "background": "#01579B",
+                    "foreground": "#ffffff",
+                    "leading_diamond": "<transparent,#01579B>\ue0b0</>",
+                    "properties": {
+                        "folder_icon": "\uf6d7",
+                        "folder_separator_icon": "<transparent> \ue0bd </>",
+                        "home_icon": "\uf7db",
+                        "style": "agnoster_short"
+                    },
+                    "style": "diamond",
+                    "template": " {{ .Path }} ",
+                    "trailing_diamond": "\ue0b0",
+                    "type": "path"
+                },
+                {
+                    "background": "#00C853",
+                    "background_templates": [
+                        "{{ if or (.Working.Changed) (.Staging.Changed) }}#FFEB3B{{ end }}",
+                        "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#FFCC80{{ end }}",
+                        "{{ if gt .Ahead 0 }}#B388FF{{ end }}",
+                        "{{ if gt .Behind 0 }}#B388FF{{ end }}"
+                    ],
+                    "foreground": "#000000",
+                    "powerline_symbol": "\ue0b0",
+                    "properties": {
+                        "fetch_stash_count": true,
+                        "fetch_status": true
+                    },
+                    "style": "powerline",
+                    "template": " {{ .HEAD }}{{ if .Staging.Changed }}<#FF6F00> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+                    "type": "git"
+                },
+                {
+                    "type": "dotnet",
+                    "style": "powerline",
+                    "powerline_symbol": "\uE0B0",
+                    "foreground": "#000000",
+                    "background": "#00ffff",
+                    "template": " \uE77F {{ .Full }} "
+                },
+                {
+                    "type": "angular",
+                    "style": "powerline",
+                    "powerline_symbol": "\uE0B0",
+                    "background": "#000000",
+                    "foreground": "#ffffff",
+                    "template": " \uE753 {{ if .Error }}<#FE4A49>?{{ else }}{{ .Full }}{{ end }} "
+                },
+                {
+                    "type": "node",
+                    "style": "powerline",
+                    "powerline_symbol": "\ue0b0",
+                    "background": "#000000",
+                    "foreground": "#45bf17",
+                    "template": " \ue718 {{ .Full }} "
+                },
+                {
+                    "type": "npm",
+                    "style": "powerline",
+                    "powerline_symbol": "\ue0b0",
+                    "background": "#000000",
+                    "foreground": "#FE4A49",
+                    "template": "\ue71e {{ .Full }} "
+                },
+                {
+                    "background": "#910000",
+                    "foreground": "#ffffff",
+                    "powerline_symbol": "\ue0b0",
+                    "style": "powerline",
+                    "template": "<transparent> \uf12a</> {{ .Meaning }} ",
+                    "type": "exit"
+                }
+            ],
+            "type": "prompt"
+        },
+        {
+            "alignment": "right",
+            "segments": [
+                {
+                    "background": "#29315A",
+                    "foreground": "#ffffff",
+                    "leading_diamond": "\ue0c5",
+                    "properties": {
+                        "style": "dallas",
+                        "threshold": 0
+                    },
+                    "style": "diamond",
+                    "template": "\ufa1e {{ .FormattedMs }}s ",
+                    "type": "executiontime"
+                },
+                {
+                    "background": "#29315A",
+                    "foreground": "#3EC669",
+                    "properties": {
+                        "time_format": "15:04:05 | Monday"
+                    },
+                    "style": "plain",
+                    "template": "<transparent> \ue0ba\ue0bc </>{{ .CurrentDate | date .Format }} ",
+                    "type": "time"
+                }
+            ],
+            "type": "prompt"
+        },
+        {
+            "alignment": "left",
+            "newline": true,
+            "segments": [
+                {
+                    "foreground": "#ffffff",
+                    "foreground_templates": [
+                        "{{ if gt .Code 0 }}#ff0000{{ end }}"
+                    ],
+                    "properties": {
+                        "always_enabled": true
+                    },
+                    "style": "plain",
+                    "template": "\u276f ",
+                    "type": "exit"
+                }
+            ],
+            "type": "prompt"
+        }
+    ],
+    "console_title_template": "{{if .Root}} \u26a1 {{end}}{{.Folder | replace \"~\" \"🏚\" }} @ {{.HostName}}",
+    "version": 2
+}

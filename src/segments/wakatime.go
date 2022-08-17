@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
+	"oh-my-posh/template"
 )
 
 type Wakatime struct {
@@ -34,7 +35,10 @@ func (w *Wakatime) Enabled() bool {
 }
 
 func (w *Wakatime) setAPIData() error {
-	url := w.props.GetString(URL, "")
+	url, err := w.getURL()
+	if err != nil {
+		return err
+	}
 	cacheTimeout := w.props.GetInt(properties.CacheTimeout, properties.DefaultCacheTimeout)
 	if cacheTimeout > 0 {
 		// check if data stored in cache
@@ -62,6 +66,16 @@ func (w *Wakatime) setAPIData() error {
 		w.env.Cache().Set(url, string(body), cacheTimeout)
 	}
 	return nil
+}
+
+func (w *Wakatime) getURL() (string, error) {
+	url := w.props.GetString(URL, "")
+	tmpl := &template.Text{
+		Template: url,
+		Context:  w,
+		Env:      w.env,
+	}
+	return tmpl.Render()
 }
 
 func (w *Wakatime) Init(props properties.Properties, env environment.Environment) {

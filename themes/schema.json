@@ -236,6 +236,7 @@
             "executiontime",
             "flutter",
             "fossil",
+            "gcp",
             "git",
             "go",
             "haskell",
@@ -2725,6 +2726,19 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "gcp"
+              }
+            }
+          },
+          "then": {
+            "title": "GCP Segment",
+            "description": "https://ohmyposh.dev/docs/segments/gcp"
           }
         }
       ]

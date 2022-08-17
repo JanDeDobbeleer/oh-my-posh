@@ -101,6 +101,9 @@ func TestOauthResult(t *testing.T) {
 			CacheTimeout:      60,
 			CacheJSONResponse: jsonResponse,
 			ExpectedData:      successData,
+			// temp
+			RefreshToken:  "REFRESH_TOKEN",
+			TokenResponse: tokenResponse,
 		},
 		{
 			Case:              "Cache data, invalid data",
@@ -171,6 +174,7 @@ func TestOauthResult(t *testing.T) {
 		oauth.Init(env, props)
 
 		got, err := OauthResult[*data](oauth, url, nil)
+		fmt.Println(tc.Case)
 		assert.Equal(t, tc.ExpectedData, got, tc.Case)
 		if len(tc.ExpectedErrorMessage) == 0 {
 			assert.Nil(t, err, tc.Case)

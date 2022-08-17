@@ -106,5 +106,12 @@ func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModi
 		return nil
 	}
 
-	return do[a](&o.Request, url, body, addToken, requestModifiers...)
+	// TEMP requestModifiers cannot be passed as parameter and modified in the local function at the same time(different variables)
+
+	var err = addToken()
+	if err != nil {
+		var data a
+		return data, err
+	}
+	return do[a](&o.Request, url, body, nil, requestModifiers...)
 }

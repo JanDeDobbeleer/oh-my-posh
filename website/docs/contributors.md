@@ -195,6 +195,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <td align="center"><a href="https://github.com/schallm"><img src="https://avatars.githubusercontent.com/u/331167?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michael T. Schall</b></sub></a><br /><a href="#design-schallm" title="Design">🎨</a></td>
     <td align="center"><a href="https://github.com/craiglpeters"><img src="https://avatars.githubusercontent.com/u/9445180?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Craig Peters</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=craiglpeters" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/dorian-li"><img src="https://avatars.githubusercontent.com/u/49279922?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dongyu Li</b></sub></a><br /><a href="#design-dorian-li" title="Design">🎨</a></td>
+    <td align="center"><a href="https://github.com/cyberbliss"><img src="https://avatars.githubusercontent.com/u/5401528?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stephen Judd</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=cyberbliss" title="Code">💻</a></td>
   </tr>
 </table>
 

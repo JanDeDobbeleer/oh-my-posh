@@ -86,6 +86,10 @@ func (o *OAuthRequest) refreshToken(refreshToken string) (string, error) {
 }
 
 func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
+	if data, err := getCacheValue[a](&o.Request, url); err == nil {
+		return data, nil
+	}
+	
 	accessToken, err := o.getAccessToken()
 	if err != nil {
 		var data a

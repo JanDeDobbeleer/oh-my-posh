@@ -21,16 +21,12 @@ Display the currently active GCP project, region and account
 }
 ```
 
-## Properties
-
-- display_error: `boolean` - show the error message when failing to retrieve the GCP information (defaults to `false`)
-
 ## Template ([info][templates])
 
 :::note default template
 
 ``` template
-{{ .Project }}
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Project }}{{ end }}
 ```
 
 :::
@@ -40,5 +36,6 @@ Display the currently active GCP project, region and account
 - `.Project`: `string` - the currently active project
 - `.Account`: `string` - the currently active account
 - `.Region`: `string` - default region for the active context
+- `.Error`: `string` - contains any error messages generated when trying to load the GCP config
 
 [templates]: /docs/configuration/templates

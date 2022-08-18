@@ -26,7 +26,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $env:POSH_THEME = (Resolve-Path -Path ::CONFIG::).ProviderPath
     }
     # specific module support (disabled by default)
-    if ($null -eq $env:POSH_GIT_ENABLED) {
+    if (($null -eq $env:POSH_GIT_ENABLED) -or ($null -eq (Get-Module 'posh-git'))) {
         $env:POSH_GIT_ENABLED = $false
     }
 

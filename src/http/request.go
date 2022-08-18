@@ -19,41 +19,34 @@ func (r *Request) Init(env environment.Environment, props properties.Properties)
 }
 
 func Do[a any](r *Request, url string, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
-	return do[a](r, url, nil, nil, requestModifiers...)
+	if data, err := getCacheValue[a](r, url); err == nil {
+		return data, nil
+	}
+	return do[a](r, url, nil, requestModifiers...)
 }
 
-func do[a any](r *Request, url string, body io.Reader, preRequestFunc func() error, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
+func getCacheValue[a any](r *Request, key string) (a, error) {
 	var data a
-
-	getCacheValue := func(key string) (a, error) {
-		if val, found := r.env.Cache().Get(key); found {
-			err := json.Unmarshal([]byte(val), &data)
-			if err != nil {
-				r.env.Log(environment.Error, "OAuth", err.Error())
-				return data, err
-			}
-			return data, nil
-		}
-		err := errors.New("no data in cache")
-		r.env.Log(environment.Error, "OAuth", err.Error())
-		return data, err
-	}
-
-	httpTimeout := r.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
-
-	// No need to check more than every 30 minutes by default
 	cacheTimeout := r.props.GetInt(properties.CacheTimeout, 30)
-	if cacheTimeout > 0 {
-		if data, err := getCacheValue(url); err == nil {
-			return data, nil
-		}
+	if cacheTimeout <= 0 {
+		return data, errors.New("no cache needed")
 	}
-
-	if preRequestFunc != nil {
-		if err := preRequestFunc(); err != nil {
+	if val, found := r.env.Cache().Get(key); found {
+		err := json.Unmarshal([]byte(val), &data)
+		if err != nil {
+			r.env.Log(environment.Error, "OAuth", err.Error())
 			return data, err
 		}
+		return data, nil
 	}
+	err := errors.New("no data in cache")
+	r.env.Log(environment.Error, "OAuth", err.Error())
+	return data, err
+}
+
+func do[a any](r *Request, url string, body io.Reader, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
+	var data a
+	httpTimeout := r.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
 	responseBody, err := r.env.HTTPRequest(url, body, httpTimeout, requestModifiers...)
 	if err != nil {
@@ -67,6 +60,7 @@ func do[a any](r *Request, url string, body io.Reader, preRequestFunc func() err
 		return data, err
 	}
 
+	cacheTimeout := r.props.GetInt(properties.CacheTimeout, 30)
 	if cacheTimeout > 0 {
 		r.env.Cache().Set(url, string(responseBody), cacheTimeout)
 	}

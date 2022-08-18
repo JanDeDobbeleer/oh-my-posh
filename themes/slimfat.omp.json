@@ -33,7 +33,7 @@
           "background": "#2f2f2f",
           "foreground": "#fafafa",
           "style": "diamond",
-          "template": " {{ if ne .Env.POSH_SESSION_DEFAULT_USER .UserName }}<#77f5d6>{{ .UserName }}</><#7a7a7a>\uf1fa</><#2EEFBF>{{ .HostName }}{{ end }}</><#7a7a7a> \ue0b1</>",
+          "template": " {{ if ne .Env.POSH_SESSION_DEFAULT_USER .UserName }}<#77f5d6>{{ .UserName }}</><#7a7a7a>\uf1fa</>{{ end }}<#2EEFBF>{{ .HostName }}</><#7a7a7a> \ue0b1</>",
           "type": "session"
         },
         {
@@ -176,7 +176,7 @@
   ],
   "console_title_template": "{{if .Root}}root :: {{end}}{{.Shell}} :: {{.Folder}}",
   "final_space": true,
-    "transient_prompt": {
+  "transient_prompt": {
     "background": "transparent",
     "foreground": "#7a7a7a",
     "template": " ~#@\u276f "

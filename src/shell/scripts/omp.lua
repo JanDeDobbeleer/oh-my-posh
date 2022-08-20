@@ -20,8 +20,8 @@ end
 
 -- Duration functions
 
-local endedit_time
-local last_duration
+local endedit_time = 0
+local last_duration = 0
 local tip
 local tooltip_active = false
 local cached_prompt = {}
@@ -67,7 +67,7 @@ end
 
 local function duration_onbeginedit()
     last_duration = 0
-    if endedit_time then
+    if endedit_time ~= 0 then
         local beginedit_time = os_clock_millis()
         local elapsed = beginedit_time - endedit_time
         if elapsed >= 0 then
@@ -76,8 +76,12 @@ local function duration_onbeginedit()
     end
 end
 
-local function duration_onendedit()
-    endedit_time = os_clock_millis()
+local function duration_onendedit(input)
+    endedit_time = 0
+    -- For an empty command, the execution time should not be evaluated.
+    if string.gsub(input, "^%s*(.-)%s*$", "%1") ~= "" then
+        endedit_time = os_clock_millis()
+    end
 end
 
 -- Prompt functions
@@ -188,8 +192,8 @@ local function builtin_modules_onbeginedit()
     duration_onbeginedit()
 end
 
-local function builtin_modules_onendedit()
-    duration_onendedit()
+local function builtin_modules_onendedit(input)
+    duration_onendedit(input)
 end
 
 if clink.onbeginedit ~= nil and clink.onendedit ~= nil then

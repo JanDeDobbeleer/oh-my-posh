@@ -42,7 +42,15 @@ if [ "$TERM" != "linux" ]; then
   _install-omp-hooks
 fi
 
-function self-insert() {
+# perform cleanup so a new initialization in current session works
+if [[ "$(zle -lL self-insert)" = *"_posh-self-insert"* ]]; then
+  zle -N self-insert
+fi
+if [[ "$(zle -lL zle-line-init)" = *"_posh-zle-line-init"* ]]; then
+  zle -N zle-line-init
+fi
+
+function _posh-self-insert() {
   # ignore an empty buffer
   if [[ -z  "$BUFFER"  ]]; then
     zle .self-insert
@@ -50,10 +58,10 @@ function self-insert() {
   fi
   # trigger a tip check only if the input is a space character
   if [[ "$KEYS" = " " ]]; then
-    tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --error="$omp_last_error" --command="$BUFFER" --shell-version="$ZSH_VERSION")
+    local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --error="$omp_last_error" --command="$BUFFER" --shell-version="$ZSH_VERSION")
   fi
   # ignore an empty tooltip
-  if [[ ! -z "$tooltip" ]]; then
+  if [[ -n "$tooltip" ]]; then
     RPROMPT=$tooltip
     zle .reset-prompt
   fi
@@ -61,7 +69,7 @@ function self-insert() {
 }
 
 if [[ "::TOOLTIPS::" = "true" ]]; then
-  zle -N self-insert
+  zle -N self-insert _posh-self-insert
 fi
 
 function _posh-zle-line-init() {

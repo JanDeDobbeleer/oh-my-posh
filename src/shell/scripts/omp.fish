@@ -55,6 +55,14 @@ function postexec_omp --on-event fish_postexec
   set --global --export omp_lastcommand $argv
 end
 
+# perform cleanup so a new initialization in current session works
+if test "$(string match -e '_render_transient' $(bind \r --user 2>/dev/null))" != ''
+  bind -e \r
+end
+if test "$(string match -e '_render_tooltip' $(bind \x20 --user 2>/dev/null))" != ''
+  bind -e \x20
+end
+
 # tooltip
 
 function _render_tooltip

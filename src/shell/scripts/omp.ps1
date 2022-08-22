@@ -102,7 +102,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     if ("::TOOLTIPS::" -eq "true") {
-        Set-PSReadLineKeyHandler -Key SpaceBar -ScriptBlock {
+        Set-PSReadLineKeyHandler -Key Spacebar -BriefDescription 'OhMyPoshSpaceKeyHandler' -ScriptBlock {
             [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
             $position = $host.UI.RawUI.CursorPosition
             $cleanPWD, $cleanPSWD = Get-PoshContext
@@ -118,7 +118,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     if ("::TRANSIENT::" -eq "true") {
-        Set-PSReadLineKeyHandler -Key Enter -ScriptBlock {
+        Set-PSReadLineKeyHandler -Key Enter -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock {
             $previousOutputEncoding = [Console]::OutputEncoding
             try {
                 $parseErrors = $null
@@ -349,6 +349,16 @@ Example:
     function Enable-PoshTooltips {}
     function Enable-PoshTransientPrompt {}
     function Enable-PoshLineError {}
+
+    # perform cleanup on removal so a new initialization in current session works
+    $ExecutionContext.SessionState.Module.OnRemove += {
+        if ((Get-PSReadLineKeyHandler -Key Spacebar).Function -eq 'OhMyPoshSpaceKeyHandler') {
+            Remove-PSReadLineKeyHandler -Key Spacebar
+        }
+        if ((Get-PSReadLineKeyHandler -Key Enter).Function -eq 'OhMyPoshEnterKeyHandler') {
+            Set-PSReadLineKeyHandler -Key Enter -Function AcceptLine
+        }
+    }
 
     Export-ModuleMember -Function @(
         "Set-PoshContext"

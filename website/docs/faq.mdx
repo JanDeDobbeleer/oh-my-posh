@@ -195,6 +195,10 @@ to the top of your `$PROFILE`:
 $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
 ```
 
+### Fish: $( ... ) is not supported
+
+You should update fish to v3.4.0 or higher. Fish supports `$(...)` and `"$(...)"` since v3.4.0, as described in its [changelog][fish-changelog].
+
 [exclusion]: https://support.microsoft.com/en-us/windows/add-an-exclusion-to-windows-security-811816c0-4dfd-af4a-47e4-c301afe13b26
 [arch-terminfo]: https://wiki.archlinux.org/title/Bash/Prompt_customization#Terminfo_escape_sequences
 [ps-ansi-docs]: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_ansi_terminals?view=powershell-7.2
@@ -211,3 +215,4 @@ $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Obj
 [wt-vim]: https://github.com/microsoft/terminal/issues/3794
 [vim-wt]: https://github.com/vim/vim/issues/5092
 [utf-8]: https://github.com/PowerShell/PowerShell/issues/7233#issuecomment-640243647
+[fish-changelog]: https://fishshell.com/docs/current/relnotes.html#id1

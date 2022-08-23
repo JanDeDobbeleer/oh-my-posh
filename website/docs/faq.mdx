@@ -51,6 +51,22 @@ If only your Git repo paths are slow, then try running [`git gc`][git-gc] to cle
 
 If nothing seems to resolve the issue, feel free to [create an issue][new-issue].
 
+### There are rectangles instead of icons in my prompt
+
+The font you're using doesn't have the needed standard extended glyph set like [Nerd Font][nf] does.
+Windows Terminal ships with Cascadia Code by default which has a powerline patched variant called Cascadia Code PL,
+but also that one misses certain interesting icons. You can fall back to any theme with the `.minimal` indication,
+or make use of a Nerd Font. Have a look at the [font][font] section for more context in case you're using all the right conditions.
+
+### Text decoration styles like bold and dimmed don't work
+The text decoration styles are based on your terminal emulator's capabilities.
+
+A quick way to check if your terminal supports a specific style escape sequence is to take a look at the `terminfo` database, on Linux.
+Refer [this page on ArchWiki][arch-terminfo].
+
+If you are on Windows, use Windows Terminal. It closely copies the `xterm-256color` capabilities.
+See the [PowerShell docs on terminal support][ps-ansi-docs] and [this GitHub comment][xterm-gh-comment].
+
 ### Windows Terminal: Unexpected space between segments/text
 
 Windows Terminal has some issues with [rendering certain glyphs][wt-glyph]. These issues are on [their backlog][wt-glyphs].
@@ -67,58 +83,15 @@ A temporary workaround is to use an invisible character at the end (`\u2800`).
 }
 ```
 
-### There are rectangles instead of icons in my prompt
-
-The font you're using doesn't have the needed standard extended glyph set like [Nerd Font][nf] does.
-Windows Terminal ships with Cascadia Code by default which has a powerline patched variant called Cascadia Code PL,
-but also that one misses certain interesting icons. You can fall back to any theme with the `.minimal` indication,
-or make use of a Nerd Font. Have a look at the [font][font] section for more context in case you're using all the right conditions.
-
 ### Jetbrains terminals: Icons do not render
 
 They need to work on their terminal, somehow it only supports UTF-8 and not UTF-16.
 [An issue][jb-icons] is available for a follow-up here.
 
-### The term 'Set-Theme' is not recognized as the name of a cmdlet, function, script file, or operable program.
-
-You need to migrate using the following [guide][migrating].
-
 ### Strange colouring after exiting VIM or when using the PowerShell progress bootstrap
 
 This bug is caused by Windows Terminal and/or VIM. There are two issues for this, one at [Windows Terminal][wt-vim] and
 one at [VIM][vim-wt].
-
-### Zsh: No command history (Ctrl+R does not work)
-
-This issue occurs when you're using plain zsh in combination with Oh My Posh.
-You fix this by can adding the right configuration to `~/.zshrc`.
-
-```bash
-HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
-setopt appendhistory
-```
-
-### PowerShell: Running in ConstrainedLanguage mode
-
-You're here because you've seen the following message:
-
-```powershell
-[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
-When using PowerShell in ConstrainedLanguage mode, please set the
-console mode manually to UTF-8. See here for more information:
-https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
-```
-
-When running PowerShell in ConstrainedLanguage mode, we can't set the console to UTF-8. This will cause the prompt to be rendered incorrectly.
-There's a few [options][utf-8] to set the console to UTF-8 from an OS perspective on Windows, other systems shouldn't be impacted.
-
-To remove the message after manual configuration, you can add the following to your `$PROFILE` before importing Oh My Posh:
-
-```powershell
-$env:POSH_CONSTRAINED_LANGUAGE = 1
-```
 
 ### Conda: environment name displayed in front of the prompt
 
@@ -170,16 +143,31 @@ export VIRTUAL_ENV_DISABLE_PROMPT=1
 </TabItem>
 </Tabs>
 
-### Text decoration styles like bold and dimmed don't work
-The text decoration styles are based on your terminal emulator's capabilities.
+### PowerShell: The term 'Set-Theme' is not recognized as the name of a cmdlet, function, script file, or operable program.
 
-A quick way to check if your terminal supports a specific style escape sequence is to take a look at the `terminfo` database, on Linux.
-Refer [this page on ArchWiki][arch-terminfo].
+You need to migrate using the following [guide][migrating].
 
-If you are on Windows, use Windows Terminal. It closely copies the `xterm-256color` capabilities.
-See the [PowerShell docs on terminal support][ps-ansi-docs] and [this GitHub comment][xterm-gh-comment].
+### PowerShell: Running in ConstrainedLanguage mode
 
-### The term '.../oh-my-posh.exe' is not recognized as a name of a cmdlet...
+You're here because you've seen the following message:
+
+```powershell
+[WARNING] ConstrainedLanguage mode detected, unable to set console to UTF-8.
+When using PowerShell in ConstrainedLanguage mode, please set the
+console mode manually to UTF-8. See here for more information:
+https://ohmyposh.dev/docs/faq#powershell-running-in-constrainedlanguage-mode
+```
+
+When running PowerShell in ConstrainedLanguage mode, we can't set the console to UTF-8. This will cause the prompt to be rendered incorrectly.
+There's a few [options][utf-8] to set the console to UTF-8 from an OS perspective on Windows, other systems shouldn't be impacted.
+
+To remove the message after manual configuration, you can add the following to your `$PROFILE` before importing Oh My Posh:
+
+```powershell
+$env:POSH_CONSTRAINED_LANGUAGE = 1
+```
+
+### PowerShell: The term '.../oh-my-posh.exe' is not recognized as a name of a cmdlet...
 
 For example:
 
@@ -193,6 +181,18 @@ to the top of your `$PROFILE`:
 
 ```powershell
 $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding
+```
+
+### Zsh: No command history (Ctrl+R does not work)
+
+This issue occurs when you're using plain zsh in combination with Oh My Posh.
+You fix this by can adding the right configuration to `~/.zshrc`.
+
+```bash
+HISTFILE=~/.zsh_history
+HISTSIZE=10000
+SAVEHIST=10000
+setopt appendhistory
 ```
 
 ### Fish: $( ... ) is not supported

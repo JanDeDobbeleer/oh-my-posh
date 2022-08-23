@@ -113,10 +113,13 @@ local function set_posh_tooltip(command)
     if command == nil then
         return
     end
-    -- escape double quote characters properly, if any
-    command = string.gsub(command, '\\+"', '%1%1"')
-    command = string.gsub(command, '\\+$', '%1%1')
+
+    -- escape special characters properly, if any
+    command = string.gsub(command, '(\\+)"', '%1%1"')
+    command = string.gsub(command, '(\\+)$', '%1%1')
     command = string.gsub(command, '"', '\\"')
+    command = string.gsub(command, '([&<>%(%)@%^|])', '^%1')
+
     local prompt_exe = string.format('%s print tooltip --shell=cmd %s --config=%s --command="%s"', omp_exe(), error_level_option(), omp_config(), command)
     local tooltip = run_posh_command(prompt_exe)
     if tooltip ~= "" then

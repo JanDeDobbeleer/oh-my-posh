@@ -3,6 +3,8 @@
 before:
   hooks:
     - go mod tidy
+    - go install github.com/tc-hib/go-winres@latest
+    - go-winres make --product-version=git-tag --file-version=git-tag --arch="amd64,386,arm64"
 builds:
   -
     binary: "posh-{{ .Os }}-{{ .Arch }}"

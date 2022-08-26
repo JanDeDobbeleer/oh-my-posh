@@ -121,6 +121,8 @@ const (
 	GCP SegmentType = "gcp"
 	// GIT represents the git status and information
 	GIT SegmentType = "git"
+	// GITVERSION represents the gitversion information
+	GITVERSION SegmentType = "gitversion"
 	// GOLANG writes which go version is currently active
 	GOLANG SegmentType = "go"
 	// HASKELL segment
@@ -294,6 +296,7 @@ func (segment *Segment) mapSegmentWithWriter(env platform.Environment) error {
 		FOSSIL:        &segments.Fossil{},
 		GCP:           &segments.Gcp{},
 		GIT:           &segments.Git{},
+		GITVERSION:    &segments.GitVersion{},
 		GOLANG:        &segments.Golang{},
 		HASKELL:       &segments.Haskell{},
 		IPIFY:         &segments.IPify{},

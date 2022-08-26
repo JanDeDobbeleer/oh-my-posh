@@ -73,6 +73,7 @@ module.exports = {
         "segments/fossil",
         "segments/gcp",
         "segments/git",
+        "segments/gitversion",
         "segments/golang",
         "segments/haskell",
         "segments/ipify",

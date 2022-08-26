@@ -1,0 +1,53 @@
+---
+id: gitversion
+title: GitVersion
+sidebar_label: GitVersion
+---
+
+## What
+
+Display the [GitVersion][gitversion] version.
+We _strongly_ recommend using [GitVersion Portable][gitversion-portable] for this.
+
+:::caution
+The GitVersion CLI can be a bit slow causing the prompt to feel slow. This why we cache
+the value for 30 minutes by default.
+:::
+
+## Sample Configuration
+
+```json
+{
+  "type": "gitversion",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#3a579b",
+  "template": " \uF1D2 {{ .MajorMinorPatch }} "
+}
+```
+
+## Properties
+
+| Name            | Type  | Description                                                                                                                                     |
+| --------------- | ----- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cache_timeout` | `int` | in minutes - How long to wait before fetching new information using the gitversion CLI. Default is 30 minutes, a value of 0 disables the cache. |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .MajorMinorPatch }}
+```
+
+:::
+
+### Properties
+
+You can leverage all variables from the [GitVersion][gitversion] CLI. Have a look at their [documentation][docs] for more information.
+
+[gitversion]: https://github.com/GitTools/GitVersion
+[gitversion-portable]: http://chocolatey.org/packages/GitVersion.Portable
+[templates]: /docs/configuration/templates
+[docs]: https://gitversion.net/docs/reference/variables

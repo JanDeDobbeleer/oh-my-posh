@@ -239,6 +239,7 @@
             "fossil",
             "gcp",
             "git",
+            "gitversion",
             "go",
             "haskell",
             "ipify",
@@ -2854,6 +2855,17 @@
           "then": {
             "title": "GCP Segment",
             "description": "https://ohmyposh.dev/docs/segments/gcp"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "gitversion" }
+            }
+          },
+          "then": {
+            "title": "Display GitVersion segment",
+            "description": "https://ohmyposh.dev/docs/segments/gitversion"
           }
         }
       ]

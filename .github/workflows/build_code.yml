@@ -25,5 +25,5 @@ jobs:
       with:
         distribution: goreleaser
         version: latest
-        args: build --rm-dist --snapshot --skip-post-hooks
+        args: build --rm-dist --snapshot --skip-post-hooks --skip-before
         workdir: src

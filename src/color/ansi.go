@@ -266,6 +266,10 @@ func (a *Ansi) ClearAfter() string {
 }
 
 func (a *Ansi) Title(title string) string {
+	// we have to do this to prevent bash from misidentifying escape sequences
+	if a.shell == shell.BASH {
+		title = strings.ReplaceAll(title, `\`, `\\`)
+	}
 	return fmt.Sprintf(a.title, title)
 }
 

@@ -400,6 +400,7 @@ func (segment *Segment) SetText() {
 		segment.text = strings.ReplaceAll(segment.text, `\`, `\\`)
 	case shell.ZSH:
 		segment.text = strings.ReplaceAll(segment.text, `%`, `%%`)
+	case shell.PWSH, shell.PWSH5:
+		segment.text = strings.ReplaceAll(segment.text, "`", "``")
 	}
-	segment.text = strings.ReplaceAll(segment.text, "`", "'")
 }

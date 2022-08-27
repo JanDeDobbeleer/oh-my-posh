@@ -79,6 +79,10 @@ end
 # transient prompt
 
 function _render_transient
+  if commandline --paging-mode
+    commandline --function accept-autosuggestion
+    return
+  end
   set omp_transient 1
   commandline --function repaint
   commandline --function execute

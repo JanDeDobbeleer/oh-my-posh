@@ -395,12 +395,11 @@ func (segment *Segment) SetText() {
 	if segment.Interactive {
 		return
 	}
+	// we have to do this to prevent bash/zsh from misidentifying escape sequences
 	switch segment.env.Shell() {
-	case shell.BASH, shell.FISH:
-		segment.text = strings.ReplaceAll(segment.text, `\`, `\\`)
+	case shell.BASH:
+		segment.text = strings.NewReplacer("`", "\\`", `\`, `\\`).Replace(segment.text)
 	case shell.ZSH:
-		segment.text = strings.ReplaceAll(segment.text, `%`, `%%`)
-	case shell.PWSH, shell.PWSH5:
-		segment.text = strings.ReplaceAll(segment.text, "`", "``")
+		segment.text = strings.NewReplacer("`", "\\`", `%`, `%%`).Replace(segment.text)
 	}
 }

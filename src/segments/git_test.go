@@ -54,7 +54,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 		},
 	}
 	assert.True(t, g.Enabled())
-	assert.Equal(t, fileInfo.Path, g.workingFolder)
+	assert.Equal(t, fileInfo.Path, g.workingDir)
 }
 
 func TestResolveEmptyGitPath(t *testing.T) {
@@ -136,9 +136,9 @@ func TestEnabledInWorktree(t *testing.T) {
 			},
 		}
 		assert.Equal(t, tc.ExpectedEnabled, g.hasWorktree(fileInfo), tc.Case)
-		assert.Equal(t, tc.ExpectedWorkingFolder, g.workingFolder, tc.Case)
-		assert.Equal(t, tc.ExpectedRealFolder, g.realFolder, tc.Case)
-		assert.Equal(t, tc.ExpectedRootFolder, g.rootFolder, tc.Case)
+		assert.Equal(t, tc.ExpectedWorkingFolder, g.workingDir, tc.Case)
+		assert.Equal(t, tc.ExpectedRealFolder, g.realDir, tc.Case)
+		assert.Equal(t, tc.ExpectedRootFolder, g.rootDir, tc.Case)
 	}
 }
 
@@ -507,8 +507,8 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 		env.On("FileContent", "/logs/refs/stash").Return(tc.StashContent)
 		g := &Git{
 			scm: scm{
-				env:           env,
-				workingFolder: "",
+				env:        env,
+				workingDir: "",
 			},
 		}
 		got := g.getStashContext()
@@ -809,7 +809,7 @@ func TestGitUntrackedMode(t *testing.T) {
 				props: properties.Map{
 					UntrackedModes: tc.UntrackedModes,
 				},
-				realFolder: "foo",
+				realDir: "foo",
 			},
 		}
 		got := g.getUntrackedFilesMode()
@@ -851,7 +851,7 @@ func TestGitIgnoreSubmodules(t *testing.T) {
 				props: properties.Map{
 					IgnoreSubmodules: tc.IgnoreSubmodules,
 				},
-				realFolder: "foo",
+				realDir: "foo",
 			},
 		}
 		got := g.getIgnoreSubmodulesMode()

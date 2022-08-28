@@ -98,7 +98,7 @@ func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegis
 }
 
 func (env *ShellEnvironment) InWSLSharedDrive() bool {
-	return env.IsWsl() && strings.HasPrefix(env.Pwd(), "/mnt/")
+	return env.IsWsl() && strings.HasPrefix(env.Pwd(), "/mnt/c")
 }
 
 func (env *ShellEnvironment) ConvertToWindowsPath(path string) string {

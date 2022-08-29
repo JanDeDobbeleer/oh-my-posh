@@ -81,7 +81,7 @@ func (s *Svn) shouldDisplay() bool {
 		s.workingDir = Svndir.Path
 		s.rootDir = Svndir.Path
 		// convert the worktree file path to a windows one when in wsl 2 shared folder
-		s.realDir = strings.TrimSuffix(s.convertToWindowsPath(Svndir.Path), ".svn")
+		s.realDir = strings.TrimSuffix(s.convertToWindowsPath(Svndir.Path), "/.svn")
 		return true
 	}
 	// handle worktree

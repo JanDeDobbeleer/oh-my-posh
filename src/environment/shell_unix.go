@@ -106,7 +106,7 @@ func (env *ShellEnvironment) InWSLSharedDrive() bool {
 }
 
 func (env *ShellEnvironment) ConvertToWindowsPath(path string) string {
-	windowsPath, err := env.RunCommand("wslpath", "-w", path)
+	windowsPath, err := env.RunCommand("wslpath", "-m", path)
 	if err == nil {
 		return windowsPath
 	}

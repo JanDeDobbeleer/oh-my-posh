@@ -228,7 +228,7 @@ func (env *ShellEnvironment) InWSLSharedDrive() bool {
 }
 
 func (env *ShellEnvironment) ConvertToWindowsPath(path string) string {
-	return path
+	return strings.ReplaceAll(path, `\`, "/")
 }
 
 func (env *ShellEnvironment) ConvertToLinuxPath(path string) string {

@@ -64,16 +64,18 @@ const (
 	downloadFont
 	unzipFont
 	installFont
+	admin
 	quit
 	done
 )
 
 type main struct {
-	spinner  spinner.Model
-	list     *list.Model
-	fontname string
-	state    state
-	err      error
+	spinner    spinner.Model
+	list       *list.Model
+	needsAdmin bool
+	fontname   string
+	state      state
+	err        error
 }
 
 func (m *main) buildFontList(nerdFonts []*Asset) {
@@ -123,6 +125,10 @@ func installFontZIP(zipFile []byte) {
 }
 
 func (m *main) Init() tea.Cmd {
+	if m.needsAdmin {
+		m.state = admin
+		return tea.Quit
+	}
 	if len(m.fontname) != 0 {
 		m.state = downloadFont
 		if !strings.HasPrefix(m.fontname, "https") {
@@ -222,6 +228,8 @@ func (m *main) View() string {
 		return "\n" + m.list.View()
 	case downloadFont:
 		return textStyle.Render(fmt.Sprintf("%s Downloading %s", m.spinner.View(), m.fontname))
+	case admin:
+		return textStyle.Render("You need to be admin to install a font on Windows")
 	case unzipFont:
 		return textStyle.Render(fmt.Sprintf("%s Extracting %s", m.spinner.View(), m.fontname))
 	case installFont:
@@ -234,9 +242,10 @@ func (m *main) View() string {
 	return ""
 }
 
-func Run(font string) {
+func Run(font string, needsAdmin bool) {
 	main := &main{
-		fontname: font,
+		fontname:   font,
+		needsAdmin: needsAdmin,
 	}
 	program = tea.NewProgram(main)
 	if err := program.Start(); err != nil {

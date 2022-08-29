@@ -94,10 +94,10 @@ func (s *scm) FileContents(folder, file string) string {
 }
 
 func (s *scm) convertToWindowsPath(path string) string {
-	if !s.IsWslSharedPath {
-		return path
+	if s.env.GOOS() == environment.WINDOWS || s.IsWslSharedPath {
+		return s.env.ConvertToWindowsPath(path)
 	}
-	return s.env.ConvertToWindowsPath(path)
+	return path
 }
 
 func (s *scm) convertToLinuxPath(path string) string {

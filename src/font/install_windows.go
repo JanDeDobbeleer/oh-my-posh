@@ -66,13 +66,5 @@ func install(font *Font) (err error) {
 		return errors.New("unable to add font resource")
 	}
 
-	// Notify other applications that the fonts have changed
-	user32 := syscall.NewLazyDLL("user32.dll")
-	procSendMessageW := user32.NewProc("SendMessageW")
-	_, _, e1 := syscall.SyscallN(procSendMessageW.Addr(), uintptr(HWND_BROADCAST), uintptr(WM_FONTCHANGE), 0, 0)
-	if e1 != 0 {
-		return errors.New("unable to broadcast font change")
-	}
-
 	return nil
 }

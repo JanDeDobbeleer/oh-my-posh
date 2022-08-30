@@ -113,6 +113,8 @@ const (
 	GCP SegmentType = "gcp"
 	// GIT represents the git status and information
 	GIT SegmentType = "git"
+	//CONTRIBUTIONS represents the github status and information
+	CONTRIBUTIONS SegmentType = "contributions"
 	// GOLANG writes which go version is currently active
 	GOLANG SegmentType = "go"
 	// HASKELL segment
@@ -276,6 +278,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		CF:            &segments.Cf{},
 		CFTARGET:      &segments.CfTarget{},
 		CMD:           &segments.Cmd{},
+		CONTRIBUTIONS: &segments.Contributions{},
 		CRYSTAL:       &segments.Crystal{},
 		CMAKE:         &segments.Cmake{},
 		DART:          &segments.Dart{},

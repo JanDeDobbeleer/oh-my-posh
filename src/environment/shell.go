@@ -726,8 +726,9 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 		val := splitted[1:]
 		tmplCache.Env[key] = strings.Join(val, separator)
 	}
-	tmplCache.PWD = env.Pwd()
-	tmplCache.Folder = Base(env, tmplCache.PWD)
+	pwd := env.Pwd()
+	tmplCache.PWD = strings.Replace(pwd, env.Home(), "~", 1)
+	tmplCache.Folder = Base(env, pwd)
 	tmplCache.UserName = env.User()
 	if host, err := env.Host(); err == nil {
 		tmplCache.HostName = host

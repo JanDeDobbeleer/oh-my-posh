@@ -160,7 +160,8 @@ func (g *Git) shouldDisplay() bool {
 	}
 
 	// convert the worktree file path to a windows one when in wsl 2 shared folder
-	g.Dir = strings.TrimSuffix(g.convertToWindowsPath(gitdir.Path), "/.git")
+	dir := strings.Replace(gitdir.Path, g.env.Home(), "~", 1) // align with template PWD
+	g.Dir = strings.TrimSuffix(g.convertToWindowsPath(dir), "/.git")
 
 	if !gitdir.IsDir {
 		return g.hasWorktree(gitdir)
@@ -168,7 +169,7 @@ func (g *Git) shouldDisplay() bool {
 
 	g.workingDir = gitdir.Path
 	g.rootDir = gitdir.Path
-	g.realDir = g.Dir
+	g.realDir = strings.TrimSuffix(g.convertToWindowsPath(gitdir.Path), "/.git")
 	return true
 }
 

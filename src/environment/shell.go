@@ -727,7 +727,7 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 		tmplCache.Env[key] = strings.Join(val, separator)
 	}
 	pwd := env.Pwd()
-	tmplCache.PWD = strings.Replace(pwd, env.Home(), "~", 1)
+	tmplCache.PWD = ReplaceHomeDirPrefixWithTilde(env, pwd)
 	tmplCache.Folder = Base(env, pwd)
 	tmplCache.UserName = env.User()
 	if host, err := env.Host(); err == nil {
@@ -780,6 +780,16 @@ func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 	return false
 }
 
+func isPathSeparator(env Environment, c uint8) bool {
+	if c == '/' {
+		return true
+	}
+	if env.GOOS() == WINDOWS && c == '\\' {
+		return true
+	}
+	return false
+}
+
 // Base returns the last element of path.
 // Trailing path separators are removed before extracting the last element.
 // If the path consists entirely of separators, Base returns a single separator.
@@ -789,7 +799,7 @@ func Base(env Environment, path string) string {
 	}
 	volumeName := filepath.VolumeName(path)
 	// Strip trailing slashes.
-	for len(path) > 0 && string(path[len(path)-1]) == env.PathSeparator() {
+	for len(path) > 0 && isPathSeparator(env, path[len(path)-1]) {
 		path = path[0 : len(path)-1]
 	}
 	if volumeName == path {
@@ -799,7 +809,7 @@ func Base(env Environment, path string) string {
 	path = path[len(filepath.VolumeName(path)):]
 	// Find the last element
 	i := len(path) - 1
-	for i >= 0 && string(path[i]) != env.PathSeparator() {
+	for i >= 0 && !isPathSeparator(env, path[i]) {
 		i--
 	}
 	if i >= 0 {
@@ -808,6 +818,13 @@ func Base(env Environment, path string) string {
 	// If empty now, it had only slashes.
 	if path == "" {
 		return env.PathSeparator()
+	}
+	return path
+}
+
+func ReplaceHomeDirPrefixWithTilde(env Environment, path string) string {
+	if strings.HasPrefix(path, env.Home()) {
+		return strings.Replace(path, env.Home(), "~", 1)
 	}
 	return path
 }

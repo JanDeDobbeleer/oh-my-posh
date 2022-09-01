@@ -2,6 +2,7 @@ package segments
 
 import (
 	"fmt"
+	url2 "net/url"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/regex"
@@ -32,27 +33,6 @@ func (s *GitStatus) add(code string) {
 	case "M", "R", "C", "m":
 		s.Modified++
 	}
-}
-
-type Git struct {
-	scm
-
-	Working       *GitStatus
-	Staging       *GitStatus
-	Ahead         int
-	Behind        int
-	HEAD          string
-	Ref           string
-	Hash          string
-	BranchStatus  string
-	Upstream      string
-	UpstreamIcon  string
-	UpstreamURL   string
-	UpstreamGone  bool
-	StashCount    int
-	WorktreeCount int
-	IsWorkTree    bool
-	RepoName      string
 }
 
 const (
@@ -109,6 +89,28 @@ const (
 	GITCOMMAND   = "git"
 )
 
+type Git struct {
+	scm
+
+	Working       *GitStatus
+	Staging       *GitStatus
+	Ahead         int
+	Behind        int
+	HEAD          string
+	Ref           string
+	Hash          string
+	ShortHash     string
+	BranchStatus  string
+	Upstream      string
+	UpstreamIcon  string
+	UpstreamURL   string
+	UpstreamGone  bool
+	StashCount    int
+	WorktreeCount int
+	IsWorkTree    bool
+	RepoName      string
+}
+
 func (g *Git) Template() string {
 	return " {{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} \uF692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }} " //nolint: lll
 }
@@ -138,6 +140,12 @@ func (g *Git) Enabled() bool {
 		g.WorktreeCount = g.getWorktreeContext()
 	}
 	return true
+}
+
+func (g *Git) Kraken() string {
+	root := g.getGitCommandOutput("rev-list", "--max-parents=0", "HEAD")
+	remote := g.getGitCommandOutput("remote", "get-url", "origin")
+	return fmt.Sprintf("gitkraken://repolink/%s/commit/%s?url=%s", root, g.Hash, url2.QueryEscape(remote))
 }
 
 func (g *Git) shouldDisplay() bool {
@@ -307,7 +315,8 @@ func (g *Git) setGitStatus() {
 	output := g.getGitCommandOutput(args...)
 	for _, line := range strings.Split(output, "\n") {
 		if strings.HasPrefix(line, HASH) && len(line) >= len(HASH)+7 {
-			g.Hash = line[len(HASH) : len(HASH)+7]
+			g.ShortHash = line[len(HASH) : len(HASH)+7]
+			g.Hash = line[len(HASH):]
 			continue
 		}
 		if strings.HasPrefix(line, REF) && len(line) > len(REF) {
@@ -480,7 +489,7 @@ func (g *Git) getGitRefFileSymbolicName(refFile string) string {
 
 func (g *Git) setPrettyHEADName() {
 	// we didn't fetch status, fallback to parsing the HEAD file
-	if len(g.Hash) == 0 {
+	if len(g.ShortHash) == 0 {
 		HEADRef := g.FileContents(g.workingDir, "HEAD")
 		if strings.HasPrefix(HEADRef, BRANCHPREFIX) {
 			branchName := strings.TrimPrefix(HEADRef, BRANCHPREFIX)
@@ -489,7 +498,8 @@ func (g *Git) setPrettyHEADName() {
 		}
 		// no branch, points to commit
 		if len(HEADRef) >= 7 {
-			g.Hash = HEADRef[0:7]
+			g.ShortHash = HEADRef[0:7]
+			g.Hash = HEADRef[0:]
 		}
 	}
 	// check for tag
@@ -499,11 +509,11 @@ func (g *Git) setPrettyHEADName() {
 		return
 	}
 	// fallback to commit
-	if len(g.Hash) == 0 {
+	if len(g.ShortHash) == 0 {
 		g.HEAD = g.props.GetString(NoCommitsIcon, "\uF594 ")
 		return
 	}
-	g.HEAD = fmt.Sprintf("%s%s", g.props.GetString(CommitIcon, "\uF417"), g.Hash)
+	g.HEAD = fmt.Sprintf("%s%s", g.props.GetString(CommitIcon, "\uF417"), g.ShortHash)
 }
 
 func (g *Git) getStashContext() int {

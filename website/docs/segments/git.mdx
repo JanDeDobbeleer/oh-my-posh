@@ -131,6 +131,7 @@ instead of the repo path.
 - `.WorktreeCount`: `int` - the worktree count
 - `.IsWorkTree`: `boolean` - if in a worktree repo or not
 - `.Dir`: `string` - the repository's root directory
+- `.Kraken`: `string` - a link to the current HEAD in [GitKraken][kraken-ref] for use in [hyperlinks][hyperlinks] in templates `{{ url .HEAD .Kraken }}`
 
 ### GitStatus
 
@@ -146,3 +147,4 @@ instead of the repo path.
 [hyperlinks]: /docs/configuration/templates#helper-functions
 [untracked]: https://git-scm.com/docs/git-status#Documentation/git-status.txt---untracked-filesltmodegt
 [submodules]: https://git-scm.com/docs/git-status#Documentation/git-status.txt---ignore-submodulesltwhengt
+[kraken-ref]: https://www.gitkraken.com/invite/nQmDPR9D

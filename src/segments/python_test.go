@@ -79,6 +79,7 @@ func TestPythonTemplate(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
+		env.On("GOOS").Return("")
 		env.On("HasCommand", "python").Return(true)
 		env.On("CommandPath", mock2.Anything).Return(tc.PythonPath)
 		env.On("RunCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
@@ -118,6 +119,7 @@ func TestPythonPythonInContext(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
+		env.On("GOOS").Return("")
 		env.On("PathSeparator").Return("")
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")

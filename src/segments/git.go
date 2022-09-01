@@ -117,7 +117,7 @@ func (g *Git) Enabled() bool {
 	if !g.shouldDisplay() {
 		return false
 	}
-	g.RepoName = environment.Base(g.env, g.realDir)
+	g.RepoName = environment.Base(g.env, g.convertToLinuxPath(g.realDir))
 	displayStatus := g.props.GetBool(FetchStatus, false)
 	if displayStatus {
 		g.setGitStatus()
@@ -141,8 +141,7 @@ func (g *Git) Enabled() bool {
 }
 
 func (g *Git) shouldDisplay() bool {
-	// when in wsl/wsl2 and in a windows shared folder
-	// we must use git.exe and convert paths accordingly
+	// when in a WSL shared folder, we must use git.exe and convert paths accordingly
 	// for worktrees, stashes, and path to work
 	g.IsWslSharedPath = g.env.InWSLSharedDrive()
 
@@ -159,9 +158,12 @@ func (g *Git) shouldDisplay() bool {
 		return false
 	}
 
-	// convert the worktree file path to a windows one when in wsl 2 shared folder
-	dir := strings.Replace(gitdir.Path, g.env.Home(), "~", 1) // align with template PWD
-	g.Dir = strings.TrimSuffix(g.convertToWindowsPath(dir), "/.git")
+	dir := environment.ReplaceHomeDirPrefixWithTilde(g.env, gitdir.Path) // align with template PWD
+	if g.env.GOOS() == environment.WINDOWS {
+		g.Dir = strings.TrimSuffix(dir, `\.git`)
+	} else {
+		g.Dir = strings.TrimSuffix(dir, "/.git")
+	}
 
 	if !gitdir.IsDir {
 		return g.hasWorktree(gitdir)
@@ -169,6 +171,7 @@ func (g *Git) shouldDisplay() bool {
 
 	g.workingDir = gitdir.Path
 	g.rootDir = gitdir.Path
+	// convert the worktree file path to a windows one when in a WSL shared folder
 	g.realDir = strings.TrimSuffix(g.convertToWindowsPath(gitdir.Path), "/.git")
 	return true
 }
@@ -180,7 +183,7 @@ func (g *Git) hasWorktree(gitdir *environment.FileInfo) bool {
 	if matches == nil || matches["dir"] == "" {
 		return false
 	}
-	// if we open a worktree file in a shared wsl2 folder, we have to convert it back
+	// if we open a worktree file in a WSL shared folder, we have to convert it back
 	// to the mounted path
 	g.workingDir = g.convertToLinuxPath(matches["dir"])
 

@@ -308,8 +308,8 @@ func TestSetGitHEADContextClean(t *testing.T) {
 					RevertIcon:     "revert ",
 				},
 			},
-			Hash: "1234567",
-			Ref:  tc.Ref,
+			ShortHash: "1234567",
+			Ref:       tc.Ref,
 		}
 		g.setGitHEADContext()
 		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
@@ -318,17 +318,17 @@ func TestSetGitHEADContextClean(t *testing.T) {
 
 func TestSetPrettyHEADName(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Expected string
-		Hash     string
-		Tag      string
-		HEAD     string
+		Case      string
+		Expected  string
+		ShortHash string
+		Tag       string
+		HEAD      string
 	}{
 		{Case: "main", Expected: "branch main", HEAD: BRANCHPREFIX + "main"},
 		{Case: "no hash", Expected: "commit 1234567", HEAD: "12345678910"},
-		{Case: "hash on tag", Hash: "132312322321", Expected: "tag tag-1", HEAD: "12345678910", Tag: "tag-1"},
+		{Case: "hash on tag", ShortHash: "132312322321", Expected: "tag tag-1", HEAD: "12345678910", Tag: "tag-1"},
 		{Case: "no hash on tag", Expected: "tag tag-1", Tag: "tag-1"},
-		{Case: "hash on commit", Hash: "1234567", Expected: "commit 1234567"},
+		{Case: "hash on commit", ShortHash: "1234567", Expected: "commit 1234567"},
 		{Case: "no hash on commit", Expected: "commit 1234567", HEAD: "12345678910"},
 	}
 	for _, tc := range cases {
@@ -346,7 +346,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 					TagIcon:    "tag ",
 				},
 			},
-			Hash: tc.Hash,
+			ShortHash: tc.ShortHash,
 		}
 		g.setPrettyHEADName()
 		assert.Equal(t, tc.Expected, g.HEAD, tc.Case)
@@ -485,7 +485,7 @@ func TestSetGitStatus(t *testing.T) {
 		g.setGitStatus()
 		assert.Equal(t, tc.ExpectedStaging, g.Staging, tc.Case)
 		assert.Equal(t, tc.ExpectedWorking, g.Working, tc.Case)
-		assert.Equal(t, tc.ExpectedHash, g.Hash, tc.Case)
+		assert.Equal(t, tc.ExpectedHash, g.ShortHash, tc.Case)
 		assert.Equal(t, tc.ExpectedRef, g.Ref, tc.Case)
 		assert.Equal(t, tc.ExpectedUpstream, g.Upstream, tc.Case)
 		assert.Equal(t, tc.ExpectedUpstreamGone, g.UpstreamGone, tc.Case)

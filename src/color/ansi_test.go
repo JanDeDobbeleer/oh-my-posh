@@ -32,6 +32,11 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 		Expected  string
 	}{
 		{
+			Text:      "in <accent>\x1b[1mpwsh \x1b[22m</> ",
+			ShellName: shell.PWSH,
+			Expected:  "in <accent>\x1b[1mpwsh \x1b[22m</> ",
+		},
+		{
 			Text:      "[google](http://www.google.be) [maps (2/2)](http://maps.google.be)",
 			ShellName: shell.FISH,
 			Expected:  "\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\ \x1b]8;;http://maps.google.be\x1b\\maps (2/2)\x1b]8;;\x1b\\",

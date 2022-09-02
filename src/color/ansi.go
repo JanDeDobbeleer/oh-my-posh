@@ -140,6 +140,22 @@ func (a *Ansi) InitPlain() {
 }
 
 func (a *Ansi) GenerateHyperlink(text string) string {
+	parts := strings.SplitAfter(text, ")")
+	var buffer strings.Builder
+	var part string
+	for i := range parts {
+		if strings.Contains(parts[i], "[") && !strings.Contains(parts[i], "]") {
+			part += parts[i]
+			continue
+		}
+		part += parts[i]
+		buffer.WriteString(a.replaceHyperlink(part))
+		part = ""
+	}
+	return buffer.String()
+}
+
+func (a *Ansi) replaceHyperlink(text string) string {
 	// hyperlink matching
 	results := regex.FindNamedRegexMatch("(?P<ALL>(?:\\[(?P<TEXT>.+)\\])(?:\\((?P<URL>.*)\\)))", text)
 	if len(results) != 3 {

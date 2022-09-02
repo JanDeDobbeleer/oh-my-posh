@@ -144,14 +144,15 @@ func (a *Ansi) GenerateHyperlink(text string) string {
 	var buffer strings.Builder
 	var part string
 	for i := range parts {
+		part += parts[i]
 		if strings.Contains(parts[i], "[") && !strings.Contains(parts[i], "]") {
-			part += parts[i]
 			continue
 		}
-		part += parts[i]
 		buffer.WriteString(a.replaceHyperlink(part))
 		part = ""
 	}
+	// when we did not process any parts, we return the original text
+	buffer.WriteString(part)
 	return buffer.String()
 }
 

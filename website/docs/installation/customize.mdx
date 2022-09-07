@@ -12,7 +12,26 @@ and kept up-to-date with Oh My Posh' version every time the shell starts.
 
 To set a new config/theme you need
 to change the `--config` option of the `oh-my-posh init <shell>` line in your `profile` or `.<shell>rc` script
-(see [prompt][prompt]) and point it to the location of a predefined [theme][themes] or custom configuration on your file system.
+(see [prompt][prompt]) and point it to the location of a predefined [theme][themes] or custom configuration.
+
+There are two possible values the `--config` flag can handle:
+
+- a path to a local configuration file
+
+```powershell
+oh-my-posh init pwsh --config 'C:/Users/Posh/jandedobbeleer.omp.json' | Invoke-Expression
+```
+
+- a URL pointing to a remote config
+
+```powershell
+oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json' | Invoke-Expression
+```
+
+### Get inspiration
+
+The Windows and homebrew installers also bundle the **predefined configurations** ([themes][themes]). You can use the
+following way to reference them directly. This will keep them up-to-date and compatible with future updates.
 
 <Tabs
   defaultValue="windows"
@@ -23,9 +42,6 @@ to change the `--config` option of the `oh-my-posh init <shell>` line in your `p
   ]
 }>
 <TabItem value="windows">
-
-When using the Windows installer (via winget or Store), you can make use of the `POSH_THEMES_PATH` environment variable
-that points to a directory including all [themes][themes] on your file system.
 
 For example, to use the [jandedobbeleer][jandedobbeleer] theme, alter the init line like this (`powershell`):
 
@@ -46,11 +62,10 @@ eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/jandedob
 </TabItem>
 </Tabs>
 
-### Get inspiration
+### Config syntax
 
-The best place to get started is by looking at the [themes][themes], as these are **predefined configurations** to use/alter.
-To change to for example the [jandedobbeleer][jandedobbeleer] theme, alter the Oh My Posh `init` line to the following (assuming you
-downloaded the configuration file to your user's home folder):
+The examples below use a local path to the [jandedobbeleer][jandedobbeleer] theme, adjust the `--config` value
+to reflect your use-case.
 
 <Tabs
   defaultValue="powershell"
@@ -67,7 +82,7 @@ downloaded the configuration file to your user's home folder):
 <TabItem value="powershell">
 
 ```powershell
-oh-my-posh init pwsh --config ~/.jandedobbeleer.omp.json | Invoke-Expression
+oh-my-posh init pwsh --config ~/jandedobbeleer.omp.json | Invoke-Expression
 ```
 
 Once altered, reload your profile for the changes to take effect.
@@ -88,8 +103,13 @@ New-Item -Path $PROFILE -Type File -Force
 <TabItem value="cmd">
 
 ```lua title="oh-my-posh.lua"
-load(io.popen('oh-my-posh init cmd --config ~/.jandedobbeleer.omp.json'):read("*a"))()
+load(io.popen('oh-my-posh init cmd --config C:/Users/Posh/jandedobbeleer.omp.json'):read("*a"))()
 ```
+
+:::caution
+Use the full path to the config file, not the relative path. You can make use of **forward slashes** to
+avoid having to use double backslashes.
+:::
 
 Once altered, restart cmd for the changes to take effect.
 
@@ -97,7 +117,7 @@ Once altered, restart cmd for the changes to take effect.
 <TabItem value="zsh">
 
 ```bash
-eval "$(oh-my-posh init zsh --config ~/.jandedobbeleer.omp.json)"
+eval "$(oh-my-posh init zsh --config ~/jandedobbeleer.omp.json)"
 ```
 
 Once altered, reload your profile for the changes to take effect.
@@ -110,7 +130,7 @@ exec zsh
 <TabItem value="bash">
 
 ```bash
-eval "$(oh-my-posh init bash --config ~/.jandedobbeleer.omp.json)"
+eval "$(oh-my-posh init bash --config ~/jandedobbeleer.omp.json)"
 ```
 
 Once altered, reload your profile for the changes to take effect.
@@ -127,7 +147,7 @@ Oh My Posh requires fish v3.4.0 or higher.
 :::
 
 ```bash
-oh-my-posh init fish --config ~/.jandedobbeleer.omp.json | source
+oh-my-posh init fish --config ~/jandedobbeleer.omp.json | source
 ```
 
 Once altered, reload your config for the changes to take effect.
@@ -146,7 +166,7 @@ Oh My Posh requires Nushell v0.60.0 or higher.
 Run the following command:
 
 ```bash
-oh-my-posh init nu --config ~/.jandedobbeleer.omp.json
+oh-my-posh init nu --config ~/jandedobbeleer.omp.json
 ```
 
 it saves the initialization script to `~/.oh-my-posh.nu` by default.
@@ -159,7 +179,7 @@ source ~/.oh-my-posh.nu
 If you want to save the initialization script elsewhere, you should run a command like:
 
 ```bash
-oh-my-posh init nu --config ~/.jandedobbeleer.omp.json --print | save /mylocation/myscript.nu
+oh-my-posh init nu --config ~/jandedobbeleer.omp.json --print | save /mylocation/myscript.nu
 ```
 
 and add the `source` line like:
@@ -176,7 +196,7 @@ To resolve this, you can use the `--strict` flag which tells Oh My Posh to use t
 full path in the initialization. For example:
 
 ```bash
-oh-my-posh init nu --config ~/.jandedobbeleer.omp.json --print --strict | save /mylocation/myscript.nu
+oh-my-posh init nu --config ~/jandedobbeleer.omp.json --print --strict | save /mylocation/myscript.nu
 ```
 
 This way for a new Oh My Posh version that does not update the initialization script, you don't have to recreate a new one.
@@ -192,17 +212,7 @@ Windows user's home folder.
 Inside the WSL, you can find your Windows user's home folder here: `/mnt/c/Users/<WINDOWSUSERNAME>`.
 :::
 
-:::tip remote config
-The `--config` flag can accept either a local filepath or a remotely hosted config file.
-
-For example, the following is a valid `--config` flag:
-
-```
---config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json'
-```
-:::
-
-### Export the current theme
+### Adjust a theme
 
 Maybe there's a theme you like, but you don't fancy the colors. Or, maybe there's a segment you
 want to tweak/add, or replace some of the icons with a different one. Whatever the case, **read through
@@ -215,6 +225,12 @@ which can be used to tweak and store as your own custom theme.
 ```bash
 oh-my-posh config export --output ~/.mytheme.omp.json
 ```
+
+:::caution
+Be careful not to adjust the theme files in their original location as they're updated together with Oh My Posh
+which will remove your customizations. Always copy, or export them and save the new configuration outside of the
+Oh My Posh internal themes folder.
+:::
 
 ### Read the docs
 

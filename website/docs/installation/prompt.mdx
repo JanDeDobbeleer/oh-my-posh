@@ -76,10 +76,6 @@ your cmd experience. Follow the installation instructions and make sure you sele
 Integrating Oh My Posh with Clink is easy: create a new file called oh-my-posh.lua in your Clink
 scripts directory (run `clink info` inside cmd to find that file's location).
 
-:::caution
-Use the full path to the config file, not the relative path.
-:::
-
 ```lua title="oh-my-posh.lua"
 load(io.popen('oh-my-posh init cmd'):read("*a"))()
 ```

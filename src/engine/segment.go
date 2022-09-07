@@ -306,7 +306,6 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		PERL:          &segments.Perl{},
 		PHP:           &segments.Php{},
 		PLASTIC:       &segments.Plastic{},
-		POSHGIT:       &segments.PoshGit{},
 		PROJECT:       &segments.Project{},
 		PYTHON:        &segments.Python{},
 		R:             &segments.R{},

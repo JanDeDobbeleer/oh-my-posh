@@ -97,7 +97,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         if ($env:POSH_GIT_ENABLED -eq $true) {
             # We need to set the status so posh-git can facilitate autocomplete
             $global:GitStatus = Get-GitStatus
-            $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
+            $env:POSH_GIT_STATUS = $global:GitStatus | ConvertTo-Json
         }
     }
 
@@ -337,6 +337,9 @@ Example:
         Set-PSReadLineOption -ExtraPromptLineCount (($standardOut | Measure-Object -Line).Lines - 1)
         # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n
         $standardOut -join "`n"
+
+        # remove any posh-git status
+        $env:POSH_GIT_STATUS = $null
 
         # restore the orignal last exit code
         $global:LASTEXITCODE = $script:OriginalLastExitCode

@@ -48,6 +48,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("PathSeparator").Return("/")
 	env.On("Home").Return("/Users/posh")
+	env.On("Getenv", poshGitEnv).Return("")
 	g := &Git{
 		scm: scm{
 			env:   env,

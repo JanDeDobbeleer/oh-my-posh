@@ -17,15 +17,9 @@ Local changes can also be displayed which uses the following syntax for both the
 - `?` untracked
 
 :::tip
-PowerShell offers support for the `posh-git` module for autocompletion, but it is disabled by default.
-To enable this, set `$env:POSH_GIT_ENABLED = $true` in your `$PROFILE`. Be aware this calls `git status`
-twice, so in case you're having a slow repository, it's better to migrate to the [Posh-Git segment][poshgit].
-:::
-
-:::caution
-Starting from version 3.152.0, `fetch_status` is disabled by default.
-It improves performance but reduces the quantity of information. Don't forget to enable it in your theme if needed.
-An alternative is to use the [Posh-Git segment][poshgit].
+PowerShell offers support for the [posh-git][poshgit] module for autocompletion, but it is disabled by default.
+To enable this, set `$env:POSH_GIT_ENABLED = $true` in your `$PROFILE`. This will also make use of the
+[posh-git][poshgit] output rather than do additional work to get the git status.
 :::
 
 ## Sample Configuration

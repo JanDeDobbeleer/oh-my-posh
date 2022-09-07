@@ -76,7 +76,7 @@ import TabItem from "@theme/TabItem"
             "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ffffff{{ end }}"
           ],
           "powerline_symbol": "\ue0b0",
-          "template": " {{ .HEAD }}{{ .BranchStatus }} ",
+          "template": " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }} ",
           "properties": {
             "branch_max_length": 25,
             "fetch_status": true
@@ -151,7 +151,7 @@ blocks:
     foreground_templates:
     - "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ffffff{{ end }}"
     powerline_symbol: "\ue0b0"
-    template: " {{ .HEAD }}{{ .BranchStatus }} "
+    template: " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }} "
     properties:
       branch_max_length: 25
       fetch_status: true
@@ -229,7 +229,7 @@ type = "prompt"
   foreground = "#193549"
   foreground_templates = [ "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ffffff{{ end }}" ]
   powerline_symbol = "\ue0b0"
-  template = " {{ .HEAD }}{{ .BranchStatus }} "
+  template = " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }} "
   style = "powerline"
   type = "git"
 

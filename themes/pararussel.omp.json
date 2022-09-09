@@ -43,7 +43,7 @@
         {
           "foreground": "#ffffff",
           "properties": {
-            "command": "git log --pretty=format:%cr -1 || date +%H:%m:%S",
+            "command": "git log --pretty=format:%cr -1 || date +%H:%M:%S",
             "shell": "bash"
           },
           "style": "plain",

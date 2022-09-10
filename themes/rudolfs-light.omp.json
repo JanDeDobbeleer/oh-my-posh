@@ -38,7 +38,7 @@
             "fetch_upstream_icon": true
           },
           "style": "plain",
-          "template": " [{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }}<#BD6200> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#053F22> \uf046 {{ .Staging.String }}</>{{ end }}] ",
+          "template": " [{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}<#BD6200> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#053F22> \uf046 {{ .Staging.String }}</>{{ end }}] ",
           "type": "git"
         },
         {

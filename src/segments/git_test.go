@@ -48,6 +48,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("PathSeparator").Return("/")
 	env.On("Home").Return("/Users/posh")
+	env.On("Getenv", poshGitEnv).Return("")
 	g := &Git{
 		scm: scm{
 			env:   env,
@@ -564,11 +565,11 @@ func TestGetBranchStatus(t *testing.T) {
 		Upstream     string
 		UpstreamGone bool
 	}{
-		{Case: "Equal with remote", Expected: " equal", Upstream: branchName},
-		{Case: "Ahead", Expected: " up2", Ahead: 2},
-		{Case: "Behind", Expected: " down8", Behind: 8},
-		{Case: "Behind and ahead", Expected: " up7 down8", Behind: 8, Ahead: 7},
-		{Case: "Gone", Expected: " gone", Upstream: branchName, UpstreamGone: true},
+		{Case: "Equal with remote", Expected: "equal", Upstream: branchName},
+		{Case: "Ahead", Expected: "up2", Ahead: 2},
+		{Case: "Behind", Expected: "down8", Behind: 8},
+		{Case: "Behind and ahead", Expected: "up7 down8", Behind: 8, Ahead: 7},
+		{Case: "Gone", Expected: "gone", Upstream: branchName, UpstreamGone: true},
 		{Case: "No remote", Expected: "", Upstream: ""},
 		{Case: "Default (bug)", Expected: "", Behind: -8, Upstream: "wonky"},
 	}

@@ -17,15 +17,9 @@ Local changes can also be displayed which uses the following syntax for both the
 - `?` untracked
 
 :::tip
-PowerShell offers support for the `posh-git` module for autocompletion, but it is disabled by default.
-To enable this, set `$env:POSH_GIT_ENABLED = $true` in your `$PROFILE`. Be aware this calls `git status`
-twice, so in case you're having a slow repository, it's better to migrate to the [Posh-Git segment][poshgit].
-:::
-
-:::caution
-Starting from version 3.152.0, `fetch_status` is disabled by default.
-It improves performance but reduces the quantity of information. Don't forget to enable it in your theme if needed.
-An alternative is to use the [Posh-Git segment][poshgit].
+PowerShell offers support for the [posh-git][poshgit] module for autocompletion, but it is disabled by default.
+To enable this, set `$env:POSH_GIT_ENABLED = $true` in your `$PROFILE`. This will also make use of the
+[posh-git][poshgit] output rather than do additional work to get the git status.
 :::
 
 ## Sample Configuration
@@ -43,7 +37,7 @@ An alternative is to use the [Posh-Git segment][poshgit].
     "{{ if gt .Ahead 0 }}#B388FF{{ end }}",
     "{{ if gt .Behind 0 }}#B388FB{{ end }}"
   ],
-  "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}",
+  "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}",
   "properties": {
     "fetch_status": true,
     "fetch_stash_count": true,
@@ -108,7 +102,7 @@ instead of the repo path.
 :::note default template
 
 ``` template
-{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} \uF692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }}
+{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} \uF692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }}
 ```
 
 :::

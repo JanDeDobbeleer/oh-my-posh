@@ -30,7 +30,7 @@
           "foreground": "p:c-badge-text",
           "leading_diamond": " \uE0B6",
           "style": "diamond",
-          "template": "{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uE0B1 \uF448 ({{ .Working.String }}){{ end }}{{ if and .Working.Changed .Staging.Changed }} \uE621 {{ end }}{{ if .Staging.Changed }}{{ if not .Working.Changed }} \uE0B1 {{ end }}\uF854 ({{ .Staging.String }}){{ end }}{{ if .StashCount }} \uE621 \uF6FC {{ .StashCount }} Stash{{ if gt .StashCount 1 }}es{{ end }}{{ end }}",
+          "template": "{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uE0B1 \uF448 ({{ .Working.String }}){{ end }}{{ if and .Working.Changed .Staging.Changed }} \uE621 {{ end }}{{ if .Staging.Changed }}{{ if not .Working.Changed }} \uE0B1 {{ end }}\uF854 ({{ .Staging.String }}){{ end }}{{ if .StashCount }} \uE621 \uF6FC {{ .StashCount }} Stash{{ if gt .StashCount 1 }}es{{ end }}{{ end }}",
           "properties": {
             "branch_icon": "\uE0A0 ",
             "branch_ahead_icon": "\uE621 \uF9AC ",

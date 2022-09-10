@@ -30,7 +30,7 @@
             "fetch_status": true
           },
           "style": "plain",
-          "template": "\u27e8{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \u2206{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}\u27e9",
+          "template": "\u27e8{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \u2206{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}\u27e9",
           "type": "git"
         },
         {

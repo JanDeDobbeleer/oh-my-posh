@@ -112,6 +112,7 @@ func TestAzSegment(t *testing.T) {
 		home := "/Users/posh"
 		env.On("Home").Return(home)
 		var azureProfile, azureRmContext string
+
 		if tc.HasCLI {
 			content, _ := os.ReadFile("../test/azureProfile.json")
 			azureProfile = string(content)
@@ -120,14 +121,30 @@ func TestAzSegment(t *testing.T) {
 			content, _ := os.ReadFile("../test/AzureRmContext.json")
 			azureRmContext = string(content)
 		}
+
 		env.On("GOOS").Return(environment.LINUX)
 		env.On("FileContent", filepath.Join(home, ".azure", "azureProfile.json")).Return(azureProfile)
 		env.On("FileContent", filepath.Join(home, ".azure", "AzureRmContext.json")).Return(azureRmContext)
 		env.On("Getenv", "AZURE_CONFIG_DIR").Return("")
-		env.On("HasFolder", filepath.Clean("/Users/posh/.azure")).Return(true)
+
+		if tc.HasCLI {
+			env.On("HasFilesInDir", filepath.Clean("/Users/posh/.azure"), "azureProfile.json").Return(true)
+			env.On("HasFilesInDir", filepath.Clean("/Users/posh/.azure"), "AzureRmContext.json").Return(false)
+		} else if tc.HasPowerShell {
+			env.On("HasFilesInDir", filepath.Clean("/Users/posh/.azure"), "azureProfile.json").Return(false)
+			env.On("HasFilesInDir", filepath.Clean("/Users/posh/.Azure"), "azureProfile.json").Return(false)
+			env.On("HasFilesInDir", filepath.Clean("/Users/posh/.azure"), "AzureRmContext.json").Return(true)
+		} else {
+			env.On("HasFilesInDir", filepath.Clean("/Users/posh/.azure"), "azureProfile.json").Return(false)
+			env.On("HasFilesInDir", filepath.Clean("/Users/posh/.Azure"), "azureProfile.json").Return(false)
+			env.On("HasFilesInDir", filepath.Clean("/Users/posh/.azure"), "AzureRmContext.json").Return(false)
+			env.On("HasFilesInDir", filepath.Clean("/Users/posh/.Azure"), "AzureRmContext.json").Return(false)
+		}
+
 		if tc.Source == "" {
 			tc.Source = firstMatch
 		}
+
 		az := &Az{
 			env: env,
 			props: properties.Map{

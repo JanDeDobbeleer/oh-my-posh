@@ -28,7 +28,7 @@ func TestGetStringNoEntry(t *testing.T) {
 func TestGetStringNoTextEntry(t *testing.T) {
 	var properties = Map{Foo: true}
 	value := properties.GetString(Foo, expected)
-	assert.Equal(t, expected, value)
+	assert.Equal(t, "true", value)
 }
 
 func TestGetHexColor(t *testing.T) {

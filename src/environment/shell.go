@@ -97,20 +97,27 @@ type WindowsRegistryValue struct {
 	String    string
 }
 
-type WifiType string
+type NotImplemented struct{}
 
-type WifiInfo struct {
-	SSID           string
-	Interface      string
-	RadioType      WifiType
-	PhysType       WifiType
-	Authentication WifiType
-	Cipher         WifiType
-	Channel        int
-	ReceiveRate    int
-	TransmitRate   int
-	Signal         int
-	Error          string
+func (n *NotImplemented) Error() string {
+	return "not implemented"
+}
+
+type ConnectionType string
+
+const (
+	ETHERNET  ConnectionType = "ethernet"
+	WIFI      ConnectionType = "wifi"
+	CELLULAR  ConnectionType = "cellular"
+	BLUETOOTH ConnectionType = "bluetooth"
+)
+
+type Connection struct {
+	Name         string
+	Type         ConnectionType
+	TransmitRate uint64
+	ReceiveRate  uint64
+	SSID         string // Wi-Fi only
 }
 
 type TemplateCache struct {
@@ -181,7 +188,7 @@ type Environment interface {
 	InWSLSharedDrive() bool
 	ConvertToLinuxPath(path string) string
 	ConvertToWindowsPath(path string) string
-	WifiNetwork() (*WifiInfo, error)
+	Connection(connectionType ConnectionType) (*Connection, error)
 	TemplateCache() *TemplateCache
 	LoadTemplateCache()
 	Log(logType LogType, funcName, message string)
@@ -221,6 +228,7 @@ type ShellEnvironment struct {
 	fileCache  *fileCache
 	tmplCache  *TemplateCache
 	logBuilder strings.Builder
+	networks   []*Connection
 }
 
 func (env *ShellEnvironment) Init() {

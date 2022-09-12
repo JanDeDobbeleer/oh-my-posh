@@ -225,6 +225,7 @@
             "angular",
             "battery",
             "command",
+            "connection",
             "crystal",
             "cds",
             "cf",
@@ -274,7 +275,6 @@
             "terraform",
             "ui5tooling",
             "wakatime",
-            "wifi",
             "winreg",
             "withings",
             "ytm"
@@ -569,6 +569,55 @@
                     "title": "Script",
                     "description": "A script to run",
                     "default": ""
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "connection"
+              }
+            }
+          },
+          "then": {
+            "title": "Connection Segment",
+            "description": "https://ohmyposh.dev/docs/segments/connection",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "title": "Connection type",
+                    "description": "The connection type to display",
+                    "enum": [
+                      "ethernet",
+                      "wifi",
+                      "cellular",
+                      "bluetooth"
+                    ],
+                    "default": "wifi|ethernet"
+                  },
+                  "unit": {
+                    "type": "string",
+                    "title": "Transfer speed unit",
+                    "enum": [
+                      "none",
+                      "b",
+                      "bps",
+                      "K",
+                      "Kbps",
+                      "M",
+                      "Mbps",
+                      "G",
+                      "Gbps",
+                      "T",
+                      "Tbps"
+                    ],
+                    "default": "none"
                   }
                 }
               }
@@ -2162,19 +2211,6 @@
                 }
               }
             }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "wifi"
-              }
-            }
-          },
-          "then": {
-            "title": "WiFi Segment",
-            "description": "https://ohmyposh.dev/docs/segments/wifi"
           }
         },
         {

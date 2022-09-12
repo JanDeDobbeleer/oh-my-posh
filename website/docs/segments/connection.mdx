@@ -1,0 +1,51 @@
+---
+id: connection
+title: Connection
+sidebar_label: Connection
+---
+
+## Connection
+
+Show details about the currently connected network.
+
+:::info
+Currently only supports Windows. Pull requests for Darwin and Linux support are welcome :)
+:::
+
+## Sample Configuration
+
+```json
+{
+  "type": "connection",
+  "style": "powerline",
+  "background": "#8822ee",
+  "foreground": "#222222",
+  "powerline_symbol": "\uE0B0"
+}
+```
+
+## Properties
+
+| Name   | Type     | Description                                                                                                                                                                                                                                                                                                   |
+| ------ | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type` | `string` | the type of connection to display. Can be a single value or multiple joined by <inlineCode>\|</inlineCode> . The first to resolve is shown (**default value** is <inlineCode>wifi\|ethernet</inlineCode>). Possible values:<ul><li>`wifi`</li><li>`ethernet`</li><li>`bluetooth`</li><li>`cellular`</li></ul> |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if eq .Type \"wifi\"}}\uf1eb{{ else if eq .Type \"ethernet\"}}\uf6ff{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name    | Type     | Description                                             |
+| ------- | -------- | ------------------------------------------------------- |
+| `.Type` | `string` | the connection type type. Single values of `type` above |
+| `.Name` | `string` | the name of the connection                              |
+| `.SSID` | `string` | the SSID of the current wifi network                    |
+
+[templates]: /docs/configuration/templates

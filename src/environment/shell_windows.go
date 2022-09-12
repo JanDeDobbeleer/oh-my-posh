@@ -8,8 +8,6 @@ import (
 	"strings"
 	"syscall"
 	"time"
-	"unicode/utf16"
-	"unsafe"
 
 	"github.com/Azure/go-ansiterm/winterm"
 	"golang.org/x/sys/windows"
@@ -235,248 +233,6 @@ func (env *ShellEnvironment) ConvertToLinuxPath(path string) string {
 	return path
 }
 
-var (
-	hapi                = syscall.NewLazyDLL("wlanapi.dll")
-	hWlanOpenHandle     = hapi.NewProc("WlanOpenHandle")
-	hWlanCloseHandle    = hapi.NewProc("WlanCloseHandle")
-	hWlanEnumInterfaces = hapi.NewProc("WlanEnumInterfaces")
-	hWlanQueryInterface = hapi.NewProc("WlanQueryInterface")
-)
-
-const (
-	FHSS   WifiType = "FHSS"
-	DSSS   WifiType = "DSSS"
-	IR     WifiType = "IR"
-	A      WifiType = "802.11a"
-	HRDSSS WifiType = "HRDSSS"
-	G      WifiType = "802.11g"
-	N      WifiType = "802.11n"
-	AC     WifiType = "802.11ac"
-
-	Infrastructure WifiType = "Infrastructure"
-	Independent    WifiType = "Independent"
-	Any            WifiType = "Any"
-
-	OpenSystem WifiType = "802.11 Open System"
-	SharedKey  WifiType = "802.11 Shared Key"
-	WPA        WifiType = "WPA"
-	WPAPSK     WifiType = "WPA PSK"
-	WPANone    WifiType = "WPA NONE"
-	WPA2       WifiType = "WPA2"
-	WPA2PSK    WifiType = "WPA2 PSK"
-	Disabled   WifiType = "disabled"
-
-	None   WifiType = "None"
-	WEP40  WifiType = "WEP40"
-	TKIP   WifiType = "TKIP"
-	CCMP   WifiType = "CCMP"
-	WEP104 WifiType = "WEP104"
-	WEP    WifiType = "WEP"
-)
-
-func (env *ShellEnvironment) WifiNetwork() (*WifiInfo, error) {
-	env.Trace(time.Now(), "WifiNetwork")
-	// Open handle
-	var pdwNegotiatedVersion uint32
-	var phClientHandle uint32
-	e, _, err := hWlanOpenHandle.Call(uintptr(uint32(2)), uintptr(unsafe.Pointer(nil)), uintptr(unsafe.Pointer(&pdwNegotiatedVersion)), uintptr(unsafe.Pointer(&phClientHandle)))
-	if e != 0 {
-		return nil, err
-	}
-
-	// defer closing handle
-	defer func() {
-		_, _, _ = hWlanCloseHandle.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)))
-	}()
-
-	// list interfaces
-	var interfaceList *WLAN_INTERFACE_INFO_LIST
-	e, _, err = hWlanEnumInterfaces.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)), uintptr(unsafe.Pointer(&interfaceList)))
-	if e != 0 {
-		return nil, err
-	}
-
-	// use first interface that is connected
-	numberOfInterfaces := int(interfaceList.dwNumberOfItems)
-	infoSize := unsafe.Sizeof(interfaceList.InterfaceInfo[0])
-	for i := 0; i < numberOfInterfaces; i++ {
-		network := (*WLAN_INTERFACE_INFO)(unsafe.Pointer(uintptr(unsafe.Pointer(&interfaceList.InterfaceInfo[0])) + uintptr(i)*infoSize))
-		if network.isState != 1 {
-			continue
-		}
-		return env.parseNetworkInterface(network, phClientHandle)
-	}
-	return nil, errors.New("Not connected")
-}
-
-func (env *ShellEnvironment) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHandle uint32) (*WifiInfo, error) {
-	info := WifiInfo{}
-	info.Interface = strings.TrimRight(string(utf16.Decode(network.strInterfaceDescription[:])), "\x00")
-
-	// Query wifi connection state
-	var dataSize uint16
-	var wlanAttr *WLAN_CONNECTION_ATTRIBUTES
-	e, _, err := hWlanQueryInterface.Call(uintptr(clientHandle),
-		uintptr(unsafe.Pointer(&network.InterfaceGuid)),
-		uintptr(7), // wlan_intf_opcode_current_connection
-		uintptr(unsafe.Pointer(nil)),
-		uintptr(unsafe.Pointer(&dataSize)),
-		uintptr(unsafe.Pointer(&wlanAttr)),
-		uintptr(unsafe.Pointer(nil)))
-	if e != 0 {
-		env.Log(Error, "parseNetworkInterface", "wlan_intf_opcode_current_connection error")
-		return &info, err
-	}
-
-	// SSID
-	ssid := wlanAttr.wlanAssociationAttributes.dot11Ssid
-	if ssid.uSSIDLength > 0 {
-		info.SSID = string(ssid.ucSSID[0:ssid.uSSIDLength])
-	}
-
-	// see https://docs.microsoft.com/en-us/windows/win32/nativewifi/dot11-phy-type
-	switch wlanAttr.wlanAssociationAttributes.dot11PhyType {
-	case 1:
-		info.PhysType = FHSS
-	case 2:
-		info.PhysType = DSSS
-	case 3:
-		info.PhysType = IR
-	case 4:
-		info.PhysType = A
-	case 5:
-		info.PhysType = HRDSSS
-	case 6:
-		info.PhysType = G
-	case 7:
-		info.PhysType = N
-	case 8:
-		info.PhysType = AC
-	default:
-		info.PhysType = UNKNOWN
-	}
-
-	// see https://docs.microsoft.com/en-us/windows/win32/nativewifi/dot11-bss-type
-	switch wlanAttr.wlanAssociationAttributes.dot11BssType {
-	case 1:
-		info.RadioType = Infrastructure
-	case 2:
-		info.RadioType = Independent
-	default:
-		info.RadioType = Any
-	}
-
-	info.Signal = int(wlanAttr.wlanAssociationAttributes.wlanSignalQuality)
-	info.TransmitRate = int(wlanAttr.wlanAssociationAttributes.ulTxRate) / 1024
-	info.ReceiveRate = int(wlanAttr.wlanAssociationAttributes.ulRxRate) / 1024
-
-	// Query wifi channel
-	dataSize = 0
-	var channel *uint32
-	e, _, err = hWlanQueryInterface.Call(uintptr(clientHandle),
-		uintptr(unsafe.Pointer(&network.InterfaceGuid)),
-		uintptr(8), // wlan_intf_opcode_channel_number
-		uintptr(unsafe.Pointer(nil)),
-		uintptr(unsafe.Pointer(&dataSize)),
-		uintptr(unsafe.Pointer(&channel)),
-		uintptr(unsafe.Pointer(nil)))
-	if e != 0 {
-		env.Log(Error, "parseNetworkInterface", "wlan_intf_opcode_channel_number error")
-		return &info, err
-	}
-	info.Channel = int(*channel)
-
-	if wlanAttr.wlanSecurityAttributes.bSecurityEnabled <= 0 {
-		info.Authentication = Disabled
-		return &info, nil
-	}
-
-	// see https://docs.microsoft.com/en-us/windows/win32/nativewifi/dot11-auth-algorithm
-	switch wlanAttr.wlanSecurityAttributes.dot11AuthAlgorithm {
-	case 1:
-		info.Authentication = OpenSystem
-	case 2:
-		info.Authentication = SharedKey
-	case 3:
-		info.Authentication = WPA
-	case 4:
-		info.Authentication = WPAPSK
-	case 5:
-		info.Authentication = WPANone
-	case 6:
-		info.Authentication = WPA2
-	case 7:
-		info.Authentication = WPA2PSK
-	default:
-		info.Authentication = UNKNOWN
-	}
-
-	// see https://docs.microsoft.com/en-us/windows/win32/nativewifi/dot11-cipher-algorithm
-	switch wlanAttr.wlanSecurityAttributes.dot11CipherAlgorithm {
-	case 0:
-		info.Cipher = None
-	case 0x1:
-		info.Cipher = WEP40
-	case 0x2:
-		info.Cipher = TKIP
-	case 0x4:
-		info.Cipher = CCMP
-	case 0x5:
-		info.Cipher = WEP104
-	case 0x100:
-		info.Cipher = WPA
-	case 0x101:
-		info.Cipher = WEP
-	default:
-		info.Cipher = UNKNOWN
-	}
-
-	return &info, nil
-}
-
-type WLAN_INTERFACE_INFO_LIST struct { //nolint: revive
-	dwNumberOfItems uint32
-	dwIndex         uint32 //nolint: unused
-	InterfaceInfo   [1]WLAN_INTERFACE_INFO
-}
-
-type WLAN_INTERFACE_INFO struct { //nolint: revive
-	InterfaceGuid           syscall.GUID //nolint: revive
-	strInterfaceDescription [256]uint16
-	isState                 uint32
-}
-
-type WLAN_CONNECTION_ATTRIBUTES struct { //nolint: revive
-	isState                   uint32      //nolint: unused
-	wlanConnectionMode        uint32      //nolint: unused
-	strProfileName            [256]uint16 //nolint: unused
-	wlanAssociationAttributes WLAN_ASSOCIATION_ATTRIBUTES
-	wlanSecurityAttributes    WLAN_SECURITY_ATTRIBUTES
-}
-
-type WLAN_ASSOCIATION_ATTRIBUTES struct { //nolint: revive
-	dot11Ssid         DOT11_SSID
-	dot11BssType      uint32
-	dot11Bssid        [6]uint8 //nolint: unused
-	dot11PhyType      uint32
-	uDot11PhyIndex    uint32 //nolint: unused
-	wlanSignalQuality uint32
-	ulRxRate          uint32
-	ulTxRate          uint32
-}
-
-type WLAN_SECURITY_ATTRIBUTES struct { //nolint: revive
-	bSecurityEnabled     uint32
-	bOneXEnabled         uint32 //nolint: unused
-	dot11AuthAlgorithm   uint32
-	dot11CipherAlgorithm uint32
-}
-
-type DOT11_SSID struct { //nolint: revive
-	uSSIDLength uint32
-	ucSSID      [32]uint8
-}
-
 func (env *ShellEnvironment) DirIsWritable(path string) bool {
 	defer env.Trace(time.Now(), "DirIsWritable")
 	info, err := os.Stat(path)
@@ -497,4 +253,21 @@ func (env *ShellEnvironment) DirIsWritable(path string) bool {
 	}
 
 	return true
+}
+
+func (env *ShellEnvironment) Connection(connectionType ConnectionType) (*Connection, error) {
+	if env.networks == nil {
+		networks := env.getConnections()
+		if len(networks) == 0 {
+			return nil, errors.New("No connections found")
+		}
+		env.networks = networks
+	}
+	for _, network := range env.networks {
+		if network.Type == connectionType {
+			return network, nil
+		}
+	}
+	env.Log(Error, "network", fmt.Sprintf("Network type '%s' not found", connectionType))
+	return nil, &NotImplemented{}
 }

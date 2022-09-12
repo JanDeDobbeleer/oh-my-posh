@@ -119,13 +119,12 @@ func (a *Az) FileContentWithoutBom(file string) string {
 }
 
 func (a *Az) getCLISubscription() bool {
-	var content string
-	configDir, err := a.ConfigDir(true)
+	cfg, err := a.findConfig("azureProfile.json")
 	if err != nil {
 		return false
 	}
-	profile := filepath.Join(configDir, "azureProfile.json")
-	if content = a.FileContentWithoutBom(profile); len(content) == 0 {
+	content := a.FileContentWithoutBom(cfg)
+	if len(content) == 0 {
 		return false
 	}
 	var config AzureConfig
@@ -143,19 +142,11 @@ func (a *Az) getCLISubscription() bool {
 }
 
 func (a *Az) getModuleSubscription() bool {
-	var content string
-	configDir, err := a.ConfigDir(false)
+	cfg, err := a.findConfig("AzureRmContext.json")
 	if err != nil {
 		return false
 	}
-	profiles := []string{
-		filepath.Join(configDir, "AzureRmContext.json"),
-	}
-	for _, profile := range profiles {
-		if content = a.FileContentWithoutBom(profile); len(content) != 0 {
-			break
-		}
-	}
+	content := a.FileContentWithoutBom(cfg)
 	if len(content) == 0 {
 		return false
 	}
@@ -181,17 +172,15 @@ func (a *Az) getModuleSubscription() bool {
 	return true
 }
 
-func (a *Az) ConfigDir(cli bool) (string, error) {
+func (a *Az) findConfig(fileName string) (string, error) {
 	configDirs := []string{
 		filepath.Join(a.env.Home(), ".azure"),
 		filepath.Join(a.env.Home(), ".Azure"),
-	}
-	if cli {
-		configDirs = append([]string{a.env.Getenv("AZURE_CONFIG_DIR")}, configDirs...)
+		a.env.Getenv("AZURE_CONFIG_DIR"),
 	}
 	for _, dir := range configDirs {
-		if len(dir) != 0 && a.env.HasFolder(dir) {
-			return dir, nil
+		if len(dir) != 0 && a.env.HasFilesInDir(dir, fileName) {
+			return filepath.Join(dir, fileName), nil
 		}
 	}
 	return "", errors.New("azure config dir not found")

@@ -97,6 +97,28 @@ type WindowsRegistryValue struct {
 	String    string
 }
 
+type IFTYPE string
+type NDIS_MEDIUM string
+type NDIS_PHYSICAL_MEDIUM string
+type IF_OPER_STATUS string
+type NET_IF_ADMIN_STATUS string
+type NET_IF_MEDIA_CONNECT_STATE string
+
+type ConnectedNetworks struct {
+	Networks []NetworkInfo
+}
+
+type NetworkInfo struct {
+	Alias                 string
+	Interface             string
+	InterfaceType         IFTYPE
+	NDISMediaType         NDIS_MEDIUM
+	NDISPhysicalMeidaType NDIS_PHYSICAL_MEDIUM
+	TransmitLinkSpeed     uint64
+	ReceiveLinkSpeed      uint64
+	SSID                  string // Wi-Fi only
+}
+
 type WifiType string
 
 type WifiInfo struct {
@@ -181,6 +203,7 @@ type Environment interface {
 	InWSLSharedDrive() bool
 	ConvertToLinuxPath(path string) string
 	ConvertToWindowsPath(path string) string
+	GetAllNetworkInterfaces() (*[]NetworkInfo, error)
 	WifiNetwork() (*WifiInfo, error)
 	TemplateCache() *TemplateCache
 	LoadTemplateCache()

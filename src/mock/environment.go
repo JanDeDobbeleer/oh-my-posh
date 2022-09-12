@@ -208,6 +208,11 @@ func (env *MockedEnvironment) ConvertToLinuxPath(path string) string {
 	return args.String(0)
 }
 
+func (env *MockedEnvironment) AllNetworks() (*[]environment.NetworkInfo, error) {
+	args := env.Called()
+	return args.Get(0).(*[]environment.NetworkInfo), args.Error(1)
+}
+
 func (env *MockedEnvironment) WifiNetwork() (*environment.WifiInfo, error) {
 	args := env.Called()
 	return args.Get(0).(*environment.WifiInfo), args.Error(1)

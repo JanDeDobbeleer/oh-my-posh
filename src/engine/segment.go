@@ -133,6 +133,8 @@ const (
 	LUA SegmentType = "lua"
 	// NBGV writes the nbgv version information
 	NBGV SegmentType = "nbgv"
+	// NETWORKS get all current active network connections
+	NETWORKS SegmentType = "networks"
 	// NIGHTSCOUT is an open source diabetes system
 	NIGHTSCOUT SegmentType = "nightscout"
 	// NODE writes which node version is currently active
@@ -296,6 +298,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		KUBECTL:       &segments.Kubectl{},
 		LUA:           &segments.Lua{},
 		NBGV:          &segments.Nbgv{},
+		NETWORKS:      &segments.Networks{},
 		NIGHTSCOUT:    &segments.Nightscout{},
 		NODE:          &segments.Node{},
 		NPM:           &segments.Npm{},

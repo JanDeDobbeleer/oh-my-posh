@@ -14,12 +14,8 @@ type Wifi struct {
 	environment.WifiInfo
 }
 
-const (
-	defaultTemplate = " {{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }} "
-)
-
 func (w *Wifi) Template() string {
-	return defaultTemplate
+	return "{{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }}"
 }
 
 func (w *Wifi) Enabled() bool {

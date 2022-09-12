@@ -3,12 +3,11 @@
 package color
 
 import (
-	"errors"
 	"oh-my-posh/environment"
 )
 
 func GetAccentColor(env environment.Environment) (*RGB, error) {
-	return nil, errors.New("not implemented")
+	return nil, &environment.NotImplemented{}
 }
 
 func (d *DefaultColors) SetAccentColor(env environment.Environment, defaultColor string) {

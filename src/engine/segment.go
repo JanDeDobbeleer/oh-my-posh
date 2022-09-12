@@ -96,6 +96,8 @@ const (
 	CMAKE SegmentType = "cmake"
 	// CMD writes the output of a shell command
 	CMD SegmentType = "command"
+	// CONNECTION writes a connection's information
+	CONNECTION SegmentType = "connection"
 	// CRYSTAL writes the active crystal version
 	CRYSTAL SegmentType = "crystal"
 	// DART writes the active dart version
@@ -192,8 +194,6 @@ const (
 	UI5TOOLING SegmentType = "ui5tooling"
 	// WAKATIME writes tracked time spend in dev editors
 	WAKATIME SegmentType = "wakatime"
-	// WIFI writes details about the current WIFI connection
-	WIFI SegmentType = "wifi"
 	// WINREG queries the Windows registry.
 	WINREG SegmentType = "winreg"
 	// WITHINGS queries the Withings API.
@@ -277,6 +277,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		CF:            &segments.Cf{},
 		CFTARGET:      &segments.CfTarget{},
 		CMD:           &segments.Cmd{},
+		CONNECTION:    &segments.Connection{},
 		CRYSTAL:       &segments.Crystal{},
 		CMAKE:         &segments.Cmake{},
 		DART:          &segments.Dart{},
@@ -326,7 +327,6 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		TIME:          &segments.Time{},
 		UI5TOOLING:    &segments.UI5Tooling{},
 		WAKATIME:      &segments.Wakatime{},
-		WIFI:          &segments.Wifi{},
 		WINREG:        &segments.WindowsRegistry{},
 		WITHINGS:      &segments.Withings{},
 		YTM:           &segments.Ytm{},

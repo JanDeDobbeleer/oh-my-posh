@@ -24,6 +24,9 @@ var (
 
 	psapi              = syscall.NewLazyDLL("psapi.dll")
 	getModuleBaseNameA = psapi.NewProc("GetModuleBaseNameA")
+
+	iphlpapi     = syscall.NewLazyDLL("iphlpapi.dll")
+	hGetIfTable2 = iphlpapi.NewProc("GetIfTable2")
 )
 
 // enumWindows call enumWindows from user32 and returns all active windows
@@ -189,7 +192,242 @@ func readWinAppLink(path string) (string, error) {
 	rb := (*GenericDataBuffer)(unsafe.Pointer(&rdb.DUMMYUNIONNAME))
 	appExecLink := (*AppExecLinkReparseBuffer)(unsafe.Pointer(&rb.DataBuffer))
 	if appExecLink.Version != 3 {
-		return " ", errors.New("unknown AppExecLink version")
+		return "", errors.New("unknown AppExecLink version")
 	}
 	return appExecLink.Path()
+}
+
+// networks
+
+func (env *ShellEnvironment) getConnections() []*Connection {
+	var pIFTable2 *MIN_IF_TABLE2
+	_, _, _ = hGetIfTable2.Call(uintptr(unsafe.Pointer(&pIFTable2)))
+
+	SSIDs, _ := env.getAllWifiSSID()
+	networks := make([]*Connection, 0)
+
+	for i := 0; i < int(pIFTable2.NumEntries); i++ {
+		networkInterface := pIFTable2.Table[i]
+		alias := strings.TrimRight(syscall.UTF16ToString(networkInterface.Alias[:]), "\x00")
+		description := strings.TrimRight(syscall.UTF16ToString(networkInterface.Description[:]), "\x00")
+
+		if networkInterface.OperStatus != 1 || // not connected or functional
+			!networkInterface.InterfaceAndOperStatusFlags.HardwareInterface || // rule out software interfaces
+			strings.HasPrefix(alias, "Local Area Connection") || // not relevant
+			strings.Index(alias, "-") >= 3 { // rule out parts of Ethernet filter interfaces
+			// e.g. : "Ethernet-WFP Native MAC Layer LightWeight Filter-0000"
+			continue
+		}
+
+		var connectionType ConnectionType
+		switch networkInterface.Type {
+		case 6:
+			connectionType = ETHERNET
+		case 71:
+			connectionType = WIFI
+		case 237, 234, 244:
+			connectionType = CELLULAR
+		}
+
+		if networkInterface.PhysicalMediumType == 10 {
+			connectionType = BLUETOOTH
+		}
+
+		// skip connections which aren't relevant
+		if len(connectionType) == 0 {
+			continue
+		}
+
+		network := &Connection{
+			Type:         connectionType,
+			Name:         description, // we want a relatable name, alias isn't that
+			TransmitRate: networkInterface.TransmitLinkSpeed,
+			ReceiveRate:  networkInterface.ReceiveLinkSpeed,
+		}
+
+		if SSID, OK := SSIDs[network.Name]; OK {
+			network.SSID = SSID
+		}
+
+		networks = append(networks, network)
+	}
+	return networks
+}
+
+type MIN_IF_TABLE2 struct { //nolint: revive
+	NumEntries uint64
+	Table      [256]MIB_IF_ROW2
+}
+
+const (
+	IF_MAX_STRING_SIZE         uint64 = 256 //nolint: revive
+	IF_MAX_PHYS_ADDRESS_LENGTH uint64 = 32  //nolint: revive
+)
+
+type MIB_IF_ROW2 struct { //nolint: revive
+	InterfaceLuid            uint64
+	InterfaceIndex           uint32
+	InterfaceGUID            windows.GUID
+	Alias                    [IF_MAX_STRING_SIZE + 1]uint16
+	Description              [IF_MAX_STRING_SIZE + 1]uint16
+	PhysicalAddressLength    uint32
+	PhysicalAddress          [IF_MAX_PHYS_ADDRESS_LENGTH]uint8
+	PermanentPhysicalAddress [IF_MAX_PHYS_ADDRESS_LENGTH]uint8
+
+	Mtu                uint32
+	Type               uint32
+	TunnelType         uint32
+	MediaType          uint32
+	PhysicalMediumType uint32
+	AccessType         uint32
+	DirectionType      uint32
+
+	InterfaceAndOperStatusFlags struct {
+		HardwareInterface bool
+		FilterInterface   bool
+		ConnectorPresent  bool
+		NotAuthenticated  bool
+		NotMediaConnected bool
+		Paused            bool
+		LowPower          bool
+		EndPointInterface bool
+	}
+
+	OperStatus        uint32
+	AdminStatus       uint32
+	MediaConnectState uint32
+	NetworkGUID       windows.GUID
+	ConnectionType    uint32
+
+	TransmitLinkSpeed uint64
+	ReceiveLinkSpeed  uint64
+
+	InOctets           uint64
+	InUcastPkts        uint64
+	InNUcastPkts       uint64
+	InDiscards         uint64
+	InErrors           uint64
+	InUnknownProtos    uint64
+	InUcastOctets      uint64
+	InMulticastOctets  uint64
+	InBroadcastOctets  uint64
+	OutOctets          uint64
+	OutUcastPkts       uint64
+	OutNUcastPkts      uint64
+	OutDiscards        uint64
+	OutErrors          uint64
+	OutUcastOctets     uint64
+	OutMulticastOctets uint64
+	OutBroadcastOctets uint64
+	OutQLen            uint64
+}
+
+func (env *ShellEnvironment) getAllWifiSSID() (map[string]string, error) {
+	var pdwNegotiatedVersion uint32
+	var phClientHandle uint32
+	e, _, err := hWlanOpenHandle.Call(uintptr(uint32(2)), uintptr(unsafe.Pointer(nil)), uintptr(unsafe.Pointer(&pdwNegotiatedVersion)), uintptr(unsafe.Pointer(&phClientHandle)))
+	if e != 0 {
+		env.Log(Error, "getAllWifiSSID", err.Error())
+		return nil, err
+	}
+
+	// defer closing handle
+	defer func() {
+		_, _, _ = hWlanCloseHandle.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)))
+	}()
+
+	ssid := make(map[string]string)
+	// list interfaces
+	var interfaceList *WLAN_INTERFACE_INFO_LIST
+	e, _, err = hWlanEnumInterfaces.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)), uintptr(unsafe.Pointer(&interfaceList)))
+	if e != 0 {
+		env.Log(Error, "getAllWifiSSID", err.Error())
+		return nil, err
+	}
+
+	// use first interface that is connected
+	numberOfInterfaces := int(interfaceList.dwNumberOfItems)
+	infoSize := unsafe.Sizeof(interfaceList.InterfaceInfo[0])
+	for i := 0; i < numberOfInterfaces; i++ {
+		network := (*WLAN_INTERFACE_INFO)(unsafe.Pointer(uintptr(unsafe.Pointer(&interfaceList.InterfaceInfo[0])) + uintptr(i)*infoSize))
+		if network.isState == 1 {
+			wifiInterface := strings.TrimRight(string(utf16.Decode(network.strInterfaceDescription[:])), "\x00")
+			ssid[wifiInterface] = env.getWiFiSSID(network, phClientHandle)
+		}
+	}
+	return ssid, nil
+}
+
+var (
+	wlanapi             = syscall.NewLazyDLL("wlanapi.dll")
+	hWlanOpenHandle     = wlanapi.NewProc("WlanOpenHandle")
+	hWlanCloseHandle    = wlanapi.NewProc("WlanCloseHandle")
+	hWlanEnumInterfaces = wlanapi.NewProc("WlanEnumInterfaces")
+	hWlanQueryInterface = wlanapi.NewProc("WlanQueryInterface")
+)
+
+func (env *ShellEnvironment) getWiFiSSID(network *WLAN_INTERFACE_INFO, clientHandle uint32) string {
+	// Query wifi connection state
+	var dataSize uint16
+	var wlanAttr *WLAN_CONNECTION_ATTRIBUTES
+	e, _, _ := hWlanQueryInterface.Call(uintptr(clientHandle),
+		uintptr(unsafe.Pointer(&network.InterfaceGuid)),
+		uintptr(7), // wlan_intf_opcode_current_connection
+		uintptr(unsafe.Pointer(nil)),
+		uintptr(unsafe.Pointer(&dataSize)),
+		uintptr(unsafe.Pointer(&wlanAttr)),
+		uintptr(unsafe.Pointer(nil)))
+	if e != 0 {
+		env.Log(Error, "parseWlanInterface", "wlan_intf_opcode_current_connection error")
+		return ""
+	}
+
+	ssid := wlanAttr.wlanAssociationAttributes.dot11Ssid
+	if ssid.uSSIDLength <= 0 {
+		return ""
+	}
+	return string(ssid.ucSSID[0:ssid.uSSIDLength])
+}
+
+type WLAN_INTERFACE_INFO_LIST struct { //nolint: revive
+	dwNumberOfItems uint32
+	dwIndex         uint32 //nolint: unused
+	InterfaceInfo   [256]WLAN_INTERFACE_INFO
+}
+
+type WLAN_INTERFACE_INFO struct { //nolint: revive
+	InterfaceGuid           syscall.GUID //nolint: revive
+	strInterfaceDescription [256]uint16
+	isState                 uint32
+}
+
+type WLAN_CONNECTION_ATTRIBUTES struct { //nolint: revive
+	isState                   uint32      //nolint: unused
+	wlanConnectionMode        uint32      //nolint: unused
+	strProfileName            [256]uint16 //nolint: unused
+	wlanAssociationAttributes WLAN_ASSOCIATION_ATTRIBUTES
+	wlanSecurityAttributes    WLAN_SECURITY_ATTRIBUTES //nolint: unused
+}
+
+type WLAN_ASSOCIATION_ATTRIBUTES struct { //nolint: revive
+	dot11Ssid         DOT11_SSID
+	dot11BssType      uint32   //nolint: unused
+	dot11Bssid        [6]uint8 //nolint: unused
+	dot11PhyType      uint32   //nolint: unused
+	uDot11PhyIndex    uint32   //nolint: unused
+	wlanSignalQuality uint32   //nolint: unused
+	ulRxRate          uint32   //nolint: unused
+	ulTxRate          uint32   //nolint: unused
+}
+
+type WLAN_SECURITY_ATTRIBUTES struct { //nolint: revive
+	bSecurityEnabled     uint32 //nolint: unused
+	bOneXEnabled         uint32 //nolint: unused
+	dot11AuthAlgorithm   uint32 //nolint: unused
+	dot11CipherAlgorithm uint32 //nolint: unused
+}
+
+type DOT11_SSID struct { //nolint: revive
+	uSSIDLength uint32
+	ucSSID      [32]uint8
 }

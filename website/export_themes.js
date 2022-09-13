@@ -50,6 +50,7 @@ themeConfigOverrrides.set('powerlevel10k_classic.omp.json', newThemeConfig(10));
 themeConfigOverrrides.set('powerlevel10k_lean.omp.json', newThemeConfig(80));
 themeConfigOverrrides.set('powerline.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('pure.omp.json', newThemeConfig(40, 80));
+themeConfigOverrrides.set('quick-term.omp.json', newThemeConfig(15, 0, 'SokLay'))
 themeConfigOverrrides.set('remk.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('robbyrussel.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('slim.omp.json', newThemeConfig(10, 80));

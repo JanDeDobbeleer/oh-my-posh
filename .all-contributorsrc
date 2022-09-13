@@ -1327,6 +1327,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "douugdev",
+      "name": "Douglas Silva",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59324692?v=4",
+      "profile": "https://douug.dev",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

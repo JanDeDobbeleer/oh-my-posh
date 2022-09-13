@@ -19,7 +19,7 @@
             "branch_icon": ""
           },
           "style": "diamond",
-          "template": "<#ffffff>\u26A1</><b>{{ .HEAD }}</b>",
+          "template": "<#ffffff>\u26A1</><b> {{ .HEAD }}</b>",
           "type": "git"
         },
         {

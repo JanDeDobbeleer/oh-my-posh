@@ -1,0 +1,65 @@
+---
+id: networks
+title: Networks
+sidebar_label: Networks
+---
+## What
+
+Displays the networks currently connected.
+
+:::info
+Currently only supports Windows.
+:::
+
+## Sample Configuration
+
+```json
+{
+  "type": "networks",
+  "style": "diamond",
+  "background": "#E0FFFF",
+  "foreground": "#222222",
+  "leading_diamond": "\uE0B2",
+  "trailing_diamond": "\uE0B0",
+  "properties": {
+    "SSIDAbbr": 8,
+    "ShowSSID": true,
+    "IconAsAT": true,
+    "ShowType": true,
+    "LinkSpeedUnit": "A"
+  },
+  "template": "{{if eq .Status \"Connected\"}}{{.Networks}}{{else}}\uF663{{end}}"
+},
+```
+
+## Properties
+
+- Icons
+  - IconEthernet": "\uF817"
+  - IconWiFi: "\uF1EB"
+  - IconBluetooth: "\uF5AF"
+  - IconCellular: "\uF012"
+  - IconOther: "\uF502"
+- IconAsAT: `boolean` - whether replace @ symbol with network type icon or not - defaults to `false`
+- ShowType: `boolean` - whether show network type (Wi-Fi, Cellular, etc.) - default to `true`
+- ShowSSID: `boolean` - whether show Wi-Fi SSID or not - default to `true`
+- SSIDAbbr: `int` - cut SSID name by a space/dash/underline/sharp after how many characters, 0 for keep it as it is - default to `1`
+- LinkSpeedUnit: `enum` - `auto`, `a`, `bps`, `b`, `Kbps`, `K`, `Mbps`, `M`, `Gbps`, `G`, `Tbps`, `T` - default to `auto`
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+"{{ if eq .Status \"Connected\" }}{{ .Networks }}{{ else }}\uF663{{ end }}"
+```
+
+:::
+
+### Properties
+
+- `.Status: string `- if at less one network is connected.
+- `.Networks: string` - the formatted network info based on the properties above.
+- `.NetworksInfo: []struct` - an array of `NetworkInfo` object, you can use any property it for your own customization.
+
+[templates]: /docs/configuration/templates

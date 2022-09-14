@@ -15,6 +15,10 @@ rules:
     - perf
     - test
     - revert
+  body-max-line-length:
+    - 2
+    - always
+    - 200
 help: |
   **Possible types**:
   `chore`:    Change build process, tooling or dependencies.

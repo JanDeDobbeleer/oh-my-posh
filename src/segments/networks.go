@@ -6,6 +6,7 @@ import (
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/regex"
+	"strconv"
 	"strings"
 )
 
@@ -98,7 +99,8 @@ func (n *Networks) ConstructNetworkInfo(network environment.NetworkInfo) string 
 	IconAsAT := n.props.GetBool("IconAsAT", false)
 	ShowType := n.props.GetBool("ShowType", true)
 	ShowSSID := n.props.GetBool("ShowSSID", true)
-	SSIDAbbr := n.props.GetInt(properties.Property("SSIDAbbr"), 0)
+	SSIDAbbr := n.props.GetInt("SSIDAbbr", 0)
+	LinkSpeedFull := n.props.GetBool("LinkSpeedFull", false)
 	LinkSpeedUnit := Unit(n.props.GetString("LinkSpeedUnit", "Auto"))
 
 	icon, OK := NDISPhysicalMeidaTypeMap[network.NDISPhysicalMeidaType]
@@ -132,102 +134,158 @@ func (n *Networks) ConstructNetworkInfo(network environment.NetworkInfo) string 
 	}
 
 	if LinkSpeedUnit != Hide {
+		var TransmitLinkSpeed string
+		var TransmitLinkSpeedUnit Unit
+		var ReceiveLinkSpeed string
+		var ReceiveLinkSpeedUnit Unit
+
 		switch LinkSpeedUnit {
 		case bps:
-			str += fmt.Sprintf("%s%d/%d%s", AT, network.TransmitLinkSpeed, network.ReceiveLinkSpeed, bps)
+			TransmitLinkSpeed = fmt.Sprintf("%d", network.TransmitLinkSpeed)
+			TransmitLinkSpeedUnit = bps
+			ReceiveLinkSpeed = fmt.Sprintf("%d", network.ReceiveLinkSpeed)
+			ReceiveLinkSpeedUnit = bps
 		case b:
-			str += fmt.Sprintf("%s%d/%d%s", AT, network.TransmitLinkSpeed, network.ReceiveLinkSpeed, b)
+			TransmitLinkSpeed = fmt.Sprintf("%d", network.TransmitLinkSpeed)
+			TransmitLinkSpeedUnit = b
+			ReceiveLinkSpeed = fmt.Sprintf("%d", network.ReceiveLinkSpeed)
+			ReceiveLinkSpeedUnit = b
 		case Kbps:
-			str += fmt.Sprintf("%s%.3g/%.3g%s", AT, float64(network.TransmitLinkSpeed)/math.Pow10(3), float64(network.ReceiveLinkSpeed)/math.Pow10(3), Kbps)
+			TransmitLinkSpeed = strconv.FormatFloat(float64(network.TransmitLinkSpeed)/math.Pow10(3), 'f', -1, 64)
+			TransmitLinkSpeedUnit = Kbps
+			ReceiveLinkSpeed = strconv.FormatFloat(float64(network.ReceiveLinkSpeed)/math.Pow10(3), 'f', -1, 64)
+			ReceiveLinkSpeedUnit = Kbps
 		case K:
-			str += fmt.Sprintf("%s%.3g/%.3g%s", AT, float64(network.TransmitLinkSpeed)/math.Pow10(3), float64(network.ReceiveLinkSpeed)/math.Pow10(3), K)
+			TransmitLinkSpeed = strconv.FormatFloat(float64(network.TransmitLinkSpeed)/math.Pow10(3), 'f', -1, 64)
+			TransmitLinkSpeedUnit = K
+			ReceiveLinkSpeed = strconv.FormatFloat(float64(network.ReceiveLinkSpeed)/math.Pow10(3), 'f', -1, 64)
+			ReceiveLinkSpeedUnit = K
 		case Mbps:
-			str += fmt.Sprintf("%s%.3g/%.3g%s", AT, float64(network.TransmitLinkSpeed)/math.Pow10(6), float64(network.ReceiveLinkSpeed)/math.Pow10(6), Mbps)
+			TransmitLinkSpeed = strconv.FormatFloat(float64(network.TransmitLinkSpeed)/math.Pow10(6), 'f', -1, 64)
+			TransmitLinkSpeedUnit = Mbps
+			ReceiveLinkSpeed = strconv.FormatFloat(float64(network.ReceiveLinkSpeed)/math.Pow10(6), 'f', -1, 64)
+			ReceiveLinkSpeedUnit = Mbps
 		case M:
-			str += fmt.Sprintf("%s%.3g/%.3g%s", AT, float64(network.TransmitLinkSpeed)/math.Pow10(6), float64(network.ReceiveLinkSpeed)/math.Pow10(6), M)
+			TransmitLinkSpeed = strconv.FormatFloat(float64(network.TransmitLinkSpeed)/math.Pow10(6), 'f', -1, 64)
+			TransmitLinkSpeedUnit = M
+			ReceiveLinkSpeed = strconv.FormatFloat(float64(network.ReceiveLinkSpeed)/math.Pow10(6), 'f', -1, 64)
+			ReceiveLinkSpeedUnit = M
 		case Gbps:
-			str += fmt.Sprintf("%s%.3g/%.3g%s", AT, float64(network.TransmitLinkSpeed)/math.Pow10(9), float64(network.ReceiveLinkSpeed)/math.Pow10(9), Gbps)
+			TransmitLinkSpeed = strconv.FormatFloat(float64(network.TransmitLinkSpeed)/math.Pow10(9), 'f', -1, 64)
+			TransmitLinkSpeedUnit = Gbps
+			ReceiveLinkSpeed = strconv.FormatFloat(float64(network.ReceiveLinkSpeed)/math.Pow10(9), 'f', -1, 64)
+			ReceiveLinkSpeedUnit = Gbps
 		case G:
-			str += fmt.Sprintf("%s%.3g/%.3g%s", AT, float64(network.TransmitLinkSpeed)/math.Pow10(9), float64(network.ReceiveLinkSpeed)/math.Pow10(9), G)
+			TransmitLinkSpeed = strconv.FormatFloat(float64(network.TransmitLinkSpeed)/math.Pow10(9), 'f', -1, 64)
+			TransmitLinkSpeedUnit = G
+			ReceiveLinkSpeed = strconv.FormatFloat(float64(network.ReceiveLinkSpeed)/math.Pow10(9), 'f', -1, 64)
+			ReceiveLinkSpeedUnit = G
 		case Tbps:
-			str += fmt.Sprintf("%s%.3g/%.3g%s", AT, float64(network.TransmitLinkSpeed)/math.Pow10(12), float64(network.ReceiveLinkSpeed)/math.Pow10(12), Tbps)
+			TransmitLinkSpeed = strconv.FormatFloat(float64(network.TransmitLinkSpeed)/math.Pow10(12), 'f', -1, 64)
+			TransmitLinkSpeedUnit = Tbps
+			ReceiveLinkSpeed = strconv.FormatFloat(float64(network.ReceiveLinkSpeed)/math.Pow10(12), 'f', -1, 64)
+			ReceiveLinkSpeedUnit = Tbps
 		case T:
-			str += fmt.Sprintf("%s%.3g/%.3g%s", AT, float64(network.TransmitLinkSpeed)/math.Pow10(12), float64(network.ReceiveLinkSpeed)/math.Pow10(12), T)
+			TransmitLinkSpeed = strconv.FormatFloat(float64(network.TransmitLinkSpeed)/math.Pow10(12), 'f', -1, 64)
+			TransmitLinkSpeedUnit = T
+			ReceiveLinkSpeed = strconv.FormatFloat(float64(network.ReceiveLinkSpeed)/math.Pow10(12), 'f', -1, 64)
+			ReceiveLinkSpeedUnit = T
 		case Auto:
-			TransmitUnit := (len(fmt.Sprintf("%d", network.TransmitLinkSpeed)) - 1) / 3
-			if TransmitUnit > 4 {
-				TransmitUnit = 4
+			TransmitSpeedUnitIndex := (len(fmt.Sprintf("%d", network.TransmitLinkSpeed)) - 1) / 3
+			if TransmitSpeedUnitIndex > 4 {
+				TransmitSpeedUnitIndex = 4
 			}
-			ReceiveUnit := (len(fmt.Sprintf("%d", network.TransmitLinkSpeed)) - 1) / 3
-			if ReceiveUnit > 4 {
-				ReceiveUnit = 4
-			}
-			str += fmt.Sprintf("%s%.3g", AT, float64(network.TransmitLinkSpeed)/math.Pow10(3*TransmitUnit))
-			if TransmitUnit != ReceiveUnit {
-				switch TransmitUnit {
-				case 0:
-					str += string(bps)
-				case 1:
-					str += string(Kbps)
-				case 2:
-					str += string(Mbps)
-				case 3:
-					str += string(Gbps)
-				case 4:
-					str += string(Tbps)
-				}
-			}
-			str += fmt.Sprintf("/%.3g", float64(network.ReceiveLinkSpeed)/math.Pow10(3*ReceiveUnit))
-			switch ReceiveUnit {
+			switch TransmitSpeedUnitIndex {
 			case 0:
-				str += string(bps)
+				TransmitLinkSpeedUnit = bps
 			case 1:
-				str += string(Kbps)
+				TransmitLinkSpeedUnit = Kbps
 			case 2:
-				str += string(Mbps)
+				TransmitLinkSpeedUnit = Mbps
 			case 3:
-				str += string(Gbps)
+				TransmitLinkSpeedUnit = Gbps
 			case 4:
-				str += string(Tbps)
+				TransmitLinkSpeedUnit = Tbps
+			}
+			ReceiveSpeedUnitIndex := (len(fmt.Sprintf("%d", network.TransmitLinkSpeed)) - 1) / 3
+			if ReceiveSpeedUnitIndex > 4 {
+				ReceiveSpeedUnitIndex = 4
+			}
+			switch ReceiveSpeedUnitIndex {
+			case 0:
+				ReceiveLinkSpeedUnit = bps
+			case 1:
+				ReceiveLinkSpeedUnit = Kbps
+			case 2:
+				ReceiveLinkSpeedUnit = Mbps
+			case 3:
+				ReceiveLinkSpeedUnit = Gbps
+			case 4:
+				ReceiveLinkSpeedUnit = Tbps
+			}
+			if TransmitSpeedUnitIndex == 0 {
+				TransmitLinkSpeed = fmt.Sprintf("%d", network.TransmitLinkSpeed)
+			} else {
+				TransmitLinkSpeed = fmt.Sprintf("%.3g", float64(network.TransmitLinkSpeed)/math.Pow10(3*TransmitSpeedUnitIndex))
+			}
+			if ReceiveSpeedUnitIndex == 0 {
+				ReceiveLinkSpeed = fmt.Sprintf("%d", network.ReceiveLinkSpeed)
+			} else {
+				ReceiveLinkSpeed = fmt.Sprintf("%.3g", float64(network.ReceiveLinkSpeed)/math.Pow10(3*ReceiveSpeedUnitIndex))
 			}
 		case A:
-			TransmitUnit := (len(fmt.Sprintf("%d", network.TransmitLinkSpeed)) - 1) / 3
-			if TransmitUnit > 4 {
-				TransmitUnit = 4
+			TransmitSpeedUnitIndex := (len(fmt.Sprintf("%d", network.TransmitLinkSpeed)) - 1) / 3
+			if TransmitSpeedUnitIndex > 4 {
+				TransmitSpeedUnitIndex = 4
 			}
-			ReceiveUnit := (len(fmt.Sprintf("%d", network.TransmitLinkSpeed)) - 1) / 3
-			if ReceiveUnit > 4 {
-				ReceiveUnit = 4
-			}
-			str += fmt.Sprintf("%s%.3g", AT, float64(network.TransmitLinkSpeed)/math.Pow10(3*TransmitUnit))
-			if TransmitUnit != ReceiveUnit {
-				switch TransmitUnit {
-				case 0:
-					str += string(b)
-				case 1:
-					str += string(K)
-				case 2:
-					str += string(M)
-				case 3:
-					str += string(G)
-				case 4:
-					str += string(T)
-				}
-			}
-			str += fmt.Sprintf("/%.3g", float64(network.ReceiveLinkSpeed)/math.Pow10(3*ReceiveUnit))
-			switch ReceiveUnit {
+			switch TransmitSpeedUnitIndex {
 			case 0:
-				str += string(b)
+				TransmitLinkSpeedUnit = b
 			case 1:
-				str += string(K)
+				TransmitLinkSpeedUnit = K
 			case 2:
-				str += string(M)
+				TransmitLinkSpeedUnit = M
 			case 3:
-				str += string(G)
+				TransmitLinkSpeedUnit = G
 			case 4:
-				str += string(T)
+				TransmitLinkSpeedUnit = T
+			}
+			ReceiveSpeedUnitIndex := (len(fmt.Sprintf("%d", network.TransmitLinkSpeed)) - 1) / 3
+			if ReceiveSpeedUnitIndex > 4 {
+				ReceiveSpeedUnitIndex = 4
+			}
+			switch ReceiveSpeedUnitIndex {
+			case 0:
+				ReceiveLinkSpeedUnit = b
+			case 1:
+				ReceiveLinkSpeedUnit = K
+			case 2:
+				ReceiveLinkSpeedUnit = M
+			case 3:
+				ReceiveLinkSpeedUnit = G
+			case 4:
+				ReceiveLinkSpeedUnit = T
+			}
+			if TransmitSpeedUnitIndex == 0 {
+				TransmitLinkSpeed = fmt.Sprintf("%d", network.TransmitLinkSpeed)
+			} else {
+				TransmitLinkSpeed = fmt.Sprintf("%.3g", float64(network.TransmitLinkSpeed)/math.Pow10(3*TransmitSpeedUnitIndex))
+			}
+			if ReceiveSpeedUnitIndex == 0 {
+				ReceiveLinkSpeed = fmt.Sprintf("%d", network.ReceiveLinkSpeed)
+			} else {
+				ReceiveLinkSpeed = fmt.Sprintf("%.3g", float64(network.ReceiveLinkSpeed)/math.Pow10(3*ReceiveSpeedUnitIndex))
 			}
 		}
+
+		if LinkSpeedFull || TransmitLinkSpeedUnit != ReceiveLinkSpeedUnit {
+			str += fmt.Sprintf("%s%s%s/%s%s", AT, TransmitLinkSpeed, TransmitLinkSpeedUnit, ReceiveLinkSpeed, ReceiveLinkSpeedUnit)
+		} else if TransmitLinkSpeed == ReceiveLinkSpeed {
+			str += fmt.Sprintf("%s%s%s", AT, TransmitLinkSpeed, TransmitLinkSpeedUnit)
+		} else {
+			str += fmt.Sprintf("%s%s/%s%s", AT, ReceiveLinkSpeed, TransmitLinkSpeed, TransmitLinkSpeedUnit)
+		}
 	}
+
 	return str
 }

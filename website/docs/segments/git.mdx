@@ -66,6 +66,8 @@ You can set the following properties to `true` to enable fetching additional inf
 - ignore_submodules: `map[string]string` - map of repo's where to change the [--ignore-submodules][submodules] flag (`none`, `untracked`, `dirty` or `all`).
 For example `"ignore_submodules": { "/Users/me/repos/repo1": "all" }`. If you want to override for all repo's, use `*` to set the mode
 instead of the repo path.
+- native_fallback: `boolean` - when set to `true` and `git.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native git
+executable to fetch data. Not all information can be displayed in this case. Defaults to `false`.
 
 ### Icons
 

@@ -54,6 +54,7 @@ func TestFossilStatus(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
+		env.On("InWSLSharedDrive").Return(false)
 		env.On("HasCommand", FOSSILCOMMAND).Return(tc.HasCommand)
 		env.On("RunCommand", FOSSILCOMMAND, []string{"status"}).Return(strings.ReplaceAll(tc.Output, "\t", ""), tc.OutputError)
 		f := &Fossil{

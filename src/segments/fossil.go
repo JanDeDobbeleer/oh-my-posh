@@ -38,12 +38,11 @@ func (f *Fossil) Template() string {
 }
 
 func (f *Fossil) Enabled() bool {
-	command := f.getCommand(FOSSILCOMMAND)
-	if !f.env.HasCommand(command) {
+	if !f.hasCommand(FOSSILCOMMAND) {
 		return false
 	}
 	// run fossil command
-	output, err := f.env.RunCommand(command, "status")
+	output, err := f.env.RunCommand(f.command, "status")
 	if err != nil {
 		return false
 	}

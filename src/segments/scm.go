@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+const (
+	// Fallback to native command
+	NativeFallback properties.Property = "native_fallback"
+)
+
 // ScmStatus represents part of the status of a repository
 type ScmStatus struct {
 	Unmerged   int
@@ -45,6 +50,7 @@ type scm struct {
 	env   environment.Environment
 
 	IsWslSharedPath bool
+	CommandMissing  bool
 	Dir             string // actual repo root directory
 
 	workingDir string
@@ -107,13 +113,28 @@ func (s *scm) convertToLinuxPath(path string) string {
 	return s.env.ConvertToLinuxPath(path)
 }
 
-func (s *scm) getCommand(command string) string {
+func (s *scm) hasCommand(command string) bool {
 	if len(s.command) > 0 {
-		return s.command
+		return true
 	}
-	s.command = command
+	// when in a WSL shared folder, we must use command.exe and convert paths accordingly
+	// for worktrees, stashes, and path to work
+	s.IsWslSharedPath = s.env.InWSLSharedDrive()
 	if s.env.GOOS() == environment.WINDOWS || s.IsWslSharedPath {
-		s.command += ".exe"
+		command += ".exe"
 	}
-	return s.command
+	if s.env.HasCommand(command) {
+		s.command = command
+		return true
+	}
+	s.CommandMissing = true
+	// only use the native fallback when set by the user
+	if s.IsWslSharedPath && s.props.GetBool(NativeFallback, false) {
+		command = strings.TrimSuffix(command, ".exe")
+		if s.env.HasCommand(command) {
+			s.command = command
+			return true
+		}
+	}
+	return false
 }

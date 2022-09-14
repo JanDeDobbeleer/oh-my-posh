@@ -28,6 +28,11 @@ Local changes can also be displayed which uses the following syntax:
 }
 ```
 
+## Properties
+
+- native_fallback: `boolean` - when set to `true` and `fossil.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native fossil
+executable to fetch data. Not all information can be displayed in this case. Defaults to `false`.
+
 ## Template ([info][templates])
 
 :::note default template

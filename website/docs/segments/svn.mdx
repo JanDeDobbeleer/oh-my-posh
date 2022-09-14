@@ -40,6 +40,8 @@ As doing multiple [subversion][svn] calls can slow down the prompt experience, w
 You can set the following properties to `true` to enable fetching additional information (and populate the template).
 
 - fetch_status: `boolean` - fetch the local changes - defaults to `false`
+- native_fallback: `boolean` - when set to `true` and `svn.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native svn
+executable to fetch data. Not all information can be displayed in this case. Defaults to `false`.
 
 ## Template ([info][templates])
 

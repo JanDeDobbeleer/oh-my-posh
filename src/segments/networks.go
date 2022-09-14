@@ -287,5 +287,9 @@ func (n *Networks) ConstructNetworkInfo(network environment.NetworkInfo) string 
 		}
 	}
 
+	if len(str) == 0 {
+		return icon
+	}
+
 	return str
 }

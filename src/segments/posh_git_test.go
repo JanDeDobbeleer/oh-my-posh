@@ -193,6 +193,7 @@ func TestPoshGitSegment(t *testing.T) {
 				props: &properties.Map{
 					FetchUpstreamIcon: tc.FetchUpstreamIcon,
 				},
+				command: GITCOMMAND,
 			},
 		}
 		if len(tc.Template) == 0 {

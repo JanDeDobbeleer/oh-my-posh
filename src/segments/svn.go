@@ -62,10 +62,7 @@ func (s *Svn) Enabled() bool {
 }
 
 func (s *Svn) shouldDisplay() bool {
-	// when in a WSL shared folder, we must use git.exe and convert paths accordingly
-	// for worktrees, stashes, and path to work
-	s.IsWslSharedPath = s.env.InWSLSharedDrive()
-	if !s.env.HasCommand(s.getCommand(SVNCOMMAND)) {
+	if !s.hasCommand(SVNCOMMAND) {
 		return false
 	}
 	Svndir, err := s.env.HasParentFilePath(".svn")
@@ -120,7 +117,7 @@ func (s *Svn) setSvnStatus() {
 
 func (s *Svn) getSvnCommandOutput(command string, args ...string) string {
 	args = append([]string{command, s.realDir}, args...)
-	val, err := s.env.RunCommand(s.getCommand(SVNCOMMAND), args...)
+	val, err := s.env.RunCommand(s.command, args...)
 	if err != nil {
 		return ""
 	}

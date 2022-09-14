@@ -154,8 +154,9 @@ func TestGetGitOutputForCommand(t *testing.T) {
 	env.On("GOOS").Return("unix")
 	g := &Git{
 		scm: scm{
-			env:   env,
-			props: properties.Map{},
+			env:     env,
+			props:   properties.Map{},
+			command: GITCOMMAND,
 		},
 	}
 	got := g.getGitCommandOutput(commandArgs...)
@@ -308,6 +309,7 @@ func TestSetGitHEADContextClean(t *testing.T) {
 					TagIcon:        "tag ",
 					RevertIcon:     "revert ",
 				},
+				command: GITCOMMAND,
 			},
 			ShortHash: "1234567",
 			Ref:       tc.Ref,
@@ -346,6 +348,7 @@ func TestSetPrettyHEADName(t *testing.T) {
 					CommitIcon: "commit ",
 					TagIcon:    "tag ",
 				},
+				command: GITCOMMAND,
 			},
 			ShortHash: tc.ShortHash,
 		}
@@ -473,8 +476,9 @@ func TestSetGitStatus(t *testing.T) {
 		env.MockGitCommand("", strings.ReplaceAll(tc.Output, "\t", ""), "status", "-unormal", "--branch", "--porcelain=2")
 		g := &Git{
 			scm: scm{
-				env:   env,
-				props: properties.Map{},
+				env:     env,
+				props:   properties.Map{},
+				command: GITCOMMAND,
 			},
 		}
 		if tc.ExpectedWorking == nil {
@@ -546,8 +550,9 @@ func TestGitUpstream(t *testing.T) {
 		}
 		g := &Git{
 			scm: scm{
-				env:   env,
-				props: props,
+				env:     env,
+				props:   props,
+				command: GITCOMMAND,
 			},
 			Upstream: "origin/main",
 		}
@@ -592,48 +597,6 @@ func TestGetBranchStatus(t *testing.T) {
 		}
 		g.setBranchStatus()
 		assert.Equal(t, tc.Expected, g.BranchStatus, tc.Case)
-	}
-}
-
-func TestGetGitCommand(t *testing.T) {
-	cases := []struct {
-		Case            string
-		Expected        string
-		IsWSL           bool
-		IsWSL1          bool
-		GOOS            string
-		CWD             string
-		IsWslSharedPath bool
-	}{
-		{Case: "On Windows", Expected: "git.exe", GOOS: environment.WINDOWS},
-		{Case: "Non Windows", Expected: "git"},
-		{Case: "Iside WSL2, non shared", IsWSL: true, Expected: "git"},
-		{Case: "Iside WSL2, shared", Expected: "git.exe", IsWSL: true, IsWslSharedPath: true, CWD: "/mnt/bill"},
-		{Case: "Iside WSL1, shared", Expected: "git", IsWSL: true, IsWSL1: true, CWD: "/mnt/bill"},
-	}
-
-	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On("IsWsl").Return(tc.IsWSL)
-		env.On("GOOS").Return(tc.GOOS)
-		env.On("Pwd").Return(tc.CWD)
-		wslUname := "5.10.60.1-microsoft-standard-WSL2"
-		if tc.IsWSL1 {
-			wslUname = "4.4.0-19041-Microsoft"
-		}
-		env.On("RunCommand", "uname", []string{"-r"}).Return(wslUname, nil)
-		g := &Git{
-			scm: scm{
-				env: env,
-			},
-		}
-		if tc.IsWslSharedPath {
-			env.On("InWSLSharedDrive").Return(true)
-			g.IsWslSharedPath = tc.IsWslSharedPath
-		} else {
-			env.On("InWSLSharedDrive").Return(false)
-		}
-		assert.Equal(t, tc.Expected, g.getCommand(GITCOMMAND), tc.Case)
 	}
 }
 

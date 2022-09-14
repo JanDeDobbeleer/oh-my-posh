@@ -164,11 +164,7 @@ func (g *Git) Kraken() string {
 }
 
 func (g *Git) shouldDisplay() bool {
-	// when in a WSL shared folder, we must use git.exe and convert paths accordingly
-	// for worktrees, stashes, and path to work
-	g.IsWslSharedPath = g.env.InWSLSharedDrive()
-
-	if !g.env.HasCommand(g.getCommand(GITCOMMAND)) {
+	if !g.hasCommand(GITCOMMAND) {
 		return false
 	}
 
@@ -376,7 +372,7 @@ func (g *Git) setGitStatus() {
 
 func (g *Git) getGitCommandOutput(args ...string) string {
 	args = append([]string{"-C", g.realDir, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
-	val, err := g.env.RunCommand(g.getCommand(GITCOMMAND), args...)
+	val, err := g.env.RunCommand(g.command, args...)
 	if err != nil {
 		return ""
 	}

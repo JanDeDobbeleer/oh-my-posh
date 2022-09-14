@@ -20,13 +20,13 @@ jobs:
         working-directory: ${{ github.workspace }}/src
     steps:
     - name: Install Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@268d8c0ca0432bb2cf416faae41297df9d262d7f
       with:
         go-version: 1.18
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
     - name: Golang CI
-      uses: golangci/golangci-lint-action@v2
+      uses: golangci/golangci-lint-action@537aa1903e5d359d0b27dbc19ddd22c5087f3fbc
       with:
         version: latest
         working-directory: src

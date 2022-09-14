@@ -13,22 +13,22 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
         with:
           submodules: true
           persist-credentials: false
       - name: Install Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@268d8c0ca0432bb2cf416faae41297df9d262d7f
         with:
           go-version: 1.18
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@2fddd8803e2f5c9604345a0b591c3020ee971a93
         with:
           node-version: 17.6.0
         # Create Kind cluster to have a Kubernetes context for cloud-native-azure theme
         # Images are defined on every Kind release
         # See https://github.com/kubernetes-sigs/kind/releases
       - name: Create k8s v1.23 Kind Cluster
-        uses: helm/kind-action@v1.2.0
+        uses: helm/kind-action@d08cf6ff1575077dee99962540d77ce91c62387d
         with:
           node_image: kindest/node:v1.23.4@sha256:0e34f0d0fd448aa2f2819cfd74e99fe5793a6e4938b328f657c8e3f81ee0dfb9
           cluster_name: posh
@@ -55,7 +55,7 @@ jobs:
           cd ..
       - name: Build Docs And Deploy 🚀
         id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
+        uses: Azure/static-web-apps-deploy@1a947af9992250f3bc2e68ad0754c0b0c11566c9
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ASHY_MEADOW_063E9BA03 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)

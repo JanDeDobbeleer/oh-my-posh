@@ -19,7 +19,7 @@ jobs:
       skipped: ${{ steps.changelog.outputs.skipped }}
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@v2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - name: Create changelog ✍️
         id: changelog
         uses: TriPSs/conventional-changelog-action@v3
@@ -41,13 +41,13 @@ jobs:
         working-directory: ${{ github.workspace }}/src
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@v2
+        uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
       - name: Install Go 🗳
         uses: ./.github/workflows/composite/bootstrap-go
       - name: Tag HEAD 😸
         run: git tag ${{ needs.changelog.outputs.tag }}
       - name: Install cosign 🔑
-        uses: sigstore/cosign-installer@main
+        uses: sigstore/cosign-installer@f3c664df7af409cb4873aa5068053ba9d61a57b6
         with:
           cosign-release: 'v1.4.0'
       - name: Private Key 🔐
@@ -57,7 +57,7 @@ jobs:
         env:
           COSIGN_KEY: ${{secrets.COSIGN_KEY}}
       - name: Run GoReleaser 🚀
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@ff11ca24a9b39f2d36796d1fbd7a4e39c182630a
         with:
           distribution: goreleaser
           version: latest
@@ -82,7 +82,7 @@ jobs:
           }
         shell: pwsh
       - name: Release 🎓
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@1e07f4398721186383de40550babbdf2b84acfc5
         with:
           tag_name: ${{ needs.changelog.outputs.tag }}
           body: ${{ needs.changelog.outputs.body }}

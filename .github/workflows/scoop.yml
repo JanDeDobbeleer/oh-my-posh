@@ -12,10 +12,10 @@ jobs:
         working-directory: ${{ github.workspace }}/packages/scoop
     steps:
     - name: Checkout code 👋
-      uses: actions/checkout@v2
+      uses: actions/checkout@2541b1294d2704b0964813337f33b291d3f8596b
     - name: Get release ⬇️
       id: get_release
-      uses: bruceadams/get-release@v1.2.3
+      uses: bruceadams/get-release@3a8733307b85cd96d52772b037617bd63d99522e
       env:
         GITHUB_TOKEN: ${{ github.token }}
     - name: Update Template ✍️
@@ -23,7 +23,7 @@ jobs:
         $version = $env:GITHUB_REF.TrimStart("refs/tags/v")
         ./build.ps1 -Version $version
     - name: Upload artifacts 🆙
-      uses: actions/github-script@v5
+      uses: actions/github-script@c713e510dbd7d213d92d41b7a7805a986f4c5c66
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |

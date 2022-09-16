@@ -354,12 +354,14 @@ Example:
     function Enable-PoshLineError {}
 
     # perform cleanup on removal so a new initialization in current session works
-    $ExecutionContext.SessionState.Module.OnRemove += {
-        if ((Get-PSReadLineKeyHandler -Key Spacebar).Function -eq 'OhMyPoshSpaceKeyHandler') {
-            Remove-PSReadLineKeyHandler -Key Spacebar
-        }
-        if ((Get-PSReadLineKeyHandler -Key Enter).Function -eq 'OhMyPoshEnterKeyHandler') {
-            Set-PSReadLineKeyHandler -Key Enter -Function AcceptLine
+    if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
+        $ExecutionContext.SessionState.Module.OnRemove += {
+            if ((Get-PSReadLineKeyHandler -Key Spacebar).Function -eq 'OhMyPoshSpaceKeyHandler') {
+                Remove-PSReadLineKeyHandler -Key Spacebar
+            }
+            if ((Get-PSReadLineKeyHandler -Key Enter).Function -eq 'OhMyPoshEnterKeyHandler') {
+                Set-PSReadLineKeyHandler -Key Enter -Function AcceptLine
+            }
         }
     }
 

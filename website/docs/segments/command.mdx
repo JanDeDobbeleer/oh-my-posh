@@ -42,15 +42,17 @@ error). The `&&` functionality will join the output of the commands when success
 
 ## Properties
 
-- shell: `string` - the shell in which to run the command in. Uses `shell -c command` under the hood.
-- command: `string` - the command(s) to run
-- script: `string` - the path to a script to run
+| Name      | Type     | Description                                                                       |
+| --------- | -------- | --------------------------------------------------------------------------------- |
+| `shell`   | `string` | the shell in which to run the command in. Uses `shell -c command` under the hood. |
+| `command` | `string` | the command(s) to run                                                             |
+| `script`  | `string` | the path to a script to run                                                       |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ .Output }}
 ```
 
@@ -58,7 +60,7 @@ error). The `&&` functionality will join the output of the commands when success
 
 ### Properties
 
-- `.Output`: `string` - the output of the command or script.
+|`.Output`|`string`|the output of the command or script.|
 
 [env]: /docs/configuration/templates#environment-variables
 [templates]: /docs/configuration/templates

@@ -29,7 +29,7 @@ Oh My Posh supports multiple different color references, being:
 
 ## Color templates
 
-Array of string templates to define the color based on the current context.
+Array of string [templates][templates] to define the color based on the current context.
 Under the hood this uses go's [text/template][go-text-template] feature extended with [sprig][sprig] and
 offers a few standard properties to work with. For segments, you can look at the **Template Properties**
 section in the documentation. The general template properties are listed [here][template-properties].
@@ -196,3 +196,6 @@ For example, `p:foreground` and `p:background` will be correctly set to "#CAF0F8
 [battery]: /docs/segments/battery
 [template-properties]: /docs/configuration/templates#global-properties
 [aws]: /docs/segments/aws
+[go-text-template]: https://golang.org/pkg/text/template/
+[sprig]: https://masterminds.github.io/sprig/
+[templates]: templates.mdx

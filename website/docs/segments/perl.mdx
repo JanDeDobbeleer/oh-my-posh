@@ -23,22 +23,18 @@ Display the currently active perl version.
 
 ## Properties
 
-- home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
-- fetch_version: `boolean` - display the perl version - defaults to `true`
-- missing_command_text: `string` - text to display when the perl command is missing - defaults to empty
-- display_mode: `string` - determines when the segment is displayed
-  - `always`: the segment is always displayed
-  - `files`: the segment is only displayed when one of the following files is present:
-    - `.perl-version`
-    - `*.pl`
-    - `*.p,`
-    - `*.t`
+| Name                   | Type      | Description                                                                                                                                                                                                                       |
+| ---------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                                                                                               |
+| `fetch_version`        | `boolean` | display the perl version - defaults to `true`                                                                                                                                                                                     |
+| `missing_command_text` | `string`  | text to display when the perl command is missing - defaults to empty                                                                                                                                                              |
+| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when one of the following files is present (**default**):<ul><li>`.perl-version`</li><li>`*.pl`</li><li>`*.p`</li><li>`*.t`</li></ul></li></ul> |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
 ```
 
@@ -46,10 +42,12 @@ Display the currently active perl version.
 
 ### Properties
 
-- `.Full`: `string` - the full version
-- `.Major`: `string` - major number
-- `.Minor`: `string` - minor number
-- `.Patch`: `string` - patch number
-- `.Error`: `string` - error encountered when fetching the version string
+| Name     | Type     | Description                                        |
+| -------- | -------- | -------------------------------------------------- |
+| `.Full`  | `string` | the full version                                   |
+| `.Major` | `string` | major number                                       |
+| `.Minor` | `string` | minor number                                       |
+| `.Patch` | `string` | patch number                                       |
+| `.Error` | `string` | error encountered when fetching the version string |
 
 [templates]: /docs/configuration/templates

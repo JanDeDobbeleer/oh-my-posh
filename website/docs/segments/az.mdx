@@ -23,16 +23,15 @@ Display the currently active Azure subscription information.
 
 ## Properties
 
-- source: `string` - where to fetch the information from - defaults to `first_match`
-  - `first_match`: try the CLI config first, then the PowerShell module. The first to resolve is displayed
-  - `cli`: fetch the information from the CLI config
-  - `pwsh`: fetch the information from the PowerShell Module config
+| Name     | Type     | Description                                                                                                                                                                                                                                                             |
+| -------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `source` | `string` | <ul><li>`first_match`: try the CLI config first, then the PowerShell module. The first to resolve is displayed (**default**)</li><li>`cli`: fetch the information from the CLI config</li><li>`pwsh`: fetch the information from the PowerShell Module config</li></ul> |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ .Name }}
 ```
 
@@ -40,15 +39,17 @@ Display the currently active Azure subscription information.
 
 ### Properties
 
-- `.EnvironmentName`: `string` - account environment name
-- `.HomeTenantID`: `string` - home tenant id
-- `.ID`: `string` - account/subscription id
-- `.IsDefault`: `boolean` - is the default account or not
-- `.Name`: `string` - account name
-- `.State`: `string` - account state
-- `.TenantID`: `string` - tenant id
-- `.User.Name`: `string` - user name
-- `.User.Type`: `string` - user type
-- `.Origin`: `string` - where we received the information from, can be `CLI` or `PWSH`
+| Name               | Type      | Description                                                    |
+| ------------------ | --------- | -------------------------------------------------------------- |
+| `.EnvironmentName` | `string`  | account environment name                                       |
+| `.HomeTenantID`    | `string`  | home tenant id                                                 |
+| `.ID`              | `string`  | account/subscription id                                        |
+| `.IsDefault`       | `boolean` | is the default account or not                                  |
+| `.Name`            | `string`  | account name                                                   |
+| `.State`           | `string`  | account state                                                  |
+| `.TenantID`        | `string`  | tenant id                                                      |
+| `.User.Name`       | `string`  | user name                                                      |
+| `.User.Type`       | `string`  | user type                                                      |
+| `.Origin`          | `string`  | where we received the information from, can be `CLI` or `PWSH` |
 
 [templates]: /docs/configuration/templates

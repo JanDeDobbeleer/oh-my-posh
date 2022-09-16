@@ -32,16 +32,18 @@ Remote Control password.
 
 ## Properties
 
-- playing_icon: `string` - text/icon to show when playing - defaults to `\uE602 `
-- paused_icon: `string` - text/icon to show when paused - defaults to `\uF8E3 `
-- stopped_icon: `string` - text/icon to show when paused - defaults to `\uF04D `
-- api_url: `string` - the YTMDA Remote Control API URL- defaults to `http://127.0.0.1:9863`
+| Name           | Type     | Description                                                           |
+| -------------- | -------- | --------------------------------------------------------------------- |
+| `playing_icon` | `string` | text/icon to show when playing - defaults to `\uE602 `                |
+| `paused_icon`  | `string` | text/icon to show when paused - defaults to `\uF8E3 `                 |
+| `stopped_icon` | `string` | text/icon to show when paused - defaults to `\uF04D `                 |
+| `api_url`      | `string` | the YTMDA Remote Control API URL- defaults to `http://127.0.0.1:9863` |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}
 ```
 
@@ -49,11 +51,12 @@ Remote Control password.
 
 ### Properties
 
-- `.Status`: `string` - player status (`playing`, `paused`, `stopped`)
-- `.Artist`: `string` - current artist
-- `.Track`: `string` - current track
-- `.Icon`: `string` - icon (based on `.Status`)
+| Name      | Type     | Description                                    |
+| --------- | -------- | ---------------------------------------------- |
+| `.Status` | `string` | player status (`playing`, `paused`, `stopped`) |
+| `.Artist` | `string` | current artist                                 |
+| `.Track`  | `string` | current track                                  |
+| `.Icon`   | `string` | icon (based on `.Status`)                      |
 
 [templates]: /docs/configuration/templates
-
 [templates]: /docs/configuration/templates

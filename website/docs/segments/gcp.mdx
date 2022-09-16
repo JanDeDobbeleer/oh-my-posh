@@ -25,7 +25,7 @@ Display the currently active GCP project, region and account
 
 :::note default template
 
-``` template
+```template
 {{ if .Error }}{{ .Error }}{{ else }}{{ .Project }}{{ end }}
 ```
 
@@ -33,9 +33,11 @@ Display the currently active GCP project, region and account
 
 ### Properties
 
-- `.Project`: `string` - the currently active project
-- `.Account`: `string` - the currently active account
-- `.Region`: `string` - default region for the active context
-- `.Error`: `string` - contains any error messages generated when trying to load the GCP config
+| Name       | Type     | Description                                                              |
+| ---------- | -------- | ------------------------------------------------------------------------ |
+| `.Project` | `string` | the currently active project                                             |
+| `.Account` | `string` | the currently active account                                             |
+| `.Region`  | `string` | default region for the active context                                    |
+| `.Error`   | `string` | contains any error messages generated when trying to load the GCP config |
 
 [templates]: /docs/configuration/templates

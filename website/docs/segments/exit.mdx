@@ -16,10 +16,7 @@ Displays the last exit code or that the last command failed based on the configu
   "style": "diamond",
   "foreground": "#ffffff",
   "background": "#00897b",
-  "background_templates": [
-    "{{ if gt .Code 0 }}#e91e63{{ end }}",
-  ],
-  "leading_diamond": "",
+  "background_templates": ["{{ if gt .Code 0 }}#e91e63{{ end }}"],
   "trailing_diamond": "\uE0B4",
   "template": "<#193549>\uE0B0</> \uE23A ",
   "properties": {
@@ -30,7 +27,9 @@ Displays the last exit code or that the last command failed based on the configu
 
 ## Properties
 
-- always_enabled: `boolean` - always show the status - defaults to `false`
+| Name             | Type      | Description                                  |
+| ---------------- | --------- | -------------------------------------------- |
+| `always_enabled` | `boolean` | always show the status - defaults to `false` |
 
 [colors]: /docs/configuration/colors
 
@@ -38,7 +37,7 @@ Displays the last exit code or that the last command failed based on the configu
 
 :::note default template
 
-``` template
+```template
 {{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf42e{{ end }}
 ```
 
@@ -46,7 +45,9 @@ Displays the last exit code or that the last command failed based on the configu
 
 ### Properties
 
-- `.Code`: `number` - the last known exit code
-- `.Meaning`: `string` - the textual meaning linked to exit code (if applicable, otherwise identical to `.Code`)
+| Name       | Type     | Description                                                                             |
+| ---------- | -------- | --------------------------------------------------------------------------------------- |
+| `.Code`    | `number` | the last known exit code                                                                |
+| `.Meaning` | `string` | the textual meaning linked to exit code (if applicable, otherwise identical to `.Code`) |
 
 [templates]: /docs/configuration/templates

@@ -34,16 +34,17 @@ The free tier for is sufficient. You'll find the API key in your profile setting
 
 ## Properties
 
-- url: `string` - Your Wakatime [summaries][wk-summaries] URL, including the API key. Example above. You'll know this
-works if you can curl it yourself and a result. - defaults to ``
-- http_timeout: `int` - The default timeout for http request is 20ms. If no segment is shown, try increasing this timeout.
-- cache_timeout: `int` - The default timeout for request caching is 10m. A value of 0 disables the cache.
+| Name  | Type     | Description                                                                                         |
+| ----- | -------- | --------------------------------------------------------------------------------------------------- |
+| `url` | `string` | Your Wakatime [summaries][wk-summaries] URL, including the API key. Example above. You'll know this |
+
+works if you can curl it yourself and a result. - defaults to `` |`http_timeout`|`int`|The default timeout for http request is 20ms. If no segment is shown, try increasing this timeout.| |`cache_timeout`|`int`|The default timeout for request caching is 10m. A value of 0 disables the cache.|
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ secondsRound .CummulativeTotal.Seconds }}
 ```
 
@@ -51,12 +52,16 @@ works if you can curl it yourself and a result. - defaults to ``
 
 ### Properties
 
-- `.CummulativeTotal`: `wtTotals` - object holding total tracked time values
+| Name                | Type       | Description                              |
+| ------------------- | ---------- | ---------------------------------------- |
+| `.CummulativeTotal` | `wtTotals` | object holding total tracked time values |
 
 ### wtTotals Properties
 
-- `.Seconds`: `float64` - a number reprecenting the total tracked time in seconds
-- `.Text`: `string` - a string with human readable tracked time (eg: "2 hrs 30 mins")
+| Name       | Type      | Description                                                     |
+| ---------- | --------- | --------------------------------------------------------------- |
+| `.Seconds` | `float64` | a number reprecenting the total tracked time in seconds         |
+| `.Text`    | `string`  | a string with human readable tracked time (eg: "2 hrs 30 mins") |
 
 [wt]: https://wakatime.com
 [wk-summaries]: https://wakatime.com/developers#summaries

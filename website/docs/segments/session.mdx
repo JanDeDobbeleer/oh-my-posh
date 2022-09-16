@@ -26,7 +26,7 @@ Show the current user and host name.
 
 :::note default template
 
-``` template
+```template
 {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .HostName }}
 ```
 
@@ -34,9 +34,11 @@ Show the current user and host name.
 
 ### Properties
 
-- `.UserName`: `string` - the current user's name
-- `.HostName`: `string` - the current computer's name
-- `.SSHSession`: `boolean` - active SSH session or not
-- `.Root`: `boolean` - are you a root/admin user or not
+| Name          | Type      | Description                      |
+| ------------- | --------- | -------------------------------- |
+| `.UserName`   | `string`  | the current user's name          |
+| `.HostName`   | `string`  | the current computer's name      |
+| `.SSHSession` | `boolean` | active SSH session or not        |
+| `.Root`       | `boolean` | are you a root/admin user or not |
 
 [templates]: /docs/configuration/templates

@@ -23,15 +23,16 @@ Display the currently active Kubernetes context name and namespace name.
 
 ## Properties
 
-- display_error: `boolean` - show the error context when failing to retrieve the kubectl information - defaults to `false`
-- parse_kubeconfig: `boolean` - parse kubeconfig files instead of calling out to kubectl to improve
-performance - defaults to `false`
+| Name               | Type      | Description                                                                                           |
+| ------------------ | --------- | ----------------------------------------------------------------------------------------------------- |
+| `display_error`    | `boolean` | show the error context when failing to retrieve the kubectl information - defaults to `false`         |
+| `parse_kubeconfig` | `boolean` | parse kubeconfig files instead of calling out to kubectl to improve performance - defaults to `false` |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }}
 ```
 
@@ -39,15 +40,17 @@ performance - defaults to `false`
 
 ### Properties
 
-- `.Context`: `string` - the current kubectl context
-- `.Namespace`: `string` - the current kubectl context namespace
-- `.User`: `string` - the current kubectl context user
-- `.Cluster`: `string` - the current kubectl context cluster
+| Name         | Type     | Description                           |
+| ------------ | -------- | ------------------------------------- |
+| `.Context`   | `string` | the current kubectl context           |
+| `.Namespace` | `string` | the current kubectl context namespace |
+| `.User`      | `string` | the current kubectl context user      |
+| `.Cluster`   | `string` | the current kubectl context cluster   |
 
 ## Tips
 
 It is common for the Kubernetes "default" namespace to be used when no namespace is provided. If you want your prompt to
- render an empty current namespace using the word "default", you can use something like this for the template:
+render an empty current namespace using the word "default", you can use something like this for the template:
 
 `{{.Context}} :: {{if .Namespace}}{{.Namespace}}{{else}}default{{end}}`
 

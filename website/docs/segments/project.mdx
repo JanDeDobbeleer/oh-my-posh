@@ -33,7 +33,7 @@ Supports:
 
 :::note default template
 
-``` template
+```template
  {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }}
 ```
 
@@ -41,7 +41,9 @@ Supports:
 
 ### Properties
 
-- `.Version`: `string` - The version of your project
-- `.Name`: `string` - The name of your project
+| Name       | Type     | Description                 |
+| ---------- | -------- | --------------------------- |
+| `.Version` | `string` | The version of your project |
+| `.Name`    | `string` | The name of your project    |
 
 [templates]: /docs/configuration/templates

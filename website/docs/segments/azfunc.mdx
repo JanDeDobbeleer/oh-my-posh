@@ -12,33 +12,33 @@ Display the currently active [Azure Functions CLI][az-func-core-tools] version.
 
 ```json
 {
-    "type": "azfunc",
-    "style": "powerline",
-    "powerline_symbol": "\uE0B0",
-    "foreground": "#ffffff",
-    "background": "#FEAC19",
-    "template": " \uf0e7 {{ .Full }} ",
-    "properties": {
-        "fetch_version": true,
-        "display_mode": "files"
-    }
+  "type": "azfunc",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#FEAC19",
+  "template": " \uf0e7 {{ .Full }} ",
+  "properties": {
+    "fetch_version": true,
+    "display_mode": "files"
+  }
 }
 ```
 
 ## Properties
 
-- home_enabled: `boolean` - display the segment in the HOME folder or not - defaults to `false`
-- fetch_version: `boolean` - fetch the Azure Functions CLI version - defaults to `true`
-- missing_command_text: `string` - text to display when the command is missing - defaults to empty
-- display_mode: `string` - determines when the segment is displayed
-  - `always`: the segment is always displayed
-  - `files`: the segment is only displayed when a `host.json` or `local.settings.json` files is present (default)
+| Name                   | Type      | Description                                                                                                                                                                           |
+| ---------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                                                   |
+| `fetch_version`        | `boolean` | fetch the Azure Functions CLI version - defaults to `true`                                                                                                                            |
+| `missing_command_text` | `string`  | text to display when the command is missing - defaults to empty                                                                                                                       |
+| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when a `host.json` or `local.settings.json` files is present (**default**)</li></ul> |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
 ```
 
@@ -46,11 +46,13 @@ Display the currently active [Azure Functions CLI][az-func-core-tools] version.
 
 ### Properties
 
-- `.Full`: `string` - the full version
-- `.Major`: `string` - major number
-- `.Minor`: `string` - minor number
-- `.Patch`: `string` - patch number
-- `.Error`: `string` - error encountered when fetching the version string
+| Name     | Type     | Description                                        |
+| -------- | -------- | -------------------------------------------------- |
+| `.Full`  | `string` | the full version                                   |
+| `.Major` | `string` | major number                                       |
+| `.Minor` | `string` | minor number                                       |
+| `.Patch` | `string` | patch number                                       |
+| `.Error` | `string` | error encountered when fetching the version string |
 
 [templates]: /docs/configuration/templates
 [az-func-core-tools]: https://github.com/Azure/azure-functions-core-tools

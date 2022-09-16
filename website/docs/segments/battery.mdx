@@ -37,17 +37,19 @@ Battery displays the remaining power percentage for your battery.
 
 ## Properties
 
-- display_error: `boolean` - show the error context when failing to retrieve the battery information - defaults to `false`
-- charging_icon: `string` - icon to display when charging - defaults to empty
-- discharging_icon: `string` - icon to display when discharging - defaults to empty
-- charged_icon: `string` - icon to display when fully charged - defaults to empty
-- not_charging_icon: `string` - icon to display when fully charged - defaults to empty
+| Name                | Type      | Description                                                                                   |
+| ------------------- | --------- | --------------------------------------------------------------------------------------------- |
+| `display_error`     | `boolean` | show the error context when failing to retrieve the battery information - defaults to `false` |
+| `charging_icon`     | `string`  | icon to display when charging - defaults to empty                                             |
+| `discharging_icon`  | `string`  | icon to display when discharging - defaults to empty                                          |
+| `charged_icon`      | `string`  | icon to display when fully charged - defaults to empty                                        |
+| `not_charging_icon` | `string`  | icon to display when fully charged - defaults to empty                                        |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}
 ```
 
@@ -55,20 +57,18 @@ Battery displays the remaining power percentage for your battery.
 
 ### Properties
 
-- `.State`: `struct` - the battery state, has a `.String` function
-- `.Current`: `float64` - Current (momentary) charge rate (in mW).
-- `.Full`: `float64` - Last known full capacity (in mWh)
-- `.Design`: `float64` - Reported design capacity (in mWh)
-- `.ChargeRate`: `float64` - Current (momentary) charge rate (in mW). It is always non-negative, consult .State
-field to check whether it means charging or discharging (on some systems this might be always `0` if the battery
-doesn't support it)
-- `.Voltage`: `float64` - Current voltage (in V)
-- `.DesignVoltage`: `float64` - Design voltage (in V). Some systems (e.g. macOS) do not provide a separate
-value for this. In such cases, or if getting this fails, but getting `Voltage` succeeds, this field will have
-the same value as `Voltage`, for convenience
-- `.Percentage`: `float64` - the current battery percentage
-- `.Error`: `string` - the error in case fetching the battery information failed
-- `.Icon`: `string` - the icon based on the battery state
+| Name             | Type      | Description                                                                                                                                                                                                                           |
+| ---------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.State`         | `struct`  | the battery state, has a `.String` function                                                                                                                                                                                           |
+| `.Current`       | `float64` | Current (momentary) charge rate (in mW).                                                                                                                                                                                              |
+| `.Full`          | `float64` | Last known full capacity (in mWh)                                                                                                                                                                                                     |
+| `.Design`        | `float64` | Reported design capacity (in mWh)                                                                                                                                                                                                     |
+| `.ChargeRate`    | `float64` | Current (momentary) charge rate (in mW). It is always non-negative, consult .State field to check whether it means charging or discharging (on some systems this might be always `0` if the battery doesn't support it)               |
+| `.Voltage`       | `float64` | Current voltage (in V)                                                                                                                                                                                                                |
+| `.DesignVoltage` | `float64` | Design voltage (in V). Some systems (e.g. macOS) do not provide a separate value for this. In such cases, or if getting this fails, but getting `Voltage` succeeds, this field will have the same value as `Voltage`, for convenience |
+| `.Percentage`    | `float64` | the current battery percentage                                                                                                                                                                                                        |
+| `.Error`         | `string`  | the error in case fetching the battery information failed                                                                                                                                                                             |
+| `.Icon`          | `string`  | the icon based on the battery state                                                                                                                                                                                                   |
 
 [colors]: /docs/configuration/colors
 [battery]: https://github.com/distatus/battery/blob/master/battery.go#L78

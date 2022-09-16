@@ -37,8 +37,8 @@ You need to extend or create a custom theme with your tooltips. For example:
       "style": "diamond",
       "foreground": "#193549",
       "background": "#fffb38",
-      "leading_diamond": "",
-      "trailing_diamond": "",
+      "leading_diamond": "\ue0b6",
+      "trailing_diamond": "\ue0b4",
       "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}",
       "properties": {
         "fetch_status": true,

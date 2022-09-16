@@ -29,7 +29,7 @@ The Nerdbank.GitVersioning CLI can be a bit slow causing the prompt to feel slow
 
 :::note default template
 
-``` template
+```template
 {{ .Version }}
 ```
 
@@ -37,13 +37,15 @@ The Nerdbank.GitVersioning CLI can be a bit slow causing the prompt to feel slow
 
 ### Properties
 
-- `.Version`: `string` - the current version
-- `.AssemblyVersion`: `string` - the current assembly version
-- `.AssemblyInformationalVersion`: `string` - the current assembly informational version
-- `.NuGetPackageVersion`: `string` - the current nuget package version
-- `.ChocolateyPackageVersion`: `string` - the current chocolatey package version
-- `.NpmPackageVersion`: `string` - the current npm package version
-- `.SimpleVersion`: `string` - the current simple version
+| Name                            | Type     | Description                                |
+| ------------------------------- | -------- | ------------------------------------------ |
+| `.Version`                      | `string` | the current version                        |
+| `.AssemblyVersion`              | `string` | the current assembly version               |
+| `.AssemblyInformationalVersion` | `string` | the current assembly informational version |
+| `.NuGetPackageVersion`          | `string` | the current nuget package version          |
+| `.ChocolateyPackageVersion`     | `string` | the current chocolatey package version     |
+| `.NpmPackageVersion`            | `string` | the current npm package version            |
+| `.SimpleVersion`                | `string` | the current simple version                 |
 
 [nbgv]: https://github.com/dotnet/Nerdbank.GitVersioning
 [templates]: /docs/configuration/templates

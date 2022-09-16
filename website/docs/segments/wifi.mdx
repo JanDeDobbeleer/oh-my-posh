@@ -32,7 +32,7 @@ Currently only supports Windows and WSL. Pull requests for Darwin and Linux supp
 
 :::note default template
 
-``` template
+```template
 {{ if .Error }}{{ .Error }}{{ else }}\uFAA8 {{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps{{ end }}
 ```
 
@@ -40,12 +40,14 @@ Currently only supports Windows and WSL. Pull requests for Darwin and Linux supp
 
 ### Properties
 
-- `.SSID`: `string` - the SSID of the current wifi network
-- `.RadioType`: `string` - the radio type - _e.g. 802.11ac, 802.11ax, 802.11n, etc._
-- `.Authentication`: `string` - the authentication type - _e.g. WPA2-Personal, WPA2-Enterprise, etc._
-- `.Channel`: `int` - the current channel number
-- `.ReceiveRate`: `int` - the receive rate (Mbps)
-- `.TransmitRate`: `int` - the transmit rate (Mbps)
-- `.Signal`: `int` - the signal strength (%)
+| Name              | Type     | Description                                                           |
+| ----------------- | -------- | --------------------------------------------------------------------- |
+| `.SSID`           | `string` | the SSID of the current wifi network                                  |
+| `.RadioType`      | `string` | the radio type - _e.g. 802.11ac, 802.11ax, 802.11n, etc._             |
+| `.Authentication` | `string` | the authentication type - _e.g. WPA2-Personal, WPA2-Enterprise, etc._ |
+| `.Channel`        | `int`    | the current channel number                                            |
+| `.ReceiveRate`    | `int`    | the receive rate (Mbps)                                               |
+| `.TransmitRate`   | `int`    | the transmit rate (Mbps)                                              |
+| `.Signal`         | `int`    | the signal strength (%)                                               |
 
 [templates]: /docs/configuration/templates

@@ -101,7 +101,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
     }
 
-    if ("::TOOLTIPS::" -eq "true") {
+    if (("::TOOLTIPS::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
         Set-PSReadLineKeyHandler -Key Spacebar -BriefDescription 'OhMyPoshSpaceKeyHandler' -ScriptBlock {
             [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
             $position = $host.UI.RawUI.CursorPosition
@@ -112,7 +112,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position
             # we need this workaround to prevent the text after cursor from disappearing when the tooltip is rendered
-            [Microsoft.PowerShell.PSConsoleReadLine]::Insert(" ")
+            [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
             [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
         }
     }

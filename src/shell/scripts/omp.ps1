@@ -117,7 +117,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
     }
 
-    if ("::TRANSIENT::" -eq "true") {
+    if (("::TRANSIENT::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
         Set-PSReadLineKeyHandler -Key Enter -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock {
             $previousOutputEncoding = [Console]::OutputEncoding
             try {

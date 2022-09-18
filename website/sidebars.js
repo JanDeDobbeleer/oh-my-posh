@@ -64,6 +64,7 @@ module.exports = {
         "segments/cmake",
         "segments/crystal",
         "segments/dart",
+        "segments/deno",
         "segments/dotnet",
         "segments/executiontime",
         "segments/exit",

@@ -1,0 +1,54 @@
+---
+id: deno
+title: Deno
+sidebar_label: Deno
+---
+
+## What
+
+Display the currently active [Deno CLI][deno-docs] version.
+
+## Sample Configuration
+
+```json
+{
+  "type": "deno",
+  "style": "plain",
+  "foreground": "#3C82F6",
+  "template": " \ufbe4 {{ .Full }} "
+}
+```
+
+## Properties
+
+| Name                   | Type      | Description                                                                                                                                                      |
+| ---------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                              |
+| `fetch_version`        | `boolean` | fetch the active version or not; useful if all you need is an icon indicating `deno`                                                                               |
+| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when `*.ts*` or `*.js` file are present (**default**)</li></ul> |
+| `version_url_template` | `string`  | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                            |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name     | Type     | Description                                        |
+| -------- | -------- | -------------------------------------------------- |
+| `.Full`  | `string` | the full version                                   |
+| `.Major` | `string` | major number                                       |
+| `.Minor` | `string` | minor number                                       |
+| `.Patch` | `string` | patch number                                       |
+| `.URL`   | `string` | URL of the version info / release notes            |
+| `.Error` | `string` | error encountered when fetching the version string |
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[templates]: /docs/configuration/templates
+[deno-docs]: https://deno.land/

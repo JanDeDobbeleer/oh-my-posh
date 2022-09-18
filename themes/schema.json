@@ -948,6 +948,37 @@
           "if": {
             "properties": {
               "type": {
+                "const": "deno"
+              }
+            }
+          },
+          "then": {
+            "title": "Deno CLI Segment",
+            "description": "https://ohmyposh.dev/docs/segments/deno",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
                 "const": "crystal"
               }
             }

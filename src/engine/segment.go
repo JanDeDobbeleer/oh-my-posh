@@ -99,6 +99,8 @@ const (
 	CRYSTAL SegmentType = "crystal"
 	// DART writes the active dart version
 	DART SegmentType = "dart"
+	// DENO writes the active deno version
+	DENO SegmentType = "deno"
 	// DOTNET writes which dotnet version is currently active
 	DOTNET SegmentType = "dotnet"
 	// EXECUTIONTIME writes the execution time of the last run command
@@ -279,6 +281,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		CRYSTAL:       &segments.Crystal{},
 		CMAKE:         &segments.Cmake{},
 		DART:          &segments.Dart{},
+		DENO:          &segments.Deno{},
 		DOTNET:        &segments.Dotnet{},
 		EXECUTIONTIME: &segments.Executiontime{},
 		EXIT:          &segments.Exit{},

@@ -358,6 +358,12 @@
           "title": "Allow the use of interactive prompt escape sequences",
           "description": "https://ohmyposh.dev/docs/configuration/segment#interactive",
           "default": false
+        },
+        "alias": {
+          "type": "string",
+          "title": "Give the segment an alias for use in templates",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#alias",
+          "default": ""
         }
       },
       "allOf": [

@@ -50,6 +50,7 @@ understand how to configure a segment.
 | `templates_logic`      | `string`     | <ul><li>`first_match`: return the first non-whitespace string and skip everything else</li><li>`join`:evaluate all templates and join all non-whitespace strings (**default**)</li></ul>                                                                                                                                   |
 | `properties`           | `[]Property` | see [Properties][properties] below                                                                                                                                                                                                                                                                                         |
 | `interactive`          | `boolean`    | when is true, the segment text is not escaped to allow the use of interactive prompt escape sequences - defaults to `false`                                                                                                                                                                                                |
+| `alias`                | `string`     | for use with [cross segment template properties][cstp]                                                                                                                                                                                                                                                                            |
 
 ## Style
 
@@ -154,3 +155,4 @@ This means that for user Bill, who has a user account `Bill` on Windows and `bil
 [regex]: https://www.regular-expressions.info/tutorial.html
 [templates]: /docs/configuration/templates
 [color-templates]: /docs/configuration/colors#color-templates
+[cstp]: templates.mdx#cross-segment-template-properties

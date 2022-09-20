@@ -32,6 +32,7 @@ type Segment struct {
 	TemplatesLogic      template.Logic `json:"templates_logic,omitempty"`
 	Properties          properties.Map `json:"properties,omitempty"`
 	Interactive         bool           `json:"interactive,omitempty"`
+	Alias               string         `json:"alias,omitempty"`
 
 	writer          SegmentWriter
 	Enabled         bool `json:"-"`
@@ -384,7 +385,11 @@ func (segment *Segment) SetEnabled(env environment.Environment) {
 	}
 	if segment.writer.Enabled() {
 		segment.Enabled = true
-		env.TemplateCache().AddSegmentData(string(segment.Type), segment.writer)
+		name := segment.Alias
+		if len(name) == 0 {
+			name = string(segment.Type)
+		}
+		env.TemplateCache().AddSegmentData(name, segment.writer)
 	}
 }
 

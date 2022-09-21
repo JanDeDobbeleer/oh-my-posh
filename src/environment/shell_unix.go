@@ -157,6 +157,14 @@ func (env *ShellEnvironment) DirIsWritable(path string) bool {
 	return true
 }
 
+// workaround for windows only 'networks' on unix
+const (
+	NdisPhysicalMediumWirelessWan  NDIS_PHYSICAL_MEDIUM = "Wireless WAN"  // 8
+	NdisPhysicalMediumNative802_11 NDIS_PHYSICAL_MEDIUM = "Native 802.11" // 9
+	NdisPhysicalMediumBluetooth    NDIS_PHYSICAL_MEDIUM = "Bluetooth"     // 10
+	NdisPhysicalMedium802_3        NDIS_PHYSICAL_MEDIUM = "802.3"         // 14
+)
+
 func (env *ShellEnvironment) GetAllNetworkInterfaces() (*[]NetworkInfo, error) {
-	return nil , errors.New("not implemented")
+	return nil, errors.New("not implemented")
 }

@@ -306,7 +306,6 @@ const (
 )
 
 func (env *ShellEnvironment) GetAllNetworkInterfaces() (*[]NetworkInfo, error) {
-
 	var pIFTable2 *MIN_IF_TABLE2
 	hGetIfTable2.Call(uintptr(unsafe.Pointer(&pIFTable2)))
 

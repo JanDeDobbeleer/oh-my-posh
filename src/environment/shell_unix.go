@@ -156,3 +156,7 @@ func (env *ShellEnvironment) DirIsWritable(path string) bool {
 
 	return true
 }
+
+func (env *ShellEnvironment) GetAllNetworkInterfaces() (*[]NetworkInfo, error) {
+	return nil , errors.New("not implemented")
+}

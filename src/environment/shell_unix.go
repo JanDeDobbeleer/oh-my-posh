@@ -120,10 +120,6 @@ func (env *ShellEnvironment) ConvertToLinuxPath(path string) string {
 	return path
 }
 
-func (env *ShellEnvironment) WifiNetwork() (*WifiInfo, error) {
-	return nil, errors.New("not implemented")
-}
-
 func (env *ShellEnvironment) LookWinAppPath(file string) (string, error) {
 	return "", errors.New("not relevant")
 }

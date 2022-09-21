@@ -193,8 +193,6 @@ const (
 	UI5TOOLING SegmentType = "ui5tooling"
 	// WAKATIME writes tracked time spend in dev editors
 	WAKATIME SegmentType = "wakatime"
-	// WIFI writes details about the current WIFI connection
-	WIFI SegmentType = "wifi"
 	// WINREG queries the Windows registry.
 	WINREG SegmentType = "winreg"
 	// WITHINGS queries the Withings API.
@@ -328,7 +326,6 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		TIME:          &segments.Time{},
 		UI5TOOLING:    &segments.UI5Tooling{},
 		WAKATIME:      &segments.Wakatime{},
-		WIFI:          &segments.Wifi{},
 		WINREG:        &segments.WindowsRegistry{},
 		WITHINGS:      &segments.Withings{},
 		YTM:           &segments.Ytm{},

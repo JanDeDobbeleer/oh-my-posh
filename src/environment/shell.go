@@ -204,7 +204,6 @@ type Environment interface {
 	ConvertToLinuxPath(path string) string
 	ConvertToWindowsPath(path string) string
 	GetAllNetworkInterfaces() (*[]NetworkInfo, error)
-	WifiNetwork() (*WifiInfo, error)
 	TemplateCache() *TemplateCache
 	LoadTemplateCache()
 	Log(logType LogType, funcName, message string)

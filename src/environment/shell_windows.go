@@ -586,41 +586,6 @@ const (
 	WEP    WifiType = "WEP"
 )
 
-func (env *ShellEnvironment) WifiNetwork() (*WifiInfo, error) {
-	env.Trace(time.Now(), "WifiNetwork")
-	// Open handle
-	var pdwNegotiatedVersion uint32
-	var phClientHandle uint32
-	e, _, err := hWlanOpenHandle.Call(uintptr(uint32(2)), uintptr(unsafe.Pointer(nil)), uintptr(unsafe.Pointer(&pdwNegotiatedVersion)), uintptr(unsafe.Pointer(&phClientHandle)))
-	if e != 0 {
-		return nil, err
-	}
-
-	// defer closing handle
-	defer func() {
-		_, _, _ = hWlanCloseHandle.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)))
-	}()
-
-	// list interfaces
-	var interfaceList *WLAN_INTERFACE_INFO_LIST
-	e, _, err = hWlanEnumInterfaces.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)), uintptr(unsafe.Pointer(&interfaceList)))
-	if e != 0 {
-		return nil, err
-	}
-
-	// use first interface that is connected
-	numberOfInterfaces := int(interfaceList.dwNumberOfItems)
-	infoSize := unsafe.Sizeof(interfaceList.InterfaceInfo[0])
-	for i := 0; i < numberOfInterfaces; i++ {
-		network := (*WLAN_INTERFACE_INFO)(unsafe.Pointer(uintptr(unsafe.Pointer(&interfaceList.InterfaceInfo[0])) + uintptr(i)*infoSize))
-		if network.isState != 1 {
-			continue
-		}
-		return env.parseWlanInterface(network, phClientHandle)
-	}
-	return nil, errors.New("Not connected")
-}
-
 func (env *ShellEnvironment) parseWlanInterface(network *WLAN_INTERFACE_INFO, clientHandle uint32) (*WifiInfo, error) {
 	info := WifiInfo{}
 	info.Interface = strings.TrimRight(string(utf16.Decode(network.strInterfaceDescription[:])), "\x00")

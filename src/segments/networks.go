@@ -279,7 +279,7 @@ func (n *Networks) ConstructNetworkInfo(network environment.NetworkInfo) string 
 		}
 
 		if LinkSpeedFull || TransmitLinkSpeedUnit != ReceiveLinkSpeedUnit {
-			str += fmt.Sprintf("%s%s%s/%s%s", AT, TransmitLinkSpeed, TransmitLinkSpeedUnit, ReceiveLinkSpeed, ReceiveLinkSpeedUnit)
+			str += fmt.Sprintf("%s%s%s/%s%s", AT, ReceiveLinkSpeed, ReceiveLinkSpeedUnit, TransmitLinkSpeed, TransmitLinkSpeedUnit)
 		} else if TransmitLinkSpeed == ReceiveLinkSpeed {
 			str += fmt.Sprintf("%s%s%s", AT, TransmitLinkSpeed, TransmitLinkSpeedUnit)
 		} else {

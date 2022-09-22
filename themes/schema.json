@@ -358,6 +358,12 @@
           "title": "Allow the use of interactive prompt escape sequences",
           "description": "https://ohmyposh.dev/docs/configuration/segment#interactive",
           "default": false
+        },
+        "alias": {
+          "type": "string",
+          "title": "Give the segment an alias for use in templates",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#alias",
+          "default": ""
         }
       },
       "allOf": [
@@ -935,6 +941,37 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "deno"
+              }
+            }
+          },
+          "then": {
+            "title": "Deno CLI Segment",
+            "description": "https://ohmyposh.dev/docs/segments/deno",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
@@ -1913,19 +1950,6 @@
                 }
               }
             }
-          }
-        },
-        {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "poshgit"
-              }
-            }
-          },
-          "then": {
-            "title": "Posh-Git Segment",
-            "description": "https://ohmyposh.dev/docs/segments/poshgit"
           }
         },
         {

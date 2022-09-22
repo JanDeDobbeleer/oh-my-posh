@@ -33,25 +33,24 @@ understand how to configure a segment.
 }
 ```
 
-- type: `string` any of the included [segments][segments]
-- style: `powerline` | `plain` | `diamond` | `accordion`
-- powerline_symbol: `string`
-- invert_powerline: `boolean`
-- leading_diamond: `string`
-- trailing_diamond: `string`
-- foreground: `string` [color][colors]
-- foreground_templates: foreground [color templates][color-templates]
-- background: `string` [color][colors]
-- background_templates: background [color templates][color-templates]
-- template: `string` a go [text/template][go-text-template] [template][templates] to render the prompt
-- templates: `array` of `template`
-- templates_logic: `first_match` | `join`
-- properties: `array` of `Property`: `string`
-- interactive: `boolean`
-
-## Type
-
-Takes the `string` value referencing which segment logic it needs to run (see [segments][segments] for possible values).
+| Name                   | Type         | Description                                                                                                                                                                                                                                                                                                                |
+| ---------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                 | `string`     | takes the `string` value referencing which segment logic it needs to run (see [segments][segments] for possible values)                                                                                                                                                                                                    |
+| `style`                | `string`     | see [Style][style] below. Possible values:<ul><li>`powerline`</li><li>`plain`</li><li>`diamond`</li><li>`accordion`</li></ul>                                                                                                                                                                                              |
+| `powerline_symbol`     | `string`     | character to use when `"style": "powerline"`                                                                                                                                                                                                                                                                               |
+| `invert_powerline`     | `boolean`    | if `true` swaps the foreground and background colors. Can be useful when the character you want does not exist in the perfectly mirrored variant for example - defaults to `false`                                                                                                                                         |
+| `leading_diamond`      | `string`     | character to use at the start of the segment. Will take the background color of the segment as its foreground color                                                                                                                                                                                                        |
+| `trailing_diamond`     | `string`     | character to use at the end of the segment. Will take the background color of the segment as its foreground color                                                                                                                                                                                                          |
+| `foreground`           | `string`     | [color][colors]                                                                                                                                                                                                                                                                                                            |
+| `foreground_templates` | `[]Template` | [color templates][color-templates]                                                                                                                                                                                                                                                                                         |
+| `background`           | `string`     | [color][colors]                                                                                                                                                                                                                                                                                                            |
+| `background_templates` | `[]Template` | [color templates][color-templates]                                                                                                                                                                                                                                                                                         |
+| `template`             | `string`     | a go [text/template][go-text-template] [template][templates] to render the prompt                                                                                                                                                                                                                                          |
+| `templates`            | `[]Template` | in some cases having a single [template][templates] string is a bit cumbersome. Templates allows you to span the segment's [template][templates] string multiple lines where every [template][templates] is evaluated and depending on what you aim to achieve, there are two possible outcomes based on `templates_logic` |
+| `templates_logic`      | `string`     | <ul><li>`first_match`: return the first non-whitespace string and skip everything else</li><li>`join`:evaluate all templates and join all non-whitespace strings (**default**)</li></ul>                                                                                                                                   |
+| `properties`           | `[]Property` | see [Properties][properties] below                                                                                                                                                                                                                                                                                         |
+| `interactive`          | `boolean`    | when is true, the segment text is not escaped to allow the use of interactive prompt escape sequences - defaults to `false`                                                                                                                                                                                                |
+| `alias`                | `string`     | for use with [cross segment template properties][cstp]                                                                                                                                                                                                                                                                            |
 
 ## Style
 
@@ -81,51 +80,20 @@ segment background as their foreground color.
 Same as Powerline except that it will display even when disabled, but without text. That way it seems
 as if the segment is not expanded, just like an accordion.
 
-## Powerline symbol
-
-Text character to use when `"style": "powerline"`.
-
-## Invert Powerline
-
-If `true` this swaps the foreground and background colors. Can be useful when the character you want does not exist
-in the perfectly mirrored variant for example.
-
-## Leading diamond
-
-Text character to use at the start of the segment. Will take the background color of the segment as
-its foreground color.
-
-## Trailing diamond
-
-Text character to use at the end of the segment. Will take the background color of the segment as its foreground color.
-
-## Template
-
-A single line [template][templates] string leveraging a segment's properties to render the text.
-
-## Templates
-
-In some cases having a single [template][templates] string is a bit cumbersome. Templates allows you to span the
-segment's [template][templates] string multiple lines where every [template][templates] is evaluated and depending
-on what you aim to achieve, there are two possible outcomes based on `templates_logic`:
-
-- `first_match`: return the first non-whitespace string and skip everything else
-- `join`: evaluate all templates and join all non-whitespace strings
-
-The default is `join`.
-
 ## Properties
 
-An array of **Properties** with a value. This is used inside of the segment logic to tweak what the output of the segment
-will be. Segments have the ability to define their own Properties, but there are some general ones being used by the
-engine which allow you to customize the output even more.
+An array of Properties with a value. This is used inside of the segment logic to tweak what the output of the segment will be.
+Segments have the ability to define their own Properties, but there are some shared ones being used by the engine which allow
+you to customize the output even more.
 
-### General-purpose properties
+### Shared properties
 
 You can use these on any segment, the engine is responsible for adding them correctly.
 
-- include_folders: `[]string`
-- exclude_folders: `[]string`
+| Name              | Type       |
+| ----------------- | ---------- |
+| `include_folders` | `[]string` |
+| `exclude_folders` | `[]string` |
 
 #### Include / Exclude Folders
 
@@ -166,26 +134,25 @@ You can also combine these properties:
 ]
 ```
 
-#### Interactive
-
-When this is true, the segment text is not escaped to allow the use of interactive prompt escape sequences.
-
 #### Notes
 
 - Oh My Posh will accept both `/` and `\` as path separators for a folder and will match regardless of which
-is used by the current operating system.
+  is used by the current operating system.
 - Because the strings are evaluated as regular expressions, if you want to use a `\` in a Windows
-directory name, you need to specify it as `\\\\`.
+  directory name, you need to specify it as `\\\\`.
 - The character `~` at the start of a specified folder will match the user's home directory.
 - The comparison is case-insensitive on Windows and macOS, but case-sensitive on other operating systems.
 
-This means that for user Bill, who has a user account `Bill` on Windows and `bill` on Linux,  `~/Foo` might match
+This means that for user Bill, who has a user account `Bill` on Windows and `bill` on Linux, `~/Foo` might match
 `C:\Users\Bill\Foo` or `C:\Users\Bill\foo` on Windows but only `/home/bill/Foo` on Linux.
 
 [segments]: /docs/segments/angular
+[properties]: #properties
+[style]: #style
 [colors]: /docs/configuration/colors
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/
 [regex]: https://www.regular-expressions.info/tutorial.html
 [templates]: /docs/configuration/templates
 [color-templates]: /docs/configuration/colors#color-templates
+[cstp]: templates.mdx#cross-segment-template-properties

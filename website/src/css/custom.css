@@ -164,38 +164,78 @@ a.getStarted_Sjon {
 }
 
 [data-theme="light"] .themedImage_ToTc {
-  filter: invert(0%) sepia(8%) saturate(2885%) hue-rotate(67deg) brightness(84%) contrast(87%);
+  filter: invert(0%) sepia(8%) saturate(2885%) hue-rotate(67deg) brightness(84%)
+    contrast(87%);
 }
 
 [data-theme="dark"] .themedImage_ToTc {
-  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(226deg) brightness(102%) contrast(101%);
+  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(226deg)
+    brightness(102%) contrast(101%);
 }
 
 /* Fonts */
 
 :root {
   --ifm-font-family-monospace: "Inter";
-  --ifm-font-family-base: "Inter"
+  --ifm-font-family-base: "Inter";
 }
 
 code {
-  font-family: 'Fira Code', monospace;
+  font-family: "Fira Code", monospace;
 }
 
-code[class*="language-"], pre[class*="language-"] {
-  font-family: 'Fira Code', monospace;
+code[class*="language-"],
+pre[class*="language-"] {
+  font-family: "Fira Code", monospace;
 }
 
 /* Dev settings */
 
-[data-theme="dark"] .themedImage_node_modules-\@docusaurus-theme-classic-lib-theme-ThemedImage-styles-module {
-  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(226deg) brightness(102%) contrast(101%);
+[data-theme="dark"]
+  .themedImage_node_modules-\@docusaurus-theme-classic-lib-theme-ThemedImage-styles-module {
+  filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(226deg)
+    brightness(102%) contrast(101%);
 }
 
-[data-theme="light"] .themedImage_node_modules-\@docusaurus-theme-classic-lib-theme-ThemedImage-styles-module {
-  filter: invert(0%) sepia(8%) saturate(2885%) hue-rotate(67deg) brightness(84%) contrast(87%);
+[data-theme="light"]
+  .themedImage_node_modules-\@docusaurus-theme-classic-lib-theme-ThemedImage-styles-module {
+  filter: invert(0%) sepia(8%) saturate(2885%) hue-rotate(67deg) brightness(84%)
+    contrast(87%);
 }
 
 a.getStarted_src-pages-styles-module {
   color: white;
+}
+
+table {
+  /* We need this to be able to use border-radius. */
+  border-collapse: separate;
+
+  /* Add a 1px border spacing for out box-shadow to fit into. Increase this if you want to increase the border width. */
+  border-spacing: 1px;
+}
+
+table th,
+table td {
+  /* Remove any borders from our stylesheet. */
+  border: 0;
+
+  /* Use the spread value on the box-shadow to set the border width. */
+  box-shadow: 0 0 0 1px #c8c9cc;
+}
+
+table th:first-child {
+  border-top-left-radius: 6.4px;
+}
+
+table th:last-child {
+  border-top-right-radius: 6.4px;
+}
+
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 6.4px;
+}
+
+table tr:last-child td:last-child {
+  border-bottom-right-radius: 6.4px;
 }

@@ -234,8 +234,9 @@ R       Moved.File`,
 
 		s := &Svn{
 			scm: scm{
-				env:   env,
-				props: properties.Map{},
+				env:     env,
+				props:   properties.Map{},
+				command: SVNCOMMAND,
 			},
 		}
 		s.setSvnStatus()

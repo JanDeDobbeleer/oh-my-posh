@@ -1,6 +1,8 @@
 package segments
 
 import (
+	"oh-my-posh/environment"
+	"oh-my-posh/mock"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -152,5 +154,41 @@ func TestTruncateBranchWithSymbol(t *testing.T) {
 			},
 		}
 		assert.Equal(t, tc.Expected, p.truncateBranch(tc.Branch), tc.Case)
+	}
+}
+
+func TestHasCommand(t *testing.T) {
+	cases := []struct {
+		Case            string
+		ExpectedCommand string
+		Command         string
+		GOOS            string
+		IsWslSharedPath bool
+		NativeFallback  bool
+	}{
+		{Case: "On Windows", ExpectedCommand: "git.exe", GOOS: environment.WINDOWS},
+		{Case: "Cache", ExpectedCommand: "git.exe", Command: "git.exe"},
+		{Case: "Non Windows", ExpectedCommand: "git"},
+		{Case: "Iside WSL2, non shared", ExpectedCommand: "git"},
+		{Case: "Iside WSL2, shared", ExpectedCommand: "git.exe", IsWslSharedPath: true},
+		{Case: "Iside WSL2, shared fallback", ExpectedCommand: "git", IsWslSharedPath: true, NativeFallback: true},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("GOOS").Return(tc.GOOS)
+		env.On("InWSLSharedDrive").Return(tc.IsWslSharedPath)
+		env.On("HasCommand", "git").Return(true)
+		env.On("HasCommand", "git.exe").Return(!tc.NativeFallback)
+		s := &scm{
+			env: env,
+			props: properties.Map{
+				NativeFallback: tc.NativeFallback,
+			},
+			command: tc.Command,
+		}
+
+		_ = s.hasCommand(GITCOMMAND)
+		assert.Equal(t, tc.ExpectedCommand, s.command, tc.Case)
 	}
 }

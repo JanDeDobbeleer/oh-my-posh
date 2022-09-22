@@ -4,7 +4,7 @@ title: Withings
 sidebar_label: Withings
 ---
 
-import WithingsConnect from '/img/withings.svg';
+import WithingsConnect from "/img/withings.svg";
 
 ## What
 
@@ -20,7 +20,7 @@ Click the following link to connect with Withings:
 
 <div className="withings">
   <a href="https://account.withings.com/oauth2_user/authorize2?client_id=93675962e88ddfe53f83c0c900558f72174e0ac70ccfb57e48053530c7e6e494&response_type=code&redirect_uri=https://ohmyposh.dev/api/auth&scope=user.activity,user.metrics&state=withings">
-    <WithingsConnect className="withings"/>
+    <WithingsConnect className="withings" />
   </a>
 </div>
 
@@ -35,8 +35,8 @@ Click the following link to connect with Withings:
   "background": "#000000",
   "template": "{{ if gt .Weight 0.0 }} {{ round .Weight 2 }}kg {{ end }}",
   "properties": {
-    "access_token":"11111111111111111",
-    "refresh_token":"1111111111111111",
+    "access_token": "11111111111111111",
+    "refresh_token": "1111111111111111",
     "http_timeout": 1500
   }
 }
@@ -44,17 +44,19 @@ Click the following link to connect with Withings:
 
 ## Properties
 
-- access_token: `string` - token from Withings login, see login link in section above.
-- refresh_token: `string` - token from Withings login, see login link in section above.
-- expires_in: `int` - the default timeout of the token from the Withings login
-- http_timeout: `int` - how long do you want to wait before you want to see your prompt more than your Withings data? - defaults to 500ms
-- CacheTimeout: `int` in minutes - How long do you want your Withings data cached? - defaults to 5 min
+| Name            | Type     | Description                                                                                                       |
+| --------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
+| `access_token`  | `string` | token from Withings login, see login link in section above.                                                       |
+| `refresh_token` | `string` | token from Withings login, see login link in section above.                                                       |
+| `expires_in`    | `int`    | the default timeout of the token from the Withings login                                                          |
+| `http_timeout`  | `int`    | how long do you want to wait before you want to see your prompt more than your Withings data? - defaults to 500ms |
+| `CacheTimeout`  | `int`    | in minutes - How long do you want your Withings data cached? - defaults to 5 min                                  |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ if gt .Weight 0.0 }} {{ round .Weight 2 }}kg {{ end }}
 ```
 
@@ -64,9 +66,11 @@ Click the following link to connect with Withings:
 
 The properties below are available for use in your template
 
-- `.Weight`: `float` - your last measured weight
-- `.SleepHours`: `string` - your last measured sleep SleepHours
-- `.Steps`: `int` - your last measured steps
+| Name          | Type     | Description                         |
+| ------------- | -------- | ----------------------------------- |
+| `.Weight`     | `float`  | your last measured weight           |
+| `.SleepHours` | `string` | your last measured sleep SleepHours |
+| `.Steps`      | `int`    | your last measured steps            |
 
 Now, go out and be active!
 

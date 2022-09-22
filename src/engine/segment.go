@@ -32,6 +32,7 @@ type Segment struct {
 	TemplatesLogic      template.Logic `json:"templates_logic,omitempty"`
 	Properties          properties.Map `json:"properties,omitempty"`
 	Interactive         bool           `json:"interactive,omitempty"`
+	Alias               string         `json:"alias,omitempty"`
 
 	writer          SegmentWriter
 	Enabled         bool `json:"-"`
@@ -99,6 +100,8 @@ const (
 	CRYSTAL SegmentType = "crystal"
 	// DART writes the active dart version
 	DART SegmentType = "dart"
+	// DENO writes the active deno version
+	DENO SegmentType = "deno"
 	// DOTNET writes which dotnet version is currently active
 	DOTNET SegmentType = "dotnet"
 	// EXECUTIONTIME writes the execution time of the last run command
@@ -279,6 +282,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		CRYSTAL:       &segments.Crystal{},
 		CMAKE:         &segments.Cmake{},
 		DART:          &segments.Dart{},
+		DENO:          &segments.Deno{},
 		DOTNET:        &segments.Dotnet{},
 		EXECUTIONTIME: &segments.Executiontime{},
 		EXIT:          &segments.Exit{},
@@ -307,7 +311,6 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		PERL:          &segments.Perl{},
 		PHP:           &segments.Php{},
 		PLASTIC:       &segments.Plastic{},
-		POSHGIT:       &segments.PoshGit{},
 		PROJECT:       &segments.Project{},
 		PYTHON:        &segments.Python{},
 		R:             &segments.R{},
@@ -382,7 +385,11 @@ func (segment *Segment) SetEnabled(env environment.Environment) {
 	}
 	if segment.writer.Enabled() {
 		segment.Enabled = true
-		env.TemplateCache().AddSegmentData(string(segment.Type), segment.writer)
+		name := segment.Alias
+		if len(name) == 0 {
+			name = string(segment.Type)
+		}
+		env.TemplateCache().AddSegmentData(name, segment.writer)
 	}
 }
 

@@ -35,15 +35,16 @@ Supported registry key types:
 
 ## Properties
 
-- path: `string` - registry path to the desired key using backslashes and with a valid root HKEY name.
-  Ending path with \ will get the (Default) key from that path.
-- fallback: `string` - the value to fall back to if no entry is found
+| Name       | Type     | Description                                                                                                                                      |
+| ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `path`     | `string` | registry path to the desired key using backslashes and with a valid root HKEY name. Ending path with \ will get the (Default) key from that path |
+| `fallback` | `string` | the value to fall back to if no entry is found                                                                                                   |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ .Value }}
 ```
 
@@ -51,6 +52,8 @@ Supported registry key types:
 
 ### Properties
 
-- .Value: `string` - The result of your query, or fallback if not found.
+| Name   | Type     | Description                                         |
+| ------ | -------- | --------------------------------------------------- |
+| .Value | `string` | The result of your query, or fallback if not found. |
 
 [templates]: /docs/configuration/templates

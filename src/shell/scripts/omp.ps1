@@ -97,11 +97,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         if ($env:POSH_GIT_ENABLED -eq $true) {
             # We need to set the status so posh-git can facilitate autocomplete
             $global:GitStatus = Get-GitStatus
-            $env:POSH_GIT_STATUS = Write-GitStatus -Status $global:GitStatus
+            $env:POSH_GIT_STATUS = $global:GitStatus | ConvertTo-Json
         }
     }
 
-    if ("::TOOLTIPS::" -eq "true") {
+    if (("::TOOLTIPS::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
         Set-PSReadLineKeyHandler -Key Spacebar -BriefDescription 'OhMyPoshSpaceKeyHandler' -ScriptBlock {
             [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
             $position = $host.UI.RawUI.CursorPosition
@@ -112,12 +112,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position
             # we need this workaround to prevent the text after cursor from disappearing when the tooltip is rendered
-            [Microsoft.PowerShell.PSConsoleReadLine]::Insert(" ")
+            [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
             [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
         }
     }
 
-    if ("::TRANSIENT::" -eq "true") {
+    if (("::TRANSIENT::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
         Set-PSReadLineKeyHandler -Key Enter -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock {
             $previousOutputEncoding = [Console]::OutputEncoding
             try {
@@ -338,6 +338,9 @@ Example:
         # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n
         $standardOut -join "`n"
 
+        # remove any posh-git status
+        $env:POSH_GIT_STATUS = $null
+
         # restore the orignal last exit code
         $global:LASTEXITCODE = $script:OriginalLastExitCode
     }
@@ -351,12 +354,14 @@ Example:
     function Enable-PoshLineError {}
 
     # perform cleanup on removal so a new initialization in current session works
-    $ExecutionContext.SessionState.Module.OnRemove += {
-        if ((Get-PSReadLineKeyHandler -Key Spacebar).Function -eq 'OhMyPoshSpaceKeyHandler') {
-            Remove-PSReadLineKeyHandler -Key Spacebar
-        }
-        if ((Get-PSReadLineKeyHandler -Key Enter).Function -eq 'OhMyPoshEnterKeyHandler') {
-            Set-PSReadLineKeyHandler -Key Enter -Function AcceptLine
+    if ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage") {
+        $ExecutionContext.SessionState.Module.OnRemove += {
+            if ((Get-PSReadLineKeyHandler -Key Spacebar).Function -eq 'OhMyPoshSpaceKeyHandler') {
+                Remove-PSReadLineKeyHandler -Key Spacebar
+            }
+            if ((Get-PSReadLineKeyHandler -Key Enter).Function -eq 'OhMyPoshEnterKeyHandler') {
+                Set-PSReadLineKeyHandler -Key Enter -Function AcceptLine
+            }
         }
     }
 

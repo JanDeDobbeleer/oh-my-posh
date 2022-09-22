@@ -8,7 +8,7 @@ import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
 :::info
-This feature only works in `fish`, `zsh`, `powershell` and `cmd` for the time being.
+This feature only works in `fish`, `zsh`, `powershell` (`ConstrainedLanguage` mode unsupported) and `cmd` for the time being.
 :::
 
 Transient prompt, when enabled, replaces the prompt with a simpler one to allow more screen real estate.
@@ -23,7 +23,6 @@ Typically, your prompt will simply leave the prompt on the screen when you execu
 By enabling Transient Prompt, you can replace the prompt with some other content for a cleaner console as shown here:
 
 ![After Transient](/img/transient-after.gif)
-
 
 ## Configuration
 
@@ -43,13 +42,15 @@ You need to extend or create a custom theme with your transient prompt. For exam
 }
 ```
 
-The configuration has the following properties:
+## Properties
 
-- foreground: `string` [color][colors]
-- foreground_templates: foreground [color templates][color-templates]
-- background: `string` [color][colors]
-- background_templates: background [color templates][color-templates]
-- template: `string` - a fully featured [template][templates] - defaults to `{{ .Shell }}> `
+| Name                   | Type     | Description                                                                                                                                |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `foreground`           | `string` | [color][colors]                                                                                                                            |
+| `foreground_templates` | `array` | [color templates][color-templates]                                                                                                         |
+| `background`           | `string` | [color][colors]                                                                                                                            |
+| `background_templates` | `array` | [color templates][color-templates]                                                                                                         |
+| `template`             | `string` | a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below - defaults to `{{ .Shell }}> ` |
 
 ## Enable the feature
 

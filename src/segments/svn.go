@@ -62,11 +62,7 @@ func (s *Svn) Enabled() bool {
 }
 
 func (s *Svn) shouldDisplay() bool {
-	// when in wsl/wsl2 and in a windows shared folder
-	// we must use Svn.exe and convert paths accordingly
-	// for worktrees, stashes, and path to work
-	s.IsWslSharedPath = s.env.InWSLSharedDrive()
-	if !s.env.HasCommand(s.getCommand(SVNCOMMAND)) {
+	if !s.hasCommand(SVNCOMMAND) {
 		return false
 	}
 	Svndir, err := s.env.HasParentFilePath(".svn")
@@ -80,7 +76,7 @@ func (s *Svn) shouldDisplay() bool {
 	if Svndir.IsDir {
 		s.workingDir = Svndir.Path
 		s.rootDir = Svndir.Path
-		// convert the worktree file path to a windows one when in wsl 2 shared folder
+		// convert the worktree file path to a windows one when in a WSL shared folder
 		s.realDir = strings.TrimSuffix(s.convertToWindowsPath(Svndir.Path), "/.svn")
 		return true
 	}
@@ -89,10 +85,9 @@ func (s *Svn) shouldDisplay() bool {
 	dirPointer := strings.Trim(s.env.FileContent(Svndir.Path), " \r\n")
 	matches := regex.FindNamedRegexMatch(`^Svndir: (?P<dir>.*)$`, dirPointer)
 	if matches != nil && matches["dir"] != "" {
-		// if we open a worktree file in a shared wsl2 folder, we have to convert it back
+		// if we open a worktree file in a WSL shared folder, we have to convert it back
 		// to the mounted path
 		s.workingDir = s.convertToLinuxPath(matches["dir"])
-		return false
 	}
 	return false
 }
@@ -122,7 +117,7 @@ func (s *Svn) setSvnStatus() {
 
 func (s *Svn) getSvnCommandOutput(command string, args ...string) string {
 	args = append([]string{command, s.realDir}, args...)
-	val, err := s.env.RunCommand(s.getCommand(SVNCOMMAND), args...)
+	val, err := s.env.RunCommand(s.command, args...)
 	if err != nil {
 		return ""
 	}

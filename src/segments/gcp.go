@@ -21,7 +21,7 @@ type Gcp struct {
 }
 
 func (g *Gcp) Template() string {
-	return " {{ if .Error }}{{ .Error }}{{ else }}{{ .Project }}{{ end }} "
+	return " {{ if not .Error }}{{ .Project }}{{ end }} "
 }
 
 func (g *Gcp) Init(props properties.Properties, env environment.Environment) {

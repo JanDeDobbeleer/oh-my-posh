@@ -102,7 +102,7 @@ func (env *ShellEnvironment) InWSLSharedDrive() bool {
 		return false
 	}
 	windowsPath := env.ConvertToWindowsPath(env.Pwd())
-	return !strings.HasPrefix(windowsPath, `//wsl.localhost`) && !strings.HasPrefix(windowsPath, `//wsl$`)
+	return !strings.HasPrefix(windowsPath, `//wsl.localhost/`) && !strings.HasPrefix(windowsPath, `//wsl$/`)
 }
 
 func (env *ShellEnvironment) ConvertToWindowsPath(path string) string {

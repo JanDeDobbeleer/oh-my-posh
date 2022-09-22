@@ -5,7 +5,7 @@ sidebar_label: Block
 ---
 
 import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem"
+import TabItem from "@theme/TabItem";
 
 Let's take a closer look at what defines a block.
 
@@ -41,13 +41,11 @@ Let's take a closer look at what defines a block.
 
 ```yaml
 # yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
-...
+---
 blocks:
   - type: prompt
     alignment: left
-    segments: [
-      ...
-    ]
+    segments: [...]
 ```
 
 </TabItem>
@@ -67,12 +65,16 @@ segments = [
 </TabItem>
 </Tabs>
 
-- type: `prompt` | `rprompt`
-- newline: `boolean`
-- alignment: `left` | `right`
-- filler: `string`
-- overflow: `break` | `hide`
-- segments: `array` of one or more `segments`
+## Properties
+
+| Name        | Type      |
+| ----------- | --------- |
+| `type`      | `string`  |
+| `newline`   | `boolean` |
+| `alignment` | `string`  |
+| `filler`    | `string`  |
+| `overflow`  | `string`  |
+| `segments`  | `array`   |
 
 ### Type
 
@@ -80,13 +82,16 @@ Tells the engine what to do with the block. There are two options:
 
 - `prompt` renders one or more segments
 - `rprompt` renders one or more segments aligned to the right of the cursor. Only one `rprompt` block is permitted.
-Supported on zsh, bash, PowerShell, cmd and fish.
+  Supported on zsh, bash, PowerShell, cmd and fish.
 
 ### Newline
 
 Start the block on a new line - defaults to `false`.
 
 ### Alignment
+
+- `left`
+- `right`
 
 Tell the engine if the block should be left or right-aligned.
 
@@ -103,11 +108,15 @@ to be repeated to this property. Add this property to the _right_ aligned block.
 
 ### Overflow
 
+- `break`
+- `hide`
+
 When the right aligned block is so long it will overflow the left aligned block, the engine will either
 break the block or hide it based on the setting. By default it is printed as is on the same line.
 
 ### Segments
 
-Array of one or more segments.
+Array of one or more [segments][segment].
 
 [color-overrides]: /docs/configuration/colors#color-overrides
+[segment]: segment.mdx

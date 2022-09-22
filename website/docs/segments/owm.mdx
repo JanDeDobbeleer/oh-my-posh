@@ -10,7 +10,7 @@ Shows the current weather of a given location with [Open Weather Map][owm].
 
 :::caution
 You **must** request an API key at the [Open Weather Map][owm-price] website.
-The free tier for *Current weather and forecasts collection* is sufficient.
+The free tier for _Current weather and forecasts collection_ is sufficient.
 :::
 
 ## Sample Configuration
@@ -35,22 +35,20 @@ The free tier for *Current weather and forecasts collection* is sufficient.
 
 ## Properties
 
-- apikey: `string` - Your API key from [Open Weather Map][owm]
-- location: `string` - The requested location.
-                        Formatted as <City,STATE,COUNTRY_CODE>. City name, state code and country code divided by comma.
-                        Please, refer to ISO 3166 for the state codes or country codes - defaults to `DE BILT,NL`
-- units: `string` - Units of measurement.
-                    Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`
-- http_timeout: `int` - The default timeout for http request is 20ms.
-- cache_timeout: `int` - The default timeout for request caching is 10m. A value of 0 disables the cache.
-- template: `string` - A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`
+| Name            | Type     | Description                                                                                                                                                                                                        |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apikey`        | `string` | Your API key from [Open Weather Map][owm]                                                                                                                                                                          |
+| `location`      | `string` | The requested location. Formatted as <City,STATE,COUNTRY_CODE>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes - defaults to `DE BILT,NL` |
+| `units`         | `string` | Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`                                                                                 |
+| `http_timeout`  | `int`    | The default timeout for http request is 20ms.                                                                                                                                                                      |
+| `cache_timeout` | `int`    | The default timeout for request caching is 10m. A value of 0 disables the cache.                                                                                                                                   |
+| `template`      | `string` | A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below - defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`                                           |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ .Weather }} ({{ .Temperature }}{{ .UnitIcon }})
 ```
 
@@ -58,10 +56,12 @@ properties below - defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`
 
 ### Properties
 
-- `.Weather`: `string` - the current weather icon
-- `.Temperature`: `int` - the current temperature
-- `.UnitIcon`: `string` - the current unit icon(based on units property)
-- `.URL`: `string` - the url of the current api call
+| Name           | Type     | Description                                    |
+| -------------- | -------- | ---------------------------------------------- |
+| `.Weather`     | `string` | the current weather icon                       |
+| `.Temperature` | `int`    | the current temperature                        |
+| `.UnitIcon`    | `string` | the current unit icon(based on units property) |
+| `.URL`         | `string` | the url of the current api call                |
 
 [templates]: /docs/configuration/templates
 [owm]: https://openweathermap.org

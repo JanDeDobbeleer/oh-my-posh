@@ -9,14 +9,6 @@ sidebar_label: Subversion
 Display subversion information when in a subversion repository. Also works for subfolders. For maximum compatibility,
 make sure your `svn` executable is up-to-date (when branch or status information is incorrect for example).
 
-Local changes can also be displayed which uses the following syntax:
-
-- `+` added
-- `!` conflicted
-- `-` deleted
-- `~` modified
-- `>` moved
-
 ## Sample Configuration
 
 ```json
@@ -39,13 +31,16 @@ Local changes can also be displayed which uses the following syntax:
 As doing multiple [subversion][svn] calls can slow down the prompt experience, we do not fetch information by default.
 You can set the following properties to `true` to enable fetching additional information (and populate the template).
 
-- fetch_status: `boolean` - fetch the local changes - defaults to `false`
+| Name              | Type      | Description                                                                                                                                                                                                                     |
+| ----------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_status`    | `boolean` | fetch the local changes - defaults to `false`                                                                                                                                                                                   |
+| `native_fallback` | `boolean` | when set to `true` and `svn.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native svn executable to fetch data. Not all information can be displayed in this case. Defaults to `false`. |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
  \ue0a0{{.Branch}} r{{.BaseRev}} {{.Working.String}}
 ```
 
@@ -53,20 +48,34 @@ You can set the following properties to `true` to enable fetching additional inf
 
 ### Properties
 
-- `.Working`: `SvnStatus` - changes in the worktree (see below)
-- `.Branch`: `string` - current branch (releative URL reported by `svn info`)
-- `.BaseRev`: `int` - the currently checked out revision number
+| Name       | Type        | Description                                           |
+| ---------- | ----------- | ----------------------------------------------------- |
+| `.Working` | `SvnStatus` | changes in the worktree (see below)                   |
+| `.Branch`  | `string`    | current branch (releative URL reported by `svn info`) |
+| `.BaseRev` | `int`       | the currently checked out revision number             |
 
 ### SvnStatus
 
-- `.Modified`: `int` - number of modified files
-- `.Deleted`: `int` - number of deleted files
-- `.Added`: `int` - number of added files
-- `.Moved`: `int` - number of changed moved files
-- `.Conflicted`: `int` - number of changed tracked files with conflicts
-- `.Changed`: `boolean` - if the status contains changes or not
-- `.HasConflicts`: `boolean` - if the status contains conflicts or not
-- `.String`: `string` - a string representation of the changes above
+| Name            | Type      | Description                                    |
+| --------------- | --------- | ---------------------------------------------- |
+| `.Modified`     | `int`     | number of modified files                       |
+| `.Deleted`      | `int`     | number of deleted files                        |
+| `.Added`        | `int`     | number of added files                          |
+| `.Moved`        | `int`     | number of changed moved files                  |
+| `.Conflicted`   | `int`     | number of changed tracked files with conflicts |
+| `.Changed`      | `boolean` | if the status contains changes or not          |
+| `.HasConflicts` | `boolean` | if the status contains conflicts or not        |
+| `.String`       | `string`  | a string representation of the changes above   |
+
+Local changes use the following syntax:
+
+| Icon | Description |
+| ---- | ----------- |
+| `+`  | added       |
+| `!`  | conflicted  |
+| `-`  | deleted     |
+| `~`  | modified    |
+| `>`  | moved       |
 
 [svn]: https://subversion.apache.org
 [templates]: /docs/config-templates

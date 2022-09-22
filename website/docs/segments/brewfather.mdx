@@ -6,7 +6,7 @@ sidebar_label: Brewfather
 
 ## What
 
-Calling all brewers!  Keep up-to-date with the status of your [Brewfather][brewfather] batch directly in your
+Calling all brewers! Keep up-to-date with the status of your [Brewfather][brewfather] batch directly in your
 commandline prompt using the brewfather segment!
 
 You will need your User ID and API Key as generated in
@@ -41,38 +41,45 @@ NOTE: Temperature units are in degrees C and specific gravity is expressed as `X
 
 ## Properties
 
-- user_id: `string` - as provided by Brewfather's Generate API Key screen.
-- api_key: `string` - as provided by Brewfather's Generate API Key screen.
-- batch_id: `string` - Get this by navigating to the desired batch on the brewfather website,
-the batch id is at the end of the URL in the address bar.
-- http_timeout: `int` in milliseconds - How long to wait for the Brewfather service to answer the request.  Default 2 seconds.
-- cache_timeout: `int` in minutes - How long to wait before updating the data from Brewfather.  Default is 5 minutes.
-- day_icon: `string` - icon or letter to use to indicate days.  Default is "d".
+| Name            | Type     | Description                                                                                                                     |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `user_id`       | `string` | as provided by Brewfather's Generate API Key screen                                                                             |
+| `api_key`       | `string` | as provided by Brewfather's Generate API Key screen                                                                             |
+| `batch_id`      | `string` | Get this by navigating to the desired batch on the brewfather website, the batch id is at the end of the URL in the address bar |
+| `http_timeout`  | `int`    | in milliseconds - How long to wait for the Brewfather service to answer the request. Default 2 seconds                          |
+| `cache_timeout` | `int`    | in minutes - How long to wait before updating the data from Brewfather. Default is 5 minutes                                    |
+| `day_icon`      | `string` | icon or letter to use to indicate days. Default is "d"                                                                          |
+
+## Icons
 
 You can override the icons for temperature trend as used by template property `.TemperatureTrendIcon` with:
 
-- doubleup_icon - for increases of more than 4°C, default is ↑↑
-- singleup_icon - increase 2-4°C, default is ↑
-- fortyfiveup_icon - increase 0.5-2°C, default is ↗
-- flat_icon - change less than 0.5°C, default is →
-- fortyfivedown_icon - decrease 0.5-2°C, default is ↘
-- singledown_icon - decrease 2-4°C, default is ↓
-- doubledown_icon - decrease more than 4°C, default is ↓↓
+| Name                 | Description                                     |
+| -------------------- | ----------------------------------------------- |
+| `doubleup_icon`      | for increases of more than 4°C, default is `↑↑` |
+| `singleup_icon`      | increase 2-4°C, default is `↑`                  |
+| `fortyfiveup_icon`   | increase 0.5-2°C, default is `↗`                |
+| `flat_icon`          | change less than 0.5°C, default is `→`          |
+| `fortyfivedown_icon` | decrease 0.5-2°C, default is `↘`                |
+| `singledown_icon`    | decrease 2-4°C, default is `↓`                  |
+| `doubledown_icon`    | decrease more than 4°C, default is `↓↓`         |
 
 You can override the default icons for batch status as used by template property `.StatusIcon` with:
 
-- planning_status_icon
-- brewing_status_icon
-- fermenting_status_icon
-- conditioning_status_icon
-- completed_status_icon
-- archived_status_icon
+| Name                       |
+| -------------------------- |
+| `planning_status_icon`     |
+| `brewing_status_icon`      |
+| `fermenting_status_icon`   |
+| `conditioning_status_icon` |
+| `completed_status_icon`    |
+| `archived_status_icon`     |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ .StatusIcon }} {{ if .DaysBottledOrFermented }}{{ .DaysBottledOrFermented }}{{ .DayIcon }} {{ end }}{{ url .Recipe.Name .URL }} {{ printf \"%.1f\" .MeasuredAbv }}%{{ if and (.Reading) (eq .Status \"Fermenting\") }} {{ printf \"%.3f\" .Reading.Gravity }} {{ .Reading.Temperature }}\u00b0 {{ .TemperatureTrendIcon }}{{ end }}
 ```
 
@@ -80,65 +87,71 @@ You can override the default icons for batch status as used by template property
 
 ### Properties
 
-Commonly used fields
+| Name                    | Type     | Description                                                                                      |
+| ----------------------- | -------- | ------------------------------------------------------------------------------------------------ |
+| .Status                 | `string` | One of "Planning", "Brewing", "Fermenting", "Conditioning", "Completed" or "Archived"            |
+| .StatusIcon             | `string` | Icon representing above stats. Can be overridden with properties shown above                     |
+| .TemperatureTrendIcon   | `string` | Icon showing temperature trend based on latest and previous reading                              |
+| .DaysFermenting         | `int`    | days since start of fermentation                                                                 |
+| .DaysBottled            | `int`    | days since bottled/kegged                                                                        |
+| .DaysBottledOrFermented | `int`    | one of the above, chosen automatically based on batch status                                     |
+| .Recipe.Name            | `string` | The recipe being brewed in this batch                                                            |
+| .BatchName              | `string` | The name of this batch                                                                           |
+| .BatchNumer             | `int`    | The number of this batch                                                                         |
+| .MeasuredAbv            | `float`  | The ABV for the batch - either estimated from recipe or calculated from entered OG and FG values |
+| .ReadingAge             | `int`    | age in hours of most recent reading or -1 if there are no readings available                     |
 
-- .Status: `string` - One of "Planning", "Brewing", "Fermenting", "Conditioning", "Completed" or "Archived"
-- .StatusIcon `string` - Icon representing above stats.  Can be overridden with properties shown above
-- .TemperatureTrendIcon `string` - Icon showing temperature trend based on latest and previous reading
-- .DaysFermenting `int` - days since start of fermentation
-- .DaysBottled `int` - days since bottled/kegged
-- .DaysBottledOrFermented `int` - one of the above, chosen automatically based on batch status
-- .Recipe.Name: `string` - The recipe being brewed in this batch
-- .BatchName `string` - The name of this batch
-- .BatchNumer `int` - The number of this batch
-- .MeasuredAbv: `float` - The ABV for the batch - either estimated from recipe or calculated from entered OG and FG values
-- .ReadingAge `int` - age in hours of most recent reading or -1 if there are no readings available
+#### Reading
 
-.Reading contains the most recent data from devices or manual entry as visible on the Brewfather's batch Readings graph.
-If there are no readings available, .Reading will be null.
+`.Reading` contains the most recent data from devices or manual entry as visible on the Brewfather's batch Readings graph.
+If there are no readings available, `.Reading` will be null.
 
-- .Reading.Gravity: `float` - specific gravity (in decimal point format)
-- .Reading.Temperature `float` - temperature in °C
-- .Reading.Time `int` - unix timestamp of reading
-- .Reading.Comment `string` - comment attached to this reading
-- .Reading.DeviceType `string` - source of the reading, e.g. "Tilt"
-- .Reading.DeviceID `string` - id of the device, e.g. "PINK"
+| Name                 | Type     | Description                                |
+| -------------------- | -------- | ------------------------------------------ |
+| .Reading.Gravity     | `float`  | specific gravity (in decimal point format) |
+| .Reading.Temperature | `float`  | temperature in °C                          |
+| .Reading.Time        | `int`    | unix timestamp of reading                  |
+| .Reading.Comment     | `string` | comment attached to this reading           |
+| .Reading.DeviceType  | `string` | source of the reading, e.g. "Tilt"         |
+| .Reading.DeviceID    | `string` | id of the device, e.g. "PINK"              |
 
-Additional template properties
+#### Additional properties
 
-- .MeasuredOg: `float` - The OG for the batch as manually entered into Brewfather
-- .MeasuredFg: `float` -The FG for the batch as manually entered into Brewfather
-- .BrewDate: `int` - The unix timestamp of the brew day
-- .FermentStartDate: `int` The unix timestamp when fermentation was started
-- .BottlingDate: `time` - The unix timestamp when bottled/kegged
-- .TemperatureTrend `float` - The difference between the most recent and previous temperature in °C
-- .DayIcon `string` - given by "day_icon", or "d" by default
+| Name              | Type     | Description                                                           |
+| ----------------- | -------- | --------------------------------------------------------------------- |
+| .MeasuredOg       | `float`  | The OG for the batch as manually entered into Brewfather              |
+| .MeasuredFg       | `float`  | The FG for the batch as manually entered into Brewfather              |
+| .BrewDate         | `int`    | The unix timestamp of the brew day                                    |
+| .FermentStartDate | `int`    | The unix timestamp when fermentation was started                      |
+| .BottlingDate     | `time`   | The unix timestamp when bottled/kegged                                |
+| .TemperatureTrend | `float`  | The difference between the most recent and previous temperature in °C |
+| .DayIcon          | `string` | given by "day_icon", or "d" by default                                |
 
-Hyperlink support
+#### Hyperlink support
 
-- .URL `string` - the URL for the batch in the Brewfather app.  You can use this to add a hyperlink to the segment
-if you are using a terminal that supports it.  The default template implements this.
+| Name   | Type     | Description                                                                                                                                                                        |
+| ------ | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.URL` | `string` | the URL for the batch in the Brewfather app. You can use this to add a hyperlink to the segment if you are using a terminal that supports it. The default template implements this |
 
-  Hyperlink formatting example
+Hyperlink formatting example
 
-  ````json
-  {
-    // General format: [Text](Url)
-    "template":"[{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} {{.Recipe.Name}}]({{.URL}})"
-  }
-
-  ````
+```json
+{
+  // General format: [Text](Url)
+  "template": "[{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}d{{end}} {{.Recipe.Name}}]({{.URL}})"
+}
+```
 
 ### Advanced Templating
 
-The built in template will provides key useful information.  However, you can use the properties about the batch
-to build your own.  For reference, the built-in template looks like this:
+The built in template will provides key useful information. However, you can use the properties about the batch
+to build your own. For reference, the built-in template looks like this:
 
-  ````json
-  {
-    "template":"{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}{{.DayIcon}} {{end}}[{{.Recipe.Name}}]({{.URL}}) {{printf \"%.1f\" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{printf \"%.3f\" .Reading.Gravity}} {{.Reading.Temperature}}\u00b0 {{.TemperatureTrendIcon}}{{end}}"
-  }
-  ````
+```json
+{
+  "template": "{{.StatusIcon}} {{if .DaysBottledOrFermented}}{{.DaysBottledOrFermented}}{{.DayIcon}} {{end}}[{{.Recipe.Name}}]({{.URL}}) {{printf \"%.1f\" .MeasuredAbv}}%{{ if and (.Reading) (eq .Status \"Fermenting\")}}: {{printf \"%.3f\" .Reading.Gravity}} {{.Reading.Temperature}}\u00b0 {{.TemperatureTrendIcon}}{{end}}"
+}
+```
 
 ### Unit conversion
 
@@ -148,32 +161,36 @@ The following conversion functions are available to the template to convert to o
 
 #### Temperature
 
-- DegCToF - input: `float` degrees in C;  output `float` degrees in F (1 decimal place).
-- DegCToKelvin- input: `float` degrees in C;  output `float` Kelvin (1 decimal place).
+| Name           | Description                                                                |
+| -------------- | -------------------------------------------------------------------------- |
+| `DegCToF`      | input: `float` degrees in C; output `float` degrees in F (1 decimal place) |
+| `DegCToKelvin` | input: `float` degrees in C; output `float` Kelvin (1 decimal place)       |
 
 #### Gravity
 
-- SGToBrix - input `float` SG in x.xxx decimal; output `float` Brix (2 decimal places)
-- SGToPlato - input `float` SG in x.xxx decimal; output `float` Plato (2 decimal places)
+| Name      | Description                                                                |
+| --------- | -------------------------------------------------------------------------- |
+| SGToBrix  | input `float` SG in x.xxx decimal; output `float` Brix (2 decimal places)  |
+| SGToPlato | input `float` SG in x.xxx decimal; output `float` Plato (2 decimal places) |
 
-  *(These use the polynomial conversions from [Wikipedia][wikipedia_gravity_page])*
+_(These use the polynomial conversions from [Wikipedia][wikipedia_gravity_page])_
 
 #### Example
 
-```` json
+```json
 {
-  "template":"{{if .Reading}}{{.SGToBrix .Reading.Gravity}}°Bx, {{.DegCToF .Reading.Temperature}}°F{{end}}"
+  "template": "{{if .Reading}}{{.SGToBrix .Reading.Gravity}}°Bx, {{.DegCToF .Reading.Temperature}}°F{{end}}"
 }
-````
+```
 
 To display gravity as SG in XXXX format (e.g. "1020" instead of "1.020"), use the `mulf` template function
 
-```` json
+```json
 {
-  "template":"{{if .Reading}}{{.mulf 1000 .Reading.Gravity}}, {{.DegCToF .Reading.Temperature}}°F{{end}}"
+  "template": "{{if .Reading}}{{.mulf 1000 .Reading.Gravity}}, {{.DegCToF .Reading.Temperature}}°F{{end}}"
 }
-````
+```
 
 [templates]: /docs/configuration/templates
 [brewfather]: http://brewfather.app
-[wikipedia_gravity_page]:https://en.wikipedia.org/wiki/Brix#Specific_gravity_2
+[wikipedia_gravity_page]: https://en.wikipedia.org/wiki/Brix#Specific_gravity_2

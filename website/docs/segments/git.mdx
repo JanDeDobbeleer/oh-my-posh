@@ -9,23 +9,10 @@ sidebar_label: Git
 Display git information when in a git repository. Also works for subfolders. For maximum compatibility,
 make sure your `git` executable is up-to-date (when branch or status information is incorrect for example).
 
-Local changes can also be displayed which uses the following syntax for both the working and staging area:
-
-- `+` added
-- `~` modified
-- `-` deleted
-- `?` untracked
-
 :::tip
-PowerShell offers support for the `posh-git` module for autocompletion, but it is disabled by default.
-To enable this, set `$env:POSH_GIT_ENABLED = $true` in your `$PROFILE`. Be aware this calls `git status`
-twice, so in case you're having a slow repository, it's better to migrate to the [Posh-Git segment][poshgit].
-:::
-
-:::caution
-Starting from version 3.152.0, `fetch_status` is disabled by default.
-It improves performance but reduces the quantity of information. Don't forget to enable it in your theme if needed.
-An alternative is to use the [Posh-Git segment][poshgit].
+PowerShell offers support for the [posh-git][poshgit] module for autocompletion, but it is disabled by default.
+To enable this, set `$env:POSH_GIT_ENABLED = $true` in your `$PROFILE`. This will also make use of the
+[posh-git][poshgit] output rather than do additional work to get the git status.
 :::
 
 ## Sample Configuration
@@ -43,7 +30,7 @@ An alternative is to use the [Posh-Git segment][poshgit].
     "{{ if gt .Ahead 0 }}#B388FF{{ end }}",
     "{{ if gt .Behind 0 }}#B388FB{{ end }}"
   ],
-  "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}",
+  "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}",
   "properties": {
     "fetch_status": true,
     "fetch_stash_count": true,
@@ -62,87 +49,107 @@ An alternative is to use the [Posh-Git segment][poshgit].
 As doing multiple git calls can slow down the prompt experience, we do not fetch information by default.
 You can set the following properties to `true` to enable fetching additional information (and populate the template).
 
-- fetch_status: `boolean` - fetch the local changes - defaults to `false`
-- fetch_stash_count: `boolean` fetch stash count - defaults to `false`
-- fetch_worktree_count: `boolean` fetch worktree count - defaults to `false`
-- fetch_upstream_icon: `boolean` - fetch upstream icon - defaults to `false`
-- untracked_modes: `map[string]string` - map of repo's where to override the default [untracked files mode][untracked] (`no` | `normal` | `all`). For example
-`"untracked_modes": { "/Users/me/repos/repo1": "no" }` - defaults to `normal` for all repo's. If you want to override for all repo's, use
-`*` to set the mode instead of the repo path.
-- ignore_submodules: `map[string]string` - map of repo's where to change the [--ignore-submodules][submodules] flag (`none`, `untracked`, `dirty` or `all`).
-For example `"ignore_submodules": { "/Users/me/repos/repo1": "all" }`. If you want to override for all repo's, use `*` to set the mode
-instead of the repo path.
+| Name                   | Type                | Description                                                                                                                                                                                                                                                                                                   |
+| ---------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_status`         | `boolean`           | fetch the local changes - defaults to `false`                                                                                                                                                                                                                                                                 |
+| `fetch_stash_count`    | `boolean`           | fetch stash count - defaults to `false`                                                                                                                                                                                                                                                                       |
+| `fetch_worktree_count` | `boolean`           | fetch worktree count - defaults to `false`                                                                                                                                                                                                                                                                    |
+| `fetch_upstream_icon`  | `boolean`           | fetch upstream icon - defaults to `false`                                                                                                                                                                                                                                                                     |
+| `untracked_modes`      | `map[string]string` | map of repo's where to override the default [untracked files mode][untracked]:<ul><li>`no`</li><li>`normal`</li><li>`all`</li></ul>For example `"untracked_modes": { "/Users/me/repos/repo1": "no" }` - defaults to `normal` for all repo's. If you want to override for all repo's, use `*` to set the mode instead of the repo path |
+| `ignore_submodules`    | `map[string]string` | map of repo's where to change the [--ignore-submodules][submodules] flag (`none`, `untracked`, `dirty` or `all`). For example `"ignore_submodules": { "/Users/me/repos/repo1": "all" }`. If you want to override for all repo's, use `*` to set the mode instead of the repo path                             |
+| `native_fallback`      | `boolean`           | when set to `true` and `git.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native git executable to fetch data. Not all information can be displayed in this case. Defaults to `false`                                                                                |
 
 ### Icons
 
 #### Branch
 
-- branch_icon: `string` - the icon to use in front of the git branch name - defaults to `\uE0A0 `
-- branch_identical_icon: `string` - the icon to display when remote and local are identical - defaults to `\u2261`
-- branch_ahead_icon: `string` - the icon to display when the local branch is ahead of its remote - defaults to `\u2191`
-- branch_behind_icon: `string` - the icon to display when the local branch is behind its remote - defaults to `\u2193`
-- branch_gone_icon: `string` - the icon to display when there's no remote branch - defaults to `\u2262`
-- branch_max_length: `int` - the max length for the displayed branch name where `0` implies full length - defaults to `0`
-- truncate_symbol: `string` - the icon to display when a branch name is truncated - defaults to empty
+| Name                    | Type     | Description                                                                                  |
+| ----------------------- | -------- | -------------------------------------------------------------------------------------------- |
+| `branch_icon`           | `string` | the icon to use in front of the git branch name - defaults to `\uE0A0 `                      |
+| `branch_identical_icon` | `string` | the icon to display when remote and local are identical - defaults to `\u2261`               |
+| `branch_ahead_icon`     | `string` | the icon to display when the local branch is ahead of its remote - defaults to `\u2191`      |
+| `branch_behind_icon`    | `string` | the icon to display when the local branch is behind its remote - defaults to `\u2193`        |
+| `branch_gone_icon`      | `string` | the icon to display when there's no remote branch - defaults to `\u2262`                     |
+| `branch_max_length`     | `int`    | the max length for the displayed branch name where `0` implies full length - defaults to `0` |
+| `truncate_symbol`       | `string` | the icon to display when a branch name is truncated - defaults to empty                      |
 
 #### HEAD
 
-- commit_icon: `string` - icon/text to display before the commit context (detached HEAD) - defaults to `\uF417`
-- tag_icon: `string` - icon/text to display before the tag context - defaults to `\uF412`
-- rebase_icon: `string` - icon/text to display before the context when in a rebase - defaults to `\uE728 `
-- cherry_pick_icon: `string` - icon/text to display before the context when doing a cherry-pick - defaults to `\uE29B `
-- revert_icon: `string` - icon/text to display before the context when doing a revert - defaults to `\uF0E2 `
-- merge_icon: `string` icon/text to display before the merge context - defaults to `\uE727 `
-- no_commits_icon: `string` icon/text to display when there are no commits in the repo - defaults to `\uF594 `
+| Name               | Type     | Description                                                                              |
+| ------------------ | -------- | ---------------------------------------------------------------------------------------- |
+| `commit_icon`      | `string` | icon/text to display before the commit context (detached HEAD) - defaults to `\uF417`    |
+| `tag_icon`         | `string` | icon/text to display before the tag context - defaults to `\uF412`                       |
+| `rebase_icon`      | `string` | icon/text to display before the context when in a rebase - defaults to `\uE728 `         |
+| `cherry_pick_icon` | `string` | icon/text to display before the context when doing a cherry-pick - defaults to `\uE29B ` |
+| `revert_icon`      | `string` | icon/text to display before the context when doing a revert - defaults to `\uF0E2 `      |
+| `merge_icon`       | `string` | icon/text to display before the merge context - defaults to `\uE727 `                    |
+| `no_commits_icon`  | `string` | icon/text to display when there are no commits in the repo - defaults to `\uF594 `       |
 
 #### Upstream
 
-- github_icon: `string` - icon/text to display when the upstream is Github - defaults to `\uF408 `
-- gitlab_icon: `string` - icon/text to display when the upstream is Gitlab - defaults to `\uF296 `
-- bitbucket_icon: `string` - icon/text to display when the upstream is Bitbucket - defaults to `\uF171 `
-- azure_devops_icon: `string` - icon/text to display when the upstream is Azure DevOps - defaults to `\uFD03 `
-- git_icon: `string` - icon/text to display when the upstream is not known/mapped - defaults to `\uE5FB `
+| Name                | Type     | Description                                                                        |
+| ------------------- | -------- | ---------------------------------------------------------------------------------- |
+| `github_icon`       | `string` | icon/text to display when the upstream is Github - defaults to `\uF408 `           |
+| `gitlab_icon`       | `string` | icon/text to display when the upstream is Gitlab - defaults to `\uF296 `           |
+| `bitbucket_icon`    | `string` | icon/text to display when the upstream is Bitbucket - defaults to `\uF171 `        |
+| `azure_devops_icon` | `string` | icon/text to display when the upstream is Azure DevOps - defaults to `\uFD03 `     |
+| `git_icon`          | `string` | icon/text to display when the upstream is not known/mapped - defaults to `\uE5FB ` |
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
-{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} \uF692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }}
+```template
+{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} \uF692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }}
 ```
 
 :::
 
 ### Properties
 
-- `.RepoName`: `string` - the repo folder name
-- `.Working`: `GitStatus` - changes in the worktree (see below)
-- `.Staging`: `GitStatus` - staged changes in the work tree (see below)
-- `.HEAD`: `string` - the current HEAD context (branch/rebase/merge/...)
-- `.Ref`: `string` - the current HEAD reference (branch/tag/...)
-- `.Behind`: `int` - commits behind of upstream
-- `.Ahead`: `int` - commits ahead of upstream
-- `.BranchStatus`: `string` - the current branch context (ahead/behind string representation)
-- `.Upstream`: `string` - the upstream name (remote)
-- `.UpstreamGone`: `boolean` - whether the upstream is gone (no remote)
-- `.UpstreamIcon`: `string` - the upstream icon (based on the icons above)
-- `.UpstreamURL`: `string` - the upstream URL for use in [hyperlinks][hyperlinks] in templates: `{{ url .UpstreamIcon .UpstreamURL }}`
-- `.StashCount`: `int` - the stash count
-- `.WorktreeCount`: `int` - the worktree count
-- `.IsWorkTree`: `boolean` - if in a worktree repo or not
-- `.Dir`: `string` - the repository's root directory
+| Name             | Type        | Description                                                                                                                      |
+| ---------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `.RepoName`      | `string`    | the repo folder name                                                                                                             |
+| `.Working`       | `GitStatus` | changes in the worktree (see below)                                                                                              |
+| `.Staging`       | `GitStatus` | staged changes in the work tree (see below)                                                                                      |
+| `.HEAD`          | `string`    | the current HEAD context (branch/rebase/merge/...)                                                                               |
+| `.Ref`           | `string`    | the current HEAD reference (branch/tag/...)                                                                                      |
+| `.Behind`        | `int`       | commits behind of upstream                                                                                                       |
+| `.Ahead`         | `int`       | commits ahead of upstream                                                                                                        |
+| `.BranchStatus`  | `string`    | the current branch context (ahead/behind string representation)                                                                  |
+| `.Upstream`      | `string`    | the upstream name (remote)                                                                                                       |
+| `.UpstreamGone`  | `boolean`   | whether the upstream is gone (no remote)                                                                                         |
+| `.UpstreamIcon`  | `string`    | the upstream icon (based on the icons above)                                                                                     |
+| `.UpstreamURL`   | `string`    | the upstream URL for use in [hyperlinks][hyperlinks] in templates: `{{ url .UpstreamIcon .UpstreamURL }}`                        |
+| `.StashCount`    | `int`       | the stash count                                                                                                                  |
+| `.WorktreeCount` | `int`       | the worktree count                                                                                                               |
+| `.IsWorkTree`    | `boolean`   | if in a worktree repo or not                                                                                                     |
+| `.Dir`           | `string`    | the repository's root directory                                                                                                  |
+| `.Kraken`        | `string`    | a link to the current HEAD in [GitKraken][kraken-ref] for use in [hyperlinks][hyperlinks] in templates `{{ url .HEAD .Kraken }}` |
 
 ### GitStatus
 
-- `.Unmerged`: `int` - number of unmerged changes
-- `.Deleted`: `int` - number of deleted changes
-- `.Added`: `int` - number of added changes
-- `.Modified`: `int` - number of modified changes
-- `.Changed`: `boolean` - if the status contains changes or not
-- `.String`: `string` - a string representation of the changes above
+| Name        | Type      | Description                                  |
+| ----------- | --------- | -------------------------------------------- |
+| `.Unmerged` | `int`     | number of unmerged changes                   |
+| `.Deleted`  | `int`     | number of deleted changes                    |
+| `.Added`    | `int`     | number of added changes                      |
+| `.Modified` | `int`     | number of modified changes                   |
+| `.Changed`  | `boolean` | if the status contains changes or not        |
+| `.String`   | `string`  | a string representation of the changes above |
+
+Local changes use the following syntax:
+
+| Icon | Description |
+| ---- | ----------- |
+| `+`  | added       |
+| `~`  | modified    |
+| `-`  | deleted     |
+| `?`  | untracked   |
 
 [poshgit]: /docs/segments/poshgit
 [templates]: /docs/configuration/templates
 [hyperlinks]: /docs/configuration/templates#helper-functions
 [untracked]: https://git-scm.com/docs/git-status#Documentation/git-status.txt---untracked-filesltmodegt
 [submodules]: https://git-scm.com/docs/git-status#Documentation/git-status.txt---ignore-submodulesltwhengt
+[kraken-ref]: https://www.gitkraken.com/invite/nQmDPR9D

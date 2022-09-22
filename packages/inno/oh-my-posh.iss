@@ -11,9 +11,11 @@ OutputBaseFilename=install
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
 ChangesEnvironment=yes
+SignTool=signtool
+SignedUninstaller=yes
 
 [Files]
-Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"
+Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"; Flags: sign
 Source: "bin\themes\*"; DestDir: "{app}\themes"
 
 [Registry]

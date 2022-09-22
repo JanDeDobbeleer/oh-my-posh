@@ -27,13 +27,13 @@ Show the current shell name (zsh, PowerShell, bash, ...).
 
 ## Properties
 
-- mapped_shell_names: `object` - custom glyph/text to use in place of specified shell names (case-insensitive)
+|`mapped_shell_names`|`object`|custom glyph/text to use in place of specified shell names (case-insensitive)|
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ .Name }}
 ```
 
@@ -41,7 +41,9 @@ Show the current shell name (zsh, PowerShell, bash, ...).
 
 ### Properties
 
-- `.Name`: `string` - the shell name
-- `.Version`: `string` - the shell version
+| Name       | Type     | Description       |
+| ---------- | -------- | ----------------- |
+| `.Name`    | `string` | the shell name    |
+| `.Version` | `string` | the shell version |
 
 [templates]: /docs/configuration/templates

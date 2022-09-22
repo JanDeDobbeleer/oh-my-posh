@@ -27,14 +27,17 @@ This requires a terraform binary in your PATH and will only show in directories 
 
 ## Properties
 
-- fetch_version: `boolean` - fetch the version information from `versions.tf`, `main.tf` or `terraform.tfstate` -
+| Name            | Type      | Description                                                                        |
+| --------------- | --------- | ---------------------------------------------------------------------------------- |
+| `fetch_version` | `boolean` | fetch the version information from `versions.tf`, `main.tf` or `terraform.tfstate` |
+
 defaults to `false`
 
 ## Template ([info][templates])
 
 :::note default template
 
-``` template
+```template
 {{ .WorkspaceName }}{{ if .Version }} {{ .Version }}{{ end }}
 ```
 
@@ -42,7 +45,9 @@ defaults to `false`
 
 ### Properties
 
-- `.WorkspaceName`: `string` - is the current workspace name
-- `.Version`: `string` - terraform version (set `fetch_version` to `true`)
+| Name             | Type     | Description                                       |
+| ---------------- | -------- | ------------------------------------------------- |
+| `.WorkspaceName` | `string` | is the current workspace name                     |
+| `.Version`       | `string` | terraform version (set `fetch_version` to `true`) |
 
 [templates]: /docs/configuration/templates

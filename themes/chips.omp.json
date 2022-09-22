@@ -1,0 +1,246 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "p:c-badge-folder",
+          "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
+          "properties": {
+            "style": "folder"
+          },
+          "style": "diamond",
+          "template": "\uF07B {{ .Path }}",
+          "trailing_diamond": "\uE0B4",
+          "type": "path"
+        },
+        {
+          "background": "p:c-git-normal",
+          "background_templates": [
+            "{{ if gt .Ahead 0 }}p:c-git-ahead{{ end }}",
+            "{{ if gt .Behind 0 }}p:c-git-behind{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:c-git-ahead-behind{{ end }}",
+            "{{ if and (not .Working.Changed) (.Staging.Changed) }}p:c-git-staging{{ end }}",
+            "{{ if and (.Working.Changed) (.Staging.Changed) }}p:c-git-staging-working{{ end }}",
+            "{{ if .UpstreamGone }}p:c-git-upstream-gone{{ end }}",
+            "{{ if and (.Working.Changed) (not .Staging.Changed) }}p:c-git-working{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
+          "leading_diamond": " \uE0B6",
+          "style": "diamond",
+          "template": "{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uE0B1 \uF448 ({{ .Working.String }}){{ end }}{{ if and .Working.Changed .Staging.Changed }} \uE621 {{ end }}{{ if .Staging.Changed }}{{ if not .Working.Changed }} \uE0B1 {{ end }}\uF854 ({{ .Staging.String }}){{ end }}{{ if .StashCount }} \uE621 \uF6FC {{ .StashCount }} Stash{{ if gt .StashCount 1 }}es{{ end }}{{ end }}",
+          "properties": {
+            "branch_icon": "\uE0A0 ",
+            "branch_ahead_icon": "\uE621 \uF9AC ",
+            "branch_behind_icon": "\uE621 \uF9AD ",
+            "branch_gone_icon": "\uE621 \uF00D",
+            "branch_identical_icon": "\uE621 \uF00C",
+            "fetch_status": true,
+            "fetch_stash_count": true
+          },
+          "trailing_diamond": "\uE0B4",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "background_templates": [
+            "{{ if lt .Ms 60000 }}p:c-exec-fast{{ end }}",
+            "{{ if lt .Ms 3600000 }}p:c-exec-normal{{ end }}",
+            "{{ if lt .Ms 10800000 }}p:c-exec-slow{{ end }}",
+            "{{ if gt .Ms 10800001 }}p:c-exec-slower{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
+          "properties": {
+            "style": "austin",
+            "threshold": 1
+          },
+          "style": "diamond",
+          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PRIMARY_EXEC_TIME)) }}\uFA1E {{ .FormattedMs }}.{{ end }}",
+          "trailing_diamond": "\uE0B4 ",
+          "type": "executiontime"
+        },
+        {
+          "background_templates": [
+            "{{ if lt (.CummulativeTotal.Seconds | int64) 3600 }}p:c-wakatime-undertime{{ end }}",
+            "{{ if lt (.CummulativeTotal.Seconds | int64) 10800 }}p:c-wakatime-warm-up{{ end }}",
+            "{{ if lt (.CummulativeTotal.Seconds | int64) 25200 }}p:c-wakatime-working{{ end }}",
+            "{{ if lt (.CummulativeTotal.Seconds | int64) 28000 }}p:c-wakatime-quota{{ end }}",
+            "{{ if gt (.CummulativeTotal.Seconds | int64) 28801 }}p:c-wakatime-overtime{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
+          "properties": {
+            "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}",
+            "http_timeout": 2000,
+            "cache_timeout": 5
+          },
+          "style": "diamond",
+          "template": "{{ if and (.Env.WAKATIME_API_KEY) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_WAKATIME))) (gt (.CummulativeTotal.Seconds | int64) 0) }}\uFA19 {{ secondsRound .CummulativeTotal.Seconds }}.{{ end }}",
+          "trailing_diamond": "\uE0B4 ",
+          "type": "wakatime"
+        },
+        {
+          "background_templates": [
+            "{{ if regexMatch \"(^(0[6-9])|(1[0-1])):\" (.CurrentDate | date .Format) }}p:c-date-time-morning{{ end }}",
+            "{{ if regexMatch (\"(^1[2-4]):\") (.CurrentDate | date .Format) }}p:c-date-time-noon{{ end }}",
+            "{{ if regexMatch (\"(^1[5-7]):\") (.CurrentDate | date .Format) }}p:c-date-time-afternoon{{ end }}",
+            "{{ if regexMatch \"(^(1[8-9])|(2[0-3])):\" (.CurrentDate | date .Format) }}p:c-date-time-evening{{ end }}",
+            "{{ if regexMatch \"^(0[0-5]):\" (.CurrentDate | date .Format) }}p:c-date-time-night{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
+          "properties": {
+            "time_format": "15:04 (01/02)"
+          },
+          "style": "diamond",
+          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_DTIME)) }}\uF5EF {{ .CurrentDate | date .Format }}{{ end }}",
+          "trailing_diamond": "\uE0B4 ",
+          "type": "time"
+        },
+        {
+          "background_templates": [
+            "{{ if .Error }}p:c-battery-state-error{{ end }}",
+            "{{ if lt .Percentage 15 }}p:c-battery-15-less{{ end }}",
+            "{{ if and (gt .Percentage 16) (lt .Percentage 30) }}p:c-battery-30-less{{ end }}",
+            "{{ if and (gt .Percentage 31) (lt .Percentage 45) }}p:c-battery-45-less{{ end }}",
+            "{{ if and (gt .Percentage 46) (lt .Percentage 55) }}p:c-battery-55-less{{ end }}",
+            "{{ if and (gt .Percentage 56) (lt .Percentage 70) }}p:c-battery-70-less{{ end }}",
+            "{{ if and (gt .Percentage 71) (lt .Percentage 90) }}p:c-battery-90-less{{ end }}",
+            "{{ if and (gt .Percentage 91) (lt .Percentage 100) }}p:c-battery-90-less{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
+          "style": "diamond",
+          "template": "{{ if eq \"True\" (title (default \"False\" .Env.DISABLE_SEGMENT_BATTERY)) }}{{ else }}{{ if not .Error }}{{ if eq \"Charging\" .State.String }}\uE315 {{ else if eq \"Discharging\" .State.String }}\uF062 {{ else if eq \"Full\" .State.String }}~ {{ else }}? {{ end }}{{ if lt .Percentage 15 }}\uF579{{ else if and (gt .Percentage 16) (lt .Percentage 30) }}\uF57A{{ else if and (gt .Percentage 31) (lt .Percentage 45) }}\uF57C{{ else if and (gt .Percentage 46) (lt .Percentage 55)}}\uF57D{{ else if and (gt .Percentage 56) (lt .Percentage 70) }}\uF57E{{ else if and (gt .Percentage 71) (lt .Percentage 90) }}\uF580{{ else }}\uF581{{ end }} {{ .Percentage }}%{{ else }}!{{ end }}{{ end }}",
+          "trailing_diamond": "\uE0B4",
+          "type": "battery"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "template": "{{ if false }}{{ end }}",
+          "type": "session",
+          "style": "diamond"
+        },
+        {
+          "background_templates": [
+            "{{ if and (.Segments.Session.SSHSession) (not .Root) }}p:c-shell-state-ssh-active{{ end }}",
+            "{{ if and (not .Segments.Session.SSHSession) (.Root) }}p:c-shell-state-root-active{{ end }}",
+            "{{ if and (.Segments.Session.SSHSession) (.Root) }}p:c-shell-state-root-ssh-active{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
+          "style": "diamond",
+          "template": "{{ if or (.Segments.Session.SSHSession) (.Root) }}{{ if .Segments.Session.SSHSession }}\uE7A2 SSH{{ end }}{{ if and (.Segments.Session.SSHSession) (.Root) }} \uE621 {{ end }}{{ if .Root }}# Root{{ end }}{{ end }}",
+          "trailing_diamond": "\uE0B4 ",
+          "type": "text"
+        },
+        {
+          "background_templates": [
+            "{{ if empty .Full }}p:c-project-node-error{{ else }}p:c-project-node{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
+          "powerline_symbol": "\uE0B0",
+          "properties": {
+            "disply_mode": "files",
+            "fetch_package_manager": true
+          },
+          "style": "diamond",
+          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_NODE)) }}\uE718 {{ if not (empty .Full) }}{{ .Full }}{{ else }}No Version{{ if .Error }}({{ .Error }}){{ end }}{{ end }}{{ end }}",
+          "trailing_diamond": "\uE0B4 ",
+          "type": "node"
+        },
+        {
+          "background": "p:c-project-python",
+          "leading_diamond": "\uE0B6",
+          "foreground": "p:c-badge-text",
+          "properties": {
+            "display_mode": "context",
+            "fetch_virtual_env": true
+          },
+          "style": "diamond",
+          "template": "{{ if or (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON))) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON_VENV))) }}\uE235 {{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON)) }}{{ .Full }}{{ end }}{{ if and (.Venv) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON))) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON_VENV))) }} \uE621 {{ end }}{{ if and (.Venv) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON_VENV))) }}{{ if .Env.SEGMENT_PROJECT_PYTHON_ACTIVE_VENV_STR }}{{ .Env.SEGMENT_PROJECT_PYTHON_ACTIVE_VENV_STR }}{{ else }}{{ .Venv }}{{ end }}{{ end }}{{ end }}",
+          "trailing_diamond": "\uE0B4 ",
+          "type": "python"
+        },
+        {
+          "style": "plain",
+          "foreground": "p:c-badge-white",
+          "template": "\u276F",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "console_title_template": "{{ if .Segments.Session.SSHSession }}SSH'd{{ if or .Root }} & {{ end }}{{ end }}{{ if .Root }}# (as {{ .UserName }}) | {{ end }}{{ if .WSL }}WSL | {{ end }}{{ .Folder }} ({{ .Shell }})",
+  "final_space": true,
+  "palette": {
+    "c-badge-folder": "#FFD770",
+    "c-badge-text": "#212121",
+    "c-badge-white": "#FAFAFA",
+    "c-badge-return-custom": "#E7B9FF",
+    "c-badge-return-fail-term": "#FF8A80",
+    "c-badge-return-success": "#B2FF59",
+    "c-battery-15-less": "#FF8A80",
+    "c-battery-30-less": "#FFD180",
+    "c-battery-45-less": "#FFE57F",
+    "c-battery-55-less": "#FFFF8D",
+    "c-battery-70-less": "#F4FF81",
+    "c-battery-90-less": "#B9F6CA",
+    "c-battery-100-less": "#CCFF90",
+    "c-battery-state-error": "#FF867F",
+    "c-date-time-morning": "#FFFF8D",
+    "c-date-time-noon": "#FFF64F",
+    "c-date-time-afternoon": "#FFC400",
+    "c-date-time-evening": "#C0CFFF",
+    "c-date-time-night": "#83B9FF",
+    "c-exec-fast": "#C6FF00",
+    "c-exec-normal": "#FFFF00",
+    "c-exec-slow": "#FFD180",
+    "c-exec-slower": "#FF867F",
+    "c-git-ahead": "#6EFFFF",
+    "c-git-behind": "#FFA06D",
+    "c-git-ahead-behind": "#C0CFFF",
+    "c-git-normal": "#66FFA6",
+    "c-git-staging": "#FFD740",
+    "c-git-staging-working": "#FFB2FF",
+    "c-git-upstream-gone": "#FF867F",
+    "c-git-working": "#84FFFF",
+    "c-project-node": "#9CFF57",
+    "c-project-node-error": "#FF867F",
+    "c-project-python": "#FFE873",
+    "c-secondary-ellipsis": "#FFFF8D",
+    "c-shell-state-ssh-active": "#BAFFFF",
+    "c-shell-state-root-active": "#9FFFE0",
+    "c-shell-state-root-ssh-active": "#FFB2FF",
+    "c-wakatime-undertime": "#A7FFEB",
+    "c-wakatime-warm-up": "#FFFFB3",
+    "c-wakatime-working": "#FFD180",
+    "c-wakatime-quota": "#FFD0B0",
+    "c-wakatime-overtime": "#FF8A80"
+  },
+  "transient_prompt": {
+    "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_TRANSIENT)) }}<{{ if eq .Code 0 }}p:c-badge-return-success{{ else if or (eq .Code 1) (eq .Code 130) }}p:c-badge-return-fail-term{{ else }}p:c-badge-return-custom{{ end }}>\uE0B6</><p:c-badge-text,{{ if eq .Code 0 }}p:c-badge-return-success{{ else if or (eq .Code 1) (eq .Code 130) }}p:c-badge-return-fail-term{{ else }}p:c-badge-return-custom{{ end }}>\uF55D \uE0B1 {{ if .Segments.Executiontime.Ms }}{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_TRANSIENT_EXEC_TIME)) }}\uFA1E {{ .Segments.Executiontime.FormattedMs }} \uE621 {{ end }}{{ end }}<b>{{ if eq .Code 0 }}OK{{ else if eq .Code 1 }}FAIL{{ else if eq .Code 130 }}TERM{{ else }}Code{{ end }} ({{ .Code }})</b></><{{ if eq .Code 0 }}p:c-badge-return-success{{ else if or (eq .Code 1) (eq .Code 130) }}p:c-badge-return-fail-term{{ else }}p:c-badge-return-custom{{ end }}>\uE0B4</> {{ end }}\u276F "
+  },
+  "secondary_prompt": {
+    "background": "transparent",
+    "foreground": "p:c-secondary-ellipsis",
+    "template": " ... "
+  },
+  "version": 2
+}

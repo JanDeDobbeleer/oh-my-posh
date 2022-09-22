@@ -357,8 +357,8 @@ func (pt *Path) replaceMappedLocations(pwd string) string {
 
 	mappedLocations := map[string]string{}
 	if pt.props.GetBool(MappedLocationsEnabled, true) {
-		mappedLocations["HKCU:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
-		mappedLocations["HKLM:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
+		mappedLocations["hkcu:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
+		mappedLocations["hklm:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
 		mappedLocations[pt.normalize(pt.env.Home())] = pt.props.GetString(HomeIcon, "~")
 	}
 

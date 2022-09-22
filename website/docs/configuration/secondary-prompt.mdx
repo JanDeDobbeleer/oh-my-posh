@@ -31,19 +31,22 @@ You need to extend or create a custom theme with your secondary prompt override.
 }
 ```
 
-The configuration has the following properties:
+## Properties
 
-- background: `string` [color][colors]
-- foreground: `string` [color][colors]
-- template: `string` - a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the
-properties below - defaults to `> `
+| Name         | Type     | Description                                                                                                                    |
+| ------------ | -------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `background` | `string` | [color][colors]                                                                                                                |
+| `foreground` | `string` | [color][colors]                                                                                                                |
+| `template`   | `string` | a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below - defaults to `> ` |
 
 ## Template ([info][templates])
 
-- `.Root`: `boolean` - is the current user root/admin or not
-- `.Shell`: `string` - the current shell name
-- `.UserName`: `string` - the current user name
-- `.HostName`: `string` - the host name
+| Name        | Type      | Description                           |
+| ----------- | --------- | ------------------------------------- |
+| `.Root`     | `boolean` | is the current user root/admin or not |
+| `.Shell`    | `string`  | the current shell name                |
+| `.UserName` | `string`  | the current user name                 |
+| `.HostName` | `string`  | the host name                         |
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [sprig]: https://masterminds.github.io/sprig/

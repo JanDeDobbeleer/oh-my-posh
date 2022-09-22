@@ -17,11 +17,10 @@ type Gcp struct {
 	Account string
 	Project string
 	Region  string
-	Error   string
 }
 
 func (g *Gcp) Template() string {
-	return " {{ if not .Error }}{{ .Project }}{{ end }} "
+	return " {{ .Project }} "
 }
 
 func (g *Gcp) Init(props properties.Properties, env environment.Environment) {
@@ -33,16 +32,16 @@ func (g *Gcp) Enabled() bool {
 	cfgDir := g.getConfigDirectory()
 	configFile, err := g.getActiveConfig(cfgDir)
 	if err != nil {
-		g.Error = err.Error()
-		return true
+		g.env.Log(environment.Error, "Gcp.Enabled()", err.Error())
+		return false
 	}
 
 	cfgpath := path.Join(cfgDir, "configurations", "config_"+configFile)
 
 	cfg, err := ini.Load(cfgpath)
 	if err != nil {
-		g.Error = "GCLOUD CONFIG ERROR"
-		return true
+		g.env.Log(environment.Error, "Gcp.Enabled()", err.Error())
+		return false
 	}
 
 	g.Project = cfg.Section("core").Key("project").String()

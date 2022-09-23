@@ -4,6 +4,11 @@ set --global CONDA_PROMPT_MODIFIER false
 set --global omp_tooltip_command ""
 set --global omp_transient 0
 
+# template function for context loading
+function set_poshcontext
+  return
+end
+
 function fish_prompt
     set --local omp_status_cache_temp $status
     # clear from cursor to end of screen as
@@ -28,7 +33,7 @@ function fish_prompt
     if set --query status_generation
       set --global --export omp_last_status_generation $status_generation
     end
-
+    set_poshcontext
     ::OMP:: print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
 end
 
@@ -94,6 +99,8 @@ end
 
 # legacy functions
 function enable_poshtooltips
+  return
 end
 function enable_poshtransientprompt
+  return
 end

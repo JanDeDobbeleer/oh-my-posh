@@ -12,6 +12,11 @@ function _omp_start_timer() {
     ::OMP:: get millis
 }
 
+# template function for context loading
+function set_poshcontext() {
+    return
+}
+
 function _omp_hook() {
     local ret=$?
     local omp_stack_count=$((${#DIRSTACK[@]} - 1))
@@ -21,6 +26,7 @@ function _omp_hook() {
         omp_elapsed=$((omp_now-omp_start_time))
         omp_start_time=""
     fi
+    set_poshcontext
     PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" | tr -d '\0')"
     return $ret
 }

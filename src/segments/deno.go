@@ -17,7 +17,7 @@ func (d *Deno) Init(props properties.Properties, env environment.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.js", "*.ts"},
+		extensions: []string{"*.js", "*.ts", "deno.json"},
 		commands: []*cmd{
 			{
 				executable: "deno",

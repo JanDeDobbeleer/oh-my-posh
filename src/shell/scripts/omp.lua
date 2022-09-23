@@ -23,6 +23,7 @@ end
 local endedit_time = 0
 local last_duration = 0
 local tip
+local tooltips_enabled = ::TOOLTIPS::
 local tooltip_active = false
 local cached_prompt = {}
 
@@ -216,7 +217,7 @@ function ohmyposh_space(rl_buffer)
     end
 end
 
-if rl.setbinding then
+if tooltips_enabled and rl.setbinding then
     clink.onbeginedit(function () tip = nil cached_prompt = {} end)
     rl.setbinding(' ', [["luafunc:ohmyposh_space"]], 'emacs')
 end

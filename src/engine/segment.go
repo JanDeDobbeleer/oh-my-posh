@@ -156,8 +156,6 @@ const (
 	PHP SegmentType = "php"
 	// PLASTIC represents the plastic scm status and information
 	PLASTIC SegmentType = "plastic"
-	// POSHGIT writes the posh git prompt
-	POSHGIT SegmentType = "poshgit"
 	// Project version
 	PROJECT SegmentType = "project"
 	// PYTHON writes the virtual env name

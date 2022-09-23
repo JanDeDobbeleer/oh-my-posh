@@ -46,8 +46,7 @@
           "background": "#292929",
           "foreground": "#D4E157",
           "style": "plain",
-          "template": "<#fb7e14>\ue0b1 </>{{ .Status }} ",
-          "type": "poshgit"
+          "type": "git"
         },
         {
           "background": "#292929",

@@ -198,6 +198,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center"><a href="https://github.com/dorian-li"><img src="https://avatars.githubusercontent.com/u/49279922?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dongyu Li</b></sub></a><br /><a href="#design-dorian-li" title="Design">🎨</a></td>
       <td align="center"><a href="https://github.com/cyberbliss"><img src="https://avatars.githubusercontent.com/u/5401528?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Stephen Judd</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=cyberbliss" title="Code">💻</a></td>
       <td align="center"><a href="https://douug.dev"><img src="https://avatars.githubusercontent.com/u/59324692?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Douglas Silva</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=douugdev" title="Documentation">📖</a></td>
+      <td align="center"><a href="https://github.com/BoseSj"><img src="https://avatars.githubusercontent.com/u/58129377?v=4?s=100" width="100px;" alt=""/><br /><sub><b>SJ Basak</b></sub></a><br /><a href="#design-BoseSj" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>

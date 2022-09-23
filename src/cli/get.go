@@ -61,4 +61,5 @@ This command is used to get the value of the following variables:
 
 func init() { //nolint:gochecknoinits
 	rootCmd.AddCommand(getCmd)
+	getCmd.Flags().StringVar(&shellName, "shell", "", "the shell to print for")
 }

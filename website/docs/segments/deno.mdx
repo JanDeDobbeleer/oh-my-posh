@@ -21,12 +21,12 @@ Display the currently active [Deno CLI][deno-docs] version.
 
 ## Properties
 
-| Name                   | Type      | Description                                                                                                                                                      |
-| ---------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                              |
-| `fetch_version`        | `boolean` | fetch the active version or not; useful if all you need is an icon indicating `deno`                                                                               |
-| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when `*.ts*` or `*.js` file are present (**default**)</li></ul> |
-| `version_url_template` | `string`  | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                            |
+| Name                   | Type      | Description                                                                                                                                                                    |
+| ---------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                                            |
+| `fetch_version`        | `boolean` | fetch the active version or not; useful if all you need is an icon indicating `deno`                                                                                           |
+| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when `*.ts*`, `*.js` or `deno.json` files are present (**default**)</li></ul> |
+| `version_url_template` | `string`  | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                          |
 
 ## Template ([info][templates])
 

@@ -91,9 +91,9 @@ html[data-theme="dark"] .header-gk-link:before {
     no-repeat;
 }
 
-div.admonition.admonition-tip.alert.alert--success {
-  background-color: #3e8fb0;
-  border-color: #3e8fb0;
+div.theme-admonition.theme-admonition-tip.alert.alert--success {
+  background-color: #9ccfd8;
+  border-color: #56949f;
 }
 
 iframe.youtube {

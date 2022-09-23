@@ -1336,6 +1336,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "BoseSj",
+      "name": "SJ Basak",
+      "avatar_url": "https://avatars.githubusercontent.com/u/58129377?v=4",
+      "profile": "https://github.com/BoseSj",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

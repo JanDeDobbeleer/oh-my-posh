@@ -34,6 +34,9 @@ This command is used to get the value of the following variables:
 		}
 		env := &environment.ShellEnvironment{
 			Version: cliVersion,
+			CmdFlags: &environment.Flags{
+				Shell: shellName,
+			},
 		}
 		env.Init()
 		defer env.Close()

@@ -17,7 +17,7 @@ function _omp_hook() {
     local omp_stack_count=$((${#DIRSTACK[@]} - 1))
     local omp_elapsed=-1
     if [[ -n "$omp_start_time" ]]; then
-        local omp_now=$(::OMP:: get millis)
+        local omp_now=$(::OMP:: get millis --shell=bash)
         omp_elapsed=$((omp_now-omp_start_time))
         omp_start_time=""
     fi

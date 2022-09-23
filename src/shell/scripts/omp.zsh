@@ -14,7 +14,7 @@ function prompt_ohmyposh_precmd() {
   omp_stack_count=${#dirstack[@]}
   omp_elapsed=-1
   if [ $omp_start_time ]; then
-    omp_now=$(::OMP:: get millis)
+    omp_now=$(::OMP:: get millis --shell=zsh)
     omp_elapsed=$(($omp_now-$omp_start_time))
   fi
   eval "$(::OMP:: print primary --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION")"

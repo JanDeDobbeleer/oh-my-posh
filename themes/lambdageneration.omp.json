@@ -99,10 +99,10 @@
           "background": "#292929",
           "foreground": "#fb7e14",
           "properties": {
-            "time_format": "15:04:05"
+            "time_format": "15:04:05, _2"
           },
           "style": "diamond",
-          "template": "{{ .CurrentDate | date .Format }} \uf017 ",
+          "template": "{{ .CurrentDate | date .Format }} \uf5ef ",
           "trailing_diamond": "\ue0b4",
           "type": "time"
         }

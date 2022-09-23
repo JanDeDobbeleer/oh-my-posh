@@ -92,7 +92,7 @@
           ],
           "leading_diamond": "\ue0b6",
           "properties": {
-            "time_format": "15:04:05"
+            "time_format": "_2, 15:04:05"
           },
           "style": "diamond",
           "template": " \uf5ef {{ .CurrentDate | date .Format }} ",

@@ -4,6 +4,9 @@ title: Templates
 sidebar_label: Templates
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 Every segment has a `template` property to tweak the text that is displayed.
 Under the hood, this uses go's [text/template][go-text-template] feature extended with [sprig][sprig] and
 offers a few standard properties to work with.
@@ -31,8 +34,20 @@ offers a few standard properties to work with.
 | `.Env.VarName` | `string` | Any environment variable where `VarName` is the environment variable name |
 
 :::tip
-If you're using PowerShell, you can override a function to populate environment variables before the
-prompt is rendered.
+For the shells below, you can override a function to execute some logic before the prompt is rendered.
+This can be used to for example populate an environment variable with a specific context.
+
+<Tabs
+  defaultValue="powershell"
+  groupId="shell"
+  values={[
+    { label: 'powershell', value: 'powershell', },
+    { label: 'zsh', value: 'zsh', },
+    { label: 'bash', value: 'bash', },
+    { label: 'fish', value: 'fish', },
+  ]
+}>
+<TabItem value="powershell">
 
 ```powershell
 function Set-EnvVar {
@@ -40,6 +55,36 @@ function Set-EnvVar {
 }
 New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force
 ```
+
+</TabItem>
+<TabItem value="zsh">
+
+```bash
+function set_poshcontext() {
+    export POSH=$(date)
+}
+```
+
+</TabItem>
+<TabItem value="bash">
+
+```bash
+function set_poshcontext() {
+    export POSH=$(date)
+}
+```
+
+</TabItem>
+<TabItem value="fish">
+
+```shell
+function set_poshcontext
+  set --export POSH $(date)
+end
+```
+
+</TabItem>
+</Tabs>
 
 :::
 

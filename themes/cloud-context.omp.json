@@ -1,0 +1,188 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 2,
+  "console_title_template": "{{ if or .Root .Segments.Git.RepoName }}[ {{ if .Root }}Admin{{ end }}{{ if and .Root .Segments.Git.RepoName }}@{{ end }}{{ if .Segments.Git.RepoName }}{{ .Segments.Git.RepoName }}{{ end }} ]{{ end }} {{ .Folder }}",
+  "palette": {
+    "background-color": "transparent",
+    "cloud-text-amazon": "#4285F4",
+    "cloud-text-azure": "#4285F4",
+    "cloud-text-gcp": "#4285F4",
+    "error-background": "#dd0033",
+    "error-text": "#242424",
+    "git-text": "#238636",
+    "kubernetes-text": "#FFBB00",
+    "symbol-color": "#ffffff",
+    "timer-text": "#dd0033"
+  },
+  "blocks": [
+    {
+      "alignment": "left",
+      "newline": false,
+      "segments": [
+        {
+          "background": "p:background-color",
+          "foreground": "p:timer-text",
+          "properties": {
+            "time_format": "15:04:05"
+          },
+          "style": "powerline",
+          "powerline_symbol": "",
+          "template": " <p:symbol-color>\uf65e</> {{ dateInZone .Format .CurrentDate \"UTC\" }} ",
+          "type": "time"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:kubernetes-text",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": "<p:symbol-color>\ufd31</> {{.Context}}{{if .Namespace}} \uf061 {{.Namespace}}{{end}}",
+          "type": "kubectl"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:cloud-text-amazon",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": " <p:symbol-color>\uf270</> {{.Profile}}{{if .Region}} \uf061 {{.Region}}{{end}}",
+          "type": "aws"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:cloud-text-azure",
+          "properties": {
+            "source": "cli"
+          },
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": " <p:symbol-color>\ufd03</> {{ .Name }}",
+          "type": "az"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:cloud-text-azure",
+          "properties": {
+            "source": "pwsh"
+          },
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": " <p:symbol-color>\ufd03</> (PS) {{ .Name }}",
+          "type": "az"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:cloud-text-gcp",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": " <p:symbol-color>\ue7b2</> {{ .Project }}",
+          "type": "gcp"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:git-text",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": " <p:symbol-color>\uF408</> {{ .RepoName }}",
+          "type": "git"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:timer-text",
+          "properties": {
+            "style": "austin",
+            "threshold": 1
+          },
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": " <p:symbol-color>\ufbab</> {{ .FormattedMs }}",
+          "type": "executiontime"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:symbol-color",
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": "{{ if eq .Code 0 }} \uf7d0 {{ end }}",
+          "type": "exit"
+        },
+        {
+          "background": "p:error-background",
+          "foreground": "p:error-text",
+          "leading_diamond": " \ue0c5",
+          "trailing_diamond": "\ue0c4",
+          "style": "diamond",
+          "template": "{{ if ne .Code 0 }} \uf00d {{ .Code }}{{ if (ne .Meaning (toString .Code)) }} - {{ .Meaning }}{{else}}{{ end }} {{ end }}",
+          "type": "exit"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "background": "p:background-color",
+          "foreground": "p:timer-text",
+          "properties": {
+            "time_format": "15:04:05"
+          },
+          "style": "powerline",
+          "powerline_symbol": "",
+          "template": " <p:symbol-color>\uf49b</> {{ .CurrentDate | date .Format }} ",
+          "type": "time"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:symbol-color",
+          "properties": {
+            "folder_separator_icon": "/",
+            "style": "folder"
+          },
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": "\ue5ff {{ path .Path .Location }} ",
+          "type": "path"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:git-text",
+          "properties": {
+            "fetch_stash_count": true,
+            "fetch_status": true
+          },
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "background": "p:error-background",
+          "foreground": "p:backgrond-color",
+          "style": "diamond",
+          "leading_diamond": "\ue0c7",
+          "trailing_diamond": "\ue0c6",
+          "template": " \uf0e7 ",
+          "type": "root"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:git-text",
+          "style": "plain",
+          "template": "{{ if .Root }}{{ else }}<p:symbol-color> > </>{{ end }}",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ]
+}

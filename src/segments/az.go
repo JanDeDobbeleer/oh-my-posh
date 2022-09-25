@@ -174,9 +174,9 @@ func (a *Az) getModuleSubscription() bool {
 
 func (a *Az) findConfig(fileName string) (string, error) {
 	configDirs := []string{
+		a.env.Getenv("AZURE_CONFIG_DIR"),
 		filepath.Join(a.env.Home(), ".azure"),
 		filepath.Join(a.env.Home(), ".Azure"),
-		a.env.Getenv("AZURE_CONFIG_DIR"),
 	}
 	for _, dir := range configDirs {
 		if len(dir) != 0 && a.env.HasFilesInDir(dir, fileName) {

@@ -13,6 +13,23 @@ make sure your `git` executable is up-to-date (when branch or status information
 PowerShell offers support for the [posh-git][poshgit] module for autocompletion, but it is disabled by default.
 To enable this, set `$env:POSH_GIT_ENABLED = $true` in your `$PROFILE`. This will also make use of the
 [posh-git][poshgit] output rather than do additional work to get the git status.
+
+If you want to display the default [posh-git][poshgit] output, **do not** set the above environment variable
+and add the following snippet after initializing Oh My Posh in your `$PROFILE`:
+
+```powershell
+function Set-PoshGitStatus {
+    $global:GitStatus = Get-GitStatus
+    $env:POSH_GIT_STRING = Write-GitStatus -Status $global:GitStatus
+}
+New-Alias -Name 'Set-PoshContext' -Value 'Set-PoshGitStatus' -Scope Global -Force
+```
+
+You can then use the `POSH_GIT_STRING` environment variable in a [text segment][text]:
+
+```json
+"template": "{{ if .Env.POSH_GIT_STRING }} {{ .Env.POSH_GIT_STRING }} {{ end }}"
+```
 :::
 
 ## Sample Configuration
@@ -153,3 +170,4 @@ Local changes use the following syntax:
 [untracked]: https://git-scm.com/docs/git-status#Documentation/git-status.txt---untracked-filesltmodegt
 [submodules]: https://git-scm.com/docs/git-status#Documentation/git-status.txt---ignore-submodulesltwhengt
 [kraken-ref]: https://www.gitkraken.com/invite/nQmDPR9D
+[text]: text.mdx

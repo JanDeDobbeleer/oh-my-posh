@@ -355,11 +355,13 @@ func (pt *Path) replaceMappedLocations(pwd string) string {
 		pwd = strings.Replace(pwd, "Microsoft.PowerShell.Core\\FileSystem::", "", 1)
 	}
 
+	enableMappedLocations := pt.props.GetBool(MappedLocationsEnabled, true)
+
+	// built-in mapped locations, can be disabled
 	mappedLocations := map[string]string{}
-	if pt.props.GetBool(MappedLocationsEnabled, true) {
+	if enableMappedLocations {
 		mappedLocations["hkcu:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
 		mappedLocations["hklm:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
-		mappedLocations[pt.normalize(pt.env.Home())] = pt.props.GetString(HomeIcon, "~")
 	}
 
 	// merge custom locations with mapped locations
@@ -387,6 +389,12 @@ func (pt *Path) replaceMappedLocations(pwd string) string {
 			return value + pwd[len(key):]
 		}
 	}
+
+	// treat this as a built-in mapped location
+	if enableMappedLocations && pt.inHomeDir(pwd) {
+		return pt.props.GetString(HomeIcon, "~") + pwd[len(pt.env.Home()):]
+	}
+
 	return pwd
 }
 
@@ -405,7 +413,14 @@ func (pt *Path) replaceFolderSeparators(pwd string) string {
 }
 
 func (pt *Path) inHomeDir(pwd string) bool {
-	return strings.HasPrefix(pwd, pt.env.Home())
+	home := pt.env.Home()
+	if home == pwd {
+		return true
+	}
+	if !strings.HasSuffix(home, pt.env.PathSeparator()) {
+		home += pt.env.PathSeparator()
+	}
+	return strings.HasPrefix(pwd, home)
 }
 
 func (pt *Path) rootLocation() string {

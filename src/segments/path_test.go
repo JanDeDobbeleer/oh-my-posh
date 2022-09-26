@@ -46,30 +46,39 @@ const (
 	levelDir        = "/level"
 )
 
-func TestIsInHomeDirTrue(t *testing.T) {
-	home := homeBill
-	env := new(mock.MockedEnvironment)
-	env.On("Home").Return(home)
-	path := &Path{
-		env: env,
+func TestIsInHomeDir(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected bool
+		Dir      string
+	}{
+		{
+			Case:     "in home dir",
+			Expected: true,
+			Dir:      homeBill,
+		},
+		{
+			Case:     "in home dir subdirectory",
+			Expected: true,
+			Dir:      homeBill + "/go/src/github.com/JanDeDobbeleer/oh-my-posh",
+		},
+		{
+			Case:     "in similar home dir but not really",
+			Expected: false,
+			Dir:      "/home/bill-test",
+		},
 	}
-	got := path.inHomeDir(home)
-	assert.True(t, got)
-}
-
-func TestIsInHomeDirLevelTrue(t *testing.T) {
-	home := homeBill
-	pwd := home
-	for i := 0; i < 99; i++ {
-		pwd += levelDir
+	for _, tc := range cases {
+		home := homeBill
+		env := new(mock.MockedEnvironment)
+		env.On("Home").Return(home)
+		env.On("PathSeparator").Return("/")
+		path := &Path{
+			env: env,
+		}
+		got := path.inHomeDir(tc.Dir)
+		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
-	env := new(mock.MockedEnvironment)
-	env.On("Home").Return(home)
-	path := &Path{
-		env: env,
-	}
-	got := path.inHomeDir(pwd)
-	assert.True(t, got)
 }
 
 func TestRootLocationHome(t *testing.T) {
@@ -147,17 +156,6 @@ func TestParent(t *testing.T) {
 		got := path.Parent()
 		assert.EqualValues(t, tc.Expected, got, tc.Case)
 	}
-}
-
-func TestIsInHomeDirFalse(t *testing.T) {
-	home := homeBill
-	env := new(mock.MockedEnvironment)
-	env.On("Home").Return(home)
-	path := &Path{
-		env: env,
-	}
-	got := path.inHomeDir("/usr/error")
-	assert.False(t, got)
 }
 
 func TestPathDepthMultipleLevelsDeep(t *testing.T) {
@@ -865,6 +863,7 @@ func TestGetPwd(t *testing.T) {
 		Pswd                   string
 		Expected               string
 	}{
+		{MappedLocationsEnabled: true, Pwd: "/usr/home-test", Expected: "/usr/home-test"},
 		{MappedLocationsEnabled: true, Pwd: "", Expected: ""},
 		{MappedLocationsEnabled: true, Pwd: "/usr", Expected: "/usr"},
 		{MappedLocationsEnabled: true, Pwd: "/usr/home", Expected: "~"},

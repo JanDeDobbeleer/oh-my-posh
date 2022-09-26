@@ -23,6 +23,7 @@ const (
 	pwsh       = "pwsh"
 	cli        = "cli"
 	firstMatch = "first_match"
+	azureEnv   = "POSH_AZURE_SUBSCRIPTION"
 )
 
 type AzureConfig struct {
@@ -47,47 +48,25 @@ type AzureUser struct {
 	Type string `json:"type"`
 }
 
-type AzurePowerShellConfig struct {
-	DefaultContextKey string                                  `json:"DefaultContextKey"`
-	Contexts          map[string]*AzurePowerShellSubscription `json:"Contexts"`
-}
-
 type AzurePowerShellSubscription struct {
+	Name    string `json:"Name"`
 	Account struct {
-		ID         string      `json:"Id"`
-		Credential interface{} `json:"Credential"`
-		Type       string      `json:"Type"`
-		TenantMap  struct {
-		} `json:"TenantMap"`
-		ExtendedProperties struct {
-			Subscriptions string `json:"Subscriptions"`
-			Tenants       string `json:"Tenants"`
-			HomeAccountID string `json:"HomeAccountId"`
-		} `json:"ExtendedProperties"`
+		Type string `json:"Type"`
 	} `json:"Account"`
-	Tenant struct {
-		ID                 string      `json:"Id"`
-		Directory          interface{} `json:"Directory"`
-		IsHome             bool        `json:"IsHome"`
-		ExtendedProperties struct {
-		} `json:"ExtendedProperties"`
-	} `json:"Tenant"`
+	Environment struct {
+		Name string `json:"Name"`
+	} `json:"Environment"`
 	Subscription struct {
 		ID                 string `json:"Id"`
 		Name               string `json:"Name"`
 		State              string `json:"State"`
 		ExtendedProperties struct {
-			HomeTenant          string `json:"HomeTenant"`
-			AuthorizationSource string `json:"AuthorizationSource"`
-			SubscriptionPolices string `json:"SubscriptionPolices"`
-			Tenants             string `json:"Tenants"`
-			Account             string `json:"Account"`
-			Environment         string `json:"Environment"`
+			Account string `json:"Account"`
 		} `json:"ExtendedProperties"`
 	} `json:"Subscription"`
-	Environment struct {
-		Name string `json:"Name"`
-	} `json:"Environment"`
+	Tenant struct {
+		ID string `json:"Id"`
+	} `json:"Tenant"`
 }
 
 func (a *Az) Template() string {
@@ -142,31 +121,23 @@ func (a *Az) getCLISubscription() bool {
 }
 
 func (a *Az) getModuleSubscription() bool {
-	cfg, err := a.findConfig("AzureRmContext.json")
-	if err != nil {
+	envSubscription := a.env.Getenv(azureEnv)
+	if len(envSubscription) == 0 {
 		return false
 	}
-	content := a.FileContentWithoutBom(cfg)
-	if len(content) == 0 {
-		return false
-	}
-	var config AzurePowerShellConfig
-	if err := json.Unmarshal([]byte(content), &config); err != nil {
-		return false
-	}
-	defaultContext := config.Contexts[config.DefaultContextKey]
-	if defaultContext == nil {
+	var config AzurePowerShellSubscription
+	if err := json.Unmarshal([]byte(envSubscription), &config); err != nil {
 		return false
 	}
 	a.IsDefault = true
-	a.EnvironmentName = defaultContext.Environment.Name
-	a.TenantID = defaultContext.Tenant.ID
-	a.ID = defaultContext.Subscription.ID
-	a.Name = defaultContext.Subscription.Name
-	a.State = defaultContext.Subscription.State
+	a.EnvironmentName = config.Environment.Name
+	a.TenantID = config.Tenant.ID
+	a.ID = config.Subscription.ID
+	a.Name = config.Subscription.Name
+	a.State = config.Subscription.State
 	a.User = &AzureUser{
-		Name: defaultContext.Subscription.ExtendedProperties.Account,
-		Type: defaultContext.Account.Type,
+		Name: config.Subscription.ExtendedProperties.Account,
+		Type: config.Account.Type,
 	}
 	a.Origin = "PWSH"
 	return true

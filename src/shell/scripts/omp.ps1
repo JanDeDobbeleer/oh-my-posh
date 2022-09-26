@@ -25,9 +25,24 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     if ((::CONFIG:: -ne '') -and (Test-Path ::CONFIG::)) {
         $env:POSH_THEME = (Resolve-Path -Path ::CONFIG::).ProviderPath
     }
+
     # specific module support (disabled by default)
     if (($null -eq $env:POSH_GIT_ENABLED) -or ($null -eq (Get-Module 'posh-git'))) {
         $env:POSH_GIT_ENABLED = $false
+    }
+    if (($null -eq $env:POSH_AZURE_ENABLED) -or ($null -eq (Get-Module 'az'))) {
+        $env:POSH_AZURE_ENABLED = $false
+    }
+
+    function Initialize-ModuleSupport {
+        if ($env:POSH_GIT_ENABLED -eq $true) {
+            # We need to set the status so posh-git can facilitate autocomplete
+            $global:GitStatus = Get-GitStatus
+            $env:POSH_GIT_STATUS = $global:GitStatus | ConvertTo-Json
+        }
+        if ($env:POSH_AZURE_ENABLED -eq $true) {
+            $env:POSH_AZURE_SUBSCRIPTION = Get-AzContext | ConvertTo-Json
+        }
     }
 
     function Start-Utf8Process {
@@ -91,14 +106,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $cleanPWD = $cleanPWD.TrimEnd('\')
         $cleanPSWD = $cleanPSWD.TrimEnd('\')
         return $cleanPWD, $cleanPSWD
-    }
-
-    function Initialize-ModuleSupport {
-        if ($env:POSH_GIT_ENABLED -eq $true) {
-            # We need to set the status so posh-git can facilitate autocomplete
-            $global:GitStatus = Get-GitStatus
-            $env:POSH_GIT_STATUS = $global:GitStatus | ConvertTo-Json
-        }
     }
 
     if (("::TOOLTIPS::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {

@@ -1,81 +1,112 @@
 {
-  "DefaultContextKey": "My Azure Subscription (subscription_id) - tenant_id - user_name",
-  "EnvironmentTable": {},
-  "Contexts": {
-    "My Azure Subscription (subscription_id) - tenant_id - user_name": {
-      "Account": {
-        "Id": "232-232-232-232",
-        "Type": "user",
-        "TenantMap": {},
-        "ExtendedProperties": {
-          "Subscriptions": "subscription_ids",
-          "Tenants": "tenants_ids",
-          "HomeAccountId": "tenants_ids"
-        }
-      },
-      "Tenant": {
-        "Id": "4777-4777-4777-4777",
-        "Directory": null,
-        "IsHome": true,
-        "ExtendedProperties": {}
-      },
-      "Subscription": {
-        "Id": "97hkk-97hkk-97hkk-97hkk",
-        "Name": "AzurePosh",
-        "State": "Poshfull",
-        "ExtendedProperties": {
-          "HomeTenant": "688ab8f8-d8d8-4c8b-b8b8-b8b8b8b8b8b8",
-          "AuthorizationSource": "Legacy",
-          "SubscriptionPolices": "{\"locationPlacementId\":\"Public_2014-09-01\",\"quotaId\":\"MSDN_2014-09-01\",\"spendingLimit\":\"On\"}",
-          "Tenants": "4777-4777-4777-4777",
-          "Account": "Bill",
-          "Environment": "AzurePoshCloud"
-        }
-      },
-      "Environment": {
-        "Name": "AzurePoshCloud",
-        "Type": "Built-in",
-        "OnPremise": false,
-        "ServiceManagementUrl": "https://management.core.windows.net/",
-        "ResourceManagerUrl": "https://management.azure.com/",
-        "ManagementPortalUrl": "https://portal.azure.com/",
-        "PublishSettingsFileUrl": "https://go.microsoft.com/fwlink/?LinkID=301775",
-        "ActiveDirectoryAuthority": "https://login.microsoftonline.com/",
-        "GalleryUrl": "https://gallery.azure.com/",
-        "GraphUrl": "https://graph.windows.net/",
-        "ActiveDirectoryServiceEndpointResourceId": "https://management.core.windows.net/",
-        "StorageEndpointSuffix": "core.windows.net",
-        "SqlDatabaseDnsSuffix": ".database.windows.net",
-        "TrafficManagerDnsSuffix": "trafficmanager.net",
-        "AzureKeyVaultDnsSuffix": "vault.azure.net",
-        "AzureKeyVaultServiceEndpointResourceId": "https://vault.azure.net",
-        "GraphEndpointResourceId": "https://graph.windows.net/",
-        "DataLakeEndpointResourceId": "https://datalake.azure.net/",
-        "BatchEndpointResourceId": "https://batch.core.windows.net/",
-        "AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix": "azuredatalakeanalytics.net",
-        "AzureDataLakeStoreFileSystemEndpointSuffix": "azuredatalakestore.net",
-        "AdTenant": "Common",
-        "ContainerRegistryEndpointSuffix": "azurecr.io",
-        "VersionProfiles": [],
-        "ExtendedProperties": {
-          "OperationalInsightsEndpoint": "https://api.loganalytics.io/v1",
-          "OperationalInsightsEndpointResourceId": "https://api.loganalytics.io",
-          "AzureAnalysisServicesEndpointSuffix": "asazure.windows.net",
-          "AnalysisServicesEndpointResourceId": "https://region.asazure.windows.net",
-          "AzureAttestationServiceEndpointSuffix": "attest.azure.net",
-          "AzureAttestationServiceEndpointResourceId": "https://attest.azure.net",
-          "AzureSynapseAnalyticsEndpointSuffix": "dev.azuresynapse.net",
-          "AzureSynapseAnalyticsEndpointResourceId": "https://dev.azuresynapse.net",
-          "ManagedHsmServiceEndpointResourceId": "https://managedhsm.azure.net",
-          "ManagedHsmServiceEndpointSuffix": "managedhsm.azure.net",
-          "MicrosoftGraphEndpointResourceId": "https://graph.microsoft.com/",
-          "MicrosoftGraphUrl": "https://graph.microsoft.com"
-        }
-      },
-      "VersionProfile": null,
-      "TokenCache": { "CacheData": null },
-      "ExtendedProperties": {}
+  "Name": "MVP (c2733c30-f2c9-45bd-9f1f-528d7c6191b8) - be96dc2e-13ce-4ee1-9cad-13b52b893716 - jan@ohmyposh.dev",
+  "Account": {
+    "Id": "jan@ohmyposh.dev",
+    "Type": "User",
+    "Tenants": [
+      "be96dc2e-13ce-4ee1-9cad-13b52b893716"
+    ],
+    "AccessToken": null,
+    "Credential": null,
+    "TenantMap": {},
+    "CertificateThumbprint": null,
+    "ExtendedProperties": {
+      "Tenants": "be96dc2e-13ce-4ee1-9cad-13b52b893716",
+      "HomeAccountId": "360a9158-bf5d-45a7-8539-88e7f6f1d90b.161de531-8316-49b4-88fb-1a669ecc3b5c",
+      "Subscriptions": "c2733c30-f2c9-45bd-9f1f-528d7c6191b8"
     }
   },
+  "Environment": {
+    "Name": "AzurePoshCloud",
+    "Type": "Built-in",
+    "EnableAdfsAuthentication": false,
+    "OnPremise": false,
+    "ActiveDirectoryServiceEndpointResourceId": "https://management.core.windows.net/",
+    "AdTenant": "Common",
+    "GalleryUrl": "https://gallery.azure.com/",
+    "ManagementPortalUrl": "https://portal.azure.com/",
+    "ServiceManagementUrl": "https://management.core.windows.net/",
+    "PublishSettingsFileUrl": "https://go.microsoft.com/fwlink/?LinkID=301775",
+    "ResourceManagerUrl": "https://management.azure.com/",
+    "SqlDatabaseDnsSuffix": ".database.windows.net",
+    "StorageEndpointSuffix": "core.windows.net",
+    "ActiveDirectoryAuthority": "https://login.microsoftonline.com/",
+    "GraphUrl": "https://graph.windows.net/",
+    "GraphEndpointResourceId": "https://graph.windows.net/",
+    "TrafficManagerDnsSuffix": "trafficmanager.net",
+    "AzureKeyVaultDnsSuffix": "vault.azure.net",
+    "DataLakeEndpointResourceId": "https://datalake.azure.net/",
+    "AzureDataLakeStoreFileSystemEndpointSuffix": "azuredatalakestore.net",
+    "AzureDataLakeAnalyticsCatalogAndJobEndpointSuffix": "azuredatalakeanalytics.net",
+    "AzureKeyVaultServiceEndpointResourceId": "https://vault.azure.net",
+    "ContainerRegistryEndpointSuffix": "azurecr.io",
+    "AzureOperationalInsightsEndpointResourceId": "https://api.loganalytics.io",
+    "AzureOperationalInsightsEndpoint": "https://api.loganalytics.io/v1",
+    "AzureAnalysisServicesEndpointSuffix": "asazure.windows.net",
+    "AnalysisServicesEndpointResourceId": "https://region.asazure.windows.net",
+    "AzureAttestationServiceEndpointSuffix": "attest.azure.net",
+    "AzureAttestationServiceEndpointResourceId": "https://attest.azure.net",
+    "AzureSynapseAnalyticsEndpointSuffix": "dev.azuresynapse.net",
+    "AzureSynapseAnalyticsEndpointResourceId": "https://dev.azuresynapse.net",
+    "VersionProfiles": [],
+    "ExtendedProperties": {
+      "OperationalInsightsEndpoint": "https://api.loganalytics.io/v1",
+      "OperationalInsightsEndpointResourceId": "https://api.loganalytics.io",
+      "AzureAnalysisServicesEndpointSuffix": "asazure.windows.net",
+      "AnalysisServicesEndpointResourceId": "https://region.asazure.windows.net",
+      "AzureAttestationServiceEndpointSuffix": "attest.azure.net",
+      "AzureAttestationServiceEndpointResourceId": "https://attest.azure.net",
+      "AzureSynapseAnalyticsEndpointSuffix": "dev.azuresynapse.net",
+      "AzureSynapseAnalyticsEndpointResourceId": "https://dev.azuresynapse.net",
+      "ManagedHsmServiceEndpointResourceId": "https://managedhsm.azure.net",
+      "ManagedHsmServiceEndpointSuffix": "managedhsm.azure.net",
+      "MicrosoftGraphEndpointResourceId": "https://graph.microsoft.com/",
+      "MicrosoftGraphUrl": "https://graph.microsoft.com",
+      "AzurePurviewEndpointSuffix": "purview.azure.net",
+      "AzurePurviewEndpointResourceId": "https://purview.azure.net"
+    },
+    "BatchEndpointResourceId": "https://batch.core.windows.net/"
+  },
+  "Subscription": {
+    "Id": "c2733c30-f2c9-45bd-9f1f-528d7c6191b8",
+    "Name": "MVP",
+    "State": "Enabled",
+    "SubscriptionId": "c2733c30-f2c9-45bd-9f1f-528d7c6191b8",
+    "TenantId": "be96dc2e-13ce-4ee1-9cad-13b52b893716",
+    "HomeTenantId": "be96dc2e-13ce-4ee1-9cad-13b52b893716",
+    "ManagedByTenantIds": [],
+    "CurrentStorageAccountName": null,
+    "SubscriptionPolicies": {
+      "LocationPlacementId": "Public_2014-09-01",
+      "QuotaId": "MSDN_2014-09-01",
+      "SpendingLimit": "On"
+    },
+    "ExtendedProperties": {
+      "Account": "jan.de.dobbeleer@gmail.com",
+      "Tenants": "be96dc2e-13ce-4ee1-9cad-13b52b893716",
+      "AuthorizationSource": "Legacy",
+      "SubscriptionPolices": "{\"locationPlacementId\":\"Public_2014-09-01\",\"quotaId\":\"MSDN_2014-09-01\",\"spendingLimit\":\"On\"}",
+      "HomeTenant": "be96dc2e-13ce-4ee1-9cad-13b52b893716",
+      "Environment": "AzureCloud"
+    },
+    "CurrentStorageAccount": null,
+    "AuthorizationSource": "Legacy",
+    "Tags": null
+  },
+  "Tenant": {
+    "Id": "be96dc2e-13ce-4ee1-9cad-13b52b893716",
+    "TenantId": "be96dc2e-13ce-4ee1-9cad-13b52b893716",
+    "ExtendedProperties": {},
+    "TenantCategory": null,
+    "Country": null,
+    "CountryCode": null,
+    "Name": null,
+    "Domains": [],
+    "DefaultDomain": null,
+    "TenantType": null,
+    "TenantBrandingLogoUrl": null
+  },
+  "TokenCache": null,
+  "VersionProfile": null,
   "ExtendedProperties": {}
 }

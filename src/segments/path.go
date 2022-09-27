@@ -347,6 +347,9 @@ func (pt *Path) normalize(inputPath string) string {
 	if goos == environment.WINDOWS || goos == environment.DARWIN {
 		normalized = strings.ToLower(normalized)
 	}
+	if !strings.HasSuffix(normalized, "/") {
+		normalized += "/"
+	}
 	return normalized
 }
 
@@ -355,13 +358,11 @@ func (pt *Path) replaceMappedLocations(pwd string) string {
 		pwd = strings.Replace(pwd, "Microsoft.PowerShell.Core\\FileSystem::", "", 1)
 	}
 
-	enableMappedLocations := pt.props.GetBool(MappedLocationsEnabled, true)
-
-	// built-in mapped locations, can be disabled
 	mappedLocations := map[string]string{}
-	if enableMappedLocations {
-		mappedLocations["hkcu:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
-		mappedLocations["hklm:"] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
+	if pt.props.GetBool(MappedLocationsEnabled, true) {
+		mappedLocations[pt.normalize("hkcu:")] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
+		mappedLocations[pt.normalize("hklm:")] = pt.props.GetString(WindowsRegistryIcon, "\uF013")
+		mappedLocations[pt.normalize(pt.env.Home())] = pt.props.GetString(HomeIcon, "~")
 	}
 
 	// merge custom locations with mapped locations
@@ -385,16 +386,12 @@ func (pt *Path) replaceMappedLocations(pwd string) string {
 	normalizedPwd := pt.normalize(pwd)
 	for _, key := range keys {
 		if strings.HasPrefix(normalizedPwd, key) {
-			value := mappedLocations[key]
-			return value + pwd[len(key):]
+			replacement := mappedLocations[key]
+			// -1 as we want to ignore the trailing slash
+			// set by the normalize function
+			return replacement + pwd[len(key)-1:]
 		}
 	}
-
-	// treat this as a built-in mapped location
-	if enableMappedLocations && pt.inHomeDir(pwd) {
-		return pt.props.GetString(HomeIcon, "~") + pwd[len(pt.env.Home()):]
-	}
-
 	return pwd
 }
 
@@ -410,17 +407,6 @@ func (pt *Path) replaceFolderSeparators(pwd string) string {
 
 	pwd = strings.ReplaceAll(pwd, defaultSeparator, folderSeparator)
 	return pwd
-}
-
-func (pt *Path) inHomeDir(pwd string) bool {
-	home := pt.env.Home()
-	if home == pwd {
-		return true
-	}
-	if !strings.HasSuffix(home, pt.env.PathSeparator()) {
-		home += pt.env.PathSeparator()
-	}
-	return strings.HasPrefix(pwd, home)
 }
 
 func (pt *Path) rootLocation() string {

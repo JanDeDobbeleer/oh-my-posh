@@ -40,46 +40,10 @@ func renderTemplate(env *mock.MockedEnvironment, segmentTemplate string, context
 }
 
 const (
-	homeBill        = "/home/bill"
 	homeJan         = "/usr/home/jan"
 	homeBillWindows = "C:\\Users\\Bill"
 	levelDir        = "/level"
 )
-
-func TestIsInHomeDir(t *testing.T) {
-	cases := []struct {
-		Case     string
-		Expected bool
-		Dir      string
-	}{
-		{
-			Case:     "in home dir",
-			Expected: true,
-			Dir:      homeBill,
-		},
-		{
-			Case:     "in home dir subdirectory",
-			Expected: true,
-			Dir:      homeBill + "/go/src/github.com/JanDeDobbeleer/oh-my-posh",
-		},
-		{
-			Case:     "in similar home dir but not really",
-			Expected: false,
-			Dir:      "/home/bill-test",
-		},
-	}
-	for _, tc := range cases {
-		home := homeBill
-		env := new(mock.MockedEnvironment)
-		env.On("Home").Return(home)
-		env.On("PathSeparator").Return("/")
-		path := &Path{
-			env: env,
-		}
-		got := path.inHomeDir(tc.Dir)
-		assert.Equal(t, tc.Expected, got, tc.Case)
-	}
-}
 
 func TestRootLocationHome(t *testing.T) {
 	cases := []struct {
@@ -92,10 +56,10 @@ func TestRootLocationHome(t *testing.T) {
 		HomeIcon      string
 		RegistryIcon  string
 	}{
+		{Expected: "REG", RegistryIcon: "REG", HomePath: "C:\\Users\\Bill", Pwd: "HKCU:\\Program Files\\Go", GOOS: environment.WINDOWS, PathSeparator: "\\"},
 		{Expected: "~", HomeIcon: "~", HomePath: "/home/bill/", Pwd: "/home/bill/", PathSeparator: "/"},
 		{Expected: "usr", HomePath: "/home/bill/", Pwd: "/usr/error/what", PathSeparator: "/"},
 		{Expected: "C:", HomePath: "C:\\Users\\Bill", Pwd: "C:\\Program Files\\Go", GOOS: environment.WINDOWS, PathSeparator: "\\"},
-		{Expected: "REG", RegistryIcon: "REG", HomePath: "C:\\Users\\Bill", Pwd: "HKCU:\\Program Files\\Go", GOOS: environment.WINDOWS, PathSeparator: "\\"},
 		{Expected: "~", HomeIcon: "~", HomePath: "C:\\Users\\Bill", Pwd: "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\Bill", GOOS: environment.WINDOWS, PathSeparator: "\\"},
 		{Expected: "C:", HomePath: "C:\\Users\\Jack", Pwd: "Microsoft.PowerShell.Core\\FileSystem::C:\\Users\\Bill", GOOS: environment.WINDOWS, PathSeparator: "\\"},
 		{Expected: "", HomePath: "C:\\Users\\Jack", Pwd: "", GOOS: environment.WINDOWS, PathSeparator: "\\"},
@@ -511,14 +475,14 @@ func TestNormalizePath(t *testing.T) {
 		GOOS     string
 		Expected string
 	}{
-		{Input: "C:\\Users\\Bob\\Foo", GOOS: environment.LINUX, Expected: "C:/Users/Bob/Foo"},
-		{Input: "C:\\Users\\Bob\\Foo", GOOS: environment.WINDOWS, Expected: "c:/users/bob/foo"},
-		{Input: "~\\Bob\\Foo", GOOS: environment.LINUX, Expected: "/usr/home/Bob/Foo"},
-		{Input: "~\\Bob\\Foo", GOOS: environment.WINDOWS, Expected: "/usr/home/bob/foo"},
-		{Input: "/foo/~/bar", GOOS: environment.LINUX, Expected: "/foo/~/bar"},
-		{Input: "/foo/~/bar", GOOS: environment.WINDOWS, Expected: "/foo/~/bar"},
-		{Input: "~/baz", GOOS: environment.LINUX, Expected: "/usr/home/baz"},
-		{Input: "~/baz", GOOS: environment.WINDOWS, Expected: "/usr/home/baz"},
+		{Input: "C:\\Users\\Bob\\Foo", GOOS: environment.LINUX, Expected: "C:/Users/Bob/Foo/"},
+		{Input: "C:\\Users\\Bob\\Foo", GOOS: environment.WINDOWS, Expected: "c:/users/bob/foo/"},
+		{Input: "~\\Bob\\Foo", GOOS: environment.LINUX, Expected: "/usr/home/Bob/Foo/"},
+		{Input: "~\\Bob\\Foo", GOOS: environment.WINDOWS, Expected: "/usr/home/bob/foo/"},
+		{Input: "/foo/~/bar", GOOS: environment.LINUX, Expected: "/foo/~/bar/"},
+		{Input: "/foo/~/bar", GOOS: environment.WINDOWS, Expected: "/foo/~/bar/"},
+		{Input: "~/baz", GOOS: environment.LINUX, Expected: "/usr/home/baz/"},
+		{Input: "~/baz", GOOS: environment.WINDOWS, Expected: "/usr/home/baz/"},
 	}
 
 	for _, tc := range cases {
@@ -863,10 +827,10 @@ func TestGetPwd(t *testing.T) {
 		Pswd                   string
 		Expected               string
 	}{
+		{MappedLocationsEnabled: true, Pwd: "/usr/home", Expected: "~"},
 		{MappedLocationsEnabled: true, Pwd: "/usr/home-test", Expected: "/usr/home-test"},
 		{MappedLocationsEnabled: true, Pwd: "", Expected: ""},
 		{MappedLocationsEnabled: true, Pwd: "/usr", Expected: "/usr"},
-		{MappedLocationsEnabled: true, Pwd: "/usr/home", Expected: "~"},
 		{MappedLocationsEnabled: true, Pwd: "/usr/home/abc", Expected: "~/abc"},
 		{MappedLocationsEnabled: true, Pwd: "/a/b/c/d", Expected: "#"},
 		{MappedLocationsEnabled: true, Pwd: "/a/b/c/d/e/f/g", Expected: "#/e/f/g"},

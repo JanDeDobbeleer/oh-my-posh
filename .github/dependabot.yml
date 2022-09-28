@@ -4,17 +4,20 @@ updates:
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "main"
     schedule:
       interval: "daily"
 
   # Maintain dependencies for npm
   - package-ecosystem: "npm"
     directory: "/"
+    target-branch: "main"
     schedule:
       interval: "daily"
 
   # Maintain dependencies for Go modules
   - package-ecosystem: "gomod"
     directory: "/"
+    target-branch: "main"
     schedule:
       interval: "daily"

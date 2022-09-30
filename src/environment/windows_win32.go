@@ -203,7 +203,6 @@ func (env *ShellEnvironment) getConnections() []*Connection {
 	var pIFTable2 *MIN_IF_TABLE2
 	_, _, _ = hGetIfTable2.Call(uintptr(unsafe.Pointer(&pIFTable2)))
 
-	SSIDs, _ := env.getAllWifiSSID()
 	networks := make([]*Connection, 0)
 
 	for i := 0; i < int(pIFTable2.NumEntries); i++ {
@@ -220,11 +219,13 @@ func (env *ShellEnvironment) getConnections() []*Connection {
 		}
 
 		var connectionType ConnectionType
+		var ssid string
 		switch networkInterface.Type {
 		case 6:
 			connectionType = ETHERNET
 		case 71:
 			connectionType = WIFI
+			ssid = env.getWiFiSSID(networkInterface.InterfaceGUID)
 		case 237, 234, 244:
 			connectionType = CELLULAR
 		}
@@ -243,10 +244,7 @@ func (env *ShellEnvironment) getConnections() []*Connection {
 			Name:         description, // we want a relatable name, alias isn't that
 			TransmitRate: networkInterface.TransmitLinkSpeed,
 			ReceiveRate:  networkInterface.ReceiveLinkSpeed,
-		}
-
-		if SSID, OK := SSIDs[network.Name]; OK {
-			network.SSID = SSID
+			SSID:         ssid,
 		}
 
 		networks = append(networks, network)
@@ -322,13 +320,21 @@ type MIB_IF_ROW2 struct { //nolint: revive
 	OutQLen            uint64
 }
 
-func (env *ShellEnvironment) getAllWifiSSID() (map[string]string, error) {
+var (
+	wlanapi             = syscall.NewLazyDLL("wlanapi.dll")
+	hWlanOpenHandle     = wlanapi.NewProc("WlanOpenHandle")
+	hWlanCloseHandle    = wlanapi.NewProc("WlanCloseHandle")
+	hWlanQueryInterface = wlanapi.NewProc("WlanQueryInterface")
+)
+
+func (env *ShellEnvironment) getWiFiSSID(guid windows.GUID) string {
+	// Query wifi connection state
 	var pdwNegotiatedVersion uint32
 	var phClientHandle uint32
 	e, _, err := hWlanOpenHandle.Call(uintptr(uint32(2)), uintptr(unsafe.Pointer(nil)), uintptr(unsafe.Pointer(&pdwNegotiatedVersion)), uintptr(unsafe.Pointer(&phClientHandle)))
 	if e != 0 {
 		env.Log(Error, "getAllWifiSSID", err.Error())
-		return nil, err
+		return ""
 	}
 
 	// defer closing handle
@@ -336,42 +342,11 @@ func (env *ShellEnvironment) getAllWifiSSID() (map[string]string, error) {
 		_, _, _ = hWlanCloseHandle.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)))
 	}()
 
-	ssid := make(map[string]string)
-	// list interfaces
-	var interfaceList *WLAN_INTERFACE_INFO_LIST
-	e, _, err = hWlanEnumInterfaces.Call(uintptr(phClientHandle), uintptr(unsafe.Pointer(nil)), uintptr(unsafe.Pointer(&interfaceList)))
-	if e != 0 {
-		env.Log(Error, "getAllWifiSSID", err.Error())
-		return nil, err
-	}
-
-	// use first interface that is connected
-	numberOfInterfaces := int(interfaceList.dwNumberOfItems)
-	infoSize := unsafe.Sizeof(interfaceList.InterfaceInfo[0])
-	for i := 0; i < numberOfInterfaces; i++ {
-		network := (*WLAN_INTERFACE_INFO)(unsafe.Pointer(uintptr(unsafe.Pointer(&interfaceList.InterfaceInfo[0])) + uintptr(i)*infoSize))
-		if network.isState == 1 {
-			wifiInterface := strings.TrimRight(string(utf16.Decode(network.strInterfaceDescription[:])), "\x00")
-			ssid[wifiInterface] = env.getWiFiSSID(network, phClientHandle)
-		}
-	}
-	return ssid, nil
-}
-
-var (
-	wlanapi             = syscall.NewLazyDLL("wlanapi.dll")
-	hWlanOpenHandle     = wlanapi.NewProc("WlanOpenHandle")
-	hWlanCloseHandle    = wlanapi.NewProc("WlanCloseHandle")
-	hWlanEnumInterfaces = wlanapi.NewProc("WlanEnumInterfaces")
-	hWlanQueryInterface = wlanapi.NewProc("WlanQueryInterface")
-)
-
-func (env *ShellEnvironment) getWiFiSSID(network *WLAN_INTERFACE_INFO, clientHandle uint32) string {
-	// Query wifi connection state
 	var dataSize uint16
 	var wlanAttr *WLAN_CONNECTION_ATTRIBUTES
-	e, _, _ := hWlanQueryInterface.Call(uintptr(clientHandle),
-		uintptr(unsafe.Pointer(&network.InterfaceGuid)),
+
+	e, _, _ = hWlanQueryInterface.Call(uintptr(phClientHandle),
+		uintptr(unsafe.Pointer(&guid)),
 		uintptr(7), // wlan_intf_opcode_current_connection
 		uintptr(unsafe.Pointer(nil)),
 		uintptr(unsafe.Pointer(&dataSize)),
@@ -387,18 +362,6 @@ func (env *ShellEnvironment) getWiFiSSID(network *WLAN_INTERFACE_INFO, clientHan
 		return ""
 	}
 	return string(ssid.ucSSID[0:ssid.uSSIDLength])
-}
-
-type WLAN_INTERFACE_INFO_LIST struct { //nolint: revive
-	dwNumberOfItems uint32
-	dwIndex         uint32 //nolint: unused
-	InterfaceInfo   [256]WLAN_INTERFACE_INFO
-}
-
-type WLAN_INTERFACE_INFO struct { //nolint: revive
-	InterfaceGuid           syscall.GUID //nolint: revive
-	strInterfaceDescription [256]uint16
-	isState                 uint32
 }
 
 type WLAN_CONNECTION_ATTRIBUTES struct { //nolint: revive

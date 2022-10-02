@@ -78,7 +78,7 @@
           "invert_powerline": true,
           "leading_diamond": " \ue0b6",
           "style": "diamond",
-          "template": " \uf5ef {{ .CurrentDate | date .Format }} ",
+          "template": " \uf64f {{ .CurrentDate | date .Format }} ",
           "trailing_diamond": "\ue0b4",
           "type": "time"
         }

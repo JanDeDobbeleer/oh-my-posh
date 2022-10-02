@@ -345,7 +345,10 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 func (segment *Segment) string() string {
 	var templatesResult string
 	if !segment.Templates.Empty() {
-		return segment.Templates.Resolve(segment.writer, segment.env, "", segment.TemplatesLogic)
+		templatesResult = segment.Templates.Resolve(segment.writer, segment.env, "", segment.TemplatesLogic)
+		if len(templatesResult) != 0 && len(segment.Template) == 0 {
+			return templatesResult
+		}
 	}
 	if len(segment.Template) == 0 {
 		segment.Template = segment.writer.Template()

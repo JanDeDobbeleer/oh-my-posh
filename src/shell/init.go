@@ -174,6 +174,14 @@ func PrintInit(env environment.Environment) string {
 	if err != nil {
 		return noExe
 	}
+
+	toggleSetting := func(setting bool) string {
+		if env.Flags().Manual {
+			return "false"
+		}
+		return strconv.FormatBool(setting)
+	}
+
 	shell := env.Flags().Shell
 	configFile := env.Flags().Config
 	var script string
@@ -209,9 +217,9 @@ func PrintInit(env environment.Environment) string {
 		"::OMP::", executable,
 		"::CONFIG::", configFile,
 		"::SHELL::", shell,
-		"::TRANSIENT::", strconv.FormatBool(Transient),
-		"::ERROR_LINE::", strconv.FormatBool(ErrorLine),
-		"::TOOLTIPS::", strconv.FormatBool(Tooltips),
+		"::TRANSIENT::", toggleSetting(Transient),
+		"::ERROR_LINE::", toggleSetting(ErrorLine),
+		"::TOOLTIPS::", toggleSetting(Tooltips),
 	).Replace(script)
 }
 

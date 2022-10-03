@@ -22,7 +22,7 @@ const (
 	Prompt BlockType = "prompt"
 	// LineBreak creates a line break in the prompt
 	LineBreak BlockType = "newline"
-	// RPrompt a right aligned prompt in ZSH and Powershell
+	// RPrompt is a right aligned prompt
 	RPrompt BlockType = "rprompt"
 	// Left aligns left
 	Left BlockAlignment = "left"

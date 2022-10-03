@@ -42,9 +42,9 @@ Display the current path.
 
 ## Mapped Locations
 
-Allows you to override a location with an icon. It validates if the current path **starts with** the value and replaces
-it with the icon if there's a match. To avoid issues with nested overrides, Oh My Posh will sort the list of mapped
-locations before doing a replacement.
+Allows you to override a location with an icon/string.
+It validates if the current path **starts with the specific elements** and replaces it with the icon/string if there's a match.
+To avoid issues with nested overrides, Oh My Posh will sort the list of mapped locations before doing a replacement.
 
 | Name                       | Type      | Description                                                                                              |
 | -------------------------- | --------- | -------------------------------------------------------------------------------------------------------- |
@@ -63,8 +63,8 @@ For example, to swap out `C:\Users\Leet\GitHub` with a GitHub icon, you can do t
 
 ### Notes
 
-- Oh My Posh will accept both `/` and `\` as path separators for a mapped location and will match regardless of which
-  is used by the current operating system.
+- To make mapped Locations work cross-platform, you should use `/` as the path separator, Oh My Posh will
+automatically match effective separators based on the running operating system.
 - The character `~` at the start of a mapped location will match the user's home directory.
 - The match is case-insensitive on Windows and macOS, but case-sensitive on other operating systems.
 
@@ -87,8 +87,8 @@ Style sets the way the path is displayed. Based on previous experience and popul
 
 ### Agnoster
 
-Renders each folder as the `folder_icon` separated by the `folder_separator_icon`.
-Only the current folder name is displayed at the end.
+Renders each intermediate folder as the `folder_icon` separated by the `folder_separator_icon`.
+The first and the last (current) folder name are always displayed as-is.
 
 ### Agnoster Full
 
@@ -96,17 +96,18 @@ Renders each folder name separated by the `folder_separator_icon`.
 
 ### Agnoster Short
 
-When more than `max_depth` levels deep, it renders one `folder_icon` (if `hide_root_location` is `false`) followed by
-the names of the last `max_depth` folders, separated by the `folder_separator_icon`.
+When more than `max_depth` levels deep, it renders one `folder_icon` (if `hide_root_location` is `false`,
+which means the root folder does not count for depth) followed by the names of the last `max_depth` folders,
+separated by the `folder_separator_icon`.
 
 ### Agnoster Left
 
 Renders each folder as the `folder_icon` separated by the `folder_separator_icon`.
-Only the root folder name and it's child are displayed in full.
+Only the first folder name and its child are displayed in full.
 
 ### Full
 
-Display `$PWD` as a string.
+Display the current working directory as a full string with each folder separated by the `folder_separator_icon`.
 
 ### Folder
 
@@ -114,13 +115,13 @@ Display the name of the current folder.
 
 ### Mixed
 
-Works like `Agnoster Full`, but for any middle folder short enough it will display its name instead. The maximum length
-for the folders to display is governed by the `mixed_threshold` property.
+Works like `Agnoster`, but for any intermediate folder name that is short enough, it will be displayed as-is.
+The maximum length for the folders to display is governed by the `mixed_threshold` property.
 
 ### Letter
 
-Works like `Full`, but will write every subfolder name using the first letter only, except when the folder name
-starts with a symbol or icon.
+Works like `Agnoster Full`, but will write every folder name using the first letter only, except when the folder name
+starts with a symbol or icon. Specially, the last (current) folder name is always displayed in full.
 
 - `folder` will be shortened to `f`
 - `.config` will be shortened to `.c`
@@ -132,9 +133,9 @@ starts with a symbol or icon.
 Works like `Letter`, but will make sure every folder name is the shortest unique value.
 
 The uniqueness refers to the displayed path, so `C:\dev\dev\dev\development` will be displayed as
-`C:\d\de\dev\development` (instead of `C:\d\d\d\development` for `Letter`). Uniqueness does _not_ refer to other
+`C\d\de\dev\development` (instead of `C\d\d\d\development` for `Letter`). Uniqueness does **not** refer to other
 folders at the same level, so if `C:\projectA\dev` and `C:\projectB\dev` exist, then both will be displayed as
-`C:\p\dev`.
+`C\p\dev`.
 
 ## Template ([info][templates])
 
@@ -148,12 +149,12 @@ folders at the same level, so if `C:\projectA\dev` and `C:\projectB\dev` exist, 
 
 ### Properties
 
-| Name          | Type      | Description                                                                  |
+| Name          | Type      | Description                                                                                                                                                            |
 | ------------- | --------- | ---------------------------------------------------------------------------- |
-| `.Path`       | `string`  | the current directory (based on the `style` property)                        |
-| `.Parent`     | `string`  | the current directory's parent folder (designed for use with style `folder`) |
-| `.Location`   | `string`  | the current directory (raw value)                                            |
-| `.StackCount` | `int`     | the stack count                                                              |
-| `.Writable`   | `boolean` | is the current directory writable by the user or not                         |
+| `.Path`       | `string`  | the current directory (based on the `style` property)                                                                                                                  |
+| `.Parent`     | `string`  | the current directory's parent folder which ends with a path separator (designed for use with style `folder`, it is empty if `.Path` contains only one single element) |
+| `.Location`   | `string`  | the current directory (raw value)                                                                                                                                      |
+| `.StackCount` | `int`     | the stack count                                                                                                                                                        |
+| `.Writable`   | `boolean` | is the current directory writable by the user or not                                                                                                                   |
 
 [templates]: /docs/configuration/templates

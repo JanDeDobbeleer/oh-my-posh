@@ -100,22 +100,22 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     function Set-PoshContext {}
 
-    function Get-PoshContext {
-        $cleanPWD = $PWD.ProviderPath
-        $cleanPSWD = $PWD.ToString()
-        $cleanPWD = $cleanPWD.TrimEnd('\')
-        $cleanPSWD = $cleanPSWD.TrimEnd('\')
-        return $cleanPWD, $cleanPSWD
+    function Get-CleanPSWD {
+        $pswd = $PWD.ToString()
+        if ($pswd -ne '/') {
+            return $pswd.TrimEnd('\') -replace '^Microsoft\.PowerShell\.Core\\FileSystem::', ''
+        }
+        return $pswd
     }
 
     if (("::TOOLTIPS::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
         Set-PSReadLineKeyHandler -Key Spacebar -BriefDescription 'OhMyPoshSpaceKeyHandler' -ScriptBlock {
             [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
             $position = $host.UI.RawUI.CursorPosition
-            $cleanPWD, $cleanPSWD = Get-PoshContext
+            $cleanPSWD = Get-CleanPSWD
             $command = $null
             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
-            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
+            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--error=$script:ErrorCode", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position
             # we need this workaround to prevent the text after cursor from disappearing when the tooltip is rendered
@@ -259,9 +259,10 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         if ($List -eq $true) {
             $themes | Select-Object @{ Name = 'hyperlink'; Expression = { Get-FileHyperlink -uri $_.FullName } } | Format-Table -HideTableHeaders
         } else {
+            $cleanPSWD = Get-CleanPSWD
             $themes | ForEach-Object -Process {
                 Write-Host "Theme: $(Get-FileHyperlink -uri $_.FullName -Name ($_.BaseName -replace '\.omp$', ''))`n"
-                @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--config=$($_.FullName)", "--pwd=$PWD", "--shell=$script:ShellName"))
+                @(Start-Utf8Process $script:OMPExecutable @("print", "primary", "--config=$($_.FullName)", "--pswd=$cleanPSWD", "--shell=$script:ShellName"))
                 Write-Host "`n"
             }
         }
@@ -331,7 +332,7 @@ Example:
         if ($script:PromptType -ne 'transient') {
             Update-PoshErrorCode
         }
-        $cleanPWD, $cleanPSWD = Get-PoshContext
+        $cleanPSWD = Get-CleanPSWD
         $stackCount = global:Get-PoshStackCount
         Set-PoshContext
         $terminalWidth = $Host.UI.RawUI.WindowSize.Width
@@ -339,7 +340,7 @@ Example:
         if (-not $terminalWidth) {
             $terminalWidth = 0
         }
-        $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", $script:PromptType, "--error=$script:ErrorCode", "--pwd=$cleanPWD", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName"))
+        $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", $script:PromptType, "--error=$script:ErrorCode", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName"))
         # make sure PSReadLine knows if we have a multiline prompt
         Set-PSReadLineOption -ExtraPromptLineCount (($standardOut | Measure-Object -Line).Lines - 1)
         # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n

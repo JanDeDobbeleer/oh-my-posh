@@ -337,11 +337,16 @@ func (env *ShellEnvironment) Pwd() string {
 	}
 	correctPath := func(pwd string) string {
 		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
-		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
-		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
+		if env.GOOS() == WINDOWS {
+			driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
+			return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
+		}
+		return pwd
 	}
 	if env.CmdFlags != nil && env.CmdFlags.PWD != "" {
-		env.cwd = correctPath(env.CmdFlags.PWD)
+		// ensure a clean path
+		root, path := ParsePath(env, correctPath(env.CmdFlags.PWD))
+		env.cwd = root + path
 		return env.cwd
 	}
 	dir, err := os.Getwd()
@@ -735,6 +740,9 @@ func (env *ShellEnvironment) TemplateCache() *TemplateCache {
 	pwd := env.Pwd()
 	tmplCache.PWD = ReplaceHomeDirPrefixWithTilde(env, pwd)
 	tmplCache.Folder = Base(env, pwd)
+	if env.GOOS() == WINDOWS && strings.HasSuffix(tmplCache.Folder, ":") {
+		tmplCache.Folder += `\`
+	}
 	tmplCache.UserName = env.User()
 	if host, err := env.Host(); err == nil {
 		tmplCache.HostName = host
@@ -766,19 +774,21 @@ func (env *ShellEnvironment) DirMatchesOneOf(dir string, regexes []string) (matc
 }
 
 func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
-	normalizedCwd := strings.ReplaceAll(dir, "\\", "/")
-	normalizedHomeDir := strings.ReplaceAll(home, "\\", "/")
+	if goos == WINDOWS {
+		dir = strings.ReplaceAll(dir, "\\", "/")
+		home = strings.ReplaceAll(home, "\\", "/")
+	}
 
 	for _, element := range regexes {
 		normalizedElement := strings.ReplaceAll(element, "\\\\", "/")
 		if strings.HasPrefix(normalizedElement, "~") {
-			normalizedElement = strings.Replace(normalizedElement, "~", normalizedHomeDir, 1)
+			normalizedElement = strings.Replace(normalizedElement, "~", home, 1)
 		}
 		pattern := fmt.Sprintf("^%s$", normalizedElement)
 		if goos == WINDOWS || goos == DARWIN {
 			pattern = "(?i)" + pattern
 		}
-		matched := regex.MatchString(pattern, normalizedCwd)
+		matched := regex.MatchString(pattern, dir)
 		if matched {
 			return true
 		}
@@ -786,7 +796,7 @@ func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 	return false
 }
 
-func isPathSeparator(env Environment, c uint8) bool {
+func IsPathSeparator(env Environment, c uint8) bool {
 	if c == '/' {
 		return true
 	}
@@ -800,13 +810,13 @@ func isPathSeparator(env Environment, c uint8) bool {
 // Trailing path separators are removed before extracting the last element.
 // If the path consists entirely of separators, Base returns a single separator.
 func Base(env Environment, path string) string {
-	if path == "/" {
-		return path
-	}
 	volumeName := filepath.VolumeName(path)
 	// Strip trailing slashes.
-	for len(path) > 0 && isPathSeparator(env, path[len(path)-1]) {
+	for len(path) > 0 && IsPathSeparator(env, path[len(path)-1]) {
 		path = path[0 : len(path)-1]
+	}
+	if len(path) == 0 {
+		return env.PathSeparator()
 	}
 	if volumeName == path {
 		return path
@@ -815,22 +825,69 @@ func Base(env Environment, path string) string {
 	path = path[len(filepath.VolumeName(path)):]
 	// Find the last element
 	i := len(path) - 1
-	for i >= 0 && !isPathSeparator(env, path[i]) {
+	for i >= 0 && !IsPathSeparator(env, path[i]) {
 		i--
 	}
 	if i >= 0 {
 		path = path[i+1:]
 	}
 	// If empty now, it had only slashes.
-	if path == "" {
+	if len(path) == 0 {
 		return env.PathSeparator()
 	}
 	return path
 }
 
+// ParsePath parses an input path and returns a clean root and a clean path.
+func ParsePath(env Environment, inputPath string) (root, path string) {
+	if len(inputPath) == 0 {
+		return
+	}
+	separator := env.PathSeparator()
+	clean := func(path string) string {
+		matches := regex.FindAllNamedRegexMatch(fmt.Sprintf(`(?P<element>[^\%s]+)`, separator), path)
+		n := len(matches) - 1
+		s := new(strings.Builder)
+		for i, m := range matches {
+			s.WriteString(m["element"])
+			if i != n {
+				s.WriteString(separator)
+			}
+		}
+		return s.String()
+	}
+
+	if env.GOOS() == WINDOWS {
+		inputPath = strings.ReplaceAll(inputPath, "/", `\`)
+		// for a UNC path, extract \\hostname\sharename as the root
+		matches := regex.FindNamedRegexMatch(`^\\\\(?P<hostname>[^\\]+)\\+(?P<sharename>[^\\]+)\\*(?P<path>[\s\S]*)$`, inputPath)
+		if len(matches) > 0 {
+			root = `\\` + matches["hostname"] + `\` + matches["sharename"] + `\`
+			path = clean(matches["path"])
+			return
+		}
+	}
+	s := strings.SplitAfterN(inputPath, separator, 2)
+	root = s[0]
+	if !strings.HasSuffix(root, separator) {
+		// a root should end with a separator
+		root += separator
+	}
+	if len(s) == 2 {
+		path = clean(s[1])
+	}
+	return root, path
+}
+
 func ReplaceHomeDirPrefixWithTilde(env Environment, path string) string {
-	if strings.HasPrefix(path, env.Home()) {
-		return strings.Replace(path, env.Home(), "~", 1)
+	home := env.Home()
+	// match Home directory exactly
+	if !strings.HasPrefix(path, home) {
+		return path
+	}
+	rem := path[len(home):]
+	if len(rem) == 0 || IsPathSeparator(env, rem[0]) {
+		return "~" + rem
 	}
 	return path
 }

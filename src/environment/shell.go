@@ -54,6 +54,7 @@ type Flags struct {
 	TerminalWidth int
 	Strict        bool
 	Debug         bool
+	Manual        bool
 }
 
 type CommandError struct {

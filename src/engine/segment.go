@@ -346,7 +346,7 @@ func (segment *Segment) string() string {
 	var templatesResult string
 	if !segment.Templates.Empty() {
 		templatesResult = segment.Templates.Resolve(segment.writer, segment.env, "", segment.TemplatesLogic)
-		if len(templatesResult) != 0 && len(segment.Template) == 0 {
+		if len(segment.Template) == 0 {
 			return templatesResult
 		}
 	}

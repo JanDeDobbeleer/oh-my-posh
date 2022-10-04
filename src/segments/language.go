@@ -17,7 +17,7 @@ type loadContext func()
 
 type inContext func() bool
 
-type getVersion func() (string, error)
+type getVersion func() string
 type matchesVersionFile func() bool
 
 type version struct {
@@ -171,9 +171,8 @@ func (l *language) setVersion() error {
 				continue
 			}
 		} else {
-			versionStr, err = command.getVersion()
-			if err != nil || versionStr == "" {
-				lastError = errors.New("cannot get version")
+			versionStr = command.getVersion()
+			if len(versionStr) == 0 {
 				continue
 			}
 		}

@@ -1,7 +1,6 @@
 package segments
 
 import (
-	"errors"
 	"fmt"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
@@ -99,7 +98,7 @@ func (p *Python) canUseVenvName(name string) bool {
 	return true
 }
 
-func (p *Python) pyenvVersion() (string, error) {
+func (p *Python) pyenvVersion() string {
 	// Use `pyenv root` instead of $PYENV_ROOT?
 	// Is our Python executable at $PYENV_ROOT/bin/python ?
 	// Should p.env expose command paths?
@@ -108,37 +107,43 @@ func (p *Python) pyenvVersion() (string, error) {
 		path = p.env.CommandPath("python3")
 	}
 	if len(path) == 0 {
-		return "", errors.New("no python executable found")
+		p.env.Log(environment.Debug, "pyenvVersion", "python not found")
+		return ""
 	}
 	pyEnvRoot := p.env.Getenv("PYENV_ROOT")
 	// TODO:  pyenv-win has this at $PYENV_ROOT/pyenv-win/shims
 	if path != filepath.Join(pyEnvRoot, "shims", "python") {
-		return "", fmt.Errorf("executable at %s is not a pyenv shim", path)
+		p.env.Log(environment.Debug, "pyenvVersion", fmt.Sprintf("executable at %s is not a pyenv shim", path))
+		return ""
 	}
 	// pyenv version-name will return current version or virtualenv
 	cmdOutput, err := p.env.RunCommand("pyenv", "version-name")
 	if err != nil {
-		return "", err
+		p.env.Log(environment.Debug, "pyenvVersion", err.Error())
+		return ""
 	}
 	versionString := strings.Split(cmdOutput, ":")[0]
 	if len(versionString) == 0 {
-		return "", errors.New("no pyenv version-name found")
+		p.env.Log(environment.Debug, "pyenvVersion", "no pyenv version-name found")
+		return ""
 	}
 
 	// $PYENV_ROOT/versions + versionString (symlinks resolved) == $PYENV_ROOT/versions/(version)[/envs/(virtualenv)]
 	realPath, err := p.env.ResolveSymlink(filepath.Join(pyEnvRoot, "versions", versionString))
 	if err != nil {
-		return "", err
+		p.env.Log(environment.Debug, "pyenvVersion", err.Error())
+		return ""
 	}
 	// ../versions/(version)[/envs/(virtualenv)]
 	shortPath, err := filepath.Rel(filepath.Join(pyEnvRoot, "versions"), realPath)
 	if err != nil {
-		return "", err
+		p.env.Log(environment.Debug, "pyenvVersion", err.Error())
+		return ""
 	}
 	// override virtualenv if pyenv set one
 	parts := strings.Split(shortPath, string(filepath.Separator))
 	if len(parts) > 2 && p.canUseVenvName(parts[2]) {
 		p.Venv = parts[2]
 	}
-	return parts[0], nil
+	return parts[0]
 }

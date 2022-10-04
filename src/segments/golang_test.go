@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 type mockedLanguageParams struct {
@@ -29,6 +30,7 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.MockedEnvironment
 	env.On("TemplateCache").Return(&environment.TemplateCache{
 		Env: make(map[string]string),
 	})
+	env.On("Log", mock2.Anything, mock2.Anything, mock2.Anything)
 	props := properties.Map{
 		properties.FetchVersion: true,
 	}

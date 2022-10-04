@@ -83,6 +83,12 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $StartInfo.RedirectStandardError = $StartInfo.RedirectStandardInput = $StartInfo.RedirectStandardOutput = $true
         $StartInfo.UseShellExecute = $false
         if ($PWD.Provider.Name -eq 'FileSystem') {
+            # make sure we're in a valid directory
+            # if not, go back HOME
+            if (-not (Test-Path -Path $PWD)) {
+                Write-Host "Unable to find the current directory, falling back to $HOME" -ForegroundColor Red
+                Set-Location $HOME
+            }
             $StartInfo.WorkingDirectory = $PWD.ProviderPath
         }
         $StartInfo.CreateNoWindow = $true

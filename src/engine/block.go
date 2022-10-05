@@ -149,6 +149,8 @@ func (b *Block) renderActiveSegment() {
 		if b.activeSegment.Enabled {
 			b.writer.Write(color.Background, color.Foreground, b.activeSegment.text)
 		}
+	default:
+		b.writer.Write(color.Transparent, color.Accent, b.activeSegment.text)
 	}
 	b.previousActiveSegment = b.activeSegment
 	b.writer.SetParentColors(b.previousActiveSegment.background(), b.previousActiveSegment.foreground())

@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestGetNodePackageVersion(t *testing.T) {
@@ -34,12 +33,12 @@ func TestGetNodePackageVersion(t *testing.T) {
 		env.On("TemplateCache").Return(&environment.TemplateCache{
 			Env: make(map[string]string),
 		})
-		env.On("Log", mock2.Anything, mock2.Anything, mock2.Anything)
-		got := getNodePackageVersion(env, "nx")
+		got, err := getNodePackageVersion(env, "nx")
 		if tc.ShouldFail {
-			assert.Empty(t, got, tc.Case)
+			assert.Error(t, err, tc.Case)
 			return
 		}
+		assert.Nil(t, err, tc.Case)
 		assert.Equal(t, tc.Version, got, tc.Case)
 	}
 }

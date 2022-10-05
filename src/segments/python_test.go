@@ -93,7 +93,6 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
 		env.On("ResolveSymlink", mock2.Anything).Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
-		env.On("Log", mock2.Anything, mock2.Anything, mock2.Anything)
 		props := properties.Map{
 			properties.FetchVersion: tc.FetchVersion,
 			UsePythonVersionFile:    true,

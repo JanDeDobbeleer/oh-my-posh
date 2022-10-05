@@ -33,7 +33,7 @@ func (a *Angular) Enabled() bool {
 	return a.language.Enabled()
 }
 
-func (a *Angular) getVersion() string {
+func (a *Angular) getVersion() (string, error) {
 	// tested by nx_test.go
 	return getNodePackageVersion(a.language.env, filepath.Join("@angular", "core"))
 }

@@ -121,7 +121,7 @@ func TestPythonPythonInContext(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("GOOS").Return("")
-		env.On("PathSeparator").Return("")
+		env.On("PathSeparator").Return("/")
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")

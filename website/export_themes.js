@@ -63,6 +63,11 @@ themeConfigOverrrides.set('tonybaloney.omp.json', newThemeConfig(0, 40));
 themeConfigOverrrides.set('unicorn.omp.json', newThemeConfig(0, 40));
 themeConfigOverrrides.set('ys.omp.json', newThemeConfig(40, 100));
 themeConfigOverrrides.set('zash.omp.json', newThemeConfig(40, 40));
+themeConfigOverrrides.set('catppuccin.omp.json', newThemeConfig(40, 40, 'IrwinJuice', '#24273A'));
+themeConfigOverrrides.set('catppuccin_latte.omp.json', newThemeConfig(40, 40, 'IrwinJuice', '#EFF1F5'));
+themeConfigOverrrides.set('catppuccin_frappe.omp.json', newThemeConfig(40, 40, 'IrwinJuice', '#303446'));
+themeConfigOverrrides.set('catppuccin_macchiato.omp.json', newThemeConfig(40, 40, 'IrwinJuice', '#24273A'));
+themeConfigOverrrides.set('catppuccin_mocha.omp.json', newThemeConfig(40, 40, 'IrwinJuice', '#1E1E2E'));
 
 (async () => {
   const themes = await fs.promises.readdir(themesConfigDir);

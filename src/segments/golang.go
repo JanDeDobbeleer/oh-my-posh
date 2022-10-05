@@ -39,22 +39,20 @@ func (g *Golang) Init(props properties.Properties, env environment.Environment) 
 	}
 }
 
-func (g *Golang) getVersion() string {
+func (g *Golang) getVersion() (string, error) {
 	if !g.props.GetBool(ParseModFile, false) {
-		return ""
+		return "", nil
 	}
 	gomod, err := g.language.env.HasParentFilePath("go.mod")
 	if err != nil {
-		g.env.Log(environment.Debug, "getVersion", err.Error())
-		return ""
+		return "", nil
 	}
 	contents := g.language.env.FileContent(gomod.Path)
 	file, err := modfile.Parse(gomod.Path, []byte(contents), nil)
 	if err != nil {
-		g.env.Log(environment.Debug, "getVersion", err.Error())
-		return ""
+		return "", err
 	}
-	return file.Go.Version
+	return file.Go.Version, nil
 }
 
 func (g *Golang) Enabled() bool {

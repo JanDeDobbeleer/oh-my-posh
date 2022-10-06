@@ -155,10 +155,15 @@ func Init(env environment.Environment) string {
 		if err != nil {
 			return noExe
 		}
+		var additionalParams string
 		if env.Flags().Strict {
-			return fmt.Sprintf("(@(& %s init %s --config=%s --print --strict) -join \"`n\") | Invoke-Expression", quotePwshStr(executable), shell, quotePwshStr(env.Flags().Config))
+			additionalParams += " --strict"
 		}
-		return fmt.Sprintf("(@(& %s init %s --config=%s --print) -join \"`n\") | Invoke-Expression", quotePwshStr(executable), shell, quotePwshStr(env.Flags().Config))
+		if env.Flags().Manual {
+			additionalParams += " --manual"
+		}
+		command := "(@(& %s init %s --config=%s --print%s) -join \"`n\") | Invoke-Expression"
+		return fmt.Sprintf(command, quotePwshStr(executable), shell, quotePwshStr(env.Flags().Config), additionalParams)
 	case ZSH, BASH, FISH, CMD:
 		return PrintInit(env)
 	case NU:

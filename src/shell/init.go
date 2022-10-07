@@ -155,10 +155,15 @@ func Init(env environment.Environment) string {
 		if err != nil {
 			return noExe
 		}
+		var additionalParams string
 		if env.Flags().Strict {
-			return fmt.Sprintf("(@(& %s init %s --config=%s --print --strict) -join \"`n\") | Invoke-Expression", quotePwshStr(executable), shell, quotePwshStr(env.Flags().Config))
+			additionalParams += " --strict"
 		}
-		return fmt.Sprintf("(@(& %s init %s --config=%s --print) -join \"`n\") | Invoke-Expression", quotePwshStr(executable), shell, quotePwshStr(env.Flags().Config))
+		if env.Flags().Manual {
+			additionalParams += " --manual"
+		}
+		command := "(@(& %s init %s --config=%s --print%s) -join \"`n\") | Invoke-Expression"
+		return fmt.Sprintf(command, quotePwshStr(executable), shell, quotePwshStr(env.Flags().Config), additionalParams)
 	case ZSH, BASH, FISH, CMD:
 		return PrintInit(env)
 	case NU:
@@ -174,6 +179,14 @@ func PrintInit(env environment.Environment) string {
 	if err != nil {
 		return noExe
 	}
+
+	toggleSetting := func(setting bool) string {
+		if env.Flags().Manual {
+			return "false"
+		}
+		return strconv.FormatBool(setting)
+	}
+
 	shell := env.Flags().Shell
 	configFile := env.Flags().Config
 	var script string
@@ -209,9 +222,9 @@ func PrintInit(env environment.Environment) string {
 		"::OMP::", executable,
 		"::CONFIG::", configFile,
 		"::SHELL::", shell,
-		"::TRANSIENT::", strconv.FormatBool(Transient),
-		"::ERROR_LINE::", strconv.FormatBool(ErrorLine),
-		"::TOOLTIPS::", strconv.FormatBool(Tooltips),
+		"::TRANSIENT::", toggleSetting(Transient),
+		"::ERROR_LINE::", toggleSetting(ErrorLine),
+		"::TOOLTIPS::", toggleSetting(Tooltips),
 	).Replace(script)
 }
 

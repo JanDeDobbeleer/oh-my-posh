@@ -149,7 +149,7 @@
             "time_format": "_2,15:04"
           },
           "style": "plain",
-          "template": "<#ffffff>[</>{{ .CurrentDate | date .Format }}<#ffffff>]</>",
+          "template": "<#ffffff>[</>\uf5ef{{ .CurrentDate | date .Format }}<#ffffff>]</>",
           "type": "time"
         }
       ],

@@ -71,6 +71,9 @@ func (p *Python) loadContext() {
 	var venv string
 	for _, venvVar := range venvVars {
 		venv = p.language.env.Getenv(venvVar)
+		if len(venv) == 0 {
+			continue
+		}
 		name := environment.Base(p.language.env, venv)
 		if p.canUseVenvName(name) {
 			p.Venv = name
@@ -84,9 +87,6 @@ func (p *Python) inContext() bool {
 }
 
 func (p *Python) canUseVenvName(name string) bool {
-	if name == "" || name == "." {
-		return false
-	}
 	if p.language.props.GetBool(properties.DisplayDefault, true) {
 		return true
 	}

@@ -23,7 +23,7 @@ func (env *ShellEnvironment) Home() string {
 }
 
 func (env *ShellEnvironment) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
-	return "", errors.New("not implemented")
+	return "", &NotImplemented{}
 }
 
 func (env *ShellEnvironment) IsWsl() bool {
@@ -94,7 +94,7 @@ func (env *ShellEnvironment) CachePath() string {
 }
 
 func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
-	return nil, errors.New("not implemented")
+	return nil, &NotImplemented{}
 }
 
 func (env *ShellEnvironment) InWSLSharedDrive() bool {
@@ -118,10 +118,6 @@ func (env *ShellEnvironment) ConvertToLinuxPath(path string) string {
 		return linuxPath
 	}
 	return path
-}
-
-func (env *ShellEnvironment) WifiNetwork() (*WifiInfo, error) {
-	return nil, errors.New("not implemented")
 }
 
 func (env *ShellEnvironment) LookWinAppPath(file string) (string, error) {
@@ -159,4 +155,12 @@ func (env *ShellEnvironment) DirIsWritable(path string) bool {
 	}
 
 	return true
+}
+
+func (env *ShellEnvironment) Connection(connectionType ConnectionType) (*Connection, error) {
+	// added to disable the linting error, we can implement this later
+	if len(env.networks) == 0 {
+		return nil, &NotImplemented{}
+	}
+	return nil, &NotImplemented{}
 }

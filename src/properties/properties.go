@@ -60,15 +60,7 @@ func (m Map) GetString(property Property, defaultValue string) string {
 	if !found {
 		return defaultValue
 	}
-	return ParseString(val, defaultValue)
-}
-
-func ParseString(value interface{}, defaultValue string) string {
-	stringValue, ok := value.(string)
-	if !ok {
-		return defaultValue
-	}
-	return stringValue
+	return fmt.Sprint(val)
 }
 
 func (m Map) GetColor(property Property, defaultValue string) string {
@@ -76,7 +68,7 @@ func (m Map) GetColor(property Property, defaultValue string) string {
 	if !found {
 		return defaultValue
 	}
-	colorString := ParseString(val, defaultValue)
+	colorString := fmt.Sprint(val)
 	if color.IsAnsiColorName(colorString) {
 		return colorString
 	}

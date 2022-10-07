@@ -208,9 +208,9 @@ func (env *MockedEnvironment) ConvertToLinuxPath(path string) string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) WifiNetwork() (*environment.WifiInfo, error) {
-	args := env.Called()
-	return args.Get(0).(*environment.WifiInfo), args.Error(1)
+func (env *MockedEnvironment) Connection(connectionType environment.ConnectionType) (*environment.Connection, error) {
+	args := env.Called(connectionType)
+	return args.Get(0).(*environment.Connection), args.Error(1)
 }
 
 func (env *MockedEnvironment) TemplateCache() *environment.TemplateCache {

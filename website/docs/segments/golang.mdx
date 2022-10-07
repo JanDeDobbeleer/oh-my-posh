@@ -23,14 +23,14 @@ Display the currently active golang version.
 
 ## Properties
 
-| Name                   | Type                                                             | Description                                                                                                                                                        |
-| ---------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `home_enabled`         | `boolean`                                                        | display the segment in the HOME folder or not - defaults to `false`                                                                                                |
-| `fetch_version`        | `boolean`                                                        | display the golang version - defaults to `true`                                                                                                                    |
-| `missing_command_text` | `string`                                                         | text to display when the command is missing - defaults to empty                                                                                                    |
-| `display_mode`         | `string`                                                         | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when `*.go` or `go.mod` files are present (**default**)</li></ul> |
-| `version_url_template` | `string`                                                         | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                              |
-| `parse_mod_file`       | `boolean`: parse the go.mod file instead of calling `go version` |
+| Name                   | Type      | Description                                                                                                                                                        |
+| ---------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                                |
+| `fetch_version`        | `boolean` | display the golang version - defaults to `true`                                                                                                                    |
+| `missing_command_text` | `string`  | text to display when the command is missing - defaults to empty                                                                                                    |
+| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when `*.go` or `go.mod` files are present (**default**)</li></ul> |
+| `version_url_template` | `string`  | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                              |
+| `parse_mod_file`       | `boolean` | parse the go.mod file instead of calling `go version`                                                                                                              |
 
 ## Template ([info][templates])
 

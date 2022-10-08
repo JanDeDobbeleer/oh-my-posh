@@ -1,6 +1,6 @@
 name: Feature Request
 description: Request a new feature
-labels: [feat]
+labels: ["🚀 feat"]
 assignees:
   - jandedobbeleer
 body:

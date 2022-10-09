@@ -12,10 +12,10 @@
 
       // Options:
 
-      "POSH_THEME": "/workspaces/oh-my-posh/themes/jandedobbeleer.omp.json",
+      "POSH_THEME": "/workspaces/oh-my-posh/themes/nkdesigndev.omp.json",
 
       // Override me with your own timezone:
-      "TZ": "UTC",
+      "TZ": "IN",
       // Use one of the "TZ database name" entries from:
       // https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 

@@ -12,10 +12,10 @@ onlyLabels: []
 
 # Issues or Pull Requests with these labels will never be considered stale. Set to `[]` to disable
 exemptLabels:
-  - feat
-  - bug
-  - enhancement
-  - "help wanted"
+  - "🚀 feat"
+  - "🐛 bug"
+  - "🤩 enhancement"
+  - "😵‍💫 help wanted"
 
 # Set to true to ignore issues in a project (defaults to false)
 exemptProjects: false
@@ -27,7 +27,7 @@ exemptMilestones: false
 exemptAssignees: false
 
 # Label to use when marking as stale
-staleLabel: stale
+staleLabel: "💤 stale"
 
 # Comment to post when marking as stale. Set to `false` to disable
 markComment: >

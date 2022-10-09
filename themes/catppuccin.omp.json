@@ -1,49 +1,39 @@
 {
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palette": {
+        "os": "#ACB0BE",
+        "pink": "#F5BDE6",
+        "lavender": "#B7BDF8",
+        "blue":  "#8AADF4",
+        "wight": "#FFFFFF",
+        "text": "#494D64"
+  },
   "blocks": [
     {
       "alignment": "left",
       "segments": [
         {
-          "background": "#8AADF4",
-          "foreground": "#ffffff",
+          "background": "p:blue",
+          "foreground": "p:wight",
           "powerline_symbol": "\ue0b4",
           "leading_diamond": "\ue0b6",
-          "properties": {
-            "style": "full",
-            "alpine": "\uf300",
-            "arch": "\uf303",
-            "centos": "\uf304",
-            "debian": "\uf306",
-            "elementary": "\uf309",
-            "fedora": "\uf30a",
-            "gentoo": "\uf30d",
-            "linux": "\ue712",
-            "macos": "\ue711",
-            "manjaro": "\uf312",
-            "mint": "\uf30f",
-            "opensuse": "\uf314",
-            "raspbian": "\uf315",
-            "ubuntu": "\uebc9",
-            "windows": "\ue70f"
-          },
           "style": "diamond",
           "template": "{{.Icon}} ",
           "type": "os"
         },
         {
-          "background": "#8AADF4",
-          "foreground": "#494D64",
+          "background": "p:blue",
+          "foreground": "p:text",
           "powerline_symbol": "\ue0b4",
           "style": "diamond",
           "template": "{{ .UserName }}@{{ .HostName }}",
           "type": "session"
         },
         {
-          "background": "#F5BDE6",
-          "foreground": "#494D64",
+          "background": "p:pink",
+          "foreground": "p:text",
           "properties": {
-            "folder_icon": "<#494D64>..\ue5fe..</>",
+            "folder_icon": "..\ue5fe..",
             "home_icon": "~",
             "style": "agnoster_short"
           },
@@ -53,8 +43,8 @@
           "type": "path"
         },
         {
-          "background": "#B7BDF8",
-          "foreground": "#494D64",
+          "background": "p:lavender",
+          "foreground": "p:text",
           "style": "powerline",
           "properties": {
             "branch_icon": "\ue725 ",

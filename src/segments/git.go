@@ -110,6 +110,7 @@ type Git struct {
 	WorktreeCount  int
 	IsWorkTree     bool
 	RepoName       string
+	IsBare         bool
 }
 
 func (g *Git) Template() string {
@@ -122,6 +123,17 @@ func (g *Git) Enabled() bool {
 	}
 
 	g.RepoName = environment.Base(g.env, g.convertToLinuxPath(g.realDir))
+
+	if g.IsBare {
+		head := g.FileContents(g.workingDir, "HEAD")
+		branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
+		g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
+		g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.Ref)
+		g.Working = &GitStatus{}
+		g.Staging = &GitStatus{}
+		return true
+	}
+
 	if g.props.GetBool(FetchWorktreeCount, false) {
 		g.WorktreeCount = g.getWorktreeContext()
 	}
@@ -170,6 +182,13 @@ func (g *Git) shouldDisplay() bool {
 
 	gitdir, err := g.env.HasParentFilePath(".git")
 	if err != nil {
+		g.realDir = g.env.Pwd()
+		bare := g.getGitCommandOutput("rev-parse", "--is-bare-repository")
+		if bare == "true" {
+			g.IsBare = true
+			g.workingDir = g.realDir
+			return true
+		}
 		return false
 	}
 

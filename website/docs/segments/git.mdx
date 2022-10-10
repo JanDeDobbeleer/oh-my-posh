@@ -30,6 +30,7 @@ You can then use the `POSH_GIT_STRING` environment variable in a [text segment][
 ```json
 "template": "{{ if .Env.POSH_GIT_STRING }} {{ .Env.POSH_GIT_STRING }} {{ end }}"
 ```
+
 :::
 
 ## Sample Configuration
@@ -66,15 +67,15 @@ You can then use the `POSH_GIT_STRING` environment variable in a [text segment][
 As doing multiple git calls can slow down the prompt experience, we do not fetch information by default.
 You can set the following properties to `true` to enable fetching additional information (and populate the template).
 
-| Name                   | Type                | Description                                                                                                                                                                                                                                                                                                   |
-| ---------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_status`         | `boolean`           | fetch the local changes - defaults to `false`                                                                                                                                                                                                                                                                 |
-| `fetch_stash_count`    | `boolean`           | fetch stash count - defaults to `false`                                                                                                                                                                                                                                                                       |
-| `fetch_worktree_count` | `boolean`           | fetch worktree count - defaults to `false`                                                                                                                                                                                                                                                                    |
-| `fetch_upstream_icon`  | `boolean`           | fetch upstream icon - defaults to `false`                                                                                                                                                                                                                                                                     |
+| Name                   | Type                | Description                                                                                                                                                                                                                                                                                                                           |
+| ---------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_status`         | `boolean`           | fetch the local changes - defaults to `false`                                                                                                                                                                                                                                                                                         |
+| `fetch_stash_count`    | `boolean`           | fetch stash count - defaults to `false`                                                                                                                                                                                                                                                                                               |
+| `fetch_worktree_count` | `boolean`           | fetch worktree count - defaults to `false`                                                                                                                                                                                                                                                                                            |
+| `fetch_upstream_icon`  | `boolean`           | fetch upstream icon - defaults to `false`                                                                                                                                                                                                                                                                                             |
 | `untracked_modes`      | `map[string]string` | map of repo's where to override the default [untracked files mode][untracked]:<ul><li>`no`</li><li>`normal`</li><li>`all`</li></ul>For example `"untracked_modes": { "/Users/me/repos/repo1": "no" }` - defaults to `normal` for all repo's. If you want to override for all repo's, use `*` to set the mode instead of the repo path |
-| `ignore_submodules`    | `map[string]string` | map of repo's where to change the [--ignore-submodules][submodules] flag (`none`, `untracked`, `dirty` or `all`). For example `"ignore_submodules": { "/Users/me/repos/repo1": "all" }`. If you want to override for all repo's, use `*` to set the mode instead of the repo path                             |
-| `native_fallback`      | `boolean`           | when set to `true` and `git.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native git executable to fetch data. Not all information can be displayed in this case. Defaults to `false`                                                                                |
+| `ignore_submodules`    | `map[string]string` | map of repo's where to change the [--ignore-submodules][submodules] flag (`none`, `untracked`, `dirty` or `all`). For example `"ignore_submodules": { "/Users/me/repos/repo1": "all" }`. If you want to override for all repo's, use `*` to set the mode instead of the repo path                                                     |
+| `native_fallback`      | `boolean`           | when set to `true` and `git.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native git executable to fetch data. Not all information can be displayed in this case. Defaults to `false`                                                                                                        |
 
 ### Icons
 
@@ -141,6 +142,7 @@ You can set the following properties to `true` to enable fetching additional inf
 | `.StashCount`    | `int`       | the stash count                                                                                                                  |
 | `.WorktreeCount` | `int`       | the worktree count                                                                                                               |
 | `.IsWorkTree`    | `boolean`   | if in a worktree repo or not                                                                                                     |
+| `.IsBare`        | `boolean`   | if in a bare repo or not                                                                                                         |
 | `.Dir`           | `string`    | the repository's root directory                                                                                                  |
 | `.Kraken`        | `string`    | a link to the current HEAD in [GitKraken][kraken-ref] for use in [hyperlinks][hyperlinks] in templates `{{ url .HEAD .Kraken }}` |
 

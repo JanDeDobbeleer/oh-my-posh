@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"errors"
 	"fmt"
 	"oh-my-posh/environment"
 	"oh-my-posh/mock"
@@ -141,6 +142,47 @@ func TestEnabledInWorktree(t *testing.T) {
 		assert.Equal(t, tc.ExpectedWorkingFolder, g.workingDir, tc.Case)
 		assert.Equal(t, tc.ExpectedRealFolder, g.realDir, tc.Case)
 		assert.Equal(t, tc.ExpectedRootFolder, g.rootDir, tc.Case)
+	}
+}
+
+func TestEnabledInBareRepo(t *testing.T) {
+	cases := []struct {
+		Case            string
+		HEAD            string
+		IsBare          string
+		ExpectedEnabled bool
+		ExpectedHEAD    string
+	}{
+		{
+			Case:            "Bare repo on main",
+			IsBare:          "true",
+			HEAD:            "ref: refs/heads/main",
+			ExpectedEnabled: true,
+			ExpectedHEAD:    "main",
+		},
+		{
+			Case:   "Not a bare repo",
+			IsBare: "false",
+		},
+	}
+	for _, tc := range cases {
+		pwd := "/home/user/bare.git"
+		env := new(mock.MockedEnvironment)
+		env.On("InWSLSharedDrive").Return(false)
+		env.On("GOOS").Return("")
+		env.On("HasCommand", "git").Return(true)
+		env.On("HasParentFilePath", ".git").Return(&environment.FileInfo{}, errors.New("nope"))
+		env.MockGitCommand(pwd, tc.IsBare, "rev-parse", "--is-bare-repository")
+		env.On("Pwd").Return(pwd)
+		env.On("FileContent", "/home/user/bare.git/HEAD").Return(tc.HEAD)
+		g := &Git{
+			scm: scm{
+				env:   env,
+				props: properties.Map{},
+			},
+		}
+		assert.Equal(t, g.Enabled(), tc.ExpectedEnabled, tc.Case)
+		assert.Equal(t, g.Ref, tc.ExpectedHEAD, tc.Case)
 	}
 }
 

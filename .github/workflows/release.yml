@@ -47,7 +47,7 @@ jobs:
       - name: Tag HEAD 😸
         run: git tag ${{ needs.changelog.outputs.tag }}
       - name: Install cosign 🔑
-        uses: sigstore/cosign-installer@ced07f21fb1da67979f539bbc6304c16c0677e76
+        uses: sigstore/cosign-installer@7cc35d7fdbe70d4278a0c96779081e6fac665f88
         with:
           cosign-release: 'v1.4.0'
       - name: Private Key 🔐

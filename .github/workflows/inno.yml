@@ -30,7 +30,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
     - name: Upload artifacts 🆙
-      uses: actions/github-script@7dff1a87643417cf3b95bb10b29f4c4bc60d8ebd
+      uses: actions/github-script@100527700e8b29ca817ac0e0dfbfc5e8ff38edda
       with:
         github-token: ${{secrets.GITHUB_TOKEN}}
         script: |
@@ -56,7 +56,7 @@ jobs:
     needs: publish
     steps:
     - name: Notify Winget Build 🙋🏾‍♀️
-      uses: actions/github-script@7dff1a87643417cf3b95bb10b29f4c4bc60d8ebd
+      uses: actions/github-script@100527700e8b29ca817ac0e0dfbfc5e8ff38edda
       with:
         github-token: ${{ secrets.GH_PAT }}
         script: |
@@ -68,7 +68,7 @@ jobs:
             inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', '')}
           })
     - name: Notify Windows Store Build 👋
-      uses: actions/github-script@7dff1a87643417cf3b95bb10b29f4c4bc60d8ebd
+      uses: actions/github-script@100527700e8b29ca817ac0e0dfbfc5e8ff38edda
       with:
         github-token: ${{ secrets.GH_PAT }}
         script: |

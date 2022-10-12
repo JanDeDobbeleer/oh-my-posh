@@ -254,7 +254,7 @@ func (env *ShellEnvironment) resolveConfigPath() {
 		env.CmdFlags.Config = env.Getenv("POSH_THEME")
 	}
 	if len(env.CmdFlags.Config) == 0 {
-		env.CmdFlags.Config = fmt.Sprintf("https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/v%s/themes/default.omp.json", env.Version)
+		return
 	}
 	if strings.HasPrefix(env.CmdFlags.Config, "https://") {
 		if err := env.downloadConfig(env.CmdFlags.Config); err != nil {

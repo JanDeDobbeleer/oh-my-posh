@@ -177,8 +177,10 @@ func TestEnabledInBareRepo(t *testing.T) {
 		env.On("FileContent", "/home/user/bare.git/HEAD").Return(tc.HEAD)
 		g := &Git{
 			scm: scm{
-				env:   env,
-				props: properties.Map{},
+				env: env,
+				props: properties.Map{
+					FetchBareInfo: true,
+				},
 			},
 		}
 		assert.Equal(t, g.Enabled(), tc.ExpectedEnabled, tc.Case)

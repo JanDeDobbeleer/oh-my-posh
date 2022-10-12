@@ -44,6 +44,8 @@ const (
 	FetchWorktreeCount properties.Property = "fetch_worktree_count"
 	// FetchUpstreamIcon fetches the upstream icon
 	FetchUpstreamIcon properties.Property = "fetch_upstream_icon"
+	// FetchBareInfo fetches the bare repo status
+	FetchBareInfo properties.Property = "fetch_bare_info"
 
 	// BranchIcon the icon to use as branch indicator
 	BranchIcon properties.Property = "branch_icon"
@@ -182,6 +184,9 @@ func (g *Git) shouldDisplay() bool {
 
 	gitdir, err := g.env.HasParentFilePath(".git")
 	if err != nil {
+		if !g.props.GetBool(FetchBareInfo, false) {
+			return false
+		}
 		g.realDir = g.env.Pwd()
 		bare := g.getGitCommandOutput("rev-parse", "--is-bare-repository")
 		if bare == "true" {

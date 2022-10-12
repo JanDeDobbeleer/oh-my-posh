@@ -799,6 +799,12 @@
                     "description": "Display upstream icon or not",
                     "default": false
                   },
+                  "fetch_bare_info": {
+                    "type": "boolean",
+                    "title": "Fetch info when in a bare repo",
+                    "description": "Fetch info when in a bare repo or not",
+                    "default": false
+                  },
                   "branch_icon": {
                     "type": "string",
                     "title": "Branch Icon",

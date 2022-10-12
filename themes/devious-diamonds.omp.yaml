@@ -5,6 +5,7 @@ blocks:
     newline: true
     segments:
       - type: iterm
+        interactive: true
         style: plain
         foreground: cyan
         template: "{{ .PromptMark }}"

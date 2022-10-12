@@ -10,6 +10,9 @@ import (
 )
 
 func TestRenderTemplate(t *testing.T) {
+	type Me struct {
+		Name string
+	}
 	cases := []struct {
 		Case        string
 		Expected    string
@@ -17,11 +20,68 @@ func TestRenderTemplate(t *testing.T) {
 		ShouldError bool
 		Context     interface{}
 	}{
-		{Case: "single property", Expected: "hello world", Template: "{{.Text}} world", Context: struct{ Text string }{Text: "hello"}},
-		{Case: "invalid property", ShouldError: true, Template: "{{.Durp}} world", Context: struct{ Text string }{Text: "hello"}},
-		{Case: "invalid template", ShouldError: true, Template: "{{ if .Text }} world", Context: struct{ Text string }{Text: "hello"}},
-		{Case: "if statement true", Expected: "hello world", Template: "{{ if .Text }}{{.Text}} world{{end}}", Context: struct{ Text string }{Text: "hello"}},
-		{Case: "if statement false", Expected: "world", Template: "{{ if .Text }}{{.Text}} {{end}}world", Context: struct{ Text string }{Text: ""}},
+		{
+			Case:     "Env like property name",
+			Expected: "hello world",
+			Template: "{{.EnvLike}} {{.Text2}}",
+			Context: struct {
+				EnvLike string
+				Text2   string
+			}{
+				EnvLike: "hello",
+				Text2:   "world",
+			},
+		},
+		{
+			Case:     "single property with a dot literal",
+			Expected: "hello world",
+			Template: "{{ if eq .Text \".Net\" }}hello world{{ end }}",
+			Context:  struct{ Text string }{Text: ".Net"},
+		},
+		{
+			Case:     "single property",
+			Expected: "hello world",
+			Template: "{{.Text}} world",
+			Context:  struct{ Text string }{Text: "hello"},
+		},
+		{
+			Case:     "duplicate property",
+			Expected: "hello jan posh",
+			Template: "hello {{ .Me.Name }} {{ .Name }}",
+			Context: struct {
+				Name string
+				Me   Me
+			}{
+				Name: "posh",
+				Me: Me{
+					Name: "jan",
+				},
+			},
+		},
+		{
+			Case:        "invalid property",
+			ShouldError: true,
+			Template:    "{{.Durp}} world",
+			Context:     struct{ Text string }{Text: "hello"},
+		},
+		{
+			Case:        "invalid template",
+			ShouldError: true,
+			Template:    "{{ if .Text }} world",
+			Context:     struct{ Text string }{Text: "hello"},
+		},
+		{
+			Case:     "if statement true",
+			Expected: "hello world",
+			Template: "{{ if .Text }}{{.Text}} world{{end}}",
+			Context:  struct{ Text string }{Text: "hello"},
+		},
+		{
+			Case:     "if statement false",
+			Expected: "world",
+			Template: "{{ if .Text }}{{.Text}} {{end}}world",
+			Context:  struct{ Text string }{Text: ""},
+		},
 		{
 			Case:     "if statement true with 2 properties",
 			Expected: "hello world",
@@ -86,6 +146,8 @@ func TestRenderTemplate(t *testing.T) {
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
+		} else {
+			assert.NoError(t, err)
 		}
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}

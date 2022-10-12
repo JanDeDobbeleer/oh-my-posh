@@ -344,17 +344,15 @@ func (env *ShellEnvironment) Pwd() string {
 		return env.cwd
 	}
 	correctPath := func(pwd string) string {
-		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
-		if env.GOOS() == WINDOWS {
-			driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
-			return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
+		if env.GOOS() != WINDOWS {
+			return pwd
 		}
-		return pwd
+		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
+		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
+		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
 	}
 	if env.CmdFlags != nil && env.CmdFlags.PWD != "" {
-		// ensure a clean path
-		root, path := ParsePath(env, correctPath(env.CmdFlags.PWD))
-		env.cwd = root + path
+		env.cwd = correctPath(env.CmdFlags.PWD)
 		return env.cwd
 	}
 	dir, err := os.Getwd()
@@ -844,47 +842,6 @@ func Base(env Environment, path string) string {
 		return env.PathSeparator()
 	}
 	return path
-}
-
-// ParsePath parses an input path and returns a clean root and a clean path.
-func ParsePath(env Environment, inputPath string) (root, path string) {
-	if len(inputPath) == 0 {
-		return
-	}
-	separator := env.PathSeparator()
-	clean := func(path string) string {
-		matches := regex.FindAllNamedRegexMatch(fmt.Sprintf(`(?P<element>[^\%s]+)`, separator), path)
-		n := len(matches) - 1
-		s := new(strings.Builder)
-		for i, m := range matches {
-			s.WriteString(m["element"])
-			if i != n {
-				s.WriteString(separator)
-			}
-		}
-		return s.String()
-	}
-
-	if env.GOOS() == WINDOWS {
-		inputPath = strings.ReplaceAll(inputPath, "/", `\`)
-		// for a UNC path, extract \\hostname\sharename as the root
-		matches := regex.FindNamedRegexMatch(`^\\\\(?P<hostname>[^\\]+)\\+(?P<sharename>[^\\]+)\\*(?P<path>[\s\S]*)$`, inputPath)
-		if len(matches) > 0 {
-			root = `\\` + matches["hostname"] + `\` + matches["sharename"] + `\`
-			path = clean(matches["path"])
-			return
-		}
-	}
-	s := strings.SplitAfterN(inputPath, separator, 2)
-	root = s[0]
-	if !strings.HasSuffix(root, separator) {
-		// a root should end with a separator
-		root += separator
-	}
-	if len(s) == 2 {
-		path = clean(s[1])
-	}
-	return root, path
 }
 
 func ReplaceHomeDirPrefixWithTilde(env Environment, path string) string {

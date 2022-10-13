@@ -21,6 +21,18 @@ func TestRenderTemplate(t *testing.T) {
 		Context     interface{}
 	}{
 		{
+			Case:     "tillig's regex",
+			Expected: " ⎈ hello :: world ",
+			Template: " ⎈ {{ replaceP \"([a-f0-9]{2})[a-f0-9]{6}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{10}([a-f0-9]{2})\" .Context \"$1..$2\" }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }} ", //nolint:lll
+			Context: struct {
+				Context   string
+				Namespace string
+			}{
+				Context:   "hello",
+				Namespace: "world",
+			},
+		},
+		{
 			Case:     "Env like property name",
 			Expected: "hello world",
 			Template: "{{.EnvLike}} {{.Text2}}",

@@ -67,7 +67,7 @@ func (b *Block) InitPlain(env environment.Environment, config *Config) {
 	b.writer = &color.AnsiWriter{
 		Ansi:               b.ansi,
 		TerminalBackground: shell.ConsoleBackgroundColor(env, config.TerminalBackground),
-		AnsiColors:         config.MakeColors(env),
+		AnsiColors:         config.MakeColors(),
 	}
 	b.env = env
 	b.executeSegmentLogic()

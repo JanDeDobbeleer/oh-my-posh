@@ -125,7 +125,7 @@ func (env *ShellEnvironment) LookWinAppPath(file string) (string, error) {
 }
 
 func (env *ShellEnvironment) DirIsWritable(path string) bool {
-	defer env.Trace(time.Now(), "DirIsWritable")
+	defer env.Trace(time.Now(), "DirIsWritable", path)
 	info, err := os.Stat(path)
 	if err != nil {
 		env.Log(Error, "DirIsWritable", err.Error())

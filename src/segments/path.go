@@ -84,7 +84,7 @@ func (pt *Path) Enabled() bool {
 		pt.Location = pt.pwd
 	}
 	pt.StackCount = pt.env.StackCount()
-	pt.Writable = pt.env.DirIsWritable(pt.pwd)
+	pt.Writable = pt.env.DirIsWritable(pt.env.Pwd())
 	return true
 }
 

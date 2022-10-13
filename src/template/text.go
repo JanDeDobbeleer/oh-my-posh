@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"oh-my-posh/environment"
-	"oh-my-posh/regex"
 	"strings"
 	"text/template"
 )
@@ -97,56 +96,47 @@ func (t *Text) cleanTemplate() {
 		return false
 	}
 
-	walkAndReplace := func(node string) string {
-		var result string
-		var property string
-		var inProperty bool
-		// var literal bool
-		for _, char := range node {
-			switch char {
-			case '.':
-				var lastChar rune
-				if len(result) > 0 {
-					lastChar = rune(result[len(result)-1])
-				}
-				// only replace if we're in a valid property start
-				// with a space, { or ( character
-				switch lastChar {
-				case ' ', '{', '(':
-					property += string(char)
-					inProperty = true
-				default:
-					result += string(char)
-				}
-			case ' ', '}', ')': // space or }
-				if !inProperty {
-					result += string(char)
-					continue
-				}
-				// end of a variable, needs to be appended
-				if !knownVariable(property) {
-					result += ".Data" + property
-				} else {
-					result += property
-				}
-				property = ""
-				result += string(char)
-				inProperty = false
+	var result string
+	var property string
+	var inProperty bool
+	for _, char := range t.Template {
+		switch char {
+		case '.':
+			var lastChar rune
+			if len(result) > 0 {
+				lastChar = rune(result[len(result)-1])
+			}
+			// only replace if we're in a valid property start
+			// with a space, { or ( character
+			switch lastChar {
+			case ' ', '{', '(':
+				property += string(char)
+				inProperty = true
 			default:
-				if inProperty {
-					property += string(char)
-					continue
-				}
 				result += string(char)
 			}
+		case ' ', '}', ')': // space or }
+			if !inProperty {
+				result += string(char)
+				continue
+			}
+			// end of a variable, needs to be appended
+			if !knownVariable(property) {
+				result += ".Data" + property
+			} else {
+				result += property
+			}
+			property = ""
+			result += string(char)
+			inProperty = false
+		default:
+			if inProperty {
+				property += string(char)
+				continue
+			}
+			result += string(char)
 		}
-		return result
 	}
 
-	// matches := regex.FindAllNamedRegexMatch(`(?: |{|\()(?P<VAR>(\.[a-zA-Z_][a-zA-Z0-9]*)+)`, t.Template)
-	matches := regex.FindAllNamedRegexMatch(`(?P<NODE>{{[^{]+}})`, t.Template)
-	for _, match := range matches {
-		node := walkAndReplace(match["NODE"])
-		t.Template = strings.Replace(t.Template, match["NODE"], node, 1)
-	}
+	t.Template = result
 }

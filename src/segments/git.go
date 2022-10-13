@@ -120,6 +120,9 @@ func (g *Git) Template() string {
 }
 
 func (g *Git) Enabled() bool {
+	g.Working = &GitStatus{}
+	g.Staging = &GitStatus{}
+
 	if !g.shouldDisplay() {
 		return false
 	}
@@ -127,12 +130,7 @@ func (g *Git) Enabled() bool {
 	g.RepoName = environment.Base(g.env, g.convertToLinuxPath(g.realDir))
 
 	if g.IsBare {
-		head := g.FileContents(g.workingDir, "HEAD")
-		branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
-		g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
-		g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.Ref)
-		g.Working = &GitStatus{}
-		g.Staging = &GitStatus{}
+		g.getBareRepoInfo()
 		return true
 	}
 
@@ -169,7 +167,7 @@ func (g *Git) Kraken() string {
 		if len(g.Upstream) == 0 {
 			g.Upstream = "origin"
 		}
-		g.RawUpstreamURL = g.getOriginURL()
+		g.RawUpstreamURL = g.getRemoteURL()
 	}
 	if len(g.Hash) == 0 {
 		g.Hash = g.getGitCommandOutput("rev-parse", "HEAD")
@@ -212,6 +210,20 @@ func (g *Git) shouldDisplay() bool {
 	// convert the worktree file path to a windows one when in a WSL shared folder
 	g.realDir = strings.TrimSuffix(g.convertToWindowsPath(gitdir.Path), "/.git")
 	return true
+}
+
+func (g *Git) getBareRepoInfo() {
+	head := g.FileContents(g.workingDir, "HEAD")
+	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
+	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
+	g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.Ref)
+	if !g.props.GetBool(FetchUpstreamIcon, false) {
+		return
+	}
+	g.Upstream = g.getGitCommandOutput("remote")
+	if len(g.Upstream) != 0 {
+		g.UpstreamIcon = g.getUpstreamIcon()
+	}
 }
 
 func (g *Git) setDir(dir string) {
@@ -313,7 +325,7 @@ func (g *Git) getUpstreamIcon() string {
 		url = strings.ReplaceAll(url, ":", "/")
 		return fmt.Sprintf("https://%s", url)
 	}
-	g.RawUpstreamURL = g.getOriginURL()
+	g.RawUpstreamURL = g.getRemoteURL()
 	g.UpstreamURL = cleanSSHURL(g.RawUpstreamURL)
 	if strings.Contains(g.UpstreamURL, "github") {
 		return g.props.GetString(GithubIcon, "\uF408 ")
@@ -588,7 +600,7 @@ func (g *Git) getWorktreeContext() int {
 	return count
 }
 
-func (g *Git) getOriginURL() string {
+func (g *Git) getRemoteURL() string {
 	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
 	cfg, err := ini.Load(g.rootDir + "/config")
 	if err != nil {

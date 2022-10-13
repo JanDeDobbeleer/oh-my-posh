@@ -150,8 +150,12 @@ func TestEnabledInBareRepo(t *testing.T) {
 		Case            string
 		HEAD            string
 		IsBare          string
+		FetchRemote     bool
+		Remote          string
+		RemoteURL       string
 		ExpectedEnabled bool
 		ExpectedHEAD    string
+		ExpectedRemote  string
 	}{
 		{
 			Case:            "Bare repo on main",
@@ -164,6 +168,17 @@ func TestEnabledInBareRepo(t *testing.T) {
 			Case:   "Not a bare repo",
 			IsBare: "false",
 		},
+		{
+			Case:            "Bare repo on main remote enabled",
+			IsBare:          "true",
+			HEAD:            "ref: refs/heads/main",
+			ExpectedEnabled: true,
+			ExpectedHEAD:    "main",
+			FetchRemote:     true,
+			Remote:          "origin",
+			RemoteURL:       "git@github.com:JanDeDobbeleer/oh-my-posh.git",
+			ExpectedRemote:  "\uf408 ",
+		},
 	}
 	for _, tc := range cases {
 		pwd := "/home/user/bare.git"
@@ -175,16 +190,20 @@ func TestEnabledInBareRepo(t *testing.T) {
 		env.MockGitCommand(pwd, tc.IsBare, "rev-parse", "--is-bare-repository")
 		env.On("Pwd").Return(pwd)
 		env.On("FileContent", "/home/user/bare.git/HEAD").Return(tc.HEAD)
+		env.MockGitCommand(pwd, tc.Remote, "remote")
+		env.MockGitCommand(pwd, tc.RemoteURL, "remote", "get-url", tc.Remote)
 		g := &Git{
 			scm: scm{
 				env: env,
 				props: properties.Map{
-					FetchBareInfo: true,
+					FetchBareInfo:     true,
+					FetchUpstreamIcon: tc.FetchRemote,
 				},
 			},
 		}
 		assert.Equal(t, g.Enabled(), tc.ExpectedEnabled, tc.Case)
 		assert.Equal(t, g.Ref, tc.ExpectedHEAD, tc.Case)
+		assert.Equal(t, g.UpstreamIcon, tc.ExpectedRemote, tc.Case)
 	}
 }
 

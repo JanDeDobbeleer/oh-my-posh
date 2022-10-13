@@ -9,6 +9,7 @@ import (
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/segments"
+	"oh-my-posh/template"
 	"os"
 	"path/filepath"
 	"strings"
@@ -31,20 +32,21 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Version              int           `json:"version"`
-	FinalSpace           bool          `json:"final_space,omitempty"`
-	ConsoleTitleTemplate string        `json:"console_title_template,omitempty"`
-	TerminalBackground   string        `json:"terminal_background,omitempty"`
-	AccentColor          string        `json:"accent_color,omitempty"`
-	Blocks               []*Block      `json:"blocks,omitempty"`
-	Tooltips             []*Segment    `json:"tooltips,omitempty"`
-	TransientPrompt      *Segment      `json:"transient_prompt,omitempty"`
-	ValidLine            *Segment      `json:"valid_line,omitempty"`
-	ErrorLine            *Segment      `json:"error_line,omitempty"`
-	SecondaryPrompt      *Segment      `json:"secondary_prompt,omitempty"`
-	DebugPrompt          *Segment      `json:"debug_prompt,omitempty"`
-	Palette              color.Palette `json:"palette,omitempty"`
-	PWD                  string        `json:"pwd,omitempty"`
+	Version              int             `json:"version"`
+	FinalSpace           bool            `json:"final_space,omitempty"`
+	ConsoleTitleTemplate string          `json:"console_title_template,omitempty"`
+	TerminalBackground   string          `json:"terminal_background,omitempty"`
+	AccentColor          string          `json:"accent_color,omitempty"`
+	Blocks               []*Block        `json:"blocks,omitempty"`
+	Tooltips             []*Segment      `json:"tooltips,omitempty"`
+	TransientPrompt      *Segment        `json:"transient_prompt,omitempty"`
+	ValidLine            *Segment        `json:"valid_line,omitempty"`
+	ErrorLine            *Segment        `json:"error_line,omitempty"`
+	SecondaryPrompt      *Segment        `json:"secondary_prompt,omitempty"`
+	DebugPrompt          *Segment        `json:"debug_prompt,omitempty"`
+	Palette              color.Palette   `json:"palette,omitempty"`
+	Palettes             *color.Palettes `json:"palettes,omitempty"`
+	PWD                  string          `json:"pwd,omitempty"`
 
 	// Deprecated
 	OSC99 bool `json:"osc99,omitempty"`
@@ -55,13 +57,30 @@ type Config struct {
 	origin  string
 	eval    bool
 	updated bool
+	env     environment.Environment
 }
 
 // MakeColors creates instance of AnsiColors to use in AnsiWriter according to
 // environment and configuration.
-func (cfg *Config) MakeColors(env environment.Environment) color.AnsiColors {
-	cacheDisabled := env.Getenv("OMP_CACHE_DISABLED") == "1"
-	return color.MakeColors(cfg.Palette, !cacheDisabled, cfg.AccentColor, env)
+func (cfg *Config) MakeColors() color.AnsiColors {
+	cacheDisabled := cfg.env.Getenv("OMP_CACHE_DISABLED") == "1"
+	return color.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
+}
+
+func (cfg *Config) getPalette() color.Palette {
+	if cfg.Palettes == nil {
+		return cfg.Palette
+	}
+	tmpl := &template.Text{
+		Template: cfg.Palettes.Template,
+		Env:      cfg.env,
+	}
+	if palette, err := tmpl.Render(); err == nil {
+		if p, ok := cfg.Palettes.List[palette]; ok {
+			return p
+		}
+	}
+	return cfg.Palette
 }
 
 func (cfg *Config) print(message string) {
@@ -88,6 +107,7 @@ func (cfg *Config) exitWithError(err error) {
 // LoadConfig returns the default configuration including possible user overrides
 func LoadConfig(env environment.Environment) *Config {
 	cfg := loadConfig(env)
+	cfg.env = env
 	// only migrate automatically when the switch isn't set
 	if !env.Flags().Migrate && cfg.Version < configVersion {
 		cfg.BackupAndMigrate(env)

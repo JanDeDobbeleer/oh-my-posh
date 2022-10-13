@@ -100,7 +100,7 @@ func engineRender() {
 
 	ansi := &color.Ansi{}
 	ansi.InitPlain()
-	writerColors := cfg.MakeColors(env)
+	writerColors := cfg.MakeColors()
 	writer := &color.AnsiWriter{
 		Ansi:               ansi,
 		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),

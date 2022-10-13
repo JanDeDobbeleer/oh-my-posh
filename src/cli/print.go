@@ -73,7 +73,7 @@ var printCmd = &cobra.Command{
 				Ansi: ansi,
 			}
 		} else {
-			writerColors := cfg.MakeColors(env)
+			writerColors := cfg.MakeColors()
 			writer = &color.AnsiWriter{
 				Ansi:               ansi,
 				TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),

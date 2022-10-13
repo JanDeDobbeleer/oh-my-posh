@@ -32,7 +32,7 @@ var debugCmd = &cobra.Command{
 		cfg := engine.LoadConfig(env)
 		ansi := &color.Ansi{}
 		ansi.InitPlain()
-		writerColors := cfg.MakeColors(env)
+		writerColors := cfg.MakeColors()
 		writer := &color.AnsiWriter{
 			Ansi:               ansi,
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),

@@ -59,7 +59,7 @@ Exports the config to an image file using customized output options.`,
 		cfg := engine.LoadConfig(env)
 		ansi := &color.Ansi{}
 		ansi.InitPlain()
-		writerColors := cfg.MakeColors(env)
+		writerColors := cfg.MakeColors()
 		writer := &color.AnsiWriter{
 			Ansi:               ansi,
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),

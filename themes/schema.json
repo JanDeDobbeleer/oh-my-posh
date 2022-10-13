@@ -2900,6 +2900,27 @@
         }
       }
     },
+    "palettes": {
+      "type": "object",
+      "title": "Palettes",
+      "description": "https://ohmyposh.dev/docs/configuration/colors#palettes",
+      "default": {},
+      "properties": {
+        "template": {
+          "type": "string",
+          "title": "Prompt Template"
+        },
+        "list": {
+          "type": "object",
+          "title": "List of palettes",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/palette"
+            }
+          }
+        }
+      }
+    },
     "accent_color": {
       "title": "Accent color",
       "$ref": "#/definitions/color"

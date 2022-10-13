@@ -17,6 +17,7 @@ Oh My Posh supports multiple different color references, being:
   as well as 8 extended ANSI colors:
 
   `darkGray` `lightRed` `lightGreen` `lightYellow` `lightBlue` `lightMagenta` `lightCyan` `lightWhite`
+
 - 256 color palette using their number representation.
   For example `0` is black, `1` is red, `2` is green, etc.
 - The `transparent` keyword which can be used to create either a transparent foreground override
@@ -189,6 +190,51 @@ For example, `p:foreground` and `p:background` will be correctly set to "#CAF0F8
         ...
     }
 ```
+
+## Palettes
+
+If you want to use a `palette` conditionally, for example for **light or dark mode**, you can define multiple
+`palettes` and a [template][templates] that resolves to the `palette` key. The `template` is evaluated at
+runtime so your prompt can change at any time based on the outcome of the `template`.
+
+Take the following configuration:
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palettes": {
+    "template": "{{ if eq .Shell \"pwsh\" }}latte{{ else }}frappe{{ end }}",
+    "list": {
+      "latte": {
+        "black": "#262B44",
+        "green": "#59C9A5",
+        "orange": "#F07623",
+        "red": "#e64553",
+        "white": "#E0DEF4",
+        "yellow": "#df8e1d",
+        "blue": "#7287fd"
+      },
+      "frappe": {
+        "black": "#262B44",
+        "green": "#59C9A5",
+        "orange": "#F07623",
+        "red": "#D81E5B",
+        "white": "#E0DEF4",
+        "yellow": "#F3AE35",
+        "blue": "#4B95E9"
+      }
+    }
+  },
+  "blocks": [
+    ...
+  ]
+}
+```
+
+In this case, when the shell is `pwsh`, the `latte` palette will be used, otherwise it uses the `frappe` palette. If you want,
+you could also add `frappe` as the default `palette`, given that one is used as a fallback when not match can be found based on what
+the `template` resolves to. In case no match is available and no `palette` is defined, it will also fallback to `transparent`
+for any palette color reference in templates/colors.
 
 [hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/

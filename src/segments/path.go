@@ -409,16 +409,6 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 	relativeN := pt.normalize(relative)
 	pathSeparator := pt.env.PathSeparator()
 
-	formatRoot := func(root string) string {
-		// trim the trailing separator first
-		root = strings.TrimSuffix(root, pathSeparator)
-		// only preserve the trailing separator for a Unix/Windows/PSDrive root
-		if len(root) == 0 || strings.HasSuffix(root, ":") {
-			return root + pathSeparator
-		}
-		return root
-	}
-
 	for _, key := range keys {
 		keyRoot, keyRelative := pt.parsePath(key)
 		if keyRoot != rootN || !strings.HasPrefix(relativeN, keyRelative) {
@@ -428,18 +418,18 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 		overflow := relative[len(keyRelative):]
 		if len(overflow) == 0 {
 			// exactly match the full path
-			return formatRoot(value), ""
+			return value, ""
 		}
 		if len(keyRelative) == 0 {
 			// only match the root
-			return formatRoot(value), strings.Trim(relative, pathSeparator)
+			return value, strings.Trim(relative, pathSeparator)
 		}
 		// match several prefix elements
 		if overflow[0:1] == pt.env.PathSeparator() {
-			return formatRoot(value), strings.Trim(overflow, pathSeparator)
+			return value, strings.Trim(overflow, pathSeparator)
 		}
 	}
-	return formatRoot(root), strings.Trim(relative, pathSeparator)
+	return root, strings.Trim(relative, pathSeparator)
 }
 
 func (pt *Path) normalizePath(path string) string {
@@ -485,16 +475,15 @@ func (pt *Path) parsePath(inputPath string) (root, path string) {
 		// for a UNC path, extract \\hostname\sharename as the root
 		matches := regex.FindNamedRegexMatch(`^\\\\(?P<hostname>[^\\]+)\\+(?P<sharename>[^\\]+)\\*(?P<path>[\s\S]*)$`, inputPath)
 		if len(matches) > 0 {
-			root = `\\` + matches["hostname"] + `\` + matches["sharename"] + `\`
+			root = `\\` + matches["hostname"] + `\` + matches["sharename"]
 			path = clean(matches["path"])
 			return
 		}
 	}
 	s := strings.SplitAfterN(inputPath, separator, 2)
 	root = s[0]
-	if !strings.HasSuffix(root, separator) {
-		// a root should end with a separator
-		root += separator
+	if pt.env.GOOS() == environment.WINDOWS {
+		root = strings.TrimSuffix(root, separator)
 	}
 	if len(s) == 2 {
 		path = clean(s[1])

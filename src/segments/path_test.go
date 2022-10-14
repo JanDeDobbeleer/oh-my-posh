@@ -280,7 +280,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 			Style:               Letter,
 			Expected:            "➼ > .w > man",
 			HomePath:            homeDir,
-			Pwd:                 "➼/.whatever/man",
+			Pwd:                 "/➼/.whatever/man",
 			PathSeparator:       "/",
 			FolderSeparatorIcon: " > ",
 		},
@@ -288,13 +288,13 @@ func TestAgnosterPathStyles(t *testing.T) {
 			Style:               Letter,
 			Expected:            "➼ s > .w > man",
 			HomePath:            homeDir,
-			Pwd:                 "➼ something/.whatever/man",
+			Pwd:                 "/➼ something/.whatever/man",
 			PathSeparator:       "/",
 			FolderSeparatorIcon: " > ",
 		},
 		{
 			Style:               Letter,
-			Expected:            "C:\\",
+			Expected:            "C:",
 			HomePath:            homeDirWindows,
 			Pwd:                 "C:\\",
 			GOOS:                environment.WINDOWS,
@@ -354,7 +354,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               Mixed,
-			Expected:            "C:\\ > .. > foo > .. > man",
+			Expected:            "C: > .. > foo > .. > man",
 			HomePath:            homeDirWindows,
 			Pwd:                 "C:\\Users\\foo\\foobar\\man",
 			GOOS:                environment.WINDOWS,
@@ -563,7 +563,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterShort,
-			Expected:            "C:/",
+			Expected:            "C:",
 			HomePath:            homeDir,
 			Pwd:                 "/mnt/c",
 			Pswd:                "C:",
@@ -594,7 +594,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterShort,
-			Expected:            "C:\\",
+			Expected:            "C:",
 			HomePath:            homeDirWindows,
 			Pwd:                 "C:",
 			GOOS:                environment.WINDOWS,
@@ -603,7 +603,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterShort,
-			Expected:            "C:\\ > .. > bar > man",
+			Expected:            "C: > .. > bar > man",
 			HomePath:            homeDirWindows,
 			Pwd:                 "C:\\usr\\foo\\bar\\man",
 			GOOS:                environment.WINDOWS,
@@ -613,7 +613,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		},
 		{
 			Style:               AgnosterShort,
-			Expected:            "C:\\ > .. > foo > bar > man",
+			Expected:            "C: > .. > foo > bar > man",
 			HomePath:            homeDirWindows,
 			Pwd:                 "C:\\usr\\foo\\bar\\man",
 			GOOS:                environment.WINDOWS,
@@ -743,7 +743,7 @@ func TestFullAndFolderPath(t *testing.T) {
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/a/b/c/d", Expected: "d"},
 
 		// for Windows paths
-		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: environment.WINDOWS},
+		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:", PathSeparator: "\\", GOOS: environment.WINDOWS},
 		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: homeDirWindows, Expected: "~", PathSeparator: "\\", GOOS: environment.WINDOWS},
 		{Style: Full, FolderSeparatorIcon: "\\", Pwd: homeDirWindows, Expected: "~", PathSeparator: "\\", GOOS: environment.WINDOWS},
 		{Style: Full, FolderSeparatorIcon: "\\", Pwd: homeDirWindows + "\\abc", Expected: "~\\abc", PathSeparator: "\\", GOOS: environment.WINDOWS},
@@ -920,8 +920,16 @@ func TestAgnosterPath(t *testing.T) {
 		PathSeparator string
 	}{
 		{
+			Case:          "Windows registry drive case sensitive",
+			Expected:      "\uf013 > f > magnetic:TOAST",
+			Home:          homeDirWindows,
+			PWD:           "HKLM:\\SOFTWARE\\magnetic:TOAST\\",
+			GOOS:          environment.WINDOWS,
+			PathSeparator: "\\",
+		},
+		{
 			Case:          "Windows outside home",
-			Expected:      "C:\\ > f > f > location",
+			Expected:      "C: > f > f > location",
 			Home:          homeDirWindows,
 			PWD:           "C:\\Program Files\\Go\\location",
 			GOOS:          environment.WINDOWS,
@@ -937,7 +945,7 @@ func TestAgnosterPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows inside home zero levels",
-			Expected:      "C:\\ > location",
+			Expected:      "C: > location",
 			Home:          homeDirWindows,
 			PWD:           "C:\\location",
 			GOOS:          environment.WINDOWS,
@@ -945,7 +953,7 @@ func TestAgnosterPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows inside home one level",
-			Expected:      "C:\\ > f > location",
+			Expected:      "C: > f > location",
 			Home:          homeDirWindows,
 			PWD:           "C:\\Program Files\\location",
 			GOOS:          environment.WINDOWS,
@@ -953,7 +961,7 @@ func TestAgnosterPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows lower case drive letter",
-			Expected:      "C:\\ > Windows",
+			Expected:      "C: > Windows",
 			Home:          homeDirWindows,
 			PWD:           "C:\\Windows\\",
 			GOOS:          environment.WINDOWS,
@@ -961,7 +969,7 @@ func TestAgnosterPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows lower case drive letter (other)",
-			Expected:      "P:\\ > Other",
+			Expected:      "P: > Other",
 			Home:          homeDirWindows,
 			PWD:           "P:\\Other\\",
 			GOOS:          environment.WINDOWS,
@@ -969,7 +977,7 @@ func TestAgnosterPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows lower word drive",
-			Expected:      "some:\\ > some",
+			Expected:      "some: > some",
 			Home:          homeDirWindows,
 			PWD:           "some:\\some\\",
 			GOOS:          environment.WINDOWS,
@@ -977,7 +985,7 @@ func TestAgnosterPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows lower word drive (ending with c)",
-			Expected:      "src:\\ > source",
+			Expected:      "src: > source",
 			Home:          homeDirWindows,
 			PWD:           "src:\\source\\",
 			GOOS:          environment.WINDOWS,
@@ -985,7 +993,7 @@ func TestAgnosterPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows lower word drive (arbitrary cases)",
-			Expected:      "sRc:\\ > source",
+			Expected:      "sRc: > source",
 			Home:          homeDirWindows,
 			PWD:           "sRc:\\source\\",
 			GOOS:          environment.WINDOWS,
@@ -996,14 +1004,6 @@ func TestAgnosterPath(t *testing.T) {
 			Expected:      "\uf013 > f > magnetic:test",
 			Home:          homeDirWindows,
 			PWD:           "HKLM:\\SOFTWARE\\magnetic:test\\",
-			GOOS:          environment.WINDOWS,
-			PathSeparator: "\\",
-		},
-		{
-			Case:          "Windows registry drive case sensitive",
-			Expected:      "\uf013 > f > magnetic:TOAST",
-			Home:          homeDirWindows,
-			PWD:           "HKLM:\\SOFTWARE\\magnetic:TOAST\\",
 			GOOS:          environment.WINDOWS,
 			PathSeparator: "\\",
 		},
@@ -1083,7 +1083,7 @@ func TestAgnosterLeftPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows outside home",
-			Expected:      "C:\\ > Program Files > f > f",
+			Expected:      "C: > Program Files > f > f",
 			Home:          homeDirWindows,
 			PWD:           "C:\\Program Files\\Go\\location",
 			GOOS:          environment.WINDOWS,
@@ -1091,7 +1091,7 @@ func TestAgnosterLeftPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows inside home zero levels",
-			Expected:      "C:\\ > location",
+			Expected:      "C: > location",
 			Home:          homeDirWindows,
 			PWD:           "C:\\location",
 			GOOS:          environment.WINDOWS,
@@ -1099,7 +1099,7 @@ func TestAgnosterLeftPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows inside home one level",
-			Expected:      "C:\\ > Program Files > f",
+			Expected:      "C: > Program Files > f",
 			Home:          homeDirWindows,
 			PWD:           "C:\\Program Files\\location",
 			GOOS:          environment.WINDOWS,
@@ -1107,7 +1107,7 @@ func TestAgnosterLeftPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows lower case drive letter",
-			Expected:      "C:\\ > Windows",
+			Expected:      "C: > Windows",
 			Home:          homeDirWindows,
 			PWD:           "C:\\Windows\\",
 			GOOS:          environment.WINDOWS,
@@ -1115,7 +1115,7 @@ func TestAgnosterLeftPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows lower case drive letter (other)",
-			Expected:      "P:\\ > Other",
+			Expected:      "P: > Other",
 			Home:          homeDirWindows,
 			PWD:           "P:\\Other\\",
 			GOOS:          environment.WINDOWS,
@@ -1123,7 +1123,7 @@ func TestAgnosterLeftPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows lower word drive",
-			Expected:      "some:\\ > some",
+			Expected:      "some: > some",
 			Home:          homeDirWindows,
 			PWD:           "some:\\some\\",
 			GOOS:          environment.WINDOWS,
@@ -1131,7 +1131,7 @@ func TestAgnosterLeftPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows lower word drive (ending with c)",
-			Expected:      "src:\\ > source",
+			Expected:      "src: > source",
 			Home:          homeDirWindows,
 			PWD:           "src:\\source\\",
 			GOOS:          environment.WINDOWS,
@@ -1139,7 +1139,7 @@ func TestAgnosterLeftPath(t *testing.T) {
 		},
 		{
 			Case:          "Windows lower word drive (arbitrary cases)",
-			Expected:      "sRc:\\ > source",
+			Expected:      "sRc: > source",
 			Home:          homeDirWindows,
 			PWD:           "sRc:\\source\\",
 			GOOS:          environment.WINDOWS,

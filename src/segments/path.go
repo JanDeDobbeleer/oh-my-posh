@@ -364,8 +364,9 @@ func (pt *Path) getAgnosterShortPath() string {
 
 func (pt *Path) getFullPath() string {
 	rel := pt.relative
-	if pt.root != pt.env.PathSeparator() {
-		rel = pt.env.PathSeparator() + rel
+	pathSeparator := pt.env.PathSeparator()
+	if pt.root != pathSeparator && !strings.HasSuffix(pt.root, pathSeparator) {
+		rel = pathSeparator + rel
 	}
 	path := pt.replaceFolderSeparators(rel)
 	return pt.root + path

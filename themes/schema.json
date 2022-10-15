@@ -2915,7 +2915,7 @@
           "title": "List of palettes",
           "patternProperties": {
             ".*": {
-              "$ref": "#/definitions/palette"
+              "$ref": "#/properties/palette"
             }
           }
         }

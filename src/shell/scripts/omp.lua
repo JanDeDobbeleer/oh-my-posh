@@ -46,6 +46,7 @@ end
 local function run_posh_command(command)
     command = '"'..command..'"'
     local _,ismain = coroutine.running()
+    local output
     if ismain then
         output = io.popen(command):read("*a")
     else

@@ -1,7 +1,6 @@
 -- Helper functions
 
--- REVIEW:  Why is this a global function?  Should it be local?
-function get_priority_number(name, default)
+local function get_priority_number(name, default)
 	local value = os.getenv(name)
 	if os.envmap ~= nil and type(os.envmap) == 'table' then
 		local t = os.envmap[name]

@@ -127,6 +127,9 @@ func (pt *Path) Init(props properties.Properties, env environment.Environment) {
 func (pt *Path) setStyle() {
 	if len(pt.relative) == 0 {
 		pt.Path = pt.root
+		if strings.HasSuffix(pt.Path, ":") {
+			pt.Path += pt.env.PathSeparator()
+		}
 		return
 	}
 	switch style := pt.props.GetString(properties.Style, Agnoster); style {

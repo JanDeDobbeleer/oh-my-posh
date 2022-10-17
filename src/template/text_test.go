@@ -226,6 +226,11 @@ func TestCleanTemplate(t *testing.T) {
 		Template string
 	}{
 		{
+			Case:     "Literal dot",
+			Expected: "hello . what's up",
+			Template: "hello . what's up",
+		},
+		{
 			Case:     "Variable",
 			Expected: "{{range $cpu := .Data.CPU}}{{round $cpu.Mhz 2 }} {{end}}",
 			Template: "{{range $cpu := .CPU}}{{round $cpu.Mhz 2 }} {{end}}",

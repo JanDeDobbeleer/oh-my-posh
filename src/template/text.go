@@ -82,6 +82,9 @@ func (t *Text) cleanTemplate() {
 	}
 
 	knownVariable := func(variable string) bool {
+		if variable == "." {
+			return true
+		}
 		variable = strings.TrimPrefix(variable, ".")
 		splitted := strings.Split(variable, ".")
 		if len(splitted) == 0 {

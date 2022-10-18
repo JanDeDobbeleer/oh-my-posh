@@ -29,6 +29,12 @@
           "template": "<#ffffff>via</> \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
           "type": "python"
         },
+        {
+          "foreground": "#f74c00",
+          "style": "plain",
+          "template": "<#ffffff>via</> \uE7a8 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
+          "type": "rust"
+        },
 
         {
           "foreground": "#00add8",
@@ -43,7 +49,7 @@
           "type": "node"
         },
         {
-          "foreground": "#f44336",
+          "foreground": "#ef0e13",
           "style": "plain",
           "template": "<#ffffff>via</> \ue791{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
           "type": "ruby"

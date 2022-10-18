@@ -11,6 +11,7 @@ import (
 
 const (
 	languageTemplate = " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+	noVersion        = "NO VERSION"
 )
 
 type loadContext func()
@@ -162,6 +163,7 @@ func (l *language) setVersion() error {
 		var err error
 		if command.getVersion == nil {
 			if !l.env.HasCommand(command.executable) {
+				lastError = errors.New(noVersion)
 				continue
 			}
 			versionStr, err = l.env.RunCommand(command.executable, command.args...)

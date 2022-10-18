@@ -83,7 +83,7 @@ func TestLanguageFilesFoundButNoCommandAndVersionAndDisplayVersion(t *testing.T)
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
-	assert.Equal(t, "", lang.Error, "unicorn is not available")
+	assert.Equal(t, noVersion, lang.Error, "unicorn is not available")
 }
 
 func TestLanguageFilesFoundButNoCommandAndVersionAndDontDisplayVersion(t *testing.T) {

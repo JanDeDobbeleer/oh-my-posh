@@ -3,6 +3,9 @@ if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }
 
+# enable the fallback for non-existing folders
+$env:POSH_UNKNOWN_DIR_REDIRECT = $true
+
 # Helper functions which need to be defined before the module is loaded
 # See https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2300
 function global:Get-PoshStackCount {
@@ -85,7 +88,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         if ($PWD.Provider.Name -eq 'FileSystem') {
             # make sure we're in a valid directory
             # if not, go back HOME
-            if (-not (Test-Path -Path $PWD)) {
+            if (-not (Test-Path -Path $PWD) -and $env:POSH_UNKNOWN_DIR_REDIRECT -eq $true) {
                 Write-Host "Unable to find the current directory, falling back to $HOME" -ForegroundColor Red
                 Set-Location $HOME
             }

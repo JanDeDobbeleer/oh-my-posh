@@ -3,9 +3,6 @@ if ($null -ne (Get-Module -Name "oh-my-posh-core")) {
     Remove-Module -Name "oh-my-posh-core" -Force
 }
 
-# enable the fallback for non-existing folders
-$env:POSH_UNKNOWN_DIR_REDIRECT = $true
-
 # Helper functions which need to be defined before the module is loaded
 # See https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2300
 function global:Get-PoshStackCount {
@@ -25,7 +22,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:TransientPrompt = $false
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:CONDA_PROMPT_MODIFIER = $false
-    if ((::CONFIG:: -ne '') -and (Test-Path ::CONFIG::)) {
+    if ((::CONFIG:: -ne '') -and (Test-Path -LiteralPath ::CONFIG::)) {
         $env:POSH_THEME = (Resolve-Path -Path ::CONFIG::).ProviderPath
     }
 
@@ -88,7 +85,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         if ($PWD.Provider.Name -eq 'FileSystem') {
             # make sure we're in a valid directory
             # if not, go back HOME
-            if (-not (Test-Path -Path $PWD) -and $env:POSH_UNKNOWN_DIR_REDIRECT -eq $true) {
+            if (-not (Test-Path -LiteralPath $PWD)) {
                 Write-Host "Unable to find the current directory, falling back to $HOME" -ForegroundColor Red
                 Set-Location $HOME
             }
@@ -249,7 +246,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             do {
                 $temp = Read-Host 'Please enter the themes path'
             }
-            while (-not (Test-Path -Path $temp))
+            while (-not (Test-Path -LiteralPath $temp))
             $Path = (Resolve-Path -Path $temp).ProviderPath
         }
 

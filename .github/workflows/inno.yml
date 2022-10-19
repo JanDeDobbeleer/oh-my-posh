@@ -24,11 +24,6 @@ jobs:
       run: |
         $version = $env:GITHUB_REF.TrimStart("refs/tags/v")
         ./build.ps1 -Architecture ${{ matrix.arch }}  -Version $version
-    - name: Get release ⬇️
-      id: get_release
-      uses: bruceadams/get-release@v1.2.3
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
     - name: Upload artifacts 🆙
       uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
       with:
@@ -46,7 +41,7 @@ jobs:
 
             await github.rest.repos.uploadReleaseAsset({
               owner, repo,
-              release_id: ${{ steps.get_release.outputs.id }},
+              release_id: ${{ github.event.release.id }},
               name: file,
               data: await fs.readFile(`./packages/inno/Output/${file}`)
             });
@@ -89,6 +84,6 @@ jobs:
             repo: '${{ github.event.repository.name }}',
             workflow_id: 'scoop.yml',
             ref: 'main',
-            inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', '')}
+            inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', ''), "release": "${{ github.event.release.id }}" }
           })
 

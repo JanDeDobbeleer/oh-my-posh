@@ -5,6 +5,9 @@ on:
       version:
         description: 'The latest version'
         required: true
+      release:
+        description: 'The release id'
+        required: true
 
 jobs:
   publish:
@@ -16,15 +19,9 @@ jobs:
     steps:
     - name: Checkout code 👋
       uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
-    - name: Get release ⬇️
-      id: get_release
-      uses: bruceadams/get-release@3a8733307b85cd96d52772b037617bd63d99522e
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
     - name: Update Template ✍️
       run: |
-        $version = $env:GITHUB_REF.TrimStart("refs/tags/v")
-        ./build.ps1 -Version $version
+        ./build.ps1 -Version ${{ github.event.inputs.version }}
     - name: Upload artifacts 🆙
       uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
       with:
@@ -39,7 +36,7 @@ jobs:
 
           await github.rest.repos.uploadReleaseAsset({
             owner, repo,
-            release_id: ${{ steps.get_release.outputs.id }},
-            name: "oh-my-posh.json",
+            release_id: ${{ github.event.inputs.release }},
+            name: 'oh-my-posh.json',
             data: await fs.readFile('./packages/scoop/dist/oh-my-posh.json')
           });

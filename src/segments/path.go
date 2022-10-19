@@ -79,7 +79,7 @@ func (pt *Path) Enabled() bool {
 	}
 	pt.setStyle()
 	if pt.env.IsWsl() {
-		pt.Location, _ = pt.env.RunCommand("wslpath", "-m", pt.pwd)
+		pt.Location, _ = pt.env.RunCommand("wslpath", "-m", pt.env.Pwd())
 	} else {
 		pt.Location = pt.pwd
 	}

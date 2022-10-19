@@ -1,0 +1,88 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "#41A6B5",
+          "style": "plain",
+          "template": " ",
+          "type": "session"
+        },
+				{
+					"foreground": "#FFFFFF",
+					"style": "plain",
+					"template": "| ",
+					"type": "session"
+				},
+        {
+          "foreground": "#41A6B5",
+          "properties": {
+            "folder_separator_icon": "/",
+            "style": "full"
+          },
+          "style": "plain",
+          "template": "{{ .Path }} ",
+          "type": "path"
+        },
+        {
+          "foreground": "#BB9AF7",
+          "powerline_symbol": "",
+          "properties": {
+            "fetch_stash_count": true,
+            "fetch_upstream_icon": true
+          },
+          "style": "plain",
+          "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} ",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "type": "prompt",
+      "segments": [
+        {
+          "foreground": "#41A6B5",
+          "style": "plain",
+          "template": " \ue28e {{ .Full }} ",
+          "type": "flutter"
+        },
+        {
+          "foreground": "#41A6B5",
+          "style": "plain",
+          "template": " {{ .Full }} ",
+          "type": "python"
+        },
+        {
+          "foreground": "#41A6B5",
+          "style": "plain",
+          "template": " {{ .Full }} ",
+          "type": "rust"
+        },
+        {
+          "foreground": "#41A6B5",
+          "style": "plain",
+          "template": " {{ .Full }} ",
+          "type": "node"
+        }
+      ]
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#CD4277",
+          "style": "plain",
+          "template": "# ",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "version": 2
+}

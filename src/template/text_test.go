@@ -226,6 +226,11 @@ func TestCleanTemplate(t *testing.T) {
 		Template string
 	}{
 		{
+			Case:     "Literal dots",
+			Expected: " ... ",
+			Template: " ... ",
+		},
+		{
 			Case:     "Literal dot",
 			Expected: "hello . what's up",
 			Template: "hello . what's up",

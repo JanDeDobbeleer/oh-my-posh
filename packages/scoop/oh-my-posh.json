@@ -3,34 +3,46 @@
   "description": "A prompt theme engine for any shell",
   "homepage": "https://ohmyposh.dev",
   "license": {
-      "identifier": "MIT",
-      "url": "https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/COPYING"
+    "identifier": "MIT",
+    "url": "https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/COPYING"
   },
   "architecture": {
-      "64bit": {
-          "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/posh-windows-amd64.7z",
-          "hash": "<HASH>"
-      }
+    "64bit": {
+      "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-amd64.exe",
+      "hash": "<HASH-AMD64>"
+    },
+    "32bit": {
+      "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-386.exe",
+      "hash": "<HASH-386>"
+    }
   },
-  "env_add_path": "bin",
-  "env_set": {
-    "POSH_THEMES_PATH": "$dir\\themes"
+  "installer": {
+    "args": [
+      "/CURRENTUSER",
+      "/VERYSILENT"
+    ]
   },
   "checkver": {
-      "github": "https://github.com/JanDeDobbeleer/oh-my-posh"
+    "github": "https://github.com/JanDeDobbeleer/oh-my-posh"
   },
   "post_install": [
-      "Write-Host 'Thanks for installing Oh My Posh.'",
-      "Write-Host 'Have a look at https://ohmyposh.dev for detailed instructions for your shell.'"
+    "Write-Host 'Thanks for installing Oh My Posh.'",
+    "Write-Host 'Have a look at https://ohmyposh.dev for detailed instructions for your shell.'"
   ],
   "autoupdate": {
-      "architecture": {
-          "64bit": {
-              "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$version/posh-windows-amd64.7z",
-              "hash": {
-                  "url": "$url.sha256"
-              }
-          }
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-amd64.exe",
+        "hash": {
+          "url": "$url.sha256"
+        }
+      },
+      "32bit": {
+        "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-386.exe",
+        "hash": {
+          "url": "$url.sha256"
+        }
       }
+    }
   }
 }

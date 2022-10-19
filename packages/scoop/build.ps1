@@ -5,29 +5,26 @@ Param
     $Version
 )
 
-New-Item -Path "." -Name "package/bin" -ItemType Directory
+function Get-HashForArchitecture {
+    param (
+        [parameter(Mandatory = $true)]
+        [string]
+        $Architecture,
+        [parameter(Mandatory = $true)]
+        [string]
+        $Version
+    )
+    $hash = (new-object Net.WebClient).DownloadString("https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v$Version/install-$Architecture.exe.sha256")
+    return $hash.Trim()
+}
+
 New-Item -Path "." -Name "dist" -ItemType "directory"
-Copy-Item -Path "../../themes" -Destination "./package" -Recurse
 
-# Download the files and pack them
-@{name = 'posh-windows-amd64.exe'; outName = 'oh-my-posh.exe' } | ForEach-Object -Process {
-    $download = "https://github.com/jandedobbeleer/oh-my-posh/releases/download/v$Version/$($_.name)"
-    Invoke-WebRequest $download -Out "./package/bin/$($_.outName)"
-}
+$HashAmd64 = Get-HashForArchitecture -Architecture 'amd64' -Version $Version
+$Hash386 = Get-HashForArchitecture -Architecture '386' -Version $Version
 
-$zipDestination = "./dist/posh-windows-amd64.7z"
-
-$compress = @{
-    Path             = "./package/*"
-    CompressionLevel = "Fastest"
-    DestinationPath  = $zipDestination
-}
-Compress-Archive @compress
-$zipHash = Get-FileHash $zipDestination -Algorithm SHA256
 $content = Get-Content '.\oh-my-posh.json' -Raw
 $content = $content.Replace('<VERSION>', $Version)
-$content = $content.Replace('<HASH>', $zipHash.Hash)
+$content = $content.Replace('<HASH-AMD64>', $HashAmd64)
+$content = $content.Replace('<HASH-386>', $Hash386)
 $content | Out-File -Encoding 'UTF8' './dist/oh-my-posh.json'
-$zipHash.Hash | Out-File -Encoding 'UTF8' './dist/posh-windows-amd64.7z.sha256'
-
-Remove-Item ./package/ -Recurse

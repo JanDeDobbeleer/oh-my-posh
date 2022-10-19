@@ -79,4 +79,16 @@ jobs:
             ref: 'main',
             inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', '')}
           })
+    - name: Notify Scoop Build 🤙
+      uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
+      with:
+        github-token: ${{ secrets.GH_PAT }}
+        script: |
+          await github.request('POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches', {
+            owner: 'jandedobbeleer',
+            repo: '${{ github.event.repository.name }}',
+            workflow_id: 'scoop.yml',
+            ref: 'main',
+            inputs: {"version": process.env.GITHUB_REF.replace('refs/tags/v', '')}
+          })
 

@@ -1,7 +1,10 @@
 name: Scoop
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'The latest version'
+        required: true
 
 jobs:
   publish:
@@ -34,13 +37,9 @@ jobs:
           const { repo: { owner, repo }, sha } = context;
           console.log({ owner, repo, sha });
 
-          for (let file of await fs.readdir('./packages/scoop/dist')) {
-            console.log('uploading', file);
-
-            await github.rest.repos.uploadReleaseAsset({
-              owner, repo,
-              release_id: ${{ steps.get_release.outputs.id }},
-              name: file,
-              data: await fs.readFile(`./packages/scoop/dist/${file}`)
-            });
-          }
+          await github.rest.repos.uploadReleaseAsset({
+            owner, repo,
+            release_id: ${{ steps.get_release.outputs.id }},
+            name: "oh-my-posh.json",
+            data: await fs.readFile('./packages/scoop/dist/oh-my-posh.json')
+          });

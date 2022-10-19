@@ -17,7 +17,7 @@ export-env {
         # See https://github.com/nushell/nushell/discussions/6402#discussioncomment-3466687.
         let cmd_duration = if $env.CMD_DURATION_MS == "0823" { 0 } else { $env.CMD_DURATION_MS }
 
-        let width = (term size -c | get columns | into string)
+        let width = ((term size).columns | into string)
         ^::OMP:: print primary $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.NU_VERSION)" $"--execution-time=($cmd_duration)" $"--error=($env.LAST_EXIT_CODE)" $"--terminal-width=($width)"
     }
 }

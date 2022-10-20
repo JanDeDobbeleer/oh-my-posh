@@ -22,7 +22,6 @@
       "/VERYSILENT"
     ]
   },
-  "innosetup": true,
   "checkver": {
     "github": "https://github.com/JanDeDobbeleer/oh-my-posh"
   },

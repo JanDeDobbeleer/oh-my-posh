@@ -16,12 +16,6 @@
       "hash": "<HASH-386>"
     }
   },
-  "installer": {
-    "args": [
-      "/CURRENTUSER",
-      "/VERYSILENT"
-    ]
-  },
   "innosetup": true,
   "checkver": {
     "github": "https://github.com/JanDeDobbeleer/oh-my-posh"

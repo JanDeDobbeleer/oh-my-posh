@@ -22,6 +22,7 @@
       "/VERYSILENT"
     ]
   },
+  "innosetup": true,
   "checkver": {
     "github": "https://github.com/JanDeDobbeleer/oh-my-posh"
   },
@@ -32,17 +33,14 @@
   "autoupdate": {
     "architecture": {
       "64bit": {
-        "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-amd64.exe",
-        "hash": {
-          "url": "$url.sha256"
-        }
+        "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-amd64.exe"
       },
       "32bit": {
-        "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-386.exe",
-        "hash": {
-          "url": "$url.sha256"
-        }
+        "url": "https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-386.exe"
       }
+    },
+    "hash": {
+      "url": "$url.sha256"
     }
   }
 }

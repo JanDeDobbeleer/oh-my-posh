@@ -18,7 +18,8 @@ jobs:
             const pr = context.payload;
 
             console.log(`Repo: ${repo}`);
-            console.log(`Pull Request: ${pr}`);
+            console.log(`Owner: ${owner}`);
+            console.log(`Pull Request: ${JSON.stringify(pr)}`);
 
             const response = await github.rest.pulls.listFiles({
               owner, repo,
@@ -32,15 +33,17 @@ jobs:
 
             let hasThemeAdditions = false;
             for (const file in response.data) {
-              console.log(`File: ${file}`);
-              if (file.status === 'added' && file.filename.includes('themes/')) {
-                console.log(`File: ${file.filename} is a theme addition`);
+              const name = file.filename
+              console.log(`File: ${name}`);
+              if (file.status === 'added' && name.includes('themes/')) {
+                console.log(`File: ${name} is a theme addition`);
                 hasThemeAdditions = true;
                 break;
               }
             }
 
             if (!hasThemeAdditions) {
+              console.log('No theme additions found.');
               return;
             }
 

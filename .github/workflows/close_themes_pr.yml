@@ -1,0 +1,59 @@
+name: Close Themes PR
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code 👋
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+      - name: Check and close 🔐
+        uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const { repo: { owner, repo } } = context;
+            const pr = context.payload;
+
+            console.log(`Repo: ${repo}`);
+            console.log(`Pull Request: ${pr}`);
+
+            const response = await github.rest.pulls.listFiles({
+              owner, repo,
+              pull_number: pr.number
+            });
+
+            if (response.status !== 200) {
+              console.log('Could not fetch files');
+              return;
+            }
+
+            let hasThemeAdditions = false;
+            for (const file in response.data) {
+              console.log(`File: ${file}`);
+              if (file.status === 'added' && file.filename.includes('themes/')) {
+                console.log(`File: ${file.filename}` is a theme addition);
+                hasThemeAdditions = true;
+                break;
+              }
+            }
+
+            if (!hasThemeAdditions) {
+              return;
+            }
+
+            const body = `👋 @${pr.user.login}, theme aditions are no longer accepted due to the ever growing set. We do however accept showcasing your custom theme in the [🎨 Themes section](https://github.com/JanDeDobbeleer/oh-my-posh/discussions/categories/themes) in discussions.`
+
+            await github.rest.issues.createComment({
+              repo: repo,
+              issue_number: pr.number,
+              body,
+            });
+
+            await github.rest.pulls.update({
+              owner, repo,
+              pull_number: pr.number,
+              state: "closed",
+            });

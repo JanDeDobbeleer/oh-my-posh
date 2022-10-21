@@ -12,7 +12,7 @@ jobs:
       - name: Check and close 🔐
         uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{ secrets.GH_PAT }}
           script: |
             const { repo: { owner, repo } } = context;
             const pr = context.payload.pull_request;

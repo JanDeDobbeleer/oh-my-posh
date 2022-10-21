@@ -1,10 +1,11 @@
 name: Close Themes PR
 on:
   pull_request_target:
-    types: [opened, reopened, edited]
+    types:
+      - opened
 
 jobs:
-  publish:
+  check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code 👋
@@ -45,12 +46,14 @@ jobs:
 
             const body = `👋 @${pr.user.login}, theme aditions are no longer accepted due to the ever growing set. We do however accept showcasing your custom theme in the [🎨 Themes section](https://github.com/JanDeDobbeleer/oh-my-posh/discussions/categories/themes) in discussions.`
 
+            console.log(`Adding comment: ${body}`);
             await github.rest.issues.createComment({
               owner, repo,
               issue_number: pr.number,
               body,
             });
 
+            console.log(`Closing pull request: ${pr.html_url}`);
             await github.rest.pulls.update({
               owner, repo,
               pull_number: pr.number,

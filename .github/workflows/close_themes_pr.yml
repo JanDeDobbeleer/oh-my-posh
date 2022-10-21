@@ -15,11 +15,7 @@ jobs:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const { repo: { owner, repo } } = context;
-            const pr = context.payload;
-
-            console.log(`Repo: ${repo}`);
-            console.log(`Owner: ${owner}`);
-            console.log(`Pull Request: ${JSON.stringify(pr)}`);
+            const pr = context.payload.pull_request;
 
             const response = await github.rest.pulls.listFiles({
               owner, repo,

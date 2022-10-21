@@ -32,7 +32,7 @@ jobs:
             }
 
             let hasThemeAdditions = false;
-            for (const file in response.data) {
+            for (const file of response.data) {
               const name = file.filename
               console.log(`File: ${name}`);
               if (file.status === 'added' && name.includes('themes/')) {
@@ -50,7 +50,7 @@ jobs:
             const body = `👋 @${pr.user.login}, theme aditions are no longer accepted due to the ever growing set. We do however accept showcasing your custom theme in the [🎨 Themes section](https://github.com/JanDeDobbeleer/oh-my-posh/discussions/categories/themes) in discussions.`
 
             await github.rest.issues.createComment({
-              repo: repo,
+              owner, repo,
               issue_number: pr.number,
               body,
             });

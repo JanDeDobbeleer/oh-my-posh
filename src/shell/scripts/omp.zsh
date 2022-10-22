@@ -112,8 +112,6 @@ if [[ "::TRANSIENT::" = "true" ]]; then
   # https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2617#discussioncomment-3911044
   bindkey '^[[F' end-of-line
   bindkey '^[[H' beginning-of-line
-  bindkey '^[[A' up-line-or-beginning-search
-  bindkey '^[[B' down-line-or-beginning-search
 fi
 
 # legacy functions for backwards compatibility

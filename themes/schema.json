@@ -232,6 +232,7 @@
             "cftarget",
             "cmake",
             "dotnet",
+            "dotnettarget",
             "dart",
             "exit",
             "executiontime",
@@ -2804,6 +2805,31 @@
           "then": {
             "title": "GCP Segment",
             "description": "https://ohmyposh.dev/docs/segments/gcp"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "dotnettarget"
+              }
+            }
+          },
+          "then": {
+            "title": "Dotnet Target segment",
+            "description": "https://ohmyposh.dev/docs/segments/dotnettarget",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_error": {
+                    "type": "boolean",
+                    "title": "Display Error",
+                    "description": "Show the error when failing to retrieve the target framework moniker",
+                    "default": false
+                  }
+                }
+              }
+            }
           }
         }
       ]

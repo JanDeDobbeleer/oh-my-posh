@@ -106,6 +106,8 @@ const (
 	DENO SegmentType = "deno"
 	// DOTNET writes which dotnet version is currently active
 	DOTNET SegmentType = "dotnet"
+	// DOTNETTARGET writes which version of .NET the current project is targeting
+	DOTNETTARGET SegmentType = "dotnettarget"
 	// EXECUTIONTIME writes the execution time of the last run command
 	EXECUTIONTIME SegmentType = "executiontime"
 	// EXIT writes the last exit code
@@ -283,6 +285,7 @@ func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error 
 		DART:          &segments.Dart{},
 		DENO:          &segments.Deno{},
 		DOTNET:        &segments.Dotnet{},
+		DOTNETTARGET:  &segments.DotnetTarget{},
 		EXECUTIONTIME: &segments.Executiontime{},
 		EXIT:          &segments.Exit{},
 		FLUTTER:       &segments.Flutter{},

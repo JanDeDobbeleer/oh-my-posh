@@ -67,6 +67,7 @@ module.exports = {
         "segments/dart",
         "segments/deno",
         "segments/dotnet",
+        "segments/dotnettarget",
         "segments/executiontime",
         "segments/exit",
         "segments/flutter",

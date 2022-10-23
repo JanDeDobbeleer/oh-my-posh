@@ -1,0 +1,56 @@
+---
+id: dotnettarget
+title: Dotnet Target
+sidebar_label: Dotnet Target
+---
+
+## What
+
+Display target framework moniker ([TFM][tfm]) of the current project.
+
+:::note
+
+*If the working directory contains multiple projects (which is considered very bad tone!), the segment will combine their monikers and remove duplicate versions, like in this example:*
+
+`net6.0;net5.0` + `net5.0;net48` = `net6.0;net5.0;net48`
+
+:::
+
+## Sample Configuration
+
+```json
+{
+  "type": "dotnettarget",
+  "style": "powerline",
+  "powerline_symbol": "\ue0b0",
+  "foreground": "#e8eef1",
+  "background": "#3d4b91",
+  "template": " \uE77F {{ .Text }} "
+}
+```
+
+## Properties
+
+| Name                   | Type      | Description                                                                                                                                                                                                                          |
+| ---------------------- | --------- | -------------------------------------------------------------------------------------------|
+| `display_error`        | `boolean` | show the error when failing to retrieve the target framework moniker - defaults to `false` |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Text }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name             | Type     | Description                                             |
+| ---------------- | -------- | ------------------------------------------------------- |
+| `.Text`          | `string` | the target framework moniker (TFM)                      |
+| `.Error`         | `string` | the error in case retrieving the TFM information failed |
+
+[templates]: /docs/configuration/templates
+[tfm]: https://learn.microsoft.com/en-us/dotnet/standard/frameworks

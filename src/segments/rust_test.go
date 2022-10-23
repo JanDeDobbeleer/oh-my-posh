@@ -13,6 +13,7 @@ func TestRust(t *testing.T) {
 		ExpectedString string
 		Version        string
 	}{
+		{Case: "Rust 1.64.0", ExpectedString: "1.64.0", Version: "rustc 1.64.0"},
 		{Case: "Rust 1.53.0", ExpectedString: "1.53.0", Version: "rustc 1.53.0 (4369396ce 2021-04-27)"},
 		{Case: "Rust 1.66.0", ExpectedString: "1.66.0-nightly", Version: "rustc 1.66.0-nightly (01af5040f 2022-10-04)"},
 	}

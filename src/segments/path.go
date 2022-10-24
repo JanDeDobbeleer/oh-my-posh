@@ -78,13 +78,14 @@ func (pt *Path) Enabled() bool {
 		return false
 	}
 	pt.setStyle()
+	pwd := pt.env.Pwd()
 	if pt.env.IsWsl() {
-		pt.Location, _ = pt.env.RunCommand("wslpath", "-m", pt.env.Pwd())
+		pt.Location, _ = pt.env.RunCommand("wslpath", "-m", pwd)
 	} else {
-		pt.Location = pt.pwd
+		pt.Location = pwd
 	}
 	pt.StackCount = pt.env.StackCount()
-	pt.Writable = pt.env.DirIsWritable(pt.env.Pwd())
+	pt.Writable = pt.env.DirIsWritable(pwd)
 	return true
 }
 

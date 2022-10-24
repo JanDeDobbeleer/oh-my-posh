@@ -5,8 +5,12 @@
       "alignment": "left",
       "segments": [
         {
-          "background": "p:c-badge-folder",
-          "foreground": "p:c-badge-text",
+          "background_templates": [
+            "{{ if not (empty .Env.OVERRIDE_FOLDER_BADGE_BG) }}{{ .Env.OVERRIDE_FOLDER_BADGE_BG }}{{ else }}p:c-badge-folder{{ end }}"
+          ],
+          "foreground_templates": [
+            "{{ if not (empty .Env.OVERRIDE_FOLDER_BADGE_FG) }}{{ .Env.OVERRIDE_FOLDER_BADGE_FG }}{{ else }}p:c-badge-text{{ end }}"
+          ],
           "leading_diamond": "\uE0B6",
           "properties": {
             "style": "folder"
@@ -30,13 +34,13 @@
           "foreground": "p:c-badge-text",
           "leading_diamond": " \uE0B6",
           "style": "diamond",
-          "template": "{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uE0B1 \uF448 ({{ .Working.String }}){{ end }}{{ if and .Working.Changed .Staging.Changed }} \uE621 {{ end }}{{ if .Staging.Changed }}{{ if not .Working.Changed }} \uE0B1 {{ end }}\uF854 ({{ .Staging.String }}){{ end }}{{ if .StashCount }} \uE621 \uF6FC {{ .StashCount }} Stash{{ if gt .StashCount 1 }}es{{ end }}{{ end }}",
+          "template": "{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uE0B1 \uF448 ({{ .Working.String }}){{ end }}{{ if and .Working.Changed .Staging.Changed }} \uE621 {{ end }}{{ if .Staging.Changed }}{{ if not .Working.Changed }} \uE0B1 {{ end }}\uF854 ({{ .Staging.String }}){{ end }}{{ if .StashCount }} \uE621 \uF6FC {{ .StashCount }} Stash{{ if gt .StashCount 1 }}es{{ end }}{{ end }}",
           "properties": {
             "branch_icon": "\uE0A0 ",
-            "branch_ahead_icon": "\uE621 \uF9AC ",
-            "branch_behind_icon": "\uE621 \uF9AD ",
-            "branch_gone_icon": "\uE621 \uF00D",
-            "branch_identical_icon": "\uE621 \uF00C",
+            "branch_ahead_icon": " \uE621 \uF9AC ",
+            "branch_behind_icon": " \uE621 \uF9AD ",
+            "branch_gone_icon": " \uE621 \uF00D",
+            "branch_identical_icon": " \uE621 \uF00C",
             "fetch_status": true,
             "fetch_stash_count": true
           },
@@ -114,12 +118,12 @@
             "{{ if and (gt .Percentage 46) (lt .Percentage 55) }}p:c-battery-55-less{{ end }}",
             "{{ if and (gt .Percentage 56) (lt .Percentage 70) }}p:c-battery-70-less{{ end }}",
             "{{ if and (gt .Percentage 71) (lt .Percentage 90) }}p:c-battery-90-less{{ end }}",
-            "{{ if and (gt .Percentage 91) (lt .Percentage 100) }}p:c-battery-90-less{{ end }}"
+            "{{ if and (gt .Percentage 91) (le .Percentage 100) }}p:c-battery-100-less{{ end }}"
           ],
           "foreground": "p:c-badge-text",
           "leading_diamond": "\uE0B6",
           "style": "diamond",
-          "template": "{{ if eq \"True\" (title (default \"False\" .Env.DISABLE_SEGMENT_BATTERY)) }}{{ else }}{{ if not .Error }}{{ if eq \"Charging\" .State.String }}\uE315 {{ else if eq \"Discharging\" .State.String }}\uF062 {{ else if eq \"Full\" .State.String }}~ {{ else }}? {{ end }}{{ if lt .Percentage 15 }}\uF579{{ else if and (gt .Percentage 16) (lt .Percentage 30) }}\uF57A{{ else if and (gt .Percentage 31) (lt .Percentage 45) }}\uF57C{{ else if and (gt .Percentage 46) (lt .Percentage 55)}}\uF57D{{ else if and (gt .Percentage 56) (lt .Percentage 70) }}\uF57E{{ else if and (gt .Percentage 71) (lt .Percentage 90) }}\uF580{{ else }}\uF581{{ end }} {{ .Percentage }}%{{ else }}!{{ end }}{{ end }}",
+          "template": "{{ if eq \"True\" (title (default \"False\" .Env.DISABLE_SEGMENT_BATTERY)) }}{{ else }}{{ if not .Error }}{{ if eq \"Charging\" .State.String }}\uE315 {{ else if eq \"Discharging\" .State.String }}\uF062 {{ else if eq \"Full\" .State.String }}~ {{ else }}? {{ end }}{{ if le .Percentage 15 }}\uF579{{ else if and (ge .Percentage 16) (le .Percentage 30) }}\uF57A{{ else if and (ge .Percentage 31) (le .Percentage 45) }}\uF57C{{ else if and (ge .Percentage 46) (le .Percentage 55)}}\uF57D{{ else if and (ge .Percentage 56) (le .Percentage 70) }}\uF57E{{ else if and (ge .Percentage 71) (le .Percentage 80) }}\uF580{{ else if and (ge .Percentage 81) (le .Percentage 95) }}\uF581{{ else }}\uF578{{ end }} {{ .Percentage }}%{{ else }}!{{ end }}{{ end }}",
           "trailing_diamond": "\uE0B4",
           "type": "battery"
         }
@@ -150,27 +154,66 @@
         },
         {
           "background_templates": [
-            "{{ if empty .Full }}p:c-project-node-error{{ else }}p:c-project-node{{ end }}"
+            "{{ if empty .Full }}p:c-project-generic-error{{ else }}p:c-project-crystal{{ end }}"
           ],
           "foreground": "p:c-badge-text",
           "leading_diamond": "\uE0B6",
-          "powerline_symbol": "\uE0B0",
-          "properties": {
-            "disply_mode": "files",
-            "fetch_package_manager": true
-          },
           "style": "diamond",
-          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_NODE)) }}\uE718 {{ if not (empty .Full) }}{{ .Full }}{{ else }}No Version{{ if .Error }}({{ .Error }}){{ end }}{{ end }}{{ end }}",
+          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_CRYSTAL)) }}\uE62F {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}{{ end }}",
+          "trailing_diamond": "\uE0B4 ",
+          "type": "crystal"
+        },
+        {
+          "background_templates": [
+            "{{ if empty .Full }}p:c-project-generic-error{{ else }}p:c-project-flutter{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
+          "style": "diamond",
+          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_FLUTTER)) }}Flutter | {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}{{ end }}",
+          "trailing_diamond": "\uE0B4 ",
+          "type": "dart"
+        },
+        {
+          "background_templates": [
+            "{{ if .Error }}p:c-project-generic-error{{ else }}p:c-project-lua{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
+          "style": "diamond",
+          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_LUA)) }}\uE620 {{ if or (.Error) (empty .Full) }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}{{ end }}",
+          "trailing_diamond": "\uE0B4 ",
+          "type": "lua"
+        },
+        {
+          "background_templates": [
+            "{{ if empty .Full }}p:c-project-generic-error{{ else }}p:c-project-node{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
+          "style": "diamond",
+          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_NODE)) }}\uE718 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}{{ end }}",
           "trailing_diamond": "\uE0B4 ",
           "type": "node"
         },
         {
-          "background": "p:c-project-python",
+          "background_templates": [
+            "{{ if empty .Full }}p:c-project-generic-error{{ else }}p:c-project-rust{{ end }}"
+          ],
+          "foreground": "p:c-badge-text",
           "leading_diamond": "\uE0B6",
+          "style": "diamond",
+          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_RUST)) }}\uE7A8 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}{{ end }}",
+          "trailing_diamond": "\uE0B4 ",
+          "type": "rust"
+        },
+        {
+          "background_templates": [
+            "{{ if empty .Full }}p:c-project-generic-error{{ else }}p:c-project-python{{ end }}"
+          ],
           "foreground": "p:c-badge-text",
           "properties": {
-            "display_mode": "context",
-            "fetch_virtual_env": true
+            "display_mode": "context"
           },
           "style": "diamond",
           "template": "{{ if or (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON))) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON_VENV))) }}\uE235 {{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON)) }}{{ .Full }}{{ end }}{{ if and (.Venv) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON))) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON_VENV))) }} \uE621 {{ end }}{{ if and (.Venv) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_PROJECT_PYTHON_VENV))) }}{{ if .Env.SEGMENT_PROJECT_PYTHON_ACTIVE_VENV_STR }}{{ .Env.SEGMENT_PROJECT_PYTHON_ACTIVE_VENV_STR }}{{ else }}{{ .Venv }}{{ end }}{{ end }}{{ end }}",
@@ -179,7 +222,9 @@
         },
         {
           "style": "plain",
-          "foreground": "p:c-badge-white",
+          "foreground_templates": [
+            "{{ if eq \"False\" (title (default \"False\" .Env.ENABLE_ARROW_DIVIDER_COLOR_EXECUTION_RETURN)) }}p:c-badge-white{{ else }}{{ if eq .Code 0 }}p:c-badge-return-success{{ else if or (eq .Code 1) (eq .Code 130) }}p:c-badge-return-fail-term{{ else }}p:c-badge-return-custom{{ end }}{{ end }}"
+          ],
           "template": "\u276F",
           "type": "text"
         }
@@ -221,8 +266,12 @@
     "c-git-staging-working": "#FFB2FF",
     "c-git-upstream-gone": "#FF867F",
     "c-git-working": "#84FFFF",
+    "c-project-generic-error": "#FF867F",
+    "c-project-crystal": "#FFFFFF",
+    "c-project-flutter": "#6DC2FF",
+    "c-project-lua": "#BBC2FF",
     "c-project-node": "#9CFF57",
-    "c-project-node-error": "#FF867F",
+    "c-project-rust": "#FFAB40",
     "c-project-python": "#FFE873",
     "c-secondary-ellipsis": "#FFFF8D",
     "c-shell-state-ssh-active": "#BAFFFF",

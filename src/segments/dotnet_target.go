@@ -2,12 +2,10 @@ package segments
 
 import (
 	"errors"
-	"fmt"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
 	"oh-my-posh/regex"
 	"strings"
-	"time"
 )
 
 type DotnetTarget struct {
@@ -53,7 +51,6 @@ func (d *DotnetTarget) Enabled() bool {
 }
 
 func (d *DotnetTarget) getProjectFiles() []string {
-	defer d.env.Trace(time.Now(), "getProjectFiles")
 	var files []string
 	for _, extension := range d.extensions {
 		cwd := d.env.Pwd()
@@ -65,8 +62,6 @@ func (d *DotnetTarget) getProjectFiles() []string {
 			}
 		}
 	}
-	total := fmt.Sprintf("%d file(s) found", len(files))
-	d.env.Log(environment.Debug, "getProjectFiles", total)
 	return files
 }
 

@@ -3,22 +3,33 @@ package segments
 import (
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"oh-my-posh/environment"
 	"oh-my-posh/properties"
+	"oh-my-posh/regex"
 	"path/filepath"
+	"strings"
 
 	"github.com/BurntSushi/toml"
 )
 
 type ProjectItem struct {
 	Name    string
-	File    string
-	Fetcher func(item ProjectItem) (string, string)
+	Files   []string
+	Fetcher func(item ProjectItem) *ProjectData
 }
 
 type ProjectData struct {
 	Version string
 	Name    string
+	Target  string
+}
+
+func (p *ProjectData) enabled() bool {
+	if p == nil {
+		return false
+	}
+	return len(p.Version) > 0 || len(p.Name) > 0 || len(p.Target) > 0
 }
 
 // Rust Cargo package
@@ -56,15 +67,19 @@ type Project struct {
 func (n *Project) Enabled() bool {
 	for _, item := range n.projects {
 		if n.hasProjectFile(item) {
-			n.Version, n.Name = item.Fetcher(*item)
-			return len(n.Version) > 0 || len(n.Name) > 0
+			data := item.Fetcher(*item)
+			if data == nil {
+				continue
+			}
+			n.ProjectData = *data
+			return n.enabled()
 		}
 	}
 	return false
 }
 
 func (n *Project) Template() string {
-	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }} "
+	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}} {{ end }}{{ if .Name }}{{ .Name }} {{ end }}{{ if .Target }}\uf9fd {{.Target}} {{ end }}{{ end }}" //nolint:lll
 }
 
 func (n *Project) Init(props properties.Properties, env environment.Environment) {
@@ -74,76 +89,92 @@ func (n *Project) Init(props properties.Properties, env environment.Environment)
 	n.projects = []*ProjectItem{
 		{
 			Name:    "node",
-			File:    "package.json",
+			Files:   []string{"package.json"},
 			Fetcher: n.getNodePackage,
 		},
 		{
 			Name:    "cargo",
-			File:    "Cargo.toml",
+			Files:   []string{"Cargo.toml"},
 			Fetcher: n.getCargoPackage,
 		},
 		{
 			Name:    "poetry",
-			File:    "pyproject.toml",
+			Files:   []string{"pyproject.toml"},
 			Fetcher: n.getPoetryPackage,
 		},
 		{
 			Name:    "php",
-			File:    "composer.json",
+			Files:   []string{"composer.json"},
 			Fetcher: n.getNodePackage,
 		},
 		{
 			Name:    "nuspec",
-			File:    "*.nuspec",
+			Files:   []string{"*.nuspec"},
 			Fetcher: n.getNuSpecPackage,
+		},
+		{
+			Name:    "dotnet",
+			Files:   []string{"*.vbproj", "*.fsproj", "*.csproj"},
+			Fetcher: n.getDotnetProject,
 		},
 	}
 }
 
 func (n *Project) hasProjectFile(p *ProjectItem) bool {
-	return n.env.HasFiles(p.File)
+	for _, file := range p.Files {
+		if n.env.HasFiles(file) {
+			return true
+		}
+	}
+	return false
 }
 
-func (n *Project) getNodePackage(item ProjectItem) (string, string) {
-	content := n.env.FileContent(item.File)
+func (n *Project) getNodePackage(item ProjectItem) *ProjectData {
+	content := n.env.FileContent(item.Files[0])
 
 	var data ProjectData
 	err := json.Unmarshal([]byte(content), &data)
 	if err != nil {
 		n.Error = err.Error()
-		return "", ""
+		return nil
 	}
 
-	return data.Version, data.Name
+	return &data
 }
 
-func (n *Project) getCargoPackage(item ProjectItem) (string, string) {
-	content := n.env.FileContent(item.File)
+func (n *Project) getCargoPackage(item ProjectItem) *ProjectData {
+	content := n.env.FileContent(item.Files[0])
 
 	var data CargoTOML
 	_, err := toml.Decode(content, &data)
 	if err != nil {
 		n.Error = err.Error()
-		return "", ""
+		return nil
 	}
 
-	return data.Package.Version, data.Package.Name
+	return &ProjectData{
+		Version: data.Package.Version,
+		Name:    data.Package.Name,
+	}
 }
 
-func (n *Project) getPoetryPackage(item ProjectItem) (string, string) {
-	content := n.env.FileContent(item.File)
+func (n *Project) getPoetryPackage(item ProjectItem) *ProjectData {
+	content := n.env.FileContent(item.Files[0])
 
 	var data PyProjectTOML
 	_, err := toml.Decode(content, &data)
 	if err != nil {
 		n.Error = err.Error()
-		return "", ""
+		return nil
 	}
 
-	return data.Tool.Poetry.Version, data.Tool.Poetry.Name
+	return &ProjectData{
+		Version: data.Tool.Poetry.Version,
+		Name:    data.Tool.Poetry.Name,
+	}
 }
 
-func (n *Project) getNuSpecPackage(item ProjectItem) (string, string) {
+func (n *Project) getNuSpecPackage(item ProjectItem) *ProjectData {
 	files := n.env.LsDir(n.env.Pwd())
 	var content string
 	// get the first match only
@@ -158,8 +189,40 @@ func (n *Project) getNuSpecPackage(item ProjectItem) (string, string) {
 	err := xml.Unmarshal([]byte(content), &data)
 	if err != nil {
 		n.Error = err.Error()
-		return "", ""
+		return nil
 	}
 
-	return data.MetaData.Version, data.MetaData.Title
+	return &ProjectData{
+		Version: data.MetaData.Version,
+		Name:    data.MetaData.Title,
+	}
+}
+
+func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
+	files := n.env.LsDir(n.env.Pwd())
+	var name string
+	var content string
+	// get the first match only
+	for _, file := range files {
+		extension := filepath.Ext(file.Name())
+		if extension == ".csproj" || extension == ".fsproj" || extension == ".vbproj" {
+			name = strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
+			content = n.env.FileContent(file.Name())
+			break
+		}
+	}
+	// the name of the parameter may differ depending on the version,
+	// so instead of xml.Unmarshal() we use regex:
+	tag := "(?P<TAG><.*TargetFramework.*>(?P<TFM>.*)</.*TargetFramework.*>)"
+	values := regex.FindNamedRegexMatch(tag, content)
+	if len(values) == 0 {
+		n.Error = errors.New("cannot extract TFM from " + name + " project file").Error()
+		return nil
+	}
+	target := values["TFM"]
+
+	return &ProjectData{
+		Target: target,
+		Name:   name,
+	}
 }

@@ -15,6 +15,7 @@ Supports:
 - Poetry project (`pyproject.toml`)
 - PHP project (`composer.json`)
 - Any nuspec based project (`*.nuspec`, first file match info is displayed)
+- .NET project (`*.csproj`, `*.vbproj` or `*.fsproj`, first file match info is displayed)
 
 ## Sample Configuration
 
@@ -41,9 +42,10 @@ Supports:
 
 ### Properties
 
-| Name       | Type     | Description                 |
-| ---------- | -------- | --------------------------- |
-| `.Version` | `string` | The version of your project |
-| `.Name`    | `string` | The name of your project    |
+| Name       | Type     | Description                                          |
+| ---------- | -------- | ---------------------------------------------------- |
+| `.Version` | `string` | The version of your project                          |
+| `.Target`  | `string` | The target framwork/language version of your project |
+| `.Name`    | `string` | The name of your project                             |
 
 [templates]: /docs/configuration/templates

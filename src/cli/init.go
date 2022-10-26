@@ -64,6 +64,11 @@ func runInit(shellName string) {
 	shell.Transient = cfg.TransientPrompt != nil
 	shell.ErrorLine = cfg.ErrorLine != nil || cfg.ValidLine != nil
 	shell.Tooltips = len(cfg.Tooltips) > 0
+	for _, block := range cfg.Blocks {
+		if block.Type == engine.RPrompt {
+			shell.RPrompt = true
+		}
+	}
 	if print {
 		init := shell.PrintInit(env)
 		fmt.Print(init)

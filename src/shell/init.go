@@ -38,6 +38,7 @@ var (
 	Transient bool
 	ErrorLine bool
 	Tooltips  bool
+	RPrompt   bool
 )
 
 func getExecutablePath(env platform.Environment) (string, error) {
@@ -225,6 +226,7 @@ func PrintInit(env platform.Environment) string {
 		"::TRANSIENT::", toggleSetting(Transient),
 		"::ERROR_LINE::", toggleSetting(ErrorLine),
 		"::TOOLTIPS::", toggleSetting(Tooltips),
+		"::RPROMPT::", strconv.FormatBool(RPrompt),
 	).Replace(script)
 }
 

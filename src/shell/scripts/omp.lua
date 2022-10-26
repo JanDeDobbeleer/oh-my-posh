@@ -23,10 +23,7 @@ end
 local endedit_time = 0
 local last_duration = 0
 local tooltips_enabled = ::TOOLTIPS::
-local rprompt_enabled = true
--- REVIEW:  OMP could set rprompt_enabled = ::HASRPROMPT:: which could speed up
--- performance for configs that don't have an rprompt, by not needing to invoke
--- OMP an extra time for the rprompt.
+local rprompt_enabled = ::RPROMPT::
 
 local cached_prompt = {}
 -- Fields in cached_prompt:
@@ -232,9 +229,6 @@ function p:rightfilter(prompt)
     return (cached_prompt.tooltip or cached_prompt.right), false
 end
 function p:transientfilter(prompt)
--- REVIEW: this can potentially be expensive and noticable for users; consider
--- optimizing this so the Lua script can natively generate the transient prompt
--- when feasible.
     local prompt_exe = string.format('%s print transient --shell=cmd --config=%s %s', omp_exe(), omp_config(), error_level_option())
     prompt = run_posh_command(prompt_exe)
     if prompt == "" then

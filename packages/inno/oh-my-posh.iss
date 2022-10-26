@@ -13,6 +13,7 @@ PrivilegesRequiredOverridesAllowed=dialog
 ChangesEnvironment=yes
 SignTool=signtool
 SignedUninstaller=yes
+CloseApplications=no
 
 [Files]
 Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"; Flags: sign

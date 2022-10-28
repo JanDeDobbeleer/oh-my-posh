@@ -48,7 +48,7 @@
         },
         {
           "style": "plain",
-          "template": "<darkGray>on</> <white>git:</>{{ .HEAD }} ",
+          "template": "<darkGray>on</> <white>git:</><cyan>{{ .HEAD }}</> ",
           "type": "git"
         },
         {

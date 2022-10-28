@@ -117,7 +117,7 @@ if [[ "::TRANSIENT::" = "true" ]]; then
     bindkey '^[[B' down-line-or-beginning-search
   fi
   if [[ -n "${_widgets[(r)up-line-or-beginning-search]}" ]]; then
-    bindkey '^[[B' up-line-or-beginning-search
+    bindkey '^[[A' up-line-or-beginning-search
   fi
 fi
 

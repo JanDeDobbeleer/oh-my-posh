@@ -48,8 +48,11 @@
         },
         {
           "style": "plain",
-          "template": "<darkGray>on</> <white>git:</><cyan>{{ .HEAD }}</> ",
-          "type": "git"
+          "template": "<darkGray>on</> <white>git:</><cyan>{{ .HEAD }}</>{{ if .Working.Changed }}<red> x</>{{ end }} ",
+          "type": "git",
+          "properties": {
+            "fetch_status": true
+          }
         },
         {
           "foreground": "darkGray",

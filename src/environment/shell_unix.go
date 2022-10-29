@@ -98,7 +98,7 @@ func (env *ShellEnvironment) WindowsRegistryKeyValue(path string) (*WindowsRegis
 }
 
 func (env *ShellEnvironment) InWSLSharedDrive() bool {
-	if !env.IsWsl() {
+	if !env.IsWsl2() {
 		return false
 	}
 	windowsPath := env.ConvertToWindowsPath(env.Pwd())

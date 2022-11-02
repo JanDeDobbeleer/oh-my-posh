@@ -40,5 +40,5 @@ You can export, migrate or edit the config.`,
 }
 
 func init() { //nolint:gochecknoinits
-	rootCmd.AddCommand(configCmd)
+	RootCmd.AddCommand(configCmd)
 }

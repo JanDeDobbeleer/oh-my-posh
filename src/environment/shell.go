@@ -274,9 +274,7 @@ func (env *ShellEnvironment) resolveConfigPath() {
 		configFile = filepath.Join(env.Home(), configFile)
 	}
 	if !filepath.IsAbs(configFile) {
-		if absConfigFile, err := filepath.Abs(configFile); err == nil {
-			configFile = absConfigFile
-		}
+		configFile = filepath.Join(env.Pwd(), configFile)
 	}
 	env.CmdFlags.Config = filepath.Clean(configFile)
 }

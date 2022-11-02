@@ -15,7 +15,7 @@ var (
 	cliVersion string
 )
 
-var rootCmd = &cobra.Command{
+var RootCmd = &cobra.Command{
 	Use:   "oh-my-posh",
 	Short: "oh-my-posh is a tool to render your prompt",
 	Long: `oh-my-posh is a cross platform tool to render your prompt.
@@ -37,7 +37,7 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 
 func Execute(version string) {
 	cliVersion = version
-	if err := rootCmd.Execute(); err != nil {
+	if err := RootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }
@@ -49,8 +49,8 @@ var (
 )
 
 func init() { //nolint:gochecknoinits
-	rootCmd.PersistentFlags().StringVarP(&config, "config", "c", "", "config (required)")
-	rootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init (deprecated)")
-	rootCmd.Flags().BoolVar(&displayVersion, "version", false, "version")
-	rootCmd.Flags().StringVarP(&shellName, "shell", "s", "", "shell (deprecated)")
+	RootCmd.PersistentFlags().StringVarP(&config, "config", "c", "", "config (required)")
+	RootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init (deprecated)")
+	RootCmd.Flags().BoolVar(&displayVersion, "version", false, "version")
+	RootCmd.Flags().StringVarP(&shellName, "shell", "s", "", "shell (deprecated)")
 }

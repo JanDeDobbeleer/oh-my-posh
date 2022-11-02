@@ -45,7 +45,7 @@ func init() { //nolint:gochecknoinits
 	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "run in strict mode")
 	initCmd.Flags().BoolVarP(&manual, "manual", "m", false, "enable/disable manual mode")
 	_ = initCmd.MarkPersistentFlagRequired("config")
-	rootCmd.AddCommand(initCmd)
+	RootCmd.AddCommand(initCmd)
 }
 
 func runInit(shellName string) {

@@ -56,5 +56,5 @@ var debugCmd = &cobra.Command{
 }
 
 func init() { //nolint:gochecknoinits
-	rootCmd.AddCommand(debugCmd)
+	RootCmd.AddCommand(debugCmd)
 }

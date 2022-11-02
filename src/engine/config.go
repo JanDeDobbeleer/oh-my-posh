@@ -119,9 +119,6 @@ func loadConfig(env environment.Environment) *Config {
 	defer env.Trace(time.Now(), "config.loadConfig")
 	var cfg Config
 	configFile := env.Flags().Config
-	if _, err := os.Stat(configFile); err != nil {
-		return defaultConfig()
-	}
 
 	cfg.origin = configFile
 	cfg.format = strings.TrimPrefix(filepath.Ext(configFile), ".")
@@ -139,7 +136,9 @@ func loadConfig(env environment.Environment) *Config {
 	})
 
 	err := config.LoadFiles(configFile)
-	cfg.exitWithError(err)
+	if err != nil {
+		return defaultConfig()
+	}
 
 	err = config.BindStruct("", &cfg)
 	cfg.exitWithError(err)

@@ -20,5 +20,5 @@ func init() { //nolint:gochecknoinits
 	promptCmd.AddCommand(initCmd)
 	promptCmd.AddCommand(debugCmd)
 	promptCmd.AddCommand(printCmd)
-	rootCmd.AddCommand(promptCmd)
+	RootCmd.AddCommand(promptCmd)
 }

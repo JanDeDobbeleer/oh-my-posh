@@ -365,28 +365,26 @@ func (env *ShellEnvironment) Pwd() string {
 func (env *ShellEnvironment) HasFiles(pattern string) bool {
 	defer env.Trace(time.Now(), "HasFiles", pattern)
 	cwd := env.Pwd()
-	pattern = cwd + env.PathSeparator() + pattern
-	matches, err := filepath.Glob(pattern)
+	fileSystem := os.DirFS(cwd)
+	matches, err := fs.Glob(fileSystem, pattern)
 	if err != nil {
 		env.Log(Error, "HasFiles", err.Error())
 		return false
 	}
 	for _, match := range matches {
-		f, _ := os.Stat(match)
-		if f.IsDir() {
+		file, err := fs.Stat(fileSystem, match)
+		if err != nil || file.IsDir() {
 			continue
 		}
-		env.Log(Debug, "HasFiles", "true")
 		return true
 	}
-	env.Log(Debug, "HasFiles", "false")
 	return false
 }
 
 func (env *ShellEnvironment) HasFilesInDir(dir, pattern string) bool {
 	defer env.Trace(time.Now(), "HasFilesInDir", pattern)
-	pattern = dir + env.PathSeparator() + pattern
-	matches, err := filepath.Glob(pattern)
+	fileSystem := os.DirFS(dir)
+	matches, err := fs.Glob(fileSystem, pattern)
 	if err != nil {
 		env.Log(Error, "HasFilesInDir", err.Error())
 		return false

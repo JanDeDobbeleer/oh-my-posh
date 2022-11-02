@@ -654,12 +654,12 @@ func (env *ShellEnvironment) HasParentFilePath(path string) (*FileInfo, error) {
 	defer env.Trace(time.Now(), "HasParentFilePath", path)
 	currentFolder := env.Pwd()
 	for {
-		searchPath := filepath.Join(currentFolder, path)
-		info, err := os.Stat(searchPath)
+		fileSystem := os.DirFS(currentFolder)
+		info, err := fs.Stat(fileSystem, path)
 		if err == nil {
 			return &FileInfo{
 				ParentFolder: currentFolder,
-				Path:         searchPath,
+				Path:         filepath.Join(currentFolder, path),
 				IsDir:        info.IsDir(),
 			}, nil
 		}

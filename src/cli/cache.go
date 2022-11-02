@@ -57,7 +57,7 @@ You can do the following:
 }
 
 func init() { //nolint:gochecknoinits
-	rootCmd.AddCommand(getCache)
+	RootCmd.AddCommand(getCache)
 }
 
 func editFileWithEditor(file string) {

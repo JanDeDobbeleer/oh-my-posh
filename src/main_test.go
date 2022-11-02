@@ -21,7 +21,7 @@ func BenchmarkInit(b *testing.B) {
 func BenchmarkPrimary(b *testing.B) {
 	cmd := cli.RootCmd
 	// needs to be a non-existing file as we panic otherwise
-	cmd.SetArgs([]string{"print", "primary", "--config", "err.omp.json", "--pwd", "/Users/jan/Code/oh-my-posh/src"})
+	cmd.SetArgs([]string{"print", "primary", "--config", "err.omp.json", "--pwd", "/Users/jan/Code/oh-my-posh/src", "--shell", "fish"})
 	out := bytes.NewBufferString("")
 	cmd.SetOut(out)
 

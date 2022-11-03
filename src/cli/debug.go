@@ -26,6 +26,7 @@ var debugCmd = &cobra.Command{
 				Config: config,
 				Debug:  true,
 				PWD:    pwd,
+				Shell:  shellName,
 			},
 		}
 		env.Init()
@@ -58,5 +59,6 @@ var debugCmd = &cobra.Command{
 
 func init() { //nolint:gochecknoinits
 	debugCmd.Flags().StringVar(&pwd, "pwd", "", "current working directory")
+	debugCmd.Flags().StringVar(&shellName, "shell", "", "the shell to print for")
 	RootCmd.AddCommand(debugCmd)
 }

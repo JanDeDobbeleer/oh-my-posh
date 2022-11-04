@@ -72,7 +72,7 @@ end
 
 function _render_tooltip
   commandline --function expand-abbr
-  set omp_tooltip_command (commandline --current-buffer | string collect | string split --allow-empty -f1 ' ')
+  set omp_tooltip_command (commandline --current-buffer | string split --allow-empty -f1 ' ' | string collect)
   commandline --insert " "
   commandline --function repaint
 end

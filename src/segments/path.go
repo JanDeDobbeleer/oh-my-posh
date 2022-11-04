@@ -415,6 +415,10 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 
 	for _, key := range keys {
 		keyRoot, keyRelative := pt.parsePath(key)
+		matchSubFolders := strings.HasSuffix(keyRelative, "*")
+		if matchSubFolders && len(keyRelative) > 1 {
+			keyRelative = keyRelative[0 : len(keyRelative)-1] // remove trailing /* or \*
+		}
 		if keyRoot != rootN || !strings.HasPrefix(relativeN, keyRelative) {
 			continue
 		}
@@ -429,7 +433,7 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 			return value, strings.Trim(relative, pathSeparator)
 		}
 		// match several prefix elements
-		if overflow[0:1] == pt.env.PathSeparator() {
+		if matchSubFolders || overflow[0:1] == pt.env.PathSeparator() {
 			return value, strings.Trim(overflow, pathSeparator)
 		}
 	}

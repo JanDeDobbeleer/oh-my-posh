@@ -1335,3 +1335,36 @@ func TestNormalizePath(t *testing.T) {
 		assert.Equal(t, tc.Expected, got)
 	}
 }
+
+func TestReplaceMappedLocations(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Pwd      string
+		Expected string
+	}{
+		{Pwd: "/f/g/h", Expected: "/f/g/h"},
+		{Pwd: "/f/g/h/e", Expected: "^/e"},
+		{Pwd: "/a/b/c/d", Expected: "#"},
+		{Pwd: "/a/b/c/d/e", Expected: "#/e"},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("PathSeparator").Return("/")
+		env.On("Pwd").Return(tc.Pwd)
+		env.On("Shell").Return(shell.FISH)
+		env.On("GOOS").Return(environment.DARWIN)
+		path := &Path{
+			env: env,
+			props: properties.Map{
+				MappedLocationsEnabled: false,
+				MappedLocations: map[string]string{
+					"/a/b/c/d": "#",
+					"/f/g/h/*": "^",
+				},
+			},
+		}
+		path.setPaths()
+		assert.Equal(t, tc.Expected, path.pwd)
+	}
+}

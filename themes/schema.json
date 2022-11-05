@@ -277,6 +277,7 @@
             "wakatime",
             "winreg",
             "withings",
+            "xmake",
             "ytm"
           ]
         },
@@ -1241,6 +1242,37 @@
           "then": {
             "title": "Rust Segment",
             "description": "https://ohmyposh.dev/docs/segments/rust",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "xmake"
+              }
+            }
+          },
+          "then": {
+            "title": "XMake Segment",
+            "description": "https://ohmyposh.dev/docs/segments/xmake",
             "properties": {
               "properties": {
                 "properties": {

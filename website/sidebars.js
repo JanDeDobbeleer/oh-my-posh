@@ -113,6 +113,7 @@ module.exports = {
         "segments/wakatime",
         "segments/withings",
         "segments/winreg",
+        "segments/xmake",
         "segments/ytm",
       ],
     },

@@ -1,0 +1,53 @@
+---
+id: xmake
+title: XMake
+sidebar_label: XMake
+---
+
+## What
+
+Display the currently active xmake version.
+
+## Sample Configuration
+
+```json
+{
+  "type": "xmake",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#e0f2f1",
+  "background": "#22a079",
+  "template": " xmake v{{ .Full }} "
+},
+```
+
+## Properties
+
+| Name                   | Type      | Description                                                                                                                                                 |
+| ---------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                         |
+| `fetch_version`        | `boolean` | display the xmake version (`xmake --version`) - defaults to `true`                                                                                          |
+| `missing_command_text` | `string`  | text to display when the command is missing - defaults to empty                                                                                             |
+| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when a `xmake.lua` file is present (**default**)</li></ul> |
+
+## Template ([into][templates])
+
+:::note default template
+
+```template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name     | Type     | Description                                        |
+| -------- | -------- | -------------------------------------------------- |
+| `.Full`  | `string` | the full version                                   |
+| `.Major` | `string` | major number                                       |
+| `.Minor` | `string` | minor number                                       |
+| `.Patch` | `string` | patch number                                       |
+| `.Error` | `string` | error encountered when fetching the version string |
+
+[templates]: /docs/configuration/templates

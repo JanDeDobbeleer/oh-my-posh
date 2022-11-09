@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (f *Flutter) Template() string {
 	return languageTemplate
 }
 
-func (f *Flutter) Init(props properties.Properties, env environment.Environment) {
+func (f *Flutter) Init(props properties.Properties, env platform.Environment) {
 	f.language = language{
 		env:        env,
 		props:      props,

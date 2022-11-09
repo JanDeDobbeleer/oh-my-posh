@@ -2,8 +2,8 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"os"
 	"path/filepath"
@@ -117,7 +117,7 @@ func TestKubectlSegment(t *testing.T) {
 		}
 		var kubectlErr error
 		if tc.KubectlErr {
-			kubectlErr = &environment.CommandError{
+			kubectlErr = &platform.CommandError{
 				Err:      "oops",
 				ExitCode: 1,
 			}

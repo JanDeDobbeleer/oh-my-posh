@@ -2,7 +2,7 @@ package segments
 
 import (
 	"errors"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"path"
 
@@ -15,7 +15,7 @@ const (
 
 type Gcp struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	Account string
 	Project string
@@ -26,7 +26,7 @@ func (g *Gcp) Template() string {
 	return " {{ .Project }} "
 }
 
-func (g *Gcp) Init(props properties.Properties, env environment.Environment) {
+func (g *Gcp) Init(props properties.Properties, env platform.Environment) {
 	g.props = props
 	g.env = env
 }
@@ -35,7 +35,7 @@ func (g *Gcp) Enabled() bool {
 	cfgDir := g.getConfigDirectory()
 	configFile, err := g.getActiveConfig(cfgDir)
 	if err != nil {
-		g.env.Log(environment.Error, "Gcp.Enabled()", err.Error())
+		g.env.Log(platform.Error, "Gcp.Enabled()", err.Error())
 		return false
 	}
 
@@ -43,13 +43,13 @@ func (g *Gcp) Enabled() bool {
 	cfg := g.env.FileContent(cfgpath)
 
 	if len(cfg) == 0 {
-		g.env.Log(environment.Error, "Gcp.Enabled()", "config file is empty")
+		g.env.Log(platform.Error, "Gcp.Enabled()", "config file is empty")
 		return false
 	}
 
 	data, err := ini.Load([]byte(cfg))
 	if err != nil {
-		g.env.Log(environment.Error, "Gcp.Enabled()", err.Error())
+		g.env.Log(platform.Error, "Gcp.Enabled()", err.Error())
 		return false
 	}
 
@@ -74,7 +74,7 @@ func (g *Gcp) getConfigDirectory() string {
 	if len(cfgDir) != 0 {
 		return cfgDir
 	}
-	if g.env.GOOS() == environment.WINDOWS {
+	if g.env.GOOS() == platform.WINDOWS {
 		return path.Join(g.env.Getenv("APPDATA"), "gcloud")
 	}
 	return path.Join(g.env.Home(), ".config", "gcloud")

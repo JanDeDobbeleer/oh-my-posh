@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (r *R) Template() string {
 	return languageTemplate
 }
 
-func (r *R) Init(props properties.Properties, env environment.Environment) {
+func (r *R) Init(props properties.Properties, env platform.Environment) {
 	rRegex := `version (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`
 	r.language = language{
 		env:        env,

@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (x *XMake) Template() string {
 	return languageTemplate
 }
 
-func (x *XMake) Init(props properties.Properties, env environment.Environment) {
+func (x *XMake) Init(props properties.Properties, env platform.Environment) {
 	x.language = language{
 		env:        env,
 		props:      props,

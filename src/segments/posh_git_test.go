@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -184,7 +184,7 @@ func TestPoshGitSegment(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("Getenv", poshGitEnv).Return(tc.PoshGitJSON)
 		env.On("Home").Return("/Users/bill")
-		env.On("GOOS").Return(environment.LINUX)
+		env.On("GOOS").Return(platform.LINUX)
 		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", "origin"}).Return("github.com/cli", nil)
 		g := &Git{

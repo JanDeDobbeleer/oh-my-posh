@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"oh-my-posh/template"
 	"os"
@@ -122,7 +122,7 @@ func TestAzSegment(t *testing.T) {
 			azureRmContext = string(content)
 		}
 
-		env.On("GOOS").Return(environment.LINUX)
+		env.On("GOOS").Return(platform.LINUX)
 		env.On("FileContent", filepath.Join(home, ".azure", "azureProfile.json")).Return(azureProfile)
 		env.On("Getenv", "POSH_AZURE_SUBSCRIPTION").Return(azureRmContext)
 		env.On("Getenv", "AZURE_CONFIG_DIR").Return("")

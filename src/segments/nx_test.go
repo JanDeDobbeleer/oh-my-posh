@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"path/filepath"
 	"testing"
 
@@ -30,7 +30,7 @@ func TestGetNodePackageVersion(t *testing.T) {
 		path := filepath.Join("posh", "node_modules", "nx")
 		env.On("HasFilesInDir", path, "package.json").Return(!tc.NoFiles)
 		env.On("FileContent", filepath.Join(path, "package.json")).Return(tc.PackageJSON)
-		env.On("TemplateCache").Return(&environment.TemplateCache{
+		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: make(map[string]string),
 		})
 		got, err := getNodePackageVersion(env, "nx")

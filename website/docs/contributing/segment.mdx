@@ -15,13 +15,13 @@ You can use the following template as a guide.
 package segments
 
 import (
-  "oh-my-posh/environment"
+  "oh-my-posh/platform"
   "oh-my-posh/properties"
 )
 
 type New struct {
     props   properties.Properties
-    env     environment.Environment
+    env     platform.Environment
 
     Text string
 }
@@ -39,7 +39,7 @@ func (n *new) Template() string {
     return " {{.Text}} world "
 }
 
-func (n *new) Init(props properties.Properties, env environment.Environment) {
+func (n *new) Init(props properties.Properties, env platform.Environment) {
     n.props = props
     n.env = env
 

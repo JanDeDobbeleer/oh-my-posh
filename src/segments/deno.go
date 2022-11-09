@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (d *Deno) Template() string {
 	return languageTemplate
 }
 
-func (d *Deno) Init(props properties.Properties, env environment.Environment) {
+func (d *Deno) Init(props properties.Properties, env platform.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,

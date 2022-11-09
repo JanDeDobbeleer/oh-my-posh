@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -166,7 +166,7 @@ func TestHasCommand(t *testing.T) {
 		IsWslSharedPath bool
 		NativeFallback  bool
 	}{
-		{Case: "On Windows", ExpectedCommand: "git.exe", GOOS: environment.WINDOWS},
+		{Case: "On Windows", ExpectedCommand: "git.exe", GOOS: platform.WINDOWS},
 		{Case: "Cache", ExpectedCommand: "git.exe", Command: "git.exe"},
 		{Case: "Non Windows", ExpectedCommand: "git"},
 		{Case: "Iside WSL2, non shared", ExpectedCommand: "git"},

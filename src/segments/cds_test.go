@@ -2,8 +2,8 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"path/filepath"
 	"testing"
@@ -115,7 +115,7 @@ func TestCdsSegment(t *testing.T) {
 			"display_mode": tc.DisplayMode,
 		}
 
-		env.On("TemplateCache").Return(&environment.TemplateCache{
+		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: make(map[string]string),
 		})
 

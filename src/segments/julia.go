@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (j *Julia) Template() string {
 	return languageTemplate
 }
 
-func (j *Julia) Init(props properties.Properties, env environment.Environment) {
+func (j *Julia) Init(props properties.Properties, env platform.Environment) {
 	j.language = language{
 		env:        env,
 		props:      props,

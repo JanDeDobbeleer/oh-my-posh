@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"oh-my-posh/regex"
 	"path/filepath"
@@ -56,7 +56,7 @@ type NuSpec struct {
 
 type Project struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	projects []*ProjectItem
 	Error    string
@@ -82,7 +82,7 @@ func (n *Project) Template() string {
 	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}} {{ end }}{{ if .Name }}{{ .Name }} {{ end }}{{ if .Target }}\uf9fd {{.Target}} {{ end }}{{ end }}" //nolint:lll
 }
 
-func (n *Project) Init(props properties.Properties, env environment.Environment) {
+func (n *Project) Init(props properties.Properties, env platform.Environment) {
 	n.props = props
 	n.env = env
 

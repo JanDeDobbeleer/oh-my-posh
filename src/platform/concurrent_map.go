@@ -1,4 +1,4 @@
-package environment
+package platform
 
 type concurrentMap struct {
 	values map[string]interface{}

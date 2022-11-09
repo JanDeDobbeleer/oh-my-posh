@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"math"
 	"net/http"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"sort"
 	"time"
@@ -16,7 +16,7 @@ import (
 // segment struct, makes templating easier
 type Brewfather struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	Batch
 	TemperatureTrendIcon string
@@ -322,7 +322,7 @@ func (bf *Brewfather) SGToPlato(sg float64) float64 {
 	return math.Round(100*((135.997*sg*sg*sg)-(630.272*sg*sg)+(1111.14*sg)-616.868)) / 100 // 2 decimal places
 }
 
-func (bf *Brewfather) Init(props properties.Properties, env environment.Environment) {
+func (bf *Brewfather) Init(props properties.Properties, env platform.Environment) {
 	bf.props = props
 	bf.env = env
 }

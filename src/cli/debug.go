@@ -5,7 +5,7 @@ import (
 	"oh-my-posh/color"
 	"oh-my-posh/console"
 	"oh-my-posh/engine"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/shell"
 	"time"
 
@@ -20,9 +20,9 @@ var debugCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		startTime := time.Now()
-		env := &environment.ShellEnvironment{
+		env := &platform.Shell{
 			Version: cliVersion,
-			CmdFlags: &environment.Flags{
+			CmdFlags: &platform.Flags{
 				Config: config,
 				Debug:  true,
 				PWD:    pwd,

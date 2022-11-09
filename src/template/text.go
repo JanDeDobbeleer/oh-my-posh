@@ -3,7 +3,7 @@ package template
 import (
 	"bytes"
 	"errors"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/regex"
 	"strings"
 	"text/template"
@@ -18,14 +18,14 @@ const (
 type Text struct {
 	Template        string
 	Context         interface{}
-	Env             environment.Environment
+	Env             platform.Environment
 	TemplatesResult string
 }
 
 type Data interface{}
 
 type Context struct {
-	*environment.TemplateCache
+	*platform.TemplateCache
 
 	// Simple container to hold ANY object
 	Data
@@ -45,7 +45,7 @@ func (t *Text) Render() (string, error) {
 	t.cleanTemplate()
 	tmpl, err := template.New(t.Template).Funcs(funcMap()).Parse(t.Template)
 	if err != nil {
-		t.Env.Log(environment.Error, "Render", err.Error())
+		t.Env.Log(platform.Error, "Render", err.Error())
 		return "", errors.New(InvalidTemplate)
 	}
 	context := &Context{}
@@ -54,7 +54,7 @@ func (t *Text) Render() (string, error) {
 	defer buffer.Reset()
 	err = tmpl.Execute(buffer, context)
 	if err != nil {
-		t.Env.Log(environment.Error, "Render", err.Error())
+		t.Env.Log(platform.Error, "Render", err.Error())
 		return "", errors.New(IncorrectTemplate)
 	}
 	text := buffer.String()

@@ -1,13 +1,13 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
 type Spotify struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	MusicPlayer
 }
@@ -48,7 +48,7 @@ func (s *Spotify) resolveIcon() {
 	}
 }
 
-func (s *Spotify) Init(props properties.Properties, env environment.Environment) {
+func (s *Spotify) Init(props properties.Properties, env platform.Environment) {
 	s.props = props
 	s.env = env
 }

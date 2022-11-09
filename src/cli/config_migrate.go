@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 	"oh-my-posh/engine"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 
 	"github.com/spf13/cobra"
 )
@@ -37,9 +37,9 @@ Migrates the ~/myconfig.omp.json config file to toml and writes the result to yo
 A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		env := &environment.ShellEnvironment{
+		env := &platform.Shell{
 			Version: cliVersion,
-			CmdFlags: &environment.Flags{
+			CmdFlags: &platform.Flags{
 				Config:  config,
 				Migrate: true,
 			},

@@ -3,8 +3,8 @@ package segments
 import (
 	"fmt"
 	"math"
-	"oh-my-posh/environment"
 	"oh-my-posh/http"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"time"
 )
@@ -125,7 +125,7 @@ func (s *Strava) getActivityIcon() string {
 	return s.props.GetString(UnknownActivityIcon, "\ue213")
 }
 
-func (s *Strava) Init(props properties.Properties, env environment.Environment) {
+func (s *Strava) Init(props properties.Properties, env platform.Environment) {
 	s.props = props
 
 	oauth := &http.OAuthRequest{

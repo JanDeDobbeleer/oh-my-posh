@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (p *Php) Template() string {
 	return languageTemplate
 }
 
-func (p *Php) Init(props properties.Properties, env environment.Environment) {
+func (p *Php) Init(props properties.Properties, env platform.Environment) {
 	p.language = language{
 		env:        env,
 		props:      props,

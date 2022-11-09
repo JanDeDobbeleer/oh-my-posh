@@ -3,7 +3,7 @@ package segments
 import (
 	"encoding/json"
 	"errors"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"path/filepath"
 
@@ -13,7 +13,7 @@ import (
 
 type Terraform struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	WorkspaceName string
 	TerraformBlock
@@ -23,7 +23,7 @@ func (tf *Terraform) Template() string {
 	return " {{ .WorkspaceName }}{{ if .Version }} {{ .Version }}{{ end }} "
 }
 
-func (tf *Terraform) Init(props properties.Properties, env environment.Environment) {
+func (tf *Terraform) Init(props properties.Properties, env platform.Environment) {
 	tf.props = props
 	tf.env = env
 }

@@ -1,16 +1,16 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"strings"
 )
 
 type Connection struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
-	environment.Connection
+	platform.Connection
 }
 
 const (
@@ -25,7 +25,7 @@ func (c *Connection) Enabled() bool {
 	types := c.props.GetString(Type, "wifi|ethernet")
 	connectionTypes := strings.Split(types, "|")
 	for _, connectionType := range connectionTypes {
-		network, err := c.env.Connection(environment.ConnectionType(connectionType))
+		network, err := c.env.Connection(platform.ConnectionType(connectionType))
 		if err != nil {
 			continue
 		}
@@ -35,7 +35,7 @@ func (c *Connection) Enabled() bool {
 	return false
 }
 
-func (c *Connection) Init(props properties.Properties, env environment.Environment) {
+func (c *Connection) Init(props properties.Properties, env platform.Environment) {
 	c.props = props
 	c.env = env
 }

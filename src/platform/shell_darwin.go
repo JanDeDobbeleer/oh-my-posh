@@ -1,4 +1,4 @@
-package environment
+package platform
 
 import (
 	"errors"
@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"oh-my-posh/environment/battery"
+	"oh-my-posh/platform/battery"
 )
 
 func mapMostLogicalState(state string) battery.State {
@@ -29,7 +29,7 @@ func mapMostLogicalState(state string) battery.State {
 	}
 }
 
-func (env *ShellEnvironment) parseBatteryOutput(output string) (*battery.Info, error) {
+func (env *Shell) parseBatteryOutput(output string) (*battery.Info, error) {
 	matches := regex.FindNamedRegexMatch(`(?P<PERCENTAGE>[0-9]{1,3})%; (?P<STATE>[a-zA-Z\s]+);`, output)
 	if len(matches) != 2 {
 		msg := "Unable to find battery state based on output"
@@ -48,7 +48,7 @@ func (env *ShellEnvironment) parseBatteryOutput(output string) (*battery.Info, e
 	}, nil
 }
 
-func (env *ShellEnvironment) BatteryState() (*battery.Info, error) {
+func (env *Shell) BatteryState() (*battery.Info, error) {
 	defer env.Trace(time.Now(), "BatteryState")
 	output, err := env.RunCommand("pmset", "-g", "batt")
 	if err != nil {

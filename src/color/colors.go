@@ -2,13 +2,13 @@ package color
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"strconv"
 
 	"github.com/gookit/color"
 )
 
-func MakeColors(palette Palette, cacheEnabled bool, accentColor string, env environment.Environment) (colors AnsiColors) {
+func MakeColors(palette Palette, cacheEnabled bool, accentColor string, env platform.Environment) (colors AnsiColors) {
 	defaultColors := &DefaultColors{}
 	defaultColors.SetAccentColor(env, accentColor)
 	colors = defaultColors

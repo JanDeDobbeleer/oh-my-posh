@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"oh-my-posh/color"
 	"oh-my-posh/console"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/shell"
 	"oh-my-posh/template"
 	"strings"
@@ -13,7 +13,7 @@ import (
 
 type Engine struct {
 	Config       *Config
-	Env          environment.Environment
+	Env          platform.Environment
 	Writer       color.Writer
 	Ansi         *color.Ansi
 	ConsoleTitle *console.Title

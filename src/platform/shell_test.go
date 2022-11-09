@@ -1,4 +1,4 @@
-package environment
+package platform
 
 import (
 	"testing"

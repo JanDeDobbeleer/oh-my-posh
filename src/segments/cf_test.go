@@ -2,8 +2,8 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"path/filepath"
 	"testing"
@@ -63,7 +63,7 @@ func TestCFSegment(t *testing.T) {
 		env.On("Pwd").Return("/usr/home/dev/my-app")
 		env.On("Home").Return("/usr/home")
 
-		env.On("TemplateCache").Return(&environment.TemplateCache{
+		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: make(map[string]string),
 		})
 

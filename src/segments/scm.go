@@ -2,7 +2,7 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"strings"
 )
@@ -47,7 +47,7 @@ func (s *ScmStatus) String() string {
 
 type scm struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	IsWslSharedPath bool
 	CommandMissing  bool
@@ -68,7 +68,7 @@ const (
 	FullBranchPath properties.Property = "full_branch_path"
 )
 
-func (s *scm) Init(props properties.Properties, env environment.Environment) {
+func (s *scm) Init(props properties.Properties, env platform.Environment) {
 	s.props = props
 	s.env = env
 }
@@ -100,7 +100,7 @@ func (s *scm) FileContents(folder, file string) string {
 }
 
 func (s *scm) convertToWindowsPath(path string) string {
-	if s.env.GOOS() == environment.WINDOWS || s.IsWslSharedPath {
+	if s.env.GOOS() == platform.WINDOWS || s.IsWslSharedPath {
 		return s.env.ConvertToWindowsPath(path)
 	}
 	return path
@@ -120,7 +120,7 @@ func (s *scm) hasCommand(command string) bool {
 	// when in a WSL shared folder, we must use command.exe and convert paths accordingly
 	// for worktrees, stashes, and path to work
 	s.IsWslSharedPath = s.env.InWSLSharedDrive()
-	if s.env.GOOS() == environment.WINDOWS || s.IsWslSharedPath {
+	if s.env.GOOS() == platform.WINDOWS || s.IsWslSharedPath {
 		command += ".exe"
 	}
 	if s.env.HasCommand(command) {

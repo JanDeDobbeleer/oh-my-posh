@@ -3,7 +3,7 @@ package segments
 import (
 	"fmt"
 	url2 "net/url"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"oh-my-posh/regex"
 	"path/filepath"
@@ -127,7 +127,7 @@ func (g *Git) Enabled() bool {
 		return false
 	}
 
-	g.RepoName = environment.Base(g.env, g.convertToLinuxPath(g.realDir))
+	g.RepoName = platform.Base(g.env, g.convertToLinuxPath(g.realDir))
 
 	if g.IsBare {
 		g.getBareRepoInfo()
@@ -227,15 +227,15 @@ func (g *Git) getBareRepoInfo() {
 }
 
 func (g *Git) setDir(dir string) {
-	dir = environment.ReplaceHomeDirPrefixWithTilde(g.env, dir) // align with template PWD
-	if g.env.GOOS() == environment.WINDOWS {
+	dir = platform.ReplaceHomeDirPrefixWithTilde(g.env, dir) // align with template PWD
+	if g.env.GOOS() == platform.WINDOWS {
 		g.Dir = strings.TrimSuffix(dir, `\.git`)
 		return
 	}
 	g.Dir = strings.TrimSuffix(dir, "/.git")
 }
 
-func (g *Git) hasWorktree(gitdir *environment.FileInfo) bool {
+func (g *Git) hasWorktree(gitdir *platform.FileInfo) bool {
 	g.rootDir = gitdir.Path
 	dirPointer := strings.Trim(g.env.FileContent(gitdir.Path), " \r\n")
 	matches := regex.FindNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)

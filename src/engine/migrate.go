@@ -2,7 +2,7 @@ package engine
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"oh-my-posh/segments"
 	"strings"
@@ -16,7 +16,7 @@ const (
 	segmentTemplate = properties.Property("template")
 )
 
-func (cfg *Config) Migrate(env environment.Environment) {
+func (cfg *Config) Migrate(env platform.Environment) {
 	for _, block := range cfg.Blocks {
 		for _, segment := range block.Segments {
 			segment.migrate(env, cfg.Version)
@@ -32,7 +32,7 @@ func (cfg *Config) Migrate(env environment.Environment) {
 	cfg.Version = configVersion
 }
 
-func (segment *Segment) migrate(env environment.Environment, version int) {
+func (segment *Segment) migrate(env platform.Environment, version int) {
 	if version < 1 {
 		segment.migrationOne(env)
 	}
@@ -41,7 +41,7 @@ func (segment *Segment) migrate(env environment.Environment, version int) {
 	}
 }
 
-func (segment *Segment) migrationOne(env environment.Environment) {
+func (segment *Segment) migrationOne(env platform.Environment) {
 	if err := segment.mapSegmentWithWriter(env); err != nil {
 		return
 	}
@@ -161,7 +161,7 @@ func (segment *Segment) migrationOne(env environment.Environment) {
 	delete(segment.Properties, colorBackground)
 }
 
-func (segment *Segment) migrationTwo(env environment.Environment) {
+func (segment *Segment) migrationTwo(env platform.Environment) {
 	if err := segment.mapSegmentWithWriter(env); err != nil {
 		return
 	}

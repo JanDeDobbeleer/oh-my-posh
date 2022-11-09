@@ -2,8 +2,8 @@ package color
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/shell"
 	"oh-my-posh/template"
 	"testing"
@@ -29,7 +29,7 @@ func TestMeasureText(t *testing.T) {
 		},
 	}
 	env := new(mock.MockedEnvironment)
-	env.On("TemplateCache").Return(&environment.TemplateCache{
+	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),
 	})
 	shells := []string{shell.BASH, shell.ZSH, shell.PLAIN}

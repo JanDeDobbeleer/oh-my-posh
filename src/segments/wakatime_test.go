@@ -3,8 +3,8 @@ package segments
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -82,7 +82,7 @@ func TestWTTrackedTime(t *testing.T) {
 		cache.On("Set", FAKEAPIURL, response, tc.CacheTimeout).Return()
 		env.On("Cache").Return(cache)
 
-		env.On("TemplateCache").Return(&environment.TemplateCache{
+		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: map[string]string{"HELLO": "hello"},
 		})
 
@@ -127,7 +127,7 @@ func TestWTGetUrl(t *testing.T) {
 		env := &mock.MockedEnvironment{}
 
 		env.On("Log", mock2.Anything, mock2.Anything, mock2.Anything)
-		env.On("TemplateCache").Return(&environment.TemplateCache{
+		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: map[string]string{"HELLO": "hello"},
 		})
 

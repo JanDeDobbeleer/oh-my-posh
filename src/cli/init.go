@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 	"oh-my-posh/engine"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/shell"
 
 	"github.com/spf13/cobra"
@@ -49,9 +49,9 @@ func init() { //nolint:gochecknoinits
 }
 
 func runInit(shellName string) {
-	env := &environment.ShellEnvironment{
+	env := &platform.Shell{
 		Version: cliVersion,
-		CmdFlags: &environment.Flags{
+		CmdFlags: &platform.Flags{
 			Shell:  shellName,
 			Config: config,
 			Strict: strict,

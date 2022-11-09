@@ -2,13 +2,13 @@ package segments
 
 import (
 	"errors"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
 type ITerm struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	PromptMark string
 }
@@ -54,7 +54,7 @@ func (i *ITerm) getResult() (string, error) {
 	return response, nil
 }
 
-func (i *ITerm) Init(props properties.Properties, env environment.Environment) {
+func (i *ITerm) Init(props properties.Properties, env platform.Environment) {
 	i.props = props
 	i.env = env
 }

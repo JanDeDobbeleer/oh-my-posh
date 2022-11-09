@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (k *Kotlin) Template() string {
 	return languageTemplate
 }
 
-func (k *Kotlin) Init(props properties.Properties, env environment.Environment) {
+func (k *Kotlin) Init(props properties.Properties, env platform.Environment) {
 	k.language = language{
 		env:        env,
 		props:      props,

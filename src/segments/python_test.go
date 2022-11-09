@@ -2,8 +2,8 @@ package segments
 
 import (
 	"errors"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -98,7 +98,7 @@ func TestPythonTemplate(t *testing.T) {
 			UsePythonVersionFile:    true,
 			DisplayMode:             DisplayModeAlways,
 		}
-		env.On("TemplateCache").Return(&environment.TemplateCache{
+		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: make(map[string]string),
 		})
 		python := &Python{}
@@ -125,7 +125,7 @@ func TestPythonPythonInContext(t *testing.T) {
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
 		env.On("Getenv", "PYENV_VERSION").Return("")
-		env.On("HasParentFilePath", ".python-version").Return(&environment.FileInfo{}, errors.New("no match at root level"))
+		env.On("HasParentFilePath", ".python-version").Return(&platform.FileInfo{}, errors.New("no match at root level"))
 		python := &Python{}
 		python.Init(properties.Map{}, env)
 		python.loadContext()

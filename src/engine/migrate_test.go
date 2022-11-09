@@ -1,8 +1,8 @@
 package engine
 
 import (
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -88,7 +88,7 @@ func (m *MockedWriter) Template() string {
 	return m.template
 }
 
-func (m *MockedWriter) Init(props properties.Properties, env environment.Environment) {}
+func (m *MockedWriter) Init(props properties.Properties, env platform.Environment) {}
 
 func TestIconOverride(t *testing.T) {
 	cases := []struct {

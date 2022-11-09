@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (c *Cf) Template() string {
 	return languageTemplate
 }
 
-func (c *Cf) Init(props properties.Properties, env environment.Environment) {
+func (c *Cf) Init(props properties.Properties, env platform.Environment) {
 	c.language = language{
 		env:        env,
 		props:      props,

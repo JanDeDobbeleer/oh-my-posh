@@ -3,7 +3,7 @@ package segments
 import (
 	"encoding/json"
 	"errors"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"time"
 )
@@ -11,7 +11,7 @@ import (
 // segment struct, makes templating easier
 type Nightscout struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	NightscoutData
 	TrendIcon string
@@ -139,7 +139,7 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 	return data, nil
 }
 
-func (ns *Nightscout) Init(props properties.Properties, env environment.Environment) {
+func (ns *Nightscout) Init(props properties.Properties, env platform.Environment) {
 	ns.props = props
 	ns.env = env
 }

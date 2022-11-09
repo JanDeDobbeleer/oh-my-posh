@@ -2,7 +2,7 @@ package engine
 
 import (
 	"oh-my-posh/color"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/shell"
 	"sync"
 	"time"
@@ -47,21 +47,21 @@ type Block struct {
 	HorizontalOffset int `json:"horizontal_offset,omitempty"`
 	VerticalOffset   int `json:"vertical_offset,omitempty"`
 
-	env                   environment.Environment
+	env                   platform.Environment
 	writer                color.Writer
 	ansi                  *color.Ansi
 	activeSegment         *Segment
 	previousActiveSegment *Segment
 }
 
-func (b *Block) Init(env environment.Environment, writer color.Writer, ansi *color.Ansi) {
+func (b *Block) Init(env platform.Environment, writer color.Writer, ansi *color.Ansi) {
 	b.env = env
 	b.writer = writer
 	b.ansi = ansi
 	b.executeSegmentLogic()
 }
 
-func (b *Block) InitPlain(env environment.Environment, config *Config) {
+func (b *Block) InitPlain(env platform.Environment, config *Config) {
 	b.ansi = &color.Ansi{}
 	b.ansi.InitPlain()
 	b.writer = &color.AnsiWriter{

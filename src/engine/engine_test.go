@@ -4,8 +4,8 @@ import (
 	"errors"
 	"oh-my-posh/color"
 	"oh-my-posh/console"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/shell"
 	"testing"
 
@@ -64,7 +64,7 @@ func TestPrintPWD(t *testing.T) {
 		env.On("Pwd").Return("pwd")
 		env.On("Shell").Return("shell")
 		env.On("Host").Return("host", nil)
-		env.On("TemplateCache").Return(&environment.TemplateCache{
+		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env:   make(map[string]string),
 			Shell: "shell",
 		})
@@ -91,7 +91,7 @@ func BenchmarkEngineRender(b *testing.B) {
 }
 
 func engineRender() {
-	env := &environment.ShellEnvironment{}
+	env := &platform.Shell{}
 	env.Init()
 	defer env.Close()
 

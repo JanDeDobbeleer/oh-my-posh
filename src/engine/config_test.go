@@ -2,8 +2,8 @@ package engine
 
 import (
 	"oh-my-posh/color"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/segments"
 	"testing"
 
@@ -119,7 +119,7 @@ func TestGetPalette(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
-		env.On("TemplateCache").Return(&environment.TemplateCache{
+		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env:   map[string]string{},
 			Shell: "bash",
 		})

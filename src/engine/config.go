@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"oh-my-posh/color"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"oh-my-posh/segments"
 	"oh-my-posh/template"
@@ -57,7 +57,7 @@ type Config struct {
 	origin  string
 	eval    bool
 	updated bool
-	env     environment.Environment
+	env     platform.Environment
 }
 
 // MakeColors creates instance of AnsiColors to use in AnsiWriter according to
@@ -105,7 +105,7 @@ func (cfg *Config) exitWithError(err error) {
 }
 
 // LoadConfig returns the default configuration including possible user overrides
-func LoadConfig(env environment.Environment) *Config {
+func LoadConfig(env platform.Environment) *Config {
 	cfg := loadConfig(env)
 	cfg.env = env
 	// only migrate automatically when the switch isn't set
@@ -115,7 +115,7 @@ func LoadConfig(env environment.Environment) *Config {
 	return cfg
 }
 
-func loadConfig(env environment.Environment) *Config {
+func loadConfig(env platform.Environment) *Config {
 	defer env.Trace(time.Now(), "config.loadConfig")
 	var cfg Config
 	configFile := env.Flags().Config
@@ -205,7 +205,7 @@ func (cfg *Config) Export(format string) string {
 	}
 }
 
-func (cfg *Config) BackupAndMigrate(env environment.Environment) {
+func (cfg *Config) BackupAndMigrate(env platform.Environment) {
 	origin := cfg.backup()
 	cfg.Migrate(env)
 	cfg.Write(cfg.format)

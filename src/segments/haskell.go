@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -19,7 +19,7 @@ func (h *Haskell) Template() string {
 	return languageTemplate
 }
 
-func (h *Haskell) Init(props properties.Properties, env environment.Environment) {
+func (h *Haskell) Init(props properties.Properties, env platform.Environment) {
 	ghcRegex := `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`
 	ghcCmd := &cmd{
 		executable: "ghc",

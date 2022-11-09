@@ -2,12 +2,12 @@ package console
 
 import (
 	"oh-my-posh/color"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/template"
 )
 
 type Title struct {
-	Env      environment.Environment
+	Env      platform.Environment
 	Ansi     *color.Ansi
 	Template string
 }

@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 	"oh-my-posh/color"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"time"
 
 	color2 "github.com/gookit/color"
@@ -32,9 +32,9 @@ This command is used to get the value of the following variables:
 			_ = cmd.Help()
 			return
 		}
-		env := &environment.ShellEnvironment{
+		env := &platform.Shell{
 			Version: cliVersion,
-			CmdFlags: &environment.Flags{
+			CmdFlags: &platform.Flags{
 				Shell: shellName,
 			},
 		}

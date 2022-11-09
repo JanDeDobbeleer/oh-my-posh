@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 	"oh-my-posh/engine"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"path/filepath"
 	"strings"
 
@@ -38,9 +38,9 @@ Exports the ~/myconfig.omp.json config file to toml and writes the result to you
 A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		env := &environment.ShellEnvironment{
+		env := &platform.Shell{
 			Version: cliVersion,
-			CmdFlags: &environment.Flags{
+			CmdFlags: &platform.Flags{
 				Config: config,
 			},
 		}
@@ -60,7 +60,7 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	},
 }
 
-func cleanOutputPath(path string, env environment.Environment) string {
+func cleanOutputPath(path string, env platform.Environment) string {
 	if strings.HasPrefix(path, "~") {
 		path = strings.TrimPrefix(path, "~")
 		path = filepath.Join(env.Home(), path)

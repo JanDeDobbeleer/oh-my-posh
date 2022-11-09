@@ -2,7 +2,7 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"strconv"
 
@@ -12,7 +12,7 @@ import (
 
 type Executiontime struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	FormattedMs string
 	Ms          int64
@@ -67,7 +67,7 @@ func (t *Executiontime) Template() string {
 	return " {{ .FormattedMs }} "
 }
 
-func (t *Executiontime) Init(props properties.Properties, env environment.Environment) {
+func (t *Executiontime) Init(props properties.Properties, env platform.Environment) {
 	t.props = props
 	t.env = env
 }

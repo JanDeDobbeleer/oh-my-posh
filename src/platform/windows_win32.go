@@ -1,6 +1,6 @@
 //go:build windows
 
-package environment
+package platform
 
 import (
 	"errors"
@@ -199,7 +199,7 @@ func readWinAppLink(path string) (string, error) {
 
 // networks
 
-func (env *ShellEnvironment) getConnections() []*Connection {
+func (env *Shell) getConnections() []*Connection {
 	var pIFTable2 *MIN_IF_TABLE2
 	_, _, _ = hGetIfTable2.Call(uintptr(unsafe.Pointer(&pIFTable2)))
 
@@ -327,7 +327,7 @@ var (
 	hWlanQueryInterface = wlanapi.NewProc("WlanQueryInterface")
 )
 
-func (env *ShellEnvironment) getWiFiSSID(guid windows.GUID) string {
+func (env *Shell) getWiFiSSID(guid windows.GUID) string {
 	// Query wifi connection state
 	var pdwNegotiatedVersion uint32
 	var phClientHandle uint32

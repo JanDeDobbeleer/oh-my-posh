@@ -2,7 +2,7 @@ package segments
 
 import (
 	"oh-my-posh/constants"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -16,7 +16,7 @@ func (d *Dotnet) Template() string {
 	return " {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} "
 }
 
-func (d *Dotnet) Init(props properties.Properties, env environment.Environment) {
+func (d *Dotnet) Init(props properties.Properties, env platform.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,

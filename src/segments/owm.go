@@ -5,13 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
 type Owm struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	Temperature int
 	Weather     string
@@ -163,7 +163,7 @@ func (d *Owm) setStatus() error {
 	return nil
 }
 
-func (d *Owm) Init(props properties.Properties, env environment.Environment) {
+func (d *Owm) Init(props properties.Properties, env platform.Environment) {
 	d.props = props
 	d.env = env
 }

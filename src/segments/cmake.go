@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (c *Cmake) Template() string {
 	return languageTemplate
 }
 
-func (c *Cmake) Init(props properties.Properties, env environment.Environment) {
+func (c *Cmake) Init(props properties.Properties, env platform.Environment) {
 	c.language = language{
 		env:        env,
 		props:      props,

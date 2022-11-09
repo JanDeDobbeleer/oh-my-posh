@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"path/filepath"
 
@@ -13,7 +13,7 @@ const ParseKubeConfig properties.Property = "parse_kubeconfig"
 
 type Kubectl struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	Context string
 
@@ -38,7 +38,7 @@ func (k *Kubectl) Template() string {
 	return " {{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }} "
 }
 
-func (k *Kubectl) Init(props properties.Properties, env environment.Environment) {
+func (k *Kubectl) Init(props properties.Properties, env platform.Environment) {
 	k.props = props
 	k.env = env
 }

@@ -2,7 +2,7 @@ package battery
 
 import (
 	"errors"
-	"oh-my-posh/environment/cmd"
+	"oh-my-posh/platform/cmd"
 	"oh-my-posh/regex"
 	"strconv"
 	"strings"

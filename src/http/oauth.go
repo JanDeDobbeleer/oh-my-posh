@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -85,7 +85,7 @@ func (o *OAuthRequest) refreshToken(refreshToken string) (string, error) {
 	return tokens.AccessToken, nil
 }
 
-func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModifiers ...environment.HTTPRequestModifier) (a, error) {
+func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModifiers ...platform.HTTPRequestModifier) (a, error) {
 	if data, err := getCacheValue[a](&o.Request, url); err == nil {
 		return data, nil
 	}
@@ -102,7 +102,7 @@ func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModi
 	}
 
 	if requestModifiers == nil {
-		requestModifiers = []environment.HTTPRequestModifier{}
+		requestModifiers = []platform.HTTPRequestModifier{}
 	}
 
 	requestModifiers = append(requestModifiers, addAuthHeader)

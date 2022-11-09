@@ -1,13 +1,13 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
 type Session struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 	// text  string
 
 	SSHSession bool
@@ -25,7 +25,7 @@ func (s *Session) Template() string {
 	return " {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .HostName }} "
 }
 
-func (s *Session) Init(props properties.Properties, env environment.Environment) {
+func (s *Session) Init(props properties.Properties, env platform.Environment) {
 	s.props = props
 	s.env = env
 }

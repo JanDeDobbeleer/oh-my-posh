@@ -2,15 +2,13 @@
 
 package color
 
-import (
-	"oh-my-posh/environment"
-)
+import "oh-my-posh/platform"
 
-func GetAccentColor(env environment.Environment) (*RGB, error) {
-	return nil, &environment.NotImplemented{}
+func GetAccentColor(env platform.Environment) (*RGB, error) {
+	return nil, &platform.NotImplemented{}
 }
 
-func (d *DefaultColors) SetAccentColor(env environment.Environment, defaultColor string) {
+func (d *DefaultColors) SetAccentColor(env platform.Environment, defaultColor string) {
 	if len(defaultColor) == 0 {
 		return
 	}

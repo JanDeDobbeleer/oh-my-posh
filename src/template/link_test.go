@@ -1,8 +1,8 @@
 package template
 
 import (
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -21,7 +21,7 @@ func TestUrl(t *testing.T) {
 	}
 
 	env := &mock.MockedEnvironment{}
-	env.On("TemplateCache").Return(&environment.TemplateCache{
+	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),
 	})
 	env.On("Log", mock2.Anything, mock2.Anything, mock2.Anything)
@@ -50,7 +50,7 @@ func TestPath(t *testing.T) {
 	}
 
 	env := &mock.MockedEnvironment{}
-	env.On("TemplateCache").Return(&environment.TemplateCache{
+	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),
 	})
 	for _, tc := range cases {

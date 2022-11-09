@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"fmt"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/template"
 	"os"
 	"strings"
@@ -40,18 +40,18 @@ var (
 	Tooltips  bool
 )
 
-func getExecutablePath(env environment.Environment) (string, error) {
+func getExecutablePath(env platform.Environment) (string, error) {
 	executable, err := os.Executable()
 	if err != nil {
 		return "", err
 	}
 	if env.Flags().Strict {
-		return environment.Base(env, executable), nil
+		return platform.Base(env, executable), nil
 	}
 	// On Windows, it fails when the excutable is called in MSYS2 for example
 	// which uses unix style paths to resolve the executable's location.
 	// PowerShell knows how to resolve both, so we can swap this without any issue.
-	if env.GOOS() == environment.WINDOWS {
+	if env.GOOS() == platform.WINDOWS {
 		executable = strings.ReplaceAll(executable, "\\", "/")
 	}
 	return executable, nil
@@ -147,7 +147,7 @@ func quoteNuStr(str string) string {
 	return fmt.Sprintf(`"%s"`, strings.NewReplacer(`\`, `\\`, `"`, `\"`).Replace(str))
 }
 
-func Init(env environment.Environment) string {
+func Init(env platform.Environment) string {
 	shell := env.Flags().Shell
 	switch shell {
 	case PWSH, PWSH5:
@@ -174,7 +174,7 @@ func Init(env environment.Environment) string {
 	}
 }
 
-func PrintInit(env environment.Environment) string {
+func PrintInit(env platform.Environment) string {
 	executable, err := getExecutablePath(env)
 	if err != nil {
 		return noExe
@@ -228,7 +228,7 @@ func PrintInit(env environment.Environment) string {
 	).Replace(script)
 }
 
-func createNuInit(env environment.Environment) {
+func createNuInit(env platform.Environment) {
 	initPath := filepath.Join(env.Home(), ".oh-my-posh.nu")
 	f, err := os.OpenFile(initPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
@@ -241,7 +241,7 @@ func createNuInit(env environment.Environment) {
 	_ = f.Close()
 }
 
-func ConsoleBackgroundColor(env environment.Environment, backgroundColorTemplate string) string {
+func ConsoleBackgroundColor(env platform.Environment, backgroundColorTemplate string) string {
 	if len(backgroundColorTemplate) == 0 {
 		return backgroundColorTemplate
 	}

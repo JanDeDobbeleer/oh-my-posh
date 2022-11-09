@@ -3,8 +3,8 @@ package segments
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"os"
 	"testing"
@@ -26,7 +26,7 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.MockedEnvironment
 	env.On("HasFiles", params.extension).Return(true)
 	env.On("Pwd").Return("/usr/home/project")
 	env.On("Home").Return("/usr/home")
-	env.On("TemplateCache").Return(&environment.TemplateCache{
+	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),
 	})
 	props := properties.Map{
@@ -67,7 +67,7 @@ func TestGolang(t *testing.T) {
 		env, props := getMockedLanguageEnv(params)
 		if tc.ParseModFile {
 			props[ParseModFile] = tc.ParseModFile
-			fileInfo := &environment.FileInfo{
+			fileInfo := &platform.FileInfo{
 				Path:         "../go.mod",
 				ParentFolder: "./",
 				IsDir:        false,

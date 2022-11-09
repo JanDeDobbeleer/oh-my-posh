@@ -1,14 +1,14 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"strconv"
 )
 
 type Exit struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	Meaning string
 }
@@ -25,7 +25,7 @@ func (e *Exit) Enabled() bool {
 	return e.env.ErrorCode() != 0
 }
 
-func (e *Exit) Init(props properties.Properties, env environment.Environment) {
+func (e *Exit) Init(props properties.Properties, env platform.Environment) {
 	e.props = props
 	e.env = env
 }

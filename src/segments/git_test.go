@@ -3,8 +3,8 @@ package segments
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"os"
 	"path/filepath"
@@ -34,7 +34,7 @@ func TestEnabledGitNotFound(t *testing.T) {
 }
 
 func TestEnabledInWorkingDirectory(t *testing.T) {
-	fileInfo := &environment.FileInfo{
+	fileInfo := &platform.FileInfo{
 		Path:         "/dir/hello",
 		ParentFolder: "/dir",
 		IsDir:        true,
@@ -121,7 +121,7 @@ func TestEnabledInWorktree(t *testing.T) {
 			ExpectedRootFolder:    TestRootPath + "dev/separate/.git/posh",
 		},
 	}
-	fileInfo := &environment.FileInfo{
+	fileInfo := &platform.FileInfo{
 		Path:         TestRootPath + "dev/.git",
 		ParentFolder: TestRootPath + "dev",
 	}
@@ -186,7 +186,7 @@ func TestEnabledInBareRepo(t *testing.T) {
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("GOOS").Return("")
 		env.On("HasCommand", "git").Return(true)
-		env.On("HasParentFilePath", ".git").Return(&environment.FileInfo{}, errors.New("nope"))
+		env.On("HasParentFilePath", ".git").Return(&platform.FileInfo{}, errors.New("nope"))
 		env.MockGitCommand(pwd, tc.IsBare, "rev-parse", "--is-bare-repository")
 		env.On("Pwd").Return(pwd)
 		env.On("FileContent", "/home/user/bare.git/HEAD").Return(tc.HEAD)

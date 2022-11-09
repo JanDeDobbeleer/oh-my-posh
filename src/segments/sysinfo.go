@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 
 	cpu "github.com/shirou/gopsutil/v3/cpu"
@@ -12,7 +12,7 @@ import (
 
 type SystemInfo struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	Precision int
 	// mem
@@ -50,7 +50,7 @@ func (s *SystemInfo) Enabled() bool {
 	return true
 }
 
-func (s *SystemInfo) Init(props properties.Properties, env environment.Environment) {
+func (s *SystemInfo) Init(props properties.Properties, env platform.Environment) {
 	s.props = props
 	s.env = env
 	s.Precision = s.props.GetInt(Precision, 2)

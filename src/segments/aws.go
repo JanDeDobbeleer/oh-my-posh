@@ -2,14 +2,14 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"strings"
 )
 
 type Aws struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	Profile string
 	Region  string
@@ -23,7 +23,7 @@ func (a *Aws) Template() string {
 	return " {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
 }
 
-func (a *Aws) Init(props properties.Properties, env environment.Environment) {
+func (a *Aws) Init(props properties.Properties, env platform.Environment) {
 	a.props = props
 	a.env = env
 }

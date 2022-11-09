@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -25,7 +25,7 @@ func TestSvnEnabledToolNotFound(t *testing.T) {
 }
 
 func TestSvnEnabledInWorkingDirectory(t *testing.T) {
-	fileInfo := &environment.FileInfo{
+	fileInfo := &platform.FileInfo{
 		Path:         "/dir/hello",
 		ParentFolder: "/dir",
 		IsDir:        true,
@@ -215,7 +215,7 @@ R       Moved.File`,
 		},
 	}
 	for _, tc := range cases {
-		fileInfo := &environment.FileInfo{
+		fileInfo := &platform.FileInfo{
 			Path:         "/dir/hello",
 			ParentFolder: "/dir",
 			IsDir:        true,

@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (r *Ruby) Template() string {
 	return languageTemplate
 }
 
-func (r *Ruby) Init(props properties.Properties, env environment.Environment) {
+func (r *Ruby) Init(props properties.Properties, env platform.Environment) {
 	r.language = language{
 		env:        env,
 		props:      props,

@@ -2,7 +2,7 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"oh-my-posh/regex"
 	"strconv"
@@ -37,7 +37,7 @@ type Plastic struct {
 	plasticWorkspaceFolder string // root folder of workspace
 }
 
-func (p *Plastic) Init(props properties.Properties, env environment.Environment) {
+func (p *Plastic) Init(props properties.Properties, env platform.Environment) {
 	p.props = props
 	p.env = env
 }

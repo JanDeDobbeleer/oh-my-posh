@@ -5,7 +5,7 @@ import (
 	"oh-my-posh/color"
 	"oh-my-posh/console"
 	"oh-my-posh/engine"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/shell"
 
 	"github.com/spf13/cobra"
@@ -46,9 +46,9 @@ var printCmd = &cobra.Command{
 			_ = cmd.Help()
 			return
 		}
-		env := &environment.ShellEnvironment{
+		env := &platform.Shell{
 			Version: cliVersion,
-			CmdFlags: &environment.Flags{
+			CmdFlags: &platform.Flags{
 				Config:        config,
 				PWD:           pwd,
 				PSWD:          pswd,

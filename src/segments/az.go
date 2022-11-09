@@ -3,7 +3,7 @@ package segments
 import (
 	"encoding/json"
 	"errors"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"path/filepath"
 	"strings"
@@ -11,7 +11,7 @@ import (
 
 type Az struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	AzureSubscription
 	Origin string
@@ -73,7 +73,7 @@ func (a *Az) Template() string {
 	return " {{ .Name }} "
 }
 
-func (a *Az) Init(props properties.Properties, env environment.Environment) {
+func (a *Az) Init(props properties.Properties, env platform.Environment) {
 	a.props = props
 	a.env = env
 }

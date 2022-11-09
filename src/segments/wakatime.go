@@ -2,14 +2,14 @@ package segments
 
 import (
 	"encoding/json"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"oh-my-posh/template"
 )
 
 type Wakatime struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	wtData
 }
@@ -78,7 +78,7 @@ func (w *Wakatime) getURL() (string, error) {
 	return tmpl.Render()
 }
 
-func (w *Wakatime) Init(props properties.Properties, env environment.Environment) {
+func (w *Wakatime) Init(props properties.Properties, env platform.Environment) {
 	w.props = props
 	w.env = env
 }

@@ -2,8 +2,8 @@ package console
 
 import (
 	"oh-my-posh/color"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -49,7 +49,7 @@ func TestGetTitle(t *testing.T) {
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
 		env.On("PathSeparator").Return(tc.PathSeparator)
-		env.On("TemplateCache").Return(&environment.TemplateCache{
+		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
 			},
@@ -106,7 +106,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
-		env.On("TemplateCache").Return(&environment.TemplateCache{
+		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
 			},

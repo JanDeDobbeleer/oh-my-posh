@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"oh-my-posh/segments"
 	"oh-my-posh/shell"
@@ -37,7 +37,7 @@ type Segment struct {
 	writer          SegmentWriter
 	Enabled         bool `json:"-"`
 	text            string
-	env             environment.Environment
+	env             platform.Environment
 	backgroundCache string
 	foregroundCache string
 }
@@ -55,7 +55,7 @@ type SegmentTiming struct {
 type SegmentWriter interface {
 	Enabled() bool
 	Template() string
-	Init(props properties.Properties, env environment.Environment)
+	Init(props properties.Properties, env platform.Environment)
 }
 
 // SegmentStyle the style of segment, for more information, see the constants
@@ -266,7 +266,7 @@ func (segment *Segment) background() string {
 	return segment.backgroundCache
 }
 
-func (segment *Segment) mapSegmentWithWriter(env environment.Environment) error {
+func (segment *Segment) mapSegmentWithWriter(env platform.Environment) error {
 	segment.env = env
 	functions := map[SegmentType]SegmentWriter{
 		ANGULAR:       &segments.Angular{},
@@ -369,7 +369,7 @@ func (segment *Segment) string() string {
 	return text
 }
 
-func (segment *Segment) SetEnabled(env environment.Environment) {
+func (segment *Segment) SetEnabled(env platform.Environment) {
 	defer func() {
 		err := recover()
 		if err == nil {

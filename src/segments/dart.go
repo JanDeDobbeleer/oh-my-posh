@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -18,7 +18,7 @@ func (d *Dart) Template() string {
 	return languageTemplate
 }
 
-func (d *Dart) Init(props properties.Properties, env environment.Environment) {
+func (d *Dart) Init(props properties.Properties, env platform.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,

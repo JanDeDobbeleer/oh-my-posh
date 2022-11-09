@@ -3,7 +3,7 @@ package segments
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"path/filepath"
 	"strings"
@@ -25,7 +25,7 @@ func (p *Python) Template() string {
 	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} "
 }
 
-func (p *Python) Init(props properties.Properties, env environment.Environment) {
+func (p *Python) Init(props properties.Properties, env platform.Environment) {
 	p.language = language{
 		env:         env,
 		props:       props,
@@ -74,7 +74,7 @@ func (p *Python) loadContext() {
 		if len(venv) == 0 {
 			continue
 		}
-		name := environment.Base(p.language.env, venv)
+		name := platform.Base(p.language.env, venv)
 		if p.canUseVenvName(name) {
 			p.Venv = name
 			break

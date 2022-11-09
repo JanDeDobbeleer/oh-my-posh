@@ -1,13 +1,13 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
 type WindowsRegistry struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	Value string
 }
@@ -23,13 +23,13 @@ func (wr *WindowsRegistry) Template() string {
 	return " {{ .Value }} "
 }
 
-func (wr *WindowsRegistry) Init(props properties.Properties, env environment.Environment) {
+func (wr *WindowsRegistry) Init(props properties.Properties, env platform.Environment) {
 	wr.props = props
 	wr.env = env
 }
 
 func (wr *WindowsRegistry) Enabled() bool {
-	if wr.env.GOOS() != environment.WINDOWS {
+	if wr.env.GOOS() != platform.WINDOWS {
 		return false
 	}
 

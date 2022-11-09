@@ -4,8 +4,8 @@ import (
 	"path"
 	"testing"
 
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -57,7 +57,7 @@ func TestGcpSegment(t *testing.T) {
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
 		cfgpath := path.Join("config", "configurations", "config_production")
 		env.On("FileContent", cfgpath).Return(tc.CfgData)
-		env.On("Log", environment.Error, "Gcp.Enabled()", mock2.Anything).Return()
+		env.On("Log", platform.Error, "Gcp.Enabled()", mock2.Anything).Return()
 		g := &Gcp{
 			env: env,
 		}
@@ -84,7 +84,7 @@ func TestGetConfigDirectory(t *testing.T) {
 		},
 		{
 			Case:     "Windows",
-			GOOS:     environment.WINDOWS,
+			GOOS:     platform.WINDOWS,
 			AppData:  "/Users/posh/.config",
 			Expected: "/Users/posh/.config/gcloud",
 		},

@@ -2,8 +2,8 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -12,7 +12,7 @@ import (
 
 func TestConnection(t *testing.T) {
 	type connectionResponse struct {
-		Connection *environment.Connection
+		Connection *platform.Connection
 		Error      error
 	}
 	cases := []struct {
@@ -29,7 +29,7 @@ func TestConnection(t *testing.T) {
 			ConnectionType:  "wifi",
 			Connections: []*connectionResponse{
 				{
-					Connection: &environment.Connection{
+					Connection: &platform.Connection{
 						Name: "WiFi",
 						Type: "wifi",
 					},
@@ -41,8 +41,8 @@ func TestConnection(t *testing.T) {
 			ConnectionType: "wifi",
 			Connections: []*connectionResponse{
 				{
-					Connection: &environment.Connection{
-						Type: environment.WIFI,
+					Connection: &platform.Connection{
+						Type: platform.WIFI,
 					},
 					Error: fmt.Errorf("no connection"),
 				},
@@ -55,14 +55,14 @@ func TestConnection(t *testing.T) {
 			ExpectedEnabled: true,
 			Connections: []*connectionResponse{
 				{
-					Connection: &environment.Connection{
-						Type: environment.WIFI,
+					Connection: &platform.Connection{
+						Type: platform.WIFI,
 					},
 					Error: fmt.Errorf("no connection"),
 				},
 				{
-					Connection: &environment.Connection{
-						Type: environment.ETHERNET,
+					Connection: &platform.Connection{
+						Type: platform.ETHERNET,
 					},
 				},
 			},
@@ -72,14 +72,14 @@ func TestConnection(t *testing.T) {
 			ConnectionType: "wifi|ethernet",
 			Connections: []*connectionResponse{
 				{
-					Connection: &environment.Connection{
-						Type: environment.WIFI,
+					Connection: &platform.Connection{
+						Type: platform.WIFI,
 					},
 					Error: fmt.Errorf("no connection"),
 				},
 				{
-					Connection: &environment.Connection{
-						Type: environment.ETHERNET,
+					Connection: &platform.Connection{
+						Type: platform.ETHERNET,
 					},
 					Error: fmt.Errorf("no connection"),
 				},

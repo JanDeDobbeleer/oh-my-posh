@@ -2,13 +2,13 @@ package segments
 
 import (
 	"encoding/json"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
 type Nbgv struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	VersionInfo
 }
@@ -45,7 +45,7 @@ func (n *Nbgv) Enabled() bool {
 	return n.VersionInfo.VersionFileFound
 }
 
-func (n *Nbgv) Init(props properties.Properties, env environment.Environment) {
+func (n *Nbgv) Init(props properties.Properties, env platform.Environment) {
 	n.props = props
 	n.env = env
 }

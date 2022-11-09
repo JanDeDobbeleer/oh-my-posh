@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -13,7 +13,7 @@ func (az *AzFunc) Template() string {
 	return languageTemplate
 }
 
-func (az *AzFunc) Init(props properties.Properties, env environment.Environment) {
+func (az *AzFunc) Init(props properties.Properties, env platform.Environment) {
 	az.language = language{
 		env:        env,
 		props:      props,

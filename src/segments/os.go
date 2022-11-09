@@ -1,13 +1,13 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
 type Os struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	Icon string
 }
@@ -68,18 +68,18 @@ func (oi *Os) Template() string {
 func (oi *Os) Enabled() bool {
 	goos := oi.env.GOOS()
 	switch goos {
-	case environment.WINDOWS:
+	case platform.WINDOWS:
 		oi.Icon = oi.props.GetString(Windows, "\uE62A")
-	case environment.DARWIN:
+	case platform.DARWIN:
 		oi.Icon = oi.props.GetString(MacOS, "\uF179")
-	case environment.LINUX:
-		platform := oi.env.Platform()
+	case platform.LINUX:
+		pf := oi.env.Platform()
 		displayDistroName := oi.props.GetBool(DisplayDistroName, false)
 		if displayDistroName {
-			oi.Icon = platform
+			oi.Icon = pf
 			break
 		}
-		oi.Icon = oi.getDistroIcon(platform)
+		oi.Icon = oi.getDistroIcon(pf)
 	default:
 		oi.Icon = goos
 	}
@@ -130,7 +130,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 	return oi.props.GetString(Linux, "\uF17C")
 }
 
-func (oi *Os) Init(props properties.Properties, env environment.Environment) {
+func (oi *Os) Init(props properties.Properties, env platform.Environment) {
 	oi.props = props
 	oi.env = env
 }

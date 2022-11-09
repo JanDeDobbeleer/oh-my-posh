@@ -5,7 +5,7 @@ import (
 	"oh-my-posh/color"
 	"oh-my-posh/console"
 	"oh-my-posh/engine"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/shell"
 
 	"github.com/spf13/cobra"
@@ -47,9 +47,9 @@ Exports the config to an image file ~/mytheme.png.
 Exports the config to an image file using customized output options.`,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		env := &environment.ShellEnvironment{
+		env := &platform.Shell{
 			Version: cliVersion,
-			CmdFlags: &environment.Flags{
+			CmdFlags: &platform.Flags{
 				Config: config,
 				Shell:  shell.PLAIN,
 			},

@@ -2,8 +2,8 @@ package segments
 
 import (
 	"net"
-	"oh-my-posh/environment"
 	"oh-my-posh/http"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 )
 
@@ -61,7 +61,7 @@ func (i *IPify) getResult() (string, error) {
 	return data.IP, err
 }
 
-func (i *IPify) Init(props properties.Properties, env environment.Environment) {
+func (i *IPify) Init(props properties.Properties, env platform.Environment) {
 	request := &http.Request{}
 	request.Init(env, props)
 

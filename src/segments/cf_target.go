@@ -1,14 +1,14 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"regexp"
 )
 
 type CfTarget struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	CfTargetDetails
 }
@@ -24,7 +24,7 @@ func (c *CfTarget) Template() string {
 	return "{{if .Org }}{{ .Org }}{{ end }}{{if .Space }}/{{ .Space }}{{ end }}"
 }
 
-func (c *CfTarget) Init(props properties.Properties, env environment.Environment) {
+func (c *CfTarget) Init(props properties.Properties, env platform.Environment) {
 	c.props = props
 	c.env = env
 }

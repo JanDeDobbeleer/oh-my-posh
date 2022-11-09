@@ -2,7 +2,7 @@ package cli
 
 import (
 	"fmt"
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -33,7 +33,7 @@ You can do the following:
 			_ = cmd.Help()
 			return
 		}
-		env := &environment.ShellEnvironment{
+		env := &platform.Shell{
 			Version: cliVersion,
 		}
 		env.Init()
@@ -42,7 +42,7 @@ You can do the following:
 		case "path":
 			fmt.Print(env.CachePath())
 		case "clear":
-			cacheFilePath := filepath.Join(env.CachePath(), environment.CacheFile)
+			cacheFilePath := filepath.Join(env.CachePath(), platform.CacheFile)
 			err := os.Remove(cacheFilePath)
 			if err != nil {
 				fmt.Println(err.Error())
@@ -50,7 +50,7 @@ You can do the following:
 			}
 			fmt.Printf("removed cache file at %s\n", cacheFilePath)
 		case "edit":
-			cacheFilePath := filepath.Join(env.CachePath(), environment.CacheFile)
+			cacheFilePath := filepath.Join(env.CachePath(), platform.CacheFile)
 			editFileWithEditor(cacheFilePath)
 		}
 	},

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"oh-my-posh/environment"
 	"oh-my-posh/http"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"strconv"
 	"strings"
@@ -216,7 +216,7 @@ func (w *Withings) getSleep() bool {
 	return true
 }
 
-func (w *Withings) Init(props properties.Properties, env environment.Environment) {
+func (w *Withings) Init(props properties.Properties, env platform.Environment) {
 	w.props = props
 
 	oauth := &http.OAuthRequest{

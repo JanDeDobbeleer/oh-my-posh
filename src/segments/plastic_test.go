@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -29,7 +29,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
 	env.On("FileContent", "/dir/.plastic//plastic.selector").Return("")
-	fileInfo := &environment.FileInfo{
+	fileInfo := &platform.FileInfo{
 		Path:         "/dir/hello",
 		ParentFolder: "/dir",
 		IsDir:        true,

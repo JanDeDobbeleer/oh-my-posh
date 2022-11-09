@@ -1,14 +1,14 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"strings"
 )
 
 type Cmd struct {
 	props properties.Properties
-	env   environment.Environment
+	env   platform.Environment
 
 	Output string
 }
@@ -71,7 +71,7 @@ func (c *Cmd) runScript(shell, script string) bool {
 	return len(c.Output) != 0
 }
 
-func (c *Cmd) Init(props properties.Properties, env environment.Environment) {
+func (c *Cmd) Init(props properties.Properties, env platform.Environment) {
 	c.props = props
 	c.env = env
 }

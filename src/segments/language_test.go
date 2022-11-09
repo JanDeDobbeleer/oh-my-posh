@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"oh-my-posh/environment"
 	"oh-my-posh/mock"
+	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -53,7 +53,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	}
 	env.On("Pwd").Return(cwd)
 	env.On("Home").Return(home)
-	env.On("TemplateCache").Return(&environment.TemplateCache{
+	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),
 	})
 	if args.properties == nil {
@@ -353,7 +353,7 @@ func TestLanguageEnabledCommandExitCode(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"uni"},
 		version:           universion,
-		expectedError:     &environment.CommandError{ExitCode: expected},
+		expectedError:     &platform.CommandError{ExitCode: expected},
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())

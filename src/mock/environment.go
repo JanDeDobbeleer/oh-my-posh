@@ -3,8 +3,8 @@ package mock
 import (
 	"io"
 	"io/fs"
-	"oh-my-posh/environment"
-	"oh-my-posh/environment/battery"
+	"oh-my-posh/platform"
+	"oh-my-posh/platform/battery"
 	"time"
 
 	mock "github.com/stretchr/testify/mock"
@@ -119,9 +119,9 @@ func (env *MockedEnvironment) Root() bool {
 	return args.Bool(0)
 }
 
-func (env *MockedEnvironment) Flags() *environment.Flags {
+func (env *MockedEnvironment) Flags() *platform.Flags {
 	arguments := env.Called()
-	return arguments.Get(0).(*environment.Flags)
+	return arguments.Get(0).(*platform.Flags)
 }
 
 func (env *MockedEnvironment) BatteryState() (*battery.Info, error) {
@@ -139,19 +139,19 @@ func (env *MockedEnvironment) QueryWindowTitles(processName, windowTitleRegex st
 	return args.String(0), args.Error(1)
 }
 
-func (env *MockedEnvironment) WindowsRegistryKeyValue(path string) (*environment.WindowsRegistryValue, error) {
+func (env *MockedEnvironment) WindowsRegistryKeyValue(path string) (*platform.WindowsRegistryValue, error) {
 	args := env.Called(path)
-	return args.Get(0).(*environment.WindowsRegistryValue), args.Error(1)
+	return args.Get(0).(*platform.WindowsRegistryValue), args.Error(1)
 }
 
-func (env *MockedEnvironment) HTTPRequest(url string, body io.Reader, timeout int, requestModifiers ...environment.HTTPRequestModifier) ([]byte, error) {
+func (env *MockedEnvironment) HTTPRequest(url string, body io.Reader, timeout int, requestModifiers ...platform.HTTPRequestModifier) ([]byte, error) {
 	args := env.Called(url)
 	return args.Get(0).([]byte), args.Error(1)
 }
 
-func (env *MockedEnvironment) HasParentFilePath(path string) (*environment.FileInfo, error) {
+func (env *MockedEnvironment) HasParentFilePath(path string) (*platform.FileInfo, error) {
 	args := env.Called(path)
-	return args.Get(0).(*environment.FileInfo), args.Error(1)
+	return args.Get(0).(*platform.FileInfo), args.Error(1)
 }
 
 func (env *MockedEnvironment) StackCount() int {
@@ -179,9 +179,9 @@ func (env *MockedEnvironment) CachePath() string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) Cache() environment.Cache {
+func (env *MockedEnvironment) Cache() platform.Cache {
 	args := env.Called()
-	return args.Get(0).(environment.Cache)
+	return args.Get(0).(platform.Cache)
 }
 
 func (env *MockedEnvironment) Close() {
@@ -208,14 +208,14 @@ func (env *MockedEnvironment) ConvertToLinuxPath(path string) string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) Connection(connectionType environment.ConnectionType) (*environment.Connection, error) {
+func (env *MockedEnvironment) Connection(connectionType platform.ConnectionType) (*platform.Connection, error) {
 	args := env.Called(connectionType)
-	return args.Get(0).(*environment.Connection), args.Error(1)
+	return args.Get(0).(*platform.Connection), args.Error(1)
 }
 
-func (env *MockedEnvironment) TemplateCache() *environment.TemplateCache {
+func (env *MockedEnvironment) TemplateCache() *platform.TemplateCache {
 	args := env.Called()
-	return args.Get(0).(*environment.TemplateCache)
+	return args.Get(0).(*platform.TemplateCache)
 }
 
 func (env *MockedEnvironment) LoadTemplateCache() {
@@ -246,7 +246,7 @@ func (env *MockedEnvironment) Trace(start time.Time, function string, args ...st
 	_ = env.Called(start, function, args)
 }
 
-func (env *MockedEnvironment) Log(logType environment.LogType, funcName, message string) {
+func (env *MockedEnvironment) Log(logType platform.LogType, funcName, message string) {
 	_ = env.Called(logType, funcName, message)
 }
 

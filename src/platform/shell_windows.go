@@ -143,7 +143,7 @@ func (env *Shell) LookWinAppPath(file string) (string, error) {
 func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
 	env.Trace(time.Now(), "WindowsRegistryKeyValue", path)
 
-	// Format:
+	// Format:sudo -u postgres psql
 	// "HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"
 	//   1  |                  2                         |   3
 	//

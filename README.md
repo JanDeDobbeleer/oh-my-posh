@@ -16,7 +16,7 @@
 
 ![GitHub Downloads][gh-downloads]
 
-![Twitter][twitter]
+![Mastodon][mastodon]
 
 This repo was made with love using GitKraken.
 
@@ -59,7 +59,7 @@ using Go (and the amazing [README][powerline-go])
 
 [release-status]: https://img.shields.io/github/workflow/status/jandedobbeleer/oh-my-posh/Release?label=Build
 [gh-downloads]: https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads
-[twitter]: https://shields.io/twitter/follow/jandedobbeleer?label=Follow
+[mastodon]: https://img.shields.io/mastodon/follow/109326234705859737?domain=https%3A%2F%2Fsocial.ohmyposh.dev&label=Mastodon&style=social
 [kraken]: https://img.shields.io/badge/GitKraken-Legendary%20Git%20Tools-teal?style=plastic&logo=gitkraken
 [kraken-ref]: https://www.gitkraken.com/invite/nQmDPR9D
 [oh-my-posh2]: https://github.com/JanDeDobbeleer/oh-my-posh2

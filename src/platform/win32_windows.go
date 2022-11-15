@@ -3,6 +3,7 @@ package platform
 import (
 	"errors"
 	"oh-my-posh/regex"
+	"reflect"
 	"strings"
 	"syscall"
 	"unicode/utf16"
@@ -193,4 +194,77 @@ func readWinAppLink(path string) (string, error) {
 		return "", errors.New("unknown AppExecLink version")
 	}
 	return appExecLink.Path()
+}
+
+var (
+	advapi     = syscall.NewLazyDLL("advapi32.dll")
+	procGetAce = advapi.NewProc("GetAce")
+)
+
+const (
+	ACCESS_DENIED_ACE_TYPE = 1 //nolint: revive
+)
+
+type AccessAllowedAce struct {
+	AceType    uint8
+	AceFlags   uint8
+	AceSize    uint16
+	AccessMask uint32
+	SidStart   uint32
+}
+
+func getCurrentUser() (sid *windows.SID, err error) {
+	token := windows.GetCurrentProcessToken()
+	defer token.Close()
+
+	tokenuser, err := token.GetTokenUser()
+	sid = tokenuser.User.Sid
+	return
+}
+
+func isWriteable(folder string) bool {
+	cu, err := getCurrentUser()
+	if err != nil {
+		// unable to get current user
+		return false
+	}
+
+	si, err := windows.GetNamedSecurityInfo(folder, windows.SE_FILE_OBJECT, windows.DACL_SECURITY_INFORMATION)
+	if err != nil {
+		return false
+	}
+
+	dacl, _, err := si.DACL()
+	if err != nil || dacl == nil {
+		// no dacl implies full access
+		return true
+	}
+
+	rs := reflect.ValueOf(dacl).Elem()
+	aceCount := rs.Field(3).Uint()
+
+	for i := uint64(0); i < aceCount; i++ {
+		ace := &AccessAllowedAce{}
+
+		ret, _, _ := procGetAce.Call(uintptr(unsafe.Pointer(dacl)), uintptr(i), uintptr(unsafe.Pointer(&ace)))
+		if ret == 0 {
+			return false
+		}
+
+		if ace.AceType == ACCESS_DENIED_ACE_TYPE {
+			continue
+		}
+
+		aceSid := (*windows.SID)(unsafe.Pointer(&ace.SidStart))
+
+		if !aceSid.Equals(cu) {
+			continue
+		}
+
+		allowMask := ^(windows.GENERIC_WRITE | windows.GENERIC_ALL)
+		if ace.AccessMask&uint32(allowMask) != 0 {
+			return true
+		}
+	}
+	return false
 }

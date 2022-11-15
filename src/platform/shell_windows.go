@@ -235,24 +235,7 @@ func (env *Shell) ConvertToLinuxPath(path string) string {
 
 func (env *Shell) DirIsWritable(path string) bool {
 	defer env.Trace(time.Now(), "DirIsWritable")
-	info, err := os.Stat(path)
-	if err != nil {
-		env.Log(Error, "DirIsWritable", err.Error())
-		return false
-	}
-
-	if !info.IsDir() {
-		env.Log(Error, "DirIsWritable", "Path isn't a directory")
-		return false
-	}
-
-	// Check if the user bit is enabled in file permission
-	if info.Mode().Perm()&(1<<(uint(7))) == 0 {
-		env.Log(Error, "DirIsWritable", "Write permission bit is not set on this file for user")
-		return false
-	}
-
-	return true
+	return isWriteable(path)
 }
 
 func (env *Shell) Connection(connectionType ConnectionType) (*Connection, error) {

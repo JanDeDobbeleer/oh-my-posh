@@ -32,14 +32,14 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 		Expected  string
 	}{
 		{
-			Text:      "in <accent>\x1b[1mpwsh \x1b[22m</> ",
-			ShellName: shell.PWSH,
-			Expected:  "in <accent>\x1b[1mpwsh \x1b[22m</> ",
-		},
-		{
 			Text:      "[google](http://www.google.be) [maps (2/2)](http://maps.google.be)",
 			ShellName: shell.FISH,
 			Expected:  "\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\ \x1b]8;;http://maps.google.be\x1b\\maps (2/2)\x1b]8;;\x1b\\",
+		},
+		{
+			Text:      "in <accent>\x1b[1mpwsh \x1b[22m</> ",
+			ShellName: shell.PWSH,
+			Expected:  "in <accent>\x1b[1mpwsh \x1b[22m</> ",
 		},
 		{Text: "[google](http://www.google.be)", ShellName: shell.ZSH, Expected: "%{\x1b]8;;http://www.google.be\x1b\\%}google%{\x1b]8;;\x1b\\%}"},
 		{Text: "[google](http://www.google.be)", ShellName: shell.PWSH, Expected: "\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\"},
@@ -98,5 +98,24 @@ func TestFormatText(t *testing.T) {
 		a.InitPlain()
 		formattedText := a.formatText(tc.Text)
 		assert.Equal(t, tc.Expected, formattedText, tc.Case)
+	}
+}
+
+func TestGenerateFileLink(t *testing.T) {
+	cases := []struct {
+		Text     string
+		Expected string
+	}{
+		{
+			Text:     `[Posh](file:C:/Program Files (x86)/Common Files/Microsoft Shared/Posh)`,
+			Expected: "\x1b]8;;file:C:/Program Files (x86)/Common Files/Microsoft Shared/Posh\x1b\\Posh\x1b]8;;\x1b\\",
+		},
+		{Text: `[Windows](file:C:/Windows)`, Expected: "\x1b]8;;file:C:/Windows\x1b\\Windows\x1b]8;;\x1b\\"},
+	}
+	for _, tc := range cases {
+		a := Ansi{}
+		a.Init(shell.PWSH)
+		hyperlinkText := a.GenerateHyperlink(tc.Text)
+		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
 }

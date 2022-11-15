@@ -229,7 +229,9 @@ func (env *Shell) wifiNetwork() (*Connection, error) {
 }
 
 func (env *Shell) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHandle uint32) (*Connection, error) {
-	info := Connection{}
+	info := Connection{
+		Type: WIFI,
+	}
 
 	// Query wifi connection state
 	var dataSize uint16

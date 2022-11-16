@@ -394,9 +394,22 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 	// mapped locations can override predefined locations
 	keyValues := pt.props.GetKeyValueMap(MappedLocations, make(map[string]string))
 	for key, val := range keyValues {
-		if key != "" {
-			mappedLocations[pt.normalize(key)] = val
+		if len(key) == 0 {
+			continue
 		}
+		tmpl := &template.Text{
+			Template: key,
+			Context:  pt,
+			Env:      pt.env,
+		}
+		path, err := tmpl.Render()
+		if err != nil {
+			pt.env.Log(platform.Error, "replaceMappedLocations", err.Error())
+		}
+		if len(path) == 0 {
+			continue
+		}
+		mappedLocations[pt.normalize(path)] = val
 	}
 
 	// sort map keys in reverse order

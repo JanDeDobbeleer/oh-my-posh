@@ -21,6 +21,11 @@ func TestRenderTemplate(t *testing.T) {
 		Context     interface{}
 	}{
 		{
+			Case:     "color override with dots",
+			Expected: "😺💬<#FF8000> Meow! What should I do next? ...</>",
+			Template: "😺💬<#FF8000> Meow! What should I do next? ...</>",
+		},
+		{
 			Case:     "tillig's regex",
 			Expected: " ⎈ hello :: world ",
 			Template: " ⎈ {{ replaceP \"([a-f0-9]{2})[a-f0-9]{6}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{10}([a-f0-9]{2})\" .Context \"$1..$2\" }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }} ", //nolint:lll

@@ -143,5 +143,6 @@ func (t *Text) cleanTemplate() {
 		}
 	}
 
-	t.Template = result
+	// return the result and remaining unresolved property
+	t.Template = result + property
 }

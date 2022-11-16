@@ -842,6 +842,7 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		PathSeparator   string
 		Expected        string
 	}{
+		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"{{ .Env.HOME }}/d": "#"}, Expected: "#"},
 		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"/a/b/c/d": "#"}, Expected: "#"},
 		{Pwd: "\\a\\b\\c\\d", MappedLocations: map[string]string{"\\a\\b": "#"}, GOOS: platform.WINDOWS, PathSeparator: "\\", Expected: "#\\c\\d"},
 		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"/a/b": "#"}, Expected: "#/c/d"},
@@ -868,6 +869,11 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		}
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.PLAIN)
+		env.On("TemplateCache").Return(&platform.TemplateCache{
+			Env: map[string]string{
+				"HOME": "/a/b/c",
+			},
+		})
 		path := &Path{
 			env: env,
 			props: properties.Map{

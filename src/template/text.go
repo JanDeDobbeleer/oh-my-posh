@@ -42,6 +42,9 @@ func (c *Context) init(t *Text) {
 }
 
 func (t *Text) Render() (string, error) {
+	if !strings.Contains(t.Template, "{{") || !strings.Contains(t.Template, "}}") {
+		return t.Template, nil
+	}
 	t.cleanTemplate()
 	tmpl, err := template.New(t.Template).Funcs(funcMap()).Parse(t.Template)
 	if err != nil {

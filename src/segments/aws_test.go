@@ -3,7 +3,6 @@ package segments
 import (
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
-	"oh-my-posh/template"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -45,7 +44,7 @@ func TestAWSSegment(t *testing.T) {
 			Region:          "eu-west",
 			Template:        "profile: {{.Profile}}{{if .Region}} in {{.Region}}{{end}}",
 		},
-		{Case: "template: invalid", ExpectedString: template.InvalidTemplate, ExpectedEnabled: true, Profile: "c", Template: "{{ .Burp"},
+		{Case: "template: invalid", ExpectedString: "{{ .Burp", ExpectedEnabled: true, Profile: "c", Template: "{{ .Burp"},
 	}
 
 	for _, tc := range cases {

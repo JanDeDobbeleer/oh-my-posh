@@ -35,6 +35,7 @@ This command is used to install fonts and configure the font in your terminal.
 				}
 				env := &platform.Shell{}
 				env.Init()
+				defer env.Close()
 				needsAdmin := env.GOOS() == platform.WINDOWS && !env.Root()
 				font.Run(fontName, needsAdmin)
 				return

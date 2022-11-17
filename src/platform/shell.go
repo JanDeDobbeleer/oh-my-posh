@@ -36,8 +36,10 @@ const (
 )
 
 var (
+	pid           = os.Getppid()
 	lock          = sync.RWMutex{}
-	TEMPLATECACHE = fmt.Sprintf("template_cache_%d", os.Getppid())
+	TEMPLATECACHE = fmt.Sprintf("template_cache_%d", pid)
+	TOGGLECACHE   = fmt.Sprintf("toggle_cache_%d", pid)
 )
 
 type Flags struct {

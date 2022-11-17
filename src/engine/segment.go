@@ -384,6 +384,15 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 	if err != nil || !segment.shouldIncludeFolder() {
 		return
 	}
+	// validate toggles
+	if toggles, OK := segment.env.Cache().Get(platform.TOGGLECACHE); OK && len(toggles) > 0 {
+		list := strings.Split(toggles, ",")
+		for _, toggle := range list {
+			if SegmentType(toggle) == segment.Type {
+				return
+			}
+		}
+	}
 	if segment.writer.Enabled() {
 		segment.Enabled = true
 		name := segment.Alias

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"oh-my-posh/color"
 	"oh-my-posh/platform"
+	"strings"
 	"time"
 
 	color2 "github.com/gookit/color"
@@ -12,7 +13,7 @@ import (
 
 // getCmd represents the get command
 var getCmd = &cobra.Command{
-	Use:   "get [shell|millis|accent]",
+	Use:   "get [shell|millis|accent|toggles]",
 	Short: "Get a value from oh-my-posh",
 	Long: `Get a value from oh-my-posh.
 
@@ -20,11 +21,13 @@ This command is used to get the value of the following variables:
 
 - shell
 - millis
-- accent`,
+- accent
+- toggles`,
 	ValidArgs: []string{
 		"millis",
 		"shell",
 		"accent",
+		"toggles",
 	},
 	Args: NoArgsOrOneValidArg,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -53,6 +56,21 @@ This command is used to get the value of the following variables:
 			}
 			accent := color2.RGB(rgb.R, rgb.G, rgb.B)
 			fmt.Println("#" + accent.Hex())
+		case "toggles":
+			cache := env.Cache()
+			togglesCache, _ := cache.Get(platform.TOGGLECACHE)
+			var toggles []string
+			if len(togglesCache) != 0 {
+				toggles = strings.Split(togglesCache, ",")
+			}
+			if len(toggles) == 0 {
+				fmt.Println("No segments are toggled off")
+				return
+			}
+			fmt.Println("Toggled off segments:")
+			for _, toggle := range toggles {
+				fmt.Println("- " + toggle)
+			}
 		default:
 			_ = cmd.Help()
 		}

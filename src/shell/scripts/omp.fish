@@ -2,6 +2,7 @@ set --export POSH_THEME ::CONFIG::
 set --global POWERLINE_COMMAND "oh-my-posh"
 set --global CONDA_PROMPT_MODIFIER false
 set --global omp_tooltip_prompt ""
+set --global has_omp_tooltip false
 set --global omp_transient 0
 
 # template function for context loading
@@ -41,13 +42,16 @@ function fish_right_prompt
     if test "$omp_transient" = "1"
       echo -n ""
       set omp_transient 0
+      set has_omp_tooltip false
       return
     end
     if test -n "$omp_tooltip_prompt"
       echo -n $omp_tooltip_prompt
       set omp_tooltip_prompt  ""
+      set has_omp_tooltip true
       return
     end
+    set has_omp_tooltip false
     ::OMP:: print right --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
 end
 
@@ -76,6 +80,9 @@ function _render_tooltip
   set omp_tooltip_prompt (::OMP:: print tooltip --config $POSH_THEME --shell fish --error $omp_status_cache --shell-version $FISH_VERSION --command $omp_tooltip_command)
   commandline --insert " "
   if not test -n "$omp_tooltip_prompt"
+    if test "$has_omp_tooltip" = "true"
+      commandline --function repaint
+    end
     return
   end
   commandline --function repaint

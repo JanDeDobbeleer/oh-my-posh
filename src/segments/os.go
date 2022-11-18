@@ -51,6 +51,8 @@ const (
 	Nixos properties.Property = "nixos"
 	// Opensuse the string/icon to use for Opensuse
 	Opensuse properties.Property = "opensuse"
+	// Redhat the string/icon to use for Redhat
+	Redhat properties.Property = "redhat"
 	// Sabayon the string/icon to use for Sabayon
 	Sabayon properties.Property = "sabayon"
 	// Slackware the string/icon to use for Slackware
@@ -120,6 +122,8 @@ func (oi *Os) getDistroIcon(distro string) string {
 		return oi.props.GetString(Nixos, "\uF313")
 	case "opensuse":
 		return oi.props.GetString(Opensuse, "\uF314")
+	case "redhat":
+		return oi.props.GetString(Redhat, "\uF316")
 	case "sabayon":
 		return oi.props.GetString(Sabayon, "\uF317")
 	case "slackware":

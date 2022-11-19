@@ -1566,6 +1566,12 @@
                     "description": "The icon to use for Opensuse",
                     "default": "\uF314"
                   },
+                  "redhat": {
+                    "type": "string",
+                    "title": "Redhat Icon",
+                    "description": "The icon to use for Redhat",
+                    "default": "\uF316"
+                  },
                   "sabayon": {
                     "type": "string",
                     "title": "Sabayon Icon",

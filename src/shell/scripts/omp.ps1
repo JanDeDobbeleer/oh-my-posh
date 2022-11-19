@@ -21,6 +21,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:PSVersion = $PSVersionTable.PSVersion.ToString()
     $script:TransientPrompt = $false
     $env:POWERLINE_COMMAND = "oh-my-posh"
+    $env:POSH_PID = $PID
     $env:CONDA_PROMPT_MODIFIER = $false
     if ((::CONFIG:: -ne '') -and (Test-Path -LiteralPath ::CONFIG::)) {
         $env:POSH_THEME = (Resolve-Path -Path ::CONFIG::).ProviderPath

@@ -35,11 +35,18 @@ const (
 	LINUX   = "linux"
 )
 
+func getPID() string {
+	pid := os.Getenv("POSH_PID")
+	if len(pid) == 0 {
+		pid = strconv.Itoa(os.Getppid())
+	}
+	return pid
+}
+
 var (
-	pid           = os.Getppid()
 	lock          = sync.RWMutex{}
-	TEMPLATECACHE = fmt.Sprintf("template_cache_%d", pid)
-	TOGGLECACHE   = fmt.Sprintf("toggle_cache_%d", pid)
+	TEMPLATECACHE = fmt.Sprintf("template_cache_%s", getPID())
+	TOGGLECACHE   = fmt.Sprintf("toggle_cache_%s", getPID())
 )
 
 type Flags struct {

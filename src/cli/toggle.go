@@ -44,7 +44,7 @@ var toggleCmd = &cobra.Command{
 			newToggles = append(newToggles, segment)
 		}
 
-		cache.Set(platform.TOGGLECACHE, strings.Join(newToggles, ","), -1)
+		cache.Set(platform.TOGGLECACHE, strings.Join(newToggles, ","), 1440)
 	},
 }
 

@@ -189,6 +189,12 @@ to distinct between both. For example:
 ```
 :::
 
+If you want to know if a specific segment is active, you can use the `.Segments.Contains` function, for example:
+
+```json
+"template": "{{ if .Segments.Contains \"Git\" }}\uf7d3{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
+```
+
 ## Text decoration
 
 You can make use of the following syntax to decorate text:

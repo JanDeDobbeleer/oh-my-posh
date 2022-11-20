@@ -130,6 +130,13 @@ type Connection struct {
 	SSID         string // Wi-Fi only
 }
 
+type SegmentsCache map[string]interface{}
+
+func (c *SegmentsCache) Contains(key string) bool {
+	_, ok := (*c)[key]
+	return ok
+}
+
 type TemplateCache struct {
 	Root         bool
 	PWD          string
@@ -142,7 +149,7 @@ type TemplateCache struct {
 	Env          map[string]string
 	OS           string
 	WSL          bool
-	Segments     map[string]interface{}
+	Segments     SegmentsCache
 }
 
 func (t *TemplateCache) AddSegmentData(key string, value interface{}) {

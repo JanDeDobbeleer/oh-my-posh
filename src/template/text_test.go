@@ -284,3 +284,31 @@ func TestCleanTemplate(t *testing.T) {
 		assert.Equal(t, tc.Expected, tmpl.Template, tc.Case)
 	}
 }
+
+func TestSegmentContains(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Template string
+	}{
+		{Case: "match", Expected: "hello", Template: `{{ if .Segments.Contains "Git" }}hello{{ end }}`},
+		{Case: "match", Expected: "world", Template: `{{ if .Segments.Contains "Path" }}hello{{ else }}world{{ end }}`},
+	}
+
+	env := &mock.MockedEnvironment{}
+	env.On("TemplateCache").Return(&platform.TemplateCache{
+		Env: make(map[string]string),
+		Segments: map[string]interface{}{
+			"Git": nil,
+		},
+	})
+	for _, tc := range cases {
+		tmpl := &Text{
+			Template: tc.Template,
+			Context:  nil,
+			Env:      env,
+		}
+		text, _ := tmpl.Render()
+		assert.Equal(t, tc.Expected, text, tc.Case)
+	}
+}

@@ -179,6 +179,14 @@ Check the spelling of the name, or if a path was included, verify that the path 
 
 The issue is that PowerShell on Windows doesn't yet default to UTF-8. Resolve the issue by setting the shell to UTF-8 in the scope of initializing Oh My Posh.
 
+:::info Why it matters?
+If the location contains non-ASCII characters, non-UTF-8 PowerShell may provide a wrong path to Oh My Posh, which can break the initialization.
+
+The scenario for non-ASCII location:
+- Your computer has a non-ASCII user name.
+- Your [config file](./installation/customize.mdx) is under your `$HOME`.
+:::
+
 To do so, edit your `$PROFILE`, find the line that initializes Oh My Posh (as highlighted below), and change it to the following:
 
 ```powershell

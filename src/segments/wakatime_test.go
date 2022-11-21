@@ -126,7 +126,7 @@ func TestWTGetUrl(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 
-		env.On("Log", mock2.Anything, mock2.Anything, mock2.Anything)
+		env.On("Error", mock2.Anything, mock2.Anything)
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: map[string]string{"HELLO": "hello"},
 		})

@@ -8,9 +8,9 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"log"
 	"net/http"
 	"net/http/httputil"
+	"oh-my-posh/log"
 	"oh-my-posh/platform/battery"
 	"oh-my-posh/platform/cmd"
 	"oh-my-posh/regex"
@@ -208,7 +208,8 @@ type Environment interface {
 	Connection(connectionType ConnectionType) (*Connection, error)
 	TemplateCache() *TemplateCache
 	LoadTemplateCache()
-	Log(logType LogType, funcName, message string)
+	Debug(funcName, message string)
+	Error(funcName string, err error)
 	Trace(start time.Time, function string, args ...string)
 }
 
@@ -229,23 +230,15 @@ func (c *commandCache) get(command string) (string, bool) {
 	return command, ok
 }
 
-type LogType string
-
-const (
-	Error LogType = "error"
-	Debug LogType = "debug"
-)
-
 type Shell struct {
 	CmdFlags *Flags
 	Version  string
 
-	cwd        string
-	cmdCache   *commandCache
-	fileCache  *fileCache
-	tmplCache  *TemplateCache
-	logBuilder strings.Builder
-	networks   []*Connection
+	cwd       string
+	cmdCache  *commandCache
+	fileCache *fileCache
+	tmplCache *TemplateCache
+	networks  []*Connection
 }
 
 func (env *Shell) Init() {
@@ -254,7 +247,7 @@ func (env *Shell) Init() {
 		env.CmdFlags = &Flags{}
 	}
 	if env.CmdFlags.Debug {
-		log.SetOutput(&env.logBuilder)
+		log.Enable()
 	}
 	env.fileCache = &fileCache{}
 	env.fileCache.Init(env.CachePath())
@@ -316,34 +309,25 @@ func (env *Shell) downloadConfig(location string) error {
 }
 
 func (env *Shell) Trace(start time.Time, function string, args ...string) {
-	if env.CmdFlags == nil || !env.CmdFlags.Debug {
-		return
-	}
-	elapsed := time.Since(start)
-	trace := fmt.Sprintf("%s duration: %s, args: %s", function, elapsed, strings.Trim(fmt.Sprint(args), "[]"))
-	log.Println(trace)
+	log.Trace(start, function, args...)
 }
 
-func (env *Shell) Log(logType LogType, funcName, message string) {
-	if !env.CmdFlags.Debug {
-		return
-	}
-	trace := fmt.Sprintf("%s: %s\n%s", logType, funcName, message)
-	log.Println(trace)
+func (env *Shell) Debug(funcName, message string) {
+	log.Debug(funcName, message)
+}
+
+func (env *Shell) Error(funcName string, err error) {
+	log.Error(funcName, err)
 }
 
 func (env *Shell) debugF(function string, fn func() string) {
-	if !env.CmdFlags.Debug {
-		return
-	}
-	trace := fmt.Sprintf("%s: %s\n%s", Debug, function, fn())
-	log.Println(trace)
+	log.DebugF(function, fn)
 }
 
 func (env *Shell) Getenv(key string) string {
 	defer env.Trace(time.Now(), "Getenv", key)
 	val := os.Getenv(key)
-	env.Log(Debug, "Getenv", val)
+	env.Debug("Getenv", val)
 	return val
 }
 
@@ -352,7 +336,7 @@ func (env *Shell) Pwd() string {
 	lock.Lock()
 	defer func() {
 		lock.Unlock()
-		env.Log(Debug, "Pwd", env.cwd)
+		env.Debug("Pwd", env.cwd)
 	}()
 	if env.cwd != "" {
 		return env.cwd
@@ -371,7 +355,7 @@ func (env *Shell) Pwd() string {
 	}
 	dir, err := os.Getwd()
 	if err != nil {
-		env.Log(Error, "Pwd", err.Error())
+		env.Error("Pwd", err)
 		return ""
 	}
 	env.cwd = correctPath(dir)
@@ -384,7 +368,7 @@ func (env *Shell) HasFiles(pattern string) bool {
 	fileSystem := os.DirFS(cwd)
 	matches, err := fs.Glob(fileSystem, pattern)
 	if err != nil {
-		env.Log(Error, "HasFiles", err.Error())
+		env.Error("HasFiles", err)
 		return false
 	}
 	for _, match := range matches {
@@ -402,7 +386,7 @@ func (env *Shell) HasFilesInDir(dir, pattern string) bool {
 	fileSystem := os.DirFS(dir)
 	matches, err := fs.Glob(fileSystem, pattern)
 	if err != nil {
-		env.Log(Error, "HasFilesInDir", err.Error())
+		env.Error("HasFilesInDir", err)
 		return false
 	}
 	hasFilesInDir := len(matches) > 0
@@ -416,18 +400,18 @@ func (env *Shell) HasFileInParentDirs(pattern string, depth uint) bool {
 
 	for c := 0; c < int(depth); c++ {
 		if env.HasFilesInDir(currentFolder, pattern) {
-			env.Log(Debug, "HasFileInParentDirs", "true")
+			env.Debug("HasFileInParentDirs", "true")
 			return true
 		}
 
 		if dir := filepath.Dir(currentFolder); dir != currentFolder {
 			currentFolder = dir
 		} else {
-			env.Log(Debug, "HasFileInParentDirs", "false")
+			env.Debug("HasFileInParentDirs", "false")
 			return false
 		}
 	}
-	env.Log(Debug, "HasFileInParentDirs", "false")
+	env.Debug("HasFileInParentDirs", "false")
 	return false
 }
 
@@ -435,7 +419,7 @@ func (env *Shell) HasFolder(folder string) bool {
 	defer env.Trace(time.Now(), "HasFolder", folder)
 	f, err := os.Stat(folder)
 	if err != nil {
-		env.Log(Debug, "HasFolder", "false")
+		env.Debug("HasFolder", "false")
 		return false
 	}
 	env.debugF("HasFolder", func() string { return strconv.FormatBool(f.IsDir()) })
@@ -446,10 +430,10 @@ func (env *Shell) ResolveSymlink(path string) (string, error) {
 	defer env.Trace(time.Now(), "ResolveSymlink", path)
 	link, err := filepath.EvalSymlinks(path)
 	if err != nil {
-		env.Log(Error, "ResolveSymlink", err.Error())
+		env.Error("ResolveSymlink", err)
 		return "", err
 	}
-	env.Log(Debug, "ResolveSymlink", link)
+	env.Debug("ResolveSymlink", link)
 	return link, nil
 }
 
@@ -460,11 +444,11 @@ func (env *Shell) FileContent(file string) string {
 	}
 	content, err := os.ReadFile(file)
 	if err != nil {
-		env.Log(Error, "FileContent", err.Error())
+		env.Error("FileContent", err)
 		return ""
 	}
 	fileContent := string(content)
-	env.Log(Debug, "FileContent", fileContent)
+	env.Debug("FileContent", fileContent)
 	return fileContent
 }
 
@@ -472,7 +456,7 @@ func (env *Shell) LsDir(path string) []fs.DirEntry {
 	defer env.Trace(time.Now(), "LsDir", path)
 	entries, err := os.ReadDir(path)
 	if err != nil {
-		env.Log(Error, "LsDir", err.Error())
+		env.Error("LsDir", err)
 		return nil
 	}
 	env.debugF("LsDir", func() string {
@@ -496,7 +480,7 @@ func (env *Shell) User() string {
 	if user == "" {
 		user = os.Getenv("USERNAME")
 	}
-	env.Log(Debug, "User", user)
+	env.Debug("User", user)
 	return user
 }
 
@@ -504,11 +488,11 @@ func (env *Shell) Host() (string, error) {
 	defer env.Trace(time.Now(), "Host")
 	hostName, err := os.Hostname()
 	if err != nil {
-		env.Log(Error, "Host", err.Error())
+		env.Error("Host", err)
 		return "", err
 	}
 	hostName = cleanHostName(hostName)
-	env.Log(Debug, "Host", hostName)
+	env.Debug("Host", hostName)
 	return hostName, nil
 }
 
@@ -524,9 +508,9 @@ func (env *Shell) RunCommand(command string, args ...string) (string, error) {
 	}
 	output, err := cmd.Run(command, args...)
 	if err != nil {
-		env.Log(Error, "RunCommand", "cmd.Run() failed")
+		env.Error("RunCommand", err)
 	}
-	env.Log(Debug, "RunCommand", output)
+	env.Debug("RunCommand", output)
 	return output, err
 }
 
@@ -541,22 +525,22 @@ func (env *Shell) RunShellCommand(shell, command string) string {
 func (env *Shell) CommandPath(command string) string {
 	defer env.Trace(time.Now(), "CommandPath", command)
 	if path, ok := env.cmdCache.get(command); ok {
-		env.Log(Debug, "CommandPath", path)
+		env.Debug("CommandPath", path)
 		return path
 	}
 	path, err := exec.LookPath(command)
 	if err == nil {
 		env.cmdCache.set(command, path)
-		env.Log(Debug, "CommandPath", path)
+		env.Debug("CommandPath", path)
 		return path
 	}
 	path, err = env.LookWinAppPath(command)
 	if err == nil {
 		env.cmdCache.set(command, path)
-		env.Log(Debug, "CommandPath", path)
+		env.Debug("CommandPath", path)
 		return path
 	}
-	env.Log(Error, "CommandPath", err.Error())
+	env.Error("CommandPath", err)
 	return ""
 }
 
@@ -595,20 +579,20 @@ func (env *Shell) Shell() string {
 	p, _ := process.NewProcess(int32(pid))
 	name, err := p.Name()
 	if err != nil {
-		env.Log(Error, "Shell", err.Error())
+		env.Error("Shell", err)
 		return UNKNOWN
 	}
-	env.Log(Debug, "Shell", "process name: "+name)
+	env.Debug("Shell", "process name: "+name)
 	// this is used for when scoop creates a shim, see
 	// https://github.com/JanDeDobbeleer/oh-my-posh/issues/2806
 	executable, _ := os.Executable()
 	if name == "cmd.exe" || name == executable {
 		p, _ = p.Parent()
 		name, err = p.Name()
-		env.Log(Debug, "Shell", "parent process name: "+name)
+		env.Debug("Shell", "parent process name: "+name)
 	}
 	if err != nil {
-		env.Log(Error, "Shell", err.Error())
+		env.Error("Shell", err)
 		return UNKNOWN
 	}
 	// Cache the shell value to speed things up.
@@ -642,27 +626,27 @@ func (env *Shell) HTTPRequest(targetURL string, body io.Reader, timeout int, req
 	}
 	if env.CmdFlags.Debug {
 		dump, _ := httputil.DumpRequestOut(request, true)
-		env.Log(Debug, "HTTPRequest", string(dump))
+		env.Debug("HTTPRequest", string(dump))
 	}
 	response, err := client.Do(request)
 	if err != nil {
-		env.Log(Error, "HTTPRequest", err.Error())
+		env.Error("HTTPRequest", err)
 		return nil, env.unWrapError(err)
 	}
 	// anything inside the range [200, 299] is considered a success
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
 		message := "HTTP status code " + strconv.Itoa(response.StatusCode)
 		err := errors.New(message)
-		env.Log(Error, "HTTPRequest", message)
+		env.Error("HTTPRequest", err)
 		return nil, err
 	}
 	defer response.Body.Close()
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
-		env.Log(Error, "HTTPRequest", err.Error())
+		env.Error("HTTPRequest", err)
 		return nil, err
 	}
-	env.Log(Debug, "HTTPRequest", string(responseBody))
+	env.Debug("HTTPRequest", string(responseBody))
 	return responseBody, nil
 }
 
@@ -686,7 +670,7 @@ func (env *Shell) HasParentFilePath(path string) (*FileInfo, error) {
 			currentFolder = dir
 			continue
 		}
-		env.Log(Error, "HasParentFilePath", err.Error())
+		env.Error("HasParentFilePath", err)
 		return nil, errors.New("no match at root level")
 	}
 }
@@ -721,14 +705,14 @@ func (env *Shell) LoadTemplateCache() {
 	var templateCache TemplateCache
 	err := json.Unmarshal([]byte(val), &templateCache)
 	if err != nil {
-		env.Log(Error, "LoadTemplateCache", err.Error())
+		env.Error("LoadTemplateCache", err)
 		return
 	}
 	env.tmplCache = &templateCache
 }
 
 func (env *Shell) Logs() string {
-	return env.logBuilder.String()
+	return log.String()
 }
 
 func (env *Shell) TemplateCache() *TemplateCache {
@@ -782,8 +766,7 @@ func (env *Shell) DirMatchesOneOf(dir string, regexes []string) (match bool) {
 	// for the time being until we figure out what the actual root cause is
 	defer func() {
 		if err := recover(); err != nil {
-			message := fmt.Sprintf("%s", err)
-			env.Log(Error, "DirMatchesOneOf", message)
+			env.Error("DirMatchesOneOf", errors.New("panic"))
 			match = false
 		}
 	}()

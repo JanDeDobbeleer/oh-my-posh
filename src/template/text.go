@@ -48,7 +48,7 @@ func (t *Text) Render() (string, error) {
 	t.cleanTemplate()
 	tmpl, err := template.New(t.Template).Funcs(funcMap()).Parse(t.Template)
 	if err != nil {
-		t.Env.Log(platform.Error, "Render", err.Error())
+		t.Env.Error("Render", err)
 		return "", errors.New(InvalidTemplate)
 	}
 	context := &Context{}
@@ -57,7 +57,7 @@ func (t *Text) Render() (string, error) {
 	defer buffer.Reset()
 	err = tmpl.Execute(buffer, context)
 	if err != nil {
-		t.Env.Log(platform.Error, "Render", err.Error())
+		t.Env.Error("Render", err)
 		return "", errors.New(IncorrectTemplate)
 	}
 	text := buffer.String()

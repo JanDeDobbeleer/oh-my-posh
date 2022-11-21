@@ -30,7 +30,7 @@ func (env *Shell) Root() bool {
 		0, 0, 0, 0, 0, 0,
 		&sid)
 	if err != nil {
-		env.Log(Error, "Root", err.Error())
+		env.Error("Root", err)
 		return false
 	}
 	defer func() {
@@ -44,7 +44,7 @@ func (env *Shell) Root() bool {
 
 	member, err := token.IsMember(sid)
 	if err != nil {
-		env.Log(Error, "Root", err.Error())
+		env.Error("Root", err)
 		return false
 	}
 
@@ -54,7 +54,7 @@ func (env *Shell) Root() bool {
 func (env *Shell) Home() string {
 	home := os.Getenv("HOME")
 	defer func() {
-		env.Log(Debug, "Home", home)
+		env.Debug("Home", home)
 	}()
 	if len(home) > 0 {
 		return home
@@ -71,7 +71,7 @@ func (env *Shell) QueryWindowTitles(processName, windowTitleRegex string) (strin
 	defer env.Trace(time.Now(), "WindowTitle", windowTitleRegex)
 	title, err := queryWindowTitles(processName, windowTitleRegex)
 	if err != nil {
-		env.Log(Error, "QueryWindowTitles", err.Error())
+		env.Error("QueryWindowTitles", err)
 	}
 	return title, err
 }
@@ -93,12 +93,12 @@ func (env *Shell) TerminalWidth() (int, error) {
 	}
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
 	if err != nil {
-		env.Log(Error, "TerminalWidth", err.Error())
+		env.Error("TerminalWidth", err)
 		return 0, err
 	}
 	info, err := winterm.GetConsoleScreenBufferInfo(uintptr(handle))
 	if err != nil {
-		env.Log(Error, "TerminalWidth", err.Error())
+		env.Error("TerminalWidth", err)
 		return 0, err
 	}
 	// return int(float64(info.Size.X) * 0.57), nil
@@ -157,9 +157,9 @@ func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, e
 	//
 	rootKey, regPath, found := strings.Cut(path, `\`)
 	if !found {
-		errorLogMsg := fmt.Sprintf("Error, malformed registry path: '%s'", path)
-		env.Log(Error, "WindowsRegistryKeyValue", errorLogMsg)
-		return nil, errors.New(errorLogMsg)
+		err := fmt.Errorf("Error, malformed registry path: '%s'", path)
+		env.Error("WindowsRegistryKeyValue", err)
+		return nil, err
 	}
 
 	regKey := Base(env, regPath)
@@ -180,19 +180,19 @@ func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, e
 	case "HKU", "HKEY_USERS":
 		key = windows.HKEY_USERS
 	default:
-		errorLogMsg := fmt.Sprintf("Error, unknown registry key: '%s'", rootKey)
-		env.Log(Error, "WindowsRegistryKeyValue", errorLogMsg)
-		return nil, errors.New(errorLogMsg)
+		err := fmt.Errorf("Error, unknown registry key: '%s", rootKey)
+		env.Error("WindowsRegistryKeyValue", err)
+		return nil, err
 	}
 
 	k, err := registry.OpenKey(key, regPath, registry.READ)
 	if err != nil {
-		env.Log(Error, "WindowsRegistryKeyValue", err.Error())
+		env.Error("WindowsRegistryKeyValue", err)
 		return nil, err
 	}
 	_, valType, err := k.GetValue(regKey, nil)
 	if err != nil {
-		env.Log(Error, "WindowsRegistryKeyValue", err.Error())
+		env.Error("WindowsRegistryKeyValue", err)
 		return nil, err
 	}
 
@@ -217,7 +217,7 @@ func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, e
 		errorLogMsg := fmt.Sprintf("Error, no formatter for type: %d", valType)
 		return nil, errors.New(errorLogMsg)
 	}
-	env.Log(Debug, "WindowsRegistryKeyValue", fmt.Sprintf("%s(%s): %s", regKey, regValue.ValueType, regValue.String))
+	env.Debug("WindowsRegistryKeyValue", fmt.Sprintf("%s(%s): %s", regKey, regValue.ValueType, regValue.String))
 	return regValue, nil
 }
 
@@ -251,6 +251,6 @@ func (env *Shell) Connection(connectionType ConnectionType) (*Connection, error)
 			return network, nil
 		}
 	}
-	env.Log(Error, "network", fmt.Sprintf("Network type '%s' not found", connectionType))
+	env.Error("network", fmt.Errorf("Network type '%s' not found", connectionType))
 	return nil, &NotImplemented{}
 }

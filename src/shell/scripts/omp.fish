@@ -62,6 +62,11 @@ function postexec_omp --on-event fish_postexec
   set --global --export omp_lastcommand $argv
 end
 
+# fix tooltip not resetting on SIGINT (ctrl+c)
+function sigint_omp --on-signal INT
+    commandline --function repaint
+end
+
 # perform cleanup so a new initialization in current session works
 if test "$(string match -e '_render_transient' $(bind \r --user 2>/dev/null))" != ''
   bind -e \r

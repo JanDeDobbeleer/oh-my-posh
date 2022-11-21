@@ -205,11 +205,56 @@ const (
 	ACCESS_DENIED_ACE_TYPE = 1 //nolint: revive
 )
 
+type accessMask uint32
+
+func (m accessMask) canWrite() bool {
+	allowMask := ^(windows.GENERIC_WRITE | windows.GENERIC_ALL | windows.WRITE_DAC | windows.WRITE_OWNER)
+	return m&accessMask(allowMask) != 0
+}
+
+func (m accessMask) permissions() string {
+	var permissions []string
+	if m&windows.GENERIC_READ != 0 {
+		permissions = append(permissions, "GENERIC_READ")
+	}
+	if m&windows.GENERIC_WRITE != 0 {
+		permissions = append(permissions, "GENERIC_WRITE")
+	}
+	if m&windows.GENERIC_EXECUTE != 0 {
+		permissions = append(permissions, "GENERIC_EXECUTE")
+	}
+	if m&windows.GENERIC_ALL != 0 {
+		permissions = append(permissions, "GENERIC_ALL")
+	}
+	if m&windows.WRITE_DAC != 0 {
+		permissions = append(permissions, "WRITE_DAC")
+	}
+	if m&windows.WRITE_OWNER != 0 {
+		permissions = append(permissions, "WRITE_OWNER")
+	}
+	if m&windows.SYNCHRONIZE != 0 {
+		permissions = append(permissions, "SYNCHRONIZE")
+	}
+	if m&windows.DELETE != 0 {
+		permissions = append(permissions, "DELETE")
+	}
+	if m&windows.READ_CONTROL != 0 {
+		permissions = append(permissions, "READ_CONTROL")
+	}
+	if m&windows.ACCESS_SYSTEM_SECURITY != 0 {
+		permissions = append(permissions, "ACCESS_SYSTEM_SECURITY")
+	}
+	if m&windows.MAXIMUM_ALLOWED != 0 {
+		permissions = append(permissions, "MAXIMUM_ALLOWED")
+	}
+	return strings.Join(permissions, "\n")
+}
+
 type AccessAllowedAce struct {
 	AceType    uint8
 	AceFlags   uint8
 	AceSize    uint16
-	AccessMask uint32
+	AccessMask accessMask
 	SidStart   uint32
 }
 
@@ -222,21 +267,24 @@ func getCurrentUser() (sid *windows.SID, err error) {
 	return
 }
 
-func isWriteable(folder string) bool {
+func (env *Shell) isWriteable(folder string) bool {
 	cu, err := getCurrentUser()
 	if err != nil {
 		// unable to get current user
+		env.Error("isWriteable", err)
 		return false
 	}
 
 	si, err := windows.GetNamedSecurityInfo(folder, windows.SE_FILE_OBJECT, windows.DACL_SECURITY_INFORMATION)
 	if err != nil {
+		env.Error("isWriteable", err)
 		return false
 	}
 
 	dacl, _, err := si.DACL()
 	if err != nil || dacl == nil {
 		// no dacl implies full access
+		env.Debug("isWriteable", "no dacl")
 		return true
 	}
 
@@ -248,11 +296,8 @@ func isWriteable(folder string) bool {
 
 		ret, _, _ := procGetAce.Call(uintptr(unsafe.Pointer(dacl)), uintptr(i), uintptr(unsafe.Pointer(&ace)))
 		if ret == 0 {
+			env.Debug("isWriteable", "no ace found")
 			return false
-		}
-
-		if ace.AceType == ACCESS_DENIED_ACE_TYPE {
-			continue
 		}
 
 		aceSid := (*windows.SID)(unsafe.Pointer(&ace.SidStart))
@@ -261,8 +306,16 @@ func isWriteable(folder string) bool {
 			continue
 		}
 
-		allowMask := ^(windows.GENERIC_WRITE | windows.GENERIC_ALL)
-		if ace.AccessMask&uint32(allowMask) != 0 {
+		// this gets priority over the other access types
+		if ace.AceType == ACCESS_DENIED_ACE_TYPE {
+			env.Debug("isWriteable", "ACCESS_DENIED_ACE_TYPE")
+			return false
+		}
+
+		env.debugF("isWriteable", func() string {
+			return ace.AccessMask.permissions()
+		})
+		if ace.AccessMask.canWrite() {
 			return true
 		}
 	}

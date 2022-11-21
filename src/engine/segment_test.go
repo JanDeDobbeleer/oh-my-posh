@@ -44,7 +44,6 @@ func TestParseTestConfig(t *testing.T) {
 			"foreground": "#ffffff",
 			"background": "#61AFEF",
 			"properties": {
-				"prefix": " \uE5FF ",
 				"style": "folder",
 				"exclude_folders": [
 					"/super/secret/project"

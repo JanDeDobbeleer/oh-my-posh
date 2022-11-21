@@ -244,7 +244,7 @@ func (env *Shell) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHand
 		uintptr(unsafe.Pointer(&wlanAttr)),
 		uintptr(unsafe.Pointer(nil)))
 	if e != 0 {
-		env.Log(Error, "parseNetworkInterface", "wlan_intf_opcode_current_connection error")
+		env.Error("parseNetworkInterface", err)
 		return &info, err
 	}
 

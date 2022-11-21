@@ -34,13 +34,13 @@ func getCacheValue[a any](r *Request, key string) (a, error) {
 	if val, found := r.env.Cache().Get(key); found {
 		err := json.Unmarshal([]byte(val), &data)
 		if err != nil {
-			r.env.Log(platform.Error, "OAuth", err.Error())
+			r.env.Error("OAuth", err)
 			return data, err
 		}
 		return data, nil
 	}
 	err := errors.New("no data in cache")
-	r.env.Log(platform.Error, "OAuth", err.Error())
+	r.env.Error("OAuth", err)
 	return data, err
 }
 
@@ -50,13 +50,13 @@ func do[a any](r *Request, url string, body io.Reader, requestModifiers ...platf
 
 	responseBody, err := r.env.HTTPRequest(url, body, httpTimeout, requestModifiers...)
 	if err != nil {
-		r.env.Log(platform.Error, "OAuth", err.Error())
+		r.env.Error("OAuth", err)
 		return data, err
 	}
 
 	err = json.Unmarshal(responseBody, &data)
 	if err != nil {
-		r.env.Log(platform.Error, "OAuth", err.Error())
+		r.env.Error("OAuth", err)
 		return data, err
 	}
 

@@ -35,7 +35,7 @@ func (g *Gcp) Enabled() bool {
 	cfgDir := g.getConfigDirectory()
 	configFile, err := g.getActiveConfig(cfgDir)
 	if err != nil {
-		g.env.Log(platform.Error, "Gcp.Enabled()", err.Error())
+		g.env.Error("Gcp.Enabled()", err)
 		return false
 	}
 
@@ -43,13 +43,13 @@ func (g *Gcp) Enabled() bool {
 	cfg := g.env.FileContent(cfgpath)
 
 	if len(cfg) == 0 {
-		g.env.Log(platform.Error, "Gcp.Enabled()", "config file is empty")
+		g.env.Error("Gcp.Enabled()", errors.New("config file is empty"))
 		return false
 	}
 
 	data, err := ini.Load([]byte(cfg))
 	if err != nil {
-		g.env.Log(platform.Error, "Gcp.Enabled()", err.Error())
+		g.env.Error("Gcp.Enabled()", err)
 		return false
 	}
 

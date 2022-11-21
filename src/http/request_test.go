@@ -3,7 +3,6 @@ package http
 import (
 	"net"
 	"oh-my-posh/mock"
-	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"testing"
 
@@ -75,7 +74,7 @@ func TestRequestResult(t *testing.T) {
 
 		env.On("Cache").Return(cache)
 		env.On("HTTPRequest", url).Return([]byte(tc.JSONResponse), tc.Error)
-		env.On("Log", platform.Error, "OAuth", mock2.Anything).Return()
+		env.On("Error", "OAuth", mock2.Anything).Return()
 
 		request := &Request{}
 		request.Init(env, props)

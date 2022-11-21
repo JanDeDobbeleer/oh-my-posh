@@ -235,7 +235,7 @@ func (env *Shell) ConvertToLinuxPath(path string) string {
 
 func (env *Shell) DirIsWritable(path string) bool {
 	defer env.Trace(time.Now(), "DirIsWritable")
-	return isWriteable(path)
+	return env.isWriteable(path)
 }
 
 func (env *Shell) Connection(connectionType ConnectionType) (*Connection, error) {

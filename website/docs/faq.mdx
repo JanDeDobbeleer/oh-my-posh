@@ -177,8 +177,31 @@ For example:
 Check the spelling of the name, or if a path was included, verify that the path is correct and try again.
 ```
 
-The issue is that PowerShell on Windows doesn't yet default to UTF8. Resolve the issue by adding the following line
-to the top of your `$PROFILE`:
+The issue is that PowerShell on Windows doesn't yet default to UTF-8. Resolve the issue by setting the shell to UTF-8 in the scope of initializing Oh My Posh.
+
+:::info Why it matters?
+If the location contains non-ASCII characters, non-UTF-8 PowerShell may provide a wrong path to Oh My Posh, which can break the initialization.
+
+The scenario for non-ASCII location:
+- Your computer has a non-ASCII user name.
+- Your [config file](./installation/customize.mdx) is under your `$HOME`.
+:::
+
+To do so, edit your `$PROFILE`, find the line that initializes Oh My Posh (as highlighted below), and change it to the following:
+
+```powershell
+$previousOutputEncoding = [Console]::OutputEncoding
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+try {
+    // highlight-start
+    oh-my-posh init pwsh --config ~/custom.omp.json | Invoke-Expression
+    // highlight-end
+} finally {
+    [Console]::OutputEncoding = $previousOutputEncoding
+}
+```
+
+Alternatively, let the whole shell become UTF-8. (Be aware: Unwanted side effects can happen.) Add the following line to the top of your `$PROFILE`:
 
 ```powershell
 $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Object System.Text.UTF8Encoding

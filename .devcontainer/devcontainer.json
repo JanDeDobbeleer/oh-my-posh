@@ -8,7 +8,7 @@
       // Update the VARIANT arg to pick a version of Go: 1, 1.16, 1.17
       // Append -bullseye or -buster to pin to an OS version.
       // Use -bullseye variants on local arm64/Apple Silicon.
-      "VARIANT": "1.18-bullseye",
+      "VARIANT": "1.19-bullseye",
 
       // Options:
 
@@ -21,7 +21,7 @@
 
       "NODE_VERSION": "lts/*",
       //Powershell version
-      "PS_VERSION": "7.2.1"
+      "PS_VERSION": "7.2.7"
     }
   },
   "runArgs": ["--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"],
@@ -59,18 +59,19 @@
 
   // Add the IDs of extensions you want installed when the container is created.
   "extensions": [
-    "actboy168.tasks",
-    "eamodio.gitlens",
-    "bungcip.better-toml",
-    "davidanson.vscode-markdownlint",
-    "editorconfig.editorconfig",
-    "esbenp.prettier-vscode",
-    "github.vscode-pull-request-github",
-    "golang.go",
-    "ms-vscode.powershell",
-    "redhat.vscode-yaml",
-    "yzhang.markdown-all-in-one"
-  ],
+	"actboy168.tasks",
+	"eamodio.gitlens",
+	"bungcip.better-toml",
+	"davidanson.vscode-markdownlint",
+	"editorconfig.editorconfig",
+	"esbenp.prettier-vscode",
+	"github.vscode-pull-request-github",
+	"golang.go",
+	"ms-vscode.powershell",
+	"redhat.vscode-yaml",
+	"yzhang.markdown-all-in-one",
+	"ms-azuretools.vscode-azurefunctions"
+],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [3000],

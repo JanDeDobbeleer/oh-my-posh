@@ -77,6 +77,7 @@ func (env *Shell) Platform() string {
 			platform = "manjaro"
 		}
 	}
+	env.Debug("Platform", platform)
 	return platform
 }
 

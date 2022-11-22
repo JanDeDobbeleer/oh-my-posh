@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -24,7 +25,7 @@ experience, regardless of where you are. For a detailed guide
 on getting started, have a look at the docs at https://ohmyposh.dev`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if initialize {
-			runInit(shellName)
+			runInit(strings.ToLower(shellName))
 			return
 		}
 		if displayVersion {

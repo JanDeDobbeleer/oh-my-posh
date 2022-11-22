@@ -53,9 +53,9 @@ type Config struct {
 
 	Output string `json:"-"`
 
-	format  string
-	origin  string
-	eval    bool
+	format string
+	origin string
+	// eval    bool
 	updated bool
 	env     platform.Environment
 }
@@ -83,27 +83,6 @@ func (cfg *Config) getPalette() color.Palette {
 	return cfg.Palette
 }
 
-func (cfg *Config) print(message string) {
-	if cfg.eval {
-		fmt.Printf("echo \"%s\"", message)
-		return
-	}
-	fmt.Println(message)
-}
-
-func (cfg *Config) exitWithError(err error) {
-	if err == nil {
-		return
-	}
-	defer os.Exit(1)
-	message := "Oh My Posh Error:\n\n" + err.Error()
-	if cfg.eval {
-		fmt.Printf("echo \"%s\"\n", message)
-		return
-	}
-	cfg.print(message)
-}
-
 // LoadConfig returns the default configuration including possible user overrides
 func LoadConfig(env platform.Environment) *Config {
 	cfg := loadConfig(env)
@@ -117,9 +96,13 @@ func LoadConfig(env platform.Environment) *Config {
 
 func loadConfig(env platform.Environment) *Config {
 	defer env.Trace(time.Now(), "config.loadConfig")
-	var cfg Config
 	configFile := env.Flags().Config
 
+	if len(configFile) == 0 {
+		return defaultConfig(false)
+	}
+
+	var cfg Config
 	cfg.origin = configFile
 	cfg.format = strings.TrimPrefix(filepath.Ext(configFile), ".")
 	if cfg.format == "yml" {
@@ -137,11 +120,13 @@ func loadConfig(env platform.Environment) *Config {
 
 	err := config.LoadFiles(configFile)
 	if err != nil {
-		return defaultConfig()
+		return defaultConfig(true)
 	}
 
 	err = config.BindStruct("", &cfg)
-	cfg.exitWithError(err)
+	if err != nil {
+		return defaultConfig(true)
+	}
 
 	return &cfg
 }
@@ -184,15 +169,13 @@ func (cfg *Config) Export(format string) string {
 		jsonEncoder := json2.NewEncoder(&result)
 		jsonEncoder.SetEscapeHTML(false)
 		jsonEncoder.SetIndent("", "  ")
-		err := jsonEncoder.Encode(cfg)
-		cfg.exitWithError(err)
+		_ = jsonEncoder.Encode(cfg)
 		prefix := "{\n  \"$schema\": \"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\","
 		data := strings.Replace(result.String(), "{", prefix, 1)
 		return escapeGlyphs(data)
 	}
 
-	_, err := config.DumpTo(&result, cfg.format)
-	cfg.exitWithError(err)
+	_, _ = config.DumpTo(&result, cfg.format)
 	switch cfg.format {
 	case YAML:
 		prefix := "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
@@ -206,10 +189,9 @@ func (cfg *Config) Export(format string) string {
 }
 
 func (cfg *Config) BackupAndMigrate(env platform.Environment) {
-	origin := cfg.backup()
+	cfg.backup()
 	cfg.Migrate(env)
 	cfg.Write(cfg.format)
-	cfg.print(fmt.Sprintf("\nOh My Posh config migrated to version %d\nBackup config available at %s\n\n", cfg.Version, origin))
 }
 
 func (cfg *Config) Write(format string) {
@@ -219,25 +201,32 @@ func (cfg *Config) Write(format string) {
 		destination = cfg.origin
 	}
 	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
-	cfg.exitWithError(err)
-	_, err = f.WriteString(content)
-	cfg.exitWithError(err)
-	if err := f.Close(); err != nil {
-		cfg.exitWithError(err)
+	if err != nil {
+		return
 	}
+	_, err = f.WriteString(content)
+	if err != nil {
+		return
+	}
+	_ = f.Close()
 }
 
-func (cfg *Config) backup() string {
+func (cfg *Config) backup() {
 	dst := cfg.origin + ".bak"
 	source, err := os.Open(cfg.origin)
-	cfg.exitWithError(err)
+	if err != nil {
+		return
+	}
 	defer source.Close()
 	destination, err := os.Create(dst)
-	cfg.exitWithError(err)
+	if err != nil {
+		return
+	}
 	defer destination.Close()
 	_, err = io.Copy(destination, source)
-	cfg.exitWithError(err)
-	return dst
+	if err != nil {
+		return
+	}
 }
 
 func escapeGlyphs(s string) string {
@@ -254,7 +243,13 @@ func escapeGlyphs(s string) string {
 	return builder.String()
 }
 
-func defaultConfig() *Config {
+func defaultConfig(warning bool) *Config {
+	exitBackgroundTemplate := "{{ if gt .Code 0 }}p:red{{ end }}"
+	exitTemplate := " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
+	if warning {
+		exitBackgroundTemplate = "p:red"
+		exitTemplate = " CONFIG ERROR "
+	}
 	cfg := &Config{
 		Version:    2,
 		FinalSpace: true,
@@ -323,13 +318,13 @@ func defaultConfig() *Config {
 						TrailingDiamond: "\ue0b4",
 						Background:      "p:blue",
 						BackgroundTemplates: []string{
-							"{{ if gt .Code 0 }}p:red{{ end }}",
+							exitBackgroundTemplate,
 						},
 						Foreground: "p:white",
 						Properties: properties.Map{
 							properties.AlwaysEnabled: true,
 						},
-						Template: " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} ",
+						Template: exitTemplate,
 					},
 				},
 			},

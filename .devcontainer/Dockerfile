@@ -10,6 +10,8 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 
 # Install powershell
 ARG PS_VERSION="7.2.1"
+# powershell-7.3.0-linux-x64.tar.gz
+# powershell-7.3.0-linux-arm64.tar.gz
 RUN ARCH="$(dpkg --print-architecture)"; \
     if [ "${ARCH}" = "amd64" ]; then \
         PS_BIN="v$PS_VERSION/powershell-$PS_VERSION-linux-x64.tar.gz"; \
@@ -25,10 +27,13 @@ RUN ARCH="$(dpkg --print-architecture)"; \
 
 ENV PATH=$PATH:/usr/local/pwsh
 
-RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3/Debian_11/ /' | tee /etc/apt/sources.list.d/shells:fish:release:3.list; \
+    curl -fsSL https://download.opensuse.org/repositories/shells:fish:release:3/Debian_11/Release.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/shells_fish_release_3.gpg > /dev/null; \
+    apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
     fish \
     tmux \
+    fzf \
     && apt-get clean
 
 ARG USERNAME=vscode
@@ -38,10 +43,6 @@ RUN mkdir /home/${USERNAME}/bin; \
     wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(dpkg --print-architecture) -O /home/${USERNAME}/bin/oh-my-posh; \
     chmod +x /home/${USERNAME}/bin/oh-my-posh; \
     chown ${USERNAME}: /home/${USERNAME}/bin;
-
-# Download the fzf binary
-RUN wget https://github.com/junegunn/fzf/releases/download/0.29.0/fzf-0.29.0-linux_$(dpkg --print-architecture).tar.gz -O /home/${USERNAME}/bin/fzf; \
-    chmod +x /home/${USERNAME}/bin/fzf;
 
 # NOTE: devcontainers are Linux-only at this time but when
 # Windows or Darwin is supported someone will need to improve

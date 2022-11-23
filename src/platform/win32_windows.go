@@ -2,6 +2,7 @@ package platform
 
 import (
 	"errors"
+	"fmt"
 	"oh-my-posh/regex"
 	"reflect"
 	"strings"
@@ -302,7 +303,9 @@ func (env *Shell) isWriteable(folder string) bool {
 
 		aceSid := (*windows.SID)(unsafe.Pointer(&ace.SidStart))
 
-		if !aceSid.Equals(cu) {
+		env.debugF("isWriteable", func() string { return fmt.Sprintf("ace SID: %s", aceSid.String()) })
+		if !aceSid.Equals(cu) && !aceSid.IsWellKnown(windows.WinWorldSid) {
+			env.Debug("isWriteable", "not current user or world")
 			continue
 		}
 
@@ -312,12 +315,11 @@ func (env *Shell) isWriteable(folder string) bool {
 			return false
 		}
 
-		env.debugF("isWriteable", func() string {
-			return ace.AccessMask.permissions()
-		})
+		env.debugF("isWriteable", func() string { return ace.AccessMask.permissions() })
 		if ace.AccessMask.canWrite() {
 			return true
 		}
 	}
+	env.Debug("isWriteable", "no access control on the folder")
 	return false
 }

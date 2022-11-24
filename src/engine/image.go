@@ -70,6 +70,7 @@ const (
 	left                = "left"
 	osc99               = "osc99"
 	osc7                = "osc7"
+	osc51               = "osc51"
 	lineChange          = "linechange"
 	consoleTitle        = "title"
 	link                = "link"
@@ -197,6 +198,7 @@ func (ir *ImageRenderer) Init(config string) {
 		left:                `^(?P<STR>\x1b\[(\d{1,3})D)`,
 		osc99:               `^(?P<STR>\x1b\]9;9;(.+)\x1b\\)`,
 		osc7:                `^(?P<STR>\x1b\]7;(.+)\x1b\\)`,
+		osc51:               `^(?P<STR>\x1b\]51;A(.+)\x1b\\)`,
 		lineChange:          `^(?P<STR>\x1b\[(\d)[FB])`,
 		consoleTitle:        `^(?P<STR>\x1b\]0;(.+)\007)`,
 		link:                fmt.Sprintf(`^%s`, regex.LINK),
@@ -504,7 +506,7 @@ func (ir *ImageRenderer) shouldPrint() bool {
 		case boldReset, italicReset, underlineReset, overlineReset:
 			ir.style = ""
 			return false
-		case strikethrough, strikethroughReset, left, osc99, osc7, lineChange, consoleTitle:
+		case strikethrough, strikethroughReset, left, osc99, osc7, osc51, lineChange, consoleTitle:
 			return false
 		case color16:
 			ir.setBase16Color(match[bc])

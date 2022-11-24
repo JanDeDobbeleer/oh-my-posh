@@ -2869,7 +2869,7 @@
     },
     "pwd": {
       "type": "string",
-      "title": "Enable OSC99/7",
+      "title": "Enable OSC99/7/51",
       "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
       "default": ""
     },

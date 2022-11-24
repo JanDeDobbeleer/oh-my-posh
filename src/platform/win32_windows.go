@@ -209,8 +209,13 @@ const (
 type accessMask uint32
 
 func (m accessMask) canWrite() bool {
-	allowMask := ^(windows.GENERIC_WRITE | windows.GENERIC_ALL | windows.WRITE_DAC | windows.WRITE_OWNER)
-	return m&accessMask(allowMask) != 0
+	allowed := []int{windows.GENERIC_WRITE, windows.WRITE_DAC, windows.WRITE_OWNER}
+	for _, v := range allowed {
+		if m&accessMask(v) != 0 {
+			return true
+		}
+	}
+	return false
 }
 
 func (m accessMask) permissions() string {
@@ -259,17 +264,45 @@ type AccessAllowedAce struct {
 	SidStart   uint32
 }
 
-func getCurrentUser() (sid *windows.SID, err error) {
+func getCurrentUser() (user *tokenUser, err error) {
 	token := windows.GetCurrentProcessToken()
 	defer token.Close()
 
 	tokenuser, err := token.GetTokenUser()
-	sid = tokenuser.User.Sid
+	if err != nil {
+		return
+	}
+	tokenGroups, err := token.GetTokenGroups()
+	if err != nil {
+		return
+	}
+	user = &tokenUser{
+		sid:    tokenuser.User.Sid,
+		groups: tokenGroups.AllGroups(),
+	}
 	return
+}
+
+type tokenUser struct {
+	sid    *windows.SID
+	groups []windows.SIDAndAttributes
+}
+
+func (u *tokenUser) isMemberOf(sid *windows.SID) bool {
+	if u.sid.Equals(sid) {
+		return true
+	}
+	for _, g := range u.groups {
+		if g.Sid.Equals(sid) {
+			return true
+		}
+	}
+	return false
 }
 
 func (env *Shell) isWriteable(folder string) bool {
 	cu, err := getCurrentUser()
+
 	if err != nil {
 		// unable to get current user
 		env.Error("isWriteable", err)
@@ -303,11 +336,12 @@ func (env *Shell) isWriteable(folder string) bool {
 
 		aceSid := (*windows.SID)(unsafe.Pointer(&ace.SidStart))
 
-		env.debugF("isWriteable", func() string { return fmt.Sprintf("ace SID: %s", aceSid.String()) })
-		if !aceSid.Equals(cu) && !aceSid.IsWellKnown(windows.WinWorldSid) {
-			env.Debug("isWriteable", "not current user or world")
+		if !cu.isMemberOf(aceSid) {
+			env.Debug("isWriteable", "not current user or in group")
 			continue
 		}
+
+		env.Debug("isWriteable", fmt.Sprintf("current user is member of %s", aceSid.String()))
 
 		// this gets priority over the other access types
 		if ace.AceType == ACCESS_DENIED_ACE_TYPE {
@@ -317,9 +351,10 @@ func (env *Shell) isWriteable(folder string) bool {
 
 		env.debugF("isWriteable", func() string { return ace.AccessMask.permissions() })
 		if ace.AccessMask.canWrite() {
+			env.Debug("isWriteable", "user has write access")
 			return true
 		}
 	}
-	env.Debug("isWriteable", "no access control on the folder")
+	env.Debug("isWriteable", "no write access")
 	return false
 }

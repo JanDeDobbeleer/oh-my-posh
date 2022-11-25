@@ -19,6 +19,8 @@ const (
 	Linux properties.Property = "linux"
 	// Windows the string/icon to use for windows
 	Windows properties.Property = "windows"
+	// Alma the string/icon to use for Alma
+	Alma properties.Property = "alma"
 	// Alpine the string/icon to use for Alpine
 	Alpine properties.Property = "alpine"
 	// Aosc the string/icon to use for Aosc
@@ -53,6 +55,8 @@ const (
 	Opensuse properties.Property = "opensuse"
 	// Redhat the string/icon to use for Redhat
 	Redhat properties.Property = "redhat"
+	// Rocky the string/icon to use for Rocky linux
+	Rocky properties.Property = "rocky"
 	// Sabayon the string/icon to use for Sabayon
 	Sabayon properties.Property = "sabayon"
 	// Slackware the string/icon to use for Slackware
@@ -90,6 +94,8 @@ func (oi *Os) Enabled() bool {
 
 func (oi *Os) getDistroIcon(distro string) string {
 	switch distro {
+	case "alma":
+		return oi.props.GetString(Alma, "\uF31D")
 	case "alpine":
 		return oi.props.GetString(Alpine, "\uF300")
 	case "aosc":
@@ -124,6 +130,8 @@ func (oi *Os) getDistroIcon(distro string) string {
 		return oi.props.GetString(Opensuse, "\uF314")
 	case "redhat":
 		return oi.props.GetString(Redhat, "\uF316")
+	case "rocky":
+		return oi.props.GetString(Rocky, "\uF32B")
 	case "sabayon":
 		return oi.props.GetString(Sabayon, "\uF317")
 	case "slackware":

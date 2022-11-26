@@ -1350,6 +1350,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 		Pwd      string
 		Expected string
 	}{
+		{Pwd: "/c/l/k/f", Expected: "f"},
 		{Pwd: "/f/g/h", Expected: "/f/g/h"},
 		{Pwd: "/f/g/h/e", Expected: "^/e"},
 		{Pwd: "/a/b/c/d", Expected: "#"},
@@ -1369,6 +1370,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 				MappedLocations: map[string]string{
 					"/a/b/c/d": "#",
 					"/f/g/h/*": "^",
+					"/c/l/k/*": "",
 				},
 			},
 		}

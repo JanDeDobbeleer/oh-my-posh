@@ -99,6 +99,11 @@ func (pt *Path) setPaths() {
 	}
 	// ensure a clean path
 	pt.root, pt.relative = pt.replaceMappedLocations()
+	// this is a full replacement of the parent
+	if len(pt.root) == 0 {
+		pt.pwd = pt.relative
+		return
+	}
 	pathSeparator := pt.env.PathSeparator()
 	if !strings.HasSuffix(pt.root, pathSeparator) && len(pt.relative) > 0 {
 		pt.pwd = pt.root + pathSeparator + pt.relative

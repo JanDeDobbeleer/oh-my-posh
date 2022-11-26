@@ -12,6 +12,9 @@ import (
 	"oh-my-posh/segments"
 	"oh-my-posh/shell"
 	"oh-my-posh/template"
+
+	c "golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // Segment represent a single segment and it's configuration
@@ -397,7 +400,7 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 		segment.Enabled = true
 		name := segment.Alias
 		if len(name) == 0 {
-			name = string(segment.Type)
+			name = c.Title(language.English).String(string(segment.Type))
 		}
 		env.TemplateCache().AddSegmentData(name, segment.writer)
 	}

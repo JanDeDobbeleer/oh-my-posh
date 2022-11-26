@@ -24,8 +24,6 @@ import (
 	"time"
 
 	process "github.com/shirou/gopsutil/v3/process"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 const (
@@ -158,7 +156,6 @@ func (t *TemplateCache) AddSegmentData(key string, value interface{}) {
 	if t.Segments == nil {
 		t.Segments = make(map[string]interface{})
 	}
-	key = cases.Title(language.English).String(key)
 	t.Segments[key] = value
 }
 

@@ -126,7 +126,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		return oi.props.GetString(Mint, "\uF30e")
 	case "nixos":
 		return oi.props.GetString(Nixos, "\uF313")
-	case "opensuse":
+	case "opensuse", "opensuse-tumbleweed":
 		return oi.props.GetString(Opensuse, "\uF314")
 	case "redhat":
 		return oi.props.GetString(Redhat, "\uF316")

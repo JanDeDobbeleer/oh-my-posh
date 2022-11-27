@@ -1345,6 +1345,16 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "treed",
+      "name": "Ted Reed",
+      "avatar_url": "https://avatars.githubusercontent.com/u/71910?v=4",
+      "profile": "http://tedreed.info",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

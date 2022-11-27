@@ -1,0 +1,31 @@
+name: Mastodon
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notes 📝
+        id: notes
+        uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
+        with:
+          script: |
+            notes = context.payload.release.body
+
+            // replace all non-supported characters
+            notes = notes.replaceAll('###', '')
+            notes = notes.replaceAll('**', '')
+            notes = notes.replace(/ \(\[[0-9a-z]+\]\(.*\)/g, '')
+            notes = notes.trim()
+            notes += `\n${context.payload.release.html_url}`
+            return notes
+      - name: Toot 🐘
+        uses: cbrgm/mastodon-github-action@6cffb7d449201bf36a60589de7a76e18ee226043
+        with:
+          message: ${{steps.notes.outputs.result}}
+          visibility: "public"
+        env:
+          MASTODON_URL: "https://social.ohmyposh.dev/"
+          MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}

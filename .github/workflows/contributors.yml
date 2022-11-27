@@ -1,0 +1,66 @@
+name: Contributors
+on:
+  pull_request_target:
+    types:
+      - closed
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout code 👋
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+      - name: Check and comment 👩🏾‍💻
+        uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            const { repo: { owner, repo } } = context;
+            const pr = context.payload.pull_request;
+
+            if (pr.user.login === "JanDeDobbeleer") {
+              console.log('No credit for maintainer, stop processing');
+              return;
+            }
+
+            const response = await github.rest.pulls.listFiles({
+              owner, repo,
+              pull_number: pr.number
+            });
+
+            if (response.status !== 200) {
+              console.log('Could not fetch files');
+              return;
+            }
+
+            var addContribution = function(arr, name, path, contribution) {
+              if (arr.indexOf(contribution) != -1) {
+                return
+              }
+              if (name.includes(path)) {
+                arr.push(contribution)
+              }
+            };
+
+            var contributions = [];
+            for (const file of response.data) {
+              const name = file.filename;
+              addContribution(contributions, name, 'themes/', 'design');
+              addContribution(contributions, name, 'src/', 'code');
+              addContribution(contributions, name, 'website/', 'doc');
+            }
+
+            if (contributions.length === 0) {
+              console.log('No relevant additions found');
+              return;
+            }
+
+            const body = `@all-contributors please add @${pr.user.login} for ${contributions.join()}`;
+
+            console.log(`Adding comment: ${body}`);
+            await github.rest.issues.createComment({
+              owner, repo,
+              issue_number: pr.number,
+              body,
+            });

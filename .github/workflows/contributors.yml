@@ -19,8 +19,8 @@ jobs:
             const { repo: { owner, repo } } = context;
             const pr = context.payload.pull_request;
 
-            if (pr.user.login === "JanDeDobbeleer") {
-              console.log('No credit for maintainer, stop processing');
+            if (pr.user.id === 2492783 || pr.user.id === 46447321) {
+              console.log('No credit for maintainer/bot, stop processing');
               return;
             }
 

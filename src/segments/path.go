@@ -23,6 +23,7 @@ type Path struct {
 	StackCount int
 	Location   string
 	Writable   bool
+	RootDir    bool
 }
 
 const (
@@ -427,6 +428,9 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
 
 	root, relative := pt.parsePath(pt.pwd)
+	if len(relative) == 0 {
+		pt.RootDir = true
+	}
 	rootN := pt.normalize(root)
 	relativeN := pt.normalize(relative)
 	pathSeparator := pt.env.PathSeparator()

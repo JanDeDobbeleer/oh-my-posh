@@ -1,3 +1,5 @@
+# <a rel="me" href="https://social.ohmyposh.dev/@releasebot">Mastodon</a>
+
 name: Mastodon
 on:
   release:

@@ -11,6 +11,7 @@ jobs:
         id: notes
         uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
         with:
+          result-encoding: string
           script: |
             notes = context.payload.release.body
 
@@ -19,12 +20,18 @@ jobs:
             notes = notes.replaceAll('**', '')
             notes = notes.replace(/ \(\[[0-9a-z]+\]\(.*\)/g, '')
             notes = notes.trim()
-            notes += `\n${context.payload.release.html_url}`
             return notes
       - name: Toot 🐘
         uses: cbrgm/mastodon-github-action@6cffb7d449201bf36a60589de7a76e18ee226043
         with:
-          message: ${{steps.notes.outputs.result}}
+          message: |
+            📦 ${{ github.event.release.name }}
+
+            ${{steps.notes.outputs.result}}
+
+            ${{ github.event.release.html_url }}
+
+            #ohmyposh #oss #cli #opensource
           visibility: "public"
         env:
           MASTODON_URL: "https://social.ohmyposh.dev/"

@@ -1364,6 +1364,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Lemorz56",
+      "name": "Sebastian",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1346676?v=4",
+      "profile": "https://www.msbrg.net/",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

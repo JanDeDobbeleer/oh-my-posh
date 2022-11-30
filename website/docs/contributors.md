@@ -203,6 +203,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <tr>
       <td align="center"><a href="http://tedreed.info"><img src="https://avatars.githubusercontent.com/u/71910?v=4?s=100" width="100px;" alt="Ted Reed"/><br /><sub><b>Ted Reed</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=treed" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=treed" title="Documentation">📖</a></td>
       <td align="center"><a href="http://albertp.dev"><img src="https://avatars.githubusercontent.com/u/14863373?v=4?s=100" width="100px;" alt="Albert Portnoy"/><br /><sub><b>Albert Portnoy</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=asportnoy" title="Code">💻</a></td>
+      <td align="center"><a href="https://www.msbrg.net/"><img src="https://avatars.githubusercontent.com/u/1346676?v=4?s=100" width="100px;" alt="Sebastian"/><br /><sub><b>Sebastian</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Lemorz56" title="Code">💻</a> <a href="#design-Lemorz56" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Lemorz56" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

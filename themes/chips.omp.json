@@ -212,6 +212,7 @@
             "{{ if empty .Full }}p:c-project-generic-error{{ else }}p:c-project-python{{ end }}"
           ],
           "foreground": "p:c-badge-text",
+          "leading_diamond": "\uE0B6",
           "properties": {
             "display_mode": "context"
           },

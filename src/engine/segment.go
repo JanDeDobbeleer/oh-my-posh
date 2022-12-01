@@ -36,6 +36,8 @@ type Segment struct {
 	Properties          properties.Map `json:"properties,omitempty"`
 	Interactive         bool           `json:"interactive,omitempty"`
 	Alias               string         `json:"alias,omitempty"`
+	MaxWidth            int            `json:"max_width,omitempty"`
+	MinWidth            int            `json:"min_width,omitempty"`
 
 	writer          SegmentWriter
 	Enabled         bool `json:"-"`
@@ -399,6 +401,9 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 			}
 		}
 	}
+	if segment.shouldHideForWidth() {
+		return
+	}
 	if segment.writer.Enabled() {
 		segment.Enabled = true
 		name := segment.Alias
@@ -407,6 +412,26 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 		}
 		env.TemplateCache().AddSegmentData(name, segment.writer)
 	}
+}
+
+func (segment *Segment) shouldHideForWidth() bool {
+	if segment.MaxWidth == 0 && segment.MinWidth == 0 {
+		return false
+	}
+	width, err := segment.env.TerminalWidth()
+	if err != nil {
+		return false
+	}
+	if segment.MinWidth > 0 && segment.MaxWidth > 0 {
+		return width < segment.MinWidth || width > segment.MaxWidth
+	}
+	if segment.MaxWidth > 0 && width > segment.MaxWidth {
+		return true
+	}
+	if segment.MinWidth > 0 && width < segment.MinWidth {
+		return true
+	}
+	return false
 }
 
 func (segment *Segment) SetText() {

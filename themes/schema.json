@@ -318,6 +318,18 @@
           "description": "https://ohmyposh.dev/docs/configuration/segment#templates",
           "enum": ["first_match", "join"]
         },
+		"max_cols": {
+			"type": "integer",
+			"title": "if the terminal width exceeds this value, the segment will be hidden",
+			"description": "https://ohmyposh.dev/docs/configuration/segment#max_cols",
+			"default": 0
+		},
+		"min_cols": {
+			"type": "integer",
+			"title": "if the terminal width is inferior than this value, the segment will be hidden",
+			"description": "https://ohmyposh.dev/docs/configuration/segment#min_cols",
+			"default": 0
+		},
         "properties": {
           "type": "object",
           "title": "Segment Properties, used to change behavior/displaying",

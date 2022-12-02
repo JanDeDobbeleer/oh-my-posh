@@ -18,7 +18,7 @@ jobs:
           submodules: true
           persist-credentials: false
       - name: Install Go
-        uses: actions/setup-go@c4a742cab115ed795e34d4513e2cf7d472deb55f
+        uses: actions/setup-go@d0a58c1c4d2b25278816e339b944508c875f3613
         with:
           go-version: 1.18
       - uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516

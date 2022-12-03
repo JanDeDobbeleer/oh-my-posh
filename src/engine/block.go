@@ -47,6 +47,9 @@ type Block struct {
 	HorizontalOffset int `json:"horizontal_offset,omitempty"`
 	VerticalOffset   int `json:"vertical_offset,omitempty"`
 
+	MaxWidth int `json:"max_width,omitempty"`
+	MinWidth int `json:"min_width,omitempty"`
+
 	env                   platform.Environment
 	writer                color.Writer
 	ansi                  *color.Ansi
@@ -75,6 +78,9 @@ func (b *Block) InitPlain(env platform.Environment, config *Config) {
 
 func (b *Block) executeSegmentLogic() {
 	if b.env.Flags().Debug {
+		return
+	}
+	if shouldHideForWidth(b.env, b.MinWidth, b.MaxWidth) {
 		return
 	}
 	b.setEnabledSegments()

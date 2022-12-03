@@ -39,10 +39,10 @@ type Segment struct {
 	MaxWidth            int            `json:"max_width,omitempty"`
 	MinWidth            int            `json:"min_width,omitempty"`
 
+	env             platform.Environment
 	writer          SegmentWriter
 	Enabled         bool `json:"-"`
 	text            string
-	env             platform.Environment
 	backgroundCache string
 	foregroundCache string
 }
@@ -401,7 +401,7 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 			}
 		}
 	}
-	if segment.shouldHideForWidth() {
+	if shouldHideForWidth(segment.env, segment.MinWidth, segment.MaxWidth) {
 		return
 	}
 	if segment.writer.Enabled() {
@@ -412,26 +412,6 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 		}
 		env.TemplateCache().AddSegmentData(name, segment.writer)
 	}
-}
-
-func (segment *Segment) shouldHideForWidth() bool {
-	if segment.MaxWidth == 0 && segment.MinWidth == 0 {
-		return false
-	}
-	width, err := segment.env.TerminalWidth()
-	if err != nil {
-		return false
-	}
-	if segment.MinWidth > 0 && segment.MaxWidth > 0 {
-		return width < segment.MinWidth || width > segment.MaxWidth
-	}
-	if segment.MaxWidth > 0 && width > segment.MaxWidth {
-		return true
-	}
-	if segment.MinWidth > 0 && width < segment.MinWidth {
-		return true
-	}
-	return false
 }
 
 func (segment *Segment) SetText() {

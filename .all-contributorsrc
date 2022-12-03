@@ -1375,6 +1375,17 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "mirsella",
+      "name": "Lucas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45905567?v=4",
+      "profile": "https://github.com/mirsella",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

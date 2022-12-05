@@ -1395,6 +1395,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "astronaako",
+      "name": "Mohamed Naamy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18577543?v=4",
+      "profile": "https://github.com/astronaako",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

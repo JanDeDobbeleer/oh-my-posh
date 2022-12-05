@@ -24,7 +24,7 @@ jobs:
             notes = notes.trim()
             return notes
       - name: Toot 🐘
-        uses: cbrgm/mastodon-github-action@6cffb7d449201bf36a60589de7a76e18ee226043
+        uses: cbrgm/mastodon-github-action@845d2db774a6ac1c058f0fc7559023797b9d05ae
         with:
           message: |
             📦 ${{ github.event.release.name }}

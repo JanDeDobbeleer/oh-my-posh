@@ -1,0 +1,235 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
+        {
+            "alignment": "left",
+            "segments": [
+                {
+                    "foreground": "#7eb8da",
+                    "style": "plain",
+                    "template": "\u250f[<#55ffff>{{ .UserName }}@{{ .HostName }}</>]",
+                    "type": "session"
+                },
+                {
+                    "foreground": "#3C873A",
+                    "properties": {
+                        "fetch_package_manager": true,
+                        "npm_icon": " <#cc3a3a>\ue5fa</> ",
+                        "yarn_icon": " <#348cba>\uf61a</>"
+                    },
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}<#7eb8da>)</>",
+                    "type": "node"
+                },
+                {
+                    "foreground": "#FFE873",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}<#7eb8da>)</>",
+                    "type": "python"
+                },
+                {
+                    "foreground": "#ec2729",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ue738 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}<#7eb8da>)</>",
+                    "type": "java"
+                },
+                {
+                    "foreground": "#0d6da8",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ue77f {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}<#7eb8da>)</>",
+                    "type": "dotnet"
+                },
+                {
+                    "foreground": "#06aad5",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ufcd1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}<#7eb8da>)</>",
+                    "type": "go"
+                },
+                {
+                    "foreground": "#925837",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ue7a8 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}<#7eb8da>)</>",
+                    "type": "rust"
+                },
+                {
+                    "foreground": "#055b9c",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ue798 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}<#7eb8da>)</>",
+                    "type": "dart"
+                },
+                {
+                    "foreground": "#ce092f",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ue753 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}<#7eb8da>)</>",
+                    "type": "angular"
+                },
+                {
+                    "foreground": "#7eb8da",
+                    "style": "plain",
+                    "template": "<#1e293b>\u2500(</>{{ if .Error }}{{ .Error }}{{ else }}Nx {{ .Full }}{{ end }}<#1e293b>)</>",
+                    "type": "nx"
+                },
+                {
+                    "foreground": "#359a25",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ue624 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}<#7eb8da>)</>",
+                    "type": "julia"
+                },
+                {
+                    "foreground": "#9c1006",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ue791 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}<#7eb8da>)</>",
+                    "type": "ruby"
+                },
+                {
+                    "foreground": "#5398c2",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\uf104<#f5bf45>\uf0e7</>\uf105 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}<#7eb8da>)</>",
+                    "type": "azfunc"
+                },
+                {
+                    "foreground": "#faa029",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ue7ad {{.Profile}}{{if .Region}}@{{.Region}}{{end}}<#7eb8da>)</>",
+                    "type": "aws"
+                },
+                {
+                    "foreground": "#316ce4",
+                    "style": "plain",
+                    "template": "<#7eb8da>\u2500(</>\ufd31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}<#7eb8da>)</>",
+                    "type": "kubectl"
+                },
+                {
+                    "foreground": "#FF9248",
+                    "style": "plain",
+                    "template": " <f>\uf292</f>",
+                    "type": "root"
+                }
+            ],
+            "type": "prompt"
+        },
+        {
+            "alignment": "right",
+            "segments": [
+                {
+                    "foreground": "#7eb8da",
+                    "properties": {
+                        "linux": "<#7eb8da>\ue712</>",
+                        "macos": "<#7eb8da>\ue711</>",
+                        "windows": "<#7eb8da>\ue70f</>"
+                    },
+                    "style": "plain",
+                    "template": "<#7eb8da></>{{ if .WSL }}WSL at {{ end }}{{.Icon}}<#7eb8da> <d>\uf053\u2500</d></>",
+                    "type": "os"
+                },
+                {
+                    "foreground": "#7eb8da",
+                    "foreground_templates": [
+                        "{{if eq \"Charging\" .State.String}}#40c4ff{{end}}",
+                        "{{if eq \"Discharging\" .State.String}}#FFFB38{{end}}",
+                        "{{if eq \"Full\" .State.String}}#33DD2D{{end}}"
+                    ],
+                    "properties": {
+                        "charged_icon": "\uf58e ",
+                        "charging_icon": "<f>\ue234</f> ",
+                        "discharging_icon": "<d>\ue234</d> "
+                    },
+                    "style": "plain",
+                    "template": "<#7eb8da>[</>{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}%<#7eb8da>]<d>\u2500</d></>",
+                    "type": "battery"
+                },
+                {
+                    "foreground": "#55ffff",
+                    "properties": {
+                        "time_format": " 01/02/06"
+                    },
+                    "style": "plain",
+                    "template": "<#7eb8da>[</><d>\uf073</d>{{ .CurrentDate | date .Format }}<#7eb8da>]\u2513</>",
+                    "type": "time"
+                }
+            ],
+            "type": "prompt"
+        },
+        {
+            "alignment": "right",
+            "segments": [
+                {
+                    "foreground": "#55ffff",
+                    "style": "plain",
+                    "template": "<#7eb8da>[</><d>\uf64f</d> {{ .CurrentDate | date .Format }}<#7eb8da>]</><d>\u2500</d>",
+                    "type": "time"
+                },
+                {
+                    "foreground": "#55ffff",
+                    "properties": {
+                        "always_enabled": true
+                    },
+                    "style": "plain",
+                    "template": "<#7eb8da>[</><d>\ufa1e</d>{{ .FormattedMs }}<#7eb8da>]\u251B</> ",
+                    "type": "executiontime"
+                }
+            ],
+            "type": "rprompt"
+        },
+        {
+            "alignment": "left",
+            "newline": true,
+            "segments": [
+                {
+                    "foreground": "#7eb8da",
+                    "properties": {
+                        "style": "full"
+                    },
+                    "style": "plain",
+                    "template": "\u2523[<#98bfad>{{ .Path }}</>]",
+                    "type": "path"
+                }
+            ],
+            "type": "prompt"
+        },
+        {
+            "alignment": "left",
+            "newline": true,
+            "segments": [
+                {
+                    "foreground": "#7eb8da",
+                    "foreground_templates": [
+                        "{{ if gt .Code 0 }}#ef5350{{ end }}"
+                    ],
+                    "properties": {
+                        "always_enabled": true
+                    },
+                    "style": "plain",
+                    "template": "\u2516",
+                    "type": "exit"
+                },
+                {
+                    "foreground": "#e0f8ff",
+                    "properties": {
+                        "fetch_stash_count": true,
+                        "fetch_status": true,
+                        "fetch_upstream_icon": true,
+                        "always_enabled": false
+                    },
+                    "style": "plain",
+                    "template": "<#7eb8da>[{{ .UpstreamIcon }}</> {{ .HEAD }}{{ if .Staging.Changed }}<#00AA00> \u25cf {{ .Staging.String }}</>{{ end }}{{ if .Working.Changed }}<#D75F00> \u25cf {{ .Working.String }}</>{{ end }}<#7eb8da>]</>",
+                    "type": "git"
+                },
+                {
+                    "foreground": "#7eb8da",
+                    "foreground_templates": [
+                        "{{ if gt .Code 0 }}#ef5350{{ end }}"
+                    ],
+                    "properties": {
+                        "always_enabled": true
+                    },
+                    "style": "plain",
+                    "template": "\u2500\ueaf4 ",
+                    "type": "exit"
+                }
+            ],
+            "type": "prompt"
+        }
+    ],
+    "version": 2
+}

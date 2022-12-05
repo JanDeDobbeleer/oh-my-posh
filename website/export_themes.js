@@ -45,6 +45,8 @@ themeConfigOverrrides.set('material.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('microverse-power.omp.json', newThemeConfig(40, 100));
 themeConfigOverrrides.set('negligible.omp.json', newThemeConfig(10));
 themeConfigOverrrides.set('night-owl.omp.json', newThemeConfig(40, 0, 'Mr-Vipi', '#011627'));
+themeConfigOverrrides.set('nyx.omp.json', newThemeConfig(40, 40, 'poqdavid'));
+themeConfigOverrrides.set('nyx_cmd.omp.json', newThemeConfig(40, 40, 'poqdavid'));
 themeConfigOverrrides.set('paradox.omp.json', newThemeConfig(40, 100));
 themeConfigOverrrides.set('powerlevel10k_classic.omp.json', newThemeConfig(10));
 themeConfigOverrrides.set('powerlevel10k_lean.omp.json', newThemeConfig(80));

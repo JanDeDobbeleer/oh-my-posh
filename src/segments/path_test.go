@@ -1355,6 +1355,8 @@ func TestReplaceMappedLocations(t *testing.T) {
 		{Pwd: "/f/g/h/e", Expected: "^/e"},
 		{Pwd: "/a/b/c/d", Expected: "#"},
 		{Pwd: "/a/b/c/d/e", Expected: "#/e"},
+		{Pwd: "/a/b/c/d/e", Expected: "#/e"},
+		{Pwd: "/a/b/k/j/e", Expected: "e"},
 	}
 
 	for _, tc := range cases {
@@ -1363,6 +1365,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("Shell").Return(shell.FISH)
 		env.On("GOOS").Return(platform.DARWIN)
+		env.On("Home").Return("/a/b/k")
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -1371,6 +1374,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 					"/a/b/c/d": "#",
 					"/f/g/h/*": "^",
 					"/c/l/k/*": "",
+					"~/j/*":    "",
 				},
 			},
 		}

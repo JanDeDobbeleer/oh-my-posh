@@ -1404,6 +1404,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "bend-n",
+      "name": "bendn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/70787919?v=4",
+      "profile": "http://bend-n.github.io",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

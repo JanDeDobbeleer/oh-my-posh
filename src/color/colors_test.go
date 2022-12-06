@@ -13,6 +13,8 @@ func TestGetAnsiFromColorString(t *testing.T) {
 		Color      string
 		Background bool
 	}{
+		{Case: "256 color", Expected: AnsiColor("38;2;135;95;255"), Color: "99", Background: false},
+		{Case: "256 color", Expected: AnsiColor("38;2;135;255;215"), Color: "122", Background: false},
 		{Case: "Invalid background", Expected: emptyAnsiColor, Color: "invalid", Background: true},
 		{Case: "Invalid background", Expected: emptyAnsiColor, Color: "invalid", Background: false},
 		{Case: "Hex foreground", Expected: AnsiColor("38;2;170;187;204"), Color: "#AABBCC", Background: false},

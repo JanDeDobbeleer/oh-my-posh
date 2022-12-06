@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"oh-my-posh/platform"
 	"strconv"
+	"strings"
 
 	"github.com/gookit/color"
 )
@@ -77,6 +78,14 @@ func (d *DefaultColors) AnsiColorFromString(colorString string, isBackground boo
 	colorFromName, err := getAnsiColorFromName(colorString, isBackground)
 	if err == nil {
 		return colorFromName
+	}
+	if !strings.HasPrefix(colorString, "#") {
+		val, err := strconv.ParseUint(colorString, 10, 64)
+		if err != nil {
+			return emptyAnsiColor
+		}
+		c256 := color.C256(uint8(val), isBackground)
+		return AnsiColor(c256.RGBColor().String())
 	}
 	style := color.HEX(colorString, isBackground)
 	if !style.IsEmpty() {

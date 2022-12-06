@@ -81,7 +81,7 @@ func (d *DefaultColors) AnsiColorFromString(colorString string, isBackground boo
 	}
 	if !strings.HasPrefix(colorString, "#") {
 		val, err := strconv.ParseUint(colorString, 10, 64)
-		if err != nil {
+		if err != nil || val > 255 {
 			return emptyAnsiColor
 		}
 		c256 := color.C256(uint8(val), isBackground)

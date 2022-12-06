@@ -207,6 +207,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center"><a href="https://github.com/mirsella"><img src="https://avatars.githubusercontent.com/u/45905567?v=4?s=100" width="100px;" alt="Lucas"/><br /><sub><b>Lucas</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mirsella" title="Code">💻</a> <a href="#design-mirsella" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mirsella" title="Documentation">📖</a></td>
       <td align="center"><a href="https://github.com/ethansocal"><img src="https://avatars.githubusercontent.com/u/79533577?v=4?s=100" width="100px;" alt="Ethan"/><br /><sub><b>Ethan</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ethansocal" title="Documentation">📖</a></td>
       <td align="center"><a href="https://github.com/astronaako"><img src="https://avatars.githubusercontent.com/u/18577543?v=4?s=100" width="100px;" alt="Mohamed Naamy"/><br /><sub><b>Mohamed Naamy</b></sub></a><br /><a href="#design-astronaako" title="Design">🎨</a></td>
+      <td align="center"><a href="http://bend-n.github.io"><img src="https://avatars.githubusercontent.com/u/70787919?v=4?s=100" width="100px;" alt="bendn"/><br /><sub><b>bendn</b></sub></a><br /><a href="#design-bend-n" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>

@@ -102,62 +102,75 @@ blocks:
         properties:
           script: |
             api_key="$OWM_API_KEY" # change this
-            now=$(date +'%I:%M')
-            [[ $(date +'%p') == 'am' ]] && now+='滛 ' || now+=' '
-            echo -n "$now"
-            [[ -z $api_key ]] && exit 0
-            update=$(jq '.minute' /tmp/weather.w | tr -d '"')
-            if [[ -f '/tmp/weather.w' && $NO_WEATHER_CACHE -ne 1 && $(bc -l <<<"$(date +'%M')<=($update+10)") -eq 1 ]]; then
-                echo -n "$(jq .weather /tmp/weather.w | tr -d '"')" && exit 0
-            else
-                location=$(curl -m .25 -s 'https://freegeoip.live/json/')
-                [[ $? -ne 0 ]] && echo -n '(睊)' && exit 0
-                url="https://api.openweathermap.org/data/2.5/weather?lat=$(echo "$location" | jq .latitude)&lon=$(echo "$location" | jq .longitude)&units=metric&appid=$api_key"
-                res=$(curl -m .25 -s "$url")
-                [[ $? -ne 0 ]] && echo -n '(睊)' && exit 0
-                temp=$(echo "$res" | jq .main.temp)
-                temp_min=$(echo "$res" | jq .main.temp_min)
-                temp_max=$(echo "$res" | jq .main.temp_max)
-                [[ $(bc -l <<<"$temp_min!=$temp") -eq 1 ]] && temp_min_s="$temp_min-"
-                [[ $(bc -l <<<"$temp_max==$temp") -eq 1 ]] && temp_s="$temp_min_s$temp糖" || temp_s+="(${temp_min}${temp}-${temp_max})糖"
-                feels_like=$(echo "$res" | jq .main.feels_like)
-                [[ $(bc -l <<<"$feels_like!=$temp_min&&$feels_like!=$temp&&$feels_like!=$temp_max") -eq 1 ]] && feels_string="feels $feels_like糖"
-                case $(echo "$res" | jq .weather[0].icon | tr -d '"') in
-                01n | 01d)
-                    icon='\ufa98'
-                    ;;
-                02n | 02d)
-                    icon='\ufa94'
-                    ;;
-                03n | 03d)
-                    icon='\ue33d'
-                    ;;
-                04n | 04d)
-                    icon='\ue312'
-                    ;;
-                09n | 09d)
-                    icon='\ufa95'
-                    ;;
-                10n | 10d)
-                    icon='\ue308'
-                    ;;
-                11n | 11d)
-                    icon='\ue31d'
-                    ;;
-                13n | 13d)
-                    icon='\ue31a'
-                    ;;
-                50n | 50d)
-                    icon='\ue313'
-                    ;;
-                *)
-                    icon=''
-                    ;;
-                esac
-                weather="${icon} ${temp_s} ${feels_string}"
-                echo -ne "$weather"
-                echo -ne "{\"minute\": \"$(date +'%M')\", \"weather\": \"$weather\"}" >/tmp/weather.w
+            location='$LOCATION' # change this (or dont, and set the variable in your env)
+
+            set -e
+
+            now="$(date +'%I:%M%P')"
+
+            if [[ -f /tmp/weather.w && $NO_WEATHER_CACHE -ne 1 ]]; then
+                update=$(jq '.minute' /tmp/weather.w | tr -d '"')
+                # refresh every ten minutes
+                if [[ $(bc -l <<<"$(date +'%M')<=($update+10)") -eq 1 ]]; then
+                    echo "$now" "$(jq .weather /tmp/weather.w | tr -d '"')" && exit 0
+                fi
             fi
+
+            gurl="curl -Gsm.7 https://api.openweathermap.org"
+            enc="--data-urlencode"
+
+            # get location
+            [[ ! -f /tmp/location.w ]] &&
+                $gurl/geo/1.0/direct $enc "q=$location" $enc "limit=0" $enc "appid=$api_key" | jq -c '{"lat": .[0].lat, "lon": .[0].lon}' >/tmp/location.w
+            location="$(cat /tmp/location.w)"
+
+            # get weather
+            res=$($gurl/data/2.5/weather $enc "lat=$(jq .lat <<<"$location")" $enc "lon=$(jq .lon <<<"$location")" $enc "units=metric" $enc "appid=$api_key")
+            temp=$(jq .main.temp <<<"$res")
+            temp_min=$(jq .main.temp_min <<<"$res")
+            temp_max=$(jq .main.temp_max <<<"$res")
+            [[ $(bc -l <<<"$temp_min!=$temp") -eq 1 ]] && temp_min_s="$temp_min-"
+            [[ $(bc -l <<<"$temp_max==$temp") -eq 1 ]] && temp_s="$temp_min_s$temp°C" || temp_s+="(${temp_min}${temp}-${temp_max})°C"
+            feels_like=$(jq .main.feels_like <<<"$res")
+            [[ $(bc -l <<<"$feels_like!=$temp_min&&$feels_like!=$temp&&$feels_like!=$temp_max") -eq 1 ]] && feels_string="feels $feels_like°C"
+
+            # pick weather icon
+            case $(jq .weather[0].icon <<<"$res" | tr -d '"') in
+            01n | 01d)
+                icon='\ufa98'
+                ;;
+            02n | 02d)
+                icon='\ufa94'
+                ;;
+            03n | 03d)
+                icon='\ue33d'
+                ;;
+            04n | 04d)
+                icon='\ue312'
+                ;;
+            09n | 09d)
+                icon='\ufa95'
+                ;;
+            10n | 10d)
+                icon='\ue308'
+                ;;
+            11n | 11d)
+                icon='\ue31d'
+                ;;
+            13n | 13d)
+                icon='\ue31a'
+                ;;
+            50n | 50d)
+                icon='\ue313'
+                ;;
+            *)
+                icon=''
+                ;;
+            esac
+            weather="$icon  - $temp_s $feels_string"
+            echo -e "$now $weather"
+            echo -e "{\"minute\": \"$(date +'%M')\", \"weather\": \"$weather\"}" >/tmp/weather.w
+
         style: diamond
         template: "{{ .Output }}"
         trailing_diamond: 

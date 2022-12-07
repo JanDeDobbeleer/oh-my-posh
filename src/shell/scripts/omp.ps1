@@ -331,8 +331,14 @@ Example:
     }
 
     function prompt {
-        # store the orignal last command execution status and last exit code
-        $script:OriginalLastExecutionStatus = $?
+        # store the orignal last command execution status
+        if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS -is [bool]) {
+            # make it compatible with NVS auto-switching, if enabled
+            $script:OriginalLastExecutionStatus = $global:NVS_ORIGINAL_LASTEXECUTIONSTATUS
+        } else {
+            $script:OriginalLastExecutionStatus = $?
+        }
+        # store the orignal last exit code
         $script:OriginalLastExitCode = $global:LASTEXITCODE
 
         Set-PoshPromptType

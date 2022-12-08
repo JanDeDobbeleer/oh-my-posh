@@ -103,7 +103,13 @@ func (e *Engine) printPWD() {
 }
 
 func (e *Engine) newline() {
-	e.write("\n")
+	// WARP terminal will remove \n from the prompt, so we hack a newline in
+	if e.Env.Getenv("TERM_PROGRAM") == "WarpTerminal" {
+		// fmt.Println("TERM_PROGRAM")
+		e.write(e.Ansi.LineBreak())
+	} else {
+		e.write("\n")
+	}
 	e.currentLineLength = 0
 }
 

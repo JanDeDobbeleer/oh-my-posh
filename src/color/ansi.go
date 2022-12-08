@@ -354,3 +354,9 @@ func (a *Ansi) SaveCursorPosition() string {
 func (a *Ansi) RestoreCursorPosition() string {
 	return a.restoreCursorPosition
 }
+
+func (a *Ansi) LineBreak() string {
+	cr := fmt.Sprintf(a.left, 1000)
+	lf := fmt.Sprintf(a.linechange, 1, "B")
+	return cr + lf
+}

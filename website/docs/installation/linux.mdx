@@ -41,6 +41,12 @@ in case it doesn't work).
 
 **Download Oh My Posh**
 
+:::caution
+The below commands assume the processor architecture is `amd64` while we have support for `arm` and `arm64` as well.
+Make sure you validate your architecture and adjust `posh-linux-<ARCH>` accordingly. If you don't know your
+processor architecture, you can display it using `uname -m`.
+:::
+
 ```bash
 sudo wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh
 sudo chmod +x /usr/local/bin/oh-my-posh

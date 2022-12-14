@@ -10,10 +10,10 @@ runs:
     - name: Install Go
       uses: actions/setup-go@268d8c0ca0432bb2cf416faae41297df9d262d7f
       with:
-        go-version: 1.19
+        go-version: 1.19.4
     - name: Override Go ♻️
       shell: pwsh
       run: |
         New-Item -Path ./bin -ItemType Directory
-        Invoke-WebRequest 'https://github.com/jandedobbeleer/go/releases/download/1.19/go' -OutFile "$env:GOROOT/bin/go"
+        Invoke-WebRequest 'https://github.com/jandedobbeleer/go/releases/download/1.19.4/go' -OutFile "$env:GOROOT/bin/go"
         chmod a+x "$env:GOROOT/bin/go" 2>&1

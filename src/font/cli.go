@@ -248,7 +248,7 @@ func Run(font string, needsAdmin bool) {
 		needsAdmin: needsAdmin,
 	}
 	program = tea.NewProgram(main)
-	if err := program.Start(); err != nil {
+	if _, err := program.Run(); err != nil {
 		print("Error running program: %v", err)
 		os.Exit(1)
 	}

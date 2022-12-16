@@ -531,12 +531,6 @@ func (env *Shell) CommandPath(command string) string {
 		env.Debug("CommandPath", path)
 		return path
 	}
-	path, err = env.LookWinAppPath(command)
-	if err == nil {
-		env.cmdCache.set(command, path)
-		env.Debug("CommandPath", path)
-		return path
-	}
 	env.Error("CommandPath", err)
 	return ""
 }

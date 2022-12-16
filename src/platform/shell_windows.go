@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
@@ -116,26 +115,6 @@ func (env *Shell) CachePath() string {
 		return cachePath
 	}
 	return env.Home()
-}
-
-func (env *Shell) LookWinAppPath(file string) (string, error) {
-	winAppPath := filepath.Join(env.Getenv("LOCALAPPDATA"), `\Microsoft\WindowsApps\`)
-	if !strings.HasSuffix(file, ".exe") {
-		file += ".exe"
-	}
-	isWinStoreApp := func() bool {
-		pattern := winAppPath + env.PathSeparator() + file
-		matches, err := filepath.Glob(pattern)
-		if err != nil {
-			return false
-		}
-		return len(matches) != 0
-	}
-	if isWinStoreApp() {
-		commandFile := filepath.Join(winAppPath, file)
-		return readWinAppLink(commandFile)
-	}
-	return "", errors.New("no Windows Store App")
 }
 
 // Takes a registry path to a key like

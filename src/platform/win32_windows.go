@@ -155,48 +155,6 @@ func (rb *AppExecLinkReparseBuffer) Path() (string, error) {
 	return link, nil
 }
 
-// openSymlink calls CreateFile Windows API with FILE_FLAG_OPEN_REPARSE_POINT
-// parameter, so that Windows does not follow symlink, if path is a symlink.
-// openSymlink returns opened file handle.
-func openSymlink(path string) (syscall.Handle, error) {
-	p, err := syscall.UTF16PtrFromString(path)
-	if err != nil {
-		return 0, err
-	}
-	attrs := uint32(syscall.FILE_FLAG_BACKUP_SEMANTICS)
-	// Use FILE_FLAG_OPEN_REPARSE_POINT, otherwise CreateFile will follow symlink.
-	// See https://docs.microsoft.com/en-us/windows/desktop/FileIO/symbolic-link-effects-on-file-systems-functions#createfile-and-createfiletransacted
-	attrs |= syscall.FILE_FLAG_OPEN_REPARSE_POINT
-	h, err := syscall.CreateFile(p, 0, 0, nil, syscall.OPEN_EXISTING, attrs, 0)
-	if err != nil {
-		return 0, err
-	}
-	return h, nil
-}
-
-func readWinAppLink(path string) (string, error) {
-	h, err := openSymlink(path)
-	if err != nil {
-		return "", err
-	}
-	defer syscall.CloseHandle(h) //nolint: errcheck
-
-	rdbbuf := make([]byte, syscall.MAXIMUM_REPARSE_DATA_BUFFER_SIZE)
-	var bytesReturned uint32
-	err = syscall.DeviceIoControl(h, syscall.FSCTL_GET_REPARSE_POINT, nil, 0, &rdbbuf[0], uint32(len(rdbbuf)), &bytesReturned, nil)
-	if err != nil {
-		return "", err
-	}
-
-	rdb := (*REPARSE_DATA_BUFFER)(unsafe.Pointer(&rdbbuf[0]))
-	rb := (*GenericDataBuffer)(unsafe.Pointer(&rdb.DUMMYUNIONNAME))
-	appExecLink := (*AppExecLinkReparseBuffer)(unsafe.Pointer(&rb.DataBuffer))
-	if appExecLink.Version != 3 {
-		return "", errors.New("unknown AppExecLink version")
-	}
-	return appExecLink.Path()
-}
-
 var (
 	advapi     = syscall.NewLazyDLL("advapi32.dll")
 	procGetAce = advapi.NewProc("GetAce")

@@ -61,7 +61,14 @@ Get-ChildItem '*.yaml' | ForEach-Object -Process {
 if (-not $Token) {
     return
 }
-# Get the latest wingetcreate exe
-Invoke-WebRequest 'https://aka.ms/wingetcreate/latest/self-contained' -OutFile wingetcreate.exe
+# Install the latest wingetcreate exe
+# Download and install C++ Runtime framework package.
+Invoke-WebRequest https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx -OutFile $(vcLibsBundleFile)
+Add-AppxPackage $(vcLibsBundleFile)
+
+# Download Winget-Create msixbundle, install, and execute update.
+Invoke-WebRequest https://aka.ms/wingetcreate/latest/msixbundle -OutFile $(appxBundleFile)
+Add-AppxPackage $(appxBundleFile)
+
 # Create the PR
-./wingetcreate.exe submit --token $Token $Version
+wingetcreate submit --token $Token $Version

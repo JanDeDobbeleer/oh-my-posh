@@ -63,12 +63,14 @@ if (-not $Token) {
 }
 # Install the latest wingetcreate exe
 # Download and install C++ Runtime framework package.
-Invoke-WebRequest https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx -OutFile $(vcLibsBundleFile)
-Add-AppxPackage $(vcLibsBundleFile)
+$vcLibsBundleFile = "$env:TEMP\Microsoft.VCLibs.Desktop.appx"
+Invoke-WebRequest https://aka.ms/Microsoft.VCLibs.x64.14.00.Desktop.appx -OutFile $vcLibsBundleFile
+Add-AppxPackage $vcLibsBundleFile
 
 # Download Winget-Create msixbundle, install, and execute update.
-Invoke-WebRequest https://aka.ms/wingetcreate/latest/msixbundle -OutFile $(appxBundleFile)
-Add-AppxPackage $(appxBundleFile)
+$appxBundleFile = "$env:TEMP\wingetcreate.msixbundle"
+Invoke-WebRequest https://aka.ms/wingetcreate/latest/msixbundle -OutFile $appxBundleFile
+Add-AppxPackage $appxBundleFile
 
 # Create the PR
 wingetcreate submit --token $Token $Version

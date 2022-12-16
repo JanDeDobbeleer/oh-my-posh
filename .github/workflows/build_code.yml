@@ -27,3 +27,10 @@ jobs:
         version: latest
         args: build --rm-dist --snapshot --skip-post-hooks --skip-before
         workdir: src
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb
+      with:
+        name: builds
+        retention-days: 1
+        path: |
+          src/dist

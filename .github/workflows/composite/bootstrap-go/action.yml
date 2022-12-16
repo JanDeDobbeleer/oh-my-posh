@@ -7,14 +7,30 @@ branding:
 runs:
   using: "composite"
   steps:
-    - name: Install Go
-      uses: actions/setup-go@268d8c0ca0432bb2cf416faae41297df9d262d7f
-      with:
-        go-version: 1.19.4
-    - name: Override Go ♻️
+    - name: Install Go 🚀
+      env:
+        VERSION: "1.19.4"
       shell: pwsh
       run: |
-        $goBin = $(Get-Command go).Source
-        Invoke-WebRequest 'https://github.com/jandedobbeleer/go/releases/download/1.19.4/go' -OutFile "$goBin"
-        chmod a+x $goBin 2>&1
-        go version
+        # Delete conflicting go versions first
+        Remove-Item -Path "$env:RUNNER_TOOL_CACHE/go" -Recurse -Force -ErrorAction Ignore
+
+        # Download source
+        $tempZip = "$env:RUNNER_TEMP/source.zip"
+        Invoke-WebRequest "https://github.com/jandedobbeleer/go/releases/download/$env:VERSION/go.zip" -OutFile $tempZip
+
+        # Extract to correct location
+        Expand-Archive $tempZip -DestinationPath $env:RUNNER_TEMP -Force
+        $sourceFolder = Join-Path $env:RUNNER_TOOL_CACHE "go"
+        New-Item -ItemType Directory -Path $sourceFolder
+        Move-Item "$env:RUNNER_TEMP/go/*" $sourceFolder -Force
+
+        # Set correct permissions on go executables
+        chmod a+x "$sourceFolder/bin/go" 2>&1
+        Get-ChildItem "$sourceFolder/pkg/tool/linux_amd64" | ForEach-Object {
+          chmod a+x $_ 2>&1
+        }
+
+        # Add to path
+        "$sourceFolder/bin" >> $env:GITHUB_PATH
+        "GOROOT=$sourceFolder" >> $env:GITHUB_ENV

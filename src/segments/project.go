@@ -54,11 +54,6 @@ type NuSpec struct {
 	} `xml:"metadata"`
 }
 
-type JuliaProjectTOML struct {
-	Name    string
-	Version string
-}
-
 type Project struct {
 	props properties.Properties
 	env   platform.Environment
@@ -125,7 +120,7 @@ func (n *Project) Init(props properties.Properties, env platform.Environment) {
 		{
 			Name:    "julia",
 			Files:   []string{"JuliaProject.toml", "Project.toml"},
-			Fetcher: n.getJuliaProject,
+			Fetcher: n.getProjectData,
 		},
 	}
 }
@@ -237,18 +232,15 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 	}
 }
 
-func (n *Project) getJuliaProject(item ProjectItem) *ProjectData {
+func (n *Project) getProjectData(item ProjectItem) *ProjectData {
 	content := n.env.FileContent(item.Files[0])
 
-	var data JuliaProjectTOML
+	var data ProjectData
 	_, err := toml.Decode(content, &data)
 	if err != nil {
 		n.Error = err.Error()
 		return nil
 	}
 
-	return &ProjectData{
-		Version: data.Version,
-		Name:    data.Name,
-	}
+	return &data
 }

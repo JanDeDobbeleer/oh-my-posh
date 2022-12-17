@@ -129,7 +129,6 @@ func (b *Block) setSegmentsText() {
 }
 
 func (b *Block) RenderSegments() (string, int) {
-	defer b.writer.Reset()
 	for _, segment := range b.Segments {
 		if !segment.Enabled && segment.Style != Accordion {
 			continue
@@ -222,7 +221,6 @@ func (b *Block) Debug() (int, []*SegmentTiming) {
 			b.setActiveSegment(segment)
 			b.renderActiveSegment()
 			segmentTiming.text, _ = b.writer.String()
-			b.writer.Reset()
 		}
 		segmentTiming.duration = time.Since(start)
 		segmentTimings = append(segmentTimings, &segmentTiming)

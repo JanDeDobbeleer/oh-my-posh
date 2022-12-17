@@ -2,13 +2,14 @@ package engine
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"oh-my-posh/color"
 	"oh-my-posh/console"
 	"oh-my-posh/platform"
 	"oh-my-posh/shell"
 	"oh-my-posh/template"
-	"strings"
-	"time"
 )
 
 type Engine struct {
@@ -37,7 +38,9 @@ func (e *Engine) writeANSI(text string) {
 }
 
 func (e *Engine) string() string {
-	return e.console.String()
+	text := e.console.String()
+	e.console.Reset()
+	return text
 }
 
 func (e *Engine) canWriteRPrompt(rprompt bool) bool {
@@ -130,7 +133,6 @@ func (e *Engine) shouldFill(block *Block, length int) (string, bool) {
 	}
 	e.Writer.Write("", "", block.Filler)
 	filler, lenFiller := e.Writer.String()
-	e.Writer.Reset()
 	if lenFiller == 0 {
 		return "", false
 	}
@@ -314,6 +316,7 @@ func (e *Engine) print() string {
 		prompt = e.Ansi.FormatText(prompt)
 		e.write(prompt)
 	}
+
 	return e.string()
 }
 
@@ -342,7 +345,7 @@ func (e *Engine) PrintTooltip(tip string) string {
 		Segments:  []*Segment{tooltip},
 	}
 	switch e.Env.Shell() {
-	case shell.ZSH, shell.CMD, shell.FISH:
+	case shell.ZSH, shell.CMD, shell.FISH, shell.PLAIN:
 		block.Init(e.Env, e.Writer, e.Ansi)
 		if !block.Enabled() {
 			return ""
@@ -431,7 +434,8 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 			return prompt
 		}
 		return str
-	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH, shell.FISH, shell.NU:
+	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH, shell.FISH, shell.NU, shell.PLAIN:
+		// Return the string and empty our buffer
 		str, _ := e.Writer.String()
 		return str
 	}

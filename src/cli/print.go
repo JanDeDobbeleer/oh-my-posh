@@ -2,11 +2,8 @@ package cli
 
 import (
 	"fmt"
-	"oh-my-posh/color"
-	"oh-my-posh/console"
 	"oh-my-posh/engine"
 	"oh-my-posh/platform"
-	"oh-my-posh/shell"
 
 	"github.com/spf13/cobra"
 )
@@ -46,53 +43,23 @@ var printCmd = &cobra.Command{
 			_ = cmd.Help()
 			return
 		}
-		env := &platform.Shell{
-			Version: cliVersion,
-			CmdFlags: &platform.Flags{
-				Config:        config,
-				PWD:           pwd,
-				PSWD:          pswd,
-				ErrorCode:     exitCode,
-				ExecutionTime: timing,
-				StackCount:    stackCount,
-				TerminalWidth: terminalWidth,
-				Eval:          eval,
-				Shell:         shellName,
-				ShellVersion:  shellVersion,
-			},
+
+		flags := &platform.Flags{
+			Config:        config,
+			PWD:           pwd,
+			PSWD:          pswd,
+			ErrorCode:     exitCode,
+			ExecutionTime: timing,
+			StackCount:    stackCount,
+			TerminalWidth: terminalWidth,
+			Eval:          eval,
+			Shell:         shellName,
+			ShellVersion:  shellVersion,
+			Plain:         plain,
 		}
-		env.Init()
-		defer env.Close()
-		cfg := engine.LoadConfig(env)
-		ansi := &color.Ansi{}
-		ansi.Init(env.Shell())
-		var writer color.Writer
-		if plain {
-			ansi.InitPlain()
-			writer = &color.PlainWriter{
-				Ansi: ansi,
-			}
-		} else {
-			writerColors := cfg.MakeColors()
-			writer = &color.AnsiWriter{
-				Ansi:               ansi,
-				TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
-				AnsiColors:         writerColors,
-			}
-		}
-		consoleTitle := &console.Title{
-			Env:      env,
-			Ansi:     ansi,
-			Template: cfg.ConsoleTitleTemplate,
-		}
-		eng := &engine.Engine{
-			Config:       cfg,
-			Env:          env,
-			Writer:       writer,
-			ConsoleTitle: consoleTitle,
-			Ansi:         ansi,
-			Plain:        plain,
-		}
+
+		eng := engine.New(flags)
+
 		switch args[0] {
 		case "debug":
 			fmt.Print(eng.PrintExtraPrompt(engine.Debug))

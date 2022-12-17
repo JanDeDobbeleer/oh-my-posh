@@ -186,6 +186,37 @@ func TestPackage(t *testing.T) {
 			File:            "Cargo.toml",
 			PackageContents: "[",
 		},
+		{
+			Case:            "Julia project",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 0.1.0 ProjectEuler",
+			Name:            "julia",
+			File:            "JuliaProject.toml",
+			PackageContents: "name = \"ProjectEuler\"\nversion = \"0.1.0\"",
+		},
+		{
+			Case:            "Julia project no name",
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 0.1.0",
+			Name:            "julia",
+			File:            "JuliaProject.toml",
+			PackageContents: "version = \"0.1.0\"",
+		},
+		{
+			Case:            "Julia project no version",
+			ExpectedEnabled: true,
+			ExpectedString:  "ProjectEuler",
+			Name:            "julia",
+			File:            "JuliaProject.toml",
+			PackageContents: "name = \"ProjectEuler\"",
+		},
+		{
+			Case:            "Julia project invalid toml",
+			ExpectedString:  "toml: line 1: unexpected end of table name (table names cannot be empty)",
+			Name:            "julia",
+			File:            "JuliaProject.toml",
+			PackageContents: "[",
+		},
 	}
 
 	for _, tc := range cases {

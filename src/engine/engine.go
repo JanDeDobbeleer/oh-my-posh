@@ -2,13 +2,14 @@ package engine
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"oh-my-posh/color"
 	"oh-my-posh/console"
 	"oh-my-posh/platform"
 	"oh-my-posh/shell"
 	"oh-my-posh/template"
-	"strings"
-	"time"
 )
 
 type Engine struct {
@@ -255,7 +256,12 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	e.write(fmt.Sprintf("\n\x1b[1mConfig path:\x1b[0m %s\n", e.Env.Flags().Config))
 	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
 	e.write(e.Env.Logs())
-	return e.string()
+
+	// Return the string and empty our buffer
+	prompt := e.string()
+	e.console.Reset()
+
+	return prompt
 }
 
 func (e *Engine) print() string {
@@ -293,7 +299,12 @@ func (e *Engine) print() string {
 		prompt = e.Ansi.FormatText(prompt)
 		e.write(prompt)
 	}
-	return e.string()
+
+	// Return the string and empty our buffer
+	prompt := e.string()
+	e.console.Reset()
+
+	return prompt
 }
 
 func (e *Engine) PrintTooltip(tip string) string {
@@ -321,7 +332,7 @@ func (e *Engine) PrintTooltip(tip string) string {
 		Segments:  []*Segment{tooltip},
 	}
 	switch e.Env.Shell() {
-	case shell.ZSH, shell.CMD, shell.FISH:
+	case shell.ZSH, shell.CMD, shell.FISH, shell.PLAIN:
 		block.Init(e.Env, e.Writer, e.Ansi)
 		if !block.Enabled() {
 			return ""
@@ -410,8 +421,10 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 			return prompt
 		}
 		return str
-	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH, shell.FISH, shell.NU:
+	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH, shell.FISH, shell.NU, shell.PLAIN:
+		// Return the string and empty our buffer
 		str, _ := e.Writer.String()
+		e.Writer.Reset()
 		return str
 	}
 	return ""

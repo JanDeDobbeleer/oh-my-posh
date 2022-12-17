@@ -5,15 +5,16 @@ import (
 	json2 "encoding/json"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
+	"strings"
+	"time"
+
 	"oh-my-posh/color"
 	"oh-my-posh/platform"
 	"oh-my-posh/properties"
 	"oh-my-posh/segments"
 	"oh-my-posh/template"
-	"os"
-	"path/filepath"
-	"strings"
-	"time"
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/json"
@@ -218,7 +219,7 @@ func (cfg *Config) Write(format string) {
 	if len(destination) == 0 {
 		destination = cfg.origin
 	}
-	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o755)
 	cfg.exitWithError(err)
 	_, err = f.WriteString(content)
 	cfg.exitWithError(err)

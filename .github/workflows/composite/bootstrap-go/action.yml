@@ -34,3 +34,4 @@ runs:
         # Add to path
         "$sourceFolder/bin" >> $env:GITHUB_PATH
         "GOROOT=$sourceFolder" >> $env:GITHUB_ENV
+        "GOPATH=$sourceFolder" >> $env:GITHUB_ENV

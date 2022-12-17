@@ -39,9 +39,6 @@ func (a *PlainWriter) Write(background, foreground, text string) {
 }
 
 func (a *PlainWriter) String() (string, int) {
+	defer a.builder.Reset()
 	return a.builder.String(), a.length
-}
-
-func (a *PlainWriter) Reset() {
-	a.builder.Reset()
 }

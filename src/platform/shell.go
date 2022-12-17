@@ -62,6 +62,7 @@ type Flags struct {
 	Strict        bool
 	Debug         bool
 	Manual        bool
+	Plain         bool
 }
 
 type CommandError struct {

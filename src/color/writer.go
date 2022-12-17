@@ -13,7 +13,6 @@ const (
 type Writer interface {
 	Write(background, foreground, text string)
 	String() (string, int)
-	Reset()
 	SetColors(background, foreground string)
 	SetParentColors(background, foreground string)
 	ClearParentColors()
@@ -238,10 +237,9 @@ func (a *AnsiWriter) expandKeyword(keyword string) string {
 }
 
 func (a *AnsiWriter) String() (string, int) {
+	defer func() {
+		a.length = 0
+		a.builder.Reset()
+	}()
 	return a.builder.String(), a.length
-}
-
-func (a *AnsiWriter) Reset() {
-	a.length = 0
-	a.builder.Reset()
 }

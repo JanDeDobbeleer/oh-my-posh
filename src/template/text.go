@@ -108,10 +108,23 @@ func (t *Text) cleanTemplate() {
 		return false
 	}
 
-	var result string
-	var property string
-	var inProperty bool
-	for _, char := range t.Template {
+	var result, property string
+	var inProperty, inTemplate bool
+	for i, char := range t.Template {
+		// define start or end of template
+		if !inTemplate && char == '{' {
+			if i-1 >= 0 && rune(t.Template[i-1]) == '{' {
+				inTemplate = true
+			}
+		} else if inTemplate && char == '}' {
+			if i-1 >= 0 && rune(t.Template[i-1]) == '}' {
+				inTemplate = false
+			}
+		}
+		if !inTemplate {
+			result += string(char)
+			continue
+		}
 		switch char {
 		case '.':
 			var lastChar rune

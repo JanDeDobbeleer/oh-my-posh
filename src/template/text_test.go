@@ -21,6 +21,12 @@ func TestRenderTemplate(t *testing.T) {
 		Context     interface{}
 	}{
 		{
+			Case:     "dot literal",
+			Expected: "Hello .NET \uE77F",
+			Template: "{{ .Text }} .NET \uE77F",
+			Context:  struct{ Text string }{Text: "Hello"},
+		},
+		{
 			Case:     "color override with dots",
 			Expected: "😺💬<#FF8000> Meow! What should I do next? ...</>",
 			Template: "😺💬<#FF8000> Meow! What should I do next? ...</>",

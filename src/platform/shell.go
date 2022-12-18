@@ -689,7 +689,7 @@ func (env *Shell) Close() {
 
 func (env *Shell) LoadTemplateCache() {
 	defer env.Trace(time.Now(), "LoadTemplateCache")
-	val, OK := env.fileCache.Get(TEMPLATECACHE)
+	val, OK := env.fileCache.Get("template_cache_91508")
 	if !OK {
 		return
 	}

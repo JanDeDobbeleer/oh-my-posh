@@ -14,6 +14,8 @@ func funcMap() template.FuncMap {
 		"glob":         glob,
 		"matchP":       matchP,
 		"replaceP":     replaceP,
+		"gt":           gt,
+		"lt":           lt,
 	}
 	for key, fun := range sprig.TxtFuncMap() {
 		if _, ok := funcMap[key]; !ok {

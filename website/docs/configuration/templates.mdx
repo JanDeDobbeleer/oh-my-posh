@@ -185,15 +185,6 @@ If you want to know if a specific segment is active, you can use the `.Segments.
 "template": "{{ if .Segments.Contains \"Git\" }}\uf7d3{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
 ```
 
-:::tip
-Due to the way the segments data is cached, all numbers are converted to `float64`. If you want to use a number in a
-template, you need to compare it to a `float64`:
-
-```json
-"template": "{{ if gt .Segments.Git.StashCount (float64 0) }}Stash!{{ end }}"
-```
-:::
-
 ## Text decoration
 
 You can make use of the following syntax to decorate text:

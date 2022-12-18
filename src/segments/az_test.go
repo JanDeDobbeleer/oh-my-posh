@@ -4,7 +4,6 @@ import (
 	"oh-my-posh/mock"
 	"oh-my-posh/platform"
 	"oh-my-posh/properties"
-	"oh-my-posh/template"
 	"os"
 	"path/filepath"
 	"testing"
@@ -50,7 +49,7 @@ func TestAzSegment(t *testing.T) {
 		{
 			Case:            "Faulty template",
 			ExpectedEnabled: true,
-			ExpectedString:  template.IncorrectTemplate,
+			ExpectedString:  "<.Data.Burp>: can't evaluate field Burp in type template.Data",
 			Template:        "{{ .Burp }}",
 			HasPowerShell:   true,
 		},

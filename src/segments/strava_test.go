@@ -4,7 +4,6 @@ import (
 	"errors"
 	"oh-my-posh/mock"
 	"oh-my-posh/properties"
-	"oh-my-posh/template"
 	"testing"
 	"time"
 
@@ -85,7 +84,7 @@ func TestStravaSegment(t *testing.T) {
 				},
 			},
 			Template:        "{{.Ago}}{{.Burp}}",
-			ExpectedString:  template.IncorrectTemplate,
+			ExpectedString:  "<.Data.Burp>: can't evaluate field Burp in type template.Data",
 			ExpectedEnabled: true,
 		},
 	}

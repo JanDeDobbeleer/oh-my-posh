@@ -58,7 +58,11 @@ func (t *Text) Render() (string, error) {
 	err = tmpl.Execute(buffer, context)
 	if err != nil {
 		t.Env.Error("Render", err)
-		return "", errors.New(IncorrectTemplate)
+		msg := regex.FindNamedRegexMatch(`at (?P<MSG><.*)$`, err.Error())
+		if len(msg) == 0 {
+			return "", errors.New(IncorrectTemplate)
+		}
+		return "", errors.New(msg["MSG"])
 	}
 	text := buffer.String()
 	// issue with missingkey=zero ignored for map[string]interface{}

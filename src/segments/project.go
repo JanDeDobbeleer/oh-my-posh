@@ -117,6 +117,11 @@ func (n *Project) Init(props properties.Properties, env platform.Environment) {
 			Files:   []string{"*.vbproj", "*.fsproj", "*.csproj"},
 			Fetcher: n.getDotnetProject,
 		},
+		{
+			Name:    "julia",
+			Files:   []string{"JuliaProject.toml", "Project.toml"},
+			Fetcher: n.getProjectData,
+		},
 	}
 }
 
@@ -225,4 +230,17 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 		Target: target,
 		Name:   name,
 	}
+}
+
+func (n *Project) getProjectData(item ProjectItem) *ProjectData {
+	content := n.env.FileContent(item.Files[0])
+
+	var data ProjectData
+	_, err := toml.Decode(content, &data)
+	if err != nil {
+		n.Error = err.Error()
+		return nil
+	}
+
+	return &data
 }

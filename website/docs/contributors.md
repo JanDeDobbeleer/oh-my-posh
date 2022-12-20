@@ -211,6 +211,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center"><a href="http://www.david-anthoff.com"><img src="https://avatars.githubusercontent.com/u/1036561?v=4?s=100" width="100px;" alt="David Anthoff"/><br /><sub><b>David Anthoff</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=davidanthoff" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=davidanthoff" title="Documentation">📖</a></td>
+      <td align="center"><a href="https://github.com/jooooel"><img src="https://avatars.githubusercontent.com/u/9303280?v=4?s=100" width="100px;" alt="jooooel"/><br /><sub><b>jooooel</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jooooel" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

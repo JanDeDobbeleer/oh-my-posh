@@ -1433,6 +1433,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "maxlandon",
+      "name": "maxlandon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25826036?v=4",
+      "profile": "https://github.com/maxlandon",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

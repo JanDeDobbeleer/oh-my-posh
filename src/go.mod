@@ -19,7 +19,7 @@ require (
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/sergi/go-diff v1.2.0 // indirect
-	github.com/shirou/gopsutil/v3 v3.22.11
+	github.com/shirou/gopsutil/v3 v3.22.10
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/stretchr/testify v1.8.1
 	github.com/wayneashleyberry/terminal-dimensions v1.1.0
@@ -92,4 +92,4 @@ require (
 
 replace github.com/atotto/clipboard v0.1.4 => github.com/jandedobbeleer/clipboard v0.1.4-1
 
-replace github.com/shirou/gopsutil/v3 v3.22.9 => github.com/jandedobbeleer/gopsutil/v3 v3.22.9-2
+replace github.com/shirou/gopsutil/v3 v3.22.10 => github.com/jandedobbeleer/gopsutil/v3 v3.22.10-1

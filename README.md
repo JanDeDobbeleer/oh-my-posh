@@ -57,7 +57,7 @@ a modern and more efficient tool was needed to suit my personal needs.
 using Go (and the amazing [README][powerline-go])
 * [Starship][starship] for creating an amazing way to initialize the prompt
 
-[release-status]: https://img.shields.io/github/workflow/status/jandedobbeleer/oh-my-posh/Release?label=Build
+[release-status]: https://img.shields.io/github/actions/workflow/status/jandedobbeleer/oh-my-posh/release.yml?branch=main
 [gh-downloads]: https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads
 [mastodon]: https://img.shields.io/mastodon/follow/109326234705859737?domain=https%3A%2F%2Fsocial.ohmyposh.dev&label=Mastodon&style=social
 [kraken]: https://img.shields.io/badge/GitKraken-Legendary%20Git%20Tools-teal?style=plastic&logo=gitkraken

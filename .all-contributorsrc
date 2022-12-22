@@ -1442,6 +1442,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "lino-levan",
+      "name": "Lino Le Van",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11367844?v=4",
+      "profile": "https://linolevan.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

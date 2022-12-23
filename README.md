@@ -7,7 +7,6 @@
   />
 </p>
 <!-- markdownlint-enable -->
-<!-- markdownlint-disable first-header-h1 -->
 
 ![Release Status][release-status]
 
@@ -16,11 +15,16 @@
 
 ![GitHub Downloads][gh-downloads]
 
-![Mastodon][mastodon]
-
 This repo was made with love using GitKraken.
 
 [![GitKraken shield][kraken]][kraken-ref]
+<!-- markdownlint-disable first-header-h1 -->
+
+## Join the community
+
+![Mastodon][mastodon]
+
+![Discord][discord]
 
 What started as the offspring of [oh-my-posh2][oh-my-posh2] for PowerShell resulted in a cross platform,
 highly customizable and extensible prompt theme engine. After 4 years of working on oh-my-posh,
@@ -60,6 +64,7 @@ using Go (and the amazing [README][powerline-go])
 [release-status]: https://img.shields.io/github/actions/workflow/status/jandedobbeleer/oh-my-posh/release.yml?branch=main
 [gh-downloads]: https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads
 [mastodon]: https://img.shields.io/mastodon/follow/109326234705859737?domain=https%3A%2F%2Fsocial.ohmyposh.dev&label=Mastodon&style=social
+[discord]: https://img.shields.io/discord/1023597603331526656
 [kraken]: https://img.shields.io/badge/GitKraken-Legendary%20Git%20Tools-teal?style=plastic&logo=gitkraken
 [kraken-ref]: https://www.gitkraken.com/invite/nQmDPR9D
 [oh-my-posh2]: https://github.com/JanDeDobbeleer/oh-my-posh2

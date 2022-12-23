@@ -44,7 +44,7 @@ jobs:
               return;
             }
 
-            const body = `👋 @${pr.user.login}, theme aditions are no longer accepted due to the ever growing set. We do however accept showcasing your custom theme in the [🎨 Themes section](https://github.com/JanDeDobbeleer/oh-my-posh/discussions/categories/themes) in discussions.`
+            const body = `👋 @${pr.user.login}, theme aditions are no longer accepted due to the ever growing set. We do however accept showcasing your custom theme in the [🎨 Themes section](https://github.com/JanDeDobbeleer/oh-my-posh/discussions/categories/themes) or [themes channel](https://discord.com/channels/1023597603331526656/1055533233309233252) on Discord.`
 
             console.log(`Adding comment: ${body}`);
             await github.rest.issues.createComment({

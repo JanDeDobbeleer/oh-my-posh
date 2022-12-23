@@ -110,6 +110,18 @@
           "type": "julia"
         },
         {
+          "type": "php",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#4063D8",
+          "leading_diamond": " \ue0b6",
+          "properties": {
+            "fetch_version": false
+          },
+          "template": "\ue73d {{ .Full }} ",
+          "trailing_diamond": "\ue0b4"
+        },
+        {
           "background": "#29315A",
           "foreground": "#9B6BDF",
           "foreground_templates": [

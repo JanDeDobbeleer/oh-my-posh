@@ -1,0 +1,19 @@
+name: Discord
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Changelog 📝
+        uses: sebastianpopp/discord-action@ba18c5aaa871acf97620c349fd76a187550f12eb
+        with:
+          webhook: ${{ secrets.CHANGELOG_WEBHOOK }}
+          message: |
+            📦 ${{ github.event.release.name }}
+
+            ${{ github.event.release.body }}
+
+            ${{ github.event.release.html_url }}

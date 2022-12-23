@@ -66,6 +66,12 @@ module.exports = {
           className: 'header-mastodon-link',
           'aria-label': 'Mastodon',
           position: 'right',
+        },
+        {
+          href: 'https://discord.gg/n7E3DkXssv',
+          className: 'header-discord-link',
+          'aria-label': 'Discord',
+          position: 'right',
         }
       ],
     },

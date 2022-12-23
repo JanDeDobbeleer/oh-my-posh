@@ -147,9 +147,21 @@ func (b *Block) renderActiveSegment() {
 	case Plain, Powerline:
 		b.writer.Write(color.Background, color.Foreground, b.activeSegment.text)
 	case Diamond:
-		b.writer.Write(color.Transparent, color.Background, b.activeSegment.LeadingDiamond)
+		background := color.Background
+		foreground := color.Transparent
+		if b.activeSegment.InvertLeading {
+			b.writer.Write(background, foreground, b.activeSegment.LeadingDiamond)
+		} else {
+			b.writer.Write(foreground, background, b.activeSegment.LeadingDiamond)
+		}
+
 		b.writer.Write(color.Background, color.Foreground, b.activeSegment.text)
-		b.writer.Write(color.Transparent, color.Background, b.activeSegment.TrailingDiamond)
+
+		if b.activeSegment.InvertTrailing {
+			b.writer.Write(background, foreground, b.activeSegment.TrailingDiamond)
+		} else {
+			b.writer.Write(foreground, background, b.activeSegment.TrailingDiamond)
+		}
 	case Accordion:
 		if b.activeSegment.Enabled {
 			b.writer.Write(color.Background, color.Foreground, b.activeSegment.text)

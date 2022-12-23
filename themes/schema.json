@@ -468,11 +468,23 @@
                 "description": "https://ohmyposh.dev/docs/configuration/segment#leading-diamond",
                 "default": ""
               },
+              "invert_leading": {
+                "type": "boolean",
+                "title": "Flip the leading diamond's foreground and background colors",
+                "description": "https://ohmyposh.dev/docs/configuration/segment#invert-leading",
+                "default": false
+              },
               "trailing_diamond": {
                 "type": "string",
                 "title": "Trailing diamond",
                 "description": "https://ohmyposh.dev/docs/configuration/segment#trailing-diamond",
                 "default": ""
+              },
+              "invert_trailing": {
+                "type": "boolean",
+                "title": "Flip the trailing diamond's foreground and background colors",
+                "description": "https://ohmyposh.dev/docs/configuration/segment#invert-trailing",
+                "default": false
               }
             }
           }

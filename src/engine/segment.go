@@ -29,10 +29,12 @@ type Segment struct {
 	Background          string         `json:"background,omitempty"`
 	BackgroundTemplates template.List  `json:"background_templates,omitempty"`
 	LeadingDiamond      string         `json:"leading_diamond,omitempty"`
+	InvertLeading       bool           `json:"invert_leading,omitempty"`
 	TrailingDiamond     string         `json:"trailing_diamond,omitempty"`
 	Template            string         `json:"template,omitempty"`
 	Templates           template.List  `json:"templates,omitempty"`
 	TemplatesLogic      template.Logic `json:"templates_logic,omitempty"`
+	InvertTrailing      bool           `json:"invert_trailing,omitempty"`
 	Properties          properties.Map `json:"properties,omitempty"`
 	Interactive         bool           `json:"interactive,omitempty"`
 	Alias               string         `json:"alias,omitempty"`

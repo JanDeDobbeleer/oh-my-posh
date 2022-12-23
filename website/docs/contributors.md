@@ -214,6 +214,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center"><a href="https://github.com/jooooel"><img src="https://avatars.githubusercontent.com/u/9303280?v=4?s=100" width="100px;" alt="jooooel"/><br /><sub><b>jooooel</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jooooel" title="Documentation">📖</a></td>
       <td align="center"><a href="https://github.com/maxlandon"><img src="https://avatars.githubusercontent.com/u/25826036?v=4?s=100" width="100px;" alt="maxlandon"/><br /><sub><b>maxlandon</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=maxlandon" title="Code">💻</a></td>
       <td align="center"><a href="https://linolevan.com"><img src="https://avatars.githubusercontent.com/u/11367844?v=4?s=100" width="100px;" alt="Lino Le Van"/><br /><sub><b>Lino Le Van</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=lino-levan" title="Documentation">📖</a></td>
+      <td align="center"><a href="https://github.com/dvlprJobayer"><img src="https://avatars.githubusercontent.com/u/76583359?v=4?s=100" width="100px;" alt="Jobayer Ahammed Patwary"/><br /><sub><b>Jobayer Ahammed Patwary</b></sub></a><br /><a href="#design-dvlprJobayer" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>

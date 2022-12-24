@@ -7,16 +7,16 @@ jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-    - name: Notes 📝
+      - name: Notes 📝
         id: notes
         uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
         with:
-            result-encoding: string
-            script: |
+          result-encoding: string
+          script: |
             notes = context.payload.release.body
 
             // replace all non-supported characters
-            notes = notes.replaceAll('###',
+            notes = notes.replaceAll('###', '')
             notes = notes.trim()
             return notes
       - name: Changelog 📝

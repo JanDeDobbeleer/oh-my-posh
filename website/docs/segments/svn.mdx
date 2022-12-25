@@ -58,6 +58,7 @@ You can set the following properties to `true` to enable fetching additional inf
 
 | Name            | Type      | Description                                    |
 | --------------- | --------- | ---------------------------------------------- |
+| `.Untracked`    | `int`     | number of files not under version control      |
 | `.Modified`     | `int`     | number of modified files                       |
 | `.Deleted`      | `int`     | number of deleted files                        |
 | `.Added`        | `int`     | number of added files                          |
@@ -71,6 +72,7 @@ Local changes use the following syntax:
 
 | Icon | Description |
 | ---- | ----------- |
+| `?`  | untracked   |
 | `+`  | added       |
 | `!`  | conflicted  |
 | `-`  | deleted     |

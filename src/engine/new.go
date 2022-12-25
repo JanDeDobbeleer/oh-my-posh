@@ -16,7 +16,6 @@ func New(flags *platform.Flags) *Engine {
 	}
 
 	env.Init()
-	defer env.Close()
 	cfg := LoadConfig(env)
 	ansi := &color.Ansi{}
 	ansi.Init(env.Shell())

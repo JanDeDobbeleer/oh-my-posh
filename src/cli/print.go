@@ -59,6 +59,7 @@ var printCmd = &cobra.Command{
 		}
 
 		eng := engine.New(flags)
+		defer eng.Env.Close()
 
 		switch args[0] {
 		case "debug":

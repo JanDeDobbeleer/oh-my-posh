@@ -13,6 +13,8 @@ type SvnStatus struct {
 
 func (s *SvnStatus) add(code string) {
 	switch code {
+	case "?":
+		s.Untracked++
 	case "C":
 		s.Conflicted++
 	case "D":
@@ -21,10 +23,8 @@ func (s *SvnStatus) add(code string) {
 		s.Added++
 	case "M":
 		s.Modified++
-	case "R":
+	case "R", "!":
 		s.Moved++
-	default:
-		s.Unmerged++
 	}
 }
 

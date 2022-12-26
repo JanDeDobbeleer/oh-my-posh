@@ -211,6 +211,76 @@ const (
 	YTM SegmentType = "ytm"
 )
 
+// Segments contains all available prompt segment writers.
+// Consumers of the library can also add their own segment writer.
+var Segments = map[SegmentType]SegmentWriter{
+	ANGULAR:       &segments.Angular{},
+	AWS:           &segments.Aws{},
+	AZ:            &segments.Az{},
+	AZFUNC:        &segments.AzFunc{},
+	BATTERY:       &segments.Battery{},
+	BREWFATHER:    &segments.Brewfather{},
+	CDS:           &segments.Cds{},
+	CF:            &segments.Cf{},
+	CFTARGET:      &segments.CfTarget{},
+	CMD:           &segments.Cmd{},
+	CONNECTION:    &segments.Connection{},
+	CRYSTAL:       &segments.Crystal{},
+	CMAKE:         &segments.Cmake{},
+	DART:          &segments.Dart{},
+	DENO:          &segments.Deno{},
+	DOTNET:        &segments.Dotnet{},
+	EXECUTIONTIME: &segments.Executiontime{},
+	EXIT:          &segments.Exit{},
+	FLUTTER:       &segments.Flutter{},
+	FOSSIL:        &segments.Fossil{},
+	GCP:           &segments.Gcp{},
+	GIT:           &segments.Git{},
+	GITVERSION:    &segments.GitVersion{},
+	GOLANG:        &segments.Golang{},
+	HASKELL:       &segments.Haskell{},
+	IPIFY:         &segments.IPify{},
+	ITERM:         &segments.ITerm{},
+	JAVA:          &segments.Java{},
+	JULIA:         &segments.Julia{},
+	KOTLIN:        &segments.Kotlin{},
+	KUBECTL:       &segments.Kubectl{},
+	LUA:           &segments.Lua{},
+	NBGV:          &segments.Nbgv{},
+	NIGHTSCOUT:    &segments.Nightscout{},
+	NODE:          &segments.Node{},
+	NPM:           &segments.Npm{},
+	NX:            &segments.Nx{},
+	OS:            &segments.Os{},
+	OWM:           &segments.Owm{},
+	PATH:          &segments.Path{},
+	PERL:          &segments.Perl{},
+	PHP:           &segments.Php{},
+	PLASTIC:       &segments.Plastic{},
+	PROJECT:       &segments.Project{},
+	PYTHON:        &segments.Python{},
+	R:             &segments.R{},
+	ROOT:          &segments.Root{},
+	RUBY:          &segments.Ruby{},
+	RUST:          &segments.Rust{},
+	SESSION:       &segments.Session{},
+	SHELL:         &segments.Shell{},
+	SPOTIFY:       &segments.Spotify{},
+	STRAVA:        &segments.Strava{},
+	SVN:           &segments.Svn{},
+	SWIFT:         &segments.Swift{},
+	SYSTEMINFO:    &segments.SystemInfo{},
+	TERRAFORM:     &segments.Terraform{},
+	TEXT:          &segments.Text{},
+	TIME:          &segments.Time{},
+	UI5TOOLING:    &segments.UI5Tooling{},
+	WAKATIME:      &segments.Wakatime{},
+	WINREG:        &segments.WindowsRegistry{},
+	WITHINGS:      &segments.Withings{},
+	XMAKE:         &segments.XMake{},
+	YTM:           &segments.Ytm{},
+}
+
 func (segment *Segment) shouldIncludeFolder() bool {
 	if segment.env == nil {
 		return true
@@ -275,81 +345,17 @@ func (segment *Segment) background() string {
 
 func (segment *Segment) mapSegmentWithWriter(env platform.Environment) error {
 	segment.env = env
-	functions := map[SegmentType]SegmentWriter{
-		ANGULAR:       &segments.Angular{},
-		AWS:           &segments.Aws{},
-		AZ:            &segments.Az{},
-		AZFUNC:        &segments.AzFunc{},
-		BATTERY:       &segments.Battery{},
-		BREWFATHER:    &segments.Brewfather{},
-		CDS:           &segments.Cds{},
-		CF:            &segments.Cf{},
-		CFTARGET:      &segments.CfTarget{},
-		CMD:           &segments.Cmd{},
-		CONNECTION:    &segments.Connection{},
-		CRYSTAL:       &segments.Crystal{},
-		CMAKE:         &segments.Cmake{},
-		DART:          &segments.Dart{},
-		DENO:          &segments.Deno{},
-		DOTNET:        &segments.Dotnet{},
-		EXECUTIONTIME: &segments.Executiontime{},
-		EXIT:          &segments.Exit{},
-		FLUTTER:       &segments.Flutter{},
-		FOSSIL:        &segments.Fossil{},
-		GCP:           &segments.Gcp{},
-		GIT:           &segments.Git{},
-		GITVERSION:    &segments.GitVersion{},
-		GOLANG:        &segments.Golang{},
-		HASKELL:       &segments.Haskell{},
-		IPIFY:         &segments.IPify{},
-		ITERM:         &segments.ITerm{},
-		JAVA:          &segments.Java{},
-		JULIA:         &segments.Julia{},
-		KOTLIN:        &segments.Kotlin{},
-		KUBECTL:       &segments.Kubectl{},
-		LUA:           &segments.Lua{},
-		NBGV:          &segments.Nbgv{},
-		NIGHTSCOUT:    &segments.Nightscout{},
-		NODE:          &segments.Node{},
-		NPM:           &segments.Npm{},
-		NX:            &segments.Nx{},
-		OS:            &segments.Os{},
-		OWM:           &segments.Owm{},
-		PATH:          &segments.Path{},
-		PERL:          &segments.Perl{},
-		PHP:           &segments.Php{},
-		PLASTIC:       &segments.Plastic{},
-		PROJECT:       &segments.Project{},
-		PYTHON:        &segments.Python{},
-		R:             &segments.R{},
-		ROOT:          &segments.Root{},
-		RUBY:          &segments.Ruby{},
-		RUST:          &segments.Rust{},
-		SESSION:       &segments.Session{},
-		SHELL:         &segments.Shell{},
-		SPOTIFY:       &segments.Spotify{},
-		STRAVA:        &segments.Strava{},
-		SVN:           &segments.Svn{},
-		SWIFT:         &segments.Swift{},
-		SYSTEMINFO:    &segments.SystemInfo{},
-		TERRAFORM:     &segments.Terraform{},
-		TEXT:          &segments.Text{},
-		TIME:          &segments.Time{},
-		UI5TOOLING:    &segments.UI5Tooling{},
-		WAKATIME:      &segments.Wakatime{},
-		WINREG:        &segments.WindowsRegistry{},
-		WITHINGS:      &segments.Withings{},
-		XMAKE:         &segments.XMake{},
-		YTM:           &segments.Ytm{},
-	}
+
 	if segment.Properties == nil {
 		segment.Properties = make(properties.Map)
 	}
-	if writer, ok := functions[segment.Type]; ok {
+
+	if writer, ok := Segments[segment.Type]; ok {
 		writer.Init(segment.Properties, env)
 		segment.writer = writer
 		return nil
 	}
+
 	return errors.New("unable to map writer")
 }
 

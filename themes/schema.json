@@ -288,6 +288,11 @@
           "description": "https://ohmyposh.dev/docs/configuration/segment#style",
           "enum": ["plain", "powerline", "diamond", "accordion"]
         },
+        "style_condition": {
+          "type": "string",
+          "title": "Segment Style Condition",
+          "description": "Conditionally change the segments style using a template. Defaults to using the style property value. Must evaluate to a valid template style."
+        },
         "foreground": {
           "$ref": "#/definitions/color"
         },

@@ -22,6 +22,7 @@ type Segment struct {
 	Type                SegmentType    `json:"type,omitempty"`
 	Tips                []string       `json:"tips,omitempty"`
 	Style               SegmentStyle   `json:"style,omitempty"`
+	StyleCondition      string         `json:"style_condition,omitempty"`
 	PowerlineSymbol     string         `json:"powerline_symbol,omitempty"`
 	InvertPowerline     bool           `json:"invert_powerline,omitempty"`
 	Foreground          string         `json:"foreground,omitempty"`
@@ -45,6 +46,7 @@ type Segment struct {
 	text            string
 	backgroundCache string
 	foregroundCache string
+	styleCache      SegmentStyle
 }
 
 // SegmentTiming holds the timing context for a segment
@@ -291,7 +293,8 @@ func (segment *Segment) shouldIncludeFolder() bool {
 }
 
 func (segment *Segment) isPowerline() bool {
-	return segment.Style == Powerline || segment.Style == Accordion
+	style := segment.style()
+	return style == Powerline || style == Accordion
 }
 
 func (segment *Segment) cwdIncluded() bool {
@@ -341,6 +344,30 @@ func (segment *Segment) background() string {
 		segment.backgroundCache = segment.BackgroundTemplates.FirstMatch(segment.writer, segment.env, segment.Background)
 	}
 	return segment.backgroundCache
+}
+
+func (segment *Segment) style() SegmentStyle {
+	if len(segment.styleCache) == 0 {
+		segment.styleCache = segment.getStyle(segment.StyleCondition, segment.Style)
+	}
+
+	return segment.styleCache
+}
+
+func (segment *Segment) getStyle(condition string, defaultStyle SegmentStyle) SegmentStyle {
+	if condition == "" {
+		return defaultStyle
+	}
+	txtTemplate := &template.Text{
+		Context: segment.writer,
+		Env:     segment.env,
+	}
+	txtTemplate.Template = condition
+	value, err := txtTemplate.Render()
+	if err != nil || value == "" {
+		return defaultStyle
+	}
+	return SegmentStyle(value)
 }
 
 func (segment *Segment) mapSegmentWithWriter(env platform.Environment) error {

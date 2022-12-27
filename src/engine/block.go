@@ -143,7 +143,7 @@ func (b *Block) RenderSegments() (string, int) {
 
 func (b *Block) renderActiveSegment() {
 	b.writePowerline(false)
-	switch b.activeSegment.Style {
+	switch b.activeSegment.style() {
 	case Plain, Powerline:
 		b.writer.Write(color.Background, color.Foreground, b.activeSegment.text)
 	case Diamond:
@@ -177,7 +177,7 @@ func (b *Block) writePowerline(final bool) {
 	if final || !b.activeSegment.isPowerline() {
 		bgColor = color.Transparent
 	}
-	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
+	if b.activeSegment.style() == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
 		bgColor = color.Background
 	}
 	if b.activeSegment.InvertPowerline {
@@ -191,10 +191,10 @@ func (b *Block) getPowerlineColor() string {
 	if b.previousActiveSegment == nil {
 		return color.Transparent
 	}
-	if b.previousActiveSegment.Style == Diamond && len(b.previousActiveSegment.TrailingDiamond) == 0 {
+	if b.previousActiveSegment.style() == Diamond && len(b.previousActiveSegment.TrailingDiamond) == 0 {
 		return b.previousActiveSegment.background()
 	}
-	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
+	if b.activeSegment.style() == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
 		return b.previousActiveSegment.background()
 	}
 	if !b.previousActiveSegment.isPowerline() {

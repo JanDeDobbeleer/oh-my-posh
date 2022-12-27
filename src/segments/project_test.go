@@ -155,19 +155,21 @@ func TestPackage(t *testing.T) {
 		},
 		{
 			Case:            "Empty project package node.js",
-			ExpectedEnabled: false,
+			ExpectedEnabled: true,
 			Name:            "node",
 			File:            "package.json",
 			PackageContents: "{}",
 		},
 		{
 			Case:            "Empty project package cargo",
+			ExpectedEnabled: true,
 			Name:            "cargo",
 			File:            "Cargo.toml",
 			PackageContents: "",
 		},
 		{
 			Case:            "Empty project package poetry",
+			ExpectedEnabled: true,
 			Name:            "poetry",
 			File:            "pyproject.toml",
 			PackageContents: "",
@@ -263,7 +265,7 @@ func TestNuspecPackage(t *testing.T) {
 			Case:            "no info in file",
 			FileName:        "../test/empty.nuspec",
 			HasFiles:        true,
-			ExpectedEnabled: false,
+			ExpectedEnabled: true,
 		},
 		{
 			Case:            "no files",

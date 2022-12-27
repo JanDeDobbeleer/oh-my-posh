@@ -36,6 +36,8 @@ func TestSvnEnabledInWorkingDirectory(t *testing.T) {
 	env.On("GOOS").Return("")
 	env.On("FileContent", "/dir/hello/trunk").Return("")
 	env.MockSvnCommand(fileInfo.Path, "", "info", "--tags", "--exact-match")
+	env.On("RunCommand", "svn", []string{"info", "/dir/hello", "--show-item", "revision"}).Return("", nil)
+	env.On("RunCommand", "svn", []string{"info", "/dir/hello", "--show-item", "relative-url"}).Return("", nil)
 	env.On("IsWsl").Return(false)
 	env.On("HasParentFilePath", ".svn").Return(fileInfo, nil)
 	s := &Svn{
@@ -239,8 +241,10 @@ R       Moved.File`,
 
 		s := &Svn{
 			scm: scm{
-				env:     env,
-				props:   properties.Map{},
+				env: env,
+				props: properties.Map{
+					FetchStatus: true,
+				},
 				command: SVNCOMMAND,
 			},
 		}

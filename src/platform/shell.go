@@ -708,8 +708,6 @@ func (env *Shell) Logs() string {
 }
 
 func (env *Shell) TemplateCache() *TemplateCache {
-	lock.Lock()
-	defer lock.Unlock()
 	defer env.Trace(time.Now(), "TemplateCache")
 	if env.tmplCache != nil {
 		return env.tmplCache

@@ -20,16 +20,10 @@ type ProjectItem struct {
 }
 
 type ProjectData struct {
+	Type    string
 	Version string
 	Name    string
 	Target  string
-}
-
-func (p *ProjectData) enabled() bool {
-	if p == nil {
-		return false
-	}
-	return len(p.Version) > 0 || len(p.Name) > 0 || len(p.Target) > 0
 }
 
 // Rust Cargo package
@@ -72,10 +66,11 @@ func (n *Project) Enabled() bool {
 				continue
 			}
 			n.ProjectData = *data
-			return n.enabled()
+			n.ProjectData.Type = item.Name
+			return true
 		}
 	}
-	return false
+	return n.props.GetBool(properties.AlwaysEnabled, false)
 }
 
 func (n *Project) Template() string {

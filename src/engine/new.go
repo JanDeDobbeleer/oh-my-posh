@@ -52,14 +52,3 @@ func New(flags *platform.Flags) *Engine {
 
 	return eng
 }
-
-// AddSegment allows to add a user-implemented prompt segment writer to the engine.
-func (eng *Engine) AddSegment(stype SegmentType, segment SegmentWriter) {
-	if segment == nil {
-		return
-	}
-
-	// Else, simply add the writer to the list of user-defined ones.
-	// It can now be used by any previously or to-be loaded configuration.
-	userSegments[stype] = segment
-}

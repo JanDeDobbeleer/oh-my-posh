@@ -211,9 +211,9 @@ const (
 	YTM SegmentType = "ytm"
 )
 
-// PromptSegments contains all available prompt segment writers.
+// Segments contains all available prompt segment writers.
 // Consumers of the library can also add their own segment writer.
-var PromptSegments = map[SegmentType]SegmentWriter{
+var Segments = map[SegmentType]SegmentWriter{
 	ANGULAR:       &segments.Angular{},
 	AWS:           &segments.Aws{},
 	AZ:            &segments.Az{},
@@ -350,7 +350,7 @@ func (segment *Segment) mapSegmentWithWriter(env platform.Environment) error {
 		segment.Properties = make(properties.Map)
 	}
 
-	if writer, ok := PromptSegments[segment.Type]; ok {
+	if writer, ok := Segments[segment.Type]; ok {
 		writer.Init(segment.Properties, env)
 		segment.writer = writer
 		return nil

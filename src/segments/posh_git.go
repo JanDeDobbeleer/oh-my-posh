@@ -58,7 +58,7 @@ func (g *Git) hasPoshGitStatus() bool {
 	g.Staging = &GitStatus{}
 	g.Staging.parsePoshGitStatus(posh.Index)
 	g.HEAD = g.parsePoshGitHEAD(posh.Branch)
-	g.StashCount = posh.StashCount
+	g.stashCount = posh.StashCount
 	g.Ahead = posh.AheadBy
 	g.Behind = posh.BehindBy
 	g.UpstreamGone = len(posh.Upstream) == 0
@@ -67,6 +67,7 @@ func (g *Git) hasPoshGitStatus() bool {
 	if len(g.Upstream) != 0 && g.props.GetBool(FetchUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
+	g.poshgit = true
 	return true
 }
 

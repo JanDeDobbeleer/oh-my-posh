@@ -580,7 +580,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 				workingDir: "",
 			},
 		}
-		got := g.getStashContext()
+		got := g.StashCount()
 		assert.Equal(t, tc.Expected, got)
 	}
 }
@@ -760,7 +760,8 @@ func TestGitTemplateString(t *testing.T) {
 						Modified: 1,
 					},
 				},
-				StashCount: 3,
+				stashCount: 3,
+				poshgit:    true,
 			},
 		},
 		{

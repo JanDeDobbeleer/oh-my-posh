@@ -113,7 +113,7 @@ func TestPoshGitSegment(t *testing.T) {
 				"Branch": "posh-git-json"
 			}
 			`,
-			ExpectedString:  "\ue0a0posh-git-json ↑1 ↓1 \uf044 ~2 | \uf046 -2 \uf692 2",
+			ExpectedString:  "\ue0a0posh-git-json ↑1 ↓1 \uf044 ~2 | \uf046 -2",
 			ExpectedEnabled: true,
 		},
 		{
@@ -140,7 +140,7 @@ func TestPoshGitSegment(t *testing.T) {
 				"Branch": "posh-git-json"
 			}
 			`,
-			ExpectedString:  "\ue0a0posh-git-json ≢ \uf692 2",
+			ExpectedString:  "\ue0a0posh-git-json ≢",
 			ExpectedEnabled: true,
 		},
 		{
@@ -160,7 +160,7 @@ func TestPoshGitSegment(t *testing.T) {
 				"Branch": "posh-git-json"
 			}
 			`,
-			ExpectedString:  "\ue0a0posh-git-json ≢ \uf692 2",
+			ExpectedString:  "\ue0a0posh-git-json ≢",
 			ExpectedEnabled: true,
 		},
 		{

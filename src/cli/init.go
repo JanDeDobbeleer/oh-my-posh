@@ -2,9 +2,10 @@ package cli
 
 import (
 	"fmt"
-	"oh-my-posh/engine"
-	"oh-my-posh/platform"
-	"oh-my-posh/shell"
+
+	"github.com/jandedobbeleer/oh-my-posh/engine"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/shell"
 
 	"github.com/spf13/cobra"
 )

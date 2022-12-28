@@ -2,13 +2,14 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/regex"
-	"oh-my-posh/shell"
-	"oh-my-posh/template"
 	"sort"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
+	"github.com/jandedobbeleer/oh-my-posh/regex"
+	"github.com/jandedobbeleer/oh-my-posh/shell"
+	"github.com/jandedobbeleer/oh-my-posh/template"
 )
 
 type Path struct {

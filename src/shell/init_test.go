@@ -2,9 +2,10 @@ package shell
 
 import (
 	"fmt"
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
 
 	"github.com/stretchr/testify/assert"
 )

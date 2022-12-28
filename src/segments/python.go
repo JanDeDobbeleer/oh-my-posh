@@ -3,10 +3,11 @@ package segments
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"path/filepath"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 type Python struct {

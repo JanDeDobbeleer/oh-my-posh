@@ -3,8 +3,9 @@ package segments
 import (
 	"errors"
 	"net"
-	"oh-my-posh/mock"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/mock"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"

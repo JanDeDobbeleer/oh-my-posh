@@ -3,10 +3,11 @@ package segments
 import (
 	"encoding/json"
 	"errors"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"path/filepath"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 type Az struct {

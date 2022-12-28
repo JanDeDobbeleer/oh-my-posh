@@ -2,9 +2,10 @@ package segments
 
 import (
 	"errors"
-	"oh-my-posh/mock"
-	"oh-my-posh/properties"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 
 	"github.com/alecthomas/assert"
 	mock2 "github.com/stretchr/testify/mock"

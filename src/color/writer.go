@@ -2,8 +2,9 @@ package color
 
 import (
 	"fmt"
-	"oh-my-posh/regex"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/regex"
 )
 
 const (

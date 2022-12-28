@@ -1,10 +1,11 @@
 package console
 
 import (
-	"oh-my-posh/color"
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
 
 	"github.com/stretchr/testify/assert"
 )

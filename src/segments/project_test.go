@@ -2,11 +2,12 @@ package segments
 
 import (
 	"io/fs"
-	"oh-my-posh/mock"
-	"oh-my-posh/properties"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 
 	"github.com/alecthomas/assert"
 

@@ -1,9 +1,10 @@
 package segments
 
 import (
-	"oh-my-posh/regex"
 	"strconv"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/regex"
 )
 
 // SvnStatus represents part of the status of a Svn repository

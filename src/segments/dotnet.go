@@ -1,9 +1,9 @@
 package segments
 
 import (
-	"oh-my-posh/constants"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
+	"github.com/jandedobbeleer/oh-my-posh/constants"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 type Dotnet struct {

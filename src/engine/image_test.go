@@ -2,10 +2,11 @@ package engine
 
 import (
 	"io/ioutil" //nolint:staticcheck,nolintlint
-	"oh-my-posh/color"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/color"
 
 	"github.com/stretchr/testify/assert"
 )

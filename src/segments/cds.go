@@ -2,8 +2,9 @@ package segments
 
 import (
 	"encoding/json"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 type Cds struct {

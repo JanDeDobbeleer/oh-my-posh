@@ -1,8 +1,9 @@
 package template
 
 import (
-	"oh-my-posh/platform"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
 )
 
 type Logic string

@@ -1,9 +1,10 @@
 package segments
 
 import (
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"strconv"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 type Exit struct {

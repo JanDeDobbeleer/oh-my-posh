@@ -131,7 +131,7 @@ func (b *Block) setSegmentsText() {
 
 func (b *Block) RenderSegments() (string, int) {
 	for _, segment := range b.Segments {
-		if !segment.Enabled && segment.Style != Accordion {
+		if !segment.Enabled && segment.style() != Accordion {
 			continue
 		}
 		b.setActiveSegment(segment)
@@ -217,7 +217,7 @@ func (b *Block) Debug() (int, []*SegmentTiming) {
 		segment.SetEnabled(b.env)
 		segment.SetText()
 		segmentTiming.active = segment.Enabled
-		if segmentTiming.active || segment.Style == Accordion {
+		if segmentTiming.active || segment.style() == Accordion {
 			b.setActiveSegment(segment)
 			b.renderActiveSegment()
 			segmentTiming.text, _ = b.writer.String()

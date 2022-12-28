@@ -22,7 +22,6 @@ type Segment struct {
 	Type                SegmentType    `json:"type,omitempty"`
 	Tips                []string       `json:"tips,omitempty"`
 	Style               SegmentStyle   `json:"style,omitempty"`
-	StyleCondition      string         `json:"style_condition,omitempty"`
 	PowerlineSymbol     string         `json:"powerline_symbol,omitempty"`
 	InvertPowerline     bool           `json:"invert_powerline,omitempty"`
 	Foreground          string         `json:"foreground,omitempty"`
@@ -67,6 +66,20 @@ type SegmentWriter interface {
 
 // SegmentStyle the style of segment, for more information, see the constants
 type SegmentStyle string
+
+func (s *SegmentStyle) Resolve(env platform.Environment, context interface{}) SegmentStyle {
+	txtTemplate := &template.Text{
+		Context: context,
+		Env:     env,
+	}
+	txtTemplate.Template = string(*s)
+	value, err := txtTemplate.Render()
+	// default to Plain
+	if err != nil || len(value) == 0 {
+		return Plain
+	}
+	return SegmentStyle(value)
+}
 
 // SegmentType the type of segment, for more information, see the constants
 type SegmentType string
@@ -283,6 +296,14 @@ var Segments = map[SegmentType]SegmentWriter{
 	YTM:           &segments.Ytm{},
 }
 
+func (segment *Segment) style() SegmentStyle {
+	if len(segment.styleCache) != 0 {
+		return segment.styleCache
+	}
+	segment.styleCache = segment.Style.Resolve(segment.env, segment.writer)
+	return segment.styleCache
+}
+
 func (segment *Segment) shouldIncludeFolder() bool {
 	if segment.env == nil {
 		return true
@@ -344,30 +365,6 @@ func (segment *Segment) background() string {
 		segment.backgroundCache = segment.BackgroundTemplates.FirstMatch(segment.writer, segment.env, segment.Background)
 	}
 	return segment.backgroundCache
-}
-
-func (segment *Segment) style() SegmentStyle {
-	if len(segment.styleCache) == 0 {
-		segment.styleCache = segment.getStyle(segment.StyleCondition, segment.Style)
-	}
-
-	return segment.styleCache
-}
-
-func (segment *Segment) getStyle(condition string, defaultStyle SegmentStyle) SegmentStyle {
-	if condition == "" {
-		return defaultStyle
-	}
-	txtTemplate := &template.Text{
-		Context: segment.writer,
-		Env:     segment.env,
-	}
-	txtTemplate.Template = condition
-	value, err := txtTemplate.Render()
-	if err != nil || value == "" {
-		return defaultStyle
-	}
-	return SegmentStyle(value)
 }
 
 func (segment *Segment) mapSegmentWithWriter(env platform.Environment) error {

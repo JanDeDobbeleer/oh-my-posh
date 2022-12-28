@@ -15,7 +15,6 @@ type Writer interface {
 	String() (string, int)
 	SetColors(background, foreground string)
 	SetParentColors(background, foreground string)
-	ClearParentColors()
 }
 
 // AnsiWriter writes colorized ANSI strings
@@ -99,10 +98,6 @@ func (a *AnsiWriter) SetParentColors(background, foreground string) {
 		Background: background,
 		Foreground: foreground,
 	}}, a.ParentColors...)
-}
-
-func (a *AnsiWriter) ClearParentColors() {
-	a.ParentColors = nil
 }
 
 func (a *AnsiWriter) getAnsiFromColorString(colorString string, isBackground bool) AnsiColor {

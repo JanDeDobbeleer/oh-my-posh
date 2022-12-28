@@ -137,7 +137,6 @@ func (b *Block) RenderSegments() (string, int) {
 		b.renderActiveSegment()
 	}
 	b.writePowerline(true)
-	b.writer.ClearParentColors()
 	return b.writer.String()
 }
 

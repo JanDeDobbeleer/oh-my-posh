@@ -5,11 +5,11 @@ import (
 	"strings"
 	"time"
 
-	"oh-my-posh/color"
-	"oh-my-posh/console"
-	"oh-my-posh/platform"
-	"oh-my-posh/shell"
-	"oh-my-posh/template"
+	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/console"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/shell"
+	"github.com/jandedobbeleer/oh-my-posh/template"
 )
 
 type Engine struct {
@@ -305,7 +305,7 @@ func (e *Engine) print() string {
 			break
 		}
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
-		// see https://github.com/JanDeDobbeleer/oh-my-posh/pull/2398
+		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
 		ansi := &color.Ansi{}
 		ansi.InitPlain()
 		prompt := ansi.SaveCursorPosition()

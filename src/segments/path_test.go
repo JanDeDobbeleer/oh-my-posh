@@ -1,13 +1,14 @@
 package segments
 
 import (
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/shell"
-	"oh-my-posh/template"
 	"strings"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
+	"github.com/jandedobbeleer/oh-my-posh/shell"
+	"github.com/jandedobbeleer/oh-my-posh/template"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"

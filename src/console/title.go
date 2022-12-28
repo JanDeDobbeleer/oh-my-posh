@@ -1,9 +1,9 @@
 package console
 
 import (
-	"oh-my-posh/color"
-	"oh-my-posh/platform"
-	"oh-my-posh/template"
+	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/template"
 )
 
 type Title struct {

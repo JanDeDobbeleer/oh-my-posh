@@ -3,8 +3,9 @@
 package platform
 
 import (
-	"oh-my-posh/platform/battery"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform/battery"
 )
 
 func (env *Shell) BatteryState() (*battery.Info, error) {

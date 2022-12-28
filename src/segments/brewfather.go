@@ -7,10 +7,11 @@ import (
 	"fmt"
 	"math"
 	"net/http"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"sort"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 // segment struct, makes templating easier

@@ -3,12 +3,13 @@ package segments
 import (
 	"fmt"
 	url2 "net/url"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/regex"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
+	"github.com/jandedobbeleer/oh-my-posh/regex"
 
 	"gopkg.in/ini.v1"
 )

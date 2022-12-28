@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/segments"
-	"oh-my-posh/shell"
-	"oh-my-posh/template"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
+	"github.com/jandedobbeleer/oh-my-posh/segments"
+	"github.com/jandedobbeleer/oh-my-posh/shell"
+	"github.com/jandedobbeleer/oh-my-posh/template"
 
 	c "golang.org/x/text/cases"
 	"golang.org/x/text/language"

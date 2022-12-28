@@ -3,9 +3,10 @@ package segments
 import (
 	"encoding/json"
 	"errors"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 // segment struct, makes templating easier

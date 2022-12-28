@@ -4,12 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"oh-my-posh/http"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/http"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 
 	http2 "net/http"
 	"net/url"

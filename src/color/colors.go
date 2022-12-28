@@ -2,9 +2,10 @@ package color
 
 import (
 	"fmt"
-	"oh-my-posh/platform"
 	"strconv"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
 
 	"github.com/gookit/color"
 )

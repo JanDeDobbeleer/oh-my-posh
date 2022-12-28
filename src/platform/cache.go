@@ -25,13 +25,13 @@ func (c *cacheObject) expired() bool {
 }
 
 type fileCache struct {
-	cache     *concurrentMap
+	cache     *ConcurrentMap
 	cachePath string
 	dirty     bool
 }
 
 func (fc *fileCache) Init(cachePath string) {
-	fc.cache = newConcurrentMap()
+	fc.cache = NewConcurrentMap()
 	fc.cachePath = cachePath
 	cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
 	content, err := os.ReadFile(cacheFilePath)
@@ -48,7 +48,7 @@ func (fc *fileCache) Init(cachePath string) {
 		if co.expired() {
 			continue
 		}
-		fc.cache.set(key, co)
+		fc.cache.Set(key, co)
 	}
 }
 
@@ -56,7 +56,7 @@ func (fc *fileCache) Close() {
 	if !fc.dirty {
 		return
 	}
-	cache := fc.cache.list()
+	cache := fc.cache.List()
 	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
 		cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
 		_ = os.WriteFile(cacheFilePath, dump, 0644)
@@ -66,7 +66,7 @@ func (fc *fileCache) Close() {
 // returns the value for the given key as long as
 // the TTL (minutes) is not expired
 func (fc *fileCache) Get(key string) (string, bool) {
-	val, found := fc.cache.get(key)
+	val, found := fc.cache.Get(key)
 	if !found {
 		return "", false
 	}
@@ -78,7 +78,7 @@ func (fc *fileCache) Get(key string) (string, bool) {
 
 // sets the value for the given key with a TTL (minutes)
 func (fc *fileCache) Set(key, value string, ttl int) {
-	fc.cache.set(key, &cacheObject{
+	fc.cache.Set(key, &cacheObject{
 		Value:     value,
 		Timestamp: time.Now().Unix(),
 		TTL:       ttl,

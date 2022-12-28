@@ -42,7 +42,6 @@ func getPID() string {
 }
 
 var (
-	lock          = sync.RWMutex{}
 	TEMPLATECACHE = fmt.Sprintf("template_cache_%s", getPID())
 	TOGGLECACHE   = fmt.Sprintf("toggle_cache_%s", getPID())
 )
@@ -131,8 +130,8 @@ type Connection struct {
 
 type SegmentsCache map[string]interface{}
 
-func (c *SegmentsCache) Contains(key string) bool {
-	_, ok := (*c)[key]
+func (s *SegmentsCache) Contains(key string) bool {
+	_, ok := (*s)[key]
 	return ok
 }
 
@@ -149,15 +148,14 @@ type TemplateCache struct {
 	OS           string
 	WSL          bool
 	Segments     SegmentsCache
+
+	sync.RWMutex
 }
 
 func (t *TemplateCache) AddSegmentData(key string, value interface{}) {
-	lock.Lock()
-	defer lock.Unlock()
-	if t.Segments == nil {
-		t.Segments = make(map[string]interface{})
-	}
+	t.Lock()
 	t.Segments[key] = value
+	t.Unlock()
 }
 
 type Environment interface {
@@ -212,15 +210,15 @@ type Environment interface {
 }
 
 type commandCache struct {
-	commands *concurrentMap
+	commands *ConcurrentMap
 }
 
 func (c *commandCache) set(command, path string) {
-	c.commands.set(command, path)
+	c.commands.Set(command, path)
 }
 
 func (c *commandCache) get(command string) (string, bool) {
-	cacheCommand, found := c.commands.get(command)
+	cacheCommand, found := c.commands.Get(command)
 	if !found {
 		return "", false
 	}
@@ -237,6 +235,8 @@ type Shell struct {
 	fileCache *fileCache
 	tmplCache *TemplateCache
 	networks  []*Connection
+
+	sync.RWMutex
 }
 
 func (env *Shell) Init() {
@@ -251,7 +251,7 @@ func (env *Shell) Init() {
 	env.fileCache.Init(env.CachePath())
 	env.resolveConfigPath()
 	env.cmdCache = &commandCache{
-		commands: newConcurrentMap(),
+		commands: NewConcurrentMap(),
 	}
 }
 
@@ -331,9 +331,7 @@ func (env *Shell) Getenv(key string) string {
 
 func (env *Shell) Pwd() string {
 	defer env.Trace(time.Now(), "Pwd")
-	lock.Lock()
 	defer func() {
-		lock.Unlock()
 		env.Debug("Pwd", env.cwd)
 	}()
 	if env.cwd != "" {
@@ -708,7 +706,11 @@ func (env *Shell) Logs() string {
 }
 
 func (env *Shell) TemplateCache() *TemplateCache {
-	defer env.Trace(time.Now(), "TemplateCache")
+	env.Lock()
+	defer func() {
+		env.Trace(time.Now(), "TemplateCache")
+		env.Unlock()
+	}()
 	if env.tmplCache != nil {
 		return env.tmplCache
 	}
@@ -718,6 +720,7 @@ func (env *Shell) TemplateCache() *TemplateCache {
 		ShellVersion: env.CmdFlags.ShellVersion,
 		Code:         env.ErrorCode(),
 		WSL:          env.IsWsl(),
+		Segments:     make(map[string]interface{}),
 	}
 	tmplCache.Env = make(map[string]string)
 	const separator = "="
@@ -751,8 +754,6 @@ func (env *Shell) TemplateCache() *TemplateCache {
 }
 
 func (env *Shell) DirMatchesOneOf(dir string, regexes []string) (match bool) {
-	lock.Lock()
-	defer lock.Unlock()
 	// sometimes the function panics inside golang, we want to silence that error
 	// and assume that there's no match. Not perfect, but better than crashing
 	// for the time being until we figure out what the actual root cause is

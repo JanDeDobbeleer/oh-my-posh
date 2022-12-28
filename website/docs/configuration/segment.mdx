@@ -36,8 +36,7 @@ understand how to configure a segment.
 | Name                   | Type         | Description                                                                                                                                                                                                                                                                                                                |
 | ---------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `type`                 | `string`     | takes the `string` value referencing which segment logic it needs to run (see [segments][segments] for possible values)                                                                                                                                                                                                    |
-| `style`                | `string`     | see [Style][style] below. Possible values:<ul><li>`powerline`</li><li>`plain`</li><li>`diamond`</li><li>`accordion`</li></ul>                                                                                                                                                                                              |
-| `style_condition`      | `string`     | conditionally change the segments style using a template. Defaults to using the style property value. Must evaluate to a valid template style.                                                                                                                                                                                              |
+| `style`                | `string`     | see [Style][style] below. Possible values:<ul><li>`powerline`</li><li>`plain`</li><li>`diamond`</li><li>`accordion`</li><li>a go [text/template][go-text-template] [template][templates] resolving to the above values</li></ul>                                                                                           |
 | `powerline_symbol`     | `string`     | character to use when `"style": "powerline"`                                                                                                                                                                                                                                                                               |
 | `invert_powerline`     | `boolean`    | if `true` swaps the foreground and background colors. Can be useful when the character you want does not exist in the perfectly mirrored variant for example - defaults to `false`                                                                                                                                         |
 | `leading_diamond`      | `string`     | character to use at the start of the segment. Will take the background color of the segment as its foreground color                                                                                                                                                                                                        |
@@ -58,7 +57,7 @@ understand how to configure a segment.
 ## Style
 
 Style defines how a prompt is rendered. Looking at the most prompt
-themes out there, we identified 3 types. All of these require a different configuration and depending on the look
+themes out there, we identified 4 types. All of these require a different configuration and depending on the look
 you want to achieve you might need to understand/use them all.
 
 ### Powerline

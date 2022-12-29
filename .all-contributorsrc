@@ -1461,6 +1461,17 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "NoF0rte",
+      "name": "NoF0rte",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64100993?v=4",
+      "profile": "https://github.com/NoF0rte",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

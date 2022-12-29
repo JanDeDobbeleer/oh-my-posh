@@ -52,7 +52,6 @@ func (p *Python) Init(props properties.Properties, env platform.Environment) {
 		},
 		versionURLTemplate: "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}",
 		displayMode:        props.GetString(DisplayMode, DisplayModeEnvironment),
-		homeEnabled:        props.GetBool(HomeEnabled, true),
 	}
 }
 

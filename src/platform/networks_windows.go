@@ -103,11 +103,17 @@ type WLAN_INTERFACE_INFO struct {
 	isState                 uint32
 }
 
+//nolint:revive
+const (
+	WLAN_MAX_NAME_LENGTH  int64 = 256
+	DOT11_SSID_MAX_LENGTH int64 = 32
+)
+
 //nolint:revive, unused
 type WLAN_CONNECTION_ATTRIBUTES struct {
 	isState                   uint32
 	wlanConnectionMode        uint32
-	strProfileName            [256]uint16
+	strProfileName            [WLAN_MAX_NAME_LENGTH]uint16
 	wlanAssociationAttributes WLAN_ASSOCIATION_ATTRIBUTES
 	wlanSecurityAttributes    WLAN_SECURITY_ATTRIBUTES
 }
@@ -135,7 +141,7 @@ type WLAN_SECURITY_ATTRIBUTES struct {
 //nolint:revive
 type DOT11_SSID struct {
 	uSSIDLength uint32
-	ucSSID      [32]uint8
+	ucSSID      [DOT11_SSID_MAX_LENGTH]uint8
 }
 
 func (env *Shell) getConnections() []*Connection {

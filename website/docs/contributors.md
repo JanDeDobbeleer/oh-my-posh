@@ -216,6 +216,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center"><a href="https://linolevan.com"><img src="https://avatars.githubusercontent.com/u/11367844?v=4?s=100" width="100px;" alt="Lino Le Van"/><br /><sub><b>Lino Le Van</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=lino-levan" title="Documentation">📖</a></td>
       <td align="center"><a href="https://github.com/dvlprJobayer"><img src="https://avatars.githubusercontent.com/u/76583359?v=4?s=100" width="100px;" alt="Jobayer Ahammed Patwary"/><br /><sub><b>Jobayer Ahammed Patwary</b></sub></a><br /><a href="#design-dvlprJobayer" title="Design">🎨</a></td>
       <td align="center"><a href="https://github.com/NoF0rte"><img src="https://avatars.githubusercontent.com/u/64100993?v=4?s=100" width="100px;" alt="NoF0rte"/><br /><sub><b>NoF0rte</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=NoF0rte" title="Code">💻</a> <a href="#design-NoF0rte" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=NoF0rte" title="Documentation">📖</a></td>
+      <td align="center"><a href="https://github.com/LNKLEO"><img src="https://avatars.githubusercontent.com/u/10334184?v=4?s=100" width="100px;" alt="LNKLEO"/><br /><sub><b>LNKLEO</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=LNKLEO" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

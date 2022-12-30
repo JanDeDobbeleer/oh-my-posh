@@ -2,9 +2,10 @@ package segments
 
 import (
 	"encoding/json"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/template"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
+	"github.com/jandedobbeleer/oh-my-posh/template"
 )
 
 type Wakatime struct {

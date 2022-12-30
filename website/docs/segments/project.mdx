@@ -18,6 +18,12 @@ Supports:
 - .NET project (`*.csproj`, `*.vbproj` or `*.fsproj`, first file match info is displayed)
 - Julia project (`JuliaProject.toml`, `Project.toml`)
 
+## Properties
+
+| Name             | Type      | Description                                   |
+| ---------------- | --------- | --------------------------------------------- |
+| `always_enabled` | `boolean` | always show the segment - defaults to `false` |
+
 ## Sample Configuration
 
 ```json
@@ -43,10 +49,12 @@ Supports:
 
 ### Properties
 
-| Name       | Type     | Description                                          |
-| ---------- | -------- | ---------------------------------------------------- |
-| `.Version` | `string` | The version of your project                          |
-| `.Target`  | `string` | The target framwork/language version of your project |
-| `.Name`    | `string` | The name of your project                             |
+| Name       | Type     | Description                                                                           |
+| ---------- | -------- | ------------------------------------------------------------------------------------- |
+| `.Type`    | `string` | The type of project (`node`, `cargo`, `poetry`, `php`, `nuspec`, `dotnet` or `julia`) |
+| `.Version` | `string` | The version of your project                                                           |
+| `.Target`  | `string` | The target framwork/language version of your project                                  |
+| `.Name`    | `string` | The name of your project                                                              |
+| `.Error`   | `string` | The error context when we can't fetch the project info                                |
 
 [templates]: /docs/configuration/templates

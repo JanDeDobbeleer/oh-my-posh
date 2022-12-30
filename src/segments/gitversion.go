@@ -3,8 +3,9 @@ package segments
 import (
 	"encoding/json"
 	"errors"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 type gitVersion struct {

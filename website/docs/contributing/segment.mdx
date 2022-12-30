@@ -4,7 +4,7 @@ title: Add Segment
 sidebar_label: Add Segment
 ---
 
-## Create the logic
+## Create the logic (Writer)
 
 Add a new file in the `./src/segments` folder: `new.go`.
 Ensure `New` is a single verb indicating the context the segment renders.
@@ -69,10 +69,10 @@ NEW SegmentType = "new"
 
 ## Add the SegmentType mapping
 
-Map your `SegmentType` to your Segment in the `mapSegmentWithWriter` function (respect the alphabetical order).
+Add your `SegmentType` and `Writer` to the `Segments` map (respect the alphabetical order).
 
 ```go
-NEW: &New{},
+NEW: func() SegmentWriter { return &segments.New{} },
 ```
 
 ## Test your functionality

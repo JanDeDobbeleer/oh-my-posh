@@ -2,11 +2,12 @@ package cli
 
 import (
 	"fmt"
-	"oh-my-posh/color"
-	"oh-my-posh/console"
-	"oh-my-posh/engine"
-	"oh-my-posh/platform"
-	"oh-my-posh/shell"
+
+	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/console"
+	"github.com/jandedobbeleer/oh-my-posh/engine"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/shell"
 
 	"github.com/spf13/cobra"
 )

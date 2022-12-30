@@ -1,8 +1,9 @@
 package color
 
 import (
-	"oh-my-posh/regex"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/regex"
 )
 
 // PlainWriter writes a plain string
@@ -15,7 +16,6 @@ type PlainWriter struct {
 
 func (a *PlainWriter) SetColors(background, foreground string)       {}
 func (a *PlainWriter) SetParentColors(background, foreground string) {}
-func (a *PlainWriter) ClearParentColors()                            {}
 
 func (a *PlainWriter) Write(background, foreground, text string) {
 	if len(text) == 0 {

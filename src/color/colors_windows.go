@@ -2,7 +2,8 @@ package color
 
 import (
 	"errors"
-	"oh-my-posh/platform"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
 
 	"github.com/gookit/color"
 )

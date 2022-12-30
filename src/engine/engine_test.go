@@ -2,12 +2,13 @@ package engine
 
 import (
 	"errors"
-	"oh-my-posh/color"
-	"oh-my-posh/console"
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/shell"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/console"
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/shell"
 
 	"github.com/stretchr/testify/assert"
 )

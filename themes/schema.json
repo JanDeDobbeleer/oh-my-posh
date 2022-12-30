@@ -283,10 +283,16 @@
           ]
         },
         "style": {
-          "type": "string",
           "title": "Segment Style",
           "description": "https://ohmyposh.dev/docs/configuration/segment#style",
-          "enum": ["plain", "powerline", "diamond", "accordion"]
+          "anyOf": [
+            {
+              "enum": ["plain", "powerline", "diamond", "accordion"]
+            },
+            {
+              "type": "string"
+            }
+          ]
         },
         "foreground": {
           "$ref": "#/definitions/color"

@@ -1,11 +1,12 @@
 package engine
 
 import (
-	"oh-my-posh/color"
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/segments"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/segments"
 
 	"github.com/gookit/config/v2"
 	"github.com/mitchellh/mapstructure"

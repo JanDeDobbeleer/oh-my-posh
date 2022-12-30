@@ -2,10 +2,11 @@ package cli
 
 import (
 	"fmt"
-	"oh-my-posh/color"
-	"oh-my-posh/platform"
 	"strings"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
 
 	color2 "github.com/gookit/color"
 	"github.com/spf13/cobra"

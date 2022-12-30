@@ -3,12 +3,13 @@ package segments
 import (
 	"fmt"
 	url2 "net/url"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/regex"
 	"path/filepath"
 	"strconv"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
+	"github.com/jandedobbeleer/oh-my-posh/regex"
 
 	"gopkg.in/ini.v1"
 )
@@ -108,15 +109,18 @@ type Git struct {
 	UpstreamURL    string
 	RawUpstreamURL string
 	UpstreamGone   bool
-	StashCount     int
-	WorktreeCount  int
 	IsWorkTree     bool
 	RepoName       string
 	IsBare         bool
+
+	// needed for posh-git support
+	poshgit       bool
+	stashCount    int
+	worktreeCount int
 }
 
 func (g *Git) Template() string {
-	return " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}} \uF692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }} " //nolint: lll
+	return " {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }} " //nolint: lll
 }
 
 func (g *Git) Enabled() bool {
@@ -132,10 +136,6 @@ func (g *Git) Enabled() bool {
 	if g.IsBare {
 		g.getBareRepoInfo()
 		return true
-	}
-
-	if g.props.GetBool(FetchWorktreeCount, false) {
-		g.WorktreeCount = g.getWorktreeContext()
 	}
 
 	if g.hasPoshGitStatus() {
@@ -155,10 +155,20 @@ func (g *Git) Enabled() bool {
 	if len(g.Upstream) != 0 && g.props.GetBool(FetchUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
-	if g.props.GetBool(FetchStashCount, false) {
-		g.StashCount = g.getStashContext()
-	}
 	return true
+}
+
+func (g *Git) StashCount() int {
+	if g.poshgit || g.stashCount != 0 {
+		return g.stashCount
+	}
+	stashContent := g.FileContents(g.rootDir, "logs/refs/stash")
+	if stashContent == "" {
+		return 0
+	}
+	lines := strings.Split(stashContent, "\n")
+	g.stashCount = len(lines)
+	return g.stashCount
 }
 
 func (g *Git) Kraken() string {
@@ -577,16 +587,10 @@ func (g *Git) setPrettyHEADName() {
 	g.HEAD = fmt.Sprintf("%s%s", g.props.GetString(CommitIcon, "\uF417"), g.ShortHash)
 }
 
-func (g *Git) getStashContext() int {
-	stashContent := g.FileContents(g.rootDir, "logs/refs/stash")
-	if stashContent == "" {
-		return 0
+func (g *Git) WorktreeCount() int {
+	if g.worktreeCount > 0 {
+		return g.worktreeCount
 	}
-	lines := strings.Split(stashContent, "\n")
-	return len(lines)
-}
-
-func (g *Git) getWorktreeContext() int {
 	if !g.env.HasFolder(g.rootDir + "/worktrees") {
 		return 0
 	}

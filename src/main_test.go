@@ -2,8 +2,9 @@ package main
 
 import (
 	"bytes"
-	"oh-my-posh/cli"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/cli"
 )
 
 func BenchmarkInit(b *testing.B) {

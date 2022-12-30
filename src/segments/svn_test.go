@@ -1,10 +1,11 @@
 package segments
 
 import (
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -36,6 +37,8 @@ func TestSvnEnabledInWorkingDirectory(t *testing.T) {
 	env.On("GOOS").Return("")
 	env.On("FileContent", "/dir/hello/trunk").Return("")
 	env.MockSvnCommand(fileInfo.Path, "", "info", "--tags", "--exact-match")
+	env.On("RunCommand", "svn", []string{"info", "/dir/hello", "--show-item", "revision"}).Return("", nil)
+	env.On("RunCommand", "svn", []string{"info", "/dir/hello", "--show-item", "relative-url"}).Return("", nil)
 	env.On("IsWsl").Return(false)
 	env.On("HasParentFilePath", ".svn").Return(fileInfo, nil)
 	s := &Svn{
@@ -239,8 +242,10 @@ R       Moved.File`,
 
 		s := &Svn{
 			scm: scm{
-				env:     env,
-				props:   properties.Map{},
+				env: env,
+				props: properties.Map{
+					FetchStatus: true,
+				},
 				command: SVNCOMMAND,
 			},
 		}

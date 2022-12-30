@@ -1,9 +1,9 @@
 package segments
 
 import (
-	"oh-my-posh/platform"
-	"oh-my-posh/platform/battery"
-	"oh-my-posh/properties"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/platform/battery"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 type Battery struct {

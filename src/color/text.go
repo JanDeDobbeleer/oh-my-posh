@@ -1,8 +1,9 @@
 package color
 
 import (
-	"oh-my-posh/regex"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/regex"
 
 	"github.com/mattn/go-runewidth"
 )

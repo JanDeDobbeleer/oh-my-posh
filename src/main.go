@@ -1,6 +1,6 @@
 package main
 
-import "oh-my-posh/cli"
+import "github.com/jandedobbeleer/oh-my-posh/cli"
 
 var (
 	Version = "development"

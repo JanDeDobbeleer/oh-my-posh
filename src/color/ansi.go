@@ -2,9 +2,10 @@ package color
 
 import (
 	"fmt"
-	"oh-my-posh/regex"
-	"oh-my-posh/shell"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/regex"
+	"github.com/jandedobbeleer/oh-my-posh/shell"
 )
 
 const (

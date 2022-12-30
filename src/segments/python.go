@@ -3,10 +3,11 @@ package segments
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"path/filepath"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 type Python struct {
@@ -51,7 +52,6 @@ func (p *Python) Init(props properties.Properties, env platform.Environment) {
 		},
 		versionURLTemplate: "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}",
 		displayMode:        props.GetString(DisplayMode, DisplayModeEnvironment),
-		homeEnabled:        props.GetBool(HomeEnabled, true),
 	}
 }
 

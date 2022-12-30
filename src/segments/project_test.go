@@ -2,11 +2,12 @@ package segments
 
 import (
 	"io/fs"
-	"oh-my-posh/mock"
-	"oh-my-posh/properties"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 
 	"github.com/alecthomas/assert"
 
@@ -155,19 +156,21 @@ func TestPackage(t *testing.T) {
 		},
 		{
 			Case:            "Empty project package node.js",
-			ExpectedEnabled: false,
+			ExpectedEnabled: true,
 			Name:            "node",
 			File:            "package.json",
 			PackageContents: "{}",
 		},
 		{
 			Case:            "Empty project package cargo",
+			ExpectedEnabled: true,
 			Name:            "cargo",
 			File:            "Cargo.toml",
 			PackageContents: "",
 		},
 		{
 			Case:            "Empty project package poetry",
+			ExpectedEnabled: true,
 			Name:            "poetry",
 			File:            "pyproject.toml",
 			PackageContents: "",
@@ -263,7 +266,7 @@ func TestNuspecPackage(t *testing.T) {
 			Case:            "no info in file",
 			FileName:        "../test/empty.nuspec",
 			HasFiles:        true,
-			ExpectedEnabled: false,
+			ExpectedEnabled: true,
 		},
 		{
 			Case:            "no files",

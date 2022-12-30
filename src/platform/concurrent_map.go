@@ -1,30 +1,33 @@
 package platform
 
-type concurrentMap struct {
+import "sync"
+
+type ConcurrentMap struct {
 	values map[string]interface{}
+	sync.RWMutex
 }
 
-func newConcurrentMap() *concurrentMap {
-	return &concurrentMap{
+func NewConcurrentMap() *ConcurrentMap {
+	return &ConcurrentMap{
 		values: make(map[string]interface{}),
 	}
 }
 
-func (c *concurrentMap) set(key string, value interface{}) {
-	lock.Lock()
-	defer lock.Unlock()
+func (c *ConcurrentMap) Set(key string, value interface{}) {
+	c.Lock()
+	defer c.Unlock()
 	c.values[key] = value
 }
 
-func (c *concurrentMap) get(key string) (interface{}, bool) {
-	lock.RLock()
-	defer lock.RUnlock()
+func (c *ConcurrentMap) Get(key string) (interface{}, bool) {
+	c.RLock()
+	defer c.RUnlock()
 	if val, ok := c.values[key]; ok {
 		return val, true
 	}
 	return "", false
 }
 
-func (c *concurrentMap) list() map[string]interface{} {
+func (c *ConcurrentMap) List() map[string]interface{} {
 	return c.values
 }

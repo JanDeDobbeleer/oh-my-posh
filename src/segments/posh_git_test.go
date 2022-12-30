@@ -1,10 +1,11 @@
 package segments
 
 import (
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -113,7 +114,7 @@ func TestPoshGitSegment(t *testing.T) {
 				"Branch": "posh-git-json"
 			}
 			`,
-			ExpectedString:  "\ue0a0posh-git-json ↑1 ↓1 \uf044 ~2 | \uf046 -2 \uf692 2",
+			ExpectedString:  "\ue0a0posh-git-json ↑1 ↓1 \uf044 ~2 | \uf046 -2",
 			ExpectedEnabled: true,
 		},
 		{
@@ -140,7 +141,7 @@ func TestPoshGitSegment(t *testing.T) {
 				"Branch": "posh-git-json"
 			}
 			`,
-			ExpectedString:  "\ue0a0posh-git-json ≢ \uf692 2",
+			ExpectedString:  "\ue0a0posh-git-json ≢",
 			ExpectedEnabled: true,
 		},
 		{
@@ -160,7 +161,7 @@ func TestPoshGitSegment(t *testing.T) {
 				"Branch": "posh-git-json"
 			}
 			`,
-			ExpectedString:  "\ue0a0posh-git-json ≢ \uf692 2",
+			ExpectedString:  "\ue0a0posh-git-json ≢",
 			ExpectedEnabled: true,
 		},
 		{

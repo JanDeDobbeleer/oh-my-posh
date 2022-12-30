@@ -3,10 +3,11 @@ package segments
 import (
 	"fmt"
 	"math"
-	"oh-my-posh/http"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/http"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 )
 
 // StravaAPI is a wrapper around http.Oauth

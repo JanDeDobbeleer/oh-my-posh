@@ -3,13 +3,14 @@ package segments
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/properties"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -580,7 +581,7 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 				workingDir: "",
 			},
 		}
-		got := g.getStashContext()
+		got := g.StashCount()
 		assert.Equal(t, tc.Expected, got)
 	}
 }
@@ -760,7 +761,8 @@ func TestGitTemplateString(t *testing.T) {
 						Modified: 1,
 					},
 				},
-				StashCount: 3,
+				stashCount: 3,
+				poshgit:    true,
 			},
 		},
 		{

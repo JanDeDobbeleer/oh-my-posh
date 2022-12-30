@@ -1,11 +1,12 @@
 package engine
 
 import (
-	"oh-my-posh/color"
-	"oh-my-posh/platform"
-	"oh-my-posh/shell"
 	"sync"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/platform"
+	"github.com/jandedobbeleer/oh-my-posh/shell"
 )
 
 // BlockType type of block
@@ -130,20 +131,19 @@ func (b *Block) setSegmentsText() {
 
 func (b *Block) RenderSegments() (string, int) {
 	for _, segment := range b.Segments {
-		if !segment.Enabled && segment.Style != Accordion {
+		if !segment.Enabled && segment.style() != Accordion {
 			continue
 		}
 		b.setActiveSegment(segment)
 		b.renderActiveSegment()
 	}
 	b.writePowerline(true)
-	b.writer.ClearParentColors()
 	return b.writer.String()
 }
 
 func (b *Block) renderActiveSegment() {
 	b.writePowerline(false)
-	switch b.activeSegment.Style {
+	switch b.activeSegment.style() {
 	case Plain, Powerline:
 		b.writer.Write(color.Background, color.Foreground, b.activeSegment.text)
 	case Diamond:
@@ -177,7 +177,7 @@ func (b *Block) writePowerline(final bool) {
 	if final || !b.activeSegment.isPowerline() {
 		bgColor = color.Transparent
 	}
-	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
+	if b.activeSegment.style() == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
 		bgColor = color.Background
 	}
 	if b.activeSegment.InvertPowerline {
@@ -191,10 +191,10 @@ func (b *Block) getPowerlineColor() string {
 	if b.previousActiveSegment == nil {
 		return color.Transparent
 	}
-	if b.previousActiveSegment.Style == Diamond && len(b.previousActiveSegment.TrailingDiamond) == 0 {
+	if b.previousActiveSegment.style() == Diamond && len(b.previousActiveSegment.TrailingDiamond) == 0 {
 		return b.previousActiveSegment.background()
 	}
-	if b.activeSegment.Style == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
+	if b.activeSegment.style() == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
 		return b.previousActiveSegment.background()
 	}
 	if !b.previousActiveSegment.isPowerline() {
@@ -217,7 +217,7 @@ func (b *Block) Debug() (int, []*SegmentTiming) {
 		segment.SetEnabled(b.env)
 		segment.SetText()
 		segmentTiming.active = segment.Enabled
-		if segmentTiming.active || segment.Style == Accordion {
+		if segmentTiming.active || segment.style() == Accordion {
 			b.setActiveSegment(segment)
 			b.renderActiveSegment()
 			segmentTiming.text, _ = b.writer.String()

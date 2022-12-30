@@ -26,11 +26,12 @@ import (
 	_ "embed"
 	"fmt"
 	"math"
-	"oh-my-posh/color"
-	"oh-my-posh/regex"
 	"strconv"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/regex"
 
 	"github.com/esimov/stackblur-go"
 	"github.com/fogleman/gg"

@@ -1,8 +1,9 @@
 package color
 
 import (
-	"oh-my-posh/shell"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/shell"
 
 	"github.com/stretchr/testify/assert"
 )

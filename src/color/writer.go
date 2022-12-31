@@ -205,8 +205,14 @@ func (a *AnsiWriter) expandKeyword(keyword string) string {
 			case ParentForeground:
 				keyword = color.Foreground
 			default:
+				if len(keyword) == 0 {
+					return Transparent
+				}
 				return keyword
 			}
+		}
+		if len(keyword) == 0 {
+			return Transparent
 		}
 		return keyword
 	}

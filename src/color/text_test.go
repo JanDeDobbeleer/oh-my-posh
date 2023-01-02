@@ -37,7 +37,7 @@ func TestMeasureText(t *testing.T) {
 	for _, shell := range shells {
 		for _, tc := range cases {
 			ansi := &Ansi{}
-			ansi.Init(shell, "")
+			ansi.Init(shell)
 			tmpl := &template.Text{
 				Template: tc.Template,
 				Env:      env,

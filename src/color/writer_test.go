@@ -174,7 +174,7 @@ func TestWriteANSIColors(t *testing.T) {
 
 	for _, tc := range cases {
 		ansi := &Ansi{}
-		ansi.Init(shell.PWSH, "")
+		ansi.Init(shell.PWSH)
 		renderer := &AnsiWriter{
 			Ansi:               ansi,
 			ParentColors:       []*Color{tc.Parent},

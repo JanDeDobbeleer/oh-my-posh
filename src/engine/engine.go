@@ -43,7 +43,7 @@ func (e *Engine) string() string {
 	return text
 }
 
-func (e *Engine) canWriteRPrompt(rprompt bool) bool {
+func (e *Engine) canWriteRightBlock(rprompt bool) bool {
 	if rprompt && (e.rprompt == "" || e.Plain) {
 		return false
 	}
@@ -188,7 +188,7 @@ func (e *Engine) renderBlock(block *Block) {
 		text, length := block.RenderSegments()
 		e.rpromptLength = length
 
-		if !e.canWriteRPrompt(false) {
+		if !e.canWriteRightBlock(false) {
 			switch block.Overflow {
 			case Break:
 				e.newline()
@@ -211,7 +211,7 @@ func (e *Engine) renderBlock(block *Block) {
 		ansi := e.Ansi
 		if e.Env.Shell() == shell.BASH {
 			ansi = &color.Ansi{}
-			ansi.InitPlain()
+			ansi.InitPlain(e.Env.GOOS())
 		}
 		prompt := ansi.CarriageForward()
 		prompt += ansi.GetCursorForRightWrite(length, block.HorizontalOffset)
@@ -292,7 +292,7 @@ func (e *Engine) print() string {
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
 	case shell.PWSH, shell.PWSH5, shell.PLAIN, shell.NU:
-		if !e.canWriteRPrompt(true) {
+		if !e.canWriteRightBlock(true) {
 			break
 		}
 		e.write(e.Ansi.SaveCursorPosition())
@@ -301,13 +301,13 @@ func (e *Engine) print() string {
 		e.write(e.rprompt)
 		e.write(e.Ansi.RestoreCursorPosition())
 	case shell.BASH:
-		if !e.canWriteRPrompt(true) {
+		if !e.canWriteRightBlock(true) {
 			break
 		}
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
 		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
 		ansi := &color.Ansi{}
-		ansi.InitPlain()
+		ansi.InitPlain(e.Env.GOOS())
 		prompt := ansi.SaveCursorPosition()
 		prompt += ansi.CarriageForward()
 		prompt += ansi.GetCursorForRightWrite(e.rpromptLength, 0)

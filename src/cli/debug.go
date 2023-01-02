@@ -34,7 +34,7 @@ var debugCmd = &cobra.Command{
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 		ansi := &color.Ansi{}
-		ansi.InitPlain()
+		ansi.InitPlain(env.GOOS())
 		writerColors := cfg.MakeColors()
 		writer := &color.AnsiWriter{
 			Ansi:               ansi,

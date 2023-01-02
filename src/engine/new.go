@@ -18,11 +18,11 @@ func New(flags *platform.Flags) *Engine {
 	env.Init()
 	cfg := LoadConfig(env)
 	ansi := &color.Ansi{}
-	ansi.Init(env.Shell())
+	ansi.Init(env.Shell(), env.GOOS())
 
 	var writer color.Writer
 	if flags.Plain {
-		ansi.InitPlain()
+		ansi.InitPlain(env.GOOS())
 		writer = &color.PlainWriter{
 			Ansi: ansi,
 		}

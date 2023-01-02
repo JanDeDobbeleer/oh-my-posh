@@ -72,7 +72,7 @@ func TestPrintPWD(t *testing.T) {
 			Shell: "shell",
 		})
 		ansi := &color.Ansi{}
-		ansi.InitPlain("")
+		ansi.InitPlain()
 		engine := &Engine{
 			Env: env,
 			Config: &Config{
@@ -102,7 +102,7 @@ func engineRender() {
 	defer testClearDefaultConfig()
 
 	ansi := &color.Ansi{}
-	ansi.InitPlain("")
+	ansi.InitPlain()
 	writerColors := cfg.MakeColors()
 	writer := &color.AnsiWriter{
 		Ansi:               ansi,

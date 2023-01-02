@@ -33,7 +33,7 @@ func runImageTest(config, content string) (string, error) {
 	}
 	defer os.Remove(file.Name())
 	ansi := &color.Ansi{}
-	ansi.InitPlain("")
+	ansi.InitPlain()
 	image := &ImageRenderer{
 		AnsiString: content,
 		Ansi:       ansi,

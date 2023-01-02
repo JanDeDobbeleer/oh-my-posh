@@ -211,7 +211,7 @@ func (e *Engine) renderBlock(block *Block) {
 		ansi := e.Ansi
 		if e.Env.Shell() == shell.BASH {
 			ansi = &color.Ansi{}
-			ansi.InitPlain(e.Env.GOOS())
+			ansi.InitPlain()
 		}
 		prompt := ansi.CarriageForward()
 		prompt += ansi.GetCursorForRightWrite(length, block.HorizontalOffset)
@@ -307,7 +307,7 @@ func (e *Engine) print() string {
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
 		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
 		ansi := &color.Ansi{}
-		ansi.InitPlain(e.Env.GOOS())
+		ansi.InitPlain()
 		prompt := ansi.SaveCursorPosition()
 		prompt += ansi.CarriageForward()
 		prompt += ansi.GetCursorForRightWrite(e.rpromptLength, 0)

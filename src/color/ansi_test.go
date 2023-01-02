@@ -20,7 +20,7 @@ func TestGenerateHyperlinkNoUrl(t *testing.T) {
 	}
 	for _, tc := range cases {
 		a := Ansi{}
-		a.Init(tc.ShellName)
+		a.Init(tc.ShellName, "")
 		hyperlinkText := a.GenerateHyperlink(tc.Text)
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
@@ -53,7 +53,7 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 	}
 	for _, tc := range cases {
 		a := Ansi{}
-		a.Init(tc.ShellName)
+		a.Init(tc.ShellName, "")
 		hyperlinkText := a.GenerateHyperlink(tc.Text)
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
@@ -71,7 +71,7 @@ func TestGenerateHyperlinkWithUrlNoName(t *testing.T) {
 	}
 	for _, tc := range cases {
 		a := Ansi{}
-		a.Init(tc.ShellName)
+		a.Init(tc.ShellName, "")
 		hyperlinkText := a.GenerateHyperlink(tc.Text)
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}
@@ -96,7 +96,7 @@ func TestFormatText(t *testing.T) {
 	}
 	for _, tc := range cases {
 		a := Ansi{}
-		a.InitPlain()
+		a.InitPlain("")
 		formattedText := a.formatText(tc.Text)
 		assert.Equal(t, tc.Expected, formattedText, tc.Case)
 	}
@@ -115,7 +115,7 @@ func TestGenerateFileLink(t *testing.T) {
 	}
 	for _, tc := range cases {
 		a := Ansi{}
-		a.Init(shell.PWSH)
+		a.Init(shell.PWSH, "")
 		hyperlinkText := a.GenerateHyperlink(tc.Text)
 		assert.Equal(t, tc.Expected, hyperlinkText)
 	}

@@ -62,7 +62,7 @@ func TestGetTitle(t *testing.T) {
 			Folder:   "vagrant",
 		})
 		ansi := &color.Ansi{}
-		ansi.InitPlain()
+		ansi.InitPlain("")
 		ct := &Title{
 			Env:      env,
 			Ansi:     ansi,
@@ -117,7 +117,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			HostName: "",
 		})
 		ansi := &color.Ansi{}
-		ansi.InitPlain()
+		ansi.InitPlain("")
 		ct := &Title{
 			Env:      env,
 			Ansi:     ansi,

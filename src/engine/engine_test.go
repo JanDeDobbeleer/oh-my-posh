@@ -39,7 +39,7 @@ func TestCanWriteRPrompt(t *testing.T) {
 			currentLineLength: tc.PromptLength,
 			rprompt:           "hello",
 		}
-		got := engine.canWriteRPrompt(true)
+		got := engine.canWriteRightBlock(true)
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
@@ -71,7 +71,7 @@ func TestPrintPWD(t *testing.T) {
 			Shell: "shell",
 		})
 		ansi := &color.Ansi{}
-		ansi.InitPlain()
+		ansi.InitPlain("")
 		engine := &Engine{
 			Env: env,
 			Config: &Config{
@@ -101,7 +101,7 @@ func engineRender() {
 	defer testClearDefaultConfig()
 
 	ansi := &color.Ansi{}
-	ansi.InitPlain()
+	ansi.InitPlain("")
 	writerColors := cfg.MakeColors()
 	writer := &color.AnsiWriter{
 		Ansi:               ansi,

@@ -48,7 +48,7 @@ type Ansi struct {
 	format                string
 }
 
-func (a *Ansi) Init(shellName, goos string) {
+func (a *Ansi) Init(shellName string) {
 	a.shell = shellName
 	switch shellName {
 	case shell.ZSH:
@@ -125,6 +125,9 @@ func (a *Ansi) Init(shellName, goos string) {
 		a.colorTransparent = "\x1b[%s;49m\x1b[7m%s\x1b[0m"
 		a.escapeLeft = ""
 		a.escapeRight = ""
+		// when in fish on Linux, it seems hyperlinks ending with \\ print a \
+		// unlike on macOS. However, this is a fish bug, so do not try to fix it here:
+		// https://github.com/JanDeDobbeleer/oh-my-posh/pull/3288#issuecomment-1369137068
 		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
 		a.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b\\\\\\\\?(?P<TEXT>.+)\x1b]8;;\x1b\\\\)"
 		a.osc99 = "\x1b]9;9;\"%s\"\x1b\\"
@@ -139,17 +142,10 @@ func (a *Ansi) Init(shellName, goos string) {
 		a.dimmed = "\x1b[2m%s\x1b[22m"
 		a.strikethrough = "\x1b[9m%s\x1b[29m"
 	}
-	// see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3287
-	// when in fish on Linux, it seems hyperlinks ending with \\ prints a \
-	// unlike on macOS
-	if shellName == shell.FISH && goos == "linux" {
-		a.hyperlink = "\x1b]8;;%s\x1b%s\x1b]8;;\x1b\\"
-		a.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b?(?P<TEXT>.+)\x1b]8;;\x1b\\\\)"
-	}
 }
 
 func (a *Ansi) InitPlain() {
-	a.Init(shell.PLAIN, "")
+	a.Init(shell.PLAIN)
 }
 
 func (a *Ansi) GenerateHyperlink(text string) string {

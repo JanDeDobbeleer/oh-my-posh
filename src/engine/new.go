@@ -26,7 +26,7 @@ func New(flags *platform.Flags) *Engine {
 			Ansi: ansi,
 		}
 	} else {
-		ansi.Init(env.Shell(), env.GOOS())
+		ansi.Init(env.Shell())
 		writerColors := cfg.MakeColors()
 		writer = &color.AnsiWriter{
 			Ansi:               ansi,

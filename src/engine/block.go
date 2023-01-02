@@ -67,7 +67,7 @@ func (b *Block) Init(env platform.Environment, writer color.Writer, ansi *color.
 
 func (b *Block) InitPlain(env platform.Environment, config *Config) {
 	b.ansi = &color.Ansi{}
-	b.ansi.InitPlain(b.env.GOOS())
+	b.ansi.InitPlain()
 	b.writer = &color.AnsiWriter{
 		Ansi:               b.ansi,
 		TerminalBackground: shell.ConsoleBackgroundColor(env, config.TerminalBackground),

@@ -148,8 +148,8 @@ func (a *Ansi) Init(shellName, goos string) {
 	}
 }
 
-func (a *Ansi) InitPlain(goos string) {
-	a.Init(shell.PLAIN, goos)
+func (a *Ansi) InitPlain() {
+	a.Init(shell.PLAIN, "")
 }
 
 func (a *Ansi) GenerateHyperlink(text string) string {

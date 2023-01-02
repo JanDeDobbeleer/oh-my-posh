@@ -96,7 +96,7 @@ func TestFormatText(t *testing.T) {
 	}
 	for _, tc := range cases {
 		a := Ansi{}
-		a.InitPlain("")
+		a.InitPlain()
 		formattedText := a.formatText(tc.Text)
 		assert.Equal(t, tc.Expected, formattedText, tc.Case)
 	}

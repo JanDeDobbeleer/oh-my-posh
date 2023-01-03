@@ -135,7 +135,7 @@ func TestParent(t *testing.T) {
 		env.On("Home").Return(tc.HomePath)
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("Flags").Return(&platform.Flags{})
-		env.On("Shell").Return(shell.PLAIN)
+		env.On("Shell").Return(shell.GENERIC)
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("GOOS").Return(tc.GOOS)
 		path := &Path{
@@ -811,7 +811,7 @@ func TestFullAndFolderPath(t *testing.T) {
 			PSWD: tc.Pswd,
 		}
 		env.On("Flags").Return(args)
-		env.On("Shell").Return(shell.PLAIN)
+		env.On("Shell").Return(shell.GENERIC)
 		if len(tc.Template) == 0 {
 			tc.Template = "{{ if gt .StackCount 0 }}{{ .StackCount }} {{ end }}{{ .Path }}"
 		}
@@ -870,7 +870,7 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 			PSWD: tc.Pwd,
 		}
 		env.On("Flags").Return(args)
-		env.On("Shell").Return(shell.PLAIN)
+		env.On("Shell").Return(shell.GENERIC)
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: map[string]string{
 				"HOME": "/a/b/c",
@@ -902,7 +902,7 @@ func TestFolderPathCustomMappedLocations(t *testing.T) {
 		PSWD: pwd,
 	}
 	env.On("Flags").Return(args)
-	env.On("Shell").Return(shell.PLAIN)
+	env.On("Shell").Return(shell.GENERIC)
 	path := &Path{
 		env: env,
 		props: properties.Map{

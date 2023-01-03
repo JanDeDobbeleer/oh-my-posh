@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/color"
-	"github.com/jandedobbeleer/oh-my-posh/console"
 	"github.com/jandedobbeleer/oh-my-posh/engine"
 	"github.com/jandedobbeleer/oh-my-posh/platform"
 	"github.com/jandedobbeleer/oh-my-posh/shell"
@@ -52,31 +51,21 @@ Exports the config to an image file using customized output options.`,
 			Version: cliVersion,
 			CmdFlags: &platform.Flags{
 				Config: config,
-				Shell:  shell.PLAIN,
+				Shell:  shell.GENERIC,
 			},
 		}
 		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
-		ansi := &color.Ansi{}
-		ansi.InitPlain()
 		writerColors := cfg.MakeColors()
 		writer := &color.AnsiWriter{
-			Ansi:               ansi,
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
 		}
-		consoleTitle := &console.Title{
-			Env:      env,
-			Ansi:     ansi,
-			Template: cfg.ConsoleTitleTemplate,
-		}
 		eng := &engine.Engine{
-			Config:       cfg,
-			Env:          env,
-			Writer:       writer,
-			ConsoleTitle: consoleTitle,
-			Ansi:         ansi,
+			Config: cfg,
+			Env:    env,
+			Writer: writer,
 		}
 		prompt := eng.PrintPrimary()
 		imageCreator := &engine.ImageRenderer{
@@ -85,7 +74,7 @@ Exports the config to an image file using customized output options.`,
 			CursorPadding: cursorPadding,
 			RPromptOffset: rPromptOffset,
 			BgColor:       bgColor,
-			Ansi:          ansi,
+			Ansi:          writer,
 		}
 		if outputImage != "" {
 			imageCreator.Path = cleanOutputPath(outputImage, env)

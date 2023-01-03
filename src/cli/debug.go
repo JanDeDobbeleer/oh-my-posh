@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/color"
-	"github.com/jandedobbeleer/oh-my-posh/console"
 	"github.com/jandedobbeleer/oh-my-posh/engine"
 	"github.com/jandedobbeleer/oh-my-posh/platform"
 	"github.com/jandedobbeleer/oh-my-posh/shell"
@@ -33,26 +32,17 @@ var debugCmd = &cobra.Command{
 		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
-		ansi := &color.Ansi{}
-		ansi.InitPlain()
 		writerColors := cfg.MakeColors()
 		writer := &color.AnsiWriter{
-			Ansi:               ansi,
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
 		}
-		consoleTitle := &console.Title{
-			Env:      env,
-			Ansi:     ansi,
-			Template: cfg.ConsoleTitleTemplate,
-		}
+		writer.Init(shell.GENERIC)
 		eng := &engine.Engine{
-			Config:       cfg,
-			Env:          env,
-			Writer:       writer,
-			ConsoleTitle: consoleTitle,
-			Ansi:         ansi,
-			Plain:        plain,
+			Config: cfg,
+			Env:    env,
+			Writer: writer,
+			Plain:  plain,
 		}
 		fmt.Print(eng.PrintDebug(startTime, cliVersion))
 	},

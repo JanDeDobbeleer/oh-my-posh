@@ -110,7 +110,7 @@ type ImageRenderer struct {
 	CursorPadding int
 	RPromptOffset int
 	BgColor       string
-	Ansi          *color.Ansi
+	Ansi          *color.AnsiWriter
 
 	Path string
 

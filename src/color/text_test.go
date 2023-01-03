@@ -33,18 +33,18 @@ func TestMeasureText(t *testing.T) {
 	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),
 	})
-	shells := []string{shell.BASH, shell.ZSH, shell.PLAIN}
+	shells := []string{shell.BASH, shell.ZSH, shell.GENERIC}
 	for _, shell := range shells {
 		for _, tc := range cases {
-			ansi := &Ansi{}
-			ansi.Init(shell)
+			ansiWriter := &AnsiWriter{}
+			ansiWriter.Init(shell)
 			tmpl := &template.Text{
 				Template: tc.Template,
 				Env:      env,
 			}
 			text, _ := tmpl.Render()
-			text = ansi.GenerateHyperlink(text)
-			got := ansi.MeasureText(text)
+			text = ansiWriter.GenerateHyperlink(text)
+			got := ansiWriter.MeasureText(text)
 			assert.Equal(t, tc.Expected, got, fmt.Sprintf("%s: %s", shell, tc.Case))
 		}
 	}

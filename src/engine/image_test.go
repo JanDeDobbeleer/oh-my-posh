@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/shell"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -32,8 +33,8 @@ func runImageTest(config, content string) (string, error) {
 		return "", err
 	}
 	defer os.Remove(file.Name())
-	ansi := &color.Ansi{}
-	ansi.InitPlain()
+	ansi := &color.AnsiWriter{}
+	ansi.Init(shell.GENERIC)
 	image := &ImageRenderer{
 		AnsiString: content,
 		Ansi:       ansi,

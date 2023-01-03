@@ -53,26 +53,22 @@ type Block struct {
 
 	env                   platform.Environment
 	writer                color.Writer
-	ansi                  *color.Ansi
 	activeSegment         *Segment
 	previousActiveSegment *Segment
 }
 
-func (b *Block) Init(env platform.Environment, writer color.Writer, ansi *color.Ansi) {
+func (b *Block) Init(env platform.Environment, writer color.Writer) {
 	b.env = env
 	b.writer = writer
-	b.ansi = ansi
 	b.executeSegmentLogic()
 }
 
 func (b *Block) InitPlain(env platform.Environment, config *Config) {
-	b.ansi = &color.Ansi{}
-	b.ansi.InitPlain()
 	b.writer = &color.AnsiWriter{
-		Ansi:               b.ansi,
 		TerminalBackground: shell.ConsoleBackgroundColor(env, config.TerminalBackground),
 		AnsiColors:         config.MakeColors(),
 	}
+	b.writer.Init(shell.GENERIC)
 	b.env = env
 	b.executeSegmentLogic()
 }

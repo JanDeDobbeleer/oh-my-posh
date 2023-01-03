@@ -10,6 +10,40 @@ import (
 	"github.com/gookit/color"
 )
 
+// AnsiColors is the interface that wraps AnsiColorFromString method.
+//
+// AnsiColorFromString gets the ANSI color code for a given color string.
+// This can include a valid hex color in the format `#FFFFFF`,
+// but also a name of one of the first 16 ANSI colors like `lightBlue`.
+type AnsiColors interface {
+	AnsiColorFromString(colorString string, isBackground bool) AnsiColor
+}
+
+// AnsiColor is an ANSI color code ready to be printed to the console.
+// Example: "38;2;255;255;255", "48;2;255;255;255", "31", "95".
+type AnsiColor string
+
+const (
+	emptyAnsiColor       = AnsiColor("")
+	transparentAnsiColor = AnsiColor(Transparent)
+)
+
+func (c AnsiColor) IsEmpty() bool {
+	return c == emptyAnsiColor
+}
+
+func (c AnsiColor) IsTransparent() bool {
+	return c == transparentAnsiColor
+}
+
+func (c AnsiColor) ToForeground() AnsiColor {
+	colorString := string(c)
+	if strings.HasPrefix(colorString, "38;") {
+		return AnsiColor(strings.Replace(colorString, "38;", "48;", 1))
+	}
+	return c
+}
+
 func MakeColors(palette Palette, cacheEnabled bool, accentColor string, env platform.Environment) (colors AnsiColors) {
 	defaultColors := &DefaultColors{}
 	defaultColors.SetAccentColor(env, accentColor)

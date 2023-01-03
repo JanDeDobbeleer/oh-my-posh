@@ -6,19 +6,16 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/color"
-	"github.com/jandedobbeleer/oh-my-posh/console"
 	"github.com/jandedobbeleer/oh-my-posh/platform"
 	"github.com/jandedobbeleer/oh-my-posh/shell"
 	"github.com/jandedobbeleer/oh-my-posh/template"
 )
 
 type Engine struct {
-	Config       *Config
-	Env          platform.Environment
-	Writer       color.Writer
-	Ansi         *color.Ansi
-	ConsoleTitle *console.Title
-	Plain        bool
+	Config *Config
+	Env    platform.Environment
+	Writer color.Writer
+	Plain  bool
 
 	console           strings.Builder
 	currentLineLength int
@@ -27,13 +24,6 @@ type Engine struct {
 }
 
 func (e *Engine) write(text string) {
-	e.console.WriteString(text)
-}
-
-func (e *Engine) writeANSI(text string) {
-	if e.Plain {
-		return
-	}
 	e.console.WriteString(text)
 }
 
@@ -71,9 +61,9 @@ func (e *Engine) PrintPrimary() string {
 		e.renderBlock(block)
 	}
 	if len(e.Config.ConsoleTitleTemplate) > 0 {
-		e.writeANSI(e.ConsoleTitle.GetTitle())
+		title := e.getTitleTemplateText()
+		e.write(e.Writer.FormatTitle(title))
 	}
-	e.writeANSI(e.Ansi.ColorReset())
 	if e.Config.FinalSpace {
 		e.write(" ")
 	}
@@ -88,7 +78,7 @@ func (e *Engine) printPWD() {
 	cwd := e.Env.Pwd()
 	// Backwards compatibility for deprecated OSC99
 	if e.Config.OSC99 {
-		e.writeANSI(e.Ansi.ConsolePwd(color.OSC99, "", "", cwd))
+		e.write(e.Writer.ConsolePwd(color.OSC99, "", "", cwd))
 		return
 	}
 	// Allow template logic to define when to enable the PWD (when supported)
@@ -102,13 +92,13 @@ func (e *Engine) printPWD() {
 	}
 	user := e.Env.User()
 	host, _ := e.Env.Host()
-	e.writeANSI(e.Ansi.ConsolePwd(pwdType, user, host, cwd))
+	e.write(e.Writer.ConsolePwd(pwdType, user, host, cwd))
 }
 
 func (e *Engine) newline() {
 	// WARP terminal will remove \n from the prompt, so we hack a newline in
 	if e.isWarp() {
-		e.write(e.Ansi.LineBreak())
+		e.write(e.Writer.LineBreak())
 	} else {
 		e.write("\n")
 	}
@@ -140,6 +130,17 @@ func (e *Engine) shouldFill(block *Block, length int) (string, bool) {
 	return strings.Repeat(filler, repeat), true
 }
 
+func (e *Engine) getTitleTemplateText() string {
+	tmpl := &template.Text{
+		Template: e.Config.ConsoleTitleTemplate,
+		Env:      e.Env,
+	}
+	if text, err := tmpl.Render(); err == nil {
+		return text
+	}
+	return ""
+}
+
 func (e *Engine) renderBlock(block *Block) {
 	defer func() {
 		// Due to a bug in PowerShell, the end of the line needs to be cleared.
@@ -147,7 +148,7 @@ func (e *Engine) renderBlock(block *Block) {
 		// color of the line above the new input line. Clearing the line fixes this,
 		// but can hopefully one day be removed when this is resolved natively.
 		if e.Env.Shell() == shell.PWSH || e.Env.Shell() == shell.PWSH5 {
-			e.writeANSI(e.Ansi.ClearAfter())
+			e.write(e.Writer.ClearAfter())
 		}
 	}()
 	// when in bash, for rprompt blocks we need to write plain
@@ -155,7 +156,7 @@ func (e *Engine) renderBlock(block *Block) {
 	if e.Env.Shell() == shell.BASH && (block.Type == RPrompt || block.Alignment == Right) {
 		block.InitPlain(e.Env, e.Config)
 	} else {
-		block.Init(e.Env, e.Writer, e.Ansi)
+		block.Init(e.Env, e.Writer)
 	}
 	if !block.Enabled() {
 		return
@@ -171,7 +172,7 @@ func (e *Engine) renderBlock(block *Block) {
 		e.newline()
 	case Prompt:
 		if block.VerticalOffset != 0 {
-			e.writeANSI(e.Ansi.ChangeLine(block.VerticalOffset))
+			e.write(e.Writer.ChangeLine(block.VerticalOffset))
 		}
 
 		if block.Alignment == Left {
@@ -208,17 +209,16 @@ func (e *Engine) renderBlock(block *Block) {
 			return
 		}
 		// this can contain ANSI escape sequences
-		ansi := e.Ansi
+		writer := e.Writer
 		if e.Env.Shell() == shell.BASH {
-			ansi = &color.Ansi{}
-			ansi.InitPlain()
+			writer.Init(shell.GENERIC)
 		}
-		prompt := ansi.CarriageForward()
-		prompt += ansi.GetCursorForRightWrite(length, block.HorizontalOffset)
+		prompt := writer.CarriageForward()
+		prompt += writer.GetCursorForRightWrite(length, block.HorizontalOffset)
 		prompt += text
 		e.currentLineLength = 0
 		if e.Env.Shell() == shell.BASH {
-			prompt = e.Ansi.FormatText(prompt)
+			prompt = e.Writer.FormatText(prompt)
 		}
 		e.write(prompt)
 	case RPrompt:
@@ -234,9 +234,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	e.write("\n\x1b[1mSegments:\x1b[0m\n\n")
 	// console title timing
 	titleStartTime := time.Now()
-	title := e.ConsoleTitle.GetTitle()
-	title = strings.TrimPrefix(title, "\x1b]0;")
-	title = strings.TrimSuffix(title, "\a")
+	title := e.getTitleTemplateText()
 	segmentTiming := &SegmentTiming{
 		name:       "ConsoleTitle",
 		nameLength: 12,
@@ -247,7 +245,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	segmentTimings = append(segmentTimings, segmentTiming)
 	// loop each segments of each blocks
 	for _, block := range e.Config.Blocks {
-		block.Init(e.Env, e.Writer, e.Ansi)
+		block.Init(e.Env, e.Writer)
 		longestSegmentName, timings := block.Debug()
 		segmentTimings = append(segmentTimings, timings...)
 		if longestSegmentName > largestSegmentNameLength {
@@ -278,11 +276,11 @@ func (e *Engine) print() string {
 		}
 		// Warp doesn't support RPROMPT so we need to write it manually
 		if e.isWarp() {
-			e.write(e.Ansi.SaveCursorPosition())
-			e.write(e.Ansi.CarriageForward())
-			e.write(e.Ansi.GetCursorForRightWrite(e.rpromptLength, 0))
+			e.write(e.Writer.SaveCursorPosition())
+			e.write(e.Writer.CarriageForward())
+			e.write(e.Writer.GetCursorForRightWrite(e.rpromptLength, 0))
 			e.write(e.rprompt)
-			e.write(e.Ansi.RestoreCursorPosition())
+			e.write(e.Writer.RestoreCursorPosition())
 			// escape double quotes contained in the prompt
 			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
 			return prompt
@@ -291,29 +289,29 @@ func (e *Engine) print() string {
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
-	case shell.PWSH, shell.PWSH5, shell.PLAIN, shell.NU:
+	case shell.PWSH, shell.PWSH5, shell.GENERIC, shell.NU:
 		if !e.canWriteRightBlock(true) {
 			break
 		}
-		e.write(e.Ansi.SaveCursorPosition())
-		e.write(e.Ansi.CarriageForward())
-		e.write(e.Ansi.GetCursorForRightWrite(e.rpromptLength, 0))
+		e.write(e.Writer.SaveCursorPosition())
+		e.write(e.Writer.CarriageForward())
+		e.write(e.Writer.GetCursorForRightWrite(e.rpromptLength, 0))
 		e.write(e.rprompt)
-		e.write(e.Ansi.RestoreCursorPosition())
+		e.write(e.Writer.RestoreCursorPosition())
 	case shell.BASH:
 		if !e.canWriteRightBlock(true) {
 			break
 		}
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
 		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
-		ansi := &color.Ansi{}
-		ansi.InitPlain()
-		prompt := ansi.SaveCursorPosition()
-		prompt += ansi.CarriageForward()
-		prompt += ansi.GetCursorForRightWrite(e.rpromptLength, 0)
+		writer := &color.AnsiWriter{}
+		writer.Init(shell.GENERIC)
+		prompt := writer.SaveCursorPosition()
+		prompt += writer.CarriageForward()
+		prompt += writer.GetCursorForRightWrite(e.rpromptLength, 0)
 		prompt += e.rprompt
-		prompt += ansi.RestoreCursorPosition()
-		prompt = e.Ansi.FormatText(prompt)
+		prompt += writer.RestoreCursorPosition()
+		prompt = e.Writer.FormatText(prompt)
 		e.write(prompt)
 	}
 
@@ -345,8 +343,8 @@ func (e *Engine) PrintTooltip(tip string) string {
 		Segments:  []*Segment{tooltip},
 	}
 	switch e.Env.Shell() {
-	case shell.ZSH, shell.CMD, shell.FISH, shell.PLAIN:
-		block.Init(e.Env, e.Writer, e.Ansi)
+	case shell.ZSH, shell.CMD, shell.FISH, shell.GENERIC:
+		block.Init(e.Env, e.Writer)
 		if !block.Enabled() {
 			return ""
 		}
@@ -358,9 +356,9 @@ func (e *Engine) PrintTooltip(tip string) string {
 			return ""
 		}
 		text, length := block.RenderSegments()
-		e.write(e.Ansi.ClearAfter())
-		e.write(e.Ansi.CarriageForward())
-		e.write(e.Ansi.GetCursorForRightWrite(length, 0))
+		e.write(e.Writer.ClearAfter())
+		e.write(e.Writer.CarriageForward())
+		e.write(e.Writer.GetCursorForRightWrite(length, 0))
 		e.write(text)
 		return e.string()
 	}
@@ -434,7 +432,7 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 			return prompt
 		}
 		return str
-	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH, shell.FISH, shell.NU, shell.PLAIN:
+	case shell.PWSH, shell.PWSH5, shell.CMD, shell.BASH, shell.FISH, shell.NU, shell.GENERIC:
 		// Return the string and empty our buffer
 		str, _ := e.Writer.String()
 		return str
@@ -455,7 +453,7 @@ func (e *Engine) PrintRPrompt() string {
 	if block == nil {
 		return ""
 	}
-	block.Init(e.Env, e.Writer, e.Ansi)
+	block.Init(e.Env, e.Writer)
 	if !block.Enabled() {
 		return ""
 	}

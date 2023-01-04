@@ -9,6 +9,10 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
+func init() { //nolint:gochecknoinits
+	runewidth.DefaultCondition.EastAsianWidth = false
+}
+
 var (
 	knownStyles = []*style{
 		{AnchorStart: `<b>`, AnchorEnd: `</b>`, Start: "\x1b[1m", End: "\x1b[22m"},
@@ -309,6 +313,15 @@ func (w *Writer) Write(background, foreground, text string) {
 	w.currentForeground = ""
 }
 
+func (w *Writer) String() (string, int) {
+	defer func() {
+		w.length = 0
+		w.builder.Reset()
+	}()
+
+	return w.builder.String(), w.length
+}
+
 func (w *Writer) printEscapedAnsiString(text string) {
 	if w.Plain {
 		return
@@ -491,11 +504,9 @@ func (w *Writer) expandKeyword(keyword string) string {
 	return keyword
 }
 
-func (w *Writer) String() (string, int) {
-	defer func() {
-		w.length = 0
-		w.builder.Reset()
-	}()
-
-	return w.builder.String(), w.length
+func (w *Writer) trimAnsi(text string) string {
+	if len(text) == 0 || !strings.Contains(text, "\x1b") {
+		return text
+	}
+	return regex.ReplaceAllString(AnsiRegex, text, "")
 }

@@ -3,7 +3,7 @@ package engine
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/mock"
 	"github.com/jandedobbeleer/oh-my-posh/platform"
 	"github.com/jandedobbeleer/oh-my-posh/segments"
@@ -61,21 +61,21 @@ func TestEscapeGlyphs(t *testing.T) {
 }
 
 func TestGetPalette(t *testing.T) {
-	palette := color.Palette{
+	palette := ansi.Palette{
 		"red":  "#ff0000",
 		"blue": "#0000ff",
 	}
 	cases := []struct {
 		Case            string
-		Palettes        *color.Palettes
-		Palette         color.Palette
-		ExpectedPalette color.Palette
+		Palettes        *ansi.Palettes
+		Palette         ansi.Palette
+		ExpectedPalette ansi.Palette
 	}{
 		{
 			Case: "match",
-			Palettes: &color.Palettes{
+			Palettes: &ansi.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]color.Palette{
+				List: map[string]ansi.Palette{
 					"bash": palette,
 					"zsh": {
 						"red":  "#ff0001",
@@ -87,9 +87,9 @@ func TestGetPalette(t *testing.T) {
 		},
 		{
 			Case: "no match, no fallback",
-			Palettes: &color.Palettes{
+			Palettes: &ansi.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]color.Palette{
+				List: map[string]ansi.Palette{
 					"fish": palette,
 					"zsh": {
 						"red":  "#ff0001",
@@ -101,9 +101,9 @@ func TestGetPalette(t *testing.T) {
 		},
 		{
 			Case: "no match, default",
-			Palettes: &color.Palettes{
+			Palettes: &ansi.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]color.Palette{
+				List: map[string]ansi.Palette{
 					"zsh": {
 						"red":  "#ff0001",
 						"blue": "#0000fb",

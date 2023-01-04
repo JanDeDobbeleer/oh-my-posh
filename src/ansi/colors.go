@@ -1,4 +1,4 @@
-package color
+package ansi
 
 import (
 	"fmt"
@@ -10,41 +10,41 @@ import (
 	"github.com/gookit/color"
 )
 
-// AnsiColors is the interface that wraps AnsiColorFromString method.
+// Colors is the interface that wraps AnsiColorFromString method.
 //
 // AnsiColorFromString gets the ANSI color code for a given color string.
 // This can include a valid hex color in the format `#FFFFFF`,
 // but also a name of one of the first 16 ANSI colors like `lightBlue`.
-type AnsiColors interface {
-	AnsiColorFromString(colorString string, isBackground bool) AnsiColor
+type Colors interface {
+	AnsiColorFromString(colorString string, isBackground bool) Color
 }
 
-// AnsiColor is an ANSI color code ready to be printed to the console.
+// Color is an ANSI color code ready to be printed to the console.
 // Example: "38;2;255;255;255", "48;2;255;255;255", "31", "95".
-type AnsiColor string
+type Color string
 
 const (
-	emptyAnsiColor       = AnsiColor("")
-	transparentAnsiColor = AnsiColor(Transparent)
+	emptyColor       = Color("")
+	transparentColor = Color(Transparent)
 )
 
-func (c AnsiColor) IsEmpty() bool {
-	return c == emptyAnsiColor
+func (c Color) IsEmpty() bool {
+	return c == emptyColor
 }
 
-func (c AnsiColor) IsTransparent() bool {
-	return c == transparentAnsiColor
+func (c Color) IsTransparent() bool {
+	return c == transparentColor
 }
 
-func (c AnsiColor) ToForeground() AnsiColor {
+func (c Color) ToForeground() Color {
 	colorString := string(c)
 	if strings.HasPrefix(colorString, "38;") {
-		return AnsiColor(strings.Replace(colorString, "38;", "48;", 1))
+		return Color(strings.Replace(colorString, "38;", "48;", 1))
 	}
 	return c
 }
 
-func MakeColors(palette Palette, cacheEnabled bool, accentColor string, env platform.Environment) (colors AnsiColors) {
+func MakeColors(palette Palette, cacheEnabled bool, accentColor string, env platform.Environment) (colors Colors) {
 	defaultColors := &DefaultColors{}
 	defaultColors.SetAccentColor(env, accentColor)
 	colors = defaultColors
@@ -63,12 +63,12 @@ type RGB struct {
 
 // DefaultColors is the default AnsiColors implementation.
 type DefaultColors struct {
-	accent *Color
+	accent *cachedColor
 }
 
 var (
 	// Map for color names and their respective foreground [0] or background [1] color codes
-	ansiColorCodes = map[string][2]AnsiColor{
+	ansiColorCodes = map[string][2]Color{
 		"black":        {"30", "40"},
 		"red":          {"31", "41"},
 		"green":        {"32", "42"},
@@ -94,21 +94,21 @@ const (
 	backgroundIndex = 1
 )
 
-func (d *DefaultColors) AnsiColorFromString(colorString string, isBackground bool) AnsiColor {
+func (d *DefaultColors) AnsiColorFromString(colorString string, isBackground bool) Color {
 	if len(colorString) == 0 {
-		return emptyAnsiColor
+		return emptyColor
 	}
 	if colorString == Transparent {
-		return transparentAnsiColor
+		return transparentColor
 	}
 	if colorString == Accent {
 		if d.accent == nil {
-			return emptyAnsiColor
+			return emptyColor
 		}
 		if isBackground {
-			return AnsiColor(d.accent.Background)
+			return Color(d.accent.Background)
 		}
-		return AnsiColor(d.accent.Foreground)
+		return Color(d.accent.Foreground)
 	}
 	colorFromName, err := getAnsiColorFromName(colorString, isBackground)
 	if err == nil {
@@ -117,25 +117,25 @@ func (d *DefaultColors) AnsiColorFromString(colorString string, isBackground boo
 	if !strings.HasPrefix(colorString, "#") {
 		val, err := strconv.ParseUint(colorString, 10, 64)
 		if err != nil || val > 255 {
-			return emptyAnsiColor
+			return emptyColor
 		}
 		c256 := color.C256(uint8(val), isBackground)
-		return AnsiColor(c256.RGBColor().String())
+		return Color(c256.RGBColor().String())
 	}
 	style := color.HEX(colorString, isBackground)
 	if !style.IsEmpty() {
-		return AnsiColor(style.String())
+		return Color(style.String())
 	}
 	if colorInt, err := strconv.ParseInt(colorString, 10, 8); err == nil {
 		c := color.C256(uint8(colorInt), isBackground)
-		return AnsiColor(c.String())
+		return Color(c.String())
 	}
-	return emptyAnsiColor
+	return emptyColor
 }
 
 // getAnsiColorFromName returns the color code for a given color name if the name is
 // known ANSI color name.
-func getAnsiColorFromName(colorName string, isBackground bool) (AnsiColor, error) {
+func getAnsiColorFromName(colorName string, isBackground bool) (Color, error) {
 	if colorCodes, found := ansiColorCodes[colorName]; found {
 		if isBackground {
 			return colorCodes[backgroundIndex], nil
@@ -153,14 +153,14 @@ func IsAnsiColorName(colorString string) bool {
 // PaletteColors is the AnsiColors Decorator that uses the Palette to do named color
 // lookups before ANSI color code generation.
 type PaletteColors struct {
-	ansiColors AnsiColors
+	ansiColors Colors
 	palette    Palette
 }
 
-func (p *PaletteColors) AnsiColorFromString(colorString string, isBackground bool) AnsiColor {
+func (p *PaletteColors) AnsiColorFromString(colorString string, isBackground bool) Color {
 	paletteColor, err := p.palette.ResolveColor(colorString)
 	if err != nil {
-		return emptyAnsiColor
+		return emptyColor
 	}
 	ansiColor := p.ansiColors.AnsiColorFromString(paletteColor, isBackground)
 	return ansiColor
@@ -170,8 +170,8 @@ func (p *PaletteColors) AnsiColorFromString(colorString string, isBackground boo
 // AnsiColorFromString calls are cheap, but not free, and having a simple cache in
 // has measurable positive effect on performance.
 type CachedColors struct {
-	ansiColors AnsiColors
-	colorCache map[cachedColorKey]AnsiColor
+	ansiColors Colors
+	colorCache map[cachedColorKey]Color
 }
 
 type cachedColorKey struct {
@@ -179,9 +179,9 @@ type cachedColorKey struct {
 	isBackground bool
 }
 
-func (c *CachedColors) AnsiColorFromString(colorString string, isBackground bool) AnsiColor {
+func (c *CachedColors) AnsiColorFromString(colorString string, isBackground bool) Color {
 	if c.colorCache == nil {
-		c.colorCache = make(map[cachedColorKey]AnsiColor)
+		c.colorCache = make(map[cachedColorKey]Color)
 	}
 	key := cachedColorKey{colorString, isBackground}
 	if ansiColor, hit := c.colorCache[key]; hit {

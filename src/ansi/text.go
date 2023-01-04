@@ -1,4 +1,4 @@
-package color
+package ansi
 
 import (
 	"strings"
@@ -12,7 +12,7 @@ func init() { //nolint:gochecknoinits
 	runewidth.DefaultCondition.EastAsianWidth = false
 }
 
-func (a *AnsiWriter) MeasureText(text string) int {
+func (a *Writer) MeasureText(text string) int {
 	// skip strings with ANSI
 	if !strings.Contains(text, "\x1b") {
 		text = a.TrimEscapeSequences(text)
@@ -25,20 +25,20 @@ func (a *AnsiWriter) MeasureText(text string) int {
 			text = strings.ReplaceAll(text, match["STR"], match["TEXT"])
 		}
 	}
-	text = a.TrimAnsi(text)
+	text = a.trimAnsi(text)
 	text = a.TrimEscapeSequences(text)
 	length := runewidth.StringWidth(text)
 	return length
 }
 
-func (a *AnsiWriter) TrimAnsi(text string) string {
+func (a *Writer) trimAnsi(text string) string {
 	if len(text) == 0 || !strings.Contains(text, "\x1b") {
 		return text
 	}
 	return regex.ReplaceAllString(AnsiRegex, text, "")
 }
 
-func (a *AnsiWriter) TrimEscapeSequences(text string) string {
+func (a *Writer) TrimEscapeSequences(text string) string {
 	if len(text) == 0 {
 		return text
 	}

@@ -8,7 +8,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
-
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +19,7 @@ var (
 	outputImage   string
 )
 
-// imageCmd represents the image command
+// imageCmd represents the image command.
 var imageCmd = &cobra.Command{
 	Use:   "image",
 	Short: "Export your config to an image",

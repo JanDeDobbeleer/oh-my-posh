@@ -5,11 +5,10 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"gopkg.in/yaml.v3"
 )
 
-// Whether to use kubectl or read kubeconfig ourselves
+// Whether to use kubectl or read kubeconfig ourselves.
 const ParseKubeConfig properties.Property = "parse_kubeconfig"
 
 type Kubectl struct {

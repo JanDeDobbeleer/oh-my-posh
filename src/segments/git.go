@@ -10,11 +10,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-
 	"gopkg.in/ini.v1"
 )
 
-// GitStatus represents part of the status of a git repository
+// GitStatus represents part of the status of a git repository.
 type GitStatus struct {
 	ScmStatus
 }
@@ -37,54 +36,54 @@ func (s *GitStatus) add(code string) {
 }
 
 const (
-	// FetchStatus fetches the status of the repository
+	// FetchStatus fetches the status of the repository.
 	FetchStatus properties.Property = "fetch_status"
-	// FetchStashCount fetches the stash count
+	// FetchStashCount fetches the stash count.
 	FetchStashCount properties.Property = "fetch_stash_count"
-	// FetchWorktreeCount fetches the worktree count
+	// FetchWorktreeCount fetches the worktree count.
 	FetchWorktreeCount properties.Property = "fetch_worktree_count"
-	// FetchUpstreamIcon fetches the upstream icon
+	// FetchUpstreamIcon fetches the upstream icon.
 	FetchUpstreamIcon properties.Property = "fetch_upstream_icon"
-	// FetchBareInfo fetches the bare repo status
+	// FetchBareInfo fetches the bare repo status.
 	FetchBareInfo properties.Property = "fetch_bare_info"
 
-	// BranchIcon the icon to use as branch indicator
+	// BranchIcon the icon to use as branch indicator.
 	BranchIcon properties.Property = "branch_icon"
-	// BranchIdenticalIcon the icon to display when the remote and local branch are identical
+	// BranchIdenticalIcon the icon to display when the remote and local branch are identical.
 	BranchIdenticalIcon properties.Property = "branch_identical_icon"
-	// BranchAheadIcon the icon to display when the local branch is ahead of the remote
+	// BranchAheadIcon the icon to display when the local branch is ahead of the remote.
 	BranchAheadIcon properties.Property = "branch_ahead_icon"
-	// BranchBehindIcon the icon to display when the local branch is behind the remote
+	// BranchBehindIcon the icon to display when the local branch is behind the remote.
 	BranchBehindIcon properties.Property = "branch_behind_icon"
-	// BranchGoneIcon the icon to use when ther's no remote
+	// BranchGoneIcon the icon to use when ther's no remote.
 	BranchGoneIcon properties.Property = "branch_gone_icon"
-	// RebaseIcon shows before the rebase context
+	// RebaseIcon shows before the rebase context.
 	RebaseIcon properties.Property = "rebase_icon"
-	// CherryPickIcon shows before the cherry-pick context
+	// CherryPickIcon shows before the cherry-pick context.
 	CherryPickIcon properties.Property = "cherry_pick_icon"
-	// RevertIcon shows before the revert context
+	// RevertIcon shows before the revert context.
 	RevertIcon properties.Property = "revert_icon"
-	// CommitIcon shows before the detached context
+	// CommitIcon shows before the detached context.
 	CommitIcon properties.Property = "commit_icon"
-	// NoCommitsIcon shows when there are no commits in the repo yet
+	// NoCommitsIcon shows when there are no commits in the repo yet.
 	NoCommitsIcon properties.Property = "no_commits_icon"
-	// TagIcon shows before the tag context
+	// TagIcon shows before the tag context.
 	TagIcon properties.Property = "tag_icon"
-	// MergeIcon shows before the merge context
+	// MergeIcon shows before the merge context.
 	MergeIcon properties.Property = "merge_icon"
-	// GithubIcon shows√ when upstream is github
+	// GithubIcon shows√ when upstream is github.
 	GithubIcon properties.Property = "github_icon"
-	// BitbucketIcon shows  when upstream is bitbucket
+	// BitbucketIcon shows  when upstream is bitbucket.
 	BitbucketIcon properties.Property = "bitbucket_icon"
-	// AzureDevOpsIcon shows  when upstream is azure devops
+	// AzureDevOpsIcon shows  when upstream is azure devops.
 	AzureDevOpsIcon properties.Property = "azure_devops_icon"
-	// GitlabIcon shows when upstream is gitlab
+	// GitlabIcon shows when upstream is gitlab.
 	GitlabIcon properties.Property = "gitlab_icon"
-	// GitIcon shows when the upstream can't be identified
+	// GitIcon shows when the upstream can't be identified.
 	GitIcon properties.Property = "git_icon"
-	// UntrackedModes list the optional untracked files mode per repo
+	// UntrackedModes list the optional untracked files mode per repo.
 	UntrackedModes properties.Property = "untracked_modes"
-	// IgnoreSubmodules list the optional ignore-submodules mode per repo
+	// IgnoreSubmodules list the optional ignore-submodules mode per repo.
 	IgnoreSubmodules properties.Property = "ignore_submodules"
 
 	DETACHED     = "(detached)"

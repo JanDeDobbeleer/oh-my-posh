@@ -5,7 +5,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +13,7 @@ var (
 	format string
 )
 
-// migrateCmd represents the migrate command
+// migrateCmd represents the migrate command.
 var migrateCmd = &cobra.Command{
 	Use:   "migrate",
 	Short: "Migrate your config",

@@ -7,7 +7,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
 )
@@ -109,7 +108,7 @@ func TestStravaSegment(t *testing.T) {
 			tc.Template = strava.Template()
 		}
 
-		var got = renderTemplate(&mock.MockedEnvironment{}, tc.Template, strava)
+		got := renderTemplate(&mock.MockedEnvironment{}, tc.Template, strava)
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)
 	}
 }

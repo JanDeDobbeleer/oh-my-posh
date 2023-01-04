@@ -13,9 +13,9 @@ type WindowsRegistry struct {
 }
 
 const (
-	// full path to the key; if ends in \, gets "(Default)" key in that path
+	// full path to the key; if ends in \, gets "(Default)" key in that path.
 	RegistryPath properties.Property = "path"
-	// Fallback is the text to display if the key is not found
+	// Fallback is the text to display if the key is not found.
 	Fallback properties.Property = "fallback"
 )
 

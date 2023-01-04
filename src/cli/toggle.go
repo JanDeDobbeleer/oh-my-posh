@@ -4,11 +4,10 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
 	"github.com/spf13/cobra"
 )
 
-// versionCmd represents the version command
+// versionCmd represents the version command.
 var toggleCmd = &cobra.Command{
 	Use:   "toggle",
 	Short: "Toggle a segment on/off",

@@ -9,7 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
-// segment struct, makes templating easier
+// segment struct, makes templating easier.
 type Nightscout struct {
 	props properties.Properties
 	env   platform.Environment
@@ -19,7 +19,7 @@ type Nightscout struct {
 }
 
 const (
-	// Your complete Nightscout URL and APIKey like this
+	// Your complete Nightscout URL and APIKey like this.
 	URL properties.Property = "url"
 
 	DoubleUpIcon      properties.Property = "doubleup_icon"
@@ -33,7 +33,7 @@ const (
 	NSCacheTimeout properties.Property = "cache_timeout"
 )
 
-// NightscoutData struct contains the API data
+// NightscoutData struct contains the API data.
 type NightscoutData struct {
 	ID         string    `json:"_id"`
 	Sgv        int       `json:"sgv"`

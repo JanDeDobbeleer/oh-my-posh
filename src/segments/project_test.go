@@ -6,11 +6,9 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/alecthomas/assert"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
-	"github.com/alecthomas/assert"
-
 	testify_mock "github.com/stretchr/testify/mock"
 )
 

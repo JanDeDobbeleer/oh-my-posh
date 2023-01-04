@@ -8,7 +8,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -97,7 +96,7 @@ func TestCdsSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var env = new(mock.MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "cds").Return(true)
 		env.On("RunCommand", "cds", []string{"--version"}).Return(tc.Version, nil)
 		env.On("Pwd").Return("/usr/home/dev/my-app")
@@ -132,7 +131,6 @@ func TestCdsSegment(t *testing.T) {
 
 		for _, f := range cds.language.extensions {
 			match, err := filepath.Match(f, tc.File)
-
 			if err != nil {
 				t.Fail()
 			}

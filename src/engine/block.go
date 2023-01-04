@@ -9,33 +9,33 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
-// BlockType type of block
+// BlockType type of block.
 type BlockType string
 
-// BlockAlignment aligment of a Block
+// BlockAlignment aligment of a Block.
 type BlockAlignment string
 
-// Overflow defines how to handle a right block that overflows with the previous block
+// Overflow defines how to handle a right block that overflows with the previous block.
 type Overflow string
 
 const (
-	// Prompt writes one or more Segments
+	// Prompt writes one or more Segments.
 	Prompt BlockType = "prompt"
-	// LineBreak creates a line break in the prompt
+	// LineBreak creates a line break in the prompt.
 	LineBreak BlockType = "newline"
-	// RPrompt is a right aligned prompt
+	// RPrompt is a right aligned prompt.
 	RPrompt BlockType = "rprompt"
-	// Left aligns left
+	// Left aligns left.
 	Left BlockAlignment = "left"
-	// Right aligns right
+	// Right aligns right.
 	Right BlockAlignment = "right"
-	// Break adds a line break
+	// Break adds a line break.
 	Break Overflow = "break"
-	// Hide hides the block
+	// Hide hides the block.
 	Hide Overflow = "hide"
 )
 
-// Block defines a part of the prompt with optional segments
+// Block defines a part of the prompt with optional segments.
 type Block struct {
 	Type      BlockType      `json:"type,omitempty"`
 	Alignment BlockAlignment `json:"alignment,omitempty"`

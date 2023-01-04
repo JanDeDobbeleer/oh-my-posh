@@ -7,11 +7,10 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/BurntSushi/toml"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-
-	"github.com/BurntSushi/toml"
 )
 
 type ProjectItem struct {
@@ -27,12 +26,12 @@ type ProjectData struct {
 	Target  string
 }
 
-// Rust Cargo package
+// Rust Cargo package.
 type CargoTOML struct {
 	Package ProjectData
 }
 
-// Python Poetry package
+// Python Poetry package.
 type PyProjectTOML struct {
 	Tool PyProjectToolTOML
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -114,7 +113,6 @@ func TestUI5Tooling(t *testing.T) {
 
 		ui5tooling.Init(props, env)
 		err := mockFilePresence(&tc, ui5tooling, env)
-
 		if err != nil {
 			t.Fail()
 		}
@@ -126,7 +124,7 @@ func TestUI5Tooling(t *testing.T) {
 }
 
 func prepareMockedEnvironment(tc *testCase) *mock.MockedEnvironment {
-	var env = new(mock.MockedEnvironment)
+	env := new(mock.MockedEnvironment)
 	env.On("HasCommand", "ui5").Return(true)
 	env.On("RunCommand", "ui5", []string{"--version"}).Return(tc.Version, nil)
 	env.On("Home").Return("/home/user")
@@ -142,7 +140,6 @@ func prepareMockedEnvironment(tc *testCase) *mock.MockedEnvironment {
 func mockFilePresence(tc *testCase, ui5tooling *UI5Tooling, env *mock.MockedEnvironment) error {
 	for _, f := range ui5tooling.language.extensions {
 		match, err := filepath.Match(f, tc.UI5YamlFilename)
-
 		if err != nil {
 			return err
 		}

@@ -3,7 +3,6 @@ package segments
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"golang.org/x/mod/modfile"
 )
 

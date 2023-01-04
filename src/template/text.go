@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	// Errors to show when the template handling fails
+	// Errors to show when the template handling fails.
 	InvalidTemplate   = "invalid template text"
 	IncorrectTemplate = "unable to create text based on template"
 )

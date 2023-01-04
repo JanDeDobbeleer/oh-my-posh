@@ -7,8 +7,10 @@ import (
 	"time"
 )
 
-var enabled bool
-var logBuilder strings.Builder
+var (
+	enabled    bool
+	logBuilder strings.Builder
+)
 
 func Enable() {
 	enabled = true

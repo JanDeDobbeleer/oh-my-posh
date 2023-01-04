@@ -9,11 +9,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
-
 	"github.com/spf13/cobra"
 )
 
-// debugCmd represents the prompt command
+// debugCmd represents the prompt command.
 var debugCmd = &cobra.Command{
 	Use:   "debug",
 	Short: "Print the prompt in debug mode",

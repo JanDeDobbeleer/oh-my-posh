@@ -226,7 +226,7 @@ func (e *Engine) renderBlock(block *Block) {
 	}
 }
 
-// debug will loop through your config file and output the timings for each segments
+// debug will loop through your config file and output the timings for each segments.
 func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	var segmentTimings []*SegmentTiming
 	largestSegmentNameLength := 0

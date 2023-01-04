@@ -20,11 +20,11 @@ type MusicPlayer struct {
 }
 
 const (
-	// PlayingIcon indicates a song is playing
+	// PlayingIcon indicates a song is playing.
 	PlayingIcon properties.Property = "playing_icon"
-	// PausedIcon indicates a song is paused
+	// PausedIcon indicates a song is paused.
 	PausedIcon properties.Property = "paused_icon"
-	// StoppedIcon indicates a song is stopped
+	// StoppedIcon indicates a song is stopped.
 	StoppedIcon properties.Property = "stopped_icon"
 
 	playing = "playing"

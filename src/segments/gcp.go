@@ -6,7 +6,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"gopkg.in/ini.v1"
 )
 

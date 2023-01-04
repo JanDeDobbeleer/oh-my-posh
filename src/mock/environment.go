@@ -7,7 +7,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform/battery"
-
 	mock "github.com/stretchr/testify/mock"
 )
 

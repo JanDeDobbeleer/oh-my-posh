@@ -3,12 +3,11 @@ package engine
 import (
 	"testing"
 
+	"github.com/gookit/config/v2"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
-
-	"github.com/gookit/config/v2"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )

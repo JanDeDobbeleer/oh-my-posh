@@ -28,45 +28,45 @@ type Path struct {
 }
 
 const (
-	// FolderSeparatorIcon the path which is split will be separated by this icon
+	// FolderSeparatorIcon the path which is split will be separated by this icon.
 	FolderSeparatorIcon properties.Property = "folder_separator_icon"
-	// FolderSeparatorTemplate the path which is split will be separated by this template
+	// FolderSeparatorTemplate the path which is split will be separated by this template.
 	FolderSeparatorTemplate properties.Property = "folder_separator_template"
-	// HomeIcon indicates the $HOME location
+	// HomeIcon indicates the $HOME location.
 	HomeIcon properties.Property = "home_icon"
-	// FolderIcon identifies one folder
+	// FolderIcon identifies one folder.
 	FolderIcon properties.Property = "folder_icon"
-	// WindowsRegistryIcon indicates the registry location on Windows
+	// WindowsRegistryIcon indicates the registry location on Windows.
 	WindowsRegistryIcon properties.Property = "windows_registry_icon"
-	// Agnoster displays a short path with separator icon, this the default style
+	// Agnoster displays a short path with separator icon, this the default style.
 	Agnoster string = "agnoster"
-	// AgnosterFull displays all the folder names with the folder_separator_icon
+	// AgnosterFull displays all the folder names with the folder_separator_icon.
 	AgnosterFull string = "agnoster_full"
-	// AgnosterShort displays the folder names with one folder_separator_icon, regardless of depth
+	// AgnosterShort displays the folder names with one folder_separator_icon, regardless of depth.
 	AgnosterShort string = "agnoster_short"
-	// Short displays a shorter path
+	// Short displays a shorter path.
 	Short string = "short"
-	// Full displays the full path
+	// Full displays the full path.
 	Full string = "full"
-	// Folder displays the current folder
+	// Folder displays the current folder.
 	Folder string = "folder"
-	// Mixed like agnoster, but if a folder name is short enough, it is displayed as-is
+	// Mixed like agnoster, but if a folder name is short enough, it is displayed as-is.
 	Mixed string = "mixed"
-	// Letter like agnoster, but with the first letter of each folder name
+	// Letter like agnoster, but with the first letter of each folder name.
 	Letter string = "letter"
-	// Unique like agnoster, but with the first unique letters of each folder name
+	// Unique like agnoster, but with the first unique letters of each folder name.
 	Unique string = "unique"
-	// AgnosterLeft like agnoster, but keeps the left side of the path
+	// AgnosterLeft like agnoster, but keeps the left side of the path.
 	AgnosterLeft string = "agnoster_left"
-	// MixedThreshold the threshold of the length of the path Mixed will display
+	// MixedThreshold the threshold of the length of the path Mixed will display.
 	MixedThreshold properties.Property = "mixed_threshold"
-	// MappedLocations allows overriding certain location with an icon
+	// MappedLocations allows overriding certain location with an icon.
 	MappedLocations properties.Property = "mapped_locations"
-	// MappedLocationsEnabled enables overriding certain locations with an icon
+	// MappedLocationsEnabled enables overriding certain locations with an icon.
 	MappedLocationsEnabled properties.Property = "mapped_locations_enabled"
-	// MaxDepth Maximum path depth to display whithout shortening
+	// MaxDepth Maximum path depth to display whithout shortening.
 	MaxDepth properties.Property = "max_depth"
-	// Hides the root location if it doesn't fit in max_depth. Used in Agnoster Short
+	// Hides the root location if it doesn't fit in max_depth. Used in Agnoster Short.
 	HideRootLocation properties.Property = "hide_root_location"
 )
 

@@ -40,7 +40,6 @@ func (c *CfTarget) getCFTargetCommandOutput() string {
 	}
 
 	output, err := c.env.RunCommand("cf", "target")
-
 	if err != nil {
 		return ""
 	}

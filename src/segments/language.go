@@ -19,8 +19,10 @@ type loadContext func()
 
 type inContext func() bool
 
-type getVersion func() (string, error)
-type matchesVersionFile func() bool
+type (
+	getVersion         func() (string, error)
+	matchesVersionFile func() bool
+)
 
 type version struct {
 	Full          string
@@ -78,23 +80,23 @@ type language struct {
 }
 
 const (
-	// DisplayMode sets the display mode (always, when_in_context, never)
+	// DisplayMode sets the display mode (always, when_in_context, never).
 	DisplayMode properties.Property = "display_mode"
-	// DisplayModeAlways displays the segment always
+	// DisplayModeAlways displays the segment always.
 	DisplayModeAlways string = "always"
-	// DisplayModeFiles displays the segment when the current folder contains certain extensions
+	// DisplayModeFiles displays the segment when the current folder contains certain extensions.
 	DisplayModeFiles string = "files"
-	// DisplayModeEnvironment displays the segment when the environment has a language's context
+	// DisplayModeEnvironment displays the segment when the environment has a language's context.
 	DisplayModeEnvironment string = "environment"
-	// DisplayModeContext displays the segment when the environment or files is active
+	// DisplayModeContext displays the segment when the environment or files is active.
 	DisplayModeContext string = "context"
-	// MissingCommandText sets the text to display when the command is not present in the system
+	// MissingCommandText sets the text to display when the command is not present in the system.
 	MissingCommandText properties.Property = "missing_command_text"
-	// HomeEnabled displays the segment in the HOME folder or not
+	// HomeEnabled displays the segment in the HOME folder or not.
 	HomeEnabled properties.Property = "home_enabled"
-	// LanguageExtensions the list of extensions to validate
+	// LanguageExtensions the list of extensions to validate.
 	LanguageExtensions properties.Property = "extensions"
-	// LanguageFolders the list of folders to validate
+	// LanguageFolders the list of folders to validate.
 	LanguageFolders properties.Property = "folders"
 )
 
@@ -156,7 +158,7 @@ func (l *language) hasLanguageFolders() bool {
 	return false
 }
 
-// setVersion parses the version string returned by the command
+// setVersion parses the version string returned by the command.
 func (l *language) setVersion() error {
 	var lastError error
 	for _, command := range l.commands {

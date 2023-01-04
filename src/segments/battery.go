@@ -16,13 +16,13 @@ type Battery struct {
 }
 
 const (
-	// ChargingIcon to display when charging
+	// ChargingIcon to display when charging.
 	ChargingIcon properties.Property = "charging_icon"
-	// DischargingIcon o display when discharging
+	// DischargingIcon o display when discharging.
 	DischargingIcon properties.Property = "discharging_icon"
-	// ChargedIcon to display when fully charged
+	// ChargedIcon to display when fully charged.
 	ChargedIcon properties.Property = "charged_icon"
-	// NotChargingIcon to display when on AC power
+	// NotChargingIcon to display when on AC power.
 	NotChargingIcon properties.Property = "not_charging_icon"
 )
 

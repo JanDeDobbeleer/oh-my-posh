@@ -11,7 +11,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -602,8 +601,10 @@ func TestGitUpstream(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 		env.On("IsWsl").Return(false)
-		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
-			"-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
+		env.On("RunCommand", "git", []string{
+			"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
+			"-c", "color.status=false", "remote", "get-url", "origin",
+		}).Return(tc.Upstream, nil)
 		env.On("GOOS").Return("unix")
 		props := properties.Map{
 			GithubIcon:      "GH",

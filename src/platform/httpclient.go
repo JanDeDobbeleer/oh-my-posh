@@ -10,6 +10,4 @@ type httpClient interface {
 	Do(req *http.Request) (*http.Response, error)
 }
 
-var (
-	client httpClient = &http.Client{}
-)
+var client httpClient = &http.Client{}

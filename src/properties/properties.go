@@ -17,40 +17,40 @@ type Properties interface {
 	GetStringArray(property Property, defaultValue []string) []string
 }
 
-// Property defines one property of a segment for context
+// Property defines one property of a segment for context.
 type Property string
 
-// general Properties used across Segments
+// general Properties used across Segments.
 const (
-	// Style indicates the style to use
+	// Style indicates the style to use.
 	Style Property = "style"
-	// IncludeFolders indicates folders to be included for the segment logic
+	// IncludeFolders indicates folders to be included for the segment logic.
 	IncludeFolders Property = "include_folders"
-	// ExcludeFolders indicates folders to be excluded for the segment logic
+	// ExcludeFolders indicates folders to be excluded for the segment logic.
 	ExcludeFolders Property = "exclude_folders"
-	// IgnoreFolders is a duplicate of ExcludeFolders
+	// IgnoreFolders is a duplicate of ExcludeFolders.
 	IgnoreFolders Property = "ignore_folders"
-	// FetchVersion decides whether to fetch the version number or not
+	// FetchVersion decides whether to fetch the version number or not.
 	FetchVersion Property = "fetch_version"
-	// AlwaysEnabled decides whether or not to always display the info
+	// AlwaysEnabled decides whether or not to always display the info.
 	AlwaysEnabled Property = "always_enabled"
-	// VersionURLTemplate is the template to use when building language segment hyperlink
+	// VersionURLTemplate is the template to use when building language segment hyperlink.
 	VersionURLTemplate Property = "version_url_template"
-	// DisplayError decides whether to display when an error occurs or not
+	// DisplayError decides whether to display when an error occurs or not.
 	DisplayError Property = "display_error"
-	// DisplayDefault hides or shows the default
+	// DisplayDefault hides or shows the default.
 	DisplayDefault Property = "display_default"
-	// AccessToken is the access token to use for an API
+	// AccessToken is the access token to use for an API.
 	AccessToken Property = "access_token"
-	// RefreshToken is the refresh token to use for an API
+	// RefreshToken is the refresh token to use for an API.
 	RefreshToken Property = "refresh_token"
-	// HTTPTimeout timeout used when executing http request
+	// HTTPTimeout timeout used when executing http request.
 	HTTPTimeout Property = "http_timeout"
-	// DefaultHTTPTimeout default timeout used when executing http request
+	// DefaultHTTPTimeout default timeout used when executing http request.
 	DefaultHTTPTimeout = 20
-	// DefaultCacheTimeout default timeout used when caching data
+	// DefaultCacheTimeout default timeout used when caching data.
 	DefaultCacheTimeout = 10
-	// CacheTimeout cache timeout
+	// CacheTimeout cache timeout.
 	CacheTimeout Property = "cache_timeout"
 )
 

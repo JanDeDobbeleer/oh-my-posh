@@ -23,9 +23,9 @@ func install(font *Font) (err error) {
 		strings.ToLower(strings.ReplaceAll(font.Family, " ", "-")),
 		path.Base(font.FileName))
 
-	if err = os.MkdirAll(path.Dir(fullPath), 0700); err != nil {
+	if err = os.MkdirAll(path.Dir(fullPath), 0o700); err != nil {
 		return err
 	}
 
-	return ioutil.WriteFile(fullPath, font.Data, 0644)
+	return ioutil.WriteFile(fullPath, font.Data, 0o644)
 }

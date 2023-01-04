@@ -7,7 +7,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
 )
@@ -165,7 +164,7 @@ func TestWithingsSegment(t *testing.T) {
 			tc.Template = withings.Template()
 		}
 
-		var got = renderTemplate(&mock.MockedEnvironment{}, tc.Template, withings)
+		got := renderTemplate(&mock.MockedEnvironment{}, tc.Template, withings)
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)
 	}
 }

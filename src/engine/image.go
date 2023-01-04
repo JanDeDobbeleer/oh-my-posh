@@ -30,12 +30,11 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-
 	"github.com/esimov/stackblur-go"
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"golang.org/x/image/font"
 )
 
@@ -44,7 +43,7 @@ const (
 	yellow = "#E1C04C"
 	green  = "#71BD47"
 
-	// known ansi sequences
+	// known ansi sequences.
 
 	fg                  = "FG"
 	bg                  = "BG"
@@ -215,7 +214,7 @@ type RuneRange struct {
 	End   rune
 }
 
-// If we're a Nerd Font code point, treat as double width
+// If we're a Nerd Font code point, treat as double width.
 var doubleWidthRunes = []RuneRange{
 	// Seti-UI + Custom range
 	{Start: '\ue5fa', End: '\ue62b'},
@@ -252,7 +251,7 @@ var doubleWidthRunes = []RuneRange{
 
 // This is getting how many additional characters of width to allocate when drawing
 // e.g. for characters that are 2 or more wide. A standard character will return 0
-// Nerd Font glyphs will return 1, since most are double width
+// Nerd Font glyphs will return 1, since most are double width.
 func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
 	for _, runeRange := range doubleWidthRunes {
 		if runeRange.Start <= r && r <= runeRange.End {
@@ -336,7 +335,7 @@ func (ir *ImageRenderer) measureContent() (width, height float64) {
 }
 
 func (ir *ImageRenderer) SavePNG() error {
-	var f = func(value float64) float64 { return ir.factor * value }
+	f := func(value float64) float64 { return ir.factor * value }
 
 	var (
 		corner   = f(6)
@@ -375,7 +374,6 @@ func (ir *ImageRenderer) SavePNG() error {
 		bc.Image(),
 		uint32(ir.shadowRadius),
 	)
-
 	if err != nil {
 		return err
 	}

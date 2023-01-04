@@ -7,7 +7,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -225,6 +224,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		assert.Equal(t, expectedString, renderTemplate(env, "[{{.Weather}} ({{.Temperature}}{{.UnitIcon}})]({{.URL}})", o), tc.Case)
 	}
 }
+
 func TestOWMSegmentFromCache(t *testing.T) {
 	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
 	expectedString := fmt.Sprintf("%s (20°C)", "\ufa98")

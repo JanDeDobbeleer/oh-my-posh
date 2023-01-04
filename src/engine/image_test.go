@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-
 	"github.com/stretchr/testify/assert"
 )
 

@@ -6,7 +6,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,7 +24,7 @@ func TestGetNodePackageVersion(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var env = new(mock.MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		// mock  getVersion methods
 		env.On("Pwd").Return("posh")
 		path := filepath.Join("posh", "node_modules", "nx")

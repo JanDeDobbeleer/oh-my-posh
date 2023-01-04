@@ -15,11 +15,11 @@ type Node struct {
 }
 
 const (
-	// YarnIcon illustrates Yarn is used
+	// YarnIcon illustrates Yarn is used.
 	YarnIcon properties.Property = "yarn_icon"
-	// NPMIcon illustrates NPM is used
+	// NPMIcon illustrates NPM is used.
 	NPMIcon properties.Property = "npm_icon"
-	// FetchPackageManager shows if NPM or Yarn is used
+	// FetchPackageManager shows if NPM or Yarn is used.
 	FetchPackageManager properties.Property = "fetch_package_manager"
 )
 

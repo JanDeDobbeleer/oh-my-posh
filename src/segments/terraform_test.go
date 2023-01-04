@@ -6,7 +6,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -101,7 +100,7 @@ func TestTerraform(t *testing.T) {
 			template = tf.Template()
 		}
 		assert.Equal(t, tc.ExpectedEnabled, tf.Enabled(), tc.Case)
-		var got = renderTemplate(env, template, tf)
+		got := renderTemplate(env, template, tf)
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)
 	}
 }

@@ -3,7 +3,6 @@ package segments
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	cpu "github.com/shirou/gopsutil/v3/cpu"
 	disk "github.com/shirou/gopsutil/v3/disk"
 	load "github.com/shirou/gopsutil/v3/load"
@@ -35,7 +34,7 @@ type SystemInfo struct {
 }
 
 const (
-	// Precision number of decimal places to show
+	// Precision number of decimal places to show.
 	Precision properties.Property = "precision"
 )
 

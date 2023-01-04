@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	http2 "net/http"
+	"net/url"
 	"strconv"
 	"strings"
 	"time"
@@ -11,12 +13,9 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
-	http2 "net/http"
-	"net/url"
 )
 
-// WithingsData struct contains the API data
+// WithingsData struct contains the API data.
 type WithingsData struct {
 	Status int   `json:"status"`
 	Body   *Body `json:"body"`
@@ -69,7 +68,7 @@ type Activity struct {
 	HrZone3       int    `json:"hr_zone_3"`
 }
 
-// WithingsAPI is a wrapper around http.Oauth
+// WithingsAPI is a wrapper around http.Oauth.
 type WithingsAPI interface {
 	GetMeasures(meastypes string) (*WithingsData, error)
 	GetActivities(activities string) (*WithingsData, error)

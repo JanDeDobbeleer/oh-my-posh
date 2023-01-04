@@ -7,15 +7,12 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
 	"github.com/spf13/cobra"
 )
 
-var (
-	output string
-)
+var output string
 
-// exportCmd represents the export command
+// exportCmd represents the export command.
 var exportCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export your config",

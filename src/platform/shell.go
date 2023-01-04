@@ -23,7 +23,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/platform/battery"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform/cmd"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-
 	process "github.com/shirou/gopsutil/v3/process"
 )
 
@@ -870,7 +869,7 @@ func returnOrBuildCachePath(path string) string {
 	if _, err := os.Stat(cachePath); err == nil {
 		return cachePath
 	}
-	if err := os.Mkdir(cachePath, 0755); err != nil {
+	if err := os.Mkdir(cachePath, 0o755); err != nil {
 		return ""
 	}
 	return cachePath

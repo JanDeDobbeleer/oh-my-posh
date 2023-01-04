@@ -13,57 +13,57 @@ type Os struct {
 }
 
 const (
-	// MacOS the string/icon to use for MacOS
+	// MacOS the string/icon to use for MacOS.
 	MacOS properties.Property = "macos"
-	// Linux the string/icon to use for linux
+	// Linux the string/icon to use for linux.
 	Linux properties.Property = "linux"
-	// Windows the string/icon to use for windows
+	// Windows the string/icon to use for windows.
 	Windows properties.Property = "windows"
-	// Alma the string/icon to use for Alma
+	// Alma the string/icon to use for Alma.
 	Alma properties.Property = "alma"
-	// Alpine the string/icon to use for Alpine
+	// Alpine the string/icon to use for Alpine.
 	Alpine properties.Property = "alpine"
-	// Aosc the string/icon to use for Aosc
+	// Aosc the string/icon to use for Aosc.
 	Aosc properties.Property = "aosc"
-	// Arch the string/icon to use for Arch
+	// Arch the string/icon to use for Arch.
 	Arch properties.Property = "arch"
-	// Centos the string/icon to use for Centos
+	// Centos the string/icon to use for Centos.
 	Centos properties.Property = "centos"
-	// Coreos the string/icon to use for Coreos
+	// Coreos the string/icon to use for Coreos.
 	Coreos properties.Property = "coreos"
-	// Debian the string/icon to use for Debian
+	// Debian the string/icon to use for Debian.
 	Debian properties.Property = "debian"
-	// Devuan the string/icon to use for Devuan
+	// Devuan the string/icon to use for Devuan.
 	Devuan properties.Property = "devuan"
-	// Raspbian the string/icon to use for Raspbian
+	// Raspbian the string/icon to use for Raspbian.
 	Raspbian properties.Property = "raspbian"
-	// Elementary the string/icon to use for Elementary
+	// Elementary the string/icon to use for Elementary.
 	Elementary properties.Property = "elementary"
-	// Fedora the string/icon to use for Fedora
+	// Fedora the string/icon to use for Fedora.
 	Fedora properties.Property = "fedora"
-	// Gentoo the string/icon to use for Gentoo
+	// Gentoo the string/icon to use for Gentoo.
 	Gentoo properties.Property = "gentoo"
-	// Mageia the string/icon to use for Mageia
+	// Mageia the string/icon to use for Mageia.
 	Mageia properties.Property = "mageia"
-	// Manjaro the string/icon to use for Manjaro
+	// Manjaro the string/icon to use for Manjaro.
 	Manjaro properties.Property = "manjaro"
-	// Mint the string/icon to use for Mint
+	// Mint the string/icon to use for Mint.
 	Mint properties.Property = "mint"
-	// Nixos the string/icon to use for Nixos
+	// Nixos the string/icon to use for Nixos.
 	Nixos properties.Property = "nixos"
-	// Opensuse the string/icon to use for Opensuse
+	// Opensuse the string/icon to use for Opensuse.
 	Opensuse properties.Property = "opensuse"
-	// Redhat the string/icon to use for Redhat
+	// Redhat the string/icon to use for Redhat.
 	Redhat properties.Property = "redhat"
-	// Rocky the string/icon to use for Rocky linux
+	// Rocky the string/icon to use for Rocky linux.
 	Rocky properties.Property = "rocky"
-	// Sabayon the string/icon to use for Sabayon
+	// Sabayon the string/icon to use for Sabayon.
 	Sabayon properties.Property = "sabayon"
-	// Slackware the string/icon to use for Slackware
+	// Slackware the string/icon to use for Slackware.
 	Slackware properties.Property = "slackware"
-	// Ubuntu the string/icon to use for Ubuntu
+	// Ubuntu the string/icon to use for Ubuntu.
 	Ubuntu properties.Property = "ubuntu"
-	// DisplayDistroName display the distro name or not
+	// DisplayDistroName display the distro name or not.
 	DisplayDistroName properties.Property = "display_distro_name"
 )
 

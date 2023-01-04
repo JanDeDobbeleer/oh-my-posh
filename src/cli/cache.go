@@ -8,11 +8,10 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
 	"github.com/spf13/cobra"
 )
 
-// getCmd represents the get command
+// getCmd represents the get command.
 var getCache = &cobra.Command{
 	Use:   "cache [path|clear|edit]",
 	Short: "Interact with the oh-my-posh cache",

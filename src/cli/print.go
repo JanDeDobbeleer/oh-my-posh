@@ -5,7 +5,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +22,7 @@ var (
 	plain        bool
 )
 
-// printCmd represents the prompt command
+// printCmd represents the prompt command.
 var printCmd = &cobra.Command{
 	Use:   "print [debug|primary|secondary|transient|right|tooltip|valid|error]",
 	Short: "Print the prompt/context",

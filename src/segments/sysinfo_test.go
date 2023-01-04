@@ -5,7 +5,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/stretchr/testify/assert"
 )
@@ -41,7 +40,8 @@ func TestSysInfo(t *testing.T) {
 			Case:           "load",
 			ExpectedString: "0.22 0.12 0",
 			Template:       "{{ round .Load1 .Precision }} {{round .Load5 .Precision }} {{round .Load15 .Precision }}",
-			SysInfo:        SystemInfo{Precision: 2, Load1: 0.22, Load5: 0.12, Load15: 0}},
+			SysInfo:        SystemInfo{Precision: 2, Load1: 0.22, Load5: 0.12, Load15: 0},
+		},
 		{Case: "not enabled", ExpectDisabled: true, SysInfo: SystemInfo{PhysicalPercentUsed: 0, SwapPercentUsed: 0}},
 		{
 			Case:           "2 physical cpus",

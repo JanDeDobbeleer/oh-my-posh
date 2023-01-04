@@ -5,9 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
 	"github.com/gookit/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 )
 
 func MakeColors(palette Palette, cacheEnabled bool, accentColor string, env platform.Environment) (colors AnsiColors) {
@@ -32,28 +31,26 @@ type DefaultColors struct {
 	accent *Color
 }
 
-var (
-	// Map for color names and their respective foreground [0] or background [1] color codes
-	ansiColorCodes = map[string][2]AnsiColor{
-		"black":        {"30", "40"},
-		"red":          {"31", "41"},
-		"green":        {"32", "42"},
-		"yellow":       {"33", "43"},
-		"blue":         {"34", "44"},
-		"magenta":      {"35", "45"},
-		"cyan":         {"36", "46"},
-		"white":        {"37", "47"},
-		"default":      {"39", "49"},
-		"darkGray":     {"90", "100"},
-		"lightRed":     {"91", "101"},
-		"lightGreen":   {"92", "102"},
-		"lightYellow":  {"93", "103"},
-		"lightBlue":    {"94", "104"},
-		"lightMagenta": {"95", "105"},
-		"lightCyan":    {"96", "106"},
-		"lightWhite":   {"97", "107"},
-	}
-)
+// Map for color names and their respective foreground [0] or background [1] color codes
+var ansiColorCodes = map[string][2]AnsiColor{
+	"black":        {"30", "40"},
+	"red":          {"31", "41"},
+	"green":        {"32", "42"},
+	"yellow":       {"33", "43"},
+	"blue":         {"34", "44"},
+	"magenta":      {"35", "45"},
+	"cyan":         {"36", "46"},
+	"white":        {"37", "47"},
+	"default":      {"39", "49"},
+	"darkGray":     {"90", "100"},
+	"lightRed":     {"91", "101"},
+	"lightGreen":   {"92", "102"},
+	"lightYellow":  {"93", "103"},
+	"lightBlue":    {"94", "104"},
+	"lightMagenta": {"95", "105"},
+	"lightCyan":    {"96", "106"},
+	"lightWhite":   {"97", "107"},
+}
 
 const (
 	foregroundIndex = 0

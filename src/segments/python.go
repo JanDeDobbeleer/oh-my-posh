@@ -17,7 +17,7 @@ type Python struct {
 }
 
 const (
-	// FetchVirtualEnv fetches the virtual env
+	// FetchVirtualEnv fetches the virtual env.
 	FetchVirtualEnv      properties.Property = "fetch_virtual_env"
 	UsePythonVersionFile properties.Property = "use_python_version_file"
 )

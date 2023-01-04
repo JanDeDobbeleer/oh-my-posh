@@ -4,10 +4,9 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/alecthomas/assert"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
-	"github.com/alecthomas/assert"
 )
 
 func TestNbgv(t *testing.T) {

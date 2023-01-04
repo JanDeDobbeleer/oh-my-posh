@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	// Fallback to native command
+	// Fallback to native command.
 	NativeFallback properties.Property = "native_fallback"
 )
 
-// ScmStatus represents part of the status of a repository
+// ScmStatus represents part of the status of a repository.
 type ScmStatus struct {
 	Unmerged   int
 	Deleted    int
@@ -61,11 +61,11 @@ type scm struct {
 }
 
 const (
-	// BranchMaxLength truncates the length of the branch name
+	// BranchMaxLength truncates the length of the branch name.
 	BranchMaxLength properties.Property = "branch_max_length"
-	// TruncateSymbol appends the set symbol to a truncated branch name
+	// TruncateSymbol appends the set symbol to a truncated branch name.
 	TruncateSymbol properties.Property = "truncate_symbol"
-	// FullBranchPath displays the full path of a branch
+	// FullBranchPath displays the full path of a branch.
 	FullBranchPath properties.Property = "full_branch_path"
 )
 

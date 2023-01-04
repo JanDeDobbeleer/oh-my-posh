@@ -5,7 +5,7 @@ import (
 	link "net/url"
 )
 
-// url builds an hyperlink if url is not empty, otherwise returns the text only
+// url builds an hyperlink if url is not empty, otherwise returns the text only.
 func url(text, url string) (string, error) {
 	if url == "" {
 		return text, nil

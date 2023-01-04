@@ -89,7 +89,7 @@ func (n *GitVersion) Enabled() bool {
 }
 
 func (n *GitVersion) getCacheValue(key string) (*gitVersion, error) {
-	var semVer = &gitVersion{}
+	semVer := &gitVersion{}
 	cacheTimeout := n.props.GetInt(properties.CacheTimeout, 30)
 
 	if cacheTimeout <= 0 {

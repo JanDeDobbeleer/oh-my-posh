@@ -8,7 +8,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -58,7 +57,7 @@ func TestCFSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var env = new(mock.MockedEnvironment)
+		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "cf").Return(true)
 		env.On("RunCommand", "cf", []string{"version"}).Return(tc.Version, nil)
 		env.On("Pwd").Return("/usr/home/dev/my-app")
@@ -82,7 +81,6 @@ func TestCFSegment(t *testing.T) {
 
 		for _, f := range cf.language.extensions {
 			match, err := filepath.Match(f, tc.CfYamlFile)
-
 			if err != nil {
 				t.Fail()
 			}

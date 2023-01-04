@@ -22,15 +22,15 @@ type Owm struct {
 }
 
 const (
-	// APIKey openweathermap api key
+	// APIKey openweathermap api key.
 	APIKey properties.Property = "apikey"
-	// Location openweathermap location
+	// Location openweathermap location.
 	Location properties.Property = "location"
-	// Units openweathermap units
+	// Units openweathermap units.
 	Units properties.Property = "units"
-	// CacheKeyResponse key used when caching the response
+	// CacheKeyResponse key used when caching the response.
 	CacheKeyResponse string = "owm_response"
-	// CacheKeyURL key used when caching the url responsible for the response
+	// CacheKeyURL key used when caching the url responsible for the response.
 	CacheKeyURL string = "owm_url"
 )
 

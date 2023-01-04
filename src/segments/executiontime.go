@@ -6,7 +6,6 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	lang "golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
@@ -19,27 +18,27 @@ type Executiontime struct {
 	Ms          int64
 }
 
-// DurationStyle how to display the time
+// DurationStyle how to display the time.
 type DurationStyle string
 
 const (
-	// ThresholdProperty represents minimum duration (milliseconds) required to enable this segment
+	// ThresholdProperty represents minimum duration (milliseconds) required to enable this segment.
 	ThresholdProperty properties.Property = "threshold"
-	// Austin milliseconds short
+	// Austin milliseconds short.
 	Austin DurationStyle = "austin"
-	// Roundrock milliseconds long
+	// Roundrock milliseconds long.
 	Roundrock DurationStyle = "roundrock"
-	// Dallas milliseconds full
+	// Dallas milliseconds full.
 	Dallas DurationStyle = "dallas"
-	// Galveston hour
+	// Galveston hour.
 	Galveston DurationStyle = "galveston"
-	// Galveston hour
+	// Galveston hour.
 	GalvestonMs DurationStyle = "galvestonms"
-	// Houston hour and milliseconds
+	// Houston hour and milliseconds.
 	Houston DurationStyle = "houston"
-	// Amarillo seconds
+	// Amarillo seconds.
 	Amarillo DurationStyle = "amarillo"
-	// Round will round the output of the format
+	// Round will round the output of the format.
 	Round DurationStyle = "round"
 
 	second           = 1000

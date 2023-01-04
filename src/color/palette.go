@@ -21,7 +21,7 @@ func (p Palette) ResolveColor(colorName string) (string, error) {
 	return p.resolveColor(colorName, 1, &colorName)
 }
 
-// originalColorName is a pointer to save allocations
+// originalColorName is a pointer to save allocations.
 func (p Palette) resolveColor(colorName string, depth int, originalColorName *string) (string, error) {
 	key, ok := asPaletteKey(colorName)
 	// colorName is not a palette key, return it as is
@@ -78,7 +78,7 @@ func (p *PaletteKeyError) Error() string {
 }
 
 // PaletteRecursiveKeyError records the Palette key and resolved color value (which
-// is also a Palette key)
+// is also a Palette key).
 type PaletteRecursiveKeyError struct {
 	Key   string
 	Value string

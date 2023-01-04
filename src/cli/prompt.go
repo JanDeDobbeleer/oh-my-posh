@@ -4,7 +4,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// promptCmd represents the prompt command
+// promptCmd represents the prompt command.
 var promptCmd = &cobra.Command{
 	Use:   "prompt",
 	Short: "Set up the prompt for your shell (deprecated)",

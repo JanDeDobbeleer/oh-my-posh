@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
-
 	"github.com/stretchr/testify/assert"
 )
 

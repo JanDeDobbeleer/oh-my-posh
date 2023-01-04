@@ -6,15 +6,13 @@ import (
 	"github.com/alecthomas/assert"
 )
 
-var (
-	testPalette = Palette{
-		"red":   "#FF0000",
-		"green": "#00FF00",
-		"blue":  "#0000FF",
-		"white": "#FFFFFF",
-		"black": "#000000",
-	}
-)
+var testPalette = Palette{
+	"red":   "#FF0000",
+	"green": "#00FF00",
+	"blue":  "#0000FF",
+	"white": "#FFFFFF",
+	"black": "#000000",
+}
 
 type TestPaletteRequest struct {
 	Case          string

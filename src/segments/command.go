@@ -15,11 +15,11 @@ type Cmd struct {
 }
 
 const (
-	// ExecutableShell to execute command in
+	// ExecutableShell to execute command in.
 	ExecutableShell properties.Property = "shell"
-	// Command to execute
+	// Command to execute.
 	Command properties.Property = "command"
-	// Command to execute
+	// Command to execute.
 	Script properties.Property = "script"
 )
 

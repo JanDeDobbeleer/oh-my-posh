@@ -12,12 +12,11 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
-
 	c "golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
-// Segment represent a single segment and it's configuration
+// Segment represent a single segment and it's configuration.
 type Segment struct {
 	Type                SegmentType    `json:"type,omitempty"`
 	Tips                []string       `json:"tips,omitempty"`
@@ -48,7 +47,7 @@ type Segment struct {
 	styleCache      SegmentStyle
 }
 
-// SegmentTiming holds the timing context for a segment
+// SegmentTiming holds the timing context for a segment.
 type SegmentTiming struct {
 	name       string
 	nameLength int
@@ -57,14 +56,14 @@ type SegmentTiming struct {
 	duration   time.Duration
 }
 
-// SegmentWriter is the interface used to define what and if to write to the prompt
+// SegmentWriter is the interface used to define what and if to write to the prompt.
 type SegmentWriter interface {
 	Enabled() bool
 	Template() string
 	Init(props properties.Properties, env platform.Environment)
 }
 
-// SegmentStyle the style of segment, for more information, see the constants
+// SegmentStyle the style of segment, for more information, see the constants.
 type SegmentStyle string
 
 func (s *SegmentStyle) Resolve(env platform.Environment, context interface{}) SegmentStyle {
@@ -81,148 +80,148 @@ func (s *SegmentStyle) Resolve(env platform.Environment, context interface{}) Se
 	return SegmentStyle(value)
 }
 
-// SegmentType the type of segment, for more information, see the constants
+// SegmentType the type of segment, for more information, see the constants.
 type SegmentType string
 
 const (
-	// Plain writes it without ornaments
+	// Plain writes it without ornaments.
 	Plain SegmentStyle = "plain"
-	// Powerline writes it Powerline style
+	// Powerline writes it Powerline style.
 	Powerline SegmentStyle = "powerline"
-	// Accordion writes it Powerline style but collapses the segment when disabled instead of hiding
+	// Accordion writes it Powerline style but collapses the segment when disabled instead of hiding.
 	Accordion SegmentStyle = "accordion"
-	// Diamond writes the prompt shaped with a leading and trailing symbol
+	// Diamond writes the prompt shaped with a leading and trailing symbol.
 	Diamond SegmentStyle = "diamond"
 
-	// ANGULAR writes which angular cli version us currently active
+	// ANGULAR writes which angular cli version us currently active.
 	ANGULAR SegmentType = "angular"
-	// AWS writes the active aws context
+	// AWS writes the active aws context.
 	AWS SegmentType = "aws"
-	// AZ writes the Azure subscription info we're currently in
+	// AZ writes the Azure subscription info we're currently in.
 	AZ SegmentType = "az"
-	// AZFUNC writes current AZ func version
+	// AZFUNC writes current AZ func version.
 	AZFUNC SegmentType = "azfunc"
-	// BATTERY writes the battery percentage
+	// BATTERY writes the battery percentage.
 	BATTERY SegmentType = "battery"
-	// Brewfather segment
+	// Brewfather segment.
 	BREWFATHER SegmentType = "brewfather"
-	// cds (SAP CAP) version
+	// cds (SAP CAP) version.
 	CDS SegmentType = "cds"
-	// Cloud Foundry segment
+	// Cloud Foundry segment.
 	CF SegmentType = "cf"
-	// Cloud Foundry logged in target
+	// Cloud Foundry logged in target.
 	CFTARGET SegmentType = "cftarget"
-	// CMAKE writes the active cmake version
+	// CMAKE writes the active cmake version.
 	CMAKE SegmentType = "cmake"
-	// CMD writes the output of a shell command
+	// CMD writes the output of a shell command.
 	CMD SegmentType = "command"
-	// CONNECTION writes a connection's information
+	// CONNECTION writes a connection's information.
 	CONNECTION SegmentType = "connection"
-	// CRYSTAL writes the active crystal version
+	// CRYSTAL writes the active crystal version.
 	CRYSTAL SegmentType = "crystal"
-	// DART writes the active dart version
+	// DART writes the active dart version.
 	DART SegmentType = "dart"
-	// DENO writes the active deno version
+	// DENO writes the active deno version.
 	DENO SegmentType = "deno"
-	// DOTNET writes which dotnet version is currently active
+	// DOTNET writes which dotnet version is currently active.
 	DOTNET SegmentType = "dotnet"
-	// EXECUTIONTIME writes the execution time of the last run command
+	// EXECUTIONTIME writes the execution time of the last run command.
 	EXECUTIONTIME SegmentType = "executiontime"
-	// EXIT writes the last exit code
+	// EXIT writes the last exit code.
 	EXIT SegmentType = "exit"
-	// FLUTTER writes the flutter version
+	// FLUTTER writes the flutter version.
 	FLUTTER SegmentType = "flutter"
-	// FOSSIL writes the fossil status
+	// FOSSIL writes the fossil status.
 	FOSSIL SegmentType = "fossil"
-	// GCP writes the active GCP context
+	// GCP writes the active GCP context.
 	GCP SegmentType = "gcp"
-	// GIT represents the git status and information
+	// GIT represents the git status and information.
 	GIT SegmentType = "git"
-	// GITVERSION represents the gitversion information
+	// GITVERSION represents the gitversion information.
 	GITVERSION SegmentType = "gitversion"
-	// GOLANG writes which go version is currently active
+	// GOLANG writes which go version is currently active.
 	GOLANG SegmentType = "go"
-	// HASKELL segment
+	// HASKELL segment.
 	HASKELL SegmentType = "haskell"
-	// IPIFY segment
+	// IPIFY segment.
 	IPIFY SegmentType = "ipify"
-	// ITERM inserts the Shell Integration prompt mark on iTerm zsh/bash/fish
+	// ITERM inserts the Shell Integration prompt mark on iTerm zsh/bash/fish.
 	ITERM SegmentType = "iterm"
-	// JAVA writes the active java version
+	// JAVA writes the active java version.
 	JAVA SegmentType = "java"
-	// JULIA writes which julia version is currently active
+	// JULIA writes which julia version is currently active.
 	JULIA SegmentType = "julia"
-	// KOTLIN writes the active kotlin version
+	// KOTLIN writes the active kotlin version.
 	KOTLIN SegmentType = "kotlin"
-	// KUBECTL writes the Kubernetes context we're currently in
+	// KUBECTL writes the Kubernetes context we're currently in.
 	KUBECTL SegmentType = "kubectl"
-	// LUA writes the active lua version
+	// LUA writes the active lua version.
 	LUA SegmentType = "lua"
-	// NBGV writes the nbgv version information
+	// NBGV writes the nbgv version information.
 	NBGV SegmentType = "nbgv"
-	// NIGHTSCOUT is an open source diabetes system
+	// NIGHTSCOUT is an open source diabetes system.
 	NIGHTSCOUT SegmentType = "nightscout"
-	// NODE writes which node version is currently active
+	// NODE writes which node version is currently active.
 	NODE SegmentType = "node"
-	// npm version
+	// npm version.
 	NPM SegmentType = "npm"
-	// NX writes which Nx version us currently active
+	// NX writes which Nx version us currently active.
 	NX SegmentType = "nx"
-	// OS write os specific icon
+	// OS write os specific icon.
 	OS SegmentType = "os"
-	// OWM writes the weather coming from openweatherdata
+	// OWM writes the weather coming from openweatherdata.
 	OWM SegmentType = "owm"
-	// PATH represents the current path segment
+	// PATH represents the current path segment.
 	PATH SegmentType = "path"
-	// PERL writes which perl version is currently active
+	// PERL writes which perl version is currently active.
 	PERL SegmentType = "perl"
-	// PHP writes which php version is currently active
+	// PHP writes which php version is currently active.
 	PHP SegmentType = "php"
-	// PLASTIC represents the plastic scm status and information
+	// PLASTIC represents the plastic scm status and information.
 	PLASTIC SegmentType = "plastic"
-	// Project version
+	// Project version.
 	PROJECT SegmentType = "project"
-	// PYTHON writes the virtual env name
+	// PYTHON writes the virtual env name.
 	PYTHON SegmentType = "python"
-	// R version
+	// R version.
 	R SegmentType = "r"
-	// ROOT writes root symbol
+	// ROOT writes root symbol.
 	ROOT SegmentType = "root"
-	// RUBY writes which ruby version is currently active
+	// RUBY writes which ruby version is currently active.
 	RUBY SegmentType = "ruby"
-	// RUST writes the cargo version information if cargo.toml is present
+	// RUST writes the cargo version information if cargo.toml is present.
 	RUST SegmentType = "rust"
-	// SESSION represents the user info segment
+	// SESSION represents the user info segment.
 	SESSION SegmentType = "session"
-	// SHELL writes which shell we're currently in
+	// SHELL writes which shell we're currently in.
 	SHELL SegmentType = "shell"
-	// SPOTIFY writes the SPOTIFY status for Mac
+	// SPOTIFY writes the SPOTIFY status for Mac.
 	SPOTIFY SegmentType = "spotify"
-	// STRAVA is a sports activity tracker
+	// STRAVA is a sports activity tracker.
 	STRAVA SegmentType = "strava"
-	// Subversion segment
+	// Subversion segment.
 	SVN SegmentType = "svn"
-	// SWIFT writes the active swift version
+	// SWIFT writes the active swift version.
 	SWIFT SegmentType = "swift"
-	// SYSTEMINFO writes system information (memory, cpu, load)
+	// SYSTEMINFO writes system information (memory, cpu, load).
 	SYSTEMINFO SegmentType = "sysinfo"
-	// TERRAFORM writes the terraform workspace we're currently in
+	// TERRAFORM writes the terraform workspace we're currently in.
 	TERRAFORM SegmentType = "terraform"
-	// TEXT writes a text
+	// TEXT writes a text.
 	TEXT SegmentType = "text"
-	// TIME writes the current timestamp
+	// TIME writes the current timestamp.
 	TIME SegmentType = "time"
-	// UI5 Tooling segment
+	// UI5 Tooling segment.
 	UI5TOOLING SegmentType = "ui5tooling"
-	// WAKATIME writes tracked time spend in dev editors
+	// WAKATIME writes tracked time spend in dev editors.
 	WAKATIME SegmentType = "wakatime"
 	// WINREG queries the Windows registry.
 	WINREG SegmentType = "winreg"
 	// WITHINGS queries the Withings API.
 	WITHINGS SegmentType = "withings"
-	// XMAKE write the xmake version if xmake.lua is present
+	// XMAKE write the xmake version if xmake.lua is present.
 	XMAKE SegmentType = "xmake"
-	// YTM writes YouTube Music information and status
+	// YTM writes YouTube Music information and status.
 	YTM SegmentType = "ytm"
 )
 

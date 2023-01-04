@@ -14,7 +14,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
-// segment struct, makes templating easier
+// segment struct, makes templating easier.
 type Brewfather struct {
 	props properties.Properties
 	env   platform.Environment

@@ -59,12 +59,12 @@ func (fc *fileCache) Close() {
 	cache := fc.cache.List()
 	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
 		cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
-		_ = os.WriteFile(cacheFilePath, dump, 0644)
+		_ = os.WriteFile(cacheFilePath, dump, 0o644)
 	}
 }
 
 // returns the value for the given key as long as
-// the TTL (minutes) is not expired
+// the TTL (minutes) is not expired.
 func (fc *fileCache) Get(key string) (string, bool) {
 	val, found := fc.cache.Get(key)
 	if !found {
@@ -76,7 +76,7 @@ func (fc *fileCache) Get(key string) (string, bool) {
 	return "", false
 }
 
-// sets the value for the given key with a TTL (minutes)
+// sets the value for the given key with a TTL (minutes).
 func (fc *fileCache) Set(key, value string, ttl int) {
 	fc.cache.Set(key, &cacheObject{
 		Value:     value,

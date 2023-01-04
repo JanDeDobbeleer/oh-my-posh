@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-
 	"github.com/mattn/go-runewidth"
 )
 

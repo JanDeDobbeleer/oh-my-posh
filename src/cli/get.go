@@ -5,14 +5,13 @@ import (
 	"strings"
 	"time"
 
+	color2 "github.com/gookit/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
-	color2 "github.com/gookit/color"
 	"github.com/spf13/cobra"
 )
 
-// getCmd represents the get command
+// getCmd represents the get command.
 var getCmd = &cobra.Command{
 	Use:   "get [shell|millis|accent|toggles|width]",
 	Short: "Get a value from oh-my-posh",

@@ -10,16 +10,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gookit/config/v2"
+	"github.com/gookit/config/v2/json"
+	"github.com/gookit/config/v2/toml"
+	yaml "github.com/gookit/config/v2/yamlv3"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
-
-	"github.com/gookit/config/v2"
-	"github.com/gookit/config/v2/json"
-	"github.com/gookit/config/v2/toml"
-	yaml "github.com/gookit/config/v2/yamlv3"
 	"github.com/mitchellh/mapstructure"
 )
 
@@ -31,7 +30,7 @@ const (
 	configVersion = 2
 )
 
-// Config holds all the theme for rendering the prompt
+// Config holds all the theme for rendering the prompt.
 type Config struct {
 	Version              int             `json:"version"`
 	FinalSpace           bool            `json:"final_space,omitempty"`
@@ -84,7 +83,7 @@ func (cfg *Config) getPalette() color.Palette {
 	return cfg.Palette
 }
 
-// LoadConfig returns the default configuration including possible user overrides
+// LoadConfig returns the default configuration including possible user overrides.
 func LoadConfig(env platform.Environment) *Config {
 	cfg := loadConfig(env)
 	cfg.env = env
@@ -201,7 +200,7 @@ func (cfg *Config) Write(format string) {
 	if len(destination) == 0 {
 		destination = cfg.origin
 	}
-	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o755)
 	if err != nil {
 		return
 	}

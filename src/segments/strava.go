@@ -10,7 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
-// StravaAPI is a wrapper around http.Oauth
+// StravaAPI is a wrapper around http.Oauth.
 type StravaAPI interface {
 	GetActivities() ([]*StravaData, error)
 }
@@ -24,7 +24,7 @@ func (s *stravaAPI) GetActivities() ([]*StravaData, error) {
 	return http.OauthResult[[]*StravaData](&s.OAuthRequest, url, nil)
 }
 
-// segment struct, makes templating easier
+// segment struct, makes templating easier.
 type Strava struct {
 	props properties.Properties
 
@@ -52,7 +52,7 @@ const (
 	noActivitiesFound = "No activities found"
 )
 
-// StravaData struct contains the API data
+// StravaData struct contains the API data.
 type StravaData struct {
 	ID                   int       `json:"id"`
 	Type                 string    `json:"type"`

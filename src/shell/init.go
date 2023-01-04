@@ -2,11 +2,10 @@ package shell
 
 import (
 	_ "embed"
-	"path/filepath"
-	"strconv"
-
 	"fmt"
 	"os"
+	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
@@ -233,7 +232,7 @@ func PrintInit(env platform.Environment) string {
 
 func createNuInit(env platform.Environment) {
 	initPath := filepath.Join(env.Home(), ".oh-my-posh.nu")
-	f, err := os.OpenFile(initPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	f, err := os.OpenFile(initPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o755)
 	if err != nil {
 		return
 	}

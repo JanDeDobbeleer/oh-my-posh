@@ -6,7 +6,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
-// PlainWriter writes a plain string
+// PlainWriter writes a plain string.
 type PlainWriter struct {
 	Ansi *Ansi
 

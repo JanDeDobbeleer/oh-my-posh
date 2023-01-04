@@ -12,7 +12,7 @@ var (
 	config         string
 	displayVersion bool
 
-	// Version number of oh-my-posh
+	// Version number of oh-my-posh.
 	cliVersion string
 )
 
@@ -43,7 +43,7 @@ func Execute(version string) {
 	}
 }
 
-// Backwards compatibility
+// Backwards compatibility.
 var (
 	shellName  string
 	initialize bool

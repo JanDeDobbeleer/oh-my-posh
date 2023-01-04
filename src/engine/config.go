@@ -113,11 +113,14 @@ func loadConfig(env platform.Environment) *Config {
 	config.AddDriver(yaml.Driver)
 	config.AddDriver(json.Driver)
 	config.AddDriver(toml.Driver)
-	config.WithOptions(func(opt *config.Options) {
-		opt.DecoderConfig = &mapstructure.DecoderConfig{
-			TagName: "json",
-		}
-	})
+
+	if config.Default().IsEmpty() {
+		config.WithOptions(func(opt *config.Options) {
+			opt.DecoderConfig = &mapstructure.DecoderConfig{
+				TagName: "json",
+			}
+		})
+	}
 
 	err := config.LoadFiles(configFile)
 	if err != nil {

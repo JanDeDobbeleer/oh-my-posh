@@ -125,6 +125,9 @@ func (a *Ansi) Init(shellName string) {
 		a.colorTransparent = "\x1b[%s;49m\x1b[7m%s\x1b[0m"
 		a.escapeLeft = ""
 		a.escapeRight = ""
+		// when in fish on Linux, it seems hyperlinks ending with \\ print a \
+		// unlike on macOS. However, this is a fish bug, so do not try to fix it here:
+		// https://github.com/JanDeDobbeleer/oh-my-posh/pull/3288#issuecomment-1369137068
 		a.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
 		a.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b\\\\\\\\?(?P<TEXT>.+)\x1b]8;;\x1b\\\\)"
 		a.osc99 = "\x1b]9;9;\"%s\"\x1b\\"

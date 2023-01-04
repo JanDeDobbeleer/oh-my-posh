@@ -19,10 +19,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/log"
-	"github.com/jandedobbeleer/oh-my-posh/platform/battery"
-	"github.com/jandedobbeleer/oh-my-posh/platform/cmd"
-	"github.com/jandedobbeleer/oh-my-posh/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform/battery"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform/cmd"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
 	process "github.com/shirou/gopsutil/v3/process"
 )

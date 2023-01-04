@@ -69,7 +69,7 @@ func TestGolang(t *testing.T) {
 		if tc.ParseModFile {
 			props[ParseModFile] = tc.ParseModFile
 			fileInfo := &platform.FileInfo{
-				Path:         "../go.mod",
+				Path:         "../../go.mod",
 				ParentFolder: "./",
 				IsDir:        false,
 			}

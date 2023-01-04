@@ -1,4 +1,4 @@
-package color
+package ansi
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/shell"
 )
 
-func (a *AnsiWriter) GenerateHyperlink(text string) string {
+func (w *Writer) GenerateHyperlink(text string) string {
 	const (
 		LINK  = "link"
 		TEXT  = "text"
@@ -60,7 +60,7 @@ func (a *AnsiWriter) GenerateHyperlink(text string) string {
 				continue
 			}
 			// end of link part
-			result.WriteString(a.replaceHyperlink(hyperlink.String()))
+			result.WriteString(w.replaceHyperlink(hyperlink.String()))
 			hyperlink.Reset()
 			state = OTHER
 		}
@@ -70,21 +70,21 @@ func (a *AnsiWriter) GenerateHyperlink(text string) string {
 	return result.String()
 }
 
-func (a *AnsiWriter) replaceHyperlink(text string) string {
+func (w *Writer) replaceHyperlink(text string) string {
 	// hyperlink matching
 	results := regex.FindNamedRegexMatch("(?P<ALL>(?:\\[(?P<TEXT>.+)\\])(?:\\((?P<URL>.*)\\)))", text)
 	if len(results) != 3 {
 		return text
 	}
-	linkText := a.escapeLinkTextForFishShell(results["TEXT"])
+	linkText := w.escapeLinkTextForFishShell(results["TEXT"])
 	// build hyperlink ansi
-	hyperlink := fmt.Sprintf(a.hyperlink, results["URL"], linkText)
+	hyperlink := fmt.Sprintf(w.hyperlink, results["URL"], linkText)
 	// replace original text by the new onex
 	return strings.Replace(text, results["ALL"], hyperlink, 1)
 }
 
-func (a *AnsiWriter) escapeLinkTextForFishShell(text string) string {
-	if a.shell != shell.FISH {
+func (w *Writer) escapeLinkTextForFishShell(text string) string {
+	if w.shell != shell.FISH {
 		return text
 	}
 	escapeChars := map[string]string{

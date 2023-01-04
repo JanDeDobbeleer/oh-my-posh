@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/platform"
 	"github.com/jandedobbeleer/oh-my-posh/shell"
 	"github.com/jandedobbeleer/oh-my-posh/template"
@@ -14,7 +14,7 @@ import (
 type Engine struct {
 	Config *Config
 	Env    platform.Environment
-	Writer color.Writer
+	Writer *ansi.Writer
 	Plain  bool
 
 	console           strings.Builder
@@ -78,7 +78,7 @@ func (e *Engine) printPWD() {
 	cwd := e.Env.Pwd()
 	// Backwards compatibility for deprecated OSC99
 	if e.Config.OSC99 {
-		e.write(e.Writer.ConsolePwd(color.OSC99, "", "", cwd))
+		e.write(e.Writer.ConsolePwd(ansi.OSC99, "", "", cwd))
 		return
 	}
 	// Allow template logic to define when to enable the PWD (when supported)
@@ -304,7 +304,7 @@ func (e *Engine) print() string {
 		}
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
 		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
-		writer := &color.AnsiWriter{}
+		writer := &ansi.Writer{}
 		writer.Init(shell.GENERIC)
 		prompt := writer.SaveCursorPosition()
 		prompt += writer.CarriageForward()

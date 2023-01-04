@@ -4,7 +4,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/mock"
 	"github.com/jandedobbeleer/oh-my-posh/platform"
 	"github.com/jandedobbeleer/oh-my-posh/shell"
@@ -52,9 +52,9 @@ func TestPrintPWD(t *testing.T) {
 		OSC99    bool
 	}{
 		{Case: "Empty PWD"},
-		{Case: "OSC99", PWD: color.OSC99, Expected: "\x1b]9;9;\"pwd\"\x1b\\"},
-		{Case: "OSC7", PWD: color.OSC7, Expected: "\x1b]7;\"file://host/pwd\"\x1b\\"},
-		{Case: "OSC51", PWD: color.OSC51, Expected: "\x1b]51;Auser@host:pwd\x1b\\"},
+		{Case: "OSC99", PWD: ansi.OSC99, Expected: "\x1b]9;9;\"pwd\"\x1b\\"},
+		{Case: "OSC7", PWD: ansi.OSC7, Expected: "\x1b]7;\"file://host/pwd\"\x1b\\"},
+		{Case: "OSC51", PWD: ansi.OSC51, Expected: "\x1b]51;Auser@host:pwd\x1b\\"},
 		{Case: "Deprecated OSC99", OSC99: true, Expected: "\x1b]9;9;\"pwd\"\x1b\\"},
 		{Case: "Template (empty)", PWD: "{{ if eq .Shell \"pwsh\" }}osc7{{ end }}"},
 		{Case: "Template (non empty)", PWD: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;\"file://host/pwd\"\x1b\\"},
@@ -71,7 +71,7 @@ func TestPrintPWD(t *testing.T) {
 			Shell: "shell",
 		})
 
-		writer := &color.AnsiWriter{}
+		writer := &ansi.Writer{}
 		writer.Init(shell.GENERIC)
 		engine := &Engine{
 			Env: env,
@@ -102,7 +102,7 @@ func engineRender() {
 	defer testClearDefaultConfig()
 
 	writerColors := cfg.MakeColors()
-	writer := &color.AnsiWriter{
+	writer := &ansi.Writer{
 		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 		AnsiColors:         writerColors,
 	}
@@ -173,17 +173,17 @@ func TestGetTitle(t *testing.T) {
 			PWD:      tc.Cwd,
 			Folder:   "vagrant",
 		})
-		ansi := &color.AnsiWriter{}
-		ansi.Init(shell.GENERIC)
+		writer := &ansi.Writer{}
+		writer.Init(shell.GENERIC)
 		engine := &Engine{
 			Config: &Config{
 				ConsoleTitleTemplate: tc.Template,
 			},
-			Writer: ansi,
+			Writer: writer,
 			Env:    env,
 		}
 		title := engine.getTitleTemplateText()
-		got := ansi.FormatTitle(title)
+		got := writer.FormatTitle(title)
 		assert.Equal(t, tc.Expected, got)
 	}
 }
@@ -231,17 +231,17 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			Root:     tc.Root,
 			HostName: "",
 		})
-		ansi := &color.AnsiWriter{}
-		ansi.Init(shell.GENERIC)
+		writer := &ansi.Writer{}
+		writer.Init(shell.GENERIC)
 		engine := &Engine{
 			Config: &Config{
 				ConsoleTitleTemplate: tc.Template,
 			},
-			Writer: ansi,
+			Writer: writer,
 			Env:    env,
 		}
 		title := engine.getTitleTemplateText()
-		got := ansi.FormatTitle(title)
+		got := writer.FormatTitle(title)
 		assert.Equal(t, tc.Expected, got)
 	}
 }

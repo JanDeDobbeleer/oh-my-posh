@@ -1,4 +1,4 @@
-package color
+package ansi
 
 type Palettes struct {
 	Template string             `json:"template,omitempty"`

@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/platform"
 	"github.com/jandedobbeleer/oh-my-posh/properties"
 	"github.com/jandedobbeleer/oh-my-posh/segments"
@@ -33,21 +33,21 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Version              int             `json:"version"`
-	FinalSpace           bool            `json:"final_space,omitempty"`
-	ConsoleTitleTemplate string          `json:"console_title_template,omitempty"`
-	TerminalBackground   string          `json:"terminal_background,omitempty"`
-	AccentColor          string          `json:"accent_color,omitempty"`
-	Blocks               []*Block        `json:"blocks,omitempty"`
-	Tooltips             []*Segment      `json:"tooltips,omitempty"`
-	TransientPrompt      *Segment        `json:"transient_prompt,omitempty"`
-	ValidLine            *Segment        `json:"valid_line,omitempty"`
-	ErrorLine            *Segment        `json:"error_line,omitempty"`
-	SecondaryPrompt      *Segment        `json:"secondary_prompt,omitempty"`
-	DebugPrompt          *Segment        `json:"debug_prompt,omitempty"`
-	Palette              color.Palette   `json:"palette,omitempty"`
-	Palettes             *color.Palettes `json:"palettes,omitempty"`
-	PWD                  string          `json:"pwd,omitempty"`
+	Version              int            `json:"version"`
+	FinalSpace           bool           `json:"final_space,omitempty"`
+	ConsoleTitleTemplate string         `json:"console_title_template,omitempty"`
+	TerminalBackground   string         `json:"terminal_background,omitempty"`
+	AccentColor          string         `json:"accent_color,omitempty"`
+	Blocks               []*Block       `json:"blocks,omitempty"`
+	Tooltips             []*Segment     `json:"tooltips,omitempty"`
+	TransientPrompt      *Segment       `json:"transient_prompt,omitempty"`
+	ValidLine            *Segment       `json:"valid_line,omitempty"`
+	ErrorLine            *Segment       `json:"error_line,omitempty"`
+	SecondaryPrompt      *Segment       `json:"secondary_prompt,omitempty"`
+	DebugPrompt          *Segment       `json:"debug_prompt,omitempty"`
+	Palette              ansi.Palette   `json:"palette,omitempty"`
+	Palettes             *ansi.Palettes `json:"palettes,omitempty"`
+	PWD                  string         `json:"pwd,omitempty"`
 
 	// Deprecated
 	OSC99 bool `json:"osc99,omitempty"`
@@ -63,12 +63,12 @@ type Config struct {
 
 // MakeColors creates instance of AnsiColors to use in AnsiWriter according to
 // environment and configuration.
-func (cfg *Config) MakeColors() color.AnsiColors {
+func (cfg *Config) MakeColors() ansi.Colors {
 	cacheDisabled := cfg.env.Getenv("OMP_CACHE_DISABLED") == "1"
-	return color.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
+	return ansi.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
 }
 
-func (cfg *Config) getPalette() color.Palette {
+func (cfg *Config) getPalette() ansi.Palette {
 	if cfg.Palettes == nil {
 		return cfg.Palette
 	}
@@ -387,7 +387,7 @@ func defaultConfig(warning bool) *Config {
 			},
 		},
 		ConsoleTitleTemplate: "{{ .Shell }} in {{ .Folder }}",
-		Palette: color.Palette{
+		Palette: ansi.Palette{
 			"black":  "#262B44",
 			"blue":   "#4B95E9",
 			"green":  "#59C9A5",

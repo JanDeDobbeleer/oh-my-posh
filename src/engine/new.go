@@ -1,7 +1,7 @@
 package engine
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/platform"
 	"github.com/jandedobbeleer/oh-my-posh/shell"
 )
@@ -17,7 +17,7 @@ func New(flags *platform.Flags) *Engine {
 	env.Init()
 	cfg := LoadConfig(env)
 
-	ansiWriter := &color.AnsiWriter{
+	ansiWriter := &ansi.Writer{
 		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 		AnsiColors:         cfg.MakeColors(),
 		Plain:              flags.Plain,

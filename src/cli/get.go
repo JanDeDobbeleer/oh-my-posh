@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/color"
+	"github.com/jandedobbeleer/oh-my-posh/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/platform"
 
 	color2 "github.com/gookit/color"
@@ -52,7 +52,7 @@ This command is used to get the value of the following variables:
 		case "shell":
 			fmt.Println(env.Shell())
 		case "accent":
-			rgb, err := color.GetAccentColor(env)
+			rgb, err := ansi.GetAccentColor(env)
 			if err != nil {
 				fmt.Println("error getting accent color:", err.Error())
 				return

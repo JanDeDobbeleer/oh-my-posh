@@ -1,4 +1,4 @@
-package color
+package ansi
 
 import (
 	"fmt"
@@ -36,7 +36,7 @@ func TestMeasureText(t *testing.T) {
 	shells := []string{shell.BASH, shell.ZSH, shell.GENERIC}
 	for _, shell := range shells {
 		for _, tc := range cases {
-			ansiWriter := &AnsiWriter{}
+			ansiWriter := &Writer{}
 			ansiWriter.Init(shell)
 			tmpl := &template.Text{
 				Template: tc.Template,

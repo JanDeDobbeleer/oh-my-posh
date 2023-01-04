@@ -1,6 +1,6 @@
 //go:build !windows
 
-package color
+package ansi
 
 import "github.com/jandedobbeleer/oh-my-posh/platform"
 
@@ -12,7 +12,7 @@ func (d *DefaultColors) SetAccentColor(env platform.Environment, defaultColor st
 	if len(defaultColor) == 0 {
 		return
 	}
-	d.accent = &Color{
+	d.accent = &cachedColor{
 		Foreground: string(d.AnsiColorFromString(defaultColor, false)),
 		Background: string(d.AnsiColorFromString(defaultColor, true)),
 	}

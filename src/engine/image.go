@@ -30,8 +30,8 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/jandedobbeleer/oh-my-posh/color"
-	"github.com/jandedobbeleer/oh-my-posh/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
 	"github.com/esimov/stackblur-go"
 	"github.com/fogleman/gg"
@@ -336,7 +336,7 @@ func (ir *ImageRenderer) measureContent() (width, height float64) {
 }
 
 func (ir *ImageRenderer) SavePNG() error {
-	var f = func(value float64) float64 { return ir.factor * value }
+	f := func(value float64) float64 { return ir.factor * value }
 
 	var (
 		corner   = f(6)
@@ -375,7 +375,6 @@ func (ir *ImageRenderer) SavePNG() error {
 		bc.Image(),
 		uint32(ir.shadowRadius),
 	)
-
 	if err != nil {
 		return err
 	}

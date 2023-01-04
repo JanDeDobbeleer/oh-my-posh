@@ -3,7 +3,7 @@ package color
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
 // PlainWriter writes a plain string

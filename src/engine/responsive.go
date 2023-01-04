@@ -1,6 +1,6 @@
 package engine
 
-import "github.com/jandedobbeleer/oh-my-posh/platform"
+import "github.com/jandedobbeleer/oh-my-posh/src/platform"
 
 func shouldHideForWidth(env platform.Environment, minWidth, maxWidth int) bool {
 	if maxWidth == 0 && minWidth == 0 {

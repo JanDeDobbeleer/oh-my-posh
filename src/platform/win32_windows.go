@@ -9,7 +9,7 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
-	"github.com/jandedobbeleer/oh-my-posh/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
 	"golang.org/x/sys/windows"
 )
@@ -261,7 +261,6 @@ func (u *tokenUser) isMemberOf(sid *windows.SID) bool {
 
 func (env *Shell) isWriteable(folder string) bool {
 	cu, err := getCurrentUser()
-
 	if err != nil {
 		// unable to get current user
 		env.Error("isWriteable", err)

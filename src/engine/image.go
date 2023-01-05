@@ -30,7 +30,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
 	"github.com/esimov/stackblur-go"
@@ -110,7 +110,7 @@ type ImageRenderer struct {
 	CursorPadding int
 	RPromptOffset int
 	BgColor       string
-	Ansi          *color.Ansi
+	Ansi          *ansi.Writer
 
 	Path string
 
@@ -278,7 +278,7 @@ func (ir *ImageRenderer) lenWithoutANSI(text string) int {
 	for _, match := range matches {
 		text = strings.ReplaceAll(text, match[str], "")
 	}
-	stripped := regex.ReplaceAllString(color.AnsiRegex, text, "")
+	stripped := regex.ReplaceAllString(ansi.AnsiRegex, text, "")
 	length := utf8.RuneCountInString(stripped)
 	for _, rune := range stripped {
 		length += ir.runeAdditionalWidth(rune)
@@ -336,7 +336,7 @@ func (ir *ImageRenderer) measureContent() (width, height float64) {
 }
 
 func (ir *ImageRenderer) SavePNG() error {
-	var f = func(value float64) float64 { return ir.factor * value }
+	f := func(value float64) float64 { return ir.factor * value }
 
 	var (
 		corner   = f(6)
@@ -375,7 +375,6 @@ func (ir *ImageRenderer) SavePNG() error {
 		bc.Image(),
 		uint32(ir.shadowRadius),
 	)
-
 	if err != nil {
 		return err
 	}

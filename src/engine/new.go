@@ -1,8 +1,7 @@
 package engine
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/console"
+	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
@@ -17,37 +16,19 @@ func New(flags *platform.Flags) *Engine {
 
 	env.Init()
 	cfg := LoadConfig(env)
-	ansi := &color.Ansi{}
 
-	var writer color.Writer
-	if flags.Plain {
-		ansi.InitPlain()
-		writer = &color.PlainWriter{
-			Ansi: ansi,
-		}
-	} else {
-		ansi.Init(env.Shell())
-		writerColors := cfg.MakeColors()
-		writer = &color.AnsiWriter{
-			Ansi:               ansi,
-			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
-			AnsiColors:         writerColors,
-		}
+	ansiWriter := &ansi.Writer{
+		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
+		AnsiColors:         cfg.MakeColors(),
+		Plain:              flags.Plain,
 	}
-
-	consoleTitle := &console.Title{
-		Env:      env,
-		Ansi:     ansi,
-		Template: cfg.ConsoleTitleTemplate,
-	}
+	ansiWriter.Init(env.Shell())
 
 	eng := &Engine{
-		Config:       cfg,
-		Env:          env,
-		Writer:       writer,
-		ConsoleTitle: consoleTitle,
-		Ansi:         ansi,
-		Plain:        flags.Plain,
+		Config: cfg,
+		Env:    env,
+		Writer: ansiWriter,
+		Plain:  flags.Plain,
 	}
 
 	return eng

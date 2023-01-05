@@ -1,4 +1,4 @@
-package color
+package ansi
 
 import (
 	"errors"
@@ -27,7 +27,7 @@ func GetAccentColor(env platform.Environment) (*RGB, error) {
 func (d *DefaultColors) SetAccentColor(env platform.Environment, defaultColor string) {
 	rgb, err := GetAccentColor(env)
 	if err != nil {
-		d.accent = &Color{
+		d.accent = &cachedColor{
 			Foreground: string(d.AnsiColorFromString(defaultColor, false)),
 			Background: string(d.AnsiColorFromString(defaultColor, true)),
 		}
@@ -35,7 +35,7 @@ func (d *DefaultColors) SetAccentColor(env platform.Environment, defaultColor st
 	}
 	foreground := color.RGB(rgb.R, rgb.G, rgb.B, false)
 	background := color.RGB(rgb.R, rgb.G, rgb.B, true)
-	d.accent = &Color{
+	d.accent = &cachedColor{
 		Foreground: foreground.String(),
 		Background: background.String(),
 	}

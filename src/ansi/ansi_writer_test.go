@@ -93,7 +93,7 @@ func TestWriteANSIColors(t *testing.T) {
 		{
 			Case:     "Inherit no parent foreground",
 			Input:    "hello <parentForeground>world</>",
-			Expected: "\x1b[47m\x1b[30mhello \x1b[47;49m\x1b[7mworld\x1b[0m",
+			Expected: "\x1b[47m\x1b[30mhello \x1b[0m\x1b[37;49m\x1b[7mworld\x1b[0m",
 			Colors:   &cachedColor{Foreground: "black", Background: "white"},
 		},
 		{
@@ -143,7 +143,7 @@ func TestWriteANSIColors(t *testing.T) {
 		{
 			Case:     "Transparent foreground",
 			Input:    "test",
-			Expected: "\x1b[38;2;255;87;51;49m\x1b[7mtest\x1b[0m",
+			Expected: "\x1b[0m\x1b[38;2;255;87;51;49m\x1b[7mtest\x1b[0m",
 			Colors:   &cachedColor{Foreground: Transparent, Background: "#FF5733"},
 		},
 		{

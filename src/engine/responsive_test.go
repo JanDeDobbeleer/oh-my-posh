@@ -3,7 +3,7 @@ package engine
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 
 	"github.com/stretchr/testify/assert"
 )

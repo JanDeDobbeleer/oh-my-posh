@@ -3,7 +3,7 @@ package ansi
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	"github.com/stretchr/testify/assert"
 )

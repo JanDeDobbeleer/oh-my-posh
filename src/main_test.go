@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/cli"
+	"github.com/jandedobbeleer/oh-my-posh/src/cli"
 )
 
 func BenchmarkInit(b *testing.B) {

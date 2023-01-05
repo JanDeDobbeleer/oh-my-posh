@@ -6,11 +6,13 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/regex"
 	"github.com/jandedobbeleer/oh-my-posh/shell"
+	"github.com/mattn/go-runewidth"
 )
 
 func (w *Writer) write(i int, s rune) {
 	// ignore the logic when there is no hyperlink
 	if !w.hasHyperlink {
+		w.length += runewidth.RuneWidth(s)
 		w.builder.WriteRune(s)
 		return
 	}
@@ -22,6 +24,7 @@ func (w *Writer) write(i int, s rune) {
 	}
 
 	if w.state == OTHER {
+		w.length += runewidth.RuneWidth(s)
 		w.builder.WriteRune(s)
 		return
 	}
@@ -61,6 +64,9 @@ func (w *Writer) replaceHyperlink(text string) string {
 	if len(results) != 3 {
 		return text
 	}
+
+	// we only care about the length of the text part
+	w.length += runewidth.StringWidth(results["TEXT"])
 
 	if w.Plain {
 		return results["TEXT"]

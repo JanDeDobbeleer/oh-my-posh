@@ -305,7 +305,6 @@ func (w *Writer) Write(background, foreground, text string) {
 		s := w.runes[i]
 		// ignore everything which isn't overriding
 		if s != '<' {
-			w.length += runewidth.RuneWidth(s)
 			w.write(i, s)
 			continue
 		}

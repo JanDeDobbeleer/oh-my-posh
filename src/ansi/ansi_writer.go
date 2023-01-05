@@ -53,9 +53,10 @@ const (
 	// Foreground takes the current segment's foreground color
 	Foreground = "foreground"
 
-	anchorRegex = `^(?P<ANCHOR><(?P<FG>[^,>]+)?,?(?P<BG>[^>]+)?>)`
-	colorise    = "\x1b[%sm"
-	transparent = "\x1b[%s;49m\x1b[7m"
+	anchorRegex    = `^(?P<ANCHOR><(?P<FG>[^,>]+)?,?(?P<BG>[^>]+)?>)`
+	colorise       = "\x1b[%sm"
+	transparent    = "\x1b[0m\x1b[%s;49m\x1b[7m"
+	transparentEnd = "\x1b[27m"
 
 	AnsiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 
@@ -87,6 +88,7 @@ type Writer struct {
 	currentForeground Color
 	currentBackground Color
 	runes             []rune
+	transparent       bool
 
 	shell                 string
 	format                string
@@ -363,11 +365,15 @@ func (w *Writer) writeSegmentColors() {
 		fg = w.currentForeground
 	}
 
+	// always reset inverted
+	// w.transparent = false
+
 	if fg.IsTransparent() && len(w.TerminalBackground) != 0 {
 		background := w.getAnsiFromColorString(w.TerminalBackground, false)
 		w.writeEscapedAnsiString(fmt.Sprintf(colorise, background))
 		w.writeEscapedAnsiString(fmt.Sprintf(colorise, bg.ToForeground()))
 	} else if fg.IsTransparent() && !bg.IsEmpty() {
+		w.transparent = true
 		w.writeEscapedAnsiString(fmt.Sprintf(transparent, bg))
 	} else {
 		if !bg.IsEmpty() && !bg.IsTransparent() {
@@ -393,12 +399,16 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 		if position == len(w.runes)-1 {
 			return
 		}
-		if w.currentBackground != w.background {
+		if w.currentBackground != w.background || w.transparent {
+			if w.transparent {
+				w.writeEscapedAnsiString(transparentEnd)
+			}
 			w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.background))
 		}
-		if w.currentForeground != w.foreground {
+		if w.currentForeground != w.foreground || w.transparent {
 			w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.foreground))
 		}
+		w.transparent = false
 		return
 	}
 
@@ -436,6 +446,7 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 	}
 
 	if w.currentForeground.IsTransparent() && !w.currentBackground.IsTransparent() {
+		w.transparent = true
 		w.writeEscapedAnsiString(fmt.Sprintf(transparent, w.currentBackground))
 		return
 	}
@@ -457,6 +468,12 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 }
 
 func (w *Writer) asAnsiColors(background, foreground string) (Color, Color) {
+	if len(background) == 0 {
+		background = Background
+	}
+	if len(foreground) == 0 {
+		foreground = Foreground
+	}
 	background = w.expandKeyword(background)
 	foreground = w.expandKeyword(foreground)
 	inverted := foreground == Transparent && len(background) != 0

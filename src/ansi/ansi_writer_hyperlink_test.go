@@ -41,9 +41,9 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 			Expected:  "\x1b[47m\x1b[30m\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\ \x1b]8;;http://maps.google.be\x1b\\maps (2/2)\x1b]8;;\x1b\\\x1b[0m",
 		},
 		{
-			Text:      "in <accent>\x1b[1mpwsh \x1b[22m</> ",
+			Text:      "in <accent><b>pwsh </b></> ",
 			ShellName: shell.PWSH,
-			Expected:  "\x1b[47m\x1b[30min \x1b[1mpwsh \x1b[22m \x1b[0m",
+			Expected:  "\x1b[47m\x1b[30min \x1b[0m\x1b[30m\x1b[1mpwsh \x1b[22m\x1b[47m \x1b[0m",
 		},
 		{Text: "[google](http://www.google.be)", ShellName: shell.ZSH, Expected: "%{\x1b[47m%}%{\x1b[30m%}%{\x1b]8;;http://www.google.be\x1b\\%}google%{\x1b]8;;\x1b\\%}%{\x1b[0m%}"},
 		{Text: "[google](http://www.google.be)", ShellName: shell.PWSH, Expected: "\x1b[47m\x1b[30m\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\\x1b[0m"},

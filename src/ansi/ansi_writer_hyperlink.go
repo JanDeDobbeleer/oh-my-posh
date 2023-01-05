@@ -8,66 +8,51 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/shell"
 )
 
-func (w *Writer) GenerateHyperlink(text string) string {
-	const (
-		LINK  = "link"
-		TEXT  = "text"
-		OTHER = "plain"
-	)
-
-	// do not do this when we do not need to
-	anchorCount := strings.Count(text, "[") + strings.Count(text, "]") + strings.Count(text, "(") + strings.Count(text, ")")
-	if anchorCount < 4 {
-		return text
+func (w *Writer) write(i int, s rune) {
+	// ignore the logic when there is no hyperlink
+	if !w.hasHyperlink {
+		w.builder.WriteRune(s)
+		return
 	}
 
-	var result, hyperlink strings.Builder
-	var squareIndex, roundCount int
-	state := OTHER
-
-	for i, s := range text {
-		if s == '[' && state == OTHER {
-			state = TEXT
-			hyperlink.WriteRune(s)
-			continue
-		}
-
-		if state == OTHER {
-			result.WriteRune(s)
-			continue
-		}
-
-		hyperlink.WriteRune(s)
-
-		switch s {
-		case ']':
-			// potential end of text part of hyperlink
-			squareIndex = i
-		case '(':
-			// split into link part
-			if squareIndex == i-1 {
-				state = LINK
-			}
-			if state == LINK {
-				roundCount++
-			}
-		case ')':
-			if state != LINK {
-				continue
-			}
-			roundCount--
-			if roundCount != 0 {
-				continue
-			}
-			// end of link part
-			result.WriteString(w.replaceHyperlink(hyperlink.String()))
-			hyperlink.Reset()
-			state = OTHER
-		}
+	if s == '[' && w.state == OTHER {
+		w.state = TEXT
+		w.hyperlinkBuilder.WriteRune(s)
+		return
 	}
 
-	result.WriteString(hyperlink.String())
-	return result.String()
+	if w.state == OTHER {
+		w.builder.WriteRune(s)
+		return
+	}
+
+	w.hyperlinkBuilder.WriteRune(s)
+
+	switch s {
+	case ']':
+		// potential end of text part of hyperlink
+		w.squareIndex = i
+	case '(':
+		// split into link part
+		if w.squareIndex == i-1 {
+			w.state = LINK
+		}
+		if w.state == LINK {
+			w.roundCount++
+		}
+	case ')':
+		if w.state != LINK {
+			return
+		}
+		w.roundCount--
+		if w.roundCount != 0 {
+			return
+		}
+		// end of link part
+		w.builder.WriteString(w.replaceHyperlink(w.hyperlinkBuilder.String()))
+		w.hyperlinkBuilder.Reset()
+		w.state = OTHER
+	}
 }
 
 func (w *Writer) replaceHyperlink(text string) string {
@@ -76,10 +61,15 @@ func (w *Writer) replaceHyperlink(text string) string {
 	if len(results) != 3 {
 		return text
 	}
+
+	if w.Plain {
+		return results["TEXT"]
+	}
+
 	linkText := w.escapeLinkTextForFishShell(results["TEXT"])
 	// build hyperlink ansi
 	hyperlink := fmt.Sprintf(w.hyperlink, results["URL"], linkText)
-	// replace original text by the new onex
+	// replace original text by the new ones
 	return strings.Replace(text, results["ALL"], hyperlink, 1)
 }
 

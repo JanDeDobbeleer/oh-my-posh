@@ -303,21 +303,12 @@ func (e *Engine) print() string {
 			break
 		}
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
-<<<<<<< HEAD
-		// see https://github.com/jandedobbeleer/oh-my-posh/src/pull/2398
-		ansi := &color.Ansi{}
-		ansi.InitPlain()
-		prompt := ansi.SaveCursorPosition()
-		prompt += ansi.CarriageForward()
-		prompt += ansi.GetCursorForRightWrite(e.rpromptLength, 0)
-=======
 		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
 		writer := &ansi.Writer{}
 		writer.Init(shell.GENERIC)
 		prompt := writer.SaveCursorPosition()
 		prompt += writer.CarriageForward()
 		prompt += writer.GetCursorForRightWrite(e.rpromptLength, 0)
->>>>>>> b5bb0606419bbab4b418e48be5d405b0bfd97d2f
 		prompt += e.rprompt
 		prompt += writer.RestoreCursorPosition()
 		prompt = e.Writer.FormatText(prompt)

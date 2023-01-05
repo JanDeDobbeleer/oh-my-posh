@@ -89,6 +89,7 @@ type Writer struct {
 	currentBackground Color
 	runes             []rune
 	transparent       bool
+	invisible         bool
 
 	shell                 string
 	format                string
@@ -365,8 +366,11 @@ func (w *Writer) writeSegmentColors() {
 		fg = w.currentForeground
 	}
 
-	// always reset inverted
-	// w.transparent = false
+	// ignore processing fully tranparent colors
+	w.invisible = fg.IsTransparent() && bg.IsTransparent()
+	if w.invisible {
+		return
+	}
 
 	if fg.IsTransparent() && len(w.TerminalBackground) != 0 {
 		background := w.getAnsiFromColorString(w.TerminalBackground, false)
@@ -429,6 +433,12 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 		match[BG] = background
 	}
 	w.currentBackground, w.currentForeground = w.asAnsiColors(match[BG], match[FG])
+
+	// ignore processing fully tranparent colors
+	w.invisible = w.currentForeground.IsTransparent() && w.currentBackground.IsTransparent()
+	if w.invisible {
+		return
+	}
 
 	// make sure we have colors
 	if w.currentForeground.IsEmpty() {

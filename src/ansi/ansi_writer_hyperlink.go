@@ -10,7 +10,11 @@ import (
 )
 
 func (w *Writer) write(i int, s rune) {
-	// ignore the logic when there is no hyperlink
+	// ignore processing when invisible (<transparent,transparent>)
+	if w.invisible {
+		return
+	}
+	// ignore the logic when there is no hyperlink or things arent't visible
 	if !w.hasHyperlink {
 		w.length += runewidth.RuneWidth(s)
 		w.builder.WriteRune(s)

@@ -204,3 +204,49 @@ func TestWriteANSIColors(t *testing.T) {
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
+
+func TestWriteLength(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected int
+		Input    string
+		Colors   *cachedColor
+	}{
+		{
+			Case:     "Bold",
+			Input:    "<b>test</b>",
+			Expected: 4,
+			Colors:   &cachedColor{Foreground: "black", Background: ParentBackground},
+		},
+		{
+			Case:     "Bold with color override",
+			Input:    "<b><#ffffff>test</></b>",
+			Expected: 4,
+			Colors:   &cachedColor{Foreground: "black", Background: ParentBackground},
+		},
+		{
+			Case:     "Bold with color override and link",
+			Input:    "<b><#ffffff>test</></b> [url](https://example.com)",
+			Expected: 8,
+			Colors:   &cachedColor{Foreground: "black", Background: ParentBackground},
+		},
+		{
+			Case:     "Bold with color override and link and leading/trailing spaces",
+			Input:    " <b><#ffffff>test</></b> [url](https://example.com) ",
+			Expected: 10,
+			Colors:   &cachedColor{Foreground: "black", Background: ParentBackground},
+		},
+	}
+
+	for _, tc := range cases {
+		renderer := &Writer{
+			ParentColors: []*cachedColor{},
+			Colors:       tc.Colors,
+			AnsiColors:   &DefaultColors{},
+		}
+		renderer.Init(shell.GENERIC)
+		renderer.Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
+		_, got := renderer.String()
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}

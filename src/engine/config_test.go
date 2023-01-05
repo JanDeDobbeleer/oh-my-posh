@@ -3,10 +3,10 @@ package engine
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/ansi"
-	"github.com/jandedobbeleer/oh-my-posh/mock"
-	"github.com/jandedobbeleer/oh-my-posh/platform"
-	"github.com/jandedobbeleer/oh-my-posh/segments"
+	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/gookit/config/v2"
 	"github.com/mitchellh/mapstructure"

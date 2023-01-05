@@ -4,9 +4,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/ansi"
-	"github.com/jandedobbeleer/oh-my-posh/platform"
-	"github.com/jandedobbeleer/oh-my-posh/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
 // BlockType type of block

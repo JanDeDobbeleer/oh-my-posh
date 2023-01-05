@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/ansi"
-	"github.com/jandedobbeleer/oh-my-posh/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -16,6 +16,7 @@ func TestGt(t *testing.T) {
 		{Case: "Float vs int", Expected: false, E1: float64(3), E2: 4},
 		{Case: "Int vs float", Expected: false, E1: 3, E2: float64(4)},
 		{Case: "Int vs Int", Expected: false, E1: 3, E2: 4},
+		{Case: "Int64 vs Int", Expected: false, E1: int64(3), E2: 4},
 		{Case: "Float vs Float", Expected: false, E1: float64(3), E2: float64(4)},
 		{Case: "Float vs String", Expected: true, E1: float64(3), E2: "test"},
 		{Case: "Int vs String", Expected: true, E1: 3, E2: "test"},
@@ -40,7 +41,7 @@ func TestLt(t *testing.T) {
 		{Case: "Int vs Int", Expected: true, E1: 3, E2: 4},
 		{Case: "Float vs Float", Expected: true, E1: float64(3), E2: float64(4)},
 		{Case: "Float vs String", Expected: false, E1: float64(3), E2: "test"},
-		{Case: "String vs String", Expected: true, E1: "test", E2: "test"},
+		{Case: "String vs String", Expected: false, E1: "test", E2: "test"},
 	}
 
 	for _, tc := range cases {

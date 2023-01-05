@@ -12,7 +12,9 @@
         "print",
         "primary",
         "--shell=pwsh",
-        "--terminal-width=200"
+        "--terminal-width=200",
+        "--execution-time=600",
+        "--config=/Users/jan/.posh.omp.json"
       ]
     },
     {

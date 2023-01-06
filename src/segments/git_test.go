@@ -598,6 +598,7 @@ func TestGitUpstream(t *testing.T) {
 		{Case: "Azure DevOps", Expected: "AD", Upstream: "dev.azure.com/test"},
 		{Case: "Azure DevOps Dos", Expected: "AD", Upstream: "test.visualstudio.com"},
 		{Case: "Gitstash", Expected: "G", Upstream: "gitstash.com/test"},
+		{Case: "My custom server", Expected: "CU", Upstream: "mycustom.server/test"},
 	}
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
@@ -611,6 +612,9 @@ func TestGitUpstream(t *testing.T) {
 			BitbucketIcon:   "BB",
 			AzureDevOpsIcon: "AD",
 			GitIcon:         "G",
+			UpstreamIcons: map[string]string{
+				"mycustom.server": "CU",
+			},
 		}
 		g := &Git{
 			scm: scm{

@@ -21,13 +21,13 @@ func (w *Writer) write(i int, s rune) {
 		return
 	}
 
-	if s == '[' && w.state == OTHER {
-		w.state = TEXT
+	if s == '[' && w.hyperlinkState == OTHER {
+		w.hyperlinkState = TEXT
 		w.hyperlinkBuilder.WriteRune(s)
 		return
 	}
 
-	if w.state == OTHER {
+	if w.hyperlinkState == OTHER {
 		w.length += runewidth.RuneWidth(s)
 		w.builder.WriteRune(s)
 		return
@@ -42,13 +42,13 @@ func (w *Writer) write(i int, s rune) {
 	case '(':
 		// split into link part
 		if w.squareIndex == i-1 {
-			w.state = LINK
+			w.hyperlinkState = LINK
 		}
-		if w.state == LINK {
+		if w.hyperlinkState == LINK {
 			w.roundCount++
 		}
 	case ')':
-		if w.state != LINK {
+		if w.hyperlinkState != LINK {
 			return
 		}
 		w.roundCount--
@@ -58,7 +58,7 @@ func (w *Writer) write(i int, s rune) {
 		// end of link part
 		w.builder.WriteString(w.replaceHyperlink(w.hyperlinkBuilder.String()))
 		w.hyperlinkBuilder.Reset()
-		w.state = OTHER
+		w.hyperlinkState = OTHER
 	}
 }
 

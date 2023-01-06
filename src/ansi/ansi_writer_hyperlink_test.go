@@ -17,6 +17,7 @@ func TestGenerateHyperlinkNoUrl(t *testing.T) {
 		{Text: "sample text with no url", ShellName: shell.ZSH, Expected: "%{\x1b[47m%}%{\x1b[30m%}sample text with no url%{\x1b[0m%}"},
 		{Text: "sample text with no url", ShellName: shell.PWSH, Expected: "\x1b[47m\x1b[30msample text with no url\x1b[0m"},
 		{Text: "sample text with no url", ShellName: shell.BASH, Expected: "\\[\x1b[47m\\]\\[\x1b[30m\\]sample text with no url\\[\x1b[0m\\]"},
+		{Text: "sample text with no url [test]", ShellName: shell.BASH, Expected: "\\[\x1b[47m\\]\\[\x1b[30m\\]sample text with no url [test]\\[\x1b[0m\\]"},
 	}
 	for _, tc := range cases {
 		a := Writer{

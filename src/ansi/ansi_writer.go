@@ -324,6 +324,11 @@ func (w *Writer) Write(background, foreground, text string) {
 		w.write(i, s)
 	}
 
+	// append remnant hyperlink
+	w.builder.WriteString(w.hyperlinkBuilder.String())
+	w.hyperlinkBuilder.Reset()
+
+	// reset colors
 	w.writeEscapedAnsiString(colorStyle.End)
 
 	// reset current

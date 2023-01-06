@@ -36,6 +36,10 @@ func (c Color) IsTransparent() bool {
 	return c == transparentColor
 }
 
+func (c Color) IsClear() bool {
+	return c == transparentColor || c == emptyColor
+}
+
 func (c Color) ToForeground() Color {
 	colorString := string(c)
 	if strings.HasPrefix(colorString, "38;") {

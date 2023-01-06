@@ -403,15 +403,23 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 		if position == len(w.runes)-1 {
 			return
 		}
-		if w.currentBackground != w.background || w.transparent {
-			if w.transparent {
-				w.writeEscapedAnsiString(transparentEnd)
-			}
+
+		if w.transparent {
+			w.writeEscapedAnsiString(transparentEnd)
+		}
+
+		if w.background.IsClear() {
+			w.writeEscapedAnsiString(colorStyle.End)
+		}
+
+		if w.currentBackground != w.background && !w.background.IsClear() {
 			w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.background))
 		}
-		if w.currentForeground != w.foreground || w.transparent {
+
+		if (w.currentForeground != w.foreground || w.transparent) && !w.foreground.IsClear() {
 			w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.foreground))
 		}
+
 		w.transparent = false
 		return
 	}

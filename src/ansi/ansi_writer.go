@@ -66,7 +66,7 @@ const (
 
 	LINK   = "link"
 	TEXT   = "text"
-	OTHER  = "plain"
+	OTHER  = "other"
 	ANCHOR = "ANCHOR"
 	BG     = "BG"
 	FG     = "FG"
@@ -113,11 +113,11 @@ type Writer struct {
 	hasHyperlink            bool
 	hyperlinkBuilder        strings.Builder
 	squareIndex, roundCount int
-	state                   string
+	hyperlinkState          string
 }
 
 func (w *Writer) Init(shellName string) {
-	w.state = OTHER
+	w.hyperlinkState = OTHER
 	w.shell = shellName
 	switch w.shell {
 	case shell.BASH:
@@ -327,6 +327,7 @@ func (w *Writer) Write(background, foreground, text string) {
 	// append remnant hyperlink
 	w.builder.WriteString(w.hyperlinkBuilder.String())
 	w.hyperlinkBuilder.Reset()
+	w.hyperlinkState = OTHER
 
 	// reset colors
 	w.writeEscapedAnsiString(colorStyle.End)
@@ -349,11 +350,14 @@ func (w *Writer) writeEscapedAnsiString(text string) {
 	if w.Plain {
 		return
 	}
-	if len(w.format) == 0 {
+	if len(w.format) != 0 {
+		text = fmt.Sprintf(w.format, text)
+	}
+	if w.hyperlinkState == OTHER {
 		w.builder.WriteString(text)
 		return
 	}
-	w.builder.WriteString(fmt.Sprintf(w.format, text))
+	w.hyperlinkBuilder.WriteString(text)
 }
 
 func (w *Writer) getAnsiFromColorString(colorString string, isBackground bool) Color {

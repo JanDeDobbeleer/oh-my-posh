@@ -919,7 +919,7 @@
                     "type": "string",
                     "title": "Azure DevOps Icon",
                     "description": "Icon/text to display when the upstream is Azure DevOps",
-                    "default": "\uFD03"
+                    "default": "\uEBE8"
                   },
                   "git_icon": {
                     "type": "string",

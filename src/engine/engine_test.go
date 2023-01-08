@@ -52,12 +52,12 @@ func TestPrintPWD(t *testing.T) {
 		OSC99    bool
 	}{
 		{Case: "Empty PWD"},
-		{Case: "OSC99", PWD: ansi.OSC99, Expected: "\x1b]9;9;\"pwd\"\x1b\\"},
-		{Case: "OSC7", PWD: ansi.OSC7, Expected: "\x1b]7;\"file://host/pwd\"\x1b\\"},
+		{Case: "OSC99", PWD: ansi.OSC99, Expected: "\x1b]9;9;pwd\x1b\\"},
+		{Case: "OSC7", PWD: ansi.OSC7, Expected: "\x1b]7;file://host/pwd\x1b\\"},
 		{Case: "OSC51", PWD: ansi.OSC51, Expected: "\x1b]51;Auser@host:pwd\x1b\\"},
-		{Case: "Deprecated OSC99", OSC99: true, Expected: "\x1b]9;9;\"pwd\"\x1b\\"},
+		{Case: "Deprecated OSC99", OSC99: true, Expected: "\x1b]9;9;pwd\x1b\\"},
 		{Case: "Template (empty)", PWD: "{{ if eq .Shell \"pwsh\" }}osc7{{ end }}"},
-		{Case: "Template (non empty)", PWD: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;\"file://host/pwd\"\x1b\\"},
+		{Case: "Template (non empty)", PWD: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;file://host/pwd\x1b\\"},
 	}
 
 	for _, tc := range cases {

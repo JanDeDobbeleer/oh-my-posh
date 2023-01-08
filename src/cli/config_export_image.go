@@ -57,6 +57,11 @@ Exports the config to an image file using customized output options.`,
 		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
+
+		// set dsane defaults for things we don't print
+		cfg.ConsoleTitleTemplate = ""
+		cfg.PWD = ""
+
 		writerColors := cfg.MakeColors()
 		writer := &ansi.Writer{
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
@@ -68,7 +73,9 @@ Exports the config to an image file using customized output options.`,
 			Env:    env,
 			Writer: writer,
 		}
+
 		prompt := eng.PrintPrimary()
+
 		imageCreator := &engine.ImageRenderer{
 			AnsiString:    prompt,
 			Author:        author,
@@ -82,6 +89,7 @@ Exports the config to an image file using customized output options.`,
 		}
 		imageCreator.Init(env.Flags().Config)
 		err := imageCreator.SavePNG()
+
 		if err != nil {
 			fmt.Print(err.Error())
 		}

@@ -134,8 +134,8 @@ func (w *Writer) Init(shellName string) {
 		w.escapeRight = "\\]"
 		w.hyperlink = "\\[\x1b]8;;%s\x1b\\\\\\]%s\\[\x1b]8;;\x1b\\\\\\]"
 		w.hyperlinkRegex = `(?P<STR>\\\[\x1b\]8;;(.+)\x1b\\\\\\\](?P<TEXT>.+)\\\[\x1b\]8;;\x1b\\\\\\\])`
-		w.osc99 = "\\[\x1b]9;9;\"%s\"\x1b\\\\\\]"
-		w.osc7 = "\\[\x1b]7;\"file://%s/%s\"\x1b\\\\\\]"
+		w.osc99 = "\\[\x1b]9;9;%s\x1b\\\\\\]"
+		w.osc7 = "\\[\x1b]7;file://%s/%s\x1b\\\\\\]"
 		w.osc51 = "\\[\x1b]51;A;%s@%s:%s\x1b\\\\\\]"
 	case "zsh":
 		w.format = "%%{%s%%}"
@@ -151,8 +151,8 @@ func (w *Writer) Init(shellName string) {
 		w.escapeRight = "%}"
 		w.hyperlink = "%%{\x1b]8;;%s\x1b\\%%}%s%%{\x1b]8;;\x1b\\%%}"
 		w.hyperlinkRegex = `(?P<STR>%{\x1b]8;;(.+)\x1b\\%}(?P<TEXT>.+)%{\x1b]8;;\x1b\\%})`
-		w.osc99 = "%%{\x1b]9;9;\"%s\"\x1b\\%%}"
-		w.osc7 = "%%{\x1b]7;file:\"//%s/%s\"\x1b\\%%}"
+		w.osc99 = "%%{\x1b]9;9;%s\x1b\\%%}"
+		w.osc7 = "%%{\x1b]7;file://%s/%s\x1b\\%%}"
 		w.osc51 = "%%{\x1b]51;A%s@%s:%s\x1b\\%%}"
 	default:
 		w.linechange = "\x1b[%d%s"
@@ -168,8 +168,8 @@ func (w *Writer) Init(shellName string) {
 		// https://github.com/JanDeDobbeleer/oh-my-posh/pull/3288#issuecomment-1369137068
 		w.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
 		w.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b\\\\\\\\?(?P<TEXT>.+)\x1b]8;;\x1b\\\\)"
-		w.osc99 = "\x1b]9;9;\"%s\"\x1b\\"
-		w.osc7 = "\x1b]7;\"file://%s/%s\"\x1b\\"
+		w.osc99 = "\x1b]9;9;%s\x1b\\"
+		w.osc7 = "\x1b]7;file://%s/%s\x1b\\"
 		w.osc51 = "\x1b]51;A%s@%s:%s\x1b\\"
 	}
 }

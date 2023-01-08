@@ -62,6 +62,7 @@ Exports the config to an image file using customized output options.`,
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
 		}
+		writer.Init(shell.GENERIC)
 		eng := &engine.Engine{
 			Config: cfg,
 			Env:    env,

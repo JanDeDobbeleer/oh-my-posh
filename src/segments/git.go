@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -13,6 +14,19 @@ import (
 
 	"gopkg.in/ini.v1"
 )
+
+type Commit struct {
+	// git log -1 --pretty="format:%an%n%ae%n%cn%n%ce%n%at%n%s"
+	Author    *User
+	Committer *User
+	Subject   string
+	Timestamp time.Time
+}
+
+type User struct {
+	Name  string
+	Email string
+}
 
 // GitStatus represents part of the status of a git repository
 type GitStatus struct {
@@ -119,6 +133,8 @@ type Git struct {
 	poshgit       bool
 	stashCount    int
 	worktreeCount int
+
+	commit *Commit
 }
 
 func (g *Git) Template() string {
@@ -158,6 +174,43 @@ func (g *Git) Enabled() bool {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
 	return true
+}
+
+func (g *Git) Commit() *Commit {
+	if g.commit != nil {
+		return g.commit
+	}
+	g.commit = &Commit{
+		Author:    &User{},
+		Committer: &User{},
+	}
+	commitBody := g.getGitCommandOutput("log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s")
+	splitted := strings.Split(strings.TrimSpace(commitBody), "\n")
+	for _, line := range splitted {
+		line = strings.TrimSpace(line)
+		if len(line) <= 3 {
+			continue
+		}
+		anchor := line[:3]
+		line = line[3:]
+		switch anchor {
+		case "an:":
+			g.commit.Author.Name = line
+		case "ae:":
+			g.commit.Author.Email = line
+		case "cn:":
+			g.commit.Committer.Name = line
+		case "ce:":
+			g.commit.Committer.Email = line
+		case "at:":
+			if t, err := strconv.ParseInt(line, 10, 64); err == nil {
+				g.commit.Timestamp = time.Unix(t, 0)
+			}
+		case "su:":
+			g.commit.Subject = line
+		}
+	}
+	return g.commit
 }
 
 func (g *Git) StashCount() int {

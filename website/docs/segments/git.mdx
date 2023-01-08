@@ -145,6 +145,7 @@ You can set the following properties to `true` to enable fetching additional inf
 | `.IsBare`        | `boolean`   | if in a bare repo or not, only set when `fetch_bare_info` is set to `true`                                                       |
 | `.Dir`           | `string`    | the repository's root directory                                                                                                  |
 | `.Kraken`        | `string`    | a link to the current HEAD in [GitKraken][kraken-ref] for use in [hyperlinks][hyperlinks] in templates `{{ url .HEAD .Kraken }}` |
+| `.Commit`        | `Commit`    | HEAD commit information (see below)                                                                                              |
 
 ### GitStatus
 
@@ -157,6 +158,22 @@ You can set the following properties to `true` to enable fetching additional inf
 | `.Untracked` | `int`     | number of untracked changes                  |
 | `.Changed`   | `boolean` | if the status contains changes or not        |
 | `.String`    | `string`  | a string representation of the changes above |
+
+### Commit
+
+| Name         | Type        | Description                            |
+| ------------ | ----------- | -------------------------------------- |
+| `.Author`    | `User`      | the author or the commit (see below)   |
+| `.Committer` | `User`      | the comitter or the commit (see below) |
+| `.Subject`   | `string`    | the commit subject                     |
+| `.Timestamp` | `time.Time` | the commit timestamp                   |
+
+### User
+
+| Name     | Type     | Description      |
+| -------- | -------- | ---------------- |
+| `.Name`  | `string` | the user's name  |
+| `.Email` | `string` | the user's email |
 
 Local changes use the following syntax:
 

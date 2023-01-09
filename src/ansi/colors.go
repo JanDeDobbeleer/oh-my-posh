@@ -10,13 +10,13 @@ import (
 	"github.com/gookit/color"
 )
 
-// Colors is the interface that wraps AnsiColorFromString method.
+// ColorString is the interface that wraps ToColor method.
 //
-// AnsiColorFromString gets the ANSI color code for a given color string.
+// ToColor gets the ANSI color code for a given color string.
 // This can include a valid hex color in the format `#FFFFFF`,
 // but also a name of one of the first 16 ANSI colors like `lightBlue`.
-type Colors interface {
-	AnsiColorFromString(colorString string, isBackground bool) Color
+type ColorString interface {
+	ToColor(colorString string, isBackground bool) Color
 }
 
 // Color is an ANSI color code ready to be printed to the console.
@@ -48,7 +48,7 @@ func (c Color) ToForeground() Color {
 	return c
 }
 
-func MakeColors(palette Palette, cacheEnabled bool, accentColor string, env platform.Environment) (colors Colors) {
+func MakeColors(palette Palette, cacheEnabled bool, accentColor string, env platform.Environment) (colors ColorString) {
 	defaultColors := &DefaultColors{}
 	defaultColors.SetAccentColor(env, accentColor)
 	colors = defaultColors
@@ -67,7 +67,7 @@ type RGB struct {
 
 // DefaultColors is the default AnsiColors implementation.
 type DefaultColors struct {
-	accent *cachedColor
+	accent *Colors
 }
 
 var (
@@ -98,7 +98,7 @@ const (
 	backgroundIndex = 1
 )
 
-func (d *DefaultColors) AnsiColorFromString(colorString string, isBackground bool) Color {
+func (d *DefaultColors) ToColor(colorString string, isBackground bool) Color {
 	if len(colorString) == 0 {
 		return emptyColor
 	}
@@ -157,24 +157,24 @@ func IsAnsiColorName(colorString string) bool {
 // PaletteColors is the AnsiColors Decorator that uses the Palette to do named color
 // lookups before ANSI color code generation.
 type PaletteColors struct {
-	ansiColors Colors
+	ansiColors ColorString
 	palette    Palette
 }
 
-func (p *PaletteColors) AnsiColorFromString(colorString string, isBackground bool) Color {
+func (p *PaletteColors) ToColor(colorString string, isBackground bool) Color {
 	paletteColor, err := p.palette.ResolveColor(colorString)
 	if err != nil {
 		return emptyColor
 	}
-	ansiColor := p.ansiColors.AnsiColorFromString(paletteColor, isBackground)
+	ansiColor := p.ansiColors.ToColor(paletteColor, isBackground)
 	return ansiColor
 }
 
 // CachedColors is the AnsiColors Decorator that does simple color lookup caching.
-// AnsiColorFromString calls are cheap, but not free, and having a simple cache in
+// ToColor calls are cheap, but not free, and having a simple cache in
 // has measurable positive effect on performance.
 type CachedColors struct {
-	ansiColors Colors
+	ansiColors ColorString
 	colorCache map[cachedColorKey]Color
 }
 
@@ -183,7 +183,7 @@ type cachedColorKey struct {
 	isBackground bool
 }
 
-func (c *CachedColors) AnsiColorFromString(colorString string, isBackground bool) Color {
+func (c *CachedColors) ToColor(colorString string, isBackground bool) Color {
 	if c.colorCache == nil {
 		c.colorCache = make(map[cachedColorKey]Color)
 	}
@@ -191,7 +191,7 @@ func (c *CachedColors) AnsiColorFromString(colorString string, isBackground bool
 	if ansiColor, hit := c.colorCache[key]; hit {
 		return ansiColor
 	}
-	ansiColor := c.ansiColors.AnsiColorFromString(colorString, isBackground)
+	ansiColor := c.ansiColors.ToColor(colorString, isBackground)
 	c.colorCache[key] = ansiColor
 	return ansiColor
 }

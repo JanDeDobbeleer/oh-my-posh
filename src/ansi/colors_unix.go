@@ -12,8 +12,8 @@ func (d *DefaultColors) SetAccentColor(env platform.Environment, defaultColor st
 	if len(defaultColor) == 0 {
 		return
 	}
-	d.accent = &cachedColor{
-		Foreground: string(d.AnsiColorFromString(defaultColor, false)),
-		Background: string(d.AnsiColorFromString(defaultColor, true)),
+	d.accent = &Colors{
+		Foreground: string(d.ToColor(defaultColor, false)),
+		Background: string(d.ToColor(defaultColor, true)),
 	}
 }

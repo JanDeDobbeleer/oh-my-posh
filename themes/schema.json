@@ -3063,6 +3063,22 @@
         }
       }
     },
+    "cycle": {
+      "type": "array",
+      "title": "List of settings to cycle through segment by segment",
+      "description": "https://ohmyposh.dev/docs/configuration/cycle",
+      "default": [],
+      "items": {
+        "properties": {
+          "foreground": {
+            "$ref": "#/definitions/color"
+          },
+          "background": {
+            "$ref": "#/definitions/color"
+          }
+        }
+      }
+    },
     "accent_color": {
       "title": "Accent color",
       "$ref": "#/definitions/color"

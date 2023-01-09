@@ -34,9 +34,9 @@ type style struct {
 	End         string
 }
 
-type cachedColor struct {
-	Background string
-	Foreground string
+type Colors struct {
+	Background string `json:"background"`
+	Foreground string `json:"foreground"`
 }
 
 const (
@@ -75,9 +75,9 @@ const (
 // Writer writes colorized ANSI strings
 type Writer struct {
 	TerminalBackground string
-	Colors             *cachedColor
-	ParentColors       []*cachedColor
-	AnsiColors         Colors
+	Colors             *Colors
+	ParentColors       []*Colors
+	AnsiColors         ColorString
 	Plain              bool
 
 	builder strings.Builder
@@ -175,7 +175,7 @@ func (w *Writer) Init(shellName string) {
 }
 
 func (w *Writer) SetColors(background, foreground string) {
-	w.Colors = &cachedColor{
+	w.Colors = &Colors{
 		Background: background,
 		Foreground: foreground,
 	}
@@ -183,9 +183,9 @@ func (w *Writer) SetColors(background, foreground string) {
 
 func (w *Writer) SetParentColors(background, foreground string) {
 	if w.ParentColors == nil {
-		w.ParentColors = make([]*cachedColor, 0)
+		w.ParentColors = make([]*Colors, 0)
 	}
-	w.ParentColors = append([]*cachedColor{{
+	w.ParentColors = append([]*Colors{{
 		Background: background,
 		Foreground: foreground,
 	}}, w.ParentColors...)
@@ -279,7 +279,7 @@ func (w *Writer) Write(background, foreground, text string) {
 	w.background, w.foreground = w.asAnsiColors(background, foreground)
 	// default to white foreground
 	if w.foreground.IsEmpty() {
-		w.foreground = w.AnsiColors.AnsiColorFromString("white", false)
+		w.foreground = w.AnsiColors.ToColor("white", false)
 	}
 	// validate if we start with a color override
 	match := regex.FindNamedRegexMatch(anchorRegex, text)
@@ -361,7 +361,7 @@ func (w *Writer) writeEscapedAnsiString(text string) {
 }
 
 func (w *Writer) getAnsiFromColorString(colorString string, isBackground bool) Color {
-	return w.AnsiColors.AnsiColorFromString(colorString, isBackground)
+	return w.AnsiColors.ToColor(colorString, isBackground)
 }
 
 func (w *Writer) writeSegmentColors() {

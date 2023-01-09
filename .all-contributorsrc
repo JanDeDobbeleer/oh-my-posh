@@ -1481,6 +1481,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kamfaima",
+      "name": "kamfaima",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23546392?v=4",
+      "profile": "https://github.com/kamfaima",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

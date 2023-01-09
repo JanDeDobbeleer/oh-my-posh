@@ -112,6 +112,7 @@ module.exports = {
         "segments/text",
         "segments/time",
         "segments/ui5tooling",
+        "segments/vala",
         "segments/wakatime",
         "segments/withings",
         "segments/winreg",

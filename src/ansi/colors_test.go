@@ -26,7 +26,7 @@ func TestGetAnsiFromColorString(t *testing.T) {
 	}
 	for _, tc := range cases {
 		ansiColors := &DefaultColors{}
-		ansiColor := ansiColors.AnsiColorFromString(tc.Color, tc.Background)
+		ansiColor := ansiColors.ToColor(tc.Color, tc.Background)
 		assert.Equal(t, tc.Expected, ansiColor, tc.Case)
 	}
 }

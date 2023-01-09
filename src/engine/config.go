@@ -47,6 +47,7 @@ type Config struct {
 	DebugPrompt          *Segment       `json:"debug_prompt,omitempty"`
 	Palette              ansi.Palette   `json:"palette,omitempty"`
 	Palettes             *ansi.Palettes `json:"palettes,omitempty"`
+	Cycle                ansi.Cycle     `json:"cycle,omitempty"`
 	PWD                  string         `json:"pwd,omitempty"`
 
 	// Deprecated
@@ -63,7 +64,7 @@ type Config struct {
 
 // MakeColors creates instance of AnsiColors to use in AnsiWriter according to
 // environment and configuration.
-func (cfg *Config) MakeColors() ansi.Colors {
+func (cfg *Config) MakeColors() ansi.ColorString {
 	cacheDisabled := cfg.env.Getenv("OMP_CACHE_DISABLED") == "1"
 	return ansi.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
 }

@@ -236,6 +236,32 @@ you could also add `frappe` as the default `palette`, given that one is used as 
 the `template` resolves to. In case no match is available and no `palette` is defined, it will also fallback to `transparent`
 for any palette color reference in templates/colors.
 
+## Cycle
+
+When you want to display the same **sequence of colors** (background and foreground) regardless of which segments are active, you can
+make use of the cycle property. This property is a list of colors which are used one after the other. If there's nothing in the list
+anymore and your prompt would still render additional segments, the segment's colors are being used. A defined cycle always gets
+precendence over everything else.
+
+```json
+...
+"cycle": [
+  {
+    "background": "p:blue",
+    "foreground": "p:white"
+  },
+  {
+    "background": "p:green",
+    "foreground": "p:black"
+  },
+  {
+    "background": "p:orange",
+    "foreground": "p:white"
+  }
+],
+...
+```
+
 [hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [git]: /docs/segments/git

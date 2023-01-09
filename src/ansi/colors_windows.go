@@ -27,15 +27,15 @@ func GetAccentColor(env platform.Environment) (*RGB, error) {
 func (d *DefaultColors) SetAccentColor(env platform.Environment, defaultColor string) {
 	rgb, err := GetAccentColor(env)
 	if err != nil {
-		d.accent = &cachedColor{
-			Foreground: string(d.AnsiColorFromString(defaultColor, false)),
-			Background: string(d.AnsiColorFromString(defaultColor, true)),
+		d.accent = &Colors{
+			Foreground: string(d.ToColor(defaultColor, false)),
+			Background: string(d.ToColor(defaultColor, true)),
 		}
 		return
 	}
 	foreground := color.RGB(rgb.R, rgb.G, rgb.B, false)
 	background := color.RGB(rgb.R, rgb.G, rgb.B, true)
-	d.accent = &cachedColor{
+	d.accent = &Colors{
 		Foreground: foreground.String(),
 		Background: background.String(),
 	}

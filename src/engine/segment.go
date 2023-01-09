@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
@@ -39,13 +40,13 @@ type Segment struct {
 	MaxWidth            int            `json:"max_width,omitempty"`
 	MinWidth            int            `json:"min_width,omitempty"`
 
-	env             platform.Environment
-	writer          SegmentWriter
-	Enabled         bool `json:"-"`
-	text            string
-	backgroundCache string
-	foregroundCache string
-	styleCache      SegmentStyle
+	Enabled bool `json:"-"`
+
+	colors     *ansi.Colors
+	env        platform.Environment
+	writer     SegmentWriter
+	text       string
+	styleCache SegmentStyle
 }
 
 // SegmentTiming holds the timing context for a segment
@@ -360,17 +361,23 @@ func (segment *Segment) shouldInvokeWithTip(tip string) bool {
 }
 
 func (segment *Segment) foreground() string {
-	if len(segment.foregroundCache) == 0 {
-		segment.foregroundCache = segment.ForegroundTemplates.FirstMatch(segment.writer, segment.env, segment.Foreground)
+	if segment.colors == nil {
+		segment.colors = &ansi.Colors{}
 	}
-	return segment.foregroundCache
+	if len(segment.colors.Foreground) == 0 {
+		segment.colors.Foreground = segment.ForegroundTemplates.FirstMatch(segment.writer, segment.env, segment.Foreground)
+	}
+	return segment.colors.Foreground
 }
 
 func (segment *Segment) background() string {
-	if len(segment.backgroundCache) == 0 {
-		segment.backgroundCache = segment.BackgroundTemplates.FirstMatch(segment.writer, segment.env, segment.Background)
+	if segment.colors == nil {
+		segment.colors = &ansi.Colors{}
 	}
-	return segment.backgroundCache
+	if len(segment.colors.Background) == 0 {
+		segment.colors.Background = segment.BackgroundTemplates.FirstMatch(segment.writer, segment.env, segment.Background)
+	}
+	return segment.colors.Background
 }
 
 func (segment *Segment) mapSegmentWithWriter(env platform.Environment) error {

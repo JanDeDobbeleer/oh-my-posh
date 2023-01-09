@@ -126,6 +126,8 @@ const (
 	DENO SegmentType = "deno"
 	// DOTNET writes which dotnet version is currently active
 	DOTNET SegmentType = "dotnet"
+	// ELIXIR writes the elixir version
+	ELIXIR SegmentType = "elixir"
 	// EXECUTIONTIME writes the execution time of the last run command
 	EXECUTIONTIME SegmentType = "executiontime"
 	// EXIT writes the last exit code
@@ -246,6 +248,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	DENO:          func() SegmentWriter { return &segments.Deno{} },
 	DOTNET:        func() SegmentWriter { return &segments.Dotnet{} },
 	EXECUTIONTIME: func() SegmentWriter { return &segments.Executiontime{} },
+	ELIXIR:        func() SegmentWriter { return &segments.Elixir{} },
 	EXIT:          func() SegmentWriter { return &segments.Exit{} },
 	FLUTTER:       func() SegmentWriter { return &segments.Flutter{} },
 	FOSSIL:        func() SegmentWriter { return &segments.Fossil{} },

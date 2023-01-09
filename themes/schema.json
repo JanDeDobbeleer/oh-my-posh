@@ -2032,6 +2032,37 @@
           "if": {
             "properties": {
               "type": {
+                "const": "elixir"
+              }
+            }
+          },
+          "then": {
+            "title": "Elixir Segment",
+            "description": "https://ohmyposh.dev/docs/segments/elixir",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
                 "const": "executiontime"
               }
             }

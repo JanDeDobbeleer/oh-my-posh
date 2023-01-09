@@ -1,0 +1,55 @@
+---
+id: elixir
+title: Elixir
+sidebar_label: Elixir
+---
+
+## What
+
+Display the currently active elixir version.
+
+## Sample Configuration
+
+```json
+{
+  "type": "elixir",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#422251",
+  "template": " \ue62d {{ .Full }} "
+}
+```
+
+## Properties
+
+| Name                   | Type      | Description                                                                                                                                            |
+| ---------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                    |
+| `fetch_version`        | `boolean` | fetch the flutter version - defaults to `true`                                                                                                         |
+| `missing_command_text` | `string`  | text to display when the command is missing - defaults to empty                                                                                        |
+| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when `*.ex` files are present (**default**)</li></ul> |
+| `version_url_template` | `string`  | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                  |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name     | Type     | Description                                        |
+| -------- | -------- | -------------------------------------------------- |
+| `.Full`  | `string` | the full version                                   |
+| `.Major` | `string` | major number                                       |
+| `.Minor` | `string` | minor number                                       |
+| `.URL`   | `string` | URL of the version info / release notes            |
+| `.Error` | `string` | error encountered when fetching the version string |
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[templates]: /docs/configuration/templates

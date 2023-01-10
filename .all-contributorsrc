@@ -1490,6 +1490,16 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "dhrdlicka",
+      "name": "David Hrdlička",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13226155?v=4",
+      "profile": "https://github.com/dhrdlicka",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

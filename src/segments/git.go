@@ -408,8 +408,8 @@ func (g *Git) getUpstreamIcon() string {
 		"github":           {GithubIcon, "\uF408 "},
 		"gitlab":           {GitlabIcon, "\uF296 "},
 		"bitbucket":        {BitbucketIcon, "\uF171 "},
-		"dev.azure.com":    {AzureDevOpsIcon, "\uFD03 "},
-		"visualstudio.com": {AzureDevOpsIcon, "\uFD03 "},
+		"dev.azure.com":    {AzureDevOpsIcon, "\uEBE8 "},
+		"visualstudio.com": {AzureDevOpsIcon, "\uEBE8 "},
 	}
 	for key, value := range defaults {
 		if strings.Contains(g.UpstreamURL, key) {

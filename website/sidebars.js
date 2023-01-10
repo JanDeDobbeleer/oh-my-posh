@@ -84,6 +84,7 @@ module.exports = {
         "segments/kotlin",
         "segments/kubectl",
         "segments/lua",
+        "segments/mercurial",
         "segments/nbgv",
         "segments/nightscout",
         "segments/node",

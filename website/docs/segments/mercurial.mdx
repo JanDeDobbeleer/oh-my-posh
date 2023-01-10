@@ -1,0 +1,81 @@
+---
+id: mercurial
+title: Mercurial
+sidebar_label: Mercurial
+---
+
+## What
+
+Display Mercurial information when in a Mercurial repository. For maximum compatibility,
+make sure your `hg` executable is up-to-date (when branch or status information is incorrect for example).
+
+## Sample Configuration
+
+```json
+{
+  "type": "mercurial",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#193549",
+  "background": "#ffeb3b",
+  "properties": {
+    "newprop": "\uEFF1"
+  }
+}
+```
+
+## Properties
+
+### Fetching information
+
+As doing Mercurial (hg) calls can slow down the prompt experience, we do not fetch information by default.
+You can set the following properties to `true` to enable fetching additional information (and populate the template).
+
+| Name              | Type      | Description                                   |
+| ----------------- | --------- | --------------------------------------------- |
+| `fetch_status`    | `boolean` | fetch the local changes - defaults to `false` |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+hg {{.Branch}} {{if .LocalCommitNumber}}({{.LocalCommitNumber}}:{{.ChangeSetIDShort}}){{end}}{{range .Bookmarks }} \uf02e {{.}}{{end}}{{range .Tags}} \uf02b {{.}}{{end}}{{if .Working.Changed}} \uf044 {{ .Working.String }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name                 | Type              | Description                                           |
+| -------------------- | ----------------- | ----------------------------------------------------- |
+| `.Working`           | `MercurialStatus` | changes in the worktree (see below)                   |
+| `.IsTip`             | `boolean`         | Current commit is the tip commit                      |
+| `.ChangeSetID`       | `string`          | The current local commit number                       |
+| `.ChangeSetID`       | `string`          | The current local commit number                       |
+| `.ChangeSetIDShort`  | `string`          | The current local commit number                       |
+| `.Branch`            | `string`          | current branch (releative URL reported by `svn info`) |
+| `.Bookmarks`         | `[]string`        | the currently checked out revision number             |
+| `.Tags`              | `[]string`        | the currently checked out revision number             |
+
+### SvnStatus
+
+| Name            | Type      | Description                                    |
+| --------------- | --------- | ---------------------------------------------- |
+| `.Untracked`    | `int`     | number of files not under version control      |
+| `.Modified`     | `int`     | number of modified files                       |
+| `.Deleted`      | `int`     | number of deleted files                        |
+| `.Added`        | `int`     | number of added files                          |
+| `.Changed`      | `boolean` | if the status contains changes or not          |
+| `.String`       | `string`  | a string representation of the changes above   |
+
+Local changes use the following syntax:
+
+| Icon | Description |
+| ---- | ----------- |
+| `?`  | untracked   |
+| `+`  | added       |
+| `-`  | deleted     |
+| `~`  | modified    |
+
+[templates]: /docs/config-templates

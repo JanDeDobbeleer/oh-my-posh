@@ -249,6 +249,7 @@
             "kotlin",
             "kubectl",
             "lua",
+            "mercurial",
             "node",
             "npm",
             "nx",
@@ -2946,6 +2947,29 @@
           "then": {
             "title": "Display GitVersion segment",
             "description": "https://ohmyposh.dev/docs/segments/gitversion"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "mercurial" }
+            }
+          },
+          "then": {
+            "title": "Mercurial Segment",
+            "description": "https://ohmyposh.dev/docs/mercurial",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_status": {
+                    "type": "boolean",
+                    "title": "Display Status",
+                    "description": "Display the local changes or not",
+                    "default": true
+                  }
+                }
+              }
+            }
           }
         }
       ]

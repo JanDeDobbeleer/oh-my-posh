@@ -160,29 +160,29 @@ Once altered, reload your config for the changes to take effect.
 <TabItem value="nu">
 
 :::caution
-Oh My Posh requires Nushell v0.70.0 or higher.
+Oh My Posh requires Nushell v0.73.0 or higher.
 :::
 
-Run the following command:
+Add the following line to the Nushell env file (`$nu.env-path`):
 
 ```bash
 oh-my-posh init nu --config ~/jandedobbeleer.omp.json
 ```
 
-it saves the initialization script to `~/.oh-my-posh.nu` by default.
-Then edit the Nushell config file (`$nu.config-path`) and add the following line at the bottom:
+This saves the initialization script to `~/.oh-my-posh.nu`.
+Now, edit the Nushell config file (`$nu.config-path`) and add the following line at the bottom:
 
 ```bash
 source ~/.oh-my-posh.nu
 ```
 
-If you want to save the initialization script elsewhere, you should run a command like:
+If you want to save the initialization script elsewhere, you can change the first line to something like this:
 
 ```bash
-oh-my-posh init nu --config ~/jandedobbeleer.omp.json --print | save /mylocation/myscript.nu
+oh-my-posh init nu --config ~/jandedobbeleer.omp.json --print | save /mylocation/myscript.nu --force
 ```
 
-and add the `source` line like:
+And change the `source` line to:
 
 ```bash
 source /mylocation/myscript.nu

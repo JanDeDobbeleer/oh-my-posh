@@ -17,7 +17,7 @@ func (e *Elixir) Init(props properties.Properties, env platform.Environment) {
 	e.language = language{
 		env:        env,
 		props:      props,
-		extensions: []string{"*.ex"},
+		extensions: []string{"*.ex", "*.exs"},
 		commands: []*cmd{
 			{
 				executable: "elixir",

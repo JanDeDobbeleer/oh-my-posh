@@ -50,34 +50,29 @@ if [ "$TERM" != "linux" ]; then
 fi
 
 # perform cleanup so a new initialization in current session works
-if [[ "$(zle -lL self-insert)" = *"_posh-self-insert"* ]]; then
+if [[ "$(zle -lL self-insert)" = *"_posh-tooltip"* ]]; then
   zle -N self-insert
 fi
 if [[ "$(zle -lL zle-line-init)" = *"_posh-zle-line-init"* ]]; then
   zle -N zle-line-init
 fi
 
-function _posh-self-insert() {
+function _posh-tooltip() {
   # ignore an empty buffer
   if [[ -z  "$BUFFER"  ]]; then
     zle .self-insert
     return
   fi
-  # trigger a tip check only if the input is a space character
-  if [[ "$KEYS" = " " ]]; then
-    local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --error="$omp_last_error" --command="$BUFFER" --shell-version="$ZSH_VERSION")
-  fi
+
+  local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --error="$omp_last_error" --command="$BUFFER" --shell-version="$ZSH_VERSION")
   # ignore an empty tooltip
   if [[ -n "$tooltip" ]]; then
     RPROMPT=$tooltip
     zle .reset-prompt
   fi
+
   zle .self-insert
 }
-
-if [[ "::TOOLTIPS::" = "true" ]]; then
-  zle -N self-insert _posh-self-insert
-fi
 
 function _posh-zle-line-init() {
     [[ $CONTEXT == start ]] || return 0
@@ -106,7 +101,12 @@ function _posh-zle-line-init() {
     return ret
 }
 
-if [[ "::TRANSIENT::" = "true" ]]; then
+function enable_poshtooltips() {
+  zle -N _posh-tooltip
+  bindkey " " _posh-tooltip
+}
+
+function enable_poshtransientprompt() {
   zle -N zle-line-init _posh-zle-line-init
 
   # restore broken key bindings
@@ -120,8 +120,12 @@ if [[ "::TRANSIENT::" = "true" ]]; then
   if [[ -n "${_widgets[(r)up-line-or-beginning-search]}" ]]; then
     bindkey '^[[A' up-line-or-beginning-search
   fi
+}
+
+if [[ "::TOOLTIPS::" = "true" ]]; then
+  enable_poshtooltips
 fi
 
-# legacy functions for backwards compatibility
-function enable_poshtooltips() {}
-function enable_poshtransientprompt() {}
+if [[ "::TRANSIENT::" = "true" ]]; then
+  enable_poshtransientprompt
+fi

@@ -228,6 +228,11 @@ func (env *MockedEnvironment) MockGitCommand(dir, returnValue string, args ...st
 	env.On("RunCommand", "git", args).Return(returnValue, nil)
 }
 
+func (env *MockedEnvironment) MockHgCommand(dir, returnValue string, args ...string) {
+	args = append([]string{"-R", dir}, args...)
+	env.On("RunCommand", "hg", args).Return(returnValue, nil)
+}
+
 func (env *MockedEnvironment) MockSvnCommand(dir, returnValue string, args ...string) {
 	args = append([]string{"-C", dir, "--no-optional-locks", "-c", "core.quotepath=false", "-c", "color.status=false"}, args...)
 	env.On("RunCommand", "svn", args).Return(returnValue, nil)

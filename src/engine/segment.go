@@ -161,6 +161,8 @@ const (
 	KUBECTL SegmentType = "kubectl"
 	// LUA writes the active lua version
 	LUA SegmentType = "lua"
+	// MERCURIAL writes the Mercurial source control information
+	MERCURIAL SegmentType = "mercurial"
 	// NBGV writes the nbgv version information
 	NBGV SegmentType = "nbgv"
 	// NIGHTSCOUT is an open source diabetes system
@@ -267,6 +269,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	KOTLIN:        func() SegmentWriter { return &segments.Kotlin{} },
 	KUBECTL:       func() SegmentWriter { return &segments.Kubectl{} },
 	LUA:           func() SegmentWriter { return &segments.Lua{} },
+	MERCURIAL:     func() SegmentWriter { return &segments.Mercurial{} },
 	NBGV:          func() SegmentWriter { return &segments.Nbgv{} },
 	NIGHTSCOUT:    func() SegmentWriter { return &segments.Nightscout{} },
 	NODE:          func() SegmentWriter { return &segments.Node{} },

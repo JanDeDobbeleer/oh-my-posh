@@ -220,6 +220,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/kamfaima"><img src="https://avatars.githubusercontent.com/u/23546392?v=4?s=100" width="100px;" alt="kamfaima"/><br /><sub><b>kamfaima</b></sub></a><br /><a href="#design-kamfaima" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/dhrdlicka"><img src="https://avatars.githubusercontent.com/u/13226155?v=4?s=100" width="100px;" alt="David Hrdlička"/><br /><sub><b>David Hrdlička</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=dhrdlicka" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=dhrdlicka" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

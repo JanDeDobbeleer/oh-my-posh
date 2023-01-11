@@ -1500,6 +1500,17 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "davidcourtney",
+      "name": "David Courtney",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1019134?v=4",
+      "profile": "http://davidcourtney.com",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -183,18 +183,6 @@ source /mylocation/myscript.nu
 
 Once added, restart Nushell for the changes to take effect.
 
-:::tip
-For the time being, there is a [problem][homebrew-problem] with the initialization using Oh My Posh installed via Homebrew.
-To resolve this, you can use the `--strict` flag which tells Oh My Posh to use the executable name and not the
-full path in the initialization. For example:
-
-```bash
-oh-my-posh init nu --print --strict | save /mylocation/myscript.nu
-```
-
-This way for a new Oh My Posh version that does not update the initialization script, you don't have to recreate a new one.
-:::
-
 </TabItem>
 </Tabs>
 

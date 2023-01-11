@@ -101,76 +101,39 @@ blocks:
         leading_diamond: 
         properties:
           script: |
-            api_key="$OWM_API_KEY" # change this
-            location='$LOCATION' # change this (or dont, and set the variable in your env)
-
-            set -e
-
             now="$(date +'%I:%M%P')"
-
-            if [[ -f /tmp/weather.w && $NO_WEATHER_CACHE -ne 1 ]]; then
-                update=$(jq '.minute' /tmp/weather.w | tr -d '"')
-                # refresh every ten minutes
-                if [[ $(bc -l <<<"$(date +'%M')<=($update+10)") -eq 1 ]]; then
-                    echo "$now" "$(jq .weather /tmp/weather.w | tr -d '"')" && exit 0
-                fi
+            if [[ -f /tmp/weather.w ]]; then
+              update="$(cat /tmp/last_update.w)"
+              if [[ -f /tmp/w_lock.w || $(date +'%s') -le $((update + 600)) ]]; then
+                echo -n "$now"
+                cat /tmp/weather.w
+                exit 0
+              fi
+            elif [[ -f /tmp/w_lock.w ]]; then
+              echo "$now"
+              exit 0
             fi
-
-            gurl="curl -Gsm.7 https://api.openweathermap.org"
-            enc="--data-urlencode"
-
-            # get location
-            [[ ! -f /tmp/location.w ]] &&
-                $gurl/geo/1.0/direct $enc "q=$location" $enc "limit=0" $enc "appid=$api_key" | jq -c '{"lat": .[0].lat, "lon": .[0].lon}' >/tmp/location.w
-            location="$(cat /tmp/location.w)"
-
-            # get weather
-            res=$($gurl/data/2.5/weather $enc "lat=$(jq .lat <<<"$location")" $enc "lon=$(jq .lon <<<"$location")" $enc "units=metric" $enc "appid=$api_key")
-            temp=$(jq .main.temp <<<"$res")
-            temp_min=$(jq .main.temp_min <<<"$res")
-            temp_max=$(jq .main.temp_max <<<"$res")
-            [[ $(bc -l <<<"$temp_min!=$temp") -eq 1 ]] && temp_min_s="$temp_min-"
-            [[ $(bc -l <<<"$temp_max==$temp") -eq 1 ]] && temp_s="$temp_min_s$temp°C" || temp_s+="(${temp_min}${temp}-${temp_max})°C"
-            feels_like=$(jq .main.feels_like <<<"$res")
-            [[ $(bc -l <<<"$feels_like!=$temp_min&&$feels_like!=$temp&&$feels_like!=$temp_max") -eq 1 ]] && feels_string="feels $feels_like°C"
-
-            # pick weather icon
-            case $(jq .weather[0].icon <<<"$res" | tr -d '"') in
-            01n | 01d)
-                icon='\ufa98'
-                ;;
-            02n | 02d)
-                icon='\ufa94'
-                ;;
-            03n | 03d)
-                icon='\ue33d'
-                ;;
-            04n | 04d)
-                icon='\ue312'
-                ;;
-            09n | 09d)
-                icon='\ufa95'
-                ;;
-            10n | 10d)
-                icon='\ue308'
-                ;;
-            11n | 11d)
-                icon='\ue31d'
-                ;;
-            13n | 13d)
-                icon='\ue31a'
-                ;;
-            50n | 50d)
-                icon='\ue313'
-                ;;
-            *)
-                icon=''
-                ;;
-            esac
-            weather="$icon  - $temp_s $feels_string"
-            echo -e "$now $weather"
-            echo -e "{\"minute\": \"$(date +'%M')\", \"weather\": \"$weather\"}" >/tmp/weather.w
-
+            touch /tmp/w_lock.w
+            if ! res=$(curl -s wttr.in -Gsm2 --data-urlencode "format=j1"); then
+              echo "$now"
+              date +'%s' >/tmp/last_update.w
+              echo 睊 >/tmp/weather.w
+              rm /tmp/w_lock.w
+              exit 0
+            fi
+            res=$(jq .current_condition[] -c <<<"$res")
+            temp=$(jq -r .temp_C <<<"$res")
+            feels_like=$(jq -r .FeelsLikeC <<<"$res")
+            [[ $(bc -l <<<"$feels_like!=$temp") -eq 1 ]] && feels_string=" feels $feels_like°C"
+            WWC_MAP='{"113":"Sunny","116":"PartlyCloudy","119":"Cloudy","122":"VeryCloudy","143":"Fog","176":"LightShowers","179":"LightSleetShowers","182":"LightSleet","185":"LightSleet","200":"ThunderyShowers","227":"LightSnow","230":"HeavySnow","248":"Fog","260":"Fog","263":"LightShowers","266":"LightRain","281":"LightSleet","284":"LightSleet","293":"LightRain","296":"LightRain","299":"HeavyShowers","302":"HeavyRain","305":"HeavyShowers","308":"HeavyRain","311":"LightSleet","314":"LightSleet","317":"LightSleet","320":"LightSnow","323":"LightSnowShowers","326":"LightSnowShowers","329":"HeavySnow","332":"HeavySnow","335":"HeavySnowShowers","338":"HeavySnow","350":"LightSleet","353":"LightShowers","356":"HeavyShowers","359":"HeavyRain","362":"LightSleetShowers","365":"LightSleetShowers","368":"LightSnowShowers","371":"HeavySnowShowers","374":"LightSleetShowers","377":"LightSleet","386":"ThunderyShowers","389":"ThunderyHeavyRain","392":"ThunderySnowShowers","395":"HeavySnowShowers"}';NF_DAY_MAP='{"Unknown":"ﮊ","Cloudy":"","Fog":"","HeavyRain":"","HeavyShowers":"","HeavySnow":"","HeavySnowShowers":"","LightRain":"","LightShowers":"","LightSleet":"","LightSleetShowers":"","LightSnow":"","LightSnowShowers":"","PartlyCloudy":"","Sunny":"","ThunderyHeavyRain":"","ThunderyShowers":"","ThunderySnowShowers":"","VeryCloudy":""}';NF_NIGHT_MAP='{"Unknown":"ﮊ","Cloudy":"","Fog":"","HeavyRain":"","HeavyShowers":"","HeavySnow":"","HeavySnowShowers":"","LightRain":"","LightShowers":"","LightSleet":"","LightSleetShowers":"","LightSnow":"","LightSnowShowers":"","PartlyCloudy":"","Sunny":"","ThunderyHeavyRain":"","ThunderyShowers":"","ThunderySnowShowers":"","VeryCloudy":""}'
+            cur_h="$(date +'%H')" ;wwc="$(jq '.weatherCode' <<<"$res")"
+            if [[ $cur_h -gt 18 || $cur_h -lt 6 ]]; then icon=$(jq -r ".$(echo "$WWC_MAP" | jq -r ".$wwc")" <<<"$NF_DAY_MAP")
+            else icon=$(jq -r ".$(echo "$WWC_MAP" | jq -r ".$wwc")" <<<"$NF_NIGHT_MAP"); fi
+            weather="$icon  $temp°C$feels_string"
+            echo "$now $weather"
+            date +'%s' >/tmp/last_update.w
+            echo "$weather" >/tmp/weather.w
+            rm /tmp/w_lock.w
         style: diamond
         template: "{{ .Output }}"
         trailing_diamond: 

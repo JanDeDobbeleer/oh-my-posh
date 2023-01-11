@@ -159,7 +159,7 @@ func (e *Engine) renderBlock(block *Block) {
 	}()
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
-	if e.Env.Shell() == shell.BASH && (block.Type == RPrompt || block.Alignment == Right) {
+	if e.Env.Shell() == shell.BASH && block.Type == RPrompt {
 		block.InitPlain(e.Env, e.Config)
 	} else {
 		block.Init(e.Env, e.Writer)
@@ -214,18 +214,10 @@ func (e *Engine) renderBlock(block *Block) {
 			e.write(text)
 			return
 		}
-		// this can contain ANSI escape sequences
-		writer := e.Writer
-		if e.Env.Shell() == shell.BASH {
-			writer.Init(shell.GENERIC)
-		}
-		prompt := writer.CarriageForward()
-		prompt += writer.GetCursorForRightWrite(length, block.HorizontalOffset)
+		prompt := e.Writer.CarriageForward()
+		prompt += e.Writer.GetCursorForRightWrite(length, block.HorizontalOffset)
 		prompt += text
 		e.currentLineLength = 0
-		if e.Env.Shell() == shell.BASH {
-			prompt = e.Writer.FormatText(prompt)
-		}
 		e.write(prompt)
 	case RPrompt:
 		e.rprompt, e.rpromptLength = block.RenderSegments()

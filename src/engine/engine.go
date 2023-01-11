@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	cycle *ansi.Cycle
+	cycle *ansi.Cycle = &ansi.Cycle{}
 )
 
 type Engine struct {

@@ -55,13 +55,11 @@ type Block struct {
 	writer                *ansi.Writer
 	activeSegment         *Segment
 	previousActiveSegment *Segment
-	cycle                 *ansi.Cycle
 }
 
-func (b *Block) Init(env platform.Environment, writer *ansi.Writer, cycle *ansi.Cycle) {
+func (b *Block) Init(env platform.Environment, writer *ansi.Writer) {
 	b.env = env
 	b.writer = writer
-	b.cycle = cycle
 	b.executeSegmentLogic()
 }
 
@@ -132,9 +130,8 @@ func (b *Block) RenderSegments() (string, int) {
 		if !segment.Enabled && segment.style() != Accordion {
 			continue
 		}
-		if b.cycle != nil && len(*b.cycle) > 0 {
-			colors, cycle := ansi.PopColors(*b.cycle)
-			b.cycle = &cycle
+		if colors, newCycle := cycle.Loop(); colors != nil {
+			cycle = &newCycle
 			segment.colors = colors
 		}
 		b.setActiveSegment(segment)

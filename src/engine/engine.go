@@ -11,6 +11,10 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
+var (
+	cycle *ansi.Cycle
+)
+
 type Engine struct {
 	Config *Config
 	Env    platform.Environment
@@ -21,7 +25,6 @@ type Engine struct {
 	currentLineLength int
 	rprompt           string
 	rpromptLength     int
-	cycle             *ansi.Cycle
 }
 
 func (e *Engine) write(text string) {
@@ -59,7 +62,7 @@ func (e *Engine) canWriteRightBlock(rprompt bool) bool {
 
 func (e *Engine) PrintPrimary() string {
 	// cache a pointer to the color cycle
-	e.cycle = &e.Config.Cycle
+	cycle = &e.Config.Cycle
 	for _, block := range e.Config.Blocks {
 		e.renderBlock(block)
 	}
@@ -159,7 +162,7 @@ func (e *Engine) renderBlock(block *Block) {
 	if e.Env.Shell() == shell.BASH && (block.Type == RPrompt || block.Alignment == Right) {
 		block.InitPlain(e.Env, e.Config)
 	} else {
-		block.Init(e.Env, e.Writer, e.cycle)
+		block.Init(e.Env, e.Writer)
 	}
 	if !block.Enabled() {
 		return
@@ -247,10 +250,10 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	}
 	segmentTimings = append(segmentTimings, segmentTiming)
 	// cache a pointer to the color cycle
-	e.cycle = &e.Config.Cycle
+	cycle = &e.Config.Cycle
 	// loop each segments of each blocks
 	for _, block := range e.Config.Blocks {
-		block.Init(e.Env, e.Writer, e.cycle)
+		block.Init(e.Env, e.Writer)
 		longestSegmentName, timings := block.Debug()
 		segmentTimings = append(segmentTimings, timings...)
 		if longestSegmentName > largestSegmentNameLength {
@@ -349,7 +352,7 @@ func (e *Engine) PrintTooltip(tip string) string {
 	}
 	switch e.Env.Shell() {
 	case shell.ZSH, shell.CMD, shell.FISH, shell.GENERIC:
-		block.Init(e.Env, e.Writer, nil)
+		block.Init(e.Env, e.Writer)
 		if !block.Enabled() {
 			return ""
 		}
@@ -458,7 +461,7 @@ func (e *Engine) PrintRPrompt() string {
 	if block == nil {
 		return ""
 	}
-	block.Init(e.Env, e.Writer, e.cycle)
+	block.Init(e.Env, e.Writer)
 	if !block.Enabled() {
 		return ""
 	}

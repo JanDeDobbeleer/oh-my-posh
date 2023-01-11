@@ -2,9 +2,9 @@ package ansi
 
 type Cycle []*Colors
 
-func PopColors(array []*Colors) (*Colors, Cycle) {
-	if len(array) == 0 {
-		return nil, array
+func (c Cycle) Loop() (*Colors, Cycle) {
+	if len(c) == 0 {
+		return nil, c
 	}
-	return array[0], array[1:]
+	return c[0], append(c[1:], c[0])
 }

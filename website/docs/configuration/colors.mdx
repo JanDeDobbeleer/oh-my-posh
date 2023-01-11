@@ -239,9 +239,8 @@ for any palette color reference in templates/colors.
 ## Cycle
 
 When you want to display the same **sequence of colors** (background and foreground) regardless of which segments are active, you can
-make use of the cycle property. This property is a list of colors which are used one after the other. If there's nothing in the list
-anymore and your prompt would still render additional segments, the segment's colors are being used. A defined cycle always gets
-precendence over everything else.
+make use of the cycle property. This property is a list of colors which are used one after the other in a continuous loop. A defined
+cycle always gets precendence over everything else.
 
 ```json
 ...

@@ -300,6 +300,7 @@ func (ir *ImageRenderer) cleanContent() {
 	// clean string before render
 	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[m", "\x1b[0m")
 	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[K", "")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[0J", "")
 	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[1F", "")
 	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b8", "")
 	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\u2800", " ")

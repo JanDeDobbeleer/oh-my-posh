@@ -1511,6 +1511,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "Jensdevloo",
+      "name": "jensdevloo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2276152?v=4",
+      "profile": "https://github.com/Jensdevloo",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

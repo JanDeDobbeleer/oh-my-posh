@@ -149,13 +149,7 @@ func (e *Engine) getTitleTemplateText() string {
 
 func (e *Engine) renderBlock(block *Block) {
 	defer func() {
-		// Due to a bug in PowerShell, the end of the line needs to be cleared.
-		// If this doesn't happen, the portion after the prompt gets colored in the background
-		// color of the line above the new input line. Clearing the line fixes this,
-		// but can hopefully one day be removed when this is resolved natively.
-		if e.Env.Shell() == shell.PWSH || e.Env.Shell() == shell.PWSH5 {
-			e.write(e.Writer.ClearAfter())
-		}
+		e.write(e.Writer.ClearAfter())
 	}()
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly

@@ -207,7 +207,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		env := &mock.MockedEnvironment{}
 
 		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.3}}`, tc.IconID)
-		expectedString := fmt.Sprintf("[%s (20°C)](http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", tc.ExpectedIconString)
+		expectedString := fmt.Sprintf("«%s (20°C)»(http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", tc.ExpectedIconString)
 
 		env.On("HTTPRequest", OWMAPIURL).Return([]byte(response), nil)
 
@@ -222,7 +222,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		}
 
 		assert.Nil(t, o.setStatus())
-		assert.Equal(t, expectedString, renderTemplate(env, "[{{.Weather}} ({{.Temperature}}{{.UnitIcon}})]({{.URL}})", o), tc.Case)
+		assert.Equal(t, expectedString, renderTemplate(env, "«{{.Weather}} ({{.Temperature}}{{.UnitIcon}})»({{.URL}})", o), tc.Case)
 	}
 }
 func TestOWMSegmentFromCache(t *testing.T) {
@@ -250,7 +250,7 @@ func TestOWMSegmentFromCache(t *testing.T) {
 
 func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
-	expectedString := fmt.Sprintf("[%s (20°C)](http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", "\ufa98")
+	expectedString := fmt.Sprintf("«%s (20°C)»(http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", "\ufa98")
 
 	env := &mock.MockedEnvironment{}
 	cache := &mock.MockedCache{}
@@ -269,5 +269,5 @@ func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 	env.On("Cache").Return(cache)
 
 	assert.Nil(t, o.setStatus())
-	assert.Equal(t, expectedString, renderTemplate(env, "[{{.Weather}} ({{.Temperature}}{{.UnitIcon}})]({{.URL}})", o))
+	assert.Equal(t, expectedString, renderTemplate(env, "«{{.Weather}} ({{.Temperature}}{{.UnitIcon}})»({{.URL}})", o))
 }

@@ -673,15 +673,18 @@ func (g *Git) WorktreeCount() int {
 
 func (g *Git) getRemoteURL() string {
 	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
+	if len(upstream) == 0 {
+		return g.getGitCommandOutput("remote", "get-url", "origin")
+	}
 	cfg, err := ini.Load(g.rootDir + "/config")
 	if err != nil {
 		return g.getGitCommandOutput("remote", "get-url", upstream)
 	}
 	url := cfg.Section("remote \"" + upstream + "\"").Key("url").String()
-	if len(url) == 0 {
-		url = g.getGitCommandOutput("remote", "get-url", upstream)
+	if len(url) != 0 {
+		return url
 	}
-	return url
+	return g.getGitCommandOutput("remote", "get-url", upstream)
 }
 
 func (g *Git) getUntrackedFilesMode() string {

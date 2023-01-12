@@ -289,7 +289,8 @@ func (env *Shell) resolveConfigPath() {
 
 func (env *Shell) downloadConfig(location string) error {
 	defer env.Trace(time.Now(), "downloadConfig", location)
-	configPath := filepath.Join(env.CachePath(), "config.omp.json")
+	ext := filepath.Ext(location)
+	configPath := filepath.Join(env.CachePath(), "config.omp"+ext)
 	cfg, err := env.HTTPRequest(location, nil, 5000)
 	if err != nil {
 		return err

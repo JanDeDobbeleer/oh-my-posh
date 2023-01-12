@@ -29,7 +29,7 @@ type Brewfather struct {
 	DaysBottled            uint
 	DaysBottledOrFermented *uint // help avoid chronic template logic - code will point this to one of above or be nil depending on status
 
-	URL string // URL of batch page to open if hyperlink enabled on the segment and URL formatting used in template: [name](link)
+	URL string // URL of batch page to open if hyperlink enabled on the segment and URL formatting used in template: «text»(link)
 }
 
 const (

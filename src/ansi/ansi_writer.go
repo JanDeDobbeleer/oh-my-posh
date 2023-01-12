@@ -110,10 +110,10 @@ type Writer struct {
 	osc51                 string
 
 	// hyperlink
-	hasHyperlink            bool
-	hyperlinkBuilder        strings.Builder
-	squareIndex, roundCount int
-	hyperlinkState          string
+	hasHyperlink             bool
+	hyperlinkBuilder         strings.Builder
+	bracketIndex, roundCount int
+	hyperlinkState           string
 }
 
 func (w *Writer) Init(shellName string) {
@@ -302,7 +302,7 @@ func (w *Writer) Write(background, foreground, text string) {
 	w.runes = []rune(text)
 
 	// only run hyperlink logic when we have to
-	w.hasHyperlink = strings.Count(text, "[")+strings.Count(text, "]")+strings.Count(text, "(")+strings.Count(text, ")") >= 4
+	w.hasHyperlink = strings.Count(text, "«")+strings.Count(text, "»")+strings.Count(text, "(")+strings.Count(text, ")") >= 4
 
 	for i := 0; i < len(w.runes); i++ {
 		s := w.runes[i]

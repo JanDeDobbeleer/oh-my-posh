@@ -14,9 +14,9 @@ func url(text, url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("[%s](%s)", text, url), nil
+	return fmt.Sprintf("«%s»(%s)", text, url), nil
 }
 
 func path(text, path string) (string, error) {
-	return fmt.Sprintf("[%s](file:%s)", text, path), nil
+	return fmt.Sprintf("«%s»(file:%s)", text, path), nil
 }

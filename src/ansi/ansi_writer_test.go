@@ -226,13 +226,13 @@ func TestWriteLength(t *testing.T) {
 		},
 		{
 			Case:     "Bold with color override and link",
-			Input:    "<b><#ffffff>test</></b> [url](https://example.com)",
+			Input:    "<b><#ffffff>test</></b> «url»(https://example.com)",
 			Expected: 8,
 			Colors:   &Colors{Foreground: "black", Background: ParentBackground},
 		},
 		{
 			Case:     "Bold with color override and link and leading/trailing spaces",
-			Input:    " <b><#ffffff>test</></b> [url](https://example.com) ",
+			Input:    " <b><#ffffff>test</></b> «url»(https://example.com) ",
 			Expected: 10,
 			Colors:   &Colors{Foreground: "black", Background: ParentBackground},
 		},

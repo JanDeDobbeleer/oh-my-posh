@@ -44,6 +44,17 @@ by modifying the Windows Terminal settings (default shortcut: `CTRL + SHIFT + ,`
 }
 ```
 
+
+#### VS Code
+
+When using Visual Studio Code, you will need to configure the integrated Terminal to make use of the Nerd Font as well. This can be done by changing the `Integrated: Font Family` value in the Terminal settings (default shortcut: `CTRL + ,` and search for `Integrated: Font Family` or via `Users` -> `Features` -> `Terminal`).
+
+If you are using the JSON based settings, you will need to update the `terminal.integrated.fontFamily` value. Example in case of `MesloLGM NF` Nerd Font:
+
+```json
+"terminal.integrated.fontFamily": "MesloLGM NF"
+```
+
 ### Other Fonts
 
 If you are not interested in using a Nerd Font, you will want to use a theme which doesn't include any Nerd Font icons.

@@ -20,7 +20,7 @@ jobs:
             notes = notes.trim()
             return notes
       - name: Changelog 📝
-        uses: sebastianpopp/discord-action@ba18c5aaa871acf97620c349fd76a187550f12eb
+        uses: sebastianpopp/discord-action@4f2d5417bc61a79593304a62e71cd32427c17790
         with:
           webhook: ${{ secrets.CHANGELOG_WEBHOOK }}
           message: |

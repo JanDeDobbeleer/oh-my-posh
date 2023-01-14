@@ -409,6 +409,12 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 	if match[ANCHOR] == colorStyle.AnchorEnd {
 		// make sure to reset the colors if needed
 		position += len([]rune(colorStyle.AnchorEnd)) - 1
+
+		// do not reset when colors are identical
+		if w.currentBackground == w.background && w.currentForeground == w.foreground {
+			return
+		}
+
 		// do not restore colors at the end of the string, we print it anyways
 		if position == len(w.runes)-1 {
 			return

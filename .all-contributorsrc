@@ -1520,6 +1520,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "thomasdoerr",
+      "name": "Thomas Dörr",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6919685?v=4",
+      "profile": "https://github.com/thomasdoerr",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

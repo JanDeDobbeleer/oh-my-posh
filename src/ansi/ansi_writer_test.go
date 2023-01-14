@@ -99,7 +99,7 @@ func TestWriteANSIColors(t *testing.T) {
 		{
 			Case:     "Inherit no parent background",
 			Input:    "hello <,parentBackground>world</>",
-			Expected: "\x1b[47m\x1b[30mhello \x1b[0m\x1b[30mworld\x1b[0m",
+			Expected: "\x1b[47m\x1b[30mhello \x1b[49mworld\x1b[0m",
 			Colors:   &Colors{Foreground: "black", Background: "white"},
 		},
 		{

@@ -18,6 +18,12 @@ func TestWriteANSIColors(t *testing.T) {
 		TerminalBackground string
 	}{
 		{
+			Case:     "Inline override identical",
+			Input:    "\ue0a0saturnay <red>↑</>1",
+			Expected: "\x1b[31m\ue0a0saturnay ↑1\x1b[0m",
+			Colors:   &Colors{Foreground: "red", Background: Transparent},
+		},
+		{
 			Case:     "Bold",
 			Input:    "<b>test</b>",
 			Expected: "\x1b[1m\x1b[30mtest\x1b[22m\x1b[0m",

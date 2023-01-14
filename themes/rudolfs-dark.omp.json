@@ -52,6 +52,17 @@
           "type": "git"
         },
         {
+          "background": "#256C9D",
+          "foreground": "#ffffff",
+          "powerline_symbol": "\ue0b0",
+          "style": "plain",
+          "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
+          "properties": {
+            "text": "\ue0b0"
+          },
+          "type": "python"
+        },
+        {
           "foreground": "#256C9D",
           "style": "plain",
           "template": "\ue0b0 ",

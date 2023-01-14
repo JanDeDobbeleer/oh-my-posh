@@ -52,6 +52,17 @@
           "type": "path"
         },
         {
+          "background": "#E0E0E0",
+          "foreground": "#424242",
+          "powerline_symbol": "\ue0b0",
+          "style": "plain",
+          "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
+          "properties": {
+            "text": "\ue0b0"
+          },
+          "type": "python"
+        },
+        {
           "foreground": "#E0E0E0",
           "style": "plain",
           "template": "\ue0b0 ",

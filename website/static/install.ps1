@@ -38,7 +38,7 @@ switch ($arch) {
             $installer = "install-386.exe"
         }
     }
-    12 { $installer = "install-amd64.exe" } # x64 emulated on Surface Pro X
+    12 { $installer = "install-arm64.exe" } # Surface Pro X
 }
 
 if ($installer -eq '') {

@@ -44,7 +44,7 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 		{
 			Text:      "in <accent><b>pwsh </b></> ",
 			ShellName: shell.PWSH,
-			Expected:  "\x1b[47m\x1b[30min \x1b[0m\x1b[30m\x1b[1mpwsh \x1b[22m\x1b[47m \x1b[0m",
+			Expected:  "\x1b[47m\x1b[30min \x1b[49m\x1b[1mpwsh \x1b[22m\x1b[47m \x1b[0m",
 		},
 		{Text: "«google»(http://www.google.be)", ShellName: shell.ZSH, Expected: "%{\x1b[47m%}%{\x1b[30m%}%{\x1b]8;;http://www.google.be\x1b\\%}google%{\x1b]8;;\x1b\\%}%{\x1b[0m%}"},
 		{Text: "«google»(http://www.google.be)", ShellName: shell.PWSH, Expected: "\x1b[47m\x1b[30m\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\\x1b[0m"},

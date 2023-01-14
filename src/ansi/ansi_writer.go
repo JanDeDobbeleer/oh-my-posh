@@ -57,6 +57,7 @@ const (
 	colorise       = "\x1b[%sm"
 	transparent    = "\x1b[0m\x1b[%s;49m\x1b[7m"
 	transparentEnd = "\x1b[27m"
+	backgroundEnd  = "\x1b[49m"
 
 	AnsiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 
@@ -481,13 +482,13 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 	if w.currentBackground != w.background {
 		// end the colors in case we have a transparent background
 		if w.currentBackground.IsTransparent() {
-			w.writeEscapedAnsiString(colorStyle.End)
+			w.writeEscapedAnsiString(backgroundEnd)
 		} else {
 			w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.currentBackground))
 		}
 	}
 
-	if w.currentForeground != w.foreground || w.currentBackground.IsTransparent() {
+	if w.currentForeground != w.foreground {
 		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.currentForeground))
 	}
 

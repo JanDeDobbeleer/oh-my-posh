@@ -170,7 +170,7 @@ func (g *Git) Enabled() bool {
 		g.Working = &GitStatus{}
 		g.Staging = &GitStatus{}
 	}
-	if len(g.Upstream) != 0 && g.props.GetBool(FetchUpstreamIcon, false) {
+	if g.props.GetBool(FetchUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
 	return true
@@ -674,7 +674,7 @@ func (g *Git) WorktreeCount() int {
 func (g *Git) getRemoteURL() string {
 	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
 	if len(upstream) == 0 {
-		return g.getGitCommandOutput("remote", "get-url", "origin")
+		upstream = "origin"
 	}
 	cfg, err := ini.Load(g.rootDir + "/config")
 	if err != nil {

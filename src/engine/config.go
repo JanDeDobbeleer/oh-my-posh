@@ -97,7 +97,7 @@ func LoadConfig(env platform.Environment) *Config {
 }
 
 func loadConfig(env platform.Environment) *Config {
-	defer env.Trace(time.Now(), "config.loadConfig")
+	defer env.Trace(time.Now())
 	configFile := env.Flags().Config
 
 	if len(configFile) == 0 {

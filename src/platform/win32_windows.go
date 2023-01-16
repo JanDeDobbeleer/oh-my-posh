@@ -264,20 +264,20 @@ func (env *Shell) isWriteable(folder string) bool {
 
 	if err != nil {
 		// unable to get current user
-		env.Error("isWriteable", err)
+		env.Error(err)
 		return false
 	}
 
 	si, err := windows.GetNamedSecurityInfo(folder, windows.SE_FILE_OBJECT, windows.DACL_SECURITY_INFORMATION)
 	if err != nil {
-		env.Error("isWriteable", err)
+		env.Error(err)
 		return false
 	}
 
 	dacl, _, err := si.DACL()
 	if err != nil || dacl == nil {
 		// no dacl implies full access
-		env.Debug("isWriteable", "no dacl")
+		env.Debug("no dacl")
 		return true
 	}
 
@@ -289,31 +289,31 @@ func (env *Shell) isWriteable(folder string) bool {
 
 		ret, _, _ := procGetAce.Call(uintptr(unsafe.Pointer(dacl)), uintptr(i), uintptr(unsafe.Pointer(&ace)))
 		if ret == 0 {
-			env.Debug("isWriteable", "no ace found")
+			env.Debug("no ace found")
 			return false
 		}
 
 		aceSid := (*windows.SID)(unsafe.Pointer(&ace.SidStart))
 
 		if !cu.isMemberOf(aceSid) {
-			env.Debug("isWriteable", "not current user or in group")
+			env.Debug("not current user or in group")
 			continue
 		}
 
-		env.Debug("isWriteable", fmt.Sprintf("current user is member of %s", aceSid.String()))
+		env.Debug(fmt.Sprintf("current user is member of %s", aceSid.String()))
 
 		// this gets priority over the other access types
 		if ace.AceType == ACCESS_DENIED_ACE_TYPE {
-			env.Debug("isWriteable", "ACCESS_DENIED_ACE_TYPE")
+			env.Debug("ACCESS_DENIED_ACE_TYPE")
 			return false
 		}
 
-		env.debugF("isWriteable", func() string { return ace.AccessMask.permissions() })
+		env.debugF(func() string { return ace.AccessMask.permissions() })
 		if ace.AccessMask.canWrite() {
-			env.Debug("isWriteable", "user has write access")
+			env.Debug("user has write access")
 			return true
 		}
 	}
-	env.Debug("isWriteable", "no write access")
+	env.Debug("no write access")
 	return false
 }

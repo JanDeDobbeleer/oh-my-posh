@@ -200,7 +200,7 @@ func (env *Shell) getConnections() []*Connection {
 }
 
 func (env *Shell) wifiNetwork() (*Connection, error) {
-	env.Trace(time.Now(), "wifiNetwork")
+	env.Trace(time.Now())
 	// Open handle
 	var pdwNegotiatedVersion uint32
 	var phClientHandle uint32
@@ -250,7 +250,7 @@ func (env *Shell) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHand
 		uintptr(unsafe.Pointer(&wlanAttr)),
 		uintptr(unsafe.Pointer(nil)))
 	if e != 0 {
-		env.Error("parseNetworkInterface", err)
+		env.Error(err)
 		return &info, err
 	}
 

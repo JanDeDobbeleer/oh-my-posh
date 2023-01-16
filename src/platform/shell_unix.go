@@ -14,7 +14,7 @@ import (
 )
 
 func (env *Shell) Root() bool {
-	defer env.Trace(time.Now(), "Root")
+	defer env.Trace(time.Now())
 	return os.Geteuid() == 0
 }
 
@@ -27,7 +27,7 @@ func (env *Shell) QueryWindowTitles(processName, windowTitleRegex string) (strin
 }
 
 func (env *Shell) IsWsl() bool {
-	defer env.Trace(time.Now(), "IsWsl")
+	defer env.Trace(time.Now())
 	// one way to check
 	// version := env.FileContent("/proc/version")
 	// return strings.Contains(version, "microsoft")
@@ -36,7 +36,7 @@ func (env *Shell) IsWsl() bool {
 }
 
 func (env *Shell) IsWsl2() bool {
-	defer env.Trace(time.Now(), "IsWsl2")
+	defer env.Trace(time.Now())
 	if !env.IsWsl() {
 		return false
 	}
@@ -45,13 +45,13 @@ func (env *Shell) IsWsl2() bool {
 }
 
 func (env *Shell) TerminalWidth() (int, error) {
-	defer env.Trace(time.Now(), "TerminalWidth")
+	defer env.Trace(time.Now())
 	if env.CmdFlags.TerminalWidth != 0 {
 		return env.CmdFlags.TerminalWidth, nil
 	}
 	width, err := terminal.Width()
 	if err != nil {
-		env.Error("TerminalWidth", err)
+		env.Error(err)
 	}
 	return int(width), err
 }
@@ -77,12 +77,12 @@ func (env *Shell) Platform() string {
 			platform = "manjaro"
 		}
 	}
-	env.Debug("Platform", platform)
+	env.Debug(platform)
 	return platform
 }
 
 func (env *Shell) CachePath() string {
-	defer env.Trace(time.Now(), "CachePath")
+	defer env.Trace(time.Now())
 	// get XDG_CACHE_HOME if present
 	if cachePath := returnOrBuildCachePath(env.Getenv("XDG_CACHE_HOME")); len(cachePath) != 0 {
 		return cachePath
@@ -126,7 +126,7 @@ func (env *Shell) LookWinAppPath(file string) (string, error) {
 }
 
 func (env *Shell) DirIsWritable(path string) bool {
-	defer env.Trace(time.Now(), "DirIsWritable", path)
+	defer env.Trace(time.Now(), path)
 	return unix.Access(path, unix.W_OK) == nil
 }
 

@@ -57,7 +57,7 @@ func TestGcpSegment(t *testing.T) {
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
 		cfgpath := path.Join("config", "configurations", "config_production")
 		env.On("FileContent", cfgpath).Return(tc.CfgData)
-		env.On("Error", "Gcp.Enabled()", mock2.Anything).Return()
+		env.On("Error", mock2.Anything).Return()
 		g := &Gcp{
 			env: env,
 		}

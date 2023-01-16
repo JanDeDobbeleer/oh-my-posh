@@ -27,8 +27,8 @@ func renderTemplate(env *mock.MockedEnvironment, segmentTemplate string, context
 			Env: make(map[string]string),
 		})
 	}
-	env.On("Error", mock2.Anything, mock2.Anything)
-	env.On("Debug", mock2.Anything, mock2.Anything)
+	env.On("Error", mock2.Anything)
+	env.On("Debug", mock2.Anything)
 	tmpl := &template.Text{
 		Template: segmentTemplate,
 		Context:  context,
@@ -1294,8 +1294,8 @@ func TestGetFolderSeparator(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("PathSeparator").Return("/")
-		env.On("Error", mock2.Anything, mock2.Anything)
-		env.On("Debug", mock2.Anything, mock2.Anything)
+		env.On("Error", mock2.Anything)
+		env.On("Debug", mock2.Anything)
 		path := &Path{
 			env: env,
 		}

@@ -49,7 +49,7 @@ func (t *Text) Render() (string, error) {
 	t.cleanTemplate()
 	tmpl, err := template.New(t.Template).Funcs(funcMap()).Parse(t.Template)
 	if err != nil {
-		t.Env.Error("Render", err)
+		t.Env.Error(err)
 		return "", errors.New(InvalidTemplate)
 	}
 	context := &Context{}
@@ -58,7 +58,7 @@ func (t *Text) Render() (string, error) {
 	defer buffer.Reset()
 	err = tmpl.Execute(buffer, context)
 	if err != nil {
-		t.Env.Error("Render", err)
+		t.Env.Error(err)
 		msg := regex.FindNamedRegexMatch(`at (?P<MSG><.*)$`, err.Error())
 		if len(msg) == 0 {
 			return "", errors.New(IncorrectTemplate)

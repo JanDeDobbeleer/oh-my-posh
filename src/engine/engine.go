@@ -221,9 +221,8 @@ func (e *Engine) renderBlock(block *Block) {
 // debug will loop through your config file and output the timings for each segments
 func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	var segmentTimings []*SegmentTiming
-	largestSegmentNameLength := 0
-	e.write(fmt.Sprintf("\n\x1b[1mVersion:\x1b[0m %s\n", version))
-	e.write("\n\x1b[1mSegments:\x1b[0m\n\n")
+	e.write(fmt.Sprintf("\n\x1b[38;2;191;207;240m\x1b[1mVersion:\x1b[0m %s\n", version))
+	e.write("\n\x1b[38;2;191;207;240m\x1b[1mSegments:\x1b[0m\n\n")
 	// console title timing
 	titleStartTime := time.Now()
 	title := e.getTitleTemplateText()
@@ -234,6 +233,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 		text:       title,
 		duration:   time.Since(titleStartTime),
 	}
+	largestSegmentNameLength := 12
 	segmentTimings = append(segmentTimings, segmentTiming)
 	// cache a pointer to the color cycle
 	cycle = &e.Config.Cycle
@@ -254,10 +254,10 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.active)
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.text))
 	}
-	e.write(fmt.Sprintf("\n\x1b[1mRun duration:\x1b[0m %s\n", time.Since(startTime)))
-	e.write(fmt.Sprintf("\n\x1b[1mCache path:\x1b[0m %s\n", e.Env.CachePath()))
-	e.write(fmt.Sprintf("\n\x1b[1mConfig path:\x1b[0m %s\n", e.Env.Flags().Config))
-	e.write("\n\x1b[1mLogs:\x1b[0m\n\n")
+	e.write(fmt.Sprintf("\n\x1b[38;2;191;207;240m\x1b[1mRun duration:\x1b[0m %s\n", time.Since(startTime)))
+	e.write(fmt.Sprintf("\n\x1b[38;2;191;207;240m\x1b[1mCache path:\x1b[0m %s\n", e.Env.CachePath()))
+	e.write(fmt.Sprintf("\n\x1b[38;2;191;207;240m\x1b[1mConfig path:\x1b[0m %s\n", e.Env.Flags().Config))
+	e.write("\n\x1b[38;2;191;207;240m\x1b[1mLogs:\x1b[0m\n\n")
 	e.write(e.Env.Logs())
 	return e.string()
 }

@@ -248,16 +248,16 @@ func (env *MockedEnvironment) DirMatchesOneOf(dir string, regexes []string) bool
 	return args.Bool(0)
 }
 
-func (env *MockedEnvironment) Trace(start time.Time, function string, args ...string) {
-	_ = env.Called(start, function, args)
+func (env *MockedEnvironment) Trace(start time.Time, args ...string) {
+	_ = env.Called(start, args)
 }
 
-func (env *MockedEnvironment) Debug(funcName, message string) {
-	_ = env.Called(funcName, message)
+func (env *MockedEnvironment) Debug(message string) {
+	_ = env.Called(message)
 }
 
-func (env *MockedEnvironment) Error(funcName string, err error) {
-	_ = env.Called(funcName, err)
+func (env *MockedEnvironment) Error(err error) {
+	_ = env.Called(err)
 }
 
 func (env *MockedEnvironment) DirIsWritable(path string) bool {

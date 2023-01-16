@@ -75,7 +75,7 @@ func TestRequestResult(t *testing.T) {
 
 		env.On("Cache").Return(cache)
 		env.On("HTTPRequest", url).Return([]byte(tc.JSONResponse), tc.Error)
-		env.On("Error", "OAuth", mock2.Anything).Return()
+		env.On("Error", mock2.Anything).Return()
 
 		request := &Request{}
 		request.Init(env, props)

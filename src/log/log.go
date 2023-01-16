@@ -2,66 +2,77 @@ package log
 
 import (
 	"fmt"
-	"log"
+	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 )
 
 var enabled bool
-var logBuilder strings.Builder
+var log strings.Builder
 
 func Enable() {
 	enabled = true
-	log.SetOutput(&logBuilder)
 }
 
 func Info(message string) {
 	if !enabled {
 		return
 	}
-	log.Println(message)
+	log.WriteString(message)
 }
 
-func Trace(start time.Time, function string, args ...string) {
+func Trace(start time.Time, args ...string) {
 	if !enabled {
 		return
 	}
 	elapsed := time.Since(start)
-	var argString string
-	if len(args) > 0 {
-		argString = fmt.Sprintf(", args: %s", strings.Join(args, " "))
-	}
-	trace := entry(fmt.Sprintf("%s: %s%s", function, elapsed, argString))
-	log.Println(trace)
+	fn, _ := funcSpec()
+	header := fmt.Sprintf("%s(%s) - \x1b[38;2;156;231;201m%s\033[0m", fn, strings.Join(args, " "), elapsed)
+	printLn(trace, header)
 }
 
-func Debug(funcName, message string) {
+func Debug(message string) {
 	if !enabled {
 		return
 	}
-	trace := entry(fmt.Sprintf("%s\n%s", funcName, message))
-	trace.Format(Yellow)
-	log.Println(trace)
+	fn, line := funcSpec()
+	header := fmt.Sprintf("%s:%d", fn, line)
+	printLn(debug, header, message)
 }
 
-func DebugF(function string, fn func() string) {
+func DebugF(fn func() string) {
 	if !enabled {
 		return
 	}
-	trace := entry(fmt.Sprintf("%s\n%s", function, fn()))
-	trace.Format(Yellow)
-	log.Println(trace)
+	fn2, line := funcSpec()
+	header := fmt.Sprintf("%s:%d", fn2, line)
+	printLn(debug, header, fn())
 }
 
-func Error(funcName string, err error) {
+func Error(err error) {
 	if !enabled {
 		return
 	}
-	trace := entry(fmt.Sprintf("%s\n%s", funcName, err.Error()))
-	trace.Format(Red)
-	log.Println(trace)
+	fn, line := funcSpec()
+	header := fmt.Sprintf("%s:%d", fn, line)
+	printLn(bug, header, err.Error())
 }
 
 func String() string {
-	return logBuilder.String()
+	return log.String()
+}
+
+func funcSpec() (string, int) {
+	pc, file, line, OK := runtime.Caller(3)
+	if !OK {
+		return "", 0
+	}
+	fn := runtime.FuncForPC(pc).Name()
+	fn = fn[strings.LastIndex(fn, ".")+1:]
+	file = filepath.Base(file)
+	if strings.HasPrefix(fn, "func") {
+		return file, line
+	}
+	return fmt.Sprintf("%s:%s", file, fn), line
 }

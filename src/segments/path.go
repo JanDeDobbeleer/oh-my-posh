@@ -184,7 +184,7 @@ func (pt *Path) getFolderSeparator() string {
 	}
 	text, err := tmpl.Render()
 	if err != nil {
-		pt.env.Error("getFolderSeparator", err)
+		pt.env.Error(err)
 	}
 	if len(text) == 0 {
 		return pt.env.PathSeparator()
@@ -411,7 +411,7 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 		}
 		path, err := tmpl.Render()
 		if err != nil {
-			pt.env.Error("replaceMappedLocations", err)
+			pt.env.Error(err)
 		}
 		if len(path) == 0 {
 			continue

@@ -226,15 +226,15 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	// console title timing
 	titleStartTime := time.Now()
 	title := e.getTitleTemplateText()
-	segmentTiming := &SegmentTiming{
+	consoleTitleTiming := &SegmentTiming{
 		name:       "ConsoleTitle",
 		nameLength: 12,
 		active:     len(e.Config.ConsoleTitleTemplate) > 0,
 		text:       title,
 		duration:   time.Since(titleStartTime),
 	}
-	largestSegmentNameLength := 12
-	segmentTimings = append(segmentTimings, segmentTiming)
+	largestSegmentNameLength := consoleTitleTiming.nameLength
+	segmentTimings = append(segmentTimings, consoleTitleTiming)
 	// cache a pointer to the color cycle
 	cycle = &e.Config.Cycle
 	// loop each segments of each blocks
@@ -247,11 +247,17 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 		}
 	}
 
-	// pad the output so the tabs render correctly
-	largestSegmentNameLength += 7
+	// 22 is the color for false/true and 7 is the reset color
+	largestSegmentNameLength += 22 + 7
 	for _, segment := range segmentTimings {
 		duration := segment.duration.Milliseconds()
-		segmentName := fmt.Sprintf("%s(%t)", segment.name, segment.active)
+		var active string
+		if segment.active {
+			active = "\x1b[38;2;156;231;201mtrue\x1b[0m"
+		} else {
+			active = "\x1b[38;2;204;137;214mfalse\x1b[0m"
+		}
+		segmentName := fmt.Sprintf("%s(%s)", segment.name, active)
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.text))
 	}
 	e.write(fmt.Sprintf("\n\x1b[38;2;191;207;240m\x1b[1mRun duration:\x1b[0m %s\n", time.Since(startTime)))

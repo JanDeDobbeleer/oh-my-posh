@@ -724,13 +724,11 @@ func (env *Shell) TemplateCache() *TemplateCache {
 	const separator = "="
 	values := os.Environ()
 	for value := range values {
-		splitted := strings.Split(values[value], separator)
-		if len(splitted) != 2 {
+		key, val, valid := strings.Cut(values[value], separator)
+		if !valid {
 			continue
 		}
-		key := splitted[0]
-		val := splitted[1:]
-		tmplCache.Env[key] = strings.Join(val, separator)
+		tmplCache.Env[key] = val
 	}
 	pwd := env.Pwd()
 	tmplCache.PWD = ReplaceHomeDirPrefixWithTilde(env, pwd)

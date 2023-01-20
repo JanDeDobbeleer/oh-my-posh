@@ -390,7 +390,11 @@ func (g *Git) getUpstreamIcon() string {
 		url = strings.ReplaceAll(url, ":", "/")
 		return fmt.Sprintf("https://%s", url)
 	}
+
 	g.RawUpstreamURL = g.getRemoteURL()
+	if len(g.RawUpstreamURL) == 0 {
+		return ""
+	}
 	g.UpstreamURL = cleanSSHURL(g.RawUpstreamURL)
 
 	// allow overrides first

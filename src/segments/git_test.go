@@ -594,6 +594,7 @@ func TestGitUpstream(t *testing.T) {
 		Upstream string
 	}{
 		{Case: "No upstream", Expected: "", Upstream: ""},
+		{Case: "SSH url", Expected: "G", Upstream: "ssh://git@git.my.domain:3001/ADIX7/dotconfig.git"},
 		{Case: "GitHub", Expected: "GH", Upstream: "github.com/test"},
 		{Case: "Gitlab", Expected: "GL", Upstream: "gitlab.com/test"},
 		{Case: "Bitbucket", Expected: "BB", Upstream: "bitbucket.org/test"},

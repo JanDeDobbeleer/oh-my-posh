@@ -49,6 +49,7 @@ func TestEscapeGlyphs(t *testing.T) {
 		Input    string
 		Expected string
 	}{
+		{Input: "󰉋", Expected: "\\udb80\\ude4b"},
 		{Input: "a", Expected: "a"},
 		{Input: "\ue0b4", Expected: "\\ue0b4"},
 		{Input: "\ufd03", Expected: "\\ufd03"},

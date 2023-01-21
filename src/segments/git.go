@@ -386,7 +386,10 @@ func (g *Git) getUpstreamIcon() string {
 		}
 		url = strings.TrimPrefix(url, "ssh://")
 		url = strings.TrimPrefix(url, "git://")
-		url = strings.TrimPrefix(url, "git@")
+		if strings.HasPrefix(url, "git@") {
+			url = strings.TrimPrefix(url, "git@")
+			url = strings.Replace(url, ":", "/", 1)
+		}
 		url = strings.TrimSuffix(url, ".git")
 		return fmt.Sprintf("https://%s", url)
 	}

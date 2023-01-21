@@ -57,6 +57,7 @@ module.exports = {
         "segments/azfunc",
         "segments/battery",
         "segments/brewfather",
+        "segments/buf",
         "segments/cds",
         "segments/cf",
         "segments/cftarget",

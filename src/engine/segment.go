@@ -107,6 +107,8 @@ const (
 	BATTERY SegmentType = "battery"
 	// Brewfather segment
 	BREWFATHER SegmentType = "brewfather"
+	// Buf segment writes the active buf version
+	BUF SegmentType = "buf"
 	// cds (SAP CAP) version
 	CDS SegmentType = "cds"
 	// Cloud Foundry segment
@@ -242,6 +244,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	AZFUNC:        func() SegmentWriter { return &segments.AzFunc{} },
 	BATTERY:       func() SegmentWriter { return &segments.Battery{} },
 	BREWFATHER:    func() SegmentWriter { return &segments.Brewfather{} },
+	BUF:           func() SegmentWriter { return &segments.Buf{} },
 	CDS:           func() SegmentWriter { return &segments.Cds{} },
 	CF:            func() SegmentWriter { return &segments.Cf{} },
 	CFTARGET:      func() SegmentWriter { return &segments.CfTarget{} },

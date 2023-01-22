@@ -13,19 +13,20 @@ offers a few standard properties to work with.
 
 ## Global properties
 
-| Name            | Type      | Description                           |
-| --------------- | --------- | ------------------------------------- |
-| `.Root`         | `boolean` | is the current user root/admin or not |
-| `.PWD`          | `string`  | the current working directory         |
-| `.Folder`       | `string`  | the current working folder            |
-| `.Shell`        | `string`  | the current shell name                |
-| `.ShellVersion` | `string`  | the current shell version             |
-| `.UserName`     | `string`  | the current user name                 |
-| `.HostName`     | `string`  | the host name                         |
-| `.Code`         | `int`     | the last exit code                    |
-| `.OS`           | `string`  | the operating system                  |
-| `.WSL`          | `boolean` | in WSL yes/no                         |
-| `.Templates`    | `string`  | the [templates][templates] result     |
+| Name            | Type      | Description                                                       |
+| --------------- | --------- | ----------------------------------------------------------------- |
+| `.Root`         | `boolean` | is the current user root/admin or not                             |
+| `.PWD`          | `string`  | the current working directory                                     |
+| `.Folder`       | `string`  | the current working folder                                        |
+| `.Shell`        | `string`  | the current shell name                                            |
+| `.ShellVersion` | `string`  | the current shell version                                         |
+| `.UserName`     | `string`  | the current user name                                             |
+| `.HostName`     | `string`  | the host name                                                     |
+| `.Code`         | `int`     | the last exit code                                                |
+| `.OS`           | `string`  | the operating system                                              |
+| `.WSL`          | `boolean` | in WSL yes/no                                                     |
+| `.Templates`    | `string`  | the [templates][templates] result                                 |
+| `.PromptCount`  | `int`     | the prompt counter, increments with 1 for every prompt invocation |
 
 ## Environment variables
 
@@ -177,6 +178,7 @@ to distinct between both. For example:
   "template": "{{ .Segments.Hello.Output }} {{ .Segments.World.Output }}"
 }
 ```
+
 :::
 
 If you want to know if a specific segment is active, you can use the `.Segments.Contains` function, for example:

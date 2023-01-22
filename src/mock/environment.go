@@ -264,3 +264,7 @@ func (env *MockedEnvironment) DirIsWritable(path string) bool {
 	args := env.Called(path)
 	return args.Bool(0)
 }
+
+func (env *MockedEnvironment) SetPromptCount() {
+	_ = env.Called()
+}

@@ -34,7 +34,7 @@ const (
 	LINUX   = "linux"
 )
 
-func getPID() string {
+func pid() string {
 	pid := os.Getenv("POSH_PID")
 	if len(pid) == 0 {
 		pid = strconv.Itoa(os.Getppid())
@@ -43,8 +43,9 @@ func getPID() string {
 }
 
 var (
-	TEMPLATECACHE = fmt.Sprintf("template_cache_%s", getPID())
-	TOGGLECACHE   = fmt.Sprintf("toggle_cache_%s", getPID())
+	TEMPLATECACHE    = fmt.Sprintf("template_cache_%s", pid())
+	TOGGLECACHE      = fmt.Sprintf("toggle_cache_%s", pid())
+	PROMPTCOUNTCACHE = fmt.Sprintf("prompt_count_cache_%s", pid())
 )
 
 type Flags struct {
@@ -63,6 +64,8 @@ type Flags struct {
 	Debug         bool
 	Manual        bool
 	Plain         bool
+	Primary       bool
+	PromptCount   int
 }
 
 type CommandError struct {
@@ -148,6 +151,7 @@ type TemplateCache struct {
 	Env          map[string]string
 	OS           string
 	WSL          bool
+	PromptCount  int
 	Segments     SegmentsCache
 
 	sync.RWMutex
@@ -205,6 +209,7 @@ type Environment interface {
 	Connection(connectionType ConnectionType) (*Connection, error)
 	TemplateCache() *TemplateCache
 	LoadTemplateCache()
+	SetPromptCount()
 	Debug(message string)
 	Error(err error)
 	Trace(start time.Time, args ...string)
@@ -254,6 +259,7 @@ func (env *Shell) Init() {
 	env.cmdCache = &commandCache{
 		commands: NewConcurrentMap(),
 	}
+	env.SetPromptCount()
 }
 
 func (env *Shell) resolveConfigPath() {
@@ -712,6 +718,7 @@ func (env *Shell) TemplateCache() *TemplateCache {
 	if env.tmplCache != nil {
 		return env.tmplCache
 	}
+
 	tmplCache := &TemplateCache{
 		Root:         env.Root(),
 		Shell:        env.Shell(),
@@ -719,8 +726,10 @@ func (env *Shell) TemplateCache() *TemplateCache {
 		Code:         env.ErrorCode(),
 		WSL:          env.IsWsl(),
 		Segments:     make(map[string]interface{}),
+		PromptCount:  env.CmdFlags.PromptCount,
 	}
 	tmplCache.Env = make(map[string]string)
+
 	const separator = "="
 	values := os.Environ()
 	for value := range values {
@@ -730,21 +739,25 @@ func (env *Shell) TemplateCache() *TemplateCache {
 		}
 		tmplCache.Env[key] = val
 	}
+
 	pwd := env.Pwd()
 	tmplCache.PWD = ReplaceHomeDirPrefixWithTilde(env, pwd)
 	tmplCache.Folder = Base(env, pwd)
 	if env.GOOS() == WINDOWS && strings.HasSuffix(tmplCache.Folder, ":") {
 		tmplCache.Folder += `\`
 	}
+
 	tmplCache.UserName = env.User()
 	if host, err := env.Host(); err == nil {
 		tmplCache.HostName = host
 	}
+
 	goos := env.GOOS()
 	tmplCache.OS = goos
 	if goos == LINUX {
 		tmplCache.OS = env.Platform()
 	}
+
 	env.tmplCache = tmplCache
 	return tmplCache
 }
@@ -784,6 +797,28 @@ func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 		}
 	}
 	return false
+}
+
+func (env *Shell) SetPromptCount() {
+	countStr := os.Getenv("POSH_PROMPT_COUNT")
+	if len(countStr) > 0 {
+		// this counter is incremented by the shell
+		count, err := strconv.Atoi(countStr)
+		if err == nil {
+			env.CmdFlags.PromptCount = count
+			return
+		}
+	}
+	var count int
+	if val, found := env.Cache().Get(PROMPTCOUNTCACHE); found {
+		count, _ = strconv.Atoi(val)
+	}
+	// only write to cache if we're the primary prompt
+	if env.CmdFlags.Primary {
+		count++
+		env.Cache().Set(PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
+	}
+	env.CmdFlags.PromptCount = count
 }
 
 func IsPathSeparator(env Environment, c uint8) bool {

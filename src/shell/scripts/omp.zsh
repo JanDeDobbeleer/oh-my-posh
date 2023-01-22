@@ -2,6 +2,7 @@ export POSH_THEME=::CONFIG::
 export POSH_PID=$$
 export POWERLINE_COMMAND="oh-my-posh"
 export CONDA_PROMPT_MODIFIER=false
+export POSH_PROMPT_COUNT=0
 
 # set secondary prompt
 PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=zsh)"
@@ -23,6 +24,8 @@ function prompt_ohmyposh_precmd() {
     omp_now=$(::OMP:: get millis --shell=zsh)
     omp_elapsed=$(($omp_now-$omp_start_time))
   fi
+  count=$((POSH_PROMPT_COUNT+1))
+  export POSH_PROMPT_COUNT=$count
   set_poshcontext
   eval "$(::OMP:: print primary --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION")"
   unset omp_start_time

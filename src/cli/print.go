@@ -57,6 +57,7 @@ var printCmd = &cobra.Command{
 			Shell:         shellName,
 			ShellVersion:  shellVersion,
 			Plain:         plain,
+			Primary:       args[0] == "primary",
 		}
 
 		eng := engine.New(flags)

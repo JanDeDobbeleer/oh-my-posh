@@ -16,10 +16,11 @@ var (
 )
 
 type Engine struct {
-	Config *Config
-	Env    platform.Environment
-	Writer *ansi.Writer
-	Plain  bool
+	Config      *Config
+	Env         platform.Environment
+	Writer      *ansi.Writer
+	Plain       bool
+	PromptCount int
 
 	console           strings.Builder
 	currentLineLength int
@@ -63,8 +64,8 @@ func (e *Engine) canWriteRightBlock(rprompt bool) bool {
 func (e *Engine) PrintPrimary() string {
 	// cache a pointer to the color cycle
 	cycle = &e.Config.Cycle
-	for _, block := range e.Config.Blocks {
-		e.renderBlock(block)
+	for i, block := range e.Config.Blocks {
+		e.renderBlock(block, (i == 0 && e.PromptCount == 1))
 	}
 	if len(e.Config.ConsoleTitleTemplate) > 0 {
 		title := e.getTitleTemplateText()
@@ -147,10 +148,11 @@ func (e *Engine) getTitleTemplateText() string {
 	return ""
 }
 
-func (e *Engine) renderBlock(block *Block) {
+func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 	defer func() {
 		e.write(e.Writer.ClearAfter())
 	}()
+
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
 	if e.Env.Shell() == shell.BASH && block.Type == RPrompt {
@@ -158,17 +160,29 @@ func (e *Engine) renderBlock(block *Block) {
 	} else {
 		block.Init(e.Env, e.Writer)
 	}
+
 	if !block.Enabled() {
 		return
 	}
-	if block.Newline {
+
+	// do not print a newline to avoid a leading space
+	// when we're printin the first primary prompt in
+	// the shell
+	if block.Newline && !cancelNewline {
 		e.newline()
 	}
+
 	switch block.Type {
-	// This is deprecated but leave if to not break current configs
+	// This is deprecated but we leave it in to not break configs
 	// It is encouraged to used "newline": true on block level
 	// rather than the standalone the linebreak block
 	case LineBreak:
+		// do not print a newline to avoid a leading space
+		// when we're printin the first primary prompt in
+		// the shell
+		if !cancelNewline {
+			return
+		}
 		e.newline()
 	case Prompt:
 		if block.VerticalOffset != 0 {

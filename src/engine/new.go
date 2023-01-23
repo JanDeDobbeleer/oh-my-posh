@@ -25,10 +25,11 @@ func New(flags *platform.Flags) *Engine {
 	ansiWriter.Init(env.Shell())
 
 	eng := &Engine{
-		Config: cfg,
-		Env:    env,
-		Writer: ansiWriter,
-		Plain:  flags.Plain,
+		Config:      cfg,
+		Env:         env,
+		Writer:      ansiWriter,
+		Plain:       flags.Plain,
+		PromptCount: env.CmdFlags.PromptCount,
 	}
 
 	return eng

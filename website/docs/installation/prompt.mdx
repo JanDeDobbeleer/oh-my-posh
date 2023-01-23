@@ -41,6 +41,9 @@ When the above command gives an error, make sure to create the profile first.
 ```powershell
 New-Item -Path $PROFILE -Type File -Force
 ```
+
+In this scenario, it can also be that PowerShell blocks running local scripts. To solve that, set PowerShell
+to only require remote scripts to be signed using `Set-ExecutionPolicy RemoteSigned`, or [sign the profile][sign].
 :::
 
 Then add the following line.
@@ -189,3 +192,4 @@ Once added, restart Nushell for the changes to take effect.
 [clink]: https://chrisant996.github.io/clink/
 [iterm2]: https://www.iterm2.com/
 [homebrew-problem]: https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2644
+[sign]: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing?view=powershell-7.3#methods-of-signing-scripts

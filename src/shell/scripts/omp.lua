@@ -18,6 +18,12 @@ local function get_priority_number(name, default)
 	end
 end
 
+-- Environment variables
+
+local function environment_onbeginedit()
+    os.setenv("POSH_CURSOR_LINE", console.getnumlines())
+end
+
 -- Local state
 
 local endedit_time = 0
@@ -245,6 +251,7 @@ end
 local function builtin_modules_onbeginedit()
     cache_onbeginedit()
     duration_onbeginedit()
+    environment_onbeginedit()
 end
 
 local function builtin_modules_onendedit(input)

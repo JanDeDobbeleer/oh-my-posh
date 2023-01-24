@@ -64,8 +64,9 @@ func (e *Engine) canWriteRightBlock(rprompt bool) bool {
 func (e *Engine) PrintPrimary() string {
 	// cache a pointer to the color cycle
 	cycle = &e.Config.Cycle
+	firstLine := e.Env.Getenv("POSH_CURSOR_LINE") == "1"
 	for i, block := range e.Config.Blocks {
-		e.renderBlock(block, (i == 0 && e.PromptCount == 1))
+		e.renderBlock(block, (i == 0 && (e.PromptCount == 1 || firstLine)))
 	}
 	if len(e.Config.ConsoleTitleTemplate) > 0 {
 		title := e.getTitleTemplateText()

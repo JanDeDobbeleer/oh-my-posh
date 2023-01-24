@@ -353,6 +353,11 @@ Example:
         if (-not $terminalWidth) {
             $terminalWidth = 0
         }
+
+        # set the cursor positions, they are zero based so align with other platforms
+        $env:POSH_CURSOR_LINE = $Host.UI.RawUI.CursorPosition.Y + 1
+        $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1
+
         $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", $script:PromptType, "--error=$script:ErrorCode", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName"))
         # make sure PSReadLine knows if we have a multiline prompt
         Set-PSReadLineOption -ExtraPromptLineCount (($standardOut | Measure-Object -Line).Lines - 1)

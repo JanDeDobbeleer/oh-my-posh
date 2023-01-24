@@ -86,7 +86,9 @@ Tells the engine what to do with the block. There are two options:
 
 ### Newline
 
-Start the block on a new line - defaults to `false`.
+Start the block on a new line - defaults to `false`. For `zsh`, `bash`, `pwsh` this will not print a newline that's
+defined on the first block when the prompt is on the first line (when using clear), or when the shell session starts
+(1st prompt).
 
 ### Alignment
 

@@ -119,12 +119,14 @@ use them.
 
 <!-- markdownlint-disable MD013 -->
 
-| Template                                       | Description                                                                                                        |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `{{ url .UpstreamIcon .UpstreamURL }}`         | Create a hyperlink to a website to open your default browser (needs terminal [support][terminal-list-hyperlinks]). |
-| `{{ path .Path .Location }}`                   | Create a link to a folder to open your file explorer (needs terminal [support][terminal-list-hyperlinks]).         |
-| `{{ secondsRound 3600 }}`                      | Round seconds to a time indication. In this case the output is `1h`.                                               |
-| `{{ if glob "*.go" }}OK{{ else }}NOK{{ end }}` | Exposes [filepath.Glob][glob] as a boolean template function.                                                      |
+| Template                                                       | Description                                                                                                        |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `{{ url .UpstreamIcon .UpstreamURL }}`                         | Create a hyperlink to a website to open your default browser (needs terminal [support][terminal-list-hyperlinks]). |
+| `{{ path .Path .Location }}`                                   | Create a link to a folder to open your file explorer (needs terminal [support][terminal-list-hyperlinks]).         |
+| `{{ secondsRound 3600 }}`                                      | Round seconds to a time indication. In this case the output is `1h`.                                               |
+| `{{ if glob "*.go" }}OK{{ else }}NOK{{ end }}`                 | Exposes [filepath.Glob][glob] as a boolean template function.                                                      |
+| `{{ if matchP "*.Repo" .Path }}Repo{{ else }}No Repo{{ end }}` | Exposes [regexp.MatchString][regexpms] as a boolean template function.                                             |
+| `{{ replaceP "c.t" "cut code cat" "dog" }}`                    | Exposes [regexp.ReplaceAllString][regexpra] as a string template function.                                         |
 
 <!-- markdownlint-enable MD013 -->
 
@@ -213,3 +215,5 @@ This can be used in templates and icons/text inside your config.
 [git]: /docs/segments/git
 [exit]: /docs/segments/exit
 [templates]: /docs/configuration/segment#templates
+[regexpms]: https://pkg.go.dev/regexp#Regexp.MatchString
+[regexpra]: https://pkg.go.dev/regexp#Regexp.ReplaceAllString

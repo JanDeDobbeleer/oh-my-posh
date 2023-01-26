@@ -20,6 +20,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:ShellName = "::SHELL::"
     $script:PSVersion = $PSVersionTable.PSVersion.ToString()
     $script:TransientPrompt = $false
+    $script:ToolTipCommand = ""
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:POSH_PID = $PID
     $env:CONDA_PROMPT_MODIFIER = $false
@@ -122,6 +123,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $cleanPSWD = Get-CleanPSWD
             $command = $null
             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
+            $command = $command.Trim().Split(" ", 2) | Select-Object -First 1
+            if ($command -eq $script:ToolTipCommand) {
+                return
+            }
+            $script:ToolTipCommand = $command
             $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--error=$script:ErrorCode", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
             Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position

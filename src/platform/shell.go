@@ -777,6 +777,10 @@ func (env *Shell) DirMatchesOneOf(dir string, regexes []string) (match bool) {
 }
 
 func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
+	if len(regexes) == 0 {
+		return false
+	}
+
 	if goos == WINDOWS {
 		dir = strings.ReplaceAll(dir, "\\", "/")
 		home = strings.ReplaceAll(home, "\\", "/")

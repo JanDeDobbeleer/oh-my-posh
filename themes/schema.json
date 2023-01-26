@@ -82,7 +82,12 @@
       "type": "string",
       "title": "Display Mode",
       "description": "Determines whether the segment is displayed always or only if a file matching the extensions are present in the current folder",
-      "enum": ["always", "files", "environment", "context"],
+      "enum": [
+        "always",
+        "files",
+        "environment",
+        "context"
+      ],
       "default": "context"
     },
     "missing_command_text": {
@@ -134,7 +139,11 @@
             }
           },
           "then": {
-            "required": ["type", "alignment", "segments"],
+            "required": [
+              "type",
+              "alignment",
+              "segments"
+            ],
             "title": "Prompt definition, contains 1 or more segments to render"
           }
         },
@@ -147,7 +156,10 @@
             }
           },
           "then": {
-            "required": ["type", "segments"],
+            "required": [
+              "type",
+              "segments"
+            ],
             "title": "RPrompt definition, contains 1 or more segments to render to the right of the cursor"
           }
         },
@@ -168,7 +180,10 @@
                 "type": "string",
                 "title": "Block overflow",
                 "description": "https://ohmyposh.dev/docs/configuration/block#overflow",
-                "enum": ["break", "hide"],
+                "enum": [
+                  "break",
+                  "hide"
+                ],
                 "default": ""
               }
             }
@@ -180,14 +195,20 @@
           "type": "string",
           "title": "Block type",
           "description": "https://ohmyposh.dev/docs/configuration/block#type",
-          "enum": ["prompt", "rprompt"],
+          "enum": [
+            "prompt",
+            "rprompt"
+          ],
           "default": "prompt"
         },
         "alignment": {
           "type": "string",
           "title": "Block alignment",
           "description": "https://ohmyposh.dev/docs/configuration/block#alignment",
-          "enum": ["left", "right"],
+          "enum": [
+            "left",
+            "right"
+          ],
           "default": "left"
         },
         "newline": {
@@ -212,7 +233,10 @@
       "title": "A segment",
       "description": "https://ohmyposh.dev/docs/configuration/segment",
       "default": {},
-      "required": ["type", "style"],
+      "required": [
+        "type",
+        "style"
+      ],
       "properties": {
         "type": {
           "type": "string",
@@ -288,7 +312,12 @@
           "description": "https://ohmyposh.dev/docs/configuration/segment#style",
           "anyOf": [
             {
-              "enum": ["plain", "powerline", "diamond", "accordion"]
+              "enum": [
+                "plain",
+                "powerline",
+                "diamond",
+                "accordion"
+              ]
             },
             {
               "type": "string"
@@ -323,20 +352,23 @@
           "type": "string",
           "title": "Templates Logic",
           "description": "https://ohmyposh.dev/docs/configuration/segment#templates",
-          "enum": ["first_match", "join"]
+          "enum": [
+            "first_match",
+            "join"
+          ]
         },
-		"max_cols": {
-			"type": "integer",
-			"title": "if the terminal width exceeds this value, the segment will be hidden",
-			"description": "https://ohmyposh.dev/docs/configuration/segment#max_cols",
-			"default": 0
-		},
-		"min_cols": {
-			"type": "integer",
-			"title": "if the terminal width is inferior than this value, the segment will be hidden",
-			"description": "https://ohmyposh.dev/docs/configuration/segment#min_cols",
-			"default": 0
-		},
+        "max_cols": {
+          "type": "integer",
+          "title": "if the terminal width exceeds this value, the segment will be hidden",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#max_cols",
+          "default": 0
+        },
+        "min_cols": {
+          "type": "integer",
+          "title": "if the terminal width is inferior than this value, the segment will be hidden",
+          "description": "https://ohmyposh.dev/docs/configuration/segment#min_cols",
+          "default": 0
+        },
         "properties": {
           "type": "object",
           "title": "Segment Properties, used to change behavior/displaying",
@@ -503,7 +535,11 @@
                     "title": "Source",
                     "description": "https://ohmyposh.dev/docs/az#properties",
                     "default": "first_match",
-                    "enum": ["first_match", "cli", "pwsh"]
+                    "enum": [
+                      "first_match",
+                      "cli",
+                      "pwsh"
+                    ]
                   }
                 }
               }
@@ -945,6 +981,15 @@
                     "title": "Ignore submodules",
                     "description": "Ignore changes to submodules when looking for changes",
                     "default": {}
+                  },
+                  "ignore_status": {
+                    "type": "array",
+                    "title": "Ignore fetching status in these repo's",
+                    "description": "Ignore fetching status for certain repo's, uses the same logic as the exclude_folders property",
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -2016,7 +2061,11 @@
                     "title": "units",
                     "description": "Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit). Default is standard",
                     "default": "standard",
-                    "enum": ["standard", "metric", "imperial"]
+                    "enum": [
+                      "standard",
+                      "metric",
+                      "imperial"
+                    ]
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
@@ -2631,7 +2680,11 @@
                     "type": "string",
                     "title": "Use Stack GHC",
                     "description": "Get the GHC version used by Stack. Will decrease performance. Boolean indicating whether stack ghc was used available in template as .StackGhc",
-                    "enum": ["always", "package", "never"],
+                    "enum": [
+                      "always",
+                      "package",
+                      "never"
+                    ],
                     "default": "never"
                   }
                 }
@@ -2818,7 +2871,10 @@
                     "type": "string",
                     "title": "Preferred Executable",
                     "description": "The preferred executable to use when fetching the version.",
-                    "enum": ["lua", "luajit"],
+                    "enum": [
+                      "lua",
+                      "luajit"
+                    ],
                     "default": "lua"
                   }
                 }
@@ -2941,7 +2997,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "gitversion" }
+              "type": {
+                "const": "gitversion"
+              }
             }
           },
           "then": {
@@ -2952,7 +3010,9 @@
         {
           "if": {
             "properties": {
-              "type": { "const": "mercurial" }
+              "type": {
+                "const": "mercurial"
+              }
             }
           },
           "then": {
@@ -2975,7 +3035,9 @@
       ]
     }
   },
-  "required": ["blocks"],
+  "required": [
+    "blocks"
+  ],
   "properties": {
     "final_space": {
       "type": "boolean",
@@ -3027,7 +3089,9 @@
             }
           }
         },
-        "required": ["tips"]
+        "required": [
+          "tips"
+        ]
       }
     },
     "transient_prompt": {

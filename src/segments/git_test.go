@@ -14,6 +14,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -52,6 +53,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.On("PathSeparator").Return("/")
 	env.On("Home").Return("/Users/posh")
 	env.On("Getenv", poshGitEnv).Return("")
+	env.On("DirMatchesOneOf", mock2.Anything, mock2.Anything).Return(false)
 	g := &Git{
 		scm: scm{
 			env:   env,

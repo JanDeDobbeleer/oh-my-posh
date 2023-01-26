@@ -163,6 +163,12 @@ func (t *TemplateCache) AddSegmentData(key string, value interface{}) {
 	t.Unlock()
 }
 
+func (t *TemplateCache) RemoveSegmentData(key string) {
+	t.Lock()
+	delete(t.Segments, key)
+	t.Unlock()
+}
+
 type Environment interface {
 	Getenv(key string) string
 	Pwd() string

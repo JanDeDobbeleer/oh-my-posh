@@ -47,6 +47,7 @@ type Segment struct {
 	writer     SegmentWriter
 	text       string
 	styleCache SegmentStyle
+	name       string
 }
 
 // SegmentTiming holds the timing context for a segment
@@ -427,6 +428,18 @@ func (segment *Segment) string() string {
 	return text
 }
 
+func (segment *Segment) Name() string {
+	if len(segment.name) != 0 {
+		return segment.name
+	}
+	name := segment.Alias
+	if len(name) == 0 {
+		name = c.Title(language.English).String(string(segment.Type))
+	}
+	segment.name = name
+	return name
+}
+
 func (segment *Segment) SetEnabled(env platform.Environment) {
 	defer func() {
 		err := recover()
@@ -456,11 +469,7 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 	}
 	if segment.writer.Enabled() {
 		segment.Enabled = true
-		name := segment.Alias
-		if len(name) == 0 {
-			name = c.Title(language.English).String(string(segment.Type))
-		}
-		env.TemplateCache().AddSegmentData(name, segment.writer)
+		env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
 	}
 }
 
@@ -470,6 +479,10 @@ func (segment *Segment) SetText() {
 	}
 	segment.text = segment.string()
 	segment.Enabled = len(strings.ReplaceAll(segment.text, " ", "")) > 0
+	if !segment.Enabled {
+		segment.env.TemplateCache().RemoveSegmentData(segment.Name())
+	}
+
 	if segment.Interactive {
 		return
 	}

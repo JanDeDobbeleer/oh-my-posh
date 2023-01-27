@@ -223,6 +223,20 @@ setopt appendhistory
 
 You should update fish to v3.4.0 or higher. Fish supports `$(...)` and `"$(...)"` since v3.4.0, as described in its [changelog][fish-changelog].
 
+### After updating my Nerd Font to a newer version, the prompt displays unknown characters
+
+Nerd Fonts moved the icons to a different location in the font for v3.
+This can cause the prompt to display unknown characters. There's a built-in migration in Oh My Posh to fix this.
+
+To migrate, run the following command:
+
+```bash
+oh-my-posh config migrate glyphs --write
+```
+
+This will update your configuration file to use the new glyph locations. Do know they might look different, as they also
+updated the icons themselves. A backup of the current config can be found in the same location with a `.bak` extension.
+
 [exclusion]: https://support.microsoft.com/en-us/windows/add-an-exclusion-to-windows-security-811816c0-4dfd-af4a-47e4-c301afe13b26
 [arch-terminfo]: https://wiki.archlinux.org/title/Bash/Prompt_customization#Terminfo_escape_sequences
 [ps-ansi-docs]: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_ansi_terminals?view=powershell-7.2

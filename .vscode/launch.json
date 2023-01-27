@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Prompt",
+      "name": "Primary",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "name": "Debug Tooltip",
+      "name": "Tooltip",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -30,7 +30,7 @@
       ]
     },
     {
-      "name": "Debug Transient",
+      "name": "Transient",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -54,7 +54,7 @@
       ]
     },
     {
-      "name": "Print debug",
+      "name": "Debug",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -65,7 +65,7 @@
       ]
     },
     {
-      "name": "Print init",
+      "name": "Init",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -98,6 +98,18 @@
       "args": [
         "config",
         "migrate"
+      ]
+    },
+    {
+      "name": "Migrate glyphs",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "config",
+        "migrate",
+        "glyphs"
       ]
     },
     {

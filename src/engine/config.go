@@ -53,7 +53,8 @@ type Config struct {
 	// Deprecated
 	OSC99 bool `json:"osc99,omitempty"`
 
-	Output string `json:"-"`
+	Output        string `json:"-"`
+	MigrateGlyphs bool   `json:"-"`
 
 	format string
 	origin string
@@ -177,7 +178,7 @@ func (cfg *Config) Export(format string) string {
 		_ = jsonEncoder.Encode(cfg)
 		prefix := "{\n  \"$schema\": \"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\","
 		data := strings.Replace(result.String(), "{", prefix, 1)
-		return escapeGlyphs(data)
+		return escapeGlyphs(data, cfg.MigrateGlyphs)
 	}
 
 	_, _ = config.DumpTo(&result, cfg.format)
@@ -187,14 +188,14 @@ func (cfg *Config) Export(format string) string {
 		return prefix + result.String()
 	case TOML:
 		prefix := "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-		return prefix + escapeGlyphs(result.String())
+		return prefix + escapeGlyphs(result.String(), cfg.MigrateGlyphs)
 	default:
 		return result.String()
 	}
 }
 
 func (cfg *Config) BackupAndMigrate(env platform.Environment) {
-	cfg.backup()
+	cfg.Backup()
 	cfg.Migrate(env)
 	cfg.Write(cfg.format)
 }
@@ -216,7 +217,7 @@ func (cfg *Config) Write(format string) {
 	_ = f.Close()
 }
 
-func (cfg *Config) backup() {
+func (cfg *Config) Backup() {
 	dst := cfg.origin + ".bak"
 	source, err := os.Open(cfg.origin)
 	if err != nil {
@@ -234,7 +235,7 @@ func (cfg *Config) backup() {
 	}
 }
 
-func escapeGlyphs(s string) string {
+func escapeGlyphs(s string, migrate bool) string {
 	shouldExclude := func(r rune) bool {
 		if r < 0x1000 { // Basic Multilingual Plane
 			return true
@@ -266,12 +267,23 @@ func escapeGlyphs(s string) string {
 		return false
 	}
 
+	var cp codePoints
+	if migrate {
+		cp = getGlyphCodePoints()
+	}
+
 	var builder strings.Builder
 	for _, r := range s {
 		// exclude regular characters and emojis
 		if shouldExclude(r) {
 			builder.WriteRune(r)
 			continue
+		}
+
+		if migrate {
+			if val, OK := cp[int(r)]; OK {
+				r = rune(val)
+			}
 		}
 
 		if r > 0x10000 {

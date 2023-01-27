@@ -30,11 +30,12 @@ Migrates the ~/myconfig.omp.json config file and prints the result to stdout.
 
 > oh-my-posh config migrate --config ~/myconfig.omp.json --format toml
 
-Migrates the ~/myconfig.omp.json config file to toml and prints the result to stdout.
+Migrates the ~/myconfig.omp.json config file to TOML and prints the result to stdout.
 
 > oh-my-posh config migrate --config ~/myconfig.omp.json --format toml --write
 
-Migrates the ~/myconfig.omp.json config file to toml and writes the result to your config file.
+Migrates the ~/myconfig.omp.json config file to TOML and writes the result to your config file.
+
 A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {

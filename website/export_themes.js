@@ -52,7 +52,7 @@ themeConfigOverrrides.set('powerline.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('pure.omp.json', newThemeConfig(40, 80));
 themeConfigOverrrides.set('quick-term.omp.json', newThemeConfig(15, 0, 'SokLay'))
 themeConfigOverrrides.set('remk.omp.json', newThemeConfig(40, 40));
-themeConfigOverrrides.set('robbyrussel.omp.json', newThemeConfig(40, 40));
+themeConfigOverrrides.set('robbyrussell.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('slim.omp.json', newThemeConfig(10, 80));
 themeConfigOverrrides.set('slimfat.omp.json', newThemeConfig(10, 93));
 themeConfigOverrrides.set('space.omp.json', newThemeConfig(40, 40));

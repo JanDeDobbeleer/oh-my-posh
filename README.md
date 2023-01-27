@@ -56,7 +56,7 @@ a modern and more efficient tool was needed to suit my personal needs.
 
 * [Chris Benti][chrisbenti-psconfig] for providing the first influence to start oh-my-posh
 * [Keith Dahlby][keithdahlby-poshgit] for creating posh-git and making life more enjoyable
-* [Robby Russel][oh-my-zsh] for creating oh-my-zsh, without him this would probably not be here
+* [Robby Russell][oh-my-zsh] for creating oh-my-zsh, without him this would probably not be here
 * [Janne Mareike Koschinski][justjanne] for providing information on how to get certain information
 using Go (and the amazing [README][powerline-go])
 * [Starship][starship] for creating an amazing way to initialize the prompt
@@ -80,7 +80,7 @@ using Go (and the amazing [README][powerline-go])
 [release]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
 [chrisbenti-psconfig]: https://github.com/chrisbenti/PS-Config
 [keithdahlby-poshgit]: https://github.com/dahlbyk/posh-git
-[oh-my-zsh]: https://github.com/robbyrussell/oh-my-zsh
+[oh-my-zsh]: https://github.com/ohmyzsh/ohmyzsh
 [justjanne]: https://github.com/justjanne
 [powerline-go]: https://github.com/justjanne/powerline-go
 [starship]: https://github.com/starship/starship/blob/master/src/init/mod.rs

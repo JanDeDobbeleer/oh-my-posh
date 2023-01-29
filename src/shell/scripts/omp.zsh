@@ -8,6 +8,11 @@ export POSH_PROMPT_COUNT=0
 PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=zsh)"
 
 function _set_posh_cursor_position() {
+  # not supported in Midnight Commander
+  # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3415
+  if [[ -v MC_SID ]];then
+      return
+  fi
   echo -ne "\033[6n"            # ask the terminal for the position
   read -s -d\[ garbage          # discard the first part of the response
   read -s -d R pos              # store the position in bash variable 'pos'

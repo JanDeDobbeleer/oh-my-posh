@@ -31,12 +31,7 @@ Exports the ~/myconfig.omp.json config file and prints the result to stdout.
 
 > oh-my-posh config export --config ~/myconfig.omp.json --format toml
 
-Exports the ~/myconfig.omp.json config file to toml and prints the result to stdout.
-
-> oh-my-posh config export --config ~/myconfig.omp.json --format toml --write
-
-Exports the ~/myconfig.omp.json config file to toml and writes the result to your config file.
-A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
+Exports the ~/myconfig.omp.json config file to toml and prints the result to stdout.`,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &platform.Shell{

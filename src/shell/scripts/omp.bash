@@ -12,7 +12,7 @@ PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=bash --shell-versi
 function _set_posh_cursor_position() {
     # not supported in Midnight Commander
     # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3415
-    if [[ -v MC_SID ]];then
+    if [[ -v MC_SID ]] || [[ $TERM_PROGRAM == "WarpTerminal" ]]; then
         return
     fi
     local pos

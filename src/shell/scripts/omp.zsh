@@ -13,6 +13,7 @@ function _set_posh_cursor_position() {
   if [[ -v MC_SID ]];then
       return
   fi
+  local pos
   echo -ne "\033[6n"            # ask the terminal for the position
   read -s -d\[ garbage          # discard the first part of the response
   read -s -d R pos              # store the position in bash variable 'pos'
@@ -34,7 +35,7 @@ function prompt_ohmyposh_precmd() {
   omp_stack_count=${#dirstack[@]}
   omp_elapsed=-1
   if [ $omp_start_time ]; then
-    omp_now=$(::OMP:: get millis --shell=zsh)
+    local omp_now=$(::OMP:: get millis --shell=zsh)
     omp_elapsed=$(($omp_now-$omp_start_time))
   fi
   count=$((POSH_PROMPT_COUNT+1))
@@ -43,7 +44,6 @@ function prompt_ohmyposh_precmd() {
   _set_posh_cursor_position
   eval "$(::OMP:: print primary --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION")"
   unset omp_start_time
-  unset omp_now
 }
 
 function _install-omp-hooks() {

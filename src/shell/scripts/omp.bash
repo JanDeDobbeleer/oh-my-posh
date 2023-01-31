@@ -15,6 +15,7 @@ function _set_posh_cursor_position() {
     if [[ -v MC_SID ]];then
         return
     fi
+    local pos
     echo -ne "\033[6n"            # ask the terminal for the position
     read -s -d\[ garbage          # discard the first part of the response
     read -s -d R pos              # store the position in bash variable 'pos'

@@ -216,6 +216,7 @@ type Environment interface {
 	TemplateCache() *TemplateCache
 	LoadTemplateCache()
 	SetPromptCount()
+	CursorPosition() (row, col int)
 	Debug(message string)
 	Error(err error)
 	Trace(start time.Time, args ...string)
@@ -829,6 +830,16 @@ func (env *Shell) SetPromptCount() {
 		env.Cache().Set(PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
 	}
 	env.CmdFlags.PromptCount = count
+}
+
+func (env *Shell) CursorPosition() (row, col int) {
+	if number, err := strconv.Atoi(env.Getenv("POSH_CURSOR_LINE")); err == nil {
+		row = number
+	}
+	if number, err := strconv.Atoi(env.Getenv("POSH_CURSOR_COLUMN")); err != nil {
+		col = number
+	}
+	return
 }
 
 func IsPathSeparator(env Environment, c uint8) bool {

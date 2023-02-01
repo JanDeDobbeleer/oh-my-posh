@@ -7,20 +7,6 @@ export POSH_PROMPT_COUNT=0
 # set secondary prompt
 PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=zsh)"
 
-function _set_posh_cursor_position() {
-  # not supported in Midnight Commander
-  # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3415
-  if [[ -v MC_SID ]] || [[ $TERM_PROGRAM == "WarpTerminal" ]]; then
-      return
-  fi
-  local pos
-  echo -ne "\033[6n"            # ask the terminal for the position
-  read -s -d\[ garbage          # discard the first part of the response
-  read -s -d R pos              # store the position in bash variable 'pos'
-  export POSH_CURSOR_LINE=${pos%;*}
-  export POSH_CURSOR_COLUMN=${pos#*;}
-}
-
 # template function for context loading
 function set_poshcontext() {
   return
@@ -41,7 +27,6 @@ function prompt_ohmyposh_precmd() {
   count=$((POSH_PROMPT_COUNT+1))
   export POSH_PROMPT_COUNT=$count
   set_poshcontext
-  _set_posh_cursor_position
   eval "$(::OMP:: print primary --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION")"
   unset omp_start_time
 }

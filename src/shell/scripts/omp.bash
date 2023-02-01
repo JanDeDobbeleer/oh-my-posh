@@ -9,20 +9,6 @@ PS0='${omp_start_time:0:$((omp_start_time="$(_omp_start_timer)",0))}'
 # set secondary prompt
 PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION")"
 
-function _set_posh_cursor_position() {
-    # not supported in Midnight Commander
-    # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3415
-    if [[ -v MC_SID ]] || [[ $TERM_PROGRAM == "WarpTerminal" ]]; then
-        return
-    fi
-    local pos
-    echo -ne "\033[6n"            # ask the terminal for the position
-    read -s -d\[ garbage          # discard the first part of the response
-    read -s -d R pos              # store the position in bash variable 'pos'
-    export POSH_CURSOR_LINE=${pos%;*}
-    export POSH_CURSOR_COLUMN=${pos#*;}
-}
-
 function _omp_start_timer() {
     ::OMP:: get millis
 }
@@ -42,7 +28,6 @@ function _omp_hook() {
         omp_start_time=""
     fi
     set_poshcontext
-    _set_posh_cursor_position
     PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" | tr -d '\0')"
     return $ret
 }

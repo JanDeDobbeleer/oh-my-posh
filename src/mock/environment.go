@@ -268,3 +268,8 @@ func (env *MockedEnvironment) DirIsWritable(path string) bool {
 func (env *MockedEnvironment) SetPromptCount() {
 	_ = env.Called()
 }
+
+func (env *MockedEnvironment) CursorPosition() (int, int) {
+	args := env.Called()
+	return args.Int(0), args.Int(1)
+}

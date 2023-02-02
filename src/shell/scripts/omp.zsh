@@ -7,6 +7,28 @@ export POSH_PROMPT_COUNT=0
 # set secondary prompt
 PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=zsh)"
 
+function _set_posh_cursor_position() {
+  # not supported in Midnight Commander
+  # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3415
+  if [[ -v MC_SID ]]; then
+      return
+  fi
+
+  local oldstty=$(stty -g)
+  stty raw -echo min 0
+
+  local pos
+  echo -en "\033[6n" > /dev/tty
+  read -r -d R pos
+  pos=${pos:2} # strip off the esc-[
+  local parts=(${(s:;:)pos})
+
+  stty $oldstty
+
+  export POSH_CURSOR_LINE=${parts[1]}
+  export POSH_CURSOR_COLUMN=${parts[2]}
+}
+
 # template function for context loading
 function set_poshcontext() {
   return
@@ -27,6 +49,7 @@ function prompt_ohmyposh_precmd() {
   count=$((POSH_PROMPT_COUNT+1))
   export POSH_PROMPT_COUNT=$count
   set_poshcontext
+  _set_posh_cursor_position
   eval "$(::OMP:: print primary --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION")"
   unset omp_start_time
 }

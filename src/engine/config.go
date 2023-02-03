@@ -89,10 +89,9 @@ func (cfg *Config) getPalette() ansi.Palette {
 // LoadConfig returns the default configuration including possible user overrides
 func LoadConfig(env platform.Environment) *Config {
 	cfg := loadConfig(env)
-	cfg.env = env
 	// only migrate automatically when the switch isn't set
 	if !env.Flags().Migrate && cfg.Version < configVersion {
-		cfg.BackupAndMigrate(env)
+		cfg.BackupAndMigrate()
 	}
 	return cfg
 }
@@ -102,12 +101,14 @@ func loadConfig(env platform.Environment) *Config {
 	configFile := env.Flags().Config
 
 	if len(configFile) == 0 {
-		return defaultConfig(false)
+		env.Debug("no config file specified, using default")
+		return defaultConfig(env, false)
 	}
 
 	var cfg Config
 	cfg.origin = configFile
 	cfg.format = strings.TrimPrefix(filepath.Ext(configFile), ".")
+	cfg.env = env
 	if cfg.format == "yml" {
 		cfg.format = YAML
 	}
@@ -126,12 +127,14 @@ func loadConfig(env platform.Environment) *Config {
 
 	err := config.LoadFiles(configFile)
 	if err != nil {
-		return defaultConfig(true)
+		env.Error(err)
+		return defaultConfig(env, true)
 	}
 
 	err = config.BindStruct("", &cfg)
 	if err != nil {
-		return defaultConfig(true)
+		env.Error(err)
+		return defaultConfig(env, true)
 	}
 
 	return &cfg
@@ -194,9 +197,9 @@ func (cfg *Config) Export(format string) string {
 	}
 }
 
-func (cfg *Config) BackupAndMigrate(env platform.Environment) {
+func (cfg *Config) BackupAndMigrate() {
 	cfg.Backup()
-	cfg.Migrate(env)
+	cfg.Migrate()
 	cfg.Write(cfg.format)
 }
 
@@ -301,7 +304,7 @@ func escapeGlyphs(s string, migrate bool) string {
 	return builder.String()
 }
 
-func defaultConfig(warning bool) *Config {
+func defaultConfig(env platform.Environment, warning bool) *Config {
 	exitBackgroundTemplate := "{{ if gt .Code 0 }}p:red{{ end }}"
 	exitTemplate := " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
 	if warning {
@@ -489,5 +492,6 @@ func defaultConfig(warning bool) *Config {
 			},
 		},
 	}
+	cfg.env = env
 	return cfg
 }

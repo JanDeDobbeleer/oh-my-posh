@@ -17,14 +17,14 @@ const (
 	segmentTemplate = properties.Property("template")
 )
 
-func (cfg *Config) Migrate(env platform.Environment) {
+func (cfg *Config) Migrate() {
 	for _, block := range cfg.Blocks {
 		for _, segment := range block.Segments {
-			segment.migrate(env, cfg.Version)
+			segment.migrate(cfg.env, cfg.Version)
 		}
 	}
 	for _, segment := range cfg.Tooltips {
-		segment.migrate(env, cfg.Version)
+		segment.migrate(cfg.env, cfg.Version)
 	}
 	if strings.Contains(cfg.ConsoleTitleTemplate, ".Path") {
 		cfg.ConsoleTitleTemplate = strings.ReplaceAll(cfg.ConsoleTitleTemplate, ".Path", ".PWD")

@@ -70,7 +70,7 @@ See the [PowerShell docs on terminal support][ps-ansi-docs] and [this GitHub com
 ### Windows Terminal: Unexpected space between segments/text
 
 Windows Terminal has some issues with [rendering certain glyphs][wt-glyph]. These issues are on [their backlog][wt-glyphs].
-A temporary workaround is to use an invisible character at the end (`\u2800`).
+A temporary workaround is to use an invisible character at the end (`\u2800`), or a zero width character (`\u200a`) before the icon.
 
 ```json
 {

@@ -50,10 +50,10 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 		if write {
-			cfg.BackupAndMigrate(env)
+			cfg.BackupAndMigrate()
 			return
 		}
-		cfg.Migrate(env)
+		cfg.Migrate()
 		fmt.Print(cfg.Export(format))
 	},
 }

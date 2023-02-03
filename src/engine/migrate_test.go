@@ -427,8 +427,9 @@ func TestMigrateConfig(t *testing.T) {
 	for _, tc := range cases {
 		cfg := &Config{
 			ConsoleTitleTemplate: tc.Template,
+			env:                  &mock.MockedEnvironment{},
 		}
-		cfg.Migrate(&mock.MockedEnvironment{})
+		cfg.Migrate()
 		assert.Equal(t, tc.Expected, cfg.ConsoleTitleTemplate, tc.Case)
 	}
 }

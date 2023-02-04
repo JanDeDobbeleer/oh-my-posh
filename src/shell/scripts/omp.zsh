@@ -10,7 +10,7 @@ PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=zsh)"
 function _set_posh_cursor_position() {
   # not supported in Midnight Commander
   # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3415
-  if [[ -v MC_SID ]]; then
+  if [[ "::CURSOR::" != "true" ]] || [[ -v MC_SID ]]; then
       return
   fi
 
@@ -54,25 +54,10 @@ function prompt_ohmyposh_precmd() {
   unset omp_start_time
 }
 
-function _install-omp-hooks() {
-  for s in "${preexec_functions[@]}"; do
-    if [ "$s" = "prompt_ohmyposh_preexec" ]; then
-      return
-    fi
-  done
-  preexec_functions+=(prompt_ohmyposh_preexec)
-
-  for s in "${precmd_functions[@]}"; do
-    if [ "$s" = "prompt_ohmyposh_precmd" ]; then
-      return
-    fi
-  done
-  precmd_functions+=(prompt_ohmyposh_precmd)
-}
-
-if [ "$TERM" != "linux" ]; then
-  _install-omp-hooks
-fi
+# add hook functions
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd prompt_ohmyposh_precmd
+add-zsh-hook preexec prompt_ohmyposh_preexec
 
 # perform cleanup so a new initialization in current session works
 if [[ "$(zle -lL self-insert)" = *"_posh-tooltip"* ]]; then

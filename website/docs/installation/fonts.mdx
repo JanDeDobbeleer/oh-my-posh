@@ -4,6 +4,9 @@ title: Fonts
 sidebar_label: 🔤 Fonts
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 ### Nerd Fonts
 
 Oh My Posh was designed to use [Nerd Fonts][nerdfonts]. Nerd Fonts are popular fonts that are patched to include icons.
@@ -12,6 +15,15 @@ We recommend [Meslo LGM NF][meslo], but any Nerd Font should be compatible with 
 To see the icons displayed in Oh My Posh, **install** a [Nerd Font][nerdfonts], and **configure** your terminal to use it.
 
 #### Installation
+
+<Tabs
+    defaultValue="oh-my-posh"
+    values={[
+        { label: 'Oh My Posh', value: 'oh-my-posh' },
+        { label: 'homebrew', value: 'homebrew' }
+    ]
+}>
+<TabItem value="oh-my-posh">
 
 Oh My Posh has a CLI to help you select and install a [Nerd Font][nerdfonts] (beta):
 
@@ -22,6 +34,22 @@ This command needs to be executed as admin. The fonts are installed system wide.
 ```bash
 oh-my-posh font install
 ```
+
+</TabItem>
+<TabItem value="homebrew">
+
+If you're using Homebrew, you can tap the `homebrew-cask-fonts` repository and install Nerd Fonts from there instead:
+
+```bash
+brew tap homebrew/cask-fonts                     # You only need to do this once!
+brew search nerd-font                            # Search for font packages
+
+# EXAMPLE: Install the NF version of Fira Code
+brew install --cask font-fira-code-nerd-font
+```
+
+</TabItem>
+</Tabs>
 
 #### Windows Terminal
 
@@ -43,7 +71,6 @@ by modifying the Windows Terminal settings (default shortcut: `CTRL + SHIFT + ,`
     }
 }
 ```
-
 
 #### VS Code
 

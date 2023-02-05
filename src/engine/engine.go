@@ -67,7 +67,7 @@ func (e *Engine) PrintPrimary() string {
 		var cancelNewline bool
 		if i == 0 {
 			row, _ := e.Env.CursorPosition()
-			cancelNewline = e.Env.Flags().PromptCount == 1 || row == 1
+			cancelNewline = e.Env.Flags().Cleared || e.Env.Flags().PromptCount == 1 || row == 1
 		}
 		e.renderBlock(block, cancelNewline)
 	}

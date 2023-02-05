@@ -36,7 +36,12 @@ function fish_prompt
       set --global --export omp_last_status_generation $status_generation
     end
     set_poshcontext
-    ::OMP:: print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
+    # validate if the user cleared the screen
+    set --local omp_cleared false
+    if test (history | head -1) = "clear"
+      set omp_cleared true
+    end
+    ::OMP:: print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared
 end
 
 function fish_right_prompt

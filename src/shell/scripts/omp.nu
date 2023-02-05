@@ -18,7 +18,11 @@ export-env {
         # See https://github.com/nushell/nushell/discussions/6402#discussioncomment-3466687.
         let cmd_duration = if $env.CMD_DURATION_MS == "0823" { 0 } else { $env.CMD_DURATION_MS }
 
+        # hack to set the cursor line to 1 when the user clears the screen
+        # this obviously isn't bulletproof, but it's a start
+        let clear = (history | last 1 | get 0.command) == "clear"
+
         let width = ((term size).columns | into string)
-        ^::OMP:: print primary $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.NU_VERSION)" $"--execution-time=($cmd_duration)" $"--error=($env.LAST_EXIT_CODE)" $"--terminal-width=($width)"
+        ^::OMP:: print primary $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.NU_VERSION)" $"--execution-time=($cmd_duration)" $"--error=($env.LAST_EXIT_CODE)" $"--terminal-width=($width)" $"--cleared=($clear)"
     }
 }

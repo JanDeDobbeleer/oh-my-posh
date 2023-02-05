@@ -6,12 +6,25 @@ sidebar_label: iTerm
 
 ## What
 
-Inserts the iTerm2 shell integration prompt mark for zsh, bash, and fish.
+Inserts the iTerm2 shell integration prompt mark for zsh, and bash.
 For more information, read the [shell integration page][int-page] on
 the developer's website.
 
 :::info
-You will need to set env var `ITERM2_SQUELCH_MARK = 1` prior to initiating Oh My Posh.
+You will need to add `export ITERM2_SQUELCH_MARK=1` before the shell integration script is sourced.
+:::
+
+:::info Fish shell
+For fish, you can make use of Oh My Posh's `set_poshcontext` function to set the prompt mark. Add the
+following line after initialising Oh My Posh:
+
+```fish
+function set_poshcontext
+  iterm2_prompt_mark
+end
+```
+
+You do not need to add this segment.
 :::
 
 ## Sample Configuration

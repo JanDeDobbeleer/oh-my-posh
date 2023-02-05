@@ -66,6 +66,7 @@ type Flags struct {
 	Plain         bool
 	Primary       bool
 	PromptCount   int
+	Cleared       bool
 }
 
 type CommandError struct {

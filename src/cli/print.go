@@ -17,6 +17,7 @@ var (
 	stackCount    int
 	terminalWidth int
 	eval          bool
+	cleared       bool
 
 	command      string
 	shellVersion string
@@ -58,6 +59,7 @@ var printCmd = &cobra.Command{
 			ShellVersion:  shellVersion,
 			Plain:         plain,
 			Primary:       args[0] == "primary",
+			Cleared:       cleared,
 		}
 
 		eng := engine.New(flags)
@@ -97,6 +99,7 @@ func init() { //nolint:gochecknoinits
 	printCmd.Flags().IntVarP(&terminalWidth, "terminal-width", "w", 0, "width of the terminal")
 	printCmd.Flags().StringVar(&command, "command", "", "tooltip command")
 	printCmd.Flags().BoolVarP(&plain, "plain", "p", false, "plain text output (no ANSI)")
+	printCmd.Flags().BoolVar(&cleared, "cleared", false, "do we have a clear terminal or not")
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
 	RootCmd.AddCommand(printCmd)
 }

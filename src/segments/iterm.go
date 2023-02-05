@@ -5,6 +5,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
 type ITerm struct {
@@ -21,6 +22,7 @@ func (i *ITerm) Template() string {
 func (i *ITerm) Enabled() bool {
 	promptMark, err := i.getResult()
 	if err != nil {
+		i.env.Error(err)
 		return false
 	}
 	i.PromptMark = promptMark
@@ -35,19 +37,17 @@ func (i *ITerm) getResult() (string, error) {
 		return "", errors.New("Only works with iTerm")
 	}
 
-	// Check to ensure the user has squelched the default mark
+	// Check to ensure the user has squelched the default mark for BASH and ZSH
 	if i.env.Getenv("ITERM2_SQUELCH_MARK") != "1" {
-		return "", errors.New("iTerm default mark enabled (set ITERM2_SQUELCH_MARK=1)")
+		return "", errors.New("iTerm default mark enabled (export ITERM2_SQUELCH_MARK=1)")
 	}
 
 	// Now, set the mark string based on shell (or error out)
 	switch i.env.Shell() {
-	case "zsh":
+	case shell.ZSH:
 		response = `%{$(iterm2_prompt_mark)%}`
-	case "bash":
+	case shell.BASH:
 		response = `\[$(iterm2_prompt_mark)\]`
-	case "fish":
-		response = `iterm2_prompt_mark`
 	default:
 		return "", errors.New("Shell isn't compatible with iTerm Shell Integration")
 	}

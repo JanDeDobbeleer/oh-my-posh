@@ -153,10 +153,6 @@ func (e *Engine) getTitleTemplateText() string {
 }
 
 func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
-	defer func() {
-		e.write(e.Writer.ClearAfter())
-	}()
-
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
 	if e.Env.Shell() == shell.BASH && block.Type == RPrompt {
@@ -374,7 +370,6 @@ func (e *Engine) PrintTooltip(tip string) string {
 			return ""
 		}
 		text, length := block.RenderSegments()
-		e.write(e.Writer.ClearAfter())
 		e.write(e.Writer.CarriageForward())
 		e.write(e.Writer.GetCursorForRightWrite(length, 0))
 		e.write(text)

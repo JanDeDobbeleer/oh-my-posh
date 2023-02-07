@@ -232,13 +232,6 @@ func (w *Writer) ConsolePwd(pwdType, userName, hostName, pwd string) string {
 	}
 }
 
-func (w *Writer) ClearAfter() string {
-	if w.Plain {
-		return ""
-	}
-	return w.clearLine + w.clearBelow
-}
-
 func (w *Writer) FormatTitle(title string) string {
 	title = w.trimAnsi(title)
 	if w.Plain {

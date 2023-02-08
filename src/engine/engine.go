@@ -153,6 +153,15 @@ func (e *Engine) getTitleTemplateText() string {
 }
 
 func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
+	defer func() {
+		// when in PowerShell, we need to clear the line after the prompt
+		// to avoid the background being printed on the next line
+		// when at the end of the buffer.
+		// See https://github.com/JanDeDobbeleer/oh-my-posh/issues/65
+		if e.Env.Shell() == shell.PWSH || e.Env.Shell() == shell.PWSH5 {
+			e.write(e.Writer.ClearAfter())
+		}
+	}()
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
 	if e.Env.Shell() == shell.BASH && block.Type == RPrompt {

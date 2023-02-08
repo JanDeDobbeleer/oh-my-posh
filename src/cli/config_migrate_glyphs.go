@@ -40,21 +40,28 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 				Config: config,
 			},
 		}
+
 		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
+
 		cfg.MigrateGlyphs = true
+		if len(format) == 0 {
+			format = cfg.Format
+		}
+
 		if write {
 			cfg.Backup()
 			cfg.Write(format)
 			return
 		}
+
 		fmt.Print(cfg.Export(format))
 	},
 }
 
 func init() { //nolint:gochecknoinits
 	migrateGlyphsCmd.Flags().BoolVarP(&write, "write", "w", false, "write the migrated config back to the config file")
-	migrateGlyphsCmd.Flags().StringVarP(&format, "format", "f", "json", "the config format to migrate to")
+	migrateGlyphsCmd.Flags().StringVarP(&format, "format", "f", "", "the config format to migrate to")
 	migrateCmd.AddCommand(migrateGlyphsCmd)
 }

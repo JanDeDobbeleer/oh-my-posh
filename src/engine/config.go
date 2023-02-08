@@ -55,8 +55,8 @@ type Config struct {
 
 	Output        string `json:"-"`
 	MigrateGlyphs bool   `json:"-"`
+	Format        string `json:"-"`
 
-	format string
 	origin string
 	// eval    bool
 	updated bool
@@ -107,10 +107,10 @@ func loadConfig(env platform.Environment) *Config {
 
 	var cfg Config
 	cfg.origin = configFile
-	cfg.format = strings.TrimPrefix(filepath.Ext(configFile), ".")
+	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
 	cfg.env = env
-	if cfg.format == "yml" {
-		cfg.format = YAML
+	if cfg.Format == "yml" {
+		cfg.Format = YAML
 	}
 
 	config.AddDriver(yaml.Driver)
@@ -166,7 +166,7 @@ func (cfg *Config) Export(format string) string {
 	cfg.sync()
 
 	if len(format) != 0 {
-		cfg.format = format
+		cfg.Format = format
 	}
 
 	config.AddDriver(yaml.Driver)
@@ -174,7 +174,7 @@ func (cfg *Config) Export(format string) string {
 
 	var result bytes.Buffer
 
-	if cfg.format == JSON {
+	if cfg.Format == JSON {
 		jsonEncoder := json2.NewEncoder(&result)
 		jsonEncoder.SetEscapeHTML(false)
 		jsonEncoder.SetIndent("", "  ")
@@ -184,23 +184,21 @@ func (cfg *Config) Export(format string) string {
 		return escapeGlyphs(data, cfg.MigrateGlyphs)
 	}
 
-	_, _ = config.DumpTo(&result, cfg.format)
-	switch cfg.format {
+	_, _ = config.DumpTo(&result, cfg.Format)
+	var prefix string
+	switch cfg.Format {
 	case YAML:
-		prefix := "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-		return prefix + result.String()
+		prefix = "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 	case TOML:
-		prefix := "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-		return prefix + escapeGlyphs(result.String(), cfg.MigrateGlyphs)
-	default:
-		return result.String()
+		prefix = "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 	}
+	return prefix + escapeGlyphs(result.String(), cfg.MigrateGlyphs)
 }
 
 func (cfg *Config) BackupAndMigrate() {
 	cfg.Backup()
 	cfg.Migrate()
-	cfg.Write(cfg.format)
+	cfg.Write(cfg.Format)
 }
 
 func (cfg *Config) Write(format string) {

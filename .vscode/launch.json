@@ -109,8 +109,7 @@
       "args": [
         "config",
         "migrate",
-        "glyphs",
-        "--config=/Users/jan/.posh.omp.yaml"
+        "glyphs"
       ]
     },
     {

@@ -1538,6 +1538,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "CodexLink",
+      "name": "Janrey Licas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5953927?v=4",
+      "profile": "https://github.com/CodexLink",
+      "contributions": [
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

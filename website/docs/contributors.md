@@ -227,6 +227,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://blog.aelterman.com"><img src="https://avatars.githubusercontent.com/u/17446043?v=4?s=100" width="100px;" alt="Sven Aelterman"/><br /><sub><b>Sven Aelterman</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=SvenAelterman" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/CodexLink"><img src="https://avatars.githubusercontent.com/u/5953927?v=4?s=100" width="100px;" alt="Janrey Licas"/><br /><sub><b>Janrey Licas</b></sub></a><br /><a href="#design-CodexLink" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=CodexLink" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/padilo"><img src="https://avatars.githubusercontent.com/u/783959?v=4?s=100" width="100px;" alt="Pablo Díaz-López"/><br /><sub><b>Pablo Díaz-López</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=padilo" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

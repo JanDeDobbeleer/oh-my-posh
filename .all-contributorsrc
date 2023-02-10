@@ -1548,6 +1548,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "padilo",
+      "name": "Pablo Díaz-López",
+      "avatar_url": "https://avatars.githubusercontent.com/u/783959?v=4",
+      "profile": "https://github.com/padilo",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

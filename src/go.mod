@@ -25,7 +25,7 @@ require (
 	github.com/wayneashleyberry/terminal-dimensions v1.1.0
 	golang.org/x/crypto v0.5.0 // indirect
 	golang.org/x/image v0.3.0
-	golang.org/x/sys v0.4.0
+	golang.org/x/sys v0.5.0
 	golang.org/x/text v0.6.0
 	gopkg.in/ini.v1 v1.67.0
 )
@@ -70,9 +70,12 @@ require (
 	github.com/aymanbagabas/go-osc52 v1.2.1 // indirect
 	github.com/containerd/console v1.0.3 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
+	github.com/fatih/color v1.14.1 // indirect
+	github.com/goccy/go-yaml v1.9.8 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/muesli/ansi v0.0.0-20221106050444-61f0cd9a192a // indirect
@@ -88,8 +91,13 @@ require (
 	github.com/zclconf/go-cty v1.12.1 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/term v0.4.0 // indirect
+	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 )
 
 replace github.com/atotto/clipboard v0.1.4 => github.com/jandedobbeleer/clipboard v0.1.4-1
 
 replace github.com/shirou/gopsutil/v3 v3.22.10 => github.com/jandedobbeleer/gopsutil/v3 v3.22.10-1
+
+replace github.com/gookit/config/v2 v2.1.8 => github.com/jandedobbeleer/config/v2 v2.1.8-1
+
+replace github.com/goccy/go-yaml v1.9.8 => github.com/jandedobbeleer/go-yaml v1.9.8-1

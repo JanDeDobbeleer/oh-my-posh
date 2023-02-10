@@ -102,8 +102,8 @@ github.com/jandedobbeleer/clipboard v0.1.4-1 h1:rJehm5W0a3hvjcxyB3snqLBV4yvMBBc1
 github.com/jandedobbeleer/clipboard v0.1.4-1/go.mod h1:ZY9tmq7sm5xIbd9bOK4onWV4S6X0u6GY7Vn0Yu86PYI=
 github.com/jandedobbeleer/config/v2 v2.1.8-1 h1:b9KGKynC7qaLqOEb0gAV3myDK7eLKOVuYWYsA0DBCWE=
 github.com/jandedobbeleer/config/v2 v2.1.8-1/go.mod h1:6DbECmmKHFCZpO0ed5q53b5+5YCuA3cWMdQH+LDkx4M=
-github.com/jandedobbeleer/go-yaml v1.9.8-1 h1:D4WsRs3VOYGQPapKBLysUsG3TdpSQwq3a392kT/v26k=
-github.com/jandedobbeleer/go-yaml v1.9.8-1/go.mod h1:JubOolP3gh0HpiBc4BLRD4YmjEjHAmIIB2aaXKkTfoE=
+github.com/jandedobbeleer/go-yaml v1.9.8-2 h1:o5oje0zWP/RaP3ebP8OBGGaktHPCd8T/EbCAY28mY3M=
+github.com/jandedobbeleer/go-yaml v1.9.8-2/go.mod h1:JubOolP3gh0HpiBc4BLRD4YmjEjHAmIIB2aaXKkTfoE=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
 github.com/klauspost/compress v1.4.1/go.mod h1:RyIbtBH6LamlWaDj8nUwkbUhJ87Yi3uG0guNDohfE1A=

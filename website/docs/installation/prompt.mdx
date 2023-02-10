@@ -98,7 +98,7 @@ eval "$(oh-my-posh init zsh)"
 As the standard terminal has issues displaying the ANSI characters correctly, you might want to skip loading just for that terminal and instead of the line above, place this in your `~/.zshrc`:
 
 ```bash
-if [ $TERM_PROGRAM != "Apple_Terminal" ]; then
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   eval "$(oh-my-posh init zsh)"
 fi
 ```

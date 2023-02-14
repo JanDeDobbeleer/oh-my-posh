@@ -100,4 +100,4 @@ replace github.com/shirou/gopsutil/v3 v3.22.10 => github.com/jandedobbeleer/gops
 
 replace github.com/gookit/config/v2 v2.1.8 => github.com/jandedobbeleer/config/v2 v2.1.8-1
 
-replace github.com/goccy/go-yaml v1.9.8 => github.com/jandedobbeleer/go-yaml v1.9.8-2
+replace github.com/goccy/go-yaml v1.9.8 => github.com/jandedobbeleer/go-yaml v1.9.8-3

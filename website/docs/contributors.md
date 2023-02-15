@@ -229,6 +229,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/padilo"><img src="https://avatars.githubusercontent.com/u/783959?v=4?s=100" width="100px;" alt="Pablo Díaz-López"/><br /><sub><b>Pablo Díaz-López</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=padilo" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/DarkMagicSource"><img src="https://avatars.githubusercontent.com/u/35950530?v=4?s=100" width="100px;" alt="Caitlyn Williams"/><br /><sub><b>Caitlyn Williams</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=DarkMagicSource" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

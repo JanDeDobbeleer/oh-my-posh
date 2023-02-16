@@ -289,6 +289,7 @@
             "ruby",
             "rust",
             "r",
+            "sapling",
             "session",
             "spotify",
             "shell",
@@ -1820,6 +1821,31 @@
           "then": {
             "title": "Root Segment",
             "description": "https://ohmyposh.dev/docs/segments/root"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "sapling"
+              }
+            }
+          },
+          "then": {
+            "title": "Sapling Segment",
+            "description": "https://ohmyposh.dev/docs/segments/sapling",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "fetch_status": {
+                    "type": "boolean",
+                    "title": "Display Status",
+                    "description": "Display the local changes or not",
+                    "default": true
+                  }
+                }
+              }
+            }
           }
         },
         {

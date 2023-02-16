@@ -200,6 +200,8 @@ const (
 	RUBY SegmentType = "ruby"
 	// RUST writes the cargo version information if cargo.toml is present
 	RUST SegmentType = "rust"
+	// SAPLING represents the sapling segment
+	SAPLING SegmentType = "sapling"
 	// SESSION represents the user info segment
 	SESSION SegmentType = "session"
 	// SHELL writes which shell we're currently in
@@ -291,6 +293,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	ROOT:          func() SegmentWriter { return &segments.Root{} },
 	RUBY:          func() SegmentWriter { return &segments.Ruby{} },
 	RUST:          func() SegmentWriter { return &segments.Rust{} },
+	SAPLING:       func() SegmentWriter { return &segments.Sapling{} },
 	SESSION:       func() SegmentWriter { return &segments.Session{} },
 	SHELL:         func() SegmentWriter { return &segments.Shell{} },
 	SPOTIFY:       func() SegmentWriter { return &segments.Spotify{} },

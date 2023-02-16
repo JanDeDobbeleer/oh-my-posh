@@ -128,7 +128,6 @@ type Git struct {
 	RawUpstreamURL string
 	UpstreamGone   bool
 	IsWorkTree     bool
-	RepoName       string
 	IsBare         bool
 
 	// needed for posh-git support

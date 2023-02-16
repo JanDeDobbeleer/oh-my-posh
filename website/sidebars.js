@@ -103,6 +103,7 @@ module.exports = {
         "segments/root",
         "segments/ruby",
         "segments/rust",
+        "segments/sapling",
         "segments/session",
         "segments/shell",
         "segments/spotify",

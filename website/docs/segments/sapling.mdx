@@ -1,0 +1,85 @@
+---
+id: sapling
+title: Sapling
+sidebar_label: Sapling
+---
+
+## What
+
+Display [sapling][sapling] information when in a sapling repository.
+
+## Sample Configuration
+
+```json
+{
+  "type": "sapling",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#193549",
+  "background": "#4C9642",
+  "background_templates": ["{{ if .Bookmark }}#4C9642{{ end }}"],
+  "properties": {
+    "fetch_status": true
+  }
+}
+```
+
+## Properties
+
+### Fetching information
+
+| Name              | Type      | Description                                                                                                                                                                                                                       |
+| ----------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_status`    | `boolean` | fetch the local changes - defaults to `true`                                                                                                                                                                                      |
+| `native_fallback` | `boolean` | when set to `true` and `sl.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native sapling executable to fetch data. Not all information can be displayed in this case. Defaults to `false` |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Bookmark }}\uf097 {{ .Bookmark }}*{{ else }}\ue729 {{ .ShortHash }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name         | Type            | Description                           |
+| ------------ | --------------- | ------------------------------------- |
+| `.RepoName`  | `string`        | the repo folder name                  |
+| `.Working`   | `SaplingStatus` | changes in the worktree (see below)   |
+| `.Author`    | `string`        | the author of the commit              |
+| `.Hash`      | `string`        | the full hash of the commit           |
+| `.ShortHash` | `string`        | the short hash of the commit          |
+| `.When`      | `string`        | the commit's relative time indication |
+| `.Bookmark`  | `string`        | the commit's bookmark (if any)        |
+| `.Dir`       | `string`        | the repository's root directory       |
+
+### SaplingStatus
+
+| Name         | Type      | Description                                  |
+| ------------ | --------- | -------------------------------------------- |
+| `.Modified`  | `int`     | number of modified changes                   |
+| `.Added`     | `int`     | number of added changes                      |
+| `.Deleted`   | `int`     | number of removed changes                    |
+| `.Untracked` | `boolean` | number of untracked changes                  |
+| `.Clean`     | `int`     | number of clean changes                      |
+| `.Missing`   | `int`     | number of missing changes                    |
+| `.Ignored`   | `boolean` | number of ignored changes                    |
+| `.String`    | `string`  | a string representation of the changes above |
+
+Local changes use the following syntax:
+
+| Icon | Description |
+| ---- | ----------- |
+| `+`  | added       |
+| `~`  | modified    |
+| `-`  | deleted     |
+| `?`  | untracked   |
+| `=`  | clean       |
+| `!`  | missing     |
+| `Ø`  | ignored     |
+
+[sapling]: https://sapling-scm.com/
+[templates]: /docs/configuration/templates

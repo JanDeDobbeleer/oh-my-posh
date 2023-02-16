@@ -22,10 +22,22 @@ type ScmStatus struct {
 	Moved      int
 	Conflicted int
 	Untracked  int
+	Clean      int
+	Missing    int
+	Ignored    int
 }
 
 func (s *ScmStatus) Changed() bool {
-	return s.Added > 0 || s.Deleted > 0 || s.Modified > 0 || s.Unmerged > 0 || s.Moved > 0 || s.Conflicted > 0 || s.Untracked > 0
+	return s.Unmerged > 0 ||
+		s.Added > 0 ||
+		s.Deleted > 0 ||
+		s.Modified > 0 ||
+		s.Moved > 0 ||
+		s.Conflicted > 0 ||
+		s.Untracked > 0 ||
+		s.Clean > 0 ||
+		s.Missing > 0 ||
+		s.Ignored > 0
 }
 
 func (s *ScmStatus) String() string {
@@ -43,6 +55,9 @@ func (s *ScmStatus) String() string {
 	status += stringIfValue(s.Moved, ">")
 	status += stringIfValue(s.Unmerged, "x")
 	status += stringIfValue(s.Conflicted, "!")
+	status += stringIfValue(s.Missing, "!")
+	status += stringIfValue(s.Clean, "=")
+	status += stringIfValue(s.Ignored, "Ø")
 	return strings.TrimSpace(status)
 }
 
@@ -53,6 +68,7 @@ type scm struct {
 	IsWslSharedPath bool
 	CommandMissing  bool
 	Dir             string // actual repo root directory
+	RepoName        string
 
 	workingDir string
 	rootDir    string

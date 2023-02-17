@@ -9,4 +9,5 @@ const (
 	CMD     = "cmd"
 	NU      = "nu"
 	GENERIC = "shell"
+	TCSH    = "tcsh"
 )

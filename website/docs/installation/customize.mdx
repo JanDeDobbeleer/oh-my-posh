@@ -77,9 +77,12 @@ to reflect your use-case.
     { label: 'bash', value: 'bash', },
     { label: 'fish', value: 'fish', },
     { label: 'nu', value: 'nu', },
+    { label: 'tcsh', value: 'tcsh', },
   ]
 }>
 <TabItem value="powershell">
+
+Adjust or add the following line in your `$PROFILE`:
 
 ```powershell
 oh-my-posh init pwsh --config ~/jandedobbeleer.omp.json | Invoke-Expression
@@ -105,6 +108,8 @@ to only require remote scripts to be signed using `Set-ExecutionPolicy RemoteSig
 </TabItem>
 <TabItem value="cmd">
 
+Adjust or add the following line in `oh-my-posh.lua`:
+
 ```lua title="oh-my-posh.lua"
 load(io.popen('oh-my-posh init cmd --config C:/Users/Posh/jandedobbeleer.omp.json'):read("*a"))()
 ```
@@ -118,6 +123,8 @@ Once altered, restart cmd for the changes to take effect.
 
 </TabItem>
 <TabItem value="zsh">
+
+Adjust or add the following line to `~/.zshrc`:
 
 ```bash
 eval "$(oh-my-posh init zsh --config ~/jandedobbeleer.omp.json)"
@@ -136,6 +143,8 @@ exec zsh
 Use the full path to the config file, not the relative path or `~` as a shorthand for `$HOME`.
 :::
 
+Adjust or add the following line in `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
+
 ```bash
 eval "$(oh-my-posh init bash --config ~/jandedobbeleer.omp.json)"
 ```
@@ -152,6 +161,8 @@ exec bash
 :::caution
 Oh My Posh requires fish v3.4.0 or higher.
 :::
+
+Adjust or add the following line in `~/.config/fish/config.fish`:
 
 ```bash
 oh-my-posh init fish --config ~/jandedobbeleer.omp.json | source
@@ -170,7 +181,7 @@ Once altered, reload your config for the changes to take effect.
 Oh My Posh requires Nushell v0.73.0 or higher.
 :::
 
-Add the following line to the Nushell env file (`$nu.env-path`):
+Adjust or add the following line to the Nushell env file (`$nu.env-path`):
 
 ```bash
 oh-my-posh init nu --config ~/jandedobbeleer.omp.json
@@ -196,6 +207,21 @@ source /mylocation/myscript.nu
 ```
 
 Once altered, restart Nushell for the changes to take effect.
+
+</TabItem>
+<TabItem value="tcsh">
+
+Adjust or add the following line at the end of `~/.tcshrc`:
+
+```bash
+eval `oh-my-posh init tcsh --config ~/jandedobbeleer.omp.json`
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec tcsh
+```
 
 </TabItem>
 </Tabs>

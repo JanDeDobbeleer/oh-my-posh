@@ -462,7 +462,7 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 	if toggles, OK := segment.env.Cache().Get(platform.TOGGLECACHE); OK && len(toggles) > 0 {
 		list := strings.Split(toggles, ",")
 		for _, toggle := range list {
-			if SegmentType(toggle) == segment.Type {
+			if SegmentType(toggle) == segment.Type || toggle == segment.Alias {
 				return
 			}
 		}

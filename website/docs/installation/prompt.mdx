@@ -25,6 +25,7 @@ oh-my-posh get shell
     { label: 'bash', value: 'bash', },
     { label: 'fish', value: 'fish', },
     { label: 'nu', value: 'nu', },
+    { label: 'tcsh', value: 'tcsh', },
   ]
 }>
 <TabItem value="powershell">
@@ -185,6 +186,21 @@ source /mylocation/myscript.nu
 ```
 
 Once added, restart Nushell for the changes to take effect.
+
+</TabItem>
+<TabItem value="tcsh">
+
+Add the following at the end of `~/.tcshrc`:
+
+```bash
+eval `oh-my-posh init tcsh`
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec tcsh
+```
 
 </TabItem>
 </Tabs>

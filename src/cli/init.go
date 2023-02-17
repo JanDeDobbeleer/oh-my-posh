@@ -29,6 +29,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 			"pwsh",
 			"cmd",
 			"nu",
+			"tcsh",
 		},
 		Args: NoArgsOrOneValidArg,
 		Run: func(cmd *cobra.Command, args []string) {

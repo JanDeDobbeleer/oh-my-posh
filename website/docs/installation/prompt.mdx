@@ -26,6 +26,7 @@ oh-my-posh get shell
     { label: 'fish', value: 'fish', },
     { label: 'nu', value: 'nu', },
     { label: 'tcsh', value: 'tcsh', },
+    { label: 'elvish', value: 'elvish', },
   ]
 }>
 <TabItem value="powershell">
@@ -200,6 +201,21 @@ Once added, reload your profile for the changes to take effect.
 
 ```bash
 exec tcsh
+```
+
+</TabItem>
+<TabItem value="elvish">
+
+Add the following at the end of ~/.elvish/rc.elv:
+
+```bash
+eval (oh-my-posh init elvish)
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec elvish
 ```
 
 </TabItem>

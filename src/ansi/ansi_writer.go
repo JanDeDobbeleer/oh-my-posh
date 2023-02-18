@@ -250,6 +250,9 @@ func (w *Writer) FormatTitle(title string) string {
 		title = strings.NewReplacer("`", "\\`", `\`, `\\`).Replace(title)
 	case shell.ZSH:
 		title = strings.NewReplacer("`", "\\`", `%`, `%%`).Replace(title)
+	case shell.ELVISH:
+		// elvish doesn't support this
+		return ""
 	}
 	return fmt.Sprintf(w.title, title)
 }

@@ -78,6 +78,7 @@ to reflect your use-case.
     { label: 'fish', value: 'fish', },
     { label: 'nu', value: 'nu', },
     { label: 'tcsh', value: 'tcsh', },
+    { label: 'elvish', value: 'elvish', },
   ]
 }>
 <TabItem value="powershell">
@@ -221,6 +222,21 @@ Once added, reload your profile for the changes to take effect.
 
 ```bash
 exec tcsh
+```
+
+</TabItem>
+<TabItem value="elvish">
+
+Adjust or add the following line at the end of ~/.elvish/rc.elv:
+
+```bash
+eval (oh-my-posh init elvish --config ~/jandedobbeleer.omp.json)
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec elvish
 ```
 
 </TabItem>

@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/mattn/go-runewidth"
 )
 
@@ -69,6 +70,11 @@ func (w *Writer) replaceHyperlink(text string) string {
 	}
 
 	linkText := results["TEXT"]
+
+	// this isn't supported for elvish
+	if w.shell == shell.ELVISH {
+		return strings.Replace(text, results["ALL"], linkText, 1)
+	}
 
 	// we only care about the length of the text part
 	w.length += runewidth.StringWidth(linkText)

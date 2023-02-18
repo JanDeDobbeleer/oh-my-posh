@@ -83,9 +83,15 @@ func (e *Engine) PrintPrimary() string {
 }
 
 func (e *Engine) printPWD() {
+	// only print when supported
+	if e.Env.Shell() == shell.ELVISH {
+		return
+	}
+	// only print when relevant
 	if len(e.Config.PWD) == 0 && !e.Config.OSC99 {
 		return
 	}
+
 	cwd := e.Env.Pwd()
 	// Backwards compatibility for deprecated OSC99
 	if e.Config.OSC99 {
@@ -97,10 +103,12 @@ func (e *Engine) printPWD() {
 		Template: e.Config.PWD,
 		Env:      e.Env,
 	}
+
 	pwdType, err := tmpl.Render()
 	if err != nil || len(pwdType) == 0 {
 		return
 	}
+
 	user := e.Env.User()
 	host, _ := e.Env.Host()
 	e.write(e.Writer.ConsolePwd(pwdType, user, host, cwd))

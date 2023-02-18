@@ -34,6 +34,9 @@ var nuInit string
 //go:embed scripts/omp.tcsh
 var tcshInit string
 
+//go:embed scripts/omp.elv
+var elvishInit string
+
 const (
 	noExe = "echo \"Unable to find Oh My Posh executable\""
 )
@@ -156,7 +159,7 @@ func quoteNuStr(str string) string {
 func Init(env platform.Environment) string {
 	shell := env.Flags().Shell
 	switch shell {
-	case PWSH, PWSH5:
+	case PWSH, PWSH5, ELVISH:
 		executable, err := getExecutablePath(env)
 		if err != nil {
 			return noExe
@@ -168,8 +171,16 @@ func Init(env platform.Environment) string {
 		if env.Flags().Manual {
 			additionalParams += " --manual"
 		}
-		command := "(@(& %s init %s --config=%s --print%s) -join \"`n\") | Invoke-Expression"
-		return fmt.Sprintf(command, quotePwshStr(executable), shell, quotePwshStr(env.Flags().Config), additionalParams)
+		var command, config string
+		switch shell {
+		case PWSH, PWSH5:
+			command = "(@(& %s init %s --config=%s --print%s) -join \"`n\") | Invoke-Expression"
+			config = quotePwshStr(env.Flags().Config)
+		case ELVISH:
+			command = "eval (%s init %s --config=%s --print%s | slurp)"
+			config = quotePosixStr(env.Flags().Config)
+		}
+		return fmt.Sprintf(command, quotePwshStr(executable), shell, config, additionalParams)
 	case ZSH, BASH, FISH, CMD, TCSH:
 		return PrintInit(env)
 	case NU:
@@ -225,6 +236,10 @@ func PrintInit(env platform.Environment) string {
 		executable = quotePosixStr(executable)
 		configFile = quotePosixStr(configFile)
 		script = tcshInit
+	case ELVISH:
+		executable = quotePosixStr(executable)
+		configFile = quotePosixStr(configFile)
+		script = elvishInit
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}

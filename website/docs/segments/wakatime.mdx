@@ -34,11 +34,11 @@ The free tier for is sufficient. You'll find the API key in your profile setting
 
 ## Properties
 
-| Name            | Type      | Description                                                                                                                                                                             |
-| --------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `url`           | `string`  | Your Wakatime [summaries][wk-summaries] URL, including the API key. Example above. Defaults to ``.                                                                                      |
-| `http_timeout`  | `int`     | The time it takes to consider a http request as timed-out. Defaults to `20` ms. If no segment is shown, try increasing this timeout.                                                    |
-| `cache_timeout` | `int`     | The number of minutes to invalidate/renew the Wakatime segment output. Defaults to `10` m. Setting this to `0` disables the cache and requests to the Wakatime API for a new response.  |
+| Name            | Type      | Description                                                                                                                                                                                                       |
+| --------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url`           | `string`  | The Wakatime [summaries][wk-summaries] URL, including the API key. Example above. Defaults to ``.                                                                                                                 |
+| `http_timeout`  | `int`     | The time (_in milliseconds_, `ms`) it takes to consider an http request as **timed-out**. Defaults to `20`. If no segment is shown, try increasing this timeout.                                                  |
+| `cache_timeout` | `int`     | The time (_in minutes_, `m`) it takes to invalidate/renew the Wakatime segment output. Defaults to `10`. Setting this to `0` disables the cache and requests to the API everytime the user presses the Enter key. |
 
 ### Dynamic API Key
 

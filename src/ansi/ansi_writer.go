@@ -250,8 +250,8 @@ func (w *Writer) FormatTitle(title string) string {
 		title = strings.NewReplacer("`", "\\`", `\`, `\\`).Replace(title)
 	case shell.ZSH:
 		title = strings.NewReplacer("`", "\\`", `%`, `%%`).Replace(title)
-	case shell.ELVISH:
-		// elvish doesn't support this
+	case shell.ELVISH, shell.XONSH:
+		// these shells don't support setting the title
 		return ""
 	}
 	return fmt.Sprintf(w.title, title)

@@ -84,7 +84,8 @@ func (e *Engine) PrintPrimary() string {
 
 func (e *Engine) printPWD() {
 	// only print when supported
-	if e.Env.Shell() == shell.ELVISH {
+	sh := e.Env.Shell()
+	if sh == shell.ELVISH || sh == shell.XONSH {
 		return
 	}
 	// only print when relevant

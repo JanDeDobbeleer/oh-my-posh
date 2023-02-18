@@ -19,56 +19,35 @@ oh-my-posh get shell
   defaultValue="powershell"
   groupId="shell"
   values={[
-    { label: 'powershell', value: 'powershell', },
-    { label: 'cmd', value: 'cmd', },
-    { label: 'zsh', value: 'zsh', },
     { label: 'bash', value: 'bash', },
+    { label: 'cmd', value: 'cmd', },
+    { label: 'elvish', value: 'elvish', },
     { label: 'fish', value: 'fish', },
     { label: 'nu', value: 'nu', },
+    { label: 'powershell', value: 'powershell', },
     { label: 'tcsh', value: 'tcsh', },
-    { label: 'elvish', value: 'elvish', },
+    { label: 'xonsh', value: 'xonsh', },
+    { label: 'zsh', value: 'zsh', },
   ]
 }>
-<TabItem value="powershell">
+<TabItem value="bash">
 
-Edit your PowerShell profile script, you can find its location under the `$PROFILE` variable in your preferred PowerShell version. For example, using notepad:
+Add the following to `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
 
-```powershell
-notepad $PROFILE
+```bash
+eval "$(oh-my-posh init bash)"
 ```
-
-:::info
-When the above command gives an error, make sure to create the profile first.
-
-```powershell
-New-Item -Path $PROFILE -Type File -Force
-```
-
-In this scenario, it can also be that PowerShell blocks running local scripts. To solve that, set PowerShell
-to only require remote scripts to be signed using `Set-ExecutionPolicy RemoteSigned`, or [sign the profile][sign].
-:::
-
-Then add the following line.
-
-```powershell
-oh-my-posh init pwsh | Invoke-Expression
-```
-
-:::tip Antivirus software
-If adding an exception to your Antivirus software still blocks Oh My Posh for Windows, you can try using the below
-alternate line in your PowerShell profile. This is a drop-in replacement to the above call with Invoke-Expression.
-Tested with PowerShell 7.2.4 with Bitdefender Antivirus installed and requires NO exceptions for oh-my-posh.exe.
-Bitdefender blocks the calls to Invoke-Expression as malicious code and this alternate line skips the double calls:
-
-```powershell
-& ([ScriptBlock]::Create((oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" --print) -join "`n"))
-```
-:::
 
 Once added, reload your profile for the changes to take effect.
 
-```powershell
-. $PROFILE
+```bash
+exec bash
+```
+
+Or, when using `~/.profile`.
+
+```bash
+. ~/.profile
 ```
 
 </TabItem>
@@ -88,51 +67,18 @@ load(io.popen('oh-my-posh init cmd'):read("*a"))()
 Once added, restart cmd for the changes to take effect.
 
 </TabItem>
-<TabItem value="zsh">
+<TabItem value="elvish">
 
-Add the following to `~/.zshrc`:
-
-```bash
-eval "$(oh-my-posh init zsh)"
-```
-
-:::tip
-As the standard terminal has issues displaying the ANSI characters correctly, you might want to skip loading just for that terminal and instead of the line above, place this in your `~/.zshrc`:
+Add the following at the end of `~/.elvish/rc.elv`:
 
 ```bash
-if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-  eval "$(oh-my-posh init zsh)"
-fi
-```
-
-Note this will still load Oh My Posh for [iTerm2][iterm2] or any other modern day macOS terminal that supports ANSI characters.
-:::
-
-Once added, reload your profile for the changes to take effect.
-
-```bash
-exec zsh
-```
-
-</TabItem>
-<TabItem value="bash">
-
-Add the following to `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
-
-```bash
-eval "$(oh-my-posh init bash)"
+eval (oh-my-posh init elvish)
 ```
 
 Once added, reload your profile for the changes to take effect.
 
 ```bash
-exec bash
-```
-
-Or, when using `~/.profile`.
-
-```bash
-. ~/.profile
+exec elvish
 ```
 
 </TabItem>
@@ -189,6 +135,49 @@ source /mylocation/myscript.nu
 Once added, restart Nushell for the changes to take effect.
 
 </TabItem>
+<TabItem value="powershell">
+
+Edit your PowerShell profile script, you can find its location under the `$PROFILE` variable in your preferred PowerShell version. For example, using notepad:
+
+```powershell
+notepad $PROFILE
+```
+
+:::info
+When the above command gives an error, make sure to create the profile first.
+
+```powershell
+New-Item -Path $PROFILE -Type File -Force
+```
+
+In this scenario, it can also be that PowerShell blocks running local scripts. To solve that, set PowerShell
+to only require remote scripts to be signed using `Set-ExecutionPolicy RemoteSigned`, or [sign the profile][sign].
+:::
+
+Then add the following line.
+
+```powershell
+oh-my-posh init pwsh | Invoke-Expression
+```
+
+:::tip Antivirus software
+If adding an exception to your Antivirus software still blocks Oh My Posh for Windows, you can try using the below
+alternate line in your PowerShell profile. This is a drop-in replacement to the above call with Invoke-Expression.
+Tested with PowerShell 7.2.4 with Bitdefender Antivirus installed and requires NO exceptions for oh-my-posh.exe.
+Bitdefender blocks the calls to Invoke-Expression as malicious code and this alternate line skips the double calls:
+
+```powershell
+& ([ScriptBlock]::Create((oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" --print) -join "`n"))
+```
+:::
+
+Once added, reload your profile for the changes to take effect.
+
+```powershell
+. $PROFILE
+```
+
+</TabItem>
 <TabItem value="tcsh">
 
 Add the following at the end of `~/.tcshrc`:
@@ -204,18 +193,45 @@ exec tcsh
 ```
 
 </TabItem>
-<TabItem value="elvish">
+<TabItem value="xonsh">
 
-Add the following at the end of ~/.elvish/rc.elv:
+Add the following line at the end of `~/.xonshrc`:
 
 ```bash
-eval (oh-my-posh init elvish)
+execx($(oh-my-posh init xonsh))
 ```
 
 Once added, reload your profile for the changes to take effect.
 
 ```bash
-exec elvish
+exec xonsh
+```
+
+</TabItem>
+<TabItem value="zsh">
+
+Add the following to `~/.zshrc`:
+
+```bash
+eval "$(oh-my-posh init zsh)"
+```
+
+:::tip
+As the standard terminal has issues displaying the ANSI characters correctly, you might want to skip loading just for that terminal and instead of the line above, place this in your `~/.zshrc`:
+
+```bash
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+  eval "$(oh-my-posh init zsh)"
+fi
+```
+
+Note this will still load Oh My Posh for [iTerm2][iterm2] or any other modern day macOS terminal that supports ANSI characters.
+:::
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec zsh
 ```
 
 </TabItem>

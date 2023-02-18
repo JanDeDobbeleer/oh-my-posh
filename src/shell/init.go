@@ -37,6 +37,9 @@ var tcshInit string
 //go:embed scripts/omp.elv
 var elvishInit string
 
+//go:embed scripts/omp.py
+var xonshInit string
+
 const (
 	noExe = "echo \"Unable to find Oh My Posh executable\""
 )
@@ -181,7 +184,7 @@ func Init(env platform.Environment) string {
 			config = quotePosixStr(env.Flags().Config)
 		}
 		return fmt.Sprintf(command, quotePwshStr(executable), shell, config, additionalParams)
-	case ZSH, BASH, FISH, CMD, TCSH:
+	case ZSH, BASH, FISH, CMD, TCSH, XONSH:
 		return PrintInit(env)
 	case NU:
 		createNuInit(env)
@@ -240,6 +243,10 @@ func PrintInit(env platform.Environment) string {
 		executable = quotePosixStr(executable)
 		configFile = quotePosixStr(configFile)
 		script = elvishInit
+	case XONSH:
+		executable = quotePosixStr(executable)
+		configFile = quotePosixStr(configFile)
+		script = xonshInit
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}

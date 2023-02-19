@@ -24,6 +24,9 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/platform/cmd"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
+	cpu "github.com/shirou/gopsutil/v3/cpu"
+	disk "github.com/shirou/gopsutil/v3/disk"
+	load "github.com/shirou/gopsutil/v3/load"
 	process "github.com/shirou/gopsutil/v3/process"
 )
 
@@ -133,6 +136,30 @@ type Connection struct {
 	SSID         string // Wi-Fi only
 }
 
+type Memory struct {
+	PhysicalTotalMemory     uint64
+	PhysicalAvailableMemory uint64
+	PhysicalFreeMemory      uint64
+	PhysicalPercentUsed     float64
+	SwapTotalMemory         uint64
+	SwapFreeMemory          uint64
+	SwapPercentUsed         float64
+}
+
+type SystemInfo struct {
+	// mem
+	Memory
+	// cpu
+	Times float64
+	CPU   []cpu.InfoStat
+	// load
+	Load1  float64
+	Load5  float64
+	Load15 float64
+	// disk
+	Disks map[string]disk.IOCountersStat
+}
+
 type SegmentsCache map[string]interface{}
 
 func (s *SegmentsCache) Contains(key string) bool {
@@ -218,6 +245,7 @@ type Environment interface {
 	LoadTemplateCache()
 	SetPromptCount()
 	CursorPosition() (row, col int)
+	SystemInfo() (*SystemInfo, error)
 	Debug(message string)
 	Error(err error)
 	Trace(start time.Time, args ...string)
@@ -844,6 +872,39 @@ func (env *Shell) CursorPosition() (row, col int) {
 		col = number
 	}
 	return
+}
+
+func (env *Shell) SystemInfo() (*SystemInfo, error) {
+	s := &SystemInfo{}
+
+	mem, err := env.Memory()
+	if err != nil {
+		return nil, err
+	}
+	s.Memory = *mem
+
+	loadStat, err := load.Avg()
+	if err == nil {
+		s.Load1 = loadStat.Load1
+		s.Load5 = loadStat.Load5
+		s.Load15 = loadStat.Load15
+	}
+
+	processorTimes, err := cpu.Percent(0, false)
+	if err == nil && len(processorTimes) > 0 {
+		s.Times = processorTimes[0]
+	}
+
+	processors, err := cpu.Info()
+	if err == nil {
+		s.CPU = processors
+	}
+
+	diskIO, err := disk.IOCounters()
+	if err == nil {
+		s.Disks = diskIO
+	}
+	return s, nil
 }
 
 func IsPathSeparator(env Environment, c uint8) bool {

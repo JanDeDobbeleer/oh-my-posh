@@ -33,22 +33,23 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Version              int            `json:"version"`
-	FinalSpace           bool           `json:"final_space,omitempty"`
-	ConsoleTitleTemplate string         `json:"console_title_template,omitempty"`
-	TerminalBackground   string         `json:"terminal_background,omitempty"`
-	AccentColor          string         `json:"accent_color,omitempty"`
-	Blocks               []*Block       `json:"blocks,omitempty"`
-	Tooltips             []*Segment     `json:"tooltips,omitempty"`
-	TransientPrompt      *Segment       `json:"transient_prompt,omitempty"`
-	ValidLine            *Segment       `json:"valid_line,omitempty"`
-	ErrorLine            *Segment       `json:"error_line,omitempty"`
-	SecondaryPrompt      *Segment       `json:"secondary_prompt,omitempty"`
-	DebugPrompt          *Segment       `json:"debug_prompt,omitempty"`
-	Palette              ansi.Palette   `json:"palette,omitempty"`
-	Palettes             *ansi.Palettes `json:"palettes,omitempty"`
-	Cycle                ansi.Cycle     `json:"cycle,omitempty"`
-	PWD                  string         `json:"pwd,omitempty"`
+	Version              int                    `json:"version"`
+	FinalSpace           bool                   `json:"final_space,omitempty"`
+	ConsoleTitleTemplate string                 `json:"console_title_template,omitempty"`
+	TerminalBackground   string                 `json:"terminal_background,omitempty"`
+	AccentColor          string                 `json:"accent_color,omitempty"`
+	Blocks               []*Block               `json:"blocks,omitempty"`
+	Tooltips             []*Segment             `json:"tooltips,omitempty"`
+	TransientPrompt      *Segment               `json:"transient_prompt,omitempty"`
+	ValidLine            *Segment               `json:"valid_line,omitempty"`
+	ErrorLine            *Segment               `json:"error_line,omitempty"`
+	SecondaryPrompt      *Segment               `json:"secondary_prompt,omitempty"`
+	DebugPrompt          *Segment               `json:"debug_prompt,omitempty"`
+	Palette              ansi.Palette           `json:"palette,omitempty"`
+	Palettes             *ansi.Palettes         `json:"palettes,omitempty"`
+	Cycle                ansi.Cycle             `json:"cycle,omitempty"`
+	PWD                  string                 `json:"pwd,omitempty"`
+	Var                  map[string]interface{} `json:"var,omitempty"`
 
 	// Deprecated
 	OSC99 bool `json:"osc99,omitempty"`

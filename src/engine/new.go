@@ -16,6 +16,7 @@ func New(flags *platform.Flags) *Engine {
 
 	env.Init()
 	cfg := LoadConfig(env)
+	env.Var = cfg.Var
 
 	ansiWriter := &ansi.Writer{
 		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),

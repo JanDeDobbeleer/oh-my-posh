@@ -177,6 +177,7 @@ type TemplateCache struct {
 	HostName     string
 	Code         int
 	Env          map[string]string
+	Var          map[string]interface{}
 	OS           string
 	WSL          bool
 	PromptCount  int
@@ -271,6 +272,7 @@ func (c *commandCache) get(command string) (string, bool) {
 type Shell struct {
 	CmdFlags *Flags
 	Version  string
+	Var      map[string]interface{}
 
 	cwd       string
 	cmdCache  *commandCache
@@ -768,6 +770,11 @@ func (env *Shell) TemplateCache() *TemplateCache {
 		PromptCount:  env.CmdFlags.PromptCount,
 	}
 	tmplCache.Env = make(map[string]string)
+	tmplCache.Var = make(map[string]interface{})
+
+	if env.Var != nil {
+		tmplCache.Var = env.Var
+	}
 
 	const separator = "="
 	values := os.Environ()

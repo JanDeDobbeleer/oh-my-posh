@@ -89,6 +89,42 @@ end
 
 :::
 
+## Config variables
+
+| Name           | Type  | Description                                              |
+| -------------- | ----- | -------------------------------------------------------- |
+| `.var.VarName` | `any` | Any config variable where `VarName` is the variable name |
+
+### Example
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 2,
+  // highlight-start
+  "var": {
+    "Hello": "hello",
+    "World": "world"
+  },
+  // highlight-end
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "p:white",
+          // highlight-next-line
+          "template": "{{ .Var.Hello }} {{ .Var.World }} "
+        }
+      ]
+    }
+  ]
+}
+```
+
 ## Template logic
 
 <!-- markdownlint-disable MD013 -->

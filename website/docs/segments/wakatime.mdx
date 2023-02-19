@@ -34,11 +34,32 @@ The free tier for is sufficient. You'll find the API key in your profile setting
 
 ## Properties
 
-| Name  | Type     | Description                                                                                         |
-| ----- | -------- | --------------------------------------------------------------------------------------------------- |
-| `url` | `string` | Your Wakatime [summaries][wk-summaries] URL, including the API key. Example above. You'll know this |
+| Name            | Type      | Description                                                                                                                                                                                                       |
+| --------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url`           | `string`  | The Wakatime [summaries][wk-summaries] URL, including the API key. Example above. Defaults to ``.                                                                                                                 |
+| `http_timeout`  | `int`     | The time (_in milliseconds_, `ms`) it takes to consider an http request as **timed-out**. Defaults to `20`. If no segment is shown, try increasing this timeout.                                                  |
+| `cache_timeout` | `int`     | The time (_in minutes_, `m`) it takes to invalidate/renew the Wakatime segment output. Defaults to `10`. Setting this to `0` disables the cache and requests to the API everytime the user presses the Enter key. |
 
-works if you can curl it yourself and a result. - defaults to `` |`http_timeout`|`int`|The default timeout for http request is 20ms. If no segment is shown, try increasing this timeout.| |`cache_timeout`|`int`|The default timeout for request caching is 10m. A value of 0 disables the cache.|
+### Dynamic API Key
+
+If you don't want to include the API key into your configuration, the following modification can be done.
+
+```json
+"properties": {
+  // highlight-next-line
+  "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key={{ .Env.WAKATIME_API_KEY }}",
+  "cache_timeout": 10,
+  "http_timeout": 500
+}
+```
+
+:::note 
+
+`WAKATIME_API_KEY` is an example, **any name is possible and acceptable** as long as the environment variable exists and contains the API key value.
+
+Please refer to the [Environment Variable][templates-environment-variables] page for more information.
+
+:::
 
 ## Template ([info][templates])
 
@@ -66,3 +87,4 @@ works if you can curl it yourself and a result. - defaults to `` |`http_timeout`
 [wt]: https://wakatime.com
 [wk-summaries]: https://wakatime.com/developers#summaries
 [templates]: /docs/configuration/templates
+[templates-environment-variables]: /docs/configuration/templates#environment-variables

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/shirou/gopsutil/v3/host"
+	mem "github.com/shirou/gopsutil/v3/mem"
 	terminal "github.com/wayneashleyberry/terminal-dimensions"
 	"golang.org/x/sys/unix"
 )
@@ -138,4 +139,25 @@ func (env *Shell) Connection(connectionType ConnectionType) (*Connection, error)
 		return nil, &NotImplemented{}
 	}
 	return nil, &NotImplemented{}
+}
+
+func (env *Shell) Memory() (*Memory, error) {
+	m := &Memory{}
+	memStat, err := mem.VirtualMemory()
+	if err != nil {
+		env.Error(err)
+		return nil, err
+	}
+	m.PhysicalTotalMemory = memStat.Total
+	m.PhysicalAvailableMemory = memStat.Available
+	m.PhysicalFreeMemory = memStat.Free
+	m.PhysicalPercentUsed = memStat.UsedPercent
+	swapStat, err := mem.SwapMemory()
+	if err != nil {
+		env.Error(err)
+	}
+	m.SwapTotalMemory = swapStat.Total
+	m.SwapFreeMemory = swapStat.Free
+	m.SwapPercentUsed = swapStat.UsedPercent
+	return m, nil
 }

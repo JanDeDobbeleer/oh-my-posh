@@ -273,3 +273,8 @@ func (env *MockedEnvironment) CursorPosition() (int, int) {
 	args := env.Called()
 	return args.Int(0), args.Int(1)
 }
+
+func (env *MockedEnvironment) SystemInfo() (*platform.SystemInfo, error) {
+	args := env.Called()
+	return args.Get(0).(*platform.SystemInfo), args.Error(1)
+}

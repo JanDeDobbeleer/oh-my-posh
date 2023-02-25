@@ -9,7 +9,7 @@ runs:
   steps:
     - name: Install Go 🚀
       env:
-        VERSION: "1.19.4"
+        VERSION: "1.19.6"
       shell: pwsh
       run: |
         # Delete conflicting go versions first

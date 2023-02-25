@@ -25,7 +25,7 @@ func (u *Unity) Enabled() bool {
 		u.env.Error(err)
 		return false
 	}
-	if unityVersion == "" {
+	if len(unityVersion) == 0 {
 		return false
 	}
 	u.UnityVersion = unityVersion
@@ -42,7 +42,8 @@ func (u *Unity) Enabled() bool {
 func (u *Unity) GetUnityVersion() (version string, err error) {
 	versionFilePath := filepath.Join("ProjectSettings", "ProjectVersion.txt")
 	if !u.env.HasFiles(versionFilePath) {
-		return "", nil
+		u.env.Debug("No ProjectVersion.txt file found")
+		return
 	}
 
 	versionFileText := u.env.FileContent(versionFilePath)

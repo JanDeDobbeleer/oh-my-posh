@@ -301,6 +301,7 @@
             "text",
             "terraform",
             "ui5tooling",
+            "unity",
             "wakatime",
             "winreg",
             "withings",
@@ -2746,6 +2747,26 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "unity" }
+            }
+          },
+          "then": {
+            "title": "Unity Segment",
+            "description": "https://ohmyposh.dev/docs/unity",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
                   }
                 }
               }

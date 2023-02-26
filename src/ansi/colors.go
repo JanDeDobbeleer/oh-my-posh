@@ -124,7 +124,7 @@ func (d *DefaultColors) ToColor(colorString string, isBackground bool) Color {
 			return emptyColor
 		}
 		c256 := color.C256(uint8(val), isBackground)
-		return Color(c256.RGBColor().String())
+		return Color(c256.String())
 	}
 	style := color.HEX(colorString, isBackground)
 	if !style.IsEmpty() {

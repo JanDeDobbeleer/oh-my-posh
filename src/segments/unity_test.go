@@ -9,6 +9,7 @@ import (
 	mock2 "github.com/stretchr/testify/mock"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
@@ -151,12 +152,22 @@ func TestUnitySegment(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("Error", mock2.Anything).Return()
+		env.On("Debug", mock2.Anything)
 
-		versionFilePath := filepath.Join("ProjectSettings", "ProjectVersion.txt")
-		env.On("HasFiles", versionFilePath).Return(tc.VersionFileExists)
+		err := errors.New("no match at root level")
+		var projectDir *platform.FileInfo
 		if tc.VersionFileExists {
+			err = nil
+			projectDir = &platform.FileInfo{
+				ParentFolder: "UnityProjectRoot",
+				Path:         "UnityProjectRoot/ProjectSettings",
+				IsDir:        true,
+			}
+			env.On("HasFilesInDir", projectDir.Path, "ProjectVersion.txt").Return(tc.VersionFileExists)
+			versionFilePath := filepath.Join(projectDir.Path, "ProjectVersion.txt")
 			env.On("FileContent", versionFilePath).Return(tc.VersionFileText)
 		}
+		env.On("HasParentFilePath", "ProjectSettings").Return(projectDir, err)
 
 		cache := &mock.MockedCache{}
 		cache.On("Get", tc.CacheGet.key).Return(tc.CacheGet.val, tc.CacheGet.found)

@@ -1575,6 +1575,17 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "cabauman",
+      "name": "Colt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6819362?v=4",
+      "profile": "https://www.coltbauman.com",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

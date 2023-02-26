@@ -115,6 +115,7 @@ module.exports = {
         "segments/text",
         "segments/time",
         "segments/ui5tooling",
+        "segments/unity",
         "segments/vala",
         "segments/wakatime",
         "segments/withings",

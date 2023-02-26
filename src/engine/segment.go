@@ -224,6 +224,8 @@ const (
 	TIME SegmentType = "time"
 	// UI5 Tooling segment
 	UI5TOOLING SegmentType = "ui5tooling"
+	// UNITY writes which Unity version is currently active
+	UNITY SegmentType = "unity"
 	// VALA writes the active vala version
 	VALA SegmentType = "vala"
 	// WAKATIME writes tracked time spend in dev editors
@@ -305,6 +307,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	TEXT:          func() SegmentWriter { return &segments.Text{} },
 	TIME:          func() SegmentWriter { return &segments.Time{} },
 	UI5TOOLING:    func() SegmentWriter { return &segments.UI5Tooling{} },
+	UNITY:         func() SegmentWriter { return &segments.Unity{} },
 	VALA:          func() SegmentWriter { return &segments.Vala{} },
 	WAKATIME:      func() SegmentWriter { return &segments.Wakatime{} },
 	WINREG:        func() SegmentWriter { return &segments.WindowsRegistry{} },

@@ -23,7 +23,7 @@
         "build",
         "-v",
         "-ldflags",
-        "\"-X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%s)'\""
+        "\"-s -w -X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%s)' -extldflags '-static'\""
       ]
     },
     {
@@ -54,7 +54,7 @@
         "-o",
         "/home/vscode/bin/oh-my-posh",
         "-ldflags",
-        "\"-X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%s)'\""
+        "\"-s -w -X 'main.Version=development-$(git --no-pager log -1 --pretty=%h-%s)' -extldflags '-static'\""
       ]
     },
     {

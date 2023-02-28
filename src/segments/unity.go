@@ -64,6 +64,7 @@ func (u *Unity) GetUnityVersion() (version string, err error) {
 
 	versionStartIndex := versionPrefixIndex + len(versionPrefix)
 	unityVersion := firstLine[versionStartIndex:]
+	unityVersion = strings.TrimSpace(unityVersion)
 
 	return strings.TrimSuffix(unityVersion, "f1"), nil
 }

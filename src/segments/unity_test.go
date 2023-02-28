@@ -147,6 +147,18 @@ func TestUnitySegment(t *testing.T) {
 			VersionFileExists:   true,
 			VersionFileText:     "2021.3.16f1",
 		},
+		{
+			Case:                "CRLF line ending",
+			ExpectedOutput:      "\ue721 2021.3.16 C# 9",
+			ExpectedToBeEnabled: true,
+			VersionFileExists:   true,
+			VersionFileText:     "m_EditorVersion: 2021.3.16f1\r\nm_EditorVersionWithRevision: 2021.3.16f1 (4016570cf34f)\r\n",
+			CacheGet: CacheGet{
+				key:   "2021.3",
+				val:   "C# 9",
+				found: true,
+			},
+		},
 	}
 
 	for _, tc := range cases {

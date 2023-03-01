@@ -88,7 +88,8 @@ to reflect your use-case.
 Use the full path to the config file, not the relative path or `~` as a shorthand for `$HOME`.
 :::
 
-Adjust or add the following line in `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
+Adjust the Oh My Posh init line in `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending
+on your environment) by adding the `--config` flag with the location of your configuration.
 
 ```bash
 eval "$(oh-my-posh init bash --config ~/jandedobbeleer.omp.json)"
@@ -103,7 +104,8 @@ exec bash
 </TabItem>
 <TabItem value="cmd">
 
-Adjust or add the following line in `oh-my-posh.lua`:
+Adjust the Oh My Posh init line in `oh-my-posh.lua` by adding the `--config` flag with the location
+of your configuration.
 
 ```lua title="oh-my-posh.lua"
 load(io.popen('oh-my-posh init cmd --config C:/Users/Posh/jandedobbeleer.omp.json'):read("*a"))()
@@ -119,7 +121,8 @@ Once altered, restart cmd for the changes to take effect.
 </TabItem>
 <TabItem value="elvish">
 
-Adjust or add the following line at the end of `~/.elvish/rc.elv`:
+Adjust the Oh My Posh init line in `~/.elvish/rc.elv` by adding the `--config` flag with the location
+of your configuration.
 
 ```bash
 eval (oh-my-posh init elvish --config ~/jandedobbeleer.omp.json)
@@ -138,7 +141,8 @@ exec elvish
 Oh My Posh requires fish v3.4.0 or higher.
 :::
 
-Adjust or add the following line in `~/.config/fish/config.fish`:
+Adjust the Oh My Posh init line in `~/.config/fish/config.fish` by adding the `--config` flag with
+the location of your configuration.
 
 ```bash
 oh-my-posh init fish --config ~/jandedobbeleer.omp.json | source
@@ -157,7 +161,8 @@ Once altered, reload your config for the changes to take effect.
 Oh My Posh requires Nushell v0.73.0 or higher.
 :::
 
-Adjust or add the following line to the Nushell env file (`$nu.env-path`):
+Adjust the Oh My Posh init line in the Nushell env file (`$nu.env-path`) by adding the `--config` flag
+with the location of your configuration.
 
 ```bash
 oh-my-posh init nu --config ~/jandedobbeleer.omp.json
@@ -187,7 +192,8 @@ Once altered, restart Nushell for the changes to take effect.
 </TabItem>
 <TabItem value="powershell">
 
-Adjust or add the following line in your `$PROFILE`:
+Adjust the Oh My Posh init line in your `$PROFILE` by adding the `--config` flag with the location
+of your configuration.
 
 ```powershell
 oh-my-posh init pwsh --config ~/jandedobbeleer.omp.json | Invoke-Expression
@@ -213,7 +219,7 @@ to only require remote scripts to be signed using `Set-ExecutionPolicy RemoteSig
 </TabItem>
 <TabItem value="tcsh">
 
-Adjust or add the following line at the end of `~/.tcshrc`:
+Adjust the Oh My Posh init line in `~/.tcshrc` by adding the `--config` flag with the location of your configuration.
 
 ```bash
 eval `oh-my-posh init tcsh --config ~/jandedobbeleer.omp.json`
@@ -228,7 +234,7 @@ exec tcsh
 </TabItem>
 <TabItem value="xonsh">
 
-Adjust or add the following line at the end of `~/.xonshrc`:
+Adjust the Oh My Posh init line in `~/.xonshrc` by adding the `--config` flag with the location of your configuration.
 
 ```bash
 execx($(oh-my-posh init xonsh --config ~/jandedobbeleer.omp.json))
@@ -243,7 +249,7 @@ exec xonsh
 </TabItem>
 <TabItem value="zsh">
 
-Adjust or add the following line to `~/.zshrc`:
+Adjust the Oh My Posh init line in `~/.zshrc` by adding the `--config` flag with the location of your configuration.
 
 ```bash
 eval "$(oh-my-posh init zsh --config ~/jandedobbeleer.omp.json)"

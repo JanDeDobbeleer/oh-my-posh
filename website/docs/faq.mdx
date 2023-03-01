@@ -219,6 +219,10 @@ SAVEHIST=10000
 setopt appendhistory
 ```
 
+### ZSH: No such shell function 'zle-line-init'
+
+This is most likely caused by two Oh My Posh init lines in your `.zshrc`, remove one of them. See [here][zsh-init].
+
 ### Fish: $(...) is not supported
 
 You should update fish to v3.4.0 or higher. Fish supports `$(...)` and `"$(...)"` since v3.4.0, as described in its [changelog][fish-changelog].
@@ -259,3 +263,4 @@ This is a known problem with Xonsh. The issue is tracked [here][xonsh-issue].
 [utf-8]: https://github.com/PowerShell/PowerShell/issues/7233#issuecomment-640243647
 [fish-changelog]: https://fishshell.com/docs/current/relnotes.html#id1
 [xonsh-issue]: https://github.com/xonsh/xonsh/issues/3810
+[zsh-init]: https://github.com/JanDeDobbeleer/oh-my-posh/discussions/3462#discussioncomment-5155790

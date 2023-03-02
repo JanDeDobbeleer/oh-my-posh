@@ -90,7 +90,12 @@ func (u *Unity) GetUnityVersion() (version string, err error) {
 	unityVersion := firstLine[versionStartIndex:]
 	unityVersion = strings.TrimSpace(unityVersion)
 
-	return strings.TrimSuffix(unityVersion, "f1"), nil
+	fIndex := strings.Index(unityVersion, "f")
+	if versionPrefixIndex > -1 {
+		unityVersion = unityVersion[:fIndex]
+	}
+
+	return unityVersion, nil
 }
 
 func (u *Unity) GetCSharpVersion() (version string, err error) {

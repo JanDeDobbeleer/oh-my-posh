@@ -8,13 +8,16 @@ sidebar_label: Unity
 
 Display the currently active [Unity][unity] and C# versions.
 
-The Unity version is displayed regardless of whether or not the C# version fetching succeeds.
+The Unity version is displayed regardless of whether or not the corrsponding C# version can be found.
+The C# version is determined by first checking a static table.
+If the Unity version isn't found, a web request is made to [the Unity docs][unity-csharp-page] to
+try extracting it from there. A web request only occurs the first time a given `major.minor`
+Unity version is encountered. Subsequent invocations return the cached C# version.
 
-The C# version is fetched from [the docs][unity-csharp-page], but the page only exists as far back as Unity 2018.3.
-Earlier versions will not display a C# version.
+C# version display is only supported from Unity 2017.1.
 
-A web request only occurs the first time a given `major.minor` Unity version is encountered.
-Subsequent invocations return the cached C# version.
+Unity 2017.1 - 2019.1 support two C# versions, depending on which scripting runtime is selected in Player Settings.
+This segment always chooses the higher version.
 
 ## Sample Configuration
 

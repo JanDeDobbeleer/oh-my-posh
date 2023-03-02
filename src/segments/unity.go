@@ -19,6 +19,30 @@ type Unity struct {
 	CSharpVersion string
 }
 
+var csharpVersionsByUnityVersion = map[string]string{
+	"2017.1": "C# 6",
+	"2017.2": "C# 6",
+	"2017.3": "C# 6",
+	"2017.4": "C# 6",
+	"2018.1": "C# 6",
+	"2018.2": "C# 6",
+	"2018.3": "C# 7.3",
+	"2018.4": "C# 7.3",
+	"2019.1": "C# 7.3",
+	"2019.2": "C# 7.3",
+	"2019.3": "C# 7.3",
+	"2019.4": "C# 7.3",
+	"2020.1": "C# 7.3",
+	"2020.2": "C# 8",
+	"2020.3": "C# 8",
+	"2021.1": "C# 8",
+	"2021.2": "C# 9",
+	"2021.3": "C# 9",
+	"2022.1": "C# 9",
+	"2022.2": "C# 9",
+	"2023.1": "C# 9",
+}
+
 func (u *Unity) Enabled() bool {
 	unityVersion, err := u.GetUnityVersion()
 	if err != nil {
@@ -76,8 +100,17 @@ func (u *Unity) GetCSharpVersion() (version string, err error) {
 	}
 	shortUnityVersion := u.UnityVersion[0:lastDotIndex]
 
-	if val, found := u.env.Cache().Get(shortUnityVersion); found {
-		csharpVersion := strings.TrimSuffix(val, ".0")
+	csharpVersion, found := csharpVersionsByUnityVersion[shortUnityVersion]
+	if found {
+		return csharpVersion, nil
+	}
+
+	u.env.Debug(fmt.Sprintf("Unity version %s doesn't exist in the map. Now making web request...", shortUnityVersion))
+	return u.GetCSharpVersionFromWeb(shortUnityVersion)
+}
+
+func (u *Unity) GetCSharpVersionFromWeb(shortUnityVersion string) (version string, err error) {
+	if csharpVersion, found := u.env.Cache().Get(shortUnityVersion); found {
 		return csharpVersion, nil
 	}
 

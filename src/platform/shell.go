@@ -70,6 +70,7 @@ type Flags struct {
 	Primary       bool
 	PromptCount   int
 	Cleared       bool
+	Version       string
 }
 
 type CommandError struct {
@@ -90,8 +91,12 @@ type FileInfo struct {
 type Cache interface {
 	Init(home string)
 	Close()
+	// Gets the value for a given key.
+	// Returns the value and a boolean indicating if the key was found.
+	// In case the ttl expired, the function returns false.
 	Get(key string) (string, bool)
-	// ttl in minutes
+	// Sets a value for a given key.
+	// The ttl indicates how may minutes to cache the value.
 	Set(key, value string, ttl int)
 }
 
@@ -271,7 +276,6 @@ func (c *commandCache) get(command string) (string, bool) {
 
 type Shell struct {
 	CmdFlags *Flags
-	Version  string
 	Var      map[string]interface{}
 
 	cwd       string

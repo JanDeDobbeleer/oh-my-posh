@@ -11,6 +11,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 )
 
 //go:embed scripts/omp.ps1
@@ -250,6 +251,7 @@ func PrintInit(env platform.Environment) string {
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}
+	notice, hasNotice := upgrade.Notice(env)
 	return strings.NewReplacer(
 		"::OMP::", executable,
 		"::CONFIG::", configFile,
@@ -259,6 +261,8 @@ func PrintInit(env platform.Environment) string {
 		"::TOOLTIPS::", toggleSetting(Tooltips),
 		"::RPROMPT::", strconv.FormatBool(RPrompt),
 		"::CURSOR::", strconv.FormatBool(Cursor),
+		"::UPGRADE::", strconv.FormatBool(hasNotice),
+		"::UPGRADENOTICE::", notice,
 	).Replace(script)
 }
 

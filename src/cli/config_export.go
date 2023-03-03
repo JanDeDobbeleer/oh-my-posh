@@ -35,9 +35,9 @@ Exports the ~/myconfig.omp.json config file to toml and prints the result to std
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &platform.Shell{
-			Version: cliVersion,
 			CmdFlags: &platform.Flags{
-				Config: config,
+				Config:  config,
+				Version: cliVersion,
 			},
 		}
 		env.Init()

@@ -24,8 +24,15 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $env:POWERLINE_COMMAND = "oh-my-posh"
     $env:POSH_PID = $PID
     $env:CONDA_PROMPT_MODIFIER = $false
+
+    # set the default theme
     if ((::CONFIG:: -ne '') -and (Test-Path -LiteralPath ::CONFIG::)) {
         $env:POSH_THEME = (Resolve-Path -Path ::CONFIG::).ProviderPath
+    }
+
+    # print upgrade notice
+    if ("::UPGRADE::" -eq "true") {
+        Write-Host "::UPGRADENOTICE::"
     }
 
     # specific module support (disabled by default)

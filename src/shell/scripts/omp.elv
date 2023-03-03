@@ -30,3 +30,7 @@ set edit:rprompt = {
     var cmd-duration = (printf "%.0f" (* $edit:command-duration 1000))
     ::OMP:: print right --config=$E:POSH_THEME --shell=elvish --execution-time=$cmd-duration --error=$error-code --pwd=$pwd --shell-version=$E:ELVISH_VERSION
 }
+
+if (eq '::UPGRADE::' 'true') {
+    echo '::UPGRADENOTICE::'
+}

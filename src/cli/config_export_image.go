@@ -48,10 +48,10 @@ Exports the config to an image file using customized output options.`,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &platform.Shell{
-			Version: cliVersion,
 			CmdFlags: &platform.Flags{
-				Config: config,
-				Shell:  shell.GENERIC,
+				Config:  config,
+				Shell:   shell.GENERIC,
+				Version: cliVersion,
 			},
 		}
 		env.Init()

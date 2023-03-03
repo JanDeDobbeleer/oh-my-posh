@@ -39,9 +39,9 @@ This command is used to get the value of the following variables:
 			return
 		}
 		env := &platform.Shell{
-			Version: cliVersion,
 			CmdFlags: &platform.Flags{
-				Shell: shellName,
+				Shell:   shellName,
+				Version: cliVersion,
 			},
 		}
 		env.Init()

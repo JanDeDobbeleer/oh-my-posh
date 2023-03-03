@@ -35,7 +35,9 @@ You can do the following:
 			return
 		}
 		env := &platform.Shell{
-			Version: cliVersion,
+			CmdFlags: &platform.Flags{
+				Version: cliVersion,
+			},
 		}
 		env.Init()
 		defer env.Close()

@@ -26,3 +26,7 @@ export-env {
         ^::OMP:: print primary $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.NU_VERSION)" $"--execution-time=($cmd_duration)" $"--error=($env.LAST_EXIT_CODE)" $"--terminal-width=($width)" $"--cleared=($clear)"
     }
 }
+
+if "::UPGRADE::" == "true" {
+    echo "::UPGRADENOTICE::"
+}

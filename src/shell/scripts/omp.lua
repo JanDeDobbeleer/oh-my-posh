@@ -1,3 +1,11 @@
+-- Upgrade notice
+
+local notice = [[::UPGRADENOTICE::]]
+
+if '::UPGRADE::' == 'true' then
+    print(notice)
+end
+
 -- Helper functions
 
 local function get_priority_number(name, default)

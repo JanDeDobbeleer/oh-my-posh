@@ -22,9 +22,9 @@ func TestCanUpgrade(t *testing.T) {
 		GOOS           string
 	}{
 		{Case: "Up to date", CurrentVersion: "3.0.0", LatestVersion: "v3.0.0"},
-		{Case: "Oudated Windows", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.WINDOWS},
-		{Case: "Oudated Linux", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.LINUX},
-		{Case: "Oudated Darwin", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.DARWIN},
+		{Case: "Outdated Windows", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.WINDOWS},
+		{Case: "Outdated Linux", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.LINUX},
+		{Case: "Outdated Darwin", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.DARWIN},
 		{Case: "Cached", Cache: true},
 		{Case: "Error", Error: fmt.Errorf("error")},
 	}

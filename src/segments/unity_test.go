@@ -36,99 +36,15 @@ func TestUnitySegment(t *testing.T) {
 		Case                string
 		ExpectedOutput      string
 		VersionFileText     string
-		CacheGet            CacheGet
-		CacheSet            CacheSet
 		ExpectedToBeEnabled bool
 		VersionFileExists   bool
-		HTTPResponse        HTTPResponse
 	}{
 		{
-			Case:                "C# version cached",
+			Case:                "Unity version exists in C# map",
 			ExpectedOutput:      "\ue721 2021.3.16 C# 9",
 			ExpectedToBeEnabled: true,
 			VersionFileExists:   true,
 			VersionFileText:     "m_EditorVersion: 2021.3.16f1\nm_EditorVersionWithRevision: 2021.3.16f1 (4016570cf34f)",
-			CacheGet: CacheGet{
-				key:   "2021.3",
-				val:   "C# 9",
-				found: true,
-			},
-		},
-		{
-			Case:                "C# version not cached",
-			ExpectedOutput:      "\ue721 2021.3.16 C# 9",
-			ExpectedToBeEnabled: true,
-			VersionFileExists:   true,
-			VersionFileText:     "m_EditorVersion: 2021.3.16f1\nm_EditorVersionWithRevision: 2021.3.16f1 (4016570cf34f)",
-			CacheGet: CacheGet{
-				key:   "2021.3",
-				val:   "",
-				found: false,
-			},
-			CacheSet: CacheSet{
-				key: "2021.3",
-				val: "C# 9",
-			},
-			HTTPResponse: HTTPResponse{
-				body: `<a href="https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-9">C# 9.0</a>`,
-				err:  nil,
-			},
-		},
-		{
-			Case:                "C# version has a minor version",
-			ExpectedOutput:      "\ue721 2021.3.16 C# 7.3",
-			ExpectedToBeEnabled: true,
-			VersionFileExists:   true,
-			VersionFileText:     "m_EditorVersion: 2021.3.16f1\nm_EditorVersionWithRevision: 2021.3.16f1 (4016570cf34f)",
-			CacheGet: CacheGet{
-				key:   "2021.3",
-				val:   "",
-				found: false,
-			},
-			CacheSet: CacheSet{
-				key: "2021.3",
-				val: "C# 7.3",
-			},
-			HTTPResponse: HTTPResponse{
-				body: `<a href="https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-7-3">C# 7.3</a>`,
-				err:  nil,
-			},
-		},
-		{
-			Case:                "C# version not found in webpage",
-			ExpectedOutput:      "\ue721 2021.3.16",
-			ExpectedToBeEnabled: true,
-			VersionFileExists:   true,
-			VersionFileText:     "m_EditorVersion: 2021.3.16f1\nm_EditorVersionWithRevision: 2021.3.16f1 (4016570cf34f)",
-			CacheGet: CacheGet{
-				key:   "2021.3",
-				val:   "",
-				found: false,
-			},
-			CacheSet: CacheSet{
-				key: "2021.3",
-				val: "",
-			},
-			HTTPResponse: HTTPResponse{
-				body: `<h1>Sorry... that page seems to be missing!</h1>`,
-				err:  nil,
-			},
-		},
-		{
-			Case:                "http request fails",
-			ExpectedOutput:      "\ue721 2021.3.16",
-			ExpectedToBeEnabled: true,
-			VersionFileExists:   true,
-			VersionFileText:     "m_EditorVersion: 2021.3.16f1\nm_EditorVersionWithRevision: 2021.3.16f1 (4016570cf34f)",
-			CacheGet: CacheGet{
-				key:   "2021.3",
-				val:   "",
-				found: false,
-			},
-			HTTPResponse: HTTPResponse{
-				body: "",
-				err:  errors.New("FAIL"),
-			},
 		},
 		{
 			Case:                "ProjectSettings/ProjectVersion.txt doesn't exist",
@@ -153,10 +69,140 @@ func TestUnitySegment(t *testing.T) {
 			ExpectedToBeEnabled: true,
 			VersionFileExists:   true,
 			VersionFileText:     "m_EditorVersion: 2021.3.16f1\r\nm_EditorVersionWithRevision: 2021.3.16f1 (4016570cf34f)\r\n",
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("Error", mock2.Anything).Return()
+		env.On("Debug", mock2.Anything)
+
+		err := errors.New("no match at root level")
+		var projectDir *platform.FileInfo
+		if tc.VersionFileExists {
+			err = nil
+			projectDir = &platform.FileInfo{
+				ParentFolder: "UnityProjectRoot",
+				Path:         "UnityProjectRoot/ProjectSettings",
+				IsDir:        true,
+			}
+			env.On("HasFilesInDir", projectDir.Path, "ProjectVersion.txt").Return(tc.VersionFileExists)
+			versionFilePath := filepath.Join(projectDir.Path, "ProjectVersion.txt")
+			env.On("FileContent", versionFilePath).Return(tc.VersionFileText)
+		}
+		env.On("HasParentFilePath", "ProjectSettings").Return(projectDir, err)
+
+		props := properties.Map{}
+		unity := &Unity{}
+		unity.Init(props, env)
+		assert.Equal(t, tc.ExpectedToBeEnabled, unity.Enabled())
+		if tc.ExpectedToBeEnabled {
+			assert.Equal(t, tc.ExpectedOutput, renderTemplate(env, unity.Template(), unity), tc.Case)
+		}
+	}
+}
+
+// 2021.9.20f1 is used in the test cases below as a fake Unity version.
+// As such, it doesn't exist in the predfined map in unity.go. This
+// allows us to test the web request portion of the code, which is the
+// fallback for obtaining a C# version.
+func TestUnitySegmentCSharpWebRequest(t *testing.T) {
+	cases := []struct {
+		Case                string
+		ExpectedOutput      string
+		VersionFileText     string
+		CacheGet            CacheGet
+		CacheSet            CacheSet
+		ExpectedToBeEnabled bool
+		VersionFileExists   bool
+		HTTPResponse        HTTPResponse
+	}{
+		{
+			Case:                "C# version cached",
+			ExpectedOutput:      "\ue721 2021.9.20 C# 10",
+			ExpectedToBeEnabled: true,
+			VersionFileExists:   true,
+			VersionFileText:     "m_EditorVersion: 2021.9.20f1\nm_EditorVersionWithRevision: 2021.9.20f1 (4016570cf34f)",
 			CacheGet: CacheGet{
-				key:   "2021.3",
-				val:   "C# 9",
+				key:   "2021.9",
+				val:   "C# 10",
 				found: true,
+			},
+		},
+		{
+			Case:                "C# version not cached",
+			ExpectedOutput:      "\ue721 2021.9.20 C# 10",
+			ExpectedToBeEnabled: true,
+			VersionFileExists:   true,
+			VersionFileText:     "m_EditorVersion: 2021.9.20f1\nm_EditorVersionWithRevision: 2021.9.20f1 (4016570cf34f)",
+			CacheGet: CacheGet{
+				key:   "2021.9",
+				val:   "",
+				found: false,
+			},
+			CacheSet: CacheSet{
+				key: "2021.9",
+				val: "C# 10",
+			},
+			HTTPResponse: HTTPResponse{
+				body: `<a href="https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-10">C# 10.0</a>`,
+				err:  nil,
+			},
+		},
+		{
+			Case:                "C# version has a minor version",
+			ExpectedOutput:      "\ue721 2021.9.20 C# 10.1",
+			ExpectedToBeEnabled: true,
+			VersionFileExists:   true,
+			VersionFileText:     "m_EditorVersion: 2021.9.20f1\nm_EditorVersionWithRevision: 2021.9.20f1 (4016570cf34f)",
+			CacheGet: CacheGet{
+				key:   "2021.9",
+				val:   "",
+				found: false,
+			},
+			CacheSet: CacheSet{
+				key: "2021.9",
+				val: "C# 10.1",
+			},
+			HTTPResponse: HTTPResponse{
+				body: `<a href="https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-10-1">C# 10.1</a>`,
+				err:  nil,
+			},
+		},
+		{
+			Case:                "C# version not found in webpage",
+			ExpectedOutput:      "\ue721 2021.9.20",
+			ExpectedToBeEnabled: true,
+			VersionFileExists:   true,
+			VersionFileText:     "m_EditorVersion: 2021.9.20f1\nm_EditorVersionWithRevision: 2021.9.20f1 (4016570cf34f)",
+			CacheGet: CacheGet{
+				key:   "2021.9",
+				val:   "",
+				found: false,
+			},
+			CacheSet: CacheSet{
+				key: "2021.9",
+				val: "",
+			},
+			HTTPResponse: HTTPResponse{
+				body: `<h1>Sorry... that page seems to be missing!</h1>`,
+				err:  nil,
+			},
+		},
+		{
+			Case:                "http request fails",
+			ExpectedOutput:      "\ue721 2021.9.20",
+			ExpectedToBeEnabled: true,
+			VersionFileExists:   true,
+			VersionFileText:     "m_EditorVersion: 2021.9.20f1\nm_EditorVersionWithRevision: 2021.9.20f1 (4016570cf34f)",
+			CacheGet: CacheGet{
+				key:   "2021.9",
+				val:   "",
+				found: false,
+			},
+			HTTPResponse: HTTPResponse{
+				body: "",
+				err:  errors.New("FAIL"),
 			},
 		},
 	}

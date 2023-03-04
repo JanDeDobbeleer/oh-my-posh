@@ -1,6 +1,6 @@
 module github.com/jandedobbeleer/oh-my-posh/src
 
-go 1.19
+go 1.20
 
 require (
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161

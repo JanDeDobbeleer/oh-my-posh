@@ -1,0 +1,41 @@
+---
+id: docker
+title: Docker
+sidebar_label: Docker
+---
+
+## What
+
+Display the current Docker context. Will not be active when using the default context.
+
+## Sample Configuration
+
+```json
+{
+  "type": "docker",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#000000",
+  "background": "#0B59E7",
+  "template": " \uf308 {{ .Context }} "
+}
+```
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+\uf308 {{ .Context }}
+```
+
+:::
+
+### Properties
+
+| Name       | Type     | Description                |
+| ---------- | -------- | -------------------------- |
+| `.Context` | `string` | the current active context |
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[templates]: /docs/configuration/templates

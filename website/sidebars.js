@@ -67,6 +67,7 @@ module.exports = {
         "segments/crystal",
         "segments/dart",
         "segments/deno",
+        "segments/docker",
         "segments/dotnet",
         "segments/elixir",
         "segments/executiontime",

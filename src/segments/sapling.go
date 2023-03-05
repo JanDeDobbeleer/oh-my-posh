@@ -40,17 +40,18 @@ func (s *SaplingStatus) add(code string) {
 
 const (
 	SAPLINGCOMMAND   = "sl"
-	SLCOMMITTEMPLATE = "no:{node}\nns:{sl_node}\nnd:{sl_date}\nun:{sl_user}\nbm:{activebookmark}"
+	SLCOMMITTEMPLATE = "no:{node}\nns:{sl_node}\nnd:{sl_date}\nun:{sl_user}\nbm:{activebookmark}\ndn:{desc|firstline}"
 )
 
 type Sapling struct {
 	scm
 
-	ShortHash string
-	Hash      string
-	When      string
-	Author    string
-	Bookmark  string
+	ShortHash   string
+	Hash        string
+	When        string
+	Author      string
+	Bookmark    string
+	Description string
 
 	Working *SaplingStatus
 }
@@ -147,6 +148,8 @@ func (sl *Sapling) setCommitContext() {
 			sl.Author = line
 		case "bm:":
 			sl.Bookmark = line
+		case "dn:":
+			sl.Description = line
 		}
 	}
 }

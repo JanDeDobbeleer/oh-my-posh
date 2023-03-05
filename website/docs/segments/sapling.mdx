@@ -45,16 +45,17 @@ Display [sapling][sapling] information when in a sapling repository.
 
 ### Properties
 
-| Name         | Type            | Description                           |
-| ------------ | --------------- | ------------------------------------- |
-| `.RepoName`  | `string`        | the repo folder name                  |
-| `.Working`   | `SaplingStatus` | changes in the worktree (see below)   |
-| `.Author`    | `string`        | the author of the commit              |
-| `.Hash`      | `string`        | the full hash of the commit           |
-| `.ShortHash` | `string`        | the short hash of the commit          |
-| `.When`      | `string`        | the commit's relative time indication |
-| `.Bookmark`  | `string`        | the commit's bookmark (if any)        |
-| `.Dir`       | `string`        | the repository's root directory       |
+| Name           | Type            | Description                                |
+| -------------- | --------------- | ------------------------------------------ |
+| `.RepoName`    | `string`        | the repo folder name                       |
+| `.Working`     | `SaplingStatus` | changes in the worktree (see below)        |
+| `.Description` | `string`        | the first line of the commit's description |
+| `.Author`      | `string`        | the author of the commit                   |
+| `.Hash`        | `string`        | the full hash of the commit                |
+| `.ShortHash`   | `string`        | the short hash of the commit               |
+| `.When`        | `string`        | the commit's relative time indication      |
+| `.Bookmark`    | `string`        | the commit's bookmark (if any)             |
+| `.Dir`         | `string`        | the repository's root directory            |
 
 ### SaplingStatus
 

@@ -10,6 +10,7 @@ can be a good starting point.
 
 1. Ensure any dependencies or build artifacts are removed/ignored before creating a commit.
 2. Commits follow the [conventional commits][cc] guidelines.
+(You can [look up the supported *types*][cc-types] along with an explanation [here][cc-types])
 3. Update the documentation with details of changes to the functionality, this includes new segments
    or core functionality.
 4. Pull Requests are merged once all checks pass and a project maintainer has approved it.
@@ -53,6 +54,7 @@ if you do `Codespaces: Rebuild Container` again, you'll be back to the latest st
 [docs]: https://ohmyposh.dev/docs
 [guide]: https://ohmyposh.dev/docs/contributing/started
 [cc]: https://www.conventionalcommits.org/en/v1.0.0/#summary
+[cc-types]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/.commitlintrc.yml#L23-L33
 [codespaces-badge]: https://github.com/codespaces/badge.svg
 [codespaces-link]: https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=175405157
 [devcontainer-ext]: https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers

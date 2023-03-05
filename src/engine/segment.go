@@ -128,6 +128,8 @@ const (
 	DART SegmentType = "dart"
 	// DENO writes the active deno version
 	DENO SegmentType = "deno"
+	// DOCKER writes the docker context
+	DOCKER SegmentType = "docker"
 	// DOTNET writes which dotnet version is currently active
 	DOTNET SegmentType = "dotnet"
 	// ELIXIR writes the elixir version
@@ -259,6 +261,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	CMAKE:         func() SegmentWriter { return &segments.Cmake{} },
 	DART:          func() SegmentWriter { return &segments.Dart{} },
 	DENO:          func() SegmentWriter { return &segments.Deno{} },
+	DOCKER:        func() SegmentWriter { return &segments.Docker{} },
 	DOTNET:        func() SegmentWriter { return &segments.Dotnet{} },
 	EXECUTIONTIME: func() SegmentWriter { return &segments.Executiontime{} },
 	ELIXIR:        func() SegmentWriter { return &segments.Elixir{} },

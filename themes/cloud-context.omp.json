@@ -157,6 +157,30 @@
           "powerline_symbol": "\ue0b4",
           "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
           "type": "git"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:symbol-color",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}",
+          "type": "node"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:symbol-color",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}",
+          "type": "python"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:symbol-color",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": " \ue77f {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}",
+          "type": "dotnet"
         }
       ],
       "type": "prompt"

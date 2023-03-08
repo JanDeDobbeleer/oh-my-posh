@@ -14,7 +14,7 @@ We recommend [Meslo LGM NF][meslo], but any Nerd Font should be compatible with 
 
 To see the icons displayed in Oh My Posh, **install** a [Nerd Font][nerdfonts], and **configure** your terminal to use it.
 
-#### Installation
+### Installation
 
 <Tabs
     defaultValue="oh-my-posh"
@@ -51,7 +51,23 @@ brew install --cask font-fira-code-nerd-font
 </TabItem>
 </Tabs>
 
-#### Windows Terminal
+### Configuration
+
+Make sure to **configure your terminal** to use the font you have installed. The following sections will show you how to do this for the most popular terminals.
+
+<Tabs
+    defaultValue="wt"
+    values={[
+        { label: 'Windows Terminal', value: 'wt' },
+        { label: 'VS Code', value: 'code' }
+    ]
+}>
+<TabItem value="wt">
+
+:::caution Text renderer
+To ensure correct rendering of the glyphs you will need to enable the option `Use the new text renderer ("AtlasEngine")` in your terminal settings.
+For further details, see [here][wt-issue-8993].
+:::
 
 Once you have installed a Nerd Font, you will need to configure the Windows Terminal to use it. This can be easily done
 by modifying the Windows Terminal settings (default shortcut: `CTRL + SHIFT + ,`). In your `settings.json` file, add the
@@ -72,7 +88,8 @@ by modifying the Windows Terminal settings (default shortcut: `CTRL + SHIFT + ,`
 }
 ```
 
-#### VS Code
+</TabItem>
+<TabItem value="code">
 
 When using Visual Studio Code, you will need to configure the integrated Terminal to make use of the Nerd Font as well. This can be done by changing the `Integrated: Font Family` value in the Terminal settings (default shortcut: `CTRL + ,` and search for `Integrated: Font Family` or via `Users` -> `Features` -> `Terminal`).
 
@@ -81,6 +98,9 @@ If you are using the JSON based settings, you will need to update the `terminal.
 ```json
 "terminal.integrated.fontFamily": "MesloLGM NF"
 ```
+
+</TabItem>
+</Tabs>
 
 ### Other Fonts
 
@@ -94,3 +114,4 @@ The `minimal` themes do not make use of Nerd Font icons.
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [font-thread]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/145#issuecomment-730162622
 [configuration]: /docs/configuration/overview
+[wt-issue-8993]: https://github.com/microsoft/terminal/issues/8993

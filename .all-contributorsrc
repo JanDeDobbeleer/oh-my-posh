@@ -1587,6 +1587,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "craftzneko",
+      "name": "craftzneko",
+      "avatar_url": "https://avatars.githubusercontent.com/u/662108?v=4",
+      "profile": "https://github.com/craftzneko",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

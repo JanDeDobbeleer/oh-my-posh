@@ -1596,6 +1596,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "atlanswer",
+      "name": "甘亭",
+      "avatar_url": "https://avatars.githubusercontent.com/u/17683244?v=4",
+      "profile": "http://waferlab.dev",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

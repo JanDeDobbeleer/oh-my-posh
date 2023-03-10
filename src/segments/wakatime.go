@@ -68,7 +68,7 @@ func (w *Wakatime) setAPIData() error {
 	if (w.wtData.CumulativeTotal == wtTotals{}) ||
 		(w.wtData.Start == "") ||
 		(w.wtData.End == "") {
-		return fmt.Errorf("One of the fields of Wakatime segment is empty. | %+v - Error", w.wtData)
+		return fmt.Errorf("Some context of Wakatime segment is missing. Please check Wakatime API for changes that resulted to this error. | Payload: %+v - Error", w.wtData)
 	}
 
 	if cacheTimeout > 0 {

@@ -2,6 +2,7 @@ package segments
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -21,13 +22,13 @@ type wtTotals struct {
 }
 
 type wtData struct {
-	CummulativeTotal wtTotals `json:"cummulative_total"`
-	Start            string   `json:"start"`
-	End              string   `json:"end"`
+	CumulativeTotal wtTotals `json:"cumulative_total"`
+	Start           string   `json:"start"`
+	End             string   `json:"end"`
 }
 
 func (w *Wakatime) Template() string {
-	return " {{ secondsRound .CummulativeTotal.Seconds }} "
+	return " {{ secondsRound .CumulativeTotal.Seconds }} "
 }
 
 func (w *Wakatime) Enabled() bool {
@@ -61,6 +62,13 @@ func (w *Wakatime) setAPIData() error {
 	err = json.Unmarshal(body, &w.wtData)
 	if err != nil {
 		return err
+	}
+
+	// In case of Wakatime API changes, validate if one of the fields of `w.wtData`, is empty.
+	if (w.wtData.CumulativeTotal == wtTotals{}) ||
+		(w.wtData.Start == "") ||
+		(w.wtData.End == "") {
+		return fmt.Errorf("One of the fields of Wakatime segment is empty. | %+v - Error", w.wtData)
 	}
 
 	if cacheTimeout > 0 {

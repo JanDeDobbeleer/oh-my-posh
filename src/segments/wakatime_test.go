@@ -73,8 +73,7 @@ func TestWTTrackedTime(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
-
-		response := fmt.Sprintf(`{"cummulative_total": {"seconds": %.2f, "text": "x"}}`, float64(tc.Seconds))
+		response := fmt.Sprintf(`{"cumulative_total": {"seconds": %.2f, "text": "x"}, "start": "2023-01-01T00:00:00Z", "end": "2023-01-01T00:01:00Z"}`, float64(tc.Seconds))
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(response), tc.Error)
 

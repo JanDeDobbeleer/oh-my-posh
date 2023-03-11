@@ -21,13 +21,13 @@ type wtTotals struct {
 }
 
 type wtData struct {
-	CummulativeTotal wtTotals `json:"cummulative_total"`
-	Start            string   `json:"start"`
-	End              string   `json:"end"`
+	CumulativeTotal wtTotals `json:"cumulative_total"`
+	Start           string   `json:"start"`
+	End             string   `json:"end"`
 }
 
 func (w *Wakatime) Template() string {
-	return " {{ secondsRound .CummulativeTotal.Seconds }} "
+	return " {{ secondsRound .CumulativeTotal.Seconds }} "
 }
 
 func (w *Wakatime) Enabled() bool {

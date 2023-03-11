@@ -2,7 +2,6 @@ package segments
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"

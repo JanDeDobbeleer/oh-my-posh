@@ -64,13 +64,6 @@ func (w *Wakatime) setAPIData() error {
 		return err
 	}
 
-	// In case of Wakatime API changes, validate if one of the fields of `w.wtData`, is empty.
-	if (w.wtData.CumulativeTotal == wtTotals{}) ||
-		(w.wtData.Start == "") ||
-		(w.wtData.End == "") {
-		return fmt.Errorf("Some context of Wakatime segment is missing. Please check Wakatime API for changes that resulted to this error. | Payload: %+v - Error", w.wtData)
-	}
-
 	if cacheTimeout > 0 {
 		w.env.Cache().Set(url, string(body), cacheTimeout)
 	}

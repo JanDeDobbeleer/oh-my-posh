@@ -33,10 +33,16 @@ func (d *Docker) envVars() []string {
 }
 
 func (d *Docker) configFiles() []string {
-	return []string{
-		filepath.Join(d.env.Home(), "/.docker/config.json"),
-		filepath.Join(d.env.Getenv("DOCKER_CONFIG"), "/config.json"),
+	files := []string{
+		filepath.Join(d.env.Home(), ".docker/config.json"),
 	}
+
+	dockerConfig := d.env.Getenv("DOCKER_CONFIG")
+	if len(dockerConfig) > 0 {
+		files = append(files, filepath.Join(dockerConfig, "config.json"))
+	}
+
+	return files
 }
 
 func (d *Docker) Enabled() bool {

@@ -85,3 +85,9 @@ func (fc *fileCache) Set(key, value string, ttl int) {
 	})
 	fc.dirty = true
 }
+
+// delete the key from the cache
+func (fc *fileCache) Delete(key string) {
+	fc.cache.Delete(key)
+	fc.dirty = true
+}

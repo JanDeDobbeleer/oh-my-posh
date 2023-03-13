@@ -39,7 +39,7 @@ https://ohmyposh.dev/docs/installation/windows#update`
 	unix   = "To upgrade, use your favorite package manager or, if you used Homebrew to install, run: 'brew upgrade oh-my-posh'"
 	darwin = "To upgrade, run: 'brew upgrade oh-my-posh'"
 
-	UPGRADECACHEKEY = "upgrade_check"
+	CACHEKEY = "upgrade_check"
 )
 
 func getLatestVersion(env platform.Environment) (string, error) {
@@ -59,7 +59,7 @@ func getLatestVersion(env platform.Environment) (string, error) {
 // The upgrade check is only performed every other week.
 func Notice(env platform.Environment) (string, bool) {
 	// do not check when last validation was < 1 week ago
-	if _, OK := env.Cache().Get(UPGRADECACHEKEY); OK {
+	if _, OK := env.Cache().Get(CACHEKEY); OK {
 		return "", false
 	}
 
@@ -69,7 +69,7 @@ func Notice(env platform.Environment) (string, bool) {
 	}
 
 	oneWeek := 10080
-	env.Cache().Set(UPGRADECACHEKEY, latest, oneWeek)
+	env.Cache().Set(CACHEKEY, latest, oneWeek)
 
 	version := fmt.Sprintf("v%s", env.Flags().Version)
 	if latest == version {

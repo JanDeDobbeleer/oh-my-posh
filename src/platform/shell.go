@@ -98,6 +98,8 @@ type Cache interface {
 	// Sets a value for a given key.
 	// The ttl indicates how may minutes to cache the value.
 	Set(key, value string, ttl int)
+	// Deletes a key from the cache.
+	Delete(key string)
 }
 
 type HTTPRequestModifier func(request *http.Request)

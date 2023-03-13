@@ -50,7 +50,7 @@ var (
 )
 
 func init() { //nolint:gochecknoinits
-	RootCmd.PersistentFlags().StringVarP(&config, "config", "c", "", "config (required)")
+	RootCmd.PersistentFlags().StringVarP(&config, "config", "c", "", "config file path")
 	RootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init (deprecated)")
 	RootCmd.Flags().BoolVar(&displayVersion, "version", false, "version")
 	RootCmd.Flags().StringVarP(&shellName, "shell", "s", "", "shell (deprecated)")

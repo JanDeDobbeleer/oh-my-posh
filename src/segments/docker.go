@@ -60,14 +60,16 @@ func (d *Docker) Enabled() bool {
 	// Check if there is a file named `$HOME/.docker/config.json` or `$DOCKER_CONFIG/config.json`
 	// Return the current context if it is not empty and not `default`
 	for _, f := range d.configFiles() {
-		if !d.env.HasFiles(f) {
+		data := d.env.FileContent(f)
+		if len(data) == 0 {
 			continue
 		}
-		data := d.env.FileContent(f)
+
 		var cfg DockerConfig
 		if err := json.Unmarshal([]byte(data), &cfg); err != nil {
 			continue
 		}
+
 		if len(cfg.CurrentContext) > 0 && cfg.CurrentContext != "default" {
 			d.Context = cfg.CurrentContext
 			return true

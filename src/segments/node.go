@@ -2,6 +2,7 @@ package segments
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -46,12 +47,7 @@ func (n *Node) Init(props properties.Properties, env platform.Environment) {
 }
 
 func (n *Node) Enabled() bool {
-	if n.language.Enabled() {
-		n.Mismatch = !n.matchesVersionFile()
-		return true
-	}
-
-	return false
+	return n.language.Enabled()
 }
 
 func (n *Node) loadContext() {
@@ -67,10 +63,10 @@ func (n *Node) loadContext() {
 	}
 }
 
-func (n *Node) matchesVersionFile() bool {
+func (n *Node) matchesVersionFile() (string, bool) {
 	fileVersion := n.language.env.FileContent(".nvmrc")
 	if len(fileVersion) == 0 {
-		return true
+		return "", true
 	}
 
 	re := fmt.Sprintf(
@@ -80,5 +76,7 @@ func (n *Node) matchesVersionFile() bool {
 		n.language.version.Patch,
 	)
 
-	return regex.MatchString(re, fileVersion)
+	version := strings.TrimPrefix(fileVersion, "v")
+
+	return version, regex.MatchString(re, fileVersion)
 }

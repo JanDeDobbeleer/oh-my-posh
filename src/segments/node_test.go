@@ -17,18 +17,19 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 		Patch: "3",
 	}
 	cases := []struct {
-		Case      string
-		Expected  bool
-		RCVersion string
+		Case            string
+		Expected        bool
+		ExpectedVersion string
+		RCVersion       string
 	}{
 		{Case: "no file context", Expected: true, RCVersion: ""},
-		{Case: "version match", Expected: true, RCVersion: "1.2.3"},
-		{Case: "version mismatch", Expected: false, RCVersion: "3.2.1"},
-		{Case: "version match in other format", Expected: true, RCVersion: "v1.2.3"},
-		{Case: "version match without patch", Expected: true, RCVersion: "1.2"},
-		{Case: "version match without patch in other format", Expected: true, RCVersion: "v1.2"},
-		{Case: "version match without minor", Expected: true, RCVersion: "1"},
-		{Case: "version match without minor in other format", Expected: true, RCVersion: "v1"},
+		{Case: "version match", Expected: true, ExpectedVersion: "1.2.3", RCVersion: "1.2.3"},
+		{Case: "version mismatch", Expected: false, ExpectedVersion: "3.2.1", RCVersion: "3.2.1"},
+		{Case: "version match in other format", Expected: true, ExpectedVersion: "1.2.3", RCVersion: "v1.2.3"},
+		{Case: "version match without patch", Expected: true, ExpectedVersion: "1.2", RCVersion: "1.2"},
+		{Case: "version match without patch in other format", Expected: true, ExpectedVersion: "1.2", RCVersion: "v1.2"},
+		{Case: "version match without minor", Expected: true, ExpectedVersion: "1", RCVersion: "1"},
+		{Case: "version match without minor in other format", Expected: true, ExpectedVersion: "1", RCVersion: "v1"},
 	}
 
 	for _, tc := range cases {
@@ -41,7 +42,9 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 				version: nodeVersion,
 			},
 		}
-		assert.Equal(t, tc.Expected, node.matchesVersionFile(), tc.Case)
+		version, match := node.matchesVersionFile()
+		assert.Equal(t, tc.Expected, match, tc.Case)
+		assert.Equal(t, tc.ExpectedVersion, version, tc.Case)
 	}
 }
 

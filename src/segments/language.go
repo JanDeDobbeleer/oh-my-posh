@@ -20,7 +20,7 @@ type loadContext func()
 type inContext func() bool
 
 type getVersion func() (string, error)
-type matchesVersionFile func() bool
+type matchesVersionFile func() (string, bool)
 
 type version struct {
 	Full          string
@@ -31,6 +31,7 @@ type version struct {
 	BuildMetadata string
 	URL           string
 	Executable    string
+	Expected      string
 }
 
 type cmd struct {
@@ -128,12 +129,18 @@ func (l *language) Enabled() bool {
 			enabled = l.hasLanguageFiles() || l.hasLanguageFolders() || l.inLanguageContext()
 		}
 	}
+
 	if !enabled || !l.props.GetBool(properties.FetchVersion, true) {
 		return enabled
 	}
+
 	err := l.setVersion()
 	if err != nil {
 		l.Error = err.Error()
+	}
+
+	if l.matchesVersionFile != nil {
+		l.version.Expected, l.Mismatch = l.matchesVersionFile()
 	}
 	return enabled
 }

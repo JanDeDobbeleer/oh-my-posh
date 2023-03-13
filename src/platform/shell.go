@@ -416,6 +416,7 @@ func (env *Shell) HasFiles(pattern string) bool {
 	matches, err := fs.Glob(fileSystem, pattern)
 	if err != nil {
 		env.Error(err)
+		env.Debug("false")
 		return false
 	}
 	for _, match := range matches {
@@ -423,8 +424,10 @@ func (env *Shell) HasFiles(pattern string) bool {
 		if err != nil || file.IsDir() {
 			continue
 		}
+		env.Debug("true")
 		return true
 	}
+	env.Debug("false")
 	return false
 }
 
@@ -434,6 +437,7 @@ func (env *Shell) HasFilesInDir(dir, pattern string) bool {
 	matches, err := fs.Glob(fileSystem, pattern)
 	if err != nil {
 		env.Error(err)
+		env.Debug("false")
 		return false
 	}
 	hasFilesInDir := len(matches) > 0

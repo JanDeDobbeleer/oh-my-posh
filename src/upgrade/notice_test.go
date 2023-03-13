@@ -35,7 +35,7 @@ func TestCanUpgrade(t *testing.T) {
 			Version: tc.CurrentVersion,
 		})
 		cache := &mock.MockedCache{}
-		cache.On("Get", UPGRADECACHEKEY).Return("", tc.Cache)
+		cache.On("Get", CACHEKEY).Return("", tc.Cache)
 		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
 		env.On("Cache").Return(cache)
 		env.On("GOOS").Return(tc.GOOS)

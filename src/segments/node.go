@@ -76,7 +76,8 @@ func (n *Node) matchesVersionFile() (string, bool) {
 		n.language.version.Patch,
 	)
 
-	version := strings.TrimPrefix(fileVersion, "v")
+	version := strings.TrimSpace(fileVersion)
+	version = strings.TrimPrefix(version, "v")
 
 	return version, regex.MatchString(re, fileVersion)
 }

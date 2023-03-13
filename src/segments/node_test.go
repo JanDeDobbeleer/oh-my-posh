@@ -24,6 +24,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 	}{
 		{Case: "no file context", Expected: true, RCVersion: ""},
 		{Case: "version match", Expected: true, ExpectedVersion: "1.2.3", RCVersion: "1.2.3"},
+		{Case: "version match with newline", Expected: true, ExpectedVersion: "1.2.3", RCVersion: "1.2.3\n"},
 		{Case: "version mismatch", Expected: false, ExpectedVersion: "3.2.1", RCVersion: "3.2.1"},
 		{Case: "version match in other format", Expected: true, ExpectedVersion: "1.2.3", RCVersion: "v1.2.3"},
 		{Case: "version match without patch", Expected: true, ExpectedVersion: "1.2", RCVersion: "1.2"},

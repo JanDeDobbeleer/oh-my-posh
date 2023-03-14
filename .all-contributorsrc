@@ -1606,6 +1606,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Mertsch",
+      "name": "Mertsch",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9402861?v=4",
+      "profile": "https://github.com/Mertsch",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

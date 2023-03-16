@@ -98,17 +98,18 @@ func (m Map) GetFloat64(property Property, defaultValue float64) float64 {
 		return defaultValue
 	}
 
-	if floatValue, ok := val.(float64); ok {
-		return floatValue
-	}
-
-	// config parser parses an int
-	intValue, ok := val.(int)
-	if !ok {
+	switch v := val.(type) {
+	case int:
+		return float64(v)
+	case int64:
+		return float64(v)
+	case uint64:
+		return float64(v)
+	case float64:
+		return v
+	default:
 		return defaultValue
 	}
-
-	return float64(intValue)
 }
 
 func (m Map) GetInt(property Property, defaultValue int) int {

@@ -86,29 +86,28 @@ func TestGetBoolInvalidProperty(t *testing.T) {
 }
 
 func TestGetFloat64(t *testing.T) {
-	expected := float64(1337)
-	var properties = Map{Foo: expected}
-	value := properties.GetFloat64(Foo, 9001)
-	assert.Equal(t, expected, value)
+	cases := []struct {
+		Case     string
+		Expected float64
+		Input    interface{}
+	}{
+		{Case: "int", Expected: 1337, Input: 1337},
+		{Case: "float64", Expected: 1337, Input: float64(1337)},
+		{Case: "uint64", Expected: 1337, Input: uint64(1337)},
+		{Case: "int64", Expected: 1337, Input: int64(1337)},
+		{Case: "string", Expected: 9001, Input: "invalid"},
+		{Case: "bool", Expected: 9001, Input: true},
+	}
+	for _, tc := range cases {
+		properties := Map{Foo: tc.Input}
+		value := properties.GetFloat64(Foo, 9001)
+		assert.Equal(t, tc.Expected, value, tc.Case)
+	}
 }
 
 func TestGetFloat64PropertyNotInMap(t *testing.T) {
 	expected := float64(1337)
 	var properties = Map{}
-	value := properties.GetFloat64(Foo, expected)
-	assert.Equal(t, expected, value)
-}
-
-func TestGetFloat64InvalidStringProperty(t *testing.T) {
-	expected := float64(1337)
-	var properties = Map{Foo: "invalid"}
-	value := properties.GetFloat64(Foo, expected)
-	assert.Equal(t, expected, value)
-}
-
-func TestGetFloat64InvalidBoolProperty(t *testing.T) {
-	expected := float64(1337)
-	var properties = Map{Foo: true}
 	value := properties.GetFloat64(Foo, expected)
 	assert.Equal(t, expected, value)
 }

@@ -1,0 +1,396 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palette": {
+    "background": "#292929",
+    "color": "#fb7e14",
+    "lite-color": "#fca052"
+  },
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "os",
+          "background": "p:background",
+          "foreground": "p:color",
+          "leading_diamond": "\u256d\u2500\ue0b6",
+          "style": "diamond",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} \ue0b3"
+        },
+        {
+          "type": "path",
+          "background": "p:background",
+          "foreground": "p:color",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "folder_icon": "\uf115",
+            "folder_separator_icon": " \ue0bd ~ ",
+            "home_icon": "\uf7db",
+            "style": "agnoster"
+          },
+          "style": "powerline",
+          "template": "{{ .Path }}"
+        },
+        {
+          "type": "wifi",
+          "style": "powerline",
+          "foreground": "p:background",
+          "background_templates": [
+            "{{ if (lt .Signal 60) }}p:lite-color{{ else if (lt .Signal 90) }}p:color{{ else }}p:background{{ end }}"
+          ],
+          "powerline_symbol": "\uE0B0",
+          "template": " \uFAA8{{ .SSID }} {{ .Signal }}% {{ .ReceiveRate }}Mbps"
+        },
+        {
+          "type": "git",
+          "background": "p:color",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}{{ end }}",
+            "{{ if gt .Ahead 0 }}p:lite-color{{ end }}",
+            "{{ if gt .Behind 0 }}p:lite-color{{ end }}"
+          ],
+          "foreground": "p:background",
+          "powerline_symbol": "\ue0b0 ",
+          "properties": {
+            "branch_icon": "\ue725 ",
+            "fetch_status": true,
+            "fetch_stash_count": true,
+            "fetch_upstream_icon": true
+          },
+          "style": "powerline",
+          "template": "\ue0c7 {{ .UpstreamIcon }}{{ .HEAD }}{{ .BranchStatus }}{{ if .Staging.Changed }} \uF044{{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF046{{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692{{ .StashCount }}{{ end }}"
+        },
+        {
+          "type": "battery",
+          "background": "p:background",
+          "foreground": "p:color",
+          "foreground_templates": [
+            "{{ if eq \"Full\" .State.String }}{{ end }}",
+            "{{ if eq \"Charging\" .State.String }}{{ end }}",
+            "{{ if eq \"Discharging\" .State.String }}p:lite-color{{ end }}"
+          ],
+          "properties": {
+            "charged_icon": " \uf58e ",
+            "charging_icon": " \uf1e6 ",
+            "discharging_icon": " \ue234 "
+          },
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "template": "{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }} "
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "background": "p:background",
+          "foreground": "p:color",
+          "style": "diamond",
+          "leading_diamond": "\ue0b6",
+          "template": " {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .HostName }} \ue0b3 ",
+          "type": "session"
+        },
+        {
+          "type": "time",
+          "background": "p:background",
+          "foreground": "p:color",
+          "properties": {
+            "time_format": "15:04:05"
+          },
+          "style": "diamond",
+          "template": "{{ .CurrentDate | date .Format }} \uf017 ",
+          "trailing_diamond": "\ue0b4"
+        },
+        {
+          "type": "spotify",
+          "style": "diamond",
+          "foreground": "p:background",
+          "background": "p:color",
+          "leading_diamond": "\ue0c2",
+          "trailing_diamond": "\ue0c0",
+          "properties": {
+            "playing_icon": "\uE602 ",
+            "paused_icon": "\uF8E3 ",
+            "stopped_icon": "\uF04D "
+          }
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "shell",
+          "background": "p:color",
+          "foreground": "p:background",
+          "properties": {
+            "mapped_shell_names": {
+              "powershell": "PS5"
+            }
+          },
+          "style": "diamond",
+          "leading_diamond": "\u2570\u2500\ue0b6",
+          "template": "\uf489 {{ .Version }} \ue0b1"
+        },
+        {
+          "type": "sysinfo",
+          "background": "p:color",
+          "foreground": "p:background",
+          "template": " \uf85a {{ round .PhysicalPercentUsed .Precision }}%",
+          "properties": {
+            "precision": 2
+          },
+          "style": "powerline"
+        },
+        {
+          "type": "executiontime",
+          "background": "p:color",
+          "foreground": "p:background",
+          "properties": {
+            "always_enabled": true,
+            "style": "austin",
+            "threshold": 500
+          },
+          "style": "powerline",
+          "template": " \ue0b1 {{ .FormattedMs }} \ue0b1"
+        },
+        {
+          "type": "project",
+          "style": "diamond",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }} \ue0b1 "
+        },
+        {
+          "type": "aws",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": " \uE7AD {{.Profile}}{{if .Region}}@{{.Region}}{{end}} \ue0b1"
+        },
+        {
+          "type": "az",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uFD03 {{ .User.Name }}@{{ .EnvironmentName }} \ue0b1"
+        },
+        {
+          "type": "azfunc",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uf0e7 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1",
+          "properties": {
+              "fetch_version": true,
+              "display_mode": "files"
+          }
+      },
+        {
+          "type": "cds",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "properties": {
+            "display_mode": "files"
+        },
+          "template": "\ue311 cds {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "cf",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uf40a cf {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "crystal",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uE370 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "go",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uFCD1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "dart",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uE798 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+      {
+          "type": "dotnet",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uE77F {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "haskell",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "properties": {
+            "display_mode": "files"
+        },
+          "template": "\ue61f {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "java",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uE738 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "julia",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uE624 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "kotlin",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\ufa05 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "kubectl",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uFD31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} \ue0b1"
+        },
+        {
+          "type": "node",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "properties": {
+            "display_mode": "files"
+        },
+          "template": "\uE718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} \ue0b1"
+        },
+        {
+          "type": "npm",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\ue71e {{ .Full }} \ue0b1"
+        },
+        {
+          "type": "python",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "properties": {
+            "display_mode": "files"
+        },
+          "template": "\uE235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }}{{ end }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "php",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\ue73d {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "r",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": " R {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "ruby",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uE791 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "rust",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\uE7a8 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "swift",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "\ue755 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "terraform",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "p:background",
+          "background": "p:color",
+          "template": "{{ .WorkspaceName }}{{ if .Version }} {{ .Version }}{{ end }} \ue0b1"
+        },
+        {
+          "type": "ui5tooling",
+          "foreground": "p:background",
+          "background": "p:color",
+          "powerline_symbol": "\ue0b0",
+          "template": " \ufab6ui5 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue0b1",
+          "style": "powerline"
+        },
+        {
+          "background": "p:color",
+          "foreground": "p:background",
+          "properties": {
+            "always_enabled": true,
+            "display_exit_code": true
+          },
+          "style": "diamond",
+          "template": " {{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf00c{{ end }} ",
+          "trailing_diamond": "\ue0b4",
+          "type": "exit"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 2
+}

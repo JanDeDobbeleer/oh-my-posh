@@ -27,10 +27,10 @@ var fontExtensions = map[string]bool{
 	".ttf": true,
 }
 
-// new creates a new Font struct.
+// newFont creates a newFont Font struct.
 // fileName is the font's file name, and data is a byte slice containing the font file data.
 // It returns a FontData struct describing the font, or an error.
-func new(fileName string, data []byte) (*Font, error) {
+func newFont(fileName string, data []byte) (*Font, error) {
 	if _, ok := fontExtensions[strings.ToLower(path.Ext(fileName))]; !ok {
 		return nil, fmt.Errorf("not a font: %v", fileName)
 	}

@@ -96,4 +96,4 @@ replace github.com/atotto/clipboard v0.1.4 => github.com/jandedobbeleer/clipboar
 
 replace github.com/shirou/gopsutil/v3 v3.22.10 => github.com/jandedobbeleer/gopsutil/v3 v3.22.10-1
 
-replace github.com/goccy/go-yaml v1.10.0 => github.com/jandedobbeleer/go-yaml v1.10.0-3
+replace github.com/goccy/go-yaml v1.10.0 => github.com/jandedobbeleer/go-yaml v1.10.0-4

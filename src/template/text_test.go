@@ -170,9 +170,8 @@ func TestRenderTemplate(t *testing.T) {
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
-		} else {
-			assert.NoError(t, err)
 		}
+		assert.NoError(t, err)
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}
 }

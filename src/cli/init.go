@@ -11,9 +11,9 @@ import (
 )
 
 var (
-	print  bool
-	strict bool
-	manual bool
+	printOutput bool
+	strict      bool
+	manual      bool
 
 	initCmd = &cobra.Command{
 		Use:   "init [bash|zsh|fish|powershell|pwsh|cmd|nu] --config ~/.mytheme.omp.json",
@@ -45,7 +45,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 )
 
 func init() { //nolint:gochecknoinits
-	initCmd.Flags().BoolVarP(&print, "print", "p", false, "print the init script")
+	initCmd.Flags().BoolVarP(&printOutput, "print", "p", false, "print the init script")
 	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "run in strict mode")
 	initCmd.Flags().BoolVarP(&manual, "manual", "m", false, "enable/disable manual mode")
 	_ = initCmd.MarkPersistentFlagRequired("config")
@@ -77,7 +77,7 @@ func runInit(shellName string) {
 			shell.RPrompt = true
 		}
 	}
-	if print {
+	if printOutput {
 		init := shell.PrintInit(env)
 		fmt.Print(init)
 		return

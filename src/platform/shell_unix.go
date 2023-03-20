@@ -23,7 +23,7 @@ func (env *Shell) Home() string {
 	return os.Getenv("HOME")
 }
 
-func (env *Shell) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
+func (env *Shell) QueryWindowTitles(_, _ string) (string, error) {
 	return "", &NotImplemented{}
 }
 
@@ -97,7 +97,7 @@ func (env *Shell) CachePath() string {
 	return env.Home()
 }
 
-func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
+func (env *Shell) WindowsRegistryKeyValue(_ string) (*WindowsRegistryValue, error) {
 	return nil, &NotImplemented{}
 }
 
@@ -124,7 +124,7 @@ func (env *Shell) ConvertToLinuxPath(path string) string {
 	return path
 }
 
-func (env *Shell) LookWinAppPath(file string) (string, error) {
+func (env *Shell) LookWinAppPath(_ string) (string, error) {
 	return "", errors.New("not relevant")
 }
 
@@ -133,7 +133,7 @@ func (env *Shell) DirIsWritable(path string) bool {
 	return unix.Access(path, unix.W_OK) == nil
 }
 
-func (env *Shell) Connection(connectionType ConnectionType) (*Connection, error) {
+func (env *Shell) Connection(_ ConnectionType) (*Connection, error) {
 	// added to disable the linting error, we can implement this later
 	if len(env.networks) == 0 {
 		return nil, &NotImplemented{}

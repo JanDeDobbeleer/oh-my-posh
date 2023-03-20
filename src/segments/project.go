@@ -175,7 +175,7 @@ func (n *Project) getPoetryPackage(item ProjectItem) *ProjectData {
 	}
 }
 
-func (n *Project) getNuSpecPackage(item ProjectItem) *ProjectData {
+func (n *Project) getNuSpecPackage(_ ProjectItem) *ProjectData {
 	files := n.env.LsDir(n.env.Pwd())
 	var content string
 	// get the first match only
@@ -199,7 +199,7 @@ func (n *Project) getNuSpecPackage(item ProjectItem) *ProjectData {
 	}
 }
 
-func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
+func (n *Project) getDotnetProject(_ ProjectItem) *ProjectData {
 	files := n.env.LsDir(n.env.Pwd())
 	var name string
 	var content string

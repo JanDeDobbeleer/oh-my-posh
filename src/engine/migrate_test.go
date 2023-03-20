@@ -89,7 +89,7 @@ func (m *MockedWriter) Template() string {
 	return m.template
 }
 
-func (m *MockedWriter) Init(props properties.Properties, env platform.Environment) {}
+func (m *MockedWriter) Init(_ properties.Properties, _ platform.Environment) {}
 
 func TestIconOverride(t *testing.T) {
 	cases := []struct {

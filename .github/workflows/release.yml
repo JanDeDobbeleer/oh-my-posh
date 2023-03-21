@@ -45,7 +45,10 @@ jobs:
       - name: Install Go 🗳
         uses: ./.github/workflows/composite/bootstrap-go
       - name: Tag HEAD 😸
-        run: git tag ${{ needs.changelog.outputs.tag }}
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag ${{ needs.changelog.outputs.tag }}
       - name: Install cosign 🔑
         uses: sigstore/cosign-installer@c3667d99424e7e6047999fb6246c0da843953c65
         with:

@@ -1740,7 +1740,8 @@
                       "folder",
                       "mixed",
                       "letter",
-                      "unique"
+                      "unique",
+                      "powerlevel"
                     ],
                     "default": "folder"
                   },

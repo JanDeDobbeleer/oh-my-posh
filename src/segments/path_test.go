@@ -162,6 +162,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		FolderSeparatorIcon string
 		GOOS                string
 		MaxDepth            int
+		MaxWidth            int
 		HideRootLocation    bool
 	}{
 		{
@@ -196,6 +197,25 @@ func TestAgnosterPathStyles(t *testing.T) {
 			GOOS:                platform.WINDOWS,
 			PathSeparator:       "\\",
 			FolderSeparatorIcon: " > ",
+		},
+
+		{
+			Style:               Powerlevel,
+			Expected:            "t > w > o > a > v > l > p > wh > we > i > wa > th > the > d > f > u > it > c > to > a > co > stream",
+			HomePath:            homeDir,
+			Pwd:                 "there/was/once/a/very/long/path/which/wended/its/way/through/the/dark/forest/until/it/came/to/a/cold/stream",
+			PathSeparator:       "/",
+			FolderSeparatorIcon: " > ",
+			MaxWidth:            20,
+		},
+		{
+			Style:               Powerlevel,
+			Expected:            "t > w > o > a > v > l > p > which > wended > its > way > through > the",
+			HomePath:            homeDir,
+			Pwd:                 "there/was/once/a/very/long/path/which/wended/its/way/through/the",
+			PathSeparator:       "/",
+			FolderSeparatorIcon: " > ",
+			MaxWidth:            70,
 		},
 
 		{
@@ -696,6 +716,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 				FolderSeparatorIcon: tc.FolderSeparatorIcon,
 				properties.Style:    tc.Style,
 				MaxDepth:            tc.MaxDepth,
+				MaxWidth:            tc.MaxWidth,
 				HideRootLocation:    tc.HideRootLocation,
 			},
 		}

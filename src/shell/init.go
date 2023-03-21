@@ -210,7 +210,12 @@ func PrintInit(env platform.Environment) string {
 
 	shell := env.Flags().Shell
 	configFile := env.Flags().Config
-	var script string
+
+	var (
+		script, notice string
+		hasNotice      bool
+	)
+
 	switch shell {
 	case PWSH, PWSH5:
 		executable = quotePwshStr(executable)
@@ -251,7 +256,13 @@ func PrintInit(env platform.Environment) string {
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}
-	notice, hasNotice := upgrade.Notice(env)
+
+	// only run this for shells that support
+	// injecting the notice directly
+	if shell != PWSH && shell != PWSH5 {
+		notice, hasNotice = upgrade.Notice(env)
+	}
+
 	return strings.NewReplacer(
 		"::OMP::", executable,
 		"::CONFIG::", configFile,

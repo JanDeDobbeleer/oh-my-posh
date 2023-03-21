@@ -30,11 +30,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $env:POSH_THEME = (Resolve-Path -Path ::CONFIG::).ProviderPath
     }
 
-    # print upgrade notice
-    if ("::UPGRADE::" -eq "true") {
-        Write-Host "::UPGRADENOTICE::"
-    }
-
     # specific module support (disabled by default)
     if (($null -eq $env:POSH_GIT_ENABLED) -or ($null -eq (Get-Module 'posh-git'))) {
         $env:POSH_GIT_ENABLED = $false
@@ -402,6 +397,11 @@ Example:
                 Set-PSReadLineKeyHandler -Key Enter -Function AcceptLine
             }
         }
+    }
+
+    $notice = @(Start-Utf8Process $script:OMPExecutable @("notice"))
+    if ($notice) {
+        Write-Host $notice -NoNewline
     }
 
     Export-ModuleMember -Function @(

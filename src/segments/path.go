@@ -58,6 +58,9 @@ const (
 	Unique string = "unique"
 	// AgnosterLeft like agnoster, but keeps the left side of the path
 	AgnosterLeft string = "agnoster_left"
+	// Powerlevel tries to mimic the powerlevel10k path,
+	// used in combination with max_width.
+	Powerlevel string = "powerlevel"
 	// MixedThreshold the threshold of the length of the path Mixed will display
 	MixedThreshold properties.Property = "mixed_threshold"
 	// MappedLocations allows overriding certain location with an icon
@@ -66,6 +69,8 @@ const (
 	MappedLocationsEnabled properties.Property = "mapped_locations_enabled"
 	// MaxDepth Maximum path depth to display whithout shortening
 	MaxDepth properties.Property = "max_depth"
+	// MaxWidth Maximum path width to display for powerlevel style
+	MaxWidth properties.Property = "max_width"
 	// Hides the root location if it doesn't fit in max_depth. Used in Agnoster Short
 	HideRootLocation properties.Property = "hide_root_location"
 )
@@ -152,7 +157,7 @@ func (pt *Path) setStyle() {
 	case Letter:
 		pt.Path = pt.getLetterPath()
 	case Unique:
-		pt.Path = pt.getUniqueLettersPath()
+		pt.Path = pt.getUniqueLettersPath(0)
 	case AgnosterLeft:
 		pt.Path = pt.getAgnosterLeftPath()
 	case Short:
@@ -162,6 +167,9 @@ func (pt *Path) setStyle() {
 		pt.Path = pt.getFullPath()
 	case Folder:
 		pt.Path = pt.getFolderPath()
+	case Powerlevel:
+		maxWidth := int(pt.props.GetFloat64(MaxWidth, 0))
+		pt.Path = pt.getUniqueLettersPath(maxWidth)
 	default:
 		pt.Path = fmt.Sprintf("Path style: %s is not available", style)
 	}
@@ -294,7 +302,7 @@ func (pt *Path) getLetterPath() string {
 	return buffer.String()
 }
 
-func (pt *Path) getUniqueLettersPath() string {
+func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 	var buffer strings.Builder
 	separator := pt.getFolderSeparator()
 	elements := strings.Split(pt.relative, pt.env.PathSeparator())
@@ -317,6 +325,16 @@ func (pt *Path) getUniqueLettersPath() string {
 			buffer.WriteString(separator)
 		}
 		buffer.WriteString(letter)
+		// only return early on maxWidth > 0
+		// this enables the powerlevel10k behavior
+		if maxWidth > 0 {
+			trailing := strings.Join(elements[i+1:], separator)
+			leftover := maxWidth - buffer.Len() - len(trailing) - len(separator)
+			if leftover >= 0 {
+				buffer.WriteString(fmt.Sprintf("%s%s", separator, trailing))
+				return buffer.String()
+			}
+		}
 	}
 	buffer.WriteString(fmt.Sprintf("%s%s", separator, elements[n-1]))
 	return buffer.String()

@@ -38,6 +38,7 @@ Display the current path.
 | `style`                     | `enum`    | how to display the current path                                                                                              |
 | `mixed_threshold`           | `number`  | the maximum length of a path segment that will be displayed when using `Mixed` - defaults to `4`                             |
 | `max_depth`                 | `number`  | maximum path depth to display before shortening when using `agnoster_short`, defaults to `1`                                 |
+| `max_width`                 | `number`  | maximum path length to display when using `powerlevel`, defaults to `0`                                                      |
 | `hide_root_location`        | `boolean` | hides the root location if it doesn't fit in the last `max_depth` folders, when using `agnoster_short` - defaults to `false` |
 
 ## Mapped Locations
@@ -74,7 +75,7 @@ For example, to swap out `C:\Users\Leet\GitHub` with a GitHub icon, you can do t
 
 ## Style
 
-Style sets the way the path is displayed. Based on previous experience and popular themes, there are 5 flavors.
+Style sets the way the path is displayed. Based on previous experience and popular themes, there are 10 flavors.
 
 - `agnoster`
 - `agnoster_full`
@@ -85,6 +86,7 @@ Style sets the way the path is displayed. Based on previous experience and popul
 - `mixed`
 - `letter`
 - `unique`
+- `powerlevel`
 
 ### Agnoster
 
@@ -137,6 +139,10 @@ The uniqueness refers to the displayed path, so `C:\dev\dev\dev\development` wil
 `C\d\de\dev\development` (instead of `C\d\d\d\development` for `Letter`). Uniqueness does **not** refer to other
 folders at the same level, so if `C:\projectA\dev` and `C:\projectB\dev` exist, then both will be displayed as
 `C\p\dev`.
+
+### Powerlevel
+
+Works like `Unique`, but will stop shortening when `max_width` is reached.
 
 ## Template ([info][templates])
 

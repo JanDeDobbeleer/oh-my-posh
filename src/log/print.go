@@ -14,48 +14,98 @@ const (
 	trace
 )
 
+type Text string
+
+func (t Text) Green() Text {
+	if plain {
+		return t
+	}
+	return "\x1b[38;2;191;207;240m" + t
+}
+
+func (t Text) Red() Text {
+	if plain {
+		return t
+	}
+	return "\x1b[38;2;253;122;140m" + t
+}
+
+func (t Text) Purple() Text {
+	if plain {
+		return t
+	}
+	return "\x1b[38;2;204;137;214m" + t
+}
+
+func (t Text) Yellow() Text {
+	if plain {
+		return t
+	}
+	return "\x1b[38;2;156;231;201m" + t
+}
+
+func (t Text) Bold() Text {
+	if plain {
+		return t
+	}
+	return "\x1b[1m" + t
+}
+
+func (t Text) Plain() Text {
+	if plain {
+		return t
+	}
+	return t + "\033[0m"
+}
+
+func (t Text) String() string {
+	return string(t)
+}
+
 func printLn(lt logType, args ...string) {
 	if len(args) == 0 {
 		return
 	}
-	var str string
+	var str Text
 	switch lt {
 	case debug:
-		str = "\x1b[38;2;191;207;240m[DEBUG] "
+		str = Text("[DEBUG] ").Green()
 	case bug:
-		str = "\x1b[38;2;253;122;140m[ERROR] "
+		str = Text("[ERROR] ").Red()
 	case trace:
-		str = "\x1b[38;2;204;137;214m[TRACE] "
+		str = Text("[TRACE] ").Purple()
 	}
 	// timestamp 156, 231, 201
-	str += fmt.Sprintf("\x1b[38;2;156;231;201m%s ", time.Now().Format("15:04:05.000"))
-	str += "\033[0m"
-	str += args[0]
+	str += Text(time.Now().Format("15:04:05.000") + " ").Yellow().Plain()
+	str += Text(args[0])
 	str += parseArgs(args...)
-	log.WriteString(str)
+	log.WriteString(str.String())
 }
 
-func parseArgs(args ...string) string {
+func parseArgs(args ...string) Text {
 	if len(args) == 1 {
 		return "\n"
 	}
 
 	// display empty return values as NO DATA
 	if len(args[1]) == 0 {
-		return " \x1b[38;2;156;231;201m\u2192\033[0m \x1b[38;2;253;122;140mNO DATA\033[0m\n"
+		text := Text(" \u2192").Yellow()
+		text += Text(" NO DATA\n").Red().Plain()
+		return text
 	}
 
 	// print a single line for single output
 	splitted := strings.Split(args[1], "\n")
 	if len(splitted) == 1 {
-		return fmt.Sprintf(" \x1b[38;2;156;231;201m\u2192\033[0m %s\n", args[1])
+		text := Text(" \u2192").Yellow().Plain()
+		return Text(fmt.Sprintf("%s %s\n", text, args[1]))
 	}
 
 	// indent multiline output with 4 spaces
-	var str string
-	str += " \x1b[38;2;156;231;201m\u2193\033[0m\n"
+	var str Text
+	str += Text(" \u2193\n").Yellow().Plain()
 	for _, line := range splitted {
-		str += fmt.Sprintf("    %s\n", line)
+		str += Text(fmt.Sprintf("    %s\n", line))
 	}
 	return str
 }

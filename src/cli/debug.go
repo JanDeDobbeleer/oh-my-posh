@@ -27,6 +27,7 @@ var debugCmd = &cobra.Command{
 				PWD:     pwd,
 				Shell:   shellName,
 				Version: cliVersion,
+				Plain:   plain,
 			},
 		}
 		env.Init()
@@ -36,6 +37,7 @@ var debugCmd = &cobra.Command{
 		writer := &ansi.Writer{
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
+			Plain:              plain,
 		}
 		writer.Init(shell.GENERIC)
 		eng := &engine.Engine{
@@ -51,5 +53,6 @@ var debugCmd = &cobra.Command{
 func init() { //nolint:gochecknoinits
 	debugCmd.Flags().StringVar(&pwd, "pwd", "", "current working directory")
 	debugCmd.Flags().StringVar(&shellName, "shell", "", "the shell to print for")
+	debugCmd.Flags().BoolVarP(&plain, "plain", "p", false, "plain text output (no ANSI)")
 	RootCmd.AddCommand(debugCmd)
 }

@@ -8,11 +8,18 @@ import (
 	"time"
 )
 
-var enabled bool
-var log strings.Builder
+var (
+	enabled bool
+	plain   bool
+	log     strings.Builder
+)
 
 func Enable() {
 	enabled = true
+}
+
+func Plain() {
+	plain = true
 }
 
 func Info(message string) {
@@ -28,7 +35,7 @@ func Trace(start time.Time, args ...string) {
 	}
 	elapsed := time.Since(start)
 	fn, _ := funcSpec()
-	header := fmt.Sprintf("%s(%s) - \x1b[38;2;156;231;201m%s\033[0m", fn, strings.Join(args, " "), elapsed)
+	header := fmt.Sprintf("%s(%s) - %s", fn, strings.Join(args, " "), Text(elapsed.String()).Yellow().Plain())
 	printLn(trace, header)
 }
 

@@ -297,6 +297,9 @@ func (env *Shell) Init() {
 	if env.CmdFlags.Debug {
 		log.Enable()
 	}
+	if env.CmdFlags.Plain {
+		log.Plain()
+	}
 	env.fileCache = &fileCache{}
 	env.fileCache.Init(env.CachePath())
 	env.resolveConfigPath()

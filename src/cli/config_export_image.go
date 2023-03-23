@@ -66,6 +66,7 @@ Exports the config to an image file using customized output options.`,
 		writer := &ansi.Writer{
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
+			TrueColor:          env.CmdFlags.TrueColor,
 		}
 		writer.Init(shell.GENERIC)
 		eng := &engine.Engine{

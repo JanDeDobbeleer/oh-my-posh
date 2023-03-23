@@ -38,6 +38,7 @@ var debugCmd = &cobra.Command{
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
 			Plain:              plain,
+			TrueColor:          env.CmdFlags.TrueColor,
 		}
 		writer.Init(shell.GENERIC)
 		eng := &engine.Engine{

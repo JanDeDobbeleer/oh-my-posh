@@ -80,6 +80,7 @@ type Writer struct {
 	ParentColors       []*Colors
 	AnsiColors         ColorString
 	Plain              bool
+	TrueColor          bool
 
 	builder strings.Builder
 	length  int
@@ -283,7 +284,7 @@ func (w *Writer) Write(background, foreground, text string) {
 	w.background, w.foreground = w.asAnsiColors(background, foreground)
 	// default to white foreground
 	if w.foreground.IsEmpty() {
-		w.foreground = w.AnsiColors.ToColor("white", false)
+		w.foreground = w.AnsiColors.ToColor("white", false, w.TrueColor)
 	}
 	// validate if we start with a color override
 	match := regex.FindNamedRegexMatch(anchorRegex, text)
@@ -365,7 +366,7 @@ func (w *Writer) writeEscapedAnsiString(text string) {
 }
 
 func (w *Writer) getAnsiFromColorString(colorString string, isBackground bool) Color {
-	return w.AnsiColors.ToColor(colorString, isBackground)
+	return w.AnsiColors.ToColor(colorString, isBackground, w.TrueColor)
 }
 
 func (w *Writer) writeSegmentColors() {

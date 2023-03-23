@@ -71,6 +71,7 @@ type Flags struct {
 	PromptCount   int
 	Cleared       bool
 	Version       string
+	TrueColor     bool
 }
 
 type CommandError struct {
@@ -300,6 +301,11 @@ func (env *Shell) Init() {
 	if env.CmdFlags.Plain {
 		log.Plain()
 	}
+	trueColor := true
+	if env.Getenv("TERM_PROGRAM") == "Apple_Terminal" {
+		trueColor = false
+	}
+	env.CmdFlags.TrueColor = trueColor
 	env.fileCache = &fileCache{}
 	env.fileCache.Init(env.CachePath())
 	env.resolveConfigPath()

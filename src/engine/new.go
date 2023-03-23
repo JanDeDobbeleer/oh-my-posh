@@ -22,6 +22,7 @@ func New(flags *platform.Flags) *Engine {
 		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 		AnsiColors:         cfg.MakeColors(),
 		Plain:              flags.Plain,
+		TrueColor:          env.CmdFlags.TrueColor,
 	}
 	ansiWriter.Init(env.Shell())
 

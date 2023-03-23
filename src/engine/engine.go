@@ -337,7 +337,9 @@ func (e *Engine) print() string {
 		}
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
 		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
-		writer := &ansi.Writer{}
+		writer := &ansi.Writer{
+			TrueColor: e.Env.Flags().TrueColor,
+		}
 		writer.Init(shell.GENERIC)
 		prompt := writer.SaveCursorPosition()
 		prompt += writer.CarriageForward()

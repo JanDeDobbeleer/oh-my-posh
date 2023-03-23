@@ -203,6 +203,7 @@ func TestWriteANSIColors(t *testing.T) {
 			Colors:             tc.Colors,
 			TerminalBackground: tc.TerminalBackground,
 			AnsiColors:         &DefaultColors{},
+			TrueColor:          true,
 		}
 		renderer.Init(shell.GENERIC)
 		renderer.Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)

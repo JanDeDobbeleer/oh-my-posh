@@ -28,8 +28,8 @@ func (d *DefaultColors) SetAccentColor(env platform.Environment, defaultColor st
 	rgb, err := GetAccentColor(env)
 	if err != nil {
 		d.accent = &Colors{
-			Foreground: string(d.ToColor(defaultColor, false)),
-			Background: string(d.ToColor(defaultColor, true)),
+			Foreground: string(d.ToColor(defaultColor, false, env.Flags().TrueColor)),
+			Background: string(d.ToColor(defaultColor, true, env.Flags().TrueColor)),
 		}
 		return
 	}

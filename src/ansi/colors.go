@@ -16,7 +16,7 @@ import (
 // This can include a valid hex color in the format `#FFFFFF`,
 // but also a name of one of the first 16 ANSI colors like `lightBlue`.
 type ColorString interface {
-	ToColor(colorString string, isBackground bool) Color
+	ToColor(colorString string, isBackground bool, trueColor bool) Color
 }
 
 // Color is an ANSI color code ready to be printed to the console.
@@ -98,7 +98,7 @@ const (
 	backgroundIndex = 1
 )
 
-func (d *DefaultColors) ToColor(colorString string, isBackground bool) Color {
+func (d *DefaultColors) ToColor(colorString string, isBackground, trueColor bool) Color {
 	if len(colorString) == 0 {
 		return emptyColor
 	}
@@ -128,7 +128,10 @@ func (d *DefaultColors) ToColor(colorString string, isBackground bool) Color {
 	}
 	style := color.HEX(colorString, isBackground)
 	if !style.IsEmpty() {
-		return Color(style.String())
+		if trueColor {
+			return Color(style.String())
+		}
+		return Color(style.C256().String())
 	}
 	if colorInt, err := strconv.ParseInt(colorString, 10, 8); err == nil {
 		c := color.C256(uint8(colorInt), isBackground)
@@ -161,12 +164,12 @@ type PaletteColors struct {
 	palette    Palette
 }
 
-func (p *PaletteColors) ToColor(colorString string, isBackground bool) Color {
+func (p *PaletteColors) ToColor(colorString string, isBackground, trueColor bool) Color {
 	paletteColor, err := p.palette.ResolveColor(colorString)
 	if err != nil {
 		return emptyColor
 	}
-	ansiColor := p.ansiColors.ToColor(paletteColor, isBackground)
+	ansiColor := p.ansiColors.ToColor(paletteColor, isBackground, trueColor)
 	return ansiColor
 }
 
@@ -183,7 +186,7 @@ type cachedColorKey struct {
 	isBackground bool
 }
 
-func (c *CachedColors) ToColor(colorString string, isBackground bool) Color {
+func (c *CachedColors) ToColor(colorString string, isBackground, trueColor bool) Color {
 	if c.colorCache == nil {
 		c.colorCache = make(map[cachedColorKey]Color)
 	}
@@ -191,7 +194,7 @@ func (c *CachedColors) ToColor(colorString string, isBackground bool) Color {
 	if ansiColor, hit := c.colorCache[key]; hit {
 		return ansiColor
 	}
-	ansiColor := c.ansiColors.ToColor(colorString, isBackground)
+	ansiColor := c.ansiColors.ToColor(colorString, isBackground, trueColor)
 	c.colorCache[key] = ansiColor
 	return ansiColor
 }

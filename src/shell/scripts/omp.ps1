@@ -69,7 +69,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             # ref-1: https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.processstartinfo.argumentlist?view=net-6.0
             # ref-2: https://docs.microsoft.com/en-us/powershell/scripting/whats-new/differences-from-windows-powershell?view=powershell-7.2#net-framework-vs-net-core
             $Arguments | ForEach-Object -Process { $StartInfo.ArgumentList.Add($_) }
-        } else {
+        }
+        else {
             # escape arguments manually in lower versions, refer to https://docs.microsoft.com/en-us/previous-versions/17w5ykft(v=vs.85)
             $escapedArgs = $Arguments | ForEach-Object {
                 # escape N consecutive backslash(es), which are followed by a double quote, to 2N consecutive ones
@@ -139,32 +140,48 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         }
     }
 
+    function Set-TransientPrompt {
+        param(
+            [string]$Key
+        )
+
+        $previousOutputEncoding = [Console]::OutputEncoding
+        try {
+            $parseErrors = $null
+            [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
+            if ($parseErrors.Count -eq 0) {
+                $script:TransientPrompt = $true
+                [Console]::OutputEncoding = [Text.Encoding]::UTF8
+                [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
+            }
+        }
+        finally {
+            # If PSReadline is set to display suggestion list, this workaround is needed to clear the buffer below
+            # before accepting the current commandline. The max amount of items in the list is 10, so 12 lines
+            # are cleared (10 + 1 more for the prompt + 1 more for current commandline).
+            if ((Get-PSReadLineOption).PredictionViewStyle -eq 'ListView') {
+                $terminalHeight = $Host.UI.RawUI.WindowSize.Height
+                # only do this on an valid value
+                if ([int]$terminalHeight -gt 0) {
+                    [Microsoft.PowerShell.PSConsoleReadLine]::Insert("`n" * [System.Math]::Min($terminalHeight - $Host.UI.RawUI.CursorPosition.Y - 1, 12))
+                    [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
+                }
+            }
+            switch ($Key) {
+                "Ctrl+c" { [Microsoft.PowerShell.PSConsoleReadLine]::CopyOrCancelLine() }
+                Default { [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() }
+            }
+            [Console]::OutputEncoding = $previousOutputEncoding
+        }
+
+    }
+
     if (("::TRANSIENT::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
         Set-PSReadLineKeyHandler -Key Enter -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock {
-            $previousOutputEncoding = [Console]::OutputEncoding
-            try {
-                $parseErrors = $null
-                [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
-                if ($parseErrors.Count -eq 0) {
-                    $script:TransientPrompt = $true
-                    [Console]::OutputEncoding = [Text.Encoding]::UTF8
-                    [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
-                }
-            } finally {
-                # If PSReadline is set to display suggestion list, this workaround is needed to clear the buffer below
-                # before accepting the current commandline. The max amount of items in the list is 10, so 12 lines
-                # are cleared (10 + 1 more for the prompt + 1 more for current commandline).
-                if ((Get-PSReadLineOption).PredictionViewStyle -eq 'ListView') {
-                    $terminalHeight = $Host.UI.RawUI.WindowSize.Height
-                    # only do this on an valid value
-                    if ([int]$terminalHeight -gt 0) {
-                        [Microsoft.PowerShell.PSConsoleReadLine]::Insert("`n" * [System.Math]::Min($terminalHeight - $Host.UI.RawUI.CursorPosition.Y - 1, 12))
-                        [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
-                    }
-                }
-                [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-                [Console]::OutputEncoding = $previousOutputEncoding
-            }
+            Set-TransientPrompt -Key "Enter"
+        }
+        Set-PSReadLineKeyHandler -Key Ctrl+c -BriefDescription 'OhMyPoshCtrlCKeyHandler' -ScriptBlock {
+            Set-TransientPrompt -Key "Ctrl+c"
         }
     }
 
@@ -215,7 +232,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             # https://stackoverflow.com/questions/3038337/powershell-resolve-path-that-might-not-exist
             $FilePath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($FilePath)
             [IO.File]::WriteAllLines($FilePath, $configString)
-        } else {
+        }
+        else {
             Set-Clipboard $configString
             Write-Output "Theme copied to clipboard"
         }
@@ -273,7 +291,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $themes = Get-ChildItem -Path "$Path/*" -Include '*.omp.json' | Sort-Object Name
         if ($List -eq $true) {
             $themes | Select-Object @{ Name = 'hyperlink'; Expression = { Get-FileHyperlink -uri $_.FullName } } | Format-Table -HideTableHeaders
-        } else {
+        }
+        else {
             $cleanPSWD = Get-CleanPSWD
             $themes | ForEach-Object -Process {
                 Write-Host "Theme: $(Get-FileHyperlink -uri $_.FullName -Name ($_.BaseName -replace '\.omp$', ''))`n"
@@ -325,7 +344,8 @@ Example:
         $invocationInfo = try {
             # retrieve info of the most recent error
             $global:Error[0] | Where-Object { $_ -ne $null } | Select-Object -ExpandProperty InvocationInfo
-        } catch { $null }
+        }
+        catch { $null }
         # check if the last command caused the last error
         if ($null -ne $invocationInfo -and $lastHistory.CommandLine -eq $invocationInfo.Line) {
             $script:ErrorCode = 1
@@ -343,7 +363,8 @@ Example:
         if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS -is [bool]) {
             # make it compatible with NVS auto-switching, if enabled
             $script:OriginalLastExecutionStatus = $global:NVS_ORIGINAL_LASTEXECUTIONSTATUS
-        } else {
+        }
+        else {
             $script:OriginalLastExecutionStatus = $?
         }
         # store the orignal last exit code
@@ -395,6 +416,9 @@ Example:
             }
             if ((Get-PSReadLineKeyHandler -Key Enter).Function -eq 'OhMyPoshEnterKeyHandler') {
                 Set-PSReadLineKeyHandler -Key Enter -Function AcceptLine
+            }
+            if ((Get-PSReadLineKeyHandler -Key Ctrl+c).Function -eq 'OhMyPoshCtrlCKeyHandler') {
+                Set-PSReadLineKeyHandler -Key Ctrl+c -Function CopyOrCancelLine
             }
         }
     }

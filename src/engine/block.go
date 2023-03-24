@@ -150,7 +150,6 @@ func (b *Block) renderActiveSegment() {
 	case Diamond:
 		b.writer.Write(ansi.Transparent, ansi.Background, b.activeSegment.LeadingDiamond)
 		b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
-		b.writer.Write(ansi.Transparent, ansi.Background, b.activeSegment.TrailingDiamond)
 	case Accordion:
 		if b.activeSegment.Enabled {
 			b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
@@ -161,15 +160,30 @@ func (b *Block) renderActiveSegment() {
 }
 
 func (b *Block) writePowerline(final bool) {
-	resolvePowerlineSymbol := func() string {
-		var symbol string
-		if b.activeSegment.isPowerline() {
-			symbol = b.activeSegment.PowerlineSymbol
-		} else if b.previousActiveSegment != nil && b.previousActiveSegment.isPowerline() {
-			symbol = b.previousActiveSegment.PowerlineSymbol
-		}
-		return symbol
+	if final && b.activeSegment.style() == Diamond {
+		b.writer.Write(ansi.Transparent, ansi.Background, b.activeSegment.TrailingDiamond)
+		return
 	}
+
+	resolvePowerlineSymbol := func() string {
+		if final && b.activeSegment.style() == Diamond {
+			return b.activeSegment.TrailingDiamond
+		}
+		if b.activeSegment.isPowerline() {
+			return b.activeSegment.PowerlineSymbol
+		}
+		if b.previousActiveSegment == nil {
+			return ""
+		}
+		if b.previousActiveSegment.isPowerline() {
+			return b.previousActiveSegment.PowerlineSymbol
+		}
+		if b.previousActiveSegment.style() == Diamond && len(b.activeSegment.TrailingDiamond) != 0 {
+			return b.previousActiveSegment.TrailingDiamond
+		}
+		return ""
+	}
+
 	symbol := resolvePowerlineSymbol()
 	if len(symbol) == 0 {
 		return

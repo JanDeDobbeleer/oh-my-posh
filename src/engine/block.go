@@ -138,19 +138,18 @@ func (b *Block) RenderSegments() (string, int) {
 		b.setActiveSegment(segment)
 		b.renderActiveSegment()
 	}
-	b.writePowerline(true)
+	b.writeSeparator(true)
 	return b.writer.String()
 }
 
 func (b *Block) renderActiveSegment() {
-	b.writePowerline(false)
+	b.writeSeparator(false)
 	switch b.activeSegment.style() {
 	case Plain, Powerline:
 		b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
 	case Diamond:
 		b.writer.Write(ansi.Transparent, ansi.Background, b.activeSegment.LeadingDiamond)
 		b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
-		b.writer.Write(ansi.Transparent, ansi.Background, b.activeSegment.TrailingDiamond)
 	case Accordion:
 		if b.activeSegment.Enabled {
 			b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
@@ -160,7 +159,21 @@ func (b *Block) renderActiveSegment() {
 	b.writer.SetParentColors(b.previousActiveSegment.background(), b.previousActiveSegment.foreground())
 }
 
-func (b *Block) writePowerline(final bool) {
+func (b *Block) writeSeparator(final bool) {
+	isCurrentDiamond := b.activeSegment.style() == Diamond
+	if final && isCurrentDiamond {
+		b.writer.Write(ansi.Transparent, ansi.Background, b.activeSegment.TrailingDiamond)
+		return
+	}
+	isPreviousDiamond := b.previousActiveSegment != nil && b.previousActiveSegment.style() == Diamond
+	if isPreviousDiamond && isCurrentDiamond && len(b.activeSegment.LeadingDiamond) == 0 {
+		b.writer.Write(ansi.Background, ansi.ParentBackground, b.previousActiveSegment.TrailingDiamond)
+		return
+	}
+	if isPreviousDiamond && len(b.previousActiveSegment.TrailingDiamond) > 0 {
+		b.writer.Write(ansi.Transparent, ansi.ParentBackground, b.previousActiveSegment.TrailingDiamond)
+	}
+
 	resolvePowerlineSymbol := func() string {
 		var symbol string
 		if b.activeSegment.isPowerline() {

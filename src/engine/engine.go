@@ -254,6 +254,12 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 // debug will loop through your config file and output the timings for each segments
 func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Version:").Green().Bold().Plain(), version))
+	sh := e.Env.Shell()
+	shellVersion := e.Env.Getenv("POSH_SHELL_VERSION")
+	if len(shellVersion) != 0 {
+		sh += fmt.Sprintf(" (%s)", shellVersion)
+	}
+	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Shell:").Green().Bold().Plain(), sh))
 	e.write(log.Text("\nSegments:\n\n").Green().Bold().Plain().String())
 	// console title timing
 	titleStartTime := time.Now()

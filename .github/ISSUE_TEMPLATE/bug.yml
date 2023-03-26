@@ -47,10 +47,15 @@ body:
       label: Which shell are you using?
       multiple: true
       options:
-        - zsh
         - bash
+        - elvish
         - fish
+        - cmd
+        - nu
         - powershell
+        - xonsh
+        - tcsh
+        - zsh
         - other (please specify)
   - type: textarea
     id: logs

@@ -75,6 +75,7 @@ local function omp_config()
 end
 
 os.setenv("POSH_THEME", ::CONFIG::)
+os.setenv("POSH_SHELL_VERSION", string.format('clink v%s.%s.%s.%s', clink.version_major, clink.version_minor, clink.version_patch, clink.version_commit))
 
 -- Execution helpers
 

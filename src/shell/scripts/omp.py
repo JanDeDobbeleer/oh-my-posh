@@ -3,6 +3,7 @@ import uuid
 $POWERLINE_COMMAND = "oh-my-posh"
 $POSH_THEME = "::CONFIG::"
 $POSH_PID = uuid.uuid4().hex
+$POSH_SHELL_VERSION = ""
 
 def get_command_context():
     last_cmd = __xonsh__.history[-1] if __xonsh__.history else None

@@ -642,7 +642,7 @@ func (env *Shell) Shell() string {
 	// this is used for when scoop creates a shim, see
 	// https://github.com/jandedobbeleer/oh-my-posh/issues/2806
 	executable, _ := os.Executable()
-	if name == "cmd.exe" || name == executable {
+	if name == executable {
 		p, _ = p.Parent()
 		name, err = p.Name()
 		env.Debug("parent process name: " + name)

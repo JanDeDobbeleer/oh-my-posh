@@ -1,5 +1,6 @@
 setenv POWERLINE_COMMAND "oh-my-posh";
 setenv POSH_THEME "::CONFIG::";
+setenv POSH_SHELL_VERSION "";
 
 set USER_PRECMD = "`alias precmd`";
 set USER_POSTCMD = "`alias postcmd`";

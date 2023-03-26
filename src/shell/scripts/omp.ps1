@@ -22,6 +22,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     $script:TransientPrompt = $false
     $script:ToolTipCommand = ""
     $env:POWERLINE_COMMAND = "oh-my-posh"
+    $env:POSH_SHELL_VERSION = $script:PSVersion
     $env:POSH_PID = $PID
     $env:CONDA_PROMPT_MODIFIER = $false
 

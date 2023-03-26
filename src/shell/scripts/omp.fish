@@ -100,7 +100,8 @@ function _render_tooltip
 end
 
 if test "::TOOLTIPS::" = "true"
-  bind \x20 _render_tooltip
+  bind \x20 _render_tooltip -M default
+  bind \x20 _render_tooltip -M insert
 end
 
 # transient prompt
@@ -116,7 +117,9 @@ function _render_transient
 end
 
 if test "::TRANSIENT::" = "true"
-  bind \r _render_transient
+  bind \r _render_transient -M default
+  bind \r _render_transient -M insert
+  bind \r _render_transient -M visual
 end
 
 # legacy functions

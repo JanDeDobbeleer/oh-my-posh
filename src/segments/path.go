@@ -309,6 +309,14 @@ func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 	if pt.root != pt.env.PathSeparator() {
 		elements = append([]string{pt.root}, elements...)
 	}
+
+	if maxWidth > 0 {
+		path := strings.Join(elements, separator)
+		if len(path) <= maxWidth {
+			return path
+		}
+	}
+
 	n := len(elements)
 	letters := make(map[string]bool)
 	for i := 0; i < n-1; i++ {

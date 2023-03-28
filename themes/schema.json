@@ -2863,7 +2863,16 @@
           },
           "then": {
             "title": "Clound Foundry Target segment",
-            "description": "https://ohmyposh.dev/docs/segments/cftarget"
+            "description": "https://ohmyposh.dev/docs/segments/cftarget",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  }
+                }
+              }
+            }
           }
         },
         {

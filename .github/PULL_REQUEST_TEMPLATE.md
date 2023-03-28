@@ -7,13 +7,18 @@
 
 ### Description
 
-<!--TemplateBody-->
+copilot:summary
+
+### How
+
+copilot:walkthrough
 
 <!---
 
 Tips:
 
-If you're not comfortable with working with Git, we're working a guide (https://ohmyposh.dev/docs/contributing_git) to help you out.
+If you're not comfortable with working with Git,
+we're working a guide (https://ohmyposh.dev/docs/contributing_git) to help you out.
 Oh My Posh advises GitKraken (https://www.gitkraken.com/invite/nQmDPR9D) as your preferred cross platform Git GUI power tool.
 
 -->

@@ -378,3 +378,48 @@ func TestDotnetProject(t *testing.T) {
 		}
 	}
 }
+
+func TestPowerShellModuleProject(t *testing.T) {
+	cases := []struct {
+		Case            string
+		HasFiles        bool
+		ExpectedString  string
+		ExpectedEnabled bool
+	}{
+		{
+			Case:            "valid PowerShell module file",
+			HasFiles:        true,
+			ExpectedEnabled: true,
+			ExpectedString:  "\uf487 1.0.0.0 oh-my-posh",
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On(hasFiles, testify_mock.Anything).Run(func(args testify_mock.Arguments) {
+			for _, c := range env.ExpectedCalls {
+				if c.Method == hasFiles {
+					c.ReturnArguments = testify_mock.Arguments{args.Get(0).(string) == "*.psd1"}
+				}
+			}
+		})
+		env.On("Pwd").Return("posh")
+		env.On("LsDir", "posh").Return([]fs.DirEntry{
+			&MockDirEntry{
+				name: "oh-my-posh.psd1",
+			},
+		})
+		var moduleContent string
+		if tc.HasFiles {
+			content, _ := os.ReadFile("../test/oh-my-posh.psd1")
+			moduleContent = string(content)
+		}
+		env.On("FileContent", "oh-my-posh.psd1").Return(moduleContent)
+		pkg := &Project{}
+		pkg.Init(properties.Map{}, env)
+		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)
+		if tc.ExpectedEnabled {
+			assert.Equal(t, tc.ExpectedString, renderTemplate(env, pkg.Template(), pkg), tc.Case)
+		}
+	}
+}

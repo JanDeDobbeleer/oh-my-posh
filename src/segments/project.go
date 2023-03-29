@@ -118,6 +118,11 @@ func (n *Project) Init(props properties.Properties, env platform.Environment) {
 			Files:   []string{"JuliaProject.toml", "Project.toml"},
 			Fetcher: n.getProjectData,
 		},
+		{
+			Name:    "powershell",
+			Files:   []string{"*.psd1"},
+			Fetcher: n.getPowerShellModuleData,
+		},
 	}
 }
 
@@ -226,6 +231,40 @@ func (n *Project) getDotnetProject(_ ProjectItem) *ProjectData {
 		Target: target,
 		Name:   name,
 	}
+}
+
+func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {
+	files := n.env.LsDir(n.env.Pwd())
+	var content string
+	// get the first match only
+	for _, file := range files {
+		if filepath.Ext(file.Name()) == ".psd1" {
+			content = n.env.FileContent(file.Name())
+			break
+		}
+	}
+
+	data := &ProjectData{}
+	lines := strings.Split(content, "\n")
+
+	for _, line := range lines {
+		splitted := strings.SplitN(line, "=", 2)
+		if len(splitted) < 2 {
+			continue
+		}
+		key := strings.TrimSpace(splitted[0])
+		value := strings.TrimSpace(splitted[1])
+		value = strings.Trim(value, "'\"")
+
+		switch key {
+		case "ModuleVersion":
+			data.Version = value
+		case "RootModule":
+			data.Name = strings.TrimRight(value, ".psm1")
+		}
+	}
+
+	return data
 }
 
 func (n *Project) getProjectData(item ProjectItem) *ProjectData {

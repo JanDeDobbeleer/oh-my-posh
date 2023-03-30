@@ -3,7 +3,7 @@ import uuid
 $POWERLINE_COMMAND = "oh-my-posh"
 $POSH_THEME = "::CONFIG::"
 $POSH_PID = uuid.uuid4().hex
-$POSH_SHELL_VERSION = ""
+$POSH_SHELL_VERSION = $XONSH_VERSION
 
 def get_command_context():
     last_cmd = __xonsh__.history[-1] if __xonsh__.history else None
@@ -13,11 +13,11 @@ def get_command_context():
 
 def posh_primary():
     status, duration = get_command_context()
-    return $(::OMP:: print primary --config=@($POSH_THEME) --shell=xonsh --error=@(status) --execution-time=@(duration) | cat)
+    return $(::OMP:: print primary --config=@($POSH_THEME) --shell=xonsh --error=@(status) --execution-time=@(duration) --shell-version=@($POSH_SHELL_VERSION) | cat)
 
 def posh_right():
     status, duration = get_command_context()
-    return $(::OMP:: print right --config=@($POSH_THEME) --shell=xonsh --error=@(status) --execution-time=@(duration) | cat)
+    return $(::OMP:: print right --config=@($POSH_THEME) --shell=xonsh --error=@(status) --execution-time=@(duration) --shell-version=@($POSH_SHELL_VERSION) | cat)
 
 
 $PROMPT = posh_primary

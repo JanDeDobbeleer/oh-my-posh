@@ -5,6 +5,7 @@ package platform
 import (
 	"errors"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -29,11 +30,19 @@ func (env *Shell) QueryWindowTitles(_, _ string) (string, error) {
 
 func (env *Shell) IsWsl() bool {
 	defer env.Trace(time.Now())
-	// one way to check
-	// version := env.FileContent("/proc/version")
-	// return strings.Contains(version, "microsoft")
-	// using env variable
-	return env.Getenv("WSL_DISTRO_NAME") != ""
+	const key = "is_wsl"
+	if val, found := env.Cache().Get(key); found {
+		env.Debug(val)
+		return val == "true"
+	}
+	var val bool
+	defer func() {
+		env.Cache().Set(key, strconv.FormatBool(val), -1)
+	}()
+	version := env.FileContent("/proc/version")
+	val = strings.Contains(version, "microsoft")
+	env.Debug(strconv.FormatBool(val))
+	return val
 }
 
 func (env *Shell) IsWsl2() bool {

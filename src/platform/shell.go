@@ -394,8 +394,9 @@ func (env *Shell) Getenv(key string) string {
 }
 
 func (env *Shell) Pwd() string {
+	env.Lock()
 	defer env.Trace(time.Now())
-	defer env.Debug(env.cwd)
+	defer env.Unlock()
 	if env.cwd != "" {
 		return env.cwd
 	}
@@ -409,6 +410,7 @@ func (env *Shell) Pwd() string {
 	}
 	if env.CmdFlags != nil && env.CmdFlags.PWD != "" {
 		env.cwd = correctPath(env.CmdFlags.PWD)
+		env.Debug(env.cwd)
 		return env.cwd
 	}
 	dir, err := os.Getwd()
@@ -417,6 +419,7 @@ func (env *Shell) Pwd() string {
 		return ""
 	}
 	env.cwd = correctPath(dir)
+	env.Debug(env.cwd)
 	return env.cwd
 }
 
@@ -772,9 +775,7 @@ func (env *Shell) Logs() string {
 }
 
 func (env *Shell) TemplateCache() *TemplateCache {
-	env.Lock()
 	defer env.Trace(time.Now())
-	defer env.Unlock()
 	if env.tmplCache != nil {
 		return env.tmplCache
 	}

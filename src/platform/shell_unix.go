@@ -39,8 +39,7 @@ func (env *Shell) IsWsl() bool {
 	defer func() {
 		env.Cache().Set(key, strconv.FormatBool(val), -1)
 	}()
-	version := env.FileContent("/proc/version")
-	val = strings.Contains(version, "microsoft")
+	val = env.HasCommand("wslpath")
 	env.Debug(strconv.FormatBool(val))
 	return val
 }

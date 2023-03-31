@@ -10,16 +10,16 @@ Display the currently active Kubernetes context name and namespace name.
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "kubectl",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#ebcc34",
   "template": " \uFD31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
-}
-```
+}}/>
 
 ## Properties
 

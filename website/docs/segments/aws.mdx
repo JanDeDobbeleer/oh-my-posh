@@ -10,16 +10,16 @@ Display the currently active AWS profile and region.
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "aws",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
   "foreground": "#ffffff",
   "background": "#FFA400",
   "template": " \uE7AD {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
-}
-```
+}}/>
 
 ## Properties
 

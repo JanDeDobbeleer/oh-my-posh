@@ -19,10 +19,13 @@ This example uses the default segment template to show a rendition of detail app
 Additionally, the background of the segment will turn red if the latest reading is over 4 hours old - possibly helping indicate
 an issue if, for example there is a Tilt or similar device that is supposed to be logging to Brewfather every 15 minutes.
 
-NOTE: Temperature units are in degrees C and specific gravity is expressed as `X.XXX` values.
+:::info
+Temperature units are in degrees C and specific gravity is expressed as `X.XXX` values.
+:::
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
     "type":"brewfather",
     "style": "powerline",
     "powerline_symbol": "\uE0B0",
@@ -36,8 +39,7 @@ NOTE: Temperature units are in degrees C and specific gravity is expressed as `X
         "api_key":"qrstuvw78910",
         "batch_id":"hijklmno098765",
     }
-},
-```
+}}/>
 
 ## Properties
 

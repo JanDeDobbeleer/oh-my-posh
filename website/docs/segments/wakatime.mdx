@@ -9,28 +9,26 @@ sidebar_label: Wakatime
 Shows the tracked time on [wakatime][wt] of the current day
 
 :::caution
-
 You **must** request an API key at the [wakatime][wt] website.
 The free tier for is sufficient. You'll find the API key in your profile settings page.
-
 :::
 
 ## Sample Configuration
 
-```json
-{
-    "type": "wakatime",
-    "style": "powerline",
-    "powerline_symbol": "\uE0B0",
-    "foreground": "#ffffff",
-    "background": "#007acc",
-    "properties": {
-        "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=API_KEY",
-        "cache_timeout": 10,
-        "http_timeout": 500
-    }
-},
-```
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
+  "type": "wakatime",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#007acc",
+  "properties": {
+      "url": "https://wakatime.com/api/v1/users/current/summaries?start=today&end=today&api_key=API_KEY",
+      "cache_timeout": 10,
+      "http_timeout": 500
+  }
+}}/>
 
 ## Properties
 

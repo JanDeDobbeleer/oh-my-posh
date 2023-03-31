@@ -10,16 +10,16 @@ Display the currently active [Lua][lua] or [LuaJIT][luajit] version.
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "lua",
   "style": "powerline",
   "powerline_symbol": "\ue0b0",
   "foreground": "white",
   "background": "blue",
   "template": " \ue620 {{ .Full }} "
-}
-```
+}}/>
 
 ## Properties
 

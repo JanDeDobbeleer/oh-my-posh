@@ -213,18 +213,23 @@ a.getStarted_Sjon {
 
 /* Fonts */
 
+@font-face {
+  font-family: "Victor Mono";
+  src: url('/static/fonts/VictorMono.ttf') format("truetype");
+}
+
 :root {
   --ifm-font-family-monospace: "Inter";
   --ifm-font-family-base: "Inter";
 }
 
 code {
-  font-family: "Fira Code", monospace;
+  font-family: "Victor Mono", monospace;
 }
 
 code[class*="language-"],
 pre[class*="language-"] {
-  font-family: "Fira Code", monospace;
+  font-family: "Victor Mono", monospace;
 }
 
 /* Dev settings */

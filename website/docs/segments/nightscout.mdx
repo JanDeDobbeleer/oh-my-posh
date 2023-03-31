@@ -23,8 +23,9 @@ white text on a yellow background, for example.
 The `foreground_templates` example below could be set to just a single color,
 if that color is visible against any of your backgrounds.
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "nightscout",
   "style": "diamond",
   "foreground": "#ffffff",
@@ -39,7 +40,6 @@ if that color is visible against any of your backgrounds.
     "{{ if lt .Sgv 60 }}#000000{{ end }}",
     "#000000"
   ],
-
   "leading_diamond": "\ue0b6",
   "trailing_diamond": "\uE0B0",
   "template": "\ue2a1 {{ .Sgv }}{{ .TrendIcon }}",
@@ -47,8 +47,7 @@ if that color is visible against any of your backgrounds.
     "url": "https://YOURNIGHTSCOUTAPP.herokuapp.com/api/v1/entries.json?count=1&token=APITOKENFROMYOURADMIN",
     "http_timeout": 1500
   }
-}
-```
+}}/>
 
 Or display in mmol/l (instead of the default mg/dl) with the following template:
 

@@ -4,66 +4,21 @@ title: Block
 sidebar_label: Block
 ---
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
-
 Let's take a closer look at what defines a block.
 
-<Tabs
-  defaultValue="json"
-  groupId="sample"
-  values={[
-    { label: 'json', value: 'json', },
-    { label: 'yaml', value: 'yaml', },
-    { label: 'toml', value: 'toml', },
-  ]
-}>
-<TabItem value="json">
+import Config from '@site/src/components/Config.js';
 
-```json
-{
+<Config data={{
   "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  ...
   "blocks": [
     {
       "type": "prompt",
       "alignment": "left",
       "segments": [
-        ...
       ]
     }
   ]
-}
-```
-
-</TabItem>
-<TabItem value="yaml">
-
-```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
----
-blocks:
-  - type: prompt
-    alignment: left
-    segments: [...]
-```
-
-</TabItem>
-<TabItem value="toml">
-
-```toml
-"$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
-
-[[blocks]]
-type = "prompt"
-alignment = "left"
-segments = [
-  ...
-]
-```
-
-</TabItem>
-</Tabs>
+}}/>
 
 ## Properties
 

@@ -10,16 +10,16 @@ Display the currently active [.NET SDK][net-sdk-docs] version.
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "dotnet",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#00ffff",
   "template": " \uE77F {{ .Full }} "
-}
-```
+}}/>
 
 ## Properties
 

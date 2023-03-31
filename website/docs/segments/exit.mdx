@@ -10,8 +10,9 @@ Displays the last exit code or that the last command failed based on the configu
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "exit",
   "style": "diamond",
   "foreground": "#ffffff",
@@ -22,8 +23,7 @@ Displays the last exit code or that the last command failed based on the configu
   "properties": {
     "always_enabled": true
   }
-}
-```
+}}/>
 
 ## Properties
 

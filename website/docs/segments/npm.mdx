@@ -10,16 +10,16 @@ Display the currently active [npm][npm-docs] version.
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "npm",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
   "foreground": "#193549",
   "background": "#ffeb3b",
   "template": "\ue71e {{ .Full }} "
-}
-```
+}}/>
 
 ## Properties
 

@@ -31,14 +31,40 @@ func (e *Exit) Init(props properties.Properties, env platform.Environment) {
 	e.env = env
 }
 
-func (e *Exit) getMeaningFromExitCode(code int) string {
+func (e *Exit) getMeaningFromExitCode(code int) string { //nolint: gocyclo
 	switch code {
 	case 1:
 		return "ERROR"
-	case 2:
+	case 2, 64:
 		return "USAGE"
-	case 126:
+	case 65:
+		return "DATAERR"
+	case 66:
+		return "NOINPUT"
+	case 67:
+		return "NOUSER"
+	case 68:
+		return "NOHOST"
+	case 69:
+		return "UNAVAILABLE"
+	case 70:
+		return "SOFTWARE"
+	case 71:
+		return "OSERR"
+	case 72:
+		return "OSFILE"
+	case 73:
+		return "CANTCREAT"
+	case 74:
+		return "IOERR"
+	case 75:
+		return "TEMPFAIL"
+	case 76:
+		return "PROTOCOL"
+	case 77, 126:
 		return "NOPERM"
+	case 78:
+		return "CONFIG"
 	case 127:
 		return "NOTFOUND"
 	case 128 + 1:

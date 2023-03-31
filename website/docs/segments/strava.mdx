@@ -4,8 +4,6 @@ title: Strava
 sidebar_label: Strava
 ---
 
-import StravaConnect from "/img/strava_connect.svg";
-
 ## What
 
 [Strava][strava] is a popular activity tracker for bike, run or any other training.
@@ -30,8 +28,9 @@ This configuration sets the background green if you have an activity the last tw
 orange if you have one last 5 days, and red otherwise. The `foreground_templates` example below could be set to just a single color,
 if that color is visible against any of your backgrounds.
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "strava",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
@@ -53,8 +52,7 @@ if that color is visible against any of your backgrounds.
     "refresh_token": "1111111111111111",
     "http_timeout": 1500
   }
-}
-```
+}}/>
 
 ## Properties
 

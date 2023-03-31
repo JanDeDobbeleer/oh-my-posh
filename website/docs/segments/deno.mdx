@@ -10,14 +10,14 @@ Display the currently active [Deno CLI][deno-docs] version.
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "deno",
   "style": "plain",
   "foreground": "#3C82F6",
   "template": " \ufbe4 {{ .Full }} "
-}
-```
+}}/>
 
 ## Properties
 

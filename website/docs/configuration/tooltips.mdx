@@ -4,9 +4,6 @@ title: Tooltips
 sidebar_label: Tooltips
 ---
 
-import Tabs from "@theme/Tabs";
-import TabItem from "@theme/TabItem";
-
 :::info
 Due to limitations (or not having found a way just yet), this feature only works in `fish`, `zsh`, `powershell`
 (`ConstrainedLanguage` mode unsupported) and `cmd` (as of [Clink][clink] v1.2.46+) for the time being.
@@ -24,12 +21,10 @@ the segment should be rendered.
 
 You need to extend or create a custom theme with your tooltips. For example:
 
-```json
-{
-  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "blocks": [
-      ...
-  ],
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
+  "blocks": [],
   "tooltips": [
     {
       "type": "git",
@@ -46,8 +41,7 @@ You need to extend or create a custom theme with your tooltips. For example:
       }
     }
   ]
-}
-```
+}}/>
 
 This configuration will render a right-aligned git segment when you type `git` or `g` followed by a space.
 A tip should not include any leading or trailing space but an interpolated one can be used, e.g., `g s`.

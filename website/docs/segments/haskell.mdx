@@ -10,16 +10,16 @@ Display the currently active Glasgow Haskell Compiler (GHC) version.
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "haskell",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
   "foreground": "#906cff",
   "background": "#100e23",
   "template": " \ue61f {{ .Full }}"
-}
-```
+}}/>
 
 ## Properties
 

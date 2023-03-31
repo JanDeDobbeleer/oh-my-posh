@@ -18,20 +18,20 @@ Supported registry key types:
 
 ## Sample Configuration
 
-```json
-  {
-    "type": "winreg",
-    "style": "powerline",
-    "powerline_symbol": "\uE0B0",
-    "foreground": "#ffffff",
-    "background": "#444444",
-    "template":" \uE62A {{ .Value }}",
-    "properties": {
-      "path": "HKLM\\software\\microsoft\\windows nt\\currentversion\\buildlab",
-      "fallback":"unknown"
-    }
-  },
-```
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
+  "type": "winreg",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#444444",
+  "template":" \uE62A {{ .Value }}",
+  "properties": {
+    "path": "HKLM\\software\\microsoft\\windows nt\\currentversion\\buildlab",
+    "fallback":"unknown"
+  }
+}}/>
 
 ## Properties
 

@@ -101,6 +101,24 @@ Once altered, reload your profile for the changes to take effect.
 exec bash
 ```
 
+Advanced version: The name of the topic is defined by a separate variable `$themeName`, the path to the topics is obtained through an environment variable `$POSH_THEMES_PATH`. This also checks and informs about errors of specifying a theme file.
+
+```bash
+themeName="jandedobbeleer"
+# For Windows Git BASH
+# themePath=$(cygpath $POSH_THEMES_PATH)
+themePath="$POSH_THEMES_PATH"
+themeFile=$themePath/$themeName.omp.json
+if [ ! -f "$themeFile" ]; then
+    echo -e "\033[0;41m Warning: \033[0;33m Theme file is missing, check the path and name in the settings."
+    echo -e "\033[32mOh-My-POSH start with the \"standart\" theme."
+    eval "$(oh-my-posh init bash)"
+else
+    echo -e "\033[32mOh-My-POSH start with the \"$themeName\" theme."
+    eval "$(oh-my-posh init bash --config $themeFile)"
+fi
+```
+
 </TabItem>
 <TabItem value="cmd">
 
@@ -117,6 +135,21 @@ avoid having to use double backslashes.
 :::
 
 Once altered, restart cmd for the changes to take effect.
+
+Advanced version: The name of the topic is defined by a separate variable `$themeName`, the path to the topics is obtained through an environment variable `$POSH_THEMES_PATH`. This also checks and informs about errors of specifying a theme file.
+
+```lua title="oh-my-posh.lua"
+local themeName = "gmay1"
+local themeFile = os.getenv("POSH_THEMES_PATH") .. "\\" .. themeName .. ".omp.json"
+if not io.open(themeFile) then
+    print("\27[0;41m Warning: \27[0;33m Theme file is missing, check the path and name in the settings.")
+    print("\27[32mOh-My-POSH start with the \"standart\" theme.")
+    load(io.popen(string.format('oh-my-posh init cmd')):read("*a"))()
+else
+--    print(string.format('\27[32mOh-My-POSH start with the "%s" theme.', themeName))
+    load(io.popen(string.format('oh-my-posh init cmd --config %s', themeFile)):read("*a"))()
+end
+```
 
 </TabItem>
 <TabItem value="elvish">
@@ -199,6 +232,12 @@ of your configuration.
 oh-my-posh init pwsh --config ~/jandedobbeleer.omp.json | Invoke-Expression
 ```
 
+ Advanced version: The name of the topic is defined by a separate variable `$themeName`, the path to the topics is obtained through an environment variable `$POSH_THEMES_PATH`. This also checks and informs about errors of specifying a theme file.
+
+```powershell
+oh-my-posh init pwsh --config ~/jandedobbeleer.omp.json | Invoke-Expression
+```
+
 Once altered, reload your profile for the changes to take effect.
 
 ```powershell
@@ -216,6 +255,22 @@ In this scenario, it can also be that PowerShell blocks running local scripts. T
 to only require remote scripts to be signed using `Set-ExecutionPolicy RemoteSigned`, or [sign the profile][sign].
 :::
 
+Advanced version: The name of the topic is defined by a separate variable `$themeName`, the path to the topics is obtained through an environment variable `$POSH_THEMES_PATH`. This also checks and informs about errors of specifying a theme file.
+
+```powershell
+$themeName = "froczh"
+$themeFile = $Env:POSH_THEMES_PATH + "\" + $themeName + ".omp.json"
+if (-not (Test-Path $themeFile)) {
+    Write-Host " Warning: " -BackgroundColor Red -NoNewline
+    Write-Host " Theme file is missing, check the path and name in the settings." -ForegroundColor DarkYellow
+    Write-Host "Oh-My-POSH start with the `"standart`" theme" -ForegroundColor DarkGreen
+    oh-my-posh init pwsh | Invoke-Expression
+}
+else {
+#    Write-Host "Oh-My-POSH start with the `"$themeName`" theme" -ForegroundColor DarkGreen
+    oh-my-posh init pwsh --config $themeFile | Invoke-Expression
+}
+```
 </TabItem>
 <TabItem value="tcsh">
 

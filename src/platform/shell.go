@@ -189,6 +189,7 @@ type TemplateCache struct {
 	OS           string
 	WSL          bool
 	PromptCount  int
+	SHLVL        int
 	Segments     SegmentsCache
 
 	sync.RWMutex
@@ -822,6 +823,11 @@ func (env *Shell) TemplateCache() *TemplateCache {
 	tmplCache.OS = goos
 	if goos == LINUX {
 		tmplCache.OS = env.Platform()
+	}
+
+	val := env.Getenv("SHLVL")
+	if shlvl, err := strconv.Atoi(val); err == nil {
+		tmplCache.SHLVL = shlvl
 	}
 
 	env.tmplCache = tmplCache

@@ -51,7 +51,7 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.On("IsWsl").Return(false)
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("PathSeparator").Return("/")
-	env.On("Home").Return("/Users/posh")
+	env.On("Home").Return(poshHome)
 	env.On("Getenv", poshGitEnv).Return("")
 	env.On("DirMatchesOneOf", mock2.Anything, mock2.Anything).Return(false)
 	g := &Git{

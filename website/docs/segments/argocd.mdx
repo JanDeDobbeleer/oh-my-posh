@@ -1,0 +1,42 @@
+---
+id: argocd
+title: ArgoCD Context
+sidebar_label: ArgoCD
+---
+
+## What
+
+Display the current ArgoCD context name, user and/or server.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "argocd",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#FFA400",
+    template: " {{ .Name }}:{{ .User }}@{{ .Server }} ",
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .Name }}
+```
+
+### Properties
+
+| Name      | Type     | Description                       |
+| --------- | -------- | --------------------------------- |
+| `.Name`   | `string` | the current context name          |
+| `.Server` | `string` | the server of the current context |
+| `.User`   | `string` | the user of the current context   |
+
+[templates]: /docs/configuration/templates

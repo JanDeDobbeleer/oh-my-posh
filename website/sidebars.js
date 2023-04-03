@@ -52,6 +52,7 @@ module.exports = {
       collapsed: true,
       items: [
         "segments/angular",
+        "segments/argocd",
         "segments/aws",
         "segments/az",
         "segments/azfunc",

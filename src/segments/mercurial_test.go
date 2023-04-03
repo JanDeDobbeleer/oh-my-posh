@@ -39,7 +39,7 @@ func TestMercurialEnabledInWorkingDirectory(t *testing.T) {
 	env.On("IsWsl").Return(false)
 	env.On("HasParentFilePath", ".hg").Return(fileInfo, nil)
 	env.On("PathSeparator").Return("/")
-	env.On("Home").Return("/Users/posh")
+	env.On("Home").Return(poshHome)
 	env.On("Getenv", poshGitEnv).Return("")
 
 	hg := &Mercurial{
@@ -153,7 +153,7 @@ A Added.File
 		env.On("IsWsl").Return(false)
 		env.On("HasParentFilePath", ".hg").Return(fileInfo, nil)
 		env.On("PathSeparator").Return("/")
-		env.On("Home").Return("/Users/posh")
+		env.On("Home").Return(poshHome)
 		env.On("Getenv", poshGitEnv).Return("")
 		env.MockHgCommand(fileInfo.Path, tc.LogOutput, "log", "-r", ".", "--template", hgLogTemplate)
 		env.MockHgCommand(fileInfo.Path, tc.StatusOutput, "status")

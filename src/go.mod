@@ -38,6 +38,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.16.2
 	github.com/mattn/go-runewidth v0.0.14
 	github.com/spf13/cobra v1.6.1
+	github.com/spf13/pflag v1.0.5
 	golang.org/x/mod v0.9.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -84,7 +85,6 @@ require (
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/sahilm/fuzzy v0.1.0 // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
 	github.com/zclconf/go-cty v1.13.1 // indirect
 	golang.org/x/sync v0.1.0 // indirect

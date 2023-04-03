@@ -109,8 +109,7 @@ func TestAzSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		home := "/Users/posh"
-		env.On("Home").Return(home)
+		env.On("Home").Return(poshHome)
 		var azureProfile, azureRmContext string
 
 		if tc.HasCLI {
@@ -123,7 +122,7 @@ func TestAzSegment(t *testing.T) {
 		}
 
 		env.On("GOOS").Return(platform.LINUX)
-		env.On("FileContent", filepath.Join(home, ".azure", "azureProfile.json")).Return(azureProfile)
+		env.On("FileContent", filepath.Join(poshHome, ".azure", "azureProfile.json")).Return(azureProfile)
 		env.On("Getenv", "POSH_AZURE_SUBSCRIPTION").Return(azureRmContext)
 		env.On("Getenv", "AZURE_CONFIG_DIR").Return("")
 

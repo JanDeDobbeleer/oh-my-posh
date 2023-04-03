@@ -71,7 +71,7 @@ type AzurePowerShellSubscription struct {
 }
 
 func (a *Az) Template() string {
-	return " {{ .Name }} "
+	return NameTemplate
 }
 
 func (a *Az) Init(props properties.Properties, env platform.Environment) {

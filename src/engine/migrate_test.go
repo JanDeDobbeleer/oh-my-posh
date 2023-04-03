@@ -6,6 +6,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -385,7 +386,7 @@ func TestMigratePreAndPostfix(t *testing.T) {
 		},
 		{
 			Case:     "Prefix",
-			Expected: " {{ .Name }} ",
+			Expected: segments.NameTemplate,
 			Props: properties.Map{
 				"prefix":   " ",
 				"template": "{{ .Name }}",
@@ -393,7 +394,7 @@ func TestMigratePreAndPostfix(t *testing.T) {
 		},
 		{
 			Case:     "Postfix",
-			Expected: " {{ .Name }} ",
+			Expected: segments.NameTemplate,
 			Props: properties.Map{
 				"postfix":  " ",
 				"template": "{{ .Name }} ",

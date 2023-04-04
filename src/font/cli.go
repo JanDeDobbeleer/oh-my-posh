@@ -194,7 +194,7 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Quit
 
 		case "enter":
-			if len(m.font) != 0 {
+			if len(m.font) != 0 || m.list == nil || m.list.SelectedItem() == nil {
 				return m, nil
 			}
 			var font *Asset

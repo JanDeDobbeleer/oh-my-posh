@@ -236,6 +236,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="http://waferlab.dev"><img src="https://avatars.githubusercontent.com/u/17683244?v=4?s=100" width="100px;" alt="甘亭"/><br /><sub><b>甘亭</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=atlanswer" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Mertsch"><img src="https://avatars.githubusercontent.com/u/9402861?v=4?s=100" width="100px;" alt="Mertsch"/><br /><sub><b>Mertsch</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Mertsch" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://mespin.me/"><img src="https://avatars.githubusercontent.com/u/38158676?v=4?s=100" width="100px;" alt="Marc Espín"/><br /><sub><b>Marc Espín</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=marc2332" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

@@ -1615,6 +1615,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "marc2332",
+      "name": "Marc Espín",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38158676?v=4",
+      "profile": "https://mespin.me/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

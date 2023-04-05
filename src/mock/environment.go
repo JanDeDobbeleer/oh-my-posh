@@ -256,6 +256,10 @@ func (env *MockedEnvironment) Debug(message string) {
 	_ = env.Called(message)
 }
 
+func (env *MockedEnvironment) DebugF(format string, a ...any) {
+	_ = env.Called(format, a)
+}
+
 func (env *MockedEnvironment) Error(err error) {
 	_ = env.Called(err)
 }

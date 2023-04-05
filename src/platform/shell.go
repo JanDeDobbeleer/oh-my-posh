@@ -257,6 +257,7 @@ type Environment interface {
 	CursorPosition() (row, col int)
 	SystemInfo() (*SystemInfo, error)
 	Debug(message string)
+	DebugF(format string, a ...any)
 	Error(err error)
 	Trace(start time.Time, args ...string)
 }
@@ -379,12 +380,16 @@ func (env *Shell) Debug(message string) {
 	log.Debug(message)
 }
 
-func (env *Shell) Error(err error) {
-	log.Error(err)
+func (env *Shell) DebugF(format string, a ...any) {
+	if !env.CmdFlags.Debug {
+		return
+	}
+	message := fmt.Sprintf(format, a...)
+	log.Debug(message)
 }
 
-func (env *Shell) debugF(fn func() string) {
-	log.DebugF(fn)
+func (env *Shell) Error(err error) {
+	log.Error(err)
 }
 
 func (env *Shell) Getenv(key string) string {
@@ -456,7 +461,7 @@ func (env *Shell) HasFilesInDir(dir, pattern string) bool {
 		return false
 	}
 	hasFilesInDir := len(matches) > 0
-	env.debugF(func() string { return strconv.FormatBool(hasFilesInDir) })
+	env.DebugF("%t", hasFilesInDir)
 	return hasFilesInDir
 }
 
@@ -488,8 +493,9 @@ func (env *Shell) HasFolder(folder string) bool {
 		env.Debug("false")
 		return false
 	}
-	env.debugF(func() string { return strconv.FormatBool(f.IsDir()) })
-	return f.IsDir()
+	isDir := f.IsDir()
+	env.DebugF("%t", isDir)
+	return isDir
 }
 
 func (env *Shell) ResolveSymlink(path string) (string, error) {
@@ -525,13 +531,7 @@ func (env *Shell) LsDir(path string) []fs.DirEntry {
 		env.Error(err)
 		return nil
 	}
-	env.debugF(func() string {
-		var entriesStr string
-		for _, entry := range entries {
-			entriesStr += entry.Name() + "\n"
-		}
-		return entriesStr
-	})
+	env.DebugF("%v", entries)
 	return entries
 }
 

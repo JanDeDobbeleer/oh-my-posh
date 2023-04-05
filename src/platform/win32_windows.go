@@ -308,7 +308,7 @@ func (env *Shell) isWriteable(folder string) bool {
 			return false
 		}
 
-		env.debugF(func() string { return ace.AccessMask.permissions() })
+		env.DebugF("%v", ace.AccessMask.permissions())
 		if ace.AccessMask.canWrite() {
 			env.Debug("user has write access")
 			return true

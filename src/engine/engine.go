@@ -263,6 +263,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	e.write(log.Text("\nSegments:\n\n").Green().Bold().Plain().String())
 	// console title timing
 	titleStartTime := time.Now()
+	e.Env.Debug("Segment: Title")
 	title := e.getTitleTemplateText()
 	consoleTitleTiming := &SegmentTiming{
 		name:       "ConsoleTitle",

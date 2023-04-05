@@ -48,15 +48,6 @@ func Debug(message string) {
 	printLn(debug, header, message)
 }
 
-func DebugF(fn func() string) {
-	if !enabled {
-		return
-	}
-	fn2, line := funcSpec()
-	header := fmt.Sprintf("%s:%d", fn2, line)
-	printLn(debug, header, fn())
-}
-
 func Error(err error) {
 	if !enabled {
 		return

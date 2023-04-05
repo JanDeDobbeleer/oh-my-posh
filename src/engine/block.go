@@ -227,6 +227,7 @@ func (b *Block) Debug() (int, []*SegmentTiming) {
 		if segmentTiming.nameLength > largestSegmentNameLength {
 			largestSegmentNameLength = segmentTiming.nameLength
 		}
+		b.env.DebugF("Segment: %s", segmentTiming.name)
 		start := time.Now()
 		segment.SetEnabled(b.env)
 		segment.SetText()

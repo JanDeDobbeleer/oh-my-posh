@@ -405,7 +405,11 @@ func (segment *Segment) mapSegmentWithWriter(env platform.Environment) error {
 
 	if f, ok := Segments[segment.Type]; ok {
 		writer := f()
-		writer.Init(segment.Properties, env)
+		wrapper := &properties.Wrapper{
+			Properties: segment.Properties,
+			Env:        env,
+		}
+		writer.Init(wrapper, env)
 		segment.writer = writer
 		return nil
 	}

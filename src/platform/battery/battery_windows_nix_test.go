@@ -1,4 +1,4 @@
-//go:build !darwin
+//go:build !darwin && !netbsd
 
 // battery
 // Copyright (C) 2016-2017 Karol 'Kenji Takahashi' Woźniak

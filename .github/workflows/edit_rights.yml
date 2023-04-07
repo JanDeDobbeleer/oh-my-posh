@@ -16,7 +16,7 @@ jobs:
   notify-when-maintainers-cannot-edit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@98814c53be79b1d30f795b907e553d8679345975
+      - uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |

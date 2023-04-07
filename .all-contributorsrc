@@ -1634,6 +1634,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "bsiegert",
+      "name": "Benny Siegert",
+      "avatar_url": "https://avatars.githubusercontent.com/u/866330?v=4",
+      "profile": "https://bentsukun.ch",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -16,6 +16,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
+            const fs = require('fs');
             const { repo: { owner, repo } } = context;
             const pr = context.payload.pull_request;
 
@@ -52,7 +53,20 @@ jobs:
             }
 
             if (contributions.length === 0) {
-              console.log('No relevant additions found');
+              console.log('No relevant contributions found');
+              return;
+            }
+
+            var data = fs.readFileSync('.all-contributorsrc', 'utf8');
+            let json = JSON.parse(data);
+            const contributor = json.contributors.find(contributor => contributor.login === pr.user.login);
+            if (contributor) {
+              console.log(contributor);
+              contributions = contributions.filter(contribution => !contributor.contributions.includes(contribution));
+            }
+
+            if (contributions.length === 0) {
+              console.log('No new contributions found');
               return;
             }
 

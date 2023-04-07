@@ -12,9 +12,9 @@ require (
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/gookit/color v1.5.2
+	github.com/gookit/color v1.5.3
 	github.com/gookit/config/v2 v2.2.1
-	github.com/gookit/goutil v0.6.7 // indirect
+	github.com/gookit/goutil v0.6.8 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0
@@ -26,7 +26,7 @@ require (
 	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/image v0.6.0
 	golang.org/x/sys v0.6.0
-	golang.org/x/text v0.8.0
+	golang.org/x/text v0.9.0
 	gopkg.in/ini.v1 v1.67.0
 )
 

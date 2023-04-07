@@ -1,4 +1,4 @@
-//go:build linux
+//go:build !windows && !darwin
 
 // Derived from https://github.com/Crosse/font-install
 // Copyright 2020 Seth Wright <seth@crosse.org>

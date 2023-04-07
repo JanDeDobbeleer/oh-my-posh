@@ -8,6 +8,8 @@
 </p>
 <!-- markdownlint-enable -->
 
+[![License][license]](COPYING)
+
 ![Release Status][release-status]
 
 [![Release][release-badge]][release]
@@ -62,6 +64,7 @@ using Go (and the amazing [README][powerline-go])
 * [Starship][starship] for creating an amazing way to initialize the prompt
 
 [release-status]: https://img.shields.io/github/actions/workflow/status/jandedobbeleer/oh-my-posh/release.yml?branch=main
+[license]: https://img.shields.io/github/license/JanDeDobbeleer/oh-my-posh.svg
 [gh-downloads]: https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads
 [mastodon]: https://img.shields.io/mastodon/follow/109326234705859737?domain=https%3A%2F%2Fsocial.ohmyposh.dev&label=Mastodon&style=social
 [discord]: https://img.shields.io/discord/1023597603331526656

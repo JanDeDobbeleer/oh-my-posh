@@ -238,6 +238,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://mespin.me/"><img src="https://avatars.githubusercontent.com/u/38158676?v=4?s=100" width="100px;" alt="Marc Espín"/><br /><sub><b>Marc Espín</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=marc2332" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/ksdpmx"><img src="https://avatars.githubusercontent.com/u/3256083?v=4?s=100" width="100px;" alt="jasonz"/><br /><sub><b>jasonz</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ksdpmx" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ksdpmx" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

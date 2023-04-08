@@ -52,6 +52,7 @@ type Sapling struct {
 	Author      string
 	Bookmark    string
 	Description string
+	New         bool
 
 	Working *SaplingStatus
 }
@@ -129,6 +130,10 @@ func (sl *Sapling) setHeadContext() {
 
 func (sl *Sapling) setCommitContext() {
 	body := sl.getSaplingCommandOutput("log", "--limit", "1", "--template", SLCOMMITTEMPLATE)
+	if len(body) == 0 {
+		sl.New = true
+		return
+	}
 	splitted := strings.Split(strings.TrimSpace(body), "\n")
 	for _, line := range splitted {
 		line = strings.TrimSpace(line)

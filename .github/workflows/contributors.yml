@@ -70,7 +70,11 @@ jobs:
               return;
             }
 
-            const body = `@all-contributors please add @${pr.user.login} for ${contributions.join()}`;
+            var body = `@all-contributors please add @${pr.user.login} for ${contributions.join()}`;
+
+            if (!contributor) {
+              body += `\n\nThis is pure magic 🪄! @holopin-bot @${pr.user.login} wizard`;
+            }
 
             console.log(`Adding comment: ${body}`);
             await github.rest.issues.createComment({

@@ -10,19 +10,21 @@ Display [sapling][sapling] information when in a sapling repository.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "sapling",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#193549",
-  "background": "#4C9642",
-  "background_templates": ["{{ if .Bookmark }}#4C9642{{ end }}"],
-  "properties": {
-    "fetch_status": true
-  }
-}}/>
+<Config
+  data={{
+    type: "sapling",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#4C9642",
+    background_templates: ["{{ if .Bookmark }}#4C9642{{ end }}"],
+    properties: {
+      fetch_status: true,
+    },
+  }}
+/>
 
 ## Properties
 
@@ -56,6 +58,7 @@ import Config from '@site/src/components/Config.js';
 | `.When`        | `string`        | the commit's relative time indication      |
 | `.Bookmark`    | `string`        | the commit's bookmark (if any)             |
 | `.Dir`         | `string`        | the repository's root directory            |
+| `.New`         | `boolean`       | true when there are no commits in the repo |
 
 ### SaplingStatus
 

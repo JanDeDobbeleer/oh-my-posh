@@ -11,7 +11,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-
 	"gopkg.in/ini.v1"
 )
 
@@ -59,6 +58,10 @@ const (
 	FetchStashCount properties.Property = "fetch_stash_count"
 	// FetchWorktreeCount fetches the worktree count
 	FetchWorktreeCount properties.Property = "fetch_worktree_count"
+	// FetchUpstreamURL fetches and formats the upstream url
+	FetchUpstreamURL properties.Property = "fetch_upstream_url"
+	// InsteadOfURLS list the url prefixes that git is configured to substitute
+	InsteadOfURLS properties.Property = "instead_of_urls"
 	// FetchUpstreamIcon fetches the upstream icon
 	FetchUpstreamIcon properties.Property = "fetch_upstream_icon"
 	// FetchBareInfo fetches the bare repo status
@@ -108,34 +111,35 @@ const (
 	DETACHED     = "(detached)"
 	BRANCHPREFIX = "ref: refs/heads/"
 	GITCOMMAND   = "git"
+	UPSTREAM     = "origin"
 )
 
 type Git struct {
 	scm
 
-	Working        *GitStatus
-	Staging        *GitStatus
-	Ahead          int
-	Behind         int
-	HEAD           string
-	Ref            string
-	Hash           string
-	ShortHash      string
-	BranchStatus   string
-	Upstream       string
-	UpstreamIcon   string
-	UpstreamURL    string
-	RawUpstreamURL string
-	UpstreamGone   bool
-	IsWorkTree     bool
-	IsBare         bool
+	Working      *GitStatus
+	Staging      *GitStatus
+	Ahead        int
+	Behind       int
+	HEAD         string
+	Ref          string
+	Hash         string
+	ShortHash    string
+	BranchStatus string
+	Upstream     string
+	UpstreamIcon string
+	UpstreamURL  string
+	UpstreamGone bool
+	IsWorkTree   bool
+	IsBare       bool
 
 	// needed for posh-git support
 	poshgit       bool
 	stashCount    int
 	worktreeCount int
 
-	commit *Commit
+	commit         *Commit
+	rawUpstreamURL string
 }
 
 func (g *Git) Template() string {
@@ -154,28 +158,40 @@ func (g *Git) Enabled() bool {
 
 	if g.IsBare {
 		g.getBareRepoInfo()
-		return true
-	}
+	} else if !g.hasPoshGitStatus() {
+		displayStatus := g.props.GetBool(FetchStatus, false)
+		if g.shouldIgnoreStatus() {
+			displayStatus = false
+		}
+		if displayStatus {
+			g.setGitStatus()
+			g.setGitHEADContext()
+			g.setBranchStatus()
+		} else {
+			g.setPrettyHEADName()
+			g.Working = &GitStatus{}
+			g.Staging = &GitStatus{}
+		}
 
-	if g.hasPoshGitStatus() {
-		return true
+		if len(g.Upstream) == 0 {
+			g.Upstream = UPSTREAM
+		}
 	}
-
-	displayStatus := g.props.GetBool(FetchStatus, false)
-	if g.shouldIgnoreStatus() {
-		displayStatus = false
-	}
-	if displayStatus {
-		g.setGitStatus()
-		g.setGitHEADContext()
-		g.setBranchStatus()
-	} else {
-		g.setPrettyHEADName()
-		g.Working = &GitStatus{}
-		g.Staging = &GitStatus{}
-	}
-	if g.props.GetBool(FetchUpstreamIcon, false) {
-		g.UpstreamIcon = g.getUpstreamIcon()
+	upstreamIcon := g.props.GetBool(FetchUpstreamIcon, false)
+	upstreamURL := g.props.GetBool(FetchUpstreamURL, false)
+	if upstreamIcon || upstreamURL {
+		if g.IsBare {
+			g.Upstream = g.getGitCommandOutput("remote")
+		}
+		if len(g.Upstream) != 0 {
+			g.rawUpstreamURL = g.getRemoteURL()
+			if upstreamIcon {
+				g.UpstreamIcon = g.getUpstreamIcon(g.rawUpstreamURL)
+			}
+			if upstreamURL {
+				g.UpstreamURL = g.cleanUpstreamURL(g.rawUpstreamURL)
+			}
+		}
 	}
 	return true
 }
@@ -232,16 +248,16 @@ func (g *Git) StashCount() int {
 
 func (g *Git) Kraken() string {
 	root := g.getGitCommandOutput("rev-list", "--max-parents=0", "HEAD")
-	if len(g.RawUpstreamURL) == 0 {
+	if len(g.rawUpstreamURL) == 0 {
 		if len(g.Upstream) == 0 {
-			g.Upstream = "origin"
+			g.Upstream = UPSTREAM
 		}
-		g.RawUpstreamURL = g.getRemoteURL()
+		g.rawUpstreamURL = g.getRemoteURL()
 	}
 	if len(g.Hash) == 0 {
 		g.Hash = g.getGitCommandOutput("rev-parse", "HEAD")
 	}
-	return fmt.Sprintf("gitkraken://repolink/%s/commit/%s?url=%s", root, g.Hash, url2.QueryEscape(g.RawUpstreamURL))
+	return fmt.Sprintf("gitkraken://repolink/%s/commit/%s?url=%s", root, g.Hash, url2.QueryEscape(g.rawUpstreamURL))
 }
 
 func (g *Git) shouldDisplay() bool {
@@ -286,13 +302,6 @@ func (g *Git) getBareRepoInfo() {
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
 	g.HEAD = fmt.Sprintf("%s%s", branchIcon, g.Ref)
-	if !g.props.GetBool(FetchUpstreamIcon, false) {
-		return
-	}
-	g.Upstream = g.getGitCommandOutput("remote")
-	if len(g.Upstream) != 0 {
-		g.UpstreamIcon = g.getUpstreamIcon()
-	}
 }
 
 func (g *Git) setDir(dir string) {
@@ -418,17 +427,11 @@ func (g *Git) cleanUpstreamURL(url string) string {
 	return fmt.Sprintf("https://%s/%s", match["URL"], match["PATH"])
 }
 
-func (g *Git) getUpstreamIcon() string {
-	g.RawUpstreamURL = g.getRemoteURL()
-	if len(g.RawUpstreamURL) == 0 {
-		return ""
-	}
-	g.UpstreamURL = g.cleanUpstreamURL(g.RawUpstreamURL)
-
+func (g *Git) getUpstreamIcon(url string) string {
 	// allow overrides first
 	custom := g.props.GetKeyValueMap(UpstreamIcons, map[string]string{})
 	for key, value := range custom {
-		if strings.Contains(g.UpstreamURL, key) {
+		if strings.Contains(url, key) {
 			return value
 		}
 	}
@@ -444,7 +447,7 @@ func (g *Git) getUpstreamIcon() string {
 		"visualstudio.com": {AzureDevOpsIcon, "\uEBE8 "},
 	}
 	for key, value := range defaults {
-		if strings.Contains(g.UpstreamURL, key) {
+		if strings.Contains(url, key) {
 			return g.props.GetString(value.Icon, value.Default)
 		}
 	}
@@ -706,7 +709,11 @@ func (g *Git) WorktreeCount() int {
 func (g *Git) getRemoteURL() string {
 	upstream := regex.ReplaceAllString("/.*", g.Upstream, "")
 	if len(upstream) == 0 {
-		upstream = "origin"
+		upstream = UPSTREAM
+	}
+	insteadOfs := g.props.GetStringArray(InsteadOfURLS, []string{})
+	if len(insteadOfs) == 1 && insteadOfs[0] == "*" {
+		return g.getGitCommandOutput("remote", "get-url", upstream)
 	}
 	cfg, err := ini.Load(g.rootDir + "/config")
 	if err != nil {
@@ -714,6 +721,11 @@ func (g *Git) getRemoteURL() string {
 	}
 	url := cfg.Section("remote \"" + upstream + "\"").Key("url").String()
 	if len(url) != 0 {
+		for _, insteadOfURL := range insteadOfs {
+			if strings.HasPrefix(url, insteadOfURL) {
+				return g.getGitCommandOutput("remote", "get-url", upstream)
+			}
+		}
 		return url
 	}
 	return g.getGitCommandOutput("remote", "get-url", upstream)

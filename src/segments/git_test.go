@@ -620,7 +620,7 @@ func TestGitUpstream(t *testing.T) {
 		Expected string
 		Upstream string
 	}{
-		{Case: "No upstream", Expected: "", Upstream: ""},
+		{Case: "No upstream", Expected: "G", Upstream: ""},
 		{Case: "SSH url", Expected: "G", Upstream: "ssh://git@git.my.domain:3001/ADIX7/dotconfig.git"},
 		{Case: "Gitea", Expected: "EX", Upstream: "_gitea@src.example.com:user/repo.git"},
 		{Case: "GitHub", Expected: "GH", Upstream: "github.com/test"},
@@ -634,8 +634,6 @@ func TestGitUpstream(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 		env.On("IsWsl").Return(false)
-		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
-			"-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
 		env.On("GOOS").Return("unix")
 		props := properties.Map{
 			GithubIcon:      "GH",
@@ -654,9 +652,10 @@ func TestGitUpstream(t *testing.T) {
 				props:   props,
 				command: GITCOMMAND,
 			},
-			Upstream: "origin/main",
+			Upstream:       "origin/main",
+			rawUpstreamURL: tc.Upstream,
 		}
-		upstreamIcon := g.getUpstreamIcon()
+		upstreamIcon := g.getUpstreamIcon(g.rawUpstreamURL)
 		assert.Equal(t, tc.Expected, upstreamIcon, tc.Case)
 	}
 }

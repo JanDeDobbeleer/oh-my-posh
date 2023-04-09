@@ -164,21 +164,6 @@ func TestPoshGitSegment(t *testing.T) {
 			ExpectedString:  "\ue0a0posh-git-json ≢",
 			ExpectedEnabled: true,
 		},
-		{
-			Case:     "Fetch upstream icon (GitHub)",
-			Template: "{{ .UpstreamIcon }}",
-			PoshGitJSON: `
-			{
-				"RepoName": "oh-my-posh",
-				"GitDir": "/Users/bill/Code/oh-my-posh/.git",
-				"Branch": "\ue0a0posh-git-json",
-				"Upstream": "origin/posh-git-json"
-			}
-			`,
-			ExpectedString:    "\uf408",
-			FetchUpstreamIcon: true,
-			ExpectedEnabled:   true,
-		},
 	}
 
 	for _, tc := range cases {

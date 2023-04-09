@@ -866,11 +866,32 @@
                     "description": "Display the worktree count or not",
                     "default": false
                   },
+                  "fetch_upstream_url": {
+                    "type": "boolean",
+                    "title": "Display upstream URL",
+                    "description": "Display upstream's fully qualified URL or not",
+                    "default": false
+                  },
+                  "instead_of_urls": {
+                    "type": "array",
+                    "title": "Get remote URL from git command for this prefixes",
+                    "description": "If the remote URL in the local git config file starts with any of these values, retrieve it from the cli",
+                    "default": [],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
                   "fetch_upstream_icon": {
                     "type": "boolean",
                     "title": "Display Upstream Icon",
                     "description": "Display upstream icon or not",
                     "default": false
+                  },
+                  "upstream_icons": {
+                    "type": "object",
+                    "title": "Upstream Icons",
+                    "description": "map of text (key) and icon/text (value). Value will be displayed if remote URL contains the key",
+                    "default": {}
                   },
                   "fetch_bare_info": {
                     "type": "boolean",

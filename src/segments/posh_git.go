@@ -64,9 +64,6 @@ func (g *Git) hasPoshGitStatus() bool {
 	g.UpstreamGone = len(posh.Upstream) == 0
 	g.Upstream = posh.Upstream
 	g.setBranchStatus()
-	if len(g.Upstream) != 0 && g.props.GetBool(FetchUpstreamIcon, false) {
-		g.UpstreamIcon = g.getUpstreamIcon()
-	}
 	g.poshgit = true
 	return true
 }

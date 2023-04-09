@@ -108,7 +108,7 @@ Adjust the Oh My Posh init line in `oh-my-posh.lua` by adding the `--config` fla
 of your configuration.
 
 ```lua title="oh-my-posh.lua"
-load(io.popen('oh-my-posh init cmd --config C:/Users/Posh/jandedobbeleer.omp.json'):read("*a"))()
+load(io.popen('oh-my-posh init cmd --config ' .. os.getenv("POSH_THEMES_PATH") .. '/jandedobbeleer.omp.json'):read("*a"))()
 ```
 
 :::caution

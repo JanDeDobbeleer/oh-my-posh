@@ -9,6 +9,6 @@ jobs:
       - uses: actions/checkout@8f4b7f84864484a7bf31766abe9204da3cbe65b3
         with:
           fetch-depth: 0
-      - uses: wagoid/commitlint-github-action@09faa1aae81627890cbffff1d0f7bc0e520a8b01
+      - uses: wagoid/commitlint-github-action@6b9a739128622e4780b06c2c86550512ee7c9e1e
         with:
           configFile: './.commitlintrc.yml'

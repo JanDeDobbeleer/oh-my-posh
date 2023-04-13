@@ -1,0 +1,613 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+version: 2
+palette:
+  default_fg: "#0077ff"
+  default_bg: "#29315A"
+console_title_template: "{{ .UserName }}@{{ .HostName }} {{ .Shell }} in {{ .PWD }}"
+blocks:
+  - type: prompt
+    alignment: left
+    overflow: break
+    segments:
+      - type: os
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: p:default_fg
+        background: p:default_bg
+        properties:
+          display_distro_name: false
+          alma: ""
+          alpine: ""
+          aosc: ""
+          arch: ""
+          centos: ""
+          coreos: ""
+          debian: ""
+          devuan: ""
+          raspbian: ""
+          elementary: ""
+          fedora: ""
+          gentoo: ""
+          mageia: ""
+          manjaro: ""
+          mint: ""
+          nixos: ""
+          opensuse: ""
+          redhat: ""
+          rocky: ""
+          sabayon: ""
+          slackware: ""
+          ubuntu: ""
+          linux: ""
+          macos: ""
+          windows: ""
+        template:
+          "{{ if .WSL }} on {{ end
+          }}{{ if .Icon }}{{ .Icon }}{{ end
+          }}"
+      - type: shell
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: p:default_fg
+        background: p:default_bg
+        template: "{{ if .Name }}{{ .Name }}{{ end
+          }}"
+      - type: session
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: p:default_fg
+        background: p:default_bg
+        template:
+          "{{ if .SSHSession }} {{ end
+          }}{{ if .Root }}{{ if .UserName }}<#ff0055>{{ .UserName }}</>{{ end }}{{ else }}{{ .UserName }}{{ end
+          }}{{ if .HostName }}{{ if .UserName }}@{{ end }}{{ .HostName }}{{ end
+          }}"
+      # - type: ipify
+      #   style: diamond
+      #   leading_diamond: ""
+      #   trailing_diamond: " "
+      #   foreground: p:default_fg
+      #   background: p:default_bg
+      #   properties:
+      #     cache_timeout: 15
+      #     http_timeout: 50
+      #   template:
+      #     "{{ if .IP }}{{ .IP }}{{ end
+      #     }}"
+      - type: path
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: p:default_fg
+        background: p:default_bg
+        properties:
+          folder_separator_icon: "/"
+          home_icon: " "
+          folder_icon: "..."
+          windows_registry_icon: ""
+          style: agnoster_short
+          mixed_threshold: 5
+          max_depth: 3
+          hide_root_location: false
+          # mapped_locations:
+        template:
+          "{{ if .Path }}{{ .Path }}{{ end
+          }}"
+      - type: git
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#43CCEA"
+        background: p:default_bg
+        foreground_templates:
+          - "{{ if or (.Working.Changed) (.Staging.Changed) }}#ff9248{{ end }}"
+          - "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ff4500{{ end }}"
+          - "{{ if gt .Ahead 0 }}#b388ff{{ end }}"
+          - "{{ if gt .Behind 0 }}#b388ff{{ end }}"
+        properties:
+          fetch_status: true
+          fetch_stash_count: false
+          fetch_worktree_count: false
+          fetch_upstream_icon: true
+          fetch_bare_info: true
+          # untracked_modes:
+          # ignore_submodules:
+          native_fallback: false
+          commit_icon: " "
+          tag_icon: " "
+          rebase_icon: " "
+          cherry_pick_icon: " "
+          revert_icon: " "
+          merge_icon: " "
+          no_commits_icon: " "
+          branch_icon: " "
+          branch_identical_icon: "≡"
+          branch_ahead_icon: "↑"
+          branch_behind_icon: "↓"
+          branch_gone_icon: "≢"
+          branch_max_length: 25
+          truncate_symbol: ""
+          github_icon: ""
+          gitlab_icon: ""
+          bitbucket_icon: ""
+          azure_devops_icon: "ﴃ"
+          git_icon: ""
+          upstream_icons:
+            git.wanadev.org: ""
+            git2.wanadev.org: ""
+        template:
+          "{{ url .UpstreamIcon .UpstreamURL }}{{ if .UpstreamIcon }}{{ end
+          }}{{ if .HEAD }} {{ .HEAD }}{{ end
+          }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end
+          }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end
+          }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end
+          }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end
+          }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end
+          }}"
+  - type: prompt
+    alignment: right
+    overflow: break
+    segments:
+      - type: terraform
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#844fba"
+        background: "background"
+        properties:
+          fetch_version: false
+        template:
+          "行
+          {{ if .WorkspaceName }}{{ .WorkspaceName }}{{ end
+          }}"
+      - type: python
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#ffe263"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_virtual_env: true
+          display_default: true
+          fetch_version: true
+          display_mode: context
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}{{ if .Venv }} ({{ .Venv }}){{ end
+          }}"
+      - type: go
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#79d4fd"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+          parse_mod_file: true
+        template:
+          "󰟓
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: rust
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#db1010"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: ruby
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#cc342d"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: elixir
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#4e2a8e"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: node
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#026e00"
+        background: "background"
+        properties:
+          display_mode: files
+          fetch_package_manager: true
+          fetch_version: true
+          npm_icon: "<#FE4A49> npm</>"
+          yarn_icon: "<#44FFD2> yarn</>"
+        template:
+          "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end
+          }}
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: cmake
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#5fc004"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: angular
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#dd0031"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: dotnet
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#5c2d91"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: flutter
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#0468d7"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: haskell
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#5e5086"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: julia
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#cb3c33"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: kotlin
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#7f52ff"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: lua
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#00007c"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: perl
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#0073a1"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: php
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#7377ad"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: r
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#2266b8"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "R
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: swift
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#ef6354"
+        background: "background"
+        properties:
+          home_enabled: false
+          fetch_version: true
+          display_mode: files
+        template:
+          "
+          {{ if .Full }}{{ .Full }}{{ end
+          }}"
+      - type: project
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#5485a3"
+        background: "background"
+        template:
+          "{{ if or .Version .Name }}{{ end
+          }}{{ if .Version }} {{ .Version }}{{ end
+          }}{{ if .Name }} {{ .Name }}{{ end
+          }}"
+      - type: exit
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#eb3434"
+        background: p:default_bg
+        properties:
+          always_enabled: false
+        template:
+          "{{ if gt .Code 0 }}
+          {{ if .Meaning }}{{ .Meaning }}{{ end }}{{ else }} {{ end
+          }}"
+      - type: executiontime
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        foreground: "#727272"
+        background: p:default_bg
+        properties:
+          style: roundrock
+          threshold: 2000
+        template:
+          "
+          {{ if .FormattedMs }} {{ .FormattedMs }}{{ end
+          }}"
+      # - type: sysinfo
+      #   style: diamond
+      #   leading_diamond: ""
+      #   trailing_diamond: " "
+      #   foreground: "#898c90"
+      #   background: p:default_bg
+      #   properties:
+      #     precision: 0
+      #   template:
+      #     "{{ if .Load1 }} {{ round .Load1 0 }}%{{ end
+      #     }}{{ if .PhysicalPercentUsed }}{{ if .Load1 }} {{ end }} {{ round .PhysicalPercentUsed 0 }}%{{ end
+      #     }}{{ if .SwapPercentUsed }}{{ if or .Load1 .PhysicalPercentUsed }} {{ end }} {{ round .SwapPercentUsed 0 }}%{{ end
+      #     }}"
+      - type: time
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: ""
+        foreground: "#727272"
+        background: p:default_bg
+        properties:
+          style: mixed
+        template:
+          "
+          {{ if .CurrentDate }}{{ .CurrentDate | date .Format }}{{ end
+          }}"
+  - type: prompt
+    alignment: left
+    newline: true
+    segments:
+      - foreground: "#1fe64a"
+        style: diamond
+        leading_diamond: ""
+        trailing_diamond: " "
+        template:
+          "➜"
+        type: text
+tooltips:
+  - type: kubectl
+    tips:
+      - k
+      - kubectl
+      - kind
+      - minikube
+      - helm
+      - kubens
+      - kcx
+      - kubectx
+      - kcx
+      - oc
+      - istioctl
+      - kogito
+      - k9s
+      - helmfile
+      - flux
+      - fluxctl
+      - stern
+      - kubeseal
+      - skaffold
+      - kubent
+      - kubecolor
+    style: diamond
+    leading_diamond: ""
+    trailing_diamond: " "
+    background: "background"
+    foreground: "#316ce6"
+    properties:
+      display_error: false
+      parse_kubeconfig: false
+    template:
+      "ﴱ
+      {{ if .Context }}{{ .Context }}{{ end
+      }}{{ if .Cluster }}{{ if ne .Cluster .Context }}{{ if .Context }} :: {{ end }}{{ .Cluster }}{{ end }}{{ end
+      }}{{ if or .Context .Cluster }} :: {{ end }}{{ if .Namespace }}{{ .Namespace }}{{ else }}default{{ end
+      }}{{ if .User }}{{ if ne .User .Cluster }}{{ if or .Context .Cluster}} :: {{ end }}{{ .User }}{{ end }}{{ end
+      }}"
+  - type: aws
+    tips:
+      - aws
+      - awless
+    style: diamond
+    leading_diamond: ""
+    trailing_diamond: " "
+    foreground: "#ec912d"
+    background: "background"
+    properties:
+      display_default: false
+    template:
+      "󰸏
+      {{ if .Profile }}{{.Profile}}{{ end
+      }}{{ if .Region }}{{ if .Profile }}@{{ end }}{{ .Region }}{{ end
+      }}"
+  - type: az
+    tips:
+      - az
+    style: diamond
+    leading_diamond: ""
+    trailing_diamond: " "
+    foreground: "#0078d4"
+    background: "background"
+    properties:
+      source: first_match
+    template:
+      "ﴃ
+      {{ if .User.Name }}{{ .User.Name }}{{ end
+      }}{{ if .EnvironmentName}}{{ if .User.Name }}@{{ end }}{{ .EnvironmentName }}{{ end
+      }}"
+  - type: gcp
+    tips:
+      - gcloud
+      - gcs
+      - gsutil
+    style: diamond
+    leading_diamond: ""
+    trailing_diamond: " "
+    foreground: "#1a73e8"
+    background: "background"
+    template:
+      "
+      {{ if .Account }}{{ .Account }}{{ end
+      }}{{ if .Region }}{{ if .Account }}@{{ end }}{{ .Region }}{{ end
+      }}{{ if .Project }}{{ if or .Account .Region }} :: {{ end }}{{ .Project }}{{ end
+      }}"
+  - type: argocd
+    tips:
+      - argo
+      - argocd
+    style: diamond
+    leading_diamond: ""
+    trailing_diamond: " "
+    foreground: "#ef754f"
+    background: "background"
+    template:
+      "󱣘
+      {{ if .User }}{{ .User }}{{ end
+      }}{{ if .Server }}{{ if .User }}@{{ end }}{{ .Server }}{{ end
+      }}{{ if .Name }}{{ id or .User .Server }} :: {{ end }}{{ .Name }}{{ end
+      }}"
+  - type: docker
+    tips:
+      - d
+      - docker
+      - dc
+      - docker-compose
+    style: diamond
+    leading_diamond: ""
+    trailing_diamond: " "
+    foreground: "#2496ed"
+    background: "background"
+    template:
+      "
+      {{ if .Context }}{{ .Context }}{{ end
+      }}"

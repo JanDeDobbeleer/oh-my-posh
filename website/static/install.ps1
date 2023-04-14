@@ -59,7 +59,7 @@ $url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/$i
 # check if we can make https requests
 try {
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    Invoke-WebRequest -Uri $url -Method Head
+    Invoke-WebRequest -Uri $url -Method Head | Where-Object -FilterScript { $_.StatusCode -ne 200 }  # Suppress success output
 } catch {
     Write-Host "Unable to download $installer. Please check your internet connection."
     exit

@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@83b7061638ee4956cf7545a6f7efe594e5ad0247
+      uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
     - name: Lint files
       uses: articulate/actions-markdownlint@17b8abe7407cd17590c006ecc837c35e1ac3ed83
       with:

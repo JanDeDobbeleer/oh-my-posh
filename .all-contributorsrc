@@ -1643,6 +1643,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kema-dev",
+      "name": "kema",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54537427?v=4",
+      "profile": "http://www.kemadev.fr/fr/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

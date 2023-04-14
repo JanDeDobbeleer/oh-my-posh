@@ -52,7 +52,7 @@ Write-Host "Downloading $installer..."
 if(Get-Command -Name New-TemporaryFile -ErrorAction SilentlyContinue){
     $tmp = New-TemporaryFile | Rename-Item -NewName { $_ -replace 'tmp$', 'exe' } -PassThru    
 }else{
-    $tmp = New-Item -Path $env:TEMP -Name ([System.IO.Path]::GetRandomFileName()  -replace '\.\w+$','.exe') -Force
+    $tmp = New-Item -Path $env:TEMP -Name ([System.IO.Path]::GetRandomFileName()  -replace '\.\w+$','.exe') -Force -ItemType File
 }
 $url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/$installer"
 

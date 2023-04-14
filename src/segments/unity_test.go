@@ -40,6 +40,13 @@ func TestUnitySegment(t *testing.T) {
 		VersionFileExists   bool
 	}{
 		{
+			Case:                "Unity version without f suffix",
+			ExpectedOutput:      "\ue721 2023.2.0a9 C# 9",
+			ExpectedToBeEnabled: true,
+			VersionFileExists:   true,
+			VersionFileText:     "m_EditorVersion: 2023.2.0a9\nm_EditorVersionWithRevision: 2023.2.0a9 (5405d0db74a0)",
+		},
+		{
 			Case:                "Unity version exists in C# map",
 			ExpectedOutput:      "\ue721 2021.3.16 C# 9",
 			ExpectedToBeEnabled: true,

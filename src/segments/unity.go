@@ -54,24 +54,25 @@ func (u *Unity) GetUnityVersion() (version string, err error) {
 	versionFilePath := filepath.Join(projectDir.Path, "ProjectVersion.txt")
 	versionFileText := u.env.FileContent(versionFilePath)
 
-	firstLine := strings.Split(versionFileText, "\n")[0]
+	lines := strings.Split(versionFileText, "\n")
 	versionPrefix := "m_EditorVersion: "
-	versionPrefixIndex := strings.Index(firstLine, versionPrefix)
-	if versionPrefixIndex == -1 {
-		err := errors.New("ProjectSettings/ProjectVersion.txt is missing 'm_EditorVersion: ' prefix")
-		return "", err
+	for _, line := range lines {
+		if !strings.HasPrefix(line, versionPrefix) {
+			continue
+		}
+		version := strings.TrimPrefix(line, versionPrefix)
+		version = strings.TrimSpace(version)
+		if len(version) == 0 {
+			return "", errors.New("Empty m_EditorVersion")
+		}
+		fIndex := strings.Index(version, "f")
+		if fIndex > 0 {
+			return version[:fIndex], nil
+		}
+		return version, nil
 	}
 
-	versionStartIndex := versionPrefixIndex + len(versionPrefix)
-	unityVersion := firstLine[versionStartIndex:]
-	unityVersion = strings.TrimSpace(unityVersion)
-
-	fIndex := strings.Index(unityVersion, "f")
-	if versionPrefixIndex > -1 {
-		unityVersion = unityVersion[:fIndex]
-	}
-
-	return unityVersion, nil
+	return "", errors.New("ProjectSettings/ProjectVersion.txt is missing m_EditorVersion")
 }
 
 func (u *Unity) GetCSharpVersion() (version string, err error) {
@@ -103,6 +104,7 @@ func (u *Unity) GetCSharpVersion() (version string, err error) {
 		"2022.1": "C# 9",
 		"2022.2": "C# 9",
 		"2023.1": "C# 9",
+		"2023.2": "C# 9",
 	}
 
 	csharpVersion, found := csharpVersionsByUnityVersion[shortUnityVersion]

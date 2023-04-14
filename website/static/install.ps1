@@ -27,7 +27,7 @@ https://ohmyposh.dev/docs/installation/linux
     exit
 }
 $installer = ''
-$arch = (Get-CimInstance -Class Win32_Processor -Property Architecture).Architecture
+$arch = (Get-CimInstance -Class Win32_Processor -Property Architecture).Architecture | Select-Object -First 1
 switch ($arch) {
     0 { $installer = "install-386.exe" } # x86
     5 { $installer = "install-arm64.exe" } # ARM
@@ -41,7 +41,7 @@ switch ($arch) {
     12 { $installer = "install-arm64.exe" } # Surface Pro X
 }
 
-if ($installer -eq '') {
+if ([string]::IsNullOrEmpty($installer)) {
     Write-Host @"
 The installer for system architecture ($arch) is not available.
 "@
@@ -49,8 +49,21 @@ The installer for system architecture ($arch) is not available.
 }
 
 Write-Host "Downloading $installer..."
-$tmp = New-TemporaryFile | Rename-Item -NewName { $_ -replace 'tmp$', 'exe' } -PassThru
+if(Get-Command -Name New-TemporaryFile -ErrorAction SilentlyContinue){
+    $tmp = New-TemporaryFile | Rename-Item -NewName { $_ -replace 'tmp$', 'exe' } -PassThru    
+}else{
+    $tmp = New-Item -Path $env:TEMP -Name ([System.IO.Path]::GetRandomFileName()  -replace '\.\w+$','.exe') -Force
+}
 $url = "https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/$installer"
+
+# check if we can make https requests
+try {
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-WebRequest -Uri $url -Method Head
+} catch {
+    Write-Host "Unable to download $installer. Please check your internet connection."
+    exit
+}
 Invoke-WebRequest -OutFile $tmp $url
 Write-Host 'Running installer...'
 $installMode = "/CURRENTUSER"

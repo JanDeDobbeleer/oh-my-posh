@@ -39,6 +39,7 @@ type Segment struct {
 	Alias               string         `json:"alias,omitempty"`
 	MaxWidth            int            `json:"max_width,omitempty"`
 	MinWidth            int            `json:"min_width,omitempty"`
+	Filler              string         `json:"filler,omitempty"`
 
 	Enabled bool `json:"-"`
 

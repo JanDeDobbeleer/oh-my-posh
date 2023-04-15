@@ -3168,7 +3168,14 @@
     "transient_prompt": {
       "$ref": "#/definitions/extra_prompt",
       "title": "Transient Prompt Setting",
-      "description": "https://ohmyposh.dev/docs/configuration/transient"
+      "description": "https://ohmyposh.dev/docs/configuration/transient",
+      "properties": {
+        "filler": {
+          "type": "string",
+          "title": "Filler",
+          "description": "Right aligned filler text, will span the remaining width"
+        }
+      }
     },
     "valid_line": {
       "$ref": "#/definitions/extra_prompt",

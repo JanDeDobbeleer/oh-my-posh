@@ -130,8 +130,8 @@ func (e *Engine) isWarp() bool {
 	return e.Env.Getenv("TERM_PROGRAM") == "WarpTerminal"
 }
 
-func (e *Engine) shouldFill(block *Block, length int) (string, bool) {
-	if len(block.Filler) == 0 {
+func (e *Engine) shouldFill(filler string, length int) (string, bool) {
+	if len(filler) == 0 {
 		return "", false
 	}
 	terminalWidth, err := e.Env.TerminalWidth()
@@ -142,7 +142,7 @@ func (e *Engine) shouldFill(block *Block, length int) (string, bool) {
 	if padLength <= 0 {
 		return "", false
 	}
-	e.Writer.Write("", "", block.Filler)
+	e.Writer.Write("", "", filler)
 	filler, lenFiller := e.Writer.String()
 	if lenFiller == 0 {
 		return "", false
@@ -228,14 +228,14 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 				e.newline()
 			case Hide:
 				// make sure to fill if needed
-				if padText, OK := e.shouldFill(block, 0); OK {
+				if padText, OK := e.shouldFill(block.Filler, 0); OK {
 					e.write(padText)
 				}
 				return
 			}
 		}
 
-		if padText, OK := e.shouldFill(block, length); OK {
+		if padText, OK := e.shouldFill(block.Filler, length); OK {
 			// in this case we can print plain
 			e.write(padText)
 			e.write(text)
@@ -462,10 +462,15 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 	background := prompt.BackgroundTemplates.FirstMatch(nil, e.Env, prompt.Background)
 	e.Writer.SetColors(background, foreground)
 	e.Writer.Write(background, foreground, promptText)
+	str, length := e.Writer.String()
+	if promptType == Transient {
+		if padText, OK := e.shouldFill(prompt.Filler, length); OK {
+			str += padText
+		}
+	}
 	switch e.Env.Shell() {
 	case shell.ZSH:
 		// escape double quotes contained in the prompt
-		str, _ := e.Writer.String()
 		if promptType == Transient {
 			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(str, "\"", "\"\""))
 			// empty RPROMPT
@@ -475,13 +480,11 @@ func (e *Engine) PrintExtraPrompt(promptType ExtraPromptType) string {
 		return str
 	case shell.PWSH, shell.PWSH5:
 		// Return the string and empty our buffer
-		str, _ := e.Writer.String()
 		// clear the line afterwards to prevent text from being written on the same line
 		// see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3628
 		return str + e.Writer.ClearAfter()
 	case shell.CMD, shell.BASH, shell.FISH, shell.NU, shell.GENERIC:
 		// Return the string and empty our buffer
-		str, _ := e.Writer.String()
 		return str
 	}
 	return ""

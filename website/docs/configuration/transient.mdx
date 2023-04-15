@@ -44,13 +44,14 @@ You need to extend or create a custom theme with your transient prompt. For exam
 
 ## Properties
 
-| Name                   | Type     | Description                                                                                                                                |
-| ---------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `foreground`           | `string` | [color][colors]                                                                                                                            |
-| `foreground_templates` | `array` | [color templates][color-templates]                                                                                                         |
-| `background`           | `string` | [color][colors]                                                                                                                            |
-| `background_templates` | `array` | [color templates][color-templates]                                                                                                         |
-| `template`             | `string` | a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below - defaults to `{{ .Shell }}> ` |
+| Name                   | Type     | Description                                                                                                                                    |
+| ---------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `foreground`           | `string` | [color][colors]                                                                                                                                |
+| `foreground_templates` | `array`  | [color templates][color-templates]                                                                                                             |
+| `background`           | `string` | [color][colors]                                                                                                                                |
+| `background_templates` | `array`  | [color templates][color-templates]                                                                                                             |
+| `template`             | `string` | a go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below - defaults to `{{ .Shell }}> `     |
+| `filler`               | `string` | when you want to create a line with a repeated set of characters spanning the width of the terminal. Will be added _after_ the `template` text |
 
 ## Enable the feature
 

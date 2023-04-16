@@ -68,6 +68,10 @@ if [[ "$(zle -lL zle-line-init)" = *"_posh-zle-line-init"* ]]; then
   zle -N zle-line-init
 fi
 
+function get_alias_from_buffer() {
+  printf '%s' $aliases[$1]
+}
+
 function _posh-tooltip() {
   # ignore an empty buffer
   if [[ -z  "$BUFFER"  ]]; then
@@ -75,7 +79,15 @@ function _posh-tooltip() {
     return
   fi
 
-  local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --error="$omp_last_error" --command="$BUFFER" --shell-version="$ZSH_VERSION")
+  # expand alias for first word
+  local -a split_buffer=(${(s: :)BUFFER})
+  local first=${split_buffer[1]}
+  local alias=$(get_alias_from_buffer $first)
+  if [[ -z "$alias" ]]; then
+    alias=$first
+  fi
+
+  local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --error="$omp_last_error" --command="$alias" --shell-version="$ZSH_VERSION")
   # ignore an empty tooltip
   if [[ -n "$tooltip" ]]; then
     RPROMPT=$tooltip

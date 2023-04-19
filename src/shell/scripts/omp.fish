@@ -39,7 +39,8 @@ function fish_prompt
     set_poshcontext
     # validate if the user cleared the screen
     set --local omp_cleared false
-    if test (history | head -1) = "clear"
+    set --local last_command (history search --max 1)
+    if test "$last_command" = "clear"
       set omp_cleared true
     end
     ::OMP:: print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared

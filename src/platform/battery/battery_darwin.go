@@ -34,11 +34,22 @@ func parseBatteryOutput(output string) (*Info, error) {
 		msg := "Unable to find battery state based on output"
 		return nil, errors.New(msg)
 	}
+
 	var percentage int
 	var err error
 	if percentage, err = strconv.Atoi(matches["PERCENTAGE"]); err != nil {
 		return nil, errors.New("Unable to parse battery percentage")
 	}
+
+	// sometimes it reports discharging when at 100, so let's force it to Full
+	// https://github.com/JanDeDobbeleer/oh-my-posh/issues/3729
+	if percentage == 100 {
+		return &Info{
+			Percentage: percentage,
+			State:      Full,
+		}, nil
+	}
+
 	return &Info{
 		Percentage: percentage,
 		State:      mapMostLogicalState(matches["STATE"]),

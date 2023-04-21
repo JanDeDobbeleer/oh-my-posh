@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"time"
@@ -37,10 +38,16 @@ func isZipFile(data []byte) bool {
 }
 
 func getRemoteFile(location string) (data []byte, err error) {
-	client := &http.Client{}
-	ctx, cancelF := context.WithTimeout(context.Background(), time.Second*time.Duration(60))
-	defer cancelF()
-	req, err := http.NewRequestWithContext(ctx, "GET", location, nil)
+	client := &http.Client{
+		Transport: &http.Transport{
+			Dial: (&net.Dialer{
+				Timeout: 10 * time.Second,
+			}).Dial,
+			TLSHandshakeTimeout:   10 * time.Second,
+			ResponseHeaderTimeout: 10 * time.Second,
+		},
+	}
+	req, err := http.NewRequestWithContext(context.Background(), "GET", location, nil)
 	if err != nil {
 		return nil, err
 	}

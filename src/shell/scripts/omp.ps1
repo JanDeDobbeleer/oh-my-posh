@@ -127,7 +127,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $cleanPSWD = Get-CleanPSWD
             $command = $null
             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
-            $command = $command.Trim().Split(" ", 2) | Select-Object -First 1
+            $command = $command.TrimStart().Split(" ", 2) | Select-Object -First 1
             if ($command -eq $script:ToolTipCommand) {
                 return
             }
@@ -396,6 +396,9 @@ Example:
 
         # remove any posh-git status
         $env:POSH_GIT_STATUS = $null
+
+        # remove cached tip command
+        $script:ToolTipCommand = ""
 
         # restore the orignal last exit code
         $global:LASTEXITCODE = $script:OriginalLastExitCode

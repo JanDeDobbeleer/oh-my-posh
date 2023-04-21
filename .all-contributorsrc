@@ -1661,6 +1661,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "iavael",
+      "name": "Iavael",
+      "avatar_url": "https://avatars.githubusercontent.com/u/905853?v=4",
+      "profile": "https://iavael.name/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

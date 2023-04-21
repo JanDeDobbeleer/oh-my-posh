@@ -69,19 +69,6 @@ if [[ "$(zle -lL zle-line-init)" = *"_posh-zle-line-init"* ]]; then
 fi
 
 function _posh-tooltip() {
-  # ignore an empty buffer
-  if [[ -z  "$BUFFER"  ]]; then
-    zle .self-insert
-    return
-  fi
-
-  local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --error="$omp_last_error" --command="$BUFFER" --shell-version="$ZSH_VERSION")
-  # ignore an empty tooltip
-  if [[ -n "$tooltip" ]]; then
-    RPROMPT=$tooltip
-    zle .reset-prompt
-  fi
-
   # https://github.com/zsh-users/zsh-autosuggestions - clear suggestion to avoid keeping it after the newly inserted space
   if [[ -n "$(zle -lL autosuggest-clear)" ]]; then
     # only if suggestions not disabled (variable not set)
@@ -97,6 +84,20 @@ function _posh-tooltip() {
       zle autosuggest-fetch
     fi
   fi
+
+  # get the first word of command line as tip
+  local tip=${${(MS)BUFFER##[[:graph:]]*}%%[[:space:]]*}
+  # ignore an empty tip
+  if [[ -z "$tip" ]]; then
+    return
+  fi
+  local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --error="$omp_last_error" --command="$tip" --shell-version="$ZSH_VERSION")
+  # ignore an empty tooltip
+  if [[ -z "$tooltip" ]]; then
+    return
+  fi
+  RPROMPT=$tooltip
+  zle .reset-prompt
 }
 
 function _posh-zle-line-init() {

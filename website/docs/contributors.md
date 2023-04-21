@@ -242,6 +242,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://bentsukun.ch"><img src="https://avatars.githubusercontent.com/u/866330?v=4?s=100" width="100px;" alt="Benny Siegert"/><br /><sub><b>Benny Siegert</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=bsiegert" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://www.kemadev.fr/fr/"><img src="https://avatars.githubusercontent.com/u/54537427?v=4?s=100" width="100px;" alt="kema"/><br /><sub><b>kema</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kema-dev" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://mavaddat.ca"><img src="https://avatars.githubusercontent.com/u/5055400?v=4?s=100" width="100px;" alt="Mavaddat Javid"/><br /><sub><b>Mavaddat Javid</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mavaddat" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://iavael.name/"><img src="https://avatars.githubusercontent.com/u/905853?v=4?s=100" width="100px;" alt="Iavael"/><br /><sub><b>Iavael</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=iavael" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

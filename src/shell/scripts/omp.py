@@ -13,11 +13,11 @@ def get_command_context():
 
 def posh_primary():
     status, duration = get_command_context()
-    return $(::OMP:: print primary --config=@($POSH_THEME) --shell=xonsh --error=@(status) --execution-time=@(duration) --shell-version=@($POSH_SHELL_VERSION) | cat)
+    return $(::OMP:: print primary --config=@($POSH_THEME) --shell=xonsh --error=@(status) --execution-time=@(duration) --shell-version=@($POSH_SHELL_VERSION))
 
 def posh_right():
     status, duration = get_command_context()
-    return $(::OMP:: print right --config=@($POSH_THEME) --shell=xonsh --error=@(status) --execution-time=@(duration) --shell-version=@($POSH_SHELL_VERSION) | cat)
+    return $(::OMP:: print right --config=@($POSH_THEME) --shell=xonsh --error=@(status) --execution-time=@(duration) --shell-version=@($POSH_SHELL_VERSION))
 
 
 $PROMPT = posh_primary

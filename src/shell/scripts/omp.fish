@@ -86,12 +86,13 @@ end
 
 function _render_tooltip
   commandline --function expand-abbr
-  set omp_tooltip_command (commandline --current-buffer | string split --allow-empty -f1 ' ' | string collect)
+  commandline --insert " "
+  # get the first word of command line as tip
+  set omp_tooltip_command (commandline --current-buffer | string trim -l | string split --allow-empty -f1 ' ' | string collect)
   if not test -n "$omp_tooltip_command"
     return
   end
   set omp_tooltip_prompt (::OMP:: print tooltip --config $POSH_THEME --shell fish --error $omp_status_cache --shell-version $FISH_VERSION --command $omp_tooltip_command)
-  commandline --insert " "
   if not test -n "$omp_tooltip_prompt"
     if test "$has_omp_tooltip" = "true"
       commandline --function repaint

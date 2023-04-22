@@ -71,8 +71,8 @@ func (w *Writer) replaceHyperlink(text string) string {
 
 	linkText := results["TEXT"]
 
-	// this isn't supported for elvish
-	if w.shell == shell.ELVISH {
+	// this isn't supported for elvish and xonsh
+	if w.shell == shell.ELVISH || w.shell == shell.XONSH {
 		return strings.Replace(text, results["ALL"], linkText, 1)
 	}
 

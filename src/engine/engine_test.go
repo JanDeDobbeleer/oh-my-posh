@@ -81,8 +81,8 @@ func TestPrintPWD(t *testing.T) {
 			},
 			Writer: writer,
 		}
-		engine.printPWD()
-		got := engine.print()
+		engine.pwd()
+		got := engine.string()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
@@ -114,7 +114,7 @@ func engineRender() {
 		Writer: writer,
 	}
 
-	engine.PrintPrimary()
+	engine.Primary()
 }
 
 func BenchmarkEngineRenderPalette(b *testing.B) {

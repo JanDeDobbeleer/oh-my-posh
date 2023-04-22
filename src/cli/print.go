@@ -67,21 +67,21 @@ var printCmd = &cobra.Command{
 
 		switch args[0] {
 		case "debug":
-			fmt.Print(eng.PrintExtraPrompt(engine.Debug))
+			fmt.Print(eng.ExtraPrompt(engine.Debug))
 		case "primary":
-			fmt.Print(eng.PrintPrimary())
+			fmt.Print(eng.Primary())
 		case "secondary":
-			fmt.Print(eng.PrintExtraPrompt(engine.Secondary))
+			fmt.Print(eng.ExtraPrompt(engine.Secondary))
 		case "transient":
-			fmt.Print(eng.PrintExtraPrompt(engine.Transient))
+			fmt.Print(eng.ExtraPrompt(engine.Transient))
 		case "right":
-			fmt.Print(eng.PrintRPrompt())
+			fmt.Print(eng.RPrompt())
 		case "tooltip":
-			fmt.Print(eng.PrintTooltip(command))
+			fmt.Print(eng.Tooltip(command))
 		case "valid":
-			fmt.Print(eng.PrintExtraPrompt(engine.Valid))
+			fmt.Print(eng.ExtraPrompt(engine.Valid))
 		case "error":
-			fmt.Print(eng.PrintExtraPrompt(engine.Error))
+			fmt.Print(eng.ExtraPrompt(engine.Error))
 		default:
 			_ = cmd.Help()
 		}

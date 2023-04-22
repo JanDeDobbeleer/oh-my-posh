@@ -75,7 +75,7 @@ Exports the config to an image file using customized output options.`,
 			Writer: writer,
 		}
 
-		prompt := eng.PrintPrimary()
+		prompt := eng.Primary()
 
 		imageCreator := &engine.ImageRenderer{
 			AnsiString:    prompt,

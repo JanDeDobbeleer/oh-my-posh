@@ -123,23 +123,24 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     if (("::TOOLTIPS::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
         Set-PSReadLineKeyHandler -Key Spacebar -BriefDescription 'OhMyPoshSpaceKeyHandler' -ScriptBlock {
             [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
-            $position = $host.UI.RawUI.CursorPosition
-            $cleanPSWD = Get-CleanPSWD
             $command = $null
             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$command, [ref]$null)
             $command = $command.TrimStart().Split(" ", 2) | Select-Object -First 1
-            if ($command -eq $script:ToolTipCommand) {
+            # ignore an empty/repeated tip
+            if ($command -eq '' -or $command -eq $script:ToolTipCommand) {
                 return
             }
-            $script:ToolTipCommand = $command
+            $position = $host.UI.RawUI.CursorPosition
+            $cleanPSWD = Get-CleanPSWD
             $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--error=$script:ErrorCode", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
-            if ($standardOut -ne '') {
-                # clear from cursor to the end of the line in case a previous tooltip is cut off and partially preserved,
-                # if the new one is shorter
-                Write-Host "`e[K" -NoNewline
-                Write-Host $standardOut -NoNewline
+            # ignore an empty tooltip
+            if ($standardOut -eq '') {
+                return
             }
+            Write-Host $standardOut -NoNewline
             $host.UI.RawUI.CursorPosition = $position
+            # cache the tip command
+            $script:ToolTipCommand = $command
             # we need this workaround to prevent the text after cursor from disappearing when the tooltip is rendered
             [Microsoft.PowerShell.PSConsoleReadLine]::Insert(' ')
             [Microsoft.PowerShell.PSConsoleReadLine]::Undo()

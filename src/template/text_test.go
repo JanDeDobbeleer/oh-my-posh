@@ -209,11 +209,40 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		{Case: "no env var", Expected: "hello world", Template: "{{.Text}} world", Context: struct{ Text string }{Text: "hello"}},
 		{Case: "map", Expected: "hello world", Template: "{{.Text}} world", Context: map[string]interface{}{"Text": "hello"}},
 		{Case: "empty map", Expected: " world", Template: "{{.Text}} world", Context: map[string]string{}},
+		{
+			Case:     "Struct with duplicate property",
+			Expected: "posh",
+			Template: "{{ .OS }}",
+			Context:  struct{ OS string }{OS: "posh"},
+			Env:      map[string]string{"HELLO": "hello"},
+		},
+		{
+			Case:     "Struct with duplicate property, but global override",
+			Expected: "darwin",
+			Template: "{{ .$.OS }}",
+			Context:  struct{ OS string }{OS: "posh"},
+			Env:      map[string]string{"HELLO": "hello"},
+		},
+		{
+			Case:     "Map with duplicate property",
+			Expected: "posh",
+			Template: "{{ .OS }}",
+			Context:  map[string]interface{}{"OS": "posh"},
+			Env:      map[string]string{"HELLO": "hello"},
+		},
+		{
+			Case:     "Non-supported map",
+			Expected: "darwin",
+			Template: "{{ .OS }}",
+			Context:  map[int]interface{}{},
+			Env:      map[string]string{"HELLO": "hello"},
+		},
 	}
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: tc.Env,
+			OS:  "darwin",
 		})
 		env.On("Error", mock2.Anything)
 		tmpl := &Text{

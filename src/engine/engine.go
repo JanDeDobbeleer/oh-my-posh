@@ -398,6 +398,9 @@ func (e *Engine) PrintTooltip(tip string) string {
 			return ""
 		}
 		text, length := block.RenderSegments()
+		// clear from cursor to the end of the line in case a previous tooltip is cut off and partially preserved,
+		// if the new one is shorter
+		e.write(e.Writer.ClearAfter())
 		e.write(e.Writer.CarriageForward())
 		e.write(e.Writer.GetCursorForRightWrite(length, 0))
 		e.write(text)

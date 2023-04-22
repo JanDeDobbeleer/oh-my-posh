@@ -13,6 +13,10 @@ offers a few standard properties to work with.
 
 ## Global properties
 
+These properties can be used anywhere, in any segment. If a segment contains a property with the same name,
+the segment property value will be used instead. In case you want to use the global property, you can prefix
+it with `.$` to reference it directly.
+
 | Name            | Type      | Description                                                       |
 | --------------- | --------- | ----------------------------------------------------------------- |
 | `.Root`         | `boolean` | is the current user root/admin or not                             |

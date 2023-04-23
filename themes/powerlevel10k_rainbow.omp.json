@@ -203,7 +203,7 @@
         {
           "foreground": "#d3d7cf",
           "style": "plain",
-          "template": "\u2500\u256f",
+          "template": "\u2500\u256f\u2800",
           "type": "text"
         }
       ],

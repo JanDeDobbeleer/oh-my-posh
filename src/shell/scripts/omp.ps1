@@ -148,10 +148,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Set-TransientPrompt {
-        param(
-            [string]$Key
-        )
-
         $previousOutputEncoding = [Console]::OutputEncoding
         try {
             $parseErrors = $null
@@ -174,21 +170,23 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     [Microsoft.PowerShell.PSConsoleReadLine]::Undo()
                 }
             }
-            switch ($Key) {
-                "Ctrl+c" { [Microsoft.PowerShell.PSConsoleReadLine]::CopyOrCancelLine() }
-                Default { [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine() }
-            }
             [Console]::OutputEncoding = $previousOutputEncoding
         }
-
     }
 
     if (("::TRANSIENT::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
         Set-PSReadLineKeyHandler -Key Enter -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock {
-            Set-TransientPrompt -Key "Enter"
+            Set-TransientPrompt
+            [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
         }
         Set-PSReadLineKeyHandler -Key Ctrl+c -BriefDescription 'OhMyPoshCtrlCKeyHandler' -ScriptBlock {
-            Set-TransientPrompt -Key "Ctrl+c"
+            $start = $null
+            [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
+            # only render a transient prompt when no text is selected
+            if ($start -eq -1) {
+                Set-TransientPrompt
+            }
+            [Microsoft.PowerShell.PSConsoleReadLine]::CopyOrCancelLine()
         }
     }
 

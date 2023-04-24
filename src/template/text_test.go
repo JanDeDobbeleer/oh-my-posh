@@ -310,10 +310,21 @@ func TestCleanTemplate(t *testing.T) {
 			Expected: "{{ if or (.Data.Working.Changed) (.Data.Staging.Changed) }}#FF9248{{ end }}",
 			Template: "{{ if or (.Working.Changed) (.Staging.Changed) }}#FF9248{{ end }}",
 		},
+		{
+			Case:     "Global property override",
+			Expected: "{{.OS}}",
+			Template: "{{.$.OS}}",
+		},
+		{
+			Case:     "Local property override",
+			Expected: "{{.Data.OS}}",
+			Template: "{{.OS}}",
+		},
 	}
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
+			Context:  map[string]interface{}{"OS": "posh"},
 		}
 		tmpl.cleanTemplate()
 		assert.Equal(t, tc.Expected, tmpl.Template, tc.Case)

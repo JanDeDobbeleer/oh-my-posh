@@ -54,7 +54,6 @@ import Config from '@site/src/components/Config.js';
 | `.Load1`                   | `float64`  | is the current load1 (can be empty on windows)                                                                            |
 | `.Load5`                   | `float64`  | is the current load5 (can be empty on windows)                                                                            |
 | `.Load15`                  | `float64`  | is the current load15 (can be empty on windows)                                                                           |
-| `.CPU`                     | `[]struct` | an array of [InfoStat][cpuinfo] object, you can use any property it has e.g. `(index .CPU 0).Cores`                       |
 | `.Disks`                   | `[]struct` | an array of [IOCountersStat][ioinfo] object, you can use any property it has e.g. `.Disks.disk0.IoTime`                   |
 
 [cpuinfo]: https://github.com/shirou/gopsutil/blob/78065a7ce2021f6a78c8d6f586a2683ba501dcec/cpu/cpu.go#L32

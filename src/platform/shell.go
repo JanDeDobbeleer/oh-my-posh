@@ -24,7 +24,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/platform/cmd"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
-	cpu "github.com/shirou/gopsutil/v3/cpu"
 	disk "github.com/shirou/gopsutil/v3/disk"
 	load "github.com/shirou/gopsutil/v3/load"
 	process "github.com/shirou/gopsutil/v3/process"
@@ -157,9 +156,6 @@ type Memory struct {
 type SystemInfo struct {
 	// mem
 	Memory
-	// cpu
-	Times float64
-	CPU   []cpu.InfoStat
 	// load
 	Load1  float64
 	Load5  float64
@@ -921,16 +917,6 @@ func (env *Shell) SystemInfo() (*SystemInfo, error) {
 		s.Load1 = loadStat.Load1
 		s.Load5 = loadStat.Load5
 		s.Load15 = loadStat.Load15
-	}
-
-	processorTimes, err := cpu.Percent(0, false)
-	if err == nil && len(processorTimes) > 0 {
-		s.Times = processorTimes[0]
-	}
-
-	processors, err := cpu.Info()
-	if err == nil {
-		s.CPU = processors
 	}
 
 	diskIO, err := disk.IOCounters()

@@ -23,6 +23,19 @@ jobs:
             notes = notes.replace(/ \(\[[0-9a-z]+\]\(.*\)/g, '')
             notes = notes.trim()
             return notes
+      - name: Sky 🌤️
+        uses: myConsciousness/bluesky-post@f7a428a2fd945074913450c19b11656b766f7c7a
+        with:
+          text: |
+            📦 ${{ github.event.release.name }}
+
+            ${{steps.notes.outputs.result}}
+
+            ${{ github.event.release.html_url }}
+
+            #ohmyposh #oss #cli #opensource
+          identifier: ${{ secrets.BLUESKY_IDENTIFIER }}
+          password: ${{ secrets.BLUESKY_PASSWORD }}
       - name: Toot 🐘
         uses: cbrgm/mastodon-github-action@d98ab3376f941df14d37d5737961de431c0838c6
         with:

@@ -73,8 +73,10 @@ const (
 	MaxWidth properties.Property = "max_width"
 	// Hides the root location if it doesn't fit in max_depth. Used in Agnoster Short
 	HideRootLocation properties.Property = "hide_root_location"
-	// A foreground color cycle
+	// A color override cycle
 	Cycle properties.Property = "cycle"
+	// Color the path separators within the cycle
+	CycleFolderSeparator properties.Property = "cycle_folder_separator"
 )
 
 func (pt *Path) Template() string {
@@ -576,28 +578,44 @@ func (pt *Path) replaceFolderSeparators(pwd string) string {
 
 func (pt *Path) colorizePath(root string, elements []string) string {
 	cycle := pt.props.GetStringArray(Cycle, []string{})
+	skipColorize := len(cycle) == 0
 	folderSeparator := pt.getFolderSeparator()
+	colorSeparator := pt.props.GetBool(CycleFolderSeparator, false)
 
-	if len(cycle) != 0 {
-		colorize := "<%s>%s</>"
-
-		if len(root) != 0 {
-			root = fmt.Sprintf(colorize, cycle[0], root)
-			cycle = append(cycle[1:], cycle[0])
+	colorizeElement := func(element string) string {
+		if skipColorize || len(element) == 0 {
+			return element
 		}
-
-		for i, element := range elements {
-			if len(element) == 0 {
-				continue
-			}
-			colored := fmt.Sprintf(colorize, cycle[0], element)
-			elements[i] = colored
+		defer func() {
 			cycle = append(cycle[1:], cycle[0])
+		}()
+		return fmt.Sprintf("<%s>%s</>", cycle[0], element)
+	}
+
+	colorizeSeparator := func() string {
+		if skipColorize || !colorSeparator {
+			return folderSeparator
+		}
+		return fmt.Sprintf("<%s>%s</>", cycle[0], folderSeparator)
+	}
+
+	var builder strings.Builder
+
+	builder.WriteString(colorizeElement(root))
+
+	if root != pt.env.PathSeparator() && len(root) != 0 {
+		builder.WriteString(colorizeSeparator())
+	}
+
+	for i, element := range elements {
+		if len(element) == 0 {
+			continue
+		}
+		builder.WriteString(colorizeElement(element))
+		if i != len(elements)-1 {
+			builder.WriteString(colorizeSeparator())
 		}
 	}
 
-	if root == pt.env.PathSeparator() || len(root) == 0 {
-		return root + strings.Join(elements, folderSeparator)
-	}
-	return root + folderSeparator + strings.Join(elements, folderSeparator)
+	return builder.String()
 }

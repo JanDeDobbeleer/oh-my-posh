@@ -16,7 +16,7 @@
     "query-string": "7.1.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "yaml": "^2.2.1"
+    "yaml": "^2.2.2"
   },
   "resolutions": {
     "trim": "^0.0.3",

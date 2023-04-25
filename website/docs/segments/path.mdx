@@ -34,7 +34,7 @@ import Config from "@site/src/components/Config.js";
 | --------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | `folder_separator_icon`     | `string`   | the symbol to use as a separator between folders - defaults to platform path separator                                       |
 | `folder_separator_template` | `string`   | the [template][templates] to use as a separator between folders - defaults to ``                                             |
-| `home_icon`                 | `string`   | the icon to display when at `$HOME`, defaults to `~`                                                                         |
+| `home_icon`                 | `string`   | the icon to display when at `$HOME` - defaults to `~`                                                                        |
 | `folder_icon`               | `string`   | the icon to use as a folder indication - defaults to `..`                                                                    |
 | `windows_registry_icon`     | `string`   | the icon to display when in the Windows registry - defaults to `\uE0B1`                                                      |
 | `style`                     | `enum`     | how to display the current path                                                                                              |
@@ -42,7 +42,8 @@ import Config from "@site/src/components/Config.js";
 | `max_depth`                 | `number`   | maximum path depth to display before shortening when using `agnoster_short`, defaults to `1`                                 |
 | `max_width`                 | `number`   | maximum path length to display when using `powerlevel`, defaults to `0`                                                      |
 | `hide_root_location`        | `boolean`  | hides the root location if it doesn't fit in the last `max_depth` folders, when using `agnoster_short` - defaults to `false` |
-| `cycle`                     | `[]string` | a list of foreground colors to cycle through to colorize the individual path folders                                         |
+| `cycle`                     | `[]string` | a list of color overrides to cycle through to colorize the individual path folders, e.g. `[ "#ffffff,#111111" ]`             |
+| `cycle_folder_separator`    | `boolean`  | colorize the `folder_separator_icon` as well when using a cycle - defaults to `false`                                        |
 
 ## Mapped Locations
 

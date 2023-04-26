@@ -29,30 +29,31 @@ jobs:
         with:
           script: |
             import pkg from '@atproto/api';
-            const { BskyAgent, RichText } = pkg;
+            const { BskyAgent } = pkg;
 
             const agent = new BskyAgent({ service: 'https://bsky.social' })
             await agent.login({identifier: '${{ secrets.BLUESKY_IDENTIFIER }}', password: '${{ secrets.BLUESKY_PASSWORD }}'})
 
-            const postBody = `📦 ${{ github.event.release.name }}
+            const version = '${{ github.event.release.name }}';
+            const notes = `${{steps.notes.outputs.result}}`;
 
-            ${{steps.notes.outputs.result}}
+            const text = `📦 ${version}
 
-            ${{ github.event.release.html_url }}
+            ${notes}
 
             #ohmyposh #oss #cli #opensource`;
 
-            const rt = new RichText({text: postBody})
-            await rt.detectFacets(agent)
-
-            const post = {
-              $type: 'app.bsky.feed.post',
-              text: rt.text,
-              facets: rt.facets,
-              createdAt: new Date().toISOString()
-            }
-
-            await agent.post(post)
+            await agent.post({
+                text: text,
+                embed: {
+                    $type: 'app.bsky.embed.external',
+                    external: {
+                        uri: `https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/${version}`,
+                        title: "GitHub release",
+                        description: version,
+                    },
+                },
+            });
       - name: Toot 🐘
         uses: cbrgm/mastodon-github-action@d98ab3376f941df14d37d5737961de431c0838c6
         with:

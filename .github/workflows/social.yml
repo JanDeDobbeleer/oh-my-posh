@@ -23,19 +23,36 @@ jobs:
             notes = notes.replace(/ \(\[[0-9a-z]+\]\(.*\)/g, '')
             notes = notes.trim()
             return notes
-      - name: Sky 🌤️
-        uses: myConsciousness/bluesky-post@f7a428a2fd945074913450c19b11656b766f7c7a
+      - name: Bluesky 🌤️
+        id: bluesky
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410
         with:
-          text: |
-            📦 ${{ github.event.release.name }}
+          script: |
+            import pkg from '@atproto/api';
+            const { BskyAgent, RichText } = pkg;
+
+            const agent = new BskyAgent({ service: 'https://bsky.social' })
+            await agent.login({identifier: '${{ secrets.BLUESKY_IDENTIFIER }}', password: '${{ secrets.BLUESKY_PASSWORD }}'})
+
+            const postBody = `📦 ${{ github.event.release.name }}
 
             ${{steps.notes.outputs.result}}
 
             ${{ github.event.release.html_url }}
 
-            #ohmyposh #oss #cli #opensource
-          identifier: ${{ secrets.BLUESKY_IDENTIFIER }}
-          password: ${{ secrets.BLUESKY_PASSWORD }}
+            #ohmyposh #oss #cli #opensource`;
+
+            const rt = new RichText({text: postBody})
+            await rt.detectFacets(agent)
+
+            const post = {
+              $type: 'app.bsky.feed.post',
+              text: rt.text,
+              facets: rt.facets,
+              createdAt: new Date().toISOString()
+            }
+
+            await agent.post(post)
       - name: Toot 🐘
         uses: cbrgm/mastodon-github-action@d98ab3376f941df14d37d5737961de431c0838c6
         with:

@@ -249,7 +249,10 @@ func (pt *Path) getAgnosterPath() string {
 	for i := 1; i < n; i++ {
 		elements = append(elements, folderIcon)
 	}
-	elements = append(elements, splitted[n-1])
+
+	if len(splitted) > 0 {
+		elements = append(elements, splitted[n-1])
+	}
 
 	return pt.colorizePath(pt.root, elements)
 }
@@ -299,7 +302,10 @@ func (pt *Path) getLetterPath() string {
 		letter := pt.getRelevantLetter(splitted[i])
 		elements = append(elements, letter)
 	}
-	elements = append(elements, splitted[n-1])
+
+	if len(splitted) > 0 {
+		elements = append(elements, splitted[n-1])
+	}
 
 	return pt.colorizePath(pt.root, elements)
 }
@@ -349,7 +355,10 @@ func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 			}
 		}
 	}
-	elements = append(elements, splitted[n-1])
+
+	if len(elements) > 0 {
+		elements = append(elements, splitted[n-1])
+	}
 
 	return pt.colorizePath(pt.root, elements)
 }
@@ -590,6 +599,10 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 			cycle = append(cycle[1:], cycle[0])
 		}()
 		return fmt.Sprintf("<%s>%s</>", cycle[0], element)
+	}
+
+	if len(elements) == 0 {
+		return colorizeElement(root)
 	}
 
 	colorizeSeparator := func() string {

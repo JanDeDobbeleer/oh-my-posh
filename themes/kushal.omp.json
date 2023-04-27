@@ -49,10 +49,37 @@
         {
           "type": "cmake",
           "style": "powerline",
-          "powerline_symbol": "\uE0B0",
+          "powerline_symbol": "\ue0b0",
           "foreground": "#E8EAEE",
           "background": "#1E9748",
           "template": " \ue61e \ue61d cmake {{ .Full }} "
+        },
+        {
+          "type": "python",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "display_mode": "context"
+          },
+          "foreground": "#011627",
+          "background": "#FFDE57",
+          "template": " \ue73c {{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }} "
+        },
+        {
+          "type": "go",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#ffffff",
+          "background": "#7FD5EA",
+          "template": " \u202d\ufcd1 {{ .Full }} "
+        },
+        {
+          "type": "rust",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#193549",
+          "background": "#99908A",
+          "template": " \ue7a8 {{ .Full }} "
         },
         {
           "background": "#1BD4CD",
@@ -83,9 +110,13 @@
       "segments": [
         {
           "background": "#03DED3",
-          "background_templates": ["{{ if gt .Code 0 }}#E44141{{ end }}"],
+          "background_templates": [
+            "{{ if gt .Code 0 }}#E44141{{ end }}"
+          ],
           "foreground": "#414141",
-          "foreground_templates": ["{{ if gt .Code 0 }}#D6DEEB{{ end }}"],
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#D6DEEB{{ end }}"
+          ],
           "leading_diamond": "\ue0b6",
           "properties": {
             "always_enabled": true

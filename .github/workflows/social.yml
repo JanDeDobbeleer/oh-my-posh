@@ -1,6 +1,4 @@
-# <a rel="me" href="https://social.ohmyposh.dev/@releasebot">Mastodon</a>
-
-name: Mastodon
+name: Social
 on:
   release:
     types: [published]
@@ -28,8 +26,7 @@ jobs:
         uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410
         with:
           script: |
-            import pkg from '@atproto/api';
-            const { BskyAgent } = pkg;
+            const { BskyAgent } = require('@atproto/api')
 
             const agent = new BskyAgent({ service: 'https://bsky.social' })
             await agent.login({identifier: '${{ secrets.BLUESKY_IDENTIFIER }}', password: '${{ secrets.BLUESKY_PASSWORD }}'})

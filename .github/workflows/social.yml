@@ -64,5 +64,5 @@ jobs:
             #ohmyposh #oss #cli #opensource
           visibility: "public"
         env:
-          MASTODON_URL: "https://social.ohmyposh.dev/"
+          MASTODON_URL: "https://hachyderm.io/"
           MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}

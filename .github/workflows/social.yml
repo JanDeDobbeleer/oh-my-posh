@@ -4,8 +4,10 @@ on:
     types: [published]
 
 jobs:
-  notify:
+  release-notes:
     runs-on: ubuntu-latest
+    outputs:
+      notes: ${{ steps.notes.outputs.result }}
     steps:
       - name: Notes 📝
         id: notes
@@ -21,7 +23,11 @@ jobs:
             notes = notes.replace(/ \(\[[0-9a-z]+\]\(.*\)/g, '')
             notes = notes.trim()
             return notes
-      - name: Bluesky 🌤️
+  bluesky:
+    runs-on: ubuntu-latest
+    needs: release-notes
+    steps:
+      - name: Post 🌤️
         id: bluesky
         uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410
         with:
@@ -32,7 +38,7 @@ jobs:
             await agent.login({identifier: '${{ secrets.BLUESKY_IDENTIFIER }}', password: '${{ secrets.BLUESKY_PASSWORD }}'})
 
             const version = '${{ github.event.release.name }}';
-            const notes = `${{steps.notes.outputs.result}}`;
+            const notes = `${{ needs.release-notes.outputs.notes }}`;
 
             const text = `📦 ${version}
 
@@ -51,13 +57,17 @@ jobs:
                     },
                 },
             });
+  mastodon:
+    runs-on: ubuntu-latest
+    needs: release-notes
+    steps:
       - name: Toot 🐘
         uses: cbrgm/mastodon-github-action@d98ab3376f941df14d37d5737961de431c0838c6
         with:
           message: |
             📦 ${{ github.event.release.name }}
 
-            ${{steps.notes.outputs.result}}
+            ${{ needs.release-notes.outputs.notes }}
 
             ${{ github.event.release.html_url }}
 

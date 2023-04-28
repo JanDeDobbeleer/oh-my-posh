@@ -7,6 +7,11 @@
       "route": "/.well-known/webfinger*",
       "methods": ["GET"],
       "rewrite": "/api/webfinger"
+    },
+    {
+      "route": "/@jan",
+      "methods": ["GET"],
+      "redirect": "https://hachyderm.io/@jandedobbeleer"
     }
   ]
 }

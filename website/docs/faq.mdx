@@ -86,16 +86,27 @@ See the [PowerShell docs on terminal support][ps-ansi-docs] and [this GitHub com
 Windows Terminal has some issues with [rendering certain glyphs][wt-glyph]. These issues are on [their backlog][wt-glyphs].
 A temporary workaround is to use an invisible character at the end (`\u2800`), or a zero width character (`\u200a`) before the icon.
 
+In case you didn't export the config yet (it's the default, or you're using the `--config` flag with a predefined theme), you can follow
+the steps [here][export] to export it to a local file so you can adjust the [segment's][segment] `template`.
+
+In the example below, it's assumed that the execution segment's icon `\ufbab` has an unexpected space after it in Windows Terminal.
+
 ```json
 {
   "type": "executiontime",
-  /* other attributes here */
-  "properties": {
-    "always_enabled": true,
-    "template": "\ufbab\u2800" // invisible spacing character
-  }
+  "template": "\ufbab" // unexpected space
 }
 ```
+
+Adjust it by adding `\u2800` immediately after the icon.
+
+```json
+{
+  "type": "executiontime",
+  "template": "\ufbab\u2800" // solved
+}
+```
+
 
 ### Jetbrains terminals: Icons do not render
 
@@ -268,6 +279,8 @@ This is a known problem with Xonsh. The issue is tracked [here][xonsh-issue].
 [latest]: https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest
 [wt-glyph]: https://github.com/microsoft/terminal/issues/3546
 [wt-glyphs]: https://github.com/microsoft/terminal/issues?q=is%3Aissue+is%3Aopen+unicode+width
+[export]: installation/customize.mdx#adjust-a-theme
+[segment]: configuration/segment.mdx
 [nf]: https://www.nerdfonts.com/
 [font]: /docs/installation/fonts
 [jb-icons]: https://youtrack.jetbrains.com/issue/IDEA-248010

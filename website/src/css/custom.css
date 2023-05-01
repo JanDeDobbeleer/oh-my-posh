@@ -64,6 +64,7 @@ html[data-theme="dark"] .header-github-link:before {
 
 .header-bluesky-link:before {
   content: "@";
+  color: #4163EB;
   font-style: bold;
   font-size: 24px;
   padding-right: 10px;

@@ -52,7 +52,7 @@ jobs:
                     $type: 'app.bsky.embed.external',
                     external: {
                         uri: `https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/${version}`,
-                        title: "GitHub release",
+                        title: "The best release yet 🚀",
                         description: version,
                     },
                 },

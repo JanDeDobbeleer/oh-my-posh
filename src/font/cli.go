@@ -139,11 +139,11 @@ func (m *main) Init() tea.Cmd {
 		return tea.Quit
 	}
 
-	isZipFile := func() bool {
-		return strings.HasSuffix(m.font, ".zip")
+	isLocalZipFile := func() bool {
+		return !strings.HasPrefix(m.font, "https") && strings.HasSuffix(m.font, ".zip")
 	}
 
-	if len(m.font) != 0 && !isZipFile() {
+	if len(m.font) != 0 && !isLocalZipFile() {
 		m.state = downloadFont
 		if !strings.HasPrefix(m.font, "https") {
 			m.font = fmt.Sprintf("https://github.com/ryanoasis/nerd-fonts/releases/latest/download/%s.zip", m.font)
@@ -156,7 +156,7 @@ func (m *main) Init() tea.Cmd {
 	}
 
 	defer func() {
-		if isZipFile() {
+		if isLocalZipFile() {
 			go installLocalFontZIP(m.font)
 			return
 		}
@@ -167,7 +167,7 @@ func (m *main) Init() tea.Cmd {
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
 	m.spinner = s
 	m.state = getFonts
-	if isZipFile() {
+	if isLocalZipFile() {
 		m.state = unzipFont
 	}
 	return m.spinner.Tick

@@ -58,7 +58,7 @@ func getRemoteFile(location string) (data []byte, err error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return
+		return data, fmt.Errorf("Failed to download zip file: %s\n→ %s", resp.Status, location)
 	}
 
 	data, err = io.ReadAll(resp.Body)

@@ -143,6 +143,15 @@
       "console": "integratedTerminal"
     },
     {
+      "type": "node",
+      "request": "launch",
+      "name": "Bluesky",
+      "cwd": "${workspaceFolder}/scripts/bluesky",
+      "program": "${workspaceRoot}/scripts/bluesky/main.cjs",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/scripts/bluesky/.env"
+    },
+    {
       "name": "Docs API",
       "type": "node",
       "request": "attach",
@@ -152,7 +161,7 @@
       "envFile": "${workspaceFolder}/website/.env"
     },
     {
-      "name": "Debug CLI(cache)",
+      "name": "Cache",
       "type": "go",
       "request": "launch",
       "mode": "debug",

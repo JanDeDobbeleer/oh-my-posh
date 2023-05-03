@@ -1,0 +1,57 @@
+---
+id: sitecore
+title: Sitecore
+sidebar_label: Sitecore
+---
+
+## What
+
+Show the current active Sitecore environment
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "sitecore",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#0077c2",
+    template:
+      " {{ if .Cloud }}\uf65e{{ else }}\uf98a{{ end }} {{ .Environment }} ",
+  }}
+/>
+
+## Properties
+
+There are no properties that can be set
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Cloud }}\uf65e{{ else }}\uf98a{{ end }} {{ .Environment }}
+```
+
+:::
+
+:::note advanced xmcloud template
+When using xmcloud, the hostname can become very long. You can shorten `.Environment` by using the following template:
+
+```template
+ {{ if .Cloud }}\uf65e{{ else }}\uf98a{{ end }} {{ if .Cloud }}{{ $splittedHostName := split \".\" .Environment }}{{ $myList := split \"-\" $splittedHostName._0 }} {{ $myList._1 }} - {{ $myList._2 }} - {{ $myList._3 }}{{ else }} {{ .Environment }} {{ end }}
+```
+
+:::
+
+### Properties
+
+| Name           | Type     | Description                                                                                                   |
+| -------------- | -------- | ------------------------------------------------------------------------------------------------------------- |
+| `.Environment` | `string` | The hostname of the environment                                                                               |
+| `.Cloud`       | `bool`   | Used to determine if the environment is a cloud environment. Is true when hostname contains "sitecorecloud.io |
+
+[templates]: /docs/configuration/templates

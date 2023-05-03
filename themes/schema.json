@@ -1931,6 +1931,19 @@
           "if": {
             "properties": {
               "type": {
+                "const": "sitecore"
+              }
+            }
+          },
+          "then": {
+            "title": "Sitecore Segment",
+            "description": "https://ohmyposh.dev/docs/segments/sitecore"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
                 "const": "spotify"
               }
             }

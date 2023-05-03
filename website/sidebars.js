@@ -108,6 +108,7 @@ module.exports = {
         "segments/sapling",
         "segments/session",
         "segments/shell",
+        "segments/sitecore",
         "segments/spotify",
         "segments/strava",
         "segments/svn",

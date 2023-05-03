@@ -1,0 +1,10 @@
+{
+  "endpoints": {
+    "default": {
+      "ref": "local",
+      "allowWrite": true,
+      "host": "https://xmcloudcm.local",
+      "variables": {}
+    }
+  }
+}

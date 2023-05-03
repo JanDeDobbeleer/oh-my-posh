@@ -211,6 +211,8 @@ const (
 	SESSION SegmentType = "session"
 	// SHELL writes which shell we're currently in
 	SHELL SegmentType = "shell"
+	// SITECORE displays the current context for the Sitecore CLI
+	SITECORE SegmentType = "sitecore"
 	// SPOTIFY writes the SPOTIFY status for Mac
 	SPOTIFY SegmentType = "spotify"
 	// STRAVA is a sports activity tracker
@@ -307,6 +309,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	SAPLING:       func() SegmentWriter { return &segments.Sapling{} },
 	SESSION:       func() SegmentWriter { return &segments.Session{} },
 	SHELL:         func() SegmentWriter { return &segments.Shell{} },
+	SITECORE:      func() SegmentWriter { return &segments.Sitecore{} },
 	SPOTIFY:       func() SegmentWriter { return &segments.Spotify{} },
 	STRAVA:        func() SegmentWriter { return &segments.Strava{} },
 	SVN:           func() SegmentWriter { return &segments.Svn{} },

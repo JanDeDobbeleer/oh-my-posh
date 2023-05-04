@@ -38,6 +38,12 @@ This command is used to get the value of the following variables:
 			_ = cmd.Help()
 			return
 		}
+
+		if args[0] == "millis" {
+			fmt.Print(time.Now().UnixNano() / 1000000)
+			return
+		}
+
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
 				Shell:   shellName,
@@ -46,9 +52,8 @@ This command is used to get the value of the following variables:
 		}
 		env.Init()
 		defer env.Close()
+
 		switch args[0] {
-		case "millis":
-			fmt.Print(time.Now().UnixNano() / 1000000)
 		case "shell":
 			fmt.Println(env.Shell())
 		case "accent":

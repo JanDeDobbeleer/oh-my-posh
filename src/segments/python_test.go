@@ -2,6 +2,7 @@ package segments
 
 import (
 	"errors"
+	"path/filepath"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
@@ -26,6 +27,7 @@ func TestPythonTemplate(t *testing.T) {
 		FetchVersion     bool
 		PythonPath       string
 		ResolveSymlink   ResolveSymlink
+		PyvenvCfg        string
 	}{
 		{Case: "No virtual env present", FetchVersion: true, Expected: "3.8.4", Template: "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}"},
 		{Case: "Virtual env present", FetchVersion: true, Expected: "VENV 3.8.4", VirtualEnvName: "VENV", Template: "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}"},
@@ -76,6 +78,15 @@ func TestPythonTemplate(t *testing.T) {
 			Template:       "{{ .Venv }} {{ .Full }}",
 			ResolveSymlink: ResolveSymlink{Path: "/home/user/.pyenv/versions/demo", Err: nil},
 		},
+		{
+			Case:           "pyvenv.cfg prompt",
+			FetchVersion:   true,
+			VirtualEnvName: "VENV",
+			PythonPath:     "/home/user/.pyenv/shims/python",
+			Template:       "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Major }}.{{ .Minor }}",
+			PyvenvCfg:      "home = /usr/bin/\nprompt = pyvenvCfgPrompt\n",
+			Expected:       "pyvenvCfgPrompt 3.8",
+		},
 	}
 
 	for _, tc := range cases {
@@ -86,6 +97,8 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("RunCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
 		env.On("RunCommand", "pyenv", []string{"version-name"}).Return(tc.VirtualEnvName, nil)
 		env.On("HasFiles", "*.py").Return(true)
+		env.On("HasFilesInDir", mock2.Anything, "pyvenv.cfg").Return(len(tc.PyvenvCfg) > 0)
+		env.On("FileContent", filepath.Join(filepath.Dir(tc.PythonPath), "pyvenv.cfg")).Return(tc.PyvenvCfg)
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
@@ -122,6 +135,8 @@ func TestPythonPythonInContext(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("GOOS").Return("")
 		env.On("PathSeparator").Return("/")
+		env.On("CommandPath", mock2.Anything).Return("")
+		env.On("HasFilesInDir", mock2.Anything, "pyvenv.cfg").Return(false)
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")

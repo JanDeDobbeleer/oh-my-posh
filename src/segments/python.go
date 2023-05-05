@@ -63,6 +63,10 @@ func (p *Python) loadContext() {
 	if !p.language.props.GetBool(FetchVirtualEnv, true) {
 		return
 	}
+	if prompt := p.pyvenvCfgPrompt(); len(prompt) > 0 {
+		p.Venv = prompt
+		return
+	}
 	venvVars := []string{
 		"VIRTUAL_ENV",
 		"CONDA_ENV_PATH",
@@ -141,4 +145,34 @@ func (p *Python) pyenvVersion() (string, error) {
 		p.Venv = parts[2]
 	}
 	return parts[0], nil
+}
+
+func (p *Python) pyvenvCfgPrompt() string {
+	path := p.language.env.CommandPath("python")
+	if len(path) == 0 {
+		path = p.language.env.CommandPath("python3")
+	}
+	if len(path) == 0 {
+		return ""
+	}
+	pyvenvDir := filepath.Dir(path)
+	if !p.language.env.HasFilesInDir(pyvenvDir, "pyvenv.cfg") {
+		pyvenvDir = filepath.Dir(pyvenvDir)
+	}
+	if !p.language.env.HasFilesInDir(pyvenvDir, "pyvenv.cfg") {
+		return ""
+	}
+	pyvenvCfg := p.env.FileContent(filepath.Join(pyvenvDir, "pyvenv.cfg"))
+	for _, line := range strings.Split(pyvenvCfg, "\n") {
+		lineSplit := strings.SplitN(line, "=", 2)
+		if len(lineSplit) != 2 {
+			continue
+		}
+		key := strings.TrimSpace(lineSplit[0])
+		if key == "prompt" {
+			value := strings.TrimSpace(lineSplit[1])
+			return value
+		}
+	}
+	return ""
 }

@@ -26,6 +26,6 @@ Tags:
 - "terminal"
 - "oh-my-posh"
 ManifestType: defaultLocale
-ManifestVersion: 1.1.0
+ManifestVersion: 1.4.0
 ReleaseNotesUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/tag/v<VERSION>
 

@@ -58,6 +58,10 @@ func getLatestVersion(env platform.Environment) (string, error) {
 //
 // The upgrade check is only performed every other week.
 func Notice(env platform.Environment) (string, bool) {
+	// never validate when we install using the Windows Store
+	if env.Getenv("POSH_INSTALLER") == "winstore" {
+		return "", false
+	}
 	// do not check when last validation was < 1 week ago
 	if _, OK := env.Cache().Get(CACHEKEY); OK {
 		return "", false

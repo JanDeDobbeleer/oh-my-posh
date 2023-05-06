@@ -20,6 +20,7 @@ func TestCanUpgrade(t *testing.T) {
 		Error          error
 		Cache          bool
 		GOOS           string
+		Installer      string
 	}{
 		{Case: "Up to date", CurrentVersion: "3.0.0", LatestVersion: "v3.0.0"},
 		{Case: "Outdated Windows", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.WINDOWS},
@@ -27,6 +28,7 @@ func TestCanUpgrade(t *testing.T) {
 		{Case: "Outdated Darwin", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.DARWIN},
 		{Case: "Cached", Cache: true},
 		{Case: "Error", Error: fmt.Errorf("error")},
+		{Case: "Windows Store", Installer: "winstore"},
 	}
 
 	for _, tc := range cases {
@@ -39,6 +41,7 @@ func TestCanUpgrade(t *testing.T) {
 		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
 		env.On("Cache").Return(cache)
 		env.On("GOOS").Return(tc.GOOS)
+		env.On("Getenv", "POSH_INSTALLER").Return(tc.Installer)
 
 		json := fmt.Sprintf(`{"tag_name":"%s"}`, tc.LatestVersion)
 		env.On("HTTPRequest", releaseURL).Return([]byte(json), tc.Error)

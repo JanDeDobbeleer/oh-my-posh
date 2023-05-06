@@ -36,8 +36,8 @@ A new release of Oh My Posh is available: %s → %s
 `
 	windows = `To upgrade, use the guide for your favorite package manager in the documentation:
 https://ohmyposh.dev/docs/installation/windows#update`
-	unix   = "To upgrade, use your favorite package manager or, if you used Homebrew to install, run: 'brew upgrade oh-my-posh'"
-	darwin = "To upgrade, run: 'brew upgrade oh-my-posh'"
+	unix   = "To upgrade, use your favorite package manager or, if you used Homebrew to install, run: 'brew update && brew upgrade oh-my-posh'"
+	darwin = "To upgrade, run: 'brew update && brew upgrade oh-my-posh'"
 
 	CACHEKEY = "upgrade_check"
 )

@@ -37,13 +37,13 @@
           "background": "#491545",
           "foreground": "#ffffff",
           "properties": {
-            "paused_icon": "\uf8e3 ",
+            "paused_icon": "\udb80\udfe4 ",
             "playing_icon": "\ue602 ",
             "stopped_icon": "\uf04d ",
             "track_separator": " - "
           },
           "style": "plain",
-          "template": " \uf9c6 {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} ",
+          "template": " \udb81\udcc7 {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} ",
           "type": "spotify"
         },
         {
@@ -56,7 +56,7 @@
             "always_enabled": true
           },
           "style": "diamond",
-          "template": " \uf7d4 ",
+          "template": " \udb86\udca0 ",
           "trailing_diamond": "\ue0b4",
           "type": "exit"
         }

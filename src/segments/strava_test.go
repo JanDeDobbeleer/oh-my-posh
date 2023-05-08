@@ -46,7 +46,7 @@ func TestStravaSegment(t *testing.T) {
 				},
 			},
 			Template:        "{{.Ago}} {{.Icon}}",
-			ExpectedString:  "6h \uf5a2",
+			ExpectedString:  "6h \udb80\udca3",
 			ExpectedEnabled: true,
 		},
 		{
@@ -60,7 +60,7 @@ func TestStravaSegment(t *testing.T) {
 				},
 			},
 			Template:        "{{.Ago}} {{.Icon}}",
-			ExpectedString:  "4d \ufc0c",
+			ExpectedString:  "4d \udb81\udf0e",
 			ExpectedEnabled: true,
 		},
 		{

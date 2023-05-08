@@ -18,7 +18,7 @@
           "foreground": "#ffffff",
           "background": "#047e84",
           "powerline_symbol": "\ue0b0",
-          "template": "{{ if .Env.PNPPSSITE }} \uf672 {{ .Env.PNPPSSITE }}{{ end }}"
+          "template": "{{ if .Env.PNPPSSITE }} \udb80\udd73 {{ .Env.PNPPSSITE }}{{ end }}"
         },
         {
           "type": "text",
@@ -64,7 +64,7 @@
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) ",
+          "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }}) ",
           "type": "git"
         },
         {

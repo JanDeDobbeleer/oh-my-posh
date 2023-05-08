@@ -24,7 +24,7 @@
           "properties": {
             "folder_icon": "\ue5ff",
             "folder_separator_icon": "\ue0b9",
-            "home_icon": "\uf7db",
+            "home_icon": "\udb80\udedc",
             "mapped_locations": {
               "C:\\Users": "\uf007",
               "C:\\Windows": "\ue62a"

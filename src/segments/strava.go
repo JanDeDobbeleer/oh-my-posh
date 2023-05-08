@@ -111,9 +111,9 @@ func (s *Strava) getActivityIcon() string {
 	case "VirtualRide":
 		fallthrough
 	case "Ride":
-		return s.props.GetString(RideIcon, "\uf5a2")
+		return s.props.GetString(RideIcon, "\udb80\udca3")
 	case "Run":
-		return s.props.GetString(RunIcon, "\ufc0c")
+		return s.props.GetString(RunIcon, "\udb81\udf0e")
 	case "NordicSki":
 	case "AlpineSki":
 	case "BackcountrySki":

@@ -781,7 +781,7 @@ func TestGitTemplateString(t *testing.T) {
 		},
 		{
 			Case:     "Working and staging area changes with separator and stash count",
-			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3 \uf692 3",
+			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3 \udb80\udd93 3",
 			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}", //nolint:lll
 			Git: &Git{
 				HEAD: branchName,

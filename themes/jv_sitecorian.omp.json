@@ -33,7 +33,7 @@
           "background": "#185F7B",
           "foreground": "#ffffff",
           "properties": {
-            "home_icon": "\uf7dd  ",
+            "home_icon": "\udb80\udede  ",
             "style": "mixed"
           },
           "style": "diamond",
@@ -51,7 +51,7 @@
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -71,7 +71,7 @@
             "always_enabled": true
           },
           "style": "powerline",
-          "template": " {{ if gt .Code 0 }}\uf525{{ else }}\uf469 \u2665{{ end }} ",
+          "template": " {{ if gt .Code 0 }}\udb80\udc26{{ else }}\uf469 \u2665{{ end }} ",
           "type": "exit"
         }
       ],
@@ -89,7 +89,7 @@
             "time_format": "3:04:05 PM"
           },
           "style": "diamond",
-          "template": " {{ .CurrentDate | date .Format }}<#ffffff> \uf64f </>",
+          "template": " {{ .CurrentDate | date .Format }}<#ffffff> \udb82\udd54 </>",
           "trailing_diamond": "\ue0c4",
           "type": "time"
         },

@@ -27,20 +27,20 @@ func TestOWMSegmentSingle(t *testing.T) {
 		{
 			Case:            "Sunny Display",
 			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
-			ExpectedString:  "\ufa98 (20°C)",
+			ExpectedString:  "\udb81\udd99 (20°C)",
 			ExpectedEnabled: true,
 		},
 		{
 			Case:            "Sunny Display",
 			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
-			ExpectedString:  "\ufa98 (20°C)",
+			ExpectedString:  "\udb81\udd99 (20°C)",
 			ExpectedEnabled: true,
 			Template:        "{{.Weather}} ({{.Temperature}}{{.UnitIcon}})",
 		},
 		{
 			Case:            "Sunny Display",
 			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
-			ExpectedString:  "\ufa98",
+			ExpectedString:  "\udb81\udd99",
 			ExpectedEnabled: true,
 			Template:        "{{.Weather}} ",
 		},
@@ -90,7 +90,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		{
 			Case:               "Sunny Display day",
 			IconID:             "01d",
-			ExpectedIconString: "\ufa98",
+			ExpectedIconString: "\udb81\udd99",
 		},
 		{
 			Case:               "Light clouds Display day",
@@ -110,7 +110,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		{
 			Case:               "Shower Rain Display day",
 			IconID:             "09d",
-			ExpectedIconString: "\ufa95",
+			ExpectedIconString: "\udb81\udd96",
 		},
 		{
 			Case:               "Rain Display day",
@@ -136,7 +136,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		{
 			Case:               "Sunny Display night",
 			IconID:             "01n",
-			ExpectedIconString: "\ufa98",
+			ExpectedIconString: "\udb81\udd99",
 		},
 		{
 			Case:               "Light clouds Display night",
@@ -156,7 +156,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		{
 			Case:               "Shower Rain Display night",
 			IconID:             "09n",
-			ExpectedIconString: "\ufa95",
+			ExpectedIconString: "\udb81\udd96",
 		},
 		{
 			Case:               "Rain Display night",
@@ -227,7 +227,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 }
 func TestOWMSegmentFromCache(t *testing.T) {
 	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
-	expectedString := fmt.Sprintf("%s (20°C)", "\ufa98")
+	expectedString := fmt.Sprintf("%s (20°C)", "\udb81\udd99")
 
 	env := &mock.MockedEnvironment{}
 	cache := &mock.MockedCache{}
@@ -250,7 +250,7 @@ func TestOWMSegmentFromCache(t *testing.T) {
 
 func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
-	expectedString := fmt.Sprintf("«%s (20°C)»(http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", "\ufa98")
+	expectedString := fmt.Sprintf("«%s (20°C)»(http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", "\udb81\udd99")
 
 	env := &mock.MockedEnvironment{}
 	cache := &mock.MockedCache{}

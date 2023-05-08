@@ -89,12 +89,12 @@ A temporary workaround is to use an invisible character at the end (`\u2800`), o
 In case you didn't export the config yet (it's the default, or you're using the `--config` flag with a predefined theme), you can follow
 the steps [here][export] to export it to a local file so you can adjust the [segment's][segment] `template`.
 
-In the example below, it's assumed that the execution segment's icon `\ufbab` has an unexpected space after it in Windows Terminal.
+In the example below, it's assumed that the execution segment's icon `\udb81\udead` has an unexpected space after it in Windows Terminal.
 
 ```json
 {
   "type": "executiontime",
-  "template": "\ufbab" // unexpected space
+  "template": "\udb81\udead" // unexpected space
 }
 ```
 
@@ -103,7 +103,7 @@ Adjust it by adding `\u2800` immediately after the icon.
 ```json
 {
   "type": "executiontime",
-  "template": "\ufbab\u2800" // solved
+  "template": "\udb81\udead\u2800" // solved
 }
 ```
 

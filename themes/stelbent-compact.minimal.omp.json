@@ -14,7 +14,7 @@
             "display_host": true
           },
           "style": "plain",
-          "template": "\u250c {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}@{{ .HostName }} "
+          "template": "\u250c {{ if .SSHSession }}\udb80\udf18 {{ end }}{{ .UserName }}@{{ .HostName }} "
         },
         {
           "type": "path",

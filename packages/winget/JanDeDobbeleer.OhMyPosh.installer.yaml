@@ -15,36 +15,36 @@ Installers:
   InstallerSha256: <HASH-AMD64>
   Scope: machine
   InstallerSwitches:
-     Custom: /INSTALLER=winget
+     Custom: /INSTALLER=winget /ALLUSERS
 - Architecture: x64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-amd64.exe
   InstallerSha256: <HASH-AMD64>
   Scope: user
   InstallerSwitches:
-     Custom: /INSTALLER=winget
+     Custom: /INSTALLER=winget /CURRENTUSER
 - Architecture: x86
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-386.exe
   InstallerSha256: <HASH-386>
   Scope: machine
   InstallerSwitches:
-     Custom: /INSTALLER=winget
+     Custom: /INSTALLER=winget /ALLUSERS
 - Architecture: x86
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-386.exe
   InstallerSha256: <HASH-386>
   Scope: user
   InstallerSwitches:
-     Custom: /INSTALLER=winget
+     Custom: /INSTALLER=winget /CURRENTUSER
 - Architecture: arm64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-arm64.exe
   InstallerSha256: <HASH-ARM64>
   Scope: machine
   InstallerSwitches:
-     Custom: /INSTALLER=winget
+     Custom: /INSTALLER=winget /ALLUSERS
 - Architecture: arm64
   InstallerUrl: https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v<VERSION>/install-arm64.exe
   InstallerSha256: <HASH-ARM64>
   Scope: user
   InstallerSwitches:
-     Custom: /INSTALLER=winget
+     Custom: /INSTALLER=winget /CURRENTUSER
 ManifestType: installer
 ManifestVersion: 1.4.0

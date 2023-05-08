@@ -123,6 +123,10 @@ module.exports = {
               label: 'Docusaurus',
               href: 'https://github.com/facebook/docusaurus',
             },
+            {
+              label: 'Privacy',
+              href: '/privacy',
+            },
           ],
         },
       ],

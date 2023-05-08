@@ -67,6 +67,7 @@ type Flags struct {
 	Manual        bool
 	Plain         bool
 	Primary       bool
+	HasTransient  bool
 	PromptCount   int
 	Cleared       bool
 	Version       string
@@ -743,12 +744,22 @@ func (env *Shell) Cache() Cache {
 	return env.fileCache
 }
 
-func (env *Shell) Close() {
-	defer env.Trace(time.Now())
+func (env *Shell) saveTemplateCache() {
+	// only store this when in a primary prompt
+	// and when we have a transient prompt in the config
+	canSave := env.CmdFlags.Primary && env.CmdFlags.HasTransient
+	if !canSave {
+		return
+	}
 	templateCache, err := json.Marshal(env.TemplateCache())
 	if err == nil {
 		env.fileCache.Set(TEMPLATECACHE, string(templateCache), 1440)
 	}
+}
+
+func (env *Shell) Close() {
+	defer env.Trace(time.Now())
+	env.saveTemplateCache()
 	env.fileCache.Close()
 }
 

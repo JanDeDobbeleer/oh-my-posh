@@ -31,7 +31,7 @@
           {
             "foreground": "#BFA8BF",
             "style": "powerline",
-            "template": " <#fff>\ufcb5</> {{ .Name }} ",
+            "template": " <#fff>\udb81\udfb7</> {{ .Name }} ",
             "type": "shell"
           }
         ],
@@ -52,7 +52,7 @@
               "threshold": 0
             },
             "style": "diamond",
-            "template": " <#BBC4B9>{{ .FormattedMs }}s</> <#fff>\uf6dc</>",
+            "template": " <#BBC4B9>{{ .FormattedMs }}s</> <#fff>\udb80\udddd</>",
             "type": "executiontime"
           },
           {
@@ -75,7 +75,7 @@
           {
             "foreground": "#BBC4B9",
             "style": "diamond",
-            "template": "<#fff>\uf6dc \ue718</> {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
+            "template": "<#fff>\udb80\udddd \ue718</> {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
             "type": "node"
           }
         ],

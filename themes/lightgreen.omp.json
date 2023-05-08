@@ -56,7 +56,7 @@
             "fetch_status": true
           },
           "style": "plain",
-          "template": "<#000000>\ue0b1 </>{{ .HEAD }}{{ if .Staging.Changed }}<#FF6F00> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": "<#000000>\ue0b1 </>{{ .HEAD }}{{ if .Staging.Changed }}<#FF6F00> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -73,7 +73,7 @@
           "foreground": "#06aad5",
           "leading_diamond": "\ue0b6",
           "style": "diamond",
-          "template": "\ufcd1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
+          "template": "\udb81\udfd3 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
           "trailing_diamond": "\ue0b4 ",
           "type": "go"
         },
@@ -99,7 +99,7 @@
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
           "style": "diamond",
-          "template": "\ufd31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}",
+          "template": "\udb82\udc33 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}",
           "trailing_diamond": "\ue0b4",
           "type": "kubectl"
         }
@@ -136,7 +136,7 @@
           "invert_powerline": true,
           "leading_diamond": "\ue0b2",
           "properties": {
-            "charged_icon": "\uf58e ",
+            "charged_icon": "\udb85\udfe6 ",
             "charging_icon": "\uf1e6 ",
             "discharging_icon": "\ue234 "
           },

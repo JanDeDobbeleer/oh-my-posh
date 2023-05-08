@@ -34,7 +34,7 @@
           "background": "#0057b7",
           "foreground": "#FBD951",
           "properties": {
-            "home_icon": "\uf7dd",
+            "home_icon": "\udb80\udede",
             "style": "mixed"
           },
           "style": "diamond",
@@ -52,7 +52,7 @@
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " \uf1d3  {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}}\uf692 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }} ",
+          "template": " \uf1d3  {{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Staging.Changed) (.Working.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0}}\udb80\udd93 {{ .StashCount }}{{ end }}{{ if gt .WorktreeCount 0}} \uf1bb {{ .WorktreeCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -115,9 +115,9 @@
           "invert_powerline": true,
           "leading_diamond": "\ue0b2",
           "properties": {
-            "charged_icon": "\uf583 ",
+            "charged_icon": "\udb80\udc84 ",
             "charging_icon": "\uf492 ",
-            "discharging_icon": "\uf58c "
+            "discharging_icon": "\udb80\udc8d "
           },
           "style": "diamond",
           "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}% <#111111>\ue0b2</>",
@@ -132,7 +132,7 @@
             "always_enabled": true
           },
           "style": "diamond",
-          "template": " \uf608 {{ .FormattedMs }} <#111111>\ue0b2</>",
+          "template": " \udb80\udd09 {{ .FormattedMs }} <#111111>\ue0b2</>",
           "type": "executiontime"
         },
         {
@@ -144,7 +144,7 @@
             "time_format": "_2,15:04"
           },
           "style": "diamond",
-          "template": " \uf5ef {{ .CurrentDate | date .Format }}",
+          "template": " \udb80\udcf0 {{ .CurrentDate | date .Format }}",
           "trailing_diamond": "\ue0b4",
           "type": "time"
         }
@@ -185,7 +185,7 @@
             "display_host": false
           },
           "style": "powerline",
-          "template": " {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }} ",
+          "template": " {{ if .SSHSession }}\udb80\udf18 {{ end }}{{ .UserName }} ",
           "type": "session"
         }
       ],

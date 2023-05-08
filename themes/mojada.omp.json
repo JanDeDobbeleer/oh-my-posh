@@ -73,7 +73,7 @@
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -93,7 +93,7 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": " {{ if gt .Code 0 }}\uf659{{ else }}\uf633{{ end }} ",
+          "template": " {{ if gt .Code 0 }}\udb80\udd5a{{ else }}\udb80\udd34{{ end }} ",
           "type": "exit"
         },
         {
@@ -116,9 +116,9 @@
           "invert_powerline": true,
           "powerline_symbol": "\ue0b2",
           "properties": {
-            "charged_icon": "\uf583 ",
-            "charging_icon": "\uf588 ",
-            "discharging_icon": "\uf57d "
+            "charged_icon": "\udb80\udc84 ",
+            "charging_icon": "\udb80\udc89 ",
+            "discharging_icon": "\udb80\udc7e "
           },
           "style": "powerline",
           "template": " {{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}% ",

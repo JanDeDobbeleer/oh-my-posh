@@ -7,7 +7,7 @@
         {
           "foreground": "#45F1C2",
           "style": "plain",
-          "template": "\uf508 {{ .UserName }} on",
+          "template": "\udb80\udc09 {{ .UserName }} on",
           "type": "session"
         },
         {
@@ -28,7 +28,7 @@
             "fetch_upstream_icon": true
           },
           "style": "plain",
-          "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": "{{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
       ],

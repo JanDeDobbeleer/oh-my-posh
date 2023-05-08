@@ -25,11 +25,11 @@
           "powerline_symbol": "\ue0b0",
           "properties": {
             "folder_icon": " \uf07b ",
-            "home_icon": "\uf7dd",
+            "home_icon": "\udb80\udede",
             "style": "folder"
           },
           "style": "powerline",
-          "template": " \uf07b\uf553{{ .Path }} ",
+          "template": " \uf07b\udb80\udc54{{ .Path }} ",
           "type": "path"
         },
         {
@@ -59,7 +59,7 @@
             "threshold": 0
           },
           "style": "diamond",
-          "template": " \ufa1e{{ .FormattedMs }}\u2800",
+          "template": " \udb81\udd1f{{ .FormattedMs }}\u2800",
           "trailing_diamond": "\ue0b4",
           "type": "executiontime"
         }
@@ -76,7 +76,7 @@
           "properties": {
             "fetch_package_manager": true,
             "npm_icon": " <#cc3a3a>\ue5fa</> ",
-            "yarn_icon": " <#348cba>\uf61a</>"
+            "yarn_icon": " <#348cba>\udb80\udd1b</>"
           },
           "style": "diamond",
           "template": "\ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}",
@@ -115,7 +115,7 @@
           "foreground": "#06aad5",
           "leading_diamond": "\ue0b6",
           "style": "diamond",
-          "template": "\ufcd1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
+          "template": "\udb81\udfd3 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
           "trailing_diamond": "\ue0b4 ",
           "type": "go"
         },
@@ -196,7 +196,7 @@
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
           "style": "diamond",
-          "template": "\ufd31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}",
+          "template": "\udb82\udc33 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}",
           "trailing_diamond": "\ue0b4",
           "type": "kubectl"
         },
@@ -224,7 +224,7 @@
           "invert_powerline": true,
           "leading_diamond": "\ue0b2",
           "properties": {
-            "charged_icon": "\uf58e ",
+            "charged_icon": "\udb85\udfe6 ",
             "charging_icon": "\uf1e6 ",
             "discharging_icon": "\ue234 "
           },
@@ -241,7 +241,7 @@
             "time_format": "_2,15:04"
           },
           "style": "diamond",
-          "template": " \uf5ef {{ .CurrentDate | date .Format }} ",
+          "template": " \udb80\udcf0 {{ .CurrentDate | date .Format }} ",
           "trailing_diamond": "\ue0b4",
           "type": "time"
         }
@@ -265,7 +265,7 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": "\ue285\ufb00 ",
+          "template": "\ue285\udb81\ude01 ",
           "type": "exit"
         }
       ],

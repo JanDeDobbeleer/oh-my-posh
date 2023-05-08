@@ -42,7 +42,7 @@
           "properties": {
             "folder_icon": "\ue5fe",
             "folder_separator_icon": "<transparent> \ue0bd </>",
-            "home_icon": "\uf7db",
+            "home_icon": "\udb80\udedc",
             "style": "agnoster_short"
           },
           "style": "plain",
@@ -57,7 +57,7 @@
             "fetch_status": true
           },
           "style": "plain",
-          "template": "<#000000>\ue0b1 </>{{ .HEAD }}{{ if .Staging.Changed }}<#FF6F00> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": "<#000000>\ue0b1 </>{{ .HEAD }}{{ if .Staging.Changed }}<#FF6F00> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -83,7 +83,7 @@
           "foreground": "#43CCEA",
           "leading_diamond": "\ue0c5",
           "style": "diamond",
-          "template": " {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }}<transparent> / </>{{ .HostName }}",
+          "template": " {{ if .SSHSession }}\udb80\udf18 {{ end }}{{ .UserName }}<transparent> / </>{{ .HostName }}",
           "type": "session"
         },
         {
@@ -113,7 +113,7 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": "\ufb0c ",
+          "template": "\udb81\ude0d ",
           "type": "exit"
         }
       ],

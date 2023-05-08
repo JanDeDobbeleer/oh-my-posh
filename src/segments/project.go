@@ -75,7 +75,7 @@ func (n *Project) Enabled() bool {
 }
 
 func (n *Project) Template() string {
-	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}} {{ end }}{{ if .Name }}{{ .Name }} {{ end }}{{ if .Target }}\uf9fd {{.Target}} {{ end }}{{ end }}" //nolint:lll
+	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}} {{ end }}{{ if .Name }}{{ .Name }} {{ end }}{{ if .Target }}\U000f04fe {{.Target}} {{ end }}{{ end }}" //nolint:lll
 }
 
 func (n *Project) Init(props properties.Properties, env platform.Environment) {

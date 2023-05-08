@@ -32,7 +32,7 @@
           "properties": {
             "fetch_package_manager": true,
             "npm_icon": " <#cc3a3a>\ue5fa</> ",
-            "yarn_icon": " <#348cba>\uf61a</>"
+            "yarn_icon": " <#348cba>\udb80\udd1b</>"
           },
           "style": "plain",
           "template": "<#ffffff>(</>{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}<#ffffff>)</>",
@@ -135,7 +135,7 @@
             "{{if eq \"Full\" .State.String}}#33DD2D{{end}}"
           ],
           "properties": {
-            "charged_icon": "\uf58e ",
+            "charged_icon": "\udb85\udfe6 ",
             "charging_icon": "\uf1e6 ",
             "discharging_icon": "\ue234 "
           },
@@ -149,7 +149,7 @@
             "time_format": "_2,15:04"
           },
           "style": "plain",
-          "template": "<#ffffff>[</>\uf5ef{{ .CurrentDate | date .Format }}<#ffffff>]</>",
+          "template": "<#ffffff>[</>\udb80\udcf0{{ .CurrentDate | date .Format }}<#ffffff>]</>",
           "type": "time"
         }
       ],
@@ -182,7 +182,7 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": "\ue285\ufb00 ",
+          "template": "\ue285\udb81\ude01 ",
           "type": "exit"
         }
       ],

@@ -57,7 +57,7 @@
             "fetch_version": false
           },
           "style": "diamond",
-          "template": "\ufcd1{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
+          "template": "\udb81\udfd3{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
           "trailing_diamond": "\ue0b4",
           "type": "go"
         },

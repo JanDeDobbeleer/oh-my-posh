@@ -27,7 +27,7 @@
           },
           "style": "powerline",
           "powerline_symbol": "",
-          "template": " <p:symbol-color>\uf65e</> {{ dateInZone .Format .CurrentDate \"UTC\" }} ",
+          "template": " <p:symbol-color>\udb80\udd5f</> {{ dateInZone .Format .CurrentDate \"UTC\" }} ",
           "type": "time"
         },
         {
@@ -35,7 +35,7 @@
           "foreground": "p:kubernetes-text",
           "style": "powerline",
           "powerline_symbol": "\ue0b4",
-          "template": "<p:symbol-color>\ufd31</> {{.Context}}{{if .Namespace}} \uf061 {{.Namespace}}{{end}}",
+          "template": "<p:symbol-color>\udb82\udc33</> {{.Context}}{{if .Namespace}} \uf061 {{.Namespace}}{{end}}",
           "type": "kubectl"
         },
         {
@@ -93,7 +93,7 @@
           },
           "style": "powerline",
           "powerline_symbol": "\ue0b4",
-          "template": " <p:symbol-color>\ufbab</> {{ .FormattedMs }}",
+          "template": " <p:symbol-color>\udb81\udead</> {{ .FormattedMs }}",
           "type": "executiontime"
         },
         {
@@ -104,7 +104,7 @@
           },
           "style": "powerline",
           "powerline_symbol": "\ue0b4",
-          "template": "{{ if eq .Code 0 }} \uf7d0 {{ end }}",
+          "template": "{{ if eq .Code 0 }} \udb82\udcd0 {{ end }}",
           "type": "exit"
         },
         {
@@ -155,7 +155,7 @@
           },
           "style": "powerline",
           "powerline_symbol": "\ue0b4",
-          "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
       ],

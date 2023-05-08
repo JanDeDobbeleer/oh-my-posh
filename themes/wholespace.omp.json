@@ -11,7 +11,7 @@
           "properties": {
             "macos": "\uf179 ",
             "ubuntu": "\uf31b ",
-            "windows": "\uf871 "
+            "windows": "\udb80\udf72 "
           },
           "style": "diamond",
           "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}",
@@ -35,14 +35,14 @@
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b2",
           "style": "diamond",
-          "template": "\uf85a CPU: {{ round .PhysicalPercentUsed .Precision }}% | ",
+          "template": "\udb80\udf5b CPU: {{ round .PhysicalPercentUsed .Precision }}% | ",
           "type": "sysinfo"
         },
         {
           "background": "#516BEB",
           "foreground": "#ffffff",
           "style": "diamond",
-          "template": "RAM: {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1068786176.0) }}GB \uf85a ",
+          "template": "RAM: {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1068786176.0) }}GB \udb80\udf5b ",
           "trailing_diamond": "<transparent,#516BEB>\ue0b2</>",
           "type": "sysinfo"
         },
@@ -72,7 +72,7 @@
           "properties": {
             "fetch_package_manager": true,
             "npm_icon": " <#cc3a3a>\ue5fa</> ",
-            "yarn_icon": " <#348cba>\uf61a</>"
+            "yarn_icon": " <#348cba>\udb80\udd1b</>"
           },
           "style": "diamond",
           "template": "\ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}",
@@ -91,7 +91,7 @@
             "fetch_worktree_count": true
           },
           "style": "diamond",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
           "trailing_diamond": "\ue0b0",
           "type": "git"
         }
@@ -120,7 +120,7 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": " \uf7d4 ",
+          "template": " \udb86\udca0 ",
           "type": "exit"
         }
       ],

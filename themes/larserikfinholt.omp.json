@@ -23,7 +23,7 @@
             "style": "folder"
           },
           "style": "powerline",
-          "template": " \uf74a  {{ .Path }} ",
+          "template": " \udb80\ude4b  {{ .Path }} ",
           "type": "path"
         },
         {
@@ -43,7 +43,7 @@
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -53,7 +53,7 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": "<transparent>\ue0b0</> \ufbab{{ .FormattedMs }}\u2800",
+          "template": "<transparent>\ue0b0</> \udb81\udead{{ .FormattedMs }}\u2800",
           "type": "executiontime"
         },
         {

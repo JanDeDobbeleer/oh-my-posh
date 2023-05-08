@@ -34,7 +34,7 @@
             "fetch_stash_count": true
           },
           "style": "plain",
-          "template": "<#ffffff>on</> {{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": "<#ffffff>on</> {{ .HEAD }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -46,7 +46,7 @@
         {
           "foreground": "#7FD5EA",
           "style": "powerline",
-          "template": "[\ufcd1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] ",
+          "template": "[\udb81\udfd3 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] ",
           "type": "go"
         },
         {

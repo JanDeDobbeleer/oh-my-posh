@@ -19,7 +19,7 @@ const (
 )
 
 func (c *Connection) Template() string {
-	return " {{ if eq .Type \"wifi\"}}\uf1eb{{ else if eq .Type \"ethernet\"}}\uf6ff{{ end }} "
+	return " {{ if eq .Type \"wifi\"}}\uf1eb{{ else if eq .Type \"ethernet\"}}\U000f0200{{ end }} "
 }
 
 func (c *Connection) Enabled() bool {

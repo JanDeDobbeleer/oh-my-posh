@@ -19,11 +19,11 @@
           "properties": {
             "folder_icon": "\uf115",
             "folder_separator_icon": "\\",
-            "home_icon": "\uf7db",
+            "home_icon": "\udb80\udedc",
             "style": "full"
           },
           "style": "powerline",
-          "template": " <#000>\uf07b \uf553</> {{ .Path }} ",
+          "template": " <#000>\uf07b \udb80\udc54</> {{ .Path }} ",
           "type": "path"
         },
         {
@@ -37,7 +37,7 @@
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }}) ",
+          "template": " \u279c ({{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }}) ",
           "type": "git"
         },
         {
@@ -56,7 +56,7 @@
             "always_enabled": true
           },
           "style": "powerline",
-          "template": " \ufbab {{ .FormattedMs }} ",
+          "template": " \udb81\udead {{ .FormattedMs }} ",
           "type": "executiontime"
         },
         {
@@ -81,7 +81,7 @@
             "always_enabled": true
           },
           "style": "diamond",
-          "template": " {{ if gt .Code 0 }}\uf525{{ else }}\uf469{{ end }}",
+          "template": " {{ if gt .Code 0 }}\udb80\udc26{{ else }}\uf469{{ end }}",
           "trailing_diamond": "\ue0b4",
           "type": "exit"
         }

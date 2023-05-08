@@ -2260,13 +2260,13 @@
                     "type": "string",
                     "title": "Alternative icon",
                     "description": "Alternative icon for this activity type",
-                    "default": "\uf5a2"
+                    "default": "\udb80\udca3"
                   },
                   "run_icon": {
                     "type": "string",
                     "title": "Alternative icon",
                     "description": "Alternative icon for this activity type",
-                    "default": "\ufc0c"
+                    "default": "\udb81\udf0e"
                   },
                   "skiing_icon": {
                     "type": "string",

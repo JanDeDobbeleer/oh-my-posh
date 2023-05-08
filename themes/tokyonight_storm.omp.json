@@ -72,7 +72,7 @@
           "type": "node",
           "style": "plain",
           "foreground": "p:pistachio-green",
-          "template": "\uf898 {{ .Full }} "
+          "template": "\udb80\udf99 {{ .Full }} "
         },
         {
           "type": "php",

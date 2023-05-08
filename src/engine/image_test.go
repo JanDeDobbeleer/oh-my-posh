@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	"github.com/stretchr/testify/assert"
@@ -33,13 +34,21 @@ func runImageTest(config, content string) (string, error) {
 		return "", err
 	}
 	defer os.Remove(file.Name())
+
 	writer := &ansi.Writer{}
 	writer.Init(shell.GENERIC)
 	image := &ImageRenderer{
 		AnsiString: content,
 		Ansi:       writer,
 	}
-	image.Init(config)
+
+	env := &platform.Shell{
+		CmdFlags: &platform.Flags{
+			Config: config,
+		},
+	}
+
+	_ = image.Init(env)
 	err = image.SavePNG()
 	if err == nil {
 		os.Remove(image.Path)

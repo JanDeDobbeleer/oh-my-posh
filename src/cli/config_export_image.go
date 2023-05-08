@@ -85,12 +85,18 @@ Exports the config to an image file using customized output options.`,
 			BgColor:       bgColor,
 			Ansi:          writer,
 		}
+
 		if outputImage != "" {
 			imageCreator.Path = cleanOutputPath(outputImage, env)
 		}
-		imageCreator.Init(env.Flags().Config)
-		err := imageCreator.SavePNG()
 
+		err := imageCreator.Init(env)
+		if err != nil {
+			fmt.Print(err.Error())
+			return
+		}
+
+		err = imageCreator.SavePNG()
 		if err != nil {
 			fmt.Print(err.Error())
 		}

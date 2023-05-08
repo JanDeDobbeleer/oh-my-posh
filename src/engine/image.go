@@ -23,14 +23,20 @@
 package engine
 
 import (
-	_ "embed"
+	"archive/zip"
+	"bytes"
 	"fmt"
+	"io"
 	"math"
+	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"unicode/utf8"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	fontCLI "github.com/jandedobbeleer/oh-my-posh/src/font"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
 	"github.com/esimov/stackblur-go"
@@ -74,15 +80,6 @@ const (
 	link                = "link"
 )
 
-//go:embed font/Hack-Nerd-Bold.ttf
-var hackBold []byte
-
-//go:embed font/Hack-Nerd-Regular.ttf
-var hackRegular []byte
-
-//go:embed font/Hack-Nerd-Italic.ttf
-var hackItalic []byte
-
 type RGB struct {
 	r int
 	g int
@@ -108,6 +105,8 @@ type ImageRenderer struct {
 	RPromptOffset int
 	BgColor       string
 	Ansi          *ansi.Writer
+
+	env platform.Environment
 
 	Path string
 
@@ -139,40 +138,35 @@ type ImageRenderer struct {
 	ansiSequenceRegexMap map[string]string
 }
 
-func (ir *ImageRenderer) Init(config string) {
+func (ir *ImageRenderer) Init(env platform.Environment) error {
+	ir.env = env
+
 	if ir.Path == "" {
-		match := regex.FindNamedRegexMatch(`.*(\/|\\)(?P<STR>.+)\.(json|yaml|yml|toml)`, config)
+		match := regex.FindNamedRegexMatch(`.*(\/|\\)(?P<STR>.+)\.(json|yaml|yml|toml)`, env.Flags().Config)
 		ir.Path = fmt.Sprintf("%s.png", strings.TrimSuffix(match[str], ".omp"))
 	}
 
-	f := 2.0
-
 	ir.cleanContent()
 
-	fontRegular, _ := truetype.Parse(hackRegular)
-	fontBold, _ := truetype.Parse(hackBold)
-	fontItalic, _ := truetype.Parse(hackItalic)
-	fontFaceOptions := &truetype.Options{Size: f * 12, DPI: 144}
+	if err := ir.loadFonts(); err != nil {
+		return err
+	}
 
 	ir.defaultForegroundColor = &RGB{255, 255, 255}
 	ir.defaultBackgroundColor = &RGB{21, 21, 21}
 
-	ir.factor = f
-
+	ir.factor = 2.0
 	ir.columns = 80
 	ir.rows = 25
 
-	ir.margin = f * 48
-	ir.padding = f * 24
+	ir.margin = ir.factor * 48
+	ir.padding = ir.factor * 24
 
 	ir.shadowBaseColor = "#10101066"
-	ir.shadowRadius = uint8(math.Min(f*16, 255))
-	ir.shadowOffsetX = f * 16
-	ir.shadowOffsetY = f * 16
+	ir.shadowRadius = uint8(math.Min(ir.factor*16, 255))
+	ir.shadowOffsetX = ir.factor * 16
+	ir.shadowOffsetY = ir.factor * 16
 
-	ir.regular = truetype.NewFace(fontRegular, fontFaceOptions)
-	ir.bold = truetype.NewFace(fontBold, fontFaceOptions)
-	ir.italic = truetype.NewFace(fontItalic, fontFaceOptions)
 	ir.lineSpacing = 1.2
 
 	ir.ansiSequenceRegexMap = map[string]string{
@@ -198,6 +192,81 @@ func (ir *ImageRenderer) Init(config string) {
 		consoleTitle:        `^(?P<STR>\x1b\]0;(.+)\007)`,
 		link:                fmt.Sprintf(`^%s`, regex.LINK),
 	}
+
+	return nil
+}
+
+func (ir *ImageRenderer) loadFonts() error {
+	var data []byte
+
+	fontCachePath := filepath.Join(ir.env.CachePath(), "Hack.zip")
+	if _, err := os.Stat(fontCachePath); err == nil {
+		data, _ = os.ReadFile(fontCachePath)
+	}
+
+	// Download font if not cached
+	if data == nil {
+		url := "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Hack.zip"
+		var err error
+
+		data, err = fontCLI.Download(url)
+		if err != nil {
+			return err
+		}
+
+		err = os.WriteFile(fontCachePath, data, 0644)
+		if err != nil {
+			return err
+		}
+	}
+
+	bytesReader := bytes.NewReader(data)
+	zipReader, err := zip.NewReader(bytesReader, int64(bytesReader.Len()))
+	if err != nil {
+		return err
+	}
+
+	fontFaceOptions := &truetype.Options{Size: 2.0 * 12, DPI: 144}
+
+	parseFont := func(file *zip.File) (font.Face, error) {
+		rc, err := file.Open()
+		if err != nil {
+			return nil, err
+		}
+
+		defer rc.Close()
+
+		data, err := io.ReadAll(rc)
+		if err != nil {
+			return nil, err
+		}
+
+		font, err := truetype.Parse(data)
+		if err != nil {
+			return nil, err
+		}
+
+		return truetype.NewFace(font, fontFaceOptions), nil
+	}
+
+	for _, file := range zipReader.File {
+		switch file.Name {
+		case "HackNerdFont-Regular.ttf":
+			if regular, err := parseFont(file); err == nil {
+				ir.regular = regular
+			}
+		case "HackNerdFont-Bold.ttf":
+			if bold, err := parseFont(file); err == nil {
+				ir.bold = bold
+			}
+		case "HackNerdFont-Italic.ttf":
+			if italic, err := parseFont(file); err == nil {
+				ir.italic = italic
+			}
+		}
+	}
+
+	return nil
 }
 
 func (ir *ImageRenderer) fontHeight() float64 {

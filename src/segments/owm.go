@@ -114,7 +114,7 @@ func (d *Owm) setStatus() error {
 	case "01n":
 		fallthrough
 	case "01d":
-		icon = "\ufa98"
+		icon = "\U000f0599"
 	case "02n":
 		fallthrough
 	case "02d":
@@ -130,7 +130,7 @@ func (d *Owm) setStatus() error {
 	case "09n":
 		fallthrough
 	case "09d":
-		icon = "\ufa95"
+		icon = "\U000f0596"
 	case "10n":
 		fallthrough
 	case "10d":
@@ -159,7 +159,7 @@ func (d *Owm) setStatus() error {
 	case "":
 		fallthrough
 	case "standard":
-		d.UnitIcon = "°K" // \ufa05"
+		d.UnitIcon = "°K" // \U000f0506"
 	}
 	return nil
 }

@@ -109,7 +109,7 @@ func (segment *Segment) migrationOne(env platform.Environment) {
 	case SESSION:
 		hasTemplate := segment.hasProperty(segmentTemplate)
 		segment.migrateTemplate()
-		segment.migrateIconOverride("ssh_icon", "\uf817 ")
+		segment.migrateIconOverride("ssh_icon", "\U000f0318 ")
 		template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
 		template = strings.ReplaceAll(template, ".ComputerName", ".HostName")
 		if !segment.Properties.GetBool(properties.Property("display_host"), true) {

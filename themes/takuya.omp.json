@@ -65,7 +65,7 @@
           "properties": {
             "fetch_package_manager": true,
             "npm_icon": " <#cc3a3a>\ue5fa</> ",
-            "yarn_icon": " <#348cba>\uf61a</>"
+            "yarn_icon": " <#348cba>\udb80\udd1b</>"
           },
           "style": "diamond",
           "template": "\ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}",
@@ -78,7 +78,7 @@
           "invert_powerline": true,
           "leading_diamond": " \ue0b6",
           "style": "diamond",
-          "template": " \uf64f {{ .CurrentDate | date .Format }} ",
+          "template": " \udb82\udd54 {{ .CurrentDate | date .Format }} ",
           "trailing_diamond": "\ue0b4",
           "type": "time"
         }

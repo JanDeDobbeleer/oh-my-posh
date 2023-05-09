@@ -31,7 +31,7 @@
           {
             "foreground": "#BFA8BF",
             "style": "powerline",
-            "template": " <#fff>\udb81\udfb7</> {{ .Name }} ",
+            "template": " <#fff>\uf120</> {{ .Name }} ",
             "type": "shell"
           }
         ],
@@ -75,7 +75,7 @@
           {
             "foreground": "#BBC4B9",
             "style": "diamond",
-            "template": "<#fff>\udb80\udddd \ue718</> {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
+            "template": " <#fff>\ue718</> {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
             "type": "node"
           }
         ],

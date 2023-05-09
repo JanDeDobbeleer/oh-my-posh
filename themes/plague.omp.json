@@ -18,7 +18,7 @@
           "foreground": "#434343",
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
-          "template": " \udb81\udcc7 {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} ",
+          "template": " \uf1bc {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }} ",
           "type": "spotify"
         },
         {
@@ -41,7 +41,7 @@
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -57,7 +57,7 @@
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
-          "template": " \udb81\udfb7 {{ .Name }} ",
+          "template": " \uf120 {{ .Name }} ",
           "type": "shell"
         },
         {

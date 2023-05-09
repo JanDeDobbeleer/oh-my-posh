@@ -159,7 +159,7 @@ func (d *Owm) setStatus() error {
 	case "":
 		fallthrough
 	case "standard":
-		d.UnitIcon = "°K" // \U000f0506"
+		d.UnitIcon = "°K" // <b>K</b>"
 	}
 	return nil
 }

@@ -12,7 +12,7 @@
             "display_host": false
           },
           "style": "diamond",
-          "template": "{{ if .SSHSession }}\udb80\udf18 {{ end }}{{ .UserName }} ",
+          "template": "{{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }} ",
           "type": "session"
         },
         {

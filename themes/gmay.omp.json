@@ -50,7 +50,7 @@
             "fetch_upstream_icon": true
           },
           "style": "powerline",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -80,7 +80,7 @@
             "always_enabled": true
           },
           "style": "diamond",
-          "template": " \udb86\udca0 ",
+          "template": " \ueb05 ",
           "trailing_diamond": "\ue0b4",
           "type": "exit"
         }
@@ -94,7 +94,7 @@
         {
           "foreground": "#f1184c",
           "style": "plain",
-          "template": "\udb80\udec7 ",
+          "template": "\uf0a9 ",
           "type": "text"
         }
       ],

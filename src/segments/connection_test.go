@@ -52,7 +52,7 @@ func TestConnection(t *testing.T) {
 		{
 			Case:            "WiFi and Ethernet, enabled",
 			ConnectionType:  "wifi|ethernet",
-			ExpectedString:  "\U000f0200",
+			ExpectedString:  "\ueba9",
 			ExpectedEnabled: true,
 			Connections: []*connectionResponse{
 				{

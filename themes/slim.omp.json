@@ -70,7 +70,7 @@
             "fetch_upstream_icon": true
           },
           "style": "diamond",
-          "template": "<#7a7a7a>\ue0b1 </>{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}<#E84855> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#2FDA4E> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
+          "template": "<#7a7a7a>\ue0b1 </>{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}<#E84855> \uf044 {{ .Working.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#2FDA4E> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {
@@ -121,7 +121,7 @@
             "time_format": "15:04:05"
           },
           "style": "diamond",
-          "template": " {{ .CurrentDate | date .Format }}<#007ACC> \udb82\udd54 </>",
+          "template": " {{ .CurrentDate | date .Format }}<#007ACC> \ue641 </>",
           "trailing_diamond": "\u2593\ue0c6",
           "type": "time"
         }
@@ -169,7 +169,7 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": " \udb81\uddfc {{ if gt .Code 0 }}{{ .Code }}{{ end }} ",
+          "template": " \uea9f {{ if gt .Code 0 }}{{ .Code }}{{ end }} ",
           "type": "exit"
         }
       ],

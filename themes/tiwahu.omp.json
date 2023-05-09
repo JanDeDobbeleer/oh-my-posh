@@ -33,14 +33,14 @@
           "background": "#222222",
           "foreground": "#666666",
           "style": "plain",
-          "template": " {{ if .WSL }}\udb80\udd8f {{ end }}{{.Icon}}",
+          "template": " {{ if .WSL }}\uebcc {{ end }}{{.Icon}}",
           "type": "os"
         },
         {
           "background": "#222222",
           "foreground": "#666666",
           "style": "plain",
-          "template": " {{ if .SSHSession }}\udb80\udf18 {{ end }}{{ .UserName }}@{{ .HostName }} ",
+          "template": " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }}@{{ .HostName }} ",
           "type": "session"
         },
         {
@@ -64,7 +64,7 @@
             "fetch_status": false,
             "fetch_upstream_icon": false,
             "merge_icon": "\ue727 ",
-            "no_commits_icon": "\udb80\udc95 ",
+            "no_commits_icon": "\uf0c3 ",
             "rebase_icon": "\ue728 ",
             "revert_icon": "\uf0e2 ",
             "tag_icon": "\uf412 "
@@ -90,7 +90,7 @@
             "fetch_version": false
           },
           "style": "plain",
-          "template": " \udb81\udfd3 ",
+          "template": " \ue626 ",
           "type": "go"
         },
         {

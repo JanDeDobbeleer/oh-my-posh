@@ -33,7 +33,7 @@
           "properties": {
             "folder_icon": "\uf115",
             "folder_separator_icon": " \ue0b1 ",
-            "home_icon": "\udb80\udedc",
+            "home_icon": "\ueb06",
             "style": "agnoster"
           },
           "style": "powerline",

@@ -23,9 +23,9 @@
           "foreground": "#ffffff",
           "leading_diamond": "<transparent,#01579B>\ue0b0</>",
           "properties": {
-            "folder_icon": "\udb80\uddd8",
+            "folder_icon": "...",
             "folder_separator_icon": "<transparent> \ue0bd </>",
-            "home_icon": "\udb80\udedc",
+            "home_icon": "\ueb06",
             "style": "agnoster_short"
           },
           "style": "diamond",
@@ -48,7 +48,7 @@
             "fetch_status": true
           },
           "style": "powerline",
-          "template": " {{ .HEAD }}{{ if .Staging.Changed }}<#FF6F00> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .HEAD }}{{ if .Staging.Changed }}<#FF6F00> \uf046 {{ .Staging.String }}</>{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "type": "git"
         },
         {

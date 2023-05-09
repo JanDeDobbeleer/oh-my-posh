@@ -321,7 +321,7 @@ func TestDotnetProject(t *testing.T) {
 			HasFiles:        true,
 			ProjectContents: "...<TargetFramework>net7.0</TargetFramework>...",
 			ExpectedEnabled: true,
-			ExpectedString:  "Valid \U000f04fe net7.0",
+			ExpectedString:  "Valid \uf4de net7.0",
 		},
 		{
 			Case:            "valid .fsproj file",
@@ -329,7 +329,7 @@ func TestDotnetProject(t *testing.T) {
 			HasFiles:        true,
 			ProjectContents: "...<TargetFramework>net6.0</TargetFramework>...",
 			ExpectedEnabled: true,
-			ExpectedString:  "Valid \U000f04fe net6.0",
+			ExpectedString:  "Valid \uf4de net6.0",
 		},
 		{
 			Case:            "valid .vbproj file",
@@ -337,7 +337,7 @@ func TestDotnetProject(t *testing.T) {
 			HasFiles:        true,
 			ProjectContents: "...<TargetFramework>net5.0</TargetFramework>...",
 			ExpectedEnabled: true,
-			ExpectedString:  "Valid \U000f04fe net5.0",
+			ExpectedString:  "Valid \uf4de net5.0",
 		},
 		{
 			Case:            "invalid or empty contents",

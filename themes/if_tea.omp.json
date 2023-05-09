@@ -22,7 +22,7 @@
             "opensuse": "\uf314",
             "raspbian": "\uf315",
             "ubuntu": "\uf31b ",
-            "windows": "\udb80\udf72 ",
+            "windows": "\ue62a ",
             "wsl": "\ue712"
           },
           "style": "diamond",
@@ -36,7 +36,7 @@
           "style": "diamond",
           "leading_diamond": "<transparent,#00c7fc>\ue0b0</>",
           "properties": {
-            "template": " \udb80\udf5b CPU: {{ round .PhysicalPercentUsed .Precision }}% | "
+            "template": " \ue266 CPU: {{ round .PhysicalPercentUsed .Precision }}% | "
           },
           "type": "sysinfo"
         },
@@ -44,7 +44,7 @@
           "background": "#00c7fc",
           "foreground": "#000000",
           "style": "diamond",
-          "template": "RAM: {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB \udb80\udf5b ",
+          "template": "RAM: {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB \ue266 ",
           "trailing_diamond": "<transparent,#00c7fc>\ue0b2</>",
           "type": "sysinfo"
         },
@@ -79,7 +79,7 @@
             "fetch_worktree_count": true
           },
           "style": "diamond",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "trailing_diamond": "\ue0b0",
           "type": "git"
         }
@@ -113,7 +113,7 @@
             "time_format": "3:04:05 PM | Monday"
           },
           "style": "diamond",
-          "template": " \udb82\udd54 {{ .CurrentDate | date .Format }} \udb80\udcf0 ",
+          "template": " \ue641 {{ .CurrentDate | date .Format }} \uf073 ",
           "trailing_diamond": "\ue0b0",
           "type": "time"
         },
@@ -131,7 +131,7 @@
           "leading_diamond": "<transparent,#F8677b>\ue0b0</>",
           "properties": {
             "folder_icon": "\uf07b ",
-            "folder_separator_icon": " \udb80\udc55 ",
+            "folder_separator_icon": " \uf061 ",
             "home_icon": " ",
             "style": "agnoster_full",
             "template": " \ue5ff {{ .Path }} "

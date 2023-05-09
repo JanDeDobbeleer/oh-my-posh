@@ -8,7 +8,7 @@
           "background": "#003543",
           "foreground": "#ffffff",
           "style": "plain",
-          "template": " \udb82\udd54 {{ .CurrentDate | date .Format }} ",
+          "template": " \ue641 {{ .CurrentDate | date .Format }} ",
           "type": "time"
         },
         {
@@ -18,7 +18,7 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": " \udb81\udd1f{{ .FormattedMs }} ",
+          "template": " \ueba2{{ .FormattedMs }} ",
           "type": "executiontime"
         }
       ],

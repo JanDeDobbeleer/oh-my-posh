@@ -22,7 +22,7 @@
         {
           "foreground": "#7FD5EA",
           "style": "powerline",
-          "template": "(\udb81\udfd3{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}) ",
+          "template": "(\ue626{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}) ",
           "type": "go"
         },
         {

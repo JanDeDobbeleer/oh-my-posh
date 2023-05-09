@@ -206,7 +206,7 @@ func (ir *ImageRenderer) loadFonts() error {
 
 	// Download font if not cached
 	if data == nil {
-		url := "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Hack.zip"
+		url := "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.0/Hack.zip"
 		var err error
 
 		data, err = fontCLI.Download(url)

@@ -21,7 +21,7 @@
           "background": "#464646",
           "foreground": "p:white",
           "properties": {
-            "windows": "\udb80\udf72",
+            "windows": "\ue62a",
             "linux": "\uf17c",
             "ubuntu": "\uf31b",
             "macos": "\uf179"
@@ -94,7 +94,7 @@
           "properties": {
             "folder_icon": "\uf07b",
             "folder_separator_template": "<#93d0ff> \u00bb </>",
-            "home_icon": "\udb80\udedc",
+            "home_icon": "\ueb06",
             "style": "agnoster"
           },
           "style": "plain",

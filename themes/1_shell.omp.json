@@ -90,7 +90,7 @@
           "leading_diamond": "<#00c7fc> \ue285 </><#ffafd2>{</>",
           "properties": {
             "folder_icon": "\uf07b",
-            "folder_separator_icon": "\uebcb",
+            "folder_separator_icon": " \uebcb ",
             "home_icon": "home",
             "style": "agnoster_full"
           },

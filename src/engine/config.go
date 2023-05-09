@@ -325,7 +325,7 @@ func defaultConfig(env platform.Environment, warning bool) *Config {
 						TrailingDiamond: "\ue0b0",
 						Background:      "p:yellow",
 						Foreground:      "p:black",
-						Template:        " {{ if .SSHSession }}\U000f0318 {{ end }}{{ .UserName }} ",
+						Template:        " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }} ",
 					},
 					{
 						Type:            PATH,
@@ -336,7 +336,7 @@ func defaultConfig(env platform.Environment, warning bool) *Config {
 						Properties: properties.Map{
 							properties.Style: "folder",
 						},
-						Template: " \U000f024b {{ path .Path .Location }} ",
+						Template: " \uea83 {{ path .Path .Location }} ",
 					},
 					{
 						Type:            GIT,
@@ -396,7 +396,7 @@ func defaultConfig(env platform.Environment, warning bool) *Config {
 						Style:      Plain,
 						Background: "transparent",
 						Foreground: "p:green",
-						Template:   "\U000f0399 ",
+						Template:   "\ue718 ",
 						Properties: properties.Map{
 							segments.HomeEnabled:         false,
 							segments.FetchPackageManager: false,
@@ -408,7 +408,7 @@ func defaultConfig(env platform.Environment, warning bool) *Config {
 						Style:      Plain,
 						Background: "transparent",
 						Foreground: "p:blue",
-						Template:   "\U000f07d3 ",
+						Template:   "\ue626 ",
 						Properties: properties.Map{
 							properties.FetchVersion: false,
 						},

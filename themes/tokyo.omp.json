@@ -7,7 +7,7 @@
         {
           "foreground": "#7eb8da",
           "style": "plain",
-          "template": "\u250f[<#ffffff>\udb80\udc09</> {{ .UserName }} from <#ffffff>\udb81\udfc0</> {{ .HostName }}]",
+          "template": "\u250f[<#ffffff>\ueb99</> {{ .UserName }} from <#ffffff>\uf108</> {{ .HostName }}]",
           "type": "session"
         },
         {
@@ -31,7 +31,7 @@
         {
           "foreground": "#be9ddf",
           "style": "diamond",
-          "template": "[<#ffffff>\udb80\udf5b</> RAM: {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB]",
+          "template": "[<#ffffff>\ue266</> RAM: {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB]",
           "type": "sysinfo"
         },
         {
@@ -40,7 +40,7 @@
             "time_format": "Monday at 3:04:05 PM"
           },
           "style": "diamond",
-          "template": "[<#ffffff>\udb80\udcf0</> {{ .CurrentDate | date .Format }}]",
+          "template": "[<#ffffff>\uf073</> {{ .CurrentDate | date .Format }}]",
           "type": "time"
         },
         {
@@ -51,7 +51,7 @@
             "fetch_upstream_icon": true
           },
           "style": "plain",
-          "template": "[<#ffffff>{{ .UpstreamIcon }}</>{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <#ffffff>\uf044</> {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#ffffff>\uf046</> {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} <#ffffff>\udb80\udd93</> {{ .StashCount }}{{ end }}]",
+          "template": "[<#ffffff>{{ .UpstreamIcon }}</>{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} <#ffffff>\uf044</> {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#ffffff>\uf046</> {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} <#ffffff>\ueb4b</> {{ .StashCount }}{{ end }}]",
           "type": "git"
         },
         {
@@ -75,7 +75,7 @@
         {
           "foreground": "#ffa5d8",
           "style": "powerline",
-          "template": "[<#ffffff>\udb81\udf8f</> Error, check your command]",
+          "template": "[<#ffffff>\uea6c</> Error, check your command]",
           "type": "exit"
         }
       ],

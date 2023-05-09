@@ -71,7 +71,7 @@
           "powerline_symbol": "\ue0b0",
           "foreground": "#ffffff",
           "background": "#7FD5EA",
-          "template": " \u202d\udb81\udfd3 {{ .Full }} "
+          "template": " \u202d\ue626 {{ .Full }} "
         },
         {
           "type": "rust",
@@ -99,7 +99,7 @@
             "fetch_worktree_count": true
           },
           "style": "powerline",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#CAEBE1> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \udb80\udd93 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#CAEBE1> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
       ],
@@ -153,7 +153,7 @@
         {
           "foreground": "#F2D3B6",
           "properties": {
-            "time_format": "<#D6DEEB>\udb82\udd54 15:04:05</> <#79DFE1>|</> \udb80\udcf0 2 Jan, Monday"
+            "time_format": "<#D6DEEB>\ue641 15:04:05</> <#79DFE1>|</> \uf073 2 Jan, Monday"
           },
           "style": "plain",
           "template": "{{ .CurrentDate | date .Format }} <#79DFE1>|</>",
@@ -164,8 +164,8 @@
           "leading_diamond": "<#00C7FC> \uf07b </><#B6D6F2> in </>",
           "properties": {
             "folder_icon": " \uf07c ",
-            "folder_separator_icon": " \udb80\udc55 ",
-            "home_icon": "\udb80\udedc ",
+            "folder_separator_icon": " \uf061 ",
+            "home_icon": "\ueb06 ",
             "style": "agnoster_short",
             "max_depth": 3
           },

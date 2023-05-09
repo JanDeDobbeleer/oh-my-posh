@@ -58,8 +58,8 @@
           ],
           "properties": {
             "charged_icon": "\uf240 ",
-            "charging_icon": "\udb80\udc84 ",
-            "discharging_icon": "\udb80\udc84 ",
+            "charging_icon": "\ueb2d ",
+            "discharging_icon": "\ueb2d ",
             "text": "\ue0b0"
           },
           "style": "powerline",
@@ -92,7 +92,7 @@
           "foreground": "#fb7e14",
           "leading_diamond": "\ue0b6",
           "style": "diamond",
-          "template": " {{ if .SSHSession }}\udb80\udf18 {{ end }}{{ .UserName }}@{{ .HostName }} <#fb7e14>\ue0b3</> ",
+          "template": " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }}@{{ .HostName }} <#fb7e14>\ue0b3</> ",
           "type": "session"
         },
         {
@@ -102,7 +102,7 @@
             "time_format": "15:04:05, _2"
           },
           "style": "diamond",
-          "template": "{{ .CurrentDate | date .Format }} \udb80\udcf0 ",
+          "template": "{{ .CurrentDate | date .Format }} \uf073 ",
           "trailing_diamond": "\ue0b4",
           "type": "time"
         }
@@ -121,7 +121,7 @@
           "foreground": "#292929",
           "style": "diamond",
           "leading_diamond": "\u2570\u2500\ue0b6",
-          "template": "\udb81\ude27",
+          "template": "\ue7ad",
           "trailing_diamond": "\ue0b4",
           "type": "path"
         }

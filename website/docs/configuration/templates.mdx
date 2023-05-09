@@ -180,7 +180,7 @@ If you want to for example use the [git][git] segment's `.UpstreamGone` property
 do so like this:
 
 ```json
-"template": " {{ if .Segments.Git.UpstreamGone }}\udb80\uded4{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
+"template": " {{ if .Segments.Git.UpstreamGone }}\ueb05{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
 ```
 
 :::caution
@@ -227,7 +227,7 @@ to distinct between both. For example:
 If you want to know if a specific segment is active, you can use the `.Segments.Contains` function, for example:
 
 ```json
-"template": "{{ if .Segments.Contains \"Git\" }}\udb80\uded4{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
+"template": "{{ if .Segments.Contains \"Git\" }}\ueb05{{ else if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
 ```
 
 ## Text decoration

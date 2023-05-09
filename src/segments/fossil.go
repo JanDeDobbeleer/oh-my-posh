@@ -34,7 +34,7 @@ type Fossil struct {
 }
 
 func (f *Fossil) Template() string {
-	return " \U000f062c {{.Branch}} {{.Status.String}} "
+	return " \ue725 {{.Branch}} {{.Status.String}} "
 }
 
 func (f *Fossil) Enabled() bool {

@@ -280,7 +280,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "SESSION no HOST",
-			Expected: " {{ if .SSHSession }}\U000f0318 {{ end }}{{ .UserName }} ",
+			Expected: " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }} ",
 			Type:     SESSION,
 			Props: properties.Map{
 				"display_host": false,
@@ -288,7 +288,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "SESSION no USER",
-			Expected: " {{ if .SSHSession }}\U000f0318 {{ end }}{{ .HostName }} ",
+			Expected: " {{ if .SSHSession }}\ueba9 {{ end }}{{ .HostName }} ",
 			Type:     SESSION,
 			Props: properties.Map{
 				"display_user": false,
@@ -296,7 +296,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "SESSION no USER nor HOST",
-			Expected: " {{ if .SSHSession }}\U000f0318 {{ end }} ",
+			Expected: " {{ if .SSHSession }}\ueba9 {{ end }} ",
 			Type:     SESSION,
 			Props: properties.Map{
 				"display_user": false,
@@ -305,7 +305,7 @@ func TestSegmentTemplateMigration(t *testing.T) {
 		},
 		{
 			Case:     "SESSION - Color overrides",
-			Expected: " {{ if .SSHSession }}\U000f0318 {{ end }}<#123456>{{ .UserName }}</>@<#789012>{{ .HostName }}</> ",
+			Expected: " {{ if .SSHSession }}\ueba9 {{ end }}<#123456>{{ .UserName }}</>@<#789012>{{ .HostName }}</> ",
 			Type:     SESSION,
 			Props: properties.Map{
 				"user_color": "#123456",

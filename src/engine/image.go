@@ -73,6 +73,7 @@ const (
 	overlineReset       = "overliner"
 	strikethrough       = "strikethrough"
 	strikethroughReset  = "strikethroughr"
+	backgroundReset     = "backgroundr"
 	color16             = "color16"
 	left                = "left"
 	lineChange          = "linechange"
@@ -186,6 +187,7 @@ func (ir *ImageRenderer) Init(env platform.Environment) error {
 		overlineReset:       `^(?P<STR>\x1b\[55m)`,
 		strikethrough:       `^(?P<STR>\x1b\[9m)`,
 		strikethroughReset:  `^(?P<STR>\x1b\[29m)`,
+		backgroundReset:     `^(?P<STR>\x1b\[49m)`,
 		color16:             `^(?P<STR>\x1b\[(?P<BC>[349][0-7]|10[0-7]|39)m)`,
 		left:                `^(?P<STR>\x1b\[(\d{1,3})D)`,
 		lineChange:          `^(?P<STR>\x1b\[(\d)[FB])`,
@@ -564,6 +566,9 @@ func (ir *ImageRenderer) shouldPrint() bool {
 			return false
 		case reset:
 			ir.foregroundColor = ir.defaultForegroundColor
+			ir.backgroundColor = nil
+			return false
+		case backgroundReset:
 			ir.backgroundColor = nil
 			return false
 		case bold, italic, underline, overline:

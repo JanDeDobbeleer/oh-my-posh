@@ -245,6 +245,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://iavael.name/"><img src="https://avatars.githubusercontent.com/u/905853?v=4?s=100" width="100px;" alt="Iavael"/><br /><sub><b>Iavael</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=iavael" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Kushal-Chandar"><img src="https://avatars.githubusercontent.com/u/83660514?v=4?s=100" width="100px;" alt="Kushal-Chandar"/><br /><sub><b>Kushal-Chandar</b></sub></a><br /><a href="#design-Kushal-Chandar" title="Design">🎨</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.project-miller.com/"><img src="https://avatars.githubusercontent.com/u/2429638?v=4?s=100" width="100px;" alt="Matthew Miller"/><br /><sub><b>Matthew Miller</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=BigBear0812" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

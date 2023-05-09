@@ -1679,6 +1679,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "BigBear0812",
+      "name": "Matthew Miller",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2429638?v=4",
+      "profile": "http://www.project-miller.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

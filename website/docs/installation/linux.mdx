@@ -35,31 +35,17 @@ To display all icons, we recommend the use of a [Nerd Font][fonts].
 </TabItem>
 <TabItem value="manual">
 
-Oh My Posh can also be installed manually by downloading the release.
-Depending on your distro, this may or may not work (please refer to the homebrew installation
-in case it doesn't work).
-
-**Download Oh My Posh**
-
-:::caution
-The below commands assume the processor architecture is `amd64` while we have support for `arm` and `arm64` as well.
-Make sure you validate your architecture and adjust `posh-linux-<ARCH>` accordingly. If you don't know your
-processor architecture, you can display it using `uname -m`.
-:::
+Install the latest version for your system by running the following command:
 
 ```bash
-sudo wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh
-sudo chmod +x /usr/local/bin/oh-my-posh
+curl -s https://ohmyposh.dev/install.sh | bash -s
 ```
 
-**Download the [themes][themes]**
+By default the script will install to `/usr/local/bin` or the existing Oh My Posh executable's installation folder.
+If you want to install to a different location you can specify it using the `-d` flag:
 
 ```bash
-mkdir ~/.poshthemes
-wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip -O ~/.poshthemes/themes.zip
-unzip ~/.poshthemes/themes.zip -d ~/.poshthemes
-chmod u+rw ~/.poshthemes/*.omp.*
-rm ~/.poshthemes/themes.zip
+curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin
 ```
 
 </TabItem>

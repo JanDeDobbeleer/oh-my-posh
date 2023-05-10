@@ -32,21 +32,21 @@ jobs:
                     "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-amd64.exe",
                     "languages":["en"],
                     "architectures":["X64"],
-                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=winstore",
+                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=ws",
                     "isSilentInstall":false
                   },
                   {
                     "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-arm64.exe",
                     "languages":["en"],
                     "architectures":["Arm64"],
-                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=winstore",
+                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=ws",
                     "isSilentInstall":false
                   },
                   {
                     "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ github.event.inputs.version }}/install-386.exe",
                     "languages":["en"],
                     "architectures":["X86"],
-                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=winstore",
+                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=ws",
                     "isSilentInstall":false
                   }
               ]

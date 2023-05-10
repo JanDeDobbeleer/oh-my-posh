@@ -28,7 +28,7 @@ func TestCanUpgrade(t *testing.T) {
 		{Case: "Outdated Darwin", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.DARWIN},
 		{Case: "Cached", Cache: true},
 		{Case: "Error", Error: fmt.Errorf("error")},
-		{Case: "Windows Store", Installer: "winstore"},
+		{Case: "Windows Store", Installer: "ws"},
 	}
 
 	for _, tc := range cases {

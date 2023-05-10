@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"io"
 	"path"
-	"runtime"
 	"strings"
 )
 
@@ -38,10 +37,10 @@ func InstallZIP(data []byte) (err error) {
 			continue
 		}
 
-		if _, ok := fonts[fontData.Name]; !ok {
+		if _, found := fonts[fontData.Name]; !found {
 			fonts[fontData.Name] = fontData
 		} else {
-			// Prefer OTF over TTF; otherwise prefer the first font we found.
+			// prefer OTF over TTF; otherwise prefer the first font we find
 			first := strings.ToLower(path.Ext(fonts[fontData.Name].FileName))
 			second := strings.ToLower(path.Ext(fontData.FileName))
 			if first != second && second == ".otf" {
@@ -51,25 +50,10 @@ func InstallZIP(data []byte) (err error) {
 	}
 
 	for _, font := range fonts {
-		if !shouldInstall(font.Name) {
-			continue
-		}
-
-		// print("Installing %s", font.Name)
 		if err = install(font); err != nil {
 			return err
 		}
 	}
 
 	return nil
-}
-
-func shouldInstall(name string) bool {
-	name = strings.ToLower(name)
-	switch runtime.GOOS {
-	case "windows":
-		return strings.Contains(name, "windows compatible")
-	default:
-		return !strings.Contains(name, "windows compatible")
-	}
 }

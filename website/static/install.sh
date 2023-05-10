@@ -55,7 +55,7 @@ set_install_directory() {
         posh_dir=$(command -v oh-my-posh)
         real_dir=$(realpath $posh_dir)
         install_dir=$(dirname $real_dir)
-        printf "Oh My Posh is already installed, updating existing installation in:\n"
+        printf "ℹ️  Oh My Posh is already installed, updating existing installation in:\n"
         printf "  ${install_dir}\n"
     else
         install_dir="/usr/local/bin"
@@ -121,7 +121,7 @@ install() {
     printf "🚀 Installation complete.\n\nYou can follow the instructions at https://ohmyposh.dev/docs/installation/prompt\n"
     printf "to setup your shell to use oh-my-posh.\n\n"
     printf "If you want to use a built-in theme, you can find them in the ${theme_dir} directory:\n"
-    printf "  oh-my-posh init {shell} --config theme ${theme_dir}/{theme}.omp.json\n\n"
+    printf "  oh-my-posh init {shell} --config ${theme_dir}/{theme}.omp.json\n\n"
 }
 
 detect_arch() {

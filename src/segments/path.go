@@ -145,7 +145,7 @@ func (pt *Path) setStyle() {
 	if len(pt.relative) == 0 {
 		pt.Path = pt.root
 		if strings.HasSuffix(pt.Path, ":") {
-			pt.Path += pt.env.PathSeparator()
+			pt.Path += pt.getFolderSeparator()
 		}
 		return
 	}

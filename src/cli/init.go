@@ -68,6 +68,7 @@ func runInit(shellName string) {
 	shell.Transient = cfg.TransientPrompt != nil
 	shell.ErrorLine = cfg.ErrorLine != nil || cfg.ValidLine != nil
 	shell.Tooltips = len(cfg.Tooltips) > 0
+	shell.ShellIntegration = cfg.ShellIntegration
 	for i, block := range cfg.Blocks {
 		// only fetch cursor position when relevant
 		if i == 0 && block.Newline {

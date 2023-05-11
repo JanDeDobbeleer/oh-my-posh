@@ -22,6 +22,7 @@ var (
 	command      string
 	shellVersion string
 	plain        bool
+	noExitCode   bool
 )
 
 // printCmd represents the prompt command
@@ -60,6 +61,7 @@ var printCmd = &cobra.Command{
 			Plain:         plain,
 			Primary:       args[0] == "primary",
 			Cleared:       cleared,
+			NoExitCode:    noExitCode,
 		}
 
 		eng := engine.New(flags)
@@ -101,5 +103,6 @@ func init() { //nolint:gochecknoinits
 	printCmd.Flags().BoolVarP(&plain, "plain", "p", false, "plain text output (no ANSI)")
 	printCmd.Flags().BoolVar(&cleared, "cleared", false, "do we have a clear terminal or not")
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
+	printCmd.Flags().BoolVar(&noExitCode, "no-exit-code", false, "no valid exit code (cancelled or no command yet)")
 	RootCmd.AddCommand(printCmd)
 }

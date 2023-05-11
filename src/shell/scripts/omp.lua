@@ -38,6 +38,7 @@ local endedit_time = 0
 local last_duration = 0
 local tooltips_enabled = ::TOOLTIPS::
 local rprompt_enabled = ::RPROMPT::
+local no_exit_code = true
 
 local cached_prompt = {}
 -- Fields in cached_prompt:
@@ -146,12 +147,19 @@ local function error_level_option()
     return ""
 end
 
+local function no_exit_code_option()
+    if no_exit_code then
+        return "--no-exit-code"
+    end
+    return ""
+end
+
 local function get_posh_prompt(rprompt)
     local prompt = "primary"
     if rprompt then
         prompt = "right"
     end
-    local prompt_exe = string.format('%s print %s --shell=cmd --config=%s %s %s', omp_exe(), prompt, omp_config(), execution_time_option(), error_level_option(), rprompt)
+    local prompt_exe = string.format('%s print %s --shell=cmd --config=%s %s %s %s', omp_exe(), prompt, omp_config(), execution_time_option(), error_level_option(), no_exit_code_option())
     return run_posh_command(prompt_exe)
 end
 
@@ -186,6 +194,17 @@ local function async_collect_posh_prompts()
     if rprompt_enabled then
         display_cached_prompt() -- Show left side; don't wait for right side.
         cached_prompt.right = get_posh_prompt(true)
+    end
+end
+
+local function command_executed_mark(input)
+    if string.gsub(input, "^%s*(.-)%s*$", "%1") ~= "" then
+        no_exit_code = false
+    else
+        no_exit_code = true
+    end
+    if "::FTCS_MARKS::" == "true" then
+        clink.print("\x1b]133;C\007", NONL)
     end
 end
 
@@ -245,7 +264,7 @@ function p:rightfilter(prompt)
     return (cached_prompt.tooltip or cached_prompt.right), false
 end
 function p:transientfilter(prompt)
-    local prompt_exe = string.format('%s print transient --shell=cmd --config=%s %s', omp_exe(), omp_config(), error_level_option())
+    local prompt_exe = string.format('%s print transient --shell=cmd --config=%s %s %s', omp_exe(), omp_config(), error_level_option(), no_exit_code_option())
     prompt = run_posh_command(prompt_exe)
     if prompt == "" then
         prompt = nil
@@ -266,6 +285,7 @@ end
 
 local function builtin_modules_onendedit(input)
     duration_onendedit(input)
+    command_executed_mark(input)
 end
 
 if clink.onbeginedit ~= nil and clink.onendedit ~= nil then

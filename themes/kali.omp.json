@@ -37,10 +37,16 @@
           "type": "path"
         },
         {
+          "type": "git",
           "foreground": "white",
           "style": "plain",
-          "template": "<{{ if .Root }}lightBlue{{ else }}green{{ end }}>-[</>{{ .HEAD }}<{{ if .Root }}lightBlue{{ else }}green{{ end }}>]</>",
-          "type": "git"
+          "template": "<{{ if .Root }}lightBlue{{ else }}green{{ end }}>-[</>{{if .IsBare}}<lightBlue>BARE:</>{{end}}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }}<{{ if .Root }}lightBlue{{ else }}green{{ end }}>] {{ .UpstreamIcon }} </>",
+          "properties": {
+            "fetch_status": true,
+            "fetch_stash_count": true,
+            "fetch_upstream_icon": true,
+            "fetch_bare_info": true
+          }
         }
       ],
       "type": "prompt"

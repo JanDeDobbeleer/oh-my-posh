@@ -1,0 +1,140 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
+      {
+        "alignment": "left",
+        "segments": [
+          {
+            "foreground": "#a7c2f6",
+            "background": "#323a55",
+            "properties": {
+              "folder_icon": " \uf07b ",
+              "style": "full"
+            },
+            "style": "diamond",
+            "leading_diamond": "\u256d\u2500\ue0b6",
+            "trailing_diamond": "\ue0b4",
+            "template": " {{ .Path }} ",
+            "type": "path"
+          },
+          {
+            "background": "#48536f",
+            "background_templates": [
+              "{{ if or (.Working.Changed) (.Staging.Changed) }}#48536f{{ end }}",
+              "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#48536f{{ end }}",
+              "{{ if gt .Ahead 0 }}#48536f{{ end }}",
+              "{{ if gt .Behind 0 }}#48536f{{ end }}"
+            ],
+            "foreground": "#a7c2f6",
+            "trailing_diamond": "\ue0b4 ",
+            "properties": {
+              "branch_icon": "\ue725 ",
+              "fetch_status": true,
+              "fetch_upstream_icon": true
+            },
+            "style": "diamond",
+            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#ef5350> \uf046 {{ .Staging.String }}</>{{ end }} ",
+            "type": "git"
+          },
+          {
+            "type": "root",
+            "style": "diamond",
+            "foreground": "#090c0c",
+            "background": "#a3aed2",
+            "trailing_diamond": "\ue0b4",
+            "leading_diamond": "\ue0b6",
+            "template": " \uf0e7 ",
+            "properties": {
+              "root_icon": "\uf292"
+            }
+          }
+        ],
+        "type": "prompt"
+      },
+      {
+        "alignment": "right",
+        "segments": [
+          {
+            "background": "#394260",
+            "foreground": "#a7c2f6",
+            "leading_diamond": "\ue0b6",
+            "properties": {
+              "fetch_package_manager": true,
+              "npm_icon": " <#cc3a3a>\ue5fa</> ",
+              "yarn_icon": " <#348cba>\uf61a</>"
+            },
+            "style": "diamond",
+            "template": "\ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}",
+            "trailing_diamond": "\ue0b4 ",
+            "type": "node"
+          },
+          {
+            "background": "#394260",
+            "foreground": "#a7c2f6",
+            "leading_diamond": "\ue0b6",
+            "style": "diamond",
+            "template": "\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}",
+            "trailing_diamond": "\ue0b4 ",
+            "type": "python"
+          },
+          {
+            "background": "#394260",
+            "foreground": "#a7c2f6",
+            "leading_diamond": "\ue0b6",
+            "style": "diamond",
+            "template": "\ufcd1 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
+            "trailing_diamond": "\ue0b4 ",
+            "type": "go"
+          },
+          {
+            "background": "#394260",
+            "foreground": "#a7c2f6",
+            "leading_diamond": " \ue0b6",
+            "style": "diamond",
+            "template": "\ue753 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",
+            "trailing_diamond": "\ue0b4 ",
+            "type": "angular"
+          },
+          {
+            "background": "#a7c2f6",
+            "foreground": "#485472",
+            "invert_powerline": true,
+            "leading_diamond": "\ue0b6",
+            "properties": {
+              "time_format": "_2,15:04"
+            },
+            "style": "diamond",
+            "template": "\uf5ef{{ .CurrentDate | date .Format }}",
+            "trailing_diamond": "\ue0b4",
+            "type": "time"
+          }
+        ],
+        "type": "prompt"
+      },
+      {
+        "alignment": "left",
+        "newline": true,
+        "segments": [
+          {
+            "foreground": "#323a55",
+            "style": "plain",
+            "template": "\u2570\u2500",
+            "type": "text"
+          },
+          {
+            "foreground": "#a7c2f6",
+            "foreground_templates": ["{{ if gt .Code 0 }}#ef5350{{ end }}"],
+            "properties": {
+              "always_enabled": true
+            },
+            "style": "plain",
+            "template": "\ue285 ",
+            "type": "exit"
+          }
+        ],
+        "type": "prompt"
+      }
+    ],
+    "version": 2
+  }
+  

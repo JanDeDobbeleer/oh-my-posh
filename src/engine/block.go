@@ -1,11 +1,13 @@
 package engine
 
 import (
+	"strings"
 	"sync"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
@@ -165,7 +167,11 @@ func (b *Block) writeSeparator(final bool) {
 		b.writer.Write(ansi.Transparent, ansi.Background, b.activeSegment.TrailingDiamond)
 		return
 	}
+
 	isPreviousDiamond := b.previousActiveSegment != nil && b.previousActiveSegment.style() == Diamond
+	if isPreviousDiamond {
+		b.adjustTrailingDiamondColorOverrides()
+	}
 	if isPreviousDiamond && isCurrentDiamond && len(b.activeSegment.LeadingDiamond) == 0 {
 		b.writer.Write(ansi.Background, ansi.ParentBackground, b.previousActiveSegment.TrailingDiamond)
 		return
@@ -199,6 +205,50 @@ func (b *Block) writeSeparator(final bool) {
 		return
 	}
 	b.writer.Write(bgColor, b.getPowerlineColor(), symbol)
+}
+
+func (b *Block) adjustTrailingDiamondColorOverrides() {
+	// as we now already adjusted the activeSegment, we need to change the value
+	// of background and foreground to parentBackground and parentForeground
+	// this will still break when using parentBackground and parentForeground as keywords
+	// in a trailing diamond, but let's fix that when it happens as it requires either a rewrite
+	// of the logic for diamonds or storing grandparents as well like one happy family.
+	if b.previousActiveSegment == nil || len(b.previousActiveSegment.TrailingDiamond) == 0 {
+		return
+	}
+
+	if !strings.Contains(b.previousActiveSegment.TrailingDiamond, ansi.Background) && !strings.Contains(b.previousActiveSegment.TrailingDiamond, ansi.Foreground) {
+		return
+	}
+
+	match := regex.FindNamedRegexMatch(ansi.AnchorRegex, b.previousActiveSegment.TrailingDiamond)
+	if len(match) == 0 {
+		return
+	}
+
+	adjustOverride := func(anchor, override string) {
+		newOverride := override
+		switch override {
+		case ansi.Foreground:
+			newOverride = ansi.ParentForeground
+		case ansi.Background:
+			newOverride = ansi.ParentBackground
+		}
+
+		if override == newOverride {
+			return
+		}
+
+		newAnchor := strings.Replace(match[ansi.ANCHOR], override, newOverride, 1)
+		b.previousActiveSegment.TrailingDiamond = strings.Replace(b.previousActiveSegment.TrailingDiamond, anchor, newAnchor, 1)
+	}
+
+	if len(match[ansi.BG]) > 0 {
+		adjustOverride(match[ansi.ANCHOR], match[ansi.BG])
+	}
+	if len(match[ansi.FG]) > 0 {
+		adjustOverride(match[ansi.ANCHOR], match[ansi.FG])
+	}
 }
 
 func (b *Block) getPowerlineColor() string {

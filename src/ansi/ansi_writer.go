@@ -54,7 +54,7 @@ const (
 	// Foreground takes the current segment's foreground color
 	Foreground = "foreground"
 
-	anchorRegex    = `^(?P<ANCHOR><(?P<FG>[^,>]+)?,?(?P<BG>[^>]+)?>)`
+	AnchorRegex    = `^(?P<ANCHOR><(?P<FG>[^,>]+)?,?(?P<BG>[^>]+)?>)`
 	colorise       = "\x1b[%sm"
 	transparent    = "\x1b[0m\x1b[%s;49m\x1b[7m"
 	transparentEnd = "\x1b[27m"
@@ -288,7 +288,7 @@ func (w *Writer) Write(background, foreground, text string) {
 		w.foreground = w.AnsiColors.ToColor("white", false, w.TrueColor)
 	}
 	// validate if we start with a color override
-	match := regex.FindNamedRegexMatch(anchorRegex, text)
+	match := regex.FindNamedRegexMatch(AnchorRegex, text)
 	if len(match) != 0 {
 		colorOverride := true
 		for _, style := range knownStyles {
@@ -320,7 +320,7 @@ func (w *Writer) Write(background, foreground, text string) {
 
 		// color/end overrides first
 		text = string(w.runes[i:])
-		match = regex.FindNamedRegexMatch(anchorRegex, text)
+		match = regex.FindNamedRegexMatch(AnchorRegex, text)
 		if len(match) > 0 {
 			i = w.writeColorOverrides(match, background, i)
 			continue

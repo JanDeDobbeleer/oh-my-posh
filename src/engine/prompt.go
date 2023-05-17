@@ -46,7 +46,7 @@ func (e *Engine) Primary() string {
 		e.write(" ")
 	}
 
-	if e.Config.ShellIntegration {
+	if e.Config.ShellIntegration && e.Config.TransientPrompt == nil {
 		e.write(e.Writer.CommandStart())
 	}
 

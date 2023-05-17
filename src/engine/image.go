@@ -45,6 +45,14 @@ import (
 	"golang.org/x/image/font"
 )
 
+type ConnectionError struct {
+	reason string
+}
+
+func (f *ConnectionError) Error() string {
+	return f.reason
+}
+
 const (
 	red    = "#ED655A"
 	yellow = "#E1C04C"
@@ -150,7 +158,7 @@ func (ir *ImageRenderer) Init(env platform.Environment) error {
 	ir.cleanContent()
 
 	if err := ir.loadFonts(); err != nil {
-		return err
+		return &ConnectionError{reason: err.Error()}
 	}
 
 	ir.defaultForegroundColor = &RGB{255, 255, 255}

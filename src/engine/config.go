@@ -270,8 +270,12 @@ func escapeGlyphs(s string, migrate bool) string {
 	}
 
 	var cp codePoints
+	var err error
 	if migrate {
-		cp = getGlyphCodePoints()
+		cp, err = getGlyphCodePoints()
+		if err != nil {
+			migrate = false
+		}
 	}
 
 	var builder strings.Builder

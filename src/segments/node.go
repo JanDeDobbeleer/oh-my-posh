@@ -55,11 +55,11 @@ func (n *Node) loadContext() {
 		return
 	}
 	if n.language.env.HasFiles("yarn.lock") {
-		n.PackageManagerIcon = n.language.props.GetString(YarnIcon, " \uF61A")
+		n.PackageManagerIcon = n.language.props.GetString(YarnIcon, "\uF61A")
 		return
 	}
 	if n.language.env.HasFiles("package-lock.json") || n.language.env.HasFiles("package.json") {
-		n.PackageManagerIcon = n.language.props.GetString(NPMIcon, " \uE71E")
+		n.PackageManagerIcon = n.language.props.GetString(NPMIcon, "\uE71E")
 	}
 }
 

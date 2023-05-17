@@ -359,7 +359,6 @@ func defaultConfig(env platform.Environment, warning bool) *Config {
 							segments.BranchMaxLength:   25,
 							segments.FetchStatus:       true,
 							segments.FetchUpstreamIcon: true,
-							segments.GithubIcon:        "\uf7a3",
 						},
 						Template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ", //nolint:lll
 					},

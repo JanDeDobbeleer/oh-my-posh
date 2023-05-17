@@ -3131,6 +3131,11 @@
       "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
       "default": true
     },
+    "shell_integration": {
+      "type": "boolean",
+      "title": "FTCS command marks for shell integration",
+      "default": false
+    },
     "pwd": {
       "type": "string",
       "title": "Enable OSC99/7/51",

@@ -20,6 +20,12 @@ const (
 )
 
 func (e *Engine) Primary() string {
+	if e.Config.ShellIntegration {
+		exitCode := e.Env.ErrorCode()
+		e.write(e.Writer.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
+		e.write(e.Writer.PromptStart())
+	}
+
 	// cache a pointer to the color cycle
 	cycle = &e.Config.Cycle
 	for i, block := range e.Config.Blocks {
@@ -38,6 +44,10 @@ func (e *Engine) Primary() string {
 
 	if e.Config.FinalSpace {
 		e.write(" ")
+	}
+
+	if e.Config.ShellIntegration && e.Config.TransientPrompt == nil {
+		e.write(e.Writer.CommandStart())
 	}
 
 	e.pwd()
@@ -139,6 +149,12 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		promptText = err.Error()
 	}
 
+	if promptType == Transient && e.Config.ShellIntegration {
+		exitCode := e.Env.ErrorCode()
+		e.write(e.Writer.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
+		e.write(e.Writer.PromptStart())
+	}
+
 	foreground := prompt.ForegroundTemplates.FirstMatch(nil, e.Env, prompt.Foreground)
 	background := prompt.BackgroundTemplates.FirstMatch(nil, e.Env, prompt.Background)
 	e.Writer.SetColors(background, foreground)
@@ -149,6 +165,10 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		if padText, OK := e.shouldFill(prompt.Filler, length); OK {
 			str += padText
 		}
+	}
+
+	if promptType == Transient && e.Config.ShellIntegration {
+		str += e.Writer.CommandStart()
 	}
 
 	switch e.Env.Shell() {

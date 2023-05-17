@@ -133,6 +133,7 @@ For example, the following is a valid `--config` flag:
 | `terminal_background` | `string`         | [color][colors] - terminal background color, set to your terminal's background color when you notice black elements in Windows Terminal or the Visual Studio Code integrated terminal |
 | `accent_color`        | `string`         | [color][colors] - accent color, used as a fallback when the `accent` [color][accent] is not supported                                                                                 |
 | `var`                 | `map[string]any` | config variables to use in [templates][templates]. Can be any value                                                                                                                   |
+| `shell_integration`   | `boolean`        | enable shell integration using FinalTerm's OSC sequences. Works in bash, cmd (Clink v1.14.25+), fish, powershell and zsh                                                              |
 
 ### JSON Schema Validation
 

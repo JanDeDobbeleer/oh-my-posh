@@ -122,6 +122,7 @@ type Writer struct {
 func (w *Writer) Init(shellName string) {
 	w.hyperlinkState = OTHER
 	w.shell = shellName
+	w.format = "%s"
 	switch w.shell {
 	case shell.BASH:
 		w.format = "\\[%s\\]"
@@ -269,6 +270,22 @@ func (w *Writer) SaveCursorPosition() string {
 
 func (w *Writer) RestoreCursorPosition() string {
 	return w.restoreCursorPosition
+}
+
+func (w *Writer) PromptStart() string {
+	return fmt.Sprintf(w.format, "\x1b]133;A\007")
+}
+
+func (w *Writer) CommandStart() string {
+	return fmt.Sprintf(w.format, "\x1b]133;B\007")
+}
+
+func (w *Writer) CommandFinished(code int, ignore bool) string {
+	if ignore {
+		return fmt.Sprintf(w.format, "\x1b]133;D\007")
+	}
+	mark := fmt.Sprintf("\x1b]133;D;%d\007", code)
+	return fmt.Sprintf(w.format, mark)
 }
 
 func (w *Writer) LineBreak() string {

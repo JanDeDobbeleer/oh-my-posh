@@ -6,7 +6,7 @@ export CONDA_PROMPT_MODIFIER=false
 omp_start_time=""
 
 # start timer on command start
-PS0='${omp_start_time:0:$((omp_start_time="$(_omp_start_timer)",0))}'
+PS0='${omp_start_time:0:$((omp_start_time="$(_omp_start_timer)",0))}$(_omp_ftcs_command_start)'
 # set secondary prompt
 PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION")"
 
@@ -34,6 +34,12 @@ function _omp_start_timer() {
     ::OMP:: get millis
 }
 
+function _omp_ftcs_command_start() {
+    if [ "::FTCS_MARKS::" == "true" ]; then
+        printf "\e]133;C\a"
+    fi
+}
+
 # template function for context loading
 function set_poshcontext() {
     return
@@ -43,14 +49,16 @@ function _omp_hook() {
     local ret=$?
     local omp_stack_count=$((${#DIRSTACK[@]} - 1))
     local omp_elapsed=-1
+    local no_exit_code="true"
     if [[ -n "$omp_start_time" ]]; then
         local omp_now=$(::OMP:: get millis --shell=bash)
         omp_elapsed=$((omp_now-omp_start_time))
         omp_start_time=""
+        no_exit_code="false"
     fi
     set_poshcontext
     _set_posh_cursor_position
-    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" | tr -d '\0')"
+    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-exit-code="$no_exit_code" | tr -d '\0')"
     return $ret
 }
 

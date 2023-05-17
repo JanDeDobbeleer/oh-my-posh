@@ -149,10 +149,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     function Set-TransientPrompt {
         $previousOutputEncoding = [Console]::OutputEncoding
+        $executingCommand = $false
+
         try {
             $parseErrors = $null
             [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
             if ($parseErrors.Count -eq 0) {
+                $executingCommand = $true
                 $script:TransientPrompt = $true
                 [Console]::OutputEncoding = [Text.Encoding]::UTF8
                 [Microsoft.PowerShell.PSConsoleReadLine]::InvokePrompt()
@@ -172,12 +175,18 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             }
             [Console]::OutputEncoding = $previousOutputEncoding
         }
+
+        return $executingCommand
     }
 
     if (("::TRANSIENT::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
         Set-PSReadLineKeyHandler -Key Enter -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock {
-            Set-TransientPrompt
+            $executingCommand = Set-TransientPrompt
             [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+            # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
+            if (("::FTCS_MARKS::" -eq "true") -and $executingCommand) {
+                Write-Host "`e]133;C`a" -NoNewline
+            }
         }
         Set-PSReadLineKeyHandler -Key Ctrl+c -BriefDescription 'OhMyPoshCtrlCKeyHandler' -ScriptBlock {
             $start = $null
@@ -187,6 +196,23 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 Set-TransientPrompt
             }
             [Microsoft.PowerShell.PSConsoleReadLine]::CopyOrCancelLine()
+        }
+    }
+
+    if (("::FTCS_MARKS::" -eq "true") -and ("::TRANSIENT::" -ne "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
+        Set-PSReadLineKeyHandler -Key Enter  -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock {
+            $executingCommand = $false
+            try {
+                $parseErrors = $null
+                [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
+                $executingCommand = $parseErrors.Count -eq 0
+            }
+            finally {}
+            [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+            # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
+            if ($executingCommand) {
+                Write-Host "`e]133;C`a" -NoNewline
+            }
         }
     }
 
@@ -338,8 +364,10 @@ Example:
         # error code should be updated only when a non-empty command is run
         if (($null -eq $lastHistory) -or ($script:LastHistoryId -eq $lastHistory.Id)) {
             $script:ExecutionTime = 0
+            $script:NoExitCode = $true
             return
         }
+        $script:NoExitCode = $false
         $script:LastHistoryId = $lastHistory.Id
         $script:ExecutionTime = ($lastHistory.EndExecutionTime - $lastHistory.StartExecutionTime).TotalMilliseconds
         if ($script:OriginalLastExecutionStatus) {
@@ -392,7 +420,7 @@ Example:
         $env:POSH_CURSOR_LINE = $Host.UI.RawUI.CursorPosition.Y + 1
         $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1
 
-        $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", $script:PromptType, "--error=$script:ErrorCode", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName"))
+        $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", $script:PromptType, "--error=$script:ErrorCode", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName", "--no-exit-code=$script:NoExitCode"))
         # make sure PSReadLine knows if we have a multiline prompt
         Set-PSReadLineOption -ExtraPromptLineCount (($standardOut | Measure-Object -Line).Lines - 1)
         # the output can be multiline, joining these ensures proper rendering by adding line breaks with `n

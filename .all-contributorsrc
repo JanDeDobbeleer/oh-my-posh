@@ -1706,6 +1706,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "krzysdz",
+      "name": "krzysdz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/12915102?v=4",
+      "profile": "https://github.com/krzysdz",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

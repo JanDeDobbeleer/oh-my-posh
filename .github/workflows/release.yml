@@ -50,7 +50,7 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag ${{ needs.changelog.outputs.tag }}
       - name: Install cosign 🔑
-        uses: sigstore/cosign-installer@204a51a57a74d190b284a0ce69b44bc37201f343
+        uses: sigstore/cosign-installer@03d0fecf172873164a163bbc64bed0f3bf114ed7
         with:
           cosign-release: 'v1.4.0'
       - name: Private Key 🔐

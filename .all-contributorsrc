@@ -1697,6 +1697,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "alexvy86",
+      "name": "Alex Villarreal",
+      "avatar_url": "https://avatars.githubusercontent.com/u/716334?v=4",
+      "profile": "https://alex-v.blog/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

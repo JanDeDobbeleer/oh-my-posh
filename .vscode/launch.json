@@ -12,8 +12,7 @@
         "print",
         "primary",
         "--shell=pwsh",
-        "--terminal-width=200",
-        "--config=/Users/jan/.test.omp.json"
+        "--terminal-width=200"
       ]
     },
     {

@@ -1,0 +1,33 @@
+name: Dependabot auto-merge
+on:
+    pull_request:
+        types: [opened, reopened]
+
+permissions:
+    contents: write
+    pull-requests: write
+
+jobs:
+    dependabot:
+        runs-on: ubuntu-latest
+        if: ${{ github.actor == 'dependabot[bot]' }}
+        steps:
+            - name: Dependabot metadata
+              id: metadata
+              uses: dependabot/fetch-metadata@efb5c8deb113433243b6b08de1aa879d5aa01cf7
+              with:
+                  github-token: "${{ secrets.GITHUB_TOKEN }}"
+            - name: install GH CLI
+              uses: sersoft-gmbh/setup-gh-cli-action@4022189b02796671e17d07f27c496713d09cb3a7
+              with:
+                  version: stable
+            - name: Approve a PR
+              run: gh pr review --approve "$PR_URL"
+              env:
+                  PR_URL: ${{github.event.pull_request.html_url}}
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+            - name: Enable auto-merge for Dependabot PRs
+              run: gh pr merge --auto --rebase "$PR_URL"
+              env:
+                  PR_URL: ${{github.event.pull_request.html_url}}
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

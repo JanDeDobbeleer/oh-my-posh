@@ -1717,6 +1717,17 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "BasLijten",
+      "name": "Bas Lijten",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11842067?v=4",
+      "profile": "http://blog.baslijten.com",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

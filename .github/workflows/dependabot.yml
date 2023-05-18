@@ -21,11 +21,6 @@ jobs:
               uses: sersoft-gmbh/setup-gh-cli-action@4022189b02796671e17d07f27c496713d09cb3a7
               with:
                   version: stable
-            - name: Approve a PR
-              run: gh pr review --approve "$PR_URL"
-              env:
-                  PR_URL: ${{github.event.pull_request.html_url}}
-                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
             - name: Enable auto-merge for Dependabot PRs
               run: gh pr merge --auto --rebase "$PR_URL"
               env:

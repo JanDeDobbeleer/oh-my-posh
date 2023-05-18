@@ -54,8 +54,6 @@ const (
 
 	BFDayIcon properties.Property = "day_icon"
 
-	BFCacheTimeout properties.Property = "cache_timeout"
-
 	BFStatusPlanning     string = "Planning"
 	BFStatusBrewing      string = "Brewing"
 	BFStatusFermenting   string = "Fermenting"
@@ -247,7 +245,7 @@ func (bf *Brewfather) getResult() (*Batch, error) {
 	batchReadingsURL := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s/readings", batchID)
 
 	httpTimeout := bf.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
-	cacheTimeout := bf.props.GetInt(BFCacheTimeout, 5)
+	cacheTimeout := bf.props.GetInt(properties.CacheTimeout, 5)
 
 	if cacheTimeout > 0 {
 		if data, err := getFromCache(batchURL); err == nil {

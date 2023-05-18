@@ -1,0 +1,46 @@
+---
+id: upgrade
+title: Upgrade notice
+sidebar_label: Upgrade
+---
+
+## What
+
+Displays when there's an update available for Oh My Posh.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "upgrade",
+    style: "plain",
+    foreground: "#111111",
+    background: "#FFD664",
+  }}
+/>
+
+## Properties
+
+| Name            | Type  | Description                                                                                   |
+| --------------- | ----- | --------------------------------------------------------------------------------------------- |
+| `cache_timeout` | `int` | in minutes - How long to wait before checking for a new version. Default is 10080 (one week). |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ \uf019
+```
+
+:::
+
+### Properties
+
+| Name       | Type     | Description            |
+| ---------- | -------- | ---------------------- |
+| `.Version` | `string` | the new version number |
+
+[templates]: /docs/configuration/templates

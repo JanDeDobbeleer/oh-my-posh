@@ -2,6 +2,19 @@
 
 install_dir=""
 
+error() {
+    printf "\x1b[31m$1\e[0m\n"
+    exit 1
+}
+
+info() {
+    printf "$1\n"
+}
+
+warn() {
+    printf "⚠️  \x1b[33m$1\e[0m\n"
+}
+
 help() {
     # Display Help
     echo "Installs Oh My Posh"
@@ -30,8 +43,7 @@ SUPPORTED_TARGETS="linux-amd64 linux-arm linux-arm64 darwin-amd64 darwin-arm64"
 
 validate_dependency() {
     if ! command -v $1 >/dev/null; then
-        printf "$1 is required to install Oh My Posh. Please install $1 and try again.\n"
-        exit 1
+        error "$1 is required to install Oh My Posh. Please install $1 and try again.\n"
     fi
 }
 
@@ -55,8 +67,8 @@ set_install_directory() {
         posh_dir=$(command -v oh-my-posh)
         real_dir=$(realpath $posh_dir)
         install_dir=$(dirname $real_dir)
-        printf "ℹ️  Oh My Posh is already installed, updating existing installation in:\n"
-        printf "  ${install_dir}\n"
+        info "Oh My Posh is already installed, updating existing installation in:"
+        info "  ${install_dir}"
     else
         install_dir="/usr/local/bin"
     fi
@@ -64,15 +76,27 @@ set_install_directory() {
 
 validate_install_directory() {
     if [ ! -d "$install_dir" ]; then
-        printf "Directory ${install_dir} does not exist, set a different directory and try again."
-        exit 1
+        error "Directory ${install_dir} does not exist, set a different directory and try again."
     fi
 
     # check if we can write to the install directory
     if [ ! -w $install_dir ]; then
-        printf "Cannot write to ${install_dir}. Please run the script with sudo and try again:\n"
-        printf "  sudo ./install.sh"
-        exit 1
+        error "Cannot write to ${install_dir}. Please run the script with sudo and try again:\n  sudo ./install.sh"
+    fi
+
+    # check if the directory is in the PATH
+    good=$(
+        IFS=:
+        for path in $PATH; do
+        if [ "${path%/}" = "${install_dir}" ]; then
+            printf 1
+            break
+        fi
+        done
+    )
+
+    if [ "${good}" != "1" ]; then
+        warn "Installation directory ${install_dir} is not in your \$PATH"
     fi
 }
 
@@ -92,16 +116,15 @@ install() {
     )
 
     if [ "${good}" != "1" ]; then
-        printf "${arch} builds for ${platform} are not available for Oh My Posh"
-        exit 1
+        error "${arch} builds for ${platform} are not available for Oh My Posh"
     fi
 
-    printf "\nℹ️  Installing oh-my-posh for ${target} in ${install_dir}\n"
+    info "\nℹ️  Installing oh-my-posh for ${target} in ${install_dir}"
 
     executable=${install_dir}/oh-my-posh
     url=https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-${target}
 
-    printf "⬇️  Downloading oh-my-posh from ${url}\n"
+    info "⬇️  Downloading oh-my-posh from ${url}"
 
     curl -s -L https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-${target} -o $executable
     chmod +x $executable
@@ -109,7 +132,7 @@ install() {
     # install themes in cache
     cache_dir=$(oh-my-posh cache path)
 
-    printf "🎨 Installing oh-my-posh themes in ${cache_dir}/themes\n\n"
+    info "🎨 Installing oh-my-posh themes in ${cache_dir}/themes\n"
 
     theme_dir="${cache_dir}/themes"
     mkdir -p $theme_dir
@@ -118,10 +141,10 @@ install() {
     chmod u+rw ${theme_dir}/*.omp.*
     rm ${cache_dir}/themes.zip
 
-    printf "🚀 Installation complete.\n\nYou can follow the instructions at https://ohmyposh.dev/docs/installation/prompt\n"
-    printf "to setup your shell to use oh-my-posh.\n\n"
-    printf "If you want to use a built-in theme, you can find them in the ${theme_dir} directory:\n"
-    printf "  oh-my-posh init {shell} --config ${theme_dir}/{theme}.omp.json\n\n"
+    info "🚀 Installation complete.\n\nYou can follow the instructions at https://ohmyposh.dev/docs/installation/prompt"
+    info "to setup your shell to use oh-my-posh.\n"
+    info "If you want to use a built-in theme, you can find them in the ${theme_dir} directory:"
+    info "  oh-my-posh init {shell} --config ${theme_dir}/{theme}.omp.json\n"
 }
 
 detect_arch() {

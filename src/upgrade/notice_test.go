@@ -44,7 +44,7 @@ func TestCanUpgrade(t *testing.T) {
 		env.On("Getenv", "POSH_INSTALLER").Return(tc.Installer)
 
 		json := fmt.Sprintf(`{"tag_name":"%s"}`, tc.LatestVersion)
-		env.On("HTTPRequest", releaseURL).Return([]byte(json), tc.Error)
+		env.On("HTTPRequest", RELEASEURL).Return([]byte(json), tc.Error)
 		// ignore the notice
 		_, canUpgrade := Notice(env)
 		assert.Equal(t, tc.Expected, canUpgrade, tc.Case)

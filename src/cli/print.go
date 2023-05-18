@@ -62,6 +62,7 @@ var printCmd = &cobra.Command{
 			Primary:       args[0] == "primary",
 			Cleared:       cleared,
 			NoExitCode:    noExitCode,
+			Version:       cliVersion,
 		}
 
 		eng := engine.New(flags)

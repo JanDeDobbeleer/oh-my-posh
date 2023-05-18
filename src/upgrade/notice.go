@@ -29,7 +29,7 @@ type release struct {
 }
 
 const (
-	releaseURL    = "https://api.github.com/repos/jandedobbeleer/oh-my-posh/releases/latest"
+	RELEASEURL    = "https://api.github.com/repos/jandedobbeleer/oh-my-posh/releases/latest"
 	upgradeNotice = `
 A new release of Oh My Posh is available: %s → %s
 %s
@@ -42,8 +42,8 @@ https://ohmyposh.dev/docs/installation/windows#update`
 	CACHEKEY = "upgrade_check"
 )
 
-func getLatestVersion(env platform.Environment) (string, error) {
-	body, err := env.HTTPRequest(releaseURL, nil, 1000)
+func Latest(env platform.Environment) (string, error) {
+	body, err := env.HTTPRequest(RELEASEURL, nil, 1000)
 	if err != nil {
 		return "", err
 	}
@@ -67,7 +67,7 @@ func Notice(env platform.Environment) (string, bool) {
 		return "", false
 	}
 
-	latest, err := getLatestVersion(env)
+	latest, err := Latest(env)
 	if err != nil {
 		return "", false
 	}

@@ -119,6 +119,7 @@ module.exports = {
         "segments/time",
         "segments/ui5tooling",
         "segments/unity",
+        "segments/upgrade",
         "segments/vala",
         "segments/wakatime",
         "segments/withings",

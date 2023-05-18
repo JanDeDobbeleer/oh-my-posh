@@ -77,7 +77,7 @@ func TestGitversion(t *testing.T) {
 		env.On("Pwd").Return("test-dir")
 		env.On("Cache").Return(cache)
 		cache.On("Get", "test-dir").Return(tc.CacheResponse, len(tc.CacheResponse) != 0)
-		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything).Return(tc.Response, true)
+		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
 
 		env.On("RunCommand", "gitversion", []string{"-output", "json"}).Return(tc.Response, tc.CommandError)
 

@@ -15,8 +15,8 @@ You can use the following template as a guide.
 package segments
 
 import (
-  "oh-my-posh/platform"
-  "oh-my-posh/properties"
+  "github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
 type New struct {
@@ -31,15 +31,15 @@ const (
     NewProp properties.Property = "newprop"
 )
 
-func (n *new) Enabled() bool {
+func (n *New) Enabled() bool {
     return true
 }
 
-func (n *new) Template() string {
+func (n *New) Template() string {
     return " {{.Text}} world "
 }
 
-func (n *new) Init(props properties.Properties, env platform.Environment) {
+func (n *New) Init(props properties.Properties, env platform.Environment) {
     n.props = props
     n.env = env
 

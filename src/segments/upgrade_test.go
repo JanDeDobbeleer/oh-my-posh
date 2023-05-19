@@ -21,7 +21,7 @@ func TestUpgrade(t *testing.T) {
 		HasCache        bool
 		CurrentVersion  string
 		LatestVersion   string
-		CacheVersion    string
+		CachedVersion   string
 		Error           error
 	}{
 		{
@@ -36,7 +36,7 @@ func TestUpgrade(t *testing.T) {
 			LatestVersion:  "1.0.1",
 		},
 		{
-			Case:  "Version error",
+			Case:  "Error on update check",
 			Error: errors.New("error"),
 		},
 		{
@@ -44,7 +44,7 @@ func TestUpgrade(t *testing.T) {
 			HasCache:        true,
 			CurrentVersion:  "1.0.2",
 			LatestVersion:   "1.0.3",
-			CacheVersion:    "1.0.2",
+			CachedVersion:   "1.0.2",
 			ExpectedEnabled: true,
 		},
 		{
@@ -52,14 +52,14 @@ func TestUpgrade(t *testing.T) {
 			HasCache:       true,
 			CurrentVersion: "1.0.2",
 			LatestVersion:  "1.0.2",
-			CacheVersion:   "1.0.1",
+			CachedVersion:  "1.0.1",
 		},
 		{
 			Case:            "On previous, version changed",
 			HasCache:        true,
 			CurrentVersion:  "1.0.2",
 			LatestVersion:   "1.0.3",
-			CacheVersion:    "1.0.1",
+			CachedVersion:   "1.0.1",
 			ExpectedEnabled: true,
 		},
 	}
@@ -69,10 +69,10 @@ func TestUpgrade(t *testing.T) {
 		cache := &mock.MockedCache{}
 
 		env.On("Cache").Return(cache)
-		if len(tc.CacheVersion) == 0 {
-			tc.CacheVersion = tc.CurrentVersion
+		if len(tc.CachedVersion) == 0 {
+			tc.CachedVersion = tc.CurrentVersion
 		}
-		cacheData := fmt.Sprintf(`{"latest":"v%s", "current": "v%s"}`, tc.LatestVersion, tc.CacheVersion)
+		cacheData := fmt.Sprintf(`{"latest":"%s", "current": "%s"}`, tc.LatestVersion, tc.CachedVersion)
 		cache.On("Get", UPGRADECACHEKEY).Return(cacheData, tc.HasCache)
 		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
 

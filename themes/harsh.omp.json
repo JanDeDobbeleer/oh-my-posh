@@ -1,0 +1,104 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "final_space": true,
+  "version": 2,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "exit",
+          "style": "powerline",
+          "foreground": "#ffffff",
+          "background": "#7D7E75",
+          "background_templates": ["{{ if gt .Code 0 }}#e91e63{{ end }}"],
+          "powerline_symbol": "\ue0b0",
+          "template": "<#193549></>  ",
+          "properties": {
+            "always_enabled": true
+          }
+        },
+        {
+          "type": "shell",
+          "style": "powerline",
+          "powerline_symbol": "\uE0B0",
+          "foreground": "#000000",
+          "background": "#f1c40f",
+          "template": "{{ .Name }}"
+        },
+        {
+          "type": "root",
+          "style": "powerline",
+          "background": "#747c92",
+          "foreground": "#fffb38",
+          "properties": {
+            "root_icon": "\uf292"
+          },
+          "template": "<parentBackground>\ue0b0</> \uf0e7 "
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#ffffff",
+          "background": "#401bf7",
+          "properties": {
+            "style": "folder"
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "background": "#f5d5ed",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#deba6f{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#747c92{{ end }}",
+            "{{ if gt .Ahead 0 }}#9cec5b{{ end }}",
+            "{{ if gt .Behind 0 }}#9cec5b{{ end }}"
+          ],
+          "foreground": "#011627",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "branch_icon": "\ue725 ",
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "template": " {{ .HEAD }} {{ if .Working.Changed }}{{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#533a71> \uf046 {{ .Staging.String }}</>{{ end }} "
+        }
+      ]
+    },
+    {
+      "type": "rprompt",
+      "segments": [
+        {
+          "type": "node",
+          "style": "powerline",
+          "background": "#303030",
+          "foreground": "#3C873A",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "fetch_package_manager": true,
+            "npm_icon": " <#cc3a3a>\ue5fa</> ",
+            "yarn_icon": " <#348cba>\uf61a</>"
+          },
+          "template": "\uf64f {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
+        },
+        {
+          "type": "spotify",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "foreground": "#ffffff",
+          "background": "#1BD760",
+          "template": "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Artist }} - {{ .Track }}{{ end }}",
+          "properties": {
+            "playing_icon": " ",
+            "paused_icon": " ",
+            "stopped_icon": " "
+          }
+        }
+      ]
+    }
+  ]
+}

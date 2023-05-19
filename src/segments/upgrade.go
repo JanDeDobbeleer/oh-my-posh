@@ -2,8 +2,6 @@ package segments
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -34,53 +32,59 @@ func (u *Upgrade) Init(props properties.Properties, env platform.Environment) {
 }
 
 func (u *Upgrade) Enabled() bool {
-	version := fmt.Sprintf("v%s", u.env.Flags().Version)
-
-	if shouldDisplay, err := u.ShouldDisplay(version); err == nil {
-		return shouldDisplay
+	current := u.env.Flags().Version
+	latest := u.cachedLatest(current)
+	if len(latest) == 0 {
+		latest = u.checkUpdate(current)
 	}
 
-	latest, err := upgrade.Latest(u.env)
-	if err != nil {
+	if len(latest) == 0 || current == latest {
 		return false
 	}
-
-	if latest == version {
-		return false
-	}
-
-	cacheData := &UpgradeCache{
-		Latest:  latest,
-		Current: version,
-	}
-	cacheJSON, err := json.Marshal(cacheData)
-	if err != nil {
-		return false
-	}
-
-	oneWeek := 10080
-	cacheTimeout := u.props.GetInt(properties.CacheTimeout, oneWeek)
-	u.env.Cache().Set(UPGRADECACHEKEY, string(cacheJSON), cacheTimeout)
 
 	u.Version = latest
 	return true
 }
 
-func (u *Upgrade) ShouldDisplay(version string) (bool, error) {
-	data, OK := u.env.Cache().Get(UPGRADECACHEKEY)
-	if !OK {
-		return false, errors.New("no cache")
+func (u *Upgrade) cachedLatest(current string) string {
+	data, ok := u.env.Cache().Get(UPGRADECACHEKEY)
+	if !ok {
+		return "" // no cache
 	}
 
 	var cacheJSON UpgradeCache
 	err := json.Unmarshal([]byte(data), &cacheJSON)
 	if err != nil {
-		return false, errors.New("invalid cache data")
+		return "" // invalid cache data
 	}
 
-	if version == cacheJSON.Current {
-		return cacheJSON.Current != cacheJSON.Latest, nil
+	if current != cacheJSON.Current {
+		return "" // version changed, run the check again
 	}
 
-	return false, errors.New("version changed, run the check again")
+	return cacheJSON.Latest
+}
+
+func (u *Upgrade) checkUpdate(current string) string {
+	tag, err := upgrade.Latest(u.env)
+	if err != nil {
+		return ""
+	}
+
+	latest := tag[1:]
+	cacheData := &UpgradeCache{
+		Latest:  latest,
+		Current: current,
+	}
+	cacheJSON, err := json.Marshal(cacheData)
+	if err != nil {
+		return ""
+	}
+
+	oneWeek := 10080
+	cacheTimeout := u.props.GetInt(properties.CacheTimeout, oneWeek)
+	// update cache
+	u.env.Cache().Set(UPGRADECACHEKEY, string(cacheJSON), cacheTimeout)
+
+	return latest
 }

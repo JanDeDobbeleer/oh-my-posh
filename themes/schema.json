@@ -432,7 +432,7 @@
           },
           "then": {
             "title": "Project Segment",
-            "description": "https://ohmyposh.dev/docs/project"
+            "description": "https://ohmyposh.dev/docs/segments/project"
           }
         },
         {
@@ -445,7 +445,7 @@
           },
           "then": {
             "title": "NPM Segment",
-            "description": "https://ohmyposh.dev/docs/npm",
+            "description": "https://ohmyposh.dev/docs/segments/npm",
             "properties": {
               "properties": {
                 "properties": {
@@ -529,14 +529,14 @@
           },
           "then": {
             "title": "Azure Segment",
-            "description": "https://ohmyposh.dev/docs/az",
+            "description": "https://ohmyposh.dev/docs/segments/az",
             "properties": {
               "properties": {
                 "properties": {
                   "source": {
                     "type": "string",
                     "title": "Source",
-                    "description": "https://ohmyposh.dev/docs/az#properties",
+                    "description": "https://ohmyposh.dev/docs/segments/az#properties",
                     "default": "first_match",
                     "enum": [
                       "first_match",
@@ -2567,7 +2567,7 @@
           },
           "then": {
             "title": "Brewfather Batch Status",
-            "description": "https://ohmyposh.dev/docs/brewfather",
+            "description": "https://ohmyposh.dev/docs/segments/brewfather",
             "properties": {
               "properties": {
                 "properties": {
@@ -2804,12 +2804,34 @@
           },
           "then": {
             "title": "Unity Segment",
-            "description": "https://ohmyposh.dev/docs/unity",
+            "description": "https://ohmyposh.dev/docs/segments/unity",
             "properties": {
               "properties": {
                 "properties": {
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "upgrade"
+              }
+            }
+          },
+          "then": {
+            "title": "Upgrade Segment",
+            "description": "https://ohmyposh.dev/docs/segments/upgrade",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "cache_timeout": {
+                    "$ref": "#/definitions/cache_timeout"
                   }
                 }
               }
@@ -3116,7 +3138,7 @@
           },
           "then": {
             "title": "Mercurial Segment",
-            "description": "https://ohmyposh.dev/docs/mercurial",
+            "description": "https://ohmyposh.dev/docs/segments/mercurial",
             "properties": {
               "properties": {
                 "properties": {

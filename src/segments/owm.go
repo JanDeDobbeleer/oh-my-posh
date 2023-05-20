@@ -28,6 +28,10 @@ const (
 	Location properties.Property = "location"
 	// Units openweathermap units
 	Units properties.Property = "units"
+	// Latitude for the location used in place of location
+	Latitude properties.Property = "latitude"
+	// Longitude for the location used in place of location
+	Longitude properties.Property = "longitude"
 	// CacheKeyResponse key used when caching the response
 	CacheKeyResponse string = "owm_response"
 	// CacheKeyURL key used when caching the url responsible for the response
@@ -46,6 +50,11 @@ type temperature struct {
 type owmDataResponse struct {
 	Data        []weather `json:"weather"`
 	temperature `json:"main"`
+}
+
+type geoLocation struct {
+	Lat float64 `json:"lat"`
+	Lon float64 `json:"lon"`
 }
 
 func (d *Owm) Enabled() bool {
@@ -76,9 +85,28 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 
 	apikey := d.props.GetString(APIKey, ".")
 	location := d.props.GetString(Location, "De Bilt,NL")
+	latitude := d.props.GetFloat64(Latitude, 91)
+	longitude := d.props.GetFloat64(Longitude, 181)
 	units := d.props.GetString(Units, "standard")
 	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
-	d.URL = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?q=%s&units=%s&appid=%s", location, units, apikey)
+
+	if latitude > 90 || latitude < -90 || longitude > 180 && longitude < -180 {
+		var geoResponse []geoLocation
+		geocodingURL := fmt.Sprintf("http://api.openweathermap.org/geo/1.0/direct?q=%s&limit=1&appid=%s", location, apikey)
+		body, err := d.env.HTTPRequest(geocodingURL, nil, httpTimeout)
+		if err != nil {
+			return new(owmDataResponse), err
+		}
+		err = json.Unmarshal(body, &geoResponse)
+		if err != nil {
+			return new(owmDataResponse), err
+		}
+
+		latitude = geoResponse[0].Lat
+		longitude = geoResponse[0].Lon
+	}
+
+	d.URL = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?lat=%v&lon=%v&units=%s&appid=%s", latitude, longitude, units, apikey)
 
 	body, err := d.env.HTTPRequest(d.URL, nil, httpTimeout)
 	if err != nil {

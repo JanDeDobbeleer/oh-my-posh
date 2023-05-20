@@ -12,56 +12,107 @@ import (
 )
 
 const (
-	OWMAPIURL = "http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key"
+	OWMGEOAPIURL     = "http://api.openweathermap.org/geo/1.0/direct?q=AMSTERDAM,NL&limit=1&appid=key"
+	OWMWEATHERAPIURL = "http://api.openweathermap.org/data/2.5/weather?lat=52.3727598&lon=4.8936041&units=metric&appid=key"
 )
 
 func TestOWMSegmentSingle(t *testing.T) {
 	cases := []struct {
-		Case            string
-		JSONResponse    string
-		ExpectedString  string
-		ExpectedEnabled bool
-		Template        string
-		Error           error
+		Case                string
+		Location            string
+		Latitude            float64
+		Longitude           float64
+		GeoJSONResponse     string
+		WeatherJSONResponse string
+		ExpectedString      string
+		ExpectedEnabled     bool
+		Template            string
+		Error               error
 	}{
 		{
-			Case:            "Sunny Display",
-			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
-			ExpectedString:  "\ue30d (20°C)",
-			ExpectedEnabled: true,
+			Case:                "Sunny Display",
+			Location:            "AMSTERDAM,NL",
+			GeoJSONResponse:     `[{"lat": 52.3727598,"lon": 4.8936041}]`,
+			WeatherJSONResponse: `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
+			ExpectedString:      "\ue30d (20°C)",
+			ExpectedEnabled:     true,
 		},
 		{
-			Case:            "Sunny Display",
-			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
-			ExpectedString:  "\ue30d (20°C)",
-			ExpectedEnabled: true,
-			Template:        "{{.Weather}} ({{.Temperature}}{{.UnitIcon}})",
+			Case:                "Sunny Display",
+			Location:            "AMSTERDAM,NL",
+			GeoJSONResponse:     `[{"lat": 52.3727598,"lon": 4.8936041}]`,
+			WeatherJSONResponse: `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
+			ExpectedString:      "\ue30d (20°C)",
+			ExpectedEnabled:     true,
+			Template:            "{{.Weather}} ({{.Temperature}}{{.UnitIcon}})",
 		},
 		{
-			Case:            "Sunny Display",
-			JSONResponse:    `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
-			ExpectedString:  "\ue30d",
-			ExpectedEnabled: true,
-			Template:        "{{.Weather}} ",
+			Case:                "Sunny Display",
+			Location:            "AMSTERDAM,NL",
+			GeoJSONResponse:     `[{"lat": 52.3727598,"lon": 4.8936041}]`,
+			WeatherJSONResponse: `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
+			ExpectedString:      "\ue30d",
+			ExpectedEnabled:     true,
+			Template:            "{{.Weather}} ",
 		},
 		{
-			Case:            "Error in retrieving data",
-			JSONResponse:    "nonsense",
-			Error:           errors.New("Something went wrong"),
-			ExpectedEnabled: false,
+			Case:                "Config Skip Geocoding Check With Location",
+			Location:            "AMSTERDAM,NL",
+			Latitude:            52.3727598,
+			Longitude:           4.8936041,
+			WeatherJSONResponse: `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
+			ExpectedString:      "\ue30d (20°C)",
+			ExpectedEnabled:     true,
+		},
+		{
+			Case:                "Config Skip Geocoding Check Without Location",
+			Latitude:            52.3727598,
+			Longitude:           4.8936041,
+			WeatherJSONResponse: `{"weather":[{"icon":"01d"}],"main":{"temp":20}}`,
+			ExpectedString:      "\ue30d (20°C)",
+			ExpectedEnabled:     true,
+		},
+		{
+			Case:                "Error in retrieving data",
+			Location:            "AMSTERDAM,NL",
+			GeoJSONResponse:     "nonsense",
+			WeatherJSONResponse: "nonsense",
+			Error:               errors.New("Something went wrong"),
+			ExpectedEnabled:     false,
 		},
 	}
 
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
-		props := properties.Map{
-			APIKey:                  "key",
-			Location:                "AMSTERDAM,NL",
-			Units:                   "metric",
-			properties.CacheTimeout: 0,
+		var props properties.Map
+		if tc.Latitude != 0 && tc.Longitude != 0 && tc.Location != "" {
+			props = properties.Map{
+				APIKey:                  "key",
+				Location:                tc.Location,
+				Latitude:                tc.Latitude,
+				Longitude:               tc.Longitude,
+				Units:                   "metric",
+				properties.CacheTimeout: 0,
+			}
+		} else if tc.Location != "" {
+			props = properties.Map{
+				APIKey:                  "key",
+				Location:                tc.Location,
+				Units:                   "metric",
+				properties.CacheTimeout: 0,
+			}
+		} else if tc.Latitude != 0 && tc.Longitude != 0 {
+			props = properties.Map{
+				APIKey:                  "key",
+				Latitude:                tc.Latitude,
+				Longitude:               tc.Longitude,
+				Units:                   "metric",
+				properties.CacheTimeout: 0,
+			}
 		}
 
-		env.On("HTTPRequest", OWMAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
+		env.On("HTTPRequest", OWMGEOAPIURL).Return([]byte(tc.GeoJSONResponse), tc.Error)
+		env.On("HTTPRequest", OWMWEATHERAPIURL).Return([]byte(tc.WeatherJSONResponse), tc.Error)
 
 		o := &Owm{
 			props: props,
@@ -179,14 +230,16 @@ func TestOWMSegmentIcons(t *testing.T) {
 			ExpectedIconString: "\ue313",
 		},
 	}
+	geoResponse := `[{"lat": 52.3727598,"lon": 4.8936041}]`
 
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 
-		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.3}}`, tc.IconID)
+		weatherResponse := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.3}}`, tc.IconID)
 		expectedString := fmt.Sprintf("%s (20°C)", tc.ExpectedIconString)
 
-		env.On("HTTPRequest", OWMAPIURL).Return([]byte(response), nil)
+		env.On("HTTPRequest", OWMGEOAPIURL).Return([]byte(geoResponse), nil)
+		env.On("HTTPRequest", OWMWEATHERAPIURL).Return([]byte(weatherResponse), nil)
 
 		o := &Owm{
 			props: properties.Map{
@@ -206,10 +259,11 @@ func TestOWMSegmentIcons(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 
-		response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.3}}`, tc.IconID)
-		expectedString := fmt.Sprintf("«%s (20°C)»(http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", tc.ExpectedIconString)
+		weatherResponse := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.3}}`, tc.IconID)
+		expectedString := fmt.Sprintf("«%s (20°C)»(http://api.openweathermap.org/data/2.5/weather?lat=52.3727598&lon=4.8936041&units=metric&appid=key)", tc.ExpectedIconString)
 
-		env.On("HTTPRequest", OWMAPIURL).Return([]byte(response), nil)
+		env.On("HTTPRequest", OWMGEOAPIURL).Return([]byte(geoResponse), nil)
+		env.On("HTTPRequest", OWMWEATHERAPIURL).Return([]byte(weatherResponse), nil)
 
 		o := &Owm{
 			props: properties.Map{
@@ -240,7 +294,7 @@ func TestOWMSegmentFromCache(t *testing.T) {
 		env: env,
 	}
 	cache.On("Get", "owm_response").Return(response, true)
-	cache.On("Get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key", true)
+	cache.On("Get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?lat=52.3727598&lon=4.8936041&units=metric&appid=key", true)
 	cache.On("Set").Return()
 	env.On("Cache").Return(cache)
 
@@ -250,7 +304,7 @@ func TestOWMSegmentFromCache(t *testing.T) {
 
 func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
-	expectedString := fmt.Sprintf("«%s (20°C)»(http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", "\ue30d")
+	expectedString := fmt.Sprintf("«%s (20°C)»(http://api.openweathermap.org/data/2.5/weather?lat=52.3727598&lon=4.8936041&units=metric&appid=key)", "\ue30d")
 
 	env := &mock.MockedEnvironment{}
 	cache := &mock.MockedCache{}
@@ -264,7 +318,7 @@ func TestOWMSegmentFromCacheWithHyperlink(t *testing.T) {
 		env: env,
 	}
 	cache.On("Get", "owm_response").Return(response, true)
-	cache.On("Get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key", true)
+	cache.On("Get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?lat=52.3727598&lon=4.8936041&units=metric&appid=key", true)
 	cache.On("Set").Return()
 	env.On("Cache").Return(cache)
 

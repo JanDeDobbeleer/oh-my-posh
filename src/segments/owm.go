@@ -59,7 +59,13 @@ type geoLocation struct {
 
 func (d *Owm) Enabled() bool {
 	err := d.setStatus()
-	return err == nil
+
+	if err != nil {
+		d.env.Error(err)
+		return false
+	}
+
+	return true
 }
 
 func (d *Owm) Template() string {
@@ -85,21 +91,34 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 
 	apikey := d.props.GetString(APIKey, ".")
 	location := d.props.GetString(Location, "De Bilt,NL")
-	latitude := d.props.GetFloat64(Latitude, 91)
-	longitude := d.props.GetFloat64(Longitude, 181)
+	latitude := d.props.GetFloat64(Latitude, 91)    // This default value is intentionally invalid since there should not be a default for this and 0 is a valid value
+	longitude := d.props.GetFloat64(Longitude, 181) // This default value is intentionally invalid since there should not be a default for this and 0 is a valid value
 	units := d.props.GetString(Units, "standard")
 	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
-	if latitude > 90 || latitude < -90 || longitude > 180 && longitude < -180 {
+	validCoordinates := func(latitude, longitude float64) bool {
+		// Latitude values are only valid if they are between -90 and 90
+		// Longitude values are only valid if they are between -180 and 180
+		// https://gisgeography.com/latitude-longitude-coordinates/
+		return latitude <= 90 && latitude >= -90 && longitude <= 180 && longitude >= -180
+	}
+
+	if !validCoordinates(latitude, longitude) {
 		var geoResponse []geoLocation
 		geocodingURL := fmt.Sprintf("http://api.openweathermap.org/geo/1.0/direct?q=%s&limit=1&appid=%s", location, apikey)
+
 		body, err := d.env.HTTPRequest(geocodingURL, nil, httpTimeout)
 		if err != nil {
 			return new(owmDataResponse), err
 		}
+
 		err = json.Unmarshal(body, &geoResponse)
 		if err != nil {
 			return new(owmDataResponse), err
+		}
+
+		if len(geoResponse) == 0 {
+			return new(owmDataResponse), fmt.Errorf("no coordinates found for %s", location)
 		}
 
 		latitude = geoResponse[0].Lat
@@ -127,13 +146,16 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 
 func (d *Owm) setStatus() error {
 	units := d.props.GetString(Units, "standard")
+
 	q, err := d.getResult()
 	if err != nil {
 		return err
 	}
+
 	if len(q.Data) == 0 {
 		return errors.New("No data found")
 	}
+
 	id := q.Data[0].TypeID
 
 	d.Temperature = int(math.Round(q.temperature.Value))

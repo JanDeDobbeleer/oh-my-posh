@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema",
-  "$id": "http://example.com/example.json",
+  "$id": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "type": "object",
   "title": "The Oh My Posh theme definition",
   "description": "https://ohmyposh.dev/docs/configuration/overview",

@@ -1729,6 +1729,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "ParkerM",
+      "name": "Parker Mauney",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5124113?v=4",
+      "profile": "https://github.com/ParkerM",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -113,6 +114,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 
 		env.On("HTTPRequest", OWMGEOAPIURL).Return([]byte(tc.GeoJSONResponse), tc.Error)
 		env.On("HTTPRequest", OWMWEATHERAPIURL).Return([]byte(tc.WeatherJSONResponse), tc.Error)
+		env.On("Error", mock2.Anything)
 
 		o := &Owm{
 			props: props,

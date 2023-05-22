@@ -17,6 +17,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	}
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Shell:").Green().Bold().Plain(), sh))
 	e.write(log.Text("\nSegments:\n\n").Green().Bold().Plain().String())
+
 	// console title timing
 	titleStartTime := time.Now()
 	e.Env.Debug("Segment: Title")
@@ -29,6 +30,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 		duration:   time.Since(titleStartTime),
 	}
 	largestSegmentNameLength := consoleTitleTiming.nameLength
+
 	var segmentTimings []*SegmentTiming
 	segmentTimings = append(segmentTimings, consoleTitleTiming)
 	// cache a pointer to the color cycle
@@ -56,9 +58,16 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 		segmentName := fmt.Sprintf("%s(%s)", segment.name, active.Plain())
 		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.text))
 	}
+
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Run duration:").Green().Bold().Plain(), time.Since(startTime)))
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Cache path:").Green().Bold().Plain(), e.Env.CachePath()))
-	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Config path:").Green().Bold().Plain(), e.Env.Flags().Config))
+
+	config := e.Env.Flags().Config
+	if len(config) == 0 {
+		config = "no --config set, using default built-in configuration"
+	}
+	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Config path:").Green().Bold().Plain(), config))
+
 	e.write(log.Text("\nLogs:\n\n").Green().Bold().Plain().String())
 	e.write(e.Env.Logs())
 	return e.string()

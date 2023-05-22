@@ -1739,6 +1739,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "gbrusella",
+      "name": "Gonzalo Brusella",
+      "avatar_url": "https://avatars.githubusercontent.com/u/115679?v=4",
+      "profile": "http://www.brusella.com.ar",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

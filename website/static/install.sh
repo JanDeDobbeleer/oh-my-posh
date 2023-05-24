@@ -154,6 +154,7 @@ detect_arch() {
     x86_64) arch="amd64" ;;
     armv*) arch="arm" ;;
     arm64) arch="arm64" ;;
+    aarch64) arch="arm64" ;;
   esac
 
   if [ "${arch}" = "arm64" ] && [ "$(getconf LONG_BIT)" -eq 32 ]; then

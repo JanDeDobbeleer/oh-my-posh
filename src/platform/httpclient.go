@@ -1,7 +1,9 @@
 package platform
 
 import (
+	"net"
 	"net/http"
+	"time"
 )
 
 // Inspired by: https://www.thegreatcodeadventure.com/mocking-http-requests-in-golang/
@@ -11,5 +13,13 @@ type httpClient interface {
 }
 
 var (
-	client httpClient = &http.Client{}
+	defaultTransport http.RoundTripper = &http.Transport{
+		Proxy: http.ProxyFromEnvironment,
+		Dial: (&net.Dialer{
+			Timeout: 10 * time.Second,
+		}).Dial,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ResponseHeaderTimeout: 10 * time.Second,
+	}
+	Client httpClient = &http.Client{Transport: defaultTransport}
 )

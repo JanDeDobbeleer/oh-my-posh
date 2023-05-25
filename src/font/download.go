@@ -8,10 +8,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
 	"net/url"
-	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 )
 
 func Download(fontPath string) ([]byte, error) {
@@ -38,20 +38,11 @@ func isZipFile(data []byte) bool {
 }
 
 func getRemoteFile(location string) (data []byte, err error) {
-	client := &http.Client{
-		Transport: &http.Transport{
-			Dial: (&net.Dialer{
-				Timeout: 10 * time.Second,
-			}).Dial,
-			TLSHandshakeTimeout:   10 * time.Second,
-			ResponseHeaderTimeout: 10 * time.Second,
-		},
-	}
 	req, err := http.NewRequestWithContext(context.Background(), "GET", location, nil)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := client.Do(req)
+	resp, err := platform.Client.Do(req)
 	if err != nil {
 		return
 	}

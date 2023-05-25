@@ -688,7 +688,7 @@ func (env *Shell) HTTPRequest(targetURL string, body io.Reader, timeout int, req
 		dump, _ := httputil.DumpRequestOut(request, true)
 		env.Debug(string(dump))
 	}
-	response, err := client.Do(request)
+	response, err := Client.Do(request)
 	if err != nil {
 		env.Error(err)
 		return nil, env.unWrapError(err)

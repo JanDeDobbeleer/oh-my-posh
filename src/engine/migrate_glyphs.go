@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 )
 
 type codePoints map[int]int
@@ -13,7 +15,6 @@ type codePoints map[int]int
 func getGlyphCodePoints() (codePoints, error) {
 	var codePoints = make(codePoints)
 
-	client := &http.Client{}
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(5000))
 	defer cncl()
 
@@ -22,7 +23,7 @@ func getGlyphCodePoints() (codePoints, error) {
 		return codePoints, &ConnectionError{reason: err.Error()}
 	}
 
-	response, err := client.Do(request)
+	response, err := platform.Client.Do(request)
 	if err != nil {
 		return codePoints, err
 	}

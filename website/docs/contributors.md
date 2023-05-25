@@ -254,6 +254,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ParkerM"><img src="https://avatars.githubusercontent.com/u/5124113?v=4?s=100" width="100px;" alt="Parker Mauney"/><br /><sub><b>Parker Mauney</b></sub></a><br /><a href="#design-ParkerM" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://www.brusella.com.ar"><img src="https://avatars.githubusercontent.com/u/115679?v=4?s=100" width="100px;" alt="Gonzalo Brusella"/><br /><sub><b>Gonzalo Brusella</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=gbrusella" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/krokofant"><img src="https://avatars.githubusercontent.com/u/5908498?v=4?s=100" width="100px;" alt="Emil Sundin"/><br /><sub><b>Emil Sundin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=krokofant" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

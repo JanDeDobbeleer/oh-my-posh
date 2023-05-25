@@ -1748,8 +1748,18 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "krokofant",
+      "name": "Emil Sundin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5908498?v=4",
+      "profile": "https://github.com/krokofant",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs"
 }

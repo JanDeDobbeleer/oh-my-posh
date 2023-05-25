@@ -14,7 +14,7 @@ jobs:
         steps:
             - name: Dependabot metadata
               id: metadata
-              uses: dependabot/fetch-metadata@28a846a1194a2665a2eea75dd4556c91e43af857
+              uses: dependabot/fetch-metadata@cd6e996708b8cfe0b639401134a3b9a3177be7b2
               with:
                   github-token: "${{ secrets.GITHUB_TOKEN }}"
             - name: install GH CLI

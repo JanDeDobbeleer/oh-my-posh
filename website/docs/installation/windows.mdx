@@ -130,37 +130,10 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object
 
 ## Default themes
 
-<Tabs
-  defaultValue="winget"
-  groupId="install"
-  values={[
-    { label: 'winget', value: 'winget', },
-    { label: 'scoop', value: 'scoop', },
-    { label: 'manual', value: 'manual', },
-  ]
-}>
-<TabItem value="winget">
-
 You can find the themes in the folder indicated by the environment variable `POSH_THEMES_PATH`.
 For example, you can use `oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json"`
 for the prompt initialization in PowerShell.
 
-</TabItem>
-<TabItem value="scoop">
-
-You can find the themes in the `$(scoop prefix oh-my-posh)\themes` folder.
-For example, you can use `oh-my-posh init pwsh --config "$(scoop prefix oh-my-posh)\themes\jandedobbeleer.omp.json"`
-for the prompt initialization in PowerShell.
-
-</TabItem>
-<TabItem value="manual">
-
-You can find the themes in the folder indicated by the environment variable `POSH_THEMES_PATH`.
-For example, you can use `oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json"`
-for the prompt initialization in PowerShell.
-
-</TabItem>
-</Tabs>
 
 [fonts]: /docs/installation/fonts
 [scoop]: https://scoop.sh/

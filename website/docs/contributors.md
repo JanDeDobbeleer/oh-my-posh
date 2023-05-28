@@ -256,6 +256,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/krokofant"><img src="https://avatars.githubusercontent.com/u/5908498?v=4?s=100" width="100px;" alt="Emil Sundin"/><br /><sub><b>Emil Sundin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=krokofant" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://dysuby.github.io"><img src="https://avatars.githubusercontent.com/u/26317510?v=4?s=100" width="100px;" alt="dysuby"/><br /><sub><b>dysuby</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=dysuby" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

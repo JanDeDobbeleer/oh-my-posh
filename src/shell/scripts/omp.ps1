@@ -185,7 +185,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
             # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
             if (("::FTCS_MARKS::" -eq "true") -and $executingCommand) {
-                Write-Host "`e]133;C`a" -NoNewline
+                Write-Host "$([char]0x1b)]133;C`a" -NoNewline
             }
         }
         Set-PSReadLineKeyHandler -Key Ctrl+c -BriefDescription 'OhMyPoshCtrlCKeyHandler' -ScriptBlock {
@@ -211,7 +211,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
             # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
             if ($executingCommand) {
-                Write-Host "`e]133;C`a" -NoNewline
+                Write-Host "$([char]0x1b)]133;C`a" -NoNewline
             }
         }
     }

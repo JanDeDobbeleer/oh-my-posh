@@ -2,8 +2,8 @@ dmitri.shuralyov.com/font/woff2 v0.0.0-20180220214647-957792cbbdab h1:Ew70NL+wL6
 dmitri.shuralyov.com/font/woff2 v0.0.0-20180220214647-957792cbbdab/go.mod h1:FvHgTMJanm43G7B3MVSjS/jim5ytVqAJNAOpRhnuHJc=
 github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 h1:L/gRVlceqvL25UVaW/CKtUDjefjrs0SPonmDGUVOYP0=
 github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
-github.com/BurntSushi/toml v1.2.1 h1:9F2/+DoOYIOksmaJFPw1tGFy1eDnIJXg+UHjuD8lTak=
-github.com/BurntSushi/toml v1.2.1/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
+github.com/BurntSushi/toml v1.3.0 h1:Ws8e5YmnrGEHzZEzg0YvK/7COGYtTC5PbaH9oSSbgfA=
+github.com/BurntSushi/toml v1.3.0/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
 github.com/ConradIrwin/font v0.0.0-20210318200717-ce8d41cc0732 h1:0EDePskeF4vNFCk70ATaFHQzjmwXsk+VImnMJttecNU=
 github.com/ConradIrwin/font v0.0.0-20210318200717-ce8d41cc0732/go.mod h1:krTLO7JWu6g8RMxG8sl+T1Hf8W93XQacBKJmqFZ2MFY=
 github.com/Masterminds/goutils v1.1.1 h1:5nUrii3FMTL5diU80unEVvNevw1nH4+ZV4DSLVJLSYI=

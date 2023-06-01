@@ -72,8 +72,8 @@ github.com/gookit/config/v2 v2.2.1/go.mod h1:22ZTM0ve1ESyAx/ocUfjOrQ5ztFwy1Rs3YH
 github.com/gookit/goutil v0.6.8 h1:B2XXSCGav5TXWtKRT9i/s/owOLXXB7sY6UsfqeSLroE=
 github.com/gookit/goutil v0.6.8/go.mod h1:u+Isykc6RQcZ4GQzulsaGm+Famd97U5Tzp3aQyo+jyA=
 github.com/gookit/ini/v2 v2.2.1 h1:6fCrz8icnUHhYqGZwu7RtHLh+v+ErrgrAt9+aIcoJCc=
-github.com/hashicorp/hcl/v2 v2.16.2 h1:mpkHZh/Tv+xet3sy3F9Ld4FyI2tUpWe9x3XtPx9f1a0=
-github.com/hashicorp/hcl/v2 v2.16.2/go.mod h1:JRmR89jycNkrrqnMmvPDMd56n1rQJ2Q6KocSLCMCXng=
+github.com/hashicorp/hcl/v2 v2.17.0 h1:z1XvSUyXd1HP10U4lrLg5e0JMVz6CPaJvAgxM0KNZVY=
+github.com/hashicorp/hcl/v2 v2.17.0/go.mod h1:gJyW2PTShkJqQBKpAmPO3yxMxIuoXkOF2TpqXzrQyx4=
 github.com/huandu/xstrings v1.3.3/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=
 github.com/huandu/xstrings v1.4.0 h1:D17IlohoQq4UcpqD7fDk80P7l+lwAmlFaBHgOipl2FU=
 github.com/huandu/xstrings v1.4.0/go.mod h1:y5/lhBue+AyNmUVz9RLU9xbLR0o4KIIExikq4ovT0aE=

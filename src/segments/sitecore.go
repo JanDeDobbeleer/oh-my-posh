@@ -33,29 +33,29 @@ type UserConfig struct {
 }
 
 func (s *Sitecore) Enabled() bool {
-	if s.env.HasFiles(sitecoreFileName) && s.env.HasFiles(path.Join(sitecoreFolderName, userFileName)) {
-		var userConfig = getUserConfig(s)
-
-		if (userConfig == nil) {
-			return false
-		}		
-
-		s.EndpointName = userConfig.getDefaultEndpoint()
-		
-		displayDefault := s.props.GetBool(properties.DisplayDefault, true)
-        
-		if !displayDefault && s.EndpointName == defaultEnpointName {
-			return false
-		} 
-
-		if endpoint := userConfig.getEndpoint(s.EndpointName); endpoint != nil && len(endpoint.Host) > 0 {
-			s.CmHost = endpoint.Host
-		}
-		
-		return true
+	if !s.env.HasFiles(sitecoreFileName) || !s.env.HasFiles(path.Join(sitecoreFolderName, userFileName)) {
+		return false
 	}
 
-	return false
+	var userConfig = getUserConfig(s)
+
+	if (userConfig == nil) {
+		return false
+	}		
+
+	s.EndpointName = userConfig.getDefaultEndpoint()
+	
+	displayDefault := s.props.GetBool(properties.DisplayDefault, true)
+	
+	if !displayDefault && s.EndpointName == defaultEnpointName {
+		return false
+	} 
+
+	if endpoint := userConfig.getEndpoint(s.EndpointName); endpoint != nil && len(endpoint.Host) > 0 {
+		s.CmHost = endpoint.Host
+	}
+	
+	return true
 }
 
 func (s *Sitecore) Template() string {

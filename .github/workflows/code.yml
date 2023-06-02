@@ -28,7 +28,9 @@ jobs:
     - name: Golang CI
       uses: golangci/golangci-lint-action@08e2f20817b15149a52b5b3ebe7de50aff2ba8c5
       with:
-        version: latest
+        # version: latest
+        # Pinning the version until https://github.com/golangci/golangci-lint/issues/3862 is solved
+        version: v1.52.2
         working-directory: src
     - name: Unit Tests
       run: go test -v ./...

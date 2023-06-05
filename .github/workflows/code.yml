@@ -26,7 +26,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
     - name: Golang CI
-      uses: golangci/golangci-lint-action@08e2f20817b15149a52b5b3ebe7de50aff2ba8c5
+      uses: golangci/golangci-lint-action@5f1fec7010f6ae3b84ea4f7b2129beb8639b564f
       with:
         # version: latest
         # Pinning the version until https://github.com/golangci/golangci-lint/issues/3862 is solved

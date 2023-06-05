@@ -24,15 +24,10 @@ To display all icons, we recommend the use of a [Nerd Font][fonts].
   defaultValue="homebrew"
   groupId="install"
   values={[
-    { label: 'homebrew', value: 'homebrew', },
     { label: 'manual', value: 'manual', }
+    { label: 'homebrew', value: 'homebrew', },
   ]
 }>
-<TabItem value="homebrew">
-
-<InstallHomebrew />
-
-</TabItem>
 <TabItem value="manual">
 
 Install the latest version for your system by running the following command:
@@ -47,6 +42,11 @@ If you want to install to a different location you can specify it using the `-d`
 ```bash
 curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin
 ```
+
+</TabItem>
+<TabItem value="homebrew">
+
+<InstallHomebrew />
 
 </TabItem>
 </Tabs>

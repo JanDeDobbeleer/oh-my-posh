@@ -16,20 +16,20 @@ const (
 )
 
 type Sitecore struct {
-    props   	properties.Properties
-    env     	platform.Environment
+	props properties.Properties
+	env   platform.Environment
 
-    EndpointName 	string
-	CmHost 			string
+	EndpointName string
+	CmHost       string
 }
 
 type EndpointConfig struct {
-	Host string `json:"host"`
+	Host string	`json:"host"`
 }
 
 type UserConfig struct {
-	DefaultEndpoint string 						`json:"defaultEndpoint"`
-	Endpoints 		map[string]EndpointConfig 	`json:"endpoints"`
+	DefaultEndpoint string                    `json:"defaultEndpoint"`
+	Endpoints       map[string]EndpointConfig `json:"endpoints"`
 }
 
 func (s *Sitecore) Enabled() bool {
@@ -37,16 +37,16 @@ func (s *Sitecore) Enabled() bool {
 		return false
 	}
 
-	var userConfig = getUserConfig(s)
+	var userConfig, err = getUserConfig(s)
 
-	if (userConfig == nil) {
-		return false
-	}		
+	if (err != nil) {
+		return false;
+	}
 
 	s.EndpointName = userConfig.getDefaultEndpoint()
-	
+
 	displayDefault := s.props.GetBool(properties.DisplayDefault, true)
-	
+
 	if !displayDefault && s.EndpointName == defaultEnpointName {
 		return false
 	} 
@@ -67,15 +67,15 @@ func (s *Sitecore) Init(props properties.Properties, env platform.Environment) {
 	s.env = env
 }
 
-func getUserConfig(s *Sitecore) *UserConfig {
+func getUserConfig(s *Sitecore) (*UserConfig, error) {
 	userJson := s.env.FileContent(path.Join(sitecoreFolderName, userFileName))
 	var userConfig UserConfig
 
 	if err := json.Unmarshal([]byte(userJson), &userConfig); err != nil {
-		return nil
+		return nil, err
 	}
 
-	return &userConfig
+	return &userConfig, nil
 }
 
 func (u *UserConfig) getDefaultEndpoint() string {

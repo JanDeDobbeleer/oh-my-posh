@@ -166,7 +166,7 @@ detect_arch() {
 
 
 detect_platform() {
-  platform="$(uname -s | tr '[:upper:]' '[:lower:]')"
+  platform="$(uname -s | awk '{print tolower($0)}')"
 
   case "${platform}" in
     linux) platform="linux" ;;

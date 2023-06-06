@@ -1008,6 +1008,12 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "fetch_user": {
+                    "type": "boolean",
+                    "title": "Fetch the user",
+                    "description": "Fetch the current configured user for the repository",
+                    "default": false
                   }
                 }
               }

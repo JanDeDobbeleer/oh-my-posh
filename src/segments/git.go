@@ -63,6 +63,8 @@ const (
 	FetchUpstreamIcon properties.Property = "fetch_upstream_icon"
 	// FetchBareInfo fetches the bare repo status
 	FetchBareInfo properties.Property = "fetch_bare_info"
+	// FetchUser fetches the current user for the repo
+	FetchUser properties.Property = "fetch_user"
 
 	// BranchIcon the icon to use as branch indicator
 	BranchIcon properties.Property = "branch_icon"
@@ -129,6 +131,7 @@ type Git struct {
 	UpstreamGone   bool
 	IsWorkTree     bool
 	IsBare         bool
+	User           *User
 
 	// needed for posh-git support
 	poshgit       bool
@@ -145,9 +148,15 @@ func (g *Git) Template() string {
 func (g *Git) Enabled() bool {
 	g.Working = &GitStatus{}
 	g.Staging = &GitStatus{}
+	g.User = &User{}
 
 	if !g.shouldDisplay() {
 		return false
+	}
+
+	fetchUser := g.props.GetBool(FetchUser, false)
+	if fetchUser {
+		g.setUser()
 	}
 
 	g.RepoName = platform.Base(g.env, g.convertToLinuxPath(g.realDir))
@@ -279,6 +288,11 @@ func (g *Git) shouldDisplay() bool {
 	// convert the worktree file path to a windows one when in a WSL shared folder
 	g.realDir = strings.TrimSuffix(g.convertToWindowsPath(gitdir.Path), "/.git")
 	return true
+}
+
+func (g *Git) setUser() {
+	g.User.Name = g.getGitCommandOutput("config", "user.name")
+	g.User.Email = g.getGitCommandOutput("config", "user.email")
 }
 
 func (g *Git) getBareRepoInfo() {

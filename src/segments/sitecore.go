@@ -39,7 +39,7 @@ func (s *Sitecore) Enabled() bool {
 
 	var userConfig, err = getUserConfig(s)
 
-	if (err != nil) {
+	if err != nil {
 		return false;
 	}
 

@@ -1766,6 +1766,17 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "dorokhin-bohdan",
+      "name": "Bohdan Dorokhin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24988081?v=4",
+      "profile": "https://github.com/dorokhin-bohdan",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

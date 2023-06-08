@@ -1,9 +1,9 @@
 ### Prerequisites
 
-- [ ] I have read and understood the [contributing guide][CONTRIBUTING.md]
-- [ ] The commit message follows the [conventional commits][cc] guidelines
-- [ ] Tests for the changes have been added (for bug fixes/features)
-- [ ] Docs have been added/updated (for bug fixes/features)
+- [ ] I have read and understood the [contributing guide][CONTRIBUTING.md].
+- [ ] The commit message follows the [conventional commits][cc] guidelines.
+- [ ] Tests for the changes have been added (for bug fixes / features).
+- [ ] Docs have been added/updated (for bug fixes / features).
 
 ### Description
 

@@ -5,12 +5,13 @@ on:
     branches:
       - main
     paths:
-    - 'website/**'
-    - 'themes/**'
+      - "website/**"
+      - "themes/**"
+  workflow_dispatch:
 
 permissions:
-      id-token: write
-      contents: read
+  id-token: write
+  contents: read
 
 jobs:
   build_and_deploy:
@@ -44,9 +45,7 @@ jobs:
           kubectl config set-context posh --namespace demo
       - uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build oh-my-posh 🔧
         run: |
           cd src

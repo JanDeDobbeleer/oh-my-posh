@@ -1,93 +1,162 @@
 package segments
 
 import (
-	"errors"
-	"os"
-	"path/filepath"
+	"path"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSitecoreSegment(t *testing.T) {
 	cases := []struct {
-		Case            string
-		ExpectedEnabled bool
-		ExpectedString  string
-		Template        string
-		IsCloud         bool
+		Case               string
+		ExpectedString     string
+		ExpectedEnabled    bool
+		SitecoreFileExists bool
+		UserFileExists     bool
+		UserFileContent    string
+		DisplayDefault     bool
 	}{
+		{Case: "Disabled, no sitecore.json file and user.json file", ExpectedString: "", ExpectedEnabled: false, SitecoreFileExists: false, UserFileExists: false},
+		{Case: "Disabled, only sitecore.json file exists", ExpectedString: "", ExpectedEnabled: false, SitecoreFileExists: true, UserFileExists: false},
+		{Case: "Disabled, only user.json file exists", ExpectedString: "", ExpectedEnabled: false, SitecoreFileExists: false, UserFileExists: true},
 		{
-			Case:            "no config files found",
-			ExpectedEnabled: false,
+			Case:               "Disabled, user.json is empty",
+			ExpectedString:     "",
+			ExpectedEnabled:    false,
+			SitecoreFileExists: true,
+			UserFileExists:     true,
+			UserFileContent:    "",
 		},
 		{
-			Case:            "Sitecore local config",
-			ExpectedEnabled: true,
-			ExpectedString:  "https://xmcloudcm.local false",
-			Template:        "{{ .Environment }} {{ .Cloud }}",
-			IsCloud:         false,
+			Case:               "Disabled, user.json contains non-json text",
+			ExpectedString:     "",
+			ExpectedEnabled:    false,
+			SitecoreFileExists: true,
+			UserFileExists:     true,
+			UserFileContent:    testUserJSONNotJSONFormat,
 		},
 		{
-			Case:            "Sitecore cloud config",
-			ExpectedEnabled: true,
-			ExpectedString:  "https://xmc-sitecore<someID>-projectName-environmentName.sitecorecloud.io true",
-			Template:        "{{ .Environment }} {{ .Cloud }}",
-			IsCloud:         true,
+			Case:               "Disabled with default endpoint",
+			ExpectedString:     "default",
+			ExpectedEnabled:    false,
+			SitecoreFileExists: true,
+			UserFileExists:     true,
+			UserFileContent:    testUserJSONOnlyDefaultEnv,
+			DisplayDefault:     false,
 		},
 		{
-			Case:            "Sitecore cloud config - advanced template",
-			ExpectedEnabled: true,
-			ExpectedString:  "sitecore<someID> - projectName - environmentName",
-			Template:        "{{ if .Cloud }} {{ $splittedHostName := split \".\" .Environment }} {{ $myList := split \"-\" $splittedHostName._0 }} {{ $myList._1 }} - {{ $myList._2 }} - {{ $myList._3 }} {{ end }}", //nolint:lll
-			IsCloud:         true,
+			Case:               "Enabled, user.json initial state",
+			ExpectedString:     "default",
+			ExpectedEnabled:    true,
+			SitecoreFileExists: true,
+			UserFileExists:     true,
+			UserFileContent:    testUserJSONDefaultEmpty,
+			DisplayDefault:     true,
+		},
+		{
+			Case:               "Enabled, user.json with custom default endpoint and without endpoints",
+			ExpectedString:     "MySuperEnv",
+			ExpectedEnabled:    true,
+			SitecoreFileExists: true,
+			UserFileExists:     true,
+			UserFileContent:    testUserJSONCustomDefaultEnvWithoutEndpoints,
+		},
+		{
+			Case:               "Enabled, user.json with custom default endpoint and configured endpoints",
+			ExpectedString:     "myEnv (https://host.com)",
+			ExpectedEnabled:    true,
+			SitecoreFileExists: true,
+			UserFileExists:     true,
+			UserFileContent:    testUserJSONCustomDefaultEnv,
+		},
+		{
+			Case:               "Enabled, user.json with custom default endpoint and empty host",
+			ExpectedString:     "envWithEmptyHost",
+			ExpectedEnabled:    true,
+			SitecoreFileExists: true,
+			UserFileExists:     true,
+			UserFileContent:    testUserJSONCustomDefaultEnvAndEmptyHost,
 		},
 	}
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("Home").Return(poshHome)
-		var sitecoreConfigFile string
+		env.On("HasFiles", "sitecore.json").Return(tc.SitecoreFileExists)
+		env.On("HasFiles", path.Join(".sitecore", "user.json")).Return(tc.UserFileExists)
+		env.On("FileContent", path.Join(".sitecore", "user.json")).Return(tc.UserFileContent)
 
-		if tc.IsCloud {
-			content, _ := os.ReadFile("../test/sitecoreUser1.json")
-			sitecoreConfigFile = string(content)
+		props := properties.Map{
+			properties.DisplayDefault: tc.DisplayDefault,
 		}
 
-		if !tc.IsCloud {
-			content, _ := os.ReadFile("../test/sitecoreUser2.json")
-			sitecoreConfigFile = string(content)
-		}
-
-		var projectDir *platform.FileInfo
-		var err error
-
-		if !tc.ExpectedEnabled {
-			err = errors.New("no config directory")
-			projectDir = nil
-		}
-
-		if tc.ExpectedEnabled {
-			err = nil
-			projectDir = &platform.FileInfo{
-				ParentFolder: "SitecoreProjectRoot",
-				Path:         filepath.Join("SitecoreProjectRoot", ".sitecore"),
-				IsDir:        true,
-			}
-		}
-
-		env.On("HasParentFilePath", ".sitecore").Return(projectDir, err)
-		env.On("HasFilesInDir", filepath.Join("SitecoreProjectRoot", ".sitecore"), "user.json").Return(true)
-		env.On("FileContent", filepath.Join("SitecoreProjectRoot", ".sitecore", "user.json")).Return(sitecoreConfigFile)
-
-		sitecore := &Sitecore{
-			env: env,
-		}
-
+		sitecore := &Sitecore{}
+		sitecore.Init(props, env)
 		assert.Equal(t, tc.ExpectedEnabled, sitecore.Enabled(), tc.Case)
-		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, sitecore), tc.Case)
+		assert.Equal(t, tc.ExpectedString, renderTemplate(env, sitecore.Template(), sitecore), tc.Case)
 	}
 }
+
+var testUserJSONDefaultEmpty = `
+{
+	"endpoints": {}
+}`
+
+var testUserJSONCustomDefaultEnvWithoutEndpoints = `
+{
+	"endpoints": {},
+	"defaultEndpoint": "MySuperEnv"
+}`
+
+var testUserJSONCustomDefaultEnv = `
+{
+	"endpoints": {
+		"myEnv": {
+			"host": "https://host.com"
+		}
+	},
+	"defaultEndpoint": "myEnv"
+}`
+
+var testUserJSONCustomDefaultEnvAndEmptyHost = `
+{
+	"endpoints": {
+		"myEnv": {
+			"host": ""
+		}
+	},
+	"defaultEndpoint": "envWithEmptyHost"
+}`
+
+var testUserJSONNotJSONFormat = `
+---
+ doe: "a deer, a female deer"
+ ray: "a drop of golden sun"
+ pi: 3.14159
+ xmas: true
+ french-hens: 3
+ calling-birds:
+   - huey
+   - dewey
+   - louie
+   - fred
+ xmas-fifth-day:
+   calling-birds: four
+   french-hens: 3
+   golden-rings: 5
+   partridges:
+     count: 1
+     location: "a pear tree"
+   turtle-doves: two`
+
+var testUserJSONOnlyDefaultEnv = `
+{
+	"endpoints": {
+		"default": {
+			"host": "https://host.com"
+		}
+	}
+}`

@@ -6,52 +6,39 @@ sidebar_label: Sitecore
 
 ## What
 
-Show the current active Sitecore environment
+Display current Sitecore environment. Will not be active when sitecore.json and user.json don't exist.
 
 ## Sample Configuration
 
-import Config from "@site/src/components/Config.js";
-
-<Config
-  data={{
-    type: "sitecore",
-    style: "powerline",
-    powerline_symbol: "\uE0B0",
-    foreground: "#ffffff",
-    background: "#0077c2",
-    template:
-      " {{ if .Cloud }}\uf65e{{ else }}\uf98a{{ end }} {{ .Environment }} ",
-  }}
-/>
+```json
+{
+  "type": "sitecore",
+  "style": "plain",
+  "foreground": "#000000",
+  "background": "#FFFFFF",
+  "template": "Env: {{ .EndpointName }}{{ if .CmHost }} CM: {{ .CmHost }}{{ end }}"
+}
+```
 
 ## Properties
 
-There are no properties that can be set
+| Name              | Type      | Description                                                                                        |
+| ----------------- | --------- | -------------------------------------------------------------------------------------------------- |
+| `display_default` | `boolean` | display the segment or not when the Sitecore environment name matches `default` - defaults to true |
 
 ## Template ([info][templates])
 
 :::note default template
 
 ```template
-{{ if .Cloud }}\uf65e{{ else }}\uf98a{{ end }} {{ .Environment }}
+{{ .EndpointName }} {{ if .CmHost }}({{ .CmHost }}){{ end }}
 ```
 
 :::
 
-:::note advanced xmcloud template
-When using xmcloud, the hostname can become very long. You can shorten `.Environment` by using the following template:
+## Properties
 
-```template
- {{ if .Cloud }}\uf65e{{ else }}\uf98a{{ end }} {{ if .Cloud }}{{ $splittedHostName := split \".\" .Environment }}{{ $myList := split \"-\" $splittedHostName._0 }} {{ $myList._1 }} - {{ $myList._2 }} - {{ $myList._3 }}{{ else }} {{ .Environment }} {{ end }}
-```
-
-:::
-
-### Properties
-
-| Name           | Type     | Description                                                                                                   |
-| -------------- | -------- | ------------------------------------------------------------------------------------------------------------- |
-| `.Environment` | `string` | The hostname of the environment                                                                               |
-| `.Cloud`       | `bool`   | Used to determine if the environment is a cloud environment. Is true when hostname contains "sitecorecloud.io |
-
-[templates]: /docs/configuration/templates
+| Name           | Type     | Description                              |
+| -------------- | -------- | ---------------------------------------- |
+| `EndpointName` | `string` | name of the current Sitecore environment |
+| `CmHost`       | `string` | host of the current Sitecore environment |

@@ -292,6 +292,7 @@
             "r",
             "sapling",
             "session",
+            "sitecore",
             "spotify",
             "shell",
             "sysinfo",
@@ -1944,7 +1945,19 @@
           },
           "then": {
             "title": "Sitecore Segment",
-            "description": "https://ohmyposh.dev/docs/segments/sitecore"
+            "description": "https://ohmyposh.dev/docs/segments/sitecore",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_default": {
+                    "type": "boolean",
+                    "title": "Display Default",
+                    "description": "Display the segment or not when the Sitecore environment name matches `default`",
+                    "default": true
+                  }
+                }
+              }
+            }
           }
         },
         {

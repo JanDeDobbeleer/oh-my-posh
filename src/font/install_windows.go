@@ -12,34 +12,49 @@ import (
 )
 
 // https://docs.microsoft.com/en-us/windows/win32/api/wingdi/nf-wingdi-addfontresourcea
-var FontsDir = filepath.Join(os.Getenv("WINDIR"), "Fonts")
 
 const (
 	WM_FONTCHANGE  = 0x001D //nolint:revive
 	HWND_BROADCAST = 0xFFFF //nolint:revive
 )
 
-func install(font *Font) (err error) {
+func install(font *Font, admin bool) (err error) {
 	// To install a font on Windows:
 	//  - Copy the file to the fonts directory
 	//  - Add registry entry
 	//  - Call AddFontResourceW to set the font
 	// -  Notify other applications that the fonts have changed
-	fullPath := filepath.Join(FontsDir, font.FileName)
+	fontsDir := filepath.Join(os.Getenv("WINDIR"), "Fonts")
+	if !admin {
+		fontsDir = filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "Microsoft", "Windows", "Fonts")
+	}
+
+	fullPath := filepath.Join(fontsDir, font.FileName)
+	// validate if font is already installed, remove it in case it is
+	if _, err := os.Stat(fullPath); err == nil {
+		if err = os.Remove(fullPath); err != nil {
+			return fmt.Errorf("Unable to remove existing font file: %s", err.Error())
+		}
+	}
 	err = os.WriteFile(fullPath, font.Data, 0644)
 	if err != nil {
-		return
+		return fmt.Errorf("Unable to write font file: %s", err.Error())
 	}
 
 	// Add registry entry
-	k, err := registry.OpenKey(registry.LOCAL_MACHINE, `SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts`, registry.WRITE)
+	reg := registry.LOCAL_MACHINE
+	if !admin {
+		reg = registry.CURRENT_USER
+	}
+
+	k, err := registry.OpenKey(reg, `SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts`, registry.WRITE)
 	if err != nil {
 		// If this fails, remove the font file as well.
 		if nexterr := os.Remove(fullPath); nexterr != nil {
-			return nexterr
+			return errors.New("Unable to delete font file after registry key open error")
 		}
 
-		return err
+		return fmt.Errorf("Unable to open registry key: %s", err.Error())
 	}
 	defer k.Close()
 
@@ -47,10 +62,10 @@ func install(font *Font) (err error) {
 	if err = k.SetStringValue(name, font.FileName); err != nil {
 		// If this fails, remove the font file as well.
 		if nexterr := os.Remove(fullPath); nexterr != nil {
-			return nexterr
+			return errors.New("Unable to delete font file after registry key set error")
 		}
 
-		return err
+		return fmt.Errorf("Unable to set registry value: %s", err.Error())
 	}
 
 	gdi32 := syscall.NewLazyDLL("gdi32.dll")
@@ -63,7 +78,7 @@ func install(font *Font) (err error) {
 
 	ret, _, _ := proc.Call(uintptr(unsafe.Pointer(fontPtr)))
 	if ret == 0 {
-		return errors.New("unable to add font resource")
+		return errors.New("Unable to add font resource using AddFontResourceW")
 	}
 
 	return nil

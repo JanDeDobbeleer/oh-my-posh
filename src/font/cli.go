@@ -64,18 +64,17 @@ const (
 	downloadFont
 	unzipFont
 	installFont
-	admin
 	quit
 	done
 )
 
 type main struct {
-	spinner    spinner.Model
-	list       *list.Model
-	needsAdmin bool
-	font       string
-	state      state
-	err        error
+	spinner spinner.Model
+	list    *list.Model
+	system  bool
+	font    string
+	state   state
+	err     error
 }
 
 func (m *main) buildFontList(nerdFonts []*Asset) {
@@ -115,17 +114,17 @@ func downloadFontZip(location string) {
 	program.Send(zipMsg(zipFile))
 }
 
-func installLocalFontZIP(zipFile string) {
+func installLocalFontZIP(zipFile string, user bool) {
 	data, err := os.ReadFile(zipFile)
 	if err != nil {
 		program.Send(errMsg(err))
 		return
 	}
-	installFontZIP(data)
+	installFontZIP(data, user)
 }
 
-func installFontZIP(zipFile []byte) {
-	err := InstallZIP(zipFile)
+func installFontZIP(zipFile []byte, user bool) {
+	err := InstallZIP(zipFile, user)
 	if err != nil {
 		program.Send(errMsg(err))
 		return
@@ -134,11 +133,6 @@ func installFontZIP(zipFile []byte) {
 }
 
 func (m *main) Init() tea.Cmd {
-	if m.needsAdmin {
-		m.state = admin
-		return tea.Quit
-	}
-
 	isLocalZipFile := func() bool {
 		return !strings.HasPrefix(m.font, "https") && strings.HasSuffix(m.font, ".zip")
 	}
@@ -157,7 +151,7 @@ func (m *main) Init() tea.Cmd {
 
 	defer func() {
 		if isLocalZipFile() {
-			go installLocalFontZIP(m.font)
+			go installLocalFontZIP(m.font, m.system)
 			return
 		}
 		go getFontsList()
@@ -215,7 +209,7 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case zipMsg:
 		m.state = installFont
 		defer func() {
-			go installFontZIP(msg)
+			go installFontZIP(msg, m.system)
 		}()
 		m.spinner.Spinner = spinner.Dot
 		return m, m.spinner.Tick
@@ -250,8 +244,6 @@ func (m *main) View() string {
 		return "\n" + m.list.View()
 	case downloadFont:
 		return textStyle.Render(fmt.Sprintf("%s Downloading %s", m.spinner.View(), m.font))
-	case admin:
-		return textStyle.Render("You need to be admin to install a font on Windows")
 	case unzipFont:
 		return textStyle.Render(fmt.Sprintf("%s Extracting %s", m.spinner.View(), m.font))
 	case installFont:
@@ -264,10 +256,10 @@ func (m *main) View() string {
 	return ""
 }
 
-func Run(font string, needsAdmin bool) {
+func Run(font string, system bool) {
 	main := &main{
-		font:       font,
-		needsAdmin: needsAdmin,
+		font:   font,
+		system: system,
 	}
 	program = tea.NewProgram(main)
 	if _, err := program.Run(); err != nil {

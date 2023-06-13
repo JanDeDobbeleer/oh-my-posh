@@ -77,6 +77,8 @@ const (
 	Cycle properties.Property = "cycle"
 	// Color the path separators within the cycle
 	CycleFolderSeparator properties.Property = "cycle_folder_separator"
+	// format to use on the folder names
+	FolderFormat properties.Property = "folder_format"
 )
 
 func (pt *Path) Template() string {
@@ -590,8 +592,10 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 	skipColorize := len(cycle) == 0
 	folderSeparator := pt.getFolderSeparator()
 	colorSeparator := pt.props.GetBool(CycleFolderSeparator, false)
+	folderFormat := pt.props.GetString(FolderFormat, "%s")
 
 	colorizeElement := func(element string) string {
+		element = fmt.Sprintf(folderFormat, element)
 		if skipColorize || len(element) == 0 {
 			return element
 		}

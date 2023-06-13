@@ -1801,6 +1801,12 @@
                     "title": "The folder format",
                     "description": "Golang string format to apply to the folder name",
                     "pattern": ".*%s.*"
+                  },
+                  "edge_format": {
+                    "type": "string",
+                    "title": "The format to use on the start and end folder",
+                    "description": "Golang string format to apply to the start and end folder",
+                    "pattern": ".*%s.*"
                   }
                 }
               }

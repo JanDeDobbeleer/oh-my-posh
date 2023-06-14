@@ -18,7 +18,7 @@ const (
 	HWND_BROADCAST = 0xFFFF //nolint:revive
 )
 
-func install(font *Font, admin bool) (err error) {
+func install(font *Font, admin bool) error {
 	// To install a font on Windows:
 	//  - Copy the file to the fonts directory
 	//  - Add registry entry
@@ -36,7 +36,7 @@ func install(font *Font, admin bool) (err error) {
 			return fmt.Errorf("Unable to remove existing font file: %s", err.Error())
 		}
 	}
-	err = os.WriteFile(fullPath, font.Data, 0644)
+	err := os.WriteFile(fullPath, font.Data, 0644)
 	if err != nil {
 		return fmt.Errorf("Unable to write font file: %s", err.Error())
 	}
@@ -73,7 +73,7 @@ func install(font *Font, admin bool) (err error) {
 
 	fontPtr, err := syscall.UTF16PtrFromString(fullPath)
 	if err != nil {
-		return
+		return err
 	}
 
 	ret, _, _ := proc.Call(uintptr(unsafe.Pointer(fontPtr)))

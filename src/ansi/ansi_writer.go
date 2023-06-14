@@ -425,8 +425,8 @@ func (w *Writer) writeSegmentColors() {
 	w.currentForeground = fg
 }
 
-func (w *Writer) writeColorOverrides(match map[string]string, background string, i int) (position int) {
-	position = i
+func (w *Writer) writeColorOverrides(match map[string]string, background string, i int) int {
+	position := i
 	// check color reset first
 	if match[ANCHOR] == resetStyle.AnchorEnd {
 		// make sure to reset the colors if needed
@@ -434,12 +434,12 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 
 		// do not reset when colors are identical
 		if w.currentBackground == w.background && w.currentForeground == w.foreground {
-			return
+			return position
 		}
 
 		// do not restore colors at the end of the string, we print it anyways
 		if position == len(w.runes)-1 {
-			return
+			return position
 		}
 
 		if w.transparent {
@@ -459,7 +459,7 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 		}
 
 		w.transparent = false
-		return
+		return position
 	}
 
 	position += len([]rune(match[ANCHOR])) - 1
@@ -467,11 +467,11 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 	for _, style := range knownStyles {
 		if style.AnchorEnd == match[ANCHOR] {
 			w.writeEscapedAnsiString(style.End)
-			return
+			return position
 		}
 		if style.AnchorStart == match[ANCHOR] {
 			w.writeEscapedAnsiString(style.Start)
-			return
+			return position
 		}
 	}
 
@@ -483,7 +483,7 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 	// ignore processing fully tranparent colors
 	w.invisible = w.currentForeground.IsTransparent() && w.currentBackground.IsTransparent()
 	if w.invisible {
-		return
+		return position
 	}
 
 	// make sure we have colors
@@ -498,13 +498,13 @@ func (w *Writer) writeColorOverrides(match map[string]string, background string,
 		background := w.getAnsiFromColorString(w.TerminalBackground, false)
 		w.writeEscapedAnsiString(fmt.Sprintf(colorise, background))
 		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.currentBackground.ToForeground()))
-		return
+		return position
 	}
 
 	if w.currentForeground.IsTransparent() && !w.currentBackground.IsTransparent() {
 		w.transparent = true
 		w.writeEscapedAnsiString(fmt.Sprintf(transparent, w.currentBackground))
-		return
+		return position
 	}
 
 	if w.currentBackground != w.background {

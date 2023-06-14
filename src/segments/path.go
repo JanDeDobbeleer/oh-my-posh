@@ -524,9 +524,10 @@ func (pt *Path) normalizePath(path string) string {
 }
 
 // ParsePath parses an input path and returns a clean root and a clean path.
-func (pt *Path) parsePath(inputPath string) (root, path string) {
+func (pt *Path) parsePath(inputPath string) (string, string) {
+	var root, path string
 	if len(inputPath) == 0 {
-		return
+		return root, path
 	}
 	separator := pt.env.PathSeparator()
 	clean := func(path string) string {
@@ -549,7 +550,7 @@ func (pt *Path) parsePath(inputPath string) (root, path string) {
 		if len(matches) > 0 {
 			root = `\\` + matches["hostname"] + `\` + matches["sharename"]
 			path = clean(matches["path"])
-			return
+			return root, path
 		}
 	}
 	s := strings.SplitAfterN(inputPath, separator, 2)

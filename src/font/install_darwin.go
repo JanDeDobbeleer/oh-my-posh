@@ -9,17 +9,15 @@ import (
 
 var FontsDir = path.Join(os.Getenv("HOME"), "Library", "Fonts")
 
-func install(font *Font, _ bool) (err error) {
+func install(font *Font, _ bool) error {
 	// On darwin/OSX, the user's fonts directory is ~/Library/Fonts,
 	// and fonts should be installed directly into that path;
 	// i.e., not in subfolders.
 	fullPath := path.Join(FontsDir, path.Base(font.FileName))
 
-	if err = os.MkdirAll(path.Dir(fullPath), 0700); err != nil {
-		return
+	if err := os.MkdirAll(path.Dir(fullPath), 0700); err != nil {
+		return err
 	}
 
-	err = os.WriteFile(fullPath, font.Data, 0644)
-
-	return
+	return os.WriteFile(fullPath, font.Data, 0644)
 }

@@ -1777,6 +1777,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "CY-Pan",
+      "name": "Ad Red",
+      "avatar_url": "https://avatars.githubusercontent.com/u/59761962?v=4",
+      "profile": "https://github.com/CY-Pan",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

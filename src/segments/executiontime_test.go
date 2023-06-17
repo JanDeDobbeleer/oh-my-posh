@@ -296,16 +296,46 @@ func TestExecutionTimeFormatDurationLucky7(t *testing.T) {
 		Input    string
 		Expected string
 	}{
-		{Input: "0.001s" /*    */, Expected: "    1ms"},
-		{Input: "0.1s" /*      */, Expected: "  100ms"},
-		{Input: "1s" /*        */, Expected: " 1.00s "},
-		{Input: "2.1s" /*      */, Expected: " 2.10s "},
-		{Input: "1m" /*        */, Expected: " 1m  0s"},
-		{Input: "3m2.1s" /*    */, Expected: " 3m  2s"},
-		{Input: "1h" /*        */, Expected: " 1h  0m"},
-		{Input: "4h3m2.1s" /*  */, Expected: " 4h  3m"},
-		{Input: "124h3m2.1s" /**/, Expected: " 5d  4h"},
-		{Input: "124h3m2.0s" /**/, Expected: " 5d  4h"},
+		{
+			Input:    "0.001s",
+			Expected: "    1ms",
+		},
+		{
+			Input:    "0.1s",
+			Expected: "  100ms",
+		},
+		{
+			Input:    "1s",
+			Expected: " 1.00s ",
+		},
+		{
+			Input:    "2.1s",
+			Expected: " 2.10s ",
+		},
+		{
+			Input:    "1m",
+			Expected: " 1m  0s",
+		},
+		{
+			Input:    "3m2.1s",
+			Expected: " 3m  2s",
+		},
+		{
+			Input:    "1h",
+			Expected: " 1h  0m",
+		},
+		{
+			Input:    "4h3m2.1s",
+			Expected: " 4h  3m",
+		},
+		{
+			Input:    "124h3m2.1s",
+			Expected: " 5d  4h",
+		},
+		{
+			Input:    "124h3m2.0s",
+			Expected: " 5d  4h",
+		},
 	}
 
 	for _, tc := range cases {

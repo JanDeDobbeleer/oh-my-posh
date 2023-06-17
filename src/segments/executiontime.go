@@ -253,25 +253,31 @@ func (t *Executiontime) formatDurationLucky7() string {
 		result := fmt.Sprintf("%5d", t.Ms)
 
 		return result[:2] + "." + result[2:4] + "s "
-	} else if t.Ms < hour {
+	}
+
+	if t.Ms < hour {
 		m := t.Ms / minute
 		s := t.Ms % minute / second
 
 		return fmt.Sprintf("%2dm %2ds", m, s)
-	} else if t.Ms < day {
+	}
+
+	if t.Ms < day {
 		h := t.Ms / hour
 		m := t.Ms % hour / minute
 
 		return fmt.Sprintf("%2dh %2dm", h, m)
-	} else if t.Ms < 100*day {
+	}
+
+	if t.Ms < 100*day {
 		d := t.Ms / day
 		h := t.Ms % day / hour
 
 		return fmt.Sprintf("%2dd %2dh", d, h)
-	} else {
-		// I have no Idea how you got here
-		// return "   ∞   "
-		d := t.Ms / day
-		return fmt.Sprintf("%6dd", d)
 	}
+
+	// I have no Idea how you got here
+	// return "   ∞   "
+	d := t.Ms / day
+	return fmt.Sprintf("%6dd", d)
 }

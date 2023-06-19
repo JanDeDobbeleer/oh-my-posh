@@ -41,6 +41,8 @@ const (
 	Amarillo DurationStyle = "amarillo"
 	// Round will round the output of the format
 	Round DurationStyle = "round"
+	// Always 7 character width
+	Lucky7 = "lucky7"
 
 	second           = 1000
 	minute           = 60000
@@ -91,6 +93,8 @@ func (t *Executiontime) formatDuration(style DurationStyle) string {
 		return t.formatDurationAmarillo()
 	case Round:
 		return t.formatDurationRound()
+	case Lucky7:
+		return t.formatDurationLucky7()
 	default:
 		return fmt.Sprintf("Style: %s is not available", style)
 	}
@@ -222,4 +226,58 @@ func (t *Executiontime) formatDurationRound() string {
 		return fmt.Sprintf("%ds", seconds)
 	}
 	return fmt.Sprintf("%dms", t.Ms%second)
+}
+
+func (t *Executiontime) formatDurationLucky7() string {
+	// https://github.com/JanDeDobbeleer/oh-my-posh/issues/3970
+	// execution time will always be 7 characters long
+	// decimal point will be at the same location (3rd space or str[2])
+	// seconds and milliseconds will be aligned
+	// [m, s], [h, m], [d, h] will be aligned
+	if t.Ms < second {
+		//   999ms
+		// 1234567
+		return fmt.Sprintf("%5dms", t.Ms%second)
+	}
+
+	if t.Ms < minute {
+		// 12.34s
+		// 1234567
+
+		//  1.23s
+		// 1230 (= 1230ms)
+		// ^ use Sprintf pad left space
+		//  1230
+		// from here, just take 1, 23 of 230, and append s and ' '
+
+		result := fmt.Sprintf("%5d", t.Ms)
+
+		return result[:2] + "." + result[2:4] + "s "
+	}
+
+	if t.Ms < hour {
+		m := t.Ms / minute
+		s := t.Ms % minute / second
+
+		return fmt.Sprintf("%2dm %2ds", m, s)
+	}
+
+	if t.Ms < day {
+		h := t.Ms / hour
+		m := t.Ms % hour / minute
+
+		return fmt.Sprintf("%2dh %2dm", h, m)
+	}
+
+	if t.Ms < 100*day {
+		d := t.Ms / day
+		h := t.Ms % day / hour
+
+		return fmt.Sprintf("%2dd %2dh", d, h)
+	}
+
+	// I have no Idea how you got here
+	// return "   ∞   "
+	d := t.Ms / day
+	return fmt.Sprintf("%6dd", d)
 }

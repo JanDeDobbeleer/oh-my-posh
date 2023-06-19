@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"math"
 	"testing"
 	"time"
 
@@ -287,5 +288,77 @@ func TestExecutionTimeFormatDurationRound(t *testing.T) {
 		executionTime.Ms = duration.Milliseconds()
 		output := executionTime.formatDurationRound()
 		assert.Equal(t, tc.Expected, output)
+	}
+}
+
+func TestExecutionTimeFormatDurationLucky7(t *testing.T) {
+	cases := []struct {
+		Input    string
+		Expected string
+	}{
+		{
+			Input:    "0.001s",
+			Expected: "    1ms",
+		},
+		{
+			Input:    "0.1s",
+			Expected: "  100ms",
+		},
+		{
+			Input:    "1s",
+			Expected: " 1.00s ",
+		},
+		{
+			Input:    "2.1s",
+			Expected: " 2.10s ",
+		},
+		{
+			Input:    "1m",
+			Expected: " 1m  0s",
+		},
+		{
+			Input:    "3m2.1s",
+			Expected: " 3m  2s",
+		},
+		{
+			Input:    "1h",
+			Expected: " 1h  0m",
+		},
+		{
+			Input:    "4h3m2.1s",
+			Expected: " 4h  3m",
+		},
+		{
+			Input:    "124h3m2.1s",
+			Expected: " 5d  4h",
+		},
+		{
+			Input:    "124h3m2.0s",
+			Expected: " 5d  4h",
+		},
+	}
+
+	for _, tc := range cases {
+		duration, _ := time.ParseDuration(tc.Input)
+		executionTime := &Executiontime{}
+		executionTime.Ms = duration.Milliseconds()
+		output := executionTime.formatDurationLucky7()
+		assert.Equal(t, tc.Expected, output)
+	}
+
+	// Extra fuzz test
+	var timestamp int64 = 1
+	var ms1000days int64 = 1000 * 24 * 60 * 60 * 1000
+
+	// log(ms1000days, 1.5) is approx 62.1
+	for timestamp < ms1000days {
+		timestamp = int64(math.Ceil(float64(timestamp) * 1.5))
+
+		executionTime := (&Executiontime{
+			Ms: timestamp,
+		}).formatDurationLucky7()
+
+		// Lucky 7!!
+		assert.Equal(t, len(executionTime), 7)
 	}
 }

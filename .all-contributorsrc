@@ -1786,6 +1786,16 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "nopeless",
+      "name": "nopeless",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38830903?v=4",
+      "profile": "https://github.com/nopeless",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

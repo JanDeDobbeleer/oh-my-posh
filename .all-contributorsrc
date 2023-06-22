@@ -1806,6 +1806,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Coder-Tavi",
+      "name": "Tavi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66774833?v=4",
+      "profile": "https://tavis.page",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

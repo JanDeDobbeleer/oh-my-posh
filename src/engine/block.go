@@ -123,7 +123,7 @@ func (b *Block) setSegmentsText() {
 	for _, segment := range b.Segments {
 		go func(s *Segment) {
 			defer wg.Done()
-			s.SetText()
+			s.SetText(b.env)
 		}(segment)
 	}
 }
@@ -280,7 +280,7 @@ func (b *Block) Debug() (int, []*SegmentTiming) {
 		b.env.DebugF("Segment: %s", segmentTiming.name)
 		start := time.Now()
 		segment.SetEnabled(b.env)
-		segment.SetText()
+		segment.SetText(b.env)
 		segmentTiming.active = segment.Enabled
 		if segmentTiming.active || segment.style() == Accordion {
 			b.setActiveSegment(segment)

@@ -496,7 +496,7 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 	}
 }
 
-func (segment *Segment) SetText() {
+func (segment *Segment) SetText(env platform.Environment) {
 	if !segment.Enabled {
 		return
 	}
@@ -505,6 +505,8 @@ func (segment *Segment) SetText() {
 	if !segment.Enabled {
 		segment.env.TemplateCache().RemoveSegmentData(segment.Name())
 	}
+
+	env.TemplateCache().AddSegmentData(fmt.Sprintf("%sText", segment.Name()), segment.text)
 
 	if segment.Interactive {
 		return

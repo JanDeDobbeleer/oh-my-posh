@@ -13,7 +13,8 @@
           ],
           "leading_diamond": "\uE0B6",
           "properties": {
-            "style": "folder"
+            "style": "agnoster_short",
+            "max_depth": 2
           },
           "style": "diamond",
           "template": "\uF07B {{ .Path }}",

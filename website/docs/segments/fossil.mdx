@@ -10,15 +10,15 @@ Display [fossil][fossil] information when in a fossil repository.
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "fossil",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
   "foreground": "#193549",
   "background": "#ffeb3b"
-}
-```
+}}/>
 
 ## Properties
 
@@ -31,7 +31,7 @@ Display [fossil][fossil] information when in a fossil repository.
 :::note default template
 
 ```template
- \ufb2b {{.Branch}} {{.Status.String}}
+ \ue725 {{.Branch}} {{.Status.String}}
 ```
 
 :::
@@ -68,4 +68,4 @@ Local changes use the following syntax:
 
 [fossil]: https://fossil-scm.org
 [templates]: /docs/config-templates
-[hyperlinks]: /docs/config-templates#helper-functions
+[hyperlinks]: /docs/config-templates#custom

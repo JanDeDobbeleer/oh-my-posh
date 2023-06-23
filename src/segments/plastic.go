@@ -2,11 +2,12 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/regex"
 	"strconv"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
 type PlasticStatus struct {

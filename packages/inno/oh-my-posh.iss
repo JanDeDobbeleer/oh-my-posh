@@ -22,6 +22,7 @@ Source: "bin\themes\*"; DestDir: "{app}\themes"
 [Registry]
 Root: "HKA"; Subkey: "{code:GetEnvironmentKey}"; ValueType: expandsz; ValueName: "Path"; ValueData: "{olddata};{app}\bin"; Check: NeedsAddPathHKA(ExpandConstant('{app}\bin'))
 Root: "HKA"; Subkey: "{code:GetEnvironmentKey}"; ValueType: string; ValueName: "POSH_THEMES_PATH"; ValueData: {app}\themes; Flags: preservestringtype
+Root: "HKA"; Subkey: "{code:GetEnvironmentKey}"; ValueType: string; ValueName: "POSH_INSTALLER"; ValueData: {param:installer|manual}; Flags: preservestringtype
 
 [Code]
 function GetEnvironmentKey(Param: string): string;

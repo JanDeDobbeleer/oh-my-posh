@@ -1,9 +1,10 @@
 package segments
 
 import (
-	"oh-my-posh/regex"
 	"strconv"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
 // SvnStatus represents part of the status of a Svn repository
@@ -13,6 +14,8 @@ type SvnStatus struct {
 
 func (s *SvnStatus) add(code string) {
 	switch code {
+	case "?":
+		s.Untracked++
 	case "C":
 		s.Conflicted++
 	case "D":
@@ -21,10 +24,8 @@ func (s *SvnStatus) add(code string) {
 		s.Added++
 	case "M":
 		s.Modified++
-	case "R":
+	case "R", "!":
 		s.Moved++
-	default:
-		s.Unmerged++
 	}
 }
 
@@ -52,12 +53,9 @@ func (s *Svn) Enabled() bool {
 	if !s.shouldDisplay() {
 		return false
 	}
-	displayStatus := s.props.GetBool(FetchStatus, false)
-	if displayStatus {
-		s.setSvnStatus()
-	} else {
-		s.Working = &SvnStatus{}
-	}
+
+	s.setSvnStatus()
+
 	return true
 }
 
@@ -101,6 +99,12 @@ func (s *Svn) setSvnStatus() {
 	}
 
 	s.Working = &SvnStatus{}
+
+	displayStatus := s.props.GetBool(FetchStatus, false)
+	if !displayStatus {
+		return
+	}
+
 	changes := s.getSvnCommandOutput("status")
 	if len(changes) == 0 {
 		return

@@ -3,15 +3,18 @@ package segments
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -48,8 +51,9 @@ func TestEnabledInWorkingDirectory(t *testing.T) {
 	env.On("IsWsl").Return(false)
 	env.On("HasParentFilePath", ".git").Return(fileInfo, nil)
 	env.On("PathSeparator").Return("/")
-	env.On("Home").Return("/Users/posh")
+	env.On("Home").Return(poshHome)
 	env.On("Getenv", poshGitEnv).Return("")
+	env.On("DirMatchesOneOf", mock2.Anything, mock2.Anything).Return(false)
 	g := &Git{
 		scm: scm{
 			env:   env,
@@ -580,8 +584,33 @@ func TestGetStashContextZeroEntries(t *testing.T) {
 				workingDir: "",
 			},
 		}
-		got := g.getStashContext()
+		got := g.StashCount()
 		assert.Equal(t, tc.Expected, got)
+	}
+}
+
+func TestGitCleanSSHURL(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Upstream string
+	}{
+		{Case: "regular URL", Expected: "https://src.example.com/user/repo", Upstream: "/src.example.com/user/repo.git"},
+		{Case: "domain:path", Expected: "https://host.xz/path/to/repo", Upstream: "host.xz:/path/to/repo.git/"},
+		{Case: "ssh with port", Expected: "https://host.xz/path/to/repo", Upstream: "ssh://user@host.xz:1234/path/to/repo.git"},
+		{Case: "ssh with port, trailing slash", Expected: "https://host.xz/path/to/repo", Upstream: "ssh://user@host.xz:1234/path/to/repo.git/"},
+		{Case: "ssh without port", Expected: "https://host.xz/path/to/repo", Upstream: "ssh://user@host.xz/path/to/repo.git/"},
+		{Case: "ssh port, no user", Expected: "https://host.xz/path/to/repo", Upstream: "ssh://host.xz:1234/path/to/repo.git"},
+		{Case: "ssh no port, no user", Expected: "https://host.xz/path/to/repo", Upstream: "ssh://host.xz/path/to/repo.git"},
+		{Case: "rsync no port, no user", Expected: "https://host.xz/path/to/repo", Upstream: "rsync://host.xz/path/to/repo.git/"},
+		{Case: "git no port, no user", Expected: "https://host.xz/path/to/repo", Upstream: "git://host.xz/path/to/repo.git"},
+		{Case: "gitea no port, no user", Expected: "https://src.example.com/user/repo", Upstream: "_gitea@src.example.com:user/repo.git"},
+		{Case: "unsupported", Upstream: "\\test\\repo.git"},
+	}
+	for _, tc := range cases {
+		g := &Git{}
+		upstreamIcon := g.cleanUpstreamURL(tc.Upstream)
+		assert.Equal(t, tc.Expected, upstreamIcon, tc.Case)
 	}
 }
 
@@ -591,12 +620,16 @@ func TestGitUpstream(t *testing.T) {
 		Expected string
 		Upstream string
 	}{
+		{Case: "No upstream", Expected: "", Upstream: ""},
+		{Case: "SSH url", Expected: "G", Upstream: "ssh://git@git.my.domain:3001/ADIX7/dotconfig.git"},
+		{Case: "Gitea", Expected: "EX", Upstream: "_gitea@src.example.com:user/repo.git"},
 		{Case: "GitHub", Expected: "GH", Upstream: "github.com/test"},
 		{Case: "Gitlab", Expected: "GL", Upstream: "gitlab.com/test"},
 		{Case: "Bitbucket", Expected: "BB", Upstream: "bitbucket.org/test"},
 		{Case: "Azure DevOps", Expected: "AD", Upstream: "dev.azure.com/test"},
 		{Case: "Azure DevOps Dos", Expected: "AD", Upstream: "test.visualstudio.com"},
 		{Case: "Gitstash", Expected: "G", Upstream: "gitstash.com/test"},
+		{Case: "My custom server", Expected: "CU", Upstream: "mycustom.server/test"},
 	}
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
@@ -610,6 +643,10 @@ func TestGitUpstream(t *testing.T) {
 			BitbucketIcon:   "BB",
 			AzureDevOpsIcon: "AD",
 			GitIcon:         "G",
+			UpstreamIcons: map[string]string{
+				"mycustom.server": "CU",
+				"src.example.com": "EX",
+			},
 		}
 		g := &Git{
 			scm: scm{
@@ -744,8 +781,8 @@ func TestGitTemplateString(t *testing.T) {
 		},
 		{
 			Case:     "Working and staging area changes with separator and stash count",
-			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3 \uf692 3",
-			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \uF692 {{ .StashCount }}{{ end }}", //nolint:lll
+			Expected: "main \uF046 +5 ~1 | \uF044 +2 ~3 \ueb4b 3",
+			Template: "{{ .HEAD }}{{ if .Staging.Changed }} \uF046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uF044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }}", //nolint:lll
 			Git: &Git{
 				HEAD: branchName,
 				Working: &GitStatus{
@@ -760,7 +797,8 @@ func TestGitTemplateString(t *testing.T) {
 						Modified: 1,
 					},
 				},
-				StashCount: 3,
+				stashCount: 3,
+				poshgit:    true,
 			},
 		},
 		{
@@ -883,6 +921,88 @@ func TestGitIgnoreSubmodules(t *testing.T) {
 			},
 		}
 		got := g.getIgnoreSubmodulesMode()
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
+func TestGitCommit(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected *Commit
+		Output   string
+	}{
+		{
+			Case: "Clean commit",
+			Output: `
+			an:Jan De Dobbeleer
+			ae:jan@ohmyposh.dev
+			cn:Jan De Dobbeleer
+			ce:jan@ohmyposh.dev
+			at:1673176335
+			su:docs(error): you can't use cross segment properties
+			`,
+			Expected: &Commit{
+				Author: &User{
+					Name:  "Jan De Dobbeleer",
+					Email: "jan@ohmyposh.dev",
+				},
+				Committer: &User{
+					Name:  "Jan De Dobbeleer",
+					Email: "jan@ohmyposh.dev",
+				},
+				Subject:   "docs(error): you can't use cross segment properties",
+				Timestamp: time.Unix(1673176335, 0),
+			},
+		},
+		{
+			Case: "No commit output",
+			Expected: &Commit{
+				Author:    &User{},
+				Committer: &User{},
+			},
+		},
+		{
+			Case: "No author",
+			Output: `
+			an:
+			ae:
+			cn:Jan De Dobbeleer
+			ce:jan@ohmyposh.dev
+			at:1673176335
+			su:docs(error): you can't use cross segment properties
+			`,
+			Expected: &Commit{
+				Author: &User{},
+				Committer: &User{
+					Name:  "Jan De Dobbeleer",
+					Email: "jan@ohmyposh.dev",
+				},
+				Subject:   "docs(error): you can't use cross segment properties",
+				Timestamp: time.Unix(1673176335, 0),
+			},
+		},
+		{
+			Case: "Bad timestamp",
+			Output: `
+			at:err
+			`,
+			Expected: &Commit{
+				Author:    &User{},
+				Committer: &User{},
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.MockGitCommand("", tc.Output, "log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s")
+		g := &Git{
+			scm: scm{
+				env:     env,
+				command: "git",
+			},
+		}
+		got := g.Commit()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

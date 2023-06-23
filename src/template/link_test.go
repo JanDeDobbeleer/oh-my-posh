@@ -1,9 +1,10 @@
 package template
 
 import (
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -16,7 +17,7 @@ func TestUrl(t *testing.T) {
 		Template    string
 		ShouldError bool
 	}{
-		{Case: "valid url", Expected: "[link](https://ohmyposh.dev)", Template: `{{ url "link" "https://ohmyposh.dev" }}`},
+		{Case: "valid url", Expected: "«link»(https://ohmyposh.dev)", Template: `{{ url "link" "https://ohmyposh.dev" }}`},
 		{Case: "invalid url", Expected: "", Template: `{{ url "link" "Foo" }}`, ShouldError: true},
 	}
 
@@ -24,8 +25,8 @@ func TestUrl(t *testing.T) {
 	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),
 	})
-	env.On("Error", mock2.Anything, mock2.Anything)
-	env.On("Debug", mock2.Anything, mock2.Anything)
+	env.On("Error", mock2.Anything)
+	env.On("Debug", mock2.Anything)
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
@@ -47,7 +48,7 @@ func TestPath(t *testing.T) {
 		Expected string
 		Template string
 	}{
-		{Case: "valid path", Expected: "[link](file:/test/test)", Template: `{{ path "link" "/test/test" }}`},
+		{Case: "valid path", Expected: "«link»(file:/test/test)", Template: `{{ path "link" "/test/test" }}`},
 	}
 
 	env := &mock.MockedEnvironment{}

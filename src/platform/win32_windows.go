@@ -3,12 +3,13 @@ package platform
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/regex"
 	"reflect"
 	"strings"
 	"syscall"
 	"unicode/utf16"
 	"unsafe"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
 	"golang.org/x/sys/windows"
 )
@@ -155,48 +156,6 @@ func (rb *AppExecLinkReparseBuffer) Path() (string, error) {
 	return link, nil
 }
 
-// openSymlink calls CreateFile Windows API with FILE_FLAG_OPEN_REPARSE_POINT
-// parameter, so that Windows does not follow symlink, if path is a symlink.
-// openSymlink returns opened file handle.
-func openSymlink(path string) (syscall.Handle, error) {
-	p, err := syscall.UTF16PtrFromString(path)
-	if err != nil {
-		return 0, err
-	}
-	attrs := uint32(syscall.FILE_FLAG_BACKUP_SEMANTICS)
-	// Use FILE_FLAG_OPEN_REPARSE_POINT, otherwise CreateFile will follow symlink.
-	// See https://docs.microsoft.com/en-us/windows/desktop/FileIO/symbolic-link-effects-on-file-systems-functions#createfile-and-createfiletransacted
-	attrs |= syscall.FILE_FLAG_OPEN_REPARSE_POINT
-	h, err := syscall.CreateFile(p, 0, 0, nil, syscall.OPEN_EXISTING, attrs, 0)
-	if err != nil {
-		return 0, err
-	}
-	return h, nil
-}
-
-func readWinAppLink(path string) (string, error) {
-	h, err := openSymlink(path)
-	if err != nil {
-		return "", err
-	}
-	defer syscall.CloseHandle(h) //nolint: errcheck
-
-	rdbbuf := make([]byte, syscall.MAXIMUM_REPARSE_DATA_BUFFER_SIZE)
-	var bytesReturned uint32
-	err = syscall.DeviceIoControl(h, syscall.FSCTL_GET_REPARSE_POINT, nil, 0, &rdbbuf[0], uint32(len(rdbbuf)), &bytesReturned, nil)
-	if err != nil {
-		return "", err
-	}
-
-	rdb := (*REPARSE_DATA_BUFFER)(unsafe.Pointer(&rdbbuf[0]))
-	rb := (*GenericDataBuffer)(unsafe.Pointer(&rdb.DUMMYUNIONNAME))
-	appExecLink := (*AppExecLinkReparseBuffer)(unsafe.Pointer(&rb.DataBuffer))
-	if appExecLink.Version != 3 {
-		return "", errors.New("unknown AppExecLink version")
-	}
-	return appExecLink.Path()
-}
-
 var (
 	advapi     = syscall.NewLazyDLL("advapi32.dll")
 	procGetAce = advapi.NewProc("GetAce")
@@ -305,20 +264,20 @@ func (env *Shell) isWriteable(folder string) bool {
 
 	if err != nil {
 		// unable to get current user
-		env.Error("isWriteable", err)
+		env.Error(err)
 		return false
 	}
 
 	si, err := windows.GetNamedSecurityInfo(folder, windows.SE_FILE_OBJECT, windows.DACL_SECURITY_INFORMATION)
 	if err != nil {
-		env.Error("isWriteable", err)
+		env.Error(err)
 		return false
 	}
 
 	dacl, _, err := si.DACL()
 	if err != nil || dacl == nil {
 		// no dacl implies full access
-		env.Debug("isWriteable", "no dacl")
+		env.Debug("no dacl")
 		return true
 	}
 
@@ -330,31 +289,64 @@ func (env *Shell) isWriteable(folder string) bool {
 
 		ret, _, _ := procGetAce.Call(uintptr(unsafe.Pointer(dacl)), uintptr(i), uintptr(unsafe.Pointer(&ace)))
 		if ret == 0 {
-			env.Debug("isWriteable", "no ace found")
+			env.Debug("no ace found")
 			return false
 		}
 
 		aceSid := (*windows.SID)(unsafe.Pointer(&ace.SidStart))
 
 		if !cu.isMemberOf(aceSid) {
-			env.Debug("isWriteable", "not current user or in group")
+			env.Debug("not current user or in group")
 			continue
 		}
 
-		env.Debug("isWriteable", fmt.Sprintf("current user is member of %s", aceSid.String()))
+		env.Debug(fmt.Sprintf("current user is member of %s", aceSid.String()))
 
 		// this gets priority over the other access types
 		if ace.AceType == ACCESS_DENIED_ACE_TYPE {
-			env.Debug("isWriteable", "ACCESS_DENIED_ACE_TYPE")
+			env.Debug("ACCESS_DENIED_ACE_TYPE")
 			return false
 		}
 
-		env.debugF("isWriteable", func() string { return ace.AccessMask.permissions() })
+		env.DebugF("%v", ace.AccessMask.permissions())
 		if ace.AccessMask.canWrite() {
-			env.Debug("isWriteable", "user has write access")
+			env.Debug("user has write access")
 			return true
 		}
 	}
-	env.Debug("isWriteable", "no write access")
+	env.Debug("no write access")
 	return false
+}
+
+var (
+	kernel32             = syscall.NewLazyDLL("kernel32.dll")
+	globalMemoryStatusEx = kernel32.NewProc("GlobalMemoryStatusEx")
+)
+
+type memoryStatusEx struct {
+	Length               uint32
+	MemoryLoad           uint32
+	TotalPhys            uint64
+	AvailPhys            uint64
+	TotalPageFile        uint64
+	AvailPageFile        uint64
+	TotalVirtual         uint64
+	AvailVirtual         uint64
+	AvailExtendedVirtual uint64
+}
+
+func (env *Shell) Memory() (*Memory, error) {
+	var memStat memoryStatusEx
+	memStat.Length = uint32(unsafe.Sizeof(memStat))
+	r0, _, err := globalMemoryStatusEx.Call(uintptr(unsafe.Pointer(&memStat)))
+	if r0 == 0 {
+		env.Error(err)
+		return nil, err
+	}
+	return &Memory{
+		PhysicalTotalMemory:     memStat.TotalPhys,
+		PhysicalFreeMemory:      memStat.AvailPhys,
+		PhysicalAvailableMemory: memStat.AvailPhys,
+		PhysicalPercentUsed:     float64(memStat.MemoryLoad),
+	}, nil
 }

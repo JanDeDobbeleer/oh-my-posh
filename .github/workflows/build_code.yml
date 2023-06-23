@@ -17,13 +17,20 @@ jobs:
         shell: pwsh
     steps:
     - name: Checkout code 👋
-      uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+      uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
     - name: Install Go 🗳
       uses: ./.github/workflows/composite/bootstrap-go
     - name: Run GoReleaser 🚀
-      uses: goreleaser/goreleaser-action@b508e2e3ef3b19d4e4146d4f8fb3ba9db644a757
+      uses: goreleaser/goreleaser-action@336e29918d653399e599bfca99fadc1d7ffbc9f7
       with:
         distribution: goreleaser
         version: latest
         args: build --rm-dist --snapshot --skip-post-hooks --skip-before
         workdir: src
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce
+      with:
+        name: builds
+        retention-days: 1
+        path: |
+          src/dist

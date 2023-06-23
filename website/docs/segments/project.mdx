@@ -16,19 +16,26 @@ Supports:
 - PHP project (`composer.json`)
 - Any nuspec based project (`*.nuspec`, first file match info is displayed)
 - .NET project (`*.csproj`, `*.vbproj` or `*.fsproj`, first file match info is displayed)
+- Julia project (`JuliaProject.toml`, `Project.toml`)
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "project",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
   "foreground": "#193549",
   "background": "#ffeb3b",
   "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }} "
-}
-```
+}}/>
+
+## Properties
+
+| Name             | Type      | Description                                   |
+| ---------------- | --------- | --------------------------------------------- |
+| `always_enabled` | `boolean` | always show the segment - defaults to `false` |
 
 ## Template ([info][templates])
 
@@ -42,10 +49,12 @@ Supports:
 
 ### Properties
 
-| Name       | Type     | Description                                          |
-| ---------- | -------- | ---------------------------------------------------- |
-| `.Version` | `string` | The version of your project                          |
-| `.Target`  | `string` | The target framwork/language version of your project |
-| `.Name`    | `string` | The name of your project                             |
+| Name       | Type     | Description                                                                           |
+| ---------- | -------- | ------------------------------------------------------------------------------------- |
+| `.Type`    | `string` | The type of project (`node`, `cargo`, `poetry`, `php`, `nuspec`, `dotnet` or `julia`) |
+| `.Version` | `string` | The version of your project                                                           |
+| `.Target`  | `string` | The target framwork/language version of your project                                  |
+| `.Name`    | `string` | The name of your project                                                              |
+| `.Error`   | `string` | The error context when we can't fetch the project info                                |
 
 [templates]: /docs/configuration/templates

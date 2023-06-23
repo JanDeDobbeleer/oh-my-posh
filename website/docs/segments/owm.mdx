@@ -15,8 +15,9 @@ The free tier for _Current weather and forecasts collection_ is sufficient.
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "owm",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
@@ -30,19 +31,24 @@ The free tier for _Current weather and forecasts collection_ is sufficient.
     "http_timeout": 20,
     "cache_timeout": 10
   }
-}
-```
+}}/>
 
 ## Properties
 
-| Name            | Type     | Description                                                                                                                                                                                                        |
-| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `apikey`        | `string` | Your API key from [Open Weather Map][owm]                                                                                                                                                                          |
-| `location`      | `string` | The requested location. Formatted as <City,STATE,COUNTRY_CODE>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes - defaults to `DE BILT,NL` |
-| `units`         | `string` | Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`                                                                                 |
-| `http_timeout`  | `int`    | The default timeout for http request is 20ms.                                                                                                                                                                      |
-| `cache_timeout` | `int`    | The default timeout for request caching is 10m. A value of 0 disables the cache.                                                                                                                                   |
-| `template`      | `string` | A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below - defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`                                           |
+| Name            | Type      | Description                                                                                                                                                                                                        |
+| --------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `apikey`        | `string`  | Your API key from [Open Weather Map][owm]                                                                                                                                                                          |
+| `latitude`      | `float64` | The latitude of the requested location.                                                                                                                                                                            |
+| `longitude`     | `float64` | The longitude of the requested location.                                                                                                                                                                           |
+| `location`      | `string`  | The requested location. Formatted as <City,STATE,COUNTRY_CODE>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes - defaults to `DE BILT,NL` |
+| `units`         | `string`  | Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit) - defaults to `standard`                                                                                 |
+| `http_timeout`  | `int`     | The default timeout for http request is 20ms.                                                                                                                                                                      |
+| `cache_timeout` | `int`     | The default timeout for request caching is 10m. A value of 0 disables the cache.                                                                                                                                   |
+| `template`      | `string`  | A go [text/template][go-text-template] template extended with [sprig][sprig] utilizing the properties below - defaults to `{{.Weather}} ({{.Temperature}}{{.UnitIcon}})`                                           |
+
+### Specifying Location
+
+The given location can either be specified through the Latitude and Longitude properties or through the Location property. If both Latitude and Longitude are specified and valid then Location will be ignored if it is included. If Latitude or Longitude are not specified or are invalid then Location will be used.
 
 ## Template ([info][templates])
 

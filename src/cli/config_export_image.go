@@ -2,11 +2,11 @@ package cli
 
 import (
 	"fmt"
-	"oh-my-posh/color"
-	"oh-my-posh/console"
-	"oh-my-posh/engine"
-	"oh-my-posh/platform"
-	"oh-my-posh/shell"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/engine"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	"github.com/spf13/cobra"
 )
@@ -48,49 +48,55 @@ Exports the config to an image file using customized output options.`,
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &platform.Shell{
-			Version: cliVersion,
 			CmdFlags: &platform.Flags{
-				Config: config,
-				Shell:  shell.PLAIN,
+				Config:  config,
+				Shell:   shell.GENERIC,
+				Version: cliVersion,
 			},
 		}
 		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
-		ansi := &color.Ansi{}
-		ansi.InitPlain()
+
+		// set dsane defaults for things we don't print
+		cfg.ConsoleTitleTemplate = ""
+		cfg.PWD = ""
+
 		writerColors := cfg.MakeColors()
-		writer := &color.AnsiWriter{
-			Ansi:               ansi,
+		writer := &ansi.Writer{
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
+			TrueColor:          env.CmdFlags.TrueColor,
 		}
-		consoleTitle := &console.Title{
-			Env:      env,
-			Ansi:     ansi,
-			Template: cfg.ConsoleTitleTemplate,
-		}
+		writer.Init(shell.GENERIC)
 		eng := &engine.Engine{
-			Config:       cfg,
-			Env:          env,
-			Writer:       writer,
-			ConsoleTitle: consoleTitle,
-			Ansi:         ansi,
+			Config: cfg,
+			Env:    env,
+			Writer: writer,
 		}
-		prompt := eng.PrintPrimary()
+
+		prompt := eng.Primary()
+
 		imageCreator := &engine.ImageRenderer{
 			AnsiString:    prompt,
 			Author:        author,
 			CursorPadding: cursorPadding,
 			RPromptOffset: rPromptOffset,
 			BgColor:       bgColor,
-			Ansi:          ansi,
+			Ansi:          writer,
 		}
+
 		if outputImage != "" {
 			imageCreator.Path = cleanOutputPath(outputImage, env)
 		}
-		imageCreator.Init(env.Flags().Config)
-		err := imageCreator.SavePNG()
+
+		err := imageCreator.Init(env)
+		if err != nil {
+			fmt.Print(err.Error())
+			return
+		}
+
+		err = imageCreator.SavePNG()
 		if err != nil {
 			fmt.Print(err.Error())
 		}

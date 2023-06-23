@@ -10,7 +10,8 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 )
 
 func Download(fontPath string) ([]byte, error) {
@@ -37,21 +38,18 @@ func isZipFile(data []byte) bool {
 }
 
 func getRemoteFile(location string) (data []byte, err error) {
-	client := &http.Client{}
-	ctx, cancelF := context.WithTimeout(context.Background(), time.Second*time.Duration(60))
-	defer cancelF()
-	req, err := http.NewRequestWithContext(ctx, "GET", location, nil)
+	req, err := http.NewRequestWithContext(context.Background(), "GET", location, nil)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := client.Do(req)
+	resp, err := platform.Client.Do(req)
 	if err != nil {
 		return
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return
+		return data, fmt.Errorf("Failed to download zip file: %s\n→ %s", resp.Status, location)
 	}
 
 	data, err = io.ReadAll(resp.Body)

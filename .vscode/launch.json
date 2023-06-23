@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Prompt",
+      "name": "Primary",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "name": "Debug Tooltip",
+      "name": "Tooltip",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -30,7 +30,7 @@
       ]
     },
     {
-      "name": "Debug Transient",
+      "name": "Transient",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -54,7 +54,7 @@
       ]
     },
     {
-      "name": "Print debug",
+      "name": "Debug",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -65,7 +65,7 @@
       ]
     },
     {
-      "name": "Print init",
+      "name": "Init",
       "type": "go",
       "request": "launch",
       "mode": "debug",
@@ -101,6 +101,18 @@
       ]
     },
     {
+      "name": "Migrate glyphs",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "config",
+        "migrate",
+        "glyphs"
+      ]
+    },
+    {
       "name": "Get value",
       "type": "go",
       "request": "launch",
@@ -131,6 +143,15 @@
       "console": "integratedTerminal"
     },
     {
+      "type": "node",
+      "request": "launch",
+      "name": "Bluesky",
+      "cwd": "${workspaceFolder}/scripts/bluesky",
+      "program": "${workspaceRoot}/scripts/bluesky/main.cjs",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/scripts/bluesky/.env"
+    },
+    {
       "name": "Docs API",
       "type": "node",
       "request": "attach",
@@ -140,7 +161,7 @@
       "envFile": "${workspaceFolder}/website/.env"
     },
     {
-      "name": "Debug CLI(cache)",
+      "name": "Cache",
       "type": "go",
       "request": "launch",
       "mode": "debug",

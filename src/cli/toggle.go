@@ -1,8 +1,9 @@
 package cli
 
 import (
-	"oh-my-posh/platform"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 
 	"github.com/spf13/cobra"
 )

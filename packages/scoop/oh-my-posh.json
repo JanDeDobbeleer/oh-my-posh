@@ -19,7 +19,8 @@
   "installer": {
     "args": [
       "/CURRENTUSER",
-      "/VERYSILENT"
+      "/VERYSILENT",
+      "/INSTALLER=scoop"
     ]
   },
   "checkver": {

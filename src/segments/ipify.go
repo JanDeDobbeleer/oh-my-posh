@@ -2,9 +2,10 @@ package segments
 
 import (
 	"net"
-	"oh-my-posh/http"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/http"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
 type ipData struct {

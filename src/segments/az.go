@@ -3,10 +3,11 @@ package segments
 import (
 	"encoding/json"
 	"errors"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"path/filepath"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
 type Az struct {
@@ -70,7 +71,7 @@ type AzurePowerShellSubscription struct {
 }
 
 func (a *Az) Template() string {
-	return " {{ .Name }} "
+	return NameTemplate
 }
 
 func (a *Az) Init(props properties.Properties, env platform.Environment) {

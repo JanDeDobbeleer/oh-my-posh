@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
 type Request struct {
@@ -34,13 +35,13 @@ func getCacheValue[a any](r *Request, key string) (a, error) {
 	if val, found := r.env.Cache().Get(key); found {
 		err := json.Unmarshal([]byte(val), &data)
 		if err != nil {
-			r.env.Error("OAuth", err)
+			r.env.Error(err)
 			return data, err
 		}
 		return data, nil
 	}
 	err := errors.New("no data in cache")
-	r.env.Error("OAuth", err)
+	r.env.Error(err)
 	return data, err
 }
 
@@ -50,13 +51,13 @@ func do[a any](r *Request, url string, body io.Reader, requestModifiers ...platf
 
 	responseBody, err := r.env.HTTPRequest(url, body, httpTimeout, requestModifiers...)
 	if err != nil {
-		r.env.Error("OAuth", err)
+		r.env.Error(err)
 		return data, err
 	}
 
 	err = json.Unmarshal(responseBody, &data)
 	if err != nil {
-		r.env.Error("OAuth", err)
+		r.env.Error(err)
 		return data, err
 	}
 

@@ -38,7 +38,9 @@ module.exports = async function (context, req) {
   } catch (error) {
     context.log(error);
     context.res = {
-      body: error,
+      body: {
+        "message": (error.message) ? error.message : "unable to refresh token"
+      },
       status: 500
     };
   }

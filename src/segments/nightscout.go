@@ -3,9 +3,10 @@ package segments
 import (
 	"encoding/json"
 	"errors"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
 // segment struct, makes templating easier
@@ -28,8 +29,6 @@ const (
 	FortyFiveDownIcon properties.Property = "fortyfivedown_icon"
 	SingleDownIcon    properties.Property = "singledown_icon"
 	DoubleDownIcon    properties.Property = "doubledown_icon"
-
-	NSCacheTimeout properties.Property = "cache_timeout"
 )
 
 // NightscoutData struct contains the API data
@@ -109,7 +108,7 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 	url := ns.props.GetString(URL, "")
 	httpTimeout := ns.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 	// natural and understood NS timeout is 5, anything else is unusual
-	cacheTimeout := ns.props.GetInt(NSCacheTimeout, 5)
+	cacheTimeout := ns.props.GetInt(properties.CacheTimeout, 5)
 
 	if cacheTimeout > 0 {
 		if data, err := getCacheValue(url); err == nil {

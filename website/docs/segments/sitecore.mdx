@@ -1,0 +1,44 @@
+---
+id: sitecore
+title: Sitecore
+sidebar_label: Sitecore
+---
+
+## What
+
+Display current Sitecore environment. Will not be active when sitecore.json and user.json don't exist.
+
+## Sample Configuration
+
+```json
+{
+  "type": "sitecore",
+  "style": "plain",
+  "foreground": "#000000",
+  "background": "#FFFFFF",
+  "template": "Env: {{ .EndpointName }}{{ if .CmHost }} CM: {{ .CmHost }}{{ end }}"
+}
+```
+
+## Properties
+
+| Name              | Type      | Description                                                                                        |
+| ----------------- | --------- | -------------------------------------------------------------------------------------------------- |
+| `display_default` | `boolean` | display the segment or not when the Sitecore environment name matches `default` - defaults to true |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .EndpointName }} {{ if .CmHost }}({{ .CmHost }}){{ end }}
+```
+
+:::
+
+## Properties
+
+| Name           | Type     | Description                              |
+| -------------- | -------- | ---------------------------------------- |
+| `EndpointName` | `string` | name of the current Sitecore environment |
+| `CmHost`       | `string` | host of the current Sitecore environment |

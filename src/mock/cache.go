@@ -42,3 +42,8 @@ func (_m *MockedCache) Init(home string) {
 func (_m *MockedCache) Set(key, value string, ttl int) {
 	_m.Called(key, value, ttl)
 }
+
+// delete provides a mock function with given fields: key
+func (_m *MockedCache) Delete(key string) {
+	_m.Called(key)
+}

@@ -14,15 +14,15 @@ Currently only supports Windows. Pull requests for Darwin and Linux support are 
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "connection",
   "style": "powerline",
   "background": "#8822ee",
   "foreground": "#222222",
   "powerline_symbol": "\uE0B0"
-}
-```
+}}/>
 
 ## Properties
 
@@ -35,7 +35,7 @@ Currently only supports Windows. Pull requests for Darwin and Linux support are 
 :::note default template
 
 ```template
-{{ if eq .Type \"wifi\"}}\uf1eb{{ else if eq .Type \"ethernet\"}}\uf6ff{{ end }}
+{{ if eq .Type \"wifi\"}}\uf1eb{{ else if eq .Type \"ethernet\"}}\ueba9{{ end }}
 ```
 
 :::

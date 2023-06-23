@@ -3,9 +3,10 @@ package segments
 import (
 	"encoding/json"
 	"fmt"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"path/filepath"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
 type Nx struct {

@@ -3,10 +3,11 @@ package segments
 import (
 	"errors"
 	"fmt"
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -72,8 +73,7 @@ func TestWTTrackedTime(t *testing.T) {
 
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
-
-		response := fmt.Sprintf(`{"cummulative_total": {"seconds": %.2f, "text": "x"}}`, float64(tc.Seconds))
+		response := fmt.Sprintf(`{"cumulative_total": {"seconds": %.2f, "text": "x"}}`, float64(tc.Seconds))
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(response), tc.Error)
 
@@ -126,7 +126,7 @@ func TestWTGetUrl(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 
-		env.On("Error", mock2.Anything, mock2.Anything)
+		env.On("Error", mock2.Anything)
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: map[string]string{"HELLO": "hello"},
 		})

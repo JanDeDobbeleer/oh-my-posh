@@ -1,9 +1,10 @@
 package segments
 
 import (
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
 type Connection struct {
@@ -18,7 +19,7 @@ const (
 )
 
 func (c *Connection) Template() string {
-	return " {{ if eq .Type \"wifi\"}}\uf1eb{{ else if eq .Type \"ethernet\"}}\uf6ff{{ end }} "
+	return " {{ if eq .Type \"wifi\"}}\uf1eb{{ else if eq .Type \"ethernet\"}}\ueba9{{ end }} "
 }
 
 func (c *Connection) Enabled() bool {

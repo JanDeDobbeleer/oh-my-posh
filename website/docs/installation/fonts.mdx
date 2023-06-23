@@ -4,6 +4,9 @@ title: Fonts
 sidebar_label: 🔤 Fonts
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
 ### Nerd Fonts
 
 Oh My Posh was designed to use [Nerd Fonts][nerdfonts]. Nerd Fonts are popular fonts that are patched to include icons.
@@ -11,19 +14,62 @@ We recommend [Meslo LGM NF][meslo], but any Nerd Font should be compatible with 
 
 To see the icons displayed in Oh My Posh, **install** a [Nerd Font][nerdfonts], and **configure** your terminal to use it.
 
-#### Installation
+### Installation
+
+<Tabs
+    defaultValue="oh-my-posh"
+    values={[
+        { label: 'Oh My Posh', value: 'oh-my-posh' },
+        { label: 'homebrew', value: 'homebrew' }
+    ]
+}>
+<TabItem value="oh-my-posh">
 
 Oh My Posh has a CLI to help you select and install a [Nerd Font][nerdfonts] (beta):
 
 :::caution Windows
-This command needs to be executed as admin. The fonts are installed system wide.
+This command is best executed as admin so that fonts are installed system wide.
+In case you have no admin rights, you can install the fonts by adding the `--user` flag.
+Do know this can have side-effects when using certain applications.
 :::
 
 ```bash
 oh-my-posh font install
 ```
 
-#### Windows Terminal
+</TabItem>
+<TabItem value="homebrew">
+
+If you're using Homebrew, you can tap the `homebrew-cask-fonts` repository and install Nerd Fonts from there instead:
+
+```bash
+brew tap homebrew/cask-fonts                     # You only need to do this once!
+brew search nerd-font                            # Search for font packages
+
+# EXAMPLE: Install the NF version of Fira Code
+brew install --cask font-fira-code-nerd-font
+```
+
+</TabItem>
+</Tabs>
+
+### Configuration
+
+Make sure to **configure your terminal** to use the font you have installed. The following sections will show you how to do this for the most popular terminals.
+
+<Tabs
+    defaultValue="wt"
+    values={[
+        { label: 'Windows Terminal', value: 'wt' },
+        { label: 'VS Code', value: 'code' }
+    ]
+}>
+<TabItem value="wt">
+
+:::caution Text renderer
+To ensure correct rendering of the glyphs you will need to enable the option `Use the new text renderer ("AtlasEngine")` in your terminal settings.
+For further details, see [here][wt-issue-8993].
+:::
 
 Once you have installed a Nerd Font, you will need to configure the Windows Terminal to use it. This can be easily done
 by modifying the Windows Terminal settings (default shortcut: `CTRL + SHIFT + ,`). In your `settings.json` file, add the
@@ -37,12 +83,26 @@ by modifying the Windows Terminal settings (default shortcut: `CTRL + SHIFT + ,`
         {
             "font":
             {
-                "face": "MesloLGM NF"
+                "face": "MesloLGM Nerd Font"
             }
         }
     }
 }
 ```
+
+</TabItem>
+<TabItem value="code">
+
+When using Visual Studio Code, you will need to configure the integrated Terminal to make use of the Nerd Font as well. This can be done by changing the `Integrated: Font Family` value in the Terminal settings (default shortcut: `CTRL + ,` and search for `Integrated: Font Family` or via `Users` -> `Features` -> `Terminal`).
+
+If you are using the JSON based settings, you will need to update the `terminal.integrated.fontFamily` value. Example in case of `MesloLGM Nerd Font` Nerd Font:
+
+```json
+"terminal.integrated.fontFamily": "MesloLGM Nerd Font"
+```
+
+</TabItem>
+</Tabs>
 
 ### Other Fonts
 
@@ -52,7 +112,8 @@ The `minimal` themes do not make use of Nerd Font icons.
 [Creating your own theme][configuration] is always an option too 😊
 
 [nerdfonts]: https://www.nerdfonts.com/
-[meslo]: https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/Meslo.zip
+[meslo]: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Meslo.zip
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [font-thread]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/145#issuecomment-730162622
 [configuration]: /docs/configuration/overview
+[wt-issue-8993]: https://github.com/microsoft/terminal/issues/8993

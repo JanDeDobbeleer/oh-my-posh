@@ -10,16 +10,17 @@ jobs:
     if: github.event.pull_request.merged == true
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Check and comment 👩🏾‍💻
-        uses: actions/github-script@d556feaca394842dc55e4734bf3bb9f685482fa0
+        uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
+            const fs = require('fs');
             const { repo: { owner, repo } } = context;
             const pr = context.payload.pull_request;
 
-            if (pr.user.id === 2492783 || pr.user.id === 46447321) {
+            if (pr.user.id === 2492783 || pr.user.type === "Bot") {
               console.log('No credit for maintainer/bot, stop processing');
               return;
             }
@@ -52,11 +53,28 @@ jobs:
             }
 
             if (contributions.length === 0) {
-              console.log('No relevant additions found');
+              console.log('No relevant contributions found');
               return;
             }
 
-            const body = `@all-contributors please add @${pr.user.login} for ${contributions.join()}`;
+            var data = fs.readFileSync('.all-contributorsrc', 'utf8');
+            let json = JSON.parse(data);
+            const contributor = json.contributors.find(contributor => contributor.login === pr.user.login);
+            if (contributor) {
+              console.log(contributor);
+              contributions = contributions.filter(contribution => !contributor.contributions.includes(contribution));
+            }
+
+            if (contributions.length === 0) {
+              console.log('No new contributions found');
+              return;
+            }
+
+            var body = `@all-contributors please add @${pr.user.login} for ${contributions.join()}`;
+
+            if (!contributor) {
+              body += `\n\nThis is pure magic 🪄! @holopin-bot @${pr.user.login} wizard`;
+            }
 
             console.log(`Adding comment: ${body}`);
             await github.rest.issues.createComment({

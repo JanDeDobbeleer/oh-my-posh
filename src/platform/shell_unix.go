@@ -5,16 +5,18 @@ package platform
 import (
 	"errors"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/shirou/gopsutil/v3/host"
+	mem "github.com/shirou/gopsutil/v3/mem"
 	terminal "github.com/wayneashleyberry/terminal-dimensions"
 	"golang.org/x/sys/unix"
 )
 
 func (env *Shell) Root() bool {
-	defer env.Trace(time.Now(), "Root")
+	defer env.Trace(time.Now())
 	return os.Geteuid() == 0
 }
 
@@ -22,21 +24,28 @@ func (env *Shell) Home() string {
 	return os.Getenv("HOME")
 }
 
-func (env *Shell) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
+func (env *Shell) QueryWindowTitles(_, _ string) (string, error) {
 	return "", &NotImplemented{}
 }
 
 func (env *Shell) IsWsl() bool {
-	defer env.Trace(time.Now(), "IsWsl")
-	// one way to check
-	// version := env.FileContent("/proc/version")
-	// return strings.Contains(version, "microsoft")
-	// using env variable
-	return env.Getenv("WSL_DISTRO_NAME") != ""
+	defer env.Trace(time.Now())
+	const key = "is_wsl"
+	if val, found := env.Cache().Get(key); found {
+		env.Debug(val)
+		return val == "true"
+	}
+	var val bool
+	defer func() {
+		env.Cache().Set(key, strconv.FormatBool(val), -1)
+	}()
+	val = env.HasCommand("wslpath")
+	env.Debug(strconv.FormatBool(val))
+	return val
 }
 
 func (env *Shell) IsWsl2() bool {
-	defer env.Trace(time.Now(), "IsWsl2")
+	defer env.Trace(time.Now())
 	if !env.IsWsl() {
 		return false
 	}
@@ -45,13 +54,13 @@ func (env *Shell) IsWsl2() bool {
 }
 
 func (env *Shell) TerminalWidth() (int, error) {
-	defer env.Trace(time.Now(), "TerminalWidth")
+	defer env.Trace(time.Now())
 	if env.CmdFlags.TerminalWidth != 0 {
 		return env.CmdFlags.TerminalWidth, nil
 	}
 	width, err := terminal.Width()
 	if err != nil {
-		env.Error("TerminalWidth", err)
+		env.Error(err)
 	}
 	return int(width), err
 }
@@ -59,6 +68,7 @@ func (env *Shell) TerminalWidth() (int, error) {
 func (env *Shell) Platform() string {
 	const key = "environment_platform"
 	if val, found := env.Cache().Get(key); found {
+		env.Debug(val)
 		return val
 	}
 	var platform string
@@ -67,6 +77,7 @@ func (env *Shell) Platform() string {
 	}()
 	if wsl := env.Getenv("WSL_DISTRO_NAME"); len(wsl) != 0 {
 		platform = strings.Split(strings.ToLower(wsl), "-")[0]
+		env.Debug(platform)
 		return platform
 	}
 	platform, _, _, _ = host.PlatformInformation()
@@ -77,12 +88,12 @@ func (env *Shell) Platform() string {
 			platform = "manjaro"
 		}
 	}
-	env.Debug("Platform", platform)
+	env.Debug(platform)
 	return platform
 }
 
 func (env *Shell) CachePath() string {
-	defer env.Trace(time.Now(), "CachePath")
+	defer env.Trace(time.Now())
 	// get XDG_CACHE_HOME if present
 	if cachePath := returnOrBuildCachePath(env.Getenv("XDG_CACHE_HOME")); len(cachePath) != 0 {
 		return cachePath
@@ -94,7 +105,7 @@ func (env *Shell) CachePath() string {
 	return env.Home()
 }
 
-func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
+func (env *Shell) WindowsRegistryKeyValue(_ string) (*WindowsRegistryValue, error) {
 	return nil, &NotImplemented{}
 }
 
@@ -121,19 +132,40 @@ func (env *Shell) ConvertToLinuxPath(path string) string {
 	return path
 }
 
-func (env *Shell) LookWinAppPath(file string) (string, error) {
+func (env *Shell) LookWinAppPath(_ string) (string, error) {
 	return "", errors.New("not relevant")
 }
 
 func (env *Shell) DirIsWritable(path string) bool {
-	defer env.Trace(time.Now(), "DirIsWritable", path)
+	defer env.Trace(time.Now(), path)
 	return unix.Access(path, unix.W_OK) == nil
 }
 
-func (env *Shell) Connection(connectionType ConnectionType) (*Connection, error) {
+func (env *Shell) Connection(_ ConnectionType) (*Connection, error) {
 	// added to disable the linting error, we can implement this later
 	if len(env.networks) == 0 {
 		return nil, &NotImplemented{}
 	}
 	return nil, &NotImplemented{}
+}
+
+func (env *Shell) Memory() (*Memory, error) {
+	m := &Memory{}
+	memStat, err := mem.VirtualMemory()
+	if err != nil {
+		env.Error(err)
+		return nil, err
+	}
+	m.PhysicalTotalMemory = memStat.Total
+	m.PhysicalAvailableMemory = memStat.Available
+	m.PhysicalFreeMemory = memStat.Free
+	m.PhysicalPercentUsed = memStat.UsedPercent
+	swapStat, err := mem.SwapMemory()
+	if err != nil {
+		env.Error(err)
+	}
+	m.SwapTotalMemory = swapStat.Total
+	m.SwapFreeMemory = swapStat.Free
+	m.SwapPercentUsed = swapStat.UsedPercent
+	return m, nil
 }

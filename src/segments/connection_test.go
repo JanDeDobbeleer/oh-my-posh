@@ -2,10 +2,11 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -51,7 +52,7 @@ func TestConnection(t *testing.T) {
 		{
 			Case:            "WiFi and Ethernet, enabled",
 			ConnectionType:  "wifi|ethernet",
-			ExpectedString:  "\uf6ff",
+			ExpectedString:  "\ueba9",
 			ExpectedEnabled: true,
 			Connections: []*connectionResponse{
 				{

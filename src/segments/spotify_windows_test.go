@@ -3,10 +3,11 @@
 package segments
 
 import (
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -62,9 +63,15 @@ func TestSpotifyWindowsPWA(t *testing.T) {
 	}{
 		{
 			Case:            "Playing",
-			ExpectedString:  "\ue602 Snow in Stockholm - Sarah, the Illstrumentalist",
+			ExpectedString:  "\ue602 Sarah, the Illstrumentalist - Snow in Stockholm",
 			ExpectedEnabled: true,
 			Title:           "Spotify - Snow in Stockholm • Sarah, the Illstrumentalist",
+		},
+		{
+			Case:            "Playing",
+			ExpectedString:  "\ue602 Main one - Bring the drama",
+			ExpectedEnabled: true,
+			Title:           "Spotify - Bring the drama • Main one",
 		},
 		{
 			Case:            "Stopped",

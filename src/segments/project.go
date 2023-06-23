@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/regex"
 	"path/filepath"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
 	"github.com/BurntSushi/toml"
 )
@@ -20,16 +21,10 @@ type ProjectItem struct {
 }
 
 type ProjectData struct {
+	Type    string
 	Version string
 	Name    string
 	Target  string
-}
-
-func (p *ProjectData) enabled() bool {
-	if p == nil {
-		return false
-	}
-	return len(p.Version) > 0 || len(p.Name) > 0 || len(p.Target) > 0
 }
 
 // Rust Cargo package
@@ -72,14 +67,15 @@ func (n *Project) Enabled() bool {
 				continue
 			}
 			n.ProjectData = *data
-			return n.enabled()
+			n.ProjectData.Type = item.Name
+			return true
 		}
 	}
-	return false
+	return n.props.GetBool(properties.AlwaysEnabled, false)
 }
 
 func (n *Project) Template() string {
-	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}} {{ end }}{{ if .Name }}{{ .Name }} {{ end }}{{ if .Target }}\uf9fd {{.Target}} {{ end }}{{ end }}" //nolint:lll
+	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}} {{ end }}{{ if .Name }}{{ .Name }} {{ end }}{{ if .Target }}\uf4de {{.Target}} {{ end }}{{ end }}" //nolint:lll
 }
 
 func (n *Project) Init(props properties.Properties, env platform.Environment) {
@@ -116,6 +112,16 @@ func (n *Project) Init(props properties.Properties, env platform.Environment) {
 			Name:    "dotnet",
 			Files:   []string{"*.vbproj", "*.fsproj", "*.csproj"},
 			Fetcher: n.getDotnetProject,
+		},
+		{
+			Name:    "julia",
+			Files:   []string{"JuliaProject.toml", "Project.toml"},
+			Fetcher: n.getProjectData,
+		},
+		{
+			Name:    "powershell",
+			Files:   []string{"*.psd1"},
+			Fetcher: n.getPowerShellModuleData,
 		},
 	}
 }
@@ -174,7 +180,7 @@ func (n *Project) getPoetryPackage(item ProjectItem) *ProjectData {
 	}
 }
 
-func (n *Project) getNuSpecPackage(item ProjectItem) *ProjectData {
+func (n *Project) getNuSpecPackage(_ ProjectItem) *ProjectData {
 	files := n.env.LsDir(n.env.Pwd())
 	var content string
 	// get the first match only
@@ -198,7 +204,7 @@ func (n *Project) getNuSpecPackage(item ProjectItem) *ProjectData {
 	}
 }
 
-func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
+func (n *Project) getDotnetProject(_ ProjectItem) *ProjectData {
 	files := n.env.LsDir(n.env.Pwd())
 	var name string
 	var content string
@@ -225,4 +231,51 @@ func (n *Project) getDotnetProject(item ProjectItem) *ProjectData {
 		Target: target,
 		Name:   name,
 	}
+}
+
+func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {
+	files := n.env.LsDir(n.env.Pwd())
+	var content string
+	// get the first match only
+	for _, file := range files {
+		if filepath.Ext(file.Name()) == ".psd1" {
+			content = n.env.FileContent(file.Name())
+			break
+		}
+	}
+
+	data := &ProjectData{}
+	lines := strings.Split(content, "\n")
+
+	for _, line := range lines {
+		splitted := strings.SplitN(line, "=", 2)
+		if len(splitted) < 2 {
+			continue
+		}
+		key := strings.TrimSpace(splitted[0])
+		value := strings.TrimSpace(splitted[1])
+		value = strings.Trim(value, "'\"")
+
+		switch key {
+		case "ModuleVersion":
+			data.Version = value
+		case "RootModule":
+			data.Name = strings.TrimRight(value, ".psm1")
+		}
+	}
+
+	return data
+}
+
+func (n *Project) getProjectData(item ProjectItem) *ProjectData {
+	content := n.env.FileContent(item.Files[0])
+
+	var data ProjectData
+	_, err := toml.Decode(content, &data)
+	if err != nil {
+		n.Error = err.Error()
+		return nil
+	}
+
+	return &data
 }

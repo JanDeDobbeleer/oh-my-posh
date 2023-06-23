@@ -2,13 +2,14 @@ package segments
 
 import (
 	"fmt"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/regex"
-	"oh-my-posh/shell"
-	"oh-my-posh/template"
 	"sort"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type Path struct {
@@ -57,6 +58,9 @@ const (
 	Unique string = "unique"
 	// AgnosterLeft like agnoster, but keeps the left side of the path
 	AgnosterLeft string = "agnoster_left"
+	// Powerlevel tries to mimic the powerlevel10k path,
+	// used in combination with max_width.
+	Powerlevel string = "powerlevel"
 	// MixedThreshold the threshold of the length of the path Mixed will display
 	MixedThreshold properties.Property = "mixed_threshold"
 	// MappedLocations allows overriding certain location with an icon
@@ -65,8 +69,18 @@ const (
 	MappedLocationsEnabled properties.Property = "mapped_locations_enabled"
 	// MaxDepth Maximum path depth to display whithout shortening
 	MaxDepth properties.Property = "max_depth"
+	// MaxWidth Maximum path width to display for powerlevel style
+	MaxWidth properties.Property = "max_width"
 	// Hides the root location if it doesn't fit in max_depth. Used in Agnoster Short
 	HideRootLocation properties.Property = "hide_root_location"
+	// A color override cycle
+	Cycle properties.Property = "cycle"
+	// Color the path separators within the cycle
+	CycleFolderSeparator properties.Property = "cycle_folder_separator"
+	// format to use on the folder names
+	FolderFormat properties.Property = "folder_format"
+	// format to use on the first and last folder of the path
+	EdgeFormat properties.Property = "edge_format"
 )
 
 func (pt *Path) Template() string {
@@ -135,7 +149,7 @@ func (pt *Path) setStyle() {
 	if len(pt.relative) == 0 {
 		pt.Path = pt.root
 		if strings.HasSuffix(pt.Path, ":") {
-			pt.Path += pt.env.PathSeparator()
+			pt.Path += pt.getFolderSeparator()
 		}
 		return
 	}
@@ -151,7 +165,7 @@ func (pt *Path) setStyle() {
 	case Letter:
 		pt.Path = pt.getLetterPath()
 	case Unique:
-		pt.Path = pt.getUniqueLettersPath()
+		pt.Path = pt.getUniqueLettersPath(0)
 	case AgnosterLeft:
 		pt.Path = pt.getAgnosterLeftPath()
 	case Short:
@@ -161,6 +175,9 @@ func (pt *Path) setStyle() {
 		pt.Path = pt.getFullPath()
 	case Folder:
 		pt.Path = pt.getFolderPath()
+	case Powerlevel:
+		maxWidth := int(pt.props.GetFloat64(MaxWidth, 0))
+		pt.Path = pt.getUniqueLettersPath(maxWidth)
 	default:
 		pt.Path = fmt.Sprintf("Path style: %s is not available", style)
 	}
@@ -183,7 +200,7 @@ func (pt *Path) getFolderSeparator() string {
 	}
 	text, err := tmpl.Render()
 	if err != nil {
-		pt.env.Error("getFolderSeparator", err)
+		pt.env.Error(err)
 	}
 	if len(text) == 0 {
 		return pt.env.PathSeparator()
@@ -224,41 +241,42 @@ func (pt *Path) pathDepth(pwd string) int {
 }
 
 func (pt *Path) getAgnosterPath() string {
-	var buffer strings.Builder
 	folderIcon := pt.props.GetString(FolderIcon, "..")
-	separator := pt.getFolderSeparator()
-	elements := strings.Split(pt.relative, pt.env.PathSeparator())
-	if pt.root != pt.env.PathSeparator() {
-		elements = append([]string{pt.root}, elements...)
+	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
+	if pt.root == pt.env.PathSeparator() {
+		pt.root = splitted[0]
+		splitted = splitted[1:]
 	}
-	n := len(elements)
-	buffer.WriteString(elements[0])
-	for i := 2; i < n; i++ {
-		buffer.WriteString(fmt.Sprintf("%s%s", separator, folderIcon))
+
+	var elements []string
+	n := len(splitted)
+	for i := 1; i < n; i++ {
+		elements = append(elements, folderIcon)
 	}
-	if n > 1 {
-		buffer.WriteString(fmt.Sprintf("%s%s", separator, elements[n-1]))
+
+	if len(splitted) > 0 {
+		elements = append(elements, splitted[n-1])
 	}
-	return buffer.String()
+
+	return pt.colorizePath(pt.root, elements)
 }
 
 func (pt *Path) getAgnosterLeftPath() string {
-	var buffer strings.Builder
 	folderIcon := pt.props.GetString(FolderIcon, "..")
-	separator := pt.getFolderSeparator()
-	elements := strings.Split(pt.relative, pt.env.PathSeparator())
-	if pt.root != pt.env.PathSeparator() {
-		elements = append([]string{pt.root}, elements...)
+	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
+	if pt.root == pt.env.PathSeparator() {
+		pt.root = splitted[0]
+		splitted = splitted[1:]
 	}
-	n := len(elements)
-	buffer.WriteString(elements[0])
-	if n > 1 {
-		buffer.WriteString(fmt.Sprintf("%s%s", separator, elements[1]))
+
+	var elements []string
+	n := len(splitted)
+	elements = append(elements, splitted[0])
+	for i := 1; i < n; i++ {
+		elements = append(elements, folderIcon)
 	}
-	for i := 2; i < n; i++ {
-		buffer.WriteString(fmt.Sprintf("%s%s", separator, folderIcon))
-	}
-	return buffer.String()
+
+	return pt.colorizePath(pt.root, elements)
 }
 
 func (pt *Path) getRelevantLetter(folder string) string {
@@ -275,35 +293,50 @@ func (pt *Path) getRelevantLetter(folder string) string {
 }
 
 func (pt *Path) getLetterPath() string {
-	var buffer strings.Builder
-	separator := pt.getFolderSeparator()
-	elements := strings.Split(pt.relative, pt.env.PathSeparator())
-	if pt.root != pt.env.PathSeparator() {
-		elements = append([]string{pt.root}, elements...)
+	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
+	if pt.root == pt.env.PathSeparator() {
+		pt.root = splitted[0]
+		splitted = splitted[1:]
 	}
-	n := len(elements)
+	pt.root = pt.getRelevantLetter(pt.root)
+
+	var elements []string
+	n := len(splitted)
 	for i := 0; i < n-1; i++ {
-		letter := pt.getRelevantLetter(elements[i])
-		if i != 0 {
-			buffer.WriteString(separator)
-		}
-		buffer.WriteString(letter)
+		letter := pt.getRelevantLetter(splitted[i])
+		elements = append(elements, letter)
 	}
-	buffer.WriteString(fmt.Sprintf("%s%s", separator, elements[n-1]))
-	return buffer.String()
+
+	if len(splitted) > 0 {
+		elements = append(elements, splitted[n-1])
+	}
+
+	return pt.colorizePath(pt.root, elements)
 }
 
-func (pt *Path) getUniqueLettersPath() string {
-	var buffer strings.Builder
+func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 	separator := pt.getFolderSeparator()
-	elements := strings.Split(pt.relative, pt.env.PathSeparator())
-	if pt.root != pt.env.PathSeparator() {
-		elements = append([]string{pt.root}, elements...)
+	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
+	if pt.root == pt.env.PathSeparator() {
+		pt.root = splitted[0]
+		splitted = splitted[1:]
 	}
-	n := len(elements)
+
+	if maxWidth > 0 {
+		path := strings.Join(splitted, separator)
+		if len(path) <= maxWidth {
+			return pt.colorizePath(pt.root, splitted)
+		}
+	}
+
+	pt.root = pt.getRelevantLetter(pt.root)
+
+	var elements []string
+	n := len(splitted)
 	letters := make(map[string]bool)
+	letters[pt.root] = true
 	for i := 0; i < n-1; i++ {
-		folder := elements[i]
+		folder := splitted[i]
 		letter := pt.getRelevantLetter(folder)
 		for letters[letter] {
 			if letter == folder {
@@ -312,22 +345,36 @@ func (pt *Path) getUniqueLettersPath() string {
 			letter += folder[len(letter) : len(letter)+1]
 		}
 		letters[letter] = true
-		if i != 0 {
-			buffer.WriteString(separator)
+		elements = append(elements, letter)
+		// only return early on maxWidth > 0
+		// this enables the powerlevel10k behavior
+		if maxWidth > 0 {
+			list := splitted[i+1:]
+			list = append(list, elements...)
+			current := strings.Join(list, separator)
+			leftover := maxWidth - len(current) - len(pt.root) - len(separator)
+			if leftover >= 0 {
+				elements = append(elements, strings.Join(splitted[i+1:], separator))
+				return pt.colorizePath(pt.root, elements)
+			}
 		}
-		buffer.WriteString(letter)
 	}
-	buffer.WriteString(fmt.Sprintf("%s%s", separator, elements[n-1]))
-	return buffer.String()
+
+	if len(elements) > 0 {
+		elements = append(elements, splitted[n-1])
+	}
+
+	return pt.colorizePath(pt.root, elements)
 }
 
 func (pt *Path) getAgnosterFullPath() string {
-	path := strings.Trim(pt.relative, pt.env.PathSeparator())
-	path = pt.replaceFolderSeparators(path)
+	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
 	if pt.root == pt.env.PathSeparator() {
-		return path
+		pt.root = splitted[0]
+		splitted = splitted[1:]
 	}
-	return pt.root + pt.getFolderSeparator() + path
+
+	return pt.colorizePath(pt.root, splitted)
 }
 
 func (pt *Path) getAgnosterShortPath() string {
@@ -345,11 +392,11 @@ func (pt *Path) getAgnosterShortPath() string {
 		return pt.getAgnosterFullPath()
 	}
 	pathSeparator := pt.env.PathSeparator()
-	folderSeparator := pt.getFolderSeparator()
 	rel := strings.TrimPrefix(pt.relative, pathSeparator)
 	splitted := strings.Split(rel, pathSeparator)
 	splitPos := pathDepth - maxDepth
-	var buffer strings.Builder
+	// var buffer strings.Builder
+	var elements []string
 	// unix root, needs to be replaced with the folder we're in at root level
 	root := pt.root
 	room := pathDepth - maxDepth
@@ -357,29 +404,24 @@ func (pt *Path) getAgnosterShortPath() string {
 		root = splitted[0]
 		room--
 	}
+
+	if hideRootLocation || room > 0 {
+		elements = append(elements, folderIcon)
+	}
+
 	if hideRootLocation {
-		buffer.WriteString(folderIcon)
-	} else {
-		buffer.WriteString(root)
-		if room > 0 {
-			buffer.WriteString(folderSeparator)
-			buffer.WriteString(folderIcon)
-		}
+		root = ""
 	}
+
 	for i := splitPos; i < pathDepth; i++ {
-		buffer.WriteString(fmt.Sprintf("%s%s", folderSeparator, splitted[i]))
+		elements = append(elements, splitted[i])
 	}
-	return buffer.String()
+	return pt.colorizePath(root, elements)
 }
 
 func (pt *Path) getFullPath() string {
-	rel := pt.relative
-	pathSeparator := pt.env.PathSeparator()
-	if pt.root != pathSeparator && !strings.HasSuffix(pt.root, pathSeparator) {
-		rel = pathSeparator + rel
-	}
-	path := pt.replaceFolderSeparators(rel)
-	return pt.root + path
+	elements := strings.Split(pt.relative, pt.env.PathSeparator())
+	return pt.colorizePath(pt.root, elements)
 }
 
 func (pt *Path) getFolderPath() string {
@@ -410,7 +452,7 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 		}
 		path, err := tmpl.Render()
 		if err != nil {
-			pt.env.Error("replaceMappedLocations", err)
+			pt.env.Error(err)
 		}
 		if len(path) == 0 {
 			continue
@@ -482,9 +524,10 @@ func (pt *Path) normalizePath(path string) string {
 }
 
 // ParsePath parses an input path and returns a clean root and a clean path.
-func (pt *Path) parsePath(inputPath string) (root, path string) {
+func (pt *Path) parsePath(inputPath string) (string, string) {
+	var root, path string
 	if len(inputPath) == 0 {
-		return
+		return root, path
 	}
 	separator := pt.env.PathSeparator()
 	clean := func(path string) string {
@@ -507,7 +550,7 @@ func (pt *Path) parsePath(inputPath string) (root, path string) {
 		if len(matches) > 0 {
 			root = `\\` + matches["hostname"] + `\` + matches["sharename"]
 			path = clean(matches["path"])
-			return
+			return root, path
 		}
 	}
 	s := strings.SplitAfterN(inputPath, separator, 2)
@@ -545,4 +588,63 @@ func (pt *Path) replaceFolderSeparators(pwd string) string {
 
 	pwd = strings.ReplaceAll(pwd, defaultSeparator, folderSeparator)
 	return pwd
+}
+
+func (pt *Path) colorizePath(root string, elements []string) string {
+	cycle := pt.props.GetStringArray(Cycle, []string{})
+	skipColorize := len(cycle) == 0
+	folderSeparator := pt.getFolderSeparator()
+	colorSeparator := pt.props.GetBool(CycleFolderSeparator, false)
+	folderFormat := pt.props.GetString(FolderFormat, "%s")
+	edgeFormat := pt.props.GetString(EdgeFormat, folderFormat)
+
+	colorizeElement := func(element string) string {
+		if skipColorize || len(element) == 0 {
+			return element
+		}
+		defer func() {
+			cycle = append(cycle[1:], cycle[0])
+		}()
+		return fmt.Sprintf("<%s>%s</>", cycle[0], element)
+	}
+
+	if len(elements) == 0 {
+		root := fmt.Sprintf(edgeFormat, root)
+		return colorizeElement(root)
+	}
+
+	colorizeSeparator := func() string {
+		if skipColorize || !colorSeparator {
+			return folderSeparator
+		}
+		return fmt.Sprintf("<%s>%s</>", cycle[0], folderSeparator)
+	}
+
+	var builder strings.Builder
+
+	root = fmt.Sprintf(edgeFormat, root)
+	builder.WriteString(colorizeElement(root))
+
+	if root != pt.env.PathSeparator() && len(root) != 0 {
+		builder.WriteString(colorizeSeparator())
+	}
+
+	for i, element := range elements {
+		if len(element) == 0 {
+			continue
+		}
+
+		format := folderFormat
+		if i == len(elements)-1 {
+			format = edgeFormat
+		}
+
+		element = fmt.Sprintf(format, element)
+		builder.WriteString(colorizeElement(element))
+		if i != len(elements)-1 {
+			builder.WriteString(colorizeSeparator())
+		}
+	}
+
+	return builder.String()
 }

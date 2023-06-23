@@ -62,9 +62,15 @@ module.exports = {
           position: 'right',
         },
         {
-          href: 'https://social.ohmyposh.dev/@jan',
-          className: 'header-mastodon-link',
-          'aria-label': 'Mastodon',
+          href: 'https://discord.gg/n7E3DkXssv',
+          className: 'header-discord-link',
+          'aria-label': 'Discord',
+          position: 'right',
+        },
+        {
+          href: 'https://staging.bsky.app/profile/ohmyposh.dev',
+          className: 'header-bluesky-link',
+          'aria-label': 'Bluesky',
           position: 'right',
         }
       ],
@@ -93,10 +99,12 @@ module.exports = {
               href: 'https://github.com/jandedobbeleer/oh-my-posh',
             },
             {
-              html: '<a class="footer__link-item" rel="me" href="https://social.ohmyposh.dev/@jan">Mastodon <svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_node_modules-@docusaurus-theme-classic-lib-theme-Icon-ExternalLink-styles-module"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a>',
+              label: 'Discord',
+              href: 'https://discord.gg/n7E3DkXssv',
             },
             {
-              html: '<a class="footer__link-item" rel="me" href="https://social.ohmyposh.dev/@releasebot">Releases <svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_node_modules-@docusaurus-theme-classic-lib-theme-Icon-ExternalLink-styles-module"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></a>',
+              label: 'Bluesky',
+              href: 'https://staging.bsky.app/profile/ohmyposh.dev',
             }
           ],
         },
@@ -115,13 +123,17 @@ module.exports = {
               label: 'Docusaurus',
               href: 'https://github.com/facebook/docusaurus',
             },
+            {
+              label: 'Privacy',
+              href: '/privacy',
+            },
           ],
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} <a href='https://github.com/sponsors/JanDeDobbeleer' target='_blank'>Jan De Dobbeleer</a> and <a href='/docs/contributors'>contributors</a>.`,
     },
     appInsights: {
-      instrumentationKey: '72804848-dc30-4856-8245-4fa1450b041f',
+      instrumentationKey: '51741aa7-e087-4e80-b7b0-0863d467462a',
     },
     algolia: {
       appId: 'XIR4RB3TM1',

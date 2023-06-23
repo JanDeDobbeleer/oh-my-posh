@@ -2,12 +2,18 @@ package cmd
 
 import (
 	"bytes"
+	"context"
 	"os/exec"
 	"strings"
+	"time"
 )
 
+// Run is used to correctly run a command with a timeout.
 func Run(command string, args ...string) (string, error) {
-	cmd := exec.Command(command, args...)
+	// set a timeout of 4 seconds
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*4)
+	defer cancel()
+	cmd := exec.CommandContext(ctx, command, args...)
 	var out bytes.Buffer
 	var err bytes.Buffer
 	cmd.Stdout = &out

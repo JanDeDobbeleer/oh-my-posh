@@ -1,9 +1,10 @@
 package segments
 
 import (
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
 type Shell struct {
@@ -20,7 +21,7 @@ const (
 )
 
 func (s *Shell) Template() string {
-	return " {{ .Name }} "
+	return NameTemplate
 }
 
 func (s *Shell) Enabled() bool {

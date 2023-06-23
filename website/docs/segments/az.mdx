@@ -16,16 +16,16 @@ initializing Oh My Posh.
 
 ## Sample Configuration
 
-```json
-{
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
   "type": "az",
   "style": "powerline",
   "powerline_symbol": "\uE0B0",
   "foreground": "#000000",
   "background": "#9ec3f0",
   "template": " \uFD03 {{ .EnvironmentName }}"
-}
-```
+}}/>
 
 ## Properties
 
@@ -47,15 +47,16 @@ initializing Oh My Posh.
 
 | Name               | Type      | Description                                                    |
 | ------------------ | --------- | -------------------------------------------------------------- |
-| `.EnvironmentName` | `string`  | account environment name                                       |
+| `.EnvironmentName` | `string`  | Azure environment name                                         |
 | `.HomeTenantID`    | `string`  | home tenant id                                                 |
-| `.ID`              | `string`  | account/subscription id                                        |
-| `.IsDefault`       | `boolean` | is the default account or not                                  |
-| `.Name`            | `string`  | account name                                                   |
-| `.State`           | `string`  | account state                                                  |
+| `.ID`              | `string`  | subscription id                                                |
+| `.IsDefault`       | `boolean` | is the default subscription or not                             |
+| `.Name`            | `string`  | subscription name                                              |
+| `.State`           | `string`  | subscription state                                             |
 | `.TenantID`        | `string`  | tenant id                                                      |
 | `.User.Name`       | `string`  | user name                                                      |
 | `.User.Type`       | `string`  | user type                                                      |
 | `.Origin`          | `string`  | where we received the information from, can be `CLI` or `PWSH` |
 
 [templates]: /docs/configuration/templates
+[az]: https://www.powershellgallery.com/packages/Az

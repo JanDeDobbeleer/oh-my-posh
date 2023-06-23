@@ -1,0 +1,62 @@
+---
+id: unity
+title: Unity
+sidebar_label: Unity
+---
+
+## What
+
+Display the currently active [Unity][unity] and C# versions.
+
+The Unity version is displayed regardless of whether or not the corrsponding C# version can be found.
+The C# version is determined by first checking a static table.
+If the Unity version isn't found, a web request is made to [the Unity docs][unity-csharp-page] to
+try extracting it from there. A web request only occurs the first time a given `major.minor`
+Unity version is encountered. Subsequent invocations return the cached C# version.
+
+C# version display is only supported from Unity 2017.1.
+
+Unity 2017.1 - 2019.1 support two C# versions, depending on which scripting runtime is selected in Player Settings.
+This segment always chooses the higher version.
+
+## Sample Configuration
+
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
+  "type": "unity",
+  "style": "powerline",
+  "powerline_symbol": "\ue0b0",
+  "foreground": "#111111",
+  "background": "#ffffff",
+  "properties": {
+    "http_timeout": 2000
+  }
+}}/>
+
+## Properties
+
+| Name            | Type     | Description                                     |
+| --------------- | -------- | ----------------------------------------------- |
+| `http_timeout`  | `int`    | The default timeout for http request is 2000ms. |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+\ue721 {{ .UnityVersion }}{{ if .CSharpVersion }} {{ .CSharpVersion }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name             | Type     | Description                              |
+| ---------------- | -------- | ---------------------------------------- |
+| `.UnityVersion`  | `string` | the Unity version                        |
+| `.CSharpVersion` | `string` | the C# version                           |
+
+[unity]: https://unity.com/
+[templates]: /docs/configuration/templates
+[unity-csharp-page]: https://docs.unity3d.com/Manual/CSharpCompiler.html

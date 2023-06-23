@@ -19,14 +19,122 @@ oh-my-posh get shell
   defaultValue="powershell"
   groupId="shell"
   values={[
-    { label: 'powershell', value: 'powershell', },
-    { label: 'cmd', value: 'cmd', },
-    { label: 'zsh', value: 'zsh', },
     { label: 'bash', value: 'bash', },
+    { label: 'cmd', value: 'cmd', },
+    { label: 'elvish', value: 'elvish', },
     { label: 'fish', value: 'fish', },
     { label: 'nu', value: 'nu', },
+    { label: 'powershell', value: 'powershell', },
+    { label: 'tcsh', value: 'tcsh', },
+    { label: 'xonsh', value: 'xonsh', },
+    { label: 'zsh', value: 'zsh', },
   ]
 }>
+<TabItem value="bash">
+
+Add the following to `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
+
+```bash
+eval "$(oh-my-posh init bash)"
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec bash
+```
+
+Or, when using `~/.profile`.
+
+```bash
+. ~/.profile
+```
+
+</TabItem>
+<TabItem value="cmd">
+
+There's no out-of-the-box support for Windows CMD when it comes to custom prompts.
+There is however a way to do it using [Clink][clink], which at the same time supercharges
+your cmd experience. Follow the installation instructions and make sure you select autostart.
+
+Integrating Oh My Posh with Clink is easy: create a new file called oh-my-posh.lua in your Clink
+scripts directory (run `clink info` inside cmd to find that file's location).
+
+```lua title="oh-my-posh.lua"
+load(io.popen('oh-my-posh init cmd'):read("*a"))()
+```
+
+Once added, restart cmd for the changes to take effect.
+
+</TabItem>
+<TabItem value="elvish">
+
+Add the following at the end of `~/.elvish/rc.elv`:
+
+```bash
+eval (oh-my-posh init elvish)
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec elvish
+```
+
+</TabItem>
+<TabItem value="fish">
+
+:::caution
+Oh My Posh requires fish v3.4.0 or higher.
+:::
+
+Initialize Oh My Posh in `~/.config/fish/config.fish`:
+
+```bash
+oh-my-posh init fish | source
+```
+
+Once added, reload your config for the changes to take effect.
+
+```bash
+exec fish
+```
+
+</TabItem>
+<TabItem value="nu">
+
+:::caution
+Oh My Posh requires Nushell v0.78.0 or higher.
+:::
+
+Add the following line to the Nushell env file (`$nu.env-path`):
+
+```bash
+oh-my-posh init nu
+```
+
+This saves the initialization script to `~/.oh-my-posh.nu`.
+Now, edit the Nushell config file (`$nu.config-path`) and add the following line at the bottom:
+
+```bash
+source ~/.oh-my-posh.nu
+```
+
+If you want to save the initialization script elsewhere, you can change the first line to something like this:
+
+```bash
+oh-my-posh init nu --print | save /mylocation/myscript.nu --force
+```
+
+And change the `source` line to:
+
+```bash
+source /mylocation/myscript.nu
+```
+
+Once added, restart Nushell for the changes to take effect.
+
+</TabItem>
 <TabItem value="powershell">
 
 Edit your PowerShell profile script, you can find its location under the `$PROFILE` variable in your preferred PowerShell version. For example, using notepad:
@@ -41,6 +149,9 @@ When the above command gives an error, make sure to create the profile first.
 ```powershell
 New-Item -Path $PROFILE -Type File -Force
 ```
+
+In this scenario, it can also be that PowerShell blocks running local scripts. To solve that, set PowerShell
+to only require remote scripts to be signed using `Set-ExecutionPolicy RemoteSigned`, or [sign the profile][sign].
 :::
 
 Then add the following line.
@@ -67,20 +178,34 @@ Once added, reload your profile for the changes to take effect.
 ```
 
 </TabItem>
-<TabItem value="cmd">
+<TabItem value="tcsh">
 
-There's no out-of-the-box support for Windows CMD when it comes to custom prompts.
-There is however a way to do it using [Clink][clink], which at the same time supercharges
-your cmd experience. Follow the installation instructions and make sure you select autostart.
+Add the following at the end of `~/.tcshrc`:
 
-Integrating Oh My Posh with Clink is easy: create a new file called oh-my-posh.lua in your Clink
-scripts directory (run `clink info` inside cmd to find that file's location).
-
-```lua title="oh-my-posh.lua"
-load(io.popen('oh-my-posh init cmd'):read("*a"))()
+```bash
+eval `oh-my-posh init tcsh`
 ```
 
-Once added, restart cmd for the changes to take effect.
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec tcsh
+```
+
+</TabItem>
+<TabItem value="xonsh">
+
+Add the following line at the end of `~/.xonshrc`:
+
+```bash
+execx($(oh-my-posh init xonsh))
+```
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec xonsh
+```
 
 </TabItem>
 <TabItem value="zsh">
@@ -95,7 +220,7 @@ eval "$(oh-my-posh init zsh)"
 As the standard terminal has issues displaying the ANSI characters correctly, you might want to skip loading just for that terminal and instead of the line above, place this in your `~/.zshrc`:
 
 ```bash
-if [ $TERM_PROGRAM != "Apple_Terminal" ]; then
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   eval "$(oh-my-posh init zsh)"
 fi
 ```
@@ -110,94 +235,9 @@ exec zsh
 ```
 
 </TabItem>
-<TabItem value="bash">
-
-Add the following to `~/.bashrc` (could be `~/.profile` or `~/.bash_profile` depending on your environment):
-
-```bash
-eval "$(oh-my-posh init bash)"
-```
-
-Once added, reload your profile for the changes to take effect.
-
-```bash
-exec bash
-```
-
-Or, when using `~/.profile`.
-
-```bash
-. ~/.profile
-```
-
-</TabItem>
-<TabItem value="fish">
-
-:::caution
-Oh My Posh requires fish v3.4.0 or higher.
-:::
-
-Initialize Oh My Posh in `~/.config/fish/config.fish`:
-
-```bash
-oh-my-posh init fish | source
-```
-
-Once added, reload your config for the changes to take effect.
-
-```bash
-exec fish
-```
-
-</TabItem>
-<TabItem value="nu">
-
-:::caution
-Oh My Posh requires Nushell v0.70.0 or higher.
-:::
-
-Run the following command:
-
-```bash
-oh-my-posh init nu
-```
-
-it saves the initialization script to `~/.oh-my-posh.nu` by default.
-Then edit the Nushell config file (`$nu.config-path`) and add the following line at the bottom:
-
-```bash
-source ~/.oh-my-posh.nu
-```
-
-If you want to save the initialization script elsewhere, you should run a command like:
-
-```bash
-oh-my-posh init nu --print | save /mylocation/myscript.nu
-```
-
-and add the `source` line like:
-
-```bash
-source /mylocation/myscript.nu
-```
-
-Once added, restart Nushell for the changes to take effect.
-
-:::tip
-For the time being, there is a [problem][homebrew-problem] with the initialization using Oh My Posh installed via Homebrew.
-To resolve this, you can use the `--strict` flag which tells Oh My Posh to use the executable name and not the
-full path in the initialization. For example:
-
-```bash
-oh-my-posh init nu --print --strict | save /mylocation/myscript.nu
-```
-
-This way for a new Oh My Posh version that does not update the initialization script, you don't have to recreate a new one.
-:::
-
-</TabItem>
 </Tabs>
 
 [clink]: https://chrisant996.github.io/clink/
 [iterm2]: https://www.iterm2.com/
 [homebrew-problem]: https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2644
+[sign]: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_signing?view=powershell-7.3#methods-of-signing-scripts

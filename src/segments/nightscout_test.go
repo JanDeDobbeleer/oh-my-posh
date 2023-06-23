@@ -2,10 +2,10 @@ package segments
 
 import (
 	"errors"
-	"oh-my-posh/mock"
-	"oh-my-posh/properties"
-	"oh-my-posh/template"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -125,7 +125,7 @@ func TestNSSegment(t *testing.T) {
 			JSONResponse: `
 			[{"sgv":50,"direction":"DoubleDown"}]`,
 			Template:        "\ue2a1 {{.Sgv}}{{.Burp}}",
-			ExpectedString:  template.IncorrectTemplate,
+			ExpectedString:  "<.Data.Burp>: can't evaluate field Burp in type template.Data",
 			ExpectedEnabled: true,
 			CacheTimeout:    10,
 		},

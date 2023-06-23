@@ -2,9 +2,10 @@ package http
 
 import (
 	"net"
-	"oh-my-posh/mock"
-	"oh-my-posh/properties"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -74,7 +75,7 @@ func TestRequestResult(t *testing.T) {
 
 		env.On("Cache").Return(cache)
 		env.On("HTTPRequest", url).Return([]byte(tc.JSONResponse), tc.Error)
-		env.On("Error", "OAuth", mock2.Anything).Return()
+		env.On("Error", mock2.Anything).Return()
 
 		request := &Request{}
 		request.Init(env, props)

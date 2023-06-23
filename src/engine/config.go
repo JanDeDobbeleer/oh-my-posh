@@ -5,15 +5,17 @@ import (
 	json2 "encoding/json"
 	"fmt"
 	"io"
-	"oh-my-posh/color"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/segments"
-	"oh-my-posh/template"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	"github.com/gookit/config/v2"
 	"github.com/gookit/config/v2/json"
@@ -32,28 +34,32 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Version              int             `json:"version"`
-	FinalSpace           bool            `json:"final_space,omitempty"`
-	ConsoleTitleTemplate string          `json:"console_title_template,omitempty"`
-	TerminalBackground   string          `json:"terminal_background,omitempty"`
-	AccentColor          string          `json:"accent_color,omitempty"`
-	Blocks               []*Block        `json:"blocks,omitempty"`
-	Tooltips             []*Segment      `json:"tooltips,omitempty"`
-	TransientPrompt      *Segment        `json:"transient_prompt,omitempty"`
-	ValidLine            *Segment        `json:"valid_line,omitempty"`
-	ErrorLine            *Segment        `json:"error_line,omitempty"`
-	SecondaryPrompt      *Segment        `json:"secondary_prompt,omitempty"`
-	DebugPrompt          *Segment        `json:"debug_prompt,omitempty"`
-	Palette              color.Palette   `json:"palette,omitempty"`
-	Palettes             *color.Palettes `json:"palettes,omitempty"`
-	PWD                  string          `json:"pwd,omitempty"`
+	Version              int                    `json:"version"`
+	FinalSpace           bool                   `json:"final_space,omitempty"`
+	ConsoleTitleTemplate string                 `json:"console_title_template,omitempty"`
+	TerminalBackground   string                 `json:"terminal_background,omitempty"`
+	AccentColor          string                 `json:"accent_color,omitempty"`
+	Blocks               []*Block               `json:"blocks,omitempty"`
+	Tooltips             []*Segment             `json:"tooltips,omitempty"`
+	TransientPrompt      *Segment               `json:"transient_prompt,omitempty"`
+	ValidLine            *Segment               `json:"valid_line,omitempty"`
+	ErrorLine            *Segment               `json:"error_line,omitempty"`
+	SecondaryPrompt      *Segment               `json:"secondary_prompt,omitempty"`
+	DebugPrompt          *Segment               `json:"debug_prompt,omitempty"`
+	Palette              ansi.Palette           `json:"palette,omitempty"`
+	Palettes             *ansi.Palettes         `json:"palettes,omitempty"`
+	Cycle                ansi.Cycle             `json:"cycle,omitempty"`
+	ShellIntegration     bool                   `json:"shell_integration,omitempty"`
+	PWD                  string                 `json:"pwd,omitempty"`
+	Var                  map[string]interface{} `json:"var,omitempty"`
 
 	// Deprecated
 	OSC99 bool `json:"osc99,omitempty"`
 
-	Output string `json:"-"`
+	Output        string `json:"-"`
+	MigrateGlyphs bool   `json:"-"`
+	Format        string `json:"-"`
 
-	format string
 	origin string
 	// eval    bool
 	updated bool
@@ -62,12 +68,12 @@ type Config struct {
 
 // MakeColors creates instance of AnsiColors to use in AnsiWriter according to
 // environment and configuration.
-func (cfg *Config) MakeColors() color.AnsiColors {
+func (cfg *Config) MakeColors() ansi.ColorString {
 	cacheDisabled := cfg.env.Getenv("OMP_CACHE_DISABLED") == "1"
-	return color.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
+	return ansi.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
 }
 
-func (cfg *Config) getPalette() color.Palette {
+func (cfg *Config) getPalette() ansi.Palette {
 	if cfg.Palettes == nil {
 		return cfg.Palette
 	}
@@ -86,46 +92,72 @@ func (cfg *Config) getPalette() color.Palette {
 // LoadConfig returns the default configuration including possible user overrides
 func LoadConfig(env platform.Environment) *Config {
 	cfg := loadConfig(env)
-	cfg.env = env
+
 	// only migrate automatically when the switch isn't set
 	if !env.Flags().Migrate && cfg.Version < configVersion {
-		cfg.BackupAndMigrate(env)
+		cfg.BackupAndMigrate()
 	}
+
+	if !cfg.ShellIntegration {
+		return cfg
+	}
+
+	// bash  - ok
+	// fish  - ok
+	// pwsh  - ok
+	// zsh   - ok
+	// cmd   - ok, as of v1.4.25 (chrisant996/clink#457, fixed in chrisant996/clink@8a5d7ea)
+	// nu    - built-in (and bugged) feature - nushell/nushell#5585, https://www.nushell.sh/blog/2022-08-16-nushell-0_67.html#shell-integration-fdncred-and-tyriar
+	// elv   - broken OSC sequences
+	// xonsh - broken OSC sequences
+	// tcsh  - overall broken, FTCS_COMMAND_EXECUTED could be added to POSH_POSTCMD in the future
+	switch env.Shell() {
+	case shell.ELVISH, shell.XONSH, shell.TCSH, shell.NU:
+		cfg.ShellIntegration = false
+	}
+
 	return cfg
 }
 
 func loadConfig(env platform.Environment) *Config {
-	defer env.Trace(time.Now(), "config.loadConfig")
+	defer env.Trace(time.Now())
 	configFile := env.Flags().Config
 
 	if len(configFile) == 0 {
-		return defaultConfig(false)
+		env.Debug("no config file specified, using default")
+		return defaultConfig(env, false)
 	}
 
 	var cfg Config
 	cfg.origin = configFile
-	cfg.format = strings.TrimPrefix(filepath.Ext(configFile), ".")
-	if cfg.format == "yml" {
-		cfg.format = YAML
+	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
+	cfg.env = env
+	if cfg.Format == "yml" {
+		cfg.Format = YAML
 	}
 
 	config.AddDriver(yaml.Driver)
 	config.AddDriver(json.Driver)
 	config.AddDriver(toml.Driver)
-	config.WithOptions(func(opt *config.Options) {
-		opt.DecoderConfig = &mapstructure.DecoderConfig{
-			TagName: "json",
-		}
-	})
+
+	if config.Default().IsEmpty() {
+		config.WithOptions(func(opt *config.Options) {
+			opt.DecoderConfig = &mapstructure.DecoderConfig{
+				TagName: "json",
+			}
+		})
+	}
 
 	err := config.LoadFiles(configFile)
 	if err != nil {
-		return defaultConfig(true)
+		env.Error(err)
+		return defaultConfig(env, true)
 	}
 
 	err = config.BindStruct("", &cfg)
 	if err != nil {
-		return defaultConfig(true)
+		env.Error(err)
+		return defaultConfig(env, true)
 	}
 
 	return &cfg
@@ -157,7 +189,7 @@ func (cfg *Config) Export(format string) string {
 	cfg.sync()
 
 	if len(format) != 0 {
-		cfg.format = format
+		cfg.Format = format
 	}
 
 	config.AddDriver(yaml.Driver)
@@ -165,33 +197,31 @@ func (cfg *Config) Export(format string) string {
 
 	var result bytes.Buffer
 
-	if cfg.format == JSON {
+	if cfg.Format == JSON {
 		jsonEncoder := json2.NewEncoder(&result)
 		jsonEncoder.SetEscapeHTML(false)
 		jsonEncoder.SetIndent("", "  ")
 		_ = jsonEncoder.Encode(cfg)
 		prefix := "{\n  \"$schema\": \"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\","
 		data := strings.Replace(result.String(), "{", prefix, 1)
-		return escapeGlyphs(data)
+		return escapeGlyphs(data, cfg.MigrateGlyphs)
 	}
 
-	_, _ = config.DumpTo(&result, cfg.format)
-	switch cfg.format {
+	_, _ = config.DumpTo(&result, cfg.Format)
+	var prefix string
+	switch cfg.Format {
 	case YAML:
-		prefix := "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-		return prefix + result.String()
+		prefix = "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 	case TOML:
-		prefix := "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-		return prefix + escapeGlyphs(result.String())
-	default:
-		return result.String()
+		prefix = "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 	}
+	return prefix + escapeGlyphs(result.String(), cfg.MigrateGlyphs)
 }
 
-func (cfg *Config) BackupAndMigrate(env platform.Environment) {
-	cfg.backup()
-	cfg.Migrate(env)
-	cfg.Write(cfg.format)
+func (cfg *Config) BackupAndMigrate() {
+	cfg.Backup()
+	cfg.Migrate()
+	cfg.Write(cfg.Format)
 }
 
 func (cfg *Config) Write(format string) {
@@ -211,7 +241,7 @@ func (cfg *Config) Write(format string) {
 	_ = f.Close()
 }
 
-func (cfg *Config) backup() {
+func (cfg *Config) Backup() {
 	dst := cfg.origin + ".bak"
 	source, err := os.Open(cfg.origin)
 	if err != nil {
@@ -229,21 +259,77 @@ func (cfg *Config) backup() {
 	}
 }
 
-func escapeGlyphs(s string) string {
+func escapeGlyphs(s string, migrate bool) string {
+	shouldExclude := func(r rune) bool {
+		if r < 0x1000 { // Basic Multilingual Plane
+			return true
+		}
+		if r > 0x1F600 && r < 0x1F64F { // Emoticons
+			return true
+		}
+		if r > 0x1F300 && r < 0x1F5FF { // Misc Symbols and Pictographs
+			return true
+		}
+		if r > 0x1F680 && r < 0x1F6FF { // Transport and Map
+			return true
+		}
+		if r > 0x2600 && r < 0x26FF { // Misc symbols
+			return true
+		}
+		if r > 0x2700 && r < 0x27BF { // Dingbats
+			return true
+		}
+		if r > 0xFE00 && r < 0xFE0F { // Variation Selectors
+			return true
+		}
+		if r > 0x1F900 && r < 0x1F9FF { // Supplemental Symbols and Pictographs
+			return true
+		}
+		if r > 0x1F1E6 && r < 0x1F1FF { // Flags
+			return true
+		}
+		return false
+	}
+
+	var cp codePoints
+	var err error
+	if migrate {
+		cp, err = getGlyphCodePoints()
+		if err != nil {
+			migrate = false
+		}
+	}
+
 	var builder strings.Builder
 	for _, r := range s {
-		// exclude regular characters and emoji
-		if r < 0x1000 || r > 0x10000 {
+		// exclude regular characters and emojis
+		if shouldExclude(r) {
 			builder.WriteRune(r)
 			continue
 		}
+
+		if migrate {
+			if val, OK := cp[int(r)]; OK {
+				r = rune(val)
+			}
+		}
+
+		if r > 0x10000 {
+			// calculate surrogate pairs
+			one := 0xd800 + (((r - 0x10000) >> 10) & 0x3ff)
+			two := 0xdc00 + ((r - 0x10000) & 0x3ff)
+			quoted := fmt.Sprintf("\\u%04x\\u%04x", one, two)
+			builder.WriteString(quoted)
+			continue
+		}
+
 		quoted := fmt.Sprintf("\\u%04x", r)
 		builder.WriteString(quoted)
 	}
 	return builder.String()
 }
 
-func defaultConfig(warning bool) *Config {
+func defaultConfig(env platform.Environment, warning bool) *Config {
 	exitBackgroundTemplate := "{{ if gt .Code 0 }}p:red{{ end }}"
 	exitTemplate := " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
 	if warning {
@@ -265,7 +351,7 @@ func defaultConfig(warning bool) *Config {
 						TrailingDiamond: "\ue0b0",
 						Background:      "p:yellow",
 						Foreground:      "p:black",
-						Template:        " {{ if .SSHSession }}\uf817 {{ end }}{{ .UserName }} ",
+						Template:        " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }} ",
 					},
 					{
 						Type:            PATH,
@@ -276,7 +362,7 @@ func defaultConfig(warning bool) *Config {
 						Properties: properties.Map{
 							properties.Style: "folder",
 						},
-						Template: " \uf74a {{ path .Path .Location }} ",
+						Template: " \uea83 {{ path .Path .Location }} ",
 					},
 					{
 						Type:            GIT,
@@ -299,7 +385,6 @@ func defaultConfig(warning bool) *Config {
 							segments.BranchMaxLength:   25,
 							segments.FetchStatus:       true,
 							segments.FetchUpstreamIcon: true,
-							segments.GithubIcon:        "\uf7a3",
 						},
 						Template: " {{ if .UpstreamURL }}{{ url .UpstreamIcon .UpstreamURL }} {{ end }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }} ", //nolint:lll
 					},
@@ -336,7 +421,7 @@ func defaultConfig(warning bool) *Config {
 						Style:      Plain,
 						Background: "transparent",
 						Foreground: "p:green",
-						Template:   "\uf898 ",
+						Template:   "\ue718 ",
 						Properties: properties.Map{
 							segments.HomeEnabled:         false,
 							segments.FetchPackageManager: false,
@@ -348,7 +433,7 @@ func defaultConfig(warning bool) *Config {
 						Style:      Plain,
 						Background: "transparent",
 						Foreground: "p:blue",
-						Template:   "\ufcd1 ",
+						Template:   "\ue626 ",
 						Properties: properties.Map{
 							properties.FetchVersion: false,
 						},
@@ -383,7 +468,7 @@ func defaultConfig(warning bool) *Config {
 			},
 		},
 		ConsoleTitleTemplate: "{{ .Shell }} in {{ .Folder }}",
-		Palette: color.Palette{
+		Palette: ansi.Palette{
 			"black":  "#262B44",
 			"blue":   "#4B95E9",
 			"green":  "#59C9A5",
@@ -431,5 +516,6 @@ func defaultConfig(warning bool) *Config {
 			},
 		},
 	}
+	cfg.env = env
 	return cfg
 }

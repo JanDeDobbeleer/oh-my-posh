@@ -24,37 +24,29 @@ To display all icons, we recommend the use of a [Nerd Font][fonts].
   defaultValue="homebrew"
   groupId="install"
   values={[
-    { label: 'homebrew', value: 'homebrew', },
-    { label: 'manual', value: 'manual', }
+    { label: 'manual', value: 'manual', },
+    { label: 'homebrew', value: 'homebrew', }
   ]
 }>
+<TabItem value="manual">
+
+Install the latest version for your system by running the following command:
+
+```bash
+curl -s https://ohmyposh.dev/install.sh | bash -s
+```
+
+By default the script will install to `/usr/local/bin` or the existing Oh My Posh executable's installation folder.
+If you want to install to a different location you can specify it using the `-d` flag:
+
+```bash
+curl -s https://ohmyposh.dev/install.sh | bash -s -- -d ~/bin
+```
+
+</TabItem>
 <TabItem value="homebrew">
 
 <InstallHomebrew />
-
-</TabItem>
-<TabItem value="manual">
-
-Oh My Posh can also be installed manually by downloading the release.
-Depending on your distro, this may or may not work (please refer to the homebrew installation
-in case it doesn't work).
-
-**Download Oh My Posh**
-
-```bash
-sudo wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh
-sudo chmod +x /usr/local/bin/oh-my-posh
-```
-
-**Download the [themes][themes]**
-
-```bash
-mkdir ~/.poshthemes
-wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip -O ~/.poshthemes/themes.zip
-unzip ~/.poshthemes/themes.zip -d ~/.poshthemes
-chmod u+rw ~/.poshthemes/*.omp.*
-rm ~/.poshthemes/themes.zip
-```
 
 </TabItem>
 </Tabs>

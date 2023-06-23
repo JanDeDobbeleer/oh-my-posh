@@ -49,10 +49,37 @@
         {
           "type": "cmake",
           "style": "powerline",
-          "powerline_symbol": "\uE0B0",
+          "powerline_symbol": "\ue0b0",
           "foreground": "#E8EAEE",
           "background": "#1E9748",
           "template": " \ue61e \ue61d cmake {{ .Full }} "
+        },
+        {
+          "type": "python",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+            "display_mode": "context"
+          },
+          "foreground": "#011627",
+          "background": "#FFDE57",
+          "template": " \ue73c {{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }} "
+        },
+        {
+          "type": "go",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#ffffff",
+          "background": "#7FD5EA",
+          "template": " \u202d\ue626 {{ .Full }} "
+        },
+        {
+          "type": "rust",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "foreground": "#193549",
+          "background": "#99908A",
+          "template": " \ue7a8 {{ .Full }} "
         },
         {
           "background": "#1BD4CD",
@@ -72,7 +99,7 @@
             "fetch_worktree_count": true
           },
           "style": "powerline",
-          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#CAEBE1> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \uf692 {{ .StashCount }}{{ end }} ",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}<#CAEBE1> \uf046 {{ .Staging.String }}</>{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
       ],
@@ -83,9 +110,13 @@
       "segments": [
         {
           "background": "#03DED3",
-          "background_templates": ["{{ if gt .Code 0 }}#E44141{{ end }}"],
+          "background_templates": [
+            "{{ if gt .Code 0 }}#E44141{{ end }}"
+          ],
           "foreground": "#414141",
-          "foreground_templates": ["{{ if gt .Code 0 }}#D6DEEB{{ end }}"],
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#D6DEEB{{ end }}"
+          ],
           "leading_diamond": "\ue0b6",
           "properties": {
             "always_enabled": true
@@ -122,7 +153,7 @@
         {
           "foreground": "#F2D3B6",
           "properties": {
-            "time_format": "<#D6DEEB>\uf64f 15:04:05</> <#79DFE1>|</> \uf5ef 2 Jan, Monday"
+            "time_format": "<#D6DEEB>\ue641 15:04:05</> <#79DFE1>|</> \uf073 2 Jan, Monday"
           },
           "style": "plain",
           "template": "{{ .CurrentDate | date .Format }} <#79DFE1>|</>",
@@ -133,8 +164,8 @@
           "leading_diamond": "<#00C7FC> \uf07b </><#B6D6F2> in </>",
           "properties": {
             "folder_icon": " \uf07c ",
-            "folder_separator_icon": " \uf554 ",
-            "home_icon": "\uf7db ",
+            "folder_separator_icon": " \uf061 ",
+            "home_icon": "\ueb06 ",
             "style": "agnoster_short",
             "max_depth": 3
           },

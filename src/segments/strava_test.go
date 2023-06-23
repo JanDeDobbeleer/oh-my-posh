@@ -2,11 +2,11 @@ package segments
 
 import (
 	"errors"
-	"oh-my-posh/mock"
-	"oh-my-posh/properties"
-	"oh-my-posh/template"
 	"testing"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -46,7 +46,7 @@ func TestStravaSegment(t *testing.T) {
 				},
 			},
 			Template:        "{{.Ago}} {{.Icon}}",
-			ExpectedString:  "6h \uf5a2",
+			ExpectedString:  "6h \uf206",
 			ExpectedEnabled: true,
 		},
 		{
@@ -60,7 +60,7 @@ func TestStravaSegment(t *testing.T) {
 				},
 			},
 			Template:        "{{.Ago}} {{.Icon}}",
-			ExpectedString:  "4d \ufc0c",
+			ExpectedString:  "4d \ue213",
 			ExpectedEnabled: true,
 		},
 		{
@@ -85,7 +85,7 @@ func TestStravaSegment(t *testing.T) {
 				},
 			},
 			Template:        "{{.Ago}}{{.Burp}}",
-			ExpectedString:  template.IncorrectTemplate,
+			ExpectedString:  "<.Data.Burp>: can't evaluate field Burp in type template.Data",
 			ExpectedEnabled: true,
 		},
 	}

@@ -6,10 +6,12 @@ import (
 	"strconv"
 
 	"fmt"
-	"oh-my-posh/platform"
-	"oh-my-posh/template"
 	"os"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 )
 
 //go:embed scripts/omp.ps1
@@ -30,15 +32,26 @@ var cmdInit string
 //go:embed scripts/omp.nu
 var nuInit string
 
+//go:embed scripts/omp.tcsh
+var tcshInit string
+
+//go:embed scripts/omp.elv
+var elvishInit string
+
+//go:embed scripts/omp.py
+var xonshInit string
+
 const (
 	noExe = "echo \"Unable to find Oh My Posh executable\""
 )
 
 var (
-	Transient bool
-	ErrorLine bool
-	Tooltips  bool
-	RPrompt   bool
+	Transient        bool
+	ErrorLine        bool
+	Tooltips         bool
+	ShellIntegration bool
+	RPrompt          bool
+	Cursor           bool
 )
 
 func getExecutablePath(env platform.Environment) (string, error) {
@@ -151,7 +164,7 @@ func quoteNuStr(str string) string {
 func Init(env platform.Environment) string {
 	shell := env.Flags().Shell
 	switch shell {
-	case PWSH, PWSH5:
+	case PWSH, PWSH5, ELVISH:
 		executable, err := getExecutablePath(env)
 		if err != nil {
 			return noExe
@@ -163,9 +176,18 @@ func Init(env platform.Environment) string {
 		if env.Flags().Manual {
 			additionalParams += " --manual"
 		}
-		command := "(@(& %s init %s --config=%s --print%s) -join \"`n\") | Invoke-Expression"
-		return fmt.Sprintf(command, quotePwshStr(executable), shell, quotePwshStr(env.Flags().Config), additionalParams)
-	case ZSH, BASH, FISH, CMD:
+		var command, config string
+		switch shell {
+		case PWSH, PWSH5:
+			command = "(@(& %s init %s --config=%s --print%s) -join \"`n\") | Invoke-Expression"
+			config = quotePwshStr(env.Flags().Config)
+			executable = quotePwshStr(executable)
+		case ELVISH:
+			command = "eval (%s init %s --config=%s --print%s | slurp)"
+			config = env.Flags().Config
+		}
+		return fmt.Sprintf(command, executable, shell, config, additionalParams)
+	case ZSH, BASH, FISH, CMD, TCSH, XONSH:
 		return PrintInit(env)
 	case NU:
 		createNuInit(env)
@@ -190,7 +212,12 @@ func PrintInit(env platform.Environment) string {
 
 	shell := env.Flags().Shell
 	configFile := env.Flags().Config
-	var script string
+
+	var (
+		script, notice string
+		hasNotice      bool
+	)
+
 	switch shell {
 	case PWSH, PWSH5:
 		executable = quotePwshStr(executable)
@@ -216,9 +243,24 @@ func PrintInit(env platform.Environment) string {
 		executable = quoteNuStr(executable)
 		configFile = quoteNuStr(configFile)
 		script = nuInit
+	case TCSH:
+		executable = quotePosixStr(executable)
+		configFile = quotePosixStr(configFile)
+		script = tcshInit
+	case ELVISH:
+		script = elvishInit
+	case XONSH:
+		script = xonshInit
 	default:
 		return fmt.Sprintf("echo \"No initialization script available for %s\"", shell)
 	}
+
+	// only run this for shells that support
+	// injecting the notice directly
+	if shell != PWSH && shell != PWSH5 {
+		notice, hasNotice = upgrade.Notice(env)
+	}
+
 	return strings.NewReplacer(
 		"::OMP::", executable,
 		"::CONFIG::", configFile,
@@ -226,7 +268,11 @@ func PrintInit(env platform.Environment) string {
 		"::TRANSIENT::", toggleSetting(Transient),
 		"::ERROR_LINE::", toggleSetting(ErrorLine),
 		"::TOOLTIPS::", toggleSetting(Tooltips),
+		"::FTCS_MARKS::", toggleSetting(ShellIntegration),
 		"::RPROMPT::", strconv.FormatBool(RPrompt),
+		"::CURSOR::", strconv.FormatBool(Cursor),
+		"::UPGRADE::", strconv.FormatBool(hasNotice),
+		"::UPGRADENOTICE::", notice,
 	).Replace(script)
 }
 

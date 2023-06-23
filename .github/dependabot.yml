@@ -8,16 +8,9 @@ updates:
     schedule:
       interval: "daily"
 
-  # Maintain dependencies for npm
-  - package-ecosystem: "npm"
-    directory: "/"
-    target-branch: "main"
-    schedule:
-      interval: "daily"
-
   # Maintain dependencies for Go modules
   - package-ecosystem: "gomod"
-    directory: "/"
+    directory: "/src"
     target-branch: "main"
     schedule:
       interval: "daily"

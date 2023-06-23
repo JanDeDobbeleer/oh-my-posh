@@ -1,0 +1,26 @@
+name: Social
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  bluesky:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Node ⬇️
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+        with:
+          node-version: 18
+      - name: Checkout code 👋
+        uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
+      - name: Skyt 🌤️
+        working-directory: scripts/bluesky
+        env:
+          BLUESKY_IDENTIFIER: ${{ secrets.BLUESKY_IDENTIFIER }}
+          BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
+          OWNER: JanDeDobbeleer
+          REPO: oh-my-posh
+        run: |
+          npm install
+          node main.cjs

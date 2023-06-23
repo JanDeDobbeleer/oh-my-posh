@@ -8,7 +8,7 @@ sidebar_label: Colors
 
 Oh My Posh supports multiple different color references, being:
 
-- Typical [hex colors][hexcolors] (for example `#CB4B16`).
+- True color using [hex colors][hexcolors] (for example `#CB4B16`).
 - 16 [ANSI color names][ansicolors].
   These include 8 basic ANSI colors and `default`
 
@@ -235,6 +235,31 @@ In this case, when the shell is `pwsh`, the `latte` palette will be used, otherw
 you could also add `frappe` as the default `palette`, given that one is used as a fallback when not match can be found based on what
 the `template` resolves to. In case no match is available and no `palette` is defined, it will also fallback to `transparent`
 for any palette color reference in templates/colors.
+
+## Cycle
+
+When you want to display the same **sequence of colors** (background and foreground) regardless of which segments are active, you can
+make use of the cycle property. This property is a list of colors which are used one after the other in a continuous loop. A defined
+cycle always gets precendence over everything else.
+
+```json
+...
+"cycle": [
+  {
+    "background": "p:blue",
+    "foreground": "p:white"
+  },
+  {
+    "background": "p:green",
+    "foreground": "p:black"
+  },
+  {
+    "background": "p:orange",
+    "foreground": "p:white"
+  }
+],
+...
+```
 
 [hexcolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/
 [ansicolors]: https://htmlcolorcodes.com/color-chart/material-design-color-chart/

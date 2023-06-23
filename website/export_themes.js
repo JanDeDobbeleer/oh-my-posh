@@ -29,7 +29,7 @@ themeConfigOverrrides.set('amro.omp.json', newThemeConfig(40, 100, 'AmRo', '#1C2
 themeConfigOverrrides.set('avit.omp.json', newThemeConfig(40, 80));
 themeConfigOverrrides.set('blueish.omp.json', newThemeConfig(40, 100));
 themeConfigOverrrides.set('cert.omp.json', newThemeConfig(40, 50));
-themeConfigOverrrides.set('chips.omp.json', newThemeConfig(25, 30, 'CodexLink | v1.2.0 | More samples at https://github.com/CodexLink/chips.omp.json'));
+themeConfigOverrrides.set('chips.omp.json', newThemeConfig(25, 30, 'CodexLink | v1.2.2 (02/09/2023) | https://github.com/CodexLink/chips.omp.json'));
 themeConfigOverrrides.set('cinnamon.omp.json', newThemeConfig(40, 80));
 themeConfigOverrrides.set('craver.omp.json', newThemeConfig(40, 80, 'Nick Craver', '#282c34'));
 themeConfigOverrrides.set('darkblood.omp.json', newThemeConfig(40, 40));
@@ -52,7 +52,7 @@ themeConfigOverrrides.set('powerline.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('pure.omp.json', newThemeConfig(40, 80));
 themeConfigOverrrides.set('quick-term.omp.json', newThemeConfig(15, 0, 'SokLay'))
 themeConfigOverrrides.set('remk.omp.json', newThemeConfig(40, 40));
-themeConfigOverrrides.set('robbyrussel.omp.json', newThemeConfig(40, 40));
+themeConfigOverrrides.set('robbyrussell.omp.json', newThemeConfig(40, 40));
 themeConfigOverrrides.set('slim.omp.json', newThemeConfig(10, 80));
 themeConfigOverrrides.set('slimfat.omp.json', newThemeConfig(10, 93));
 themeConfigOverrrides.set('space.omp.json', newThemeConfig(40, 40));

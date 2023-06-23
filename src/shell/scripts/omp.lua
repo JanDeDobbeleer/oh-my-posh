@@ -1,3 +1,11 @@
+-- Upgrade notice
+
+local notice = [[::UPGRADENOTICE::]]
+
+if '::UPGRADE::' == 'true' then
+    print(notice)
+end
+
 -- Helper functions
 
 local function get_priority_number(name, default)
@@ -18,12 +26,19 @@ local function get_priority_number(name, default)
 	end
 end
 
+-- Environment variables
+
+local function environment_onbeginedit()
+    os.setenv("POSH_CURSOR_LINE", console.getnumlines())
+end
+
 -- Local state
 
 local endedit_time = 0
 local last_duration = 0
 local tooltips_enabled = ::TOOLTIPS::
 local rprompt_enabled = ::RPROMPT::
+local no_exit_code = true
 
 local cached_prompt = {}
 -- Fields in cached_prompt:
@@ -61,6 +76,7 @@ local function omp_config()
 end
 
 os.setenv("POSH_THEME", ::CONFIG::)
+os.setenv("POSH_SHELL_VERSION", string.format('clink v%s.%s.%s.%s', clink.version_major, clink.version_minor, clink.version_patch, clink.version_commit))
 
 -- Execution helpers
 
@@ -72,7 +88,7 @@ end
 
 local function run_posh_command(command)
     command = '"'..command..'"'
-    local _,ismain = coroutine.running()
+    local _, ismain = coroutine.running()
     local output
     if ismain then
         output = io.popen(command):read("*a")
@@ -131,28 +147,36 @@ local function error_level_option()
     return ""
 end
 
+local function no_exit_code_option()
+    if no_exit_code then
+        return "--no-exit-code"
+    end
+    return ""
+end
+
 local function get_posh_prompt(rprompt)
     local prompt = "primary"
     if rprompt then
         prompt = "right"
     end
-    local prompt_exe = string.format('%s print %s --shell=cmd --config=%s %s %s', omp_exe(), prompt, omp_config(), execution_time_option(), error_level_option(), rprompt)
+    local prompt_exe = string.format('%s print %s --shell=cmd --config=%s %s %s %s', omp_exe(), prompt, omp_config(), execution_time_option(), error_level_option(), no_exit_code_option())
     return run_posh_command(prompt_exe)
 end
 
-local function set_posh_tooltip(command)
-    local tooltip
-    if command ~= nil and command ~= "" then
-        -- escape special characters properly, if any
-        command = string.gsub(command, '(\\+)"', '%1%1"')
-        command = string.gsub(command, '(\\+)$', '%1%1')
-        command = string.gsub(command, '"', '\\"')
-        command = string.gsub(command, '([&<>%(%)@%^|])', '^%1')
+local function set_posh_tooltip(tip_command)
+    if tip_command ~= "" and tip_command ~= cached_prompt.tip_command then
+        -- Escape special characters properly, if any.
+        local escaped_tip_command = string.gsub(tip_command, '(\\+)"', '%1%1"'):gsub('(\\+)$', '%1%1'):gsub('"', '\\"'):gsub('([&<>%(%)@%^|])', '^%1')
 
-        local prompt_exe = string.format('%s print tooltip --shell=cmd %s --config=%s --command="%s"', omp_exe(), error_level_option(), omp_config(), command)
-        tooltip = run_posh_command(prompt_exe)
+        local prompt_exe = string.format('%s print tooltip --shell=cmd %s --config=%s --command="%s"', omp_exe(), error_level_option(), omp_config(), escaped_tip_command)
+        local tooltip = run_posh_command(prompt_exe)
+        -- Do not cache an empty tooltip.
+        if tooltip == "" then
+            return
+        end
+        cached_prompt.tip_command = tip_command
+        cached_prompt.tooltip = tooltip
     end
-    cached_prompt.tooltip = (tooltip ~= "") and tooltip or nil
 end
 
 local function display_cached_prompt()
@@ -170,6 +194,17 @@ local function async_collect_posh_prompts()
     if rprompt_enabled then
         display_cached_prompt() -- Show left side; don't wait for right side.
         cached_prompt.right = get_posh_prompt(true)
+    end
+end
+
+local function command_executed_mark(input)
+    if string.gsub(input, "^%s*(.-)%s*$", "%1") ~= "" then
+        no_exit_code = false
+    else
+        no_exit_code = true
+    end
+    if "::FTCS_MARKS::" == "true" then
+        clink.print("\x1b]133;C\007", NONL)
     end
 end
 
@@ -229,7 +264,7 @@ function p:rightfilter(prompt)
     return (cached_prompt.tooltip or cached_prompt.right), false
 end
 function p:transientfilter(prompt)
-    local prompt_exe = string.format('%s print transient --shell=cmd --config=%s %s', omp_exe(), omp_config(), error_level_option())
+    local prompt_exe = string.format('%s print transient --shell=cmd --config=%s %s %s', omp_exe(), omp_config(), error_level_option(), no_exit_code_option())
     prompt = run_posh_command(prompt_exe)
     if prompt == "" then
         prompt = nil
@@ -245,10 +280,12 @@ end
 local function builtin_modules_onbeginedit()
     cache_onbeginedit()
     duration_onbeginedit()
+    environment_onbeginedit()
 end
 
 local function builtin_modules_onendedit(input)
     duration_onendedit(input)
+    command_executed_mark(input)
 end
 
 if clink.onbeginedit ~= nil and clink.onendedit ~= nil then
@@ -258,39 +295,23 @@ end
 
 -- Tooltips
 
-local function get_tip_command(line)
-    if USE_ENTIRE_COMMAND_LINE then
--- REVIEW:  This is what oh-my-posh was doing -- was that intentional?
-        -- Return the entire command line, minus leading and trailing spaces.
-        return line:gsub("^%s*(.-)%s*$", "%1")
-    else
-        -- This returns the first word from the command line.
-        return line:match("[^ ]+") or ""
-    end
-end
-
 function ohmyposh_space(rl_buffer)
     -- Insert space first, in case it might affect the tip word, e.g. it could
     -- split "gitcommit" into "git commit".
     rl_buffer:insert(" ")
-
-    -- Get the new tip command.
-    local tip_command = get_tip_command(rl_buffer:getbuffer())
-    if tip_command == cached_prompt.tip_command then
-        return
-    end
-    cached_prompt.tip_command = tip_command
+    -- Get the first word of command line as tip.
+    local tip_command = rl_buffer:getbuffer():gsub("^%s*([^%s]*).*$", "%1")
 
     -- Generate a tooltip asynchronously (via coroutine) if available, otherwise
     -- generate a tooltip immediately.
     if not can_async() then
-        set_posh_tooltip(cached_prompt.tip_command)
+        set_posh_tooltip(tip_command)
         clink.refilterprompt()
     elseif cached_prompt.coroutine then
         -- No action needed; a tooltip coroutine is already running.
     else
         cached_prompt.coroutine = coroutine.create(function ()
-            set_posh_tooltip(cached_prompt.tip_command)
+            set_posh_tooltip(tip_command)
             if cached_prompt.coroutine == coroutine.running() then
                 cached_prompt.coroutine = nil
             end

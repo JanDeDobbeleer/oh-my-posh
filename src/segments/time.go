@@ -1,9 +1,10 @@
 package segments
 
 import (
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
 	"time"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
 
 type Time struct {

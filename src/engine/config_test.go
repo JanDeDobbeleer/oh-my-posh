@@ -1,11 +1,12 @@
 package engine
 
 import (
-	"oh-my-posh/color"
-	"oh-my-posh/mock"
-	"oh-my-posh/platform"
-	"oh-my-posh/segments"
 	"testing"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/gookit/config/v2"
 	"github.com/mitchellh/mapstructure"
@@ -48,6 +49,7 @@ func TestEscapeGlyphs(t *testing.T) {
 		Input    string
 		Expected string
 	}{
+		{Input: "󰉋", Expected: "\\udb80\\ude4b"},
 		{Input: "a", Expected: "a"},
 		{Input: "\ue0b4", Expected: "\\ue0b4"},
 		{Input: "\ufd03", Expected: "\\ufd03"},
@@ -55,26 +57,26 @@ func TestEscapeGlyphs(t *testing.T) {
 		{Input: "🏚", Expected: "🏚"},
 	}
 	for _, tc := range cases {
-		assert.Equal(t, tc.Expected, escapeGlyphs(tc.Input), tc.Input)
+		assert.Equal(t, tc.Expected, escapeGlyphs(tc.Input, false), tc.Input)
 	}
 }
 
 func TestGetPalette(t *testing.T) {
-	palette := color.Palette{
+	palette := ansi.Palette{
 		"red":  "#ff0000",
 		"blue": "#0000ff",
 	}
 	cases := []struct {
 		Case            string
-		Palettes        *color.Palettes
-		Palette         color.Palette
-		ExpectedPalette color.Palette
+		Palettes        *ansi.Palettes
+		Palette         ansi.Palette
+		ExpectedPalette ansi.Palette
 	}{
 		{
 			Case: "match",
-			Palettes: &color.Palettes{
+			Palettes: &ansi.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]color.Palette{
+				List: map[string]ansi.Palette{
 					"bash": palette,
 					"zsh": {
 						"red":  "#ff0001",
@@ -86,9 +88,9 @@ func TestGetPalette(t *testing.T) {
 		},
 		{
 			Case: "no match, no fallback",
-			Palettes: &color.Palettes{
+			Palettes: &ansi.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]color.Palette{
+				List: map[string]ansi.Palette{
 					"fish": palette,
 					"zsh": {
 						"red":  "#ff0001",
@@ -100,9 +102,9 @@ func TestGetPalette(t *testing.T) {
 		},
 		{
 			Case: "no match, default",
-			Palettes: &color.Palettes{
+			Palettes: &ansi.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]color.Palette{
+				List: map[string]ansi.Palette{
 					"zsh": {
 						"red":  "#ff0001",
 						"blue": "#0000fb",

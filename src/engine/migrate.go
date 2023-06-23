@@ -2,10 +2,11 @@ package engine
 
 import (
 	"fmt"
-	"oh-my-posh/platform"
-	"oh-my-posh/properties"
-	"oh-my-posh/segments"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 )
 
 const (
@@ -16,14 +17,14 @@ const (
 	segmentTemplate = properties.Property("template")
 )
 
-func (cfg *Config) Migrate(env platform.Environment) {
+func (cfg *Config) Migrate() {
 	for _, block := range cfg.Blocks {
 		for _, segment := range block.Segments {
-			segment.migrate(env, cfg.Version)
+			segment.migrate(cfg.env, cfg.Version)
 		}
 	}
 	for _, segment := range cfg.Tooltips {
-		segment.migrate(env, cfg.Version)
+		segment.migrate(cfg.env, cfg.Version)
 	}
 	if strings.Contains(cfg.ConsoleTitleTemplate, ".Path") {
 		cfg.ConsoleTitleTemplate = strings.ReplaceAll(cfg.ConsoleTitleTemplate, ".Path", ".PWD")
@@ -108,7 +109,7 @@ func (segment *Segment) migrationOne(env platform.Environment) {
 	case SESSION:
 		hasTemplate := segment.hasProperty(segmentTemplate)
 		segment.migrateTemplate()
-		segment.migrateIconOverride("ssh_icon", "\uf817 ")
+		segment.migrateIconOverride("ssh_icon", "\ueba9 ")
 		template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
 		template = strings.ReplaceAll(template, ".ComputerName", ".HostName")
 		if !segment.Properties.GetBool(properties.Property("display_host"), true) {

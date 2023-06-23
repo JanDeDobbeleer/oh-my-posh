@@ -1,0 +1,10 @@
+{
+  "endpoints": {
+    "default": {
+      "ref": "xmcloud",
+      "allowWrite": true,
+      "host": "https://xmc-sitecore<someID>-projectName-environmentName.sitecorecloud.io",
+      "variables": {}
+    }
+  }
+}

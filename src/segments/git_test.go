@@ -554,6 +554,8 @@ func TestSetGitStatus(t *testing.T) {
 		if tc.ExpectedStaging == nil {
 			tc.ExpectedStaging = &GitStatus{}
 		}
+		tc.ExpectedStaging.Formats = map[string]string{}
+		tc.ExpectedWorking.Formats = map[string]string{}
 		g.setGitStatus()
 		assert.Equal(t, tc.ExpectedStaging, g.Staging, tc.Case)
 		assert.Equal(t, tc.ExpectedWorking, g.Working, tc.Case)

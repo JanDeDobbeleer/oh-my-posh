@@ -146,9 +146,6 @@ func (g *Git) Template() string {
 }
 
 func (g *Git) Enabled() bool {
-	statusFormats := g.props.GetKeyValueMap(StatusFormats, map[string]string{})
-	g.Working = &GitStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
-	g.Staging = &GitStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 	g.User = &User{}
 
 	if !g.shouldDisplay() {
@@ -489,8 +486,9 @@ func (g *Git) setGitStatus() {
 	)
 	// firstly assume that upstream is gone
 	g.UpstreamGone = true
-	g.Working = &GitStatus{}
-	g.Staging = &GitStatus{}
+	statusFormats := g.props.GetKeyValueMap(StatusFormats, map[string]string{})
+	g.Working = &GitStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
+	g.Staging = &GitStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 	untrackedMode := g.getUntrackedFilesMode()
 	args := []string{"status", untrackedMode, "--branch", "--porcelain=2"}
 	ignoreSubmodulesMode := g.getIgnoreSubmodulesMode()

@@ -1815,6 +1815,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "NicholasDawson",
+      "name": "Nick Dawson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37987430?v=4",
+      "profile": "http://ndawson.me",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

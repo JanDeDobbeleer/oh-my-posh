@@ -61,6 +61,7 @@ func (p *Plastic) Enabled() bool {
 	if !wkdir.IsDir {
 		return false
 	}
+
 	p.plasticWorkspaceFolder = wkdir.ParentFolder
 	displayStatus := p.props.GetBool(FetchStatus, false)
 	p.setSelector()
@@ -78,9 +79,11 @@ func (p *Plastic) setPlasticStatus() {
 	headChangeset := p.getHeadChangeset()
 	p.Behind = headChangeset > currentChangeset
 
+	statusFormats := p.props.GetKeyValueMap(StatusFormats, map[string]string{})
+	p.Status = &PlasticStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
+
 	// parse file state
 	p.MergePending = false
-	p.Status = &PlasticStatus{}
 	p.parseFilesStatus(splittedOutput)
 }
 

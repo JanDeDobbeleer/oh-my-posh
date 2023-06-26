@@ -11,18 +11,20 @@ make sure your `hg` executable is up-to-date (when branch or status information 
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "mercurial",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#193549",
-  "background": "#ffeb3b",
-  "properties": {
-    "newprop": "\uEFF1"
-  }
-}}/>
+<Config
+  data={{
+    type: "mercurial",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#ffeb3b",
+    properties: {
+      newprop: "\uEFF1",
+    },
+  }}
+/>
 
 ## Properties
 
@@ -31,9 +33,10 @@ import Config from '@site/src/components/Config.js';
 As doing Mercurial (hg) calls can slow down the prompt experience, we do not fetch information by default.
 You can set the following properties to `true` to enable fetching additional information (and populate the template).
 
-| Name              | Type      | Description                                   |
-| ----------------- | --------- | --------------------------------------------- |
-| `fetch_status`    | `boolean` | fetch the local changes - defaults to `false` |
+| Name             | Type                | Description                                                                                                                                                                                                                                                                                 |
+| ---------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_status`   | `boolean`           | fetch the local changes - defaults to `false`                                                                                                                                                                                                                                               |
+| `status_formats` | `map[string]string` | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides. Defaults to an empty map. |
 
 ## Template ([info][templates])
 
@@ -47,35 +50,35 @@ hg {{.Branch}} {{if .LocalCommitNumber}}({{.LocalCommitNumber}}:{{.ChangeSetIDSh
 
 ### Properties
 
-| Name                 | Type              | Description                                           |
-| -------------------- | ----------------- | ----------------------------------------------------- |
-| `.Working`           | `MercurialStatus` | changes in the worktree (see below)                   |
-| `.IsTip`             | `boolean`         | Current commit is the tip commit                      |
-| `.ChangeSetID`       | `string`          | The current local commit number                       |
-| `.ChangeSetID`       | `string`          | The current local commit number                       |
-| `.ChangeSetIDShort`  | `string`          | The current local commit number                       |
-| `.Branch`            | `string`          | current branch (releative URL reported by `svn info`) |
-| `.Bookmarks`         | `[]string`        | the currently checked out revision number             |
-| `.Tags`              | `[]string`        | the currently checked out revision number             |
+| Name                | Type       | Description                                           |
+| ------------------- | ---------- | ----------------------------------------------------- |
+| `.Working`          | `Status`   | changes in the worktree (see below)                   |
+| `.IsTip`            | `boolean`  | Current commit is the tip commit                      |
+| `.ChangeSetID`      | `string`   | The current local commit number                       |
+| `.ChangeSetID`      | `string`   | The current local commit number                       |
+| `.ChangeSetIDShort` | `string`   | The current local commit number                       |
+| `.Branch`           | `string`   | current branch (releative URL reported by `svn info`) |
+| `.Bookmarks`        | `[]string` | the currently checked out revision number             |
+| `.Tags`             | `[]string` | the currently checked out revision number             |
 
-### SvnStatus
+### Status
 
-| Name            | Type      | Description                                    |
-| --------------- | --------- | ---------------------------------------------- |
-| `.Untracked`    | `int`     | number of files not under version control      |
-| `.Modified`     | `int`     | number of modified files                       |
-| `.Deleted`      | `int`     | number of deleted files                        |
-| `.Added`        | `int`     | number of added files                          |
-| `.Changed`      | `boolean` | if the status contains changes or not          |
-| `.String`       | `string`  | a string representation of the changes above   |
+| Name         | Type      | Description                                  |
+| ------------ | --------- | -------------------------------------------- |
+| `.Untracked` | `int`     | number of files not under version control    |
+| `.Modified`  | `int`     | number of modified files                     |
+| `.Deleted`   | `int`     | number of deleted files                      |
+| `.Added`     | `int`     | number of added files                        |
+| `.Changed`   | `boolean` | if the status contains changes or not        |
+| `.String`    | `string`  | a string representation of the changes above |
 
 Local changes use the following syntax:
 
 | Icon | Description |
 | ---- | ----------- |
-| `?`  | untracked   |
-| `+`  | added       |
-| `-`  | deleted     |
-| `~`  | modified    |
+| `?`  | Untracked   |
+| `~`  | Modified    |
+| `-`  | Deleted     |
+| `+`  | Added       |
 
 [templates]: /docs/config-templates

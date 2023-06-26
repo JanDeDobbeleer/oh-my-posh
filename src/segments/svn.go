@@ -63,10 +63,12 @@ func (s *Svn) shouldDisplay() bool {
 	if !s.hasCommand(SVNCOMMAND) {
 		return false
 	}
+
 	Svndir, err := s.env.HasParentFilePath(".svn")
 	if err != nil {
 		return false
 	}
+
 	if s.shouldIgnoreRootRepository(Svndir.ParentFolder) {
 		return false
 	}
@@ -78,6 +80,7 @@ func (s *Svn) shouldDisplay() bool {
 		s.realDir = strings.TrimSuffix(s.convertToWindowsPath(Svndir.Path), "/.svn")
 		return true
 	}
+
 	// handle worktree
 	s.rootDir = Svndir.Path
 	dirPointer := strings.Trim(s.env.FileContent(Svndir.Path), " \r\n")
@@ -98,7 +101,8 @@ func (s *Svn) setSvnStatus() {
 		s.Branch = branch[2:]
 	}
 
-	s.Working = &SvnStatus{}
+	statusFormats := s.props.GetKeyValueMap(StatusFormats, map[string]string{})
+	s.Working = &SvnStatus{ScmStatus: ScmStatus{Formats: statusFormats}}
 
 	displayStatus := s.props.GetBool(FetchStatus, false)
 	if !displayStatus {

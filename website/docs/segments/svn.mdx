@@ -11,18 +11,20 @@ make sure your `svn` executable is up-to-date (when branch or status information
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "svn",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#193549",
-  "background": "#ffeb3b",
-  "properties": {
-    "fetch_status": true
-  }
-}}/>
+<Config
+  data={{
+    type: "svn",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#ffeb3b",
+    properties: {
+      fetch_status: true,
+    },
+  }}
+/>
 
 ## Properties
 
@@ -31,10 +33,11 @@ import Config from '@site/src/components/Config.js';
 As doing multiple [subversion][svn] calls can slow down the prompt experience, we do not fetch information by default.
 You can set the following properties to `true` to enable fetching additional information (and populate the template).
 
-| Name              | Type      | Description                                                                                                                                                                                                                     |
-| ----------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_status`    | `boolean` | fetch the local changes - defaults to `false`                                                                                                                                                                                   |
-| `native_fallback` | `boolean` | when set to `true` and `svn.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native svn executable to fetch data. Not all information can be displayed in this case. Defaults to `false`. |
+| Name              | Type                | Description                                                                                                                                                                                                                                                                                 |
+| ----------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_status`    | `boolean`           | fetch the local changes - defaults to `false`                                                                                                                                                                                                                                               |
+| `native_fallback` | `boolean`           | when set to `true` and `svn.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native svn executable to fetch data. Not all information can be displayed in this case. Defaults to `false`.                                                             |
+| `status_formats`  | `map[string]string` | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides. Defaults to an empty map. |
 
 ## Template ([info][templates])
 
@@ -48,13 +51,13 @@ You can set the following properties to `true` to enable fetching additional inf
 
 ### Properties
 
-| Name       | Type        | Description                                           |
-| ---------- | ----------- | ----------------------------------------------------- |
-| `.Working` | `SvnStatus` | changes in the worktree (see below)                   |
-| `.Branch`  | `string`    | current branch (releative URL reported by `svn info`) |
-| `.BaseRev` | `int`       | the currently checked out revision number             |
+| Name       | Type     | Description                                           |
+| ---------- | -------- | ----------------------------------------------------- |
+| `.Working` | `Status` | changes in the worktree (see below)                   |
+| `.Branch`  | `string` | current branch (releative URL reported by `svn info`) |
+| `.BaseRev` | `int`    | the currently checked out revision number             |
 
-### SvnStatus
+### Status
 
 | Name            | Type      | Description                                    |
 | --------------- | --------- | ---------------------------------------------- |
@@ -72,12 +75,12 @@ Local changes use the following syntax:
 
 | Icon | Description |
 | ---- | ----------- |
-| `?`  | untracked   |
-| `+`  | added       |
-| `!`  | conflicted  |
-| `-`  | deleted     |
-| `~`  | modified    |
-| `>`  | moved       |
+| `?`  | Untracked   |
+| `~`  | Modified    |
+| `-`  | Deleted     |
+| `+`  | Added       |
+| `>`  | Moved       |
+| `!`  | Conflicted  |
 
 [svn]: https://subversion.apache.org
 [templates]: /docs/config-templates

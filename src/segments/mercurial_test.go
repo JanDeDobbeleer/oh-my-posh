@@ -165,6 +165,10 @@ A Added.File
 			},
 		}
 
+		if tc.ExpectedWorking != nil {
+			tc.ExpectedWorking.Formats = map[string]string{}
+		}
+
 		assert.True(t, hg.Enabled())
 		assert.Equal(t, fileInfo.Path, hg.workingDir)
 		assert.Equal(t, fileInfo.Path, hg.realDir)

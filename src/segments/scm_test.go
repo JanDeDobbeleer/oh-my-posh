@@ -63,27 +63,46 @@ func TestScmStatusChanged(t *testing.T) {
 	}
 }
 
-func TestScmStatusUnmerged(t *testing.T) {
-	expected := "x1"
-	status := &ScmStatus{
-		Unmerged: 1,
+func TestScmStatusString(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected string
+		Status   ScmStatus
+	}{
+		{
+			Case:     "Unmerged",
+			Expected: "x1",
+			Status: ScmStatus{
+				Unmerged: 1,
+			},
+		},
+		{
+			Case:     "Unmerged and Modified",
+			Expected: "~3 x1",
+			Status: ScmStatus{
+				Unmerged: 1,
+				Modified: 3,
+			},
+		},
+		{
+			Case:   "Empty",
+			Status: ScmStatus{},
+		},
+		{
+			Case:     "Format override",
+			Expected: "Added: 1",
+			Status: ScmStatus{
+				Added: 1,
+				Formats: map[string]string{
+					"Added": "Added: %d",
+				},
+			},
+		},
 	}
-	assert.Equal(t, expected, status.String())
-}
 
-func TestScmStatusUnmergedModified(t *testing.T) {
-	expected := "~3 x1"
-	status := &ScmStatus{
-		Unmerged: 1,
-		Modified: 3,
+	for _, tc := range cases {
+		assert.Equal(t, tc.Expected, tc.Status.String(), tc.Case)
 	}
-	assert.Equal(t, expected, status.String())
-}
-
-func TestScmStatusEmpty(t *testing.T) {
-	expected := ""
-	status := &ScmStatus{}
-	assert.Equal(t, expected, status.String())
 }
 
 func TestTruncateBranch(t *testing.T) {

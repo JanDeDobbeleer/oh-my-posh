@@ -102,6 +102,12 @@
       "description": "Template that creates the URL of the version info / release notes",
       "default": ""
     },
+    "status_formats": {
+      "type": "object",
+      "title": "Status string formats",
+      "description": "Override the status format for a specific change. Example: {\"Added\": \"Added: %d\"}",
+      "default": {}
+    },
     "extra_prompt": {
       "type": "object",
       "default": {},
@@ -1014,6 +1020,9 @@
                     "title": "Fetch the user",
                     "description": "Fetch the current configured user for the repository",
                     "default": false
+                  },
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
                   }
                 }
               }
@@ -1891,6 +1900,9 @@
                     "title": "Display Status",
                     "description": "Display the local changes or not",
                     "default": true
+                  },
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
                   }
                 }
               }
@@ -2371,6 +2383,9 @@
                     "title": "Display Status",
                     "description": "Display the local changes or not",
                     "default": true
+                  },
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
                   }
                 }
               }
@@ -2584,6 +2599,9 @@
                     "title": "Full branch path",
                     "description": "display the full branch path instead of only the branch name",
                     "default": false
+                  },
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
                   }
                 }
               }
@@ -3180,6 +3198,9 @@
                     "title": "Display Status",
                     "description": "Display the local changes or not",
                     "default": true
+                  },
+                  "status_formats": {
+                    "$ref": "#/definitions/status_formats"
                   }
                 }
               }

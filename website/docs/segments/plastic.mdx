@@ -12,27 +12,30 @@ For maximum compatibility, make sure your `cm` executable is up-to-date
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "plastic",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#193549",
-  "background": "#ffeb3b",
-  "background_templates": [
-    "{{ if .MergePending }}#006060{{ end }}",
-    "{{ if .Changed }}#FF9248{{ end }}",
-    "{{ if and .Changed .Behind }}#ff4500{{ end }}",
-    "{{ if .Behind }}#B388FF{{ end }}"
-  ],
-  "template": "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ end }}{{ .Status.String }}",
-  "properties": {
-    "fetch_status": true,
-    "branch_max_length": 25,
-    "truncate_symbol": "\u2026"
-  }
-}}/>
+<Config
+  data={{
+    type: "plastic",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#193549",
+    background: "#ffeb3b",
+    background_templates: [
+      "{{ if .MergePending }}#006060{{ end }}",
+      "{{ if .Changed }}#FF9248{{ end }}",
+      "{{ if and .Changed .Behind }}#ff4500{{ end }}",
+      "{{ if .Behind }}#B388FF{{ end }}",
+    ],
+    template:
+      "{{ .Selector }}{{ if .Status.Changed }} \uF044 {{ end }}{{ .Status.String }}",
+    properties: {
+      fetch_status: true,
+      branch_max_length: 25,
+      truncate_symbol: "\u2026",
+    },
+  }}
+/>
 
 ## Plastic SCM Icon
 
@@ -47,7 +50,10 @@ by leaving a like!
 As doing multiple `cm` calls can slow down the prompt experience, we do not fetch information by default.
 You can set the following property to `true` to enable fetching additional information (and populate the template).
 
-|`fetch_status`|`boolean`|fetch the local changes - defaults to `false`|
+| Name             | Type                | Description                                                                                                                                                                                                                                                                                 |
+| ---------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_status`   | `boolean`           | fetch the local changes - defaults to `false`                                                                                                                                                                                                                                               |
+| `status_formats` | `map[string]string` | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides. Defaults to an empty map. |
 
 ### Icons
 
@@ -79,14 +85,14 @@ You can set the following property to `true` to enable fetching additional infor
 
 ### Properties
 
-| Name            | Type            | Description                                                                                                                                                       |
-| --------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.Selector`     | `string`        | the current selector context (branch/changeset/label)                                                                                                             |
-| `.Behind`       | `bool`          | the current workspace is behind and changes are incoming                                                                                                          |
-| `.Status`       | `PlasticStatus` | changes in the workspace (see below)                                                                                                                              |
-| `.MergePending` | `bool`          | if a merge is pending and needs to be commited (known issue: when no file is left after a _Change/Delete conflict_ merge, the `MergePending` property is not set) |
+| Name            | Type     | Description                                                                                                                                                       |
+| --------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.Selector`     | `string` | the current selector context (branch/changeset/label)                                                                                                             |
+| `.Behind`       | `bool`   | the current workspace is behind and changes are incoming                                                                                                          |
+| `.Status`       | `Status` | changes in the workspace (see below)                                                                                                                              |
+| `.MergePending` | `bool`   | if a merge is pending and needs to be commited (known issue: when no file is left after a _Change/Delete conflict_ merge, the `MergePending` property is not set) |
 
-### PlasticStatus
+### Status
 
 | Name        | Type      | Description                                  |
 | ----------- | --------- | -------------------------------------------- |
@@ -102,11 +108,11 @@ Local changes use the following syntax:
 
 | Icon | Description |
 | ---- | ----------- |
-| `+`  | added       |
-| `~`  | modified    |
-| `-`  | deleted     |
-| `v`  | moved       |
-| `x`  | unmerged    |
+| `x`  | Unmerged    |
+| `-`  | Deleted     |
+| `+`  | Added       |
+| `~`  | Modified    |
+| `v`  | Moved       |
 
 [templates]: /docs/configuration/templates
 [fa-issue]: https://github.com/FortAwesome/Font-Awesome/issues/18504

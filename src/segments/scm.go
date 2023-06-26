@@ -11,6 +11,8 @@ import (
 const (
 	// Fallback to native command
 	NativeFallback properties.Property = "native_fallback"
+	// Override the built-in status formats
+	StatusFormats properties.Property = "status_formats"
 )
 
 // ScmStatus represents part of the status of a repository
@@ -25,6 +27,8 @@ type ScmStatus struct {
 	Clean      int
 	Missing    int
 	Ignored    int
+
+	Formats map[string]string
 }
 
 func (s *ScmStatus) Changed() bool {
@@ -41,24 +45,38 @@ func (s *ScmStatus) Changed() bool {
 }
 
 func (s *ScmStatus) String() string {
-	var status string
-	stringIfValue := func(value int, prefix string) string {
-		if value > 0 {
-			return fmt.Sprintf(" %s%d", prefix, value)
-		}
-		return ""
+	var status strings.Builder
+
+	if s.Formats == nil {
+		s.Formats = make(map[string]string)
 	}
-	status += stringIfValue(s.Untracked, "?")
-	status += stringIfValue(s.Added, "+")
-	status += stringIfValue(s.Modified, "~")
-	status += stringIfValue(s.Deleted, "-")
-	status += stringIfValue(s.Moved, ">")
-	status += stringIfValue(s.Unmerged, "x")
-	status += stringIfValue(s.Conflicted, "!")
-	status += stringIfValue(s.Missing, "!")
-	status += stringIfValue(s.Clean, "=")
-	status += stringIfValue(s.Ignored, "Ø")
-	return strings.TrimSpace(status)
+
+	stringIfValue := func(value int, name, prefix string) {
+		if value <= 0 {
+			return
+		}
+
+		// allow user override for prefix
+		if _, ok := s.Formats[name]; ok {
+			status.WriteString(fmt.Sprintf(s.Formats[name], value))
+			return
+		}
+
+		status.WriteString(fmt.Sprintf(" %s%d", prefix, value))
+	}
+
+	stringIfValue(s.Untracked, "Untracked", "?")
+	stringIfValue(s.Added, "Added", "+")
+	stringIfValue(s.Modified, "Modified", "~")
+	stringIfValue(s.Deleted, "Deleted", "-")
+	stringIfValue(s.Moved, "Moved", ">")
+	stringIfValue(s.Unmerged, "Unmerged", "x")
+	stringIfValue(s.Conflicted, "Conflicted", "!")
+	stringIfValue(s.Missing, "Missing", "!")
+	stringIfValue(s.Clean, "Clean", "=")
+	stringIfValue(s.Ignored, "Ignored", "Ø")
+
+	return strings.TrimSpace(status.String())
 }
 
 type scm struct {

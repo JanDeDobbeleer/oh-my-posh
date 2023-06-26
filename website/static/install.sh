@@ -81,7 +81,7 @@ validate_install_directory() {
 
     # check if we can write to the install directory
     if [ ! -w $install_dir ]; then
-        error "Cannot write to ${install_dir}. Please run the script with sudo and try again:\n  sudo ./install.sh"
+        error "Cannot write to ${install_dir}. Please run the script with sudo and try again:\n  curl -s https://ohmyposh.dev/install.sh | sudo bash -s\n\nAlternatively, you can set a different directory and try again: \n  curl -s https://ohmyposh.dev/install.sh | bash -s -- -d {directory}"
     fi
 
     # check if the directory is in the PATH

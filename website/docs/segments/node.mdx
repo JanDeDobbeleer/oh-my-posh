@@ -10,16 +10,18 @@ Display the currently active [Node.js][node-js] version.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "node",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#ffffff",
-  "background": "#6CA35E",
-  "template": " \uE718 {{ .Full }} "
-}}/>
+<Config
+  data={{
+    type: "node",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#6CA35E",
+    template: " \uE718 {{ .Full }} ",
+  }}
+/>
 
 ## Properties
 
@@ -55,7 +57,7 @@ import Config from '@site/src/components/Config.js';
 | `.URL`                | `string`  | URL of the version info / release notes                             |
 | `.Error`              | `string`  | error encountered when fetching the version string                  |
 | `.PackageManagerIcon` | `string`  | the Yarn or NPM icon when setting `fetch_package_manager` to `true` |
-| `.Mismatch`           | `boolean` | if the version in `.nvmrc` matches with `.Full`                     |
+| `.Mismatch`           | `boolean` | true if the version in `.nvmrc` is not equal to `.Full`             |
 | `.Expected`           | `string`  | the expected version set in `.nvmrc`                                |
 
 [go-text-template]: https://golang.org/pkg/text/template/

@@ -5,13 +5,13 @@ This website is built using [Docusaurus 2](https://v2.docusaurus.io/), a modern 
 ## Installation
 
 ```shell
-$ yarn install
+$ npm install
 ```
 
 ## Local Development
 
 ```shell
-$ yarn start
+$ npm run start
 ```
 
 This command starts a local development server and open up a browser window.

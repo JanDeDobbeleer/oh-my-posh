@@ -1824,6 +1824,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jntrnr",
+      "name": "JT",
+      "avatar_url": "https://avatars.githubusercontent.com/u/547158?v=4",
+      "profile": "https://www.jntrnr.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

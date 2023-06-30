@@ -265,6 +265,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://ndawson.me"><img src="https://avatars.githubusercontent.com/u/37987430?v=4?s=100" width="100px;" alt="Nick Dawson"/><br /><sub><b>Nick Dawson</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=NicholasDawson" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.jntrnr.com/"><img src="https://avatars.githubusercontent.com/u/547158?v=4?s=100" width="100px;" alt="JT"/><br /><sub><b>JT</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jntrnr" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

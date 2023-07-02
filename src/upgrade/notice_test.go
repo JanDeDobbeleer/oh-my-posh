@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/stretchr/testify/assert"
@@ -33,9 +34,7 @@ func TestCanUpgrade(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("Flags").Return(&platform.Flags{
-			Version: tc.CurrentVersion,
-		})
+		build.Version = tc.CurrentVersion
 		cache := &mock.MockedCache{}
 		cache.On("Get", CACHEKEY).Return("", tc.Cache)
 		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)

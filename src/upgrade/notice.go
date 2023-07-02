@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 )
 
@@ -75,7 +76,7 @@ func Notice(env platform.Environment) (string, bool) {
 	oneWeek := 10080
 	env.Cache().Set(CACHEKEY, latest, oneWeek)
 
-	version := fmt.Sprintf("v%s", env.Flags().Version)
+	version := fmt.Sprintf("v%s", build.Version)
 	if latest == version {
 		return "", false
 	}

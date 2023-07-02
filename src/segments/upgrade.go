@@ -3,6 +3,7 @@ package segments
 import (
 	"encoding/json"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
@@ -32,7 +33,7 @@ func (u *Upgrade) Init(props properties.Properties, env platform.Environment) {
 }
 
 func (u *Upgrade) Enabled() bool {
-	current := u.env.Flags().Version
+	current := build.Version
 	latest := u.cachedLatest(current)
 	if len(latest) == 0 {
 		latest = u.checkUpdate(current)

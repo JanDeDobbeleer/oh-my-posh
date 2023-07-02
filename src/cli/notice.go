@@ -16,9 +16,7 @@ var noticeCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &platform.Shell{
-			CmdFlags: &platform.Flags{
-				Version: cliVersion,
-			},
+			CmdFlags: &platform.Flags{},
 		}
 		env.Init()
 		defer env.Close()

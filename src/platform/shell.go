@@ -70,7 +70,6 @@ type Flags struct {
 	HasTransient  bool
 	PromptCount   int
 	Cleared       bool
-	Version       string
 	TrueColor     bool
 	NoExitCode    bool
 }

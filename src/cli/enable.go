@@ -44,8 +44,7 @@ func init() { //nolint:gochecknoinits
 func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
 	env := &platform.Shell{
 		CmdFlags: &platform.Flags{
-			Shell:   shellName,
-			Version: cliVersion,
+			Shell: shellName,
 		},
 	}
 	env.Init()

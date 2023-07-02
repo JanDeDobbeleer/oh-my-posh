@@ -55,11 +55,10 @@ func init() { //nolint:gochecknoinits
 func runInit(shellName string) {
 	env := &platform.Shell{
 		CmdFlags: &platform.Flags{
-			Shell:   shellName,
-			Config:  config,
-			Strict:  strict,
-			Manual:  manual,
-			Version: cliVersion,
+			Shell:  shellName,
+			Config: config,
+			Strict: strict,
+			Manual: manual,
 		},
 	}
 	env.Init()

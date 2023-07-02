@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
@@ -76,7 +76,7 @@ func TestUpgrade(t *testing.T) {
 		cache.On("Get", UPGRADECACHEKEY).Return(cacheData, tc.HasCache)
 		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
 
-		env.On("Flags").Return(&platform.Flags{Version: tc.CurrentVersion})
+		build.Version = tc.CurrentVersion
 
 		json := fmt.Sprintf(`{"tag_name":"v%s"}`, tc.LatestVersion)
 		env.On("HTTPRequest", upgrade.RELEASEURL).Return([]byte(json), tc.Error)

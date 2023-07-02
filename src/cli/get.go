@@ -46,8 +46,7 @@ This command is used to get the value of the following variables:
 
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
-				Shell:   shellName,
-				Version: cliVersion,
+				Shell: shellName,
 			},
 		}
 		env.Init()

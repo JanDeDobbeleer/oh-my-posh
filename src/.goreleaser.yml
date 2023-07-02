@@ -12,7 +12,7 @@ builds:
     flags:
       - -a
     ldflags:
-      - -s -w -X main.Version={{.Version}} -extldflags "-static"
+      - -s -w -X github.com/jandedobbeleer/oh-my-posh/src/build.Version={{ .Version }} -X github.com/jandedobbeleer/oh-my-posh/src/build.Date={{ .Date }} -extldflags "-static"
     tags:
       - netgo
       - osusergo
@@ -27,12 +27,12 @@ builds:
       - amd64
       - arm64
       - arm
-      - 386
+      - "386"
     ignore:
       - goos: darwin
-        goarch: 386
+        goarch: "386"
       - goos: linux
-        goarch: 386
+        goarch: "386"
       - goos: darwin
         goarch: arm
       - goos: windows

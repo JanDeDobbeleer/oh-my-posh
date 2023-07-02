@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -22,12 +23,11 @@ var debugCmd = &cobra.Command{
 		startTime := time.Now()
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
-				Config:  config,
-				Debug:   true,
-				PWD:     pwd,
-				Shell:   shellName,
-				Version: cliVersion,
-				Plain:   plain,
+				Config: config,
+				Debug:  true,
+				PWD:    pwd,
+				Shell:  shellName,
+				Plain:  plain,
 			},
 		}
 		env.Init()
@@ -47,7 +47,7 @@ var debugCmd = &cobra.Command{
 			Writer: writer,
 			Plain:  plain,
 		}
-		fmt.Print(eng.PrintDebug(startTime, cliVersion))
+		fmt.Print(eng.PrintDebug(startTime, build.Version))
 	},
 }
 

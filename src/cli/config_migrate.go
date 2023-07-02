@@ -43,7 +43,6 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 			CmdFlags: &platform.Flags{
 				Config:  config,
 				Migrate: true,
-				Version: cliVersion,
 			},
 		}
 		env.Init()

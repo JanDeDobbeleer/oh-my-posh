@@ -5,15 +5,13 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/spf13/cobra"
 )
 
 var (
 	config         string
 	displayVersion bool
-
-	// Version number of oh-my-posh
-	cliVersion string
 )
 
 var RootCmd = &cobra.Command{
@@ -29,15 +27,14 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 			return
 		}
 		if displayVersion {
-			fmt.Println(cliVersion)
+			fmt.Println(build.Version)
 			return
 		}
 		_ = cmd.Help()
 	},
 }
 
-func Execute(version string) {
-	cliVersion = version
+func Execute() {
 	if err := RootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}

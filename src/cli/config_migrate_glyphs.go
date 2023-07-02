@@ -36,8 +36,7 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
-				Config:  config,
-				Version: cliVersion,
+				Config: config,
 			},
 		}
 

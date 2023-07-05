@@ -130,7 +130,7 @@ install() {
     chmod +x $executable
 
     # install themes in cache
-    cache_dir=$(oh-my-posh cache path)
+    cache_dir=$($executable cache path)
 
     info "🎨 Installing oh-my-posh themes in ${cache_dir}/themes\n"
 

@@ -21,7 +21,7 @@ This repo was made with love using GitKraken.
 
 [![GitKraken shield][kraken]][kraken-ref]
 
-[![badge](https://github.com/Botspot/pi-apps/blob/master/icons/badge-light.png?raw=true)](https://github.com/Botspot/pi-apps)
+[![Get it on Pi-Apps](https://github.com/Botspot/pi-apps/blob/master/icons/badge-light.png?raw=true)](https://github.com/Botspot/pi-apps)
 <!-- markdownlint-disable first-header-h1 -->
 
 ## Join the community

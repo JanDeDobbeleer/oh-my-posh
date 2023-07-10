@@ -1842,6 +1842,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jenspinney",
+      "name": "Jen Spinney",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3200507?v=4",
+      "profile": "https://github.com/jenspinney",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

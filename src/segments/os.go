@@ -138,6 +138,8 @@ func (oi *Os) getDistroIcon(distro string) string {
 		return oi.props.GetString(Slackware, "\uF319")
 	case "ubuntu":
 		return oi.props.GetString(Ubuntu, "\uF31b")
+	case "android":
+		return oi.props.GetString(Ubuntu, "\uf17b")
 	}
 	return oi.props.GetString(Linux, "\uF17C")
 }

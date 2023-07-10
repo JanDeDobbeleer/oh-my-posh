@@ -1,0 +1,36 @@
+name: Android
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    container: ghcr.io/jandedobbeleer/golang-android-container:latest
+    steps:
+    - name: Checkout code 👋
+      uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
+    - name: Build
+      run: |
+        VERSION="${${{ github.event.release.name }}:1}"
+        echo "Building version ${VERSION}"
+        cd src
+        go build -o dist/posh-android-arm -ldflags="-s -w -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Version=${VERSION}' -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Date=$(date)'"
+    - name: Upload artifacts 🆙
+      uses: actions/github-script@d7906e4ad0b1822421a7e6a35d5ca353c962f410
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          console.log('environment', process.versions);
+
+          const fs = require('fs').promises;
+
+          const { repo: { owner, repo }, sha } = context;
+          console.log({ owner, repo, sha });
+
+          await github.rest.repos.uploadReleaseAsset({
+            owner, repo,
+            release_id: ${{ github.event.release.id }},
+            name: 'posh-android-arm',
+            data: await fs.readFile('./src/dist/posh-android-arm')
+          });

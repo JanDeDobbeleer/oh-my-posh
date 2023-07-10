@@ -40,7 +40,7 @@ func (a *Aws) Enabled() bool {
 		return ""
 	}
 	displayDefaultUser := a.props.GetBool(properties.DisplayDefault, true)
-	a.Profile = getEnvFirstMatch("AWS_VAULT", "AWS_PROFILE")
+	a.Profile = getEnvFirstMatch("AWS_VAULT", "AWS_DEFAULT_PROFILE", "AWS_PROFILE")
 	if !displayDefaultUser && a.Profile == defaultUser {
 		return false
 	}

@@ -13,7 +13,10 @@
           ],
           "leading_diamond": "\uE0B6",
           "properties": {
-            "style": "folder"
+            "style": "agnoster_short",
+            "folder_separator_icon": "/",
+            "hide_root_location": true,
+            "max_depth": 2
           },
           "style": "diamond",
           "template": "\uF07B {{ .Path }}",
@@ -73,11 +76,11 @@
         },
         {
           "background_templates": [
-            "{{ if lt (.CummulativeTotal.Seconds | int64) 3600 }}p:c-wakatime-undertime{{ end }}",
-            "{{ if lt (.CummulativeTotal.Seconds | int64) 10800 }}p:c-wakatime-warm-up{{ end }}",
-            "{{ if lt (.CummulativeTotal.Seconds | int64) 25200 }}p:c-wakatime-working{{ end }}",
-            "{{ if lt (.CummulativeTotal.Seconds | int64) 28000 }}p:c-wakatime-quota{{ end }}",
-            "{{ if ge (.CummulativeTotal.Seconds | int64) 28800 }}p:c-wakatime-overtime{{ end }}"
+            "{{ if lt .CumulativeTotal.Seconds 3600 }}p:c-wakatime-undertime{{ end }}",
+            "{{ if lt .CumulativeTotal.Seconds 10800 }}p:c-wakatime-warm-up{{ end }}",
+            "{{ if lt .CumulativeTotal.Seconds 25200 }}p:c-wakatime-working{{ end }}",
+            "{{ if lt .CumulativeTotal.Seconds 28000 }}p:c-wakatime-quota{{ end }}",
+            "{{ if ge .CumulativeTotal.Seconds 28800 }}p:c-wakatime-overtime{{ end }}"
           ],
           "foreground": "p:c-badge-text",
           "leading_diamond": "\uE0B6",
@@ -87,7 +90,7 @@
             "cache_timeout": 5
           },
           "style": "diamond",
-          "template": "{{ if and (.Env.WAKATIME_API_KEY) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_WAKATIME))) (gt (.CummulativeTotal.Seconds | int64) 0) }}\uFA19 {{ secondsRound .CummulativeTotal.Seconds }}.{{ end }}",
+          "template": "{{ if and (.Env.WAKATIME_API_KEY) (eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_WAKATIME))) (gt .CumulativeTotal.Seconds 0) }}\uFA19 {{ secondsRound .CumulativeTotal.Seconds }}.{{ end }}",
           "trailing_diamond": "\uE0B4 ",
           "type": "wakatime"
         },
@@ -123,7 +126,7 @@
           "foreground": "p:c-badge-text",
           "leading_diamond": "\uE0B6",
           "style": "diamond",
-          "template": "{{ if eq \"True\" (title (default \"False\" .Env.DISABLE_SEGMENT_BATTERY)) }}{{ else }}{{ if not .Error }}{{ if eq \"Charging\" .State.String }}\uE315 {{ else if eq \"Discharging\" .State.String }}\uF062 {{ else if eq \"Full\" .State.String }}~ {{ else }}? {{ end }}{{ if le .Percentage 15 }}\uF579{{ else if and (ge .Percentage 16) (le .Percentage 30) }}\uF57A{{ else if and (ge .Percentage 31) (le .Percentage 45) }}\uF57C{{ else if and (ge .Percentage 46) (le .Percentage 55)}}\uF57D{{ else if and (ge .Percentage 56) (le .Percentage 70) }}\uF57E{{ else if and (ge .Percentage 71) (le .Percentage 80) }}\uF580{{ else if and (ge .Percentage 81) (le .Percentage 95) }}\uF581{{ else }}\uF578{{ end }} {{ .Percentage }}%{{ else }}!{{ end }}{{ end }}",
+          "template": "{{ if eq \"True\" (title (default \"False\" .Env.DISABLE_SEGMENT_BATTERY)) }}{{ else }}{{ if not .Error }}{{ if eq \"Charging\" .State.String }}\uE315 {{ else if eq \"Discharging\" .State.String }}{{ else if eq \"Full\" .State.String }}~ {{ else }}? {{ end }}{{ if le .Percentage 15 }}\uF579{{ else if and (ge .Percentage 16) (le .Percentage 30) }}\uF57A{{ else if and (ge .Percentage 31) (le .Percentage 45) }}\uF57C{{ else if and (ge .Percentage 46) (le .Percentage 55)}}\uF57D{{ else if and (ge .Percentage 56) (le .Percentage 70) }}\uF57E{{ else if and (ge .Percentage 71) (le .Percentage 80) }}\uF580{{ else if and (ge .Percentage 81) (le .Percentage 95) }}\uF581{{ else }}\uF578{{ end }} {{ .Percentage }}%{{ else }}!{{ end }}{{ end }}",
           "trailing_diamond": "\uE0B4",
           "type": "battery"
         }

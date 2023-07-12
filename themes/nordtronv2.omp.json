@@ -1,0 +1,92 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palette": {
+	  "closer": "p:os"
+  },
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+		{
+          "foreground": "p:os",
+          "style": "plain",
+          "template": "<#76d5a6>\u250f[</><#cad57f>{{.Icon}}</><#76d5a6>]</>",
+          "type": "os"
+        },
+        {
+          "foreground": "#AB8AC0",
+          "style": "plain",
+          "template": "<#76d5a6>[</>{{ .UserName }}<#76d5a6>@</>{{ .HostName }}<#76d5a6>]</>",
+          "type": "session"
+        },
+        {
+          "foreground": "#AB8AC0",
+          "properties": {
+            "fetch_stash_count": true,
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "style": "plain",
+          "template": "<#76d5a6>--[</>{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}<#8fbcbb> \u25cf </>{{ end }}{{ if .Staging.Changed }}<#88c0d0> \u25cf </>{{ end }}<#76d5a6>]</>",
+          "type": "git"
+        },
+        {
+          "foreground": "#AB8AC0",
+          "style": "plain",
+          "template": "<#76d5a6>--[</>{{.Profile}}{{if .Region}}@{{.Region}}{{end}}<#76d5a6>]</>",
+          "type": "aws"
+        },
+        {
+          "foreground": "#AB8AC0",
+          "style": "plain",
+          "template": "<#76d5a6>--[</>{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}<#76d5a6>]</>",
+          "type": "kubectl"
+        },
+        {
+          "foreground": "#d8dee9",
+          "style": "plain",
+          "template": "<#76d5a6>[</>\uf0e7<#76d5a6>]</>",
+          "type": "root"
+        },
+        {
+          "foreground": "#d8dee9",
+          "style": "plain",
+          "template": "<#76d5a6>[x</>{{ .Meaning }}<#76d5a6>]</>",
+          "type": "exit"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#AB8AC0",
+          "properties": {
+            "style": "full"
+          },
+          "style": "plain",
+          "template": "<#76d5a6>\u2516[</>{{ .Path }}<#76d5a6>]</>",
+          "type": "path"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#76d5a6",
+          "style": "plain",
+          "template": " \u2b9e",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "final_space": true,
+  "version": 2
+}

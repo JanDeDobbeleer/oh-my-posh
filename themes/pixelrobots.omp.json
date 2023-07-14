@@ -26,7 +26,7 @@
             "source": "cli"
           },
           "style": "powerline",
-          "template": " \ufd03 {{ .Name }} [ {{ .Origin }} ] ",
+          "template": " \uebd8 {{ .Name }} [ {{ .Origin }} ] ",
           "type": "az"
         },
         {
@@ -37,7 +37,7 @@
             "source": "pwsh"
           },
           "style": "powerline",
-          "template": " \ufd03 {{ .Name }} [ {{ .Origin }} ] ",
+          "template": " \uebd8 {{ .Name }} [ {{ .Origin }} ] ",
           "type": "az"
         }
       ],

@@ -54,7 +54,7 @@
           },
           "style": "powerline",
           "powerline_symbol": "\ue0b4",
-          "template": " <p:symbol-color>\ufd03</> {{ .Name }}",
+          "template": " <p:symbol-color>\uebd8</> {{ .Name }}",
           "type": "az"
         },
         {
@@ -65,7 +65,7 @@
           },
           "style": "powerline",
           "powerline_symbol": "\ue0b4",
-          "template": " <p:symbol-color>\ufd03</> (PS) {{ .Name }}",
+          "template": " <p:symbol-color>\uebd8</> (PS) {{ .Name }}",
           "type": "az"
         },
         {

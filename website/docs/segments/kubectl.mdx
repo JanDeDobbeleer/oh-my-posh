@@ -10,16 +10,23 @@ Display the currently active Kubernetes context name and namespace name.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "kubectl",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#000000",
-  "background": "#ebcc34",
-  "template": " \uFD31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
-}}/>
+<Config
+  data={{
+    type: "kubectl",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#000000",
+    background: "#ebcc34",
+    template: " \uFD31 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} ",
+    properties: {
+      context_aliases: {
+        "arn:aws:eks:eu-west-1:1234567890:cluster/posh": "posh",
+      },
+    },
+  }}
+/>
 
 ## Properties
 
@@ -27,6 +34,7 @@ import Config from '@site/src/components/Config.js';
 | ------------------ | --------- | ----------------------------------------------------------------------------------------------------- |
 | `display_error`    | `boolean` | show the error context when failing to retrieve the kubectl information - defaults to `false`         |
 | `parse_kubeconfig` | `boolean` | parse kubeconfig files instead of calling out to kubectl to improve performance - defaults to `false` |
+| `context_aliases`  | `object`  | custom context names                                                                                  |
 
 ## Template ([info][templates])
 
@@ -47,11 +55,14 @@ import Config from '@site/src/components/Config.js';
 | `.User`      | `string` | the current kubectl context user      |
 | `.Cluster`   | `string` | the current kubectl context cluster   |
 
-## Tips
+:::tip
 
 It is common for the Kubernetes "default" namespace to be used when no namespace is provided. If you want your prompt to
 render an empty current namespace using the word "default", you can use something like this for the template:
 
-`{{.Context}} :: {{if .Namespace}}{{.Namespace}}{{else}}default{{end}}`
+```
+{{.Context}} :: {{if .Namespace}}{{.Namespace}}{{else}}default{{end}}
+```
+:::
 
 [templates]: /docs/configuration/templates

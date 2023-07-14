@@ -12,8 +12,7 @@ jobs:
       uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
     - name: Build
       run: |
-        VERSION="${{ github.event.release.name }}"
-        VERSION="${VERSION:1}"
+        VERSION=$(echo "${{ github.event.release.name }}" | cut -c2-)
         echo "Building version ${VERSION}"
         cd src
         go build -o dist/posh-android-arm -ldflags="-s -w -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Version=${VERSION}' -X 'github.com/jandedobbeleer/oh-my-posh/src/build.Date=$(date)'"

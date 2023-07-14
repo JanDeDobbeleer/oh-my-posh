@@ -34,6 +34,7 @@ func TestKubectlSegment(t *testing.T) {
 		ExpectedEnabled bool
 		ExpectedString  string
 		Files           map[string]string
+		ContextAliases  map[string]string
 	}{
 		{
 			Case:            "kubeconfig incomplete",
@@ -58,6 +59,16 @@ func TestKubectlSegment(t *testing.T) {
 		},
 		{Case: "no namespace", Template: standardTemplate, KubectlExists: true, Context: "aaa", ExpectedString: "aaa", ExpectedEnabled: true},
 		{
+			Case:            "kubectl context alias",
+			Template:        standardTemplate,
+			KubectlExists:   true,
+			Context:         "aaa",
+			Namespace:       "bbb",
+			ContextAliases:  map[string]string{"aaa": "ccc"},
+			ExpectedString:  "ccc :: bbb",
+			ExpectedEnabled: true,
+		},
+		{
 			Case:            "kubectl error",
 			Template:        standardTemplate,
 			DisplayError:    true,
@@ -75,6 +86,15 @@ func TestKubectlSegment(t *testing.T) {
 			ParseKubeConfig: true,
 			Files:           testKubeConfigFiles,
 			ExpectedString:  "aaa :: bbb :: ccc :: ddd",
+			ExpectedEnabled: true,
+		},
+		{
+			Case:            "kubeconfig context alias",
+			Template:        standardTemplate,
+			ParseKubeConfig: true,
+			Files:           testKubeConfigFiles,
+			ContextAliases:  map[string]string{"aaa": "ccc"},
+			ExpectedString:  "ccc :: bbb",
 			ExpectedEnabled: true,
 		},
 		{
@@ -135,6 +155,7 @@ func TestKubectlSegment(t *testing.T) {
 			props: properties.Map{
 				properties.DisplayError: tc.DisplayError,
 				ParseKubeConfig:         tc.ParseKubeConfig,
+				ContextAliases:          tc.ContextAliases,
 			},
 		}
 		assert.Equal(t, tc.ExpectedEnabled, k.Enabled(), tc.Case)

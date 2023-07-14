@@ -1416,6 +1416,12 @@
                     "title": "Parse kubeconfig",
                     "description": "Parse kubeconfig files instead of calling out to kubectl to improve performance.",
                     "default": false
+                  },
+                  "context_aliases": {
+                    "type": "object",
+                    "title": "Context aliases",
+                    "description": "Custom context names.",
+                    "default": {}
                   }
                 }
               }

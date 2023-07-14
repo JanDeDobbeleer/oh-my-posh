@@ -508,7 +508,7 @@ func defaultConfig(env platform.Environment, warning bool) *Config {
 				TrailingDiamond: "\ue0b4",
 				Background:      "p:blue",
 				Foreground:      "p:white",
-				Template:        " \ufd03 {{ .Name }} ",
+				Template:        " \uebd8 {{ .Name }} ",
 				Properties: properties.Map{
 					properties.DisplayDefault: true,
 				},

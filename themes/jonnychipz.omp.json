@@ -25,7 +25,7 @@
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
-          "template": " \ufd03 {{ .Name }} ",
+          "template": " \uebd8 {{ .Name }} ",
           "type": "az"
         },
         {

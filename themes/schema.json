@@ -1705,6 +1705,12 @@
                     "title": "Alma Icon",
                     "description": "The icon to use for Alma",
                     "default": "\uF31D"
+                  },
+                  "android": {
+                    "type": "string",
+                    "title": "Android Icon",
+                    "description": "The icon to use for Alma",
+                    "default": "\uf17b"
                   }
                 }
               }

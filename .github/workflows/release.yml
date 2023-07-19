@@ -95,7 +95,6 @@ jobs:
             src/dist/posh-*
             src/dist/themes.*
   winget:
-    name: Publish To WinGet
     needs: [artifacts, changelog]
     runs-on: windows-latest
     steps:
@@ -105,7 +104,6 @@ jobs:
           version: ${{ needs.changelog.outputs.tag }}
           token: ${{ secrets.WINGETCREATE_TOKEN }}
   microsoft_store:
-    name: Publish To Windows Store
     needs: [artifacts, changelog]
     runs-on: ubuntu-latest
     steps:

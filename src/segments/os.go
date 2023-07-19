@@ -51,6 +51,7 @@ func (oi *Os) Enabled() bool {
 func (oi *Os) getDistroIcon(distro string) string {
 	iconMap := map[string]string{
 		"alma":                "\uF31D",
+		"almalinux9":          "\uF31D",
 		"alpine":              "\uF300",
 		"aosc":                "\uF301",
 		"arch":                "\uF303",

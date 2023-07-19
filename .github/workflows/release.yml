@@ -122,7 +122,8 @@ jobs:
         uses: jandedobbeleer/store-submission@submission-status
         with:
           command: update
-          product-update: '{
+          product-update: |
+            {
               "packages":[
                   {
                     "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ needs.changelog.outputs.tag }}/install-amd64.exe",
@@ -146,7 +147,7 @@ jobs:
                     "isSilentInstall":false
                   }
               ]
-            }'
+            }
       - name: Publish Submission
         uses: jandedobbeleer/store-submission@submission-status
         with:

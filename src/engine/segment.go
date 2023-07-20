@@ -197,6 +197,8 @@ const (
 	PROJECT SegmentType = "project"
 	// PYTHON writes the virtual env name
 	PYTHON SegmentType = "python"
+	// QUASAR writes the QUASAR version and context
+	QUASAR SegmentType = "quasar"
 	// R version
 	R SegmentType = "r"
 	// ROOT writes root symbol
@@ -302,6 +304,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	PLASTIC:       func() SegmentWriter { return &segments.Plastic{} },
 	PROJECT:       func() SegmentWriter { return &segments.Project{} },
 	PYTHON:        func() SegmentWriter { return &segments.Python{} },
+	QUASAR:        func() SegmentWriter { return &segments.Quasar{} },
 	R:             func() SegmentWriter { return &segments.R{} },
 	ROOT:          func() SegmentWriter { return &segments.Root{} },
 	RUBY:          func() SegmentWriter { return &segments.Ruby{} },

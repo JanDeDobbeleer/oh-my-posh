@@ -1,0 +1,69 @@
+---
+id: quasar
+title: Quasar
+sidebar_label: Quasar
+---
+
+## What
+
+Display the currently active [Quasar CLI][quasar-cli] version. Only rendered when the current or
+parent folder contains a `quasar.config` or `quasar.config.js` file.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "quasar",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#00B4FF",
+    template:
+      " \uea6a {{.Full}}{{ if .HasVite }} \ueb29 {{ .Vite.Version }}{{ end }} ",
+  }}
+/>
+
+## Properties
+
+| Name                   | Type      | Description                                                                                                           |
+| ---------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- |
+| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                   |
+| `missing_command_text` | `string`  | text to display when the command is missing - defaults to empty                                                       |
+| `fetch_version`        | `boolean` | fetch the NPM version - defaults to `true`                                                                            |
+| `version_url_template` | `string`  | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes |
+| `fetch_dependencies`   | `boolean` | fetch the version number of the `vite` and `@quasar/app-vite` dependencies if present - defaults to `false`           |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+\uea6a {{.Full}}{{ if .HasVite }} \ueb29 {{ .Vite.Version }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name       | Type         | Description                                        |
+| ---------- | ------------ | -------------------------------------------------- |
+| `.Full`    | `string`     | the full version                                   |
+| `.Major`   | `string`     | major number                                       |
+| `.Minor`   | `string`     | minor number                                       |
+| `.Patch`   | `string`     | patch number                                       |
+| `.URL`     | `string`     | URL of the version info / release notes            |
+| `.Error`   | `string`     | error encountered when fetching the version string |
+| `.Vite`    | `Dependency` | the `vite` dependency, if found                    |
+| `.AppVite` | `Dependency` | the `@quasar/app-vite` dependency, if found        |
+
+#### Dependency
+
+| Name       | Type      | Description                   |
+| ---------- | --------- | ----------------------------- |
+| `.Version` | `string`  | the full version              |
+| `.Dev`     | `boolean` | development dependency or not |
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[templates]: /docs/configuration/templates
+[quasar-cli]: https://quasar.dev/start/quasar-cli

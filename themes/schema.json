@@ -1884,6 +1884,43 @@
           "if": {
             "properties": {
               "type": {
+                "const": "quasar"
+              }
+            }
+          },
+          "then": {
+            "title": "Quasar Segment",
+            "description": "https://ohmyposh.dev/docs/segments/quasar",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "fetch_dependencies": {
+                    "type": "boolean",
+                    "title": "Fetch Dependencies",
+                    "description": "Fetch the vite and @quasar/app-vite dependency information or not",
+                    "default": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
                 "const": "root"
               }
             }

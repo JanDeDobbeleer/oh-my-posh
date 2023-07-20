@@ -15,7 +15,7 @@
 [![Release][release-badge]][release]
 [![Documentation][docs-badge]][docs]
 
-![GitHub Downloads][gh-downloads]
+![GitHub Downloads][gh-downloads] <a href='https://github.com/repo-reviews/repo-reviews.github.io/blob/main/create.md' target="_blank"><img alt='Github' src='https://img.shields.io/badge/review_me-100000?style=flat&logo=Github&logoColor=white&labelColor=888888&color=555555'/></a>
 
 This repo was made with love using GitKraken.
 
@@ -56,7 +56,7 @@ a modern and more efficient tool was needed to suit my personal needs.
 
 ## Reviews
 
-* [Repo review][repo-review] by [TameWizard][tamewizard]
+* [Repo review][repo-review] by [TameWizard][tamewizard] 
 
 ## Thanks
 

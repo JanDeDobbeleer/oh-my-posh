@@ -101,6 +101,7 @@ module.exports = {
         "segments/plastic",
         "segments/project",
         "segments/python",
+        "segments/quasar",
         "segments/r",
         "segments/root",
         "segments/ruby",

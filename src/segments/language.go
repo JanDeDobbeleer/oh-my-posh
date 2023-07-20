@@ -72,6 +72,9 @@ type language struct {
 	matchesVersionFile matchesVersionFile
 	homeEnabled        bool
 	displayMode        string
+	// root is the root folder of the project
+	projectFiles []string
+	projectRoot  *platform.FileInfo
 
 	version
 	Error    string
@@ -106,11 +109,19 @@ func (l *language) Enabled() bool {
 	inHomeDir := func() bool {
 		return l.env.Pwd() == l.env.Home()
 	}
+
 	var enabled bool
+
 	homeEnabled := l.props.GetBool(HomeEnabled, l.homeEnabled)
 	if inHomeDir() && !homeEnabled {
-		enabled = false
-	} else {
+		return false
+	}
+
+	if len(l.projectFiles) != 0 && l.hasProjectFiles() {
+		enabled = true
+	}
+
+	if !enabled {
 		// set default mode when not set
 		if len(l.displayMode) == 0 {
 			l.displayMode = l.props.GetString(DisplayMode, DisplayModeFiles)
@@ -126,7 +137,7 @@ func (l *language) Enabled() bool {
 		case DisplayModeContext:
 			fallthrough
 		default:
-			enabled = l.hasLanguageFiles() || l.hasLanguageFolders() || l.inLanguageContext()
+			enabled = l.hasLanguageFiles() || l.hasLanguageFolders() || l.inLanguageContext() || l.hasProjectFiles()
 		}
 	}
 
@@ -153,6 +164,16 @@ func (l *language) Enabled() bool {
 func (l *language) hasLanguageFiles() bool {
 	for _, extension := range l.extensions {
 		if l.env.HasFiles(extension) {
+			return true
+		}
+	}
+	return false
+}
+
+func (l *language) hasProjectFiles() bool {
+	for _, extension := range l.projectFiles {
+		if configPath, err := l.env.HasParentFilePath(extension); err == nil {
+			l.projectRoot = configPath
 			return true
 		}
 	}

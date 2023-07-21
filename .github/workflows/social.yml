@@ -23,4 +23,4 @@ jobs:
           REPO: oh-my-posh
         run: |
           npm install
-          node main.cjs
+          node main.js

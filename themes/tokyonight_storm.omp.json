@@ -56,7 +56,7 @@
           }
         },
         {
-          "type": "exit",
+          "type": "status",
           "style": "plain",
           "foreground": "p:terminal-red",
           "template": " \uf00d"

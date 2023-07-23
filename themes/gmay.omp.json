@@ -82,7 +82,7 @@
           "style": "diamond",
           "template": " \ueb05 ",
           "trailing_diamond": "\ue0b4",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

@@ -67,7 +67,7 @@
           },
           "style": "plain",
           "template": " {{ if gt .Code 0 }}<#ff0000>\uf00d</>{{ else }}<#23d18b>\uf42e</>{{ end }} ",
-          "type": "exit"
+          "type": "status"
         },
         {
           "foreground": "#bab02a",

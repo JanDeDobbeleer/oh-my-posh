@@ -33,7 +33,7 @@
           "foreground": "#DCB977",
           "style": "plain",
           "template": " \uf119",
-          "type": "exit"
+          "type": "status"
         },
         {
           "foreground": "#66F68F",

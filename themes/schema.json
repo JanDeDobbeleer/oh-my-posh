@@ -264,7 +264,6 @@
             "docker",
             "dotnet",
             "dart",
-            "exit",
             "executiontime",
             "flutter",
             "fossil",
@@ -300,6 +299,7 @@
             "session",
             "sitecore",
             "spotify",
+            "status",
             "shell",
             "sysinfo",
             "strava",
@@ -777,13 +777,13 @@
           "if": {
             "properties": {
               "type": {
-                "const": "exit"
+                "const": "status"
               }
             }
           },
           "then": {
-            "title": "Exit Segment",
-            "description": "https://ohmyposh.dev/docs/segments/exit",
+            "title": "Status Segment",
+            "description": "https://ohmyposh.dev/docs/segments/status",
             "properties": {
               "properties": {
                 "properties": {

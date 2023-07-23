@@ -76,7 +76,7 @@
           "foreground": "#ffa5d8",
           "style": "powerline",
           "template": "[<#ffffff>\uea6c</> Error, check your command]",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

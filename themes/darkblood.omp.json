@@ -25,8 +25,8 @@
         {
           "foreground": "#ffffff",
           "style": "plain",
-          "template": "<#CB4B16>[x</>{{ .Meaning }}<#CB4B16>]</>",
-          "type": "exit"
+          "template": "<#CB4B16>[x</>{{ reason .Code }}<#CB4B16>]</>",
+          "type": "status"
         }
       ],
       "type": "prompt"

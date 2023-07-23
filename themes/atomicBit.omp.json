@@ -183,7 +183,7 @@
           },
           "style": "plain",
           "template": "\ue285\ueb9e ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

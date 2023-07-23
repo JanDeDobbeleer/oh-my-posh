@@ -142,14 +142,14 @@ end
 
 local function error_level_option()
     if os.geterrorlevel ~= nil and settings.get("cmd.get_errorlevel") then
-        return "--error "..os.geterrorlevel()
+        return "--status "..os.geterrorlevel()
     end
     return ""
 end
 
 local function no_exit_code_option()
     if no_exit_code then
-        return "--no-exit-code"
+        return "--no-status"
     end
     return ""
 end

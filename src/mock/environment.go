@@ -105,9 +105,9 @@ func (env *MockedEnvironment) RunShellCommand(shell, command string) string {
 	return args.String(0)
 }
 
-func (env *MockedEnvironment) ErrorCode() int {
+func (env *MockedEnvironment) StatusCodes() (int, string) {
 	args := env.Called()
-	return args.Int(0)
+	return args.Int(0), args.String(1)
 }
 
 func (env *MockedEnvironment) ExecutionTime() float64 {

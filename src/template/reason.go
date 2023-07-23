@@ -1,37 +1,8 @@
-package segments
+package template
 
-import (
-	"strconv"
+import "strconv"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-)
-
-type Exit struct {
-	props properties.Properties
-	env   platform.Environment
-
-	Meaning string
-}
-
-func (e *Exit) Template() string {
-	return " {{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf42e{{ end }} "
-}
-
-func (e *Exit) Enabled() bool {
-	e.Meaning = e.getMeaningFromExitCode(e.env.ErrorCode())
-	if e.props.GetBool(properties.AlwaysEnabled, false) {
-		return true
-	}
-	return e.env.ErrorCode() != 0
-}
-
-func (e *Exit) Init(props properties.Properties, env platform.Environment) {
-	e.props = props
-	e.env = env
-}
-
-func (e *Exit) getMeaningFromExitCode(code int) string { //nolint: gocyclo
+func GetReasonFromStatus(code int) string { //nolint: gocyclo
 	switch code {
 	case 1:
 		return "ERROR"

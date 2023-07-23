@@ -87,8 +87,8 @@
           "foreground": "#fffef9",
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
-          "template": " \uf12a >>{{ .Meaning }} ",
-          "type": "exit"
+          "template": " \uf12a >>{{ reason .Code }} ",
+          "type": "status"
         }
       ],
       "type": "prompt"

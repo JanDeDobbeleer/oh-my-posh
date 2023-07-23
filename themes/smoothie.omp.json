@@ -52,7 +52,7 @@
           "foreground": "#fb0207",
           "style": "plain",
           "template": " ××× ",
-          "type": "exit"
+          "type": "status"
         },
         {
           "foreground": "#9966ff",

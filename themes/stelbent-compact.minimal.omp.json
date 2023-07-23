@@ -68,7 +68,7 @@
           "template": " {{ .WorkspaceName }}{{ if .Version }} {{ .Version }}{{ end }} "
         },
         {
-          "type": "exit",
+          "type": "status",
           "background": "#ff8080",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",

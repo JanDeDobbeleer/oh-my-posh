@@ -72,7 +72,7 @@
           },
           "style": "powerline",
           "template": " {{ if gt .Code 0 }}\uf421{{ else }}\uf469 \u2665{{ end }} ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

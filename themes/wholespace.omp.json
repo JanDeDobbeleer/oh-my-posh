@@ -121,7 +121,7 @@
           },
           "style": "plain",
           "template": " \ueb05 ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

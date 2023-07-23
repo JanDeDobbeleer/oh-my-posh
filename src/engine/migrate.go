@@ -135,7 +135,7 @@ func (segment *Segment) migrationOne(env platform.Environment) {
 			segment.migrateColorOverride("version_mismatch_color", "{{ if .Mismatch }}%s{{ end }}", background)
 		}
 	case EXIT:
-		template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
+		template := segment.Properties.GetString(segmentTemplate, "{{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf42e{{ end }}")
 		if strings.Contains(template, ".Text") {
 			template = strings.ReplaceAll(template, ".Text", ".Meaning")
 			segment.Properties[segmentTemplate] = template

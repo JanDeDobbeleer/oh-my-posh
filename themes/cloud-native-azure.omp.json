@@ -54,9 +54,9 @@
             "always_enabled": true
           },
           "style": "diamond",
-          "template": " \ue23a {{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf42e{{ end }} ",
+          "template": " \ue23a {{ if gt .Code 0 }}\uf00d {{ reason .Code }}{{ else }}\uf42e{{ end }} ",
           "trailing_diamond": "\ue0b4",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

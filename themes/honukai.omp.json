@@ -61,8 +61,8 @@
         {
           "foreground": "#CB4B16",
           "style": "plain",
-          "template": " {{ .Meaning }} ",
-          "type": "exit"
+          "template": " {{ reason .Code }} ",
+          "type": "status"
         },
         {
           "foreground": "#CC4B16",

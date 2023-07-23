@@ -55,8 +55,8 @@
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
-          "template": " {{ .Meaning }} ",
-          "type": "exit"
+          "template": " {{ reason .Code }} ",
+          "type": "status"
         }
       ],
       "type": "prompt"

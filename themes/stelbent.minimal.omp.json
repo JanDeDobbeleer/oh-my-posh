@@ -92,7 +92,7 @@
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
           "template": " error ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

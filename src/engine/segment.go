@@ -217,6 +217,8 @@ const (
 	SITECORE SegmentType = "sitecore"
 	// SPOTIFY writes the SPOTIFY status for Mac
 	SPOTIFY SegmentType = "spotify"
+	// STATUS writes the last know command status
+	STATUS SegmentType = "status"
 	// STRAVA is a sports activity tracker
 	STRAVA SegmentType = "strava"
 	// Subversion segment
@@ -275,7 +277,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	DOTNET:        func() SegmentWriter { return &segments.Dotnet{} },
 	EXECUTIONTIME: func() SegmentWriter { return &segments.Executiontime{} },
 	ELIXIR:        func() SegmentWriter { return &segments.Elixir{} },
-	EXIT:          func() SegmentWriter { return &segments.Exit{} },
+	EXIT:          func() SegmentWriter { return &segments.Status{} },
 	FLUTTER:       func() SegmentWriter { return &segments.Flutter{} },
 	FOSSIL:        func() SegmentWriter { return &segments.Fossil{} },
 	GCP:           func() SegmentWriter { return &segments.Gcp{} },
@@ -314,6 +316,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	SHELL:         func() SegmentWriter { return &segments.Shell{} },
 	SITECORE:      func() SegmentWriter { return &segments.Sitecore{} },
 	SPOTIFY:       func() SegmentWriter { return &segments.Spotify{} },
+	STATUS:        func() SegmentWriter { return &segments.Status{} },
 	STRAVA:        func() SegmentWriter { return &segments.Strava{} },
 	SVN:           func() SegmentWriter { return &segments.Svn{} },
 	SWIFT:         func() SegmentWriter { return &segments.Swift{} },

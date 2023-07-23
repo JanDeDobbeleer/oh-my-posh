@@ -85,7 +85,7 @@
           "powerline_symbol": "\ue0b4",
           "style": "powerline",
           "template": " \ueb05 ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

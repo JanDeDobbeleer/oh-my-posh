@@ -53,13 +53,13 @@
         "alignment": "right",
         "segments": [
           {
-            "type": "exit",
+            "type": "status",
             "style": "plain",
             "foreground": "#b8ff75",
             "foreground_templates": [
               "{{ if gt .Code 0 }}#E06C75{{ end }}"
             ],
-            "template": " x{{ .Meaning }}"
+            "template": " x{{ reason .Code }}"
           },
           {
             "foreground": "#b8ff75",

@@ -170,8 +170,8 @@
             "always_enabled": true
           },
           "style": "powerline",
-          "template": " {{ if gt .Code 0 }}{{ .Meaning }}{{ else }}\u2714{{ end }} ",
-          "type": "exit"
+          "template": " {{ if gt .Code 0 }}{{ reason .Code }}{{ else }}\u2714{{ end }} ",
+          "type": "status"
         },
         {
           "background": "#d3d7cf",

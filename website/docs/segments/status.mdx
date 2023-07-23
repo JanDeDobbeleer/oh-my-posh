@@ -1,0 +1,74 @@
+---
+id: status
+title: Status Code
+sidebar_label: Status Code
+---
+
+## What
+
+Displays the last known status code and/or the reason that the last command failed.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "status",
+    style: "diamond",
+    foreground: "#ffffff",
+    background: "#00897b",
+    background_templates: ["{{ if .Error }}#e91e63{{ end }}"],
+    trailing_diamond: "\uE0B4",
+    template: "<#193549>\uE0B0</> \uE23A ",
+    properties: {
+      always_enabled: true,
+    },
+  }}
+/>
+
+## Properties
+
+| Name               | Type      | Description                                                                                          |
+| ------------------ | --------- | ---------------------------------------------------------------------------------------------------- |
+| `always_enabled`   | `boolean` | always show the status - defaults to `false`                                                         |
+| `status_template`  | `string`  | [template][status-template] used to render an individual status code - defaults to `{{ .Code }}`     |
+| `status_separator` | `string`  | used to separate multiple statuses when `$PIPESTATUS` is available - defaults to <code>&#124;</code> |
+
+[colors]: /docs/configuration/colors
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Error }}\uf00d {{ reason .Code }}{{ else }}\uf42e{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name      | Type      | Description                                                                           |
+| --------- | --------- | ------------------------------------------------------------------------------------- |
+| `.Code`   | `number`  | the last known exit code (command or pipestatus)                                      |
+| `.String` | `string`  | the formatted status codes using `status_template` and `status_separator`             |
+| `.Error`  | `boolean` | true if one of the commands has an error (validates on command status and pipestatus) |
+
+### Status Template
+
+When using `status_template`, use `if eq .Code 0` to check for a successful exit code. The `.Error` property
+is used on a global context and will not necessarily indicate that the current validated code is a non-zero value.
+
+```template
+{{ if eq .Code 0 }}\uf00c{{ else }}\uf071{{ end }}
+```
+
+In case you want the reason for the exit code instead of code itself, you can use the `reason` function:
+
+```template
+{{ if eq .Code 0 }}\uf00c{{ else }}\uf071 {{ reason .Code }}{{ end }}
+```
+
+[templates]: /docs/configuration/templates
+[status-template]: #status-template

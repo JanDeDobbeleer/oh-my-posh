@@ -109,7 +109,7 @@
           },
           "style": "plain",
           "template": " \ue286 ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

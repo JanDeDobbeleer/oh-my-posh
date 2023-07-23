@@ -20,7 +20,7 @@
           "foreground": "#ff8888",
           "style": "plain",
           "template": "{{ if gt .Code 0 }} {{ .Code }} {{ end }}",
-          "type": "exit"
+          "type": "status"
         },
         {
           "background": "#ffcc88",

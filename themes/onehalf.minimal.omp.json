@@ -59,7 +59,7 @@
           },
           "style": "plain",
           "template": "{{ if gt .Code 0 }}<p:red>({{ .Code }}) </>{{ else }}<p:green>({{ .Code }}) </>{{ end }}> ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

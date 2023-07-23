@@ -14,15 +14,17 @@ end
 
 function fish_prompt
     set --local omp_status_cache_temp $status
+    set --local omp_pipestatus_cache_temp $pipestatus
     # clear from cursor to end of screen as
     # commandline --function repaint does not do this
     # see https://github.com/fish-shell/fish-shell/issues/8418
     printf \e\[0J
     if test "$omp_transient" = "1"
-      ::OMP:: print transient --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --no-exit-code=$omp_no_exit_code
+      ::OMP:: print transient --config $POSH_THEME --shell fish --status $omp_status_cache --pipestatus="$omp_pipestatus_cache" --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --no-status=$omp_no_exit_code
       return
     end
     set --global omp_status_cache $omp_status_cache_temp
+    set --global omp_pipestatus_cache $omp_pipestatus_cache_temp
     set --global omp_stack_count (count $dirstack)
     set --global omp_duration "$CMD_DURATION$cmd_duration"
     set --global omp_no_exit_code false
@@ -49,7 +51,7 @@ function fish_prompt
     if test "$last_command" = "clear"
       set omp_cleared true
     end
-    ::OMP:: print primary --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-exit-code=$omp_no_exit_code
+    ::OMP:: print primary --config $POSH_THEME --shell fish --status $omp_status_cache --pipestatus="$omp_pipestatus_cache" --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-status=$omp_no_exit_code
 end
 
 function fish_right_prompt
@@ -66,7 +68,7 @@ function fish_right_prompt
       return
     end
     set has_omp_tooltip false
-    ::OMP:: print right --config $POSH_THEME --shell fish --error $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
+    ::OMP:: print right --config $POSH_THEME --shell fish --status $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
 end
 
 function postexec_omp --on-event fish_postexec
@@ -104,7 +106,7 @@ function _render_tooltip
   if not test -n "$omp_tooltip_command"
     return
   end
-  set omp_tooltip_prompt (::OMP:: print tooltip --config $POSH_THEME --shell fish --error $omp_status_cache --shell-version $FISH_VERSION --command $omp_tooltip_command)
+  set omp_tooltip_prompt (::OMP:: print tooltip --config $POSH_THEME --shell fish --status $omp_status_cache --shell-version $FISH_VERSION --command $omp_tooltip_command)
   if not test -n "$omp_tooltip_prompt"
     if test "$has_omp_tooltip" = "true"
       commandline --function repaint

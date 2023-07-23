@@ -114,7 +114,7 @@
           },
           "style": "plain",
           "template": "\uf432 ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

@@ -208,6 +208,8 @@ func (f *fields) init(data interface{}) {
 		for key := range m {
 			(*f)[key] = true
 		}
+	case reflect.Ptr:
+		f.init(reflect.ValueOf(data).Elem().Interface())
 	}
 }
 

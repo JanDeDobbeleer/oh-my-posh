@@ -74,7 +74,7 @@
           "style": "diamond",
           "template": " \ueb05{{ if gt .Code 0 }} {{.Code}}{{ end }} ",
           "trailing_diamond": "\ue0b4",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

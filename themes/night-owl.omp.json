@@ -399,7 +399,7 @@
           },
           "style": "plain",
           "template": "\ue285\ue285",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

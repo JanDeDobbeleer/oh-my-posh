@@ -42,8 +42,8 @@
         {
           "foreground": "#d8dee9",
           "style": "plain",
-          "template": "<#5e81ac>[x</>{{ .Meaning }}<#5e81ac>]</>",
-          "type": "exit"
+          "template": "<#5e81ac>[x</>{{ reason .Code }}<#5e81ac>]</>",
+          "type": "status"
         }
       ],
       "type": "prompt"

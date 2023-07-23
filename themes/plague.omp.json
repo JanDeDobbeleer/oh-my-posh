@@ -79,7 +79,7 @@
           },
           "style": "plain",
           "template": "<transparent>\ue0b0</> \ue23a <background,transparent>\ue0b4</>",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

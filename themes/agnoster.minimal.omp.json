@@ -7,8 +7,8 @@
         {
           "foreground": "#ffffff",
           "style": "plain",
-          "template": "{{ .Meaning }}\u274c ",
-          "type": "exit"
+          "template": "{{ reason .Code }}\u274c ",
+          "type": "status"
         },
         {
           "foreground": "#ff0000",

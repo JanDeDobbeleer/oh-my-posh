@@ -46,12 +46,12 @@ const (
 )
 
 var (
-	Transient        bool
-	ErrorLine        bool
-	Tooltips         bool
-	ShellIntegration bool
-	RPrompt          bool
-	Cursor           bool
+	Transient         bool
+	ErrorLine         bool
+	Tooltips          bool
+	ShellIntegration  bool
+	RPrompt           bool
+	CursorPositioning bool
 )
 
 func getExecutablePath(env platform.Environment) (string, error) {
@@ -270,7 +270,7 @@ func PrintInit(env platform.Environment) string {
 		"::TOOLTIPS::", toggleSetting(Tooltips),
 		"::FTCS_MARKS::", toggleSetting(ShellIntegration),
 		"::RPROMPT::", strconv.FormatBool(RPrompt),
-		"::CURSOR::", strconv.FormatBool(Cursor),
+		"::CURSOR::", strconv.FormatBool(CursorPositioning),
 		"::UPGRADE::", strconv.FormatBool(hasNotice),
 		"::UPGRADENOTICE::", notice,
 	).Replace(script)

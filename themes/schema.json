@@ -3269,6 +3269,12 @@
       "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
       "default": true
     },
+    "disable_cursor_positioning": {
+      "type": "boolean",
+      "title": "Disable Cursor Positioning",
+      "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
+      "default": false
+    },
     "shell_integration": {
       "type": "boolean",
       "title": "FTCS command marks for shell integration",

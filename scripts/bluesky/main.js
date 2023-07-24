@@ -16,6 +16,7 @@ const {Octokit} = require("@octokit/rest");
   notes = notes.replaceAll('**', '');
   notes = notes.replace(/ \(\[[0-9a-z]+\]\(.*\)/g, '');
   notes = notes.trim();
+  notes = notes.substring(0, 249);
 
   const agent = new BskyAgent({ service: 'https://bsky.social' });
   await agent.login({ identifier: process.env.BLUESKY_IDENTIFIER, password: process.env.BLUESKY_PASSWORD });

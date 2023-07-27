@@ -133,12 +133,17 @@ func loadConfig(env platform.Environment) *Config {
 	cfg.origin = configFile
 	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
 	cfg.env = env
-	if cfg.Format == "yml" {
+
+	// support different extensions
+	switch cfg.Format {
+	case "yml":
 		cfg.Format = YAML
+	case "jsonc":
+		cfg.Format = JSON
 	}
 
-	config.AddDriver(yaml.Driver)
-	config.AddDriver(json.Driver)
+	config.AddDriver(yaml.Driver.WithAliases("yaml", "yml"))
+	config.AddDriver(json.Driver.WithAliases("json", "jsonc"))
 	config.AddDriver(toml.Driver)
 
 	if config.Default().IsEmpty() {

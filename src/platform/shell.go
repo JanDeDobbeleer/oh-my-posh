@@ -632,9 +632,10 @@ func (env *Shell) Flags() *Flags {
 
 func (env *Shell) Shell() string {
 	defer env.Trace(time.Now())
-	if env.CmdFlags.Shell != "" {
+	if len(env.CmdFlags.Shell) != 0 {
 		return env.CmdFlags.Shell
 	}
+	env.Debug("no shell name provided in flags, trying to detect it")
 	pid := os.Getppid()
 	p, _ := process.NewProcess(int32(pid))
 	name, err := p.Name()

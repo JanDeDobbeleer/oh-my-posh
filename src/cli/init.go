@@ -70,8 +70,8 @@ func runInit(shellName string) {
 	shell.ShellIntegration = cfg.ShellIntegration
 	for i, block := range cfg.Blocks {
 		// only fetch cursor position when relevant
-		if i == 0 && block.Newline {
-			shell.Cursor = true
+		if !cfg.DisableCursorPositioning && (i == 0 && block.Newline) {
+			shell.CursorPositioning = true
 		}
 		if block.Type == engine.RPrompt {
 			shell.RPrompt = true

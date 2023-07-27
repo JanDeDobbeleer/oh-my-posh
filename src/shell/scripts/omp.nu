@@ -23,7 +23,7 @@ export-env {
         let clear = (history | last 1 | get 0.command) == "clear"
 
         let width = ((term size).columns | into string)
-        ^::OMP:: print primary $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=($cmd_duration)" $"--error=($env.LAST_EXIT_CODE)" $"--terminal-width=($width)" $"--cleared=($clear)"
+        ^::OMP:: print primary $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=($cmd_duration)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=($width)" $"--cleared=($clear)"
     }
 }
 

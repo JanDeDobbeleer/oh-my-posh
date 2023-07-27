@@ -55,7 +55,7 @@
           "powerline_symbol": "\ue0b0",
           "style": "powerline",
           "template": " \ue20f ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

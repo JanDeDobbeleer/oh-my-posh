@@ -161,7 +161,7 @@
           "style": "diamond",
           "template": "<parentBackground>\ue0b0</> \ue23a ",
           "trailing_diamond": "\ue0b4",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

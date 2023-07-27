@@ -69,8 +69,8 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": "{{ if gt .Code 0 }}<parentBackground,background>\ue0b0</><transparent> \uf12a</> {{ .Meaning }} <background,transparent>\ue0b0</>{{ else }}<parentBackground,transparent>\ue0b0</>{{ end }}",
-          "type": "exit"
+          "template": "{{ if gt .Code 0 }}<parentBackground,background>\ue0b0</><transparent> \uf12a</> {{ reason .Code }} <background,transparent>\ue0b0</>{{ else }}<parentBackground,transparent>\ue0b0</>{{ end }}",
+          "type": "status"
         }
       ],
       "type": "prompt"
@@ -113,7 +113,7 @@
           },
           "style": "plain",
           "template": "\u276f ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

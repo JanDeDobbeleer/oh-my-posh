@@ -90,8 +90,8 @@
                     "foreground": "#ffffff",
                     "powerline_symbol": "\ue0b0",
                     "style": "powerline",
-                    "template": "<transparent> \uf12a</> {{ .Meaning }} ",
-                    "type": "exit"
+                    "template": "<transparent> \uf12a</> {{ reason .Code }} ",
+                    "type": "status"
                 }
             ],
             "type": "prompt"
@@ -138,7 +138,7 @@
                     },
                     "style": "plain",
                     "template": "\u276f ",
-                    "type": "exit"
+                    "type": "status"
                 }
             ],
             "type": "prompt"

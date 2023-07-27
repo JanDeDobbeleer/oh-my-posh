@@ -65,7 +65,7 @@
           },
           "style": "powerline",
           "template": " \uea6c ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

@@ -11,7 +11,7 @@ PS0='${omp_start_time:0:$((omp_start_time="$(_omp_start_timer)",0))}$(_omp_ftcs_
 PS2="$(::OMP:: print secondary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION")"
 
 function _set_posh_cursor_position() {
-      # not supported in Midnight Commander
+    # not supported in Midnight Commander
     # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3415
     if [[ "::CURSOR::" != "true" ]] || [[ -v MC_SID ]]; then
         return
@@ -46,19 +46,26 @@ function set_poshcontext() {
 }
 
 function _omp_hook() {
-    local ret=$?
+    local ret=$? pipeStatus=(${PIPESTATUS[@]})
+    if [[ "${#BP_PIPESTATUS[@]}" -gt "${#pipeStatus[@]}" ]]; then
+        pipeStatus=(${BP_PIPESTATUS[@]})
+    fi
+
     local omp_stack_count=$((${#DIRSTACK[@]} - 1))
     local omp_elapsed=-1
     local no_exit_code="true"
+
     if [[ -n "$omp_start_time" ]]; then
         local omp_now=$(::OMP:: get millis --shell=bash)
         omp_elapsed=$((omp_now-omp_start_time))
         omp_start_time=""
         no_exit_code="false"
     fi
+
     set_poshcontext
     _set_posh_cursor_position
-    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --error="$ret" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-exit-code="$no_exit_code" | tr -d '\0')"
+
+    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$ret" --pipestatus="${pipeStatus[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$no_exit_code" | tr -d '\0')"
     return $ret
 }
 

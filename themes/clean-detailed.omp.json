@@ -120,7 +120,7 @@
           },
           "style": "plain",
           "template": "\u2570\u2500 ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

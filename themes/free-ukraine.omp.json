@@ -93,7 +93,7 @@
           "style": "diamond",
           "template": " {{ if gt .Code 0 }}\uf421 \uf119 {{ else }}\uf469 \u2665 {{ end }}",
           "trailing_diamond": "\ue0b0",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

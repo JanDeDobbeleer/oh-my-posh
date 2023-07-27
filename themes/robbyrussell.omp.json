@@ -32,7 +32,7 @@
           "foreground": "#BF616A",
           "style": "plain",
           "template": " \u2717",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

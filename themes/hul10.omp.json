@@ -119,7 +119,7 @@
           },
           "style": "plain",
           "template": "\u276f",
-          "type": "exit"
+          "type": "status"
         }
       ]
     }

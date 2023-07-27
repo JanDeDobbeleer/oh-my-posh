@@ -32,7 +32,7 @@
           "foreground": "#DCB977",
           "style": "plain",
           "template": " \uf119 ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

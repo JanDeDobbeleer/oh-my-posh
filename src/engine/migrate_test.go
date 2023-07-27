@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -326,7 +327,9 @@ func TestSegmentTemplateMigration(t *testing.T) {
 			Type:       tc.Type,
 			Properties: tc.Props,
 		}
-		segment.migrationOne(&mock.MockedEnvironment{})
+		env := &mock.MockedEnvironment{}
+		env.On("Debug", mock2.Anything).Return(nil)
+		segment.migrationOne(env)
 		assert.Equal(t, tc.Expected, segment.Properties[segmentTemplate], tc.Case)
 	}
 }

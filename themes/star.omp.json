@@ -41,7 +41,7 @@
           "foreground": "#C94A16",
           "style": "plain",
           "template": "x ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

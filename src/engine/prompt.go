@@ -21,7 +21,7 @@ const (
 
 func (e *Engine) Primary() string {
 	if e.Config.ShellIntegration {
-		exitCode := e.Env.ErrorCode()
+		exitCode, _ := e.Env.StatusCodes()
 		e.write(e.Writer.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
 		e.write(e.Writer.PromptStart())
 	}
@@ -150,7 +150,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 	}
 
 	if promptType == Transient && e.Config.ShellIntegration {
-		exitCode := e.Env.ErrorCode()
+		exitCode, _ := e.Env.StatusCodes()
 		e.write(e.Writer.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
 		e.write(e.Writer.PromptStart())
 	}

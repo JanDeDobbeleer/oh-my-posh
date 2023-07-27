@@ -197,6 +197,8 @@ const (
 	PROJECT SegmentType = "project"
 	// PYTHON writes the virtual env name
 	PYTHON SegmentType = "python"
+	// QUASAR writes the QUASAR version and context
+	QUASAR SegmentType = "quasar"
 	// R version
 	R SegmentType = "r"
 	// ROOT writes root symbol
@@ -215,6 +217,8 @@ const (
 	SITECORE SegmentType = "sitecore"
 	// SPOTIFY writes the SPOTIFY status for Mac
 	SPOTIFY SegmentType = "spotify"
+	// STATUS writes the last know command status
+	STATUS SegmentType = "status"
 	// STRAVA is a sports activity tracker
 	STRAVA SegmentType = "strava"
 	// Subversion segment
@@ -273,7 +277,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	DOTNET:        func() SegmentWriter { return &segments.Dotnet{} },
 	EXECUTIONTIME: func() SegmentWriter { return &segments.Executiontime{} },
 	ELIXIR:        func() SegmentWriter { return &segments.Elixir{} },
-	EXIT:          func() SegmentWriter { return &segments.Exit{} },
+	EXIT:          func() SegmentWriter { return &segments.Status{} },
 	FLUTTER:       func() SegmentWriter { return &segments.Flutter{} },
 	FOSSIL:        func() SegmentWriter { return &segments.Fossil{} },
 	GCP:           func() SegmentWriter { return &segments.Gcp{} },
@@ -302,6 +306,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	PLASTIC:       func() SegmentWriter { return &segments.Plastic{} },
 	PROJECT:       func() SegmentWriter { return &segments.Project{} },
 	PYTHON:        func() SegmentWriter { return &segments.Python{} },
+	QUASAR:        func() SegmentWriter { return &segments.Quasar{} },
 	R:             func() SegmentWriter { return &segments.R{} },
 	ROOT:          func() SegmentWriter { return &segments.Root{} },
 	RUBY:          func() SegmentWriter { return &segments.Ruby{} },
@@ -311,6 +316,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	SHELL:         func() SegmentWriter { return &segments.Shell{} },
 	SITECORE:      func() SegmentWriter { return &segments.Sitecore{} },
 	SPOTIFY:       func() SegmentWriter { return &segments.Spotify{} },
+	STATUS:        func() SegmentWriter { return &segments.Status{} },
 	STRAVA:        func() SegmentWriter { return &segments.Strava{} },
 	SVN:           func() SegmentWriter { return &segments.Svn{} },
 	SWIFT:         func() SegmentWriter { return &segments.Swift{} },

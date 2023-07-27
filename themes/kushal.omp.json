@@ -123,7 +123,7 @@
           },
           "style": "diamond",
           "template": " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} ",
-          "type": "exit"
+          "type": "status"
         },
         {
           "background": "#575656",
@@ -193,7 +193,7 @@
           },
           "style": "plain",
           "template": "\u276f ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

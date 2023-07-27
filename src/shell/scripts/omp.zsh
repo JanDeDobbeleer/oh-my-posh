@@ -43,7 +43,7 @@ function prompt_ohmyposh_preexec() {
 }
 
 function prompt_ohmyposh_precmd() {
-  omp_last_error=$?
+  omp_last_error=$? pipeStatus=(${pipestatus[@]})
   omp_stack_count=${#dirstack[@]}
   omp_elapsed=-1
   no_exit_code="true"
@@ -56,7 +56,7 @@ function prompt_ohmyposh_precmd() {
   export POSH_PROMPT_COUNT=$count
   set_poshcontext
   _set_posh_cursor_position
-  eval "$(::OMP:: print primary --config="$POSH_THEME" --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION"  --no-exit-code="$no_exit_code")"
+  eval "$(::OMP:: print primary --config="$POSH_THEME" --status="$omp_last_error" --pipestatus="${pipeStatus[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$no_exit_code")"
   unset omp_start_time
 }
 
@@ -96,7 +96,7 @@ function _posh-tooltip() {
   if [[ -z "$tip" ]]; then
     return
   fi
-  local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --error="$omp_last_error" --command="$tip" --shell-version="$ZSH_VERSION")
+  local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --status="$omp_last_error" --command="$tip" --shell-version="$ZSH_VERSION")
   # ignore an empty tooltip
   if [[ -z "$tooltip" ]]; then
     return
@@ -114,7 +114,7 @@ function _posh-zle-line-init() {
     local -i ret=$?
     (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
-    eval "$(::OMP:: print transient --error="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --config="$POSH_THEME" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-exit-code="$no_exit_code")"
+    eval "$(::OMP:: print transient --status="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --config="$POSH_THEME" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$no_exit_code")"
     zle .reset-prompt
 
     # If we received EOT, we exit the shell

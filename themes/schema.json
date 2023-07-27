@@ -264,7 +264,6 @@
             "docker",
             "dotnet",
             "dart",
-            "exit",
             "executiontime",
             "flutter",
             "fossil",
@@ -300,6 +299,7 @@
             "session",
             "sitecore",
             "spotify",
+            "status",
             "shell",
             "sysinfo",
             "strava",
@@ -777,13 +777,13 @@
           "if": {
             "properties": {
               "type": {
-                "const": "exit"
+                "const": "status"
               }
             }
           },
           "then": {
-            "title": "Exit Segment",
-            "description": "https://ohmyposh.dev/docs/segments/exit",
+            "title": "Status Segment",
+            "description": "https://ohmyposh.dev/docs/segments/status",
             "properties": {
               "properties": {
                 "properties": {
@@ -1874,6 +1874,43 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "quasar"
+              }
+            }
+          },
+          "then": {
+            "title": "Quasar Segment",
+            "description": "https://ohmyposh.dev/docs/segments/quasar",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "fetch_dependencies": {
+                    "type": "boolean",
+                    "title": "Fetch Dependencies",
+                    "description": "Fetch the vite and @quasar/app-vite dependency information or not",
+                    "default": true
                   }
                 }
               }
@@ -3231,6 +3268,12 @@
       "title": "Final Space",
       "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
       "default": true
+    },
+    "disable_cursor_positioning": {
+      "type": "boolean",
+      "title": "Disable Cursor Positioning",
+      "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
+      "default": false
     },
     "shell_integration": {
       "type": "boolean",

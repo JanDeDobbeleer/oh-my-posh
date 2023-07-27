@@ -40,7 +40,7 @@
         "print",
         "transient",
         "--shell=pwsh",
-        "--error=1"
+        "--status=1"
       ]
     },
     {

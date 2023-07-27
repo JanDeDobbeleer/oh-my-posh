@@ -156,7 +156,7 @@
           },
           "style": "plain",
           "template": " ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

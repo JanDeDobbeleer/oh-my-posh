@@ -64,7 +64,7 @@ blocks:
         properties:
           always_enabled: true
         style: diamond
-        template: " {{ if gt .Code 0 }} {{ .Meaning }}{{ else }}{{ end }} "
+        template: " {{ if gt .Code 0 }} {{ reason .Code }}{{ else }}{{ end }} "
         trailing_diamond: 
         type: exit
     type: prompt

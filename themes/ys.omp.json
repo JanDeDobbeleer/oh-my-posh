@@ -64,7 +64,7 @@
           "foreground": "red",
           "style": "plain",
           "template": " C:{{ if gt .Code 0 }}{{ .Code }}{{ end }} ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

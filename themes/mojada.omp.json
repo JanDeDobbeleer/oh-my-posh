@@ -94,7 +94,7 @@
           },
           "style": "plain",
           "template": " {{ if gt .Code 0 }}\uf52f{{ else }}\uf4a7{{ end }} ",
-          "type": "exit"
+          "type": "status"
         },
         {
           "foreground": "#ffffff",

@@ -65,7 +65,7 @@
       "type": "prompt",
       "segments": [
         {
-          "type": "exit",
+          "type": "status",
           "style": "diamond",
           "foreground": "#00c7fc",
           "properties": {

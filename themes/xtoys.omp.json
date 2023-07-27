@@ -44,7 +44,7 @@
           },
           "style": "plain",
           "template": "<#66CDAA>\u276f</><#76EEC6>\u276f</><foreground>\u276f</> ",
-          "type": "exit"
+          "type": "status"
         }
       ],
       "type": "prompt"

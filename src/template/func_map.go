@@ -17,6 +17,7 @@ func funcMap() template.FuncMap {
 		"gt":           gt,
 		"lt":           lt,
 		"reason":       GetReasonFromStatus,
+		"hresult":      hresult,
 	}
 	for key, fun := range sprig.TxtFuncMap() {
 		if _, ok := funcMap[key]; !ok {

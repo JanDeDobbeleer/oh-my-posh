@@ -39,6 +39,7 @@ following way to reference them directly. This will keep them up-to-date and com
   values={[
     { label: 'windows', value: 'windows', },
     { label: 'homebrew', value: 'homebrew', },
+    { label: 'linux', value: 'linux', },
   ]
 }>
 <TabItem value="windows">
@@ -50,12 +51,21 @@ oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/jandedobbeleer.omp.json" | 
 ```
 
 </TabItem>
+<TabItem value="linux">
+
+To use the [jandedobbeleer][jandedobbeleer] theme, alter the init line like this (`bash`):
+
+```bash
+eval "$(oh-my-posh init bash --config POSH_THEMES_PATH/jandedobbeleer.omp.json)"
+```
+
+</TabItem>
 <TabItem value="homebrew">
 
 When using homebrew, all themes are installed alongside Oh My Posh in `$(brew --prefix oh-my-posh)/themes`.
 To use any of the themes, use the following syntax (`zsh`):
 
-```bash
+```zsh
 eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json)"
 ```
 

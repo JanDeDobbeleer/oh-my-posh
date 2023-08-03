@@ -148,9 +148,12 @@ func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, e
 		return nil, err
 	}
 
-	regKey := Base(env, regPath)
-	if len(regKey) != 0 {
-		regPath = strings.TrimSuffix(regPath, `\`+regKey)
+	var regKey string
+	if !strings.HasSuffix(regPath, `\`) {
+		regKey = Base(env, regPath)
+		if len(regKey) != 0 {
+			regPath = strings.TrimSuffix(regPath, `\`+regKey)
+		}
 	}
 
 	var key registry.Key

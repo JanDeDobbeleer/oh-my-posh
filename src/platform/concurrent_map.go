@@ -37,3 +37,12 @@ func (c *ConcurrentMap) Delete(key string) {
 func (c *ConcurrentMap) List() map[string]interface{} {
 	return c.values
 }
+
+func (c *ConcurrentMap) Contains(key string) bool {
+	c.RLock()
+	defer c.RUnlock()
+	if _, ok := c.values[key]; ok {
+		return true
+	}
+	return false
+}

@@ -166,13 +166,6 @@ type SystemInfo struct {
 	Disks map[string]disk.IOCountersStat
 }
 
-type SegmentsCache map[string]interface{}
-
-func (s *SegmentsCache) Contains(key string) bool {
-	_, ok := (*s)[key]
-	return ok
-}
-
 type TemplateCache struct {
 	Root         bool
 	PWD          string
@@ -188,22 +181,18 @@ type TemplateCache struct {
 	WSL          bool
 	PromptCount  int
 	SHLVL        int
-	Segments     SegmentsCache
+	Segments     *ConcurrentMap
 
 	initialized bool
 	sync.RWMutex
 }
 
 func (t *TemplateCache) AddSegmentData(key string, value interface{}) {
-	t.Lock()
-	t.Segments[key] = value
-	t.Unlock()
+	t.Segments.Set(key, value)
 }
 
 func (t *TemplateCache) RemoveSegmentData(key string) {
-	t.Lock()
-	delete(t.Segments, key)
-	t.Unlock()
+	t.Segments.Delete(key)
 }
 
 type Environment interface {
@@ -802,7 +791,7 @@ func (env *Shell) TemplateCache() *TemplateCache {
 	tmplCache.ShellVersion = env.CmdFlags.ShellVersion
 	tmplCache.Code, _ = env.StatusCodes()
 	tmplCache.WSL = env.IsWsl()
-	tmplCache.Segments = make(map[string]interface{})
+	tmplCache.Segments = NewConcurrentMap()
 	tmplCache.PromptCount = env.CmdFlags.PromptCount
 	tmplCache.Env = make(map[string]string)
 	tmplCache.Var = make(map[string]interface{})

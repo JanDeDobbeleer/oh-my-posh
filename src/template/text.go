@@ -159,6 +159,12 @@ func (t *Text) cleanTemplate() {
 			// end of a variable, needs to be appended
 			if !isKnownVariable(property) {
 				result += ".Data" + property
+			} else if strings.HasPrefix(property, ".Segments") && !strings.HasSuffix(property, ".Contains") {
+				// as we can't provide a clean way to access the list
+				// of segments, we need to replace the property with
+				// the list of segments so they can be accessed directly
+				property = strings.Replace(property, ".Segments", ".Segments.List", 1)
+				result += property
 			} else {
 				// check if we have the same property in Data
 				// and replace it with the Data property so it

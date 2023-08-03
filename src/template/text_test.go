@@ -320,6 +320,16 @@ func TestCleanTemplate(t *testing.T) {
 			Expected: "{{.Data.OS}}",
 			Template: "{{.OS}}",
 		},
+		{
+			Case:     "Keep .Contains intact for Segments",
+			Expected: `{{.Segments.Contains "Git"}}`,
+			Template: `{{.Segments.Contains "Git"}}`,
+		},
+		{
+			Case:     "Replace a direct call to .Segments with .Segments.List",
+			Expected: `{{.Segments.List.Git.Repo}}`,
+			Template: `{{.Segments.Git.Repo}}`,
+		},
 	}
 	for _, tc := range cases {
 		tmpl := &Text{
@@ -342,11 +352,11 @@ func TestSegmentContains(t *testing.T) {
 	}
 
 	env := &mock.MockedEnvironment{}
+	segments := platform.NewConcurrentMap()
+	segments.Set("Git", "foo")
 	env.On("TemplateCache").Return(&platform.TemplateCache{
-		Env: make(map[string]string),
-		Segments: map[string]interface{}{
-			"Git": nil,
-		},
+		Env:      make(map[string]string),
+		Segments: segments,
 	})
 	for _, tc := range cases {
 		tmpl := &Text{

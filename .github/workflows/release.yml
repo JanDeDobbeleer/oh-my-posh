@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
       - name: Create changelog ✍️
         id: changelog
-        uses: TriPSs/conventional-changelog-action@dd19d7c07e5f620b2d6f48d547148a4b6b29e92f
+        uses: TriPSs/conventional-changelog-action@5f865e4ca373f189640721c0cca04ea3e0e7bfcd
         with:
           github-token: ${{ secrets.github_token }}
           skip-version-file: "true"

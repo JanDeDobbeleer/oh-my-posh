@@ -2,47 +2,35 @@ package platform
 
 import "sync"
 
-type ConcurrentMap struct {
-	values map[string]interface{}
-	sync.RWMutex
-}
-
 func NewConcurrentMap() *ConcurrentMap {
-	return &ConcurrentMap{
-		values: make(map[string]interface{}),
-	}
+	var cm ConcurrentMap
+	return &cm
 }
 
-func (c *ConcurrentMap) Set(key string, value interface{}) {
-	c.Lock()
-	defer c.Unlock()
-	c.values[key] = value
+type ConcurrentMap sync.Map
+
+func (cm *ConcurrentMap) Set(key string, value any) {
+	(*sync.Map)(cm).Store(key, value)
 }
 
-func (c *ConcurrentMap) Get(key string) (interface{}, bool) {
-	c.RLock()
-	defer c.RUnlock()
-	if val, ok := c.values[key]; ok {
-		return val, true
-	}
-	return "", false
+func (cm *ConcurrentMap) Get(key string) (any, bool) {
+	return (*sync.Map)(cm).Load(key)
 }
 
-func (c *ConcurrentMap) Delete(key string) {
-	c.RLock()
-	defer c.RUnlock()
-	delete(c.values, key)
+func (cm *ConcurrentMap) Delete(key string) {
+	(*sync.Map)(cm).Delete(key)
 }
 
-func (c *ConcurrentMap) List() map[string]interface{} {
-	return c.values
+func (cm *ConcurrentMap) Contains(key string) bool {
+	_, ok := (*sync.Map)(cm).Load(key)
+	return ok
 }
 
-func (c *ConcurrentMap) Contains(key string) bool {
-	c.RLock()
-	defer c.RUnlock()
-	if _, ok := c.values[key]; ok {
+func (cm *ConcurrentMap) List() map[string]any {
+	list := make(map[string]any)
+	(*sync.Map)(cm).Range(func(key, value any) bool {
+		list[key.(string)] = value
 		return true
-	}
-	return false
+	})
+	return list
 }

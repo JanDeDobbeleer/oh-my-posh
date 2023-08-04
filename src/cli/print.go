@@ -24,6 +24,7 @@ var (
 	shellVersion string
 	plain        bool
 	noStatus     bool
+	column       int
 )
 
 // printCmd represents the prompt command
@@ -64,6 +65,7 @@ var printCmd = &cobra.Command{
 			Primary:       args[0] == "primary",
 			Cleared:       cleared,
 			NoExitCode:    noStatus,
+			Column:        column,
 		}
 
 		eng := engine.New(flags)
@@ -107,6 +109,7 @@ func init() { //nolint:gochecknoinits
 	printCmd.Flags().BoolVarP(&plain, "plain", "p", false, "plain text output (no ANSI)")
 	printCmd.Flags().BoolVar(&cleared, "cleared", false, "do we have a clear terminal or not")
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
+	printCmd.Flags().IntVar(&column, "column", 0, "the column position of the cursor")
 	// Deprecated flags
 	printCmd.Flags().IntVarP(&status, "error", "e", 0, "last exit code")
 	printCmd.Flags().BoolVar(&noStatus, "no-exit-code", false, "no valid exit code (cancelled or no command yet)")

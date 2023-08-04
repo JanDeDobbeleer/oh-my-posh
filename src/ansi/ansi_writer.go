@@ -97,7 +97,6 @@ type Writer struct {
 	shell                 string
 	format                string
 	left                  string
-	right                 string
 	title                 string
 	linechange            string
 	clearBelow            string
@@ -127,7 +126,6 @@ func (w *Writer) Init(shellName string) {
 	case shell.BASH:
 		w.format = "\\[%s\\]"
 		w.linechange = "\\[\x1b[%d%s\\]"
-		w.right = "\\[\x1b[%dC\\]"
 		w.left = "\\[\x1b[%dD\\]"
 		w.clearBelow = "\\[\x1b[0J\\]"
 		w.clearLine = "\\[\x1b[K\\]"
@@ -144,7 +142,6 @@ func (w *Writer) Init(shellName string) {
 	case shell.ZSH, shell.TCSH:
 		w.format = "%%{%s%%}"
 		w.linechange = "%%{\x1b[%d%s%%}"
-		w.right = "%%{\x1b[%dC%%}"
 		w.left = "%%{\x1b[%dD%%}"
 		w.clearBelow = "%{\x1b[0J%}"
 		w.clearLine = "%{\x1b[K%}"
@@ -160,7 +157,6 @@ func (w *Writer) Init(shellName string) {
 		w.osc51 = "%%{\x1b]51;A%s@%s:%s\x1b\\%%}"
 	default:
 		w.linechange = "\x1b[%d%s"
-		w.right = "\x1b[%dC"
 		w.left = "\x1b[%dD"
 		w.clearBelow = "\x1b[0J"
 		w.clearLine = "\x1b[K"
@@ -193,15 +189,6 @@ func (w *Writer) SetParentColors(background, foreground string) {
 		Background: background,
 		Foreground: foreground,
 	}}, w.ParentColors...)
-}
-
-func (w *Writer) CarriageForward() string {
-	return fmt.Sprintf(w.right, 1000)
-}
-
-func (w *Writer) GetCursorForRightWrite(length, offset int) string {
-	strippedLen := length + (-offset)
-	return fmt.Sprintf(w.left, strippedLen)
 }
 
 func (w *Writer) ChangeLine(numberOfLines int) string {

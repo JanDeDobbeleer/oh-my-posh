@@ -131,8 +131,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 return
             }
             $position = $host.UI.RawUI.CursorPosition
+            $terminalWidth = $Host.UI.RawUI.WindowSize.Width
             $cleanPSWD = Get-CleanPSWD
-            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--status=$script:ErrorCode", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion"))
+            $standardOut = @(Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--status=$script:ErrorCode", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion", "--column=$($position.X)", "--terminal-width=$terminalWidth"))
             # ignore an empty tooltip
             if ($standardOut -eq '') {
                 return

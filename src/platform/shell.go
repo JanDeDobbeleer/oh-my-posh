@@ -73,6 +73,7 @@ type Flags struct {
 	Cleared       bool
 	TrueColor     bool
 	NoExitCode    bool
+	Column        int
 }
 
 type CommandError struct {

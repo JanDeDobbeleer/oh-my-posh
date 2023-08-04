@@ -49,12 +49,22 @@ func (e *Engine) Tooltip(tip string) string {
 		if !block.Enabled() {
 			return ""
 		}
+
+		consoleWidth, err := e.Env.TerminalWidth()
+		if err != nil || consoleWidth == 0 {
+			return ""
+		}
+
 		text, length := block.RenderSegments()
+
+		space := consoleWidth - e.Env.Flags().Column - length
+		if space <= 0 {
+			return ""
+		}
 		// clear from cursor to the end of the line in case a previous tooltip
 		// is cut off and partially preserved, if the new one is shorter
 		e.write(e.Writer.ClearAfter())
-		e.write(e.Writer.CarriageForward())
-		e.write(e.Writer.GetCursorForRightWrite(length, 0))
+		e.write(strings.Repeat(" ", space))
 		e.write(text)
 		return e.string()
 	}

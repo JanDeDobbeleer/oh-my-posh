@@ -126,17 +126,12 @@ func (e *Engine) isWarp() bool {
 	return e.Env.Getenv("TERM_PROGRAM") == "WarpTerminal"
 }
 
-func (e *Engine) shouldFill(filler string, blockLength int) (string, bool) {
+func (e *Engine) shouldFill(filler string, remaining, blockLength int) (string, bool) {
 	if len(filler) == 0 {
 		return "", false
 	}
 
-	terminalWidth, err := e.Env.TerminalWidth()
-	if err != nil || terminalWidth == 0 {
-		return "", false
-	}
-
-	padLength := terminalWidth - e.currentLineLength - blockLength
+	padLength := remaining - blockLength
 	if padLength <= 0 {
 		return "", false
 	}
@@ -221,32 +216,36 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		}
 
 		text, length := block.RenderSegments()
-		e.rpromptLength = length
 
-		if _, OK := e.canWriteRightBlock(false); OK {
+		space, OK := e.canWriteRightBlock(false)
+		// we can't print the right block as there's not enough room available
+		if !OK {
 			switch block.Overflow {
 			case Break:
 				e.newline()
 			case Hide:
 				// make sure to fill if needed
-				if padText, OK := e.shouldFill(block.Filler, 0); OK {
+				if padText, OK := e.shouldFill(block.Filler, space, 0); OK {
 					e.write(padText)
 				}
+				e.currentLineLength = 0
 				return
 			}
 		}
 
-		if padText, OK := e.shouldFill(block.Filler, length); OK {
-			// in this case we can print plain
+		defer func() {
+			e.currentLineLength = 0
+		}()
+
+		// validate if we have a filler and fill if needed
+		if padText, OK := e.shouldFill(block.Filler, space, length); OK {
 			e.write(padText)
 			e.write(text)
 			return
 		}
 
-		prompt := e.Writer.CarriageForward()
-		prompt += e.Writer.GetCursorForRightWrite(length, block.HorizontalOffset)
+		prompt := strings.Repeat(" ", space-length)
 		prompt += text
-		e.currentLineLength = 0
 		e.write(prompt)
 	case RPrompt:
 		e.rprompt, e.rpromptLength = block.RenderSegments()

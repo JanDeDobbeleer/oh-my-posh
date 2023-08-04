@@ -87,7 +87,8 @@ func (env *Shell) IsWsl2() bool {
 
 func (env *Shell) TerminalWidth() (int, error) {
 	defer env.Trace(time.Now())
-	if env.CmdFlags.TerminalWidth != 0 {
+	if env.CmdFlags.TerminalWidth > 0 {
+		env.DebugF("terminal width: %d", env.CmdFlags.TerminalWidth)
 		return env.CmdFlags.TerminalWidth, nil
 	}
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)

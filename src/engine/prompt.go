@@ -44,6 +44,7 @@ func (e *Engine) Primary() string {
 
 	if e.Config.FinalSpace {
 		e.write(" ")
+		e.currentLineLength++
 	}
 
 	if e.Config.ShellIntegration && e.Config.TransientPrompt == nil {
@@ -59,11 +60,7 @@ func (e *Engine) Primary() string {
 		}
 		// Warp doesn't support RPROMPT so we need to write it manually
 		if e.isWarp() {
-			e.write(e.Writer.SaveCursorPosition())
-			e.write(e.Writer.CarriageForward())
-			e.write(e.Writer.GetCursorForRightWrite(e.rpromptLength, 0))
-			e.write(e.rprompt)
-			e.write(e.Writer.RestoreCursorPosition())
+			e.writeRPrompt()
 			// escape double quotes contained in the prompt
 			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
 			return prompt
@@ -73,16 +70,10 @@ func (e *Engine) Primary() string {
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
 	case shell.PWSH, shell.PWSH5, shell.GENERIC, shell.NU:
-		if !e.canWriteRightBlock(true) {
-			break
-		}
-		e.write(e.Writer.SaveCursorPosition())
-		e.write(e.Writer.CarriageForward())
-		e.write(e.Writer.GetCursorForRightWrite(e.rpromptLength, 0))
-		e.write(e.rprompt)
-		e.write(e.Writer.RestoreCursorPosition())
+		e.writeRPrompt()
 	case shell.BASH:
-		if !e.canWriteRightBlock(true) {
+		space, OK := e.canWriteRightBlock(true)
+		if !OK {
 			break
 		}
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
@@ -92,8 +83,7 @@ func (e *Engine) Primary() string {
 		}
 		writer.Init(shell.GENERIC)
 		prompt := writer.SaveCursorPosition()
-		prompt += writer.CarriageForward()
-		prompt += writer.GetCursorForRightWrite(e.rpromptLength, 0)
+		prompt += strings.Repeat(" ", space)
 		prompt += e.rprompt
 		prompt += writer.RestoreCursorPosition()
 		prompt = e.Writer.FormatText(prompt)

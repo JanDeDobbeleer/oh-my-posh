@@ -35,27 +35,48 @@ func (e *Engine) string() string {
 	return text
 }
 
-func (e *Engine) canWriteRightBlock(rprompt bool) bool {
-	if rprompt && (e.rprompt == "" || e.Plain) {
-		return false
+func (e *Engine) canWriteRightBlock(rprompt bool) (int, bool) {
+	if rprompt && (len(e.rprompt) == 0 || e.Plain) {
+		return 0, false
 	}
+
 	consoleWidth, err := e.Env.TerminalWidth()
 	if err != nil || consoleWidth == 0 {
-		return true
+		return 0, false
 	}
+
 	promptWidth := e.currentLineLength
 	availableSpace := consoleWidth - promptWidth
+
 	// spanning multiple lines
 	if availableSpace < 0 {
 		overflow := promptWidth % consoleWidth
 		availableSpace = consoleWidth - overflow
 	}
+
+	if rprompt {
+		availableSpace -= e.rpromptLength
+	}
+
 	promptBreathingRoom := 5
 	if rprompt {
 		promptBreathingRoom = 30
 	}
-	canWrite := (availableSpace - e.rpromptLength) >= promptBreathingRoom
-	return canWrite
+
+	canWrite := availableSpace >= promptBreathingRoom
+
+	return availableSpace, canWrite
+}
+
+func (e *Engine) writeRPrompt() {
+	space, OK := e.canWriteRightBlock(true)
+	if !OK {
+		return
+	}
+	e.write(e.Writer.SaveCursorPosition())
+	e.write(strings.Repeat(" ", space))
+	e.write(e.rprompt)
+	e.write(e.Writer.RestoreCursorPosition())
 }
 
 func (e *Engine) pwd() {
@@ -105,23 +126,28 @@ func (e *Engine) isWarp() bool {
 	return e.Env.Getenv("TERM_PROGRAM") == "WarpTerminal"
 }
 
-func (e *Engine) shouldFill(filler string, length int) (string, bool) {
+func (e *Engine) shouldFill(filler string, blockLength int) (string, bool) {
 	if len(filler) == 0 {
 		return "", false
 	}
+
 	terminalWidth, err := e.Env.TerminalWidth()
 	if err != nil || terminalWidth == 0 {
 		return "", false
 	}
-	padLength := terminalWidth - e.currentLineLength - length
+
+	padLength := terminalWidth - e.currentLineLength - blockLength
 	if padLength <= 0 {
 		return "", false
 	}
+
+	// allow for easy color overrides and templates
 	e.Writer.Write("", "", filler)
 	filler, lenFiller := e.Writer.String()
 	if lenFiller == 0 {
 		return "", false
 	}
+
 	repeat := padLength / lenFiller
 	return strings.Repeat(filler, repeat), true
 }
@@ -197,7 +223,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		text, length := block.RenderSegments()
 		e.rpromptLength = length
 
-		if !e.canWriteRightBlock(false) {
+		if _, OK := e.canWriteRightBlock(false); OK {
 			switch block.Overflow {
 			case Break:
 				e.newline()
@@ -216,6 +242,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 			e.write(text)
 			return
 		}
+
 		prompt := e.Writer.CarriageForward()
 		prompt += e.Writer.GetCursorForRightWrite(length, block.HorizontalOffset)
 		prompt += text

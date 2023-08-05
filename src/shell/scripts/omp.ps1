@@ -417,6 +417,13 @@ Example:
             $terminalWidth = 0
         }
 
+        # in some cases we have an empty $script:NoExitCode
+        # this is a workaround to make sure we always have a value
+        # see https://github.com/JanDeDobbeleer/oh-my-posh/issues/4128
+        if ($null -eq $script:NoExitCode) {
+            $script:NoExitCode = $true
+        }
+
         # set the cursor positions, they are zero based so align with other platforms
         $env:POSH_CURSOR_LINE = $Host.UI.RawUI.CursorPosition.Y + 1
         $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1

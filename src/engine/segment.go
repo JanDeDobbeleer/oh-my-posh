@@ -49,15 +49,10 @@ type Segment struct {
 	text       string
 	styleCache SegmentStyle
 	name       string
-}
 
-// SegmentTiming holds the timing context for a segment
-type SegmentTiming struct {
-	name       string
-	nameLength int
-	active     bool
-	text       string
+	// debug info
 	duration   time.Duration
+	nameLength int
 }
 
 // SegmentWriter is the interface used to define what and if to write to the prompt
@@ -480,10 +475,24 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 		fmt.Println(message)
 		segment.Enabled = true
 	}()
+
+	// segment timings for debug purposes
+	var start time.Time
+	if env.Flags().Debug {
+		start = time.Now()
+		segment.nameLength = len(segment.Name())
+		defer func() {
+			segment.duration = time.Since(start)
+		}()
+	}
+
 	err := segment.mapSegmentWithWriter(env)
 	if err != nil || !segment.shouldIncludeFolder() {
 		return
 	}
+
+	segment.env.DebugF("Segment: %s", segment.Name())
+
 	// validate toggles
 	if toggles, OK := segment.env.Cache().Get(platform.TOGGLECACHE); OK && len(toggles) > 0 {
 		list := strings.Split(toggles, ",")
@@ -493,9 +502,11 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 			}
 		}
 	}
+
 	if shouldHideForWidth(segment.env, segment.MinWidth, segment.MaxWidth) {
 		return
 	}
+
 	if segment.writer.Enabled() {
 		segment.Enabled = true
 		env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)

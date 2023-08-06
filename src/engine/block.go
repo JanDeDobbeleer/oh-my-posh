@@ -3,7 +3,6 @@ package engine
 import (
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
@@ -77,9 +76,6 @@ func (b *Block) InitPlain(env platform.Environment, config *Config) {
 }
 
 func (b *Block) executeSegmentLogic() {
-	if b.env.Flags().Debug {
-		return
-	}
 	if shouldHideForWidth(b.env, b.MinWidth, b.MaxWidth) {
 		return
 	}
@@ -265,30 +261,4 @@ func (b *Block) getPowerlineColor() string {
 		return ansi.Transparent
 	}
 	return b.previousActiveSegment.background()
-}
-
-func (b *Block) Debug() (int, []*SegmentTiming) {
-	var segmentTimings []*SegmentTiming
-	largestSegmentNameLength := 0
-	for _, segment := range b.Segments {
-		var segmentTiming SegmentTiming
-		segmentTiming.name = string(segment.Type)
-		segmentTiming.nameLength = len(segmentTiming.name)
-		if segmentTiming.nameLength > largestSegmentNameLength {
-			largestSegmentNameLength = segmentTiming.nameLength
-		}
-		b.env.DebugF("Segment: %s", segmentTiming.name)
-		start := time.Now()
-		segment.SetEnabled(b.env)
-		segment.SetText()
-		segmentTiming.active = segment.Enabled
-		if segmentTiming.active || segment.style() == Accordion {
-			b.setActiveSegment(segment)
-			b.renderActiveSegment()
-			segmentTiming.text, _ = b.writer.String()
-		}
-		segmentTiming.duration = time.Since(start)
-		segmentTimings = append(segmentTimings, &segmentTiming)
-	}
-	return largestSegmentNameLength, segmentTimings
 }

@@ -16,47 +16,50 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 		sh += fmt.Sprintf(" (%s)", shellVersion)
 	}
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Shell:").Green().Bold().Plain(), sh))
-	e.write(log.Text("\nSegments:\n\n").Green().Bold().Plain().String())
 
 	// console title timing
 	titleStartTime := time.Now()
 	e.Env.Debug("Segment: Title")
 	title := e.getTitleTemplateText()
-	consoleTitleTiming := &SegmentTiming{
+	consoleTitle := &Segment{
 		name:       "ConsoleTitle",
 		nameLength: 12,
-		active:     len(e.Config.ConsoleTitleTemplate) > 0,
+		Enabled:    len(e.Config.ConsoleTitleTemplate) > 0,
 		text:       title,
 		duration:   time.Since(titleStartTime),
 	}
-	largestSegmentNameLength := consoleTitleTiming.nameLength
+	largestSegmentNameLength := consoleTitle.nameLength
 
-	var segmentTimings []*SegmentTiming
-	segmentTimings = append(segmentTimings, consoleTitleTiming)
-	// cache a pointer to the color cycle
-	cycle = &e.Config.Cycle
-	// loop each segments of each blocks
+	// render prompt
+	e.write(log.Text("\nPrompt:\n\n").Green().Bold().Plain().String())
+	e.write(e.Primary())
+
+	e.write(log.Text("\n\nSegments:\n\n").Green().Bold().Plain().String())
+
+	var segments []*Segment
+	segments = append(segments, consoleTitle)
+
 	for _, block := range e.Config.Blocks {
-		block.Init(e.Env, e.Writer)
-		longestSegmentName, timings := block.Debug()
-		segmentTimings = append(segmentTimings, timings...)
-		if longestSegmentName > largestSegmentNameLength {
-			largestSegmentNameLength = longestSegmentName
+		for _, segment := range block.Segments {
+			segments = append(segments, segment)
+			if segment.nameLength > largestSegmentNameLength {
+				largestSegmentNameLength = segment.nameLength
+			}
 		}
 	}
 
 	// 22 is the color for false/true and 7 is the reset color
 	largestSegmentNameLength += 22 + 7
-	for _, segment := range segmentTimings {
+	for _, segment := range segments {
 		duration := segment.duration.Milliseconds()
 		var active log.Text
-		if segment.active {
+		if segment.Enabled {
 			active = log.Text("true").Yellow()
 		} else {
 			active = log.Text("false").Purple()
 		}
-		segmentName := fmt.Sprintf("%s(%s)", segment.name, active.Plain())
-		e.write(fmt.Sprintf("%-*s - %3d ms - %s\n", largestSegmentNameLength, segmentName, duration, segment.text))
+		segmentName := fmt.Sprintf("%s(%s)", segment.Name(), active.Plain())
+		e.write(fmt.Sprintf("%-*s - %3d ms\n", largestSegmentNameLength, segmentName, duration))
 	}
 
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Run duration:").Green().Bold().Plain(), time.Since(startTime)))

@@ -244,7 +244,13 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 			return
 		}
 
-		prompt := strings.Repeat(" ", space-length)
+		var prompt string
+		space -= length
+
+		if space > 0 {
+			prompt += strings.Repeat(" ", space-length)
+		}
+
 		prompt += text
 		e.write(prompt)
 	case RPrompt:

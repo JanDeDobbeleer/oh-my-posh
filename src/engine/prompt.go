@@ -37,7 +37,7 @@ func (e *Engine) Primary() string {
 		e.renderBlock(block, cancelNewline)
 	}
 
-	if len(e.Config.ConsoleTitleTemplate) > 0 {
+	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {
 		title := e.getTitleTemplateText()
 		e.write(e.Writer.FormatTitle(title))
 	}

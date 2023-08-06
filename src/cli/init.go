@@ -16,7 +16,7 @@ var (
 	manual      bool
 
 	initCmd = &cobra.Command{
-		Use:   "init [bash|zsh|fish|powershell|pwsh|cmd|nu] --config ~/.mytheme.omp.json",
+		Use:   "init [bash|zsh|fish|powershell|pwsh|cmd|nu|tcsh|elvish|xonsh]",
 		Short: "Initialize your shell and config",
 		Long: `Initialize your shell and config.
 

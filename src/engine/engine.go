@@ -36,7 +36,7 @@ func (e *Engine) string() string {
 }
 
 func (e *Engine) canWriteRightBlock(rprompt bool) (int, bool) {
-	if rprompt && (len(e.rprompt) == 0 || e.Plain) {
+	if rprompt && (len(e.rprompt) == 0) {
 		return 0, false
 	}
 
@@ -248,7 +248,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		space -= length
 
 		if space > 0 {
-			prompt += strings.Repeat(" ", space-length)
+			prompt += strings.Repeat(" ", space)
 		}
 
 		prompt += text

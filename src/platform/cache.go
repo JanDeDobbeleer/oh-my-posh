@@ -56,7 +56,7 @@ func (fc *fileCache) Close() {
 	if !fc.dirty {
 		return
 	}
-	cache := fc.cache.List()
+	cache := fc.cache.SimpleMap()
 	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
 		cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
 		_ = os.WriteFile(cacheFilePath, dump, 0644)

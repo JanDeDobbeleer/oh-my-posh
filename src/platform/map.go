@@ -26,11 +26,21 @@ func (cm *ConcurrentMap) Contains(key string) bool {
 	return ok
 }
 
-func (cm *ConcurrentMap) List() map[string]any {
+func (cm *ConcurrentMap) SimpleMap() SimpleMap {
 	list := make(map[string]any)
 	(*sync.Map)(cm).Range(func(key, value any) bool {
 		list[key.(string)] = value
 		return true
 	})
 	return list
+}
+
+type SimpleMap map[string]any
+
+func (m SimpleMap) ConcurrentMap() *ConcurrentMap {
+	var cm ConcurrentMap
+	for k, v := range m {
+		cm.Set(k, v)
+	}
+	return &cm
 }

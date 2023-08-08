@@ -168,21 +168,22 @@ type SystemInfo struct {
 }
 
 type TemplateCache struct {
-	Root         bool
-	PWD          string
-	Folder       string
-	Shell        string
-	ShellVersion string
-	UserName     string
-	HostName     string
-	Code         int
-	Env          map[string]string
-	Var          map[string]interface{}
-	OS           string
-	WSL          bool
-	PromptCount  int
-	SHLVL        int
-	Segments     *ConcurrentMap
+	Root          bool
+	PWD           string
+	Folder        string
+	Shell         string
+	ShellVersion  string
+	UserName      string
+	HostName      string
+	Code          int
+	Env           map[string]string
+	Var           SimpleMap
+	OS            string
+	WSL           bool
+	PromptCount   int
+	SHLVL         int
+	Segments      *ConcurrentMap
+	SegmentsCache SimpleMap
 
 	initialized bool
 	sync.RWMutex
@@ -745,7 +746,9 @@ func (env *Shell) saveTemplateCache() {
 	if !canSave {
 		return
 	}
-	templateCache, err := json.Marshal(env.TemplateCache())
+	cache := env.TemplateCache()
+	cache.SegmentsCache = cache.Segments.SimpleMap()
+	templateCache, err := json.Marshal(cache)
 	if err == nil {
 		env.fileCache.Set(TEMPLATECACHE, string(templateCache), 1440)
 	}
@@ -769,6 +772,7 @@ func (env *Shell) LoadTemplateCache() {
 		env.Error(err)
 		return
 	}
+	tmplCache.Segments = tmplCache.SegmentsCache.ConcurrentMap()
 	tmplCache.initialized = true
 	env.tmplCache = &tmplCache
 }

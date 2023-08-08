@@ -327,7 +327,7 @@ func TestCleanTemplate(t *testing.T) {
 		},
 		{
 			Case:     "Replace a direct call to .Segments with .Segments.List",
-			Expected: `{{.Segments.List.Git.Repo}}`,
+			Expected: `{{.Segments.SimpleMap.Git.Repo}}`,
 			Template: `{{.Segments.Git.Repo}}`,
 		},
 	}

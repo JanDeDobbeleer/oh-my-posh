@@ -1,5 +1,5 @@
 ---
-id: overview
+id: general
 title: General
 sidebar_label: General
 ---
@@ -135,6 +135,7 @@ For example, the following is a valid `--config` flag:
 | `var`                        | `map[string]any` | config variables to use in [templates][templates]. Can be any value                                                                                                                   |
 | `shell_integration`          | `boolean`        | enable shell integration using FinalTerm's OSC sequences. Works in bash, cmd (Clink v1.14.25+), fish, powershell and zsh                                                              |
 | `disable_cursor_positioning` | `boolean`        | disable fetching the cursor position in bash and zsh in case of unwanted side-effects                                                                                                 |
+| `patch_pwsh_bleed`           | `boolean`        | patch a PowerShell bug where the background colors bleed into the next line at the end of the buffer (can be removed when [this][pwsh-bleed] is merged)                               |
 
 ### JSON Schema Validation
 
@@ -188,3 +189,4 @@ Converters won't catch this change, so you will need to adjust manually.
 [colors]: /docs/configuration/colors
 [accent]: /docs/configuration/colors#standard-colors
 [templates]: /docs/configuration/templates#config-variables
+[pwsh-bleed]: https://github.com/PowerShell/PowerShell/pull/19019

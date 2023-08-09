@@ -53,6 +53,7 @@ type Config struct {
 	PWD                      string                 `json:"pwd,omitempty"`
 	Var                      map[string]interface{} `json:"var,omitempty"`
 	DisableCursorPositioning bool                   `json:"disable_cursor_positioning,omitempty"`
+	PatchPwshBleed           bool                   `json:"patch_pwsh_bleed,omitempty"`
 
 	// Deprecated
 	OSC99 bool `json:"osc99,omitempty"`

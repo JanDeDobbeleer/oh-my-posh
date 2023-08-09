@@ -16,6 +16,11 @@ func New(flags *platform.Flags) *Engine {
 
 	env.Init()
 	cfg := LoadConfig(env)
+
+	if cfg.PatchPwshBleed {
+		patchPowerShellBleed(env.Shell(), flags)
+	}
+
 	env.Var = cfg.Var
 	flags.HasTransient = cfg.TransientPrompt != nil
 
@@ -35,4 +40,21 @@ func New(flags *platform.Flags) *Engine {
 	}
 
 	return eng
+}
+
+func patchPowerShellBleed(sh string, flags *platform.Flags) {
+	// when in PowerShell, and force patching the bleed bug
+	// we need to reduce the terminal width by 1 so the last
+	// character isn't cut off by the ANSI escape sequences
+	// See https://github.com/JanDeDobbeleer/oh-my-posh/issues/65
+	if sh != shell.PWSH && sh != shell.PWSH5 {
+		return
+	}
+
+	// only do this when relevant
+	if flags.TerminalWidth <= 0 {
+		return
+	}
+
+	flags.TerminalWidth--
 }

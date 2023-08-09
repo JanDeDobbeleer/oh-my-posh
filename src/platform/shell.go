@@ -271,7 +271,7 @@ func (c *commandCache) get(command string) (string, bool) {
 
 type Shell struct {
 	CmdFlags *Flags
-	Var      map[string]interface{}
+	Var      SimpleMap
 
 	cwd       string
 	cmdCache  *commandCache

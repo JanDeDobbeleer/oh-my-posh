@@ -66,8 +66,8 @@ func (env *Shell) TerminalWidth() (int, error) {
 		env.Error(err)
 	}
 
-	env.DebugF("terminal width: %d", width)
 	env.CmdFlags.TerminalWidth = int(width)
+	env.DebugF("terminal width: %d", env.CmdFlags.TerminalWidth)
 	return env.CmdFlags.TerminalWidth, err
 }
 

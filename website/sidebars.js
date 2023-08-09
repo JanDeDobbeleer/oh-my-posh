@@ -32,7 +32,7 @@ module.exports = {
       type: "category",
       label: "⚙️ Configuration",
       items: [
-        "configuration/overview",
+        "configuration/general",
         "configuration/block",
         "configuration/segment",
         "configuration/sample",

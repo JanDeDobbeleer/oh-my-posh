@@ -1,0 +1,15 @@
+name: Social
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  bluesky:
+    uses: jandedobbeleer/workflows/.github/workflows/bluesky.yml@main
+    with:
+      identifier: ${{ secrets.BLUESKY_IDENTIFIER }}
+      password: ${{ secrets.BLUESKY_PASSWORD }}
+      repo: oh-my-posh
+      title: "The best release yet 🚀"
+      tags: "#ohmyposh #oss #cli #opensource"

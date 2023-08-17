@@ -908,11 +908,11 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("Home").Return(homeDir)
 		env.On("Pwd").Return(tc.Pwd)
-		if tc.GOOS == "" {
+		if len(tc.GOOS) == 0 {
 			tc.GOOS = platform.DARWIN
 		}
 		env.On("GOOS").Return(tc.GOOS)
-		if tc.PathSeparator == "" {
+		if len(tc.PathSeparator) == 0 {
 			tc.PathSeparator = "/"
 		}
 		env.On("PathSeparator").Return(tc.PathSeparator)
@@ -932,6 +932,36 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 				properties.Style:       Full,
 				MappedLocationsEnabled: false,
 				MappedLocations:        tc.MappedLocations,
+			},
+		}
+		path.setPaths()
+		path.setStyle()
+		got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
+		assert.Equal(t, tc.Expected, got)
+	}
+}
+
+func TestPowerlevelMappedLocations(t *testing.T) {
+	cases := []struct {
+		Pwd             string
+		MappedLocations map[string]string
+		Expected        string
+	}{
+		{Pwd: "/Users/michal/Applications", MappedLocations: map[string]string{"~": "#"}, Expected: "#/Applications"},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("Home").Return("/Users/michal")
+		env.On("Pwd").Return(tc.Pwd)
+		env.On("GOOS").Return(platform.DARWIN)
+		env.On("PathSeparator").Return("/")
+		env.On("Shell").Return(shell.GENERIC)
+		path := &Path{
+			env: env,
+			props: properties.Map{
+				properties.Style: Powerlevel,
+				MappedLocations:  tc.MappedLocations,
 			},
 		}
 		path.setPaths()

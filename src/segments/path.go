@@ -317,6 +317,7 @@ func (pt *Path) getLetterPath() string {
 func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 	separator := pt.getFolderSeparator()
 	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
+
 	if pt.root == pt.env.PathSeparator() {
 		pt.root = splitted[0]
 		splitted = splitted[1:]
@@ -360,7 +361,7 @@ func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 		}
 	}
 
-	if len(elements) > 0 {
+	if len(splitted) > 0 {
 		elements = append(elements, splitted[n-1])
 	}
 

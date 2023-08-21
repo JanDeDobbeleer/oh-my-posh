@@ -42,9 +42,11 @@ func install(font *Font, admin bool) error {
 	}
 
 	// Add registry entry
-	reg := registry.LOCAL_MACHINE
+	var reg = registry.LOCAL_MACHINE
+	var regValue = font.FileName
 	if !admin {
 		reg = registry.CURRENT_USER
+		regValue = fullPath
 	}
 
 	k, err := registry.OpenKey(reg, `SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts`, registry.WRITE)
@@ -59,7 +61,7 @@ func install(font *Font, admin bool) error {
 	defer k.Close()
 
 	name := fmt.Sprintf("%v (TrueType)", font.Name)
-	if err = k.SetStringValue(name, font.FileName); err != nil {
+	if err = k.SetStringValue(name, regValue); err != nil {
 		// If this fails, remove the font file as well.
 		if nexterr := os.Remove(fullPath); nexterr != nil {
 			return errors.New("Unable to delete font file after registry key set error")

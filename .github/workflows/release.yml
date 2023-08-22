@@ -30,7 +30,7 @@ jobs:
           skip-commit: "true"
           skip-on-empty: "true"
   artifacts:
-    needs: changelog
+    needs: [changelog]
     if: ${{ needs.changelog.outputs.skipped == 'false' }}
     runs-on: ubuntu-latest
     env:
@@ -94,3 +94,61 @@ jobs:
           files: |
             src/dist/posh-*
             src/dist/themes.*
+  winget:
+    needs: [artifacts, changelog]
+    runs-on: windows-latest
+    steps:
+      - uses: vedantmgoyal2009/winget-releaser@v2
+        with:
+          identifier: JanDeDobbeleer.OhMyPosh
+          version: ${{ needs.changelog.outputs.tag }}
+          token: ${{ secrets.WINGETCREATE_TOKEN }}
+  microsoft_store:
+    needs: [artifacts, changelog]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configure Store Credentials 🔑
+        uses: jandedobbeleer/store-submission@submission-status
+        with:
+          command: configure
+          type: win32
+          seller-id: ${{ secrets.SELLER_ID }}
+          product-id: ${{ secrets.PRODUCT_ID }}
+          tenant-id: ${{ secrets.TENANT_ID }}
+          client-id: ${{ secrets.CLIENT_ID }}
+          client-secret: ${{ secrets.CLIENT_SECRET }}
+          only-on-ready: true
+      - name: Update draft submission
+        uses: jandedobbeleer/store-submission@submission-status
+        with:
+          command: update
+          product-update: |
+            {
+              "packages":[
+                  {
+                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ needs.changelog.outputs.tag }}/install-amd64.exe",
+                    "languages":["en"],
+                    "architectures":["X64"],
+                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=ws",
+                    "isSilentInstall":false
+                  },
+                  {
+                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ needs.changelog.outputs.tag }}/install-arm64.exe",
+                    "languages":["en"],
+                    "architectures":["Arm64"],
+                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=ws",
+                    "isSilentInstall":false
+                  },
+                  {
+                    "packageUrl":"https://github.com/JanDeDobbeleer/oh-my-posh/releases/download/v${{ needs.changelog.outputs.tag }}/install-386.exe",
+                    "languages":["en"],
+                    "architectures":["X86"],
+                    "installerParameters":"/VERYSILENT /CURRENTUSER /INSTALLER=ws",
+                    "isSilentInstall":false
+                  }
+              ]
+            }
+      - name: Publish Submission
+        uses: jandedobbeleer/store-submission@submission-status
+        with:
+          command: publish

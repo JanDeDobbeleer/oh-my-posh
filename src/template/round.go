@@ -6,23 +6,25 @@ import (
 	"strings"
 )
 
-func parseSeconds(seconds interface{}) (int, error) {
-	switch seconds := seconds.(type) {
+func toInt(integer any) (int, error) {
+	switch seconds := integer.(type) {
 	default:
-		return 0, errors.New("invalid seconds type")
+		return 0, errors.New("invalid integer type")
 	case string:
 		return strconv.Atoi(seconds)
 	case int:
 		return seconds, nil
 	case int64:
 		return int(seconds), nil
+	case uint64:
+		return int(seconds), nil
 	case float64:
 		return int(seconds), nil
 	}
 }
 
-func secondsRound(seconds interface{}) string {
-	s, err := parseSeconds(seconds)
+func secondsRound(seconds any) string {
+	s, err := toInt(seconds)
 	if err != nil {
 		return err.Error()
 	}

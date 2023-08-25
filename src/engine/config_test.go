@@ -11,6 +11,7 @@ import (
 	"github.com/gookit/config/v2"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 func testClearDefaultConfig() {
@@ -125,6 +126,7 @@ func TestGetPalette(t *testing.T) {
 			Env:   map[string]string{},
 			Shell: "bash",
 		})
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		cfg := &Config{
 			env:      env,
 			Palette:  tc.Palette,

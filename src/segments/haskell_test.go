@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestHaskell(t *testing.T) {
@@ -78,6 +79,7 @@ func TestHaskell(t *testing.T) {
 		env.On("HasFiles", "*.hs").Return(true)
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: make(map[string]string),
 		})

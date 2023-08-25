@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestCanWriteRPrompt(t *testing.T) {
@@ -66,6 +67,7 @@ func TestPrintPWD(t *testing.T) {
 		env.On("Shell").Return("shell")
 		env.On("User").Return("user")
 		env.On("Host").Return("host", nil)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env:   make(map[string]string),
 			Shell: "shell",
@@ -163,6 +165,7 @@ func TestGetTitle(t *testing.T) {
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
 		env.On("PathSeparator").Return(tc.PathSeparator)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
@@ -223,6 +226,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",

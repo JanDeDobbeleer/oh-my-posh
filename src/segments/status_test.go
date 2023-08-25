@@ -30,6 +30,7 @@ func TestStatusWriterEnabled(t *testing.T) {
 			Code: 133,
 		})
 		env.On("Error", mock2.Anything).Return(nil)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 
 		props := properties.Map{}
 		if len(tc.Template) > 0 {
@@ -95,6 +96,7 @@ func TestFormatStatus(t *testing.T) {
 			Code: 133,
 		})
 		env.On("Error", mock2.Anything).Return(nil)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		props := properties.Map{
 			StatusTemplate:  tc.Template,
 			StatusSeparator: tc.Separator,

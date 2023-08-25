@@ -29,6 +29,7 @@ func renderTemplateNoTrimSpace(env *mock.MockedEnvironment, segmentTemplate stri
 	}
 	env.On("Error", mock2.Anything)
 	env.On("Debug", mock2.Anything)
+	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 	tmpl := &template.Text{
 		Template: segmentTemplate,
 		Context:  context,
@@ -921,6 +922,7 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		}
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.GENERIC)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: map[string]string{
 				"HOME": "/a/b/c",
@@ -957,6 +959,7 @@ func TestPowerlevelMappedLocations(t *testing.T) {
 		env.On("GOOS").Return(platform.DARWIN)
 		env.On("PathSeparator").Return("/")
 		env.On("Shell").Return(shell.GENERIC)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -983,6 +986,7 @@ func TestFolderPathCustomMappedLocations(t *testing.T) {
 	}
 	env.On("Flags").Return(args)
 	env.On("Shell").Return(shell.GENERIC)
+	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 	path := &Path{
 		env: env,
 		props: properties.Map{
@@ -1371,6 +1375,7 @@ func TestGetPwd(t *testing.T) {
 		}
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.PWSH)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -1404,6 +1409,7 @@ func TestGetFolderSeparator(t *testing.T) {
 		env.On("PathSeparator").Return("/")
 		env.On("Error", mock2.Anything)
 		env.On("Debug", mock2.Anything)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		path := &Path{
 			env: env,
 		}
@@ -1475,6 +1481,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 		env.On("Shell").Return(shell.FISH)
 		env.On("GOOS").Return(platform.DARWIN)
 		env.On("Home").Return("/a/b/k")
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		path := &Path{
 			env: env,
 			props: properties.Map{

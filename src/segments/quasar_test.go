@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestQuasar(t *testing.T) {
@@ -62,6 +63,7 @@ func TestQuasar(t *testing.T) {
 		env.On("RunCommand", "quasar", []string{"--version"}).Return(tc.Version, nil)
 		env.On("Pwd").Return("/usr/home/project")
 		env.On("Home").Return("/usr/home")
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: make(map[string]string),
 		})

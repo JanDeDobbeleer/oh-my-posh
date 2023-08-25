@@ -27,6 +27,7 @@ func TestUrl(t *testing.T) {
 	})
 	env.On("Error", mock2.Anything)
 	env.On("Debug", mock2.Anything)
+	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
@@ -52,6 +53,7 @@ func TestPath(t *testing.T) {
 	}
 
 	env := &mock.MockedEnvironment{}
+	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),
 	})

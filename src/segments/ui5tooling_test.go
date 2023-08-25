@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -131,6 +132,7 @@ func prepareMockedEnvironment(tc *testCase) *mock.MockedEnvironment {
 	env.On("RunCommand", "ui5", []string{"--version"}).Return(tc.Version, nil)
 	env.On("Home").Return("/home/user")
 	env.On("Pwd").Return(WorkingDirRoot)
+	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 
 	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),

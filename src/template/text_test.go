@@ -160,6 +160,7 @@ func TestRenderTemplate(t *testing.T) {
 		Env: make(map[string]string),
 	})
 	env.On("Error", mock2.Anything)
+	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
@@ -245,6 +246,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 			OS:  "darwin",
 		})
 		env.On("Error", mock2.Anything)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		tmpl := &Text{
 			Template: tc.Template,
 			Context:  tc.Context,
@@ -354,6 +356,7 @@ func TestSegmentContains(t *testing.T) {
 	env := &mock.MockedEnvironment{}
 	segments := platform.NewConcurrentMap()
 	segments.Set("Git", "foo")
+	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env:      make(map[string]string),
 		Segments: segments,

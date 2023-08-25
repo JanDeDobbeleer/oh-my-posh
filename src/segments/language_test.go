@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -54,6 +55,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	}
 	env.On("Pwd").Return(cwd)
 	env.On("Home").Return(home)
+	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),
 	})

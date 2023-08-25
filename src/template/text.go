@@ -67,6 +67,7 @@ func (c *Context) init(t *Text) {
 }
 
 func (t *Text) Render() (string, error) {
+	t.Env.DebugF("Rendering template: %s", t.Template)
 	if !strings.Contains(t.Template, "{{") || !strings.Contains(t.Template, "}}") {
 		return t.Template, nil
 	}

@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/stretchr/testify/assert"
+	mock2 "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -142,6 +143,7 @@ func TestGetColors(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: make(map[string]string),
 		})

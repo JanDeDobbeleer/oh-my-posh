@@ -21,6 +21,7 @@ type Commit struct {
 	Committer *User
 	Subject   string
 	Timestamp time.Time
+	Sha       string
 }
 
 type User struct {
@@ -195,7 +196,7 @@ func (g *Git) Commit() *Commit {
 		Author:    &User{},
 		Committer: &User{},
 	}
-	commitBody := g.getGitCommandOutput("log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s")
+	commitBody := g.getGitCommandOutput("log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H")
 	splitted := strings.Split(strings.TrimSpace(commitBody), "\n")
 	for _, line := range splitted {
 		line = strings.TrimSpace(line)
@@ -219,6 +220,8 @@ func (g *Git) Commit() *Commit {
 			}
 		case "su:":
 			g.commit.Subject = line
+		case "ha:":
+			g.commit.Sha = line
 		}
 	}
 	return g.commit

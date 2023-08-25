@@ -942,6 +942,7 @@ func TestGitCommit(t *testing.T) {
 			ce:jan@ohmyposh.dev
 			at:1673176335
 			su:docs(error): you can't use cross segment properties
+			ha:1234567891011121314
 			`,
 			Expected: &Commit{
 				Author: &User{
@@ -954,6 +955,7 @@ func TestGitCommit(t *testing.T) {
 				},
 				Subject:   "docs(error): you can't use cross segment properties",
 				Timestamp: time.Unix(1673176335, 0),
+				Sha:       "1234567891011121314",
 			},
 		},
 		{
@@ -997,7 +999,7 @@ func TestGitCommit(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.MockGitCommand("", tc.Output, "log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s")
+		env.MockGitCommand("", tc.Output, "log", "-1", "--pretty=format:an:%an%nae:%ae%ncn:%cn%nce:%ce%nat:%at%nsu:%s%nha:%H")
 		g := &Git{
 			scm: scm{
 				env:     env,

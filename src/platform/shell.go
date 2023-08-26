@@ -3,6 +3,7 @@ package platform
 import (
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -345,7 +346,9 @@ func (env *Shell) resolveConfigPath() {
 func (env *Shell) downloadConfig(location string) error {
 	defer env.Trace(time.Now(), location)
 	ext := filepath.Ext(location)
-	configPath := filepath.Join(env.CachePath(), "config.omp"+ext)
+	fileHash := base64.StdEncoding.EncodeToString([]byte(location))
+	filename := fmt.Sprintf("config.%s.omp%s", fileHash, ext)
+	configPath := filepath.Join(env.CachePath(), filename)
 	cfg, err := env.HTTPRequest(location, nil, 5000)
 	if err != nil {
 		return err

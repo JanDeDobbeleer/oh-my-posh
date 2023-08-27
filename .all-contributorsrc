@@ -1861,6 +1861,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "darthwalsh",
+      "name": "Carl Walsh",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2829438?v=4",
+      "profile": "https://carlwa.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

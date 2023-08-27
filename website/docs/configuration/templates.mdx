@@ -177,7 +177,7 @@ use them.
 To use another segment's template properties in a template, you can make use of `{{ .Segments.Segment }}`
 in your template where `.Segment` is the name of the segment you want to use with the first letter uppercased.
 
-If you want to for example use the [git][git] segment's `.UpstreamGone` property in the [exit][exit] segment, you can
+If you want to for example use the [git][git] segment's `.UpstreamGone` property in the [status][status] segment, you can
 do so like this:
 
 ```json
@@ -255,7 +255,7 @@ This can be used in templates and icons/text inside your config.
 [sprig]: https://masterminds.github.io/sprig/
 [glob]: https://pkg.go.dev/path/filepath#Glob
 [git]: /docs/segments/git
-[exit]: /docs/segments/exit
+[status]: /docs/segments/status
 [templates]: /docs/configuration/segment#templates
 [regexpms]: https://pkg.go.dev/regexp#Regexp.MatchString
 [regexpra]: https://pkg.go.dev/regexp#Regexp.ReplaceAllString

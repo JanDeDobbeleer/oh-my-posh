@@ -10,12 +10,22 @@ import (
 	"strings"
 )
 
-func InstallZIP(data []byte, user bool) error {
+func contains[S ~[]E, E comparable](s S, e E) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+func InstallZIP(data []byte, user bool) ([]string, error) {
+	var families []string
 	bytesReader := bytes.NewReader(data)
 
 	zipReader, err := zip.NewReader(bytesReader, int64(bytesReader.Len()))
 	if err != nil {
-		return err
+		return families, err
 	}
 
 	fonts := make(map[string]*Font)
@@ -23,13 +33,13 @@ func InstallZIP(data []byte, user bool) error {
 	for _, zf := range zipReader.File {
 		rc, err := zf.Open()
 		if err != nil {
-			return err
+			return families, err
 		}
 		defer rc.Close()
 
 		data, err := io.ReadAll(rc)
 		if err != nil {
-			return err
+			return families, err
 		}
 
 		fontData, err := newFont(zf.Name, data)
@@ -51,9 +61,13 @@ func InstallZIP(data []byte, user bool) error {
 
 	for _, font := range fonts {
 		if err = install(font, user); err != nil {
-			return err
+			return families, err
+		}
+
+		if !contains(families, font.Family) {
+			families = append(families, font.Family)
 		}
 	}
 
-	return nil
+	return families, nil
 }

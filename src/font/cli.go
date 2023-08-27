@@ -29,7 +29,7 @@ type loadMsg []*Asset
 
 type zipMsg []byte
 
-type successMsg int
+type successMsg []string
 
 type errMsg error
 
@@ -69,12 +69,13 @@ const (
 )
 
 type main struct {
-	spinner spinner.Model
-	list    *list.Model
-	system  bool
-	font    string
-	state   state
-	err     error
+	spinner  spinner.Model
+	list     *list.Model
+	system   bool
+	font     string
+	state    state
+	err      error
+	families []string
 }
 
 func (m *main) buildFontList(nerdFonts []*Asset) {
@@ -124,12 +125,12 @@ func installLocalFontZIP(zipFile string, user bool) {
 }
 
 func installFontZIP(zipFile []byte, user bool) {
-	err := InstallZIP(zipFile, user)
+	families, err := InstallZIP(zipFile, user)
 	if err != nil {
 		program.Send(errMsg(err))
 		return
 	}
-	program.Send(successMsg(0))
+	program.Send(successMsg(families))
 }
 
 func (m *main) Init() tea.Cmd {
@@ -216,6 +217,7 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case successMsg:
 		m.state = done
+		m.families = msg
 		return m, tea.Quit
 
 	case errMsg:
@@ -251,7 +253,13 @@ func (m *main) View() string {
 	case quit:
 		return textStyle.Render("No need to install a new font? That's cool.")
 	case done:
-		return textStyle.Render(fmt.Sprintf("Successfully installed %s 🚀", m.font))
+		var builder strings.Builder
+		builder.WriteString(fmt.Sprintf("Successfully installed %s 🚀\n\n", m.font))
+		builder.WriteString("The following font families are now available for configuration:\n")
+		for _, family := range m.families {
+			builder.WriteString(fmt.Sprintf("  • %s\n", family))
+		}
+		return textStyle.Render(builder.String())
 	}
 	return ""
 }

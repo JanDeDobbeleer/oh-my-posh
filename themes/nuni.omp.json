@@ -1,0 +1,142 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "#B4009E",
+          "foreground": "#ffffff",
+          "leading_diamond": "\ue0b6",
+          "style": "diamond",
+          "template": "{{ .UserName }} ",
+          "type": "session"
+        },
+        {
+          "background": "#FFFF00",
+          "foreground": "#000000",
+          "powerline_symbol": "\ue0b0",
+          
+          "properties": {
+            "style": "folder"
+          },
+          "style": "powerline",
+          "template": " <#5800B3>\uf07b</>  {{ .Path }} ",
+          "type": "path"
+        },
+        {
+          "background": "#4E44FF",
+          "foreground": "#ffffff",
+          "powerline_symbol": "\ue0b0",
+          "leading_diamond": "\ue0b6",
+          "trailing_diamond": "<#28bd03>\ue0b4</> ",
+          "properties": {
+            "branch_icon": "",
+            "fetch_stash_count": true,
+            "fetch_status": false,
+            "fetch_upstream_icon": true
+          },
+          "style": "powerline",
+          "template": " \ue725 \u279c ({{ .HEAD }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }}) ",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "foreground": "#a9ffb4",
+          "style": "plain",
+          "type": "text"
+        },
+        {
+          "background": "#FF8000",
+          "foreground": "#ffffff",
+          "leading_diamond": "\ue0b6",
+          "style": "diamond",
+          "template": "<#ffffff> 🦀</> {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
+          "trailing_diamond": "<#FF8000>\ue0b4</> ",
+          "type": "rust"
+        },
+        {
+          "background": "#28bd03",
+          "foreground": "#ffffff",
+          "leading_diamond": "\ue0b6",
+          "powerline_symbol": "\ue0b0",
+          "style": "diamond",
+          "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} ",
+          "trailing_diamond": "<#28bd03>\ue0b4</> ",
+          "type": "node"
+        },
+        {
+          "foreground": "#a9ffb4",
+          "properties": {
+            "style": "dallas",
+            "threshold": 0
+          },
+          "style": "diamond",
+          "template": "\uf120 {{ .FormattedMs }}s <#ffffff></>",
+          "type": "executiontime"
+        },
+        {
+          "properties": {
+            "root_icon": "\uf292 "
+          },
+          "style": "diamond",
+          "template": " \uf0e7 ",
+          "type": "root"
+        },
+        {
+          "background": "#FFFF00",
+          "foreground": "#000000",
+          "leading_diamond": "\ue0b6",
+          "style": "diamond",
+          "template": " <#000000>🍂 CPU:</> {{ round .PhysicalPercentUsed .Precision }}/1e2 ",
+          "type": "sysinfo"
+        },
+        {
+          "background": "#4E44FF",
+          "foreground": "#000000",
+          "trailing_diamond": "\ue0b4",
+          "style": "diamond",
+          "template": " <#000000>RAM:</> {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB ",
+          "type": "sysinfo"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "style": "plain",
+          "template": " 💦<#4E44FF> Don't forget to drink water uwu... </>",
+          "type": "text"
+        }],
+        "type": "prompt"
+    },
+    
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "foreground": "#ffffff",
+          "properties": {
+            "time_format": "04:05"
+          },
+          "style": "plain",
+          "template": " \u2665 {{ .CurrentDate | date .Format }} ",
+          "trailing_diamond":"\ue0b4",
+          "type": "time"
+        }
+      ],
+        "type": "prompt"
+    }
+  ],
+  
+  "final_space": true,
+  "version": 2
+}

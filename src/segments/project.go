@@ -237,8 +237,9 @@ func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {
 	files := n.env.LsDir(n.env.Pwd())
 	var content string
 	// get the first match only
+	// excluding PSScriptAnalyzerSettings.psd1
 	for _, file := range files {
-		if filepath.Ext(file.Name()) == ".psd1" {
+		if filepath.Ext(file.Name()) == ".psd1" && file.Name() != "PSScriptAnalyzerSettings.psd1" {
 			content = n.env.FileContent(file.Name())
 			break
 		}

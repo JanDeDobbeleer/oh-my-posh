@@ -56,7 +56,7 @@
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
           "style": "diamond",
-          "template": "<#ffffff> 🦀</> {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
+          "template": "<#ffffff> 🦀</> {{ if .Error }}oops{{ else }}{{ .Full }}{{ end }} ",
           "trailing_diamond": "<#FF8000>\ue0b4</> ",
           "type": "rust"
         },
@@ -118,6 +118,7 @@
         }],
         "type": "prompt"
     },
+    
     
     {
       "alignment": "right",

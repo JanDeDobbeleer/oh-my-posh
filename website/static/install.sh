@@ -126,7 +126,11 @@ install() {
 
     info "⬇️  Downloading oh-my-posh from ${url}"
 
-    curl -s -L https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-${target} -o $executable
+    http_response=$(curl -s -f -L $url -o $executable -w "%{http_code}")
+    if [ $http_response != "200" ]; then
+        error "Unable to download executable at ${url}\nPlease validate your connection and/or proxy settings"
+    fi
+
     chmod +x $executable
 
     # install themes in cache
@@ -135,16 +139,23 @@ install() {
     info "🎨 Installing oh-my-posh themes in ${cache_dir}/themes\n"
 
     theme_dir="${cache_dir}/themes"
+    url="https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip"
     mkdir -p $theme_dir
-    curl -s -L https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip -o ${cache_dir}/themes.zip
-    unzip -o -q ${cache_dir}/themes.zip -d $theme_dir
-    chmod u+rw ${theme_dir}/*.omp.*
-    rm ${cache_dir}/themes.zip
+    http_response=$(curl -s -f -L $url -o ${cache_dir}/themes.zip -w "%{http_code}")
+    if [ $http_response == "200" ]; then
+        unzip -o -q ${cache_dir}/themes.zip -d $theme_dir
+        chmod u+rw ${theme_dir}/*.omp.*
+        rm ${cache_dir}/themes.zip
+    else
+        warn "Unable to download themes at ${url}\nPlease validate your connection and/or proxy settings"
+    fi
 
     info "🚀 Installation complete.\n\nYou can follow the instructions at https://ohmyposh.dev/docs/installation/prompt"
-    info "to setup your shell to use oh-my-posh.\n"
-    info "If you want to use a built-in theme, you can find them in the ${theme_dir} directory:"
-    info "  oh-my-posh init {shell} --config ${theme_dir}/{theme}.omp.json\n"
+    info "to setup your shell to use oh-my-posh."
+    if [ $http_response == "200" ]; then
+        info "\nIf you want to use a built-in theme, you can find them in the ${theme_dir} directory:"
+        info "  oh-my-posh init {shell} --config ${theme_dir}/{theme}.omp.json\n"
+    fi
 }
 
 detect_arch() {

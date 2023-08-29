@@ -93,7 +93,7 @@
           "foreground": "#000000",
           "leading_diamond": "\ue0b6",
           "style": "diamond",
-          "template": " <#000000>🍂 CPU:</> {{ round .PhysicalPercentUsed .Precision }}/1e2 ",
+          "template": " <#000000>🍂 (RAMus)</> {{ round .PhysicalPercentUsed .Precision }}/1e2 ",
           "type": "sysinfo"
         },
         {
@@ -101,7 +101,7 @@
           "foreground": "#000000",
           "trailing_diamond": "\ue0b4",
           "style": "diamond",
-          "template": " <#000000>RAM:</> {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB ",
+          "template": " {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB ",
           "type": "sysinfo"
         }
       ],

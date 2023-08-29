@@ -630,6 +630,7 @@ func TestGitUpstream(t *testing.T) {
 		{Case: "Bitbucket", Expected: "BB", Upstream: "bitbucket.org/test"},
 		{Case: "Azure DevOps", Expected: "AD", Upstream: "dev.azure.com/test"},
 		{Case: "Azure DevOps Dos", Expected: "AD", Upstream: "test.visualstudio.com"},
+		{Case: "AWS CodeCommit", Expected: "AC", Upstream: "codecommit::eu-west-1://test-repository"},
 		{Case: "Gitstash", Expected: "G", Upstream: "gitstash.com/test"},
 		{Case: "My custom server", Expected: "CU", Upstream: "mycustom.server/test"},
 	}
@@ -640,11 +641,12 @@ func TestGitUpstream(t *testing.T) {
 			"-c", "color.status=false", "remote", "get-url", "origin"}).Return(tc.Upstream, nil)
 		env.On("GOOS").Return("unix")
 		props := properties.Map{
-			GithubIcon:      "GH",
-			GitlabIcon:      "GL",
-			BitbucketIcon:   "BB",
-			AzureDevOpsIcon: "AD",
-			GitIcon:         "G",
+			GithubIcon:        "GH",
+			GitlabIcon:        "GL",
+			BitbucketIcon:     "BB",
+			AzureDevOpsIcon:   "AD",
+			AwsCodecommitIcon: "AC",
+			GitIcon:           "G",
 			UpstreamIcons: map[string]string{
 				"mycustom.server": "CU",
 				"src.example.com": "EX",

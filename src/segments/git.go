@@ -93,7 +93,7 @@ const (
 	MergeIcon properties.Property = "merge_icon"
 	// UpstreamIcons allows to add custom upstream icons
 	UpstreamIcons properties.Property = "upstream_icons"
-	// GithubIcon shows√ when upstream is github
+	// GithubIcon shows when upstream is github
 	GithubIcon properties.Property = "github_icon"
 	// BitbucketIcon shows  when upstream is bitbucket
 	BitbucketIcon properties.Property = "bitbucket_icon"

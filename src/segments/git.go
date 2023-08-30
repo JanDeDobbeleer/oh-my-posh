@@ -99,8 +99,8 @@ const (
 	BitbucketIcon properties.Property = "bitbucket_icon"
 	// AzureDevOpsIcon shows  when upstream is azure devops
 	AzureDevOpsIcon properties.Property = "azure_devops_icon"
-	// AwsCodecommitIcon shows  when upstream is aws codecommit
-	AwsCodecommitIcon properties.Property = "aws_codecommit_icon"
+	// CodeCommit shows  when upstream is aws codecommit
+	CodeCommit properties.Property = "codecommit_icon"
 	// GitlabIcon shows when upstream is gitlab
 	GitlabIcon properties.Property = "gitlab_icon"
 	// GitIcon shows when the upstream can't be identified
@@ -464,7 +464,7 @@ func (g *Git) getUpstreamIcon() string {
 		"bitbucket":        {BitbucketIcon, "\uF171 "},
 		"dev.azure.com":    {AzureDevOpsIcon, "\uEBE8 "},
 		"visualstudio.com": {AzureDevOpsIcon, "\uEBE8 "},
-		"codecommit":       {AwsCodecommitIcon, "\uF270 "},
+		"codecommit":       {CodeCommit, "\uF270 "},
 	}
 	for key, value := range defaults {
 		if strings.Contains(g.UpstreamURL, key) {

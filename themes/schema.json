@@ -982,10 +982,10 @@
                     "description": "Icon/text to display when the upstream is Azure DevOps",
                     "default": "\uEBE8"
                   },
-                  "aws_codecommit_icon": {
+                  "codecommit_icon": {
                     "type": "string",
-                    "title": "AWS CodeCommit Icon",
-                    "description": "Icon/text to display when the upstream is AWS CodeCommit",
+                    "title": "CodeCommit Icon",
+                    "description": "Icon/text to display when the upstream is CodeCommit",
                     "default": "\uF270"
                   },
                   "git_icon": {

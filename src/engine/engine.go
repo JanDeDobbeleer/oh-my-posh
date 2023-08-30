@@ -161,6 +161,19 @@ func (e *Engine) getTitleTemplateText() string {
 func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 	defer e.patchPowerShellBleed()
 
+	// This is deprecated but we leave it in to not break configs
+	// It is encouraged to used "newline": true on block level
+	// rather than the standalone the linebreak block
+	if block.Type == LineBreak {
+		// do not print a newline to avoid a leading space
+		// when we're printin the first primary prompt in
+		// the shell
+		if !cancelNewline {
+			e.newline()
+		}
+		return
+	}
+
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
 	if e.Env.Shell() == shell.BASH && block.Type == RPrompt {
@@ -180,25 +193,20 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		e.newline()
 	}
 
-	switch block.Type {
-	// This is deprecated but we leave it in to not break configs
-	// It is encouraged to used "newline": true on block level
-	// rather than the standalone the linebreak block
-	case LineBreak:
-		// do not print a newline to avoid a leading space
-		// when we're printin the first primary prompt in
-		// the shell
-		if !cancelNewline {
-			return
-		}
-		e.newline()
+	text, length := block.RenderSegments()
+
+	// do not print anything when we don't have any text
+	if length == 0 {
+		return
+	}
+
+	switch block.Type { //nolint:exhaustive
 	case Prompt:
 		if block.VerticalOffset != 0 {
 			e.write(e.Writer.ChangeLine(block.VerticalOffset))
 		}
 
 		if block.Alignment == Left {
-			text, length := block.RenderSegments()
 			e.currentLineLength += length
 			e.write(text)
 			return
@@ -207,8 +215,6 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		if block.Alignment != Right {
 			return
 		}
-
-		text, length := block.RenderSegments()
 
 		space, OK := e.canWriteRightBlock(false)
 		// we can't print the right block as there's not enough room available
@@ -247,7 +253,8 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		prompt += text
 		e.write(prompt)
 	case RPrompt:
-		e.rprompt, e.rpromptLength = block.RenderSegments()
+		e.rprompt = text
+		e.rpromptLength = length
 	}
 }
 

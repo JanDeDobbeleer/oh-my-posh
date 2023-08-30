@@ -428,7 +428,7 @@ func (g *Git) cleanUpstreamURL(url string) string {
 		return fmt.Sprintf("https://%s/%s", match["URL"], path)
 	}
 	// codecommit::region-identifier-id://repo-name
-	match = regex.FindNamedRegexMatch(`codecommit::(?P<URL>[a-z0-9-]+)://(?P<PATH>[a-z0-9+-./]+)`, url)
+	match = regex.FindNamedRegexMatch(`codecommit::(?P<URL>[a-z0-9-]+)://(?P<PATH>[\w\.@\:/\-~]+)`, url)
 	if len(match) != 0 {
 		return fmt.Sprintf("https://%s.console.aws.amazon.com/codesuite/codecommit/repositories/%s/browse?region=%s", match["URL"], match["PATH"], match["URL"])
 	}

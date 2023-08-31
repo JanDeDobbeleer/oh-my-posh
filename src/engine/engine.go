@@ -91,6 +91,12 @@ func (e *Engine) pwd() {
 	}
 
 	cwd := e.Env.Pwd()
+
+	// in BASH, we need to escape the path
+	if e.Env.Shell() == shell.BASH {
+		cwd = strings.ReplaceAll(cwd, `\`, `\\`)
+	}
+
 	// Backwards compatibility for deprecated OSC99
 	if e.Config.OSC99 {
 		e.write(e.Writer.ConsolePwd(ansi.OSC99, "", "", cwd))

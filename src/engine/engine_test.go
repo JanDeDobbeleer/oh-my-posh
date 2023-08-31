@@ -49,22 +49,34 @@ func TestPrintPWD(t *testing.T) {
 	cases := []struct {
 		Case     string
 		Expected string
-		PWD      string
+		Config   string
+		Pwd      string
+		Shell    string
 		OSC99    bool
 	}{
 		{Case: "Empty PWD"},
-		{Case: "OSC99", PWD: ansi.OSC99, Expected: "\x1b]9;9;pwd\x1b\\"},
-		{Case: "OSC7", PWD: ansi.OSC7, Expected: "\x1b]7;file://host/pwd\x1b\\"},
-		{Case: "OSC51", PWD: ansi.OSC51, Expected: "\x1b]51;Auser@host:pwd\x1b\\"},
+		{Case: "OSC99", Config: ansi.OSC99, Expected: "\x1b]9;9;pwd\x1b\\"},
+		{Case: "OSC7", Config: ansi.OSC7, Expected: "\x1b]7;file://host/pwd\x1b\\"},
+		{Case: "OSC51", Config: ansi.OSC51, Expected: "\x1b]51;Auser@host:pwd\x1b\\"},
 		{Case: "Deprecated OSC99", OSC99: true, Expected: "\x1b]9;9;pwd\x1b\\"},
-		{Case: "Template (empty)", PWD: "{{ if eq .Shell \"pwsh\" }}osc7{{ end }}"},
-		{Case: "Template (non empty)", PWD: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;file://host/pwd\x1b\\"},
+		{Case: "Template (empty)", Config: "{{ if eq .Shell \"pwsh\" }}osc7{{ end }}"},
+		{Case: "Template (non empty)", Config: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;file://host/pwd\x1b\\"},
+		{
+			Case:     "OSC99 Bash",
+			Pwd:      `C:\Users\user\Documents\GitHub\oh-my-posh`,
+			Config:   ansi.OSC99,
+			Shell:    shell.BASH,
+			Expected: "\x1b]9;9;C:\\\\Users\\\\user\\\\Documents\\\\GitHub\\\\oh-my-posh\x1b\\",
+		},
 	}
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("Pwd").Return("pwd")
-		env.On("Shell").Return("shell")
+		if len(tc.Pwd) == 0 {
+			tc.Pwd = "pwd"
+		}
+		env.On("Pwd").Return(tc.Pwd)
+		env.On("Shell").Return(tc.Shell)
 		env.On("User").Return("user")
 		env.On("Host").Return("host", nil)
 		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
@@ -78,7 +90,7 @@ func TestPrintPWD(t *testing.T) {
 		engine := &Engine{
 			Env: env,
 			Config: &Config{
-				PWD:   tc.PWD,
+				PWD:   tc.Config,
 				OSC99: tc.OSC99,
 			},
 			Writer: writer,

@@ -35,7 +35,7 @@
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b2",
           "style": "diamond",
-          "template": "\ue266 CPU: {{ round .PhysicalPercentUsed .Precision }}% | ",
+          "template": "\ue266 RAMus: {{ round .PhysicalPercentUsed .Precision }}% | ",
           "type": "sysinfo"
         },
         {

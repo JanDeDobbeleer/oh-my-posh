@@ -244,6 +244,10 @@ func (g *Git) StashCount() int {
 
 func (g *Git) Kraken() string {
 	root := g.getGitCommandOutput("rev-list", "--max-parents=0", "HEAD")
+	if strings.Contains(root, "\n") {
+		root = strings.Split(root, "\n")[0]
+	}
+
 	if len(g.RawUpstreamURL) == 0 {
 		if len(g.Upstream) == 0 {
 			g.Upstream = "origin"

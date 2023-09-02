@@ -245,6 +245,10 @@ func (n *Project) getPowerShellModuleData(_ ProjectItem) *ProjectData {
 		}
 	}
 
+	if len(content) == 0 {
+		return nil
+	}
+
 	data := &ProjectData{}
 	lines := strings.Split(content, "\n")
 

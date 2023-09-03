@@ -28,13 +28,23 @@ func (e *Engine) Primary() string {
 
 	// cache a pointer to the color cycle
 	cycle = &e.Config.Cycle
+	var cancelNewline, didRender bool
+
 	for i, block := range e.Config.Blocks {
-		var cancelNewline bool
+		// do not print a leading newline when we're at the first row and the prompt is cleared
 		if i == 0 {
 			row, _ := e.Env.CursorPosition()
 			cancelNewline = e.Env.Flags().Cleared || e.Env.Flags().PromptCount == 1 || row == 1
 		}
-		e.renderBlock(block, cancelNewline)
+
+		// skip setting a newline when we didn't print anything yet
+		if i != 0 {
+			cancelNewline = !didRender
+		}
+
+		if e.renderBlock(block, cancelNewline) {
+			didRender = true
+		}
 	}
 
 	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {

@@ -164,7 +164,7 @@ func (e *Engine) getTitleTemplateText() string {
 	return ""
 }
 
-func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
+func (e *Engine) renderBlock(block *Block, cancelNewline bool) bool {
 	defer e.patchPowerShellBleed()
 
 	// This is deprecated but we leave it in to not break configs
@@ -177,7 +177,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		if !cancelNewline {
 			e.newline()
 		}
-		return
+		return false
 	}
 
 	// when in bash, for rprompt blocks we need to write plain
@@ -189,7 +189,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 	}
 
 	if !block.Enabled() {
-		return
+		return false
 	}
 
 	// do not print a newline to avoid a leading space
@@ -203,7 +203,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 
 	// do not print anything when we don't have any text
 	if length == 0 {
-		return
+		return false
 	}
 
 	switch block.Type { //nolint:exhaustive
@@ -215,11 +215,11 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		if block.Alignment == Left {
 			e.currentLineLength += length
 			e.write(text)
-			return
+			return true
 		}
 
 		if block.Alignment != Right {
-			return
+			return false
 		}
 
 		space, OK := e.canWriteRightBlock(false)
@@ -234,7 +234,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 					e.write(padText)
 				}
 				e.currentLineLength = 0
-				return
+				return true
 			}
 		}
 
@@ -246,7 +246,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		if padText, OK := e.shouldFill(block.Filler, space, length); OK {
 			e.write(padText)
 			e.write(text)
-			return
+			return true
 		}
 
 		var prompt string
@@ -262,6 +262,8 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) {
 		e.rprompt = text
 		e.rpromptLength = length
 	}
+
+	return true
 }
 
 func (e *Engine) patchPowerShellBleed() {

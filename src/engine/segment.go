@@ -150,6 +150,8 @@ const (
 	GOLANG SegmentType = "go"
 	// HASKELL segment
 	HASKELL SegmentType = "haskell"
+	// HELM segment
+	HELM SegmentType = "helm"
 	// IPIFY segment
 	IPIFY SegmentType = "ipify"
 	// ITERM inserts the Shell Integration prompt mark on iTerm zsh/bash/fish
@@ -280,6 +282,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	GITVERSION:    func() SegmentWriter { return &segments.GitVersion{} },
 	GOLANG:        func() SegmentWriter { return &segments.Golang{} },
 	HASKELL:       func() SegmentWriter { return &segments.Haskell{} },
+	HELM:          func() SegmentWriter { return &segments.Helm{} },
 	IPIFY:         func() SegmentWriter { return &segments.IPify{} },
 	ITERM:         func() SegmentWriter { return &segments.ITerm{} },
 	JAVA:          func() SegmentWriter { return &segments.Java{} },

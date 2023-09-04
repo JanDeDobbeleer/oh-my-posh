@@ -272,6 +272,7 @@
             "gitversion",
             "go",
             "haskell",
+            "helm",
             "ipify",
             "iterm",
             "julia",
@@ -2860,6 +2861,28 @@
                       "never"
                     ],
                     "default": "never"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "helm"
+              }
+            }
+          },
+          "then": {
+            "title": "Helm segment",
+            "description": "https://ohmyposh.dev/docs/segments/helm",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
                   }
                 }
               }

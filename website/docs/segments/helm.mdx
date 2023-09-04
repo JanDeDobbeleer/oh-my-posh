@@ -1,0 +1,46 @@
+---
+id: helm
+title: Helm
+sidebar_label: Helm
+---
+
+## What
+
+Display the version of helm
+
+## Sample Configuration
+
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
+  "background": "#a7cae1",
+  "foreground": "#100e23",
+  "powerline_symbol": "\ue0b0",
+  "template": " Helm {{ .Version }}",
+  "style": "powerline",
+  "type": "helm"
+}}/>
+
+## Properties
+
+| Name           | Type     | Description                                                                                                                                                                      |
+| -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `display_mode` | `string` | <ul><li>`always`: the segment is always displayed (**default**)</li><li>`files`: the segment is only displayed when a `Chart.yaml` (or `Chart.yml`) file is present </li></ul>   |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ Helm {{ .Version }}
+```
+
+:::
+
+### Properties
+
+| Name         | Type     | Description                |
+| ------------ | -------- | -------------------------- |
+| `.Version`   | `string` | Helm cli version           |
+
+[templates]: /docs/configuration/templates

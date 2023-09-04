@@ -79,6 +79,7 @@ module.exports = {
         "segments/gitversion",
         "segments/golang",
         "segments/haskell",
+        "segments/helm",
         "segments/ipify",
         "segments/iterm",
         "segments/java",

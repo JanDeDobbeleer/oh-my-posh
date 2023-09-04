@@ -436,6 +436,8 @@ func TestSetGitStatus(t *testing.T) {
 		ExpectedUpstreamGone bool
 		ExpectedAhead        int
 		ExpectedBehind       int
+		Rebase               bool
+		Merge                bool
 	}{
 		{
 			Case: "all different options on working and staging, no remote",
@@ -535,6 +537,40 @@ func TestSetGitStatus(t *testing.T) {
 			ExpectedRef:          "branch-is-gone",
 			ExpectedUpstreamGone: true,
 		},
+		{
+			Case: "rebase with 2 merge conflicts",
+			Output: `
+			# branch.oid 1234567891011121314
+			# branch.head rework-git-status
+			# branch.upstream origin/rework-git-status
+			# branch.ab +0 -0
+			1 AA N...
+			1 AA N...
+			`,
+			ExpectedUpstream: "origin/rework-git-status",
+			ExpectedHash:     "1234567",
+			ExpectedRef:      "rework-git-status",
+			Rebase:           true,
+			ExpectedStaging:  &GitStatus{ScmStatus: ScmStatus{Unmerged: 2}},
+		},
+		{
+			Case: "merge with 4 merge conflicts",
+			Output: `
+			# branch.oid 1234567891011121314
+			# branch.head rework-git-status
+			# branch.upstream origin/rework-git-status
+			# branch.ab +0 -0
+			1 AA N...
+			1 AA N...
+			1 AA N...
+			1 AA N...
+			`,
+			ExpectedUpstream: "origin/rework-git-status",
+			ExpectedHash:     "1234567",
+			ExpectedRef:      "rework-git-status",
+			Merge:            true,
+			ExpectedStaging:  &GitStatus{ScmStatus: ScmStatus{Unmerged: 4}},
+		},
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
@@ -554,6 +590,8 @@ func TestSetGitStatus(t *testing.T) {
 		if tc.ExpectedStaging == nil {
 			tc.ExpectedStaging = &GitStatus{}
 		}
+		g.Rebase = tc.Rebase
+		g.Merge = tc.Merge
 		tc.ExpectedStaging.Formats = map[string]string{}
 		tc.ExpectedWorking.Formats = map[string]string{}
 		g.setGitStatus()

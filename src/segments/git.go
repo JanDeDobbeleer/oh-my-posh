@@ -44,7 +44,7 @@ func (s *GitStatus) add(code string) {
 		s.Added++
 	case "?":
 		s.Untracked++
-	case "U":
+	case "U", "AA":
 		s.Unmerged++
 	case "M", "R", "C", "m":
 		s.Modified++
@@ -493,6 +493,17 @@ func (g *Git) setGitStatus() {
 		if len(status) <= 4 {
 			return
 		}
+
+		// map conflicts separately when in a merge or rebase
+		if g.Rebase || g.Merge {
+			conflict := "AA"
+			full := status[2:4]
+			if full == conflict {
+				g.Staging.add(conflict)
+				return
+			}
+		}
+
 		workingCode := status[3:4]
 		stagingCode := status[2:3]
 		g.Working.add(workingCode)

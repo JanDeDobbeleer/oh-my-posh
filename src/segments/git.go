@@ -135,6 +135,11 @@ type Git struct {
 	IsWorkTree     bool
 	IsBare         bool
 	User           *User
+	Detached       bool
+	Merge          bool
+	Rebase         bool
+	CherryPick     bool
+	Revert         bool
 
 	// needed for posh-git support
 	poshgit       bool
@@ -555,6 +560,7 @@ func (g *Git) getGitCommandOutput(args ...string) string {
 func (g *Git) setGitHEADContext() {
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	if g.Ref == DETACHED {
+		g.Detached = true
 		g.setPrettyHEADName()
 	} else {
 		head := g.formatHEAD(g.Ref)
@@ -581,6 +587,7 @@ func (g *Git) setGitHEADContext() {
 	}
 
 	if g.env.HasFolder(g.workingDir + "/rebase-merge") {
+		g.Rebase = true
 		origin := getPrettyNameOrigin("rebase-merge/head-name")
 		onto := g.getGitRefFileSymbolicName("rebase-merge/onto")
 		onto = g.formatHEAD(onto)
@@ -590,7 +597,9 @@ func (g *Git) setGitHEADContext() {
 		g.HEAD = fmt.Sprintf("%s%s onto %s%s (%s/%s) at %s", icon, origin, branchIcon, onto, step, total, g.HEAD)
 		return
 	}
+
 	if g.env.HasFolder(g.workingDir + "/rebase-apply") {
+		g.Rebase = true
 		origin := getPrettyNameOrigin("rebase-apply/head-name")
 		step := g.FileContents(g.workingDir, "rebase-apply/next")
 		total := g.FileContents(g.workingDir, "rebase-apply/last")
@@ -598,9 +607,12 @@ func (g *Git) setGitHEADContext() {
 		g.HEAD = fmt.Sprintf("%s%s (%s/%s) at %s", icon, origin, step, total, g.HEAD)
 		return
 	}
+
 	// merge
 	commitIcon := g.props.GetString(CommitIcon, "\uF417")
+
 	if g.hasGitFile("MERGE_MSG") {
+		g.Merge = true
 		icon := g.props.GetString(MergeIcon, "\uE727 ")
 		mergeContext := g.FileContents(g.workingDir, "MERGE_MSG")
 		matches := regex.FindNamedRegexMatch(`Merge (remote-tracking )?(?P<type>branch|commit|tag) '(?P<theirs>.*)'`, mergeContext)
@@ -622,23 +634,28 @@ func (g *Git) setGitHEADContext() {
 			return
 		}
 	}
+
 	// sequencer status
 	// see if a cherry-pick or revert is in progress, if the user has committed a
 	// conflict resolution with 'git commit' in the middle of a sequence of picks or
 	// reverts then CHERRY_PICK_HEAD/REVERT_HEAD will not exist so we have to read
 	// the todo file.
 	if g.hasGitFile("CHERRY_PICK_HEAD") {
+		g.CherryPick = true
 		sha := g.FileContents(g.workingDir, "CHERRY_PICK_HEAD")
 		cherry := g.props.GetString(CherryPickIcon, "\uE29B ")
 		g.HEAD = fmt.Sprintf("%s%s%s onto %s", cherry, commitIcon, g.formatSHA(sha), formatDetached())
 		return
 	}
+
 	if g.hasGitFile("REVERT_HEAD") {
+		g.Revert = true
 		sha := g.FileContents(g.workingDir, "REVERT_HEAD")
 		revert := g.props.GetString(RevertIcon, "\uF0E2 ")
 		g.HEAD = fmt.Sprintf("%s%s%s onto %s", revert, commitIcon, g.formatSHA(sha), formatDetached())
 		return
 	}
+
 	if g.hasGitFile("sequencer/todo") {
 		todo := g.FileContents(g.workingDir, "sequencer/todo")
 		matches := regex.FindNamedRegexMatch(`^(?P<action>p|pick|revert)\s+(?P<sha>\S+)`, todo)
@@ -647,16 +664,19 @@ func (g *Git) setGitHEADContext() {
 			sha := matches["sha"]
 			switch action {
 			case "p", "pick":
+				g.CherryPick = true
 				cherry := g.props.GetString(CherryPickIcon, "\uE29B ")
 				g.HEAD = fmt.Sprintf("%s%s%s onto %s", cherry, commitIcon, g.formatSHA(sha), formatDetached())
 				return
 			case "revert":
+				g.Revert = true
 				revert := g.props.GetString(RevertIcon, "\uF0E2 ")
 				g.HEAD = fmt.Sprintf("%s%s%s onto %s", revert, commitIcon, g.formatSHA(sha), formatDetached())
 				return
 			}
 		}
 	}
+
 	g.HEAD = formatDetached()
 }
 

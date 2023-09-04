@@ -1872,6 +1872,17 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ercpereda",
+      "name": "Ernesto R. C. Pereda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13546685?v=4",
+      "profile": "https://github.com/ercpereda",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

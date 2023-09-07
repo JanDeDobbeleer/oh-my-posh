@@ -195,6 +195,12 @@ func TestWriteANSIColors(t *testing.T) {
 			Expected: "\x1b[40m\x1b[30mtest\x1b[0m",
 			Colors:   &Colors{Foreground: "black", Background: "white"},
 		},
+		{
+			Case:     "Nested override",
+			Input:    "hello, <red>world, <white>rabbit</> hello</>",
+			Expected: "\x1b[47m\x1b[30mhello, \x1b[31mworld, \x1b[37mrabbit\x1b[31m hello\x1b[0m",
+			Colors:   &Colors{Foreground: "black", Background: "white"},
+		},
 	}
 
 	for _, tc := range cases {

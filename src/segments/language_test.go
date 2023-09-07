@@ -526,3 +526,24 @@ func TestLanguageHyperlinkTemplatePropertyTakesPriority(t *testing.T) {
 	assert.Equal(t, "https://uni.org/release/1.3.307", lang.version.DefaultURL)
 	assert.Equal(t, "https://custom/url/template/1.3", lang.version.URL)
 }
+
+func TestLanguageHyperlinkTemplateEmpty(t *testing.T) {
+	args := &languageArgs{
+		commands: []*cmd{
+			{
+				executable: "uni",
+				args:       []string{"--version"},
+				regex:      `(?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+)))`,
+			},
+		},
+		extensions:        []string{uni},
+		enabledExtensions: []string{uni},
+		enabledCommands:   []string{"uni"},
+		version:           universion,
+		properties:        properties.Map{},
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.Enabled())
+	assert.Equal(t, "", lang.version.DefaultURL)
+	assert.Equal(t, "", lang.version.URL)
+}

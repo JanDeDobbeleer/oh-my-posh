@@ -44,14 +44,15 @@ import Config from '@site/src/components/Config.js';
 
 ### Properties
 
-| Name     | Type     | Description                                        |
-| -------- | -------- | -------------------------------------------------- |
-| `.Full`  | `string` | the full version                                   |
-| `.Major` | `string` | major number                                       |
-| `.Minor` | `string` | minor number                                       |
-| `.Patch` | `string` | patch number                                       |
-| `.URL`   | `string` | URL of the version info / release notes            |
-| `.Error` | `string` | error encountered when fetching the version string |
+| Name          | Type     | Description                                                                      |
+| ------------- | -------- | -------------------------------------------------------------------------------- |
+| `.Full`       | `string` | the full version                                                                 |
+| `.Major`      | `string` | major number                                                                     |
+| `.Minor`      | `string` | minor number                                                                     |
+| `.Patch`      | `string` | patch number                                                                     |
+| `.DefaultURL` | `string` | default URL of the version info / release notes                                  |
+| `.URL`        | `string` | URL of the version info / release notes (`version_url_template` or `DefaultURL`) |
+| `.Error`      | `string` | error encountered when fetching the version string                               |
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [templates]: /docs/configuration/templates

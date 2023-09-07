@@ -46,16 +46,17 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name       | Type         | Description                                        |
-| ---------- | ------------ | -------------------------------------------------- |
-| `.Full`    | `string`     | the full version                                   |
-| `.Major`   | `string`     | major number                                       |
-| `.Minor`   | `string`     | minor number                                       |
-| `.Patch`   | `string`     | patch number                                       |
-| `.URL`     | `string`     | URL of the version info / release notes            |
-| `.Error`   | `string`     | error encountered when fetching the version string |
-| `.Vite`    | `Dependency` | the `vite` dependency, if found                    |
-| `.AppVite` | `Dependency` | the `@quasar/app-vite` dependency, if found        |
+| Name          | Type         | Description                                                                      |
+| ------------- | ------------ | -------------------------------------------------------------------------------- |
+| `.Full`       | `string`     | the full version                                                                 |
+| `.Major`      | `string`     | major number                                                                     |
+| `.Minor`      | `string`     | minor number                                                                     |
+| `.Patch`      | `string`     | patch number                                                                     |
+| `.DefaultURL` | `string`     | default URL of the version info / release notes                                  |
+| `.URL`        | `string`     | URL of the version info / release notes (`version_url_template` or `DefaultURL`) |
+| `.Error`      | `string`     | error encountered when fetching the version string                               |
+| `.Vite`       | `Dependency` | the `vite` dependency, if found                                                  |
+| `.AppVite`    | `Dependency` | the `@quasar/app-vite` dependency, if found                                      |
 
 #### Dependency
 

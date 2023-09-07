@@ -499,6 +499,7 @@ func TestLanguageInnerHyperlink(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
+	assert.Equal(t, "https://unicor.org/doc/1.3.307", lang.version.DefaultURL)
 	assert.Equal(t, "https://unicor.org/doc/1.3.307", lang.version.URL)
 }
 
@@ -522,5 +523,6 @@ func TestLanguageHyperlinkTemplatePropertyTakesPriority(t *testing.T) {
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
+	assert.Equal(t, "https://uni.org/release/1.3.307", lang.version.DefaultURL)
 	assert.Equal(t, "https://custom/url/template/1.3", lang.version.URL)
 }

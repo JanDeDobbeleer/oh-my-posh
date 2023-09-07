@@ -29,6 +29,7 @@ type version struct {
 	Patch         string
 	Prerelease    string
 	BuildMetadata string
+	DefaultURL    string
 	URL           string
 	Executable    string
 	Expected      string
@@ -222,6 +223,7 @@ func (l *language) setVersion() error {
 		if command.versionURLTemplate != "" {
 			l.versionURLTemplate = command.versionURLTemplate
 		}
+		l.buildDefaultVersionURL()
 		l.buildVersionURL()
 		l.version.Executable = command.executable
 		return nil
@@ -244,6 +246,22 @@ func (l *language) inLanguageContext() bool {
 		return false
 	}
 	return l.inContext()
+}
+
+func (l *language) buildDefaultVersionURL() {
+	if len(l.versionURLTemplate) == 0 {
+		return
+	}
+	tmpl := &template.Text{
+		Template: l.versionURLTemplate,
+		Context:  l.version,
+		Env:      l.env,
+	}
+	url, err := tmpl.Render()
+	if err != nil {
+		return
+	}
+	l.version.DefaultURL = url
 }
 
 func (l *language) buildVersionURL() {

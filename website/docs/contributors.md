@@ -272,6 +272,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://carlwa.com"><img src="https://avatars.githubusercontent.com/u/2829438?v=4?s=100" width="100px;" alt="Carl Walsh"/><br /><sub><b>Carl Walsh</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=darthwalsh" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ercpereda"><img src="https://avatars.githubusercontent.com/u/13546685?v=4?s=100" width="100px;" alt="Ernesto R. C. Pereda"/><br /><sub><b>Ernesto R. C. Pereda</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ercpereda" title="Code">💻</a> <a href="#design-ercpereda" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ercpereda" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/0Ky"><img src="https://avatars.githubusercontent.com/u/16103757?v=4?s=100" width="100px;" alt="ｃｒｙｐｔｉｘ"/><br /><sub><b>ｃｒｙｐｔｉｘ</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=0Ky" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

@@ -76,8 +76,9 @@ func (w *Writer) replaceHyperlink(text string) string {
 		return strings.Replace(text, results["ALL"], linkText, 1)
 	}
 
-	// we only care about the length of the text part
-	w.length += runewidth.StringWidth(linkText)
+	// we only care about the length of the actual text part
+	characters := w.trimAnsi(linkText)
+	w.length += runewidth.StringWidth(characters)
 
 	if w.Plain {
 		return linkText

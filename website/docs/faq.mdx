@@ -26,7 +26,19 @@ oh-my-posh enable notice
 ### The prompt is slow (delay in showing the prompt between commands)
 
 :::tip Windows
-Make sure Windows Defender, or your AntiVirus, has an exclusion [configured][exclusion].
+The delay you're experiencing may be linked to the real-time protection features of antivirus software.
+
+To potentially alleviate this delay, ensure that Windows Defender or your primary antivirus software has an [exclusion][exclusion] set for the full path of the executable. To identify the full path of the executable in question, you can run the following command in a PowerShell prompt: 
+
+```powershell
+(Get-Command oh-my-posh).Source
+```
+
+Additionally, check your antivirus settings for features that actively scan scripts during execution. Even with exclusions set, some antivirus programs might still actively scan scripts, which can introduce a noticeable delay.
+:::
+
+:::caution
+Always proceed with caution to maintain a balance between system performance and security. Modifying security settings or adding exclusions can expose your system to potential threats.
 :::
 
 <Tabs

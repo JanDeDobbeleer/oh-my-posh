@@ -19,6 +19,61 @@ type ColorString interface {
 	ToColor(colorString string, isBackground bool, trueColor bool) Color
 }
 
+type ColorSet struct {
+	Foreground Color
+	Background Color
+}
+
+type ColorHistory []*ColorSet
+
+func (c *ColorHistory) Len() int {
+	return len(*c)
+}
+
+func (c *ColorHistory) Add(background, foreground Color) {
+	colors := &ColorSet{
+		Foreground: foreground,
+		Background: background,
+	}
+
+	if c.Len() == 0 {
+		*c = append(*c, colors)
+		return
+	}
+
+	last := (*c)[c.Len()-1]
+	// never add the same colors twice
+	if last.Foreground == colors.Foreground && last.Background == colors.Background {
+		return
+	}
+
+	*c = append(*c, colors)
+}
+
+func (c *ColorHistory) Pop() {
+	if c.Len() == 0 {
+		return
+	}
+
+	*c = (*c)[:c.Len()-1]
+}
+
+func (c *ColorHistory) Background() Color {
+	if c.Len() == 0 {
+		return emptyColor
+	}
+
+	return (*c)[c.Len()-1].Background
+}
+
+func (c *ColorHistory) Foreground() Color {
+	if c.Len() == 0 {
+		return emptyColor
+	}
+
+	return (*c)[c.Len()-1].Foreground
+}
+
 // Color is an ANSI color code ready to be printed to the console.
 // Example: "38;2;255;255;255", "48;2;255;255;255", "31", "95".
 type Color string

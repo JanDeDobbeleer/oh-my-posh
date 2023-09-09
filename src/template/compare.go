@@ -30,6 +30,9 @@ func gt(e1, e2 interface{}) bool {
 	if val, OK := e1.(int); OK {
 		return val > interFaceToInt(e2)
 	}
+	if val, OK := e1.(int64); OK {
+		return val > int64(interFaceToInt(e2))
+	}
 	if val, OK := e1.(float64); OK {
 		return val > interfaceToFloat64(e2)
 	}

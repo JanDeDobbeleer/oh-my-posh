@@ -43,123 +43,123 @@ blocks:
         background: magenta
         foreground: black
         template: " {{ if .SSHSession }} {{ end }}{{ .UserName }}@{{ .HostName }} "
-      # - type: angular
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: lightRed
-      #   foreground: black
-      #   properties:
-      #     fetch_version: true
-      #   template: " ﮰ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
-      # - type: aws
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: yellow
-      #   foreground: black
-      #   properties:
-      #     display_default: false
-      #   template: "  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
-      # - type: az
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: lightBlue
-      #   foreground: black
-      #   properties:
-      #     display_default: false
-      #   template: " ﴃ Subscription {{ .Name }} ({{ if .EnvironmentName | contains 'AzureCloud' }}{{ 'Global' }}{{ else }}{{ .EnvironmentName }}{{ end }}) "
-      # - type: azfunc
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: yellow
-      #   foreground: black
-      #   properties:
-      #     display_mode: files
-      #     fetch_version: false
-      #   template: " ﴃ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
-      # - type: go
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: lightCyan
-      #   foreground: black
-      #   properties:
-      #     fetch_version: true
-      #   template: " ﳑ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
-      # - type: java
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: lightCyan
-      #   foreground: black
-      #   template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
-      # - type: julia
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: lightCyan
-      #   foreground: black
-      #   properties:
-      #     fetch_version: true
-      #   template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
-      # - type: kubectl
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: lightYellow
-      #   foreground: black
-      #   template: " ﴱ {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
-      # - type: node
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: lightGreen
-      #   foreground: black
-      #   properties:
-      #     fetch_version: true
-      #   template: "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
-      # - type: php
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: lightCyan
-      #   foreground: black
-      #   template: "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+      - type: angular
+        style: powerline
+        powerline_symbol: 
+        background: lightRed
+        foreground: black
+        properties:
+          fetch_version: true
+        template: " ﮰ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: aws
+        style: powerline
+        powerline_symbol: 
+        background: yellow
+        foreground: black
+        properties:
+          display_default: false
+        template: "  {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
+      - type: az
+        style: powerline
+        powerline_symbol: 
+        background: lightBlue
+        foreground: black
+        properties:
+          display_default: false
+        template: " ﴃ Subscription {{ .Name }} ({{ if .EnvironmentName | contains \"AzureCloud\" }}{{ \"Global\" }}{{ else }}{{ .EnvironmentName }}{{ end }}) "
+      - type: azfunc
+        style: powerline
+        powerline_symbol: 
+        background: yellow
+        foreground: black
+        properties:
+          display_mode: files
+          fetch_version: false
+        template: " ﴃ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: go
+        style: powerline
+        powerline_symbol: 
+        background: lightCyan
+        foreground: black
+        properties:
+          fetch_version: true
+        template: " ﳑ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: java
+        style: powerline
+        powerline_symbol: 
+        background: lightCyan
+        foreground: black
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: julia
+        style: powerline
+        powerline_symbol: 
+        background: lightCyan
+        foreground: black
+        properties:
+          fetch_version: true
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: kubectl
+        style: powerline
+        powerline_symbol: 
+        background: lightYellow
+        foreground: black
+        template: " ﴱ {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
+      - type: node
+        style: powerline
+        powerline_symbol: 
+        background: lightGreen
+        foreground: black
+        properties:
+          fetch_version: true
+        template: "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+      - type: php
+        style: powerline
+        powerline_symbol: 
+        background: lightCyan
+        foreground: black
+        template: "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
       - type: project
         style: powerline
         powerline_symbol: 
         background: lightYellow
         foreground: black
         template: " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }} {{.Version}}{{ end }} {{ if .Name }}{{ .Name }}{{ end }}{{ end }} "
-      # - type: python
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: lightYellow
-      #   foreground: black
-      #   properties:
-      #     display_mode: files
-      #     fetch_virtual_env: false
-      #   template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
-      # - type: ruby
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: red
-      #   foreground: black
-      #   properties:
-      #     display_mode: files
-      #     fetch_version: true
-      #   template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
-      # - type: rust
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: lightRed
-      #   foreground: black
-      #   properties:
-      #     display_mode: files
-      #     fetch_version: true
-      #   template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
-      # - type: swift
-      #   style: powerline
-      #   powerline_symbol: 
-      #   background: blue
-      #   foreground: black
-      #   properties:
-      #     display_mode: files
-      #     fetch_version: true
-      #   template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: python
+        style: powerline
+        powerline_symbol: 
+        background: lightYellow
+        foreground: black
+        properties:
+          display_mode: files
+          fetch_virtual_env: false
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: ruby
+        style: powerline
+        powerline_symbol: 
+        background: red
+        foreground: black
+        properties:
+          display_mode: files
+          fetch_version: true
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: rust
+        style: powerline
+        powerline_symbol: 
+        background: lightRed
+        foreground: black
+        properties:
+          display_mode: files
+          fetch_version: true
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: swift
+        style: powerline
+        powerline_symbol: 
+        background: blue
+        foreground: black
+        properties:
+          display_mode: files
+          fetch_version: true
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: time
         style: powerline
         powerline_symbol: 

@@ -11,7 +11,6 @@ blocks:
         template: "{{ .PromptMark }}"
       - type: os
         style: diamond
-        trailing_diamond: <transparent,></>
         foreground: cyan
         properties:
           alpine: 
@@ -67,7 +66,7 @@ blocks:
         foreground: black
         properties:
           display_default: false
-        template: " ﴃ Subscription {{ .Name }} ({{ if .EnvironmentName | contains 'AzureCloud' }}{{ 'Global' }}{{ else }}{{ .EnvironmentName }}{{ end }}) "
+        template: " ﴃ Subscription {{ .Name }} ({{ if .EnvironmentName | contains \"AzureCloud\" }}{{ \"Global\" }}{{ else }}{{ .EnvironmentName }}{{ end }}) "
       - type: azfunc
         style: powerline
         powerline_symbol: 
@@ -84,13 +83,13 @@ blocks:
         foreground: black
         properties:
           fetch_version: true
-        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+        template: " ﳑ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: java
         style: powerline
         powerline_symbol: 
         background: lightCyan
         foreground: black
-        template: "  {{ .Full }}"
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: julia
         style: powerline
         powerline_symbol: 
@@ -118,7 +117,7 @@ blocks:
         powerline_symbol: 
         background: lightCyan
         foreground: black
-        template: "  {{ .Full }} "
+        template: "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
       - type: project
         style: powerline
         powerline_symbol: 
@@ -143,6 +142,24 @@ blocks:
           display_mode: files
           fetch_version: true
         template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: rust
+        style: powerline
+        powerline_symbol: 
+        background: lightRed
+        foreground: black
+        properties:
+          display_mode: files
+          fetch_version: true
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+      - type: swift
+        style: powerline
+        powerline_symbol: 
+        background: blue
+        foreground: black
+        properties:
+          display_mode: files
+          fetch_version: true
+        template: "  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: time
         style: powerline
         powerline_symbol: 
@@ -184,7 +201,7 @@ blocks:
         style: plain
         foreground: cyan
         template: " ╚"
-      - type: exit
+      - type: status
         style: diamond
         leading_diamond: 
         background: blue

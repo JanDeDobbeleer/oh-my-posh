@@ -1892,6 +1892,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ehawman",
+      "name": "Evan Hawman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/52979227?v=4",
+      "profile": "https://github.com/ehawman",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -69,7 +69,7 @@
         {
           "foreground": "#94ffa2",
           "style": "diamond",
-          "template": " <#ffffff>CPU:</> {{ round .PhysicalPercentUsed .Precision }}% ",
+          "template": " <#ffffff>MEM:</> {{ round .PhysicalPercentUsed .Precision }}% ",
           "type": "sysinfo"
         },
         {

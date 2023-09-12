@@ -276,6 +276,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/0Ky"><img src="https://avatars.githubusercontent.com/u/16103757?v=4?s=100" width="100px;" alt="ｃｒｙｐｔｉｘ"/><br /><sub><b>ｃｒｙｐｔｉｘ</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=0Ky" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ehawman"><img src="https://avatars.githubusercontent.com/u/52979227?v=4?s=100" width="100px;" alt="Evan Hawman"/><br /><sub><b>Evan Hawman</b></sub></a><br /><a href="#design-ehawman" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://zerdox.dev"><img src="https://avatars.githubusercontent.com/u/49815452?v=4?s=100" width="100px;" alt="Mark Lansky"/><br /><sub><b>Mark Lansky</b></sub></a><br /><a href="#design-ZerdoX-x" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/pulsation"><img src="https://avatars.githubusercontent.com/u/1838397?v=4?s=100" width="100px;" alt="pulsation"/><br /><sub><b>pulsation</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=pulsation" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

@@ -1919,6 +1919,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "oriionn",
+      "name": "orionsource",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38093786?v=4",
+      "profile": "https://oriondev.fr",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

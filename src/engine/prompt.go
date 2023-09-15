@@ -42,6 +42,17 @@ func (e *Engine) Primary() string {
 			cancelNewline = !didRender
 		}
 
+		// only render rprompt for shells where we need it from the primary prompt
+		renderRPrompt := true
+		switch e.Env.Shell() {
+		case shell.ELVISH, shell.FISH, shell.NU, shell.XONSH, shell.CMD:
+			renderRPrompt = false
+		}
+
+		if block.Type == RPrompt && !renderRPrompt {
+			continue
+		}
+
 		if e.renderBlock(block, cancelNewline) {
 			didRender = true
 		}
@@ -79,7 +90,7 @@ func (e *Engine) Primary() string {
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
-	case shell.PWSH, shell.PWSH5, shell.GENERIC, shell.NU:
+	case shell.PWSH, shell.PWSH5, shell.GENERIC:
 		e.writeRPrompt()
 	case shell.BASH:
 		space, OK := e.canWriteRightBlock(true)

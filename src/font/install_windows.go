@@ -29,6 +29,13 @@ func install(font *Font, admin bool) error {
 		fontsDir = filepath.Join(os.Getenv("USERPROFILE"), "AppData", "Local", "Microsoft", "Windows", "Fonts")
 	}
 
+	// check if the Fonts folder exists, if not, create it
+	if _, err := os.Stat(fontsDir); os.IsNotExist(err) {
+		if err = os.MkdirAll(fontsDir, 0755); err != nil {
+			return fmt.Errorf("Unable to create fonts directory: %s", err.Error())
+		}
+	}
+
 	fullPath := filepath.Join(fontsDir, font.FileName)
 	// validate if font is already installed, remove it in case it is
 	if _, err := os.Stat(fullPath); err == nil {

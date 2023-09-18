@@ -18,7 +18,7 @@ jobs:
               with:
                   github-token: "${{ secrets.GITHUB_TOKEN }}"
             - name: install GH CLI
-              uses: sersoft-gmbh/setup-gh-cli-action@4022189b02796671e17d07f27c496713d09cb3a7
+              uses: sersoft-gmbh/setup-gh-cli-action@4d7f209ad8ceeebfd3247f24fc40d2a65434434a
               with:
                   version: stable
             - name: Enable auto-merge for Dependabot PRs

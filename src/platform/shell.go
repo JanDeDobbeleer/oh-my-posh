@@ -190,7 +190,7 @@ type TemplateCache struct {
 	sync.RWMutex
 }
 
-func (t *TemplateCache) AddSegmentData(key string, value interface{}) {
+func (t *TemplateCache) AddSegmentData(key string, value any) {
 	t.Segments.Set(key, value)
 }
 
@@ -802,7 +802,7 @@ func (env *Shell) TemplateCache() *TemplateCache {
 	tmplCache.Segments = NewConcurrentMap()
 	tmplCache.PromptCount = env.CmdFlags.PromptCount
 	tmplCache.Env = make(map[string]string)
-	tmplCache.Var = make(map[string]interface{})
+	tmplCache.Var = make(map[string]any)
 
 	if env.Var != nil {
 		tmplCache.Var = env.Var

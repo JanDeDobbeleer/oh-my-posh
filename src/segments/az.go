@@ -33,15 +33,15 @@ type AzureConfig struct {
 }
 
 type AzureSubscription struct {
-	ID               string        `json:"id"`
-	Name             string        `json:"name"`
-	State            string        `json:"state"`
-	User             *AzureUser    `json:"user"`
-	IsDefault        bool          `json:"isDefault"`
-	TenantID         string        `json:"tenantId"`
-	EnvironmentName  string        `json:"environmentName"`
-	HomeTenantID     string        `json:"homeTenantId"`
-	ManagedByTenants []interface{} `json:"managedByTenants"`
+	ID               string     `json:"id"`
+	Name             string     `json:"name"`
+	State            string     `json:"state"`
+	User             *AzureUser `json:"user"`
+	IsDefault        bool       `json:"isDefault"`
+	TenantID         string     `json:"tenantId"`
+	EnvironmentName  string     `json:"environmentName"`
+	HomeTenantID     string     `json:"homeTenantId"`
+	ManagedByTenants []any      `json:"managedByTenants"`
 }
 
 type AzureUser struct {

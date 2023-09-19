@@ -54,7 +54,7 @@ const (
 	CacheTimeout Property = "cache_timeout"
 )
 
-type Map map[Property]interface{}
+type Map map[Property]any
 
 func (m Map) GetString(property Property, defaultValue string) string {
 	val, found := m[property]
@@ -158,11 +158,11 @@ func (m Map) GetStringArray(property Property, defaultValue []string) []string {
 	return keyValues
 }
 
-func ParseStringArray(param interface{}) []string {
+func ParseStringArray(param any) []string {
 	switch v := param.(type) {
 	default:
 		return []string{}
-	case []interface{}:
+	case []any:
 		list := make([]string, len(v))
 		for i, v := range v {
 			list[i] = fmt.Sprint(v)
@@ -173,11 +173,11 @@ func ParseStringArray(param interface{}) []string {
 	}
 }
 
-func parseKeyValueArray(param interface{}) map[string]string {
+func parseKeyValueArray(param any) map[string]string {
 	switch v := param.(type) {
 	default:
 		return map[string]string{}
-	case map[interface{}]interface{}:
+	case map[any]any:
 		keyValueArray := make(map[string]string)
 		for key, value := range v {
 			val := value.(string)
@@ -185,14 +185,14 @@ func parseKeyValueArray(param interface{}) map[string]string {
 			keyValueArray[keyString] = val
 		}
 		return keyValueArray
-	case map[string]interface{}:
+	case map[string]any:
 		keyValueArray := make(map[string]string)
 		for key, value := range v {
 			val := value.(string)
 			keyValueArray[key] = val
 		}
 		return keyValueArray
-	case []interface{}:
+	case []any:
 		keyValueArray := make(map[string]string)
 		for _, s := range v {
 			l := ParseStringArray(s)

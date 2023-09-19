@@ -50,8 +50,8 @@ func Get() (*Info, error) {
 	apm_status, err := cmd.Run("apm", "-b")
 	if err != nil {
 		return nil, err
-	}  
+	}
 
-  return parseBatteryOutput(apm_percentage, apm_status)
+	return parseBatteryOutput(apm_percentage, apm_status)
 
 }

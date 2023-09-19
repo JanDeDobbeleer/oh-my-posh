@@ -65,7 +65,7 @@ type SegmentWriter interface {
 // SegmentStyle the style of segment, for more information, see the constants
 type SegmentStyle string
 
-func (s *SegmentStyle) Resolve(env platform.Environment, context interface{}) SegmentStyle {
+func (s *SegmentStyle) Resolve(env platform.Environment, context any) SegmentStyle {
 	txtTemplate := &template.Text{
 		Context: context,
 		Env:     env,

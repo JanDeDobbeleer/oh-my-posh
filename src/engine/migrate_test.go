@@ -41,7 +41,7 @@ func TestHasProperty(t *testing.T) {
 func TestMigratePropertyValue(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Expected interface{}
+		Expected any
 		Property properties.Property
 		Props    properties.Map
 	}{
@@ -60,7 +60,7 @@ func TestMigratePropertyValue(t *testing.T) {
 func TestMigratePropertyKey(t *testing.T) {
 	cases := []struct {
 		Case        string
-		Expected    interface{}
+		Expected    any
 		OldProperty properties.Property
 		NewProperty properties.Property
 		Props       properties.Map

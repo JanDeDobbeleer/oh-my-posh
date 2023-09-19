@@ -62,7 +62,7 @@ func TestRequestResult(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var props properties.Map = map[properties.Property]interface{}{
+		var props properties.Map = map[properties.Property]any{
 			properties.CacheTimeout: tc.CacheTimeout,
 		}
 

@@ -111,7 +111,7 @@ func TestTruncateBranch(t *testing.T) {
 		Expected   string
 		Branch     string
 		FullBranch bool
-		MaxLength  interface{}
+		MaxLength  any
 	}{
 		{Case: "No limit", Expected: "are-belong-to-us", Branch: "/all-your-base/are-belong-to-us", FullBranch: false},
 		{Case: "No limit - larger", Expected: "are-belong", Branch: "/all-your-base/are-belong-to-us", FullBranch: false, MaxLength: 10.0},
@@ -146,8 +146,8 @@ func TestTruncateBranchWithSymbol(t *testing.T) {
 		Expected       string
 		Branch         string
 		FullBranch     bool
-		MaxLength      interface{}
-		TruncateSymbol interface{}
+		MaxLength      any
+		TruncateSymbol any
 	}{
 		{Case: "No limit", Expected: "are-belong-to-us", Branch: "/all-your-base/are-belong-to-us", FullBranch: false, TruncateSymbol: "..."},
 		{Case: "No limit - larger", Expected: "are-belong...", Branch: "/all-your-base/are-belong-to-us", FullBranch: false, MaxLength: 10.0, TruncateSymbol: "..."},

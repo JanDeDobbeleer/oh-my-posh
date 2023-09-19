@@ -8,45 +8,45 @@ import (
 
 func TestParseBatteryOutput(t *testing.T) {
 	cases := []struct {
-		Case                string
-		PercentOutput       string
-    StatusOutput        string
-		ExpectedState       State
-		ExpectedPercentage  int
+		Case               string
+		PercentOutput      string
+		StatusOutput       string
+		ExpectedState      State
+		ExpectedPercentage int
 		ExpectError        bool
 	}{
 		{
 			Case:               "charging",
 			PercentOutput:      "99",
-      StatusOutput:       "3",
+			StatusOutput:       "3",
 			ExpectedState:      Charging,
 			ExpectedPercentage: 99,
 		},
 		{
 			Case:               "charging 1%",
 			PercentOutput:      "1",
-      StatusOutput:       "3",
+			StatusOutput:       "3",
 			ExpectedState:      Charging,
 			ExpectedPercentage: 1,
 		},
 		{
 			Case:               "removed",
 			PercentOutput:      "0",
-      StatusOutput:       "4",
+			StatusOutput:       "4",
 			ExpectedState:      Unknown,
 			ExpectedPercentage: 0,
 		},
 		{
 			Case:               "charged",
 			PercentOutput:      "100",
-      StatusOutput:       "0",
+			StatusOutput:       "0",
 			ExpectedState:      Full,
 			ExpectedPercentage: 100,
 		},
 		{
 			Case:               "discharging",
 			PercentOutput:      "25",
-      StatusOutput:       "1",
+			StatusOutput:       "1",
 			ExpectedState:      Discharging,
 			ExpectedPercentage: 25,
 		},

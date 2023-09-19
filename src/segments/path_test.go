@@ -14,7 +14,7 @@ import (
 	mock2 "github.com/stretchr/testify/mock"
 )
 
-func renderTemplateNoTrimSpace(env *mock.MockedEnvironment, segmentTemplate string, context interface{}) string {
+func renderTemplateNoTrimSpace(env *mock.MockedEnvironment, segmentTemplate string, context any) string {
 	found := false
 	for _, call := range env.Mock.ExpectedCalls {
 		if call.Method == "TemplateCache" {
@@ -42,7 +42,7 @@ func renderTemplateNoTrimSpace(env *mock.MockedEnvironment, segmentTemplate stri
 	return text
 }
 
-func renderTemplate(env *mock.MockedEnvironment, segmentTemplate string, context interface{}) string {
+func renderTemplate(env *mock.MockedEnvironment, segmentTemplate string, context any) string {
 	return strings.TrimSpace(renderTemplateNoTrimSpace(env, segmentTemplate, context))
 }
 

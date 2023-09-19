@@ -89,7 +89,7 @@ func TestGetFloat64(t *testing.T) {
 	cases := []struct {
 		Case     string
 		Expected float64
-		Input    interface{}
+		Input    any
 	}{
 		{Case: "int", Expected: 1337, Input: 1337},
 		{Case: "float64", Expected: 1337, Input: float64(1337)},

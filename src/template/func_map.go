@@ -7,7 +7,7 @@ import (
 )
 
 func funcMap() template.FuncMap {
-	funcMap := map[string]interface{}{
+	funcMap := map[string]any{
 		"secondsRound": secondsRound,
 		"url":          url,
 		"path":         path,

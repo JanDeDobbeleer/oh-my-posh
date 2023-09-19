@@ -183,7 +183,7 @@ func (segment *Segment) hasProperty(property properties.Property) bool {
 	return false
 }
 
-func (segment *Segment) migratePropertyValue(property properties.Property, value interface{}) {
+func (segment *Segment) migratePropertyValue(property properties.Property, value any) {
 	if !segment.hasProperty(property) {
 		return
 	}

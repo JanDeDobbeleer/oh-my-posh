@@ -34,26 +34,26 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Version                  int                    `json:"version"`
-	FinalSpace               bool                   `json:"final_space,omitempty"`
-	ConsoleTitleTemplate     string                 `json:"console_title_template,omitempty"`
-	TerminalBackground       string                 `json:"terminal_background,omitempty"`
-	AccentColor              string                 `json:"accent_color,omitempty"`
-	Blocks                   []*Block               `json:"blocks,omitempty"`
-	Tooltips                 []*Segment             `json:"tooltips,omitempty"`
-	TransientPrompt          *Segment               `json:"transient_prompt,omitempty"`
-	ValidLine                *Segment               `json:"valid_line,omitempty"`
-	ErrorLine                *Segment               `json:"error_line,omitempty"`
-	SecondaryPrompt          *Segment               `json:"secondary_prompt,omitempty"`
-	DebugPrompt              *Segment               `json:"debug_prompt,omitempty"`
-	Palette                  ansi.Palette           `json:"palette,omitempty"`
-	Palettes                 *ansi.Palettes         `json:"palettes,omitempty"`
-	Cycle                    ansi.Cycle             `json:"cycle,omitempty"`
-	ShellIntegration         bool                   `json:"shell_integration,omitempty"`
-	PWD                      string                 `json:"pwd,omitempty"`
-	Var                      map[string]interface{} `json:"var,omitempty"`
-	DisableCursorPositioning bool                   `json:"disable_cursor_positioning,omitempty"`
-	PatchPwshBleed           bool                   `json:"patch_pwsh_bleed,omitempty"`
+	Version                  int            `json:"version"`
+	FinalSpace               bool           `json:"final_space,omitempty"`
+	ConsoleTitleTemplate     string         `json:"console_title_template,omitempty"`
+	TerminalBackground       string         `json:"terminal_background,omitempty"`
+	AccentColor              string         `json:"accent_color,omitempty"`
+	Blocks                   []*Block       `json:"blocks,omitempty"`
+	Tooltips                 []*Segment     `json:"tooltips,omitempty"`
+	TransientPrompt          *Segment       `json:"transient_prompt,omitempty"`
+	ValidLine                *Segment       `json:"valid_line,omitempty"`
+	ErrorLine                *Segment       `json:"error_line,omitempty"`
+	SecondaryPrompt          *Segment       `json:"secondary_prompt,omitempty"`
+	DebugPrompt              *Segment       `json:"debug_prompt,omitempty"`
+	Palette                  ansi.Palette   `json:"palette,omitempty"`
+	Palettes                 *ansi.Palettes `json:"palettes,omitempty"`
+	Cycle                    ansi.Cycle     `json:"cycle,omitempty"`
+	ShellIntegration         bool           `json:"shell_integration,omitempty"`
+	PWD                      string         `json:"pwd,omitempty"`
+	Var                      map[string]any `json:"var,omitempty"`
+	DisableCursorPositioning bool           `json:"disable_cursor_positioning,omitempty"`
+	PatchPwshBleed           bool           `json:"patch_pwsh_bleed,omitempty"`
 
 	// Deprecated
 	OSC99 bool `json:"osc99,omitempty"`
@@ -174,7 +174,7 @@ func (cfg *Config) sync() {
 	if !cfg.updated {
 		return
 	}
-	var structMap map[string]interface{}
+	var structMap map[string]any
 	inrec, err := json2.Marshal(cfg)
 	if err != nil {
 		return
@@ -185,7 +185,7 @@ func (cfg *Config) sync() {
 	}
 	// remove empty structs
 	for k, v := range structMap {
-		if smap, OK := v.(map[string]interface{}); OK && len(smap) == 0 {
+		if smap, OK := v.(map[string]any); OK && len(smap) == 0 {
 			delete(structMap, k)
 		}
 	}

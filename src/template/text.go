@@ -42,12 +42,12 @@ var (
 
 type Text struct {
 	Template        string
-	Context         interface{}
+	Context         any
 	Env             platform.Environment
 	TemplatesResult string
 }
 
-type Data interface{}
+type Data any
 
 type Context struct {
 	*platform.TemplateCache
@@ -91,7 +91,7 @@ func (t *Text) Render() (string, error) {
 		return "", errors.New(msg["MSG"])
 	}
 	text := buffer.String()
-	// issue with missingkey=zero ignored for map[string]interface{}
+	// issue with missingkey=zero ignored for map[string]any
 	// https://github.com/golang/go/issues/24963
 	text = strings.ReplaceAll(text, "<no value>", "")
 	return text, nil
@@ -195,7 +195,7 @@ func (t *Text) cleanTemplate() {
 
 type fields map[string]bool
 
-func (f *fields) init(data interface{}) {
+func (f *fields) init(data any) {
 	if data == nil {
 		return
 	}
@@ -208,7 +208,7 @@ func (f *fields) init(data interface{}) {
 			(*f)[val.Field(i).Name] = true
 		}
 	case reflect.Map:
-		m, ok := data.(map[string]interface{})
+		m, ok := data.(map[string]any)
 		if !ok {
 			return
 		}

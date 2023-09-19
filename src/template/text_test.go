@@ -19,7 +19,7 @@ func TestRenderTemplate(t *testing.T) {
 		Expected    string
 		Template    string
 		ShouldError bool
-		Context     interface{}
+		Context     any
 	}{
 		{
 			Case:     "dot literal",
@@ -184,7 +184,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		Template    string
 		ShouldError bool
 		Env         map[string]string
-		Context     interface{}
+		Context     any
 	}{
 		{
 			Case:        "nil struct with env var",
@@ -197,7 +197,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 			Case:     "map with env var",
 			Expected: "hello world",
 			Template: "{{.Env.HELLO}} {{.World}}",
-			Context:  map[string]interface{}{"World": "world"},
+			Context:  map[string]any{"World": "world"},
 			Env:      map[string]string{"HELLO": "hello"},
 		},
 		{
@@ -208,7 +208,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 			Env:      map[string]string{"HELLO": "hello"},
 		},
 		{Case: "no env var", Expected: "hello world", Template: "{{.Text}} world", Context: struct{ Text string }{Text: "hello"}},
-		{Case: "map", Expected: "hello world", Template: "{{.Text}} world", Context: map[string]interface{}{"Text": "hello"}},
+		{Case: "map", Expected: "hello world", Template: "{{.Text}} world", Context: map[string]any{"Text": "hello"}},
 		{Case: "empty map", Expected: " world", Template: "{{.Text}} world", Context: map[string]string{}},
 		{
 			Case:     "Struct with duplicate property",
@@ -228,14 +228,14 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 			Case:     "Map with duplicate property",
 			Expected: "posh",
 			Template: "{{ .OS }}",
-			Context:  map[string]interface{}{"OS": "posh"},
+			Context:  map[string]any{"OS": "posh"},
 			Env:      map[string]string{"HELLO": "hello"},
 		},
 		{
 			Case:     "Non-supported map",
 			Expected: "darwin",
 			Template: "{{ .OS }}",
-			Context:  map[int]interface{}{},
+			Context:  map[int]any{},
 			Env:      map[string]string{"HELLO": "hello"},
 		},
 	}
@@ -336,7 +336,7 @@ func TestCleanTemplate(t *testing.T) {
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
-			Context:  map[string]interface{}{"OS": "posh"},
+			Context:  map[string]any{"OS": "posh"},
 		}
 		tmpl.cleanTemplate()
 		assert.Equal(t, tc.Expected, tmpl.Template, tc.Case)

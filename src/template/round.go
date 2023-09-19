@@ -1,27 +1,9 @@
 package template
 
 import (
-	"errors"
 	"strconv"
 	"strings"
 )
-
-func toInt(integer any) (int, error) {
-	switch seconds := integer.(type) {
-	default:
-		return 0, errors.New("invalid integer type")
-	case string:
-		return strconv.Atoi(seconds)
-	case int:
-		return seconds, nil
-	case int64:
-		return int(seconds), nil
-	case uint64:
-		return int(seconds), nil
-	case float64:
-		return int(seconds), nil
-	}
-}
 
 func secondsRound(seconds any) string {
 	s, err := toInt(seconds)

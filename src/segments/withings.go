@@ -29,8 +29,8 @@ type Body struct {
 }
 
 type MeasureGroup struct {
-	Measures []*Measure  `json:"measures"`
-	Comment  interface{} `json:"comment"`
+	Measures []*Measure `json:"measures"`
+	Comment  any        `json:"comment"`
 }
 
 type Measure struct {

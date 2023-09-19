@@ -143,7 +143,7 @@ func TestOauthResult(t *testing.T) {
 		url := "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1"
 		tokenURL := fmt.Sprintf("https://ohmyposh.dev/api/refresh?segment=test&token=%s", tc.RefreshToken)
 
-		var props properties.Map = map[properties.Property]interface{}{
+		var props properties.Map = map[properties.Property]any{
 			properties.CacheTimeout: tc.CacheTimeout,
 			properties.AccessToken:  tc.AccessToken,
 			properties.RefreshToken: tc.RefreshToken,

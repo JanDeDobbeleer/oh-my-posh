@@ -59,7 +59,7 @@
       "extensions": [
         "actboy168.tasks",
         "eamodio.gitlens",
-        "bungcip.better-toml",
+        "tamasfe.even-better-toml",
         "davidanson.vscode-markdownlint",
         "editorconfig.editorconfig",
         "esbenp.prettier-vscode",

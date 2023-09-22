@@ -6,7 +6,7 @@
     "esbenp.prettier-vscode",
     "davidanson.vscode-markdownlint",
     "yzhang.markdown-all-in-one",
-    "bungcip.better-toml",
+    "tamasfe.even-better-toml",
     "redhat.vscode-yaml"
   ]
 }

@@ -488,12 +488,15 @@ func (w *Writer) endColorOverride(position int) int {
 	// make sure to reset the colors if needed
 	position += len([]rune(resetStyle.AnchorEnd)) - 1
 
-	// reset colors to previous when we have > 2 in stack
-	// - first is always the starting colors used in Write()
-	// - second is the first override
-	// as soon as we have  more than 2, we can pop the last one
+	// do not restore colors at the end of the string, we print it anyways
+	if position == len(w.runes)-1 {
+		return position
+	}
+
+	// reset colors to previous when we have >= 2 in stack
+	// as soon as we have  more than 1, we can pop the last one
 	// and print the previous override as it wasn't ended yet
-	if w.current.Len() >= 3 {
+	if w.current.Len() >= 2 {
 		fg := w.current.Foreground()
 		bg := w.current.Background()
 
@@ -512,11 +515,6 @@ func (w *Writer) endColorOverride(position int) int {
 
 	// do not reset when colors are identical
 	if w.current.Background() == w.background && w.current.Foreground() == w.foreground {
-		return position
-	}
-
-	// do not restore colors at the end of the string, we print it anyways
-	if position == len(w.runes)-1 {
 		return position
 	}
 

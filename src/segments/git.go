@@ -778,6 +778,30 @@ func (g *Git) getRemoteURL() string {
 	return g.getGitCommandOutput("remote", "get-url", upstream)
 }
 
+func (g *Git) Remotes() map[string]string {
+	var remotes = make(map[string]string)
+
+	location := filepath.Join(g.rootDir, "config")
+	config := g.env.FileContent(location)
+	cfg, err := ini.Load([]byte(config))
+	if err != nil {
+		return remotes
+	}
+
+	for _, section := range cfg.Sections() {
+		if !strings.HasPrefix(section.Name(), "remote ") {
+			continue
+		}
+
+		name := strings.TrimPrefix(section.Name(), "remote ")
+		name = strings.Trim(name, "\"")
+		url := section.Key("url").String()
+		url = g.cleanUpstreamURL(url)
+		remotes[name] = url
+	}
+	return remotes
+}
+
 func (g *Git) getUntrackedFilesMode() string {
 	return g.getSwitchMode(UntrackedModes, "-u", "normal")
 }

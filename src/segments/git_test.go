@@ -1050,3 +1050,58 @@ func TestGitCommit(t *testing.T) {
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
+
+func TestGitRemotes(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected int
+		Config   string
+	}{
+		{
+			Case:     "Empty config file",
+			Expected: 0,
+		},
+		{
+			Case:     "Two remotes",
+			Expected: 2,
+			Config: `
+[remote "origin"]
+	url = git@github.com:JanDeDobbeleer/test.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[remote "upstream"]
+	url = git@github.com:microsoft/test.git
+	fetch = +refs/heads/*:refs/remotes/upstream/*
+`,
+		},
+		{
+			Case:     "One remote",
+			Expected: 1,
+			Config: `
+[remote "origin"]
+	url = git@github.com:JanDeDobbeleer/test.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+`,
+		},
+		{
+			Case:     "Broken config",
+			Expected: 0,
+			Config:   "{{}}",
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("FileContent", "config").Return(tc.Config)
+
+		g := &Git{
+			scm: scm{
+				props:   properties.Map{},
+				realDir: "foo",
+				env:     env,
+			},
+		}
+
+		got := g.Remotes()
+		assert.Equal(t, tc.Expected, len(got), tc.Case)
+	}
+}

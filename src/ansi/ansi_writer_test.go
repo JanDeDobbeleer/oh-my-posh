@@ -200,6 +200,12 @@ func TestWriteANSIColors(t *testing.T) {
 			Expected: "\x1b[47m\x1b[30mhello, \x1b[31mworld, \x1b[37mrabbit\x1b[31m hello\x1b[0m",
 			Colors:   &Colors{Foreground: "black", Background: "white"},
 		},
+		{
+			Case:     "Transparent override",
+			Input:    "home<transparent> / </>code<transparent> / </>src ",
+			Expected: "\x1b[47m\x1b[30mhome\x1b[0m\x1b[37;49m\x1b[7m / \x1b[27m\x1b[47m\x1b[30mcode\x1b[0m\x1b[37;49m\x1b[7m / \x1b[27m\x1b[47m\x1b[30msrc \x1b[0m",
+			Colors:   &Colors{Foreground: "black", Background: "white"},
+		},
 	}
 
 	for _, tc := range cases {

@@ -1928,6 +1928,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "CesarGBkR",
+      "name": "Cesar Garduño",
+      "avatar_url": "https://avatars.githubusercontent.com/u/99093357?v=4",
+      "profile": "https://github.com/CesarGBkR",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

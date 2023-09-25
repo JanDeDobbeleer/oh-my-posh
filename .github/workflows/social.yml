@@ -13,7 +13,7 @@ jobs:
         with:
           node-version: 18
       - name: Checkout code 👋
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
       - name: Skyt 🌤️
         working-directory: scripts/bluesky
         env:

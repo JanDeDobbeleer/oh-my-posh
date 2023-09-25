@@ -19,7 +19,7 @@ jobs:
       skipped: ${{ steps.changelog.outputs.skipped }}
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
       - name: Create changelog ✍️
         id: changelog
         uses: TriPSs/conventional-changelog-action@8118086024a5380b05b0d54ed2181516082e090f
@@ -41,7 +41,7 @@ jobs:
         working-directory: ${{ github.workspace }}/src
     steps:
       - name: Checkout code 👋
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608
       - name: Install Go 🗳
         uses: ./.github/workflows/composite/bootstrap-go
       - name: Tag HEAD 😸

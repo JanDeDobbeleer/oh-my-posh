@@ -1937,6 +1937,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Adi-vig",
+      "name": "Aditya Sakhare",
+      "avatar_url": "https://avatars.githubusercontent.com/u/123308369?v=4",
+      "profile": "https://github.com/Adi-vig",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

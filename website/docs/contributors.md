@@ -279,6 +279,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/pulsation"><img src="https://avatars.githubusercontent.com/u/1838397?v=4?s=100" width="100px;" alt="pulsation"/><br /><sub><b>pulsation</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=pulsation" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://oriondev.fr"><img src="https://avatars.githubusercontent.com/u/38093786?v=4?s=100" width="100px;" alt="orionsource"/><br /><sub><b>orionsource</b></sub></a><br /><a href="#design-oriionn" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/CesarGBkR"><img src="https://avatars.githubusercontent.com/u/99093357?v=4?s=100" width="100px;" alt="Cesar Garduño"/><br /><sub><b>Cesar Garduño</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=CesarGBkR" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Adi-vig"><img src="https://avatars.githubusercontent.com/u/123308369?v=4?s=100" width="100px;" alt="Aditya Sakhare"/><br /><sub><b>Aditya Sakhare</b></sub></a><br /><a href="#design-Adi-vig" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>

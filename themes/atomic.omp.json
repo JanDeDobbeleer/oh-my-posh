@@ -210,7 +210,7 @@
             "windows": "\ue70f"
           },
           "style": "diamond",
-          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}<#262626> \ue0b2</>",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}<#222222> \ue0b2</>",
           "type": "os"
         },
         {

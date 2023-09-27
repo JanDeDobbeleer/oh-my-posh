@@ -342,7 +342,7 @@ func (w *Writer) Write(background, foreground, text string) {
 	// reset colors
 	w.writeEscapedAnsiString(resetStyle.End)
 
-	// reset current
+	// pop last color from the stack
 	w.current.Pop()
 }
 
@@ -487,6 +487,7 @@ func (w *Writer) endColorOverride(position int) int {
 
 	// do not restore colors at the end of the string, we print it anyways
 	if position == len(w.runes)-1 {
+		w.current.Pop()
 		return position
 	}
 

@@ -332,11 +332,15 @@ func (g *Git) setDir(dir string) {
 
 func (g *Git) hasWorktree(gitdir *platform.FileInfo) bool {
 	g.rootDir = gitdir.Path
-	dirPointer := strings.Trim(g.env.FileContent(gitdir.Path), " \r\n")
-	matches := regex.FindNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, dirPointer)
-	if matches == nil || matches["dir"] == "" {
+	content := g.env.FileContent(gitdir.Path)
+	content = strings.Trim(content, " \r\n")
+	matches := regex.FindNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, content)
+
+	if matches == nil || len(matches["dir"]) == 0 {
+		g.env.Debug("No matches found, directory isn't a worktree")
 		return false
 	}
+
 	// if we open a worktree file in a WSL shared folder, we have to convert it back
 	// to the mounted path
 	g.workingDir = g.convertToLinuxPath(matches["dir"])
@@ -344,17 +348,18 @@ func (g *Git) hasWorktree(gitdir *platform.FileInfo) bool {
 	// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
 	// strips the last .git/worktrees part
 	// :ind+5 = index + /.git
-	ind := strings.LastIndex(g.workingDir, "/.git/worktrees")
+	ind := strings.LastIndex(g.workingDir, ".git/worktrees")
 	if ind > -1 {
 		gitDir := filepath.Join(g.workingDir, "gitdir")
-		g.rootDir = g.workingDir[:ind+5]
+		g.rootDir = g.workingDir[:ind+4]
 		g.realDir = strings.TrimSuffix(g.env.FileContent(gitDir), ".git\n")
 		g.IsWorkTree = true
 		return true
 	}
+
 	// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
 	// we need the parent folder to detect where the real .git folder is
-	ind = strings.LastIndex(g.workingDir, "/.git/modules")
+	ind = strings.LastIndex(g.workingDir, ".git/modules")
 	if ind > -1 {
 		g.rootDir = resolveGitPath(gitdir.ParentFolder, g.workingDir)
 		// this might be both a worktree and a submodule, where the path would look like
@@ -384,6 +389,7 @@ func (g *Git) hasWorktree(gitdir *platform.FileInfo) bool {
 		g.realDir = gitFolder
 		return true
 	}
+
 	return false
 }
 

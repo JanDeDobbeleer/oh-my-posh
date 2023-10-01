@@ -281,6 +281,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/CesarGBkR"><img src="https://avatars.githubusercontent.com/u/99093357?v=4?s=100" width="100px;" alt="Cesar Garduño"/><br /><sub><b>Cesar Garduño</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=CesarGBkR" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Adi-vig"><img src="https://avatars.githubusercontent.com/u/123308369?v=4?s=100" width="100px;" alt="Aditya Sakhare"/><br /><sub><b>Aditya Sakhare</b></sub></a><br /><a href="#design-Adi-vig" title="Design">🎨</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/deepak-dev-96"><img src="https://avatars.githubusercontent.com/u/134447761?v=4?s=100" width="100px;" alt="Deepak Dev"/><br /><sub><b>Deepak Dev</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=deepak-dev-96" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

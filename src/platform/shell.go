@@ -425,22 +425,36 @@ func (env *Shell) Pwd() string {
 
 func (env *Shell) HasFiles(pattern string) bool {
 	defer env.Trace(time.Now(), pattern)
+
 	cwd := env.Pwd()
 	fileSystem := os.DirFS(cwd)
-	matches, err := fs.Glob(fileSystem, pattern)
+
+	matches, err := fs.ReadDir(fileSystem, ".")
 	if err != nil {
 		env.Error(err)
 		env.Debug("false")
 		return false
 	}
+
+	pattern = strings.ToLower(pattern)
 	for _, match := range matches {
-		file, err := fs.Stat(fileSystem, match)
-		if err != nil || file.IsDir() {
+		if match.IsDir() {
 			continue
 		}
-		env.Debug("true")
-		return true
+
+		matchFileName, err := filepath.Match(pattern, strings.ToLower(match.Name()))
+		if err != nil {
+			env.Error(err)
+			env.Debug("false")
+			return false
+		}
+
+		if matchFileName {
+			env.Debug("true")
+			return true
+		}
 	}
+
 	env.Debug("false")
 	return false
 }

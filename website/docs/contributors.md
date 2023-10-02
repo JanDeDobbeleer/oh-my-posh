@@ -283,6 +283,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/deepak-dev-96"><img src="https://avatars.githubusercontent.com/u/134447761?v=4?s=100" width="100px;" alt="Deepak Dev"/><br /><sub><b>Deepak Dev</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=deepak-dev-96" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://creativewebspecialist.co.uk"><img src="https://avatars.githubusercontent.com/u/1389894?v=4?s=100" width="100px;" alt="Warren Buckley"/><br /><sub><b>Warren Buckley</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=warrenbuckley" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

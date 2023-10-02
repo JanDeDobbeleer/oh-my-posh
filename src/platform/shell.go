@@ -522,14 +522,32 @@ func (env *Shell) FileContent(file string) string {
 	if !filepath.IsAbs(file) {
 		file = filepath.Join(env.Pwd(), file)
 	}
-	content, err := os.ReadFile(file)
+
+	// Get all files in the directory of the file
+	globOfFilesInDir := filepath.Join(filepath.Dir(file), "*")
+	matches, err := filepath.Glob(globOfFilesInDir)
 	if err != nil {
 		env.Error(err)
 		return ""
 	}
-	fileContent := string(content)
-	env.Debug(fileContent)
-	return fileContent
+
+	// For each file found in the directory of the file we want to read its contents
+	for _, match := range matches {
+		// Do a case insensitive comparison of the file name to find the file we want
+		if strings.EqualFold(filepath.Base(match), filepath.Base(file)) {
+			content, err := os.ReadFile(match)
+			if err != nil {
+				env.Error(err)
+				return ""
+			}
+			fileContent := string(content)
+			env.Debug(fileContent)
+			return fileContent
+		}
+	}
+
+	env.Debug("File not found")
+	return ""
 }
 
 func (env *Shell) LsDir(path string) []fs.DirEntry {

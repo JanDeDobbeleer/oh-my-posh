@@ -1955,6 +1955,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "warrenbuckley",
+      "name": "Warren Buckley",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1389894?v=4",
+      "profile": "http://creativewebspecialist.co.uk",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

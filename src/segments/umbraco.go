@@ -76,8 +76,6 @@ func (u *Umbraco) Template() string {
 func (u *Umbraco) Init(props properties.Properties, env platform.Environment) {
 	u.props = props
 	u.env = env
-
-	u.env.Debug("HEY HEY HEY")
 }
 
 func (u *Umbraco) TryFindModernUmbraco() bool {

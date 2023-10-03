@@ -39,36 +39,34 @@ type WebConfig struct {
 }
 
 func (u *Umbraco) Enabled() bool {
-	return true
+	u.env.Debug("UMBRACO: Checking if we enable segment")
 
-	// u.env.Debug("UMBRACO: Checking if we enable segment")
+	// If the cwd does not contain a folder called 'umbraco'
+	// Then get out of here...
+	if !u.env.HasFolder(umbracoFolderName) {
+		return false
+	}
 
-	// // If the cwd does not contain a folder called 'umbraco'
-	// // Then get out of here...
-	// if !u.env.HasFolder(umbracoFolderName) {
-	// 	return false
-	// }
+	// Check if we have a .csproj OR a web.config in the CWD
+	// TODO: What if file name on disk is Web.config or web.Config?
+	if !u.env.HasFiles("*.csproj") && !u.env.HasFiles("web.config") {
+		u.env.Debug("UMBRACO: NO CSProj or web.config found")
+		return false
+	}
 
-	// // Check if we have a .csproj OR a web.config in the CWD
-	// // TODO: What if file name on disk is Web.config or web.Config?
-	// if !u.env.HasFiles("*.csproj") && !u.env.HasFiles("web.config") {
-	// 	u.env.Debug("UMBRACO: NO CSProj or web.config found")
-	// 	return false
-	// }
+	// Modern .NET Core based Umbraco
+	if u.TryFindModernUmbraco() {
+		return true
+	}
 
-	// // Modern .NET Core based Umbraco
-	// if u.TryFindModernUmbraco() {
-	// 	return true
-	// }
+	// Legacy .NET Framework based Umbraco
+	if u.TryFindLegacyUmbraco() {
+		return true
+	}
 
-	// // Legacy .NET Framework based Umbraco
-	// if u.TryFindLegacyUmbraco() {
-	// 	return true
-	// }
-
-	// // If we have got here then neither modern or legacy Umbraco was NOT found
-	// u.FoundUmbraco = false
-	// return false
+	// If we have got here then neither modern or legacy Umbraco was NOT found
+	u.FoundUmbraco = false
+	return false
 }
 
 func (u *Umbraco) Template() string {
@@ -78,6 +76,8 @@ func (u *Umbraco) Template() string {
 func (u *Umbraco) Init(props properties.Properties, env platform.Environment) {
 	u.props = props
 	u.env = env
+
+	u.env.Debug("HEY HEY HEY")
 }
 
 func (u *Umbraco) TryFindModernUmbraco() bool {

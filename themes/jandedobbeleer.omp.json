@@ -1,17 +1,27 @@
 {
-  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "$schema": "schema.json",
   "blocks": [
     {
       "alignment": "left",
       "segments": [
         {
-          "background": "#c386f1",
+          "background": "#d886f1",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
           "style": "diamond",
           "template": " {{ .UserName }} ",
           "trailing_diamond": "\ue0b0",
           "type": "session"
+        },
+        {
+          "background": "#f0260b",
+          "foreground": "#ffffff",
+          "style": "powerline",
+          "type": "umbraco",
+          "template": "WARREN IS HERE ",
+          "properties": {
+            "newprop": "HIYA"
+          }
         },
         {
           "background": "#ff479c",

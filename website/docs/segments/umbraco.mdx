@@ -1,0 +1,30 @@
+---
+id: umbraco
+title: Umbraco
+sidebar_label: Umbraco
+---
+
+## What
+
+Display something new.
+
+## Sample Configuration
+
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
+  "type": "umbraco",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#193549",
+  "background": "#ffeb3b",
+  "properties": {
+    "newprop": "\uEFF1"
+  }
+}}/>
+
+## Properties
+
+| Name      | Type     | Description                                 |
+| --------- | -------- | ------------------------------------------- |
+| `newprop` | `string` | the new text to show - defaults to `\uEFF1` |

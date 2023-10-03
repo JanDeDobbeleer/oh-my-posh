@@ -232,6 +232,8 @@ const (
 	TIME SegmentType = "time"
 	// UI5 Tooling segment
 	UI5TOOLING SegmentType = "ui5tooling"
+	// UMBRACO writes the Umbraco version if Umbraco is present
+	UMBRACO SegmentType = "umbraco"
 	// UNITY writes which Unity version is currently active
 	UNITY SegmentType = "unity"
 	// UPGRADE lets you know if you can upgrade Oh My Posh
@@ -323,6 +325,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	TEXT:          func() SegmentWriter { return &segments.Text{} },
 	TIME:          func() SegmentWriter { return &segments.Time{} },
 	UI5TOOLING:    func() SegmentWriter { return &segments.UI5Tooling{} },
+	UMBRACO:       func() SegmentWriter { return &segments.Umbraco{} },
 	UNITY:         func() SegmentWriter { return &segments.Unity{} },
 	UPGRADE:       func() SegmentWriter { return &segments.Upgrade{} },
 	VALA:          func() SegmentWriter { return &segments.Vala{} },

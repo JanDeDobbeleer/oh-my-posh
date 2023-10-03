@@ -496,14 +496,35 @@ func (env *Shell) HasFileInParentDirs(pattern string, depth uint) bool {
 
 func (env *Shell) HasFolder(folder string) bool {
 	defer env.Trace(time.Now(), folder)
-	f, err := os.Stat(folder)
+
+	// the folder param may be a relative path, so we need to convert it to an absolute path
+	if !filepath.IsAbs(folder) {
+		folder = filepath.Join(env.Pwd(), folder)
+	}
+
+	// Get all folders & files in parent folder to see if we can find the folder we are looking for
+	parentFolder := filepath.Dir(folder)
+	matches, err := filepath.Glob(filepath.Join(parentFolder, "*"))
 	if err != nil {
 		env.Debug("false")
 		return false
 	}
-	isDir := f.IsDir()
-	env.DebugF("%t", isDir)
-	return isDir
+
+	for _, match := range matches {
+		if strings.EqualFold(filepath.Base(match), filepath.Base(folder)) {
+			f, err := os.Stat(match)
+			if err != nil {
+				env.Error(err)
+				env.Debug("false")
+				return false
+			}
+			isDir := f.IsDir()
+			env.DebugF("%t", isDir)
+			return isDir
+		}
+	}
+	env.Debug("false")
+	return false
 }
 
 func (env *Shell) ResolveSymlink(path string) (string, error) {

@@ -511,17 +511,18 @@ func (env *Shell) HasFolder(folder string) bool {
 	}
 
 	for _, match := range matches {
-		if strings.EqualFold(filepath.Base(match), filepath.Base(folder)) {
-			f, err := os.Stat(match)
-			if err != nil {
-				env.Error(err)
-				env.Debug("false")
-				return false
-			}
-			isDir := f.IsDir()
-			env.DebugF("%t", isDir)
-			return isDir
+		if !strings.EqualFold(filepath.Base(match), filepath.Base(folder)) {
+			continue
 		}
+		f, err := os.Stat(match)
+		if err != nil {
+			env.Error(err)
+			env.Debug("false")
+			return false
+		}
+		isDir := f.IsDir()
+		env.DebugF("%t", isDir)
+		return isDir
 	}
 	env.Debug("false")
 	return false

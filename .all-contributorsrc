@@ -1964,6 +1964,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "LunarMarathon",
+      "name": "LunarMarathon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/113847439?v=4",
+      "profile": "https://github.com/LunarMarathon",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

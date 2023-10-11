@@ -34,7 +34,7 @@ require (
 	github.com/ConradIrwin/font v0.0.0-20210318200717-ce8d41cc0732
 	github.com/charmbracelet/bubbles v0.16.1
 	github.com/charmbracelet/bubbletea v0.24.2
-	github.com/charmbracelet/lipgloss v0.8.0
+	github.com/charmbracelet/lipgloss v0.9.0
 	github.com/hashicorp/hcl/v2 v2.18.1
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/spf13/cobra v1.7.0

@@ -1,0 +1,96 @@
+{
+  "resource": "internationalbroadcasterschedule",
+  "parameters": {
+    "LeagueID": "00",
+    "Season": "2023",
+    "RegionID": 1,
+    "Date": "10/26/2023",
+    "EST": "Y"
+  },
+  "resultSets": [
+    {
+      "NextGameList": [
+        {
+          "gameID": "0022300075",
+          "vtCity": "Philadelphia",
+          "vtNickName": "76ers",
+          "vtShortName": "Philadelphia",
+          "vtAbbreviation": "PHI",
+          "htCity": "Milwaukee",
+          "htNickName": "Bucks",
+          "htShortName": "Milwaukee",
+          "htAbbreviation": "MIL",
+          "date": "10/26/2023",
+          "time": "07:30 PM",
+          "day": "Thu",
+          "broadcasters": [
+            {
+              "broadcastID": "10",
+              "broadcasterName": "TNT",
+              "tapeDelayComments": ""
+            }
+          ]
+        },
+        {
+          "gameID": "0022300076",
+          "vtCity": "Phoenix",
+          "vtNickName": "Suns",
+          "vtShortName": "Phoenix",
+          "vtAbbreviation": "PHX",
+          "htCity": "Los Angeles",
+          "htNickName": "Lakers",
+          "htShortName": "L.A. Lakers",
+          "htAbbreviation": "LAL",
+          "date": "10/26/2023",
+          "time": "10:00 PM",
+          "day": "Thu",
+          "broadcasters": [
+            {
+              "broadcastID": "10",
+              "broadcasterName": "TNT",
+              "tapeDelayComments": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "CompleteGameList": [
+        {
+          "gameID": "0022300075",
+          "vtCity": "Philadelphia",
+          "vtNickName": "76ers",
+          "vtShortName": "Philadelphia",
+          "vtAbbreviation": "PHI",
+          "htCity": "Milwaukee",
+          "htNickName": "Bucks",
+          "htShortName": "Milwaukee",
+          "htAbbreviation": "MIL",
+          "date": "10/26/2023",
+          "time": "07:30 PM",
+          "day": "Thu",
+          "broadcastID": "10",
+          "broadcasterName": "TNT",
+          "tapeDelayComments": ""
+        },
+        {
+          "gameID": "0022300076",
+          "vtCity": "Phoenix",
+          "vtNickName": "Suns",
+          "vtShortName": "Phoenix",
+          "vtAbbreviation": "PHX",
+          "htCity": "Los Angeles",
+          "htNickName": "Lakers",
+          "htShortName": "L.A. Lakers",
+          "htAbbreviation": "LAL",
+          "date": "10/26/2023",
+          "time": "10:00 PM",
+          "day": "Thu",
+          "broadcastID": "10",
+          "broadcasterName": "TNT",
+          "tapeDelayComments": ""
+        }
+      ]
+    }
+  ]
+}

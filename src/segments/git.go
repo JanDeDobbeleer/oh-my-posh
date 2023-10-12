@@ -167,6 +167,9 @@ func (g *Git) Enabled() bool {
 
 	g.RepoName = platform.Base(g.env, g.convertToLinuxPath(g.realDir))
 
+	g.Working = &GitStatus{}
+	g.Staging = &GitStatus{}
+
 	if g.IsBare {
 		g.getBareRepoInfo()
 		return true
@@ -186,8 +189,6 @@ func (g *Git) Enabled() bool {
 		g.setBranchStatus()
 	} else {
 		g.setPrettyHEADName()
-		g.Working = &GitStatus{}
-		g.Staging = &GitStatus{}
 	}
 	if g.props.GetBool(FetchUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()

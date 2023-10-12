@@ -1,0 +1,85 @@
+---
+id: nba
+title: NBA
+sidebar_label: NBA
+---
+
+## What
+
+The NBA segment allows you to display the scheduling and score information for your
+favorite NBA team!
+
+## Sample Configuration
+
+In order to use the NBA segment, you need to provide a valid team
+[tri-code](https://liaison.reuters.com/tools/sports-team-codes) that you'd
+like to get data for inside of the configuration. For example, if you'd like
+to get information for the Los Angeles Lakers, you'd need to use the "LAL"
+tri-code.
+
+This example uses "LAL" to get information for the Los Angeles Lakers. It also
+sets the foreground and background colors to match the theming for the team.
+If you are interested in getting information about specific foreground and
+background colors you could use for other teams, you can explore some of
+the color schemes [here](https://teamcolorcodes.com/nba-team-color-codes/).
+
+It is recommended that you set the HTTP timeout to a higher value than the
+normal default in case it takes some time to gather the scoreboard information.
+In this case we have the http_timeout set to 1500.
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    background: "#e9ac2f",
+    foreground: "#8748dc",
+    leading_diamond: "\ue0b6",
+    style: "diamond",
+    trailing_diamond: "\ue0b0",
+    type: "nba",
+    properties: {
+      team: "LAL",
+      http_timeout: 1500,
+    },
+  }}
+/>
+
+## Properties
+
+| Name           | Type     | Description                                                                                                                                        |
+| -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `team`         | `string` | tri-code for the NBA team you want to get data for                                                                                                 |
+| `days_offset`  | `int`    | how many days in advance you wish to see that information for, defaults to 8                                                                       |
+| `http_timeout` | `int`    | How long do you want to wait before you want to see your prompt more than your sugar? I figure a half second is a good default - defaults to 500ms |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+\U000F0806 {{ .HomeTeam}}{{ if .HasStats }} ({{.HomeTeamWins}}-{{.HomeTeamLosses}}){{ end }}{{ if .Started }}:{{.HomeScore}}{{ end }} vs {{ .AwayTeam}}{{ if .HasStats }} ({{.AwayTeamWins}}-{{.AwayTeamLosses}}){{ end }}{{ if .Started }}:{{.AwayScore}}{{ end }} | {{ if not .Started }}{{.GameDate}} | {{ end }}{{.Time}}
+```
+
+:::
+
+### Properties
+
+| Name            | Type      | Description                                                 |
+| --------------- | --------- | ----------------------------------------------------------- |
+| .HomeTeam       | `string`  | home team for the upcoming game                             |
+| .AwayTeam       | `string`  | away team for the upcoming game                             |
+| .Time           | `string`  | time (EST) that the upcoming game will start                |
+| .GameDate       | `string`  | date the game will happen                                   |
+| .StartTimeUTC   | `string`  | time (UTC) the game will start                              |
+| .GameStatus     | `integer` | integer, 1 = scheduled, 2 = in progress, 3 = finished       |
+| .HomeScore      | `int`     | score of the home team                                      |
+| .AwayScore      | `int`     | score of the away team                                      |
+| .HomeTeamWins   | `int`     | number of wins the home team currently has for the season   |
+| .HomeTeamLosses | `int`     | number of losses the home team currently has for the season |
+| .AwayTeamWins   | `int`     | number of wins the away team currently has for the season   |
+| .AwayTeamLosses | `int`     | number of losses the away team currently has for the season |
+| .Started        | `boolean` | if the game was started or not                              |
+| .HasStats       | `boolean` | if the game has game stats or not                           |
+
+[templates]: /docs/configuration/templates
+[nf-search]: https://www.nerdfonts.com/cheat-sheet

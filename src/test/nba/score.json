@@ -1,0 +1,699 @@
+{
+  "meta": {
+    "version": 1,
+    "request": "https://nba-prod-us-east-1-mediaops-stats.s3.amazonaws.com/NBA/liveData/scoreboard/todaysScoreboard_00.json",
+    "time": "2023-10-19 01:17:57.1757",
+    "code": 200
+  },
+  "scoreboard": {
+    "gameDate": "2023-10-19",
+    "leagueId": "00",
+    "leagueName": "National Basketball Association",
+    "games": [
+      {
+        "gameId": "0012300060",
+        "gameCode": "20231019/BOSCHA",
+        "gameStatus": 2,
+        "gameStatusText": "Q1 8:23",
+        "period": 0,
+        "gameClock": "Q1 8:23",
+        "gameTimeUTC": "2023-10-19T23:00:00Z",
+        "gameEt": "2023-10-19T19:00:00Z",
+        "regulationPeriods": 4,
+        "ifNecessary": false,
+        "seriesGameNumber": "",
+        "seriesText": "Preseason",
+        "seriesConference": "",
+        "poRoundDesc": "",
+        "gameSubtype": "",
+        "homeTeam": {
+          "teamId": 1610612766,
+          "teamName": "Hornets",
+          "teamCity": "Charlotte",
+          "teamTricode": "CHA",
+          "wins": 1,
+          "losses": 0,
+          "score": 13,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "awayTeam": {
+          "teamId": 1610612738,
+          "teamName": "Celtics",
+          "teamCity": "Boston",
+          "teamTricode": "BOS",
+          "wins": 0,
+          "losses": 1,
+          "score": 8,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "gameLeaders": {
+          "homeLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "CHA",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          },
+          "awayLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "BOS",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          }
+        },
+        "pbOdds": {
+          "team": null,
+          "odds": 0.0,
+          "suspended": 0
+        }
+      },
+      {
+        "gameId": "0012300061",
+        "gameCode": "20231019/MINCHI",
+        "gameStatus": 1,
+        "gameStatusText": "8:00 pm ET",
+        "period": 0,
+        "gameClock": "",
+        "gameTimeUTC": "2023-10-20T00:00:00Z",
+        "gameEt": "2023-10-19T20:00:00Z",
+        "regulationPeriods": 4,
+        "ifNecessary": false,
+        "seriesGameNumber": "",
+        "seriesText": "Preseason",
+        "seriesConference": "",
+        "poRoundDesc": "",
+        "gameSubtype": "",
+        "homeTeam": {
+          "teamId": 1610612741,
+          "teamName": "Bulls",
+          "teamCity": "Chicago",
+          "teamTricode": "CHI",
+          "wins": 0,
+          "losses": 0,
+          "score": 0,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "awayTeam": {
+          "teamId": 1610612750,
+          "teamName": "Timberwolves",
+          "teamCity": "Minnesota",
+          "teamTricode": "MIN",
+          "wins": 0,
+          "losses": 0,
+          "score": 0,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "gameLeaders": {
+          "homeLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "CHI",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          },
+          "awayLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "MIN",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          }
+        },
+        "pbOdds": {
+          "team": null,
+          "odds": 0.0,
+          "suspended": 0
+        }
+      },
+      {
+        "gameId": "0012300062",
+        "gameCode": "20231019/DETOKC",
+        "gameStatus": 1,
+        "gameStatusText": "8:00 pm ET",
+        "period": 0,
+        "gameClock": "",
+        "gameTimeUTC": "2023-10-20T00:00:00Z",
+        "gameEt": "2023-10-19T20:00:00Z",
+        "regulationPeriods": 4,
+        "ifNecessary": false,
+        "seriesGameNumber": "",
+        "seriesText": "Preseason",
+        "seriesConference": "",
+        "poRoundDesc": "",
+        "gameSubtype": "",
+        "homeTeam": {
+          "teamId": 1610612760,
+          "teamName": "Thunder",
+          "teamCity": "Oklahoma City",
+          "teamTricode": "OKC",
+          "wins": 0,
+          "losses": 0,
+          "score": 0,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "awayTeam": {
+          "teamId": 1610612765,
+          "teamName": "Pistons",
+          "teamCity": "Detroit",
+          "teamTricode": "DET",
+          "wins": 0,
+          "losses": 0,
+          "score": 0,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "gameLeaders": {
+          "homeLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "OKC",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          },
+          "awayLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "DET",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          }
+        },
+        "pbOdds": {
+          "team": null,
+          "odds": 0.0,
+          "suspended": 0
+        }
+      },
+      {
+        "gameId": "0012300063",
+        "gameCode": "20231019/PHXLAL",
+        "gameStatus": 1,
+        "gameStatusText": "10:00 pm ET",
+        "period": 0,
+        "gameClock": "",
+        "gameTimeUTC": "2023-10-20T02:00:00Z",
+        "gameEt": "2023-10-19T22:00:00Z",
+        "regulationPeriods": 4,
+        "ifNecessary": false,
+        "seriesGameNumber": "",
+        "seriesText": "Preseason",
+        "seriesConference": "",
+        "poRoundDesc": "",
+        "gameSubtype": "",
+        "homeTeam": {
+          "teamId": 1610612747,
+          "teamName": "Lakers",
+          "teamCity": "Los Angeles",
+          "teamTricode": "LAL",
+          "wins": 0,
+          "losses": 0,
+          "score": 0,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "awayTeam": {
+          "teamId": 1610612756,
+          "teamName": "Suns",
+          "teamCity": "Phoenix",
+          "teamTricode": "PHX",
+          "wins": 0,
+          "losses": 0,
+          "score": 0,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "gameLeaders": {
+          "homeLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "LAL",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          },
+          "awayLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "PHX",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          }
+        },
+        "pbOdds": {
+          "team": null,
+          "odds": 0.0,
+          "suspended": 0
+        }
+      },
+      {
+        "gameId": "0012300064",
+        "gameCode": "20231019/DENLAC",
+        "gameStatus": 1,
+        "gameStatusText": "10:00 pm ET",
+        "period": 0,
+        "gameClock": "",
+        "gameTimeUTC": "2023-10-20T02:00:00Z",
+        "gameEt": "2023-10-19T22:00:00Z",
+        "regulationPeriods": 4,
+        "ifNecessary": false,
+        "seriesGameNumber": "",
+        "seriesText": "Preseason",
+        "seriesConference": "",
+        "poRoundDesc": "",
+        "gameSubtype": "",
+        "homeTeam": {
+          "teamId": 1610612746,
+          "teamName": "Clippers",
+          "teamCity": "LA",
+          "teamTricode": "LAC",
+          "wins": 0,
+          "losses": 0,
+          "score": 0,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "awayTeam": {
+          "teamId": 1610612743,
+          "teamName": "Nuggets",
+          "teamCity": "Denver",
+          "teamTricode": "DEN",
+          "wins": 0,
+          "losses": 0,
+          "score": 0,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "gameLeaders": {
+          "homeLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "LAC",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          },
+          "awayLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "DEN",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          }
+        },
+        "pbOdds": {
+          "team": null,
+          "odds": 0.0,
+          "suspended": 0
+        }
+      },
+      {
+        "gameId": "0012300065",
+        "gameCode": "20231019/UTASAC",
+        "gameStatus": 1,
+        "gameStatusText": "10:00 pm ET",
+        "period": 0,
+        "gameClock": "",
+        "gameTimeUTC": "2023-10-20T02:00:00Z",
+        "gameEt": "2023-10-19T22:00:00Z",
+        "regulationPeriods": 4,
+        "ifNecessary": false,
+        "seriesGameNumber": "",
+        "seriesText": "Preseason",
+        "seriesConference": "",
+        "poRoundDesc": "",
+        "gameSubtype": "",
+        "homeTeam": {
+          "teamId": 1610612758,
+          "teamName": "Kings",
+          "teamCity": "Sacramento",
+          "teamTricode": "SAC",
+          "wins": 0,
+          "losses": 0,
+          "score": 0,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "awayTeam": {
+          "teamId": 1610612762,
+          "teamName": "Jazz",
+          "teamCity": "Utah",
+          "teamTricode": "UTA",
+          "wins": 0,
+          "losses": 0,
+          "score": 0,
+          "seed": null,
+          "inBonus": null,
+          "timeoutsRemaining": 0,
+          "periods": [
+            {
+              "period": 1,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 2,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 3,
+              "periodType": "REGULAR",
+              "score": 0
+            },
+            {
+              "period": 4,
+              "periodType": "REGULAR",
+              "score": 0
+            }
+          ]
+        },
+        "gameLeaders": {
+          "homeLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "SAC",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          },
+          "awayLeaders": {
+            "personId": 0,
+            "name": "",
+            "jerseyNum": "",
+            "position": "",
+            "teamTricode": "UTA",
+            "playerSlug": null,
+            "points": 0,
+            "rebounds": 0,
+            "assists": 0
+          }
+        },
+        "pbOdds": {
+          "team": null,
+          "odds": 0.0,
+          "suspended": 0
+        }
+      }
+    ]
+  }
+}

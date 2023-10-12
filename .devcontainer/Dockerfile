@@ -38,11 +38,6 @@ RUN echo 'deb http://download.opensuse.org/repositories/shells:/fish:/release:/3
 
 ARG USERNAME=vscode
 
-# Download the oh-my-posh binary
-RUN mkdir /home/${USERNAME}/bin; \
-    wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-$(dpkg --print-architecture) -O /home/${USERNAME}/bin/oh-my-posh; \
-    chmod +x /home/${USERNAME}/bin/oh-my-posh; \
-    chown ${USERNAME}: /home/${USERNAME}/bin;
 
 # NOTE: devcontainers are Linux-only at this time but when
 # Windows or Darwin is supported someone will need to improve

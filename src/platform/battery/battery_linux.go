@@ -24,7 +24,6 @@ package battery
 import (
 	"errors"
 	"fmt"
-	"io/ioutil" //nolint:staticcheck,nolintlint
 	"os"
 	"path/filepath"
 	"strconv"
@@ -43,7 +42,7 @@ func newState(name string) (State, error) {
 }
 
 func readFloat(path, filename string) (float64, error) {
-	str, err := ioutil.ReadFile(filepath.Join(path, filename))
+	str, err := os.ReadFile(filepath.Join(path, filename))
 	if err != nil {
 		return 0, err
 	}
@@ -66,12 +65,12 @@ func readAmp(path, filename string, volts float64) (float64, error) {
 }
 
 func isBattery(path string) bool {
-	t, err := ioutil.ReadFile(filepath.Join(path, "type"))
+	t, err := os.ReadFile(filepath.Join(path, "type"))
 	return err == nil && string(t) == "Battery\n"
 }
 
 func getBatteryFiles() ([]string, error) {
-	files, err := ioutil.ReadDir(sysfs)
+	files, err := os.ReadDir(sysfs)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +118,7 @@ func getByPath(path string) (*battery, error) {
 		}
 	}
 
-	state, err := ioutil.ReadFile(filepath.Join(path, "status"))
+	state, err := os.ReadFile(filepath.Join(path, "status"))
 	if err != nil || len(state) == 0 {
 		return nil, errors.New("unable to parse or invalid status")
 	}

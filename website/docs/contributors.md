@@ -285,6 +285,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/deepak-dev-96"><img src="https://avatars.githubusercontent.com/u/134447761?v=4?s=100" width="100px;" alt="Deepak Dev"/><br /><sub><b>Deepak Dev</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=deepak-dev-96" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://creativewebspecialist.co.uk"><img src="https://avatars.githubusercontent.com/u/1389894?v=4?s=100" width="100px;" alt="Warren Buckley"/><br /><sub><b>Warren Buckley</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=warrenbuckley" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/LunarMarathon"><img src="https://avatars.githubusercontent.com/u/113847439?v=4?s=100" width="100px;" alt="LunarMarathon"/><br /><sub><b>LunarMarathon</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=LunarMarathon" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://ginglis.me"><img src="https://avatars.githubusercontent.com/u/43075615?v=4?s=100" width="100px;" alt="Gavin Inglis"/><br /><sub><b>Gavin Inglis</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ginglis13" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

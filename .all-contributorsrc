@@ -1973,6 +1973,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ginglis13",
+      "name": "Gavin Inglis",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43075615?v=4",
+      "profile": "https://ginglis.me",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

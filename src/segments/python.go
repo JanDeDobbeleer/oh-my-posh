@@ -31,7 +31,7 @@ func (p *Python) Init(props properties.Properties, env platform.Environment) {
 		env:         env,
 		props:       props,
 		extensions:  []string{"*.py", "*.ipynb", "pyproject.toml", "venv.bak"},
-		folders:     []string{".venv", "venv", "virtualenv", "env", "venv-win", "pyenv-win"},
+		folders:     []string{".venv", "venv", "virtualenv", "venv-win", "pyenv-win"},
 		loadContext: p.loadContext,
 		inContext:   p.inContext,
 		commands: []*cmd{

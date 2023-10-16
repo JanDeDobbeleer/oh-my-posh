@@ -5,7 +5,6 @@
 package font
 
 import (
-	"io/ioutil" //nolint:staticcheck,nolintlint
 	"os"
 	"path"
 	"strings"
@@ -27,5 +26,5 @@ func install(font *Font, _ bool) error {
 		return err
 	}
 
-	return ioutil.WriteFile(fullPath, font.Data, 0644)
+	return os.WriteFile(fullPath, font.Data, 0644)
 }

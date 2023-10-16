@@ -1,7 +1,6 @@
 package engine
 
 import (
-	"io/ioutil" //nolint:staticcheck,nolintlint
 	"os"
 	"path/filepath"
 	"testing"
@@ -29,7 +28,7 @@ var cases = []struct {
 
 func runImageTest(config, content string) (string, error) {
 	poshImagePath := "jandedobbeleer.png"
-	file, err := ioutil.TempFile("", poshImagePath)
+	file, err := os.CreateTemp("", poshImagePath)
 	if err != nil {
 		return "", err
 	}

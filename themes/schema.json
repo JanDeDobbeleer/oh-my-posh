@@ -3,7 +3,7 @@
   "$id": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
   "type": "object",
   "title": "The Oh My Posh theme definition",
-  "description": "https://ohmyposh.dev/docs/configuration/overview",
+  "description": "https://ohmyposh.dev/docs/configuration/general",
   "definitions": {
     "color": {
       "anyOf": [
@@ -3295,13 +3295,13 @@
     "final_space": {
       "type": "boolean",
       "title": "Final Space",
-      "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
+      "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": true
     },
     "disable_cursor_positioning": {
       "type": "boolean",
       "title": "Disable Cursor Positioning",
-      "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
+      "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": false
     },
     "shell_integration": {
@@ -3312,7 +3312,7 @@
     "pwd": {
       "type": "string",
       "title": "Enable OSC99/7/51",
-      "description": "https://ohmyposh.dev/docs/configuration/overview#general-settings",
+      "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": ""
     },
     "console_title_template": {
@@ -3328,7 +3328,7 @@
       "type": "array",
       "title": "Block array",
       "default": [],
-      "description": "https://ohmyposh.dev/docs/configuration/overview#blocks",
+      "description": "https://ohmyposh.dev/docs/configuration/general#blocks",
       "items": {
         "$ref": "#/definitions/block"
       }

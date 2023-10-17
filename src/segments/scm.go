@@ -88,10 +88,11 @@ type scm struct {
 	Dir             string // actual repo root directory
 	RepoName        string
 
-	workingDir string
-	rootDir    string
-	realDir    string // real directory (can be different from current path when in worktrees)
-	command    string
+	workingDir     string
+	rootDir        string
+	realDir        string // real directory (can be different from current path when in worktrees)
+	command        string
+	nativeFallback bool
 }
 
 const (
@@ -111,13 +112,16 @@ func (s *scm) Init(props properties.Properties, env platform.Environment) {
 func (s *scm) truncateBranch(branch string) string {
 	fullBranchPath := s.props.GetBool(FullBranchPath, true)
 	maxLength := s.props.GetInt(BranchMaxLength, 0)
+
 	if !fullBranchPath && strings.Contains(branch, "/") {
 		index := strings.LastIndex(branch, "/")
 		branch = branch[index+1:]
 	}
+
 	if maxLength == 0 || len(branch) <= maxLength {
 		return branch
 	}
+
 	symbol := s.props.GetString(TruncateSymbol, "")
 	return branch[0:maxLength] + symbol
 }
@@ -135,9 +139,11 @@ func (s *scm) FileContents(folder, file string) string {
 }
 
 func (s *scm) convertToWindowsPath(path string) string {
-	if s.env.GOOS() == platform.WINDOWS || s.IsWslSharedPath {
+	// only convert when in Windows, or when in a WSL shared folder and not using the native fallback
+	if s.env.GOOS() == platform.WINDOWS || (s.IsWslSharedPath && !s.nativeFallback) {
 		return s.env.ConvertToWindowsPath(path)
 	}
+
 	return path
 }
 
@@ -145,6 +151,7 @@ func (s *scm) convertToLinuxPath(path string) string {
 	if !s.IsWslSharedPath {
 		return path
 	}
+
 	return s.env.ConvertToLinuxPath(path)
 }
 
@@ -152,24 +159,30 @@ func (s *scm) hasCommand(command string) bool {
 	if len(s.command) > 0 {
 		return true
 	}
+
 	// when in a WSL shared folder, we must use command.exe and convert paths accordingly
-	// for worktrees, stashes, and path to work
+	// for worktrees, stashes, and path to work, except when native_fallback is set
 	s.IsWslSharedPath = s.env.InWSLSharedDrive()
 	if s.env.GOOS() == platform.WINDOWS || s.IsWslSharedPath {
 		command += ".exe"
 	}
+
 	if s.env.HasCommand(command) {
 		s.command = command
 		return true
 	}
+
 	s.CommandMissing = true
+
 	// only use the native fallback when set by the user
 	if s.IsWslSharedPath && s.props.GetBool(NativeFallback, false) {
 		command = strings.TrimSuffix(command, ".exe")
 		if s.env.HasCommand(command) {
 			s.command = command
+			s.nativeFallback = true
 			return true
 		}
 	}
+
 	return false
 }

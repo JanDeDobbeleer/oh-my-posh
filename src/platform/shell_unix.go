@@ -100,14 +100,22 @@ func (env *Shell) Platform() string {
 
 func (env *Shell) CachePath() string {
 	defer env.Trace(time.Now())
+
+	// allow the user to set the cache path using OMP_CACHE_DIR
+	if cachePath := returnOrBuildCachePath(env.Getenv("OMP_CACHE_DIR")); len(cachePath) != 0 {
+		return cachePath
+	}
+
 	// get XDG_CACHE_HOME if present
 	if cachePath := returnOrBuildCachePath(env.Getenv("XDG_CACHE_HOME")); len(cachePath) != 0 {
 		return cachePath
 	}
+
 	// HOME cache folder
 	if cachePath := returnOrBuildCachePath(env.Home() + "/.cache"); len(cachePath) != 0 {
 		return cachePath
 	}
+
 	return env.Home()
 }
 

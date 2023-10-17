@@ -287,6 +287,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/LunarMarathon"><img src="https://avatars.githubusercontent.com/u/113847439?v=4?s=100" width="100px;" alt="LunarMarathon"/><br /><sub><b>LunarMarathon</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=LunarMarathon" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://ginglis.me"><img src="https://avatars.githubusercontent.com/u/43075615?v=4?s=100" width="100px;" alt="Gavin Inglis"/><br /><sub><b>Gavin Inglis</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ginglis13" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://jaliyaudagedara.blogspot.com"><img src="https://avatars.githubusercontent.com/u/5653381?v=4?s=100" width="100px;" alt="Jaliya Udagedara"/><br /><sub><b>Jaliya Udagedara</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jaliyaudagedara" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/BPplays"><img src="https://avatars.githubusercontent.com/u/58504799?v=4?s=100" width="100px;" alt="BPplays"/><br /><sub><b>BPplays</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=BPplays" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

@@ -16,7 +16,9 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/1829553?v=4",
       "profile": "https://github.com/lnu",
       "contributions": [
-        "code"
+        "code",
+        "design",
+        "doc"
       ]
     },
     {
@@ -1990,6 +1992,15 @@
       "profile": "http://jaliyaudagedara.blogspot.com",
       "contributions": [
         "doc"
+      ]
+    },
+    {
+      "login": "BPplays",
+      "name": "BPplays",
+      "avatar_url": "https://avatars.githubusercontent.com/u/58504799?v=4",
+      "profile": "https://github.com/BPplays",
+      "contributions": [
+        "code"
       ]
     }
   ],

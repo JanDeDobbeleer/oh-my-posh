@@ -13,8 +13,8 @@ require (
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gookit/color v1.5.4
-	github.com/gookit/config/v2 v2.2.3
-	github.com/gookit/goutil v0.6.10 // indirect
+	github.com/gookit/config/v2 v2.2.4
+	github.com/gookit/goutil v0.6.14 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0
@@ -35,7 +35,7 @@ require (
 	github.com/charmbracelet/bubbles v0.16.1
 	github.com/charmbracelet/bubbletea v0.24.2
 	github.com/charmbracelet/lipgloss v0.9.1
-	github.com/hashicorp/hcl/v2 v2.18.1
+	github.com/hashicorp/hcl/v2 v2.19.0
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
@@ -71,7 +71,7 @@ require (
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/fatih/color v1.15.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/goccy/go-yaml v1.11.0 // indirect
+	github.com/goccy/go-yaml v1.11.2 // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
@@ -89,8 +89,8 @@ require (
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
 	github.com/zclconf/go-cty v1.13.1 // indirect
-	golang.org/x/sync v0.3.0 // indirect
-	golang.org/x/term v0.9.0 // indirect
+	golang.org/x/sync v0.4.0 // indirect
+	golang.org/x/term v0.13.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 )
 

@@ -127,8 +127,9 @@ install() {
     info "⬇️  Downloading oh-my-posh from ${url}"
 
     http_response=$(curl -s -f -L $url -o $executable -w "%{http_code}")
-    if [ $http_response != "200" ]; then
-        error "Unable to download executable at ${url}\nPlease validate your connection and/or proxy settings"
+
+    if [ $http_response != "200" ] || [ ! -f $executable ]; then
+        error "Unable to download executable at ${url}\nPlease validate your curl, connection and/or proxy settings"
     fi
 
     chmod +x $executable
@@ -139,15 +140,19 @@ install() {
     info "🎨 Installing oh-my-posh themes in ${cache_dir}/themes\n"
 
     theme_dir="${cache_dir}/themes"
-    url="https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip"
     mkdir -p $theme_dir
-    http_response=$(curl -s -f -L $url -o ${cache_dir}/themes.zip -w "%{http_code}")
-    if [ $http_response == "200" ]; then
-        unzip -o -q ${cache_dir}/themes.zip -d $theme_dir
+    zip_file="${cache_dir}/themes.zip"
+
+    url="https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip"
+
+    http_response=$(curl -s -f -L $url -o $zip_file -w "%{http_code}")
+
+    if [ $http_response == "200" ] && [ -f $zip_file ]; then
+        unzip -o -q $zip_file -d $theme_dir
         chmod u+rw ${theme_dir}/*.omp.*
-        rm ${cache_dir}/themes.zip
+        rm $zip_file
     else
-        warn "Unable to download themes at ${url}\nPlease validate your connection and/or proxy settings"
+        warn "Unable to download themes at ${url}\nPlease validate your curl, connection and/or proxy settings"
     fi
 
     info "🚀 Installation complete.\n\nYou can follow the instructions at https://ohmyposh.dev/docs/installation/prompt"

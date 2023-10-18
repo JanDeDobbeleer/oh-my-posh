@@ -301,13 +301,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $List
         )
 
-        if ($Path -eq "") {
-            do {
-                $temp = Read-Host 'Please enter the themes path'
-            }
-            while (-not (Test-Path -LiteralPath $temp))
-            $Path = (Resolve-Path -Path $temp).ProviderPath
+        while (-not (Test-Path -LiteralPath $Path)) {
+            $Path = Read-Host 'Please enter the themes path'
         }
+
+        $Path = (Resolve-Path -Path $temp).ProviderPath
 
         $logo = @'
    __  _____ _      ___  ___       ______         _      __

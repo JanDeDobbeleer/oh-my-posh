@@ -41,7 +41,7 @@
           "foreground": "#43CCEA",
           "properties": {
             "folder_icon": "\ue5fe",
-            "folder_separator_icon": "<transparent> \ue0bd </>",
+            "folder_separator_icon": " <#000000>\ue0bd </>",
             "home_icon": "\ueb06",
             "style": "agnoster_short"
           },

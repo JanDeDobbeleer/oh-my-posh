@@ -10,6 +10,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"golang.org/x/exp/slices"
 
 	"github.com/BurntSushi/toml"
 )
@@ -110,7 +111,7 @@ func (n *Project) Init(props properties.Properties, env platform.Environment) {
 		},
 		{
 			Name:    "dotnet",
-			Files:   []string{"*.vbproj", "*.fsproj", "*.csproj"},
+			Files:   []string{"*.sln", "*.slnf", "*.vbproj", "*.fsproj", "*.csproj"},
 			Fetcher: n.getDotnetProject,
 		},
 		{
@@ -205,18 +206,22 @@ func (n *Project) getNuSpecPackage(_ ProjectItem) *ProjectData {
 }
 
 func (n *Project) getDotnetProject(_ ProjectItem) *ProjectData {
-	files := n.env.LsDir(n.env.Pwd())
 	var name string
 	var content string
+
+	extensions := []string{".sln", ".slnf", ".csproj", ".fsproj", ".vbproj"}
+	files := n.env.LsDir(n.env.Pwd())
+
 	// get the first match only
 	for _, file := range files {
 		extension := filepath.Ext(file.Name())
-		if extension == ".csproj" || extension == ".fsproj" || extension == ".vbproj" {
+		if slices.Contains(extensions, extension) {
 			name = strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
 			content = n.env.FileContent(file.Name())
 			break
 		}
 	}
+
 	// the name of the parameter may differ depending on the version,
 	// so instead of xml.Unmarshal() we use regex:
 	tag := "(?P<TAG><.*TargetFramework.*>(?P<TFM>.*)</.*TargetFramework.*>)"

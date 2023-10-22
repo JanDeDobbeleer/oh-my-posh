@@ -2,7 +2,6 @@ package segments
 
 import (
 	"encoding/xml"
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -45,7 +44,7 @@ type FindUmbracoResult struct {
 	FoundUmbracoFolder bool
 	FoundWebConfig     bool
 	FoundCSProj        bool
-	FolderPath         string
+	FilePath           string
 }
 
 func (u *Umbraco) Enabled() bool {
@@ -74,13 +73,13 @@ func (u *Umbraco) Enabled() bool {
 	// Modern .NET Core based Umbraco
 	if findUmbracoResults.FoundCSProj {
 		u.env.Debug("UMBRACO: Checking for modern Umbraco as we have found .csproj file")
-		return u.TryFindModernUmbraco(findUmbracoResults.FolderPath)
+		return u.TryFindModernUmbraco(findUmbracoResults.FilePath)
 	}
 
 	// Legacy .NET Framework based Umbraco
 	if findUmbracoResults.FoundWebConfig {
 		u.env.Debug("UMBRACO: Checking for legacy Umbraco as we have found web.config file")
-		return u.TryFindLegacyUmbraco(findUmbracoResults.FolderPath)
+		return u.TryFindLegacyUmbraco(findUmbracoResults.FilePath)
 	}
 
 	// If we have got here then neither modern or legacy Umbraco was NOT found
@@ -103,8 +102,6 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (*FindUmbracoResult, error)
 	results := FindUmbracoResult{}
 
 	for {
-		fmt.Println("Checking " + currentFolder)
-
 		// Check if a directory named "Umbraco" exists in the current directory
 		files, err := os.ReadDir(currentFolder)
 		if err != nil {
@@ -123,20 +120,30 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (*FindUmbracoResult, error)
 			if !file.IsDir() && strings.EqualFold(file.Name(), umbracoWebConfig) {
 				u.env.Debug("UMBRACO: Found a web.config file in " + currentFolder)
 				results.FoundWebConfig = true
+				results.FilePath = filepath.Join(currentFolder, file.Name())
 			}
 
 			// Check if the item is a file AND has file extension of .csproj regardless of casing
 			if !file.IsDir() && strings.EqualFold(filepath.Ext(file.Name()), ".csproj") {
 				u.env.Debug("UMBRACO: Found a .csproj file in " + currentFolder)
 				results.FoundCSProj = true
+				results.FilePath = filepath.Join(currentFolder, file.Name())
 			}
 
 			// If we have found an Umbraco folder AND a .csproj OR  an Umbraco folder AND a web.config file
 			// Then we can break the for loop as we have found what we need
 			if (results.FoundUmbracoFolder && results.FoundCSProj) || (results.FoundUmbracoFolder && results.FoundWebConfig) {
-				results.FolderPath = currentFolder
+				// Break out the loop for checking the collection of files in the current folder
 				break
 			}
+		}
+
+		// If we have found an Umbraco folder AND a .csproj OR  an Umbraco folder AND a web.config file
+		// Then we can break the for loop as we have found what we need
+		if (results.FoundUmbracoFolder && results.FoundCSProj) || (results.FoundUmbracoFolder && results.FoundWebConfig) {
+			// Same logic in the inner for loop
+			// But we will BREAK out and stop checking for parent folders
+			break
 		}
 
 		// If we've reached the root directory, stop
@@ -153,49 +160,34 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (*FindUmbracoResult, error)
 }
 
 func (u *Umbraco) TryFindModernUmbraco(foundCSProjPath string) bool {
-	// Check we have one or more .csproj files in the CWD
-	if !u.env.HasFiles("*.csproj") {
+	// Check the passed in filepath is not empty
+	if foundCSProjPath == "" {
+		u.env.Debug("UMBRACO: No .CSProj file path passed in")
 		return false
 	}
 
-	// Get a list of all files that match the search pattern
-	// Some folders could have multiple .csproj files in them
-	searchPattern := "*.csproj"
+	u.env.Debug("UMBRACO: Trying to open file at " + foundCSProjPath)
 
-	// Get a list of all files that match the search pattern
-	files, err := filepath.Glob(searchPattern)
+	// Read the file contents of the csproj file
+	contents := u.env.FileContent(foundCSProjPath)
+
+	// XML Unmarshal - map the contents of the file to the CSProj struct
+	csProjPackages := CSProj{}
+	err := xml.Unmarshal([]byte(contents), &csProjPackages)
 
 	if err != nil {
-		u.env.Debug("UMBRACO: Error while searching for .csproj files")
+		u.env.Debug("UMBRACO: Error while trying to parse XML of .csproj file")
 		u.env.Debug(err.Error())
-		return false
 	}
 
-	// Loop over all the files that have a .csproj extension
-	for _, file := range files {
-		u.env.Debug("UMBRACO: Trying to open file at " + file)
+	// Loop over all the package references
+	for _, packageReference := range csProjPackages.PackageReferences {
+		if strings.EqualFold(packageReference.Name, "umbraco.cms") {
+			u.IsModernUmbraco = true
+			u.FoundUmbraco = true
+			u.Version = packageReference.Version
 
-		// Read the file contents of the csproj file
-		contents := u.env.FileContent(file)
-
-		// XML Unmarshal - map the contents of the file to the CSProj struct
-		csProjPackages := CSProj{}
-		err := xml.Unmarshal([]byte(contents), &csProjPackages)
-
-		if err != nil {
-			u.env.Debug("UMBRACO: Error while trying to parse XML of .csproj file")
-			u.env.Debug(err.Error())
-		}
-
-		// Loop over all the package references
-		for _, packageReference := range csProjPackages.PackageReferences {
-			if strings.EqualFold(packageReference.Name, "umbraco.cms") {
-				u.IsModernUmbraco = true
-				u.FoundUmbraco = true
-				u.Version = packageReference.Version
-
-				return true
-			}
+			return true
 		}
 	}
 
@@ -203,12 +195,16 @@ func (u *Umbraco) TryFindModernUmbraco(foundCSProjPath string) bool {
 }
 
 func (u *Umbraco) TryFindLegacyUmbraco(foundWebConfigPath string) bool {
-	if !u.env.HasFiles(umbracoWebConfig) {
+	// Check the passed in filepath is not empty
+	if foundWebConfigPath == "" {
+		u.env.Debug("UMBRACO: No web.config file path passed in")
 		return false
 	}
 
-	// Read the file contents of the web.config in the CWD
-	contents := u.env.FileContent(umbracoWebConfig)
+	u.env.Debug("UMBRACO: Trying to open file at " + foundWebConfigPath)
+
+	// Read the file contents of the web.config
+	contents := u.env.FileContent(foundWebConfigPath)
 
 	// XML Unmarshal - web.config all AppSettings keys
 	webConfigAppSettings := WebConfig{}

@@ -5,6 +5,19 @@
       "alignment": "left",
       "segments": [
         {
+          "background": "#d886f1",
+          "foreground": "#ffffff",
+          "style": "diamond",
+          "leading_diamond": "\ue0b6",
+          "trailing_diamond": "\ue0b0",
+          "type": "umbraco",
+          "template": "\udb81\udd49 {{ .Version }} ",
+          "background_templates": [
+            "{{ if (.IsModernUmbraco) }}#3544B1{{ end }}",
+            "{{ if (.IsLegacyUmbraco) }}#F79C37{{ end }}"
+          ]
+        },
+        {
           "background": "#c386f1",
           "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",

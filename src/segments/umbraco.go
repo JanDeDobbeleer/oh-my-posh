@@ -2,7 +2,6 @@ package segments
 
 import (
 	"encoding/xml"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -103,10 +102,7 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (*FindUmbracoResult, error)
 
 	for {
 		// Check if a directory named "Umbraco" exists in the current directory
-		files, err := os.ReadDir(currentFolder)
-		if err != nil {
-			return nil, err
-		}
+		files := u.env.LsDir(currentFolder)
 
 		// Have to loop over each item found in the current folder
 		for _, file := range files {

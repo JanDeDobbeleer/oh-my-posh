@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
@@ -38,22 +39,26 @@ func TestUmbracoSegment(t *testing.T) {
 			HasUmbracoFolder: true,
 			HasCsproj:        false,
 			HasWebConfig:     true,
-			ExpectedEnabled:  true,     // Segment should be enabled and visible
-			ExpectedString:   "8.15.0", // We are using the default template (by not specifying one) and expect just the version to be displayed
+			ExpectedEnabled:  true, // Segment should be enabled and visible
+			Template:         "{{ .Version }}",
+			ExpectedString:   "8.18.9",
 		},
 		{
 			Case:             "Umbraco Folder and .csproj but NO web.config",
 			HasUmbracoFolder: true,
 			HasCsproj:        true,
 			HasWebConfig:     false,
-			ExpectedEnabled:  true,     // Segment should be enabled and visible
-			ExpectedString:   "12.1.2", // We are using the default template (by not specifying one) and expect just the version to be displayed
+			ExpectedEnabled:  true, // Segment should be enabled and visible
+			Template:         "{{ .Version }}",
+			ExpectedString:   "12.1.2",
 		},
 		{
-			Case:            "Umbraco Folder and .csproj with custom template",
-			ExpectedEnabled: true,
-			Template:        "Version:{{ .Version }} ModernUmbraco:{{ .IsModernUmbraco }} LegacyUmbraco:{{ .IsLegacyUmbraco }}",
-			ExpectedString:  "Version:12.1.2 ModernUmbraco:true LegacyUmbraco:false",
+			Case:             "Umbraco Folder and .csproj with custom template",
+			HasUmbracoFolder: true,
+			HasCsproj:        true,
+			ExpectedEnabled:  true,
+			Template:         "Version:{{ .Version }} ModernUmbraco:{{ .IsModernUmbraco }} LegacyUmbraco:{{ .IsLegacyUmbraco }}",
+			ExpectedString:   "Version:12.1.2 ModernUmbraco:true LegacyUmbraco:false",
 		},
 	}
 
@@ -71,15 +76,41 @@ func TestUmbracoSegment(t *testing.T) {
 			sampleWebConfig = string(content)
 		}
 
-		const umbracoProjectDirectory = "/workspace/MyProject"
-		env.On("Pwd").Return(umbracoProjectDirectory)
-		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "MyProject.csproj")).Return(sampleCSProj)
-		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "web.config")).Return(sampleWebConfig)
+		//const umbracoProjectDirectory = "/workspace/MyProject"
+		env.On("Pwd").Return("/workspace/MyProject")
+		env.On("FileContent", filepath.Join("/workspace/MyProject", "MyProject.csproj")).Return(sampleCSProj)
+		env.On("FileContent", filepath.Join("/workspace/MyProject", "web.config")).Return(sampleWebConfig)
 		env.On("Debug", mock2.Anything)
 		env.On("Trace", mock2.Anything, mock2.Anything)
 
-		// TODO: HOW do I mock the folder/file structure so that Umbraco segmenet can test looping through parent folders
-		// ******* Any help or pointers please Jan *******
+		dirEntries := []fs.DirEntry{}
+		if tc.HasUmbracoFolder {
+			dirEntries = append(dirEntries, &MockDirEntry{
+				name:  "Umbraco",
+				isDir: true,
+			})
+		}
+
+		if tc.HasCsproj {
+			dirEntries = append(dirEntries, &MockDirEntry{
+				name:  "MyProject.csproj",
+				isDir: false,
+			})
+		}
+
+		if tc.HasWebConfig {
+			dirEntries = append(dirEntries, &MockDirEntry{
+				name:  "web.config",
+				isDir: false,
+			})
+		}
+
+		env.On("LsDir", "/workspace/MyProject").Return(dirEntries)
+
+		// Mocked these folder calls to return empty results
+		// As the first test case will not find anything and then crawl up the folder tree
+		env.On("LsDir", "/workspace").Return([]fs.DirEntry{})
+		env.On("LsDir", "/").Return([]fs.DirEntry{})
 
 		// Setup the Umbraco segment with the mocked environment & properties
 		umb := &Umbraco{

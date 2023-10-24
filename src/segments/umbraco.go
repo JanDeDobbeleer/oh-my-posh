@@ -14,10 +14,9 @@ type Umbraco struct {
 	props properties.Properties
 	env   platform.Environment
 
-	FoundUmbraco    bool
-	IsModernUmbraco bool
-	IsLegacyUmbraco bool
-	Version         string
+	Found   bool
+	Modern  bool
+	Version string
 }
 
 const (
@@ -61,7 +60,7 @@ func (u *Umbraco) Enabled() bool {
 
 	if !findUmbracoResults.FoundUmbracoFolder {
 		u.env.Debug("UMBRACO: No Umbraco folder found")
-		u.FoundUmbraco = false
+		u.Found = false
 		return false
 	}
 
@@ -82,7 +81,7 @@ func (u *Umbraco) Enabled() bool {
 	}
 
 	// If we have got here then neither modern or legacy Umbraco was NOT found
-	u.FoundUmbraco = false
+	u.Found = false
 	return false
 }
 
@@ -179,8 +178,8 @@ func (u *Umbraco) TryFindModernUmbraco(foundCSProjPath string) bool {
 	// Loop over all the package references
 	for _, packageReference := range csProjPackages.PackageReferences {
 		if strings.EqualFold(packageReference.Name, "umbraco.cms") {
-			u.IsModernUmbraco = true
-			u.FoundUmbraco = true
+			u.Modern = true
+			u.Found = true
 			u.Version = packageReference.Version
 
 			return true
@@ -214,8 +213,8 @@ func (u *Umbraco) TryFindLegacyUmbraco(foundWebConfigPath string) bool {
 	// Loop over all the package references
 	for _, appSetting := range webConfigAppSettings.AppSettings {
 		if strings.EqualFold(appSetting.Key, "umbraco.core.configurationstatus") {
-			u.IsLegacyUmbraco = true
-			u.FoundUmbraco = true
+			u.Modern = false
+			u.Found = true
 
 			if len(appSetting.Value) == 0 {
 				u.Version = "Unknown"

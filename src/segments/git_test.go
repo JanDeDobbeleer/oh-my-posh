@@ -18,7 +18,9 @@ import (
 )
 
 const (
-	branchName = "main"
+	branchName      = "main"
+	dotGit          = "dev/.git"
+	dotGitSubmodule = "dev/.git/modules/submodule"
 )
 
 func TestEnabledGitNotFound(t *testing.T) {
@@ -88,23 +90,23 @@ func TestEnabledInWorktree(t *testing.T) {
 			WorkingFolderContent:  TestRootPath + "dev/worktree.git\n",
 			ExpectedWorkingFolder: TestRootPath + "dev/.git/worktrees/folder_worktree",
 			ExpectedRealFolder:    TestRootPath + "dev/worktree",
-			ExpectedRootFolder:    TestRootPath + "dev/.git",
+			ExpectedRootFolder:    TestRootPath + dotGit,
 		},
 		{
 			Case:                  "submodule",
 			ExpectedEnabled:       true,
 			WorkingFolder:         "./.git/modules/submodule",
-			ExpectedWorkingFolder: TestRootPath + "dev/.git/modules/submodule",
-			ExpectedRealFolder:    TestRootPath + "dev/.git/modules/submodule",
-			ExpectedRootFolder:    TestRootPath + "dev/.git/modules/submodule",
+			ExpectedWorkingFolder: TestRootPath + dotGitSubmodule,
+			ExpectedRealFolder:    TestRootPath + dotGitSubmodule,
+			ExpectedRootFolder:    TestRootPath + dotGitSubmodule,
 		},
 		{
 			Case:                  "submodule with root working folder",
 			ExpectedEnabled:       true,
-			WorkingFolder:         TestRootPath + "repo/.git/modules/submodule",
-			ExpectedWorkingFolder: TestRootPath + "repo/.git/modules/submodule",
-			ExpectedRealFolder:    TestRootPath + "repo/.git/modules/submodule",
-			ExpectedRootFolder:    TestRootPath + "repo/.git/modules/submodule",
+			WorkingFolder:         TestRootPath + dotGitSubmodule,
+			ExpectedWorkingFolder: TestRootPath + dotGitSubmodule,
+			ExpectedRealFolder:    TestRootPath + dotGitSubmodule,
+			ExpectedRootFolder:    TestRootPath + dotGitSubmodule,
 		},
 		{
 			Case:                  "submodule with worktrees",
@@ -126,12 +128,12 @@ func TestEnabledInWorktree(t *testing.T) {
 		},
 	}
 	fileInfo := &platform.FileInfo{
-		Path:         TestRootPath + "dev/.git",
+		Path:         TestRootPath + dotGit,
 		ParentFolder: TestRootPath + "dev",
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("FileContent", TestRootPath+"dev/.git").Return(fmt.Sprintf("gitdir: %s", tc.WorkingFolder))
+		env.On("FileContent", TestRootPath+dotGit).Return(fmt.Sprintf("gitdir: %s", tc.WorkingFolder))
 		env.On("FileContent", filepath.Join(tc.WorkingFolder, tc.WorkingFolderAddon)).Return(tc.WorkingFolderContent)
 		env.On("HasFilesInDir", tc.WorkingFolder, tc.WorkingFolderAddon).Return(true)
 		env.On("HasFilesInDir", tc.WorkingFolder, "HEAD").Return(true)

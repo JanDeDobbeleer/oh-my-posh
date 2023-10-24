@@ -14,6 +14,15 @@ import (
 	mock2 "github.com/stretchr/testify/mock"
 )
 
+const (
+	homeDir        = "/home/someone"
+	homeDirWindows = "C:\\Users\\someone"
+	fooBarMan      = "\\foo\\bar\\man"
+	abc            = "/abc"
+	abcd           = "/a/b/c/d"
+	cdefg          = "/c/d/e/f/g"
+)
+
 func renderTemplateNoTrimSpace(env *mock.MockedEnvironment, segmentTemplate string, context any) string {
 	found := false
 	for _, call := range env.Mock.ExpectedCalls {
@@ -45,11 +54,6 @@ func renderTemplateNoTrimSpace(env *mock.MockedEnvironment, segmentTemplate stri
 func renderTemplate(env *mock.MockedEnvironment, segmentTemplate string, context any) string {
 	return strings.TrimSpace(renderTemplateNoTrimSpace(env, segmentTemplate, context))
 }
-
-const (
-	homeDir        = "/home/someone"
-	homeDirWindows = "C:\\Users\\someone"
-)
 
 func TestParent(t *testing.T) {
 	cases := []struct {
@@ -529,7 +533,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 			Style:               AgnosterShort,
 			Expected:            ".. > bar > man",
 			HomePath:            homeDirWindows,
-			Pwd:                 homeDirWindows + "\\foo\\bar\\man",
+			Pwd:                 homeDirWindows + fooBarMan,
 			GOOS:                platform.WINDOWS,
 			PathSeparator:       "\\",
 			FolderSeparatorIcon: " > ",
@@ -677,7 +681,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 			Style:               AgnosterShort,
 			Expected:            "~ > .. > bar > man",
 			HomePath:            homeDirWindows,
-			Pwd:                 homeDirWindows + "\\foo\\bar\\man",
+			Pwd:                 homeDirWindows + fooBarMan,
 			GOOS:                platform.WINDOWS,
 			PathSeparator:       "\\",
 			FolderSeparatorIcon: " > ",
@@ -687,7 +691,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 			Style:               AgnosterShort,
 			Expected:            "~ > foo > bar > man",
 			HomePath:            homeDirWindows,
-			Pwd:                 homeDirWindows + "\\foo\\bar\\man",
+			Pwd:                 homeDirWindows + fooBarMan,
 			GOOS:                platform.WINDOWS,
 			PathSeparator:       "\\",
 			FolderSeparatorIcon: " > ",
@@ -774,26 +778,26 @@ func TestFullAndFolderPath(t *testing.T) {
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: homeDir, Expected: "~"},
-		{Style: Full, Pwd: homeDir + "/abc", Expected: "~/abc"},
-		{Style: Full, Pwd: homeDir + "/abc", Expected: homeDir + "/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", Expected: "/a/b/c/d"},
+		{Style: Full, Pwd: homeDir + abc, Expected: "~/abc"},
+		{Style: Full, Pwd: homeDir + abc, Expected: homeDir + abc, DisableMappedLocations: true},
+		{Style: Full, Pwd: abcd, Expected: abcd},
 
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: homeDir, Expected: "~"},
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: homeDir, Expected: "/home|someone", DisableMappedLocations: true},
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: homeDir + "/abc", Expected: "~|abc"},
-		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/a/b/c/d", Expected: "/a|b|c|d"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: homeDir + abc, Expected: "~|abc"},
+		{Style: Full, FolderSeparatorIcon: "|", Pwd: abcd, Expected: "/a|b|c|d"},
 
 		{Style: Folder, Pwd: "/", Expected: "/"},
 		{Style: Folder, Pwd: homeDir, Expected: "~"},
 		{Style: Folder, Pwd: homeDir, Expected: "someone", DisableMappedLocations: true},
-		{Style: Folder, Pwd: homeDir + "/abc", Expected: "abc"},
-		{Style: Folder, Pwd: "/a/b/c/d", Expected: "d"},
+		{Style: Folder, Pwd: homeDir + abc, Expected: "abc"},
+		{Style: Folder, Pwd: abcd, Expected: "d"},
 
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: homeDir, Expected: "~"},
 		{Style: Folder, FolderSeparatorIcon: "|", Pwd: homeDir, Expected: "someone", DisableMappedLocations: true},
-		{Style: Folder, FolderSeparatorIcon: "|", Pwd: homeDir + "/abc", Expected: "abc"},
-		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/a/b/c/d", Expected: "d"},
+		{Style: Folder, FolderSeparatorIcon: "|", Pwd: homeDir + abc, Expected: "abc"},
+		{Style: Folder, FolderSeparatorIcon: "|", Pwd: abcd, Expected: "d"},
 
 		// for Windows paths
 		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: platform.WINDOWS},
@@ -806,41 +810,41 @@ func TestFullAndFolderPath(t *testing.T) {
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: 2, Expected: "2 /"},
 		{Style: Full, Pwd: "/", StackCount: 2, Expected: "2 /"},
 		{Style: Full, Pwd: homeDir, StackCount: 2, Expected: "2 ~"},
-		{Style: Full, Pwd: homeDir + "/abc", StackCount: 2, Expected: "2 ~/abc"},
-		{Style: Full, Pwd: homeDir + "/abc", StackCount: 2, Expected: "2 " + homeDir + "/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCount: 2, Expected: "2 /a/b/c/d"},
+		{Style: Full, Pwd: homeDir + abc, StackCount: 2, Expected: "2 ~/abc"},
+		{Style: Full, Pwd: homeDir + abc, StackCount: 2, Expected: "2 " + homeDir + abc, DisableMappedLocations: true},
+		{Style: Full, Pwd: abcd, StackCount: 2, Expected: "2 /a/b/c/d"},
 
 		// StackCountEnabled=false and StackCount=2
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Template: "{{ .Path }}", StackCount: 2, Expected: "/"},
 		{Style: Full, Pwd: "/", Template: "{{ .Path }}", StackCount: 2, Expected: "/"},
 		{Style: Full, Pwd: homeDir, Template: "{{ .Path }}", StackCount: 2, Expected: "~"},
 
-		{Style: Full, Pwd: homeDir + "/abc", Template: "{{ .Path }}", StackCount: 2, Expected: homeDir + "/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", Template: "{{ .Path }}", StackCount: 2, Expected: "/a/b/c/d"},
+		{Style: Full, Pwd: homeDir + abc, Template: "{{ .Path }}", StackCount: 2, Expected: homeDir + abc, DisableMappedLocations: true},
+		{Style: Full, Pwd: abcd, Template: "{{ .Path }}", StackCount: 2, Expected: abcd},
 
 		// StackCountEnabled=true and StackCount=0
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: 0, Expected: "/"},
 		{Style: Full, Pwd: "/", StackCount: 0, Expected: "/"},
 		{Style: Full, Pwd: homeDir, StackCount: 0, Expected: "~"},
-		{Style: Full, Pwd: homeDir + "/abc", StackCount: 0, Expected: "~/abc"},
-		{Style: Full, Pwd: homeDir + "/abc", StackCount: 0, Expected: homeDir + "/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCount: 0, Expected: "/a/b/c/d"},
+		{Style: Full, Pwd: homeDir + abc, StackCount: 0, Expected: "~/abc"},
+		{Style: Full, Pwd: homeDir + abc, StackCount: 0, Expected: homeDir + abc, DisableMappedLocations: true},
+		{Style: Full, Pwd: abcd, StackCount: 0, Expected: abcd},
 
 		// StackCountEnabled=true and StackCount<0
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", StackCount: -1, Expected: "/"},
 		{Style: Full, Pwd: "/", StackCount: -1, Expected: "/"},
 		{Style: Full, Pwd: homeDir, StackCount: -1, Expected: "~"},
-		{Style: Full, Pwd: homeDir + "/abc", StackCount: -1, Expected: "~/abc"},
-		{Style: Full, Pwd: homeDir + "/abc", StackCount: -1, Expected: homeDir + "/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", StackCount: -1, Expected: "/a/b/c/d"},
+		{Style: Full, Pwd: homeDir + abc, StackCount: -1, Expected: "~/abc"},
+		{Style: Full, Pwd: homeDir + abc, StackCount: -1, Expected: homeDir + abc, DisableMappedLocations: true},
+		{Style: Full, Pwd: abcd, StackCount: -1, Expected: abcd},
 
 		// StackCountEnabled=true and StackCount not set
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: homeDir, Expected: "~"},
-		{Style: Full, Pwd: homeDir + "/abc", Expected: "~/abc"},
-		{Style: Full, Pwd: homeDir + "/abc", Expected: homeDir + "/abc", DisableMappedLocations: true},
-		{Style: Full, Pwd: "/a/b/c/d", Expected: "/a/b/c/d"},
+		{Style: Full, Pwd: homeDir + abc, Expected: "~/abc"},
+		{Style: Full, Pwd: homeDir + abc, Expected: homeDir + abc, DisableMappedLocations: true},
+		{Style: Full, Pwd: abcd, Expected: abcd},
 	}
 
 	for _, tc := range cases {
@@ -895,14 +899,14 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		PathSeparator   string
 		Expected        string
 	}{
-		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"{{ .Env.HOME }}/d": "#"}, Expected: "#"},
-		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"/a/b/c/d": "#"}, Expected: "#"},
+		{Pwd: abcd, MappedLocations: map[string]string{"{{ .Env.HOME }}/d": "#"}, Expected: "#"},
+		{Pwd: abcd, MappedLocations: map[string]string{abcd: "#"}, Expected: "#"},
 		{Pwd: "\\a\\b\\c\\d", MappedLocations: map[string]string{"\\a\\b": "#"}, GOOS: platform.WINDOWS, PathSeparator: "\\", Expected: "#\\c\\d"},
-		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"/a/b": "#"}, Expected: "#/c/d"},
-		{Pwd: "/a/b/c/d", MappedLocations: map[string]string{"/a/b": "/e/f"}, Expected: "/e/f/c/d"},
-		{Pwd: homeDir + "/a/b/c/d", MappedLocations: map[string]string{"~/a/b": "#"}, Expected: "#/c/d"},
+		{Pwd: abcd, MappedLocations: map[string]string{"/a/b": "#"}, Expected: "#/c/d"},
+		{Pwd: abcd, MappedLocations: map[string]string{"/a/b": "/e/f"}, Expected: "/e/f/c/d"},
+		{Pwd: homeDir + abcd, MappedLocations: map[string]string{"~/a/b": "#"}, Expected: "#/c/d"},
 		{Pwd: "/a" + homeDir + "/b/c/d", MappedLocations: map[string]string{"/a~": "#"}, Expected: "/a" + homeDir + "/b/c/d"},
-		{Pwd: homeDir + "/a/b/c/d", MappedLocations: map[string]string{"/a/b": "#"}, Expected: homeDir + "/a/b/c/d"},
+		{Pwd: homeDir + abcd, MappedLocations: map[string]string{"/a/b": "#"}, Expected: homeDir + abcd},
 	}
 
 	for _, tc := range cases {
@@ -975,7 +979,7 @@ func TestPowerlevelMappedLocations(t *testing.T) {
 }
 
 func TestFolderPathCustomMappedLocations(t *testing.T) {
-	pwd := "/a/b/c/d"
+	pwd := abcd
 	env := new(mock.MockedEnvironment)
 	env.On("PathSeparator").Return("/")
 	env.On("Home").Return(homeDir)
@@ -992,7 +996,7 @@ func TestFolderPathCustomMappedLocations(t *testing.T) {
 		props: properties.Map{
 			properties.Style: Folder,
 			MappedLocations: map[string]string{
-				"/a/b/c/d": "#",
+				abcd: "#",
 			},
 		},
 	}
@@ -1349,16 +1353,16 @@ func TestGetPwd(t *testing.T) {
 		{MappedLocationsEnabled: true, Pwd: homeDir + "-test", Expected: homeDir + "-test"},
 		{MappedLocationsEnabled: true},
 		{MappedLocationsEnabled: true, Pwd: "/usr", Expected: "/usr"},
-		{MappedLocationsEnabled: true, Pwd: homeDir + "/abc", Expected: "~/abc"},
-		{MappedLocationsEnabled: true, Pwd: "/a/b/c/d", Expected: "#"},
+		{MappedLocationsEnabled: true, Pwd: homeDir + abc, Expected: "~/abc"},
+		{MappedLocationsEnabled: true, Pwd: abcd, Expected: "#"},
 		{MappedLocationsEnabled: true, Pwd: "/a/b/c/d/e/f/g", Expected: "#/e/f/g"},
 		{MappedLocationsEnabled: true, Pwd: "/z/y/x/w", Expected: "/z/y/x/w"},
 
 		{MappedLocationsEnabled: false},
-		{MappedLocationsEnabled: false, Pwd: homeDir + "/abc", Expected: homeDir + "/abc"},
+		{MappedLocationsEnabled: false, Pwd: homeDir + abc, Expected: homeDir + abc},
 		{MappedLocationsEnabled: false, Pwd: "/a/b/c/d/e/f/g", Expected: "#/e/f/g"},
-		{MappedLocationsEnabled: false, Pwd: homeDir + "/c/d/e/f/g", Expected: homeDir + "/c/d/e/f/g"},
-		{MappedLocationsEnabled: true, Pwd: homeDir + "/c/d/e/f/g", Expected: "~/c/d/e/f/g"},
+		{MappedLocationsEnabled: false, Pwd: homeDir + cdefg, Expected: homeDir + cdefg},
+		{MappedLocationsEnabled: true, Pwd: homeDir + cdefg, Expected: "~/c/d/e/f/g"},
 
 		{MappedLocationsEnabled: true, Pwd: "/w/d/x/w", Pswd: "/z/y/x/w", Expected: "/z/y/x/w"},
 		{MappedLocationsEnabled: false, Pwd: "/f/g/k/d/e/f/g", Pswd: "/a/b/c/d/e/f/g", Expected: "#/e/f/g"},
@@ -1381,7 +1385,7 @@ func TestGetPwd(t *testing.T) {
 			props: properties.Map{
 				MappedLocationsEnabled: tc.MappedLocationsEnabled,
 				MappedLocations: map[string]string{
-					"/a/b/c/d": "#",
+					abcd: "#",
 				},
 			},
 		}
@@ -1468,7 +1472,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 		{Pwd: "/c/l/k/f", Expected: "f"},
 		{Pwd: "/f/g/h", Expected: "/f/g/h"},
 		{Pwd: "/f/g/h/e", Expected: "^/e"},
-		{Pwd: "/a/b/c/d", Expected: "#"},
+		{Pwd: abcd, Expected: "#"},
 		{Pwd: "/a/b/c/d/e", Expected: "#/e"},
 		{Pwd: "/a/b/c/d/e", Expected: "#/e"},
 		{Pwd: "/a/b/k/j/e", Expected: "e"},
@@ -1487,7 +1491,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 			props: properties.Map{
 				MappedLocationsEnabled: false,
 				MappedLocations: map[string]string{
-					"/a/b/c/d": "#",
+					abcd:       "#",
 					"/f/g/h/*": "^",
 					"/c/l/k/*": "",
 					"~/j/*":    "",

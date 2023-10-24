@@ -13,7 +13,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const testKubectlAllInfoTemplate = "{{.Context}} :: {{.Namespace}} :: {{.User}} :: {{.Cluster}}"
+const (
+	testKubectlAllInfoTemplate = "{{.Context}} :: {{.Namespace}} :: {{.User}} :: {{.Cluster}}"
+	contextMarker              = "currentcontextmarker"
+)
 
 func TestKubectlSegment(t *testing.T) {
 	standardTemplate := "{{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}}"
@@ -40,7 +43,7 @@ func TestKubectlSegment(t *testing.T) {
 			Case:            "kubeconfig incomplete",
 			Template:        testKubectlAllInfoTemplate,
 			ParseKubeConfig: true,
-			Kubeconfig:      "currentcontextmarker" + lsep + "contextdefinitionincomplete",
+			Kubeconfig:      contextMarker + lsep + "contextdefinitionincomplete",
 			Files:           testKubeConfigFiles,
 			ExpectedString:  "ctx ::  ::  ::",
 			ExpectedEnabled: true,
@@ -101,7 +104,7 @@ func TestKubectlSegment(t *testing.T) {
 			Case:            "kubeconfig multiple current marker first",
 			Template:        testKubectlAllInfoTemplate,
 			ParseKubeConfig: true,
-			Kubeconfig:      "" + lsep + "currentcontextmarker" + lsep + "contextdefinition" + lsep + "contextredefinition",
+			Kubeconfig:      "" + lsep + contextMarker + lsep + "contextdefinition" + lsep + "contextredefinition",
 			Files:           testKubeConfigFiles,
 			ExpectedString:  "ctx :: ns :: usr :: cl",
 			ExpectedEnabled: true,
@@ -109,7 +112,7 @@ func TestKubectlSegment(t *testing.T) {
 		{
 			Case:     "kubeconfig multiple context first",
 			Template: testKubectlAllInfoTemplate, ParseKubeConfig: true,
-			Kubeconfig:      "contextdefinition" + lsep + "contextredefinition" + lsep + "currentcontextmarker" + lsep,
+			Kubeconfig:      "contextdefinition" + lsep + "contextredefinition" + lsep + contextMarker + lsep,
 			Files:           testKubeConfigFiles,
 			ExpectedString:  "ctx :: ns :: usr :: cl",
 			ExpectedEnabled: true,
@@ -185,7 +188,7 @@ contexts:
       namespace: ns
     name: ctx
 `,
-	"currentcontextmarker": `
+	contextMarker: `
 apiVersion: v1
 current-context: ctx
 `,

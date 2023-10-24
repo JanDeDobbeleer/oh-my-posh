@@ -137,7 +137,8 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (bool, bool, string, error)
 		// Otherwise this loop will run forever - EEEK
 		if currentFolder == "/" || currentFolder == "\\" {
 			// Still found nothing even at the root
-			return foundWebConfig, foundCSProj, configFilePath, errors.New("scanned all directories to the root and did not find an umbraco folder with a web.config or *.csproj file belongside it")
+			err := errors.New("scanned all directories to the root and did not find an umbraco folder with a web.config or *.csproj file belongside it")
+			return false, false, "", err
 		}
 
 		// Move up to the parent directory

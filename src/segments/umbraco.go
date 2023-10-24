@@ -70,13 +70,11 @@ func (u *Umbraco) Enabled() bool {
 
 	// Modern .NET Core based Umbraco
 	if findUmbracoResults.FoundCSProj {
-		u.env.Debug("UMBRACO: Checking for modern Umbraco as we have found .csproj file")
 		return u.TryFindModernUmbraco(findUmbracoResults.FilePath)
 	}
 
 	// Legacy .NET Framework based Umbraco
 	if findUmbracoResults.FoundWebConfig {
-		u.env.Debug("UMBRACO: Checking for legacy Umbraco as we have found web.config file")
 		return u.TryFindLegacyUmbraco(findUmbracoResults.FilePath)
 	}
 

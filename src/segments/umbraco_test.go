@@ -76,10 +76,10 @@ func TestUmbracoSegment(t *testing.T) {
 			sampleWebConfig = string(content)
 		}
 
-		//const umbracoProjectDirectory = "/workspace/MyProject"
-		env.On("Pwd").Return("/workspace/MyProject")
-		env.On("FileContent", filepath.Join("/workspace/MyProject", "MyProject.csproj")).Return(sampleCSProj)
-		env.On("FileContent", filepath.Join("/workspace/MyProject", "web.config")).Return(sampleWebConfig)
+		const umbracoProjectDirectory = "/workspace/MyProject"
+		env.On("Pwd").Return(umbracoProjectDirectory)
+		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "MyProject.csproj")).Return(sampleCSProj)
+		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "web.config")).Return(sampleWebConfig)
 		env.On("Debug", mock2.Anything)
 		env.On("Trace", mock2.Anything, mock2.Anything)
 

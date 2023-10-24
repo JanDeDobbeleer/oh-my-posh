@@ -152,17 +152,15 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (*FindUmbracoResult, error)
 	return &results, nil
 }
 
-func (u *Umbraco) TryFindModernUmbraco(foundCSProjPath string) bool {
+func (u *Umbraco) TryFindModernUmbraco(configPath string) bool {
 	// Check the passed in filepath is not empty
-	if foundCSProjPath == "" {
+	if len(configPath) == 0 {
 		u.env.Debug("UMBRACO: No .CSProj file path passed in")
 		return false
 	}
 
-	u.env.Debug("UMBRACO: Trying to open file at " + foundCSProjPath)
-
 	// Read the file contents of the csproj file
-	contents := u.env.FileContent(foundCSProjPath)
+	contents := u.env.FileContent(configPath)
 
 	// XML Unmarshal - map the contents of the file to the CSProj struct
 	csProjPackages := CSProj{}
@@ -187,17 +185,15 @@ func (u *Umbraco) TryFindModernUmbraco(foundCSProjPath string) bool {
 	return false
 }
 
-func (u *Umbraco) TryFindLegacyUmbraco(foundWebConfigPath string) bool {
+func (u *Umbraco) TryFindLegacyUmbraco(configPath string) bool {
 	// Check the passed in filepath is not empty
-	if len(foundWebConfigPath) == 0 {
+	if len(configPath) == 0 {
 		u.env.Debug("UMBRACO: No web.config file path passed in")
 		return false
 	}
 
-	u.env.Debug("UMBRACO: Trying to open file at " + foundWebConfigPath)
-
 	// Read the file contents of the web.config
-	contents := u.env.FileContent(foundWebConfigPath)
+	contents := u.env.FileContent(configPath)
 
 	// XML Unmarshal - web.config all AppSettings keys
 	webConfigAppSettings := WebConfig{}

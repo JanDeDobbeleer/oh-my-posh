@@ -57,8 +57,8 @@ func TestUmbracoSegment(t *testing.T) {
 			HasUmbracoFolder: true,
 			HasCsproj:        true,
 			ExpectedEnabled:  true,
-			Template:         "Version:{{ .Version }} ModernUmbraco:{{ .IsModernUmbraco }} LegacyUmbraco:{{ .IsLegacyUmbraco }}",
-			ExpectedString:   "Version:12.1.2 ModernUmbraco:true LegacyUmbraco:false",
+			Template:         "Version:{{ .Version }} ModernUmbraco:{{ .Modern }}",
+			ExpectedString:   "Version:12.1.2 ModernUmbraco:true",
 		},
 	}
 

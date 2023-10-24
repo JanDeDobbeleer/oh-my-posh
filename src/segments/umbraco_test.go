@@ -105,12 +105,16 @@ func TestUmbracoSegment(t *testing.T) {
 			})
 		}
 
-		env.On("LsDir", "/workspace/MyProject").Return(dirEntries)
+		env.On("LsDir", umbracoProjectDirectory).Return(dirEntries)
 
 		// Mocked these folder calls to return empty results
 		// As the first test case will not find anything and then crawl up the folder tree
 		env.On("LsDir", "/workspace").Return([]fs.DirEntry{})
 		env.On("LsDir", "/").Return([]fs.DirEntry{})
+
+		// Windows will jump up a folder and then check for \\workspace and then \\
+		env.On("LsDir", "\\workspace").Return([]fs.DirEntry{})
+		env.On("LsDir", "\\").Return([]fs.DirEntry{})
 
 		// Setup the Umbraco segment with the mocked environment & properties
 		umb := &Umbraco{

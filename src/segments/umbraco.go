@@ -144,7 +144,7 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (*FindUmbracoResult, error)
 
 		// If we've reached the root directory, stop
 		// Otherwise this loop will run forever - EEEK
-		if currentFolder == "/" {
+		if currentFolder == "/" || currentFolder == "\\" {
 			break
 		}
 

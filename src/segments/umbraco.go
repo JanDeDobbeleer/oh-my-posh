@@ -192,7 +192,7 @@ func (u *Umbraco) TryFindModernUmbraco(foundCSProjPath string) bool {
 
 func (u *Umbraco) TryFindLegacyUmbraco(foundWebConfigPath string) bool {
 	// Check the passed in filepath is not empty
-	if foundWebConfigPath == "" {
+	if len(foundWebConfigPath) == 0 {
 		u.env.Debug("UMBRACO: No web.config file path passed in")
 		return false
 	}
@@ -217,7 +217,7 @@ func (u *Umbraco) TryFindLegacyUmbraco(foundWebConfigPath string) bool {
 			u.IsLegacyUmbraco = true
 			u.FoundUmbraco = true
 
-			if appSetting.Value == "" {
+			if len(appSetting.Value) == 0 {
 				u.Version = "Unknown"
 			} else {
 				u.Version = appSetting.Value

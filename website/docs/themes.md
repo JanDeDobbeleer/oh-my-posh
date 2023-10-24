@@ -11,6 +11,12 @@ display every available theme using the following PowerShell cmdlet.
 ```powershell
 Get-PoshThemes
 ```
+......Linux Bash......
+mkdir ~/.poshthemes
+wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip -O ~/.poshthemes/themes.zip
+unzip ~/.poshthemes/themes.zip -d ~/.poshthemes
+chmod u+rw ~/.poshthemes/*.json
+rm ~/.poshthemes/themes.zip
 
 Once you're ready to swap to a theme, follow the steps described in [🚀 Get started > Customize][installation-customize].
 

@@ -2,6 +2,7 @@ package segments
 
 import (
 	"encoding/xml"
+	"errors"
 	"path/filepath"
 	"strings"
 	"time"
@@ -38,28 +39,16 @@ type WebConfig struct {
 	} `xml:"appSettings>add"`
 }
 
-type FindUmbracoResult struct {
-	FoundUmbracoFolder bool
-	FoundWebConfig     bool
-	FoundCSProj        bool
-	FilePath           string
-}
-
 func (u *Umbraco) Enabled() bool {
 	u.env.Debug("UMBRACO: Checking if we enable segment")
 
 	// Checks if the current folder contains an umbraco folder
 	// If not it then checks each parent until the root
-	findUmbracoResults, err := u.TryFindUmbracoInParentDirsOrSelf()
+	foundWebConfig, foundCSProj, configFilePath, err := u.TryFindUmbracoInParentDirsOrSelf()
 
 	if err != nil {
 		u.env.Debug("UMBRACO: Error while searching for Umbraco folder and files")
 		u.env.Debug(err.Error())
-		return false
-	}
-
-	if !findUmbracoResults.FoundUmbracoFolder {
-		u.env.Debug("UMBRACO: No Umbraco folder found")
 		u.Found = false
 		return false
 	}
@@ -69,13 +58,13 @@ func (u *Umbraco) Enabled() bool {
 	// OR one or more .csproj files at the same level as the Umbraco folder
 
 	// Modern .NET Core based Umbraco
-	if findUmbracoResults.FoundCSProj {
-		return u.TryFindModernUmbraco(findUmbracoResults.FilePath)
+	if foundCSProj {
+		return u.TryFindModernUmbraco(configFilePath)
 	}
 
 	// Legacy .NET Framework based Umbraco
-	if findUmbracoResults.FoundWebConfig {
-		return u.TryFindLegacyUmbraco(findUmbracoResults.FilePath)
+	if foundWebConfig {
+		return u.TryFindLegacyUmbraco(configFilePath)
 	}
 
 	// If we have got here then neither modern or legacy Umbraco was NOT found
@@ -92,10 +81,15 @@ func (u *Umbraco) Init(props properties.Properties, env platform.Environment) {
 	u.env = env
 }
 
-func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (*FindUmbracoResult, error) {
+// Return type is bool FoundWebConfig, bool FoundCSProj, string FilePath, error
+func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (bool, bool, string, error) {
 	defer u.env.Trace(time.Now(), "UMBRACO: Checking for an umbraco folder & files in current or any parent folders until root")
 	currentFolder := u.env.Pwd()
-	results := FindUmbracoResult{}
+
+	foundUmbracoFolder := false
+	foundWebConfig := false
+	foundCSProj := false
+	configFilePath := ""
 
 	for {
 		// Check if a directory named "Umbraco" exists in the current directory
@@ -106,26 +100,26 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (*FindUmbracoResult, error)
 			// Check if the item is a folder AND it matches 'Umbraco' regardless of casing
 			if file.IsDir() && strings.EqualFold(file.Name(), umbracoFolderName) {
 				u.env.Debug("UMBRACO: Found an Umbraco folder in " + currentFolder)
-				results.FoundUmbracoFolder = true
+				foundUmbracoFolder = true
 			}
 
 			// Check if the item is a file AND it matches 'web.config' regardless of casing
 			if !file.IsDir() && strings.EqualFold(file.Name(), umbracoWebConfig) {
 				u.env.Debug("UMBRACO: Found a web.config file in " + currentFolder)
-				results.FoundWebConfig = true
-				results.FilePath = filepath.Join(currentFolder, file.Name())
+				foundWebConfig = true
+				configFilePath = filepath.Join(currentFolder, file.Name())
 			}
 
 			// Check if the item is a file AND has file extension of .csproj regardless of casing
 			if !file.IsDir() && strings.EqualFold(filepath.Ext(file.Name()), ".csproj") {
 				u.env.Debug("UMBRACO: Found a .csproj file in " + currentFolder)
-				results.FoundCSProj = true
-				results.FilePath = filepath.Join(currentFolder, file.Name())
+				foundCSProj = true
+				configFilePath = filepath.Join(currentFolder, file.Name())
 			}
 
 			// If we have found an Umbraco folder AND a .csproj OR  an Umbraco folder AND a web.config file
 			// Then we can break the for loop as we have found what we need
-			if (results.FoundUmbracoFolder && results.FoundCSProj) || (results.FoundUmbracoFolder && results.FoundWebConfig) {
+			if (foundUmbracoFolder && foundCSProj) || (foundUmbracoFolder && foundWebConfig) {
 				// Break out the loop for checking the collection of files in the current folder
 				break
 			}
@@ -133,7 +127,7 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (*FindUmbracoResult, error)
 
 		// If we have found an Umbraco folder AND a .csproj OR  an Umbraco folder AND a web.config file
 		// Then we can break the for loop as we have found what we need
-		if (results.FoundUmbracoFolder && results.FoundCSProj) || (results.FoundUmbracoFolder && results.FoundWebConfig) {
+		if (foundUmbracoFolder && foundCSProj) || (foundUmbracoFolder && foundWebConfig) {
 			// Same logic in the inner for loop
 			// But we will BREAK out and stop checking for parent folders
 			break
@@ -142,14 +136,15 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (*FindUmbracoResult, error)
 		// If we've reached the root directory, stop
 		// Otherwise this loop will run forever - EEEK
 		if currentFolder == "/" || currentFolder == "\\" {
-			break
+			// Still found nothing even at the root
+			return foundWebConfig, foundCSProj, configFilePath, errors.New("scanned all directories to the root and did not find an umbraco folder with a web.config or *.csproj file belongside it")
 		}
 
 		// Move up to the parent directory
 		currentFolder = filepath.Dir(currentFolder)
 	}
 
-	return &results, nil
+	return foundWebConfig, foundCSProj, configFilePath, nil
 }
 
 func (u *Umbraco) TryFindModernUmbraco(configPath string) bool {

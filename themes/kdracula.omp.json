@@ -1,0 +1,141 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "version": 2,
+    "final_space": true,
+    "blocks": [
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "os",
+            "style": "diamond",
+            "foreground": "#ffffff",
+            "background": "#0c7bbb",
+            "leading_diamond": "\u256d\u2500\ue0b2",
+            "template": " {{ if .WSL }}\ue712 on {{ end }}{{ .Icon }}  ",
+            "properties": {
+              "alpine": "\uf300",
+              "arch": "\uf303",
+              "centos": "\uf304",
+              "debian": "\uf306",
+              "elementary": "\uf309",
+              "fedora": "\uf30a",
+              "gentoo": "\uf30d",
+              "linux": "\ue712",
+              "macos": "\ue711",
+              "manjaro": "\uf312",
+              "mint": "\uf30f",
+              "opensuse": "\uf314",
+              "raspbian": "\uf315",
+              "ubuntu": "\uf31c",
+              "windows": "\ue70f"
+            }
+          },
+          {
+            "type": "text",
+            "style": "diamond",
+            "powerline_symbol": "\ue0b0",
+            "foreground": "#ffffff",
+            "background": "#DA627D",
+            "template": " 🏠  "
+          },
+          {
+            "type": "path",
+            "style": "powerline",
+            "powerline_symbol": "\ue0b0",
+            "foreground": "#ffffff",
+            "background": "#8a62da",
+            "template": " {{ .Path }} ",
+            "properties": {
+              "style": "folder"
+            }
+          },
+          {
+            "type": "git",
+            "style": "powerline",
+            "powerline_symbol": "\ue0b0",
+            "foreground": "#43CCEA",
+            "foreground_templates": [
+              "{{ if or (.Working.Changed) (.Staging.Changed) }}#FF9248{{ end }}",
+              "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ff4500{{ end }}",
+              "{{ if gt .Ahead 0 }}#B388FF{{ end }}",
+              "{{ if gt .Behind 0 }}#B388FF{{ end }}"
+            ],
+            "background": "#191f48",
+            "trailing_diamond": "\ue0b4",
+            "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
+            "properties": {
+              "branch_max_length": 25,
+              "fetch_stash_count": true,
+              "fetch_status": true,
+              "fetch_upstream_icon": true
+            }
+          }
+        ],
+        "newline": true
+      },
+      {
+        "type": "prompt",
+        "alignment": "right",
+        "segments": [
+          {
+            "type": "sysinfo",
+            "style": "diamond",
+            "foreground": "#81ff91",
+            "template": "<#cc7eda> | </><#7eb8da>RAM:</> {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB"
+          },
+          {
+            "type": "ruby",
+            "style": "powerline",
+            "foreground": "#E0115F",
+            "template": " <#cc7eda> | </><#7eb8da>\ue739</> {{ .Full }}",
+            "properties": {
+              "fetch_version": true
+            }
+          },
+          {
+            "type": "node",
+            "style": "powerline",
+            "foreground": "#81ff91",
+            "template": "<#cc7eda> | </><#7eb8da>\ue718</> {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}",
+            "properties": {
+              "fetch_version": true
+            }
+          },
+          {
+            "type": "php",
+            "style": "powerline",
+            "foreground": "#81ff91",
+            "template": "<#cc7eda> | </><#7eb8da>\ue73d</> {{ .Full }}"
+          },
+          {
+            "type": "npm",
+            "style": "powerline",
+            "foreground": "#81ff91",
+            "template": "<#cc7eda> | </><#7eb8da>\ue71e </> {{ .Full }}"
+          },
+          {
+            "type": "sysinfo",
+            "style": "powerline",
+            "foreground": "#81ff91",
+            "template": "<> </>"
+          }
+        ]
+      },
+      {
+        "type": "prompt",
+        "alignment": "left",
+        "segments": [
+          {
+            "type": "text",
+            "style": "plain",
+            "foreground": "#0c7bbb",
+            "template": "\u2570\u2500"
+          }
+        ],
+        "newline": true
+      }
+    ]
+  }
+  

@@ -30,10 +30,27 @@ import Config from '@site/src/components/Config.js';
   "foreground": "#d886f1",
   "style": "diamond",
   "leading_diamond": "\ue0b6",
-  "trailing_diamond": "\ue0b0",
+  "trailing_diamond": "\ue0b4",
   "template": "\udb81\udd49 {{ .Version }}",
   "background_templates": [
-    "{{ if (.IsModernUmbraco) }}#3544B1{{ end }}",
-    "{{ if (.IsLegacyUmbraco) }}#F79C37{{ end }}"
+    "{{ if (.Modern) }}#3544B1{{ end }}",
+    "{{ if not (.Modern) }}#F79C37{{ end }}"
   ]
 }}/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .Version }}
+```
+
+:::
+
+## Properties
+
+| Name           | Type      | Description                                                                                                         |
+| -------------- | --------- | ------------------------------------------------------------------------------------------------------------------- |
+| `.Modern`      | `boolean` | a boolean to detemine if this is modern Umbraco V9+ using modern .NET or if its legacy Umbraco using .NET Framework |
+| `.Version`     | `string`  | the versiion of umbraco found                                                                                       |

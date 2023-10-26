@@ -98,6 +98,7 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (bool, bool, string, error)
 			if file.IsDir() && strings.EqualFold(file.Name(), umbracoFolderName) {
 				u.env.Debug("UMBRACO: Found an Umbraco folder in " + currentFolder)
 				foundUmbracoFolder = true
+				continue
 			}
 
 			// Check if the item is a file AND it matches 'web.config' regardless of casing
@@ -105,6 +106,7 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (bool, bool, string, error)
 				u.env.Debug("UMBRACO: Found a web.config file in " + currentFolder)
 				foundWebConfig = true
 				configFilePath = filepath.Join(currentFolder, file.Name())
+				continue
 			}
 
 			// Check if the item is a file AND has file extension of .csproj regardless of casing
@@ -112,6 +114,7 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (bool, bool, string, error)
 				u.env.Debug("UMBRACO: Found a .csproj file in " + currentFolder)
 				foundCSProj = true
 				configFilePath = filepath.Join(currentFolder, file.Name())
+				continue
 			}
 
 			// If we have found an Umbraco folder AND a .csproj

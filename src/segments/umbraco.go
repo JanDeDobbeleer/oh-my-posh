@@ -27,14 +27,14 @@ const (
 
 type CSProj struct {
 	PackageReferences []struct {
-		Name    string `xml:"Include,attr"`
-		Version string `xml:"Version,attr"`
+		Name    string `xml:"include,attr"`
+		Version string `xml:"version,attr"`
 	} `xml:"ItemGroup>PackageReference"`
 }
 
 type WebConfig struct {
 	AppSettings []struct {
-		Key   string `xml:"key,attr"` // TODO: What happens if the web.config has the attribute as uppercase Key="" ?
+		Key   string `xml:"key,attr"`
 		Value string `xml:"value,attr"`
 	} `xml:"appSettings>add"`
 }
@@ -117,8 +117,8 @@ func (u *Umbraco) TryFindUmbracoInParentDirsOrSelf() (bool, bool, string, error)
 				configFilePath = filepath.Join(currentFolder, file.Name())
 			}
 
-			// If we have found an Umbraco folder AND a .csproj OR  an Umbraco folder AND a web.config file
-			// Then we can break the for loop as we have found what we need
+			// If we have found an Umbraco folder AND a .csproj
+			// OR an Umbraco folder AND a web.config file
 			if (foundUmbracoFolder && foundCSProj) || (foundUmbracoFolder && foundWebConfig) {
 				// Break out the loop for checking the collection of files in the current folder
 				break
@@ -158,6 +158,11 @@ func (u *Umbraco) TryFindModernUmbraco(configPath string) bool {
 	// Read the file contents of the csproj file
 	contents := u.env.FileContent(configPath)
 
+	// As XML unmarshal does not support case insenstivity attributes
+	// this is just a simple string replace to lowercase the attribute
+	contents = strings.ReplaceAll(contents, "Include=", "include=")
+	contents = strings.ReplaceAll(contents, "Version=", "version=")
+
 	// XML Unmarshal - map the contents of the file to the CSProj struct
 	csProjPackages := CSProj{}
 	err := xml.Unmarshal([]byte(contents), &csProjPackages)
@@ -190,6 +195,11 @@ func (u *Umbraco) TryFindLegacyUmbraco(configPath string) bool {
 
 	// Read the file contents of the web.config
 	contents := u.env.FileContent(configPath)
+
+	// As XML unmarshal does not support case insenstivity attributes
+	// this is just a simple string replace to lowercase the attribute
+	contents = strings.ReplaceAll(contents, "Key=", "key=")
+	contents = strings.ReplaceAll(contents, "Value=", "value=")
 
 	// XML Unmarshal - web.config all AppSettings keys
 	webConfigAppSettings := WebConfig{}

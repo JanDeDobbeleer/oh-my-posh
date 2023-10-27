@@ -1,12 +1,14 @@
 package segments
 
 import (
+	"errors"
 	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -81,16 +83,21 @@ func TestUmbracoSegment(t *testing.T) {
 		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "MyProject.csproj")).Return(sampleCSProj)
 		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "web.config")).Return(sampleWebConfig)
 		env.On("Debug", mock2.Anything)
-		env.On("Trace", mock2.Anything, mock2.Anything)
 
-		dirEntries := []fs.DirEntry{}
 		if tc.HasUmbracoFolder {
-			dirEntries = append(dirEntries, &MockDirEntry{
-				name:  "Umbraco",
-				isDir: true,
-			})
+			fileInfo := &platform.FileInfo{
+				Path:         "/workspace/MyProject/Umbraco",
+				ParentFolder: "/workspace/MyProject",
+				IsDir:        true,
+			}
+
+			env.On("HasParentFilePath", "umbraco").Return(fileInfo, nil)
+		} else {
+			env.On("HasParentFilePath", "Umbraco").Return(&platform.FileInfo{}, errors.New("no such file or directory"))
+			env.On("HasParentFilePath", "umbraco").Return(&platform.FileInfo{}, errors.New("no such file or directory"))
 		}
 
+		dirEntries := []fs.DirEntry{}
 		if tc.HasCsproj {
 			dirEntries = append(dirEntries, &MockDirEntry{
 				name:  "MyProject.csproj",
@@ -106,15 +113,6 @@ func TestUmbracoSegment(t *testing.T) {
 		}
 
 		env.On("LsDir", umbracoProjectDirectory).Return(dirEntries)
-
-		// Mocked these folder calls to return empty results
-		// As the first test case will not find anything and then crawl up the folder tree
-		env.On("LsDir", "/workspace").Return([]fs.DirEntry{})
-		env.On("LsDir", "/").Return([]fs.DirEntry{})
-
-		// Windows will jump up a folder and then check for \\workspace and then \\
-		env.On("LsDir", "\\workspace").Return([]fs.DirEntry{})
-		env.On("LsDir", "\\").Return([]fs.DirEntry{})
 
 		// Setup the Umbraco segment with the mocked environment & properties
 		umb := &Umbraco{

@@ -17,11 +17,6 @@ type Umbraco struct {
 	Version string
 }
 
-const (
-	umbracoFolderName = "umbraco"
-	umbracoWebConfig  = "web.config"
-)
-
 type CSProj struct {
 	PackageReferences []struct {
 		Name    string `xml:"include,attr"`

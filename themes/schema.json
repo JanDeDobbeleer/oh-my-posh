@@ -1500,7 +1500,7 @@
                     "type": "string",
                     "title": "Yarn Icon",
                     "description": "Icon/text to use for Yarn",
-                    "default": " \uF61A"
+                    "default": " \uF011B"
                   },
                   "npm_icon": {
                     "type": "string",

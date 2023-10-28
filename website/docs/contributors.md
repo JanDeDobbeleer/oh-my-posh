@@ -292,6 +292,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://joshbduncan.com"><img src="https://avatars.githubusercontent.com/u/44387852?v=4?s=100" width="100px;" alt="Josh Duncan"/><br /><sub><b>Josh Duncan</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=joshbduncan" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/princesaini"><img src="https://avatars.githubusercontent.com/u/25565506?v=4?s=100" width="100px;" alt="Prince Saini"/><br /><sub><b>Prince Saini</b></sub></a><br /><a href="#design-princesaini" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>

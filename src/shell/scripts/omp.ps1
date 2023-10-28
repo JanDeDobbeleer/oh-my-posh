@@ -305,7 +305,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $Path = Read-Host 'Please enter the themes path'
         }
 
-        $Path = (Resolve-Path -Path $temp).ProviderPath
+        $Path = (Resolve-Path -Path $Path).ProviderPath
 
         $logo = @'
    __  _____ _      ___  ___       ______         _      __

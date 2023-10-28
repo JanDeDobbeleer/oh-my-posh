@@ -2015,6 +2015,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "joshbduncan",
+      "name": "Josh Duncan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/44387852?v=4",
+      "profile": "http://joshbduncan.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

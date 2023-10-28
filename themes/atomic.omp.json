@@ -94,7 +94,7 @@
         },
         {
           "background": "#0e8ac8",
-          "foreground": "#ec2729",
+          "foreground": "#ffffff",
           "leading_diamond": "\ue0b6",
           "style": "diamond",
           "template": "\ue738 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}",

@@ -290,6 +290,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/BPplays"><img src="https://avatars.githubusercontent.com/u/58504799?v=4?s=100" width="100px;" alt="BPplays"/><br /><sub><b>BPplays</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=BPplays" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mateusz-bajorek"><img src="https://avatars.githubusercontent.com/u/11185738?v=4?s=100" width="100px;" alt="Mateusz Bajorek"/><br /><sub><b>Mateusz Bajorek</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mateusz-bajorek" title="Code">💻</a> <a href="#design-mateusz-bajorek" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mateusz-bajorek" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://joshbduncan.com"><img src="https://avatars.githubusercontent.com/u/44387852?v=4?s=100" width="100px;" alt="Josh Duncan"/><br /><sub><b>Josh Duncan</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=joshbduncan" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

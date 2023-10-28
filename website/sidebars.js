@@ -120,6 +120,7 @@ module.exports = {
         "segments/text",
         "segments/time",
         "segments/ui5tooling",
+        "segments/umbraco",
         "segments/unity",
         "segments/upgrade",
         "segments/vala",

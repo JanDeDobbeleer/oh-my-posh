@@ -310,6 +310,7 @@
             "text",
             "terraform",
             "ui5tooling",
+            "umbraco",
             "unity",
             "upgrade",
             "wakatime",
@@ -3279,6 +3280,29 @@
                   },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": { "const": "umbraco" }
+            }
+          },
+          "then": {
+            "title": "Display something umbraco",
+            "description": "https://ohmyposh.dev/docs/segments/umbraco",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "newprop": {
+                    "type": "string",
+                    "title": "New Property",
+                    "description": "the default text to display",
+                    "default": "Hello"
                   }
                 }
               }

@@ -1,0 +1,56 @@
+---
+id: umbraco
+title: Umbraco
+sidebar_label: Umbraco
+---
+
+## What
+
+Display current Umbraco Version if found inside the current working directory.
+The segment will only show based on the following logic
+
+* The current folder contains the folder named umbraco
+* Modern Umbraco (.NET Core)
+    * Check to see if current folder contains one or more .csproj files
+    * Open .csproj XML files and check to see if Umbraco is installed as a PackageReference
+    * Read the installed version
+* Legacy Umbraco (.NET Framework)
+    * Check to see if the current folder contains a web.config
+    * Open the XML and look for AppSettings keys
+    * If umbraco is installed it has a setting called umbraco.core.configurationstatus
+    * Read the value inside this AppSetting to get its version
+
+## Sample Configuration
+
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
+  "type": "umbraco",
+  "background": "#ffffff",
+  "foreground": "#d886f1",
+  "style": "diamond",
+  "leading_diamond": "\ue0b6",
+  "trailing_diamond": "\ue0b4",
+  "template": "\udb81\udd49 {{ .Version }}",
+  "background_templates": [
+    "{{ if (.Modern) }}#3544B1{{ end }}",
+    "{{ if not (.Modern) }}#F79C37{{ end }}"
+  ]
+}}/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .Version }}
+```
+
+:::
+
+## Properties
+
+| Name           | Type      | Description                                                                                                         |
+| -------------- | --------- | ------------------------------------------------------------------------------------------------------------------- |
+| `.Modern`      | `boolean` | a boolean to detemine if this is modern Umbraco V9+ using modern .NET or if its legacy Umbraco using .NET Framework |
+| `.Version`     | `string`  | the version of umbraco found                                                                                       |

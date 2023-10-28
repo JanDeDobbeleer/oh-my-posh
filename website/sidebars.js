@@ -59,6 +59,7 @@ module.exports = {
         "segments/battery",
         "segments/brewfather",
         "segments/buf",
+        "segments/carbonintensity",
         "segments/cds",
         "segments/cf",
         "segments/cftarget",

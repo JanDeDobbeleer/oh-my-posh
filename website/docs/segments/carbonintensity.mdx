@@ -1,0 +1,85 @@
+---
+id: carbonintensity
+title: Carbon Intensity
+sidebar_label: Carbon Intensity
+---
+
+## What
+
+Shows the actual and forecast carbon intensity in gCO2/kWh using data from the [Carbon Intensity API][carbonintensity-api].
+
+:::note
+Note that this segment only provides data for Great Britain at the moment. Support for other countries may become available in the future.
+:::
+
+## Sample Configuration
+
+:::caution
+The API can be slow. It's recommended to set the `http_timeout` property to a large value (e.g. `5000`).
+:::
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "carbonintensity",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#000000",
+    background: "#ffffff",
+    background_templates: [
+      '{{if eq "very low" .Index}}#a3e635{{end}}',
+      '{{if eq "low" .Index}}#bef264{{end}}',
+      '{{if eq "moderate" .Index}}#fbbf24{{end}}',
+      '{{if eq "high" .Index}}#ef4444{{end}}',
+      '{{if eq "very high" .Index}}#dc2626{{end}}',
+    ],
+    template:
+      " CO₂ {{ .Index.Icon }}{{ .Actual.String }} {{ .TrendIcon }} {{ .Forecast.String }} ",
+    properties: {
+      http_timeout: 5000,
+      cache_timeout: 10,
+    },
+  }}
+/>
+
+## Properties
+
+| Name            | Type  | Description                                                                                                                                      |
+| --------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `http_timeout`  | `int` | Timeout (in milliseconds) for HTTP requests. The default is 20ms, but you may need to set this to as high as 5000ms to handle slow API requests. |
+| `cache_timeout` | `int` | Timeout (in minutes) for the response cache. The default is 10m. A value of 0 disables the cache.                                                |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+CO₂ {{ .Index.Icon }}{{ .Actual.String }} {{ .TrendIcon }} {{ .Forecast.String }}
+```
+
+:::
+
+### Properties
+
+| Name         | Type     | Description                                                                                                                                                             |
+| ------------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.Forecast`  | `Number` | The forecast carbon intensity in gCO2/kWh. Equal to `0` if no data is available.                                                                                        |
+| `.Actual`    | `Number` | The actual carbon intensity in gCO2/kWh. Equal to `0` if no data is available.                                                                                          |
+| `.Index`     | `Index`  | A rating of the current carbon intensity. Possible values are `"very low"`, `"low"`, `"moderate"`, `"high"`, or `"very high"`. Equal to `"??"` if no data is available. |
+| `.TrendIcon` | `string` | An icon representation of the predicted trend in carbon intensity based on the Actual and Forecast values. Possible values are `"↗"`, `"↘"`, or `"→"`.                  |
+
+#### Number
+
+| Name      | Type     | Description                        |
+| --------- | -------- | ---------------------------------- |
+| `.String` | `string` | string representation of the value |
+
+#### Index
+
+| Name    | Type     | Description                      |
+| ------- | -------- | -------------------------------- |
+| `.Icon` | `string` | icon representation of the value |
+
+[templates]: /docs/configuration/templates
+[carbonintensity-api]: https://carbon-intensity.github.io/api-definitions

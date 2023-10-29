@@ -149,3 +149,29 @@ func TestPythonPythonInContext(t *testing.T) {
 		assert.Equal(t, tc.Expected, python.inContext())
 	}
 }
+
+func TestPythonVirtualEnvIgnoreDefaultVenvNames(t *testing.T) {
+	cases := []struct {
+		VirtualEnvName string
+	}{
+		{VirtualEnvName: "/path/to/folder/.venv"},
+		{VirtualEnvName: "/path/to/folder/venv"},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("GOOS").Return("")
+		env.On("PathSeparator").Return("/")
+		env.On("CommandPath", mock2.Anything).Return("")
+		env.On("HasFilesInDir", mock2.Anything, "pyvenv.cfg").Return(false)
+		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
+		env.On("Getenv", "CONDA_ENV_PATH").Return("")
+		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
+		env.On("Getenv", "PYENV_VERSION").Return("")
+		env.On("HasParentFilePath", ".python-version").Return(&platform.FileInfo{}, errors.New("no match at root level"))
+		python := &Python{}
+		python.Init(properties.Map{}, env)
+		python.loadContext()
+		assert.Equal(t, "folder", python.Venv)
+	}
+}

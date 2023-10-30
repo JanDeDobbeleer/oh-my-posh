@@ -1,0 +1,97 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "palette": {
+    "w": "white",
+    "lightblue": "#5F87FF",
+    "lightmagenta": "#D75FFF",
+    "robinblue": "#5FD7FF",
+    "goodgreen": "#00D700",
+    "badred": "#FF875F"
+  },
+  "blocks": [
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "background": "cyan",
+          "foreground": "p:w",
+          "leading_diamond": "\ue0b6",
+          "properties": {
+            "macos": "\uf179  ",
+            "ubuntu": "\uf31b  ",
+            "windows": "\ue62a  "
+          },
+          "style": "diamond",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}}",
+          "trailing_diamond": "\ue0b0",
+          "type": "os"
+        },
+        {
+          "background": "p:lightblue",
+          "foreground": "p:w",
+          "leading_diamond": "<transparent>\ue0b0</>",
+          //transparent color is same as background
+          "style": "diamond",
+          "template": " {{ .UserName }} ",
+          "trailing_diamond": "\ue0b0",
+          "type": "session"
+        },
+        {
+          "background": "p:lightmagenta",
+          "foreground": "p:w",
+          "leading_diamond": "<transparent>\ue0b0</>",
+          "style": "diamond",
+          "template": " {{ .HostName }} ",
+          "trailing_diamond": "\ue0b0",
+          "type": "session"
+        },
+        {
+          "background": "p:robinblue",
+          "foreground": "p:w",
+          "leading_diamond": "\n   \ue0b6",
+          "style": "diamond",
+          "template": " \udb85\udfaa \udb80\ude4b {{ .Path }} ",
+          "trailing_diamond": "\ue0b0",
+          "type": "path"
+        },
+        /*
+        {
+          "background": "p:goodgreen",
+          "foreground": "p:w",
+          "leading_diamond": "<transparent,#516BEB>\ue0b0</>",
+          "style": "diamond",
+          "template": " {{ .HostName }} ",
+          "trailing_diamond": "\ue0b4 ",
+          "type": "session"
+        }
+        */
+        {
+          "type": "git",
+          "style": "diamond",
+          "leading_diamond": "<transparent,>\ue0b0</>",
+          "foreground": "p:w",
+          "background": "p:goodgreen",
+          "background_templates": [
+            "{{if or (.Working.Changed) (.Staging.Changed)}}p:badred{{else}}p:goodgreen{{end}}"
+          ],
+          "template": "{{ if or (.Working.Changed) (.Staging.Changed) }} \uf52f {{ else }} \uf49e {{end}}",
+          "trailing_diamond": "\ue0b4 ",
+          "properties": {
+            "fetch_status": true,
+            "fetch_stash_count": true,
+            "fetch_upstream_icon": true
+          }
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "console_title_template": "{{ .Folder }}",
+  "transient_prompt": {
+    "background": "transparent",
+    "foreground": "#FEF5ED",
+    "template": "\ue285 "
+  },
+  "version": 2
+}

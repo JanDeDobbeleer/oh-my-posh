@@ -16,14 +16,15 @@ import (
 
 func TestUmbracoSegment(t *testing.T) {
 	cases := []struct {
-		Case               string
-		ExpectedEnabled    bool
-		ExpectedString     string
-		Template           string
-		HasUmbracoFolder   bool
-		HasCsproj          bool
-		HasWebConfig       bool
-		UseLegacyWebConfig bool
+		Case                    string
+		ExpectedEnabled         bool
+		ExpectedString          string
+		Template                string
+		HasUmbracoFolder        bool
+		HasCsproj               bool
+		HasWebConfig            bool
+		UseLegacyWebConfig      bool
+		HasCSProjWithoutUmbraco bool
 	}{
 		{
 			Case:             "No Umbraco folder found",
@@ -66,6 +67,36 @@ func TestUmbracoSegment(t *testing.T) {
 			ExpectedString:   "12.1.2",
 		},
 		{
+			Case:                    "Umbraco Folder with a .csproj [without Umbraco] and a web.config",
+			HasUmbracoFolder:        true,
+			HasCsproj:               false,
+			HasWebConfig:            true,
+			HasCSProjWithoutUmbraco: true, // This is a .csproj file without Umbraco installed - so we can test it doesn't return but carries on checking for more csproj or web.config files
+			ExpectedEnabled:         true, // Segment should not be visible
+			Template:                "{{ .Version }}",
+			ExpectedString:          "8.18.9",
+		},
+		{
+			Case:                    "Umbraco Folder with a .csproj [without Umbraco] and NO web.config",
+			HasUmbracoFolder:        true,
+			HasCsproj:               false,
+			HasWebConfig:            false,
+			HasCSProjWithoutUmbraco: true,
+			ExpectedEnabled:         false,
+			Template:                "{{ .Version }}",
+			ExpectedString:          "",
+		},
+		{
+			Case:                    "Umbraco Folder with multiple .csproj's and NO web.config",
+			HasUmbracoFolder:        true,
+			HasCsproj:               true,
+			HasWebConfig:            false,
+			HasCSProjWithoutUmbraco: true,
+			ExpectedEnabled:         true, // Segment should be enabled and visible
+			Template:                "{{ .Version }}",
+			ExpectedString:          "12.1.2",
+		},
+		{
 			Case:             "Umbraco Folder and .csproj with custom template",
 			HasUmbracoFolder: true,
 			HasCsproj:        true,
@@ -78,7 +109,7 @@ func TestUmbracoSegment(t *testing.T) {
 	for _, tc := range cases {
 		// Prepare/arrange the test
 		env := new(mock.MockedEnvironment)
-		var sampleCSProj, sampleWebConfig string
+		var sampleCSProj, sampleWebConfig, sampleNonUmbracoCSProj string
 
 		if tc.HasCsproj {
 			content, _ := os.ReadFile("../test/umbraco/MyProject.csproj")
@@ -95,10 +126,15 @@ func TestUmbracoSegment(t *testing.T) {
 			content, _ := os.ReadFile(filePath)
 			sampleWebConfig = string(content)
 		}
+		if tc.HasCSProjWithoutUmbraco {
+			content, _ := os.ReadFile("../test/umbraco/ANonUmbracoProject.csproj")
+			sampleNonUmbracoCSProj = string(content)
+		}
 
 		const umbracoProjectDirectory = "/workspace/MyProject"
 		env.On("Pwd").Return(umbracoProjectDirectory)
 		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "MyProject.csproj")).Return(sampleCSProj)
+		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "ANonUmbracoProject.csproj")).Return(sampleNonUmbracoCSProj)
 		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "web.config")).Return(sampleWebConfig)
 		env.On("Debug", mock2.Anything)
 
@@ -126,6 +162,13 @@ func TestUmbracoSegment(t *testing.T) {
 		if tc.HasWebConfig {
 			dirEntries = append(dirEntries, &MockDirEntry{
 				name:  "web.config",
+				isDir: false,
+			})
+		}
+
+		if tc.HasCSProjWithoutUmbraco {
+			dirEntries = append(dirEntries, &MockDirEntry{
+				name:  "ANonUmbracoProject.csproj",
 				isDir: false,
 			})
 		}

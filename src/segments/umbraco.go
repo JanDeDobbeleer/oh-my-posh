@@ -59,11 +59,23 @@ func (u *Umbraco) Enabled() bool {
 		}
 
 		if strings.EqualFold(file.Name(), "web.config") {
-			return u.TryFindLegacyUmbraco(filepath.Join(location, file.Name()))
+			if u.TryFindLegacyUmbraco(filepath.Join(location, file.Name())) {
+				return true
+			}
+
+			// We may have found a web.config first before a *.csproj file
+			// So we need to keep checking to see if modern Umbraco is installed if we come across a *.csproj file
+			continue
 		}
 
 		if strings.EqualFold(filepath.Ext(file.Name()), ".csproj") {
-			return u.TryFindModernUmbraco(filepath.Join(location, file.Name()))
+			if u.TryFindModernUmbraco(filepath.Join(location, file.Name())) {
+				return true
+			}
+
+			// We may have found a *.csproj first before a web.config file
+			// So we need to keep checking if legacy Umbraco is installed (as the *.csproj could be for a non-Umbraco project)
+			continue
 		}
 	}
 

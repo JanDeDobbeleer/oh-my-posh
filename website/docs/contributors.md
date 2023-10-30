@@ -295,6 +295,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/princesaini"><img src="https://avatars.githubusercontent.com/u/25565506?v=4?s=100" width="100px;" alt="Prince Saini"/><br /><sub><b>Prince Saini</b></sub></a><br /><a href="#design-princesaini" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/fabriciojuliano/"><img src="https://avatars.githubusercontent.com/u/70244182?v=4?s=100" width="100px;" alt="fabriciojlm"/><br /><sub><b>fabriciojlm</b></sub></a><br /><a href="#design-fabriciojlm" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SriRamanujam"><img src="https://avatars.githubusercontent.com/u/2983875?v=4?s=100" width="100px;" alt="Sri Ramanujam"/><br /><sub><b>Sri Ramanujam</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=SriRamanujam" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=SriRamanujam" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Juneezee"><img src="https://avatars.githubusercontent.com/u/20135478?v=4?s=100" width="100px;" alt="Eng Zer Jun"/><br /><sub><b>Eng Zer Jun</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Juneezee" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

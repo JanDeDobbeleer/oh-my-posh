@@ -142,7 +142,7 @@ func (u *Umbraco) TryFindLegacyUmbraco(configPath string) bool {
 
 	// Loop over all the package references
 	for _, appSetting := range webConfigAppSettings.AppSettings {
-		if strings.EqualFold(appSetting.Key, "umbraco.core.configurationstatus") {
+		if strings.EqualFold(appSetting.Key, "umbraco.core.configurationstatus") || strings.EqualFold(appSetting.Key, "umbracoConfigurationStatus") {
 			u.Modern = false
 
 			if len(appSetting.Value) == 0 {

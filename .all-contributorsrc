@@ -2042,6 +2042,16 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "SriRamanujam",
+      "name": "Sri Ramanujam",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2983875?v=4",
+      "profile": "https://github.com/SriRamanujam",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

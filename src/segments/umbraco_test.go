@@ -16,13 +16,14 @@ import (
 
 func TestUmbracoSegment(t *testing.T) {
 	cases := []struct {
-		Case             string
-		ExpectedEnabled  bool
-		ExpectedString   string
-		Template         string
-		HasUmbracoFolder bool
-		HasCsproj        bool
-		HasWebConfig     bool
+		Case               string
+		ExpectedEnabled    bool
+		ExpectedString     string
+		Template           string
+		HasUmbracoFolder   bool
+		HasCsproj          bool
+		HasWebConfig       bool
+		UseLegacyWebConfig bool
 	}{
 		{
 			Case:             "No Umbraco folder found",
@@ -44,6 +45,16 @@ func TestUmbracoSegment(t *testing.T) {
 			ExpectedEnabled:  true, // Segment should be enabled and visible
 			Template:         "{{ .Version }}",
 			ExpectedString:   "8.18.9",
+		},
+		{
+			Case:               "Umbraco Folder and web.config but NO .csproj and uses older web.config",
+			HasUmbracoFolder:   true,
+			HasCsproj:          false,
+			HasWebConfig:       true,
+			UseLegacyWebConfig: true,
+			ExpectedEnabled:    true, // Segment should be enabled and visible
+			Template:           "{{ .Version }}",
+			ExpectedString:     "4.11.10",
 		},
 		{
 			Case:             "Umbraco Folder and .csproj but NO web.config",
@@ -74,7 +85,14 @@ func TestUmbracoSegment(t *testing.T) {
 			sampleCSProj = string(content)
 		}
 		if tc.HasWebConfig {
-			content, _ := os.ReadFile("../test/umbraco/web.config")
+			var filePath string
+			if tc.UseLegacyWebConfig {
+				filePath = "../test/umbraco/web.old.config"
+			} else {
+				filePath = "../test/umbraco/web.config"
+			}
+
+			content, _ := os.ReadFile(filePath)
 			sampleWebConfig = string(content)
 		}
 

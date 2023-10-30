@@ -65,7 +65,7 @@ func (segment *Segment) migrationOne(env platform.Environment) {
 		segment.migrateIconOverride("stash_count_icon", " \uF692 ")
 		segment.migrateIconOverride("worktree_count_icon", " \uf1bb ")
 		segment.migrateIconOverride("status_separator_icon", " |")
-		if segment.Properties.GetBool(properties.Property("status_colors_enabled"), false) {
+		if segment.Properties.GetBool("status_colors_enabled", false) {
 			background := segment.Properties.GetBool(colorBackground, true)
 			segment.migrateColorOverride("local_changes_color", "{{ if or (.Working.Changed) (.Staging.Changed) }}%s{{ end }}", background)
 			segment.migrateColorOverride("ahead_and_behind_color", "{{ if and (gt .Ahead 0) (gt .Behind 0) }}%s{{ end }}", background)
@@ -87,10 +87,10 @@ func (segment *Segment) migrationOne(env platform.Environment) {
 		segment.migrateColorOverride("charging_color", `{{ if eq "Charging" .State.String }}%s{{ end }}`, background)
 		segment.migrateColorOverride("discharging_color", `{{ if eq "Discharging" .State.String }}%s{{ end }}`, background)
 		stateList := []string{`"Discharging"`}
-		if segment.Properties.GetBool(properties.Property("display_charging"), true) {
+		if segment.Properties.GetBool("display_charging", true) {
 			stateList = append(stateList, `"Charging"`)
 		}
-		if segment.Properties.GetBool(properties.Property("display_charged"), true) {
+		if segment.Properties.GetBool("display_charged", true) {
 			stateList = append(stateList, `"Full"`)
 		}
 		if len(stateList) < 3 {
@@ -112,10 +112,10 @@ func (segment *Segment) migrationOne(env platform.Environment) {
 		segment.migrateIconOverride("ssh_icon", "\ueba9 ")
 		template := segment.Properties.GetString(segmentTemplate, segment.writer.Template())
 		template = strings.ReplaceAll(template, ".ComputerName", ".HostName")
-		if !segment.Properties.GetBool(properties.Property("display_host"), true) {
+		if !segment.Properties.GetBool("display_host", true) {
 			template = strings.ReplaceAll(template, "@{{ .HostName }}", "")
 		}
-		if !segment.Properties.GetBool(properties.Property("display_user"), true) {
+		if !segment.Properties.GetBool("display_user", true) {
 			template = strings.ReplaceAll(template, "@", "")
 			template = strings.ReplaceAll(template, "{{ .UserName }}", "")
 		}

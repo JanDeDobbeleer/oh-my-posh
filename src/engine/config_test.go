@@ -56,6 +56,8 @@ func TestEscapeGlyphs(t *testing.T) {
 		{Input: "\ufd03", Expected: "\\ufd03"},
 		{Input: "}", Expected: "}"},
 		{Input: "🏚", Expected: "🏚"},
+		{Input: "\U000F011B", Expected: "\\udb80\\udd1b"},
+		{Input: "󰄛", Expected: "\\udb80\\udd1b"},
 	}
 	for _, tc := range cases {
 		assert.Equal(t, tc.Expected, escapeGlyphs(tc.Input, false), tc.Input)

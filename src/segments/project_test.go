@@ -11,6 +11,7 @@ import (
 
 	"github.com/alecthomas/assert"
 
+	mock2 "github.com/stretchr/testify/mock"
 	testify_mock "github.com/stretchr/testify/mock"
 )
 
@@ -343,8 +344,8 @@ func TestDotnetProject(t *testing.T) {
 			Case:            "invalid or empty contents",
 			FileName:        "Invalid.csproj",
 			HasFiles:        true,
-			ExpectedEnabled: false,
-			ExpectedString:  "cannot extract TFM from Invalid project file",
+			ExpectedEnabled: true,
+			ExpectedString:  "Invalid",
 		},
 		{
 			Case:            "no files",
@@ -370,6 +371,7 @@ func TestDotnetProject(t *testing.T) {
 			},
 		})
 		env.On("FileContent", tc.FileName).Return(tc.ProjectContents)
+		env.On("Error", mock2.Anything)
 		pkg := &Project{}
 		pkg.Init(properties.Map{}, env)
 		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)

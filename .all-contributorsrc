@@ -2061,6 +2061,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "AlexJPotter",
+      "name": "Alex Potter",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14200888?v=4",
+      "profile": "https://alexpotter.dev",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

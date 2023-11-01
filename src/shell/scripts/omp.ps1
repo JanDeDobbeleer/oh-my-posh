@@ -182,20 +182,27 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     if (("::TRANSIENT::" -eq "true") -and ($ExecutionContext.SessionState.LanguageMode -ne "ConstrainedLanguage")) {
         Set-PSReadLineKeyHandler -Key Enter -BriefDescription 'OhMyPoshEnterKeyHandler' -ScriptBlock {
-            $executingCommand = Set-TransientPrompt
-            [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
-            # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
-            if (("::FTCS_MARKS::" -eq "true") -and $executingCommand) {
-                Write-Host "$([char]0x1b)]133;C`a" -NoNewline
+            try {
+                $executingCommand = Set-TransientPrompt
+                [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+                # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
+                if (("::FTCS_MARKS::" -eq "true") -and $executingCommand) {
+                    Write-Host "$([char]0x1b)]133;C`a" -NoNewline
+                }
             }
+            finally {}
         }
         Set-PSReadLineKeyHandler -Key Ctrl+c -BriefDescription 'OhMyPoshCtrlCKeyHandler' -ScriptBlock {
-            $start = $null
-            [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
-            # only render a transient prompt when no text is selected
-            if ($start -eq -1) {
-                Set-TransientPrompt
+            try {
+                $start = $null
+                [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
+                # only render a transient prompt when no text is selected
+                if ($start -eq -1) {
+                    Set-TransientPrompt
+                }
             }
+            finally {}
+
             [Microsoft.PowerShell.PSConsoleReadLine]::CopyOrCancelLine()
         }
     }
@@ -209,7 +216,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 $executingCommand = $parseErrors.Count -eq 0
             }
             finally {}
+
             [Microsoft.PowerShell.PSConsoleReadLine]::AcceptLine()
+
             # Write FTCS_COMMAND_EXECUTED after accepting the input - it should still happen before execution
             if ($executingCommand) {
                 Write-Host "$([char]0x1b)]133;C`a" -NoNewline

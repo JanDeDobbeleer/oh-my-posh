@@ -3,7 +3,7 @@ package segments
 import (
 	"encoding/json"
 	"encoding/xml"
-	"errors"
+	"fmt"
 	"path/filepath"
 	"strings"
 
@@ -208,13 +208,14 @@ func (n *Project) getNuSpecPackage(_ ProjectItem) *ProjectData {
 func (n *Project) getDotnetProject(_ ProjectItem) *ProjectData {
 	var name string
 	var content string
+	var extension string
 
 	extensions := []string{".sln", ".slnf", ".csproj", ".fsproj", ".vbproj"}
 	files := n.env.LsDir(n.env.Pwd())
 
 	// get the first match only
 	for _, file := range files {
-		extension := filepath.Ext(file.Name())
+		extension = filepath.Ext(file.Name())
 		if slices.Contains(extensions, extension) {
 			name = strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
 			content = n.env.FileContent(file.Name())
@@ -224,13 +225,17 @@ func (n *Project) getDotnetProject(_ ProjectItem) *ProjectData {
 
 	// the name of the parameter may differ depending on the version,
 	// so instead of xml.Unmarshal() we use regex:
+	var target string
 	tag := "(?P<TAG><.*TargetFramework.*>(?P<TFM>.*)</.*TargetFramework.*>)"
+
 	values := regex.FindNamedRegexMatch(tag, content)
-	if len(values) == 0 {
-		n.Error = errors.New("cannot extract TFM from " + name + " project file").Error()
-		return nil
+	if len(values) != 0 {
+		target = values["TFM"]
 	}
-	target := values["TFM"]
+
+	if len(target) == 0 {
+		n.env.Error(fmt.Errorf("cannot extract TFM from %s project file", name))
+	}
 
 	return &ProjectData{
 		Target: target,

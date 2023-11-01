@@ -832,3 +832,7 @@ func (g *Git) getSwitchMode(property properties.Property, gitSwitch, mode string
 	}
 	return fmt.Sprintf("%s%s", gitSwitch, mode)
 }
+
+func (g *Git) LatestTag() string {
+	return g.getGitCommandOutput("describe", "--tags", "--abbrev=0")
+}

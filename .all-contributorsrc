@@ -2081,6 +2081,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "paulomorgado",
+      "name": "Paulo Morgado",
+      "avatar_url": "https://avatars.githubusercontent.com/u/470455?v=4",
+      "profile": "https://github.com/paulomorgado",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

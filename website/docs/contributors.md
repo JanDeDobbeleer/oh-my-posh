@@ -299,6 +299,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://alexpotter.dev"><img src="https://avatars.githubusercontent.com/u/14200888?v=4?s=100" width="100px;" alt="Alex Potter"/><br /><sub><b>Alex Potter</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=AlexJPotter" title="Code">💻</a> <a href="#design-AlexJPotter" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=AlexJPotter" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://mishmanners.info"><img src="https://avatars.githubusercontent.com/u/36594527?v=4?s=100" width="100px;" alt="Michelle "MishManners®™" Mannering"/><br /><sub><b>Michelle "MishManners®™" Mannering</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mishmanners" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/paulomorgado"><img src="https://avatars.githubusercontent.com/u/470455?v=4?s=100" width="100px;" alt="Paulo Morgado"/><br /><sub><b>Paulo Morgado</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=paulomorgado" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=paulomorgado" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

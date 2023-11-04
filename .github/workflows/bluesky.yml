@@ -1,0 +1,17 @@
+name: Bluesky
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  bluesky:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish
+        uses: JanDeDobbeleer/bluesky-releasenotes-action@main
+        with:
+          title: "The best release yet 🚀"
+          bluesky-identifier: ${{ secrets.BLUESKY_IDENTIFIER }}
+          bluesky-password: ${{ secrets.BLUESKY_PASSWORD }}
+          github-token: ${{ secrets.GH_PAT }}

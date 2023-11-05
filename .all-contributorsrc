@@ -2101,6 +2101,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "flanakin",
+      "name": "Michael Flanakin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/399533?v=4",
+      "profile": "http://about.me/flanakin",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -56,7 +56,7 @@ on oh-my-posh, a modern and more efficient tool was needed to suit my personal n
 
 ## Reviews
 
-* [Repo review][(https://repo-reviews.github.io//reviews/2023-06-21_TameWizard_JanDeDobbeleer_oh-my-posh) by [TameWizard](https://github.com/TameWizard)
+* [Repo review](https://repo-reviews.github.io//reviews/2023-06-21_TameWizard_JanDeDobbeleer_oh-my-posh) by [TameWizard](https://github.com/TameWizard)
 
 ## Thanks
 

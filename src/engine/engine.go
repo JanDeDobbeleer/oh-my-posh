@@ -222,6 +222,14 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) bool {
 			return false
 		}
 
+		// in ZSH, RPROMPT is printed with a trailing space
+		// to ensure alignment, we need to print a space here
+		// see https://github.com/JanDeDobbeleer/oh-my-posh/issues/4327
+		if e.Env.Shell() == shell.ZSH {
+			text += " "
+			length++
+		}
+
 		space, OK := e.canWriteRightBlock(false)
 		// we can't print the right block as there's not enough room available
 		if !OK {

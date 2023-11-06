@@ -1,0 +1,70 @@
+---
+id: lastfm
+title: LastFM
+sidebar_label: LastFM
+---
+
+## What
+
+Show the currently playing song from a [LastFM][lastfm] user.
+
+:::caution
+Be aware that LastFM updates may be severely delayed when paused and songs may linger in the "now playing" state for a prolonged time.
+
+Additionally, we are using HTTP requests to get the data,
+so you may need to adjust the `http_timeout` and `cache_timeout` to your liking to get better results.
+
+You **must** request an [API key][api-key] at the LastFM website.
+:::
+
+## Sample Configuration
+
+import Config from '@site/src/components/Config.js';
+
+<Config data={{
+  "background": "p:sky",
+  "foreground": "p:white",
+  "powerline_symbol": "\ue0b0",
+  "properties": {
+    "apikey": "<YOUR_API_KEY>",
+	  "username": "<LASTFM_USERNAME>",
+	  "http_timeout": 20000,
+	  "cache_timeout": 1
+  },
+  "style": "powerline",
+  "template": " {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Full }}{{ end }} ",
+  "type": "lastfm"
+}}/>
+
+## Properties
+
+| Name           | Type     | Description                                            |
+| -------------- | -------- | ------------------------------------------------------ |
+| `playing_icon` | `string` | text/icon to show when playing - defaults to `\uE602 ` |
+| `stopped_icon` | `string` | text/icon to show when stopped - defaults to `\uF04D ` |
+| `apikey`       | `string` | your LastFM [API key][api-key]                         |
+| `username`     | `string` | your LastFM username                                   |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name      | Type     | Description                                    |
+| --------- | -------- | ---------------------------------------------- |
+| `.Status` | `string` | player status (`playing`, `paused`, `stopped`) |
+| `.Artist` | `string` | current artist                                 |
+| `.Track`  | `string` | current track                                  |
+| `.Full`   | `string` | will output `Artist - Track`                   |
+| `.Icon`   | `string` | icon (based on `.Status`)                      |
+
+[templates]: /docs/configuration/templates
+[lastfm]: https://www.last.fm
+[api-key]: https://www.last.fm/api/account/create

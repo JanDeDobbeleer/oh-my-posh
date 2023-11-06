@@ -168,6 +168,8 @@ const (
 	KOTLIN SegmentType = "kotlin"
 	// KUBECTL writes the Kubernetes context we're currently in
 	KUBECTL SegmentType = "kubectl"
+	// LASTFM writes the lastfm status
+	LASTFM SegmentType = "lastfm"
 	// LUA writes the active lua version
 	LUA SegmentType = "lua"
 	// MERCURIAL writes the Mercurial source control information
@@ -299,6 +301,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	JULIA:           func() SegmentWriter { return &segments.Julia{} },
 	KOTLIN:          func() SegmentWriter { return &segments.Kotlin{} },
 	KUBECTL:         func() SegmentWriter { return &segments.Kubectl{} },
+	LASTFM:          func() SegmentWriter { return &segments.LastFM{} },
 	LUA:             func() SegmentWriter { return &segments.Lua{} },
 	MERCURIAL:       func() SegmentWriter { return &segments.Mercurial{} },
 	NBA:             func() SegmentWriter { return &segments.Nba{} },

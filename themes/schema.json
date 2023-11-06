@@ -280,6 +280,7 @@
             "java",
             "kotlin",
             "kubectl",
+            "lastfm",
             "lua",
             "mercurial",
             "node",
@@ -3149,6 +3150,55 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "lastfm"
+              }
+            }
+          },
+          "then": {
+            "title": "LastFM Segment",
+            "description": "https://ohmyposh.dev/docs/segments/lastfm",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "playing_icon": {
+                    "type": "string",
+                    "title": "User Info Separator",
+                    "description": "Text/icon to show when playing",
+                    "default": "\uE602"
+                  },
+                  "stopped_icon": {
+                    "type": "string",
+                    "title": "SSH Icon",
+                    "description": "Text/icon to show when stopped",
+                    "default": "\uF04D"
+                  },
+                  "apiKey": {
+                    "type": "string",
+                    "title": "apiKey",
+                    "description": "The apikey used for the api call (Required)",
+                    "default": "."
+                  },
+                  "username": {
+                    "type": "string",
+                    "title": "username",
+                    "description": "The username used for the api call (Required)",
+                    "default": "."
+                  },
+                  "http_timeout": {
+                    "$ref": "#/definitions/http_timeout"
+                  },
+                  "cache_timeout": {
+                    "$ref": "#/definitions/cache_timeout"
                   }
                 }
               }

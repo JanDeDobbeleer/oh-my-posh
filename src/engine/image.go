@@ -299,7 +299,7 @@ var doubleWidthRunes = []RuneRange{
 	// Font Awesome Extension
 	{Start: '\ue200', End: '\ue2a9'},
 	// Material Design Icons
-	{Start: '\U000f0001', End: '\U000f0848'},
+	{Start: '\U000f0001', End: '\U000f1af0'},
 	// Weather
 	{Start: '\ue300', End: '\ue3eb'},
 	// Octicons

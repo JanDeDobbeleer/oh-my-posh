@@ -72,7 +72,7 @@
             "always_enabled": true
           },
           "style": "diamond",
-          "template": " \ueb05{{ if gt .Code 0 }} {{.Code}}{{ end }} ",
+          "template": " \uf08a{{ if gt .Code 0 }} {{.Code}}{{ end }} ",
           "trailing_diamond": "\ue0b4",
           "type": "status"
         }

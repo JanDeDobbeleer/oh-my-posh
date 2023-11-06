@@ -1,0 +1,159 @@
+package segments
+
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+)
+
+type LastFM struct {
+	props properties.Properties
+	env   platform.Environment
+
+	Artist string
+	Track  string
+	Full   string
+	URL    string
+	Icon   string
+	Status string
+}
+
+const (
+	// APIKey openweathermap api key
+	lfmAPIKey properties.Property = "apiKey"
+	// LastFM username
+	lfmUsername properties.Property = "username"
+	// Seconds since last played until the song is considered stopped
+	lfmStoppedSeconds properties.Property = "stopped_seconds"
+	// CacheKeyResponse key used when caching the response
+	lfmCacheKeyResponse string = "lfm_response"
+	// CacheKeyURL key used when caching the url responsible for the response
+	lfmCacheKeyURL string = "lfm_url"
+
+	// PlayingIcon indicates a song is playing
+	lfmPlayingIcon properties.Property = "playing_icon"
+	// StoppedIcon indicates a song is stopped
+	lfmStoppedIcon properties.Property = "stopped_icon"
+)
+
+type lmfDate struct {
+	UnixString string `json:"uts"`
+}
+type lfmTrackInfo struct {
+	IsPlaying *string `json:"nowplaying,omitempty"`
+}
+type Artist struct {
+	Name string `json:"#text"`
+}
+type lfmTrack struct {
+	Artist `json:"artist"`
+	Name   string        `json:"name"`
+	Info   *lfmTrackInfo `json:"@attr"`
+	Date   lmfDate       `json:"date"`
+}
+type tracks struct {
+	Tracks []lfmTrack `json:"track"`
+}
+
+type lfmDataResponse struct {
+	TracksInfo tracks `json:"recenttracks"`
+}
+
+func (d *LastFM) Enabled() bool {
+	err := d.setStatus()
+
+	if err != nil {
+		d.env.Error(err)
+		return false
+	}
+
+	return true
+}
+
+func (d *LastFM) Template() string {
+	return " {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Full }}{{ end }} "
+}
+
+func (d *LastFM) getResult() (*lfmDataResponse, error) {
+	cacheTimeout := d.props.GetInt(properties.CacheTimeout, 0)
+	response := new(lfmDataResponse)
+	if cacheTimeout > 0 {
+		// check if data stored in cache
+		val, found := d.env.Cache().Get(lfmCacheKeyResponse)
+		// we got something from te cache
+		if found {
+			err := json.Unmarshal([]byte(val), response)
+			if err != nil {
+				return nil, err
+			}
+			d.URL, _ = d.env.Cache().Get(lfmCacheKeyURL)
+			return response, nil
+		}
+	}
+
+	apikey := d.props.GetString(lfmAPIKey, ".")
+	username := d.props.GetString(lfmUsername, ".")
+	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
+
+	d.URL = fmt.Sprintf("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&api_key=%s&user=%s&format=json&limit=1", apikey, username)
+
+	body, err := d.env.HTTPRequest(d.URL, nil, httpTimeout)
+	if err != nil {
+		return new(lfmDataResponse), err
+	}
+	err = json.Unmarshal(body, &response)
+	if err != nil {
+		return new(lfmDataResponse), err
+	}
+
+	if cacheTimeout > 0 {
+		d.env.Cache().Set(lfmCacheKeyResponse, string(body), cacheTimeout)
+		d.env.Cache().Set(lfmCacheKeyURL, d.URL, cacheTimeout)
+	}
+	return response, nil
+}
+
+func (d *LastFM) setStatus() error {
+	q, err := d.getResult()
+	if err != nil {
+		return err
+	}
+
+	if len(q.TracksInfo.Tracks) == 0 {
+		return errors.New("No data found")
+	}
+
+	track := q.TracksInfo.Tracks[0]
+
+	d.Artist = track.Artist.Name
+	d.Track = track.Name
+	d.Full = fmt.Sprintf("%s - %s", d.Artist, d.Track)
+
+	isPlaying := false
+	if track.Info != nil && track.Info.IsPlaying != nil && *track.Info.IsPlaying == "true" {
+		isPlaying = true
+	}
+
+	// date
+	/* date, err := strconv.ParseInt(track.Date.UnixString, 10, 64) */
+	// Seconds since last played until the song is considered stopped
+	/* timeSince := time.Now().Unix() - date */ // DISABLED: unfortunately lastfm updates too slow to be useful
+
+	if isPlaying {
+		d.Icon = d.props.GetString(lfmPlayingIcon, "\uE602 ")
+		d.Status = "playing"
+	} else {
+		d.Icon = d.props.GetString(lfmStoppedIcon, "\uF04D ")
+		d.Status = "stopped"
+	}
+
+	return nil
+}
+
+func (d *LastFM) Init(props properties.Properties, env platform.Environment) {
+	d.props = props
+	d.env = env
+}

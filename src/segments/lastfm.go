@@ -27,7 +27,7 @@ const (
 	// LastFM username
 	lfmUsername properties.Property = "username"
 	// Seconds since last played until the song is considered stopped
-	lfmStoppedSeconds properties.Property = "stopped_seconds"
+	/* lfmStoppedSeconds properties.Property = "stopped_seconds" */ // Commented out incase we want to re-enable this feature
 	// CacheKeyResponse key used when caching the response
 	lfmCacheKeyResponse string = "lfm_response"
 	// CacheKeyURL key used when caching the url responsible for the response

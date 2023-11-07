@@ -2,7 +2,6 @@ package segments
 
 import (
 	"errors"
-	"fmt"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
@@ -27,20 +26,20 @@ func TestLFMSegmentSingle(t *testing.T) {
 	}{
 		{
 			Case:            "All Defaults",
-			APIJSONResponse: `{"recenttracks":{"track":[{"artist":{"mbid":"","#text":"C.Gambino"},"name":"Automatic","@attr":{"nowplaying":"true"}}]}}`,
+			APIJSONResponse: `{"recenttracks":{"track":[{"artist":{"#text":"C.Gambino"},"name":"Automatic","@attr":{"nowplaying":"true"}}]}}`,
 			ExpectedString:  "\uE602 C.Gambino - Automatic",
 			ExpectedEnabled: true,
 		},
 		{
 			Case:            "Custom Template",
-			APIJSONResponse: `{"recenttracks":{"track":[{"artist":{"mbid":"","#text":"C.Gambino"},"name":"Automatic","@attr":{"nowplaying":"true"}}]}}`,
+			APIJSONResponse: `{"recenttracks":{"track":[{"artist":{"#text":"C.Gambino"},"name":"Automatic","@attr":{"nowplaying":"true"}}]}}`,
 			ExpectedString:  "\uE602 C.Gambino - Automatic",
 			ExpectedEnabled: true,
 			Template:        "{{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Full }}{{ end }}",
 		},
 		{
 			Case:            "Song Stopped",
-			APIJSONResponse: `{"recenttracks":{"track":[{"artist":{"mbid":"","#text":"C.Gambino"},"streamable":"0","name":"Automatic","date":{"uts":"1699350223","#text":"07 Nov 2023, 09:43"}}]}}`,
+			APIJSONResponse: `{"recenttracks":{"track":[{"artist":{"#text":"C.Gambino"},"name":"Automatic","date":{"uts":"1699350223"}}]}}`,
 			ExpectedString:  "\uF04D",
 			ExpectedEnabled: true,
 			Template:        "{{ .Icon }}",
@@ -84,8 +83,8 @@ func TestLFMSegmentSingle(t *testing.T) {
 }
 
 func TestLFMSegmentFromCache(t *testing.T) {
-	response := fmt.Sprintf(`{"recenttracks":{"track":[{"artist":{"mbid":"","#text":"C.Gambino"},"streamable":"0","name":"Automatic","date":{"uts":"1699350223","#text":"07 Nov 2023, 09:43"}}]}}`)
-	expectedString := fmt.Sprintf("%s", "\uF04D")
+	response := `{"recenttracks":{"track":[{"artist":{"mbid":"","#text":"C.Gambino"},"streamable":"0","name":"Automatic","date":{"uts":"1699350223","#text":"07 Nov 2023, 09:43"}}]}}`
+	expectedString := "\uF04D"
 
 	env := &mock.MockedEnvironment{}
 	cache := &mock.MockedCache{}

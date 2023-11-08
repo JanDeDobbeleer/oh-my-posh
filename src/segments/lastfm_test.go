@@ -96,8 +96,7 @@ func TestLFMSegmentFromCache(t *testing.T) {
 		},
 		env: env,
 	}
-	cache.On("Get", "lfm_response").Return(response, true)
-	cache.On("Get", "lfm_url").Return(LFMAPIURL, true)
+	cache.On("Get", LFMAPIURL).Return(response, true)
 	cache.On("Set").Return()
 	env.On("Cache").Return(cache)
 

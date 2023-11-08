@@ -22,21 +22,10 @@ type LastFM struct {
 }
 
 const (
-	// APIKey openweathermap api key
+	// APIKey api key
 	lfmAPIKey properties.Property = "apiKey"
 	// LastFM username
 	lfmUsername properties.Property = "username"
-	// Seconds since last played until the song is considered stopped
-	/* lfmStoppedSeconds properties.Property = "stopped_seconds" */ // Commented out incase we want to re-enable this feature
-	// CacheKeyResponse key used when caching the response
-	lfmCacheKeyResponse string = "lfm_response"
-	// CacheKeyURL key used when caching the url responsible for the response
-	lfmCacheKeyURL string = "lfm_url"
-
-	// PlayingIcon indicates a song is playing
-	lfmPlayingIcon properties.Property = "playing_icon"
-	// StoppedIcon indicates a song is stopped
-	lfmStoppedIcon properties.Property = "stopped_icon"
 )
 
 type lmfDate struct {
@@ -55,7 +44,7 @@ type lfmTrack struct {
 	Date   lmfDate       `json:"date"`
 }
 type tracks struct {
-	Tracks []lfmTrack `json:"track"`
+	Tracks []*lfmTrack `json:"track"`
 }
 
 type lfmDataResponse struct {
@@ -80,25 +69,24 @@ func (d *LastFM) Template() string {
 func (d *LastFM) getResult() (*lfmDataResponse, error) {
 	cacheTimeout := d.props.GetInt(properties.CacheTimeout, 0)
 	response := new(lfmDataResponse)
-	if cacheTimeout > 0 {
-		// check if data stored in cache
-		val, found := d.env.Cache().Get(lfmCacheKeyResponse)
-		// we got something from te cache
-		if found {
-			err := json.Unmarshal([]byte(val), response)
-			if err != nil {
-				return nil, err
-			}
-			d.URL, _ = d.env.Cache().Get(lfmCacheKeyURL)
-			return response, nil
-		}
-	}
 
 	apikey := d.props.GetString(lfmAPIKey, ".")
 	username := d.props.GetString(lfmUsername, ".")
 	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
 	d.URL = fmt.Sprintf("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&api_key=%s&user=%s&format=json&limit=1", apikey, username)
+
+	if cacheTimeout > 0 {
+		val, found := d.env.Cache().Get(d.URL)
+
+		if found {
+			err := json.Unmarshal([]byte(val), response)
+			if err != nil {
+				return nil, err
+			}
+			return response, nil
+		}
+	}
 
 	body, err := d.env.HTTPRequest(d.URL, nil, httpTimeout)
 	if err != nil {
@@ -110,8 +98,7 @@ func (d *LastFM) getResult() (*lfmDataResponse, error) {
 	}
 
 	if cacheTimeout > 0 {
-		d.env.Cache().Set(lfmCacheKeyResponse, string(body), cacheTimeout)
-		d.env.Cache().Set(lfmCacheKeyURL, d.URL, cacheTimeout)
+		d.env.Cache().Set(d.URL, string(body), cacheTimeout)
 	}
 	return response, nil
 }
@@ -137,16 +124,11 @@ func (d *LastFM) setStatus() error {
 		isPlaying = true
 	}
 
-	// date
-	/* date, err := strconv.ParseInt(track.Date.UnixString, 10, 64) */
-	// Seconds since last played until the song is considered stopped
-	/* timeSince := time.Now().Unix() - date */ // DISABLED: unfortunately lastfm updates too slow to be useful
-
 	if isPlaying {
-		d.Icon = d.props.GetString(lfmPlayingIcon, "\uE602 ")
+		d.Icon = d.props.GetString(PlayingIcon, "\uE602 ")
 		d.Status = "playing"
 	} else {
-		d.Icon = d.props.GetString(lfmStoppedIcon, "\uF04D ")
+		d.Icon = d.props.GetString(StoppedIcon, "\uF04D ")
 		d.Status = "stopped"
 	}
 

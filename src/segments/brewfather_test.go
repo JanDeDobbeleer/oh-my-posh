@@ -148,7 +148,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		props := properties.Map{
 			properties.CacheTimeout: tc.CacheTimeout,
 			BFBatchID:               BFFakeBatchID,
-			BFAPIKey:                "FAKE",
+			APIKey:                  "FAKE",
 			BFUserID:                "FAKE",
 		}
 

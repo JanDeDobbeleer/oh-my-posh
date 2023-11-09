@@ -19,22 +19,24 @@ You **must** request an [API key][api-key] at the LastFM website.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "background": "p:sky",
-  "foreground": "p:white",
-  "powerline_symbol": "\ue0b0",
-  "properties": {
-    "apikey": "<YOUR_API_KEY>",
-	  "username": "<LASTFM_USERNAME>",
-	  "http_timeout": 20000,
-	  "cache_timeout": 1
-  },
-  "style": "powerline",
-  "template": " {{ .Icon }}{{ if ne .Status \"stopped\" }}{{ .Full }}{{ end }} ",
-  "type": "lastfm"
-}}/>
+<Config
+  data={{
+    background: "p:sky",
+    foreground: "p:white",
+    powerline_symbol: "\ue0b0",
+    properties: {
+      api_key: "<YOUR_API_KEY>",
+      username: "<LASTFM_USERNAME>",
+      http_timeout: 20000,
+      cache_timeout: 1,
+    },
+    style: "powerline",
+    template: ' {{ .Icon }}{{ if ne .Status "stopped" }}{{ .Full }}{{ end }} ',
+    type: "lastfm",
+  }}
+/>
 
 ## Properties
 
@@ -42,7 +44,7 @@ import Config from '@site/src/components/Config.js';
 | -------------- | -------- | ------------------------------------------------------ |
 | `playing_icon` | `string` | text/icon to show when playing - defaults to `\uE602 ` |
 | `stopped_icon` | `string` | text/icon to show when stopped - defaults to `\uF04D ` |
-| `apikey`       | `string` | your LastFM [API key][api-key]                         |
+| `api_key`      | `string` | your LastFM [API key][api-key]                         |
 | `username`     | `string` | your LastFM username                                   |
 
 ## Template ([info][templates])

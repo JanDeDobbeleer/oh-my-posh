@@ -3125,8 +3125,8 @@
             }
           },
           "then": {
-            "title": "Lua Segment",
-            "description": "https://ohmyposh.dev/docs/segments/lua",
+            "title": "LastFM Segment",
+            "description": "https://ohmyposh.dev/docs/segments/lastfm",
             "properties": {
               "properties": {
                 "properties": {

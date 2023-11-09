@@ -16,7 +16,6 @@ type LastFM struct {
 	Artist string
 	Track  string
 	Full   string
-	URL    string
 	Icon   string
 	Status string
 }
@@ -74,10 +73,10 @@ func (d *LastFM) getResult() (*lfmDataResponse, error) {
 	username := d.props.GetString(lfmUsername, ".")
 	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
-	d.URL = fmt.Sprintf("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&api_key=%s&user=%s&format=json&limit=1", apikey, username)
+	url := fmt.Sprintf("https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&api_key=%s&user=%s&format=json&limit=1", apikey, username)
 
 	if cacheTimeout > 0 {
-		val, found := d.env.Cache().Get(d.URL)
+		val, found := d.env.Cache().Get(url)
 
 		if found {
 			err := json.Unmarshal([]byte(val), response)
@@ -88,7 +87,7 @@ func (d *LastFM) getResult() (*lfmDataResponse, error) {
 		}
 	}
 
-	body, err := d.env.HTTPRequest(d.URL, nil, httpTimeout)
+	body, err := d.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {
 		return new(lfmDataResponse), err
 	}
@@ -98,7 +97,7 @@ func (d *LastFM) getResult() (*lfmDataResponse, error) {
 	}
 
 	if cacheTimeout > 0 {
-		d.env.Cache().Set(d.URL, string(body), cacheTimeout)
+		d.env.Cache().Set(url, string(body), cacheTimeout)
 	}
 	return response, nil
 }

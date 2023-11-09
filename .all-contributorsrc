@@ -2119,6 +2119,17 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "TendTo",
+      "name": "Tend",
+      "avatar_url": "https://avatars.githubusercontent.com/u/65033249?v=4",
+      "profile": "https://github.com/TendTo",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

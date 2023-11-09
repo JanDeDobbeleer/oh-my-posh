@@ -15,6 +15,7 @@ type Properties interface {
 	GetInt(property Property, defaultValue int) int
 	GetKeyValueMap(property Property, defaultValue map[string]string) map[string]string
 	GetStringArray(property Property, defaultValue []string) []string
+	Get(property Property, defaultValue any) any
 }
 
 // Property defines one property of a segment for context
@@ -158,6 +159,15 @@ func (m Map) GetStringArray(property Property, defaultValue []string) []string {
 	return keyValues
 }
 
+func (m Map) Get(property Property, defaultValue any) any {
+	val, found := m[property]
+	if !found {
+		return defaultValue
+	}
+
+	return val
+}
+
 func ParseStringArray(param any) []string {
 	switch v := param.(type) {
 	default:
@@ -206,4 +216,26 @@ func parseKeyValueArray(param any) map[string]string {
 	case map[string]string:
 		return v
 	}
+}
+
+// Generic functions
+
+type Value interface {
+	string | int | []string | float64 | bool
+}
+
+func OneOf[T Value](properties Properties, defaultValue T, props ...Property) T {
+	for _, prop := range props {
+		// get value on a generic get, then see if we can cast to T?
+		val := properties.Get(prop, nil)
+		if val == nil {
+			continue
+		}
+
+		if v, ok := val.(T); ok {
+			return v
+		}
+	}
+
+	return defaultValue
 }

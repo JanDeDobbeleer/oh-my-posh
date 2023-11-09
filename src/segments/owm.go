@@ -23,7 +23,7 @@ type Owm struct {
 
 const (
 	// APIKey openweathermap api key
-	APIKey properties.Property = "apikey"
+	APIKey properties.Property = "api_key"
 	// Location openweathermap location
 	Location properties.Property = "location"
 	// Units openweathermap units
@@ -89,7 +89,7 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 		}
 	}
 
-	apikey := d.props.GetString(APIKey, ".")
+	apikey := properties.OneOf[string](d.props, ".", APIKey, "apiKey")
 	location := d.props.GetString(Location, "De Bilt,NL")
 	latitude := d.props.GetFloat64(Latitude, 91)    // This default value is intentionally invalid since there should not be a default for this and 0 is a valid value
 	longitude := d.props.GetFloat64(Longitude, 181) // This default value is intentionally invalid since there should not be a default for this and 0 is a valid value

@@ -2280,16 +2280,16 @@
             "properties": {
               "properties": {
                 "properties": {
-                  "apikey": {
+                  "api_key": {
                     "type": "string",
-                    "title": "apikey",
-                    "description": "The apikey used for the api call (Required)",
+                    "title": "API key",
+                    "description": "The API key used for the api call (Required)",
                     "default": "."
                   },
                   "location": {
                     "type": "string",
                     "title": "location",
-                    "description": "Location to use for the api call. Formatted as <City>,<STATE>,<COUNTRY_CODE>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes.",
+                    "description": "Location to use for the API call. Formatted as <City>,<STATE>,<COUNTRY_CODE>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes.",
                     "default": "De Bilt,NL"
                   },
                   "units": {
@@ -3182,16 +3182,16 @@
                     "description": "Text/icon to show when stopped",
                     "default": "\uF04D"
                   },
-                  "apiKey": {
+                  "api_key": {
                     "type": "string",
-                    "title": "apiKey",
-                    "description": "The apikey used for the api call (Required)",
+                    "title": "API key",
+                    "description": "The API key used for the API call (Required)",
                     "default": "."
                   },
                   "username": {
                     "type": "string",
                     "title": "username",
-                    "description": "The username used for the api call (Required)",
+                    "description": "The username used for the API call (Required)",
                     "default": "."
                   },
                   "http_timeout": {

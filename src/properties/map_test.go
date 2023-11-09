@@ -111,3 +111,57 @@ func TestGetFloat64PropertyNotInMap(t *testing.T) {
 	value := properties.GetFloat64(Foo, expected)
 	assert.Equal(t, expected, value)
 }
+
+func TestOneOf(t *testing.T) {
+	cases := []struct {
+		Case         string
+		Map          Map
+		Properties   []Property
+		DefaultValue string
+		Expected     any
+	}{
+		{
+			Case:       "one element",
+			Expected:   "1337",
+			Properties: []Property{Foo},
+			Map: Map{
+				Foo: "1337",
+			},
+			DefaultValue: "2000",
+		},
+		{
+			Case:       "two elements",
+			Expected:   "1337",
+			Properties: []Property{Foo},
+			Map: Map{
+				Foo:   "1337",
+				"Bar": "9001",
+			},
+			DefaultValue: "2000",
+		},
+		{
+			Case:       "no match",
+			Expected:   "2000",
+			Properties: []Property{"Moo"},
+			Map: Map{
+				Foo:   "1337",
+				"Bar": "9001",
+			},
+			DefaultValue: "2000",
+		},
+		{
+			Case:       "incorrect type",
+			Expected:   "2000",
+			Properties: []Property{Foo},
+			Map: Map{
+				Foo:   1337,
+				"Bar": "9001",
+			},
+			DefaultValue: "2000",
+		},
+	}
+	for _, tc := range cases {
+		value := OneOf(tc.Map, tc.DefaultValue, tc.Properties...)
+		assert.Equal(t, tc.Expected, value, tc.Case)
+	}
+}

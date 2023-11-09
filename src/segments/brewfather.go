@@ -34,7 +34,6 @@ type Brewfather struct {
 
 const (
 	BFUserID  properties.Property = "user_id"
-	BFAPIKey  properties.Property = "api_key"
 	BFBatchID properties.Property = "batch_id"
 
 	BFDoubleUpIcon      properties.Property = "doubleup_icon"
@@ -228,7 +227,7 @@ func (bf *Brewfather) getResult() (*Batch, error) {
 		return nil, errors.New("missing Brewfather user id (user_id)")
 	}
 
-	apiKey := bf.props.GetString(BFAPIKey, "")
+	apiKey := bf.props.GetString(APIKey, "")
 	if len(apiKey) == 0 {
 		return nil, errors.New("missing Brewfather api key (api_key)")
 	}

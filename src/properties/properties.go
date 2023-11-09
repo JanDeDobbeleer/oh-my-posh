@@ -52,3 +52,9 @@ func (w *Wrapper) GetStringArray(property Property, defaultValue []string) []str
 	w.Env.Debug(fmt.Sprintf("%s: %v", property, value))
 	return value
 }
+
+func (w *Wrapper) Get(property Property, defaultValue any) any {
+	value := w.Properties.Get(property, defaultValue)
+	w.Env.Debug(fmt.Sprintf("%s: %v", property, value))
+	return value
+}

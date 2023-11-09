@@ -57,6 +57,7 @@ module.exports = {
         "segments/az",
         "segments/azfunc",
         "segments/battery",
+        "segments/bazel",
         "segments/brewfather",
         "segments/buf",
         "segments/carbonintensity",

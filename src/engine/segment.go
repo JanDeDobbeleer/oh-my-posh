@@ -104,6 +104,8 @@ const (
 	AZFUNC SegmentType = "azfunc"
 	// BATTERY writes the battery percentage
 	BATTERY SegmentType = "battery"
+	// BAZEL writes the bazel version
+	BAZEL SegmentType = "bazel"
 	// Brewfather segment
 	BREWFATHER SegmentType = "brewfather"
 	// Buf segment writes the active buf version
@@ -265,6 +267,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	AZ:              func() SegmentWriter { return &segments.Az{} },
 	AZFUNC:          func() SegmentWriter { return &segments.AzFunc{} },
 	BATTERY:         func() SegmentWriter { return &segments.Battery{} },
+	BAZEL:           func() SegmentWriter { return &segments.Bazel{} },
 	BREWFATHER:      func() SegmentWriter { return &segments.Brewfather{} },
 	BUF:             func() SegmentWriter { return &segments.Buf{} },
 	CARBONINTENSITY: func() SegmentWriter { return &segments.CarbonIntensity{} },

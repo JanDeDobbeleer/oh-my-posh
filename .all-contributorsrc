@@ -2130,6 +2130,17 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "KibbeWater",
+      "name": "Snow",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35224538?v=4",
+      "profile": "https://kibbewater.com",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

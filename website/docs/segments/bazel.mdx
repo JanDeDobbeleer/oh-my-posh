@@ -1,0 +1,58 @@
+---
+id: bazel
+title: Bazel
+sidebar_label: Bazel
+---
+
+## What
+
+Display the currently active [Bazel][bazel-github] version.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config data={{
+  "type": "bazel",
+  "style": "powerline",
+  "powerline_symbol": "\uE0B0",
+  "foreground": "#ffffff",
+  "background": "#43a047",
+}}/>
+
+## Properties
+
+| Name                   | Type      | Description                                                                                                                                                                                                                                              |
+| ---------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                                                                                                                      |
+| `fetch_version`        | `boolean` | display the Bazel version - defaults to `true`                                                                                                                                                                                                           |
+| `missing_command_text` | `string`  | text to display when the command is missing - defaults to empty                                                                                                                                                                                          |
+| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when `*.bazel`, `*.bzl`, `.bazelrc`, `.bazelversion`, `BUILD` or `WORKSPACE` files or any of Bazel's output folders are present (**default**)</li></ul> |
+| `version_url_template` | `string`  | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info documentation                                                                                                                                      |
+| `icon`                 | `string`  | the icon for the segment - defaults to `"\ue63a"`                                                                                                                                                                                                        |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ if .Error }}{{ .Icon }} {{ .Error }}{{ else }}{{ url .Icon .URL }} {{ .Full }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name     | Type     | Description                                        |
+| -------- | -------- | -------------------------------------------------- |
+| `.Full`  | `string` | the full version                                   |
+| `.Major` | `string` | major number                                       |
+| `.Minor` | `string` | minor number                                       |
+| `.Patch` | `string` | patch number                                       |
+| `.URL`   | `string` | URL of the version info / release notes            |
+| `.Error` | `string` | error encountered when fetching the version string |
+| `.Icon`  | `string` | the icon representing Bazel's logo                 |
+
+[bazel-github]: https://github.com/bazelbuild/bazel
+[go-text-template]: https://golang.org/pkg/text/template/
+[templates]: /docs/configuration/templates

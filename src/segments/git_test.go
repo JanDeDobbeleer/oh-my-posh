@@ -165,7 +165,7 @@ func TestEnabledInBareRepo(t *testing.T) {
 	}{
 		{
 			Case:            "Bare repo on main",
-			IsBare:          "true",
+			IsBare:          trueStr,
 			HEAD:            "ref: refs/heads/main",
 			ExpectedEnabled: true,
 			ExpectedHEAD:    "main",
@@ -176,7 +176,7 @@ func TestEnabledInBareRepo(t *testing.T) {
 		},
 		{
 			Case:            "Bare repo on main remote enabled",
-			IsBare:          "true",
+			IsBare:          trueStr,
 			HEAD:            "ref: refs/heads/main",
 			ExpectedEnabled: true,
 			ExpectedHEAD:    "main",

@@ -113,6 +113,8 @@ const (
 	DETACHED     = "(detached)"
 	BRANCHPREFIX = "ref: refs/heads/"
 	GITCOMMAND   = "git"
+
+	trueStr = "true"
 )
 
 type Git struct {
@@ -278,7 +280,7 @@ func (g *Git) shouldDisplay() bool {
 		}
 		g.realDir = g.env.Pwd()
 		bare := g.getGitCommandOutput("rev-parse", "--is-bare-repository")
-		if bare == "true" {
+		if bare == trueStr {
 			g.IsBare = true
 			g.workingDir = g.realDir
 			return true

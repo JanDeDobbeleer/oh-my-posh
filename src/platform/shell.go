@@ -351,6 +351,12 @@ func (env *Shell) downloadConfig(location string) error {
 	configPath := filepath.Join(env.CachePath(), filename)
 	cfg, err := env.HTTPRequest(location, nil, 5000)
 	if err != nil {
+		if _, osErr := os.Stat(configPath); !os.IsNotExist(osErr) {
+			// use the already cached config
+			env.CmdFlags.Config = configPath
+			return nil
+		}
+
 		return err
 	}
 	out, err := os.Create(configPath)

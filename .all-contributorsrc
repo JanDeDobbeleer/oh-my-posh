@@ -2141,6 +2141,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "randombenj",
+      "name": "Benj Fassbind",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5184499?v=4",
+      "profile": "https://github.com/randombenj",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
@@ -20,6 +21,8 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		SSHSession      bool
 		Root            bool
 		Template        string
+		WhoAmI          string
+		Platform        string
 	}{
 		{
 			Case:           "user and computer",
@@ -87,6 +90,25 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			Root:            true,
 			Template:        "{{if ne .Env.POSH_SESSION_DEFAULT_USER .UserName}}{{.UserName}}{{end}}",
 		},
+		{
+			Case:           "user with ssh using who am i",
+			ExpectedString: "john on remote",
+			UserName:       "john",
+			SSHSession:     false,
+			WhoAmI:         "sascha   pts/1        2023-11-08 22:56 (89.246.1.1)",
+			ComputerName:   "remote",
+			Template:       "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
+		},
+		{
+			Case:           "user with ssh using who am i (windows)",
+			ExpectedString: "john",
+			UserName:       "john",
+			SSHSession:     false,
+			WhoAmI:         "sascha   pts/1        2023-11-08 22:56 (89.246.1.1)",
+			Platform:       platform.WINDOWS,
+			ComputerName:   "remote",
+			Template:       "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
+		},
 	}
 
 	for _, tc := range cases {
@@ -110,6 +132,16 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			},
 			Root: tc.Root,
 		})
+
+		env.On("Platform").Return(tc.Platform)
+
+		var whoAmIErr error
+		if len(tc.WhoAmI) == 0 {
+			whoAmIErr = fmt.Errorf("who am i error")
+		}
+
+		env.On("RunCommand", "who", []string{"am", "i"}).Return(tc.WhoAmI, whoAmIErr)
+
 		session := &Session{
 			env:   env,
 			props: properties.Map{},

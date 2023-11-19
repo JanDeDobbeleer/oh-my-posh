@@ -3,6 +3,7 @@ package segments
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
 type Session struct {
@@ -35,11 +36,22 @@ func (s *Session) activeSSHSession() bool {
 		"SSH_CONNECTION",
 		"SSH_CLIENT",
 	}
+
 	for _, key := range keys {
 		content := s.env.Getenv(key)
 		if content != "" {
 			return true
 		}
 	}
-	return false
+
+	if s.env.Platform() == platform.WINDOWS {
+		return false
+	}
+
+	whoAmI, err := s.env.RunCommand("who", "am", "i")
+	if err != nil {
+		return false
+	}
+
+	return regex.MatchString(`\(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\)`, whoAmI)
 }

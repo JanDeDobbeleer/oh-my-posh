@@ -10,24 +10,24 @@ Display the currently active AWS profile and region.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "aws",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#ffffff",
-  "background": "#FFA400",
-  "template": " \uE7AD {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
-}}/>
+<Config
+  data={{
+    type: "aws",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#FFA400",
+    template: " \uE7AD {{.Profile}}{{if .Region}}@{{.Region}}{{end}}",
+  }}
+/>
 
 ## Properties
 
-| Name              | Type                                                                           | Description |
-| ----------------- | ------------------------------------------------------------------------------ | ----------- |
-| `display_default` | `boolean` - display the segment or not when the user profile matches `default` | defaults    |
-
-to `true`
+| Name              | Type                                                                           | Description        |
+| ----------------- | ------------------------------------------------------------------------------ | ------------------ |
+| `display_default` | `boolean` - display the segment or not when the user profile matches `default` | defaults to `true` |
 
 ## Template ([info][templates])
 

@@ -29,7 +29,7 @@ jobs:
           cache-dependency-path: src/go.sum
       - uses: actions/setup-node@8f152de45cc393bb48ce5d89d36b731f54556e65
         with:
-          node-version: 21.2.0
+          node-version: 20.9.0
         # Create Kind cluster to have a Kubernetes context for cloud-native-azure theme
         # Images are defined on every Kind release
         # See https://github.com/kubernetes-sigs/kind/releases

@@ -1,7 +1,7 @@
 import React from 'react';
 import {useLocation} from "react-router-dom";
 import CodeBlock from '@theme/CodeBlock';
-const queryString = require('query-string');
+import queryString from 'query-string';
 
 function Auth() {
   const search = useLocation().search;

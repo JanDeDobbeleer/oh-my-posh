@@ -15,10 +15,10 @@
     "@iarna/toml": "^2.2.5",
     "@mdx-js/react": "^3.0.0",
     "classnames": "^2.3.2",
-    "query-string": "7.1.1",
+    "query-string": "8.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "yaml": "^2.2.2"
+    "yaml": "^2.3.4"
   },
   "resolutions": {
     "trim": "^0.0.3",
@@ -41,10 +41,10 @@
     ]
   },
   "engines": {
-    "npm": "8.9.0",
-    "node": "18.2.0"
+    "npm": "10.2.3",
+    "node": "21.2.0"
   },
   "volta": {
-    "node": "18.2.0"
+    "node": "21.2.0"
   }
 }

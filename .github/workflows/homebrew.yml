@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Notify Homebrew Repo 🙋🏾‍♀️
-      uses: actions/github-script@e69ef5462fd455e02edcaf4dd7708eda96b9eda0
+      uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea
       with:
         github-token: ${{ secrets.GH_PAT }}
         script: |

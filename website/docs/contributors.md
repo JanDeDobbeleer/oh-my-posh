@@ -308,6 +308,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://kibbewater.com"><img src="https://avatars.githubusercontent.com/u/35224538?v=4?s=100" width="100px;" alt="Snow"/><br /><sub><b>Snow</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=KibbeWater" title="Code">💻</a> <a href="#design-KibbeWater" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=KibbeWater" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/randombenj"><img src="https://avatars.githubusercontent.com/u/5184499?v=4?s=100" width="100px;" alt="Benj Fassbind"/><br /><sub><b>Benj Fassbind</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=randombenj" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://blog.liudonghua.top"><img src="https://avatars.githubusercontent.com/u/2276718?v=4?s=100" width="100px;" alt="liudonghua"/><br /><sub><b>liudonghua</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=liudonghua123" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 

@@ -1,6 +1,7 @@
 [Setup]
 AppName=Oh My Posh
 AppVersion=<VERSION>
+VersionInfoVersion=<VERSION>
 DefaultDirName={autopf}\oh-my-posh
 DefaultGroupName=Oh My Posh
 AppPublisher=Jan De Dobbeleer

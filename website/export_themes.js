@@ -116,6 +116,8 @@ themeConfigOverrrides.set('catppuccin_mocha.omp.json', newThemeConfig(40, 40, 'I
     links.push(`[${themeName}]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/themes/${theme} '${themeName}'\n`);
   }
 
+  await fs.promises.appendFile('./docs/themes.md', '\n');
+
   for (const link of links) {
     await fs.promises.appendFile('./docs/themes.md', link);
   }

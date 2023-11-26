@@ -7,12 +7,6 @@
 
 ### Description
 
-copilot:summary
-
-### How
-
-copilot:walkthrough
-
 <!---
 
 Tips:

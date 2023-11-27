@@ -12,7 +12,7 @@ Supports:
 
 - Node.js project (`package.json`)
 - Cargo project (`Cargo.toml`)
-- Poetry project (`pyproject.toml`)
+- Python project (`pyproject.toml`, supports metadata defined according to [PEP 621][pep621-standard] or [Poetry][poetry-standard])
 - PHP project (`composer.json`)
 - Any nuspec based project (`*.nuspec`, first file match info is displayed)
 - .NET project (`*.sln`, `*.slnf`, `*.csproj`, `*.vbproj` or `*.fsproj`, first file match info is displayed)
@@ -55,10 +55,12 @@ import Config from "@site/src/components/Config.js";
 
 | Name       | Type     | Description                                                                                                                                                        |
 | ---------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `.Type`    | `string` | The type of project:<ul><li>`node`</li><li>`cargo`</li><li>`poetry`</li><li>`php`</li><li>`nuspec`</li><li>`dotnet`</li><li>`julia`</li><li>`powershell`</li></ul> |
+| `.Type`    | `string` | The type of project:<ul><li>`node`</li><li>`cargo`</li><li>`python`</li><li>`php`</li><li>`nuspec`</li><li>`dotnet`</li><li>`julia`</li><li>`powershell`</li></ul> |
 | `.Version` | `string` | The version of your project                                                                                                                                        |
 | `.Target`  | `string` | The target framwork/language version of your project                                                                                                               |
 | `.Name`    | `string` | The name of your project                                                                                                                                           |
 | `.Error`   | `string` | The error context when we can't fetch the project info                                                                                                             |
 
 [templates]: /docs/configuration/templates
+[pep621-standard]: https://peps.python.org/pep-0621/
+[poetry-standard]: https://python-poetry.org/docs/pyproject/

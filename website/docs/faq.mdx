@@ -9,6 +9,21 @@ import TabItem from "@theme/TabItem";
 
 Before validating anything, make sure you're on the [latest version][latest] of Oh My Posh and your terminal and shell are up-to-date.
 
+### My prompt is broken after upgrading to PowerShell 7.4
+
+PowerShell 7.4 has an [issue][pwsh-20733] in encoding which affects the rendering of Oh My Posh.
+You can work around this by forcing the entire shell to UTF8.
+
+```powershell
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+oh-my-posh init pwsh --config ~/custom.omp.json | Invoke-Expression
+```
+
+:::warning
+Forcing the entire session to UTF8 can have unwanted side-effects for other executables. We can't be held liable for that,
+consider this a temporary workaround until the original PowerShell [issue][pwsh-20733] is resolved.
+:::
+
 ### I want to disable the upgrade notice
 
 You can disable the upgrade notice using the following command once:
@@ -28,7 +43,7 @@ oh-my-posh enable notice
 :::tip Windows
 The delay you're experiencing may be linked to the real-time protection features of antivirus software.
 
-To potentially alleviate this delay, ensure that Windows Defender or your primary antivirus software has an [exclusion][exclusion] set for the full path of the executable. To identify the full path of the executable in question, you can run the following command in a PowerShell prompt: 
+To potentially alleviate this delay, ensure that Windows Defender or your primary antivirus software has an [exclusion][exclusion] set for the full path of the executable. To identify the full path of the executable in question, you can run the following command in a PowerShell prompt:
 
 ```powershell
 (Get-Command oh-my-posh).Source
@@ -282,6 +297,7 @@ updated the icons themselves. A backup of the current config can be found in the
 
 This is a known problem with Xonsh. The issue is tracked [here][xonsh-issue].
 
+[pwsh-20733]: https://github.com/PowerShell/PowerShell/issues/20733
 [exclusion]: https://support.microsoft.com/en-us/windows/add-an-exclusion-to-windows-security-811816c0-4dfd-af4a-47e4-c301afe13b26
 [arch-terminfo]: https://wiki.archlinux.org/title/Bash/Prompt_customization#Terminfo_escape_sequences
 [ps-ansi-docs]: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_ansi_terminals?view=powershell-7.2

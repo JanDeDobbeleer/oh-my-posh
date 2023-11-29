@@ -2,6 +2,7 @@ package segments
 
 import (
 	"encoding/json"
+	"errors"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
@@ -18,7 +19,10 @@ type Upgrade struct {
 	props properties.Properties
 	env   platform.Environment
 
+	// deprecated
 	Version string
+
+	UpgradeCache
 }
 
 const UPGRADECACHEKEY = "upgrade_segment"
@@ -33,43 +37,44 @@ func (u *Upgrade) Init(props properties.Properties, env platform.Environment) {
 }
 
 func (u *Upgrade) Enabled() bool {
-	current := build.Version
-	latest := u.cachedLatest(current)
-	if len(latest) == 0 {
-		latest = u.checkUpdate(current)
+	u.Current = build.Version
+	latest, err := u.cachedLatest(u.Current)
+	if err != nil {
+		latest, err = u.checkUpdate(u.Current)
 	}
 
-	if len(latest) == 0 || current == latest {
+	if err != nil || u.Current == latest.Latest {
 		return false
 	}
 
-	u.Version = latest
+	u.UpgradeCache = *latest
+	u.Version = u.Latest
 	return true
 }
 
-func (u *Upgrade) cachedLatest(current string) string {
+func (u *Upgrade) cachedLatest(current string) (*UpgradeCache, error) {
 	data, ok := u.env.Cache().Get(UPGRADECACHEKEY)
 	if !ok {
-		return "" // no cache
+		return nil, errors.New("no cache data")
 	}
 
 	var cacheJSON UpgradeCache
 	err := json.Unmarshal([]byte(data), &cacheJSON)
 	if err != nil {
-		return "" // invalid cache data
+		return nil, err // invalid cache data
 	}
 
 	if current != cacheJSON.Current {
-		return "" // version changed, run the check again
+		return nil, errors.New("version changed, run the check again")
 	}
 
-	return cacheJSON.Latest
+	return &cacheJSON, nil
 }
 
-func (u *Upgrade) checkUpdate(current string) string {
+func (u *Upgrade) checkUpdate(current string) (*UpgradeCache, error) {
 	tag, err := upgrade.Latest(u.env)
 	if err != nil {
-		return ""
+		return nil, err
 	}
 
 	latest := tag[1:]
@@ -79,7 +84,7 @@ func (u *Upgrade) checkUpdate(current string) string {
 	}
 	cacheJSON, err := json.Marshal(cacheData)
 	if err != nil {
-		return ""
+		return nil, err
 	}
 
 	oneWeek := 10080
@@ -87,5 +92,5 @@ func (u *Upgrade) checkUpdate(current string) string {
 	// update cache
 	u.env.Cache().Set(UPGRADECACHEKEY, string(cacheJSON), cacheTimeout)
 
-	return latest
+	return cacheData, nil
 }

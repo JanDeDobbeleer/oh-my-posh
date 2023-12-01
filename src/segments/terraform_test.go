@@ -12,16 +12,17 @@ import (
 
 func TestTerraform(t *testing.T) {
 	cases := []struct {
-		Case            string
-		Template        string
-		HasTfCommand    bool
-		HasTfFolder     bool
-		HasTfFiles      bool
-		HasTfStateFile  bool
-		FetchVersion    bool
-		WorkspaceName   string
-		ExpectedString  string
-		ExpectedEnabled bool
+		Case              string
+		Template          string
+		HasTfCommand      bool
+		HasTfFolder       bool
+		HasTfFiles        bool
+		HasTfVersionFiles bool
+		HasTfStateFile    bool
+		FetchVersion      bool
+		WorkspaceName     string
+		ExpectedString    string
+		ExpectedEnabled   bool
 	}{
 		{
 			Case:            "default workspace",
@@ -51,17 +52,17 @@ func TestTerraform(t *testing.T) {
 			FetchVersion:   true,
 		},
 		{
-			Case:            "files",
-			ExpectedString:  ">= 1.0.10",
-			ExpectedEnabled: true,
-			WorkspaceName:   "default",
-			Template:        "{{ .Version }}",
-			HasTfFiles:      true,
-			HasTfCommand:    true,
-			FetchVersion:    true,
+			Case:              "files",
+			ExpectedString:    ">= 1.0.10",
+			ExpectedEnabled:   true,
+			WorkspaceName:     "default",
+			Template:          "{{ .Version }}",
+			HasTfVersionFiles: true,
+			HasTfCommand:      true,
+			FetchVersion:      true,
 		},
 		{
-			Case:            "files",
+			Case:            "version files",
 			ExpectedString:  "0.12.24",
 			ExpectedEnabled: true,
 			WorkspaceName:   "default",
@@ -70,6 +71,14 @@ func TestTerraform(t *testing.T) {
 			HasTfCommand:    true,
 			FetchVersion:    true,
 		},
+		{
+			Case:            "context files",
+			ExpectedString:  "default",
+			ExpectedEnabled: true,
+			WorkspaceName:   "default",
+			HasTfFiles:      true,
+			HasTfCommand:    true,
+		},
 	}
 
 	for _, tc := range cases {
@@ -77,12 +86,15 @@ func TestTerraform(t *testing.T) {
 
 		env.On("HasCommand", "terraform").Return(tc.HasTfCommand)
 		env.On("HasFolder", ".terraform").Return(tc.HasTfFolder)
+		env.On("HasFiles", ".tf").Return(tc.HasTfFiles)
+		env.On("HasFiles", ".tfplan").Return(tc.HasTfFiles)
+		env.On("HasFiles", ".tfstate").Return(tc.HasTfFiles)
 		env.On("Pwd").Return("")
 		env.On("RunCommand", "terraform", []string{"workspace", "show"}).Return(tc.WorkspaceName, nil)
-		env.On("HasFiles", "versions.tf").Return(tc.HasTfFiles)
-		env.On("HasFiles", "main.tf").Return(tc.HasTfFiles)
+		env.On("HasFiles", "versions.tf").Return(tc.HasTfVersionFiles)
+		env.On("HasFiles", "main.tf").Return(tc.HasTfVersionFiles)
 		env.On("HasFiles", "terraform.tfstate").Return(tc.HasTfStateFile)
-		if tc.HasTfFiles {
+		if tc.HasTfVersionFiles {
 			content, _ := os.ReadFile("../test/versions.tf")
 			env.On("FileContent", "versions.tf").Return(string(content))
 		}

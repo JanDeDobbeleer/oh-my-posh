@@ -2168,6 +2168,16 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "oleksbabieiev",
+      "name": "Oleksandr Babieiev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/64398691?v=4",
+      "profile": "https://github.com/oleksbabieiev",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

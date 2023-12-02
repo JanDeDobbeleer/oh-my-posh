@@ -35,6 +35,7 @@ const (
 	WINDOWS = "windows"
 	DARWIN  = "darwin"
 	LINUX   = "linux"
+	CMD     = "cmd"
 )
 
 func pid() string {
@@ -628,6 +629,17 @@ func (env *Shell) HasCommand(command string) bool {
 
 func (env *Shell) StatusCodes() (int, string) {
 	defer env.Trace(time.Now())
+
+	if env.CmdFlags.Shell != CMD || env.CmdFlags.ErrorCode == 0 {
+		return env.CmdFlags.ErrorCode, env.CmdFlags.PipeStatus
+	}
+
+	errorCode := env.Getenv("=ExitCode")
+	if len(errorCode) > 0 {
+		env.Debug(errorCode)
+		env.CmdFlags.ErrorCode, _ = strconv.Atoi(errorCode)
+	}
+
 	return env.CmdFlags.ErrorCode, env.CmdFlags.PipeStatus
 }
 

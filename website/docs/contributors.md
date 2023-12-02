@@ -311,6 +311,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://blog.liudonghua.top"><img src="https://avatars.githubusercontent.com/u/2276718?v=4?s=100" width="100px;" alt="liudonghua"/><br /><sub><b>liudonghua</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=liudonghua123" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://somoy.me"><img src="https://avatars.githubusercontent.com/u/40368688?v=4?s=100" width="100px;" alt="Somoy Subandhu"/><br /><sub><b>Somoy Subandhu</b></sub></a><br /><a href="#design-Somoy73" title="Design">🎨</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/oleksbabieiev"><img src="https://avatars.githubusercontent.com/u/64398691?v=4?s=100" width="100px;" alt="Oleksandr Babieiev"/><br /><sub><b>Oleksandr Babieiev</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=oleksbabieiev" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=oleksbabieiev" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

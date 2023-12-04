@@ -1,6 +1,9 @@
 package template
 
-import "path/filepath"
+import (
+	"os"
+	"path/filepath"
+)
 
 func glob(pattern string) (bool, error) {
 	matches, err := filepath.Glob(pattern)
@@ -8,4 +11,9 @@ func glob(pattern string) (bool, error) {
 		return false, err
 	}
 	return len(matches) > 0, nil
+}
+
+func readFile(path string) string {
+	content, _ := os.ReadFile(path)
+	return string(content)
 }

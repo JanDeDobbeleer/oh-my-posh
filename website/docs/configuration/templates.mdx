@@ -169,6 +169,7 @@ use them.
 | `{{ if matchP "*.Repo" .Path }}Repo{{ else }}No Repo{{ end }}` | Exposes [regexp.MatchString][regexpms] as a boolean template function.                                                 |
 | `{{ replaceP "c.t" "cut code cat" "dog" }}`                    | Exposes [regexp.ReplaceAllString][regexpra] as a string template function.                                             |
 | <code>\{\{ .Code &vert; hresult \}\}</code>                    | Transform a status code to its HRESULT value for easy troubleshooting. For example `-1978335212` becomes `0x8A150014`. |
+| `{{ readFile ".version.json" }}`                               | Read a file in the current directory. Returns a string.                                                                |
 
 <!-- markdownlint-enable MD013 -->
 

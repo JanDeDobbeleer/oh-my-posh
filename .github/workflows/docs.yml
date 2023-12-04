@@ -44,7 +44,7 @@ jobs:
       - name: Set default Kubernetes namespace
         run: |
           kubectl config set-context posh --namespace demo
-      - uses: azure/login@4c88f01b0e3a5600e08a37889921afd060f75cf0
+      - uses: azure/login@de95379fe4dadc2defb305917eaa7e5dde727294
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Build oh-my-posh 🔧

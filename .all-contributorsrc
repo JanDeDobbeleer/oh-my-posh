@@ -2178,6 +2178,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "mrbeardad",
+      "name": "Heache Bear",
+      "avatar_url": "https://avatars.githubusercontent.com/u/54128430?v=4",
+      "profile": "https://github.com/mrbeardad",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

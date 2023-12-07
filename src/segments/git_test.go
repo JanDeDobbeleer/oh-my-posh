@@ -647,6 +647,7 @@ func TestGitCleanSSHURL(t *testing.T) {
 		{Case: "rsync no port, no user", Expected: "https://host.xz/path/to/repo", Upstream: "rsync://host.xz/path/to/repo.git/"},
 		{Case: "git no port, no user", Expected: "https://host.xz/path/to/repo", Upstream: "git://host.xz/path/to/repo.git"},
 		{Case: "gitea no port, no user", Expected: "https://src.example.com/user/repo", Upstream: "_gitea@src.example.com:user/repo.git"},
+		{Case: "git@ with user", Expected: "https://github.com/JanDeDobbeleer/oh-my-posh", Upstream: "git@github.com:JanDeDobbeleer/oh-my-posh"},
 		{Case: "unsupported", Upstream: "\\test\\repo.git"},
 	}
 	for _, tc := range cases {

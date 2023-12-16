@@ -25,7 +25,7 @@ jobs:
       with:
         distribution: goreleaser
         version: latest
-        args: build --rm-dist --snapshot --skip-post-hooks --skip-before
+        args: build --clean --snapshot --skip=post-hooks --skip=before
         workdir: src
     - name: Archive production artifacts
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392

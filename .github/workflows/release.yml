@@ -64,7 +64,7 @@ jobs:
         with:
           distribution: goreleaser
           version: latest
-          args: build --rm-dist
+          args: build --clean
           workdir: src
         env:
           COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}

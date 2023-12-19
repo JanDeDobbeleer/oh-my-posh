@@ -2188,6 +2188,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ChrisNSki",
+      "name": "Christopher Narowski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/125232146?v=4",
+      "profile": "http://ensif.com",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -313,6 +313,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="http://somoy.me"><img src="https://avatars.githubusercontent.com/u/40368688?v=4?s=100" width="100px;" alt="Somoy Subandhu"/><br /><sub><b>Somoy Subandhu</b></sub></a><br /><a href="#design-Somoy73" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/oleksbabieiev"><img src="https://avatars.githubusercontent.com/u/64398691?v=4?s=100" width="100px;" alt="Oleksandr Babieiev"/><br /><sub><b>Oleksandr Babieiev</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=oleksbabieiev" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=oleksbabieiev" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mrbeardad"><img src="https://avatars.githubusercontent.com/u/54128430?v=4?s=100" width="100px;" alt="Heache Bear"/><br /><sub><b>Heache Bear</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mrbeardad" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://ensif.com"><img src="https://avatars.githubusercontent.com/u/125232146?v=4?s=100" width="100px;" alt="Christopher Narowski"/><br /><sub><b>Christopher Narowski</b></sub></a><br /><a href="#design-ChrisNSki" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>

@@ -69,6 +69,33 @@ func (n *Node) matchesVersionFile() (string, bool) {
 		return "", true
 	}
 
+	fileVersion = strings.TrimSpace(fileVersion)
+
+	if strings.HasPrefix(fileVersion, "lts/") {
+		fileVersion = strings.ToLower(fileVersion)
+		codeName := strings.TrimPrefix(fileVersion, "lts/")
+		switch codeName {
+		case "argon":
+			fileVersion = "4.9.1"
+		case "boron":
+			fileVersion = "6.17.1"
+		case "carbon":
+			fileVersion = "8.17.0"
+		case "dubnium":
+			fileVersion = "10.24.1"
+		case "erbium":
+			fileVersion = "12.22.12"
+		case "fermium":
+			fileVersion = "14.21.3"
+		case "gallium":
+			fileVersion = "16.20.1"
+		case "hydrogen":
+			fileVersion = "18.19.0"
+		case "iron":
+			fileVersion = "20.10.0"
+		}
+	}
+
 	re := fmt.Sprintf(
 		`(?im)^v?%s(\.?%s)?(\.?%s)?$`,
 		n.language.version.Major,

@@ -12,8 +12,9 @@
 
 ![Build Status badge](https://img.shields.io/github/actions/workflow/status/jandedobbeleer/oh-my-posh/release.yml?branch=main)
 
-![Release version number badge][release-badge]][release]
-![Documentation link badge ohmyposh.dev][docs-badge]][docs]
+[![Release version number badge][release-badge]][release]
+
+[![Documentation link badge ohmyposh.dev][docs-badge]][docs]
 
 ![Number of GitHub Downloads badge](https://img.shields.io/github/downloads/jandedobbeleer/oh-my-posh/total?color=pink&label=GitHub%20Downloads)
 

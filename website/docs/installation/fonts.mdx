@@ -61,7 +61,8 @@ Make sure to **configure your terminal** to use the font you have installed. The
     defaultValue="wt"
     values={[
         { label: 'Windows Terminal', value: 'wt' },
-        { label: 'VS Code', value: 'code' }
+        { label: 'Visual Studio Code', value: 'code' },
+        { label: 'Visual Studio', value: 'vs' }
     ]
 }>
 <TabItem value="wt">
@@ -81,7 +82,7 @@ by modifying the Windows Terminal settings (default shortcut: `CTRL + SHIFT + ,`
     {
         "defaults":
         {
-            "font": 
+            "font":
             {
                 "face": "MesloLGM Nerd Font"
             }
@@ -102,6 +103,16 @@ If you are using the JSON based settings, you will need to update the `terminal.
 ```
 
 </TabItem>
+<TabItem value="vs">
+
+When using Visual Studio, you will need to configure the integrated Terminal to make use of the Nerd Font as well. This can be done by opening the settings
+in `Tools > Options > Fonts and Colors > Terminal` and selecting a font like `MesloLGM Nerd Font`.
+
+:::warning
+OTF fonts do not appear in Visual Studio's Terminal settings, only TTF fonts. See [here][vs-otf] for more information.
+:::
+
+</TabItem>
 </Tabs>
 
 ### Other Fonts
@@ -116,3 +127,4 @@ The `minimal` themes do not make use of Nerd Font icons.
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [configuration]: /docs/installation/customize
 [wt-issue-8993]: https://github.com/microsoft/terminal/issues/8993
+[vs-otf]: https://stackoverflow.com/questions/75252606/is-it-possible-to-use-nerd-fonts-as-the-font-for-terminals-in-visual-studio

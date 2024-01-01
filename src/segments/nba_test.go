@@ -90,9 +90,8 @@ func TestNBASegment(t *testing.T) {
 			currTime := time.Now().In(time.FixedZone("America/New_York", -5*60*60))
 			// add offset days to currTime so we can query for games in the future
 			currTime = currTime.AddDate(0, 0, i)
-			dateStr := fmt.Sprintf("%02d/%02d/%d", currTime.Month(), currTime.Day(), currTime.Year())
-			nbaSeason := fmt.Sprintf("%d", currTime.Year())
-			scheduleURLEndpoint := NBASchedURLPart1 + nbaSeason + "&Date=" + dateStr + NBASchedURLPart2
+			dateStr := currTime.Format(NBADateFormat)
+			scheduleURLEndpoint := fmt.Sprintf(NBAScheduleURL, currentNBASeason, dateStr)
 			env.On("HTTPRequest", scheduleURLEndpoint).Return([]byte(tc.JSONResponse), tc.Error)
 		}
 

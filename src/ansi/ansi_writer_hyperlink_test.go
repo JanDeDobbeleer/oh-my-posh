@@ -37,7 +37,7 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 		Expected  string
 	}{
 		{
-			Text:      "«google»(http://www.google.be) «maps (2/2)»(http://maps.google.be)",
+			Text:      "<LINK>http://www.google.be<TEXT>google</TEXT></LINK> <LINK>http://maps.google.be<TEXT>maps (2/2)</TEXT></LINK>",
 			ShellName: shell.FISH,
 			Expected:  "\x1b[47m\x1b[30m\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\ \x1b]8;;http://maps.google.be\x1b\\maps (2/2)\x1b]8;;\x1b\\\x1b[0m",
 		},
@@ -46,44 +46,51 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 			ShellName: shell.PWSH,
 			Expected:  "\x1b[47m\x1b[30min \x1b[49m\x1b[1mpwsh \x1b[22m\x1b[47m \x1b[0m",
 		},
-		{Text: "«google»(http://www.google.be)", ShellName: shell.ZSH, Expected: "%{\x1b[47m%}%{\x1b[30m%}%{\x1b]8;;http://www.google.be\x1b\\%}google%{\x1b]8;;\x1b\\%}%{\x1b[0m%}"},
-		{Text: "«google»(http://www.google.be)", ShellName: shell.PWSH, Expected: "\x1b[47m\x1b[30m\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\\x1b[0m"},
 		{
-			Text:      "«google»(http://www.google.be)",
+			Text:      "<LINK>http://www.google.be<TEXT>google</TEXT></LINK>",
+			ShellName: shell.ZSH,
+			Expected:  "%{\x1b[47m%}%{\x1b[30m%}%{\x1b]8;;http://www.google.be\x1b\\%}google%{\x1b]8;;\x1b\\%}%{\x1b[0m%}",
+		},
+		{
+			Text:      "<LINK>http://www.google.be<TEXT>google</TEXT></LINK>",
+			ShellName: shell.PWSH,
+			Expected:  "\x1b[47m\x1b[30m\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\\x1b[0m",
+		},
+		{
+			Text:      "<LINK>http://www.google.be<TEXT>google</TEXT></LINK>",
 			ShellName: shell.BASH,
 			Expected:  "\\[\x1b[47m\\]\\[\x1b[30m\\]\\[\x1b]8;;http://www.google.be\x1b\\\\\\]google\\[\x1b]8;;\x1b\\\\\\]\\[\x1b[0m\\]",
 		},
 		{
-			Text:      "«google»(http://www.google.be) «maps»(http://maps.google.be)",
+			Text:      "<LINK>http://www.google.be<TEXT>google</TEXT></LINK> <LINK>http://maps.google.be<TEXT>maps</TEXT></LINK>",
 			ShellName: shell.FISH,
 			Expected:  "\x1b[47m\x1b[30m\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\ \x1b]8;;http://maps.google.be\x1b\\maps\x1b]8;;\x1b\\\x1b[0m",
 		},
 		{
-			Text:      "[]«google»(http://www.google.be)[]",
+			Text:      "[]<LINK>http://www.google.be<TEXT>google</TEXT></LINK>[]",
 			ShellName: shell.FISH,
 			Expected:  "\x1b[47m\x1b[30m[]\x1b]8;;http://www.google.be\x1b\\google\x1b]8;;\x1b\\[]\x1b[0m",
 		},
-	}
-	for _, tc := range cases {
-		a := Writer{
-			AnsiColors: &DefaultColors{},
-		}
-		a.Init(tc.ShellName)
-		a.Write("white", "black", tc.Text)
-		hyperlinkText, _ := a.String()
-		assert.Equal(t, tc.Expected, hyperlinkText)
-	}
-}
-
-func TestGenerateHyperlinkWithUrlNoName(t *testing.T) {
-	cases := []struct {
-		Text      string
-		ShellName string
-		Expected  string
-	}{
-		{Text: "«»(http://www.google.be)", ShellName: shell.ZSH, Expected: "%{\x1b[47m%}%{\x1b[30m%}«»(http://www.google.be)%{\x1b[0m%}"},
-		{Text: "«»(http://www.google.be)", ShellName: shell.PWSH, Expected: "\x1b[47m\x1b[30m«»(http://www.google.be)\x1b[0m"},
-		{Text: "«»(http://www.google.be)", ShellName: shell.BASH, Expected: "\\[\x1b[47m\\]\\[\x1b[30m\\]«»(http://www.google.be)\\[\x1b[0m\\]"},
+		{
+			Text:      "<LINK>http://www.google.be<TEXT><blue>google</></TEXT></LINK>",
+			ShellName: shell.FISH,
+			Expected:  "\x1b[47m\x1b[30m\x1b]8;;http://www.google.be\x1b\\\x1b[49m\x1b[34mgoogle\x1b[47m\x1b[30m\x1b]8;;\x1b\\\x1b[0m",
+		},
+		{
+			Text:      "<LINK>http://www.google.be<TEXT></TEXT></LINK>",
+			ShellName: shell.ZSH,
+			Expected:  "%{\x1b[47m%}%{\x1b[30m%}%{\x1b]8;;http://www.google.be\x1b\\%}link%{\x1b]8;;\x1b\\%}%{\x1b[0m%}",
+		},
+		{
+			Text:      "<LINK>http://www.google.be<TEXT></TEXT></LINK>",
+			ShellName: shell.PWSH,
+			Expected:  "\x1b[47m\x1b[30m\x1b]8;;http://www.google.be\x1b\\link\x1b]8;;\x1b\\\x1b[0m",
+		},
+		{
+			Text:      "<LINK>http://www.google.be<TEXT></TEXT></LINK>",
+			ShellName: shell.BASH,
+			Expected:  "\\[\x1b[47m\\]\\[\x1b[30m\\]\\[\x1b]8;;http://www.google.be\x1b\\\\\\]link\\[\x1b]8;;\x1b\\\\\\]\\[\x1b[0m\\]",
+		},
 	}
 	for _, tc := range cases {
 		a := Writer{
@@ -102,10 +109,10 @@ func TestGenerateFileLink(t *testing.T) {
 		Expected string
 	}{
 		{
-			Text:     `«Posh»(file:C:/Program Files (x86)/Common Files/Microsoft Shared/Posh)`,
+			Text:     `<LINK>file:C:/Program Files (x86)/Common Files/Microsoft Shared/Posh<TEXT>Posh</TEXT></LINK>`,
 			Expected: "\x1b[47m\x1b[30m\x1b]8;;file:C:/Program Files (x86)/Common Files/Microsoft Shared/Posh\x1b\\Posh\x1b]8;;\x1b\\\x1b[0m",
 		},
-		{Text: `«Windows»(file:C:/Windows)`, Expected: "\x1b[47m\x1b[30m\x1b]8;;file:C:/Windows\x1b\\Windows\x1b]8;;\x1b\\\x1b[0m"},
+		{Text: `<LINK>file:C:/Windows<TEXT>Windows</TEXT></LINK>`, Expected: "\x1b[47m\x1b[30m\x1b]8;;file:C:/Windows\x1b\\Windows\x1b]8;;\x1b\\\x1b[0m"},
 	}
 	for _, tc := range cases {
 		a := Writer{

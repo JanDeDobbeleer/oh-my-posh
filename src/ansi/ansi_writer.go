@@ -66,12 +66,14 @@ const (
 	OSC7  = "osc7"
 	OSC51 = "osc51"
 
-	LINK   = "link"
-	TEXT   = "text"
-	OTHER  = "other"
 	ANCHOR = "ANCHOR"
 	BG     = "BG"
 	FG     = "FG"
+
+	hyperLinkStart   = "<LINK>"
+	hyperLinkEnd     = "</LINK>"
+	hyperLinkText    = "<TEXT>"
+	hyperLinkTextEnd = "</TEXT>"
 )
 
 // Writer writes colorized ANSI strings
@@ -92,6 +94,7 @@ type Writer struct {
 	runes       []rune
 	transparent bool
 	invisible   bool
+	hyperlink   bool
 
 	shell                 string
 	format                string
@@ -104,21 +107,16 @@ type Writer struct {
 	restoreCursorPosition string
 	escapeLeft            string
 	escapeRight           string
-	hyperlink             string
-	hyperlinkRegex        string
 	osc99                 string
 	osc7                  string
 	osc51                 string
 
-	// hyperlink
-	hasHyperlink             bool
-	hyperlinkBuilder         strings.Builder
-	bracketIndex, roundCount int
-	hyperlinkState           string
+	hyperlinkStart  string
+	hyperlinkCenter string
+	hyperlinkEnd    string
 }
 
 func (w *Writer) Init(shellName string) {
-	w.hyperlinkState = OTHER
 	w.shell = shellName
 	w.format = "%s"
 	switch w.shell {
@@ -133,8 +131,9 @@ func (w *Writer) Init(shellName string) {
 		w.title = "\\[\x1b]0;%s\007\\]"
 		w.escapeLeft = "\\["
 		w.escapeRight = "\\]"
-		w.hyperlink = "\\[\x1b]8;;%s\x1b\\\\\\]%s\\[\x1b]8;;\x1b\\\\\\]"
-		w.hyperlinkRegex = `(?P<STR>\\\[\x1b\]8;;(.+)\x1b\\\\\\\](?P<TEXT>.+)\\\[\x1b\]8;;\x1b\\\\\\\])`
+		w.hyperlinkStart = "\\[\x1b]8;;"
+		w.hyperlinkCenter = "\x1b\\\\\\]"
+		w.hyperlinkEnd = "\\[\x1b]8;;\x1b\\\\\\]"
 		w.osc99 = "\\[\x1b]9;9;%s\x1b\\\\\\]"
 		w.osc7 = "\\[\x1b]7;file://%s/%s\x1b\\\\\\]"
 		w.osc51 = "\\[\x1b]51;A;%s@%s:%s\x1b\\\\\\]"
@@ -149,8 +148,9 @@ func (w *Writer) Init(shellName string) {
 		w.title = "%%{\x1b]0;%s\007%%}"
 		w.escapeLeft = "%{"
 		w.escapeRight = "%}"
-		w.hyperlink = "%%{\x1b]8;;%s\x1b\\%%}%s%%{\x1b]8;;\x1b\\%%}"
-		w.hyperlinkRegex = `(?P<STR>%{\x1b]8;;(.+)\x1b\\%}(?P<TEXT>.+)%{\x1b]8;;\x1b\\%})`
+		w.hyperlinkStart = "%{\x1b]8;;"
+		w.hyperlinkCenter = "\x1b\\%}"
+		w.hyperlinkEnd = "%{\x1b]8;;\x1b\\%}"
 		w.osc99 = "%%{\x1b]9;9;%s\x1b\\%%}"
 		w.osc7 = "%%{\x1b]7;file://%s/%s\x1b\\%%}"
 		w.osc51 = "%%{\x1b]51;A%s@%s:%s\x1b\\%%}"
@@ -165,8 +165,9 @@ func (w *Writer) Init(shellName string) {
 		// when in fish on Linux, it seems hyperlinks ending with \\ print a \
 		// unlike on macOS. However, this is a fish bug, so do not try to fix it here:
 		// https://github.com/JanDeDobbeleer/oh-my-posh/pull/3288#issuecomment-1369137068
-		w.hyperlink = "\x1b]8;;%s\x1b\\%s\x1b]8;;\x1b\\"
-		w.hyperlinkRegex = "(?P<STR>\x1b]8;;(.+)\x1b\\\\\\\\?(?P<TEXT>.+)\x1b]8;;\x1b\\\\)"
+		w.hyperlinkStart = "\x1b]8;;"
+		w.hyperlinkCenter = "\x1b\\"
+		w.hyperlinkEnd = "\x1b]8;;\x1b\\"
 		w.osc99 = "\x1b]9;9;%s\x1b\\"
 		w.osc7 = "\x1b]7;file://%s/%s\x1b\\"
 		w.osc51 = "\x1b]51;A%s@%s:%s\x1b\\"
@@ -292,7 +293,7 @@ func (w *Writer) Write(background, foreground, text string) {
 	}
 	// validate if we start with a color override
 	match := regex.FindNamedRegexMatch(AnchorRegex, text)
-	if len(match) != 0 {
+	if len(match) != 0 && match[ANCHOR] != hyperLinkStart {
 		colorOverride := true
 		for _, style := range knownStyles {
 			if match[ANCHOR] != style.AnchorStart {
@@ -301,24 +302,29 @@ func (w *Writer) Write(background, foreground, text string) {
 			w.writeEscapedAnsiString(style.Start)
 			colorOverride = false
 		}
+
 		if colorOverride {
 			w.current.Add(w.asAnsiColors(match[BG], match[FG]))
-			// w.current.Background(), w.current.Foreground() = w.asAnsiColors(match[BG], match[FG])
 		}
 	}
+
 	w.writeSegmentColors()
+
+	// print the hyperlink part AFTER the coloring
+	if match[ANCHOR] == hyperLinkStart {
+		w.hyperlink = true
+		w.builder.WriteString(w.hyperlinkStart)
+	}
 
 	text = text[len(match[ANCHOR]):]
 	w.runes = []rune(text)
-
-	// only run hyperlink logic when we have to
-	w.hasHyperlink = strings.Count(text, "«")+strings.Count(text, "»")+strings.Count(text, "(")+strings.Count(text, ")") >= 4
+	hyperlinkTextPosition := 0
 
 	for i := 0; i < len(w.runes); i++ {
 		s := w.runes[i]
 		// ignore everything which isn't overriding
 		if s != '<' {
-			w.write(i, s)
+			w.write(s)
 			continue
 		}
 
@@ -326,18 +332,40 @@ func (w *Writer) Write(background, foreground, text string) {
 		text = string(w.runes[i:])
 		match = regex.FindNamedRegexMatch(AnchorRegex, text)
 		if len(match) > 0 {
-			i = w.writeColorOverrides(match, background, i)
+			// check for hyperlinks first
+			switch match[ANCHOR] {
+			case hyperLinkStart:
+				w.hyperlink = true
+				i += len([]rune(match[ANCHOR])) - 1
+				w.builder.WriteString(w.hyperlinkStart)
+				continue
+			case hyperLinkText:
+				w.hyperlink = false
+				i += len([]rune(match[ANCHOR])) - 1
+				hyperlinkTextPosition = i
+				w.builder.WriteString(w.hyperlinkCenter)
+				continue
+			case hyperLinkTextEnd:
+				// this implies there's no text in the hyperlink
+				if hyperlinkTextPosition+1 == i {
+					w.builder.WriteString("link")
+					w.length += 4
+				}
+				i += len([]rune(match[ANCHOR])) - 1
+				continue
+			case hyperLinkEnd:
+				i += len([]rune(match[ANCHOR])) - 1
+				w.builder.WriteString(w.hyperlinkEnd)
+				continue
+			}
+
+			i = w.writeArchorOverride(match, background, i)
 			continue
 		}
 
 		w.length += runewidth.RuneWidth(s)
-		w.write(i, s)
+		w.write(s)
 	}
-
-	// append remnant hyperlink
-	w.builder.WriteString(w.hyperlinkBuilder.String())
-	w.hyperlinkBuilder.Reset()
-	w.hyperlinkState = OTHER
 
 	// reset colors
 	w.writeEscapedAnsiString(resetStyle.End)
@@ -359,18 +387,23 @@ func (w *Writer) writeEscapedAnsiString(text string) {
 	if w.Plain {
 		return
 	}
+
 	if len(w.format) != 0 {
 		text = fmt.Sprintf(w.format, text)
 	}
-	if w.hyperlinkState == OTHER {
-		w.builder.WriteString(text)
-		return
-	}
-	w.hyperlinkBuilder.WriteString(text)
+
+	w.builder.WriteString(text)
 }
 
 func (w *Writer) getAnsiFromColorString(colorString string, isBackground bool) Color {
 	return w.AnsiColors.ToColor(colorString, isBackground, w.TrueColor)
+}
+
+func (w *Writer) write(s rune) {
+	if !w.hyperlink {
+		w.length += runewidth.RuneWidth(s)
+	}
+	w.builder.WriteRune(s)
 }
 
 func (w *Writer) writeSegmentColors() {
@@ -410,7 +443,7 @@ func (w *Writer) writeSegmentColors() {
 	w.current.Add(bg, fg)
 }
 
-func (w *Writer) writeColorOverrides(match map[string]string, background string, i int) int {
+func (w *Writer) writeArchorOverride(match map[string]string, background string, i int) int {
 	position := i
 	// check color reset first
 	if match[ANCHOR] == resetStyle.AnchorEnd {

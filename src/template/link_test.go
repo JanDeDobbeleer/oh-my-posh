@@ -17,7 +17,7 @@ func TestUrl(t *testing.T) {
 		Template    string
 		ShouldError bool
 	}{
-		{Case: "valid url", Expected: "«link»(https://ohmyposh.dev)", Template: `{{ url "link" "https://ohmyposh.dev" }}`},
+		{Case: "valid url", Expected: "<LINK>https://ohmyposh.dev<TEXT>link</TEXT></LINK>", Template: `{{ url "link" "https://ohmyposh.dev" }}`},
 		{Case: "invalid url", Expected: "", Template: `{{ url "link" "Foo" }}`, ShouldError: true},
 	}
 
@@ -49,7 +49,7 @@ func TestPath(t *testing.T) {
 		Expected string
 		Template string
 	}{
-		{Case: "valid path", Expected: "«link»(file:/test/test)", Template: `{{ path "link" "/test/test" }}`},
+		{Case: "valid path", Expected: "<LINK>file:/test/test<TEXT>link</TEXT></LINK>", Template: `{{ path "link" "/test/test" }}`},
 	}
 
 	env := &mock.MockedEnvironment{}

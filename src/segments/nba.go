@@ -51,11 +51,13 @@ const (
 	InProgressTemplate properties.Property = "in_progress_template"
 	FinishedTemplate   properties.Property = "finished_template"
 
-	NBAScoreURL      string = "https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_00.json"
-	NBASchedURLPart1 string = "https://stats.nba.com/stats/internationalbroadcasterschedule?LeagueID=00&Season="
-	NBASchedURLPart2 string = "&RegionID=1&EST=Y"
+	NBAScoreURL    string = "https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_00.json"
+	NBAScheduleURL string = "https://stats.nba.com/stats/internationalbroadcasterschedule?LeagueID=00&Season=%s&Date=%s&RegionID=1&EST=Y"
 
 	Unknown = "Unknown"
+
+	currentNBASeason = "2023"
+	NBADateFormat    = "02/01/2006"
 )
 
 // Custom type for GameStatus
@@ -209,7 +211,7 @@ func (nba *Nba) retrieveScoreData(teamName string, httpTimeout int) (*NBAData, e
 		return nil, err
 	}
 
-	var scoreboardResponse *ScoreboardResponse
+	var scoreboardResponse ScoreboardResponse
 	err = json.Unmarshal(body, &scoreboardResponse)
 	if err != nil {
 		return nil, err
@@ -240,15 +242,15 @@ func (nba *Nba) retrieveScoreData(teamName string, httpTimeout int) (*NBAData, e
 func (nba *Nba) retrieveScheduleData(teamName string, httpTimeout int) (*NBAData, error) {
 	// How many days into the future should we look for a game.
 	numDaysToSearch := nba.props.GetInt(DaysOffset, 8)
-	nbaSeason := nba.props.GetString(NBASeason, "2023")
+	nbaSeason := nba.props.GetString(NBASeason, currentNBASeason)
 	// Get the current date in America/New_York
-	t := time.Now().In(time.FixedZone("America/New_York", -5*60*60))
+	nowNYC := time.Now().In(time.FixedZone("America/New_York", -5*60*60))
 
 	// Check to see if a game is scheduled while the numDaysToSearch is greater than 0
 	for numDaysToSearch > 0 {
-		// convert t into the format that the API expects "MM/YYYY/DD"
-		dateStr := fmt.Sprintf("%02d/%02d/%d", t.Month(), t.Day(), t.Year())
-		urlEndpoint := NBASchedURLPart1 + nbaSeason + "&Date=" + dateStr + NBASchedURLPart2
+		dateStr := nowNYC.Format(NBADateFormat)
+		urlEndpoint := fmt.Sprintf(NBAScheduleURL, nbaSeason, dateStr)
+
 		body, err := nba.env.HTTPRequest(urlEndpoint, nil, httpTimeout)
 		if err != nil {
 			return nil, err
@@ -264,7 +266,7 @@ func (nba *Nba) retrieveScheduleData(teamName string, httpTimeout int) (*NBAData
 		gameInfo, err := nba.findGameSchedulebyTeamTricode(scheduleResponse.ResultSets[1].CompleteGameList, teamName)
 		if err != nil {
 			// We didn't find a game for the team on this day, so we need to check the next day
-			t = t.AddDate(0, 0, 1)
+			nowNYC = nowNYC.AddDate(0, 0, 1)
 			numDaysToSearch--
 			continue
 		}

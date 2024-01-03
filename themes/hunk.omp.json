@@ -27,6 +27,17 @@
           "type": "path"
         },
         {
+	        "type": "shell",
+	        "style": "powerline",
+	        "powerline_symbol": "\ue0b0",
+	        "foreground": "#ffffff",
+	        "background": "#C2DDEF",
+	        "template": "{{ if .Env.IN_NIX_SHELL }} \uf313 impure {{ end }}",
+	        "properties": {
+	          "style": "full"
+	        }
+	      },
+        {
           "background": "#f78fb3",
           "foreground": "#ffffff",
           "powerline_symbol": "\ue0b0",

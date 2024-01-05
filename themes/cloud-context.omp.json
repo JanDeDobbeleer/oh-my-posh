@@ -34,7 +34,7 @@
           "background": "p:background-color",
           "foreground": "p:kubernetes-text",
           "style": "powerline",
-          "powerline_symbol": "\ue0b4",
+          "powerline_symbol": "",
           "template": "<p:symbol-color>\uf308</> {{.Context}}{{if .Namespace}} \uf061 {{.Namespace}}{{end}}",
           "type": "kubectl"
         },
@@ -42,7 +42,7 @@
           "background": "p:background-color",
           "foreground": "p:cloud-text-amazon",
           "style": "powerline",
-          "powerline_symbol": "\ue0b4",
+          "powerline_symbol": "",
           "template": " <p:symbol-color>\uf270</> {{.Profile}}{{if .Region}} \uf061 {{.Region}}{{end}}",
           "type": "aws"
         },
@@ -53,7 +53,7 @@
             "source": "cli"
           },
           "style": "powerline",
-          "powerline_symbol": "\ue0b4",
+          "powerline_symbol": "",
           "template": " <p:symbol-color>\uebd8</> {{ .Name }}",
           "type": "az"
         },
@@ -64,7 +64,7 @@
             "source": "pwsh"
           },
           "style": "powerline",
-          "powerline_symbol": "\ue0b4",
+          "powerline_symbol": "",
           "template": " <p:symbol-color>\uebd8</> (PS) {{ .Name }}",
           "type": "az"
         },
@@ -72,7 +72,7 @@
           "background": "p:background-color",
           "foreground": "p:cloud-text-gcp",
           "style": "powerline",
-          "powerline_symbol": "\ue0b4",
+          "powerline_symbol": "",
           "template": " <p:symbol-color>\ue7b2</> {{ .Project }}",
           "type": "gcp"
         },
@@ -80,7 +80,7 @@
           "background": "p:background-color",
           "foreground": "p:git-text",
           "style": "powerline",
-          "powerline_symbol": "\ue0b4",
+          "powerline_symbol": "",
           "template": " <p:symbol-color>\uF408</> {{ .RepoName }}",
           "type": "git"
         },
@@ -92,7 +92,7 @@
             "threshold": 1
           },
           "style": "powerline",
-          "powerline_symbol": "\ue0b4",
+          "powerline_symbol": "",
           "template": " <p:symbol-color>\ueba2</> {{ .FormattedMs }}",
           "type": "executiontime"
         },
@@ -103,7 +103,7 @@
             "always_enabled": true
           },
           "style": "powerline",
-          "powerline_symbol": "\ue0b4",
+          "powerline_symbol": "",
           "template": "{{ if eq .Code 0 }} \uf004 {{ end }}",
           "type": "status"
         },
@@ -142,7 +142,7 @@
             "style": "folder"
           },
           "style": "powerline",
-          "powerline_symbol": "\ue0b4",
+          "powerline_symbol": "",
           "template": "\ue5ff {{ path .Path .Location }} ",
           "type": "path"
         },
@@ -154,7 +154,7 @@
             "fetch_status": true
           },
           "style": "powerline",
-          "powerline_symbol": "\ue0b4",
+          "powerline_symbol": "",
           "template": "{{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
           "type": "git"
         }
@@ -180,6 +180,30 @@
           "style": "plain",
           "template": "{{ if .Root }}{{ else }}<p:symbol-color> > </>{{ end }}",
           "type": "text"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:symbol-color",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}",
+          "type": "node"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:symbol-color",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}",
+          "type": "python"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:symbol-color",
+          "style": "powerline",
+          "powerline_symbol": "",
+          "template": " \ue77f {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }}",
+          "type": "dotnet"
         }
       ],
       "type": "prompt"

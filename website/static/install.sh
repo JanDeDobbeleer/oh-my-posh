@@ -29,7 +29,7 @@ help() {
     echo
 }
 
-while getopts ":hdt:" option; do
+while getopts ":hd:t:" option; do
    case $option in
       h) # display Help
          help

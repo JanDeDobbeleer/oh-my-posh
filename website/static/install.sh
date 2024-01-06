@@ -44,7 +44,7 @@ while getopts ":hd:t:" option; do
    esac
 done
 
-SUPPORTED_TARGETS="linux-386 linux-amd64 linux-arm linux-arm64 darwin-amd64 darwin-arm64"
+SUPPORTED_TARGETS="linux-386 linux-amd64 linux-arm linux-arm64 darwin-amd64 darwin-arm64 freebsd-386 freebsd-amd64 freebsd-arm freebsd-arm64"
 
 validate_dependency() {
     if ! command -v $1 >/dev/null; then

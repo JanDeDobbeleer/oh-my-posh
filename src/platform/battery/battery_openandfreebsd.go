@@ -1,3 +1,5 @@
+//go:build openbsd || freebsd
+
 package battery
 
 import (

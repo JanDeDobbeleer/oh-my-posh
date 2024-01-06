@@ -1,6 +1,8 @@
 #!/usr/bin/env sh
 
 install_dir=""
+themes_dir=""
+executable=""
 
 error() {
     printf "\x1b[31m$1\e[0m\n"
@@ -17,22 +19,25 @@ warn() {
 
 help() {
     # Display Help
-    echo "Installs Oh My Posh"
+    echo "Install script for Oh My Posh"
     echo
-    echo "Syntax: install.sh [-h|d]"
-    echo "options:"
-    echo "h     Print this Help."
-    echo "d     Specify the installation directory. Defaults to /usr/local/bin or the directory where oh-my-posh is installed."
+    echo "Syntax: install.sh [-h|d|t]"
+    echo "\noptions:"
+    echo "-h     Print this help."
+    echo "-d     Specify the installation directory. Defaults to /usr/local/bin or the directory where oh-my-posh is installed."
+    echo "-t     Specify the themes installation directory. Defaults to the oh-my-posh cache directory."
     echo
 }
 
-while getopts ":hd:" option; do
+while getopts ":hdt:" option; do
    case $option in
       h) # display Help
          help
          exit;;
       d) # Enter a name
-         install_dir=$OPTARG;;
+         install_dir=${OPTARG};;
+      t) # themes directory
+         themes_dir=${OPTARG};;
      \?) # Invalid option
          echo "Invalid option command line option. Use -h for help."
          exit 1
@@ -100,6 +105,68 @@ validate_install_directory() {
     fi
 }
 
+validate_themes_directory() {
+    if [ ! -d "$install_dir" ]; then
+        error "Directory ${install_dir} does not exist, set a different directory and try again."
+    fi
+
+    # check if we can write to the install directory
+    if [ ! -w $install_dir ]; then
+        error "Cannot write to ${install_dir}. Please set a different directory and try again: \n  curl -s https://ohmyposh.dev/install.sh | bash -s -- -d {directory}"
+    fi
+
+    # check if the directory is in the PATH
+    good=$(
+        IFS=:
+        for path in $PATH; do
+        if [ "${path%/}" = "${install_dir}" ]; then
+            printf 1
+            break
+        fi
+        done
+    )
+
+    if [ "${good}" != "1" ]; then
+        warn "Installation directory ${install_dir} is not in your \$PATH"
+    fi
+}
+
+install_themes() {
+    if [ -n "$themes_dir" ]; then
+        # expand directory
+        themes_dir="${themes_dir/#\~/$HOME}"
+    fi
+
+    cache_dir=$($executable cache path)
+
+    # validate if the user set the path to the themes directory
+    if [ -z "$themes_dir" ]; then
+        themes_dir="${cache_dir}/themes"
+    fi
+
+    # Validate if the themes directory exists
+    if [ ! -d "$themes_dir" ]; then
+        mkdir -p $themes_dir
+    fi
+
+    info "🎨 Installing oh-my-posh themes in ${themes_dir}\n"
+
+    zip_file="${cache_dir}/themes.zip"
+
+    url="https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip"
+
+    http_response=$(curl -s -f -L $url -o $zip_file -w "%{http_code}")
+
+    if [ $http_response == "200" ] && [ -f $zip_file ]; then
+        unzip -o -q $zip_file -d $themes_dir
+        # make sure the files are readable and writable for all users
+        chmod a+rwX ${themes_dir}/*.omp.*
+        rm $zip_file
+    else
+        warn "Unable to download themes at ${url}\nPlease validate your curl, connection and/or proxy settings"
+    fi
+}
+
 install() {
     arch=$(detect_arch)
     platform=$(detect_platform)
@@ -134,26 +201,7 @@ install() {
 
     chmod +x $executable
 
-    # install themes in cache
-    cache_dir=$($executable cache path)
-
-    info "🎨 Installing oh-my-posh themes in ${cache_dir}/themes\n"
-
-    theme_dir="${cache_dir}/themes"
-    mkdir -p $theme_dir
-    zip_file="${cache_dir}/themes.zip"
-
-    url="https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/themes.zip"
-
-    http_response=$(curl -s -f -L $url -o $zip_file -w "%{http_code}")
-
-    if [ $http_response == "200" ] && [ -f $zip_file ]; then
-        unzip -o -q $zip_file -d $theme_dir
-        chmod u+rw ${theme_dir}/*.omp.*
-        rm $zip_file
-    else
-        warn "Unable to download themes at ${url}\nPlease validate your curl, connection and/or proxy settings"
-    fi
+    install_themes
 
     info "🚀 Installation complete.\n\nYou can follow the instructions at https://ohmyposh.dev/docs/installation/prompt"
     info "to setup your shell to use oh-my-posh."

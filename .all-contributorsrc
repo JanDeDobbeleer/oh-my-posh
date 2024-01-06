@@ -2206,6 +2206,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "kkk669",
+      "name": "Kenta Kubo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/601636?v=4",
+      "profile": "https://kebo.xyz",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -315,6 +315,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mrbeardad"><img src="https://avatars.githubusercontent.com/u/54128430?v=4?s=100" width="100px;" alt="Heache Bear"/><br /><sub><b>Heache Bear</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mrbeardad" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://ensif.com"><img src="https://avatars.githubusercontent.com/u/125232146?v=4?s=100" width="100px;" alt="Christopher Narowski"/><br /><sub><b>Christopher Narowski</b></sub></a><br /><a href="#design-ChrisNSki" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/sino1641"><img src="https://avatars.githubusercontent.com/u/13870295?v=4?s=100" width="100px;" alt="Sin"/><br /><sub><b>Sin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=sino1641" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://kebo.xyz"><img src="https://avatars.githubusercontent.com/u/601636?v=4?s=100" width="100px;" alt="Kenta Kubo"/><br /><sub><b>Kenta Kubo</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kkk669" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

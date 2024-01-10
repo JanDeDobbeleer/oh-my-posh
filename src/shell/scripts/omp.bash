@@ -47,7 +47,7 @@ function set_poshcontext() {
 
 function _omp_hook() {
     local ret=$? pipeStatus=(${PIPESTATUS[@]})
-    if [[ "${#BP_PIPESTATUS[@]}" -gt "${#pipeStatus[@]}" ]]; then
+    if [[ "${#BP_PIPESTATUS[@]}" -ge "${#pipeStatus[@]}" ]]; then
         pipeStatus=(${BP_PIPESTATUS[@]})
     fi
 

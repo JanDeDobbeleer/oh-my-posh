@@ -400,9 +400,14 @@ func (w *Writer) getAnsiFromColorString(colorString string, isBackground bool) C
 }
 
 func (w *Writer) write(s rune) {
+	if w.invisible {
+		return
+	}
+
 	if !w.hyperlink {
 		w.length += runewidth.RuneWidth(s)
 	}
+
 	w.builder.WriteRune(s)
 }
 

@@ -2215,6 +2215,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "mfedatto",
+      "name": "MFedatto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5623739?v=4",
+      "profile": "http://mfedatto.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

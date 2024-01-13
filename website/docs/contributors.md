@@ -319,6 +319,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://mfedatto.com"><img src="https://avatars.githubusercontent.com/u/5623739?v=4?s=100" width="100px;" alt="MFedatto"/><br /><sub><b>MFedatto</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mfedatto" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/riikka-l-861694b2/"><img src="https://avatars.githubusercontent.com/u/56921531?v=4?s=100" width="100px;" alt="Riikka"/><br /><sub><b>Riikka</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=RiikkaDream" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

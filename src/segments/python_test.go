@@ -90,13 +90,17 @@ func TestPythonTemplate(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		params := &mockedLanguageParams{
+			cmd:           "python",
+			versionParam:  "--version",
+			versionOutput: "Python 3.8.4",
+			extension:     "*.py",
+		}
+		env, props := getMockedLanguageEnv(params)
+
 		env.On("GOOS").Return("")
-		env.On("HasCommand", "python").Return(true)
 		env.On("CommandPath", mock2.Anything).Return(tc.PythonPath)
-		env.On("RunCommand", "python", []string{"--version"}).Return("Python 3.8.4", nil)
 		env.On("RunCommand", "pyenv", []string{"version-name"}).Return(tc.VirtualEnvName, nil)
-		env.On("HasFiles", "*.py").Return(true)
 		env.On("HasFilesInDir", mock2.Anything, "pyvenv.cfg").Return(len(tc.PyvenvCfg) > 0)
 		env.On("FileContent", filepath.Join(filepath.Dir(tc.PythonPath), "pyvenv.cfg")).Return(tc.PyvenvCfg)
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
@@ -104,18 +108,12 @@ func TestPythonTemplate(t *testing.T) {
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "PYENV_ROOT").Return("/home/user/.pyenv")
 		env.On("PathSeparator").Return("")
-		env.On("Pwd").Return("/usr/home/project")
-		env.On("Home").Return("/usr/home")
 		env.On("ResolveSymlink", mock2.Anything).Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		props := properties.Map{
-			properties.FetchVersion: tc.FetchVersion,
-			UsePythonVersionFile:    true,
-			DisplayMode:             DisplayModeAlways,
-		}
-		env.On("TemplateCache").Return(&platform.TemplateCache{
-			Env: make(map[string]string),
-		})
+
+		props[properties.FetchVersion] = tc.FetchVersion
+		props[UsePythonVersionFile] = true
+		props[DisplayMode] = DisplayModeAlways
+
 		python := &Python{}
 		python.Init(props, env)
 		assert.Equal(t, !tc.ExpectedDisabled, python.Enabled(), tc.Case)

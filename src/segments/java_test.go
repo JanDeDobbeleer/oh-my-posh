@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -56,12 +53,14 @@ func TestJava(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On("HasCommand", "java").Return(true)
-		env.On("RunCommand", "java", []string{"-Xinternalversion"}).Return(tc.Version, nil)
-		env.On("HasFiles", "pom.xml").Return(true)
-		env.On("Pwd").Return("/usr/home/project")
-		env.On("Home").Return("/usr/home")
+		params := &mockedLanguageParams{
+			cmd:           "java",
+			versionParam:  "-Xinternalversion",
+			versionOutput: tc.Version,
+			extension:     "pom.xml",
+		}
+		env, props := getMockedLanguageEnv(params)
+
 		if tc.JavaHomeEnabled {
 			env.On("Getenv", "JAVA_HOME").Return("/usr/java")
 			env.On("HasCommand", "/usr/java/bin/java").Return(true)
@@ -69,9 +68,7 @@ func TestJava(t *testing.T) {
 		} else {
 			env.On("Getenv", "JAVA_HOME").Return("")
 		}
-		props := properties.Map{
-			properties.FetchVersion: true,
-		}
+
 		j := &Java{}
 		j.Init(props, env)
 		assert.True(t, j.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))

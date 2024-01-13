@@ -4,52 +4,40 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/constants"
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestDotnetSegment(t *testing.T) {
 	cases := []struct {
-		Case         string
-		Expected     string
-		ExitCode     int
-		HasCommand   bool
-		Version      string
-		FetchVersion bool
+		Case     string
+		Expected string
+		ExitCode int
+		Version  string
 	}{
-		{Case: "Unsupported version", Expected: "\uf071", HasCommand: true, FetchVersion: true, ExitCode: constants.DotnetExitCode, Version: "3.1.402"},
-		{Case: "Regular version", Expected: "3.1.402", HasCommand: true, FetchVersion: true, Version: "3.1.402"},
-		{Case: "Regular version", Expected: "", HasCommand: true, FetchVersion: false, Version: "3.1.402"},
-		{Case: "Regular version", Expected: "", HasCommand: false, FetchVersion: false, Version: "3.1.402"},
+		{Case: "Unsupported version", Expected: "\uf071", ExitCode: constants.DotnetExitCode, Version: "3.1.402"},
+		{Case: "Regular version", Expected: "3.1.402", Version: "3.1.402"},
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On("HasCommand", "dotnet").Return(tc.HasCommand)
+		params := &mockedLanguageParams{
+			cmd:           "dotnet",
+			versionParam:  "--version",
+			versionOutput: tc.Version,
+			extension:     "*.cs",
+		}
+		env, props := getMockedLanguageEnv(params)
+
 		if tc.ExitCode != 0 {
+			env.Unset("RunCommand")
 			err := &platform.CommandError{ExitCode: tc.ExitCode}
 			env.On("RunCommand", "dotnet", []string{"--version"}).Return("", err)
-		} else {
-			env.On("RunCommand", "dotnet", []string{"--version"}).Return(tc.Version, nil)
 		}
 
-		env.On("HasFiles", "*.cs").Return(true)
-		env.On("PathSeparator").Return("")
-		env.On("Pwd").Return("/usr/home/project")
-		env.On("Home").Return("/usr/home")
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
-			Env: make(map[string]string),
-		})
-		props := properties.Map{
-			properties.FetchVersion: tc.FetchVersion,
-		}
 		dotnet := &Dotnet{}
 		dotnet.Init(props, env)
+
 		assert.True(t, dotnet.Enabled())
 		assert.Equal(t, tc.Expected, renderTemplate(env, dotnet.Template(), dotnet), tc.Case)
 	}

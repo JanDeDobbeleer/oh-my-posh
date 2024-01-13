@@ -5,12 +5,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestHaskell(t *testing.T) {
@@ -57,36 +54,32 @@ func TestHaskell(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		params := &mockedLanguageParams{
+			cmd:           "ghc",
+			versionParam:  "--numeric-version",
+			versionOutput: tc.GhcVersion,
+			extension:     "*.hs",
+		}
+		env, props := getMockedLanguageEnv(params)
+
 		if tc.StackGhcMode == "always" || (tc.StackGhcMode == "package" && tc.InStackPackage) {
 			env.On("HasCommand", "stack").Return(true)
 			env.On("RunCommand", "stack", []string{"ghc", "--", "--numeric-version"}).Return(tc.StackGhcVersion, nil)
-		} else {
-			env.On("HasCommand", "ghc").Return(true)
-			env.On("RunCommand", "ghc", []string{"--numeric-version"}).Return(tc.GhcVersion, nil)
 		}
+
 		fileInfo := &platform.FileInfo{
 			Path:         "../stack.yaml",
 			ParentFolder: "./",
 			IsDir:        false,
 		}
+
 		if tc.InStackPackage {
 			var err error
 			env.On("HasParentFilePath", "stack.yaml").Return(fileInfo, err)
 		} else {
 			env.On("HasParentFilePath", "stack.yaml").Return(fileInfo, errors.New("no match"))
 		}
-		env.On("HasFiles", "*.hs").Return(true)
-		env.On("Pwd").Return("/usr/home/project")
-		env.On("Home").Return("/usr/home")
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
-			Env: make(map[string]string),
-		})
 
-		props := properties.Map{
-			properties.FetchVersion: true,
-		}
 		props[StackGhcMode] = tc.StackGhcMode
 
 		h := &Haskell{}

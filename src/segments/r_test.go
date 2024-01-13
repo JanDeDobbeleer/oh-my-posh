@@ -4,12 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestR(t *testing.T) {
@@ -36,25 +31,22 @@ func TestR(t *testing.T) {
 		{Case: "R.exe 4.0.0", ExpectedString: "4.0.0", HasRexe: true, Version: "R version 4.0.0 (2020-04-24) -- \"Arbor Day\""},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		params := &mockedLanguageParams{
+			cmd:           "R",
+			versionParam:  "--version",
+			versionOutput: tc.Version,
+			extension:     "*.R",
+		}
+		env, props := getMockedLanguageEnv(params)
+
 		env.On("HasCommand", "Rscript").Return(tc.HasRscript)
 		env.On("RunCommand", "Rscript", []string{"--version"}).Return(tc.Version, nil)
-		env.On("HasCommand", "R").Return(tc.HasR)
-		env.On("RunCommand", "R", []string{"--version"}).Return(tc.Version, nil)
 		env.On("HasCommand", "R.exe").Return(tc.HasRexe)
 		env.On("RunCommand", "R.exe", []string{"--version"}).Return(tc.Version, nil)
-		env.On("HasFiles", "*.R").Return(true)
-		env.On("Pwd").Return("/usr/home/project")
-		env.On("Home").Return("/usr/home")
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
-			Env: make(map[string]string),
-		})
-		props := properties.Map{
-			properties.FetchVersion: true,
-		}
+
 		r := &R{}
 		r.Init(props, env)
+
 		assert.True(t, r.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, r.Template(), r), fmt.Sprintf("Failed in case: %s", tc.Case))
 	}

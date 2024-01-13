@@ -5,12 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestLua(t *testing.T) {
@@ -59,24 +54,27 @@ func TestLua(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On("HasCommand", "lua").Return(tc.HasLua)
-		env.On("RunCommand", "lua", []string{"-v"}).Return(tc.Version, nil)
+		params := &mockedLanguageParams{
+			cmd:           "lua",
+			versionParam:  "-v",
+			versionOutput: tc.Version,
+			extension:     "*.lua",
+		}
+		env, props := getMockedLanguageEnv(params)
+
+		if !tc.HasLua {
+			env.Unset("HasCommand")
+			env.On("HasCommand", "lua").Return(false)
+		}
+
 		env.On("HasCommand", "luajit").Return(tc.HasLuaJit)
 		env.On("RunCommand", "luajit", []string{"-v"}).Return(tc.Version, nil)
-		env.On("HasFiles", "*.lua").Return(true)
-		env.On("Pwd").Return("/usr/home/project")
-		env.On("Home").Return("/usr/home")
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
-			Env: make(map[string]string),
-		})
-		props := properties.Map{
-			properties.FetchVersion: true,
-		}
+
 		props[PreferredExecutable] = tc.Prefer
+
 		l := &Lua{}
 		l.Init(props, env)
+
 		failMsg := fmt.Sprintf("Failed in case: %s", tc.Case)
 		assert.True(t, l.Enabled(), failMsg)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, l.Template(), l), failMsg)

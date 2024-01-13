@@ -73,7 +73,13 @@ This installs a couple of things:
 - `oh-my-posh.exe` - Windows executable
 - `themes` - The latest Oh My Posh [themes][themes]
 
-For the `PATH` to be reloaded, a restart of your terminal is advised.
+For the `PATH` to be reloaded, a restart of your terminal is advised. If oh-my-posh is still not recognized as a command, add it manually to path, for example:
+
+```powershell
+$env:Path += ";C:\Users\user\AppData\Local\Programs\oh-my-posh\bin"
+```
+
+ You can find this path of the binary by searching for `oh-my-posh.exe`.
 
 :::tip Antivirus software
 Due to frequent updates of Oh My Posh, Antivirus software occasionally flags it (false positive).

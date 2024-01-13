@@ -10,25 +10,30 @@ Display the active [CDS CLI][sap-cap-cds] version.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "background": "#a7cae1",
-  "foreground": "#100e23",
-  "powerline_symbol": "\ue0b0",
-  "template": " \ue311 cds {{ .Full }} ",
-  "style": "powerline",
-  "type": "cds"
-}}/>
+<Config
+  data={{
+    background: "#a7cae1",
+    foreground: "#100e23",
+    powerline_symbol: "\ue0b0",
+    template: " \ue311 cds {{ .Full }} ",
+    style: "powerline",
+    type: "cds",
+  }}
+/>
 
 ## Properties
 
-| Name                   | Type      | Description                                                                                                                                                                                                                                                                                                                                                   |
-| ---------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                                                                                                                                                                                                                           |
-| `fetch_version`        | `boolean` | fetch the CDS version - defaults to `true`                                                                                                                                                                                                                                                                                                                    |
-| `missing_command_text` | `string`  | text to display when the cds command is missing - defaults to empty                                                                                                                                                                                                                                                                                           |
-| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is displayed when `.cdsrc.json`, `.cdsrc-private` or `*.cds` file is present</li><li>`context`: the segment is displayed when conditions from `files` mode are fulfilled or `package.json` file is present and `@sap/cds` is in `dependencies` section (**default**)</li></ul> |
+| Name                   | Type       | Description                                                                                                                                                                                                                                                                                                                                                   |
+| ---------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `home_enabled`         | `boolean`  | display the segment in the HOME folder or not - defaults to `false`                                                                                                                                                                                                                                                                                           |
+| `fetch_version`        | `boolean`  | fetch the CDS version - defaults to `true`                                                                                                                                                                                                                                                                                                                    |
+| `missing_command_text` | `string`   | text to display when the cds command is missing - defaults to empty                                                                                                                                                                                                                                                                                           |
+| `display_mode`         | `string`   | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is displayed when `.cdsrc.json`, `.cdsrc-private` or `*.cds` file is present</li><li>`context`: the segment is displayed when conditions from `files` mode are fulfilled or `package.json` file is present and `@sap/cds` is in `dependencies` section (**default**)</li></ul> |
+| `extensions`           | `[]string` | allows to override the default list of file extensions to validate                                                                                                                                                                                                                                                                                            |
+| `folders`              | `[]string` | allows to override the list of folders names to validate                                                                                                                                                                                                                                                                                                      |
+| `cache_version`        | `boolean`  | cache the executable's version or not - defaults to `false`                                                                                                                                                                                                                                                                                                   |
 
 ## Template ([info][templates])
 

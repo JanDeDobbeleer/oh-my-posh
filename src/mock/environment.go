@@ -282,3 +282,12 @@ func (env *MockedEnvironment) SystemInfo() (*platform.SystemInfo, error) {
 	args := env.Called()
 	return args.Get(0).(*platform.SystemInfo), args.Error(1)
 }
+
+func (env *MockedEnvironment) Unset(name string) {
+	for i := 0; i < len(env.ExpectedCalls); i++ {
+		f := env.ExpectedCalls[i]
+		if f.Method == name {
+			f.Unset()
+		}
+	}
+}

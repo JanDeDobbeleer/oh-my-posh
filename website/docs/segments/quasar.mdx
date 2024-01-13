@@ -26,13 +26,16 @@ import Config from "@site/src/components/Config.js";
 
 ## Properties
 
-| Name                   | Type      | Description                                                                                                           |
-| ---------------------- | --------- | --------------------------------------------------------------------------------------------------------------------- |
-| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                   |
-| `missing_command_text` | `string`  | text to display when the command is missing - defaults to empty                                                       |
-| `fetch_version`        | `boolean` | fetch the NPM version - defaults to `true`                                                                            |
-| `version_url_template` | `string`  | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes |
-| `fetch_dependencies`   | `boolean` | fetch the version number of the `vite` and `@quasar/app-vite` dependencies if present - defaults to `false`           |
+| Name                   | Type       | Description                                                                                                           |
+| ---------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------- |
+| `home_enabled`         | `boolean`  | display the segment in the HOME folder or not - defaults to `false`                                                   |
+| `missing_command_text` | `string`   | text to display when the command is missing - defaults to empty                                                       |
+| `fetch_version`        | `boolean`  | fetch the NPM version - defaults to `true`                                                                            |
+| `version_url_template` | `string`   | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes |
+| `fetch_dependencies`   | `boolean`  | fetch the version number of the `vite` and `@quasar/app-vite` dependencies if present - defaults to `false`           |
+| `extensions`           | `[]string` | allows to override the default list of file extensions to validate                                                    |
+| `folders`              | `[]string` | allows to override the list of folders names to validate                                                              |
+| `cache_version`        | `boolean`  | cache the executable's version or not - defaults to `false`                                                           |
 
 ## Template ([info][templates])
 

@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,15 +27,14 @@ func TestPerl(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On("HasCommand", "perl").Return(true)
-		env.On("RunCommand", "perl", []string{"-version"}).Return(tc.Version, nil)
-		env.On("HasFiles", ".perl-version").Return(true)
-		env.On("Pwd").Return("/usr/home/project")
-		env.On("Home").Return("/usr/home")
-		props := properties.Map{
-			properties.FetchVersion: true,
+		params := &mockedLanguageParams{
+			cmd:           "perl",
+			versionParam:  "-version",
+			versionOutput: tc.Version,
+			extension:     ".perl-version",
 		}
+		env, props := getMockedLanguageEnv(params)
+
 		p := &Perl{}
 		p.Init(props, env)
 		assert.True(t, p.Enabled(), fmt.Sprintf("Failed in case: %s", tc.Case))

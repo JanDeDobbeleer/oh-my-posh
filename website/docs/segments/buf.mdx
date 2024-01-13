@@ -10,23 +10,28 @@ Display the currently active [Buf CLI][buf-docs] version.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "buf",
-  "style": "plain",
-  "foreground": "#1000D6",
-  "template": " 🐃 {{ .Full }} "
-}}/>
+<Config
+  data={{
+    type: "buf",
+    style: "plain",
+    foreground: "#1000D6",
+    template: " 🐃 {{ .Full }} ",
+  }}
+/>
 
 ## Properties
 
-| Name                   | Type      | Description                                                                                                                                                                                   |
-| ---------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `home_enabled`         | `boolean` | display the segment in the HOME folder or not - defaults to `false`                                                                                                                           |
-| `fetch_version`        | `boolean` | fetch the active version or not; useful if all you need is an icon indicating `buf`                                                                                                          |
-| `display_mode`         | `string`  | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when `buf.yaml`, `buf.gen.yaml` or `buf.work.yaml` files are present (**default**)</li></ul> |
-| `version_url_template` | `string`  | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                         |
+| Name                   | Type       | Description                                                                                                                                                                                   |
+| ---------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `home_enabled`         | `boolean`  | display the segment in the HOME folder or not - defaults to `false`                                                                                                                           |
+| `fetch_version`        | `boolean`  | fetch the active version or not; useful if all you need is an icon indicating `buf`                                                                                                           |
+| `display_mode`         | `string`   | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when `buf.yaml`, `buf.gen.yaml` or `buf.work.yaml` files are present (**default**)</li></ul> |
+| `version_url_template` | `string`   | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                         |
+| `extensions`           | `[]string` | allows to override the default list of file extensions to validate                                                                                                                            |
+| `folders`              | `[]string` | allows to override the list of folders names to validate                                                                                                                                      |
+| `cache_version`        | `boolean`  | cache the executable's version or not - defaults to `false`                                                                                                                                   |
 
 ## Template ([info][templates])
 

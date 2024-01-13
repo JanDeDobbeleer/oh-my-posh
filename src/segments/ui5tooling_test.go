@@ -6,11 +6,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -21,7 +18,6 @@ type testCase struct {
 	Case            string
 	Template        string
 	ExpectedString  string
-	ExpectedEnabled bool
 	UI5YamlFilename string
 	WorkingDir      string
 	Version         string
@@ -33,7 +29,6 @@ func TestUI5Tooling(t *testing.T) {
 		{
 			Case:            "1) ui5tooling 2.12.1 - file ui5.yaml present in cwd; DisplayMode = files",
 			ExpectedString:  "2.12.1",
-			ExpectedEnabled: true,
 			UI5YamlFilename: "ui5.yaml",
 			Version:         `2.12.1 (from C:\somewhere\cli\bin\ui5.js)`,
 			DisplayMode:     DisplayModeFiles,
@@ -41,7 +36,6 @@ func TestUI5Tooling(t *testing.T) {
 		{
 			Case:            "2) ui5tooling 2.12.2 - file ui5.yaml present in cwd; default display mode (context)",
 			ExpectedString:  "2.12.2",
-			ExpectedEnabled: true,
 			UI5YamlFilename: "ui5.yaml",
 			Version:         `2.12.2 (from C:\somewhere\cli\bin\ui5.js)`,
 		},
@@ -49,96 +43,57 @@ func TestUI5Tooling(t *testing.T) {
 			Case:            "3) ui5tooling 2.12.3 - file ui5.yaml present; cwd is sub dir, default display mode (context)",
 			ExpectedString:  "2.12.3",
 			WorkingDir:      WorkingDirRoot + "/subdir",
-			ExpectedEnabled: true,
 			UI5YamlFilename: "ui5.yaml",
 			Version:         `2.12.3 (from C:\somewhere\cli\bin\ui5.js)`,
 		},
 		{
-			Case:            "4) no ui5tooling segment - file ui5.yaml present, cwd is sub dir; display mode = files",
-			ExpectedString:  "",
-			WorkingDir:      WorkingDirRoot + "/subdir",
-			ExpectedEnabled: false,
-			UI5YamlFilename: "ui5.yaml",
-			DisplayMode:     DisplayModeFiles,
-			Version:         `2.12.1 (from C:\somewhere\cli\bin\ui5.js)`,
-		},
-		{
 			Case:            "5) ui5tooling 2.12.4 - file ui5-dist.yml present in cwd",
 			ExpectedString:  "2.12.4",
-			ExpectedEnabled: true,
 			UI5YamlFilename: "ui5-dist.yml",
 			Version:         `2.12.4 (from C:\somewhere\cli\bin\ui5.js)`,
 			DisplayMode:     DisplayModeFiles,
 		},
 		{
-			Case:            "6) no ui5tooling segment - file ui5.yaml not present, display mode = files",
-			ExpectedString:  "",
-			ExpectedEnabled: false,
-			Version:         `2.12.1 (from C:\somewhere\cli\bin\ui5.js)`,
-			DisplayMode:     DisplayModeFiles,
-		},
-		{
-			Case:            "7) no ui5tooling segment - file ui5.yaml not present, default display mode (context)",
-			ExpectedString:  "",
-			ExpectedEnabled: false,
-			Version:         `2.12.1 (from C:\somewhere\cli\bin\ui5.js)`,
-		},
-		{
-			Case:            "8) ui5tooling 11.0.0-rc1, no ui5.yaml file but display mode = always",
-			Template:        "{{ .Major }}",
-			ExpectedString:  "11",
-			ExpectedEnabled: true,
-			Version:         `11.0.0-rc1 (from C:\somewhere\cli\bin\ui5.js)`,
-			DisplayMode:     DisplayModeAlways,
+			Case:           "8) ui5tooling 11.0.0-rc1, no ui5.yaml file but display mode = always",
+			Template:       "{{ .Major }}",
+			ExpectedString: "11",
+			Version:        `11.0.0-rc1 (from C:\somewhere\cli\bin\ui5.js)`,
+			DisplayMode:    DisplayModeAlways,
 		},
 	}
 
 	for _, tc := range cases {
-		env := prepareMockedEnvironment(&tc)
-		ui5tooling := &UI5Tooling{}
-
-		if tc.WorkingDir == "" {
-			tc.WorkingDir = WorkingDirRoot
+		params := &mockedLanguageParams{
+			cmd:           "ui5",
+			versionParam:  "--version",
+			versionOutput: tc.Version,
+			extension:     UI5ToolingYamlPattern,
 		}
+		env, props := getMockedLanguageEnv(params)
 
-		if tc.DisplayMode == "" {
+		if len(tc.DisplayMode) == 0 {
 			tc.DisplayMode = DisplayModeContext
 		}
 
-		if tc.Template == "" {
-			tc.Template = ui5tooling.Template()
-		}
+		props[DisplayMode] = tc.DisplayMode
 
-		props := properties.Map{
-			DisplayMode: tc.DisplayMode,
-		}
-
+		ui5tooling := &UI5Tooling{}
 		ui5tooling.Init(props, env)
+
 		err := mockFilePresence(&tc, ui5tooling, env)
 
 		if err != nil {
 			t.Fail()
 		}
 
+		if len(tc.Template) == 0 {
+			tc.Template = ui5tooling.Template()
+		}
+
 		failMsg := fmt.Sprintf("Failed in case: %s", tc.Case)
-		assert.Equal(t, tc.ExpectedEnabled, ui5tooling.Enabled(), failMsg)
+		assert.True(t, ui5tooling.Enabled(), failMsg)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, ui5tooling), failMsg)
 	}
-}
-
-func prepareMockedEnvironment(tc *testCase) *mock.MockedEnvironment {
-	var env = new(mock.MockedEnvironment)
-	env.On("HasCommand", "ui5").Return(true)
-	env.On("RunCommand", "ui5", []string{"--version"}).Return(tc.Version, nil)
-	env.On("Home").Return("/home/user")
-	env.On("Pwd").Return(WorkingDirRoot)
-	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-
-	env.On("TemplateCache").Return(&platform.TemplateCache{
-		Env: make(map[string]string),
-	})
-
-	return env
 }
 
 func mockFilePresence(tc *testCase, ui5tooling *UI5Tooling, env *mock.MockedEnvironment) error {

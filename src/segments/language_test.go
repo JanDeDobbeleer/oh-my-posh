@@ -28,6 +28,7 @@ type languageArgs struct {
 	properties         properties.Properties
 	matchesVersionFile matchesVersionFile
 	inHome             bool
+	cachedVersion      string
 }
 
 func (l *languageArgs) hasvalue(value string, list []string) bool {
@@ -41,27 +42,38 @@ func (l *languageArgs) hasvalue(value string, list []string) bool {
 
 func bootStrapLanguageTest(args *languageArgs) *language {
 	env := new(mock.MockedEnvironment)
+
 	for _, command := range args.commands {
 		env.On("HasCommand", command.executable).Return(args.hasvalue(command.executable, args.enabledCommands))
 		env.On("RunCommand", command.executable, command.args).Return(args.version, args.expectedError)
 	}
+
 	for _, extension := range args.extensions {
 		env.On("HasFiles", extension).Return(args.hasvalue(extension, args.enabledExtensions))
 	}
+
 	home := "/usr/home"
 	cwd := "/usr/home/project"
 	if args.inHome {
 		cwd = home
 	}
+
 	env.On("Pwd").Return(cwd)
 	env.On("Home").Return(home)
 	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 	env.On("TemplateCache").Return(&platform.TemplateCache{
 		Env: make(map[string]string),
 	})
+
+	cache := &mock.MockedCache{}
+	cache.On("Get", mock2.Anything).Return(args.cachedVersion, len(args.cachedVersion) > 0)
+	cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
+	env.On("Cache").Return(cache)
+
 	if args.properties == nil {
 		args.properties = properties.Map{}
 	}
+
 	l := &language{
 		props:              args.properties,
 		env:                env,
@@ -70,6 +82,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 		versionURLTemplate: args.versionURLTemplate,
 		matchesVersionFile: args.matchesVersionFile,
 	}
+
 	return l
 }
 
@@ -523,4 +536,59 @@ func TestLanguageHyperlinkTemplatePropertyTakesPriority(t *testing.T) {
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
 	assert.Equal(t, "https://custom/url/template/1.3", lang.version.URL)
+}
+
+func TestLanguageEnabledCachedVersion(t *testing.T) {
+	props := properties.Map{
+		properties.FetchVersion: true,
+	}
+	args := &languageArgs{
+		commands: []*cmd{
+			{
+				executable: "unicorn",
+				args:       []string{"--version"},
+				regex:      "(?P<version>.*)",
+			},
+		},
+		extensions:        []string{uni, corn},
+		enabledExtensions: []string{uni, corn},
+		enabledCommands:   []string{"unicorn"},
+		version:           universion,
+		cachedVersion:     "1.3.37",
+		properties:        props,
+	}
+	lang := bootStrapLanguageTest(args)
+	assert.True(t, lang.Enabled())
+	assert.Equal(t, "1.3.37", lang.Full, "cached unicorn version is available")
+	assert.Equal(t, "unicorn", lang.Executable, "cached version was found")
+}
+
+type mockedLanguageParams struct {
+	cmd           string
+	versionParam  string
+	versionOutput string
+	extension     string
+}
+
+func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.MockedEnvironment, properties.Map) {
+	env := new(mock.MockedEnvironment)
+	env.On("HasCommand", params.cmd).Return(true)
+	env.On("RunCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
+	env.On("HasFiles", params.extension).Return(true)
+	env.On("Pwd").Return("/usr/home/project")
+	env.On("Home").Return("/usr/home")
+	env.On("TemplateCache").Return(&platform.TemplateCache{
+		Env: make(map[string]string),
+	})
+	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
+	props := properties.Map{
+		properties.FetchVersion: true,
+	}
+
+	cache := &mock.MockedCache{}
+	cache.On("Get", mock2.Anything).Return("", false)
+	cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
+	env.On("Cache").Return(cache)
+
+	return env, props
 }

@@ -101,7 +101,7 @@ type Cache interface {
 	// In case the ttl expired, the function returns false.
 	Get(key string) (string, bool)
 	// Sets a value for a given key.
-	// The ttl indicates how may minutes to cache the value.
+	// The ttl indicates how many minutes to cache the value.
 	Set(key, value string, ttl int)
 	// Deletes a key from the cache.
 	Delete(key string)

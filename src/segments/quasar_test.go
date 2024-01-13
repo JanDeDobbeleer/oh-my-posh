@@ -6,10 +6,7 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestQuasar(t *testing.T) {
@@ -58,24 +55,20 @@ func TestQuasar(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On("HasCommand", "quasar").Return(true)
-		env.On("RunCommand", "quasar", []string{"--version"}).Return(tc.Version, nil)
-		env.On("Pwd").Return("/usr/home/project")
-		env.On("Home").Return("/usr/home")
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
-			Env: make(map[string]string),
-		})
+		params := &mockedLanguageParams{
+			cmd:           "quasar",
+			versionParam:  "--version",
+			versionOutput: tc.Version,
+			extension:     "quasar.config",
+		}
+		env, props := getMockedLanguageEnv(params)
+
 		env.On("HasFilesInDir", "/usr/home/project", "package-lock.json").Return(tc.HasPackageLockFile)
 		fileInfo := &platform.FileInfo{ParentFolder: "/usr/home/project", IsDir: true}
 		env.On("HasParentFilePath", "quasar.config").Return(fileInfo, nil)
 		env.On("FileContent", filepath.Join(fileInfo.ParentFolder, "package-lock.json")).Return(packageLockFile)
 
-		props := properties.Map{
-			properties.FetchVersion: true,
-			FetchDependencies:       tc.FetchDependencies,
-		}
+		props[FetchDependencies] = tc.FetchDependencies
 
 		quasar := &Quasar{}
 		quasar.Init(props, env)

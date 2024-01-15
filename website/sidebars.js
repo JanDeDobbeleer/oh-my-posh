@@ -96,6 +96,7 @@ module.exports = {
         "segments/node",
         "segments/npm",
         "segments/nx",
+        "segments/ocaml",
         "segments/os",
         "segments/owm",
         "segments/path",

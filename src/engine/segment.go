@@ -186,6 +186,8 @@ const (
 	NPM SegmentType = "npm"
 	// NX writes which Nx version us currently active
 	NX SegmentType = "nx"
+	// OCAML writes the active Ocaml version
+	OCAML SegmentType = "ocaml"
 	// OS write os specific icon
 	OS SegmentType = "os"
 	// OWM writes the weather coming from openweatherdata
@@ -310,6 +312,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	NODE:            func() SegmentWriter { return &segments.Node{} },
 	NPM:             func() SegmentWriter { return &segments.Npm{} },
 	NX:              func() SegmentWriter { return &segments.Nx{} },
+	OCAML:           func() SegmentWriter { return &segments.OCaml{} },
 	OS:              func() SegmentWriter { return &segments.Os{} },
 	OWM:             func() SegmentWriter { return &segments.Owm{} },
 	PATH:            func() SegmentWriter { return &segments.Path{} },

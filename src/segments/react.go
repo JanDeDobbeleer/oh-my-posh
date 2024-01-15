@@ -1,8 +1,6 @@
 package segments
 
 import (
-	"path/filepath"
-
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 )
@@ -36,5 +34,5 @@ func (r *React) Enabled() bool {
 
 func (r *React) getVersion() (string, error) {
 	// tested by nx_test.go
-	return getNodePackageVersion(r.language.env, filepath.Join("react"))
+	return getNodePackageVersion(r.language.env, "react")
 }

@@ -107,6 +107,7 @@ module.exports = {
         "segments/python",
         "segments/quasar",
         "segments/r",
+        "segments/react",
         "segments/root",
         "segments/ruby",
         "segments/rust",

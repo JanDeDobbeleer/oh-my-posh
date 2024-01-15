@@ -208,6 +208,8 @@ const (
 	QUASAR SegmentType = "quasar"
 	// R version
 	R SegmentType = "r"
+	// REACT writes the current react version
+	REACT SegmentType = "react"
 	// ROOT writes root symbol
 	ROOT SegmentType = "root"
 	// RUBY writes which ruby version is currently active
@@ -323,6 +325,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	PYTHON:          func() SegmentWriter { return &segments.Python{} },
 	QUASAR:          func() SegmentWriter { return &segments.Quasar{} },
 	R:               func() SegmentWriter { return &segments.R{} },
+	REACT:           func() SegmentWriter { return &segments.React{} },
 	ROOT:            func() SegmentWriter { return &segments.Root{} },
 	RUBY:            func() SegmentWriter { return &segments.Ruby{} },
 	RUST:            func() SegmentWriter { return &segments.Rust{} },

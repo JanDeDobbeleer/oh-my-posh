@@ -52,7 +52,20 @@
         }
       ],
       "type": "prompt"
-    }
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#63F08C",
+          "style": "plain",
+          "template": "\u279c ",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    } 
   ],
   "version": 2
 }

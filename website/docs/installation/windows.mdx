@@ -139,7 +139,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object
 ## Default themes
 
 You can find the themes in the folder indicated by the environment variable `POSH_THEMES_PATH`.
-For example, you can use `oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json"`
+For example, you can use `oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH\jandedobbeleer.omp.json" | Invoke-Expression`
 for the prompt initialization in PowerShell.
 
 

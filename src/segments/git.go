@@ -295,7 +295,12 @@ func (g *Git) shouldDisplay() bool {
 	g.setDir(gitdir.Path)
 
 	if !gitdir.IsDir {
-		return g.hasWorktree(gitdir)
+		if g.hasWorktree(gitdir) {
+			g.realDir = g.convertToWindowsPath(g.realDir)
+			return true
+		}
+
+		return false
 	}
 
 	g.workingDir = gitdir.Path

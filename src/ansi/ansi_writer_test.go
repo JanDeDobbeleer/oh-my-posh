@@ -206,6 +206,12 @@ func TestWriteANSIColors(t *testing.T) {
 			Expected: "\x1b[47m\x1b[30mhome\x1b[0m\x1b[37;49m\x1b[7m / \x1b[27m\x1b[47m\x1b[30mcode\x1b[0m\x1b[37;49m\x1b[7m / \x1b[27m\x1b[47m\x1b[30msrc \x1b[0m",
 			Colors:   &Colors{Foreground: "black", Background: "white"},
 		},
+		{
+			Case:     "Larger than and less than symbols",
+			Input:    "<red><</><orange>></><yellow><</>",
+			Expected: "\x1b[47m\x1b[31m<\x1b[30m>\x1b[33m<\x1b[0m",
+			Colors:   &Colors{Foreground: "black", Background: "white"},
+		},
 	}
 
 	for _, tc := range cases {

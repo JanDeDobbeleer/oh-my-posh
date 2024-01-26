@@ -54,7 +54,7 @@ const (
 	// Foreground takes the current segment's foreground color
 	Foreground = "foreground"
 
-	AnchorRegex    = `^(?P<ANCHOR><(?P<FG>[^,>]+)?,?(?P<BG>[^>]+)?>)`
+	AnchorRegex    = `^(?P<ANCHOR><(?P<FG>[^,<>]+)?,?(?P<BG>[^<>]+)?>)`
 	colorise       = "\x1b[%sm"
 	transparent    = "\x1b[0m\x1b[%s;49m\x1b[7m"
 	transparentEnd = "\x1b[27m"

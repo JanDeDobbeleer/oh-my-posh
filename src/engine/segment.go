@@ -202,6 +202,8 @@ const (
 	PLASTIC SegmentType = "plastic"
 	// Project version
 	PROJECT SegmentType = "project"
+	// PULUMI writes the pulumi user, store and stack
+	PULUMI SegmentType = "pulumi"
 	// PYTHON writes the virtual env name
 	PYTHON SegmentType = "python"
 	// QUASAR writes the QUASAR version and context
@@ -322,6 +324,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	PHP:             func() SegmentWriter { return &segments.Php{} },
 	PLASTIC:         func() SegmentWriter { return &segments.Plastic{} },
 	PROJECT:         func() SegmentWriter { return &segments.Project{} },
+	PULUMI:          func() SegmentWriter { return &segments.Pulumi{} },
 	PYTHON:          func() SegmentWriter { return &segments.Python{} },
 	QUASAR:          func() SegmentWriter { return &segments.Quasar{} },
 	R:               func() SegmentWriter { return &segments.R{} },

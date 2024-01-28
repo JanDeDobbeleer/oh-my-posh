@@ -295,6 +295,7 @@
             "php",
             "plastic",
             "project",
+            "pulumi",
             "root",
             "ruby",
             "rust",
@@ -1955,6 +1956,19 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pulumi"
+              }
+            }
+          },
+          "then": {
+            "title": "Pulumi Segment",
+            "description": "https://ohmyposh.dev/docs/segments/pulumi"
           }
         },
         {

@@ -104,6 +104,7 @@ module.exports = {
         "segments/php",
         "segments/plastic",
         "segments/project",
+        "segments/pulumi",
         "segments/python",
         "segments/quasar",
         "segments/r",

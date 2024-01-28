@@ -1,0 +1,56 @@
+---
+id: pulumi
+title: Pulumi
+sidebar_label: Pulumi
+---
+
+## What
+
+Display the currently active pulumi logged-in user, url and stack.
+
+:::caution
+This requires a pulumi binary in your PATH and will only show in directories that contain a `Pulumi.yaml` file.
+:::
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "pulumi",
+    style: "diamond",
+    powerline_symbol: "\uE0CF",
+    foreground: "#ffffff",
+    background: "#662d91",
+    template:
+      "{{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}",
+  }}
+/>
+
+## Properties
+
+| Name          | Type      | Default | Description                                                                        |
+| ------------- | --------- | ------- | ---------------------------------------------------------------------------------- |
+| `fetch_stack` | `boolean` | `false` | fetch the current stack name                                                       |
+| `fetch_about` | `boolean` | `false` | fetch the URL and user for the current stask. Requires `fetch_stack` set to `true` |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+{{ .Stack }}{{if .User }} :: {{ .User }}@{{ end }}{{ if .URL }}{{ .URL }}{{ end }}
+```
+
+:::
+
+### Properties
+
+| Name     | Type     | Description                                        |
+| -------- | -------- | -------------------------------------------------- |
+| `.Stack` | `string` | the current stack name                             |
+| `.User`  | `string` | is the current logged in user                      |
+| `.Url`   | `string` | the URL of the state where pulumi stores resources |
+
+[templates]: /docs/configuration/templates

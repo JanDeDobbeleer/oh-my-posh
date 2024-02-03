@@ -37,6 +37,7 @@ When using oh-my-posh inside the WSL, make sure to follow the [Linux][linux] ins
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
     { label: 'manual', value: 'manual', },
+    { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
 <TabItem value="winget">
@@ -63,6 +64,20 @@ Open a PowerShell prompt and run the following command:
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://ohmyposh.dev/install.ps1'))
+```
+
+</TabItem>
+<TabItem value="chocolatey">
+
+:::info
+The chocolatey package is maintained by the community and might not be up to date.
+In case of issues, please contact the [maintainer][choco-maintainer].
+:::
+
+Open a PowerShell prompt and run the following command:
+
+```powershell
+choco install oh-my-posh
 ```
 
 </TabItem>
@@ -105,6 +120,7 @@ Exclusions should be added with the full path to the executable, you can get it 
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
     { label: 'manual', value: 'manual', },
+    { label: 'chocolatey', value: 'chocolatey'},
   ]
 }>
 <TabItem value="winget">
@@ -134,6 +150,20 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; Invoke-Expression ((New-Object
 ```
 
 </TabItem>
+<TabItem value="chocolatey">
+
+:::info
+The chocolatey package is maintained by the community and might not be up to date.
+In case of issues, please contact the [maintainer][choco-maintainer].
+:::
+
+Open a PowerShell prompt and run the following command:
+
+```powershell
+choco upgrade oh-my-posh
+```
+
+</TabItem>
 </Tabs>
 
 ## Default themes
@@ -149,3 +179,4 @@ for the prompt initialization in PowerShell.
 [linux]: /docs/installation/linux
 [themes]: /docs/themes
 [report-false-positive]: https://docs.microsoft.com/en-us/microsoft-365/security/defender/m365d-autoir-report-false-positives-negatives#report-a-false-positivenegative-to-microsoft-for-analysis
+[choco-maintainer]: https://github.com/digitalcoyote/chocolatey-packages

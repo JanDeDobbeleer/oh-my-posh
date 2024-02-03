@@ -36,6 +36,7 @@ When using oh-my-posh inside the WSL, make sure to follow the [Linux][linux] ins
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
+    { label: 'choco', value: 'choco'},
     { label: 'manual', value: 'manual', },
   ]
 }>
@@ -57,6 +58,17 @@ scoop install https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/downl
 ```
 
 </TabItem>
+
+<TabItem value="choco">
+
+Open a PowerShell prompt and run the following command:
+
+```powershell
+choco install oh-my-posh
+``` 
+
+</TabItem>
+
 <TabItem value="manual">
 
 Open a PowerShell prompt and run the following command:
@@ -104,6 +116,7 @@ Exclusions should be added with the full path to the executable, you can get it 
   values={[
     { label: 'winget', value: 'winget', },
     { label: 'scoop', value: 'scoop', },
+    { label: 'choco', value: 'choco'},
     { label: 'manual', value: 'manual', },
   ]
 }>
@@ -125,6 +138,17 @@ scoop update oh-my-posh
 ```
 
 </TabItem>
+
+<TabItem value="choco">
+
+Open a PowerShell prompt and run the following command:
+
+```powershell
+choco upgrade oh-my-posh
+```
+
+</TabItem>
+
 <TabItem value="manual">
 
 Open a PowerShell prompt and run the following command:

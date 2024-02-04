@@ -2262,6 +2262,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "VEERT00X",
+      "name": "Veko",
+      "avatar_url": "https://avatars.githubusercontent.com/u/72668825?v=4",
+      "profile": "https://veert00x.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

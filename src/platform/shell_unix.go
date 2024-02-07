@@ -66,6 +66,16 @@ func (env *Shell) TerminalWidth() (int, error) {
 		env.Error(err)
 	}
 
+	// fetch width from the environment variable
+	// in case the terminal width is not available
+	if width == 0 {
+		i, err := strconv.Atoi(env.Getenv("COLUMNS"))
+		if err != nil {
+			env.Error(err)
+		}
+		width = uint(i)
+	}
+
 	env.CmdFlags.TerminalWidth = int(width)
 	env.DebugF("terminal width: %d", env.CmdFlags.TerminalWidth)
 	return env.CmdFlags.TerminalWidth, err

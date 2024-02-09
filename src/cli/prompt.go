@@ -10,7 +10,7 @@ var promptCmd = &cobra.Command{
 	Short: "Set up the prompt for your shell (deprecated)",
 	Long:  `Set up the prompt for your shell. (deprecated)`,
 	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, _ []string) {
 		_ = cmd.Help()
 	},
 }

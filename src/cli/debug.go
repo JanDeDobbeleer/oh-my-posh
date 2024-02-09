@@ -19,7 +19,7 @@ var debugCmd = &cobra.Command{
 	Short: "Print the prompt in debug mode",
 	Long:  "Print the prompt in debug mode.",
 	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		startTime := time.Now()
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{

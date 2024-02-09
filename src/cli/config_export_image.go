@@ -46,7 +46,7 @@ Exports the config to an image file ~/mytheme.png.
 
 Exports the config to an image file using customized output options.`,
 	Args: cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
 				Config: config,

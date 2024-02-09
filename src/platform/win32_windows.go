@@ -77,7 +77,7 @@ func getWindowFileName(handle syscall.Handle) (string, error) {
 func queryWindowTitles(processName, windowTitleRegex string) (string, error) {
 	var title string
 	// callback for EnumWindows
-	cb := syscall.NewCallback(func(handle syscall.Handle, pointer uintptr) uintptr {
+	cb := syscall.NewCallback(func(handle syscall.Handle, _ uintptr) uintptr {
 		fileName, err := getWindowFileName(handle)
 		if err != nil {
 			// ignore the error and continue enumeration

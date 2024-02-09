@@ -33,7 +33,7 @@ Exports the ~/myconfig.omp.json config file and prints the result to stdout.
 
 Exports the ~/myconfig.omp.json config file to toml and prints the result to stdout.`,
 	Args: cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
+	Run: func(_ *cobra.Command, _ []string) {
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
 				Config: config,

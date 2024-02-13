@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"os/exec"
+	"path/filepath"
 	"strings"
 	"syscall"
 	"time"
@@ -248,4 +250,18 @@ func (env *Shell) Connection(connectionType ConnectionType) (*Connection, error)
 	}
 	env.Error(fmt.Errorf("Network type '%s' not found", connectionType))
 	return nil, &NotImplemented{}
+}
+
+func (env *Shell) LookPath(command string) (string, error) {
+	winAppPath := filepath.Join(env.Getenv("LOCALAPPDATA"), `\Microsoft\WindowsApps\`, command)
+	if !strings.HasSuffix(winAppPath, ".exe") {
+		winAppPath += ".exe"
+	}
+
+	path, err := exec.LookPath(command)
+	if err == nil && path != winAppPath {
+		return path, nil
+	}
+
+	return readWinAppLink(winAppPath)
 }

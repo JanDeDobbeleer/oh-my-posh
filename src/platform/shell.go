@@ -12,7 +12,6 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -609,12 +608,14 @@ func (env *Shell) CommandPath(command string) string {
 		env.Debug(path)
 		return path
 	}
-	path, err := exec.LookPath(command)
+
+	path, err := env.LookPath(command)
 	if err == nil {
 		env.cmdCache.set(command, path)
 		env.Debug(path)
 		return path
 	}
+
 	env.Error(err)
 	return ""
 }

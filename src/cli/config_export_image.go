@@ -57,9 +57,12 @@ Exports the config to an image file using customized output options.`,
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 
-		// set dsane defaults for things we don't print
+		// set sane defaults for things we don't print
 		cfg.ConsoleTitleTemplate = ""
 		cfg.PWD = ""
+
+		// add variables to the environment
+		env.Var = cfg.Var
 
 		writerColors := cfg.MakeColors()
 		writer := &ansi.Writer{

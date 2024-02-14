@@ -42,7 +42,7 @@
           "properties": {
             "folder_icon": "\ue5fe",
             "folder_separator_icon": " <#000000>\ue0bd </>",
-            "home_icon": "\ueb06",
+            "home_icon": "\uf7db",
             "style": "agnoster_short"
           },
           "style": "plain",

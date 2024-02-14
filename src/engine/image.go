@@ -291,7 +291,7 @@ type RuneRange struct {
 // If we're a Nerd Font code point, treat as double width
 var doubleWidthRunes = []RuneRange{
 	// Seti-UI + Custom range
-	{Start: '\ue5fa', End: '\ue62b'},
+	{Start: '\ue5fa', End: '\ue6b1'},
 	// Devicons
 	{Start: '\ue700', End: '\ue7c5'},
 	// Font Awesome
@@ -301,26 +301,25 @@ var doubleWidthRunes = []RuneRange{
 	// Material Design Icons
 	{Start: '\U000f0001', End: '\U000f1af0'},
 	// Weather
-	{Start: '\ue300', End: '\ue3eb'},
+	{Start: '\ue300', End: '\ue3e3'},
 	// Octicons
-	{Start: '\uf400', End: '\uf4a8'},
+	{Start: '\uf400', End: '\uf532'},
 	{Start: '\u2665', End: '\u2665'},
 	{Start: '\u26A1', End: '\u26A1'},
-	{Start: '\uf27c', End: '\uf27c'},
 	// Powerline Extra Symbols (intentionally excluding single width bubbles (e0b4-e0b7) and pixelated (e0c4-e0c7))
 	{Start: '\ue0a3', End: '\ue0a3'},
-	{Start: '\ue0b8', End: '\ue0c3'},
-	{Start: '\ue0c8', End: '\ue0c8'},
+	{Start: '\ue0b4', End: '\ue0c8'},
 	{Start: '\ue0ca', End: '\ue0ca'},
-	{Start: '\ue0cc', End: '\ue0d2'},
-	{Start: '\ue0d4', End: '\ue0d4'},
+	{Start: '\ue0cc', End: '\ue0d4'},
 	// IEC Power Symbols
 	{Start: '\u23fb', End: '\u23fe'},
 	{Start: '\u2b58', End: '\u2b58'},
 	// Font Logos
-	{Start: '\uf300', End: '\uf31c'},
+	{Start: '\uf300', End: '\uf372'},
 	// Pomicons
-	{Start: '\ue000', End: '\ue00d'},
+	{Start: '\ue000', End: '\ue00a'},
+	// Codicons
+	{Start: '\uea60', End: '\uebeb'},
 }
 
 // This is getting how many additional characters of width to allocate when drawing

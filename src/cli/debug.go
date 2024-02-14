@@ -21,6 +21,7 @@ var debugCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
 		startTime := time.Now()
+
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
 				Config: config,
@@ -30,9 +31,15 @@ var debugCmd = &cobra.Command{
 				Plain:  plain,
 			},
 		}
+
 		env.Init()
 		defer env.Close()
+
 		cfg := engine.LoadConfig(env)
+
+		// add variables to the environment
+		env.Var = cfg.Var
+
 		writerColors := cfg.MakeColors()
 		writer := &ansi.Writer{
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
@@ -40,6 +47,7 @@ var debugCmd = &cobra.Command{
 			Plain:              plain,
 			TrueColor:          env.CmdFlags.TrueColor,
 		}
+
 		writer.Init(shell.GENERIC)
 		eng := &engine.Engine{
 			Config: cfg,
@@ -47,6 +55,7 @@ var debugCmd = &cobra.Command{
 			Writer: writer,
 			Plain:  plain,
 		}
+
 		fmt.Print(eng.PrintDebug(startTime, build.Version))
 	},
 }

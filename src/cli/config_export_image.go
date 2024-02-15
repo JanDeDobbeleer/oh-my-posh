@@ -12,11 +12,11 @@ import (
 )
 
 var (
-	author        string
-	cursorPadding int
-	rPromptOffset int
-	bgColor       string
-	outputImage   string
+	author string
+	// cursorPadding int
+	// rPromptOffset int
+	bgColor     string
+	outputImage string
 )
 
 // imageCmd represents the image command
@@ -49,10 +49,12 @@ Exports the config to an image file using customized output options.`,
 	Run: func(_ *cobra.Command, _ []string) {
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
-				Config: config,
-				Shell:  shell.GENERIC,
+				Config:        config,
+				Shell:         shell.GENERIC,
+				TerminalWidth: 150,
 			},
 		}
+
 		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
@@ -80,12 +82,10 @@ Exports the config to an image file using customized output options.`,
 		prompt := eng.Primary()
 
 		imageCreator := &engine.ImageRenderer{
-			AnsiString:    prompt,
-			Author:        author,
-			CursorPadding: cursorPadding,
-			RPromptOffset: rPromptOffset,
-			BgColor:       bgColor,
-			Ansi:          writer,
+			AnsiString: prompt,
+			Author:     author,
+			BgColor:    bgColor,
+			Ansi:       writer,
 		}
 
 		if outputImage != "" {
@@ -108,8 +108,8 @@ Exports the config to an image file using customized output options.`,
 func init() { //nolint:gochecknoinits
 	imageCmd.Flags().StringVar(&author, "author", "", "config author")
 	imageCmd.Flags().StringVar(&bgColor, "background-color", "", "image background color")
-	imageCmd.Flags().IntVar(&cursorPadding, "cursor-padding", 0, "prompt cursor padding")
-	imageCmd.Flags().IntVar(&rPromptOffset, "rprompt-offset", 0, "right prompt offset")
+	// imageCmd.Flags().IntVar(&cursorPadding, "cursor-padding", 0, "prompt cursor padding")
+	// imageCmd.Flags().IntVar(&rPromptOffset, "rprompt-offset", 0, "right prompt offset")
 	imageCmd.Flags().StringVarP(&outputImage, "output", "o", "", "image file (.png) to export to")
 	exportCmd.AddCommand(imageCmd)
 }

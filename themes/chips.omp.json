@@ -37,13 +37,9 @@
           "foreground": "p:c-badge-text",
           "leading_diamond": " \uE0B6",
           "style": "diamond",
-          "template": "{{ .HEAD }}{{ .BranchStatus }}{{ if .Working.Changed }} \uE0B1 \uF448 ({{ .Working.String }}){{ end }}{{ if and .Working.Changed .Staging.Changed }} \uE621 {{ end }}{{ if .Staging.Changed }}{{ if not .Working.Changed }} \uE0B1 {{ end }}\uF854 ({{ .Staging.String }}){{ end }}{{ if .StashCount }} \uE621 \uF6FC {{ .StashCount }} Stash{{ if gt .StashCount 1 }}es{{ end }}{{ end }}",
+          "template": "{{ .HEAD }} {{ .BranchStatus }}{{ if .Working.Changed }} \uE0B1 \uF448 ({{ .Working.String }}){{ end }}{{ if and .Working.Changed .Staging.Changed }} \uE0B1 {{ end }}{{ if .Staging.Changed }}{{ if not .Working.Changed }} \uf15c {{ end }}\uf15c ({{ .Staging.String }}){{ end }}{{ if .StashCount }} \ueb4b {{ .StashCount }} Stash{{ if gt .StashCount 1 }}es{{ end }}{{ end }}",
           "properties": {
             "branch_icon": "\uE0A0 ",
-            "branch_ahead_icon": " \uE621 \uF9AC ",
-            "branch_behind_icon": " \uE621 \uF9AD ",
-            "branch_gone_icon": " \uE621 \uF00D",
-            "branch_identical_icon": " \uE621 \uF00C",
             "fetch_status": true,
             "fetch_stash_count": true
           },
@@ -108,7 +104,7 @@
             "time_format": "15:04 (01/02)"
           },
           "style": "diamond",
-          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_DTIME)) }}\uF5EF {{ .CurrentDate | date .Format }}{{ end }}",
+          "template": "{{ if eq \"False\" (title (default \"False\" .Env.DISABLE_SEGMENT_DTIME)) }}\uf43a {{ .CurrentDate | date .Format }}{{ end }}",
           "trailing_diamond": "\uE0B4 ",
           "type": "time"
         },

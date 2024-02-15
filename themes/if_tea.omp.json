@@ -132,7 +132,7 @@
           "properties": {
             "folder_icon": "\uf07b ",
             "folder_separator_icon": " \uf061 ",
-            "home_icon": " ",
+            "home_icon": "\uf46d",
             "style": "agnoster_full",
             "template": " \ue5ff {{ .Path }} "
           },

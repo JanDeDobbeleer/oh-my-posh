@@ -14,8 +14,8 @@
         {
           "foreground": "#ffaed8",
           "properties": {
-            "folder_separator_icon": " 🢖 ",
-            "home_icon": "\u2764",
+            "folder_separator_icon": " | ",
+            "home_icon": "\uf46d",
             "style": "letter"
           },
           "style": "plain",
@@ -25,7 +25,7 @@
         {
           "foreground": "#62beff",
           "properties": {
-            "branch_icon": "\u27df",
+            "branch_icon": "\uf418",
             "branch_identical_icon": "\u2261",
             "fetch_status": true
           },

@@ -12,7 +12,7 @@
           "type": "root"
         },
         {
-          "background": "#000000",
+          "background": "transparent",
           "foreground": "#ffffff",
           "properties": {
             "alpine": "\uf300",

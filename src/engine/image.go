@@ -326,6 +326,11 @@ var doubleWidthRunes = []RuneRange{
 // e.g. for characters that are 2 or more wide. A standard character will return 0
 // Nerd Font glyphs will return 1, since most are double width
 func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
+	// exclude the round leading diamond
+	if r == '\ue0b6' {
+		return 0
+	}
+
 	for _, runeRange := range doubleWidthRunes {
 		if runeRange.Start <= r && r <= runeRange.End {
 			return 1

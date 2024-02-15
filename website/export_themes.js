@@ -88,6 +88,7 @@ themeConfigOverrrides.set('catppuccin_mocha.omp.json', newThemeConfig(40, 40, 'I
     poshCommand += ` --rprompt-offset=${config.rpromptOffset}`;
     poshCommand += ` --cursor-padding=${config.cursorPadding}`;
     poshCommand += ` --background-color=${config.bgColor}`;
+    poshCommand += ` --terminal-width=200`;
     if (config.author !== '') {
       poshCommand += ` --author="${config.author}"`;
     }

@@ -339,6 +339,73 @@ func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
 	return 0
 }
 
+func (ir *ImageRenderer) cleanContent() {
+	// clean abundance of empty lines
+	ir.AnsiString = strings.Trim(ir.AnsiString, "\n")
+	ir.AnsiString = "\n" + ir.AnsiString
+
+	// clean string before render
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[m", "\x1b[0m")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[K", "")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[0J", "")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[27m", "")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b8", "")
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\u2800", " ")
+
+	// cursor indication
+	saveCursorAnsi := "\x1b7"
+	if !strings.Contains(ir.AnsiString, saveCursorAnsi) {
+		ir.AnsiString += "_"
+	}
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, saveCursorAnsi, "_")
+
+	// replace rprompt with adding and mark right aligned blocks with a pointer
+	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[1000C", strings.Repeat(" ", ir.RPromptOffset))
+
+	// add watermarks
+	ir.AnsiString += "\n\n\x1b[1mohmyposh.dev\x1b[22m"
+	if len(ir.Author) > 0 {
+		createdBy := fmt.Sprintf(" by \x1b[1m%s\x1b[22m", ir.Author)
+		ir.AnsiString += createdBy
+	}
+}
+
+func (ir *ImageRenderer) measureContent() (width, height float64) {
+	linewidth := 145
+	linewidth += ir.additionalWidth()
+
+	tmpDrawer := &font.Drawer{Face: ir.regular}
+	advance := tmpDrawer.MeasureString(strings.Repeat(" ", linewidth))
+	width = float64(advance >> 6)
+	// height, lines times font height and line spacing
+	height = float64(len(strings.Split(ir.AnsiString, "\n"))) * ir.fontHeight() * ir.lineSpacing
+	return width, height
+}
+
+/*
+additionalWidth returns the number of additional characters of width to allocate when drawing
+for characters that are 2 wide. A standard character will return 0
+Nerd Font glyphs will return 1, since most are double width
+*/
+func (ir *ImageRenderer) additionalWidth() int {
+	longest := 0
+	var longestLine string
+	for _, line := range strings.Split(ir.AnsiString, "\n") {
+		length := ir.lenWithoutANSI(line)
+		if length > longest {
+			longestLine = line
+			longest = length
+		}
+	}
+
+	var additionalWidth int
+	for _, rune := range longestLine {
+		additionalWidth += ir.runeAdditionalWidth(rune)
+	}
+
+	return additionalWidth
+}
+
 func (ir *ImageRenderer) lenWithoutANSI(text string) int {
 	if len(text) == 0 {
 		return 0
@@ -361,57 +428,6 @@ func (ir *ImageRenderer) lenWithoutANSI(text string) int {
 		length += ir.runeAdditionalWidth(rune)
 	}
 	return length
-}
-
-func (ir *ImageRenderer) calculateWidth() int {
-	longest := 0
-	for _, line := range strings.Split(ir.AnsiString, "\n") {
-		length := ir.lenWithoutANSI(line)
-		if length > longest {
-			longest = length
-		}
-	}
-	return longest
-}
-
-func (ir *ImageRenderer) cleanContent() {
-	rPromptAnsi := "\x1b7\x1b[1000C"
-	hasRPrompt := strings.Contains(ir.AnsiString, rPromptAnsi)
-	// clean abundance of empty lines
-	ir.AnsiString = strings.Trim(ir.AnsiString, "\n")
-	ir.AnsiString = "\n" + ir.AnsiString
-	// clean string before render
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[m", "\x1b[0m")
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[K", "")
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[0J", "")
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[27m", "")
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[1F", "")
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b8", "")
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\u2800", " ")
-	// replace rprompt with adding and mark right aligned blocks with a pointer
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, rPromptAnsi, fmt.Sprintf("_%s", strings.Repeat(" ", ir.CursorPadding)))
-	ir.AnsiString = strings.ReplaceAll(ir.AnsiString, "\x1b[1000C", strings.Repeat(" ", ir.RPromptOffset))
-	if !hasRPrompt {
-		ir.AnsiString += fmt.Sprintf("_%s", strings.Repeat(" ", ir.CursorPadding))
-	}
-	// add watermarks
-	ir.AnsiString += "\n\n\x1b[1mohmyposh.dev\x1b[22m"
-	if len(ir.Author) > 0 {
-		createdBy := fmt.Sprintf(" by \x1b[1m%s\x1b[22m", ir.Author)
-		ir.AnsiString += createdBy
-	}
-}
-
-func (ir *ImageRenderer) measureContent() (width, height float64) {
-	// get the longest line
-	linewidth := ir.calculateWidth()
-	// width, taken from the longest line
-	tmpDrawer := &font.Drawer{Face: ir.regular}
-	advance := tmpDrawer.MeasureString(strings.Repeat(" ", linewidth))
-	width = float64(advance >> 6)
-	// height, lines times font height and line spacing
-	height = float64(len(strings.Split(ir.AnsiString, "\n"))) * ir.fontHeight() * ir.lineSpacing
-	return width, height
 }
 
 func (ir *ImageRenderer) SavePNG() error {

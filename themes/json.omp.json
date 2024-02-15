@@ -10,7 +10,7 @@
             "style": "folder"
           },
           "style": "diamond",
-          "template": "<#42E66C>\u2B22 </><b>{{ .Path }}</b>",
+          "template": "<#42E66C>\ueaf7 </><b>{{ .Path }}</b>",
           "type": "path"
         },
         {
@@ -36,7 +36,7 @@
       "newline": true,
       "segments": [
         {
-          "foreground": "#000000",
+          "foreground": "#FFFFFF",
           "style": "plain",
           "template": ">",
           "type": "text"

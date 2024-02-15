@@ -41,7 +41,7 @@
         {
           "foreground": "#007ACC",
           "style": "plain",
-          "template": "\ue602 ",
+          "template": "\ue602",
           "type": "text"
         }
       ],

@@ -120,7 +120,7 @@
           "foreground": "#337bb6",
           "leading_diamond": "\ue0b2",
           "style": "diamond",
-          "template": "\uFD03 {{ .EnvironmentName }} ",
+          "template": "\uebd8 {{ .EnvironmentName }} ",
           "trailing_diamond": "<transparent,#ffffff>\ue0b2</>",
           "type": "az"
         },

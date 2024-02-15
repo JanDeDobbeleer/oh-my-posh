@@ -30,6 +30,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"slices"
 	"strconv"
 	"strings"
 	"unicode/utf8"
@@ -327,7 +328,8 @@ var doubleWidthRunes = []RuneRange{
 // Nerd Font glyphs will return 1, since most are double width
 func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
 	// exclude the round leading diamond
-	if r == '\ue0b6' {
+	singles := []rune{'\ue0b6', '\ue0ba', '\ue0bc'}
+	if slices.Contains(singles, r) {
 		return 0
 	}
 

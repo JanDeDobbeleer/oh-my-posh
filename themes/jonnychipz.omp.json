@@ -23,8 +23,8 @@
         {
           "background": "#1a1af5",
           "foreground": "#ffffff",
-          "powerline_symbol": "\ue0b0",
-          "style": "powerline",
+          "trailing_diamond": "\ue0b0",
+          "style": "diamond",
           "template": " \uebd8 {{ .Name }} ",
           "type": "az"
         },
@@ -38,7 +38,8 @@
             "always_enabled": true
           },
           "style": "diamond",
-          "template": "<transparent>\ue0b0</>\ue23a ",
+          "template": " \ue23a ",
+          "leading_diamond": "<transparent>\ue0b0</>",
           "trailing_diamond": "\ue0b4",
           "type": "status"
         }

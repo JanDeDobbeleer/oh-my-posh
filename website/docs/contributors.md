@@ -324,6 +324,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://chris-johnston.me"><img src="https://avatars.githubusercontent.com/u/16418643?v=4?s=100" width="100px;" alt="Chris Johnston"/><br /><sub><b>Chris Johnston</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Chris-Johnston" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Daimonion1980"><img src="https://avatars.githubusercontent.com/u/12880413?v=4?s=100" width="100px;" alt="Thomas"/><br /><sub><b>Thomas</b></sub></a><br /><a href="#design-Daimonion1980" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://veert00x.com"><img src="https://avatars.githubusercontent.com/u/72668825?v=4?s=100" width="100px;" alt="Veko"/><br /><sub><b>Veko</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=VEERT00X" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://lucascosti.com"><img src="https://avatars.githubusercontent.com/u/4434330?v=4?s=100" width="100px;" alt="Lucas Costi"/><br /><sub><b>Lucas Costi</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=lucascosti" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

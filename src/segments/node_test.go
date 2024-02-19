@@ -11,10 +11,10 @@ import (
 
 func TestNodeMatchesVersionFile(t *testing.T) {
 	nodeVersion := version{
-		Full:  "20.10.0",
+		Full:  "20.11.1",
 		Major: "20",
-		Minor: "10",
-		Patch: "0",
+		Minor: "11",
+		Patch: "1",
 	}
 	cases := []struct {
 		Case            string
@@ -23,16 +23,16 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 		RCVersion       string
 	}{
 		{Case: "no file context", Expected: true, RCVersion: ""},
-		{Case: "version match", Expected: true, ExpectedVersion: "20.10.0", RCVersion: "20.10.0"},
-		{Case: "version match with newline", Expected: true, ExpectedVersion: "20.10.0", RCVersion: "20.10.0\n"},
+		{Case: "version match", Expected: true, ExpectedVersion: "20.11.1", RCVersion: "20.11.1"},
+		{Case: "version match with newline", Expected: true, ExpectedVersion: "20.11.1", RCVersion: "20.11.1\n"},
 		{Case: "version mismatch", Expected: false, ExpectedVersion: "3.2.1", RCVersion: "3.2.1"},
-		{Case: "version match in other format", Expected: true, ExpectedVersion: "20.10.0", RCVersion: "v20.10.0"},
-		{Case: "version match without patch", Expected: true, ExpectedVersion: "20.10", RCVersion: "20.10"},
-		{Case: "version match without patch in other format", Expected: true, ExpectedVersion: "20.10", RCVersion: "v20.10"},
+		{Case: "version match in other format", Expected: true, ExpectedVersion: "20.11.1", RCVersion: "v20.11.1"},
+		{Case: "version match without patch", Expected: true, ExpectedVersion: "20.11", RCVersion: "20.11"},
+		{Case: "version match without patch in other format", Expected: true, ExpectedVersion: "20.11", RCVersion: "v20.11"},
 		{Case: "version match without minor", Expected: true, ExpectedVersion: "20", RCVersion: "20"},
 		{Case: "version match without minor in other format", Expected: true, ExpectedVersion: "20", RCVersion: "v20"},
-		{Case: "lts match", Expected: true, ExpectedVersion: "20.10.0", RCVersion: "lts/iron"},
-		{Case: "lts match upper case", Expected: true, ExpectedVersion: "20.10.0", RCVersion: "lts/Iron"},
+		{Case: "lts match", Expected: true, ExpectedVersion: "20.11.1", RCVersion: "lts/iron"},
+		{Case: "lts match upper case", Expected: true, ExpectedVersion: "20.11.1", RCVersion: "lts/Iron"},
 		{Case: "lts mismatch", Expected: false, ExpectedVersion: "8.17.0", RCVersion: "lts/carbon"},
 	}
 

@@ -62,7 +62,7 @@ func (segment *Segment) migrationOne(env platform.Environment) {
 		segment.migrateTemplate()
 		segment.migrateIconOverride("local_working_icon", " \uF044 ")
 		segment.migrateIconOverride("local_staged_icon", " \uF046 ")
-		segment.migrateIconOverride("stash_count_icon", " \uF692 ")
+		segment.migrateIconOverride("stash_count_icon", " \uf0c7 ")
 		segment.migrateIconOverride("worktree_count_icon", " \uf1bb ")
 		segment.migrateIconOverride("status_separator_icon", " |")
 		if segment.Properties.GetBool("status_colors_enabled", false) {

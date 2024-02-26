@@ -150,7 +150,11 @@ func (b *Block) renderActiveSegment() {
 	case Plain, Powerline:
 		b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
 	case Diamond:
-		b.writer.Write(ansi.Transparent, ansi.Background, b.activeSegment.LeadingDiamond)
+		background := ansi.Transparent
+		if b.previousActiveSegment != nil && !b.previousActiveSegment.hasTrailingDiamond() {
+			background = b.previousActiveSegment.background()
+		}
+		b.writer.Write(background, ansi.Background, b.activeSegment.LeadingDiamond)
 		b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
 	case Accordion:
 		if b.activeSegment.Enabled {

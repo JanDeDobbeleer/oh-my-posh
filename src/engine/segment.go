@@ -376,6 +376,11 @@ func (segment *Segment) isPowerline() bool {
 	return style == Powerline || style == Accordion
 }
 
+func (segment *Segment) hasTrailingDiamond() bool {
+	style := segment.style()
+	return style == Diamond && len(segment.TrailingDiamond) > 0
+}
+
 func (segment *Segment) cwdIncluded() bool {
 	value, ok := segment.Properties[properties.IncludeFolders]
 	if !ok {

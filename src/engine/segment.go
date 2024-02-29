@@ -376,9 +376,12 @@ func (segment *Segment) isPowerline() bool {
 	return style == Powerline || style == Accordion
 }
 
-func (segment *Segment) hasTrailingDiamond() bool {
-	style := segment.style()
-	return style == Diamond && len(segment.TrailingDiamond) > 0
+func (segment *Segment) hasEmptyDiamondAtEnd() bool {
+	if segment.style() != Diamond {
+		return false
+	}
+
+	return len(segment.TrailingDiamond) == 0
 }
 
 func (segment *Segment) cwdIncluded() bool {

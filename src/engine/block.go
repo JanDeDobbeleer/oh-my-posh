@@ -151,7 +151,7 @@ func (b *Block) renderActiveSegment() {
 		b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
 	case Diamond:
 		background := ansi.Transparent
-		if b.previousActiveSegment != nil && !b.previousActiveSegment.hasTrailingDiamond() {
+		if b.previousActiveSegment != nil && b.previousActiveSegment.hasEmptyDiamondAtEnd() {
 			background = b.previousActiveSegment.background()
 		}
 		b.writer.Write(background, ansi.Background, b.activeSegment.LeadingDiamond)

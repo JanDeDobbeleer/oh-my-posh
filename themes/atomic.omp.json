@@ -29,7 +29,7 @@
             "style": "folder"
           },
           "style": "powerline",
-          "template": " \uf07b\uea9c{{ .Path }} ",
+          "template": " \uf07b\uea9c {{ .Path }} ",
           "type": "path"
         },
         {
@@ -59,7 +59,7 @@
             "threshold": 0
           },
           "style": "diamond",
-          "template": " \ueba2{{ .FormattedMs }}\u2800",
+          "template": " \ueba2 {{ .FormattedMs }}\u2800",
           "trailing_diamond": "\ue0b4",
           "type": "executiontime"
         }

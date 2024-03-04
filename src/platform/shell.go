@@ -281,6 +281,8 @@ type Shell struct {
 	networks  []*Connection
 
 	sync.RWMutex
+
+	lsDirMap ConcurrentMap
 }
 
 func (env *Shell) Init() {
@@ -430,20 +432,37 @@ func (env *Shell) Pwd() string {
 }
 
 func (env *Shell) HasFiles(pattern string) bool {
+	return env.HasFilesInDir(env.Pwd(), pattern)
+}
+
+func (env *Shell) HasFilesInDir(dir, pattern string) bool {
 	defer env.Trace(time.Now(), pattern)
 
-	cwd := env.Pwd()
-	fileSystem := os.DirFS(cwd)
+	fileSystem := os.DirFS(dir)
+	var dirEntries []fs.DirEntry
 
-	matches, err := fs.ReadDir(fileSystem, ".")
-	if err != nil {
-		env.Error(err)
-		env.Debug("false")
-		return false
+	if files, OK := env.lsDirMap.Get(dir); OK {
+		dirEntries, _ = files.([]fs.DirEntry)
+	}
+
+	if len(dirEntries) == 0 {
+		var err error
+		dirEntries, err = fs.ReadDir(fileSystem, ".")
+		if err != nil {
+			env.Error(err)
+			env.Debug("false")
+			return false
+		}
+
+		env.lsDirMap.Set(dir, dirEntries)
 	}
 
 	pattern = strings.ToLower(pattern)
-	for _, match := range matches {
+
+	env.RWMutex.RLock()
+	defer env.RWMutex.RUnlock()
+
+	for _, match := range dirEntries {
 		if match.IsDir() {
 			continue
 		}
@@ -463,20 +482,6 @@ func (env *Shell) HasFiles(pattern string) bool {
 
 	env.Debug("false")
 	return false
-}
-
-func (env *Shell) HasFilesInDir(dir, pattern string) bool {
-	defer env.Trace(time.Now(), pattern)
-	fileSystem := os.DirFS(dir)
-	matches, err := fs.Glob(fileSystem, pattern)
-	if err != nil {
-		env.Error(err)
-		env.Debug("false")
-		return false
-	}
-	hasFilesInDir := len(matches) > 0
-	env.DebugF("%t", hasFilesInDir)
-	return hasFilesInDir
 }
 
 func (env *Shell) HasFileInParentDirs(pattern string, depth uint) bool {

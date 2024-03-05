@@ -37,20 +37,6 @@ const (
 	CMD     = "cmd"
 )
 
-func pid() string {
-	pid := os.Getenv("POSH_PID")
-	if len(pid) == 0 {
-		pid = strconv.Itoa(os.Getppid())
-	}
-	return pid
-}
-
-var (
-	TEMPLATECACHE    = fmt.Sprintf("template_cache_%s", pid())
-	TOGGLECACHE      = fmt.Sprintf("toggle_cache_%s", pid())
-	PROMPTCOUNTCACHE = fmt.Sprintf("prompt_count_cache_%s", pid())
-)
-
 type Flags struct {
 	ErrorCode     int
 	PipeStatus    string
@@ -90,20 +76,6 @@ type FileInfo struct {
 	ParentFolder string
 	Path         string
 	IsDir        bool
-}
-
-type Cache interface {
-	Init(home string)
-	Close()
-	// Gets the value for a given key.
-	// Returns the value and a boolean indicating if the key was found.
-	// In case the ttl expired, the function returns false.
-	Get(key string) (string, bool)
-	// Sets a value for a given key.
-	// The ttl indicates how many minutes to cache the value.
-	Set(key, value string, ttl int)
-	// Deletes a key from the cache.
-	Delete(key string)
 }
 
 type HTTPRequestModifier func(request *http.Request)
@@ -168,36 +140,6 @@ type SystemInfo struct {
 	Disks map[string]disk.IOCountersStat
 }
 
-type TemplateCache struct {
-	Root          bool
-	PWD           string
-	Folder        string
-	Shell         string
-	ShellVersion  string
-	UserName      string
-	HostName      string
-	Code          int
-	Env           map[string]string
-	Var           SimpleMap
-	OS            string
-	WSL           bool
-	PromptCount   int
-	SHLVL         int
-	Segments      *ConcurrentMap
-	SegmentsCache SimpleMap
-
-	initialized bool
-	sync.RWMutex
-}
-
-func (t *TemplateCache) AddSegmentData(key string, value any) {
-	t.Segments.Set(key, value)
-}
-
-func (t *TemplateCache) RemoveSegmentData(key string) {
-	t.Segments.Delete(key)
-}
-
 type Environment interface {
 	Getenv(key string) string
 	Pwd() string
@@ -251,23 +193,6 @@ type Environment interface {
 	DebugF(format string, a ...any)
 	Error(err error)
 	Trace(start time.Time, args ...string)
-}
-
-type commandCache struct {
-	commands *ConcurrentMap
-}
-
-func (c *commandCache) set(command, path string) {
-	c.commands.Set(command, path)
-}
-
-func (c *commandCache) get(command string) (string, bool) {
-	cacheCommand, found := c.commands.Get(command)
-	if !found {
-		return "", false
-	}
-	command, ok := cacheCommand.(string)
-	return command, ok
 }
 
 type Shell struct {

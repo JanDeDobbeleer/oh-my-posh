@@ -329,6 +329,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://krason.dev/"><img src="https://avatars.githubusercontent.com/u/11185582?v=4?s=100" width="100px;" alt="Grzegorz Krasoń"/><br /><sub><b>Grzegorz Krasoń</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=gergelyk" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/rockyoung"><img src="https://avatars.githubusercontent.com/u/1207971?v=4?s=100" width="100px;" alt="rockyoung"/><br /><sub><b>rockyoung</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=rockyoung" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=rockyoung" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/shravanasati"><img src="https://avatars.githubusercontent.com/u/69118069?v=4?s=100" width="100px;" alt="Shravan Asati"/><br /><sub><b>Shravan Asati</b></sub></a><br /><a href="#design-shravanasati" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>

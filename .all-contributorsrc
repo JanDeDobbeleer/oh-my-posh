@@ -2280,6 +2280,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "gergelyk",
+      "name": "Grzegorz Krasoń",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11185582?v=4",
+      "profile": "http://krason.dev/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

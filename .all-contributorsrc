@@ -2289,6 +2289,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "rockyoung",
+      "name": "rockyoung",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1207971?v=4",
+      "profile": "https://github.com/rockyoung",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

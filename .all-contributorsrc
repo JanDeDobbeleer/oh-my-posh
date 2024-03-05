@@ -2299,6 +2299,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "shravanasati",
+      "name": "Shravan Asati",
+      "avatar_url": "https://avatars.githubusercontent.com/u/69118069?v=4",
+      "profile": "https://github.com/shravanasati",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

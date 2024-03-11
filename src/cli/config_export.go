@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
@@ -45,6 +46,12 @@ Exports the ~/myconfig.omp.json config file to toml and prints the result to std
 		cfg := engine.LoadConfig(env)
 
 		if len(output) == 0 && len(format) == 0 {
+			// usage error
+			os.Exit(2)
+		}
+
+		formats := []string{"json", "jsonc", "toml", "tml", "yaml", "yml"}
+		if len(format) != 0 && !slices.Contains(formats, format) {
 			// usage error
 			os.Exit(2)
 		}

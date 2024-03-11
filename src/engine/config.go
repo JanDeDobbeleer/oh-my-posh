@@ -220,7 +220,7 @@ func (cfg *Config) Write(format string) {
 	content := cfg.Export(format)
 	if len(content) == 0 {
 		// we are unable to perform the export
-		os.Exit(1)
+		os.Exit(65)
 		return
 	}
 

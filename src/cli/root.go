@@ -36,7 +36,8 @@ on getting started, have a look at the docs at https://ohmyposh.dev`,
 
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		os.Exit(1)
+		// software error
+		os.Exit(70)
 	}
 }
 

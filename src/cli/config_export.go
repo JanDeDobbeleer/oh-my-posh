@@ -44,6 +44,11 @@ Exports the ~/myconfig.omp.json config file to toml and prints the result to std
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
 
+		if len(output) == 0 && len(format) == 0 {
+			// usage error
+			os.Exit(2)
+		}
+
 		if len(output) == 0 {
 			fmt.Print(cfg.Export(format))
 			return
@@ -63,7 +68,8 @@ Exports the ~/myconfig.omp.json config file to toml and prints the result to std
 		case "yaml", "yml":
 			format = engine.YAML
 		default:
-			os.Exit(1)
+			// data error
+			os.Exit(65)
 		}
 
 		cfg.Write(format)

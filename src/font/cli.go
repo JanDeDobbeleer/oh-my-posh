@@ -272,6 +272,6 @@ func Run(font string, system bool) {
 	program = tea.NewProgram(main)
 	if _, err := program.Run(); err != nil {
 		print("Error running program: %v", err)
-		os.Exit(1)
+		os.Exit(70)
 	}
 }

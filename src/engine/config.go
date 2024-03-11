@@ -229,7 +229,7 @@ func (cfg *Config) Write(format string) {
 		destination = cfg.origin
 	}
 
-	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
+	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return
 	}

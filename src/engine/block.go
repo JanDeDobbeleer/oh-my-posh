@@ -38,19 +38,19 @@ const (
 
 // Block defines a part of the prompt with optional segments
 type Block struct {
-	Type      BlockType      `json:"type,omitempty"`
-	Alignment BlockAlignment `json:"alignment,omitempty"`
-	Segments  []*Segment     `json:"segments,omitempty"`
-	Newline   bool           `json:"newline,omitempty"`
-	Filler    string         `json:"filler,omitempty"`
-	Overflow  Overflow       `json:"overflow,omitempty"`
+	Type      BlockType      `json:"type,omitempty" toml:"type,omitempty"`
+	Alignment BlockAlignment `json:"alignment,omitempty" toml:"alignment,omitempty"`
+	Segments  []*Segment     `json:"segments,omitempty" toml:"segments,omitempty"`
+	Newline   bool           `json:"newline,omitempty" toml:"newline,omitempty"`
+	Filler    string         `json:"filler,omitempty" toml:"filler,omitempty"`
+	Overflow  Overflow       `json:"overflow,omitempty" toml:"overflow,omitempty"`
 
 	// Deprecated: keep the logic for legacy purposes
-	HorizontalOffset int `json:"horizontal_offset,omitempty"`
-	VerticalOffset   int `json:"vertical_offset,omitempty"`
+	HorizontalOffset int `json:"horizontal_offset,omitempty" toml:"horizontal_offset,omitempty"`
+	VerticalOffset   int `json:"vertical_offset,omitempty" toml:"vertical_offset,omitempty"`
 
-	MaxWidth int `json:"max_width,omitempty"`
-	MinWidth int `json:"min_width,omitempty"`
+	MaxWidth int `json:"max_width,omitempty" toml:"max_width,omitempty"`
+	MinWidth int `json:"min_width,omitempty" toml:"min_width,omitempty"`
 
 	env                   platform.Environment
 	writer                *ansi.Writer

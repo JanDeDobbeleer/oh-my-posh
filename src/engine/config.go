@@ -2,7 +2,6 @@ package engine
 
 import (
 	"bytes"
-	json2 "encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -10,18 +9,16 @@ import (
 	"strings"
 	"time"
 
+	json "github.com/goccy/go-json"
+	yaml "github.com/goccy/go-yaml"
+	"github.com/gookit/goutil/jsonutil"
 	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
-
-	"github.com/gookit/config/v2"
-	"github.com/gookit/config/v2/json"
-	"github.com/gookit/config/v2/toml"
-	yaml "github.com/gookit/config/v2/yamlv3"
-	"github.com/mitchellh/mapstructure"
+	toml "github.com/pelletier/go-toml/v2"
 )
 
 const (
@@ -34,33 +31,33 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Version                  int            `json:"version"`
-	FinalSpace               bool           `json:"final_space,omitempty"`
-	ConsoleTitleTemplate     string         `json:"console_title_template,omitempty"`
-	TerminalBackground       string         `json:"terminal_background,omitempty"`
-	AccentColor              string         `json:"accent_color,omitempty"`
-	Blocks                   []*Block       `json:"blocks,omitempty"`
-	Tooltips                 []*Segment     `json:"tooltips,omitempty"`
-	TransientPrompt          *Segment       `json:"transient_prompt,omitempty"`
-	ValidLine                *Segment       `json:"valid_line,omitempty"`
-	ErrorLine                *Segment       `json:"error_line,omitempty"`
-	SecondaryPrompt          *Segment       `json:"secondary_prompt,omitempty"`
-	DebugPrompt              *Segment       `json:"debug_prompt,omitempty"`
-	Palette                  ansi.Palette   `json:"palette,omitempty"`
-	Palettes                 *ansi.Palettes `json:"palettes,omitempty"`
-	Cycle                    ansi.Cycle     `json:"cycle,omitempty"`
-	ShellIntegration         bool           `json:"shell_integration,omitempty"`
-	PWD                      string         `json:"pwd,omitempty"`
-	Var                      map[string]any `json:"var,omitempty"`
-	DisableCursorPositioning bool           `json:"disable_cursor_positioning,omitempty"`
-	PatchPwshBleed           bool           `json:"patch_pwsh_bleed,omitempty"`
+	Version                  int            `json:"version" toml:"version"`
+	FinalSpace               bool           `json:"final_space,omitempty" toml:"final_space,omitempty"`
+	ConsoleTitleTemplate     string         `json:"console_title_template,omitempty" toml:"console_title_template,omitempty"`
+	TerminalBackground       string         `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
+	AccentColor              string         `json:"accent_color,omitempty" toml:"accent_color,omitempty"`
+	Blocks                   []*Block       `json:"blocks,omitempty" toml:"blocks,omitempty"`
+	Tooltips                 []*Segment     `json:"tooltips,omitempty" toml:"tooltips,omitempty"`
+	TransientPrompt          *Segment       `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty"`
+	ValidLine                *Segment       `json:"valid_line,omitempty" toml:"valid_line,omitempty"`
+	ErrorLine                *Segment       `json:"error_line,omitempty" toml:"error_line,omitempty"`
+	SecondaryPrompt          *Segment       `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty"`
+	DebugPrompt              *Segment       `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty"`
+	Palette                  ansi.Palette   `json:"palette,omitempty" toml:"palette,omitempty"`
+	Palettes                 *ansi.Palettes `json:"palettes,omitempty" toml:"palettes,omitempty"`
+	Cycle                    ansi.Cycle     `json:"cycle,omitempty" toml:"cycle,omitempty"`
+	ShellIntegration         bool           `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
+	PWD                      string         `json:"pwd,omitempty" toml:"pwd,omitempty"`
+	Var                      map[string]any `json:"var,omitempty" toml:"var,omitempty"`
+	DisableCursorPositioning bool           `json:"disable_cursor_positioning,omitempty" toml:"disable_cursor_positioning,omitempty"`
+	PatchPwshBleed           bool           `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty"`
 
 	// Deprecated
-	OSC99 bool `json:"osc99,omitempty"`
+	OSC99 bool `json:"osc99,omitempty" toml:"osc99,omitempty"`
 
-	Output        string `json:"-"`
-	MigrateGlyphs bool   `json:"-"`
-	Format        string `json:"-"`
+	Output        string `json:"-" toml:"-"`
+	MigrateGlyphs bool   `json:"-" toml:"-"`
+	Format        string `json:"-" toml:"-"`
 
 	origin string
 	// eval    bool
@@ -135,94 +132,82 @@ func loadConfig(env platform.Environment) *Config {
 	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
 	cfg.env = env
 
-	// support different extensions
-	switch cfg.Format {
-	case "yml":
-		cfg.Format = YAML
-	case "jsonc":
-		cfg.Format = JSON
-	}
-
-	config.AddDriver(yaml.Driver.WithAliases("yaml", "yml"))
-	config.AddDriver(json.Driver.WithAliases("json", "jsonc"))
-	config.AddDriver(toml.Driver)
-
-	if config.Default().IsEmpty() {
-		config.WithOptions(func(opt *config.Options) {
-			opt.DecoderConfig = &mapstructure.DecoderConfig{
-				TagName: "json",
-			}
-		})
-	}
-
-	err := config.LoadFiles(configFile)
+	// read the data
+	data, err := os.ReadFile(configFile)
 	if err != nil {
-		env.Error(err)
+		env.DebugF("error reading config file: %s", err)
 		return defaultConfig(env, true)
 	}
 
-	err = config.BindStruct("", &cfg)
+	switch cfg.Format {
+	case "yml", "yaml":
+		cfg.Format = YAML
+		err = yaml.Unmarshal(data, &cfg)
+	case "jsonc", "json":
+		cfg.Format = JSON
+
+		if cfg.Format == "jsonc" {
+			str := jsonutil.StripComments(string(data))
+			data = []byte(str)
+		}
+
+		decoder := json.NewDecoder(bytes.NewReader(data))
+		err = decoder.Decode(&cfg)
+	case "toml", "tml":
+		cfg.Format = TOML
+		err = toml.Unmarshal(data, &cfg)
+	default:
+		err = fmt.Errorf("unsupported config file format: %s", cfg.Format)
+	}
+
 	if err != nil {
-		env.Error(err)
+		env.DebugF("error decoding config file: %s", err)
 		return defaultConfig(env, true)
 	}
 
 	return &cfg
 }
 
-func (cfg *Config) sync() {
-	if !cfg.updated {
-		return
-	}
-	var structMap map[string]any
-	inrec, err := json2.Marshal(cfg)
-	if err != nil {
-		return
-	}
-	err = json2.Unmarshal(inrec, &structMap)
-	if err != nil {
-		return
-	}
-	// remove empty structs
-	for k, v := range structMap {
-		if smap, OK := v.(map[string]any); OK && len(smap) == 0 {
-			delete(structMap, k)
-		}
-	}
-	config.SetData(structMap)
-}
-
 func (cfg *Config) Export(format string) string {
-	cfg.sync()
-
 	if len(format) != 0 {
 		cfg.Format = format
 	}
 
-	config.AddDriver(yaml.Driver)
-	config.AddDriver(toml.Driver)
-
 	var result bytes.Buffer
 
-	if cfg.Format == JSON {
-		jsonEncoder := json2.NewEncoder(&result)
+	switch cfg.Format {
+	case YAML:
+		prefix := "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
+		yamlEncoder := yaml.NewEncoder(&result)
+
+		err := yamlEncoder.Encode(cfg)
+		if err != nil {
+			return ""
+		}
+
+		return prefix + escapeGlyphs(result.String(), cfg.MigrateGlyphs)
+	case JSON:
+		jsonEncoder := json.NewEncoder(&result)
 		jsonEncoder.SetEscapeHTML(false)
 		jsonEncoder.SetIndent("", "  ")
 		_ = jsonEncoder.Encode(cfg)
 		prefix := "{\n  \"$schema\": \"https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\","
 		data := strings.Replace(result.String(), "{", prefix, 1)
 		return escapeGlyphs(data, cfg.MigrateGlyphs)
+	case TOML:
+		prefix := "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
+		tomlEncoder := toml.NewEncoder(&result)
+
+		err := tomlEncoder.Encode(cfg)
+		if err != nil {
+			return ""
+		}
+
+		return prefix + escapeGlyphs(result.String(), cfg.MigrateGlyphs)
 	}
 
-	_, _ = config.DumpTo(&result, cfg.Format)
-	var prefix string
-	switch cfg.Format {
-	case YAML:
-		prefix = "# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-	case TOML:
-		prefix = "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
-	}
-	return prefix + escapeGlyphs(result.String(), cfg.MigrateGlyphs)
+	// unsupported format
+	return ""
 }
 
 func (cfg *Config) BackupAndMigrate() {
@@ -233,19 +218,30 @@ func (cfg *Config) BackupAndMigrate() {
 
 func (cfg *Config) Write(format string) {
 	content := cfg.Export(format)
+	if len(content) == 0 {
+		// we are unable to perform the export
+		os.Exit(1)
+		return
+	}
+
 	destination := cfg.Output
 	if len(destination) == 0 {
 		destination = cfg.origin
 	}
+
 	f, err := os.OpenFile(destination, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
 		return
 	}
+
+	defer func() {
+		_ = f.Close()
+	}()
+
 	_, err = f.WriteString(content)
 	if err != nil {
 		return
 	}
-	_ = f.Close()
 }
 
 func (cfg *Config) Backup() {

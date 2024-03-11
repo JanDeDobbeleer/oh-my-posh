@@ -78,6 +78,17 @@
       ]
     },
     {
+      "name": "Export Config",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "config",
+        "export"
+      ]
+    },
+    {
       "name": "Export Image",
       "type": "go",
       "request": "launch",

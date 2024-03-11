@@ -36,8 +36,8 @@ type style struct {
 }
 
 type Colors struct {
-	Background string `json:"background"`
-	Foreground string `json:"foreground"`
+	Background string `json:"background" toml:"background"`
+	Foreground string `json:"foreground" toml:"foreground"`
 }
 
 const (

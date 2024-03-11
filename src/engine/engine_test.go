@@ -113,7 +113,6 @@ func engineRender() {
 	defer env.Close()
 
 	cfg := LoadConfig(env)
-	defer testClearDefaultConfig()
 
 	writerColors := cfg.MakeColors()
 	writer := &ansi.Writer{

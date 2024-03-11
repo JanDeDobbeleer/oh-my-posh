@@ -132,7 +132,6 @@ func loadConfig(env platform.Environment) *Config {
 	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
 	cfg.env = env
 
-	// read the data
 	data, err := os.ReadFile(configFile)
 	if err != nil {
 		env.DebugF("error reading config file: %s", err)
@@ -144,12 +143,12 @@ func loadConfig(env platform.Environment) *Config {
 		cfg.Format = YAML
 		err = yaml.Unmarshal(data, &cfg)
 	case "jsonc", "json":
-		cfg.Format = JSON
-
 		if cfg.Format == "jsonc" {
 			str := jsonutil.StripComments(string(data))
 			data = []byte(str)
 		}
+
+		cfg.Format = JSON
 
 		decoder := json.NewDecoder(bytes.NewReader(data))
 		err = decoder.Decode(&cfg)

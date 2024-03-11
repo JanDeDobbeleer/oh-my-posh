@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -42,15 +43,29 @@ Exports the ~/myconfig.omp.json config file to toml and prints the result to std
 		env.Init()
 		defer env.Close()
 		cfg := engine.LoadConfig(env)
+
 		if len(output) == 0 {
 			fmt.Print(cfg.Export(format))
 			return
 		}
+
 		cfg.Output = cleanOutputPath(output, env)
-		format := strings.TrimPrefix(filepath.Ext(output), ".")
-		if format == "yml" {
-			format = engine.YAML
+
+		if len(format) == 0 {
+			format = strings.TrimPrefix(filepath.Ext(output), ".")
 		}
+
+		switch format {
+		case "json", "jsonc":
+			format = engine.JSON
+		case "toml", "tml":
+			format = engine.TOML
+		case "yaml", "yml":
+			format = engine.YAML
+		default:
+			os.Exit(1)
+		}
+
 		cfg.Write(format)
 	},
 }

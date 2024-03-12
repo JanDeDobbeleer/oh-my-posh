@@ -184,7 +184,7 @@ func (cfg *Config) Export(format string) string {
 			return ""
 		}
 
-		return prefix + escapeGlyphs(result.String(), cfg.MigrateGlyphs)
+		return prefix + result.String()
 	case JSON:
 		jsonEncoder := json.NewEncoder(&result)
 		jsonEncoder.SetEscapeHTML(false)
@@ -203,7 +203,7 @@ func (cfg *Config) Export(format string) string {
 			return ""
 		}
 
-		return prefix + escapeGlyphs(result.String(), cfg.MigrateGlyphs)
+		return prefix + result.String()
 	}
 
 	// unsupported format

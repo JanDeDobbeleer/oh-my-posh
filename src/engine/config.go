@@ -196,6 +196,7 @@ func (cfg *Config) Export(format string) string {
 	case TOML:
 		prefix := "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 		tomlEncoder := toml.NewEncoder(&result)
+		tomlEncoder.SetIndentTables(true)
 
 		err := tomlEncoder.Encode(cfg)
 		if err != nil {

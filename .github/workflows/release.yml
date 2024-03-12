@@ -85,7 +85,7 @@ jobs:
           }
         shell: pwsh
       - name: Release 🎓
-        uses: softprops/action-gh-release@d99959edae48b5ffffd7b00da66dcdb0a33a52ee
+        uses: softprops/action-gh-release@3198ee18f814cdf787321b4a32a26ddbf37acc52
         with:
           tag_name: ${{ needs.changelog.outputs.tag }}
           body: ${{ needs.changelog.outputs.body }}

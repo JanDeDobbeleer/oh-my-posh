@@ -143,12 +143,10 @@ func loadConfig(env platform.Environment) *Config {
 		cfg.Format = YAML
 		err = yaml.Unmarshal(data, &cfg)
 	case "jsonc", "json":
-		if cfg.Format == "jsonc" {
-			str := jsonutil.StripComments(string(data))
-			data = []byte(str)
-		}
-
 		cfg.Format = JSON
+
+		str := jsonutil.StripComments(string(data))
+		data = []byte(str)
 
 		decoder := json.NewDecoder(bytes.NewReader(data))
 		err = decoder.Decode(&cfg)

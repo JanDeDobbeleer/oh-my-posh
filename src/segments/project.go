@@ -12,7 +12,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"golang.org/x/exp/slices"
 
-	"github.com/BurntSushi/toml"
+	toml "github.com/pelletier/go-toml/v2"
 )
 
 type ProjectItem struct {
@@ -154,7 +154,7 @@ func (n *Project) getCargoPackage(item ProjectItem) *ProjectData {
 	content := n.env.FileContent(item.Files[0])
 
 	var data CargoTOML
-	_, err := toml.Decode(content, &data)
+	err := toml.Unmarshal([]byte(content), &data)
 	if err != nil {
 		n.Error = err.Error()
 		return nil
@@ -170,7 +170,7 @@ func (n *Project) getPythonPackage(item ProjectItem) *ProjectData {
 	content := n.env.FileContent(item.Files[0])
 
 	var data PyProjectTOML
-	_, err := toml.Decode(content, &data)
+	err := toml.Unmarshal([]byte(content), &data)
 	if err != nil {
 		n.Error = err.Error()
 		return nil
@@ -293,7 +293,7 @@ func (n *Project) getProjectData(item ProjectItem) *ProjectData {
 	content := n.env.FileContent(item.Files[0])
 
 	var data ProjectData
-	_, err := toml.Decode(content, &data)
+	err := toml.Unmarshal([]byte(content), &data)
 	if err != nil {
 		n.Error = err.Error()
 		return nil

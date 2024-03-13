@@ -48,6 +48,17 @@ func TestSpotifyWsl(t *testing.T) {
 "Spotify.exe","10404","Console","1","256,924 K","Unknown","PC\user","0:10:49","N/A"`,
 		},
 		{
+			Case:            "Spotify playing",
+			ExpectedString:  "\ue602 Grabbitz - Another Form Of \"Goodbye\"",
+			ExpectedEnabled: true,
+			ExecOutput: `"Spotify.exe","13748","Console","1","303.744 K","Running","GARMIN\elderbroekowe","0:03:58","Grabbitz - Another Form Of "Goodbye""
+"Spotify.exe","4208","Console","1","31.544 K","Running","GARMIN\elderbroekowe","0:00:00","N/A"
+"Spotify.exe","14528","Console","1","184.020 K","Running","GARMIN\elderbroekowe","0:02:54","N/A"
+"Spotify.exe","14488","Console","1","53.828 K","Unknown","GARMIN\elderbroekowe","0:00:08","N/A"
+"Spotify.exe","14800","Console","1","29.576 K","Unknown","GARMIN\elderbroekowe","0:00:00","N/A"
+"Spotify.exe","19836","Console","1","237.360 K","Unknown","GARMIN\elderbroekowe","0:07:46","N/A"`,
+		},
+		{
 			Case:            "tasklist.exe not in path",
 			ExpectedString:  "-",
 			ExpectedEnabled: false,

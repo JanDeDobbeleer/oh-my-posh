@@ -183,7 +183,7 @@ func TestEnabledInBareRepo(t *testing.T) {
 			FetchRemote:     true,
 			Remote:          "origin",
 			RemoteURL:       "git@github.com:JanDeDobbeleer/oh-my-posh.git",
-			ExpectedRemote:  "\uf408 ",
+			ExpectedRemote:  "\uf408",
 		},
 	}
 	for _, tc := range cases {

@@ -2,9 +2,10 @@ package engine
 
 import (
 	"context"
-	"encoding/csv"
+	"io"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
@@ -30,23 +31,29 @@ func getGlyphCodePoints() (codePoints, error) {
 
 	defer response.Body.Close()
 
-	lines, err := csv.NewReader(response.Body).ReadAll()
+	bytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return codePoints, err
 	}
 
+	lines := strings.Split(string(bytes), "\n")
+
 	for _, line := range lines {
-		if len(line) < 2 {
+		fields := strings.Split(line, ",")
+		if len(fields) < 2 {
 			continue
 		}
-		oldGlyph, err := strconv.ParseUint(line[0], 16, 32)
+
+		oldGlyph, err := strconv.ParseUint(fields[0], 16, 32)
 		if err != nil {
 			continue
 		}
-		newGlyph, err := strconv.ParseUint(line[1], 16, 32)
+
+		newGlyph, err := strconv.ParseUint(fields[1], 16, 32)
 		if err != nil {
 			continue
 		}
+
 		codePoints[oldGlyph] = newGlyph
 	}
 

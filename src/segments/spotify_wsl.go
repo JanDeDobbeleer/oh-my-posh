@@ -22,6 +22,7 @@ func (s *Spotify) Enabled() bool {
 	}
 
 	for _, record := range records {
+		record = strings.TrimSpace(record)
 		fields := strings.Split(record, ",")
 		if len(fields) == 0 {
 			continue

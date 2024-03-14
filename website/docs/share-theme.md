@@ -16,14 +16,13 @@ The oh-my-posh executable has the `config export image` command to export your c
 to an image file (.png).
 
 ```powershell
-oh-my-posh config export image --cursor-padding 50
+oh-my-posh config export image
 ```
 
 There are a couple of additional flags you can use to tweak the image rendering:
 
-- `--cursor-padding`: spaces to add after the cursor indication (`_`)
-- `--rprompt-offset`: spaces to add **before** a block that's right aligned
 - `--author`: the name of the creator, added after `ohmyposh.dev`
 - `--background-color`: the hex background color to use (e.g. `#222222`)
+- `--output`: the file to export to (e.g. `theme.png`)
 
 For all options, and additional examples, use `oh-my-posh config export image --help`

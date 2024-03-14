@@ -2308,6 +2308,17 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "lzecca78",
+      "name": "Luca Zecca",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3881844?v=4",
+      "profile": "https://github.com/lzecca78",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

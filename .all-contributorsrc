@@ -2319,6 +2319,16 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "jreilly-lukava",
+      "name": "Joshua Reilly",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30353736?v=4",
+      "profile": "https://github.com/jreilly-lukava",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

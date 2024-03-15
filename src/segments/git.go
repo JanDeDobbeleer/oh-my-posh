@@ -492,19 +492,19 @@ func (g *Git) getUpstreamIcon() string {
 		Icon    properties.Property
 		Default string
 	}{
-		"github":           {GithubIcon, "\uF408 "},
-		"gitlab":           {GitlabIcon, "\uF296 "},
-		"bitbucket":        {BitbucketIcon, "\uF171 "},
-		"dev.azure.com":    {AzureDevOpsIcon, "\uEBE8 "},
-		"visualstudio.com": {AzureDevOpsIcon, "\uEBE8 "},
-		"codecommit":       {CodeCommit, "\uF270 "},
+		"github":           {GithubIcon, "\uF408"},
+		"gitlab":           {GitlabIcon, "\uF296"},
+		"bitbucket":        {BitbucketIcon, "\uF171"},
+		"dev.azure.com":    {AzureDevOpsIcon, "\uEBE8"},
+		"visualstudio.com": {AzureDevOpsIcon, "\uEBE8"},
+		"codecommit":       {CodeCommit, "\uF270"},
 	}
 	for key, value := range defaults {
 		if strings.Contains(g.UpstreamURL, key) {
 			return g.props.GetString(value.Icon, value.Default)
 		}
 	}
-	return g.props.GetString(GitIcon, "\uE5FB ")
+	return g.props.GetString(GitIcon, "\uE5FB")
 }
 
 func (g *Git) setGitStatus() {

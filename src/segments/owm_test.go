@@ -86,7 +86,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
 		var props properties.Map
-		if tc.Latitude != 0 && tc.Longitude != 0 && tc.Location != "" {
+		if tc.Latitude != 0 && tc.Longitude != 0 && tc.Location != "" { //nolint: gocritic
 			props = properties.Map{
 				APIKey:                  "key",
 				Location:                tc.Location,

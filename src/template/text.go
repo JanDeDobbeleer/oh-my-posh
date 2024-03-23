@@ -158,7 +158,7 @@ func (t *Text) cleanTemplate() {
 				continue
 			}
 			// end of a variable, needs to be appended
-			if !isKnownVariable(property) {
+			if !isKnownVariable(property) { //nolint: gocritic
 				result += ".Data" + property
 			} else if strings.HasPrefix(property, ".Segments") && !strings.HasSuffix(property, ".Contains") {
 				// as we can't provide a clean way to access the list

@@ -105,7 +105,7 @@ func mockFilePresence(tc *testCase, ui5tooling *UI5Tooling, env *mock.MockedEnvi
 		}
 
 		if match {
-			if tc.DisplayMode == DisplayModeFiles && tc.WorkingDir == WorkingDirRoot {
+			if tc.DisplayMode == DisplayModeFiles && tc.WorkingDir == WorkingDirRoot { //nolint: gocritic
 				env.On("HasFiles", f).Return(true)
 				env.On("HasFileInParentDirs", f, uint(4)).Return(false)
 				// mode context, working dir != working dir root

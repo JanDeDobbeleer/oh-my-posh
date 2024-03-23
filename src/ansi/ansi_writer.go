@@ -428,7 +428,7 @@ func (w *Writer) writeSegmentColors() {
 		return
 	}
 
-	if fg.IsTransparent() && len(w.TerminalBackground) != 0 {
+	if fg.IsTransparent() && len(w.TerminalBackground) != 0 { //nolint: gocritic
 		background := w.getAnsiFromColorString(w.TerminalBackground, false)
 		w.writeEscapedAnsiString(fmt.Sprintf(colorise, background))
 		w.writeEscapedAnsiString(fmt.Sprintf(colorise, bg.ToForeground()))

@@ -25,6 +25,7 @@ type Path struct {
 	Location   string
 	Writable   bool
 	RootDir    bool
+	Folders    Folders
 }
 
 const (
@@ -48,8 +49,8 @@ const (
 	Short string = "short"
 	// Full displays the full path
 	Full string = "full"
-	// Folder displays the current folder
-	Folder string = "folder"
+	// FolderType displays the current folder
+	FolderType string = "folder"
 	// Mixed like agnoster, but if a folder name is short enough, it is displayed as-is
 	Mixed string = "mixed"
 	// Letter like agnoster, but with the first letter of each folder name
@@ -81,6 +82,8 @@ const (
 	FolderFormat properties.Property = "folder_format"
 	// format to use on the first and last folder of the path
 	EdgeFormat properties.Property = "edge_format"
+	// GitDirFormat format to use on the git directory
+	GitDirFormat properties.Property = "gitdir_format"
 )
 
 func (pt *Path) Template() string {
@@ -105,25 +108,34 @@ func (pt *Path) Enabled() bool {
 }
 
 func (pt *Path) setPaths() {
+	defer func() {
+		pt.Folders = pt.splitPath()
+	}()
+
 	pt.pwd = pt.env.Pwd()
 	if (pt.env.Shell() == shell.PWSH || pt.env.Shell() == shell.PWSH5) && len(pt.env.Flags().PSWD) != 0 {
 		pt.pwd = pt.env.Flags().PSWD
 	}
+
 	if len(pt.pwd) == 0 {
 		return
 	}
+
 	// ensure a clean path
 	pt.root, pt.relative = pt.replaceMappedLocations()
+
 	// this is a full replacement of the parent
 	if len(pt.root) == 0 {
 		pt.pwd = pt.relative
 		return
 	}
+
 	pathSeparator := pt.env.PathSeparator()
 	if !strings.HasSuffix(pt.root, pathSeparator) && len(pt.relative) > 0 {
 		pt.pwd = pt.root + pathSeparator + pt.relative
 		return
 	}
+
 	pt.pwd = pt.root + pt.relative
 }
 
@@ -173,7 +185,7 @@ func (pt *Path) setStyle() {
 		fallthrough
 	case Full:
 		pt.Path = pt.getFullPath()
-	case Folder:
+	case FolderType:
 		pt.Path = pt.getFolderPath()
 	case Powerlevel:
 		maxWidth := int(pt.props.GetFloat64(MaxWidth, 0))
@@ -213,15 +225,17 @@ func (pt *Path) getMixedPath() string {
 	threshold := int(pt.props.GetFloat64(MixedThreshold, 4))
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 	separator := pt.getFolderSeparator()
-	elements := strings.Split(pt.relative, pt.env.PathSeparator())
+
 	if pt.root != pt.env.PathSeparator() {
-		elements = append([]string{pt.root}, elements...)
+		pt.Folders = append(Folders{{Name: pt.root}}, pt.Folders...)
 	}
-	n := len(elements)
-	buffer.WriteString(elements[0])
+
+	n := len(pt.Folders)
+	buffer.WriteString(pt.Folders[0].Name)
+
 	for i := 1; i < n; i++ {
-		folder := elements[i]
-		if len(folder) > threshold && i != n-1 {
+		folder := pt.Folders[i].Name
+		if len(folder) > threshold && i != n-1 && !pt.Folders[i].Display {
 			folder = folderIcon
 		}
 		buffer.WriteString(fmt.Sprintf("%s%s", separator, folder))
@@ -229,33 +243,27 @@ func (pt *Path) getMixedPath() string {
 	return buffer.String()
 }
 
-func (pt *Path) pathDepth(pwd string) int {
-	splitted := strings.Split(pwd, pt.env.PathSeparator())
-	depth := 0
-	for _, part := range splitted {
-		if part != "" {
-			depth++
-		}
-	}
-	return depth
-}
-
 func (pt *Path) getAgnosterPath() string {
 	folderIcon := pt.props.GetString(FolderIcon, "..")
-	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
+
 	if pt.root == pt.env.PathSeparator() {
-		pt.root = splitted[0]
-		splitted = splitted[1:]
+		pt.root = pt.Folders[0].Name
+		pt.Folders = pt.Folders[1:]
 	}
 
 	var elements []string
-	n := len(splitted)
+	n := len(pt.Folders)
 	for i := 1; i < n; i++ {
+		if pt.Folders[i].Display {
+			elements = append(elements, pt.Folders[i].Name)
+			continue
+		}
+
 		elements = append(elements, folderIcon)
 	}
 
-	if len(splitted) > 0 {
-		elements = append(elements, splitted[n-1])
+	if len(pt.Folders) > 0 {
+		elements = append(elements, pt.Folders[n-1].Name)
 	}
 
 	return pt.colorizePath(pt.root, elements)
@@ -263,52 +271,66 @@ func (pt *Path) getAgnosterPath() string {
 
 func (pt *Path) getAgnosterLeftPath() string {
 	folderIcon := pt.props.GetString(FolderIcon, "..")
-	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
+
 	if pt.root == pt.env.PathSeparator() {
-		pt.root = splitted[0]
-		splitted = splitted[1:]
+		pt.root = pt.Folders[0].Name
+		pt.Folders = pt.Folders[1:]
 	}
 
 	var elements []string
-	n := len(splitted)
-	elements = append(elements, splitted[0])
+	n := len(pt.Folders)
+	elements = append(elements, pt.Folders[0].Name)
 	for i := 1; i < n; i++ {
+		if pt.Folders[i].Display {
+			elements = append(elements, pt.Folders[i].Name)
+			continue
+		}
+
 		elements = append(elements, folderIcon)
 	}
 
 	return pt.colorizePath(pt.root, elements)
 }
 
-func (pt *Path) getRelevantLetter(folder string) string {
+func (pt *Path) getRelevantLetter(folder *Folder) string {
+	if folder.Display {
+		return folder.Name
+	}
+
 	// check if there is at least a letter we can use
-	matches := regex.FindNamedRegexMatch(`(?P<letter>[\p{L}0-9]).*`, folder)
+	matches := regex.FindNamedRegexMatch(`(?P<letter>[\p{L}0-9]).*`, folder.Name)
 	if matches == nil || len(matches["letter"]) == 0 {
 		// no letter found, keep the folder unchanged
-		return folder
+		return folder.Name
 	}
 	letter := matches["letter"]
 	// handle non-letter characters before the first found letter
-	letter = folder[0:strings.Index(folder, letter)] + letter
+	letter = folder.Name[0:strings.Index(folder.Name, letter)] + letter
 	return letter
 }
 
 func (pt *Path) getLetterPath() string {
-	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
 	if pt.root == pt.env.PathSeparator() {
-		pt.root = splitted[0]
-		splitted = splitted[1:]
+		pt.root = pt.Folders[0].Name
+		pt.Folders = pt.Folders[1:]
 	}
-	pt.root = pt.getRelevantLetter(pt.root)
+
+	pt.root = pt.getRelevantLetter(&Folder{Name: pt.root})
 
 	var elements []string
-	n := len(splitted)
+	n := len(pt.Folders)
 	for i := 0; i < n-1; i++ {
-		letter := pt.getRelevantLetter(splitted[i])
+		if pt.Folders[i].Display {
+			elements = append(elements, pt.Folders[i].Name)
+			continue
+		}
+
+		letter := pt.getRelevantLetter(pt.Folders[i])
 		elements = append(elements, letter)
 	}
 
-	if len(splitted) > 0 {
-		elements = append(elements, splitted[n-1])
+	if len(pt.Folders) > 0 {
+		elements = append(elements, pt.Folders[n-1].Name)
 	}
 
 	return pt.colorizePath(pt.root, elements)
@@ -316,98 +338,101 @@ func (pt *Path) getLetterPath() string {
 
 func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 	separator := pt.getFolderSeparator()
-	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
 
 	if pt.root == pt.env.PathSeparator() {
-		pt.root = splitted[0]
-		splitted = splitted[1:]
+		pt.root = pt.Folders[0].Name
+		pt.Folders = pt.Folders[1:]
 	}
 
 	if maxWidth > 0 {
-		path := strings.Join(splitted, separator)
+		path := strings.Join(pt.Folders.List(), separator)
 		if len(path) <= maxWidth {
-			return pt.colorizePath(pt.root, splitted)
+			return pt.colorizePath(pt.root, pt.Folders.List())
 		}
 	}
 
-	pt.root = pt.getRelevantLetter(pt.root)
+	pt.root = pt.getRelevantLetter(&Folder{Name: pt.root})
 
 	var elements []string
-	n := len(splitted)
+	n := len(pt.Folders)
 	letters := make(map[string]bool)
 	letters[pt.root] = true
 	for i := 0; i < n-1; i++ {
-		folder := splitted[i]
-		letter := pt.getRelevantLetter(folder)
+		folder := pt.Folders[i].Name
+		letter := pt.getRelevantLetter(pt.Folders[i])
+
 		for letters[letter] {
 			if letter == folder {
 				break
 			}
 			letter += folder[len(letter) : len(letter)+1]
 		}
+
 		letters[letter] = true
 		elements = append(elements, letter)
+
 		// only return early on maxWidth > 0
 		// this enables the powerlevel10k behavior
 		if maxWidth > 0 {
-			list := splitted[i+1:]
+			list := pt.Folders[i+1:].List()
 			list = append(list, elements...)
 			current := strings.Join(list, separator)
 			leftover := maxWidth - len(current) - len(pt.root) - len(separator)
 			if leftover >= 0 {
-				elements = append(elements, strings.Join(splitted[i+1:], separator))
+				elements = append(elements, strings.Join(pt.Folders[i+1:].List(), separator))
 				return pt.colorizePath(pt.root, elements)
 			}
 		}
 	}
 
-	if len(splitted) > 0 {
-		elements = append(elements, splitted[n-1])
+	if len(pt.Folders) > 0 {
+		elements = append(elements, pt.Folders[n-1].Name)
 	}
 
 	return pt.colorizePath(pt.root, elements)
 }
 
 func (pt *Path) getAgnosterFullPath() string {
-	splitted := strings.Split(pt.relative, pt.env.PathSeparator())
 	if pt.root == pt.env.PathSeparator() {
-		pt.root = splitted[0]
-		splitted = splitted[1:]
+		pt.root = pt.Folders[0].Name
+		pt.Folders = pt.Folders[1:]
 	}
 
-	return pt.colorizePath(pt.root, splitted)
+	return pt.colorizePath(pt.root, pt.Folders.List())
 }
 
 func (pt *Path) getAgnosterShortPath() string {
-	pathDepth := pt.pathDepth(pt.relative)
+	pathDepth := len(pt.Folders)
+
 	maxDepth := pt.props.GetInt(MaxDepth, 1)
 	if maxDepth < 1 {
 		maxDepth = 1
 	}
+
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 	hideRootLocation := pt.props.GetBool(HideRootLocation, false)
+
 	if pathDepth <= maxDepth {
 		if hideRootLocation {
 			pt.root = folderIcon
 		}
 		return pt.getAgnosterFullPath()
 	}
+
 	pathSeparator := pt.env.PathSeparator()
-	rel := strings.TrimPrefix(pt.relative, pathSeparator)
-	splitted := strings.Split(rel, pathSeparator)
 	splitPos := pathDepth - maxDepth
-	// var buffer strings.Builder
-	var elements []string
+
+	var folders []string
 	// unix root, needs to be replaced with the folder we're in at root level
 	root := pt.root
 	room := pathDepth - maxDepth
 	if root == pathSeparator {
-		root = splitted[0]
+		root = pt.Folders[0].Name
 		room--
 	}
 
 	if hideRootLocation || room > 0 {
-		elements = append(elements, folderIcon)
+		folders = append(folders, folderIcon)
 	}
 
 	if hideRootLocation {
@@ -415,14 +440,14 @@ func (pt *Path) getAgnosterShortPath() string {
 	}
 
 	for i := splitPos; i < pathDepth; i++ {
-		elements = append(elements, splitted[i])
+		folders = append(folders, pt.Folders[i].Name)
 	}
-	return pt.colorizePath(root, elements)
+
+	return pt.colorizePath(root, folders)
 }
 
 func (pt *Path) getFullPath() string {
-	elements := strings.Split(pt.relative, pt.env.PathSeparator())
-	return pt.colorizePath(pt.root, elements)
+	return pt.colorizePath(pt.root, pt.Folders.List())
 }
 
 func (pt *Path) getFolderPath() string {
@@ -648,4 +673,70 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 	}
 
 	return builder.String()
+}
+
+type Folder struct {
+	Name    string
+	Display bool
+	Path    string
+}
+
+type Folders []*Folder
+
+func (f Folders) List() []string {
+	var list []string
+
+	for _, folder := range f {
+		list = append(list, folder.Name)
+	}
+
+	return list
+}
+
+func (pt *Path) splitPath() Folders {
+	result := Folders{}
+	folders := []string{}
+
+	if len(pt.relative) != 0 {
+		folders = strings.Split(pt.relative, pt.env.PathSeparator())
+	}
+
+	folderFormatMap := pt.makeFolderFormatMap()
+
+	currentPath := pt.root
+	if currentPath == "~" {
+		currentPath = pt.env.Home() + pt.env.PathSeparator()
+	}
+
+	var display bool
+
+	for _, folder := range folders {
+		currentPath += folder
+
+		if format := folderFormatMap[currentPath]; len(format) != 0 {
+			folder = fmt.Sprintf(format, folder)
+			display = true
+		}
+
+		result = append(result, &Folder{Name: folder, Path: currentPath, Display: display})
+
+		currentPath += pt.env.PathSeparator()
+
+		display = false
+	}
+
+	return result
+}
+
+func (pt *Path) makeFolderFormatMap() map[string]string {
+	folderFormatMap := make(map[string]string)
+
+	if gitDirFormat := pt.props.GetString(GitDirFormat, ""); len(gitDirFormat) != 0 {
+		dir, err := pt.env.HasParentFilePath(".git")
+		if err == nil && dir.IsDir {
+			folderFormatMap[dir.ParentFolder] = gitDirFormat
+		}
+	}
+
+	return folderFormatMap
 }

@@ -52,7 +52,7 @@ blocks:
           always_enabled: true
           style: round
         style: powerline
-        template: " 羽{{ .FormattedMs }} "
+        template: " 󰔟 {{ .FormattedMs }} "
         type: executiontime
 
       # Exit code
@@ -88,10 +88,10 @@ blocks:
           charging_icon: 
           discharging_icon: " "
         style: diamond
-        template: " {{.Templates }}{{ .Percentage}} <transparent></>"
+        template: " {{.Templates }} {{ .Percentage}}<transparent> </>"
         templates:
-          - '{{if eq "Discharging" .State.String}}{{if lt .Percentage 11}}{{else if lt .Percentage 21}}{{else if lt .Percentage 31}}{{else if lt .Percentage 41}}{{else if lt .Percentage 51}}{{else if lt .Percentage 61}}{{else if lt .Percentage 71}}{{else if lt .Percentage 81}}{{else if lt .Percentage 91}}{{else}}{{end}}{{end}}'
-          - '{{if eq "Charging" .State.String}}{{ if lt .Percentage 21}}{{else if lt .Percentage 31}}{{else if lt .Percentage 41}}{{else if lt .Percentage 61}}{{else if lt .Percentage 81}}{{else if lt .Percentage 91}}{{else}}{{end}}{{end}}'
+          - '{{if eq "Discharging" .State.String}}{{if lt .Percentage 11}}󰁺{{else if lt .Percentage 21}}󰁻{{else if lt .Percentage 31}}󰁼{{else if lt .Percentage 41}}󰁽{{else if lt .Percentage 51}}󰁾{{else if lt .Percentage 61}}󰁿{{else if lt .Percentage 71}}󰂀{{else if lt .Percentage 81}}󰂁{{else if lt .Percentage 91}}󰂂{{else}}󰁹{{end}}{{end}}'
+          - '{{if eq "Charging"    .State.String}}{{if lt .Percentage 11}}󰢜{{else if lt .Percentage 21}}󰂆{{else if lt .Percentage 31}}󰂇{{else if lt .Percentage 41}}󰂈{{else if lt .Percentage 51}}󰢝{{else if lt .Percentage 61}}󰂉{{else if lt .Percentage 71}}󰢞{{else if lt .Percentage 81}}󰂊{{else if lt .Percentage 91}}󰂋{{else}}󰂄{{end}}{{end}}'
         templates_logic: first_match
         type: battery
 

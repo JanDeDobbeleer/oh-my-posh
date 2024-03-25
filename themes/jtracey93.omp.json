@@ -54,13 +54,55 @@
           "properties": {
             "time_format": "15:04:05"
           },
-          "style": "diamond",
+          "style": "plain",
           "template": " {{ .CurrentDate | date .Format }} ",
-          "trailing_diamond": "\ue0b0",
           "type": "time"
+        },
+        {
+          "background": "#49404f",
+          "foreground": "#ffffff",
+          "properties": {
+            "style": "dallas",
+            "threshold": 0
+          },
+          "style": "plain",
+          "template": " {{ .FormattedMs }}s ",
+          "type": "executiontime"
+        },
+        {
+          "type": "status",
+          "style": "diamond",
+          "foreground": "#ffffff",
+          "background": "#00897b",
+          "background_templates": [
+            "{{ if .Error }}#e91e63{{ end }}"
+          ],
+          "trailing_diamond": "\ue0b0",
+          "properties": {
+            "always_enabled": true
+          }
         }
       ],
       "type": "prompt"
+    },
+    {
+      "type": "prompt",
+      "newline": true,
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "#ffffff",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#ff0000{{ end }}"
+          ],
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "plain",
+          "template": "\u276f ",
+          "type": "status"
+        }
+      ]
     }
   ],
   "final_space": true,

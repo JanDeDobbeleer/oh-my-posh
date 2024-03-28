@@ -787,21 +787,21 @@ func TestFullAndFolderPath(t *testing.T) {
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: homeDir + abc, Expected: "~|abc"},
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: abcd, Expected: "/a|b|c|d"},
 
-		{Style: Folder, Pwd: "/", Expected: "/"},
-		{Style: Folder, Pwd: homeDir, Expected: "~"},
-		{Style: Folder, Pwd: homeDir, Expected: "someone", DisableMappedLocations: true},
-		{Style: Folder, Pwd: homeDir + abc, Expected: "abc"},
-		{Style: Folder, Pwd: abcd, Expected: "d"},
+		{Style: FolderType, Pwd: "/", Expected: "/"},
+		{Style: FolderType, Pwd: homeDir, Expected: "~"},
+		{Style: FolderType, Pwd: homeDir, Expected: "someone", DisableMappedLocations: true},
+		{Style: FolderType, Pwd: homeDir + abc, Expected: "abc"},
+		{Style: FolderType, Pwd: abcd, Expected: "d"},
 
-		{Style: Folder, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
-		{Style: Folder, FolderSeparatorIcon: "|", Pwd: homeDir, Expected: "~"},
-		{Style: Folder, FolderSeparatorIcon: "|", Pwd: homeDir, Expected: "someone", DisableMappedLocations: true},
-		{Style: Folder, FolderSeparatorIcon: "|", Pwd: homeDir + abc, Expected: "abc"},
-		{Style: Folder, FolderSeparatorIcon: "|", Pwd: abcd, Expected: "d"},
+		{Style: FolderType, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
+		{Style: FolderType, FolderSeparatorIcon: "|", Pwd: homeDir, Expected: "~"},
+		{Style: FolderType, FolderSeparatorIcon: "|", Pwd: homeDir, Expected: "someone", DisableMappedLocations: true},
+		{Style: FolderType, FolderSeparatorIcon: "|", Pwd: homeDir + abc, Expected: "abc"},
+		{Style: FolderType, FolderSeparatorIcon: "|", Pwd: abcd, Expected: "d"},
 
 		// for Windows paths
-		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: platform.WINDOWS},
-		{Style: Folder, FolderSeparatorIcon: "\\", Pwd: homeDirWindows, Expected: "~", PathSeparator: "\\", GOOS: platform.WINDOWS},
+		{Style: FolderType, FolderSeparatorIcon: "\\", Pwd: "C:\\", Expected: "C:\\", PathSeparator: "\\", GOOS: platform.WINDOWS},
+		{Style: FolderType, FolderSeparatorIcon: "\\", Pwd: homeDirWindows, Expected: "~", PathSeparator: "\\", GOOS: platform.WINDOWS},
 		{Style: Full, FolderSeparatorIcon: "\\", Pwd: homeDirWindows, Expected: "~", PathSeparator: "\\", GOOS: platform.WINDOWS},
 		{Style: Full, FolderSeparatorIcon: "\\", Pwd: homeDirWindows + "\\abc", Expected: "~\\abc", PathSeparator: "\\", GOOS: platform.WINDOWS},
 		{Style: Full, FolderSeparatorIcon: "\\", Pwd: "C:\\Users\\posh", Expected: "C:\\Users\\posh", PathSeparator: "\\", GOOS: platform.WINDOWS},
@@ -994,7 +994,7 @@ func TestFolderPathCustomMappedLocations(t *testing.T) {
 	path := &Path{
 		env: env,
 		props: properties.Map{
-			properties.Style: Folder,
+			properties.Style: FolderType,
 			MappedLocations: map[string]string{
 				abcd: "#",
 			},
@@ -1500,5 +1500,55 @@ func TestReplaceMappedLocations(t *testing.T) {
 		}
 		path.setPaths()
 		assert.Equal(t, tc.Expected, path.pwd)
+	}
+}
+
+func TestSplitPath(t *testing.T) {
+	cases := []struct {
+		Case         string
+		Relative     string
+		Root         string
+		GitDir       *platform.FileInfo
+		GitDirFormat string
+		Expected     Folders
+	}{
+		{Case: "Root directory", Root: "/", Expected: Folders{}},
+		{
+			Case:     "Regular directory",
+			Root:     "/",
+			Relative: "c/d",
+			Expected: Folders{
+				{Name: "c", Path: "/c"},
+				{Name: "d", Path: "/c/d"},
+			},
+		},
+		{
+			Case:         "Home directory - git folder",
+			Root:         "~",
+			Relative:     "c/d",
+			GitDir:       &platform.FileInfo{IsDir: true, ParentFolder: "/a/b/c"},
+			GitDirFormat: "<b>%s</b>",
+			Expected: Folders{
+				{Name: "<b>c</b>", Path: "/a/b/c", Display: true},
+				{Name: "d", Path: "/a/b/c/d"},
+			},
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("PathSeparator").Return("/")
+		env.On("Home").Return("/a/b")
+		env.On("HasParentFilePath", ".git").Return(tc.GitDir, nil)
+		path := &Path{
+			env: env,
+			props: properties.Map{
+				GitDirFormat: tc.GitDirFormat,
+			},
+			root:     tc.Root,
+			relative: tc.Relative,
+		}
+		got := path.splitPath()
+		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

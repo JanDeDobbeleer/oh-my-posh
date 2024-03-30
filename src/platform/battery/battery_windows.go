@@ -92,7 +92,7 @@ func uint32ToFloat64(num uint32) (float64, error) {
 }
 
 func setupDiSetup(proc *windows.LazyProc, nargs, a1, a2, a3, a4, a5, a6 uintptr) (uintptr, error) {
-	r1, _, errno := syscall.Syscall6(proc.Addr(), nargs, a1, a2, a3, a4, a5, a6)
+	r1, _, errno := syscall.Syscall6(proc.Addr(), nargs, a1, a2, a3, a4, a5, a6) //nolint:staticcheck
 	if windows.Handle(r1) == windows.InvalidHandle {
 		if errno != 0 {
 			return 0, error(errno)
@@ -103,7 +103,7 @@ func setupDiSetup(proc *windows.LazyProc, nargs, a1, a2, a3, a4, a5, a6 uintptr)
 }
 
 func setupDiCall(proc *windows.LazyProc, nargs, a1, a2, a3, a4, a5, a6 uintptr) syscall.Errno {
-	r1, _, errno := syscall.Syscall6(proc.Addr(), nargs, a1, a2, a3, a4, a5, a6)
+	r1, _, errno := syscall.Syscall6(proc.Addr(), nargs, a1, a2, a3, a4, a5, a6) //nolint:staticcheck
 	if r1 == 0 {
 		if errno != 0 {
 			return errno
@@ -144,11 +144,13 @@ func systemGet(idx int) (*battery, error) {
 		2|16, // DIGCF_PRESENT|DIGCF_DEVICEINTERFACE
 		0, 0,
 	)
+
 	if err != nil {
 		return nil, err
 	}
+
 	defer func() {
-		_, _, _ = syscall.Syscall(setupDiDestroyDeviceInfoList.Addr(), 1, hdev, 0, 0)
+		_, _, _ = syscall.Syscall(setupDiDestroyDeviceInfoList.Addr(), 1, hdev, 0, 0) //nolint:staticcheck
 	}()
 
 	var did spDeviceInterfaceData
@@ -163,12 +165,15 @@ func systemGet(idx int) (*battery, error) {
 		uintptr(unsafe.Pointer(&did)),
 		0,
 	)
+
 	if errno == 259 { // ERROR_NO_MORE_ITEMS
 		return nil, ErrNotFound
 	}
+
 	if errno != 0 {
 		return nil, errno
 	}
+
 	var cbRequired uint32
 	errno = setupDiCall(
 		setupDiGetDeviceInterfaceDetailW,
@@ -180,9 +185,11 @@ func systemGet(idx int) (*battery, error) {
 		uintptr(unsafe.Pointer(&cbRequired)),
 		0,
 	)
+
 	if errno != 0 && errno != 122 { // ERROR_INSUFFICIENT_BUFFER
 		return nil, errno
 	}
+
 	// The god damn struct with ANYSIZE_ARRAY of utf16 in it is crazy.
 	// So... let's emulate it with array of uint16 ;-D.
 	// Keep in mind that the first two elements are actually cbSize.
@@ -193,6 +200,7 @@ func systemGet(idx int) (*battery, error) {
 	} else {
 		*cbSize = 6
 	}
+
 	errno = setupDiCall(
 		setupDiGetDeviceInterfaceDetailW,
 		6,
@@ -203,9 +211,11 @@ func systemGet(idx int) (*battery, error) {
 		uintptr(unsafe.Pointer(&cbRequired)),
 		0,
 	)
+
 	if errno != 0 {
 		return nil, errno
 	}
+
 	devicePath := &didd[2:][0]
 
 	handle, err := windows.CreateFile(
@@ -217,9 +227,11 @@ func systemGet(idx int) (*battery, error) {
 		windows.FILE_ATTRIBUTE_NORMAL,
 		0,
 	)
+
 	if err != nil {
 		return nil, err
 	}
+
 	defer func() {
 		_ = windows.CloseHandle(handle)
 	}()
@@ -238,9 +250,11 @@ func systemGet(idx int) (*battery, error) {
 		&dwOut,
 		nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
+
 	if bqi.BatteryTag == 0 {
 		return nil, errors.New("BatteryTag not returned")
 	}
@@ -258,6 +272,7 @@ func systemGet(idx int) (*battery, error) {
 		&dwOut,
 		nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -276,6 +291,7 @@ func systemGet(idx int) (*battery, error) {
 		&dwOut,
 		nil,
 	)
+
 	if err != nil {
 		return nil, err
 	}
@@ -283,9 +299,11 @@ func systemGet(idx int) (*battery, error) {
 	if b.Current, err = uint32ToFloat64(bs.Capacity); err != nil {
 		return nil, err
 	}
+
 	if b.Voltage, err = uint32ToFloat64(bs.Voltage); err != nil {
 		return nil, err
 	}
+
 	b.Voltage /= 1000
 	b.State = readState(bs.PowerState)
 

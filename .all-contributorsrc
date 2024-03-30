@@ -2329,6 +2329,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "ivan-the-terrible",
+      "name": "Ivan",
+      "avatar_url": "https://avatars.githubusercontent.com/u/56458442?v=4",
+      "profile": "https://ivan-the-terrible.github.io/",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

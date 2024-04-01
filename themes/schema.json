@@ -950,6 +950,30 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a .NET workspace",
+                    "default": [
+                      "*.cs",
+                      "*.csx",
+                      "*.vb",
+                      "*.fs",
+                      "*.fsx",
+                      "*.sln",
+                      "*.slnf",
+                      "*.csproj",
+                      "*.fsproj",
+                      "*.vbproj",
+                      "global.json"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -1006,6 +1030,37 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Flutter workspace",
+                    "default": [
+                      "*.dart",
+                      "pubspec.yaml",
+                      "pubspec.yml",
+                      "pubspec.lock"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folders": {
+                    "type": "array",
+                    "title": "Folders",
+                    "description": "The folders to look for when determining if a folder is a Flutter workspace",
+                    "default": [
+                      ".dart_tool"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -1022,7 +1077,19 @@
           },
           "then": {
             "title": "Fossil Segment",
-            "description": "https://ohmyposh.dev/docs/segments/fossil"
+            "description": "https://ohmyposh.dev/docs/segments/fossil",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "native_fallback": {
+                    "type": "boolean",
+                    "title": "Native Fallback",
+                    "description": "Use the native fossil command when the fossil executable is not found",
+                    "default": false
+                  }
+                }
+              }
+            }
           }
         },
         {
@@ -1247,11 +1314,26 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
                   "parse_mod_file": {
                     "type": "boolean",
                     "title": "Parse go.mod file",
                     "description": "Parse go.mod file instead of calling out to go to improve performance.",
                     "default": false
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Go workspace",
+                    "default": [
+                      "*.go",
+                      "go.mod"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -1345,6 +1427,22 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Deno workspace",
+                    "default": [
+                      "*.js",
+                      "*.ts",
+                      "deno.json"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -1428,6 +1526,20 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Julia workspace",
+                    "default": [
+                      "*.jl"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -1524,6 +1636,29 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Java workspace",
+                    "default": [
+                      "pom.xml",
+                      "build.gradle.kts",
+                      "build.sbt",
+                      ".java-version",
+                      ".deps.edn",
+                      "project.clj",
+                      "build.boot",
+                      "*.java",
+                      "*.class",
+                      "*.gradle",
+                      "*.jar",
+                      "*.clj",
+                      "*.cljc"
+                    ]
                   }
                 }
               }
@@ -2509,6 +2644,24 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Elixir workspace",
+                    "default": [
+                      "*.ex",
+                      "*.exs"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -3169,6 +3322,9 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
                   "stack_ghc_mode": {
                     "type": "string",
                     "title": "Use Stack GHC",
@@ -3179,6 +3335,22 @@
                       "never"
                     ],
                     "default": "never"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if the current directory is a Haskell project",
+                    "default": [
+                      "*.hs",
+                      "*.lhs",
+                      "stack.yaml",
+                      "package.yaml",
+                      "*.cabal",
+                      "cabal.project"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -3416,6 +3588,23 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if the current directory is a Kotlin project",
+                    "default":
+                    [
+                      "*.kt",
+                      "*.kts",
+                      "*.ktm"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -3500,6 +3689,9 @@
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
                   },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
                   "preferred_executable": {
                     "type": "string",
                     "title": "Preferred Executable",
@@ -3509,6 +3701,19 @@
                       "luajit"
                     ],
                     "default": "lua"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if the current directory is a Lua project",
+                    "default":
+                    [
+                      "*.lua",
+                      "*.rockspec"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -3655,7 +3860,19 @@
           },
           "then": {
             "title": "Display GitVersion segment",
-            "description": "https://ohmyposh.dev/docs/segments/gitversion"
+            "description": "https://ohmyposh.dev/docs/segments/gitversion",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout",
+                    "description": "Minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 30
+                  }
+                }
+              }
+            }
           }
         },
         {
@@ -3680,6 +3897,43 @@
                   },
                   "status_formats": {
                     "$ref": "#/definitions/status_formats"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nightscout"
+              }
+            }
+          },
+          "then": {
+            "title": "Display Nightscout segment",
+            "description": "https://ohmyposh.dev/docs/segments/nightscout",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "title": "URL",
+                    "description": "The URL to the Nightscout API",
+                    "default": "https://your.nightscout.url/api/v1/entries.json"
+                  },
+                  "cache_timeout": {
+                    "type": "integer",
+                    "title": "cache timeout",
+                    "description": "Minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 5
+                  },
+                  "http_timeout": {
+                    "type": "integer",
+                    "title": "Http request timeout",
+                    "description": "Milliseconds to use for http request timeouts",
+                    "default": 500
                   }
                 }
               }

@@ -2915,7 +2915,10 @@
                     "$ref": "#/definitions/http_timeout"
                   },
                   "cache_timeout": {
-                    "$ref": "#/definitions/cache_timeout"
+                    "type": "integer",
+                    "title": "cache timeout",
+                    "description": "Minutes the response is cached. A value of 0 disables the cache.",
+                    "default": 5
                   },
                   "doubleup_icon": {
                     "type": "string",

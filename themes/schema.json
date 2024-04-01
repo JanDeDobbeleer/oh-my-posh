@@ -705,6 +705,53 @@
           "if": {
             "properties": {
               "type": {
+                "const": "buf"
+              }
+            }
+          },
+          "then": {
+            "title": "Buf Segment",
+            "description": "https://ohmyposh.dev/docs/segments/buf",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Buf workspace",
+                    "default": [
+                      "buf.yaml",
+                      "buf.gen.yaml",
+                      "buf.work.yaml"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
                 "const": "carbonintensity"
               }
             }
@@ -840,6 +887,22 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a CMake workspace",
+                    "default": [
+                      "*.cmake",
+                      "CMakeLists.txt"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+
                   }
                 }
               }
@@ -1223,6 +1286,34 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Dart workspace",
+                    "default": [
+                      "*.dart",
+                      "pubspec.yaml",
+                      "pubspec.yml",
+                      "pubspec.lock"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folders": {
+                    "type": "array",
+                    "title": "Folders",
+                    "description": "The folders to look for when determining if a folder is a Dart workspace",
+                    "default": [
+                      ".dart_tool"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -1288,6 +1379,21 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Crystal workspace",
+                    "default": [
+                      "*.cr",
+                      "shard.yml"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -3238,6 +3344,22 @@
                   },
                   "version_url_template": {
                     "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if the current directory is a Cloud Foundry project",
+                    "default":
+                    [
+                      "manifest.yml",
+                      "mta.yaml"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
                   }
                 }
               }
@@ -3452,6 +3574,24 @@
                   },
                   "missing_command_text": {
                     "$ref": "#/definitions/missing_command_text"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if the current directory is a CDS project",
+                    "default":
+                    [
+                      ".cdsrc.json",
+                      ".cdsrc-private.json",
+                      "*.cds"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+
                   }
                 }
               }

@@ -657,6 +657,41 @@
                     "title": "Icon",
                     "description": "The icon representing Bazel's logo",
                     "default": "\ue63a"
+                  },
+                  "extensions":{
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Bazel workspace",
+                    "default": [
+                      "*.bazel",
+                      "*.bzl",
+                      "BUILD",
+                      "WORKSPACE",
+                      ".bazelrc",
+                      ".bazelversion"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folders": {
+                    "type": "array",
+                    "title": "Folders",
+                    "description": "The folders to look for when determining if a folder is a Bazel workspace",
+                    "default": [
+                      "bazel-bin",
+                      "bazel-out",
+                      "bazel-testlogs"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "cache_version": {
+                    "type": "boolean",
+                    "title": "Cache Version",
+                    "description": "Cache the version of Bazel",
+                    "default": false
                   }
                 }
               }

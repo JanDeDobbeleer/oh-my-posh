@@ -82,6 +82,10 @@ const (
 	FolderFormat properties.Property = "folder_format"
 	// format to use on the first and last folder of the path
 	EdgeFormat properties.Property = "edge_format"
+	// format to use on first folder of the path
+	LeftFormat properties.Property = "left_format"
+	// format to use on the last folder of the path
+	RightFormat properties.Property = "right_format"
 	// GitDirFormat format to use on the git directory
 	GitDirFormat properties.Property = "gitdir_format"
 )
@@ -622,7 +626,10 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 	folderSeparator := pt.getFolderSeparator()
 	colorSeparator := pt.props.GetBool(CycleFolderSeparator, false)
 	folderFormat := pt.props.GetString(FolderFormat, "%s")
+
 	edgeFormat := pt.props.GetString(EdgeFormat, folderFormat)
+	leftFormat := pt.props.GetString(LeftFormat, edgeFormat)
+	rightFormat := pt.props.GetString(RightFormat, edgeFormat)
 
 	colorizeElement := func(element string) string {
 		if skipColorize || len(element) == 0 {
@@ -635,7 +642,7 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 	}
 
 	if len(elements) == 0 {
-		root := fmt.Sprintf(edgeFormat, root)
+		root := fmt.Sprintf(leftFormat, root)
 		return colorizeElement(root)
 	}
 
@@ -648,7 +655,7 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 
 	var builder strings.Builder
 
-	root = fmt.Sprintf(edgeFormat, root)
+	root = fmt.Sprintf(leftFormat, root)
 	builder.WriteString(colorizeElement(root))
 
 	if root != pt.env.PathSeparator() && len(root) != 0 {
@@ -662,7 +669,7 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 
 		format := folderFormat
 		if i == len(elements)-1 {
-			format = edgeFormat
+			format = rightFormat
 		}
 
 		element = fmt.Sprintf(format, element)

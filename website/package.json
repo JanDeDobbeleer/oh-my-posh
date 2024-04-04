@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "cross-env NODE_ENV=development docusaurus start",
+    "start": "cross-env NODE_ENV=development docusaurus start --poll 1000",
     "build": "docusaurus build",
     "serve": "docusaurus serve",
     "themes": "node export_themes.js"

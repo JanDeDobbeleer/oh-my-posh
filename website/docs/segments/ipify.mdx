@@ -28,11 +28,11 @@ import Config from '@site/src/components/Config.js';
 
 ## Properties
 
-| Name            | Type     | Description                                                                                                          |
-| --------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
-| `url`           | `string` | The Ipify URL, by default IPv4 is used, use `https://api64.ipify.org` for IPv6 - defaults to `https://api.ipify.org` |
-| `http_timeout`  | `int`    | How long may the segment wait for a response of the ipify API? - defaults to 20ms                                    |
-| `cache_timeout` | `int`    | in minutes - How long you want your IP address cached - defaults to 10 min                                           |
+| Name            | Type     | Default                 |  Description                                                                    |
+| --------------- | :------: | :---------------------: | ------------------------------------------------------------------------------- |
+| `url`           | `string` | `https://api.ipify.org` | The Ipify URL, by default IPv4 is used, use `https://api64.ipify.org` for IPv6  |
+| `http_timeout`  | `int`    | `20`                    | in milliseconds - how long may the segment wait for a response of the ipify API |
+| `cache_timeout` | `int`    | `10`                    | in minutes - How long you want your IP address cached                           |
 
 ## Template ([info][templates])
 

@@ -32,11 +32,11 @@ import Config from '@site/src/components/Config.js';
 
 ## Properties
 
-| Name            | Type      | Description                                                                                                                                                                                                       |
-| --------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `url`           | `string`  | The Wakatime [summaries][wk-summaries] URL, including the API key. Example above. Defaults to ``.                                                                                                                 |
-| `http_timeout`  | `int`     | The time (_in milliseconds_, `ms`) it takes to consider an http request as **timed-out**. Defaults to `20`. If no segment is shown, try increasing this timeout.                                                  |
-| `cache_timeout` | `int`     | The time (_in minutes_, `m`) it takes to invalidate/renew the Wakatime segment output. Defaults to `10`. Setting this to `0` disables the cache and requests to the API everytime the user presses the Enter key. |
+| Name            | Type      | Default | Description                                                                                                                                                                                     |
+| --------------- | :-------: | :-----: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url`           | `string`  |         | The Wakatime [summaries][wk-summaries] URL, including the API key. Example above.                                                                                                               |
+| `http_timeout`  | `int`     | `20`    | The time (_in milliseconds_, `ms`) it takes to consider an http request as **timed-out**. If no segment is shown, try increasing this timeout.                                                  |
+| `cache_timeout` | `int`     | `10`    | The time (_in minutes_, `m`) it takes to invalidate/renew the Wakatime segment output. Setting this to `0` disables the cache and requests to the API everytime the user presses the Enter key. |
 
 ### Dynamic API Key
 

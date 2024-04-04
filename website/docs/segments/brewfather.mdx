@@ -43,14 +43,14 @@ import Config from '@site/src/components/Config.js';
 
 ## Properties
 
-| Name            | Type     | Description                                                                                                                     |
-| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `user_id`       | `string` | as provided by Brewfather's Generate API Key screen                                                                             |
-| `api_key`       | `string` | as provided by Brewfather's Generate API Key screen                                                                             |
-| `batch_id`      | `string` | Get this by navigating to the desired batch on the brewfather website, the batch id is at the end of the URL in the address bar |
-| `http_timeout`  | `int`    | in milliseconds - How long to wait for the Brewfather service to answer the request. Default 2 seconds                          |
-| `cache_timeout` | `int`    | in minutes - How long to wait before updating the data from Brewfather. Default is 5 minutes                                    |
-| `day_icon`      | `string` | icon or letter to use to indicate days. Default is "d"                                                                          |
+| Name            | Type     | Default | Description                                                                                                                     |
+| --------------- | :------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------- |
+| `user_id`       | `string` |         | as provided by Brewfather's Generate API Key screen                                                                             |
+| `api_key`       | `string` |         | as provided by Brewfather's Generate API Key screen                                                                             |
+| `batch_id`      | `string` |         | Get this by navigating to the desired batch on the brewfather website, the batch id is at the end of the URL in the address bar |
+| `http_timeout`  | `int`    | `2`     | in milliseconds - How long to wait for the Brewfather service to answer the request                                             |
+| `cache_timeout` | `int`    | `5`     | in minutes - How long to wait before updating the data from Brewfather                                                          |
+| `day_icon`      | `string` | `d`     | icon or letter to use to indicate days                                                                                          |
 
 ## Icons
 

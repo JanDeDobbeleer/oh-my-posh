@@ -25,16 +25,16 @@ import Config from "@site/src/components/Config.js";
 
 ## Properties
 
-| Name                   | Type       | Description                                                                                                                                                           |
-| ---------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `home_enabled`         | `boolean`  | display the segment in the HOME folder or not - defaults to `false`                                                                                                   |
-| `fetch_version`        | `boolean`  | fetch the julia version - defaults to `true`                                                                                                                          |
-| `missing_command_text` | `string`   | text to display when the command is missing - defaults to empty                                                                                                       |
-| `display_mode`         | `string`   | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when `*.cr` or `shard.yml` files are present (**default**)</li></ul> |
-| `version_url_template` | `string`   | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                 |
-| `extensions`           | `[]string` | allows to override the default list of file extensions to validate                                                                                                    |
-| `folders`              | `[]string` | allows to override the list of folder names to validate                                                                                                              |
-| `cache_version`        | `boolean`  | cache the executable's version or not - defaults to `false`                                                                                                           |
+| Name                   | Type       | Default           | Description                                                                                                                                                                                                                          |
+| ---------------------- | :--------: | :---------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `home_enabled`         | `boolean`  | `false`           | display the segment in the HOME folder or not                                                                                                                                                                                        |
+| `fetch_version`        | `boolean`  | `true`            | fetch the crystal version                                                                                                                                                                                                            |
+| `missing_command_text` | `string`   |                   | text to display when the command is missing                                                                                                                                                                                          |
+| `display_mode`         | `string`   | `context`         | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when file `extensions` listed are present</li><li>`context`: displays the segment when the environment or files is active</li></ul> |
+| `version_url_template` | `string`   |                   | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
+| `extensions`           | `[]string` | `*.cr, shard.yml` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
+| `folders`              | `[]string` |                   | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `cache_version`        | `boolean`  | `false`           | cache the executable's version or not                                                                                                                                                                                                |
 
 ## Template ([info][templates])
 

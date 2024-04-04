@@ -30,11 +30,11 @@ import Config from "@site/src/components/Config.js";
 
 ### Fetching information
 
-| Name              | Type                | Description                                                                                                                                                                                                                                                                                 |
-| ----------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_status`    | `boolean`           | fetch the local changes - defaults to `true`                                                                                                                                                                                                                                                |
-| `native_fallback` | `boolean`           | when set to `true` and `sl.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native sapling executable to fetch data. Not all information can be displayed in this case. Defaults to `false`                                                           |
-| `status_formats`  | `map[string]string` | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides. Defaults to an empty map. |
+| Name                | Type                | Default | Description                                                                                                                                                                                                                                                       |
+| ------------------- | :-----------------: | :-----: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_status`      | `boolean`           | `true`  | fetch the local changes - defaults to                                                                                                                                                                                                                             |
+| `native_fallback`   | `boolean`           | `false` | when set to `true` and `sl.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native sapling executable to fetch data. Not all information can be displayed in this case                                                      |
+| `status_formats`    | `map[string]string` |         |  a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides |
 
 ## Template ([info][templates])
 

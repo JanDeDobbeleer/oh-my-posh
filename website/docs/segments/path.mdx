@@ -30,25 +30,25 @@ import Config from "@site/src/components/Config.js";
 
 ## Properties
 
-| Name                        | Type       | Description                                                                                                                  |
-| --------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `folder_separator_icon`     | `string`   | the symbol to use as a separator between folders - defaults to platform path separator                                       |
-| `folder_separator_template` | `string`   | the [template][templates] to use as a separator between folders - defaults to ``                                             |
-| `home_icon`                 | `string`   | the icon to display when at `$HOME` - defaults to `~`                                                                        |
-| `folder_icon`               | `string`   | the icon to use as a folder indication - defaults to `..`                                                                    |
-| `windows_registry_icon`     | `string`   | the icon to display when in the Windows registry - defaults to `\uE0B1`                                                      |
-| `style`                     | `enum`     | how to display the current path                                                                                              |
-| `mixed_threshold`           | `number`   | the maximum length of a path segment that will be displayed when using `Mixed` - defaults to `4`                             |
-| `max_depth`                 | `number`   | maximum path depth to display before shortening when using `agnoster_short`, defaults to `1`                                 |
-| `max_width`                 | `number`   | maximum path length to display when using `powerlevel` - defaults to `0`                                                     |
-| `hide_root_location`        | `boolean`  | hides the root location if it doesn't fit in the last `max_depth` folders, when using `agnoster_short` - defaults to `false` |
-| `cycle`                     | `[]string` | a list of color overrides to cycle through to colorize the individual path folders, e.g. `[ "#ffffff,#111111" ]`             |
-| `cycle_folder_separator`    | `boolean`  | colorize the `folder_separator_icon` as well when using a cycle - defaults to `false`                                        |
-| `folder_format`             | `string`   | format to use on individual path folders - defaults to `%s`                                                                  |
-| `edge_format`               | `string`   | format to use on the first and last folder of the path - defaults to `%s`                                                    |
-| `left_format`               | `string`   | format to use on the firstfolder of the path - defaults to `edge_format`                                                     |
-| `right_format`              | `string`   | format to use on the last folder of the path - defaults to `edge_format`                                                     |
-| `gitdir_format`             | `string`   | format to use for a git root directory - defaults to ``                                                                      |
+| Name                        | Type       | Default    | Description                                                                                                      |
+| --------------------------- | :--------: | :--------: | ---------------------------------------------------------------------------------------------------------------- |
+| `folder_separator_icon`     | `string`   | `/`        | the symbol to use as a separator between folders                                                                 |
+| `folder_separator_template` | `string`   |            | the [template][templates] to use as a separator between folders                                                  |
+| `home_icon`                 | `string`   | `~`        | the icon to display when at `$HOME`                                                                              |
+| `folder_icon`               | `string`   | `..`       | the icon to use as a folder indication                                                                           |
+| `windows_registry_icon`     | `string`   | `\uF013`   | the icon to display when in the Windows registry                                                                 |
+| `style`                     | `enum`     | `agnoster` | how to display the current path                                                                                  |
+| `mixed_threshold`           | `number`   | `4`        | the maximum length of a path segment that will be displayed when using `Mixed`                                   |
+| `max_depth`                 | `number`   | `1`        | maximum path depth to display before shortening when using `agnoster_short`                                      |
+| `max_width`                 | `number`   | `0`        | maximum path length to display when using `powerlevel`                                                           |
+| `hide_root_location`        | `boolean`  | `false`    | ides the root location if it doesn't fit in the last `max_depth` folders, when using `agnoster_short`            |
+| `cycle`                     | `[]string` |            | a list of color overrides to cycle through to colorize the individual path folders, e.g. `[ "#ffffff,#111111" ]` |
+| `cycle_folder_separator`    | `boolean`  | `false`    | colorize the `folder_separator_icon` as well when using a cycle                                                  |
+| `folder_format`             | `string`   | `%s`       | format to use on individual path folders                                                                         |
+| `edge_format`               | `string`   | `%s`       | format to use on the first and last folder of the path                                                           |
+| `left_format`               | `string`   | `%s`       | format to use on the firstfolder of the path - defaults to `edge_format`                                         |
+| `right_format`              | `string`   | `%s`       | format to use on the last folder of the path - defaults to `edge_format`                                         |
+| `gitdir_format`             | `string`   |            | format to use for a git root directory                                                                           |
 
 ## Mapped Locations
 
@@ -56,10 +56,10 @@ Allows you to override a location with an icon/string.
 It validates if the current path **starts with the specific elements** and replaces it with the icon/string if there's a match.
 To avoid issues with nested overrides, Oh My Posh will sort the list of mapped locations before doing a replacement.
 
-| Name                       | Type      | Description                                                                                              |
-| -------------------------- | --------- | -------------------------------------------------------------------------------------------------------- |
-| `mapped_locations_enabled` | `boolean` | replace known locations in the path with the replacements before applying the style - defaults to `true` |
-| `mapped_locations`         | `object`  | custom glyph/text for specific paths. Works regardless of the `mapped_locations_enabled`                 |
+| Name                       | Type      | Default | Description                                                                              |
+| -------------------------- | :-------: | :-----: | ---------------------------------------------------------------------------------------- |
+| `mapped_locations_enabled` | `boolean` | `true`  | replace known locations in the path with the replacements before applying the style      |
+| `mapped_locations`         | `object`  |         | custom glyph/text for specific paths. Works regardless of the `mapped_locations_enabled` |
 
 setting.
 

@@ -58,18 +58,18 @@ import Config from '@site/src/components/Config.js';
 
 ## Properties
 
-| Name                    | Type     | Description                                                                                                     |
-| ----------------------- | -------- | --------------------------------------------------------------------------------------------------------------- |
-| `access_token`          | `string` | token from Strava login, see login link in section above.                                                       |
-| `refresh_token`         | `string` | token from Strava login, see login link in section above.                                                       |
-| `expires_in`            | `int`    | the default timeout of the token from the Strava login                                                          |
-| `http_timeout`          | `int`    | how long do you want to wait before you want to see your prompt more than your strava data? - defaults to 500ms |
-| `cache_timeout`         | `int`    | in minutes - How long do you want your Strava data cached? - defaults to 5 min                                  |
-| `ride_icon`             | `string` | defaults to `\uf206`                                                                                            |
-| `run_icon`              | `string` | defaults to `\ue213`                                                                                            |
-| `skiing_icon`           | `string` | defaults to `\ue213`                                                                                            |
-| `workout_icon`          | `string` | defaults to `\ue213`                                                                                            |
-| `unknown_activity_icon` | `string` | defaults to `\ue213`                                                                                            |
+| Name                    | Type     | Default  | Description                                                                                                   |
+| ----------------------- | :------: | :------: | ------------------------------------------------------------------------------------------------------------- |
+| `access_token`          | `string` |          | token from Strava login, see login link in section above.                                                     |
+| `refresh_token`         | `string` |          | token from Strava login, see login link in section above.                                                     |
+| `expires_in`            | `int`    | `0`      | the default timeout of the token from the Strava login                                                        |
+| `http_timeout`          | `int`    | `500`    | in milliseconds - how long do you want to wait before you want to see your prompt more than your strava data? |
+| `cache_timeout`         | `int`    | `5`      | in minutes - How long do you want your Strava data cached?                                                    |
+| `ride_icon`             | `string` | `\uf206` |                                                                                                               |
+| `run_icon`              | `string` | `\ue213` |                                                                                                               |
+| `skiing_icon`           | `string` | `\ue213` |                                                                                                               |
+| `workout_icon`          | `string` | `\ue213` |                                                                                                               |
+| `unknown_activity_icon` | `string` | `\ue213` |                                                                                                               |
 
 ## Template ([info][templates])
 

@@ -30,11 +30,11 @@ import Config from "@site/src/components/Config.js";
 
 ## Properties
 
-| Name               | Type      | Description                                                                                           |
-| ------------------ | --------- | ----------------------------------------------------------------------------------------------------- |
-| `display_error`    | `boolean` | show the error context when failing to retrieve the kubectl information - defaults to `false`         |
-| `parse_kubeconfig` | `boolean` | parse kubeconfig files instead of calling out to kubectl to improve performance - defaults to `false` |
-| `context_aliases`  | `object`  | custom context names                                                                                  |
+| Name               | Type      | Default | Description                                                                     |
+| ------------------ | :-------: | :-----: | ------------------------------------------------------------------------------- |
+| `display_error`    | `boolean` | `false` | show the error context when failing to retrieve the kubectl information         |
+| `parse_kubeconfig` | `boolean` | `false` | parse kubeconfig files instead of calling out to kubectl to improve performance |
+| `context_aliases`  | `object`  |         | custom context namespace                                                        |
 
 ## Template ([info][templates])
 

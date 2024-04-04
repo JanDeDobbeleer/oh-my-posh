@@ -40,12 +40,12 @@ import Config from "@site/src/components/Config.js";
 
 ## Properties
 
-| Name           | Type     | Description                                            |
-| -------------- | -------- | ------------------------------------------------------ |
-| `playing_icon` | `string` | text/icon to show when playing - defaults to `\uE602 ` |
-| `stopped_icon` | `string` | text/icon to show when stopped - defaults to `\uF04D ` |
-| `api_key`      | `string` | your LastFM [API key][api-key]                         |
-| `username`     | `string` | your LastFM username                                   |
+| Name           |   Type   |  Default  | Description                    |
+| -------------- | :------: | :-------: | ------------------------------ |
+| `playing_icon` | `string` | `\uE602 ` | text/icon to show when playing |
+| `stopped_icon` | `string` | `\uF04D ` | text/icon to show when stopped |
+| `api_key`      | `string` |           | your LastFM [API key][api-key] |
+| `username`     | `string` |           | your LastFM username           |
 
 ## Template ([info][templates])
 
@@ -67,6 +67,6 @@ import Config from "@site/src/components/Config.js";
 | `.Full`   | `string` | will output `Artist - Track`                   |
 | `.Icon`   | `string` | icon (based on `.Status`)                      |
 
-[templates]: /docs/configuration/templates
+[templates]: configuration/templates.mdx
 [lastfm]: https://www.last.fm
 [api-key]: https://www.last.fm/api/account/create

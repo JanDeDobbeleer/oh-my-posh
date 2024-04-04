@@ -44,13 +44,13 @@ import Config from '@site/src/components/Config.js';
 
 ## Properties
 
-| Name             | Type     | Description                                                                                                       |
-| ---------------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
-| `access_token`   | `string` | token from Withings login, see login link in section above.                                                       |
-| `refresh_token`  | `string` | token from Withings login, see login link in section above.                                                       |
-| `expires_in`     | `int`    | the default timeout of the token from the Withings login                                                          |
-| `http_timeout`   | `int`    | how long do you want to wait before you want to see your prompt more than your Withings data? - defaults to 500ms |
-| `cache_timeout`  | `int`    | in minutes - How long do you want your Withings data cached? - defaults to 5 min                                  |
+| Name             | Type     | Default | Description                                                                                   |
+| ---------------- | :------: | :-----: | --------------------------------------------------------------------------------------------- |
+| `access_token`   | `string` |         | token from Withings login, see login link in section above.                                   |
+| `refresh_token`  | `string` |         | token from Withings login, see login link in section above.                                   |
+| `expires_in`     | `int`    | `0`     | the default timeout of the token from the Withings login                                      |
+| `http_timeout`   | `int`    | `500`   | how long do you want to wait before you want to see your prompt more than your Withings data? |
+| `cache_timeout`  | `int`    | `5`     | in minutes - How long do you want your Withings data cached?                                  |
 
 ## Template ([info][templates])
 

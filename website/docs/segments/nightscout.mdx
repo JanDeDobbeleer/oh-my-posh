@@ -57,11 +57,11 @@ Or display in mmol/l (instead of the default mg/dl) with the following template:
 
 ## Properties
 
-| Name            | Type     | Description                                                                                                                                                                                    |
-| --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `url`           | `string` | Your Nightscout URL, including the full path to entries.json AND count=1 AND token. Example above. You'll know this works if you can curl it yourself and get a single value. - defaults to `` |
-| `http_timeout`  | `int`    | How long do you want to wait before you want to see your prompt more than your sugar? I figure a half second is a good default - defaults to 500ms                                             |
-| `cache_timeout` | `int`    | in minutes - How long do you want your numbers cached? - defaults to 5 min                                                                                                                     |
+| Name            | Type     | Default | Description                                                                                                                                                                  |
+| --------------- | :------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url`           | `string` |         | Your Nightscout URL, including the full path to entries.json AND count=1 AND token. Example above. You'll know this works if you can curl it yourself and get a single value |
+| `http_timeout`  | `int`    | `500`   | in milliseconds - how long do you want to wait before you want to see your prompt more than your sugar? I figure a half second is a good default                             |
+| `cache_timeout` | `int`    | `5`     | in minutes - how long do you want your numbers cached?                                                                                                                       |
 
 :::info
 You can change the icons for trend, put the trend elsewhere, add text, however you like!

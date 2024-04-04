@@ -33,10 +33,10 @@ import Config from "@site/src/components/Config.js";
 As doing Mercurial (hg) calls can slow down the prompt experience, we do not fetch information by default.
 You can set the following properties to `true` to enable fetching additional information (and populate the template).
 
-| Name             | Type                | Description                                                                                                                                                                                                                                                                                 |
-| ---------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_status`   | `boolean`           | fetch the local changes - defaults to `false`                                                                                                                                                                                                                                               |
-| `status_formats` | `map[string]string` | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides. Defaults to an empty map. |
+| Name             | Type                | Default | Description                                                                                                                                                                                                                                                      |
+| ---------------- | :-----------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fetch_status`   | `boolean`           | `false` | fetch the local changes                                                                                                                                                                                                                                          |
+| `status_formats` | `map[string]string` |         | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides |
 
 ## Template ([info][templates])
 

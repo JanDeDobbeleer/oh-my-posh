@@ -1,61 +1,47 @@
-//go:build !darwin && !windows
+//go:build linux && !darwin && !windows
 
 package segments
 
 import (
+	"errors"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSpotifyLinux(t *testing.T) {
 	cases := []struct {
-		Case            string
-		ExpectedString  string
-		ExpectedEnabled bool
-		Title           string
-		Artist          string
-		Track           string
-		Error           error
+		Running  bool
+		Expected string
+		Status   string
+		Artist   string
+		Track    string
+		Error    error
 	}{
-		{
-			Case:            "Playing",
-			ExpectedString:  "Sarah, the Illstrumentalist - Snow in Stockholm",
-			ExpectedEnabled: true,
-			Title:           "Snow in Stockholm - Sarah, the Illstrumentalist",
-			Artist:          "Sarah, the Illstrumentalist",
-			Track:           "Snow in Stockholm",
-		},
-		{
-			Case:            "Stopped",
-			ExpectedEnabled: true,
-			ExpectedString:  "-",
-		},
+		{Running: false, Expected: "\uE602  -", Error: errors.New("oops")},
+		{Running: true, Expected: "\uE602 Candlemass - Spellbreaker", Status: "playing", Artist: "Candlemass", Track: "Spellbreaker"},
+		{Running: true, Expected: "\uE602 Candlemass - Spellbreaker", Status: "paused", Artist: "Candlemass", Track: "Spellbreaker"},
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-
-		env.On("RunCommand", "dbus-send", []string{
-			"--print-reply",
-			"--dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:org.mpris.MediaPlayer2.Player string:Metadata",
-		}).Return(tc.Track+" "+tc.Artist, nil)
+		env.On("IsWsl").Return(false)
+		env.On("RunShellCommand", shell.BASH, "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:org.mpris.MediaPlayer2.Player string:Metadata").Return(tc.Status, nil)
+		env.On("RunShellCommand", shell.BASH, "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:org.mpris.MediaPlayer2.Player string:Metadata | awk -F '\"' 'BEGIN {RS=\"entry\"}; /'xesam:artist'/ {a=$4} END {print a}'").Return(tc.Artist, nil)
+		env.On("RunShellCommand", shell.BASH, "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:org.mpris.MediaPlayer2.Player string:Metadata | awk -F '\"' 'BEGIN {RS=\"entry\"}; /'xesam:title'/ {t=$4} END {print t}'").Return(tc.Track, nil)
 
 		s := &Spotify{
 			env:   env,
 			props: properties.Map{},
-			MusicPlayer: MusicPlayer{
-				Artist: tc.Artist,
-				Track:  tc.Track,
-			},
 		}
-		enable := s.Enable()
+		enable := s.Enabled()
 		assert.True(t, enable)
-		if tc.ExpectedEnabled {
-			assert.True(t, s.Enable())
-			assert.Equal(t, tc.ExpectedString, renderTemplate(env, s.Template(), s))
+		if tc.Running {
+			assert.True(t, s.Enabled())
+			assert.Equal(t, tc.Expected, renderTemplate(env, s.Template(), s))
 		}
 	}
 }

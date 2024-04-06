@@ -3,45 +3,38 @@
 package segments
 
 import (
-	"encoding/json"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
-type Metadata struct {
-	TrackID     string   `json:"mpris:trackid"`
-	Length      uint64   `json:"mpris:length"`
-	ArtURL      string   `json:"mpris:artUrl"`
-	Album       string   `json:"xesam:album"`
-	AlbumArtist []string `json:"xesam:albumArtist"`
-	Artist      []string `json:"xesam:artist"`
-	AutoRating  float64  `json:"xesam:autoRating"`
-	DiscNumber  int32    `json:"xesam:discNumber"`
-	Title       string   `json:"xesam:title"`
-	TrackNumber int32    `json:"xesam:trackNumber"`
-	URL         string   `json:"xesam:url"`
+func (s *Spotify) Enabled() bool {
+	var err error
+	running := s.runLinuxScriptCommand("")
+
+	if strings.HasPrefix(running, "ERROR") {
+		return false
+	}
+	if strings.Contains(running, "Error.ServiceUnknown") || strings.HasSuffix(running, "-") {
+		s.Status = stopped
+		return false
+	}
+	s.Status = playing
+	if err != nil {
+		s.Status = stopped
+		return false
+	}
+	if s.Status == stopped {
+		return false
+	}
+
+	s.Artist = s.runLinuxScriptCommand(" | awk -F '\"' 'BEGIN {RS=\"entry\"}; /'xesam:artist'/ {a=$4} END {print a}'")
+	s.Track = s.runLinuxScriptCommand(" | awk -F '\"' 'BEGIN {RS=\"entry\"}; /'xesam:title'/ {t=$4} END {print t}'")
+	s.resolveIcon()
+	return true
 }
 
-func (s *Spotify) Enable() bool {
-
-	tlist, _ := s.env.RunCommand("dbus-send", "--print-reply", "--dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:org.mpris.MediaPlayer2.Player string:Metadata")
-
-	// Split the output into lines
-	lines := strings.Split(tlist, "\n")
-
-	// Extract the JSON-formatted data
-	var jsonData string
-	for _, line := range lines {
-		if strings.Contains(line, "variant") {
-			jsonData = strings.TrimSpace(line[len("   variant       array ["):])
-			break
-		}
-	}
-
-	var metadata []Metadata
-	// Parsing JSON data from the output string
-	if err := json.Unmarshal([]byte(jsonData), &metadata); err != nil {
-		return true
-	}
-
-	return false
+func (s *Spotify) runLinuxScriptCommand(command string) string {
+	val := s.env.RunShellCommand(shell.BASH, "dbus-send --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.freedesktop.DBus.Properties.Get string:org.mpris.MediaPlayer2.Player string:Metadata"+command)
+	return val
 }

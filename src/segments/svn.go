@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"path"
 	"strconv"
 	"strings"
 
@@ -121,6 +122,18 @@ func (s *Svn) setSvnStatus() {
 		// element is the element from someSlice for where we are
 		s.Working.add(line[0:1])
 	}
+}
+
+func (s *Svn) Repo() string {
+	// Get the repository name as the last path element of the repository root URL
+	repo := s.getSvnCommandOutput("info", "--show-item", "repos-root-url")
+	base := path.Base(repo)
+
+	if base == "." {
+		return ""
+	}
+
+	return base
 }
 
 func (s *Svn) getSvnCommandOutput(command string, args ...string) string {

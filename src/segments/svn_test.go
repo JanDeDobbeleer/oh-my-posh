@@ -262,3 +262,44 @@ R       Moved.File`,
 		assert.Equal(t, tc.ExpectedConflicts, s.Working.HasConflicts(), tc.Case)
 	}
 }
+
+func TestRepo(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Repo     string
+		Expected string
+	}{
+		{
+			Case:     "No repo",
+			Repo:     "",
+			Expected: "",
+		},
+		{
+			Case:     "Repo with trailing slash",
+			Repo:     "http://example.com/",
+			Expected: "example.com",
+		},
+		{
+			Case:     "Repo without trailing slash",
+			Repo:     "http://example.com",
+			Expected: "example.com",
+		},
+		{
+			Case:     "Repo with a path",
+			Repo:     "http://example.com/test/repo",
+			Expected: "repo",
+		},
+	}
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("RunCommand", "svn", []string{"info", "", "--show-item", "repos-root-url"}).Return(tc.Repo, nil)
+		s := &Svn{
+			scm: scm{
+				env:     env,
+				command: SVNCOMMAND,
+			},
+		}
+
+		assert.Equal(t, tc.Expected, s.Repo(), tc.Case)
+	}
+}

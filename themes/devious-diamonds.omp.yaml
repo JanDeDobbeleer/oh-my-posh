@@ -234,7 +234,7 @@ blocks:
         foreground: white
         properties:
           root_icon: 
-        template: "{{ if and .Root ( not .Segments.Path.Writable ) }} {{ end }}{{ if and .Root .Segments.Path.Writable }}  {{ end }} \b"
+        template: "{{ if not .Root }}\u2800{{ end }}{{ if and .Root ( not .Segments.Path.Writable ) }} {{ end }}{{ if and .Root .Segments.Path.Writable }}  {{ end }}"
 console_title_template: "{{ .Folder }}"
 palette:
   black: "#1B1A23"

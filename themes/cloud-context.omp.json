@@ -7,6 +7,7 @@
     "cloud-text-amazon": "#4285F4",
     "cloud-text-azure": "#4285F4",
     "cloud-text-gcp": "#4285F4",
+    "cloud-text-firebase": "#FFA000",
     "error-background": "#dd0033",
     "error-text": "#242424",
     "git-text": "#238636",
@@ -75,6 +76,14 @@
           "powerline_symbol": "\ue0b4",
           "template": " <p:symbol-color>\ue7b2</> {{ .Project }}",
           "type": "gcp"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:cloud-text-firebase",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": " <p:symbol-color>\udb82\udd67</> {{ .Project }}",
+          "type": "firebase"
         },
         {
           "background": "p:background-color",

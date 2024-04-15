@@ -314,6 +314,7 @@
             "flutter",
             "fossil",
             "gcp",
+            "firebase",
             "git",
             "gitversion",
             "go",
@@ -629,11 +630,7 @@
                     "title": "Source",
                     "description": "https://ohmyposh.dev/docs/segments/az#properties",
                     "default": "first_match",
-                    "enum": [
-                      "first_match",
-                      "cli",
-                      "pwsh"
-                    ]
+                    "enum": ["first_match", "cli", "pwsh"]
                   }
                 }
               }
@@ -727,7 +724,7 @@
                     "description": "The icon representing Bazel's logo",
                     "default": "\ue63a"
                   },
-                  "extensions":{
+                  "extensions": {
                     "type": "array",
                     "title": "Extensions",
                     "description": "The extensions to look for when determining if a folder is a Bazel workspace",
@@ -747,11 +744,7 @@
                     "type": "array",
                     "title": "Folders",
                     "description": "The folders to look for when determining if a folder is a Bazel workspace",
-                    "default": [
-                      "bazel-bin",
-                      "bazel-out",
-                      "bazel-testlogs"
-                    ],
+                    "default": ["bazel-bin", "bazel-out", "bazel-testlogs"],
                     "items": {
                       "type": "string"
                     }
@@ -890,12 +883,7 @@
                     "type": "string",
                     "title": "Connection type",
                     "description": "The connection type to display",
-                    "enum": [
-                      "ethernet",
-                      "wifi",
-                      "cellular",
-                      "bluetooth"
-                    ],
+                    "enum": ["ethernet", "wifi", "cellular", "bluetooth"],
                     "default": "wifi|ethernet"
                   },
                   "unit": {
@@ -1131,9 +1119,7 @@
                     "type": "array",
                     "title": "Folders",
                     "description": "The folders to look for when determining if a folder is a Flutter workspace",
-                    "default": [
-                      ".dart_tool"
-                    ],
+                    "default": [".dart_tool"],
                     "items": {
                       "type": "string"
                     }
@@ -1469,9 +1455,7 @@
                     "type": "array",
                     "title": "Folders",
                     "description": "The folders to look for when determining if a folder is a Dart workspace",
-                    "default": [
-                      ".dart_tool"
-                    ],
+                    "default": [".dart_tool"],
                     "items": {
                       "type": "string"
                     }
@@ -2909,11 +2893,7 @@
                     "title": "units",
                     "description": "Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit). Default is standard",
                     "default": "standard",
-                    "enum": [
-                      "standard",
-                      "metric",
-                      "imperial"
-                    ]
+                    "enum": ["standard", "metric", "imperial"]
                   },
                   "http_timeout": {
                     "$ref": "#/definitions/http_timeout"
@@ -3185,10 +3165,7 @@
                     "type": "array",
                     "title": "Extensions",
                     "description": "The extensions to look for when determining if the current directory is an Angular project",
-                    "default":
-                    [
-                      "angular.json"
-                    ],
+                    "default": ["angular.json"],
                     "items": {
                       "type": "string"
                     }
@@ -4294,6 +4271,19 @@
           "then": {
             "title": "GCP Segment",
             "description": "https://ohmyposh.dev/docs/segments/gcp"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "firebase"
+              }
+            }
+          },
+          "then": {
+            "title": "Firebase Segment",
+            "description": "https://ohmyposh.dev/docs/segments/firebase"
           }
         },
         {

@@ -146,6 +146,8 @@ const (
 	FOSSIL SegmentType = "fossil"
 	// GCP writes the active GCP context
 	GCP SegmentType = "gcp"
+	// FIREBASE writes the active firebase project
+	FIREBASE SegmentType = "firebase"
 	// GIT represents the git status and information
 	GIT SegmentType = "git"
 	// GITVERSION represents the gitversion information
@@ -296,6 +298,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	FLUTTER:         func() SegmentWriter { return &segments.Flutter{} },
 	FOSSIL:          func() SegmentWriter { return &segments.Fossil{} },
 	GCP:             func() SegmentWriter { return &segments.Gcp{} },
+	FIREBASE:        func() SegmentWriter { return &segments.Firebase{} },
 	GIT:             func() SegmentWriter { return &segments.Git{} },
 	GITVERSION:      func() SegmentWriter { return &segments.GitVersion{} },
 	GOLANG:          func() SegmentWriter { return &segments.Golang{} },

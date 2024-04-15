@@ -77,6 +77,7 @@ module.exports = {
         "segments/flutter",
         "segments/fossil",
         "segments/gcp",
+        "segments/firebase",
         "segments/git",
         "segments/gitversion",
         "segments/golang",

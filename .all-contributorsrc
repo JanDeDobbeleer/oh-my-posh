@@ -2338,6 +2338,15 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "mountcount",
+      "name": "mountcount",
+      "avatar_url": "https://avatars.githubusercontent.com/u/166301065?v=4",
+      "profile": "https://github.com/mountcount",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

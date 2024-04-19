@@ -4370,6 +4370,12 @@
                     "title": "Http request timeout",
                     "description": "Milliseconds to use for http request timeouts",
                     "default": 500
+                  },
+                  "headers": {
+                    "type": "object",
+                    "title": "Headers",
+                    "description": "A key, value map of Headers to send with the request",
+                    "default": {}
                   }
                 }
               }

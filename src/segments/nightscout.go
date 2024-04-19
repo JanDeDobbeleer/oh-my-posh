@@ -3,6 +3,7 @@ package segments
 import (
 	"encoding/json"
 	"errors"
+	http2 "net/http"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
@@ -20,7 +21,8 @@ type Nightscout struct {
 
 const (
 	// Your complete Nightscout URL and APIKey like this
-	URL properties.Property = "url"
+	URL     properties.Property = "url"
+	Headers properties.Property = "headers"
 
 	DoubleUpIcon      properties.Property = "doubleup_icon"
 	SingleUpIcon      properties.Property = "singleup_icon"
@@ -116,7 +118,14 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 		}
 	}
 
-	body, err := ns.env.HTTPRequest(url, nil, httpTimeout)
+	headers := ns.props.GetKeyValueMap(Headers, map[string]string{})
+	modifiers := func(request *http2.Request) {
+		for key, value := range headers {
+			request.Header.Add(key, value)
+		}
+	}
+
+	body, err := ns.env.HTTPRequest(url, nil, httpTimeout, modifiers)
 	if err != nil {
 		return nil, err
 	}

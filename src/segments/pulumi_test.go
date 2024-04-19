@@ -203,6 +203,8 @@ description: A Console App
 		env.On("HasFiles", pulumiJSON).Return(len(tc.JSONConfig) > 0)
 		env.On("FileContent", pulumiJSON).Return(tc.JSONConfig, nil)
 
+		env.On("PathSeparator").Return("/")
+
 		env.On("HasFolder", filepath.Clean("/home/foobar/.pulumi/workspaces")).Return(tc.HasWorkspaceFolder)
 		workspaceFile := "oh-my-posh-c62b7b6786c5c5a85896576e46a25d7c9f888e92-workspace.json"
 		env.On("HasFilesInDir", filepath.Clean("/home/foobar/.pulumi/workspaces"), workspaceFile).Return(len(tc.WorkSpaceFile) > 0)

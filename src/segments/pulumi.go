@@ -154,7 +154,7 @@ func (p *Pulumi) getProjectName() error {
 		return hex.EncodeToString(h.Sum(nil))
 	}
 
-	p.workspaceSHA1 = sha1HexString(p.env.Pwd() + "/" + fileName)
+	p.workspaceSHA1 = sha1HexString(p.env.Pwd() + p.env.PathSeparator() + fileName)
 
 	return nil
 }

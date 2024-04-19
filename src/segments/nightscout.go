@@ -118,9 +118,9 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 		}
 	}
 
-	header := ns.props.GetKeyValueMap(Headers, map[string]string{})
+	headers := ns.props.GetKeyValueMap(Headers, map[string]string{})
 	modifiers := func(request *http2.Request) {
-		for key, value := range header {
+		for key, value := range headers {
 			request.Header.Add(key, value)
 		}
 	}

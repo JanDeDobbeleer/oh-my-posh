@@ -335,6 +335,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://ivan-the-terrible.github.io/"><img src="https://avatars.githubusercontent.com/u/56458442?v=4?s=100" width="100px;" alt="Ivan"/><br /><sub><b>Ivan</b></sub></a><br /><a href="#design-ivan-the-terrible" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ivan-the-terrible" title="Documentation">📖</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ivan-the-terrible" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mountcount"><img src="https://avatars.githubusercontent.com/u/166301065?v=4?s=100" width="100px;" alt="mountcount"/><br /><sub><b>mountcount</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=mountcount" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Bondrake"><img src="https://avatars.githubusercontent.com/u/11696?v=4?s=100" width="100px;" alt="Bondrake"/><br /><sub><b>Bondrake</b></sub></a><br /><a href="#design-Bondrake" title="Design">🎨</a></td>
+    </tr>
   </tbody>
 </table>
 

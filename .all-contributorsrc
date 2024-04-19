@@ -2349,6 +2349,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "Bondrake",
+      "name": "Bondrake",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11696?v=4",
+      "profile": "https://github.com/Bondrake",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

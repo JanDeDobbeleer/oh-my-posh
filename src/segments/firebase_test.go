@@ -10,22 +10,31 @@ import (
 )
 
 func TestFirebaseSegment(t *testing.T) {
+	config := `{
+		"activeProjects": {
+			"path": "project-name"
+		}
+	}`
 	cases := []struct {
 		Case            string
-		CfgData         string
 		ActiveConfig    string
+		ActivePath      string
 		ExpectedEnabled bool
 		ExpectedString  string
 	}{
 		{
 			Case:            "happy path",
 			ExpectedEnabled: true,
-			ActiveConfig: `{
-				"activeProjects": {
-					"path": "project-name"
-				}
-			}`,
-			ExpectedString: "project-name",
+			ActiveConfig:    config,
+			ActivePath:      "path",
+			ExpectedString:  "project-name",
+		},
+		{
+			Case:            "happy subpath",
+			ExpectedEnabled: true,
+			ActiveConfig:    config,
+			ActivePath:      "path/subpath",
+			ExpectedString:  "project-name",
 		},
 		{
 			Case:            "no active config",
@@ -46,7 +55,7 @@ func TestFirebaseSegment(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("Home").Return("home")
-		env.On("Pwd").Return("path")
+		env.On("Pwd").Return(tc.ActivePath)
 		fcPath := filepath.Join("home", ".config", "configstore", "firebase-tools.json")
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
 		env.On("Error", mock2.Anything).Return()

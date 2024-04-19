@@ -54,7 +54,7 @@ func (f *Firebase) Enabled() bool {
 	// Test if the current directory is a project path
 	// and if it is, return the project name
 	for key, value := range data.ActiveProject {
-		if key == f.env.Pwd() || strings.HasPrefix(f.env.Pwd(), key) {
+		if strings.HasPrefix(f.env.Pwd(), key) {
 			f.Project = value
 			return true
 		}

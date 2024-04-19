@@ -136,6 +136,7 @@ func TestNSSegment(t *testing.T) {
 		props := properties.Map{
 			properties.CacheTimeout: tc.CacheTimeout,
 			URL:                     "FAKE",
+			Headers:                 map[string]string{"Fake-Header": "xxxxx"},
 		}
 
 		cache := &mock.MockedCache{}

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+final_space: true
 blocks:
   - type: prompt
     alignment: left
@@ -27,7 +27,7 @@ blocks:
           opensuse: 
           raspbian: 
           ubuntu: 
-          windows: 
+          windows: 󰍲
           wsl: 
           wsl_separator: 
         template: " {{ if .WSL }}{{ end }}{{.Icon}}═"
@@ -42,7 +42,7 @@ blocks:
         powerline_symbol: 
         background: magenta
         foreground: black
-        template: " {{ if .SSHSession }} {{ end }}{{ .UserName }}@{{ .HostName }} "
+        template: " {{ if .SSHSession }}󰌘 {{ end }}{{ .UserName }}@{{ .HostName }} "
       - type: angular
         style: powerline
         powerline_symbol: 
@@ -50,7 +50,7 @@ blocks:
         foreground: black
         properties:
           fetch_version: true
-        template: " ﮰ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+        template: " 󰚲 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: aws
         style: powerline
         powerline_symbol: 
@@ -83,7 +83,7 @@ blocks:
         foreground: black
         properties:
           fetch_version: true
-        template: " ﳑ {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
+        template: " 󰟓 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} "
       - type: java
         style: powerline
         powerline_symbol: 
@@ -103,7 +103,7 @@ blocks:
         powerline_symbol: 
         background: lightYellow
         foreground: black
-        template: " ﴱ {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
+        template: " 󰠳 {{.Context}}{{if .Namespace}} :: {{.Namespace}}{{end}} "
       - type: node
         style: powerline
         powerline_symbol: 
@@ -111,7 +111,7 @@ blocks:
         foreground: black
         properties:
           fetch_version: true
-        template: "  {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+        template: " 󰎙 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
       - type: php
         style: powerline
         powerline_symbol: 
@@ -192,7 +192,7 @@ blocks:
           fetch_status: true
           fetch_upstream_icon: true
           fetch_worktree_count: true
-        template: "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }}"
+        template: "{{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} 󰆓 {{ .StashCount }}{{ end }}"
   - type: prompt
     alignment: left
     newline: true
@@ -210,7 +210,7 @@ blocks:
         foreground: black
         properties:
           always_enabled: true
-        template: " {{ if gt .Code 0 }}{{ else }}{{ end }}{{ if eq ( gt .Code 0 ) .Segments.Path.Writable}} {{ end }}"
+        template: " {{ if gt .Code 0 }}󰋔 {{ else }} {{ end }}{{ if eq ( gt .Code 0 ) .Segments.Path.Writable}} {{ end }}"
       - type: path
         style: powerline
         powerline_symbol: 
@@ -221,10 +221,10 @@ blocks:
         properties:
           style: agnoster_short
           folder_icon: 
-          folder_separator_icon: "  "
-          home_icon: 
+          folder_separator_icon: " 󰁕 "
+          home_icon: 󰋜
           max_depth: 3
-        template: "{{ if eq ( gt .Code 0 ) .Writable }} {{ end }} {{ .Path }}{{ if not .Writable  }} {{ end }}{{ if and .Writable .Root }} {{end}}"
+        template: "{{ if eq ( gt .Code 0 ) .Writable }} {{ end }} {{ .Path }}{{ if not .Writable  }} 󰍁 {{ end }}{{ if and .Writable .Root }} {{end}} "
       - type: text
         style: diamond
         trailing_diamond: 

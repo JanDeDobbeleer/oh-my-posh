@@ -52,7 +52,7 @@ blocks:
           always_enabled: true
           style: round
         style: powerline
-        template: " 羽{{ .FormattedMs }} "
+        template: " 󰔟{{ .FormattedMs }} "
         type: executiontime
 
       # Exit code
@@ -84,14 +84,14 @@ blocks:
         foreground: p:white
         leading_diamond: 
         properties:
-          charged_icon: 
-          charging_icon: 
-          discharging_icon: " "
+          charged_icon: 󰂄
+          charging_icon: 󰂄
+          discharging_icon: "󰁹 "
         style: diamond
-        template: " {{.Templates }}{{ .Percentage}} <transparent></>"
+        template: " {{.Templates }}{{ .Percentage}}󰏰 <transparent></>"
         templates:
-          - '{{if eq "Discharging" .State.String}}{{if lt .Percentage 11}}{{else if lt .Percentage 21}}{{else if lt .Percentage 31}}{{else if lt .Percentage 41}}{{else if lt .Percentage 51}}{{else if lt .Percentage 61}}{{else if lt .Percentage 71}}{{else if lt .Percentage 81}}{{else if lt .Percentage 91}}{{else}}{{end}}{{end}}'
-          - '{{if eq "Charging" .State.String}}{{ if lt .Percentage 21}}{{else if lt .Percentage 31}}{{else if lt .Percentage 41}}{{else if lt .Percentage 61}}{{else if lt .Percentage 81}}{{else if lt .Percentage 91}}{{else}}{{end}}{{end}}'
+          - '{{if eq "Discharging" .State.String}}{{if lt .Percentage 11}}󰁺{{else if lt .Percentage 21}}󰁻{{else if lt .Percentage 31}}󰁼{{else if lt .Percentage 41}}󰁽{{else if lt .Percentage 51}}󰁾{{else if lt .Percentage 61}}󰁾{{else if lt .Percentage 71}}󰂀{{else if lt .Percentage 81}}󰂁{{else if lt .Percentage 91}}󰂂{{else}}󰁹{{end}}{{end}}'
+          - '{{if eq "Charging" .State.String}}{{ if lt .Percentage 21}}󰂆{{else if lt .Percentage 31}}󰂇{{else if lt .Percentage 41}}󰂈{{else if lt .Percentage 61}}󰂉{{else if lt .Percentage 81}}󰂊{{else if lt .Percentage 91}}󰂋{{else}}󰂄{{end}}{{end}}'
         templates_logic: first_match
         type: battery
 
@@ -117,7 +117,7 @@ blocks:
             if ! res=$(curl -s wttr.in -Gsm2 --data-urlencode "format=j1"); then
               echo "$now"
               date +'%s' >/tmp/last_update.w
-              echo 睊 >/tmp/weather.w
+              echo 󰖪 >/tmp/weather.w
               rm /tmp/w_lock.w
               exit 0
             fi
@@ -125,7 +125,7 @@ blocks:
             temp=$(jq -r .temp_C <<<"$res")
             feels_like=$(jq -r .FeelsLikeC <<<"$res")
             [[ $(bc -l <<<"$feels_like!=$temp") -eq 1 ]] && feels_string=" feels $feels_like°C"
-            WWC_MAP='{"113":"Sunny","116":"PartlyCloudy","119":"Cloudy","122":"VeryCloudy","143":"Fog","176":"LightShowers","179":"LightSleetShowers","182":"LightSleet","185":"LightSleet","200":"ThunderyShowers","227":"LightSnow","230":"HeavySnow","248":"Fog","260":"Fog","263":"LightShowers","266":"LightRain","281":"LightSleet","284":"LightSleet","293":"LightRain","296":"LightRain","299":"HeavyShowers","302":"HeavyRain","305":"HeavyShowers","308":"HeavyRain","311":"LightSleet","314":"LightSleet","317":"LightSleet","320":"LightSnow","323":"LightSnowShowers","326":"LightSnowShowers","329":"HeavySnow","332":"HeavySnow","335":"HeavySnowShowers","338":"HeavySnow","350":"LightSleet","353":"LightShowers","356":"HeavyShowers","359":"HeavyRain","362":"LightSleetShowers","365":"LightSleetShowers","368":"LightSnowShowers","371":"HeavySnowShowers","374":"LightSleetShowers","377":"LightSleet","386":"ThunderyShowers","389":"ThunderyHeavyRain","392":"ThunderySnowShowers","395":"HeavySnowShowers"}';NF_DAY_MAP='{"Unknown":"ﮊ","Cloudy":"","Fog":"","HeavyRain":"","HeavyShowers":"","HeavySnow":"","HeavySnowShowers":"","LightRain":"","LightShowers":"","LightSleet":"","LightSleetShowers":"","LightSnow":"","LightSnowShowers":"","PartlyCloudy":"","Sunny":"","ThunderyHeavyRain":"","ThunderyShowers":"","ThunderySnowShowers":"","VeryCloudy":""}';NF_NIGHT_MAP='{"Unknown":"ﮊ","Cloudy":"","Fog":"","HeavyRain":"","HeavyShowers":"","HeavySnow":"","HeavySnowShowers":"","LightRain":"","LightShowers":"","LightSleet":"","LightSleetShowers":"","LightSnow":"","LightSnowShowers":"","PartlyCloudy":"","Sunny":"","ThunderyHeavyRain":"","ThunderyShowers":"","ThunderySnowShowers":"","VeryCloudy":""}'
+            WWC_MAP='{"113":"Sunny","116":"PartlyCloudy","119":"Cloudy","122":"VeryCloudy","143":"Fog","176":"LightShowers","179":"LightSleetShowers","182":"LightSleet","185":"LightSleet","200":"ThunderyShowers","227":"LightSnow","230":"HeavySnow","248":"Fog","260":"Fog","263":"LightShowers","266":"LightRain","281":"LightSleet","284":"LightSleet","293":"LightRain","296":"LightRain","299":"HeavyShowers","302":"HeavyRain","305":"HeavyShowers","308":"HeavyRain","311":"LightSleet","314":"LightSleet","317":"LightSleet","320":"LightSnow","323":"LightSnowShowers","326":"LightSnowShowers","329":"HeavySnow","332":"HeavySnow","335":"HeavySnowShowers","338":"HeavySnow","350":"LightSleet","353":"LightShowers","356":"HeavyShowers","359":"HeavyRain","362":"LightSleetShowers","365":"LightSleetShowers","368":"LightSnowShowers","371":"HeavySnowShowers","374":"LightSleetShowers","377":"LightSleet","386":"ThunderyShowers","389":"ThunderyHeavyRain","392":"ThunderySnowShowers","395":"HeavySnowShowers"}';NF_DAY_MAP='{"Unknown":"󰚌","Cloudy":"","Fog":"","HeavyRain":"","HeavyShowers":"","HeavySnow":"","HeavySnowShowers":"","LightRain":"","LightShowers":"","LightSleet":"","LightSleetShowers":"","LightSnow":"","LightSnowShowers":"","PartlyCloudy":"","Sunny":"","ThunderyHeavyRain":"","ThunderyShowers":"","ThunderySnowShowers":"","VeryCloudy":""}';NF_NIGHT_MAP='{"Unknown":"󰚌","Cloudy":"","Fog":"","HeavyRain":"","HeavyShowers":"","HeavySnow":"","HeavySnowShowers":"","LightRain":"","LightShowers":"","LightSleet":"","LightSleetShowers":"","LightSnow":"","LightSnowShowers":"","PartlyCloudy":"","Sunny":"","ThunderyHeavyRain":"","ThunderyShowers":"","ThunderySnowShowers":"","VeryCloudy":""}'
             cur_h="$(date +'%H')" ;wwc="$(jq '.weatherCode' <<<"$res")"
             if [[ $cur_h -gt 18 || $cur_h -lt 6 ]]; then icon=$(jq -r ".$(echo "$WWC_MAP" | jq -r ".$wwc")" <<<"$NF_DAY_MAP")
             else icon=$(jq -r ".$(echo "$WWC_MAP" | jq -r ".$wwc")" <<<"$NF_NIGHT_MAP"); fi

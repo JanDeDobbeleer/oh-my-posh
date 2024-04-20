@@ -93,7 +93,7 @@
             "always_enabled": true
           },
           "style": "plain",
-          "template": " {{ if gt .Code 0 }}\uf52f{{ else }}\uf4a7{{ end }} ",
+          "template": " {{ if gt .Code 0 }}\udb80\udc30{{ else }}\uf4a7{{ end }} ",
           "type": "status"
         },
         {

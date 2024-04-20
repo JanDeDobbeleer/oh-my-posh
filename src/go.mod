@@ -10,7 +10,6 @@ require (
 	github.com/alecthomas/repr v0.4.0 // indirect
 	github.com/esimov/stackblur-go v1.1.0
 	github.com/fogleman/gg v1.3.0
-	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gookit/color v1.5.4
 	github.com/huandu/xstrings v1.4.0 // indirect
@@ -70,6 +69,7 @@ require (
 	github.com/containerd/console v1.0.4 // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/fatih/color v1.16.0 // indirect
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect

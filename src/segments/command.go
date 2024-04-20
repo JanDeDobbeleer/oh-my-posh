@@ -21,6 +21,8 @@ const (
 	Command properties.Property = "command"
 	// Command to execute
 	Script properties.Property = "script"
+	// Interpret execution, or not
+	Interpret properties.Property = "interpret"
 )
 
 func (c *Cmd) Template() string {
@@ -32,18 +34,28 @@ func (c *Cmd) Enabled() bool {
 	if !c.env.HasCommand(shell) {
 		return false
 	}
+
 	command := c.props.GetString(Command, "")
 	if len(command) != 0 {
 		return c.runCommand(shell, command)
 	}
+
 	script := c.props.GetString(Script, "")
 	if len(script) != 0 {
 		return c.runScript(shell, script)
 	}
+
 	return false
 }
 
 func (c *Cmd) runCommand(shell, command string) bool {
+	interpret := c.props.GetBool(Interpret, true)
+
+	if !interpret {
+		c.Output = c.env.RunShellCommand(shell, command)
+		return len(c.Output) != 0
+	}
+
 	if strings.Contains(command, "||") {
 		commands := strings.Split(command, "||")
 		for _, cmd := range commands {
@@ -54,6 +66,7 @@ func (c *Cmd) runCommand(shell, command string) bool {
 			}
 		}
 	}
+
 	if strings.Contains(command, "&&") {
 		var output string
 		commands := strings.Split(command, "&&")
@@ -63,6 +76,7 @@ func (c *Cmd) runCommand(shell, command string) bool {
 		c.Output = output
 		return len(c.Output) != 0
 	}
+
 	c.Output = c.env.RunShellCommand(shell, strings.TrimSpace(command))
 	return len(c.Output) != 0
 }

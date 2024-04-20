@@ -136,6 +136,23 @@ func TestExecuteMultipleCommandsOrDisabled(t *testing.T) {
 	assert.False(t, enabled)
 }
 
+func TestExecuteNonInterpretedCommand(t *testing.T) {
+	env := new(mock.MockedEnvironment)
+	env.On("HasCommand", "bash").Return(true)
+	env.On("RunShellCommand", "bash", "echo hello && echo world").Return("hello world")
+	props := properties.Map{
+		Command:   "echo hello && echo world",
+		Interpret: false,
+	}
+	c := &Cmd{
+		props: props,
+		env:   env,
+	}
+	enabled := c.Enabled()
+	assert.True(t, enabled)
+	assert.Equal(t, "hello world", renderTemplate(env, c.Template(), c))
+}
+
 func TestExecuteScript(t *testing.T) {
 	cases := []struct {
 		Case            string

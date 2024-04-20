@@ -42,8 +42,8 @@ import (
 
 	"github.com/esimov/stackblur-go"
 	"github.com/fogleman/gg"
-	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font"
+	"golang.org/x/image/font/opentype"
 )
 
 type ConnectionError struct {
@@ -217,7 +217,7 @@ func (ir *ImageRenderer) loadFonts() error {
 
 	// Download font if not cached
 	if data == nil {
-		url := "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.0/Hack.zip"
+		url := "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.2.1/Hack.zip"
 		var err error
 
 		data, err = fontCLI.Download(url)
@@ -237,7 +237,7 @@ func (ir *ImageRenderer) loadFonts() error {
 		return err
 	}
 
-	fontFaceOptions := &truetype.Options{Size: 2.0 * 12, DPI: 144}
+	fontFaceOptions := &opentype.FaceOptions{Size: 2.0 * 12, DPI: 144}
 
 	parseFont := func(file *zip.File) (font.Face, error) {
 		rc, err := file.Open()
@@ -252,12 +252,16 @@ func (ir *ImageRenderer) loadFonts() error {
 			return nil, err
 		}
 
-		font, err := truetype.Parse(data)
+		font, err := opentype.Parse(data)
 		if err != nil {
 			return nil, err
 		}
 
-		return truetype.NewFace(font, fontFaceOptions), nil
+		fontFace, err := opentype.NewFace(font, fontFaceOptions)
+		if err != nil {
+			return nil, err
+		}
+		return fontFace, nil
 	}
 
 	for _, file := range zipReader.File {

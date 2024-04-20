@@ -338,6 +338,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Bondrake"><img src="https://avatars.githubusercontent.com/u/11696?v=4?s=100" width="100px;" alt="Bondrake"/><br /><sub><b>Bondrake</b></sub></a><br /><a href="#design-Bondrake" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/R00dRallec"><img src="https://avatars.githubusercontent.com/u/9081954?v=4?s=100" width="100px;" alt="R00dRallec"/><br /><sub><b>R00dRallec</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=R00dRallec" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=R00dRallec" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/publicfacingusername"><img src="https://avatars.githubusercontent.com/u/13956145?v=4?s=100" width="100px;" alt="Justin Wolfington"/><br /><sub><b>Justin Wolfington</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=publicfacingusername" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

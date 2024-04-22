@@ -710,10 +710,19 @@ func (pt *Path) splitPath() Folders {
 
 	folderFormatMap := pt.makeFolderFormatMap()
 
-	currentPath := pt.root
-	if currentPath == "~" {
-		currentPath = pt.env.Home() + pt.env.PathSeparator()
+	getCurrentPath := func() string {
+		if pt.root == "~" {
+			return pt.env.Home() + pt.env.PathSeparator()
+		}
+
+		if pt.env.GOOS() == platform.WINDOWS {
+			return pt.root + pt.env.PathSeparator()
+		}
+
+		return pt.root
 	}
+
+	currentPath := getCurrentPath()
 
 	var display bool
 

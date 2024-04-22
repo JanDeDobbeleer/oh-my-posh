@@ -2378,6 +2378,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jtracey93",
+      "name": "Jack Tracey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/41163455?v=4",
+      "profile": "https://bio.link/jacktracey",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -1506,6 +1506,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 func TestSplitPath(t *testing.T) {
 	cases := []struct {
 		Case         string
+		GOOS         string
 		Relative     string
 		Root         string
 		GitDir       *platform.FileInfo
@@ -1517,6 +1518,7 @@ func TestSplitPath(t *testing.T) {
 			Case:     "Regular directory",
 			Root:     "/",
 			Relative: "c/d",
+			GOOS:     platform.DARWIN,
 			Expected: Folders{
 				{Name: "c", Path: "/c"},
 				{Name: "d", Path: "/c/d"},
@@ -1526,11 +1528,26 @@ func TestSplitPath(t *testing.T) {
 			Case:         "Home directory - git folder",
 			Root:         "~",
 			Relative:     "c/d",
+			GOOS:         platform.DARWIN,
 			GitDir:       &platform.FileInfo{IsDir: true, ParentFolder: "/a/b/c"},
 			GitDirFormat: "<b>%s</b>",
 			Expected: Folders{
 				{Name: "<b>c</b>", Path: "/a/b/c", Display: true},
 				{Name: "d", Path: "/a/b/c/d"},
+			},
+		},
+		{
+			Case:         "Home directory - git folder on Windows",
+			Root:         "C:",
+			Relative:     "a/b/c/d",
+			GOOS:         platform.WINDOWS,
+			GitDir:       &platform.FileInfo{IsDir: true, ParentFolder: "C:/a/b/c"},
+			GitDirFormat: "<b>%s</b>",
+			Expected: Folders{
+				{Name: "a", Path: "C:/a"},
+				{Name: "b", Path: "C:/a/b"},
+				{Name: "<b>c</b>", Path: "C:/a/b/c", Display: true},
+				{Name: "d", Path: "C:/a/b/c/d"},
 			},
 		},
 	}
@@ -1540,6 +1557,7 @@ func TestSplitPath(t *testing.T) {
 		env.On("PathSeparator").Return("/")
 		env.On("Home").Return("/a/b")
 		env.On("HasParentFilePath", ".git").Return(tc.GitDir, nil)
+		env.On("GOOS").Return(tc.GOOS)
 		path := &Path{
 			env: env,
 			props: properties.Map{

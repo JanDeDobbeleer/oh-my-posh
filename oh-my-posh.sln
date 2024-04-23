@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.002.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D799C21B-546F-459F-82FD-8410B67A1AE6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{27B6D226-D285-435F-882C-1E2AA8A9EDF9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ANonUmbracoProject", "src\test\umbraco\ANonUmbracoProject.csproj", "{0AD22A5F-BFB2-455E-9198-294157975262}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyProject", "src\test\umbraco\MyProject.csproj", "{138A8A74-30B8-4A09-A733-9D271CB5CD69}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0AD22A5F-BFB2-455E-9198-294157975262}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AD22A5F-BFB2-455E-9198-294157975262}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AD22A5F-BFB2-455E-9198-294157975262}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AD22A5F-BFB2-455E-9198-294157975262}.Release|Any CPU.Build.0 = Release|Any CPU
+		{138A8A74-30B8-4A09-A733-9D271CB5CD69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{138A8A74-30B8-4A09-A733-9D271CB5CD69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{138A8A74-30B8-4A09-A733-9D271CB5CD69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{138A8A74-30B8-4A09-A733-9D271CB5CD69}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{27B6D226-D285-435F-882C-1E2AA8A9EDF9} = {D799C21B-546F-459F-82FD-8410B67A1AE6}
+		{0AD22A5F-BFB2-455E-9198-294157975262} = {27B6D226-D285-435F-882C-1E2AA8A9EDF9}
+		{138A8A74-30B8-4A09-A733-9D271CB5CD69} = {27B6D226-D285-435F-882C-1E2AA8A9EDF9}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {572D37CA-C543-4555-BD8B-8A4E0057782C}
+	EndGlobalSection
+EndGlobal

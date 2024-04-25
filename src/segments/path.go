@@ -257,13 +257,14 @@ func (pt *Path) getAgnosterPath() string {
 
 	var elements []string
 	n := len(pt.Folders)
-	for i := 1; i < n; i++ {
+	for i := 0; i < n-1; i++ {
+		name := folderIcon
+
 		if pt.Folders[i].Display {
-			elements = append(elements, pt.Folders[i].Name)
-			continue
+			name = pt.Folders[i].Name
 		}
 
-		elements = append(elements, folderIcon)
+		elements = append(elements, name)
 	}
 
 	if len(pt.Folders) > 0 {

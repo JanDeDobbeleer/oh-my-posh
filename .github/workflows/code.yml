@@ -27,7 +27,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b
     - name: Golang CI
-      uses: golangci/golangci-lint-action@d6238b002a20823d52840fda27e2d4891c5952dc
+      uses: golangci/golangci-lint-action@82d40c283aeb1f2b6595839195e95c2d6a49081b
       with:
         working-directory: src
     - name: Unit Tests

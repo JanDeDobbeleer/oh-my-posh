@@ -110,7 +110,7 @@ func TestUnitySegment(t *testing.T) {
 }
 
 // 2021.9.20f1 is used in the test cases below as a fake Unity version.
-// As such, it doesn't exist in the predfined map in unity.go. This
+// As such, it doesn't exist in the predefined map in unity.go. This
 // allows us to test the web request portion of the code, which is the
 // fallback for obtaining a C# version.
 func TestUnitySegmentCSharpWebRequest(t *testing.T) {

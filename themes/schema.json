@@ -2873,7 +2873,7 @@
                   "location": {
                     "type": "string",
                     "title": "location",
-                    "description": "Location to use for the API call interpretted only if valid coordinates aren't given. Formatted as <City>,<STATE>,<COUNTRY_CODE>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes.",
+                    "description": "Location to use for the API call interpreted only if valid coordinates aren't given. Formatted as <City>,<STATE>,<COUNTRY_CODE>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes.",
                     "default": "De Bilt,NL"
                   },
                   "latitude" : {

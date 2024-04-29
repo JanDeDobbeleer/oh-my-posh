@@ -37,7 +37,7 @@ func mapMostLogicalState(currentState, newState State) State {
 	return newState
 }
 
-// GetAll returns information about all batteries in the system.
+// Get returns information about all batteries in the system.
 //
 // If error != nil, it will be either ErrFatal or Errors.
 // If error is of type Errors, it is guaranteed that length of both returned slices is the same and that i-th error coresponds with i-th battery structure.

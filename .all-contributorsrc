@@ -2387,6 +2387,17 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "MarkDaveny",
+      "name": "MarkDaveny",
+      "avatar_url": "https://avatars.githubusercontent.com/u/168091250?v=4",
+      "profile": "https://github.com/MarkDaveny",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

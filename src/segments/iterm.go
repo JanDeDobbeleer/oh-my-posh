@@ -1,7 +1,7 @@
 package segments
 
 import (
-	"errors"
+	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -11,8 +11,6 @@ import (
 type ITerm struct {
 	props properties.Properties
 	env   platform.Environment
-
-	PromptMark string
 }
 
 func (i *ITerm) Template() string {
@@ -20,39 +18,49 @@ func (i *ITerm) Template() string {
 }
 
 func (i *ITerm) Enabled() bool {
-	promptMark, err := i.getResult()
-	if err != nil {
-		i.env.Error(err)
-		return false
-	}
-	i.PromptMark = promptMark
-
-	return true
+	return i.env.Getenv("TERM_PROGRAM") == "iTerm.app"
 }
 
-func (i *ITerm) getResult() (string, error) {
-	var response string
-	// First, check if we're using iTerm
-	if i.env.Getenv("TERM_PROGRAM") != "iTerm.app" {
-		return "", errors.New("Only works with iTerm")
-	}
-
+func (i *ITerm) PromptMark() string {
 	// Check to ensure the user has squelched the default mark for BASH and ZSH
 	if i.env.Getenv("ITERM2_SQUELCH_MARK") != "1" {
-		return "", errors.New("iTerm default mark enabled (export ITERM2_SQUELCH_MARK=1)")
+		i.env.Debug("iTerm default mark enabled, adjust using export ITERM2_SQUELCH_MARK=1")
+		return ""
 	}
 
-	// Now, set the mark string based on shell (or error out)
+	sh := i.env.Shell()
+	if sh != shell.ZSH && sh != shell.BASH {
+		i.env.Debug("Shell is not ZSH or BASH, cannot set prompt mark")
+		return ""
+	}
+
+	return i.format("$(iterm2_prompt_mark)")
+}
+
+func (i *ITerm) CurrentDir() string {
+	dir := fmt.Sprintf("\x1b]1337;CurrentDir=%s\x07", i.env.Pwd())
+	return i.format(dir)
+}
+
+func (i *ITerm) RemoteHost() string {
+	host, err := i.env.Host()
+	if err != nil {
+		return ""
+	}
+
+	remoteHost := fmt.Sprintf("\x1b]1337;RemoteHost=%s@%s\x07", i.env.User(), host)
+	return i.format(remoteHost)
+}
+
+func (i *ITerm) format(input string) string {
 	switch i.env.Shell() {
 	case shell.ZSH:
-		response = `%{$(iterm2_prompt_mark)%}`
+		return fmt.Sprintf(`%%{%s%%}`, input)
 	case shell.BASH:
-		response = `\[$(iterm2_prompt_mark)\]`
+		return fmt.Sprintf(`\[%s\]`, input)
 	default:
-		return "", errors.New("Shell isn't compatible with iTerm Shell Integration")
+		return input
 	}
-
-	return response, nil
 }
 
 func (i *ITerm) Init(props properties.Properties, env platform.Environment) {

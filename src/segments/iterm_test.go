@@ -20,12 +20,12 @@ func TestITermSegment(t *testing.T) {
 		ExpectedDisabled bool
 	}{
 		{Case: "not iterm", TermProgram: "", SquelchMark: "1", Shell: "zsh", ExpectedDisabled: true},
-		{Case: "default mark", TermProgram: "iTerm.app", Shell: "zsh", Template: "{{ .PromptMark }}", ExpectedDisabled: true},
+		{Case: "default mark", TermProgram: "iTerm.app", Shell: "zsh", Template: "{{ .PromptMark }}", ExpectedDisabled: false},
 		{Case: "zsh", TermProgram: "iTerm.app", SquelchMark: "1", Shell: "zsh", Template: "{{ .PromptMark }}", ExpectedString: `%{$(iterm2_prompt_mark)%}`},
 		{Case: "bash", TermProgram: "iTerm.app", SquelchMark: "1", Shell: "bash", Template: "{{ .PromptMark }}", ExpectedString: `\[$(iterm2_prompt_mark)\]`},
-		{Case: "fish", TermProgram: "iTerm.app", SquelchMark: "1", Shell: "fish", Template: "{{ .PromptMark }}", ExpectedDisabled: true},
-		{Case: "pwsh", TermProgram: "iTerm.app", SquelchMark: "1", Shell: "pwsh", Template: "{{ .PromptMark }}", ExpectedDisabled: true},
-		{Case: "gibberishshell", TermProgram: "iTerm.app", SquelchMark: "1", Shell: "jaserhuashf", Template: "{{ .PromptMark }}", ExpectedDisabled: true},
+		{Case: "fish", TermProgram: "iTerm.app", SquelchMark: "1", Shell: "fish", Template: "{{ .PromptMark }}", ExpectedDisabled: false},
+		{Case: "pwsh", TermProgram: "iTerm.app", SquelchMark: "1", Shell: "pwsh", Template: "{{ .PromptMark }}", ExpectedDisabled: false},
+		{Case: "gibberishshell", TermProgram: "iTerm.app", SquelchMark: "1", Shell: "jaserhuashf", Template: "{{ .PromptMark }}", ExpectedDisabled: false},
 	}
 
 	for _, tc := range cases {

@@ -6,15 +6,16 @@ sidebar_label: iTerm
 
 ## What
 
-Inserts the iTerm2 shell integration prompt mark for zsh, and bash.
-For more information, read the [shell integration page][int-page] on
+Inserts iTerm2 shell integration prompt marks and extensions. This segment has no visible output
+but is used to enable iTerm2 terminal features.
+For more information, read the [shell integration][int-page] and [extension page][ext-page] on
 the developer's website.
 
-:::info
+:::info PromptMark in Bash and ZSH
 You will need to add `export ITERM2_SQUELCH_MARK=1` before the shell integration script is sourced.
 :::
 
-:::info Fish shell
+:::info PromptMark in Fish shell
 For fish, you can make use of Oh My Posh's `set_poshcontext` function to set the prompt mark. Add the
 following line after initialising Oh My Posh:
 
@@ -24,20 +25,22 @@ function set_poshcontext
 end
 ```
 
-You do not need to add this segment.
+You do not need to add this segment to use the prompt mark.
 :::
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "iterm",
-  "interactive": true,
-  "style": "plain",
-  "foreground": "#80ffea",
-  "template": "{{ .PromptMark }}"
-}}/>
+<Config
+  data={{
+    type: "iterm",
+    interactive: true,
+    style: "plain",
+    foreground: "#80ffea",
+    template: "{{ .PromptMark }}",
+  }}
+/>
 
 ## Template ([info][templates])
 
@@ -49,5 +52,14 @@ import Config from '@site/src/components/Config.js';
 
 :::
 
+### Properties
+
+| Name          | Type     | Description                                         |
+| ------------- | -------- | --------------------------------------------------- |
+| `.PromptMark` | `string` | inserts the prompt mark to enable shell integration |
+| `.CurrentDir` | `string` | inserts the current directory                       |
+| `.RemoteHost` | `string` | inserts the current user and host name              |
+
 [templates]: /docs/configuration/templates
 [int-page]: https://iterm2.com/documentation-shell-integration.html
+[ext-page]: https://iterm2.com/documentation-escape-codes.html

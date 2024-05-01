@@ -425,16 +425,16 @@
             "join"
           ]
         },
-        "max_cols": {
+        "max_width": {
           "type": "integer",
           "title": "if the terminal width exceeds this value, the segment will be hidden",
-          "description": "https://ohmyposh.dev/docs/configuration/segment#max_cols",
+          "description": "https://ohmyposh.dev/docs/configuration/segment",
           "default": 0
         },
-        "min_cols": {
+        "min_width": {
           "type": "integer",
           "title": "if the terminal width is inferior than this value, the segment will be hidden",
-          "description": "https://ohmyposh.dev/docs/configuration/segment#min_cols",
+          "description": "https://ohmyposh.dev/docs/configuration/segment",
           "default": 0
         },
         "properties": {

@@ -123,6 +123,7 @@ module.exports = {
         "segments/svn",
         "segments/swift",
         "segments/sysinfo",
+        "segments/talosctl",
         "segments/terraform",
         "segments/text",
         "segments/time",

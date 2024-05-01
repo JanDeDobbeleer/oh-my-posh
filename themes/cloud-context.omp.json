@@ -12,6 +12,7 @@
     "error-text": "#242424",
     "git-text": "#238636",
     "kubernetes-text": "#FFBB00",
+    "talosctl-text": "#FF6C00",
     "symbol-color": "#ffffff",
     "timer-text": "#dd0033"
   },
@@ -38,6 +39,14 @@
           "powerline_symbol": "\ue0b4",
           "template": "<p:symbol-color>\uf308</> {{.Context}}{{if .Namespace}} \uf061 {{.Namespace}}{{end}}",
           "type": "kubectl"
+        },
+        {
+          "background": "p:background-color",
+          "foreground": "p:talosctl-text",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b4",
+          "template": "<p:symbol-color>\udb84\udcfe</> {{.Context}}",
+          "type": "talosctl"
         },
         {
           "background": "p:background-color",

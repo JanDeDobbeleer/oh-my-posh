@@ -286,7 +286,7 @@
         "type": {
           "type": "string",
           "title": "Segment Type",
-          "description": "https://ohmyposh.dev/docs/configuration/segment#type",
+          "description": "https://ohmyposh.dev/docs/configuration/segment",
           "enum": [
             "az",
             "aws",
@@ -414,12 +414,12 @@
         },
         "templates": {
           "$ref": "#/definitions/templates",
-          "description": "https://ohmyposh.dev/docs/configuration/segment#templates"
+          "description": "https://ohmyposh.dev/docs/configuration/segment"
         },
         "templates_logic": {
           "type": "string",
           "title": "Templates Logic",
-          "description": "https://ohmyposh.dev/docs/configuration/segment#templates",
+          "description": "https://ohmyposh.dev/docs/configuration/segment",
           "enum": [
             "first_match",
             "join"
@@ -476,13 +476,13 @@
         "interactive": {
           "type": "boolean",
           "title": "Allow the use of interactive prompt escape sequences",
-          "description": "https://ohmyposh.dev/docs/configuration/segment#interactive",
+          "description": "https://ohmyposh.dev/docs/configuration/segment",
           "default": false
         },
         "alias": {
           "type": "string",
           "title": "Give the segment an alias for use in templates",
-          "description": "https://ohmyposh.dev/docs/configuration/segment#alias",
+          "description": "https://ohmyposh.dev/docs/configuration/segment",
           "default": ""
         }
       },

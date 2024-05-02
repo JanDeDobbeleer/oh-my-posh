@@ -44,7 +44,7 @@ func TestTalosctlSegment(t *testing.T) {
 		fcPath := filepath.Join("home", ".talos", "config")
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
 		env.On("Error", mock2.Anything).Return()
-		talos := Talosctl{
+		talos := TalosCTL{
 			env: env,
 		}
 		talos.Enabled()
@@ -70,7 +70,7 @@ func TestGetTalosctlActiveConfig(t *testing.T) {
 		{
 			Case:          "no active config",
 			ActiveConfig:  "",
-			ExpectedError: TALOSCTLNOACTIVECONFIG,
+			ExpectedError: "NO ACTIVE CONFIG FOUND",
 		},
 	}
 
@@ -81,7 +81,7 @@ func TestGetTalosctlActiveConfig(t *testing.T) {
 		contentPath := filepath.Join(configPath, "config")
 		env.On("FileContent", contentPath).Return(tc.ActiveConfig)
 		env.On("Error", mock2.Anything).Return()
-		talos := Talosctl{
+		talos := TalosCTL{
 			env: env,
 		}
 		got, err := talos.getActiveConfig(configPath)

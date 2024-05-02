@@ -347,7 +347,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	SVN:             func() SegmentWriter { return &segments.Svn{} },
 	SWIFT:           func() SegmentWriter { return &segments.Swift{} },
 	SYSTEMINFO:      func() SegmentWriter { return &segments.SystemInfo{} },
-	TALOSCTL:        func() SegmentWriter { return &segments.Talosctl{} },
+	TALOSCTL:        func() SegmentWriter { return &segments.TalosCTL{} },
 	TERRAFORM:       func() SegmentWriter { return &segments.Terraform{} },
 	TEXT:            func() SegmentWriter { return &segments.Text{} },
 	TIME:            func() SegmentWriter { return &segments.Time{} },

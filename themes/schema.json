@@ -360,6 +360,7 @@
             "strava",
             "svn",
             "swift",
+            "talosctl",
             "time",
             "text",
             "terraform",
@@ -2777,6 +2778,19 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "talosctl"
+              }
+            }
+          },
+          "then": {
+            "title": "Talosctl Segment",
+            "description": "https://ohmyposh.dev/docs/segments/talosctl"
           }
         },
         {

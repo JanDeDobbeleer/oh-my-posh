@@ -60,7 +60,7 @@ var debugCmd = &cobra.Command{
 	},
 }
 
-func init() { //nolint:gochecknoinits
+func init() {
 	debugCmd.Flags().StringVar(&pwd, "pwd", "", "current working directory")
 	debugCmd.Flags().StringVar(&shellName, "shell", "", "the shell to print for")
 	debugCmd.Flags().BoolVarP(&plain, "plain", "p", false, "plain text output (no ANSI)")

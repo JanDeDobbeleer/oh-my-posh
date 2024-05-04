@@ -27,7 +27,7 @@ var versionCmd = &cobra.Command{
 	},
 }
 
-func init() { //nolint:gochecknoinits
+func init() {
 	versionCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "write verbose output")
 	RootCmd.AddCommand(versionCmd)
 }

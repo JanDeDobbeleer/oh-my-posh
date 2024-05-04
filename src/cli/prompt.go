@@ -15,7 +15,7 @@ var promptCmd = &cobra.Command{
 	},
 }
 
-func init() { //nolint:gochecknoinits
+func init() {
 	// legacy support
 	promptCmd.AddCommand(initCmd)
 	promptCmd.AddCommand(debugCmd)

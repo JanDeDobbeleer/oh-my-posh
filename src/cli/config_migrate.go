@@ -57,7 +57,7 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	},
 }
 
-func init() { //nolint:gochecknoinits
+func init() {
 	migrateCmd.Flags().BoolVarP(&write, "write", "w", false, "write the migrated config back to the config file")
 	migrateCmd.Flags().StringVarP(&format, "format", "f", "json", "the config format to migrate to")
 	configCmd.AddCommand(migrateCmd)

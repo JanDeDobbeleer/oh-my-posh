@@ -9,7 +9,7 @@ import (
 	"github.com/mattn/go-runewidth"
 )
 
-func init() { //nolint:gochecknoinits
+func init() {
 	runewidth.DefaultCondition.EastAsianWidth = false
 }
 

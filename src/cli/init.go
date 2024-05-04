@@ -44,7 +44,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 	}
 )
 
-func init() { //nolint:gochecknoinits
+func init() {
 	initCmd.Flags().BoolVarP(&printOutput, "print", "p", false, "print the init script")
 	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "run in strict mode")
 	initCmd.Flags().BoolVarP(&manual, "manual", "m", false, "enable/disable manual mode")

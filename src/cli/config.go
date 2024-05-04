@@ -39,6 +39,6 @@ You can export, migrate or edit the config.`,
 	},
 }
 
-func init() { //nolint:gochecknoinits
+func init() {
 	RootCmd.AddCommand(configCmd)
 }

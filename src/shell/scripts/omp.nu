@@ -23,12 +23,15 @@ $env.PROMPT_MULTILINE_INDICATOR = (^::OMP:: print secondary $"--config=($env.POS
 $env.PROMPT_COMMAND = { ||
     # hack to set the cursor line to 1 when the user clears the screen
     # this obviously isn't bulletproof, but it's a start
-    let clear = (history | is-empty) or ((history | last 1 | get 0.command) == "clear")
+    mut clear = false
+    if $nu.history-enabled {
+        $clear = (history | is-empty) or ((history | last 1 | get 0.command) == "clear")
+    }
 
     ^::OMP:: print primary $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=(posh_cmd_duration)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=(posh_width)" $"--cleared=($clear)"
 }
 
-$env.PROMPT_COMMAND_RIGHT = { ||    
+$env.PROMPT_COMMAND_RIGHT = { ||
     ^::OMP:: print right $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=(posh_cmd_duration)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=(posh_width)"
 }
 

@@ -47,7 +47,7 @@ var (
 	initialize bool
 )
 
-func init() { //nolint:gochecknoinits
+func init() {
 	RootCmd.PersistentFlags().StringVarP(&config, "config", "c", "", "config file path")
 	RootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init (deprecated)")
 	RootCmd.Flags().BoolVar(&displayVersion, "version", false, "version")

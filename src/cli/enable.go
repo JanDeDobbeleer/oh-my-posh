@@ -37,7 +37,7 @@ var enableCmd = &cobra.Command{
 	},
 }
 
-func init() { //nolint:gochecknoinits
+func init() {
 	RootCmd.AddCommand(enableCmd)
 }
 

@@ -49,6 +49,6 @@ var toggleCmd = &cobra.Command{
 	},
 }
 
-func init() { //nolint:gochecknoinits
+func init() {
 	RootCmd.AddCommand(toggleCmd)
 }

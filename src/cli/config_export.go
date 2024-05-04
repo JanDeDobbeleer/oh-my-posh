@@ -96,7 +96,7 @@ func cleanOutputPath(path string, env platform.Environment) string {
 	return filepath.Clean(path)
 }
 
-func init() { //nolint:gochecknoinits
+func init() {
 	exportCmd.Flags().StringVarP(&format, "format", "f", "json", "config format to migrate to")
 	exportCmd.Flags().StringVarP(&output, "output", "o", "", "config file to export to")
 	configCmd.AddCommand(exportCmd)

@@ -59,7 +59,7 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	},
 }
 
-func init() { //nolint:gochecknoinits
+func init() {
 	migrateGlyphsCmd.Flags().BoolVarP(&write, "write", "w", false, "write the migrated config back to the config file")
 	migrateGlyphsCmd.Flags().StringVarP(&format, "format", "f", "", "the config format to migrate to")
 	migrateCmd.AddCommand(migrateGlyphsCmd)

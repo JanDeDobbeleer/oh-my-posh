@@ -106,7 +106,7 @@ Exports the config to an image file using customized output options.`,
 	},
 }
 
-func init() { //nolint:gochecknoinits
+func init() {
 	imageCmd.Flags().StringVar(&author, "author", "", "config author")
 	imageCmd.Flags().StringVar(&bgColor, "background-color", "", "image background color")
 	imageCmd.Flags().StringVarP(&outputImage, "output", "o", "", "image file (.png) to export to")

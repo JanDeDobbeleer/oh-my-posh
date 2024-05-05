@@ -55,8 +55,8 @@
           "type": "path"
         },
         {
-          "background": "#f14e32",
-          "foreground": "#f0efe7",
+          "background": "#cf432B",
+          "foreground": "#f1f0e9",
           "properties": {
             "branch_icon": "\ue725 ",
             "cherry_pick_icon": "\ue29b ",

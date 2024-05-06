@@ -2398,6 +2398,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "tiwahu",
+      "name": "Timothy Huber",
+      "avatar_url": "https://avatars.githubusercontent.com/u/590564?v=4",
+      "profile": "http://www.tiwahu.com/",
+      "contributions": [
+        "design"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -55,6 +55,7 @@ func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
 			env.Cache().Delete(upgrade.CACHEKEY)
 			return
 		}
+
 		env.Cache().Set(upgrade.CACHEKEY, "disabled", -1)
 	default:
 		_ = cmd.Help()

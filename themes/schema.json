@@ -4449,6 +4449,18 @@
       "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": ""
     },
+    "disable_notice": {
+      "type": "boolean",
+      "title": "Disable Upgrade Notice",
+      "description": "https://ohmyposh.dev/docs/configuration/title#general-settings",
+      "default": false
+    },
+    "patch_pwsh_bleed": {
+      "type": "boolean",
+      "title": "Patch PowerShell Color Bleed",
+      "description": "https://ohmyposh.dev/docs/configuration/title#general-settings",
+      "default": false
+    },
     "console_title_template": {
       "type": "string",
       "title": "Console Title Template",

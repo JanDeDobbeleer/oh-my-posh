@@ -341,6 +341,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/publicfacingusername"><img src="https://avatars.githubusercontent.com/u/13956145?v=4?s=100" width="100px;" alt="Justin Wolfington"/><br /><sub><b>Justin Wolfington</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=publicfacingusername" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://bio.link/jacktracey"><img src="https://avatars.githubusercontent.com/u/41163455?v=4?s=100" width="100px;" alt="Jack Tracey"/><br /><sub><b>Jack Tracey</b></sub></a><br /><a href="#design-jtracey93" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/MarkDaveny"><img src="https://avatars.githubusercontent.com/u/168091250?v=4?s=100" width="100px;" alt="MarkDaveny"/><br /><sub><b>MarkDaveny</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=MarkDaveny" title="Code">💻</a> <a href="#design-MarkDaveny" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=MarkDaveny" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.tiwahu.com/"><img src="https://avatars.githubusercontent.com/u/590564?v=4?s=100" width="100px;" alt="Timothy Huber"/><br /><sub><b>Timothy Huber</b></sub></a><br /><a href="#design-tiwahu" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>

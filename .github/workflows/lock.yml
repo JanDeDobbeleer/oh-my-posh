@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: dessant/lock-threads@1bf7ec25051fe7c00bdd17e6a7cf3d7bfb7dc771
         with:
-          issue-inactive-days: '182'
+          issue-inactive-days: '90'
           issue-comment: >
             This issue has been automatically locked since there
             has not been any recent activity (i.e. last half year) after it was closed.

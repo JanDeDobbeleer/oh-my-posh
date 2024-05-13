@@ -51,6 +51,11 @@ func (p *Python) Init(props properties.Properties, env platform.Environment) {
 				args:       []string{"--version"},
 				regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
 			},
+			{
+				executable: "py",
+				args:       []string{"--version"},
+				regex:      `(?:Python (?P<version>((?P<major>[0-9]+).(?P<minor>[0-9]+).(?P<patch>[0-9]+))))`,
+			},
 		},
 		versionURLTemplate: "https://docs.python.org/release/{{ .Major }}.{{ .Minor }}.{{ .Patch }}/whatsnew/changelog.html#python-{{ .Major }}-{{ .Minor }}-{{ .Patch }}",
 		displayMode:        props.GetString(DisplayMode, DisplayModeEnvironment),

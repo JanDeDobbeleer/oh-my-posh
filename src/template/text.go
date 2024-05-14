@@ -28,15 +28,16 @@ var (
 		"ShellVersion",
 		"UserName",
 		"HostName",
-		"Env",
-		"Data",
 		"Code",
+		"Env",
 		"OS",
 		"WSL",
-		"Segments",
-		"Templates",
 		"PromptCount",
+		"Segments",
+		"SHLVL",
+		"Templates",
 		"Var",
+		"Data",
 	}
 )
 

@@ -98,12 +98,13 @@ func (m *main) buildFontList(nerdFonts []*Asset) {
 }
 
 func getFontsList() {
-	nerdFonts, err := Nerds()
+	fonts, err := Fonts()
 	if err != nil {
 		program.Send(errMsg(err))
 		return
 	}
-	program.Send(loadMsg(nerdFonts))
+
+	program.Send(loadMsg(fonts))
 }
 
 func downloadFontZip(location string) {

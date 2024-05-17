@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
+	"sort"
 	"strings"
 	"time"
 
@@ -23,30 +25,57 @@ type Asset struct {
 
 func (a Asset) FilterValue() string { return a.Name }
 
-func Nerds() ([]*Asset, error) {
-	ctx, cancelF := context.WithTimeout(context.Background(), time.Second*time.Duration(20))
-	defer cancelF()
-	req, err := http.NewRequestWithContext(ctx, "GET", "https://api.github.com/repos/ryanoasis/nerd-fonts/releases/latest", nil)
+func Fonts() ([]*Asset, error) {
+	assets, err := fetchFontAssets("ryanoasis/nerd-fonts")
 	if err != nil {
 		return nil, err
 	}
+
+	cascadiaCode, err := fetchFontAssets("microsoft/cascadia-code")
+	if err != nil {
+		return assets, nil
+	}
+
+	assets = append(assets, cascadiaCode...)
+	sort.Slice(assets, func(i, j int) bool { return assets[i].Name < assets[j].Name })
+
+	return assets, nil
+}
+
+func CascadiaCode() ([]*Asset, error) {
+	return fetchFontAssets("microsoft/cascadia-code")
+}
+
+func fetchFontAssets(repo string) ([]*Asset, error) {
+	ctx, cancelF := context.WithTimeout(context.Background(), time.Second*time.Duration(20))
+	defer cancelF()
+
+	repoURL := "https://api.github.com/repos/" + repo + "/releases/latest"
+	req, err := http.NewRequestWithContext(ctx, "GET", repoURL, nil)
+	if err != nil {
+		return nil, err
+	}
+
 	req.Header.Add("Accept", "application/vnd.github.v3+json")
 	response, err := platform.Client.Do(req)
 	if err != nil || response.StatusCode != http.StatusOK {
-		return nil, errors.New("failed to get nerd fonts release")
+		return nil, fmt.Errorf("failed to get %s release", repo)
 	}
+
 	defer response.Body.Close()
 	var release release
 	err = json.NewDecoder(response.Body).Decode(&release)
 	if err != nil {
 		return nil, errors.New("failed to parse nerd fonts release")
 	}
-	var nerdFonts []*Asset
+
+	var fonts []*Asset
 	for _, asset := range release.Assets {
 		if asset.State == "uploaded" && strings.HasSuffix(asset.Name, ".zip") {
 			asset.Name = strings.TrimSuffix(asset.Name, ".zip")
-			nerdFonts = append(nerdFonts, asset)
+			fonts = append(fonts, asset)
 		}
 	}
-	return nerdFonts, nil
+
+	return fonts, nil
 }

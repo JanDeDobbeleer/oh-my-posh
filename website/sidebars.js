@@ -84,7 +84,6 @@ module.exports = {
         "segments/haskell",
         "segments/helm",
         "segments/ipify",
-        "segments/iterm",
         "segments/java",
         "segments/julia",
         "segments/kotlin",

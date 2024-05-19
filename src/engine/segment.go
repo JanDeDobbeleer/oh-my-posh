@@ -160,8 +160,6 @@ const (
 	HELM SegmentType = "helm"
 	// IPIFY segment
 	IPIFY SegmentType = "ipify"
-	// ITERM inserts the Shell Integration prompt mark on iTerm zsh/bash/fish
-	ITERM SegmentType = "iterm"
 	// JAVA writes the active java version
 	JAVA SegmentType = "java"
 	// JULIA writes which julia version is currently active
@@ -307,7 +305,6 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	HASKELL:         func() SegmentWriter { return &segments.Haskell{} },
 	HELM:            func() SegmentWriter { return &segments.Helm{} },
 	IPIFY:           func() SegmentWriter { return &segments.IPify{} },
-	ITERM:           func() SegmentWriter { return &segments.ITerm{} },
 	JAVA:            func() SegmentWriter { return &segments.Java{} },
 	JULIA:           func() SegmentWriter { return &segments.Julia{} },
 	KOTLIN:          func() SegmentWriter { return &segments.Kotlin{} },

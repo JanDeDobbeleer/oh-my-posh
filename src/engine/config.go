@@ -31,27 +31,28 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Version                  int            `json:"version" toml:"version"`
-	FinalSpace               bool           `json:"final_space,omitempty" toml:"final_space,omitempty"`
-	ConsoleTitleTemplate     string         `json:"console_title_template,omitempty" toml:"console_title_template,omitempty"`
-	TerminalBackground       string         `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
-	AccentColor              string         `json:"accent_color,omitempty" toml:"accent_color,omitempty"`
-	Blocks                   []*Block       `json:"blocks,omitempty" toml:"blocks,omitempty"`
-	Tooltips                 []*Segment     `json:"tooltips,omitempty" toml:"tooltips,omitempty"`
-	TransientPrompt          *Segment       `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty"`
-	ValidLine                *Segment       `json:"valid_line,omitempty" toml:"valid_line,omitempty"`
-	ErrorLine                *Segment       `json:"error_line,omitempty" toml:"error_line,omitempty"`
-	SecondaryPrompt          *Segment       `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty"`
-	DebugPrompt              *Segment       `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty"`
-	Palette                  ansi.Palette   `json:"palette,omitempty" toml:"palette,omitempty"`
-	Palettes                 *ansi.Palettes `json:"palettes,omitempty" toml:"palettes,omitempty"`
-	Cycle                    ansi.Cycle     `json:"cycle,omitempty" toml:"cycle,omitempty"`
-	ShellIntegration         bool           `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
-	PWD                      string         `json:"pwd,omitempty" toml:"pwd,omitempty"`
-	Var                      map[string]any `json:"var,omitempty" toml:"var,omitempty"`
-	DisableCursorPositioning bool           `json:"disable_cursor_positioning,omitempty" toml:"disable_cursor_positioning,omitempty"`
-	PatchPwshBleed           bool           `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty"`
-	DisableNotice            bool           `json:"disable_notice,omitempty" toml:"disable_notice,omitempty"`
+	Version                  int                `json:"version" toml:"version"`
+	FinalSpace               bool               `json:"final_space,omitempty" toml:"final_space,omitempty"`
+	ConsoleTitleTemplate     string             `json:"console_title_template,omitempty" toml:"console_title_template,omitempty"`
+	TerminalBackground       string             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
+	AccentColor              string             `json:"accent_color,omitempty" toml:"accent_color,omitempty"`
+	Blocks                   []*Block           `json:"blocks,omitempty" toml:"blocks,omitempty"`
+	Tooltips                 []*Segment         `json:"tooltips,omitempty" toml:"tooltips,omitempty"`
+	TransientPrompt          *Segment           `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty"`
+	ValidLine                *Segment           `json:"valid_line,omitempty" toml:"valid_line,omitempty"`
+	ErrorLine                *Segment           `json:"error_line,omitempty" toml:"error_line,omitempty"`
+	SecondaryPrompt          *Segment           `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty"`
+	DebugPrompt              *Segment           `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty"`
+	Palette                  ansi.Palette       `json:"palette,omitempty" toml:"palette,omitempty"`
+	Palettes                 *ansi.Palettes     `json:"palettes,omitempty" toml:"palettes,omitempty"`
+	Cycle                    ansi.Cycle         `json:"cycle,omitempty" toml:"cycle,omitempty"`
+	ShellIntegration         bool               `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
+	PWD                      string             `json:"pwd,omitempty" toml:"pwd,omitempty"`
+	Var                      map[string]any     `json:"var,omitempty" toml:"var,omitempty"`
+	DisableCursorPositioning bool               `json:"disable_cursor_positioning,omitempty" toml:"disable_cursor_positioning,omitempty"`
+	PatchPwshBleed           bool               `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty"`
+	DisableNotice            bool               `json:"disable_notice,omitempty" toml:"disable_notice,omitempty"`
+	ITermFeatures            ansi.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty"`
 
 	// Deprecated
 	OSC99 bool `json:"osc99,omitempty" toml:"osc99,omitempty"`

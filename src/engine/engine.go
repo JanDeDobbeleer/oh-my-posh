@@ -132,6 +132,10 @@ func (e *Engine) isWarp() bool {
 	return e.Env.Getenv("TERM_PROGRAM") == "WarpTerminal"
 }
 
+func (e *Engine) isIterm() bool {
+	return e.Env.Getenv("TERM_PROGRAM") == "iTerm.app"
+}
+
 func (e *Engine) shouldFill(filler string, remaining, blockLength int) (string, bool) {
 	if len(filler) == 0 {
 		return "", false

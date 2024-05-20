@@ -181,7 +181,6 @@ func (w *Writer) Init(shellName string) {
 		w.osc99 = "\x1b]9;9;%s\x1b\\"
 		w.osc7 = "\x1b]7;file://%s/%s\x1b\\"
 		w.osc51 = "\x1b]51;A%s@%s:%s\x1b\\"
-		w.iTermPromptMark = "$(iterm2_prompt_mark)"
 		w.iTermCurrentDir = "\x1b]1337;CurrentDir=%s\x07"
 		w.iTermRemoteHost = "\x1b]1337;RemoteHost=%s@%s\x07"
 	}

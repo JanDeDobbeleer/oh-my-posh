@@ -70,7 +70,7 @@ func (e *Engine) Primary() string {
 
 	if e.Config.ITermFeatures != nil && e.isIterm() {
 		host, _ := e.Env.Host()
-		e.write(e.Writer.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Pwd(), e.Env.User(), host))
+		e.write(e.Writer.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
 	}
 
 	if e.Config.ShellIntegration && e.Config.TransientPrompt == nil {

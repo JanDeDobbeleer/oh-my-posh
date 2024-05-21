@@ -19,7 +19,7 @@ func (h *Helm) Enabled() bool {
 	}
 
 	inChart := false
-	files := []string{"Chart.yml", "Chart.yaml"}
+	files := []string{"Chart.yml", "Chart.yaml", "helmfile.yaml", "helmfile.yml"}
 	for _, file := range files {
 		if _, err := h.env.HasParentFilePath(file); err == nil {
 			inChart = true

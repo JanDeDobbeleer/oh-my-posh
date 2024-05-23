@@ -2416,6 +2416,16 @@
       "contributions": [
         "design"
       ]
+    },
+    {
+      "login": "jlabonski",
+      "name": "Jeffrey Labonski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2981369?v=4",
+      "profile": "https://github.com/jlabonski",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -578,7 +578,13 @@
                 "type": "string",
                 "title": "Powerline Symbol",
                 "description": "https://ohmyposh.dev/docs/configuration/segment#powerline-symbol",
-                "default": "\uE0B0"
+                "default": "\ue0b0"
+              },
+              "leading_powerline_symbol": {
+                "type": "string",
+                "title": "Leading Powerline Symbol",
+                "description": "https://ohmyposh.dev/docs/configuration/segment#powerline-symbol",
+                "default": "\ue0d7"
               },
               "invert_powerline": {
                 "type": "boolean",

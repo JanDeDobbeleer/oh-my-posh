@@ -344,6 +344,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="http://www.tiwahu.com/"><img src="https://avatars.githubusercontent.com/u/590564?v=4?s=100" width="100px;" alt="Timothy Huber"/><br /><sub><b>Timothy Huber</b></sub></a><br /><a href="#design-tiwahu" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://yashjmistry.me"><img src="https://avatars.githubusercontent.com/u/63824041?v=4?s=100" width="100px;" alt="Yash Mistry"/><br /><sub><b>Yash Mistry</b></sub></a><br /><a href="#design-YashJM" title="Design">🎨</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jlabonski"><img src="https://avatars.githubusercontent.com/u/2981369?v=4?s=100" width="100px;" alt="Jeffrey Labonski"/><br /><sub><b>Jeffrey Labonski</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jlabonski" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jlabonski" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

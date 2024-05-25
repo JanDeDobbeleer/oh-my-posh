@@ -18,12 +18,47 @@ As the standard terminal only supports [256 colors][256-colors], we advise using
 To display all icons, we recommend the use of a [Nerd Font][fonts].
 :::
 
-## Installation
+<Tabs
+  defaultValue="homebrew"
+  groupId="install"
+  values={[
+    { label: 'homebrew', value: 'homebrew', },
+    { label: 'MacPorts', value: 'macports', }
+  ]
+}>
+<TabItem value="homebrew">
 
 <InstallHomebrew />
+
+</TabItem>
+<TabItem value="macports">
+
+You can install Oh My Posh via [MacPorts] which is maintained by the [community].
+
+```bash
+sudo port selfupdate
+sudo port install oh-my-posh
+```
+
+Oh My Posh will be installed at `/opt/local/bin/oh-my-posh`.
+
+## Updating
+
+```bash
+sudo port selfupdate
+sudo port upgrade oh-my-posh
+```
+
+More details on the [ports page] for Oh My Posh.
+
+</TabItem>
+</Tabs>
 
 <Next />
 
 [256-colors]: /docs/configuration/colors#standard-colors
 [iterm2]: https://iterm2.com
 [fonts]: /docs/installation/fonts
+[MacPorts]: https://www.macports.org
+[ports page]: https://ports.macports.org/port/oh-my-posh
+[community]: https://ports.macports.org/port/oh-my-posh/

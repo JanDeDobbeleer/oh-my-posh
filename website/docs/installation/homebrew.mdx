@@ -1,11 +1,5 @@
 A [Homebrew][brew] Formula and Cask (macOS only) are available for easy installation.
 
-:::warning Linux
-When installing Homebrew for Linux,
-be sure to follow *[Next steps][nextsteps]* instructions to add Homebrew to your PATH and to your
-bash shell profile script, and *[Requirements][requirements]* to build Oh My Posh.
-:::
-
 ```bash
 brew install jandedobbeleer/oh-my-posh/oh-my-posh
 ```
@@ -18,7 +12,7 @@ This installs two things:
 If you want to use a predefined theme, you can find them in `$(brew --prefix oh-my-posh)/themes`, referencing them as such
 will always keep them compatible when updating Oh My Posh.
 
-## Update
+## Updating
 
 ```bash
 brew update && brew upgrade oh-my-posh
@@ -34,7 +28,5 @@ brew update && brew upgrade && exec zsh
 :::
 
 [brew]: https://brew.sh
-[requirements]: https://docs.brew.sh/Homebrew-on-Linux#requirements
-[nextsteps]: https://docs.brew.sh/Homebrew-on-Linux#install
 [themes]: https://ohmyposh.dev/docs/themes
 [strange]: https://github.com/JanDeDobbeleer/oh-my-posh/issues/1287

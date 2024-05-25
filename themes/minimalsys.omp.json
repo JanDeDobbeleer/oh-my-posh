@@ -1,0 +1,121 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "background": "#6cc7ff",
+          "foreground": "#444444",
+          "leading_diamond": "\ue0b6",
+          "style": "diamond",
+          "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} ",
+          "type": "os"
+        },
+        {
+          "background": "#ef5350",
+          "foreground": "#FFFB38",
+          "properties": {
+            "root_icon": "\uf292"
+          },
+          "style": "diamond",
+          "template": "<parentBackground>\ue0b0</> \uf0e7 ",
+          "type": "root"
+        },
+        {
+          "background": "#444444",
+          "foreground": "#E4E4E4",
+          "powerline_symbol": "\ue0b4",
+          "properties": {
+            "style": "full"
+          },
+          "style": "powerline",
+          "template": " {{ .Path }} ",
+          "type": "path"
+        },
+        {
+          "background": "#FFFB38",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#ffeb95{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#c5e478{{ end }}",
+            "{{ if gt .Ahead 0 }}#C792EA{{ end }}",
+            "{{ if gt .Behind 0 }}#C792EA{{ end }}"
+          ],
+          "foreground": "#011627",
+          "powerline_symbol": "\ue0b4",
+          "properties": {
+            "branch_icon": "\ue725 ",
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          },
+          "style": "powerline",
+          "template": " {{ .HEAD }}{{ if .Working.Changed }} {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} <#ef5350> \uf046 {{ .Staging.String }}</#ef5350>{{ end }} ",
+          "type": "git"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "background": "#575656",
+          "foreground": "#D6DEEB",
+          "properties": {
+            "style": "roundrock",
+            "threshold": 0
+          },
+          "style": "diamond",
+          "leading_diamond": " \ue0b6",
+          "template": " \uf252 {{ .FormattedMs }} ",
+          "trailing_diamond": "\ue0b4",
+          "type": "executiontime"
+        },
+        {
+          "background": "#84db81",
+          "foreground": "#303030",
+          "invert_powerline": true,
+          "style": "diamond",
+          "leading_diamond": " \ue0b6",
+          "template": " \uf4bc CPU: {{ round .PhysicalPercentUsed .Precision }}\uf295 \ue621 ",
+          "type": "sysinfo"
+        },
+        {
+          "background": "#84db81",
+          "foreground": "#303030",
+          "invert_powerline": true,
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "template": "<#303030>\ue266</> RAM: {{ (div ((sub .PhysicalTotalMemory .PhysicalFreeMemory)|float64) 1000000000.0) }}/{{ (div .PhysicalTotalMemory 1000000000.0) }}GB ",
+          "type": "sysinfo"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "foreground": "#6cc7ff",
+          "style": "plain",
+          "type": "text"
+        },
+        {
+          "foreground": "#e0f8ff",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}#ef5350{{ end }}"
+          ],
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "plain",
+          "template": "\uf105 ",
+          "type": "exit"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "version": 2
+}

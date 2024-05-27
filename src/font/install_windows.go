@@ -43,6 +43,7 @@ func install(font *Font, admin bool) error {
 			return fmt.Errorf("Unable to remove existing font file: %s", err.Error())
 		}
 	}
+
 	err := os.WriteFile(fullPath, font.Data, 0644)
 	if err != nil {
 		return fmt.Errorf("Unable to write font file: %s", err.Error())

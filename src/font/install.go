@@ -42,7 +42,7 @@ func InstallZIP(data []byte, user bool) ([]string, error) {
 			return families, err
 		}
 
-		fontData, err := newFont(zf.Name, data)
+		fontData, err := newFont(path.Base(zf.Name), data)
 		if err != nil {
 			continue
 		}

@@ -2426,6 +2426,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "herbygillot",
+      "name": "Herby Gillot",
+      "avatar_url": "https://avatars.githubusercontent.com/u/618376?v=4",
+      "profile": "https://github.com/herbygillot",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

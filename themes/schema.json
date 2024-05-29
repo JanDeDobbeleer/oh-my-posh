@@ -2952,18 +2952,6 @@
                     "description": "Location to use for the API call interpreted only if valid coordinates aren't given. Formatted as <City>,<STATE>,<COUNTRY_CODE>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes.",
                     "default": "De Bilt,NL"
                   },
-                  "latitude": {
-                    "type": "number",
-                    "title": "Latitude",
-                    "description": "The latitude of the requested location, valid between -90 and 90",
-                    "default": 91
-                  },
-                  "longitude": {
-                    "type": "number",
-                    "title": "Longitude",
-                    "description": "The longitude of the requested location, valid between -180 and 180",
-                    "default": 181
-                  },
                   "units": {
                     "type": "string",
                     "title": "units",

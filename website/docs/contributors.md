@@ -346,6 +346,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jlabonski"><img src="https://avatars.githubusercontent.com/u/2981369?v=4?s=100" width="100px;" alt="Jeffrey Labonski"/><br /><sub><b>Jeffrey Labonski</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jlabonski" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jlabonski" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/herbygillot"><img src="https://avatars.githubusercontent.com/u/618376?v=4?s=100" width="100px;" alt="Herby Gillot"/><br /><sub><b>Herby Gillot</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=herbygillot" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

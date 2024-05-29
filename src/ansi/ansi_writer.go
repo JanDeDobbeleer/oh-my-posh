@@ -558,7 +558,12 @@ func (w *Writer) endColorOverride(position int) int {
 		}
 
 		if previousBg != bg {
-			w.writeEscapedAnsiString(fmt.Sprintf(colorise, previousBg))
+			background := fmt.Sprintf(colorise, previousBg)
+			if previousBg.IsClear() {
+				background = backgroundStyle.End
+			}
+
+			w.writeEscapedAnsiString(background)
 		}
 
 		if previousFg != fg {

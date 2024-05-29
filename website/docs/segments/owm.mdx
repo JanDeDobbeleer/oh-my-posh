@@ -37,19 +37,13 @@ import Config from "@site/src/components/Config.js";
 
 ## Properties
 
-| Name            | Type      | Default      | Description                                                                                                                                                                                                                                   |
-| --------------- | :-------: | :----------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `api_key`       | `string`  | `.`          | Your API key from [Open Weather Map][owm]. Can also be set using the `POSH_OWM_API_KEY` environment variable.                                                                                                                                 |
-| `latitude`      | `float64` | `91`         | The latitude of the requested location, valid between -90 and 90                                                                                                                                                                              |
-| `longitude`     | `float64` | `181`        | The longitude of the requested location, valid between -180 and 180                                                                                                                                                                           |
-| `location`      | `string`  | `De Bilt,NL` | The requested location interpreted only if valid coordinates aren't given. Formatted as \<City,STATE,COUNTRY_CODE\>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes |
-| `units`         | `string`  | `standard`   | Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit)                                                                                                                                     |
-| `http_timeout`  | `int`     | `20`         | in milliseconds, the timeout for http request                                                                                                                                                                                                 |
-| `cache_timeout` | `int`     | `10`         | in minutes, the timeout for request caching. A value of 0 disables the cache.                                                                                                                                                                 |
-
-### Specifying Location
-
-The given location can either be specified through the Latitude and Longitude properties or through the Location property. If both Latitude and Longitude are specified and valid then Location will be ignored if it is included. If Latitude or Longitude are not specified or are invalid then Location will be used.
+| Name            |   Type   |   Default    | Description                                                                                                                                                                                                                                  |
+| --------------- | :------: | :----------: | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `api_key`       | `string` |     `.`      | Your API key from [Open Weather Map][owm]. Can also be set using the `POSH_OWM_API_KEY` environment variable.                                                                                                                                |
+| `location`      | `string` | `De Bilt,NL` | The requested location interpreted only if valid coordinates aren't given. Formatted as \<City,STATE,COUNTRY_CODE\>. City name, state code and country code divided by comma. Please, refer to ISO 3166 for the state codes or country codes |
+| `units`         | `string` |  `standard`  | Units of measurement. Available values are standard (kelvin), metric (celsius), and imperial (fahrenheit)                                                                                                                                    |
+| `http_timeout`  |  `int`   |     `20`     | in milliseconds, the timeout for http request                                                                                                                                                                                                |
+| `cache_timeout` |  `int`   |     `10`     | in minutes, the timeout for request caching. A value of 0 disables the cache.                                                                                                                                                                |
 
 ## Template ([info][templates])
 

@@ -3,6 +3,7 @@ package segments
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
@@ -13,7 +14,7 @@ import (
 )
 
 const (
-	OWMWEATHERAPIURL = "http://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&appid=key"
+	OWMWEATHERAPIURL = "https://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&appid=key"
 )
 
 func TestOWMSegmentSingle(t *testing.T) {
@@ -79,8 +80,9 @@ func TestOWMSegmentSingle(t *testing.T) {
 			properties.CacheTimeout: 0,
 		}
 
-		url := fmt.Sprintf(OWMWEATHERAPIURL, tc.Location)
-		env.On("HTTPRequest", url).Return([]byte(tc.WeatherJSONResponse), tc.Error)
+		location := url.QueryEscape(tc.Location)
+		testURL := fmt.Sprintf(OWMWEATHERAPIURL, location)
+		env.On("HTTPRequest", testURL).Return([]byte(tc.WeatherJSONResponse), tc.Error)
 		env.On("Error", mock2.Anything)
 
 		o := &Owm{
@@ -200,7 +202,8 @@ func TestOWMSegmentIcons(t *testing.T) {
 		},
 	}
 
-	url := fmt.Sprintf(OWMWEATHERAPIURL, "AMSTERDAM,NL")
+	location := url.QueryEscape("AMSTERDAM,NL")
+	testURL := fmt.Sprintf(OWMWEATHERAPIURL, location)
 
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
@@ -208,7 +211,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 		weatherResponse := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.3}}`, tc.IconID)
 		expectedString := fmt.Sprintf("%s (20°C)", tc.ExpectedIconString)
 
-		env.On("HTTPRequest", url).Return([]byte(weatherResponse), nil)
+		env.On("HTTPRequest", testURL).Return([]byte(weatherResponse), nil)
 
 		o := &Owm{
 			props: properties.Map{
@@ -229,9 +232,9 @@ func TestOWMSegmentIcons(t *testing.T) {
 		env := &mock.MockedEnvironment{}
 
 		weatherResponse := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.3}}`, tc.IconID)
-		expectedString := fmt.Sprintf("«%s (20°C)»(%s)", tc.ExpectedIconString, url)
+		expectedString := fmt.Sprintf("«%s (20°C)»(%s)", tc.ExpectedIconString, testURL)
 
-		env.On("HTTPRequest", url).Return([]byte(weatherResponse), nil)
+		env.On("HTTPRequest", testURL).Return([]byte(weatherResponse), nil)
 
 		o := &Owm{
 			props: properties.Map{

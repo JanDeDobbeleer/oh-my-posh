@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"net/url"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -89,6 +90,8 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 
 	location := d.props.GetString(Location, "De Bilt,NL")
 
+	location = url.QueryEscape(location)
+
 	if len(apikey) == 0 || len(location) == 0 {
 		return nil, errors.New("no api key or location found")
 	}
@@ -96,7 +99,7 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 	units := d.props.GetString(Units, "standard")
 	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
-	d.URL = fmt.Sprintf("http://api.openweathermap.org/data/2.5/weather?q=%s&units=%s&appid=%s", location, units, apikey)
+	d.URL = fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?q=%s&units=%s&appid=%s", location, units, apikey)
 
 	body, err := d.env.HTTPRequest(d.URL, nil, httpTimeout)
 	if err != nil {

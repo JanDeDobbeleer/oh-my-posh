@@ -160,6 +160,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		Template: getTemplate(prompt.Template),
 		Env:      e.Env,
 	}
+
 	promptText, err := tmpl.Render()
 	if err != nil {
 		promptText = err.Error()

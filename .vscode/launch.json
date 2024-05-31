@@ -146,6 +146,16 @@
       ]
     },
     {
+      "name": "Upgrade",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "upgrade"
+      ]
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Theme export",

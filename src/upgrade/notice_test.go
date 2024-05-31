@@ -45,7 +45,7 @@ func TestCanUpgrade(t *testing.T) {
 		json := fmt.Sprintf(`{"tag_name":"%s"}`, tc.LatestVersion)
 		env.On("HTTPRequest", RELEASEURL).Return([]byte(json), tc.Error)
 		// ignore the notice
-		_, canUpgrade := Notice(env)
+		_, canUpgrade := Notice(env, false)
 		assert.Equal(t, tc.Expected, canUpgrade, tc.Case)
 	}
 }

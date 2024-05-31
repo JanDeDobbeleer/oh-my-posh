@@ -268,7 +268,7 @@ func PrintInit(env platform.Environment) string {
 	// only run this for shells that support
 	// injecting the notice directly
 	if shell != PWSH && shell != PWSH5 {
-		notice, hasNotice = upgrade.Notice(env)
+		notice, hasNotice = upgrade.Notice(env, false)
 	}
 
 	return strings.NewReplacer(

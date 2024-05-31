@@ -58,9 +58,9 @@ func Latest(env platform.Environment) (string, error) {
 // that should be displayed to the user.
 //
 // The upgrade check is only performed every other week.
-func Notice(env platform.Environment) (string, bool) {
+func Notice(env platform.Environment, force bool) (string, bool) {
 	// do not check when last validation was < 1 week ago
-	if _, OK := env.Cache().Get(CACHEKEY); OK {
+	if _, OK := env.Cache().Get(CACHEKEY); OK && !force {
 		return "", false
 	}
 

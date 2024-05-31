@@ -21,7 +21,7 @@ var noticeCmd = &cobra.Command{
 		env.Init()
 		defer env.Close()
 
-		if notice, hasNotice := upgrade.Notice(env); hasNotice {
+		if notice, hasNotice := upgrade.Notice(env, false); hasNotice {
 			fmt.Println(notice)
 		}
 	},

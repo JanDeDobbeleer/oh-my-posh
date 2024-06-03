@@ -8,10 +8,10 @@ import (
 	"runtime"
 )
 
-var successMsg = "Upgrade successful, restart your shell to take full advantage of the new functionality."
+var successMsg = "🚀  Upgrade successful, restart your shell to take full advantage of the new functionality."
 
 func install() error {
-	program.Send(stateMsg(validating))
+	setState(validating)
 	executable, err := os.Executable()
 	if err != nil {
 		return err
@@ -24,7 +24,7 @@ func install() error {
 
 	defer file.Close()
 
-	program.Send(stateMsg(downloading))
+	setState(downloading)
 
 	asset := fmt.Sprintf("posh-%s-%s", runtime.GOOS, runtime.GOARCH)
 
@@ -35,7 +35,7 @@ func install() error {
 
 	defer data.Close()
 
-	program.Send(stateMsg(installing))
+	setState(installing)
 
 	_, err = io.Copy(file, data)
 	if err != nil {

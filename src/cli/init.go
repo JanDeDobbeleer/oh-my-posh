@@ -73,6 +73,7 @@ func runInit(shellName string) {
 	shell.Tooltips = len(cfg.Tooltips) > 0
 	shell.ShellIntegration = cfg.ShellIntegration
 	shell.PromptMark = shellName == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(ansi.PromptMark)
+	shell.AutoUpgrade = cfg.AutoUpgrade && upgrade.Supported
 
 	for i, block := range cfg.Blocks {
 		// only fetch cursor position when relevant
@@ -85,7 +86,7 @@ func runInit(shellName string) {
 	}
 
 	// allow overriding the upgrade notice from the config
-	if cfg.DisableNotice {
+	if cfg.DisableNotice || cfg.AutoUpgrade {
 		env.Cache().Set(upgrade.CACHEKEY, "disabled", -1)
 	}
 

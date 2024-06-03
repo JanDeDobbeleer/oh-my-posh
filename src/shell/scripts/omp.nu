@@ -44,3 +44,7 @@ if "::TRANSIENT::" == "true" {
 if "::UPGRADE::" == "true" {
     echo "::UPGRADENOTICE::"
 }
+
+if "::AUTOUPGRADE::" == "true" {
+    ^::OMP:: upgrade
+}

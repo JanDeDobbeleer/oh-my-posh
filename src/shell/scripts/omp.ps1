@@ -486,6 +486,12 @@ Example:
         "Enable-PoshLineError"
         "Export-PoshTheme"
         "Get-PoshThemes"
+        "Start-Utf8Process"
         "prompt"
     )
 } | Import-Module -Global
+
+
+if ("::AUTOUPGRADE::" -eq "true") {
+    & ::OMP:: upgrade
+}

@@ -335,3 +335,8 @@ end
 if tooltips_enabled and rl.setbinding then
     rl.setbinding(' ', [["luafunc:ohmyposh_space"]], 'emacs')
 end
+
+if '::AUTOUPGRADE::' == 'true' then
+    local prompt_exe = string.format('%s upgrade', omp_exe())
+    os.execute(prompt_exe)
+end

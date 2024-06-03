@@ -13,7 +13,7 @@ import (
 var successMsg = "Oh My Posh is installing in the background.\nRestart your shell in a minute to take full advantage of the new functionality."
 
 func install() error {
-	program.Send(stateMsg(downloading))
+	setState(downloading)
 
 	temp := os.Getenv("TEMP")
 	if len(temp) == 0 {

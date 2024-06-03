@@ -2,4 +2,10 @@
 
 package upgrade
 
-func Run() {}
+import "github.com/jandedobbeleer/oh-my-posh/src/platform"
+
+func Run(_ platform.Environment) {}
+
+var (
+	Supported = false
+)

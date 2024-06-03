@@ -34,3 +34,7 @@ set edit:rprompt = {
 if (eq '::UPGRADE::' 'true') {
     echo '::UPGRADENOTICE::'
 }
+
+if (eq '::AUTOUPGRADE::' 'true') {
+    ::OMP:: upgrade
+}

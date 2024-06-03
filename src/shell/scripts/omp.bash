@@ -76,3 +76,7 @@ fi
 if [ "::UPGRADE::" == "true" ]; then
     echo "::UPGRADENOTICE::"
 fi
+
+if [[ "::AUTOUPGRADE::" == "true" ]]; then
+    ::OMP:: upgrade
+fi

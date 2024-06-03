@@ -19,12 +19,7 @@ var upgradeCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
 		if runtime.GOOS == platform.LINUX {
-			fmt.Print("\n    ⚠️ upgrade is not supported on this platform\n\n")
-			return
-		}
-
-		if force {
-			upgrade.Run()
+			fmt.Print("\n⚠️ upgrade is not supported on this platform\n\n")
 			return
 		}
 
@@ -34,12 +29,17 @@ var upgradeCmd = &cobra.Command{
 		env.Init()
 		defer env.Close()
 
-		if _, hasNotice := upgrade.Notice(env, true); !hasNotice {
-			fmt.Print("\n    ✅  no new version available\n\n")
+		if force {
+			upgrade.Run(env)
 			return
 		}
 
-		upgrade.Run()
+		if _, hasNotice := upgrade.Notice(env, true); !hasNotice {
+			fmt.Print("\n✅  no new version available\n\n")
+			return
+		}
+
+		upgrade.Run(env)
 	},
 }
 

@@ -27,3 +27,6 @@ notice = """::UPGRADENOTICE::"""
 
 if "::UPGRADE::" == "true":
   print(notice)
+
+if "::AUTOUPGRADE::" == "true":
+  ::OMP:: upgrade

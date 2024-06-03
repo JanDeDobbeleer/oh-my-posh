@@ -52,6 +52,7 @@ type Config struct {
 	DisableCursorPositioning bool               `json:"disable_cursor_positioning,omitempty" toml:"disable_cursor_positioning,omitempty"`
 	PatchPwshBleed           bool               `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty"`
 	DisableNotice            bool               `json:"disable_notice,omitempty" toml:"disable_notice,omitempty"`
+	AutoUpgrade              bool               `json:"auto_upgrade,omitempty" toml:"auto_upgrade,omitempty"`
 	ITermFeatures            ansi.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty"`
 
 	// Deprecated

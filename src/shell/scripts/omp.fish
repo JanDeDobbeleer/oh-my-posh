@@ -160,3 +160,7 @@ end
 if test "::UPGRADE::" = "true"
   echo "::UPGRADENOTICE::"
 end
+
+if test "::AUTOUPGRADE::" = "true"
+  ::OMP:: upgrade
+end

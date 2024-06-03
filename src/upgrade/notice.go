@@ -33,13 +33,8 @@ const (
 	RELEASEURL    = "https://api.github.com/repos/jandedobbeleer/oh-my-posh/releases/latest"
 	upgradeNotice = `
 A new release of Oh My Posh is available: %s → %s
-%s
+To upgrade, run: 'oh-my-posh upgrade'
 `
-	windows = `To upgrade, use the guide for your favorite package manager in the documentation:
-https://ohmyposh.dev/docs/installation/windows#update`
-	unix   = "To upgrade, use your favorite package manager or, if you used Homebrew to install, run: 'brew update; brew upgrade oh-my-posh'"
-	darwin = "To upgrade, run: 'brew update; brew upgrade oh-my-posh'"
-
 	CACHEKEY = "upgrade_check"
 )
 
@@ -82,15 +77,5 @@ func Notice(env platform.Environment, force bool) (string, bool) {
 		return "", false
 	}
 
-	var notice string
-	switch env.GOOS() {
-	case platform.WINDOWS:
-		notice = windows
-	case platform.DARWIN:
-		notice = darwin
-	case platform.LINUX:
-		notice = unix
-	}
-
-	return fmt.Sprintf(upgradeNotice, version, latest, notice), true
+	return fmt.Sprintf(upgradeNotice, version, latest), true
 }

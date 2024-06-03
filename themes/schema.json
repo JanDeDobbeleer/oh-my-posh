@@ -1328,6 +1328,12 @@
                     "description": "Icon/text to display when the upstream is CodeCommit",
                     "default": "\uF270"
                   },
+                  "codeberg_icon": {
+                    "type": "string",
+                    "title": "Codeberg Icon",
+                    "description": "Icon/text to display when the upstream is Codeberg",
+                    "default": "\uF330"
+                  },
                   "git_icon": {
                     "type": "string",
                     "title": "Git Icon",

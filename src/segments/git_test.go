@@ -672,6 +672,7 @@ func TestGitUpstream(t *testing.T) {
 		{Case: "Azure DevOps", Expected: "AD", Upstream: "dev.azure.com/test"},
 		{Case: "Azure DevOps Dos", Expected: "AD", Upstream: "test.visualstudio.com"},
 		{Case: "CodeCommit", Expected: "AC", Upstream: "codecommit::eu-west-1://test-repository"},
+		{Case: "Codeberg", Expected: "CB", Upstream: "codeberg.org:user/repo.git"},
 		{Case: "Gitstash", Expected: "G", Upstream: "gitstash.com/test"},
 		{Case: "My custom server", Expected: "CU", Upstream: "mycustom.server/test"},
 	}
@@ -687,6 +688,7 @@ func TestGitUpstream(t *testing.T) {
 			BitbucketIcon:   "BB",
 			AzureDevOpsIcon: "AD",
 			CodeCommit:      "AC",
+			CodebergIcon:    "CB",
 			GitIcon:         "G",
 			UpstreamIcons: map[string]string{
 				"mycustom.server": "CU",

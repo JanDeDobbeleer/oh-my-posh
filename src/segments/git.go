@@ -101,6 +101,8 @@ const (
 	AzureDevOpsIcon properties.Property = "azure_devops_icon"
 	// CodeCommit shows  when upstream is aws codecommit
 	CodeCommit properties.Property = "codecommit_icon"
+	// CodebergIcon shows when upstream is codeberg
+	CodebergIcon properties.Property = "codeberg_icon"
 	// GitlabIcon shows when upstream is gitlab
 	GitlabIcon properties.Property = "gitlab_icon"
 	// GitIcon shows when the upstream can't be identified
@@ -498,6 +500,7 @@ func (g *Git) getUpstreamIcon() string {
 		"dev.azure.com":    {AzureDevOpsIcon, "\uEBE8 "},
 		"visualstudio.com": {AzureDevOpsIcon, "\uEBE8 "},
 		"codecommit":       {CodeCommit, "\uF270 "},
+		"codeberg":         {CodebergIcon, "\uF330 "},
 	}
 	for key, value := range defaults {
 		if strings.Contains(g.UpstreamURL, key) {

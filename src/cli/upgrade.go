@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"runtime"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
@@ -17,6 +18,11 @@ var upgradeCmd = &cobra.Command{
 	Long:  "Upgrade when a new version is available.",
 	Args:  cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
+		if runtime.GOOS == platform.LINUX {
+			fmt.Print("\n    ⚠️ upgrade is not supported on this platform\n\n")
+			return
+		}
+
 		if force {
 			upgrade.Run()
 			return

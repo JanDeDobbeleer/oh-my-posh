@@ -112,7 +112,7 @@ func Run() {
 	}
 }
 
-func downloadAsset(asset string) (io.ReadCloser, error) {
+func downloadAsset(asset string) (io.ReadCloser, error) { //nolint:unused
 	url := fmt.Sprintf("https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/%s", asset)
 
 	req, err := http.NewRequestWithContext(context.Background(), "GET", url, nil)

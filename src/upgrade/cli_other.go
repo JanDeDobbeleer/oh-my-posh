@@ -1,4 +1,4 @@
-//go:build linux || freebsd || openbsd
+//go:build linux || freebsd || openbsd || netbsd
 
 package upgrade
 

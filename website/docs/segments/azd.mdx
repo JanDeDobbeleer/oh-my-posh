@@ -1,0 +1,44 @@
+---
+id: azd
+title: Azure Developer CLI
+sidebar_label: azd
+---
+
+## What
+
+Display the currently active environment in the Azure Developer CLI.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "azd",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#000000",
+    background: "#9ec3f0",
+    template: " \uebd8 {{ .DefaultEnvironment }} ",
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+ \uebd8 {{ .DefaultEnvironment }}
+```
+
+:::
+
+### Properties
+
+| Name                  | Type     | Description                          |
+| --------------------- | -------- | ------------------------------------ |
+| `.DefaultEnvironment` | `string` | Azure Developer CLI environment name |
+| `.Version`            | `number` | Config version number                |
+
+[templates]: /docs/configuration/templates
+[azd]: https://aka.ms/azd

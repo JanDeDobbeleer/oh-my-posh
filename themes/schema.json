@@ -289,6 +289,7 @@
           "description": "https://ohmyposh.dev/docs/configuration/segment",
           "enum": [
             "az",
+            "azd",
             "aws",
             "azfunc",
             "argocd",
@@ -647,6 +648,24 @@
                     ]
                   }
                 }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "azd"
+              }
+            }
+          },
+          "then": {
+            "title": "Azure Developer CLI Segment",
+            "description": "https://ohmyposh.dev/docs/segments/azd",
+            "properties": {
+              "properties": {
+                "properties": { }
               }
             }
           }

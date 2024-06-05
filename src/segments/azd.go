@@ -1,0 +1,78 @@
+package segments
+
+import (
+	"encoding/json"
+	"path/filepath"
+	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+)
+
+type Azd struct {
+	props properties.Properties
+	env   platform.Environment
+
+	azdConfig
+}
+
+type azdConfig struct {
+	Version            int    `json:"version"`
+	DefaultEnvironment string `json:"defaultEnvironment"`
+}
+
+func (t *Azd) Template() string {
+	return " \uebd8 {{ .DefaultEnvironment }} "
+}
+
+func (t *Azd) Init(props properties.Properties, env platform.Environment) {
+	t.props = props
+	t.env = env
+}
+
+func (t *Azd) Enabled() bool {
+	var parentFilePath string
+
+	folders := t.props.GetStringArray(LanguageFolders, []string{".azure"})
+	for _, folder := range folders {
+		if file, err := t.env.HasParentFilePath(folder); err == nil {
+			parentFilePath = file.ParentFolder
+			break
+		}
+	}
+
+	if len(parentFilePath) == 0 {
+		t.env.Debug("No .azure folder found in parent directories")
+		return false
+	}
+
+	dotAzureFolder := filepath.Join(parentFilePath, ".azure")
+	files := t.env.LsDir(dotAzureFolder)
+
+	for _, file := range files {
+		if file.IsDir() {
+			continue
+		}
+
+		if strings.EqualFold(file.Name(), "config.json") {
+			return t.TryReadConfigJSON(filepath.Join(dotAzureFolder, file.Name()))
+		}
+	}
+
+	return false
+}
+
+func (t *Azd) TryReadConfigJSON(file string) bool {
+	if len(file) == 0 {
+		return false
+	}
+
+	content := t.env.FileContent(file)
+	var config azdConfig
+	if err := json.Unmarshal([]byte(content), &config); err != nil {
+		return false
+	}
+
+	t.azdConfig = config
+	return true
+}

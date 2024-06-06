@@ -1,5 +1,6 @@
 # Make sure to check the documentation at https://goreleaser.com
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
 before:
   hooks:
     - go mod tidy
@@ -46,4 +47,4 @@ archives:
 checksum:
   name_template: 'checksums.txt'
 changelog:
-  skip: true
+  disable: true

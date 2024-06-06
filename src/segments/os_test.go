@@ -76,6 +76,14 @@ func TestOSInfo(t *testing.T) {
 			GOOS:           "linux",
 			Platform:       "crazy",
 		},
+		{
+			Case:              "show distro name, mapped",
+			ExpectedString:    "<3",
+			DisplayDistroName: true,
+			GOOS:              "linux",
+			Icon:              "<3",
+			Platform:          "love",
+		},
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)

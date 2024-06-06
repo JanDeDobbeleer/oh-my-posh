@@ -38,7 +38,7 @@ func (oi *Os) Enabled() bool {
 		pf := oi.env.Platform()
 		displayDistroName := oi.props.GetBool(DisplayDistroName, false)
 		if displayDistroName {
-			oi.Icon = pf
+			oi.Icon = oi.props.GetString(properties.Property(pf), pf)
 			break
 		}
 		oi.Icon = oi.getDistroIcon(pf)

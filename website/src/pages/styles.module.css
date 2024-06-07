@@ -21,6 +21,7 @@
 
 .buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem 1.5rem;
   align-items: center;
   justify-content: center;

@@ -63,12 +63,21 @@ function Home() {
           <div className={styles.buttons}>
             <Link
               className={classnames(
-                "button button--outline button--lg",
+                "button button--primary button--lg",
                 styles.getStarted
               )}
               to={useBaseUrl("docs/")}
             >
-              Get Started
+              Get Started &rarr;
+            </Link>
+            <Link
+              className={classnames(
+                "button button--outline button--lg",
+                styles.getStarted
+              )}
+              to={useBaseUrl("docs/themes")}
+            >
+              See themes &rarr;
             </Link>
           </div>
           <img class="hero--image" src="/img/hero.png" alt="Oh My Posh prompt"></img>

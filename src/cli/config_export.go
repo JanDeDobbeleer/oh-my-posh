@@ -88,11 +88,13 @@ func cleanOutputPath(path string, env runtime.Environment) string {
 		path = strings.TrimPrefix(path, "~")
 		path = filepath.Join(env.Home(), path)
 	}
+
 	if !filepath.IsAbs(path) {
 		if absPath, err := filepath.Abs(path); err == nil {
 			path = absPath
 		}
 	}
+
 	return filepath.Clean(path)
 }
 

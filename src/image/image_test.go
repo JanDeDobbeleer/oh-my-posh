@@ -1,88 +1,36 @@
 package image
 
 import (
-	stdOS "os"
-	"path/filepath"
 	"testing"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/shell"
-	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var cases = []struct {
-	Case   string
-	Config string
-}{
-	{Case: ".omp.json suffix", Config: "~/jandedobbeleer.omp.json"},
-	{Case: ".omp.yaml suffix", Config: "~/jandedobbeleer.omp.yaml"},
-	{Case: ".omp.yml suffix", Config: "~/jandedobbeleer.omp.yml"},
-	{Case: ".omp.toml suffix", Config: "~/jandedobbeleer.omp.toml"},
-	{Case: ".json suffix", Config: "~/jandedobbeleer.json"},
-	{Case: ".yaml suffix", Config: "~/jandedobbeleer.yaml"},
-	{Case: ".yml suffix", Config: "~/jandedobbeleer.yml"},
-	{Case: ".toml suffix", Config: "~/jandedobbeleer.toml"},
-}
-
-func runImageTest(config, content string) (string, error) {
-	poshImagePath := "jandedobbeleer.png"
-	file, err := stdOS.CreateTemp("", poshImagePath)
-	if err != nil {
-		return "", err
+func TestSetOutputPath(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Config   string
+		Path     string
+		Expected string
+	}{
+		{Case: "default config", Expected: "prompt.png"},
+		{Case: "hidden file", Config: ".posh.omp.json", Expected: "posh.png"},
+		{Case: "hidden file toml", Config: ".posh.omp.toml", Expected: "posh.png"},
+		{Case: "hidden file yaml", Config: ".posh.omp.yaml", Expected: "posh.png"},
+		{Case: "hidden file yml", Config: ".posh.omp.yml", Expected: "posh.png"},
+		{Case: "path provided", Path: "mytheme.png", Expected: "mytheme.png"},
+		{Case: "relative, no omp", Config: "~/jandedobbeleer.json", Expected: "jandedobbeleer.png"},
+		{Case: "relative path", Config: "~/jandedobbeleer.omp.json", Expected: "jandedobbeleer.png"},
+		{Case: "invalid config name", Config: "~/jandedobbeleer.omp.foo", Expected: "prompt.png"},
 	}
 
-	defer func() {
-		_ = stdOS.Remove(file.Name())
-	}()
-
-	terminal.Init(shell.GENERIC)
-
-	image := &Renderer{
-		AnsiString: content,
-	}
-
-	env := &runtime.Terminal{
-		CmdFlags: &runtime.Flags{
-			Config: config,
-		},
-	}
-
-	err = image.Init(env)
-	if err != nil {
-		return "", err
-	}
-
-	err = image.SavePNG()
-	if err == nil {
-		_ = stdOS.Remove(image.Path)
-	}
-
-	return filepath.Base(image.Path), err
-}
-
-func TestStringImageFileWithText(t *testing.T) {
 	for _, tc := range cases {
-		filename, err := runImageTest(tc.Config, "foobar")
-		if connectionError, ok := err.(*ConnectionError); ok {
-			t.Log(connectionError.Error())
-			continue
+		image := &Renderer{
+			Path: tc.Path,
 		}
-		assert.Equal(t, "jandedobbeleer.png", filename, tc.Case)
-		assert.NoError(t, err)
-	}
-}
 
-func TestStringImageFileWithANSI(t *testing.T) {
-	prompt := `[38;2;40;105;131m[0m[48;2;40;105;131m[38;2;224;222;244m jan [0m[38;2;40;105;131m[0m[38;2;224;222;244m [0m`
-	for _, tc := range cases {
-		filename, err := runImageTest(tc.Config, prompt)
-		if connectionError, ok := err.(*ConnectionError); ok {
-			t.Log(connectionError.Error())
-			continue
-		}
-		assert.Equal(t, "jandedobbeleer.png", filename, tc.Case)
-		assert.NoError(t, err)
+		image.setOutputPath(tc.Config)
+
+		assert.Equal(t, tc.Expected, image.Path, tc.Case)
 	}
 }

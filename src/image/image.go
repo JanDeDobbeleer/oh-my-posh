@@ -150,10 +150,7 @@ type Renderer struct {
 func (ir *Renderer) Init(env runtime.Environment) error {
 	ir.env = env
 
-	if ir.Path == "" {
-		match := regex.FindNamedRegexMatch(`.*(\/|\\)(?P<STR>.+)\.(json|yaml|yml|toml)`, env.Flags().Config)
-		ir.Path = fmt.Sprintf("%s.png", strings.TrimSuffix(match[str], ".omp"))
-	}
+	ir.setOutputPath(env.Flags().Config)
 
 	ir.cleanContent()
 
@@ -204,6 +201,28 @@ func (ir *Renderer) Init(env runtime.Environment) error {
 	}
 
 	return nil
+}
+
+func (ir *Renderer) setOutputPath(config string) {
+	if len(ir.Path) != 0 {
+		return
+	}
+
+	if len(config) == 0 {
+		ir.Path = "prompt.png"
+		return
+	}
+
+	config = filepath.Base(config)
+
+	match := regex.FindNamedRegexMatch(`(\.?)(?P<STR>.*)\.(json|yaml|yml|toml|jsonc)`, config)
+	path := strings.TrimRight(match[str], ".omp")
+
+	if len(path) == 0 {
+		path = "prompt"
+	}
+
+	ir.Path = fmt.Sprintf("%s.png", path)
 }
 
 func (ir *Renderer) loadFonts() error {

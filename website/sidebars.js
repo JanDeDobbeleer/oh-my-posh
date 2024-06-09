@@ -60,6 +60,7 @@ module.exports = {
         "segments/bazel",
         "segments/brewfather",
         "segments/buf",
+        "segments/bun",
         "segments/carbonintensity",
         "segments/cds",
         "segments/cf",

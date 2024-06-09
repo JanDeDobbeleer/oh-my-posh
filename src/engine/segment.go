@@ -111,6 +111,8 @@ const (
 	BREWFATHER SegmentType = "brewfather"
 	// Buf segment writes the active buf version
 	BUF SegmentType = "buf"
+	// BUN writes the active bun version
+	BUN SegmentType = "bun"
 	// CARBONINTENSITY writes the actual and forecast carbon intensity in gCO2/kWh
 	CARBONINTENSITY SegmentType = "carbonintensity"
 	// cds (SAP CAP) version
@@ -281,6 +283,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	BAZEL:           func() SegmentWriter { return &segments.Bazel{} },
 	BREWFATHER:      func() SegmentWriter { return &segments.Brewfather{} },
 	BUF:             func() SegmentWriter { return &segments.Buf{} },
+	BUN:             func() SegmentWriter { return &segments.Bun{} },
 	CARBONINTENSITY: func() SegmentWriter { return &segments.CarbonIntensity{} },
 	CDS:             func() SegmentWriter { return &segments.Cds{} },
 	CF:              func() SegmentWriter { return &segments.Cf{} },

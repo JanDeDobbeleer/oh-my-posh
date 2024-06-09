@@ -297,6 +297,7 @@
             "bazel",
             "brewfather",
             "buf",
+            "bun",
             "carbonintensity",
             "command",
             "connection",
@@ -811,6 +812,57 @@
                       "buf.yaml",
                       "buf.gen.yaml",
                       "buf.work.yaml"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folders": {
+                    "$ref": "#/definitions/folders"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "bun"
+              }
+            }
+          },
+          "then": {
+            "title": "Bun CLI Segment",
+            "description": "https://ohmyposh.dev/docs/segments/bun",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is a Bun workspace",
+                    "default": [
+                      "bun.lockb"
                     ],
                     "items": {
                       "type": "string"

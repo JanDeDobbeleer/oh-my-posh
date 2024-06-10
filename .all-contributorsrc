@@ -2467,6 +2467,17 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "Joxtacy",
+      "name": "Jesper Hasselquist",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10127673?v=4",
+      "profile": "https://github.com/Joxtacy",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

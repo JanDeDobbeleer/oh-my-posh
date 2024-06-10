@@ -1,13 +1,13 @@
-name: 🚀 Feature Request
-description: Request a new feature
-labels: ["🚀 feat"]
+name: 🤩 Enhancement
+description: Suggest a change to an existing feature
+labels: ["🤩 enhancement"]
 assignees:
   - jandedobbeleer
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to request a new feature!
+        Thanks for taking the time to request this improvement!
   - type: checkboxes
     id: terms
     attributes:
@@ -17,11 +17,11 @@ body:
         - label: I agree to follow this project's Code of Conduct
           required: true
   - type: textarea
-    id: feature-request
+    id: enhancement-request
     attributes:
-      label: What would you like to see added?
-      description: Try to give some examples to make it really clear.
+      label: What would you like to see changed?
+      description: Try to give some examples to make it really clear!
       placeholder: Tell us what you would like to see!
-      value: "Something new and amazing!"
+      value: "This feature would benefit from this!"
     validations:
       required: true

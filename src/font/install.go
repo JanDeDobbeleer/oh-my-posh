@@ -7,7 +7,11 @@ import (
 	"bytes"
 	"io"
 	"path"
+	"runtime"
 	"strings"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform/cmd"
 )
 
 func contains[S ~[]E, E comparable](s S, e E) bool {
@@ -67,6 +71,11 @@ func InstallZIP(data []byte, user bool) ([]string, error) {
 		if !contains(families, font.Family) {
 			families = append(families, font.Family)
 		}
+	}
+
+	// Update the font cache when installing fonts on Linux
+	if runtime.GOOS == platform.LINUX || runtime.GOOS == platform.DARWIN {
+		_, _ = cmd.Run("fc-cache", "-f")
 	}
 
 	return families, nil

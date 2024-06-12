@@ -2489,6 +2489,15 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "Dartypier",
+      "name": "Jacopo Zecchi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22201626?v=4",
+      "profile": "https://github.com/Dartypier",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

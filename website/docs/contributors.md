@@ -353,6 +353,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Joxtacy"><img src="https://avatars.githubusercontent.com/u/10127673?v=4?s=100" width="100px;" alt="Jesper Hasselquist"/><br /><sub><b>Jesper Hasselquist</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Joxtacy" title="Code">💻</a> <a href="#design-Joxtacy" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Joxtacy" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.aaron-powell.com"><img src="https://avatars.githubusercontent.com/u/434140?v=4?s=100" width="100px;" alt="Aaron Powell"/><br /><sub><b>Aaron Powell</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=aaronpowell" title="Code">💻</a> <a href="#design-aaronpowell" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=aaronpowell" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Dartypier"><img src="https://avatars.githubusercontent.com/u/22201626?v=4?s=100" width="100px;" alt="Jacopo Zecchi"/><br /><sub><b>Jacopo Zecchi</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Dartypier" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

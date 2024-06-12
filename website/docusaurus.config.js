@@ -132,6 +132,14 @@ module.exports = {
       ],
       copyright: `Copyright © ${new Date().getFullYear()} <a href='https://github.com/sponsors/JanDeDobbeleer' target='_blank'>Jan De Dobbeleer</a> and <a href='/docs/contributors'>contributors</a>.`,
     },
+    announcementBar: {
+      id: 'support_us',
+      content:
+        '📣 To better support native Windows integration, I\'m <a target="_blank" rel="noopener noreferrer" href="https://gofund.me/06be00a0">raising funds</a> for a Surface Laptop.',
+      backgroundColor: '#2c7ae0',
+      textColor: '#ffffff',
+      isCloseable: false,
+    },
     appInsights: {
       instrumentationKey: '51741aa7-e087-4e80-b7b0-0863d467462a',
     },

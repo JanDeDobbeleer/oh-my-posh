@@ -2478,6 +2478,17 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "aaronpowell",
+      "name": "Aaron Powell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/434140?v=4",
+      "profile": "https://www.aaron-powell.com",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

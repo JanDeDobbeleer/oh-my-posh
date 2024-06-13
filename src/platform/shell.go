@@ -790,6 +790,12 @@ func (env *Shell) TemplateCache() *TemplateCache {
 
 	pwd := env.Pwd()
 	tmplCache.PWD = ReplaceHomeDirPrefixWithTilde(env, pwd)
+
+	tmplCache.AbsolutePWD = pwd
+	if env.IsWsl() {
+		tmplCache.AbsolutePWD, _ = env.RunCommand("wslpath", "-m", pwd)
+	}
+
 	tmplCache.Folder = Base(env, pwd)
 	if env.GOOS() == WINDOWS && strings.HasSuffix(tmplCache.Folder, ":") {
 		tmplCache.Folder += `\`

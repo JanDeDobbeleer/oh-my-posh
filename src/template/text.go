@@ -23,6 +23,7 @@ var (
 	knownVariables = []string{
 		"Root",
 		"PWD",
+		"AbsolutePWD",
 		"Folder",
 		"Shell",
 		"ShellVersion",

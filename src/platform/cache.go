@@ -143,6 +143,7 @@ func (c *commandCache) get(command string) (string, bool) {
 type TemplateCache struct {
 	Root          bool
 	PWD           string
+	AbsolutePWD   string
 	Folder        string
 	Shell         string
 	ShellVersion  string

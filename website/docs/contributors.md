@@ -355,6 +355,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Dartypier"><img src="https://avatars.githubusercontent.com/u/22201626?v=4?s=100" width="100px;" alt="Jacopo Zecchi"/><br /><sub><b>Jacopo Zecchi</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=Dartypier" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/rose-m"><img src="https://avatars.githubusercontent.com/u/4354632?v=4?s=100" width="100px;" alt="Michael Rose"/><br /><sub><b>Michael Rose</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=rose-m" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=rose-m" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

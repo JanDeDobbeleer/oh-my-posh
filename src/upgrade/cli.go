@@ -20,7 +20,15 @@ var (
 	program   *tea.Program
 	textStyle = lipgloss.NewStyle().Margin(1, 0, 2, 0)
 	title     string
+)
 
+const (
+	upgradeNotice = `
+A new release of Oh My Posh is available: %s → %s
+To upgrade, run: 'oh-my-posh upgrade'
+
+To enable automated upgrades, set 'auto_upgrade' to 'true' in your configuration.
+`
 	Supported = true
 )
 

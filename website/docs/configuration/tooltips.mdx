@@ -47,4 +47,28 @@ This configuration will render a right-aligned git segment when you type `git` o
 A tip should not include any spaces. Keep in mind that this is a blocking call, meaning that if the segment renders slow,
 you can't type until it's visible. Optimizations in this space are being explored.
 
+Note that you can also define multiple tooltips for the same tip to compose tooltips for individual commands. For example,
+this configuration will render the AWS profile as well as the Azure subscription information when you type `terraform`
+followed by a space.
+
+<Config data={{
+  "blocks": [],
+  "tooltips": [
+    {
+      "type": "aws",
+      "tips": ["aws", "terraform"],
+      "style": "plain",
+      "foreground": "#e0af68",
+      "template": "\uf0e0f {{.Profile}}{{if .Region}}@{{.Region}}{{end}}"
+    },
+    {
+      "type": "az",
+      "tips": ["az", "terraform"],
+      "style": "plain",
+      "foreground": "#b4f9f8",
+      "template": "\uebd8 {{ .Name }}"
+    }
+  ]
+}}/>
+
 [clink]: https://chrisant996.github.io/clink/

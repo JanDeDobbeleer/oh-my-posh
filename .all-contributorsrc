@@ -2498,6 +2498,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "rose-m",
+      "name": "Michael Rose",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4354632?v=4",
+      "profile": "https://github.com/rose-m",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

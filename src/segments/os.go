@@ -63,6 +63,7 @@ func (oi *Os) getDistroIcon(distro string) string {
 		"deepin":              "\uF321",
 		"devuan":              "\uF307",
 		"elementary":          "\uF309",
+		"endeavouros":         "\uF322",
 		"fedora":              "\uF30a",
 		"gentoo":              "\uF30d",
 		"mageia":              "\uF310",

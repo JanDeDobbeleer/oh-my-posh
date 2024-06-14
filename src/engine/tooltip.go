@@ -8,32 +8,32 @@ import (
 
 func (e *Engine) Tooltip(tip string) string {
 	tip = strings.Trim(tip, " ")
-	var tooltip *Segment
-	for _, tp := range e.Config.Tooltips {
-		if !tp.shouldInvokeWithTip(tip) {
+	tooltips := make([]*Segment, 0, 1)
+
+	for _, tooltip := range e.Config.Tooltips {
+		if !tooltip.shouldInvokeWithTip(tip) {
 			continue
 		}
-		tooltip = tp
+
+		if err := tooltip.mapSegmentWithWriter(e.Env); err != nil {
+			continue
+		}
+
+		if !tooltip.writer.Enabled() {
+			continue
+		}
+
+		tooltips = append(tooltips, tooltip)
 	}
 
-	if tooltip == nil {
+	if len(tooltips) == 0 {
 		return ""
 	}
-
-	if err := tooltip.mapSegmentWithWriter(e.Env); err != nil {
-		return ""
-	}
-
-	if !tooltip.writer.Enabled() {
-		return ""
-	}
-
-	tooltip.Enabled = true
 
 	// little hack to reuse the current logic
 	block := &Block{
 		Alignment: Right,
-		Segments:  []*Segment{tooltip},
+		Segments:  tooltips,
 	}
 
 	switch e.Env.Shell() {

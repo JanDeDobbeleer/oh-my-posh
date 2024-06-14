@@ -30,14 +30,8 @@ type release struct {
 }
 
 const (
-	RELEASEURL    = "https://api.github.com/repos/jandedobbeleer/oh-my-posh/releases/latest"
-	upgradeNotice = `
-A new release of Oh My Posh is available: %s → %s
-To upgrade, run: 'oh-my-posh upgrade'
-
-To enable automated upgrades, set 'auto_upgrade' to 'true' in your configuration.
-`
-	CACHEKEY = "upgrade_check"
+	RELEASEURL = "https://api.github.com/repos/jandedobbeleer/oh-my-posh/releases/latest"
+	CACHEKEY   = "upgrade_check"
 )
 
 func Latest(env platform.Environment) (string, error) {

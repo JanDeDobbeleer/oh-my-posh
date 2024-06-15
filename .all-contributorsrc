@@ -2508,6 +2508,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "denehoffman",
+      "name": "Nathaniel D. Hoffman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36977879?v=4",
+      "profile": "http://denehoffman.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

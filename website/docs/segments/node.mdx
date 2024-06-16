@@ -32,7 +32,8 @@ import Config from "@site/src/components/Config.js";
 | `missing_command_text`  | `string`   |                                                                              | text to display when the command is missing                                                                                                                                                                                          |
 | `display_mode`          | `string`   | `context`                                                                    | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when file `extensions` listed are present</li><li>`context`: displays the segment when the environment or files is active</li></ul> |
 | `version_url_template`  | `string`   |                                                                              | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
-| `fetch_package_manager` | `boolean`  | `false`                                                                      | define if the current project uses Yarn or NPM                                                                                                                                                                                       |
+| `fetch_package_manager` | `boolean`  | `false`                                                                      | define if the current project uses PNPM, Yarn, or NPM                                                                                                                                                                                |
+| `pnpm_icon`             | `string`   | `\uF02C1`                                                                    | the icon/text to display when using PNPM                                                                                                                                                                                             |
 | `yarn_icon`             | `string`   | `\uF011B`                                                                    | the icon/text to display when using Yarn                                                                                                                                                                                             |
 | `npm_icon`              | `string`   | `\uE71E`                                                                     | the icon/text to display when using NPM                                                                                                                                                                                              |
 | `extensions`            | `[]string` | `*.js, *.ts, package.json, .nvmrc, pnpm-workspace.yaml, .pnpmfile.cjs, .vue` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
@@ -51,17 +52,17 @@ import Config from "@site/src/components/Config.js";
 
 ### Properties
 
-| Name                  | Type      | Description                                                         |
-| --------------------- | --------- | ------------------------------------------------------------------- |
-| `.Full`               | `string`  | the full version                                                    |
-| `.Major`              | `string`  | major number                                                        |
-| `.Minor`              | `string`  | minor number                                                        |
-| `.Patch`              | `string`  | patch number                                                        |
-| `.URL`                | `string`  | URL of the version info / release notes                             |
-| `.Error`              | `string`  | error encountered when fetching the version string                  |
-| `.PackageManagerIcon` | `string`  | the Yarn or NPM icon when setting `fetch_package_manager` to `true` |
-| `.Mismatch`           | `boolean` | true if the version in `.nvmrc` is not equal to `.Full`             |
-| `.Expected`           | `string`  | the expected version set in `.nvmrc`                                |
+| Name                  | Type      | Description                                                                |
+| --------------------- | --------- | -------------------------------------------------------------------------- |
+| `.Full`               | `string`  | the full version                                                           |
+| `.Major`              | `string`  | major number                                                               |
+| `.Minor`              | `string`  | minor number                                                               |
+| `.Patch`              | `string`  | patch number                                                               |
+| `.URL`                | `string`  | URL of the version info / release notes                                    |
+| `.Error`              | `string`  | error encountered when fetching the version string                         |
+| `.PackageManagerIcon` | `string`  | the PNPM, Yarn, or NPM icon when setting `fetch_package_manager` to `true` |
+| `.Mismatch`           | `boolean` | true if the version in `.nvmrc` is not equal to `.Full`                    |
+| `.Expected`           | `string`  | the expected version set in `.nvmrc`                                       |
 
 [go-text-template]: https://golang.org/pkg/text/template/
 [templates]: /docs/configuration/templates

@@ -70,6 +70,7 @@ func (b *Block) InitPlain(env platform.Environment, config *Config) {
 		AnsiColors:         config.MakeColors(),
 		TrueColor:          env.Flags().TrueColor,
 	}
+
 	b.writer.Init(shell.GENERIC)
 	b.env = env
 	b.executeSegmentLogic()
@@ -79,12 +80,14 @@ func (b *Block) executeSegmentLogic() {
 	if shouldHideForWidth(b.env, b.MinWidth, b.MaxWidth) {
 		return
 	}
+
 	b.setEnabledSegments()
 	b.setSegmentsText()
 }
 
 func (b *Block) setActiveSegment(segment *Segment) {
 	b.activeSegment = segment
+	b.writer.Interactive = segment.Interactive
 	b.writer.SetColors(segment.background(), segment.foreground())
 }
 

@@ -204,6 +204,8 @@ const (
 	PHP SegmentType = "php"
 	// PLASTIC represents the plastic scm status and information
 	PLASTIC SegmentType = "plastic"
+	// pnpm version
+	PNPM SegmentType = "pnpm"
 	// Project version
 	PROJECT SegmentType = "project"
 	// PULUMI writes the pulumi user, store and stack
@@ -331,6 +333,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	PERL:            func() SegmentWriter { return &segments.Perl{} },
 	PHP:             func() SegmentWriter { return &segments.Php{} },
 	PLASTIC:         func() SegmentWriter { return &segments.Plastic{} },
+	PNPM:            func() SegmentWriter { return &segments.Pnpm{} },
 	PROJECT:         func() SegmentWriter { return &segments.Project{} },
 	PULUMI:          func() SegmentWriter { return &segments.Pulumi{} },
 	PYTHON:          func() SegmentWriter { return &segments.Python{} },

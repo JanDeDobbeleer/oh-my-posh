@@ -104,6 +104,7 @@ module.exports = {
         "segments/perl",
         "segments/php",
         "segments/plastic",
+        "segments/pnpm",
         "segments/project",
         "segments/pulumi",
         "segments/python",

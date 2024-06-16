@@ -343,6 +343,7 @@
             "python",
             "php",
             "plastic",
+            "pnpm",
             "project",
             "pulumi",
             "quasar",
@@ -4584,6 +4585,55 @@
                     "title": "New Property",
                     "description": "the default text to display",
                     "default": "Hello"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "pnpm"
+              }
+            }
+          },
+          "then": {
+            "title": "PNPM Segment",
+            "description": "https://ohmyposh.dev/docs/segments/pnpm",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is an PNPM workspace",
+                    "default": ["package.json", "pnpm-lock.yaml"],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folders": {
+                    "$ref": "#/definitions/folders"
                   }
                 }
               }

@@ -55,29 +55,36 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 func TestNodeInContext(t *testing.T) {
 	cases := []struct {
 		Case           string
-		HasYarn        bool
+		hasPNPM        bool
+		hasYarn        bool
 		hasNPM         bool
 		hasDefault     bool
 		PkgMgrEnabled  bool
 		ExpectedString string
 	}{
 		{Case: "no package manager file", ExpectedString: "", PkgMgrEnabled: true},
-		{Case: "yarn", HasYarn: true, ExpectedString: "yarn", PkgMgrEnabled: true},
+		{Case: "pnpm", hasPNPM: true, ExpectedString: "pnpm", PkgMgrEnabled: true},
+		{Case: "yarn", hasYarn: true, ExpectedString: "yarn", PkgMgrEnabled: true},
 		{Case: "npm", hasNPM: true, ExpectedString: "npm", PkgMgrEnabled: true},
 		{Case: "default", hasDefault: true, ExpectedString: "npm", PkgMgrEnabled: true},
-		{Case: "disabled", HasYarn: true, ExpectedString: "", PkgMgrEnabled: false},
-		{Case: "yarn and npm", HasYarn: true, hasNPM: true, ExpectedString: "yarn", PkgMgrEnabled: true},
+		{Case: "disabled by pnpm", hasPNPM: true, ExpectedString: "", PkgMgrEnabled: false},
+		{Case: "disabled by yarn", hasYarn: true, ExpectedString: "", PkgMgrEnabled: false},
+		{Case: "pnpm and npm", hasPNPM: true, hasNPM: true, ExpectedString: "pnpm", PkgMgrEnabled: true},
+		{Case: "yarn and npm", hasYarn: true, hasNPM: true, ExpectedString: "yarn", PkgMgrEnabled: true},
+		{Case: "pnpm, yarn, and npm", hasPNPM: true, hasYarn: true, hasNPM: true, ExpectedString: "pnpm", PkgMgrEnabled: true},
 	}
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("HasFiles", "yarn.lock").Return(tc.HasYarn)
+		env.On("HasFiles", "pnpm-lock.yaml").Return(tc.hasPNPM)
+		env.On("HasFiles", "yarn.lock").Return(tc.hasYarn)
 		env.On("HasFiles", "package-lock.json").Return(tc.hasNPM)
 		env.On("HasFiles", "package.json").Return(tc.hasDefault)
 		node := &Node{
 			language: language{
 				env: env,
 				props: properties.Map{
+					PnpmIcon:            "pnpm",
 					YarnIcon:            "yarn",
 					NPMIcon:             "npm",
 					FetchPackageManager: tc.PkgMgrEnabled,

@@ -70,19 +70,25 @@ func (c *Context) init(t *Text) {
 
 func (t *Text) Render() (string, error) {
 	t.Env.DebugF("Rendering template: %s", t.Template)
+
 	if !strings.Contains(t.Template, "{{") || !strings.Contains(t.Template, "}}") {
 		return t.Template, nil
 	}
+
 	t.cleanTemplate()
+
 	tmpl, err := template.New(t.Template).Funcs(funcMap()).Parse(t.Template)
 	if err != nil {
 		t.Env.Error(err)
 		return "", errors.New(InvalidTemplate)
 	}
+
 	context := &Context{}
 	context.init(t)
+
 	buffer := new(bytes.Buffer)
 	defer buffer.Reset()
+
 	err = tmpl.Execute(buffer, context)
 	if err != nil {
 		t.Env.Error(err)
@@ -92,10 +98,12 @@ func (t *Text) Render() (string, error) {
 		}
 		return "", errors.New(msg["MSG"])
 	}
+
 	text := buffer.String()
 	// issue with missingkey=zero ignored for map[string]any
 	// https://github.com/golang/go/issues/24963
 	text = strings.ReplaceAll(text, "<no value>", "")
+
 	return text, nil
 }
 
@@ -103,19 +111,23 @@ func (t *Text) cleanTemplate() {
 	isKnownVariable := func(variable string) bool {
 		variable = strings.TrimPrefix(variable, ".")
 		splitted := strings.Split(variable, ".")
+
 		if len(splitted) == 0 {
 			return true
 		}
+
 		variable = splitted[0]
 		// check if alphanumeric
 		if !regex.MatchString(`^[a-zA-Z0-9]+$`, variable) {
 			return true
 		}
+
 		for _, b := range knownVariables {
 			if variable == b {
 				return true
 			}
 		}
+
 		return false
 	}
 

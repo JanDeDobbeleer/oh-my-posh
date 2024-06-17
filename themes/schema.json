@@ -2479,7 +2479,7 @@
                     "default": 1
                   },
                   "max_width": {
-                    "type": "integer",
+                    "type": ["integer","string"],
                     "title": "Maximum Width",
                     "description": "Maximum path width to display for powerlevel style",
                     "default": 0

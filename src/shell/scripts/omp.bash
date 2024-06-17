@@ -54,6 +54,11 @@ function _omp_hook() {
     local omp_stack_count=$((${#DIRSTACK[@]} - 1))
     local omp_elapsed=-1
     local no_exit_code="true"
+    local omp_columns=0
+
+    if [[ -n "$COLUMNS" ]]; then
+        omp_columns=$COLUMNS
+    fi
 
     if [[ -n "$omp_start_time" ]]; then
         local omp_now=$(::OMP:: get millis --shell=bash)
@@ -65,7 +70,7 @@ function _omp_hook() {
     set_poshcontext
     _set_posh_cursor_position
 
-    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$ret" --pipestatus="${pipeStatus[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$no_exit_code" --terminal-width="$COLUMNS" | tr -d '\0')"
+    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$ret" --pipestatus="${pipeStatus[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$no_exit_code" --terminal-width="$omp_columns" | tr -d '\0')"
     return $ret
 }
 

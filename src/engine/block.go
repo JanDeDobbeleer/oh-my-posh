@@ -95,11 +95,13 @@ func (b *Block) Enabled() bool {
 	if b.Type == LineBreak {
 		return true
 	}
+
 	for _, segment := range b.Segments {
 		if segment.Enabled {
 			return true
 		}
 	}
+
 	return false
 }
 
@@ -107,6 +109,7 @@ func (b *Block) setEnabledSegments() {
 	wg := sync.WaitGroup{}
 	wg.Add(len(b.Segments))
 	defer wg.Wait()
+
 	for _, segment := range b.Segments {
 		go func(s *Segment) {
 			defer wg.Done()

@@ -115,13 +115,25 @@ func (e *Engine) pwd() {
 }
 
 func (e *Engine) newline() {
+	defer func() {
+		e.currentLineLength = 0
+	}()
+
 	// WARP terminal will remove \n from the prompt, so we hack a newline in
 	if e.isWarp() {
 		e.write(e.Writer.LineBreak())
-	} else {
-		e.write("\n")
+		return
 	}
-	e.currentLineLength = 0
+
+	// TCSH needs a space before the LITERAL newline character or it will not render correctly
+	// don't ask why, it be like that sometimes.
+	// https://unix.stackexchange.com/questions/99101/properly-defining-a-multi-line-prompt-in-tcsh#comment1342462_322189
+	if e.Env.Shell() == shell.TCSH {
+		e.write(` \n`)
+		return
+	}
+
+	e.write("\n")
 }
 
 func (e *Engine) isWarp() bool {

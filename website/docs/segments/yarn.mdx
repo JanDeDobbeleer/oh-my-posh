@@ -1,0 +1,62 @@
+---
+id: yarn
+title: Yarn
+sidebar_label: Yarn
+---
+
+## What
+
+Display the currently active [yarn][yarn-docs] version.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "yarn",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#FFFFFF",
+    background: "#2E2A65",
+    template: " \uDB80\uDD1B {{ .Full }} ",
+  }}
+/>
+
+## Properties
+
+| Name                   |    Type    |          Default          | Description                                                                                                                                                                                                                          |
+| ---------------------- | :--------: | :-----------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `home_enabled`         | `boolean`  |          `false`          | display the segment in the HOME folder or not                                                                                                                                                                                        |
+| `fetch_version`        | `boolean`  |          `true`           | fetch the Yarn version                                                                                                                                                                                                               |
+| `missing_command_text` |  `string`  |                           | text to display when the command is missing                                                                                                                                                                                          |
+| `display_mode`         |  `string`  |         `context`         | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when file `extensions` listed are present</li><li>`context`: displays the segment when the environment or files is active</li></ul> |
+| `version_url_template` |  `string`  |                           | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
+| `extensions`           | `[]string` | `package.json, yarn.lock` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
+| `folders`              | `[]string` |                           | allows to override the list of folder names to validate                                                                                                                                                                              |
+| `cache_version`        | `boolean`  |          `false`          | cache the executable's version or not                                                                                                                                                                                                |
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+\uDB80\uDD1B {{.Full}}
+```
+
+:::
+
+### Properties
+
+| Name     | Type     | Description                                        |
+| -------- | -------- | -------------------------------------------------- |
+| `.Full`  | `string` | the full version                                   |
+| `.Major` | `string` | major number                                       |
+| `.Minor` | `string` | minor number                                       |
+| `.Patch` | `string` | patch number                                       |
+| `.URL`   | `string` | URL of the version info / release notes            |
+| `.Error` | `string` | error encountered when fetching the version string |
+
+[go-text-template]: https://golang.org/pkg/text/template/
+[templates]: /docs/configuration/templates
+[yarn-docs]: https://yarnpkg.com

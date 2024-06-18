@@ -138,6 +138,7 @@ module.exports = {
         "segments/withings",
         "segments/winreg",
         "segments/xmake",
+        "segments/yarn",
         "segments/ytm",
       ],
     },

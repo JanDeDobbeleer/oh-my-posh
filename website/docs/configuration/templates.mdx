@@ -52,6 +52,7 @@ This can be used to for example populate an environment variable with a specific
     { label: 'zsh', value: 'zsh', },
     { label: 'bash', value: 'bash', },
     { label: 'fish', value: 'fish', },
+    { label: 'nu', value: 'nu', },
   ]
 }>
 <TabItem value="powershell">
@@ -88,6 +89,15 @@ function set_poshcontext() {
 function set_poshcontext
   set --export POSH $(date)
 end
+```
+
+</TabItem>
+<TabItem value="nu">
+
+```bash
+$env.SET_POSHCONTEXT = {
+	$env.POSH = ( date now );
+}
 ```
 
 </TabItem>

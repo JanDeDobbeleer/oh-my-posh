@@ -28,6 +28,10 @@ $env.PROMPT_COMMAND = { ||
         $clear = (history | is-empty) or ((history | last 1 | get 0.command) == "clear")
     }
 
+    if ($env.SET_POSHCONTEXT? | is-not-empty) {
+        do --env $env.SET_POSHCONTEXT
+    }
+
     ^::OMP:: print primary $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=(posh_cmd_duration)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=(posh_width)" $"--cleared=($clear)"
 }
 

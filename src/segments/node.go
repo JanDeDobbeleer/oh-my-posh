@@ -16,11 +16,13 @@ type Node struct {
 }
 
 const (
+	// PnpmIcon illustrates PNPM is used
+	PnpmIcon properties.Property = "pnpm_icon"
 	// YarnIcon illustrates Yarn is used
 	YarnIcon properties.Property = "yarn_icon"
 	// NPMIcon illustrates NPM is used
 	NPMIcon properties.Property = "npm_icon"
-	// FetchPackageManager shows if NPM or Yarn is used
+	// FetchPackageManager shows if NPM, PNPM, or Yarn is used
 	FetchPackageManager properties.Property = "fetch_package_manager"
 )
 
@@ -52,6 +54,10 @@ func (n *Node) Enabled() bool {
 
 func (n *Node) loadContext() {
 	if !n.language.props.GetBool(FetchPackageManager, false) {
+		return
+	}
+	if n.language.env.HasFiles("pnpm-lock.yaml") {
+		n.PackageManagerIcon = n.language.props.GetString(PnpmIcon, "\U000F02C1")
 		return
 	}
 	if n.language.env.HasFiles("yarn.lock") {

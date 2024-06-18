@@ -375,6 +375,7 @@
             "winreg",
             "withings",
             "xmake",
+            "yarn",
             "ytm"
           ]
         },
@@ -4628,6 +4629,55 @@
                     "title": "Extensions",
                     "description": "The extensions to look for when determining if a folder is an PNPM workspace",
                     "default": ["package.json", "pnpm-lock.yaml"],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "folders": {
+                    "$ref": "#/definitions/folders"
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "yarn"
+              }
+            }
+          },
+          "then": {
+            "title": "Yarn Segment",
+            "description": "https://ohmyposh.dev/docs/segments/yarn",
+            "properties": {
+              "properties": {
+                "properties": {
+                  "home_enabled": {
+                    "$ref": "#/definitions/home_enabled"
+                  },
+                  "fetch_version": {
+                    "$ref": "#/definitions/fetch_version"
+                  },
+                  "display_mode": {
+                    "$ref": "#/definitions/display_mode"
+                  },
+                  "missing_command_text": {
+                    "$ref": "#/definitions/missing_command_text"
+                  },
+                  "version_url_template": {
+                    "$ref": "#/definitions/version_url_template"
+                  },
+                  "cache_version": {
+                    "$ref": "#/definitions/cache_version"
+                  },
+                  "extensions": {
+                    "type": "array",
+                    "title": "Extensions",
+                    "description": "The extensions to look for when determining if a folder is an Yarn workspace",
+                    "default": ["package.json", "yarn.lock"],
                     "items": {
                       "type": "string"
                     }

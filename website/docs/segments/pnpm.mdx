@@ -15,9 +15,8 @@ import Config from "@site/src/components/Config.js";
 <Config
   data={{
     type: "pnpm",
-    style: "diamond",
-    leading_diamond: "\uE0B2",
-    trailing_diamond: "\uE0D6",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
     foreground: "#000000",
     background: "#F9AD00",
     template: " \uDB80\uDEC1 {{ .Full }} ",
@@ -33,7 +32,7 @@ import Config from "@site/src/components/Config.js";
 | `missing_command_text` |  `string`  |                                | text to display when the command is missing                                                                                                                                                                                          |
 | `display_mode`         |  `string`  |           `context`            | <ul><li>`always`: the segment is always displayed</li><li>`files`: the segment is only displayed when file `extensions` listed are present</li><li>`context`: displays the segment when the environment or files is active</li></ul> |
 | `version_url_template` |  `string`  |                                | a go [text/template][go-text-template] [template][templates] that creates the URL of the version info / release notes                                                                                                                |
-| `extensions`           | `[]string` | `package.json, yarn-lock.yaml` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
+| `extensions`           | `[]string` | `package.json, pnpm-lock.yaml` | allows to override the default list of file extensions to validate                                                                                                                                                                   |
 | `folders`              | `[]string` |                                | allows to override the list of folder names to validate                                                                                                                                                                              |
 | `cache_version`        | `boolean`  |            `false`             | cache the executable's version or not                                                                                                                                                                                                |
 

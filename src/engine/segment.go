@@ -270,6 +270,8 @@ const (
 	WITHINGS SegmentType = "withings"
 	// XMAKE write the xmake version if xmake.lua is present
 	XMAKE SegmentType = "xmake"
+	// yarn version
+	YARN SegmentType = "yarn"
 	// YTM writes YouTube Music information and status
 	YTM SegmentType = "ytm"
 )
@@ -366,6 +368,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	WINREG:          func() SegmentWriter { return &segments.WindowsRegistry{} },
 	WITHINGS:        func() SegmentWriter { return &segments.Withings{} },
 	XMAKE:           func() SegmentWriter { return &segments.XMake{} },
+	YARN:            func() SegmentWriter { return &segments.Yarn{} },
 	YTM:             func() SegmentWriter { return &segments.Ytm{} },
 }
 

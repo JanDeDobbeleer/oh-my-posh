@@ -55,6 +55,7 @@ module.exports = {
         "segments/argocd",
         "segments/aws",
         "segments/az",
+        "segments/azd",
         "segments/azfunc",
         "segments/battery",
         "segments/bazel",

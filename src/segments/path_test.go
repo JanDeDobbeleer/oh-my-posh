@@ -744,6 +744,9 @@ func TestAgnosterPathStyles(t *testing.T) {
 		}
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.PWSH)
+
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
+
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -754,6 +757,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 				HideRootLocation:    tc.HideRootLocation,
 			},
 		}
+
 		path.setPaths()
 		path.setStyle()
 		got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
@@ -1567,6 +1571,56 @@ func TestSplitPath(t *testing.T) {
 			relative: tc.Relative,
 		}
 		got := path.splitPath()
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}
+
+func TestGetMaxWidth(t *testing.T) {
+	cases := []struct {
+		Case     string
+		MaxWidth any
+		Expected int
+	}{
+		{
+			Case:     "Nil",
+			Expected: 0,
+		},
+		{
+			Case:     "Empty string",
+			MaxWidth: "",
+			Expected: 0,
+		},
+		{
+			Case:     "Invalid template",
+			MaxWidth: "{{ .Unknown }}",
+			Expected: 0,
+		},
+		{
+			Case:     "Environment variable",
+			MaxWidth: "{{ .Env.MAX_WIDTH }}",
+			Expected: 120,
+		},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.MockedEnvironment)
+		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
+		env.On("Error", mock2.Anything).Return(nil)
+		env.On("TemplateCache").Return(&platform.TemplateCache{
+			Env: map[string]string{
+				"MAX_WIDTH": "120",
+			},
+			Shell: "bash",
+		})
+
+		path := &Path{
+			env: env,
+			props: properties.Map{
+				MaxWidth: tc.MaxWidth,
+			},
+		}
+
+		got := path.getMaxWidth()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

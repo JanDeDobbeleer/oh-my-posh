@@ -137,6 +137,7 @@ For example, the following is a valid `--config` flag:
 | `disable_cursor_positioning` | `boolean`        | disable fetching the cursor position in bash and zsh in case of unwanted side-effects                                                                                                                                                                                        |
 | `patch_pwsh_bleed`           | `boolean`        | patch a PowerShell bug where the background colors bleed into the next line at the end of the buffer (can be removed when [this][pwsh-bleed] is merged)                                                                                                                      |
 | `disable_notice`             | `boolean`        | disable the upgrade notice                                                                                                                                                                                                                                                   |
+| `auto_upgrade`               | `boolean`        | enable automatic upgrades for Oh My Posh (supports Windows/macOS only)                                                                                                                                                                                                       |
 | `iterm_features`             | `[]string`       | enable iTerm2 specific features:<ul><li>`prompt_mark`: add the `iterm2_prompt_mark` [function][iterm2-si] for supported shells</li><li>`current_dir`: expose the current directory for iTerm2</li><li>`remote_host`: expose the current remote and user for iTerm2</li></ul> |
 
 ### JSON Schema Validation
@@ -160,7 +161,7 @@ For example, given the following code:
 ```
 
 Warnings will be raised for type, since `an_invalid_entry` is not in the list of acceptable values, as well as
-for the entire segment item (enclosed in {}), since it lacks the required `style` key. Take advantage of these
+for the entire segment item (enclosed in `{}`), since it lacks the required `style` key. Take advantage of these
 warnings, and ignore them at your peril.
 
 ### Accepted Formats

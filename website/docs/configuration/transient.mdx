@@ -24,6 +24,14 @@ By enabling Transient Prompt, you can replace the prompt with some other content
 
 ![After Transient](/img/transient-after.gif)
 
+:::tip
+For this feature to work properly, make sure you're [initializing your prompt][initprompt] after everything else, 
+otherwise you may not see the changes you expect.
+
+For example, if using _zsh_ and _oh-my-zsh_, make sure the `eval "$(oh-my-posh init zsh)"` in `.zshrc` is
+after the `source $ZSH/oh-my-zsh.sh` line.
+:::
+
 ## Configuration
 
 You need to extend or create a custom theme with your transient prompt. For example:
@@ -70,3 +78,4 @@ clink set prompt.transient always
 [templates]: /docs/configuration/templates
 [color-templates]: /docs/configuration/colors#color-templates
 [cstp]: /docs/configuration/templates#cross-segment-template-properties
+[initprompt]: /docs/installation/prompt

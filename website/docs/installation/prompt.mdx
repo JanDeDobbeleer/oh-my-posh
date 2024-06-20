@@ -28,6 +28,7 @@ oh-my-posh get shell
     { label: 'tcsh', value: 'tcsh', },
     { label: 'xonsh', value: 'xonsh', },
     { label: 'zsh', value: 'zsh', },
+    { label: 'oh-my-zsh', value: 'oh-my-zsh', },
   ]
 }>
 <TabItem value="bash">
@@ -227,6 +228,36 @@ fi
 
 Note this will still load Oh My Posh for [iTerm2][iterm2] or any other modern day macOS terminal that supports ANSI characters.
 :::
+
+Once added, reload your profile for the changes to take effect.
+
+```bash
+exec zsh
+```
+
+</TabItem>
+<TabItem value="oh-my-zsh">
+
+Add the file `~/.oh-my-zsh/themes/oh-my-posh.zsh-theme`:
+
+```bash
+# As the standard terminal has issues displaying the ANSI characters correctly -> we skip loading just for that terminal.
+# Note this will still load Oh My Posh for [iTerm2][iterm2] or any other modern day macOS terminal that supports ANSI characters.
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+  if [[ ${OH_MY_ZSH_POSH_THEME} != "" ]]; then
+    eval "$(oh-my-posh init zsh --config ${OH_MY_ZSH_POSH_THEME})"
+  else
+    eval "$(oh-my-posh init zsh)"
+  fi
+fi
+```
+
+Change `ZSH_THEME="oh-my-posh"` and optionally add the following before `ZSH_THEME` to `~/.zshrc`:
+
+```bash
+# Uncomment the next to configure the path to your oh-my-posh configuraton file.
+#OH_MY_ZSH_POSH_THEME="~/oh-my-posh.json"
+```
 
 Once added, reload your profile for the changes to take effect.
 

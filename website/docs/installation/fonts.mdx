@@ -10,8 +10,6 @@ import TabItem from "@theme/TabItem";
 ### Nerd Fonts
 
 Oh My Posh was designed to use [Nerd Fonts][nerdfonts]. Nerd Fonts are popular fonts that are patched to include icons.
-We recommend [Meslo LGM NF][meslo], but any Nerd Font should be compatible with the standard [themes][themes].
-
 To see the icons displayed in Oh My Posh, **install** a [Nerd Font][nerdfonts], and **configure** your terminal to use it.
 
 ### Installation
@@ -40,6 +38,12 @@ When running as a regular user, the fonts will be installed in the user's font d
 
 ```bash
 oh-my-posh font install
+```
+
+This will present a list of Nerd Font libraries, from which you can  select `Meslo`, which includes the `Meslo LGM NF` font we recommend. Note that you can also  install it directly via:
+
+```bash
+oh-my-posh font install meslo
 ```
 
 </TabItem>
@@ -128,8 +132,6 @@ The `minimal` themes do not make use of Nerd Font icons.
 [Creating your own theme][configuration] is always an option too 😊
 
 [nerdfonts]: https://www.nerdfonts.com/
-[meslo]: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.0.2/Meslo.zip
-[themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [configuration]: /docs/installation/customize
 [wt-issue-8993]: https://github.com/microsoft/terminal/issues/8993
 [vs-otf]: https://stackoverflow.com/questions/75252606/is-it-possible-to-use-nerd-fonts-as-the-font-for-terminals-in-visual-studio

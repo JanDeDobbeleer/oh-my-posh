@@ -2539,6 +2539,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "sassdawe",
+      "name": "David Sass",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10754765?v=4",
+      "profile": "http://davidsass.io",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -2545,6 +2545,12 @@
                     "title": "The format to use on a git root directory",
                     "description": "Golang string format to apply to the .git folder",
                     "default": ""
+                  },
+                  "display_cygpath": {
+                    "type": "boolean",
+                    "title": "Display the Cygwin (Linux) style path",
+                    "description": "Display the Cygwin (Linux) style path using cygpath -u $PWD.",
+                    "default": false
                   }
                 }
               }

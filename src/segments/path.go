@@ -109,7 +109,7 @@ func (pt *Path) Enabled() bool {
 	pt.setStyle()
 	pwd := pt.env.Pwd()
 
-	pt.Location = pt.env.TemplateCache().AbsolutePWD
+	pt.Location = strings.ReplaceAll(pt.env.TemplateCache().AbsolutePWD, `\`, `/`)
 	pt.StackCount = pt.env.StackCount()
 	pt.Writable = pt.env.DirIsWritable(pwd)
 	return true

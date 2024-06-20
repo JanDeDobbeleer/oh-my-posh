@@ -1,6 +1,7 @@
 package segments
 
 import (
+	"errors"
 	"strings"
 	"testing"
 
@@ -170,6 +171,9 @@ func TestAgnosterPathStyles(t *testing.T) {
 		HomeIcon            string
 		FolderSeparatorIcon string
 		GOOS                string
+		Shell               string
+		Cygpath             string
+		CygpathError        error
 		MaxDepth            int
 		MaxWidth            int
 		HideRootLocation    bool
@@ -414,6 +418,28 @@ func TestAgnosterPathStyles(t *testing.T) {
 			HomePath:            homeDirWindows,
 			Pwd:                 "C:\\Users\\foo\\foobar\\man",
 			GOOS:                platform.WINDOWS,
+			PathSeparator:       "\\",
+			FolderSeparatorIcon: " > ",
+		},
+		{
+			Style:               Mixed,
+			Expected:            "c > .. > foo > .. > man",
+			HomePath:            homeDirWindows,
+			Pwd:                 "C:\\Users\\foo\\foobar\\man",
+			GOOS:                platform.WINDOWS,
+			Shell:               shell.BASH,
+			Cygpath:             "/c/Users/foo/foobar/man",
+			PathSeparator:       "\\",
+			FolderSeparatorIcon: " > ",
+		},
+		{
+			Style:               Mixed,
+			Expected:            "C: > .. > foo > .. > man",
+			HomePath:            homeDirWindows,
+			Pwd:                 "C:\\Users\\foo\\foobar\\man",
+			GOOS:                platform.WINDOWS,
+			Shell:               shell.BASH,
+			CygpathError:        errors.New("oh no"),
 			PathSeparator:       "\\",
 			FolderSeparatorIcon: " > ",
 		},
@@ -743,9 +769,19 @@ func TestAgnosterPathStyles(t *testing.T) {
 			PSWD: tc.Pswd,
 		}
 		env.On("Flags").Return(args)
-		env.On("Shell").Return(shell.PWSH)
+
+		if len(tc.Shell) == 0 {
+			tc.Shell = shell.PWSH
+		}
+		env.On("Shell").Return(tc.Shell)
 
 		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
+
+		displayCygpath := tc.GOOS == platform.WINDOWS && tc.Shell == shell.BASH
+		if displayCygpath {
+			env.On("RunCommand", "cygpath", []string{"-u", tc.Pwd}).Return(tc.Cygpath, tc.CygpathError)
+			env.On("RunCommand", "cygpath", mock2.Anything).Return("brrrr", nil)
+		}
 
 		path := &Path{
 			env: env,
@@ -755,6 +791,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 				MaxDepth:            tc.MaxDepth,
 				MaxWidth:            tc.MaxWidth,
 				HideRootLocation:    tc.HideRootLocation,
+				DisplayCygpath:      displayCygpath,
 			},
 		}
 
@@ -917,17 +954,22 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("Home").Return(homeDir)
 		env.On("Pwd").Return(tc.Pwd)
+
 		if len(tc.GOOS) == 0 {
 			tc.GOOS = platform.DARWIN
 		}
+
 		env.On("GOOS").Return(tc.GOOS)
+
 		if len(tc.PathSeparator) == 0 {
 			tc.PathSeparator = "/"
 		}
+
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		args := &platform.Flags{
 			PSWD: tc.Pwd,
 		}
+
 		env.On("Flags").Return(args)
 		env.On("Shell").Return(shell.GENERIC)
 		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
@@ -936,6 +978,7 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 				"HOME": "/a/b/c",
 			},
 		})
+
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -944,6 +987,7 @@ func TestFullPathCustomMappedLocations(t *testing.T) {
 				MappedLocations:        tc.MappedLocations,
 			},
 		}
+
 		path.setPaths()
 		path.setStyle()
 		got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
@@ -1414,24 +1458,29 @@ func TestGetFolderSeparator(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("PathSeparator").Return("/")
 		env.On("Error", mock2.Anything)
 		env.On("Debug", mock2.Anything)
 		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 		path := &Path{
-			env: env,
+			env:           env,
+			pathSeparator: "/",
 		}
+
 		props := properties.Map{}
+
 		if len(tc.FolderSeparatorTemplate) > 0 {
 			props[FolderSeparatorTemplate] = tc.FolderSeparatorTemplate
 		}
+
 		if len(tc.FolderSeparatorIcon) > 0 {
 			props[FolderSeparatorIcon] = tc.FolderSeparatorIcon
 		}
+
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env:   make(map[string]string),
 			Shell: "bash",
 		})
+
 		path.props = props
 		got := path.getFolderSeparator()
 		assert.Equal(t, tc.Expected, got)
@@ -1558,18 +1607,21 @@ func TestSplitPath(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("PathSeparator").Return("/")
 		env.On("Home").Return("/a/b")
 		env.On("HasParentFilePath", ".git").Return(tc.GitDir, nil)
 		env.On("GOOS").Return(tc.GOOS)
+
 		path := &Path{
 			env: env,
 			props: properties.Map{
 				GitDirFormat: tc.GitDirFormat,
 			},
-			root:     tc.Root,
-			relative: tc.Relative,
+			root:          tc.Root,
+			relative:      tc.Relative,
+			pathSeparator: "/",
+			windowsPath:   tc.GOOS == platform.WINDOWS,
 		}
+
 		got := path.splitPath()
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}

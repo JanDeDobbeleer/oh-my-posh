@@ -35,7 +35,7 @@ function _omp_start_timer() {
 }
 
 function _omp_ftcs_command_start() {
-    if [ "::FTCS_MARKS::" == "true" ]; then
+    if [[ "::FTCS_MARKS::" == "true" ]]; then
         printf "\e]133;C\a"
     fi
 }
@@ -55,11 +55,14 @@ function _omp_hook() {
     local omp_elapsed=-1
     local no_exit_code="true"
 
-    if [[ -n "$omp_start_time" ]]; then
+    if [[ "$omp_start_time" ]]; then
         local omp_now=$(::OMP:: get millis --shell=bash)
-        omp_elapsed=$((omp_now-omp_start_time))
+        omp_elapsed=$((omp_now - omp_start_time))
         omp_start_time=""
         no_exit_code="false"
+    fi
+    if [[ "${pipeStatus[-1]}" != "$ret" ]]; then
+        pipeStatus=("$ret")
     fi
 
     set_poshcontext
@@ -69,11 +72,11 @@ function _omp_hook() {
     return $ret
 }
 
-if [ "$TERM" != "linux" ] && [ -x "$(command -v ::OMP::)" ] && ! [[ "$PROMPT_COMMAND" =~ "_omp_hook" ]]; then
+if [[ "$TERM" != "linux" ]] && [[ -x "$(command -v ::OMP::)" ]] && ! [[ "$PROMPT_COMMAND" =~ "_omp_hook" ]]; then
     PROMPT_COMMAND="_omp_hook; $PROMPT_COMMAND"
 fi
 
-if [ "::UPGRADE::" == "true" ]; then
+if [[ "::UPGRADE::" == "true" ]]; then
     echo "::UPGRADENOTICE::"
 fi
 

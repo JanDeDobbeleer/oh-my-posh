@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 	"github.com/spf13/cobra"
@@ -34,8 +35,12 @@ var upgradeCmd = &cobra.Command{
 			return
 		}
 
+		cfg := engine.LoadConfig(env)
+
 		if _, hasNotice := upgrade.Notice(env, true); !hasNotice {
-			fmt.Print("\n✅  no new version available\n\n")
+			if !cfg.DisableNotice {
+				fmt.Print("\n✅  no new version available\n\n")
+			}
 			return
 		}
 

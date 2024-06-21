@@ -6,30 +6,34 @@ sidebar_label: Block
 
 Let's take a closer look at what defines a block.
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
-  "blocks": [
-    {
-      "type": "prompt",
-      "alignment": "left",
-      "segments": [
-      ]
-    }
-  ]
-}}/>
+<Config
+  data={{
+    $schema:
+      "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    blocks: [
+      {
+        type: "prompt",
+        alignment: "left",
+        segments: [],
+      },
+    ],
+  }}
+/>
 
 ## Properties
 
-| Name        | Type      |
-| ----------- | --------- |
-| `type`      | `string`  |
-| `newline`   | `boolean` |
-| `alignment` | `string`  |
-| `filler`    | `string`  |
-| `overflow`  | `string`  |
-| `segments`  | `array`   |
+| Name               | Type      |
+| ------------------ | --------- |
+| `type`             | `string`  |
+| `newline`          | `boolean` |
+| `alignment`        | `string`  |
+| `filler`           | `string`  |
+| `overflow`         | `string`  |
+| `leading_diamond`  | `string`  |
+| `trailing_diamond` | `string`  |
+| `segments`         | `array`   |
 
 ### Type
 
@@ -70,6 +74,16 @@ to be repeated to this property. Add this property to the _right_ aligned block.
 
 When the right aligned block is so long it will overflow the left aligned block, the engine will either
 break the block or hide it based on the setting. By default it is printed as is on the same line.
+
+### Leading Diamond
+
+The character to use as a leading diamond for the first segment in case you always want to start the block
+with the same leading diamond, regardless of which segment is enabled or not.
+
+### Trailing Diamond
+
+The character to use as a trailing diamond for the last segment in case you always want to end the block
+with the same trailing diamond, regardless of which segment is enabled or not.
 
 ### Segments
 

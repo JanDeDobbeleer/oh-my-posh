@@ -262,6 +262,18 @@
           "description": "https://ohmyposh.dev/docs/configuration/block#newline",
           "default": false
         },
+        "leading_diamond": {
+          "type": "string",
+          "title": "Leading diamond",
+          "description": "https://ohmyposh.dev/docs/configuration/block#leading-diamond",
+          "default": ""
+        },
+        "trailing_diamond": {
+          "type": "string",
+          "title": "Trailing diamond",
+          "description": "https://ohmyposh.dev/docs/configuration/block#trailing-diamond",
+          "default": ""
+        },
         "segments": {
           "type": "array",
           "title": "Segments list, prompt elements to display based on context",

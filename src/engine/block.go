@@ -45,6 +45,9 @@ type Block struct {
 	Filler    string         `json:"filler,omitempty" toml:"filler,omitempty"`
 	Overflow  Overflow       `json:"overflow,omitempty" toml:"overflow,omitempty"`
 
+	LeadingDiamond  string `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
+	TrailingDiamond string `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
+
 	// Deprecated: keep the logic for legacy purposes
 	HorizontalOffset int `json:"horizontal_offset,omitempty" toml:"horizontal_offset,omitempty"`
 	VerticalOffset   int `json:"vertical_offset,omitempty" toml:"vertical_offset,omitempty"`
@@ -131,14 +134,20 @@ func (b *Block) setSegmentsText() {
 }
 
 func (b *Block) RenderSegments() (string, int) {
-	for _, segment := range b.Segments {
-		if !segment.Enabled && segment.style() != Accordion {
-			continue
-		}
+	b.filterSegments()
 
+	for i, segment := range b.Segments {
 		if colors, newCycle := cycle.Loop(); colors != nil {
 			cycle = &newCycle
 			segment.colors = colors
+		}
+
+		if i == 0 && len(b.LeadingDiamond) > 0 {
+			segment.LeadingDiamond = b.LeadingDiamond
+		}
+
+		if i == len(b.Segments)-1 && len(b.TrailingDiamond) > 0 {
+			segment.TrailingDiamond = b.TrailingDiamond
 		}
 
 		b.setActiveSegment(segment)
@@ -148,6 +157,20 @@ func (b *Block) RenderSegments() (string, int) {
 	b.writeSeparator(true)
 
 	return b.writer.String()
+}
+
+func (b *Block) filterSegments() {
+	segments := make([]*Segment, 0)
+
+	for _, segment := range b.Segments {
+		if !segment.Enabled && segment.style() != Accordion {
+			continue
+		}
+
+		segments = append(segments, segment)
+	}
+
+	b.Segments = segments
 }
 
 func (b *Block) renderActiveSegment() {

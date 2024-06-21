@@ -1,0 +1,210 @@
+"$schema" = "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json"
+final_space = true
+version = 2
+
+[[blocks]]
+alignment = "left"
+type = "prompt"
+
+  # OS Logo
+  [[blocks.segments]]
+  background = "#18354c"
+  foreground = "#ffc107"
+  style = "plain"
+  template = " {{ if .WSL }}WSL at {{ end }}{{.Icon}} "
+  type = "os"
+
+  # File Path
+  [[blocks.segments]]
+  background = "#18354c"
+  foreground = "#ffc107"
+  style = "diamond"
+  template = "  {{ .Path }} "
+  trailing_diamond = ""
+  type = "path"
+
+    [blocks.segments.properties]
+    style = "folder"
+
+  # Git Repo Info
+  [[blocks.segments]]
+  background = "#ffc107"
+  foreground = "#18354c"
+  trailing_diamond = ""
+  style = "diamond"
+  template = " {{ .UpstreamIcon }}{{ .HEAD }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }}"
+  type = "git"
+
+    [blocks.segments.properties]
+    fetch_stash_count = true
+    fetch_upstream_icon = true
+
+  [[blocks.segments]]
+  background = "#ffc107"
+  foreground = "#18354c"
+  style = "powerline"
+  template = "  "
+  type = "root"
+
+[[blocks]]
+alignment = "right"
+type = "rprompt"
+
+  # Flags a failed execution
+  [[blocks.segments]]
+  background = "#A42A04"
+  foreground = "#E5E1E1"
+  style = "diamond"
+  leading_diamond = ""
+  template = " {{ if gt .Code 0 }}{{ end }} "
+  type = "status"
+
+    [blocks.segments.properties]
+    always_enabled = true
+
+  # Execution Time  
+  [[blocks.segments]]
+  background = "#18354c"
+  foreground = "#ffc107"
+  style = "diamond"
+  template = " 󰔟 {{ .FormattedMs }} "
+  leading_diamond = ""
+  type = "executiontime"
+
+  #Icons for Programming Projects
+  
+  [[blocks.segments]]
+  type = "angular"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#b52e32"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "node"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#18354c"
+  background = "#6CA35E"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "crystal"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#375bd1"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "dart"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#18a0c2"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "elixir"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#674E73"
+  background = "#422251"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "haskell"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#906cff"
+  background = "#100e23"
+  template = "  {{ .Full }}"
+
+  [[blocks.segments]]
+  type = "go"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#18a0c2"
+  template = " ‭ﳑ {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "java"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#375bd1"
+  template = "  {{ .Full }}"
+
+  [[blocks.segments]]
+  type = "lua"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#375bd1"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "dotnet"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#598304"
+  background = "#80bc07"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "ocaml"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#d44f26"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "perl"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#2C48A7"
+  template = "  {{ .Full }}"
+
+  [[blocks.segments]]
+  type = "php"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#797db4"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "python"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#100e23"
+  background = "#906cff"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "ruby"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#b52e32"
+  template = "  {{ .Full }}"
+
+  [[blocks.segments]]
+  type = "rust"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#193549"
+  background = "#99908a"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "swift"
+  leading_diamond = ""
+  style = "diamond"
+  foreground = "#E5E1E1"
+  background = "#f6553c"
+  template = "  {{ .Full }} "

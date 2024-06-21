@@ -135,7 +135,7 @@ module.exports = {
     announcementBar: {
       id: 'support_us',
       content:
-        '📣 To better support native Windows integration, I\'m <a target="_blank" rel="noopener noreferrer" href="https://gofund.me/06be00a0">raising funds</a> for a Surface Laptop.',
+        'If you\'re enjoying Oh My Posh, consider becoming a <a target="_blank" rel="noopener noreferrer" href="https://github.com/sponsors/JanDeDobbeleer">sponsor</a> to keep the project going strong 💪',
       backgroundColor: '#2c7ae0',
       textColor: '#ffffff',
       isCloseable: false,

@@ -2548,6 +2548,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "carehart",
+      "name": "Charlie Arehart",
+      "avatar_url": "https://avatars.githubusercontent.com/u/389746?v=4",
+      "profile": "http://www.carehart.org",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

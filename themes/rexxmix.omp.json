@@ -1,0 +1,88 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "segments": [
+                {
+                    "type": "os",
+                    "style": "diamond",
+                    "foreground": "#3A86FF",
+                    "background": "#282c34",
+                    "leading_diamond": "",
+                    "template": " {{ if .WSL }}WSL at {{ end }}{{.Icon}} "
+                },
+                {
+                    "type": "path",
+                    "style": "powerline",
+                    "background": "#0077C2",
+                    "foreground": "#000000",
+                    "powerline_symbol": "",
+                    "properties": {
+                        "style": "agnoster_full"
+                    },
+                    "template": " {{ .Path }} "
+                },
+                {
+                    "type": "node",
+                    "style": "powerline",
+                    "background": "#3C873A",
+                    "foreground": "#000000",
+                    "powerline_symbol": "",
+                    "properties": {
+                        "fetch_version": true
+                    },
+                    "template": " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} \ue718 "
+                },
+                {
+                    "type": "python",
+                    "style": "powerline",
+                    "background": "#FBFF00",
+                    "foreground": "#000000",
+                    "powerline_symbol": "",
+                    "properties": {
+                        "display_mode": "files",
+                        "fetch_virtual_env": false
+                    },
+                    "template": " {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} \ue235 "
+                },
+                {
+                    "type": "git",
+                    "style": "powerline",
+                    "background": "#7BFF00",
+                    "background_templates": [
+                        "{{ if or (.Working.Changed) (.Staging.Changed) }}#FCE300{{ end }}",
+                        "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#FF2E00{{ end }}",
+                        "{{ if gt .Ahead 0 }}#00DDFF{{ end }}",
+                        "{{ if gt .Behind 0 }}#4E9A06{{ end }}"
+                    ],
+                    "foreground": "#000000",
+                    "powerline_symbol": "",
+                    "properties": {
+                        "branch_icon": "\uf126 ",
+                        "fetch_stash_count": true,
+                        "fetch_status": true,
+                        "fetch_upstream_icon": true
+                    },
+                    "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} "
+                },
+                {
+                    "type": "status",
+                    "style": "powerline",
+                    "background": "#282C34",
+                    "foreground": "#74E700",
+                    "foreground_templates": [
+                        "{{ if gt .Code 0 }}#FF0033{{ end }}"
+                    ],
+                    "powerline_symbol": "",
+                    "properties": {
+                        "always_enabled": true
+                    },
+                    "template": " {{ if gt .Code 0 }}\uf00d{{ else }}\uf42e{{ end }} "
+                }
+            ]
+        }
+    ],
+    "version": 2
+}

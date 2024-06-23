@@ -362,6 +362,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="http://davidsass.io"><img src="https://avatars.githubusercontent.com/u/10754765?v=4?s=100" width="100px;" alt="David Sass"/><br /><sub><b>David Sass</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=sassdawe" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://www.carehart.org"><img src="https://avatars.githubusercontent.com/u/389746?v=4?s=100" width="100px;" alt="Charlie Arehart"/><br /><sub><b>Charlie Arehart</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=carehart" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/aramikuto"><img src="https://avatars.githubusercontent.com/u/116561995?v=4?s=100" width="100px;" alt="Aleksandr Kondrashov"/><br /><sub><b>Aleksandr Kondrashov</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=aramikuto" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

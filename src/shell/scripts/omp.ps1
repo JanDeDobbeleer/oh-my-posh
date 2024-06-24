@@ -359,7 +359,8 @@ Example:
         # for details about the trick to detect a debugging context, see these comments:
         # 1) https://github.com/JanDeDobbeleer/oh-my-posh/issues/2483#issuecomment-1175761456
         # 2) https://github.com/JanDeDobbeleer/oh-my-posh/issues/2502#issuecomment-1179968052
-        if ($null -ne $PSDebugContext -or -not ((Get-PSCallStack).Location -join "").StartsWith("<")) {
+        # 3) https://github.com/JanDeDobbeleer/oh-my-posh/issues/5153
+        if ($Host.Runspace.Debugger.InBreakpoint) {
             $script:PromptType = "debug"
             return
         }

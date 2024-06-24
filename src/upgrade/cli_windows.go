@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"runtime"
+
+	"github.com/google/uuid"
 )
 
 var successMsg = "Oh My Posh is installing in the background.\nRestart your shell in a minute to take full advantage of the new functionality."
@@ -20,14 +22,9 @@ func install() error {
 		return errors.New("failed to get TEMP environment variable")
 	}
 
-	path := filepath.Join(temp, "install.exe")
-
-	if _, err := os.Stat(path); err == nil {
-		err := os.Remove(path)
-		if err != nil {
-			return errors.New("unable to remove existing installer")
-		}
-	}
+	id := uuid.New().String()
+	fileName := fmt.Sprintf("oh-my-posh-install-%s.exe", id)
+	path := filepath.Join(temp, fileName)
 
 	file, err := os.Create(path)
 	if err != nil {

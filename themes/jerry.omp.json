@@ -1,0 +1,138 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "#0bdd19",
+          "properties": {
+            "style": "folder"
+          },
+          "style": "plain",
+          "template": "{{ .Path }} ",
+          "type": "path"
+        },
+        {
+          "foreground": "#B5B50D",
+          "style": "plain",
+          "template": "[\uf0e7] ",
+          "type": "root"
+        },
+        {
+          "foreground": "red",
+          "style": "plain",
+          "template": "[",
+          "type": "text"
+        },
+        {
+          "foreground": "#fafafa",
+          "style": "plain",
+          "template": "pwsh",
+          "type": "text"
+        },
+        {
+          "foreground": "red",
+          "style": "plain",
+          "template": "]",
+          "type": "text"
+        },
+        {
+          "foreground": "#fafafa",
+          "style": "powerline",
+          "template": "[\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }}{{ end }}{{ .Full }}{{ end }}] ",
+          "type": "python"
+        },
+        {
+          "properties": {
+            "branch_icon": "",
+            "fetch_stash_count": true
+          },
+          "style": "plain",
+          "template": "<#ffffff>on</> {{ .HEAD }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
+          "type": "git"
+        },
+        {
+          "foreground": "#26d031",
+          "style": "powerline",
+          "template": "[\ue626 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] ",
+          "type": "go"
+        },
+        {
+          "foreground": "#199aae",
+          "style": "powerline",
+          "template": "[\ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}] ",
+          "type": "node"
+        },
+        {
+          "foreground": "#f44336",
+          "style": "powerline",
+          "template": "[\ue791{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] ",
+          "type": "ruby"
+        },
+        {
+          "foreground": "#ea2d2e",
+          "style": "powerline",
+          "template": "[\ue738 {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}] ",
+          "type": "java"
+        },
+        {
+          "foreground": "#4063D8",
+          "style": "powerline",
+          "template": "🔱  {{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }} ",
+          "type": "julia"
+        }
+      
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "right",
+      "segments": [
+        {
+          "foreground": "white",
+          "properties": {
+            "always_enabled": true,
+            "style": "round"
+          },
+          "style": "plain",
+          "template": " {{ .FormattedMs }} ",
+          "type": "executiontime"
+        },
+        {
+          "foreground": "green",
+          "foreground_templates": [
+            "{{ if gt .Code 0 }}red{{ end }}"
+          ],
+          "properties": {
+            "always_enabled": true
+          },
+          "style": "plain",
+          "template": " {{ if gt .Code 0 }}\u2a2f{{else}}\u2713{{ end }} ",
+          "type": "status"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+          {
+              "foreground": "#FFD54F",
+              "foreground_templates": [
+                "{{ if gt .Code 0 }}red{{ end }}"
+              ],
+              "properties": {
+                "always_enabled": true
+              },
+              "style": "powerline",
+              "template": "🔱  ",
+              "type": "status"
+            }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "version": 2
+}

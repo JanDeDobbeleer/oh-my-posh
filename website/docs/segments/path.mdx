@@ -41,12 +41,12 @@ import Config from "@site/src/components/Config.js";
 | `mixed_threshold`           |  `number`  |    `4`     | the maximum length of a path segment that will be displayed when using `Mixed`                                   |
 | `max_depth`                 |  `number`  |    `1`     | maximum path depth to display before shortening when using `agnoster_short`                                      |
 | `max_width`                 |   `any`    |    `0`     | maximum path length to display when using `powerlevel`, can leverage [templates]                                 |
-| `hide_root_location`        | `boolean`  |  `false`   | ides the root location if it doesn't fit in the last `max_depth` folders, when using `agnoster_short`            |
+| `hide_root_location`        | `boolean`  |  `false`   | hides the root location if it doesn't fit in the last `max_depth` folders when using `agnoster_short`            |
 | `cycle`                     | `[]string` |            | a list of color overrides to cycle through to colorize the individual path folders, e.g. `[ "#ffffff,#111111" ]` |
 | `cycle_folder_separator`    | `boolean`  |  `false`   | colorize the `folder_separator_icon` as well when using a cycle                                                  |
 | `folder_format`             |  `string`  |    `%s`    | format to use on individual path folders                                                                         |
 | `edge_format`               |  `string`  |    `%s`    | format to use on the first and last folder of the path                                                           |
-| `left_format`               |  `string`  |    `%s`    | format to use on the firstfolder of the path - defaults to `edge_format`                                         |
+| `left_format`               |  `string`  |    `%s`    | format to use on the first folder of the path - defaults to `edge_format`                                        |
 | `right_format`              |  `string`  |    `%s`    | format to use on the last folder of the path - defaults to `edge_format`                                         |
 | `gitdir_format`             |  `string`  |            | format to use for a git root directory                                                                           |
 | `display_cygpath`           | `boolean`  |  `false`   | display the Cygwin style path using `cygpath -u $PWD`                                                            |

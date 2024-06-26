@@ -20,7 +20,7 @@ function _set_posh_cursor_position() {
   stty raw -echo min 0
 
   local pos
-  echo -en "\033[6n" > /dev/tty
+  echo -en "\033[6n" >/dev/tty
   read -r -d R pos
   pos=${pos:2} # strip off the esc-[
   local parts=(${(s:;:)pos})
@@ -44,24 +44,24 @@ function prompt_ohmyposh_preexec() {
 }
 
 function prompt_ohmyposh_precmd() {
-  omp_last_error=$?
-  local pipeStatus=(${pipestatus[@]})
+  omp_status_cache=$?
+  omp_pipestatus_cache=(${pipestatus[@]})
   omp_stack_count=${#dirstack[@]}
   omp_elapsed=-1
-  no_exit_code="true"
+  omp_no_exit_code="true"
   if [ $omp_start_time ]; then
     local omp_now=$(::OMP:: get millis --shell=zsh)
-    omp_elapsed=$(($omp_now-$omp_start_time))
-    no_exit_code="false"
+    omp_elapsed=$(($omp_now - $omp_start_time))
+    omp_no_exit_code="false"
   fi
-  if [[ "${pipeStatus[-1]}" != "$omp_last_error" ]]; then
-    pipeStatus=("$omp_last_error")
+  if [[ "${omp_pipestatus_cache[-1]}" != "$omp_status_cache" ]]; then
+    omp_pipestatus_cache=("$omp_status_cache")
   fi
-  count=$((POSH_PROMPT_COUNT+1))
+  count=$((POSH_PROMPT_COUNT + 1))
   export POSH_PROMPT_COUNT=$count
   set_poshcontext
   _set_posh_cursor_position
-  eval "$(::OMP:: print primary --config="$POSH_THEME" --status="$omp_last_error" --pipestatus="${pipeStatus[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$no_exit_code")"
+  eval "$(::OMP:: print primary --config="$POSH_THEME" --status="$omp_status_cache" --pipestatus="${omp_pipestatus_cache[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$omp_no_exit_code")"
   unset omp_start_time
 }
 
@@ -82,7 +82,7 @@ function _posh-tooltip() {
   # https://github.com/zsh-users/zsh-autosuggestions - clear suggestion to avoid keeping it after the newly inserted space
   if [[ "$(zle -lL autosuggest-clear)" ]]; then
     # only if suggestions not disabled (variable not set)
-    if ! [[ -v _ZSH_AUTOSUGGEST_DISABLED ]]; then
+    if [[ ! -v _ZSH_AUTOSUGGEST_DISABLED ]]; then
       zle autosuggest-clear
     fi
   fi
@@ -90,19 +90,19 @@ function _posh-tooltip() {
   # https://github.com/zsh-users/zsh-autosuggestions - fetch new suggestion after the space
   if [[ "$(zle -lL autosuggest-fetch)" ]]; then
     # only if suggestions not disabled (variable not set)
-    if ! [[ -v _ZSH_AUTOSUGGEST_DISABLED ]]; then
+    if [[ ! -v _ZSH_AUTOSUGGEST_DISABLED ]]; then
       zle autosuggest-fetch
     fi
   fi
 
-  # get the first word of command line as tip
-  local tip=${${(MS)BUFFER##[[:graph:]]*}%%[[:space:]]*}
-  # ignore an empty tip
-  if [[ -z "$tip" ]]; then
+  # Get the first word of command line as tip.
+  local tooltip_command=${${(MS)BUFFER##[[:graph:]]*}%%[[:space:]]*}
+  # Ignore an empty/repeated tooltip command.
+  if [[ -z "$tooltip_command" ]] || [[ "$tooltip_command" = "$omp_tooltip_command" ]]; then
     return
   fi
-  local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --shell=zsh --status="$omp_last_error" --command="$tip" --shell-version="$ZSH_VERSION")
-  # ignore an empty tooltip
+  omp_tooltip_command="$tooltip_command"
+  local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --status="$omp_status_cache" --pipestatus="${omp_pipestatus_cache[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --command="$tooltip_command" --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$omp_no_exit_code")
   if [[ -z "$tooltip" ]]; then
     return
   fi
@@ -119,7 +119,8 @@ function _posh-zle-line-init() {
   local -i ret=$?
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
-  eval "$(::OMP:: print transient --status="$omp_last_error" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --config="$POSH_THEME" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$no_exit_code")"
+  omp_tooltip_command=''
+  eval "$(::OMP:: print transient --config="$POSH_THEME" --status="$omp_status_cache" --pipestatus="${omp_pipestatus_cache[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$omp_no_exit_code")"
   zle .reset-prompt
 
   # Exit the shell if we receive EOT.

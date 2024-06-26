@@ -46,9 +46,9 @@ function set_poshcontext() {
 }
 
 function _omp_hook() {
-    local ret=$? pipeStatus=(${PIPESTATUS[@]})
-    if [[ "${#BP_PIPESTATUS[@]}" -ge "${#pipeStatus[@]}" ]]; then
-        pipeStatus=(${BP_PIPESTATUS[@]})
+    local ret=$? omp_pipestatus=(${PIPESTATUS[@]})
+    if [[ "${#BP_PIPESTATUS[@]}" -ge "${#omp_pipestatus[@]}" ]]; then
+        omp_pipestatus=(${BP_PIPESTATUS[@]})
     fi
 
     local omp_stack_count=$((${#DIRSTACK[@]} - 1))
@@ -61,14 +61,14 @@ function _omp_hook() {
         omp_start_time=""
         no_exit_code="false"
     fi
-    if [[ "${pipeStatus[-1]}" != "$ret" ]]; then
-        pipeStatus=("$ret")
+    if [[ "${omp_pipestatus[-1]}" != "$ret" ]]; then
+        omp_pipestatus=("$ret")
     fi
 
     set_poshcontext
     _set_posh_cursor_position
 
-    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$ret" --pipestatus="${pipeStatus[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')"
+    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$ret" --pipestatus="${omp_pipestatus[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')"
     return $ret
 }
 

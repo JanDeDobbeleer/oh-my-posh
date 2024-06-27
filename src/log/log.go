@@ -22,30 +22,27 @@ func Plain() {
 	plain = true
 }
 
-func Info(message string) {
-	if !enabled {
-		return
-	}
-	log.WriteString(message)
-}
-
 func Trace(start time.Time, args ...string) {
 	if !enabled {
 		return
 	}
+
 	elapsed := time.Since(start)
 	fn, _ := funcSpec()
 	header := fmt.Sprintf("%s(%s) - %s", fn, strings.Join(args, " "), Text(elapsed.String()).Yellow().Plain())
+
 	printLn(trace, header)
 }
 
-func Debug(message string) {
+func Debug(message ...string) {
 	if !enabled {
 		return
 	}
+
 	fn, line := funcSpec()
 	header := fmt.Sprintf("%s:%d", fn, line)
-	printLn(debug, header, message)
+
+	printLn(debug, header, strings.Join(message, " "))
 }
 
 func Error(err error) {
@@ -54,6 +51,7 @@ func Error(err error) {
 	}
 	fn, line := funcSpec()
 	header := fmt.Sprintf("%s:%d", fn, line)
+
 	printLn(bug, header, err.Error())
 }
 
@@ -66,11 +64,14 @@ func funcSpec() (string, int) {
 	if !OK {
 		return "", 0
 	}
+
 	fn := runtime.FuncForPC(pc).Name()
 	fn = fn[strings.LastIndex(fn, ".")+1:]
 	file = filepath.Base(file)
+
 	if strings.HasPrefix(fn, "func") {
 		return file, line
 	}
+
 	return fmt.Sprintf("%s:%s", file, fn), line
 }

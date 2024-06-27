@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
 )
 
 type release struct {
@@ -57,7 +57,7 @@ func fetchFontAssets(repo string) ([]*Asset, error) {
 	}
 
 	req.Header.Add("Accept", "application/vnd.github.v3+json")
-	response, err := platform.Client.Do(req)
+	response, err := net.HTTPClient.Do(req)
 	if err != nil || response.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("failed to get %s release", repo)
 	}

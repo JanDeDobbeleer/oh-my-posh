@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
 )
 
 type codePoints map[uint64]uint64
@@ -24,7 +24,7 @@ func getGlyphCodePoints() (codePoints, error) {
 		return codePoints, &ConnectionError{reason: err.Error()}
 	}
 
-	response, err := platform.Client.Do(request)
+	response, err := net.HTTPClient.Do(request)
 	if err != nil {
 		return codePoints, err
 	}

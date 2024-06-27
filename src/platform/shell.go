@@ -1,9 +1,7 @@
 package platform
 
 import (
-	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -22,6 +20,8 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform/battery"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform/cmd"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 
 	disk "github.com/shirou/gopsutil/v3/disk"
@@ -239,65 +239,46 @@ func (env *Shell) Init() {
 
 func (env *Shell) resolveConfigPath() {
 	defer env.Trace(time.Now())
+
 	if len(env.CmdFlags.Config) == 0 {
 		env.CmdFlags.Config = env.Getenv("POSH_THEME")
 	}
+
 	if len(env.CmdFlags.Config) == 0 {
 		env.Debug("No config set, fallback to default config")
 		return
 	}
+
 	if strings.HasPrefix(env.CmdFlags.Config, "https://") {
-		if err := env.downloadConfig(env.CmdFlags.Config); err != nil {
-			// make it use default config when download fails
+		filePath, err := config.Download(env.CachePath(), env.CmdFlags.Config)
+		if err != nil {
 			env.Error(err)
 			env.CmdFlags.Config = ""
 			return
 		}
+
+		env.CmdFlags.Config = filePath
+		return
 	}
+
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
 	if env.Platform() == WINDOWS && env.Shell() == "bash" {
 		env.Debug("Cygwin detected, using full path for config")
 		return
 	}
+
 	configFile := env.CmdFlags.Config
 	if strings.HasPrefix(configFile, "~") {
 		configFile = strings.TrimPrefix(configFile, "~")
 		configFile = filepath.Join(env.Home(), configFile)
 	}
+
 	if !filepath.IsAbs(configFile) {
 		configFile = filepath.Join(env.Pwd(), configFile)
 	}
+
 	env.CmdFlags.Config = filepath.Clean(configFile)
-}
-
-func (env *Shell) downloadConfig(location string) error {
-	defer env.Trace(time.Now(), location)
-	ext := filepath.Ext(location)
-	fileHash := base64.StdEncoding.EncodeToString([]byte(location))
-	filename := fmt.Sprintf("config.%s.omp%s", fileHash, ext)
-	configPath := filepath.Join(env.CachePath(), filename)
-	cfg, err := env.HTTPRequest(location, nil, 5000)
-	if err != nil {
-		if _, osErr := os.Stat(configPath); !os.IsNotExist(osErr) {
-			// use the already cached config
-			env.CmdFlags.Config = configPath
-			return nil
-		}
-
-		return err
-	}
-	out, err := os.Create(configPath)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-	_, err = io.Copy(out, bytes.NewReader(cfg))
-	if err != nil {
-		return err
-	}
-	env.CmdFlags.Config = configPath
-	return nil
 }
 
 func (env *Shell) Trace(start time.Time, args ...string) {
@@ -639,24 +620,30 @@ func (env *Shell) unWrapError(err error) error {
 
 func (env *Shell) HTTPRequest(targetURL string, body io.Reader, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
 	defer env.Trace(time.Now(), targetURL)
+
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
+
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, body)
 	if err != nil {
 		return nil, err
 	}
+
 	for _, modifier := range requestModifiers {
 		modifier(request)
 	}
+
 	if env.CmdFlags.Debug {
 		dump, _ := httputil.DumpRequestOut(request, true)
 		env.Debug(string(dump))
 	}
-	response, err := Client.Do(request)
+
+	response, err := net.HTTPClient.Do(request)
 	if err != nil {
 		env.Error(err)
 		return nil, env.unWrapError(err)
 	}
+
 	// anything inside the range [200, 299] is considered a success
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
 		message := "HTTP status code " + strconv.Itoa(response.StatusCode)
@@ -664,13 +651,17 @@ func (env *Shell) HTTPRequest(targetURL string, body io.Reader, timeout int, req
 		env.Error(err)
 		return nil, err
 	}
+
 	defer response.Body.Close()
+
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
 		env.Error(err)
 		return nil, err
 	}
+
 	env.Debug(string(responseBody))
+
 	return responseBody, nil
 }
 

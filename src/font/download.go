@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
 )
 
 func Download(fontPath string) ([]byte, error) {
@@ -42,7 +42,7 @@ func getRemoteFile(location string) (data []byte, err error) {
 	if err != nil {
 		return nil, err
 	}
-	resp, err := platform.Client.Do(req)
+	resp, err := net.HTTPClient.Do(req)
 	if err != nil {
 		return
 	}

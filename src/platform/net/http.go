@@ -1,4 +1,4 @@
-package platform
+package net
 
 import (
 	"net"
@@ -31,5 +31,6 @@ var (
 		TLSHandshakeTimeout:   10 * time.Second,
 		ResponseHeaderTimeout: 10 * time.Second,
 	}
-	Client httpClient = &http.Client{Transport: defaultTransport}
+
+	HTTPClient httpClient = &http.Client{Transport: defaultTransport}
 )

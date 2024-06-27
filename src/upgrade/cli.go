@@ -14,6 +14,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
 )
 
 var (
@@ -148,7 +149,7 @@ func downloadAsset(asset string) (io.ReadCloser, error) {
 		return nil, err
 	}
 
-	resp, err := platform.Client.Do(req)
+	resp, err := net.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

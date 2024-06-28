@@ -364,6 +364,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/aramikuto"><img src="https://avatars.githubusercontent.com/u/116561995?v=4?s=100" width="100px;" alt="Aleksandr Kondrashov"/><br /><sub><b>Aleksandr Kondrashov</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=aramikuto" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://jacobbundgaard.dk"><img src="https://avatars.githubusercontent.com/u/984760?v=4?s=100" width="100px;" alt="Jacob Bundgaard"/><br /><sub><b>Jacob Bundgaard</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kimsey0" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

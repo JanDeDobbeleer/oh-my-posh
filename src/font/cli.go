@@ -231,6 +231,10 @@ func (m *main) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, cmd
 	}
 
+	if m.list == nil {
+		return m, nil
+	}
+
 	lst, cmd := m.list.Update(msg)
 	m.list = &lst
 	return m, cmd

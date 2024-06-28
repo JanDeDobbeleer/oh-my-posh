@@ -2566,6 +2566,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "kimsey0",
+      "name": "Jacob Bundgaard",
+      "avatar_url": "https://avatars.githubusercontent.com/u/984760?v=4",
+      "profile": "https://jacobbundgaard.dk",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

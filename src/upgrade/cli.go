@@ -1,5 +1,3 @@
-//go:build windows || darwin
-
 package upgrade
 
 import (
@@ -21,16 +19,6 @@ var (
 	program   *tea.Program
 	textStyle = lipgloss.NewStyle().Margin(1, 0, 2, 0)
 	title     string
-)
-
-const (
-	upgradeNotice = `
-A new release of Oh My Posh is available: %s → %s
-To upgrade, run: 'oh-my-posh upgrade'
-
-To enable automated upgrades, set 'auto_upgrade' to 'true' in your configuration.
-`
-	Supported = true
 )
 
 type resultMsg string
@@ -71,7 +59,7 @@ func (m *model) Init() tea.Cmd {
 				return
 			}
 
-			program.Send(resultMsg(successMsg))
+			program.Send(resultMsg("🚀  Upgrade successful, restart your shell to take full advantage of the new functionality."))
 		}()
 	}()
 

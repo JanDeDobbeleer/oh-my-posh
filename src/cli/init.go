@@ -73,7 +73,6 @@ func runInit(shellName string) {
 	shell.Tooltips = len(cfg.Tooltips) > 0
 	shell.ShellIntegration = cfg.ShellIntegration
 	shell.PromptMark = shellName == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(ansi.PromptMark)
-	shell.AutoUpgrade = cfg.AutoUpgrade && upgrade.Supported
 
 	for i, block := range cfg.Blocks {
 		// only fetch cursor position when relevant

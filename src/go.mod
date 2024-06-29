@@ -10,7 +10,7 @@ require (
 	github.com/alecthomas/repr v0.4.0 // indirect
 	github.com/esimov/stackblur-go v1.1.0
 	github.com/fogleman/gg v1.3.0
-	github.com/google/uuid v1.6.0
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/gookit/color v1.5.4
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
@@ -35,6 +35,7 @@ require (
 	github.com/goccy/go-yaml v1.11.3
 	github.com/gookit/goutil v0.6.15
 	github.com/hashicorp/hcl/v2 v2.21.0
+	github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/pelletier/go-toml/v2 v2.2.2
 	github.com/spf13/cobra v1.8.1

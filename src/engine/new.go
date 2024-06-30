@@ -1,9 +1,9 @@
 package engine
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 // New returns a prompt engine initialized with the
@@ -24,7 +24,7 @@ func New(flags *platform.Flags) *Engine {
 	env.Var = cfg.Var
 	flags.HasTransient = cfg.TransientPrompt != nil
 
-	ansiWriter := &ansi.Writer{
+	ansiWriter := &terminal.Writer{
 		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 		AnsiColors:         cfg.MakeColors(),
 		Plain:              flags.Plain,

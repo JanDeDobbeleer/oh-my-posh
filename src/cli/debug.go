@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
@@ -41,7 +41,7 @@ var debugCmd = &cobra.Command{
 		env.Var = cfg.Var
 
 		writerColors := cfg.MakeColors()
-		writer := &ansi.Writer{
+		writer := &terminal.Writer{
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
 			Plain:              plain,

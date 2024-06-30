@@ -4,10 +4,10 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -55,16 +55,16 @@ func TestPrintPWD(t *testing.T) {
 		OSC99    bool
 	}{
 		{Case: "Empty PWD"},
-		{Case: "OSC99", Config: ansi.OSC99, Expected: "\x1b]9;9;pwd\x1b\\"},
-		{Case: "OSC7", Config: ansi.OSC7, Expected: "\x1b]7;file://host/pwd\x1b\\"},
-		{Case: "OSC51", Config: ansi.OSC51, Expected: "\x1b]51;Auser@host:pwd\x1b\\"},
+		{Case: "OSC99", Config: terminal.OSC99, Expected: "\x1b]9;9;pwd\x1b\\"},
+		{Case: "OSC7", Config: terminal.OSC7, Expected: "\x1b]7;file://host/pwd\x1b\\"},
+		{Case: "OSC51", Config: terminal.OSC51, Expected: "\x1b]51;Auser@host:pwd\x1b\\"},
 		{Case: "Deprecated OSC99", OSC99: true, Expected: "\x1b]9;9;pwd\x1b\\"},
 		{Case: "Template (empty)", Config: "{{ if eq .Shell \"pwsh\" }}osc7{{ end }}"},
 		{Case: "Template (non empty)", Config: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;file://host/pwd\x1b\\"},
 		{
 			Case:     "OSC99 Bash",
 			Pwd:      `C:\Users\user\Documents\GitHub\oh-my-posh`,
-			Config:   ansi.OSC99,
+			Config:   terminal.OSC99,
 			Shell:    shell.BASH,
 			Expected: "\x1b]9;9;C:\\Users\\user\\Documents\\GitHub\\oh-my-posh\x1b\\",
 		},
@@ -85,7 +85,7 @@ func TestPrintPWD(t *testing.T) {
 			Shell: "shell",
 		})
 
-		writer := &ansi.Writer{}
+		writer := &terminal.Writer{}
 		writer.Init(shell.GENERIC)
 		engine := &Engine{
 			Env: env,
@@ -115,7 +115,7 @@ func engineRender() {
 	cfg := LoadConfig(env)
 
 	writerColors := cfg.MakeColors()
-	writer := &ansi.Writer{
+	writer := &terminal.Writer{
 		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 		AnsiColors:         writerColors,
 		TrueColor:          env.CmdFlags.TrueColor,
@@ -188,7 +188,7 @@ func TestGetTitle(t *testing.T) {
 			PWD:      tc.Cwd,
 			Folder:   "vagrant",
 		})
-		writer := &ansi.Writer{}
+		writer := &terminal.Writer{}
 		writer.Init(shell.GENERIC)
 		engine := &Engine{
 			Config: &Config{
@@ -247,7 +247,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			Root:     tc.Root,
 			HostName: "",
 		})
-		writer := &ansi.Writer{}
+		writer := &terminal.Writer{}
 		writer.Init(shell.GENERIC)
 		engine := &Engine{
 			Config: &Config{

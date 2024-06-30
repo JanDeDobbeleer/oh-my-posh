@@ -3,10 +3,10 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
 	"github.com/spf13/cobra"
@@ -72,7 +72,7 @@ func runInit(shellName string) {
 	shell.ErrorLine = cfg.ErrorLine != nil || cfg.ValidLine != nil
 	shell.Tooltips = len(cfg.Tooltips) > 0
 	shell.ShellIntegration = cfg.ShellIntegration
-	shell.PromptMark = shellName == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(ansi.PromptMark)
+	shell.PromptMark = shellName == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(terminal.PromptMark)
 
 	for i, block := range cfg.Blocks {
 		// only fetch cursor position when relevant

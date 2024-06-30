@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -34,7 +34,7 @@ func runImageTest(config, content string) (string, error) {
 	}
 	defer os.Remove(file.Name())
 
-	writer := &ansi.Writer{}
+	writer := &terminal.Writer{}
 	writer.Init(shell.GENERIC)
 	image := &ImageRenderer{
 		AnsiString: content,

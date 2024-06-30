@@ -3,9 +3,9 @@ package engine
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -31,21 +31,21 @@ func TestEscapeGlyphs(t *testing.T) {
 }
 
 func TestGetPalette(t *testing.T) {
-	palette := ansi.Palette{
+	palette := terminal.Palette{
 		"red":  "#ff0000",
 		"blue": "#0000ff",
 	}
 	cases := []struct {
 		Case            string
-		Palettes        *ansi.Palettes
-		Palette         ansi.Palette
-		ExpectedPalette ansi.Palette
+		Palettes        *terminal.Palettes
+		Palette         terminal.Palette
+		ExpectedPalette terminal.Palette
 	}{
 		{
 			Case: "match",
-			Palettes: &ansi.Palettes{
+			Palettes: &terminal.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]ansi.Palette{
+				List: map[string]terminal.Palette{
 					"bash": palette,
 					"zsh": {
 						"red":  "#ff0001",
@@ -57,9 +57,9 @@ func TestGetPalette(t *testing.T) {
 		},
 		{
 			Case: "no match, no fallback",
-			Palettes: &ansi.Palettes{
+			Palettes: &terminal.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]ansi.Palette{
+				List: map[string]terminal.Palette{
 					"fish": palette,
 					"zsh": {
 						"red":  "#ff0001",
@@ -71,9 +71,9 @@ func TestGetPalette(t *testing.T) {
 		},
 		{
 			Case: "no match, default",
-			Palettes: &ansi.Palettes{
+			Palettes: &terminal.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]ansi.Palette{
+				List: map[string]terminal.Palette{
 					"zsh": {
 						"red":  "#ff0001",
 						"blue": "#0000fb",

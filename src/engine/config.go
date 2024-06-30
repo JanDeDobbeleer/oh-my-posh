@@ -12,12 +12,12 @@ import (
 	json "github.com/goccy/go-json"
 	yaml "github.com/goccy/go-yaml"
 	"github.com/gookit/goutil/jsonutil"
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	toml "github.com/pelletier/go-toml/v2"
 )
 
@@ -31,29 +31,29 @@ const (
 
 // Config holds all the theme for rendering the prompt
 type Config struct {
-	Version                  int                `json:"version" toml:"version"`
-	FinalSpace               bool               `json:"final_space,omitempty" toml:"final_space,omitempty"`
-	ConsoleTitleTemplate     string             `json:"console_title_template,omitempty" toml:"console_title_template,omitempty"`
-	TerminalBackground       string             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
-	AccentColor              string             `json:"accent_color,omitempty" toml:"accent_color,omitempty"`
-	Blocks                   []*Block           `json:"blocks,omitempty" toml:"blocks,omitempty"`
-	Tooltips                 []*Segment         `json:"tooltips,omitempty" toml:"tooltips,omitempty"`
-	TransientPrompt          *Segment           `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty"`
-	ValidLine                *Segment           `json:"valid_line,omitempty" toml:"valid_line,omitempty"`
-	ErrorLine                *Segment           `json:"error_line,omitempty" toml:"error_line,omitempty"`
-	SecondaryPrompt          *Segment           `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty"`
-	DebugPrompt              *Segment           `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty"`
-	Palette                  ansi.Palette       `json:"palette,omitempty" toml:"palette,omitempty"`
-	Palettes                 *ansi.Palettes     `json:"palettes,omitempty" toml:"palettes,omitempty"`
-	Cycle                    ansi.Cycle         `json:"cycle,omitempty" toml:"cycle,omitempty"`
-	ShellIntegration         bool               `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
-	PWD                      string             `json:"pwd,omitempty" toml:"pwd,omitempty"`
-	Var                      map[string]any     `json:"var,omitempty" toml:"var,omitempty"`
-	DisableCursorPositioning bool               `json:"disable_cursor_positioning,omitempty" toml:"disable_cursor_positioning,omitempty"`
-	PatchPwshBleed           bool               `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty"`
-	DisableNotice            bool               `json:"disable_notice,omitempty" toml:"disable_notice,omitempty"`
-	AutoUpgrade              bool               `json:"auto_upgrade,omitempty" toml:"auto_upgrade,omitempty"`
-	ITermFeatures            ansi.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty"`
+	Version                  int                    `json:"version" toml:"version"`
+	FinalSpace               bool                   `json:"final_space,omitempty" toml:"final_space,omitempty"`
+	ConsoleTitleTemplate     string                 `json:"console_title_template,omitempty" toml:"console_title_template,omitempty"`
+	TerminalBackground       string                 `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
+	AccentColor              string                 `json:"accent_color,omitempty" toml:"accent_color,omitempty"`
+	Blocks                   []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty"`
+	Tooltips                 []*Segment             `json:"tooltips,omitempty" toml:"tooltips,omitempty"`
+	TransientPrompt          *Segment               `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty"`
+	ValidLine                *Segment               `json:"valid_line,omitempty" toml:"valid_line,omitempty"`
+	ErrorLine                *Segment               `json:"error_line,omitempty" toml:"error_line,omitempty"`
+	SecondaryPrompt          *Segment               `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty"`
+	DebugPrompt              *Segment               `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty"`
+	Palette                  terminal.Palette       `json:"palette,omitempty" toml:"palette,omitempty"`
+	Palettes                 *terminal.Palettes     `json:"palettes,omitempty" toml:"palettes,omitempty"`
+	Cycle                    terminal.Cycle         `json:"cycle,omitempty" toml:"cycle,omitempty"`
+	ShellIntegration         bool                   `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
+	PWD                      string                 `json:"pwd,omitempty" toml:"pwd,omitempty"`
+	Var                      map[string]any         `json:"var,omitempty" toml:"var,omitempty"`
+	DisableCursorPositioning bool                   `json:"disable_cursor_positioning,omitempty" toml:"disable_cursor_positioning,omitempty"`
+	PatchPwshBleed           bool                   `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty"`
+	DisableNotice            bool                   `json:"disable_notice,omitempty" toml:"disable_notice,omitempty"`
+	AutoUpgrade              bool                   `json:"auto_upgrade,omitempty" toml:"auto_upgrade,omitempty"`
+	ITermFeatures            terminal.ITermFeatures `json:"iterm_features,omitempty" toml:"iterm_features,omitempty"`
 
 	// Deprecated
 	OSC99 bool `json:"osc99,omitempty" toml:"osc99,omitempty"`
@@ -70,12 +70,12 @@ type Config struct {
 
 // MakeColors creates instance of AnsiColors to use in AnsiWriter according to
 // environment and configuration.
-func (cfg *Config) MakeColors() ansi.ColorString {
+func (cfg *Config) MakeColors() terminal.ColorString {
 	cacheDisabled := cfg.env.Getenv("OMP_CACHE_DISABLED") == "1"
-	return ansi.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
+	return terminal.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
 }
 
-func (cfg *Config) getPalette() ansi.Palette {
+func (cfg *Config) getPalette() terminal.Palette {
 	if cfg.Palettes == nil {
 		return cfg.Palette
 	}
@@ -472,7 +472,7 @@ func defaultConfig(env platform.Environment, warning bool) *Config {
 			},
 		},
 		ConsoleTitleTemplate: "{{ .Shell }} in {{ .Folder }}",
-		Palette: ansi.Palette{
+		Palette: terminal.Palette{
 			"black":  "#262B44",
 			"blue":   "#4B95E9",
 			"green":  "#59C9A5",

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 type ExtraPromptType int
@@ -104,7 +104,7 @@ func (e *Engine) Primary() string {
 		}
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
 		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
-		writer := &ansi.Writer{
+		writer := &terminal.Writer{
 			TrueColor: e.Env.Flags().TrueColor,
 		}
 		writer.Init(shell.GENERIC)

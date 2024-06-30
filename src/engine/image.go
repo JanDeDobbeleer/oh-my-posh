@@ -35,10 +35,10 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	fontCLI "github.com/jandedobbeleer/oh-my-posh/src/font"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/esimov/stackblur-go"
 	"github.com/fogleman/gg"
@@ -114,7 +114,7 @@ type ImageRenderer struct {
 	CursorPadding int
 	RPromptOffset int
 	BgColor       string
-	Ansi          *ansi.Writer
+	Ansi          *terminal.Writer
 
 	env platform.Environment
 
@@ -428,7 +428,7 @@ func (ir *ImageRenderer) lenWithoutANSI(text string) int {
 	for _, match := range matches {
 		text = strings.ReplaceAll(text, match[str], "")
 	}
-	stripped := regex.ReplaceAllString(ansi.AnsiRegex, text, "")
+	stripped := regex.ReplaceAllString(terminal.AnsiRegex, text, "")
 	length := utf8.RuneCountInString(stripped)
 	for _, rune := range stripped {
 		length += ir.runeAdditionalWidth(rune)

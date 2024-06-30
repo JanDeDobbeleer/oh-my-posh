@@ -1,4 +1,4 @@
-package ansi
+package terminal
 
 type Palettes struct {
 	Template string             `json:"template,omitempty" toml:"template,omitempty"`

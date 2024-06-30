@@ -4,10 +4,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 // BlockType type of block
@@ -56,19 +56,19 @@ type Block struct {
 	MinWidth int `json:"min_width,omitempty" toml:"min_width,omitempty"`
 
 	env                   platform.Environment
-	writer                *ansi.Writer
+	writer                *terminal.Writer
 	activeSegment         *Segment
 	previousActiveSegment *Segment
 }
 
-func (b *Block) Init(env platform.Environment, writer *ansi.Writer) {
+func (b *Block) Init(env platform.Environment, writer *terminal.Writer) {
 	b.env = env
 	b.writer = writer
 	b.executeSegmentLogic()
 }
 
 func (b *Block) InitPlain(env platform.Environment, config *Config) {
-	b.writer = &ansi.Writer{
+	b.writer = &terminal.Writer{
 		TerminalBackground: shell.ConsoleBackgroundColor(env, config.TerminalBackground),
 		AnsiColors:         config.MakeColors(),
 		TrueColor:          env.Flags().TrueColor,
@@ -177,17 +177,17 @@ func (b *Block) renderActiveSegment() {
 	b.writeSeparator(false)
 	switch b.activeSegment.style() {
 	case Plain, Powerline:
-		b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
+		b.writer.Write(terminal.Background, terminal.Foreground, b.activeSegment.text)
 	case Diamond:
-		background := ansi.Transparent
+		background := terminal.Transparent
 		if b.previousActiveSegment != nil && b.previousActiveSegment.hasEmptyDiamondAtEnd() {
 			background = b.previousActiveSegment.background()
 		}
-		b.writer.Write(background, ansi.Background, b.activeSegment.LeadingDiamond)
-		b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
+		b.writer.Write(background, terminal.Background, b.activeSegment.LeadingDiamond)
+		b.writer.Write(terminal.Background, terminal.Foreground, b.activeSegment.text)
 	case Accordion:
 		if b.activeSegment.Enabled {
-			b.writer.Write(ansi.Background, ansi.Foreground, b.activeSegment.text)
+			b.writer.Write(terminal.Background, terminal.Foreground, b.activeSegment.text)
 		}
 	}
 	b.previousActiveSegment = b.activeSegment
@@ -197,7 +197,7 @@ func (b *Block) renderActiveSegment() {
 func (b *Block) writeSeparator(final bool) {
 	isCurrentDiamond := b.activeSegment.style() == Diamond
 	if final && isCurrentDiamond {
-		b.writer.Write(ansi.Transparent, ansi.Background, b.activeSegment.TrailingDiamond)
+		b.writer.Write(terminal.Transparent, terminal.Background, b.activeSegment.TrailingDiamond)
 		return
 	}
 
@@ -207,12 +207,12 @@ func (b *Block) writeSeparator(final bool) {
 	}
 
 	if isPreviousDiamond && isCurrentDiamond && len(b.activeSegment.LeadingDiamond) == 0 {
-		b.writer.Write(ansi.Background, ansi.ParentBackground, b.previousActiveSegment.TrailingDiamond)
+		b.writer.Write(terminal.Background, terminal.ParentBackground, b.previousActiveSegment.TrailingDiamond)
 		return
 	}
 
 	if isPreviousDiamond && len(b.previousActiveSegment.TrailingDiamond) > 0 {
-		b.writer.Write(ansi.Transparent, ansi.ParentBackground, b.previousActiveSegment.TrailingDiamond)
+		b.writer.Write(terminal.Transparent, terminal.ParentBackground, b.previousActiveSegment.TrailingDiamond)
 	}
 
 	isPowerline := b.activeSegment.isPowerline()
@@ -234,7 +234,7 @@ func (b *Block) writeSeparator(final bool) {
 	}
 
 	if shouldOverridePowerlineLeadingSymbol() {
-		b.writer.Write(ansi.Transparent, ansi.Background, b.activeSegment.LeadingPowerlineSymbol)
+		b.writer.Write(terminal.Transparent, terminal.Background, b.activeSegment.LeadingPowerlineSymbol)
 		return
 	}
 
@@ -255,13 +255,13 @@ func (b *Block) writeSeparator(final bool) {
 		return
 	}
 
-	bgColor := ansi.Background
+	bgColor := terminal.Background
 	if final || !isPowerline {
-		bgColor = ansi.Transparent
+		bgColor = terminal.Transparent
 	}
 
 	if b.activeSegment.style() == Diamond && len(b.activeSegment.LeadingDiamond) == 0 {
-		bgColor = ansi.Background
+		bgColor = terminal.Background
 	}
 
 	if b.activeSegment.InvertPowerline {
@@ -282,11 +282,11 @@ func (b *Block) adjustTrailingDiamondColorOverrides() {
 		return
 	}
 
-	if !strings.Contains(b.previousActiveSegment.TrailingDiamond, ansi.Background) && !strings.Contains(b.previousActiveSegment.TrailingDiamond, ansi.Foreground) {
+	if !strings.Contains(b.previousActiveSegment.TrailingDiamond, terminal.Background) && !strings.Contains(b.previousActiveSegment.TrailingDiamond, terminal.Foreground) {
 		return
 	}
 
-	match := regex.FindNamedRegexMatch(ansi.AnchorRegex, b.previousActiveSegment.TrailingDiamond)
+	match := regex.FindNamedRegexMatch(terminal.AnchorRegex, b.previousActiveSegment.TrailingDiamond)
 	if len(match) == 0 {
 		return
 	}
@@ -294,31 +294,31 @@ func (b *Block) adjustTrailingDiamondColorOverrides() {
 	adjustOverride := func(anchor, override string) {
 		newOverride := override
 		switch override {
-		case ansi.Foreground:
-			newOverride = ansi.ParentForeground
-		case ansi.Background:
-			newOverride = ansi.ParentBackground
+		case terminal.Foreground:
+			newOverride = terminal.ParentForeground
+		case terminal.Background:
+			newOverride = terminal.ParentBackground
 		}
 
 		if override == newOverride {
 			return
 		}
 
-		newAnchor := strings.Replace(match[ansi.ANCHOR], override, newOverride, 1)
+		newAnchor := strings.Replace(match[terminal.ANCHOR], override, newOverride, 1)
 		b.previousActiveSegment.TrailingDiamond = strings.Replace(b.previousActiveSegment.TrailingDiamond, anchor, newAnchor, 1)
 	}
 
-	if len(match[ansi.BG]) > 0 {
-		adjustOverride(match[ansi.ANCHOR], match[ansi.BG])
+	if len(match[terminal.BG]) > 0 {
+		adjustOverride(match[terminal.ANCHOR], match[terminal.BG])
 	}
-	if len(match[ansi.FG]) > 0 {
-		adjustOverride(match[ansi.ANCHOR], match[ansi.FG])
+	if len(match[terminal.FG]) > 0 {
+		adjustOverride(match[terminal.ANCHOR], match[terminal.FG])
 	}
 }
 
 func (b *Block) getPowerlineColor() string {
 	if b.previousActiveSegment == nil {
-		return ansi.Transparent
+		return terminal.Transparent
 	}
 	if b.previousActiveSegment.style() == Diamond && len(b.previousActiveSegment.TrailingDiamond) == 0 {
 		return b.previousActiveSegment.background()
@@ -327,7 +327,7 @@ func (b *Block) getPowerlineColor() string {
 		return b.previousActiveSegment.background()
 	}
 	if !b.previousActiveSegment.isPowerline() {
-		return ansi.Transparent
+		return terminal.Transparent
 	}
 	return b.previousActiveSegment.background()
 }

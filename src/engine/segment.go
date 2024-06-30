@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	c "golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -43,7 +43,7 @@ type Segment struct {
 
 	Enabled bool `json:"-" toml:"-"`
 
-	colors     *ansi.Colors
+	colors     *terminal.Colors
 	env        platform.Environment
 	writer     SegmentWriter
 	text       string
@@ -445,7 +445,7 @@ func (segment *Segment) shouldInvokeWithTip(tip string) bool {
 
 func (segment *Segment) foreground() string {
 	if segment.colors == nil {
-		segment.colors = &ansi.Colors{}
+		segment.colors = &terminal.Colors{}
 	}
 
 	if len(segment.colors.Foreground) == 0 {
@@ -457,7 +457,7 @@ func (segment *Segment) foreground() string {
 
 func (segment *Segment) background() string {
 	if segment.colors == nil {
-		segment.colors = &ansi.Colors{}
+		segment.colors = &terminal.Colors{}
 	}
 
 	if len(segment.colors.Background) == 0 {

@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -68,7 +68,7 @@ Exports the config to an image file using customized output options.`,
 		env.Var = cfg.Var
 
 		writerColors := cfg.MakeColors()
-		writer := &ansi.Writer{
+		writer := &terminal.Writer{
 			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
 			AnsiColors:         writerColors,
 			TrueColor:          env.CmdFlags.TrueColor,

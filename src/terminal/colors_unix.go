@@ -1,6 +1,6 @@
 //go:build !windows
 
-package ansi
+package terminal
 
 import "github.com/jandedobbeleer/oh-my-posh/src/platform"
 

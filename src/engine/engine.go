@@ -3,20 +3,20 @@ package engine
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 var (
-	cycle *ansi.Cycle = &ansi.Cycle{}
+	cycle *terminal.Cycle = &terminal.Cycle{}
 )
 
 type Engine struct {
 	Config *Config
 	Env    platform.Environment
-	Writer *ansi.Writer
+	Writer *terminal.Writer
 	Plain  bool
 
 	console           strings.Builder
@@ -94,7 +94,7 @@ func (e *Engine) pwd() {
 
 	// Backwards compatibility for deprecated OSC99
 	if e.Config.OSC99 {
-		e.write(e.Writer.ConsolePwd(ansi.OSC99, "", "", cwd))
+		e.write(e.Writer.ConsolePwd(terminal.OSC99, "", "", cwd))
 		return
 	}
 

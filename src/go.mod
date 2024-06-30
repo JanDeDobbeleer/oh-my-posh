@@ -35,7 +35,6 @@ require (
 	github.com/goccy/go-yaml v1.11.3
 	github.com/gookit/goutil v0.6.15
 	github.com/hashicorp/hcl/v2 v2.21.0
-	github.com/inconshreveable/go-update v0.0.0-20160112193335-8152e7eb6ccf
 	github.com/mattn/go-runewidth v0.0.15
 	github.com/pelletier/go-toml/v2 v2.2.2
 	github.com/spf13/cobra v1.8.1

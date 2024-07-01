@@ -136,11 +136,11 @@ func (e *Engine) newline() {
 }
 
 func (e *Engine) isWarp() bool {
-	return e.Env.Getenv("TERM_PROGRAM") == "WarpTerminal"
+	return terminal.Program == terminal.Warp
 }
 
 func (e *Engine) isIterm() bool {
-	return e.Env.Getenv("TERM_PROGRAM") == "iTerm.app"
+	return terminal.Program == terminal.ITerm
 }
 
 func (e *Engine) shouldFill(filler string, remaining, blockLength int) (string, bool) {

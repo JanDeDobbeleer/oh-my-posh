@@ -69,7 +69,6 @@ func (b *Block) InitPlain(env platform.Environment, config *Config) {
 	terminal.Init(shell.GENERIC)
 	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, config.TerminalBackground)
 	terminal.AnsiColors = config.MakeColors()
-	terminal.TrueColor = env.Flags().TrueColor
 
 	b.env = env
 	b.executeSegmentLogic()

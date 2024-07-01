@@ -70,7 +70,6 @@ Exports the config to an image file using customized output options.`,
 		terminal.Init(shell.GENERIC)
 		terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
 		terminal.AnsiColors = cfg.MakeColors()
-		terminal.TrueColor = env.CmdFlags.TrueColor
 
 		eng := &engine.Engine{
 			Config: cfg,

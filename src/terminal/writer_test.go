@@ -226,7 +226,7 @@ func TestWriteANSIColors(t *testing.T) {
 		CurrentColors = tc.Colors
 		BackgroundColor = tc.TerminalBackground
 		AnsiColors = &DefaultColors{}
-		TrueColor = true
+		trueColor = true
 
 		Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
 

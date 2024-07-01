@@ -2,8 +2,10 @@ package terminal
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/mattn/go-runewidth"
@@ -46,8 +48,9 @@ var (
 	AnsiColors      ColorString
 
 	Plain       bool
-	TrueColor   bool
 	Interactive bool
+
+	trueColor bool
 
 	builder strings.Builder
 	length  int
@@ -63,7 +66,8 @@ var (
 
 	lastRune rune
 
-	shellName string
+	Shell   string
+	Program string
 
 	formats *shellFormats
 )
@@ -129,12 +133,24 @@ const (
 	hyperLinkEnd     = "</LINK>"
 	hyperLinkText    = "<TEXT>"
 	hyperLinkTextEnd = "</TEXT>"
+
+	WindowsTerminal = "Windows Terminal"
+	Warp            = "WarpTerminal"
+	ITerm           = "iTerm.app"
+	AppleTerminal   = "Apple_Terminal"
+	Unknown         = "Unknown"
 )
 
 func Init(sh string) {
-	shellName = sh
+	Shell = sh
+	Program = getTerminalName()
 
-	switch shellName {
+	log.Debug("Terminal shell: %s", Shell)
+	log.Debug("Terminal program: %s", Program)
+
+	trueColor = Program != AppleTerminal
+
+	switch Shell {
 	case shell.BASH:
 		formats = &shellFormats{
 			escape:                "\\[%s\\]",
@@ -203,12 +219,26 @@ func Init(sh string) {
 		}
 	}
 
-	if shellName == shell.ZSH {
+	if Shell == shell.ZSH {
 		formats.escapeSequences = map[rune]rune{
 			96: 92, // backtick
 			37: 37, // %
 		}
 	}
+}
+
+func getTerminalName() string {
+	Program = os.Getenv("TERM_PROGRAM")
+	if len(Program) != 0 {
+		return Program
+	}
+
+	wtSession := os.Getenv("WT_SESSION")
+	if len(wtSession) != 0 {
+		return WindowsTerminal
+	}
+
+	return Unknown
 }
 
 func SetColors(background, foreground string) {
@@ -281,7 +311,7 @@ func FormatTitle(title string) string {
 	}
 
 	// we have to do this to prevent bash/zsh from misidentifying escape sequences
-	switch shellName {
+	switch Shell {
 	case shell.BASH:
 		title = strings.NewReplacer("`", "\\`", `\`, `\\`).Replace(title)
 	case shell.ZSH:
@@ -339,7 +369,7 @@ func Write(background, foreground, text string) {
 
 	// default to white foreground
 	if foregroundColor.IsEmpty() {
-		foregroundColor = AnsiColors.ToColor("white", false, TrueColor)
+		foregroundColor = AnsiColors.ToColor("white", false)
 	}
 
 	// validate if we start with a color override
@@ -451,7 +481,7 @@ func writeEscapedAnsiString(text string) {
 }
 
 func getAnsiFromColorString(colorString string, isBackground bool) Color {
-	return AnsiColors.ToColor(colorString, isBackground, TrueColor)
+	return AnsiColors.ToColor(colorString, isBackground)
 }
 
 func write(s rune) {

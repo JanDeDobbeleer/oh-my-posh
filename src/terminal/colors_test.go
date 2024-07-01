@@ -31,16 +31,15 @@ func TestGetAnsiFromColorString(t *testing.T) {
 	}
 	for _, tc := range cases {
 		ansiColors := &DefaultColors{}
-		ansiColor := ansiColors.ToColor(tc.Color, tc.Background, !tc.Color256)
+		trueColor = !tc.Color256
+		ansiColor := ansiColors.ToColor(tc.Color, tc.Background)
 		assert.Equal(t, tc.Expected, ansiColor, tc.Case)
 	}
 }
 
 func TestMakeColors(t *testing.T) {
 	env := &mock.MockedEnvironment{}
-	env.On("Flags").Return(&platform.Flags{
-		TrueColor: true,
-	})
+
 	env.On("WindowsRegistryKeyValue", `HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM\ColorizationColor`).Return(&platform.WindowsRegistryValue{}, errors.New("err"))
 	colors := MakeColors(nil, false, "", env)
 	assert.IsType(t, &DefaultColors{}, colors)

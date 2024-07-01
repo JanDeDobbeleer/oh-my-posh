@@ -44,7 +44,6 @@ var debugCmd = &cobra.Command{
 		terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
 		terminal.AnsiColors = cfg.MakeColors()
 		terminal.Plain = plain
-		terminal.TrueColor = env.CmdFlags.TrueColor
 
 		eng := &engine.Engine{
 			Config: cfg,

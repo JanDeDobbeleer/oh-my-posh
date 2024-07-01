@@ -12,8 +12,9 @@ func (d *DefaultColors) SetAccentColor(_ platform.Environment, defaultColor stri
 	if len(defaultColor) == 0 {
 		return
 	}
+
 	d.accent = &Colors{
-		Foreground: string(d.ToColor(defaultColor, false, env.Flags().TrueColor)),
-		Background: string(d.ToColor(defaultColor, true, env.Flags().TrueColor)),
+		Foreground: string(d.ToColor(defaultColor, false)),
+		Background: string(d.ToColor(defaultColor, true)),
 	}
 }

@@ -28,7 +28,6 @@ func New(flags *platform.Flags) *Engine {
 	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
 	terminal.AnsiColors = cfg.MakeColors()
 	terminal.Plain = flags.Plain
-	terminal.TrueColor = env.CmdFlags.TrueColor
 
 	eng := &Engine{
 		Config: cfg,

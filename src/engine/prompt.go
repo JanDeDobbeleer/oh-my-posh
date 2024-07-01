@@ -106,7 +106,6 @@ func (e *Engine) Primary() string {
 		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
 
 		terminal.Init(shell.GENERIC)
-		terminal.TrueColor = e.Env.Flags().TrueColor
 
 		prompt := terminal.SaveCursorPosition()
 		prompt += strings.Repeat(" ", space)

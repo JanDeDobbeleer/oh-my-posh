@@ -1,10 +1,7 @@
 package upgrade
 
 import (
-	"context"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 
 	"github.com/charmbracelet/bubbles/spinner"
@@ -12,7 +9,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
 )
 
 var (
@@ -98,6 +94,7 @@ func (m *model) View() string {
 
 	var message string
 	m.spinner.Spinner = spinner.Dot
+
 	switch m.state {
 	case validating:
 		message = "Validating current installation"
@@ -127,24 +124,4 @@ func Run(env platform.Environment) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-}
-
-func downloadAsset(asset string) (io.ReadCloser, error) {
-	url := fmt.Sprintf("https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/%s", asset)
-
-	req, err := http.NewRequestWithContext(context.Background(), "GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := net.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to download installer: %s", url)
-	}
-
-	return resp.Body, nil
 }

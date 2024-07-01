@@ -2,13 +2,16 @@ package upgrade
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
 )
 
 func install() error {
@@ -28,14 +31,25 @@ func install() error {
 
 	setState(downloading)
 
-	data, err := downloadAsset(asset)
+	url := fmt.Sprintf("https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/%s", asset)
+
+	req, err := http.NewRequestWithContext(context.Background(), "GET", url, nil)
 	if err != nil {
 		return err
 	}
 
-	defer data.Close()
+	resp, err := net.HTTPClient.Do(req)
+	if err != nil {
+		return err
+	}
 
-	newBytes, err := io.ReadAll(data)
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to download installer: %s", url)
+	}
+
+	defer resp.Body.Close()
+
+	newBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}

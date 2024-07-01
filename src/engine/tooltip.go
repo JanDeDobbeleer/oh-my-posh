@@ -1,12 +1,25 @@
 package engine
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 )
 
 func (e *Engine) Tooltip(tip string) string {
+	supportedShells := []string{
+		shell.ZSH,
+		shell.CMD,
+		shell.FISH,
+		shell.PWSH,
+		shell.PWSH5,
+		shell.GENERIC,
+	}
+	if !slices.Contains(supportedShells, e.Env.Shell()) {
+		return ""
+	}
+
 	tip = strings.Trim(tip, " ")
 	tooltips := make([]*Segment, 0, 1)
 
@@ -35,39 +48,27 @@ func (e *Engine) Tooltip(tip string) string {
 		Alignment: Right,
 		Segments:  tooltips,
 	}
+	block.Init(e.Env, e.Writer)
+	if !block.Enabled() {
+		return ""
+	}
+	text, length := block.RenderSegments()
 
 	switch e.Env.Shell() {
-	case shell.ZSH, shell.CMD, shell.FISH, shell.GENERIC:
-		block.Init(e.Env, e.Writer)
-		if !block.Enabled() {
-			return ""
-		}
-		text, _ := block.RenderSegments()
-		return text
 	case shell.PWSH, shell.PWSH5:
-		block.InitPlain(e.Env, e.Config)
-		if !block.Enabled() {
+		e.rprompt = text
+		e.rpromptLength = length
+		e.currentLineLength = e.Env.Flags().Column
+		space, ok := e.canWriteRightBlock(true)
+		if !ok {
 			return ""
 		}
-
-		consoleWidth, err := e.Env.TerminalWidth()
-		if err != nil || consoleWidth == 0 {
-			return ""
-		}
-
-		text, length := block.RenderSegments()
-
-		space := consoleWidth - e.Env.Flags().Column - length
-		if space <= 0 {
-			return ""
-		}
-		// clear from cursor to the end of the line in case a previous tooltip
-		// is cut off and partially preserved, if the new one is shorter
-		e.write(e.Writer.ClearAfter())
 		e.write(strings.Repeat(" ", space))
+		// Workaround to avoid leftover when a previous tooltip is cut off by a shorter new one.
+		e.Writer.ClearAfter()
 		e.write(text)
 		return e.string()
+	default:
+		return text
 	}
-
-	return ""
 }

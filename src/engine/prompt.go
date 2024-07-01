@@ -30,6 +30,13 @@ func (e *Engine) Primary() string {
 	cycle = &e.Config.Cycle
 	var cancelNewline, didRender bool
 
+	// Only render the right prompt for shells where we need it to be included in the primary prompt.
+	renderRPrompt := true
+	switch e.Env.Shell() {
+	case shell.ELVISH, shell.FISH, shell.NU, shell.XONSH, shell.CMD, shell.PWSH, shell.PWSH5:
+		renderRPrompt = false
+	}
+
 	for i, block := range e.Config.Blocks {
 		// do not print a leading newline when we're at the first row and the prompt is cleared
 		if i == 0 {
@@ -40,13 +47,6 @@ func (e *Engine) Primary() string {
 		// skip setting a newline when we didn't print anything yet
 		if i != 0 {
 			cancelNewline = !didRender
-		}
-
-		// only render rprompt for shells where we need it from the primary prompt
-		renderRPrompt := true
-		switch e.Env.Shell() {
-		case shell.ELVISH, shell.FISH, shell.NU, shell.XONSH, shell.CMD:
-			renderRPrompt = false
 		}
 
 		if block.Type == RPrompt && !renderRPrompt {
@@ -95,7 +95,7 @@ func (e *Engine) Primary() string {
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
 		return prompt
-	case shell.PWSH, shell.PWSH5, shell.GENERIC:
+	case shell.GENERIC:
 		e.writeRPrompt()
 	case shell.BASH:
 		space, OK := e.canWriteRightBlock(true)
@@ -236,5 +236,18 @@ func (e *Engine) RPrompt() string {
 
 	text, length := block.RenderSegments()
 	e.rpromptLength = length
+
+	switch e.Env.Shell() {
+	case shell.PWSH, shell.PWSH5:
+		e.rprompt = text
+		e.currentLineLength = e.Env.Flags().Column
+		space, ok := e.canWriteRightBlock(true)
+		if !ok {
+			return ""
+		}
+		e.write(strings.Repeat(" ", space))
+		e.write(text)
+		return e.string()
+	}
 	return text
 }

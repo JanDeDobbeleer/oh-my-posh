@@ -16,7 +16,6 @@ var (
 type Engine struct {
 	Config *Config
 	Env    platform.Environment
-	Writer *terminal.Writer
 	Plain  bool
 
 	console           strings.Builder
@@ -73,10 +72,10 @@ func (e *Engine) writeRPrompt() {
 	if !OK {
 		return
 	}
-	e.write(e.Writer.SaveCursorPosition())
+	e.write(terminal.SaveCursorPosition())
 	e.write(strings.Repeat(" ", space))
 	e.write(e.rprompt)
-	e.write(e.Writer.RestoreCursorPosition())
+	e.write(terminal.RestoreCursorPosition())
 }
 
 func (e *Engine) pwd() {
@@ -94,7 +93,7 @@ func (e *Engine) pwd() {
 
 	// Backwards compatibility for deprecated OSC99
 	if e.Config.OSC99 {
-		e.write(e.Writer.ConsolePwd(terminal.OSC99, "", "", cwd))
+		e.write(terminal.ConsolePwd(terminal.OSC99, "", "", cwd))
 		return
 	}
 
@@ -111,7 +110,7 @@ func (e *Engine) pwd() {
 
 	user := e.Env.User()
 	host, _ := e.Env.Host()
-	e.write(e.Writer.ConsolePwd(pwdType, user, host, cwd))
+	e.write(terminal.ConsolePwd(pwdType, user, host, cwd))
 }
 
 func (e *Engine) newline() {
@@ -121,7 +120,7 @@ func (e *Engine) newline() {
 
 	// WARP terminal will remove \n from the prompt, so we hack a newline in
 	if e.isWarp() {
-		e.write(e.Writer.LineBreak())
+		e.write(terminal.LineBreak())
 		return
 	}
 
@@ -155,8 +154,8 @@ func (e *Engine) shouldFill(filler string, remaining, blockLength int) (string, 
 	}
 
 	// allow for easy color overrides and templates
-	e.Writer.Write("", "", filler)
-	filler, lenFiller := e.Writer.String()
+	terminal.Write("", "", filler)
+	filler, lenFiller := terminal.String()
 	if lenFiller == 0 {
 		return "", false
 	}
@@ -197,7 +196,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) bool {
 	if e.Env.Shell() == shell.BASH && block.Type == RPrompt {
 		block.InitPlain(e.Env, e.Config)
 	} else {
-		block.Init(e.Env, e.Writer)
+		block.Init(e.Env)
 	}
 
 	if !block.Enabled() {
@@ -221,7 +220,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) bool {
 	switch block.Type { //nolint:exhaustive
 	case Prompt:
 		if block.VerticalOffset != 0 {
-			e.write(e.Writer.ChangeLine(block.VerticalOffset))
+			e.write(terminal.ChangeLine(block.VerticalOffset))
 		}
 
 		if block.Alignment == Left {
@@ -292,5 +291,5 @@ func (e *Engine) patchPowerShellBleed() {
 		return
 	}
 
-	e.write(e.Writer.ClearAfter())
+	e.write(terminal.ClearAfter())
 }

@@ -221,16 +221,17 @@ func TestWriteANSIColors(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		renderer := &Writer{
-			ParentColors:    []*Colors{tc.Parent},
-			CurrentColors:   tc.Colors,
-			BackgroundColor: tc.TerminalBackground,
-			AnsiColors:      &DefaultColors{},
-			TrueColor:       true,
-		}
-		renderer.Init(shell.GENERIC)
-		renderer.Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
-		got, _ := renderer.String()
+		Init(shell.GENERIC)
+		ParentColors = []*Colors{tc.Parent}
+		CurrentColors = tc.Colors
+		BackgroundColor = tc.TerminalBackground
+		AnsiColors = &DefaultColors{}
+		TrueColor = true
+
+		Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
+
+		got, _ := String()
+
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
@@ -275,14 +276,17 @@ func TestWriteLength(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		renderer := &Writer{
-			ParentColors:  []*Colors{},
-			CurrentColors: tc.Colors,
-			AnsiColors:    &DefaultColors{},
-		}
-		renderer.Init(shell.GENERIC)
-		renderer.Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
-		_, got := renderer.String()
+		Init(shell.GENERIC)
+		ParentColors = []*Colors{}
+		CurrentColors = tc.Colors
+		AnsiColors = &DefaultColors{}
+
+		Init(shell.GENERIC)
+
+		Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
+
+		_, got := String()
+
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }

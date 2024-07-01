@@ -8,7 +8,7 @@ func GetAccentColor(_ platform.Environment) (*RGB, error) {
 	return nil, &platform.NotImplemented{}
 }
 
-func (d *DefaultColors) SetAccentColor(env platform.Environment, defaultColor string) {
+func (d *DefaultColors) SetAccentColor(_ platform.Environment, defaultColor string) {
 	if len(defaultColor) == 0 {
 		return
 	}

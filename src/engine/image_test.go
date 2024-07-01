@@ -34,11 +34,10 @@ func runImageTest(config, content string) (string, error) {
 	}
 	defer os.Remove(file.Name())
 
-	writer := &terminal.Writer{}
-	writer.Init(shell.GENERIC)
+	terminal.Init(shell.GENERIC)
+
 	image := &ImageRenderer{
 		AnsiString: content,
-		Ansi:       writer,
 	}
 
 	env := &platform.Shell{

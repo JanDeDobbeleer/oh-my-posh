@@ -114,7 +114,6 @@ type ImageRenderer struct {
 	CursorPadding int
 	RPromptOffset int
 	BgColor       string
-	Ansi          *terminal.Writer
 
 	env platform.Environment
 

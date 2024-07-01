@@ -24,18 +24,15 @@ func New(flags *platform.Flags) *Engine {
 	env.Var = cfg.Var
 	flags.HasTransient = cfg.TransientPrompt != nil
 
-	ansiWriter := &terminal.Writer{
-		BackgroundColor: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
-		AnsiColors:      cfg.MakeColors(),
-		Plain:           flags.Plain,
-		TrueColor:       env.CmdFlags.TrueColor,
-	}
-	ansiWriter.Init(env.Shell())
+	terminal.Init(env.Shell())
+	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
+	terminal.AnsiColors = cfg.MakeColors()
+	terminal.Plain = flags.Plain
+	terminal.TrueColor = env.CmdFlags.TrueColor
 
 	eng := &Engine{
 		Config: cfg,
 		Env:    env,
-		Writer: ansiWriter,
 		Plain:  flags.Plain,
 	}
 

@@ -22,8 +22,8 @@ const (
 func (e *Engine) Primary() string {
 	if e.Config.ShellIntegration {
 		exitCode, _ := e.Env.StatusCodes()
-		e.write(e.Writer.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
-		e.write(e.Writer.PromptStart())
+		e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
+		e.write(terminal.PromptStart())
 	}
 
 	// cache a pointer to the color cycle
@@ -60,7 +60,7 @@ func (e *Engine) Primary() string {
 
 	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {
 		title := e.getTitleTemplateText()
-		e.write(e.Writer.FormatTitle(title))
+		e.write(terminal.FormatTitle(title))
 	}
 
 	if e.Config.FinalSpace {
@@ -70,11 +70,11 @@ func (e *Engine) Primary() string {
 
 	if e.Config.ITermFeatures != nil && e.isIterm() {
 		host, _ := e.Env.Host()
-		e.write(e.Writer.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
+		e.write(terminal.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
 	}
 
 	if e.Config.ShellIntegration && e.Config.TransientPrompt == nil {
-		e.write(e.Writer.CommandStart())
+		e.write(terminal.CommandStart())
 	}
 
 	e.pwd()
@@ -104,15 +104,15 @@ func (e *Engine) Primary() string {
 		}
 		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
 		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
-		writer := &terminal.Writer{
-			TrueColor: e.Env.Flags().TrueColor,
-		}
-		writer.Init(shell.GENERIC)
-		prompt := writer.SaveCursorPosition()
+
+		terminal.Init(shell.GENERIC)
+		terminal.TrueColor = e.Env.Flags().TrueColor
+
+		prompt := terminal.SaveCursorPosition()
 		prompt += strings.Repeat(" ", space)
 		prompt += e.rprompt
-		prompt += writer.RestoreCursorPosition()
-		prompt = e.Writer.EscapeText(prompt)
+		prompt += terminal.RestoreCursorPosition()
+		prompt = terminal.EscapeText(prompt)
 		e.write(prompt)
 	}
 
@@ -168,16 +168,16 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 
 	if promptType == Transient && e.Config.ShellIntegration {
 		exitCode, _ := e.Env.StatusCodes()
-		e.write(e.Writer.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
-		e.write(e.Writer.PromptStart())
+		e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
+		e.write(terminal.PromptStart())
 	}
 
 	foreground := prompt.ForegroundTemplates.FirstMatch(nil, e.Env, prompt.Foreground)
 	background := prompt.BackgroundTemplates.FirstMatch(nil, e.Env, prompt.Background)
-	e.Writer.SetColors(background, foreground)
-	e.Writer.Write(background, foreground, promptText)
+	terminal.SetColors(background, foreground)
+	terminal.Write(background, foreground, promptText)
 
-	str, length := e.Writer.String()
+	str, length := terminal.String()
 	if promptType == Transient {
 		consoleWidth, err := e.Env.TerminalWidth()
 		if err == nil || consoleWidth != 0 {
@@ -188,7 +188,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 	}
 
 	if promptType == Transient && e.Config.ShellIntegration {
-		str += e.Writer.CommandStart()
+		str += terminal.CommandStart()
 	}
 
 	switch e.Env.Shell() {
@@ -205,7 +205,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		// Return the string and empty our buffer
 		// clear the line afterwards to prevent text from being written on the same line
 		// see https://github.com/JanDeDobbeleer/oh-my-posh/issues/3628
-		return str + e.Writer.ClearAfter()
+		return str + terminal.ClearAfter()
 	case shell.CMD, shell.BASH, shell.FISH, shell.NU, shell.GENERIC:
 		// Return the string and empty our buffer
 		return str
@@ -229,7 +229,7 @@ func (e *Engine) RPrompt() string {
 		return ""
 	}
 
-	block.Init(e.Env, e.Writer)
+	block.Init(e.Env)
 	if !block.Enabled() {
 		return ""
 	}

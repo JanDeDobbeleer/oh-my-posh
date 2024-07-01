@@ -13,7 +13,7 @@ Depending on your config, you might have to tweak the output a little bit.
 :::
 
 The oh-my-posh executable has the `config export image` command to export your current theme configuration
-to an image file (.png).
+to a PNG image file (if no other options are specified this will be a file called `.png`).
 
 ```powershell
 oh-my-posh config export image

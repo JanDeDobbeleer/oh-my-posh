@@ -3,10 +3,10 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/spf13/cobra"
 )
@@ -69,9 +69,9 @@ Exports the config to an image file using customized output options.`,
 
 		writerColors := cfg.MakeColors()
 		writer := &terminal.Writer{
-			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
-			AnsiColors:         writerColors,
-			TrueColor:          env.CmdFlags.TrueColor,
+			BackgroundColor: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
+			AnsiColors:      writerColors,
+			TrueColor:       env.CmdFlags.TrueColor,
 		}
 		writer.Init(shell.GENERIC)
 		eng := &engine.Engine{

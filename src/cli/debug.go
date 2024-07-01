@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/spf13/cobra"
 )
@@ -42,10 +42,10 @@ var debugCmd = &cobra.Command{
 
 		writerColors := cfg.MakeColors()
 		writer := &terminal.Writer{
-			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
-			AnsiColors:         writerColors,
-			Plain:              plain,
-			TrueColor:          env.CmdFlags.TrueColor,
+			BackgroundColor: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
+			AnsiColors:      writerColors,
+			Plain:           plain,
+			TrueColor:       env.CmdFlags.TrueColor,
 		}
 
 		writer.Init(shell.GENERIC)

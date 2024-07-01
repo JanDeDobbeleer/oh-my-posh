@@ -222,11 +222,11 @@ func TestWriteANSIColors(t *testing.T) {
 
 	for _, tc := range cases {
 		renderer := &Writer{
-			ParentColors:       []*Colors{tc.Parent},
-			Colors:             tc.Colors,
-			TerminalBackground: tc.TerminalBackground,
-			AnsiColors:         &DefaultColors{},
-			TrueColor:          true,
+			ParentColors:    []*Colors{tc.Parent},
+			CurrentColors:   tc.Colors,
+			BackgroundColor: tc.TerminalBackground,
+			AnsiColors:      &DefaultColors{},
+			TrueColor:       true,
 		}
 		renderer.Init(shell.GENERIC)
 		renderer.Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)
@@ -276,9 +276,9 @@ func TestWriteLength(t *testing.T) {
 
 	for _, tc := range cases {
 		renderer := &Writer{
-			ParentColors: []*Colors{},
-			Colors:       tc.Colors,
-			AnsiColors:   &DefaultColors{},
+			ParentColors:  []*Colors{},
+			CurrentColors: tc.Colors,
+			AnsiColors:    &DefaultColors{},
 		}
 		renderer.Init(shell.GENERIC)
 		renderer.Write(tc.Colors.Background, tc.Colors.Foreground, tc.Input)

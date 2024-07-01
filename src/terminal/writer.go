@@ -274,7 +274,7 @@ func ChangeLine(numberOfLines int) string {
 	return fmt.Sprintf(formats.linechange, numberOfLines, position)
 }
 
-func ConsolePwd(pwdType, userName, hostName, pwd string) string {
+func Pwd(pwdType, userName, hostName, pwd string) string {
 	if Plain {
 		return ""
 	}

@@ -93,7 +93,7 @@ func (e *Engine) pwd() {
 
 	// Backwards compatibility for deprecated OSC99
 	if e.Config.OSC99 {
-		e.write(terminal.ConsolePwd(terminal.OSC99, "", "", cwd))
+		e.write(terminal.Pwd(terminal.OSC99, "", "", cwd))
 		return
 	}
 
@@ -110,7 +110,7 @@ func (e *Engine) pwd() {
 
 	user := e.Env.User()
 	host, _ := e.Env.Host()
-	e.write(terminal.ConsolePwd(pwdType, user, host, cwd))
+	e.write(terminal.Pwd(pwdType, user, host, cwd))
 }
 
 func (e *Engine) newline() {

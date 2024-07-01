@@ -6,8 +6,8 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
@@ -46,7 +46,7 @@ var debugCmd = &cobra.Command{
 		terminal.AnsiColors = cfg.MakeColors()
 		terminal.Plain = plain
 
-		eng := &engine.Engine{
+		eng := &prompt.Engine{
 			Config: cfg,
 			Env:    env,
 			Plain:  plain,

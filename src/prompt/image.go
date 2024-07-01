@@ -20,7 +20,7 @@
 
 // https://github.com/homeport/termshot
 
-package engine
+package prompt
 
 import (
 	"archive/zip"

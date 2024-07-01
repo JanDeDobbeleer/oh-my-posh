@@ -1,4 +1,4 @@
-package engine
+package config
 
 import (
 	"encoding/json"
@@ -22,7 +22,7 @@ func TestMapSegmentWriterCanMap(t *testing.T) {
 		Type: SESSION,
 	}
 	env := new(mock.MockedEnvironment)
-	err := sc.mapSegmentWithWriter(env)
+	err := sc.MapSegmentWithWriter(env)
 	assert.NoError(t, err)
 	assert.NotNil(t, sc.writer)
 }
@@ -32,7 +32,7 @@ func TestMapSegmentWriterCannotMap(t *testing.T) {
 		Type: "nilwriter",
 	}
 	env := new(mock.MockedEnvironment)
-	err := sc.mapSegmentWithWriter(env)
+	err := sc.MapSegmentWithWriter(env)
 	assert.Error(t, err)
 }
 
@@ -157,13 +157,13 @@ func TestGetColors(t *testing.T) {
 		if tc.Background {
 			segment.Background = tc.DefaultColor
 			segment.BackgroundTemplates = tc.Templates
-			color := segment.background()
+			color := segment.ResolveBackground()
 			assert.Equal(t, tc.ExpectedColor, color, tc.Case)
 			continue
 		}
 		segment.Foreground = tc.DefaultColor
 		segment.ForegroundTemplates = tc.Templates
-		color := segment.foreground()
+		color := segment.ResolveForeground()
 		assert.Equal(t, tc.ExpectedColor, color, tc.Case)
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -89,7 +90,7 @@ func TestPrintPWD(t *testing.T) {
 
 		engine := &Engine{
 			Env: env,
-			Config: &Config{
+			Config: &config.Config{
 				PWD:   tc.Config,
 				OSC99: tc.OSC99,
 			},
@@ -113,7 +114,7 @@ func engineRender() {
 	env.Init()
 	defer env.Close()
 
-	cfg := LoadConfig(env)
+	cfg := config.Load(env)
 
 	terminal.Init(shell.GENERIC)
 	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
@@ -189,7 +190,7 @@ func TestGetTitle(t *testing.T) {
 		terminal.Init(shell.GENERIC)
 
 		engine := &Engine{
-			Config: &Config{
+			Config: &config.Config{
 				ConsoleTitleTemplate: tc.Template,
 			},
 			Env: env,
@@ -250,7 +251,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		terminal.Init(shell.GENERIC)
 
 		engine := &Engine{
-			Config: &Config{
+			Config: &config.Config{
 				ConsoleTitleTemplate: tc.Template,
 			},
 			Env: env,

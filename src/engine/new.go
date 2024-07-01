@@ -1,6 +1,7 @@
 package engine
 
 import (
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -15,7 +16,7 @@ func New(flags *platform.Flags) *Engine {
 	}
 
 	env.Init()
-	cfg := LoadConfig(env)
+	cfg := config.Load(env)
 
 	if cfg.PatchPwshBleed {
 		patchPowerShellBleed(env.Shell(), flags)

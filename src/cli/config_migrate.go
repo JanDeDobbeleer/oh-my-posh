@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/engine"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 
 	"github.com/spf13/cobra"
@@ -41,13 +41,13 @@ A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Run: func(_ *cobra.Command, _ []string) {
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
-				Config:  config,
+				Config:  configFlag,
 				Migrate: true,
 			},
 		}
 		env.Init()
 		defer env.Close()
-		cfg := engine.LoadConfig(env)
+		cfg := config.Load(env)
 		if write {
 			cfg.BackupAndMigrate()
 			return

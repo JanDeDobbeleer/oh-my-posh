@@ -3,24 +3,23 @@ package engine
 import (
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 func (e *Engine) Tooltip(tip string) string {
 	tip = strings.Trim(tip, " ")
-	tooltips := make([]*Segment, 0, 1)
+	tooltips := make([]*config.Segment, 0, 1)
 
 	for _, tooltip := range e.Config.Tooltips {
-		if !tooltip.shouldInvokeWithTip(tip) {
+		if !e.shouldInvokeWithTip(tooltip, tip) {
 			continue
 		}
 
-		if err := tooltip.mapSegmentWithWriter(e.Env); err != nil {
-			continue
-		}
+		tooltip.SetEnabled(e.Env)
 
-		if !tooltip.writer.Enabled() {
+		if !tooltip.Enabled {
 			continue
 		}
 
@@ -32,8 +31,8 @@ func (e *Engine) Tooltip(tip string) string {
 	}
 
 	// little hack to reuse the current logic
-	block := &Block{
-		Alignment: Right,
+	block := &config.Block{
+		Alignment: config.Right,
 		Segments:  tooltips,
 	}
 
@@ -43,7 +42,7 @@ func (e *Engine) Tooltip(tip string) string {
 		if !block.Enabled() {
 			return ""
 		}
-		text, _ := block.RenderSegments()
+		text, _ := e.renderBlockSegments(block)
 		return text
 	case shell.PWSH, shell.PWSH5:
 		block.InitPlain(e.Env, e.Config)
@@ -56,7 +55,7 @@ func (e *Engine) Tooltip(tip string) string {
 			return ""
 		}
 
-		text, length := block.RenderSegments()
+		text, length := e.renderBlockSegments(block)
 
 		space := consoleWidth - e.Env.Flags().Column - length
 		if space <= 0 {
@@ -71,4 +70,14 @@ func (e *Engine) Tooltip(tip string) string {
 	}
 
 	return ""
+}
+
+func (e *Engine) shouldInvokeWithTip(segment *config.Segment, tip string) bool {
+	for _, t := range segment.Tips {
+		if t == tip {
+			return true
+		}
+	}
+
+	return false
 }

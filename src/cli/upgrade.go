@@ -7,6 +7,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 	"github.com/spf13/cobra"
 )
@@ -36,6 +37,11 @@ var upgradeCmd = &cobra.Command{
 		}
 		env.Init()
 		defer env.Close()
+
+		terminal.Init(env.Shell())
+		fmt.Print(terminal.StartProgress())
+
+		defer fmt.Print(terminal.StopProgress())
 
 		if force {
 			upgrade.Run(env)

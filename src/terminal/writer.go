@@ -134,6 +134,9 @@ const (
 	hyperLinkText    = "<TEXT>"
 	hyperLinkTextEnd = "</TEXT>"
 
+	startProgress = "\x1b]9;4;3;0\x07"
+	endProgress   = "\x1b]9;4;0;0\x07"
+
 	WindowsTerminal = "Windows Terminal"
 	Warp            = "WarpTerminal"
 	ITerm           = "iTerm.app"
@@ -358,6 +361,22 @@ func LineBreak() string {
 	cr := fmt.Sprintf(formats.left, 1000)
 	lf := fmt.Sprintf(formats.linechange, 1, "B")
 	return cr + lf
+}
+
+func StartProgress() string {
+	if Program != WindowsTerminal {
+		return ""
+	}
+
+	return fmt.Sprintf(formats.escape, startProgress)
+}
+
+func StopProgress() string {
+	if Program != WindowsTerminal {
+		return ""
+	}
+
+	return fmt.Sprintf(formats.escape, endProgress)
 }
 
 func Write(background, foreground, text string) {

@@ -40,19 +40,15 @@ var debugCmd = &cobra.Command{
 		// add variables to the environment
 		env.Var = cfg.Var
 
-		writerColors := cfg.MakeColors()
-		writer := &terminal.Writer{
-			BackgroundColor: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
-			AnsiColors:      writerColors,
-			Plain:           plain,
-			TrueColor:       env.CmdFlags.TrueColor,
-		}
+		terminal.Init(shell.GENERIC)
+		terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
+		terminal.AnsiColors = cfg.MakeColors()
+		terminal.Plain = plain
+		terminal.TrueColor = env.CmdFlags.TrueColor
 
-		writer.Init(shell.GENERIC)
 		eng := &engine.Engine{
 			Config: cfg,
 			Env:    env,
-			Writer: writer,
 			Plain:  plain,
 		}
 

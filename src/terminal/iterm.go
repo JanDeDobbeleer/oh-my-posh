@@ -28,7 +28,7 @@ func (f ITermFeatures) Contains(feature iTermFeature) bool {
 	return false
 }
 
-func (w *Writer) RenderItermFeatures(features ITermFeatures, sh, pwd, user, host string) string {
+func RenderItermFeatures(features ITermFeatures, sh, pwd, user, host string) string {
 	supportedShells := []string{shell.BASH, shell.ZSH}
 
 	var result strings.Builder
@@ -39,11 +39,11 @@ func (w *Writer) RenderItermFeatures(features ITermFeatures, sh, pwd, user, host
 				continue
 			}
 
-			result.WriteString(w.formats.iTermPromptMark)
+			result.WriteString(formats.iTermPromptMark)
 		case CurrentDir:
-			result.WriteString(fmt.Sprintf(w.formats.iTermCurrentDir, pwd))
+			result.WriteString(fmt.Sprintf(formats.iTermCurrentDir, pwd))
 		case RemoteHost:
-			result.WriteString(fmt.Sprintf(w.formats.iTermRemoteHost, user, host))
+			result.WriteString(fmt.Sprintf(formats.iTermRemoteHost, user, host))
 		}
 	}
 

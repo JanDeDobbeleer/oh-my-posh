@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 func (e *Engine) Tooltip(tip string) string {
@@ -38,7 +39,7 @@ func (e *Engine) Tooltip(tip string) string {
 
 	switch e.Env.Shell() {
 	case shell.ZSH, shell.CMD, shell.FISH, shell.GENERIC:
-		block.Init(e.Env, e.Writer)
+		block.Init(e.Env)
 		if !block.Enabled() {
 			return ""
 		}
@@ -63,7 +64,7 @@ func (e *Engine) Tooltip(tip string) string {
 		}
 		// clear from cursor to the end of the line in case a previous tooltip
 		// is cut off and partially preserved, if the new one is shorter
-		e.write(e.Writer.ClearAfter())
+		e.write(terminal.ClearAfter())
 		e.write(strings.Repeat(" ", space))
 		e.write(text)
 		return e.string()

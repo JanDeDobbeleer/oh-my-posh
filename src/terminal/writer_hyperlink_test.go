@@ -20,13 +20,14 @@ func TestGenerateHyperlinkNoUrl(t *testing.T) {
 		{Text: "sample text with no url [test]", ShellName: shell.BASH, Expected: "\\[\x1b[47m\\]\\[\x1b[30m\\]sample text with no url [test]\\[\x1b[0m\\]"},
 	}
 	for _, tc := range cases {
-		a := Writer{
-			AnsiColors: &DefaultColors{},
-		}
-		a.Init(tc.ShellName)
-		a.Write("white", "black", tc.Text)
-		hyperlinkText, _ := a.String()
-		assert.Equal(t, tc.Expected, hyperlinkText)
+		Init(tc.ShellName)
+		AnsiColors = &DefaultColors{}
+
+		Write("white", "black", tc.Text)
+
+		got, _ := String()
+
+		assert.Equal(t, tc.Expected, got)
 	}
 }
 
@@ -93,13 +94,14 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		a := Writer{
-			AnsiColors: &DefaultColors{},
-		}
-		a.Init(tc.ShellName)
-		a.Write("white", "black", tc.Text)
-		hyperlinkText, _ := a.String()
-		assert.Equal(t, tc.Expected, hyperlinkText)
+		Init(tc.ShellName)
+		AnsiColors = &DefaultColors{}
+
+		Write("white", "black", tc.Text)
+
+		got, _ := String()
+
+		assert.Equal(t, tc.Expected, got)
 	}
 }
 
@@ -115,12 +117,13 @@ func TestGenerateFileLink(t *testing.T) {
 		{Text: `<LINK>file:C:/Windows<TEXT>Windows</TEXT></LINK>`, Expected: "\x1b[47m\x1b[30m\x1b]8;;file:C:/Windows\x1b\\Windows\x1b]8;;\x1b\\\x1b[0m"},
 	}
 	for _, tc := range cases {
-		a := Writer{
-			AnsiColors: &DefaultColors{},
-		}
-		a.Init(shell.PWSH)
-		a.Write("white", "black", tc.Text)
-		hyperlinkText, _ := a.String()
-		assert.Equal(t, tc.Expected, hyperlinkText)
+		Init(shell.PWSH)
+		AnsiColors = &DefaultColors{}
+
+		Write("white", "black", tc.Text)
+
+		got, _ := String()
+
+		assert.Equal(t, tc.Expected, got)
 	}
 }

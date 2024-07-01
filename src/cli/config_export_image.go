@@ -67,17 +67,14 @@ Exports the config to an image file using customized output options.`,
 		// add variables to the environment
 		env.Var = cfg.Var
 
-		writerColors := cfg.MakeColors()
-		writer := &terminal.Writer{
-			BackgroundColor: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
-			AnsiColors:      writerColors,
-			TrueColor:       env.CmdFlags.TrueColor,
-		}
-		writer.Init(shell.GENERIC)
+		terminal.Init(shell.GENERIC)
+		terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
+		terminal.AnsiColors = cfg.MakeColors()
+		terminal.TrueColor = env.CmdFlags.TrueColor
+
 		eng := &engine.Engine{
 			Config: cfg,
 			Env:    env,
-			Writer: writer,
 		}
 
 		prompt := eng.Primary()
@@ -86,7 +83,6 @@ Exports the config to an image file using customized output options.`,
 			AnsiString: prompt,
 			Author:     author,
 			BgColor:    bgColor,
-			Ansi:       writer,
 		}
 
 		if outputImage != "" {

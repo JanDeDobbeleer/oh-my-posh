@@ -85,18 +85,19 @@ func TestPrintPWD(t *testing.T) {
 			Shell: "shell",
 		})
 
-		writer := &terminal.Writer{}
-		writer.Init(shell.GENERIC)
+		terminal.Init(shell.GENERIC)
+
 		engine := &Engine{
 			Env: env,
 			Config: &Config{
 				PWD:   tc.Config,
 				OSC99: tc.OSC99,
 			},
-			Writer: writer,
 		}
+
 		engine.pwd()
 		got := engine.string()
+
 		assert.Equal(t, tc.Expected, got, tc.Case)
 	}
 }
@@ -114,17 +115,14 @@ func engineRender() {
 
 	cfg := LoadConfig(env)
 
-	writerColors := cfg.MakeColors()
-	writer := &terminal.Writer{
-		BackgroundColor: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
-		AnsiColors:      writerColors,
-		TrueColor:       env.CmdFlags.TrueColor,
-	}
-	writer.Init(shell.GENERIC)
+	terminal.Init(shell.GENERIC)
+	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
+	terminal.AnsiColors = cfg.MakeColors()
+	terminal.TrueColor = env.CmdFlags.TrueColor
+
 	engine := &Engine{
 		Config: cfg,
 		Env:    env,
-		Writer: writer,
 	}
 
 	engine.Primary()
@@ -188,17 +186,19 @@ func TestGetTitle(t *testing.T) {
 			PWD:      tc.Cwd,
 			Folder:   "vagrant",
 		})
-		writer := &terminal.Writer{}
-		writer.Init(shell.GENERIC)
+
+		terminal.Init(shell.GENERIC)
+
 		engine := &Engine{
 			Config: &Config{
 				ConsoleTitleTemplate: tc.Template,
 			},
-			Writer: writer,
-			Env:    env,
+			Env: env,
 		}
+
 		title := engine.getTitleTemplateText()
-		got := writer.FormatTitle(title)
+		got := terminal.FormatTitle(title)
+
 		assert.Equal(t, tc.Expected, got)
 	}
 }
@@ -247,17 +247,19 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 			Root:     tc.Root,
 			HostName: "",
 		})
-		writer := &terminal.Writer{}
-		writer.Init(shell.GENERIC)
+
+		terminal.Init(shell.GENERIC)
+
 		engine := &Engine{
 			Config: &Config{
 				ConsoleTitleTemplate: tc.Template,
 			},
-			Writer: writer,
-			Env:    env,
+			Env: env,
 		}
+
 		title := engine.getTitleTemplateText()
-		got := writer.FormatTitle(title)
+		got := terminal.FormatTitle(title)
+
 		assert.Equal(t, tc.Expected, got)
 	}
 }

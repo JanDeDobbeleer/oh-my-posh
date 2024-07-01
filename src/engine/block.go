@@ -56,25 +56,21 @@ type Block struct {
 	MinWidth int `json:"min_width,omitempty" toml:"min_width,omitempty"`
 
 	env                   platform.Environment
-	writer                *terminal.Writer
 	activeSegment         *Segment
 	previousActiveSegment *Segment
 }
 
-func (b *Block) Init(env platform.Environment, writer *terminal.Writer) {
+func (b *Block) Init(env platform.Environment) {
 	b.env = env
-	b.writer = writer
 	b.executeSegmentLogic()
 }
 
 func (b *Block) InitPlain(env platform.Environment, config *Config) {
-	b.writer = &terminal.Writer{
-		BackgroundColor: shell.ConsoleBackgroundColor(env, config.TerminalBackground),
-		AnsiColors:      config.MakeColors(),
-		TrueColor:       env.Flags().TrueColor,
-	}
+	terminal.Init(shell.GENERIC)
+	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, config.TerminalBackground)
+	terminal.AnsiColors = config.MakeColors()
+	terminal.TrueColor = env.Flags().TrueColor
 
-	b.writer.Init(shell.GENERIC)
 	b.env = env
 	b.executeSegmentLogic()
 }
@@ -90,8 +86,8 @@ func (b *Block) executeSegmentLogic() {
 
 func (b *Block) setActiveSegment(segment *Segment) {
 	b.activeSegment = segment
-	b.writer.Interactive = segment.Interactive
-	b.writer.SetColors(segment.background(), segment.foreground())
+	terminal.Interactive = segment.Interactive
+	terminal.SetColors(segment.background(), segment.foreground())
 }
 
 func (b *Block) Enabled() bool {
@@ -156,7 +152,7 @@ func (b *Block) RenderSegments() (string, int) {
 
 	b.writeSeparator(true)
 
-	return b.writer.String()
+	return terminal.String()
 }
 
 func (b *Block) filterSegments() {
@@ -177,27 +173,27 @@ func (b *Block) renderActiveSegment() {
 	b.writeSeparator(false)
 	switch b.activeSegment.style() {
 	case Plain, Powerline:
-		b.writer.Write(terminal.Background, terminal.Foreground, b.activeSegment.text)
+		terminal.Write(terminal.Background, terminal.Foreground, b.activeSegment.text)
 	case Diamond:
 		background := terminal.Transparent
 		if b.previousActiveSegment != nil && b.previousActiveSegment.hasEmptyDiamondAtEnd() {
 			background = b.previousActiveSegment.background()
 		}
-		b.writer.Write(background, terminal.Background, b.activeSegment.LeadingDiamond)
-		b.writer.Write(terminal.Background, terminal.Foreground, b.activeSegment.text)
+		terminal.Write(background, terminal.Background, b.activeSegment.LeadingDiamond)
+		terminal.Write(terminal.Background, terminal.Foreground, b.activeSegment.text)
 	case Accordion:
 		if b.activeSegment.Enabled {
-			b.writer.Write(terminal.Background, terminal.Foreground, b.activeSegment.text)
+			terminal.Write(terminal.Background, terminal.Foreground, b.activeSegment.text)
 		}
 	}
 	b.previousActiveSegment = b.activeSegment
-	b.writer.SetParentColors(b.previousActiveSegment.background(), b.previousActiveSegment.foreground())
+	terminal.SetParentColors(b.previousActiveSegment.background(), b.previousActiveSegment.foreground())
 }
 
 func (b *Block) writeSeparator(final bool) {
 	isCurrentDiamond := b.activeSegment.style() == Diamond
 	if final && isCurrentDiamond {
-		b.writer.Write(terminal.Transparent, terminal.Background, b.activeSegment.TrailingDiamond)
+		terminal.Write(terminal.Transparent, terminal.Background, b.activeSegment.TrailingDiamond)
 		return
 	}
 
@@ -207,12 +203,12 @@ func (b *Block) writeSeparator(final bool) {
 	}
 
 	if isPreviousDiamond && isCurrentDiamond && len(b.activeSegment.LeadingDiamond) == 0 {
-		b.writer.Write(terminal.Background, terminal.ParentBackground, b.previousActiveSegment.TrailingDiamond)
+		terminal.Write(terminal.Background, terminal.ParentBackground, b.previousActiveSegment.TrailingDiamond)
 		return
 	}
 
 	if isPreviousDiamond && len(b.previousActiveSegment.TrailingDiamond) > 0 {
-		b.writer.Write(terminal.Transparent, terminal.ParentBackground, b.previousActiveSegment.TrailingDiamond)
+		terminal.Write(terminal.Transparent, terminal.ParentBackground, b.previousActiveSegment.TrailingDiamond)
 	}
 
 	isPowerline := b.activeSegment.isPowerline()
@@ -234,7 +230,7 @@ func (b *Block) writeSeparator(final bool) {
 	}
 
 	if shouldOverridePowerlineLeadingSymbol() {
-		b.writer.Write(terminal.Transparent, terminal.Background, b.activeSegment.LeadingPowerlineSymbol)
+		terminal.Write(terminal.Transparent, terminal.Background, b.activeSegment.LeadingPowerlineSymbol)
 		return
 	}
 
@@ -265,11 +261,11 @@ func (b *Block) writeSeparator(final bool) {
 	}
 
 	if b.activeSegment.InvertPowerline {
-		b.writer.Write(b.getPowerlineColor(), bgColor, symbol)
+		terminal.Write(b.getPowerlineColor(), bgColor, symbol)
 		return
 	}
 
-	b.writer.Write(bgColor, b.getPowerlineColor(), symbol)
+	terminal.Write(bgColor, b.getPowerlineColor(), symbol)
 }
 
 func (b *Block) adjustTrailingDiamondColorOverrides() {

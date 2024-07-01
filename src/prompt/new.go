@@ -1,4 +1,4 @@
-package engine
+package prompt
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/config"

@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
@@ -72,15 +72,15 @@ Exports the config to an image file using customized output options.`,
 		terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
 		terminal.AnsiColors = cfg.MakeColors()
 
-		eng := &engine.Engine{
+		eng := &prompt.Engine{
 			Config: cfg,
 			Env:    env,
 		}
 
-		prompt := eng.Primary()
+		primaryPrompt := eng.Primary()
 
-		imageCreator := &engine.ImageRenderer{
-			AnsiString: prompt,
+		imageCreator := &prompt.ImageRenderer{
+			AnsiString: primaryPrompt,
 			Author:     author,
 			BgColor:    bgColor,
 		}

@@ -39,11 +39,11 @@ func (w *Writer) RenderItermFeatures(features ITermFeatures, sh, pwd, user, host
 				continue
 			}
 
-			result.WriteString(w.iTermPromptMark)
+			result.WriteString(w.formats.iTermPromptMark)
 		case CurrentDir:
-			result.WriteString(fmt.Sprintf(w.iTermCurrentDir, pwd))
+			result.WriteString(fmt.Sprintf(w.formats.iTermCurrentDir, pwd))
 		case RemoteHost:
-			result.WriteString(fmt.Sprintf(w.iTermRemoteHost, user, host))
+			result.WriteString(fmt.Sprintf(w.formats.iTermRemoteHost, user, host))
 		}
 	}
 

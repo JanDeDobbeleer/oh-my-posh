@@ -112,7 +112,7 @@ func (e *Engine) Primary() string {
 		prompt += strings.Repeat(" ", space)
 		prompt += e.rprompt
 		prompt += writer.RestoreCursorPosition()
-		prompt = e.Writer.FormatText(prompt)
+		prompt = e.Writer.EscapeText(prompt)
 		e.write(prompt)
 	}
 

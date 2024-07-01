@@ -116,9 +116,9 @@ func engineRender() {
 
 	writerColors := cfg.MakeColors()
 	writer := &terminal.Writer{
-		TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
-		AnsiColors:         writerColors,
-		TrueColor:          env.CmdFlags.TrueColor,
+		BackgroundColor: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
+		AnsiColors:      writerColors,
+		TrueColor:       env.CmdFlags.TrueColor,
 	}
 	writer.Init(shell.GENERIC)
 	engine := &Engine{

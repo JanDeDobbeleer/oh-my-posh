@@ -13,6 +13,18 @@ func init() {
 	runewidth.DefaultCondition.EastAsianWidth = false
 }
 
+type Colors struct {
+	Background string `json:"background" toml:"background"`
+	Foreground string `json:"foreground" toml:"foreground"`
+}
+
+type style struct {
+	AnchorStart string
+	AnchorEnd   string
+	Start       string
+	End         string
+}
+
 var (
 	knownStyles = []*style{
 		{AnchorStart: `<b>`, AnchorEnd: `</b>`, Start: "\x1b[1m", End: "\x1b[22m"},
@@ -24,20 +36,36 @@ var (
 		{AnchorStart: `<f>`, AnchorEnd: `</f>`, Start: "\x1b[5m", End: "\x1b[25m"},
 		{AnchorStart: `<r>`, AnchorEnd: `</r>`, Start: "\x1b[7m", End: "\x1b[27m"},
 	}
+
 	resetStyle      = &style{AnchorStart: "RESET", AnchorEnd: `</>`, End: "\x1b[0m"}
 	backgroundStyle = &style{AnchorStart: "BACKGROUND", AnchorEnd: `</>`, End: "\x1b[49m"}
 )
 
-type style struct {
-	AnchorStart string
-	AnchorEnd   string
-	Start       string
-	End         string
-}
+type shellFormats struct {
+	escape     string
+	left       string
+	linechange string
+	clearBelow string
+	clearLine  string
 
-type Colors struct {
-	Background string `json:"background" toml:"background"`
-	Foreground string `json:"foreground" toml:"foreground"`
+	title string
+
+	saveCursorPosition    string
+	restoreCursorPosition string
+
+	osc99 string
+	osc7  string
+	osc51 string
+
+	escapeSequences map[rune]rune
+
+	hyperlinkStart  string
+	hyperlinkCenter string
+	hyperlinkEnd    string
+
+	iTermPromptMark string
+	iTermCurrentDir string
+	iTermRemoteHost string
 }
 
 const (
@@ -54,11 +82,11 @@ const (
 	// Foreground takes the current segment's foreground color
 	Foreground = "foreground"
 
-	AnchorRegex    = `^(?P<ANCHOR><(?P<FG>[^,<>]+)?,?(?P<BG>[^<>]+)?>)`
-	colorise       = "\x1b[%sm"
-	transparent    = "\x1b[0m\x1b[%s;49m\x1b[7m"
-	transparentEnd = "\x1b[27m"
-	backgroundEnd  = "\x1b[49m"
+	AnchorRegex      = `^(?P<ANCHOR><(?P<FG>[^,<>]+)?,?(?P<BG>[^<>]+)?>)`
+	colorise         = "\x1b[%sm"
+	transparentStart = "\x1b[0m\x1b[%s;49m\x1b[7m"
+	transparentEnd   = "\x1b[27m"
+	backgroundEnd    = "\x1b[49m"
 
 	AnsiRegex = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
 
@@ -78,10 +106,10 @@ const (
 
 // Writer writes colorized ANSI strings
 type Writer struct {
-	TerminalBackground string
-	Colors             *Colors
-	ParentColors       []*Colors
-	AnsiColors         ColorString
+	BackgroundColor string
+	CurrentColors   *Colors
+	ParentColors    []*Colors
+	AnsiColors      ColorString
 
 	Plain       bool
 	TrueColor   bool
@@ -90,112 +118,96 @@ type Writer struct {
 	builder strings.Builder
 	length  int
 
-	foreground  Color
-	background  Color
-	current     ColorHistory
-	runes       []rune
-	transparent bool
-	invisible   bool
-	hyperlink   bool
+	foregroundColor Color
+	backgroundColor Color
+	currentColor    ColorHistory
+	runes           []rune
 
-	shell                 string
-	format                string
-	left                  string
-	title                 string
-	linechange            string
-	clearBelow            string
-	clearLine             string
-	saveCursorPosition    string
-	restoreCursorPosition string
-	escapeLeft            string
-	escapeRight           string
-	osc99                 string
-	osc7                  string
-	osc51                 string
+	isTransparent bool
+	isInvisible   bool
+	isHyperlink   bool
 
-	lastRune        rune
-	escapeSequences map[rune]rune
+	lastRune rune
 
-	hyperlinkStart  string
-	hyperlinkCenter string
-	hyperlinkEnd    string
+	shellName string
 
-	iTermPromptMark string
-	iTermCurrentDir string
-	iTermRemoteHost string
+	formats *shellFormats
 }
 
 func (w *Writer) Init(shellName string) {
-	w.shell = shellName
-	w.format = "%s"
-	switch w.shell {
+	w.shellName = shellName
+
+	switch w.shellName {
 	case shell.BASH:
-		w.format = "\\[%s\\]"
-		w.linechange = "\\[\x1b[%d%s\\]"
-		w.left = "\\[\x1b[%dD\\]"
-		w.clearBelow = "\\[\x1b[0J\\]"
-		w.clearLine = "\\[\x1b[K\\]"
-		w.saveCursorPosition = "\\[\x1b7\\]"
-		w.restoreCursorPosition = "\\[\x1b8\\]"
-		w.title = "\\[\x1b]0;%s\007\\]"
-		w.escapeLeft = "\\["
-		w.escapeRight = "\\]"
-		w.hyperlinkStart = "\\[\x1b]8;;"
-		w.hyperlinkCenter = "\x1b\\\\\\]"
-		w.hyperlinkEnd = "\\[\x1b]8;;\x1b\\\\\\]"
-		w.osc99 = "\\[\x1b]9;9;%s\x1b\\\\\\]"
-		w.osc7 = "\\[\x1b]7;file://%s/%s\x1b\\\\\\]"
-		w.osc51 = "\\[\x1b]51;A;%s@%s:%s\x1b\\\\\\]"
-		w.iTermPromptMark = "\\[$(iterm2_prompt_mark)\\]"
-		w.iTermCurrentDir = "\\[\x1b]1337;CurrentDir=%s\x07\\]"
-		w.iTermRemoteHost = "\\[\x1b]1337;RemoteHost=%s@%s\x07\\]"
-		w.escapeSequences = map[rune]rune{
-			96: 92, // backtick
-			92: 92, // backslash
+		w.formats = &shellFormats{
+			escape:                "\\[%s\\]",
+			linechange:            "\\[\x1b[%d%s\\]",
+			left:                  "\\[\x1b[%dD\\]",
+			clearBelow:            "\\[\x1b[0J\\]",
+			clearLine:             "\\[\x1b[K\\]",
+			saveCursorPosition:    "\\[\x1b7\\]",
+			restoreCursorPosition: "\\[\x1b8\\]",
+			title:                 "\\[\x1b]0;%s\007\\]",
+			hyperlinkStart:        "\\[\x1b]8;;",
+			hyperlinkCenter:       "\x1b\\\\\\]",
+			hyperlinkEnd:          "\\[\x1b]8;;\x1b\\\\\\]",
+			osc99:                 "\\[\x1b]9;9;%s\x1b\\\\\\]",
+			osc7:                  "\\[\x1b]7;file://%s/%s\x1b\\\\\\]",
+			osc51:                 "\\[\x1b]51;A;%s@%s:%s\x1b\\\\\\]",
+			iTermPromptMark:       "\\[$(iterm2_prompt_mark)\\]",
+			iTermCurrentDir:       "\\[\x1b]1337;CurrentDir=%s\x07\\]",
+			iTermRemoteHost:       "\\[\x1b]1337;RemoteHost=%s@%s\x07\\]",
+			escapeSequences: map[rune]rune{
+				96: 92, // backtick
+				92: 92, // backslash
+			},
 		}
 	case shell.ZSH, shell.TCSH:
-		w.format = "%%{%s%%}"
-		w.linechange = "%%{\x1b[%d%s%%}"
-		w.left = "%%{\x1b[%dD%%}"
-		w.clearBelow = "%{\x1b[0J%}"
-		w.clearLine = "%{\x1b[K%}"
-		w.saveCursorPosition = "%{\x1b7%}"
-		w.restoreCursorPosition = "%{\x1b8%}"
-		w.title = "%%{\x1b]0;%s\007%%}"
-		w.escapeLeft = "%{"
-		w.escapeRight = "%}"
-		w.hyperlinkStart = "%{\x1b]8;;"
-		w.hyperlinkCenter = "\x1b\\%}"
-		w.hyperlinkEnd = "%{\x1b]8;;\x1b\\%}"
-		w.osc99 = "%%{\x1b]9;9;%s\x1b\\%%}"
-		w.osc7 = "%%{\x1b]7;file://%s/%s\x1b\\%%}"
-		w.osc51 = "%%{\x1b]51;A%s@%s:%s\x1b\\%%}"
-		w.iTermPromptMark = "%{$(iterm2_prompt_mark)%}"
-		w.iTermCurrentDir = "%%{\x1b]1337;CurrentDir=%s\x07%%}"
-		w.iTermRemoteHost = "%%{\x1b]1337;RemoteHost=%s@%s\x07%%}"
+		w.formats = &shellFormats{
+			escape:                "%%{%s%%}",
+			linechange:            "%%{\x1b[%d%s%%}",
+			left:                  "%%{\x1b[%dD%%}",
+			clearBelow:            "%{\x1b[0J%}",
+			clearLine:             "%{\x1b[K%}",
+			saveCursorPosition:    "%{\x1b7%}",
+			restoreCursorPosition: "%{\x1b8%}",
+			title:                 "%%{\x1b]0;%s\007%%}",
+			hyperlinkStart:        "%{\x1b]8;;",
+			hyperlinkCenter:       "\x1b\\%}",
+			hyperlinkEnd:          "%{\x1b]8;;\x1b\\%}",
+			osc99:                 "%%{\x1b]9;9;%s\x1b\\%%}",
+			osc7:                  "%%{\x1b]7;file://%s/%s\x1b\\%%}",
+			osc51:                 "%%{\x1b]51;A%s@%s:%s\x1b\\%%}",
+			iTermPromptMark:       "%{$(iterm2_prompt_mark)%}",
+			iTermCurrentDir:       "%%{\x1b]1337;CurrentDir=%s\x07%%}",
+			iTermRemoteHost:       "%%{\x1b]1337;RemoteHost=%s@%s\x07%%}",
+		}
 	default:
-		w.linechange = "\x1b[%d%s"
-		w.left = "\x1b[%dD"
-		w.clearBelow = "\x1b[0J"
-		w.clearLine = "\x1b[K"
-		w.saveCursorPosition = "\x1b7"
-		w.restoreCursorPosition = "\x1b8"
-		w.title = "\x1b]0;%s\007"
-		// when in fish on Linux, it seems hyperlinks ending with \\ print a \
-		// unlike on macOS. However, this is a fish bug, so do not try to fix it here:
-		// https://github.com/JanDeDobbeleer/oh-my-posh/pull/3288#issuecomment-1369137068
-		w.hyperlinkStart = "\x1b]8;;"
-		w.hyperlinkCenter = "\x1b\\"
-		w.hyperlinkEnd = "\x1b]8;;\x1b\\"
-		w.osc99 = "\x1b]9;9;%s\x1b\\"
-		w.osc7 = "\x1b]7;file://%s/%s\x1b\\"
-		w.osc51 = "\x1b]51;A%s@%s:%s\x1b\\"
-		w.iTermCurrentDir = "\x1b]1337;CurrentDir=%s\x07"
-		w.iTermRemoteHost = "\x1b]1337;RemoteHost=%s@%s\x07"
+		w.formats = &shellFormats{
+			escape:                "%s",
+			linechange:            "\x1b[%d%s",
+			left:                  "\x1b[%dD",
+			clearBelow:            "\x1b[0J",
+			clearLine:             "\x1b[K",
+			saveCursorPosition:    "\x1b7",
+			restoreCursorPosition: "\x1b8",
+			title:                 "\x1b]0;%s\007",
+			// when in fish on Linux, it seems hyperlinks ending with \\ print a \
+			// unlike on macOS. However, this is a fish bug, so do not try to fix it here:
+			// https://github.com/JanDeDobbeleer/oh-my-posh/pull/3288#issuecomment-1369137068
+			hyperlinkStart:  "\x1b]8;;",
+			hyperlinkCenter: "\x1b\\",
+			hyperlinkEnd:    "\x1b]8;;\x1b\\",
+			osc99:           "\x1b]9;9;%s\x1b\\",
+			osc7:            "\x1b]7;file://%s/%s\x1b\\",
+			osc51:           "\x1b]51;A%s@%s:%s\x1b\\",
+			iTermCurrentDir: "\x1b]1337;CurrentDir=%s\x07",
+			iTermRemoteHost: "\x1b]1337;RemoteHost=%s@%s\x07",
+		}
 	}
 
 	if shellName == shell.ZSH {
-		w.escapeSequences = map[rune]rune{
+		w.formats.escapeSequences = map[rune]rune{
 			96: 92, // backtick
 			37: 37, // %
 		}
@@ -203,7 +215,7 @@ func (w *Writer) Init(shellName string) {
 }
 
 func (w *Writer) SetColors(background, foreground string) {
-	w.Colors = &Colors{
+	w.CurrentColors = &Colors{
 		Background: background,
 		Foreground: foreground,
 	}
@@ -213,6 +225,7 @@ func (w *Writer) SetParentColors(background, foreground string) {
 	if w.ParentColors == nil {
 		w.ParentColors = make([]*Colors, 0)
 	}
+
 	w.ParentColors = append([]*Colors{{
 		Background: background,
 		Foreground: foreground,
@@ -231,7 +244,7 @@ func (w *Writer) ChangeLine(numberOfLines int) string {
 		numberOfLines = -numberOfLines
 	}
 
-	return fmt.Sprintf(w.linechange, numberOfLines, position)
+	return fmt.Sprintf(w.formats.linechange, numberOfLines, position)
 }
 
 func (w *Writer) ConsolePwd(pwdType, userName, hostName, pwd string) string {
@@ -245,13 +258,13 @@ func (w *Writer) ConsolePwd(pwdType, userName, hostName, pwd string) string {
 
 	switch pwdType {
 	case OSC7:
-		return fmt.Sprintf(w.osc7, hostName, pwd)
+		return fmt.Sprintf(w.formats.osc7, hostName, pwd)
 	case OSC51:
-		return fmt.Sprintf(w.osc51, userName, hostName, pwd)
+		return fmt.Sprintf(w.formats.osc51, userName, hostName, pwd)
 	case OSC99:
 		fallthrough
 	default:
-		return fmt.Sprintf(w.osc99, pwd)
+		return fmt.Sprintf(w.formats.osc99, pwd)
 	}
 }
 
@@ -260,17 +273,18 @@ func (w *Writer) ClearAfter() string {
 		return ""
 	}
 
-	return w.clearLine + w.clearBelow
+	return w.formats.clearLine + w.formats.clearBelow
 }
 
 func (w *Writer) FormatTitle(title string) string {
 	title = w.trimAnsi(title)
+
 	if w.Plain {
 		return title
 	}
 
 	// we have to do this to prevent bash/zsh from misidentifying escape sequences
-	switch w.shell {
+	switch w.shellName {
 	case shell.BASH:
 		title = strings.NewReplacer("`", "\\`", `\`, `\\`).Replace(title)
 	case shell.ZSH:
@@ -280,40 +294,42 @@ func (w *Writer) FormatTitle(title string) string {
 		return ""
 	}
 
-	return fmt.Sprintf(w.title, title)
+	return fmt.Sprintf(w.formats.title, title)
 }
 
-func (w *Writer) FormatText(text string) string {
-	return fmt.Sprintf(w.format, text)
+func (w *Writer) EscapeText(text string) string {
+	return fmt.Sprintf(w.formats.escape, text)
 }
 
 func (w *Writer) SaveCursorPosition() string {
-	return w.saveCursorPosition
+	return w.formats.saveCursorPosition
 }
 
 func (w *Writer) RestoreCursorPosition() string {
-	return w.restoreCursorPosition
+	return w.formats.restoreCursorPosition
 }
 
 func (w *Writer) PromptStart() string {
-	return fmt.Sprintf(w.format, "\x1b]133;A\007")
+	return fmt.Sprintf(w.formats.escape, "\x1b]133;A\007")
 }
 
 func (w *Writer) CommandStart() string {
-	return fmt.Sprintf(w.format, "\x1b]133;B\007")
+	return fmt.Sprintf(w.formats.escape, "\x1b]133;B\007")
 }
 
 func (w *Writer) CommandFinished(code int, ignore bool) string {
 	if ignore {
-		return fmt.Sprintf(w.format, "\x1b]133;D\007")
+		return fmt.Sprintf(w.formats.escape, "\x1b]133;D\007")
 	}
+
 	mark := fmt.Sprintf("\x1b]133;D;%d\007", code)
-	return fmt.Sprintf(w.format, mark)
+
+	return fmt.Sprintf(w.formats.escape, mark)
 }
 
 func (w *Writer) LineBreak() string {
-	cr := fmt.Sprintf(w.left, 1000)
-	lf := fmt.Sprintf(w.linechange, 1, "B")
+	cr := fmt.Sprintf(w.formats.left, 1000)
+	lf := fmt.Sprintf(w.formats.linechange, 1, "B")
 	return cr + lf
 }
 
@@ -322,11 +338,13 @@ func (w *Writer) Write(background, foreground, text string) {
 		return
 	}
 
-	w.background, w.foreground = w.asAnsiColors(background, foreground)
+	w.backgroundColor, w.foregroundColor = w.asAnsiColors(background, foreground)
+
 	// default to white foreground
-	if w.foreground.IsEmpty() {
-		w.foreground = w.AnsiColors.ToColor("white", false, w.TrueColor)
+	if w.foregroundColor.IsEmpty() {
+		w.foregroundColor = w.AnsiColors.ToColor("white", false, w.TrueColor)
 	}
+
 	// validate if we start with a color override
 	match := regex.FindNamedRegexMatch(AnchorRegex, text)
 	if len(match) != 0 && match[ANCHOR] != hyperLinkStart {
@@ -335,12 +353,13 @@ func (w *Writer) Write(background, foreground, text string) {
 			if match[ANCHOR] != style.AnchorStart {
 				continue
 			}
+
 			w.writeEscapedAnsiString(style.Start)
 			colorOverride = false
 		}
 
 		if colorOverride {
-			w.current.Add(w.asAnsiColors(match[BG], match[FG]))
+			w.currentColor.Add(w.asAnsiColors(match[BG], match[FG]))
 		}
 	}
 
@@ -348,8 +367,8 @@ func (w *Writer) Write(background, foreground, text string) {
 
 	// print the hyperlink part AFTER the coloring
 	if match[ANCHOR] == hyperLinkStart {
-		w.hyperlink = true
-		w.builder.WriteString(w.hyperlinkStart)
+		w.isHyperlink = true
+		w.builder.WriteString(w.formats.hyperlinkStart)
 	}
 
 	text = text[len(match[ANCHOR]):]
@@ -371,15 +390,15 @@ func (w *Writer) Write(background, foreground, text string) {
 			// check for hyperlinks first
 			switch match[ANCHOR] {
 			case hyperLinkStart:
-				w.hyperlink = true
+				w.isHyperlink = true
 				i += len([]rune(match[ANCHOR])) - 1
-				w.builder.WriteString(w.hyperlinkStart)
+				w.builder.WriteString(w.formats.hyperlinkStart)
 				continue
 			case hyperLinkText:
-				w.hyperlink = false
+				w.isHyperlink = false
 				i += len([]rune(match[ANCHOR])) - 1
 				hyperlinkTextPosition = i
-				w.builder.WriteString(w.hyperlinkCenter)
+				w.builder.WriteString(w.formats.hyperlinkCenter)
 				continue
 			case hyperLinkTextEnd:
 				// this implies there's no text in the hyperlink
@@ -391,7 +410,7 @@ func (w *Writer) Write(background, foreground, text string) {
 				continue
 			case hyperLinkEnd:
 				i += len([]rune(match[ANCHOR])) - 1
-				w.builder.WriteString(w.hyperlinkEnd)
+				w.builder.WriteString(w.formats.hyperlinkEnd)
 				continue
 			}
 
@@ -407,7 +426,7 @@ func (w *Writer) Write(background, foreground, text string) {
 	w.writeEscapedAnsiString(resetStyle.End)
 
 	// pop last color from the stack
-	w.current.Pop()
+	w.currentColor.Pop()
 }
 
 func (w *Writer) String() (string, int) {
@@ -424,8 +443,8 @@ func (w *Writer) writeEscapedAnsiString(text string) {
 		return
 	}
 
-	if len(w.format) != 0 {
-		text = fmt.Sprintf(w.format, text)
+	if len(w.formats.escape) != 0 {
+		text = fmt.Sprintf(w.formats.escape, text)
 	}
 
 	w.builder.WriteString(text)
@@ -436,17 +455,17 @@ func (w *Writer) getAnsiFromColorString(colorString string, isBackground bool) C
 }
 
 func (w *Writer) write(s rune) {
-	if w.invisible {
+	if w.isInvisible {
 		return
 	}
 
-	if w.hyperlink {
+	if w.isHyperlink {
 		w.builder.WriteRune(s)
 		return
 	}
 
 	if !w.Interactive {
-		for special, escape := range w.escapeSequences {
+		for special, escape := range w.formats.escapeSequences {
 			if s == special && w.lastRune != escape {
 				w.builder.WriteRune(escape)
 			}
@@ -460,28 +479,28 @@ func (w *Writer) write(s rune) {
 
 func (w *Writer) writeSegmentColors() {
 	// use correct starting colors
-	bg := w.background
-	fg := w.foreground
-	if !w.current.Background().IsEmpty() {
-		bg = w.current.Background()
+	bg := w.backgroundColor
+	fg := w.foregroundColor
+	if !w.currentColor.Background().IsEmpty() {
+		bg = w.currentColor.Background()
 	}
-	if !w.current.Foreground().IsEmpty() {
-		fg = w.current.Foreground()
+	if !w.currentColor.Foreground().IsEmpty() {
+		fg = w.currentColor.Foreground()
 	}
 
 	// ignore processing fully tranparent colors
-	w.invisible = fg.IsTransparent() && bg.IsTransparent()
-	if w.invisible {
+	w.isInvisible = fg.IsTransparent() && bg.IsTransparent()
+	if w.isInvisible {
 		return
 	}
 
-	if fg.IsTransparent() && len(w.TerminalBackground) != 0 { //nolint: gocritic
-		background := w.getAnsiFromColorString(w.TerminalBackground, false)
+	if fg.IsTransparent() && len(w.BackgroundColor) != 0 { //nolint: gocritic
+		background := w.getAnsiFromColorString(w.BackgroundColor, false)
 		w.writeEscapedAnsiString(fmt.Sprintf(colorise, background))
 		w.writeEscapedAnsiString(fmt.Sprintf(colorise, bg.ToForeground()))
 	} else if fg.IsTransparent() && !bg.IsEmpty() {
-		w.transparent = true
-		w.writeEscapedAnsiString(fmt.Sprintf(transparent, bg))
+		w.isTransparent = true
+		w.writeEscapedAnsiString(fmt.Sprintf(transparentStart, bg))
 	} else {
 		if !bg.IsEmpty() && !bg.IsTransparent() {
 			w.writeEscapedAnsiString(fmt.Sprintf(colorise, bg))
@@ -492,7 +511,7 @@ func (w *Writer) writeSegmentColors() {
 	}
 
 	// set current colors
-	w.current.Add(bg, fg)
+	w.currentColor.Add(bg, fg)
 }
 
 func (w *Writer) writeArchorOverride(match map[string]string, background string, i int) int {
@@ -522,45 +541,45 @@ func (w *Writer) writeArchorOverride(match map[string]string, background string,
 	bg, fg := w.asAnsiColors(match[BG], match[FG])
 
 	// ignore processing fully tranparent colors
-	w.invisible = fg.IsTransparent() && bg.IsTransparent()
-	if w.invisible {
+	w.isInvisible = fg.IsTransparent() && bg.IsTransparent()
+	if w.isInvisible {
 		return position
 	}
 
 	// make sure we have colors
 	if fg.IsEmpty() {
-		fg = w.foreground
+		fg = w.foregroundColor
 	}
 	if bg.IsEmpty() {
-		bg = w.background
+		bg = w.backgroundColor
 	}
 
-	w.current.Add(bg, fg)
+	w.currentColor.Add(bg, fg)
 
-	if w.current.Foreground().IsTransparent() && len(w.TerminalBackground) != 0 {
-		background := w.getAnsiFromColorString(w.TerminalBackground, false)
+	if w.currentColor.Foreground().IsTransparent() && len(w.BackgroundColor) != 0 {
+		background := w.getAnsiFromColorString(w.BackgroundColor, false)
 		w.writeEscapedAnsiString(fmt.Sprintf(colorise, background))
-		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.current.Background().ToForeground()))
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.currentColor.Background().ToForeground()))
 		return position
 	}
 
-	if w.current.Foreground().IsTransparent() && !w.current.Background().IsTransparent() {
-		w.transparent = true
-		w.writeEscapedAnsiString(fmt.Sprintf(transparent, w.current.Background()))
+	if w.currentColor.Foreground().IsTransparent() && !w.currentColor.Background().IsTransparent() {
+		w.isTransparent = true
+		w.writeEscapedAnsiString(fmt.Sprintf(transparentStart, w.currentColor.Background()))
 		return position
 	}
 
-	if w.current.Background() != w.background {
+	if w.currentColor.Background() != w.backgroundColor {
 		// end the colors in case we have a transparent background
-		if w.current.Background().IsTransparent() {
+		if w.currentColor.Background().IsTransparent() {
 			w.writeEscapedAnsiString(backgroundEnd)
 		} else {
-			w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.current.Background()))
+			w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.currentColor.Background()))
 		}
 	}
 
-	if w.current.Foreground() != w.foreground {
-		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.current.Foreground()))
+	if w.currentColor.Foreground() != w.foregroundColor {
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.currentColor.Foreground()))
 	}
 
 	return position
@@ -572,23 +591,23 @@ func (w *Writer) endColorOverride(position int) int {
 
 	// do not restore colors at the end of the string, we print it anyways
 	if position == len(w.runes)-1 {
-		w.current.Pop()
+		w.currentColor.Pop()
 		return position
 	}
 
 	// reset colors to previous when we have more than 1 in stack
 	// as soon as we have  more than 1, we can pop the last one
 	// and print the previous override as it wasn't ended yet
-	if w.current.Len() > 1 {
-		fg := w.current.Foreground()
-		bg := w.current.Background()
+	if w.currentColor.Len() > 1 {
+		fg := w.currentColor.Foreground()
+		bg := w.currentColor.Background()
 
-		w.current.Pop()
+		w.currentColor.Pop()
 
-		previousBg := w.current.Background()
-		previousFg := w.current.Foreground()
+		previousBg := w.currentColor.Background()
+		previousFg := w.currentColor.Foreground()
 
-		if w.transparent {
+		if w.isTransparent {
 			w.writeEscapedAnsiString(transparentEnd)
 		}
 
@@ -609,30 +628,30 @@ func (w *Writer) endColorOverride(position int) int {
 	}
 
 	// pop the last colors from the stack
-	defer w.current.Pop()
+	defer w.currentColor.Pop()
 
 	// do not reset when colors are identical
-	if w.current.Background() == w.background && w.current.Foreground() == w.foreground {
+	if w.currentColor.Background() == w.backgroundColor && w.currentColor.Foreground() == w.foregroundColor {
 		return position
 	}
 
-	if w.transparent {
+	if w.isTransparent {
 		w.writeEscapedAnsiString(transparentEnd)
 	}
 
-	if w.background.IsClear() {
+	if w.backgroundColor.IsClear() {
 		w.writeEscapedAnsiString(backgroundStyle.End)
 	}
 
-	if w.current.Background() != w.background && !w.background.IsClear() {
-		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.background))
+	if w.currentColor.Background() != w.backgroundColor && !w.backgroundColor.IsClear() {
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.backgroundColor))
 	}
 
-	if (w.current.Foreground() != w.foreground || w.transparent) && !w.foreground.IsClear() {
-		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.foreground))
+	if (w.currentColor.Foreground() != w.foregroundColor || w.isTransparent) && !w.foregroundColor.IsClear() {
+		w.writeEscapedAnsiString(fmt.Sprintf(colorise, w.foregroundColor))
 	}
 
-	w.transparent = false
+	w.isTransparent = false
 	return position
 }
 
@@ -640,14 +659,19 @@ func (w *Writer) asAnsiColors(background, foreground string) (Color, Color) {
 	if len(background) == 0 {
 		background = Background
 	}
+
 	if len(foreground) == 0 {
 		foreground = Foreground
 	}
+
 	background = w.expandKeyword(background)
 	foreground = w.expandKeyword(foreground)
+
 	inverted := foreground == Transparent && len(background) != 0
+
 	backgroundAnsi := w.getAnsiFromColorString(background, !inverted)
 	foregroundAnsi := w.getAnsiFromColorString(foreground, false)
+
 	return backgroundAnsi, foregroundAnsi
 }
 
@@ -678,30 +702,36 @@ func (w *Writer) expandKeyword(keyword string) string {
 				return keyword
 			}
 		}
+
 		if len(keyword) == 0 {
 			return Transparent
 		}
+
 		return keyword
 	}
+
 	resolveKeyword := func(keyword string) string {
 		switch {
-		case keyword == Background && w.Colors != nil:
-			return w.Colors.Background
-		case keyword == Foreground && w.Colors != nil:
-			return w.Colors.Foreground
+		case keyword == Background && w.CurrentColors != nil:
+			return w.CurrentColors.Background
+		case keyword == Foreground && w.CurrentColors != nil:
+			return w.CurrentColors.Foreground
 		case (keyword == ParentBackground || keyword == ParentForeground) && w.ParentColors != nil:
 			return resolveParentColor(keyword)
 		default:
 			return Transparent
 		}
 	}
+
 	for ok := w.isKeyword(keyword); ok; ok = w.isKeyword(keyword) {
 		resolved := resolveKeyword(keyword)
 		if resolved == keyword {
 			break
 		}
+
 		keyword = resolved
 	}
+
 	return keyword
 }
 

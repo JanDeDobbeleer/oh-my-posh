@@ -118,7 +118,6 @@ func engineRender() {
 	terminal.Init(shell.GENERIC)
 	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
 	terminal.AnsiColors = cfg.MakeColors()
-	terminal.TrueColor = env.CmdFlags.TrueColor
 
 	engine := &Engine{
 		Config: cfg,

@@ -16,7 +16,7 @@ import (
 // This can include a valid hex color in the format `#FFFFFF`,
 // but also a name of one of the first 16 ANSI colors like `lightBlue`.
 type ColorString interface {
-	ToColor(colorString string, isBackground bool, trueColor bool) Color
+	ToColor(colorString string, isBackground bool) Color
 }
 
 type ColorSet struct {
@@ -153,45 +153,57 @@ const (
 	backgroundIndex = 1
 )
 
-func (d *DefaultColors) ToColor(colorString string, isBackground, trueColor bool) Color {
+func (d *DefaultColors) ToColor(colorString string, isBackground bool) Color {
 	if len(colorString) == 0 {
 		return emptyColor
 	}
+
 	if colorString == Transparent {
 		return transparentColor
 	}
+
 	if colorString == Accent {
 		if d.accent == nil {
 			return emptyColor
 		}
+
 		if isBackground {
 			return Color(d.accent.Background)
 		}
+
 		return Color(d.accent.Foreground)
 	}
+
 	colorFromName, err := getAnsiColorFromName(colorString, isBackground)
 	if err == nil {
 		return colorFromName
 	}
+
 	if !strings.HasPrefix(colorString, "#") {
 		val, err := strconv.ParseUint(colorString, 10, 64)
 		if err != nil || val > 255 {
 			return emptyColor
 		}
+
 		c256 := color.C256(uint8(val), isBackground)
 		return Color(c256.String())
 	}
+
 	style := color.HEX(colorString, isBackground)
 	if !style.IsEmpty() {
 		if trueColor {
 			return Color(style.String())
 		}
+
 		return Color(style.C256().String())
 	}
+
 	if colorInt, err := strconv.ParseInt(colorString, 10, 8); err == nil {
 		c := color.C256(uint8(colorInt), isBackground)
+
 		return Color(c.String())
 	}
+
 	return emptyColor
 }
 
@@ -202,8 +214,10 @@ func getAnsiColorFromName(colorName string, isBackground bool) (Color, error) {
 		if isBackground {
 			return colorCodes[backgroundIndex], nil
 		}
+
 		return colorCodes[foregroundIndex], nil
 	}
+
 	return "", fmt.Errorf("color name %s does not exist", colorName)
 }
 
@@ -219,12 +233,14 @@ type PaletteColors struct {
 	palette    Palette
 }
 
-func (p *PaletteColors) ToColor(colorString string, isBackground, trueColor bool) Color {
+func (p *PaletteColors) ToColor(colorString string, isBackground bool) Color {
 	paletteColor, err := p.palette.ResolveColor(colorString)
 	if err != nil {
 		return emptyColor
 	}
-	ansiColor := p.ansiColors.ToColor(paletteColor, isBackground, trueColor)
+
+	ansiColor := p.ansiColors.ToColor(paletteColor, isBackground)
+
 	return ansiColor
 }
 
@@ -241,7 +257,7 @@ type cachedColorKey struct {
 	isBackground bool
 }
 
-func (c *CachedColors) ToColor(colorString string, isBackground, trueColor bool) Color {
+func (c *CachedColors) ToColor(colorString string, isBackground bool) Color {
 	if c.colorCache == nil {
 		c.colorCache = make(map[cachedColorKey]Color)
 	}
@@ -249,7 +265,7 @@ func (c *CachedColors) ToColor(colorString string, isBackground, trueColor bool)
 	if ansiColor, hit := c.colorCache[key]; hit {
 		return ansiColor
 	}
-	ansiColor := c.ansiColors.ToColor(colorString, isBackground, trueColor)
+	ansiColor := c.ansiColors.ToColor(colorString, isBackground)
 	c.colorCache[key] = ansiColor
 	return ansiColor
 }

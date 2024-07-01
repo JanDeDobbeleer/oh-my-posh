@@ -58,7 +58,6 @@ type Flags struct {
 	HasTransient  bool
 	PromptCount   int
 	Cleared       bool
-	TrueColor     bool
 	NoExitCode    bool
 	Column        int
 }
@@ -216,24 +215,24 @@ func (env *Shell) Init() {
 	if env.CmdFlags == nil {
 		env.CmdFlags = &Flags{}
 	}
+
 	if env.CmdFlags.Debug {
 		log.Enable()
 	}
+
 	if env.CmdFlags.Plain {
 		log.Plain()
 	}
-	trueColor := true
-	if env.Getenv("TERM_PROGRAM") == "Apple_Terminal" {
-		trueColor = false
-	}
-	env.CmdFlags.TrueColor = trueColor
+
 	env.fileCache = &fileCache{}
 	env.fileCache.Init(env.CachePath())
 	env.resolveConfigPath()
 	env.cmdCache = &commandCache{
 		commands: NewConcurrentMap(),
 	}
+
 	env.tmplCache = &TemplateCache{}
+
 	env.SetPromptCount()
 }
 

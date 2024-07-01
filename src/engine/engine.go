@@ -3,7 +3,9 @@ package engine
 import (
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -14,7 +16,7 @@ var (
 )
 
 type Engine struct {
-	Config *Config
+	Config *config.Config
 	Env    platform.Environment
 	Plain  bool
 
@@ -22,6 +24,9 @@ type Engine struct {
 	currentLineLength int
 	rprompt           string
 	rpromptLength     int
+
+	activeSegment         *config.Segment
+	previousActiveSegment *config.Segment
 }
 
 func (e *Engine) write(text string) {
@@ -175,13 +180,13 @@ func (e *Engine) getTitleTemplateText() string {
 	return ""
 }
 
-func (e *Engine) renderBlock(block *Block, cancelNewline bool) bool {
+func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	defer e.patchPowerShellBleed()
 
 	// This is deprecated but we leave it in to not break configs
 	// It is encouraged to used "newline": true on block level
 	// rather than the standalone the linebreak block
-	if block.Type == LineBreak {
+	if block.Type == config.LineBreak {
 		// do not print a newline to avoid a leading space
 		// when we're printin the first primary prompt in
 		// the shell
@@ -193,7 +198,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) bool {
 
 	// when in bash, for rprompt blocks we need to write plain
 	// and wrap in escaped mode or the prompt will not render correctly
-	if e.Env.Shell() == shell.BASH && block.Type == RPrompt {
+	if e.Env.Shell() == shell.BASH && block.Type == config.RPrompt {
 		block.InitPlain(e.Env, e.Config)
 	} else {
 		block.Init(e.Env)
@@ -210,7 +215,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) bool {
 		e.newline()
 	}
 
-	text, length := block.RenderSegments()
+	text, length := e.renderBlockSegments(block)
 
 	// do not print anything when we don't have any text
 	if length == 0 {
@@ -218,18 +223,18 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) bool {
 	}
 
 	switch block.Type { //nolint:exhaustive
-	case Prompt:
+	case config.Prompt:
 		if block.VerticalOffset != 0 {
 			e.write(terminal.ChangeLine(block.VerticalOffset))
 		}
 
-		if block.Alignment == Left {
+		if block.Alignment == config.Left {
 			e.currentLineLength += length
 			e.write(text)
 			return true
 		}
 
-		if block.Alignment != Right {
+		if block.Alignment != config.Right {
 			return false
 		}
 
@@ -237,9 +242,9 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) bool {
 		// we can't print the right block as there's not enough room available
 		if !OK {
 			switch block.Overflow {
-			case Break:
+			case config.Break:
 				e.newline()
-			case Hide:
+			case config.Hide:
 				// make sure to fill if needed
 				if padText, OK := e.shouldFill(block.Filler, space, 0); OK {
 					e.write(padText)
@@ -269,7 +274,7 @@ func (e *Engine) renderBlock(block *Block, cancelNewline bool) bool {
 
 		prompt += text
 		e.write(prompt)
-	case RPrompt:
+	case config.RPrompt:
 		e.rprompt = text
 		e.rpromptLength = length
 	}
@@ -281,7 +286,7 @@ func (e *Engine) patchPowerShellBleed() {
 	// when in PowerShell, we need to clear the line after the prompt
 	// to avoid the background being printed on the next line
 	// when at the end of the buffer.
-	// See https://github.com/JanDeDobbeleer/oh-my-posh/issues/65
+	// See https://githue.com/JanDeDobbeleer/oh-my-posh/issues/65
 	if e.Env.Shell() != shell.PWSH && e.Env.Shell() != shell.PWSH5 {
 		return
 	}
@@ -292,4 +297,217 @@ func (e *Engine) patchPowerShellBleed() {
 	}
 
 	e.write(terminal.ClearAfter())
+}
+
+func (e *Engine) renderBlockSegments(block *config.Block) (string, int) {
+	e.filterSegments(block)
+
+	for i, segment := range block.Segments {
+		if colors, newCycle := cycle.Loop(); colors != nil {
+			cycle = &newCycle
+			segment.Colors = colors
+		}
+
+		if i == 0 && len(block.LeadingDiamond) > 0 {
+			segment.LeadingDiamond = block.LeadingDiamond
+		}
+
+		if i == len(block.Segments)-1 && len(block.TrailingDiamond) > 0 {
+			segment.TrailingDiamond = block.TrailingDiamond
+		}
+
+		e.setActiveSegment(segment)
+		e.renderActiveSegment()
+	}
+
+	e.writeSeparator(true)
+
+	return terminal.String()
+}
+
+func (e *Engine) filterSegments(block *config.Block) {
+	segments := make([]*config.Segment, 0)
+
+	for _, segment := range block.Segments {
+		if !segment.Enabled && segment.ResolveStyle() != config.Accordion {
+			continue
+		}
+
+		segments = append(segments, segment)
+	}
+
+	block.Segments = segments
+}
+
+func (e *Engine) setActiveSegment(segment *config.Segment) {
+	e.activeSegment = segment
+	terminal.Interactive = segment.Interactive
+	terminal.SetColors(segment.ResolveBackground(), segment.ResolveForeground())
+}
+
+func (e *Engine) renderActiveSegment() {
+	e.writeSeparator(false)
+	switch e.activeSegment.ResolveStyle() {
+	case config.Plain, config.Powerline:
+		terminal.Write(terminal.Background, terminal.Foreground, e.activeSegment.Text)
+	case config.Diamond:
+		background := terminal.Transparent
+
+		if e.previousActiveSegment != nil && e.previousActiveSegment.HasEmptyDiamondAtEnd() {
+			background = e.previousActiveSegment.ResolveBackground()
+		}
+
+		terminal.Write(background, terminal.Background, e.activeSegment.LeadingDiamond)
+		terminal.Write(terminal.Background, terminal.Foreground, e.activeSegment.Text)
+	case config.Accordion:
+		if e.activeSegment.Enabled {
+			terminal.Write(terminal.Background, terminal.Foreground, e.activeSegment.Text)
+		}
+	}
+	e.previousActiveSegment = e.activeSegment
+
+	terminal.SetParentColors(e.previousActiveSegment.ResolveBackground(), e.previousActiveSegment.ResolveForeground())
+}
+
+func (e *Engine) writeSeparator(final bool) {
+	isCurrentDiamond := e.activeSegment.ResolveStyle() == config.Diamond
+	if final && isCurrentDiamond {
+		terminal.Write(terminal.Transparent, terminal.Background, e.activeSegment.TrailingDiamond)
+		return
+	}
+
+	isPreviousDiamond := e.previousActiveSegment != nil && e.previousActiveSegment.ResolveStyle() == config.Diamond
+	if isPreviousDiamond {
+		e.adjustTrailingDiamondColorOverrides()
+	}
+
+	if isPreviousDiamond && isCurrentDiamond && len(e.activeSegment.LeadingDiamond) == 0 {
+		terminal.Write(terminal.Background, terminal.ParentBackground, e.previousActiveSegment.TrailingDiamond)
+		return
+	}
+
+	if isPreviousDiamond && len(e.previousActiveSegment.TrailingDiamond) > 0 {
+		terminal.Write(terminal.Transparent, terminal.ParentBackground, e.previousActiveSegment.TrailingDiamond)
+	}
+
+	isPowerline := e.activeSegment.IsPowerline()
+
+	shouldOverridePowerlineLeadingSymbol := func() bool {
+		if !isPowerline {
+			return false
+		}
+
+		if isPowerline && len(e.activeSegment.LeadingPowerlineSymbol) == 0 {
+			return false
+		}
+
+		if e.previousActiveSegment != nil && e.previousActiveSegment.IsPowerline() {
+			return false
+		}
+
+		return true
+	}
+
+	if shouldOverridePowerlineLeadingSymbol() {
+		terminal.Write(terminal.Transparent, terminal.Background, e.activeSegment.LeadingPowerlineSymbol)
+		return
+	}
+
+	resolvePowerlineSymbol := func() string {
+		if isPowerline {
+			return e.activeSegment.PowerlineSymbol
+		}
+
+		if e.previousActiveSegment != nil && e.previousActiveSegment.IsPowerline() {
+			return e.previousActiveSegment.PowerlineSymbol
+		}
+
+		return ""
+	}
+
+	symbol := resolvePowerlineSymbol()
+	if len(symbol) == 0 {
+		return
+	}
+
+	bgColor := terminal.Background
+	if final || !isPowerline {
+		bgColor = terminal.Transparent
+	}
+
+	if e.activeSegment.ResolveStyle() == config.Diamond && len(e.activeSegment.LeadingDiamond) == 0 {
+		bgColor = terminal.Background
+	}
+
+	if e.activeSegment.InvertPowerline {
+		terminal.Write(e.getPowerlineColor(), bgColor, symbol)
+		return
+	}
+
+	terminal.Write(bgColor, e.getPowerlineColor(), symbol)
+}
+
+func (e *Engine) getPowerlineColor() string {
+	if e.previousActiveSegment == nil {
+		return terminal.Transparent
+	}
+
+	if e.previousActiveSegment.ResolveStyle() == config.Diamond && len(e.previousActiveSegment.TrailingDiamond) == 0 {
+		return e.previousActiveSegment.ResolveBackground()
+	}
+
+	if e.activeSegment.ResolveStyle() == config.Diamond && len(e.activeSegment.LeadingDiamond) == 0 {
+		return e.previousActiveSegment.ResolveBackground()
+	}
+
+	if !e.previousActiveSegment.IsPowerline() {
+		return terminal.Transparent
+	}
+
+	return e.previousActiveSegment.ResolveBackground()
+}
+
+func (e *Engine) adjustTrailingDiamondColorOverrides() {
+	// as we now already adjusted the activeSegment, we need to change the value
+	// of background and foreground to parentBackground and parentForeground
+	// this will still break when using parentBackground and parentForeground as keywords
+	// in a trailing diamond, but let's fix that when it happens as it requires either a rewrite
+	// of the logic for diamonds or storing grandparents as well like one happy family.
+	if e.previousActiveSegment == nil || len(e.previousActiveSegment.TrailingDiamond) == 0 {
+		return
+	}
+
+	if !strings.Contains(e.previousActiveSegment.TrailingDiamond, terminal.Background) && !strings.Contains(e.previousActiveSegment.TrailingDiamond, terminal.Foreground) {
+		return
+	}
+
+	match := regex.FindNamedRegexMatch(terminal.AnchorRegex, e.previousActiveSegment.TrailingDiamond)
+	if len(match) == 0 {
+		return
+	}
+
+	adjustOverride := func(anchor, override string) {
+		newOverride := override
+		switch override {
+		case terminal.Foreground:
+			newOverride = terminal.ParentForeground
+		case terminal.Background:
+			newOverride = terminal.ParentBackground
+		}
+
+		if override == newOverride {
+			return
+		}
+
+		newAnchor := strings.Replace(match[terminal.ANCHOR], override, newOverride, 1)
+		e.previousActiveSegment.TrailingDiamond = strings.Replace(e.previousActiveSegment.TrailingDiamond, anchor, newAnchor, 1)
+	}
+
+	if len(match[terminal.BG]) > 0 {
+		adjustOverride(match[terminal.ANCHOR], match[terminal.BG])
+	}
+
+	if len(match[terminal.FG]) > 0 {
+		adjustOverride(match[terminal.ANCHOR], match[terminal.FG])
+	}
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -49,7 +50,7 @@ func (e *Engine) Primary() string {
 			renderRPrompt = false
 		}
 
-		if block.Type == RPrompt && !renderRPrompt {
+		if block.Type == config.RPrompt && !renderRPrompt {
 			continue
 		}
 
@@ -121,7 +122,7 @@ func (e *Engine) Primary() string {
 func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 	// populate env with latest context
 	e.Env.LoadTemplateCache()
-	var prompt *Segment
+	var prompt *config.Segment
 	switch promptType {
 	case Debug:
 		prompt = e.Config.DebugPrompt
@@ -136,7 +137,7 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 	}
 
 	if prompt == nil {
-		prompt = &Segment{}
+		prompt = &config.Segment{}
 	}
 
 	getTemplate := func(template string) string {
@@ -214,9 +215,9 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 }
 
 func (e *Engine) RPrompt() string {
-	filterRPromptBlock := func(blocks []*Block) *Block {
+	filterRPromptBlock := func(blocks []*config.Block) *config.Block {
 		for _, block := range blocks {
-			if block.Type == RPrompt {
+			if block.Type == config.RPrompt {
 				return block
 			}
 		}
@@ -233,7 +234,7 @@ func (e *Engine) RPrompt() string {
 		return ""
 	}
 
-	text, length := block.RenderSegments()
+	text, length := e.renderBlockSegments(block)
 	e.rpromptLength = length
 	return text
 }

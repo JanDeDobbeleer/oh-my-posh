@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"slices"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/engine"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
@@ -48,7 +48,7 @@ var upgradeCmd = &cobra.Command{
 			return
 		}
 
-		cfg := engine.LoadConfig(env)
+		cfg := config.Load(env)
 
 		if _, hasNotice := upgrade.Notice(env, true); !hasNotice {
 			if !cfg.DisableNotice {

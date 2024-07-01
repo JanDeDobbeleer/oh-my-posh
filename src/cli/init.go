@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/engine"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -58,7 +58,7 @@ func runInit(shellName string) {
 	env := &platform.Shell{
 		CmdFlags: &platform.Flags{
 			Shell:  shellName,
-			Config: config,
+			Config: configFlag,
 			Strict: strict,
 			Manual: manual,
 		},
@@ -66,7 +66,7 @@ func runInit(shellName string) {
 	env.Init()
 	defer env.Close()
 
-	cfg := engine.LoadConfig(env)
+	cfg := config.Load(env)
 
 	shell.Transient = cfg.TransientPrompt != nil
 	shell.ErrorLine = cfg.ErrorLine != nil || cfg.ValidLine != nil
@@ -79,7 +79,8 @@ func runInit(shellName string) {
 		if !cfg.DisableCursorPositioning && (i == 0 && block.Newline) {
 			shell.CursorPositioning = true
 		}
-		if block.Type == engine.RPrompt {
+
+		if block.Type == config.RPrompt {
 			shell.RPrompt = true
 		}
 	}

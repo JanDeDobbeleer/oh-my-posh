@@ -1,4 +1,4 @@
-package engine
+package config
 
 import (
 	"fmt"
@@ -30,7 +30,7 @@ func (cfg *Config) Migrate() {
 		cfg.ConsoleTitleTemplate = strings.ReplaceAll(cfg.ConsoleTitleTemplate, ".Path", ".PWD")
 	}
 	cfg.updated = true
-	cfg.Version = configVersion
+	cfg.Version = Version
 }
 
 func (segment *Segment) migrate(env platform.Environment, version int) {
@@ -43,7 +43,7 @@ func (segment *Segment) migrate(env platform.Environment, version int) {
 }
 
 func (segment *Segment) migrationOne(env platform.Environment) {
-	if err := segment.mapSegmentWithWriter(env); err != nil {
+	if err := segment.MapSegmentWithWriter(env); err != nil {
 		return
 	}
 	// General properties that need replacement
@@ -163,7 +163,7 @@ func (segment *Segment) migrationOne(env platform.Environment) {
 }
 
 func (segment *Segment) migrationTwo(env platform.Environment) {
-	if err := segment.mapSegmentWithWriter(env); err != nil {
+	if err := segment.MapSegmentWithWriter(env); err != nil {
 		return
 	}
 	if !segment.hasProperty(segmentTemplate) {

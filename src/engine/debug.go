@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 )
 
@@ -21,14 +22,14 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	titleStartTime := time.Now()
 	e.Env.Debug("Segment: Title")
 	title := e.getTitleTemplateText()
-	consoleTitle := &Segment{
-		name:       "ConsoleTitle",
-		nameLength: 12,
+	consoleTitle := &config.Segment{
+		Alias:      "ConsoleTitle",
+		NameLength: 12,
 		Enabled:    len(e.Config.ConsoleTitleTemplate) > 0,
-		text:       title,
-		duration:   time.Since(titleStartTime),
+		Text:       title,
+		Duration:   time.Since(titleStartTime),
 	}
-	largestSegmentNameLength := consoleTitle.nameLength
+	largestSegmentNameLength := consoleTitle.NameLength
 
 	// render prompt
 	e.write(log.Text("\nPrompt:\n\n").Green().Bold().Plain().String())
@@ -36,14 +37,14 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 
 	e.write(log.Text("\n\nSegments:\n\n").Green().Bold().Plain().String())
 
-	var segments []*Segment
+	var segments []*config.Segment
 	segments = append(segments, consoleTitle)
 
 	for _, block := range e.Config.Blocks {
 		for _, segment := range block.Segments {
 			segments = append(segments, segment)
-			if segment.nameLength > largestSegmentNameLength {
-				largestSegmentNameLength = segment.nameLength
+			if segment.NameLength > largestSegmentNameLength {
+				largestSegmentNameLength = segment.NameLength
 			}
 		}
 	}
@@ -51,7 +52,7 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	// 22 is the color for false/true and 7 is the reset color
 	largestSegmentNameLength += 22 + 7
 	for _, segment := range segments {
-		duration := segment.duration.Milliseconds()
+		duration := segment.Duration.Milliseconds()
 		var active log.Text
 		if segment.Enabled {
 			active = log.Text("true").Yellow()
@@ -65,11 +66,12 @@ func (e *Engine) PrintDebug(startTime time.Time, version string) string {
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Run duration:").Green().Bold().Plain(), time.Since(startTime)))
 	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Cache path:").Green().Bold().Plain(), e.Env.CachePath()))
 
-	config := e.Env.Flags().Config
-	if len(config) == 0 {
-		config = "no --config set, using default built-in configuration"
+	cfg := e.Env.Flags().Config
+	if len(cfg) == 0 {
+		cfg = "no --config set, using default built-in configuration"
 	}
-	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Config path:").Green().Bold().Plain(), config))
+
+	e.write(fmt.Sprintf("\n%s %s\n", log.Text("Config path:").Green().Bold().Plain(), cfg))
 
 	e.write(log.Text("\nLogs:\n\n").Green().Bold().Plain().String())
 	e.write(e.Env.Logs())

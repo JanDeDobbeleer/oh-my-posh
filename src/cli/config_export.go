@@ -7,7 +7,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/engine"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 
 	"github.com/spf13/cobra"
@@ -38,12 +38,12 @@ Exports the ~/myconfig.omp.json config file to toml and prints the result to std
 	Run: func(_ *cobra.Command, _ []string) {
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
-				Config: config,
+				Config: configFlag,
 			},
 		}
 		env.Init()
 		defer env.Close()
-		cfg := engine.LoadConfig(env)
+		cfg := config.Load(env)
 
 		if len(output) == 0 && len(format) == 0 {
 			// usage error
@@ -69,11 +69,11 @@ Exports the ~/myconfig.omp.json config file to toml and prints the result to std
 
 		switch format {
 		case "json", "jsonc":
-			format = engine.JSON
+			format = config.JSON
 		case "toml", "tml":
-			format = engine.TOML
+			format = config.TOML
 		case "yaml", "yml":
-			format = engine.YAML
+			format = config.YAML
 		default:
 			// data error
 			os.Exit(65)

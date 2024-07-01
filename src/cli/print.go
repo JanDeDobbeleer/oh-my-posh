@@ -50,7 +50,7 @@ var printCmd = &cobra.Command{
 		}
 
 		flags := &platform.Flags{
-			Config:        config,
+			Config:        configFlag,
 			PWD:           pwd,
 			PSWD:          pswd,
 			ErrorCode:     status,

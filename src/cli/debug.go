@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -24,7 +25,7 @@ var debugCmd = &cobra.Command{
 
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
-				Config: config,
+				Config: configFlag,
 				Debug:  true,
 				PWD:    pwd,
 				Shell:  shellName,
@@ -35,7 +36,7 @@ var debugCmd = &cobra.Command{
 		env.Init()
 		defer env.Close()
 
-		cfg := engine.LoadConfig(env)
+		cfg := config.Load(env)
 
 		// add variables to the environment
 		env.Var = cfg.Var

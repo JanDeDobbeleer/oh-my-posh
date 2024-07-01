@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/engine"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -49,7 +50,7 @@ Exports the config to an image file using customized output options.`,
 	Run: func(_ *cobra.Command, _ []string) {
 		env := &platform.Shell{
 			CmdFlags: &platform.Flags{
-				Config:        config,
+				Config:        configFlag,
 				Shell:         shell.GENERIC,
 				TerminalWidth: 150,
 			},
@@ -57,7 +58,7 @@ Exports the config to an image file using customized output options.`,
 
 		env.Init()
 		defer env.Close()
-		cfg := engine.LoadConfig(env)
+		cfg := config.Load(env)
 
 		// set sane defaults for things we don't print
 		cfg.ConsoleTitleTemplate = ""

@@ -69,35 +69,8 @@ var (
 	Shell   string
 	Program string
 
-	formats *shellFormats
+	formats *shell.Formats
 )
-
-type shellFormats struct {
-	escape     string
-	left       string
-	linechange string
-	clearBelow string
-	clearLine  string
-
-	title string
-
-	saveCursorPosition    string
-	restoreCursorPosition string
-
-	osc99 string
-	osc7  string
-	osc51 string
-
-	escapeSequences map[rune]rune
-
-	hyperlinkStart  string
-	hyperlinkCenter string
-	hyperlinkEnd    string
-
-	iTermPromptMark string
-	iTermCurrentDir string
-	iTermRemoteHost string
-}
 
 const (
 	// Transparent implies a transparent color
@@ -153,81 +126,7 @@ func Init(sh string) {
 
 	trueColor = Program != AppleTerminal
 
-	switch Shell {
-	case shell.BASH:
-		formats = &shellFormats{
-			escape:                "\\[%s\\]",
-			linechange:            "\\[\x1b[%d%s\\]",
-			left:                  "\\[\x1b[%dD\\]",
-			clearBelow:            "\\[\x1b[0J\\]",
-			clearLine:             "\\[\x1b[K\\]",
-			saveCursorPosition:    "\\[\x1b7\\]",
-			restoreCursorPosition: "\\[\x1b8\\]",
-			title:                 "\\[\x1b]0;%s\007\\]",
-			hyperlinkStart:        "\\[\x1b]8;;",
-			hyperlinkCenter:       "\x1b\\\\\\]",
-			hyperlinkEnd:          "\\[\x1b]8;;\x1b\\\\\\]",
-			osc99:                 "\\[\x1b]9;9;%s\x1b\\\\\\]",
-			osc7:                  "\\[\x1b]7;file://%s/%s\x1b\\\\\\]",
-			osc51:                 "\\[\x1b]51;A;%s@%s:%s\x1b\\\\\\]",
-			iTermPromptMark:       "\\[$(iterm2_prompt_mark)\\]",
-			iTermCurrentDir:       "\\[\x1b]1337;CurrentDir=%s\x07\\]",
-			iTermRemoteHost:       "\\[\x1b]1337;RemoteHost=%s@%s\x07\\]",
-			escapeSequences: map[rune]rune{
-				96: 92, // backtick
-				92: 92, // backslash
-			},
-		}
-	case shell.ZSH, shell.TCSH:
-		formats = &shellFormats{
-			escape:                "%%{%s%%}",
-			linechange:            "%%{\x1b[%d%s%%}",
-			left:                  "%%{\x1b[%dD%%}",
-			clearBelow:            "%{\x1b[0J%}",
-			clearLine:             "%{\x1b[K%}",
-			saveCursorPosition:    "%{\x1b7%}",
-			restoreCursorPosition: "%{\x1b8%}",
-			title:                 "%%{\x1b]0;%s\007%%}",
-			hyperlinkStart:        "%{\x1b]8;;",
-			hyperlinkCenter:       "\x1b\\%}",
-			hyperlinkEnd:          "%{\x1b]8;;\x1b\\%}",
-			osc99:                 "%%{\x1b]9;9;%s\x1b\\%%}",
-			osc7:                  "%%{\x1b]7;file://%s/%s\x1b\\%%}",
-			osc51:                 "%%{\x1b]51;A%s@%s:%s\x1b\\%%}",
-			iTermPromptMark:       "%{$(iterm2_prompt_mark)%}",
-			iTermCurrentDir:       "%%{\x1b]1337;CurrentDir=%s\x07%%}",
-			iTermRemoteHost:       "%%{\x1b]1337;RemoteHost=%s@%s\x07%%}",
-		}
-	default:
-		formats = &shellFormats{
-			escape:                "%s",
-			linechange:            "\x1b[%d%s",
-			left:                  "\x1b[%dD",
-			clearBelow:            "\x1b[0J",
-			clearLine:             "\x1b[K",
-			saveCursorPosition:    "\x1b7",
-			restoreCursorPosition: "\x1b8",
-			title:                 "\x1b]0;%s\007",
-			// when in fish on Linux, it seems hyperlinks ending with \\ print a \
-			// unlike on macOS. However, this is a fish bug, so do not try to fix it here:
-			// https://github.com/JanDeDobbeleer/oh-my-posh/pull/3288#issuecomment-1369137068
-			hyperlinkStart:  "\x1b]8;;",
-			hyperlinkCenter: "\x1b\\",
-			hyperlinkEnd:    "\x1b]8;;\x1b\\",
-			osc99:           "\x1b]9;9;%s\x1b\\",
-			osc7:            "\x1b]7;file://%s/%s\x1b\\",
-			osc51:           "\x1b]51;A%s@%s:%s\x1b\\",
-			iTermCurrentDir: "\x1b]1337;CurrentDir=%s\x07",
-			iTermRemoteHost: "\x1b]1337;RemoteHost=%s@%s\x07",
-		}
-	}
-
-	if Shell == shell.ZSH {
-		formats.escapeSequences = map[rune]rune{
-			96: 92, // backtick
-			37: 37, // %
-		}
-	}
+	formats = shell.GetFormats(Shell)
 }
 
 func getTerminalName() string {
@@ -274,7 +173,7 @@ func ChangeLine(numberOfLines int) string {
 		numberOfLines = -numberOfLines
 	}
 
-	return fmt.Sprintf(formats.linechange, numberOfLines, position)
+	return fmt.Sprintf(formats.Linechange, numberOfLines, position)
 }
 
 func Pwd(pwdType, userName, hostName, pwd string) string {
@@ -288,13 +187,13 @@ func Pwd(pwdType, userName, hostName, pwd string) string {
 
 	switch pwdType {
 	case OSC7:
-		return fmt.Sprintf(formats.osc7, hostName, pwd)
+		return fmt.Sprintf(formats.Osc7, hostName, pwd)
 	case OSC51:
-		return fmt.Sprintf(formats.osc51, userName, hostName, pwd)
+		return fmt.Sprintf(formats.Osc51, userName, hostName, pwd)
 	case OSC99:
 		fallthrough
 	default:
-		return fmt.Sprintf(formats.osc99, pwd)
+		return fmt.Sprintf(formats.Osc99, pwd)
 	}
 }
 
@@ -303,7 +202,7 @@ func ClearAfter() string {
 		return ""
 	}
 
-	return formats.clearLine + formats.clearBelow
+	return formats.ClearLine + formats.ClearBelow
 }
 
 func FormatTitle(title string) string {
@@ -324,42 +223,42 @@ func FormatTitle(title string) string {
 		return ""
 	}
 
-	return fmt.Sprintf(formats.title, title)
+	return fmt.Sprintf(formats.Title, title)
 }
 
 func EscapeText(text string) string {
-	return fmt.Sprintf(formats.escape, text)
+	return fmt.Sprintf(formats.Escape, text)
 }
 
 func SaveCursorPosition() string {
-	return formats.saveCursorPosition
+	return formats.SaveCursorPosition
 }
 
 func RestoreCursorPosition() string {
-	return formats.restoreCursorPosition
+	return formats.RestoreCursorPosition
 }
 
 func PromptStart() string {
-	return fmt.Sprintf(formats.escape, "\x1b]133;A\007")
+	return fmt.Sprintf(formats.Escape, "\x1b]133;A\007")
 }
 
 func CommandStart() string {
-	return fmt.Sprintf(formats.escape, "\x1b]133;B\007")
+	return fmt.Sprintf(formats.Escape, "\x1b]133;B\007")
 }
 
 func CommandFinished(code int, ignore bool) string {
 	if ignore {
-		return fmt.Sprintf(formats.escape, "\x1b]133;D\007")
+		return fmt.Sprintf(formats.Escape, "\x1b]133;D\007")
 	}
 
 	mark := fmt.Sprintf("\x1b]133;D;%d\007", code)
 
-	return fmt.Sprintf(formats.escape, mark)
+	return fmt.Sprintf(formats.Escape, mark)
 }
 
 func LineBreak() string {
-	cr := fmt.Sprintf(formats.left, 1000)
-	lf := fmt.Sprintf(formats.linechange, 1, "B")
+	cr := fmt.Sprintf(formats.Left, 1000)
+	lf := fmt.Sprintf(formats.Linechange, 1, "B")
 	return cr + lf
 }
 
@@ -368,7 +267,7 @@ func StartProgress() string {
 		return ""
 	}
 
-	return fmt.Sprintf(formats.escape, startProgress)
+	return fmt.Sprintf(formats.Escape, startProgress)
 }
 
 func StopProgress() string {
@@ -376,7 +275,7 @@ func StopProgress() string {
 		return ""
 	}
 
-	return fmt.Sprintf(formats.escape, endProgress)
+	return fmt.Sprintf(formats.Escape, endProgress)
 }
 
 func Write(background, foreground, text string) {
@@ -414,7 +313,7 @@ func Write(background, foreground, text string) {
 	// print the hyperlink part AFTER the coloring
 	if match[ANCHOR] == hyperLinkStart {
 		isHyperlink = true
-		builder.WriteString(formats.hyperlinkStart)
+		builder.WriteString(formats.HyperlinkStart)
 	}
 
 	text = text[len(match[ANCHOR]):]
@@ -438,13 +337,13 @@ func Write(background, foreground, text string) {
 			case hyperLinkStart:
 				isHyperlink = true
 				i += len([]rune(match[ANCHOR])) - 1
-				builder.WriteString(formats.hyperlinkStart)
+				builder.WriteString(formats.HyperlinkStart)
 				continue
 			case hyperLinkText:
 				isHyperlink = false
 				i += len([]rune(match[ANCHOR])) - 1
 				hyperlinkTextPosition = i
-				builder.WriteString(formats.hyperlinkCenter)
+				builder.WriteString(formats.HyperlinkCenter)
 				continue
 			case hyperLinkTextEnd:
 				// this implies there's no text in the hyperlink
@@ -456,7 +355,7 @@ func Write(background, foreground, text string) {
 				continue
 			case hyperLinkEnd:
 				i += len([]rune(match[ANCHOR])) - 1
-				builder.WriteString(formats.hyperlinkEnd)
+				builder.WriteString(formats.HyperlinkEnd)
 				continue
 			}
 
@@ -492,8 +391,8 @@ func writeEscapedAnsiString(text string) {
 		return
 	}
 
-	if len(formats.escape) != 0 {
-		text = fmt.Sprintf(formats.escape, text)
+	if len(formats.Escape) != 0 {
+		text = fmt.Sprintf(formats.Escape, text)
 	}
 
 	builder.WriteString(text)
@@ -514,7 +413,7 @@ func write(s rune) {
 	}
 
 	if !Interactive {
-		for special, escape := range formats.escapeSequences {
+		for special, escape := range formats.EscapeSequences {
 			if s == special && lastRune != escape {
 				builder.WriteRune(escape)
 			}

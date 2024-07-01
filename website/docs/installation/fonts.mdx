@@ -23,16 +23,10 @@ To see the icons displayed in Oh My Posh, **install** a [Nerd Font][nerdfonts], 
 }>
 <TabItem value="oh-my-posh">
 
-Oh My Posh has a CLI to help you select and install a [Nerd Font][nerdfonts] (beta):
+Oh My Posh has a CLI to help you select and install a [Nerd Font][nerdfonts]:
 
-:::caution Windows
-This command is best executed as admin so that fonts are installed system wide.
-In case you have no admin rights, you can install the fonts by adding the `--user` flag.
-Do know this can have side-effects when using certain applications.
-:::
-
-:::info Linux
-On Linux, when running as root, the fonts will be installed system-wide.
+:::info
+When running as root/administrator, the fonts will be installed system-wide.
 When running as a regular user, the fonts will be installed in the user's font directory.
 :::
 
@@ -49,12 +43,11 @@ oh-my-posh font install meslo
 </TabItem>
 <TabItem value="homebrew">
 
-If you're using Homebrew, you can install Nerd Fonts directly:
+If you're using Homebrew, you can search for and install Nerd Fonts directly:
 
 ```bash
-brew search nerd-font                            # Search for font packages
+brew search nerd-font
 
-# EXAMPLE: Install the NF version of Fira Code
 brew install --cask font-fira-code-nerd-font
 ```
 

@@ -10,6 +10,7 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 var program *tea.Program
@@ -246,23 +247,27 @@ func (m *main) View() string {
 	}
 	switch m.state {
 	case getFonts:
-		return textStyle.Render(fmt.Sprintf("%s Downloading font list", m.spinner.View()))
+		return textStyle.Render(fmt.Sprintf("%s Downloading font list%s", m.spinner.View(), terminal.StartProgress()))
 	case selectFont:
-		return "\n" + m.list.View()
+		return fmt.Sprintf("\n%s%s", m.list.View(), terminal.StopProgress())
 	case downloadFont:
-		return textStyle.Render(fmt.Sprintf("%s Downloading %s", m.spinner.View(), m.font))
+		return textStyle.Render(fmt.Sprintf("%s Downloading %s%s", m.spinner.View(), m.font, terminal.StartProgress()))
 	case unzipFont:
 		return textStyle.Render(fmt.Sprintf("%s Extracting %s", m.spinner.View(), m.font))
 	case installFont:
 		return textStyle.Render(fmt.Sprintf("%s Installing %s", m.spinner.View(), m.font))
 	case quit:
-		return textStyle.Render("No need to install a new font? That's cool.")
+		return textStyle.Render(fmt.Sprintf("No need to install a new font? That's cool.%s", terminal.StopProgress()))
 	case done:
 		var builder strings.Builder
-		builder.WriteString(fmt.Sprintf("Successfully installed %s 🚀\n\n", m.font))
+		builder.WriteString(fmt.Sprintf("Successfully installed %s 🚀\n\n%s", m.font, terminal.StopProgress()))
 		builder.WriteString("The following font families are now available for configuration:\n")
-		for _, family := range m.families {
-			builder.WriteString(fmt.Sprintf("  • %s\n", family))
+		for i, family := range m.families {
+			builder.WriteString(fmt.Sprintf("  • %s", family))
+
+			if i < len(m.families)-1 {
+				builder.WriteString("\n")
+			}
 		}
 		return textStyle.Render(builder.String())
 	}

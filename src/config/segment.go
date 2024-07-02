@@ -6,10 +6,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
-	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	c "golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -39,9 +39,7 @@ type Segment struct {
 	PowerlineSymbol        string         `json:"powerline_symbol,omitempty" toml:"powerline_symbol,omitempty"`
 	LeadingPowerlineSymbol string         `json:"leading_powerline_symbol,omitempty" toml:"leading_powerline_symbol,omitempty"`
 	InvertPowerline        bool           `json:"invert_powerline,omitempty" toml:"invert_powerline,omitempty"`
-	Foreground             string         `json:"foreground,omitempty" toml:"foreground,omitempty"`
 	ForegroundTemplates    template.List  `json:"foreground_templates,omitempty" toml:"foreground_templates,omitempty"`
-	Background             string         `json:"background,omitempty" toml:"background,omitempty"`
 	BackgroundTemplates    template.List  `json:"background_templates,omitempty" toml:"background_templates,omitempty"`
 	LeadingDiamond         string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
 	TrailingDiamond        string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
@@ -54,11 +52,11 @@ type Segment struct {
 	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
 	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
 	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
+	color.Set
 
 	Enabled bool `json:"-" toml:"-"`
 
-	Colors *terminal.Colors
-	Text   string
+	Text string
 
 	env        platform.Environment
 	writer     SegmentWriter
@@ -212,28 +210,22 @@ func (segment *Segment) cwdExcluded() bool {
 	return segment.env.DirMatchesOneOf(segment.env.Pwd(), list)
 }
 
-func (segment *Segment) ResolveForeground() string {
-	if segment.Colors == nil {
-		segment.Colors = &terminal.Colors{}
+func (segment *Segment) ResolveForeground() color.Ansi {
+	if len(segment.ForegroundTemplates) != 0 {
+		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.env, segment.Foreground.String())
+		segment.Set.Foreground = color.Ansi(match)
 	}
 
-	if len(segment.Colors.Foreground) == 0 {
-		segment.Colors.Foreground = segment.ForegroundTemplates.FirstMatch(segment.writer, segment.env, segment.Foreground)
-	}
-
-	return segment.Colors.Foreground
+	return segment.Set.Foreground
 }
 
-func (segment *Segment) ResolveBackground() string {
-	if segment.Colors == nil {
-		segment.Colors = &terminal.Colors{}
+func (segment *Segment) ResolveBackground() color.Ansi {
+	if len(segment.BackgroundTemplates) != 0 {
+		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.env, segment.Background.String())
+		segment.Set.Background = color.Ansi(match)
 	}
 
-	if len(segment.Colors.Background) == 0 {
-		segment.Colors.Background = segment.BackgroundTemplates.FirstMatch(segment.writer, segment.env, segment.Background)
-	}
-
-	return segment.Colors.Background
+	return segment.Set.Background
 }
 
 func (segment *Segment) ResolveStyle() SegmentStyle {

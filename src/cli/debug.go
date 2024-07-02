@@ -43,7 +43,7 @@ var debugCmd = &cobra.Command{
 
 		terminal.Init(shell.GENERIC)
 		terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
-		terminal.AnsiColors = cfg.MakeColors()
+		terminal.Colors = cfg.MakeColors()
 		terminal.Plain = plain
 
 		eng := &prompt.Engine{

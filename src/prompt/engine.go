@@ -3,6 +3,7 @@ package prompt
 import (
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
@@ -12,7 +13,7 @@ import (
 )
 
 var (
-	cycle *terminal.Cycle = &terminal.Cycle{}
+	cycle *color.Cycle = &color.Cycle{}
 )
 
 type Engine struct {
@@ -305,7 +306,7 @@ func (e *Engine) renderBlockSegments(block *config.Block) (string, int) {
 	for i, segment := range block.Segments {
 		if colors, newCycle := cycle.Loop(); colors != nil {
 			cycle = &newCycle
-			segment.Colors = colors
+			segment.Set = *colors
 		}
 
 		if i == 0 && len(block.LeadingDiamond) > 0 {
@@ -349,19 +350,19 @@ func (e *Engine) renderActiveSegment() {
 	e.writeSeparator(false)
 	switch e.activeSegment.ResolveStyle() {
 	case config.Plain, config.Powerline:
-		terminal.Write(terminal.Background, terminal.Foreground, e.activeSegment.Text)
+		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text)
 	case config.Diamond:
-		background := terminal.Transparent
+		background := color.Transparent
 
 		if e.previousActiveSegment != nil && e.previousActiveSegment.HasEmptyDiamondAtEnd() {
 			background = e.previousActiveSegment.ResolveBackground()
 		}
 
-		terminal.Write(background, terminal.Background, e.activeSegment.LeadingDiamond)
-		terminal.Write(terminal.Background, terminal.Foreground, e.activeSegment.Text)
+		terminal.Write(background, color.Background, e.activeSegment.LeadingDiamond)
+		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text)
 	case config.Accordion:
 		if e.activeSegment.Enabled {
-			terminal.Write(terminal.Background, terminal.Foreground, e.activeSegment.Text)
+			terminal.Write(color.Background, color.Foreground, e.activeSegment.Text)
 		}
 	}
 	e.previousActiveSegment = e.activeSegment
@@ -372,7 +373,7 @@ func (e *Engine) renderActiveSegment() {
 func (e *Engine) writeSeparator(final bool) {
 	isCurrentDiamond := e.activeSegment.ResolveStyle() == config.Diamond
 	if final && isCurrentDiamond {
-		terminal.Write(terminal.Transparent, terminal.Background, e.activeSegment.TrailingDiamond)
+		terminal.Write(color.Transparent, color.Background, e.activeSegment.TrailingDiamond)
 		return
 	}
 
@@ -382,12 +383,12 @@ func (e *Engine) writeSeparator(final bool) {
 	}
 
 	if isPreviousDiamond && isCurrentDiamond && len(e.activeSegment.LeadingDiamond) == 0 {
-		terminal.Write(terminal.Background, terminal.ParentBackground, e.previousActiveSegment.TrailingDiamond)
+		terminal.Write(color.Background, color.ParentBackground, e.previousActiveSegment.TrailingDiamond)
 		return
 	}
 
 	if isPreviousDiamond && len(e.previousActiveSegment.TrailingDiamond) > 0 {
-		terminal.Write(terminal.Transparent, terminal.ParentBackground, e.previousActiveSegment.TrailingDiamond)
+		terminal.Write(color.Transparent, color.ParentBackground, e.previousActiveSegment.TrailingDiamond)
 	}
 
 	isPowerline := e.activeSegment.IsPowerline()
@@ -409,7 +410,7 @@ func (e *Engine) writeSeparator(final bool) {
 	}
 
 	if shouldOverridePowerlineLeadingSymbol() {
-		terminal.Write(terminal.Transparent, terminal.Background, e.activeSegment.LeadingPowerlineSymbol)
+		terminal.Write(color.Transparent, color.Background, e.activeSegment.LeadingPowerlineSymbol)
 		return
 	}
 
@@ -430,13 +431,13 @@ func (e *Engine) writeSeparator(final bool) {
 		return
 	}
 
-	bgColor := terminal.Background
+	bgColor := color.Background
 	if final || !isPowerline {
-		bgColor = terminal.Transparent
+		bgColor = color.Transparent
 	}
 
 	if e.activeSegment.ResolveStyle() == config.Diamond && len(e.activeSegment.LeadingDiamond) == 0 {
-		bgColor = terminal.Background
+		bgColor = color.Background
 	}
 
 	if e.activeSegment.InvertPowerline {
@@ -447,9 +448,9 @@ func (e *Engine) writeSeparator(final bool) {
 	terminal.Write(bgColor, e.getPowerlineColor(), symbol)
 }
 
-func (e *Engine) getPowerlineColor() string {
+func (e *Engine) getPowerlineColor() color.Ansi {
 	if e.previousActiveSegment == nil {
-		return terminal.Transparent
+		return color.Transparent
 	}
 
 	if e.previousActiveSegment.ResolveStyle() == config.Diamond && len(e.previousActiveSegment.TrailingDiamond) == 0 {
@@ -461,7 +462,7 @@ func (e *Engine) getPowerlineColor() string {
 	}
 
 	if !e.previousActiveSegment.IsPowerline() {
-		return terminal.Transparent
+		return color.Transparent
 	}
 
 	return e.previousActiveSegment.ResolveBackground()
@@ -477,7 +478,7 @@ func (e *Engine) adjustTrailingDiamondColorOverrides() {
 		return
 	}
 
-	if !strings.Contains(e.previousActiveSegment.TrailingDiamond, terminal.Background) && !strings.Contains(e.previousActiveSegment.TrailingDiamond, terminal.Foreground) {
+	if !strings.Contains(e.previousActiveSegment.TrailingDiamond, string(color.Background)) && !strings.Contains(e.previousActiveSegment.TrailingDiamond, string(color.Foreground)) {
 		return
 	}
 
@@ -486,28 +487,28 @@ func (e *Engine) adjustTrailingDiamondColorOverrides() {
 		return
 	}
 
-	adjustOverride := func(anchor, override string) {
+	adjustOverride := func(anchor string, override color.Ansi) {
 		newOverride := override
-		switch override {
-		case terminal.Foreground:
-			newOverride = terminal.ParentForeground
-		case terminal.Background:
-			newOverride = terminal.ParentBackground
+		switch override { //nolint:exhaustive
+		case color.Foreground:
+			newOverride = color.ParentForeground
+		case color.Background:
+			newOverride = color.ParentBackground
 		}
 
 		if override == newOverride {
 			return
 		}
 
-		newAnchor := strings.Replace(match[terminal.ANCHOR], override, newOverride, 1)
+		newAnchor := strings.Replace(match[terminal.ANCHOR], string(override), string(newOverride), 1)
 		e.previousActiveSegment.TrailingDiamond = strings.Replace(e.previousActiveSegment.TrailingDiamond, anchor, newAnchor, 1)
 	}
 
 	if len(match[terminal.BG]) > 0 {
-		adjustOverride(match[terminal.ANCHOR], match[terminal.BG])
+		adjustOverride(match[terminal.ANCHOR], color.Ansi(match[terminal.BG]))
 	}
 
 	if len(match[terminal.FG]) > 0 {
-		adjustOverride(match[terminal.ANCHOR], match[terminal.FG])
+		adjustOverride(match[terminal.ANCHOR], color.Ansi(match[terminal.FG]))
 	}
 }

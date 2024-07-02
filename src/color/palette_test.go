@@ -1,4 +1,4 @@
-package terminal
+package color
 
 import (
 	"testing"
@@ -18,9 +18,9 @@ var (
 
 type TestPaletteRequest struct {
 	Case          string
-	Request       string
+	Request       Ansi
 	ExpectedError bool
-	Expected      string
+	Expected      Ansi
 }
 
 func TestPaletteShouldResolveColorFromTestPalette(t *testing.T) {
@@ -45,7 +45,7 @@ func testPaletteRequest(t *testing.T, tc TestPaletteRequest) {
 		assert.Equal(t, tc.Expected, actual, "expected different color value")
 	} else {
 		assert.NotNil(t, err, tc.Case)
-		assert.Equal(t, tc.Expected, err.Error())
+		assert.Equal(t, string(tc.Expected), err.Error())
 	}
 }
 
@@ -186,7 +186,7 @@ func TestPaletteShouldResolveRecursiveReference(t *testing.T) {
 			assert.Equal(t, tc.Expected, actual, "expected different color value")
 		} else {
 			assert.NotNil(t, err, "expected error")
-			assert.Equal(t, tc.Expected, err.Error())
+			assert.Equal(t, string(tc.Expected), err.Error())
 		}
 	}
 }
@@ -199,7 +199,7 @@ func TestPaletteShouldHandleEmptyKey(t *testing.T) {
 	actual, err := tp.ResolveColor("p:")
 
 	assert.Nil(t, err, "expected no error")
-	assert.Equal(t, "#000000", actual, "expected different color value")
+	assert.Equal(t, Ansi("#000000"), actual, "expected different color value")
 }
 
 func BenchmarkPaletteMixedCaseResolution(b *testing.B) {

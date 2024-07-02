@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
@@ -302,18 +303,21 @@ func createNuInit(env platform.Environment) {
 	_ = f.Close()
 }
 
-func ConsoleBackgroundColor(env platform.Environment, backgroundColorTemplate string) string {
-	if len(backgroundColorTemplate) == 0 {
+func ConsoleBackgroundColor(env platform.Environment, backgroundColorTemplate color.Ansi) color.Ansi {
+	if backgroundColorTemplate.IsEmpty() {
 		return backgroundColorTemplate
 	}
+
 	tmpl := &template.Text{
-		Template: backgroundColorTemplate,
+		Template: string(backgroundColorTemplate),
 		Context:  nil,
 		Env:      env,
 	}
+
 	text, err := tmpl.Render()
 	if err != nil {
-		return err.Error()
+		return color.Transparent
 	}
-	return text
+
+	return color.Ansi(text)
 }

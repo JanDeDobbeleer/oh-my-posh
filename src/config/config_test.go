@@ -3,30 +3,30 @@ package config
 import (
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
 )
 
 func TestGetPalette(t *testing.T) {
-	palette := terminal.Palette{
+	palette := color.Palette{
 		"red":  "#ff0000",
 		"blue": "#0000ff",
 	}
 	cases := []struct {
 		Case            string
-		Palettes        *terminal.Palettes
-		Palette         terminal.Palette
-		ExpectedPalette terminal.Palette
+		Palettes        *color.Palettes
+		Palette         color.Palette
+		ExpectedPalette color.Palette
 	}{
 		{
 			Case: "match",
-			Palettes: &terminal.Palettes{
+			Palettes: &color.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]terminal.Palette{
+				List: map[string]color.Palette{
 					"bash": palette,
 					"zsh": {
 						"red":  "#ff0001",
@@ -38,9 +38,9 @@ func TestGetPalette(t *testing.T) {
 		},
 		{
 			Case: "no match, no fallback",
-			Palettes: &terminal.Palettes{
+			Palettes: &color.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]terminal.Palette{
+				List: map[string]color.Palette{
 					"fish": palette,
 					"zsh": {
 						"red":  "#ff0001",
@@ -52,9 +52,9 @@ func TestGetPalette(t *testing.T) {
 		},
 		{
 			Case: "no match, default",
-			Palettes: &terminal.Palettes{
+			Palettes: &color.Palettes{
 				Template: "{{ .Shell }}",
-				List: map[string]terminal.Palette{
+				List: map[string]color.Palette{
 					"zsh": {
 						"red":  "#ff0001",
 						"blue": "#0000fb",

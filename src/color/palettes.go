@@ -1,4 +1,4 @@
-package terminal
+package color
 
 type Palettes struct {
 	Template string             `json:"template,omitempty" toml:"template,omitempty"`

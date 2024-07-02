@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -13,11 +14,6 @@ import (
 
 func init() {
 	runewidth.DefaultCondition.EastAsianWidth = false
-}
-
-type Colors struct {
-	Background string `json:"background" toml:"background"`
-	Foreground string `json:"foreground" toml:"foreground"`
 }
 
 type style struct {
@@ -42,22 +38,20 @@ var (
 	resetStyle      = &style{AnchorStart: "RESET", AnchorEnd: `</>`, End: "\x1b[0m"}
 	backgroundStyle = &style{AnchorStart: "BACKGROUND", AnchorEnd: `</>`, End: "\x1b[49m"}
 
-	BackgroundColor string
-	CurrentColors   *Colors
-	ParentColors    []*Colors
-	AnsiColors      ColorString
+	BackgroundColor color.Ansi
+	CurrentColors   *color.Set
+	ParentColors    []*color.Set
+	Colors          color.String
 
 	Plain       bool
 	Interactive bool
 
-	trueColor bool
-
 	builder strings.Builder
 	length  int
 
-	foregroundColor Color
-	backgroundColor Color
-	currentColor    ColorHistory
+	foregroundColor color.Ansi
+	backgroundColor color.Ansi
+	currentColor    color.History
 	runes           []rune
 
 	isTransparent bool
@@ -73,19 +67,6 @@ var (
 )
 
 const (
-	// Transparent implies a transparent color
-	Transparent = "transparent"
-	// Accent is the OS accent color
-	Accent = "accent"
-	// ParentBackground takes the previous segment's background color
-	ParentBackground = "parentBackground"
-	// ParentForeground takes the previous segment's color
-	ParentForeground = "parentForeground"
-	// Background takes the current segment's background color
-	Background = "background"
-	// Foreground takes the current segment's foreground color
-	Foreground = "foreground"
-
 	AnchorRegex      = `^(?P<ANCHOR><(?P<FG>[^,<>]+)?,?(?P<BG>[^<>]+)?>)`
 	colorise         = "\x1b[%sm"
 	transparentStart = "\x1b[0m\x1b[%s;49m\x1b[7m"
@@ -124,7 +105,7 @@ func Init(sh string) {
 	log.Debug("Terminal shell: %s", Shell)
 	log.Debug("Terminal program: %s", Program)
 
-	trueColor = Program != AppleTerminal
+	color.TrueColor = Program != AppleTerminal
 
 	formats = shell.GetFormats(Shell)
 }
@@ -143,19 +124,19 @@ func getTerminalName() string {
 	return Unknown
 }
 
-func SetColors(background, foreground string) {
-	CurrentColors = &Colors{
+func SetColors(background, foreground color.Ansi) {
+	CurrentColors = &color.Set{
 		Background: background,
 		Foreground: foreground,
 	}
 }
 
-func SetParentColors(background, foreground string) {
+func SetParentColors(background, foreground color.Ansi) {
 	if ParentColors == nil {
-		ParentColors = make([]*Colors, 0)
+		ParentColors = make([]*color.Set, 0)
 	}
 
-	ParentColors = append([]*Colors{{
+	ParentColors = append([]*color.Set{{
 		Background: background,
 		Foreground: foreground,
 	}}, ParentColors...)
@@ -278,7 +259,7 @@ func StopProgress() string {
 	return fmt.Sprintf(formats.Escape, endProgress)
 }
 
-func Write(background, foreground, text string) {
+func Write(background, foreground color.Ansi, text string) {
 	if len(text) == 0 {
 		return
 	}
@@ -287,7 +268,7 @@ func Write(background, foreground, text string) {
 
 	// default to white foreground
 	if foregroundColor.IsEmpty() {
-		foregroundColor = AnsiColors.ToColor("white", false)
+		foregroundColor = Colors.ToAnsi("white", false)
 	}
 
 	// validate if we start with a color override
@@ -304,7 +285,7 @@ func Write(background, foreground, text string) {
 		}
 
 		if colorOverride {
-			currentColor.Add(asAnsiColors(match[BG], match[FG]))
+			currentColor.Add(asAnsiColors(color.Ansi(match[BG]), color.Ansi(match[FG])))
 		}
 	}
 
@@ -398,8 +379,8 @@ func writeEscapedAnsiString(text string) {
 	builder.WriteString(text)
 }
 
-func getAnsiFromColorString(colorString string, isBackground bool) Color {
-	return AnsiColors.ToColor(colorString, isBackground)
+func getAnsiFromColorString(colorString color.Ansi, isBackground bool) color.Ansi {
+	return Colors.ToAnsi(colorString, isBackground)
 }
 
 func write(s rune) {
@@ -462,7 +443,7 @@ func writeSegmentColors() {
 	currentColor.Add(bg, fg)
 }
 
-func writeArchorOverride(match map[string]string, background string, i int) int {
+func writeArchorOverride(match map[string]string, background color.Ansi, i int) int {
 	position := i
 	// check color reset first
 	if match[ANCHOR] == resetStyle.AnchorEnd {
@@ -482,11 +463,14 @@ func writeArchorOverride(match map[string]string, background string, i int) int 
 		}
 	}
 
-	if match[FG] == Transparent && len(match[BG]) == 0 {
-		match[BG] = background
+	bgColor := color.Ansi(match[BG])
+	fgColor := color.Ansi(match[FG])
+
+	if fgColor.IsTransparent() && bgColor.IsEmpty() {
+		bgColor = background
 	}
 
-	bg, fg := asAnsiColors(match[BG], match[FG])
+	bg, fg := asAnsiColors(bgColor, fgColor)
 
 	// ignore processing fully tranparent colors
 	isInvisible = fg.IsTransparent() && bg.IsTransparent()
@@ -603,84 +587,24 @@ func endColorOverride(position int) int {
 	return position
 }
 
-func asAnsiColors(background, foreground string) (Color, Color) {
+func asAnsiColors(background, foreground color.Ansi) (color.Ansi, color.Ansi) {
 	if len(background) == 0 {
-		background = Background
+		background = color.Background
 	}
 
 	if len(foreground) == 0 {
-		foreground = Foreground
+		foreground = color.Foreground
 	}
 
-	background = expandKeyword(background)
-	foreground = expandKeyword(foreground)
+	background = background.Resolve(CurrentColors, ParentColors)
+	foreground = foreground.Resolve(CurrentColors, ParentColors)
 
-	inverted := foreground == Transparent && len(background) != 0
+	inverted := foreground == color.Transparent && len(background) != 0
 
 	backgroundAnsi := getAnsiFromColorString(background, !inverted)
 	foregroundAnsi := getAnsiFromColorString(foreground, false)
 
 	return backgroundAnsi, foregroundAnsi
-}
-
-func isKeyword(color string) bool {
-	switch color {
-	case Transparent, ParentBackground, ParentForeground, Background, Foreground:
-		return true
-	default:
-		return false
-	}
-}
-
-func expandKeyword(keyword string) string {
-	resolveParentColor := func(keyword string) string {
-		for _, color := range ParentColors {
-			if color == nil {
-				return Transparent
-			}
-			switch keyword {
-			case ParentBackground:
-				keyword = color.Background
-			case ParentForeground:
-				keyword = color.Foreground
-			default:
-				if len(keyword) == 0 {
-					return Transparent
-				}
-				return keyword
-			}
-		}
-
-		if len(keyword) == 0 {
-			return Transparent
-		}
-
-		return keyword
-	}
-
-	resolveKeyword := func(keyword string) string {
-		switch {
-		case keyword == Background && CurrentColors != nil:
-			return CurrentColors.Background
-		case keyword == Foreground && CurrentColors != nil:
-			return CurrentColors.Foreground
-		case (keyword == ParentBackground || keyword == ParentForeground) && ParentColors != nil:
-			return resolveParentColor(keyword)
-		default:
-			return Transparent
-		}
-	}
-
-	for ok := isKeyword(keyword); ok; ok = isKeyword(keyword) {
-		resolved := resolveKeyword(keyword)
-		if resolved == keyword {
-			break
-		}
-
-		keyword = resolved
-	}
-
-	return keyword
 }
 
 func trimAnsi(text string) string {

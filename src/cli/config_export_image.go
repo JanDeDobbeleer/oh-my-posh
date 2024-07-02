@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/image"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
@@ -79,7 +80,7 @@ Exports the config to an image file using customized output options.`,
 
 		primaryPrompt := eng.Primary()
 
-		imageCreator := &prompt.ImageRenderer{
+		imageCreator := &image.Renderer{
 			AnsiString: primaryPrompt,
 			Author:     author,
 			BgColor:    bgColor,

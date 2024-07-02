@@ -20,7 +20,7 @@
 
 // https://github.com/homeport/termshot
 
-package prompt
+package image
 
 import (
 	"archive/zip"
@@ -108,7 +108,7 @@ func NewRGBColor(ansiColor string) *RGB {
 	}
 }
 
-type ImageRenderer struct {
+type Renderer struct {
 	AnsiString    string
 	Author        string
 	CursorPadding int
@@ -147,7 +147,7 @@ type ImageRenderer struct {
 	ansiSequenceRegexMap map[string]string
 }
 
-func (ir *ImageRenderer) Init(env platform.Environment) error {
+func (ir *Renderer) Init(env platform.Environment) error {
 	ir.env = env
 
 	if ir.Path == "" {
@@ -206,7 +206,7 @@ func (ir *ImageRenderer) Init(env platform.Environment) error {
 	return nil
 }
 
-func (ir *ImageRenderer) loadFonts() error {
+func (ir *Renderer) loadFonts() error {
 	var data []byte
 
 	fontCachePath := filepath.Join(ir.env.CachePath(), "Hack.zip")
@@ -283,7 +283,7 @@ func (ir *ImageRenderer) loadFonts() error {
 	return nil
 }
 
-func (ir *ImageRenderer) fontHeight() float64 {
+func (ir *Renderer) fontHeight() float64 {
 	return float64(ir.regular.Metrics().Height >> 6)
 }
 
@@ -329,7 +329,7 @@ var doubleWidthRunes = []RuneRange{
 // This is getting how many additional characters of width to allocate when drawing
 // e.g. for characters that are 2 or more wide. A standard character will return 0
 // Nerd Font glyphs will return 1, since most are double width
-func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
+func (ir *Renderer) runeAdditionalWidth(r rune) int {
 	// exclude the round leading diamond
 	singles := []rune{'\ue0b6', '\ue0ba', '\ue0bc'}
 	if slices.Contains(singles, r) {
@@ -344,7 +344,7 @@ func (ir *ImageRenderer) runeAdditionalWidth(r rune) int {
 	return 0
 }
 
-func (ir *ImageRenderer) cleanContent() {
+func (ir *Renderer) cleanContent() {
 	// clean abundance of empty lines
 	ir.AnsiString = strings.Trim(ir.AnsiString, "\n")
 	ir.AnsiString = "\n" + ir.AnsiString
@@ -375,7 +375,7 @@ func (ir *ImageRenderer) cleanContent() {
 	}
 }
 
-func (ir *ImageRenderer) measureContent() (width, height float64) {
+func (ir *Renderer) measureContent() (width, height float64) {
 	linewidth := 145
 	linewidth += ir.additionalWidth()
 
@@ -392,7 +392,7 @@ additionalWidth returns the number of additional characters of width to allocate
 for characters that are 2 wide. A standard character will return 0
 Nerd Font glyphs will return 1, since most are double width
 */
-func (ir *ImageRenderer) additionalWidth() int {
+func (ir *Renderer) additionalWidth() int {
 	longest := 0
 	var longestLine string
 	for _, line := range strings.Split(ir.AnsiString, "\n") {
@@ -411,7 +411,7 @@ func (ir *ImageRenderer) additionalWidth() int {
 	return additionalWidth
 }
 
-func (ir *ImageRenderer) lenWithoutANSI(text string) int {
+func (ir *Renderer) lenWithoutANSI(text string) int {
 	if len(text) == 0 {
 		return 0
 	}
@@ -435,7 +435,7 @@ func (ir *ImageRenderer) lenWithoutANSI(text string) int {
 	return length
 }
 
-func (ir *ImageRenderer) SavePNG() error {
+func (ir *Renderer) SavePNG() error {
 	var f = func(value float64) float64 { return ir.factor * value }
 
 	var (
@@ -569,7 +569,7 @@ func (ir *ImageRenderer) SavePNG() error {
 	return dc.SavePNG(ir.Path)
 }
 
-func (ir *ImageRenderer) shouldPrint() bool {
+func (ir *Renderer) shouldPrint() bool {
 	for sequence, re := range ir.ansiSequenceRegexMap {
 		match := regex.FindNamedRegexMatch(re, ir.AnsiString)
 		if len(match) == 0 {
@@ -622,7 +622,7 @@ func (ir *ImageRenderer) shouldPrint() bool {
 	return true
 }
 
-func (ir *ImageRenderer) setBase16Color(colorStr string) {
+func (ir *Renderer) setBase16Color(colorStr string) {
 	tempColor := ir.defaultForegroundColor
 	colorInt, err := strconv.Atoi(colorStr)
 	if err != nil {

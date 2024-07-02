@@ -1,4 +1,4 @@
-package prompt
+package image
 
 import (
 	"os"
@@ -36,7 +36,7 @@ func runImageTest(config, content string) (string, error) {
 
 	terminal.Init(shell.GENERIC)
 
-	image := &ImageRenderer{
+	image := &Renderer{
 		AnsiString: content,
 	}
 

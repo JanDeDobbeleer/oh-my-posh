@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -41,7 +41,7 @@ func TestSpotifyWindowsNative(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("QueryWindowTitles", "spotify.exe", `^(Spotify.*)|(.*\s-\s.*)$`).Return(tc.Title, tc.Error)
-		env.On("QueryWindowTitles", "msedge.exe", `^(Spotify.*)`).Return("", &platform.NotImplemented{})
+		env.On("QueryWindowTitles", "msedge.exe", `^(Spotify.*)`).Return("", &runtime.NotImplemented{})
 		s := &Spotify{
 			env:   env,
 			props: properties.Map{},
@@ -81,7 +81,7 @@ func TestSpotifyWindowsPWA(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("QueryWindowTitles", "spotify.exe", "^(Spotify.*)|(.*\\s-\\s.*)$").Return("", &platform.NotImplemented{})
+		env.On("QueryWindowTitles", "spotify.exe", "^(Spotify.*)|(.*\\s-\\s.*)$").Return("", &runtime.NotImplemented{})
 		env.On("QueryWindowTitles", "msedge.exe", "^(Spotify.*)").Return(tc.Title, tc.Error)
 		s := &Spotify{
 			env:   env,

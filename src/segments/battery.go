@@ -1,14 +1,14 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform/battery"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
 )
 
 type Battery struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	*battery.Info
 	Error string
@@ -84,7 +84,7 @@ func (b *Battery) enabledWhileError(err error) bool {
 	return true
 }
 
-func (b *Battery) Init(props properties.Properties, env platform.Environment) {
+func (b *Battery) Init(props properties.Properties, env runtime.Environment) {
 	b.props = props
 	b.env = env
 }

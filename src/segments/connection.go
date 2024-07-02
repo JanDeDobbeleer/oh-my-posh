@@ -3,15 +3,15 @@ package segments
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Connection struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
-	platform.Connection
+	runtime.Connection
 }
 
 const (
@@ -26,7 +26,7 @@ func (c *Connection) Enabled() bool {
 	types := c.props.GetString(Type, "wifi|ethernet")
 	connectionTypes := strings.Split(types, "|")
 	for _, connectionType := range connectionTypes {
-		network, err := c.env.Connection(platform.ConnectionType(connectionType))
+		network, err := c.env.Connection(runtime.ConnectionType(connectionType))
 		if err != nil {
 			continue
 		}
@@ -36,7 +36,7 @@ func (c *Connection) Enabled() bool {
 	return false
 }
 
-func (c *Connection) Init(props properties.Properties, env platform.Environment) {
+func (c *Connection) Init(props properties.Properties, env runtime.Environment) {
 	c.props = props
 	c.env = env
 }

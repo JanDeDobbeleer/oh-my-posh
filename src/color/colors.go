@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/gookit/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 var TrueColor = true
@@ -107,7 +107,7 @@ func (c Ansi) String() string {
 	return string(c)
 }
 
-func MakeColors(palette Palette, cacheEnabled bool, accentColor Ansi, env platform.Environment) (colors String) {
+func MakeColors(palette Palette, cacheEnabled bool, accentColor Ansi, env runtime.Environment) (colors String) {
 	defaultColors := &Defaults{}
 	defaultColors.SetAccentColor(env, accentColor)
 	colors = defaultColors

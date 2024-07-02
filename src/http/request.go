@@ -5,21 +5,21 @@ import (
 	"errors"
 	"io"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Request struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 }
 
-func (r *Request) Init(env platform.Environment, props properties.Properties) {
+func (r *Request) Init(env runtime.Environment, props properties.Properties) {
 	r.env = env
 	r.props = props
 }
 
-func Do[a any](r *Request, url string, requestModifiers ...platform.HTTPRequestModifier) (a, error) {
+func Do[a any](r *Request, url string, requestModifiers ...runtime.HTTPRequestModifier) (a, error) {
 	if data, err := getCacheValue[a](r, url); err == nil {
 		return data, nil
 	}
@@ -45,7 +45,7 @@ func getCacheValue[a any](r *Request, key string) (a, error) {
 	return data, err
 }
 
-func do[a any](r *Request, url string, body io.Reader, requestModifiers ...platform.HTTPRequestModifier) (a, error) {
+func do[a any](r *Request, url string, body io.Reader, requestModifiers ...runtime.HTTPRequestModifier) (a, error) {
 	var data a
 	httpTimeout := r.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 

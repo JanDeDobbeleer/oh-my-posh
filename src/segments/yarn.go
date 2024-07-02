@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Yarn struct {
@@ -17,7 +17,7 @@ func (n *Yarn) Template() string {
 	return " \U000F011B {{.Full}} "
 }
 
-func (n *Yarn) Init(props properties.Properties, env platform.Environment) {
+func (n *Yarn) Init(props properties.Properties, env runtime.Environment) {
 	n.language = language{
 		env:        env,
 		props:      props,

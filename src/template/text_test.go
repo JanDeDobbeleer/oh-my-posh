@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -156,7 +156,7 @@ func TestRenderTemplate(t *testing.T) {
 	}
 
 	env := &mock.MockedEnvironment{}
-	env.On("TemplateCache").Return(&platform.TemplateCache{
+	env.On("TemplateCache").Return(&runtime.TemplateCache{
 		Env: make(map[string]string),
 	})
 	env.On("Error", mock2.Anything)
@@ -241,7 +241,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := &mock.MockedEnvironment{}
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			Env: tc.Env,
 			OS:  "darwin",
 		})
@@ -354,10 +354,10 @@ func TestSegmentContains(t *testing.T) {
 	}
 
 	env := &mock.MockedEnvironment{}
-	segments := platform.NewConcurrentMap()
+	segments := runtime.NewConcurrentMap()
 	segments.Set("Git", "foo")
 	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-	env.On("TemplateCache").Return(&platform.TemplateCache{
+	env.On("TemplateCache").Return(&runtime.TemplateCache{
 		Env:      make(map[string]string),
 		Segments: segments,
 	})

@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -105,7 +105,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			UserName:       "john",
 			SSHSession:     false,
 			WhoAmI:         "sascha   pts/1        2023-11-08 22:56 (89.246.1.1)",
-			Platform:       platform.WINDOWS,
+			Platform:       runtime.WINDOWS,
 			ComputerName:   "remote",
 			Template:       "{{.UserName}}{{if .SSHSession}} on {{.HostName}}{{end}}",
 		},
@@ -122,7 +122,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		}
 		env.On("Getenv", "SSH_CONNECTION").Return(SSHSession)
 		env.On("Getenv", "SSH_CLIENT").Return(SSHSession)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			UserName: tc.UserName,
 			HostName: tc.ComputerName,
 			Env: map[string]string{

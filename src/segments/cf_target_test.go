@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -19,7 +19,7 @@ func TestCFTargetSegment(t *testing.T) {
 		Template       string
 		ExpectedString string
 		DisplayMode    string
-		FileInfo       *platform.FileInfo
+		FileInfo       *runtime.FileInfo
 		TargetOutput   string
 		CommandError   error
 	}{
@@ -51,13 +51,13 @@ func TestCFTargetSegment(t *testing.T) {
 			Case:           "files and a manifest file",
 			ExpectedString: "12345678trial/dev",
 			DisplayMode:    DisplayModeFiles,
-			FileInfo:       &platform.FileInfo{},
+			FileInfo:       &runtime.FileInfo{},
 			TargetOutput:   "API endpoint: https://api.cf.eu10.hana.ondemand.com\nAPI version: 3.109.0\nuser: user@some.com\norg: 12345678trial\nspace: dev",
 		},
 		{
 			Case:        "files and a manifest directory",
 			DisplayMode: DisplayModeFiles,
-			FileInfo: &platform.FileInfo{
+			FileInfo: &runtime.FileInfo{
 				IsDir: true,
 			},
 		},

@@ -1,4 +1,4 @@
-package platform
+package runtime
 
 import (
 	"errors"
@@ -15,8 +15,8 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
-func (env *Shell) Root() bool {
-	defer env.Trace(time.Now())
+func (term *Terminal) Root() bool {
+	defer term.Trace(time.Now())
 	var sid *windows.SID
 
 	// Although this looks scary, it is directly copied from the
@@ -31,7 +31,7 @@ func (env *Shell) Root() bool {
 		0, 0, 0, 0, 0, 0,
 		&sid)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return false
 	}
 	defer func() {
@@ -45,17 +45,17 @@ func (env *Shell) Root() bool {
 
 	member, err := token.IsMember(sid)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return false
 	}
 
 	return member
 }
 
-func (env *Shell) Home() string {
+func (term *Terminal) Home() string {
 	home := os.Getenv("HOME")
 	defer func() {
-		env.Debug(home)
+		term.Debug(home)
 	}()
 	if len(home) > 0 {
 		return home
@@ -68,61 +68,61 @@ func (env *Shell) Home() string {
 	return home
 }
 
-func (env *Shell) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
-	defer env.Trace(time.Now(), windowTitleRegex)
+func (term *Terminal) QueryWindowTitles(processName, windowTitleRegex string) (string, error) {
+	defer term.Trace(time.Now(), windowTitleRegex)
 	title, err := queryWindowTitles(processName, windowTitleRegex)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 	}
 	return title, err
 }
 
-func (env *Shell) IsWsl() bool {
-	defer env.Trace(time.Now())
+func (term *Terminal) IsWsl() bool {
+	defer term.Trace(time.Now())
 	return false
 }
 
-func (env *Shell) IsWsl2() bool {
-	defer env.Trace(time.Now())
+func (term *Terminal) IsWsl2() bool {
+	defer term.Trace(time.Now())
 	return false
 }
 
-func (env *Shell) TerminalWidth() (int, error) {
-	defer env.Trace(time.Now())
+func (term *Terminal) TerminalWidth() (int, error) {
+	defer term.Trace(time.Now())
 
-	if env.CmdFlags.TerminalWidth > 0 {
-		env.DebugF("terminal width: %d", env.CmdFlags.TerminalWidth)
-		return env.CmdFlags.TerminalWidth, nil
+	if term.CmdFlags.TerminalWidth > 0 {
+		term.DebugF("terminal width: %d", term.CmdFlags.TerminalWidth)
+		return term.CmdFlags.TerminalWidth, nil
 	}
 
 	handle, err := syscall.Open("CONOUT$", syscall.O_RDWR, 0)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return 0, err
 	}
 
 	info, err := winterm.GetConsoleScreenBufferInfo(uintptr(handle))
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return 0, err
 	}
 
-	env.CmdFlags.TerminalWidth = int(info.Size.X)
-	env.DebugF("terminal width: %d", env.CmdFlags.TerminalWidth)
-	return env.CmdFlags.TerminalWidth, nil
+	term.CmdFlags.TerminalWidth = int(info.Size.X)
+	term.DebugF("terminal width: %d", term.CmdFlags.TerminalWidth)
+	return term.CmdFlags.TerminalWidth, nil
 }
 
-func (env *Shell) Platform() string {
+func (term *Terminal) Platform() string {
 	return WINDOWS
 }
 
-func (env *Shell) CachePath() string {
-	defer env.Trace(time.Now())
+func (term *Terminal) CachePath() string {
+	defer term.Trace(time.Now())
 	// get LOCALAPPDATA if present
-	if cachePath := returnOrBuildCachePath(env.Getenv("LOCALAPPDATA")); len(cachePath) != 0 {
+	if cachePath := returnOrBuildCachePath(term.Getenv("LOCALAPPDATA")); len(cachePath) != 0 {
 		return cachePath
 	}
-	return env.Home()
+	return term.Home()
 }
 
 // Takes a registry path to a key like
@@ -134,8 +134,8 @@ func (env *Shell) CachePath() string {
 // If the path ends in "\", the "(Default)" key in that path is retrieved.
 //
 // Returns a variant type if successful; nil and an error if not.
-func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
-	env.Trace(time.Now(), path)
+func (term *Terminal) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
+	term.Trace(time.Now(), path)
 
 	// Format:sudo -u postgres psql
 	// "HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"
@@ -152,13 +152,13 @@ func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, e
 	rootKey, regPath, found := strings.Cut(path, `\`)
 	if !found {
 		err := fmt.Errorf("Error, malformed registry path: '%s'", path)
-		env.Error(err)
+		term.Error(err)
 		return nil, err
 	}
 
 	var regKey string
 	if !strings.HasSuffix(regPath, `\`) {
-		regKey = Base(env, regPath)
+		regKey = Base(term, regPath)
 		if len(regKey) != 0 {
 			regPath = strings.TrimSuffix(regPath, `\`+regKey)
 		}
@@ -178,18 +178,18 @@ func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, e
 		key = windows.HKEY_USERS
 	default:
 		err := fmt.Errorf("Error, unknown registry key: '%s", rootKey)
-		env.Error(err)
+		term.Error(err)
 		return nil, err
 	}
 
 	k, err := registry.OpenKey(key, regPath, registry.READ)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return nil, err
 	}
 	_, valType, err := k.GetValue(regKey, nil)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return nil, err
 	}
 
@@ -214,46 +214,46 @@ func (env *Shell) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, e
 		errorLogMsg := fmt.Sprintf("Error, no formatter for type: %d", valType)
 		return nil, errors.New(errorLogMsg)
 	}
-	env.Debug(fmt.Sprintf("%s(%s): %s", regKey, regValue.ValueType, regValue.String))
+	term.Debug(fmt.Sprintf("%s(%s): %s", regKey, regValue.ValueType, regValue.String))
 	return regValue, nil
 }
 
-func (env *Shell) InWSLSharedDrive() bool {
+func (term *Terminal) InWSLSharedDrive() bool {
 	return false
 }
 
-func (env *Shell) ConvertToWindowsPath(path string) string {
+func (term *Terminal) ConvertToWindowsPath(path string) string {
 	return strings.ReplaceAll(path, `\`, "/")
 }
 
-func (env *Shell) ConvertToLinuxPath(path string) string {
+func (term *Terminal) ConvertToLinuxPath(path string) string {
 	return path
 }
 
-func (env *Shell) DirIsWritable(path string) bool {
-	defer env.Trace(time.Now())
-	return env.isWriteable(path)
+func (term *Terminal) DirIsWritable(path string) bool {
+	defer term.Trace(time.Now())
+	return term.isWriteable(path)
 }
 
-func (env *Shell) Connection(connectionType ConnectionType) (*Connection, error) {
-	if env.networks == nil {
-		networks := env.getConnections()
+func (term *Terminal) Connection(connectionType ConnectionType) (*Connection, error) {
+	if term.networks == nil {
+		networks := term.getConnections()
 		if len(networks) == 0 {
 			return nil, errors.New("No connections found")
 		}
-		env.networks = networks
+		term.networks = networks
 	}
-	for _, network := range env.networks {
+	for _, network := range term.networks {
 		if network.Type == connectionType {
 			return network, nil
 		}
 	}
-	env.Error(fmt.Errorf("Network type '%s' not found", connectionType))
+	term.Error(fmt.Errorf("Network type '%s' not found", connectionType))
 	return nil, &NotImplemented{}
 }
 
-func (env *Shell) LookPath(command string) (string, error) {
-	winAppPath := filepath.Join(env.Getenv("LOCALAPPDATA"), `\Microsoft\WindowsApps\`, command)
+func (term *Terminal) LookPath(command string) (string, error) {
+	winAppPath := filepath.Join(term.Getenv("LOCALAPPDATA"), `\Microsoft\WindowsApps\`, command)
 	if !strings.HasSuffix(winAppPath, ".exe") {
 		winAppPath += ".exe"
 	}

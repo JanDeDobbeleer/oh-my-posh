@@ -5,8 +5,8 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -18,7 +18,7 @@ var (
 
 type Engine struct {
 	Config *config.Config
-	Env    platform.Environment
+	Env    runtime.Environment
 	Plain  bool
 
 	console           strings.Builder

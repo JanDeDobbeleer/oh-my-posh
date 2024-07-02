@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -24,7 +24,7 @@ func TestGlob(t *testing.T) {
 
 	env := &mock.MockedEnvironment{}
 	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-	env.On("TemplateCache").Return(&platform.TemplateCache{
+	env.On("TemplateCache").Return(&runtime.TemplateCache{
 		Env: make(map[string]string),
 	})
 	for _, tc := range cases {

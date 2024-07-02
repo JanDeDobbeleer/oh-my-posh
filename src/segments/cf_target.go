@@ -4,13 +4,13 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type CfTarget struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	CfTargetDetails
 }
@@ -26,7 +26,7 @@ func (c *CfTarget) Template() string {
 	return "{{if .Org }}{{ .Org }}{{ end }}{{if .Space }}/{{ .Space }}{{ end }}"
 }
 
-func (c *CfTarget) Init(props properties.Properties, env platform.Environment) {
+func (c *CfTarget) Init(props properties.Properties, env runtime.Environment) {
 	c.props = props
 	c.env = env
 }

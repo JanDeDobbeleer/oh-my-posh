@@ -6,7 +6,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
@@ -81,7 +81,7 @@ func TestPrintPWD(t *testing.T) {
 		env.On("User").Return("user")
 		env.On("Host").Return("host", nil)
 		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			Env:   make(map[string]string),
 			Shell: "shell",
 		})
@@ -110,7 +110,7 @@ func BenchmarkEngineRender(b *testing.B) {
 }
 
 func engineRender() {
-	env := &platform.Shell{}
+	env := &runtime.Terminal{}
 	env.Init()
 	defer env.Close()
 
@@ -175,7 +175,7 @@ func TestGetTitle(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
 			},
@@ -238,7 +238,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
 		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
 			},

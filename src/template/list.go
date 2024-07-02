@@ -3,7 +3,7 @@ package template
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Logic string
@@ -19,7 +19,7 @@ func (l List) Empty() bool {
 	return len(l) == 0
 }
 
-func (l List) Resolve(context any, env platform.Environment, defaultValue string, logic Logic) string {
+func (l List) Resolve(context any, env runtime.Environment, defaultValue string, logic Logic) string {
 	switch logic {
 	case FirstMatch:
 		return l.FirstMatch(context, env, defaultValue)
@@ -30,7 +30,7 @@ func (l List) Resolve(context any, env platform.Environment, defaultValue string
 	}
 }
 
-func (l List) Join(context any, env platform.Environment) string {
+func (l List) Join(context any, env runtime.Environment) string {
 	if len(l) == 0 {
 		return ""
 	}
@@ -50,7 +50,7 @@ func (l List) Join(context any, env platform.Environment) string {
 	return buffer.String()
 }
 
-func (l List) FirstMatch(context any, env platform.Environment, defaultValue string) string {
+func (l List) FirstMatch(context any, env runtime.Environment, defaultValue string) string {
 	if len(l) == 0 {
 		return defaultValue
 	}

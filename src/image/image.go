@@ -28,7 +28,7 @@ import (
 	"fmt"
 	"io"
 	"math"
-	"os"
+	stdOS "os"
 	"path/filepath"
 	"slices"
 	"strconv"
@@ -36,8 +36,8 @@ import (
 	"unicode/utf8"
 
 	fontCLI "github.com/jandedobbeleer/oh-my-posh/src/font"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/esimov/stackblur-go"
@@ -115,7 +115,7 @@ type Renderer struct {
 	RPromptOffset int
 	BgColor       string
 
-	env platform.Environment
+	env runtime.Environment
 
 	Path string
 
@@ -147,7 +147,7 @@ type Renderer struct {
 	ansiSequenceRegexMap map[string]string
 }
 
-func (ir *Renderer) Init(env platform.Environment) error {
+func (ir *Renderer) Init(env runtime.Environment) error {
 	ir.env = env
 
 	if ir.Path == "" {
@@ -210,8 +210,8 @@ func (ir *Renderer) loadFonts() error {
 	var data []byte
 
 	fontCachePath := filepath.Join(ir.env.CachePath(), "Hack.zip")
-	if _, err := os.Stat(fontCachePath); err == nil {
-		data, _ = os.ReadFile(fontCachePath)
+	if _, err := stdOS.Stat(fontCachePath); err == nil {
+		data, _ = stdOS.ReadFile(fontCachePath)
 	}
 
 	// Download font if not cached
@@ -224,7 +224,7 @@ func (ir *Renderer) loadFonts() error {
 			return err
 		}
 
-		err = os.WriteFile(fontCachePath, data, 0644)
+		err = stdOS.WriteFile(fontCachePath, data, 0644)
 		if err != nil {
 			return err
 		}

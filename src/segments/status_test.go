@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -26,7 +26,7 @@ func TestStatusWriterEnabled(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("StatusCodes").Return(tc.Status, "")
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			Code: 133,
 		})
 		env.On("Error", mock2.Anything).Return(nil)
@@ -92,7 +92,7 @@ func TestFormatStatus(t *testing.T) {
 
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			Code: 133,
 		})
 		env.On("Error", mock2.Anything).Return(nil)

@@ -6,13 +6,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Az struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	AzureSubscription
 	Origin string
@@ -74,7 +74,7 @@ func (a *Az) Template() string {
 	return NameTemplate
 }
 
-func (a *Az) Init(props properties.Properties, env platform.Environment) {
+func (a *Az) Init(props properties.Properties, env runtime.Environment) {
 	a.props = props
 	a.env = env
 }

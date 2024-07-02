@@ -6,14 +6,14 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 // segment struct, makes templating easier
 type Nba struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	NBAData
 }
@@ -414,7 +414,7 @@ func (nba *Nba) getResult() (*NBAData, error) {
 	return data, nil
 }
 
-func (nba *Nba) Init(props properties.Properties, env platform.Environment) {
+func (nba *Nba) Init(props properties.Properties, env runtime.Environment) {
 	nba.props = props
 	nba.env = env
 }

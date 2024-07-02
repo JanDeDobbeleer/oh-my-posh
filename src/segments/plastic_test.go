@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -30,7 +30,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
 	env.On("FileContent", "/dir/.plastic//plastic.selector").Return("")
-	fileInfo := &platform.FileInfo{
+	fileInfo := &runtime.FileInfo{
 		Path:         "/dir/hello",
 		ParentFolder: "/dir",
 		IsDir:        true,

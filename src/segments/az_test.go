@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -121,7 +121,7 @@ func TestAzSegment(t *testing.T) {
 			azureRmContext = string(content)
 		}
 
-		env.On("GOOS").Return(platform.LINUX)
+		env.On("GOOS").Return(runtime.LINUX)
 		env.On("FileContent", filepath.Join(poshHome, ".azure", "azureProfile.json")).Return(azureProfile)
 		env.On("Getenv", "POSH_AZURE_SUBSCRIPTION").Return(azureRmContext)
 		env.On("Getenv", "AZURE_CONFIG_DIR").Return("")

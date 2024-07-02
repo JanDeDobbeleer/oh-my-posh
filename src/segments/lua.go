@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Lua struct {
@@ -17,7 +17,7 @@ func (l *Lua) Template() string {
 	return languageTemplate
 }
 
-func (l *Lua) Init(props properties.Properties, env platform.Environment) {
+func (l *Lua) Init(props properties.Properties, env runtime.Environment) {
 	l.language = language{
 		env:        env,
 		props:      props,

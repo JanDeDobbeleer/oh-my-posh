@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type release struct {
@@ -41,7 +41,7 @@ To enable automated upgrades, set 'auto_upgrade' to 'true' in your configuration
 `
 )
 
-func Latest(env platform.Environment) (string, error) {
+func Latest(env runtime.Environment) (string, error) {
 	body, err := env.HTTPRequest(RELEASEURL, nil, 1000)
 	if err != nil {
 		return "", err
@@ -56,7 +56,7 @@ func Latest(env platform.Environment) (string, error) {
 // that should be displayed to the user.
 //
 // The upgrade check is only performed every other week.
-func Notice(env platform.Environment, force bool) (string, bool) {
+func Notice(env runtime.Environment, force bool) (string, bool) {
 	// do not check when last validation was < 1 week ago
 	if _, OK := env.Cache().Get(CACHEKEY); OK && !force {
 		return "", false

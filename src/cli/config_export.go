@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/spf13/cobra"
 )
@@ -36,8 +36,8 @@ Exports the ~/myconfig.omp.json config file and prints the result to stdout.
 Exports the ~/myconfig.omp.json config file to toml and prints the result to stdout.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		env := &platform.Shell{
-			CmdFlags: &platform.Flags{
+		env := &runtime.Terminal{
+			CmdFlags: &runtime.Flags{
 				Config: configFlag,
 			},
 		}
@@ -83,7 +83,7 @@ Exports the ~/myconfig.omp.json config file to toml and prints the result to std
 	},
 }
 
-func cleanOutputPath(path string, env platform.Environment) string {
+func cleanOutputPath(path string, env runtime.Environment) string {
 	if strings.HasPrefix(path, "~") {
 		path = strings.TrimPrefix(path, "~")
 		path = filepath.Join(env.Home(), path)

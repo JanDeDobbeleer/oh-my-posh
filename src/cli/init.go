@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
@@ -55,8 +55,8 @@ func init() {
 }
 
 func runInit(shellName string) {
-	env := &platform.Shell{
-		CmdFlags: &platform.Flags{
+	env := &runtime.Terminal{
+		CmdFlags: &runtime.Flags{
 			Shell:  shellName,
 			Config: configFlag,
 			Strict: strict,

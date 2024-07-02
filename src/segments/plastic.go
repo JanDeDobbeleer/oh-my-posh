@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type PlasticStatus struct {
@@ -38,7 +38,7 @@ type Plastic struct {
 	plasticWorkspaceFolder string // root folder of workspace
 }
 
-func (p *Plastic) Init(props properties.Properties, env platform.Environment) {
+func (p *Plastic) Init(props properties.Properties, env runtime.Environment) {
 	p.props = props
 	p.env = env
 }

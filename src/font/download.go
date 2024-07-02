@@ -11,7 +11,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/net"
 )
 
 func Download(fontPath string) ([]byte, error) {

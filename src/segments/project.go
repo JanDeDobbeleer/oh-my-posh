@@ -7,9 +7,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"golang.org/x/exp/slices"
 
 	toml "github.com/pelletier/go-toml/v2"
@@ -53,7 +53,7 @@ type NuSpec struct {
 
 type Project struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	projects []*ProjectItem
 	Error    string
@@ -80,7 +80,7 @@ func (n *Project) Template() string {
 	return " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Version }}\uf487 {{.Version}} {{ end }}{{ if .Name }}{{ .Name }} {{ end }}{{ if .Target }}\uf4de {{.Target}} {{ end }}{{ end }}" //nolint:lll
 }
 
-func (n *Project) Init(props properties.Properties, env platform.Environment) {
+func (n *Project) Init(props properties.Properties, env runtime.Environment) {
 	n.props = props
 	n.env = env
 

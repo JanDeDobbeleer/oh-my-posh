@@ -3,8 +3,8 @@ package segments
 import (
 	"path/filepath"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"gopkg.in/yaml.v3"
 )
@@ -17,7 +17,7 @@ const (
 
 type Kubectl struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Context string
 
@@ -42,7 +42,7 @@ func (k *Kubectl) Template() string {
 	return " {{ .Context }}{{ if .Namespace }} :: {{ .Namespace }}{{ end }} "
 }
 
-func (k *Kubectl) Init(props properties.Properties, env platform.Environment) {
+func (k *Kubectl) Init(props properties.Properties, env runtime.Environment) {
 	k.props = props
 	k.env = env
 }

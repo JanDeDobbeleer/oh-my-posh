@@ -3,8 +3,8 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/spf13/cobra"
 )
@@ -49,7 +49,7 @@ var printCmd = &cobra.Command{
 			return
 		}
 
-		flags := &platform.Flags{
+		flags := &runtime.Flags{
 			Config:        configFlag,
 			PWD:           pwd,
 			PSWD:          pswd,

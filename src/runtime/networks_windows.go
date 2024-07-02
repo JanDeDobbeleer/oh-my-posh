@@ -1,4 +1,4 @@
-package platform
+package runtime
 
 import (
 	"errors"
@@ -144,7 +144,7 @@ type DOT11_SSID struct {
 	ucSSID      [DOT11_SSID_MAX_LENGTH]uint8
 }
 
-func (env *Shell) getConnections() []*Connection {
+func (env *Terminal) getConnections() []*Connection {
 	var pIFTable2 *MIN_IF_TABLE2
 	_, _, _ = hGetIfTable2.Call(uintptr(unsafe.Pointer(&pIFTable2)))
 
@@ -199,7 +199,7 @@ func (env *Shell) getConnections() []*Connection {
 	return networks
 }
 
-func (env *Shell) wifiNetwork() (*Connection, error) {
+func (env *Terminal) wifiNetwork() (*Connection, error) {
 	env.Trace(time.Now())
 	// Open handle
 	var pdwNegotiatedVersion uint32
@@ -234,7 +234,7 @@ func (env *Shell) wifiNetwork() (*Connection, error) {
 	return nil, errors.New("Not connected")
 }
 
-func (env *Shell) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHandle uint32) (*Connection, error) {
+func (env *Terminal) parseNetworkInterface(network *WLAN_INTERFACE_INFO, clientHandle uint32) (*Connection, error) {
 	info := Connection{
 		Type: WIFI,
 	}

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 )
 
@@ -33,7 +33,7 @@ func (cfg *Config) Migrate() {
 	cfg.Version = Version
 }
 
-func (segment *Segment) migrate(env platform.Environment, version int) {
+func (segment *Segment) migrate(env runtime.Environment, version int) {
 	if version < 1 {
 		segment.migrationOne(env)
 	}
@@ -42,7 +42,7 @@ func (segment *Segment) migrate(env platform.Environment, version int) {
 	}
 }
 
-func (segment *Segment) migrationOne(env platform.Environment) {
+func (segment *Segment) migrationOne(env runtime.Environment) {
 	if err := segment.MapSegmentWithWriter(env); err != nil {
 		return
 	}
@@ -162,7 +162,7 @@ func (segment *Segment) migrationOne(env platform.Environment) {
 	delete(segment.Properties, colorBackground)
 }
 
-func (segment *Segment) migrationTwo(env platform.Environment) {
+func (segment *Segment) migrationTwo(env runtime.Environment) {
 	if err := segment.MapSegmentWithWriter(env); err != nil {
 		return
 	}

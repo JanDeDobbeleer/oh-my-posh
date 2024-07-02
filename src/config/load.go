@@ -3,13 +3,13 @@ package config
 import (
 	"bytes"
 	"fmt"
-	"os"
+	stdOS "os"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/gookit/goutil/jsonutil"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	json "github.com/goccy/go-json"
@@ -18,7 +18,7 @@ import (
 )
 
 // LoadConfig returns the default configuration including possible user overrides
-func Load(env platform.Environment) *Config {
+func Load(env runtime.Environment) *Config {
 	cfg := loadConfig(env)
 
 	// only migrate automatically when the switch isn't set
@@ -47,7 +47,7 @@ func Load(env platform.Environment) *Config {
 	return cfg
 }
 
-func loadConfig(env platform.Environment) *Config {
+func loadConfig(env runtime.Environment) *Config {
 	defer env.Trace(time.Now())
 	configFile := env.Flags().Config
 
@@ -61,7 +61,7 @@ func loadConfig(env platform.Environment) *Config {
 	cfg.Format = strings.TrimPrefix(filepath.Ext(configFile), ".")
 	cfg.env = env
 
-	data, err := os.ReadFile(configFile)
+	data, err := stdOS.ReadFile(configFile)
 	if err != nil {
 		env.DebugF("error reading config file: %s", err)
 		return Default(env, true)

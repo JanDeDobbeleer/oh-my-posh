@@ -6,8 +6,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 const (
@@ -86,7 +86,7 @@ func (o *OAuthRequest) refreshToken(refreshToken string) (string, error) {
 	return tokens.AccessToken, nil
 }
 
-func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModifiers ...platform.HTTPRequestModifier) (a, error) {
+func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModifiers ...runtime.HTTPRequestModifier) (a, error) {
 	if data, err := getCacheValue[a](&o.Request, url); err == nil {
 		return data, nil
 	}
@@ -103,7 +103,7 @@ func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModi
 	}
 
 	if requestModifiers == nil {
-		requestModifiers = []platform.HTTPRequestModifier{}
+		requestModifiers = []runtime.HTTPRequestModifier{}
 	}
 
 	requestModifiers = append(requestModifiers, addAuthHeader)

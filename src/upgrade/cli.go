@@ -8,7 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 var (
@@ -108,7 +108,7 @@ func (m *model) View() string {
 	return title + textStyle.Render(fmt.Sprintf("%s %s", m.spinner.View(), message))
 }
 
-func Run(env platform.Environment) {
+func Run(env runtime.Environment) {
 	titleStyle := lipgloss.NewStyle().Margin(1, 0, 1, 0)
 	title = "📦  Upgrading Oh My Posh"
 

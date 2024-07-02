@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 
@@ -29,8 +30,8 @@ func TestConsoleBackgroundColorTemplate(t *testing.T) {
 				"TERM_PROGRAM": tc.Term,
 			},
 		})
-		color := ConsoleBackgroundColor(env, "{{ if eq \"vscode\" .Env.TERM_PROGRAM }}#123456{{end}}")
-		assert.Equal(t, tc.Expected, color, tc.Case)
+		bgColor := ConsoleBackgroundColor(env, "{{ if eq \"vscode\" .Env.TERM_PROGRAM }}#123456{{end}}")
+		assert.Equal(t, color.Ansi(tc.Expected), bgColor, tc.Case)
 	}
 }
 

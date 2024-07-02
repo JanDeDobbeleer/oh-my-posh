@@ -3,6 +3,7 @@ package terminal
 import (
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 
 	"github.com/stretchr/testify/assert"
@@ -21,7 +22,7 @@ func TestGenerateHyperlinkNoUrl(t *testing.T) {
 	}
 	for _, tc := range cases {
 		Init(tc.ShellName)
-		AnsiColors = &DefaultColors{}
+		Colors = &color.Defaults{}
 
 		Write("white", "black", tc.Text)
 
@@ -95,7 +96,7 @@ func TestGenerateHyperlinkWithUrl(t *testing.T) {
 	}
 	for _, tc := range cases {
 		Init(tc.ShellName)
-		AnsiColors = &DefaultColors{}
+		Colors = &color.Defaults{}
 
 		Write("white", "black", tc.Text)
 
@@ -118,7 +119,7 @@ func TestGenerateFileLink(t *testing.T) {
 	}
 	for _, tc := range cases {
 		Init(shell.PWSH)
-		AnsiColors = &DefaultColors{}
+		Colors = &color.Defaults{}
 
 		Write("white", "black", tc.Text)
 

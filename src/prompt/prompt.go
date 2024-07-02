@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
@@ -172,8 +173,8 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		e.write(terminal.PromptStart())
 	}
 
-	foreground := prompt.ForegroundTemplates.FirstMatch(nil, e.Env, prompt.Foreground)
-	background := prompt.BackgroundTemplates.FirstMatch(nil, e.Env, prompt.Background)
+	foreground := color.Ansi(prompt.ForegroundTemplates.FirstMatch(nil, e.Env, string(prompt.Foreground)))
+	background := color.Ansi(prompt.BackgroundTemplates.FirstMatch(nil, e.Env, string(prompt.Background)))
 	terminal.SetColors(background, foreground)
 	terminal.Write(background, foreground, promptText)
 

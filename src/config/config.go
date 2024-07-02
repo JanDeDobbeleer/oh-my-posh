@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -19,8 +20,8 @@ type Config struct {
 	Version                  int                    `json:"version" toml:"version"`
 	FinalSpace               bool                   `json:"final_space,omitempty" toml:"final_space,omitempty"`
 	ConsoleTitleTemplate     string                 `json:"console_title_template,omitempty" toml:"console_title_template,omitempty"`
-	TerminalBackground       string                 `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
-	AccentColor              string                 `json:"accent_color,omitempty" toml:"accent_color,omitempty"`
+	TerminalBackground       color.Ansi             `json:"terminal_background,omitempty" toml:"terminal_background,omitempty"`
+	AccentColor              color.Ansi             `json:"accent_color,omitempty" toml:"accent_color,omitempty"`
 	Blocks                   []*Block               `json:"blocks,omitempty" toml:"blocks,omitempty"`
 	Tooltips                 []*Segment             `json:"tooltips,omitempty" toml:"tooltips,omitempty"`
 	TransientPrompt          *Segment               `json:"transient_prompt,omitempty" toml:"transient_prompt,omitempty"`
@@ -28,9 +29,9 @@ type Config struct {
 	ErrorLine                *Segment               `json:"error_line,omitempty" toml:"error_line,omitempty"`
 	SecondaryPrompt          *Segment               `json:"secondary_prompt,omitempty" toml:"secondary_prompt,omitempty"`
 	DebugPrompt              *Segment               `json:"debug_prompt,omitempty" toml:"debug_prompt,omitempty"`
-	Palette                  terminal.Palette       `json:"palette,omitempty" toml:"palette,omitempty"`
-	Palettes                 *terminal.Palettes     `json:"palettes,omitempty" toml:"palettes,omitempty"`
-	Cycle                    terminal.Cycle         `json:"cycle,omitempty" toml:"cycle,omitempty"`
+	Palette                  color.Palette          `json:"palette,omitempty" toml:"palette,omitempty"`
+	Palettes                 *color.Palettes        `json:"palettes,omitempty" toml:"palettes,omitempty"`
+	Cycle                    color.Cycle            `json:"cycle,omitempty" toml:"cycle,omitempty"`
 	ShellIntegration         bool                   `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
 	PWD                      string                 `json:"pwd,omitempty" toml:"pwd,omitempty"`
 	Var                      map[string]any         `json:"var,omitempty" toml:"var,omitempty"`
@@ -53,12 +54,12 @@ type Config struct {
 	env     platform.Environment
 }
 
-func (cfg *Config) MakeColors() terminal.ColorString {
+func (cfg *Config) MakeColors() color.String {
 	cacheDisabled := cfg.env.Getenv("OMP_CACHE_DISABLED") == "1"
-	return terminal.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
+	return color.MakeColors(cfg.getPalette(), !cacheDisabled, cfg.AccentColor, cfg.env)
 }
 
-func (cfg *Config) getPalette() terminal.Palette {
+func (cfg *Config) getPalette() color.Palette {
 	if cfg.Palettes == nil {
 		return cfg.Palette
 	}

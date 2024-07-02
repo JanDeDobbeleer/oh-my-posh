@@ -1,4 +1,4 @@
-package terminal
+package color
 
 import (
 	"errors"
@@ -26,12 +26,12 @@ func GetAccentColor(env platform.Environment) (*RGB, error) {
 	}, nil
 }
 
-func (d *DefaultColors) SetAccentColor(env platform.Environment, defaultColor string) {
+func (d *Defaults) SetAccentColor(env platform.Environment, defaultColor Ansi) {
 	rgb, err := GetAccentColor(env)
 	if err != nil {
-		d.accent = &Colors{
-			Foreground: string(d.ToColor(defaultColor, false)),
-			Background: string(d.ToColor(defaultColor, true)),
+		d.accent = &Set{
+			Foreground: d.ToAnsi(defaultColor, false),
+			Background: d.ToAnsi(defaultColor, true),
 		}
 
 		return
@@ -40,8 +40,8 @@ func (d *DefaultColors) SetAccentColor(env platform.Environment, defaultColor st
 	foreground := color.RGB(rgb.R, rgb.G, rgb.B, false)
 	background := color.RGB(rgb.R, rgb.G, rgb.B, true)
 
-	d.accent = &Colors{
-		Foreground: foreground.String(),
-		Background: background.String(),
+	d.accent = &Set{
+		Foreground: Ansi(foreground.String()),
+		Background: Ansi(background.String()),
 	}
 }

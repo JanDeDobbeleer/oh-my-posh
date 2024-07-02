@@ -1,10 +1,10 @@
 package config
 
 import (
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
-	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 func Default(env platform.Environment, warning bool) *Config {
@@ -27,16 +27,14 @@ func Default(env platform.Environment, warning bool) *Config {
 						Style:           Diamond,
 						LeadingDiamond:  "\ue0b6",
 						TrailingDiamond: "\ue0b0",
-						Background:      "p:yellow",
-						Foreground:      "p:black",
+						Set:             color.Set{Foreground: "p:black", Background: "p:yellow"},
 						Template:        " {{ if .SSHSession }}\ueba9 {{ end }}{{ .UserName }} ",
 					},
 					{
 						Type:            PATH,
 						Style:           Powerline,
 						PowerlineSymbol: "\ue0b0",
-						Background:      "p:orange",
-						Foreground:      "p:white",
+						Set:             color.Set{Foreground: "p:white", Background: "p:orange"},
 						Properties: properties.Map{
 							properties.Style: "folder",
 						},
@@ -46,14 +44,13 @@ func Default(env platform.Environment, warning bool) *Config {
 						Type:            GIT,
 						Style:           Powerline,
 						PowerlineSymbol: "\ue0b0",
-						Background:      "p:green",
+						Set:             color.Set{Foreground: "p:black", Background: "p:green"},
 						BackgroundTemplates: []string{
 							"{{ if or (.Working.Changed) (.Staging.Changed) }}p:yellow{{ end }}",
 							"{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:red{{ end }}",
 							"{{ if gt .Ahead 0 }}#49416D{{ end }}",
 							"{{ if gt .Behind 0 }}#7A306C{{ end }}",
 						},
-						Foreground: "p:black",
 						ForegroundTemplates: []string{
 							"{{ if or (.Working.Changed) (.Staging.Changed) }}p:black{{ end }}",
 							"{{ if and (gt .Ahead 0) (gt .Behind 0) }}p:white{{ end }}",
@@ -70,8 +67,7 @@ func Default(env platform.Environment, warning bool) *Config {
 						Type:            ROOT,
 						Style:           Powerline,
 						PowerlineSymbol: "\ue0b0",
-						Background:      "p:yellow",
-						Foreground:      "p:white",
+						Set:             color.Set{Foreground: "p:white", Background: "p:yellow"},
 						Template:        " \uf0e7 ",
 					},
 					{
@@ -79,11 +75,10 @@ func Default(env platform.Environment, warning bool) *Config {
 						Style:           Diamond,
 						LeadingDiamond:  "<transparent,background>\ue0b0</>",
 						TrailingDiamond: "\ue0b4",
-						Background:      "p:blue",
+						Set:             color.Set{Foreground: "p:white", Background: "p:blue"},
 						BackgroundTemplates: []string{
 							exitBackgroundTemplate,
 						},
-						Foreground: "p:white",
 						Properties: properties.Map{
 							properties.AlwaysEnabled: true,
 						},
@@ -95,11 +90,10 @@ func Default(env platform.Environment, warning bool) *Config {
 				Type: RPrompt,
 				Segments: []*Segment{
 					{
-						Type:       NODE,
-						Style:      Plain,
-						Background: "transparent",
-						Foreground: "p:green",
-						Template:   "\ue718 ",
+						Type:     NODE,
+						Style:    Plain,
+						Set:      color.Set{Foreground: "p:green", Background: "transparent"},
+						Template: "\ue718 ",
 						Properties: properties.Map{
 							segments.HomeEnabled:         false,
 							segments.FetchPackageManager: false,
@@ -107,21 +101,19 @@ func Default(env platform.Environment, warning bool) *Config {
 						},
 					},
 					{
-						Type:       GOLANG,
-						Style:      Plain,
-						Background: "transparent",
-						Foreground: "p:blue",
-						Template:   "\ue626 ",
+						Type:     GOLANG,
+						Style:    Plain,
+						Set:      color.Set{Foreground: "p:blue", Background: "transparent"},
+						Template: "\ue626 ",
 						Properties: properties.Map{
 							properties.FetchVersion: false,
 						},
 					},
 					{
-						Type:       PYTHON,
-						Style:      Plain,
-						Background: "transparent",
-						Foreground: "p:yellow",
-						Template:   "\ue235 ",
+						Type:     PYTHON,
+						Style:    Plain,
+						Set:      color.Set{Foreground: "p:yellow", Background: "transparent"},
+						Template: "\ue235 ",
 						Properties: properties.Map{
 							properties.FetchVersion:  false,
 							segments.DisplayMode:     "files",
@@ -129,24 +121,22 @@ func Default(env platform.Environment, warning bool) *Config {
 						},
 					},
 					{
-						Type:       SHELL,
-						Style:      Plain,
-						Background: "transparent",
-						Foreground: "p:white",
-						Template:   "in <p:blue><b>{{ .Name }}</b></> ",
+						Type:     SHELL,
+						Style:    Plain,
+						Set:      color.Set{Foreground: "p:white", Background: "transparent"},
+						Template: "in <p:blue><b>{{ .Name }}</b></> ",
 					},
 					{
-						Type:       TIME,
-						Style:      Plain,
-						Background: "transparent",
-						Foreground: "p:white",
-						Template:   "at <p:blue><b>{{ .CurrentDate | date \"15:04:05\" }}</b></>",
+						Type:     TIME,
+						Style:    Plain,
+						Set:      color.Set{Foreground: "p:white", Background: "transparent"},
+						Template: "at <p:blue><b>{{ .CurrentDate | date \"15:04:05\" }}</b></>",
 					},
 				},
 			},
 		},
 		ConsoleTitleTemplate: "{{ .Shell }} in {{ .Folder }}",
-		Palette: terminal.Palette{
+		Palette: color.Palette{
 			"black":  "#262B44",
 			"blue":   "#4B95E9",
 			"green":  "#59C9A5",
@@ -156,14 +146,12 @@ func Default(env platform.Environment, warning bool) *Config {
 			"yellow": "#F3AE35",
 		},
 		SecondaryPrompt: &Segment{
-			Background: "transparent",
-			Foreground: "p:black",
-			Template:   "<p:yellow,transparent>\ue0b6</><,p:yellow> > </><p:yellow,transparent>\ue0b0</> ",
+			Set:      color.Set{Foreground: "p:black", Background: "transparent"},
+			Template: "<p:yellow,transparent>\ue0b6</><,p:yellow> > </><p:yellow,transparent>\ue0b0</> ",
 		},
 		TransientPrompt: &Segment{
-			Background: "transparent",
-			Foreground: "p:black",
-			Template:   "<p:yellow,transparent>\ue0b6</><,p:yellow> {{ .Folder }} </><p:yellow,transparent>\ue0b0</> ",
+			Set:      color.Set{Foreground: "p:black", Background: "transparent"},
+			Template: "<p:yellow,transparent>\ue0b6</><,p:yellow> {{ .Folder }} </><p:yellow,transparent>\ue0b0</> ",
 		},
 		Tooltips: []*Segment{
 			{
@@ -171,8 +159,7 @@ func Default(env platform.Environment, warning bool) *Config {
 				Style:           Diamond,
 				LeadingDiamond:  "\ue0b0",
 				TrailingDiamond: "\ue0b4",
-				Background:      "p:orange",
-				Foreground:      "p:white",
+				Set:             color.Set{Foreground: "p:white", Background: "p:orange"},
 				Template:        " \ue7ad {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} ",
 				Properties: properties.Map{
 					properties.DisplayDefault: true,
@@ -184,8 +171,7 @@ func Default(env platform.Environment, warning bool) *Config {
 				Style:           Diamond,
 				LeadingDiamond:  "\ue0b0",
 				TrailingDiamond: "\ue0b4",
-				Background:      "p:blue",
-				Foreground:      "p:white",
+				Set:             color.Set{Foreground: "p:white", Background: "p:blue"},
 				Template:        " \uebd8 {{ .Name }} ",
 				Properties: properties.Map{
 					properties.DisplayDefault: true,

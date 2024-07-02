@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -91,39 +92,39 @@ func TestShouldIncludeFolder(t *testing.T) {
 
 func TestGetColors(t *testing.T) {
 	cases := []struct {
-		Case          string
-		Background    bool
-		ExpectedColor string
-		Templates     []string
-		DefaultColor  string
-		Region        string
-		Profile       string
+		Case       string
+		Background bool
+		Expected   color.Ansi
+		Templates  []string
+		Default    color.Ansi
+		Region     string
+		Profile    string
 	}{
-		{Case: "No template - foreground", ExpectedColor: "color", Background: false, DefaultColor: "color"},
-		{Case: "No template - background", ExpectedColor: "color", Background: true, DefaultColor: "color"},
-		{Case: "Nil template", ExpectedColor: "color", DefaultColor: "color", Templates: nil},
+		{Case: "No template - foreground", Expected: "color", Background: false, Default: "color"},
+		{Case: "No template - background", Expected: "color", Background: true, Default: "color"},
+		{Case: "Nil template", Expected: "color", Default: "color", Templates: nil},
 		{
-			Case:          "Template - default",
-			ExpectedColor: "color",
-			DefaultColor:  "color",
+			Case:     "Template - default",
+			Expected: "color",
+			Default:  "color",
 			Templates: []string{
 				"{{if contains \"john\" .Profile}}color2{{end}}",
 			},
 			Profile: "doe",
 		},
 		{
-			Case:          "Template - override",
-			ExpectedColor: "color2",
-			DefaultColor:  "color",
+			Case:     "Template - override",
+			Expected: "color2",
+			Default:  "color",
 			Templates: []string{
 				"{{if contains \"john\" .Profile}}color2{{end}}",
 			},
 			Profile: "john",
 		},
 		{
-			Case:          "Template - override multiple",
-			ExpectedColor: "color3",
-			DefaultColor:  "color",
+			Case:     "Template - override multiple",
+			Expected: "color3",
+			Default:  "color",
 			Templates: []string{
 				"{{if contains \"doe\" .Profile}}color2{{end}}",
 				"{{if contains \"john\" .Profile}}color3{{end}}",
@@ -131,9 +132,9 @@ func TestGetColors(t *testing.T) {
 			Profile: "john",
 		},
 		{
-			Case:          "Template - override multiple no match",
-			ExpectedColor: "color",
-			DefaultColor:  "color",
+			Case:     "Template - override multiple no match",
+			Expected: "color",
+			Default:  "color",
 			Templates: []string{
 				"{{if contains \"doe\" .Profile}}color2{{end}}",
 				"{{if contains \"philip\" .Profile}}color3{{end}}",
@@ -147,6 +148,7 @@ func TestGetColors(t *testing.T) {
 		env.On("TemplateCache").Return(&platform.TemplateCache{
 			Env: make(map[string]string),
 		})
+
 		segment := &Segment{
 			writer: &segments.Aws{
 				Profile: tc.Profile,
@@ -154,16 +156,18 @@ func TestGetColors(t *testing.T) {
 			},
 			env: env,
 		}
+
 		if tc.Background {
-			segment.Background = tc.DefaultColor
+			segment.Background = tc.Default
 			segment.BackgroundTemplates = tc.Templates
-			color := segment.ResolveBackground()
-			assert.Equal(t, tc.ExpectedColor, color, tc.Case)
+			bgColor := segment.ResolveBackground()
+			assert.Equal(t, tc.Expected, bgColor, tc.Case)
 			continue
 		}
-		segment.Foreground = tc.DefaultColor
+
+		segment.Foreground = tc.Default
 		segment.ForegroundTemplates = tc.Templates
-		color := segment.ResolveForeground()
-		assert.Equal(t, tc.ExpectedColor, color, tc.Case)
+		fgColor := segment.ResolveForeground()
+		assert.Equal(t, tc.Expected, fgColor, tc.Case)
 	}
 }

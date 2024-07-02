@@ -1,4 +1,4 @@
-package platform
+package runtime
 
 import (
 	"errors"
@@ -259,7 +259,7 @@ func (u *tokenUser) isMemberOf(sid *windows.SID) bool {
 	return false
 }
 
-func (env *Shell) isWriteable(folder string) bool {
+func (env *Terminal) isWriteable(folder string) bool {
 	cu, err := getCurrentUser()
 
 	if err != nil {
@@ -335,7 +335,7 @@ type memoryStatusEx struct {
 	AvailExtendedVirtual uint64
 }
 
-func (env *Shell) Memory() (*Memory, error) {
+func (env *Terminal) Memory() (*Memory, error) {
 	var memStat memoryStatusEx
 	memStat.Length = uint32(unsafe.Sizeof(memStat))
 	r0, _, err := globalMemoryStatusEx.Call(uintptr(unsafe.Pointer(&memStat)))

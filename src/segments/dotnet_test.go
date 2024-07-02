@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/constants"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -31,7 +31,7 @@ func TestDotnetSegment(t *testing.T) {
 
 		if tc.ExitCode != 0 {
 			env.Unset("RunCommand")
-			err := &platform.CommandError{ExitCode: tc.ExitCode}
+			err := &runtime.CommandError{ExitCode: tc.ExitCode}
 			env.On("RunCommand", "dotnet", []string{"--version"}).Return("", err)
 		}
 

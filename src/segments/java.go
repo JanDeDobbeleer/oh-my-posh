@@ -3,8 +3,8 @@ package segments
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Java struct {
@@ -15,7 +15,7 @@ func (j *Java) Template() string {
 	return languageTemplate
 }
 
-func (j *Java) Init(props properties.Properties, env platform.Environment) {
+func (j *Java) Init(props properties.Properties, env runtime.Environment) {
 	javaRegex := `(?: JRE)(?: \(.*\))? \((?P<version>(?P<major>[0-9]+)(?:\.(?P<minor>[0-9]+))?(?:\.(?P<patch>[0-9]+))?).*\),`
 	javaCmd := &cmd{
 		executable: "java",

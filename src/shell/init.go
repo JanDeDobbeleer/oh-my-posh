@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 )
@@ -57,18 +57,18 @@ var (
 	AutoUpgrade       bool
 )
 
-func getExecutablePath(env platform.Environment) (string, error) {
+func getExecutablePath(env runtime.Environment) (string, error) {
 	executable, err := os.Executable()
 	if err != nil {
 		return "", err
 	}
 	if env.Flags().Strict {
-		return platform.Base(env, executable), nil
+		return runtime.Base(env, executable), nil
 	}
 	// On Windows, it fails when the excutable is called in MSYS2 for example
 	// which uses unix style paths to resolve the executable's location.
 	// PowerShell knows how to resolve both, so we can swap this without any issue.
-	if env.GOOS() == platform.WINDOWS {
+	if env.GOOS() == runtime.WINDOWS {
 		executable = strings.ReplaceAll(executable, "\\", "/")
 	}
 	return executable, nil
@@ -164,7 +164,7 @@ func quoteNuStr(str string) string {
 	return fmt.Sprintf(`"%s"`, strings.NewReplacer(`\`, `\\`, `"`, `\"`).Replace(str))
 }
 
-func Init(env platform.Environment) string {
+func Init(env runtime.Environment) string {
 	shell := env.Flags().Shell
 	switch shell {
 	case PWSH, PWSH5, ELVISH:
@@ -200,7 +200,7 @@ func Init(env platform.Environment) string {
 	}
 }
 
-func PrintInit(env platform.Environment) string {
+func PrintInit(env runtime.Environment) string {
 	executable, err := getExecutablePath(env)
 	if err != nil {
 		return noExe
@@ -290,7 +290,7 @@ func PrintInit(env platform.Environment) string {
 	).Replace(script)
 }
 
-func createNuInit(env platform.Environment) {
+func createNuInit(env runtime.Environment) {
 	initPath := filepath.Join(env.Home(), ".oh-my-posh.nu")
 	f, err := os.OpenFile(initPath, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0755)
 	if err != nil {
@@ -303,7 +303,7 @@ func createNuInit(env platform.Environment) {
 	_ = f.Close()
 }
 
-func ConsoleBackgroundColor(env platform.Environment, backgroundColorTemplate color.Ansi) color.Ansi {
+func ConsoleBackgroundColor(env runtime.Environment, backgroundColorTemplate color.Ansi) color.Ansi {
 	if backgroundColorTemplate.IsEmpty() {
 		return backgroundColorTemplate
 	}

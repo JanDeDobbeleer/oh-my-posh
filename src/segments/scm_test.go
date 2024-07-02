@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -186,7 +186,7 @@ func TestHasCommand(t *testing.T) {
 		IsWslSharedPath bool
 		NativeFallback  bool
 	}{
-		{Case: "On Windows", ExpectedCommand: "git.exe", GOOS: platform.WINDOWS},
+		{Case: "On Windows", ExpectedCommand: "git.exe", GOOS: runtime.WINDOWS},
 		{Case: "Cache", ExpectedCommand: "git.exe", Command: "git.exe"},
 		{Case: "Non Windows", ExpectedCommand: "git"},
 		{Case: "Iside WSL2, non shared", ExpectedCommand: "git"},

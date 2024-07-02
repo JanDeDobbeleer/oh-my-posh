@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 const (
@@ -81,7 +81,7 @@ func (s *ScmStatus) String() string {
 
 type scm struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	IsWslSharedPath bool
 	CommandMissing  bool
@@ -104,7 +104,7 @@ const (
 	FullBranchPath properties.Property = "full_branch_path"
 )
 
-func (s *scm) Init(props properties.Properties, env platform.Environment) {
+func (s *scm) Init(props properties.Properties, env runtime.Environment) {
 	s.props = props
 	s.env = env
 }
@@ -140,7 +140,7 @@ func (s *scm) FileContents(folder, file string) string {
 
 func (s *scm) convertToWindowsPath(path string) string {
 	// only convert when in Windows, or when in a WSL shared folder and not using the native fallback
-	if s.env.GOOS() == platform.WINDOWS || (s.IsWslSharedPath && !s.nativeFallback) {
+	if s.env.GOOS() == runtime.WINDOWS || (s.IsWslSharedPath && !s.nativeFallback) {
 		return s.env.ConvertToWindowsPath(path)
 	}
 
@@ -163,7 +163,7 @@ func (s *scm) hasCommand(command string) bool {
 	// when in a WSL shared folder, we must use command.exe and convert paths accordingly
 	// for worktrees, stashes, and path to work, except when native_fallback is set
 	s.IsWslSharedPath = s.env.InWSLSharedDrive()
-	if s.env.GOOS() == platform.WINDOWS || s.IsWslSharedPath {
+	if s.env.GOOS() == runtime.WINDOWS || s.IsWslSharedPath {
 		command += ".exe"
 	}
 

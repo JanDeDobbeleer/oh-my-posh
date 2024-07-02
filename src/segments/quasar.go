@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"path/filepath"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 const (
@@ -41,7 +41,7 @@ func (q *Quasar) Template() string {
 	return " \uea6a {{.Full}}{{ if .HasVite }} \ueb29 {{ .Vite.Version }}{{ end }} "
 }
 
-func (q *Quasar) Init(props properties.Properties, env platform.Environment) {
+func (q *Quasar) Init(props properties.Properties, env runtime.Environment) {
 	q.language = language{
 		env:          env,
 		props:        props,

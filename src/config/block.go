@@ -3,7 +3,7 @@ package config
 import (
 	"sync"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
@@ -53,15 +53,15 @@ type Block struct {
 	MaxWidth int `json:"max_width,omitempty" toml:"max_width,omitempty"`
 	MinWidth int `json:"min_width,omitempty" toml:"min_width,omitempty"`
 
-	env platform.Environment
+	env runtime.Environment
 }
 
-func (b *Block) Init(env platform.Environment) {
+func (b *Block) Init(env runtime.Environment) {
 	b.env = env
 	b.executeSegmentLogic()
 }
 
-func (b *Block) InitPlain(env platform.Environment, config *Config) {
+func (b *Block) InitPlain(env runtime.Environment, config *Config) {
 	terminal.Init(shell.GENERIC)
 	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, config.TerminalBackground)
 	terminal.Colors = config.MakeColors()

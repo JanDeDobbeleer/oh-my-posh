@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -89,7 +89,7 @@ func TestOSInfo(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("Platform").Return(tc.Platform)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			Env: make(map[string]string),
 			WSL: tc.IsWSL,
 		})

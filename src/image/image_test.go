@@ -1,11 +1,11 @@
 package image
 
 import (
-	"os"
+	stdOS "os"
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
@@ -28,11 +28,14 @@ var cases = []struct {
 
 func runImageTest(config, content string) (string, error) {
 	poshImagePath := "jandedobbeleer.png"
-	file, err := os.CreateTemp("", poshImagePath)
+	file, err := stdOS.CreateTemp("", poshImagePath)
 	if err != nil {
 		return "", err
 	}
-	defer os.Remove(file.Name())
+
+	defer func() {
+		_ = stdOS.Remove(file.Name())
+	}()
 
 	terminal.Init(shell.GENERIC)
 
@@ -40,8 +43,8 @@ func runImageTest(config, content string) (string, error) {
 		AnsiString: content,
 	}
 
-	env := &platform.Shell{
-		CmdFlags: &platform.Flags{
+	env := &runtime.Terminal{
+		CmdFlags: &runtime.Flags{
 			Config: config,
 		},
 	}
@@ -53,7 +56,7 @@ func runImageTest(config, content string) (string, error) {
 
 	err = image.SavePNG()
 	if err == nil {
-		os.Remove(image.Path)
+		_ = stdOS.Remove(image.Path)
 	}
 
 	return filepath.Base(image.Path), err

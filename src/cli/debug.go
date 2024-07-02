@@ -6,8 +6,8 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
@@ -23,8 +23,8 @@ var debugCmd = &cobra.Command{
 	Run: func(_ *cobra.Command, _ []string) {
 		startTime := time.Now()
 
-		env := &platform.Shell{
-			CmdFlags: &platform.Flags{
+		env := &runtime.Terminal{
+			CmdFlags: &runtime.Flags{
 				Config: configFlag,
 				Debug:  true,
 				PWD:    pwd,

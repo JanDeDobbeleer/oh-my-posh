@@ -1,17 +1,17 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type SystemInfo struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Precision int
 
-	platform.SystemInfo
+	runtime.SystemInfo
 }
 
 const (
@@ -30,7 +30,7 @@ func (s *SystemInfo) Enabled() bool {
 	return true
 }
 
-func (s *SystemInfo) Init(props properties.Properties, env platform.Environment) {
+func (s *SystemInfo) Init(props properties.Properties, env runtime.Environment) {
 	s.props = props
 	s.env = env
 	s.Precision = s.props.GetInt(Precision, 2)

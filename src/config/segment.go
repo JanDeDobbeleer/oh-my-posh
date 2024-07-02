@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 
 	c "golang.org/x/text/cases"
@@ -18,7 +18,7 @@ import (
 // SegmentStyle the style of segment, for more information, see the constants
 type SegmentStyle string
 
-func (s *SegmentStyle) resolve(env platform.Environment, context any) SegmentStyle {
+func (s *SegmentStyle) resolve(env runtime.Environment, context any) SegmentStyle {
 	txtTemplate := &template.Text{
 		Context: context,
 		Env:     env,
@@ -58,7 +58,7 @@ type Segment struct {
 
 	Text string
 
-	env        platform.Environment
+	env        runtime.Environment
 	writer     SegmentWriter
 	styleCache SegmentStyle
 	name       string
@@ -82,7 +82,7 @@ func (segment *Segment) Name() string {
 	return name
 }
 
-func (segment *Segment) SetEnabled(env platform.Environment) {
+func (segment *Segment) SetEnabled(env runtime.Environment) {
 	defer func() {
 		err := recover()
 		if err == nil {
@@ -112,7 +112,7 @@ func (segment *Segment) SetEnabled(env platform.Environment) {
 	segment.env.DebugF("Segment: %s", segment.Name())
 
 	// validate toggles
-	if toggles, OK := segment.env.Cache().Get(platform.TOGGLECACHE); OK && len(toggles) > 0 {
+	if toggles, OK := segment.env.Cache().Get(runtime.TOGGLECACHE); OK && len(toggles) > 0 {
 		list := strings.Split(toggles, ",")
 		for _, toggle := range list {
 			if SegmentType(toggle) == segment.Type || toggle == segment.Alias {

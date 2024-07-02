@@ -2,12 +2,12 @@ package config
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 )
 
-func Default(env platform.Environment, warning bool) *Config {
+func Default(env runtime.Environment, warning bool) *Config {
 	exitBackgroundTemplate := "{{ if gt .Code 0 }}p:red{{ end }}"
 	exitTemplate := " {{ if gt .Code 0 }}\uf00d{{ else }}\uf00c{{ end }} "
 	if warning {

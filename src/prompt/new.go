@@ -2,7 +2,7 @@ package prompt
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
@@ -10,8 +10,8 @@ import (
 // New returns a prompt engine initialized with the
 // given configuration options, and is ready to print any
 // of the prompt components.
-func New(flags *platform.Flags) *Engine {
-	env := &platform.Shell{
+func New(flags *runtime.Flags) *Engine {
+	env := &runtime.Terminal{
 		CmdFlags: flags,
 	}
 
@@ -39,7 +39,7 @@ func New(flags *platform.Flags) *Engine {
 	return eng
 }
 
-func patchPowerShellBleed(sh string, flags *platform.Flags) {
+func patchPowerShellBleed(sh string, flags *runtime.Flags) {
 	// when in PowerShell, and force patching the bleed bug
 	// we need to reduce the terminal width by 1 so the last
 	// character isn't cut off by the ANSI escape sequences

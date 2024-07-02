@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Aws struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Profile string
 	Region  string
@@ -24,7 +24,7 @@ func (a *Aws) Template() string {
 	return " {{ .Profile }}{{ if .Region }}@{{ .Region }}{{ end }} "
 }
 
-func (a *Aws) Init(props properties.Properties, env platform.Environment) {
+func (a *Aws) Init(props properties.Properties, env runtime.Environment) {
 	a.props = props
 	a.env = env
 }

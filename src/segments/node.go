@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Node struct {
@@ -30,7 +30,7 @@ func (n *Node) Template() string {
 	return " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
 }
 
-func (n *Node) Init(props properties.Properties, env platform.Environment) {
+func (n *Node) Init(props properties.Properties, env runtime.Environment) {
 	n.language = language{
 		env:        env,
 		props:      props,

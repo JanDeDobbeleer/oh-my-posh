@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -139,7 +139,7 @@ func TestUmbracoSegment(t *testing.T) {
 		env.On("Debug", mock2.Anything)
 
 		if tc.HasUmbracoFolder {
-			fileInfo := &platform.FileInfo{
+			fileInfo := &runtime.FileInfo{
 				Path:         "/workspace/MyProject/Umbraco",
 				ParentFolder: "/workspace/MyProject",
 				IsDir:        true,
@@ -147,8 +147,8 @@ func TestUmbracoSegment(t *testing.T) {
 
 			env.On("HasParentFilePath", "umbraco").Return(fileInfo, nil)
 		} else {
-			env.On("HasParentFilePath", "Umbraco").Return(&platform.FileInfo{}, errors.New("no such file or directory"))
-			env.On("HasParentFilePath", "umbraco").Return(&platform.FileInfo{}, errors.New("no such file or directory"))
+			env.On("HasParentFilePath", "Umbraco").Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
+			env.On("HasParentFilePath", "umbraco").Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
 		}
 
 		dirEntries := []fs.DirEntry{}

@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"runtime"
+	stdruntime "runtime"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/net"
 )
 
 func install() error {
@@ -23,11 +23,11 @@ func install() error {
 	}
 
 	extension := ""
-	if runtime.GOOS == platform.WINDOWS {
+	if stdruntime.GOOS == runtime.WINDOWS {
 		extension = ".exe"
 	}
 
-	asset := fmt.Sprintf("posh-%s-%s%s", runtime.GOOS, runtime.GOARCH, extension)
+	asset := fmt.Sprintf("posh-%s-%s%s", stdruntime.GOOS, stdruntime.GOARCH, extension)
 
 	setState(downloading)
 

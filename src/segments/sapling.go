@@ -3,7 +3,7 @@ package segments
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 // SaplingStatus represents part of the status of a Sapling repository
@@ -89,14 +89,14 @@ func (sl *Sapling) shouldDisplay() bool {
 	sl.rootDir = slDir.Path
 	// convert the worktree file path to a windows one when in a WSL shared folder
 	sl.realDir = strings.TrimSuffix(sl.convertToWindowsPath(slDir.Path), "/.sl")
-	sl.RepoName = platform.Base(sl.env, sl.convertToLinuxPath(sl.realDir))
+	sl.RepoName = runtime.Base(sl.env, sl.convertToLinuxPath(sl.realDir))
 	sl.setDir(slDir.Path)
 	return true
 }
 
 func (sl *Sapling) setDir(dir string) {
-	dir = platform.ReplaceHomeDirPrefixWithTilde(sl.env, dir) // align with template PWD
-	if sl.env.GOOS() == platform.WINDOWS {
+	dir = runtime.ReplaceHomeDirPrefixWithTilde(sl.env, dir) // align with template PWD
+	if sl.env.GOOS() == runtime.WINDOWS {
 		sl.Dir = strings.TrimSuffix(dir, `\.sl`)
 		return
 	}

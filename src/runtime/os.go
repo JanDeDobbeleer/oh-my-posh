@@ -1,4 +1,4 @@
-package platform
+package runtime
 
 import (
 	"context"
@@ -18,11 +18,11 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform/battery"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform/cmd"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/cmd"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/net"
 
 	disk "github.com/shirou/gopsutil/v3/disk"
 	load "github.com/shirou/gopsutil/v3/load"
@@ -194,7 +194,7 @@ type Environment interface {
 	Trace(start time.Time, args ...string)
 }
 
-type Shell struct {
+type Terminal struct {
 	CmdFlags *Flags
 	Var      SimpleMap
 
@@ -210,144 +210,144 @@ type Shell struct {
 	lsDirMap ConcurrentMap
 }
 
-func (env *Shell) Init() {
-	defer env.Trace(time.Now())
-	if env.CmdFlags == nil {
-		env.CmdFlags = &Flags{}
+func (term *Terminal) Init() {
+	defer term.Trace(time.Now())
+	if term.CmdFlags == nil {
+		term.CmdFlags = &Flags{}
 	}
 
-	if env.CmdFlags.Debug {
+	if term.CmdFlags.Debug {
 		log.Enable()
 	}
 
-	if env.CmdFlags.Plain {
+	if term.CmdFlags.Plain {
 		log.Plain()
 	}
 
-	env.fileCache = &fileCache{}
-	env.fileCache.Init(env.CachePath())
-	env.resolveConfigPath()
-	env.cmdCache = &commandCache{
+	term.fileCache = &fileCache{}
+	term.fileCache.Init(term.CachePath())
+	term.resolveConfigPath()
+	term.cmdCache = &commandCache{
 		commands: NewConcurrentMap(),
 	}
 
-	env.tmplCache = &TemplateCache{}
+	term.tmplCache = &TemplateCache{}
 
-	env.SetPromptCount()
+	term.SetPromptCount()
 }
 
-func (env *Shell) resolveConfigPath() {
-	defer env.Trace(time.Now())
+func (term *Terminal) resolveConfigPath() {
+	defer term.Trace(time.Now())
 
-	if len(env.CmdFlags.Config) == 0 {
-		env.CmdFlags.Config = env.Getenv("POSH_THEME")
+	if len(term.CmdFlags.Config) == 0 {
+		term.CmdFlags.Config = term.Getenv("POSH_THEME")
 	}
 
-	if len(env.CmdFlags.Config) == 0 {
-		env.Debug("No config set, fallback to default config")
+	if len(term.CmdFlags.Config) == 0 {
+		term.Debug("No config set, fallback to default config")
 		return
 	}
 
-	if strings.HasPrefix(env.CmdFlags.Config, "https://") {
-		filePath, err := config.Download(env.CachePath(), env.CmdFlags.Config)
+	if strings.HasPrefix(term.CmdFlags.Config, "https://") {
+		filePath, err := config.Download(term.CachePath(), term.CmdFlags.Config)
 		if err != nil {
-			env.Error(err)
-			env.CmdFlags.Config = ""
+			term.Error(err)
+			term.CmdFlags.Config = ""
 			return
 		}
 
-		env.CmdFlags.Config = filePath
+		term.CmdFlags.Config = filePath
 		return
 	}
 
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
-	if env.Platform() == WINDOWS && env.Shell() == "bash" {
-		env.Debug("Cygwin detected, using full path for config")
+	if term.Platform() == WINDOWS && term.Shell() == "bash" {
+		term.Debug("Cygwin detected, using full path for config")
 		return
 	}
 
-	configFile := env.CmdFlags.Config
+	configFile := term.CmdFlags.Config
 	if strings.HasPrefix(configFile, "~") {
 		configFile = strings.TrimPrefix(configFile, "~")
-		configFile = filepath.Join(env.Home(), configFile)
+		configFile = filepath.Join(term.Home(), configFile)
 	}
 
 	if !filepath.IsAbs(configFile) {
-		configFile = filepath.Join(env.Pwd(), configFile)
+		configFile = filepath.Join(term.Pwd(), configFile)
 	}
 
-	env.CmdFlags.Config = filepath.Clean(configFile)
+	term.CmdFlags.Config = filepath.Clean(configFile)
 }
 
-func (env *Shell) Trace(start time.Time, args ...string) {
+func (term *Terminal) Trace(start time.Time, args ...string) {
 	log.Trace(start, args...)
 }
 
-func (env *Shell) Debug(message string) {
+func (term *Terminal) Debug(message string) {
 	log.Debug(message)
 }
 
-func (env *Shell) DebugF(format string, a ...any) {
-	if !env.CmdFlags.Debug {
+func (term *Terminal) DebugF(format string, a ...any) {
+	if !term.CmdFlags.Debug {
 		return
 	}
 	message := fmt.Sprintf(format, a...)
 	log.Debug(message)
 }
 
-func (env *Shell) Error(err error) {
+func (term *Terminal) Error(err error) {
 	log.Error(err)
 }
 
-func (env *Shell) Getenv(key string) string {
-	defer env.Trace(time.Now(), key)
+func (term *Terminal) Getenv(key string) string {
+	defer term.Trace(time.Now(), key)
 	val := os.Getenv(key)
-	env.Debug(val)
+	term.Debug(val)
 	return val
 }
 
-func (env *Shell) Pwd() string {
-	env.Lock()
-	defer env.Trace(time.Now())
-	defer env.Unlock()
-	if env.cwd != "" {
-		return env.cwd
+func (term *Terminal) Pwd() string {
+	term.Lock()
+	defer term.Trace(time.Now())
+	defer term.Unlock()
+	if term.cwd != "" {
+		return term.cwd
 	}
 	correctPath := func(pwd string) string {
-		if env.GOOS() != WINDOWS {
+		if term.GOOS() != WINDOWS {
 			return pwd
 		}
 		// on Windows, and being case sensitive and not consistent and all, this gives silly issues
 		driveLetter := regex.GetCompiledRegex(`^[a-z]:`)
 		return driveLetter.ReplaceAllStringFunc(pwd, strings.ToUpper)
 	}
-	if env.CmdFlags != nil && env.CmdFlags.PWD != "" {
-		env.cwd = correctPath(env.CmdFlags.PWD)
-		env.Debug(env.cwd)
-		return env.cwd
+	if term.CmdFlags != nil && term.CmdFlags.PWD != "" {
+		term.cwd = correctPath(term.CmdFlags.PWD)
+		term.Debug(term.cwd)
+		return term.cwd
 	}
 	dir, err := os.Getwd()
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return ""
 	}
-	env.cwd = correctPath(dir)
-	env.Debug(env.cwd)
-	return env.cwd
+	term.cwd = correctPath(dir)
+	term.Debug(term.cwd)
+	return term.cwd
 }
 
-func (env *Shell) HasFiles(pattern string) bool {
-	return env.HasFilesInDir(env.Pwd(), pattern)
+func (term *Terminal) HasFiles(pattern string) bool {
+	return term.HasFilesInDir(term.Pwd(), pattern)
 }
 
-func (env *Shell) HasFilesInDir(dir, pattern string) bool {
-	defer env.Trace(time.Now(), pattern)
+func (term *Terminal) HasFilesInDir(dir, pattern string) bool {
+	defer term.Trace(time.Now(), pattern)
 
 	fileSystem := os.DirFS(dir)
 	var dirEntries []fs.DirEntry
 
-	if files, OK := env.lsDirMap.Get(dir); OK {
+	if files, OK := term.lsDirMap.Get(dir); OK {
 		dirEntries, _ = files.([]fs.DirEntry)
 	}
 
@@ -355,18 +355,18 @@ func (env *Shell) HasFilesInDir(dir, pattern string) bool {
 		var err error
 		dirEntries, err = fs.ReadDir(fileSystem, ".")
 		if err != nil {
-			env.Error(err)
-			env.Debug("false")
+			term.Error(err)
+			term.Debug("false")
 			return false
 		}
 
-		env.lsDirMap.Set(dir, dirEntries)
+		term.lsDirMap.Set(dir, dirEntries)
 	}
 
 	pattern = strings.ToLower(pattern)
 
-	env.RWMutex.RLock()
-	defer env.RWMutex.RUnlock()
+	term.RWMutex.RLock()
+	defer term.RWMutex.RUnlock()
 
 	for _, match := range dirEntries {
 		if match.IsDir() {
@@ -375,236 +375,236 @@ func (env *Shell) HasFilesInDir(dir, pattern string) bool {
 
 		matchFileName, err := filepath.Match(pattern, strings.ToLower(match.Name()))
 		if err != nil {
-			env.Error(err)
-			env.Debug("false")
+			term.Error(err)
+			term.Debug("false")
 			return false
 		}
 
 		if matchFileName {
-			env.Debug("true")
+			term.Debug("true")
 			return true
 		}
 	}
 
-	env.Debug("false")
+	term.Debug("false")
 	return false
 }
 
-func (env *Shell) HasFileInParentDirs(pattern string, depth uint) bool {
-	defer env.Trace(time.Now(), pattern, fmt.Sprint(depth))
-	currentFolder := env.Pwd()
+func (term *Terminal) HasFileInParentDirs(pattern string, depth uint) bool {
+	defer term.Trace(time.Now(), pattern, fmt.Sprint(depth))
+	currentFolder := term.Pwd()
 
 	for c := 0; c < int(depth); c++ {
-		if env.HasFilesInDir(currentFolder, pattern) {
-			env.Debug("true")
+		if term.HasFilesInDir(currentFolder, pattern) {
+			term.Debug("true")
 			return true
 		}
 
 		if dir := filepath.Dir(currentFolder); dir != currentFolder {
 			currentFolder = dir
 		} else {
-			env.Debug("false")
+			term.Debug("false")
 			return false
 		}
 	}
-	env.Debug("false")
+	term.Debug("false")
 	return false
 }
 
-func (env *Shell) HasFolder(folder string) bool {
-	defer env.Trace(time.Now(), folder)
+func (term *Terminal) HasFolder(folder string) bool {
+	defer term.Trace(time.Now(), folder)
 	f, err := os.Stat(folder)
 	if err != nil {
-		env.Debug("false")
+		term.Debug("false")
 		return false
 	}
 	isDir := f.IsDir()
-	env.DebugF("%t", isDir)
+	term.DebugF("%t", isDir)
 	return isDir
 }
 
-func (env *Shell) ResolveSymlink(path string) (string, error) {
-	defer env.Trace(time.Now(), path)
+func (term *Terminal) ResolveSymlink(path string) (string, error) {
+	defer term.Trace(time.Now(), path)
 	link, err := filepath.EvalSymlinks(path)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return "", err
 	}
-	env.Debug(link)
+	term.Debug(link)
 	return link, nil
 }
 
-func (env *Shell) FileContent(file string) string {
-	defer env.Trace(time.Now(), file)
+func (term *Terminal) FileContent(file string) string {
+	defer term.Trace(time.Now(), file)
 	if !filepath.IsAbs(file) {
-		file = filepath.Join(env.Pwd(), file)
+		file = filepath.Join(term.Pwd(), file)
 	}
 	content, err := os.ReadFile(file)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return ""
 	}
 	fileContent := string(content)
-	env.Debug(fileContent)
+	term.Debug(fileContent)
 	return fileContent
 }
 
-func (env *Shell) LsDir(path string) []fs.DirEntry {
-	defer env.Trace(time.Now(), path)
+func (term *Terminal) LsDir(path string) []fs.DirEntry {
+	defer term.Trace(time.Now(), path)
 	entries, err := os.ReadDir(path)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return nil
 	}
-	env.DebugF("%v", entries)
+	term.DebugF("%v", entries)
 	return entries
 }
 
-func (env *Shell) PathSeparator() string {
-	defer env.Trace(time.Now())
+func (term *Terminal) PathSeparator() string {
+	defer term.Trace(time.Now())
 	return string(os.PathSeparator)
 }
 
-func (env *Shell) User() string {
-	defer env.Trace(time.Now())
+func (term *Terminal) User() string {
+	defer term.Trace(time.Now())
 	user := os.Getenv("USER")
 	if user == "" {
 		user = os.Getenv("USERNAME")
 	}
-	env.Debug(user)
+	term.Debug(user)
 	return user
 }
 
-func (env *Shell) Host() (string, error) {
-	defer env.Trace(time.Now())
-	if len(env.host) != 0 {
-		return env.host, nil
+func (term *Terminal) Host() (string, error) {
+	defer term.Trace(time.Now())
+	if len(term.host) != 0 {
+		return term.host, nil
 	}
 
 	hostName, err := os.Hostname()
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return "", err
 	}
 
 	hostName = cleanHostName(hostName)
-	env.Debug(hostName)
-	env.host = hostName
+	term.Debug(hostName)
+	term.host = hostName
 
 	return hostName, nil
 }
 
-func (env *Shell) GOOS() string {
-	defer env.Trace(time.Now())
+func (term *Terminal) GOOS() string {
+	defer term.Trace(time.Now())
 	return runtime.GOOS
 }
 
-func (env *Shell) RunCommand(command string, args ...string) (string, error) {
-	defer env.Trace(time.Now(), append([]string{command}, args...)...)
-	if cacheCommand, ok := env.cmdCache.get(command); ok {
+func (term *Terminal) RunCommand(command string, args ...string) (string, error) {
+	defer term.Trace(time.Now(), append([]string{command}, args...)...)
+	if cacheCommand, ok := term.cmdCache.get(command); ok {
 		command = cacheCommand
 	}
 	output, err := cmd.Run(command, args...)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 	}
-	env.Debug(output)
+	term.Debug(output)
 	return output, err
 }
 
-func (env *Shell) RunShellCommand(shell, command string) string {
-	defer env.Trace(time.Now())
-	if out, err := env.RunCommand(shell, "-c", command); err == nil {
+func (term *Terminal) RunShellCommand(shell, command string) string {
+	defer term.Trace(time.Now())
+	if out, err := term.RunCommand(shell, "-c", command); err == nil {
 		return out
 	}
 	return ""
 }
 
-func (env *Shell) CommandPath(command string) string {
-	defer env.Trace(time.Now(), command)
-	if path, ok := env.cmdCache.get(command); ok {
-		env.Debug(path)
+func (term *Terminal) CommandPath(command string) string {
+	defer term.Trace(time.Now(), command)
+	if path, ok := term.cmdCache.get(command); ok {
+		term.Debug(path)
 		return path
 	}
 
-	path, err := env.LookPath(command)
+	path, err := term.LookPath(command)
 	if err == nil {
-		env.cmdCache.set(command, path)
-		env.Debug(path)
+		term.cmdCache.set(command, path)
+		term.Debug(path)
 		return path
 	}
 
-	env.Error(err)
+	term.Error(err)
 	return ""
 }
 
-func (env *Shell) HasCommand(command string) bool {
-	defer env.Trace(time.Now(), command)
-	if path := env.CommandPath(command); path != "" {
+func (term *Terminal) HasCommand(command string) bool {
+	defer term.Trace(time.Now(), command)
+	if path := term.CommandPath(command); path != "" {
 		return true
 	}
 	return false
 }
 
-func (env *Shell) StatusCodes() (int, string) {
-	defer env.Trace(time.Now())
+func (term *Terminal) StatusCodes() (int, string) {
+	defer term.Trace(time.Now())
 
-	if env.CmdFlags.Shell != CMD || !env.CmdFlags.NoExitCode {
-		return env.CmdFlags.ErrorCode, env.CmdFlags.PipeStatus
+	if term.CmdFlags.Shell != CMD || !term.CmdFlags.NoExitCode {
+		return term.CmdFlags.ErrorCode, term.CmdFlags.PipeStatus
 	}
 
-	errorCode := env.Getenv("=ExitCode")
-	env.Debug(errorCode)
-	env.CmdFlags.ErrorCode, _ = strconv.Atoi(errorCode)
+	errorCode := term.Getenv("=ExitCode")
+	term.Debug(errorCode)
+	term.CmdFlags.ErrorCode, _ = strconv.Atoi(errorCode)
 
-	return env.CmdFlags.ErrorCode, env.CmdFlags.PipeStatus
+	return term.CmdFlags.ErrorCode, term.CmdFlags.PipeStatus
 }
 
-func (env *Shell) ExecutionTime() float64 {
-	defer env.Trace(time.Now())
-	if env.CmdFlags.ExecutionTime < 0 {
+func (term *Terminal) ExecutionTime() float64 {
+	defer term.Trace(time.Now())
+	if term.CmdFlags.ExecutionTime < 0 {
 		return 0
 	}
-	return env.CmdFlags.ExecutionTime
+	return term.CmdFlags.ExecutionTime
 }
 
-func (env *Shell) Flags() *Flags {
-	defer env.Trace(time.Now())
-	return env.CmdFlags
+func (term *Terminal) Flags() *Flags {
+	defer term.Trace(time.Now())
+	return term.CmdFlags
 }
 
-func (env *Shell) Shell() string {
-	defer env.Trace(time.Now())
-	if len(env.CmdFlags.Shell) != 0 {
-		return env.CmdFlags.Shell
+func (term *Terminal) Shell() string {
+	defer term.Trace(time.Now())
+	if len(term.CmdFlags.Shell) != 0 {
+		return term.CmdFlags.Shell
 	}
-	env.Debug("no shell name provided in flags, trying to detect it")
+	term.Debug("no shell name provided in flags, trying to detect it")
 	pid := os.Getppid()
 	p, _ := process.NewProcess(int32(pid))
 	name, err := p.Name()
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return UNKNOWN
 	}
-	env.Debug("process name: " + name)
+	term.Debug("process name: " + name)
 	// this is used for when scoop creates a shim, see
 	// https://github.com/jandedobbeleer/oh-my-posh/issues/2806
 	executable, _ := os.Executable()
 	if name == executable {
 		p, _ = p.Parent()
 		name, err = p.Name()
-		env.Debug("parent process name: " + name)
+		term.Debug("parent process name: " + name)
 	}
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return UNKNOWN
 	}
 	// Cache the shell value to speed things up.
-	env.CmdFlags.Shell = strings.Trim(strings.TrimSuffix(name, ".exe"), " ")
-	return env.CmdFlags.Shell
+	term.CmdFlags.Shell = strings.Trim(strings.TrimSuffix(name, ".exe"), " ")
+	return term.CmdFlags.Shell
 }
 
-func (env *Shell) unWrapError(err error) error {
+func (term *Terminal) unWrapError(err error) error {
 	cause := err
 	for {
 		type nested interface{ Unwrap() error }
@@ -617,8 +617,8 @@ func (env *Shell) unWrapError(err error) error {
 	return cause
 }
 
-func (env *Shell) HTTPRequest(targetURL string, body io.Reader, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
-	defer env.Trace(time.Now(), targetURL)
+func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
+	defer term.Trace(time.Now(), targetURL)
 
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
@@ -632,22 +632,22 @@ func (env *Shell) HTTPRequest(targetURL string, body io.Reader, timeout int, req
 		modifier(request)
 	}
 
-	if env.CmdFlags.Debug {
+	if term.CmdFlags.Debug {
 		dump, _ := httputil.DumpRequestOut(request, true)
-		env.Debug(string(dump))
+		term.Debug(string(dump))
 	}
 
 	response, err := net.HTTPClient.Do(request)
 	if err != nil {
-		env.Error(err)
-		return nil, env.unWrapError(err)
+		term.Error(err)
+		return nil, term.unWrapError(err)
 	}
 
 	// anything inside the range [200, 299] is considered a success
 	if response.StatusCode < 200 || response.StatusCode >= 300 {
 		message := "HTTP status code " + strconv.Itoa(response.StatusCode)
 		err := errors.New(message)
-		env.Error(err)
+		term.Error(err)
 		return nil, err
 	}
 
@@ -655,18 +655,18 @@ func (env *Shell) HTTPRequest(targetURL string, body io.Reader, timeout int, req
 
 	responseBody, err := io.ReadAll(response.Body)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return nil, err
 	}
 
-	env.Debug(string(responseBody))
+	term.Debug(string(responseBody))
 
 	return responseBody, nil
 }
 
-func (env *Shell) HasParentFilePath(path string) (*FileInfo, error) {
-	defer env.Trace(time.Now(), path)
-	currentFolder := env.Pwd()
+func (term *Terminal) HasParentFilePath(path string) (*FileInfo, error) {
+	defer term.Trace(time.Now(), path)
+	currentFolder := term.Pwd()
 	for {
 		fileSystem := os.DirFS(currentFolder)
 		info, err := fs.Stat(fileSystem, path)
@@ -684,68 +684,68 @@ func (env *Shell) HasParentFilePath(path string) (*FileInfo, error) {
 			currentFolder = dir
 			continue
 		}
-		env.Error(err)
+		term.Error(err)
 		return nil, errors.New("no match at root level")
 	}
 }
 
-func (env *Shell) StackCount() int {
-	defer env.Trace(time.Now())
-	if env.CmdFlags.StackCount < 0 {
+func (term *Terminal) StackCount() int {
+	defer term.Trace(time.Now())
+	if term.CmdFlags.StackCount < 0 {
 		return 0
 	}
-	return env.CmdFlags.StackCount
+	return term.CmdFlags.StackCount
 }
 
-func (env *Shell) Cache() Cache {
-	return env.fileCache
+func (term *Terminal) Cache() Cache {
+	return term.fileCache
 }
 
-func (env *Shell) saveTemplateCache() {
+func (term *Terminal) saveTemplateCache() {
 	// only store this when in a primary prompt
 	// and when we have a transient prompt in the config
-	canSave := env.CmdFlags.Primary && env.CmdFlags.HasTransient
+	canSave := term.CmdFlags.Primary && term.CmdFlags.HasTransient
 	if !canSave {
 		return
 	}
-	cache := env.TemplateCache()
+	cache := term.TemplateCache()
 	cache.SegmentsCache = cache.Segments.SimpleMap()
 	templateCache, err := json.Marshal(cache)
 	if err == nil {
-		env.fileCache.Set(TEMPLATECACHE, string(templateCache), 1440)
+		term.fileCache.Set(TEMPLATECACHE, string(templateCache), 1440)
 	}
 }
 
-func (env *Shell) Close() {
-	defer env.Trace(time.Now())
-	env.saveTemplateCache()
-	env.fileCache.Close()
+func (term *Terminal) Close() {
+	defer term.Trace(time.Now())
+	term.saveTemplateCache()
+	term.fileCache.Close()
 }
 
-func (env *Shell) LoadTemplateCache() {
-	defer env.Trace(time.Now())
-	val, OK := env.fileCache.Get(TEMPLATECACHE)
+func (term *Terminal) LoadTemplateCache() {
+	defer term.Trace(time.Now())
+	val, OK := term.fileCache.Get(TEMPLATECACHE)
 	if !OK {
 		return
 	}
 	var tmplCache TemplateCache
 	err := json.Unmarshal([]byte(val), &tmplCache)
 	if err != nil {
-		env.Error(err)
+		term.Error(err)
 		return
 	}
 	tmplCache.Segments = tmplCache.SegmentsCache.ConcurrentMap()
 	tmplCache.initialized = true
-	env.tmplCache = &tmplCache
+	term.tmplCache = &tmplCache
 }
 
-func (env *Shell) Logs() string {
+func (term *Terminal) Logs() string {
 	return log.String()
 }
 
-func (env *Shell) TemplateCache() *TemplateCache {
-	defer env.Trace(time.Now())
-	tmplCache := env.tmplCache
+func (term *Terminal) TemplateCache() *TemplateCache {
+	defer term.Trace(time.Now())
+	tmplCache := term.tmplCache
 	tmplCache.Lock()
 	defer tmplCache.Unlock()
 
@@ -753,23 +753,23 @@ func (env *Shell) TemplateCache() *TemplateCache {
 		return tmplCache
 	}
 
-	tmplCache.Root = env.Root()
-	tmplCache.Shell = env.Shell()
-	tmplCache.ShellVersion = env.CmdFlags.ShellVersion
-	tmplCache.Code, _ = env.StatusCodes()
-	tmplCache.WSL = env.IsWsl()
+	tmplCache.Root = term.Root()
+	tmplCache.Shell = term.Shell()
+	tmplCache.ShellVersion = term.CmdFlags.ShellVersion
+	tmplCache.Code, _ = term.StatusCodes()
+	tmplCache.WSL = term.IsWsl()
 	tmplCache.Segments = NewConcurrentMap()
-	tmplCache.PromptCount = env.CmdFlags.PromptCount
+	tmplCache.PromptCount = term.CmdFlags.PromptCount
 	tmplCache.Env = make(map[string]string)
 	tmplCache.Var = make(map[string]any)
 
-	if env.Var != nil {
-		tmplCache.Var = env.Var
+	if term.Var != nil {
+		tmplCache.Var = term.Var
 	}
 
 	const separator = "="
 	values := os.Environ()
-	env.DebugF("environment: %v", values)
+	term.DebugF("environment: %v", values)
 	for value := range values {
 		key, val, valid := strings.Cut(values[value], separator)
 		if !valid {
@@ -778,31 +778,31 @@ func (env *Shell) TemplateCache() *TemplateCache {
 		tmplCache.Env[key] = val
 	}
 
-	pwd := env.Pwd()
-	tmplCache.PWD = ReplaceHomeDirPrefixWithTilde(env, pwd)
+	pwd := term.Pwd()
+	tmplCache.PWD = ReplaceHomeDirPrefixWithTilde(term, pwd)
 
 	tmplCache.AbsolutePWD = pwd
-	if env.IsWsl() {
-		tmplCache.AbsolutePWD, _ = env.RunCommand("wslpath", "-m", pwd)
+	if term.IsWsl() {
+		tmplCache.AbsolutePWD, _ = term.RunCommand("wslpath", "-m", pwd)
 	}
 
-	tmplCache.Folder = Base(env, pwd)
-	if env.GOOS() == WINDOWS && strings.HasSuffix(tmplCache.Folder, ":") {
+	tmplCache.Folder = Base(term, pwd)
+	if term.GOOS() == WINDOWS && strings.HasSuffix(tmplCache.Folder, ":") {
 		tmplCache.Folder += `\`
 	}
 
-	tmplCache.UserName = env.User()
-	if host, err := env.Host(); err == nil {
+	tmplCache.UserName = term.User()
+	if host, err := term.Host(); err == nil {
 		tmplCache.HostName = host
 	}
 
-	goos := env.GOOS()
+	goos := term.GOOS()
 	tmplCache.OS = goos
 	if goos == LINUX {
-		tmplCache.OS = env.Platform()
+		tmplCache.OS = term.Platform()
 	}
 
-	val := env.Getenv("SHLVL")
+	val := term.Getenv("SHLVL")
 	if shlvl, err := strconv.Atoi(val); err == nil {
 		tmplCache.SHLVL = shlvl
 	}
@@ -811,17 +811,17 @@ func (env *Shell) TemplateCache() *TemplateCache {
 	return tmplCache
 }
 
-func (env *Shell) DirMatchesOneOf(dir string, regexes []string) (match bool) {
+func (term *Terminal) DirMatchesOneOf(dir string, regexes []string) (match bool) {
 	// sometimes the function panics inside golang, we want to silence that error
 	// and assume that there's no match. Not perfect, but better than crashing
 	// for the time being until we figure out what the actual root cause is
 	defer func() {
 		if err := recover(); err != nil {
-			env.Error(errors.New("panic"))
+			term.Error(errors.New("panic"))
 			match = false
 		}
 	}()
-	match = dirMatchesOneOf(dir, env.Home(), env.GOOS(), regexes)
+	match = dirMatchesOneOf(dir, term.Home(), term.GOOS(), regexes)
 	return
 }
 
@@ -852,42 +852,42 @@ func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 	return false
 }
 
-func (env *Shell) SetPromptCount() {
+func (term *Terminal) SetPromptCount() {
 	countStr := os.Getenv("POSH_PROMPT_COUNT")
 	if len(countStr) > 0 {
 		// this counter is incremented by the shell
 		count, err := strconv.Atoi(countStr)
 		if err == nil {
-			env.CmdFlags.PromptCount = count
+			term.CmdFlags.PromptCount = count
 			return
 		}
 	}
 	var count int
-	if val, found := env.Cache().Get(PROMPTCOUNTCACHE); found {
+	if val, found := term.Cache().Get(PROMPTCOUNTCACHE); found {
 		count, _ = strconv.Atoi(val)
 	}
 	// only write to cache if we're the primary prompt
-	if env.CmdFlags.Primary {
+	if term.CmdFlags.Primary {
 		count++
-		env.Cache().Set(PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
+		term.Cache().Set(PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
 	}
-	env.CmdFlags.PromptCount = count
+	term.CmdFlags.PromptCount = count
 }
 
-func (env *Shell) CursorPosition() (row, col int) {
-	if number, err := strconv.Atoi(env.Getenv("POSH_CURSOR_LINE")); err == nil {
+func (term *Terminal) CursorPosition() (row, col int) {
+	if number, err := strconv.Atoi(term.Getenv("POSH_CURSOR_LINE")); err == nil {
 		row = number
 	}
-	if number, err := strconv.Atoi(env.Getenv("POSH_CURSOR_COLUMN")); err != nil {
+	if number, err := strconv.Atoi(term.Getenv("POSH_CURSOR_COLUMN")); err != nil {
 		col = number
 	}
 	return
 }
 
-func (env *Shell) SystemInfo() (*SystemInfo, error) {
+func (term *Terminal) SystemInfo() (*SystemInfo, error) {
 	s := &SystemInfo{}
 
-	mem, err := env.Memory()
+	mem, err := term.Memory()
 	if err != nil {
 		return nil, err
 	}

@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -26,7 +26,7 @@ func TestSvnEnabledToolNotFound(t *testing.T) {
 }
 
 func TestSvnEnabledInWorkingDirectory(t *testing.T) {
-	fileInfo := &platform.FileInfo{
+	fileInfo := &runtime.FileInfo{
 		Path:         "/dir/hello",
 		ParentFolder: "/dir",
 		IsDir:        true,
@@ -225,7 +225,7 @@ R       Moved.File`,
 		},
 	}
 	for _, tc := range cases {
-		fileInfo := &platform.FileInfo{
+		fileInfo := &runtime.FileInfo{
 			Path:         "/dir/hello",
 			ParentFolder: "/dir",
 			IsDir:        true,

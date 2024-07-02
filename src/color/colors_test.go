@@ -6,7 +6,7 @@ import (
 
 	"github.com/alecthomas/assert"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 func TestGetAnsiFromColorString(t *testing.T) {
@@ -40,7 +40,7 @@ func TestGetAnsiFromColorString(t *testing.T) {
 func TestMakeColors(t *testing.T) {
 	env := &mock.MockedEnvironment{}
 
-	env.On("WindowsRegistryKeyValue", `HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM\ColorizationColor`).Return(&platform.WindowsRegistryValue{}, errors.New("err"))
+	env.On("WindowsRegistryKeyValue", `HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM\ColorizationColor`).Return(&runtime.WindowsRegistryValue{}, errors.New("err"))
 	colors := MakeColors(nil, false, "", env)
 	assert.IsType(t, &Defaults{}, colors)
 

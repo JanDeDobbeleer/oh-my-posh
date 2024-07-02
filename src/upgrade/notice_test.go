@@ -6,7 +6,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/stretchr/testify/assert"
 
 	mock2 "github.com/stretchr/testify/mock"
@@ -24,9 +24,9 @@ func TestCanUpgrade(t *testing.T) {
 		Installer      string
 	}{
 		{Case: "Up to date", CurrentVersion: "3.0.0", LatestVersion: "v3.0.0"},
-		{Case: "Outdated Windows", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.WINDOWS},
-		{Case: "Outdated Linux", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.LINUX},
-		{Case: "Outdated Darwin", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: platform.DARWIN},
+		{Case: "Outdated Windows", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: runtime.WINDOWS},
+		{Case: "Outdated Linux", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: runtime.LINUX},
+		{Case: "Outdated Darwin", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: runtime.DARWIN},
 		{Case: "Cached", Cache: true},
 		{Case: "Error", Error: fmt.Errorf("error")},
 		{Case: "Windows Store", Installer: "ws"},

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/font"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/spf13/cobra"
@@ -35,7 +35,7 @@ This command is used to install fonts and configure the font in your terminal.
 				if len(args) > 1 {
 					fontName = args[1]
 				}
-				env := &platform.Shell{}
+				env := &runtime.Terminal{}
 				env.Init()
 				defer env.Close()
 

@@ -4,8 +4,8 @@ import (
 	"net"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/http"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type ipData struct {
@@ -62,7 +62,7 @@ func (i *IPify) getResult() (string, error) {
 	return data.IP, err
 }
 
-func (i *IPify) Init(props properties.Properties, env platform.Environment) {
+func (i *IPify) Init(props properties.Properties, env runtime.Environment) {
 	request := &http.Request{}
 	request.Init(env, props)
 

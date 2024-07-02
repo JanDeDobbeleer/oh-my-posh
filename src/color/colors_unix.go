@@ -2,13 +2,13 @@
 
 package color
 
-import "github.com/jandedobbeleer/oh-my-posh/src/platform"
+import "github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
-func GetAccentColor(_ platform.Environment) (*RGB, error) {
-	return nil, &platform.NotImplemented{}
+func GetAccentColor(_ runtime.Environment) (*RGB, error) {
+	return nil, &runtime.NotImplemented{}
 }
 
-func (d *Defaults) SetAccentColor(_ platform.Environment, defaultColor Ansi) {
+func (d *Defaults) SetAccentColor(_ runtime.Environment, defaultColor Ansi) {
 	if len(defaultColor) == 0 {
 		return
 	}

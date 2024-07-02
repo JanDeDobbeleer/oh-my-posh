@@ -3,8 +3,8 @@ package config
 import (
 	"errors"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 )
 
@@ -15,7 +15,7 @@ type SegmentType string
 type SegmentWriter interface {
 	Enabled() bool
 	Template() string
-	Init(props properties.Properties, env platform.Environment)
+	Init(props properties.Properties, env runtime.Environment)
 }
 
 const (
@@ -308,7 +308,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	YTM:             func() SegmentWriter { return &segments.Ytm{} },
 }
 
-func (segment *Segment) MapSegmentWithWriter(env platform.Environment) error {
+func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 	segment.env = env
 
 	if segment.Properties == nil {

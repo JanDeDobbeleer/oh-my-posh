@@ -2,11 +2,11 @@ package cli
 
 import (
 	"fmt"
-	"runtime"
+	stdruntime "runtime"
 	"slices"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 	"github.com/spf13/cobra"
@@ -22,18 +22,18 @@ var upgradeCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
 		supportedPlatforms := []string{
-			platform.WINDOWS,
-			platform.DARWIN,
-			platform.LINUX,
+			runtime.WINDOWS,
+			runtime.DARWIN,
+			runtime.LINUX,
 		}
 
-		if !slices.Contains(supportedPlatforms, runtime.GOOS) {
+		if !slices.Contains(supportedPlatforms, stdruntime.GOOS) {
 			fmt.Print("\n⚠️ upgrade is not supported on this platform\n\n")
 			return
 		}
 
-		env := &platform.Shell{
-			CmdFlags: &platform.Flags{},
+		env := &runtime.Terminal{
+			CmdFlags: &runtime.Flags{},
 		}
 		env.Init()
 		defer env.Close()

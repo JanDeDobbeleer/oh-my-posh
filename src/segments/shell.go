@@ -3,13 +3,13 @@ package segments
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Shell struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Name    string
 	Version string
@@ -37,7 +37,7 @@ func (s *Shell) Enabled() bool {
 	return true
 }
 
-func (s *Shell) Init(props properties.Properties, env platform.Environment) {
+func (s *Shell) Init(props properties.Properties, env runtime.Environment) {
 	s.props = props
 	s.env = env
 }

@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type OCaml struct {
@@ -13,7 +13,7 @@ func (o *OCaml) Template() string {
 	return languageTemplate
 }
 
-func (o *OCaml) Init(props properties.Properties, env platform.Environment) {
+func (o *OCaml) Init(props properties.Properties, env runtime.Environment) {
 	o.language = language{
 		env:        env,
 		props:      props,

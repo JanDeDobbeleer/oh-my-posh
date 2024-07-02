@@ -5,8 +5,8 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/image"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
@@ -49,8 +49,8 @@ Exports the config to an image file ~/mytheme.png.
 Exports the config to an image file using customized output options.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		env := &platform.Shell{
-			CmdFlags: &platform.Flags{
+		env := &runtime.Terminal{
+			CmdFlags: &runtime.Flags{
 				Config:        configFlag,
 				Shell:         shell.GENERIC,
 				TerminalWidth: 150,

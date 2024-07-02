@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform/net"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/net"
 )
 
 func Download(cachePath, url string) (string, error) {

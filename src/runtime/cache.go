@@ -1,4 +1,4 @@
-package platform
+package runtime
 
 import (
 	"encoding/json"

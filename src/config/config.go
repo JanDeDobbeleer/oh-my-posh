@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
@@ -51,7 +51,7 @@ type Config struct {
 	origin string
 	// eval    bool
 	updated bool
-	env     platform.Environment
+	env     runtime.Environment
 }
 
 func (cfg *Config) MakeColors() color.String {

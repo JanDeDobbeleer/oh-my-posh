@@ -3,19 +3,18 @@ package color
 import (
 	"errors"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
 	"github.com/gookit/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
-func GetAccentColor(env platform.Environment) (*RGB, error) {
+func GetAccentColor(env runtime.Environment) (*RGB, error) {
 	if env == nil {
 		return nil, errors.New("unable to get color without environment")
 	}
 
 	// see https://stackoverflow.com/questions/3560890/vista-7-how-to-get-glass-color
 	value, err := env.WindowsRegistryKeyValue(`HKEY_CURRENT_USER\Software\Microsoft\Windows\DWM\ColorizationColor`)
-	if err != nil || value.ValueType != platform.DWORD {
+	if err != nil || value.ValueType != runtime.DWORD {
 		return nil, err
 	}
 
@@ -26,7 +25,7 @@ func GetAccentColor(env platform.Environment) (*RGB, error) {
 	}, nil
 }
 
-func (d *Defaults) SetAccentColor(env platform.Environment, defaultColor Ansi) {
+func (d *Defaults) SetAccentColor(env runtime.Environment, defaultColor Ansi) {
 	rgb, err := GetAccentColor(env)
 	if err != nil {
 		d.accent = &Set{

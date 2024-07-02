@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -67,7 +66,7 @@ func TestHaskell(t *testing.T) {
 			env.On("RunCommand", "stack", []string{"ghc", "--", "--numeric-version"}).Return(tc.StackGhcVersion, nil)
 		}
 
-		fileInfo := &platform.FileInfo{
+		fileInfo := &runtime.FileInfo{
 			Path:         "../stack.yaml",
 			ParentFolder: "./",
 			IsDir:        false,

@@ -7,13 +7,13 @@ import (
 	"math"
 	"net/url"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Owm struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Temperature int
 	Weather     string
@@ -188,7 +188,7 @@ func (d *Owm) setStatus() error {
 	return nil
 }
 
-func (d *Owm) Init(props properties.Properties, env platform.Environment) {
+func (d *Owm) Init(props properties.Properties, env runtime.Environment) {
 	d.props = props
 	d.env = env
 }

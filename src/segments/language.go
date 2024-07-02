@@ -4,9 +4,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
@@ -61,7 +61,7 @@ func (c *cmd) parse(versionInfo string) (*version, error) {
 
 type language struct {
 	props              properties.Properties
-	env                platform.Environment
+	env                runtime.Environment
 	extensions         []string
 	folders            []string
 	commands           []*cmd
@@ -74,7 +74,7 @@ type language struct {
 	displayMode        string
 	// root is the root folder of the project
 	projectFiles []string
-	projectRoot  *platform.FileInfo
+	projectRoot  *runtime.FileInfo
 
 	version
 	Error    string
@@ -218,7 +218,7 @@ func (l *language) setVersion() error {
 			}
 
 			versionStr, err = l.env.RunCommand(command.executable, command.args...)
-			if exitErr, ok := err.(*platform.CommandError); ok {
+			if exitErr, ok := err.(*runtime.CommandError); ok {
 				l.exitCode = exitErr.ExitCode
 				lastError = fmt.Errorf("err executing %s with %s", command.executable, command.args)
 				continue

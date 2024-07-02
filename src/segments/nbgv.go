@@ -3,13 +3,13 @@ package segments
 import (
 	"encoding/json"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Nbgv struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	VersionInfo
 }
@@ -46,7 +46,7 @@ func (n *Nbgv) Enabled() bool {
 	return n.VersionInfo.VersionFileFound
 }
 
-func (n *Nbgv) Init(props properties.Properties, env platform.Environment) {
+func (n *Nbgv) Init(props properties.Properties, env runtime.Environment) {
 	n.props = props
 	n.env = env
 }

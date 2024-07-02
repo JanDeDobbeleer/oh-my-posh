@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type gitVersion struct {
@@ -46,7 +46,7 @@ type gitVersion struct {
 
 type GitVersion struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	gitVersion
 }
@@ -107,7 +107,7 @@ func (n *GitVersion) getCacheValue(key string) (*gitVersion, error) {
 	return semVer, err
 }
 
-func (n *GitVersion) Init(props properties.Properties, env platform.Environment) {
+func (n *GitVersion) Init(props properties.Properties, env runtime.Environment) {
 	n.props = props
 	n.env = env
 }

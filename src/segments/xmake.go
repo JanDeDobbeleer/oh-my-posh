@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type XMake struct {
@@ -13,7 +13,7 @@ func (x *XMake) Template() string {
 	return languageTemplate
 }
 
-func (x *XMake) Init(props properties.Properties, env platform.Environment) {
+func (x *XMake) Init(props properties.Properties, env runtime.Environment) {
 	x.language = language{
 		env:        env,
 		props:      props,

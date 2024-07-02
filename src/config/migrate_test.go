@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/stretchr/testify/assert"
@@ -91,7 +91,7 @@ func (m *MockedWriter) Template() string {
 	return m.template
 }
 
-func (m *MockedWriter) Init(_ properties.Properties, _ platform.Environment) {}
+func (m *MockedWriter) Init(_ properties.Properties, _ runtime.Environment) {}
 
 func TestIconOverride(t *testing.T) {
 	cases := []struct {

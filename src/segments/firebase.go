@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 const (
@@ -16,7 +16,7 @@ const (
 
 type Firebase struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Project string
 }
@@ -29,7 +29,7 @@ func (f *Firebase) Template() string {
 	return " {{ .Project}} "
 }
 
-func (f *Firebase) Init(props properties.Properties, env platform.Environment) {
+func (f *Firebase) Init(props properties.Properties, env runtime.Environment) {
 	f.props = props
 	f.env = env
 }

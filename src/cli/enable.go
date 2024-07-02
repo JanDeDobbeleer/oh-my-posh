@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
 	"github.com/spf13/cobra"
@@ -42,8 +42,8 @@ func init() {
 }
 
 func toggleFeature(cmd *cobra.Command, feature string, enable bool) {
-	env := &platform.Shell{
-		CmdFlags: &platform.Flags{
+	env := &runtime.Terminal{
+		CmdFlags: &runtime.Flags{
 			Shell: shellName,
 		},
 	}

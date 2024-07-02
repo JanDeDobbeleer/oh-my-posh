@@ -3,10 +3,12 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
-	"github.com/jandedobbeleer/oh-my-posh/src/engine"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/image"
+	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/spf13/cobra"
 )
@@ -47,9 +49,9 @@ Exports the config to an image file ~/mytheme.png.
 Exports the config to an image file using customized output options.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		env := &platform.Shell{
-			CmdFlags: &platform.Flags{
-				Config:        config,
+		env := &runtime.Terminal{
+			CmdFlags: &runtime.Flags{
+				Config:        configFlag,
 				Shell:         shell.GENERIC,
 				TerminalWidth: 150,
 			},
@@ -57,7 +59,7 @@ Exports the config to an image file using customized output options.`,
 
 		env.Init()
 		defer env.Close()
-		cfg := engine.LoadConfig(env)
+		cfg := config.Load(env)
 
 		// set sane defaults for things we don't print
 		cfg.ConsoleTitleTemplate = ""
@@ -67,26 +69,21 @@ Exports the config to an image file using customized output options.`,
 		// add variables to the environment
 		env.Var = cfg.Var
 
-		writerColors := cfg.MakeColors()
-		writer := &ansi.Writer{
-			TerminalBackground: shell.ConsoleBackgroundColor(env, cfg.TerminalBackground),
-			AnsiColors:         writerColors,
-			TrueColor:          env.CmdFlags.TrueColor,
-		}
-		writer.Init(shell.GENERIC)
-		eng := &engine.Engine{
+		terminal.Init(shell.GENERIC)
+		terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
+		terminal.Colors = cfg.MakeColors()
+
+		eng := &prompt.Engine{
 			Config: cfg,
 			Env:    env,
-			Writer: writer,
 		}
 
-		prompt := eng.Primary()
+		primaryPrompt := eng.Primary()
 
-		imageCreator := &engine.ImageRenderer{
-			AnsiString: prompt,
+		imageCreator := &image.Renderer{
+			AnsiString: primaryPrompt,
 			Author:     author,
 			BgColor:    bgColor,
-			Ansi:       writer,
 		}
 
 		if outputImage != "" {

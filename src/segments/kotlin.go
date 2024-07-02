@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Kotlin struct {
@@ -13,7 +13,7 @@ func (k *Kotlin) Template() string {
 	return languageTemplate
 }
 
-func (k *Kotlin) Init(props properties.Properties, env platform.Environment) {
+func (k *Kotlin) Init(props properties.Properties, env runtime.Environment) {
 	k.language = language{
 		env:        env,
 		props:      props,

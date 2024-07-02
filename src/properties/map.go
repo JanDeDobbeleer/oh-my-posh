@@ -3,12 +3,12 @@ package properties
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 )
 
 type Properties interface {
-	GetColor(property Property, defaultColor string) string
+	GetColor(property Property, defaultValue color.Ansi) color.Ansi
 	GetBool(property Property, defaultValue bool) bool
 	GetString(property Property, defaultValue string) string
 	GetFloat64(property Property, defaultValue float64) float64
@@ -65,19 +65,22 @@ func (m Map) GetString(property Property, defaultValue string) string {
 	return fmt.Sprint(val)
 }
 
-func (m Map) GetColor(property Property, defaultValue string) string {
+func (m Map) GetColor(property Property, defaultValue color.Ansi) color.Ansi {
 	val, found := m[property]
 	if !found {
 		return defaultValue
 	}
-	colorString := fmt.Sprint(val)
-	if ansi.IsAnsiColorName(colorString) {
+
+	colorString := color.Ansi(fmt.Sprint(val))
+	if color.IsAnsiColorName(colorString) {
 		return colorString
 	}
-	values := regex.FindNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|p:.*)`, colorString)
+
+	values := regex.FindNamedRegexMatch(`(?P<color>#[A-Fa-f0-9]{6}|[A-Fa-f0-9]{3}|p:.*)`, colorString.String())
 	if values != nil && values["color"] != "" {
-		return values["color"]
+		return color.Ansi(values["color"])
 	}
+
 	return defaultValue
 }
 

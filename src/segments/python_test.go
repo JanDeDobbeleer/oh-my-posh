@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/alecthomas/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -140,7 +140,7 @@ func TestPythonPythonInContext(t *testing.T) {
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
 		env.On("Getenv", "PYENV_VERSION").Return("")
-		env.On("HasParentFilePath", ".python-version").Return(&platform.FileInfo{}, errors.New("no match at root level"))
+		env.On("HasParentFilePath", ".python-version").Return(&runtime.FileInfo{}, errors.New("no match at root level"))
 		python := &Python{}
 		python.Init(properties.Map{}, env)
 		python.loadContext()
@@ -188,7 +188,7 @@ func TestPythonVirtualEnvIgnoreDefaultVenvNames(t *testing.T) {
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
 		env.On("Getenv", "PYENV_VERSION").Return("")
-		env.On("HasParentFilePath", ".python-version").Return(&platform.FileInfo{}, errors.New("no match at root level"))
+		env.On("HasParentFilePath", ".python-version").Return(&runtime.FileInfo{}, errors.New("no match at root level"))
 
 		props[FolderNameFallback] = tc.FolderNameFallback
 

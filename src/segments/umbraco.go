@@ -5,13 +5,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Umbraco struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Modern  bool
 	Version string
@@ -86,7 +86,7 @@ func (u *Umbraco) Template() string {
 	return "{{.Version}} "
 }
 
-func (u *Umbraco) Init(props properties.Properties, env platform.Environment) {
+func (u *Umbraco) Init(props properties.Properties, env runtime.Environment) {
 	u.props = props
 	u.env = env
 }

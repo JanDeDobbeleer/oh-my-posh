@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	lang "golang.org/x/text/language"
 	"golang.org/x/text/message"
@@ -13,7 +13,7 @@ import (
 
 type Executiontime struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	FormattedMs string
 	Ms          int64
@@ -70,7 +70,7 @@ func (t *Executiontime) Template() string {
 	return " {{ .FormattedMs }} "
 }
 
-func (t *Executiontime) Init(props properties.Properties, env platform.Environment) {
+func (t *Executiontime) Init(props properties.Properties, env runtime.Environment) {
 	t.props = props
 	t.env = env
 }

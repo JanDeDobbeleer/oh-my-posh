@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Bun struct {
@@ -13,7 +13,7 @@ func (b *Bun) Template() string {
 	return languageTemplate
 }
 
-func (b *Bun) Init(props properties.Properties, env platform.Environment) {
+func (b *Bun) Init(props properties.Properties, env runtime.Environment) {
 	b.language = language{
 		env:        env,
 		props:      props,

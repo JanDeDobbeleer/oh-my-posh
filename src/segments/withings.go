@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/http"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	http2 "net/http"
 	"net/url"
@@ -217,7 +217,7 @@ func (w *Withings) getSleep() bool {
 	return true
 }
 
-func (w *Withings) Init(props properties.Properties, env platform.Environment) {
+func (w *Withings) Init(props properties.Properties, env runtime.Environment) {
 	w.props = props
 
 	oauth := &http.OAuthRequest{

@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
@@ -16,7 +16,7 @@ const (
 
 type Status struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	String string
 	Error  bool
@@ -46,7 +46,7 @@ func (s *Status) Enabled() bool {
 	return s.Error
 }
 
-func (s *Status) Init(props properties.Properties, env platform.Environment) {
+func (s *Status) Init(props properties.Properties, env runtime.Environment) {
 	s.props = props
 	s.env = env
 

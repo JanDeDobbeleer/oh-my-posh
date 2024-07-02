@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 	"github.com/spf13/cobra"
 )
@@ -15,8 +15,8 @@ var noticeCmd = &cobra.Command{
 	Long:  "Print the upgrade notice when a new version is available.",
 	Args:  cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		env := &platform.Shell{
-			CmdFlags: &platform.Flags{},
+		env := &runtime.Terminal{
+			CmdFlags: &runtime.Flags{},
 		}
 		env.Init()
 		defer env.Close()

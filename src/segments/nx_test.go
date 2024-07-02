@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -31,7 +31,7 @@ func TestGetNodePackageVersion(t *testing.T) {
 		path := filepath.Join("posh", "node_modules", "nx")
 		env.On("HasFilesInDir", path, "package.json").Return(!tc.NoFiles)
 		env.On("FileContent", filepath.Join(path, "package.json")).Return(tc.PackageJSON)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			Env: make(map[string]string),
 		})
 		got, err := getNodePackageVersion(env, "nx")

@@ -9,8 +9,8 @@ import (
 	mock2 "github.com/stretchr/testify/mock"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -85,10 +85,10 @@ func TestUnitySegment(t *testing.T) {
 		env.On("Debug", mock2.Anything)
 
 		err := errors.New("no match at root level")
-		var projectDir *platform.FileInfo
+		var projectDir *runtime.FileInfo
 		if tc.VersionFileExists {
 			err = nil
-			projectDir = &platform.FileInfo{
+			projectDir = &runtime.FileInfo{
 				ParentFolder: "UnityProjectRoot",
 				Path:         "UnityProjectRoot/ProjectSettings",
 				IsDir:        true,
@@ -220,10 +220,10 @@ func TestUnitySegmentCSharpWebRequest(t *testing.T) {
 		env.On("Debug", mock2.Anything)
 
 		err := errors.New("no match at root level")
-		var projectDir *platform.FileInfo
+		var projectDir *runtime.FileInfo
 		if tc.VersionFileExists {
 			err = nil
-			projectDir = &platform.FileInfo{
+			projectDir = &runtime.FileInfo{
 				ParentFolder: "UnityProjectRoot",
 				Path:         "UnityProjectRoot/ProjectSettings",
 				IsDir:        true,

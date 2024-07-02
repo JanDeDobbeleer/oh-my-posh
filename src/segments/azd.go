@@ -5,13 +5,13 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Azd struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	azdConfig
 }
@@ -25,7 +25,7 @@ func (t *Azd) Template() string {
 	return " \uebd8 {{ .DefaultEnvironment }} "
 }
 
-func (t *Azd) Init(props properties.Properties, env platform.Environment) {
+func (t *Azd) Init(props properties.Properties, env runtime.Environment) {
 	t.props = props
 	t.env = env
 }

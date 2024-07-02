@@ -3,8 +3,8 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/engine"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/spf13/cobra"
 )
@@ -49,8 +49,8 @@ var printCmd = &cobra.Command{
 			return
 		}
 
-		flags := &platform.Flags{
-			Config:        config,
+		flags := &runtime.Flags{
+			Config:        configFlag,
 			PWD:           pwd,
 			PSWD:          pswd,
 			ErrorCode:     status,
@@ -68,26 +68,26 @@ var printCmd = &cobra.Command{
 			Column:        column,
 		}
 
-		eng := engine.New(flags)
+		eng := prompt.New(flags)
 		defer eng.Env.Close()
 
 		switch args[0] {
 		case "debug":
-			fmt.Print(eng.ExtraPrompt(engine.Debug))
+			fmt.Print(eng.ExtraPrompt(prompt.Debug))
 		case "primary":
 			fmt.Print(eng.Primary())
 		case "secondary":
-			fmt.Print(eng.ExtraPrompt(engine.Secondary))
+			fmt.Print(eng.ExtraPrompt(prompt.Secondary))
 		case "transient":
-			fmt.Print(eng.ExtraPrompt(engine.Transient))
+			fmt.Print(eng.ExtraPrompt(prompt.Transient))
 		case "right":
 			fmt.Print(eng.RPrompt())
 		case "tooltip":
 			fmt.Print(eng.Tooltip(command))
 		case "valid":
-			fmt.Print(eng.ExtraPrompt(engine.Valid))
+			fmt.Print(eng.ExtraPrompt(prompt.Valid))
 		case "error":
-			fmt.Print(eng.ExtraPrompt(engine.Error))
+			fmt.Print(eng.ExtraPrompt(prompt.Error))
 		default:
 			_ = cmd.Help()
 		}

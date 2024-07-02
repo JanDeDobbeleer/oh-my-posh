@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -39,7 +39,7 @@ func TestEnabledGitNotFound(t *testing.T) {
 }
 
 func TestEnabledInWorkingDirectory(t *testing.T) {
-	fileInfo := &platform.FileInfo{
+	fileInfo := &runtime.FileInfo{
 		Path:         "/dir/hello",
 		ParentFolder: "/dir",
 		IsDir:        true,
@@ -127,7 +127,7 @@ func TestEnabledInWorktree(t *testing.T) {
 			ExpectedRootFolder:    TestRootPath + "dev/separate/.git/posh",
 		},
 	}
-	fileInfo := &platform.FileInfo{
+	fileInfo := &runtime.FileInfo{
 		Path:         TestRootPath + dotGit,
 		ParentFolder: TestRootPath + "dev",
 	}
@@ -192,7 +192,7 @@ func TestEnabledInBareRepo(t *testing.T) {
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("GOOS").Return("")
 		env.On("HasCommand", "git").Return(true)
-		env.On("HasParentFilePath", ".git").Return(&platform.FileInfo{}, errors.New("nope"))
+		env.On("HasParentFilePath", ".git").Return(&runtime.FileInfo{}, errors.New("nope"))
 		env.MockGitCommand(pwd, tc.IsBare, "rev-parse", "--is-bare-repository")
 		env.On("Pwd").Return(pwd)
 		env.On("FileContent", "/home/user/bare.git/HEAD").Return(tc.HEAD)
@@ -1142,7 +1142,7 @@ func TestGitRepoName(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("PathSeparator").Return("/")
-		env.On("GOOS").Return(platform.LINUX)
+		env.On("GOOS").Return(runtime.LINUX)
 
 		g := &Git{
 			scm: scm{

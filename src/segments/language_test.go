@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -61,7 +61,7 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	env.On("Pwd").Return(cwd)
 	env.On("Home").Return(home)
 	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-	env.On("TemplateCache").Return(&platform.TemplateCache{
+	env.On("TemplateCache").Return(&runtime.TemplateCache{
 		Env: make(map[string]string),
 	})
 
@@ -394,7 +394,7 @@ func TestLanguageEnabledCommandExitCode(t *testing.T) {
 		enabledExtensions: []string{uni, corn},
 		enabledCommands:   []string{"uni"},
 		version:           universion,
-		expectedError:     &platform.CommandError{ExitCode: expected},
+		expectedError:     &runtime.CommandError{ExitCode: expected},
 	}
 	lang := bootStrapLanguageTest(args)
 	assert.True(t, lang.Enabled())
@@ -577,7 +577,7 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.MockedEnvironment
 	env.On("HasFiles", params.extension).Return(true)
 	env.On("Pwd").Return("/usr/home/project")
 	env.On("Home").Return("/usr/home")
-	env.On("TemplateCache").Return(&platform.TemplateCache{
+	env.On("TemplateCache").Return(&runtime.TemplateCache{
 		Env: make(map[string]string),
 	})
 	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)

@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,7 +27,7 @@ func TestMercurialEnabledToolNotFound(t *testing.T) {
 }
 
 func TestMercurialEnabledInWorkingDirectory(t *testing.T) {
-	fileInfo := &platform.FileInfo{
+	fileInfo := &runtime.FileInfo{
 		Path:         "/dir/hello",
 		ParentFolder: "/dir",
 		IsDir:        true,
@@ -137,7 +137,7 @@ A Added.File
 	}
 
 	for _, tc := range cases {
-		fileInfo := &platform.FileInfo{
+		fileInfo := &runtime.FileInfo{
 			Path:         "/dir/hello",
 			ParentFolder: "/dir",
 			IsDir:        true,

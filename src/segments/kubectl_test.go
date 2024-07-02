@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -141,7 +141,7 @@ func TestKubectlSegment(t *testing.T) {
 		}
 		var kubectlErr error
 		if tc.KubectlErr {
-			kubectlErr = &platform.CommandError{
+			kubectlErr = &runtime.CommandError{
 				Err:      "oops",
 				ExitCode: 1,
 			}

@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 )
 
@@ -17,7 +17,7 @@ type UpgradeCache struct {
 
 type Upgrade struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	// deprecated
 	Version string
@@ -31,7 +31,7 @@ func (u *Upgrade) Template() string {
 	return " \uf019 "
 }
 
-func (u *Upgrade) Init(props properties.Properties, env platform.Environment) {
+func (u *Upgrade) Init(props properties.Properties, env runtime.Environment) {
 	u.props = props
 	u.env = env
 }

@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/spf13/cobra"
 )
@@ -34,8 +34,8 @@ You can do the following:
 			_ = cmd.Help()
 			return
 		}
-		env := &platform.Shell{
-			CmdFlags: &platform.Flags{},
+		env := &runtime.Terminal{
+			CmdFlags: &runtime.Flags{},
 		}
 		env.Init()
 		defer env.Close()
@@ -43,7 +43,7 @@ You can do the following:
 		case "path":
 			fmt.Print(env.CachePath())
 		case "clear":
-			cacheFilePath := filepath.Join(env.CachePath(), platform.CacheFile)
+			cacheFilePath := filepath.Join(env.CachePath(), runtime.CacheFile)
 			err := os.Remove(cacheFilePath)
 			if err != nil {
 				fmt.Println(err.Error())
@@ -51,7 +51,7 @@ You can do the following:
 			}
 			fmt.Printf("removed cache file at %s\n", cacheFilePath)
 		case "edit":
-			cacheFilePath := filepath.Join(env.CachePath(), platform.CacheFile)
+			cacheFilePath := filepath.Join(env.CachePath(), runtime.CacheFile)
 			editFileWithEditor(cacheFilePath)
 		}
 	},

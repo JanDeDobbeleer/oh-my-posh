@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Julia struct {
@@ -13,7 +13,7 @@ func (j *Julia) Template() string {
 	return languageTemplate
 }
 
-func (j *Julia) Init(props properties.Properties, env platform.Environment) {
+func (j *Julia) Init(props properties.Properties, env runtime.Environment) {
 	j.language = language{
 		env:        env,
 		props:      props,

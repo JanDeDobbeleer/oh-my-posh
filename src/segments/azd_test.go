@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
 )
@@ -39,7 +39,7 @@ func TestAzdSegment(t *testing.T) {
 		env.On("Debug", mock2.Anything)
 
 		if tc.IsInited {
-			fileInfo := &platform.FileInfo{
+			fileInfo := &runtime.FileInfo{
 				Path:         "test/.azure",
 				ParentFolder: "test",
 				IsDir:        true,
@@ -58,7 +58,7 @@ func TestAzdSegment(t *testing.T) {
 
 			env.On("FileContent", filepath.Join("test", ".azure", "config.json")).Return(`{"version": 1, "defaultEnvironment": "TestEnvironment"}`, nil)
 		} else {
-			env.On("HasParentFilePath", ".azure").Return(&platform.FileInfo{}, errors.New("no such file or directory"))
+			env.On("HasParentFilePath", ".azure").Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
 		}
 
 		azd := Azd{

@@ -6,14 +6,14 @@ import (
 	http2 "net/http"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 // segment struct, makes templating easier
 type Nightscout struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	NightscoutData
 	TrendIcon string
@@ -147,7 +147,7 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 	return data, nil
 }
 
-func (ns *Nightscout) Init(props properties.Properties, env platform.Environment) {
+func (ns *Nightscout) Init(props properties.Properties, env runtime.Environment) {
 	ns.props = props
 	ns.env = env
 }

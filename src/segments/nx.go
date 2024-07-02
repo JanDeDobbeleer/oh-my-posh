@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Nx struct {
@@ -17,7 +17,7 @@ func (a *Nx) Template() string {
 	return languageTemplate
 }
 
-func (a *Nx) Init(props properties.Properties, env platform.Environment) {
+func (a *Nx) Init(props properties.Properties, env runtime.Environment) {
 	a.language = language{
 		env:        env,
 		props:      props,
@@ -40,7 +40,7 @@ func (a *Nx) getVersion() (string, error) {
 	return getNodePackageVersion(a.language.env, "nx")
 }
 
-func getNodePackageVersion(env platform.Environment, nodePackage string) (string, error) {
+func getNodePackageVersion(env runtime.Environment, nodePackage string) (string, error) {
 	const fileName string = "package.json"
 	folder := filepath.Join(env.Pwd(), "node_modules", nodePackage)
 	if !env.HasFilesInDir(folder, fileName) {

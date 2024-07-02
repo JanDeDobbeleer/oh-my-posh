@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 func TestQuasar(t *testing.T) {
@@ -64,7 +64,7 @@ func TestQuasar(t *testing.T) {
 		env, props := getMockedLanguageEnv(params)
 
 		env.On("HasFilesInDir", "/usr/home/project", "package-lock.json").Return(tc.HasPackageLockFile)
-		fileInfo := &platform.FileInfo{ParentFolder: "/usr/home/project", IsDir: true}
+		fileInfo := &runtime.FileInfo{ParentFolder: "/usr/home/project", IsDir: true}
 		env.On("HasParentFilePath", "quasar.config").Return(fileInfo, nil)
 		env.On("FileContent", filepath.Join(fileInfo.ParentFolder, "package-lock.json")).Return(packageLockFile)
 

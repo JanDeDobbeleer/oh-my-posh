@@ -3,15 +3,16 @@ package properties
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Wrapper struct {
 	Properties Map
-	Env        platform.Environment
+	Env        runtime.Environment
 }
 
-func (w *Wrapper) GetColor(property Property, defaultColor string) string {
+func (w *Wrapper) GetColor(property Property, defaultColor color.Ansi) color.Ansi {
 	value := w.Properties.GetColor(property, defaultColor)
 	w.Env.Debug(fmt.Sprintf("%s: %s", property, value))
 	return value

@@ -10,14 +10,14 @@ import (
 	"sort"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 // segment struct, makes templating easier
 type Brewfather struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Batch
 	TemperatureTrendIcon string
@@ -320,7 +320,7 @@ func (bf *Brewfather) SGToPlato(sg float64) float64 {
 	return math.Round(100*((135.997*sg*sg*sg)-(630.272*sg*sg)+(1111.14*sg)-616.868)) / 100 // 2 decimal places
 }
 
-func (bf *Brewfather) Init(props properties.Properties, env platform.Environment) {
+func (bf *Brewfather) Init(props properties.Properties, env runtime.Environment) {
 	bf.props = props
 	bf.env = env
 }

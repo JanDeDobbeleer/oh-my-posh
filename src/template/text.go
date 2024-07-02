@@ -7,8 +7,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 const (
@@ -45,14 +45,14 @@ var (
 type Text struct {
 	Template        string
 	Context         any
-	Env             platform.Environment
+	Env             runtime.Environment
 	TemplatesResult string
 }
 
 type Data any
 
 type Context struct {
-	*platform.TemplateCache
+	*runtime.TemplateCache
 
 	// Simple container to hold ANY object
 	Data

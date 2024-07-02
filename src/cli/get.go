@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	color2 "github.com/gookit/color"
 	"github.com/spf13/cobra"
@@ -44,8 +44,8 @@ This command is used to get the value of the following variables:
 			return
 		}
 
-		env := &platform.Shell{
-			CmdFlags: &platform.Flags{
+		env := &runtime.Terminal{
+			CmdFlags: &runtime.Flags{
 				Shell: shellName,
 			},
 		}
@@ -56,7 +56,7 @@ This command is used to get the value of the following variables:
 		case "shell":
 			fmt.Println(env.Shell())
 		case "accent":
-			rgb, err := ansi.GetAccentColor(env)
+			rgb, err := color.GetAccentColor(env)
 			if err != nil {
 				fmt.Println("error getting accent color:", err.Error())
 				return
@@ -65,7 +65,7 @@ This command is used to get the value of the following variables:
 			fmt.Println("#" + accent.Hex())
 		case "toggles":
 			cache := env.Cache()
-			togglesCache, _ := cache.Get(platform.TOGGLECACHE)
+			togglesCache, _ := cache.Get(runtime.TOGGLECACHE)
 			var toggles []string
 			if len(togglesCache) != 0 {
 				toggles = strings.Split(togglesCache, ",")

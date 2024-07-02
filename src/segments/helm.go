@@ -1,13 +1,13 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Helm struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Version string
 }
@@ -34,7 +34,7 @@ func (h *Helm) Template() string {
 	return " Helm {{.Version}}"
 }
 
-func (h *Helm) Init(props properties.Properties, env platform.Environment) {
+func (h *Helm) Init(props properties.Properties, env runtime.Environment) {
 	h.props = props
 	h.env = env
 }

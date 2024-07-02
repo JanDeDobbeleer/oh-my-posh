@@ -3,8 +3,8 @@ package segments
 import (
 	"path/filepath"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Angular struct {
@@ -15,7 +15,7 @@ func (a *Angular) Template() string {
 	return languageTemplate
 }
 
-func (a *Angular) Init(props properties.Properties, env platform.Environment) {
+func (a *Angular) Init(props properties.Properties, env runtime.Environment) {
 	a.language = language{
 		env:        env,
 		props:      props,

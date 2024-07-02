@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Php struct {
@@ -13,7 +13,7 @@ func (p *Php) Template() string {
 	return languageTemplate
 }
 
-func (p *Php) Init(props properties.Properties, env platform.Environment) {
+func (p *Php) Init(props properties.Properties, env runtime.Environment) {
 	p.language = language{
 		env:        env,
 		props:      props,

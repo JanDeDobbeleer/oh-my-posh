@@ -3,8 +3,7 @@ package cli
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/spf13/cobra"
 )
 
@@ -19,12 +18,12 @@ var toggleCmd = &cobra.Command{
 			_ = cmd.Help()
 			return
 		}
-		env := &platform.Shell{}
+		env := &runtime.Terminal{}
 		env.Init()
 		defer env.Close()
 
 		cache := env.Cache()
-		togglesCache, _ := cache.Get(platform.TOGGLECACHE)
+		togglesCache, _ := cache.Get(runtime.TOGGLECACHE)
 		var toggles []string
 		if len(togglesCache) != 0 {
 			toggles = strings.Split(togglesCache, ",")
@@ -45,7 +44,7 @@ var toggleCmd = &cobra.Command{
 			newToggles = append(newToggles, segment)
 		}
 
-		cache.Set(platform.TOGGLECACHE, strings.Join(newToggles, ","), 1440)
+		cache.Set(runtime.TOGGLECACHE, strings.Join(newToggles, ","), 1440)
 	},
 }
 

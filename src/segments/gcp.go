@@ -4,8 +4,8 @@ import (
 	"errors"
 	"path"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"gopkg.in/ini.v1"
 )
@@ -16,7 +16,7 @@ const (
 
 type Gcp struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Account string
 	Project string
@@ -27,7 +27,7 @@ func (g *Gcp) Template() string {
 	return " {{ .Project }} "
 }
 
-func (g *Gcp) Init(props properties.Properties, env platform.Environment) {
+func (g *Gcp) Init(props properties.Properties, env runtime.Environment) {
 	g.props = props
 	g.env = env
 }
@@ -75,8 +75,10 @@ func (g *Gcp) getConfigDirectory() string {
 	if len(cfgDir) != 0 {
 		return cfgDir
 	}
-	if g.env.GOOS() == platform.WINDOWS {
+
+	if g.env.GOOS() == runtime.WINDOWS {
 		return path.Join(g.env.Getenv("APPDATA"), "gcloud")
 	}
+
 	return path.Join(g.env.Home(), ".config", "gcloud")
 }

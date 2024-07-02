@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -26,7 +26,7 @@ func TestTrunc(t *testing.T) {
 	}
 
 	env := &mock.MockedEnvironment{}
-	env.On("TemplateCache").Return(&platform.TemplateCache{
+	env.On("TemplateCache").Return(&runtime.TemplateCache{
 		Env: make(map[string]string),
 	})
 	env.On("Error", mock2.Anything)

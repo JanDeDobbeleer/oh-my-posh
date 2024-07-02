@@ -3,8 +3,8 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/engine"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/spf13/cobra"
 )
@@ -34,15 +34,15 @@ Migrates the ~/myconfig.omp.json config file's glyphs and writes the result to y
 A backup of the current config can be found at ~/myconfig.omp.json.bak.`,
 	Args: cobra.NoArgs,
 	Run: func(_ *cobra.Command, _ []string) {
-		env := &platform.Shell{
-			CmdFlags: &platform.Flags{
-				Config: config,
+		env := &runtime.Terminal{
+			CmdFlags: &runtime.Flags{
+				Config: configFlag,
 			},
 		}
 
 		env.Init()
 		defer env.Close()
-		cfg := engine.LoadConfig(env)
+		cfg := config.Load(env)
 
 		cfg.MigrateGlyphs = true
 		if len(format) == 0 {

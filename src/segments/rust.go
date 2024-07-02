@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Rust struct {
@@ -13,7 +13,7 @@ func (r *Rust) Template() string {
 	return languageTemplate
 }
 
-func (r *Rust) Init(props properties.Properties, env platform.Environment) {
+func (r *Rust) Init(props properties.Properties, env runtime.Environment) {
 	r.language = language{
 		env:        env,
 		props:      props,

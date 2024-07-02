@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 	mock2 "github.com/stretchr/testify/mock"
@@ -83,7 +83,7 @@ func TestWTTrackedTime(t *testing.T) {
 		env.On("Cache").Return(cache)
 		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
 
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			Env: map[string]string{"HELLO": "hello"},
 		})
 
@@ -129,7 +129,7 @@ func TestWTGetUrl(t *testing.T) {
 
 		env.On("Error", mock2.Anything)
 		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&platform.TemplateCache{
+		env.On("TemplateCache").Return(&runtime.TemplateCache{
 			Env: map[string]string{"HELLO": "hello"},
 		})
 

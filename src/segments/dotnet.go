@@ -2,8 +2,8 @@ package segments
 
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/constants"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Dotnet struct {
@@ -16,7 +16,7 @@ func (d *Dotnet) Template() string {
 	return " {{ if .Unsupported }}\uf071{{ else }}{{ .Full }}{{ end }} "
 }
 
-func (d *Dotnet) Init(props properties.Properties, env platform.Environment) {
+func (d *Dotnet) Init(props properties.Properties, env runtime.Environment) {
 	d.language = language{
 		env:        env,
 		props:      props,

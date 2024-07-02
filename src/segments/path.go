@@ -6,16 +6,16 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 type Path struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	root          string
 	relative      string
@@ -126,12 +126,12 @@ func (pt *Path) setPaths() {
 			return false
 		}
 
-		isCygwin := pt.env.GOOS() == platform.WINDOWS && pt.env.Shell() == shell.BASH
+		isCygwin := pt.env.GOOS() == runtime.WINDOWS && pt.env.Shell() == shell.BASH
 		return isCygwin
 	}
 
 	pt.cygPath = displayCygpath()
-	pt.windowsPath = pt.env.GOOS() == platform.WINDOWS && !pt.cygPath
+	pt.windowsPath = pt.env.GOOS() == runtime.WINDOWS && !pt.cygPath
 	pt.pathSeparator = pt.env.PathSeparator()
 
 	pt.pwd = pt.env.Pwd()
@@ -168,12 +168,12 @@ func (pt *Path) Parent() string {
 		// a root path has no parent
 		return ""
 	}
-	base := platform.Base(pt.env, pt.pwd)
+	base := runtime.Base(pt.env, pt.pwd)
 	path := pt.replaceFolderSeparators(pt.pwd[:len(pt.pwd)-len(base)])
 	return path
 }
 
-func (pt *Path) Init(props properties.Properties, env platform.Environment) {
+func (pt *Path) Init(props properties.Properties, env runtime.Environment) {
 	pt.props = props
 	pt.env = env
 }
@@ -507,7 +507,7 @@ func (pt *Path) getFullPath() string {
 }
 
 func (pt *Path) getFolderPath() string {
-	pwd := platform.Base(pt.env, pt.pwd)
+	pwd := runtime.Base(pt.env, pt.pwd)
 	return pt.replaceFolderSeparators(pwd)
 }
 
@@ -599,7 +599,7 @@ func (pt *Path) replaceMappedLocations() (string, string) {
 }
 
 func (pt *Path) normalizePath(path string) string {
-	if pt.env.GOOS() != platform.WINDOWS || pt.cygPath {
+	if pt.env.GOOS() != runtime.WINDOWS || pt.cygPath {
 		return path
 	}
 
@@ -681,7 +681,7 @@ func (pt *Path) parsePath(inputPath string) (string, string) {
 
 func (pt *Path) normalize(inputPath string) string {
 	normalized := inputPath
-	if strings.HasPrefix(normalized, "~") && (len(normalized) == 1 || platform.IsPathSeparator(pt.env, normalized[1])) {
+	if strings.HasPrefix(normalized, "~") && (len(normalized) == 1 || runtime.IsPathSeparator(pt.env, normalized[1])) {
 		normalized = pt.env.Home() + normalized[1:]
 	}
 
@@ -690,10 +690,10 @@ func (pt *Path) normalize(inputPath string) string {
 	}
 
 	switch pt.env.GOOS() {
-	case platform.WINDOWS:
+	case runtime.WINDOWS:
 		normalized = pt.normalizePath(normalized)
 		fallthrough
-	case platform.DARWIN:
+	case runtime.DARWIN:
 		normalized = strings.ToLower(normalized)
 	}
 

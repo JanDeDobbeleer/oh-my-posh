@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Pnpm struct {
@@ -17,7 +17,7 @@ func (n *Pnpm) Template() string {
 	return " \U000F02C1 {{.Full}} "
 }
 
-func (n *Pnpm) Init(props properties.Properties, env platform.Environment) {
+func (n *Pnpm) Init(props properties.Properties, env runtime.Environment) {
 	n.language = language{
 		env:        env,
 		props:      props,

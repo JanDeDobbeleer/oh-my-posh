@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/http"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 // StravaAPI is a wrapper around http.Oauth
@@ -126,7 +126,7 @@ func (s *Strava) getActivityIcon() string {
 	return s.props.GetString(UnknownActivityIcon, "\ue213")
 }
 
-func (s *Strava) Init(props properties.Properties, env platform.Environment) {
+func (s *Strava) Init(props properties.Properties, env runtime.Environment) {
 	s.props = props
 
 	oauth := &http.OAuthRequest{

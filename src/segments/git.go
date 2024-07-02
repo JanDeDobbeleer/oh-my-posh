@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"gopkg.in/ini.v1"
 )
@@ -336,15 +336,15 @@ func (g *Git) getBareRepoInfo() {
 }
 
 func (g *Git) setDir(dir string) {
-	dir = platform.ReplaceHomeDirPrefixWithTilde(g.env, dir) // align with template PWD
-	if g.env.GOOS() == platform.WINDOWS {
+	dir = runtime.ReplaceHomeDirPrefixWithTilde(g.env, dir) // align with template PWD
+	if g.env.GOOS() == runtime.WINDOWS {
 		g.Dir = strings.TrimSuffix(dir, `\.git`)
 		return
 	}
 	g.Dir = strings.TrimSuffix(dir, "/.git")
 }
 
-func (g *Git) hasWorktree(gitdir *platform.FileInfo) bool {
+func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	g.rootDir = gitdir.Path
 	content := g.env.FileContent(gitdir.Path)
 	content = strings.Trim(content, " \r\n")
@@ -862,12 +862,12 @@ func (g *Git) getSwitchMode(property properties.Property, gitSwitch, mode string
 
 func (g *Git) repoName() string {
 	if !g.IsWorkTree {
-		return platform.Base(g.env, g.convertToLinuxPath(g.realDir))
+		return runtime.Base(g.env, g.convertToLinuxPath(g.realDir))
 	}
 
 	ind := strings.LastIndex(g.workingDir, ".git/worktrees")
 	if ind > -1 {
-		return platform.Base(g.env, g.workingDir[:ind])
+		return runtime.Base(g.env, g.workingDir[:ind])
 	}
 
 	return ""

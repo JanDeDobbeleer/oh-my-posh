@@ -1,8 +1,8 @@
 package segments
 
 import (
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"golang.org/x/mod/modfile"
 )
@@ -19,7 +19,7 @@ func (g *Golang) Template() string {
 	return languageTemplate
 }
 
-func (g *Golang) Init(props properties.Properties, env platform.Environment) {
+func (g *Golang) Init(props properties.Properties, env runtime.Environment) {
 	g.language = language{
 		env:        env,
 		props:      props,

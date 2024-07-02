@@ -3,13 +3,13 @@ package segments
 import (
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type Cmd struct {
 	props properties.Properties
-	env   platform.Environment
+	env   runtime.Environment
 
 	Output string
 }
@@ -86,7 +86,7 @@ func (c *Cmd) runScript(shell, script string) bool {
 	return len(c.Output) != 0
 }
 
-func (c *Cmd) Init(props properties.Properties, env platform.Environment) {
+func (c *Cmd) Init(props properties.Properties, env runtime.Environment) {
 	c.props = props
 	c.env = env
 }

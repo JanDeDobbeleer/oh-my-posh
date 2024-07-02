@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	config         string
+	configFlag     string
 	displayVersion bool
 )
 
@@ -48,7 +48,7 @@ var (
 )
 
 func init() {
-	RootCmd.PersistentFlags().StringVarP(&config, "config", "c", "", "config file path")
+	RootCmd.PersistentFlags().StringVarP(&configFlag, "config", "c", "", "config file path")
 	RootCmd.Flags().BoolVarP(&initialize, "init", "i", false, "init (deprecated)")
 	RootCmd.Flags().BoolVar(&displayVersion, "version", false, "version")
 	RootCmd.Flags().StringVarP(&shellName, "shell", "s", "", "shell (deprecated)")

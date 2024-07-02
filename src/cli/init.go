@@ -3,10 +3,10 @@ package cli
 import (
 	"fmt"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/ansi"
-	"github.com/jandedobbeleer/oh-my-posh/src/engine"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/config"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
 	"github.com/spf13/cobra"
@@ -55,10 +55,10 @@ func init() {
 }
 
 func runInit(shellName string) {
-	env := &platform.Shell{
-		CmdFlags: &platform.Flags{
+	env := &runtime.Terminal{
+		CmdFlags: &runtime.Flags{
 			Shell:  shellName,
-			Config: config,
+			Config: configFlag,
 			Strict: strict,
 			Manual: manual,
 		},
@@ -66,20 +66,21 @@ func runInit(shellName string) {
 	env.Init()
 	defer env.Close()
 
-	cfg := engine.LoadConfig(env)
+	cfg := config.Load(env)
 
 	shell.Transient = cfg.TransientPrompt != nil
 	shell.ErrorLine = cfg.ErrorLine != nil || cfg.ValidLine != nil
 	shell.Tooltips = len(cfg.Tooltips) > 0
 	shell.ShellIntegration = cfg.ShellIntegration
-	shell.PromptMark = shellName == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(ansi.PromptMark)
+	shell.PromptMark = shellName == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(terminal.PromptMark)
 
 	for i, block := range cfg.Blocks {
 		// only fetch cursor position when relevant
 		if !cfg.DisableCursorPositioning && (i == 0 && block.Newline) {
 			shell.CursorPositioning = true
 		}
-		if block.Type == engine.RPrompt {
+
+		if block.Type == config.RPrompt {
 			shell.RPrompt = true
 		}
 	}

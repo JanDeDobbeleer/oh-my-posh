@@ -6,8 +6,8 @@ import (
 
 	"github.com/alecthomas/assert"
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 func TestSetDir(t *testing.T) {
@@ -21,32 +21,32 @@ func TestSetDir(t *testing.T) {
 			Case:     "In home folder",
 			Expected: "~/sapling",
 			Path:     "/usr/home/sapling/.sl",
-			GOOS:     platform.LINUX,
+			GOOS:     runtime.LINUX,
 		},
 		{
 			Case:     "Outside home folder",
 			Expected: "/usr/sapling/repo",
 			Path:     "/usr/sapling/repo/.sl",
-			GOOS:     platform.LINUX,
+			GOOS:     runtime.LINUX,
 		},
 		{
 			Case:     "Windows home folder",
 			Expected: "~\\sapling",
 			Path:     "\\usr\\home\\sapling\\.sl",
-			GOOS:     platform.WINDOWS,
+			GOOS:     runtime.WINDOWS,
 		},
 		{
 			Case:     "Windows outside home folder",
 			Expected: "\\usr\\sapling\\repo",
 			Path:     "\\usr\\sapling\\repo\\.sl",
-			GOOS:     platform.WINDOWS,
+			GOOS:     runtime.WINDOWS,
 		},
 	}
 	for _, tc := range cases {
 		env := new(mock.MockedEnvironment)
 		env.On("GOOS").Return(tc.GOOS)
 		home := "/usr/home"
-		if tc.GOOS == platform.WINDOWS {
+		if tc.GOOS == runtime.WINDOWS {
 			home = "\\usr\\home"
 		}
 		env.On("Home").Return(home)
@@ -145,7 +145,7 @@ func TestShouldDisplay(t *testing.T) {
 			Expected:   true,
 		},
 	}
-	fileInfo := &platform.FileInfo{
+	fileInfo := &runtime.FileInfo{
 		Path:         "/sapling/repo/.sl",
 		ParentFolder: "/sapling/repo",
 		IsDir:        true,
@@ -154,13 +154,13 @@ func TestShouldDisplay(t *testing.T) {
 		env := new(mock.MockedEnvironment)
 		env.On("HasCommand", "sl").Return(tc.HasSapling)
 		env.On("InWSLSharedDrive").Return(false)
-		env.On("GOOS").Return(platform.LINUX)
+		env.On("GOOS").Return(runtime.LINUX)
 		env.On("Home").Return("/usr/home/sapling")
 		env.On("DirMatchesOneOf", fileInfo.ParentFolder, []string{"/sapling/repo"}).Return(tc.Excluded)
 		if tc.InRepo {
 			env.On("HasParentFilePath", ".sl").Return(fileInfo, nil)
 		} else {
-			env.On("HasParentFilePath", ".sl").Return(&platform.FileInfo{}, errors.New("error"))
+			env.On("HasParentFilePath", ".sl").Return(&runtime.FileInfo{}, errors.New("error"))
 		}
 		sl := &Sapling{
 			scm: scm{

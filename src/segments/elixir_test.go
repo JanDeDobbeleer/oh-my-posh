@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -50,7 +50,7 @@ func TestElixir(t *testing.T) {
 		env.On("HasCommand", "asdf").Return(tc.HasAsdf)
 		var asdfErr error
 		if tc.AsdfExitCode != 0 {
-			asdfErr = &platform.CommandError{ExitCode: tc.AsdfExitCode}
+			asdfErr = &runtime.CommandError{ExitCode: tc.AsdfExitCode}
 		}
 		env.On("RunCommand", "asdf", []string{"current", "elixir"}).Return(tc.AsdfVersionOutput, asdfErr)
 

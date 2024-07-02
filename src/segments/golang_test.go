@@ -6,8 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
-
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -43,7 +42,7 @@ func TestGolang(t *testing.T) {
 		env, props := getMockedLanguageEnv(params)
 		if tc.ParseModFile {
 			props[ParseModFile] = tc.ParseModFile
-			fileInfo := &platform.FileInfo{
+			fileInfo := &runtime.FileInfo{
 				Path:         "../go.mod",
 				ParentFolder: "./",
 				IsDir:        false,

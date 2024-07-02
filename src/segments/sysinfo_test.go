@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -16,7 +16,7 @@ func TestSysInfo(t *testing.T) {
 		Case           string
 		ExpectedString string
 		ExpectDisabled bool
-		SysInfo        platform.SystemInfo
+		SysInfo        runtime.SystemInfo
 		Precision      int
 		Template       string
 		Error          error
@@ -29,8 +29,8 @@ func TestSysInfo(t *testing.T) {
 		{
 			Case:           "physical mem",
 			ExpectedString: "50",
-			SysInfo: platform.SystemInfo{
-				Memory: platform.Memory{
+			SysInfo: runtime.SystemInfo{
+				Memory: runtime.Memory{
 					PhysicalPercentUsed: 50,
 				},
 			},
@@ -39,8 +39,8 @@ func TestSysInfo(t *testing.T) {
 		{
 			Case:           "physical mem 2 digits",
 			ExpectedString: "60.51",
-			SysInfo: platform.SystemInfo{
-				Memory: platform.Memory{
+			SysInfo: runtime.SystemInfo{
+				Memory: runtime.Memory{
 					PhysicalPercentUsed: 60.51,
 				},
 			},
@@ -50,8 +50,8 @@ func TestSysInfo(t *testing.T) {
 		{
 			Case:           "physical meme rounded",
 			ExpectedString: "61",
-			SysInfo: platform.SystemInfo{
-				Memory: platform.Memory{
+			SysInfo: runtime.SystemInfo{
+				Memory: runtime.Memory{
 					PhysicalPercentUsed: 61,
 				},
 			},
@@ -62,13 +62,13 @@ func TestSysInfo(t *testing.T) {
 			ExpectedString: "0.22 0.12 0",
 			Precision:      2,
 			Template:       "{{ round .Load1 .Precision }} {{round .Load5 .Precision }} {{round .Load15 .Precision }}",
-			SysInfo:        platform.SystemInfo{Load1: 0.22, Load5: 0.12, Load15: 0},
+			SysInfo:        runtime.SystemInfo{Load1: 0.22, Load5: 0.12, Load15: 0},
 		},
 		{
 			Case:           "not enabled",
 			ExpectDisabled: true,
-			SysInfo: platform.SystemInfo{
-				Memory: platform.Memory{
+			SysInfo: runtime.SystemInfo{
+				Memory: runtime.Memory{
 					PhysicalPercentUsed: 0,
 					SwapPercentUsed:     0,
 				},

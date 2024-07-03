@@ -4,15 +4,15 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func bootstrapYTMDATest(json string, err error) *Ytm {
 	url := "http://127.0.0.1:9863"
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HTTPRequest", url+"/query").Return([]byte(json), err)
 	ytm := &Ytm{
 		env: env,

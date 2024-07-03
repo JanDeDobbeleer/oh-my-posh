@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
 	"github.com/spf13/cobra"
@@ -43,7 +44,7 @@ You can do the following:
 		case "path":
 			fmt.Print(env.CachePath())
 		case "clear":
-			cacheFilePath := filepath.Join(env.CachePath(), runtime.CacheFile)
+			cacheFilePath := filepath.Join(env.CachePath(), cache.CacheFile)
 			err := os.Remove(cacheFilePath)
 			if err != nil {
 				fmt.Println(err.Error())
@@ -51,7 +52,7 @@ You can do the following:
 			}
 			fmt.Printf("removed cache file at %s\n", cacheFilePath)
 		case "edit":
-			cacheFilePath := filepath.Join(env.CachePath(), runtime.CacheFile)
+			cacheFilePath := filepath.Join(env.CachePath(), cache.CacheFile)
 			editFileWithEditor(cacheFilePath)
 		}
 	},

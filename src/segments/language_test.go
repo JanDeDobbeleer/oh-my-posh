@@ -3,12 +3,14 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -41,7 +43,7 @@ func (l *languageArgs) hasvalue(value string, list []string) bool {
 }
 
 func bootStrapLanguageTest(args *languageArgs) *language {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 
 	for _, command := range args.commands {
 		env.On("HasCommand", command.executable).Return(args.hasvalue(command.executable, args.enabledCommands))
@@ -60,15 +62,15 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 
 	env.On("Pwd").Return(cwd)
 	env.On("Home").Return(home)
-	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-	env.On("TemplateCache").Return(&runtime.TemplateCache{
+	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+	env.On("TemplateCache").Return(&cache.Template{
 		Env: make(map[string]string),
 	})
 
-	cache := &mock.MockedCache{}
-	cache.On("Get", mock2.Anything).Return(args.cachedVersion, len(args.cachedVersion) > 0)
-	cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
-	env.On("Cache").Return(cache)
+	c := &cache_.Cache{}
+	c.On("Get", testify_.Anything).Return(args.cachedVersion, len(args.cachedVersion) > 0)
+	c.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
+	env.On("Cache").Return(c)
 
 	if args.properties == nil {
 		args.properties = properties.Map{}
@@ -570,25 +572,25 @@ type mockedLanguageParams struct {
 	extension     string
 }
 
-func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.MockedEnvironment, properties.Map) {
-	env := new(mock.MockedEnvironment)
+func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, properties.Map) {
+	env := new(mock.Environment)
 	env.On("HasCommand", params.cmd).Return(true)
 	env.On("RunCommand", params.cmd, []string{params.versionParam}).Return(params.versionOutput, nil)
 	env.On("HasFiles", params.extension).Return(true)
 	env.On("Pwd").Return("/usr/home/project")
 	env.On("Home").Return("/usr/home")
-	env.On("TemplateCache").Return(&runtime.TemplateCache{
+	env.On("TemplateCache").Return(&cache.Template{
 		Env: make(map[string]string),
 	})
-	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
+	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 	props := properties.Map{
 		properties.FetchVersion: true,
 	}
 
-	cache := &mock.MockedCache{}
-	cache.On("Get", mock2.Anything).Return("", false)
-	cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
-	env.On("Cache").Return(cache)
+	c := &cache_.Cache{}
+	c.On("Get", testify_.Anything).Return("", false)
+	c.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
+	env.On("Cache").Return(c)
 
 	return env, props
 }

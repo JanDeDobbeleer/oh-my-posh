@@ -5,10 +5,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestPulumi(t *testing.T) {
@@ -185,7 +186,7 @@ description: A Console App
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 
 		env.On("HasCommand", "pulumi").Return(tc.HasCommand)
 		env.On("RunCommand", "pulumi", []string{"stack", "ls", "--json"}).Return(tc.Stack, tc.StackError)
@@ -193,9 +194,9 @@ description: A Console App
 
 		env.On("Pwd").Return("/home/foobar/Work/oh-my-posh/pulumi/projects/awesome-project")
 		env.On("Home").Return(filepath.Clean("/home/foobar"))
-		env.On("Error", mock2.Anything)
-		env.On("Debug", mock2.Anything)
-		env.On("DebugF", mock2.Anything, mock2.Anything)
+		env.On("Error", testify_.Anything)
+		env.On("Debug", testify_.Anything)
+		env.On("DebugF", testify_.Anything, testify_.Anything)
 
 		env.On("HasFiles", pulumiYAML).Return(len(tc.YAMLConfig) > 0)
 		env.On("FileContent", pulumiYAML).Return(tc.YAMLConfig, nil)
@@ -210,9 +211,9 @@ description: A Console App
 		env.On("HasFilesInDir", filepath.Clean("/home/foobar/.pulumi/workspaces"), workspaceFile).Return(len(tc.WorkSpaceFile) > 0)
 		env.On("FileContent", filepath.Clean("/home/foobar/.pulumi/workspaces/"+workspaceFile)).Return(tc.WorkSpaceFile, nil)
 
-		cache := &mock.MockedCache{}
+		cache := &cache_.Cache{}
 		cache.On("Get", "pulumi-oh-my-posh-1337-c62b7b6786c5c5a85896576e46a25d7c9f888e92-about").Return(tc.AboutCache, len(tc.AboutCache) > 0)
-		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
+		cache.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
 
 		env.On("Cache").Return(cache)
 

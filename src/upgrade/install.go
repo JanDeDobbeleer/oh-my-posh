@@ -5,13 +5,13 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/http"
+	httplib "net/http"
 	"os"
 	"path/filepath"
 	stdruntime "runtime"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime/net"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
 func install() error {
@@ -33,17 +33,17 @@ func install() error {
 
 	url := fmt.Sprintf("https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/%s", asset)
 
-	req, err := http.NewRequestWithContext(context.Background(), "GET", url, nil)
+	req, err := httplib.NewRequestWithContext(context.Background(), "GET", url, nil)
 	if err != nil {
 		return err
 	}
 
-	resp, err := net.HTTPClient.Do(req)
+	resp, err := http.HTTPClient.Do(req)
 	if err != nil {
 		return err
 	}
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != httplib.StatusOK {
 		return fmt.Errorf("failed to download installer: %s", url)
 	}
 

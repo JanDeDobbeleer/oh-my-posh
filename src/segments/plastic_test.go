@@ -3,15 +3,15 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestPlasticEnabledNotFound(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "cm").Return(false)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
@@ -25,7 +25,7 @@ func TestPlasticEnabledNotFound(t *testing.T) {
 }
 
 func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "cm").Return(true)
 	env.On("GOOS").Return("")
 	env.On("IsWsl").Return(false)
@@ -47,7 +47,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 }
 
 func setupCmStatusEnv(status, headStatus string) *Plastic {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("RunCommand", "cm", []string{"status", "--all", "--machinereadable"}).Return(status, nil)
 	env.On("RunCommand", "cm", []string{"status", "--head", "--machinereadable"}).Return(headStatus, nil)
 	p := &Plastic{
@@ -333,7 +333,7 @@ func TestPlasticTemplateString(t *testing.T) {
 			FetchStatus: true,
 		}
 		tc.Plastic.props = props
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		tc.Plastic.env = env
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Plastic), tc.Case)
 	}

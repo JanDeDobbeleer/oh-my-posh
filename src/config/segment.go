@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -112,7 +113,7 @@ func (segment *Segment) SetEnabled(env runtime.Environment) {
 	segment.env.DebugF("Segment: %s", segment.Name())
 
 	// validate toggles
-	if toggles, OK := segment.env.Cache().Get(runtime.TOGGLECACHE); OK && len(toggles) > 0 {
+	if toggles, OK := segment.env.Cache().Get(cache.TOGGLECACHE); OK && len(toggles) > 0 {
 		list := strings.Split(toggles, ",")
 		for _, toggle := range list {
 			if SegmentType(toggle) == segment.Type || toggle == segment.Alias {

@@ -6,11 +6,12 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -72,7 +73,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
+		env := &mock.Environment{}
 		props := properties.Map{
 			APIKey:                  "key",
 			Location:                tc.Location,
@@ -83,7 +84,7 @@ func TestOWMSegmentSingle(t *testing.T) {
 		location := url.QueryEscape(tc.Location)
 		testURL := fmt.Sprintf(OWMWEATHERAPIURL, location)
 		env.On("HTTPRequest", testURL).Return([]byte(tc.WeatherJSONResponse), tc.Error)
-		env.On("Error", mock2.Anything)
+		env.On("Error", testify_.Anything)
 
 		o := &Owm{
 			props: props,
@@ -206,7 +207,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 	testURL := fmt.Sprintf(OWMWEATHERAPIURL, location)
 
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
+		env := &mock.Environment{}
 
 		weatherResponse := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.3}}`, tc.IconID)
 		expectedString := fmt.Sprintf("%s (20°C)", tc.ExpectedIconString)
@@ -229,7 +230,7 @@ func TestOWMSegmentIcons(t *testing.T) {
 
 	// test with hyperlink enabled
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
+		env := &mock.Environment{}
 
 		weatherResponse := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20.3}}`, tc.IconID)
 		expectedString := fmt.Sprintf("«%s (20°C)»(%s)", tc.ExpectedIconString, testURL)
@@ -255,8 +256,8 @@ func TestOWMSegmentFromCacheByGeoName(t *testing.T) {
 	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
 	expectedString := fmt.Sprintf("%s (20°C)", "\ue30d")
 
-	env := &mock.MockedEnvironment{}
-	cache := &mock.MockedCache{}
+	env := &mock.Environment{}
+	cache := &cache_.Cache{}
 	o := &Owm{
 		props: properties.Map{
 			APIKey:   "key",
@@ -278,8 +279,8 @@ func TestOWMSegmentFromCacheWithHyperlinkByGeoName(t *testing.T) {
 	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
 	expectedString := fmt.Sprintf("«%s (20°C)»(http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", "\ue30d")
 
-	env := &mock.MockedEnvironment{}
-	cache := &mock.MockedCache{}
+	env := &mock.Environment{}
+	cache := &cache_.Cache{}
 
 	o := &Owm{
 		props: properties.Map{

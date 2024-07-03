@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestWTTrackedTime(t *testing.T) {
@@ -72,18 +73,18 @@ func TestWTTrackedTime(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
+		env := &mock.Environment{}
 		response := fmt.Sprintf(`{"cumulative_total": {"seconds": %.2f, "text": "x"}}`, float64(tc.Seconds))
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(response), tc.Error)
 
-		cache := &mock.MockedCache{}
-		cache.On("Get", FAKEAPIURL).Return(response, !tc.CacheFoundFail)
-		cache.On("Set", FAKEAPIURL, response, tc.CacheTimeout).Return()
-		env.On("Cache").Return(cache)
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
+		mockedCache := &cache_.Cache{}
+		mockedCache.On("Get", FAKEAPIURL).Return(response, !tc.CacheFoundFail)
+		mockedCache.On("Set", FAKEAPIURL, response, tc.CacheTimeout).Return()
+		env.On("Cache").Return(mockedCache)
+		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 
-		env.On("TemplateCache").Return(&runtime.TemplateCache{
+		env.On("TemplateCache").Return(&cache.Template{
 			Env: map[string]string{"HELLO": "hello"},
 		})
 
@@ -125,11 +126,11 @@ func TestWTGetUrl(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
+		env := &mock.Environment{}
 
-		env.On("Error", mock2.Anything)
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&runtime.TemplateCache{
+		env.On("Error", testify_.Anything)
+		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("TemplateCache").Return(&cache.Template{
 			Env: map[string]string{"HELLO": "hello"},
 		})
 

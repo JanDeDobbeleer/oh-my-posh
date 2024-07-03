@@ -3,12 +3,12 @@ package config
 import (
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestGetPalette(t *testing.T) {
@@ -70,12 +70,12 @@ func TestGetPalette(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
-		env.On("TemplateCache").Return(&runtime.TemplateCache{
+		env := &mock.Environment{}
+		env.On("TemplateCache").Return(&cache.Template{
 			Env:   map[string]string{},
 			Shell: "bash",
 		})
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
+		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		cfg := &Config{
 			env:      env,
 			Palette:  tc.Palette,

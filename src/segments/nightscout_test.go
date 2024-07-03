@@ -4,8 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -132,14 +133,14 @@ func TestNSSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
+		env := &mock.Environment{}
 		props := properties.Map{
 			properties.CacheTimeout: tc.CacheTimeout,
 			URL:                     "FAKE",
 			Headers:                 map[string]string{"Fake-Header": "xxxxx"},
 		}
 
-		cache := &mock.MockedCache{}
+		cache := &cache_.Cache{}
 		cache.On("Get", FAKEAPIURL).Return(tc.JSONResponse, !tc.CacheFoundFail)
 		cache.On("Set", FAKEAPIURL, tc.JSONResponse, tc.CacheTimeout).Return()
 

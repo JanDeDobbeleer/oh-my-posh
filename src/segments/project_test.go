@@ -6,13 +6,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/alecthomas/assert"
 
-	mock2 "github.com/stretchr/testify/mock"
-	testify_mock "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -256,11 +255,11 @@ func TestPackage(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On(hasFiles, testify_mock.Anything).Run(func(args testify_mock.Arguments) {
+		env := new(mock.Environment)
+		env.On(hasFiles, testify_.Anything).Run(func(args testify_.Arguments) {
 			for _, c := range env.ExpectedCalls {
 				if c.Method == hasFiles {
-					c.ReturnArguments = testify_mock.Arguments{args.Get(0).(string) == tc.File}
+					c.ReturnArguments = testify_.Arguments{args.Get(0).(string) == tc.File}
 				}
 			}
 		})
@@ -309,17 +308,17 @@ func TestNuspecPackage(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On(hasFiles, testify_mock.Anything).Run(func(args testify_mock.Arguments) {
+		env := new(mock.Environment)
+		env.On(hasFiles, testify_.Anything).Run(func(args testify_.Arguments) {
 			for _, c := range env.ExpectedCalls {
 				if c.Method != hasFiles {
 					continue
 				}
 				if args.Get(0).(string) == "*.nuspec" {
-					c.ReturnArguments = testify_mock.Arguments{tc.HasFiles}
+					c.ReturnArguments = testify_.Arguments{tc.HasFiles}
 					continue
 				}
-				c.ReturnArguments = testify_mock.Arguments{false}
+				c.ReturnArguments = testify_.Arguments{false}
 			}
 		})
 		env.On("Pwd").Return("posh")
@@ -387,12 +386,12 @@ func TestDotnetProject(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On(hasFiles, testify_mock.Anything).Run(func(args testify_mock.Arguments) {
+		env := new(mock.Environment)
+		env.On(hasFiles, testify_.Anything).Run(func(args testify_.Arguments) {
 			for _, c := range env.ExpectedCalls {
 				if c.Method == hasFiles {
 					pattern := "*" + filepath.Ext(tc.FileName)
-					c.ReturnArguments = testify_mock.Arguments{args.Get(0).(string) == pattern}
+					c.ReturnArguments = testify_.Arguments{args.Get(0).(string) == pattern}
 				}
 			}
 		})
@@ -403,7 +402,7 @@ func TestDotnetProject(t *testing.T) {
 			},
 		})
 		env.On("FileContent", tc.FileName).Return(tc.ProjectContents)
-		env.On("Error", mock2.Anything)
+		env.On("Error", testify_.Anything)
 		pkg := &Project{}
 		pkg.Init(properties.Map{}, env)
 		assert.Equal(t, tc.ExpectedEnabled, pkg.Enabled(), tc.Case)
@@ -429,11 +428,11 @@ func TestPowerShellModuleProject(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On(hasFiles, testify_mock.Anything).Run(func(args testify_mock.Arguments) {
+		env := new(mock.Environment)
+		env.On(hasFiles, testify_.Anything).Run(func(args testify_.Arguments) {
 			for _, c := range env.ExpectedCalls {
 				if c.Method == hasFiles {
-					c.ReturnArguments = testify_mock.Arguments{args.Get(0).(string) == "*.psd1"}
+					c.ReturnArguments = testify_.Arguments{args.Get(0).(string) == "*.psd1"}
 				}
 			}
 		})

@@ -4,11 +4,12 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -53,7 +54,7 @@ func TestLFMSegmentSingle(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
+		env := &mock.Environment{}
 		var props properties.Map = properties.Map{
 			APIKey:                  "key",
 			Username:                "KibbeWater",
@@ -62,7 +63,7 @@ func TestLFMSegmentSingle(t *testing.T) {
 		}
 
 		env.On("HTTPRequest", LFMAPIURL).Return([]byte(tc.APIJSONResponse), tc.Error)
-		env.On("Error", mock2.Anything)
+		env.On("Error", testify_.Anything)
 
 		o := &LastFM{
 			props: props,
@@ -86,8 +87,8 @@ func TestLFMSegmentFromCache(t *testing.T) {
 	response := `{"recenttracks":{"track":[{"artist":{"mbid":"","#text":"C.Gambino"},"streamable":"0","name":"Automatic","date":{"uts":"1699350223","#text":"07 Nov 2023, 09:43"}}]}}`
 	expectedString := "\uF04D"
 
-	env := &mock.MockedEnvironment{}
-	cache := &mock.MockedCache{}
+	env := &mock.Environment{}
+	cache := &cache_.Cache{}
 	o := &LastFM{
 		props: properties.Map{
 			APIKey:                  "key",

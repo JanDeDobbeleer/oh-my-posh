@@ -5,15 +5,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 type mockedStravaAPI struct {
-	mock2.Mock
+	testify_.Mock
 }
 
 func (s *mockedStravaAPI) GetActivities() ([]*StravaData, error) {
@@ -109,7 +109,7 @@ func TestStravaSegment(t *testing.T) {
 			tc.Template = strava.Template()
 		}
 
-		var got = renderTemplate(&mock.MockedEnvironment{}, tc.Template, strava)
+		var got = renderTemplate(&mock.Environment{}, tc.Template, strava)
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)
 	}
 }

@@ -319,7 +319,6 @@ func (segment *Segment) MapSegmentWithWriter(env runtime.Environment) error {
 		writer := f()
 		wrapper := &properties.Wrapper{
 			Properties: segment.Properties,
-			Env:        env,
 		}
 		writer.Init(wrapper, env)
 		segment.writer = writer

@@ -3,8 +3,8 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -26,9 +26,9 @@ func TestTextSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("PathSeparator").Return("/")
-		env.On("TemplateCache").Return(&runtime.TemplateCache{
+		env.On("TemplateCache").Return(&cache.Template{
 			UserName: "Posh",
 			Env: map[string]string{
 				"HELLO": "hello",

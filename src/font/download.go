@@ -8,10 +8,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"net/http"
+	httplib "net/http"
 	"net/url"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime/net"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
 func Download(fontPath string) ([]byte, error) {
@@ -33,22 +33,22 @@ func Download(fontPath string) ([]byte, error) {
 }
 
 func isZipFile(data []byte) bool {
-	contentType := http.DetectContentType(data)
+	contentType := httplib.DetectContentType(data)
 	return contentType == "application/zip"
 }
 
 func getRemoteFile(location string) (data []byte, err error) {
-	req, err := http.NewRequestWithContext(context.Background(), "GET", location, nil)
+	req, err := httplib.NewRequestWithContext(context.Background(), "GET", location, nil)
 	if err != nil {
 		return nil, err
 	}
-	resp, err := net.HTTPClient.Do(req)
+	resp, err := http.HTTPClient.Do(req)
 	if err != nil {
 		return
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
+	if resp.StatusCode != httplib.StatusOK {
 		return data, fmt.Errorf("Failed to download zip file: %s\n→ %s", resp.Status, location)
 	}
 

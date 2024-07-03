@@ -5,8 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -52,7 +52,7 @@ func TestFossilStatus(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("GOOS").Return("unix")
 		env.On("IsWsl").Return(false)
 		env.On("InWSLSharedDrive").Return(false)

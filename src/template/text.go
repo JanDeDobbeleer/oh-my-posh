@@ -7,6 +7,7 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
@@ -52,7 +53,7 @@ type Text struct {
 type Data any
 
 type Context struct {
-	*runtime.TemplateCache
+	*cache.Template
 
 	// Simple container to hold ANY object
 	Data
@@ -62,8 +63,8 @@ type Context struct {
 func (c *Context) init(t *Text) {
 	c.Data = t.Context
 	c.Templates = t.TemplatesResult
-	if cache := t.Env.TemplateCache(); cache != nil {
-		c.TemplateCache = cache
+	if tmplCache := t.Env.TemplateCache(); tmplCache != nil {
+		c.Template = tmplCache
 		return
 	}
 }

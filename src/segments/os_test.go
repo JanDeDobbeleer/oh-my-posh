@@ -3,9 +3,9 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -86,10 +86,10 @@ func TestOSInfo(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("Platform").Return(tc.Platform)
-		env.On("TemplateCache").Return(&runtime.TemplateCache{
+		env.On("TemplateCache").Return(&cache.Template{
 			Env: make(map[string]string),
 			WSL: tc.IsWSL,
 		})

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -88,7 +88,7 @@ func TestConnection(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
+		env := &mock.Environment{}
 		for _, con := range tc.Connections {
 			env.On("Connection", con.Connection.Type).Return(con.Connection, con.Error)
 		}

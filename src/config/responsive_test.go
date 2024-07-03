@@ -3,7 +3,7 @@ package config
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -27,7 +27,7 @@ func TestShouldHideForWidth(t *testing.T) {
 		{Case: "Min & Max cols - show", MinWidth: 10, MaxWidth: 20, Width: 11, Expected: false},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("TerminalWidth").Return(tc.Width, tc.Error)
 		got := shouldHideForWidth(env, tc.MinWidth, tc.MaxWidth)
 		assert.Equal(t, tc.Expected, got, tc.Case)

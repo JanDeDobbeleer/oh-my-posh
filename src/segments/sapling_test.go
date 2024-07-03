@@ -5,9 +5,9 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 )
 
 func TestSetDir(t *testing.T) {
@@ -43,7 +43,7 @@ func TestSetDir(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("GOOS").Return(tc.GOOS)
 		home := "/usr/home"
 		if tc.GOOS == runtime.WINDOWS {
@@ -100,7 +100,7 @@ func TestSetCommitContext(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("RunCommand", "sl", []string{"log", "--limit", "1", "--template", SLCOMMITTEMPLATE}).Return(tc.Output, tc.Error)
 		sl := &Sapling{
 			scm: scm{
@@ -151,7 +151,7 @@ func TestShouldDisplay(t *testing.T) {
 		IsDir:        true,
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("HasCommand", "sl").Return(tc.HasSapling)
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("GOOS").Return(runtime.LINUX)
@@ -229,7 +229,7 @@ func TestSetHeadContext(t *testing.T) {
 	bm:sapling-segment
 	`
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("RunCommand", "sl", []string{"log", "--limit", "1", "--template", SLCOMMITTEMPLATE}).Return(output, nil)
 		env.On("RunCommand", "sl", []string{"status"}).Return(tc.Output, nil)
 		sl := &Sapling{

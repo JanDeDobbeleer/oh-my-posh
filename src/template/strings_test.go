@@ -3,11 +3,11 @@ package template
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestTrunc(t *testing.T) {
@@ -25,13 +25,13 @@ func TestTrunc(t *testing.T) {
 		{Case: "negative", Expected: "ld", Template: `{{ trunc -2 "Hello World" }}`},
 	}
 
-	env := &mock.MockedEnvironment{}
-	env.On("TemplateCache").Return(&runtime.TemplateCache{
+	env := &mock.Environment{}
+	env.On("TemplateCache").Return(&cache.Template{
 		Env: make(map[string]string),
 	})
-	env.On("Error", mock2.Anything)
-	env.On("Debug", mock2.Anything)
-	env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
+	env.On("Error", testify_.Anything)
+	env.On("Debug", testify_.Anything)
+	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,

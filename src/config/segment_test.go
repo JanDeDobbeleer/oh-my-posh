@@ -4,14 +4,15 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -22,7 +23,7 @@ func TestMapSegmentWriterCanMap(t *testing.T) {
 	sc := &Segment{
 		Type: SESSION,
 	}
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	err := sc.MapSegmentWithWriter(env)
 	assert.NoError(t, err)
 	assert.NotNil(t, sc.writer)
@@ -32,7 +33,7 @@ func TestMapSegmentWriterCannotMap(t *testing.T) {
 	sc := &Segment{
 		Type: "nilwriter",
 	}
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	err := sc.MapSegmentWithWriter(env)
 	assert.Error(t, err)
 }
@@ -72,7 +73,7 @@ func TestShouldIncludeFolder(t *testing.T) {
 		{Case: "!Include & !Exclude", Included: false, Excluded: false, Expected: false},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("GOOS").Return(runtime.LINUX)
 		env.On("Home").Return("")
 		env.On("Pwd").Return(cwd)
@@ -143,9 +144,9 @@ func TestGetColors(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&runtime.TemplateCache{
+		env := new(mock.Environment)
+		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("TemplateCache").Return(&cache.Template{
 			Env: make(map[string]string),
 		})
 

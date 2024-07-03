@@ -1,15 +1,30 @@
 package http
 
 import (
+	"io"
 	"net"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
+
+type MockedEnvironment struct {
+	testify_.Mock
+}
+
+func (env *MockedEnvironment) Cache() cache.Cache {
+	args := env.Called()
+	return args.Get(0).(cache.Cache)
+}
+
+func (env *MockedEnvironment) HTTPRequest(url string, _ io.Reader, _ int, _ ...RequestModifier) ([]byte, error) {
+	args := env.Called(url)
+	return args.Get(0).([]byte), args.Error(1)
+}
 
 func TestRequestResult(t *testing.T) {
 	successData := &data{Hello: "world"}
@@ -62,23 +77,21 @@ func TestRequestResult(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var props properties.Map = map[properties.Property]any{
-			properties.CacheTimeout: tc.CacheTimeout,
-		}
+		c := &mock.Cache{}
 
-		cache := &mock.MockedCache{}
+		c.On("Get", url).Return(tc.CacheJSONResponse, !tc.ResponseCacheMiss)
+		c.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
 
-		cache.On("Get", url).Return(tc.CacheJSONResponse, !tc.ResponseCacheMiss)
-		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
+		env := &MockedEnvironment{}
 
-		env := &mock.MockedEnvironment{}
-
-		env.On("Cache").Return(cache)
+		env.On("Cache").Return(c)
 		env.On("HTTPRequest", url).Return([]byte(tc.JSONResponse), tc.Error)
-		env.On("Error", mock2.Anything).Return()
 
-		request := &Request{}
-		request.Init(env, props)
+		request := &Request{
+			Env:          env,
+			CacheTimeout: tc.CacheTimeout,
+			HTTPTimeout:  0,
+		}
 
 		got, err := Do[*data](request, url, nil)
 		assert.Equal(t, tc.ExpectedData, got, tc.Case)

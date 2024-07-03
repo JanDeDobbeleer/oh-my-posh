@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -96,7 +96,7 @@ func TestUI5Tooling(t *testing.T) {
 	}
 }
 
-func mockFilePresence(tc *testCase, ui5tooling *UI5Tooling, env *mock.MockedEnvironment) error {
+func mockFilePresence(tc *testCase, ui5tooling *UI5Tooling, env *mock.Environment) error {
 	for _, f := range ui5tooling.language.extensions {
 		match, err := filepath.Match(f, tc.UI5YamlFilename)
 

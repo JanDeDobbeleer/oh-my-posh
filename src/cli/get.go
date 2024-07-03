@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
@@ -64,8 +65,7 @@ This command is used to get the value of the following variables:
 			accent := color2.RGB(rgb.R, rgb.G, rgb.B)
 			fmt.Println("#" + accent.Hex())
 		case "toggles":
-			cache := env.Cache()
-			togglesCache, _ := cache.Get(runtime.TOGGLECACHE)
+			togglesCache, _ := env.Cache().Get(cache.TOGGLECACHE)
 			var toggles []string
 			if len(togglesCache) != 0 {
 				toggles = strings.Split(togglesCache, ",")

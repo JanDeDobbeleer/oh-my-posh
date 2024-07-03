@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
+	httplib "net/http"
 	"sort"
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime/net"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
 type release struct {
@@ -51,14 +51,14 @@ func fetchFontAssets(repo string) ([]*Asset, error) {
 	defer cancelF()
 
 	repoURL := "https://api.github.com/repos/" + repo + "/releases/latest"
-	req, err := http.NewRequestWithContext(ctx, "GET", repoURL, nil)
+	req, err := httplib.NewRequestWithContext(ctx, "GET", repoURL, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	req.Header.Add("Accept", "application/vnd.github.v3+json")
-	response, err := net.HTTPClient.Do(req)
-	if err != nil || response.StatusCode != http.StatusOK {
+	response, err := http.HTTPClient.Do(req)
+	if err != nil || response.StatusCode != httplib.StatusOK {
 		return nil, fmt.Errorf("failed to get %s release", repo)
 	}
 

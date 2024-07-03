@@ -3,14 +3,14 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExecuteCommand(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo hello").Return("hello")
 	props := properties.Map{
@@ -26,7 +26,7 @@ func TestExecuteCommand(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "exit 1").Return("")
 	env.On("RunShellCommand", "bash", "echo hello").Return("hello")
@@ -44,7 +44,7 @@ func TestExecuteMultipleCommandsOrFirst(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo hello").Return("hello")
 	env.On("RunShellCommand", "bash", "echo world").Return("world")
@@ -61,7 +61,7 @@ func TestExecuteMultipleCommandsOrSecond(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsAnd(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo hello").Return("hello")
 	env.On("RunShellCommand", "bash", "echo world").Return("world")
@@ -78,7 +78,7 @@ func TestExecuteMultipleCommandsAnd(t *testing.T) {
 }
 
 func TestExecuteSingleCommandEmpty(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "").Return("")
 	props := properties.Map{
@@ -93,7 +93,7 @@ func TestExecuteSingleCommandEmpty(t *testing.T) {
 }
 
 func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "").Return("")
 	var props properties.Map
@@ -106,7 +106,7 @@ func TestExecuteSingleCommandNoCommandProperty(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo").Return("")
 	props := properties.Map{
@@ -121,7 +121,7 @@ func TestExecuteMultipleCommandsAndDisabled(t *testing.T) {
 }
 
 func TestExecuteMultipleCommandsOrDisabled(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo").Return("")
 	env.On("RunShellCommand", "bash", "echo|| echo").Return("")
@@ -137,7 +137,7 @@ func TestExecuteMultipleCommandsOrDisabled(t *testing.T) {
 }
 
 func TestExecuteNonInterpretedCommand(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("HasCommand", "bash").Return(true)
 	env.On("RunShellCommand", "bash", "echo hello && echo world").Return("hello world")
 	props := properties.Map{
@@ -174,7 +174,7 @@ func TestExecuteScript(t *testing.T) {
 	}
 	for _, tc := range cases {
 		script := "../test/script.sh"
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("HasCommand", "bash").Return(true)
 		env.On("RunShellCommand", "bash", script).Return(tc.Output)
 		props := properties.Map{

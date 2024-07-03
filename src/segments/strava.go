@@ -5,9 +5,9 @@ import (
 	"math"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
 // StravaAPI is a wrapper around http.Oauth
@@ -133,8 +133,14 @@ func (s *Strava) Init(props properties.Properties, env runtime.Environment) {
 		AccessTokenKey:  StravaAccessTokenKey,
 		RefreshTokenKey: StravaRefreshTokenKey,
 		SegmentName:     "strava",
+		AccessToken:     s.props.GetString(properties.AccessToken, ""),
+		RefreshToken:    s.props.GetString(properties.RefreshToken, ""),
+		Request: http.Request{
+			Env:          env,
+			CacheTimeout: s.props.GetInt(properties.CacheTimeout, 30),
+			HTTPTimeout:  s.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+		},
 	}
-	oauth.Init(env, props)
 
 	s.api = &stravaAPI{
 		OAuthRequest: *oauth,

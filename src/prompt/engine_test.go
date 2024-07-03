@@ -4,14 +4,15 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestCanWriteRPrompt(t *testing.T) {
@@ -33,7 +34,7 @@ func TestCanWriteRPrompt(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("TerminalWidth").Return(tc.TerminalWidth, tc.TerminalWidthError)
 		engine := &Engine{
 			Env:               env,
@@ -72,7 +73,7 @@ func TestPrintPWD(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		if len(tc.Pwd) == 0 {
 			tc.Pwd = "pwd"
 		}
@@ -80,8 +81,8 @@ func TestPrintPWD(t *testing.T) {
 		env.On("Shell").Return(tc.Shell)
 		env.On("User").Return("user")
 		env.On("Host").Return("host", nil)
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&runtime.TemplateCache{
+		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("TemplateCache").Return(&cache.Template{
 			Env:   make(map[string]string),
 			Shell: "shell",
 		})
@@ -170,12 +171,12 @@ func TestGetTitle(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
 		env.On("PathSeparator").Return(tc.PathSeparator)
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&runtime.TemplateCache{
+		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("TemplateCache").Return(&cache.Template{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
 			},
@@ -234,11 +235,11 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
-		env.On("DebugF", mock2.Anything, mock2.Anything).Return(nil)
-		env.On("TemplateCache").Return(&runtime.TemplateCache{
+		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("TemplateCache").Return(&cache.Template{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
 			},

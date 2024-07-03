@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"net/http"
+	httplib "net/http"
 	"net/http/httputil"
 	"os"
 	"path/filepath"
@@ -17,12 +17,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/concurrent"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/cmd"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/config"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime/net"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 
 	disk "github.com/shirou/gopsutil/v3/disk"
 	load "github.com/shirou/gopsutil/v3/load"
@@ -76,8 +78,6 @@ type FileInfo struct {
 	Path         string
 	IsDir        bool
 }
-
-type HTTPRequestModifier func(request *http.Request)
 
 type WindowsRegistryValueType string
 
@@ -170,20 +170,20 @@ type Environment interface {
 	BatteryState() (*battery.Info, error)
 	QueryWindowTitles(processName, windowTitleRegex string) (string, error)
 	WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error)
-	HTTPRequest(url string, body io.Reader, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error)
+	HTTPRequest(url string, body io.Reader, timeout int, requestModifiers ...http.RequestModifier) ([]byte, error)
 	IsWsl() bool
 	IsWsl2() bool
 	StackCount() int
 	TerminalWidth() (int, error)
 	CachePath() string
-	Cache() Cache
+	Cache() cache.Cache
 	Close()
 	Logs() string
 	InWSLSharedDrive() bool
 	ConvertToLinuxPath(path string) string
 	ConvertToWindowsPath(path string) string
 	Connection(connectionType ConnectionType) (*Connection, error)
-	TemplateCache() *TemplateCache
+	TemplateCache() *cache.Template
 	LoadTemplateCache()
 	SetPromptCount()
 	CursorPosition() (row, col int)
@@ -196,18 +196,18 @@ type Environment interface {
 
 type Terminal struct {
 	CmdFlags *Flags
-	Var      SimpleMap
+	Var      concurrent.SimpleMap
 
 	cwd       string
 	host      string
-	cmdCache  *commandCache
-	fileCache *fileCache
-	tmplCache *TemplateCache
+	cmdCache  *cache.Command
+	fileCache *cache.File
+	tmplCache *cache.Template
 	networks  []*Connection
 
 	sync.RWMutex
 
-	lsDirMap ConcurrentMap
+	lsDirMap concurrent.Map
 }
 
 func (term *Terminal) Init() {
@@ -224,14 +224,14 @@ func (term *Terminal) Init() {
 		log.Plain()
 	}
 
-	term.fileCache = &fileCache{}
+	term.fileCache = &cache.File{}
 	term.fileCache.Init(term.CachePath())
 	term.resolveConfigPath()
-	term.cmdCache = &commandCache{
-		commands: NewConcurrentMap(),
+	term.cmdCache = &cache.Command{
+		Commands: concurrent.NewMap(),
 	}
 
-	term.tmplCache = &TemplateCache{}
+	term.tmplCache = &cache.Template{}
 
 	term.SetPromptCount()
 }
@@ -501,7 +501,7 @@ func (term *Terminal) GOOS() string {
 
 func (term *Terminal) RunCommand(command string, args ...string) (string, error) {
 	defer term.Trace(time.Now(), append([]string{command}, args...)...)
-	if cacheCommand, ok := term.cmdCache.get(command); ok {
+	if cacheCommand, ok := term.cmdCache.Get(command); ok {
 		command = cacheCommand
 	}
 	output, err := cmd.Run(command, args...)
@@ -522,14 +522,14 @@ func (term *Terminal) RunShellCommand(shell, command string) string {
 
 func (term *Terminal) CommandPath(command string) string {
 	defer term.Trace(time.Now(), command)
-	if path, ok := term.cmdCache.get(command); ok {
+	if path, ok := term.cmdCache.Get(command); ok {
 		term.Debug(path)
 		return path
 	}
 
 	path, err := term.LookPath(command)
 	if err == nil {
-		term.cmdCache.set(command, path)
+		term.cmdCache.Set(command, path)
 		term.Debug(path)
 		return path
 	}
@@ -617,13 +617,13 @@ func (term *Terminal) unWrapError(err error) error {
 	return cause
 }
 
-func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int, requestModifiers ...HTTPRequestModifier) ([]byte, error) {
+func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int, requestModifiers ...http.RequestModifier) ([]byte, error) {
 	defer term.Trace(time.Now(), targetURL)
 
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(timeout))
 	defer cncl()
 
-	request, err := http.NewRequestWithContext(ctx, http.MethodGet, targetURL, body)
+	request, err := httplib.NewRequestWithContext(ctx, httplib.MethodGet, targetURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -637,7 +637,7 @@ func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int,
 		term.Debug(string(dump))
 	}
 
-	response, err := net.HTTPClient.Do(request)
+	response, err := http.HTTPClient.Do(request)
 	if err != nil {
 		term.Error(err)
 		return nil, term.unWrapError(err)
@@ -697,7 +697,7 @@ func (term *Terminal) StackCount() int {
 	return term.CmdFlags.StackCount
 }
 
-func (term *Terminal) Cache() Cache {
+func (term *Terminal) Cache() cache.Cache {
 	return term.fileCache
 }
 
@@ -708,11 +708,13 @@ func (term *Terminal) saveTemplateCache() {
 	if !canSave {
 		return
 	}
-	cache := term.TemplateCache()
-	cache.SegmentsCache = cache.Segments.SimpleMap()
-	templateCache, err := json.Marshal(cache)
+
+	tmplCache := term.TemplateCache()
+	tmplCache.SegmentsCache = tmplCache.Segments.ToSimpleMap()
+
+	templateCache, err := json.Marshal(tmplCache)
 	if err == nil {
-		term.fileCache.Set(TEMPLATECACHE, string(templateCache), 1440)
+		term.fileCache.Set(cache.TEMPLATECACHE, string(templateCache), 1440)
 	}
 }
 
@@ -724,18 +726,23 @@ func (term *Terminal) Close() {
 
 func (term *Terminal) LoadTemplateCache() {
 	defer term.Trace(time.Now())
-	val, OK := term.fileCache.Get(TEMPLATECACHE)
+
+	val, OK := term.fileCache.Get(cache.TEMPLATECACHE)
 	if !OK {
 		return
 	}
-	var tmplCache TemplateCache
+
+	var tmplCache cache.Template
+
 	err := json.Unmarshal([]byte(val), &tmplCache)
 	if err != nil {
 		term.Error(err)
 		return
 	}
+
 	tmplCache.Segments = tmplCache.SegmentsCache.ConcurrentMap()
-	tmplCache.initialized = true
+	tmplCache.Initialized = true
+
 	term.tmplCache = &tmplCache
 }
 
@@ -743,13 +750,13 @@ func (term *Terminal) Logs() string {
 	return log.String()
 }
 
-func (term *Terminal) TemplateCache() *TemplateCache {
+func (term *Terminal) TemplateCache() *cache.Template {
 	defer term.Trace(time.Now())
 	tmplCache := term.tmplCache
 	tmplCache.Lock()
 	defer tmplCache.Unlock()
 
-	if tmplCache.initialized {
+	if tmplCache.Initialized {
 		return tmplCache
 	}
 
@@ -758,7 +765,7 @@ func (term *Terminal) TemplateCache() *TemplateCache {
 	tmplCache.ShellVersion = term.CmdFlags.ShellVersion
 	tmplCache.Code, _ = term.StatusCodes()
 	tmplCache.WSL = term.IsWsl()
-	tmplCache.Segments = NewConcurrentMap()
+	tmplCache.Segments = concurrent.NewMap()
 	tmplCache.PromptCount = term.CmdFlags.PromptCount
 	tmplCache.Env = make(map[string]string)
 	tmplCache.Var = make(map[string]any)
@@ -807,7 +814,7 @@ func (term *Terminal) TemplateCache() *TemplateCache {
 		tmplCache.SHLVL = shlvl
 	}
 
-	tmplCache.initialized = true
+	tmplCache.Initialized = true
 	return tmplCache
 }
 
@@ -863,13 +870,13 @@ func (term *Terminal) SetPromptCount() {
 		}
 	}
 	var count int
-	if val, found := term.Cache().Get(PROMPTCOUNTCACHE); found {
+	if val, found := term.Cache().Get(cache.PROMPTCOUNTCACHE); found {
 		count, _ = strconv.Atoi(val)
 	}
 	// only write to cache if we're the primary prompt
 	if term.CmdFlags.Primary {
 		count++
-		term.Cache().Set(PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
+		term.Cache().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
 	}
 	term.CmdFlags.PromptCount = count
 }

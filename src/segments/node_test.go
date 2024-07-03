@@ -3,8 +3,8 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/alecthomas/assert"
 )
@@ -37,7 +37,7 @@ func TestNodeMatchesVersionFile(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("FileContent", ".nvmrc").Return(tc.RCVersion)
 
 		node := &Node{
@@ -75,7 +75,7 @@ func TestNodeInContext(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("HasFiles", "pnpm-lock.yaml").Return(tc.hasPNPM)
 		env.On("HasFiles", "yarn.lock").Return(tc.hasYarn)
 		env.On("HasFiles", "package-lock.json").Return(tc.hasNPM)

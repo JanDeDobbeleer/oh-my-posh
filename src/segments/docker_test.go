@@ -3,8 +3,8 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -34,7 +34,7 @@ func TestDockerSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		docker := &Docker{}
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		docker.Init(properties.Map{}, env)
 
 		for _, v := range docker.envVars() {

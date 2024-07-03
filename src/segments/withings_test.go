@@ -5,15 +5,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 type mockedWithingsAPI struct {
-	mock2.Mock
+	testify_.Mock
 }
 
 func (s *mockedWithingsAPI) GetMeasures(meastypes string) (*WithingsData, error) {
@@ -165,7 +165,7 @@ func TestWithingsSegment(t *testing.T) {
 			tc.Template = withings.Template()
 		}
 
-		var got = renderTemplate(&mock.MockedEnvironment{}, tc.Template, withings)
+		var got = renderTemplate(&mock.Environment{}, tc.Template, withings)
 		assert.Equal(t, tc.ExpectedString, got, tc.Case)
 	}
 }

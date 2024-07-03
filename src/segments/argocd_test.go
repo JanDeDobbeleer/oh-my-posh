@@ -5,10 +5,10 @@ import (
 	"path"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -32,7 +32,7 @@ func TestArgocdGetConfigFromOpts(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 
 		argocd := &Argocd{
@@ -57,7 +57,7 @@ func TestArgocdGetConfigPath(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("Home").Return(poshHome)
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 
@@ -153,9 +153,9 @@ users:
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("FileContent", configFile).Return(tc.Config)
-		env.On("Error", mock2.Anything).Return()
+		env.On("Error", testify_.Anything).Return()
 
 		argocd := &Argocd{
 			env:   env,
@@ -246,11 +246,11 @@ servers:
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("Home").Return(poshHome)
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 		env.On("FileContent", configFile).Return(tc.Config)
-		env.On("Error", mock2.Anything).Return()
+		env.On("Error", testify_.Anything).Return()
 
 		argocd := &Argocd{
 			env:   env,

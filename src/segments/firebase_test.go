@@ -4,9 +4,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestFirebaseSegment(t *testing.T) {
@@ -53,12 +53,12 @@ func TestFirebaseSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("Home").Return("home")
 		env.On("Pwd").Return(tc.ActivePath)
 		fcPath := filepath.Join("home", ".config", "configstore", "firebase-tools.json")
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
-		env.On("Error", mock2.Anything).Return()
+		env.On("Error", testify_.Anything).Return()
 		f := Firebase{
 			env: env,
 		}
@@ -96,12 +96,12 @@ func TestGetFirebaseActiveConfig(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("Home").Return("home")
 		configPath := filepath.Join("home", ".config", "configstore")
 		contentPath := filepath.Join(configPath, "firebase-tools.json")
 		env.On("FileContent", contentPath).Return(tc.ActiveConfig)
-		env.On("Error", mock2.Anything).Return()
+		env.On("Error", testify_.Anything).Return()
 		f := Firebase{
 			env: env,
 		}

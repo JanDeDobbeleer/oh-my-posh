@@ -3,13 +3,13 @@ package config
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -327,8 +327,8 @@ func TestSegmentTemplateMigration(t *testing.T) {
 			Type:       tc.Type,
 			Properties: tc.Props,
 		}
-		env := &mock.MockedEnvironment{}
-		env.On("Debug", mock2.Anything).Return(nil)
+		env := &mock.Environment{}
+		env.On("Debug", testify_.Anything).Return(nil)
 		segment.migrationOne(env)
 		assert.Equal(t, tc.Expected, segment.Properties[segmentTemplate], tc.Case)
 	}
@@ -431,7 +431,7 @@ func TestMigrateConfig(t *testing.T) {
 	for _, tc := range cases {
 		cfg := &Config{
 			ConsoleTitleTemplate: tc.Template,
-			env:                  &mock.MockedEnvironment{},
+			env:                  &mock.Environment{},
 		}
 		cfg.Migrate()
 		assert.Equal(t, tc.Expected, cfg.ConsoleTitleTemplate, tc.Case)
@@ -465,7 +465,7 @@ func TestMigrationTwo(t *testing.T) {
 		if tc.Template != "" {
 			segment.Properties[segmentTemplate] = tc.Template
 		}
-		segment.migrationTwo(&mock.MockedEnvironment{})
+		segment.migrationTwo(&mock.Environment{})
 		assert.Equal(t, tc.Expected, segment.Template, tc.Case)
 		assert.NotContains(t, segment.Properties, segmentTemplate, tc.Case)
 	}

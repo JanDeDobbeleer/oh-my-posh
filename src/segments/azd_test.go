@@ -6,11 +6,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestAzdSegment(t *testing.T) {
@@ -35,8 +35,8 @@ func TestAzdSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		env.On("Debug", mock2.Anything)
+		env := new(mock.Environment)
+		env.On("Debug", testify_.Anything)
 
 		if tc.IsInited {
 			fileInfo := &runtime.FileInfo{

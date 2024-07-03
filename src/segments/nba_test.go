@@ -6,11 +6,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func getTestData(file string) string {
@@ -74,15 +75,15 @@ func TestNBASegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := &mock.MockedEnvironment{}
+		env := &mock.Environment{}
 		props := properties.Map{
 			properties.CacheTimeout: tc.CacheTimeout,
 			TeamName:                tc.TeamName,
 			DaysOffset:              tc.DaysOffset,
 		}
 
-		env.On("Error", mock2.Anything)
-		env.On("Debug", mock2.Anything)
+		env.On("Error", testify_.Anything)
+		env.On("Debug", testify_.Anything)
 		env.On("HTTPRequest", NBAScoreURL).Return([]byte(tc.JSONResponse), tc.Error)
 
 		// Add all the daysOffset to the http request responses
@@ -103,7 +104,7 @@ func TestNBASegment(t *testing.T) {
 		cachedScheduleKey := fmt.Sprintf("%s%s", tc.TeamName, "schedule")
 		cachedScoreKey := fmt.Sprintf("%s%s", tc.TeamName, "score")
 
-		cache := &mock.MockedCache{}
+		cache := &cache_.Cache{}
 		cache.On("Get", cachedScheduleKey).Return(nba.getGameNotFoundData(), tc.CacheFoundFail)
 		cache.On("Get", cachedScoreKey).Return(nba.getGameNotFoundData(), tc.CacheFoundFail)
 		cache.On("Set", cachedScheduleKey, nba.getGameNotFoundData(), tc.CacheTimeout).Return()

@@ -7,11 +7,11 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestUmbracoSegment(t *testing.T) {
@@ -108,7 +108,7 @@ func TestUmbracoSegment(t *testing.T) {
 
 	for _, tc := range cases {
 		// Prepare/arrange the test
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		var sampleCSProj, sampleWebConfig, sampleNonUmbracoCSProj string
 
 		if tc.HasCsproj {
@@ -136,7 +136,7 @@ func TestUmbracoSegment(t *testing.T) {
 		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "MyProject.csproj")).Return(sampleCSProj)
 		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "ANonUmbracoProject.csproj")).Return(sampleNonUmbracoCSProj)
 		env.On("FileContent", filepath.Join(umbracoProjectDirectory, "web.config")).Return(sampleWebConfig)
-		env.On("Debug", mock2.Anything)
+		env.On("Debug", testify_.Anything)
 
 		if tc.HasUmbracoFolder {
 			fileInfo := &runtime.FileInfo{

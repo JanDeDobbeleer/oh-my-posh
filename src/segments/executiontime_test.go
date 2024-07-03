@@ -5,14 +5,14 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(1337)
 	executionTime := &Executiontime{
 		env:   env,
@@ -22,7 +22,7 @@ func TestExecutionTimeWriterDefaultThresholdEnabled(t *testing.T) {
 }
 
 func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(1)
 	executionTime := &Executiontime{
 		env:   env,
@@ -32,7 +32,7 @@ func TestExecutionTimeWriterDefaultThresholdDisabled(t *testing.T) {
 }
 
 func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(99)
 	props := properties.Map{
 		ThresholdProperty: float64(10),
@@ -45,7 +45,7 @@ func TestExecutionTimeWriterCustomThresholdEnabled(t *testing.T) {
 }
 
 func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(99)
 	props := properties.Map{
 		ThresholdProperty: float64(100),
@@ -60,7 +60,7 @@ func TestExecutionTimeWriterCustomThresholdDisabled(t *testing.T) {
 func TestExecutionTimeWriterDuration(t *testing.T) {
 	input := 1337
 	expected := "1.337s"
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(input)
 	executionTime := &Executiontime{
 		env:   env,
@@ -73,7 +73,7 @@ func TestExecutionTimeWriterDuration(t *testing.T) {
 func TestExecutionTimeWriterDuration2(t *testing.T) {
 	input := 13371337
 	expected := "3h 42m 51.337s"
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("ExecutionTime").Return(input)
 	executionTime := &Executiontime{
 		env:   env,

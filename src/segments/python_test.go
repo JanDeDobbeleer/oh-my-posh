@@ -5,12 +5,12 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/alecthomas/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestPythonTemplate(t *testing.T) {
@@ -99,16 +99,16 @@ func TestPythonTemplate(t *testing.T) {
 		env, props := getMockedLanguageEnv(params)
 
 		env.On("GOOS").Return("")
-		env.On("CommandPath", mock2.Anything).Return(tc.PythonPath)
+		env.On("CommandPath", testify_.Anything).Return(tc.PythonPath)
 		env.On("RunCommand", "pyenv", []string{"version-name"}).Return(tc.VirtualEnvName, nil)
-		env.On("HasFilesInDir", mock2.Anything, "pyvenv.cfg").Return(len(tc.PyvenvCfg) > 0)
+		env.On("HasFilesInDir", testify_.Anything, "pyvenv.cfg").Return(len(tc.PyvenvCfg) > 0)
 		env.On("FileContent", filepath.Join(filepath.Dir(tc.PythonPath), "pyvenv.cfg")).Return(tc.PyvenvCfg)
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "PYENV_ROOT").Return("/home/user/.pyenv")
 		env.On("PathSeparator").Return("")
-		env.On("ResolveSymlink", mock2.Anything).Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
+		env.On("ResolveSymlink", testify_.Anything).Return(tc.ResolveSymlink.Path, tc.ResolveSymlink.Err)
 
 		props[properties.FetchVersion] = tc.FetchVersion
 		props[UsePythonVersionFile] = true
@@ -131,11 +131,11 @@ func TestPythonPythonInContext(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("GOOS").Return("")
 		env.On("PathSeparator").Return("/")
-		env.On("CommandPath", mock2.Anything).Return("")
-		env.On("HasFilesInDir", mock2.Anything, "pyvenv.cfg").Return(false)
+		env.On("CommandPath", testify_.Anything).Return("")
+		env.On("HasFilesInDir", testify_.Anything, "pyvenv.cfg").Return(false)
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")
@@ -182,8 +182,8 @@ func TestPythonVirtualEnvIgnoreDefaultVenvNames(t *testing.T) {
 
 		env.On("GOOS").Return("")
 		env.On("PathSeparator").Return("/")
-		env.On("CommandPath", mock2.Anything).Return("")
-		env.On("HasFilesInDir", mock2.Anything, "pyvenv.cfg").Return(false)
+		env.On("CommandPath", testify_.Anything).Return("")
+		env.On("HasFilesInDir", testify_.Anything, "pyvenv.cfg").Return(false)
 		env.On("Getenv", "VIRTUAL_ENV").Return(tc.VirtualEnvName)
 		env.On("Getenv", "CONDA_ENV_PATH").Return("")
 		env.On("Getenv", "CONDA_DEFAULT_ENV").Return("")

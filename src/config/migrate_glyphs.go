@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/http"
+	httplib "net/http"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime/net"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
 type ConnectionError struct {
@@ -28,12 +28,12 @@ func getGlyphCodePoints() (codePoints, error) {
 	ctx, cncl := context.WithTimeout(context.Background(), time.Millisecond*time.Duration(5000))
 	defer cncl()
 
-	request, err := http.NewRequestWithContext(ctx, http.MethodGet, "https://ohmyposh.dev/codepoints.csv", nil)
+	request, err := httplib.NewRequestWithContext(ctx, httplib.MethodGet, "https://ohmyposh.dev/codepoints.csv", nil)
 	if err != nil {
 		return codePoints, &ConnectionError{reason: err.Error()}
 	}
 
-	response, err := net.HTTPClient.Do(request)
+	response, err := http.HTTPClient.Do(request)
 	if err != nil {
 		return codePoints, err
 	}

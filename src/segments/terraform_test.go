@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -82,7 +82,7 @@ func TestTerraform(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 
 		env.On("HasCommand", "terraform").Return(tc.HasTfCommand)
 		env.On("HasFolder", ".terraform").Return(tc.HasTfFolder)

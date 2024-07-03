@@ -4,8 +4,8 @@ import (
 	"path"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -84,7 +84,7 @@ func TestSitecoreSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("HasFiles", "sitecore.json").Return(tc.SitecoreFileExists)
 		env.On("HasFiles", path.Join(".sitecore", "user.json")).Return(tc.UserFileExists)
 		env.On("FileContent", path.Join(".sitecore", "user.json")).Return(tc.UserFileContent)

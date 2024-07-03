@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	testify_mock "github.com/stretchr/testify/mock"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 )
 
 func TestHelmSegment(t *testing.T) {
@@ -82,7 +82,7 @@ func TestHelmSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("HasCommand", "helm").Return(tc.HelmExists)
 		env.On("RunCommand", "helm", []string{"version", "--short", "--template={{.Version}}"}).Return("v3.12.3", nil)
 

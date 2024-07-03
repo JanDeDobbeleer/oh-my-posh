@@ -3,15 +3,15 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestSvnEnabledToolNotFound(t *testing.T) {
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("InWSLSharedDrive").Return(false)
 	env.On("HasCommand", "svn").Return(false)
 	env.On("GOOS").Return("")
@@ -31,7 +31,7 @@ func TestSvnEnabledInWorkingDirectory(t *testing.T) {
 		ParentFolder: "/dir",
 		IsDir:        true,
 	}
-	env := new(mock.MockedEnvironment)
+	env := new(mock.Environment)
 	env.On("InWSLSharedDrive").Return(false)
 	env.On("HasCommand", "svn").Return(true)
 	env.On("GOOS").Return("")
@@ -157,7 +157,7 @@ func TestSvnTemplateString(t *testing.T) {
 		props := properties.Map{
 			FetchStatus: true,
 		}
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		tc.Svn.env = env
 		tc.Svn.props = props
 		assert.Equal(t, tc.Expected, renderTemplate(env, tc.Template, tc.Svn), tc.Case)
@@ -230,7 +230,7 @@ R       Moved.File`,
 			ParentFolder: "/dir",
 			IsDir:        true,
 		}
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("InWSLSharedDrive").Return(false)
 		env.On("IsWsl").Return(false)
 		env.On("HasCommand", "svn").Return(true)
@@ -291,7 +291,7 @@ func TestRepo(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("RunCommand", "svn", []string{"info", "", "--show-item", "repos-root-url"}).Return(tc.Repo, nil)
 		s := &Svn{
 			scm: scm{

@@ -4,14 +4,14 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"net/http"
+	httplib "net/http"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime/net"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
 func Download(cachePath, url string) (string, error) {
@@ -27,13 +27,13 @@ func Download(cachePath, url string) (string, error) {
 	ctx, cncl := context.WithTimeout(context.Background(), time.Second*time.Duration(5))
 	defer cncl()
 
-	request, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	request, err := httplib.NewRequestWithContext(ctx, httplib.MethodGet, url, nil)
 	if err != nil {
 		log.Error(err)
 		return "", err
 	}
 
-	response, err := net.HTTPClient.Do(request)
+	response, err := http.HTTPClient.Do(request)
 	if err != nil {
 		log.Error(err)
 		return "", err
@@ -41,7 +41,7 @@ func Download(cachePath, url string) (string, error) {
 
 	defer response.Body.Close()
 
-	if response.StatusCode != http.StatusOK {
+	if response.StatusCode != httplib.StatusOK {
 		err := fmt.Errorf("unexpected status code: %d", response.StatusCode)
 		log.Error(err)
 		return "", err
@@ -77,13 +77,13 @@ func shouldUpdate(cachePath, url string) (string, bool) {
 	ctx, cncl := context.WithTimeout(context.Background(), time.Second*time.Duration(5))
 	defer cncl()
 
-	request, err := http.NewRequestWithContext(ctx, http.MethodHead, url, nil)
+	request, err := httplib.NewRequestWithContext(ctx, httplib.MethodHead, url, nil)
 	if err != nil {
 		log.Error(err)
 		return "", true
 	}
 
-	response, err := net.HTTPClient.Do(request)
+	response, err := http.HTTPClient.Do(request)
 	if err != nil {
 		log.Error(err)
 		return "", true

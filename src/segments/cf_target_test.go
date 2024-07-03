@@ -6,9 +6,9 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -64,7 +64,7 @@ func TestCFTargetSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		var env = new(mock.MockedEnvironment)
+		var env = new(mock.Environment)
 		env.On("HasCommand", "cf").Return(true)
 		env.On("RunCommand", "cf", []string{"target"}).Return(tc.TargetOutput, tc.CommandError)
 		env.On("Pwd", nil).Return("/usr/home/dev/my-app")

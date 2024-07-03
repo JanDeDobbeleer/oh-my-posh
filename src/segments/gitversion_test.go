@@ -4,11 +4,12 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/alecthomas/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestGitversion(t *testing.T) {
@@ -70,14 +71,14 @@ func TestGitversion(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
-		cache := &mock.MockedCache{}
+		env := new(mock.Environment)
+		cache := &cache_.Cache{}
 
 		env.On("HasCommand", "gitversion").Return(tc.HasGitversion)
 		env.On("Pwd").Return("test-dir")
 		env.On("Cache").Return(cache)
 		cache.On("Get", "test-dir").Return(tc.CacheResponse, len(tc.CacheResponse) != 0)
-		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
+		cache.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
 
 		env.On("RunCommand", "gitversion", []string{"-output", "json"}).Return(tc.Response, tc.CommandError)
 

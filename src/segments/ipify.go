@@ -3,9 +3,9 @@ package segments
 import (
 	"net"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/http"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
 type ipData struct {
@@ -63,8 +63,11 @@ func (i *IPify) getResult() (string, error) {
 }
 
 func (i *IPify) Init(props properties.Properties, env runtime.Environment) {
-	request := &http.Request{}
-	request.Init(env, props)
+	request := &http.Request{
+		Env:          env,
+		CacheTimeout: props.GetInt(properties.CacheTimeout, 30),
+		HTTPTimeout:  props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+	}
 
 	i.api = &ipAPI{
 		Request: *request,

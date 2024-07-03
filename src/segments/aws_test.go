@@ -3,8 +3,8 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -51,7 +51,7 @@ func TestAWSSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("Getenv", "AWS_VAULT").Return(tc.Vault)
 		env.On("Getenv", "AWS_PROFILE").Return(tc.Profile)
 		env.On("Getenv", "AWS_DEFAULT_PROFILE").Return(tc.DefaultProfile)

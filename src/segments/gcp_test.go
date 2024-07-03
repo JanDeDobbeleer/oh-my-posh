@@ -4,11 +4,11 @@ import (
 	"path"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestGcpSegment(t *testing.T) {
@@ -51,13 +51,13 @@ func TestGcpSegment(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("Getenv", "CLOUDSDK_CONFIG").Return("config")
 		fcPath := path.Join("config", "active_config")
 		env.On("FileContent", fcPath).Return(tc.ActiveConfig)
 		cfgpath := path.Join("config", "configurations", "config_production")
 		env.On("FileContent", cfgpath).Return(tc.CfgData)
-		env.On("Error", mock2.Anything).Return()
+		env.On("Error", testify_.Anything).Return()
 		g := &Gcp{
 			env: env,
 		}
@@ -96,7 +96,7 @@ func TestGetConfigDirectory(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("Getenv", "CLOUDSDK_CONFIG").Return(tc.CloudSDKConfig)
 		env.On("Getenv", "APPDATA").Return(tc.AppData)
 		env.On("Home").Return(tc.Home)
@@ -127,7 +127,7 @@ func TestGetActiveConfig(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("FileContent", "active_config").Return(tc.ActiveConfig)
 		g := &Gcp{
 			env: env,

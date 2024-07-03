@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -112,7 +113,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.MockedEnvironment)
+		env := new(mock.Environment)
 		env.On("User").Return(tc.UserName)
 		env.On("GOOS").Return("burp")
 		env.On("Host").Return(tc.ComputerName, nil)
@@ -122,7 +123,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		}
 		env.On("Getenv", "SSH_CONNECTION").Return(SSHSession)
 		env.On("Getenv", "SSH_CLIENT").Return(SSHSession)
-		env.On("TemplateCache").Return(&runtime.TemplateCache{
+		env.On("TemplateCache").Return(&cache.Template{
 			UserName: tc.UserName,
 			HostName: tc.ComputerName,
 			Env: map[string]string{

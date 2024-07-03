@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/mock"
-	"github.com/jandedobbeleer/oh-my-posh/src/properties"
-
+	"github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/stretchr/testify/assert"
-	mock2 "github.com/stretchr/testify/mock"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 type data struct {
@@ -143,32 +141,32 @@ func TestOauthResult(t *testing.T) {
 		url := "https://www.strava.com/api/v3/athlete/activities?page=1&per_page=1"
 		tokenURL := fmt.Sprintf("https://ohmyposh.dev/api/refresh?segment=test&token=%s", tc.RefreshToken)
 
-		var props properties.Map = map[properties.Property]any{
-			properties.CacheTimeout: tc.CacheTimeout,
-			properties.AccessToken:  tc.AccessToken,
-			properties.RefreshToken: tc.RefreshToken,
-		}
-
-		cache := &mock.MockedCache{}
+		cache := &mock.Cache{}
 
 		cache.On("Get", url).Return(tc.CacheJSONResponse, !tc.ResponseCacheMiss)
 		cache.On("Get", accessTokenKey).Return(tc.AccessToken, tc.AccessTokenFromCache)
 		cache.On("Get", refreshTokenKey).Return(tc.RefreshToken, tc.RefreshTokenFromCache)
-		cache.On("Set", mock2.Anything, mock2.Anything, mock2.Anything)
+		cache.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
 
-		env := &mock.MockedEnvironment{}
+		env := &MockedEnvironment{}
 
 		env.On("Cache").Return(cache)
 		env.On("HTTPRequest", url).Return([]byte(tc.JSONResponse), tc.Error)
 		env.On("HTTPRequest", tokenURL).Return([]byte(tc.TokenResponse), tc.Error)
-		env.On("Error", mock2.Anything)
+		env.On("Error", testify_.Anything)
 
 		oauth := &OAuthRequest{
 			AccessTokenKey:  accessTokenKey,
 			RefreshTokenKey: refreshTokenKey,
 			SegmentName:     "test",
+			AccessToken:     tc.AccessToken,
+			RefreshToken:    tc.RefreshToken,
+			Request: Request{
+				Env:          env,
+				CacheTimeout: tc.CacheTimeout,
+				HTTPTimeout:  20,
+			},
 		}
-		oauth.Init(env, props)
 
 		got, err := OauthResult[*data](oauth, url, nil)
 		assert.Equal(t, tc.ExpectedData, got, tc.Case)

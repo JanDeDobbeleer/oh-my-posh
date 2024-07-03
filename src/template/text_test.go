@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/concurrent"
+	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -330,7 +330,7 @@ func TestCleanTemplate(t *testing.T) {
 		},
 		{
 			Case:     "Replace a direct call to .Segments with .Segments.List",
-			Expected: `{{.Segments.SimpleMap.Git.Repo}}`,
+			Expected: `{{.Segments.ToSimple.Git.Repo}}`,
 			Template: `{{.Segments.Git.Repo}}`,
 		},
 	}
@@ -355,7 +355,7 @@ func TestSegmentContains(t *testing.T) {
 	}
 
 	env := &mock.Environment{}
-	segments := concurrent.NewMap()
+	segments := maps.NewConcurrent()
 	segments.Set("Git", "foo")
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 	env.On("TemplateCache").Return(&cache.Template{

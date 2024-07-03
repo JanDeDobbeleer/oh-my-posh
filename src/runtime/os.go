@@ -18,8 +18,8 @@ import (
 	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/concurrent"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
+	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/battery"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/cmd"
@@ -196,7 +196,7 @@ type Environment interface {
 
 type Terminal struct {
 	CmdFlags *Flags
-	Var      concurrent.SimpleMap
+	Var      maps.Simple
 
 	cwd       string
 	host      string
@@ -207,7 +207,7 @@ type Terminal struct {
 
 	sync.RWMutex
 
-	lsDirMap concurrent.Map
+	lsDirMap maps.Concurrent
 }
 
 func (term *Terminal) Init() {
@@ -228,7 +228,7 @@ func (term *Terminal) Init() {
 	term.fileCache.Init(term.CachePath())
 	term.resolveConfigPath()
 	term.cmdCache = &cache.Command{
-		Commands: concurrent.NewMap(),
+		Commands: maps.NewConcurrent(),
 	}
 
 	term.tmplCache = &cache.Template{}
@@ -710,7 +710,7 @@ func (term *Terminal) saveTemplateCache() {
 	}
 
 	tmplCache := term.TemplateCache()
-	tmplCache.SegmentsCache = tmplCache.Segments.ToSimpleMap()
+	tmplCache.SegmentsCache = tmplCache.Segments.ToSimple()
 
 	templateCache, err := json.Marshal(tmplCache)
 	if err == nil {
@@ -740,7 +740,7 @@ func (term *Terminal) LoadTemplateCache() {
 		return
 	}
 
-	tmplCache.Segments = tmplCache.SegmentsCache.ConcurrentMap()
+	tmplCache.Segments = tmplCache.SegmentsCache.ToConcurrent()
 	tmplCache.Initialized = true
 
 	term.tmplCache = &tmplCache
@@ -765,7 +765,7 @@ func (term *Terminal) TemplateCache() *cache.Template {
 	tmplCache.ShellVersion = term.CmdFlags.ShellVersion
 	tmplCache.Code, _ = term.StatusCodes()
 	tmplCache.WSL = term.IsWsl()
-	tmplCache.Segments = concurrent.NewMap()
+	tmplCache.Segments = maps.NewConcurrent()
 	tmplCache.PromptCount = term.CmdFlags.PromptCount
 	tmplCache.Env = make(map[string]string)
 	tmplCache.Var = make(map[string]any)

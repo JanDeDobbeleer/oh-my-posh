@@ -1,9 +1,11 @@
 package cache
 
-import "github.com/jandedobbeleer/oh-my-posh/src/concurrent"
+import (
+	"github.com/jandedobbeleer/oh-my-posh/src/maps"
+)
 
 type Command struct {
-	Commands *concurrent.Map
+	Commands *maps.Concurrent
 }
 
 func (c *Command) Set(command, path string) {

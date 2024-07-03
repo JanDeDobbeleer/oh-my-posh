@@ -3,7 +3,7 @@ package cache
 import (
 	"sync"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/concurrent"
+	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 )
 
 type Template struct {
@@ -17,13 +17,13 @@ type Template struct {
 	HostName      string
 	Code          int
 	Env           map[string]string
-	Var           concurrent.SimpleMap
+	Var           maps.Simple
 	OS            string
 	WSL           bool
 	PromptCount   int
 	SHLVL         int
-	Segments      *concurrent.Map
-	SegmentsCache concurrent.SimpleMap
+	Segments      *maps.Concurrent
+	SegmentsCache maps.Simple
 
 	Initialized bool
 	sync.RWMutex

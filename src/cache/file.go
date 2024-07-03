@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/concurrent"
+	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 )
 
 const (
@@ -14,13 +14,13 @@ const (
 )
 
 type File struct {
-	cache     *concurrent.Map
+	cache     *maps.Concurrent
 	cachePath string
 	dirty     bool
 }
 
 func (fc *File) Init(cachePath string) {
-	fc.cache = concurrent.NewMap()
+	fc.cache = maps.NewConcurrent()
 	fc.cachePath = cachePath
 	cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
 	content, err := os.ReadFile(cacheFilePath)
@@ -47,7 +47,7 @@ func (fc *File) Close() {
 		return
 	}
 
-	cache := fc.cache.ToSimpleMap()
+	cache := fc.cache.ToSimple()
 
 	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
 		cacheFilePath := filepath.Join(fc.cachePath, CacheFile)

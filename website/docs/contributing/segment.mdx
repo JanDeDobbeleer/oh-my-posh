@@ -15,13 +15,13 @@ You can use the following template as a guide.
 package segments
 
 import (
-  "github.com/jandedobbeleer/oh-my-posh/src/platform"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 type New struct {
     props   properties.Properties
-    env     platform.Environment
+    env     runtime.Environment
 
     Text string
 }
@@ -39,11 +39,11 @@ func (n *New) Template() string {
     return " {{.Text}} world "
 }
 
-func (n *New) Init(props properties.Properties, env platform.Environment) {
+func (n *New) Init(props properties.Properties, env runtime.Environment) {
     n.props = props
     n.env = env
 
-    n.Text = props.GetString(NewProp, "Hello")
+    n.Text = n.props.GetString(NewProp, "Hello")
 }
 ```
 
@@ -57,7 +57,7 @@ use of the test tables pattern for all newly added tests. See [this][tables] blo
 
 ## Create a name for your Segment
 
-[`segment.go`][segment-go] contains the list of available `SegmentType`'s, which gives them a name we can map from the
+[`segment_types.go`][segment-go] contains the list of available `SegmentType`'s, which gives them a name we can map from the
 `.json` [themes][themes].
 
 Add your segment.
@@ -167,7 +167,7 @@ At `$.definitions.segment.allOf`, add your segment details:
 
 And be patient, I'm going as fast as I can 🏎
 
-[segment-go]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/src/engine/segment.go
+[segment-go]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/src/config/segment_types.go
 [themes]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/themes
 [docs]: https://github.com/JanDeDobbeleer/oh-my-posh/tree/main/website/docs/segments
 [sidebars]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/website/sidebars.js

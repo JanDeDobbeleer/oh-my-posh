@@ -34,7 +34,7 @@ jobs:
     if: ${{ needs.changelog.outputs.skipped == 'false' }}
     runs-on: ubuntu-latest
     env:
-      COSIGN_KEY_LOCATION: "/tmp/cosign.key"
+      SIGNING_KEY_LOCATION: "/tmp/private_key.pem"
     defaults:
       run:
         shell: pwsh
@@ -49,25 +49,19 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag ${{ needs.changelog.outputs.tag }}
-      - name: Install cosign 🔑
-        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20
-        with:
-          cosign-release: 'v1.4.0'
       - name: Private Key 🔐
         run: |
           $PSDefaultParameterValues['Out-File:Encoding']='UTF8'
-          $env:COSIGN_KEY > $env:COSIGN_KEY_LOCATION
+          $env:SIGNING_KEY > $env:SIGNING_KEY_LOCATION
         env:
-          COSIGN_KEY: ${{secrets.COSIGN_KEY}}
+          SIGNING_KEY: ${{secrets.SIGNING_KEY}}
       - name: Run GoReleaser 🚀
         uses: goreleaser/goreleaser-action@286f3b13b1b49da4ac219696163fb8c1c93e1200
         with:
           distribution: goreleaser
           version: latest
-          args: build --clean
+          args: release --clean --skip publish
           workdir: src
-        env:
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
       - name: Zip theme files 🤐
         run: |
           $compress = @{
@@ -94,3 +88,4 @@ jobs:
           files: |
             src/dist/posh-*
             src/dist/themes.*
+            src/dist/checksums.txt

@@ -37,14 +37,15 @@ builds:
         goarch: arm
       - goos: windows
         goarch: arm
-    hooks:
-      post:
-      - sh -c "cosign sign-blob --key $COSIGN_KEY_LOCATION {{ .Path }} > dist/{{ .Name }}.sig"
 archives:
   - id: oh-my-posh
     format: binary
     name_template: "posh-{{ .Os }}-{{ .Arch }}"
 checksum:
   name_template: 'checksums.txt'
+signs:
+  - cmd: openssl
+    args: [ "dgst", "-sha256", "-sign", "{{ .Env.SIGNING_KEY_LOCATION }}", "-out", "${artifact}.sig", "${artifact}" ]
+    artifacts: checksum
 changelog:
   disable: true

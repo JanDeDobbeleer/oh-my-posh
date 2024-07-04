@@ -88,4 +88,4 @@ jobs:
           files: |
             src/dist/posh-*
             src/dist/themes.*
-            src/dist/checksums.txt
+            src/dist/checksums.*

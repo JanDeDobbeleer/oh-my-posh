@@ -21,7 +21,7 @@ type Engine struct {
 	Env    runtime.Environment
 	Plain  bool
 
-	console           strings.Builder
+	prompt            strings.Builder
 	currentLineLength int
 	rprompt           string
 	rpromptLength     int
@@ -31,12 +31,12 @@ type Engine struct {
 }
 
 func (e *Engine) write(text string) {
-	e.console.WriteString(text)
+	e.prompt.WriteString(text)
 }
 
 func (e *Engine) string() string {
-	text := e.console.String()
-	e.console.Reset()
+	text := e.prompt.String()
+	e.prompt.Reset()
 	return text
 }
 
@@ -323,6 +323,9 @@ func (e *Engine) renderBlockSegments(block *config.Block) (string, int) {
 
 	e.writeSeparator(true)
 
+	e.activeSegment = nil
+	e.previousActiveSegment = nil
+
 	return terminal.String()
 }
 
@@ -348,6 +351,7 @@ func (e *Engine) setActiveSegment(segment *config.Segment) {
 
 func (e *Engine) renderActiveSegment() {
 	e.writeSeparator(false)
+
 	switch e.activeSegment.ResolveStyle() {
 	case config.Plain, config.Powerline:
 		terminal.Write(color.Background, color.Foreground, e.activeSegment.Text)
@@ -365,6 +369,7 @@ func (e *Engine) renderActiveSegment() {
 			terminal.Write(color.Background, color.Foreground, e.activeSegment.Text)
 		}
 	}
+
 	e.previousActiveSegment = e.activeSegment
 
 	terminal.SetParentColors(e.previousActiveSegment.ResolveBackground(), e.previousActiveSegment.ResolveForeground())

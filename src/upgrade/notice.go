@@ -49,6 +49,11 @@ func Latest(env runtime.Environment) (string, error) {
 	var release release
 	// this can't fail
 	_ = json.Unmarshal(body, &release)
+
+	if len(release.TagName) == 0 {
+		return "", fmt.Errorf("failed to get latest release")
+	}
+
 	return release.TagName, nil
 }
 

@@ -2,9 +2,11 @@ package cli
 
 import (
 	"fmt"
+	"os"
 	stdruntime "runtime"
 	"slices"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
@@ -32,9 +34,7 @@ var upgradeCmd = &cobra.Command{
 			return
 		}
 
-		env := &runtime.Terminal{
-			CmdFlags: &runtime.Flags{},
-		}
+		env := &runtime.Terminal{}
 		env.Init()
 		defer env.Close()
 
@@ -43,22 +43,41 @@ var upgradeCmd = &cobra.Command{
 
 		defer fmt.Print(terminal.StopProgress())
 
+		latest, err := upgrade.Latest(env)
+		if err != nil {
+			fmt.Printf("\n❌ %s\n\n", err)
+			os.Exit(1)
+			return
+		}
+
 		if force {
-			upgrade.Run(env)
+			executeUpgrade(latest)
 			return
 		}
 
 		cfg := config.Load(env)
 
-		if _, hasNotice := upgrade.Notice(env, true); !hasNotice {
+		version := fmt.Sprintf("v%s", build.Version)
+
+		if version == latest {
 			if !cfg.DisableNotice {
-				fmt.Print("\n✅  no new version available\n\n")
+				fmt.Print("\n✅ no new version available\n\n")
 			}
 			return
 		}
 
-		upgrade.Run(env)
+		executeUpgrade(latest)
 	},
+}
+
+func executeUpgrade(latest string) {
+	err := upgrade.Run(latest)
+	if err == nil {
+		return
+	}
+
+	fmt.Printf("\n❌ %s\n\n", err)
+	os.Exit(1)
 }
 
 func init() {

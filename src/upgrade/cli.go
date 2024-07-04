@@ -2,13 +2,11 @@ package upgrade
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
 var (
@@ -24,10 +22,15 @@ type state int
 const (
 	validating state = iota
 	downloading
+	verifying
 	installing
 )
 
 func setState(message state) {
+	if program == nil {
+		return
+	}
+
 	program.Send(stateMsg(message))
 }
 
@@ -37,25 +40,28 @@ type model struct {
 	spinner spinner.Model
 	message string
 	state   state
+	error   error
+
+	tag string
 }
 
-func initialModel() *model {
+func initialModel(tag string) *model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
-	return &model{spinner: s}
+	return &model{spinner: s, tag: tag}
 }
 
 func (m *model) Init() tea.Cmd {
 	defer func() {
 		go func() {
-			if err := install(); err != nil {
-				message := fmt.Sprintf("⚠️  %s", err)
-				program.Send(resultMsg(message))
+			if err := install(m.tag); err != nil {
+				m.error = err
+				program.Quit()
 				return
 			}
 
-			program.Send(resultMsg("🚀  Upgrade successful, restart your shell to take full advantage of the new functionality."))
+			program.Send(resultMsg("🚀 Upgrade successful, restart your shell to take full advantage of the new functionality."))
 		}()
 	}()
 
@@ -101,6 +107,9 @@ func (m *model) View() string {
 	case downloading:
 		m.spinner.Spinner = spinner.Globe
 		message = "Downloading latest version"
+	case verifying:
+		m.spinner.Spinner = spinner.Moon
+		message = "Verifying download"
 	case installing:
 		message = "Installing"
 	}
@@ -108,20 +117,29 @@ func (m *model) View() string {
 	return title + textStyle.Render(fmt.Sprintf("%s %s", m.spinner.View(), message))
 }
 
-func Run(env runtime.Environment) {
+func Run(latest string) error {
 	titleStyle := lipgloss.NewStyle().Margin(1, 0, 1, 0)
-	title = "📦  Upgrading Oh My Posh"
+	title = "📦 Upgrading Oh My Posh"
 
-	version, err := Latest(env)
-	if err == nil {
-		title = fmt.Sprintf("%s from %s to %s", title, build.Version, version)
+	current := build.Version
+	if len(current) == 0 {
+		current = "dev"
 	}
 
+	title = fmt.Sprintf("%s from %s to %s", title, current, latest)
 	title = titleStyle.Render(title)
 
-	program = tea.NewProgram(initialModel())
-	if _, err := program.Run(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	program = tea.NewProgram(initialModel(latest))
+	resultModel, err := program.Run()
+
+	if err != nil {
+		return err
 	}
+
+	programModel, OK := resultModel.(*model)
+	if !OK {
+		return nil
+	}
+
+	return programModel.error
 }

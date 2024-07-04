@@ -2,19 +2,13 @@ package upgrade
 
 import (
 	"bytes"
-	"context"
 	"fmt"
 	"io"
-	httplib "net/http"
 	"os"
 	"path/filepath"
-	stdruntime "runtime"
-
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
-func install() error {
+func install(tag string) error {
 	setState(validating)
 
 	executable, err := os.Executable()
@@ -22,34 +16,9 @@ func install() error {
 		return err
 	}
 
-	extension := ""
-	if stdruntime.GOOS == runtime.WINDOWS {
-		extension = ".exe"
-	}
-
-	asset := fmt.Sprintf("posh-%s-%s%s", stdruntime.GOOS, stdruntime.GOARCH, extension)
-
 	setState(downloading)
 
-	url := fmt.Sprintf("https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/%s", asset)
-
-	req, err := httplib.NewRequestWithContext(context.Background(), "GET", url, nil)
-	if err != nil {
-		return err
-	}
-
-	resp, err := http.HTTPClient.Do(req)
-	if err != nil {
-		return err
-	}
-
-	if resp.StatusCode != httplib.StatusOK {
-		return fmt.Errorf("failed to download installer: %s", url)
-	}
-
-	defer resp.Body.Close()
-
-	newBytes, err := io.ReadAll(resp.Body)
+	data, err := downloadAndVerify(tag)
 	if err != nil {
 		return err
 	}
@@ -65,7 +34,7 @@ func install() error {
 
 	defer fp.Close()
 
-	_, err = io.Copy(fp, bytes.NewReader(newBytes))
+	_, err = io.Copy(fp, bytes.NewReader(data))
 	if err != nil {
 		return err
 	}

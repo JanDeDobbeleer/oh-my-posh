@@ -53,7 +53,9 @@ type Segment struct {
 	MaxWidth               int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
 	MinWidth               int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
 	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
-	color.Set
+	Background             color.Ansi     `json:"background" toml:"background"`
+	Foreground             color.Ansi     `json:"foreground" toml:"foreground"`
+	// color.Set
 
 	Enabled bool `json:"-" toml:"-"`
 
@@ -214,19 +216,19 @@ func (segment *Segment) cwdExcluded() bool {
 func (segment *Segment) ResolveForeground() color.Ansi {
 	if len(segment.ForegroundTemplates) != 0 {
 		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.env, segment.Foreground.String())
-		segment.Set.Foreground = color.Ansi(match)
+		segment.Foreground = color.Ansi(match)
 	}
 
-	return segment.Set.Foreground
+	return segment.Foreground
 }
 
 func (segment *Segment) ResolveBackground() color.Ansi {
 	if len(segment.BackgroundTemplates) != 0 {
 		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.env, segment.Background.String())
-		segment.Set.Background = color.Ansi(match)
+		segment.Background = color.Ansi(match)
 	}
 
-	return segment.Set.Background
+	return segment.Background
 }
 
 func (segment *Segment) ResolveStyle() SegmentStyle {

@@ -306,7 +306,8 @@ func (e *Engine) renderBlockSegments(block *config.Block) (string, int) {
 	for i, segment := range block.Segments {
 		if colors, newCycle := cycle.Loop(); colors != nil {
 			cycle = &newCycle
-			segment.Set = *colors
+			segment.Foreground = colors.Foreground
+			segment.Background = colors.Background
 		}
 
 		if i == 0 && len(block.LeadingDiamond) > 0 {

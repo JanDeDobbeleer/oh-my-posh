@@ -13,6 +13,22 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
+// This is based on the following key generation and validation.
+// Generate a private key:
+// openssl genpkey -algorithm Ed25519 -out private_key.pem
+// Extract the public key:
+// openssl pkey -in private_key.pem -pubout -out public_key.pem
+// Sign the checksums.txt file:
+// openssl pkeyutl -sign -inkey private_key.pem -out checksums.txt.sig -rawin -in checksums.txt
+// Verify the signature:
+// openssl pkeyutl -verify -pubin -inkey public_key.pem -sigfile checksums.txt.sig -rawin -in checksums.txt
+// The public key is embedded in the binary.
+// The private key is used to sign the checksums.txt file.
+// The signature is embedded in the release.
+// The checksums.txt file contains the checksums of the release assets.
+// All checks are done in memory.
+// Only then the binary is written to disk.
+
 //go:embed public_key.pem
 var publicKey []byte
 

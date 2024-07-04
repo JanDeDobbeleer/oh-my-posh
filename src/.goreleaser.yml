@@ -45,7 +45,7 @@ checksum:
   name_template: 'checksums.txt'
 signs:
   - cmd: openssl
-    args: [ "dgst", "-sha256", "-sign", "{{ .Env.SIGNING_KEY_LOCATION }}", "-out", "${artifact}.sig", "${artifact}" ]
+    args: [ "pkeyutl", "-sign", "-inkey", "{{ .Env.SIGNING_KEY_LOCATION }}", "-out", "${artifact}.sig", "-rawin", "-in", "${artifact}" ]
     artifacts: checksum
 changelog:
   disable: true

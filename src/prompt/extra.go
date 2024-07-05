@@ -58,6 +58,10 @@ func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 		promptText = err.Error()
 	}
 
+	if promptType == Transient && prompt.Newline {
+		promptText = fmt.Sprintf("%s%s", e.getNewline(), promptText)
+	}
+
 	if promptType == Transient && e.Config.ShellIntegration {
 		exitCode, _ := e.Env.StatusCodes()
 		e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))

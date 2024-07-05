@@ -119,26 +119,28 @@ func (e *Engine) pwd() {
 	e.write(terminal.Pwd(pwdType, user, host, cwd))
 }
 
-func (e *Engine) newline() {
-	defer func() {
-		e.currentLineLength = 0
-	}()
-
+func (e *Engine) getNewline() string {
 	// WARP terminal will remove \n from the prompt, so we hack a newline in
 	if e.isWarp() {
-		e.write(terminal.LineBreak())
-		return
+		return terminal.LineBreak()
 	}
 
 	// TCSH needs a space before the LITERAL newline character or it will not render correctly
 	// don't ask why, it be like that sometimes.
 	// https://unix.stackexchange.com/questions/99101/properly-defining-a-multi-line-prompt-in-tcsh#comment1342462_322189
 	if e.Env.Shell() == shell.TCSH {
-		e.write(` \n`)
-		return
+		return ` \n`
 	}
 
-	e.write("\n")
+	return "\n"
+}
+
+func (e *Engine) writeNewline() {
+	defer func() {
+		e.currentLineLength = 0
+	}()
+
+	e.write(e.getNewline())
 }
 
 func (e *Engine) isWarp() bool {
@@ -192,7 +194,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 		// when we're printin the first primary prompt in
 		// the shell
 		if !cancelNewline {
-			e.newline()
+			e.writeNewline()
 		}
 		return false
 	}
@@ -213,7 +215,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	// when we're printin the first primary prompt in
 	// the shell
 	if block.Newline && !cancelNewline {
-		e.newline()
+		e.writeNewline()
 	}
 
 	text, length := e.renderBlockSegments(block)
@@ -244,7 +246,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 		if !OK {
 			switch block.Overflow {
 			case config.Break:
-				e.newline()
+				e.writeNewline()
 			case config.Hide:
 				// make sure to fill if needed
 				if padText, OK := e.shouldFill(block.Filler, space, 0); OK {

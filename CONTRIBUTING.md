@@ -32,7 +32,6 @@ Fish and PowerShell, the latter of which is the default.
 1. Open the `.devcontainer/devcontainer.json` file and in the "*build*" section modify:
 
    - `TZ`: with [your own timezone][timezones]
-   - `DEFAULT_POSH_THEME`: with [your preferred theme][themes]
 
 2. Summon the Command Panel (Ctrl+Shift+P) and select `Codespaces: Rebuild Container`
    to rebuild your devcontainer. (This should take just a few seconds.)
@@ -59,4 +58,3 @@ if you do `Codespaces: Rebuild Container` again, you'll be back to the latest st
 [codespaces-link]: https://github.com/codespaces/new?hide_repo_select=true&ref=main&repo=175405157
 [devcontainer-ext]: https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers
 [timezones]: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-[themes]: https://ohmyposh.dev/docs/themes

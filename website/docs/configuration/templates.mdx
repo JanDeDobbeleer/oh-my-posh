@@ -141,6 +141,42 @@ $env.SET_POSHCONTEXT = {
 }
 ```
 
+## Shell variables
+
+| Name                | Type  | Description                            |
+| ------------------- | ----- | -------------------------------------- |
+| `.ShellVar.VarName` | `any` | Variables passed from the active shell |
+
+### Fish supported variables
+
+| Name                   | Type     | Description                                                                          |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------ |
+| `.ShellVar.FISH__MODE` | `string` | The current [VI mode](https://fishshell.com/docs/current/cmds/fish_mode_prompt.html) |
+
+### Example
+
+```json
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 2,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "p:white",
+          // highlight-next-line
+          "template": "{{ if eq .TermVar.FISH__MODE \"insert\" }} [I] {{ else }} [?] {{ end }}"
+        }
+      ]
+    }
+  ]
+}
+```
+
 ## Template logic
 
 <!--  markdownlint-disable MD013 -->

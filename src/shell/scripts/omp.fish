@@ -29,6 +29,7 @@ function fish_prompt
     set --global omp_stack_count (count $dirstack)
     set --global omp_duration "$CMD_DURATION$cmd_duration"
     set --global omp_no_exit_code false
+    set --global omp_fish_mode $fish_bind_mode
 
     # check if variable set, < 3.2 case
     if set --query omp_lastcommand; and test "$omp_lastcommand" = ""
@@ -61,7 +62,7 @@ function fish_prompt
 
     ::PROMPT_MARK::
 
-    ::OMP:: print primary --config $POSH_THEME --shell fish --status $omp_status_cache --pipestatus="$omp_pipestatus_cache" --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-status=$omp_no_exit_code
+    ::OMP:: print primary --config $POSH_THEME --shell fish --status $omp_status_cache --pipestatus="$omp_pipestatus_cache" --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-status=$omp_no_exit_code --var FISH__MODE=$omp_fish_mode
 end
 
 function fish_right_prompt
@@ -78,7 +79,8 @@ function fish_right_prompt
       return
     end
     set has_omp_tooltip false
-    ::OMP:: print right --config $POSH_THEME --shell fish --status $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION
+    set omp_fish_mode $fish_bind_mode
+    ::OMP:: print right --config $POSH_THEME --shell fish --status $omp_status_cache --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --var FISH__MODE=$omp_fish_mode
 end
 
 function postexec_omp --on-event fish_postexec

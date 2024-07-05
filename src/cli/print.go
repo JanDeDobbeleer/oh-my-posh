@@ -2,7 +2,10 @@ package cli
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 	"github.com/jandedobbeleer/oh-my-posh/src/prompt"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 
@@ -25,6 +28,8 @@ var (
 	plain        bool
 	noStatus     bool
 	column       int
+
+	vars *[]string
 )
 
 // printCmd represents the prompt command
@@ -49,6 +54,25 @@ var printCmd = &cobra.Command{
 			return
 		}
 
+		shell_vars := make(maps.Simple, len(*vars))
+
+		for _, v := range *vars {
+			parts := strings.SplitAfterN(v, "=", 2)
+			if len(parts) == 0 {
+				_ = cmd.Help()
+				return
+			}
+
+			name := parts[0][:len(parts[0])-1]
+			if i, err := strconv.Atoi(parts[1]); err == nil {
+				shell_vars[name] = i
+			} else if b, err := strconv.ParseBool(parts[1]); err == nil {
+				shell_vars[name] = b
+			} else {
+				shell_vars[name] = parts[1]
+			}
+		}
+
 		flags := &runtime.Flags{
 			Config:        configFlag,
 			PWD:           pwd,
@@ -66,6 +90,7 @@ var printCmd = &cobra.Command{
 			Cleared:       cleared,
 			NoExitCode:    noStatus,
 			Column:        column,
+			ShellVars:     shell_vars,
 		}
 
 		eng := prompt.New(flags)
@@ -110,6 +135,7 @@ func init() {
 	printCmd.Flags().BoolVar(&cleared, "cleared", false, "do we have a clear terminal or not")
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
 	printCmd.Flags().IntVar(&column, "column", 0, "the column position of the cursor")
+	vars = printCmd.Flags().StringArray("var", make([]string, 0), "ShellVars in the form name=value")
 	// Deprecated flags
 	printCmd.Flags().IntVarP(&status, "error", "e", 0, "last exit code")
 	printCmd.Flags().BoolVar(&noStatus, "no-exit-code", false, "no valid exit code (cancelled or no command yet)")

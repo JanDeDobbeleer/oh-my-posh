@@ -23,6 +23,7 @@ func New(flags *runtime.Flags) *Engine {
 	}
 
 	env.Var = cfg.Var
+	env.ShellVar = flags.ShellVars
 	flags.HasTransient = cfg.TransientPrompt != nil
 
 	terminal.Init(env.Shell())

@@ -62,6 +62,7 @@ type Flags struct {
 	Cleared       bool
 	NoExitCode    bool
 	Column        int
+	ShellVars     maps.Simple
 }
 
 type CommandError struct {
@@ -197,6 +198,7 @@ type Environment interface {
 type Terminal struct {
 	CmdFlags *Flags
 	Var      maps.Simple
+	ShellVar maps.Simple
 
 	cwd       string
 	host      string
@@ -769,9 +771,14 @@ func (term *Terminal) TemplateCache() *cache.Template {
 	tmplCache.PromptCount = term.CmdFlags.PromptCount
 	tmplCache.Env = make(map[string]string)
 	tmplCache.Var = make(map[string]any)
+	tmplCache.ShellVar = make(map[string]any)
 
 	if term.Var != nil {
 		tmplCache.Var = term.Var
+	}
+
+	if term.ShellVar != nil {
+		tmplCache.ShellVar = term.ShellVar
 	}
 
 	const separator = "="

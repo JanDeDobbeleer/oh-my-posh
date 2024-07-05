@@ -39,6 +39,7 @@ var (
 		"SHLVL",
 		"Templates",
 		"Var",
+		"ShellVar",
 		"Data",
 	}
 )

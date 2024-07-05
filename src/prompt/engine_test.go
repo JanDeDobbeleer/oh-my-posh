@@ -264,3 +264,46 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		assert.Equal(t, tc.Expected, got)
 	}
 }
+
+func TestPrintVarious(t *testing.T) {
+	cases := []struct {
+		Case          string
+		Template      string
+		Expected      string
+		TemplateCache *cache.Template
+	}{
+		{Case: "ShellVars", Expected: "default true 1 yes",
+			Template: "{{ .ShellVar.FISH__MODE }} {{ .ShellVar.SomeBool }} {{ .ShellVar.SomeInt }} {{ if .ShellVar.SomeBool }}yes{{ else }}no{{ end }}",
+			TemplateCache: &cache.Template{
+				ShellVar: map[string]any{
+					"FISH__MODE": "default",
+					"SomeBool":   true,
+					"SomeInt":    1,
+				},
+			}},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+
+		env.On("Pwd").Return("abc")
+		env.On("Shell").Return(terminal.OSC99)
+		env.On("User").Return("user")
+		env.On("Host").Return("host", nil)
+		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("TemplateCache").Return(tc.TemplateCache)
+
+		terminal.Init(shell.GENERIC)
+
+		engine := &Engine{
+			Env: env,
+			Config: &config.Config{
+				ConsoleTitleTemplate: tc.Template,
+			},
+		}
+
+		got := engine.getTitleTemplateText()
+
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
+}

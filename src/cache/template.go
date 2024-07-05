@@ -18,6 +18,7 @@ type Template struct {
 	Code          int
 	Env           map[string]string
 	Var           maps.Simple
+	ShellVar      maps.Simple
 	OS            string
 	WSL           bool
 	PromptCount   int

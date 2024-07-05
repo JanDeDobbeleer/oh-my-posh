@@ -13,13 +13,13 @@
     "@docusaurus/preset-classic": "^3.4.0",
     "@docusaurus/theme-search-algolia": "^3.4.0",
     "@iarna/toml": "^2.2.5",
-    "@mdx-js/react": "^3.0.0",
-    "classnames": "^2.3.2",
-    "query-string": "8.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.23.1",
-    "yaml": "^2.3.4"
+    "@mdx-js/react": "^3.0.1",
+    "classnames": "^2.5.1",
+    "query-string": "9.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.24.1",
+    "yaml": "^2.4.5"
   },
   "resolutions": {
     "trim": "^0.0.3",

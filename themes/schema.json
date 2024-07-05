@@ -4808,6 +4808,12 @@
           "type": "string",
           "title": "Filler",
           "description": "Right aligned filler text, will span the remaining width"
+        },
+        "newline": {
+          "type": "boolean",
+          "title": "Newline",
+          "description": "Add a newline before the prompt",
+          "default": false
         }
       }
     },

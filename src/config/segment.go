@@ -55,7 +55,7 @@ type Segment struct {
 	Filler                 string         `json:"filler,omitempty" toml:"filler,omitempty"`
 	Background             color.Ansi     `json:"background" toml:"background"`
 	Foreground             color.Ansi     `json:"foreground" toml:"foreground"`
-	// color.Set
+	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
 
 	Enabled bool `json:"-" toml:"-"`
 

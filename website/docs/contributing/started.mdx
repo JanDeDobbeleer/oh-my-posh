@@ -4,7 +4,31 @@ title: Get Started
 sidebar_label: Get Started
 ---
 
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+## Get the source code
+
+The source is hosted on [Github][omp]. When you want to contribute, create a [fork][gh-fork] so you can make changes in
+your repository and create a pull request in the official Oh My Posh repository.
+
+To clone your fork of Oh My Posh locally, open the terminal and replace `<user>` with your Github username.
+
+```powershell
+git clone git@github.com:<user>/oh-my-posh.git
+```
+
 ## Install dependencies
+
+<Tabs
+  defaultValue="manual"
+  groupId="git"
+  values={[
+    { label: 'Manual', value: 'manual', },
+    { label: 'Winget', value: 'winget', },
+  ]
+}>
+<TabItem value="manual">
 
 ### go
 
@@ -12,7 +36,7 @@ The codebase is in [go][go], meaning we need a working go setup before we can do
 Have a look at the [go guide][go-started] to get up and running with go in no time!
 
 :::caution
-Oh My Posh needs at least go 1.18.
+Oh My Posh needs at least go 1.22
 :::
 
 ### golangci-lint
@@ -20,57 +44,88 @@ Oh My Posh needs at least go 1.18.
 To make sure we keep on writing quality code, [golang-ci lint][golang-ci-lint] is used to validate the changes.
 Have a look at the [local installation guide][golang-ci-lint-local] to make sure you can validate this yourself as well.
 
-## Get the source code
+### nodejs
 
-The source is hosted on [Github][omp]. When you want to contribute, create a [fork][gh-fork] so you can make changes in
-your repository and create a pull request in the official Oh My Posh repository.
+The documentation is written in markdown and uses [Docusaurus][docusaurus] to generate the website. To validate your
+changes, you'll need to have [nodejs] installed so you can run the website locally.
 
-Clone your fork of Oh My Posh locally, replace `<user>` with your Github username.
+### Visual Studio Code
 
-```bash
-git clone git@github.com:<user>/oh-my-posh.git
+If you're not using Visual Studio Code yet, it's a great editor to work with go and the project has the configuration built-in.
+You can download it [here][code].
+</TabItem>
+<TabItem value="winget">
+
+The project has a [winget] [configuration][winget-configuration] file available to install the dependencies.
+Navigate to the cloned repository and use winget to install the dependencies:
+
+```powershell
+winget configure configurations/configuration.dsc.yaml
 ```
+
+Done! Restart the terminal and you're ready to continue below.
+
+</TabItem>
+</Tabs>
+
+## Configure Visual Studio Code
+
+A default config (.vscode folder) for [Visual Studio Code][code] is available in the repo:
+
+- `golangci-lint` is configured as the default linter.
+- recommended extensions available for a smooth bootstrap.
+- default run and debug configurations available.
+
+Once the extensions are installed:
+
+- debug can be started by hitting F5.
+- all tests can be run using the Test explorer.
 
 ## Running tests
 
-The go source code can be found in the `src/` directory, make sure to change to that one before continuing.
+The go source code can be found in the `src/` directory, make sure to navigate to that one before continuing.
 
 ### Unit tests
 
-```bash
+```powershell
 go test -v ./...
 ```
 
 ### golangci-lint
 
-```bash
+```powershell
 golangci-lint run
 ```
 
 ## Building the app
 
 The easiest way to validate your changes is to write tests. Unfortunately, as it's a visual tool, you'll want to validate
-the changes by running the prompt in your shell as well. You can make use of go's `bin` folder which is usually added to
-your path to add your own Oh My Posh binary to and immediately see the changes appear in your shell.
+the changes by running the prompt in your shell as well.
 
-```bash
+If you already have Oh My Posh in your `PATH`, you'll need to either use that one as an output parameter, or make sure
+that the `$GOPATH/bin/` folder precedes the Oh My Posh binary in your `PATH`.
+
+```powershell
+go build -o (Get-Command oh-my-posh.exe).Source
+```
+
+Alternatively:
+
+```powershell
+$env:PATH = "$env:GOPATH\bin;$env:PATH"
 go build -o $GOPATH/bin/oh-my-posh
 ```
 
-## Get an editor
+## Run the website locally
 
-A default config(.vscode folder) for [Visual Studio Code][code] is available in the repo:
+Open your terminal and navigate to the `website` folder in the repository. Install the dependencies and start the website:
 
-- golangci-lint is configured as the default linter.
-- Recommended extensions available for a smooth bootstrap.
+```powershell
+npm install
+npm start
+```
 
-  ![recommended extensions](/img/recommended_extensions.png "Recommended extensions" )
-- Default run and debug configurations available.
-
-Once the extensions are installed:
-
-- Debug can be started by hitting F5.
-- All tests can be run using the Test explorer.
+This will start a local server on `http://localhost:3000` where you can see your changes.
 
 ### Extra tips
 
@@ -108,3 +163,7 @@ With everything set up, you're ready to start making changes and create your fir
 [gh-fork]: https://guides.github.com/activities/forking/
 [code]: https://code.visualstudio.com
 [delve]: https://github.com/go-delve/delve
+[docusaurus]: https://docusaurus.io
+[winget-configuration]: https://github.com/JanDeDobbeleer/oh-my-posh/blob/main/configuration/configuration.dsc.yaml
+[winget]: https://learn.microsoft.com/en-us/windows/package-manager/winget/
+[nodejs]: https://nodejs.org/en/download/

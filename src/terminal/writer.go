@@ -248,7 +248,7 @@ func StartProgress() string {
 		return ""
 	}
 
-	return fmt.Sprintf(formats.Escape, startProgress)
+	return startProgress
 }
 
 func StopProgress() string {
@@ -256,7 +256,7 @@ func StopProgress() string {
 		return ""
 	}
 
-	return fmt.Sprintf(formats.Escape, endProgress)
+	return endProgress
 }
 
 func Write(background, foreground color.Ansi, text string) {

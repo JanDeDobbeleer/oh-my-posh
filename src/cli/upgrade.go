@@ -43,8 +43,7 @@ var upgradeCmd = &cobra.Command{
 
 		latest, err := upgrade.Latest(env)
 		if err != nil {
-			fmt.Printf("\n❌ %s\n\n", err)
-			terminal.StopProgress()
+			fmt.Printf("\n❌ %s\n\n%s", err, terminal.StopProgress())
 			os.Exit(1)
 			return
 		}
@@ -58,27 +57,29 @@ var upgradeCmd = &cobra.Command{
 
 		version := fmt.Sprintf("v%s", build.Version)
 
-		if version == latest {
-			if !cfg.DisableNotice {
-				fmt.Print("\n✅ no new version available\n\n")
-			}
-
-			terminal.StopProgress()
+		if version != latest {
+			executeUpgrade(latest)
 			return
 		}
 
-		executeUpgrade(latest)
+		message := terminal.StopProgress()
+
+		if !cfg.DisableNotice {
+			message += "\n✅ no new version available\n\n"
+		}
+
+		fmt.Print(message)
 	},
 }
 
 func executeUpgrade(latest string) {
 	err := upgrade.Run(latest)
+	fmt.Print(terminal.StopProgress())
 	if err == nil {
 		return
 	}
 
 	fmt.Printf("\n❌ %s\n\n", err)
-	terminal.StopProgress()
 	os.Exit(1)
 }
 

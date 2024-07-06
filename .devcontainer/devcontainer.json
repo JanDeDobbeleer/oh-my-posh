@@ -20,7 +20,16 @@
       "PS_VERSION": "7.2.7"
     }
   },
-  "runArgs": ["--cap-add=SYS_PTRACE", "--security-opt", "seccomp=unconfined"],
+  "runArgs": [
+    "--cap-add=SYS_PTRACE",
+    "--security-opt",
+    "seccomp=unconfined",
+    "--security-opt",
+    "label=disable"
+  ],
+  "containerEnv": {
+    "HOME": "/home/vscode"
+  },
 
   "customizations": {
     "vscode": {

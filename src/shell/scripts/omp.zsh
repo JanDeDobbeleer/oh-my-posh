@@ -40,6 +40,7 @@ function prompt_ohmyposh_preexec() {
   if [[ "::FTCS_MARKS::" = "true" ]]; then
     printf "\033]133;C\007"
   fi
+
   omp_start_time=$(::OMP:: get millis)
 }
 
@@ -49,18 +50,23 @@ function prompt_ohmyposh_precmd() {
   omp_stack_count=${#dirstack[@]}
   omp_elapsed=-1
   omp_no_exit_code="true"
+
   if [ $omp_start_time ]; then
     local omp_now=$(::OMP:: get millis --shell=zsh)
     omp_elapsed=$(($omp_now - $omp_start_time))
     omp_no_exit_code="false"
   fi
+
   if [[ "${omp_pipestatus_cache[-1]}" != "$omp_status_cache" ]]; then
     omp_pipestatus_cache=("$omp_status_cache")
   fi
+
   count=$((POSH_PROMPT_COUNT + 1))
   export POSH_PROMPT_COUNT=$count
+
   set_poshcontext
   _set_posh_cursor_position
+
   eval "$(::OMP:: print primary --config="$POSH_THEME" --status="$omp_status_cache" --pipestatus="${omp_pipestatus_cache[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$omp_no_exit_code")"
   unset omp_start_time
 }
@@ -86,7 +92,9 @@ function _posh-tooltip() {
       zle autosuggest-clear
     fi
   fi
+
   zle .self-insert
+
   # https://github.com/zsh-users/zsh-autosuggestions - fetch new suggestion after the space
   if [[ "$(zle -lL autosuggest-fetch)" ]]; then
     # only if suggestions not disabled (variable not set)
@@ -97,15 +105,18 @@ function _posh-tooltip() {
 
   # Get the first word of command line as tip.
   local tooltip_command=${${(MS)BUFFER##[[:graph:]]*}%%[[:space:]]*}
+
   # Ignore an empty/repeated tooltip command.
   if [[ -z "$tooltip_command" ]] || [[ "$tooltip_command" = "$omp_tooltip_command" ]]; then
     return
   fi
+
   omp_tooltip_command="$tooltip_command"
   local tooltip=$(::OMP:: print tooltip --config="$POSH_THEME" --status="$omp_status_cache" --pipestatus="${omp_pipestatus_cache[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --command="$tooltip_command" --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$omp_no_exit_code")
   if [[ -z "$tooltip" ]]; then
     return
   fi
+
   RPROMPT=$tooltip
   zle .reset-prompt
 }
@@ -143,20 +154,43 @@ function enable_poshtooltips() {
   bindkey " " _posh-tooltip
 }
 
-function enable_poshtransientprompt() {
-  zle -N zle-line-init _posh-zle-line-init
+# Helper function for posh::decorate_widget
+# It calls the posh function right after the original definition of the widget
+# $1 is the name of the widget to call
+# $2 is the posh widget name
+posh::call_widget()
+{
+  builtin zle "${1}" &&
+  ${2}
+}
 
-  # restore broken key bindings
-  # https://github.com/JanDeDobbeleer/oh-my-posh/discussions/2617#discussioncomment-3911044
-  bindkey '^[[F' end-of-line
-  bindkey '^[[H' beginning-of-line
-  _widgets=$(zle -la)
-  if [[ "${_widgets[(r)down-line-or-beginning-search]}" ]]; then
-    bindkey '^[[B' down-line-or-beginning-search
-  fi
-  if [[ "${_widgets[(r)up-line-or-beginning-search]}" ]]; then
-    bindkey '^[[A' up-line-or-beginning-search
-  fi
+# decorate_widget
+# Allows to preserve any user defined value that may have been defined before posh tries to redefine it.
+# Instead, we keep the previous function and decorate it with the posh additions
+# $1: The name of the widget to decorate
+# $2: The name of the posh function to decorate it with
+function posh::decorate_widget() {
+  typeset -F SECONDS
+  local prefix=orig-s$SECONDS-r$RANDOM # unique each time, in case we're sourced more than once
+  cur_widget=${1}
+  posh_widget=${2}
+
+  case ${widgets[$cur_widget]:-""} in
+    # Already decorated: do nothing.
+    user:_posh-decorated-*);;
+
+    user:*)
+      zle -N $prefix-$cur_widget ${widgets[$cur_widget]#*:}
+      eval "_posh-decorated-${(q)prefix}-${(q)cur_widget}() { posh::call_widget ${(q)prefix}-${(q)cur_widget} ${(q)posh_widget} -- \"\$@\" }"
+      zle -N $cur_widget _posh-decorated-$prefix-$cur_widget;;
+
+    # For now, do not decorate if it's not a user:*
+    *);;
+  esac
+}
+
+function enable_poshtransientprompt() {
+  posh::decorate_widget zle-line-init _posh-zle-line-init
 }
 
 if [[ "::TOOLTIPS::" = "true" ]]; then

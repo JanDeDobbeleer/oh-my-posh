@@ -4721,9 +4721,9 @@
       "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": true
     },
-    "disable_cursor_positioning": {
+    "enable_cursor_positioning": {
       "type": "boolean",
-      "title": "Disable Cursor Positioning",
+      "title": "Enable Cursor Positioning",
       "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": false
     },

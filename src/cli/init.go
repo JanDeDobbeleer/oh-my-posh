@@ -77,7 +77,7 @@ func runInit(shellName string) {
 
 	for i, block := range cfg.Blocks {
 		// only fetch cursor position when relevant
-		if !cfg.DisableCursorPositioning && (i == 0 && block.Newline) {
+		if cfg.EnableCursorPositioning && (i == 0 && block.Newline) {
 			shell.CursorPositioning = true
 		}
 

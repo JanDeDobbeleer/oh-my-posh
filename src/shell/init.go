@@ -82,6 +82,7 @@ func quotePosixStr(str string) string {
 	if len(str) == 0 {
 		return "''"
 	}
+
 	needQuoting := false
 	var b strings.Builder
 	for _, r := range str {
@@ -166,19 +167,23 @@ func quoteNuStr(str string) string {
 
 func Init(env runtime.Environment) string {
 	shell := env.Flags().Shell
+
 	switch shell {
 	case PWSH, PWSH5, ELVISH:
 		executable, err := getExecutablePath(env)
 		if err != nil {
 			return noExe
 		}
+
 		var additionalParams string
 		if env.Flags().Strict {
 			additionalParams += " --strict"
 		}
+
 		if env.Flags().Manual {
 			additionalParams += " --manual"
 		}
+
 		var command, config string
 		switch shell {
 		case PWSH, PWSH5:
@@ -189,6 +194,7 @@ func Init(env runtime.Environment) string {
 			command = "eval (%s init %s --config=%s --print%s | slurp)"
 			config = env.Flags().Config
 		}
+
 		return fmt.Sprintf(command, executable, shell, config, additionalParams)
 	case ZSH, BASH, FISH, CMD, TCSH, XONSH:
 		return PrintInit(env)

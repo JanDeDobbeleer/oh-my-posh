@@ -30,6 +30,8 @@ func (e *Engine) Primary() string {
 	cycle = &e.Config.Cycle
 	var cancelNewline, didRender bool
 
+	needsPrimaryRPrompt := e.needsPrimaryRPrompt()
+
 	for i, block := range e.Config.Blocks {
 		// do not print a leading newline when we're at the first row and the prompt is cleared
 		if i == 0 {
@@ -42,14 +44,7 @@ func (e *Engine) Primary() string {
 			cancelNewline = !didRender
 		}
 
-		// only render rprompt for shells where we need it from the primary prompt
-		renderRPrompt := true
-		switch e.Env.Shell() {
-		case shell.ELVISH, shell.FISH, shell.NU, shell.XONSH, shell.CMD:
-			renderRPrompt = false
-		}
-
-		if block.Type == config.RPrompt && !renderRPrompt {
+		if block.Type == config.RPrompt && !needsPrimaryRPrompt {
 			continue
 		}
 
@@ -84,61 +79,48 @@ func (e *Engine) Primary() string {
 		if !e.Env.Flags().Eval {
 			break
 		}
+
 		// Warp doesn't support RPROMPT so we need to write it manually
 		if e.isWarp() {
-			e.writeRPrompt()
+			e.writePrimaryRPrompt()
 			// escape double quotes contained in the prompt
 			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
 			return prompt
 		}
+
 		// escape double quotes contained in the prompt
 		prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
 		prompt += fmt.Sprintf("\nRPROMPT=\"%s\"", e.rprompt)
+
 		return prompt
-	case shell.PWSH, shell.PWSH5, shell.GENERIC:
-		e.writeRPrompt()
-	case shell.BASH:
-		space, OK := e.canWriteRightBlock(true)
-		if !OK {
+	default:
+		if !needsPrimaryRPrompt {
 			break
 		}
-		// in bash, the entire rprompt needs to be escaped for the prompt to be interpreted correctly
-		// see https://github.com/jandedobbeleer/oh-my-posh/pull/2398
 
-		terminal.Init(shell.GENERIC)
-
-		prompt := terminal.SaveCursorPosition()
-		prompt += strings.Repeat(" ", space)
-		prompt += e.rprompt
-		prompt += terminal.RestoreCursorPosition()
-		prompt = terminal.EscapeText(prompt)
-		e.write(prompt)
+		e.writePrimaryRPrompt()
 	}
 
 	return e.string()
 }
 
-func (e *Engine) RPrompt() string {
-	filterRPromptBlock := func(blocks []*config.Block) *config.Block {
-		for _, block := range blocks {
-			if block.Type == config.RPrompt {
-				return block
-			}
-		}
-		return nil
+func (e *Engine) needsPrimaryRPrompt() bool {
+	switch e.Env.Shell() {
+	case shell.PWSH, shell.PWSH5, shell.GENERIC, shell.ZSH:
+		return true
+	default:
+		return false
+	}
+}
+
+func (e *Engine) writePrimaryRPrompt() {
+	space, OK := e.canWriteRightBlock(true)
+	if !OK {
+		return
 	}
 
-	block := filterRPromptBlock(e.Config.Blocks)
-	if block == nil {
-		return ""
-	}
-
-	block.Init(e.Env)
-	if !block.Enabled() {
-		return ""
-	}
-
-	text, length := e.renderBlockSegments(block)
-	e.rpromptLength = length
-	return text
+	e.write(terminal.SaveCursorPosition())
+	e.write(strings.Repeat(" ", space))
+	e.write(e.rprompt)
+	e.write(terminal.RestoreCursorPosition())
 }

@@ -4,8 +4,6 @@ import (
 	"sync"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
-	"github.com/jandedobbeleer/oh-my-posh/src/shell"
-	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
 // BlockType type of block
@@ -57,15 +55,6 @@ type Block struct {
 }
 
 func (b *Block) Init(env runtime.Environment) {
-	b.env = env
-	b.executeSegmentLogic()
-}
-
-func (b *Block) InitPlain(env runtime.Environment, config *Config) {
-	terminal.Init(shell.GENERIC)
-	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, config.TerminalBackground)
-	terminal.Colors = config.MakeColors()
-
 	b.env = env
 	b.executeSegmentLogic()
 }

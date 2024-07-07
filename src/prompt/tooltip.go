@@ -45,7 +45,6 @@ func (e *Engine) Tooltip(tip string) string {
 		text, _ := e.renderBlockSegments(block)
 		return text
 	case shell.PWSH, shell.PWSH5:
-		block.InitPlain(e.Env, e.Config)
 		if !block.Enabled() {
 			return ""
 		}

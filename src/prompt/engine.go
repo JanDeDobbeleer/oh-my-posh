@@ -73,17 +73,6 @@ func (e *Engine) canWriteRightBlock(rprompt bool) (int, bool) {
 	return availableSpace, canWrite
 }
 
-func (e *Engine) writeRPrompt() {
-	space, OK := e.canWriteRightBlock(true)
-	if !OK {
-		return
-	}
-	e.write(terminal.SaveCursorPosition())
-	e.write(strings.Repeat(" ", space))
-	e.write(e.rprompt)
-	e.write(terminal.RestoreCursorPosition())
-}
-
 func (e *Engine) pwd() {
 	// only print when supported
 	sh := e.Env.Shell()
@@ -199,13 +188,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 		return false
 	}
 
-	// when in bash, for rprompt blocks we need to write plain
-	// and wrap in escaped mode or the prompt will not render correctly
-	if e.Env.Shell() == shell.BASH && block.Type == config.RPrompt {
-		block.InitPlain(e.Env, e.Config)
-	} else {
-		block.Init(e.Env)
-	}
+	block.Init(e.Env)
 
 	if !block.Enabled() {
 		return false

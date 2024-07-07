@@ -3,7 +3,13 @@ export POSH_SHELL_VERSION=$BASH_VERSION
 export POWERLINE_COMMAND="oh-my-posh"
 export POSH_PID=$$
 export CONDA_PROMPT_MODIFIER=false
+
 omp_start_time=""
+omp_stack_count=0
+omp_elapsed=-1
+omp_no_exit_code="true"
+omp_ret=0
+omp_pipe_status=0
 
 # start timer on command start
 PS0='${omp_start_time:0:$((omp_start_time="$(_omp_start_timer)",0))}$(_omp_ftcs_command_start)'
@@ -45,35 +51,42 @@ function set_poshcontext() {
     return
 }
 
+# regular prompt
 function _omp_hook() {
-    local ret=$? pipeStatus=(${PIPESTATUS[@]})
-    if [[ "${#BP_PIPESTATUS[@]}" -ge "${#pipeStatus[@]}" ]]; then
-        pipeStatus=(${BP_PIPESTATUS[@]})
+    omp_ret=$?
+    omp_pipe_status=(${PIPESTATUS[@]})
+
+    if [[ "${#BP_PIPESTATUS[@]}" -ge "${#omp_pipe_status[@]}" ]]; then
+        omp_pipe_status=(${BP_PIPESTATUS[@]})
     fi
 
-    local omp_stack_count=$((${#DIRSTACK[@]} - 1))
-    local omp_elapsed=-1
-    local no_exit_code="true"
+    omp_stack_count=$((${#DIRSTACK[@]} - 1))
 
     if [[ "$omp_start_time" ]]; then
         local omp_now=$(::OMP:: get millis --shell=bash)
         omp_elapsed=$((omp_now - omp_start_time))
         omp_start_time=""
-        no_exit_code="false"
+        omp_no_exit_code="false"
     fi
-    if [[ "${pipeStatus[-1]}" != "$ret" ]]; then
-        pipeStatus=("$ret")
+
+    if [[ "${omp_pipe_status[-1]}" != "$omp_ret" ]]; then
+        omp_pipe_status=("$omp_ret")
     fi
 
     set_poshcontext
     _set_posh_cursor_position
 
-    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$ret" --pipestatus="${pipeStatus[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')"
+    PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$omp_ret" --pipestatus="${omp_pipe_status[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')"
     return $ret
 }
 
+# rprompt
+_omp_rprompt() {
+	::OMP:: print right --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$omp_ret" --pipestatus="${omp_pipe_status[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0'
+}
+
 if [[ "$TERM" != "linux" ]] && [[ -x "$(command -v ::OMP::)" ]] && ! [[ "$PROMPT_COMMAND" =~ "_omp_hook" ]]; then
-    PROMPT_COMMAND="_omp_hook; $PROMPT_COMMAND"
+    PROMPT_COMMAND="_omp_hook; _omp_rprompt; $PROMPT_COMMAND"
 fi
 
 if [[ "::UPGRADE::" == "true" ]]; then

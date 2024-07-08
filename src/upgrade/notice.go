@@ -42,7 +42,7 @@ To enable automated upgrades, set 'auto_upgrade' to 'true' in your configuration
 )
 
 func Latest(env runtime.Environment) (string, error) {
-	body, err := env.HTTPRequest(RELEASEURL, nil, 1000)
+	body, err := env.HTTPRequest(RELEASEURL, nil, 5000)
 	if err != nil {
 		return "", err
 	}

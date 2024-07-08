@@ -46,7 +46,7 @@ on oh-my-posh, a modern and more efficient tool was needed to suit my personal n
 * Shell and platform agnostic
 * Easily configurable
 * The **most** configurable prompt utility
-* Fast
+* Reasonably Fast
 * Secondary prompt
 * Right prompt
 * Transient prompt

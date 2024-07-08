@@ -72,6 +72,17 @@ you can set `leading_powerline_symbol` to the "opening" version of the `powerlin
 This will not use the inverted ANSI hack we have in place as that's not supported in every terminal. You might need to tweak
 your font settings to get the best alignment.
 
+:::warning Git Bash
+The `powerline` style has issues in Git Bash due to the icons width being incorrectly calculated, rendering
+the prompt broken when typing long commands or searching the history.
+
+The following prompt configuration has the same problem:
+
+```bash
+export PS1=" "
+```
+:::
+
 ### Plain
 
 Simple. Colored text on a transparent background. Make sure to set `foreground` for maximum enjoyment.

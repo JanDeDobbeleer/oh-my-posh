@@ -20,7 +20,7 @@ oh-my-posh init pwsh --config ~/custom.omp.json | Invoke-Expression
 ```
 
 :::warning
-Forcing the entire session to UTF8 can have unwanted side-effects for other executables. We can't be held liable for that,
+Forcing the entire session to UTF8 can have unwanted side effects for other executables. We can't be held liable for that,
 consider this a temporary workaround until the original PowerShell [issue][pwsh-20733] is resolved.
 :::
 
@@ -235,7 +235,7 @@ The issue is that PowerShell on Windows doesn't yet default to UTF-8. Resolve th
 If the location contains non-ASCII characters, non-UTF-8 PowerShell may provide a wrong path to Oh My Posh, which can break the initialization.
 
 The scenario for non-ASCII location:
-- Your computer has a non-ASCII user name.
+- Your computer has a non-ASCII username.
 - Your [config file](./installation/customize.mdx) is under your `$HOME`.
 :::
 
@@ -262,7 +262,7 @@ $OutputEncoding = [console]::InputEncoding = [console]::OutputEncoding = New-Obj
 ### Zsh: No command history (Ctrl+R does not work)
 
 This issue occurs when you're using plain zsh in combination with Oh My Posh.
-You fix this by can adding the right configuration to `~/.zshrc`.
+You can fix this by adding the right configuration to `~/.zshrc`.
 
 ```bash
 HISTFILE=~/.zsh_history

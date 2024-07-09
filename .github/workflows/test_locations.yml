@@ -1,0 +1,16 @@
+name: Dev kit
+
+on: [pull_request]
+
+jobs:
+  gheck-things:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+    - name: Check for stuff
+      run: |
+        openssl version
+        & 'C:\Program Files\Git\usr\bin\openssl.exe' version
+

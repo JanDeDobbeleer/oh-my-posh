@@ -367,6 +367,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://jacobbundgaard.dk"><img src="https://avatars.githubusercontent.com/u/984760?v=4?s=100" width="100px;" alt="Jacob Bundgaard"/><br /><sub><b>Jacob Bundgaard</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=kimsey0" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://thisaru.me"><img src="https://avatars.githubusercontent.com/u/40016057?v=4?s=100" width="100px;" alt="Thisaru Guruge"/><br /><sub><b>Thisaru Guruge</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=ThisaruGuruge" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/edwin-shdw"><img src="https://avatars.githubusercontent.com/u/62764562?v=4?s=100" width="100px;" alt="Edwin"/><br /><sub><b>Edwin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=edwin-shdw" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://dickinson.id"><img src="https://avatars.githubusercontent.com/u/522465?v=4?s=100" width="100px;" alt="Jonathan Dickinson"/><br /><sub><b>Jonathan Dickinson</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=jcdickinson" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

@@ -32,15 +32,13 @@ func install(tag string) error {
 		return err
 	}
 
-	defer fp.Close()
-
 	_, err = io.Copy(fp, bytes.NewReader(data))
+	// windows will have a lock when we do not close the file
+	fp.Close()
+
 	if err != nil {
 		return err
 	}
-
-	// windows will have a lock when we do not close the file
-	fp.Close()
 
 	oldPath := filepath.Join(targetDir, fmt.Sprintf(".%s.old", fileName))
 

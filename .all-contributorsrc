@@ -2593,6 +2593,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "jcdickinson",
+      "name": "Jonathan Dickinson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/522465?v=4",
+      "profile": "https://dickinson.id",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

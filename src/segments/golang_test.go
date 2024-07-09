@@ -51,7 +51,7 @@ func TestGolang(t *testing.T) {
 			if !tc.HasModFileInParentDir {
 				err = errors.New("no match")
 			}
-			env.On("HasParentFilePath", "go.mod").Return(fileInfo, err)
+			env.On("HasParentFilePath", "go.mod", false).Return(fileInfo, err)
 			var content string
 			if tc.InvalidModfile {
 				content = "invalid go.mod file"

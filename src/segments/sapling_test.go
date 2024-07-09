@@ -158,9 +158,9 @@ func TestShouldDisplay(t *testing.T) {
 		env.On("Home").Return("/usr/home/sapling")
 		env.On("DirMatchesOneOf", fileInfo.ParentFolder, []string{"/sapling/repo"}).Return(tc.Excluded)
 		if tc.InRepo {
-			env.On("HasParentFilePath", ".sl").Return(fileInfo, nil)
+			env.On("HasParentFilePath", ".sl", false).Return(fileInfo, nil)
 		} else {
-			env.On("HasParentFilePath", ".sl").Return(&runtime.FileInfo{}, errors.New("error"))
+			env.On("HasParentFilePath", ".sl", false).Return(&runtime.FileInfo{}, errors.New("error"))
 		}
 		sl := &Sapling{
 			scm: scm{

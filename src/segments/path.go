@@ -839,7 +839,7 @@ func (pt *Path) makeFolderFormatMap() map[string]string {
 	folderFormatMap := make(map[string]string)
 
 	if gitDirFormat := pt.props.GetString(GitDirFormat, ""); len(gitDirFormat) != 0 {
-		dir, err := pt.env.HasParentFilePath(".git")
+		dir, err := pt.env.HasParentFilePath(".git", false)
 		if err == nil && dir.IsDir {
 			folderFormatMap[dir.ParentFolder] = gitDirFormat
 		}

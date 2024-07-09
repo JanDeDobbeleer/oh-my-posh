@@ -145,10 +145,10 @@ func TestUmbracoSegment(t *testing.T) {
 				IsDir:        true,
 			}
 
-			env.On("HasParentFilePath", "umbraco").Return(fileInfo, nil)
+			env.On("HasParentFilePath", "umbraco", false).Return(fileInfo, nil)
 		} else {
-			env.On("HasParentFilePath", "Umbraco").Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
-			env.On("HasParentFilePath", "umbraco").Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
+			env.On("HasParentFilePath", "Umbraco", false).Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
+			env.On("HasParentFilePath", "umbraco", false).Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
 		}
 
 		dirEntries := []fs.DirEntry{}

@@ -152,8 +152,8 @@ func (env *Environment) HTTPRequest(url string, _ io.Reader, _ int, _ ...http.Re
 	return args.Get(0).([]byte), args.Error(1)
 }
 
-func (env *Environment) HasParentFilePath(path string) (*runtime.FileInfo, error) {
-	args := env.Called(path)
+func (env *Environment) HasParentFilePath(parent string, followSymlinks bool) (*runtime.FileInfo, error) {
+	args := env.Called(parent, followSymlinks)
 	return args.Get(0).(*runtime.FileInfo), args.Error(1)
 }
 

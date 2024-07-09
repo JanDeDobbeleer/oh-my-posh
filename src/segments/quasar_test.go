@@ -65,7 +65,7 @@ func TestQuasar(t *testing.T) {
 
 		env.On("HasFilesInDir", "/usr/home/project", "package-lock.json").Return(tc.HasPackageLockFile)
 		fileInfo := &runtime.FileInfo{ParentFolder: "/usr/home/project", IsDir: true}
-		env.On("HasParentFilePath", "quasar.config").Return(fileInfo, nil)
+		env.On("HasParentFilePath", "quasar.config", false).Return(fileInfo, nil)
 		env.On("FileContent", filepath.Join(fileInfo.ParentFolder, "package-lock.json")).Return(packageLockFile)
 
 		props[FetchDependencies] = tc.FetchDependencies

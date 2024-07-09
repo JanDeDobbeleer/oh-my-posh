@@ -73,7 +73,7 @@ func TestCFTargetSegment(t *testing.T) {
 		if tc.FileInfo == nil {
 			err = errors.New("no such file or directory")
 		}
-		env.On("HasParentFilePath", "manifest.yml").Return(tc.FileInfo, err)
+		env.On("HasParentFilePath", "manifest.yml", false).Return(tc.FileInfo, err)
 
 		cfTarget := &CfTarget{}
 		props := properties.Map{

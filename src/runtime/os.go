@@ -154,7 +154,7 @@ type Environment interface {
 	HasFiles(pattern string) bool
 	HasFilesInDir(dir, pattern string) bool
 	HasFolder(folder string) bool
-	HasParentFilePath(path string) (fileInfo *FileInfo, err error)
+	HasParentFilePath(path string, followSymlinks bool) (fileInfo *FileInfo, err error)
 	HasFileInParentDirs(pattern string, depth uint) bool
 	ResolveSymlink(path string) (string, error)
 	DirMatchesOneOf(dir string, regexes []string) bool
@@ -664,26 +664,36 @@ func (term *Terminal) HTTPRequest(targetURL string, body io.Reader, timeout int,
 	return responseBody, nil
 }
 
-func (term *Terminal) HasParentFilePath(path string) (*FileInfo, error) {
-	defer term.Trace(time.Now(), path)
-	currentFolder := term.Pwd()
+func (term *Terminal) HasParentFilePath(parent string, followSymlinks bool) (*FileInfo, error) {
+	defer term.Trace(time.Now(), parent)
+
+	path := term.Pwd()
+	if followSymlinks {
+		if actual, err := term.ResolveSymlink(path); err == nil {
+			path = actual
+		}
+	}
+
 	for {
-		fileSystem := os.DirFS(currentFolder)
-		info, err := fs.Stat(fileSystem, path)
+		fileSystem := os.DirFS(path)
+		info, err := fs.Stat(fileSystem, parent)
 		if err == nil {
 			return &FileInfo{
-				ParentFolder: currentFolder,
-				Path:         filepath.Join(currentFolder, path),
+				ParentFolder: path,
+				Path:         filepath.Join(path, parent),
 				IsDir:        info.IsDir(),
 			}, nil
 		}
+
 		if !os.IsNotExist(err) {
 			return nil, err
 		}
-		if dir := filepath.Dir(currentFolder); dir != currentFolder {
-			currentFolder = dir
+
+		if dir := filepath.Dir(path); dir != path {
+			path = dir
 			continue
 		}
+
 		term.Error(err)
 		return nil, errors.New("no match at root level")
 	}

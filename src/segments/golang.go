@@ -43,7 +43,7 @@ func (g *Golang) getVersion() (string, error) {
 	if !g.props.GetBool(ParseModFile, false) {
 		return "", nil
 	}
-	gomod, err := g.language.env.HasParentFilePath("go.mod")
+	gomod, err := g.language.env.HasParentFilePath("go.mod", false)
 	if err != nil {
 		return "", nil
 	}

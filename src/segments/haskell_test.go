@@ -74,9 +74,9 @@ func TestHaskell(t *testing.T) {
 
 		if tc.InStackPackage {
 			var err error
-			env.On("HasParentFilePath", "stack.yaml").Return(fileInfo, err)
+			env.On("HasParentFilePath", "stack.yaml", false).Return(fileInfo, err)
 		} else {
-			env.On("HasParentFilePath", "stack.yaml").Return(fileInfo, errors.New("no match"))
+			env.On("HasParentFilePath", "stack.yaml", false).Return(fileInfo, errors.New("no match"))
 		}
 
 		props[StackGhcMode] = tc.StackGhcMode

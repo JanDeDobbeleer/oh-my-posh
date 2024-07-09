@@ -51,13 +51,16 @@ func (p *Plastic) Enabled() bool {
 	if !p.env.HasCommand("cm") {
 		return false
 	}
-	wkdir, err := p.env.HasParentFilePath(".plastic")
+
+	wkdir, err := p.env.HasParentFilePath(".plastic", false)
 	if err != nil {
 		return false
 	}
+
 	if p.shouldIgnoreRootRepository(wkdir.ParentFolder) {
 		return false
 	}
+
 	if !wkdir.IsDir {
 		return false
 	}

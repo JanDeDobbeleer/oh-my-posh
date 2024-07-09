@@ -76,7 +76,7 @@ func (sl *Sapling) shouldDisplay() bool {
 		return false
 	}
 
-	slDir, err := sl.env.HasParentFilePath(".sl")
+	slDir, err := sl.env.HasParentFilePath(".sl", false)
 	if err != nil {
 		return false
 	}
@@ -91,6 +91,7 @@ func (sl *Sapling) shouldDisplay() bool {
 	sl.realDir = strings.TrimSuffix(sl.convertToWindowsPath(slDir.Path), "/.sl")
 	sl.RepoName = runtime.Base(sl.env, sl.convertToLinuxPath(sl.realDir))
 	sl.setDir(slDir.Path)
+
 	return true
 }
 

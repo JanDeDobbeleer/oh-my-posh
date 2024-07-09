@@ -35,7 +35,7 @@ func (t *Azd) Enabled() bool {
 
 	folders := t.props.GetStringArray(LanguageFolders, []string{".azure"})
 	for _, folder := range folders {
-		if file, err := t.env.HasParentFilePath(folder); err == nil {
+		if file, err := t.env.HasParentFilePath(folder, false); err == nil {
 			parentFilePath = file.ParentFolder
 			break
 		}

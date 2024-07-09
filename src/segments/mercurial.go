@@ -67,7 +67,7 @@ func (hg *Mercurial) shouldDisplay() bool {
 		return false
 	}
 
-	hgdir, err := hg.env.HasParentFilePath(".hg")
+	hgdir, err := hg.env.HasParentFilePath(".hg", false)
 	if err != nil {
 		return false
 	}

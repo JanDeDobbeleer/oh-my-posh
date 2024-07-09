@@ -41,7 +41,7 @@ func (c *CfTarget) Enabled() bool {
 		return c.setCFTargetStatus()
 	}
 
-	manifest, err := c.env.HasParentFilePath("manifest.yml")
+	manifest, err := c.env.HasParentFilePath("manifest.yml", false)
 	if err != nil || manifest.IsDir {
 		return false
 	}

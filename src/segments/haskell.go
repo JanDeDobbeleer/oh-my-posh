@@ -46,7 +46,7 @@ func (h *Haskell) Init(props properties.Properties, env runtime.Environment) {
 		h.language.commands = []*cmd{stackGhcCmd}
 		h.StackGhc = true
 	case "package":
-		_, err := h.language.env.HasParentFilePath("stack.yaml")
+		_, err := h.language.env.HasParentFilePath("stack.yaml", false)
 		if err == nil {
 			h.language.commands = []*cmd{stackGhcCmd}
 			h.StackGhc = true

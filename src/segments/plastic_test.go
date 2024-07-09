@@ -35,7 +35,7 @@ func TestPlasticEnabledInWorkspaceDirectory(t *testing.T) {
 		ParentFolder: "/dir",
 		IsDir:        true,
 	}
-	env.On("HasParentFilePath", ".plastic").Return(fileInfo, nil)
+	env.On("HasParentFilePath", ".plastic", false).Return(fileInfo, nil)
 	p := &Plastic{
 		scm: scm{
 			env:   env,

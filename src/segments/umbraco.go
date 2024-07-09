@@ -37,7 +37,7 @@ func (u *Umbraco) Enabled() bool {
 	// Check if we have a folder called Umbraco or umbraco in the current directory or a parent directory
 	folders := []string{"umbraco", "Umbraco"}
 	for _, folder := range folders {
-		if file, err := u.env.HasParentFilePath(folder); err == nil {
+		if file, err := u.env.HasParentFilePath(folder, false); err == nil {
 			location = file.ParentFolder
 			break
 		}

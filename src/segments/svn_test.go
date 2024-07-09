@@ -40,7 +40,7 @@ func TestSvnEnabledInWorkingDirectory(t *testing.T) {
 	env.On("RunCommand", "svn", []string{"info", "/dir/hello", "--show-item", "revision"}).Return("", nil)
 	env.On("RunCommand", "svn", []string{"info", "/dir/hello", "--show-item", "relative-url"}).Return("", nil)
 	env.On("IsWsl").Return(false)
-	env.On("HasParentFilePath", ".svn").Return(fileInfo, nil)
+	env.On("HasParentFilePath", ".svn", false).Return(fileInfo, nil)
 	s := &Svn{
 		scm: scm{
 			env:   env,
@@ -237,7 +237,7 @@ R       Moved.File`,
 		env.On("GOOS").Return("")
 		env.On("FileContent", "/dir/hello/trunk").Return("")
 		env.MockSvnCommand(fileInfo.Path, "", "info", "--tags", "--exact-match")
-		env.On("HasParentFilePath", ".svn").Return(fileInfo, nil)
+		env.On("HasParentFilePath", ".svn", false).Return(fileInfo, nil)
 		env.On("RunCommand", "svn", []string{"info", "", "--show-item", "revision"}).Return(tc.RefOutput, nil)
 		env.On("RunCommand", "svn", []string{"info", "", "--show-item", "relative-url"}).Return(tc.BranchOutput, nil)
 		env.On("RunCommand", "svn", []string{"status", ""}).Return(tc.StatusOutput, nil)

@@ -65,7 +65,7 @@ func (s *Svn) shouldDisplay() bool {
 		return false
 	}
 
-	Svndir, err := s.env.HasParentFilePath(".svn")
+	Svndir, err := s.env.HasParentFilePath(".svn", false)
 	if err != nil {
 		return false
 	}

@@ -279,11 +279,12 @@ func (g *Git) shouldDisplay() bool {
 		return false
 	}
 
-	gitdir, err := g.env.HasParentFilePath(".git")
+	gitdir, err := g.env.HasParentFilePath(".git", true)
 	if err != nil {
 		if !g.props.GetBool(FetchBareInfo, false) {
 			return false
 		}
+
 		g.realDir = g.env.Pwd()
 		bare := g.getGitCommandOutput("rev-parse", "--is-bare-repository")
 		if bare == trueStr {
@@ -291,6 +292,7 @@ func (g *Git) shouldDisplay() bool {
 			g.workingDir = g.realDir
 			return true
 		}
+
 		return false
 	}
 

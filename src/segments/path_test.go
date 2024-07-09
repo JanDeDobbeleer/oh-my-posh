@@ -1609,7 +1609,7 @@ func TestSplitPath(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("Home").Return("/a/b")
-		env.On("HasParentFilePath", ".git").Return(tc.GitDir, nil)
+		env.On("HasParentFilePath", ".git", false).Return(tc.GitDir, nil)
 		env.On("GOOS").Return(tc.GOOS)
 
 		path := &Path{

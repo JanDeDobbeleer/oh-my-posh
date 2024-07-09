@@ -86,8 +86,8 @@ func TestHelmSegment(t *testing.T) {
 		env.On("HasCommand", "helm").Return(tc.HelmExists)
 		env.On("RunCommand", "helm", []string{"version", "--short", "--template={{.Version}}"}).Return("v3.12.3", nil)
 
-		env.On("HasParentFilePath", tc.ChartFile).Return(&runtime.FileInfo{}, nil)
-		env.On("HasParentFilePath", testify_mock.Anything).Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
+		env.On("HasParentFilePath", tc.ChartFile, false).Return(&runtime.FileInfo{}, nil)
+		env.On("HasParentFilePath", testify_mock.Anything, false).Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
 
 		props := properties.Map{
 			DisplayMode: tc.DisplayMode,

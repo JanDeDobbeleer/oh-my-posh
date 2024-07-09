@@ -174,11 +174,12 @@ func (l *language) hasLanguageFiles() bool {
 
 func (l *language) hasProjectFiles() bool {
 	for _, extension := range l.projectFiles {
-		if configPath, err := l.env.HasParentFilePath(extension); err == nil {
+		if configPath, err := l.env.HasParentFilePath(extension, false); err == nil {
 			l.projectRoot = configPath
 			return true
 		}
 	}
+
 	return false
 }
 

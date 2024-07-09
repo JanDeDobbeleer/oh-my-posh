@@ -98,7 +98,7 @@ func TestUnitySegment(t *testing.T) {
 			versionFilePath := filepath.Join(projectDir.Path, "ProjectVersion.txt")
 			env.On("FileContent", versionFilePath).Return(tc.VersionFileText)
 		}
-		env.On("HasParentFilePath", "ProjectSettings").Return(projectDir, err)
+		env.On("HasParentFilePath", "ProjectSettings", false).Return(projectDir, err)
 
 		props := properties.Map{}
 		unity := &Unity{}
@@ -233,7 +233,7 @@ func TestUnitySegmentCSharpWebRequest(t *testing.T) {
 			versionFilePath := filepath.Join(projectDir.Path, "ProjectVersion.txt")
 			env.On("FileContent", versionFilePath).Return(tc.VersionFileText)
 		}
-		env.On("HasParentFilePath", "ProjectSettings").Return(projectDir, err)
+		env.On("HasParentFilePath", "ProjectSettings", false).Return(projectDir, err)
 
 		cache := &cache_.Cache{}
 		cache.On("Get", tc.CacheGet.key).Return(tc.CacheGet.val, tc.CacheGet.found)

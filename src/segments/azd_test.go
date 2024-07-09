@@ -44,7 +44,7 @@ func TestAzdSegment(t *testing.T) {
 				ParentFolder: "test",
 				IsDir:        true,
 			}
-			env.On("HasParentFilePath", ".azure").Return(fileInfo, nil)
+			env.On("HasParentFilePath", ".azure", false).Return(fileInfo, nil)
 			dirEntries := []fs.DirEntry{
 				&MockDirEntry{
 					name:  "config.json",
@@ -58,7 +58,7 @@ func TestAzdSegment(t *testing.T) {
 
 			env.On("FileContent", filepath.Join("test", ".azure", "config.json")).Return(`{"version": 1, "defaultEnvironment": "TestEnvironment"}`, nil)
 		} else {
-			env.On("HasParentFilePath", ".azure").Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
+			env.On("HasParentFilePath", ".azure", false).Return(&runtime.FileInfo{}, errors.New("no such file or directory"))
 		}
 
 		azd := Azd{

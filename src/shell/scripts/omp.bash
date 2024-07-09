@@ -53,8 +53,7 @@ function set_poshcontext() {
 
 # regular prompt
 function _omp_hook() {
-    omp_ret=$?
-    omp_pipe_status=(${PIPESTATUS[@]})
+    omp_ret=$? omp_pipe_status=(${PIPESTATUS[@]})
 
     if [[ "${#BP_PIPESTATUS[@]}" -ge "${#omp_pipe_status[@]}" ]]; then
         omp_pipe_status=(${BP_PIPESTATUS[@]})
@@ -77,12 +76,12 @@ function _omp_hook() {
     _set_posh_cursor_position
 
     PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$omp_ret" --pipestatus="${omp_pipe_status[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')"
-    return $ret
 }
 
 # rprompt
 _omp_rprompt() {
-	::OMP:: print right --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$omp_ret" --pipestatus="${omp_pipe_status[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0'
+    ::OMP:: print right --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$omp_ret" --pipestatus="${omp_pipe_status[*]}" --execution-time="$omp_elapsed" --stack-count="$omp_stack_count" --no-status="$omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0'
+    return $omp_ret
 }
 
 if [[ "$TERM" != "linux" ]] && [[ -x "$(command -v ::OMP::)" ]] && ! [[ "$PROMPT_COMMAND" =~ "_omp_hook" ]]; then

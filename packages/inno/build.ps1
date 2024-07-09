@@ -10,10 +10,10 @@ Param
 
 # Get signing certificate
 $pfxPath = Join-Path -Path $env:RUNNER_TEMP -ChildPath "cert.pfx"
-$signtool = 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22000.0/x86/signtool.exe'
+$signtool = 'C:/Program Files (x86)/Windows Kits/10/bin/10.0.22621.0/x86/signtool.exe'
 # create a base64 encoded value of your certificate using
 # [convert]::ToBase64String((Get-Content -path "certificate.pfx" -AsByteStream))
-# requires Windows Dev Kit 10.0.22000.0
+# requires Windows Dev Kit 10.0.22621.0
 $encodedBytes = [System.Convert]::FromBase64String($env:CERTIFICATE)
 Set-Content -Path $pfxPath -Value $encodedBytes -AsByteStream
 

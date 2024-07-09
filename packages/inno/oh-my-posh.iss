@@ -17,7 +17,7 @@ SignedUninstaller=yes
 CloseApplications=no
 
 [Files]
-Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"; Flags: sign
+Source: "bin\oh-my-posh.exe"; DestDir: "{app}\bin"
 Source: "bin\themes\*"; DestDir: "{app}\themes"
 
 [Registry]

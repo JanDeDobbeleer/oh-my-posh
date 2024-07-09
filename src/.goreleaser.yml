@@ -37,6 +37,9 @@ builds:
         goarch: arm
       - goos: windows
         goarch: arm
+    hooks:
+      post:
+        - pwsh -c "if ('{{ .Path }}'.EndsWith('.exe')) { & '{{ .Env.SIGNTOOL }}' sign /f '{{ .Env.SIGNING_CERTIFICATE_LOCATION }}' /p '{{ .Env.SIGNING_CERTIFICATE_PASSWORD }}' /fd SHA256 /t http://timestamp.digicert.com '{{ .Path }}' }"
 archives:
   - id: oh-my-posh
     format: binary
@@ -45,7 +48,7 @@ checksum:
   name_template: 'checksums.txt'
 signs:
   - cmd: openssl
-    args: [ "pkeyutl", "-sign", "-inkey", "{{ .Env.SIGNING_KEY_LOCATION }}", "-out", "${artifact}.sig", "-rawin", "-in", "${artifact}" ]
+    args: [ "pkeyutl", "-sign", "-inkey", "{{ .Env.SHA_SIGNING_KEY_LOCATION }}", "-out", "${artifact}.sig", "-rawin", "-in", "${artifact}" ]
     artifacts: checksum
 changelog:
   disable: true

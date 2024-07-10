@@ -172,11 +172,11 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	defer e.patchPowerShellBleed()
 
 	// This is deprecated but we leave it in to not break configs
-	// It is encouraged to used "newline": true on block level
-	// rather than the standalone the linebreak block
+	// It is encouraged to use "newline": true on block level
+	// rather than the standalone linebreak block
 	if block.Type == config.LineBreak {
 		// do not print a newline to avoid a leading space
-		// when we're printin the first primary prompt in
+		// when we're printing the first primary prompt in
 		// the shell
 		if !cancelNewline {
 			e.writeNewline()
@@ -191,7 +191,7 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 	}
 
 	// do not print a newline to avoid a leading space
-	// when we're printin the first primary prompt in
+	// when we're printing the first primary prompt in
 	// the shell
 	if block.Newline && !cancelNewline {
 		e.writeNewline()

@@ -114,7 +114,7 @@ func (e *Engine) needsPrimaryRPrompt() bool {
 }
 
 func (e *Engine) writePrimaryRPrompt() {
-	space, OK := e.canWriteRightBlock(true)
+	space, OK := e.canWriteRightBlock(e.rpromptLength, true)
 	if !OK {
 		return
 	}

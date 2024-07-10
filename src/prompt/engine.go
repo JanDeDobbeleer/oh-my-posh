@@ -40,7 +40,7 @@ func (e *Engine) string() string {
 	return text
 }
 
-func (e *Engine) canWriteRightBlock(rprompt bool) (int, bool) {
+func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
 	if rprompt && (len(e.rprompt) == 0) {
 		return 0, false
 	}
@@ -50,18 +50,15 @@ func (e *Engine) canWriteRightBlock(rprompt bool) (int, bool) {
 		return 0, false
 	}
 
-	promptWidth := e.currentLineLength
-	availableSpace := consoleWidth - promptWidth
+	availableSpace := consoleWidth - e.currentLineLength
 
 	// spanning multiple lines
 	if availableSpace < 0 {
-		overflow := promptWidth % consoleWidth
+		overflow := e.currentLineLength % consoleWidth
 		availableSpace = consoleWidth - overflow
 	}
 
-	if rprompt {
-		availableSpace -= e.rpromptLength
-	}
+	availableSpace -= length
 
 	promptBreathingRoom := 5
 	if rprompt {
@@ -140,12 +137,11 @@ func (e *Engine) isIterm() bool {
 	return terminal.Program == terminal.ITerm
 }
 
-func (e *Engine) shouldFill(filler string, remaining, blockLength int) (string, bool) {
+func (e *Engine) shouldFill(filler string, padLength int) (string, bool) {
 	if len(filler) == 0 {
 		return "", false
 	}
 
-	padLength := remaining - blockLength
 	if padLength <= 0 {
 		return "", false
 	}
@@ -224,7 +220,8 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 			return false
 		}
 
-		space, OK := e.canWriteRightBlock(false)
+		space, OK := e.canWriteRightBlock(length, false)
+
 		// we can't print the right block as there's not enough room available
 		if !OK {
 			switch block.Overflow {
@@ -232,9 +229,10 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 				e.writeNewline()
 			case config.Hide:
 				// make sure to fill if needed
-				if padText, OK := e.shouldFill(block.Filler, space, 0); OK {
+				if padText, OK := e.shouldFill(block.Filler, space+length); OK {
 					e.write(padText)
 				}
+
 				e.currentLineLength = 0
 				return true
 			}
@@ -245,14 +243,13 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 		}()
 
 		// validate if we have a filler and fill if needed
-		if padText, OK := e.shouldFill(block.Filler, space, length); OK {
+		if padText, OK := e.shouldFill(block.Filler, space); OK {
 			e.write(padText)
 			e.write(text)
 			return true
 		}
 
 		var prompt string
-		space -= length
 
 		if space > 0 {
 			prompt += strings.Repeat(" ", space)

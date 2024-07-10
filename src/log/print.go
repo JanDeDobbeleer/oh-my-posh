@@ -66,6 +66,7 @@ func printLn(lt logType, args ...string) {
 	if len(args) == 0 {
 		return
 	}
+
 	var str Text
 	switch lt {
 	case debug:
@@ -75,6 +76,7 @@ func printLn(lt logType, args ...string) {
 	case trace:
 		str = Text("[TRACE] ").Purple()
 	}
+
 	// timestamp 156, 231, 201
 	str += Text(time.Now().Format("15:04:05.000") + " ").Yellow().Plain()
 	str += Text(args[0])

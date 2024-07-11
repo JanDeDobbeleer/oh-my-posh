@@ -16,23 +16,25 @@ initializing Oh My Posh.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "az",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#000000",
-  "background": "#9ec3f0",
-  "template": " \uebd8 {{ .EnvironmentName }}",
-  "properties": {
-    "source": "pwsh"
-  }
-}}/>
+<Config
+  data={{
+    type: "az",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#000000",
+    background: "#9ec3f0",
+    template: " \uebd8 {{ .EnvironmentName }}",
+    properties: {
+      source: "pwsh",
+    },
+  }}
+/>
 
 ## Properties
 
-| Name     | Type     | Default       | Description                                                                                                                                                                                                                                               |
+| Name     |   Type   |    Default    | Description                                                                                                                                                                                                                                               |
 | -------- | :------: | :-----------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `source` | `string` | `first_match` | <ul><li>`first_match`: try the CLI config first, then the PowerShell module. The first to resolve is displayed</li><li>`cli`: fetch the information from the CLI config</li><li>`pwsh`: fetch the information from the PowerShell Module config</li></ul> |
 
@@ -48,18 +50,19 @@ import Config from '@site/src/components/Config.js';
 
 ### Properties
 
-| Name               | Type      | Description                                                    |
-| ------------------ | --------- | -------------------------------------------------------------- |
-| `.EnvironmentName` | `string`  | Azure environment name                                         |
-| `.HomeTenantID`    | `string`  | home tenant id                                                 |
-| `.ID`              | `string`  | subscription id                                                |
-| `.IsDefault`       | `boolean` | is the default subscription or not                             |
-| `.Name`            | `string`  | subscription name                                              |
-| `.State`           | `string`  | subscription state                                             |
-| `.TenantID`        | `string`  | tenant id                                                      |
-| `.User.Name`       | `string`  | user name                                                      |
-| `.User.Type`       | `string`  | user type                                                      |
-| `.Origin`          | `string`  | where we received the information from, can be `CLI` or `PWSH` |
+| Name                 | Type      | Description                                                    |
+| -------------------- | --------- | -------------------------------------------------------------- |
+| `.EnvironmentName`   | `string`  | Azure environment name                                         |
+| `.HomeTenantID`      | `string`  | home tenant id                                                 |
+| `.ID`                | `string`  | subscription id                                                |
+| `.IsDefault`         | `boolean` | is the default subscription or not                             |
+| `.Name`              | `string`  | subscription name                                              |
+| `.State`             | `string`  | subscription state                                             |
+| `.TenantID`          | `string`  | tenant id                                                      |
+| `.TenantDisplayName` | `string`  | tenant name                                                    |
+| `.User.Name`         | `string`  | user name                                                      |
+| `.User.Type`         | `string`  | user type                                                      |
+| `.Origin`            | `string`  | where we received the information from, can be `CLI` or `PWSH` |
 
 [templates]: /docs/configuration/templates
 [az]: https://www.powershellgallery.com/packages/Az

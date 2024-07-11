@@ -2611,6 +2611,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "EDIflyer",
+      "name": "EDIflyer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13610277?v=4",
+      "profile": "https://github.com/EDIflyer",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

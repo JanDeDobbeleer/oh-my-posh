@@ -42,6 +42,7 @@ themeConfigOverrrides.set('catppuccin_mocha.omp.json', newThemeConfig('IrwinJuic
     if (!isValidTheme(theme)) {
       continue;
     }
+
     const configPath = path.join(themesConfigDir, theme);
 
     let config = newThemeConfig();
@@ -49,7 +50,10 @@ themeConfigOverrrides.set('catppuccin_mocha.omp.json', newThemeConfig('IrwinJuic
       config = themeConfigOverrrides.get(theme);
     }
 
-    let poshCommand = `oh-my-posh config export image --config=${configPath}`;
+    const themeName = theme.slice(0, -9);
+    const image = themeName + '.png';
+
+    let poshCommand = `oh-my-posh config export image --config=${configPath} --output=${image}`;
     poshCommand += ` --background-color=${config.bgColor}`;
     if (config.author !== '') {
       poshCommand += ` --author="${config.author}"`;
@@ -62,10 +66,8 @@ themeConfigOverrrides.set('catppuccin_mocha.omp.json', newThemeConfig('IrwinJuic
       continue;
     }
 
-    console.info(`Exported ${theme}`);
+    console.info(`Exported ${theme} to ${image}`);
 
-    const themeName = theme.slice(0, -9);
-    const image = themeName + '.png';
     const toPath = path.join(themesStaticDir, image);
 
     await fs.promises.rename(image, toPath);

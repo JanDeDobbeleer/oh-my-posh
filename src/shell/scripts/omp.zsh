@@ -156,12 +156,13 @@ function enable_poshtooltips() {
 
 # Helper function for posh::decorate_widget
 # It calls the posh function right after the original definition of the widget
-# $1 is the name of the widget to call
-# $2 is the posh widget name
+# $1 is the posh widget name
+# $2.. are the name of the widget to call + potential args
 posh::call_widget()
 {
-  builtin zle "${1}" &&
-  ${2}
+  local posh_widget=$1;shift
+  builtin zle "${@}" &&
+  ${posh_widget}
 }
 
 # decorate_widget
@@ -171,21 +172,35 @@ posh::call_widget()
 # $2: The name of the posh function to decorate it with
 function posh::decorate_widget() {
   typeset -F SECONDS
-  local prefix=orig-s$SECONDS-r$RANDOM # unique each time, in case we're sourced more than once
-  cur_widget=${1}
-  posh_widget=${2}
+  local prefix=orig-s$SECONDS-r$RANDOM # unique
+  orig_widget=${1};shift
+  posh_widget=${1};shift
+  # from this point $@ does not have $1 $2 anymore
 
-  case ${widgets[$cur_widget]:-""} in
+  case ${widgets[$orig_widget]:-""} in
     # Already decorated: do nothing.
     user:_posh-decorated-*);;
 
+    # User defined
     user:*)
-      zle -N $prefix-$cur_widget ${widgets[$cur_widget]#*:}
-      eval "_posh-decorated-${(q)prefix}-${(q)cur_widget}() { posh::call_widget ${(q)prefix}-${(q)cur_widget} ${(q)posh_widget} -- \"\$@\" }"
-      zle -N $cur_widget _posh-decorated-$prefix-$cur_widget;;
+      zle -N $prefix-$orig_widget ${widgets[$orig_widget]#*:}
+      eval "_posh-decorated-${(q)prefix}-${(q)orig_widget}() { posh::call_widget ${(q)posh_widget} ${(q)prefix}-${(q)orig_widget} -- \"\$@\" }"
+      zle -N $orig_widget _posh-decorated-$prefix-$orig_widget;;
 
-    # For now, do not decorate if it's not a user:*
-    *);;
+    # Built-in
+    builtin:*)
+      eval "_posh-decorated-${(q)prefix}-${(q)orig_widget}() { posh::call_widget ${(q)posh_widget} .${(q)orig_widget} -- \"\$@\" }"
+      zle -N $orig_widget _posh-decorated-$prefix-$orig_widget;;
+
+    # non-existent
+    *)
+      if [[ $orig_widget == zle-* ]] && (( ! ${+widgets[$orig_widget]} )); then
+        # The widget is a zle one and does not exist, we can safely create it
+        # Otherwise, do nothing
+        eval "_posh-decorated-${(q)prefix}-${(q)orig_widget}() { ${(q)posh_widget} }"
+        zle -N $orig_widget _posh-decorated-$prefix-$orig_widget
+      fi
+      ;;
   esac
 }
 

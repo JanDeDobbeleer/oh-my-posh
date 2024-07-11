@@ -2602,6 +2602,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "po1o",
+      "name": "Polo-François Poli",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5702825?v=4",
+      "profile": "https://github.com/po1o",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

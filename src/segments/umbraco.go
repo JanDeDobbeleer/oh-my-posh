@@ -156,7 +156,7 @@ func (u *Umbraco) TryFindLegacyUmbraco(configPath string) bool {
 			u.Modern = false
 
 			if len(appSetting.Value) == 0 {
-				u.Version = Unknown
+				u.Version = UNKNOWN
 			} else {
 				u.Version = appSetting.Value
 			}

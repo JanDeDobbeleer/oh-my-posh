@@ -27,7 +27,6 @@ const (
 	Accordion SegmentStyle = "accordion"
 	// Diamond writes the prompt shaped with a leading and trailing symbol
 	Diamond SegmentStyle = "diamond"
-
 	// ANGULAR writes which angular cli version us currently active
 	ANGULAR SegmentType = "angular"
 	// ARGOCD writes the current argocd context
@@ -128,6 +127,8 @@ const (
 	NPM SegmentType = "npm"
 	// NX writes which Nx version us currently active
 	NX SegmentType = "nx"
+	// NIXSHELL writes the active nix shell details
+	NIXSHELL SegmentType = "nix-shell"
 	// OCAML writes the active Ocaml version
 	OCAML SegmentType = "ocaml"
 	// OS write os specific icon
@@ -266,6 +267,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	NIGHTSCOUT:      func() SegmentWriter { return &segments.Nightscout{} },
 	NODE:            func() SegmentWriter { return &segments.Node{} },
 	NPM:             func() SegmentWriter { return &segments.Npm{} },
+	NIXSHELL:        func() SegmentWriter { return &segments.NixShell{} },
 	NX:              func() SegmentWriter { return &segments.Nx{} },
 	OCAML:           func() SegmentWriter { return &segments.OCaml{} },
 	OS:              func() SegmentWriter { return &segments.Os{} },

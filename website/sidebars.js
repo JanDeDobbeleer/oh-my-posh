@@ -71,6 +71,7 @@ module.exports = {
             "segments/cli/kubectl",
             "segments/cli/mvn",
             "segments/cli/nbgv",
+            "segments/cli/nix-shell",
             "segments/cli/npm",
             "segments/cli/nx",
             "segments/cli/pnpm",

@@ -1,0 +1,42 @@
+---
+id: nix-shell
+title: Nix Shell
+sidebar_label: Nix Shell
+---
+
+## What
+
+Displays the [nix shell] status if inside a nix-shell environment.
+
+## Sample Configuration
+
+import Config from "@site/src/components/Config.js";
+
+<Config
+  data={{
+    type: "nix-shell",
+    style: "powerline",
+    foreground: "blue",
+    background: "transparent",
+    template: "(nix-{{ .Type }})",
+  }}
+/>
+
+## Template ([info][templates])
+
+:::note default template
+
+```template
+via {{ .Type }}-shell"
+```
+
+:::
+
+### Properties
+
+| Name    | Type     | Description                                                 |
+| ------- | -------- | ----------------------------------------------------------- |
+| `.Type` | `string` | the type of nix shell, can be `pure`, `impure` or `unknown` |
+
+[nix shell]: https://nixos.org/guides/nix-pills/developing-with-nix-shell.html
+[templates]: /docs/configuration/templates

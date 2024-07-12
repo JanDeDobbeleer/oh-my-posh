@@ -351,6 +351,7 @@
             "mvn",
             "nbgv",
             "nightscout",
+            "nix-shell",
             "node",
             "npm",
             "nx",
@@ -4610,20 +4611,8 @@
             }
           },
           "then": {
-            "title": "Display something umbraco",
-            "description": "https://ohmyposh.dev/docs/segments/umbraco",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "newprop": {
-                    "type": "string",
-                    "title": "New Property",
-                    "description": "the default text to display",
-                    "default": "Hello"
-                  }
-                }
-              }
-            }
+            "title": "Umbraco Segment",
+            "description": "https://ohmyposh.dev/docs/segments/umbraco"
           }
         },
         {
@@ -4722,6 +4711,19 @@
                 }
               }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "nix-shell"
+              }
+            }
+          },
+          "then": {
+            "title": "Nix Shell",
+            "description": "https://ohmyposh.dev/docs/segments/cli/nix-shell"
           }
         }
       ]

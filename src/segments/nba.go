@@ -54,7 +54,7 @@ const (
 	NBAScoreURL    string = "https://cdn.nba.com/static/json/liveData/scoreboard/todaysScoreboard_00.json"
 	NBAScheduleURL string = "https://stats.nba.com/stats/internationalbroadcasterschedule?LeagueID=00&Season=%s&Date=%s&RegionID=1&EST=Y"
 
-	Unknown = "Unknown"
+	UNKNOWN = "unknown"
 
 	currentNBASeason = "2023"
 	NBADateFormat    = "02/01/2006"
@@ -92,7 +92,7 @@ func (gs GameStatus) String() string {
 	case NotFound:
 		return "Not Found"
 	default:
-		return Unknown
+		return UNKNOWN
 	}
 }
 

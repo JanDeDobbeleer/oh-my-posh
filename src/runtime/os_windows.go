@@ -137,7 +137,7 @@ func (term *Terminal) CachePath() string {
 func (term *Terminal) WindowsRegistryKeyValue(path string) (*WindowsRegistryValue, error) {
 	term.Trace(time.Now(), path)
 
-	// Format:sudo -u postgres psql
+	// Format:
 	// "HKLM\Software\Microsoft\Windows NT\CurrentVersion\EditionID"
 	//   1  |                  2                         |   3
 	//
@@ -187,6 +187,7 @@ func (term *Terminal) WindowsRegistryKeyValue(path string) (*WindowsRegistryValu
 		term.Error(err)
 		return nil, err
 	}
+
 	_, valType, err := k.GetValue(regKey, nil)
 	if err != nil {
 		term.Error(err)
@@ -214,6 +215,7 @@ func (term *Terminal) WindowsRegistryKeyValue(path string) (*WindowsRegistryValu
 		errorLogMsg := fmt.Sprintf("Error, no formatter for type: %d", valType)
 		return nil, errors.New(errorLogMsg)
 	}
+
 	term.Debug(fmt.Sprintf("%s(%s): %s", regKey, regValue.ValueType, regValue.String))
 	return regValue, nil
 }

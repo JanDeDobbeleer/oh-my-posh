@@ -68,5 +68,7 @@ func install(tag string) error {
 		_ = hideFile(oldPath)
 	}
 
+	updateRegistry(tag)
+
 	return nil
 }

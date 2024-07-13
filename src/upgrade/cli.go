@@ -111,6 +111,7 @@ func (m *model) View() string {
 		m.spinner.Spinner = spinner.Moon
 		message = "Verifying download"
 	case installing:
+		m.spinner.Spinner = spinner.Jump
 		message = "Installing"
 	}
 

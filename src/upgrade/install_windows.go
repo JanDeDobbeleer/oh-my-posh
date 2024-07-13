@@ -1,6 +1,8 @@
 package upgrade
 
 import (
+	"errors"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
@@ -27,9 +29,18 @@ func hideFile(path string) error {
 	return nil
 }
 
-func updateRegistry(version string) {
-	key, err := getRegistryKey()
+func updateRegistry(version, executable string) {
+	// needs to be the parent directory of the executable's bin directory
+	// with a trailing backslash to match the registry key
+	// in case this wasn't installed with the installer, nothing will match
+	// and we don't set the registry keys
+	installLocation := filepath.Dir(executable)
+	installLocation = filepath.Dir(installLocation)
+	installLocation += `\`
+
+	key, err := getRegistryKey(installLocation)
 	if err != nil {
+		key.Close()
 		return
 	}
 
@@ -40,6 +51,7 @@ func updateRegistry(version string) {
 
 	splitted := strings.Split(version, ".")
 	if len(splitted) < 3 {
+		key.Close()
 		return
 	}
 
@@ -54,15 +66,51 @@ func updateRegistry(version string) {
 		_ = key.SetDWordValue("MinorVersion", minor)
 		_ = key.SetDWordValue("VersionMinor", minor)
 	}
+
+	key.Close()
 }
 
-func getRegistryKey() (registry.Key, error) {
-	path := `Software\Microsoft\Windows\CurrentVersion\Uninstall\Oh My Posh_is1`
-
-	key, err := registry.OpenKey(registry.CURRENT_USER, path, registry.WRITE)
-	if err == nil {
-		return key, nil
+// getRegistryKey tries all known registry paths to find the one we need to adjust (if any)
+func getRegistryKey(installLocation string) (registry.Key, error) {
+	knownRegistryPaths := []struct {
+		Key  registry.Key
+		Path string
+	}{
+		{registry.CURRENT_USER, `Software\Microsoft\Windows\CurrentVersion\Uninstall`},
+		{registry.CURRENT_USER, `Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall`},
+		{registry.LOCAL_MACHINE, `Software\Microsoft\Windows\CurrentVersion\Uninstall`},
+		{registry.LOCAL_MACHINE, `Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall`},
 	}
 
-	return registry.OpenKey(registry.LOCAL_MACHINE, path, registry.WRITE)
+	for _, path := range knownRegistryPaths {
+		key, ok := tryRegistryKey(path.Key, path.Path, installLocation)
+		if ok {
+			return key, nil
+		}
+	}
+
+	return registry.CURRENT_USER, errors.New("could not find registry key")
+}
+
+// tryRegistryKey tries to open the registry key for the given path
+// and checks if the install location matches with the current executable's location
+func tryRegistryKey(key registry.Key, path, installLocation string) (registry.Key, bool) {
+	path += `\Oh My Posh_is1`
+
+	readKey, err := registry.OpenKey(key, path, registry.READ)
+	if err != nil {
+		return key, false
+	}
+
+	location, _, err := readKey.GetStringValue("InstallLocation")
+	if err != nil {
+		return key, false
+	}
+
+	if location != installLocation {
+		return key, false
+	}
+
+	key, err = registry.OpenKey(key, path, registry.WRITE)
+	return key, err == nil
 }

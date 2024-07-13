@@ -45,9 +45,13 @@ Tells the engine what to do with the block. There are two options:
 
 ### Newline
 
-Start the block on a new line - defaults to `false`. For `bash`, `zsh`, `pwsh` and `cmd` this will not print a newline
+Start the block on a new line - defaults to `false`. For `pwsh` and `cmd` this will not print a newline
 that's defined on the first block when the prompt is on the first line (when using clear), or when the shell session
-starts (1st prompt).
+starts (1st prompt). To enable the same behavior for `bash` and `zsh`, set `enable_cursor_positioning` to `true`.
+This can have the side effect of swallowing commands you type while the prompt loads, or while the current
+command is still ongoing. This is a limitation of the shell and not Oh My Posh.
+
+```json
 
 ### Alignment
 

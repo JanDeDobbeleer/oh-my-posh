@@ -171,8 +171,6 @@ posh::call_widget()
 # $1: The name of the widget to decorate
 # $2: The name of the posh function to decorate it with
 function posh::decorate_widget() {
-  typeset -F SECONDS
-  local prefix=orig-s$SECONDS-r$RANDOM # unique
   orig_widget=${1};shift
   posh_widget=${1};shift
   # from this point $@ does not have $1 $2 anymore
@@ -183,22 +181,22 @@ function posh::decorate_widget() {
 
     # User defined
     user:*)
-      zle -N $prefix-$orig_widget ${widgets[$orig_widget]#*:}
-      eval "_posh-decorated-${(q)prefix}-${(q)orig_widget}() { posh::call_widget ${(q)posh_widget} ${(q)prefix}-${(q)orig_widget} -- \"\$@\" }"
-      zle -N $orig_widget _posh-decorated-$prefix-$orig_widget;;
+      zle -N $POSH_PID-$orig_widget ${widgets[$orig_widget]#*:}
+      eval "_posh-decorated-${(q)POSH_PID}-${(q)orig_widget}() { posh::call_widget ${(q)posh_widget} ${(q)POSH_PID}-${(q)orig_widget} -- \"\$@\" }"
+      zle -N $orig_widget _posh-decorated-$POSH_PID-$orig_widget;;
 
     # Built-in
     builtin:*)
-      eval "_posh-decorated-${(q)prefix}-${(q)orig_widget}() { posh::call_widget ${(q)posh_widget} .${(q)orig_widget} -- \"\$@\" }"
-      zle -N $orig_widget _posh-decorated-$prefix-$orig_widget;;
+      eval "_posh-decorated-${(q)POSH_PID}-${(q)orig_widget}() { posh::call_widget ${(q)posh_widget} .${(q)orig_widget} -- \"\$@\" }"
+      zle -N $orig_widget _posh-decorated-$POSH_PID-$orig_widget;;
 
     # non-existent
     *)
       if [[ $orig_widget == zle-* ]] && (( ! ${+widgets[$orig_widget]} )); then
         # The widget is a zle one and does not exist, we can safely create it
         # Otherwise, do nothing
-        eval "_posh-decorated-${(q)prefix}-${(q)orig_widget}() { ${(q)posh_widget} }"
-        zle -N $orig_widget _posh-decorated-$prefix-$orig_widget
+        eval "_posh-decorated-${(q)POSH_PID}-${(q)orig_widget}() { ${(q)posh_widget} }"
+        zle -N $orig_widget _posh-decorated-$POSH_PID-$orig_widget
       fi
       ;;
   esac

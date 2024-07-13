@@ -23,6 +23,8 @@ func install(tag string) error {
 		return err
 	}
 
+	setState(installing)
+
 	targetDir := filepath.Dir(executable)
 	fileName := filepath.Base(executable)
 
@@ -68,7 +70,7 @@ func install(tag string) error {
 		_ = hideFile(oldPath)
 	}
 
-	updateRegistry(tag)
+	updateRegistry(tag, executable)
 
 	return nil
 }

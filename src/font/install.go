@@ -35,6 +35,12 @@ func InstallZIP(data []byte, user bool) ([]string, error) {
 	fonts := make(map[string]*Font)
 
 	for _, zf := range zipReader.File {
+		// prevent zipslip attacks
+		// https://security.snyk.io/research/zip-slip-vulnerability
+		if strings.Contains(zf.Name, "..") {
+			continue
+		}
+
 		rc, err := zf.Open()
 		if err != nil {
 			return families, err

@@ -124,6 +124,8 @@ const (
 	NODE SegmentType = "node"
 	// npm version
 	NPM SegmentType = "npm"
+	// NUXT writes the current Nuxt version
+	NUXT SegmentType = "nuxt"
 	// NX writes which Nx version us currently active
 	NX SegmentType = "nx"
 	// OCAML writes the active Ocaml version
@@ -198,6 +200,8 @@ const (
 	UPGRADE SegmentType = "upgrade"
 	// VALA writes the active vala version
 	VALA SegmentType = "vala"
+	// VUE writes the current vue version
+	VUE SegmentType = "vue"
 	// WAKATIME writes tracked time spend in dev editors
 	WAKATIME SegmentType = "wakatime"
 	// WINREG queries the Windows registry.
@@ -263,6 +267,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	NIGHTSCOUT:      func() SegmentWriter { return &segments.Nightscout{} },
 	NODE:            func() SegmentWriter { return &segments.Node{} },
 	NPM:             func() SegmentWriter { return &segments.Npm{} },
+	NUXT:            func() SegmentWriter { return &segments.Nuxt{} },
 	NX:              func() SegmentWriter { return &segments.Nx{} },
 	OCAML:           func() SegmentWriter { return &segments.OCaml{} },
 	OS:              func() SegmentWriter { return &segments.Os{} },
@@ -300,6 +305,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	UNITY:           func() SegmentWriter { return &segments.Unity{} },
 	UPGRADE:         func() SegmentWriter { return &segments.Upgrade{} },
 	VALA:            func() SegmentWriter { return &segments.Vala{} },
+	VUE:             func() SegmentWriter { return &segments.Vue{} },
 	WAKATIME:        func() SegmentWriter { return &segments.Wakatime{} },
 	WINREG:          func() SegmentWriter { return &segments.WindowsRegistry{} },
 	WITHINGS:        func() SegmentWriter { return &segments.Withings{} },

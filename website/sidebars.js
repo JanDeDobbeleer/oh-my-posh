@@ -71,6 +71,7 @@ module.exports = {
             "segments/cli/kubectl",
             "segments/cli/nbgv",
             "segments/cli/npm",
+            "segments/cli/nuxt",
             "segments/cli/nx",
             "segments/cli/pnpm",
             "segments/cli/quasar",
@@ -80,9 +81,10 @@ module.exports = {
             "segments/cli/ui5tooling",
             "segments/cli/umbraco",
             "segments/cli/unity",
+            "segments/cli/vue",
             "segments/cli/xmake",
             "segments/cli/yarn",
-          ]
+          ],
         },
         {
           type: "category",
@@ -99,7 +101,7 @@ module.exports = {
             "segments/cloud/gcp",
             "segments/cloud/pulumi",
             "segments/cloud/sitecore",
-          ]
+          ],
         },
         {
           type: "category",
@@ -109,7 +111,7 @@ module.exports = {
             "segments/health/nightscout",
             "segments/health/strava",
             "segments/health/withings",
-          ]
+          ],
         },
         {
           type: "category",
@@ -136,7 +138,7 @@ module.exports = {
             "segments/languages/rust",
             "segments/languages/swift",
             "segments/languages/vala",
-          ]
+          ],
         },
         {
           type: "category",
@@ -146,7 +148,7 @@ module.exports = {
             "segments/music/lastfm",
             "segments/music/spotify",
             "segments/music/ytm",
-          ]
+          ],
         },
         {
           type: "category",
@@ -159,7 +161,7 @@ module.exports = {
             "segments/scm/plastic",
             "segments/scm/sapling",
             "segments/scm/svn",
-          ]
+          ],
         },
         {
           type: "category",
@@ -182,7 +184,7 @@ module.exports = {
             "segments/system/time",
             "segments/system/upgrade",
             "segments/system/winreg",
-          ]
+          ],
         },
         {
           type: "category",
@@ -195,7 +197,7 @@ module.exports = {
             "segments/web/nba",
             "segments/web/owm",
             "segments/web/wakatime",
-          ]
+          ],
         },
       ],
     },

@@ -11,17 +11,20 @@ import (
 )
 
 func (e *Engine) RPrompt() string {
-	filterRPromptBlock := func(blocks []*config.Block) *config.Block {
-		for _, block := range blocks {
-			if block.Type == config.RPrompt {
-				return block
-			}
+	var rprompt *config.Block
+	var lineCount int
+
+	for _, block := range e.Config.Blocks {
+		if block.Type == config.RPrompt {
+			rprompt = block
 		}
-		return nil
+
+		if block.Newline || block.Type == config.LineBreak {
+			lineCount++
+		}
 	}
 
-	block := filterRPromptBlock(e.Config.Blocks)
-	if block == nil {
+	if rprompt == nil {
 		return ""
 	}
 
@@ -29,13 +32,13 @@ func (e *Engine) RPrompt() string {
 		terminal.Init(shell.GENERIC)
 	}
 
-	block.Init(e.Env)
+	rprompt.Init(e.Env)
 
-	if !block.Enabled() {
+	if !rprompt.Enabled() {
 		return ""
 	}
 
-	text, length := e.renderBlockSegments(block)
+	text, length := e.renderBlockSegments(rprompt)
 	e.rpromptLength = length
 
 	if e.Env.Shell() != shell.BASH {
@@ -54,6 +57,12 @@ func (e *Engine) RPrompt() string {
 	}
 
 	text = fmt.Sprintf("%s%s\r", strings.Repeat(" ", padding), text)
+
+	// bash prints this on the same line as the prompt so we need to move the cursor down
+	// in case the prompt spans multiple lines
+	if lineCount > 0 {
+		return terminal.SaveCursorPosition() + strings.Repeat("\n", lineCount) + text + terminal.RestoreCursorPosition()
+	}
 
 	return text
 }

@@ -76,31 +76,29 @@ autoload -Uz add-zsh-hook
 add-zsh-hook precmd prompt_ohmyposh_precmd
 add-zsh-hook preexec prompt_ohmyposh_preexec
 
-# perform cleanup so a new initialization in current session works
-if [[ "$(bindkey " ")" = *"_posh-tooltip"* ]]; then
-  bindkey " " self-insert
-fi
-if [[ "$(zle -lL zle-line-init)" = *"_posh-zle-line-init"* ]]; then
-  zle -N zle-line-init
-fi
-
-function _posh-tooltip() {
-  # https://github.com/zsh-users/zsh-autosuggestions - clear suggestion to avoid keeping it after the newly inserted space
-  if [[ "$(zle -lL autosuggest-clear)" ]]; then
-    # only if suggestions not disabled (variable not set)
-    if [[ ! -v _ZSH_AUTOSUGGEST_DISABLED ]]; then
-      zle autosuggest-clear
+# Prevent incorrect behaviors when the initialization is executed twice in current session.
+function _omp_cleanup() {
+  local omp_widgets=(
+    self-insert
+    zle-line-init
+  )
+  local widget
+  for widget in "${omp_widgets[@]}"; do
+    if [[ "${widgets[_omp_original::$widget]}" ]]; then
+      # Restore the original widget.
+      zle -A _omp_original::$widget $widget
+    elif [[ "${widgets[$widget]}" = user:_omp_* ]]; then
+      # Delete the OMP-defined widget.
+      zle -D $widget
     fi
-  fi
+  done
+}
+_omp_cleanup
+unset -f _omp_cleanup
 
-  zle .self-insert
-
-  # https://github.com/zsh-users/zsh-autosuggestions - fetch new suggestion after the space
-  if [[ "$(zle -lL autosuggest-fetch)" ]]; then
-    # only if suggestions not disabled (variable not set)
-    if [[ ! -v _ZSH_AUTOSUGGEST_DISABLED ]]; then
-      zle autosuggest-fetch
-    fi
+function _omp_render_tooltip() {
+  if [[ "$KEYS" != ' ' ]]; then
+    return
   fi
 
   # Get the first word of command line as tip.
@@ -121,7 +119,7 @@ function _posh-tooltip() {
   zle .reset-prompt
 }
 
-function _posh-zle-line-init() {
+function _omp_zle-line-init() {
   [[ $CONTEXT == start ]] || return 0
 
   # Start regular line editor.
@@ -149,69 +147,53 @@ function _posh-zle-line-init() {
   return ret
 }
 
-function enable_poshtooltips() {
-  zle -N _posh-tooltip
-  bindkey " " _posh-tooltip
+# Helper function for calling a widget before the specified OMP function.
+function _omp_call_widget() {
+  # The name of the OMP function.
+  local omp_func=$1
+  # The remainder are the widget to call and potential arguments.
+  shift
+
+  zle "$@" && shift 2 && $omp_func "$@"
 }
 
-# Helper function for posh::decorate_widget
-# It calls the posh function right after the original definition of the widget
-# $1 is the posh widget name
-# $2.. are the name of the widget to call + potential args
-posh::call_widget()
-{
-  local posh_widget=$1;shift
-  builtin zle "${@}" &&
-  ${posh_widget}
-}
+# Create a widget with the specified OMP function.
+# An existing widget will be preserved and decorated with the function.
+function _omp_create_widget() {
+  # The name of the widget to create/decorate.
+  local widget=$1
+  # The name of the OMP function.
+  local omp_func=$2
 
-# decorate_widget
-# Allows to preserve any user defined value that may have been defined before posh tries to redefine it.
-# Instead, we keep the previous function and decorate it with the posh additions
-# $1: The name of the widget to decorate
-# $2: The name of the posh function to decorate it with
-function posh::decorate_widget() {
-  orig_widget=${1};shift
-  posh_widget=${1};shift
-  # from this point $@ does not have $1 $2 anymore
+  case ${widgets[$widget]:-''} in
+  # Already decorated: do nothing.
+  user:_omp_decorated_*) ;;
 
-  case ${widgets[$orig_widget]:-""} in
-    # Already decorated: do nothing.
-    user:_posh-decorated-*);;
+  # Non-existent: just create it.
+  '')
+    zle -N $widget $omp_func
+    ;;
 
-    # User defined
-    user:*)
-      zle -N $POSH_PID-$orig_widget ${widgets[$orig_widget]#*:}
-      eval "_posh-decorated-${(q)POSH_PID}-${(q)orig_widget}() { posh::call_widget ${(q)posh_widget} ${(q)POSH_PID}-${(q)orig_widget} -- \"\$@\" }"
-      zle -N $orig_widget _posh-decorated-$POSH_PID-$orig_widget;;
-
-    # Built-in
-    builtin:*)
-      eval "_posh-decorated-${(q)POSH_PID}-${(q)orig_widget}() { posh::call_widget ${(q)posh_widget} .${(q)orig_widget} -- \"\$@\" }"
-      zle -N $orig_widget _posh-decorated-$POSH_PID-$orig_widget;;
-
-    # non-existent
-    *)
-      if [[ $orig_widget == zle-* ]] && (( ! ${+widgets[$orig_widget]} )); then
-        # The widget is a zle one and does not exist, we can safely create it
-        # Otherwise, do nothing
-        eval "_posh-decorated-${(q)POSH_PID}-${(q)orig_widget}() { ${(q)posh_widget} }"
-        zle -N $orig_widget _posh-decorated-$POSH_PID-$orig_widget
-      fi
-      ;;
+  # User-defined or builtin: backup and decorate it.
+  *)
+    # Back up the original widget.
+    zle -A $widget _omp_original::$widget
+    eval "_omp_decorated_${(q)widget}() { _omp_call_widget ${(q)omp_func} _omp_original::${(q)widget} -- \"\$@\" }"
+    zle -N $widget _omp_decorated_$widget
+    ;;
   esac
 }
 
-function enable_poshtransientprompt() {
-  posh::decorate_widget zle-line-init _posh-zle-line-init
-}
+# legacy functions
+function enable_poshtooltips() {}
+function enable_poshtransientprompt() {}
 
 if [[ "::TOOLTIPS::" = "true" ]]; then
-  enable_poshtooltips
+  _omp_create_widget self-insert _omp_render_tooltip
 fi
 
 if [[ "::TRANSIENT::" = "true" ]]; then
-  enable_poshtransientprompt
+  _omp_create_widget zle-line-init _omp_zle-line-init
 fi
 
 if [[ "::UPGRADE::" = "true" ]]; then

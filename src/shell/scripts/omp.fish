@@ -3,12 +3,12 @@ set --export POSH_SHELL_VERSION $FISH_VERSION
 set --global POWERLINE_COMMAND oh-my-posh
 set --global POSH_PID $fish_pid
 set --global CONDA_PROMPT_MODIFIER false
-set --global omp_tooltip_command ''
-set --global omp_current_rprompt ''
-set --global omp_transient false
+set --global _omp_tooltip_command ''
+set --global _omp_current_rprompt ''
+set --global _omp_transient false
 
 # We use this to avoid unnecessary CLI calls for prompt repaint.
-set --global omp_new_prompt true
+set --global _omp_new_prompt true
 
 # template function for context loading
 function set_poshcontext
@@ -24,37 +24,37 @@ function fish_prompt
     # commandline --function repaint does not do this
     # see https://github.com/fish-shell/fish-shell/issues/8418
     printf \e\[0J
-    if test "$omp_transient" = true
-        ::OMP:: print transient --config $POSH_THEME --shell fish --status $omp_status_cache --pipestatus="$omp_pipestatus_cache" --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --no-status=$omp_no_exit_code
+    if test "$_omp_transient" = true
+        ::OMP:: print transient --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code
         return
     end
-    if test "$omp_new_prompt" = false
-        echo -n "$omp_current_prompt"
+    if test "$_omp_new_prompt" = false
+        echo -n "$_omp_current_prompt"
         return
     end
-    set --global omp_status_cache $omp_status_cache_temp
-    set --global omp_pipestatus_cache $omp_pipestatus_cache_temp
-    set --global omp_stack_count (count $dirstack)
-    set --global omp_duration "$CMD_DURATION$cmd_duration"
-    set --global omp_no_exit_code false
+    set --global _omp_status_cache $omp_status_cache_temp
+    set --global _omp_pipestatus_cache $omp_pipestatus_cache_temp
+    set --global _omp_stack_count (count $dirstack)
+    set --global _omp_duration "$CMD_DURATION$cmd_duration"
+    set --global _omp_no_exit_code false
 
     # check if variable set, < 3.2 case
-    if set --query omp_lastcommand; and test -z "$omp_lastcommand"
-        set omp_duration 0
-        set omp_no_exit_code true
+    if set --query _omp_last_command; and test -z "$_omp_last_command"
+        set _omp_duration 0
+        set _omp_no_exit_code true
     end
 
     # works with fish >=3.2
-    if set --query omp_last_status_generation; and test "$omp_last_status_generation" = "$status_generation"
-        set omp_duration 0
-        set omp_no_exit_code true
-    else if test -z "$omp_last_status_generation"
-        # first execution - $status_generation is 0, $omp_last_status_generation is empty
-        set omp_no_exit_code true
+    if set --query _omp_last_status_generation; and test "$_omp_last_status_generation" = "$status_generation"
+        set _omp_duration 0
+        set _omp_no_exit_code true
+    else if test -z "$_omp_last_status_generation"
+        # first execution - $status_generation is 0, $_omp_last_status_generation is empty
+        set _omp_no_exit_code true
     end
 
     if set --query status_generation
-        set --global omp_last_status_generation $status_generation
+        set --global _omp_last_status_generation $status_generation
     end
 
     set_poshcontext
@@ -70,32 +70,32 @@ function fish_prompt
     ::PROMPT_MARK::
 
     # The prompt is saved for possible reuse, typically a repaint after clearing the screen buffer.
-    set --global omp_current_prompt (::OMP:: print primary --config $POSH_THEME --shell fish --status $omp_status_cache --pipestatus="$omp_pipestatus_cache" --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-status=$omp_no_exit_code | string collect)
-    echo -n "$omp_current_prompt"
+    set --global _omp_current_prompt (::OMP:: print primary --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-status=$_omp_no_exit_code | string collect)
+    echo -n "$_omp_current_prompt"
 end
 
 function fish_right_prompt
-    if test "$omp_transient" = true
-        set omp_transient false
+    if test "$_omp_transient" = true
+        set _omp_transient false
         return
     end
     # Repaint an existing right prompt.
-    if test "$omp_new_prompt" = false
-        echo -n "$omp_current_rprompt"
+    if test "$_omp_new_prompt" = false
+        echo -n "$_omp_current_rprompt"
         return
     end
-    set omp_new_prompt false
-    set --global omp_current_rprompt (::OMP:: print right --config $POSH_THEME --shell fish --status $omp_status_cache --pipestatus="$omp_pipestatus_cache" --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --no-status=$omp_no_exit_code | string join '')
-    echo -n "$omp_current_rprompt"
+    set _omp_new_prompt false
+    set --global _omp_current_rprompt (::OMP:: print right --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code | string join '')
+    echo -n "$_omp_current_rprompt"
 end
 
-function postexec_omp --on-event fish_postexec
+function _omp_postexec --on-event fish_postexec
     # works with fish <3.2
     # pre and postexec not fired for empty command in fish >=3.2
-    set --global omp_lastcommand $argv
+    set --global _omp_last_command $argv
 end
 
-function preexec_omp --on-event fish_preexec
+function _omp_preexec --on-event fish_preexec
     if test "::FTCS_MARKS::" = true
         echo -ne "\e]133;C\a"
     end
@@ -130,16 +130,16 @@ function _omp_space_key_handler
     # Get the first word of command line as tip.
     set --local tooltip_command (commandline --current-buffer | string trim -l | string split --allow-empty -f1 ' ' | string collect)
     # Ignore an empty/repeated tooltip command.
-    if test -z "$tooltip_command" || test "$tooltip_command" = "$omp_tooltip_command"
+    if test -z "$tooltip_command" || test "$tooltip_command" = "$_omp_tooltip_command"
         return
     end
-    set omp_tooltip_command $tooltip_command
-    set --local tooltip_prompt (::OMP:: print tooltip --config $POSH_THEME --shell fish --status $omp_status_cache --pipestatus="$omp_pipestatus_cache" --execution-time $omp_duration --stack-count $omp_stack_count --shell-version $FISH_VERSION --command $omp_tooltip_command --no-status=$omp_no_exit_code | string join '')
+    set _omp_tooltip_command $tooltip_command
+    set --local tooltip_prompt (::OMP:: print tooltip --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --command $_omp_tooltip_command --no-status=$_omp_no_exit_code | string join '')
     if test -z "$tooltip_prompt"
         return
     end
     # Save the tooltip prompt to avoid unnecessary CLI calls.
-    set omp_current_rprompt $tooltip_prompt
+    set _omp_current_rprompt $tooltip_prompt
     commandline --function repaint
 end
 
@@ -156,10 +156,10 @@ function _omp_enter_key_handler
         return
     end
     if commandline --is-valid || test -z (commandline --current-buffer | string trim -l | string collect)
-        set omp_new_prompt true
-        set omp_tooltip_command ''
+        set _omp_new_prompt true
+        set _omp_tooltip_command ''
         if test "::TRANSIENT::" = true
-            set omp_transient true
+            set _omp_transient true
             commandline --function repaint
         end
     end
@@ -171,10 +171,10 @@ function _omp_ctrl_c_key_handler
         return
     end
     # Render a transient prompt on Ctrl-C with non-empty command line buffer.
-    set omp_new_prompt true
-    set omp_tooltip_command ''
+    set _omp_new_prompt true
+    set _omp_tooltip_command ''
     if test "::TRANSIENT::" = true
-        set omp_transient true
+        set _omp_transient true
         commandline --function repaint
     end
     commandline --function cancel-commandline

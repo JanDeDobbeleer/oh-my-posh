@@ -19,53 +19,19 @@ There are two possible values the `--config` flag can handle:
 - a path to a local configuration file
 
 ```powershell
-oh-my-posh init pwsh --config 'C:/Users/Posh/jandedobbeleer.omp.json' | Invoke-Expression
+--config 'C:/Users/Posh/jandedobbeleer.omp.json'
 ```
 
 - a URL pointing to a remote config
 
 ```powershell
-oh-my-posh init pwsh --config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json' | Invoke-Expression
+--config 'https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/jandedobbeleer.omp.json'
 ```
 
-### Get inspiration
+### Shell syntax
 
-The Windows and homebrew installers also bundle the **predefined configurations** ([themes][themes]). You can use the
-following way to reference them directly. This will keep them up-to-date and compatible with future updates.
-
-<Tabs
-  defaultValue="windows"
-  groupId="shell"
-  values={[
-    { label: 'windows', value: 'windows', },
-    { label: 'homebrew', value: 'homebrew', },
-  ]
-}>
-<TabItem value="windows">
-
-For example, to use the [jandedobbeleer][jandedobbeleer] theme, alter the init line like this (`powershell`):
-
-```powershell
-oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/jandedobbeleer.omp.json" | Invoke-Expression
-```
-
-</TabItem>
-<TabItem value="homebrew">
-
-When using homebrew, all themes are installed alongside Oh My Posh in `$(brew --prefix oh-my-posh)/themes`.
-To use any of the themes, use the following syntax (`zsh`):
-
-```bash
-eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json)"
-```
-
-</TabItem>
-</Tabs>
-
-### Config syntax
-
-The examples below use a local path to the [jandedobbeleer][jandedobbeleer] theme, adjust the `--config` value
-to reflect your use-case.
+The example below use a local path to the [jandedobbeleer][jandedobbeleer] theme, adjust the `--config` value
+to reflect your configuration file, local or remote.
 
 <Tabs
   defaultValue="powershell"
@@ -270,6 +236,40 @@ Windows user's home folder.
 
 Inside the WSL, you can find your Windows user's home folder here: `/mnt/c/Users/<WINDOWSUSERNAME>`.
 :::
+
+### Get inspiration
+
+The Windows and homebrew installers also bundle the **predefined configurations** ([themes][themes]). You can use the
+following way to reference them directly. This will keep them up-to-date and compatible with future updates.
+
+<Tabs
+  defaultValue="windows"
+  groupId="shell"
+  values={[
+    { label: 'windows', value: 'windows', },
+    { label: 'homebrew', value: 'homebrew', },
+  ]
+}>
+<TabItem value="windows">
+
+For example, to use the [jandedobbeleer][jandedobbeleer] theme, alter the init line like this (`powershell`):
+
+```powershell
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/jandedobbeleer.omp.json" | Invoke-Expression
+```
+
+</TabItem>
+<TabItem value="homebrew">
+
+When using homebrew, all themes are installed alongside Oh My Posh in `$(brew --prefix oh-my-posh)/themes`.
+To use any of the themes, use the following syntax (`zsh`):
+
+```bash
+eval "$(oh-my-posh init zsh --config $(brew --prefix oh-my-posh)/themes/jandedobbeleer.omp.json)"
+```
+
+</TabItem>
+</Tabs>
 
 ### Adjust a theme
 

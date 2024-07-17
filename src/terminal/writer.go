@@ -344,7 +344,6 @@ func Write(background, foreground color.Ansi, text string) {
 			continue
 		}
 
-		length += runewidth.RuneWidth(s)
 		write(s)
 	}
 

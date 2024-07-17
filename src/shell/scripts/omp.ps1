@@ -397,7 +397,7 @@ Example:
         }
     }
 
-    $promptFunction = {
+    function prompt {
         # store the orignal last command execution status
         if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS -is [bool]) {
             # make it compatible with NVS auto-switching, if enabled
@@ -435,8 +435,6 @@ Example:
         # restore the orignal last exit code
         $global:LASTEXITCODE = $script:OriginalLastExitCode
     }
-
-    $Function:prompt = $promptFunction
 
     # set secondary prompt
     Set-PSReadLineOption -ContinuationPrompt ((Start-Utf8Process $script:OMPExecutable @("print", "secondary", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n")
@@ -478,6 +476,7 @@ Example:
         "Export-PoshTheme"
         "Get-PoshThemes"
         "Start-Utf8Process"
+        "prompt"
     )
 } | Import-Module -Global
 

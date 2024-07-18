@@ -8,6 +8,10 @@ sidebar_label: Kubectl
 
 Display the currently active Kubernetes context name and namespace name.
 
+:::caution
+The Kubernetes context is cached for 1 minute by default. To avoid caching, set `cache_timeout` to 0.
+:::
+
 ## Sample Configuration
 
 import Config from "@site/src/components/Config.js";
@@ -35,6 +39,7 @@ import Config from "@site/src/components/Config.js";
 | `display_error`    | `boolean` | `false` | show the error context when failing to retrieve the kubectl information         |
 | `parse_kubeconfig` | `boolean` | `false` | parse kubeconfig files instead of calling out to kubectl to improve performance |
 | `context_aliases`  | `object`  |         | custom context namespace                                                        |
+| `cache_timeout`    | `int`     |   `1`   | in minutes - how long is the context cached                                     |
 
 ## Template ([info][templates])
 

@@ -1,6 +1,8 @@
 package segments
 
 import (
+	"encoding/json"
+	"fmt"
 	"path/filepath"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
@@ -13,11 +15,14 @@ import (
 const (
 	ParseKubeConfig properties.Property = "parse_kubeconfig"
 	ContextAliases  properties.Property = "context_aliases"
+	kubectlCacheKey                     = "kubectl"
 )
 
 type Kubectl struct {
 	props properties.Properties
 	env   runtime.Environment
+
+	dirty bool
 
 	Context string
 
@@ -47,11 +52,50 @@ func (k *Kubectl) Init(props properties.Properties, env runtime.Environment) {
 	k.env = env
 }
 
+func (k *Kubectl) setCacheValue(timeout int) {
+	if !k.dirty {
+		return
+	}
+
+	cachedData, _ := json.Marshal(k)
+	k.env.Cache().Set(kubectlCacheKey, string(cachedData), timeout)
+}
+
+func (k *Kubectl) restoreCacheValue() error {
+	if val, found := k.env.Cache().Get(kubectlCacheKey); found {
+		err := json.Unmarshal([]byte(val), k)
+		if err != nil {
+			k.env.Error(err)
+			return err
+		}
+
+		return nil
+	}
+
+	return fmt.Errorf("no data in cache")
+}
+
 func (k *Kubectl) Enabled() bool {
+	cacheTimeout := k.props.GetInt(properties.CacheTimeout, 1)
+
+	if cacheTimeout > 0 {
+		if err := k.restoreCacheValue(); err == nil {
+			return true
+		}
+	}
+
+	defer func() {
+		if cacheTimeout > 0 {
+			k.setCacheValue(cacheTimeout)
+		}
+	}()
+
 	parseKubeConfig := k.props.GetBool(ParseKubeConfig, false)
+
 	if parseKubeConfig {
 		return k.doParseKubeConfig()
 	}
+
 	return k.doCallKubectl()
 }
 
@@ -62,8 +106,10 @@ func (k *Kubectl) doParseKubeConfig() bool {
 	if len(kubeconfigs) == 0 {
 		kubeconfigs = []string{filepath.Join(k.env.Home(), ".kube/config")}
 	}
+
 	contexts := make(map[string]*KubeContext)
 	k.Context = ""
+
 	for _, kubeconfig := range kubeconfigs {
 		if len(kubeconfig) == 0 {
 			continue
@@ -97,6 +143,7 @@ func (k *Kubectl) doParseKubeConfig() bool {
 		}
 
 		k.SetContextAlias()
+		k.dirty = true
 
 		return true
 	}
@@ -114,12 +161,14 @@ func (k *Kubectl) doCallKubectl() bool {
 	if !k.env.HasCommand(cmd) {
 		return false
 	}
+
 	result, err := k.env.RunCommand(cmd, "config", "view", "--output", "yaml", "--minify")
 	displayError := k.props.GetBool(properties.DisplayError, false)
 	if err != nil && displayError {
 		k.setError("KUBECTL ERR")
 		return true
 	}
+
 	if err != nil {
 		return false
 	}
@@ -129,11 +178,15 @@ func (k *Kubectl) doCallKubectl() bool {
 	if err != nil {
 		return false
 	}
+
 	k.Context = config.CurrentContext
 	k.SetContextAlias()
+	k.dirty = true
+
 	if len(config.Contexts) > 0 {
 		k.KubeContext = *config.Contexts[0].Context
 	}
+
 	return true
 }
 
@@ -141,6 +194,7 @@ func (k *Kubectl) setError(message string) {
 	if len(k.Context) == 0 {
 		k.Context = message
 	}
+
 	k.Namespace = message
 	k.User = message
 	k.Cluster = message

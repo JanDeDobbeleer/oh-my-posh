@@ -4730,6 +4730,7 @@
     "shell_integration": {
       "type": "boolean",
       "title": "FTCS command marks for shell integration",
+      "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": false
     },
     "pwd": {
@@ -4741,13 +4742,13 @@
     "disable_notice": {
       "type": "boolean",
       "title": "Disable Upgrade Notice",
-      "description": "https://ohmyposh.dev/docs/configuration/title#general-settings",
+      "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": false
     },
     "auto_upgrade": {
       "type": "boolean",
       "title": "Enable automatic upgrades for Oh My Posh (supports Windows/macOS only)",
-      "description": "https://ohmyposh.dev/docs/configuration/title#general-settings",
+      "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": false
     },
     "patch_pwsh_bleed": {

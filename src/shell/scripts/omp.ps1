@@ -121,7 +121,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $stdoutTask.Result
     }
 
-    function Set-PoshContext {}
+    function Set-PoshContext([bool]$originalStatus) {}
 
     function Get-CleanPSWD {
         $pswd = $PWD.ToString()
@@ -415,7 +415,7 @@ Example:
         }
         $cleanPSWD = Get-CleanPSWD
         $stackCount = global:Get-PoshStackCount
-        Set-PoshContext
+        Set-PoshContext $script:OriginalLastExecutionStatus
         $terminalWidth = Get-TerminalWidth
 
         # set the cursor positions, they are zero based so align with other platforms

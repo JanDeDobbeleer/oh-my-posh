@@ -4741,19 +4741,19 @@
     "disable_notice": {
       "type": "boolean",
       "title": "Disable Upgrade Notice",
-      "description": "https://ohmyposh.dev/docs/configuration/title#general-settings",
+      "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": false
     },
     "auto_upgrade": {
       "type": "boolean",
       "title": "Enable automatic upgrades for Oh My Posh (supports Windows/macOS only)",
-      "description": "https://ohmyposh.dev/docs/configuration/title#general-settings",
+      "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": false
     },
     "patch_pwsh_bleed": {
       "type": "boolean",
       "title": "Patch PowerShell Color Bleed",
-      "description": "https://ohmyposh.dev/docs/configuration/title#general-settings",
+      "description": "https://ohmyposh.dev/docs/configuration/general#general-settings",
       "default": false
     },
     "console_title_template": {

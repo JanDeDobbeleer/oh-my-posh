@@ -9,70 +9,76 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
-type ExtraPromptType int
-
-const (
-	Transient ExtraPromptType = iota
-	Valid
-	Error
-	Secondary
-	Debug
-)
-
 func (e *Engine) Primary() string {
-	if e.Config.ShellIntegration {
-		exitCode, _ := e.Env.StatusCodes()
-		e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
-		e.write(terminal.PromptStart())
-	}
-
-	// cache a pointer to the color cycle
-	cycle = &e.Config.Cycle
-	var cancelNewline, didRender bool
-
 	needsPrimaryRPrompt := e.needsPrimaryRPrompt()
 
-	for i, block := range e.Config.Blocks {
-		// do not print a leading newline when we're at the first row and the prompt is cleared
-		if i == 0 {
-			row, _ := e.Env.CursorPosition()
-			cancelNewline = e.Env.Flags().Cleared || e.Env.Flags().PromptCount == 1 || row == 1
-		}
+	var (
+		useCache    bool
+		updateCache bool
+	)
 
-		// skip setting a newline when we didn't print anything yet
-		if i != 0 {
-			cancelNewline = !didRender
-		}
-
-		if block.Type == config.RPrompt && !needsPrimaryRPrompt {
-			continue
-		}
-
-		if e.renderBlock(block, cancelNewline) {
-			didRender = true
+	if e.Env.Shell() == shell.PWSH || e.Env.Shell() == shell.PWSH5 {
+		// For PowerShell, use a cached prompt if available, otherwise render a new prompt.
+		if e.Env.Flags().Cached && e.checkPromptCache() {
+			useCache = true
+		} else {
+			updateCache = true
 		}
 	}
 
-	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {
-		title := e.getTitleTemplateText()
-		e.write(terminal.FormatTitle(title))
-	}
+	if !useCache {
+		if e.Config.ShellIntegration {
+			exitCode, _ := e.Env.StatusCodes()
+			e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
+			e.write(terminal.PromptStart())
+		}
 
-	if e.Config.FinalSpace {
-		e.write(" ")
-		e.currentLineLength++
-	}
+		// cache a pointer to the color cycle
+		cycle = &e.Config.Cycle
+		var cancelNewline, didRender bool
 
-	if e.Config.ITermFeatures != nil && e.isIterm() {
-		host, _ := e.Env.Host()
-		e.write(terminal.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
-	}
+		for i, block := range e.Config.Blocks {
+			// do not print a leading newline when we're at the first row and the prompt is cleared
+			if i == 0 {
+				row, _ := e.Env.CursorPosition()
+				cancelNewline = e.Env.Flags().Cleared || e.Env.Flags().PromptCount == 1 || row == 1
+			}
 
-	if e.Config.ShellIntegration && e.Config.TransientPrompt == nil {
-		e.write(terminal.CommandStart())
-	}
+			// skip setting a newline when we didn't print anything yet
+			if i != 0 {
+				cancelNewline = !didRender
+			}
 
-	e.pwd()
+			if block.Type == config.RPrompt && !needsPrimaryRPrompt {
+				continue
+			}
+
+			if e.renderBlock(block, cancelNewline) {
+				didRender = true
+			}
+		}
+
+		if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {
+			title := e.getTitleTemplateText()
+			e.write(terminal.FormatTitle(title))
+		}
+
+		if e.Config.FinalSpace {
+			e.write(" ")
+			e.currentLineLength++
+		}
+
+		if e.Config.ITermFeatures != nil && e.isIterm() {
+			host, _ := e.Env.Host()
+			e.write(terminal.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
+		}
+
+		if e.Config.ShellIntegration && e.Config.TransientPrompt == nil {
+			e.write(terminal.CommandStart())
+		}
+
+		e.pwd()
+	}
 
 	switch e.Env.Shell() {
 	case shell.ZSH:
@@ -94,6 +100,16 @@ func (e *Engine) Primary() string {
 
 		return prompt
 	default:
+		if updateCache {
+			// Cache the new prompt.
+			e.updatePromptCache(&promptCache{
+				Prompt:            e.prompt.String(),
+				CurrentLineLength: e.currentLineLength,
+				RPrompt:           e.rprompt,
+				RPromptLength:     e.rpromptLength,
+			})
+		}
+
 		if !needsPrimaryRPrompt {
 			break
 		}

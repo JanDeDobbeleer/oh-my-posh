@@ -60,6 +60,7 @@ type Flags struct {
 	HasTransient  bool
 	PromptCount   int
 	Cleared       bool
+	Cached        bool
 	NoExitCode    bool
 	Column        int
 }
@@ -233,7 +234,9 @@ func (term *Terminal) Init() {
 
 	term.tmplCache = &cache.Template{}
 
-	term.SetPromptCount()
+	if !term.CmdFlags.Cached {
+		term.SetPromptCount()
+	}
 }
 
 func (term *Terminal) resolveConfigPath() {
@@ -1003,7 +1006,7 @@ func returnOrBuildCachePath(path string) string {
 	if _, err := os.Stat(cachePath); err == nil {
 		return cachePath
 	}
-	if err := os.Mkdir(cachePath, 0755); err != nil {
+	if err := os.Mkdir(cachePath, 0o755); err != nil {
 		return ""
 	}
 	return cachePath

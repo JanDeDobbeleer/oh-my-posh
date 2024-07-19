@@ -19,6 +19,7 @@ var (
 	terminalWidth int
 	eval          bool
 	cleared       bool
+	cached        bool
 
 	command      string
 	shellVersion string
@@ -64,6 +65,7 @@ var printCmd = &cobra.Command{
 			Plain:         plain,
 			Primary:       args[0] == "primary",
 			Cleared:       cleared,
+			Cached:        cached,
 			NoExitCode:    noStatus,
 			Column:        column,
 		}
@@ -108,6 +110,7 @@ func init() {
 	printCmd.Flags().StringVar(&command, "command", "", "tooltip command")
 	printCmd.Flags().BoolVarP(&plain, "plain", "p", false, "plain text output (no ANSI)")
 	printCmd.Flags().BoolVar(&cleared, "cleared", false, "do we have a clear terminal or not")
+	printCmd.Flags().BoolVar(&cached, "cached", false, "use a cached prompt")
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
 	printCmd.Flags().IntVar(&column, "column", 0, "the column position of the cursor")
 	// Deprecated flags

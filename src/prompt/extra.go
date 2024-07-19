@@ -11,6 +11,16 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
+type ExtraPromptType int
+
+const (
+	Transient ExtraPromptType = iota
+	Valid
+	Error
+	Secondary
+	Debug
+)
+
 func (e *Engine) ExtraPrompt(promptType ExtraPromptType) string {
 	// populate env with latest context
 	e.Env.LoadTemplateCache()

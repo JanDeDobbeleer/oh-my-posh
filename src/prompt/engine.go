@@ -1,8 +1,10 @@
 package prompt
 
 import (
+	"encoding/json"
 	"strings"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
@@ -12,9 +14,14 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
-var (
-	cycle *color.Cycle = &color.Cycle{}
-)
+var cycle *color.Cycle = &color.Cycle{}
+
+type promptCache struct {
+	Prompt            string
+	CurrentLineLength int
+	RPrompt           string
+	RPromptLength     int
+}
 
 type Engine struct {
 	Config *config.Config
@@ -28,6 +35,8 @@ type Engine struct {
 
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
+
+	promptCache *promptCache
 }
 
 func (e *Engine) write(text string) {
@@ -499,4 +508,81 @@ func (e *Engine) adjustTrailingDiamondColorOverrides() {
 	if len(match[terminal.FG]) > 0 {
 		adjustOverride(match[terminal.ANCHOR], color.Ansi(match[terminal.FG]))
 	}
+}
+
+func (e *Engine) checkPromptCache() bool {
+	data, ok := e.Env.Cache().Get(cache.PROMPTCACHE)
+	if !ok {
+		return false
+	}
+
+	e.promptCache = &promptCache{}
+	err := json.Unmarshal([]byte(data), e.promptCache)
+	if err != nil {
+		return false
+	}
+
+	e.write(e.promptCache.Prompt)
+	e.currentLineLength = e.promptCache.CurrentLineLength
+	e.rprompt = e.promptCache.RPrompt
+	e.rpromptLength = e.promptCache.RPromptLength
+
+	return true
+}
+
+func (e *Engine) updatePromptCache(value *promptCache) {
+	cacheJSON, err := json.Marshal(value)
+	if err != nil {
+		return
+	}
+	e.Env.Cache().Set(cache.PROMPTCACHE, string(cacheJSON), 1440)
+}
+
+// New returns a prompt engine initialized with the
+// given configuration options, and is ready to print any
+// of the prompt components.
+func New(flags *runtime.Flags) *Engine {
+	env := &runtime.Terminal{
+		CmdFlags: flags,
+	}
+
+	env.Init()
+	cfg := config.Load(env)
+
+	if cfg.PatchPwshBleed {
+		patchPowerShellBleed(env.Shell(), flags)
+	}
+
+	env.Var = cfg.Var
+	flags.HasTransient = cfg.TransientPrompt != nil
+
+	terminal.Init(env.Shell())
+	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
+	terminal.Colors = cfg.MakeColors()
+	terminal.Plain = flags.Plain
+
+	eng := &Engine{
+		Config: cfg,
+		Env:    env,
+		Plain:  flags.Plain,
+	}
+
+	return eng
+}
+
+func patchPowerShellBleed(sh string, flags *runtime.Flags) {
+	// when in PowerShell, and force patching the bleed bug
+	// we need to reduce the terminal width by 1 so the last
+	// character isn't cut off by the ANSI escape sequences
+	// See https://github.com/JanDeDobbeleer/oh-my-posh/issues/65
+	if sh != shell.PWSH && sh != shell.PWSH5 {
+		return
+	}
+
+	// only do this when relevant
+	if flags.TerminalWidth <= 0 {
+		return
+	}
+
+	flags.TerminalWidth--
 }

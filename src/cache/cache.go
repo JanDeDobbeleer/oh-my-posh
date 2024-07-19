@@ -33,6 +33,7 @@ var (
 	TEMPLATECACHE    = fmt.Sprintf("template_cache_%s", pid())
 	TOGGLECACHE      = fmt.Sprintf("toggle_cache_%s", pid())
 	PROMPTCOUNTCACHE = fmt.Sprintf("prompt_count_cache_%s", pid())
+	PROMPTCACHE      = fmt.Sprintf("prompt_cache_%s", pid())
 )
 
 type Entry struct {

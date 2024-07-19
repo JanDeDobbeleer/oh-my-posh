@@ -1,7 +1,6 @@
 package prompt
 
 import (
-	"slices"
 	"strings"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
@@ -10,18 +9,6 @@ import (
 )
 
 func (e *Engine) Tooltip(tip string) string {
-	supportedShells := []string{
-		shell.ZSH,
-		shell.CMD,
-		shell.FISH,
-		shell.PWSH,
-		shell.PWSH5,
-		shell.GENERIC,
-	}
-	if !slices.Contains(supportedShells, e.Env.Shell()) {
-		return ""
-	}
-
 	tip = strings.Trim(tip, " ")
 	tooltips := make([]*config.Segment, 0, 1)
 
@@ -56,6 +43,15 @@ func (e *Engine) Tooltip(tip string) string {
 
 	switch e.Env.Shell() {
 	case shell.PWSH, shell.PWSH5:
+		defer func() {
+			// If a prompt cache is available, we update the right prompt to the new tooltip for reuse.
+			if e.checkPromptCache() {
+				e.promptCache.RPrompt = text
+				e.promptCache.RPromptLength = length
+				e.updatePromptCache(e.promptCache)
+			}
+		}()
+
 		e.rprompt = text
 		e.currentLineLength = e.Env.Flags().Column
 		space, ok := e.canWriteRightBlock(length, true)

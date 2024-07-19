@@ -17,6 +17,9 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # Check `ConstrainedLanguage` mode.
     $script:ConstrainedLanguageMode = $ExecutionContext.SessionState.LanguageMode -eq "ConstrainedLanguage"
 
+    # This indicates whether a new prompt should be rendered instead of using the cached one.
+    $script:NewPrompt = $true
+
     # Prompt related backup.
     $script:OriginalPromptFunction = $Function:prompt
     $script:OriginalContinuationPrompt = (Get-PSReadLineOption).ContinuationPrompt
@@ -159,7 +162,22 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     $terminalWidth = Get-TerminalWidth
                     $cleanPSWD = Get-CleanPSWD
                     $stackCount = global:Get-PoshStackCount
-                    $standardOut = (Start-Utf8Process $script:OMPExecutable @("print", "tooltip", "--status=$script:ErrorCode", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion", "--column=$column", "--terminal-width=$terminalWidth", "--no-status=$script:NoExitCode")) -join ''
+                    $arguments = @(
+                        "print"
+                        "tooltip"
+                        "--status=$script:ErrorCode"
+                        "--shell=$script:ShellName"
+                        "--pswd=$cleanPSWD"
+                        "--execution-time=$script:ExecutionTime"
+                        "--stack-count=$stackCount"
+                        "--config=$env:POSH_THEME"
+                        "--command=$command"
+                        "--shell-version=$script:PSVersion"
+                        "--column=$column"
+                        "--terminal-width=$terminalWidth"
+                        "--no-status=$script:NoExitCode"
+                    )
+                    $standardOut = (Start-Utf8Process $script:OMPExecutable $arguments) -join ''
                     if (!$standardOut) {
                         return
                     }
@@ -191,6 +209,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
                 $executingCommand = $parseErrors.Count -eq 0
                 if ($executingCommand) {
+                    $script:NewPrompt = $true
                     $script:TooltipCommand = ''
                     if ('::TRANSIENT::' -eq 'true') {
                         Set-TransientPrompt
@@ -211,6 +230,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
                 # only render a transient prompt when no text is selected
                 if ($start -eq -1) {
+                    $script:NewPrompt = $true
                     $script:TooltipCommand = ''
                     if ('::TRANSIENT::' -eq 'true') {
                         Set-TransientPrompt
@@ -397,7 +417,7 @@ Example:
         }
     }
 
-    function prompt {
+    $promptFunction = {
         # store the orignal last command execution status
         if ($global:NVS_ORIGINAL_LASTEXECUTIONSTATUS -is [bool]) {
             # make it compatible with NVS auto-switching, if enabled
@@ -410,7 +430,14 @@ Example:
         $script:OriginalLastExitCode = $global:LASTEXITCODE
 
         Set-PoshPromptType
+
+        # Whether we should use a cached prompt.
+        $useCache = !$script:NewPrompt
+
         if ($script:PromptType -ne 'transient') {
+            if ($script:NewPrompt) {
+                $script:NewPrompt = $false
+            }
             Update-PoshErrorCode
         }
         $cleanPSWD = Get-CleanPSWD
@@ -422,7 +449,21 @@ Example:
         $env:POSH_CURSOR_LINE = $Host.UI.RawUI.CursorPosition.Y + 1
         $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1
 
-        $standardOut = Start-Utf8Process $script:OMPExecutable @("print", $script:PromptType, "--status=$script:ErrorCode", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName", "--no-status=$script:NoExitCode")
+        $arguments = @(
+            "print"
+            $script:PromptType
+            "--status=$script:ErrorCode"
+            "--pswd=$cleanPSWD"
+            "--execution-time=$script:ExecutionTime"
+            "--stack-count=$stackCount"
+            "--config=$env:POSH_THEME"
+            "--shell-version=$script:PSVersion"
+            "--terminal-width=$terminalWidth"
+            "--shell=$script:ShellName"
+            "--no-status=$script:NoExitCode"
+            "--cached=$useCache"
+        )
+        $standardOut = Start-Utf8Process $script:OMPExecutable $arguments
         # make sure PSReadLine knows if we have a multiline prompt
         Set-PSReadLineOption -ExtraPromptLineCount (($standardOut | Measure-Object -Line).Lines - 1)
 
@@ -435,6 +476,8 @@ Example:
         # restore the orignal last exit code
         $global:LASTEXITCODE = $script:OriginalLastExitCode
     }
+
+    $Function:prompt = $promptFunction
 
     # set secondary prompt
     Set-PSReadLineOption -ContinuationPrompt ((Start-Utf8Process $script:OMPExecutable @("print", "secondary", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n")

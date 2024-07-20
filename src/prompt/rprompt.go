@@ -61,7 +61,7 @@ func (e *Engine) RPrompt() string {
 	// bash prints this on the same line as the prompt so we need to move the cursor down
 	// in case the prompt spans multiple lines
 	if lineCount > 0 {
-		return terminal.SaveCursorPosition() + strings.Repeat("\n", lineCount) + text + terminal.RestoreCursorPosition()
+		return terminal.SaveCursorPosition() + fmt.Sprintf("\x1b[%bB", lineCount) + text + terminal.RestoreCursorPosition()
 	}
 
 	return text

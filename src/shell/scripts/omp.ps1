@@ -176,6 +176,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                         "--column=$column"
                         "--terminal-width=$terminalWidth"
                         "--no-status=$script:NoExitCode"
+                        "--cached=$true"
                     )
                     $standardOut = (Start-Utf8Process $script:OMPExecutable $arguments) -join ''
                     if (!$standardOut) {

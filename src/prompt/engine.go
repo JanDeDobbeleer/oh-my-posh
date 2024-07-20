@@ -16,7 +16,7 @@ import (
 
 var cycle *color.Cycle = &color.Cycle{}
 
-type promptCache struct {
+type engineCache struct {
 	Prompt            string
 	CurrentLineLength int
 	RPrompt           string
@@ -36,7 +36,9 @@ type Engine struct {
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
 
-	promptCache *promptCache
+	engineCache *engineCache
+
+	cached bool
 }
 
 func (e *Engine) write(text string) {
@@ -510,32 +512,40 @@ func (e *Engine) adjustTrailingDiamondColorOverrides() {
 	}
 }
 
-func (e *Engine) checkPromptCache() bool {
-	data, ok := e.Env.Cache().Get(cache.PROMPTCACHE)
+func (e *Engine) restoreEngineFromCache() bool {
+	if !e.Env.Flags().Cached {
+		return false
+	}
+
+	data, ok := e.Env.Cache().Get(cache.ENGINECACHE)
 	if !ok {
 		return false
 	}
 
-	e.promptCache = &promptCache{}
-	err := json.Unmarshal([]byte(data), e.promptCache)
+	var engineCache engineCache
+	err := json.Unmarshal([]byte(data), &engineCache)
 	if err != nil {
 		return false
 	}
 
-	e.write(e.promptCache.Prompt)
-	e.currentLineLength = e.promptCache.CurrentLineLength
-	e.rprompt = e.promptCache.RPrompt
-	e.rpromptLength = e.promptCache.RPromptLength
+	e.engineCache = &engineCache
+
+	e.write(e.engineCache.Prompt)
+	e.currentLineLength = e.engineCache.CurrentLineLength
+	e.rprompt = e.engineCache.RPrompt
+	e.rpromptLength = e.engineCache.RPromptLength
+
+	e.cached = true
 
 	return true
 }
 
-func (e *Engine) updatePromptCache(value *promptCache) {
+func (e *Engine) updateEngineCache(value *engineCache) {
 	cacheJSON, err := json.Marshal(value)
 	if err != nil {
 		return
 	}
-	e.Env.Cache().Set(cache.PROMPTCACHE, string(cacheJSON), 1440)
+	e.Env.Cache().Set(cache.ENGINECACHE, string(cacheJSON), 1440)
 }
 
 // New returns a prompt engine initialized with the

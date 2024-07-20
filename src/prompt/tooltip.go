@@ -45,10 +45,10 @@ func (e *Engine) Tooltip(tip string) string {
 	case shell.PWSH, shell.PWSH5:
 		defer func() {
 			// If a prompt cache is available, we update the right prompt to the new tooltip for reuse.
-			if e.checkPromptCache() {
-				e.promptCache.RPrompt = text
-				e.promptCache.RPromptLength = length
-				e.updatePromptCache(e.promptCache)
+			if e.restoreEngineFromCache() {
+				e.engineCache.RPrompt = text
+				e.engineCache.RPromptLength = length
+				e.updateEngineCache(e.engineCache)
 			}
 		}()
 

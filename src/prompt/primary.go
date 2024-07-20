@@ -10,74 +10,10 @@ import (
 )
 
 func (e *Engine) Primary() string {
-	needsPrimaryRPrompt := e.needsPrimaryRPrompt()
+	needsPrimaryRightPrompt := e.needsPrimaryRightPrompt()
 
-	var (
-		useCache    bool
-		updateCache bool
-	)
-
-	if e.Env.Shell() == shell.PWSH || e.Env.Shell() == shell.PWSH5 {
-		// For PowerShell, use a cached prompt if available, otherwise render a new prompt.
-		if e.Env.Flags().Cached && e.checkPromptCache() {
-			useCache = true
-		} else {
-			updateCache = true
-		}
-	}
-
-	if !useCache {
-		if e.Config.ShellIntegration {
-			exitCode, _ := e.Env.StatusCodes()
-			e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
-			e.write(terminal.PromptStart())
-		}
-
-		// cache a pointer to the color cycle
-		cycle = &e.Config.Cycle
-		var cancelNewline, didRender bool
-
-		for i, block := range e.Config.Blocks {
-			// do not print a leading newline when we're at the first row and the prompt is cleared
-			if i == 0 {
-				row, _ := e.Env.CursorPosition()
-				cancelNewline = e.Env.Flags().Cleared || e.Env.Flags().PromptCount == 1 || row == 1
-			}
-
-			// skip setting a newline when we didn't print anything yet
-			if i != 0 {
-				cancelNewline = !didRender
-			}
-
-			if block.Type == config.RPrompt && !needsPrimaryRPrompt {
-				continue
-			}
-
-			if e.renderBlock(block, cancelNewline) {
-				didRender = true
-			}
-		}
-
-		if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {
-			title := e.getTitleTemplateText()
-			e.write(terminal.FormatTitle(title))
-		}
-
-		if e.Config.FinalSpace {
-			e.write(" ")
-			e.currentLineLength++
-		}
-
-		if e.Config.ITermFeatures != nil && e.isIterm() {
-			host, _ := e.Env.Host()
-			e.write(terminal.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
-		}
-
-		if e.Config.ShellIntegration && e.Config.TransientPrompt == nil {
-			e.write(terminal.CommandStart())
-		}
-
-		e.pwd()
+	if !e.restoreEngineFromCache() {
+		e.writePrimaryPrompt(needsPrimaryRightPrompt)
 	}
 
 	switch e.Env.Shell() {
@@ -88,7 +24,7 @@ func (e *Engine) Primary() string {
 
 		// Warp doesn't support RPROMPT so we need to write it manually
 		if e.isWarp() {
-			e.writePrimaryRPrompt()
+			e.writePrimaryRightPrompt()
 			// escape double quotes contained in the prompt
 			prompt := fmt.Sprintf("PS1=\"%s\"", strings.ReplaceAll(e.string(), `"`, `\"`))
 			return prompt
@@ -100,27 +36,80 @@ func (e *Engine) Primary() string {
 
 		return prompt
 	default:
-		if updateCache {
-			// Cache the new prompt.
-			e.updatePromptCache(&promptCache{
-				Prompt:            e.prompt.String(),
-				CurrentLineLength: e.currentLineLength,
-				RPrompt:           e.rprompt,
-				RPromptLength:     e.rpromptLength,
-			})
-		}
-
-		if !needsPrimaryRPrompt {
+		if !needsPrimaryRightPrompt {
 			break
 		}
 
-		e.writePrimaryRPrompt()
+		e.writePrimaryRightPrompt()
+	}
+
+	if !e.cached {
+		e.updateEngineCache(&engineCache{
+			Prompt:            e.prompt.String(),
+			CurrentLineLength: e.currentLineLength,
+			RPrompt:           e.rprompt,
+			RPromptLength:     e.rpromptLength,
+		})
 	}
 
 	return e.string()
 }
 
-func (e *Engine) needsPrimaryRPrompt() bool {
+func (e *Engine) writePrimaryPrompt(needsPrimaryRPrompt bool) {
+	if e.Config.ShellIntegration {
+		exitCode, _ := e.Env.StatusCodes()
+		e.write(terminal.CommandFinished(exitCode, e.Env.Flags().NoExitCode))
+		e.write(terminal.PromptStart())
+	}
+
+	// cache a pointer to the color cycle
+	cycle = &e.Config.Cycle
+	var cancelNewline, didRender bool
+
+	for i, block := range e.Config.Blocks {
+		// do not print a leading newline when we're at the first row and the prompt is cleared
+		if i == 0 {
+			row, _ := e.Env.CursorPosition()
+			cancelNewline = e.Env.Flags().Cleared || e.Env.Flags().PromptCount == 1 || row == 1
+		}
+
+		// skip setting a newline when we didn't print anything yet
+		if i != 0 {
+			cancelNewline = !didRender
+		}
+
+		if block.Type == config.RPrompt && !needsPrimaryRPrompt {
+			continue
+		}
+
+		if e.renderBlock(block, cancelNewline) {
+			didRender = true
+		}
+	}
+
+	if len(e.Config.ConsoleTitleTemplate) > 0 && !e.Env.Flags().Plain {
+		title := e.getTitleTemplateText()
+		e.write(terminal.FormatTitle(title))
+	}
+
+	if e.Config.FinalSpace {
+		e.write(" ")
+		e.currentLineLength++
+	}
+
+	if e.Config.ITermFeatures != nil && e.isIterm() {
+		host, _ := e.Env.Host()
+		e.write(terminal.RenderItermFeatures(e.Config.ITermFeatures, e.Env.Shell(), e.Env.Pwd(), e.Env.User(), host))
+	}
+
+	if e.Config.ShellIntegration && e.Config.TransientPrompt == nil {
+		e.write(terminal.CommandStart())
+	}
+
+	e.pwd()
+}
+
+func (e *Engine) needsPrimaryRightPrompt() bool {
 	switch e.Env.Shell() {
 	case shell.PWSH, shell.PWSH5, shell.GENERIC, shell.ZSH:
 		return true
@@ -129,7 +118,7 @@ func (e *Engine) needsPrimaryRPrompt() bool {
 	}
 }
 
-func (e *Engine) writePrimaryRPrompt() {
+func (e *Engine) writePrimaryRightPrompt() {
 	space, OK := e.canWriteRightBlock(e.rpromptLength, true)
 	if !OK {
 		return

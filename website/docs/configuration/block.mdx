@@ -43,6 +43,12 @@ Tells the engine what to do with the block. There are two options:
 - `rprompt` renders one or more segments aligned to the right of the cursor. Only one `rprompt` block is permitted.
   Supported on zsh, bash, PowerShell, cmd, nu and fish.
 
+:::warning bash
+`rprompt` is not natively supported in bash and comes with one side effect. When you have a multiline prompt,
+the `rprompt` will not display when your new prompt is drawn at the bottom of the terminal. This is a limitation
+of bash and not Oh My Posh.
+:::
+
 ### Newline
 
 Start the block on a new line - defaults to `false`. For `pwsh` and `cmd` this will not print a newline

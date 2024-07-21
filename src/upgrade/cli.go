@@ -58,7 +58,7 @@ func (m *model) Init() tea.Cmd {
 		go func() {
 			if err := install(m.tag); err != nil {
 				m.error = err
-				program.Quit()
+				program.Send(resultMsg(fmt.Sprintf("❌ upgrade failed: %v", err)))
 				return
 			}
 
@@ -132,11 +132,7 @@ func Run(latest string) error {
 	title = titleStyle.Render(title)
 
 	program = tea.NewProgram(initialModel(latest))
-	resultModel, err := program.Run()
-
-	if err != nil {
-		return err
-	}
+	resultModel, _ := program.Run()
 
 	programModel, OK := resultModel.(*model)
 	if !OK {

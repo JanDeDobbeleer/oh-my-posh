@@ -2,6 +2,7 @@ package upgrade
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -16,6 +17,15 @@ func install(tag string) error {
 		return err
 	}
 
+	targetDir := filepath.Dir(executable)
+	fileName := filepath.Base(executable)
+
+	newPath := filepath.Join(targetDir, fmt.Sprintf(".%s.new", fileName))
+	fp, err := os.OpenFile(newPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0775)
+	if err != nil {
+		return errors.New("we do not have permissions to update")
+	}
+
 	setState(downloading)
 
 	data, err := downloadAndVerify(tag)
@@ -24,15 +34,6 @@ func install(tag string) error {
 	}
 
 	setState(installing)
-
-	targetDir := filepath.Dir(executable)
-	fileName := filepath.Base(executable)
-
-	newPath := filepath.Join(targetDir, fmt.Sprintf(".%s.new", fileName))
-	fp, err := os.OpenFile(newPath, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0775)
-	if err != nil {
-		return err
-	}
 
 	_, err = io.Copy(fp, bytes.NewReader(data))
 	// windows will have a lock when we do not close the file

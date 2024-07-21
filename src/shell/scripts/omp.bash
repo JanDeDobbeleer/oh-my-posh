@@ -76,16 +76,12 @@ function _omp_hook() {
     _omp_set_cursor_position
 
     PS1="$(::OMP:: print primary --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --no-status="$_omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0')"
-}
 
-# rprompt
-function _omp_rprompt() {
-    ::OMP:: print right --config="$POSH_THEME" --shell=bash --shell-version="$BASH_VERSION" --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --no-status="$_omp_no_exit_code" --terminal-width="${COLUMNS-0}" | tr -d '\0'
     return $_omp_status_cache
 }
 
 if [[ "$TERM" != "linux" ]] && [[ -x "$(command -v ::OMP::)" ]] && ! [[ "$PROMPT_COMMAND" =~ "_omp_hook" ]]; then
-    PROMPT_COMMAND="_omp_hook; _omp_rprompt; $PROMPT_COMMAND"
+    PROMPT_COMMAND="_omp_hook; $PROMPT_COMMAND"
 fi
 
 if [[ "::UPGRADE::" == "true" ]]; then

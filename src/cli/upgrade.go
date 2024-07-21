@@ -86,7 +86,6 @@ func executeUpgrade(latest string) {
 		return
 	}
 
-	fmt.Printf("\n❌ %s\n\n", err)
 	os.Exit(1)
 }
 

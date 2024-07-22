@@ -34,6 +34,13 @@ var (
 	TOGGLECACHE      = fmt.Sprintf("toggle_cache_%s", pid())
 	PROMPTCOUNTCACHE = fmt.Sprintf("prompt_count_cache_%s", pid())
 	ENGINECACHE      = fmt.Sprintf("engine_cache_%s", pid())
+	FONTLISTCACHE    = "font_list_cache"
+)
+
+const (
+	ONEDAY   = 1440
+	ONEWEEK  = 10080
+	ONEMONTH = 43200
 )
 
 type Entry struct {

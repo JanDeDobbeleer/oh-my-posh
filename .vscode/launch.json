@@ -156,6 +156,17 @@
       ]
     },
     {
+      "name": "Font install",
+      "type": "go",
+      "request": "launch",
+      "mode": "debug",
+      "program": "${workspaceRoot}/src",
+      "args": [
+        "font",
+        "install"
+      ]
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Theme export",

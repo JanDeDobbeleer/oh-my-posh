@@ -35,11 +35,14 @@ You can do the following:
 			_ = cmd.Help()
 			return
 		}
+
 		env := &runtime.Terminal{
 			CmdFlags: &runtime.Flags{},
 		}
+
 		env.Init()
 		defer env.Close()
+
 		switch args[0] {
 		case "path":
 			fmt.Print(env.CachePath())

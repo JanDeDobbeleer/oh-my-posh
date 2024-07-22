@@ -7,6 +7,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/build"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
 type release struct {
@@ -64,6 +65,10 @@ func Latest(env runtime.Environment) (string, error) {
 func Notice(env runtime.Environment, force bool) (string, bool) {
 	// do not check when last validation was < 1 week ago
 	if _, OK := env.Cache().Get(CACHEKEY); OK && !force {
+		return "", false
+	}
+
+	if !http.IsConnected() {
 		return "", false
 	}
 

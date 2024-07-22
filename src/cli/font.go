@@ -35,13 +35,14 @@ This command is used to install fonts and configure the font in your terminal.
 				if len(args) > 1 {
 					fontName = args[1]
 				}
+
 				env := &runtime.Terminal{}
 				env.Init()
 				defer env.Close()
 
 				terminal.Init(env.Shell())
 
-				font.Run(fontName, env.Root())
+				font.Run(fontName, env)
 
 				return
 			case "configure":

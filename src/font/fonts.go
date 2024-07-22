@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/http"
 )
 
@@ -26,6 +27,10 @@ type Asset struct {
 func (a Asset) FilterValue() string { return a.Name }
 
 func Fonts() ([]*Asset, error) {
+	if assets, err := getCachedFontData(); err == nil {
+		return assets, nil
+	}
+
 	assets, err := fetchFontAssets("ryanoasis/nerd-fonts")
 	if err != nil {
 		return nil, err
@@ -39,7 +44,41 @@ func Fonts() ([]*Asset, error) {
 	assets = append(assets, cascadiaCode...)
 	sort.Slice(assets, func(i, j int) bool { return assets[i].Name < assets[j].Name })
 
+	setCachedFontData(assets)
+
 	return assets, nil
+}
+
+func getCachedFontData() ([]*Asset, error) {
+	if environment == nil {
+		return nil, errors.New("environment not set")
+	}
+
+	list, OK := environment.Cache().Get(cache.FONTLISTCACHE)
+	if !OK {
+		return nil, errors.New("cache not found")
+	}
+
+	assets := make([]*Asset, 0)
+	err := json.Unmarshal([]byte(list), &assets)
+	if err != nil {
+		return nil, err
+	}
+
+	return assets, nil
+}
+
+func setCachedFontData(assets []*Asset) {
+	if environment == nil {
+		return
+	}
+
+	data, err := json.Marshal(assets)
+	if err != nil {
+		return
+	}
+
+	environment.Cache().Set(cache.FONTLISTCACHE, string(data), cache.ONEDAY)
 }
 
 func CascadiaCode() ([]*Asset, error) {

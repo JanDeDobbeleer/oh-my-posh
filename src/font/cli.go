@@ -10,10 +10,14 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
 
-var program *tea.Program
+var (
+	program     *tea.Program
+	environment runtime.Environment
+)
 
 const listHeight = 14
 
@@ -114,6 +118,7 @@ func downloadFontZip(location string) {
 		program.Send(errMsg(err))
 		return
 	}
+
 	program.Send(zipMsg(zipFile))
 }
 
@@ -123,6 +128,7 @@ func installLocalFontZIP(zipFile string, user bool) {
 		program.Send(errMsg(err))
 		return
 	}
+
 	installFontZIP(data, user)
 }
 
@@ -132,6 +138,7 @@ func installFontZIP(zipFile []byte, user bool) {
 		program.Send(errMsg(err))
 		return
 	}
+
 	program.Send(successMsg(families))
 }
 
@@ -159,6 +166,7 @@ func (m *main) Init() tea.Cmd {
 		}
 		go getFontsList()
 	}()
+
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("170"))
@@ -167,6 +175,7 @@ func (m *main) Init() tea.Cmd {
 	if isLocalZipFile() {
 		m.state = unzipFont
 	}
+
 	return m.spinner.Tick
 }
 
@@ -245,6 +254,7 @@ func (m *main) View() string {
 	if m.err != nil {
 		return textStyle.Render(m.err.Error())
 	}
+
 	switch m.state {
 	case getFonts:
 		return textStyle.Render(fmt.Sprintf("%s Downloading font list%s", m.spinner.View(), terminal.StartProgress()))
@@ -260,8 +270,10 @@ func (m *main) View() string {
 		return textStyle.Render(fmt.Sprintf("No need to install a new font? That's cool.%s", terminal.StopProgress()))
 	case done:
 		var builder strings.Builder
+
 		builder.WriteString(fmt.Sprintf("Successfully installed %s 🚀\n\n%s", m.font, terminal.StopProgress()))
 		builder.WriteString("The following font families are now available for configuration:\n")
+
 		for i, family := range m.families {
 			builder.WriteString(fmt.Sprintf("  • %s", family))
 
@@ -269,16 +281,21 @@ func (m *main) View() string {
 				builder.WriteString("\n")
 			}
 		}
+
 		return textStyle.Render(builder.String())
 	}
+
 	return ""
 }
 
-func Run(font string, system bool) {
+func Run(font string, env runtime.Environment) {
 	main := &main{
 		font:   font,
-		system: system,
+		system: env.Root(),
 	}
+
+	environment = env
+
 	program = tea.NewProgram(main)
 	if _, err := program.Run(); err != nil {
 		print("Error running program: %v", err)

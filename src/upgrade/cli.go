@@ -2,6 +2,7 @@ package upgrade
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -143,4 +144,16 @@ func Run(latest string) error {
 	}
 
 	return programModel.error
+}
+
+func IsMajorUpgrade(current, latest string) bool {
+	if len(current) == 0 {
+		return false
+	}
+
+	getMajorNumber := func(version string) string {
+		return strings.Split(version, ".")[0]
+	}
+
+	return getMajorNumber(current) != getMajorNumber(latest)
 }

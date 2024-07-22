@@ -57,6 +57,13 @@ var upgradeCmd = &cobra.Command{
 
 		version := fmt.Sprintf("v%s", build.Version)
 
+		if upgrade.IsMajorUpgrade(build.Version, latest) {
+			message := terminal.StopProgress()
+			message += fmt.Sprintf("\n🚨 major upgrade available: %s -> %s, use oh-my-posh upgrade --force to upgrade\n\n", version, latest)
+			fmt.Print(message)
+			return
+		}
+
 		if version != latest {
 			executeUpgrade(latest)
 			return

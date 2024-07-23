@@ -69,6 +69,7 @@ module.exports = {
             "segments/cli/gitversion",
             "segments/cli/helm",
             "segments/cli/kubectl",
+            "segments/cli/mvn",
             "segments/cli/nbgv",
             "segments/cli/npm",
             "segments/cli/nx",

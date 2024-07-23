@@ -17,9 +17,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     # Check `ConstrainedLanguage` mode.
     $script:ConstrainedLanguageMode = $ExecutionContext.SessionState.LanguageMode -eq "ConstrainedLanguage"
 
-    # This indicates whether a new prompt should be rendered instead of using the cached one.
-    $script:NewPrompt = $true
-
     # Prompt related backup.
     $script:OriginalPromptFunction = $Function:prompt
     $script:OriginalContinuationPrompt = (Get-PSReadLineOption).ContinuationPrompt
@@ -157,11 +154,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                     if (!$command -or ($command -eq $script:TooltipCommand)) {
                         return
                     }
+
                     $script:TooltipCommand = $command
                     $column = $Host.UI.RawUI.CursorPosition.X
                     $terminalWidth = Get-TerminalWidth
                     $cleanPSWD = Get-CleanPSWD
                     $stackCount = global:Get-PoshStackCount
+
                     $arguments = @(
                         "print"
                         "tooltip"
@@ -176,12 +175,13 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                         "--column=$column"
                         "--terminal-width=$terminalWidth"
                         "--no-status=$script:NoExitCode"
-                        "--cached=$true"
                     )
+
                     $standardOut = (Start-Utf8Process $script:OMPExecutable $arguments) -join ''
                     if (!$standardOut) {
                         return
                     }
+
                     Write-Host $standardOut -NoNewline
 
                     # Workaround to prevent the text after cursor from disappearing when the tooltip is printed.
@@ -210,7 +210,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
                 $executingCommand = $parseErrors.Count -eq 0
                 if ($executingCommand) {
-                    $script:NewPrompt = $true
+                    $script:newPrompt = $true
                     $script:TooltipCommand = ''
                     if ('::TRANSIENT::' -eq 'true') {
                         Set-TransientPrompt
@@ -231,7 +231,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
                 # only render a transient prompt when no text is selected
                 if ($start -eq -1) {
-                    $script:NewPrompt = $true
+                    $script:newPrompt = $true
                     $script:TooltipCommand = ''
                     if ('::TRANSIENT::' -eq 'true') {
                         Set-TransientPrompt
@@ -432,15 +432,11 @@ Example:
 
         Set-PoshPromptType
 
-        # Whether we should use a cached prompt.
-        $useCache = !$script:NewPrompt
 
         if ($script:PromptType -ne 'transient') {
-            if ($script:NewPrompt) {
-                $script:NewPrompt = $false
-            }
             Update-PoshErrorCode
         }
+
         $cleanPSWD = Get-CleanPSWD
         $stackCount = global:Get-PoshStackCount
         Set-PoshContext
@@ -462,8 +458,8 @@ Example:
             "--terminal-width=$terminalWidth"
             "--shell=$script:ShellName"
             "--no-status=$script:NoExitCode"
-            "--cached=$useCache"
         )
+
         $standardOut = Start-Utf8Process $script:OMPExecutable $arguments
         # make sure PSReadLine knows if we have a multiline prompt
         Set-PSReadLineOption -ExtraPromptLineCount (($standardOut | Measure-Object -Line).Lines - 1)

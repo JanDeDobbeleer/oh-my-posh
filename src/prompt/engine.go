@@ -1,10 +1,8 @@
 package prompt
 
 import (
-	"encoding/json"
 	"strings"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
@@ -15,13 +13,6 @@ import (
 )
 
 var cycle *color.Cycle = &color.Cycle{}
-
-type engineCache struct {
-	Prompt            string
-	CurrentLineLength int
-	RPrompt           string
-	RPromptLength     int
-}
 
 type Engine struct {
 	Config *config.Config
@@ -35,10 +26,6 @@ type Engine struct {
 
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
-
-	engineCache *engineCache
-
-	cached bool
 }
 
 func (e *Engine) write(text string) {
@@ -510,42 +497,6 @@ func (e *Engine) adjustTrailingDiamondColorOverrides() {
 	if len(match[terminal.FG]) > 0 {
 		adjustOverride(match[terminal.ANCHOR], color.Ansi(match[terminal.FG]))
 	}
-}
-
-func (e *Engine) restoreEngineFromCache() bool {
-	if !e.Env.Flags().Cached {
-		return false
-	}
-
-	data, ok := e.Env.Cache().Get(cache.ENGINECACHE)
-	if !ok {
-		return false
-	}
-
-	var engineCache engineCache
-	err := json.Unmarshal([]byte(data), &engineCache)
-	if err != nil {
-		return false
-	}
-
-	e.engineCache = &engineCache
-
-	e.write(e.engineCache.Prompt)
-	e.currentLineLength = e.engineCache.CurrentLineLength
-	e.rprompt = e.engineCache.RPrompt
-	e.rpromptLength = e.engineCache.RPromptLength
-
-	e.cached = true
-
-	return true
-}
-
-func (e *Engine) updateEngineCache(value *engineCache) {
-	cacheJSON, err := json.Marshal(value)
-	if err != nil {
-		return
-	}
-	e.Env.Cache().Set(cache.ENGINECACHE, string(cacheJSON), 1440)
 }
 
 // New returns a prompt engine initialized with the

@@ -163,8 +163,10 @@ func Pwd(pwdType, userName, hostName, pwd string) string {
 	}
 
 	if strings.HasSuffix(pwd, ":") {
-		pwd += "\\"
+		pwd += `/`
 	}
+
+	pwd = strings.ReplaceAll(pwd, `\`, `/`)
 
 	switch pwdType {
 	case OSC7:

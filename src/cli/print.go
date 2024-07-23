@@ -110,11 +110,13 @@ func init() {
 	printCmd.Flags().StringVar(&command, "command", "", "tooltip command")
 	printCmd.Flags().BoolVarP(&plain, "plain", "p", false, "plain text output (no ANSI)")
 	printCmd.Flags().BoolVar(&cleared, "cleared", false, "do we have a clear terminal or not")
-	printCmd.Flags().BoolVar(&cached, "cached", false, "use a cached prompt")
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
 	printCmd.Flags().IntVar(&column, "column", 0, "the column position of the cursor")
-	// Deprecated flags
+
+	// Deprecated flags, keep to not break CLI integration
 	printCmd.Flags().IntVarP(&status, "error", "e", 0, "last exit code")
 	printCmd.Flags().BoolVar(&noStatus, "no-exit-code", false, "no valid exit code (cancelled or no command yet)")
+	printCmd.Flags().BoolVar(&cached, "cached", false, "use a cached prompt")
+
 	RootCmd.AddCommand(printCmd)
 }

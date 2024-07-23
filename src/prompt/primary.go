@@ -12,9 +12,7 @@ import (
 func (e *Engine) Primary() string {
 	needsPrimaryRightPrompt := e.needsPrimaryRightPrompt()
 
-	if !e.restoreEngineFromCache() {
-		e.writePrimaryPrompt(needsPrimaryRightPrompt)
-	}
+	e.writePrimaryPrompt(needsPrimaryRightPrompt)
 
 	switch e.Env.Shell() {
 	case shell.ZSH:
@@ -41,15 +39,6 @@ func (e *Engine) Primary() string {
 		}
 
 		e.writePrimaryRightPrompt()
-	}
-
-	if !e.cached {
-		e.updateEngineCache(&engineCache{
-			Prompt:            e.prompt.String(),
-			CurrentLineLength: e.currentLineLength,
-			RPrompt:           e.rprompt,
-			RPromptLength:     e.rpromptLength,
-		})
 	}
 
 	return e.string()

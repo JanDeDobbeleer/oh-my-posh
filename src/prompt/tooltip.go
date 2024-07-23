@@ -35,29 +35,25 @@ func (e *Engine) Tooltip(tip string) string {
 		Alignment: config.Right,
 		Segments:  tooltips,
 	}
+
 	block.Init(e.Env)
+
 	if !block.Enabled() {
 		return ""
 	}
+
 	text, length := e.renderBlockSegments(block)
 
 	switch e.Env.Shell() {
 	case shell.PWSH, shell.PWSH5:
-		defer func() {
-			// If a prompt cache is available, we update the right prompt to the new tooltip for reuse.
-			if e.restoreEngineFromCache() {
-				e.engineCache.RPrompt = text
-				e.engineCache.RPromptLength = length
-				e.updateEngineCache(e.engineCache)
-			}
-		}()
-
 		e.rprompt = text
 		e.currentLineLength = e.Env.Flags().Column
+
 		space, ok := e.canWriteRightBlock(length, true)
 		if !ok {
 			return ""
 		}
+
 		e.write(terminal.SaveCursorPosition())
 		e.write(strings.Repeat(" ", space))
 		e.write(text)

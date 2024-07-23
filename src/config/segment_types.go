@@ -114,6 +114,8 @@ const (
 	LUA SegmentType = "lua"
 	// MERCURIAL writes the Mercurial source control information
 	MERCURIAL SegmentType = "mercurial"
+	// MVN writes the active maven version
+	MVN SegmentType = "mvn"
 	// NBA writes NBA game data
 	NBA SegmentType = "nba"
 	// NBGV writes the nbgv version information
@@ -258,6 +260,7 @@ var Segments = map[SegmentType]func() SegmentWriter{
 	LASTFM:          func() SegmentWriter { return &segments.LastFM{} },
 	LUA:             func() SegmentWriter { return &segments.Lua{} },
 	MERCURIAL:       func() SegmentWriter { return &segments.Mercurial{} },
+	MVN:             func() SegmentWriter { return &segments.Mvn{} },
 	NBA:             func() SegmentWriter { return &segments.Nba{} },
 	NBGV:            func() SegmentWriter { return &segments.Nbgv{} },
 	NIGHTSCOUT:      func() SegmentWriter { return &segments.Nightscout{} },

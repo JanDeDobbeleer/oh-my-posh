@@ -69,7 +69,7 @@ func TestPrintPWD(t *testing.T) {
 			Pwd:      `C:\Users\user\Documents\GitHub\oh-my-posh`,
 			Config:   terminal.OSC99,
 			Shell:    shell.BASH,
-			Expected: "\x1b]9;9;C:\\Users\\user\\Documents\\GitHub\\oh-my-posh\x1b\\",
+			Expected: "\x1b]9;9;C:/Users/user/Documents/GitHub/oh-my-posh\x1b\\",
 		},
 	}
 

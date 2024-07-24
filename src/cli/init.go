@@ -6,7 +6,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
-	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
 	"github.com/spf13/cobra"
@@ -68,35 +67,20 @@ func runInit(shellName string) {
 
 	cfg := config.Load(env)
 
-	shell.Transient = cfg.TransientPrompt != nil
-	shell.ErrorLine = cfg.ErrorLine != nil || cfg.ValidLine != nil
-	shell.Tooltips = len(cfg.Tooltips) > 0
-	shell.ShellIntegration = cfg.ShellIntegration
-	shell.PromptMark = shellName == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(terminal.PromptMark)
-	shell.AutoUpgrade = cfg.AutoUpgrade
-
-	for i, block := range cfg.Blocks {
-		// only fetch cursor position when relevant
-		if cfg.EnableCursorPositioning && (i == 0 && block.Newline) {
-			shell.CursorPositioning = true
-		}
-
-		if block.Type == config.RPrompt {
-			shell.RPrompt = true
-		}
-	}
-
+	// TODO: this can be removed I think
 	// allow overriding the upgrade notice from the config
 	if cfg.DisableNotice || cfg.AutoUpgrade {
 		env.Cache().Set(upgrade.CACHEKEY, "disabled", -1)
 	}
 
+	feats := cfg.Features()
+
 	if printOutput {
-		init := shell.PrintInit(env)
+		init := shell.PrintInit(env, feats)
 		fmt.Print(init)
 		return
 	}
 
-	init := shell.Init(env)
+	init := shell.Init(env, feats)
 	fmt.Print(init)
 }

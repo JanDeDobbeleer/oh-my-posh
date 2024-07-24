@@ -3,6 +3,8 @@ package config
 import (
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/segments"
+	"github.com/jandedobbeleer/oh-my-posh/src/shell"
 	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 )
@@ -73,4 +75,57 @@ func (cfg *Config) getPalette() color.Palette {
 		}
 	}
 	return cfg.Palette
+}
+
+func (cfg *Config) Features() shell.Features {
+	var feats shell.Features
+
+	if cfg.TransientPrompt != nil {
+		feats = append(feats, shell.Transient)
+	}
+
+	if cfg.ShellIntegration {
+		feats = append(feats, shell.FTCSMarks)
+	}
+
+	if !cfg.AutoUpgrade && !cfg.DisableNotice {
+		feats = append(feats, shell.Notice)
+	}
+
+	if cfg.AutoUpgrade {
+		feats = append(feats, shell.Upgrade)
+	}
+
+	if cfg.ErrorLine != nil || cfg.ValidLine != nil {
+		feats = append(feats, shell.LineError)
+	}
+
+	if len(cfg.Tooltips) > 0 {
+		feats = append(feats, shell.Tooltips)
+	}
+
+	if cfg.env.Shell() == shell.FISH && cfg.ITermFeatures != nil && cfg.ITermFeatures.Contains(terminal.PromptMark) {
+		feats = append(feats, shell.PromptMark)
+	}
+
+	for i, block := range cfg.Blocks {
+		if (i == 0 && block.Newline) && cfg.EnableCursorPositioning {
+			feats = append(feats, shell.CursorPositioning)
+		}
+
+		if block.Type == RPrompt {
+			feats = append(feats, shell.RPrompt)
+		}
+
+		for _, segment := range block.Segments {
+			if segment.Type == AZ {
+				source := segment.Properties.GetString(segments.Source, segments.FirstMatch)
+				if source == segments.Pwsh || source == segments.FirstMatch {
+					feats = append(feats, shell.Azure)
+				}
+			}
+		}
+	}
+
+	return feats
 }

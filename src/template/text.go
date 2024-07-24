@@ -43,6 +43,7 @@ var (
 		"Templates",
 		"Var",
 		"Data",
+		"Jobs",
 	}
 
 	shell string

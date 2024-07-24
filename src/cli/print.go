@@ -20,6 +20,7 @@ var (
 	eval          bool
 	cleared       bool
 	cached        bool
+	jobCount      int
 
 	command      string
 	shellVersion string
@@ -68,6 +69,7 @@ var printCmd = &cobra.Command{
 			Cached:        cached,
 			NoExitCode:    noStatus,
 			Column:        column,
+			JobCount:      jobCount,
 		}
 
 		eng := prompt.New(flags)
@@ -112,6 +114,7 @@ func init() {
 	printCmd.Flags().BoolVar(&cleared, "cleared", false, "do we have a clear terminal or not")
 	printCmd.Flags().BoolVar(&eval, "eval", false, "output the prompt for eval")
 	printCmd.Flags().IntVar(&column, "column", 0, "the column position of the cursor")
+	printCmd.Flags().IntVar(&jobCount, "job-count", 0, "number of background jobs")
 
 	// Deprecated flags, keep to not break CLI integration
 	printCmd.Flags().IntVarP(&status, "error", "e", 0, "last exit code")

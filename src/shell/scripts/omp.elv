@@ -4,6 +4,7 @@ set-env POSH_SHELL_VERSION (elvish --version)
 set-env POWERLINE_COMMAND 'oh-my-posh'
 
 var error-code = 0
+var _omp_executable = ::OMP::
 
 fn posh-after-command-hook {|m|
     var error = $m[error]
@@ -23,18 +24,10 @@ set edit:after-command = [ $@edit:after-command $posh-after-command-hook~ ]
 
 set edit:prompt = {
     var cmd-duration = (printf "%.0f" (* $edit:command-duration 1000))
-    ::OMP:: print primary --config=$E:POSH_THEME --shell=elvish --execution-time=$cmd-duration --status=$error-code --pwd=$pwd --shell-version=$E:POSH_SHELL_VERSION
+    $_omp_executable print primary --config=$E:POSH_THEME --shell=elvish --execution-time=$cmd-duration --status=$error-code --pwd=$pwd --shell-version=$E:POSH_SHELL_VERSION
 }
 
 set edit:rprompt = {
     var cmd-duration = (printf "%.0f" (* $edit:command-duration 1000))
-    ::OMP:: print right --config=$E:POSH_THEME --shell=elvish --execution-time=$cmd-duration --status=$error-code --pwd=$pwd --shell-version=$E:POSH_SHELL_VERSION
-}
-
-if (eq '::UPGRADE::' 'true') {
-    echo '::UPGRADENOTICE::'
-}
-
-if (eq '::AUTOUPGRADE::' 'true') {
-    ::OMP:: upgrade
+    $_omp_executable print right --config=$E:POSH_THEME --shell=elvish --execution-time=$cmd-duration --status=$error-code --pwd=$pwd --shell-version=$E:POSH_SHELL_VERSION
 }

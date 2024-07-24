@@ -12,7 +12,7 @@ func (f Feature) Zsh() Code {
 	case CursorPositioning:
 		return "_omp_cursor_positioning=1"
 	case Tooltips:
-		return "_omp_create_widget self-insert _omp_render_tooltip"
+		return "enable_poshtooltips"
 	case Transient:
 		return "_omp_create_widget zle-line-init _omp_zle-line-init"
 	case FTCSMarks:

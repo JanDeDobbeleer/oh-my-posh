@@ -5,6 +5,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -162,17 +163,21 @@ func TestRenderTemplate(t *testing.T) {
 	})
 	env.On("Error", testify_.Anything)
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+	env.On("Flags").Return(&runtime.Flags{})
+
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
 			Context:  tc.Context,
 			Env:      env,
 		}
+
 		text, err := tmpl.Render()
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
 		}
+
 		assert.NoError(t, err)
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}
@@ -248,16 +253,20 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 		})
 		env.On("Error", testify_.Anything)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
+
 		tmpl := &Text{
 			Template: tc.Template,
 			Context:  tc.Context,
 			Env:      env,
 		}
+
 		text, err := tmpl.Render()
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
 		}
+
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}
 }
@@ -362,12 +371,15 @@ func TestSegmentContains(t *testing.T) {
 		Env:      make(map[string]string),
 		Segments: segments,
 	})
+	env.On("Flags").Return(&runtime.Flags{})
+
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
 			Context:  nil,
 			Env:      env,
 		}
+
 		text, _ := tmpl.Render()
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}

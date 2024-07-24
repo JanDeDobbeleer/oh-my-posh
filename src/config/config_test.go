@@ -5,6 +5,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -76,11 +77,14 @@ func TestGetPalette(t *testing.T) {
 			Shell: "bash",
 		})
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
+
 		cfg := &Config{
 			env:      env,
 			Palette:  tc.Palette,
 			Palettes: tc.Palettes,
 		}
+
 		got := cfg.getPalette()
 		assert.Equal(t, tc.ExpectedPalette, got, tc.Case)
 	}

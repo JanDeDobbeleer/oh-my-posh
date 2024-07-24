@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -28,6 +29,8 @@ func TestUrl(t *testing.T) {
 	env.On("Error", testify_.Anything)
 	env.On("Debug", testify_.Anything)
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+	env.On("Flags").Return(&runtime.Flags{})
+
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
@@ -57,12 +60,15 @@ func TestPath(t *testing.T) {
 	env.On("TemplateCache").Return(&cache.Template{
 		Env: make(map[string]string),
 	})
+	env.On("Flags").Return(&runtime.Flags{})
+
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
 			Context:  nil,
 			Env:      env,
 		}
+
 		text, _ := tmpl.Render()
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}

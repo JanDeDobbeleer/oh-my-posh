@@ -63,6 +63,8 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	env.On("Pwd").Return(cwd)
 	env.On("Home").Return(home)
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+	env.On("Flags").Return(&runtime.Flags{})
+
 	env.On("TemplateCache").Return(&cache.Template{
 		Env: make(map[string]string),
 	})
@@ -583,6 +585,7 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, prop
 		Env: make(map[string]string),
 	})
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+	env.On("Flags").Return(&runtime.Flags{})
 	props := properties.Map{
 		properties.FetchVersion: true,
 	}

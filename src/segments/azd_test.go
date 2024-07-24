@@ -37,6 +37,7 @@ func TestAzdSegment(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("Debug", testify_.Anything)
+		env.On("Flags").Return(&runtime.Flags{})
 
 		if tc.IsInited {
 			fileInfo := &runtime.FileInfo{

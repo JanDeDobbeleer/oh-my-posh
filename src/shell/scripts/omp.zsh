@@ -190,6 +190,15 @@ function _omp_create_widget() {
   esac
 }
 
+function enable_poshtooltips() {
+  widget=${$(bindkey " "):2}
+
+  if [[ -z $widget ]]; then
+    widget=self-insert
+  fi
+
+  _omp_create_widget $widget _omp_render_tooltip
+}
+
 # legacy functions
-function enable_poshtooltips() {}
 function enable_poshtransientprompt() {}

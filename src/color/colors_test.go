@@ -5,8 +5,11 @@ import (
 	"testing"
 
 	"github.com/alecthomas/assert"
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
+
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestGetAnsiFromColorString(t *testing.T) {
@@ -56,4 +59,31 @@ func TestMakeColors(t *testing.T) {
 	assert.IsType(t, &Cached{}, colors)
 	assert.IsType(t, &PaletteColors{}, colors.(*Cached).ansiColors)
 	assert.IsType(t, &Defaults{}, colors.(*Cached).ansiColors.(*PaletteColors).ansiColors)
+}
+
+func TestAnsiRender(t *testing.T) {
+	cases := []struct {
+		Case     string
+		Expected Ansi
+		Term     string
+	}{
+		{Case: "Inside vscode", Expected: "#123456", Term: "vscode"},
+		{Case: "Outside vscode", Expected: "", Term: "windowsterminal"},
+	}
+
+	for _, tc := range cases {
+		env := new(mock.Environment)
+		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("TemplateCache").Return(&cache.Template{
+			Env: map[string]string{
+				"TERM_PROGRAM": tc.Term,
+			},
+		})
+		env.On("Flags").Return(&runtime.Flags{})
+
+		ansi := Ansi("{{ if eq \"vscode\" .Env.TERM_PROGRAM }}#123456{{end}}")
+		got := ansi.ResolveTemplate(env)
+
+		assert.Equal(t, tc.Expected, got, tc.Case)
+	}
 }

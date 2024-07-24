@@ -74,14 +74,14 @@ func TestAzSegment(t *testing.T) {
 			ExpectedString:  "AzureCliCloud",
 			Template:        "{{ .EnvironmentName }}",
 			HasCLI:          true,
-			Source:          cli,
+			Source:          Cli,
 		},
 		{
 			Case:            "Az CLI Profile only - disabled",
 			ExpectedEnabled: false,
 			Template:        "{{ .EnvironmentName }}",
 			HasCLI:          false,
-			Source:          cli,
+			Source:          Cli,
 		},
 		{
 			Case:            "PowerShell Profile only",
@@ -89,13 +89,13 @@ func TestAzSegment(t *testing.T) {
 			ExpectedString:  "AzurePoshCloud",
 			Template:        "{{ .EnvironmentName }}",
 			HasPowerShell:   true,
-			Source:          pwsh,
+			Source:          Pwsh,
 		},
 		{
 			Case:            "Az CLI Profile only - disabled",
 			ExpectedEnabled: false,
 			Template:        "{{ .EnvironmentName }}",
-			Source:          pwsh,
+			Source:          Pwsh,
 		},
 		{
 			Case:            "Az CLI account type",
@@ -103,7 +103,7 @@ func TestAzSegment(t *testing.T) {
 			ExpectedString:  "user",
 			Template:        "{{ .User.Type }}",
 			HasCLI:          true,
-			Source:          cli,
+			Source:          Cli,
 		},
 	}
 
@@ -136,7 +136,7 @@ func TestAzSegment(t *testing.T) {
 		}
 
 		if tc.Source == "" {
-			tc.Source = firstMatch
+			tc.Source = FirstMatch
 		}
 
 		az := &Az{

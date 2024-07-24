@@ -7,6 +7,11 @@ set --global _omp_tooltip_command ''
 set --global _omp_current_rprompt ''
 set --global _omp_transient false
 
+set --global _omp_executable ::OMP::
+set --global _omp_ftcs_marks 0
+set --global _omp_transient_prompt 0
+set --global _omp_prompt_mark 0
+
 # We use this to avoid unnecessary CLI calls for prompt repaint.
 set --global _omp_new_prompt true
 
@@ -25,7 +30,7 @@ function fish_prompt
     # see https://github.com/fish-shell/fish-shell/issues/8418
     printf \e\[0J
     if test "$_omp_transient" = true
-        ::OMP:: print transient --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code
+        $_omp_executable print transient --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code
         return
     end
     if test "$_omp_new_prompt" = false
@@ -67,10 +72,12 @@ function fish_prompt
         set omp_cleared true
     end
 
-    ::PROMPT_MARK::
+    if test $_omp_prompt_mark = 1
+        iterm2_prompt_mark
+    end
 
     # The prompt is saved for possible reuse, typically a repaint after clearing the screen buffer.
-    set --global _omp_current_prompt (::OMP:: print primary --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-status=$_omp_no_exit_code | string collect)
+    set --global _omp_current_prompt ($_omp_executable print primary --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-status=$_omp_no_exit_code | string collect)
     echo -n "$_omp_current_prompt"
 end
 
@@ -79,13 +86,16 @@ function fish_right_prompt
         set _omp_transient false
         return
     end
+
     # Repaint an existing right prompt.
     if test "$_omp_new_prompt" = false
         echo -n "$_omp_current_rprompt"
         return
     end
+
     set _omp_new_prompt false
-    set --global _omp_current_rprompt (::OMP:: print right --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code | string join '')
+    set --global _omp_current_rprompt ($_omp_executable print right --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code | string join '')
+
     echo -n "$_omp_current_rprompt"
 end
 
@@ -96,7 +106,7 @@ function _omp_postexec --on-event fish_postexec
 end
 
 function _omp_preexec --on-event fish_preexec
-    if test "::FTCS_MARKS::" = true
+    if test $_omp_ftcs_marks = 1
         echo -ne "\e]133;C\a"
     end
 end
@@ -107,16 +117,19 @@ if test -n (bind \r --user 2>/dev/null | string match -e _omp_enter_key_handler)
     bind -e \r -M insert
     bind -e \r -M visual
 end
+
 if test -n (bind \n --user 2>/dev/null | string match -e _omp_enter_key_handler)
     bind -e \n -M default
     bind -e \n -M insert
     bind -e \n -M visual
 end
+
 if test -n (bind \cc --user 2>/dev/null | string match -e _omp_ctrl_c_key_handler)
     bind -e \cc -M default
     bind -e \cc -M insert
     bind -e \cc -M visual
 end
+
 if test -n (bind \x20 --user 2>/dev/null | string match -e _omp_space_key_handler)
     bind -e \x20 -M default
     bind -e \x20 -M insert
@@ -127,23 +140,28 @@ end
 function _omp_space_key_handler
     commandline --function expand-abbr
     commandline --insert ' '
+
     # Get the first word of command line as tip.
     set --local tooltip_command (commandline --current-buffer | string trim -l | string split --allow-empty -f1 ' ' | string collect)
+
     # Ignore an empty/repeated tooltip command.
     if test -z "$tooltip_command" || test "$tooltip_command" = "$_omp_tooltip_command"
         return
     end
+
     set _omp_tooltip_command $tooltip_command
-    set --local tooltip_prompt (::OMP:: print tooltip --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --command $_omp_tooltip_command --no-status=$_omp_no_exit_code | string join '')
+    set --local tooltip_prompt ($_omp_executable print tooltip --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --command $_omp_tooltip_command --no-status=$_omp_no_exit_code | string join '')
+
     if test -z "$tooltip_prompt"
         return
     end
+
     # Save the tooltip prompt to avoid unnecessary CLI calls.
     set _omp_current_rprompt $tooltip_prompt
     commandline --function repaint
 end
 
-if test "::TOOLTIPS::" = true
+function enable_poshtooltips
     bind \x20 _omp_space_key_handler -M default
     bind \x20 _omp_space_key_handler -M insert
 end
@@ -155,14 +173,17 @@ function _omp_enter_key_handler
         commandline --function accept-autosuggestion
         return
     end
+
     if commandline --is-valid || test -z (commandline --current-buffer | string trim -l | string collect)
         set _omp_new_prompt true
         set _omp_tooltip_command ''
-        if test "::TRANSIENT::" = true
+
+        if test $_omp_transient_prompt = 1
             set _omp_transient true
             commandline --function repaint
         end
     end
+
     commandline --function execute
 end
 
@@ -170,13 +191,16 @@ function _omp_ctrl_c_key_handler
     if test -z (commandline --current-buffer | string collect)
         return
     end
+
     # Render a transient prompt on Ctrl-C with non-empty command line buffer.
     set _omp_new_prompt true
     set _omp_tooltip_command ''
-    if test "::TRANSIENT::" = true
+
+    if test $_omp_transient_prompt = 1
         set _omp_transient true
         commandline --function repaint
     end
+
     commandline --function cancel-commandline
     commandline --function repaint
 end
@@ -192,17 +216,6 @@ bind \cc _omp_ctrl_c_key_handler -M insert
 bind \cc _omp_ctrl_c_key_handler -M visual
 
 # legacy functions
-function enable_poshtooltips
-    return
-end
 function enable_poshtransientprompt
     return
-end
-
-if test "::UPGRADE::" = true
-    echo "::UPGRADENOTICE::"
-end
-
-if test "::AUTOUPGRADE::" = true
-    ::OMP:: upgrade
 end

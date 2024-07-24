@@ -63,6 +63,7 @@ type Flags struct {
 	Cached        bool
 	NoExitCode    bool
 	Column        int
+	JobCount      int
 }
 
 type CommandError struct {
@@ -276,11 +277,14 @@ func (term *Terminal) resolveConfigPath() {
 		configFile = filepath.Join(term.Home(), configFile)
 	}
 
-	if !filepath.IsAbs(configFile) {
-		configFile = filepath.Join(term.Pwd(), configFile)
+	abs, err := filepath.Abs(configFile)
+	if err != nil {
+		term.Error(err)
+		term.CmdFlags.Config = filepath.Clean(configFile)
+		return
 	}
 
-	term.CmdFlags.Config = filepath.Clean(configFile)
+	term.CmdFlags.Config = abs
 }
 
 func (term *Terminal) Trace(start time.Time, args ...string) {
@@ -782,6 +786,7 @@ func (term *Terminal) TemplateCache() *cache.Template {
 	tmplCache.PromptCount = term.CmdFlags.PromptCount
 	tmplCache.Env = make(map[string]string)
 	tmplCache.Var = make(map[string]any)
+	tmplCache.Jobs = term.CmdFlags.JobCount
 
 	if term.Var != nil {
 		tmplCache.Var = term.Var

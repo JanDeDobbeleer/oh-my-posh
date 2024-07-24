@@ -22,6 +22,7 @@ type Template struct {
 	WSL           bool
 	PromptCount   int
 	SHLVL         int
+	Jobs          int
 	Segments      *maps.Concurrent
 	SegmentsCache maps.Simple
 

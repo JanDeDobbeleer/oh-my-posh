@@ -63,7 +63,7 @@ func loadConfig(env runtime.Environment) *Config {
 
 	data, err := stdOS.ReadFile(configFile)
 	if err != nil {
-		env.DebugF("error reading config file: %s", err)
+		env.Error(err)
 		return Default(env, true)
 	}
 
@@ -87,7 +87,7 @@ func loadConfig(env runtime.Environment) *Config {
 	}
 
 	if err != nil {
-		env.DebugF("error decoding config file: %s", err)
+		env.Error(err)
 		return Default(env, true)
 	}
 

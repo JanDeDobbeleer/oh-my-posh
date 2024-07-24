@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -251,6 +252,7 @@ servers:
 		env.On("Getenv", argocdOptsEnv).Return(tc.Opts)
 		env.On("FileContent", configFile).Return(tc.Config)
 		env.On("Error", testify_.Anything).Return()
+		env.On("Flags").Return(&runtime.Flags{})
 
 		argocd := &Argocd{
 			env:   env,

@@ -41,6 +41,8 @@ func renderTemplateNoTrimSpace(env *mock.Environment, segmentTemplate string, co
 	env.On("Error", testify_.Anything)
 	env.On("Debug", testify_.Anything)
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+	env.On("Flags").Return(&runtime.Flags{})
+
 	tmpl := &template.Text{
 		Template: segmentTemplate,
 		Context:  context,
@@ -1013,6 +1015,8 @@ func TestPowerlevelMappedLocations(t *testing.T) {
 		env.On("PathSeparator").Return("/")
 		env.On("Shell").Return(shell.GENERIC)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
+
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -1020,8 +1024,10 @@ func TestPowerlevelMappedLocations(t *testing.T) {
 				MappedLocations:  tc.MappedLocations,
 			},
 		}
+
 		path.setPaths()
 		path.setStyle()
+
 		got := renderTemplateNoTrimSpace(env, "{{ .Path }}", path)
 		assert.Equal(t, tc.Expected, got)
 	}
@@ -1462,6 +1468,8 @@ func TestGetFolderSeparator(t *testing.T) {
 		env.On("Error", testify_.Anything)
 		env.On("Debug", testify_.Anything)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
+
 		path := &Path{
 			env:           env,
 			pathSeparator: "/",
@@ -1540,6 +1548,8 @@ func TestReplaceMappedLocations(t *testing.T) {
 		env.On("GOOS").Return(runtime.DARWIN)
 		env.On("Home").Return("/a/b/k")
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
+
 		path := &Path{
 			env: env,
 			props: properties.Map{
@@ -1552,6 +1562,7 @@ func TestReplaceMappedLocations(t *testing.T) {
 				},
 			},
 		}
+
 		path.setPaths()
 		assert.Equal(t, tc.Expected, path.pwd)
 	}
@@ -1659,6 +1670,7 @@ func TestGetMaxWidth(t *testing.T) {
 		env := new(mock.Environment)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("Error", testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
 		env.On("TemplateCache").Return(&cache.Template{
 			Env: map[string]string{
 				"MAX_WIDTH": "120",

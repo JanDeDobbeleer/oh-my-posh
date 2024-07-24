@@ -7,6 +7,7 @@ import (
 
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -160,6 +161,7 @@ func TestBrewfatherSegment(t *testing.T) {
 		env.On("HTTPRequest", BFBatchURL).Return([]byte(tc.BatchJSONResponse), tc.Error)
 		env.On("HTTPRequest", BFBatchReadingsURL).Return([]byte(tc.BatchReadingsJSONResponse), tc.Error)
 		env.On("Cache").Return(cache)
+		env.On("Flags").Return(&runtime.Flags{})
 
 		ns := &Brewfather{
 			props: props,

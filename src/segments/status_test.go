@@ -5,6 +5,7 @@ import (
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -31,6 +32,7 @@ func TestStatusWriterEnabled(t *testing.T) {
 		})
 		env.On("Error", testify_.Anything).Return(nil)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
 
 		props := properties.Map{}
 		if len(tc.Template) > 0 {
@@ -97,12 +99,16 @@ func TestFormatStatus(t *testing.T) {
 		})
 		env.On("Error", testify_.Anything).Return(nil)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
+
 		props := properties.Map{
 			StatusTemplate:  tc.Template,
 			StatusSeparator: tc.Separator,
 		}
+
 		s := &Status{}
 		s.Init(props, env)
+
 		assert.Equal(t, tc.Expected, s.formatStatus(tc.Status, tc.PipeStatus), tc.Case)
 	}
 }

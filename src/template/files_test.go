@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -27,17 +28,21 @@ func TestGlob(t *testing.T) {
 	env.On("TemplateCache").Return(&cache.Template{
 		Env: make(map[string]string),
 	})
+	env.On("Flags").Return(&runtime.Flags{})
+
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
 			Context:  nil,
 			Env:      env,
 		}
+
 		text, err := tmpl.Render()
 		if tc.ShouldError {
 			assert.Error(t, err)
 			continue
 		}
+
 		assert.Equal(t, tc.Expected, text, tc.Case)
 	}
 }

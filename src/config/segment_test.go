@@ -149,6 +149,7 @@ func TestGetColors(t *testing.T) {
 		env.On("TemplateCache").Return(&cache.Template{
 			Env: make(map[string]string),
 		})
+		env.On("Flags").Return(&runtime.Flags{})
 
 		segment := &Segment{
 			writer: &segments.Aws{

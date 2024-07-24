@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -63,13 +64,17 @@ func TestAWSSegment(t *testing.T) {
 		props := properties.Map{
 			properties.DisplayDefault: tc.DisplayDefault,
 		}
+		env.On("Flags").Return(&runtime.Flags{})
+
 		aws := &Aws{
 			env:   env,
 			props: props,
 		}
+
 		if tc.Template == "" {
 			tc.Template = aws.Template()
 		}
+
 		assert.Equal(t, tc.ExpectedEnabled, aws.Enabled(), tc.Case)
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, aws), tc.Case)
 	}

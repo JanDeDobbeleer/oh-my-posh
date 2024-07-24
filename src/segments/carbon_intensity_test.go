@@ -7,6 +7,7 @@ import (
 
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -228,6 +229,7 @@ func TestCarbonIntensitySegmentSingle(t *testing.T) {
 
 		env.On("HTTPRequest", CARBONINTENSITYURL).Return([]byte(jsonResponse), responseError)
 		env.On("Error", testify_.Anything)
+		env.On("Flags").Return(&runtime.Flags{})
 
 		d := &CarbonIntensity{
 			props: props,
@@ -258,6 +260,8 @@ func TestCarbonIntensitySegmentFromCache(t *testing.T) {
 		props: properties.Map{},
 		env:   env,
 	}
+
+	env.On("Flags").Return(&runtime.Flags{})
 
 	cache.On("Get", CARBONINTENSITYURL).Return(response, true)
 	cache.On("Set").Return()

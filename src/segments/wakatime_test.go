@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
+	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
@@ -83,6 +84,7 @@ func TestWTTrackedTime(t *testing.T) {
 		mockedCache.On("Set", FAKEAPIURL, response, tc.CacheTimeout).Return()
 		env.On("Cache").Return(mockedCache)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
 
 		env.On("TemplateCache").Return(&cache.Template{
 			Env: map[string]string{"HELLO": "hello"},
@@ -133,6 +135,7 @@ func TestWTGetUrl(t *testing.T) {
 		env.On("TemplateCache").Return(&cache.Template{
 			Env: map[string]string{"HELLO": "hello"},
 		})
+		env.On("Flags").Return(&runtime.Flags{})
 
 		w := &Wakatime{
 			props: properties.Map{

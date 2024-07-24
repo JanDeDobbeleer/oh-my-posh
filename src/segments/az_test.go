@@ -110,6 +110,8 @@ func TestAzSegment(t *testing.T) {
 	for _, tc := range cases {
 		env := new(mock.Environment)
 		env.On("Home").Return(poshHome)
+		env.On("Flags").Return(&runtime.Flags{})
+
 		var azureProfile, azureRmContext string
 
 		if tc.HasCLI {

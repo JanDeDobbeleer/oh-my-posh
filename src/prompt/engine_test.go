@@ -87,6 +87,7 @@ func TestPrintPWD(t *testing.T) {
 			Env:   make(map[string]string),
 			Shell: "shell",
 		})
+		env.On("Flags").Return(&runtime.Flags{})
 
 		terminal.Init(shell.GENERIC)
 
@@ -177,6 +178,7 @@ func TestGetTitle(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
 		env.On("TemplateCache").Return(&cache.Template{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",
@@ -240,6 +242,7 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
+		env.On("Flags").Return(&runtime.Flags{})
 		env.On("TemplateCache").Return(&cache.Template{
 			Env: map[string]string{
 				"USERDOMAIN": "MyCompany",

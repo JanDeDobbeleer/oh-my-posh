@@ -7,6 +7,7 @@ import (
 
 	"github.com/gookit/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 )
 
 var TrueColor = true
@@ -101,6 +102,29 @@ func (c Ansi) ToForeground() Ansi {
 		return Ansi(strings.Replace(colorString, "38;", "48;", 1))
 	}
 	return c
+}
+
+func (c Ansi) ResolveTemplate(env runtime.Environment) Ansi {
+	if c.IsEmpty() {
+		return c
+	}
+
+	if c.IsTransparent() {
+		return emptyColor
+	}
+
+	tmpl := &template.Text{
+		Template: string(c),
+		Context:  nil,
+		Env:      env,
+	}
+
+	text, err := tmpl.Render()
+	if err != nil {
+		return Transparent
+	}
+
+	return Ansi(text)
 }
 
 func (c Ansi) String() string {

@@ -518,7 +518,7 @@ func New(flags *runtime.Flags) *Engine {
 	flags.HasTransient = cfg.TransientPrompt != nil
 
 	terminal.Init(env.Shell())
-	terminal.BackgroundColor = shell.ConsoleBackgroundColor(env, cfg.TerminalBackground)
+	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate(env)
 	terminal.Colors = cfg.MakeColors()
 	terminal.Plain = flags.Plain
 

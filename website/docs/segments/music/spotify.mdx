@@ -19,28 +19,31 @@ fetching information from the native Spotify application and Edge PWA.
 
 ## Sample Configuration
 
-import Config from '@site/src/components/Config.js';
+import Config from "@site/src/components/Config.js";
 
-<Config data={{
-  "type": "spotify",
-  "style": "powerline",
-  "powerline_symbol": "\uE0B0",
-  "foreground": "#ffffff",
-  "background": "#1BD760",
-  "properties": {
-    "playing_icon": "\uE602 ",
-    "paused_icon": "\uF8E3 ",
-    "stopped_icon": "\uF04D "
-  }
-}}/>
+<Config
+  data={{
+    type: "spotify",
+    style: "powerline",
+    powerline_symbol: "\uE0B0",
+    foreground: "#ffffff",
+    background: "#1BD760",
+    properties: {
+      playing_icon: "\uE602 ",
+      paused_icon: "\uF8E3 ",
+      stopped_icon: "\uF04D ",
+    },
+  }}
+/>
 
 ## Properties
 
-| Name           | Type     | Default   | Description                    |
-| -------------- | :------: | :-------: | ------------------------------ |
-| `playing_icon` | `string` | `\uE602 ` | text/icon to show when playing |
-| `paused_icon`  | `string` | `\uF8E3 ` | text/icon to show when paused  |
-| `stopped_icon` | `string` | `\uF04D`  | text/icon to show when stopped |
+| Name            |   Type   |  Default  | Description                                                                  |
+| --------------- | :------: | :-------: | ---------------------------------------------------------------------------- |
+| `playing_icon`  | `string` | `\uE602 ` | text/icon to show when playing                                               |
+| `paused_icon`   | `string` | `\uF8E3 ` | text/icon to show when paused                                                |
+| `stopped_icon`  | `string` | `\uF04D`  | text/icon to show when stopped                                               |
+| `cache_timeout` |  `int`   |    `0`    | **macOS only** in minutes - How long to wait before fetching new information |
 
 ## Template ([info][templates])
 

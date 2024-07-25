@@ -2622,6 +2622,17 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "felipebz",
+      "name": "Felipe Zorzo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13829?v=4",
+      "profile": "https://felipezorzo.com.br",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

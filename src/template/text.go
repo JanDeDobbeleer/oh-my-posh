@@ -76,7 +76,7 @@ func (c *Context) init(t *Text) {
 }
 
 func (t *Text) Render() (string, error) {
-	t.Env.DebugF("Rendering template: %s", t.Template)
+	t.Env.DebugF("rendering template: %s", t.Template)
 
 	shell = t.Env.Flags().Shell
 

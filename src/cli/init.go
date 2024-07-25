@@ -2,11 +2,11 @@ package cli
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
-	"github.com/jandedobbeleer/oh-my-posh/src/upgrade"
 
 	"github.com/spf13/cobra"
 )
@@ -52,34 +52,36 @@ func init() {
 	initCmd.Flags().BoolVarP(&printOutput, "print", "p", false, "print the init script")
 	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "run in strict mode")
 	initCmd.Flags().BoolVarP(&manual, "manual", "m", false, "enable/disable manual mode")
+	initCmd.Flags().BoolVar(&debug, "debug", false, "enable/disable debug mode")
 	_ = initCmd.MarkPersistentFlagRequired("config")
 	RootCmd.AddCommand(initCmd)
 }
 
 func runInit(shellName string) {
+	var startTime time.Time
+	if debug {
+		startTime = time.Now()
+	}
+
 	env := &runtime.Terminal{
 		CmdFlags: &runtime.Flags{
 			Shell:  shellName,
 			Config: configFlag,
 			Strict: strict,
 			Manual: manual,
+			Debug:  debug,
 		},
 	}
+
 	env.Init()
 	defer env.Close()
 
 	cfg := config.Load(env)
 
-	// TODO: this can be removed I think
-	// allow overriding the upgrade notice from the config
-	if cfg.DisableNotice || cfg.AutoUpgrade {
-		env.Cache().Set(upgrade.CACHEKEY, "disabled", -1)
-	}
-
 	feats := cfg.Features()
 
-	if printOutput {
-		init := shell.PrintInit(env, feats)
+	if printOutput || debug {
+		init := shell.PrintInit(env, feats, &startTime)
 		fmt.Print(init)
 		return
 	}

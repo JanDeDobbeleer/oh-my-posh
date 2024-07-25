@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
 
@@ -64,7 +66,7 @@ func Init(env runtime.Environment, feats Features) string {
 
 		return fmt.Sprintf(command, executable, shell, config, additionalParams)
 	case ZSH, BASH, FISH, CMD, TCSH, XONSH:
-		return PrintInit(env, feats)
+		return PrintInit(env, feats, nil)
 	case NU:
 		createNuInit(env, feats)
 		return ""
@@ -73,7 +75,7 @@ func Init(env runtime.Environment, feats Features) string {
 	}
 }
 
-func PrintInit(env runtime.Environment, features Features) string {
+func PrintInit(env runtime.Environment, features Features, startTime *time.Time) string {
 	executable, err := getExecutablePath(env)
 	if err != nil {
 		return noExe
@@ -127,5 +129,21 @@ func PrintInit(env runtime.Environment, features Features) string {
 		"::SHELL::", shell,
 	).Replace(script)
 
-	return features.Lines(shell).String(init)
+	shellScript := features.Lines(shell).String(init)
+
+	if !env.Flags().Debug {
+		return shellScript
+	}
+
+	var builder strings.Builder
+
+	builder.WriteString(fmt.Sprintf("\n%s %s\n", log.Text("Init duration:").Green().Bold().Plain(), time.Since(*startTime)))
+
+	builder.WriteString(log.Text("\nScript:\n\n").Green().Bold().Plain().String())
+	builder.WriteString(shellScript)
+
+	builder.WriteString(log.Text("\n\nLogs:\n\n").Green().Bold().Plain().String())
+	builder.WriteString(env.Logs())
+
+	return builder.String()
 }

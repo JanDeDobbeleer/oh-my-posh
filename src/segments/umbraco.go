@@ -44,7 +44,7 @@ func (u *Umbraco) Enabled() bool {
 	}
 
 	if len(location) == 0 {
-		u.env.Debug("No umbraco folder found in parent directories")
+		u.env.Debug("no umbraco folder found in parent directories")
 		return false
 	}
 
@@ -94,7 +94,7 @@ func (u *Umbraco) Init(props properties.Properties, env runtime.Environment) {
 func (u *Umbraco) TryFindModernUmbraco(configPath string) bool {
 	// Check the passed in filepath is not empty
 	if len(configPath) == 0 {
-		u.env.Debug("UMBRACO: No .CSProj file path passed in")
+		u.env.Debug("no configPath provided")
 		return false
 	}
 
@@ -111,7 +111,6 @@ func (u *Umbraco) TryFindModernUmbraco(configPath string) bool {
 	err := xml.Unmarshal([]byte(contents), &csProjPackages)
 
 	if err != nil {
-		u.env.Debug("UMBRACO: Error while trying to parse XML of .csproj file")
 		u.env.Debug(err.Error())
 	}
 
@@ -131,7 +130,7 @@ func (u *Umbraco) TryFindModernUmbraco(configPath string) bool {
 func (u *Umbraco) TryFindLegacyUmbraco(configPath string) bool {
 	// Check the passed in filepath is not empty
 	if len(configPath) == 0 {
-		u.env.Debug("UMBRACO: No web.config file path passed in")
+		u.env.Debug("no configPath provided")
 		return false
 	}
 
@@ -148,7 +147,6 @@ func (u *Umbraco) TryFindLegacyUmbraco(configPath string) bool {
 	err := xml.Unmarshal([]byte(contents), &webConfigAppSettings)
 
 	if err != nil {
-		u.env.Debug("UMBRACO: Error while trying to parse XML of web.config file")
 		u.env.Debug(err.Error())
 	}
 

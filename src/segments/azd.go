@@ -42,7 +42,7 @@ func (t *Azd) Enabled() bool {
 	}
 
 	if len(parentFilePath) == 0 {
-		t.env.Debug("No .azure folder found in parent directories")
+		t.env.Debug("no .azure folder found in parent directories")
 		return false
 	}
 

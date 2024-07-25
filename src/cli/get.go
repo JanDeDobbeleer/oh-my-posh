@@ -65,7 +65,7 @@ This command is used to get the value of the following variables:
 			accent := color2.RGB(rgb.R, rgb.G, rgb.B)
 			fmt.Println("#" + accent.Hex())
 		case "toggles":
-			togglesCache, _ := env.Cache().Get(cache.TOGGLECACHE)
+			togglesCache, _ := env.Session().Get(cache.TOGGLECACHE)
 			var toggles []string
 			if len(togglesCache) != 0 {
 				toggles = strings.Split(togglesCache, ",")

@@ -21,6 +21,12 @@ type Cache interface {
 	Delete(key string)
 }
 
+const (
+	FileName = "omp.cache"
+)
+
+var SessionFileName = fmt.Sprintf("%s.%s", FileName, pid())
+
 func pid() string {
 	pid := os.Getenv("POSH_PID")
 	if len(pid) == 0 {
@@ -29,15 +35,13 @@ func pid() string {
 	return pid
 }
 
-var (
-	TEMPLATECACHE    = fmt.Sprintf("template_cache_%s", pid())
-	TOGGLECACHE      = fmt.Sprintf("toggle_cache_%s", pid())
-	PROMPTCOUNTCACHE = fmt.Sprintf("prompt_count_cache_%s", pid())
-	ENGINECACHE      = fmt.Sprintf("engine_cache_%s", pid())
-	FONTLISTCACHE    = "font_list_cache"
-)
-
 const (
+	TEMPLATECACHE    = "template_cache"
+	TOGGLECACHE      = "toggle_cache"
+	PROMPTCOUNTCACHE = "prompt_count_cache"
+	ENGINECACHE      = "engine_cache"
+	FONTLISTCACHE    = "font_list_cache"
+
 	ONEDAY   = 1440
 	ONEWEEK  = 10080
 	ONEMONTH = 43200

@@ -192,6 +192,11 @@ func (env *Environment) Cache() cache.Cache {
 	return args.Get(0).(cache.Cache)
 }
 
+func (env *Environment) Session() cache.Cache {
+	args := env.Called()
+	return args.Get(0).(cache.Cache)
+}
+
 func (env *Environment) Close() {
 	_ = env.Called()
 }

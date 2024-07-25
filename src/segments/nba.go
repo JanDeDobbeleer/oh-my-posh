@@ -368,7 +368,7 @@ func (nba *Nba) getResult() (*NBAData, error) {
 	// Cache the fact a game was not found for 30 minutes so we don't call the API too often
 	cacheNotFoundTimeout := nba.props.GetInt(properties.CacheTimeout, 30)
 
-	nba.env.Debug("Validating cache data for " + teamName)
+	nba.env.Debug("validating cache data for " + teamName)
 
 	if cacheScheduleTimeout > 0 {
 		if data, err := nba.getCachedScheduleValue(cachedScheduleKey); err == nil {
@@ -382,7 +382,7 @@ func (nba *Nba) getResult() (*NBAData, error) {
 		}
 	}
 
-	nba.env.Debug("Fetching available data for " + teamName)
+	nba.env.Debug("fetching available data for " + teamName)
 
 	data, err := nba.getAvailableGameData(teamName, httpTimeout)
 	if err != nil {

@@ -353,7 +353,7 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	matches := regex.FindNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, content)
 
 	if matches == nil || len(matches["dir"]) == 0 {
-		g.env.Debug("No matches found, directory isn't a worktree")
+		g.env.Debug("no matches found, directory isn't a worktree")
 		return false
 	}
 

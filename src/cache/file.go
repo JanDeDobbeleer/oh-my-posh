@@ -21,10 +21,12 @@ func (fc *File) Init(cacheFilePath string) {
 	fc.cache = maps.NewConcurrent()
 	fc.cacheFilePath = cacheFilePath
 
-	log.Debug("Loading cache file:", fc.cacheFilePath)
+	log.Debug("loading cache file:", fc.cacheFilePath)
 
 	content, err := os.ReadFile(fc.cacheFilePath)
 	if err != nil {
+		// set to dirty so we create it on close
+		fc.dirty = true
 		log.Error(err)
 		return
 	}
@@ -39,7 +41,7 @@ func (fc *File) Init(cacheFilePath string) {
 			continue
 		}
 
-		log.Debug("Loading cache key:", key)
+		log.Debug("loading cache key:", key)
 		fc.cache.Set(key, co)
 	}
 }

@@ -3,6 +3,7 @@ export POSH_SHELL_VERSION=$BASH_VERSION
 export POWERLINE_COMMAND="oh-my-posh"
 export POSH_PID=$$
 export CONDA_PROMPT_MODIFIER=false
+export OSTYPE=$OSTYPE
 
 # global variables
 _omp_start_time=""

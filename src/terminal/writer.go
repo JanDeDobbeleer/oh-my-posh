@@ -102,8 +102,8 @@ func Init(sh string) {
 	Shell = sh
 	Program = getTerminalName()
 
-	log.Debug("Terminal shell: %s", Shell)
-	log.Debug("Terminal program: %s", Program)
+	log.Debug("Terminal shell:", Shell)
+	log.Debug("Terminal program:", Program)
 
 	color.TrueColor = Program != AppleTerminal
 

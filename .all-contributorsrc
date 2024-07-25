@@ -2633,6 +2633,16 @@
         "design",
         "doc"
       ]
+    },
+    {
+      "login": "DeepSpace2",
+      "name": "Adi Vaknin",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6841988?v=4",
+      "profile": "https://github.com/DeepSpace2",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

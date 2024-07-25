@@ -42,12 +42,12 @@ func (u *Unity) Enabled() bool {
 func (u *Unity) GetUnityVersion() (string, error) {
 	projectDir, err := u.env.HasParentFilePath("ProjectSettings", false)
 	if err != nil {
-		u.env.Debug("No ProjectSettings parent folder found")
+		u.env.Debug("no ProjectSettings parent folder found")
 		return "", err
 	}
 
 	if !u.env.HasFilesInDir(projectDir.Path, "ProjectVersion.txt") {
-		u.env.Debug("No ProjectVersion.txt file found")
+		u.env.Debug("no ProjectVersion.txt file found")
 		return "", err
 	}
 

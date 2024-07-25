@@ -225,10 +225,12 @@ func (term *Terminal) Init() {
 
 	if term.CmdFlags.Debug {
 		log.Enable()
+		log.Debug("debug mode enabled")
 	}
 
 	if term.CmdFlags.Plain {
 		log.Plain()
+		log.Debug("dlain mode enabled")
 	}
 
 	initCache := func(fileName string) *cache.File {
@@ -256,13 +258,13 @@ func (term *Terminal) resolveConfigPath() {
 	defer term.Trace(time.Now())
 
 	if poshTheme := term.Getenv("POSH_THEME"); len(poshTheme) > 0 {
-		term.DebugF("Config set using POSH_THEME: %s", poshTheme)
+		term.DebugF("config set using POSH_THEME: %s", poshTheme)
 		term.CmdFlags.Config = poshTheme
 		return
 	}
 
 	if len(term.CmdFlags.Config) == 0 {
-		term.Debug("No config set, fallback to default config")
+		term.Debug("no config set, fallback to default config")
 		return
 	}
 
@@ -285,7 +287,7 @@ func (term *Terminal) resolveConfigPath() {
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
 	if isCygwin() {
-		term.Debug("Cygwin detected, using full path for config")
+		term.Debug("cygwin detected, using full path for config")
 		return
 	}
 
@@ -901,6 +903,8 @@ func dirMatchesOneOf(dir, home, goos string, regexes []string) bool {
 }
 
 func (term *Terminal) SetPromptCount() {
+	defer term.Trace(time.Now())
+
 	countStr := os.Getenv("POSH_PROMPT_COUNT")
 	if len(countStr) > 0 {
 		// this counter is incremented by the shell

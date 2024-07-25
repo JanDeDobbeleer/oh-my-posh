@@ -43,7 +43,7 @@ func createNuInit(env runtime.Environment, features Features) {
 		return
 	}
 
-	_, err = f.WriteString(PrintInit(env, features))
+	_, err = f.WriteString(PrintInit(env, features, nil))
 	if err != nil {
 		return
 	}

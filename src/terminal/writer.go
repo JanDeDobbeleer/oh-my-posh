@@ -166,8 +166,6 @@ func Pwd(pwdType, userName, hostName, pwd string) string {
 		pwd += `/`
 	}
 
-	pwd = strings.ReplaceAll(pwd, `\`, `/`)
-
 	switch pwdType {
 	case OSC7:
 		return fmt.Sprintf(formats.Osc7, hostName, pwd)

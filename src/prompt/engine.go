@@ -69,21 +69,25 @@ func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
 }
 
 func (e *Engine) pwd() {
-	// only print when supported
-	sh := e.Env.Shell()
-	if sh == shell.ELVISH || sh == shell.XONSH {
-		return
-	}
 	// only print when relevant
 	if len(e.Config.PWD) == 0 && !e.Config.OSC99 {
 		return
 	}
 
-	cwd := e.Env.Pwd()
+	// only print when supported
+	sh := e.Env.Shell()
+	if sh == shell.ELVISH || sh == shell.XONSH {
+		return
+	}
+
+	pwd := e.Env.Pwd()
+	if e.Env.IsCygwin() {
+		pwd = strings.ReplaceAll(pwd, `\`, `/`)
+	}
 
 	// Backwards compatibility for deprecated OSC99
 	if e.Config.OSC99 {
-		e.write(terminal.Pwd(terminal.OSC99, "", "", cwd))
+		e.write(terminal.Pwd(terminal.OSC99, "", "", pwd))
 		return
 	}
 
@@ -100,7 +104,7 @@ func (e *Engine) pwd() {
 
 	user := e.Env.User()
 	host, _ := e.Env.Host()
-	e.write(terminal.Pwd(pwdType, user, host, cwd))
+	e.write(terminal.Pwd(pwdType, user, host, pwd))
 }
 
 func (e *Engine) getNewline() string {

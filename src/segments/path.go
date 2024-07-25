@@ -126,8 +126,7 @@ func (pt *Path) setPaths() {
 			return false
 		}
 
-		isCygwin := pt.env.GOOS() == runtime.WINDOWS && pt.env.Shell() == shell.BASH
-		return isCygwin
+		return pt.env.IsCygwin()
 	}
 
 	pt.cygPath = displayCygpath()

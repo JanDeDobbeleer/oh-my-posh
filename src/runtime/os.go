@@ -175,6 +175,7 @@ type Environment interface {
 	HTTPRequest(url string, body io.Reader, timeout int, requestModifiers ...http.RequestModifier) ([]byte, error)
 	IsWsl() bool
 	IsWsl2() bool
+	IsCygwin() bool
 	StackCount() int
 	TerminalWidth() (int, error)
 	CachePath() string
@@ -264,9 +265,13 @@ func (term *Terminal) resolveConfigPath() {
 		return
 	}
 
+	isCygwin := func() bool {
+		return term.Platform() == WINDOWS && len(term.Getenv("OSTYPE")) > 0
+	}
+
 	// Cygwin path always needs the full path as we're on Windows but not really.
 	// Doing filepath actions will convert it to a Windows path and break the init script.
-	if term.Platform() == WINDOWS && term.Shell() == "bash" {
+	if isCygwin() {
 		term.Debug("Cygwin detected, using full path for config")
 		return
 	}

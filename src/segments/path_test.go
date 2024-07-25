@@ -180,6 +180,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		MaxDepth            int
 		MaxWidth            int
 		HideRootLocation    bool
+		Cygwin              bool
 	}{
 		{
 			Style:               Unique,
@@ -431,6 +432,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 			Pwd:                 "C:\\Users\\foo\\foobar\\man",
 			GOOS:                runtime.WINDOWS,
 			Shell:               shell.BASH,
+			Cygwin:              true,
 			Cygpath:             "/c/Users/foo/foobar/man",
 			PathSeparator:       "\\",
 			FolderSeparatorIcon: " > ",
@@ -766,6 +768,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 		env.On("Home").Return(tc.HomePath)
 		env.On("Pwd").Return(tc.Pwd)
 		env.On("GOOS").Return(tc.GOOS)
+		env.On("IsCygwin").Return(tc.Cygwin)
 		env.On("StackCount").Return(0)
 		env.On("IsWsl").Return(false)
 		args := &runtime.Flags{
@@ -780,7 +783,7 @@ func TestAgnosterPathStyles(t *testing.T) {
 
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 
-		displayCygpath := tc.GOOS == runtime.WINDOWS && tc.Shell == shell.BASH
+		displayCygpath := tc.Cygwin
 		if displayCygpath {
 			env.On("RunCommand", "cygpath", []string{"-u", tc.Pwd}).Return(tc.Cygpath, tc.CygpathError)
 			env.On("RunCommand", "cygpath", testify_.Anything).Return("brrrr", nil)

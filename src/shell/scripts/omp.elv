@@ -24,10 +24,10 @@ set edit:after-command = [ $@edit:after-command $posh-after-command-hook~ ]
 
 set edit:prompt = {
     var cmd-duration = (printf "%.0f" (* $edit:command-duration 1000))
-    $_omp_executable print primary --config=$E:POSH_THEME --shell=elvish --execution-time=$cmd-duration --status=$error-code --pwd=$pwd --shell-version=$E:POSH_SHELL_VERSION
+    $_omp_executable print primary --shell=elvish --execution-time=$cmd-duration --status=$error-code --pwd=$pwd --shell-version=$E:POSH_SHELL_VERSION
 }
 
 set edit:rprompt = {
     var cmd-duration = (printf "%.0f" (* $edit:command-duration 1000))
-    $_omp_executable print right --config=$E:POSH_THEME --shell=elvish --execution-time=$cmd-duration --status=$error-code --pwd=$pwd --shell-version=$E:POSH_SHELL_VERSION
+    $_omp_executable print right --shell=elvish --execution-time=$cmd-duration --status=$error-code --pwd=$pwd --shell-version=$E:POSH_SHELL_VERSION
 }

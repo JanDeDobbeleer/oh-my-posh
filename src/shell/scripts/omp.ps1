@@ -157,7 +157,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 $cleanPSWD = Get-CleanPSWD
                 $stackCount = global:Get-PoshStackCount
 
-                $standardOut = (Start-Utf8Process $global:_ompExecutable @("print", "tooltip", "--status=$script:ErrorCode", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--command=$command", "--shell-version=$script:PSVersion", "--column=$column", "--terminal-width=$terminalWidth", "--no-status=$script:NoExitCode", "--job-count=$script:JobCount")) -join ''
+                $standardOut = (Start-Utf8Process $global:_ompExecutable @("print", "tooltip", "--status=$script:ErrorCode", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--command=$command", "--shell-version=$script:PSVersion", "--column=$column", "--terminal-width=$terminalWidth", "--no-status=$script:NoExitCode", "--job-count=$script:JobCount")) -join ''
                 if (!$standardOut) {
                     return
                 }
@@ -227,8 +227,8 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
     }
 
     function Enable-PoshLineError {
-        $validLine = (Start-Utf8Process $global:_ompExecutable @("print", "valid", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n"
-        $errorLine = (Start-Utf8Process $global:_ompExecutable @("print", "error", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n"
+        $validLine = (Start-Utf8Process $global:_ompExecutable @("print", "valid", "--shell=$script:ShellName")) -join "`n"
+        $errorLine = (Start-Utf8Process $global:_ompExecutable @("print", "error", "--shell=$script:ShellName")) -join "`n"
         Set-PSReadLineOption -PromptText $validLine, $errorLine
     }
 
@@ -267,7 +267,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $Format = 'json'
         )
 
-        $configString = Start-Utf8Process $global:_ompExecutable @("config", "export", "--config=$env:POSH_THEME", "--format=$Format")
+        $configString = Start-Utf8Process $global:_ompExecutable @("config", "export", "--format=$Format")
         # if no path, copy to clipboard by default
         if ($FilePath) {
             # https://stackoverflow.com/questions/3038337/powershell-resolve-path-that-might-not-exist
@@ -450,7 +450,7 @@ Example:
         $env:POSH_CURSOR_LINE = $Host.UI.RawUI.CursorPosition.Y + 1
         $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1
 
-        $standardOut = Start-Utf8Process $global:_ompExecutable @("print", $script:PromptType, "--status=$script:ErrorCode", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--config=$env:POSH_THEME", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName", "--no-status=$script:NoExitCode", "--job-count=$script:JobCount")
+        $standardOut = Start-Utf8Process $global:_ompExecutable @("print", $script:PromptType, "--status=$script:ErrorCode", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName", "--no-status=$script:NoExitCode", "--job-count=$script:JobCount")
         # make sure PSReadLine knows if we have a multiline prompt
         Set-PSReadLineOption -ExtraPromptLineCount (($standardOut | Measure-Object -Line).Lines - 1)
 
@@ -467,7 +467,7 @@ Example:
     $Function:prompt = $promptFunction
 
     # set secondary prompt
-    Set-PSReadLineOption -ContinuationPrompt ((Start-Utf8Process $global:_ompExecutable @("print", "secondary", "--config=$env:POSH_THEME", "--shell=$script:ShellName")) -join "`n")
+    Set-PSReadLineOption -ContinuationPrompt ((Start-Utf8Process $global:_ompExecutable @("print", "secondary", "--shell=$script:ShellName")) -join "`n")
 
     # perform cleanup on removal so a new initialization in current session works
     if (!$script:ConstrainedLanguageMode) {

@@ -74,10 +74,6 @@ local function omp_exe()
     return '"'..::OMP::..'"'
 end
 
-local function omp_config()
-    return '"'..::CONFIG::..'"'
-end
-
 os.setenv("POSH_THEME", ::CONFIG::)
 os.setenv("POSH_SHELL_VERSION", string.format('clink v%s.%s.%s.%s', clink.version_major, clink.version_minor, clink.version_patch, clink.version_commit))
 
@@ -162,7 +158,7 @@ local function get_posh_prompt(rprompt)
     if rprompt then
         prompt = "right"
     end
-    local prompt_exe = string.format('%s print %s --shell=cmd --config=%s %s %s %s', omp_exe(), prompt, omp_config(), execution_time_option(), error_level_option(), no_exit_code_option())
+    local prompt_exe = string.format('%s print %s --shell=cmd %s %s %s', omp_exe(), prompt, execution_time_option(), error_level_option(), no_exit_code_option())
     return run_posh_command(prompt_exe)
 end
 
@@ -171,7 +167,7 @@ local function set_posh_tooltip(tip_command)
         -- Escape special characters properly, if any.
         local escaped_tip_command = string.gsub(tip_command, '(\\+)"', '%1%1"'):gsub('(\\+)$', '%1%1'):gsub('"', '\\"'):gsub('([&<>%(%)@%^|])', '^%1')
 
-        local prompt_exe = string.format('%s print tooltip --shell=cmd %s --config=%s --command="%s"', omp_exe(), error_level_option(), omp_config(), escaped_tip_command)
+        local prompt_exe = string.format('%s print tooltip --shell=cmd %s --command="%s"', omp_exe(), error_level_option(), escaped_tip_command)
         local tooltip = run_posh_command(prompt_exe)
         -- Do not cache an empty tooltip.
         if tooltip == "" then
@@ -273,7 +269,7 @@ function p:transientfilter(prompt)
         return nil
     end
 
-    local prompt_exe = string.format('%s print transient --shell=cmd --config=%s %s %s', omp_exe(), omp_config(), error_level_option(), no_exit_code_option())
+    local prompt_exe = string.format('%s print transient --shell=cmd %s %s', omp_exe(), error_level_option(), no_exit_code_option())
     prompt = run_posh_command(prompt_exe)
 
     if prompt == "" then

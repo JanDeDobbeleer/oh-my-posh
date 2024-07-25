@@ -371,6 +371,9 @@ Thanks goes to these wonderful people ([emoji key][acek]):
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/po1o"><img src="https://avatars.githubusercontent.com/u/5702825?v=4?s=100" width="100px;" alt="Polo-François Poli"/><br /><sub><b>Polo-François Poli</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=po1o" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/EDIflyer"><img src="https://avatars.githubusercontent.com/u/13610277?v=4?s=100" width="100px;" alt="EDIflyer"/><br /><sub><b>EDIflyer</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=EDIflyer" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=EDIflyer" title="Documentation">📖</a></td>
     </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://felipezorzo.com.br"><img src="https://avatars.githubusercontent.com/u/13829?v=4?s=100" width="100px;" alt="Felipe Zorzo"/><br /><sub><b>Felipe Zorzo</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=felipebz" title="Code">💻</a> <a href="#design-felipebz" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=felipebz" title="Documentation">📖</a></td>
+    </tr>
   </tbody>
 </table>
 

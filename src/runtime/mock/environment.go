@@ -172,6 +172,11 @@ func (env *Environment) IsWsl2() bool {
 	return args.Bool(0)
 }
 
+func (env *Environment) IsCygwin() bool {
+	args := env.Called()
+	return args.Bool(0)
+}
+
 func (env *Environment) TerminalWidth() (int, error) {
 	args := env.Called()
 	return args.Int(0), args.Error(1)

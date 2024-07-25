@@ -87,6 +87,11 @@ func (term *Terminal) IsWsl2() bool {
 	return false
 }
 
+func (term *Terminal) IsCygwin() bool {
+	defer term.Trace(time.Now())
+	return len(term.Getenv("OSTYPE")) > 0
+}
+
 func (term *Terminal) TerminalWidth() (int, error) {
 	defer term.Trace(time.Now())
 

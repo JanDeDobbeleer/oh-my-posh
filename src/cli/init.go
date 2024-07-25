@@ -15,6 +15,20 @@ var (
 	printOutput bool
 	strict      bool
 	manual      bool
+	debug       bool
+
+	supportedShells = []string{
+		"bash",
+		"zsh",
+		"fish",
+		"powershell",
+		"pwsh",
+		"cmd",
+		"nu",
+		"tcsh",
+		"elvish",
+		"xonsh",
+	}
 
 	initCmd = &cobra.Command{
 		Use:   "init [bash|zsh|fish|powershell|pwsh|cmd|nu|tcsh|elvish|xonsh]",
@@ -22,19 +36,8 @@ var (
 		Long: `Initialize your shell and config.
 
 See the documentation to initialize your shell: https://ohmyposh.dev/docs/installation/prompt.`,
-		ValidArgs: []string{
-			"bash",
-			"zsh",
-			"fish",
-			"powershell",
-			"pwsh",
-			"cmd",
-			"nu",
-			"tcsh",
-			"elvish",
-			"xonsh",
-		},
-		Args: NoArgsOrOneValidArg,
+		ValidArgs: supportedShells,
+		Args:      NoArgsOrOneValidArg,
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
 				_ = cmd.Help()

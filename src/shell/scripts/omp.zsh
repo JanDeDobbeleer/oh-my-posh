@@ -13,7 +13,7 @@ _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
 # set secondary prompt
-PS2="$(${_omp_executable} print secondary --config="$POSH_THEME" --shell=zsh)"
+PS2="$(${_omp_executable} print secondary --shell=zsh)"
 
 function _omp_set_cursor_position() {
   # not supported in Midnight Commander
@@ -73,7 +73,7 @@ function _omp_precmd() {
   set_poshcontext
   _omp_set_cursor_position
 
-  eval "$(${_omp_executable} print primary --config="$POSH_THEME" --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
+  eval "$(${_omp_executable} print primary --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
   unset _omp_start_time
 }
 
@@ -116,7 +116,7 @@ function _omp_render_tooltip() {
   fi
 
   _omp_tooltip_command="$tooltip_command"
-  local tooltip=$(${_omp_executable} print tooltip --config="$POSH_THEME" --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --command="$tooltip_command" --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")
+  local tooltip=$(${_omp_executable} print tooltip --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --command="$tooltip_command" --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")
   if [[ -z "$tooltip" ]]; then
     return
   fi
@@ -135,7 +135,7 @@ function _omp_zle-line-init() {
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
   _omp_tooltip_command=''
-  eval "$(${_omp_executable} print transient --config="$POSH_THEME" --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
+  eval "$(${_omp_executable} print transient --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
   zle .reset-prompt
 
   # Exit the shell if we receive EOT.

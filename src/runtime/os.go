@@ -244,8 +244,10 @@ func (term *Terminal) Init() {
 func (term *Terminal) resolveConfigPath() {
 	defer term.Trace(time.Now())
 
-	if len(term.CmdFlags.Config) == 0 {
-		term.CmdFlags.Config = term.Getenv("POSH_THEME")
+	if poshTheme := term.Getenv("POSH_THEME"); len(poshTheme) > 0 {
+		term.DebugF("Config set using POSH_THEME: %s", poshTheme)
+		term.CmdFlags.Config = poshTheme
+		return
 	}
 
 	if len(term.CmdFlags.Config) == 0 {

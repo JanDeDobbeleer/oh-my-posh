@@ -23,7 +23,7 @@ def posh_width [] {
 }
 
 # PROMPTS
-$env.PROMPT_MULTILINE_INDICATOR = (^$_omp_executable print secondary $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)")
+$env.PROMPT_MULTILINE_INDICATOR = (^$_omp_executable print secondary --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)")
 
 $env.PROMPT_COMMAND = { ||
     # hack to set the cursor line to 1 when the user clears the screen
@@ -37,9 +37,9 @@ $env.PROMPT_COMMAND = { ||
         do --env $env.SET_POSHCONTEXT
     }
 
-    ^$_omp_executable print primary $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=(posh_cmd_duration)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=(posh_width)" $"--cleared=($clear)"
+    ^$_omp_executable print primary --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=(posh_cmd_duration)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=(posh_width)" $"--cleared=($clear)"
 }
 
 $env.PROMPT_COMMAND_RIGHT = { ||
-    ^$_omp_executable print right $"--config=($env.POSH_THEME)" --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=(posh_cmd_duration)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=(posh_width)"
+    ^$_omp_executable print right --shell=nu $"--shell-version=($env.POSH_SHELL_VERSION)" $"--execution-time=(posh_cmd_duration)" $"--status=($env.LAST_EXIT_CODE)" $"--terminal-width=(posh_width)"
 }

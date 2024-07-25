@@ -30,7 +30,7 @@ function fish_prompt
     # see https://github.com/fish-shell/fish-shell/issues/8418
     printf \e\[0J
     if test "$_omp_transient" = true
-        $_omp_executable print transient --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code
+        $_omp_executable print transient --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code
         return
     end
     if test "$_omp_new_prompt" = false
@@ -77,7 +77,7 @@ function fish_prompt
     end
 
     # The prompt is saved for possible reuse, typically a repaint after clearing the screen buffer.
-    set --global _omp_current_prompt ($_omp_executable print primary --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-status=$_omp_no_exit_code | string collect)
+    set --global _omp_current_prompt ($_omp_executable print primary --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --cleared=$omp_cleared --no-status=$_omp_no_exit_code | string collect)
     echo -n "$_omp_current_prompt"
 end
 
@@ -94,7 +94,7 @@ function fish_right_prompt
     end
 
     set _omp_new_prompt false
-    set --global _omp_current_rprompt ($_omp_executable print right --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code | string join '')
+    set --global _omp_current_rprompt ($_omp_executable print right --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code | string join '')
 
     echo -n "$_omp_current_rprompt"
 end
@@ -150,7 +150,7 @@ function _omp_space_key_handler
     end
 
     set _omp_tooltip_command $tooltip_command
-    set --local tooltip_prompt ($_omp_executable print tooltip --config $POSH_THEME --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --command $_omp_tooltip_command --no-status=$_omp_no_exit_code | string join '')
+    set --local tooltip_prompt ($_omp_executable print tooltip --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --command $_omp_tooltip_command --no-status=$_omp_no_exit_code | string join '')
 
     if test -z "$tooltip_prompt"
         return

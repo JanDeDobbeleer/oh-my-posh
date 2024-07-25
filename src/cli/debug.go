@@ -16,19 +16,25 @@ import (
 
 // debugCmd represents the prompt command
 var debugCmd = &cobra.Command{
-	Use:   "debug",
-	Short: "Print the prompt in debug mode",
-	Long:  "Print the prompt in debug mode.",
-	Args:  cobra.NoArgs,
-	Run: func(_ *cobra.Command, _ []string) {
+	Use:       "debug [bash|zsh|fish|powershell|pwsh|cmd|nu|tcsh|elvish|xonsh]",
+	Short:     "Print the prompt in debug mode",
+	Long:      "Print the prompt in debug mode.",
+	ValidArgs: supportedShells,
+	Args:      NoArgsOrOneValidArg,
+	Run: func(cmd *cobra.Command, args []string) {
 		startTime := time.Now()
+
+		if len(args) == 0 {
+			_ = cmd.Help()
+			return
+		}
 
 		env := &runtime.Terminal{
 			CmdFlags: &runtime.Flags{
 				Config: configFlag,
 				Debug:  true,
 				PWD:    pwd,
-				Shell:  shellName,
+				Shell:  args[0],
 				Plain:  plain,
 			},
 		}

@@ -180,6 +180,7 @@ type Environment interface {
 	TerminalWidth() (int, error)
 	CachePath() string
 	Cache() cache.Cache
+	Session() cache.Cache
 	Close()
 	Logs() string
 	InWSLSharedDrive() bool
@@ -201,10 +202,13 @@ type Terminal struct {
 	CmdFlags *Flags
 	Var      maps.Simple
 
-	cwd       string
-	host      string
-	cmdCache  *cache.Command
-	fileCache *cache.File
+	cwd      string
+	host     string
+	cmdCache *cache.Command
+
+	deviceCache  *cache.File
+	sessionCache *cache.File
+
 	tmplCache *cache.Template
 	networks  []*Connection
 
@@ -227,8 +231,15 @@ func (term *Terminal) Init() {
 		log.Plain()
 	}
 
-	term.fileCache = &cache.File{}
-	term.fileCache.Init(term.CachePath())
+	initCache := func(fileName string) *cache.File {
+		cache := &cache.File{}
+		cache.Init(filepath.Join(term.CachePath(), fileName))
+		return cache
+	}
+
+	term.deviceCache = initCache(cache.FileName)
+	term.sessionCache = initCache(cache.SessionFileName)
+
 	term.resolveConfigPath()
 	term.cmdCache = &cache.Command{
 		Commands: maps.NewConcurrent(),
@@ -722,7 +733,11 @@ func (term *Terminal) StackCount() int {
 }
 
 func (term *Terminal) Cache() cache.Cache {
-	return term.fileCache
+	return term.deviceCache
+}
+
+func (term *Terminal) Session() cache.Cache {
+	return term.sessionCache
 }
 
 func (term *Terminal) saveTemplateCache() {
@@ -738,20 +753,21 @@ func (term *Terminal) saveTemplateCache() {
 
 	templateCache, err := json.Marshal(tmplCache)
 	if err == nil {
-		term.fileCache.Set(cache.TEMPLATECACHE, string(templateCache), 1440)
+		term.sessionCache.Set(cache.TEMPLATECACHE, string(templateCache), 1440)
 	}
 }
 
 func (term *Terminal) Close() {
 	defer term.Trace(time.Now())
 	term.saveTemplateCache()
-	term.fileCache.Close()
+	term.deviceCache.Close()
+	term.sessionCache.Close()
 }
 
 func (term *Terminal) LoadTemplateCache() {
 	defer term.Trace(time.Now())
 
-	val, OK := term.fileCache.Get(cache.TEMPLATECACHE)
+	val, OK := term.sessionCache.Get(cache.TEMPLATECACHE)
 	if !OK {
 		return
 	}
@@ -895,13 +911,13 @@ func (term *Terminal) SetPromptCount() {
 		}
 	}
 	var count int
-	if val, found := term.Cache().Get(cache.PROMPTCOUNTCACHE); found {
+	if val, found := term.Session().Get(cache.PROMPTCOUNTCACHE); found {
 		count, _ = strconv.Atoi(val)
 	}
 	// only write to cache if we're the primary prompt
 	if term.CmdFlags.Primary {
 		count++
-		term.Cache().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
+		term.Session().Set(cache.PROMPTCOUNTCACHE, strconv.Itoa(count), 1440)
 	}
 	term.CmdFlags.PromptCount = count
 }
@@ -910,9 +926,11 @@ func (term *Terminal) CursorPosition() (row, col int) {
 	if number, err := strconv.Atoi(term.Getenv("POSH_CURSOR_LINE")); err == nil {
 		row = number
 	}
+
 	if number, err := strconv.Atoi(term.Getenv("POSH_CURSOR_COLUMN")); err != nil {
 		col = number
 	}
+
 	return
 }
 

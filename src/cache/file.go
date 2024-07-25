@@ -3,28 +3,29 @@ package cache
 import (
 	"encoding/json"
 	"os"
-	"path/filepath"
 	"time"
 
+	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/maps"
 )
 
-const (
-	CacheFile = "/omp.cache"
-)
-
 type File struct {
-	cache     *maps.Concurrent
-	cachePath string
-	dirty     bool
+	cache         *maps.Concurrent
+	cacheFilePath string
+	dirty         bool
 }
 
-func (fc *File) Init(cachePath string) {
+func (fc *File) Init(cacheFilePath string) {
+	defer log.Trace(time.Now(), cacheFilePath)
+
 	fc.cache = maps.NewConcurrent()
-	fc.cachePath = cachePath
-	cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
-	content, err := os.ReadFile(cacheFilePath)
+	fc.cacheFilePath = cacheFilePath
+
+	log.Debug("Loading cache file:", fc.cacheFilePath)
+
+	content, err := os.ReadFile(fc.cacheFilePath)
 	if err != nil {
+		log.Error(err)
 		return
 	}
 
@@ -38,6 +39,7 @@ func (fc *File) Init(cachePath string) {
 			continue
 		}
 
+		log.Debug("Loading cache key:", key)
 		fc.cache.Set(key, co)
 	}
 }
@@ -50,8 +52,7 @@ func (fc *File) Close() {
 	cache := fc.cache.ToSimple()
 
 	if dump, err := json.MarshalIndent(cache, "", "    "); err == nil {
-		cacheFilePath := filepath.Join(fc.cachePath, CacheFile)
-		_ = os.WriteFile(cacheFilePath, dump, 0644)
+		_ = os.WriteFile(fc.cacheFilePath, dump, 0644)
 	}
 }
 

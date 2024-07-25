@@ -123,10 +123,12 @@ func (term *Terminal) Platform() string {
 
 func (term *Terminal) CachePath() string {
 	defer term.Trace(time.Now())
+
 	// get LOCALAPPDATA if present
 	if cachePath := returnOrBuildCachePath(term.Getenv("LOCALAPPDATA")); len(cachePath) != 0 {
 		return cachePath
 	}
+
 	return term.Home()
 }
 

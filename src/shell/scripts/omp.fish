@@ -1,8 +1,8 @@
-set --export POSH_THEME ::CONFIG::
-set --export POSH_SHELL_VERSION $FISH_VERSION
-set --global POWERLINE_COMMAND oh-my-posh
-set --global POSH_PID $fish_pid
-set --global CONDA_PROMPT_MODIFIER false
+set --global --export POSH_THEME ::CONFIG::
+set --global --export POSH_SHELL_VERSION $FISH_VERSION
+set --global --export POWERLINE_COMMAND oh-my-posh
+set --global --export POSH_PID $fish_pid
+set --global --export CONDA_PROMPT_MODIFIER false
 set --global _omp_tooltip_command ''
 set --global _omp_current_rprompt ''
 set --global _omp_transient false

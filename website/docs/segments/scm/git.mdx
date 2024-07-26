@@ -9,26 +9,6 @@ sidebar_label: Git
 Display git information when in a git repository. Also works for subfolders. For maximum compatibility,
 make sure your `git` executable is up-to-date (when branch or status information is incorrect for example).
 
-:::tip
-If you want to display the default [posh-git][poshgit] output, **do not** use this segment
-but add the following snippet after initializing Oh My Posh in your `$PROFILE`:
-
-```powershell
-function Set-PoshGitStatus {
-    $global:GitStatus = Get-GitStatus
-    $env:POSH_GIT_STRING = Write-GitStatus -Status $global:GitStatus
-}
-New-Alias -Name 'Set-PoshContext' -Value 'Set-PoshGitStatus' -Scope Global -Force
-```
-
-You can then use the `POSH_GIT_STRING` environment variable in a [text segment][text]:
-
-```json
-"template": "{{ if .Env.POSH_GIT_STRING }} {{ .Env.POSH_GIT_STRING }} {{ end }}"
-```
-
-:::
-
 ## Sample Configuration
 
 import Config from "@site/src/components/Config.js";
@@ -55,6 +35,10 @@ import Config from "@site/src/components/Config.js";
         "/Users/user/Projects/oh-my-posh/": "no",
       },
       source: "cli",
+      mapped_branches: {
+        "feat/*": "🚀 ",
+				"bug/*":  "🐛 ",
+      },
     },
   }}
 />
@@ -78,6 +62,8 @@ You can set the following properties to `true` to enable fetching additional inf
 | `fetch_user`          |   [`User`](#user)   | `false` | fetch the current configured user for the repository                                                                                                                                                                                                                                                                                  |
 | `status_formats`      | `map[string]string` |         | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides.                                                                     |
 | `source`              |      `string`       |  `cli`  | <ul><li>`cli`: fetch the information using the git CLI</li><li>`pwsh`: fetch the information from the [posh-git][poshgit] PowerShell Module</li></ul>                                                                                                                                                                                 |
+| `mapped_branches`     |      `object`       |         | custom glyph/text for specific branches. You can use `*` at the end as a wildcard character for matching                                                                                                                                                                                                                              |
+| `full_branch_path`    |       `bool`        | `true`  | display the full branch path instead of only the last part (e.g. `feature/branch` instead of `branch`)                                                                                                                                                                                                                                |
 
 ### Icons
 
@@ -197,11 +183,30 @@ Local changes use the following syntax:
 | `.Name`  | `string` | the user's name  |
 | `.Email` | `string` | the user's email |
 
+## posh-git
+
+If you want to display the default [posh-git][poshgit] output, **do not** use this segment
+but add the following snippet after initializing Oh My Posh in your `$PROFILE`:
+
+```powershell
+function Set-PoshGitStatus {
+    $global:GitStatus = Get-GitStatus
+    $env:POSH_GIT_STRING = Write-GitStatus -Status $global:GitStatus
+}
+New-Alias -Name 'Set-PoshContext' -Value 'Set-PoshGitStatus' -Scope Global -Force
+```
+
+You can then use the `POSH_GIT_STRING` environment variable in a [text segment][text]:
+
+```json
+"template": "{{ if .Env.POSH_GIT_STRING }} {{ .Env.POSH_GIT_STRING }} {{ end }}"
+```
+
 [poshgit]: https://github.com/dahlbyk/posh-git
 [templates]: /docs/configuration/templates
 [hyperlinks]: /docs/configuration/templates#custom
 [untracked]: https://git-scm.com/docs/git-status#Documentation/git-status.txt---untracked-filesltmodegt
 [submodules]: https://git-scm.com/docs/git-status#Documentation/git-status.txt---ignore-submodulesltwhengt
 [kraken-ref]: https://www.gitkraken.com/invite/nQmDPR9D
-[text]: text.mdx
+[text]: /docs/segments/system/text
 [exclude_folders]: /docs/configuration/segment#include--exclude-folders

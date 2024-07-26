@@ -50,25 +50,26 @@ by leaving a like!
 As doing multiple `cm` calls can slow down the prompt experience, we do not fetch information by default.
 You can set the following property to `true` to enable fetching additional information (and populate the template).
 
-| Name             | Type                | Default | Description                                                                                                                                                                                                                                                      |
+| Name             |        Type         | Default | Description                                                                                                                                                                                                                                                      |
 | ---------------- | :-----------------: | :-----: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_status`   | `boolean`           | `false` | fetch the local changes                                                                                                                                                                                                                                          |
+| `fetch_status`   |      `boolean`      | `false` | fetch the local changes                                                                                                                                                                                                                                          |
 | `status_formats` | `map[string]string` |         | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides |
 
 ### Icons
 
 #### Branch
 
-| Name                | Type     | Default  | Description                                                                |
-| ------------------- | :------: | :------: | -------------------------------------------------------------------------- |
-| `branch_icon`       | `string` | `\uE0A0` | the icon to use in front of the git branch name                            |
-| `full_branch_path`  | `bool`   | `true`   | display the full branch path: `_/main/fix-001_` instead of `_fix-001_`     |
-| `branch_max_length` | `int`    | `0`      | the max length for the displayed branch name where `0` implies full length |
-| `truncate_symbol`   | `string` |          | the icon to display when a branch name is truncated                        |
+| Name                |   Type   | Default  | Description                                                                                              |
+| ------------------- | :------: | :------: | -------------------------------------------------------------------------------------------------------- |
+| `branch_icon`       | `string` | `\uE0A0` | the icon to use in front of the git branch name                                                          |
+| `full_branch_path`  |  `bool`  |  `true`  | display the full branch path instead of only the last part (e.g. `feature/branch` instead of `branch`)   |
+| `branch_max_length` |  `int`   |   `0`    | the max length for the displayed branch name where `0` implies full length                               |
+| `truncate_symbol`   | `string` |          | the icon to display when a branch name is truncated                                                      |
+| `mapped_branches`   | `object` |          | custom glyph/text for specific branches. You can use `*` at the end as a wildcard character for matching |
 
 #### Selector
 
-| Name          | Type     | Default  | Description                                                    |
+| Name          |   Type   | Default  | Description                                                    |
 | ------------- | :------: | :------: | -------------------------------------------------------------- |
 | `commit_icon` | `string` | `\uF417` | icon/text to display before the commit context (detached HEAD) |
 | `tag_icon`    | `string` | `\uF412` | icon/text to display before the tag context                    |
@@ -85,11 +86,11 @@ You can set the following property to `true` to enable fetching additional infor
 
 ### Properties
 
-| Name            | Type     | Description                                                                                                                                                       |
-| --------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.Selector`     | `string` | the current selector context (branch/changeset/label)                                                                                                             |
-| `.Behind`       | `bool`   | the current workspace is behind and changes are incoming                                                                                                          |
-| `.Status`       | `Status` | changes in the workspace (see below)                                                                                                                              |
+| Name            | Type     | Description                                                                                                                                                        |
+| --------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `.Selector`     | `string` | the current selector context (branch/changeset/label)                                                                                                              |
+| `.Behind`       | `bool`   | the current workspace is behind and changes are incoming                                                                                                           |
+| `.Status`       | `Status` | changes in the workspace (see below)                                                                                                                               |
 | `.MergePending` | `bool`   | if a merge is pending and needs to be committed (known issue: when no file is left after a _Change/Delete conflict_ merge, the `MergePending` property is not set) |
 
 ### Status

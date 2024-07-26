@@ -140,23 +140,27 @@ func (p *Plastic) getHeadChangeset() int {
 func (p *Plastic) setSelector() {
 	var ref string
 	selector := p.FileContents(p.plasticWorkspaceFolder+"/.plastic/", "plastic.selector")
+
 	// changeset
 	ref = p.parseChangesetSelector(selector)
 	if len(ref) > 0 {
 		p.Selector = fmt.Sprintf("%s%s", p.props.GetString(CommitIcon, "\uF417"), ref)
 		return
 	}
+
 	// fallback to label
 	ref = p.parseLabelSelector(selector)
 	if len(ref) > 0 {
 		p.Selector = fmt.Sprintf("%s%s", p.props.GetString(TagIcon, "\uF412"), ref)
 		return
 	}
+
 	// fallback to branch/smartbranch
 	ref = p.parseBranchSelector(selector)
 	if len(ref) > 0 {
-		ref = p.truncateBranch(ref)
+		ref = p.formatBranch(ref)
 	}
+
 	p.Selector = fmt.Sprintf("%s%s", p.props.GetString(BranchIcon, "\uE0A0"), ref)
 }
 

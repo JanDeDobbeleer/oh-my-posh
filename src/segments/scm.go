@@ -3,6 +3,7 @@ package segments
 import (
 	"fmt"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -109,21 +110,40 @@ func (s *scm) Init(props properties.Properties, env runtime.Environment) {
 	s.env = env
 }
 
-func (s *scm) truncateBranch(branch string) string {
-	fullBranchPath := s.props.GetBool(FullBranchPath, true)
-	maxLength := s.props.GetInt(BranchMaxLength, 0)
+func (s *scm) formatBranch(branch string) string {
+	mappedBranches := s.props.GetKeyValueMap(MappedBranches, make(map[string]string))
+	for key, value := range mappedBranches {
+		matchSubFolders := strings.HasSuffix(key, "*")
 
+		if matchSubFolders && len(key) > 1 {
+			key = key[0 : len(key)-1] // remove trailing /* or \*
+		}
+
+		if !strings.HasPrefix(branch, key) {
+			continue
+		}
+
+		branch = strings.Replace(branch, key, value, 1)
+		break
+	}
+
+	fullBranchPath := s.props.GetBool(FullBranchPath, true)
 	if !fullBranchPath && strings.Contains(branch, "/") {
 		index := strings.LastIndex(branch, "/")
 		branch = branch[index+1:]
 	}
 
+	maxLength := s.props.GetInt(BranchMaxLength, 0)
 	if maxLength == 0 || len(branch) <= maxLength {
 		return branch
 	}
 
-	symbol := s.props.GetString(TruncateSymbol, "")
-	return branch[0:maxLength] + symbol
+	truncateSymbol := s.props.GetString(TruncateSymbol, "")
+	lenTruncateSymbol := utf8.RuneCountInString(truncateSymbol)
+	maxLength -= lenTruncateSymbol
+
+	runes := []rune(branch)
+	return string(runes[0:maxLength]) + truncateSymbol
 }
 
 func (s *scm) shouldIgnoreRootRepository(rootDir string) bool {

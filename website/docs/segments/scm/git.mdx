@@ -10,12 +10,8 @@ Display git information when in a git repository. Also works for subfolders. For
 make sure your `git` executable is up-to-date (when branch or status information is incorrect for example).
 
 :::tip
-PowerShell offers support for the [posh-git][poshgit] module for autocompletion, but it is disabled by default.
-To enable this, set `$env:POSH_GIT_ENABLED = $true` in your `$PROFILE` after initializing Oh My Posh.
-This will also make use of the [posh-git][poshgit] output rather than do additional work to get the git status.
-
-If you want to display the default [posh-git][poshgit] output, **do not** set the above environment variable
-and add the following snippet after initializing Oh My Posh in your `$PROFILE`:
+If you want to display the default [posh-git][poshgit] output, **do not** use this segment
+but add the following snippet after initializing Oh My Posh in your `$PROFILE`:
 
 ```powershell
 function Set-PoshGitStatus {
@@ -58,6 +54,7 @@ import Config from "@site/src/components/Config.js";
       untracked_modes: {
         "/Users/user/Projects/oh-my-posh/": "no",
       },
+      source: "cli",
     },
   }}
 />
@@ -69,35 +66,36 @@ import Config from "@site/src/components/Config.js";
 As doing multiple git calls can slow down the prompt experience, we do not fetch information by default.
 You can set the following properties to `true` to enable fetching additional information (and populate the template).
 
-| Name                  | Type                | Default | Description                                                                                                                                                                                                                                                                                                                           |
+| Name                  |        Type         | Default | Description                                                                                                                                                                                                                                                                                                                           |
 | --------------------- | :-----------------: | :-----: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `fetch_status`        | `boolean`           | `false` | fetch the local changes                                                                                                                                                                                                                                                                                                               |
-| `ignore_status`       | `[]string`          |         | do not fetch status for these repo's. Uses the repo's root folder and same logic as the [exclude_folders][exclude_folders] property                                                                                                                                                                                                   |
-| `fetch_upstream_icon` | `boolean`           | `false` | fetch upstream icon                                                                                                                                                                                                                                                                                                                   |
-| `fetch_bare_info`     | `boolean`           | `false` | fetch bare repo info                                                                                                                                                                                                                                                                                                                  |
+| `fetch_status`        |      `boolean`      | `false` | fetch the local changes                                                                                                                                                                                                                                                                                                               |
+| `ignore_status`       |     `[]string`      |         | do not fetch status for these repo's. Uses the repo's root folder and same logic as the [exclude_folders][exclude_folders] property                                                                                                                                                                                                   |
+| `fetch_upstream_icon` |      `boolean`      | `false` | fetch upstream icon                                                                                                                                                                                                                                                                                                                   |
+| `fetch_bare_info`     |      `boolean`      | `false` | fetch bare repo info                                                                                                                                                                                                                                                                                                                  |
 | `untracked_modes`     | `map[string]string` |         | map of repo's where to override the default [untracked files mode][untracked]:<ul><li>`no`</li><li>`normal`</li><li>`all`</li></ul>For example `"untracked_modes": { "/Users/me/repos/repo1": "no" }` - defaults to `normal` for all repo's. If you want to override for all repo's, use `*` to set the mode instead of the repo path |
 | `ignore_submodules`   | `map[string]string` |         | map of repo's where to change the [--ignore-submodules][submodules] flag (`none`, `untracked`, `dirty` or `all`). For example `"ignore_submodules": { "/Users/me/repos/repo1": "all" }`. If you want to override for all repo's, use `*` to set the mode instead of the repo path                                                     |
-| `native_fallback`     | `boolean`           | `false` | when set to `true` and `git.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native git executable to fetch data. Not all information can be displayed in this case                                                                                                                             |
-| `fetch_user`          | [`User`](#user)     | `false` | fetch the current configured user for the repository                                                                                                                                                                                                                                                                                  |
+| `native_fallback`     |      `boolean`      | `false` | when set to `true` and `git.exe` is not available when inside a WSL2 shared Windows drive, we will fallback to the native git executable to fetch data. Not all information can be displayed in this case                                                                                                                             |
+| `fetch_user`          |   [`User`](#user)   | `false` | fetch the current configured user for the repository                                                                                                                                                                                                                                                                                  |
 | `status_formats`      | `map[string]string` |         | a key, value map allowing to override how individual status items are displayed. For example, `"status_formats": { "Added": "Added: %d" }` will display the added count as `Added: 1` instead of `+1`. See the [Status](#status) section for available overrides.                                                                     |
+| `source`              |      `string`       |  `cli`  | <ul><li>`cli`: fetch the information using the git CLI</li><li>`pwsh`: fetch the information from the [posh-git][poshgit] PowerShell Module</li></ul>                                                                                                                                                                                 |
 
 ### Icons
 
 #### Branch
 
-| Name                    | Type     | Default  | Description                                                                |
+| Name                    |   Type   | Default  | Description                                                                |
 | ----------------------- | :------: | :------: | -------------------------------------------------------------------------- |
 | `branch_icon`           | `string` | `\uE0A0` | the icon to use in front of the git branch name                            |
 | `branch_identical_icon` | `string` | `\u2261` | the icon to display when remote and local are identical                    |
 | `branch_ahead_icon`     | `string` | `\u2191` | the icon to display when the local branch is ahead of its remote           |
 | `branch_behind_icon`    | `string` | `\u2193` | the icon to display when the local branch is behind its remote             |
 | `branch_gone_icon`      | `string` | `\u2262` | the icon to display when there's no remote branch                          |
-| `branch_max_length`     | `int`    | `0`      | the max length for the displayed branch name where `0` implies full length |
+| `branch_max_length`     |  `int`   |   `0`    | the max length for the displayed branch name where `0` implies full length |
 | `truncate_symbol`       | `string` |          | the icon to display when a branch name is truncated                        |
 
 #### HEAD
 
-| Name               | Type     | Default  | Description                                                      |
+| Name               |   Type   | Default  | Description                                                      |
 | ------------------ | :------: | :------: | ---------------------------------------------------------------- |
 | `commit_icon`      | `string` | `\uF417` | icon/text to display before the commit context (detached HEAD)   |
 | `tag_icon`         | `string` | `\uF412` | icon/text to display before the tag context                      |
@@ -109,15 +107,15 @@ You can set the following properties to `true` to enable fetching additional inf
 
 #### Upstream
 
-| Name                | Type                | Default  | Description                                                                                                                                                                  |
+| Name                |        Type         | Default  | Description                                                                                                                                                                  |
 | ------------------- | :-----------------: | :------: | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `github_icon`       | `string`            | `\uF408` | icon/text to display when the upstream is Github                                                                                                                             |
-| `gitlab_icon`       | `string`            | `\uF296` | icon/text to display when the upstream is Gitlab                                                                                                                             |
-| `bitbucket_icon`    | `string`            | `\uF171` | icon/text to display when the upstream is Bitbucket                                                                                                                          |
-| `azure_devops_icon` | `string`            | `\uEBE8` | icon/text to display when the upstream is Azure DevOps                                                                                                                       |
-| `codecommit_icon`   | `string`            | `\uF270` | icon/text to display when the upstream is AWS CodeCommit                                                                                                                     |
-| `codeberg_icon`     | `string`            | `\uF330` | icon/text to display when the upstream is Codeberg                                                                                                                           |
-| `git_icon`          | `string`            | `\uE5FB` | icon/text to display when the upstream is not known/mapped                                                                                                                   |
+| `github_icon`       |      `string`       | `\uF408` | icon/text to display when the upstream is Github                                                                                                                             |
+| `gitlab_icon`       |      `string`       | `\uF296` | icon/text to display when the upstream is Gitlab                                                                                                                             |
+| `bitbucket_icon`    |      `string`       | `\uF171` | icon/text to display when the upstream is Bitbucket                                                                                                                          |
+| `azure_devops_icon` |      `string`       | `\uEBE8` | icon/text to display when the upstream is Azure DevOps                                                                                                                       |
+| `codecommit_icon`   |      `string`       | `\uF270` | icon/text to display when the upstream is AWS CodeCommit                                                                                                                     |
+| `codeberg_icon`     |      `string`       | `\uF330` | icon/text to display when the upstream is Codeberg                                                                                                                           |
+| `git_icon`          |      `string`       | `\uE5FB` | icon/text to display when the upstream is not known/mapped                                                                                                                   |
 | `upstream_icons`    | `map[string]string` |          | a key, value map representing the remote URL (or a part of that URL) and icon to use in case the upstream URL contains the key. These get precedence over the standard icons |
 
 ## Template ([info][templates])
@@ -158,7 +156,7 @@ You can set the following properties to `true` to enable fetching additional inf
 | `.Rebase`        | `boolean` | true when in a rebase                                                                                                            |
 | `.CherryPick`    | `boolean` | true when in a cherry pick                                                                                                       |
 | `.Revert`        | `boolean` | true when in a revert                                                                                                            |
-| `.LatestTag`     | `string`  | the latest tag name                                                                                                       |
+| `.LatestTag`     | `string`  | the latest tag name                                                                                                              |
 
 ### Status
 
@@ -184,13 +182,13 @@ Local changes use the following syntax:
 
 ### Commit
 
-| Name         | Type        | Description                            |
-| ------------ | ----------- | -------------------------------------- |
-| `.Author`    | `User`      | the author of the commit (see below)   |
+| Name         | Type        | Description                             |
+| ------------ | ----------- | --------------------------------------- |
+| `.Author`    | `User`      | the author of the commit (see below)    |
 | `.Committer` | `User`      | the committer of the commit (see below) |
-| `.Subject`   | `string`    | the commit subject                     |
-| `.Timestamp` | `time.Time` | the commit timestamp                   |
-| `.Sha`       | `string`    | the commit SHA1                        |
+| `.Subject`   | `string`    | the commit subject                      |
+| `.Timestamp` | `time.Time` | the commit timestamp                    |
+| `.Sha`       | `string`    | the commit SHA1                         |
 
 ### User
 

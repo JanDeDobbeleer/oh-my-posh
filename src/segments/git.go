@@ -179,7 +179,8 @@ func (g *Git) Enabled() bool {
 		return true
 	}
 
-	if g.hasPoshGitStatus() {
+	source := g.props.GetString(Source, Cli)
+	if source == Pwsh && g.hasPoshGitStatus() {
 		return true
 	}
 

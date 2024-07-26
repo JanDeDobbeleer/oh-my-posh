@@ -124,6 +124,13 @@ func (cfg *Config) Features() shell.Features {
 					feats = append(feats, shell.Azure)
 				}
 			}
+
+			if segment.Type == GIT {
+				source := segment.Properties.GetString(segments.Source, segments.Cli)
+				if source == segments.Pwsh {
+					feats = append(feats, shell.PoshGit)
+				}
+			}
 		}
 	}
 

@@ -8,6 +8,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
+	testify_ "github.com/stretchr/testify/mock"
 )
 
 func TestPoshGitSegment(t *testing.T) {
@@ -186,8 +187,10 @@ func TestPoshGitSegment(t *testing.T) {
 		env.On("Getenv", poshGitEnv).Return(tc.PoshGitJSON)
 		env.On("Home").Return("/Users/bill")
 		env.On("GOOS").Return(runtime.LINUX)
+		env.On("Error", testify_.Anything)
 		env.On("RunCommand", "git", []string{"-C", "", "--no-optional-locks", "-c", "core.quotepath=false",
 			"-c", "color.status=false", "remote", "get-url", "origin"}).Return("github.com/cli", nil)
+
 		g := &Git{
 			scm: scm{
 				env: env,
@@ -197,9 +200,11 @@ func TestPoshGitSegment(t *testing.T) {
 				command: GITCOMMAND,
 			},
 		}
+
 		if len(tc.Template) == 0 {
 			tc.Template = g.Template()
 		}
+
 		assert.Equal(t, tc.ExpectedEnabled, g.hasPoshGitStatus(), tc.Case)
 		if tc.ExpectedEnabled {
 			assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, g), tc.Case)

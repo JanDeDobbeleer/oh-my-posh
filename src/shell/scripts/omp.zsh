@@ -13,7 +13,7 @@ _omp_cursor_positioning=0
 _omp_ftcs_marks=0
 
 # set secondary prompt
-PS2="$(${_omp_executable} print secondary --shell=zsh)"
+PS2="$($_omp_executable print secondary --shell=zsh)"
 
 function _omp_set_cursor_position() {
   # not supported in Midnight Commander
@@ -47,7 +47,7 @@ function _omp_preexec() {
     printf "\033]133;C\007"
   fi
 
-  _omp_start_time=$(${_omp_executable} get millis)
+  _omp_start_time=$($_omp_executable get millis)
 }
 
 function _omp_precmd() {
@@ -58,12 +58,12 @@ function _omp_precmd() {
   _omp_no_exit_code="true"
 
   if [ $_omp_start_time ]; then
-    local omp_now=$(${_omp_executable} get millis --shell=zsh)
+    local omp_now=$($_omp_executable get millis --shell=zsh)
     _omp_elapsed=$(($omp_now - $_omp_start_time))
     _omp_no_exit_code="false"
   fi
 
-  if [[ "${_omp_pipestatus_cache[-1]}" != "$_omp_status_cache" ]]; then
+  if [[ ${_omp_pipestatus_cache[-1]} != "$_omp_status_cache" ]]; then
     _omp_pipestatus_cache=("$_omp_status_cache")
   fi
 
@@ -73,7 +73,7 @@ function _omp_precmd() {
   set_poshcontext
   _omp_set_cursor_position
 
-  eval "$(${_omp_executable} print primary --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
+  eval "$($_omp_executable print primary --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
   unset _omp_start_time
 }
 
@@ -90,10 +90,10 @@ function _omp_cleanup() {
   )
   local widget
   for widget in "${omp_widgets[@]}"; do
-    if [[ "${widgets[_omp_original::$widget]}" ]]; then
+    if [[ ${widgets[_omp_original::$widget]} ]]; then
       # Restore the original widget.
       zle -A _omp_original::$widget $widget
-    elif [[ "${widgets[$widget]}" = user:_omp_* ]]; then
+    elif [[ ${widgets[$widget]} = user:_omp_* ]]; then
       # Delete the OMP-defined widget.
       zle -D $widget
     fi
@@ -103,7 +103,7 @@ _omp_cleanup
 unset -f _omp_cleanup
 
 function _omp_render_tooltip() {
-  if [[ "$KEYS" != ' ' ]]; then
+  if [[ $KEYS != ' ' ]]; then
     return
   fi
 
@@ -111,13 +111,13 @@ function _omp_render_tooltip() {
   local tooltip_command=${${(MS)BUFFER##[[:graph:]]*}%%[[:space:]]*}
 
   # Ignore an empty/repeated tooltip command.
-  if [[ -z "$tooltip_command" ]] || [[ "$tooltip_command" = "$_omp_tooltip_command" ]]; then
+  if [[ -z $tooltip_command ]] || [[ $tooltip_command = "$_omp_tooltip_command" ]]; then
     return
   fi
 
   _omp_tooltip_command="$tooltip_command"
-  local tooltip=$(${_omp_executable} print tooltip --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --command="$tooltip_command" --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")
-  if [[ -z "$tooltip" ]]; then
+  local tooltip=$($_omp_executable print tooltip --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --command="$tooltip_command" --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")
+  if [[ -z $tooltip ]]; then
     return
   fi
 
@@ -135,7 +135,7 @@ function _omp_zle-line-init() {
   (( $+zle_bracketed_paste )) && print -r -n - $zle_bracketed_paste[2]
 
   _omp_tooltip_command=''
-  eval "$(${_omp_executable} print transient --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
+  eval "$($_omp_executable print transient --status="$_omp_status_cache" --pipestatus="${_omp_pipestatus_cache[*]}" --execution-time="$_omp_elapsed" --stack-count="$_omp_stack_count" --eval --shell=zsh --shell-version="$ZSH_VERSION" --no-status="$_omp_no_exit_code")"
   zle .reset-prompt
 
   # Exit the shell if we receive EOT.
@@ -191,7 +191,7 @@ function _omp_create_widget() {
 }
 
 function enable_poshtooltips() {
-  widget=${$(bindkey " "):2}
+  local widget=${$(bindkey " "):2}
 
   if [[ -z $widget ]]; then
     widget=self-insert

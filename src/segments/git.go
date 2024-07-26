@@ -332,6 +332,7 @@ func (g *Git) getBareRepoInfo() {
 	if !g.props.GetBool(FetchUpstreamIcon, false) {
 		return
 	}
+
 	g.Upstream = g.getGitCommandOutput("remote")
 	if len(g.Upstream) != 0 {
 		g.UpstreamIcon = g.getUpstreamIcon()
@@ -353,7 +354,7 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	content = strings.Trim(content, " \r\n")
 	matches := regex.FindNamedRegexMatch(`^gitdir: (?P<dir>.*)$`, content)
 
-	if matches == nil || len(matches["dir"]) == 0 {
+	if len(matches) == 0 {
 		g.env.Debug("no matches found, directory isn't a worktree")
 		return false
 	}
@@ -362,22 +363,25 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 	// to the mounted path
 	g.workingDir = g.convertToLinuxPath(matches["dir"])
 
+	// if we don't do this, we will identify the submodule as a worktree
+	isSubmodule := strings.Contains(g.workingDir, "/modules/")
+
 	// in worktrees, the path looks like this: gitdir: path/.git/worktrees/branch
-	// strips the last .git/worktrees part
-	// :ind+5 = index + /.git
-	ind := strings.LastIndex(g.workingDir, ".git/worktrees")
-	if ind > -1 {
+	// rootDir needs to become path/.git
+	// realDir needs to become path
+	ind := strings.LastIndex(g.workingDir, "/worktrees/")
+	if ind > -1 && !isSubmodule {
 		gitDir := filepath.Join(g.workingDir, "gitdir")
-		g.rootDir = g.workingDir[:ind+4]
-		g.realDir = strings.TrimSuffix(g.env.FileContent(gitDir), ".git\n")
+		g.rootDir = g.workingDir[:ind]
+		gitDirContent := g.env.FileContent(gitDir)
+		g.realDir = strings.TrimSuffix(gitDirContent, ".git\n")
 		g.IsWorkTree = true
 		return true
 	}
 
 	// in submodules, the path looks like this: gitdir: ../.git/modules/test-submodule
 	// we need the parent folder to detect where the real .git folder is
-	ind = strings.LastIndex(g.workingDir, ".git/modules")
-	if ind > -1 {
+	if isSubmodule {
 		g.rootDir = resolveGitPath(gitdir.ParentFolder, g.workingDir)
 		// this might be both a worktree and a submodule, where the path would look like
 		// this: path/.git/modules/module/path/worktrees/location. We cannot distinguish
@@ -392,6 +396,7 @@ func (g *Git) hasWorktree(gitdir *runtime.FileInfo) bool {
 			g.IsWorkTree = true
 			return true
 		}
+
 		g.realDir = g.rootDir
 		g.workingDir = g.rootDir
 		return true

@@ -376,12 +376,18 @@ Example:
         }
 
         if ($global:_ompAzure) {
-            $env:POSH_AZURE_SUBSCRIPTION = Get-AzContext | ConvertTo-Json
+            try {
+                $env:POSH_AZURE_SUBSCRIPTION = Get-AzContext | ConvertTo-Json
+            }
+            catch {}
         }
 
         if ($global:_ompPoshGit) {
-            $global:GitStatus = Get-GitStatus
-            $env:POSH_GIT_STATUS = $global:GitStatus | ConvertTo-Json
+            try {
+                $global:GitStatus = Get-GitStatus
+                $env:POSH_GIT_STATUS = $global:GitStatus | ConvertTo-Json
+            }
+            catch {}
         }
 
         Set-PoshContext

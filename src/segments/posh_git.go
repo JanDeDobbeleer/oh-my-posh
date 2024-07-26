@@ -93,5 +93,5 @@ func (g *Git) parsePoshGitHEAD(head string) string {
 		return fmt.Sprintf("%s%s", g.props.GetString(TagIcon, "\uF412"), head)
 	}
 	// regular branch
-	return fmt.Sprintf("%s%s", g.props.GetString(BranchIcon, "\uE0A0"), g.formatHEAD(head))
+	return fmt.Sprintf("%s%s", g.props.GetString(BranchIcon, "\uE0A0"), g.formatBranch(head))
 }

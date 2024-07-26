@@ -280,12 +280,7 @@ func (g *Git) shouldDisplay() bool {
 		return false
 	}
 
-	gitdir, err := g.env.HasParentFilePath(".git", true)
-	if err != nil {
-		if !g.props.GetBool(FetchBareInfo, false) {
-			return false
-		}
-
+	if g.props.GetBool(FetchBareInfo, false) {
 		g.realDir = g.env.Pwd()
 		bare := g.getGitCommandOutput("rev-parse", "--is-bare-repository")
 		if bare == trueStr {
@@ -293,7 +288,10 @@ func (g *Git) shouldDisplay() bool {
 			g.workingDir = g.realDir
 			return true
 		}
+	}
 
+	gitdir, err := g.env.HasParentFilePath(".git", true)
+	if err != nil {
 		return false
 	}
 
@@ -325,6 +323,13 @@ func (g *Git) setUser() {
 }
 
 func (g *Git) getBareRepoInfo() {
+	// we can still have a pointer to a bare repo
+	if file, err := g.env.HasParentFilePath(".git", true); err == nil && !file.IsDir {
+		content := g.FileContents(file.ParentFolder, ".git")
+		path := strings.TrimPrefix(content, "gitdir: ")
+		g.workingDir = filepath.Join(file.ParentFolder, path)
+	}
+
 	head := g.FileContents(g.workingDir, "HEAD")
 	branchIcon := g.props.GetString(BranchIcon, "\uE0A0")
 	g.Ref = strings.Replace(head, "ref: refs/heads/", "", 1)
@@ -345,6 +350,7 @@ func (g *Git) setDir(dir string) {
 		g.Dir = strings.TrimSuffix(dir, `\.git`)
 		return
 	}
+
 	g.Dir = strings.TrimSuffix(dir, "/.git")
 }
 

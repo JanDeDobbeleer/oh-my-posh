@@ -195,7 +195,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 [Microsoft.PowerShell.PSConsoleReadLine]::GetBufferState([ref]$null, [ref]$null, [ref]$parseErrors, [ref]$null)
                 $executingCommand = $parseErrors.Count -eq 0
                 if ($executingCommand) {
-                    $script:newPrompt = $true
                     $script:TooltipCommand = ''
                     Set-TransientPrompt
                 }
@@ -215,7 +214,6 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 [Microsoft.PowerShell.PSConsoleReadLine]::GetSelectionState([ref]$start, [ref]$null)
                 # only render a transient prompt when no text is selected
                 if ($start -eq -1) {
-                    $script:newPrompt = $true
                     $script:TooltipCommand = ''
                     Set-TransientPrompt
                 }

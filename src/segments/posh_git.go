@@ -36,6 +36,7 @@ func (s *GitStatus) parsePoshGitStatus(p *poshGitStatus) {
 	if p == nil {
 		return
 	}
+
 	s.Added = len(p.Added)
 	s.Deleted = len(p.Deleted)
 	s.Modified = len(p.Modified)
@@ -45,13 +46,17 @@ func (s *GitStatus) parsePoshGitStatus(p *poshGitStatus) {
 func (g *Git) hasPoshGitStatus() bool {
 	envStatus := g.env.Getenv(poshGitEnv)
 	if len(envStatus) == 0 {
+		g.env.Error(fmt.Errorf("%s environment variable not set, do you have the posh-git module installed?", poshGitEnv))
 		return false
 	}
+
 	var posh poshGit
 	err := json.Unmarshal([]byte(envStatus), &posh)
 	if err != nil {
+		g.env.Error(err)
 		return false
 	}
+
 	g.setDir(posh.GitDir)
 	g.Working = &GitStatus{}
 	g.Working.parsePoshGitStatus(posh.Working)
@@ -63,10 +68,13 @@ func (g *Git) hasPoshGitStatus() bool {
 	g.Behind = posh.BehindBy
 	g.UpstreamGone = len(posh.Upstream) == 0
 	g.Upstream = posh.Upstream
+
 	g.setBranchStatus()
+
 	if len(g.Upstream) != 0 && g.props.GetBool(FetchUpstreamIcon, false) {
 		g.UpstreamIcon = g.getUpstreamIcon()
 	}
+
 	g.poshgit = true
 	return true
 }

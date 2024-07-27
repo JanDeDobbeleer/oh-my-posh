@@ -374,6 +374,7 @@ Thanks goes to these wonderful people ([emoji key][acek]):
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://felipezorzo.com.br"><img src="https://avatars.githubusercontent.com/u/13829?v=4?s=100" width="100px;" alt="Felipe Zorzo"/><br /><sub><b>Felipe Zorzo</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=felipebz" title="Code">💻</a> <a href="#design-felipebz" title="Design">🎨</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=felipebz" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/DeepSpace2"><img src="https://avatars.githubusercontent.com/u/6841988?v=4?s=100" width="100px;" alt="Adi Vaknin"/><br /><sub><b>Adi Vaknin</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=DeepSpace2" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=DeepSpace2" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://leevs.dev/"><img src="https://avatars.githubusercontent.com/u/835319?v=4?s=100" width="100px;" alt="Elad Leev"/><br /><sub><b>Elad Leev</b></sub></a><br /><a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=EladLeev" title="Code">💻</a> <a href="https://github.com/JanDeDobbeleer/oh-my-posh/commits?author=EladLeev" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

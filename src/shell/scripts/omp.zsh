@@ -90,9 +90,9 @@ function _omp_cleanup() {
   )
   local widget
   for widget in "${omp_widgets[@]}"; do
-    if [[ ${widgets[_omp_original::$widget]} ]]; then
+    if [[ ${widgets[._omp_original::$widget]} ]]; then
       # Restore the original widget.
-      zle -A _omp_original::$widget $widget
+      zle -A ._omp_original::$widget $widget
     elif [[ ${widgets[$widget]} = user:_omp_* ]]; then
       # Delete the OMP-defined widget.
       zle -D $widget
@@ -182,9 +182,9 @@ function _omp_create_widget() {
 
   # User-defined or builtin: backup and decorate it.
   *)
-    # Back up the original widget.
-    zle -A $widget _omp_original::$widget
-    eval "_omp_decorated_${(q)widget}() { _omp_call_widget ${(q)omp_func} _omp_original::${(q)widget} -- \"\$@\" }"
+    # Back up the original widget. The leading dot in widget name is to work around bugs when used with zsh-syntax-highlighting in Zsh v5.8 or lower.
+    zle -A $widget ._omp_original::$widget
+    eval "_omp_decorated_${(q)widget}() { _omp_call_widget ${(q)omp_func} ._omp_original::${(q)widget} -- \"\$@\" }"
     zle -N $widget _omp_decorated_$widget
     ;;
   esac

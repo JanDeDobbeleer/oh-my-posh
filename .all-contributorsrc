@@ -2653,6 +2653,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "Soyvolon",
+      "name": "Bounds",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16871668?v=4",
+      "profile": "https://github.com/Soyvolon",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

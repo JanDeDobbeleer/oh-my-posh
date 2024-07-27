@@ -58,7 +58,7 @@ This can be used to for example populate an environment variable with a specific
 <TabItem value="powershell">
 
 ```powershell
-function Set-EnvVar {
+function Set-EnvVar([bool]$originalStatus) {
     $env:POSH=$(Get-Date)
 }
 New-Alias -Name 'Set-PoshContext' -Value 'Set-EnvVar' -Scope Global -Force

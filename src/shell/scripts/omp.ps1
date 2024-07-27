@@ -113,7 +113,7 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
         $stdoutTask.Result
     }
 
-    function Set-PoshContext {}
+    function Set-PoshContext([bool]$originalStatus) {}
 
     function Get-CleanPSWD {
         $pswd = $PWD.ToString()
@@ -388,7 +388,7 @@ Example:
             catch {}
         }
 
-        Set-PoshContext
+        Set-PoshContext $script:ErrorCode
     }
 
     function Update-PoshErrorCode {

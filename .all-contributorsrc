@@ -2643,6 +2643,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "EladLeev",
+      "name": "Elad Leev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/835319?v=4",
+      "profile": "https://leevs.dev/",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -571,6 +571,13 @@ func (term *Terminal) Session() cache.Cache {
 	return term.sessionCache
 }
 
+func (term *Terminal) Close() {
+	defer term.Trace(time.Now())
+	term.saveTemplateCache()
+	term.deviceCache.Close()
+	term.sessionCache.Close()
+}
+
 func (term *Terminal) saveTemplateCache() {
 	// only store this when in a primary prompt
 	// and when we have a transient prompt in the config
@@ -586,13 +593,6 @@ func (term *Terminal) saveTemplateCache() {
 	if err == nil {
 		term.sessionCache.Set(cache.TEMPLATECACHE, string(templateCache), 1440)
 	}
-}
-
-func (term *Terminal) Close() {
-	defer term.Trace(time.Now())
-	term.saveTemplateCache()
-	term.deviceCache.Close()
-	term.sessionCache.Close()
 }
 
 func (term *Terminal) LoadTemplateCache() {

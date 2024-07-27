@@ -1,6 +1,7 @@
 package config
 
 import (
+	"encoding/json"
 	"fmt"
 	"runtime/debug"
 	"strings"
@@ -56,6 +57,7 @@ type Segment struct {
 	Background             color.Ansi     `json:"background,omitempty" toml:"background,omitempty"`
 	Foreground             color.Ansi     `json:"foreground,omitempty" toml:"foreground,omitempty"`
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
+	CacheDuration          int            `json:"cache_duration,omitempty" toml:"cache_duration,omitempty"`
 
 	Enabled bool `json:"-" toml:"-"`
 
@@ -91,6 +93,7 @@ func (segment *Segment) SetEnabled(env runtime.Environment) {
 		if err == nil {
 			return
 		}
+
 		// display a message explaining omp failed(with the err)
 		message := fmt.Sprintf("\noh-my-posh fatal error rendering %s segment:%s\n\n%s\n", segment.Type, err, debug.Stack())
 		fmt.Println(message)
@@ -114,14 +117,12 @@ func (segment *Segment) SetEnabled(env runtime.Environment) {
 
 	segment.env.DebugF("segment: %s", segment.Name())
 
-	// validate toggles
-	if toggles, OK := segment.env.Session().Get(cache.TOGGLECACHE); OK && len(toggles) > 0 {
-		list := strings.Split(toggles, ",")
-		for _, toggle := range list {
-			if SegmentType(toggle) == segment.Type || toggle == segment.Alias {
-				return
-			}
-		}
+	if segment.isToggled() {
+		return
+	}
+
+	if segment.restoreCache() {
+		return
 	}
 
 	if shouldHideForWidth(segment.env, segment.MinWidth, segment.MaxWidth) {
@@ -134,8 +135,78 @@ func (segment *Segment) SetEnabled(env runtime.Environment) {
 	}
 }
 
+func (segment *Segment) isToggled() bool {
+	toggles, OK := segment.env.Session().Get(cache.TOGGLECACHE)
+	if !OK || len(toggles) == 0 {
+		return false
+	}
+
+	list := strings.Split(toggles, ",")
+	for _, toggle := range list {
+		if SegmentType(toggle) == segment.Type || toggle == segment.Alias {
+			segment.env.DebugF("segment toggled off: %s", segment.Name())
+			return true
+		}
+	}
+
+	return false
+}
+
+func (segment *Segment) restoreCache() bool {
+	if segment.CacheDuration <= 0 {
+		return false
+	}
+
+	text, OK := segment.env.Session().Get(segment.cacheKey())
+	if !OK {
+		return false
+	}
+
+	segment.env.DebugF("restored %s segment from cache", segment.Name())
+	segment.Text = text
+	segment.Enabled = true
+
+	data, OK := segment.env.Session().Get(segment.writerCacheKey())
+	if !OK {
+		return true
+	}
+
+	err := json.Unmarshal([]byte(data), &segment.writer)
+	if err != nil {
+		segment.env.Error(err)
+	}
+
+	segment.env.TemplateCache().AddSegmentData(segment.Name(), segment.writer)
+
+	return true
+}
+
+func (segment *Segment) setCache() {
+	if segment.CacheDuration <= 0 {
+		return
+	}
+
+	segment.env.Session().Set(segment.cacheKey(), segment.Text, segment.CacheDuration)
+
+	data, err := json.Marshal(segment.writer)
+	if err != nil {
+		segment.env.Error(err)
+		return
+	}
+
+	segment.env.Session().Set(segment.writerCacheKey(), string(data), segment.CacheDuration)
+}
+
+func (segment *Segment) cacheKey() string {
+	return fmt.Sprintf("segment_cache_%s", segment.Name())
+}
+
+func (segment *Segment) writerCacheKey() string {
+	return fmt.Sprintf("segment_cache_writer_%s", segment.Name())
+}
+
 func (segment *Segment) setText() {
-	if !segment.Enabled {
+	if !segment.Enabled || len(segment.Text) != 0 {
 		return
 	}
 
@@ -144,7 +215,10 @@ func (segment *Segment) setText() {
 
 	if !segment.Enabled {
 		segment.env.TemplateCache().RemoveSegmentData(segment.Name())
+		return
 	}
+
+	segment.setCache()
 }
 
 func (segment *Segment) string() string {

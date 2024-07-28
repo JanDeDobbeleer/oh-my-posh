@@ -257,9 +257,44 @@ func (term *Terminal) Init() {
 func (term *Terminal) resolveConfigPath() {
 	defer term.Trace(time.Now())
 
+	processConfigPath := func(configString string) string {
+		if strings.HasPrefix(configString, "https://") {
+			filePath, err := config.Download(term.CachePath(), configString)
+			if err != nil {
+				term.Error(err)
+				return ""
+			}
+			return filePath
+		}
+
+		isCygwin := func() bool {
+			return term.Platform() == WINDOWS && len(term.Getenv("OSTYPE")) > 0
+		}
+
+		// Cygwin path always needs the full path as we're on Windows but not really.
+		// Doing filepath actions will convert it to a Windows path and break the init script.
+		if isCygwin() {
+			term.Debug("cygwin detected, using full path for config")
+			return configString
+		}
+
+		if strings.HasPrefix(configString, "~") {
+			configString = strings.TrimPrefix(configString, "~")
+			configString = filepath.Join(term.Home(), configString)
+		}
+
+		abs, err := filepath.Abs(configString)
+		if err != nil {
+			term.Error(err)
+			return filepath.Clean(configString)
+		}
+
+		return abs
+	}
+
 	if poshTheme := term.Getenv("POSH_THEME"); len(poshTheme) > 0 {
 		term.DebugF("config set using POSH_THEME: %s", poshTheme)
-		term.CmdFlags.Config = poshTheme
+		term.CmdFlags.Config = processConfigPath(poshTheme)
 		return
 	}
 
@@ -268,43 +303,7 @@ func (term *Terminal) resolveConfigPath() {
 		return
 	}
 
-	if strings.HasPrefix(term.CmdFlags.Config, "https://") {
-		filePath, err := config.Download(term.CachePath(), term.CmdFlags.Config)
-		if err != nil {
-			term.Error(err)
-			term.CmdFlags.Config = ""
-			return
-		}
-
-		term.CmdFlags.Config = filePath
-		return
-	}
-
-	isCygwin := func() bool {
-		return term.Platform() == WINDOWS && len(term.Getenv("OSTYPE")) > 0
-	}
-
-	// Cygwin path always needs the full path as we're on Windows but not really.
-	// Doing filepath actions will convert it to a Windows path and break the init script.
-	if isCygwin() {
-		term.Debug("cygwin detected, using full path for config")
-		return
-	}
-
-	configFile := term.CmdFlags.Config
-	if strings.HasPrefix(configFile, "~") {
-		configFile = strings.TrimPrefix(configFile, "~")
-		configFile = filepath.Join(term.Home(), configFile)
-	}
-
-	abs, err := filepath.Abs(configFile)
-	if err != nil {
-		term.Error(err)
-		term.CmdFlags.Config = filepath.Clean(configFile)
-		return
-	}
-
-	term.CmdFlags.Config = abs
+	term.CmdFlags.Config = processConfigPath(term.CmdFlags.Config)
 }
 
 func (term *Terminal) Trace(start time.Time, args ...string) {

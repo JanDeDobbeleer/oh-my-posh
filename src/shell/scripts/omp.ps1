@@ -387,8 +387,6 @@ Example:
             }
             catch {}
         }
-
-        Set-PoshContext $script:ErrorCode
     }
 
     function Update-PoshErrorCode {
@@ -445,6 +443,8 @@ Example:
         if ($script:PromptType -ne 'transient') {
             Update-PoshErrorCode
         }
+
+        Set-PoshContext $script:ErrorCode
 
         $cleanPSWD = Get-CleanPSWD
         $stackCount = global:Get-PoshStackCount

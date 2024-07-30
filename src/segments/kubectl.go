@@ -76,7 +76,7 @@ func (k *Kubectl) restoreCacheValue() error {
 }
 
 func (k *Kubectl) Enabled() bool {
-	cacheTimeout := k.props.GetInt(properties.CacheTimeout, 1)
+	cacheTimeout := k.props.GetInt(properties.CacheTimeout, 0)
 
 	if cacheTimeout > 0 {
 		if err := k.restoreCacheValue(); err == nil {

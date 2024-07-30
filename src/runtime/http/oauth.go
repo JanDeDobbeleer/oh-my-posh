@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	httplib "net/http"
+
+	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 )
 
 const (
@@ -80,6 +82,7 @@ func (o *OAuthRequest) refreshToken(refreshToken string) (string, error) {
 			message: Timeout,
 		}
 	}
+
 	tokens := &tokenExchange{}
 	err = json.Unmarshal(body, &tokens)
 	if err != nil {
@@ -87,17 +90,14 @@ func (o *OAuthRequest) refreshToken(refreshToken string) (string, error) {
 			message: TokenRefreshFailed,
 		}
 	}
+
 	// add tokens to cache
-	o.Env.Cache().Set(o.AccessTokenKey, tokens.AccessToken, tokens.ExpiresIn/60)
-	o.Env.Cache().Set(o.RefreshTokenKey, tokens.RefreshToken, 2*525960) // it should never expire unless revoked, default to 2 year
+	o.Env.Cache().Set(o.AccessTokenKey, tokens.AccessToken, cache.ToDuration(tokens.ExpiresIn))
+	o.Env.Cache().Set(o.RefreshTokenKey, tokens.RefreshToken, "2years")
 	return tokens.AccessToken, nil
 }
 
 func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModifiers ...RequestModifier) (a, error) {
-	if data, err := getCacheValue[a](&o.Request, url); err == nil {
-		return data, nil
-	}
-
 	accessToken, err := o.getAccessToken()
 	if err != nil {
 		var data a
@@ -115,5 +115,5 @@ func OauthResult[a any](o *OAuthRequest, url string, body io.Reader, requestModi
 
 	requestModifiers = append(requestModifiers, addAuthHeader)
 
-	return do[a](&o.Request, url, body, requestModifiers...)
+	return Do[a](&o.Request, url, body, requestModifiers...)
 }

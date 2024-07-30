@@ -2,30 +2,17 @@ package segments
 
 import (
 	"errors"
-	"fmt"
 	"path/filepath"
 	"testing"
 
 	testify_ "github.com/stretchr/testify/mock"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
 )
-
-type CacheGet struct {
-	key   string
-	val   string
-	found bool
-}
-
-type CacheSet struct {
-	key string
-	val string
-}
 
 type HTTPResponse struct {
 	body string
@@ -119,39 +106,16 @@ func TestUnitySegmentCSharpWebRequest(t *testing.T) {
 		Case                string
 		ExpectedOutput      string
 		VersionFileText     string
-		CacheGet            CacheGet
-		CacheSet            CacheSet
 		ExpectedToBeEnabled bool
 		VersionFileExists   bool
 		HTTPResponse        HTTPResponse
 	}{
 		{
-			Case:                "C# version cached",
+			Case:                "C# version",
 			ExpectedOutput:      "\ue721 2021.9.20 C# 10",
 			ExpectedToBeEnabled: true,
 			VersionFileExists:   true,
 			VersionFileText:     "m_EditorVersion: 2021.9.20f1\nm_EditorVersionWithRevision: 2021.9.20f1 (4016570cf34f)",
-			CacheGet: CacheGet{
-				key:   "2021.9",
-				val:   "C# 10",
-				found: true,
-			},
-		},
-		{
-			Case:                "C# version not cached",
-			ExpectedOutput:      "\ue721 2021.9.20 C# 10",
-			ExpectedToBeEnabled: true,
-			VersionFileExists:   true,
-			VersionFileText:     "m_EditorVersion: 2021.9.20f1\nm_EditorVersionWithRevision: 2021.9.20f1 (4016570cf34f)",
-			CacheGet: CacheGet{
-				key:   "2021.9",
-				val:   "",
-				found: false,
-			},
-			CacheSet: CacheSet{
-				key: "2021.9",
-				val: "C# 10",
-			},
 			HTTPResponse: HTTPResponse{
 				body: `<a href="https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-10">C# 10.0</a>`,
 				err:  nil,
@@ -163,15 +127,6 @@ func TestUnitySegmentCSharpWebRequest(t *testing.T) {
 			ExpectedToBeEnabled: true,
 			VersionFileExists:   true,
 			VersionFileText:     "m_EditorVersion: 2021.9.20f1\nm_EditorVersionWithRevision: 2021.9.20f1 (4016570cf34f)",
-			CacheGet: CacheGet{
-				key:   "2021.9",
-				val:   "",
-				found: false,
-			},
-			CacheSet: CacheSet{
-				key: "2021.9",
-				val: "C# 10.1",
-			},
 			HTTPResponse: HTTPResponse{
 				body: `<a href="https://docs.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-10-1">C# 10.1</a>`,
 				err:  nil,
@@ -183,15 +138,6 @@ func TestUnitySegmentCSharpWebRequest(t *testing.T) {
 			ExpectedToBeEnabled: true,
 			VersionFileExists:   true,
 			VersionFileText:     "m_EditorVersion: 2021.9.20f1\nm_EditorVersionWithRevision: 2021.9.20f1 (4016570cf34f)",
-			CacheGet: CacheGet{
-				key:   "2021.9",
-				val:   "",
-				found: false,
-			},
-			CacheSet: CacheSet{
-				key: "2021.9",
-				val: "",
-			},
 			HTTPResponse: HTTPResponse{
 				body: `<h1>Sorry... that page seems to be missing!</h1>`,
 				err:  nil,
@@ -203,11 +149,6 @@ func TestUnitySegmentCSharpWebRequest(t *testing.T) {
 			ExpectedToBeEnabled: true,
 			VersionFileExists:   true,
 			VersionFileText:     "m_EditorVersion: 2021.9.20f1\nm_EditorVersionWithRevision: 2021.9.20f1 (4016570cf34f)",
-			CacheGet: CacheGet{
-				key:   "2021.9",
-				val:   "",
-				found: false,
-			},
 			HTTPResponse: HTTPResponse{
 				body: "",
 				err:  errors.New("FAIL"),
@@ -235,12 +176,7 @@ func TestUnitySegmentCSharpWebRequest(t *testing.T) {
 		}
 		env.On("HasParentFilePath", "ProjectSettings", false).Return(projectDir, err)
 
-		cache := &cache_.Cache{}
-		cache.On("Get", tc.CacheGet.key).Return(tc.CacheGet.val, tc.CacheGet.found)
-		cache.On("Set", tc.CacheSet.key, tc.CacheSet.val, -1).Return()
-		env.On("Cache").Return(cache)
-
-		url := fmt.Sprintf("https://docs.unity3d.com/%s/Documentation/Manual/CSharpCompiler.html", tc.CacheGet.key)
+		url := "https://docs.unity3d.com/2021.9/Documentation/Manual/CSharpCompiler.html"
 		env.On("HTTPRequest", url).Return([]byte(tc.HTTPResponse.body), tc.HTTPResponse.err)
 
 		props := properties.Map{}

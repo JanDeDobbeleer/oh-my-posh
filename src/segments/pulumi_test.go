@@ -5,7 +5,6 @@ import (
 	"path/filepath"
 	"testing"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/stretchr/testify/assert"
@@ -95,18 +94,6 @@ description: A Console App
 			WorkSpaceFile:      `{ "stack": "1337" }`,
 			About:              `{ "backend": { "url": "s3://test-pulumi-state-test", "user":"posh-user" } }`,
 		},
-		{
-			Case:               "pulumi URL - cache",
-			ExpectedString:     "\U000f0d46 1337 :: posh-user@s3://test-pulumi-state-test",
-			ExpectedEnabled:    true,
-			HasCommand:         true,
-			HasWorkspaceFolder: true,
-			FetchStack:         true,
-			FetchAbout:         true,
-			JSONConfig:         `{ "name": "oh-my-posh" }`,
-			WorkSpaceFile:      `{ "stack": "1337" }`,
-			AboutCache:         `{ "url": "s3://test-pulumi-state-test", "user":"posh-user" }`,
-		},
 		// Error flows
 		{
 			Case:            "pulumi file JSON error",
@@ -133,19 +120,6 @@ description: A Console App
 			HasCommand:      true,
 			FetchAbout:      true,
 			JSONConfig:      `{ "name": "oh-my-posh" }`,
-		},
-		{
-			Case:               "pulumi URL - cache error",
-			ExpectedString:     "\U000f0d46 1337 :: posh-user@s3://test-pulumi-state-test-output",
-			ExpectedEnabled:    true,
-			HasCommand:         true,
-			HasWorkspaceFolder: true,
-			FetchStack:         true,
-			FetchAbout:         true,
-			JSONConfig:         `{ "name": "oh-my-posh" }`,
-			WorkSpaceFile:      `{ "stack": "1337" }`,
-			AboutCache:         `{`,
-			About:              `{ "backend": { "url": "s3://test-pulumi-state-test-output", "user":"posh-user" } }`,
 		},
 		{
 			Case:               "pulumi URL - about error",
@@ -210,12 +184,6 @@ description: A Console App
 		workspaceFile := "oh-my-posh-c62b7b6786c5c5a85896576e46a25d7c9f888e92-workspace.json"
 		env.On("HasFilesInDir", filepath.Clean("/home/foobar/.pulumi/workspaces"), workspaceFile).Return(len(tc.WorkSpaceFile) > 0)
 		env.On("FileContent", filepath.Clean("/home/foobar/.pulumi/workspaces/"+workspaceFile)).Return(tc.WorkSpaceFile, nil)
-
-		cache := &cache_.Cache{}
-		cache.On("Get", "pulumi-oh-my-posh-1337-c62b7b6786c5c5a85896576e46a25d7c9f888e92-about").Return(tc.AboutCache, len(tc.AboutCache) > 0)
-		cache.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
-
-		env.On("Cache").Return(cache)
 
 		pulumi := &Pulumi{
 			env: env,

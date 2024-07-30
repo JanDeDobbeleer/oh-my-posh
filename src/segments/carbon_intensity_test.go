@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"testing"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -247,26 +246,4 @@ func TestCarbonIntensitySegmentSingle(t *testing.T) {
 		}
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, d), tc.Case)
 	}
-}
-
-func TestCarbonIntensitySegmentFromCache(t *testing.T) {
-	response := `{ "data": [ { "from": "2023-10-27T12:30Z", "to": "2023-10-27T13:00Z", "intensity": { "forecast": 199, "actual": 193, "index": "moderate" } } ] }`
-	expectedString := "CO₂ •193 ↗ 199"
-
-	env := &mock.Environment{}
-	cache := &cache_.Cache{}
-
-	d := &CarbonIntensity{
-		props: properties.Map{},
-		env:   env,
-	}
-
-	env.On("Flags").Return(&runtime.Flags{})
-
-	cache.On("Get", CARBONINTENSITYURL).Return(response, true)
-	cache.On("Set").Return()
-	env.On("Cache").Return(cache)
-
-	assert.Nil(t, d.setStatus())
-	assert.Equal(t, expectedString, renderTemplate(env, d.Template(), d), "should return the cached response")
 }

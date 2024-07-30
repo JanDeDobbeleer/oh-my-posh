@@ -4,7 +4,6 @@ import (
 	"errors"
 	"testing"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
@@ -21,8 +20,6 @@ func TestNSSegment(t *testing.T) {
 		JSONResponse    string
 		ExpectedString  string
 		ExpectedEnabled bool
-		CacheTimeout    int
-		CacheFoundFail  bool
 		Template        string
 		Error           error
 	}{
@@ -94,32 +91,12 @@ func TestNSSegment(t *testing.T) {
 			ExpectedEnabled: false,
 		},
 		{
-			Case: "DoubleDown 50 from cache",
-			JSONResponse: `
-			[{"_id":"619d6fa819696e8ded5b2206","sgv":50,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"DoubleDown","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, //nolint:lll
-			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  "\ue2a1 50↓↓",
-			ExpectedEnabled: true,
-			CacheTimeout:    10,
-		},
-		{
-			Case: "DoubleDown 50 from cache not found",
-			JSONResponse: `
-			[{"_id":"619d6fa819696e8ded5b2206","sgv":50,"date":1637707537000,"dateString":"2021-11-23T22:45:37.000Z","trend":4,"direction":"DoubleDown","device":"share2","type":"sgv","utcOffset":0,"sysTime":"2021-11-23T22:45:37.000Z","mills":1637707537000}]`, //nolint:lll
-			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
-			ExpectedString:  "\ue2a1 50↓↓",
-			ExpectedEnabled: true,
-			CacheTimeout:    10,
-			CacheFoundFail:  true,
-		},
-		{
 			Case: "Error parsing response",
 			JSONResponse: `
 			4tffgt4e4567`,
 			Template:        "\ue2a1 {{.Sgv}}{{.TrendIcon}}",
 			ExpectedString:  "\ue2a1 50↓↓",
 			ExpectedEnabled: false,
-			CacheTimeout:    10,
 		},
 		{
 			Case: "Faulty template",
@@ -128,24 +105,17 @@ func TestNSSegment(t *testing.T) {
 			Template:        "\ue2a1 {{.Sgv}}{{.Burp}}",
 			ExpectedString:  "<.Data.Burp>: can't evaluate field Burp in type template.Data",
 			ExpectedEnabled: true,
-			CacheTimeout:    10,
 		},
 	}
 
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		props := properties.Map{
-			properties.CacheTimeout: tc.CacheTimeout,
-			URL:                     "FAKE",
-			Headers:                 map[string]string{"Fake-Header": "xxxxx"},
+			URL:     "FAKE",
+			Headers: map[string]string{"Fake-Header": "xxxxx"},
 		}
 
-		cache := &cache_.Cache{}
-		cache.On("Get", FAKEAPIURL).Return(tc.JSONResponse, !tc.CacheFoundFail)
-		cache.On("Set", FAKEAPIURL, tc.JSONResponse, tc.CacheTimeout).Return()
-
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(tc.JSONResponse), tc.Error)
-		env.On("Cache").Return(cache)
 
 		ns := &Nightscout{
 			props: props,

@@ -5,7 +5,6 @@ import (
 	"testing"
 	"time"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -58,8 +57,6 @@ func TestBrewfatherSegment(t *testing.T) {
 		BatchReadingsJSONResponse string
 		ExpectedString            string
 		ExpectedEnabled           bool
-		CacheTimeout              int
-		CacheFoundFail            bool
 		Template                  string
 		Error                     error
 	}{
@@ -148,19 +145,13 @@ func TestBrewfatherSegment(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		props := properties.Map{
-			properties.CacheTimeout: tc.CacheTimeout,
-			BFBatchID:               BFFakeBatchID,
-			APIKey:                  "FAKE",
-			BFUserID:                "FAKE",
+			BFBatchID: BFFakeBatchID,
+			APIKey:    "FAKE",
+			BFUserID:  "FAKE",
 		}
-
-		cache := &cache_.Cache{}
-		cache.On("Get", BFCacheKey).Return(nil, false) // cache testing later because cache is a little more complicated than just the single response.
-		// cache.On("Set", BFCacheKey, tc.JSONResponse, tc.CacheTimeout).Return()
 
 		env.On("HTTPRequest", BFBatchURL).Return([]byte(tc.BatchJSONResponse), tc.Error)
 		env.On("HTTPRequest", BFBatchReadingsURL).Return([]byte(tc.BatchReadingsJSONResponse), tc.Error)
-		env.On("Cache").Return(cache)
 		env.On("Flags").Return(&runtime.Flags{})
 
 		ns := &Brewfather{

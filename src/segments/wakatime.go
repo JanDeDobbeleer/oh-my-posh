@@ -40,17 +40,6 @@ func (w *Wakatime) setAPIData() error {
 	if err != nil {
 		return err
 	}
-	cacheTimeout := w.props.GetInt(properties.CacheTimeout, properties.DefaultCacheTimeout)
-	if cacheTimeout > 0 {
-		// check if data stored in cache
-		if val, found := w.env.Cache().Get(url); found {
-			err := json.Unmarshal([]byte(val), &w.wtData)
-			if err != nil {
-				return err
-			}
-			return nil
-		}
-	}
 
 	httpTimeout := w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
@@ -58,14 +47,12 @@ func (w *Wakatime) setAPIData() error {
 	if err != nil {
 		return err
 	}
+
 	err = json.Unmarshal(body, &w.wtData)
 	if err != nil {
 		return err
 	}
 
-	if cacheTimeout > 0 {
-		w.env.Cache().Set(url, string(body), cacheTimeout)
-	}
 	return nil
 }
 

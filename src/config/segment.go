@@ -57,7 +57,7 @@ type Segment struct {
 	Background             color.Ansi     `json:"background,omitempty" toml:"background,omitempty"`
 	Foreground             color.Ansi     `json:"foreground,omitempty" toml:"foreground,omitempty"`
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
-	CacheDuration          int            `json:"cache_duration,omitempty" toml:"cache_duration,omitempty"`
+	CacheDuration          cache.Duration `json:"cache_duration,omitempty" toml:"cache_duration,omitempty"`
 
 	Enabled bool `json:"-" toml:"-"`
 
@@ -153,7 +153,7 @@ func (segment *Segment) isToggled() bool {
 }
 
 func (segment *Segment) restoreCache() bool {
-	if segment.CacheDuration <= 0 {
+	if segment.CacheDuration.IsEmpty() {
 		return false
 	}
 
@@ -182,7 +182,7 @@ func (segment *Segment) restoreCache() bool {
 }
 
 func (segment *Segment) setCache() {
-	if segment.CacheDuration <= 0 {
+	if segment.CacheDuration.IsEmpty() {
 		return
 	}
 
@@ -198,11 +198,11 @@ func (segment *Segment) setCache() {
 }
 
 func (segment *Segment) cacheKey() string {
-	return fmt.Sprintf("segment_cache_%s", segment.Name())
+	return fmt.Sprintf("segment_cache_%s_%s", segment.Name(), segment.env.Pwd())
 }
 
 func (segment *Segment) writerCacheKey() string {
-	return fmt.Sprintf("segment_cache_writer_%s", segment.Name())
+	return fmt.Sprintf("segment_cache_writer_%s_%s", segment.Name(), segment.env.Pwd())
 }
 
 func (segment *Segment) setText() {

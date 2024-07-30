@@ -165,31 +165,6 @@ func (p *Pulumi) getPulumiAbout() {
 		return
 	}
 
-	cacheKey := "pulumi-" + p.Name + "-" + p.Stack + "-" + p.workspaceSHA1 + "-about"
-
-	getAboutCache := func(key string) (*backend, error) {
-		aboutBackend, OK := p.env.Cache().Get(key)
-		if (!OK || len(aboutBackend) == 0) || (OK && len(aboutBackend) == 0) {
-			return nil, fmt.Errorf("no data in cache")
-		}
-
-		var backend *backend
-		err := json.Unmarshal([]byte(aboutBackend), &backend)
-		if err != nil {
-			p.env.DebugF("unable to decode about cache: %s", aboutBackend)
-			p.env.Error(fmt.Errorf("pulling about cache decode error"))
-			return nil, err
-		}
-
-		return backend, nil
-	}
-
-	aboutBackend, err := getAboutCache(cacheKey)
-	if err == nil {
-		p.backend = *aboutBackend
-		return
-	}
-
 	aboutOutput, err := p.env.RunCommand("pulumi", "about", "--json")
 
 	if err != nil {
@@ -213,8 +188,4 @@ func (p *Pulumi) getPulumiAbout() {
 	}
 
 	p.backend = *about.Backend
-
-	cacheTimeout := p.props.GetInt(properties.CacheTimeout, 43800)
-	jso, _ := json.Marshal(about.Backend)
-	p.env.Cache().Set(cacheKey, string(jso), cacheTimeout)
 }

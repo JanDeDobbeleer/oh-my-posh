@@ -197,22 +197,10 @@ func (l *language) hasLanguageFolders() bool {
 // setVersion parses the version string returned by the command
 func (l *language) setVersion() error {
 	var lastError error
-	cacheVersion := l.props.GetBool(CacheVersion, false)
 
 	for _, command := range l.commands {
 		var versionStr string
 		var err error
-
-		versionKey := fmt.Sprintf("%s_version", command.executable)
-		versionURL := fmt.Sprintf("%s_version_url", command.executable)
-
-		if versionStr, OK := l.env.Cache().Get(versionKey); OK {
-			version, _ := command.parse(versionStr)
-			l.version = *version
-			l.version.Executable = command.executable
-			l.version.URL, _ = l.env.Cache().Get(versionURL)
-			return nil
-		}
 
 		if command.getVersion == nil {
 			if !l.env.HasCommand(command.executable) {
@@ -247,12 +235,6 @@ func (l *language) setVersion() error {
 
 		l.buildVersionURL()
 		l.version.Executable = command.executable
-
-		if cacheVersion {
-			timeout := l.props.GetInt(properties.CacheTimeout, 1440)
-			l.env.Cache().Set(versionKey, versionStr, timeout)
-			l.env.Cache().Set(versionURL, l.version.URL, timeout)
-		}
 
 		return nil
 	}

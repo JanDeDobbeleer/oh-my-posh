@@ -6,7 +6,6 @@ import (
 	"net/url"
 	"testing"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
@@ -250,51 +249,4 @@ func TestOWMSegmentIcons(t *testing.T) {
 		assert.Nil(t, o.setStatus())
 		assert.Equal(t, expectedString, renderTemplate(env, "«{{.Weather}} ({{.Temperature}}{{.UnitIcon}})»({{.URL}})", o), tc.Case)
 	}
-}
-
-func TestOWMSegmentFromCacheByGeoName(t *testing.T) {
-	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
-	expectedString := fmt.Sprintf("%s (20°C)", "\ue30d")
-
-	env := &mock.Environment{}
-	cache := &cache_.Cache{}
-	o := &Owm{
-		props: properties.Map{
-			APIKey:   "key",
-			Location: "AMSTERDAM,NL",
-			Units:    "metric",
-		},
-		env: env,
-	}
-	cache.On("Get", "owm_response").Return(response, true)
-	cache.On("Get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key", true)
-	cache.On("Set").Return()
-	env.On("Cache").Return(cache)
-
-	assert.Nil(t, o.setStatus())
-	assert.Equal(t, expectedString, renderTemplate(env, o.Template(), o), "should return the cached response")
-}
-
-func TestOWMSegmentFromCacheWithHyperlinkByGeoName(t *testing.T) {
-	response := fmt.Sprintf(`{"weather":[{"icon":"%s"}],"main":{"temp":20}}`, "01d")
-	expectedString := fmt.Sprintf("«%s (20°C)»(http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key)", "\ue30d")
-
-	env := &mock.Environment{}
-	cache := &cache_.Cache{}
-
-	o := &Owm{
-		props: properties.Map{
-			APIKey:   "key",
-			Location: "AMSTERDAM,NL",
-			Units:    "metric",
-		},
-		env: env,
-	}
-	cache.On("Get", "owm_response").Return(response, true)
-	cache.On("Get", "owm_url").Return("http://api.openweathermap.org/data/2.5/weather?q=AMSTERDAM,NL&units=metric&appid=key", true)
-	cache.On("Set").Return()
-	env.On("Cache").Return(cache)
-
-	assert.Nil(t, o.setStatus())
-	assert.Equal(t, expectedString, renderTemplate(env, "«{{.Weather}} ({{.Temperature}}{{.UnitIcon}})»({{.URL}})", o))
 }

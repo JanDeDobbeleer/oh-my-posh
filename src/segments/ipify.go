@@ -22,7 +22,7 @@ type ipAPI struct {
 
 func (i *ipAPI) Get() (*ipData, error) {
 	url := "https://api.ipify.org?format=json"
-	return http.Do[*ipData](&i.Request, url)
+	return http.Do[*ipData](&i.Request, url, nil)
 }
 
 type IPify struct {
@@ -64,9 +64,8 @@ func (i *IPify) getResult() (string, error) {
 
 func (i *IPify) Init(props properties.Properties, env runtime.Environment) {
 	request := &http.Request{
-		Env:          env,
-		CacheTimeout: props.GetInt(properties.CacheTimeout, 30),
-		HTTPTimeout:  props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+		Env:         env,
+		HTTPTimeout: props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
 	}
 
 	i.api = &ipAPI{

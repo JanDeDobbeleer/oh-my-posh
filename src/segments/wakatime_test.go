@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -17,13 +16,11 @@ import (
 
 func TestWTTrackedTime(t *testing.T) {
 	cases := []struct {
-		Case           string
-		Seconds        int
-		Expected       string
-		Template       string
-		CacheTimeout   int
-		CacheFoundFail bool
-		Error          error
+		Case     string
+		Seconds  int
+		Expected string
+		Template string
+		Error    error
 	}{
 		{
 			Case:     "nothing tracked",
@@ -51,25 +48,15 @@ func TestWTTrackedTime(t *testing.T) {
 			Expected: "2h 45m",
 		},
 		{
-			Case:         "cache 2h 45m",
-			Seconds:      9900,
-			Expected:     "2h 45m",
-			CacheTimeout: 20,
+			Case:     "no cache 2h 45m",
+			Seconds:  9900,
+			Expected: "2h 45m",
 		},
 		{
-			Case:           "no cache 2h 45m",
-			Seconds:        9900,
-			Expected:       "2h 45m",
-			CacheTimeout:   20,
-			CacheFoundFail: true,
-		},
-		{
-			Case:           "api error",
-			Seconds:        2,
-			Expected:       "0s",
-			CacheTimeout:   20,
-			CacheFoundFail: true,
-			Error:          errors.New("api error"),
+			Case:     "api error",
+			Seconds:  2,
+			Expected: "0s",
+			Error:    errors.New("api error"),
 		},
 	}
 
@@ -79,10 +66,6 @@ func TestWTTrackedTime(t *testing.T) {
 
 		env.On("HTTPRequest", FAKEAPIURL).Return([]byte(response), tc.Error)
 
-		mockedCache := &cache_.Cache{}
-		mockedCache.On("Get", FAKEAPIURL).Return(response, !tc.CacheFoundFail)
-		mockedCache.On("Set", FAKEAPIURL, response, tc.CacheTimeout).Return()
-		env.On("Cache").Return(mockedCache)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("Flags").Return(&runtime.Flags{})
 
@@ -92,8 +75,7 @@ func TestWTTrackedTime(t *testing.T) {
 
 		w := &Wakatime{
 			props: properties.Map{
-				properties.CacheTimeout: tc.CacheTimeout,
-				URL:                     FAKEAPIURL,
+				URL: FAKEAPIURL,
 			},
 			env: env,
 		}

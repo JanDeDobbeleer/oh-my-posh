@@ -4,7 +4,6 @@ import (
 	"errors"
 	"testing"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
@@ -81,26 +80,4 @@ func TestLFMSegmentSingle(t *testing.T) {
 		}
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, o), tc.Case)
 	}
-}
-
-func TestLFMSegmentFromCache(t *testing.T) {
-	response := `{"recenttracks":{"track":[{"artist":{"mbid":"","#text":"C.Gambino"},"streamable":"0","name":"Automatic","date":{"uts":"1699350223","#text":"07 Nov 2023, 09:43"}}]}}`
-	expectedString := "\uF04D"
-
-	env := &mock.Environment{}
-	cache := &cache_.Cache{}
-	o := &LastFM{
-		props: properties.Map{
-			APIKey:                  "key",
-			Username:                "KibbeWater",
-			properties.CacheTimeout: 1,
-		},
-		env: env,
-	}
-	cache.On("Get", LFMAPIURL).Return(response, true)
-	cache.On("Set").Return()
-	env.On("Cache").Return(cache)
-
-	assert.Nil(t, o.setStatus())
-	assert.Equal(t, expectedString, renderTemplate(env, o.Template(), o), "should return the cached response")
 }

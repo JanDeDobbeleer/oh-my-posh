@@ -96,27 +96,9 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 		}
 		return result[0], nil
 	}
-	getCacheValue := func(key string) (*NightscoutData, error) {
-		val, found := ns.env.Cache().Get(key)
-		// we got something from the cache
-		if found {
-			if data, err := parseSingleElement([]byte(val)); err == nil {
-				return data, nil
-			}
-		}
-		return nil, errors.New("no data in cache")
-	}
 
 	url := ns.props.GetString(URL, "")
 	httpTimeout := ns.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
-	// natural and understood NS timeout is 5, anything else is unusual
-	cacheTimeout := ns.props.GetInt(properties.CacheTimeout, 5)
-
-	if cacheTimeout > 0 {
-		if data, err := getCacheValue(url); err == nil {
-			return data, nil
-		}
-	}
 
 	headers := ns.props.GetKeyValueMap(Headers, map[string]string{})
 	modifiers := func(request *http2.Request) {
@@ -129,6 +111,7 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	var arr []*NightscoutData
 	err = json.Unmarshal(body, &arr)
 	if err != nil {
@@ -140,10 +123,6 @@ func (ns *Nightscout) getResult() (*NightscoutData, error) {
 		return nil, err
 	}
 
-	if cacheTimeout > 0 {
-		// persist new sugars in cache
-		ns.env.Cache().Set(url, string(body), cacheTimeout)
-	}
 	return data, nil
 }
 

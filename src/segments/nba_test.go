@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
@@ -29,8 +28,6 @@ func TestNBASegment(t *testing.T) {
 		JSONResponse    string
 		ExpectedString  string
 		ExpectedEnabled bool
-		CacheTimeout    int
-		CacheFoundFail  bool
 		TeamName        string
 		DaysOffset      int
 		Error           error
@@ -77,9 +74,8 @@ func TestNBASegment(t *testing.T) {
 	for _, tc := range cases {
 		env := &mock.Environment{}
 		props := properties.Map{
-			properties.CacheTimeout: tc.CacheTimeout,
-			TeamName:                tc.TeamName,
-			DaysOffset:              tc.DaysOffset,
+			TeamName:   tc.TeamName,
+			DaysOffset: tc.DaysOffset,
 		}
 
 		env.On("Error", testify_.Anything)
@@ -100,16 +96,6 @@ func TestNBASegment(t *testing.T) {
 			props: props,
 			env:   env,
 		}
-
-		cachedScheduleKey := fmt.Sprintf("%s%s", tc.TeamName, "schedule")
-		cachedScoreKey := fmt.Sprintf("%s%s", tc.TeamName, "score")
-
-		cache := &cache_.Cache{}
-		cache.On("Get", cachedScheduleKey).Return(nba.getGameNotFoundData(), tc.CacheFoundFail)
-		cache.On("Get", cachedScoreKey).Return(nba.getGameNotFoundData(), tc.CacheFoundFail)
-		cache.On("Set", cachedScheduleKey, nba.getGameNotFoundData(), tc.CacheTimeout).Return()
-		cache.On("Set", cachedScoreKey, nba.getGameNotFoundData(), tc.CacheTimeout).Return()
-		env.On("Cache").Return(cache)
 
 		enabled := nba.Enabled()
 		assert.Equal(t, tc.ExpectedEnabled, enabled, tc.Case)

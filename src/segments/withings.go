@@ -233,9 +233,8 @@ func (w *Withings) Init(props properties.Properties, env runtime.Environment) {
 		AccessToken:     w.props.GetString(properties.AccessToken, ""),
 		RefreshToken:    w.props.GetString(properties.RefreshToken, ""),
 		Request: http.Request{
-			Env:          env,
-			CacheTimeout: w.props.GetInt(properties.CacheTimeout, 30),
-			HTTPTimeout:  w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+			Env:         env,
+			HTTPTimeout: w.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
 		},
 	}
 

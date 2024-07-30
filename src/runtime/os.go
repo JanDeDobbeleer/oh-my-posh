@@ -89,7 +89,12 @@ func (term *Terminal) Init() {
 func (term *Terminal) resolveConfigPath() {
 	defer term.Trace(time.Now())
 
-	if poshTheme := term.Getenv("POSH_THEME"); len(poshTheme) > 0 {
+	// if the config flag is set, we'll use that over POSH_THEME
+	// in our internal shell logic, we'll always use the POSH_THEME
+	// due to not using --config to set the configuration
+	hasConfigFlag := len(term.CmdFlags.Config) > 0
+
+	if poshTheme := term.Getenv("POSH_THEME"); len(poshTheme) > 0 && !hasConfigFlag {
 		term.DebugF("config set using POSH_THEME: %s", poshTheme)
 		term.CmdFlags.Config = poshTheme
 		return

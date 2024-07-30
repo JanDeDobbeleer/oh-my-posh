@@ -136,9 +136,8 @@ func (s *Strava) Init(props properties.Properties, env runtime.Environment) {
 		AccessToken:     s.props.GetString(properties.AccessToken, ""),
 		RefreshToken:    s.props.GetString(properties.RefreshToken, ""),
 		Request: http.Request{
-			Env:          env,
-			CacheTimeout: s.props.GetInt(properties.CacheTimeout, 30),
-			HTTPTimeout:  s.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
+			Env:         env,
+			HTTPTimeout: s.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout),
 		},
 	}
 

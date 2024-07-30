@@ -29,11 +29,8 @@ func TestOauthResult(t *testing.T) {
 		// API response
 		JSONResponse string
 		// Cache
-		CacheJSONResponse     string
-		CacheTimeout          int
 		RefreshTokenFromCache bool
 		AccessTokenFromCache  bool
-		ResponseCacheMiss     bool
 		// Errors
 		Error error
 		// Validations
@@ -95,34 +92,23 @@ func TestOauthResult(t *testing.T) {
 			ExpectedErrorMessage: InvalidRefreshToken,
 		},
 		{
-			Case:              "Cache data",
-			CacheTimeout:      60,
-			CacheJSONResponse: jsonResponse,
-			ExpectedData:      successData,
+			Case:          "Cache data, invalid data",
+			RefreshToken:  "REFRESH_TOKEN",
+			TokenResponse: tokenResponse,
+			JSONResponse:  jsonResponse,
+			ExpectedData:  successData,
 		},
 		{
-			Case:              "Cache data, invalid data",
-			CacheTimeout:      60,
-			RefreshToken:      "REFRESH_TOKEN",
-			CacheJSONResponse: "ERR",
-			TokenResponse:     tokenResponse,
-			JSONResponse:      jsonResponse,
-			ExpectedData:      successData,
-		},
-		{
-			Case:              "Cache data, no cache",
-			CacheTimeout:      60,
-			RefreshToken:      "REFRESH_TOKEN",
-			ResponseCacheMiss: true,
-			TokenResponse:     tokenResponse,
-			JSONResponse:      jsonResponse,
-			ExpectedData:      successData,
+			Case:          "Cache data, no cache",
+			RefreshToken:  "REFRESH_TOKEN",
+			TokenResponse: tokenResponse,
+			JSONResponse:  jsonResponse,
+			ExpectedData:  successData,
 		},
 		{
 			Case:                 "API body failure",
 			AccessToken:          "ACCESSTOKEN",
 			AccessTokenFromCache: true,
-			ResponseCacheMiss:    true,
 			JSONResponse:         "ERR",
 			ExpectedErrorMessage: "invalid character 'E' looking for beginning of value",
 		},
@@ -130,7 +116,6 @@ func TestOauthResult(t *testing.T) {
 			Case:                 "API request failure",
 			AccessToken:          "ACCESSTOKEN",
 			AccessTokenFromCache: true,
-			ResponseCacheMiss:    true,
 			JSONResponse:         "ERR",
 			Error:                fmt.Errorf("no response"),
 			ExpectedErrorMessage: "no response",
@@ -143,7 +128,6 @@ func TestOauthResult(t *testing.T) {
 
 		cache := &mock.Cache{}
 
-		cache.On("Get", url).Return(tc.CacheJSONResponse, !tc.ResponseCacheMiss)
 		cache.On("Get", accessTokenKey).Return(tc.AccessToken, tc.AccessTokenFromCache)
 		cache.On("Get", refreshTokenKey).Return(tc.RefreshToken, tc.RefreshTokenFromCache)
 		cache.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
@@ -162,14 +146,14 @@ func TestOauthResult(t *testing.T) {
 			AccessToken:     tc.AccessToken,
 			RefreshToken:    tc.RefreshToken,
 			Request: Request{
-				Env:          env,
-				CacheTimeout: tc.CacheTimeout,
-				HTTPTimeout:  20,
+				Env:         env,
+				HTTPTimeout: 20,
 			},
 		}
 
 		got, err := OauthResult[*data](oauth, url, nil)
 		assert.Equal(t, tc.ExpectedData, got, tc.Case)
+
 		if len(tc.ExpectedErrorMessage) == 0 {
 			assert.Nil(t, err, tc.Case)
 		} else {

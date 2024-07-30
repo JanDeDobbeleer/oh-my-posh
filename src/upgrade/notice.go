@@ -83,8 +83,7 @@ func Notice(env runtime.Environment, force bool) (string, bool) {
 		return "", false
 	}
 
-	oneWeek := 10080
-	env.Cache().Set(CACHEKEY, latest, oneWeek)
+	env.Cache().Set(CACHEKEY, latest, "1week")
 
 	version := fmt.Sprintf("v%s", build.Version)
 	if latest == version {

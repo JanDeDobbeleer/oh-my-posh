@@ -77,41 +77,19 @@ func (d *CarbonIntensity) Template() string {
 	return " CO₂ {{ .Index.Icon }}{{ .Actual.String }} {{ .TrendIcon }} {{ .Forecast.String }} "
 }
 
-func (d *CarbonIntensity) updateCache(responseBody []byte, url string, cacheTimeoutInMinutes int) {
-	if cacheTimeoutInMinutes > 0 {
-		d.env.Cache().Set(url, string(responseBody), cacheTimeoutInMinutes)
-	}
-}
-
 func (d *CarbonIntensity) getResult() (*CarbonIntensityResponse, error) {
-	cacheTimeoutInMinutes := d.props.GetInt(properties.CacheTimeout, properties.DefaultCacheTimeout)
-
 	response := new(CarbonIntensityResponse)
 	url := "https://api.carbonintensity.org.uk/intensity"
-
-	if cacheTimeoutInMinutes > 0 {
-		cachedValue, foundInCache := d.env.Cache().Get(url)
-
-		if foundInCache {
-			err := json.Unmarshal([]byte(cachedValue), response)
-			if err == nil {
-				return response, nil
-			}
-			// If there was an error, just fall through to refetching
-		}
-	}
 
 	httpTimeout := d.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
 
 	body, err := d.env.HTTPRequest(url, nil, httpTimeout)
 	if err != nil {
-		d.updateCache(body, url, cacheTimeoutInMinutes)
 		return new(CarbonIntensityResponse), err
 	}
 
 	err = json.Unmarshal(body, &response)
 	if err != nil {
-		d.updateCache(body, url, cacheTimeoutInMinutes)
 		return new(CarbonIntensityResponse), err
 	}
 

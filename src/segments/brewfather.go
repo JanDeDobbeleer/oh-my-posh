@@ -198,30 +198,6 @@ func (bf *Brewfather) getBatchStatusIcon(batchStatus string) string {
 }
 
 func (bf *Brewfather) getResult() (*Batch, error) {
-	getFromCache := func(key string) (*Batch, error) {
-		val, found := bf.env.Cache().Get(key)
-		// we got something from the cache
-		if found {
-			var result Batch
-			err := json.Unmarshal([]byte(val), &result)
-			if err == nil {
-				return &result, nil
-			}
-		}
-		return nil, errors.New("no data in cache")
-	}
-
-	putToCache := func(key string, batch *Batch, cacheTimeout int) error {
-		cacheJSON, err := json.Marshal(batch)
-		if err != nil {
-			return err
-		}
-
-		bf.env.Cache().Set(key, string(cacheJSON), cacheTimeout)
-
-		return nil
-	}
-
 	userID := bf.props.GetString(BFUserID, "")
 	if len(userID) == 0 {
 		return nil, errors.New("missing Brewfather user id (user_id)")
@@ -244,18 +220,12 @@ func (bf *Brewfather) getResult() (*Batch, error) {
 	batchReadingsURL := fmt.Sprintf("https://api.brewfather.app/v1/batches/%s/readings", batchID)
 
 	httpTimeout := bf.props.GetInt(properties.HTTPTimeout, properties.DefaultHTTPTimeout)
-	cacheTimeout := bf.props.GetInt(properties.CacheTimeout, 5)
-
-	if cacheTimeout > 0 {
-		if data, err := getFromCache(batchURL); err == nil {
-			return data, nil
-		}
-	}
 
 	// batch
 	addAuthHeader := func(request *http.Request) {
 		request.Header.Add("authorization", authHeader)
 	}
+
 	body, err := bf.env.HTTPRequest(batchURL, nil, httpTimeout, addAuthHeader)
 	if err != nil {
 		return nil, err
@@ -292,10 +262,6 @@ func (bf *Brewfather) getResult() (*Batch, error) {
 		if len(arr) > 1 {
 			batch.TemperatureTrend = arr[0].Temperature - arr[1].Temperature
 		}
-	}
-
-	if cacheTimeout > 0 {
-		_ = putToCache(batchURL, &batch, cacheTimeout)
 	}
 
 	return &batch, nil

@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	"github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 
 	"github.com/stretchr/testify/assert"
 	testify_ "github.com/stretchr/testify/mock"
@@ -35,10 +34,6 @@ func TestRequestResult(t *testing.T) {
 		Case string
 		// API response
 		JSONResponse string
-		// Cache
-		CacheJSONResponse string
-		CacheTimeout      int
-		ResponseCacheMiss bool
 		// Errors
 		Error error
 		// Validations
@@ -49,20 +44,6 @@ func TestRequestResult(t *testing.T) {
 			Case:         "No cache",
 			JSONResponse: jsonResponse,
 			ExpectedData: successData,
-		},
-		{
-			Case:              "Cache",
-			CacheJSONResponse: `{ "hello":"mom" }`,
-			ExpectedData:      &data{Hello: "mom"},
-			CacheTimeout:      10,
-		},
-		{
-			Case:              "Cache miss",
-			ResponseCacheMiss: true,
-			JSONResponse:      jsonResponse,
-			CacheJSONResponse: `{ "hello":"mom" }`,
-			ExpectedData:      successData,
-			CacheTimeout:      10,
 		},
 		{
 			Case:                 "DNS error",
@@ -77,20 +58,12 @@ func TestRequestResult(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		c := &mock.Cache{}
-
-		c.On("Get", url).Return(tc.CacheJSONResponse, !tc.ResponseCacheMiss)
-		c.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
-
 		env := &MockedEnvironment{}
-
-		env.On("Cache").Return(c)
 		env.On("HTTPRequest", url).Return([]byte(tc.JSONResponse), tc.Error)
 
 		request := &Request{
-			Env:          env,
-			CacheTimeout: tc.CacheTimeout,
-			HTTPTimeout:  0,
+			Env:         env,
+			HTTPTimeout: 0,
 		}
 
 		got, err := Do[*data](request, url, nil)

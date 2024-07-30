@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
-	cache_ "github.com/jandedobbeleer/oh-my-posh/src/cache/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
@@ -30,7 +29,6 @@ type languageArgs struct {
 	properties         properties.Properties
 	matchesVersionFile matchesVersionFile
 	inHome             bool
-	cachedVersion      string
 }
 
 func (l *languageArgs) hasvalue(value string, list []string) bool {
@@ -68,11 +66,6 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 	env.On("TemplateCache").Return(&cache.Template{
 		Env: make(map[string]string),
 	})
-
-	c := &cache_.Cache{}
-	c.On("Get", testify_.Anything).Return(args.cachedVersion, len(args.cachedVersion) > 0)
-	c.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
-	env.On("Cache").Return(c)
 
 	if args.properties == nil {
 		args.properties = properties.Map{}
@@ -542,31 +535,6 @@ func TestLanguageHyperlinkTemplatePropertyTakesPriority(t *testing.T) {
 	assert.Equal(t, "https://custom/url/template/1.3", lang.version.URL)
 }
 
-func TestLanguageEnabledCachedVersion(t *testing.T) {
-	props := properties.Map{
-		properties.FetchVersion: true,
-	}
-	args := &languageArgs{
-		commands: []*cmd{
-			{
-				executable: "unicorn",
-				args:       []string{"--version"},
-				regex:      "(?P<version>.*)",
-			},
-		},
-		extensions:        []string{uni, corn},
-		enabledExtensions: []string{uni, corn},
-		enabledCommands:   []string{"unicorn"},
-		version:           universion,
-		cachedVersion:     "1.3.37",
-		properties:        props,
-	}
-	lang := bootStrapLanguageTest(args)
-	assert.True(t, lang.Enabled())
-	assert.Equal(t, "1.3.37", lang.Full, "cached unicorn version is available")
-	assert.Equal(t, "unicorn", lang.Executable, "cached version was found")
-}
-
 type mockedLanguageParams struct {
 	cmd           string
 	versionParam  string
@@ -586,14 +554,10 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, prop
 	})
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 	env.On("Flags").Return(&runtime.Flags{})
+
 	props := properties.Map{
 		properties.FetchVersion: true,
 	}
-
-	c := &cache_.Cache{}
-	c.On("Get", testify_.Anything).Return("", false)
-	c.On("Set", testify_.Anything, testify_.Anything, testify_.Anything)
-	env.On("Cache").Return(c)
 
 	return env, props
 }

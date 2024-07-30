@@ -67,21 +67,7 @@ func (d *Owm) Template() string {
 }
 
 func (d *Owm) getResult() (*owmDataResponse, error) {
-	cacheTimeout := d.props.GetInt(properties.CacheTimeout, properties.DefaultCacheTimeout)
 	response := new(owmDataResponse)
-
-	if cacheTimeout > 0 {
-		val, found := d.env.Cache().Get(CacheKeyResponse)
-		if found {
-			err := json.Unmarshal([]byte(val), response)
-			if err != nil {
-				return nil, err
-			}
-
-			d.URL, _ = d.env.Cache().Get(CacheKeyURL)
-			return response, nil
-		}
-	}
 
 	apikey := properties.OneOf(d.props, ".", APIKey, "apiKey")
 	if len(apikey) == 0 {
@@ -89,7 +75,6 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 	}
 
 	location := d.props.GetString(Location, "De Bilt,NL")
-
 	location = url.QueryEscape(location)
 
 	if len(apikey) == 0 || len(location) == 0 {
@@ -105,16 +90,12 @@ func (d *Owm) getResult() (*owmDataResponse, error) {
 	if err != nil {
 		return new(owmDataResponse), err
 	}
+
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return new(owmDataResponse), err
 	}
 
-	if cacheTimeout > 0 {
-		// persist new forecasts in cache
-		d.env.Cache().Set(CacheKeyResponse, string(body), cacheTimeout)
-		d.env.Cache().Set(CacheKeyURL, d.URL, cacheTimeout)
-	}
 	return response, nil
 }
 

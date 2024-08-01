@@ -521,7 +521,7 @@
           },
           "then": {
             "title": "Project Segment",
-            "description": "https://ohmyposh.dev/docs/segments/project",
+            "description": "https://ohmyposh.dev/docs/segments/system/project",
             "properties": {
               "properties": {
                 "properties": {
@@ -546,7 +546,7 @@
           },
           "then": {
             "title": "NPM Segment",
-            "description": "https://ohmyposh.dev/docs/segments/npm",
+            "description": "https://ohmyposh.dev/docs/segments/cli/npm",
             "properties": {
               "properties": {
                 "properties": {
@@ -654,14 +654,14 @@
           },
           "then": {
             "title": "Azure Segment",
-            "description": "https://ohmyposh.dev/docs/segments/az",
+            "description": "https://ohmyposh.dev/docs/segments/cloud/az",
             "properties": {
               "properties": {
                 "properties": {
                   "source": {
                     "type": "string",
                     "title": "Source",
-                    "description": "https://ohmyposh.dev/docs/segments/az#properties",
+                    "description": "https://ohmyposh.dev/docs/segments/cloud/az#properties",
                     "default": "first_match",
                     "enum": [
                       "first_match",
@@ -684,12 +684,7 @@
           },
           "then": {
             "title": "Azure Developer CLI Segment",
-            "description": "https://ohmyposh.dev/docs/segments/azd",
-            "properties": {
-              "properties": {
-                "properties": { }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/segments/cloud/azd"
           }
         },
         {
@@ -702,7 +697,7 @@
           },
           "then": {
             "title": "Battery Segment",
-            "description": "https://ohmyposh.dev/docs/segments/battery",
+            "description": "https://ohmyposh.dev/docs/segments/system/battery",
             "properties": {
               "properties": {
                 "properties": {
@@ -751,7 +746,7 @@
           },
           "then": {
             "title": "Bazel Segment",
-            "description": "https://ohmyposh.dev/docs/segments/bazel",
+            "description": "https://ohmyposh.dev/docs/segments/cli/bazel",
             "properties": {
               "properties": {
                 "properties": {
@@ -823,7 +818,7 @@
           },
           "then": {
             "title": "Buf Segment",
-            "description": "https://ohmyposh.dev/docs/segments/buf",
+            "description": "https://ohmyposh.dev/docs/segments/cli/buf",
             "properties": {
               "properties": {
                 "properties": {
@@ -876,7 +871,7 @@
           },
           "then": {
             "title": "Bun CLI Segment",
-            "description": "https://ohmyposh.dev/docs/segments/bun",
+            "description": "https://ohmyposh.dev/docs/segments/cli/bun",
             "properties": {
               "properties": {
                 "properties": {
@@ -952,7 +947,7 @@
           },
           "then": {
             "title": "Command Segment",
-            "description": "https://ohmyposh.dev/docs/segments/command",
+            "description": "https://ohmyposh.dev/docs/segments/system/command",
             "properties": {
               "properties": {
                 "properties": {
@@ -989,7 +984,7 @@
           },
           "then": {
             "title": "Connection Segment",
-            "description": "https://ohmyposh.dev/docs/segments/connection",
+            "description": "https://ohmyposh.dev/docs/segments/system/connection",
             "properties": {
               "properties": {
                 "properties": {
@@ -1038,7 +1033,7 @@
           },
           "then": {
             "title": "Cmake Segment",
-            "description": "https://ohmyposh.dev/docs/segments/cmake",
+            "description": "https://ohmyposh.dev/docs/segments/cli/cmake",
             "properties": {
               "properties": {
                 "properties": {
@@ -1090,7 +1085,7 @@
           },
           "then": {
             "title": "Docker Segment",
-            "description": "https://ohmyposh.dev/docs/segments/docker"
+            "description": "https://ohmyposh.dev/docs/segments/cli/docker"
           }
         },
         {
@@ -1103,7 +1098,7 @@
           },
           "then": {
             "title": "Dotnet Segment",
-            "description": "https://ohmyposh.dev/docs/segments/dotnet",
+            "description": "https://ohmyposh.dev/docs/segments/languages/dotnet",
             "properties": {
               "properties": {
                 "properties": {
@@ -1164,7 +1159,7 @@
           },
           "then": {
             "title": "Status Segment",
-            "description": "https://ohmyposh.dev/docs/segments/status",
+            "description": "https://ohmyposh.dev/docs/segments/system/status",
             "properties": {
               "properties": {
                 "properties": {
@@ -1201,7 +1196,7 @@
           },
           "then": {
             "title": "Flutter Segment",
-            "description": "https://ohmyposh.dev/docs/segments/flutter",
+            "description": "https://ohmyposh.dev/docs/segments/cli/flutter",
             "properties": {
               "properties": {
                 "properties": {
@@ -1263,7 +1258,7 @@
           },
           "then": {
             "title": "Fossil Segment",
-            "description": "https://ohmyposh.dev/docs/segments/fossil",
+            "description": "https://ohmyposh.dev/docs/segments/scm/fossil",
             "properties": {
               "properties": {
                 "properties": {
@@ -1285,7 +1280,7 @@
           },
           "then": {
             "title": "Git Segment",
-            "description": "https://ohmyposh.dev/docs/segments/git",
+            "description": "https://ohmyposh.dev/docs/segments/scm/git",
             "properties": {
               "properties": {
                 "properties": {
@@ -1496,7 +1491,7 @@
           },
           "then": {
             "title": "Golang Segment",
-            "description": "https://ohmyposh.dev/docs/segments/golang",
+            "description": "https://ohmyposh.dev/docs/segments/languages/golang",
             "properties": {
               "properties": {
                 "properties": {
@@ -1554,7 +1549,7 @@
           },
           "then": {
             "title": "Dart Segment",
-            "description": "https://ohmyposh.dev/docs/segments/dart",
+            "description": "https://ohmyposh.dev/docs/segments/languages/dart",
             "properties": {
               "properties": {
                 "properties": {
@@ -1616,7 +1611,7 @@
           },
           "then": {
             "title": "Deno CLI Segment",
-            "description": "https://ohmyposh.dev/docs/segments/deno",
+            "description": "https://ohmyposh.dev/docs/segments/cli/deno",
             "properties": {
               "properties": {
                 "properties": {
@@ -1669,7 +1664,7 @@
           },
           "then": {
             "title": "Crystal Segment",
-            "description": "https://ohmyposh.dev/docs/segments/crystal",
+            "description": "https://ohmyposh.dev/docs/segments/languages/crystal",
             "properties": {
               "properties": {
                 "properties": {
@@ -1721,7 +1716,7 @@
           },
           "then": {
             "title": "Julia Segment",
-            "description": "https://ohmyposh.dev/docs/segments/julia",
+            "description": "https://ohmyposh.dev/docs/segments/languages/julia",
             "properties": {
               "properties": {
                 "properties": {
@@ -1772,7 +1767,7 @@
           },
           "then": {
             "title": "Perl Segment",
-            "description": "https://ohmyposh.dev/docs/segments/perl",
+            "description": "https://ohmyposh.dev/docs/segments/languages/perl",
             "properties": {
               "properties": {
                 "properties": {
@@ -1826,7 +1821,7 @@
           },
           "then": {
             "title": "PHP Segment",
-            "description": "https://ohmyposh.dev/docs/segments/php",
+            "description": "https://ohmyposh.dev/docs/segments/languages/php",
             "properties": {
               "properties": {
                 "properties": {
@@ -1880,7 +1875,7 @@
           },
           "then": {
             "title": "Java Segment",
-            "description": "https://ohmyposh.dev/docs/segments/java",
+            "description": "https://ohmyposh.dev/docs/segments/languages/java",
             "properties": {
               "properties": {
                 "properties": {
@@ -1940,7 +1935,7 @@
           },
           "then": {
             "title": "Ruby Segment",
-            "description": "https://ohmyposh.dev/docs/segments/ruby",
+            "description": "https://ohmyposh.dev/docs/segments/languages/ruby",
             "properties": {
               "properties": {
                 "properties": {
@@ -1990,7 +1985,7 @@
           },
           "then": {
             "title": "Rust Segment",
-            "description": "https://ohmyposh.dev/docs/segments/rust",
+            "description": "https://ohmyposh.dev/docs/segments/languages/rust",
             "properties": {
               "properties": {
                 "properties": {
@@ -2040,7 +2035,7 @@
           },
           "then": {
             "title": "XMake Segment",
-            "description": "https://ohmyposh.dev/docs/segments/xmake",
+            "description": "https://ohmyposh.dev/docs/segments/cli/xmake",
             "properties": {
               "properties": {
                 "properties": {
@@ -2091,7 +2086,7 @@
           },
           "then": {
             "title": "Kubectl Segment",
-            "description": "https://ohmyposh.dev/docs/segments/kubectl",
+            "description": "https://ohmyposh.dev/docs/segments/cli/kubectl",
             "properties": {
               "properties": {
                 "properties": {
@@ -2128,7 +2123,7 @@
           },
           "then": {
             "title": "AWS Segment",
-            "description": "https://ohmyposh.dev/docs/segments/aws",
+            "description": "https://ohmyposh.dev/docs/segments/cloud/aws",
             "properties": {
               "properties": {
                 "properties": {
@@ -2153,7 +2148,7 @@
           },
           "then": {
             "title": "Node Segment",
-            "description": "https://ohmyposh.dev/docs/segments/node",
+            "description": "https://ohmyposh.dev/docs/segments/languages/node",
             "properties": {
               "properties": {
                 "properties": {
@@ -2228,7 +2223,7 @@
           },
           "then": {
             "title": "Azure Function Segment",
-            "description": "https://ohmyposh.dev/docs/segments/azfunc",
+            "description": "https://ohmyposh.dev/docs/segments/cloud/azfunc",
             "properties": {
               "properties": {
                 "properties": {
@@ -2259,7 +2254,7 @@
           },
           "then": {
             "title": "Operating System Segment",
-            "description": "https://ohmyposh.dev/docs/segments/os",
+            "description": "https://ohmyposh.dev/docs/segments/system/os",
             "properties": {
               "properties": {
                 "properties": {
@@ -2440,7 +2435,7 @@
           },
           "then": {
             "title": "Path Segment",
-            "description": "https://ohmyposh.dev/docs/segments/path",
+            "description": "https://ohmyposh.dev/docs/segments/system/path",
             "properties": {
               "properties": {
                 "properties": {
@@ -2593,7 +2588,7 @@
           },
           "then": {
             "title": "Python Segment",
-            "description": "https://ohmyposh.dev/docs/segments/python",
+            "description": "https://ohmyposh.dev/docs/segments/languages/python",
             "properties": {
               "properties": {
                 "properties": {
@@ -2671,7 +2666,7 @@
           },
           "then": {
             "title": "Pulumi Segment",
-            "description": "https://ohmyposh.dev/docs/segments/pulumi",
+            "description": "https://ohmyposh.dev/docs/segments/cloud/pulumi",
             "properties": {
               "properties": {
                 "properties": {
@@ -2702,7 +2697,7 @@
           },
           "then": {
             "title": "Quasar Segment",
-            "description": "https://ohmyposh.dev/docs/segments/quasar",
+            "description": "https://ohmyposh.dev/docs/segments/cli/quasar",
             "properties": {
               "properties": {
                 "properties": {
@@ -2757,7 +2752,7 @@
           },
           "then": {
             "title": "Root Segment",
-            "description": "https://ohmyposh.dev/docs/segments/root"
+            "description": "https://ohmyposh.dev/docs/segments/system/root"
           }
         },
         {
@@ -2770,7 +2765,7 @@
           },
           "then": {
             "title": "Sapling Segment",
-            "description": "https://ohmyposh.dev/docs/segments/sapling",
+            "description": "https://ohmyposh.dev/docs/segments/scm/sapling",
             "properties": {
               "properties": {
                 "properties": {
@@ -2801,7 +2796,7 @@
           },
           "then": {
             "title": "Session Segment",
-            "description": "https://ohmyposh.dev/docs/segments/session",
+            "description": "https://ohmyposh.dev/docs/segments/system/session",
             "properties": {
               "properties": {
                 "properties": {
@@ -2826,7 +2821,7 @@
           },
           "then": {
             "title": "Shell Segment",
-            "description": "https://ohmyposh.dev/docs/segments/shell",
+            "description": "https://ohmyposh.dev/docs/segments/system/shell",
             "properties": {
               "properties": {
                 "properties": {
@@ -2851,7 +2846,7 @@
           },
           "then": {
             "title": "Sitecore Segment",
-            "description": "https://ohmyposh.dev/docs/segments/sitecore",
+            "description": "https://ohmyposh.dev/docs/segments/cloud/sitecore",
             "properties": {
               "properties": {
                 "properties": {
@@ -2876,7 +2871,7 @@
           },
           "then": {
             "title": "Spotify Segment",
-            "description": "https://ohmyposh.dev/docs/segments/spotify",
+            "description": "https://ohmyposh.dev/docs/segments/music/spotify",
             "properties": {
               "properties": {
                 "properties": {
@@ -2913,7 +2908,7 @@
           },
           "then": {
             "title": "Terraform Segment",
-            "description": "https://ohmyposh.dev/docs/segments/terraform",
+            "description": "https://ohmyposh.dev/docs/segments/cli/terraform",
             "properties": {
               "properties": {
                 "properties": {
@@ -2938,19 +2933,7 @@
           },
           "then": {
             "title": "Text Segment",
-            "description": "https://ohmyposh.dev/docs/segments/text",
-            "properties": {
-              "properties": {
-                "properties": {
-                  "text": {
-                    "type": "string",
-                    "title": "Text",
-                    "description": "Text/icon to display",
-                    "default": ""
-                  }
-                }
-              }
-            }
+            "description": "https://ohmyposh.dev/docs/segments/system/text"
           }
         },
         {
@@ -2963,7 +2946,7 @@
           },
           "then": {
             "title": "Talosctl Segment",
-            "description": "https://ohmyposh.dev/docs/segments/talosctl"
+            "description": "https://ohmyposh.dev/docs/segments/cli/talosctl"
           }
         },
         {
@@ -2976,7 +2959,7 @@
           },
           "then": {
             "title": "Time Segment",
-            "description": "https://ohmyposh.dev/docs/segments/time",
+            "description": "https://ohmyposh.dev/docs/segments/system/time",
             "properties": {
               "properties": {
                 "properties": {
@@ -3001,7 +2984,7 @@
           },
           "then": {
             "title": "YouTube Music Desktop App Segment",
-            "description": "https://ohmyposh.dev/docs/segments/ytm",
+            "description": "https://ohmyposh.dev/docs/segments/music/ytm",
             "properties": {
               "properties": {
                 "properties": {
@@ -3095,7 +3078,7 @@
           },
           "then": {
             "title": "Elixir Segment",
-            "description": "https://ohmyposh.dev/docs/segments/elixir",
+            "description": "https://ohmyposh.dev/docs/segments/languages/elixir",
             "properties": {
               "properties": {
                 "properties": {
@@ -3147,7 +3130,7 @@
           },
           "then": {
             "title": "Displays the execution time of the previously executed command",
-            "description": "https://ohmyposh.dev/docs/segments/executiontime",
+            "description": "https://ohmyposh.dev/docs/segments/system/executiontime",
             "properties": {
               "properties": {
                 "properties": {
@@ -3195,7 +3178,7 @@
           },
           "then": {
             "title": "Get sysinfo",
-            "description": "https://ohmyposh.dev/docs/segments/sysinfo",
+            "description": "https://ohmyposh.dev/docs/segments/system/sysinfo",
             "properties": {
               "properties": {
                 "properties": {
@@ -3220,7 +3203,7 @@
           },
           "then": {
             "title": "Display training data from Strava",
-            "description": "https://ohmyposh.dev/docs/segments/strava",
+            "description": "https://ohmyposh.dev/docs/segments/health/strava",
             "properties": {
               "properties": {
                 "properties": {
@@ -3290,7 +3273,7 @@
           },
           "then": {
             "title": "SVN Segment",
-            "description": "https://ohmyposh.dev/docs/segments/svn",
+            "description": "https://ohmyposh.dev/docs/segments/scm/svn",
             "properties": {
               "properties": {
                 "properties": {
@@ -3321,7 +3304,7 @@
           },
           "then": {
             "title": "Angular CLI Segment",
-            "description": "https://ohmyposh.dev/docs/segments/angular",
+            "description": "https://ohmyposh.dev/docs/segments/cli/angular",
             "properties": {
               "properties": {
                 "properties": {
@@ -3372,7 +3355,7 @@
           },
           "then": {
             "title": "React Segment",
-            "description": "https://ohmyposh.dev/docs/segments/react",
+            "description": "https://ohmyposh.dev/docs/segments/cli/react",
             "properties": {
               "properties": {
                 "properties": {
@@ -3423,7 +3406,7 @@
           },
           "then": {
             "title": "Nx Segment",
-            "description": "https://ohmyposh.dev/docs/segments/nx",
+            "description": "https://ohmyposh.dev/docs/segments/cli/nx",
             "properties": {
               "properties": {
                 "properties": {
@@ -3475,7 +3458,7 @@
           },
           "then": {
             "title": "OCaml Segment",
-            "description": "https://ohmyposh.dev/docs/segments/ocaml",
+            "description": "https://ohmyposh.dev/docs/segments/languages/ocaml",
             "properties": {
               "properties": {
                 "properties": {
@@ -3561,7 +3544,7 @@
           },
           "then": {
             "title": "Windows Registry Query",
-            "description": "https://ohmyposh.dev/docs/segments/winreg",
+            "description": "https://ohmyposh.dev/docs/segments/system/winreg",
             "properties": {
               "properties": {
                 "properties": {
@@ -3592,7 +3575,7 @@
           },
           "then": {
             "title": "Display activity data from Withings",
-            "description": "https://ohmyposh.dev/docs/segments/withings",
+            "description": "https://ohmyposh.dev/docs/segments/health/withings",
             "properties": {
               "properties": {
                 "properties": {
@@ -3626,7 +3609,7 @@
           },
           "then": {
             "title": "Plastic SCM Segment",
-            "description": "https://ohmyposh.dev/docs/segments/plastic",
+            "description": "https://ohmyposh.dev/docs/segments/scm/plastic",
             "properties": {
               "properties": {
                 "properties": {
@@ -3687,7 +3670,7 @@
           },
           "then": {
             "title": "Brewfather Batch Status",
-            "description": "https://ohmyposh.dev/docs/segments/brewfather",
+            "description": "https://ohmyposh.dev/docs/segments/web/brewfather",
             "properties": {
               "properties": {
                 "properties": {
@@ -3817,7 +3800,7 @@
           },
           "then": {
             "title": "Display your external IP Address",
-            "description": "https://ohmyposh.dev/docs/segments/ipify",
+            "description": "https://ohmyposh.dev/docs/segments/web/ipify",
             "properties": {
               "properties": {
                 "properties": {
@@ -3848,7 +3831,7 @@
           },
           "then": {
             "title": "Haskell Segment",
-            "description": "https://ohmyposh.dev/docs/segments/haskell",
+            "description": "https://ohmyposh.dev/docs/segments/languages/haskell",
             "properties": {
               "properties": {
                 "properties": {
@@ -3915,7 +3898,7 @@
           },
           "then": {
             "title": "Helm segment",
-            "description": "https://ohmyposh.dev/docs/segments/helm",
+            "description": "https://ohmyposh.dev/docs/segments/cli/helm",
             "properties": {
               "properties": {
                 "properties": {
@@ -3937,7 +3920,7 @@
           },
           "then": {
             "title": "UI5 tooling CLI segment",
-            "description": "https://ohmyposh.dev/docs/segments/ui5tooling",
+            "description": "https://ohmyposh.dev/docs/segments/cli/ui5tooling",
             "properties": {
               "properties": {
                 "properties": {
@@ -3988,7 +3971,7 @@
           },
           "then": {
             "title": "Unity Segment",
-            "description": "https://ohmyposh.dev/docs/segments/unity",
+            "description": "https://ohmyposh.dev/docs/segments/cli/unity",
             "properties": {
               "properties": {
                 "properties": {
@@ -4010,7 +3993,7 @@
           },
           "then": {
             "title": "Upgrade Segment",
-            "description": "https://ohmyposh.dev/docs/segments/upgrade",
+            "description": "https://ohmyposh.dev/docs/segments/system/upgrade",
             "properties": {
               "properties": {
                 "properties": {
@@ -4032,7 +4015,7 @@
           },
           "then": {
             "title": "Vala Segment",
-            "description": "https://ohmyposh.dev/docs/segments/vala",
+            "description": "https://ohmyposh.dev/docs/segments/languages/vala",
             "properties": {
               "properties": {
                 "properties": {
@@ -4083,7 +4066,7 @@
           },
           "then": {
             "title": "Clound Foundry CLI segment",
-            "description": "https://ohmyposh.dev/docs/segments/cf",
+            "description": "https://ohmyposh.dev/docs/segments/cloud/cf",
             "properties": {
               "properties": {
                 "properties": {
@@ -4135,7 +4118,7 @@
           },
           "then": {
             "title": "Clound Foundry Target segment",
-            "description": "https://ohmyposh.dev/docs/segments/cftarget",
+            "description": "https://ohmyposh.dev/docs/segments/cloud/cftarget",
             "properties": {
               "properties": {
                 "properties": {
@@ -4164,7 +4147,7 @@
           },
           "then": {
             "title": "Kotlin Segment",
-            "description": "https://ohmyposh.dev/docs/segments/kotlin",
+            "description": "https://ohmyposh.dev/docs/segments/languages/kotlin",
             "properties": {
               "properties": {
                 "properties": {
@@ -4217,7 +4200,7 @@
           },
           "then": {
             "title": "LastFM Segment",
-            "description": "https://ohmyposh.dev/docs/segments/lastfm",
+            "description": "https://ohmyposh.dev/docs/segments/music/lastfm",
             "properties": {
               "properties": {
                 "properties": {
@@ -4266,7 +4249,7 @@
           },
           "then": {
             "title": "Lua Segment",
-            "description": "https://ohmyposh.dev/docs/segments/lua",
+            "description": "https://ohmyposh.dev/docs/segments/languages/lua",
             "properties": {
               "properties": {
                 "properties": {
@@ -4328,7 +4311,7 @@
           },
           "then": {
             "title": "Swift Segment",
-            "description": "https://ohmyposh.dev/docs/segments/swift",
+            "description": "https://ohmyposh.dev/docs/segments/languages/swift",
             "properties": {
               "properties": {
                 "properties": {
@@ -4380,7 +4363,7 @@
           },
           "then": {
             "title": "CDS (SAP CAP) segment",
-            "description": "https://ohmyposh.dev/docs/segments/cds",
+            "description": "https://ohmyposh.dev/docs/segments/cloud/cds",
             "properties": {
               "properties": {
                 "properties": {
@@ -4433,7 +4416,7 @@
           },
           "then": {
             "title": "R Segment",
-            "description": "https://ohmyposh.dev/docs/segments/r",
+            "description": "https://ohmyposh.dev/docs/segments/languages/r",
             "properties": {
               "properties": {
                 "properties": {
@@ -4490,7 +4473,7 @@
           },
           "then": {
             "title": "GCP Segment",
-            "description": "https://ohmyposh.dev/docs/segments/gcp"
+            "description": "https://ohmyposh.dev/docs/segments/cloud/gcp"
           }
         },
         {
@@ -4503,7 +4486,7 @@
           },
           "then": {
             "title": "Firebase Segment",
-            "description": "https://ohmyposh.dev/docs/segments/firebase"
+            "description": "https://ohmyposh.dev/docs/segments/cli/firebase"
           }
         },
         {
@@ -4516,7 +4499,7 @@
           },
           "then": {
             "title": "Display GitVersion segment",
-            "description": "https://ohmyposh.dev/docs/segments/gitversion",
+            "description": "https://ohmyposh.dev/docs/segments/cli/gitversion",
             "properties": {
               "properties": {
                 "properties": {
@@ -4541,7 +4524,7 @@
           },
           "then": {
             "title": "Mercurial Segment",
-            "description": "https://ohmyposh.dev/docs/segments/mercurial",
+            "description": "https://ohmyposh.dev/docs/segments/scm/mercurial",
             "properties": {
               "properties": {
                 "properties": {
@@ -4569,7 +4552,7 @@
           },
           "then": {
             "title": "Display Nightscout segment",
-            "description": "https://ohmyposh.dev/docs/segments/nightscout",
+            "description": "https://ohmyposh.dev/docs/segments/health/nightscout",
             "properties": {
               "properties": {
                 "properties": {
@@ -4612,7 +4595,7 @@
           },
           "then": {
             "title": "Umbraco Segment",
-            "description": "https://ohmyposh.dev/docs/segments/umbraco"
+            "description": "https://ohmyposh.dev/docs/segments/cli/umbraco"
           }
         },
         {
@@ -4625,7 +4608,7 @@
           },
           "then": {
             "title": "PNPM Segment",
-            "description": "https://ohmyposh.dev/docs/segments/pnpm",
+            "description": "https://ohmyposh.dev/docs/segments/cli/pnpm",
             "properties": {
               "properties": {
                 "properties": {
@@ -4674,7 +4657,7 @@
           },
           "then": {
             "title": "Yarn Segment",
-            "description": "https://ohmyposh.dev/docs/segments/yarn",
+            "description": "https://ohmyposh.dev/docs/segments/cli/yarn",
             "properties": {
               "properties": {
                 "properties": {

@@ -75,6 +75,7 @@ func (term *Terminal) Init() {
 	term.sessionCache = initCache(cache.SessionFileName)
 
 	term.resolveConfigPath()
+
 	term.cmdCache = &cache.Command{
 		Commands: maps.NewConcurrent(),
 	}

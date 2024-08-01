@@ -2663,6 +2663,17 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "Yash-Garg",
+      "name": "Yash Garg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/33605526?v=4",
+      "profile": "http://yashgarg.dev",
+      "contributions": [
+        "code",
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -246,7 +246,7 @@ func TestWriteLength(t *testing.T) {
 		{
 			Case:     "Emoji",
 			Input:    " ⏰  ",
-			Expected: 4,
+			Expected: 5,
 			Colors:   &color.Set{Foreground: "black", Background: color.ParentBackground},
 		},
 		{

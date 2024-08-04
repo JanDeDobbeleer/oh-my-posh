@@ -4,13 +4,17 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/log"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/mattn/go-runewidth"
 )
+
+func init() {
+	runewidth.DefaultCondition.EastAsianWidth = false
+}
 
 type style struct {
 	AnchorStart string
@@ -396,7 +400,8 @@ func write(s rune) {
 		}
 	}
 
-	length += utf8.RuneCountInString(string(s))
+	// length += utf8.RuneCountInString(string(s))
+	length += runewidth.RuneWidth(s)
 	lastRune = s
 	builder.WriteRune(s)
 }

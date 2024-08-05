@@ -31,22 +31,17 @@ import (
 )
 
 type Terminal struct {
-	CmdFlags *Flags
-	Var      maps.Simple
-
-	cwd      string
-	host     string
-	cmdCache *cache.Command
-
+	CmdFlags     *Flags
+	Var          maps.Simple
+	cmdCache     *cache.Command
 	deviceCache  *cache.File
 	sessionCache *cache.File
-
-	tmplCache *cache.Template
-	networks  []*Connection
-
+	tmplCache    *cache.Template
+	lsDirMap     maps.Concurrent
+	cwd          string
+	host         string
+	networks     []*Connection
 	sync.RWMutex
-
-	lsDirMap maps.Concurrent
 }
 
 func (term *Terminal) Init() {

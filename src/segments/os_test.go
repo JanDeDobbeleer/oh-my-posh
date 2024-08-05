@@ -15,10 +15,10 @@ func TestOSInfo(t *testing.T) {
 		Case              string
 		ExpectedString    string
 		GOOS              string
-		IsWSL             bool
 		Platform          string
-		DisplayDistroName bool
 		Icon              string
+		IsWSL             bool
+		DisplayDistroName bool
 	}{
 		{
 			Case:           "WSL debian - icon",

@@ -238,10 +238,10 @@ func TestWriteANSIColors(t *testing.T) {
 
 func TestWriteLength(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Expected int
-		Input    string
 		Colors   *color.Set
+		Case     string
+		Input    string
+		Expected int
 	}{
 		{
 			Case:     "Emoji",

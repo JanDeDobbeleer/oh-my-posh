@@ -16,11 +16,13 @@ import (
 
 func TestWTTrackedTime(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Seconds  int
-		Expected string
-		Template string
-		Error    error
+		Error          error
+		Case           string
+		Expected       string
+		Template       string
+		Seconds        int
+		CacheTimeout   int
+		CacheFoundFail bool
 	}{
 		{
 			Case:     "nothing tracked",

@@ -157,8 +157,8 @@ func TestExecuteScript(t *testing.T) {
 	cases := []struct {
 		Case            string
 		Output          string
-		HasScript       bool
 		ExpectedString  string
+		HasScript       bool
 		ExpectedEnabled bool
 	}{
 		{

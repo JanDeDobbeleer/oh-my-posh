@@ -27,16 +27,14 @@ func (s *stravaAPI) GetActivities() ([]*StravaData, error) {
 // segment struct, makes templating easier
 type Strava struct {
 	props properties.Properties
-
+	api   StravaAPI
+	Icon  string
+	Ago   string
+	Error string
+	URL   string
 	StravaData
-	Icon         string
-	Ago          string
 	Hours        int
 	Authenticate bool
-	Error        string
-	URL          string
-
-	api StravaAPI
 }
 
 const (
@@ -54,18 +52,18 @@ const (
 
 // StravaData struct contains the API data
 type StravaData struct {
-	ID                   int       `json:"id"`
-	Type                 string    `json:"type"`
 	StartDate            time.Time `json:"start_date"`
+	Type                 string    `json:"type"`
 	Name                 string    `json:"name"`
+	ID                   int       `json:"id"`
 	Distance             float64   `json:"distance"`
 	Duration             float64   `json:"moving_time"`
-	DeviceWatts          bool      `json:"device_watts"`
 	AverageWatts         float64   `json:"average_watts"`
 	WeightedAverageWatts float64   `json:"weighted_average_watts"`
 	AverageHeartRate     float64   `json:"average_heartrate"`
 	MaxHeartRate         float64   `json:"max_heartrate"`
 	KudosCount           int       `json:"kudos_count"`
+	DeviceWatts          bool      `json:"device_watts"`
 }
 
 func (s *Strava) Template() string {

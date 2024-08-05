@@ -14,9 +14,9 @@ import (
 
 func TestStatusWriterEnabled(t *testing.T) {
 	cases := []struct {
+		Template string
 		Status   int
 		Expected bool
-		Template string
 	}{
 		{Status: 102, Expected: true},
 		{Status: 0, Expected: false},
@@ -49,11 +49,11 @@ func TestStatusWriterEnabled(t *testing.T) {
 func TestFormatStatus(t *testing.T) {
 	cases := []struct {
 		Case       string
-		Status     int
 		PipeStatus string
 		Template   string
 		Separator  string
 		Expected   string
+		Status     int
 	}{
 		{
 			Case:      "No PipeStatus",

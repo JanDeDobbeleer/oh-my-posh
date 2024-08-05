@@ -35,11 +35,11 @@ type version struct {
 }
 
 type cmd struct {
-	executable         string
-	args               []string
-	regex              string
 	getVersion         getVersion
+	executable         string
+	regex              string
 	versionURLTemplate string
+	args               []string
 }
 
 func (c *cmd) parse(versionInfo string) (*version, error) {
@@ -60,25 +60,23 @@ func (c *cmd) parse(versionInfo string) (*version, error) {
 }
 
 type language struct {
-	props              properties.Properties
 	env                runtime.Environment
-	extensions         []string
-	folders            []string
-	commands           []*cmd
-	versionURLTemplate string
-	exitCode           int
+	props              properties.Properties
+	projectRoot        *runtime.FileInfo
 	loadContext        loadContext
 	inContext          inContext
 	matchesVersionFile matchesVersionFile
-	homeEnabled        bool
-	displayMode        string
-	// root is the root folder of the project
-	projectFiles []string
-	projectRoot  *runtime.FileInfo
-
 	version
-	Error    string
-	Mismatch bool
+	displayMode        string
+	Error              string
+	versionURLTemplate string
+	commands           []*cmd
+	projectFiles       []string
+	folders            []string
+	extensions         []string
+	exitCode           int
+	homeEnabled        bool
+	Mismatch           bool
 }
 
 const (

@@ -16,12 +16,14 @@ const (
 
 func TestNSSegment(t *testing.T) {
 	cases := []struct {
+		Error           error
 		Case            string
 		JSONResponse    string
 		ExpectedString  string
-		ExpectedEnabled bool
 		Template        string
-		Error           error
+		CacheTimeout    int
+		ExpectedEnabled bool
+		CacheFoundFail  bool
 	}{
 		{
 			Case: "Flat 150",

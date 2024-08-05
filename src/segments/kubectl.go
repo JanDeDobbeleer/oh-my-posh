@@ -19,12 +19,9 @@ const (
 type Kubectl struct {
 	props properties.Properties
 	env   runtime.Environment
-
-	dirty bool
-
-	Context string
-
 	KubeContext
+	Context string
+	dirty   bool
 }
 
 type KubeConfig struct {

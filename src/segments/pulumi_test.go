@@ -13,26 +13,21 @@ import (
 
 func TestPulumi(t *testing.T) {
 	cases := []struct {
-		Case       string
-		YAMLConfig string
-		JSONConfig string
-
-		HasCommand bool
-
-		FetchStack bool
-		Stack      string
-		StackError error
-
-		HasWorkspaceFolder bool
+		StackError         error
+		AboutError         error
+		About              string
+		YAMLConfig         string
+		JSONConfig         string
+		Case               string
+		ExpectedString     string
+		Stack              string
+		AboutCache         string
 		WorkSpaceFile      string
-
-		FetchAbout bool
-		About      string
-		AboutError error
-		AboutCache string
-
-		ExpectedString  string
-		ExpectedEnabled bool
+		HasCommand         bool
+		FetchAbout         bool
+		HasWorkspaceFolder bool
+		FetchStack         bool
+		ExpectedEnabled    bool
 	}{
 		{
 			Case:            "no pulumi command",

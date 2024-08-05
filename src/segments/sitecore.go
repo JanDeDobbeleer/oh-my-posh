@@ -28,8 +28,8 @@ type EndpointConfig struct {
 }
 
 type UserConfig struct {
-	DefaultEndpoint string                    `json:"defaultEndpoint"`
 	Endpoints       map[string]EndpointConfig `json:"endpoints"`
+	DefaultEndpoint string                    `json:"defaultEndpoint"`
 }
 
 func (s *Sitecore) Enabled() bool {

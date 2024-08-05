@@ -8,10 +8,8 @@ import (
 type SystemInfo struct {
 	props properties.Properties
 	env   runtime.Environment
-
-	Precision int
-
 	runtime.SystemInfo
+	Precision int
 }
 
 const (

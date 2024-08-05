@@ -14,11 +14,11 @@ import (
 
 func TestSpotifyWindowsNative(t *testing.T) {
 	cases := []struct {
+		Error           error
 		Case            string
 		ExpectedString  string
-		ExpectedEnabled bool
 		Title           string
-		Error           error
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "Playing",
@@ -55,11 +55,11 @@ func TestSpotifyWindowsNative(t *testing.T) {
 
 func TestSpotifyWindowsPWA(t *testing.T) {
 	cases := []struct {
+		Error           error
 		Case            string
 		ExpectedString  string
-		ExpectedEnabled bool
 		Title           string
-		Error           error
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "Playing",

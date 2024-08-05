@@ -56,17 +56,17 @@ func TestMercurialEnabledInWorkingDirectory(t *testing.T) {
 
 func TestMercurialGetIdInfo(t *testing.T) {
 	cases := []struct {
+		ExpectedWorking           *MercurialStatus
 		Case                      string
 		LogOutput                 string
 		StatusOutput              string
-		ExpectedWorking           *MercurialStatus
 		ExpectedBranch            string
 		ExpectedChangeSetID       string
 		ExpectedShortID           string
 		ExpectedLocalCommitNumber string
-		ExpectedIsTip             bool
 		ExpectedBookmarks         []string
 		ExpectedTags              []string
+		ExpectedIsTip             bool
 	}{
 		{
 			Case:         "nochanges_tip",

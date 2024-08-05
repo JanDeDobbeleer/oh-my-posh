@@ -16,14 +16,14 @@ type Wakatime struct {
 }
 
 type wtTotals struct {
-	Seconds float64 `json:"seconds"`
 	Text    string  `json:"text"`
+	Seconds float64 `json:"seconds"`
 }
 
 type wtData struct {
-	CumulativeTotal wtTotals `json:"cumulative_total"`
 	Start           string   `json:"start"`
 	End             string   `json:"end"`
+	CumulativeTotal wtTotals `json:"cumulative_total"`
 }
 
 func (w *Wakatime) Template() string {

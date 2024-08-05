@@ -13,13 +13,13 @@ import (
 
 func TestSysInfo(t *testing.T) {
 	cases := []struct {
+		Error          error
 		Case           string
 		ExpectedString string
-		ExpectDisabled bool
+		Template       string
 		SysInfo        runtime.SystemInfo
 		Precision      int
-		Template       string
-		Error          error
+		ExpectDisabled bool
 	}{
 		{
 			Case:           "Error",

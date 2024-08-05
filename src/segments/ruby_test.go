@@ -13,12 +13,12 @@ func TestRuby(t *testing.T) {
 	cases := []struct {
 		Case           string
 		ExpectedString string
+		Version        string
 		HasRbenv       bool
 		HasRvmprompt   bool
 		HasChruby      bool
 		HasAsdf        bool
 		HasRuby        bool
-		Version        string
 		HasRubyFiles   bool
 		HasRakeFile    bool
 		HasGemFile     bool

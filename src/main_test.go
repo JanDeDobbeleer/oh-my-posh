@@ -10,7 +10,7 @@ import (
 func BenchmarkInit(b *testing.B) {
 	cmd := cli.RootCmd
 	// needs to be a non-existing file as we panic otherwise
-	cmd.SetArgs([]string{"init", "fish", "--print", "--config", "err.omp.json"})
+	cmd.SetArgs([]string{"init", "fish", "--print"})
 	out := bytes.NewBufferString("")
 	cmd.SetOut(out)
 
@@ -22,7 +22,7 @@ func BenchmarkInit(b *testing.B) {
 func BenchmarkPrimary(b *testing.B) {
 	cmd := cli.RootCmd
 	// needs to be a non-existing file as we panic otherwise
-	cmd.SetArgs([]string{"print", "primary", "--config", "err.omp.json", "--pwd", "/Users/jan/Code/oh-my-posh/src", "--shell", "fish"})
+	cmd.SetArgs([]string{"print", "primary", "--pwd", "/Users/jan/Code/oh-my-posh/src", "--shell", "fish"})
 	out := bytes.NewBufferString("")
 	cmd.SetOut(out)
 

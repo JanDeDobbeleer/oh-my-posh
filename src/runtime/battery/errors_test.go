@@ -28,14 +28,14 @@ import (
 
 func TestErrors(t *testing.T) {
 	cases := []struct {
-		in  Errors
 		str string
+		in  Errors
 	}{
-		{Errors{nil}, ""},
-		{Errors{errors.New("")}, ""},
-		{Errors{errors.New("t1")}, "t1"},
-		{Errors{errors.New("t2"), errors.New("t3")}, "t2, t3"},
-		{Errors{errors.New("t4"), errors.New("t5")}, "t4, t5"},
+		{"", Errors{nil}},
+		{"", Errors{errors.New("")}},
+		{"t1", Errors{errors.New("t1")}},
+		{"t2, t3", Errors{errors.New("t2"), errors.New("t3")}},
+		{"t4, t5", Errors{errors.New("t4"), errors.New("t5")}},
 	}
 
 	for i, c := range cases {

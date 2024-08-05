@@ -6,9 +6,8 @@ import (
 )
 
 type Bazel struct {
-	language
-
 	Icon string
+	language
 }
 
 const (

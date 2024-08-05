@@ -15,12 +15,12 @@ import (
 func TestAzSegment(t *testing.T) {
 	cases := []struct {
 		Case            string
-		ExpectedEnabled bool
 		ExpectedString  string
-		HasCLI          bool
-		HasPowerShell   bool
 		Template        string
 		Source          string
+		ExpectedEnabled bool
+		HasCLI          bool
+		HasPowerShell   bool
 	}{
 		{
 			Case:            "no config files found",

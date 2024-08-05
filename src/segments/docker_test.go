@@ -15,12 +15,12 @@ func TestDockerSegment(t *testing.T) {
 		value string
 	}
 	cases := []struct {
+		EnvVar          envVar
 		Case            string
 		Expected        string
-		ExpectedEnabled bool
-		EnvVar          envVar
-		HasFiles        bool
 		ConfigFile      string
+		ExpectedEnabled bool
+		HasFiles        bool
 	}{
 		{Case: "DOCKER_MACHINE_NAME", Expected: "alpine", ExpectedEnabled: true, EnvVar: envVar{name: "DOCKER_MACHINE_NAME", value: "alpine"}},
 		{Case: "DOCKER_HOST", Expected: "alpine 2", ExpectedEnabled: true, EnvVar: envVar{name: "DOCKER_HOST", value: "alpine 2"}},

@@ -11,18 +11,18 @@ const (
 )
 
 type poshGit struct {
+	Index        *poshGitStatus `json:"Index"`
+	Working      *poshGitStatus `json:"Working"`
+	RepoName     string         `json:"RepoName"`
+	Branch       string         `json:"Branch"`
+	GitDir       string         `json:"GitDir"`
+	Upstream     string         `json:"Upstream"`
 	StashCount   int            `json:"StashCount"`
 	AheadBy      int            `json:"AheadBy"`
-	Index        *poshGitStatus `json:"Index"`
-	RepoName     string         `json:"RepoName"`
-	HasWorking   bool           `json:"HasWorking"`
-	Branch       string         `json:"Branch"`
-	HasIndex     bool           `json:"HasIndex"`
-	GitDir       string         `json:"GitDir"`
 	BehindBy     int            `json:"BehindBy"`
+	HasWorking   bool           `json:"HasWorking"`
+	HasIndex     bool           `json:"HasIndex"`
 	HasUntracked bool           `json:"HasUntracked"`
-	Working      *poshGitStatus `json:"Working"`
-	Upstream     string         `json:"Upstream"`
 }
 
 type poshGitStatus struct {

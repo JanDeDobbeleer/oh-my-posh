@@ -19,11 +19,11 @@ const (
 )
 
 type MockDirEntry struct {
-	name     string
-	isDir    bool
-	fileMode fs.FileMode
 	fileInfo fs.FileInfo
 	err      error
+	name     string
+	fileMode fs.FileMode
+	isDir    bool
 }
 
 func (m *MockDirEntry) Name() string {
@@ -276,9 +276,9 @@ func TestPackage(t *testing.T) {
 func TestNuspecPackage(t *testing.T) {
 	cases := []struct {
 		Case            string
-		HasFiles        bool
 		FileName        string
 		ExpectedString  string
+		HasFiles        bool
 		ExpectedEnabled bool
 	}{
 		{
@@ -342,9 +342,9 @@ func TestDotnetProject(t *testing.T) {
 	cases := []struct {
 		Case            string
 		FileName        string
-		HasFiles        bool
 		ProjectContents string
 		ExpectedString  string
+		HasFiles        bool
 		ExpectedEnabled bool
 	}{
 		{
@@ -415,8 +415,8 @@ func TestDotnetProject(t *testing.T) {
 func TestPowerShellModuleProject(t *testing.T) {
 	cases := []struct {
 		Case            string
-		HasFiles        bool
 		ExpectedString  string
+		HasFiles        bool
 		ExpectedEnabled bool
 	}{
 		{

@@ -12,11 +12,10 @@ import (
 
 // segment struct, makes templating easier
 type Nightscout struct {
-	props properties.Properties
-	env   runtime.Environment
-
-	NightscoutData
+	props     properties.Properties
+	env       runtime.Environment
 	TrendIcon string
+	NightscoutData
 }
 
 const (
@@ -35,16 +34,16 @@ const (
 
 // NightscoutData struct contains the API data
 type NightscoutData struct {
-	ID         string    `json:"_id"`
-	Sgv        int       `json:"sgv"`
-	Date       int64     `json:"date"`
 	DateString time.Time `json:"dateString"`
-	Trend      int       `json:"trend"`
+	SysTime    time.Time `json:"sysTime"`
+	ID         string    `json:"_id"`
 	Direction  string    `json:"direction"`
 	Device     string    `json:"device"`
 	Type       string    `json:"type"`
+	Sgv        int       `json:"sgv"`
+	Date       int64     `json:"date"`
+	Trend      int       `json:"trend"`
 	UtcOffset  int       `json:"utcOffset"`
-	SysTime    time.Time `json:"sysTime"`
 	Mills      int64     `json:"mills"`
 }
 

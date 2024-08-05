@@ -13,8 +13,8 @@ func TestTalosctlSegment(t *testing.T) {
 	cases := []struct {
 		Case            string
 		ActiveConfig    string
-		ExpectedEnabled bool
 		ExpectedString  string
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "happy path",

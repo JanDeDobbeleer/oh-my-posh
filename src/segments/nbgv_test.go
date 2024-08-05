@@ -12,13 +12,13 @@ import (
 
 func TestNbgv(t *testing.T) {
 	cases := []struct {
+		Error           error
 		Case            string
-		ExpectedEnabled bool
 		ExpectedString  string
 		Response        string
-		HasNbgv         bool
 		Template        string
-		Error           error
+		ExpectedEnabled bool
+		HasNbgv         bool
 	}{
 		{Case: "nbgv not installed"},
 		{Case: "nbgv installed, no version file", HasNbgv: true, Response: "{ \"VersionFileFound\": false }"},

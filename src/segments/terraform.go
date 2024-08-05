@@ -15,9 +15,8 @@ import (
 type Terraform struct {
 	props properties.Properties
 	env   runtime.Environment
-
-	WorkspaceName string
 	TerraformBlock
+	WorkspaceName string
 }
 
 func (tf *Terraform) Template() string {

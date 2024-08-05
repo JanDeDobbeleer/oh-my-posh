@@ -9,9 +9,9 @@ import (
 func TestIsMajorUpgrade(t *testing.T) {
 	cases := []struct {
 		Case           string
-		Expected       bool
 		CurrentVersion string
 		LatestVersion  string
+		Expected       bool
 	}{
 		{Case: "Same version", Expected: false, CurrentVersion: "v3.0.0", LatestVersion: "v3.0.0"},
 		{Case: "Breaking change", Expected: true, CurrentVersion: "v3.0.0", LatestVersion: "v4.0.0"},

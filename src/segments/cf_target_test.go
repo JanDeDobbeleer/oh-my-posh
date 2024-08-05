@@ -15,13 +15,13 @@ import (
 
 func TestCFTargetSegment(t *testing.T) {
 	cases := []struct {
+		CommandError   error
+		FileInfo       *runtime.FileInfo
 		Case           string
 		Template       string
 		ExpectedString string
 		DisplayMode    string
-		FileInfo       *runtime.FileInfo
 		TargetOutput   string
-		CommandError   error
 	}{
 		{
 			Case:         "not logged in to CF account",

@@ -59,9 +59,8 @@ type Segment struct {
 	Newline                bool           `json:"newline,omitempty" toml:"newline,omitempty"`
 	CacheDuration          cache.Duration `json:"cache_duration,omitempty" toml:"cache_duration,omitempty"`
 
-	Enabled bool `json:"-" toml:"-"`
-
-	Text string `json:"-" toml:"-"`
+	Enabled bool   `json:"-" toml:"-"`
+	Text    string `json:"-" toml:"-"`
 
 	env        runtime.Environment
 	writer     SegmentWriter
@@ -205,8 +204,8 @@ func (segment *Segment) writerCacheKey() string {
 	return fmt.Sprintf("segment_cache_writer_%s_%s", segment.Name(), segment.env.Pwd())
 }
 
-func (segment *Segment) setText() {
-	if !segment.Enabled || len(segment.Text) != 0 {
+func (segment *Segment) SetText() {
+	if !segment.Enabled {
 		return
 	}
 

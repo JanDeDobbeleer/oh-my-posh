@@ -3,6 +3,7 @@
 .fleet/
 src/test/umbraco/obj/
 src/keys
+*.prof
 
 # Created by https://www.toptal.com/developers/gitignore/api/node,go,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,go,visualstudiocode

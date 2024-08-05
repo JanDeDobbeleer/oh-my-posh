@@ -79,7 +79,6 @@ func (b *Block) executeSegmentLogic() {
 	}
 
 	b.setEnabledSegments()
-	b.setSegmentsText()
 }
 
 func (b *Block) setEnabledSegments() {
@@ -91,18 +90,6 @@ func (b *Block) setEnabledSegments() {
 		go func(s *Segment) {
 			defer wg.Done()
 			s.SetEnabled(b.env)
-		}(segment)
-	}
-}
-
-func (b *Block) setSegmentsText() {
-	wg := sync.WaitGroup{}
-	wg.Add(len(b.Segments))
-	defer wg.Wait()
-	for _, segment := range b.Segments {
-		go func(s *Segment) {
-			defer wg.Done()
-			s.setText()
 		}(segment)
 	}
 }

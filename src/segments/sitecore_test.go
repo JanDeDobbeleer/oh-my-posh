@@ -15,10 +15,10 @@ func TestSitecoreSegment(t *testing.T) {
 	cases := []struct {
 		Case               string
 		ExpectedString     string
+		UserFileContent    string
 		ExpectedEnabled    bool
 		SitecoreFileExists bool
 		UserFileExists     bool
-		UserFileContent    string
 		DisplayDefault     bool
 	}{
 		{Case: "Disabled, no sitecore.json file and user.json file", ExpectedString: "", ExpectedEnabled: false, SitecoreFileExists: false, UserFileExists: false},

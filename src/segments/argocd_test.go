@@ -73,11 +73,11 @@ func TestArgocdGetConfigPath(t *testing.T) {
 func TestArgocdParseConfig(t *testing.T) {
 	configFile := "/Users/posh/.config/argocd/config"
 	cases := []struct {
+		ExpectedContext ArgocdContext
 		Case            string
 		Config          string
-		Expected        bool
 		ExpectedError   string
-		ExpectedContext ArgocdContext
+		Expected        bool
 	}{
 		{Case: "missing or empty yaml", Config: "", ExpectedError: argocdInvalidYaml},
 		{
@@ -177,14 +177,14 @@ users:
 func TestArgocdSegment(t *testing.T) {
 	configFile := path.Join(poshHome, ".config", "argocd", "config")
 	cases := []struct {
+		ExpectedContext ArgocdContext
 		Case            string
 		Opts            string
 		Config          string
 		Template        string
 		ExpectedString  string
-		ExpectedEnabled bool
 		ExpectedError   string
-		ExpectedContext ArgocdContext
+		ExpectedEnabled bool
 	}{
 		{
 			Case: "default template",

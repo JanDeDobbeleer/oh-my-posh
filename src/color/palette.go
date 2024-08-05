@@ -62,8 +62,8 @@ func isPaletteKey(colorName Ansi) (Ansi, bool) {
 
 // PaletteKeyError records the missing Palette key.
 type PaletteKeyError struct {
-	Key     Ansi
 	palette Palette
+	Key     Ansi
 }
 
 func (p *PaletteKeyError) Error() string {

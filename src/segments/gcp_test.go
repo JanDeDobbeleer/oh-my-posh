@@ -16,8 +16,8 @@ func TestGcpSegment(t *testing.T) {
 		Case            string
 		CfgData         string
 		ActiveConfig    string
-		ExpectedEnabled bool
 		ExpectedString  string
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "happy path",

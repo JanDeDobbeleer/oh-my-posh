@@ -72,13 +72,13 @@ const (
 )
 
 type main struct {
-	spinner  spinner.Model
-	list     *list.Model
-	system   bool
-	font     string
-	state    state
 	err      error
+	list     *list.Model
+	font     string
 	families []string
+	spinner  spinner.Model
+	state    state
+	system   bool
 }
 
 func (m *main) buildFontList(nerdFonts []*Asset) {

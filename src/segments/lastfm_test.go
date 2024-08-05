@@ -17,12 +17,12 @@ const (
 
 func TestLFMSegmentSingle(t *testing.T) {
 	cases := []struct {
+		Error           error
 		Case            string
 		APIJSONResponse string
 		ExpectedString  string
-		ExpectedEnabled bool
 		Template        string
-		Error           error
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "All Defaults",

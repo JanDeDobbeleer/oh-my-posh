@@ -11,23 +11,23 @@ import (
 )
 
 type release struct {
-	URL             string    `json:"url"`
-	HTMLURL         string    `json:"html_url"`
-	AssetsURL       string    `json:"assets_url"`
-	UploadURL       string    `json:"upload_url"`
+	CreatedAt       time.Time `json:"created_at"`
+	PublishedAt     time.Time `json:"published_at"`
+	NodeID          string    `json:"node_id"`
+	TagName         string    `json:"tag_name"`
 	TarballURL      string    `json:"tarball_url"`
 	ZipballURL      string    `json:"zipball_url"`
 	DiscussionURL   string    `json:"discussion_url"`
-	ID              int       `json:"id"`
-	NodeID          string    `json:"node_id"`
-	TagName         string    `json:"tag_name"`
+	HTMLURL         string    `json:"html_url"`
+	URL             string    `json:"url"`
+	UploadURL       string    `json:"upload_url"`
 	TargetCommitish string    `json:"target_commitish"`
 	Name            string    `json:"name"`
 	Body            string    `json:"body"`
-	Draft           bool      `json:"draft"`
+	AssetsURL       string    `json:"assets_url"`
+	ID              int       `json:"id"`
 	Prerelease      bool      `json:"prerelease"`
-	CreatedAt       time.Time `json:"created_at"`
-	PublishedAt     time.Time `json:"published_at"`
+	Draft           bool      `json:"draft"`
 }
 
 const (

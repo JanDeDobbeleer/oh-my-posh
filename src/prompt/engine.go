@@ -15,17 +15,15 @@ import (
 var cycle *color.Cycle = &color.Cycle{}
 
 type Engine struct {
-	Config *config.Config
-	Env    runtime.Environment
-	Plain  bool
-
-	prompt            strings.Builder
-	currentLineLength int
-	rprompt           string
-	rpromptLength     int
-
+	Env                   runtime.Environment
+	Config                *config.Config
 	activeSegment         *config.Segment
 	previousActiveSegment *config.Segment
+	rprompt               string
+	prompt                strings.Builder
+	currentLineLength     int
+	rpromptLength         int
+	Plain                 bool
 }
 
 func (e *Engine) write(text string) {

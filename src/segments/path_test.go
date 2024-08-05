@@ -165,18 +165,18 @@ func TestParent(t *testing.T) {
 
 func TestAgnosterPathStyles(t *testing.T) {
 	cases := []struct {
-		Style               string
-		Expected            string
-		HomePath            string
+		CygpathError        error
+		GOOS                string
+		Shell               string
 		Pswd                string
 		Pwd                 string
 		PathSeparator       string
 		HomeIcon            string
+		HomePath            string
+		Style               string
 		FolderSeparatorIcon string
-		GOOS                string
-		Shell               string
 		Cygpath             string
-		CygpathError        error
+		Expected            string
 		MaxDepth            int
 		MaxWidth            int
 		HideRootLocation    bool
@@ -816,11 +816,11 @@ func TestFullAndFolderPath(t *testing.T) {
 		Pwd                    string
 		Pswd                   string
 		Expected               string
-		DisableMappedLocations bool
 		GOOS                   string
 		PathSeparator          string
-		StackCount             int
 		Template               string
+		StackCount             int
+		DisableMappedLocations bool
 	}{
 		{Style: Full, FolderSeparatorIcon: "|", Pwd: "/", Expected: "/"},
 		{Style: Full, Pwd: "/", Expected: "/"},
@@ -1368,10 +1368,10 @@ func TestAgnosterLeftPath(t *testing.T) {
 
 func TestGetPwd(t *testing.T) {
 	cases := []struct {
-		MappedLocationsEnabled bool
 		Pwd                    string
 		Pswd                   string
 		Expected               string
+		MappedLocationsEnabled bool
 	}{
 		{MappedLocationsEnabled: true, Pwd: homeDir, Expected: "~"},
 		{MappedLocationsEnabled: true, Pwd: homeDir + "-test", Expected: homeDir + "-test"},
@@ -1604,8 +1604,8 @@ func TestReplaceMappedLocations(t *testing.T) {
 	cases := []struct {
 		Case                   string
 		Pwd                    string
-		MappedLocationsEnabled bool
 		Expected               string
+		MappedLocationsEnabled bool
 	}{
 		{Pwd: "/c/l/k/f", Expected: "f"},
 		{Pwd: "/f/g/h", Expected: "/f/g/h"},
@@ -1721,8 +1721,8 @@ func TestSplitPath(t *testing.T) {
 
 func TestGetMaxWidth(t *testing.T) {
 	cases := []struct {
-		Case     string
 		MaxWidth any
+		Case     string
 		Expected int
 	}{
 		{

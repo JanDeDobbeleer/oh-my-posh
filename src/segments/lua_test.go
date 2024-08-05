@@ -13,10 +13,10 @@ func TestLua(t *testing.T) {
 		Case           string
 		ExpectedString string
 		Version        string
-		HasLua         bool
-		HasLuaJit      bool
 		Prefer         string
 		ExpectedURL    string
+		HasLua         bool
+		HasLuaJit      bool
 	}{
 		{
 			Case:           "Lua 5.4.4 - Prefer Lua",

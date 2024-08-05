@@ -28,8 +28,8 @@ type ArgocdContext struct {
 }
 
 type ArgocdConfig struct {
-	Contexts       []*ArgocdContext `yaml:"contexts"`
 	CurrentContext string           `yaml:"current-context"`
+	Contexts       []*ArgocdContext `yaml:"contexts"`
 }
 
 type Argocd struct {

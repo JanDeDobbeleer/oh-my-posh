@@ -323,6 +323,8 @@ func (e *Engine) filterSegments(block *config.Block) {
 	segments := make([]*config.Segment, 0)
 
 	for _, segment := range block.Segments {
+		segment.SetText()
+
 		if !segment.Enabled && segment.ResolveStyle() != config.Accordion {
 			continue
 		}

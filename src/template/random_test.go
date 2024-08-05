@@ -9,8 +9,8 @@ import (
 
 func TestRandom(t *testing.T) {
 	cases := []struct {
-		Case        string
 		Input       interface{}
+		Case        string
 		ShouldError bool
 	}{
 		{

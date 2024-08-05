@@ -13,12 +13,12 @@ import (
 
 func TestFossilStatus(t *testing.T) {
 	cases := []struct {
+		OutputError      error
 		Case             string
 		Output           string
-		OutputError      error
-		HasCommand       bool
 		ExpectedStatus   string
 		ExpectedBranch   string
+		HasCommand       bool
 		ExpectedDisabled bool
 	}{
 		{

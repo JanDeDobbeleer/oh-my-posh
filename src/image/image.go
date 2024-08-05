@@ -109,42 +109,32 @@ func NewRGBColor(ansiColor string) *RGB {
 }
 
 type Renderer struct {
-	AnsiString    string
-	Author        string
-	CursorPadding int
-	RPromptOffset int
-	BgColor       string
-
-	env runtime.Environment
-
-	Path string
-
-	factor float64
-
-	columns int
-	rows    int
-
+	italic                 font.Face
+	env                    runtime.Environment
+	bold                   font.Face
+	regular                font.Face
 	defaultForegroundColor *RGB
+	ansiSequenceRegexMap   map[string]string
+	foregroundColor        *RGB
+	backgroundColor        *RGB
 	defaultBackgroundColor *RGB
-
-	shadowBaseColor string
-	shadowRadius    uint8
-	shadowOffsetX   float64
-	shadowOffsetY   float64
-
-	padding float64
-	margin  float64
-
-	regular     font.Face
-	bold        font.Face
-	italic      font.Face
-	lineSpacing float64
-
-	// canvas switches
-	style                string
-	backgroundColor      *RGB
-	foregroundColor      *RGB
-	ansiSequenceRegexMap map[string]string
+	Path                   string
+	AnsiString             string
+	Author                 string
+	shadowBaseColor        string
+	style                  string
+	BgColor                string
+	shadowOffsetX          float64
+	padding                float64
+	margin                 float64
+	factor                 float64
+	shadowOffsetY          float64
+	rows                   int
+	lineSpacing            float64
+	RPromptOffset          int
+	CursorPadding          int
+	columns                int
+	shadowRadius           uint8
 }
 
 func (ir *Renderer) Init(env runtime.Environment) error {

@@ -15,19 +15,19 @@ import (
 
 func TestPythonTemplate(t *testing.T) {
 	type ResolveSymlink struct {
-		Path string
 		Err  error
+		Path string
 	}
 	cases := []struct {
+		ResolveSymlink   ResolveSymlink
 		Case             string
 		Expected         string
-		ExpectedDisabled bool
 		Template         string
 		VirtualEnvName   string
-		FetchVersion     bool
 		PythonPath       string
-		ResolveSymlink   ResolveSymlink
 		PyvenvCfg        string
+		ExpectedDisabled bool
+		FetchVersion     bool
 	}{
 		{Case: "No virtual env present", FetchVersion: true, Expected: "3.8.4", Template: "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}"},
 		{Case: "Virtual env present", FetchVersion: true, Expected: "VENV 3.8.4", VirtualEnvName: "VENV", Template: "{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}"},
@@ -123,8 +123,8 @@ func TestPythonTemplate(t *testing.T) {
 
 func TestPythonPythonInContext(t *testing.T) {
 	cases := []struct {
-		Expected       bool
 		VirtualEnvName string
+		Expected       bool
 	}{
 		{Expected: true, VirtualEnvName: "VENV"},
 		{Expected: false, VirtualEnvName: ""},
@@ -151,8 +151,8 @@ func TestPythonPythonInContext(t *testing.T) {
 func TestPythonVirtualEnvIgnoreDefaultVenvNames(t *testing.T) {
 	cases := []struct {
 		Expected           string
-		FolderNameFallback bool
 		VirtualEnvName     string
+		FolderNameFallback bool
 	}{
 		{
 			Expected:           "folder",

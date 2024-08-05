@@ -16,8 +16,8 @@ func TestSpotifyWsl(t *testing.T) {
 	cases := []struct {
 		Case            string
 		ExpectedString  string
-		ExpectedEnabled bool
 		ExecOutput      string
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "Spotify not running",

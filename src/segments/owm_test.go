@@ -19,13 +19,13 @@ const (
 
 func TestOWMSegmentSingle(t *testing.T) {
 	cases := []struct {
+		Error               error
 		Case                string
 		Location            string
 		WeatherJSONResponse string
 		ExpectedString      string
-		ExpectedEnabled     bool
 		Template            string
-		Error               error
+		ExpectedEnabled     bool
 	}{
 		{
 			Case:                "Sunny Display",

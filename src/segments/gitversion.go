@@ -8,39 +8,39 @@ import (
 )
 
 type gitVersion struct {
-	Major                           int    `json:"Major"`
-	Minor                           int    `json:"Minor"`
-	Patch                           int    `json:"Patch"`
-	PreReleaseTag                   string `json:"PreReleaseTag"`
+	NuGetVersionV2                  string `json:"NuGetVersionV2"`
+	FullSemVer                      string `json:"FullSemVer"`
+	CommitDate                      string `json:"CommitDate"`
+	AssemblySemVer                  string `json:"AssemblySemVer"`
 	PreReleaseTagWithDash           string `json:"PreReleaseTagWithDash"`
 	PreReleaseLabel                 string `json:"PreReleaseLabel"`
 	PreReleaseLabelWithDash         string `json:"PreReleaseLabelWithDash"`
-	PreReleaseNumber                int    `json:"PreReleaseNumber"`
-	WeightedPreReleaseNumber        int    `json:"WeightedPreReleaseNumber"`
-	BuildMetaData                   int    `json:"BuildMetaData"`
+	AssemblySemFileVer              string `json:"AssemblySemFileVer"`
+	CommitsSinceVersionSourcePadded string `json:"CommitsSinceVersionSourcePadded"`
+	VersionSourceSha                string `json:"VersionSourceSha"`
 	BuildMetaDataPadded             string `json:"BuildMetaDataPadded"`
 	FullBuildMetaData               string `json:"FullBuildMetaData"`
 	MajorMinorPatch                 string `json:"MajorMinorPatch"`
-	SemVer                          string `json:"SemVer"`
+	NuGetVersion                    string `json:"NuGetVersion"`
 	LegacySemVer                    string `json:"LegacySemVer"`
 	LegacySemVerPadded              string `json:"LegacySemVerPadded"`
-	AssemblySemVer                  string `json:"AssemblySemVer"`
-	AssemblySemFileVer              string `json:"AssemblySemFileVer"`
-	FullSemVer                      string `json:"FullSemVer"`
+	PreReleaseTag                   string `json:"PreReleaseTag"`
+	NuGetPreReleaseTag              string `json:"NuGetPreReleaseTag"`
+	SemVer                          string `json:"SemVer"`
 	InformationalVersion            string `json:"InformationalVersion"`
 	BranchName                      string `json:"BranchName"`
 	EscapedBranchName               string `json:"EscapedBranchName"`
 	Sha                             string `json:"Sha"`
 	ShortSha                        string `json:"ShortSha"`
-	NuGetVersionV2                  string `json:"NuGetVersionV2"`
-	NuGetVersion                    string `json:"NuGetVersion"`
 	NuGetPreReleaseTagV2            string `json:"NuGetPreReleaseTagV2"`
-	NuGetPreReleaseTag              string `json:"NuGetPreReleaseTag"`
-	VersionSourceSha                string `json:"VersionSourceSha"`
+	BuildMetaData                   int    `json:"BuildMetaData"`
+	Major                           int    `json:"Major"`
+	PreReleaseNumber                int    `json:"PreReleaseNumber"`
+	Minor                           int    `json:"Minor"`
 	CommitsSinceVersionSource       int    `json:"CommitsSinceVersionSource"`
-	CommitsSinceVersionSourcePadded string `json:"CommitsSinceVersionSourcePadded"`
+	WeightedPreReleaseNumber        int    `json:"WeightedPreReleaseNumber"`
 	UncommittedChanges              int    `json:"UncommittedChanges"`
-	CommitDate                      string `json:"CommitDate"`
+	Patch                           int    `json:"Patch"`
 }
 
 type GitVersion struct {

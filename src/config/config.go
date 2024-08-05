@@ -42,7 +42,6 @@ type Config struct {
 	Version                 int                    `json:"version" toml:"version"`
 	DisableNotice           bool                   `json:"disable_notice,omitempty" toml:"disable_notice,omitempty"`
 	AutoUpgrade             bool                   `json:"auto_upgrade,omitempty" toml:"auto_upgrade,omitempty"`
-	OSC99                   bool                   `json:"osc99,omitempty" toml:"osc99,omitempty"`
 	ShellIntegration        bool                   `json:"shell_integration,omitempty" toml:"shell_integration,omitempty"`
 	MigrateGlyphs           bool                   `json:"-" toml:"-"`
 	PatchPwshBleed          bool                   `json:"patch_pwsh_bleed,omitempty" toml:"patch_pwsh_bleed,omitempty"`

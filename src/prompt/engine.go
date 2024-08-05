@@ -68,7 +68,7 @@ func (e *Engine) canWriteRightBlock(length int, rprompt bool) (int, bool) {
 
 func (e *Engine) pwd() {
 	// only print when relevant
-	if len(e.Config.PWD) == 0 && !e.Config.OSC99 {
+	if len(e.Config.PWD) == 0 {
 		return
 	}
 
@@ -81,12 +81,6 @@ func (e *Engine) pwd() {
 	pwd := e.Env.Pwd()
 	if e.Env.IsCygwin() {
 		pwd = strings.ReplaceAll(pwd, `\`, `/`)
-	}
-
-	// Backwards compatibility for deprecated OSC99
-	if e.Config.OSC99 {
-		e.write(terminal.Pwd(terminal.OSC99, "", "", pwd))
-		return
 	}
 
 	// Allow template logic to define when to enable the PWD (when supported)

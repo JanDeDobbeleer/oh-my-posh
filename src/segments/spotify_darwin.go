@@ -2,8 +2,6 @@
 
 package segments
 
-const spotifyCacheKey = "spotify_music_player"
-
 func (s *Spotify) Enabled() bool {
 	// Check if running
 	running := s.runAppleScriptCommand("application \"Spotify\" is running")

@@ -56,14 +56,12 @@ func TestPrintPWD(t *testing.T) {
 		Pwd      string
 		Shell    string
 		Cygwin   bool
-		OSC99    bool
 	}{
 		{Case: "Empty PWD"},
 		{Case: "OSC99", Config: terminal.OSC99, Expected: "\x1b]9;9;pwd\x1b\\"},
 		{Case: "OSC99 - Elvish", Config: terminal.OSC99, Shell: shell.ELVISH},
 		{Case: "OSC7", Config: terminal.OSC7, Expected: "\x1b]7;file://host/pwd\x1b\\"},
 		{Case: "OSC51", Config: terminal.OSC51, Expected: "\x1b]51;Auser@host:pwd\x1b\\"},
-		{Case: "Deprecated OSC99", OSC99: true, Expected: "\x1b]9;9;pwd\x1b\\"},
 		{Case: "Template (empty)", Config: "{{ if eq .Shell \"pwsh\" }}osc7{{ end }}"},
 		{Case: "Template (non empty)", Config: "{{ if eq .Shell \"shell\" }}osc7{{ end }}", Expected: "\x1b]7;file://host/pwd\x1b\\"},
 		{
@@ -104,8 +102,7 @@ func TestPrintPWD(t *testing.T) {
 		engine := &Engine{
 			Env: env,
 			Config: &config.Config{
-				PWD:   tc.Config,
-				OSC99: tc.OSC99,
+				PWD: tc.Config,
 			},
 		}
 

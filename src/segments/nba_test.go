@@ -24,13 +24,15 @@ func TestNBASegment(t *testing.T) {
 	jsonScoreData := getTestData("nba/score.json")
 
 	cases := []struct {
+		Error           error
 		Case            string
 		JSONResponse    string
 		ExpectedString  string
-		ExpectedEnabled bool
 		TeamName        string
+		CacheTimeout    int
 		DaysOffset      int
-		Error           error
+		ExpectedEnabled bool
+		CacheFoundFail  bool
 	}{
 		{
 			Case:            "Team (Home Team) Scheduled Game",

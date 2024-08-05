@@ -16,9 +16,9 @@ import (
 )
 
 type ProjectItem struct {
+	Fetcher func(item ProjectItem) *ProjectData
 	Name    string
 	Files   []string
-	Fetcher func(item ProjectItem) *ProjectData
 }
 
 type ProjectData struct {
@@ -54,11 +54,9 @@ type NuSpec struct {
 type Project struct {
 	props properties.Properties
 	env   runtime.Environment
-
-	projects []*ProjectItem
-	Error    string
-
 	ProjectData
+	Error    string
+	projects []*ProjectItem
 }
 
 func (n *Project) Enabled() bool {

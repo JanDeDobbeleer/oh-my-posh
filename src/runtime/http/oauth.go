@@ -31,14 +31,12 @@ func (a *OAuthError) Error() string {
 }
 
 type OAuthRequest struct {
-	Request
-
 	AccessTokenKey  string
 	RefreshTokenKey string
 	SegmentName     string
-
-	RefreshToken string
-	AccessToken  string
+	RefreshToken    string
+	AccessToken     string
+	Request
 }
 
 func (o *OAuthRequest) getAccessToken() (string, error) {

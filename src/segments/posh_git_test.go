@@ -15,9 +15,9 @@ func TestPoshGitSegment(t *testing.T) {
 	cases := []struct {
 		Case              string
 		PoshGitJSON       string
-		FetchUpstreamIcon bool
 		Template          string
 		ExpectedString    string
+		FetchUpstreamIcon bool
 		ExpectedEnabled   bool
 	}{
 		{

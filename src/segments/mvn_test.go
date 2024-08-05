@@ -15,8 +15,8 @@ func TestMvn(t *testing.T) {
 		Case           string
 		ExpectedString string
 		MvnVersion     string
-		HasMvnw        bool
 		MvnwVersion    string
+		HasMvnw        bool
 	}{
 		{
 			Case:           "Maven version",

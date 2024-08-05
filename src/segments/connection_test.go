@@ -19,9 +19,9 @@ func TestConnection(t *testing.T) {
 	cases := []struct {
 		Case            string
 		ExpectedString  string
-		ExpectedEnabled bool
 		ConnectionType  string
 		Connections     []*connectionResponse
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "WiFi only, enabled",

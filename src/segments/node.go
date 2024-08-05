@@ -10,9 +10,8 @@ import (
 )
 
 type Node struct {
-	language
-
 	PackageManagerIcon string
+	language
 }
 
 const (

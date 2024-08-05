@@ -21,21 +21,19 @@ func TestOauthResult(t *testing.T) {
 	successData := &data{Hello: "world"}
 
 	cases := []struct {
-		Case string
-		// tokens
-		AccessToken   string
-		RefreshToken  string
-		TokenResponse string
-		// API response
-		JSONResponse string
-		// Cache
-		RefreshTokenFromCache bool
+		Error                 error
+		ExpectedData          *data
+		AccessToken           string
+		RefreshToken          string
+		TokenResponse         string
+		JSONResponse          string
+		CacheJSONResponse     string
+		Case                  string
+		ExpectedErrorMessage  string
+		CacheTimeout          int
+		ResponseCacheMiss     bool
 		AccessTokenFromCache  bool
-		// Errors
-		Error error
-		// Validations
-		ExpectedErrorMessage string
-		ExpectedData         *data
+		RefreshTokenFromCache bool
 	}{
 		{
 			Case:                 "No initial tokens",

@@ -19,15 +19,15 @@ const (
 )
 
 type languageArgs struct {
+	expectedError      error
+	properties         properties.Properties
+	matchesVersionFile matchesVersionFile
 	version            string
+	versionURLTemplate string
 	extensions         []string
 	enabledExtensions  []string
 	commands           []*cmd
 	enabledCommands    []string
-	versionURLTemplate string
-	expectedError      error
-	properties         properties.Properties
-	matchesVersionFile matchesVersionFile
 	inHome             bool
 }
 

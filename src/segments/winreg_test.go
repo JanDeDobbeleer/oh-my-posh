@@ -13,13 +13,13 @@ import (
 
 func TestWinReg(t *testing.T) {
 	cases := []struct {
+		Err             error
+		getWRKVOutput   *runtime.WindowsRegistryValue
 		CaseDescription string
 		Path            string
 		Fallback        string
-		ExpectedSuccess bool
 		ExpectedValue   string
-		getWRKVOutput   *runtime.WindowsRegistryValue
-		Err             error
+		ExpectedSuccess bool
 	}{
 		{
 			CaseDescription: "Error",

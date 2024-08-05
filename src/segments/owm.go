@@ -12,14 +12,13 @@ import (
 )
 
 type Owm struct {
-	props properties.Properties
-	env   runtime.Environment
-
-	Temperature int
+	props       properties.Properties
+	env         runtime.Environment
 	Weather     string
 	URL         string
 	units       string
 	UnitIcon    string
+	Temperature int
 }
 
 const (

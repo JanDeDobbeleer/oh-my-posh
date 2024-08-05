@@ -17,11 +17,11 @@ func TestRenderTemplate(t *testing.T) {
 		Name string
 	}
 	cases := []struct {
+		Context     any
 		Case        string
 		Expected    string
 		Template    string
 		ShouldError bool
-		Context     any
 	}{
 		{
 			Case:     "dot literal",
@@ -185,12 +185,12 @@ func TestRenderTemplate(t *testing.T) {
 
 func TestRenderTemplateEnvVar(t *testing.T) {
 	cases := []struct {
+		Context     any
+		Env         map[string]string
 		Case        string
 		Expected    string
 		Template    string
 		ShouldError bool
-		Env         map[string]string
-		Context     any
 	}{
 		{
 			Case:        "nil struct with env var",

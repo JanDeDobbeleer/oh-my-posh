@@ -15,11 +15,13 @@ import (
 
 func TestUpgrade(t *testing.T) {
 	cases := []struct {
+		Error           error
 		Case            string
-		ExpectedEnabled bool
 		CurrentVersion  string
 		LatestVersion   string
-		Error           error
+		CachedVersion   string
+		ExpectedEnabled bool
+		HasCache        bool
 	}{
 		{
 			Case:            "Should upgrade",

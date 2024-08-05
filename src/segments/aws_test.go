@@ -14,7 +14,6 @@ func TestAWSSegment(t *testing.T) {
 	cases := []struct {
 		Case            string
 		ExpectedString  string
-		ExpectedEnabled bool
 		Profile         string
 		DefaultProfile  string
 		Vault           string
@@ -22,6 +21,7 @@ func TestAWSSegment(t *testing.T) {
 		DefaultRegion   string
 		ConfigFile      string
 		Template        string
+		ExpectedEnabled bool
 		DisplayDefault  bool
 	}{
 		{Case: "enabled with default user", ExpectedString: "default@eu-west", Region: "eu-west", ExpectedEnabled: true, DisplayDefault: true},

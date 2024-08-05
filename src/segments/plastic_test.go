@@ -69,9 +69,9 @@ func TestPlasticGetCmOutputForCommand(t *testing.T) {
 func TestPlasticStatusBehind(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Expected bool
 		Status   string
 		Head     string
+		Expected bool
 	}{
 		{
 			Case:     "Not behind",
@@ -97,8 +97,8 @@ func TestPlasticStatusBehind(t *testing.T) {
 func TestPlasticStatusChanged(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Expected bool
 		Status   string
+		Expected bool
 	}{
 		{
 			Case:     "No changes",
@@ -164,8 +164,8 @@ func TestPlasticStatusCounts(t *testing.T) {
 func TestPlasticMergePending(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Expected bool
 		Status   string
+		Expected bool
 	}{
 		{
 			Case:     "No pending merge",
@@ -188,10 +188,10 @@ func TestPlasticMergePending(t *testing.T) {
 func TestPlasticParseIntPattern(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Expected int
 		Text     string
 		Pattern  string
 		Name     string
+		Expected int
 		Default  int
 	}{
 		{
@@ -287,10 +287,10 @@ func TestPlasticStatus(t *testing.T) {
 
 func TestPlasticTemplateString(t *testing.T) {
 	cases := []struct {
+		Plastic  *Plastic
 		Case     string
 		Expected string
 		Template string
-		Plastic  *Plastic
 	}{
 		{
 			Case:     "Default template",

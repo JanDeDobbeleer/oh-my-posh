@@ -15,7 +15,6 @@ type Nbgv struct {
 }
 
 type VersionInfo struct {
-	VersionFileFound             bool   `json:"VersionFileFound"`
 	Version                      string `json:"Version"`
 	AssemblyVersion              string `json:"AssemblyVersion"`
 	AssemblyInformationalVersion string `json:"AssemblyInformationalVersion"`
@@ -23,6 +22,7 @@ type VersionInfo struct {
 	ChocolateyPackageVersion     string `json:"ChocolateyPackageVersion"`
 	NpmPackageVersion            string `json:"NpmPackageVersion"`
 	SimpleVersion                string `json:"SimpleVersion"`
+	VersionFileFound             bool   `json:"VersionFileFound"`
 }
 
 func (n *Nbgv) Template() string {

@@ -19,11 +19,11 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		UserName        string
 		DefaultUserName string
 		ComputerName    string
-		SSHSession      bool
-		Root            bool
 		Template        string
 		WhoAmI          string
 		Platform        string
+		SSHSession      bool
+		Root            bool
 	}{
 		{
 			Case:           "user and computer",

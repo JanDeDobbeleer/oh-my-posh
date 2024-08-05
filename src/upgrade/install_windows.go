@@ -73,13 +73,13 @@ func updateRegistry(version, executable string) {
 // getRegistryKey tries all known registry paths to find the one we need to adjust (if any)
 func getRegistryKey(installLocation string) (registry.Key, error) {
 	knownRegistryPaths := []struct {
-		Key  registry.Key
 		Path string
+		Key  registry.Key
 	}{
-		{registry.CURRENT_USER, `Software\Microsoft\Windows\CurrentVersion\Uninstall`},
-		{registry.CURRENT_USER, `Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall`},
-		{registry.LOCAL_MACHINE, `Software\Microsoft\Windows\CurrentVersion\Uninstall`},
-		{registry.LOCAL_MACHINE, `Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall`},
+		{`Software\Microsoft\Windows\CurrentVersion\Uninstall`, registry.CURRENT_USER},
+		{`Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall`, registry.CURRENT_USER},
+		{`Software\Microsoft\Windows\CurrentVersion\Uninstall`, registry.LOCAL_MACHINE},
+		{`Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall`, registry.LOCAL_MACHINE},
 	}
 
 	for _, path := range knownRegistryPaths {

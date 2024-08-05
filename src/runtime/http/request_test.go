@@ -31,14 +31,14 @@ func TestRequestResult(t *testing.T) {
 	url := "https://google.com?q=hello"
 
 	cases := []struct {
-		Case string
-		// API response
-		JSONResponse string
-		// Errors
-		Error error
-		// Validations
-		ExpectedErrorMessage string
+		Error                error
 		ExpectedData         *data
+		Case                 string
+		JSONResponse         string
+		CacheJSONResponse    string
+		ExpectedErrorMessage string
+		CacheTimeout         int
+		ResponseCacheMiss    bool
 	}{
 		{
 			Case:         "No cache",

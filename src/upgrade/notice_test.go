@@ -15,14 +15,14 @@ import (
 
 func TestCanUpgrade(t *testing.T) {
 	cases := []struct {
+		Error          error
 		Case           string
-		Expected       bool
 		CurrentVersion string
 		LatestVersion  string
-		Error          error
-		Cache          bool
 		GOOS           string
 		Installer      string
+		Expected       bool
+		Cache          bool
 	}{
 		{Case: "Up to date", CurrentVersion: "3.0.0", LatestVersion: "v3.0.0"},
 		{Case: "Outdated Windows", Expected: true, CurrentVersion: "3.0.0", LatestVersion: "v3.0.1", GOOS: runtime.WINDOWS},

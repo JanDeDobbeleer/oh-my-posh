@@ -94,12 +94,12 @@ func TestShouldIncludeFolder(t *testing.T) {
 func TestGetColors(t *testing.T) {
 	cases := []struct {
 		Case       string
-		Background bool
 		Expected   color.Ansi
-		Templates  []string
 		Default    color.Ansi
 		Region     string
 		Profile    string
+		Templates  []string
+		Background bool
 	}{
 		{Case: "No template - foreground", Expected: "color", Background: false, Default: "color"},
 		{Case: "No template - background", Expected: "color", Background: true, Default: "color"},

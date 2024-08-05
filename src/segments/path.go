@@ -15,8 +15,8 @@ import (
 
 type Folder struct {
 	Name    string
-	Display bool
 	Path    string
+	Display bool
 }
 
 type Folders []*Folder
@@ -32,25 +32,21 @@ func (f Folders) List() []string {
 }
 
 type Path struct {
-	props properties.Properties
-	env   runtime.Environment
-
-	pwd      string
-	root     string
-	relative string
-	folders  Folders
-	// After `setPaths` is called, the above 4 fields should remain unchanged to preserve the original path info.
-
-	cygPath         bool
-	windowsPath     bool
-	pathSeparator   string
+	props           properties.Properties
+	env             runtime.Environment
 	mappedLocations map[string]string
-
-	Path       string
-	StackCount int
-	Location   string
-	Writable   bool
-	RootDir    bool
+	root            string
+	relative        string
+	pwd             string
+	Location        string
+	pathSeparator   string
+	Path            string
+	Folders         Folders
+	StackCount      int
+	windowsPath     bool
+	Writable        bool
+	RootDir         bool
+	cygPath         bool
 }
 
 const (
@@ -142,7 +138,7 @@ func (pt *Path) Enabled() bool {
 
 func (pt *Path) setPaths() {
 	defer func() {
-		pt.folders = pt.splitPath()
+		pt.Folders = pt.splitPath()
 	}()
 
 	displayCygpath := func() bool {
@@ -177,7 +173,7 @@ func (pt *Path) Parent() string {
 		return ""
 	}
 
-	folders := pt.folders.List()
+	folders := pt.Folders.List()
 	if len(folders) == 0 {
 		// No parent.
 		return ""
@@ -300,7 +296,7 @@ func (pt *Path) getFolderSeparator() string {
 
 func (pt *Path) getMixedPath() string {
 	root := pt.root
-	folders := pt.folders
+	folders := pt.Folders
 	threshold := int(pt.props.GetFloat64(MixedThreshold, 4))
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 
@@ -326,7 +322,7 @@ func (pt *Path) getMixedPath() string {
 
 func (pt *Path) getAgnosterPath() string {
 	root := pt.root
-	folders := pt.folders
+	folders := pt.Folders
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 
 	if pt.isRootFS(root) {
@@ -350,7 +346,7 @@ func (pt *Path) getAgnosterPath() string {
 
 func (pt *Path) getAgnosterLeftPath() string {
 	root := pt.root
-	folders := pt.folders
+	folders := pt.Folders
 	folderIcon := pt.props.GetString(FolderIcon, "..")
 
 	if pt.isRootFS(root) {
@@ -391,7 +387,7 @@ func (pt *Path) getRelevantLetter(folder *Folder) string {
 
 func (pt *Path) getLetterPath() string {
 	root := pt.root
-	folders := pt.folders
+	folders := pt.Folders
 
 	if pt.isRootFS(root) {
 		root = folders[0].Name
@@ -416,7 +412,7 @@ func (pt *Path) getLetterPath() string {
 
 func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 	root := pt.root
-	folders := pt.folders
+	folders := pt.Folders
 	separator := pt.getFolderSeparator()
 
 	if pt.isRootFS(root) {
@@ -484,7 +480,7 @@ func (pt *Path) getUniqueLettersPath(maxWidth int) string {
 
 func (pt *Path) getAgnosterFullPath() string {
 	root := pt.root
-	folders := pt.folders
+	folders := pt.Folders
 
 	if pt.isRootFS(root) {
 		root = folders[0].Name
@@ -496,7 +492,7 @@ func (pt *Path) getAgnosterFullPath() string {
 
 func (pt *Path) getAgnosterShortPath() string {
 	root := pt.root
-	folders := pt.folders
+	folders := pt.Folders
 
 	if pt.isRootFS(root) {
 		root = folders[0].Name
@@ -531,11 +527,11 @@ func (pt *Path) getAgnosterShortPath() string {
 }
 
 func (pt *Path) getFullPath() string {
-	return pt.colorizePath(pt.root, pt.folders.List())
+	return pt.colorizePath(pt.root, pt.Folders.List())
 }
 
 func (pt *Path) getFolderPath() string {
-	folderName := pt.folders[len(pt.folders)-1].Name
+	folderName := pt.Folders[len(pt.Folders)-1].Name
 	return pt.colorizePath(folderName, nil)
 }
 

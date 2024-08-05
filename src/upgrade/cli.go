@@ -38,12 +38,11 @@ func setState(message state) {
 type stateMsg state
 
 type model struct {
-	spinner spinner.Model
-	message string
-	state   state
 	error   error
-
-	tag string
+	message string
+	tag     string
+	spinner spinner.Model
+	state   state
 }
 
 func initialModel(tag string) *model {

@@ -13,8 +13,8 @@ import (
 func TestScmStatusChanged(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Expected bool
 		Status   ScmStatus
+		Expected bool
 	}{
 		{
 			Case:     "No changes",
@@ -143,12 +143,12 @@ func TestHasCommand(t *testing.T) {
 
 func TestFormatBranch(t *testing.T) {
 	cases := []struct {
+		MappedBranches   map[string]string
 		Case             string
 		Expected         string
 		Input            string
-		MappedBranches   map[string]string
-		BranchMaxLength  int
 		TruncateSymbol   string
+		BranchMaxLength  int
 		NoFullBranchPath bool
 	}{
 		{

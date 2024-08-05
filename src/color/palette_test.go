@@ -19,8 +19,8 @@ var (
 type TestPaletteRequest struct {
 	Case          string
 	Request       Ansi
-	ExpectedError bool
 	Expected      Ansi
+	ExpectedError bool
 }
 
 func TestPaletteShouldResolveColorFromTestPalette(t *testing.T) {

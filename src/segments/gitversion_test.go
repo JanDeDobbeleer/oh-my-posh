@@ -12,13 +12,16 @@ import (
 
 func TestGitversion(t *testing.T) {
 	cases := []struct {
+		CacheError      error
+		CommandError    error
 		Case            string
-		ExpectedEnabled bool
 		ExpectedString  string
 		Response        string
-		HasGitversion   bool
+		CacheResponse   string
 		Template        string
-		CommandError    error
+		CacheTimeout    int
+		ExpectedEnabled bool
+		HasGitversion   bool
 	}{
 		{Case: "GitVersion not installed"},
 		{Case: "GitVersion installed, no GitVersion.yml file", HasGitversion: true, Response: "Cannot find the .git directory"},

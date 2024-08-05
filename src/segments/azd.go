@@ -17,8 +17,8 @@ type Azd struct {
 }
 
 type azdConfig struct {
-	Version            int    `json:"version"`
 	DefaultEnvironment string `json:"defaultEnvironment"`
+	Version            int    `json:"version"`
 }
 
 func (t *Azd) Template() string {

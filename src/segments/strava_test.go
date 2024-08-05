@@ -28,12 +28,12 @@ func TestStravaSegment(t *testing.T) {
 	fourDaysAgo := time.Now().Add(-h)
 
 	cases := []struct {
+		APIError        error
 		Case            string
 		ExpectedString  string
-		ExpectedEnabled bool
 		Template        string
-		APIError        error
 		StravaData      []*StravaData
+		ExpectedEnabled bool
 	}{
 		{
 			Case: "Ride 6",

@@ -34,24 +34,19 @@ const (
 
 // Block defines a part of the prompt with optional segments
 type Block struct {
-	Type      BlockType      `json:"type,omitempty" toml:"type,omitempty"`
-	Alignment BlockAlignment `json:"alignment,omitempty" toml:"alignment,omitempty"`
-	Segments  []*Segment     `json:"segments,omitempty" toml:"segments,omitempty"`
-	Newline   bool           `json:"newline,omitempty" toml:"newline,omitempty"`
-	Filler    string         `json:"filler,omitempty" toml:"filler,omitempty"`
-	Overflow  Overflow       `json:"overflow,omitempty" toml:"overflow,omitempty"`
-
-	LeadingDiamond  string `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
-	TrailingDiamond string `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
-
-	// Deprecated: keep the logic for legacy purposes
-	HorizontalOffset int `json:"horizontal_offset,omitempty" toml:"horizontal_offset,omitempty"`
-	VerticalOffset   int `json:"vertical_offset,omitempty" toml:"vertical_offset,omitempty"`
-
-	MaxWidth int `json:"max_width,omitempty" toml:"max_width,omitempty"`
-	MinWidth int `json:"min_width,omitempty" toml:"min_width,omitempty"`
-
-	env runtime.Environment
+	env              runtime.Environment
+	Type             BlockType      `json:"type,omitempty" toml:"type,omitempty"`
+	Alignment        BlockAlignment `json:"alignment,omitempty" toml:"alignment,omitempty"`
+	Filler           string         `json:"filler,omitempty" toml:"filler,omitempty"`
+	Overflow         Overflow       `json:"overflow,omitempty" toml:"overflow,omitempty"`
+	LeadingDiamond   string         `json:"leading_diamond,omitempty" toml:"leading_diamond,omitempty"`
+	TrailingDiamond  string         `json:"trailing_diamond,omitempty" toml:"trailing_diamond,omitempty"`
+	Segments         []*Segment     `json:"segments,omitempty" toml:"segments,omitempty"`
+	VerticalOffset   int            `json:"vertical_offset,omitempty" toml:"vertical_offset,omitempty"`
+	HorizontalOffset int            `json:"horizontal_offset,omitempty" toml:"horizontal_offset,omitempty"`
+	MaxWidth         int            `json:"max_width,omitempty" toml:"max_width,omitempty"`
+	MinWidth         int            `json:"min_width,omitempty" toml:"min_width,omitempty"`
+	Newline          bool           `json:"newline,omitempty" toml:"newline,omitempty"`
 }
 
 func (b *Block) Init(env runtime.Environment) {

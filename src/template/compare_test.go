@@ -8,10 +8,10 @@ import (
 
 func TestGt(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Expected bool
 		E1       any
 		E2       any
+		Case     string
+		Expected bool
 	}{
 		{Case: "Float vs int", Expected: false, E1: float64(3), E2: 4},
 		{Case: "Int vs float", Expected: false, E1: 3, E2: float64(4)},
@@ -31,10 +31,10 @@ func TestGt(t *testing.T) {
 
 func TestLt(t *testing.T) {
 	cases := []struct {
-		Case     string
-		Expected bool
 		E1       any
 		E2       any
+		Case     string
+		Expected bool
 	}{
 		{Case: "Float vs int", Expected: true, E1: float64(3), E2: 4},
 		{Case: "Int vs float", Expected: true, E1: 3, E2: float64(4)},

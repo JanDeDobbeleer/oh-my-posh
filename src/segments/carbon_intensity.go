@@ -22,15 +22,15 @@ type CarbonIntensityResponse struct {
 }
 
 type CarbonIntensityPeriod struct {
+	Intensity *CarbonIntensityData `json:"intensity"`
 	From      string               `json:"from"`
 	To        string               `json:"to"`
-	Intensity *CarbonIntensityData `json:"intensity"`
 }
 
 type CarbonIntensityData struct {
+	Index    Index  `json:"index"`
 	Forecast Number `json:"forecast"`
 	Actual   Number `json:"actual"`
-	Index    Index  `json:"index"`
 }
 
 type Number int

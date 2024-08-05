@@ -9,9 +9,9 @@ import (
 func TestBlockEnabled(t *testing.T) {
 	cases := []struct {
 		Case     string
-		Expected bool
-		Segments []*Segment
 		Type     BlockType
+		Segments []*Segment
+		Expected bool
 	}{
 		{Case: "line break block", Expected: true, Type: LineBreak},
 		{Case: "prompt enabled", Expected: true, Type: Prompt, Segments: []*Segment{{Enabled: true}}},

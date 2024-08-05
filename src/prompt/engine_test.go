@@ -17,12 +17,12 @@ import (
 
 func TestCanWriteRPrompt(t *testing.T) {
 	cases := []struct {
-		Case               string
-		Expected           bool
-		TerminalWidth      int
 		TerminalWidthError error
+		Case               string
+		TerminalWidth      int
 		PromptLength       int
 		RPromptLength      int
+		Expected           bool
 	}{
 		{Case: "Width Error", Expected: false, TerminalWidthError: errors.New("burp")},
 		{Case: "Terminal > Prompt enabled", Expected: true, TerminalWidth: 200, PromptLength: 100, RPromptLength: 10},
@@ -150,12 +150,12 @@ func BenchmarkEngineRenderPalette(b *testing.B) {
 func TestGetTitle(t *testing.T) {
 	cases := []struct {
 		Template      string
-		Root          bool
 		User          string
 		Cwd           string
 		PathSeparator string
 		ShellName     string
 		Expected      string
+		Root          bool
 	}{
 		{
 			Template:      "{{.Env.USERDOMAIN}} :: {{.PWD}}{{if .Root}} :: Admin{{end}} :: {{.Shell}}",
@@ -220,12 +220,12 @@ func TestGetTitle(t *testing.T) {
 func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 	cases := []struct {
 		Template      string
-		Root          bool
 		User          string
 		Cwd           string
 		PathSeparator string
 		ShellName     string
 		Expected      string
+		Root          bool
 	}{
 		{
 			Template:      "Not using Host only {{.UserName}} and {{.Shell}}",

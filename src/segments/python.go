@@ -12,9 +12,8 @@ import (
 )
 
 type Python struct {
-	language
-
 	Venv string
+	language
 }
 
 const (

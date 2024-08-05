@@ -15,8 +15,8 @@ import (
 )
 
 type HTTPResponse struct {
-	body string
 	err  error
+	body string
 }
 
 func TestUnitySegment(t *testing.T) {
@@ -103,12 +103,12 @@ func TestUnitySegment(t *testing.T) {
 // fallback for obtaining a C# version.
 func TestUnitySegmentCSharpWebRequest(t *testing.T) {
 	cases := []struct {
+		HTTPResponse        HTTPResponse
 		Case                string
 		ExpectedOutput      string
 		VersionFileText     string
 		ExpectedToBeEnabled bool
 		VersionFileExists   bool
-		HTTPResponse        HTTPResponse
 	}{
 		{
 			Case:                "C# version",

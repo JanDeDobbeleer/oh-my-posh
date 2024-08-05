@@ -10,11 +10,10 @@ import (
 )
 
 type Umbraco struct {
-	props properties.Properties
-	env   runtime.Environment
-
-	Modern  bool
+	props   properties.Properties
+	env     runtime.Environment
 	Version string
+	Modern  bool
 }
 
 type CSProj struct {

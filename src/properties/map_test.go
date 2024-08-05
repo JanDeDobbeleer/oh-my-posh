@@ -88,9 +88,9 @@ func TestGetBoolInvalidProperty(t *testing.T) {
 
 func TestGetFloat64(t *testing.T) {
 	cases := []struct {
+		Input    any
 		Case     string
 		Expected float64
-		Input    any
 	}{
 		{Case: "int", Expected: 1337, Input: 1337},
 		{Case: "float64", Expected: 1337, Input: float64(1337)},
@@ -115,11 +115,11 @@ func TestGetFloat64PropertyNotInMap(t *testing.T) {
 
 func TestOneOf(t *testing.T) {
 	cases := []struct {
-		Case         string
-		Map          Map
-		Properties   []Property
-		DefaultValue string
 		Expected     any
+		Map          Map
+		Case         string
+		DefaultValue string
+		Properties   []Property
 	}{
 		{
 			Case:       "one element",

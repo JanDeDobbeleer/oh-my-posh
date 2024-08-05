@@ -39,11 +39,10 @@ const (
 )
 
 type Svn struct {
-	scm
-
 	Working *SvnStatus
-	BaseRev int
 	Branch  string
+	scm
+	BaseRev int
 }
 
 func (s *Svn) Template() string {

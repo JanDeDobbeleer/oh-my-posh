@@ -20,14 +20,14 @@ const (
 func TestCarbonIntensitySegmentSingle(t *testing.T) {
 	cases := []struct {
 		Case            string
-		HasError        bool
-		HasData         bool
-		Actual          int
-		Forecast        int
 		Index           string
 		ExpectedString  string
-		ExpectedEnabled bool
 		Template        string
+		Actual          int
+		Forecast        int
+		HasError        bool
+		HasData         bool
+		ExpectedEnabled bool
 	}{
 		{
 			Case:            "Very Low, Going Down",

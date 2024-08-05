@@ -107,11 +107,11 @@ type Scoreboard struct {
 }
 
 type Game struct {
-	GameStatus     int    `json:"gameStatus"`
 	GameStatusText string `json:"gameStatusText"`
 	GameTimeUTC    string `json:"gameTimeUTC"`
 	HomeTeam       Team   `json:"homeTeam"`
 	AwayTeam       Team   `json:"awayTeam"`
+	GameStatus     int    `json:"gameStatus"`
 }
 
 type Team struct {

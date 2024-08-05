@@ -52,13 +52,15 @@ func TestBrewfatherSegment(t *testing.T) {
 	batchReadingJSON3 := `,"type":"manual"}, {"id":"manual","temp":15,"comment":"","sg":1.050,"time":`
 
 	cases := []struct {
+		Error                     error
 		Case                      string
 		BatchJSONResponse         string
 		BatchReadingsJSONResponse string
 		ExpectedString            string
-		ExpectedEnabled           bool
 		Template                  string
-		Error                     error
+		CacheTimeout              int
+		ExpectedEnabled           bool
+		CacheFoundFail            bool
 	}{
 		{
 			Case:                      "Planning Status",

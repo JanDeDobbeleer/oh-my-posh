@@ -205,10 +205,6 @@ func (e *Engine) renderBlock(block *config.Block, cancelNewline bool) bool {
 
 	switch block.Type { //nolint:exhaustive
 	case config.Prompt:
-		if block.VerticalOffset != 0 {
-			e.write(terminal.ChangeLine(block.VerticalOffset))
-		}
-
 		if block.Alignment == config.Left {
 			e.currentLineLength += length
 			e.write(text)

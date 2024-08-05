@@ -48,6 +48,8 @@ var (
 	}
 
 	shell string
+
+	tmplFunc = template.New("cache").Funcs(funcMap())
 )
 
 type Text struct {
@@ -87,7 +89,7 @@ func (t *Text) Render() (string, error) {
 
 	t.cleanTemplate()
 
-	tmpl, err := template.New(t.Template).Funcs(funcMap()).Parse(t.Template)
+	tmpl, err := tmplFunc.Parse(t.Template)
 	if err != nil {
 		t.Env.Error(err)
 		return "", errors.New(InvalidTemplate)
@@ -106,6 +108,7 @@ func (t *Text) Render() (string, error) {
 		if len(msg) == 0 {
 			return "", errors.New(IncorrectTemplate)
 		}
+
 		return "", errors.New(msg["MSG"])
 	}
 

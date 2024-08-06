@@ -222,16 +222,18 @@ func (t *Text) cleanTemplate() {
 				result += string(char)
 				continue
 			}
-			// end of a variable, needs to be appended
-			if !isKnownVariable(property) { //nolint: gocritic
+
+			switch {
+			case !isKnownVariable(property):
+				// end of a variable, needs to be appended
 				result += ".Data" + property
-			} else if strings.HasPrefix(property, ".Segments") && !strings.HasSuffix(property, ".Contains") {
+			case strings.HasPrefix(property, ".Segments") && !strings.HasSuffix(property, ".Contains"):
 				// as we can't provide a clean way to access the list
 				// of segments, we need to replace the property with
 				// the list of segments so they can be accessed directly
 				property = strings.Replace(property, ".Segments", ".Segments.ToSimple", 1)
 				result += property
-			} else {
+			default:
 				// check if we have the same property in Data
 				// and replace it with the Data property so it
 				// can take precedence
@@ -242,6 +244,7 @@ func (t *Text) cleanTemplate() {
 				property = strings.TrimPrefix(property, globalRef)
 				result += property
 			}
+
 			property = ""
 			result += string(char)
 			inProperty = false

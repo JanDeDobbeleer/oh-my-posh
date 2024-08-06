@@ -5,6 +5,7 @@ import (
 	"errors"
 	"reflect"
 	"strings"
+	"sync"
 	"text/template"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
@@ -50,32 +51,68 @@ var (
 	shell string
 
 	tmplFunc = template.New("cache").Funcs(funcMap())
+
+	contextPool = sync.Pool{
+		New: func() any {
+			return &context{}
+		},
+	}
+
+	buffPool = sync.Pool{
+		New: func() any {
+			return &buff{}
+		},
+	}
 )
 
+type buff bytes.Buffer
+
+func (b *buff) release() {
+	(*bytes.Buffer)(b).Reset()
+	buffPool.Put(b)
+}
+
+func (b *buff) Write(p []byte) (n int, err error) {
+	return (*bytes.Buffer)(b).Write(p)
+}
+
+func (b *buff) String() string {
+	return (*bytes.Buffer)(b).String()
+}
+
 type Text struct {
-	Template        string
-	Context         any
-	Env             runtime.Environment
-	TemplatesResult string
+	Template string
+	Context  any
+	Env      runtime.Environment
 }
 
 type Data any
 
-type Context struct {
+type context struct {
 	*cache.Template
 
 	// Simple container to hold ANY object
 	Data
-	Templates string
+	initialized bool
 }
 
-func (c *Context) init(t *Text) {
+func (c *context) init(t *Text) {
 	c.Data = t.Context
-	c.Templates = t.TemplatesResult
-	if tmplCache := t.Env.TemplateCache(); tmplCache != nil {
-		c.Template = tmplCache
+
+	if c.initialized {
 		return
 	}
+
+	if tmplCache := t.Env.TemplateCache(); tmplCache != nil {
+		c.Template = tmplCache
+	}
+
+	c.initialized = true
+}
+
+func (c *context) release() {
+	c.Data = nil
+	contextPool.Put(c)
 }
 
 func (t *Text) Render() (string, error) {
@@ -95,11 +132,12 @@ func (t *Text) Render() (string, error) {
 		return "", errors.New(InvalidTemplate)
 	}
 
-	context := &Context{}
+	context := contextPool.Get().(*context)
 	context.init(t)
+	defer context.release()
 
-	buffer := new(bytes.Buffer)
-	defer buffer.Reset()
+	buffer := buffPool.Get().(*buff)
+	defer buffer.release()
 
 	err = tmpl.Execute(buffer, context)
 	if err != nil {

@@ -217,9 +217,8 @@ func (segment *Segment) SetText() {
 }
 
 func (segment *Segment) string() string {
-	var templatesResult string
 	if !segment.Templates.Empty() {
-		templatesResult = segment.Templates.Resolve(segment.writer, segment.env, "", segment.TemplatesLogic)
+		templatesResult := segment.Templates.Resolve(segment.writer, segment.env, "", segment.TemplatesLogic)
 		if len(segment.Template) == 0 {
 			return templatesResult
 		}
@@ -230,10 +229,9 @@ func (segment *Segment) string() string {
 	}
 
 	tmpl := &template.Text{
-		Template:        segment.Template,
-		Context:         segment.writer,
-		Env:             segment.env,
-		TemplatesResult: templatesResult,
+		Template: segment.Template,
+		Context:  segment.writer,
+		Env:      segment.env,
 	}
 
 	text, err := tmpl.Render()

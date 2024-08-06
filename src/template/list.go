@@ -34,10 +34,12 @@ func (l List) Join(context any, env runtime.Environment) string {
 	if len(l) == 0 {
 		return ""
 	}
+
 	txtTemplate := &Text{
 		Context: context,
 		Env:     env,
 	}
+
 	var buffer strings.Builder
 	for _, tmpl := range l {
 		txtTemplate.Template = tmpl
@@ -45,8 +47,10 @@ func (l List) Join(context any, env runtime.Environment) string {
 		if err != nil || len(strings.TrimSpace(value)) == 0 {
 			continue
 		}
+
 		buffer.WriteString(value)
 	}
+
 	return buffer.String()
 }
 
@@ -54,10 +58,12 @@ func (l List) FirstMatch(context any, env runtime.Environment, defaultValue stri
 	if len(l) == 0 {
 		return defaultValue
 	}
+
 	txtTemplate := &Text{
 		Context: context,
 		Env:     env,
 	}
+
 	for _, tmpl := range l {
 		txtTemplate.Template = tmpl
 		value, err := txtTemplate.Render()
@@ -66,5 +72,6 @@ func (l List) FirstMatch(context any, env runtime.Environment, defaultValue stri
 		}
 		return value
 	}
+
 	return defaultValue
 }

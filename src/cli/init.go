@@ -7,14 +7,12 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/config"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
-
 	"github.com/spf13/cobra"
 )
 
 var (
 	printOutput bool
 	strict      bool
-	manual      bool
 	debug       bool
 
 	supportedShells = []string{
@@ -51,7 +49,42 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 				_ = cmd.Help()
 				return
 			}
-			runInit(args[0])
+
+			var startTime time.Time
+			if debug {
+				startTime = time.Now()
+			}
+
+			env := &runtime.Terminal{
+				CmdFlags: &runtime.Flags{
+					Shell:  shellName,
+					Config: configFlag,
+					Strict: strict,
+					Debug:  debug,
+				},
+			}
+
+			env.Init()
+			defer env.Close()
+
+			cfg := config.Load(env)
+
+			feats := cfg.Features()
+
+			var output string
+
+			switch {
+			case printOutput, debug:
+				output = shell.PrintInit(env, feats, &startTime)
+			default:
+				output = shell.Init(env, feats)
+			}
+
+			if silent {
+				return
+			}
+
+			fmt.Print(output)
 		},
 	}
 
@@ -59,45 +92,7 @@ See the documentation to initialize your shell: https://ohmyposh.dev/docs/instal
 	initCmd.Flags().BoolVarP(&strict, "strict", "s", false, "run in strict mode")
 	initCmd.Flags().BoolVar(&debug, "debug", false, "enable/disable debug mode")
 
-	// Deprecated flags, should be kept to avoid breaking CLI integration.
-	initCmd.Flags().BoolVarP(&manual, "manual", "m", false, "enable/disable manual mode")
-
-	// Hide flags that are deprecated or for internal use only.
-	_ = initCmd.Flags().MarkHidden("manual")
-
 	_ = initCmd.MarkPersistentFlagRequired("config")
 
 	return initCmd
-}
-
-func runInit(shellName string) {
-	var startTime time.Time
-	if debug {
-		startTime = time.Now()
-	}
-
-	env := &runtime.Terminal{
-		CmdFlags: &runtime.Flags{
-			Shell:  shellName,
-			Config: configFlag,
-			Strict: strict,
-			Debug:  debug,
-		},
-	}
-
-	env.Init()
-	defer env.Close()
-
-	cfg := config.Load(env)
-
-	feats := cfg.Features()
-
-	if printOutput || debug {
-		init := shell.PrintInit(env, feats, &startTime)
-		fmt.Print(init)
-		return
-	}
-
-	init := shell.Init(env, feats)
-	fmt.Print(init)
 }

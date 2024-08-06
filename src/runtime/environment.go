@@ -91,7 +91,6 @@ type Flags struct {
 	TerminalWidth int
 	ErrorCode     int
 	Plain         bool
-	Manual        bool
 	Debug         bool
 	Primary       bool
 	HasTransient  bool

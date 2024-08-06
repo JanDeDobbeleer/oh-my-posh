@@ -115,12 +115,11 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
 
     function Set-PoshContext([bool]$originalStatus) {}
 
-    function Get-CleanPSWD {
-        $pswd = $PWD.ToString()
-        if ($pswd -ne '/') {
-            return $pswd.TrimEnd('\') -replace '^Microsoft\.PowerShell\.Core\\FileSystem::', ''
+    function Get-NonFSWD {
+        # We only need to return a non-filesystem working directory.
+        if ($PWD.Provider.Name -ne 'FileSystem') {
+            return $PWD.ToString()
         }
-        return $pswd
     }
 
     function Get-TerminalWidth {
@@ -154,10 +153,10 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
                 $script:TooltipCommand = $command
                 $column = $Host.UI.RawUI.CursorPosition.X
                 $terminalWidth = Get-TerminalWidth
-                $cleanPSWD = Get-CleanPSWD
+                $nonFSWD = Get-NonFSWD
                 $stackCount = global:Get-PoshStackCount
 
-                $standardOut = (Start-Utf8Process $global:_ompExecutable @("print", "tooltip", "--status=$script:ErrorCode", "--shell=$script:ShellName", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--command=$command", "--shell-version=$script:PSVersion", "--column=$column", "--terminal-width=$terminalWidth", "--no-status=$script:NoExitCode", "--job-count=$script:JobCount")) -join ''
+                $standardOut = (Start-Utf8Process $global:_ompExecutable @("print", "tooltip", "--status=$script:ErrorCode", "--shell=$script:ShellName", "--pswd=$nonFSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--command=$command", "--shell-version=$script:PSVersion", "--column=$column", "--terminal-width=$terminalWidth", "--no-status=$script:NoExitCode", "--job-count=$script:JobCount")) -join ''
                 if (!$standardOut) {
                     return
                 }
@@ -333,10 +332,10 @@ New-Module -Name "oh-my-posh-core" -ScriptBlock {
             $themes | Select-Object @{ Name = 'hyperlink'; Expression = { Get-FileHyperlink -uri $_.FullName } } | Format-Table -HideTableHeaders
         }
         else {
-            $cleanPSWD = Get-CleanPSWD
+            $nonFSWD = Get-NonFSWD
             $themes | ForEach-Object -Process {
                 Write-Host "Theme: $(Get-FileHyperlink -uri $_.FullName -Name ($_.BaseName -replace '\.omp$', ''))`n"
-                Start-Utf8Process $global:_ompExecutable @("print", "primary", "--config=$($_.FullName)", "--pswd=$cleanPSWD", "--shell=$script:ShellName")
+                Start-Utf8Process $global:_ompExecutable @("print", "primary", "--config=$($_.FullName)", "--pswd=$nonFSWD", "--shell=$script:ShellName")
                 Write-Host "`n"
             }
         }
@@ -446,7 +445,7 @@ Example:
 
         Set-PoshContext $script:ErrorCode
 
-        $cleanPSWD = Get-CleanPSWD
+        $nonFSWD = Get-NonFSWD
         $stackCount = global:Get-PoshStackCount
         $terminalWidth = Get-TerminalWidth
 
@@ -454,7 +453,7 @@ Example:
         $env:POSH_CURSOR_LINE = $Host.UI.RawUI.CursorPosition.Y + 1
         $env:POSH_CURSOR_COLUMN = $Host.UI.RawUI.CursorPosition.X + 1
 
-        $standardOut = Start-Utf8Process $global:_ompExecutable @("print", $script:PromptType, "--status=$script:ErrorCode", "--pswd=$cleanPSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName", "--no-status=$script:NoExitCode", "--job-count=$script:JobCount")
+        $standardOut = Start-Utf8Process $global:_ompExecutable @("print", $script:PromptType, "--status=$script:ErrorCode", "--pswd=$nonFSWD", "--execution-time=$script:ExecutionTime", "--stack-count=$stackCount", "--shell-version=$script:PSVersion", "--terminal-width=$terminalWidth", "--shell=$script:ShellName", "--no-status=$script:NoExitCode", "--job-count=$script:JobCount")
         # make sure PSReadLine knows if we have a multiline prompt
         Set-PSReadLineOption -ExtraPromptLineCount (($standardOut | Measure-Object -Line).Lines - 1)
 

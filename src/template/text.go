@@ -28,6 +28,7 @@ var (
 		"Root",
 		"PWD",
 		"AbsolutePWD",
+		"PSWD",
 		"Folder",
 		"Shell",
 		"ShellVersion",

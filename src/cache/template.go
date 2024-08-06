@@ -10,6 +10,7 @@ type Template struct {
 	Root          bool
 	PWD           string
 	AbsolutePWD   string
+	PSWD          string
 	Folder        string
 	Shell         string
 	ShellVersion  string

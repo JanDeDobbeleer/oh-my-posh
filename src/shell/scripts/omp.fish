@@ -5,7 +5,7 @@ set --export POSH_PID $fish_pid
 set --export CONDA_PROMPT_MODIFIER false
 set --global _omp_tooltip_command ''
 set --global _omp_current_rprompt ''
-set --global _omp_transient false
+set --global _omp_transient 0
 
 set --global _omp_executable ::OMP::
 set --global _omp_ftcs_marks 0
@@ -13,7 +13,7 @@ set --global _omp_transient_prompt 0
 set --global _omp_prompt_mark 0
 
 # We use this to avoid unnecessary CLI calls for prompt repaint.
-set --global _omp_new_prompt true
+set --global _omp_new_prompt 1
 
 # template function for context loading
 function set_poshcontext
@@ -29,11 +29,11 @@ function fish_prompt
     # commandline --function repaint does not do this
     # see https://github.com/fish-shell/fish-shell/issues/8418
     printf \e\[0J
-    if test "$_omp_transient" = true
+    if test "$_omp_transient" = 1
         $_omp_executable print transient --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code
         return
     end
-    if test "$_omp_new_prompt" = false
+    if test "$_omp_new_prompt" = 0
         echo -n "$_omp_current_prompt"
         return
     end
@@ -44,13 +44,13 @@ function fish_prompt
     set --global _omp_no_exit_code false
 
     # check if variable set, < 3.2 case
-    if set --query _omp_last_command; and test -z "$_omp_last_command"
+    if set --query _omp_last_command && test -z "$_omp_last_command"
         set _omp_duration 0
         set _omp_no_exit_code true
     end
 
     # works with fish >=3.2
-    if set --query _omp_last_status_generation; and test "$_omp_last_status_generation" = "$status_generation"
+    if set --query _omp_last_status_generation && test "$_omp_last_status_generation" = "$status_generation"
         set _omp_duration 0
         set _omp_no_exit_code true
     else if test -z "$_omp_last_status_generation"
@@ -82,18 +82,18 @@ function fish_prompt
 end
 
 function fish_right_prompt
-    if test "$_omp_transient" = true
-        set _omp_transient false
+    if test "$_omp_transient" = 1
+        set _omp_transient 0
         return
     end
 
     # Repaint an existing right prompt.
-    if test "$_omp_new_prompt" = false
+    if test "$_omp_new_prompt" = 0
         echo -n "$_omp_current_rprompt"
         return
     end
 
-    set _omp_new_prompt false
+    set _omp_new_prompt 0
     set --global _omp_current_rprompt ($_omp_executable print right --shell fish --status $_omp_status_cache --pipestatus="$_omp_pipestatus_cache" --execution-time $_omp_duration --stack-count $_omp_stack_count --shell-version $FISH_VERSION --no-status=$_omp_no_exit_code | string join '')
 
     echo -n "$_omp_current_rprompt"
@@ -112,25 +112,25 @@ function _omp_preexec --on-event fish_preexec
 end
 
 # perform cleanup so a new initialization in current session works
-if test -n (bind \r --user 2>/dev/null | string match -e _omp_enter_key_handler)
+if bind \r --user 2>/dev/null | string match -q -e _omp_enter_key_handler
     bind -e \r -M default
     bind -e \r -M insert
     bind -e \r -M visual
 end
 
-if test -n (bind \n --user 2>/dev/null | string match -e _omp_enter_key_handler)
+if bind \n --user 2>/dev/null | string match -q -e _omp_enter_key_handler
     bind -e \n -M default
     bind -e \n -M insert
     bind -e \n -M visual
 end
 
-if test -n (bind \cc --user 2>/dev/null | string match -e _omp_ctrl_c_key_handler)
+if bind \cc --user 2>/dev/null | string match -q -e _omp_ctrl_c_key_handler
     bind -e \cc -M default
     bind -e \cc -M insert
     bind -e \cc -M visual
 end
 
-if test -n (bind \x20 --user 2>/dev/null | string match -e _omp_space_key_handler)
+if bind \x20 --user 2>/dev/null | string match -q -e _omp_space_key_handler
     bind -e \x20 -M default
     bind -e \x20 -M insert
 end
@@ -175,11 +175,11 @@ function _omp_enter_key_handler
     end
 
     if commandline --is-valid || test -z (commandline --current-buffer | string trim -l | string collect)
-        set _omp_new_prompt true
+        set _omp_new_prompt 1
         set _omp_tooltip_command ''
 
         if test $_omp_transient_prompt = 1
-            set _omp_transient true
+            set _omp_transient 1
             commandline --function repaint
         end
     end
@@ -193,11 +193,11 @@ function _omp_ctrl_c_key_handler
     end
 
     # Render a transient prompt on Ctrl-C with non-empty command line buffer.
-    set _omp_new_prompt true
+    set _omp_new_prompt 1
     set _omp_tooltip_command ''
 
     if test $_omp_transient_prompt = 1
-        set _omp_transient true
+        set _omp_transient 1
         commandline --function repaint
     end
 
@@ -218,4 +218,10 @@ bind \cc _omp_ctrl_c_key_handler -M visual
 # legacy functions
 function enable_poshtransientprompt
     return
+end
+
+# This can be called by user whenever re-rendering is required.
+function omp_repaint_prompt
+    set _omp_new_prompt 1
+    commandline --function repaint
 end

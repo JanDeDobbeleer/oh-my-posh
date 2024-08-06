@@ -277,7 +277,18 @@ This is most likely caused by two Oh My Posh init lines in your `.zshrc`, remove
 
 ### Fish: Display current bind (Vim) mode
 
-Use the `set_poshcontext` function to export the current mode. Note that scope shadowing must be disabled in order to
+By default, Oh My Posh will not re-render the prompt (i.e., generate a new prompt) until a new command is run, so you should
+call the `omp_repaint_prompt` function to do prompt re-rendering whenever `$fish_bind_mode` changes:
+
+```fish
+function rerender_on_bind_mode_change --on-variable fish_bind_mode
+    if test "$fish_bind_mode" != paste
+        omp_repaint_prompt
+    end
+end
+```
+
+Then export the current bind mode in the `set_poshcontext` function. Note that scope shadowing must be disabled in order to
 access the `$fish_bind_mode` variable.
 
 ```fish
@@ -286,7 +297,7 @@ function set_poshcontext --no-scope-shadowing
 end
 ```
 
-You can then use this in a template, for example this replicates the [example in the Fish documentation][fish-mode-prompt]:
+After that, you can use the value in a template. The following replicates the [example in the Fish documentation][fish-mode-prompt]:
 
 ```json
 {

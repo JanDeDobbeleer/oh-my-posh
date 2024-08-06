@@ -62,7 +62,7 @@ func (term *Terminal) Init() {
 
 	if term.CmdFlags.Plain {
 		log.Plain()
-		log.Debug("dlain mode enabled")
+		log.Debug("plain mode enabled")
 	}
 
 	initCache := func(fileName string) *cache.File {
@@ -673,6 +673,8 @@ func (term *Terminal) TemplateCache() *cache.Template {
 	if term.IsWsl() {
 		tmplCache.AbsolutePWD, _ = term.RunCommand("wslpath", "-m", pwd)
 	}
+
+	tmplCache.PSWD = term.CmdFlags.PSWD
 
 	tmplCache.Folder = Base(term, pwd)
 	if term.GOOS() == WINDOWS && strings.HasSuffix(tmplCache.Folder, ":") {

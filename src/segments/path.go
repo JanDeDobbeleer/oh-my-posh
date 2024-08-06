@@ -109,7 +109,11 @@ func (pt *Path) Enabled() bool {
 	pt.setStyle()
 	pwd := pt.env.Pwd()
 
-	pt.Location = strings.ReplaceAll(pt.env.TemplateCache().AbsolutePWD, `\`, `/`)
+	pt.Location = pt.env.TemplateCache().AbsolutePWD
+	if pt.env.GOOS() == runtime.WINDOWS {
+		pt.Location = strings.ReplaceAll(pt.Location, `\`, `/`)
+	}
+
 	pt.StackCount = pt.env.StackCount()
 	pt.Writable = pt.env.DirIsWritable(pwd)
 	return true
@@ -609,7 +613,7 @@ func (pt *Path) normalizePath(path string) string {
 			lastChar = clean[len(clean)-1:][0]
 		}
 
-		if char == '/' && lastChar != 60 { // 60 == <, this is done to ovoid replacing color codes
+		if char == '/' && lastChar != 60 { // 60 == <, this is done to avoid replacing color codes
 			clean = append(clean, 92) // 92 == \
 			continue
 		}

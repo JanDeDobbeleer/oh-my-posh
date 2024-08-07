@@ -3,13 +3,11 @@ package segments
 import (
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -60,12 +58,6 @@ func bootStrapLanguageTest(args *languageArgs) *language {
 
 	env.On("Pwd").Return(cwd)
 	env.On("Home").Return(home)
-	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-	env.On("Flags").Return(&runtime.Flags{})
-
-	env.On("TemplateCache").Return(&cache.Template{
-		Env: make(map[string]string),
-	})
 
 	if args.properties == nil {
 		args.properties = properties.Map{}
@@ -549,11 +541,6 @@ func getMockedLanguageEnv(params *mockedLanguageParams) (*mock.Environment, prop
 	env.On("HasFiles", params.extension).Return(true)
 	env.On("Pwd").Return("/usr/home/project")
 	env.On("Home").Return("/usr/home")
-	env.On("TemplateCache").Return(&cache.Template{
-		Env: make(map[string]string),
-	})
-	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-	env.On("Flags").Return(&runtime.Flags{})
 
 	props := properties.Map{
 		properties.FetchVersion: true,

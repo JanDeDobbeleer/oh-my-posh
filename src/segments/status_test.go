@@ -93,21 +93,13 @@ func TestFormatStatus(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		env := new(mock.Environment)
-		env.On("TemplateCache").Return(&cache.Template{
-			Code: 133,
-		})
-		env.On("Error", testify_.Anything).Return(nil)
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
-
 		props := properties.Map{
 			StatusTemplate:  tc.Template,
 			StatusSeparator: tc.Separator,
 		}
 
 		s := &Status{}
-		s.Init(props, env)
+		s.Init(props, new(mock.Environment))
 
 		assert.Equal(t, tc.Expected, s.formatStatus(tc.Status, tc.PipeStatus), tc.Case)
 	}

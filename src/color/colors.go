@@ -104,7 +104,7 @@ func (c Ansi) ToForeground() Ansi {
 	return c
 }
 
-func (c Ansi) ResolveTemplate(env runtime.Environment) Ansi {
+func (c Ansi) ResolveTemplate() Ansi {
 	if c.IsEmpty() {
 		return c
 	}
@@ -116,7 +116,6 @@ func (c Ansi) ResolveTemplate(env runtime.Environment) Ansi {
 	tmpl := &template.Text{
 		Template: string(c),
 		Context:  nil,
-		Env:      env,
 	}
 
 	text, err := tmpl.Render()

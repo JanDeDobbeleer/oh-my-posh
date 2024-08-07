@@ -641,8 +641,6 @@ func (term *Terminal) Logs() string {
 func (term *Terminal) TemplateCache() *cache.Template {
 	defer term.Trace(time.Now())
 	tmplCache := term.tmplCache
-	tmplCache.Lock()
-	defer tmplCache.Unlock()
 
 	if tmplCache.Initialized {
 		return tmplCache
@@ -655,23 +653,11 @@ func (term *Terminal) TemplateCache() *cache.Template {
 	tmplCache.WSL = term.IsWsl()
 	tmplCache.Segments = maps.NewConcurrent()
 	tmplCache.PromptCount = term.CmdFlags.PromptCount
-	tmplCache.Env = make(map[string]string)
 	tmplCache.Var = make(map[string]any)
 	tmplCache.Jobs = term.CmdFlags.JobCount
 
 	if term.Var != nil {
 		tmplCache.Var = term.Var
-	}
-
-	const separator = "="
-	values := os.Environ()
-	term.DebugF("environment: %v", values)
-	for value := range values {
-		key, val, valid := strings.Cut(values[value], separator)
-		if !valid {
-			continue
-		}
-		tmplCache.Env[key] = val
 	}
 
 	pwd := term.Pwd()

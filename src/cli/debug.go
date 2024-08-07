@@ -55,7 +55,7 @@ func createDebugCmd() *cobra.Command {
 			env.Var = cfg.Var
 
 			terminal.Init(shell.GENERIC)
-			terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate(env)
+			terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 			terminal.Colors = cfg.MakeColors()
 			terminal.Plain = plain
 

@@ -90,7 +90,6 @@ func TestOSInfo(t *testing.T) {
 		env.On("GOOS").Return(tc.GOOS)
 		env.On("Platform").Return(tc.Platform)
 		env.On("TemplateCache").Return(&cache.Template{
-			Env: make(map[string]string),
 			WSL: tc.IsWSL,
 		})
 

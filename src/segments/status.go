@@ -49,7 +49,6 @@ func (s *Status) Init(props properties.Properties, env runtime.Environment) {
 	statusTemplate := s.props.GetString(StatusTemplate, "{{ .Code }}")
 	s.template = &template.Text{
 		Template: statusTemplate,
-		Env:      s.env,
 	}
 }
 

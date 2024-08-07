@@ -69,7 +69,7 @@ Exports the config to an image file using customized output options.`,
 		env.Var = cfg.Var
 
 		terminal.Init(shell.GENERIC)
-		terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate(env)
+		terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 		terminal.Colors = cfg.MakeColors()
 
 		eng := &prompt.Engine{

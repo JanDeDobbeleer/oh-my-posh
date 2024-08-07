@@ -117,21 +117,20 @@ func TestSessionSegmentTemplate(t *testing.T) {
 		env.On("User").Return(tc.UserName)
 		env.On("GOOS").Return("burp")
 		env.On("Host").Return(tc.ComputerName, nil)
+
 		var SSHSession string
 		if tc.SSHSession {
 			SSHSession = "zezzion"
 		}
+
 		env.On("Getenv", "SSH_CONNECTION").Return(SSHSession)
 		env.On("Getenv", "SSH_CLIENT").Return(SSHSession)
+		env.On("Getenv", "POSH_SESSION_DEFAULT_USER").Return(tc.DefaultUserName)
+
 		env.On("TemplateCache").Return(&cache.Template{
 			UserName: tc.UserName,
 			HostName: tc.ComputerName,
-			Env: map[string]string{
-				"SSH_CONNECTION":            SSHSession,
-				"SSH_CLIENT":                SSHSession,
-				"POSH_SESSION_DEFAULT_USER": tc.DefaultUserName,
-			},
-			Root: tc.Root,
+			Root:     tc.Root,
 		})
 
 		env.On("Platform").Return(tc.Platform)
@@ -147,6 +146,7 @@ func TestSessionSegmentTemplate(t *testing.T) {
 			env:   env,
 			props: properties.Map{},
 		}
+
 		_ = session.Enabled()
 		assert.Equal(t, tc.ExpectedString, renderTemplate(env, tc.Template, session), tc.Case)
 	}

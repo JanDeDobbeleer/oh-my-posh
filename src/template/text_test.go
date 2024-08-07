@@ -157,19 +157,10 @@ func TestRenderTemplate(t *testing.T) {
 		},
 	}
 
-	env := &mock.Environment{}
-	env.On("TemplateCache").Return(&cache.Template{
-		Env: make(map[string]string),
-	})
-	env.On("Error", testify_.Anything)
-	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-	env.On("Flags").Return(&runtime.Flags{})
-
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
 			Context:  tc.Context,
-			Env:      env,
 		}
 
 		text, err := tmpl.Render()
@@ -247,18 +238,23 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 	}
 	for _, tc := range cases {
 		env := &mock.Environment{}
-		env.On("TemplateCache").Return(&cache.Template{
-			Env: tc.Env,
-			OS:  "darwin",
-		})
 		env.On("Error", testify_.Anything)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("Flags").Return(&runtime.Flags{})
+		env.On("Shell").Return("foo")
+		env.On("TemplateCache").Return(&cache.Template{
+			OS: "darwin",
+		})
+
+		for k, v := range tc.Env {
+			env.On("Getenv", k).Return(v)
+		}
+
+		Init(env)
 
 		tmpl := &Text{
 			Template: tc.Template,
 			Context:  tc.Context,
-			Env:      env,
 		}
 
 		text, err := tmpl.Render()
@@ -271,7 +267,7 @@ func TestRenderTemplateEnvVar(t *testing.T) {
 	}
 }
 
-func TestCleanTemplate(t *testing.T) {
+func TestPatchTemplate(t *testing.T) {
 	cases := []struct {
 		Case     string
 		Expected string
@@ -294,27 +290,27 @@ func TestCleanTemplate(t *testing.T) {
 		},
 		{
 			Case:     "Same prefix",
-			Expected: "{{ .Env.HELLO }} {{ .Data.World }} {{ .Data.WorldTrend }}",
+			Expected: "{{ (call .Getenv \"HELLO\") }} {{ .Data.World }} {{ .Data.WorldTrend }}",
 			Template: "{{ .Env.HELLO }} {{ .World }} {{ .WorldTrend }}",
 		},
 		{
 			Case:     "Double use of property with different child",
-			Expected: "{{ .Env.HELLO }} {{ .Data.World.Trend }} {{ .Data.World.Hello }} {{ .Data.World }}",
+			Expected: "{{ (call .Getenv \"HELLO\") }} {{ .Data.World.Trend }} {{ .Data.World.Hello }} {{ .Data.World }}",
 			Template: "{{ .Env.HELLO }} {{ .World.Trend }} {{ .World.Hello }} {{ .World }}",
 		},
 		{
 			Case:     "Hello world",
-			Expected: "{{.Env.HELLO}} {{.Data.World}}",
+			Expected: "{{(call .Getenv \"HELLO\")}} {{.Data.World}}",
 			Template: "{{.Env.HELLO}} {{.World}}",
 		},
 		{
 			Case:     "Multiple vars",
-			Expected: "{{.Env.HELLO}} {{.Data.World}} {{.Data.World}}",
+			Expected: "{{(call .Getenv \"HELLO\")}} {{.Data.World}} {{.Data.World}}",
 			Template: "{{.Env.HELLO}} {{.World}} {{.World}}",
 		},
 		{
 			Case:     "Multiple vars with spaces",
-			Expected: "{{ .Env.HELLO }} {{ .Data.World }} {{ .Data.World }}",
+			Expected: "{{ (call .Getenv \"HELLO\") }} {{ .Data.World }} {{ .Data.World }}",
 			Template: "{{ .Env.HELLO }} {{ .World }} {{ .World }}",
 		},
 		{
@@ -343,12 +339,19 @@ func TestCleanTemplate(t *testing.T) {
 			Template: `{{.Segments.Git.Repo}}`,
 		},
 	}
+
+	env := &mock.Environment{}
+	env.On("Shell").Return("foo")
+
+	Init(env)
+
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
 			Context:  map[string]any{"OS": "posh"},
 		}
-		tmpl.cleanTemplate()
+
+		tmpl.patchTemplate()
 		assert.Equal(t, tc.Expected, tmpl.Template, tc.Case)
 	}
 }
@@ -368,16 +371,16 @@ func TestSegmentContains(t *testing.T) {
 	segments.Set("Git", "foo")
 	env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 	env.On("TemplateCache").Return(&cache.Template{
-		Env:      make(map[string]string),
 		Segments: segments,
 	})
-	env.On("Flags").Return(&runtime.Flags{})
+	env.On("Shell").Return("foo")
+
+	Init(env)
 
 	for _, tc := range cases {
 		tmpl := &Text{
 			Template: tc.Template,
 			Context:  nil,
-			Env:      env,
 		}
 
 		text, _ := tmpl.Render()

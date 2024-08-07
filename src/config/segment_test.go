@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/color"
 	"github.com/jandedobbeleer/oh-my-posh/src/properties"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
@@ -12,7 +11,6 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/segments"
 
 	"github.com/stretchr/testify/assert"
-	testify_ "github.com/stretchr/testify/mock"
 )
 
 const (
@@ -144,19 +142,11 @@ func TestGetColors(t *testing.T) {
 		},
 	}
 	for _, tc := range cases {
-		env := new(mock.Environment)
-		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("TemplateCache").Return(&cache.Template{
-			Env: make(map[string]string),
-		})
-		env.On("Flags").Return(&runtime.Flags{})
-
 		segment := &Segment{
 			writer: &segments.Aws{
 				Profile: tc.Profile,
 				Region:  tc.Region,
 			},
-			env: env,
 		}
 
 		if tc.Background {

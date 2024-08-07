@@ -1,98 +1,26 @@
 package template
 
 import (
-	"bytes"
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
-	"sync"
-	"text/template"
 
 	"github.com/jandedobbeleer/oh-my-posh/src/cache"
 	"github.com/jandedobbeleer/oh-my-posh/src/regex"
-	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 )
-
-const (
-	// Errors to show when the template handling fails
-	InvalidTemplate   = "invalid template text"
-	IncorrectTemplate = "unable to create text based on template"
-
-	globalRef = ".$"
-
-	elvish = "elvish"
-	xonsh  = "xonsh"
-)
-
-var (
-	knownVariables = []string{
-		"Root",
-		"PWD",
-		"AbsolutePWD",
-		"PSWD",
-		"Folder",
-		"Shell",
-		"ShellVersion",
-		"UserName",
-		"HostName",
-		"Code",
-		"Env",
-		"OS",
-		"WSL",
-		"PromptCount",
-		"Segments",
-		"SHLVL",
-		"Templates",
-		"Var",
-		"Data",
-		"Jobs",
-	}
-
-	shell string
-
-	tmplFunc = template.New("cache").Funcs(funcMap())
-
-	contextPool = sync.Pool{
-		New: func() any {
-			return &context{}
-		},
-	}
-
-	buffPool = sync.Pool{
-		New: func() any {
-			return &buff{}
-		},
-	}
-)
-
-type buff bytes.Buffer
-
-func (b *buff) release() {
-	(*bytes.Buffer)(b).Reset()
-	buffPool.Put(b)
-}
-
-func (b *buff) Write(p []byte) (n int, err error) {
-	return (*bytes.Buffer)(b).Write(p)
-}
-
-func (b *buff) String() string {
-	return (*bytes.Buffer)(b).String()
-}
 
 type Text struct {
-	Template string
 	Context  any
-	Env      runtime.Environment
+	Template string
 }
 
 type Data any
 
 type context struct {
-	*cache.Template
-
-	// Simple container to hold ANY object
 	Data
+	Getenv func(string) string
+	cache.Template
 	initialized bool
 }
 
@@ -103,9 +31,8 @@ func (c *context) init(t *Text) {
 		return
 	}
 
-	if tmplCache := t.Env.TemplateCache(); tmplCache != nil {
-		c.Template = tmplCache
-	}
+	c.Getenv = env.Getenv
+	c.Template = *env.TemplateCache()
 
 	c.initialized = true
 }
@@ -116,19 +43,17 @@ func (c *context) release() {
 }
 
 func (t *Text) Render() (string, error) {
-	t.Env.DebugF("rendering template: %s", t.Template)
-
-	shell = t.Env.Flags().Shell
+	env.DebugF("rendering template: %s", t.Template)
 
 	if !strings.Contains(t.Template, "{{") || !strings.Contains(t.Template, "}}") {
 		return t.Template, nil
 	}
 
-	t.cleanTemplate()
+	t.patchTemplate()
 
 	tmpl, err := tmplFunc.Parse(t.Template)
 	if err != nil {
-		t.Env.Error(err)
+		env.Error(err)
 		return "", errors.New(InvalidTemplate)
 	}
 
@@ -141,7 +66,7 @@ func (t *Text) Render() (string, error) {
 
 	err = tmpl.Execute(buffer, context)
 	if err != nil {
-		t.Env.Error(err)
+		env.Error(err)
 		msg := regex.FindNamedRegexMatch(`at (?P<MSG><.*)$`, err.Error())
 		if len(msg) == 0 {
 			return "", errors.New(IncorrectTemplate)
@@ -158,7 +83,7 @@ func (t *Text) Render() (string, error) {
 	return text, nil
 }
 
-func (t *Text) cleanTemplate() {
+func (t *Text) patchTemplate() {
 	isKnownVariable := func(variable string) bool {
 		variable = strings.TrimPrefix(variable, ".")
 		splitted := strings.Split(variable, ".")
@@ -233,6 +158,11 @@ func (t *Text) cleanTemplate() {
 				// the list of segments so they can be accessed directly
 				property = strings.Replace(property, ".Segments", ".Segments.ToSimple", 1)
 				result += property
+			case strings.HasPrefix(property, ".Env."):
+				// we need to replace the property with the getEnv function
+				// so we can access the environment variables directly
+				property = strings.TrimPrefix(property, ".Env.")
+				result += fmt.Sprintf(`(call .Getenv "%s")`, property)
 			default:
 				// check if we have the same property in Data
 				// and replace it with the Data property so it
@@ -240,6 +170,7 @@ func (t *Text) cleanTemplate() {
 				if fields.hasField(property) {
 					property = ".Data" + property
 				}
+
 				// remove the global reference so we can use it directly
 				property = strings.TrimPrefix(property, globalRef)
 				result += property

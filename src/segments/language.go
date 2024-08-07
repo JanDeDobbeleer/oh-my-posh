@@ -261,14 +261,16 @@ func (l *language) buildVersionURL() {
 	if len(versionURLTemplate) == 0 {
 		return
 	}
+
 	tmpl := &template.Text{
 		Template: versionURLTemplate,
 		Context:  l.version,
-		Env:      l.env,
 	}
+
 	url, err := tmpl.Render()
 	if err != nil {
 		return
 	}
+
 	l.version.URL = url
 }

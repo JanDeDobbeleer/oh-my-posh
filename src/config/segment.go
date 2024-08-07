@@ -20,17 +20,19 @@ import (
 // SegmentStyle the style of segment, for more information, see the constants
 type SegmentStyle string
 
-func (s *SegmentStyle) resolve(env runtime.Environment, context any) SegmentStyle {
+func (s *SegmentStyle) resolve(context any) SegmentStyle {
 	txtTemplate := &template.Text{
 		Context: context,
-		Env:     env,
 	}
+
 	txtTemplate.Template = string(*s)
 	value, err := txtTemplate.Render()
+
 	// default to Plain
 	if err != nil || len(value) == 0 {
 		return Plain
 	}
+
 	return SegmentStyle(value)
 }
 
@@ -218,7 +220,7 @@ func (segment *Segment) SetText() {
 
 func (segment *Segment) string() string {
 	if !segment.Templates.Empty() {
-		templatesResult := segment.Templates.Resolve(segment.writer, segment.env, "", segment.TemplatesLogic)
+		templatesResult := segment.Templates.Resolve(segment.writer, "", segment.TemplatesLogic)
 		if len(segment.Template) == 0 {
 			return templatesResult
 		}
@@ -231,7 +233,6 @@ func (segment *Segment) string() string {
 	tmpl := &template.Text{
 		Template: segment.Template,
 		Context:  segment.writer,
-		Env:      segment.env,
 	}
 
 	text, err := tmpl.Render()
@@ -282,7 +283,7 @@ func (segment *Segment) cwdExcluded() bool {
 
 func (segment *Segment) ResolveForeground() color.Ansi {
 	if len(segment.ForegroundTemplates) != 0 {
-		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.env, segment.Foreground.String())
+		match := segment.ForegroundTemplates.FirstMatch(segment.writer, segment.Foreground.String())
 		segment.Foreground = color.Ansi(match)
 	}
 
@@ -291,7 +292,7 @@ func (segment *Segment) ResolveForeground() color.Ansi {
 
 func (segment *Segment) ResolveBackground() color.Ansi {
 	if len(segment.BackgroundTemplates) != 0 {
-		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.env, segment.Background.String())
+		match := segment.BackgroundTemplates.FirstMatch(segment.writer, segment.Background.String())
 		segment.Background = color.Ansi(match)
 	}
 
@@ -303,7 +304,7 @@ func (segment *Segment) ResolveStyle() SegmentStyle {
 		return segment.styleCache
 	}
 
-	segment.styleCache = segment.Style.resolve(segment.env, segment.writer)
+	segment.styleCache = segment.Style.resolve(segment.writer)
 
 	return segment.styleCache
 }

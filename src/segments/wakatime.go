@@ -61,7 +61,6 @@ func (w *Wakatime) getURL() (string, error) {
 	tmpl := &template.Text{
 		Template: url,
 		Context:  w,
-		Env:      w.env,
 	}
 	return tmpl.Render()
 }

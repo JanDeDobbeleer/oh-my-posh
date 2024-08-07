@@ -62,7 +62,6 @@ func (cfg *Config) getPalette() color.Palette {
 
 	tmpl := &template.Text{
 		Template: cfg.Palettes.Template,
-		Env:      cfg.env,
 	}
 
 	key, err := tmpl.Render()

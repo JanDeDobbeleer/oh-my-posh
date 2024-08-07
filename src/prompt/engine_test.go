@@ -9,6 +9,7 @@ import (
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime"
 	"github.com/jandedobbeleer/oh-my-posh/src/runtime/mock"
 	"github.com/jandedobbeleer/oh-my-posh/src/shell"
+	"github.com/jandedobbeleer/oh-my-posh/src/template"
 	"github.com/jandedobbeleer/oh-my-posh/src/terminal"
 
 	"github.com/stretchr/testify/assert"
@@ -92,12 +93,11 @@ func TestPrintPWD(t *testing.T) {
 		env.On("Host").Return("host", nil)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
 		env.On("TemplateCache").Return(&cache.Template{
-			Env:   make(map[string]string),
 			Shell: "shell",
 		})
-		env.On("Flags").Return(&runtime.Flags{})
 
 		terminal.Init(shell.GENERIC)
+		template.Init(env)
 
 		engine := &Engine{
 			Env: env,
@@ -127,7 +127,7 @@ func engineRender() {
 	cfg := config.Load(env)
 
 	terminal.Init(shell.GENERIC)
-	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate(env)
+	terminal.BackgroundColor = cfg.TerminalBackground.ResolveTemplate()
 	terminal.Colors = cfg.MakeColors()
 
 	engine := &Engine{
@@ -185,11 +185,7 @@ func TestGetTitle(t *testing.T) {
 		env.On("Home").Return("/usr/home")
 		env.On("PathSeparator").Return(tc.PathSeparator)
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
 		env.On("TemplateCache").Return(&cache.Template{
-			Env: map[string]string{
-				"USERDOMAIN": "MyCompany",
-			},
 			Shell:    tc.ShellName,
 			UserName: "MyUser",
 			Root:     tc.Root,
@@ -197,8 +193,11 @@ func TestGetTitle(t *testing.T) {
 			PWD:      tc.Cwd,
 			Folder:   "vagrant",
 		})
+		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
+		env.On("Shell").Return(tc.ShellName)
 
 		terminal.Init(shell.GENERIC)
+		template.Init(env)
 
 		engine := &Engine{
 			Config: &config.Config{
@@ -249,18 +248,17 @@ func TestGetConsoleTitleIfGethostnameReturnsError(t *testing.T) {
 		env.On("Pwd").Return(tc.Cwd)
 		env.On("Home").Return("/usr/home")
 		env.On("DebugF", testify_.Anything, testify_.Anything).Return(nil)
-		env.On("Flags").Return(&runtime.Flags{})
 		env.On("TemplateCache").Return(&cache.Template{
-			Env: map[string]string{
-				"USERDOMAIN": "MyCompany",
-			},
 			Shell:    tc.ShellName,
 			UserName: "MyUser",
 			Root:     tc.Root,
 			HostName: "",
 		})
+		env.On("Getenv", "USERDOMAIN").Return("MyCompany")
+		env.On("Shell").Return(tc.ShellName)
 
 		terminal.Init(shell.GENERIC)
+		template.Init(env)
 
 		engine := &Engine{
 			Config: &config.Config{

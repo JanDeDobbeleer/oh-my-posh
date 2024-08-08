@@ -69,8 +69,23 @@
           },
           "style": "diamond",
           "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} ",
-          "trailing_diamond": "\ue0b0",
+          "trailing_diamond": "<transparent,#17D7A0>\ue0b2</>",
           "type": "git"
+        },
+        {
+          "background": "#FFDE57",
+          "foreground": "#111111",
+          "leading_diamond": "\ue0b2",
+          "powerline_symbol": "\ue0b0",
+          "properties": {
+              "display_mode": "environment",
+              "fetch_virtual_env": true,
+              "home_enabled": true
+          },
+          "style": "diamond",
+          "template": " \ue235 {{ if .Venv }}({{ .Venv }}){{ end }} ",
+          "trailing_diamond": "\ue0b0",
+          "type": "python"
         }
       ],
       "type": "prompt"

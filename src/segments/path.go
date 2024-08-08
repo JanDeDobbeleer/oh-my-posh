@@ -183,12 +183,12 @@ func (pt *Path) Init(props properties.Properties, env runtime.Environment) {
 
 func (pt *Path) setStyle() {
 	if len(pt.relative) == 0 {
-		pt.Path = pt.root
-
-		if strings.HasSuffix(pt.Path, ":") {
-			pt.Path += pt.getFolderSeparator()
+		// Only append a separator to a non-filesystem PSDrive root or a Windows drive root.
+		if (len(pt.env.Flags().PSWD) != 0 || pt.windowsPath) && strings.HasSuffix(pt.root, ":") {
+			pt.root += pt.getFolderSeparator()
 		}
 
+		pt.Path = pt.colorizePath(pt.root, nil)
 		return
 	}
 
@@ -207,10 +207,7 @@ func (pt *Path) setStyle() {
 		pt.Path = pt.getUniqueLettersPath(0)
 	case AgnosterLeft:
 		pt.Path = pt.getAgnosterLeftPath()
-	case Short:
-		// "short" is a duplicate of "full", just here for backwards compatibility
-		fallthrough
-	case Full:
+	case Full, Short: // "short" is a duplicate of "full", just here for backwards compatibility
 		pt.Path = pt.getFullPath()
 	case FolderType:
 		pt.Path = pt.getFolderPath()
@@ -279,27 +276,25 @@ func (pt *Path) getFolderSeparator() string {
 }
 
 func (pt *Path) getMixedPath() string {
-	var buffer strings.Builder
-
 	threshold := int(pt.props.GetFloat64(MixedThreshold, 4))
 	folderIcon := pt.props.GetString(FolderIcon, "..")
-	separator := pt.getFolderSeparator()
 
-	if pt.root != pt.pathSeparator {
-		pt.Folders = append(Folders{{Name: pt.root}}, pt.Folders...)
+	if pt.root == pt.pathSeparator {
+		pt.root = pt.Folders[0].Name
+		pt.Folders = pt.Folders[1:]
 	}
 
-	n := len(pt.Folders)
-	buffer.WriteString(pt.Folders[0].Name)
+	var folders []string
 
-	for i := 1; i < n; i++ {
+	for i, n := 0, len(pt.Folders); i < n; i++ {
 		folder := pt.Folders[i].Name
 		if len(folder) > threshold && i != n-1 && !pt.Folders[i].Display {
 			folder = folderIcon
 		}
-		buffer.WriteString(fmt.Sprintf("%s%s", separator, folder))
+		folders = append(folders, folder)
 	}
-	return buffer.String()
+
+	return pt.colorizePath(pt.root, folders)
 }
 
 func (pt *Path) getAgnosterPath() string {
@@ -510,8 +505,7 @@ func (pt *Path) getFullPath() string {
 }
 
 func (pt *Path) getFolderPath() string {
-	pwd := runtime.Base(pt.env, pt.pwd)
-	return pt.replaceFolderSeparators(pwd)
+	return pt.colorizePath(runtime.Base(pt.env, pt.pwd), nil)
 }
 
 func (pt *Path) replaceMappedLocations() (string, string) {
@@ -736,7 +730,7 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 	}
 
 	if len(elements) == 0 {
-		root := fmt.Sprintf(leftFormat, root)
+		root = fmt.Sprintf(leftFormat, root)
 		return colorizeElement(root)
 	}
 
@@ -749,8 +743,8 @@ func (pt *Path) colorizePath(root string, elements []string) string {
 
 	var builder strings.Builder
 
-	root = fmt.Sprintf(leftFormat, root)
-	builder.WriteString(colorizeElement(root))
+	formattedRoot := fmt.Sprintf(leftFormat, root)
+	builder.WriteString(colorizeElement(formattedRoot))
 
 	if root != pt.pathSeparator && len(root) != 0 {
 		builder.WriteString(colorizeSeparator())

@@ -19,16 +19,17 @@ jobs:
       run:
         working-directory: ${{ github.workspace }}/src
     steps:
-    - name: Install Go
-      uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32
-      with:
-        go-version: 1.21
-        cache-dependency-path: src/go.sum
     - name: Checkout code
       uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871
+    - name: Install Go 🗳
+      uses: ./.github/workflows/composite/bootstrap-go
     - name: Golang CI
       uses: golangci/golangci-lint-action@971e284b6050e8a5849b72094c50ab08da042db8
       with:
         working-directory: src
+    - name: Fieldalignment
+      run: |
+        go install golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest
+        fieldalignment "./..."
     - name: Unit Tests
       run: go test -v ./...

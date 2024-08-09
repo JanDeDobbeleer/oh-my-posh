@@ -1,0 +1,109 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "console_title_template": "{{ .Path }}",
+  "blocks": [
+    {
+      "alignment": "left",
+      "segments": [
+        {
+          "foreground": "blue",
+          "style": "plain",
+          "template": "{{ .Name }}",
+          "properties": {
+            "mapped_shell_names": {
+              "bash": "Bash",
+              "fish": "Fish",
+              "pwsh": "PowerShell",
+              "zsh": "Zsh"
+            }
+          },
+          "type": "shell"
+        },
+        {
+          "foreground": "white",
+          "properties": {
+            "time_format": "15:04:05"
+          },
+          "style": "plain",
+          "template": " | <green>{{ .CurrentDate | date .Format }}</>",
+          "type": "time"
+        }
+      ],
+      "type": "rprompt"
+    },
+    {
+      "alignment": "left",
+      "newline": false,
+      "segments": [
+        {
+          "type": "project",
+          "style": "plain",
+          "foreground": "darkGray",
+          "template": "{{ if .Error }}\uD83D\uDCE6 <lightRed>{{ .Error }}</>{{ else }}\uD83D\uDCE6{{ if .Version }} {{.Version}}{{ end }}{{ if .Name }} <b>{{ .Name }}</b>{{ end }}{{ end }}\n"
+        }
+      ],
+      "type": "prompt"
+    },
+    {
+      "alignment": "left",
+      "newline": false,
+      "segments": [
+        {
+          "type": "root",
+          "style": "diamond",
+          "leading_diamond": "\ue0b6",
+          "trailing_diamond": "\ue0b4",
+          "foreground": "black",
+          "background": "lightRed",
+          "template": "<f>\uD83E\uDDB8</f> {{ if eq .OS \"Windows\" }}Elevated{{ else }}root{{ end}}"
+        },
+        {
+          "foreground": "green",
+          "style": "plain",
+          "template": "{{ if not .Root }}{{ if .Env.GITHUB_USER }}@{{ .Env.GITHUB_USER }}{{ else if .UserName }}{{ .UserName }}{{ end }}{{ end }}",
+          "type": "session"
+        },
+        {
+          "style": "plain",
+          "template": " {{ if gt .Code 0 }}<red><b>\u279c</b>{{ else }}<black>\u279c{{ end }}</>",
+          "type": "session"
+        },
+        {
+          "foreground": "blue",
+          "style": "plain",
+          "properties": {
+            "style": "mixed",
+            "mixed_threshold": 4
+          },
+          "template": " <b>{{ .Path }}</b>",
+          "type": "path"
+        },
+        {
+          "properties": {
+            "full_branch_path": true,
+            "native_fallback": true
+          },
+          "style": "plain",
+          "template": " <cyan>(<b><red>{{ .HEAD }}</></b>)</>",
+          "type": "git"
+        },
+        {
+          "foreground": "white",
+          "style": "plain",
+          "template": " \u276F ",
+          "type": "text"
+        }
+      ],
+      "type": "prompt"
+    }
+  ],
+  "valid_line": {
+    "foreground": "lightGreen",
+    "template": "\u276F "
+  },
+  "error_line": {
+      "foreground": "lightRed",
+      "template": "\u276F "
+  },
+  "version": 2
+}

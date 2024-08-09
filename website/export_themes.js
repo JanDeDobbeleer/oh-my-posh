@@ -33,6 +33,7 @@ themeConfigOverrrides.set('catppuccin_latte.omp.json', newThemeConfig('IrwinJuic
 themeConfigOverrrides.set('catppuccin_frappe.omp.json', newThemeConfig('IrwinJuice', '#303446'));
 themeConfigOverrrides.set('catppuccin_macchiato.omp.json', newThemeConfig('IrwinJuice', '#24273A'));
 themeConfigOverrrides.set('catppuccin_mocha.omp.json', newThemeConfig('IrwinJuice', '#1E1E2E'));
+themeConfigOverrrides.set('devcontainers.minimal.omp.json', newThemeConfig('Julian Pawlowski', '#282c34'));
 
 (async () => {
   const themes = await fs.promises.readdir(themesConfigDir);

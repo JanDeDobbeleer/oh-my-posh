@@ -56,7 +56,6 @@ func (cfg *Config) Export(format string) string {
 		data := strings.Replace(result.String(), "{", prefix, 1)
 		return escapeGlyphs(data, cfg.MigrateGlyphs)
 	case TOML:
-		prefix := "#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json\n\n"
 		tomlEncoder := toml.NewEncoder(&result)
 		tomlEncoder.SetIndentTables(true)
 
@@ -65,7 +64,7 @@ func (cfg *Config) Export(format string) string {
 			return ""
 		}
 
-		return prefix + result.String()
+		return result.String()
 	}
 
 	// unsupported format
